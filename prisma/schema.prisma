@@ -10,7 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model citoyen {
   id    Int     @default(autoincrement()) @id
   name  String?
 }
