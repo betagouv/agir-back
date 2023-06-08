@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { CitoyenService } from './citoyen.service';
-import { PrismaService } from './prisma.service';
+import { CitoyenController } from './infrastructure/api/citoyen.controller';
+import { CitoyenUsecase } from './usecase/citoyen.usecase';
+import { CitoyenRepository } from './infrastructure/repository/citoyen.repository';
+import { PrismaService } from './infrastructure/db/prisma.service';
 
 @Module({
   imports: [],
-  controllers: [AppController],
-  providers: [AppService,CitoyenService, PrismaService],
+  controllers: [CitoyenController],
+  providers: [CitoyenUsecase,CitoyenRepository, PrismaService],
 })
 export class AppModule {}
