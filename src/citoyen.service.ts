@@ -6,6 +6,7 @@ import { Citoyen } from '@prisma/client';
 @Injectable()
 export class CitoyenService {
   constructor(private prisma: PrismaService) {}
+
   async findCitoyen(
     citoyenId: number
   ): Promise<Citoyen | null> {
@@ -15,4 +16,17 @@ export class CitoyenService {
       },
     });
   }
+
+  async createCitoyen(
+    name: string
+  ): Promise<Citoyen | null> {
+    return this.prisma.citoyen.create({
+      data: {
+        name,
+      },
+    })
+  }
+
+
+  
 }

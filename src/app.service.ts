@@ -1,3 +1,4 @@
+import { Citoyen } from '.prisma/client';
 import { Injectable } from '@nestjs/common';
 import {CitoyenService} from './citoyen.service'
 
@@ -5,8 +6,10 @@ import {CitoyenService} from './citoyen.service'
 export class AppService {
   constructor(private userService: CitoyenService) {}
 
-  async getCitoyenName(id): Promise<string> {
-    const citoyen = await this.userService.findCitoyen(id);
-    return citoyen.name;
+  async getCitoyen(id): Promise<Citoyen> {
+    return this.userService.findCitoyen(id);
+  }
+  async createCitoyen(name): Promise<Citoyen> {
+    return this.userService.createCitoyen(name);
   }
 }
