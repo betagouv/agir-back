@@ -9,7 +9,7 @@ export class CitoyenUsecase {
   async getCitoyen(id): Promise<Citoyen> {
     return this.citoyenRespoitory.findCitoyen(id);
   }
-  async createCitoyen(name): Promise<Citoyen> {
-    return this.citoyenRespoitory.createCitoyen(name);
+  async createCitoyen(name, conso): Promise<Citoyen> {
+    return this.citoyenRespoitory.createCitoyen(name, conso);
   }
 }

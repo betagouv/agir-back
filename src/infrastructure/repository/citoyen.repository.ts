@@ -18,11 +18,13 @@ export class CitoyenRepository {
   }
 
   async createCitoyen(
-    name: string
+    name: string,
+    conso: number
   ): Promise<Citoyen | null> {
     return this.prisma.citoyen.create({
       data: {
         name,
+        conso,
       },
     })
   }

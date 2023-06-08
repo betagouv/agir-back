@@ -16,7 +16,7 @@ export class CitoyenController {
   }
   @Post('citoyens')
   async createCitoyen(@Body() body): Promise<Citoyen> {
-    const citoyen = await this.citoyenUsecase.createCitoyen(body.name);
+    const citoyen = await this.citoyenUsecase.createCitoyen(body.name, body.conso);
     return citoyen;
   }
 }
