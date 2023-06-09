@@ -14,9 +14,12 @@ export class CitoyenController {
     }
     return citoyen;
   }
+  @Get('citoyens')
+  async listCitoyens(): Promise<Citoyen[]> {
+    return await this.citoyenUsecase.listCitoyens();
+  }
   @Post('citoyens')
   async createCitoyen(@Body() body): Promise<Citoyen> {
-    const citoyen = await this.citoyenUsecase.createCitoyen(body.name, body.conso);
-    return citoyen;
+    return this.citoyenUsecase.createCitoyen(body.name, body.conso);
   }
 }

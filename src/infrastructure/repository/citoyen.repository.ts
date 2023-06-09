@@ -17,6 +17,10 @@ export class CitoyenRepository {
     });
   }
 
+  async listCitoyens(): Promise<Citoyen[] | null> {
+    return this.prisma.citoyen.findMany({});
+  }
+
   async createCitoyen(
     name: string,
     conso: number
