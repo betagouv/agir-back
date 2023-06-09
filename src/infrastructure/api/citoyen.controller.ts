@@ -1,8 +1,10 @@
 import { Citoyen } from '.prisma/client';
 import { Body, Controller, Get, NotFoundException, Param, Post } from '@nestjs/common';
 import { CitoyenUsecase } from '../../usecase/citoyen.usecase';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller()
+@ApiTags('Citoyen')
 export class CitoyenController {
   constructor(private readonly citoyenUsecase: CitoyenUsecase) {}
 
