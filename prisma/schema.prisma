@@ -15,3 +15,7 @@ model Citoyen {
   name  String?
   conso  Int? @default(0)
 }
+model Utilisateur {
+  id    String  @id
+  name  String
+}

@@ -9,6 +9,10 @@
     "node": ">=18.0.0"
   },
   "scripts": {
+    "db:update": "npm run db:up && dotenv -e .env.test -- npx prisma migrate dev && dotenv -e .env -- npx prisma migrate dev",
+    "db:up": "docker-compose up -d",
+    "db:destroy": "docker-compose down",
+    "test:int": "dotenv -e .env.test -- jest --config ./test/jest-int.json",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "node dist/main.js",
@@ -29,7 +33,8 @@
     "@nestjs/swagger": "^6.3.0",
     "@prisma/client": "^4.15.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
@@ -41,6 +46,7 @@
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
+    "dotenv-cli": "7.2.1",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",

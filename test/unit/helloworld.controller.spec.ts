@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CitoyenRepository } from '../src/infrastructure/repository/citoyen.repository';
-import { HelloworldController } from '../src/infrastructure/api/helloworld.controller';
-import { CitoyenUsecase } from '../src/usecase/citoyen.usecase';
-import { PrismaService } from '../src/infrastructure/db/prisma.service';
+import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur.repository';
+import { HelloworldController } from '../../src/infrastructure/api/helloworld.controller';
+import { UtilisateurUsecase } from '../../src/usecase/utilisateur.usecase';
+import { PrismaService } from '../../src/infrastructure/db/prisma.service';
 
 describe('AppController', () => {
   let appController: HelloworldController;
@@ -10,7 +10,7 @@ describe('AppController', () => {
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [HelloworldController],
-      providers: [CitoyenUsecase, CitoyenRepository, PrismaService],
+      providers: [UtilisateurUsecase, UtilisateurRepository, PrismaService],
     }).compile();
 
     appController = app.get<HelloworldController>(HelloworldController);
