@@ -12,7 +12,6 @@ export class UtilisateurController {
   async getUtilisateurByName(@Query() query: any): Promise<Utilisateur[]> {
     if (Object.keys(query).length > 1) {
       return this.utilisateurUsecase.findUtilisateursByName(query.name);
-
     } else {
       return this.utilisateurUsecase.listUtilisateurs();
     }

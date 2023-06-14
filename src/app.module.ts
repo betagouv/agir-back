@@ -1,13 +1,18 @@
 import { Module } from '@nestjs/common';
-import { UtilisateurController as UtilisateurController } from './infrastructure/api/utilisateur.controller';
+
+import { UtilisateurController } from './infrastructure/api/utilisateur.controller';
+import { DashboardController } from './infrastructure/api/dashboard.controller';
+import { HelloworldController } from './infrastructure/api/helloworld.controller';
+
 import { UtilisateurUsecase } from './usecase/utilisateur.usecase';
+import { GenerateDashboardUsecase } from './usecase/generate_dashboard.usecase';
+
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur.repository';
 import { PrismaService } from './infrastructure/db/prisma.service';
-import { HelloworldController } from './infrastructure/api/helloworld.controller';
 
 @Module({
   imports: [],
-  controllers: [UtilisateurController, HelloworldController],
-  providers: [UtilisateurUsecase,UtilisateurRepository, PrismaService],
+  controllers: [UtilisateurController, HelloworldController, DashboardController],
+  providers: [UtilisateurUsecase,UtilisateurRepository, PrismaService, GenerateDashboardUsecase],
 })
 export class AppModule {}

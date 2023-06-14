@@ -1,4 +1,4 @@
-import { Citoyen, Utilisateur } from '.prisma/client';
+import { Utilisateur } from '.prisma/client';
 import { Injectable } from '@nestjs/common';
 import {UtilisateurRepository} from '../infrastructure/repository/utilisateur.repository'
 
