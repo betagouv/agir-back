@@ -16,7 +16,7 @@ export class QuizzRepository {
   async create(titre: string, id?: string): Promise<Quizz | null> {
     let response;
     try {
-      response = this.prisma.quizz.create({
+      response = await this.prisma.quizz.create({
         data: {
           id: id ? id : uuidv4(),
           titre

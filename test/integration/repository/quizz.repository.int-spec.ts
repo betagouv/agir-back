@@ -43,5 +43,17 @@ describe('QuizzRepository', () => {
     const createdQuizz = await TestUtil.prisma.quizz.findFirst({where: {}});
     expect(createdQuizz.titre).toEqual("quizz");
   });
+  it('fail create quizz already existing ID', async () => {
+    await TestUtil.prisma.quizz.create({
+      data: {id: '1', titre: "bob"}
+    });
+    try {
+      await quizzRepository.create("letitre", "1");
+    } catch (error) {
+      expect(error.message).toEqual("Un quizz d'id 1 existe déjà en base");
+      return;
+    }
+    fail('expected error');
+  });
 
 });
