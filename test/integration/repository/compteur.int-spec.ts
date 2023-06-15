@@ -34,12 +34,41 @@ describe('CompteurRepository', () => {
     expect(new_compteur.id).toEqual("123");
   });
 
-  it('creates a new compteur ok with id', async () => {
-    await commons.db().utilisateur.createMany({
-      data: [{ id: '1', name: "bob" }],
+  it('fails to create a new compteur cause compteur id already existing', async () => {
+    await commons.prisma.utilisateur.create({
+      data: {
+         id: '1', name: "bob",
+         compteurs: {
+           create: [
+             {
+              id: "123" ,
+              titre: "thetitre",
+               valeur: 89,
+             }
+           ]
+         }
+        }
     });
-    const new_compteur = await compteurRepository.create("letitre", 99, "1", "123");
-    expect(new_compteur.id).toEqual("123");
+    try {
+      await compteurRepository.create("letitre", 99, "1", "123");
+    } catch (error) {
+      expect(error.message).toEqual("Un compteur d'id 123 existe déjà en base");
+      return;
+    }
+    fail('expected error');
   });
-
+  it('fails to create a new compteur cause utilisateur id not existing', async () => {
+    await commons.prisma.utilisateur.create({
+      data: {
+         id: '1', name: "bob"
+        }
+    });
+    try {
+      await compteurRepository.create("letitre", 99, "2", "123");
+    } catch (error) {
+      expect(error.message).toEqual("Aucun utilisateur d'id 2 n'existe en base");
+      return;
+    }
+    fail('expected error');
+  });
 });

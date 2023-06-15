@@ -38,6 +38,9 @@ export class CompteurRepository {
           if (error.code === 'P2002') {
             throw new BadRequestException(`Un compteur d'id ${id} existe déjà en base`);
           }
+          if (error.code === 'P2003') {
+            throw new BadRequestException(`Aucun utilisateur d'id ${utilisateurId} n'existe en base`);
+          }
         }
         throw error;
     }
