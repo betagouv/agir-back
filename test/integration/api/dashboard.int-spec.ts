@@ -37,7 +37,7 @@ describe('/dashboard (API test)', () => {
              {
               id: "1" ,
               titre: "thetitre",
-               valeur: 89,
+               valeur: "89",
              }
            ]
          }

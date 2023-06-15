@@ -26,7 +26,7 @@ export class CompteurController {
       type: 'object',
       properties: {
         titre: {type : "string", description: "Titre du compteur"},
-        valeur: {type : "string", description: "Valeur numérique entière du compteur"},
+        valeur: {type : "string", description: "Valeur du compteur"},
         utilisateurId: {type : "string", description: "id de l'utilisateur auquel est lié ce compteur"}
       },
     },

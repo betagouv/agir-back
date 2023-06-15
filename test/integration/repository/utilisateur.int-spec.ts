@@ -27,7 +27,7 @@ describe('UtilisateurRepository', () => {
              {
               id: "1" ,
               titre: "thetitre",
-               valeur: 89,
+               valeur: "89",
              }
            ]
          }

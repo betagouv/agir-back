@@ -9,7 +9,7 @@ export class CompteurUsecase {
   async getById(id: string): Promise<Compteur> {
     return this.compteurRepository.getById(id);
   }
-  async create(titre: string, valeur: number, utilisateurId: string): Promise<Compteur> {
+  async create(titre: string, valeur: string, utilisateurId: string): Promise<Compteur> {
     return this.compteurRepository.create(titre, valeur, utilisateurId);
   }
   async list(): Promise<Compteur[]> {

@@ -19,7 +19,7 @@ export class CompteurRepository {
 
   async create(
     titre: string,
-    valeur: number,
+    valeur: string,
     utilisateurId: string,
     id?: string
   ): Promise<Compteur | null> {

@@ -23,7 +23,7 @@ model Utilisateur {
 model Compteur {
   id    String  @id
   titre  String
-  valeur Int
+  valeur String
   utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id])
   utilisateurId String
 }

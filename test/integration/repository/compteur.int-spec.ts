@@ -22,7 +22,7 @@ describe('CompteurRepository', () => {
     await commons.db().utilisateur.createMany({
       data: [{ id: '1', name: "bob" }],
     });
-    const new_compteur = await compteurRepository.create("letitre", 99, "1");
+    const new_compteur = await compteurRepository.create("letitre", "99", "1");
     expect(new_compteur.id).toHaveLength(36); // UUID V4
   });
 
@@ -30,7 +30,7 @@ describe('CompteurRepository', () => {
     await commons.db().utilisateur.createMany({
       data: [{ id: '1', name: "bob" }],
     });
-    const new_compteur = await compteurRepository.create("letitre", 99, "1", "123");
+    const new_compteur = await compteurRepository.create("letitre", "99", "1", "123");
     expect(new_compteur.id).toEqual("123");
   });
 
@@ -43,14 +43,14 @@ describe('CompteurRepository', () => {
              {
               id: "123" ,
               titre: "thetitre",
-               valeur: 89,
+               valeur: "89",
              }
            ]
          }
         }
     });
     try {
-      await compteurRepository.create("letitre", 99, "1", "123");
+      await compteurRepository.create("letitre", "99", "1", "123");
     } catch (error) {
       expect(error.message).toEqual("Un compteur d'id 123 existe déjà en base");
       return;
@@ -64,7 +64,7 @@ describe('CompteurRepository', () => {
         }
     });
     try {
-      await compteurRepository.create("letitre", 99, "2", "123");
+      await compteurRepository.create("letitre", "99", "2", "123");
     } catch (error) {
       expect(error.message).toEqual("Aucun utilisateur d'id 2 n'existe en base");
       return;
