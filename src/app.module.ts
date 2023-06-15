@@ -4,10 +4,12 @@ import { UtilisateurController } from './infrastructure/api/utilisateur.controll
 import { DashboardController } from './infrastructure/api/dashboard.controller';
 import { HelloworldController } from './infrastructure/api/helloworld.controller';
 import { CompteurController } from './infrastructure/api/compteur.controller';
+import { QuizzController } from './infrastructure/api/quizz.controller';
 
 import { UtilisateurUsecase } from './usecase/utilisateur.usecase';
 import { GenerateDashboardUsecase } from './usecase/generate_dashboard.usecase';
 import { CompteurUsecase } from './usecase/compteur.usecase';
+import { EvaluerQuizzUsecase } from './usecase/evaluer_quizz.usecase';
 
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur.repository';
 import { CompteurRepository } from './infrastructure/repository/compteur.repository';
@@ -22,6 +24,7 @@ import { PrismaService } from './infrastructure/db/prisma.service';
     HelloworldController,
     DashboardController,
     CompteurController,
+    QuizzController,
   ],
   providers: [
     PrismaService,
@@ -31,7 +34,8 @@ import { PrismaService } from './infrastructure/db/prisma.service';
     CompteurRepository,
     GenerateDashboardUsecase,
     CompteurUsecase,
-    UtilisateurUsecase
+    UtilisateurUsecase,
+    EvaluerQuizzUsecase,
   ],
 })
 export class AppModule {}

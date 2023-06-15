@@ -15,7 +15,12 @@ export class QuizzRepository {
     });
   }
   async getById(id: string): Promise<Quizz | null> {
-    return this.prisma.quizz.findUnique({ where: { id } });
+    return this.prisma.quizz.findUnique({
+      where: { id },
+      include: {
+        questions: true
+      }
+});
   }
   async create(titre: string, id?: string): Promise<Quizz | null> {
     let response;
