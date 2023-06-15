@@ -9,7 +9,7 @@ export class UtilisateurController {
   constructor(private readonly utilisateurUsecase: UtilisateurUsecase) {}
 
   @Get('utilisateurs')
-  async getUtilisateurByName(@Query() query: any): Promise<Utilisateur[]> {
+  async getUtilisateursByName(@Query() query: any): Promise<Utilisateur[]> {
     if (Object.keys(query).length > 1) {
       return this.utilisateurUsecase.findUtilisateursByName(query.name);
     } else {

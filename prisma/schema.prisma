@@ -18,4 +18,12 @@ model Citoyen {
 model Utilisateur {
   id    String  @id
   name  String
+  compteurs Compteur[]
+}
+model Compteur {
+  id    String  @id
+  titre  String
+  valeur Int
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id])
+  utilisateurId String
 }

@@ -20,8 +20,14 @@ async function appclose() {
     await app.close();
     await prisma.$disconnect()
 }
+
+async function deleteAll() {
+    await prisma.compteur.deleteMany();
+    await prisma.utilisateur.deleteMany();
+}
+
 function db() {
     return prisma
 }
 
-module.exports = { appinit, appclose, db, prisma};
+module.exports = { appinit, appclose, db, prisma, deleteAll};

@@ -6,16 +6,16 @@ export class GenerateDashboardUsecase {
   constructor(private utilisateurRepository: UtilisateurRepository) {}
 
   async doIt(username: string): Promise<Object> {
-    const utilisateurs = await this.utilisateurRepository.findUtilisateursByName(username);
-    if (utilisateurs.length == 0) {
+    const utilisateur = await this.utilisateurRepository.findUtilisateurByNameWithChildren(username);
+    if (utilisateur == null) {
       throw new NotFoundException(`Pas d'utilisateur de nom ${username}`);
     }
     return {
       user: {
-        id: utilisateurs[0].id,
-        name: utilisateurs[0].name
+        id: utilisateur.id,
+        name: utilisateur.name
       },
-      compteurs: [],
+      compteurs: utilisateur["compteurs"],
       quizz: [],
       badges: []
     }

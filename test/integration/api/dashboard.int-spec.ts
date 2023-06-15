@@ -10,7 +10,7 @@ describe('/dashboard (API test)', () => {
   });
 
   beforeEach(async () => {
-    await commons.prisma.utilisateur.deleteMany();
+    await commons.deleteAll();
   })
 
   afterAll(async () => {
@@ -18,14 +18,34 @@ describe('/dashboard (API test)', () => {
   })
 
   it('GET /dashboard/name - get a dashboard of a given user', async () => {
-    await commons.db().utilisateur.createMany({
+    await commons.prisma.utilisateur.createMany({
       data: [{ id: '1', name: "bob" }],
     });
     const response = await request(app.getHttpServer()).get('/dashboard/bob');
     expect(response.status).toBe(200);
-    expect(response.body.compteurs).toBeDefined();
-    expect(response.body.quizz).toBeDefined();
-    expect(response.body.badges).toBeDefined();
+    expect(response.body.compteurs).toHaveLength(0);
+    expect(response.body.quizz).toHaveLength(0);
+    expect(response.body.badges).toHaveLength(0);
+  });
+
+  it('GET /dashboard/name - get a dashboard with proper compteur', async () => {
+    await commons.prisma.utilisateur.create({
+      data: {
+         id: '1', name: "bob",
+         compteurs: {
+           create: [
+             {
+              id: "1" ,
+              titre: "thetitre",
+               valeur: 89,
+             }
+           ]
+         }
+        }
+    });
+    const response = await request(app.getHttpServer()).get('/dashboard/bob');
+    expect(response.status).toBe(200);
+    expect(response.body.compteurs).toHaveLength(1);
   });
 
   it('GET /dashboard/name - get a dashboard of a missing user', async () => {

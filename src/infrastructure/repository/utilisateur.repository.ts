@@ -16,6 +16,18 @@ export class UtilisateurRepository {
       },
     });
   }
+  async findUtilisateurByNameWithChildren(
+    name: string
+  ): Promise<Utilisateur | null> {
+    return this.prisma.utilisateur.findFirst({
+      where: {
+        name
+      },
+      include: {
+        compteurs: true
+      }
+    });
+  }
   async findUtilisateurById(
     id: string
   ): Promise<Utilisateur | null> {
