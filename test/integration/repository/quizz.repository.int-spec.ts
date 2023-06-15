@@ -39,18 +39,25 @@ describe('QuizzRepository', () => {
     });
     const quizz = await quizzRepository.list();
     expect(quizz).toHaveLength(1);
-    expect(quizz[0]["questions"]).toHaveLength(2);
+    expect(quizz[0]["questions"]).toBeUndefined();
   });
 
-  it('find unique quizz', async () => {
+  it('find unique quizz with children', async () => {
     await TestUtil.prisma.quizz.createMany({
       data: [
         {id: '1', titre: "l'eau c'est important"},
         {id: '2', titre: "Végé ?"}
       ]
     });
+    await TestUtil.prisma.quizzQuestion.createMany({
+      data: [
+        {id: '1', libelle: "question1", solution:"10", propositions: ["1","5", "10"], quizzId: "1"},
+        {id: '2', libelle: "question2", solution:"1", propositions: ["1","2"], quizzId: "1"}
+      ]
+    });
     const quizz = await quizzRepository.getById("1");
     expect(quizz.titre).toEqual("l'eau c'est important");
+    expect(quizz["questions"]).toHaveLength(2);
   });
 
   it('create unique quizz without ID', async () => {

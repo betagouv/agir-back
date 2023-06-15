@@ -10,6 +10,7 @@ import { UtilisateurUsecase } from './usecase/utilisateur.usecase';
 import { GenerateDashboardUsecase } from './usecase/generate_dashboard.usecase';
 import { CompteurUsecase } from './usecase/compteur.usecase';
 import { EvaluerQuizzUsecase } from './usecase/evaluer_quizz.usecase';
+import { LireQuizzUsecase } from './usecase/lire_quizz.usecase';
 
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur.repository';
 import { CompteurRepository } from './infrastructure/repository/compteur.repository';
@@ -36,6 +37,7 @@ import { PrismaService } from './infrastructure/db/prisma.service';
     CompteurUsecase,
     UtilisateurUsecase,
     EvaluerQuizzUsecase,
+    LireQuizzUsecase,
   ],
 })
 export class AppModule {}

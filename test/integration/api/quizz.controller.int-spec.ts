@@ -15,6 +15,22 @@ describe('/Quizz (API test)', () => {
     await TestUtil.appclose();
   })
 
+  it('GET /quizz/id - get a quizz content by id', async () => {
+    await TestUtil.prisma.quizz.create({
+      data: {id: "1", titre: "The Quizz !"}
+    })
+    await TestUtil.prisma.quizzQuestion.createMany({
+      data: [
+        {id: '1', libelle: "question1", solution:"10", propositions: ["1","5", "10"], quizzId: "1"},
+        {id: '2', libelle: "question2", solution:"1", propositions: ["1","2"], quizzId: "1"}
+      ]
+    });
+    const response = await request(TestUtil.app.getHttpServer()).get('/quizz/1');
+    expect(response.status).toBe(200);
+    expect(response.body.titre).toEqual("The Quizz !")
+    expect(response.body["questions"]).toHaveLength(2);
+  });
+
   it('POST /quizz/id/evaluer - compute a success quizz result', async () => {
     await TestUtil.prisma.quizz.create({
         data: {id: "1", titre: "The Quizz !"}

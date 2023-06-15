@@ -82,7 +82,7 @@ describe('/dashboard (API test)', () => {
     const response = await request(TestUtil.app.getHttpServer()).get('/dashboard/bob');
     expect(response.status).toBe(200);
     expect(response.body.quizz).toHaveLength(1);
-    expect(response.body.quizz[0]["questions"]).toHaveLength(2);
+    expect(response.body.quizz[0]["questions"]).toBeUndefined();
   });
 
   it('GET /dashboard/name - get a dashboard of a missing user', async () => {
