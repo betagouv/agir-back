@@ -15,7 +15,19 @@ import { PrismaService } from './infrastructure/db/prisma.service';
 
 @Module({
   imports: [],
-  controllers: [UtilisateurController, HelloworldController, DashboardController, CompteurController],
-  providers: [UtilisateurUsecase,UtilisateurRepository, PrismaService, GenerateDashboardUsecase, CompteurUsecase, CompteurRepository],
+  controllers: [
+    UtilisateurController,
+    HelloworldController,
+    DashboardController,
+    CompteurController,
+  ],
+  providers: [
+    PrismaService,
+    UtilisateurRepository,
+    CompteurRepository,
+    GenerateDashboardUsecase,
+    CompteurUsecase,
+    UtilisateurUsecase
+  ],
 })
 export class AppModule {}
