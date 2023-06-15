@@ -8,7 +8,11 @@ export class QuizzRepository {
   constructor(private prisma: PrismaService) { }
 
   async list(): Promise<Quizz[] | null> {
-    return this.prisma.quizz.findMany({});
+    return this.prisma.quizz.findMany({
+      include: {
+        questions: true
+      }
+    });
   }
   async getById(id: string): Promise<Quizz | null> {
     return this.prisma.quizz.findUnique({ where: { id } });

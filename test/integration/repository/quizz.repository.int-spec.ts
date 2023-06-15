@@ -27,6 +27,21 @@ describe('QuizzRepository', () => {
     expect(quizz).toHaveLength(2);
   });
 
+  it('list quizz with questions', async () => {
+    await TestUtil.prisma.quizz.create({
+      data: {id: "1", titre: "The Quizz !"}
+    })
+    await TestUtil.prisma.quizzQuestion.createMany({
+      data: [
+        {id: '1', libelle: "question1", solution:"10", propositions: ["1","5", "10"], quizzId: "1"},
+        {id: '2', libelle: "question2", solution:"1", propositions: ["1","2"], quizzId: "1"}
+      ]
+    });
+    const quizz = await quizzRepository.list();
+    expect(quizz).toHaveLength(1);
+    expect(quizz[0]["questions"]).toHaveLength(2);
+  });
+
   it('find unique quizz', async () => {
     await TestUtil.prisma.quizz.createMany({
       data: [

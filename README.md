@@ -67,7 +67,12 @@ Si elle ne vous sont plus utiles, ou pour repartir de rien
 npm run db:destroy
 ```
 
-
+### Accéder à la base scalingo de dev
+Il faut utiliser un tunnel SSH pour accéder via un client local la base de données scalingo
+```bash
+#Valeur de DATABASE_URL à récupérer dans l'interface web scalingo de agir-back-dev
+scalingo --app agir-back-dev db-tunnel DATABASE_URL 
+```
 
 
 ## Running the app
@@ -91,9 +96,6 @@ $ npm run start:prod
 ```bash
 # unit tests
 $ npm run test
-
-# e2e tests
-$ npm run test:e2e
 
 # test coverage
 $ npm run test:cov

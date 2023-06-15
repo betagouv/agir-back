@@ -11,6 +11,8 @@ import { CompteurUsecase } from './usecase/compteur.usecase';
 
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur.repository';
 import { CompteurRepository } from './infrastructure/repository/compteur.repository';
+import { QuizzRepository } from './infrastructure/repository/quizz.repository';
+import { QuizzQuestionRepository } from './infrastructure/repository/quizzQuestion.repository';
 import { PrismaService } from './infrastructure/db/prisma.service';
 
 @Module({
@@ -24,6 +26,8 @@ import { PrismaService } from './infrastructure/db/prisma.service';
   providers: [
     PrismaService,
     UtilisateurRepository,
+    QuizzRepository,
+    QuizzQuestionRepository,
     CompteurRepository,
     GenerateDashboardUsecase,
     CompteurUsecase,
