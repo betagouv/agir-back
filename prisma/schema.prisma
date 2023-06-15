@@ -22,3 +22,16 @@ model Compteur {
   utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id])
   utilisateurId String
 }
+model Quizz {
+  id    String  @id
+  titre  String
+  questions QuizzQuestion[]
+}
+model QuizzQuestion {
+  id    String  @id
+  libelle  String
+  propositions String[]
+  solution String
+  quizz Quizz @relation(fields: [quizzId], references: [id])
+  quizzId String
+}

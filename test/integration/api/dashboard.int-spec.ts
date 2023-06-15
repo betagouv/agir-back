@@ -1,27 +1,25 @@
-import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-const commons = require('../../test-commons');
+import { TestUtil } from '../../TestUtil';
 
 describe('/dashboard (API test)', () => {
-  let app: INestApplication;
 
   beforeAll(async () => {
-    app = await commons.appinit();
+    await TestUtil.appinit();
   });
 
   beforeEach(async () => {
-    await commons.deleteAll();
+    await TestUtil.deleteAll();
   })
 
   afterAll(async () => {
-    await commons.appclose();
+    await TestUtil.appclose();
   })
 
   it('GET /dashboard/name - get a dashboard of a given user', async () => {
-    await commons.prisma.utilisateur.createMany({
+    await TestUtil.prisma.utilisateur.createMany({
       data: [{ id: '1', name: "bob" }],
     });
-    const response = await request(app.getHttpServer()).get('/dashboard/bob');
+    const response = await request(TestUtil.app.getHttpServer()).get('/dashboard/bob');
     expect(response.status).toBe(200);
     expect(response.body.compteurs).toHaveLength(0);
     expect(response.body.quizz).toHaveLength(0);
@@ -29,7 +27,7 @@ describe('/dashboard (API test)', () => {
   });
 
   it('GET /dashboard/name - get a dashboard with proper compteur', async () => {
-    await commons.prisma.utilisateur.create({
+    await TestUtil.prisma.utilisateur.create({
       data: {
          id: '1', name: "bob",
          compteurs: {
@@ -43,13 +41,13 @@ describe('/dashboard (API test)', () => {
          }
         }
     });
-    const response = await request(app.getHttpServer()).get('/dashboard/bob');
+    const response = await request(TestUtil.app.getHttpServer()).get('/dashboard/bob');
     expect(response.status).toBe(200);
     expect(response.body.compteurs).toHaveLength(1);
   });
 
   it('GET /dashboard/name - get a dashboard of a missing user', async () => {
-    const response = await request(app.getHttpServer()).get('/dashboard/bob');
+    const response = await request(TestUtil.app.getHttpServer()).get('/dashboard/bob');
     expect(response.status).toBe(404);
   });
 

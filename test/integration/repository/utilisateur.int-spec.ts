@@ -1,25 +1,23 @@
-import { INestApplication } from '@nestjs/common';
-const commons = require('../../test-commons');
+import { TestUtil } from '../../TestUtil';
 import {UtilisateurRepository} from '../../../src/infrastructure/repository/utilisateur.repository';
 
 describe('UtilisateurRepository', () => {
-  let app: INestApplication;
-  let utilisateurRepository = new UtilisateurRepository(commons.prisma);
+  let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
   beforeAll(async () => {
-    app = await commons.appinit();
+    await TestUtil.appinit();
   });
 
   beforeEach(async () => {
-    await commons.deleteAll();
+    await TestUtil.deleteAll();
   })
 
   afterAll(async () => {
-    await commons.appclose();
+    await TestUtil.appclose();
   })
 
   it('read a new utilisateur with its compteur', async () => {
-    await commons.prisma.utilisateur.create({
+    await TestUtil.prisma.utilisateur.create({
       data: {
          id: '1', name: "bob",
          compteurs: {
@@ -38,7 +36,7 @@ describe('UtilisateurRepository', () => {
   });
 
   it('read a missing utilisateur', async () => {
-    await commons.prisma.utilisateur.create({
+    await TestUtil.prisma.utilisateur.create({
       data: {
          id: '1', name: "bob"
         }
