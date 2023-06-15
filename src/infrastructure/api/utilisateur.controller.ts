@@ -1,4 +1,4 @@
-import { Citoyen, Utilisateur } from '.prisma/client';
+import { Utilisateur } from '.prisma/client';
 import { Body, Controller, Get, NotFoundException, Param, Post, Query } from '@nestjs/common';
 import { UtilisateurUsecase } from '../../usecase/utilisateur.usecase';
 import { ApiTags, ApiBody } from '@nestjs/swagger';
