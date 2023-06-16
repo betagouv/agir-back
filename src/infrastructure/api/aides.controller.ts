@@ -18,7 +18,7 @@ export class AidesController {
   async getAide(): Promise<any> {
     const aides = await this.aidesUsecase.getRetrofit();
     if (aides == null) {
-      throw new NotFoundException(`Pas de citoyen d'id ${id}`);
+      throw new NotFoundException(`Pas d'aides pour le retrofit`);
     }
     return aides;
   }

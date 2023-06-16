@@ -8,7 +8,7 @@ type Situation = Record<string, string | number | Record<string, unknown>>;
 export class SimulationController {
   constructor(private readonly bilanUsecase: BilanUsecase) {}
   @ApiExcludeEndpoint()
-  @Get('simulation')
+  @Get('bilan')
   async getBilan(): Promise<any> {
     const simulation: Situation = {
       'transport . voiture . propriétaire': "'false'",
