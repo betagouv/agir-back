@@ -5,7 +5,7 @@ import { BilanUsecase } from '../../usecase/bilan.usecase';
 type Situation = Record<string, string | number | Record<string, unknown>>;
 
 @Controller()
-export class SimulationController {
+export class BilanController {
   constructor(private readonly bilanUsecase: BilanUsecase) {}
   @ApiExcludeEndpoint()
   @Get('bilan')

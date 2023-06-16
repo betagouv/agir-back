@@ -5,7 +5,7 @@ import { DashboardController } from './infrastructure/api/dashboard.controller';
 import { HelloworldController } from './infrastructure/api/helloworld.controller';
 import { CompteurController } from './infrastructure/api/compteur.controller';
 import { QuizzController } from './infrastructure/api/quizz.controller';
-import { SimulationController } from './infrastructure/api/bilan.controller';
+import { BilanController } from './infrastructure/api/bilan.controller';
 import { AidesController } from './infrastructure/api/aides.controller';
 
 import { UtilisateurUsecase } from './usecase/utilisateur.usecase';
@@ -30,7 +30,7 @@ import { PrismaService } from './infrastructure/db/prisma.service';
     DashboardController,
     CompteurController,
     QuizzController,
-    SimulationController,
+    BilanController,
     AidesController,
   ],
   providers: [
