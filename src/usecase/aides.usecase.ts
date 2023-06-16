@@ -9,7 +9,7 @@ type AidesVelo = any;
 
 @Injectable()
 export class AidesUsecase {
-  async getRetrofitCitoyen(citoyenId): Promise<AidesVelo> {
+  async getRetrofit(): Promise<AidesVelo> {
     const rules = yaml.load(
       fs.readFileSync(
         path.resolve(__dirname, '../publicode/retrofit.yaml'),

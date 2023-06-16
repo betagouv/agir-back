@@ -14,9 +14,9 @@ import { ApiTags } from '@nestjs/swagger';
 export class AidesController {
   constructor(private readonly aidesUsecase: AidesUsecase) {}
   @ApiExcludeEndpoint()
-  @Get('retrofit/citoyens/:id')
-  async getAide(@Param('id') id): Promise<any> {
-    const aides = await this.aidesUsecase.getRetrofitCitoyen(Number(id));
+  @Get('aides/retrofit')
+  async getAide(): Promise<any> {
+    const aides = await this.aidesUsecase.getRetrofit();
     if (aides == null) {
       throw new NotFoundException(`Pas de citoyen d'id ${id}`);
     }
