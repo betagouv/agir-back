@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { engine } from 'src/infrastructure/repository/engine';
+//import { engine } from 'src/infrastructure/repository/engine';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
 import * as fs from 'fs';
+import Publicodes from 'publicodes';
 
-type AidesVelo = object;
+type AidesVelo = any;
 
 @Injectable()
-export class AidesVeloUsecase {
-  //constructor(private citoyenRespoitory: CitoyenRepository) {}
-
-  async getAidesVeloByCitoyen(citoyenId): Promise<AidesVelo> {
+export class AidesUsecase {
+  async getRetrofitCitoyen(citoyenId): Promise<AidesVelo> {
     const rules = yaml.load(
       fs.readFileSync(
         path.resolve(__dirname, '../publicode/retrofit.yaml'),
@@ -23,16 +22,14 @@ export class AidesVeloUsecase {
     );
     console.log(aides);
 
+    const engine = new Publicodes(rules);
+
     const situation = {
       'localisation . epci': "'Métropole de Lyon'",
-      'revenu fiscal de référence': '500€/mois',
+      'revenu fiscal de référence': '2500€/mois',
     };
-    engine.setSituation(situation);
-    const activeAides = aides.filter(
-      (aide) => engine.evaluate(aide).nodeValue !== null,
-    );
+    const result = engine.setSituation(situation).evaluate('aides').nodeValue;
 
-    const result = activeAides.map((aide) => engine.getRule(aide).rawNode);
     return result;
   }
 }

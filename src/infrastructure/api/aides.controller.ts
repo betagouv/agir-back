@@ -6,17 +6,17 @@ import {
   NotFoundException,
   Param,
 } from '@nestjs/common';
-import { AidesVeloUsecase } from '../../usecase/aidesVelo.usecase';
+import { AidesUsecase } from '../../usecase/aides.usecase';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller()
-@ApiTags('AidesVelo')
-export class AidesVeloController {
-  constructor(private readonly aidesVeloUsecase: AidesVeloUsecase) {}
+@ApiTags('Aides')
+export class AidesController {
+  constructor(private readonly aidesUsecase: AidesUsecase) {}
   @ApiExcludeEndpoint()
   @Get('retrofit/citoyens/:id')
   async getAide(@Param('id') id): Promise<any> {
-    const aides = await this.aidesVeloUsecase.getAidesVeloByCitoyen(Number(id));
+    const aides = await this.aidesUsecase.getRetrofitCitoyen(Number(id));
     if (aides == null) {
       throw new NotFoundException(`Pas de citoyen d'id ${id}`);
     }
