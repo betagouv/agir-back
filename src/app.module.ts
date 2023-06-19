@@ -19,6 +19,8 @@ import { UtilisateurRepository } from './infrastructure/repository/utilisateur.r
 import { CompteurRepository } from './infrastructure/repository/compteur.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
 import { QuizzQuestionRepository } from './infrastructure/repository/quizzQuestion.repository';
+import { BadgeRepository } from './infrastructure/repository/badge.repository';
+
 import { PrismaService } from './infrastructure/db/prisma.service';
 
 @Module({
@@ -38,6 +40,8 @@ import { PrismaService } from './infrastructure/db/prisma.service';
     QuizzQuestionRepository,
     CompteurRepository,
     DashboardRepository,
+    BadgeRepository,
+        
     GenerateDashboardUsecase,
     UtilisateurUsecase,
 

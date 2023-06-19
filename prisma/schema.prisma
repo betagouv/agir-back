@@ -46,8 +46,8 @@ model Dashboard {
   id    String  @id
   compteurs Compteur[]
   badges Badge[]
-  todoQuizz String[]
-  doneQuizz String[]
+  todoQuizz String[] @default([])
+  doneQuizz String[] @default([])
   utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id])
   utilisateurId String @unique
 }

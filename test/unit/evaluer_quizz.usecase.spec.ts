@@ -1,6 +1,6 @@
 import { EvaluerQuizzUsecase } from '../../src/usecase/evaluer_quizz.usecase'
 import { QuizzQuestion } from '@prisma/client';
-import { ReponsesQuizz } from 'src/infrastructure/api/types/reponsesQuizz';
+import { BodyReponsesQuizz } from 'src/infrastructure/api/types/reponsesQuizz';
 
 describe('EvaluerQuizzUsecase', () => {
     let evaluerQuizzUsecase = new EvaluerQuizzUsecase(null);

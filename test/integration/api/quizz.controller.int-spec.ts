@@ -32,6 +32,9 @@ describe('/Quizz (API test)', () => {
   });
 
   it('POST /quizz/id/evaluer - compute a success quizz result', async () => {
+    await TestUtil.prisma.utilisateur.create({ data: { id: 'userId', name: "bob" }});
+    await TestUtil.prisma.dashboard.create({ data: {id : "123", utilisateurId: "userId", todoQuizz:["1"]}});
+
     await TestUtil.prisma.quizz.create({
         data: {id: "1", titre: "The Quizz !"}
       })
@@ -43,7 +46,7 @@ describe('/Quizz (API test)', () => {
       });
       const response = await request(TestUtil.app.getHttpServer()).post('/quizz/1/evaluer').send(
         {
-            utilisateur: 'Dorian',
+            utilisateur: 'userId',
             reponses: [
                 {"1":"10"},
                 {"2":"1"}
@@ -51,6 +54,11 @@ describe('/Quizz (API test)', () => {
         });
         expect(response.status).toBe(200);
         expect(response.body.resultat).toEqual(true);
+
+        const dashboard = await TestUtil.prisma.dashboard.findUnique({where: {id: "123"}, include: {badges: true}});
+        expect(dashboard.todoQuizz).toHaveLength(0);
+        expect(dashboard.doneQuizz).toHaveLength(1);
+        expect(dashboard["badges"]).toHaveLength(1);
     });
     it('POST /quizz/id/evaluer - compute a fail quizz result', async () => {
         await TestUtil.prisma.quizz.create({

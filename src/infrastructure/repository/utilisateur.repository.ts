@@ -16,6 +16,19 @@ export class UtilisateurRepository {
       },
     });
   }
+  // TODO: remove , temporaire pour démo
+  async findFirstUtilisateursByIdOrName(
+    nameOrId: string
+  ): Promise<Utilisateur | null> {
+    return this.prisma.utilisateur.findFirst({
+      where: {
+        OR:[
+          {id: nameOrId},
+          {name: nameOrId}
+        ]
+      },
+    });
+  }
   async findUtilisateurById(
     id: string
   ): Promise<Utilisateur | null> {

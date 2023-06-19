@@ -1,4 +1,4 @@
-export type ReponsesQuizz = {
+export type BodyReponsesQuizz = {
     utilisateur: string
     reponses: Reponse[]
   } 

@@ -3,7 +3,7 @@ import { EvaluerQuizzUsecase } from '../../usecase/evaluer_quizz.usecase'
 import { LireQuizzUsecase } from '../../usecase/lire_quizz.usecase'
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { ReponsesQuizz } from './types/reponsesQuizz';
+import { BodyReponsesQuizz } from './types/reponsesQuizz';
 import { Quizz } from '.prisma/client';
 
 @Controller()
@@ -24,8 +24,8 @@ export class QuizzController {
       },
     },
   })
-  async evaluerQuizz(@Param('id') id: string, @Body() body:ReponsesQuizz, @Res() res: Response) {
-    let success = await this.evaluerQuizzUsecase.doIt(body, id);
+  async evaluerQuizz(@Param('id') quizzId: string, @Body() body:BodyReponsesQuizz, @Res() res: Response) {
+    let success = await this.evaluerQuizzUsecase.doIt(body, quizzId);
     res.status(HttpStatus.OK).json({resultat: success}).send();
   }
   @Get('quizz/:id')

@@ -17,4 +17,14 @@ export class DashboardRepository {
       }
     );
   }
-}
+
+  async updateQuizzArrays(dashboard:Dashboard){
+    await this.prisma.dashboard.update({
+      where: {id: dashboard.id},
+      data: {
+        todoQuizz: dashboard.todoQuizz,
+        doneQuizz: dashboard.doneQuizz
+      }
+    });
+  }
+ }
