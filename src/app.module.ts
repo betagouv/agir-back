@@ -14,6 +14,7 @@ import { LireQuizzUsecase } from './usecase/lire_quizz.usecase';
 import { BilanUsecase } from './usecase/bilan.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
 
+import { DashboardRepository } from './infrastructure/repository/dashboard.repository';
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur.repository';
 import { CompteurRepository } from './infrastructure/repository/compteur.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
@@ -36,6 +37,7 @@ import { PrismaService } from './infrastructure/db/prisma.service';
     QuizzRepository,
     QuizzQuestionRepository,
     CompteurRepository,
+    DashboardRepository,
     GenerateDashboardUsecase,
     UtilisateurUsecase,
 

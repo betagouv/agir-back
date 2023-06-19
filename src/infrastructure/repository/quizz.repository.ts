@@ -16,8 +16,14 @@ export class QuizzRepository {
       include: {
         questions: true
       }
-});
+    });
   }
+  async getByListOfIds(listIds: string[]): Promise<Quizz[] | null> {
+    return this.prisma.quizz.findMany({
+      where: {id : {in : listIds}}
+    });
+  }
+
   async create(titre: string, id?: string): Promise<Quizz | null> {
     let response;
     try {

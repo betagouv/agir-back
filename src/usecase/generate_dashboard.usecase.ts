@@ -1,12 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur.repository';
 import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
+import { DashboardRepository } from '../infrastructure/repository/dashboard.repository';
 
 @Injectable()
 export class GenerateDashboardUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private quizzRepository: QuizzRepository,
+    private dashboardRepository: DashboardRepository,
   ) {}
 
   async doIt(usernameOrId: string): Promise<Object> {
@@ -17,15 +19,19 @@ export class GenerateDashboardUsecase {
     if (utilisateur == null) {
       throw new NotFoundException(`Pas d'utilisateur de nom ou d'id ${usernameOrId}`);
     }
-    const quizzList = await this.quizzRepository.list();
+
+    const dashboard = await this.dashboardRepository.getByUtilisateurId(utilisateur.id);
+
+    const quizzList = await this.quizzRepository.getByListOfIds(dashboard.todoQuizz);
+
     return {
       user: {
         id: utilisateur.id,
         name: utilisateur.name
       },
-      compteurs: [],
+      compteurs: dashboard ? dashboard["compteurs"] : [],
       quizz: quizzList,
-      badges: []
+      badges: dashboard ? dashboard["badges"] : [],
     }
   }
 }

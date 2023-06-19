@@ -7,7 +7,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class DashboardController {
   constructor(private readonly generateDashboardUsecase: GenerateDashboardUsecase) {}
 
-  @Get('dashboard/:username')
+  @Get('dashboards/:username')
   async getDashboardById(@Param('username') username:string): Promise<Object> {
       return this.generateDashboardUsecase.doIt(username);
   }

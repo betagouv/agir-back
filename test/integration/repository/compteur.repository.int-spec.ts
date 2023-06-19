@@ -15,12 +15,15 @@ describe('CompteurRepository', () => {
   afterAll(async () => {
     await TestUtil.appclose();
   })
-  it('creates a new compteur ok without id', async () => {
+  it('lists compteurs OK ', async () => {
     await TestUtil.prisma.utilisateur.create({ data: { id: '1', name: "bob" }});
     await TestUtil.prisma.dashboard.create({ data: {id : "123", utilisateurId: "1"}});
 
-    const new_compteur = await compteurRepository.create("letitre", "99", "123");
-    expect(new_compteur.id).toHaveLength(36); // UUID V4
+    await TestUtil.prisma.compteur.create({ data: {id : "1", titre: "t1",valeur: "1", dashboardId: "123"}});
+    await TestUtil.prisma.compteur.create({ data: {id : "2", titre: "t2",valeur: "99", dashboardId: "123"}});
+
+    const result = await compteurRepository.list();
+    expect(result).toHaveLength(2);
   });
 /**
 
