@@ -3,7 +3,7 @@ import { QuizzQuestion } from '@prisma/client';
 import { BodyReponsesQuizz } from 'src/infrastructure/api/types/reponsesQuizz';
 
 describe('EvaluerQuizzUsecase', () => {
-    let evaluerQuizzUsecase = new EvaluerQuizzUsecase(null);
+    let evaluerQuizzUsecase = new EvaluerQuizzUsecase(null, null, null, null);
 
     describe('findReponseForQuestionId', () => {
         it('should find value for given id', () => {
