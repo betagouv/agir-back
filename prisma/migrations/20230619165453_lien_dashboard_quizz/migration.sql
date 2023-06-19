@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Dashboard" ALTER COLUMN "doneQuizz" SET DEFAULT ARRAY[]::TEXT[],
+ALTER COLUMN "todoQuizz" SET DEFAULT ARRAY[]::TEXT[];
