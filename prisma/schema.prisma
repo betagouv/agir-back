@@ -35,3 +35,8 @@ model QuizzQuestion {
   quizz Quizz @relation(fields: [quizzId], references: [id])
   quizzId String
 }
+model Badge {
+  id    String  @id
+  titre  String
+  date DateTime
+}
