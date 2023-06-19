@@ -8,6 +8,11 @@ export class DashboardController {
   constructor(private readonly generateDashboardUsecase: GenerateDashboardUsecase) {}
 
   @Get('dashboards/:username')
+  async getDashboardsById(@Param('username') username:string): Promise<Object> {
+      return this.generateDashboardUsecase.doIt(username);
+  }
+  // TODO : removve, for demo only
+  @Get('dashboard/:username')
   async getDashboardById(@Param('username') username:string): Promise<Object> {
       return this.generateDashboardUsecase.doIt(username);
   }
