@@ -6,16 +6,13 @@ import {UtilisateurRepository} from '../infrastructure/repository/utilisateur.re
 export class UtilisateurUsecase {
   constructor(private utilisaturRespository: UtilisateurRepository) {}
 
-  async findUtilisateursByName(name: string): Promise<Utilisateur[]> {
-    return this.utilisaturRespository.findUtilisateursByName(name);
+  async findFistUtilisateursByName(name: string): Promise<Utilisateur> {
+    return this.utilisaturRespository.findFirstUtilisateursByName(name);
   }
   async findUtilisateurById(id: string): Promise<Utilisateur> {
     return this.utilisaturRespository.findUtilisateurById(id);
   }
   async listUtilisateurs(): Promise<Utilisateur[]> {
     return this.utilisaturRespository.listUtilisateur();
-  }
-  async createUtilisateur(name, id): Promise<Utilisateur> {
-    return this.utilisaturRespository.createUtilisateur(name, id);
   }
 }

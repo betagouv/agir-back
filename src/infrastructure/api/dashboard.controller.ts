@@ -8,7 +8,7 @@ export class DashboardController {
   constructor(private readonly generateDashboardUsecase: GenerateDashboardUsecase) {}
 
   @Get('dashboard/:username')
-  async getUtilisateurById(@Param('username') username:string): Promise<Object> {
+  async getDashboardById(@Param('username') username:string): Promise<Object> {
       return this.generateDashboardUsecase.doIt(username);
   }
 }

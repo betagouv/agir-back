@@ -7,25 +7,13 @@ import { Utilisateur, Prisma } from '@prisma/client';
 export class UtilisateurRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findUtilisateursByName(
-    name: string
-  ): Promise<Utilisateur[] | null> {
-    return this.prisma.utilisateur.findMany({
-      where: {
-        name
-      },
-    });
-  }
-  async findUtilisateurByNameWithChildren(
+  async findFirstUtilisateursByName(
     name: string
   ): Promise<Utilisateur | null> {
     return this.prisma.utilisateur.findFirst({
       where: {
         name
       },
-      include: {
-        compteurs: true
-      }
     });
   }
   async findUtilisateurById(
@@ -44,7 +32,7 @@ export class UtilisateurRepository {
 
   async createUtilisateur(
     name: string,
-    id: string
+    id?: string
   ): Promise<Utilisateur | null> {
     let response
     try {

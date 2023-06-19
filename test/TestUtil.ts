@@ -25,9 +25,11 @@ export class TestUtil {
     
     static async deleteAll() {
         await this.prisma.compteur.deleteMany();
-        await this.prisma.utilisateur.deleteMany();
+        await this.prisma.badge.deleteMany();
+        await this.prisma.dashboard.deleteMany();
         await this.prisma.quizzQuestion.deleteMany();
         await this.prisma.quizz.deleteMany();
+        await this.prisma.utilisateur.deleteMany();
     }
 }
 

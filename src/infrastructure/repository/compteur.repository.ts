@@ -20,7 +20,7 @@ export class CompteurRepository {
   async create(
     titre: string,
     valeur: string,
-    utilisateurId: string,
+    dashboardId: string,
     id?: string
   ): Promise<Compteur | null> {
     let response
@@ -30,7 +30,7 @@ export class CompteurRepository {
           id: id ? id : uuidv4(),
           titre,
           valeur,
-          utilisateurId
+          dashboardId
         },
       })
       } catch (error) {
@@ -39,7 +39,7 @@ export class CompteurRepository {
             throw new BadRequestException(`Un compteur d'id ${id} existe déjà en base`);
           }
           if (error.code === 'P2003') {
-            throw new BadRequestException(`Aucun utilisateur d'id ${utilisateurId} n'existe en base`);
+            throw new BadRequestException(`Aucun dashboard d'id ${dashboardId} n'existe en base`);
           }
         }
         throw error;

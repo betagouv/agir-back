@@ -3,14 +3,12 @@ import { Module } from '@nestjs/common';
 import { UtilisateurController } from './infrastructure/api/utilisateur.controller';
 import { DashboardController } from './infrastructure/api/dashboard.controller';
 import { HelloworldController } from './infrastructure/api/helloworld.controller';
-import { CompteurController } from './infrastructure/api/compteur.controller';
 import { QuizzController } from './infrastructure/api/quizz.controller';
 import { BilanController } from './infrastructure/api/bilan.controller';
 import { AidesController } from './infrastructure/api/aides.controller';
 
 import { UtilisateurUsecase } from './usecase/utilisateur.usecase';
 import { GenerateDashboardUsecase } from './usecase/generate_dashboard.usecase';
-import { CompteurUsecase } from './usecase/compteur.usecase';
 import { EvaluerQuizzUsecase } from './usecase/evaluer_quizz.usecase';
 import { LireQuizzUsecase } from './usecase/lire_quizz.usecase';
 import { BilanUsecase } from './usecase/bilan.usecase';
@@ -28,7 +26,6 @@ import { PrismaService } from './infrastructure/db/prisma.service';
     UtilisateurController,
     HelloworldController,
     DashboardController,
-    CompteurController,
     QuizzController,
     BilanController,
     AidesController,
@@ -40,7 +37,6 @@ import { PrismaService } from './infrastructure/db/prisma.service';
     QuizzQuestionRepository,
     CompteurRepository,
     GenerateDashboardUsecase,
-    CompteurUsecase,
     UtilisateurUsecase,
 
     EvaluerQuizzUsecase,

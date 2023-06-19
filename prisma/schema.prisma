@@ -13,14 +13,14 @@ datasource db {
 model Utilisateur {
   id    String  @id
   name  String
-  compteurs Compteur[]
+  dashboard Dashboard?
 }
 model Compteur {
   id    String  @id
   titre  String
   valeur String
-  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id])
-  utilisateurId String
+  dashboard Dashboard @relation(fields: [dashboardId], references: [id])
+  dashboardId String
 }
 model Quizz {
   id    String  @id
@@ -39,4 +39,15 @@ model Badge {
   id    String  @id
   titre  String
   date DateTime
+  dashboard Dashboard @relation(fields: [dashboardId], references: [id])
+  dashboardId String
+}
+model Dashboard {
+  id    String  @id
+  compteurs Compteur[]
+  badges Badge[]
+  todoQuizz String[]
+  doneQuizz String[]
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id])
+  utilisateurId String @unique
 }

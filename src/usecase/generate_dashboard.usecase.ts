@@ -9,18 +9,21 @@ export class GenerateDashboardUsecase {
     private quizzRepository: QuizzRepository,
   ) {}
 
-  async doIt(username: string): Promise<Object> {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurByNameWithChildren(username);
-    const quizzList = await this.quizzRepository.list();
+  async doIt(usernameOrId: string): Promise<Object> {
+    let utilisateur = await this.utilisateurRepository.findFirstUtilisateursByName(usernameOrId);
     if (utilisateur == null) {
-      throw new NotFoundException(`Pas d'utilisateur de nom ${username}`);
+      utilisateur = await this.utilisateurRepository.findUtilisateurById(usernameOrId);
     }
+    if (utilisateur == null) {
+      throw new NotFoundException(`Pas d'utilisateur de nom ou d'id ${usernameOrId}`);
+    }
+    const quizzList = await this.quizzRepository.list();
     return {
       user: {
         id: utilisateur.id,
         name: utilisateur.name
       },
-      compteurs: utilisateur["compteurs"],
+      compteurs: [],
       quizz: quizzList,
       badges: []
     }
