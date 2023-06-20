@@ -20,6 +20,7 @@ import { CompteurRepository } from './infrastructure/repository/compteur.reposit
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
 import { QuizzQuestionRepository } from './infrastructure/repository/quizzQuestion.repository';
 import { BadgeRepository } from './infrastructure/repository/badge.repository';
+import { BilanRepository } from './infrastructure/repository/bilan.repository';
 
 import { PrismaService } from './infrastructure/db/prisma.service';
 
@@ -37,11 +38,12 @@ import { PrismaService } from './infrastructure/db/prisma.service';
     PrismaService,
     UtilisateurRepository,
     QuizzRepository,
+    BilanRepository,
     QuizzQuestionRepository,
     CompteurRepository,
     DashboardRepository,
     BadgeRepository,
-        
+
     GenerateDashboardUsecase,
     UtilisateurUsecase,
 
