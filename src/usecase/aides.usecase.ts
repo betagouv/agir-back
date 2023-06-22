@@ -11,7 +11,7 @@ type Localisation = {
   slug: string;
   epci: string;
   zfe: string;
-  codeInsee: string;
+  code: string;
   codesPostaux: string[];
   departement: string;
   region: string;
@@ -41,9 +41,31 @@ export class AidesUsecase {
 
     const situation = {
       'localisation . epci': `'${lieu.epci}'`,
+      'localisation . région': `'${lieu.region}'`,
+      'localisation . code insee': `'${lieu.code}'`,
       'revenu fiscal de référence': `'${revenuFiscalDeReference}€/an'`,
     };
-    const result = engine.setSituation(situation).evaluate('aides').nodeValue;
+    engine.setSituation(situation); //.evaluate('aides').nodeValue;
+
+    const activeAides = aides.filter(
+      (a) => engine.evaluate(a).nodeValue !== null,
+    );
+
+    const result = activeAides.map((aide) => {
+      const aideBrut: {
+        nom: string;
+        titre: string;
+        plafond: string;
+        lien: string;
+      } = engine.getRule(aide).rawNode as any;
+
+      return {
+        libelle: aideBrut.titre,
+        montant: engine.evaluate(aideBrut.nom).nodeValue,
+        plafond: aideBrut?.plafond || '',
+        lien: aideBrut?.lien || '',
+      };
+    });
 
     return result;
   }
