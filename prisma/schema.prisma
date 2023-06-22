@@ -14,7 +14,19 @@ model Utilisateur {
   id    String  @id
   name  String
   dashboard Dashboard?
+  empreintes Empreinte[]
 }
+
+model Empreinte {
+  id    String  @id
+  initial Boolean @default(true)
+  situation String
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now())
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id])
+  utilisateurId String
+}
+
 model Compteur {
   id    String  @id
   titre  String

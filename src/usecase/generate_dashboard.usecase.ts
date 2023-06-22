@@ -20,13 +20,13 @@ export class GenerateDashboardUsecase {
         usernameOrId,
       );
 
-    const simulation: Situation = {
+    const simulation = `{
       'transport . voiture . propriétaire': "'false'",
       'transport . voiture . gabarit': "'SUV'",
       'transport . voiture . motorisation': "'thermique'",
       'alimentation . boisson . chaude . café . nombre': 41,
       'transport . voiture . thermique . carburant': "'essence E85'",
-    };
+    }`;
 
     if (utilisateur == null) {
       utilisateur = await this.utilisateurRepository.findUtilisateurById(
@@ -55,7 +55,7 @@ export class GenerateDashboardUsecase {
       compteurs: dashboard ? dashboard['compteurs'] : [],
       quizz: quizzList,
       badges: dashboard ? dashboard['badges'] : [],
-      bilan: await this.bilanRepository.getBilan(simulation),
+      bilan: await this.bilanRepository.evaluateSituation(simulation),
     };
   }
 }

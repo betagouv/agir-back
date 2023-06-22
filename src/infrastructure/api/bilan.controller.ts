@@ -1,25 +1,30 @@
-import { ApiExcludeEndpoint } from '@nestjs/swagger';
-import { Controller, Get } from '@nestjs/common';
+import { ApiProperty, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Post, Param, Body, Headers } from '@nestjs/common';
 import { BilanUsecase } from '../../usecase/bilan.usecase';
 
-type Situation = Record<string, string | number | Record<string, unknown>>;
-
 @Controller()
+@ApiTags('Bilan')
 export class BilanController {
   constructor(private readonly bilanUsecase: BilanUsecase) {}
+  @Get('bilan/:username')
+  async getBilan(@Param('username') username: string): Promise<any> {
+    const bilan = await this.bilanUsecase.getBilanForUser(username);
 
-  @Get('bilan')
-  async getBilan(): Promise<any> {
-    const simulation: Situation = {
-      'transport . voiture . propriétaire': "'false'",
-      'transport . voiture . gabarit': "'SUV'",
-      'transport . voiture . motorisation': "'thermique'",
-      'alimentation . boisson . chaude . café . nombre': 4,
-      'transport . voiture . thermique . carburant': "'essence E85'",
-    };
+    return bilan;
+  }
 
-    const bilan = await this.bilanUsecase.getBilan(simulation);
+  @Post('bilan')
+  async postEmpreinte(
+    @Headers('username') username: string,
+    @Headers('situation') situation: string,
+  ): Promise<any> {
+    const bilan = await this.bilanUsecase.addBilanForUser(username, situation);
 
     return bilan;
   }
 }
+
+/*
+string de test pour le swagger:
+{ "transport . voiture . propriétaire": "'false'","transport . voiture . gabarit": "'SUV'","transport . voiture . motorisation": "'thermique'",   "alimentation . boisson . chaude . café . nombre": 4,   "transport . voiture . thermique . carburant": "'essence E85'" }
+*/

@@ -1,20 +1,33 @@
 import { Injectable } from '@nestjs/common';
-
-import Publicodes from 'publicodes';
-
-import * as path from 'path';
-import * as fs from 'fs';
+import { BilanRepository } from 'src/infrastructure/repository/bilan.repository';
+import { UtilisateurRepository } from 'src/infrastructure/repository/utilisateur.repository';
+import { Situation } from 'src/infrastructure/api/types/bilan';
 
 @Injectable()
 export class BilanUsecase {
-  async getBilan(simulation): Promise<any> {
-    const rules = JSON.parse(
-      fs.readFileSync(path.resolve(__dirname, '../publicode/co2.json'), 'utf8'),
+  constructor(
+    private utilisateurRepository: UtilisateurRepository,
+    private bilanRepository: BilanRepository,
+  ) {}
+  async getBilanForUser(username: string): Promise<any> {
+    const utilisateurId = (
+      await this.utilisateurRepository.findFirstUtilisateursByName(username)
+    ).id;
+    const situation = await this.bilanRepository.getSituationforUserId(
+      utilisateurId,
     );
 
-    const engine = new Publicodes(rules);
+    const result = this.bilanRepository.evaluateSituation(situation);
 
-    const result = engine.setSituation(simulation).evaluate('bilan').nodeValue;
+    return result;
+  }
+
+  async addBilanForUser(username: string, situation: string): Promise<any> {
+    const utilisateurId = (
+      await this.utilisateurRepository.findFirstUtilisateursByName(username)
+    ).id;
+
+    const result = await this.bilanRepository.create(situation, utilisateurId);
 
     return result;
   }

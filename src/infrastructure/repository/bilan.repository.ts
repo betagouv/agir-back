@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../db/prisma.service';
-import { Prisma } from '@prisma/client';
+import { Empreinte, Prisma } from '@prisma/client';
 import Publicodes from 'publicodes';
 import { Situation } from 'src/infrastructure/api/types/bilan';
 
@@ -12,7 +12,7 @@ import * as fs from 'fs';
 export class BilanRepository {
   constructor(private prisma: PrismaService) {}
 
-  async getBilan(simulation: Situation): Promise<any> {
+  async evaluateSituation(simulation: string) {
     const rules = JSON.parse(
       fs.readFileSync(
         path.resolve(__dirname, '../../publicode/co2.json'),
@@ -22,40 +22,48 @@ export class BilanRepository {
 
     const engine = new Publicodes(rules);
 
-    const result = engine.setSituation(simulation).evaluate('bilan').nodeValue;
+    const result = engine
+      .setSituation(JSON.parse(simulation))
+      .evaluate('bilan').nodeValue;
 
     return result;
   }
-  /* async list(): Promise<Quizz[] | null> {
-    return this.prisma.quizz.findMany();
-  }
-  async getById(id: string): Promise<Quizz | null> {
-    return this.prisma.quizz.findUnique({
-      where: { id },
-      include: {
-        questions: true,
-      },
+
+  async getSituationforUserId(utilisateurId: string): Promise<string | null> {
+    const empreinte = await this.prisma.empreinte.findFirst({
+      where: { utilisateurId },
     });
+    return empreinte?.situation;
   }
-  async create(titre: string, id?: string): Promise<Quizz | null> {
+
+  async create(
+    situation: string,
+    utilisateurId: any,
+  ): Promise<Empreinte | null> {
     let response;
+
+    console.log(situation);
+
     try {
-      response = await this.prisma.quizz.create({
+      response = await this.prisma.empreinte.create({
         data: {
-          id: id ? id : uuidv4(),
-          titre,
+          id: uuidv4(),
+          situation: situation,
+          utilisateur: {
+            connect: {
+              id: utilisateurId,
+            },
+          },
         },
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
-          throw new BadRequestException(
-            `Un quizz d'id ${id} existe déjà en base`,
-          );
+          throw new BadRequestException(`Une empreinte existe déjà en base`);
         }
       }
       throw error;
     }
     return response;
-  }*/
+  }
 }
