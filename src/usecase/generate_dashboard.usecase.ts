@@ -20,14 +20,6 @@ export class GenerateDashboardUsecase {
         usernameOrId,
       );
 
-    const simulation = `{
-      'transport . voiture . propriétaire': "'false'",
-      'transport . voiture . gabarit': "'SUV'",
-      'transport . voiture . motorisation': "'thermique'",
-      'alimentation . boisson . chaude . café . nombre': 41,
-      'transport . voiture . thermique . carburant': "'essence E85'",
-    }`;
-
     if (utilisateur == null) {
       utilisateur = await this.utilisateurRepository.findUtilisateurById(
         usernameOrId,
@@ -44,7 +36,7 @@ export class GenerateDashboardUsecase {
     );
 
     const quizzList = await this.quizzRepository.getByListOfIds(
-      dashboard.todoQuizz,
+      dashboard?.todoQuizz,
     );
 
     return {
@@ -55,7 +47,7 @@ export class GenerateDashboardUsecase {
       compteurs: dashboard ? dashboard['compteurs'] : [],
       quizz: quizzList,
       badges: dashboard ? dashboard['badges'] : [],
-      bilan: await this.bilanRepository.evaluateSituation(simulation),
+      bilan: '',
     };
   }
 }
