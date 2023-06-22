@@ -1,10 +1,10 @@
-import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import {
   Body,
   Controller,
   Get,
   NotFoundException,
   Param,
+  Query,
 } from '@nestjs/common';
 import { AidesUsecase } from '../../usecase/aides.usecase';
 import { ApiTags } from '@nestjs/swagger';
@@ -13,10 +13,16 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('Aides')
 export class AidesController {
   constructor(private readonly aidesUsecase: AidesUsecase) {}
-  @ApiExcludeEndpoint()
+
   @Get('aides/retrofit')
-  async getAide(): Promise<any> {
-    const aides = await this.aidesUsecase.getRetrofit();
+  async getRetrofit(
+    @Query('codePostal') codePostal: string,
+    @Query('revenuFiscalDeReference') revenuFiscalDeReference: string,
+  ): Promise<any> {
+    const aides = await this.aidesUsecase.getRetrofit(
+      codePostal,
+      revenuFiscalDeReference,
+    );
     if (aides == null) {
       throw new NotFoundException(`Pas d'aides pour le retrofit`);
     }

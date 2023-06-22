@@ -7,7 +7,7 @@ type Situation = Record<string, string | number | Record<string, unknown>>;
 @Controller()
 export class BilanController {
   constructor(private readonly bilanUsecase: BilanUsecase) {}
-  @ApiExcludeEndpoint()
+
   @Get('bilan')
   async getBilan(): Promise<any> {
     const simulation: Situation = {
