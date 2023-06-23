@@ -11,7 +11,7 @@ import * as fs from 'fs';
 export class BilanRepository {
   constructor(private prisma: PrismaService) {}
 
-  async evaluateSituation(simulation: string) {
+  async evaluateSituation(simulation: string): Promise<number> {
     const rules = JSON.parse(
       fs.readFileSync(
         path.resolve(__dirname, '../../publicode/co2.json'),
@@ -22,10 +22,10 @@ export class BilanRepository {
     const engine = new Publicodes(rules);
 
     const result = engine
-      .setSituation(JSON.parse(simulation))
-      .evaluate('bilan').nodeValue;
+      .setSituation(JSON.parse(simulation || '{}'))
+      .evaluate('bilan').nodeValue as string;
 
-    return result;
+    return parseInt(result);
   }
 
   async getSituationforUserId(utilisateurId: string): Promise<string | null> {
@@ -33,6 +33,11 @@ export class BilanRepository {
       where: { utilisateurId },
     });
     return empreinte?.situation;
+  }
+
+  async getBilanByUtilisateurId(utilisateurId): Promise<number> {
+    const situation = await this.getSituationforUserId(utilisateurId);
+    return this.evaluateSituation(situation);
   }
 
   async create(

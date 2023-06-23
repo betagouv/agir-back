@@ -14,7 +14,7 @@ describe('/bilan (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('GET /bilan/name - get a dashboard by name with proper compteurs, badges, quizz', async () => {
+  it('GET /bilan/name - get a bilan by name', async () => {
     await TestUtil.prisma.utilisateur.create({
       data: { id: '1', name: 'bob' },
     });
@@ -33,6 +33,6 @@ describe('/bilan (API test)', () => {
 
     expect(response.status).toBe(200);
     // cette valeur est amenée à évoluer avec le modéle publicode co2
-    expect(parseInt(response.text)).toBe(7700);
+    expect(response.body.bilan).toBe(7700);
   });
 });

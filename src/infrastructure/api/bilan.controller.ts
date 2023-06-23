@@ -10,7 +10,7 @@ export class BilanController {
   async getBilan(@Param('username') username: string): Promise<any> {
     const bilan = await this.bilanUsecase.getBilanForUser(username);
 
-    return bilan;
+    return { bilan };
   }
 
   @Post('bilan')
