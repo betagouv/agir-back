@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { BilanRepository } from 'src/infrastructure/repository/bilan.repository';
-import { UtilisateurRepository } from 'src/infrastructure/repository/utilisateur.repository';
-import { Situation } from 'src/infrastructure/api/types/bilan';
+import { BilanRepository } from '../infrastructure/repository/bilan.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur.repository';
 
 @Injectable()
 export class BilanUsecase {

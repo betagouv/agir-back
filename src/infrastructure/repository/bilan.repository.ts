@@ -3,7 +3,6 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../db/prisma.service';
 import { Empreinte, Prisma } from '@prisma/client';
 import Publicodes from 'publicodes';
-import { Situation } from 'src/infrastructure/api/types/bilan';
 
 import * as path from 'path';
 import * as fs from 'fs';
@@ -49,11 +48,7 @@ export class BilanRepository {
         data: {
           id: uuidv4(),
           situation: situation,
-          utilisateur: {
-            connect: {
-              id: utilisateurId,
-            },
-          },
+          utilisateurId,
         },
       });
     } catch (error) {

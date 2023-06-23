@@ -2,8 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur.repository';
 import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
 import { DashboardRepository } from '../infrastructure/repository/dashboard.repository';
-import { BilanRepository } from '../infrastructure/repository/bilan.repository';
-import { Situation } from 'src/infrastructure/api/types/bilan';
 
 @Injectable()
 export class GenerateDashboardUsecase {
@@ -11,7 +9,6 @@ export class GenerateDashboardUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private quizzRepository: QuizzRepository,
     private dashboardRepository: DashboardRepository,
-    private bilanRepository: BilanRepository,
   ) {}
 
   async doIt(usernameOrId: string): Promise<Object> {
