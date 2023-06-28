@@ -9,15 +9,10 @@ export class DashboardController {
     private readonly generateDashboardUsecase: GenerateDashboardUsecase,
   ) {}
 
-  @Get('dashboards/:username')
+  @Get('dashboards/:utilisateurId')
   async getDashboardsById(
-    @Param('username') username: string,
+    @Param('utilisateurId') utilisateurId: string,
   ): Promise<Object> {
-    return this.generateDashboardUsecase.doIt(username);
-  }
-  // TODO : removve, for demo only
-  @Get('dashboard/:username')
-  async getDashboardById(@Param('username') username: string): Promise<Object> {
-    return this.generateDashboardUsecase.doIt(username);
+    return this.generateDashboardUsecase.doIt(utilisateurId);
   }
 }

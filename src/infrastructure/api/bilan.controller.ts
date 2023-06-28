@@ -6,19 +6,19 @@ import { BilanUsecase } from '../../usecase/bilan.usecase';
 @ApiTags('Bilan')
 export class BilanController {
   constructor(private readonly bilanUsecase: BilanUsecase) {}
-  @Get('bilan/:username')
-  async getBilan(@Param('username') username: string): Promise<any> {
-    const bilan = await this.bilanUsecase.getBilanForUser(username);
+  @Get('bilan/:utilisateurId')
+  async getBilan(@Param('utilisateurId') utilisateurId: string): Promise<any> {
+    const bilan = await this.bilanUsecase.getBilanForUser(utilisateurId);
 
     return { bilan };
   }
 
   @Post('bilan')
   async postEmpreinte(
-    @Headers('username') username: string,
+    @Headers('utilisateurId') utilisateurId: string,
     @Headers('situation') situation: string,
   ): Promise<any> {
-    const bilan = await this.bilanUsecase.addBilanForUser(username, situation);
+    const bilan = await this.bilanUsecase.addBilanForUser(utilisateurId, situation);
 
     return bilan;
   }

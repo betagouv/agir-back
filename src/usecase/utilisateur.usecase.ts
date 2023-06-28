@@ -6,8 +6,8 @@ import {UtilisateurRepository} from '../infrastructure/repository/utilisateur.re
 export class UtilisateurUsecase {
   constructor(private utilisaturRespository: UtilisateurRepository) {}
 
-  async findFistUtilisateursByName(name: string): Promise<Utilisateur> {
-    return this.utilisaturRespository.findFirstUtilisateursByName(name);
+  async findUtilisateursByName(name: string): Promise<Utilisateur[]> {
+    return this.utilisaturRespository.findUtilisateursByName(name);
   }
   async findUtilisateurById(id: string): Promise<Utilisateur> {
     return this.utilisaturRespository.findUtilisateurById(id);

@@ -8,10 +8,7 @@ export class BilanUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private bilanRepository: BilanRepository,
   ) {}
-  async getBilanForUser(username: string): Promise<any> {
-    const utilisateurId = (
-      await this.utilisateurRepository.findFirstUtilisateursByName(username)
-    ).id;
+  async getBilanForUser(utilisateurId: string): Promise<any> {
     const situation = await this.bilanRepository.getSituationforUserId(
       utilisateurId,
     );
@@ -21,10 +18,7 @@ export class BilanUsecase {
     return result;
   }
 
-  async addBilanForUser(username: string, situation: string): Promise<any> {
-    const utilisateurId = (
-      await this.utilisateurRepository.findFirstUtilisateursByName(username)
-    ).id;
+  async addBilanForUser(utilisateurId: string, situation: string): Promise<any> {
 
     const result = await this.bilanRepository.create(situation, utilisateurId);
 

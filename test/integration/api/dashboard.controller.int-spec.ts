@@ -15,7 +15,7 @@ describe('/dashboard (API test)', () => {
     await TestUtil.appclose();
   })
 
-  it('GET /dashboards/name - get a dashboard by name with proper compteurs, badges, quizz', async () => {
+  it('GET /dashboards/id - get a dashboard by id with proper compteurs, badges, quizz', async () => {
     await TestUtil.prisma.utilisateur.create({ data: { id: '1', name: "bob" }});
 
     await TestUtil.prisma.quizz.create({
@@ -36,7 +36,7 @@ describe('/dashboard (API test)', () => {
     await TestUtil.prisma.badge.create({ data: {id : "1", titre: "badge",date: new Date(), dashboardId: "123"}});
 
 
-    const response = await request(TestUtil.app.getHttpServer()).get('/dashboards/bob');
+    const response = await request(TestUtil.app.getHttpServer()).get('/dashboards/1');
     expect(response.status).toBe(200);
     expect(response.body.compteurs).toHaveLength(2)
     expect(response.body.badges).toHaveLength(1)

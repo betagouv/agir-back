@@ -41,14 +41,4 @@ describe('UtilisateurRepository', () => {
     fail('expected error');
   });
   
-  it('read a missing utilisateur', async () => {
-    await TestUtil.prisma.utilisateur.create({
-      data: {
-         id: '1', name: "bob"
-        }
-    });
-    const utilisateurs = await utilisateurRepository.findFirstUtilisateursByName("george");
-    expect(utilisateurs).toBeNull();
-  });
-
 });

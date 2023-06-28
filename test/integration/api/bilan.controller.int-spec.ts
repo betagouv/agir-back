@@ -14,7 +14,7 @@ describe('/bilan (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('GET /bilan/name - get a bilan by name', async () => {
+  it('GET /bilan/name - get a bilan by id', async () => {
     await TestUtil.prisma.utilisateur.create({
       data: { id: '1', name: 'bob' },
     });
@@ -28,7 +28,7 @@ describe('/bilan (API test)', () => {
     });
 
     const response = await request(TestUtil.app.getHttpServer()).get(
-      '/bilan/bob',
+      '/bilan/1',
     );
 
     expect(response.status).toBe(200);

@@ -18,7 +18,7 @@ export class EvaluerQuizzUsecase {
   async doIt(bodyReponsesQuizz: BodyReponsesQuizz, quizzId:string): Promise<boolean> {
     let quizz = await this.quizzRepository.getById(quizzId);
     const success = this.checkQuizz(bodyReponsesQuizz, quizz["questions"]);
-    const utilisateur = await this.utilisateurRepository.findFirstUtilisateursByIdOrName(bodyReponsesQuizz.utilisateur);
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(bodyReponsesQuizz.utilisateur);
 
     if (success) {
       const dashboard = await this.dashboardRepository.getByUtilisateurId(utilisateur.id);

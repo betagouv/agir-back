@@ -7,25 +7,12 @@ import { Utilisateur, Prisma } from '@prisma/client';
 export class UtilisateurRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findFirstUtilisateursByName(
+  async findUtilisateursByName(
     name: string
-  ): Promise<Utilisateur | null> {
-    return this.prisma.utilisateur.findFirst({
+  ): Promise<Utilisateur[] | null> {
+    return this.prisma.utilisateur.findMany({
       where: {
         name
-      },
-    });
-  }
-  // TODO: remove , temporaire pour démo
-  async findFirstUtilisateursByIdOrName(
-    nameOrId: string
-  ): Promise<Utilisateur | null> {
-    return this.prisma.utilisateur.findFirst({
-      where: {
-        OR:[
-          {id: nameOrId},
-          {name: nameOrId}
-        ]
       },
     });
   }

@@ -13,20 +13,13 @@ export class GenerateDashboardUsecase {
     private bilanRepository: BilanRepository,
   ) {}
 
-  async doIt(usernameOrId: string): Promise<Object> {
-    let utilisateur =
-      await this.utilisateurRepository.findFirstUtilisateursByName(
-        usernameOrId,
-      );
+  async doIt(utilisateurId: string): Promise<Object> {
+
+    let utilisateur = await this.utilisateurRepository.findUtilisateurById(utilisateurId);
 
     if (utilisateur == null) {
-      utilisateur = await this.utilisateurRepository.findUtilisateurById(
-        usernameOrId,
-      );
-    }
-    if (utilisateur == null) {
       throw new NotFoundException(
-        `Pas d'utilisateur de nom ou d'id ${usernameOrId}`,
+        `Pas d'utilisateur d'id ${utilisateurId}`,
       );
     }
 
