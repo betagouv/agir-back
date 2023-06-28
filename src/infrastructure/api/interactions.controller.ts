@@ -5,7 +5,7 @@ import { ApiTags, ApiQuery, ApiBody, ApiOkResponse } from '@nestjs/swagger';
 import { APIInteractionType } from './types/interaction';
 
 @Controller()
-@ApiTags('Interactionss')
+@ApiTags('Interactions')
 export class IntractionsController {
   constructor(private readonly interactionsUsecase: InteractionsUsecase) {}
 
