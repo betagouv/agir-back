@@ -9,6 +9,9 @@ export class UtilisateurUsecase {
   async findUtilisateursByName(name: string): Promise<Utilisateur[]> {
     return this.utilisaturRespository.findUtilisateursByName(name);
   }
+  async createUtilissateurByName(name: string): Promise<Utilisateur> {
+    return this.utilisaturRespository.createUtilisateur(name);
+  }
   async findUtilisateurById(id: string): Promise<Utilisateur> {
     return this.utilisaturRespository.findUtilisateurById(id);
   }

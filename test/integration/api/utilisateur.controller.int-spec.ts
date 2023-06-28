@@ -17,10 +17,10 @@ describe('/utilisateurs (API test)', () => {
 
   it('GET /utilisateurs?name=bob - when missing name', async () => {
     const response = await request(TestUtil.app.getHttpServer()).get('/utilisateurs?name=bob');
-    expect(response.status).toBe(202);
+    expect(response.status).toBe(200);
     expect(response.body).toHaveLength(0);
   });
-  it.only('GET /utilisateurs?name=george - by name when present', async () => {
+  it('GET /utilisateurs?name=george - by name when present', async () => {
     await TestUtil.prisma.utilisateur.createMany({
       data: [
         { id: '1', name: "bob" },
@@ -61,5 +61,18 @@ describe('/utilisateurs (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(2);
   });
+
+  it('POST /utilisateurs - create new utilisateur with given name', async () => {
+    const response = await request(TestUtil.app.getHttpServer()).post('/utilisateurs').send(
+      {
+          name: 'george'
+      });
+      const user = await TestUtil.prisma.utilisateur.findFirst({
+        where: {name : "george"}
+      });
+      expect(response.status).toBe(201);
+      expect(response.body.name).toEqual("george");
+      expect(response.headers["location"]).toContain(user.id);
+});
 
 });

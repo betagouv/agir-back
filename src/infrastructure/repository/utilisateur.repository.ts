@@ -7,21 +7,17 @@ import { Utilisateur, Prisma } from '@prisma/client';
 export class UtilisateurRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findUtilisateursByName(
-    name: string
-  ): Promise<Utilisateur[] | null> {
+  async findUtilisateursByName(name: string): Promise<Utilisateur[] | null> {
     return this.prisma.utilisateur.findMany({
       where: {
-        name
+        name,
       },
     });
   }
-  async findUtilisateurById(
-    id: string
-  ): Promise<Utilisateur | null> {
+  async findUtilisateurById(id: string): Promise<Utilisateur | null> {
     return this.prisma.utilisateur.findUnique({
       where: {
-        id
+        id,
       },
     });
   }
@@ -30,27 +26,12 @@ export class UtilisateurRepository {
     return this.prisma.utilisateur.findMany({});
   }
 
-  async createUtilisateur(
-    name: string,
-    id?: string
-  ): Promise<Utilisateur | null> {
-    let response
-    try {
-      response = await this.prisma.utilisateur.create({
-        data: {
-          id: id ? id : uuidv4(),
-          name,
-        },
-      })
-      } catch (error) {
-        if (error instanceof Prisma.PrismaClientKnownRequestError) {
-          // The .code property can be accessed in a type-safe manner
-          if (error.code === 'P2002') {
-            throw new BadRequestException(`Un utilisateur d'id ${id} existe déjà en base`);
-          }
-        }
-        throw error;
-    }
-    return response;
+  async createUtilisateur(name: string): Promise<Utilisateur | null> {
+    return this.prisma.utilisateur.create({
+      data: {
+        id: uuidv4(),
+        name,
+      },
+    });
   }
 }
