@@ -10,6 +10,7 @@
   },
   "scripts": {
     "db:update": "npm run db:up && dotenv -e .env.test -- npx prisma migrate dev && dotenv -e .env -- npx prisma migrate dev",
+    "db:status": "dotenv -e .env.test -- npx prisma migrate status",
     "db:up": "docker-compose up -d",
     "db:destroy": "docker-compose down",
     "test:int": "dotenv -e .env.test -- jest --config ./test/jest-int.json --runInBand",

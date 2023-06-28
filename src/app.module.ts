@@ -6,6 +6,7 @@ import { HelloworldController } from './infrastructure/api/helloworld.controller
 import { QuizzController } from './infrastructure/api/quizz.controller';
 import { BilanController } from './infrastructure/api/bilan.controller';
 import { AidesController } from './infrastructure/api/aides.controller';
+import { IntractionsController } from './infrastructure/api/interactions.controller';
 
 import { UtilisateurUsecase } from './usecase/utilisateur.usecase';
 import { GenerateDashboardUsecase } from './usecase/generate_dashboard.usecase';
@@ -23,6 +24,8 @@ import { BadgeRepository } from './infrastructure/repository/badge.repository';
 import { BilanRepository } from './infrastructure/repository/bilan.repository';
 
 import { PrismaService } from './infrastructure/db/prisma.service';
+import { InteractionsUsecase } from './usecase/interactions.usecase';
+import { InteractionRepository } from './infrastructure/repository/interaction.repository';
 
 @Module({
   imports: [],
@@ -33,6 +36,7 @@ import { PrismaService } from './infrastructure/db/prisma.service';
     QuizzController,
     BilanController,
     AidesController,
+    IntractionsController,
   ],
   providers: [
     PrismaService,
@@ -43,14 +47,15 @@ import { PrismaService } from './infrastructure/db/prisma.service';
     CompteurRepository,
     DashboardRepository,
     BadgeRepository,
+    InteractionRepository,
 
     GenerateDashboardUsecase,
     UtilisateurUsecase,
-
     EvaluerQuizzUsecase,
     LireQuizzUsecase,
     BilanUsecase,
     AidesUsecase,
+    InteractionsUsecase,
   ],
 })
 export class AppModule {}

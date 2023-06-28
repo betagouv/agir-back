@@ -15,6 +15,35 @@ model Utilisateur {
   name  String
   dashboard Dashboard?
   empreintes Empreinte[]
+  interactions Interaction[]
+}
+
+model Interaction {
+  id   String @id
+  type String
+  titre String
+  soustitre String?
+  categorie String
+  tags         String[] @default([])
+  duree        String?
+  frequence    String?
+  image_url    String?
+  url          String?
+  seen         Boolean @default(false)
+  seen_at      DateTime?
+  clicked      Boolean @default(false)
+  clicked_at   DateTime?
+  done         Boolean @default(false)
+  done_at      DateTime?
+  succeeded    Boolean @default(false)
+  succeeded_at DateTime?
+  difficulty   Int @default(1)
+  points       Int @default(0)
+  reco_score   Int @default(1000)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  utilisateurId String
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id])
 }
 
 model Empreinte {
