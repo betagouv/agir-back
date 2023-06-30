@@ -26,6 +26,9 @@ import { BilanRepository } from './infrastructure/repository/bilan.repository';
 import { PrismaService } from './infrastructure/db/prisma.service';
 import { InteractionsUsecase } from './usecase/interactions.usecase';
 import { InteractionRepository } from './infrastructure/repository/interaction.repository';
+import { SuiviRepository } from './infrastructure/repository/suivi.repository';
+import { SuiviUsecase } from './usecase/suivi.usecase';
+import { SuiviController } from './infrastructure/api/suivi.controller';
 
 @Module({
   imports: [],
@@ -37,6 +40,7 @@ import { InteractionRepository } from './infrastructure/repository/interaction.r
     BilanController,
     AidesController,
     IntractionsController,
+    SuiviController,
   ],
   providers: [
     PrismaService,
@@ -48,6 +52,7 @@ import { InteractionRepository } from './infrastructure/repository/interaction.r
     DashboardRepository,
     BadgeRepository,
     InteractionRepository,
+    SuiviRepository,
 
     GenerateDashboardUsecase,
     UtilisateurUsecase,
@@ -56,6 +61,7 @@ import { InteractionRepository } from './infrastructure/repository/interaction.r
     BilanUsecase,
     AidesUsecase,
     InteractionsUsecase,
+    SuiviUsecase,
   ],
 })
 export class AppModule {}

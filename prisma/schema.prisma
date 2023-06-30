@@ -10,12 +10,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+model Suivi {
+  id    String  @id
+  type  String
+  attributs String[] @default([])
+  valeurs String[] @default([])
+  computed_impact Boolean @default(false)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  utilisateurId String
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id])
+}
+
 model Utilisateur {
   id    String  @id
   name  String
   dashboard Dashboard?
   empreintes Empreinte[]
   interactions Interaction[]
+  suivis Suivi[]
 }
 
 model Interaction {
