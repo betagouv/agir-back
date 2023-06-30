@@ -14,6 +14,18 @@ describe('/suivis (API test)', () => {
     await TestUtil.appclose();
   });
 
+  it('GET /utilisateurs/123/suivis - liste vide si pas de suivi', async () => {
+    await TestUtil.prisma.utilisateur.create({
+      data: { id: '123', name: 'bob' },
+    });
+
+    const response = await request(TestUtil.app.getHttpServer()).get(
+      '/utilisateurs/123/suivis',
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(0);
+  });
   it('GET /utilisateurs/123/suivis - get all suivis', async () => {
     await TestUtil.prisma.utilisateur.create({
       data: { id: '123', name: 'bob' },
@@ -113,6 +125,39 @@ describe('/suivis (API test)', () => {
 
     expect(response.status).toBe(200);
     expect(response.body.type).toEqual('transport');
+  });
+  it('GET /utilisateurs/123/suivis/last - get last suivis by type', async () => {
+    await TestUtil.prisma.utilisateur.create({
+      data: { id: '123', name: 'bob' },
+    });
+
+    await TestUtil.prisma.suivi.create({
+      data: {
+        id: '1',
+        type: 'repas',
+        attributs: ['viande_rouge'],
+        valeurs: ['1'],
+        utilisateurId: '123',
+        created_at: new Date(123),
+      },
+    });
+    await TestUtil.prisma.suivi.create({
+      data: {
+        id: '2',
+        type: 'transport',
+        attributs: ['km_voiture'],
+        valeurs: ['20'],
+        utilisateurId: '123',
+        created_at: new Date(456),
+      },
+    });
+
+    const response = await request(TestUtil.app.getHttpServer()).get(
+      '/utilisateurs/123/suivis/last?type=repas',
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.body.type).toEqual('repas');
   });
   it('POST /utilisateurs/123/suivis - creates a new suivi', async () => {
     await TestUtil.prisma.utilisateur.create({
