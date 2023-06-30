@@ -1,8 +1,7 @@
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
 import { Controller, Get, Post, Param, Body, Query } from '@nestjs/common';
 import { SuiviUsecase } from '../../usecase/suivi.usecase';
-import { using } from 'rxjs';
-import { Suivi } from '../../../src/domain/suivi/suivi';
+import { Suivi } from '../../domain/suivi/suivi';
 
 @Controller()
 @ApiTags('Suivi')

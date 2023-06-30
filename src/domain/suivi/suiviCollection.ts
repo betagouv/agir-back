@@ -1,4 +1,3 @@
-import { response } from 'express';
 import { Suivi } from './suivi';
 import { SuiviRepas } from './suiviRepas';
 import { SuiviTransport } from './suiviTransport';

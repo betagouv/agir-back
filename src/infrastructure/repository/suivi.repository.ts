@@ -1,11 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from '../db/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { Suivi as SuiviDB, Prisma } from '@prisma/client';
+import { Suivi as SuiviDB } from '@prisma/client';
 import { Suivi } from '../../domain/suivi/suivi';
-import { SuiviRepas } from '../../../src/domain/suivi/suiviRepas';
-import { SuiviCollection } from '../../../src/domain/suivi/suiviCollection';
-import { SuiviTransport } from '../../../src/domain/suivi/suiviTransport';
+import { SuiviCollection } from '../../domain/suivi/suiviCollection';
+import { SuiviTransport } from '../../domain/suivi/suiviTransport';
+import { SuiviRepas } from '../../domain/suivi/suiviRepas';
 
 @Injectable()
 export class SuiviRepository {
