@@ -38,12 +38,12 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       '/utilisateurs/2/interactions',
     );
     const dbInteraction = await TestUtil.prisma.interaction.findUnique({
-      where: {id : "1"}
+      where: { id: '1' },
     });
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual({
-      id: "1",
+      id: '1',
       type: 'quizz',
       titre: 'the quizz !',
       soustitre: null,
@@ -65,8 +65,39 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       points: 5,
       reco_score: 100,
       utilisateurId: '2',
-      created_at : dbInteraction.created_at.toISOString(),
-      updated_at : dbInteraction.updated_at.toISOString()
+      created_at: dbInteraction.created_at.toISOString(),
+      updated_at: dbInteraction.updated_at.toISOString(),
     });
+  });
+  it('PATCH /utilisateurs/id/interactions/id - patch status of single interaction', async () => {
+    await TestUtil.prisma.utilisateur.createMany({
+      data: [{ id: '1', name: 'bob' }],
+    });
+    await TestUtil.prisma.interaction.create({
+      data: {
+        id: '123',
+        type: 'quizz',
+        titre: 'the quizz !',
+        categorie: 'apprendre',
+        tags: ['a', 'b', 'c'],
+        difficulty: 1,
+        points: 5,
+        reco_score: 100,
+        utilisateurId: '1',
+      },
+    });
+    const response = await request(TestUtil.app.getHttpServer())
+      .patch('/utilisateurs/1/interactions/123')
+      .send({
+        done: true,
+      });
+    expect(response.status).toBe(200);
+    const dbInteraction = await TestUtil.prisma.interaction.findUnique({
+      where: { id: '123' },
+    });
+    expect(dbInteraction.done).toStrictEqual(true);
+    expect(dbInteraction.clicked).toStrictEqual(false);
+    expect(dbInteraction.succeeded).toStrictEqual(false);
+    expect(dbInteraction.seen).toStrictEqual(false);
   });
 });

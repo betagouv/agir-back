@@ -1,8 +1,19 @@
 import { Utilisateur } from '.prisma/client';
-import { Body, Controller, Get, NotFoundException, Param, Post, Query, Response } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Response,
+} from '@nestjs/common';
 import { InteractionsUsecase } from '../../usecase/interactions.usecase';
 import { ApiTags, ApiQuery, ApiBody, ApiOkResponse } from '@nestjs/swagger';
 import { APIInteractionType } from './types/interaction';
+import { InteractionStatus } from '../../../src/domain/interactionStatus';
 
 @Controller()
 @ApiTags('Interactions')
@@ -10,7 +21,24 @@ export class IntractionsController {
   constructor(private readonly interactionsUsecase: InteractionsUsecase) {}
 
   @Get('utilisateurs/:id/interactions')
-  async getUserInteractions(@Param('id') id:string): Promise<APIInteractionType[]> {
+  async getUserInteractions(
+    @Param('id') id: string,
+  ): Promise<APIInteractionType[]> {
     return this.interactionsUsecase.listInteractions(id);
+  }
+  @Patch('utilisateurs/:utilisateurId/interactions/:interactionId')
+  async patchInteractionStatus(
+    @Param('interactionId') interactionId: string,
+    @Body() body: any,
+  ) {
+    // utilisateurId pour le moment pas utilisé
+    const status: InteractionStatus = {
+      seen: body.seen,
+      clicked: body.clicked,
+      done: body.done,
+      succeeded: body.succeeded,
+    };
+
+    await this.interactionsUsecase.updateStatus(interactionId, status);
   }
 }

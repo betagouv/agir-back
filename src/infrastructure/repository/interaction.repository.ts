@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../db/prisma.service';
 import { Interaction } from '@prisma/client';
+import { InteractionStatus } from '../../../src/domain/interactionStatus';
 
 @Injectable()
 export class InteractionRepository {
@@ -16,6 +17,22 @@ export class InteractionRepository {
           reco_score: 'asc',
         },
       ],
+    });
+  }
+  async updateInteractionStatusData(
+    interactionId: string,
+    data: InteractionStatus,
+  ) {
+    return this.prisma.interaction.update({
+      where: {
+        id: interactionId,
+      },
+      data: {
+        seen: data.seen,
+        clicked: data.clicked,
+        done: data.done,
+        succeeded: data.succeeded,
+      },
     });
   }
 }
