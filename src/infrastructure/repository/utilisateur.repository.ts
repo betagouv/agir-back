@@ -12,6 +12,11 @@ export class UtilisateurRepository {
       where: {
         name,
       },
+      orderBy: [
+        {
+          created_at: 'desc',
+        },
+      ],
     });
   }
   async findUtilisateurById(id: string): Promise<Utilisateur | null> {
@@ -23,7 +28,13 @@ export class UtilisateurRepository {
   }
 
   async listUtilisateur(): Promise<Utilisateur[] | null> {
-    return this.prisma.utilisateur.findMany({});
+    return this.prisma.utilisateur.findMany({
+      orderBy: [
+        {
+          created_at: 'desc',
+        },
+      ],
+    });
   }
 
   async createUtilisateur(name: string): Promise<Utilisateur | null> {
