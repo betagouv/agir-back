@@ -1,19 +1,19 @@
 import { Suivi } from './suivi';
-import { SuiviRepas } from './suiviRepas';
+import { SuiviAlimentation } from './suiviAlimentation';
 import { SuiviTransport } from './suiviTransport';
 
 export class SuiviCollection {
   constructor() {
-    this.repas = [];
+    this.alimentation = [];
     this.transports = [];
   }
 
-  repas: SuiviRepas[];
+  alimentation: SuiviAlimentation[];
   transports: SuiviTransport[];
 
   mergeAll(): Suivi[] {
     let result = [];
-    result = result.concat(this.repas);
+    result = result.concat(this.alimentation);
     result = result.concat(this.transports);
     return result;
   }

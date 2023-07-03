@@ -1,6 +1,6 @@
 import { TestUtil } from '../../TestUtil';
 import { SuiviRepository } from '../../../src/infrastructure/repository/suivi.repository';
-import { SuiviRepas } from '../../../src/domain/suivi/suiviRepas';
+import { SuiviAlimentation } from '../../../src/domain/suivi/suiviAlimentation';
 
 describe('SuiviRepository', () => {
   let suiviRepository = new SuiviRepository(TestUtil.prisma);
@@ -21,9 +21,9 @@ describe('SuiviRepository', () => {
     await TestUtil.prisma.utilisateur.create({
       data: { id: '1', name: 'bob' },
     });
-    let suiviRepas = new SuiviRepas();
-    suiviRepas.viande_rouge = 2;
-    await suiviRepository.createSuivi(suiviRepas, '1');
+    let suiviAlimentation = new SuiviAlimentation();
+    suiviAlimentation.viande_rouge = 2;
+    await suiviRepository.createSuivi(suiviAlimentation, '1');
 
     const suivis = await TestUtil.prisma.suivi.findMany({});
     expect(suivis).toHaveLength(1);
@@ -62,7 +62,7 @@ describe('SuiviRepository', () => {
     await TestUtil.prisma.suivi.create({
       data: {
         id: '1',
-        type: 'repas',
+        type: 'alimentation',
         attributs: ['viande_rouge'],
         valeurs: ['1'],
         utilisateurId: '1',
@@ -81,9 +81,9 @@ describe('SuiviRepository', () => {
     });
 
     const suivis = await suiviRepository.listAllSuivi('1');
-    expect(suivis.repas).toHaveLength(1);
+    expect(suivis.alimentation).toHaveLength(1);
     expect(suivis.transports).toHaveLength(1);
-    expect(suivis.repas[0].viande_rouge).toStrictEqual(1);
+    expect(suivis.alimentation[0].viande_rouge).toStrictEqual(1);
     expect(suivis.transports[0].km_voiture).toStrictEqual(2);
   });
 
@@ -94,7 +94,7 @@ describe('SuiviRepository', () => {
     await TestUtil.prisma.suivi.create({
       data: {
         id: '1',
-        type: 'repas',
+        type: 'alimentation',
         attributs: ['viande_rouge'],
         valeurs: ['2'],
         utilisateurId: '1',
@@ -112,9 +112,9 @@ describe('SuiviRepository', () => {
       },
     });
 
-    const suivis = await suiviRepository.listAllSuivi('1', 'repas');
-    expect(suivis.repas).toHaveLength(1);
+    const suivis = await suiviRepository.listAllSuivi('1', 'alimentation');
+    expect(suivis.alimentation).toHaveLength(1);
     expect(suivis.transports).toHaveLength(0);
-    expect(suivis.repas[0].viande_rouge).toStrictEqual(2);
+    expect(suivis.alimentation[0].viande_rouge).toStrictEqual(2);
   });
 });

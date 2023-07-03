@@ -1,8 +1,8 @@
 import { Suivi } from './suivi';
 
-export class SuiviRepas extends Suivi {
+export class SuiviAlimentation extends Suivi {
   constructor(date?: Date) {
-    super('repas', date);
+    super('alimentation', date);
   }
 
   viande_rouge: number;

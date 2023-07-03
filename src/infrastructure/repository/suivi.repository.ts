@@ -5,7 +5,7 @@ import { Suivi as SuiviDB } from '@prisma/client';
 import { Suivi } from '../../domain/suivi/suivi';
 import { SuiviCollection } from '../../domain/suivi/suiviCollection';
 import { SuiviTransport } from '../..//domain/suivi/suiviTransport';
-import { SuiviRepas } from '../../domain/suivi/suiviRepas';
+import { SuiviAlimentation } from '../../domain/suivi/suiviAlimentation';
 
 @Injectable()
 export class SuiviRepository {
@@ -67,10 +67,10 @@ export class SuiviRepository {
     let result = new SuiviCollection();
     for (const suivi of listSuivis) {
       switch (suivi.type) {
-        case 'repas':
-          let repas = new SuiviRepas(suivi.created_at);
-          repas.populateValues(suivi.attributs, suivi.valeurs);
-          result.repas.push(repas);
+        case 'alimentation':
+          let alimentation = new SuiviAlimentation(suivi.created_at);
+          alimentation.populateValues(suivi.attributs, suivi.valeurs);
+          result.alimentation.push(alimentation);
           break;
         case 'transport':
           let transport = new SuiviTransport(suivi.created_at);

@@ -34,7 +34,7 @@ describe('/suivis (API test)', () => {
     await TestUtil.prisma.suivi.create({
       data: {
         id: '1',
-        type: 'repas',
+        type: 'alimentation',
         attributs: ['viande_rouge'],
         valeurs: ['1'],
         utilisateurId: '123',
@@ -59,7 +59,7 @@ describe('/suivis (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(2);
   });
-  it('GET /utilisateurs/123/suivis?type=repas - get all suivis by type', async () => {
+  it('GET /utilisateurs/123/suivis?type=alimentation - get all suivis by type', async () => {
     await TestUtil.prisma.utilisateur.create({
       data: { id: '123', name: 'bob' },
     });
@@ -67,7 +67,7 @@ describe('/suivis (API test)', () => {
     await TestUtil.prisma.suivi.create({
       data: {
         id: '1',
-        type: 'repas',
+        type: 'alimentation',
         attributs: ['viande_rouge'],
         valeurs: ['1'],
         utilisateurId: '123',
@@ -86,12 +86,12 @@ describe('/suivis (API test)', () => {
     });
 
     const response = await request(TestUtil.app.getHttpServer()).get(
-      '/utilisateurs/123/suivis?type=repas',
+      '/utilisateurs/123/suivis?type=alimentation',
     );
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
-    expect(response.body[0].type).toEqual('repas');
+    expect(response.body[0].type).toEqual('alimentation');
   });
   it('GET /utilisateurs/123/suivis/last - get last suivis', async () => {
     await TestUtil.prisma.utilisateur.create({
@@ -101,7 +101,7 @@ describe('/suivis (API test)', () => {
     await TestUtil.prisma.suivi.create({
       data: {
         id: '1',
-        type: 'repas',
+        type: 'alimentation',
         attributs: ['viande_rouge'],
         valeurs: ['1'],
         utilisateurId: '123',
@@ -134,7 +134,7 @@ describe('/suivis (API test)', () => {
     await TestUtil.prisma.suivi.create({
       data: {
         id: '1',
-        type: 'repas',
+        type: 'alimentation',
         attributs: ['viande_rouge'],
         valeurs: ['1'],
         utilisateurId: '123',
@@ -167,7 +167,7 @@ describe('/suivis (API test)', () => {
     await TestUtil.prisma.suivi.create({
       data: {
         id: '1',
-        type: 'repas',
+        type: 'alimentation',
         attributs: ['viande_rouge'],
         valeurs: ['1'],
         utilisateurId: '123',
@@ -186,11 +186,11 @@ describe('/suivis (API test)', () => {
     });
 
     const response = await request(TestUtil.app.getHttpServer()).get(
-      '/utilisateurs/123/suivis/last?type=repas',
+      '/utilisateurs/123/suivis/last?type=alimentation',
     );
 
     expect(response.status).toBe(200);
-    expect(response.body.type).toEqual('repas');
+    expect(response.body.type).toEqual('alimentation');
   });
   it('GET /utilisateurs/123/suivis/last - get empty when empty DB of suivis', async () => {
     await TestUtil.prisma.utilisateur.create({
@@ -214,7 +214,7 @@ describe('/suivis (API test)', () => {
     const response = await request(TestUtil.app.getHttpServer())
       .post('/utilisateurs/123/suivis')
       .send({
-        type: 'repas',
+        type: 'alimentation',
         viande_rouge: 0,
         tres_cher: true,
       });
@@ -222,7 +222,7 @@ describe('/suivis (API test)', () => {
 
     let suiviDB = await TestUtil.prisma.suivi.findMany({});
     expect(suiviDB).toHaveLength(1);
-    expect(suiviDB[0].type).toEqual('repas');
+    expect(suiviDB[0].type).toEqual('alimentation');
   });
   it('POST /utilisateurs/123/suivis - creates a new suivi an read it back through API', async () => {
     await TestUtil.prisma.utilisateur.create({
@@ -232,7 +232,7 @@ describe('/suivis (API test)', () => {
     let response = await request(TestUtil.app.getHttpServer())
       .post('/utilisateurs/123/suivis')
       .send({
-        type: 'repas',
+        type: 'alimentation',
         viande_rouge: 11,
         tres_cher: true,
       });
