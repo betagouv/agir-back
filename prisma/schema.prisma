@@ -10,99 +10,104 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Suivi {
-  id    String  @id
-  type  String
-  attributs String[] @default([])
-  valeurs String[] @default([])
-  computed_impact Boolean @default(false)
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  utilisateurId String
-  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id])
+  id              String      @id
+  type            String
+  attributs       String[]    @default([])
+  valeurs         String[]    @default([])
+  computed_impact Boolean     @default(false)
+  created_at      DateTime    @default(now())
+  updated_at      DateTime    @updatedAt
+  utilisateurId   String
+  utilisateur     Utilisateur @relation(fields: [utilisateurId], references: [id])
 }
 
 model Utilisateur {
-  id    String  @id
-  name  String
-  dashboard Dashboard?
-  empreintes Empreinte[]
+  id           String        @id
+  name         String
+  dashboard    Dashboard?
+  empreintes   Empreinte[]
   interactions Interaction[]
-  suivis Suivi[]
+  suivis       Suivi[]
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @default(now()) @updatedAt
 }
 
 model Interaction {
-  id   String @id
-  type String
-  titre String
-  soustitre String?
-  categorie String
-  tags         String[] @default([])
-  duree        String?
-  frequence    String?
-  image_url    String?
-  url          String?
-  seen         Boolean @default(false)
-  seen_at      DateTime?
-  clicked      Boolean @default(false)
-  clicked_at   DateTime?
-  done         Boolean @default(false)
-  done_at      DateTime?
-  succeeded    Boolean @default(false)
-  succeeded_at DateTime?
-  difficulty   Int @default(1)
-  points       Int @default(0)
-  reco_score   Int @default(1000)
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
+  id            String      @id
+  type          String
+  titre         String
+  soustitre     String?
+  categorie     String
+  tags          String[]    @default([])
+  duree         String?
+  frequence     String?
+  image_url     String?
+  url           String?
+  seen          Boolean     @default(false)
+  seen_at       DateTime?
+  clicked       Boolean     @default(false)
+  clicked_at    DateTime?
+  done          Boolean     @default(false)
+  done_at       DateTime?
+  succeeded     Boolean     @default(false)
+  succeeded_at  DateTime?
+  difficulty    Int         @default(1)
+  points        Int         @default(0)
+  reco_score    Int         @default(1000)
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
   utilisateurId String
-  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id])
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
 }
 
 model Empreinte {
-  id    String  @id
-  initial Boolean @default(true)
-  situation String
-  created_at DateTime  @default(now())
-  updated_at DateTime  @default(now())
-  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id])
+  id            String      @id
+  initial       Boolean     @default(true)
+  situation     String
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @default(now())
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
   utilisateurId String
 }
 
 model Compteur {
-  id    String  @id
-  titre  String
-  valeur String
-  dashboard Dashboard @relation(fields: [dashboardId], references: [id])
+  id          String    @id
+  titre       String
+  valeur      String
+  dashboard   Dashboard @relation(fields: [dashboardId], references: [id])
   dashboardId String
 }
+
 model Quizz {
-  id    String  @id
-  titre  String
+  id        String          @id
+  titre     String
   questions QuizzQuestion[]
 }
+
 model QuizzQuestion {
-  id    String  @id
-  libelle  String
+  id           String   @id
+  libelle      String
   propositions String[]
-  solution String
-  quizz Quizz @relation(fields: [quizzId], references: [id])
-  quizzId String
+  solution     String
+  quizz        Quizz    @relation(fields: [quizzId], references: [id])
+  quizzId      String
 }
+
 model Badge {
-  id    String  @id
-  titre  String
-  date DateTime @default(now())
-  dashboard Dashboard @relation(fields: [dashboardId], references: [id])
+  id          String    @id
+  titre       String
+  date        DateTime  @default(now())
+  dashboard   Dashboard @relation(fields: [dashboardId], references: [id])
   dashboardId String
 }
+
 model Dashboard {
-  id    String  @id
-  compteurs Compteur[]
-  badges Badge[]
-  todoQuizz String[] @default([])
-  doneQuizz String[] @default([])
-  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id])
-  utilisateurId String @unique
+  id            String      @id
+  compteurs     Compteur[]
+  badges        Badge[]
+  todoQuizz     String[]    @default([])
+  doneQuizz     String[]    @default([])
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
+  utilisateurId String      @unique
 }
