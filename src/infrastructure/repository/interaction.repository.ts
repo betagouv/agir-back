@@ -6,10 +6,16 @@ import { Interaction } from '@prisma/client';
 export class InteractionRepository {
   constructor(private prisma: PrismaService) {}
 
-  async listInteractionsByUtilisateurId(utilisateurId:string): Promise<Interaction[] | null> {
+  async listInteractionsByUtilisateurId(
+    utilisateurId: string,
+  ): Promise<Interaction[] | null> {
     return this.prisma.interaction.findMany({
-      where: {utilisateurId}
+      where: { utilisateurId },
+      orderBy: [
+        {
+          reco_score: 'asc',
+        },
+      ],
     });
   }
-
 }

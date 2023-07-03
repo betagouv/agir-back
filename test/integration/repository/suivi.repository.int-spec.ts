@@ -2,7 +2,7 @@ import { TestUtil } from '../../TestUtil';
 import { SuiviRepository } from '../../../src/infrastructure/repository/suivi.repository';
 import { SuiviRepas } from '../../../src/domain/suivi/suiviRepas';
 
-describe('UtilisateurRepository', () => {
+describe('SuiviRepository', () => {
   let suiviRepository = new SuiviRepository(TestUtil.prisma);
 
   beforeAll(async () => {
