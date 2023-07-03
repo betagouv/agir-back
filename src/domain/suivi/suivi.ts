@@ -3,6 +3,8 @@ export class Suivi {
     this.type = type;
     this.date = date ? date : new Date();
   }
+  static alimentation = 'alimentation';
+  static transport = 'transport';
 
   private type: string;
   private date: Date;
@@ -40,8 +42,13 @@ export class Suivi {
       this[keys[i]] = values[i];
     }
   }
+  calculImpacts() {
+    throw new Error('calculImpacts() should be implemented in subclass');
+  }
   private cloneAndClean(input?: object): object {
     let thisToClean = { ...(input ? input : this) };
+    delete thisToClean['alimentation'];
+    delete thisToClean['transport'];
     delete thisToClean['type'];
     delete thisToClean['date'];
     return thisToClean;

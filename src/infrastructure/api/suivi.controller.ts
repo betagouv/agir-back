@@ -7,9 +7,12 @@ import {
   Body,
   Query,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { SuiviUsecase } from '../../usecase/suivi.usecase';
 import { Suivi } from '../../domain/suivi/suivi';
+import { SuiviAlimentation } from '../../domain/suivi/suiviAlimentation';
+import { SuiviTransport } from '../../domain/suivi/suiviTransport';
 
 @Controller()
 @ApiTags('Suivi')
@@ -45,10 +48,20 @@ export class SuiviController {
   async postSuivi(
     @Param('utilisateurId') utilisateurId: string,
     @Body() body: any,
-  ): Promise<any> {
-    let suivi = new Suivi(body.type);
+  ): Promise<Suivi> {
+    let suivi;
+    switch (body.type) {
+      case Suivi.alimentation:
+        suivi = new SuiviAlimentation();
+        break;
+      case Suivi.transport:
+        suivi = new SuiviTransport();
+        break;
+      default:
+        throw new BadRequestException(`Suivi de type ${body.type} inconnu`);
+    }
     suivi.injectValuesFromObject(body);
-    await this.suiviUsecase.createSuivi(suivi, utilisateurId);
-    return;
+    const result = await this.suiviUsecase.createSuivi(suivi, utilisateurId);
+    return result;
   }
 }

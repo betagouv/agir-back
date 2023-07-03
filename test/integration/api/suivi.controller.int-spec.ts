@@ -220,9 +220,9 @@ describe('/suivis (API test)', () => {
       });
     expect(response.status).toBe(201);
 
-    let suiviDB = await TestUtil.prisma.suivi.findMany({});
-    expect(suiviDB).toHaveLength(1);
-    expect(suiviDB[0].type).toEqual('alimentation');
+    let suiviDB = (await TestUtil.prisma.suivi.findMany({}))[0];
+    expect(response.body.id).toEqual(suiviDB.id);
+    expect(suiviDB.type).toEqual('alimentation');
   });
   it('POST /utilisateurs/123/suivis - creates a new suivi an read it back through API', async () => {
     await TestUtil.prisma.utilisateur.create({
@@ -234,6 +234,7 @@ describe('/suivis (API test)', () => {
       .send({
         type: 'alimentation',
         viande_rouge: 11,
+        poisson: 1,
         tres_cher: true,
       });
     expect(response.status).toBe(201);
@@ -244,6 +245,8 @@ describe('/suivis (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0].viande_rouge).toStrictEqual(11);
+    expect(response.body[0].viande_rouge_impact).toStrictEqual(44000);
+    expect(response.body[0].total_impact).toStrictEqual(44500);
     expect(response.body[0].tres_cher).toStrictEqual(true);
   });
 });
