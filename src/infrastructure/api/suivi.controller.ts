@@ -1,5 +1,13 @@
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
-import { Controller, Get, Post, Param, Body, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Body,
+  Query,
+  NotFoundException,
+} from '@nestjs/common';
 import { SuiviUsecase } from '../../usecase/suivi.usecase';
 import { Suivi } from '../../domain/suivi/suivi';
 
@@ -24,7 +32,13 @@ export class SuiviController {
     @Param('utilisateurId') utilisateurId: string,
     @Query('type') type?: string,
   ): Promise<Suivi> {
-    return await this.suiviUsecase.getLastSuivi(utilisateurId, type);
+    const lastSuivi = await this.suiviUsecase.getLastSuivi(utilisateurId, type);
+    if (lastSuivi === null) {
+      throw new NotFoundException(
+        `Aucun suivi de type ${type ? type : 'any'} trouvé en base`,
+      );
+    }
+    return lastSuivi;
   }
 
   @Post('utilisateurs/:utilisateurId/suivis')

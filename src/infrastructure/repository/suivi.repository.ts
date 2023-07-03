@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { Suivi as SuiviDB } from '@prisma/client';
 import { Suivi } from '../../domain/suivi/suivi';
 import { SuiviCollection } from '../../domain/suivi/suiviCollection';
-import { SuiviTransport } from '../../domain/suivi/suiviTransport';
+import { SuiviTransport } from '../..//domain/suivi/suiviTransport';
 import { SuiviRepas } from '../../domain/suivi/suiviRepas';
 
 @Injectable()
@@ -60,8 +60,7 @@ export class SuiviRepository {
         },
       ],
     });
-    let collection = this.createSuiviCollection([suivi]);
-    return collection.mergeAll()[0];
+    return suivi ? this.createSuiviCollection([suivi]).mergeAll()[0] : null;
   }
 
   private createSuiviCollection(listSuivis: SuiviDB[]): SuiviCollection {
