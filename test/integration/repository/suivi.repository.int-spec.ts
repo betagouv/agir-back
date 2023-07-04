@@ -87,34 +87,61 @@ describe('SuiviRepository', () => {
     expect(suivis.transports[0].km_voiture).toStrictEqual(2);
   });
 
-  it('liste par type', async () => {
-    await TestUtil.prisma.utilisateur.create({
-      data: { id: '1', name: 'bob' },
+  it('liste et ventile par type', async () => {
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('suivi', {
+      id: '1',
+      type: 'alimentation',
     });
-    await TestUtil.prisma.suivi.create({
-      data: {
-        id: '1',
-        type: 'alimentation',
-        attributs: ['viande_rouge'],
-        valeurs: ['2'],
-        utilisateurId: '1',
-        created_at: new Date(123),
-      },
+    await TestUtil.create('suivi', {
+      id: '2',
+      type: 'transport',
     });
-    await TestUtil.prisma.suivi.create({
-      data: {
-        id: '2',
-        type: 'transport',
-        attributs: ['km_voiture'],
-        valeurs: ['10'],
-        utilisateurId: '1',
-        created_at: new Date(456),
-      },
+    await TestUtil.create('suivi', {
+      id: '3',
+      type: 'transport',
     });
 
-    const suivis = await suiviRepository.listAllSuivi('1', 'alimentation');
+    const suivis = await suiviRepository.listAllSuivi('utilisateur-id');
     expect(suivis.alimentation).toHaveLength(1);
-    expect(suivis.transports).toHaveLength(0);
-    expect(suivis.alimentation[0].viande_rouge).toStrictEqual(2);
+    expect(suivis.transports).toHaveLength(2);
+  });
+
+  it('liste et filtre par type', async () => {
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('suivi', {
+      id: '1',
+      type: 'alimentation',
+    });
+    await TestUtil.create('suivi', {
+      id: '2',
+      type: 'transport',
+    });
+    await TestUtil.create('suivi', {
+      id: '3',
+      type: 'transport',
+    });
+
+    const suivis = await suiviRepository.listAllSuivi(
+      'utilisateur-id',
+      'transport',
+    );
+    expect(suivis.alimentation).toHaveLength(0);
+    expect(suivis.transports).toHaveLength(2);
+  });
+
+  it('liste les X derniers suivis', async () => {
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('suivi', { id: '1' });
+    await TestUtil.create('suivi', { id: '2' });
+    await TestUtil.create('suivi', { id: '3' });
+    await TestUtil.create('suivi', { id: '4' });
+
+    const suivis = await suiviRepository.listAllSuivi(
+      'utilisateur-id',
+      undefined,
+      3,
+    );
+    expect(suivis.mergeAll()).toHaveLength(3);
   });
 });

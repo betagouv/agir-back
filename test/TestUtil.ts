@@ -7,6 +7,8 @@ export class TestUtil {
   constructor() {}
   public static app: INestApplication;
   public static prisma = new PrismaService();
+  public static utilisateur = 'utilisateur';
+  public static suivi = 'suivi';
 
   static async appinit() {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -32,5 +34,28 @@ export class TestUtil {
     await this.prisma.quizz.deleteMany();
     await this.prisma.empreinte.deleteMany();
     await this.prisma.utilisateur.deleteMany();
+  }
+
+  static async create(type: string, override?) {
+    await this.prisma[type].create({
+      data: this[type.concat('Data')](override),
+    });
+  }
+  private static suiviData(override?) {
+    return {
+      id: 'suivi-id',
+      type: 'alimentation',
+      attributs: ['a', 'b', 'c'],
+      valeurs: ['1', '2', '3'],
+      utilisateurId: 'utilisateur-id',
+      ...override,
+    };
+  }
+  private static utilisateurData(override?) {
+    return {
+      id: 'utilisateur-id',
+      name: 'name',
+      ...override,
+    };
   }
 }

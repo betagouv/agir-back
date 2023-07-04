@@ -7,6 +7,7 @@ import { QuizzController } from './infrastructure/api/quizz.controller';
 import { BilanController } from './infrastructure/api/bilan.controller';
 import { AidesController } from './infrastructure/api/aides.controller';
 import { IntractionsController } from './infrastructure/api/interactions.controller';
+import { SuiviDashboardController } from './infrastructure/api/suiviDashboard.controller';
 
 import { UtilisateurUsecase } from './usecase/utilisateur.usecase';
 import { GenerateDashboardUsecase } from './usecase/generate_dashboard.usecase';
@@ -41,6 +42,7 @@ import { SuiviController } from './infrastructure/api/suivi.controller';
     AidesController,
     IntractionsController,
     SuiviController,
+    SuiviDashboardController,
   ],
   providers: [
     PrismaService,

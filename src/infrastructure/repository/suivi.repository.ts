@@ -30,8 +30,10 @@ export class SuiviRepository {
   async listAllSuivi(
     utilisateurId: string,
     type?: string,
+    maxNumber?: number,
   ): Promise<SuiviCollection | null> {
     let listSuivis = await this.prisma.suivi.findMany({
+      take: maxNumber,
       where: {
         utilisateurId,
         type,

@@ -12,9 +12,20 @@ export class SuiviCollection {
   transports: SuiviTransport[];
 
   mergeAll(): Suivi[] {
-    let result = [];
+    let result: Suivi[] = [];
     result = result.concat(this.alimentation);
     result = result.concat(this.transports);
     return result;
+  }
+  mergeAllAndOrderByDate(): Suivi[] {
+    let result = this.mergeAll();
+    result.sort((a, b) => {
+      return a.getDate().getTime() - b.getDate().getTime();
+    });
+    return result;
+  }
+  getLastSuiviDate(): Date | undefined {
+    const orderedSuivi = this.mergeAllAndOrderByDate();
+    return orderedSuivi.length === 0 ? undefined : orderedSuivi.pop().getDate();
   }
 }

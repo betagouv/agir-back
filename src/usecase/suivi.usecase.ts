@@ -28,4 +28,14 @@ export class SuiviUsecase {
   ): Promise<Suivi | null> {
     return this.suiviRepository.getLastSuivi(utilisateurId, type);
   }
+  async buildSuiviDashboard(utilisateurId: string): Promise<any> {
+    let suiviCollection = await this.suiviRepository.listAllSuivi(
+      utilisateurId,
+      undefined,
+      20,
+    );
+    return {
+      date_dernier_suivi: suiviCollection.getLastSuiviDate(),
+    };
+  }
 }
