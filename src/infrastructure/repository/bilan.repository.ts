@@ -3,6 +3,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../db/prisma.service';
 import { Empreinte, Prisma } from '@prisma/client';
 import Publicodes from 'publicodes';
+import rules from '../data/co2.json';
 
 import * as path from 'path';
 import * as fs from 'fs';
@@ -12,14 +13,7 @@ export class BilanRepository {
   constructor(private prisma: PrismaService) {}
 
   async evaluateSituation(simulation: string): Promise<number> {
-    const rules = JSON.parse(
-      fs.readFileSync(
-        path.resolve(__dirname, '../../publicode/co2.json'),
-        'utf8',
-      ),
-    );
-
-    const engine = new Publicodes(rules);
+    const engine = new Publicodes(rules as Record<string, any>);
 
     const result = engine
       .setSituation(JSON.parse(simulation || '{}'))
