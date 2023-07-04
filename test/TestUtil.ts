@@ -2,6 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/db/prisma.service';
+const request = require('supertest');
 
 export class TestUtil {
   constructor() {}
@@ -9,6 +10,10 @@ export class TestUtil {
   public static prisma = new PrismaService();
   public static utilisateur = 'utilisateur';
   public static suivi = 'suivi';
+
+  static getServer() {
+    return request(this.app.getHttpServer());
+  }
 
   static async appinit() {
     const moduleFixture: TestingModule = await Test.createTestingModule({

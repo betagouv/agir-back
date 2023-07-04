@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AidesRepository } from 'src/infrastructure/repository/aides.repository';
+import { AidesRepository } from '../../src/infrastructure/repository/aides.repository';
 
 type Aides = {
   libelle: string;

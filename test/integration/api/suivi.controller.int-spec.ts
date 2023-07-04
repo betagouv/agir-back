@@ -1,4 +1,3 @@
-import * as request from 'supertest';
 import { TestUtil } from '../../TestUtil';
 
 describe('/suivis (API test)', () => {
@@ -19,9 +18,7 @@ describe('/suivis (API test)', () => {
       data: { id: '123', name: 'bob' },
     });
 
-    const response = await request(TestUtil.app.getHttpServer()).get(
-      '/utilisateurs/123/suivis',
-    );
+    const response = await TestUtil.getServer().get('/utilisateurs/123/suivis');
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(0);
@@ -52,9 +49,7 @@ describe('/suivis (API test)', () => {
       },
     });
 
-    const response = await request(TestUtil.app.getHttpServer()).get(
-      '/utilisateurs/123/suivis',
-    );
+    const response = await TestUtil.getServer().get('/utilisateurs/123/suivis');
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(2);
@@ -85,7 +80,7 @@ describe('/suivis (API test)', () => {
       },
     });
 
-    const response = await request(TestUtil.app.getHttpServer()).get(
+    const response = await TestUtil.getServer().get(
       '/utilisateurs/123/suivis?type=alimentation',
     );
 
@@ -119,7 +114,7 @@ describe('/suivis (API test)', () => {
       },
     });
 
-    const response = await request(TestUtil.app.getHttpServer()).get(
+    const response = await TestUtil.getServer().get(
       '/utilisateurs/123/suivis/last',
     );
 
@@ -152,7 +147,7 @@ describe('/suivis (API test)', () => {
       },
     });
 
-    const response = await request(TestUtil.app.getHttpServer()).get(
+    const response = await TestUtil.getServer().get(
       '/utilisateurs/123/suivis/last?type=transport',
     );
 
@@ -185,7 +180,7 @@ describe('/suivis (API test)', () => {
       },
     });
 
-    const response = await request(TestUtil.app.getHttpServer()).get(
+    const response = await TestUtil.getServer().get(
       '/utilisateurs/123/suivis/last?type=alimentation',
     );
 
@@ -197,7 +192,7 @@ describe('/suivis (API test)', () => {
       data: { id: '123', name: 'bob' },
     });
 
-    const response = await request(TestUtil.app.getHttpServer()).get(
+    const response = await TestUtil.getServer().get(
       '/utilisateurs/123/suivis/last?type=transport',
     );
 
@@ -211,7 +206,7 @@ describe('/suivis (API test)', () => {
       data: { id: '123', name: 'bob' },
     });
 
-    const response = await request(TestUtil.app.getHttpServer())
+    const response = await TestUtil.getServer()
       .post('/utilisateurs/123/suivis')
       .send({
         type: 'alimentation',
@@ -229,7 +224,7 @@ describe('/suivis (API test)', () => {
       data: { id: '123', name: 'bob' },
     });
 
-    let response = await request(TestUtil.app.getHttpServer())
+    let response = await TestUtil.getServer()
       .post('/utilisateurs/123/suivis')
       .send({
         type: 'alimentation',
@@ -239,9 +234,7 @@ describe('/suivis (API test)', () => {
       });
     expect(response.status).toBe(201);
 
-    response = await request(TestUtil.app.getHttpServer()).get(
-      '/utilisateurs/123/suivis',
-    );
+    response = await TestUtil.getServer().get('/utilisateurs/123/suivis');
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0].viande_rouge).toStrictEqual(11);

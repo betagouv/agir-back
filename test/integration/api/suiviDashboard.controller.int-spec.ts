@@ -1,4 +1,3 @@
-import * as request from 'supertest';
 import { TestUtil } from '../../TestUtil';
 
 describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
@@ -16,7 +15,7 @@ describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
 
   it('GET /utilisateurs/id/suivi_dashboard - get empty dashboard when nothing in DB', async () => {
     await TestUtil.create('utilisateur');
-    const response = await request(TestUtil.app.getHttpServer()).get(
+    const response = await TestUtil.getServer().get(
       '/utilisateurs/utilisateur-id/suivi_dashboard',
     );
     expect(response.status).toBe(200);
@@ -26,7 +25,7 @@ describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
     await TestUtil.create('suivi', { id: '1', created_at: new Date(1) });
     await TestUtil.create('suivi', { id: '2', created_at: new Date(2) });
     await TestUtil.create('suivi', { id: '3', created_at: new Date(5) });
-    const response = await request(TestUtil.app.getHttpServer()).get(
+    const response = await TestUtil.getServer().get(
       '/utilisateurs/utilisateur-id/suivi_dashboard',
     );
     expect(response.status).toBe(200);

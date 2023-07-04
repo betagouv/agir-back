@@ -1,4 +1,3 @@
-import * as request from 'supertest';
 import { TestUtil } from '../../TestUtil';
 
 describe('/bilan (API test)', () => {
@@ -27,9 +26,7 @@ describe('/bilan (API test)', () => {
       },
     });
 
-    const response = await request(TestUtil.app.getHttpServer()).get(
-      '/bilan/1',
-    );
+    const response = await TestUtil.getServer().get('/bilan/1');
 
     expect(response.status).toBe(200);
     // cette valeur est amenée à évoluer avec le modéle publicode co2

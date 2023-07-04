@@ -1,4 +1,3 @@
-import * as request from 'supertest';
 import { TestUtil } from '../../TestUtil';
 
 describe('/utilisateurs/id/interactions (API test)', () => {
@@ -34,7 +33,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
         utilisateurId: '2',
       },
     });
-    const response = await request(TestUtil.app.getHttpServer()).get(
+    const response = await TestUtil.getServer().get(
       '/utilisateurs/2/interactions',
     );
     const dbInteraction = await TestUtil.prisma.interaction.findUnique({
@@ -86,7 +85,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
         utilisateurId: '1',
       },
     });
-    const response = await request(TestUtil.app.getHttpServer())
+    const response = await TestUtil.getServer()
       .patch('/utilisateurs/1/interactions/123')
       .send({
         done: true,

@@ -1,4 +1,3 @@
-import * as request from 'supertest';
 import { TestUtil } from '../../TestUtil';
 
 describe('/utilisateurs (API test)', () => {
@@ -15,9 +14,7 @@ describe('/utilisateurs (API test)', () => {
   });
 
   it('GET /utilisateurs?name=bob - when missing name', async () => {
-    const response = await request(TestUtil.app.getHttpServer()).get(
-      '/utilisateurs?name=bob',
-    );
+    const response = await TestUtil.getServer().get('/utilisateurs?name=bob');
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(0);
   });
@@ -28,7 +25,7 @@ describe('/utilisateurs (API test)', () => {
         { id: '2', name: 'george' },
       ],
     });
-    const response = await request(TestUtil.app.getHttpServer()).get(
+    const response = await TestUtil.getServer().get(
       '/utilisateurs?name=george',
     );
     expect(response.status).toBe(200);
@@ -37,9 +34,7 @@ describe('/utilisateurs (API test)', () => {
   });
 
   it('GET /utilisateurs/id - when missing', async () => {
-    return request(TestUtil.app.getHttpServer())
-      .get('/utilisateurs/1')
-      .expect(404);
+    return TestUtil.getServer().get('/utilisateurs/1').expect(404);
   });
   it('GET /utilisateurs/id - when present', async () => {
     await TestUtil.prisma.utilisateur.createMany({
@@ -48,9 +43,7 @@ describe('/utilisateurs (API test)', () => {
         { id: '2', name: 'george' },
       ],
     });
-    const response = await request(TestUtil.app.getHttpServer()).get(
-      '/utilisateurs/1',
-    );
+    const response = await TestUtil.getServer().get('/utilisateurs/1');
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: '1' },
     });
@@ -66,19 +59,15 @@ describe('/utilisateurs (API test)', () => {
         { id: '2', name: 'george' },
       ],
     });
-    const response = await request(TestUtil.app.getHttpServer()).get(
-      '/utilisateurs',
-    );
+    const response = await TestUtil.getServer().get('/utilisateurs');
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(2);
   });
 
   it('POST /utilisateurs - create new utilisateur with given name', async () => {
-    const response = await request(TestUtil.app.getHttpServer())
-      .post('/utilisateurs')
-      .send({
-        name: 'george',
-      });
+    const response = await TestUtil.getServer().post('/utilisateurs').send({
+      name: 'george',
+    });
     const user = await TestUtil.prisma.utilisateur.findFirst({
       where: { name: 'george' },
     });
