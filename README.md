@@ -69,6 +69,8 @@ npm run db:destroy
 
 ### Accéder à la base scalingo de dev
 Il faut utiliser un tunnel SSH pour accéder via un client local la base de données scalingo
+Il est nécessaire au préalable d'installer la ligne de commande Scalingo (https://doc.scalingo.com/platform/cli/start)
+Il peut être également nécessaire de configurer sa clé SSH dans son compte Scalingo (https://doc.scalingo.com/platform/getting-started/setup-ssh-linux)
 ```bash
 #Valeur de DATABASE_URL à récupérer dans l'interface web scalingo de agir-back-dev
 scalingo --app agir-back-dev db-tunnel DATABASE_URL 
