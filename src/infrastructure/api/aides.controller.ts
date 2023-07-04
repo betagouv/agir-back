@@ -28,4 +28,19 @@ export class AidesController {
     }
     return aides;
   }
+
+  @Get('aides/velo')
+  async getvelo(
+    @Query('codePostal') codePostal: string,
+    @Query('revenuFiscalDeReference') revenuFiscalDeReference: string,
+  ): Promise<any> {
+    const aides = await this.aidesUsecase.getVelo(
+      codePostal,
+      revenuFiscalDeReference,
+    );
+    if (aides == null) {
+      throw new NotFoundException(`Pas d'aides pour le retrofit`);
+    }
+    return aides;
+  }
 }

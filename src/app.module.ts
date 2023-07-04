@@ -30,6 +30,7 @@ import { InteractionRepository } from './infrastructure/repository/interaction.r
 import { SuiviRepository } from './infrastructure/repository/suivi.repository';
 import { SuiviUsecase } from './usecase/suivi.usecase';
 import { SuiviController } from './infrastructure/api/suivi.controller';
+import { AidesRepository } from './infrastructure/repository/aides.repository';
 
 @Module({
   imports: [],
@@ -55,6 +56,7 @@ import { SuiviController } from './infrastructure/api/suivi.controller';
     BadgeRepository,
     InteractionRepository,
     SuiviRepository,
+    AidesRepository,
 
     GenerateDashboardUsecase,
     UtilisateurUsecase,
