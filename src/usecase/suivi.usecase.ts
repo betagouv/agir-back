@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { SuiviRepository } from '../infrastructure/repository/suivi.repository';
 import { Suivi } from '../domain/suivi/suivi';
 import { SuiviCollection } from '../../src/domain/suivi/suiviCollection';
+import { SuiviComplet } from '../../src/domain/suivi/suiviComplet';
 
 @Injectable()
 export class SuiviUsecase {
@@ -34,13 +35,27 @@ export class SuiviUsecase {
       undefined,
       20,
     );
-    const lastSuivi = suiviCollection.getLastDayMergedSuivi();
-    if (!lastSuivi) {
+    const suiviCompletList = suiviCollection.getOrderedSuiviCompletList();
+    if (suiviCompletList.length === 0) {
       return {};
     }
+    const cleanLastSuiviData =
+      suiviCompletList[suiviCompletList.length - 1].mergeAllToSingleSuivi();
+
+    let derniers_totaux = [];
+    suiviCompletList.forEach((suiviComplet) => {
+      derniers_totaux.push({
+        date: suiviComplet.getDate(),
+        valeur: suiviComplet.computeTotalImpact(),
+      });
+    });
     return {
-      date_dernier_suivi: lastSuivi.getDate(),
-      impact_dernier_suivi: lastSuivi.getTotalImpact(),
+      date_dernier_suivi: cleanLastSuiviData.getDate(),
+      impact_dernier_suivi: cleanLastSuiviData.getTotalImpact(),
+      variation: SuiviComplet.computeLastVariationOfList(suiviCompletList),
+      dernier_suivi: cleanLastSuiviData.cloneAndClean(),
+      moyenne: SuiviComplet.computeMoyenne(suiviCompletList),
+      derniers_totaux,
     };
   }
 }

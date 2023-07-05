@@ -1,6 +1,7 @@
 import { SuiviCollection } from '../../../src/domain/suivi/suiviCollection';
 import { SuiviAlimentation } from '../../../src/domain/suivi/suiviAlimentation';
 import { SuiviTransport } from '../../../src/domain/suivi/suiviTransport';
+import { Suivi } from '../../../src/domain/suivi/suivi';
 
 describe('Objet SuiviCollection', () => {
   it('mergeAll : should merge ok all data', () => {
@@ -44,11 +45,11 @@ describe('Objet SuiviCollection', () => {
     let suiviCollection = new SuiviCollection();
     expect(suiviCollection.getLastSuiviDate()).toStrictEqual(undefined);
   });
-  it('getLastSuiviDate : should return merged data of last date', () => {
+  it('getOrderedSuiviCompletList : should return merged data of last date', () => {
     // GIVEN
-    let a1 = new SuiviAlimentation(new Date(1));
-    let a2 = new SuiviAlimentation(new Date(1000000));
-    let t1 = new SuiviTransport(new Date(1000005));
+    let a1 = new SuiviAlimentation(new Date(Date.parse('2023-01-01')));
+    let a2 = new SuiviAlimentation(new Date(Date.parse('2023-01-02')));
+    let t1 = new SuiviTransport(new Date(Date.parse('2023-01-02')));
     a1.viande_rouge = 1;
     a1.total_impact = 2;
     a2.viande_rouge = 2;
@@ -60,33 +61,36 @@ describe('Objet SuiviCollection', () => {
     suiviCollection.transports = [t1];
 
     // WHEN
-    const result = suiviCollection.getLastDayMergedSuivi();
+    const result = suiviCollection.getOrderedSuiviCompletList();
 
     // THEN
-    expect(result['viande_rouge']).toEqual(2);
-    expect(result['km_voiture']).toEqual(12);
-    expect(result['total_impact']).toEqual(9); //2+3+4
+    expect(result).toHaveLength(2);
+    expect(result[1].mergeAllToSingleSuivi()['viande_rouge']).toEqual(2);
+    expect(result[1].mergeAllToSingleSuivi()['km_voiture']).toEqual(12);
+    expect(result[1].mergeAllToSingleSuivi()['total_impact']).toEqual(7); //3+4
   });
-  it('getLastSuiviDate : return undefined when empty collection', () => {
+  it('getOrderedSuiviCompletList : return undefined when empty collection', () => {
     // GIVEN
     let suiviCollection = new SuiviCollection();
 
     // WHEN
-    const result = suiviCollection.getLastDayMergedSuivi();
+    const result = suiviCollection.getOrderedSuiviCompletList();
 
     // THEN
-    expect(result).toStrictEqual(undefined);
+    expect(result).toHaveLength(0);
   });
-  it('getLastSuiviDate : return element of single suivi collection', () => {
+  it('getOrderedSuiviCompletList : return element of single suivi collection', () => {
     // GIVEN
     let suiviCollection = new SuiviCollection();
     let a1 = new SuiviAlimentation(new Date(1));
+    a1.poisson = 12;
     suiviCollection.alimentation = [a1];
 
     // WHEN
-    const result = suiviCollection.getLastDayMergedSuivi();
+    const result = suiviCollection.getOrderedSuiviCompletList();
 
     // THEN
-    expect(result).toStrictEqual(a1);
+    expect(result).toHaveLength(1);
+    expect(result[0].mergeAllToSingleSuivi()['poisson']).toEqual(12);
   });
 });

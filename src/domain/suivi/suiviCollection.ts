@@ -1,5 +1,6 @@
 import { Suivi } from './suivi';
 import { SuiviAlimentation } from './suiviAlimentation';
+import { SuiviComplet } from './suiviComplet';
 import { SuiviTransport } from './suiviTransport';
 
 export class SuiviCollection {
@@ -31,22 +32,24 @@ export class SuiviCollection {
   getLastSuivi(): Suivi | undefined {
     return this.mergeAllAndOrderByDate().pop();
   }
-  getLastDayMergedSuivi(startIndex?: number): Suivi | undefined {
-    let list = this.mergeAllAndOrderByDate();
-    if (list.length === 0) return undefined;
-    if (list.length === 1) return list[0];
-    let index = startIndex | list.length - 1;
-    const currentDateString = list[index].getDate().toDateString();
-    let result = list[index];
-    index--;
-    while (
-      index >= 0 &&
-      list[index].getDate().toDateString() === currentDateString
-    ) {
-      result = result.mergeSuiviDataWith(list[index]);
-      index--;
-    }
+  getOrderedSuiviCompletList(): SuiviComplet[] {
+    let result: SuiviComplet[] = [];
 
-    return result;
+    let listSuivi = this.mergeAllAndOrderByDate();
+    if (listSuivi.length === 0) return result;
+
+    let currentSuiviComplet = new SuiviComplet();
+
+    listSuivi.reverse().forEach((suivi) => {
+      if (currentSuiviComplet.isOfSameDay(suivi)) {
+        currentSuiviComplet.addSuiviOfTypeIfNotAlreadyThereAndSameDay(suivi);
+      } else {
+        result.push(currentSuiviComplet);
+        currentSuiviComplet = new SuiviComplet();
+        currentSuiviComplet.addSuiviOfTypeIfNotAlreadyThereAndSameDay(suivi);
+      }
+    });
+    result.push(currentSuiviComplet);
+    return result.reverse();
   }
 }

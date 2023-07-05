@@ -59,7 +59,7 @@ export class Suivi {
     result['total_impact'] = this.getTotalImpact() + suivi.getTotalImpact();
     return result;
   }
-  private cloneAndClean(input?: object): object {
+  cloneAndClean(input?: object): object {
     let thisToClean = { ...(input ? input : this) };
     delete thisToClean['alimentation'];
     delete thisToClean['transport'];

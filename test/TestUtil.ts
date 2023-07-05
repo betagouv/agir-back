@@ -41,6 +41,9 @@ export class TestUtil {
     await this.prisma.utilisateur.deleteMany();
   }
 
+  static getDate(date: string) {
+    return new Date(Date.parse(date));
+  }
   static async create(type: string, override?) {
     await this.prisma[type].create({
       data: this[type.concat('Data')](override),
