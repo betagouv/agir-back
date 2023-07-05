@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { SuiviRepository } from '../infrastructure/repository/suivi.repository';
 import { Suivi } from '../domain/suivi/suivi';
-import { SuiviCollection } from '../../src/domain/suivi/suiviCollection';
-import { SuiviComplet } from '../../src/domain/suivi/suiviComplet';
+import { SuiviCollection } from '../domain/suivi/suiviCollection';
+import { SuiviComplet } from '../domain/suivi/suiviComplet';
 
 @Injectable()
 export class SuiviUsecase {
