@@ -5,6 +5,7 @@ export class Suivi {
   }
   static alimentation = 'alimentation';
   static transport = 'transport';
+  static merge = 'merge';
 
   private type: string;
   private date: Date;
@@ -45,10 +46,24 @@ export class Suivi {
   calculImpacts() {
     throw new Error('calculImpacts() should be implemented in subclass');
   }
+  getTotalImpact(): number {
+    return this['total_impact'] ? this['total_impact'] : 0;
+  }
+  setTotalImpact(impact: number) {
+    this['total_impact'] = impact;
+  }
+  mergeSuiviDataWith(suivi: Suivi): Suivi {
+    let result = new Suivi(Suivi.merge, this.getDate());
+    result.injectValuesFromObject(suivi);
+    result.injectValuesFromObject(this);
+    result['total_impact'] = this.getTotalImpact() + suivi.getTotalImpact();
+    return result;
+  }
   private cloneAndClean(input?: object): object {
     let thisToClean = { ...(input ? input : this) };
     delete thisToClean['alimentation'];
     delete thisToClean['transport'];
+    delete thisToClean['merge'];
     delete thisToClean['type'];
     delete thisToClean['date'];
     return thisToClean;

@@ -34,8 +34,13 @@ export class SuiviUsecase {
       undefined,
       20,
     );
+    const lastSuivi = suiviCollection.getLastDayMergedSuivi();
+    if (!lastSuivi) {
+      return {};
+    }
     return {
-      date_dernier_suivi: suiviCollection.getLastSuiviDate(),
+      date_dernier_suivi: lastSuivi.getDate(),
+      impact_dernier_suivi: lastSuivi.getTotalImpact(),
     };
   }
 }

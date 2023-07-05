@@ -24,11 +24,17 @@ describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
     await TestUtil.create('utilisateur');
     await TestUtil.create('suivi', { id: '1', created_at: new Date(1) });
     await TestUtil.create('suivi', { id: '2', created_at: new Date(2) });
-    await TestUtil.create('suivi', { id: '3', created_at: new Date(5) });
+    await TestUtil.create('suivi', {
+      id: '3',
+      created_at: new Date(5),
+      attributs: ['total_impact'],
+      valeurs: ['50'],
+    });
     const response = await TestUtil.getServer().get(
       '/utilisateurs/utilisateur-id/suivi_dashboard',
     );
     expect(response.status).toBe(200);
     expect(Date.parse(response.body.date_dernier_suivi)).toEqual(5);
+    expect(response.body.impact_dernier_suivi).toEqual(50);
   });
 });
