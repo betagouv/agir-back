@@ -5,21 +5,54 @@ import { Empreinte, Prisma } from '@prisma/client';
 import Publicodes from 'publicodes';
 import rules from '../data/co2.json';
 
-import * as path from 'path';
-import * as fs from 'fs';
+type categorieBilan =
+  | 'bilan'
+  | 'alimentation'
+  | 'transport'
+  | 'divers'
+  | 'services societaux'
+  | 'logement';
 
 @Injectable()
 export class BilanRepository {
   constructor(private prisma: PrismaService) {}
 
-  async evaluateSituation(simulation: string): Promise<number> {
+  async evaluate(simulation: string, type: categorieBilan): Promise<number> {
     const engine = new Publicodes(rules as Record<string, any>);
 
     const result = engine
       .setSituation(JSON.parse(simulation || '{}'))
-      .evaluate('bilan').nodeValue as string;
+      .evaluate(type).nodeValue as string;
 
     return parseInt(result);
+  }
+
+  async evaluateDetails(simulation: string): Promise<object> {
+    const engine = new Publicodes(rules as Record<string, any>);
+
+    const transport = engine
+      .setSituation(JSON.parse(simulation || '{}'))
+      .evaluate('transport').nodeValue as string;
+    const logement = engine
+      .setSituation(JSON.parse(simulation || '{}'))
+      .evaluate('logement').nodeValue as string;
+    const divers = engine
+      .setSituation(JSON.parse(simulation || '{}'))
+      .evaluate('divers').nodeValue as string;
+    const alimentation = engine
+      .setSituation(JSON.parse(simulation || '{}'))
+      .evaluate('alimentation').nodeValue as string;
+    const services_societaux = engine
+      .setSituation(JSON.parse(simulation || '{}'))
+      .evaluate('services societaux').nodeValue as string;
+
+    return {
+      transport,
+      logement,
+      divers,
+      alimentation,
+      services_societaux,
+    };
   }
 
   async getSituationforUserId(utilisateurId: string): Promise<string | null> {
@@ -31,7 +64,7 @@ export class BilanRepository {
 
   async getBilanByUtilisateurId(utilisateurId): Promise<number> {
     const situation = await this.getSituationforUserId(utilisateurId);
-    return this.evaluateSituation(situation);
+    return this.evaluate(situation, 'bilan');
   }
 
   async create(

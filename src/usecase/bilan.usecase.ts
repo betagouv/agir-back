@@ -13,13 +13,15 @@ export class BilanUsecase {
       utilisateurId,
     );
 
-    const result = this.bilanRepository.evaluateSituation(situation);
+    const result = this.bilanRepository.evaluate(situation, 'bilan');
 
     return result;
   }
 
-  async addBilanForUser(utilisateurId: string, situation: string): Promise<any> {
-
+  async addBilanForUser(
+    utilisateurId: string,
+    situation: string,
+  ): Promise<any> {
     const result = await this.bilanRepository.create(situation, utilisateurId);
 
     return result;
