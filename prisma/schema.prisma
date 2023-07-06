@@ -35,6 +35,7 @@ model Utilisateur {
 
 model Interaction {
   id            String      @id
+  content_id    String?
   type          String
   titre         String
   soustitre     String?

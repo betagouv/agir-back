@@ -23,6 +23,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     await TestUtil.prisma.interaction.create({
       data: {
         id: '1',
+        content_id: '123',
         type: 'quizz',
         titre: 'the quizz !',
         categorie: 'apprendre',
@@ -43,6 +44,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual({
       id: '1',
+      content_id: '123',
       type: 'quizz',
       titre: 'the quizz !',
       soustitre: null,
