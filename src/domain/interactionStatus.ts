@@ -1,5 +1,5 @@
 export type InteractionStatus = {
-  seen?: boolean;
+  seen?: number;
   clicked?: boolean;
   done?: boolean;
   succeeded?: boolean;

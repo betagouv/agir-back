@@ -45,7 +45,7 @@ model Interaction {
   frequence     String?
   image_url     String?
   url           String?
-  seen          Boolean     @default(false)
+  seen          Int         @default(0)
   seen_at       DateTime?
   clicked       Boolean     @default(false)
   clicked_at    DateTime?

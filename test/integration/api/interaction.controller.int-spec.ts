@@ -58,7 +58,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       frequence: null,
       image_url: null,
       url: null,
-      seen: false,
+      seen: 0,
       seen_at: null,
       succeeded: false,
       succeeded_at: null,
@@ -99,6 +99,6 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     expect(dbInteraction.done).toStrictEqual(true);
     expect(dbInteraction.clicked).toStrictEqual(false);
     expect(dbInteraction.succeeded).toStrictEqual(false);
-    expect(dbInteraction.seen).toStrictEqual(false);
+    expect(dbInteraction.seen).toStrictEqual(0);
   });
 });

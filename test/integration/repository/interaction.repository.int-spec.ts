@@ -92,7 +92,7 @@ describe('InteractionRepository', () => {
     });
     expect(result.done).toStrictEqual(true);
     expect(result.clicked).toStrictEqual(false);
-    expect(result.seen).toStrictEqual(false);
+    expect(result.seen).toStrictEqual(0);
     expect(result.succeeded).toStrictEqual(false);
   });
   it('update all status ok', async () => {
@@ -118,14 +118,14 @@ describe('InteractionRepository', () => {
       done: true,
       clicked: true,
       succeeded: true,
-      seen: true,
+      seen: 2,
     });
     const result = await TestUtil.prisma.interaction.findUnique({
       where: { id: '1' },
     });
     expect(result.done).toStrictEqual(true);
     expect(result.clicked).toStrictEqual(true);
-    expect(result.seen).toStrictEqual(true);
+    expect(result.seen).toStrictEqual(2);
     expect(result.succeeded).toStrictEqual(true);
   });
 });
