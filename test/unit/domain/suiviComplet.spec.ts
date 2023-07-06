@@ -49,8 +49,8 @@ describe('Objet SuiviComplet', () => {
     let suiviComplet = new SuiviComplet();
     let a1 = new SuiviAlimentation();
     let a2 = new SuiviAlimentation();
-    a1.oeufs = 1;
-    a2.oeufs = 2;
+    a1.vegetarien = 1;
+    a2.vegetarien = 2;
 
     // WHEN
     suiviComplet.addSuiviOfTypeIfNotAlreadyThereAndSameDay(a1);
@@ -58,7 +58,7 @@ describe('Objet SuiviComplet', () => {
 
     // THEN
     expect(suiviComplet.getNombreSuivi()).toEqual(1);
-    expect(suiviComplet.mergeAllToSingleSuivi()['oeufs']).toEqual(1);
+    expect(suiviComplet.mergeAllToSingleSuivi()['vegetarien']).toEqual(1);
   });
   it('addSuiviOfTypeIfNotAlreadyThere : should not add second suivi of different date', () => {
     // GIVEN
@@ -78,7 +78,7 @@ describe('Objet SuiviComplet', () => {
     let suiviComplet = new SuiviComplet();
     let a1 = new SuiviAlimentation();
     let t1 = new SuiviTransport();
-    a1.oeufs = 1;
+    a1.vegetarien = 1;
     t1.km_voiture = 200;
 
     // WHEN
@@ -87,7 +87,7 @@ describe('Objet SuiviComplet', () => {
 
     // THEN
     expect(suiviComplet.getNombreSuivi()).toEqual(2);
-    expect(suiviComplet.mergeAllToSingleSuivi()['oeufs']).toEqual(1);
+    expect(suiviComplet.mergeAllToSingleSuivi()['vegetarien']).toEqual(1);
     expect(suiviComplet.mergeAllToSingleSuivi()['km_voiture']).toEqual(200);
   });
   it('computeLastVariationOfList : ', () => {

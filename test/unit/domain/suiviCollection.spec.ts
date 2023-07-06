@@ -83,7 +83,7 @@ describe('Objet SuiviCollection', () => {
     // GIVEN
     let suiviCollection = new SuiviCollection();
     let a1 = new SuiviAlimentation(new Date(1));
-    a1.poisson = 12;
+    a1.poisson_blanc = 12;
     suiviCollection.alimentation = [a1];
 
     // WHEN
@@ -91,6 +91,6 @@ describe('Objet SuiviCollection', () => {
 
     // THEN
     expect(result).toHaveLength(1);
-    expect(result[0].mergeAllToSingleSuivi()['poisson']).toEqual(12);
+    expect(result[0].mergeAllToSingleSuivi()['poisson_blanc']).toEqual(12);
   });
 });

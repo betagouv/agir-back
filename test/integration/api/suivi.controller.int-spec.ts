@@ -229,7 +229,7 @@ describe('/suivis (API test)', () => {
       .send({
         type: 'alimentation',
         viande_rouge: 11,
-        poisson: 1,
+        poisson_blanc: 1,
         tres_cher: true,
       });
     expect(response.status).toBe(201);
@@ -239,7 +239,7 @@ describe('/suivis (API test)', () => {
     expect(response.body).toHaveLength(1);
     expect(response.body[0].viande_rouge).toStrictEqual(11);
     expect(response.body[0].viande_rouge_impact).toStrictEqual(44000);
-    expect(response.body[0].total_impact).toStrictEqual(44500);
+    expect(response.body[0].total_impact).toStrictEqual(44400);
     expect(response.body[0].tres_cher).toStrictEqual(true);
   });
 });
