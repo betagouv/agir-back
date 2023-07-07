@@ -45,4 +45,17 @@ export class UtilisateurRepository {
       },
     });
   }
+
+  async addPointsToUtilisateur(utilisateurId: string, points: number) {
+    await this.prisma.utilisateur.update({
+      where: {
+        id: utilisateurId,
+      },
+      data: {
+        points: {
+          increment: points,
+        },
+      },
+    });
+  }
 }

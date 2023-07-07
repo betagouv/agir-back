@@ -66,4 +66,32 @@ export class TestUtil {
       ...override,
     };
   }
+  private static interactionData(override?) {
+    return {
+      id: 'interaction-id',
+      content_id: 'quizz-id',
+      type: 'type',
+      titre: 'titre',
+      soustitre: 'soustitre',
+      categorie: 'Consommation',
+      tags: ['quizz', 'nourriture', 'conso'],
+      duree: '⏱️ < 1 minute',
+      frequence: '🔄 1x/jour',
+      image_url: 'imageurl',
+      url: 'url',
+      seen: 0,
+      seen_at: null,
+      clicked: false,
+      clicked_at: null,
+      done: false,
+      done_at: null,
+      succeeded: false,
+      succeeded_at: null,
+      difficulty: 1,
+      points: 5,
+      reco_score: 100,
+      utilisateurId: 'utilisateur-id',
+      ...override,
+    };
+  }
 }

@@ -71,34 +71,40 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     });
   });
   it('PATCH /utilisateurs/id/interactions/id - patch status of single interaction', async () => {
-    await TestUtil.prisma.utilisateur.createMany({
-      data: [{ id: '1', name: 'bob' }],
-    });
-    await TestUtil.prisma.interaction.create({
-      data: {
-        id: '123',
-        type: 'quizz',
-        titre: 'the quizz !',
-        categorie: 'apprendre',
-        tags: ['a', 'b', 'c'],
-        difficulty: 1,
-        points: 5,
-        reco_score: 100,
-        utilisateurId: '1',
-      },
-    });
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction');
     const response = await TestUtil.getServer()
-      .patch('/utilisateurs/1/interactions/123')
+      .patch('/utilisateurs/utilisateur-id/interactions/interaction-id')
       .send({
         done: true,
       });
     expect(response.status).toBe(200);
     const dbInteraction = await TestUtil.prisma.interaction.findUnique({
-      where: { id: '123' },
+      where: { id: 'interaction-id' },
+    });
+    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
     });
     expect(dbInteraction.done).toStrictEqual(true);
     expect(dbInteraction.clicked).toStrictEqual(false);
     expect(dbInteraction.succeeded).toStrictEqual(false);
     expect(dbInteraction.seen).toStrictEqual(0);
+    expect(dbUtilisateur.points).toStrictEqual(5);
+  });
+  it('PATCH /utilisateurs/id/interactions/id - does not add points when already done', async () => {
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      done: true,
+    });
+    const response = await TestUtil.getServer()
+      .patch('/utilisateurs/utilisateur-id/interactions/interaction-id')
+      .send({
+        done: true,
+      });
+    expect(response.status).toBe(200);
+    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(dbUtilisateur.points).toStrictEqual(0);
   });
 });

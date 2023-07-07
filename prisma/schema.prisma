@@ -25,6 +25,7 @@ model Suivi {
 model Utilisateur {
   id           String        @id
   name         String
+  points       Int           @default(0)
   dashboard    Dashboard?
   empreintes   Empreinte[]
   interactions Interaction[]

@@ -28,10 +28,10 @@ export class IntractionsController {
   }
   @Patch('utilisateurs/:utilisateurId/interactions/:interactionId')
   async patchInteractionStatus(
+    @Param('utilisateurId') utilisateurId: string,
     @Param('interactionId') interactionId: string,
     @Body() body: any,
   ) {
-    // utilisateurId pour le moment pas utilisé
     const status: InteractionStatus = {
       seen: body.seen,
       clicked: body.clicked,
@@ -39,6 +39,10 @@ export class IntractionsController {
       succeeded: body.succeeded,
     };
 
-    await this.interactionsUsecase.updateStatus(interactionId, status);
+    await this.interactionsUsecase.updateStatus(
+      utilisateurId,
+      interactionId,
+      status,
+    );
   }
 }

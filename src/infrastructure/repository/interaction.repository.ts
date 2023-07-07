@@ -7,6 +7,12 @@ import { InteractionStatus } from '../../../src/domain/interactionStatus';
 export class InteractionRepository {
   constructor(private prisma: PrismaService) {}
 
+  async getInteractionById(interactionId): Promise<Interaction | null> {
+    return this.prisma.interaction.findUnique({
+      where: { id: interactionId },
+    });
+  }
+
   async listInteractionsByUtilisateurId(
     utilisateurId: string,
   ): Promise<Interaction[] | null> {
