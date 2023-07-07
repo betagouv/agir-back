@@ -28,6 +28,7 @@ describe('EvaluerQuizzUsecase', () => {
         id: '1',
         solution: '11',
         libelle: 'bla',
+        texte_riche_explication: 'bla bla bla',
         quizzId: 'quizzId',
         propositions: [],
       };
@@ -35,6 +36,7 @@ describe('EvaluerQuizzUsecase', () => {
         id: '2',
         solution: '22',
         libelle: 'bla',
+        texte_riche_explication: 'bla bla bla',
         quizzId: 'quizzId',
         propositions: [],
       };
@@ -54,6 +56,7 @@ describe('EvaluerQuizzUsecase', () => {
         id: '1',
         solution: '11',
         libelle: 'bla',
+        texte_riche_explication: 'bla bla bla',
         quizzId: 'quizzId',
         propositions: [],
       };
@@ -61,6 +64,7 @@ describe('EvaluerQuizzUsecase', () => {
         id: '2',
         solution: '22',
         libelle: 'bla',
+        texte_riche_explication: 'bla bla bla',
         quizzId: 'quizzId',
         propositions: [],
       };

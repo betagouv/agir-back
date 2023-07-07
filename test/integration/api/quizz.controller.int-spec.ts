@@ -14,94 +14,44 @@ describe('/Quizz (API test)', () => {
   });
 
   it('GET /quizz/id - get a quizz content by id', async () => {
-    await TestUtil.prisma.quizz.create({
-      data: { id: '1', titre: 'The Quizz !' },
-    });
-    await TestUtil.prisma.quizzQuestion.createMany({
-      data: [
-        {
-          id: '1',
-          libelle: 'question1',
-          solution: '10',
-          propositions: ['1', '5', '10'],
-          quizzId: '1',
-        },
-        {
-          id: '2',
-          libelle: 'question2',
-          solution: '1',
-          propositions: ['1', '2'],
-          quizzId: '1',
-        },
-      ],
-    });
-    const response = await TestUtil.getServer().get('/quizz/1');
+    await TestUtil.create('quizz');
+    await TestUtil.create('quizzQuestion');
+    await TestUtil.create('quizzQuestion', { id: 'quizzQuestion-id2' });
+    const response = await TestUtil.getServer().get('/quizz/quizz-id');
     expect(response.status).toBe(200);
-    expect(response.body.titre).toEqual('The Quizz !');
+    expect(response.body.titre).toEqual('titre');
     expect(response.body['questions']).toHaveLength(2);
+    expect(response.body['questions'][0].solution).toBeDefined();
+    expect(response.body['questions'][0].texte_riche_explication).toBeDefined();
   });
 
   it('POST /quizz/id/evaluer - compute a success quizz result', async () => {
-    await TestUtil.prisma.utilisateur.create({
-      data: { id: 'userId', name: 'bob' },
-    });
-    await TestUtil.prisma.quizz.create({
-      data: { id: '1', titre: 'The Quizz !' },
-    });
-    await TestUtil.prisma.quizzQuestion.createMany({
-      data: [
-        {
-          id: '1',
-          libelle: 'question1',
-          solution: '10',
-          propositions: ['1', '5', '10'],
-          quizzId: '1',
-        },
-        {
-          id: '2',
-          libelle: 'question2',
-          solution: '1',
-          propositions: ['1', '2'],
-          quizzId: '1',
-        },
-      ],
-    });
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('quizz');
+    await TestUtil.create('quizzQuestion');
+    await TestUtil.create('quizzQuestion', { id: 'quizzQuestion-id2' });
     const response = await TestUtil.getServer()
-      .post('/quizz/1/evaluer')
+      .post('/quizz/quizz-id/evaluer')
       .send({
-        utilisateur: 'userId',
-        reponses: [{ '1': '10' }, { '2': '1' }],
+        utilisateur: 'utilisateur-id',
+        reponses: [{ 'quizzQuestion-id': '10' }, { 'quizzQuestion-id2': '10' }],
       });
     expect(response.status).toBe(200);
     expect(response.body.resultat).toEqual(true);
   });
   it('POST /quizz/id/evaluer - compute a fail quizz result', async () => {
-    await TestUtil.prisma.quizz.create({
-      data: { id: '1', titre: 'The Quizz !' },
-    });
-    await TestUtil.prisma.quizzQuestion.createMany({
-      data: [
-        {
-          id: '1',
-          libelle: 'question1',
-          solution: '10',
-          propositions: ['1', '5', '10'],
-          quizzId: '1',
-        },
-        {
-          id: '2',
-          libelle: 'question2',
-          solution: '1',
-          propositions: ['1', '2'],
-          quizzId: '1',
-        },
-      ],
-    });
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('quizz');
+    await TestUtil.create('quizzQuestion');
+    await TestUtil.create('quizzQuestion', { id: 'quizzQuestion-id2' });
     const response = await TestUtil.getServer()
-      .post('/quizz/1/evaluer')
+      .post('/quizz/quizz-id/evaluer')
       .send({
-        utilisateur: 'Dorian',
-        reponses: [{ '1': '10' }, { '2': 'bad' }],
+        utilisateur: 'utilisateur-id',
+        reponses: [
+          { 'quizzQuestion-id': '10' },
+          { 'quizzQuestion-id2': 'bad' },
+        ],
       });
     expect(response.status).toBe(200);
     expect(response.body.resultat).toEqual(false);

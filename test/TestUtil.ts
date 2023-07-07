@@ -73,6 +73,24 @@ export class TestUtil {
       ...override,
     };
   }
+  private static quizzData(override?) {
+    return {
+      id: 'quizz-id',
+      titre: 'titre',
+      ...override,
+    };
+  }
+  private static quizzQuestionData(override?) {
+    return {
+      id: 'quizzQuestion-id',
+      libelle: 'libelle',
+      solution: '10',
+      propositions: ['1', '5', '10'],
+      quizzId: 'quizz-id',
+      texte_riche_explication: 'bla bla bla',
+      ...override,
+    };
+  }
   private static interactionData(override?) {
     return {
       id: 'interaction-id',
