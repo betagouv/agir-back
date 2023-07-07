@@ -24,6 +24,9 @@ export class UtilisateurRepository {
       where: {
         id,
       },
+      include : {
+        badges: true
+      }
     });
   }
 

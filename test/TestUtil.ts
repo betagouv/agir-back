@@ -64,6 +64,15 @@ export class TestUtil {
       ...override,
     };
   }
+  private static badgeData(override?) {
+    return {
+      id: 'badge-id',
+      type: 'type',
+      titre: 'titre',
+      utilisateurId: 'utilisateur-id',
+      ...override,
+    };
+  }
   private static interactionData(override?) {
     return {
       id: 'interaction-id',

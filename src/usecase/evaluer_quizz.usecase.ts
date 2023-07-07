@@ -2,10 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { QuizzQuestion } from '@prisma/client';
 import { BodyReponsesQuizz } from 'src/infrastructure/api/types/reponsesQuizz';
 import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
+import { BadgeRepository } from '../infrastructure/repository/badge.repository';
+import { BadgeTypeEnum } from '../domain/badgeTypeEnum';
 
 @Injectable()
 export class EvaluerQuizzUsecase {
-  constructor(private quizzRepository: QuizzRepository) {}
+  constructor(
+    private quizzRepository: QuizzRepository,
+    private badgeRepository: BadgeRepository,
+  ) {}
 
   async doIt(
     bodyReponsesQuizz: BodyReponsesQuizz,
@@ -13,6 +18,12 @@ export class EvaluerQuizzUsecase {
   ): Promise<boolean> {
     let quizz = await this.quizzRepository.getById(quizzId);
     const success = this.checkQuizz(bodyReponsesQuizz, quizz['questions']);
+    if (success) {
+      this.badgeRepository.createUniqueBadge(
+        bodyReponsesQuizz.utilisateur,
+        BadgeTypeEnum.premier_quizz,
+      );
+    }
     return success;
   }
 
@@ -25,6 +36,7 @@ export class EvaluerQuizzUsecase {
     });
     return Object.values(found)[0];
   }
+
   public checkQuizz(
     bodyReponsesQuizz: BodyReponsesQuizz,
     questions: QuizzQuestion[],

@@ -90,8 +90,10 @@ model QuizzQuestion {
 
 model Badge {
   id            String       @id
+  type          String       @unique
   titre         String
-  date          DateTime     @default(now())
   Utilisateur   Utilisateur? @relation(fields: [utilisateurId], references: [id])
-  utilisateurId String?
+  utilisateurId String
+  created_at    DateTime     @default(now())
+  updated_at    DateTime     @default(now()) @updatedAt
 }
