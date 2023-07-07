@@ -26,10 +26,10 @@ model Utilisateur {
   id           String        @id
   name         String
   points       Int           @default(0)
-  dashboard    Dashboard?
   empreintes   Empreinte[]
   interactions Interaction[]
   suivis       Suivi[]
+  badges       Badge[]
   created_at   DateTime      @default(now())
   updated_at   DateTime      @default(now()) @updatedAt
 }
@@ -73,14 +73,6 @@ model Empreinte {
   utilisateurId String
 }
 
-model Compteur {
-  id          String    @id
-  titre       String
-  valeur      String
-  dashboard   Dashboard @relation(fields: [dashboardId], references: [id])
-  dashboardId String
-}
-
 model Quizz {
   id        String          @id
   titre     String
@@ -97,19 +89,9 @@ model QuizzQuestion {
 }
 
 model Badge {
-  id          String    @id
-  titre       String
-  date        DateTime  @default(now())
-  dashboard   Dashboard @relation(fields: [dashboardId], references: [id])
-  dashboardId String
-}
-
-model Dashboard {
-  id            String      @id
-  compteurs     Compteur[]
-  badges        Badge[]
-  todoQuizz     String[]    @default([])
-  doneQuizz     String[]    @default([])
-  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
-  utilisateurId String      @unique
+  id            String       @id
+  titre         String
+  date          DateTime     @default(now())
+  Utilisateur   Utilisateur? @relation(fields: [utilisateurId], references: [id])
+  utilisateurId String?
 }
