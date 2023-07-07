@@ -39,8 +39,8 @@ describe('/utilisateurs (API test)', () => {
   it('GET /utilisateurs/id - when present', async () => {
     await TestUtil.prisma.utilisateur.createMany({
       data: [
-        { id: '1', name: 'bob' },
-        { id: '2', name: 'george' },
+        { id: '1', name: 'bob', points: 5 },
+        { id: '2', name: 'george', points: 10 },
       ],
     });
     const response = await TestUtil.getServer().get('/utilisateurs/1');
@@ -49,6 +49,8 @@ describe('/utilisateurs (API test)', () => {
     });
     expect(response.status).toBe(200);
     expect(response.body.id).toEqual('1');
+    expect(response.body.name).toEqual('bob');
+    expect(response.body.points).toEqual(5);
     expect(response.body.created_at).toEqual(dbUser.created_at.toISOString());
   });
 
