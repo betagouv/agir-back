@@ -14,7 +14,6 @@ import { BilanUsecase } from './usecase/bilan.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
 
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur.repository';
-import { CompteurRepository } from './infrastructure/repository/compteur.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
 import { QuizzQuestionRepository } from './infrastructure/repository/quizzQuestion.repository';
 import { BadgeRepository } from './infrastructure/repository/badge.repository';
@@ -47,7 +46,6 @@ import { SuiviDashboardController } from './infrastructure/api/suiviDashboard.co
     QuizzRepository,
     BilanRepository,
     QuizzQuestionRepository,
-    CompteurRepository,
     BadgeRepository,
     InteractionRepository,
     SuiviRepository,
