@@ -11,6 +11,7 @@ const suivis = {
     url: null,
     difficulty: 1,
     points: 25,
+    locked: false,
   },
 };
 module.exports = suivis;

@@ -10,6 +10,7 @@ const aides = {
     url: null,
     difficulty: 1,
     points: 20,
+    locked: false,
   },
   aide_retrofit: {
     titre: "Passer à l'électrique",
@@ -22,6 +23,7 @@ const aides = {
     url: null,
     difficulty: 1,
     points: 50,
+    locked: false,
   },
 };
 module.exports = aides;

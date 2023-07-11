@@ -66,6 +66,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       points: 5,
       reco_score: 100,
       utilisateurId: '2',
+      locked: false,
       created_at: dbInteraction.created_at.toISOString(),
       updated_at: dbInteraction.updated_at.toISOString(),
     });

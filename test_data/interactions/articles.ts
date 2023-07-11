@@ -10,6 +10,7 @@ const articles = {
     url: 'https://fr.wikipedia.org/wiki/Eau',
     difficulty: 1,
     points: 5,
+    locked: false,
   },
   article_viande: {
     titre: 'Tout savoir sur la viande',
@@ -22,6 +23,7 @@ const articles = {
     url: 'https://fr.wikipedia.org/wiki/Viande',
     difficulty: 1,
     points: 5,
+    locked: false,
   },
 };
 module.exports = articles;

@@ -54,6 +54,7 @@ model Interaction {
   done_at       DateTime?
   succeeded     Boolean     @default(false)
   succeeded_at  DateTime?
+  locked        Boolean     @default(false)
   difficulty    Int         @default(1)
   points        Int         @default(0)
   reco_score    Int         @default(1000)

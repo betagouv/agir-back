@@ -9,7 +9,8 @@
     "image_url": "https://picsum.photos/200/300",
     "url": null,
     "difficulty": 2,
-    "points": 10
+    "points": 10,
+    "locked": false
   },
   "titre": "Tout sur l'eau",
   "questions": [

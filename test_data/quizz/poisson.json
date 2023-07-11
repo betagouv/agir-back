@@ -9,7 +9,8 @@
     "image_url": "https://picsum.photos/200/300",
     "url": null,
     "difficulty": 2,
-    "points": 15
+    "points": 15,
+    "locked": false
   },
   "titre": "tous les poissons ne sont pas égaux",
   "questions": [
