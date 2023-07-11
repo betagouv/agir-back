@@ -8,7 +8,8 @@ import { SuiviAlimentation } from '../../../src/domain/suivi/suiviAlimentation';
 import { SuiviRepository } from '../../../src/infrastructure/repository/suivi.repository';
 import { Suivi } from '../../../src/domain/suivi/suivi';
 import { SuiviTransport } from '../../../src/domain/suivi/suiviTransport';
-const utilisateurs = require('../../../test_data/utilisateurs');
+import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
+const utilisateurs_content = require('../../../test_data/utilisateurs_content');
 const articles = require('../../../test_data/interactions/articles');
 const aides = require('../../../test_data/interactions/aides');
 const suivis = require('../../../test_data/interactions/suivis');
@@ -17,17 +18,10 @@ const suivis_transport = require('../../../test_data/suivis_transport');
 
 export enum TheBoolean {
   true = 'true',
-  false = 'false',
 }
 
 export enum TheTypes {
   utilisateur = 'utilisateur',
-  interaction = 'interaction',
-}
-
-export enum TheIds {
-  dorian = 'dorian',
-  livio = 'livio',
 }
 
 @Controller()
@@ -43,55 +37,28 @@ export class TestDataController {
 
   private quizz_set: Object;
 
-  @Get('testdata/:type')
-  @ApiParam({ name: 'type', enum: TheTypes })
-  async GetDataByType(@Param('type') type: string) {
-    switch (type) {
-      case 'utilisateur':
-        return utilisateurs;
-      default:
-        return `unknown type '${type}'`;
-    }
+  @Get('testdata/:id')
+  @ApiParam({ name: 'id', enum: utilisateurs_liste })
+  async GetData(@Param('id') id: string) {
+    return utilisateurs_content[id];
   }
-  @Get('testdata/:type/:id')
-  @ApiParam({ name: 'type', enum: TheTypes })
-  @ApiParam({ name: 'id', enum: TheIds })
-  async GetData(@Param('id') id: string, @Param('type') type: string) {
-    switch (type) {
-      case 'utilisateur':
-        return utilisateurs[id];
-      default:
-        return `unknown type '${type}'`;
-    }
-  }
-  @ApiParam({ name: 'type', enum: TheTypes })
-  @ApiParam({ name: 'id', enum: TheIds })
-  @ApiQuery({ name: 'deleteAllUserChildren', enum: TheBoolean })
-  @Post('testdata/:type/:id/inject')
-  async injectData(
-    @Param('id') id: string,
-    @Param('type') type: string,
-    @Query('deleteAllUserChildren') deleteAll: string,
-  ) {
-    switch (type) {
-      case 'utilisateur':
-        if (deleteAll === 'true') await this.deleteUtilisateur(id);
-        await this.upsertUtilisateur(id);
-        await this.insertArticlesForUtilisateur(id);
-        await this.insertAidesForUtilisateur(id);
-        await this.insertSuivisForUtilisateur(id);
-        await this.upsertAllQuizzDefinitions();
-        await this.insertQuizzForUtilisateur(id);
-        await this.insertSuivisAlimentationForUtilisateur(id);
-        break;
-      default:
-        return `unknown type '${type}'`;
-    }
-    return `${type} - ${id} injected OK`;
+
+  @ApiParam({ name: 'id', enum: utilisateurs_liste })
+  @Post('testdata/:id/inject')
+  async injectData(@Param('id') id: string) {
+    await this.deleteUtilisateur(id);
+    await this.upsertUtilisateur(id);
+    await this.insertArticlesForUtilisateur(id);
+    await this.insertAidesForUtilisateur(id);
+    await this.insertSuivisForUtilisateur(id);
+    await this.upsertAllQuizzDefinitions();
+    await this.insertQuizzForUtilisateur(id);
+    await this.insertSuivisAlimentationForUtilisateur(id);
+    return utilisateurs_content[id];
   }
 
   async insertSuivisAlimentationForUtilisateur(utilisateurId: string) {
-    const suivis = utilisateurs[utilisateurId].suivis;
+    const suivis = utilisateurs_content[utilisateurId].suivis;
     for (let index = 0; index < suivis.length; index++) {
       const suiviId = suivis[index];
       let suiviToCreate: Suivi;
@@ -111,7 +78,7 @@ export class TestDataController {
     }
   }
   async insertArticlesForUtilisateur(utilisateurId: string) {
-    const interactions = utilisateurs[utilisateurId].interactions;
+    const interactions = utilisateurs_content[utilisateurId].interactions;
     for (let index = 0; index < interactions.length; index++) {
       const interaction = interactions[index];
       if (articles[interaction.id]) {
@@ -126,7 +93,7 @@ export class TestDataController {
     }
   }
   async insertAidesForUtilisateur(utilisateurId: string) {
-    const interactions = utilisateurs[utilisateurId].interactions;
+    const interactions = utilisateurs_content[utilisateurId].interactions;
     for (let index = 0; index < interactions.length; index++) {
       const interaction = interactions[index];
       if (aides[interaction.id]) {
@@ -141,7 +108,7 @@ export class TestDataController {
     }
   }
   async insertSuivisForUtilisateur(utilisateurId: string) {
-    const interactions = utilisateurs[utilisateurId].interactions;
+    const interactions = utilisateurs_content[utilisateurId].interactions;
     for (let index = 0; index < interactions.length; index++) {
       const interaction = interactions[index];
       if (suivis[interaction.id]) {
@@ -156,7 +123,7 @@ export class TestDataController {
     }
   }
   async insertQuizzForUtilisateur(utilisateurId: string) {
-    const interactions = utilisateurs[utilisateurId].interactions;
+    const interactions = utilisateurs_content[utilisateurId].interactions;
     for (let index = 0; index < interactions.length; index++) {
       const interaction = interactions[index];
       if (this.quizz_set[interaction.id]) {
@@ -244,7 +211,7 @@ export class TestDataController {
     });
   }
   async upsertUtilisateur(utilisateurId: string) {
-    const clonedData = { ...utilisateurs[utilisateurId] };
+    const clonedData = { ...utilisateurs_content[utilisateurId] };
     delete clonedData.suivis;
     delete clonedData.interactions;
     await this.prisma.utilisateur.upsert({
