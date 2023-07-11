@@ -5,6 +5,22 @@ import { Empreinte, Prisma } from '@prisma/client';
 import Publicodes from 'publicodes';
 import rules from '../data/co2.json';
 
+type Bilan = {
+  bilan_carbone_annuel: number;
+  details: {
+    divers: number;
+    logement: number;
+    transport: number;
+    alimentation: number;
+    services_societaux: number;
+  };
+};
+
+type BilanExtra = Bilan & {
+  created_at: Date;
+  id: string;
+};
+
 @Injectable()
 export class BilanRepository {
   constructor(private prisma: PrismaService) {}
@@ -42,35 +58,41 @@ export class BilanRepository {
   async getSituationbyUtilisateurId(
     utilisateurId: string,
   ): Promise<string | null> {
-    const empreinte = await this.prisma.empreinte.findFirst({
+    const empreintes = await this.prisma.empreinte.findMany({
       where: { utilisateurId },
+      orderBy: { created_at: 'desc' },
+      take: 1,
     });
-    return empreinte?.situation.toString();
+    return empreintes[0]?.situation.toString();
   }
 
-  async getLastBilanByUtilisateurId(utilisateurId): Promise<object> {
-    const empreinte = await this.prisma.empreinte.findFirst({
+  async getLastBilanByUtilisateurId(utilisateurId): Promise<BilanExtra> {
+    const empreintes = await this.prisma.empreinte.findMany({
       where: { utilisateurId },
+      orderBy: { created_at: 'desc' },
+      take: 1,
     });
+    const empreinte = empreintes[0];
+    const bilan = empreinte.bilan as Bilan;
     return {
-      ...(empreinte.bilan as object),
+      ...bilan,
       created_at: empreinte.created_at,
       id: empreinte.id,
     };
   }
 
-  async getAllBilansByUtilisateurId(utilisateurId): Promise<any> {
+  async getAllBilansByUtilisateurId(utilisateurId): Promise<BilanExtra[]> {
     const empreintes = await this.prisma.empreinte.findMany({
       where: { utilisateurId },
     });
     const bilans = empreintes.map((empreinte) => {
-      return [
-        {
-          ...(empreinte.bilan as object),
-          created_at: empreinte.created_at,
-          id: empreinte.id,
-        },
-      ];
+      const bilan = empreinte.bilan as Bilan;
+      return {
+        created_at: empreinte.created_at,
+        id: empreinte.id,
+        bilan_carbone_annuel: bilan.bilan_carbone_annuel,
+        details: bilan.details,
+      };
     });
     return bilans;
   }
