@@ -1,0 +1,29 @@
+{
+  "interaction": {
+    "titre": "Petit test sur l'eau",
+    "soustitre": "bla bla",
+    "categorie": "Eau",
+    "tags": ["vetements", "eau", "consommation"],
+    "duree": "⏱️ < 1 minute",
+    "frequence": "Une fois",
+    "image_url": "https://picsum.photos/200/300",
+    "url": null,
+    "difficulty": 2,
+    "points": 10
+  },
+  "titre": "Tout sur l'eau",
+  "questions": [
+    {
+      "libelle": "Combien de litres d'eau pour un TShirt ?",
+      "solution": "2700",
+      "propositions": ["27", "270", "2700"],
+      "texte_riche_explication": "Et Non !!"
+    },
+    {
+      "libelle": "Quel est le premier gaz a effet de serre",
+      "solution": "H2O",
+      "propositions": ["H20", "CO2", "CH4"],
+      "texte_riche_explication": "Et Non !!, c'est bien la vapeur d'eau le premier gaz a effe de serre"
+    }
+  ]
+}

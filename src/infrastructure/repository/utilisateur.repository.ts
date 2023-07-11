@@ -17,6 +17,9 @@ export class UtilisateurRepository {
           created_at: 'desc',
         },
       ],
+      include: {
+        badges: true,
+      },
     });
   }
   async findUtilisateurById(id: string): Promise<Utilisateur | null> {
@@ -24,9 +27,9 @@ export class UtilisateurRepository {
       where: {
         id,
       },
-      include : {
-        badges: true
-      }
+      include: {
+        badges: true,
+      },
     });
   }
 

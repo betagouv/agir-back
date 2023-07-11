@@ -36,8 +36,17 @@ describe('/Quizz (API test)', () => {
         utilisateur: 'utilisateur-id',
         reponses: [{ 'quizzQuestion-id': '10' }, { 'quizzQuestion-id2': '10' }],
       });
+    // THEN
     expect(response.status).toBe(200);
     expect(response.body.resultat).toEqual(true);
+
+    const utilisateurDb = TestUtil.prisma.utilisateur.findUnique({
+      where: {
+        id: 'utilisateur-id',
+      },
+    });
+
+    expect(utilisateurDb['badges']).toHaveLength(1);
   });
   it('POST /quizz/id/evaluer - compute a fail quizz result', async () => {
     await TestUtil.create('utilisateur');
