@@ -5,66 +5,74 @@ import { Empreinte, Prisma } from '@prisma/client';
 import Publicodes from 'publicodes';
 import rules from '../data/co2.json';
 
-type categorieBilan =
-  | 'bilan'
-  | 'alimentation'
-  | 'transport'
-  | 'divers'
-  | 'services societaux'
-  | 'logement';
-
 @Injectable()
 export class BilanRepository {
   constructor(private prisma: PrismaService) {}
 
-  async evaluate(simulation: string, type: categorieBilan): Promise<number> {
+  async evaluateBilan(simulation: string): Promise<object> {
     const engine = new Publicodes(rules as Record<string, any>);
 
-    const result = engine
-      .setSituation(JSON.parse(simulation || '{}'))
-      .evaluate(type).nodeValue as string;
+    const categories = {
+      bilan_carbone_annuel: 'bilan',
+      transport: 'transport . empreinte',
+      logement: 'logement',
+      divers: 'divers',
+      alimentation: 'alimentation',
+      services_societaux: 'services sociétaux',
+    };
 
-    return parseInt(result);
-  }
-
-  async evaluateDetails(simulation: string): Promise<object> {
-    const engine = new Publicodes(rules as Record<string, any>);
-
-    const transport = engine
-      .setSituation(JSON.parse(simulation || '{}'))
-      .evaluate('transport').nodeValue as string;
-    const logement = engine
-      .setSituation(JSON.parse(simulation || '{}'))
-      .evaluate('logement').nodeValue as string;
-    const divers = engine
-      .setSituation(JSON.parse(simulation || '{}'))
-      .evaluate('divers').nodeValue as string;
-    const alimentation = engine
-      .setSituation(JSON.parse(simulation || '{}'))
-      .evaluate('alimentation').nodeValue as string;
-    const services_societaux = engine
-      .setSituation(JSON.parse(simulation || '{}'))
-      .evaluate('services societaux').nodeValue as string;
+    Object.keys(categories).forEach(function (key) {
+      categories[key] = engine
+        .setSituation(JSON.parse(simulation || '{}'))
+        .evaluate(categories[key]).nodeValue as string;
+    });
 
     return {
-      transport,
-      logement,
-      divers,
-      alimentation,
-      services_societaux,
+      bilan_carbone_annuel: categories['bilan_carbone_annuel'],
+      details: {
+        transport: categories['transport'],
+        logement: categories['logement'],
+        divers: categories['divers'],
+        alimentation: categories['alimentation'],
+        services_societaux: categories['services_societaux'],
+      },
     };
   }
 
-  async getSituationforUserId(utilisateurId: string): Promise<string | null> {
+  async getSituationbyUtilisateurId(
+    utilisateurId: string,
+  ): Promise<string | null> {
     const empreinte = await this.prisma.empreinte.findFirst({
       where: { utilisateurId },
     });
-    return empreinte?.situation;
+    return empreinte?.situation.toString();
   }
 
-  async getBilanByUtilisateurId(utilisateurId): Promise<number> {
-    const situation = await this.getSituationforUserId(utilisateurId);
-    return this.evaluate(situation, 'bilan');
+  async getLastBilanByUtilisateurId(utilisateurId): Promise<object> {
+    const empreinte = await this.prisma.empreinte.findFirst({
+      where: { utilisateurId },
+    });
+    return {
+      ...(empreinte.bilan as object),
+      created_at: empreinte.created_at,
+      id: empreinte.id,
+    };
+  }
+
+  async getAllBilansByUtilisateurId(utilisateurId): Promise<any> {
+    const empreintes = await this.prisma.empreinte.findMany({
+      where: { utilisateurId },
+    });
+    const bilans = empreintes.map((empreinte) => {
+      return [
+        {
+          ...(empreinte.bilan as object),
+          created_at: empreinte.created_at,
+          id: empreinte.id,
+        },
+      ];
+    });
+    return bilans;
   }
 
   async create(
@@ -72,15 +80,13 @@ export class BilanRepository {
     utilisateurId: any,
   ): Promise<Empreinte | null> {
     let response;
-
-    console.log(situation);
-
     try {
       response = await this.prisma.empreinte.create({
         data: {
           id: uuidv4(),
           situation: situation,
           utilisateurId,
+          bilan: await this.evaluateBilan(situation),
         },
       });
     } catch (error) {

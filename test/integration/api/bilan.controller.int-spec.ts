@@ -13,7 +13,7 @@ describe('/bilan (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('GET /bilan/name - get a bilan by id', async () => {
+  it('GET /utilisateur/id/bilans/last - get last bilan by id user', async () => {
     await TestUtil.prisma.utilisateur.create({
       data: { id: '1', name: 'bob' },
     });
@@ -23,13 +23,24 @@ describe('/bilan (API test)', () => {
         id: 'empreinteID',
         utilisateurId: '1',
         situation: `{ "transport . voiture . propriétaire": "'false'","transport . voiture . gabarit": "'SUV'","transport . voiture . motorisation": "'thermique'",   "alimentation . boisson . chaude . café . nombre": 4,   "transport . voiture . thermique . carburant": "'essence E85'" }`,
+        bilan: {
+          details: {
+            divers: 852,
+            logement: 1424,
+            transport: 1854,
+            alimentation: 2014,
+            services_societaux: 1553,
+          },
+          bilan_carbone_annuel: 7700,
+        },
       },
     });
 
-    const response = await TestUtil.getServer().get('/bilan/1');
-
+    const response = await TestUtil.getServer().get(
+      '/utilisateur/1/bilans/last',
+    );
     expect(response.status).toBe(200);
     // cette valeur est amenée à évoluer avec le modéle publicode co2
-    expect(response.body.bilan).toBe(7700);
+    expect(response.body.bilan_carbone_annuel).toBe(7700);
   });
 });
