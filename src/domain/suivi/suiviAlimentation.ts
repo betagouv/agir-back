@@ -19,12 +19,12 @@ export class SuiviAlimentation extends Suivi {
   total_impact: number = 0;
 
   calculImpacts() {
-    this.viande_rouge_impact = this.viande_rouge * 4000;
-    this.viande_blanche_impact = this.viande_blanche * 1000;
-    this.poisson_rouge_impact = this.poisson_rouge * 500;
-    this.poisson_blanc_impact = this.poisson_blanc * 400;
-    this.vegetarien_impact = this.vegetarien * 300;
-    this.vegetalien_impact = this.vegetalien_impact * 100;
+    this.viande_rouge_impact = this.viande_rouge * 5510;
+    this.viande_blanche_impact = this.viande_blanche * 2098;
+    this.poisson_rouge_impact = this.poisson_rouge * 1630;
+    this.poisson_blanc_impact = this.poisson_blanc * 2368;
+    this.vegetarien_impact = this.vegetarien * 1115;
+    this.vegetalien_impact = this.vegetalien * 785;
 
     this.total_impact =
       this.viande_rouge_impact +

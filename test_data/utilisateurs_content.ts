@@ -1,6 +1,6 @@
 const utilisateurs = {
   dorian: {
-    name: 'Dorian',
+    name: 'Dorian_test',
     points: 0,
     interactions: [
       { id: 'article_eau', reco_score: 5 },
@@ -11,7 +11,7 @@ const utilisateurs = {
     suivis: ['sa1', 'sa2', 'st1'],
   },
   livio: {
-    name: 'Livio',
+    name: 'Livio_test',
     points: 36,
     interactions: [
       { id: 'aide_velo', reco_score: 4 },

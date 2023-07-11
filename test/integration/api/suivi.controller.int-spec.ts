@@ -238,8 +238,8 @@ describe('/suivis (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0].viande_rouge).toStrictEqual(11);
-    expect(response.body[0].viande_rouge_impact).toStrictEqual(44000);
-    expect(response.body[0].total_impact).toStrictEqual(44400);
+    expect(response.body[0].viande_rouge_impact).toStrictEqual(60610);
+    expect(response.body[0].total_impact).toStrictEqual(62978);
     expect(response.body[0].tres_cher).toStrictEqual(true);
   });
 });

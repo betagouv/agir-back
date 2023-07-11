@@ -23,10 +23,10 @@ export class SuiviTransport extends Suivi {
   total_impact: number = 0;
 
   calculImpacts() {
-    this.km_voiture_impact = this.km_voiture * 4000;
-    this.km_scooter_impact = this.km_scooter * 1000;
-    this.velo_impact = this.velo * 500;
-    this.pied_impact = this.pied * 50;
+    this.km_voiture_impact = this.km_voiture * 162;
+    this.km_scooter_impact = this.km_scooter * 76;
+    this.velo_impact = this.velo * 20;
+    this.pied_impact = this.pied * 0;
     this.train_impact = this.train * 1000;
     this.metro_tram_impact = this.metro_tram * 500;
     this.bus_impact = this.bus * 800;
