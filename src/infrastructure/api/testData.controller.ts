@@ -114,7 +114,7 @@ export class TestDataController {
       if (suivis[interaction.id]) {
         let data = { ...suivis[interaction.id], ...interaction };
         data.id = uuidv4();
-        data.type = 'suivi';
+        data.type = 'suivi-du-jour';
         data.utilisateurId = utilisateurId;
         await this.prisma.interaction.create({
           data,
