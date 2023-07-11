@@ -81,6 +81,7 @@ model Quizz {
 
 model QuizzQuestion {
   id                      String   @id
+  ordre                   Int      @default(0)
   libelle                 String
   propositions            String[]
   solution                String

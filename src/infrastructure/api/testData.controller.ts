@@ -159,8 +159,13 @@ export class TestDataController {
           where: {
             id: questionID,
           },
-          update: { ...question },
-          create: { ...question, id: questionID, quizzId: quizzId },
+          update: { ...question, ordre: index2 + 1 },
+          create: {
+            ...question,
+            id: questionID,
+            quizzId: quizzId,
+            ordre: index2 + 1,
+          },
         });
       }
     }
