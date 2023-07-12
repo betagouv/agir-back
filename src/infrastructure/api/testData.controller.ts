@@ -15,6 +15,7 @@ const aides = require('../../../test_data/interactions/aides');
 const suivis = require('../../../test_data/interactions/suivis');
 const suivis_alimentation = require('../../../test_data/suivis_alimentation');
 const suivis_transport = require('../../../test_data/suivis_transport');
+const empreintes_utilisateur = require('../../../test_data/empreintes');
 
 export enum TheBoolean {
   true = 'true',
@@ -40,12 +41,13 @@ export class TestDataController {
   @Get('testdata/:id')
   @ApiParam({ name: 'id', enum: utilisateurs_liste })
   async GetData(@Param('id') id: string) {
-    return utilisateurs_content[id];
+    return utilisateurs_content[id] || {};
   }
 
   @ApiParam({ name: 'id', enum: utilisateurs_liste })
   @Post('testdata/:id/inject')
   async injectData(@Param('id') id: string) {
+    if (!utilisateurs_content[id]) return {};
     await this.deleteUtilisateur(id);
     await this.upsertUtilisateur(id);
     await this.insertArticlesForUtilisateur(id);
@@ -54,11 +56,13 @@ export class TestDataController {
     await this.upsertAllQuizzDefinitions();
     await this.insertQuizzForUtilisateur(id);
     await this.insertSuivisAlimentationForUtilisateur(id);
+    await this.insertEmpreintesForUtilisateur(id);
     return utilisateurs_content[id];
   }
 
   async insertSuivisAlimentationForUtilisateur(utilisateurId: string) {
     const suivis = utilisateurs_content[utilisateurId].suivis;
+    if (!suivis) return;
     for (let index = 0; index < suivis.length; index++) {
       const suiviId = suivis[index];
       let suiviToCreate: Suivi;
@@ -79,6 +83,7 @@ export class TestDataController {
   }
   async insertArticlesForUtilisateur(utilisateurId: string) {
     const interactions = utilisateurs_content[utilisateurId].interactions;
+    if (!interactions) return;
     for (let index = 0; index < interactions.length; index++) {
       const interaction = interactions[index];
       if (articles[interaction.id]) {
@@ -92,8 +97,30 @@ export class TestDataController {
       }
     }
   }
+  async insertEmpreintesForUtilisateur(utilisateurId: string) {
+    const empreintes = utilisateurs_content[utilisateurId].empreintes;
+    if (!empreintes) return;
+    for (let index = 0; index < empreintes.length; index++) {
+      const empreinteId = empreintes[index];
+      if (empreintes_utilisateur[empreinteId]) {
+        let data = {
+          ...empreintes_utilisateur[empreinteId],
+          created_at: new Date(
+            Date.parse(empreintes_utilisateur[empreinteId].date),
+          ),
+        };
+        delete data.date;
+        data.id = uuidv4();
+        data.utilisateurId = utilisateurId;
+        await this.prisma.empreinte.create({
+          data,
+        });
+      }
+    }
+  }
   async insertAidesForUtilisateur(utilisateurId: string) {
     const interactions = utilisateurs_content[utilisateurId].interactions;
+    if (!interactions) return;
     for (let index = 0; index < interactions.length; index++) {
       const interaction = interactions[index];
       if (aides[interaction.id]) {
@@ -109,6 +136,7 @@ export class TestDataController {
   }
   async insertSuivisForUtilisateur(utilisateurId: string) {
     const interactions = utilisateurs_content[utilisateurId].interactions;
+    if (!interactions) return;
     for (let index = 0; index < interactions.length; index++) {
       const interaction = interactions[index];
       if (suivis[interaction.id]) {
@@ -124,6 +152,7 @@ export class TestDataController {
   }
   async insertQuizzForUtilisateur(utilisateurId: string) {
     const interactions = utilisateurs_content[utilisateurId].interactions;
+    if (!interactions) return;
     for (let index = 0; index < interactions.length; index++) {
       const interaction = interactions[index];
       if (this.quizz_set[interaction.id]) {
@@ -219,6 +248,7 @@ export class TestDataController {
     const clonedData = { ...utilisateurs_content[utilisateurId] };
     delete clonedData.suivis;
     delete clonedData.interactions;
+    delete clonedData.empreintes;
     await this.prisma.utilisateur.upsert({
       where: {
         id: utilisateurId,

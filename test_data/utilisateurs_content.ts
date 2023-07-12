@@ -22,5 +22,16 @@ const utilisateurs = {
     ],
     suivis: ['sa1', 'st1', 'st2'],
   },
+  wojtek: {
+    name: 'Wojtek',
+    points: 10,
+    interactions: [
+      { id: 'tout_sur_leau', reco_score: 3 },
+      { id: 'article_eau', reco_score: 5 },
+      { id: 'suivi_du_jour', reco_score: 1 },
+    ],
+    suivis: ['sa1', 'sa2', 'st1', 'st2'],
+    empreintes: ['e1'],
+  },
 };
 module.exports = utilisateurs;
