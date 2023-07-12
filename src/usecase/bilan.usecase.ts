@@ -8,18 +8,25 @@ export class BilanUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private bilanRepository: BilanRepository,
   ) {}
-  async getBilanForUser(utilisateurId: string): Promise<any> {
-    const situation = await this.bilanRepository.getSituationforUserId(
+  async getLastBilanByUtilisateurId(utilisateurId: string): Promise<any> {
+    const bilan = await this.bilanRepository.getLastBilanByUtilisateurId(
       utilisateurId,
     );
 
-    const result = this.bilanRepository.evaluateSituation(situation);
+    return bilan;
+  }
+  async getAllBilansByUtilisateurId(utilisateurId: string): Promise<any> {
+    const bilans = await this.bilanRepository.getAllBilansByUtilisateurId(
+      utilisateurId,
+    );
 
-    return result;
+    return bilans;
   }
 
-  async addBilanForUser(utilisateurId: string, situation: string): Promise<any> {
-
+  async addBilanToUtilisateur(
+    utilisateurId: string,
+    situation: string,
+  ): Promise<any> {
     const result = await this.bilanRepository.create(situation, utilisateurId);
 
     return result;

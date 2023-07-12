@@ -67,7 +67,8 @@ model Interaction {
 model Empreinte {
   id            String      @id
   initial       Boolean     @default(true)
-  situation     String
+  situation     Json?
+  bilan         Json?
   created_at    DateTime    @default(now())
   updated_at    DateTime    @default(now())
   utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
