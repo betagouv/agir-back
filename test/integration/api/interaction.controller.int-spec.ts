@@ -14,62 +14,22 @@ describe('/utilisateurs/id/interactions (API test)', () => {
   });
 
   it('GET /utilisateurs/id/interactions - list all interactions', async () => {
-    await TestUtil.prisma.utilisateur.createMany({
-      data: [
-        { id: '1', name: 'bob' },
-        { id: '2', name: 'george' },
-      ],
-    });
-    await TestUtil.prisma.interaction.create({
-      data: {
-        id: '1',
-        content_id: '123',
-        type: 'quizz',
-        titre: 'the quizz !',
-        categorie: 'apprendre',
-        tags: ['a', 'b', 'c'],
-        difficulty: 1,
-        points: 5,
-        reco_score: 100,
-        utilisateurId: '2',
-      },
-    });
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction');
     const response = await TestUtil.getServer().get(
-      '/utilisateurs/2/interactions',
+      '/utilisateurs/utilisateur-id/interactions',
     );
     const dbInteraction = await TestUtil.prisma.interaction.findUnique({
-      where: { id: '1' },
+      where: { id: 'interaction-id' },
     });
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual({
-      id: '1',
-      content_id: '123',
-      type: 'quizz',
-      titre: 'the quizz !',
-      soustitre: null,
-      categorie: 'apprendre',
-      tags: ['a', 'b', 'c'],
-      clicked: false,
-      clicked_at: null,
-      done: false,
-      done_at: null,
-      duree: null,
-      frequence: null,
-      image_url: null,
-      url: null,
-      seen: 0,
-      seen_at: null,
-      succeeded: false,
-      succeeded_at: null,
-      difficulty: 1,
-      points: 5,
-      reco_score: 100,
-      utilisateurId: '2',
-      locked: false,
-      created_at: dbInteraction.created_at.toISOString(),
-      updated_at: dbInteraction.updated_at.toISOString(),
-    });
+    expect(response.body[0]).toEqual(
+      TestUtil.interactionData({
+        created_at: dbInteraction.created_at.toISOString(),
+        updated_at: dbInteraction.updated_at.toISOString(),
+      }),
+    );
   });
   it('PATCH /utilisateurs/id/interactions/id - patch status of single interaction', async () => {
     await TestUtil.create('utilisateur');

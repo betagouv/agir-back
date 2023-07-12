@@ -47,7 +47,7 @@ export class TestUtil {
       data: this[type.concat('Data')](override),
     });
   }
-  private static suiviData(override?) {
+  static suiviData(override?) {
     return {
       id: 'suivi-id',
       type: 'alimentation',
@@ -57,14 +57,14 @@ export class TestUtil {
       ...override,
     };
   }
-  private static utilisateurData(override?) {
+  static utilisateurData(override?) {
     return {
       id: 'utilisateur-id',
       name: 'name',
       ...override,
     };
   }
-  private static badgeData(override?) {
+  static badgeData(override?) {
     return {
       id: 'badge-id',
       type: 'type',
@@ -73,14 +73,14 @@ export class TestUtil {
       ...override,
     };
   }
-  private static quizzData(override?) {
+  static quizzData(override?) {
     return {
       id: 'quizz-id',
       titre: 'titre',
       ...override,
     };
   }
-  private static quizzQuestionData(override?) {
+  static quizzQuestionData(override?) {
     return {
       id: 'quizzQuestion-id',
       libelle: 'libelle',
@@ -91,7 +91,7 @@ export class TestUtil {
       ...override,
     };
   }
-  private static interactionData(override?) {
+  static interactionData(override?) {
     return {
       id: 'interaction-id',
       content_id: 'quizz-id',
@@ -115,6 +115,7 @@ export class TestUtil {
       difficulty: 1,
       points: 5,
       reco_score: 100,
+      locked: true,
       utilisateurId: 'utilisateur-id',
       ...override,
     };
