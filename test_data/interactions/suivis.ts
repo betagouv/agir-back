@@ -1,7 +1,7 @@
 const suivis = {
   suivi_du_jour: {
     titre: 'Faire le suivi du jour',
-    soustitre: 'bla bla',
+    soustitre: '-',
     categorie: 'Global',
     tags: ['suivi', 'alimentation', 'kyc'],
     duree: '⏱️ < 1 minute',
