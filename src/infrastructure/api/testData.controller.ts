@@ -13,8 +13,8 @@ const utilisateurs_content = require('../../../test_data/utilisateurs_content');
 const articles = require('../../../test_data/interactions/articles');
 const aides = require('../../../test_data/interactions/aides');
 const suivis = require('../../../test_data/interactions/suivis');
-const suivis_alimentation = require('../../../test_data/suivis_alimentation');
-const suivis_transport = require('../../../test_data/suivis_transport');
+const suivis_alimentation = require('../../../test_data/suivis/suivis_alimentation');
+const suivis_transport = require('../../../test_data/suivis/suivis_transport');
 const empreintes_utilisateur = require('../../../test_data/empreintes');
 
 export enum TheBoolean {

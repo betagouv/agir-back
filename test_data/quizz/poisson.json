@@ -15,6 +15,7 @@
   "titre": "tous les poissons ne sont pas égaux",
   "questions": [
     {
+      "ordre": 1,
       "libelle": "qu'est ce qui a le plus d'impact",
       "solution": "poisson rouge",
       "propositions": ["poisson rouge", "poisson blanc"],

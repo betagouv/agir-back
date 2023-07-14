@@ -26,6 +26,7 @@ describe('EvaluerQuizzUsecase', () => {
       };
       const quest1: QuizzQuestion = {
         id: '1',
+        ordre: 1,
         solution: '11',
         libelle: 'bla',
         texte_riche_explication: 'bla bla bla',
@@ -34,6 +35,7 @@ describe('EvaluerQuizzUsecase', () => {
       };
       const quest2: QuizzQuestion = {
         id: '2',
+        ordre: 2,
         solution: '22',
         libelle: 'bla',
         texte_riche_explication: 'bla bla bla',
@@ -54,6 +56,7 @@ describe('EvaluerQuizzUsecase', () => {
       };
       const quest1: QuizzQuestion = {
         id: '1',
+        ordre: 1,
         solution: '11',
         libelle: 'bla',
         texte_riche_explication: 'bla bla bla',
@@ -62,6 +65,7 @@ describe('EvaluerQuizzUsecase', () => {
       };
       const quest2: QuizzQuestion = {
         id: '2',
+        ordre: 2,
         solution: '22',
         libelle: 'bla',
         texte_riche_explication: 'bla bla bla',
