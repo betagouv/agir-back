@@ -1,5 +1,14 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { PrismaService } from '../db/prisma.service';
 import path from 'path';
@@ -34,7 +43,6 @@ export class TestDataController {
     private suiviRepository: SuiviRepository,
   ) {
     this.quizz_set = {};
-    this.loadAllQuizz();
   }
 
   private quizz_set: Object;
@@ -47,8 +55,9 @@ export class TestDataController {
 
   @ApiParam({ name: 'id', enum: utilisateurs_liste })
   @Post('testdata/:id/inject')
-  async injectData(@Param('id') id: string) {
-    if (!utilisateurs_content[id]) return {};
+  async injectData(@Param('id') id: string): Promise<string> {
+    await this.loadAllQuizz();
+    if (!utilisateurs_content[id]) return '{}';
     await this.deleteUtilisateur(id);
     await this.upsertUtilisateur(id);
     await this.insertArticlesForUtilisateur(id);
@@ -221,24 +230,28 @@ export class TestDataController {
   }
 
   async loadAllQuizz() {
+    let current_file;
     try {
       const jsonsInDir = fs
         .readdirSync(path.resolve(__dirname, '../../../test_data/interactions'))
         .filter((file) => path.extname(file) === '.json');
 
-      jsonsInDir.forEach((file) => {
+      for (let index = 0; index < jsonsInDir.length; index++) {
+        current_file = jsonsInDir[index];
         const fileData = fs.readFileSync(
           path.join(
             path.resolve(__dirname, '../../../test_data/interactions'),
-            file,
+            current_file,
           ),
         );
-        this.quizz_set[path.basename(file, '.json')] = JSON.parse(
+        this.quizz_set[path.basename(current_file, '.json')] = JSON.parse(
           fileData.toString(),
         );
-      });
+      }
     } catch (error) {
-      // nothing ^^
+      throw new BadRequestException(
+        error.message.concat(` for file : ${current_file}`),
+      );
     }
   }
 

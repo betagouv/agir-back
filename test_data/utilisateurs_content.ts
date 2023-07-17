@@ -28,7 +28,7 @@ const utilisateurs = {
     interactions: [
       { id: 'quizz_tout_sur_leau', reco_score: 3 },
       { id: 'article_eau', reco_score: 5 },
-      { id: 'suivi_du_jour', reco_score: 1 },
+      { id: 'suivi_du_jour', reco_score: 1, locked: true },
     ],
     suivis: ['sa1', 'sa2', 'st1', 'st2'],
     bilans: ['bilan1'],
