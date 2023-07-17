@@ -13,10 +13,10 @@ const utilisateurs_content = require('../../../test_data/utilisateurs_content');
 const articles = require('../../../test_data/interactions/_articles');
 const aides = require('../../../test_data/interactions/_aides');
 const suivis = require('../../../test_data/interactions/_suivis');
-const suivis_alimentation = require('../../../test_data/points_suivi/suivis_alimentation');
-const suivis_transport = require('../../../test_data/points_suivi/suivis_transport');
-const empreintes_utilisateur = require('../../../test_data/points_suivi/bilans');
-const badges_liste = require('../../../test_data/points_suivi/badges');
+const suivis_alimentation = require('../../../test_data/evenements/suivis_alimentation');
+const suivis_transport = require('../../../test_data/evenements/suivis_transport');
+const empreintes_utilisateur = require('../../../test_data/evenements/bilans');
+const badges_liste = require('../../../test_data/evenements/badges');
 
 export enum TheBoolean {
   true = 'true',
