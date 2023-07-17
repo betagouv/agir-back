@@ -94,7 +94,7 @@ model QuizzQuestion {
 
 model Badge {
   id            String       @id
-  type          String       @unique
+  type          String?      @unique
   titre         String
   Utilisateur   Utilisateur? @relation(fields: [utilisateurId], references: [id])
   utilisateurId String

@@ -1,5 +1,5 @@
-const empreintes = {
-  e1: {
+const bilans = {
+  bilan1: {
     date: '2023-02-17',
     initial: true,
     situation: {
@@ -26,4 +26,4 @@ const empreintes = {
     },
   },
 };
-module.exports = empreintes;
+module.exports = bilans;

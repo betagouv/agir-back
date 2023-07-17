@@ -6,8 +6,8 @@
     "deleteOutDir": true,
     "assets": [
       {
-        "include": "../test_data/quizz",
-        "outDir": "dist/",
+        "include": "../test_data/interactions/*.json",
+        "outDir": "dist/test_data",
         "watchAssets": true
       }
     ]

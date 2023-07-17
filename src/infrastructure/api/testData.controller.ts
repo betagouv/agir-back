@@ -10,12 +10,13 @@ import { Suivi } from '../../../src/domain/suivi/suivi';
 import { SuiviTransport } from '../../../src/domain/suivi/suiviTransport';
 import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
-const articles = require('../../../test_data/interactions/articles');
-const aides = require('../../../test_data/interactions/aides');
-const suivis = require('../../../test_data/interactions/suivis');
-const suivis_alimentation = require('../../../test_data/suivis/suivis_alimentation');
-const suivis_transport = require('../../../test_data/suivis/suivis_transport');
-const empreintes_utilisateur = require('../../../test_data/empreintes');
+const articles = require('../../../test_data/interactions/_articles');
+const aides = require('../../../test_data/interactions/_aides');
+const suivis = require('../../../test_data/interactions/_suivis');
+const suivis_alimentation = require('../../../test_data/points_suivi/suivis_alimentation');
+const suivis_transport = require('../../../test_data/points_suivi/suivis_transport');
+const empreintes_utilisateur = require('../../../test_data/points_suivi/bilans');
+const badges_liste = require('../../../test_data/points_suivi/badges');
 
 export enum TheBoolean {
   true = 'true',
@@ -57,6 +58,7 @@ export class TestDataController {
     await this.insertQuizzForUtilisateur(id);
     await this.insertSuivisAlimentationForUtilisateur(id);
     await this.insertEmpreintesForUtilisateur(id);
+    await this.insertBadgesForUtilisateur(id);
     return utilisateurs_content[id];
   }
 
@@ -97,8 +99,26 @@ export class TestDataController {
       }
     }
   }
+  async insertBadgesForUtilisateur(utilisateurId: string) {
+    const badges = utilisateurs_content[utilisateurId].badges;
+    if (!badges) return;
+    for (let index = 0; index < badges.length; index++) {
+      const badgeId = badges[index];
+      if (badges_liste[badgeId]) {
+        let data = {
+          id: uuidv4(),
+          titre: badges_liste[badgeId].titre,
+          created_at: new Date(Date.parse(badges_liste[badgeId].date)),
+          utilisateurId: utilisateurId,
+        };
+        await this.prisma.badge.create({
+          data,
+        });
+      }
+    }
+  }
   async insertEmpreintesForUtilisateur(utilisateurId: string) {
-    const empreintes = utilisateurs_content[utilisateurId].empreintes;
+    const empreintes = utilisateurs_content[utilisateurId].bilans;
     if (!empreintes) return;
     for (let index = 0; index < empreintes.length; index++) {
       const empreinteId = empreintes[index];
@@ -203,12 +223,15 @@ export class TestDataController {
   async loadAllQuizz() {
     try {
       const jsonsInDir = fs
-        .readdirSync(path.resolve(__dirname, '../../../quizz'))
+        .readdirSync(path.resolve(__dirname, '../../../test_data/interactions'))
         .filter((file) => path.extname(file) === '.json');
 
       jsonsInDir.forEach((file) => {
         const fileData = fs.readFileSync(
-          path.join(path.resolve(__dirname, '../../../quizz'), file),
+          path.join(
+            path.resolve(__dirname, '../../../test_data/interactions'),
+            file,
+          ),
         );
         this.quizz_set[path.basename(file, '.json')] = JSON.parse(
           fileData.toString(),
@@ -248,7 +271,8 @@ export class TestDataController {
     const clonedData = { ...utilisateurs_content[utilisateurId] };
     delete clonedData.suivis;
     delete clonedData.interactions;
-    delete clonedData.empreintes;
+    delete clonedData.bilans;
+    delete clonedData.badges;
     await this.prisma.utilisateur.upsert({
       where: {
         id: utilisateurId,
