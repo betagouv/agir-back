@@ -6,8 +6,9 @@ const utilisateurs = {
       { id: 'article_eau', reco_score: 5 },
       { id: 'article_viande', reco_score: 10 },
       { id: 'suivi_du_jour', reco_score: 1 },
-      { id: 'quizz_tout_sur_leau', reco_score: 2 },
-      { id: 'quizz_mobilite_douce', reco_score: 1} 
+      { id: 'quizz_mobilite_douce', reco_score: 1},
+      { id: 'quizz_tout_sur_leau', reco_score: 2 }
+      
     ],
     suivis: ['sa1', 'sa2', 'st1'],
   },
