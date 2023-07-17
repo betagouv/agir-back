@@ -16,7 +16,7 @@
   "questions": [
     {
       "ordre": 1,
-      "libelle": "Combien de litres d'eau pour un TShirt ?",
+      "libelle": "Combien de litres d'eau pour un T-shirt ?",
       "solution": "2700",
       "propositions": ["27", "270", "2700"],
       "texte_riche_explication": "Et Non !!"
