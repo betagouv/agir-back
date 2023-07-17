@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Se déplacer",
     "soustitre": "bla bla",
-    "categorie": "Consommation",
+    "categorie": "Eau",
     "tags": ["mobilité douce", "transports", "GES"],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",
@@ -19,7 +19,7 @@
       "libelle": "Qu'est-ce que la mobilité douce ?",
       "solution": "Les moyens de transport non motorisés, comme la marche à pied, le vélo, etc.",
       "propositions": ["Les transports en commun et le partage de trajet, comme le covoiturage", "Les véhicules individuels, comme les vélos et trottinettes électriques", "Les moyens de transport non motorisés, comme la marche à pied, le vélo, etc."],
-      "texte_riche_explication": "<b>Bravo !</b> La mobilité douce désigne l'ensemble des moyens de déplacement respectueux de l'environnement, non motorisés ou à faible impact environnemental. Elle inclut notamment la marche à pied, le vélo, la trottinette, le skateboard et d'autres moyens de transport similaires. La mobilité douce réduit la pollution atmosphérique et sonore, favorise l'utilisation d'énergies renouvelables, améliore la santé et contribue à la création d'espaces urbains plus agréables. Elle encourage également l'intermodalité en combinant différents modes de transport pour des trajets plus efficaces et durables."
+      "texte_riche_explication": "Bravo ! La mobilité douce désigne l'ensemble des moyens de déplacement respectueux de l'environnement, non motorisés ou à faible impact environnemental. Elle inclut notamment la marche à pied, le vélo, la trottinette, le skateboard et d'autres moyens de transport similaires. La mobilité douce réduit la pollution atmosphérique et sonore, favorise l'utilisation d'énergies renouvelables, améliore la santé et contribue à la création d'espaces urbains plus agréables. Elle encourage également l'intermodalité en combinant différents modes de transport pour des trajets plus efficaces et durables."
     }
   ]
 }
