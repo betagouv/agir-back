@@ -1,4 +1,17 @@
 const articles = {
+  article_transport_se_deplacer_autrement: {
+    titre: "Se déplacer autrement",
+    soustitre: 'bla bla',
+    categorie: 'Transport',
+    tags: ['article', 'transport', 'comportement'],
+    duree: '⏱️ < 1 minute',
+    frequence: 'Une fois',
+    image_url: 'https://librairie.ademe.fr/688798-large_default/comment-se-deplacer-autrement-et-moins-cher-.jpg',
+    url: 'https://librairie.ademe.fr/cadic/7774/infographie-se-deplacer-autrement-moins-cher.pdf',
+    difficulty: 1,
+    points: 5,
+    locked: false,
+  },
   article_eau: {
     titre: "Tout savoir sur l'eau",
     soustitre: 'bla bla',
