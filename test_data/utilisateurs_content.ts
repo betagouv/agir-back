@@ -1,4 +1,17 @@
 const utilisateurs = {
+  benoit: {
+    name: 'Benoit',
+    points: 0,
+    interactions: [
+      { id: 'suivi_du_jour', reco_score: 1 },
+      { id: 'article_transport_se_deplacer_autrement', reco_score: 2 },
+      { id: 'article_viande', reco_score: 10 },
+      { id: 'quizz_mobilite_douce', reco_score: 1},
+      { id: 'quizz_tout_sur_leau', reco_score: 2 }
+      
+    ],
+    suivis: [], //'sa1', 'sa2', 'st1'
+  },
   dorian: {
     name: 'Dorian_test',
     points: 0,
