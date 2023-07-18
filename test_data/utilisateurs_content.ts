@@ -10,7 +10,7 @@ const utilisateurs = {
       { id: 'quizz_tout_sur_leau', reco_score: 2 }
       
     ],
-    suivis: ['sa1', 'sa2', 'st1'],
+    suivis: [], //'sa1', 'sa2', 'st1'
   },
   livio: {
     name: 'Livio_test',
