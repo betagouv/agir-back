@@ -1,4 +1,32 @@
 const utilisateurs = {
+  michel0:{
+    name: 'Michel0',
+    points: 0,
+    interactions: [
+      { id: 'suivi_du_jour', reco_score: 1 },
+      { id: 'article_transport_se_deplacer_autrement', reco_score: 2 },    
+      { id: 'quizz-BC_transport_personnes_en_voiture', reco_score: 3},
+      { id: 'quizz-BC_gaspillage_alimentaire', reco_score: 4},
+      { id: 'quizz-BC_global_rechauffement_climatique', reco_score: 5},
+      { id: 'ajouter_linky', reco_score: 3, locked: true },
+    ],
+    suivis: [], //'sa1', 'sa2', 'st1'
+  },
+  michel6:{
+    name: 'Michel6',
+    points: 36,
+    interactions: [
+      { id: 'suivi_du_jour', reco_score: 1 },
+      { id: 'article_consommation_indice_de_reparabilite', reco_score: 2 },     
+      { id: 'quizz-BC_global_gaz_effet_de_serre', reco_score: 3},
+      { id: 'article_consommation_video_numerique_responsable', reco_score: 4 },     
+      { id: 'article_alimentation_recettes_4_saisons', reco_score: 5 },      
+      { id: 'aide_velo', reco_score: 5, locked: true },      
+    ],
+    suivis: ['sa1', 'sa2', 'sa3','sa4','sa5', 'st1','st2','st3','st4','st5'],
+    bilans: ['bilan1'],
+    badges: ['badge1', 'badge2'],
+  },
   benoit: {
     name: 'Benoit',
     points: 0,

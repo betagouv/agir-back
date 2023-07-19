@@ -5,5 +5,7 @@ export enum utilisateurs_liste {
   dorian = 'dorian',
   livio = 'livio',
   wojtek = 'wojtek',
-  benoit = 'benoit'
+  benoit = 'benoit',
+  michel0 = 'michel0',
+  michel6 = 'michel6'
 }

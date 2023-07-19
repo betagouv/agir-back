@@ -1,0 +1,25 @@
+{
+  "interaction": {
+    "titre": "Quiz alimentation",
+    "soustitre": "",
+    "categorie": "alimentation",
+    "tags": [],
+    "duree": "⏱️ < 1 minute",
+    "frequence": "Une fois",
+    "image_url": "https://images.unsplash.com/photo-1542624771497-851f77d79349?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Zm9vZCUyMHdhc3RlfGVufDB8fDB8fHwy&auto=format&fit=crop&w=800&q=60",
+    "url": null,
+    "difficulty": 1,
+    "points": 10,
+    "locked": false
+  },
+  "titre": "Quiz alimentation",
+  "questions": [
+    {
+      "ordre": 1,
+      "libelle": "Quel est le poids du gaspillage alimentaire en France ?",
+      "solution": "30kg par personne et par an",
+      "propositions": ["30kg par personne et par an", "15kg par personne et par an", "60kg par personne et par an "],
+      "texte_riche_explication": "Raté ! En France, la plus grande partie du gaspillage alimentaire se situe principalement au niveau de la consommation, c'est-à-dire chez les ménages. Selon les estimations, environ 67% du gaspillage alimentaire total en France provient des foyers. Cela inclut les restes de repas jetés, les aliments périmés ou abîmés qui sont jetés sans être consommés, ainsi que les excès d'achats qui finissent par être jetés. Toutefois, il convient de noter que le gaspillage alimentaire se produit également à d'autres étapes de la chaîne d'approvisionnement. En amont, lors de la production agricole, il peut y avoir des pertes dues à des normes esthétiques strictes ou à des problèmes logistiques. Pendant la transformation et la distribution, des pertes peuvent survenir en raison de la manipulation, du stockage inadéquat ou du dépassement des dates limites de consommation."
+    }
+  ]
+}
