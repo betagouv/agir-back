@@ -1,0 +1,26 @@
+//Source: https://docs.google.com/spreadsheets/d/1_KEZeY3xD4iiaJX2xO9SOspxDcecUUS62SwAAot14os/edit#gid=0
+{
+  "interaction": {
+    "titre": "",
+    "soustitre": "",
+    "categorie": "",
+    "tags": [],
+    "duree": "⏱️ < 1 minute",
+    "frequence": "Une fois",
+    "image_url": "",
+    "url": null,
+    "difficulty": 1,
+    "points": 10,
+    "locked": false
+  },
+  "titre": "",
+  "questions": [
+    {
+      "ordre": 1,
+      "libelle": "",
+      "solution": "",
+      "propositions": ["", "", ""],
+      "texte_riche_explication": ""
+    }
+  ]
+}
