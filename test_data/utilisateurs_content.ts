@@ -21,6 +21,7 @@ const utilisateurs = {
       { id: 'quizz-BC_global_gaz_effet_de_serre', reco_score: 3},
       { id: 'article_consommation_video_numerique_responsable', reco_score: 4 },     
       { id: 'article_alimentation_recettes_4_saisons', reco_score: 5 },      
+      { id: 'aide_velo', reco_score: 5, locked: true  },      
     ],
     suivis: ['sa1', 'sa2', 'sa3','sa4','sa5', 'st1','st2','st3','st4','st5'],
     bilans: ['bilan1'],
