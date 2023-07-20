@@ -4,11 +4,11 @@ const utilisateurs = {
     points: 0,
     interactions: [
       { id: 'suivi_du_jour', reco_score: 1 },
-      { id: 'article_transport_se_deplacer_autrement', reco_score: 2 },    
-      { id: 'quizz-BC_transport_personnes_en_voiture', reco_score: 3},
-      { id: 'quizz-BC_alimentation_gaspillage_alimentaire', reco_score: 4},
-      { id: 'quizz-BC_global_rechauffement_climatique', reco_score: 5},
-      { id: 'ajouter_linky', reco_score: 3, locked: true },
+      { id: 'quizz-BC_transport_personnes_en_voiture', reco_score: 2},
+      { id: 'article_transport_se_deplacer_autrement', reco_score: 3},    
+      { id: 'ajouter_linky', reco_score: 4, locked: true },
+      { id: 'quizz-BC_alimentation_gaspillage_alimentaire', reco_score: 5},
+      { id: 'quizz-BC_global_rechauffement_climatique', reco_score: 6, locked: true},
     ],
     suivis: [], //'sa1', 'sa2', 'st1'
   },
