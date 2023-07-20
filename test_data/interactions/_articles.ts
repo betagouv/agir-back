@@ -1,5 +1,17 @@
 const articles = {
-
+  article_faire_nos_gestes_climat: {
+    titre: "Calculez votre empreinte carbone",
+    soustitre: 'Une infographie qui vous explique tout !',
+    categorie: 'Global',
+    tags: [],
+    duree: '⏱️ 15 minutes',
+    frequence: 'Une fois',
+    image_url: 'https://nosgestesclimat.fr/images/petit-logo@2x.png',
+    url: 'https://nosgestesclimat.fr/',
+    difficulty: 1,
+    points: 5,
+    locked: false,
+  },
   article_transport_se_deplacer_autrement: {
     titre: "Se déplacer autrement",
     soustitre: 'Une infographie qui vous explique tout !',
