@@ -3,7 +3,7 @@ const articles = {
   article_transport_se_deplacer_autrement: {
     titre: "Se déplacer autrement",
     soustitre: 'Une infographie qui vous explique tout !',
-    categorie: 'Transport',
+    categorie: 'Transports',
     tags: ['article', 'transport', 'comportement'],
     duree: '⏱️ < 1 minute',
     frequence: 'Une fois',
