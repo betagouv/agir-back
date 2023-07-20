@@ -1,8 +1,8 @@
 {
   "interaction": {
-    "titre": "Quiz 🚗 transport",
+    "titre": "Quiz 🚗 transports",
     "soustitre": "",
-    "categorie": "Transport",
+    "categorie": "Transports",
     "tags": [],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",
@@ -12,7 +12,7 @@
     "points": 10,
     "locked": false
   },
-  "titre": "Quiz 🚗 transport",
+  "titre": "Quiz 🚗 transports",
   "questions": [
     {
       "ordre": 1,
