@@ -2,7 +2,7 @@ const aides = {
   aide_velo: {
     titre: 'Simulez une aide pour acheter un vélo',
     soustitre: '',
-    categorie: 'Transport',
+    categorie: 'Transports',
     tags: [],
     duree: '⏱️ 2 minute',
     frequence: 'Une fois',
