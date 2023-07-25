@@ -1,0 +1,25 @@
+{
+  "interaction": {
+    "titre": "Cap sur le climat",
+    "soustitre": "Un objectif mondial",
+    "categorie": "Global",
+    "tags": ["climat", "GES"],
+    "duree": "⏱️ < 1 minute",
+    "frequence": "Une fois",
+    "image_url": "https://unsplash.com/fr/photos/yEauzeZU6xo",
+    "url": null,
+    "difficulty": 1,
+    "points": 10,
+    "locked": false
+  },
+  "titre": "Cap sur le climat",
+  "questions": [
+    {
+      "ordre": 1,
+      "libelle": "Quel est l'objectif de l'Accord de Paris sur le climat en ce qui concerne les émissions de gaz à effet de serre ?",
+      "solution": "Réduire les émissions pour limiter le réchauffement climatique en dessous de 2°C",
+      "propositions": ["Arrêter complètement les émissions de gaz à effet de serre", "Réduire les émissions pour limiter le réchauffement climatique en dessous de 2°C", "Augmenter les émissions pour stimuler l'économie"],
+      "texte_riche_explication": "Incorrect ! L'objectif de l'Accord de Paris sur le climat est de réduire les émissions de gaz à effet de serre afin de limiter le réchauffement climatique en dessous de 2°C par rapport aux niveaux préindustriels, avec des efforts pour atteindre 1,5°C."
+    }
+  ]
+}
