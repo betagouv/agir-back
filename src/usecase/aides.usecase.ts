@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Aide } from '../../src/domain/aide';
-import { AidesRepository } from '../infrastructure/repository/aides.repository';
+
+import {
+  AidesRepository,
+  AidesVeloParType,
+  AidesRetroFit,
+} from '../infrastructure/repository/aides.repository';
 
 @Injectable()
 export class AidesUsecase {
@@ -9,22 +13,20 @@ export class AidesUsecase {
   async getRetrofit(
     codePostal: string,
     revenuFiscalDeReference: string,
-  ): Promise<Aide[]> {
-    return this.aidesRepository.get(
+  ): Promise<AidesRetroFit> {
+    return this.aidesRepository.getAidesRetrofit(
       codePostal,
       revenuFiscalDeReference,
-      'retrofit',
     );
   }
 
   async getVelo(
     codePostal: string,
     revenuFiscalDeReference: string,
-  ): Promise<Aide[]> {
-    return this.aidesRepository.get(
+  ): Promise<AidesVeloParType> {
+    return this.aidesRepository.getAidesVelo(
       codePostal,
       revenuFiscalDeReference,
-      'velo',
     );
   }
 }
