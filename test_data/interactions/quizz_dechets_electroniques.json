@@ -1,0 +1,25 @@
+{
+  "interaction": {
+    "titre": "Les déchets électroniques",
+    "soustitre": "Recyclage et objets électroniques",
+    "categorie": "Consommation",
+    "tags": ["déchets", "objets électroniques", "recyclage"],
+    "duree": "⏱️ < 1 minute",
+    "frequence": "Une fois",
+    "image_url": "https://unsplash.com/fr/photos/EG49vTtKdvI",
+    "url": null,
+    "difficulty": 3,
+    "points": 15,
+    "locked": false
+  },
+  "titre": "Que deviennent nos objets électroniques ?",
+  "questions": [
+    {
+      "ordre": 1,
+      "libelle": "Quel est le taux de recyclage des déchets électroniques dans le monde ?",
+      "solution": "Environ 20%",
+      "propositions": ["Environ 50%", "Environ 20%", "Environ 5%"],
+      "texte_riche_explication": "<b>Bravo !</b> Le taux de recyclage des déchets électroniques dans le monde est d'environ 20%, d'après un rapport de l'United Nations University (UNU). Les objets électroniques contiennent souvent des matériaux précieux et potentiellement dangereux, d'où l'importance de les recycler correctement pour éviter la pollution environnementale."
+    }
+  ]
+}
