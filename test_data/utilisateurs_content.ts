@@ -34,7 +34,7 @@ const utilisateurs = {
     interactions: [
       { id: 'suivi_du_jour', reco_score: 1 },
       { id: 'article_transport_se_deplacer_autrement', reco_score: 2 },
-      { id: 'quizz_alimentation_emissions_GES', reco_score: 1 },
+      { id: 'quizz-BC_global_gaz_effet_de_serre', reco_score: 1 },
       { id: 'quizz_objectif_GES', reco_score: 2 },
     ],
     suivis: [], //'sa1', 'sa2', 'st1'
