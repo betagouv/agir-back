@@ -17,7 +17,11 @@ export class InteractionRepository {
     utilisateurId: string,
   ): Promise<Interaction[] | null> {
     return this.prisma.interaction.findMany({
-      where: { utilisateurId },
+      where: {
+        utilisateurId,
+        done: false,
+        succeeded: false,
+      },
       orderBy: [
         {
           reco_score: 'asc',

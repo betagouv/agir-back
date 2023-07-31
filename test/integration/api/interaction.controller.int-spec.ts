@@ -31,6 +31,24 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       }),
     );
   });
+  it('GET /utilisateurs/id/interactions - no done interaction', async () => {
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', { done: true });
+    const response = await TestUtil.getServer().get(
+      '/utilisateurs/utilisateur-id/interactions',
+    );
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(0);
+  });
+  it('GET /utilisateurs/id/interactions - no succeeded interaction', async () => {
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', { succeeded: true });
+    const response = await TestUtil.getServer().get(
+      '/utilisateurs/utilisateur-id/interactions',
+    );
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(0);
+  });
   it('PATCH /utilisateurs/id/interactions/id - patch status of single interaction', async () => {
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction');
