@@ -5,8 +5,7 @@ export class SuiviTransport extends Suivi {
   constructor(date?: Date, data?) {
     super(
       SuiviType.transport,
-      date,
-      data || {
+      {
         km_voiture: 0,
         km_voiture_impact: 0,
         km_scooter: 0,
@@ -22,7 +21,9 @@ export class SuiviTransport extends Suivi {
         bus: 0,
         bus_impact: 0,
         total_impact: 0,
+        ...data,
       },
+      date,
     );
   }
 

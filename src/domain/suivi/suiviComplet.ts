@@ -45,7 +45,7 @@ export class SuiviComplet {
 
   mergeAllToSingleSuivi(): Suivi | undefined {
     if (this.isEmpty()) return undefined;
-    let result = new Suivi(SuiviType.merge, this.suiviList[0].getDate());
+    let result = new Suivi(SuiviType.merge, {}, this.suiviList[0].getDate());
     this.suiviList.forEach((suivi) => {
       result = result.mergeSuiviDataWith(suivi);
     });

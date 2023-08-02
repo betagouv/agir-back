@@ -1,12 +1,10 @@
 import { SuiviType } from './suiviType';
 
 export class Suivi {
-  constructor(type: SuiviType, date?: Date, data?) {
+  constructor(type: SuiviType, data, date?: Date) {
     this.type = type;
     this.date = date ? date : new Date();
-    if (data) {
-      this.injectValuesFromObject(data);
-    }
+    this.injectValuesFromObject(data);
   }
 
   private type: SuiviType;
@@ -35,7 +33,7 @@ export class Suivi {
     this['total_impact'] = impact;
   }
   mergeSuiviDataWith(suivi: Suivi): Suivi {
-    let result = new Suivi(SuiviType.merge, this.getDate());
+    let result = new Suivi(SuiviType.merge, {}, this.getDate());
     result.injectValuesFromObject(suivi);
     result.injectValuesFromObject(this);
     result['total_impact'] = this.getTotalImpact() + suivi.getTotalImpact();

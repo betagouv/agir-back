@@ -5,8 +5,7 @@ export class SuiviAlimentation extends Suivi {
   constructor(date?: Date, data?) {
     super(
       SuiviType.alimentation,
-      date,
-      data || {
+      {
         viande_rouge: 0,
         viande_rouge_impact: 0,
         viande_blanche: 0,
@@ -20,7 +19,9 @@ export class SuiviAlimentation extends Suivi {
         vegetalien: 0,
         vegetalien_impact: 0,
         total_impact: 0,
+        ...data,
       },
+      date,
     );
   }
   viande_rouge: number;

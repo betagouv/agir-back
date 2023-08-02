@@ -13,6 +13,7 @@ describe('Objet Suivi', () => {
     expect(suivi.getDate).toBeDefined();
     expect(suivi.viande_rouge).toEqual(5);
     expect(suivi.viande_blanche).toEqual(10);
+    expect(suivi.poisson_blanc).toEqual(0);
   });
   it('mergeSuiviDataWith : merge suivi data keep this date', () => {
     let suivi1 = new SuiviTransport(new Date(1));
