@@ -6,6 +6,7 @@ import { Suivi } from '../../domain/suivi/suivi';
 import { SuiviCollection } from '../../domain/suivi/suiviCollection';
 import { SuiviTransport } from '../..//domain/suivi/suiviTransport';
 import { SuiviAlimentation } from '../../domain/suivi/suiviAlimentation';
+import { SuiviType } from '../../domain/suivi/suiviType';
 
 @Injectable()
 export class SuiviRepository {
@@ -19,8 +20,7 @@ export class SuiviRepository {
       data: {
         id: uuidv4(),
         type: suivi.getType(),
-        attributs: suivi.getAttributs(),
-        valeurs: suivi.getValeursAsStrings(),
+        data: suivi.cloneAndClean(),
         utilisateurId,
         created_at: suivi.getDate(),
       },
@@ -29,7 +29,7 @@ export class SuiviRepository {
   }
   async listAllSuivi(
     utilisateurId: string,
-    type?: string,
+    type?: SuiviType,
     maxNumber?: number,
   ): Promise<SuiviCollection | null> {
     let listSuivis = await this.prisma.suivi.findMany({
@@ -49,7 +49,7 @@ export class SuiviRepository {
 
   async getLastSuivi(
     utilisateurId: string,
-    type?: string,
+    type?: SuiviType,
   ): Promise<Suivi | null> {
     let suivi = await this.prisma.suivi.findFirst({
       where: {
@@ -67,20 +67,21 @@ export class SuiviRepository {
 
   private createSuiviCollection(listSuivis: SuiviDB[]): SuiviCollection {
     let result = new SuiviCollection();
-    for (const suivi of listSuivis) {
-      switch (suivi.type) {
-        case 'alimentation':
-          let alimentation = new SuiviAlimentation(suivi.created_at);
-          alimentation.populateValues(suivi.attributs, suivi.valeurs);
+    for (const suiviDB of listSuivis) {
+      switch (suiviDB.type) {
+        case SuiviType.alimentation.toString():
+          let alimentation = new SuiviAlimentation(
+            suiviDB.created_at,
+            suiviDB.data,
+          );
           result.alimentation.push(alimentation);
           break;
-        case 'transport':
-          let transport = new SuiviTransport(suivi.created_at);
-          transport.populateValues(suivi.attributs, suivi.valeurs);
+        case SuiviType.transport.toString():
+          let transport = new SuiviTransport(suiviDB.created_at, suiviDB.data);
           result.transports.push(transport);
           break;
         default:
-          throw new Error(`Unknown suivi type : ${suivi.type}`);
+          throw new Error(`Unknown suivi type : ${suiviDB.type}`);
       }
     }
     return result;

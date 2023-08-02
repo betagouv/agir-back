@@ -51,8 +51,11 @@ export class TestUtil {
     return {
       id: 'suivi-id',
       type: 'alimentation',
-      attributs: ['a', 'b', 'c'],
-      valeurs: ['1', '2', '3'],
+      data: {
+        a: 1,
+        b: 2,
+        c: 3,
+      },
       utilisateurId: 'utilisateur-id',
       ...override,
     };

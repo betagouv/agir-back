@@ -1,4 +1,5 @@
 import { Suivi } from './suivi';
+import { SuiviType } from './suiviType';
 
 export class SuiviComplet {
   constructor() {
@@ -44,7 +45,7 @@ export class SuiviComplet {
 
   mergeAllToSingleSuivi(): Suivi | undefined {
     if (this.isEmpty()) return undefined;
-    let result = new Suivi(Suivi.merge, this.suiviList[0].getDate());
+    let result = new Suivi(SuiviType.merge, this.suiviList[0].getDate());
     this.suiviList.forEach((suivi) => {
       result = result.mergeSuiviDataWith(suivi);
     });

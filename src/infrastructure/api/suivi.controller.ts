@@ -13,6 +13,7 @@ import { SuiviUsecase } from '../../usecase/suivi.usecase';
 import { Suivi } from '../../domain/suivi/suivi';
 import { SuiviAlimentation } from '../../domain/suivi/suiviAlimentation';
 import { SuiviTransport } from '../../domain/suivi/suiviTransport';
+import { SuiviType } from '../../domain/suivi/suiviType';
 
 @Controller()
 @ApiTags('Suivi')
@@ -25,7 +26,7 @@ export class SuiviController {
   ): Promise<Suivi[]> {
     const suivisCollection = await this.suiviUsecase.listeSuivi(
       utilisateurId,
-      type,
+      SuiviType[type],
     );
     return suivisCollection.mergeAll();
   }
@@ -35,7 +36,10 @@ export class SuiviController {
     @Param('utilisateurId') utilisateurId: string,
     @Query('type') type?: string,
   ): Promise<Suivi> {
-    const lastSuivi = await this.suiviUsecase.getLastSuivi(utilisateurId, type);
+    const lastSuivi = await this.suiviUsecase.getLastSuivi(
+      utilisateurId,
+      SuiviType[type],
+    );
     if (lastSuivi === null) {
       throw new NotFoundException(
         `Aucun suivi de type ${type ? type : 'any'} trouvé en base`,
@@ -51,10 +55,10 @@ export class SuiviController {
   ): Promise<Suivi> {
     let suivi;
     switch (body.type) {
-      case Suivi.alimentation:
+      case SuiviType.alimentation:
         suivi = new SuiviAlimentation();
         break;
-      case Suivi.transport:
+      case SuiviType.transport:
         suivi = new SuiviTransport();
         break;
       default:

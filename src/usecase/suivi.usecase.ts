@@ -3,6 +3,7 @@ import { SuiviRepository } from '../infrastructure/repository/suivi.repository';
 import { Suivi } from '../domain/suivi/suivi';
 import { SuiviCollection } from '../domain/suivi/suiviCollection';
 import { SuiviComplet } from '../domain/suivi/suiviComplet';
+import { SuiviType } from 'src/domain/suivi/suiviType';
 
 @Injectable()
 export class SuiviUsecase {
@@ -19,13 +20,13 @@ export class SuiviUsecase {
   }
   async listeSuivi(
     utilisateurId: string,
-    type?: string,
+    type?: SuiviType,
   ): Promise<SuiviCollection> {
     return this.suiviRepository.listAllSuivi(utilisateurId, type);
   }
   async getLastSuivi(
     utilisateurId: string,
-    type?: string,
+    type?: SuiviType,
   ): Promise<Suivi | null> {
     return this.suiviRepository.getLastSuivi(utilisateurId, type);
   }

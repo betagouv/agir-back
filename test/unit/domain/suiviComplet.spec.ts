@@ -1,4 +1,3 @@
-import { Suivi } from '../../../src/domain/suivi/suivi';
 import { SuiviComplet } from '../../../src/domain/suivi/suiviComplet';
 import { SuiviTransport } from '../../../src/domain/suivi/suiviTransport';
 import { SuiviAlimentation } from '../../../src/domain/suivi/suiviAlimentation';

@@ -1,3 +1,4 @@
+import { SuiviType } from '../../../src/domain/suivi/suiviType';
 import { TestUtil } from '../../TestUtil';
 
 describe('/suivis (API test)', () => {
@@ -31,9 +32,10 @@ describe('/suivis (API test)', () => {
     await TestUtil.prisma.suivi.create({
       data: {
         id: '1',
+        data: {
+          viande_rouge: 1,
+        },
         type: 'alimentation',
-        attributs: ['viande_rouge'],
-        valeurs: ['1'],
         utilisateurId: '123',
         created_at: new Date(123),
       },
@@ -42,8 +44,9 @@ describe('/suivis (API test)', () => {
       data: {
         id: '2',
         type: 'transport',
-        attributs: ['km_voiture'],
-        valeurs: ['20'],
+        data: {
+          km_voiture: 20,
+        },
         utilisateurId: '123',
         created_at: new Date(123),
       },
@@ -63,8 +66,9 @@ describe('/suivis (API test)', () => {
       data: {
         id: '1',
         type: 'alimentation',
-        attributs: ['viande_rouge'],
-        valeurs: ['1'],
+        data: {
+          viande_rouge: 1,
+        },
         utilisateurId: '123',
         created_at: new Date(123),
       },
@@ -73,8 +77,9 @@ describe('/suivis (API test)', () => {
       data: {
         id: '2',
         type: 'transport',
-        attributs: ['km_voiture'],
-        valeurs: ['20'],
+        data: {
+          km_voiture: 20,
+        },
         utilisateurId: '123',
         created_at: new Date(123),
       },
@@ -86,7 +91,7 @@ describe('/suivis (API test)', () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
-    expect(response.body[0].type).toEqual('alimentation');
+    expect(response.body[0].type).toEqual(SuiviType.alimentation);
   });
   it('GET /utilisateurs/123/suivis/last - get last suivis', async () => {
     await TestUtil.prisma.utilisateur.create({
@@ -97,8 +102,9 @@ describe('/suivis (API test)', () => {
       data: {
         id: '1',
         type: 'alimentation',
-        attributs: ['viande_rouge'],
-        valeurs: ['1'],
+        data: {
+          viande_rouge: 1,
+        },
         utilisateurId: '123',
         created_at: new Date(123),
       },
@@ -107,8 +113,9 @@ describe('/suivis (API test)', () => {
       data: {
         id: '2',
         type: 'transport',
-        attributs: ['km_voiture'],
-        valeurs: ['20'],
+        data: {
+          km_voiture: 20,
+        },
         utilisateurId: '123',
         created_at: new Date(456),
       },
@@ -130,8 +137,9 @@ describe('/suivis (API test)', () => {
       data: {
         id: '1',
         type: 'alimentation',
-        attributs: ['viande_rouge'],
-        valeurs: ['1'],
+        data: {
+          viande_rouge: 1,
+        },
         utilisateurId: '123',
         created_at: new Date(123),
       },
@@ -140,8 +148,9 @@ describe('/suivis (API test)', () => {
       data: {
         id: '2',
         type: 'transport',
-        attributs: ['km_voiture'],
-        valeurs: ['20'],
+        data: {
+          km_voiture: 20,
+        },
         utilisateurId: '123',
         created_at: new Date(456),
       },
@@ -163,8 +172,9 @@ describe('/suivis (API test)', () => {
       data: {
         id: '1',
         type: 'alimentation',
-        attributs: ['viande_rouge'],
-        valeurs: ['1'],
+        data: {
+          viande_rouge: 1,
+        },
         utilisateurId: '123',
         created_at: new Date(123),
       },
@@ -173,8 +183,9 @@ describe('/suivis (API test)', () => {
       data: {
         id: '2',
         type: 'transport',
-        attributs: ['km_voiture'],
-        valeurs: ['20'],
+        data: {
+          km_voiture: 20,
+        },
         utilisateurId: '123',
         created_at: new Date(456),
       },

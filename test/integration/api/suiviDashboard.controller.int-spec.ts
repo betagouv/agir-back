@@ -1,3 +1,4 @@
+import { SuiviType } from '../../../src/domain/suivi/suiviType';
 import { TestUtil } from '../../TestUtil';
 
 describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
@@ -24,21 +25,24 @@ describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
     await TestUtil.create('utilisateur');
     await TestUtil.create('suivi', {
       id: '1',
-      attributs: ['total_impact'],
-      valeurs: ['10'],
+      data: {
+        total_impact: 10,
+      },
       created_at: TestUtil.getDate('2023-01-01'),
     });
     await TestUtil.create('suivi', {
       id: '2',
-      attributs: ['total_impact'],
-      valeurs: ['20'],
+      data: {
+        total_impact: 20,
+      },
       created_at: TestUtil.getDate('2023-01-01'),
     });
     await TestUtil.create('suivi', {
       id: '3',
       created_at: TestUtil.getDate('2023-01-15'),
-      attributs: ['total_impact'],
-      valeurs: ['50'],
+      data: {
+        total_impact: 50,
+      },
     });
     const response = await TestUtil.getServer().get(
       '/utilisateurs/utilisateur-id/suivi_dashboard',
@@ -54,23 +58,29 @@ describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
     await TestUtil.create('suivi', {
       id: '1',
       created_at: TestUtil.getDate('2023-01-15'),
-      type: 'alimentation',
-      attributs: ['total_impact', 'viande_rouge'],
-      valeurs: ['10', '12'],
+      type: SuiviType.alimentation,
+      data: {
+        total_impact: 10,
+        viande_rouge: 12,
+      },
     });
     await TestUtil.create('suivi', {
       id: '2',
       created_at: TestUtil.getDate('2023-01-30'),
-      type: 'transport',
-      attributs: ['total_impact', 'km_voiture'],
-      valeurs: ['20', '10'],
+      type: SuiviType.transport,
+      data: {
+        total_impact: 20,
+        km_voiture: 10,
+      },
     });
     await TestUtil.create('suivi', {
       id: '3',
       created_at: TestUtil.getDate('2023-01-30'),
-      type: 'alimentation',
-      attributs: ['total_impact', 'viande_blanche'],
-      valeurs: ['50', '36'],
+      type: SuiviType.alimentation,
+      data: {
+        total_impact: 50,
+        viande_blanche: 36,
+      },
     });
     const response = await TestUtil.getServer().get(
       '/utilisateurs/utilisateur-id/suivi_dashboard',

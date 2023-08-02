@@ -13,8 +13,7 @@ datasource db {
 model Suivi {
   id              String      @id
   type            String
-  attributs       String[]    @default([])
-  valeurs         String[]    @default([])
+  data            Json        @default("{}")
   computed_impact Boolean     @default(false)
   created_at      DateTime    @default(now())
   updated_at      DateTime    @updatedAt

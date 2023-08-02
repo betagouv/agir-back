@@ -1,22 +1,41 @@
 import { Suivi } from './suivi';
+import { SuiviType } from './suiviType';
 
 export class SuiviAlimentation extends Suivi {
-  constructor(date?: Date) {
-    super(Suivi.alimentation, date);
+  constructor(date?: Date, data?) {
+    super(
+      SuiviType.alimentation,
+      date,
+      data || {
+        viande_rouge: 0,
+        viande_rouge_impact: 0,
+        viande_blanche: 0,
+        viande_blanche_impact: 0,
+        poisson_rouge: 0,
+        poisson_rouge_impact: 0,
+        poisson_blanc: 0,
+        poisson_blanc_impact: 0,
+        vegetarien: 0,
+        vegetarien_impact: 0,
+        vegetalien: 0,
+        vegetalien_impact: 0,
+        total_impact: 0,
+      },
+    );
   }
-  viande_rouge: number = 0;
-  viande_rouge_impact: number = 0;
-  viande_blanche: number = 0;
-  viande_blanche_impact: number = 0;
-  poisson_rouge: number = 0;
-  poisson_rouge_impact: number = 0;
-  poisson_blanc: number = 0;
-  poisson_blanc_impact: number = 0;
-  vegetarien: number = 0;
-  vegetarien_impact: number = 0;
-  vegetalien: number = 0;
-  vegetalien_impact: number = 0;
-  total_impact: number = 0;
+  viande_rouge: number;
+  viande_rouge_impact: number;
+  viande_blanche: number;
+  viande_blanche_impact: number;
+  poisson_rouge: number;
+  poisson_rouge_impact: number;
+  poisson_blanc: number;
+  poisson_blanc_impact: number;
+  vegetarien: number;
+  vegetarien_impact: number;
+  vegetalien: number;
+  vegetalien_impact: number;
+  total_impact: number;
 
   calculImpacts() {
     this.viande_rouge_impact = this.viande_rouge * 5510;

@@ -1,6 +1,7 @@
 import { TestUtil } from '../../TestUtil';
 import { SuiviRepository } from '../../../src/infrastructure/repository/suivi.repository';
 import { SuiviAlimentation } from '../../../src/domain/suivi/suiviAlimentation';
+import { SuiviType } from '../../../src/domain/suivi/suiviType';
 
 describe('SuiviRepository', () => {
   let suiviRepository = new SuiviRepository(TestUtil.prisma);
@@ -28,7 +29,8 @@ describe('SuiviRepository', () => {
     const suivis = await TestUtil.prisma.suivi.findMany({});
     expect(suivis).toHaveLength(1);
     expect(suivis[0].id).toHaveLength(36);
-    expect(suivis[0].attributs[0]).toEqual('viande_rouge');
+    expect(suivis[0].type).toEqual('alimentation');
+    expect(suivis[0].data['viande_rouge']).toEqual(2);
   });
 
   it('erreur de type', async () => {
@@ -39,8 +41,9 @@ describe('SuiviRepository', () => {
       data: {
         id: '1',
         type: 'bad_type',
-        attributs: ['viande_rouge'],
-        valeurs: ['1'],
+        data: {
+          viande_rouge: 1,
+        },
         utilisateurId: '1',
         created_at: new Date(123),
       },
@@ -62,9 +65,10 @@ describe('SuiviRepository', () => {
     await TestUtil.prisma.suivi.create({
       data: {
         id: '1',
-        type: 'alimentation',
-        attributs: ['viande_rouge'],
-        valeurs: ['1'],
+        type: SuiviType.alimentation,
+        data: {
+          viande_rouge: 1,
+        },
         utilisateurId: '1',
         created_at: new Date(123),
       },
@@ -72,9 +76,10 @@ describe('SuiviRepository', () => {
     await TestUtil.prisma.suivi.create({
       data: {
         id: '2',
-        type: 'transport',
-        attributs: ['km_voiture'],
-        valeurs: ['2'],
+        type: SuiviType.transport,
+        data: {
+          km_voiture: 2,
+        },
         utilisateurId: '1',
         created_at: new Date(456),
       },
@@ -124,7 +129,7 @@ describe('SuiviRepository', () => {
 
     const suivis = await suiviRepository.listAllSuivi(
       'utilisateur-id',
-      'transport',
+      SuiviType.transport,
     );
     expect(suivis.alimentation).toHaveLength(0);
     expect(suivis.transports).toHaveLength(2);
