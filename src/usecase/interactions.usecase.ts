@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Interaction } from '@prisma/client';
+import { Interaction as DBInteraction } from '@prisma/client';
 import { InteractionStatus } from '../domain/interactionStatus';
 import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur.repository';
@@ -11,7 +11,7 @@ export class InteractionsUsecase {
     private utilisateurRepository: UtilisateurRepository,
   ) {}
 
-  async listInteractions(utilisateurId: string): Promise<Interaction[]> {
+  async listInteractions(utilisateurId: string): Promise<DBInteraction[]> {
     return this.interactionRepository.listInteractionsByUtilisateurId(
       utilisateurId,
     );
@@ -22,19 +22,20 @@ export class InteractionsUsecase {
     interactionId: string,
     status: InteractionStatus,
   ) {
-    const interactionDb = await this.interactionRepository.getInteractionById(
-      interactionId,
-    );
+    const stored_interaction =
+      await this.interactionRepository.getInteractionById(interactionId);
 
-    if (status.done && !interactionDb.done) {
+    if (status.done && !stored_interaction.done) {
       await this.utilisateurRepository.addPointsToUtilisateur(
         utilisateurId,
-        interactionDb.points,
+        stored_interaction.points,
       );
+      stored_interaction.setNextScheduledReset();
     }
-    return this.interactionRepository.updateInteractionStatusData(
-      interactionId,
-      status,
+
+    stored_interaction.updateStatus(status);
+    return this.interactionRepository.partialUpdateInteraction(
+      stored_interaction,
     );
   }
 

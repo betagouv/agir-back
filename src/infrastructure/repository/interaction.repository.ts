@@ -1,21 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../db/prisma.service';
-import { Interaction } from '@prisma/client';
-import { InteractionStatus } from '../../../src/domain/interactionStatus';
+import { Interaction as DBInteraction } from '@prisma/client';
+import { Interaction } from '../../../src/domain/interaction';
 
 @Injectable()
 export class InteractionRepository {
   constructor(private prisma: PrismaService) {}
 
   async getInteractionById(interactionId): Promise<Interaction | null> {
-    return this.prisma.interaction.findUnique({
+    const result = await this.prisma.interaction.findUnique({
       where: { id: interactionId },
     });
+    return result ? new Interaction(result) : null;
   }
 
   async listInteractionsByUtilisateurId(
     utilisateurId: string,
-  ): Promise<Interaction[] | null> {
+  ): Promise<DBInteraction[] | null> {
     return this.prisma.interaction.findMany({
       where: {
         utilisateurId,
@@ -29,22 +30,20 @@ export class InteractionRepository {
       ],
     });
   }
-  async updateInteractionStatusData(
-    interactionId: string,
-    data: InteractionStatus,
-  ) {
+  async partialUpdateInteraction(
+    interaction: Interaction,
+  ): Promise<DBInteraction | null> {
     return this.prisma.interaction.update({
       where: {
-        id: interactionId,
+        id: interaction.id,
       },
       data: {
-        seen: data.seen,
-        clicked: data.clicked,
-        done: data.done,
-        succeeded: data.succeeded,
+        ...interaction,
+        updated_at: undefined,
       },
     });
   }
+
   async resetAllInteractionStatus(date: Date) {
     const result = await this.prisma.interaction.updateMany({
       where: {
@@ -59,6 +58,7 @@ export class InteractionRepository {
         clicked_at: null,
         done_at: null,
         succeeded_at: null,
+        scheduled_reset: null,
       },
     });
     return result.count;

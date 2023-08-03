@@ -6,6 +6,7 @@ const suivis = {
     tags: ['suivi', 'alimentation', 'kyc'],
     duree: '⏱️ < 1 minute',
     frequence: null,
+    day_period: 1,
     image_url:
       'https://images.unsplash.com/photo-1521079299535-94854b0a7b27?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1748&q=80',
     url: null,
@@ -13,7 +14,7 @@ const suivis = {
     points: 25,
     locked: false,
   },
-    ajouter_linky: {
+  ajouter_linky: {
     titre: 'Connectez votre compteur Linky',
     soustitre: '-',
     categorie: 'Energie',
@@ -27,7 +28,7 @@ const suivis = {
     points: 25,
     locked: true,
   },
-   aide_velo: {
+  aide_velo: {
     titre: 'Simulez une aide pour acheter un vélo',
     soustitre: '-',
     categorie: 'Transports',

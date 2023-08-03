@@ -1,5 +1,6 @@
 import { TestUtil } from '../../TestUtil';
 import { InteractionRepository } from '../../../src/infrastructure/repository/interaction.repository';
+import { Interaction } from '../../../src/domain/interaction';
 
 describe('InteractionRepository', () => {
   let interactionRepository = new InteractionRepository(TestUtil.prisma);
@@ -29,39 +30,6 @@ describe('InteractionRepository', () => {
     expect(liste[0].reco_score).toEqual(20);
     expect(liste[1].reco_score).toEqual(50);
     expect(liste[2].reco_score).toEqual(100);
-  });
-  it('updateInteractionStatusData : update done status ok wihtout changing others', async () => {
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('interaction');
-
-    await interactionRepository.updateInteractionStatusData('interaction-id', {
-      done: true,
-    });
-    const result = await TestUtil.prisma.interaction.findUnique({
-      where: { id: 'interaction-id' },
-    });
-    expect(result.done).toStrictEqual(true);
-    expect(result.clicked).toStrictEqual(false);
-    expect(result.seen).toStrictEqual(0);
-    expect(result.succeeded).toStrictEqual(false);
-  });
-  it('updateInteractionStatusData : update all status ok', async () => {
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('interaction');
-
-    await interactionRepository.updateInteractionStatusData('interaction-id', {
-      done: true,
-      clicked: true,
-      succeeded: true,
-      seen: 2,
-    });
-    const result = await TestUtil.prisma.interaction.findUnique({
-      where: { id: 'interaction-id' },
-    });
-    expect(result.done).toStrictEqual(true);
-    expect(result.clicked).toStrictEqual(true);
-    expect(result.seen).toStrictEqual(2);
-    expect(result.succeeded).toStrictEqual(true);
   });
   it('resetAllInteractionStatus : resets nothing when date after scheduled reset date', async () => {
     await TestUtil.create('utilisateur');
@@ -123,11 +91,33 @@ describe('InteractionRepository', () => {
     expect(inter1.done_at).toStrictEqual(null);
     expect(inter1.clicked_at).toStrictEqual(null);
     expect(inter1.succeeded_at).toStrictEqual(null);
+    expect(inter1.scheduled_reset).toStrictEqual(null);
     expect(inter2.done).toStrictEqual(true);
     expect(inter2.clicked).toStrictEqual(true);
     expect(inter2.succeeded).toStrictEqual(true);
     expect(inter2.done_at).not.toBeNull();
     expect(inter2.clicked_at).not.toBeNull();
     expect(inter2.succeeded_at).not.toBeNull();
+    expect(inter2.scheduled_reset).not.toBeNull();
+  });
+  it('update : update interaction and proper update_at date', async () => {
+    //GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction');
+    const interactionToUpdate = new Interaction({
+      points: 123,
+      id: 'interaction-id',
+    });
+
+    //WHEN
+    await interactionRepository.partialUpdateInteraction(interactionToUpdate);
+
+    // THEN
+    const result = await TestUtil.prisma.interaction.findUnique({
+      where: { id: 'interaction-id' },
+    });
+    expect(result.categorie).toStrictEqual('Consommation');
+    expect(result.points).toStrictEqual(123);
+    expect(result.updated_at).not.toBeNull();
   });
 });

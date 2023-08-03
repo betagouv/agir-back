@@ -120,6 +120,7 @@ export class TestUtil {
       reco_score: 100,
       locked: true,
       scheduled_reset: null,
+      day_period: null,
       utilisateurId: 'utilisateur-id',
       ...override,
     };

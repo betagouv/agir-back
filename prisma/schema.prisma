@@ -58,6 +58,7 @@ model Interaction {
   points          Int         @default(0)
   reco_score      Int         @default(1000)
   scheduled_reset DateTime?
+  day_period      Int?
   created_at      DateTime    @default(now())
   updated_at      DateTime    @updatedAt
   utilisateurId   String

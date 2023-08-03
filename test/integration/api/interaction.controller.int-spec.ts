@@ -86,6 +86,23 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     });
     expect(dbUtilisateur.points).toStrictEqual(0);
   });
+  it('PATCH /utilisateurs/id/interactions/id - set a scheduled_reset date when moving to done and day_period specified', async () => {
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      done: false,
+      day_period: 1,
+    });
+    const response = await TestUtil.getServer()
+      .patch('/utilisateurs/utilisateur-id/interactions/interaction-id')
+      .send({
+        done: true,
+      });
+    expect(response.status).toBe(200);
+    const dbInteraction = await TestUtil.prisma.interaction.findUnique({
+      where: { id: 'interaction-id' },
+    });
+    expect(dbInteraction.scheduled_reset).not.toBeNull();
+  });
   it('POST /interactions/reset resets with current date when no date parameter', async () => {
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
