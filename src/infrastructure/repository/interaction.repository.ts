@@ -45,4 +45,22 @@ export class InteractionRepository {
       },
     });
   }
+  async resetAllInteractionStatus(date: Date) {
+    const result = await this.prisma.interaction.updateMany({
+      where: {
+        scheduled_reset: {
+          lt: date,
+        },
+      },
+      data: {
+        clicked: false,
+        done: false,
+        succeeded: false,
+        clicked_at: null,
+        done_at: null,
+        succeeded_at: null,
+      },
+    });
+    return result.count;
+  }
 }

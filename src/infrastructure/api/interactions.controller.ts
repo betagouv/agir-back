@@ -3,13 +3,15 @@ import {
   Body,
   Controller,
   Get,
+  HttpStatus,
   NotFoundException,
   Param,
   Patch,
   Post,
   Query,
-  Response,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { InteractionsUsecase } from '../../usecase/interactions.usecase';
 import { ApiTags, ApiQuery, ApiBody, ApiOkResponse } from '@nestjs/swagger';
 import { APIInteractionType } from './types/interaction';
@@ -44,5 +46,18 @@ export class IntractionsController {
       interactionId,
       status,
     );
+  }
+  @ApiQuery({
+    name: 'date',
+    type: Date,
+    description: 'date seuil de reset, eg 2023-03-19',
+    required: false,
+  })
+  @Post('interactions/reset')
+  async resetInteractions(@Res() res: Response, @Query('date') date?: string) {
+    const result = await this.interactionsUsecase.reset(
+      date ? new Date(Date.parse(date)) : null,
+    );
+    res.status(HttpStatus.OK).json({ reset_interaction_number: result }).send();
   }
 }

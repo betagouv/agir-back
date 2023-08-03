@@ -37,4 +37,9 @@ export class InteractionsUsecase {
       status,
     );
   }
+
+  async reset(date?: Date): Promise<number> {
+    const date_seuil = date || new Date();
+    return this.interactionRepository.resetAllInteractionStatus(date_seuil);
+  }
 }

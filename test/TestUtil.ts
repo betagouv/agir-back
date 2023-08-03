@@ -119,6 +119,7 @@ export class TestUtil {
       points: 5,
       reco_score: 100,
       locked: true,
+      scheduled_reset: null,
       utilisateurId: 'utilisateur-id',
       ...override,
     };

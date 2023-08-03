@@ -86,4 +86,38 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     });
     expect(dbUtilisateur.points).toStrictEqual(0);
   });
+  it('POST /interactions/reset resets with current date when no date parameter', async () => {
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      done: true,
+      scheduled_reset: new Date(100),
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      done: true,
+      scheduled_reset: new Date(200),
+    });
+    const response = await TestUtil.getServer().post('/interactions/reset');
+    expect(response.status).toBe(200);
+    expect(response.body.reset_interaction_number).toEqual(2);
+  });
+  it('POST /interactions/reset resets with param date', async () => {
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      done: true,
+      scheduled_reset: new Date(100),
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      done: true,
+      scheduled_reset: new Date(200),
+    });
+    const response = await TestUtil.getServer().post(
+      '/interactions/reset?date='.concat(new Date(150).toISOString()),
+    );
+    expect(response.status).toBe(200);
+    expect(response.body.reset_interaction_number).toEqual(1);
+  });
 });

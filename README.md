@@ -44,6 +44,7 @@ docker run hello-world
 - renseigner les URLs respectives de votre base de test base de dev
 
 ### Lancer les bases de données
+Vous pouvez aussi le faire manuellement si vous rencontrez des problèmes de droits sous linux avec le script ```docker-compose``` sous jacent
 
 ```bash
 npm run db:up
@@ -55,19 +56,20 @@ npm run db:up
 npm run db:update
 ```
 
-### Lancer les tests d'intégration
+### Lancer les tests d'intégration et les tests unitaires
 
 Pour vérifier que tout marche bien
 
 ```bash
-npm run test:int
+npm run test:all
 ```
 
-Cela va :
-
-1. Lancer les images dockers dev et tests (si besoin)
-2. Jouer les migrations prisma (si besoin)
-3. Executer les tests d'intégration
+```bash
+npm run test:int # pour les tests d'intégration seuls
+```
+```bash
+npm run test # pour les tests unitaires seuls
+```
 
 ### Stoper et détruire les bases de dev et tests
 
@@ -104,12 +106,3 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# test coverage
-$ npm run test:cov
-```

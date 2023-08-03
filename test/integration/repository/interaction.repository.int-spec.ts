@@ -16,115 +16,118 @@ describe('InteractionRepository', () => {
     await TestUtil.appclose();
   });
 
-  it('desc order by reco score ', async () => {
-    await TestUtil.prisma.utilisateur.create({
-      data: { id: '123', name: 'bob' },
-    });
-    await TestUtil.prisma.interaction.createMany({
-      data: [
-        {
-          id: '1',
-          type: 'A',
-          titre: 'A',
-          categorie: 'A',
-          difficulty: 1,
-          points: 5,
-          reco_score: 100,
-          utilisateurId: '123',
-        },
-        {
-          id: '2',
-          type: 'B',
-          titre: 'B',
-          categorie: 'B',
-          difficulty: 1,
-          points: 5,
-          reco_score: 20,
-          utilisateurId: '123',
-        },
-        {
-          id: '3',
-          type: 'C',
-          titre: 'C',
-          categorie: 'C',
-          difficulty: 1,
-          points: 5,
-          reco_score: 50,
-          utilisateurId: '123',
-        },
-      ],
-    });
+  it('listInteractionsByUtilisateurId : desc order by reco score ', async () => {
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', { id: '1', reco_score: 100 });
+    await TestUtil.create('interaction', { id: '2', reco_score: 20 });
+    await TestUtil.create('interaction', { id: '3', reco_score: 50 });
 
     const liste = await interactionRepository.listInteractionsByUtilisateurId(
-      '123',
+      'utilisateur-id',
     );
     expect(liste).toHaveLength(3);
     expect(liste[0].reco_score).toEqual(20);
     expect(liste[1].reco_score).toEqual(50);
     expect(liste[2].reco_score).toEqual(100);
   });
-  it('update done status ok wihtout changing others', async () => {
-    await TestUtil.prisma.utilisateur.create({
-      data: { id: '123', name: 'bob' },
-    });
-    await TestUtil.prisma.interaction.createMany({
-      data: [
-        {
-          id: '1',
-          type: 'A',
-          titre: 'A',
-          categorie: 'A',
-          difficulty: 1,
-          points: 5,
-          reco_score: 100,
-          utilisateurId: '123',
-          done: false,
-        },
-      ],
-    });
+  it('updateInteractionStatusData : update done status ok wihtout changing others', async () => {
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction');
 
-    await interactionRepository.updateInteractionStatusData('1', {
+    await interactionRepository.updateInteractionStatusData('interaction-id', {
       done: true,
     });
     const result = await TestUtil.prisma.interaction.findUnique({
-      where: { id: '1' },
+      where: { id: 'interaction-id' },
     });
     expect(result.done).toStrictEqual(true);
     expect(result.clicked).toStrictEqual(false);
     expect(result.seen).toStrictEqual(0);
     expect(result.succeeded).toStrictEqual(false);
   });
-  it('update all status ok', async () => {
-    await TestUtil.prisma.utilisateur.create({
-      data: { id: '123', name: 'bob' },
-    });
-    await TestUtil.prisma.interaction.createMany({
-      data: [
-        {
-          id: '1',
-          type: 'A',
-          titre: 'A',
-          categorie: 'A',
-          difficulty: 1,
-          points: 5,
-          reco_score: 100,
-          utilisateurId: '123',
-        },
-      ],
-    });
+  it('updateInteractionStatusData : update all status ok', async () => {
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction');
 
-    await interactionRepository.updateInteractionStatusData('1', {
+    await interactionRepository.updateInteractionStatusData('interaction-id', {
       done: true,
       clicked: true,
       succeeded: true,
       seen: 2,
     });
     const result = await TestUtil.prisma.interaction.findUnique({
-      where: { id: '1' },
+      where: { id: 'interaction-id' },
     });
     expect(result.done).toStrictEqual(true);
     expect(result.clicked).toStrictEqual(true);
     expect(result.seen).toStrictEqual(2);
     expect(result.succeeded).toStrictEqual(true);
+  });
+  it('resetAllInteractionStatus : resets nothing when date after scheduled reset date', async () => {
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', { scheduled_reset: new Date(100) });
+
+    await interactionRepository.resetAllInteractionStatus(new Date(50));
+    const result = await TestUtil.prisma.interaction.findUnique({
+      where: { id: 'interaction-id' },
+    });
+    expect(result.done).toStrictEqual(false);
+    expect(result.clicked).toStrictEqual(false);
+    expect(result.succeeded).toStrictEqual(false);
+  });
+  it('resetAllInteractionStatus : resets nothing when no scheduled_reset date', async () => {
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', { scheduled_reset: null, done: true });
+
+    await interactionRepository.resetAllInteractionStatus(new Date(50));
+    const result = await TestUtil.prisma.interaction.findUnique({
+      where: { id: 'interaction-id' },
+    });
+    expect(result.done).toStrictEqual(true);
+  });
+  it('resetAllInteractionStatus : resets one only when date passed', async () => {
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      scheduled_reset: new Date(100),
+      done: true,
+      clicked: true,
+      succeeded: true,
+      done_at: new Date(),
+      clicked_at: new Date(),
+      succeeded_at: new Date(),
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      scheduled_reset: new Date(200),
+      done: true,
+      clicked: true,
+      succeeded: true,
+      done_at: new Date(),
+      clicked_at: new Date(),
+      succeeded_at: new Date(),
+    });
+
+    await interactionRepository.resetAllInteractionStatus(new Date(150));
+    let inter1 = await TestUtil.prisma.interaction.findUnique({
+      where: { id: '1' },
+    });
+    let inter2 = await TestUtil.prisma.interaction.findUnique({
+      where: { id: '2' },
+    });
+
+    // THEN
+    expect(inter1.done).toStrictEqual(false);
+    expect(inter1.clicked).toStrictEqual(false);
+    expect(inter1.succeeded).toStrictEqual(false);
+    expect(inter1.done_at).toStrictEqual(null);
+    expect(inter1.clicked_at).toStrictEqual(null);
+    expect(inter1.succeeded_at).toStrictEqual(null);
+    expect(inter2.done).toStrictEqual(true);
+    expect(inter2.clicked).toStrictEqual(true);
+    expect(inter2.succeeded).toStrictEqual(true);
+    expect(inter2.done_at).not.toBeNull();
+    expect(inter2.clicked_at).not.toBeNull();
+    expect(inter2.succeeded_at).not.toBeNull();
   });
 });

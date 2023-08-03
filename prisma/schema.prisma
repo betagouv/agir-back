@@ -34,33 +34,34 @@ model Utilisateur {
 }
 
 model Interaction {
-  id            String      @id
-  content_id    String?
-  type          String
-  titre         String
-  soustitre     String?
-  categorie     String
-  tags          String[]    @default([])
-  duree         String?
-  frequence     String?
-  image_url     String?
-  url           String?
-  seen          Int         @default(0)
-  seen_at       DateTime?
-  clicked       Boolean     @default(false)
-  clicked_at    DateTime?
-  done          Boolean     @default(false)
-  done_at       DateTime?
-  succeeded     Boolean     @default(false)
-  succeeded_at  DateTime?
-  locked        Boolean     @default(false)
-  difficulty    Int         @default(1)
-  points        Int         @default(0)
-  reco_score    Int         @default(1000)
-  created_at    DateTime    @default(now())
-  updated_at    DateTime    @updatedAt
-  utilisateurId String
-  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
+  id              String      @id
+  content_id      String?
+  type            String
+  titre           String
+  soustitre       String?
+  categorie       String
+  tags            String[]    @default([])
+  duree           String?
+  frequence       String?
+  image_url       String?
+  url             String?
+  seen            Int         @default(0)
+  seen_at         DateTime?
+  clicked         Boolean     @default(false)
+  clicked_at      DateTime?
+  done            Boolean     @default(false)
+  done_at         DateTime?
+  succeeded       Boolean     @default(false)
+  succeeded_at    DateTime?
+  locked          Boolean     @default(false)
+  difficulty      Int         @default(1)
+  points          Int         @default(0)
+  reco_score      Int         @default(1000)
+  scheduled_reset DateTime?
+  created_at      DateTime    @default(now())
+  updated_at      DateTime    @updatedAt
+  utilisateurId   String
+  utilisateur     Utilisateur @relation(fields: [utilisateurId], references: [id])
 }
 
 model Empreinte {
