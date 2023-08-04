@@ -1,7 +1,7 @@
 {
   "jobs": [
     {
-      "command": "*/1 * * * * curl https://www.google.com"
+      "command": "*/10 * * * * curl -d $BASE_URL/interactions/reset"
     }
   ]
 }
