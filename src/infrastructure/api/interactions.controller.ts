@@ -58,6 +58,8 @@ export class IntractionsController {
     const result = await this.interactionsUsecase.reset(
       date ? new Date(Date.parse(date)) : null,
     );
-    res.status(HttpStatus.OK).json({ reset_interaction_number: result }).send();
+    const return_payload = { reset_interaction_number: result };
+    console.log(return_payload);
+    res.status(HttpStatus.OK).json(return_payload).send();
   }
 }

@@ -1,0 +1,7 @@
+{
+  "jobs": [
+    {
+      "command": "*/1 * * * * curl https://www.google.com"
+    }
+  ]
+}

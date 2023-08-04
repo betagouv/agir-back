@@ -2,7 +2,6 @@ import { InteractionStatus } from './interactionStatus';
 
 export class Interaction {
   constructor(data: object) {
-    data as Interaction; // check ^^
     Object.assign(this, data);
   }
 
