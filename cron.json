@@ -1,7 +1,7 @@
 {
   "jobs": [
     {
-      "command": "*/10 * * * * curl -d $BASE_URL/interactions/reset"
+      "command": "*/10 * * * * ./scripts/reset_scheduled_interactions.sh"
     }
   ]
 }
