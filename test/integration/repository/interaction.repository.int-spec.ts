@@ -1,6 +1,7 @@
 import { TestUtil } from '../../TestUtil';
 import { InteractionRepository } from '../../../src/infrastructure/repository/interaction.repository';
 import { Interaction } from '../../../src/domain/interaction/interaction';
+import { InteractionType } from '../../../src/domain/interaction/interactionType';
 
 describe('InteractionRepository', () => {
   let interactionRepository = new InteractionRepository(TestUtil.prisma);
@@ -17,19 +18,47 @@ describe('InteractionRepository', () => {
     await TestUtil.appclose();
   });
 
-  it('listInteractionsByUtilisateurId : desc order by reco score ', async () => {
+  it('listMaxInteractionsByUtilisateurIdAndType : desc order by reco score ', async () => {
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', { id: '1', reco_score: 100 });
     await TestUtil.create('interaction', { id: '2', reco_score: 20 });
     await TestUtil.create('interaction', { id: '3', reco_score: 50 });
 
-    const liste = await interactionRepository.listInteractionsByUtilisateurId(
-      'utilisateur-id',
-    );
+    const liste =
+      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+        'utilisateur-id',
+      );
     expect(liste).toHaveLength(3);
     expect(liste[0].reco_score).toEqual(20);
     expect(liste[1].reco_score).toEqual(50);
     expect(liste[2].reco_score).toEqual(100);
+  });
+  it('listMaxInteractionsByUtilisateurIdAndType : filters by type ', async () => {
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', { id: '1', type: 'quizz' });
+    await TestUtil.create('interaction', { id: '2', type: 'article' });
+    await TestUtil.create('interaction', { id: '3', type: 'article' });
+
+    const liste =
+      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+        'utilisateur-id',
+        InteractionType.article,
+      );
+    expect(liste).toHaveLength(2);
+  });
+  it('listMaxInteractionsByUtilisateurIdAndType : applies max number ', async () => {
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', { id: '1', type: 'article' });
+    await TestUtil.create('interaction', { id: '2', type: 'article' });
+    await TestUtil.create('interaction', { id: '3', type: 'article' });
+
+    const liste =
+      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+        'utilisateur-id',
+        InteractionType.article,
+        1,
+      );
+    expect(liste).toHaveLength(1);
   });
   it('resetAllInteractionStatus : resets nothing when date after scheduled reset date', async () => {
     await TestUtil.create('utilisateur');

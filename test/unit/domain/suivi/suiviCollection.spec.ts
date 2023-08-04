@@ -1,7 +1,6 @@
-import { SuiviCollection } from '../../../src/domain/suivi/suiviCollection';
-import { SuiviAlimentation } from '../../../src/domain/suivi/suiviAlimentation';
-import { SuiviTransport } from '../../../src/domain/suivi/suiviTransport';
-import { Suivi } from '../../../src/domain/suivi/suivi';
+import { SuiviCollection } from '../../../../src/domain/suivi/suiviCollection';
+import { SuiviAlimentation } from '../../../../src/domain/suivi/suiviAlimentation';
+import { SuiviTransport } from '../../../../src/domain/suivi/suiviTransport';
 
 describe('Objet SuiviCollection', () => {
   it('mergeAll : should merge ok all data', () => {

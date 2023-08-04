@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../db/prisma.service';
 import { Interaction as DBInteraction } from '@prisma/client';
 import { Interaction } from '../../domain/interaction/interaction';
+import { InteractionType } from 'src/domain/interaction/interactionType';
 
 @Injectable()
 export class InteractionRepository {
@@ -14,21 +15,25 @@ export class InteractionRepository {
     return result ? new Interaction(result) : null;
   }
 
-  async listInteractionsByUtilisateurId(
+  async listMaxEligibleInteractionsByUtilisateurIdAndType(
     utilisateurId: string,
-  ): Promise<DBInteraction[] | null> {
+    type?: InteractionType,
+    maxNumber?: number,
+  ): Promise<Interaction[] | null> {
     return this.prisma.interaction.findMany({
+      take: maxNumber,
       where: {
         utilisateurId,
         done: false,
         succeeded: false,
+        type,
       },
       orderBy: [
         {
           reco_score: 'asc',
         },
       ],
-    });
+    }) as Promise<Interaction[] | null>;
   }
   async partialUpdateInteraction(
     interaction: Interaction,
@@ -39,7 +44,7 @@ export class InteractionRepository {
       },
       data: {
         ...interaction,
-        updated_at: undefined,
+        updated_at: undefined, // pour forcer la mise à jour auto
       },
     });
   }

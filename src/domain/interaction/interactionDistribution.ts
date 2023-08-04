@@ -1,12 +1,11 @@
-import { InteractionPosition } from './interactionPosition';
-import { InteractionType } from './interactionType';
+import { InteractionPlacement } from './interactionPosition';
 
 export class InteractionDistribution {
-  constructor() {}
-
-  type: InteractionType;
-  prefered: number;
-  min: number;
-  max: number;
-  position: InteractionPosition;
+  constructor(
+    public prefered: number,
+    public placement: InteractionPlacement,
+    public min?: number,
+    public max?: number,
+    public positions?: number[],
+  ) {}
 }

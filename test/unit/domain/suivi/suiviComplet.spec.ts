@@ -1,6 +1,6 @@
-import { SuiviComplet } from '../../../src/domain/suivi/suiviComplet';
-import { SuiviTransport } from '../../../src/domain/suivi/suiviTransport';
-import { SuiviAlimentation } from '../../../src/domain/suivi/suiviAlimentation';
+import { SuiviComplet } from '../../../../src/domain/suivi/suiviComplet';
+import { SuiviTransport } from '../../../../src/domain/suivi/suiviTransport';
+import { SuiviAlimentation } from '../../../../src/domain/suivi/suiviAlimentation';
 
 describe('Objet SuiviComplet', () => {
   it('isEmpty : should say empty when empty', () => {

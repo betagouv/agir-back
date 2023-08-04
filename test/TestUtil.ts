@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { InteractionType } from '../src/domain/interaction/interactionType';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/db/prisma.service';
 const request = require('supertest');
@@ -98,7 +99,7 @@ export class TestUtil {
     return {
       id: 'interaction-id',
       content_id: 'quizz-id',
-      type: 'type',
+      type: InteractionType.quizz,
       titre: 'titre',
       soustitre: 'soustitre',
       categorie: 'Consommation',

@@ -1,6 +1,6 @@
-import { Interaction } from '../../../src/domain/interaction/interaction';
+import { Interaction } from '../../../../src/domain/interaction/interaction';
 
-describe('ScheduledInteraction', () => {
+describe('Interaction', () => {
   it('setNextScheduledReset : should compute OK next day schedule', () => {
     // GIVEN
     const scheduledInteraction = new Interaction({ day_period: 1 });

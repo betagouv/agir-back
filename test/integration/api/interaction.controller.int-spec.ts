@@ -1,3 +1,7 @@
+import { InteractionDistribution } from '../../../src/domain/interaction/interactionDistribution';
+import { InteractionPlacement } from '../../../src/domain/interaction/interactionPosition';
+import { InteractionType } from '../../../src/domain/interaction/interactionType';
+import { DistributionSettings } from '../../../src/domain/interaction/distributionSettings';
 import { TestUtil } from '../../TestUtil';
 
 describe('/utilisateurs/id/interactions (API test)', () => {
@@ -7,6 +11,11 @@ describe('/utilisateurs/id/interactions (API test)', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
+    DistributionSettings.overrideSettings(new Map([]));
+  });
+
+  afterEach(() => {
+    DistributionSettings.resetSettings();
   });
 
   afterAll(async () => {
@@ -30,6 +39,123 @@ describe('/utilisateurs/id/interactions (API test)', () => {
         updated_at: dbInteraction.updated_at.toISOString(),
       }),
     );
+  });
+  it('GET /utilisateurs/id/interactions - list interactions in reco order when no strategy', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', { id: '1', reco_score: 1 });
+    await TestUtil.create('interaction', { id: '2', reco_score: 20 });
+    await TestUtil.create('interaction', { id: '3', reco_score: 10 });
+    await TestUtil.create('interaction', { id: '4', reco_score: 40 });
+
+    // WHEN
+    const response = await TestUtil.getServer().get(
+      '/utilisateurs/utilisateur-id/interactions',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(4);
+    expect(response.body[0].reco_score).toEqual(1);
+    expect(response.body[1].reco_score).toEqual(10);
+    expect(response.body[2].reco_score).toEqual(20);
+    expect(response.body[3].reco_score).toEqual(40);
+  });
+  it('GET /utilisateurs/id/interactions - list interactions with strategy, correct order', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      reco_score: 10,
+      type: InteractionType.aide,
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      reco_score: 30,
+      type: InteractionType.aide,
+    });
+    await TestUtil.create('interaction', {
+      id: '3',
+      reco_score: 20,
+      type: InteractionType.article,
+    });
+    await TestUtil.create('interaction', {
+      id: '4',
+      reco_score: 40,
+      type: InteractionType.article,
+    });
+    DistributionSettings.overrideSettings(
+      new Map([
+        [
+          InteractionType.aide,
+          new InteractionDistribution(2, InteractionPlacement.any),
+        ],
+        [
+          InteractionType.article,
+          new InteractionDistribution(2, InteractionPlacement.any),
+        ],
+      ]),
+    );
+
+    // WHEN
+    const response = await TestUtil.getServer().get(
+      '/utilisateurs/utilisateur-id/interactions',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(4);
+    expect(response.body[0].reco_score).toEqual(10);
+    expect(response.body[1].reco_score).toEqual(20);
+    expect(response.body[2].reco_score).toEqual(30);
+    expect(response.body[3].reco_score).toEqual(40);
+  });
+  it('GET /utilisateurs/id/interactions - list interactions with strategy, max per type', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      reco_score: 10,
+      type: InteractionType.aide,
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      reco_score: 30,
+      type: InteractionType.aide,
+    });
+    await TestUtil.create('interaction', {
+      id: '3',
+      reco_score: 20,
+      type: InteractionType.article,
+    });
+    await TestUtil.create('interaction', {
+      id: '4',
+      reco_score: 40,
+      type: InteractionType.article,
+    });
+    DistributionSettings.overrideSettings(
+      new Map([
+        [
+          InteractionType.aide,
+          new InteractionDistribution(1, InteractionPlacement.any),
+        ],
+        [
+          InteractionType.article,
+          new InteractionDistribution(1, InteractionPlacement.any),
+        ],
+      ]),
+    );
+
+    // WHEN
+    const response = await TestUtil.getServer().get(
+      '/utilisateurs/utilisateur-id/interactions',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(2);
+    expect(response.body[0].reco_score).toEqual(10);
+    expect(response.body[1].reco_score).toEqual(20);
   });
   it('GET /utilisateurs/id/interactions - no done interaction', async () => {
     await TestUtil.create('utilisateur');

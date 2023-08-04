@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Interaction as DBInteraction } from '@prisma/client';
+import { Interaction } from '../domain/interaction/interaction';
+import { DistributionSettings } from '../domain/interaction/distributionSettings';
 import { InteractionStatus } from '../domain/interaction/interactionStatus';
 import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur.repository';
+import { InteractionType } from '../domain/interaction/interactionType';
+import { isUndefined } from 'util';
 
 @Injectable()
 export class InteractionsUsecase {
@@ -12,9 +16,21 @@ export class InteractionsUsecase {
   ) {}
 
   async listInteractions(utilisateurId: string): Promise<DBInteraction[]> {
-    return this.interactionRepository.listInteractionsByUtilisateurId(
-      utilisateurId,
-    );
+    let result: Interaction[] = [];
+    for (const type in InteractionType) {
+      let listInteracionsOfType =
+        await this.interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+          utilisateurId,
+          type as InteractionType,
+          DistributionSettings.getPreferedOfType(type as InteractionType),
+        );
+      result = DistributionSettings.addInteractionsToList(
+        listInteracionsOfType,
+        result,
+      );
+    }
+    result.sort((a, b) => a.reco_score - b.reco_score);
+    return result;
   }
 
   async updateStatus(

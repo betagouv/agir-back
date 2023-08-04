@@ -1,7 +1,6 @@
-import { Suivi } from '../../../src/domain/suivi/suivi';
-import { SuiviTransport } from '../../../src/domain/suivi/suiviTransport';
-import { SuiviAlimentation } from '../../../src/domain/suivi/suiviAlimentation';
-import { SuiviType } from '../../../src/domain/suivi/suiviType';
+import { SuiviTransport } from '../../../../src/domain/suivi/suiviTransport';
+import { SuiviAlimentation } from '../../../../src/domain/suivi/suiviAlimentation';
+import { SuiviType } from '../../../../src/domain/suivi/suiviType';
 
 describe('Objet Suivi', () => {
   it('constructor : should build with optionnal ata object', () => {
