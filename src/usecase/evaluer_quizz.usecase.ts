@@ -3,7 +3,7 @@ import { QuizzQuestion } from '@prisma/client';
 import { BodyReponsesQuizz } from 'src/infrastructure/api/types/reponsesQuizz';
 import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
 import { BadgeRepository } from '../infrastructure/repository/badge.repository';
-import { BadgeTypeEnum } from '../domain/badgeTypeEnum';
+import { BadgeTypeEnum } from '../domain/badgeType';
 
 @Injectable()
 export class EvaluerQuizzUsecase {

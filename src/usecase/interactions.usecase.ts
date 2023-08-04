@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Interaction as DBInteraction } from '@prisma/client';
-import { InteractionStatus } from '../domain/interactionStatus';
+import { InteractionStatus } from '../domain/interaction/interactionStatus';
 import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur.repository';
 

@@ -1,6 +1,6 @@
 import { TestUtil } from '../../TestUtil';
 import { InteractionRepository } from '../../../src/infrastructure/repository/interaction.repository';
-import { Interaction } from '../../../src/domain/interaction';
+import { Interaction } from '../../../src/domain/interaction/interaction';
 
 describe('InteractionRepository', () => {
   let interactionRepository = new InteractionRepository(TestUtil.prisma);

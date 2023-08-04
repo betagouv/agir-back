@@ -1,4 +1,4 @@
-import { Interaction } from '../../../src/domain/interaction';
+import { Interaction } from '../../../src/domain/interaction/interaction';
 
 describe('ScheduledInteraction', () => {
   it('setNextScheduledReset : should compute OK next day schedule', () => {

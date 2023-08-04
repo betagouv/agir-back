@@ -15,7 +15,7 @@ import { Response } from 'express';
 import { InteractionsUsecase } from '../../usecase/interactions.usecase';
 import { ApiTags, ApiQuery, ApiBody, ApiOkResponse } from '@nestjs/swagger';
 import { APIInteractionType } from './types/interaction';
-import { InteractionStatus } from '../../../src/domain/interactionStatus';
+import { InteractionStatus } from '../../domain/interaction/interactionStatus';
 
 @Controller()
 @ApiTags('Interactions')

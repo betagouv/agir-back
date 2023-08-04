@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '../db/prisma.service';
 import { Badge, Prisma } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
-import { BadgeTypeEnum } from '../../../src/domain/badgeTypeEnum';
+import { BadgeTypeEnum } from '../../domain/badgeType';
 
 @Injectable()
 export class BadgeRepository {

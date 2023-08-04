@@ -1,4 +1,5 @@
 import { InteractionStatus } from './interactionStatus';
+import { InteractionType } from './interactionType';
 
 export class Interaction {
   constructor(data: object) {
@@ -7,7 +8,7 @@ export class Interaction {
 
   id: string;
   content_id: string;
-  type: string;
+  type: InteractionType;
   titre: string;
   soustitre: string;
   categorie: string;
