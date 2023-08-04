@@ -1,7 +1,7 @@
 {
   "jobs": [
     {
-      "command": "*/10 * * * * ./scripts/reset_scheduled_interactions.sh"
+      "command": "10 0 * * * ./scripts/reset_scheduled_interactions.sh"
     }
   ]
 }
