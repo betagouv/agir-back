@@ -17,6 +17,7 @@ export class InteractionsUsecase {
 
   async listInteractions(utilisateurId: string): Promise<DBInteraction[]> {
     let result: Interaction[] = [];
+    // Interactions by type
     for (const type in InteractionType) {
       let listInteracionsOfType =
         await this.interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
@@ -29,7 +30,19 @@ export class InteractionsUsecase {
         result,
       );
     }
+    // final sort
     result.sort((a, b) => a.reco_score - b.reco_score);
+
+    // pinned insert
+    const pinned_interactions =
+      await this.interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+        utilisateurId,
+        undefined,
+        undefined,
+        true,
+      );
+    DistributionSettings.insertPinnedInteractions(pinned_interactions, result);
+
     return result;
   }
 

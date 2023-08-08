@@ -68,4 +68,22 @@ export class DistributionSettings {
   ) {
     return list.filter((x) => x.type === type).length;
   }
+
+  static insertPinnedInteractions(
+    pinned_list: Interaction[],
+    target_list: Interaction[],
+  ) {
+    pinned_list.sort((a, b) => a.pinned_at_position - b.pinned_at_position);
+    pinned_list.forEach((pinned_interaction) => {
+      if (target_list.length < pinned_interaction.pinned_at_position + 1) {
+        target_list.push(pinned_interaction);
+      } else {
+        target_list.splice(
+          pinned_interaction.pinned_at_position,
+          0,
+          pinned_interaction,
+        );
+      }
+    });
+  }
 }

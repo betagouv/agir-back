@@ -19,6 +19,7 @@ export class InteractionRepository {
     utilisateurId: string,
     type?: InteractionType,
     maxNumber?: number,
+    pinned?: boolean,
   ): Promise<Interaction[] | null> {
     return this.prisma.interaction.findMany({
       take: maxNumber,
@@ -27,6 +28,7 @@ export class InteractionRepository {
         done: false,
         succeeded: false,
         type,
+        pinned_at_position: pinned ? { not: null } : null,
       },
       orderBy: [
         {

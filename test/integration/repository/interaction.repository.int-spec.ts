@@ -149,4 +149,73 @@ describe('InteractionRepository', () => {
     expect(result.points).toStrictEqual(123);
     expect(result.updated_at).not.toBeNull();
   });
+  it('listMaxInteractionsByUtilisateurIdAndTypev : select pinned interactions when asked', async () => {
+    //GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', { pinned_at_position: 4 });
+
+    //WHEN
+    const result =
+      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+        'utilisateur-id',
+        undefined,
+        undefined,
+        true,
+      );
+
+    // THEN
+    expect(result).toHaveLength(1);
+  });
+  it('listMaxInteractionsByUtilisateurIdAndTypev : select no pinned ineractions when not asked explicitly', async () => {
+    //GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', { pinned_at_position: 4 });
+    await TestUtil.create('interaction', { id: 'id-2' });
+
+    //WHEN
+    const result =
+      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+        'utilisateur-id',
+        undefined,
+        undefined,
+        false,
+      );
+
+    // THEN
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toEqual('id-2');
+  });
+  it('listMaxInteractionsByUtilisateurIdAndTypev : select no pinned ineractions when not pinned', async () => {
+    //GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction');
+
+    //WHEN
+    const result =
+      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+        'utilisateur-id',
+        undefined,
+        undefined,
+        true,
+      );
+
+    // THEN
+    expect(result).toHaveLength(0);
+  });
+  it('listMaxInteractionsByUtilisateurIdAndTypev : select no pinned ineractions when not asked implicitly', async () => {
+    //GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', { pinned_at_position: 4 });
+
+    //WHEN
+    const result =
+      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+        'utilisateur-id',
+        undefined,
+        undefined,
+      );
+
+    // THEN
+    expect(result).toHaveLength(0);
+  });
 });

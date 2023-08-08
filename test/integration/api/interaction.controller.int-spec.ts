@@ -166,6 +166,26 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(0);
   });
+  it('GET /utilisateurs/id/interactions - pinned interaction at proper position', async () => {
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', { id: 'id-1', reco_score: 1 });
+    await TestUtil.create('interaction', { id: 'id-2', reco_score: 2 });
+    await TestUtil.create('interaction', { id: 'id-3', reco_score: 3 });
+    await TestUtil.create('interaction', {
+      id: 'pin',
+      reco_score: 4,
+      pinned_at_position: 2,
+    });
+    const response = await TestUtil.getServer().get(
+      '/utilisateurs/utilisateur-id/interactions',
+    );
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(4);
+    expect(response.body[0].id).toEqual('id-1');
+    expect(response.body[1].id).toEqual('id-2');
+    expect(response.body[2].id).toEqual('pin');
+    expect(response.body[3].id).toEqual('id-3');
+  });
   it('GET /utilisateurs/id/interactions - no succeeded interaction', async () => {
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', { succeeded: true });

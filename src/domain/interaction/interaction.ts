@@ -29,6 +29,7 @@ export class Interaction {
   points: number;
   reco_score: number;
   locked: boolean;
+  pinned_at_position: number;
   scheduled_reset: Date;
   day_period: number;
   utilisateurId: string;

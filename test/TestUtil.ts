@@ -120,6 +120,7 @@ export class TestUtil {
       points: 5,
       reco_score: 100,
       locked: true,
+      pinned_at_position: null,
       scheduled_reset: null,
       day_period: null,
       utilisateurId: 'utilisateur-id',

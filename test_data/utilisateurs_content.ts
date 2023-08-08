@@ -7,7 +7,12 @@ const utilisateurs = {
       { id: 'quizz_alimentation_emissions_GES', reco_score: 2 },
       { id: 'article_faire_nos_gestes_climat', reco_score: 3 },
       { id: 'article_transport_se_deplacer_autrement', reco_score: 4 },
-      { id: 'ajouter_linky', reco_score: 5, locked: true },
+      {
+        id: 'ajouter_linky',
+        reco_score: 5,
+        locked: true,
+        pinned_at_position: 3,
+      },
       { id: 'quizz_objectif_GES', reco_score: 6 },
       {
         id: 'quizz-BC_global_rechauffement_climatique',
@@ -24,7 +29,7 @@ const utilisateurs = {
       { id: 'suivi_du_jour', reco_score: 1 },
       { id: 'quizz-BC_global_gaz_effet_de_serre', reco_score: 2 },
       { id: 'article_consommation_indice_de_reparabilite', reco_score: 3 },
-      { id: 'aide_velo', reco_score: 4, locked: true },
+      { id: 'aide_velo', reco_score: 4, locked: true, pinned_at_position: 3 },
       { id: 'article_alimentation_recettes_4_saisons', reco_score: 5 },
       { id: 'article_consommation_video_numerique_responsable', reco_score: 6 },
     ],
@@ -85,7 +90,7 @@ const utilisateurs = {
     interactions: [
       { id: 'quizz_tout_sur_leau', reco_score: 3 },
       { id: 'article_eau', reco_score: 5 },
-      { id: 'suivi_du_jour', reco_score: 1, locked: false },
+      { id: 'suivi_du_jour', reco_score: 1, locked: true },
     ],
     suivis: ['sa1', 'sa2', 'st1', 'st2'],
     bilans: ['bilan1'],

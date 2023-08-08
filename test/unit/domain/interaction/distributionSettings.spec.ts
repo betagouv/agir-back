@@ -72,4 +72,67 @@ describe('DistributionSettings', () => {
     // THEN
     expect(result).toHaveLength(4);
   });
+  it('insertPinnedInteractions : add one in empty list', () => {
+    // GIVEN
+    const target = [];
+    const i = new Interaction({ pinned_at_position: 1 });
+
+    // WHEN
+    DistributionSettings.insertPinnedInteractions([i], target);
+
+    // THEN
+    expect(target).toHaveLength(1);
+  });
+  it('insertPinnedInteractions : add one in middle of list', () => {
+    // GIVEN
+    const i1 = new Interaction({ id: '1' });
+    const i2 = new Interaction({ id: '2' });
+    const i3 = new Interaction({ id: 'pin', pinned_at_position: 1 });
+    const target = [i1, i2];
+
+    // WHEN
+    DistributionSettings.insertPinnedInteractions([i3], target);
+
+    // THEN
+    expect(target).toHaveLength(3);
+    expect(target[0].id).toEqual('1');
+    expect(target[1].id).toEqual('pin');
+    expect(target[2].id).toEqual('2');
+  });
+  it('insertPinnedInteractions : add pinned in pin position when several, one in between', () => {
+    // GIVEN
+    const i1 = new Interaction({ id: '1' });
+    const i2 = new Interaction({ id: '2' });
+    const i3 = new Interaction({ id: 'pin1', pinned_at_position: 1 });
+    const i4 = new Interaction({ id: 'pin3', pinned_at_position: 3 });
+    const target = [i1, i2];
+
+    // WHEN
+    DistributionSettings.insertPinnedInteractions([i4, i3], target);
+
+    // THEN
+    expect(target).toHaveLength(4);
+    expect(target[0].id).toEqual('1');
+    expect(target[1].id).toEqual('pin1');
+    expect(target[2].id).toEqual('2');
+    expect(target[3].id).toEqual('pin3');
+  });
+  it('insertPinnedInteractions : add pinned in pin position when several, one after other pushing back remaining', () => {
+    // GIVEN
+    const i1 = new Interaction({ id: '1' });
+    const i2 = new Interaction({ id: '2' });
+    const i3 = new Interaction({ id: 'pin1', pinned_at_position: 1 });
+    const i4 = new Interaction({ id: 'pin2', pinned_at_position: 2 });
+    const target = [i1, i2];
+
+    // WHEN
+    DistributionSettings.insertPinnedInteractions([i4, i3], target);
+
+    // THEN
+    expect(target).toHaveLength(4);
+    expect(target[0].id).toEqual('1');
+    expect(target[1].id).toEqual('pin1');
+    expect(target[2].id).toEqual('pin2');
+    expect(target[3].id).toEqual('2');
+  });
 });
