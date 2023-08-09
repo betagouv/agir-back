@@ -19,7 +19,8 @@
       "libelle": "Quelle source d'énergie provient de la chaleur générée par le noyau de la Terre ?",
       "solution": "Énergie géothermique",
       "propositions": ["Énergie solaire", "Énergie éolienne", "Énergie géothermique"],
-      "texte_riche_explication": "<b>Incorrect !</b> L'énergie géothermique provient de la chaleur générée par le noyau de la Terre. Elle est utilisée pour produire de l'électricité et pour le chauffage dans certaines régions."
+      "texte_riche_ko": "<b>Incorrect !</b> L'énergie géothermique provient de la chaleur générée par le noyau de la Terre. Elle est utilisée pour produire de l'électricité et pour le chauffage dans certaines régions.",
+      "texte_riche_ok" : "Tout bon !"
     }
   ]
 }

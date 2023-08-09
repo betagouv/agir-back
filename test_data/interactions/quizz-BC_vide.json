@@ -19,7 +19,8 @@
       "libelle": "",
       "solution": "",
       "propositions": ["", "", ""],
-      "texte_riche_explication": ""
+      "texte_riche_ko": "KO",
+      "texte_riche_ok": "OK"
     }
   ]
 }

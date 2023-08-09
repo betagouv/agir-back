@@ -91,7 +91,8 @@ export class TestUtil {
       solution: '10',
       propositions: ['1', '5', '10'],
       quizzId: 'quizz-id',
-      texte_riche_explication: 'bla bla bla',
+      texte_riche_ok: 'bla bla bla',
+      texte_riche_ko: 'bla bla bla',
       ...override,
     };
   }

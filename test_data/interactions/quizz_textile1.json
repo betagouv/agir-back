@@ -19,7 +19,8 @@
       "libelle": "Combien de tonnes de textiles sont jetées chaque année dans le monde ?",
       "solution": "Environ 13 millions de tonnes",
       "propositions": ["Environ 3 millions de tonnes", "Environ 8 millions de tonnes", "Environ 13 millions de tonnes"],
-      "texte_riche_explication": "<b>Mauvaise réponse !</b> Selon une étude de la Fondation Ellen MacArthur, environ 13 millions de tonnes de textiles sont jetées dans le monde chaque année, ce qui représente une quantité énorme de déchets textiles [1]. Adopter une consommation plus durable en privilégiant des vêtements de qualité et en recyclant les textiles peut aider à réduire ce gaspillage."
+      "texte_riche_ko": "<b>Mauvaise réponse !</b> Selon une étude de la Fondation Ellen MacArthur, environ 13 millions de tonnes de textiles sont jetées dans le monde chaque année, ce qui représente une quantité énorme de déchets textiles [1]. Adopter une consommation plus durable en privilégiant des vêtements de qualité et en recyclant les textiles peut aider à réduire ce gaspillage.",
+      "texte_riche_ok" : "Tout bon !"
     }
   ]
 }

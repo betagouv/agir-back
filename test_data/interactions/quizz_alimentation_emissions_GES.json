@@ -19,7 +19,8 @@
       "libelle": "Quel pourcentage des émissions mondiales de gaz à effet de serre est attribué au système alimentaire ?",
 "solution": "Environ 25%",
 "propositions": ["Moins de 5%", "Environ 10%", "Environ 25%"],
-"texte_riche_explication": "Faux ! Le système alimentaire est responsable d'environ 25% des émissions mondiales de gaz à effet de serre."
+"texte_riche_ko": "Faux ! Le système alimentaire est responsable d'environ 25% des émissions mondiales de gaz à effet de serre.",
+"texte_riche_ok" : "Tout bon !"
     }
   ]
 }

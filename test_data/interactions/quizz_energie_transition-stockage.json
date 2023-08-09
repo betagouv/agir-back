@@ -19,7 +19,8 @@
       "libelle": "Quel est l'un des principaux défis de la transition énergétique vers les sources renouvelables ?",
       "solution": "Le stockage de l'énergie",
       "propositions": ["La production d'énergie solaire", "La sécurité des centrales nucléaires", "Le stockage de l'énergie"],
-      "texte_riche_explication": "<b>Eh non !</b> L'un des principaux défis de la transition énergétique est le stockage de l'énergie. Les sources renouvelables comme le vent et le soleil sont intermittentes, ce qui nécessite des solutions efficaces de stockage pour assurer un approvisionnement constant en électricité."
+      "texte_riche_ko": "<b>Eh non !</b> L'un des principaux défis de la transition énergétique est le stockage de l'énergie. Les sources renouvelables comme le vent et le soleil sont intermittentes, ce qui nécessite des solutions efficaces de stockage pour assurer un approvisionnement constant en électricité.",
+      "texte_riche_ok" : "Tout bon !"
     }
   ]
 }

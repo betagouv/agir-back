@@ -10,6 +10,7 @@
   },
   "scripts": {
     "db:update": "dotenv -e .env.test -- npx prisma migrate dev && dotenv -e .env -- npx prisma migrate dev",
+    "db:generate": "dotenv -e .env.test -- npx prisma migrate dev --create-only",
     "db:status": "dotenv -e .env.test -- npx prisma migrate status",
     "db:up": "docker-compose up -d",
     "db:destroy": "docker-compose down",

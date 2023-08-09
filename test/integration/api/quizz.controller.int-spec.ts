@@ -22,6 +22,7 @@ describe('/Quizz (API test)', () => {
     expect(response.body.titre).toEqual('titre');
     expect(response.body['questions']).toHaveLength(2);
     expect(response.body['questions'][0].solution).toBeDefined();
+    expect(response.body['questions'][0].texte_riche_ko).toBeDefined();
     expect(response.body['questions'][0].texte_riche_explication).toBeDefined();
   });
 

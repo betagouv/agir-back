@@ -19,7 +19,8 @@
       "libelle": "qu'est ce qui a le plus d'impact",
       "solution": "poisson rouge",
       "propositions": ["poisson rouge", "poisson blanc"],
-      "texte_riche_explication": "Et non, le rouge c'est pire que le blanc"
+      "texte_riche_ko": "Et non, le rouge c'est pire que le blanc",
+      "texte_riche_ok" : "Tout bon !"
     }
   ]
 }

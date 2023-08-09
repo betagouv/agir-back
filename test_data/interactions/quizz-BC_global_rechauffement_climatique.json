@@ -19,7 +19,8 @@
       "libelle": "Qu'est-ce que le réchauffement climatique ?",
       "solution": "L'augmentation de la température moyenne de la Terre",
       "propositions": ["L'augmentation de la température moyenne de la Terre", "Les changements de météo au long de l'année", "Les gaz à effet de serre générés par les voitures"],
-      "texte_riche_explication": "Raté ! Il s'agit effectivement de l'augmentation progressive de la température moyenne de la Terre due à l'accumulation de gaz à effet de serre dans l'atmosphère. Aujourd'hui, cette augmentation est de +1,1°C par rapport à 1850. Les causes du réchauffement climatique sont multiples mais sont principalement liées aux activités humaines, comme l'utilisation des énergies fossiles (charbon, pétrole, gaz naturel) pour les transports, l'énergie et l'industrie, la déforestation et l'agriculture intensive."
+      "texte_riche_ko": "Raté ! Il s'agit effectivement de l'augmentation progressive de la température moyenne de la Terre due à l'accumulation de gaz à effet de serre dans l'atmosphère. Aujourd'hui, cette augmentation est de +1,1°C par rapport à 1850. Les causes du réchauffement climatique sont multiples mais sont principalement liées aux activités humaines, comme l'utilisation des énergies fossiles (charbon, pétrole, gaz naturel) pour les transports, l'énergie et l'industrie, la déforestation et l'agriculture intensive.",
+      "texte_riche_ok" : "Tout bon !"
     }
   ]
 }

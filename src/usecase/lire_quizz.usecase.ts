@@ -6,7 +6,12 @@ import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
 export class LireQuizzUsecase {
   constructor(private quizzRepository: QuizzRepository) {}
 
-  async doIt(quizzId:string): Promise<Quizz> {
-    return this.quizzRepository.getById(quizzId);
+  async doIt(quizzId: string): Promise<Quizz> {
+    const result = await this.quizzRepository.getById(quizzId);
+    // FIXME : temp rename
+    result['questions'].forEach((question) => {
+      question['texte_riche_explication'] = question.texte_riche_ko;
+    });
+    return result;
   }
 }

@@ -19,7 +19,8 @@
       "libelle": "Quel est l'objectif de l'Accord de Paris sur le climat en ce qui concerne les émissions de gaz à effet de serre ?",
       "solution": "Réduire les émissions pour limiter le réchauffement climatique en dessous de 2°C",
       "propositions": ["Arrêter complètement les émissions de gaz à effet de serre", "Réduire les émissions pour limiter le réchauffement climatique en dessous de 2°C", "Augmenter les émissions pour stimuler l'économie"],
-      "texte_riche_explication": "Incorrect ! L'objectif de l'Accord de Paris sur le climat est de réduire les émissions de gaz à effet de serre afin de limiter le réchauffement climatique en dessous de 2°C par rapport aux niveaux préindustriels, avec des efforts pour atteindre 1,5°C."
+      "texte_riche_ko": "Incorrect ! L'objectif de l'Accord de Paris sur le climat est de réduire les émissions de gaz à effet de serre afin de limiter le réchauffement climatique en dessous de 2°C par rapport aux niveaux préindustriels, avec des efforts pour atteindre 1,5°C.",
+      "texte_riche_ok" : "Tout bon !"
     }
   ]
 }

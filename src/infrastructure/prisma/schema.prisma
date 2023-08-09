@@ -84,14 +84,15 @@ model Quizz {
 }
 
 model QuizzQuestion {
-  id                      String   @id
-  ordre                   Int      @default(0)
-  libelle                 String
-  propositions            String[]
-  solution                String
-  texte_riche_explication String   @default("")
-  quizz                   Quizz    @relation(fields: [quizzId], references: [id])
-  quizzId                 String
+  id             String   @id
+  ordre          Int      @default(0)
+  libelle        String
+  propositions   String[]
+  solution       String
+  texte_riche_ok String   @default("")
+  texte_riche_ko String   @default("")
+  quizz          Quizz    @relation(fields: [quizzId], references: [id])
+  quizzId        String
 }
 
 model Badge {

@@ -19,7 +19,8 @@
       "libelle": "En moyenne, combien de personnes occupent une voiture sur une distance de moins de 100km en France ?",
       "solution": "1,4 personne",
       "propositions": ["1,4 personne", "2,5 personnes", "1 personne "],
-      "texte_riche_explication": "Raté ! Aujourd'hui, on compte en moyenne 1,4 personne par voiture en France. Pourtant, 4 trajets sur 10 réalisés avec le moyen de transport favori des Français font moins de 3 km.Qu'est-ce que cela implique ? Plus de trafic sur la route, moins de places pour se garer (surtout dans les villes) et une augmentation des émissions de gaz à effet de serre associées. Pour réduire les émissions, avoir recours au covoiturage peut être une solution intéressante, d'autant plus pour se rendre sur son lieu de travail grâce au Forfait Mobilité Durable proposé par de nombreuses entreprises pour les salariés se déplaçant en covoiturage ou à vélo.Par ailleurs, depuis le 1er janvier 2023, les nouveaux conducteurs en covoiturage courte-distance pourront recevoir une prime de 100€ dispensée par l'Etat. "
+      "texte_riche_ko": "Raté ! Aujourd'hui, on compte en moyenne 1,4 personne par voiture en France. Pourtant, 4 trajets sur 10 réalisés avec le moyen de transport favori des Français font moins de 3 km.Qu'est-ce que cela implique ? Plus de trafic sur la route, moins de places pour se garer (surtout dans les villes) et une augmentation des émissions de gaz à effet de serre associées. Pour réduire les émissions, avoir recours au covoiturage peut être une solution intéressante, d'autant plus pour se rendre sur son lieu de travail grâce au Forfait Mobilité Durable proposé par de nombreuses entreprises pour les salariés se déplaçant en covoiturage ou à vélo.Par ailleurs, depuis le 1er janvier 2023, les nouveaux conducteurs en covoiturage courte-distance pourront recevoir une prime de 100€ dispensée par l'Etat. ",
+      "texte_riche_ok" : "Tout bon !"
     }
   ]
 }

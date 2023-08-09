@@ -19,14 +19,15 @@
       "libelle": "Combien de litres d'eau pour un T-shirt ?",
       "solution": "2700",
       "propositions": ["27", "270", "2700"],
-      "texte_riche_explication": "Et Non !!"
+      "texte_riche_ko": "Et Non !!"
     },
     {
       "ordre": 2,
       "libelle": "Quel est le premier gaz a effet de serre",
       "solution": "H20",
       "propositions": ["H20", "CO2", "CH4"],
-      "texte_riche_explication": "Et Non !! C'est bien la vapeur d'eau le premier gaz a effe de serre"
+      "texte_riche_ko": "Et Non !! C'est bien la vapeur d'eau le premier gaz a effe de serre",
+      "texte_riche_ok" : "Tout bon !"
     }
   ]
 }
