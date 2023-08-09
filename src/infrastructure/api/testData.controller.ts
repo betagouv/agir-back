@@ -10,7 +10,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { PrismaService } from '../db/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import path from 'path';
 import fs from 'fs';
 import { SuiviAlimentation } from '../../../src/domain/suivi/suiviAlimentation';

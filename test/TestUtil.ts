@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { InteractionType } from '../src/domain/interaction/interactionType';
 import { AppModule } from '../src/app.module';
-import { PrismaService } from '../src/infrastructure/db/prisma.service';
+import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 const request = require('supertest');
 
 export class TestUtil {

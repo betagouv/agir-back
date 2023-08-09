@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PrismaService } from '../db/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { Empreinte, Prisma } from '@prisma/client';
 import Publicodes from 'publicodes';
 import rules from '../data/co2.json';

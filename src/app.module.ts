@@ -19,7 +19,7 @@ import { QuizzRepository } from './infrastructure/repository/quizz.repository';
 import { BadgeRepository } from './infrastructure/repository/badge.repository';
 import { BilanRepository } from './infrastructure/repository/bilan.repository';
 
-import { PrismaService } from './infrastructure/db/prisma.service';
+import { PrismaService } from './infrastructure/prisma/prisma.service';
 import { InteractionsUsecase } from './usecase/interactions.usecase';
 import { InteractionRepository } from './infrastructure/repository/interaction.repository';
 import { SuiviRepository } from './infrastructure/repository/suivi.repository';

@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { PrismaService } from '../db/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { Badge, Prisma } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { BadgeTypeEnum } from '../../domain/badgeType';

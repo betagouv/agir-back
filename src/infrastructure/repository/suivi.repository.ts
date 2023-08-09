@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { PrismaService } from '../db/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { Suivi as SuiviDB } from '@prisma/client';
 import { Suivi } from '../../domain/suivi/suivi';

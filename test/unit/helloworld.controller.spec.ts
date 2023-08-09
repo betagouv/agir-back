@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur.repository';
 import { HelloworldController } from '../../src/infrastructure/api/helloworld.controller';
 import { UtilisateurUsecase } from '../../src/usecase/utilisateur.usecase';
-import { PrismaService } from '../../src/infrastructure/db/prisma.service';
+import { PrismaService } from '../../src/infrastructure/prisma/prisma.service';
 
 describe('AppController', () => {
   let appController: HelloworldController;

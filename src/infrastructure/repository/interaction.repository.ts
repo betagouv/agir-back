@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../db/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { Interaction as DBInteraction } from '@prisma/client';
 import { Interaction } from '../../domain/interaction/interaction';
 import { InteractionType } from 'src/domain/interaction/interactionType';
