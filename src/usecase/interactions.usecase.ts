@@ -5,14 +5,16 @@ import { DistributionSettings } from '../domain/interaction/distributionSettings
 import { InteractionStatus } from '../domain/interaction/interactionStatus';
 import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur.repository';
+import { BadgeRepository } from '../infrastructure/repository/badge.repository';
 import { InteractionType } from '../domain/interaction/interactionType';
-import { isUndefined } from 'util';
+import { BadgeTypeEnum } from '../domain/badgeType';
 
 @Injectable()
 export class InteractionsUsecase {
   constructor(
     private interactionRepository: InteractionRepository,
     private utilisateurRepository: UtilisateurRepository,
+    private badgeRepository: BadgeRepository,
   ) {}
 
   async listInteractions(utilisateurId: string): Promise<DBInteraction[]> {
@@ -60,6 +62,13 @@ export class InteractionsUsecase {
         stored_interaction.points,
       );
       stored_interaction.setNextScheduledReset();
+    }
+
+    if (status.succeeded && stored_interaction.type === InteractionType.quizz) {
+      await this.badgeRepository.createUniqueBadge(
+        utilisateurId,
+        BadgeTypeEnum.premier_quizz,
+      );
     }
 
     stored_interaction.updateStatus(status);

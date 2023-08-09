@@ -19,7 +19,7 @@ export class EvaluerQuizzUsecase {
     let quizz = await this.quizzRepository.getById(quizzId);
     const success = this.checkQuizz(bodyReponsesQuizz, quizz['questions']);
     if (success) {
-      this.badgeRepository.createUniqueBadge(
+      await this.badgeRepository.createUniqueBadge(
         bodyReponsesQuizz.utilisateur,
         BadgeTypeEnum.premier_quizz,
       );

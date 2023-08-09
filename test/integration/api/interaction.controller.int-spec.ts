@@ -3,6 +3,7 @@ import { InteractionPlacement } from '../../../src/domain/interaction/interactio
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { DistributionSettings } from '../../../src/domain/interaction/distributionSettings';
 import { TestUtil } from '../../TestUtil';
+import { BadgeTypeEnum } from '../../../src/domain/badgeType';
 
 describe('/utilisateurs/id/interactions (API test)', () => {
   beforeAll(async () => {
@@ -215,6 +216,26 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     expect(dbInteraction.succeeded).toStrictEqual(false);
     expect(dbInteraction.seen).toStrictEqual(0);
     expect(dbUtilisateur.points).toStrictEqual(5);
+  });
+  it('PATCH /utilisateurs/id/interactions/id - win badge when first quizz', async () => {
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', { type: InteractionType.quizz });
+    const response = await TestUtil.getServer()
+      .patch('/utilisateurs/utilisateur-id/interactions/interaction-id')
+      .send({
+        succeeded: true,
+      });
+    expect(response.status).toBe(200);
+    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+      include: {
+        badges: true,
+      },
+    });
+    expect(dbUtilisateur['badges']).toHaveLength(1);
+    expect(dbUtilisateur['badges'][0].type).toEqual(
+      BadgeTypeEnum.premier_quizz.type,
+    );
   });
   it('PATCH /utilisateurs/id/interactions/id - does not add points when already done', async () => {
     await TestUtil.create('utilisateur');
