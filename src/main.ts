@@ -1,17 +1,21 @@
 import { NestFactory } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder, SwaggerCustomOptions } from '@nestjs/swagger';
+import {
+  SwaggerModule,
+  DocumentBuilder,
+  SwaggerCustomOptions,
+} from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Exposition Swagger
-  const swaggerDocumentOptions: SwaggerCustomOptions =  {
+  const swaggerDocumentOptions: SwaggerCustomOptions = {
     swaggerOptions: {
       tryItOutEnabled: true,
-    }
+    },
   };
-    const config = new DocumentBuilder()
+  const config = new DocumentBuilder()
     .setTitle('Agir back')
     .setDescription('Doc API Agir')
     .setVersion('1.0')
