@@ -32,6 +32,13 @@ export class UtilisateurRepository {
       },
     });
   }
+  async findUtilisateurByEmail(email: string): Promise<Utilisateur | null> {
+    return this.prisma.utilisateur.findUnique({
+      where: {
+        email,
+      },
+    });
+  }
 
   async listUtilisateur(): Promise<Utilisateur[] | null> {
     return this.prisma.utilisateur.findMany({

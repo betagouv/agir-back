@@ -27,6 +27,7 @@ import { SuiviUsecase } from './usecase/suivi.usecase';
 import { SuiviController } from './infrastructure/api/suivi.controller';
 import { AidesRepository } from './infrastructure/repository/aides.repository';
 import { SuiviDashboardController } from './infrastructure/api/suiviDashboard.controller';
+import { OIDCStateRepository } from '../src/infrastructure/repository/oidcState.repository';
 
 import { JwtModule } from '@nestjs/jwt';
 
@@ -58,6 +59,7 @@ import { JwtModule } from '@nestjs/jwt';
     InteractionRepository,
     SuiviRepository,
     AidesRepository,
+    OIDCStateRepository,
 
     UtilisateurUsecase,
     EvaluerQuizzUsecase,

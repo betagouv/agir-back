@@ -21,8 +21,19 @@ model Suivi {
   utilisateur     Utilisateur @relation(fields: [utilisateurId], references: [id])
 }
 
+model OIDC_STATE {
+  loginId       String   @id
+  utilisateurId String?  @unique
+  state         String?
+  nonce         String?
+  idtoken       String?
+  created_at    DateTime @default(now())
+  updated_at    DateTime @default(now()) @updatedAt
+}
+
 model Utilisateur {
   id           String        @id
+  email        String?       @unique
   name         String
   points       Int           @default(0)
   empreintes   Empreinte[]

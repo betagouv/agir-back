@@ -15,18 +15,16 @@ import { v4 as uuidv4 } from 'uuid';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '../auth/guard';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur.repository';
+import { OIDCStateRepository } from '../../../src/infrastructure/repository/oidcState.repository';
+import { OIDCState } from '../../../src/infrastructure/auth/oidcState';
 
 @Controller()
 export class HelloworldController {
   constructor(
     private jwtService: JwtService,
     private utilisateurRepository: UtilisateurRepository,
+    private oIDCStateRepository: OIDCStateRepository,
   ) {}
-
-  code_verifier: string;
-  state: string;
-  nonce: string;
-  idtoken: string;
 
   @Get()
   @ApiExcludeEndpoint()
@@ -38,25 +36,29 @@ export class HelloworldController {
   @Redirect()
   @ApiExcludeEndpoint()
   async login() {
-    this.nonce = uuidv4();
-    this.state = uuidv4();
+    let OIDC_STATE: OIDCState = {
+      loginId: uuidv4(),
+      nonce: uuidv4(),
+      state: uuidv4(),
+    };
 
-    let url2 = new URL(process.env.OIDC_URL_AUTH);
-    let params = url2.searchParams;
+    let redirect_url = new URL(process.env.OIDC_URL_AUTH);
+    let params = redirect_url.searchParams;
     params.append('response_type', 'code');
     params.append('client_id', process.env.OIDC_CLIENT_ID);
     params.append(
       'redirect_uri',
       process.env.BASE_URL.concat(
-        process.env.OIDC_URL_LOGIN_CALLBACK,
-        '?loginid=123',
+        `${process.env.OIDC_URL_LOGIN_CALLBACK}?loginid=${OIDC_STATE.loginId}`,
       ),
     );
     params.append('scope', 'email profile');
-    params.append('state', this.state);
-    params.append('nonce', this.nonce);
-    console.log(url2);
-    return { url: url2 };
+    params.append('state', OIDC_STATE.state);
+    params.append('nonce', OIDC_STATE.nonce);
+
+    await this.oIDCStateRepository.createNewState(OIDC_STATE);
+
+    return { url: redirect_url };
   }
 
   @Get('login-callback')
@@ -65,29 +67,29 @@ export class HelloworldController {
   async login_callback(
     @Req() req: Request,
     @Query('code') oidc_code: string,
-    @Query('loginid') loginid: string,
+    @Query('loginid') loginId: string,
   ) {
-    console.log(req.url);
+
+    // TOKEN ENDPOINT
     let response;
     try {
       response = await axios.post(process.env.OIDC_URL_TOKEN, {
         grant_type: 'authorization_code',
         redirect_uri: process.env.BASE_URL.concat(
-          process.env.OIDC_URL_LOGIN_CALLBACK,
-          '?loginid=123',
+          `${process.env.OIDC_URL_LOGIN_CALLBACK}?loginid=${loginId}`,
         ),
         code: oidc_code,
         client_id: process.env.OIDC_CLIENT_ID,
         client_secret: process.env.OIDC_CLIENT_SECRET,
       });
-      console.log(response.data);
     } catch (error) {
       console.log(error.message);
       console.log(error.response.data);
       console.log(error.response.status);
       console.log(error.response.headers);
     }
-    this.idtoken = response.data.id_token;
+
+    // INFO ENDPOINT
     let response2;
     try {
       response2 = await axios.get(process.env.OIDC_URL_INFO, {
@@ -95,14 +97,27 @@ export class HelloworldController {
           Authorization: `Bearer ${response.data.access_token}`,
         },
       });
-      console.log(response2.data);
     } catch (error) {
       console.log(error.message);
       console.log(error.response.data);
       console.log(error.response.status);
       console.log(error.response.headers);
     }
-    let utilisateurId = '123';
+    // FINDING USER
+    let utilisateur = await this.utilisateurRepository.findUtilisateurByEmail(
+      response2.data.email,
+    );
+    let utilisateurId = utilisateur.id;
+
+    let OIDC_STATE: OIDCState = {
+      loginId,
+      idtoken: response.data.id_token,
+      utilisateurId,
+    };
+    await this.oIDCStateRepository.deleteByUtilisateurId(utilisateurId);
+    await this.oIDCStateRepository.updateState(OIDC_STATE);
+
+    // CREATING INNER APP TOKEN
     const payload = { utilisateurId };
     let token = await this.jwtService.signAsync(payload);
     return {
@@ -119,7 +134,7 @@ export class HelloworldController {
     @Query('utilisateurId') utilisateurId: string,
   ) {
     return `<br>Bonjour ${utilisateurId} (token : ${token})<br>
-    <a href='/logout'>Se dé-connecter de France Connect</a>`;
+    <a href='/logout/${utilisateurId}'>Se dé-connecter de France Connect</a>`;
   }
 
   @Get('profile/:id')
@@ -134,20 +149,25 @@ export class HelloworldController {
     return this.utilisateurRepository.findUtilisateurById(utilisateurId);
   }
 
-  @Get('logout')
+  @Get('logout/:id')
   @Redirect()
   @ApiExcludeEndpoint()
-  async logout() {
-    let url2 = new URL(process.env.OIDC_URL_LOGOUT);
-    let params = url2.searchParams;
-    params.append('id_token_hint', this.idtoken);
-    params.append('state', this.state);
+  async logout(@Param('id') utilisateurId: string) {
+    let OIDC_STATE = await this.oIDCStateRepository.getByUtilisateurId(
+      utilisateurId,
+    );
+    let redirect_url = new URL(process.env.OIDC_URL_LOGOUT);
+    let params = redirect_url.searchParams;
+    params.append('id_token_hint', OIDC_STATE.idtoken);
+    params.append('state', OIDC_STATE.state);
     params.append(
       'post_logout_redirect_uri',
       process.env.BASE_URL.concat(process.env.OIDC_URL_LOGOUT_CALLBACK),
     );
-    console.log(url2);
-    return { url: url2 };
+
+    // REMOVE STATE
+    await this.oIDCStateRepository.deleteByUtilisateurId(utilisateurId);
+    return { url: redirect_url };
   }
 
   @Get('logout-callback')
