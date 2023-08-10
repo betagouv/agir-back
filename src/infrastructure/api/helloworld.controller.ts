@@ -1,11 +1,28 @@
-import { Controller, Get, Query, Redirect, Req } from '@nestjs/common';
+import {
+  Controller,
+  ForbiddenException,
+  Get,
+  Param,
+  Query,
+  Redirect,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import { Request } from 'express';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
+import { JwtService } from '@nestjs/jwt';
+import { AuthGuard } from '../auth/guard';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur.repository';
 
 @Controller()
 export class HelloworldController {
+  constructor(
+    private jwtService: JwtService,
+    private utilisateurRepository: UtilisateurRepository,
+  ) {}
+
   code_verifier: string;
   state: string;
   nonce: string;
@@ -43,6 +60,7 @@ export class HelloworldController {
   }
 
   @Get('login-callback')
+  @Redirect()
   @ApiExcludeEndpoint()
   async login_callback(
     @Req() req: Request,
@@ -84,9 +102,38 @@ export class HelloworldController {
       console.log(error.response.status);
       console.log(error.response.headers);
     }
-    return `<br>Bonjour ${response2.data.given_name}<br>
+    let utilisateurId = '123';
+    const payload = { utilisateurId };
+    let token = await this.jwtService.signAsync(payload);
+    return {
+      url: process.env.BASE_URL.concat(
+        `/welcome?utilisateurId=${utilisateurId}&token=${token}`,
+      ),
+    };
+  }
+
+  @Get('welcome')
+  @ApiExcludeEndpoint()
+  async welcome(
+    @Query('token') token: string,
+    @Query('utilisateurId') utilisateurId: string,
+  ) {
+    return `<br>Bonjour ${utilisateurId} (token : ${token})<br>
     <a href='/logout'>Se dé-connecter de France Connect</a>`;
   }
+
+  @Get('profile/:id')
+  @ApiExcludeEndpoint()
+  @UseGuards(AuthGuard)
+  async profile(@Req() req: Request, @Param('id') utilisateurId: string) {
+    if (utilisateurId !== req['tokenUtilisateurId']) {
+      throw new ForbiddenException(
+        `Vous n'avez pas le droit de consulter les données de l'utilisateur ${utilisateurId} `,
+      );
+    }
+    return this.utilisateurRepository.findUtilisateurById(utilisateurId);
+  }
+
   @Get('logout')
   @Redirect()
   @ApiExcludeEndpoint()

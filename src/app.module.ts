@@ -28,8 +28,16 @@ import { SuiviController } from './infrastructure/api/suivi.controller';
 import { AidesRepository } from './infrastructure/repository/aides.repository';
 import { SuiviDashboardController } from './infrastructure/api/suiviDashboard.controller';
 
+import { JwtModule } from '@nestjs/jwt';
+
 @Module({
-  imports: [],
+  imports: [
+    JwtModule.register({
+      global: true,
+      secret: process.env.INTERNAL_TOKEN_SECRET,
+      signOptions: { expiresIn: '60s' },
+    }),
+  ],
   controllers: [
     UtilisateurController,
     HelloworldController,

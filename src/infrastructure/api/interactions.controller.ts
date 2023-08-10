@@ -1,4 +1,3 @@
-import { Utilisateur } from '.prisma/client';
 import {
   Body,
   Controller,
