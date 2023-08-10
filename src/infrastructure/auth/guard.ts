@@ -28,6 +28,10 @@ export class AuthGuard implements CanActivate {
     return true;
   }
 
+  static getUtilisateurIdFromTokenInRequest(req: Request) {
+    return req['tokenUtilisateurId'];
+  }
+
   private extractTokenFromHeader(request: Request): string | undefined {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     return type === 'Bearer' ? token : undefined;

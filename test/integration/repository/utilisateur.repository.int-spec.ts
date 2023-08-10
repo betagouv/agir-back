@@ -17,7 +17,7 @@ describe('UtilisateurRepository', () => {
   })
 
   it('Creates a new utilisateur without ID', async () => {
-    await utilisateurRepository.createUtilisateur("bob");
+    await utilisateurRepository.createUtilisateurByName("bob");
     const utilisateurs = await TestUtil.prisma.utilisateur.findMany({});
     expect(utilisateurs).toHaveLength(1);
     expect(utilisateurs[0].id).toHaveLength(36);

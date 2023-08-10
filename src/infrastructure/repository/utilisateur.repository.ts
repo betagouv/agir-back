@@ -50,11 +50,19 @@ export class UtilisateurRepository {
     });
   }
 
-  async createUtilisateur(name: string): Promise<Utilisateur | null> {
+  async createUtilisateurByName(name: string): Promise<Utilisateur | null> {
     return this.prisma.utilisateur.create({
       data: {
         id: uuidv4(),
         name,
+      },
+    });
+  }
+  async createUtilisateur(data: any): Promise<Utilisateur | null> {
+    return this.prisma.utilisateur.create({
+      data: {
+        id: uuidv4(),
+        ...data,
       },
     });
   }

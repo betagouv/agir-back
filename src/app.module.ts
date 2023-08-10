@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { UtilisateurController } from './infrastructure/api/utilisateur.controller';
-import { HelloworldController } from './infrastructure/api/helloworld.controller';
+import { AuthController } from './infrastructure/api/auth.controller';
 import { QuizzController } from './infrastructure/api/quizz.controller';
 import { BilanController } from './infrastructure/api/bilan.controller';
 import { AidesController } from './infrastructure/api/aides.controller';
@@ -30,6 +30,7 @@ import { SuiviDashboardController } from './infrastructure/api/suiviDashboard.co
 import { OIDCStateRepository } from '../src/infrastructure/repository/oidcState.repository';
 
 import { JwtModule } from '@nestjs/jwt';
+import { OidcService } from '../src/infrastructure/auth/oidc.service';
 
 @Module({
   imports: [
@@ -41,7 +42,7 @@ import { JwtModule } from '@nestjs/jwt';
   ],
   controllers: [
     UtilisateurController,
-    HelloworldController,
+    AuthController,
     QuizzController,
     BilanController,
     AidesController,
@@ -60,6 +61,7 @@ import { JwtModule } from '@nestjs/jwt';
     SuiviRepository,
     AidesRepository,
     OIDCStateRepository,
+    OidcService,
 
     UtilisateurUsecase,
     EvaluerQuizzUsecase,

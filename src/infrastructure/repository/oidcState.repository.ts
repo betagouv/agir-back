@@ -19,7 +19,7 @@ export class OIDCStateRepository {
     });
   }
   async deleteByUtilisateurId(utilisateurId: string) {
-    return this.prisma.oIDC_STATE.delete({
+    return this.prisma.oIDC_STATE.deleteMany({
       where: {
         utilisateurId,
       },
