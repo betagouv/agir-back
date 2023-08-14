@@ -38,6 +38,7 @@ export class TestUtil {
     await this.prisma.quizz.deleteMany();
     await this.prisma.empreinte.deleteMany();
     await this.prisma.utilisateur.deleteMany();
+    await this.prisma.situationNGC.deleteMany();
   }
 
   static getDate(date: string) {

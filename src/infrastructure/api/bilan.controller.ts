@@ -1,4 +1,4 @@
-import { ApiProperty, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { Controller, Get, Post, Param, Body, Headers } from '@nestjs/common';
 import { BilanUsecase } from '../../usecase/bilan.usecase';
 
@@ -27,12 +27,21 @@ export class BilanController {
   @Post('bilan')
   async postEmpreinte(
     @Headers('utilisateurId') utilisateurId: string,
-    @Headers('situation') situation: string,
+    @Headers('situationId') situationId: string,
   ): Promise<any> {
     const result = await this.bilanUsecase.addBilanToUtilisateur(
       utilisateurId,
-      situation,
+      situationId,
     );
+
+    return result;
+  }
+
+  @Post('bilan/importFromNGC')
+  async importFromNGC(@Body() body: { situation: string }): Promise<any> {
+    const situation = body.situation; // todo : check situation for security
+    if (situation === '') return 0;
+    const result = await this.bilanUsecase.addSituation(situation);
 
     return result;
   }

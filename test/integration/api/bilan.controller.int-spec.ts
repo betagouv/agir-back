@@ -18,11 +18,18 @@ describe('/bilan (API test)', () => {
       data: { id: '1', name: 'bob' },
     });
 
+    await TestUtil.prisma.situationNGC.create({
+      data: {
+        id: 'situationID',
+        situation: `{ "transport . voiture . propriétaire": "'false'","transport . voiture . gabarit": "'SUV'","transport . voiture . motorisation": "'thermique'",   "alimentation . boisson . chaude . café . nombre": 4,   "transport . voiture . thermique . carburant": "'essence E85'" }`,
+      },
+    });
+
     await TestUtil.prisma.empreinte.create({
       data: {
         id: 'empreinteID',
         utilisateurId: '1',
-        situation: `{ "transport . voiture . propriétaire": "'false'","transport . voiture . gabarit": "'SUV'","transport . voiture . motorisation": "'thermique'",   "alimentation . boisson . chaude . café . nombre": 4,   "transport . voiture . thermique . carburant": "'essence E85'" }`,
+        situationId: 'situationID',
         bilan: {
           details: {
             divers: 852,

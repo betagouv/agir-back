@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Empreinte, Prisma } from '@prisma/client';
+import { Empreinte, Prisma, SituationNGC } from '@prisma/client';
 import Publicodes from 'publicodes';
 import rules from '../data/co2.json';
 
@@ -25,7 +25,7 @@ type BilanExtra = Bilan & {
 export class BilanRepository {
   constructor(private prisma: PrismaService) {}
 
-  async evaluateBilan(simulation: string): Promise<object> {
+  async evaluateBilan(situation: any): Promise<object> {
     const engine = new Publicodes(rules as Record<string, any>);
 
     const categories = {
@@ -39,7 +39,7 @@ export class BilanRepository {
 
     Object.keys(categories).forEach(function (key) {
       categories[key] = engine
-        .setSituation(JSON.parse(simulation || '{}'))
+        .setSituation(situation || '{}')
         .evaluate(categories[key]).nodeValue as string;
     });
 
@@ -62,18 +62,31 @@ export class BilanRepository {
       where: { utilisateurId },
       orderBy: { created_at: 'desc' },
       take: 1,
+      include: {
+        situation: true,
+      },
     });
     return empreintes[0]?.situation.toString();
   }
 
-  async getLastBilanByUtilisateurId(utilisateurId): Promise<BilanExtra> {
+  async getSituationNGCbyId(id: string): Promise<SituationNGC | null> {
+    const situation = await this.prisma.situationNGC.findUnique({
+      where: { id },
+    });
+    return situation;
+  }
+
+  async getLastBilanByUtilisateurId(utilisateurId): Promise<BilanExtra | null> {
     const empreintes = await this.prisma.empreinte.findMany({
       where: { utilisateurId },
       orderBy: { created_at: 'desc' },
       take: 1,
     });
+    if (empreintes.length === 0) {
+      return null;
+    }
     const empreinte = empreintes[0];
-    const bilan = empreinte.bilan as Bilan;
+    const bilan = empreinte?.bilan as Bilan;
     return {
       ...bilan,
       created_at: empreinte.created_at,
@@ -97,18 +110,38 @@ export class BilanRepository {
     return bilans;
   }
 
-  async create(
-    situation: string,
-    utilisateurId: any,
+  async createBilan(
+    situationNGC: SituationNGC,
+    utilisateurId: string,
   ): Promise<Empreinte | null> {
     let response;
     try {
       response = await this.prisma.empreinte.create({
         data: {
           id: uuidv4(),
-          situation: situation,
+          situationId: situationNGC.id,
           utilisateurId,
-          bilan: await this.evaluateBilan(situation),
+          bilan: await this.evaluateBilan(situationNGC.situation),
+        },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new BadRequestException(`Une empreinte existe déjà en base`);
+        }
+      }
+      throw error;
+    }
+    return response;
+  }
+
+  async createSituation(situation: any): Promise<Empreinte | null> {
+    let response;
+    try {
+      response = await this.prisma.situationNGC.create({
+        data: {
+          id: uuidv4(),
+          situation: situation,
         },
       });
     } catch (error) {
