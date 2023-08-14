@@ -81,12 +81,20 @@ model Interaction {
 model Empreinte {
   id            String      @id
   initial       Boolean     @default(true)
-  situation     Json?
   bilan         Json?
   created_at    DateTime    @default(now())
-  updated_at    DateTime    @default(now())
-  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
+  updated_at    DateTime    @updatedAt
   utilisateurId String
+  situationId   String      @unique
+  utilisateur   Utilisateur  @relation(fields: [utilisateurId], references: [id])
+  situation     SituationNGC  @relation(fields: [situationId], references: [id])
+}
+
+model SituationNGC {
+  id            String      @id
+  situation     Json?
+  empreinte     Empreinte?
+  created_at    DateTime    @default(now())
 }
 
 model Quizz {

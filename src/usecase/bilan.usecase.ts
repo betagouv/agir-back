@@ -25,9 +25,21 @@ export class BilanUsecase {
 
   async addBilanToUtilisateur(
     utilisateurId: string,
-    situation: string,
+    situationId: string,
   ): Promise<any> {
-    const result = await this.bilanRepository.create(situation, utilisateurId);
+    const situation = await this.bilanRepository.getSituationNGCbyId(
+      situationId,
+    );
+    const result = await this.bilanRepository.createBilan(
+      situation,
+      utilisateurId,
+    );
+
+    return result;
+  }
+
+  async addSituation(situation: string): Promise<any> {
+    const result = await this.bilanRepository.createSituation(situation);
 
     return result;
   }
