@@ -24,6 +24,7 @@ describe('/bilan (API test)', () => {
         situation: `{ "transport . voiture . propriétaire": "'false'","transport . voiture . gabarit": "'SUV'","transport . voiture . motorisation": "'thermique'",   "alimentation . boisson . chaude . café . nombre": 4,   "transport . voiture . thermique . carburant": "'essence E85'" }`,
       },
     });
+
     await TestUtil.prisma.empreinte.create({
       data: {
         id: 'empreinteID',
