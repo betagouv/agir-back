@@ -1,63 +1,17 @@
 import { v4 as uuidv4 } from 'uuid';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Empreinte, Prisma, SituationNGC } from '@prisma/client';
-import Publicodes from 'publicodes';
-import rules from '../data/co2.json';
-
-type Bilan = {
-  bilan_carbone_annuel: number;
-  details: {
-    divers: number;
-    logement: number;
-    transport: number;
-    alimentation: number;
-    services_societaux: number;
-  };
-};
-
-type BilanExtra = Bilan & {
-  created_at: Date;
-  id: string;
-};
+import { Empreinte, SituationNGC } from '@prisma/client';
+import { Bilan } from '../../../src/domain/bilan/bilan';
+import { BilanExtra } from '../../../src/domain/bilan/bilanExtra';
 
 @Injectable()
 export class BilanRepository {
   constructor(private prisma: PrismaService) {}
 
-  async evaluateBilan(situation: any): Promise<object> {
-    const engine = new Publicodes(rules as Record<string, any>);
-
-    const categories = {
-      bilan_carbone_annuel: 'bilan',
-      transport: 'transport . empreinte',
-      logement: 'logement',
-      divers: 'divers',
-      alimentation: 'alimentation',
-      services_societaux: 'services sociétaux',
-    };
-
-    Object.keys(categories).forEach(function (key) {
-      categories[key] = engine
-        .setSituation(situation || '{}')
-        .evaluate(categories[key]).nodeValue as string;
-    });
-
-    return {
-      bilan_carbone_annuel: categories['bilan_carbone_annuel'],
-      details: {
-        transport: categories['transport'],
-        logement: categories['logement'],
-        divers: categories['divers'],
-        alimentation: categories['alimentation'],
-        services_societaux: categories['services_societaux'],
-      },
-    };
-  }
-
   async getSituationbyUtilisateurId(
     utilisateurId: string,
-  ): Promise<string | null> {
+  ): Promise<any | null> {
     const empreintes = await this.prisma.empreinte.findMany({
       where: { utilisateurId },
       orderBy: { created_at: 'desc' },
@@ -66,7 +20,7 @@ export class BilanRepository {
         situation: true,
       },
     });
-    return empreintes[0]?.situation.toString();
+    return empreintes[0]?.situation.situation;
   }
 
   async getSituationNGCbyId(id: string): Promise<SituationNGC | null> {
@@ -76,7 +30,7 @@ export class BilanRepository {
     return situation;
   }
 
-  async getLastBilanByUtilisateurId(utilisateurId): Promise<BilanExtra | null> {
+  async getLastBilanByUtilisateurId(utilisateurId): Promise<BilanExtra> {
     const empreintes = await this.prisma.empreinte.findMany({
       where: { utilisateurId },
       orderBy: { created_at: 'desc' },
@@ -85,73 +39,48 @@ export class BilanRepository {
     if (empreintes.length === 0) {
       return null;
     }
-    const empreinte = empreintes[0];
-    const bilan = empreinte?.bilan as Bilan;
-    return {
-      ...bilan,
-      created_at: empreinte.created_at,
-      id: empreinte.id,
-    };
+    return this.buildBilanExtraFromEmpreinte(empreintes[0]);
   }
 
   async getAllBilansByUtilisateurId(utilisateurId): Promise<BilanExtra[]> {
     const empreintes = await this.prisma.empreinte.findMany({
       where: { utilisateurId },
+      orderBy: { created_at: 'desc' },
     });
-    const bilans = empreintes.map((empreinte) => {
-      const bilan = empreinte.bilan as Bilan;
-      return {
-        created_at: empreinte.created_at,
-        id: empreinte.id,
-        bilan_carbone_annuel: bilan.bilan_carbone_annuel,
-        details: bilan.details,
-      };
+    return empreintes.map((empreinte) => {
+      return this.buildBilanExtraFromEmpreinte(empreinte);
     });
-    return bilans;
   }
 
   async createBilan(
-    situationNGC: SituationNGC,
+    situationId: string,
     utilisateurId: string,
+    bilan: Bilan,
   ): Promise<Empreinte | null> {
-    let response;
-    try {
-      response = await this.prisma.empreinte.create({
-        data: {
-          id: uuidv4(),
-          situationId: situationNGC.id,
-          utilisateurId,
-          bilan: await this.evaluateBilan(situationNGC.situation),
-        },
-      });
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new BadRequestException(`Une empreinte existe déjà en base`);
-        }
-      }
-      throw error;
-    }
-    return response;
+    return await this.prisma.empreinte.create({
+      data: {
+        id: uuidv4(),
+        situationId,
+        utilisateurId,
+        bilan,
+      },
+    });
   }
 
-  async createSituation(situation: any): Promise<Empreinte | null> {
-    let response;
-    try {
-      response = await this.prisma.situationNGC.create({
-        data: {
-          id: uuidv4(),
-          situation: situation,
-        },
-      });
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new BadRequestException(`Une empreinte existe déjà en base`);
-        }
-      }
-      throw error;
-    }
-    return response;
+  async createSituation(situation: object): Promise<SituationNGC | null> {
+    return this.prisma.situationNGC.create({
+      data: {
+        id: uuidv4(),
+        situation: situation,
+      },
+    });
+  }
+
+  private buildBilanExtraFromEmpreinte(empreinte: Empreinte): BilanExtra {
+    return {
+      id: empreinte.id,
+      created_at: empreinte.created_at,
+      ...(empreinte.bilan as Bilan),
+    };
   }
 }

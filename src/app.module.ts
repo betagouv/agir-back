@@ -31,6 +31,7 @@ import { OIDCStateRepository } from '../src/infrastructure/repository/oidcState.
 
 import { JwtModule } from '@nestjs/jwt';
 import { OidcService } from '../src/infrastructure/auth/oidc.service';
+import { NGCCalculator } from './infrastructure/ngc/NGCCalculator';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { OidcService } from '../src/infrastructure/auth/oidc.service';
     AidesRepository,
     OIDCStateRepository,
     OidcService,
+    NGCCalculator,
 
     UtilisateurUsecase,
     EvaluerQuizzUsecase,

@@ -1,26 +1,24 @@
 import { Injectable } from '@nestjs/common';
+import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
+import { BilanExtra } from '../../src/domain/bilan/bilanExtra';
 import { BilanRepository } from '../infrastructure/repository/bilan.repository';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur.repository';
+import { SituationNGC } from '@prisma/client';
 
 @Injectable()
 export class BilanUsecase {
   constructor(
-    private utilisateurRepository: UtilisateurRepository,
     private bilanRepository: BilanRepository,
+    private nGCCalculator: NGCCalculator,
   ) {}
-  async getLastBilanByUtilisateurId(utilisateurId: string): Promise<any> {
-    const bilan = await this.bilanRepository.getLastBilanByUtilisateurId(
-      utilisateurId,
-    );
-
-    return bilan;
+  async getLastBilanByUtilisateurId(
+    utilisateurId: string,
+  ): Promise<BilanExtra> {
+    return this.bilanRepository.getLastBilanByUtilisateurId(utilisateurId);
   }
-  async getAllBilansByUtilisateurId(utilisateurId: string): Promise<any> {
-    const bilans = await this.bilanRepository.getAllBilansByUtilisateurId(
-      utilisateurId,
-    );
-
-    return bilans;
+  async getAllBilansByUtilisateurId(
+    utilisateurId: string,
+  ): Promise<BilanExtra[]> {
+    return this.bilanRepository.getAllBilansByUtilisateurId(utilisateurId);
   }
 
   async addBilanToUtilisateur(
@@ -30,17 +28,13 @@ export class BilanUsecase {
     const situation = await this.bilanRepository.getSituationNGCbyId(
       situationId,
     );
-    const result = await this.bilanRepository.createBilan(
-      situation,
-      utilisateurId,
+    const bilan = this.nGCCalculator.computeBilanFromSituation(
+      situation.situation as any,
     );
-
-    return result;
+    return this.bilanRepository.createBilan(situationId, utilisateurId, bilan);
   }
 
-  async addSituation(situation: string): Promise<any> {
-    const result = await this.bilanRepository.createSituation(situation);
-
-    return result;
+  async addSituation(situation: object): Promise<SituationNGC | null> {
+    return this.bilanRepository.createSituation(situation);
   }
 }
