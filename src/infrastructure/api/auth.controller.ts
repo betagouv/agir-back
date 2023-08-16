@@ -13,6 +13,7 @@ import { Request } from 'express';
 import { AuthGuard } from '../auth/guard';
 import { UtilisateurRepository } from '../repository/utilisateur.repository';
 import { OidcService } from '../auth/oidc.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Controller()
 export class AuthController {
@@ -60,7 +61,7 @@ export class AuthController {
     );
     if (!utilisateur) {
       utilisateur = await this.utilisateurRepository.createUtilisateur({
-        name: user_data.family_name,
+        name: user_data.family_name || 'Jone Do '.concat(uuidv4()),
         email: user_data.email,
       });
     }
@@ -71,8 +72,9 @@ export class AuthController {
     // CREATING INNER APP TOKEN
     const token = await this.oidcService.createNewInnerAppToken(utilisateurId);
     return {
-      url: process.env.BASE_URL.concat(
-        `/welcome?utilisateurId=${utilisateurId}&token=${token}`,
+      url: process.env.FRONT_BASE_URL.concat(
+        process.env.FINAL_LOGIN_REDIRECT,
+        `?utilisateurId=${utilisateurId}&token=${token}`,
       ),
     };
   }
