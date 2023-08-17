@@ -26,12 +26,11 @@ export class BilanController {
 
   @Post('bilan')
   async postEmpreinte(
-    @Headers('utilisateurId') utilisateurId: string,
-    @Headers('situationId') situationId: string,
+    @Body() body: { utilisateurId: string; situationId: string },
   ): Promise<any> {
     const result = await this.bilanUsecase.addBilanToUtilisateur(
-      utilisateurId,
-      situationId,
+      body.utilisateurId,
+      body.situationId,
     );
 
     return result;
