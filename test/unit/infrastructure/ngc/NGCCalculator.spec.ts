@@ -13,13 +13,13 @@ describe('NGCCalculator', () => {
     const situation = {
       'transport . voiture . km': { valeur: 12000, unité: 'km / an' },
     };
-    const entry = 'bilan';
+    const entry = 'transport . empreinte';
 
     //WHEN
     const response = calculator.computeSingleEntryValue(situation, entry);
 
     //THEN
-    expect(response).toEqual(8398.594521380714);
+    expect(response).toEqual(2533.9706912924553);
   });
   it('computeSingleEntry : compute ok single entry, complexe situation', () => {
     //GIVEN
