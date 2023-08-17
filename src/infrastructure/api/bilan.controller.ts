@@ -22,13 +22,14 @@ export class BilanController {
     return this.bilanUsecase.getAllBilansByUtilisateurId(utilisateurId);
   }
 
-  @Post('utilisateurs/:utilisateurId/bilans')
+  @Post('utilisateurs/:utilisateurId/bilans/:situationId')
   async postEmpreinte(
-    @Body() body: { utilisateurId: string; situationId: string },
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('situationId') situationId: string,
   ): Promise<any> {
     return await this.bilanUsecase.addBilanToUtilisateur(
-      body.utilisateurId,
-      body.situationId,
+      utilisateurId,
+      situationId,
     );
   }
 
