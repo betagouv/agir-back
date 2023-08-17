@@ -83,8 +83,10 @@ describe('/bilan (API test)', () => {
     // WHEN
     const response = await TestUtil.getServer()
       .post('/utilisateurs/utilisateur-id/bilans')
-      .set({ utilisateurId: 'utilisateur-id' })
-      .set({ situationId: 'situationNGC-id' });
+      .send({
+        utilisateurId: 'utilisateur-id',
+        situationId: 'situationNGC-id',
+      });
 
     //THEN
     expect(response.status).toBe(201);
