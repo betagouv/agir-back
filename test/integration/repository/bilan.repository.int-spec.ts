@@ -26,6 +26,6 @@ describe('BilanRepository', () => {
     );
 
     // THEN
-    expect(lastSituation).toBeUndefined();
+    expect(lastSituation).toStrictEqual({});
   });
 });

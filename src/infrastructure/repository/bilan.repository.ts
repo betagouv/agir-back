@@ -9,9 +9,7 @@ import { BilanExtra } from '../../../src/domain/bilan/bilanExtra';
 export class BilanRepository {
   constructor(private prisma: PrismaService) {}
 
-  async getLastSituationbyUtilisateurId(
-    utilisateurId: string,
-  ): Promise<any | null> {
+  async getLastSituationbyUtilisateurId(utilisateurId: string): Promise<any> {
     const empreintes = await this.prisma.empreinte.findMany({
       where: { utilisateurId },
       orderBy: { created_at: 'desc' },
@@ -20,7 +18,7 @@ export class BilanRepository {
         situation: true,
       },
     });
-    return empreintes[0]?.situation.situation;
+    return !empreintes.length ? {} : empreintes[0].situation.situation;
   }
 
   async getSituationNGCbyId(id: string): Promise<SituationNGC | null> {

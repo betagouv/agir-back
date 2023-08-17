@@ -16,7 +16,7 @@ describe('QuestionNGCRepository', () => {
     await TestUtil.appclose();
   });
 
-  it('Creates a questionNGC', async () => {
+  it('saveOrUpdateQuestion : Creates a questionNGC', async () => {
     await TestUtil.create('utilisateur');
     await questionNGCRepository.saveOrUpdateQuestion(
       'utilisateur-id',
@@ -29,7 +29,7 @@ describe('QuestionNGCRepository', () => {
     expect(questions[0].value).toEqual('value-456');
     expect(questions[0].utilisateurId).toEqual('utilisateur-id');
   });
-  it('Creates a questionNGC with numeric value OK', async () => {
+  it('saveOrUpdateQuestion : Creates a questionNGC with numeric value OK', async () => {
     await TestUtil.create('utilisateur');
     await questionNGCRepository.saveOrUpdateQuestion(
       'utilisateur-id',
@@ -39,7 +39,7 @@ describe('QuestionNGCRepository', () => {
     const questions = await TestUtil.prisma.questionNGC.findMany({});
     expect(questions[0].value).toEqual('123');
   });
-  it('Updates an existing questionNGC', async () => {
+  it('saveOrUpdateQuestion : Updates an existing questionNGC', async () => {
     await TestUtil.create('utilisateur');
     await TestUtil.create('questionNGC');
     await questionNGCRepository.saveOrUpdateQuestion(
@@ -50,5 +50,22 @@ describe('QuestionNGCRepository', () => {
     const questions = await TestUtil.prisma.questionNGC.findMany({});
     expect(questions).toHaveLength(1);
     expect(questions[0].value).toEqual('new value');
+  });
+  it('getAllQuestionForUtilisateur : liste all questions from user', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('questionNGC', { id: '1', key: 'a', value: 'AA' });
+    await TestUtil.create('questionNGC', { id: '2', key: 'b', value: 'BB' });
+
+    // WHEN
+    const liste = await questionNGCRepository.getAllQuestionForUtilisateur(
+      'utilisateur-id',
+    );
+    // THEN
+    expect(liste).toHaveLength(2);
+    expect(liste).toStrictEqual([
+      { key: 'a', value: 'AA' },
+      { key: 'b', value: 'BB' },
+    ]);
   });
 });

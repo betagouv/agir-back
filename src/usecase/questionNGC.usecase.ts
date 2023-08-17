@@ -3,6 +3,7 @@ import { QuestionNGCRepository } from '../infrastructure/repository/questionNGC.
 import { BilanRepository } from '../infrastructure/repository/bilan.repository';
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
 import { QuestionNGC } from '@prisma/client';
+import { Question } from 'src/domain/bilan/question';
 
 @Injectable()
 export class QuestionNGCUsecase {
@@ -17,12 +18,24 @@ export class QuestionNGCUsecase {
     key: string,
     value: string,
   ): Promise<QuestionNGC> {
-    const newSituation =
-      (await this.bilanRepository.getLastSituationbyUtilisateurId(
-        utilisateurId,
-      )) || {};
+    const savedQuestion = await this.questionNGCRepository.saveOrUpdateQuestion(
+      utilisateurId,
+      key,
+      value,
+    );
 
-    newSituation[key] = value.toString();
+    const questionList =
+      await this.questionNGCRepository.getAllQuestionForUtilisateur(
+        utilisateurId,
+      );
+
+    const currentSituation =
+      await this.bilanRepository.getLastSituationbyUtilisateurId(utilisateurId);
+
+    const newSituation = this.overrideSituationWithQuestionListe(
+      currentSituation,
+      questionList,
+    );
 
     const newDBSituation = await this.bilanRepository.createSituation(
       newSituation,
@@ -37,10 +50,17 @@ export class QuestionNGCUsecase {
       newComputedBilan,
     );
 
-    return this.questionNGCRepository.saveOrUpdateQuestion(
-      utilisateurId,
-      key,
-      value,
-    );
+    return savedQuestion;
+  }
+
+  private overrideSituationWithQuestionListe(
+    situation: object,
+    questionList: Question[],
+  ): object {
+    const result = { ...situation };
+    questionList.forEach((question) => {
+      result[question.key] = question.value;
+    });
+    return result;
   }
 }

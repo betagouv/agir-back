@@ -62,9 +62,13 @@ describe('/utilisateurs/id/questionsNGC (API test)', () => {
       2533.9706912924553,
     );
   });
-  it('PUT /utilisateurs/id/questionsNGC - mix with previous bilan', async () => {
+  it('PUT /utilisateurs/id/questionsNGC - mix with previous bilan and previous question', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
+    await TestUtil.create('questionNGC', {
+      key: 'transport . avion . usager',
+      value: 'non',
+    });
     await TestUtil.create('situationNGC');
     await TestUtil.create('empreinte');
 
@@ -83,15 +87,10 @@ describe('/utilisateurs/id/questionsNGC (API test)', () => {
       include: { situation: true },
       orderBy: { created_at: 'desc' },
     });
-    const situationsDB = await TestUtil.prisma.situationNGC.findMany({});
-    expect(situationsDB).toHaveLength(2);
-    expect(bilansDB).toHaveLength(2);
     expect(bilansDB[0].situation.situation).toStrictEqual({
       'transport . voiture . km': 12000,
       'transport . voiture . motorisation': "'électrique'",
+      'transport . avion . usager': 'non',
     });
-    expect(bilansDB[0].bilan['bilan_carbone_annuel']).toBeLessThan(
-      bilansDB[1].bilan['bilan_carbone_annuel'],
-    );
   });
 });

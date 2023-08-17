@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { QuestionNGC } from '@prisma/client';
+import { Question } from 'src/domain/bilan/question';
 
 @Injectable()
 export class QuestionNGCRepository {
@@ -28,6 +29,16 @@ export class QuestionNGCRepository {
       update: {
         value: value.toString(),
       },
+    });
+  }
+  async getAllQuestionForUtilisateur(
+    utilisateurId: string,
+  ): Promise<Question[] | null> {
+    const liste = await this.prisma.questionNGC.findMany({
+      where: { utilisateurId },
+    });
+    return liste.map((element) => {
+      return { key: element.key, value: element.value };
     });
   }
 }
