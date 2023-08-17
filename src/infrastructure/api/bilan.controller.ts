@@ -24,10 +24,12 @@ export class BilanController {
 
   @Post('utilisateurs/:utilisateurId/bilans')
   async postEmpreinte(
-    @Headers('utilisateurId') utilisateurId: string,
-    @Headers('situationId') situationId: string,
+    @Body() body: { utilisateurId: string; situationId: string },
   ): Promise<any> {
-    return this.bilanUsecase.addBilanToUtilisateur(utilisateurId, situationId);
+    return await this.bilanUsecase.addBilanToUtilisateur(
+      body.utilisateurId,
+      body.situationId,
+    );
   }
 
   @Post('bilan/importFromNGC')
