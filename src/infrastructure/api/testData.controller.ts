@@ -3,11 +3,8 @@ import {
   BadRequestException,
   Controller,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
   Post,
-  Query,
 } from '@nestjs/common';
 import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
@@ -131,16 +128,24 @@ export class TestDataController {
     if (!empreintes) return;
     for (let index = 0; index < empreintes.length; index++) {
       const empreinteId = empreintes[index];
-      if (empreintes_utilisateur[empreinteId]) {
+      const empreinte = empreintes_utilisateur[empreinteId];
+      if (empreinte) {
+        const situationId = uuidv4();
+        await this.prisma.situationNGC.create({
+          data: {
+            id: situationId,
+            situation: empreinte.situation,
+          },
+        });
         let data = {
-          ...empreintes_utilisateur[empreinteId],
-          created_at: new Date(
-            Date.parse(empreintes_utilisateur[empreinteId].date),
-          ),
+          ...empreinte,
+          created_at: new Date(Date.parse(empreinte.date)),
+          id: uuidv4(),
+          utilisateurId,
+          situationId,
+          date: undefined,
+          situation: undefined,
         };
-        delete data.date;
-        data.id = uuidv4();
-        data.utilisateurId = utilisateurId;
         await this.prisma.empreinte.create({
           data,
         });
