@@ -40,6 +40,7 @@ model Utilisateur {
   interactions Interaction[]
   suivis       Suivi[]
   badges       Badge[]
+  questionsNGC QuestionNGC[]
   created_at   DateTime      @default(now())
   updated_at   DateTime      @default(now()) @updatedAt
 }
@@ -88,6 +89,18 @@ model Empreinte {
   utilisateurId String
   situationId   String       @unique
   situation     SituationNGC @relation(fields: [situationId], references: [id])
+}
+
+model QuestionNGC {
+  id            String      @id
+  key           String
+  value         String?
+  utilisateurId String
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @default(now()) @updatedAt
+
+  @@unique([key, utilisateurId])
 }
 
 model SituationNGC {

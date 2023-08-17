@@ -37,6 +37,7 @@ export class TestUtil {
     await this.prisma.quizzQuestion.deleteMany();
     await this.prisma.quizz.deleteMany();
     await this.prisma.empreinte.deleteMany();
+    await this.prisma.questionNGC.deleteMany();
     await this.prisma.utilisateur.deleteMany();
     await this.prisma.situationNGC.deleteMany();
   }
@@ -56,6 +57,15 @@ export class TestUtil {
         'transport . voiture . km': 12000,
       },
       created_at: new Date(),
+      ...override,
+    };
+  }
+  static questionNGCData(override?) {
+    return {
+      id: 'questionNGC-id',
+      key: '123',
+      value: '456',
+      utilisateurId: 'utilisateur-id',
       ...override,
     };
   }
