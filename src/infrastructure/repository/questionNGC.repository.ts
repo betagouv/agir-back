@@ -10,7 +10,7 @@ export class QuestionNGCRepository {
   async saveOrUpdateQuestion(
     utilisateurId: string,
     key: string,
-    value: string,
+    value: any,
   ): Promise<QuestionNGC | null> {
     return this.prisma.questionNGC.upsert({
       where: {
@@ -22,11 +22,11 @@ export class QuestionNGCRepository {
       create: {
         id: uuidv4(),
         key,
-        value,
+        value: value.toString(),
         utilisateurId,
       },
       update: {
-        value,
+        value: value.toString(),
       },
     });
   }

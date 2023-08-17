@@ -48,14 +48,11 @@ describe('NGCCalculator', () => {
     //GIVEN
     let calculator = new NGCCalculator();
     const situation = {
-      'transport . voiture . km': { valeur: 12000, unité: 'km / an' },
+      'transport . voiture . km': 12000,
       'transport . voiture . propriétaire': 'non',
       'transport . voiture . gabarit': "'VUL'",
       'transport . voiture . motorisation': "'électrique'",
-      'transport . voiture . saisie voyageurs': {
-        valeur: 2,
-        unité: 'voyageurs',
-      },
+      'transport . voiture . saisie voyageurs': 2,
       'transport . deux roues . usager': 'non',
       'transport . avion . usager': 'non',
     };

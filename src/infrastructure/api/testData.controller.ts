@@ -12,6 +12,7 @@ import path from 'path';
 import fs from 'fs';
 import { SuiviAlimentation } from '../../../src/domain/suivi/suiviAlimentation';
 import { SuiviRepository } from '../../../src/infrastructure/repository/suivi.repository';
+import { QuestionNGCRepository } from '../../../src/infrastructure/repository/questionNGC.repository';
 import { Suivi } from '../../../src/domain/suivi/suivi';
 import { SuiviTransport } from '../../../src/domain/suivi/suiviTransport';
 import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
@@ -38,6 +39,7 @@ export class TestDataController {
   constructor(
     private prisma: PrismaService,
     private suiviRepository: SuiviRepository,
+    private questionNGCRepository: QuestionNGCRepository,
   ) {
     this.quizz_set = {};
   }
@@ -65,6 +67,7 @@ export class TestDataController {
     await this.insertSuivisAlimentationForUtilisateur(id);
     await this.insertEmpreintesForUtilisateur(id);
     await this.insertBadgesForUtilisateur(id);
+    await this.insertQuestionsNGCForUtilisateur(id);
     return utilisateurs_content[id];
   }
 
@@ -149,6 +152,20 @@ export class TestDataController {
         await this.prisma.empreinte.create({
           data,
         });
+      }
+    }
+  }
+  async insertQuestionsNGCForUtilisateur(utilisateurId: string) {
+    const questionsNGC = utilisateurs_content[utilisateurId].questionsNGC;
+    if (questionsNGC) {
+      const keyList = Object.keys(questionsNGC);
+      for (let index = 0; index < keyList.length; index++) {
+        const key = keyList[index];
+        await this.questionNGCRepository.saveOrUpdateQuestion(
+          utilisateurId,
+          key,
+          questionsNGC[key],
+        );
       }
     }
   }
@@ -281,6 +298,11 @@ export class TestDataController {
         utilisateurId,
       },
     });
+    await this.prisma.questionNGC.deleteMany({
+      where: {
+        utilisateurId,
+      },
+    });
     await this.prisma.utilisateur.deleteMany({
       where: { id: utilisateurId },
     });
@@ -291,6 +313,7 @@ export class TestDataController {
     delete clonedData.interactions;
     delete clonedData.bilans;
     delete clonedData.badges;
+    delete clonedData.questionsNGC;
     await this.prisma.utilisateur.upsert({
       where: {
         id: utilisateurId,
