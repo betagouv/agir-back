@@ -9,7 +9,7 @@ import { BilanExtra } from '../../../src/domain/bilan/bilanExtra';
 export class BilanRepository {
   constructor(private prisma: PrismaService) {}
 
-  async getSituationbyUtilisateurId(
+  async getLastSituationbyUtilisateurId(
     utilisateurId: string,
   ): Promise<any | null> {
     const empreintes = await this.prisma.empreinte.findMany({
@@ -24,16 +24,20 @@ export class BilanRepository {
   }
 
   async getSituationNGCbyId(id: string): Promise<SituationNGC | null> {
-    const situation = await this.prisma.situationNGC.findUnique({
+    return this.prisma.situationNGC.findUnique({
       where: { id },
     });
-    return situation;
   }
 
-  async getLastBilanByUtilisateurId(utilisateurId): Promise<BilanExtra> {
+  async getLastBilanByUtilisateurId(
+    utilisateurId: string,
+  ): Promise<BilanExtra> {
     const empreintes = await this.prisma.empreinte.findMany({
       where: { utilisateurId },
       orderBy: { created_at: 'desc' },
+      include: {
+        situation: true,
+      },
       take: 1,
     });
     if (empreintes.length === 0) {
@@ -80,6 +84,7 @@ export class BilanRepository {
     return {
       id: empreinte.id,
       created_at: empreinte.created_at,
+      situation: empreinte['situation'],
       ...(empreinte.bilan as Bilan),
     };
   }
