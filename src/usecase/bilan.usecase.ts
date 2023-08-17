@@ -24,14 +24,19 @@ export class BilanUsecase {
   async addBilanToUtilisateur(
     utilisateurId: string,
     situationId: string,
-  ): Promise<any> {
+  ): Promise<boolean> {
     const situation = await this.bilanRepository.getSituationNGCbyId(
       situationId,
     );
     const bilan = this.nGCCalculator.computeBilanFromSituation(
       situation.situation as any,
     );
-    return this.bilanRepository.createBilan(situationId, utilisateurId, bilan);
+    const result = await this.bilanRepository.createBilan(
+      situationId,
+      utilisateurId,
+      bilan,
+    );
+    return result !== null;
   }
 
   async addSituation(situation: object): Promise<SituationNGC | null> {

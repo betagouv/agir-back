@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Empreinte, SituationNGC } from '@prisma/client';
+import { Empreinte, Prisma, SituationNGC } from '@prisma/client';
 import { Bilan } from '../../../src/domain/bilan/bilan';
 import { BilanExtra } from '../../../src/domain/bilan/bilanExtra';
 
@@ -61,14 +61,27 @@ export class BilanRepository {
     utilisateurId: string,
     bilan: Bilan,
   ): Promise<Empreinte | null> {
-    return await this.prisma.empreinte.create({
-      data: {
-        id: uuidv4(),
-        situationId,
-        utilisateurId,
-        bilan,
-      },
-    });
+    let response;
+    try {
+      response = await this.prisma.empreinte.create({
+        data: {
+          id: uuidv4(),
+          situationId,
+          utilisateurId,
+          bilan,
+        },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new BadRequestException(
+            `Une situation d'id ${situationId} existe déjà en base pour l'utilisateur ${utilisateurId}`,
+          );
+        }
+      }
+      throw error;
+    }
+    return response;
   }
 
   async createSituation(situation: object): Promise<SituationNGC | null> {

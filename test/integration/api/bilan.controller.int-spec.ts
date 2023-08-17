@@ -81,16 +81,12 @@ describe('/bilan (API test)', () => {
     await TestUtil.create('situationNGC');
 
     // WHEN
-    const response = await TestUtil.getServer()
-      .post('/utilisateurs/utilisateur-id/bilans')
-      .send({
-        utilisateurId: 'utilisateur-id',
-        situationId: 'situationNGC-id',
-      });
+    const response = await TestUtil.getServer().post(
+      '/utilisateurs/utilisateur-id/bilans/situationNGC-id',
+    );
 
     //THEN
     expect(response.status).toBe(201);
-    expect(response.body.bilan.bilan_carbone_annuel).toEqual(8398.594521380714);
 
     const bilanDB = await TestUtil.prisma.empreinte.findMany({
       include: { situation: true },
