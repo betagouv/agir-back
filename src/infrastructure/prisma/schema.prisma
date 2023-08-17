@@ -79,6 +79,29 @@ model Interaction {
   utilisateur        Utilisateur @relation(fields: [utilisateurId], references: [id])
 }
 
+model InteractionCatalog {
+  id                 String   @id
+  content_id         String?
+  type               String
+  titre              String
+  soustitre          String?
+  categorie          String
+  tags               String[] @default([])
+  duree              String?
+  frequence          String?
+  image_url          String?
+  url                String?
+  locked             Boolean  @default(false)
+  difficulty         Int      @default(1)
+  points             Int      @default(0)
+  reco_score         Int      @default(1000)
+  day_period         Int?
+  pinned_at_position Int?
+  raison_lock        String?
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+}
+
 model Empreinte {
   id            String       @id
   initial       Boolean      @default(true)
