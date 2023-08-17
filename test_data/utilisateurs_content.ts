@@ -95,6 +95,9 @@ const utilisateurs = {
     suivis: ['sa1', 'sa2', 'st1', 'st2'],
     bilans: ['bilan1'],
     badges: ['badge1', 'badge2'],
+    questionsNGC: {
+      'transport . voiture . km': 30000,
+    },
   },
 };
 module.exports = utilisateurs;

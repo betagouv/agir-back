@@ -2,7 +2,7 @@ import { TestUtil } from '../../TestUtil';
 import { BadgeRepository } from '../../../src/infrastructure/repository/badge.repository';
 import { BadgeTypeEnum } from '../../../src/domain/badgeType';
 
-describe('UtilisateurRepository', () => {
+describe('BadgeRepository', () => {
   let badgeRepository = new BadgeRepository(TestUtil.prisma);
 
   beforeAll(async () => {

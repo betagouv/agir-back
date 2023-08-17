@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { AidesUsecase } from '../../usecase/aides.usecase';
 import { ApiTags } from '@nestjs/swagger';
+import { Aide } from '../../../src/domain/aide';
 
 @Controller()
 @ApiTags('Aides')
@@ -18,12 +19,13 @@ export class AidesController {
   async getRetrofit(
     @Query('codePostal') codePostal: string,
     @Query('revenuFiscalDeReference') revenuFiscalDeReference: string,
-  ): Promise<any> {
+  ): Promise<Aide[]> {
     const aides = await this.aidesUsecase.getRetrofit(
       codePostal,
       revenuFiscalDeReference,
     );
-    if (aides == null) {
+    // FIXME : retourner liste vide ?
+    if (aides.length === 0) {
       throw new NotFoundException(`Pas d'aides pour le retrofit`);
     }
     return aides;
@@ -33,13 +35,14 @@ export class AidesController {
   async getvelo(
     @Query('codePostal') codePostal: string,
     @Query('revenuFiscalDeReference') revenuFiscalDeReference: string,
-  ): Promise<any> {
+  ): Promise<Aide[]> {
     const aides = await this.aidesUsecase.getVelo(
       codePostal,
       revenuFiscalDeReference,
     );
-    if (aides == null) {
-      throw new NotFoundException(`Pas d'aides pour le retrofit`);
+    // FIXME : retourner liste vide ?
+    if (aides.length === 0) {
+      throw new NotFoundException(`Pas d'aides pour le vélo`);
     }
     return aides;
   }

@@ -44,7 +44,8 @@ docker run hello-world
 - renseigner les URLs respectives de votre base de test base de dev
 
 ### Lancer les bases de données
-Vous pouvez aussi le faire manuellement si vous rencontrez des problèmes de droits sous linux avec le script ```docker-compose``` sous jacent
+
+Vous pouvez aussi le faire manuellement si vous rencontrez des problèmes de droits sous linux avec le script `docker-compose` sous jacent
 
 ```bash
 npm run db:up
@@ -67,6 +68,7 @@ npm run test:all
 ```bash
 npm run test:int # pour les tests d'intégration seuls
 ```
+
 ```bash
 npm run test # pour les tests unitaires seuls
 ```
@@ -106,3 +108,6 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Convertisseur CSV => JSON pour les questions NGC
+
+https://www.convertcsv.com/csv-to-json.htm?utm_content=cmp-true

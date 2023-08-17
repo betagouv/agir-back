@@ -40,6 +40,7 @@ model Utilisateur {
   interactions Interaction[]
   suivis       Suivi[]
   badges       Badge[]
+  questionsNGC QuestionNGC[]
   created_at   DateTime      @default(now())
   updated_at   DateTime      @default(now()) @updatedAt
 }
@@ -78,23 +79,58 @@ model Interaction {
   utilisateur        Utilisateur @relation(fields: [utilisateurId], references: [id])
 }
 
+model InteractionCatalog {
+  id                 String   @id
+  content_id         String?
+  type               String
+  titre              String
+  soustitre          String?
+  categorie          String
+  tags               String[] @default([])
+  duree              String?
+  frequence          String?
+  image_url          String?
+  url                String?
+  locked             Boolean  @default(false)
+  difficulty         Int      @default(1)
+  points             Int      @default(0)
+  reco_score         Int      @default(1000)
+  day_period         Int?
+  pinned_at_position Int?
+  raison_lock        String?
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+}
+
 model Empreinte {
-  id            String      @id
-  initial       Boolean     @default(true)
+  id            String       @id
+  initial       Boolean      @default(true)
   bilan         Json?
-  created_at    DateTime    @default(now())
-  updated_at    DateTime    @updatedAt
-  utilisateurId String
-  situationId   String      @unique
+  created_at    DateTime     @default(now())
+  updated_at    DateTime     @default(now()) @updatedAt
   utilisateur   Utilisateur  @relation(fields: [utilisateurId], references: [id])
-  situation     SituationNGC  @relation(fields: [situationId], references: [id])
+  utilisateurId String
+  situationId   String       @unique
+  situation     SituationNGC @relation(fields: [situationId], references: [id])
+}
+
+model QuestionNGC {
+  id            String      @id
+  key           String
+  value         String?
+  utilisateurId String
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @default(now()) @updatedAt
+
+  @@unique([key, utilisateurId])
 }
 
 model SituationNGC {
-  id            String      @id
-  situation     Json?
-  empreinte     Empreinte?
-  created_at    DateTime    @default(now())
+  id         String     @id
+  situation  Json?
+  empreinte  Empreinte?
+  created_at DateTime   @default(now())
 }
 
 model Quizz {

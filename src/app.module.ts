@@ -31,6 +31,10 @@ import { OIDCStateRepository } from '../src/infrastructure/repository/oidcState.
 
 import { JwtModule } from '@nestjs/jwt';
 import { OidcService } from '../src/infrastructure/auth/oidc.service';
+import { NGCCalculator } from './infrastructure/ngc/NGCCalculator';
+import { QuestionNGCUsecase } from './usecase/questionNGC.usecase';
+import { QuestionNGCRepository } from './infrastructure/repository/questionNGC.repository';
+import { QuestionsNGCController } from './infrastructure/api/questionNGC.controller';
 
 @Module({
   imports: [
@@ -50,6 +54,7 @@ import { OidcService } from '../src/infrastructure/auth/oidc.service';
     SuiviController,
     SuiviDashboardController,
     TestDataController,
+    QuestionsNGCController,
   ],
   providers: [
     PrismaService,
@@ -62,6 +67,8 @@ import { OidcService } from '../src/infrastructure/auth/oidc.service';
     AidesRepository,
     OIDCStateRepository,
     OidcService,
+    NGCCalculator,
+    QuestionNGCRepository,  
 
     UtilisateurUsecase,
     EvaluerQuizzUsecase,
@@ -70,6 +77,7 @@ import { OidcService } from '../src/infrastructure/auth/oidc.service';
     AidesUsecase,
     InteractionsUsecase,
     SuiviUsecase,
+    QuestionNGCUsecase,
   ],
 })
 export class AppModule {}

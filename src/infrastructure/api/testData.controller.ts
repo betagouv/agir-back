@@ -3,11 +3,8 @@ import {
   BadRequestException,
   Controller,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
   Post,
-  Query,
 } from '@nestjs/common';
 import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
@@ -15,6 +12,7 @@ import path from 'path';
 import fs from 'fs';
 import { SuiviAlimentation } from '../../../src/domain/suivi/suiviAlimentation';
 import { SuiviRepository } from '../../../src/infrastructure/repository/suivi.repository';
+import { QuestionNGCRepository } from '../../../src/infrastructure/repository/questionNGC.repository';
 import { Suivi } from '../../../src/domain/suivi/suivi';
 import { SuiviTransport } from '../../../src/domain/suivi/suiviTransport';
 import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
@@ -41,6 +39,7 @@ export class TestDataController {
   constructor(
     private prisma: PrismaService,
     private suiviRepository: SuiviRepository,
+    private questionNGCRepository: QuestionNGCRepository,
   ) {
     this.quizz_set = {};
   }
@@ -68,6 +67,7 @@ export class TestDataController {
     await this.insertSuivisAlimentationForUtilisateur(id);
     await this.insertEmpreintesForUtilisateur(id);
     await this.insertBadgesForUtilisateur(id);
+    await this.insertQuestionsNGCForUtilisateur(id);
     return utilisateurs_content[id];
   }
 
@@ -131,19 +131,41 @@ export class TestDataController {
     if (!empreintes) return;
     for (let index = 0; index < empreintes.length; index++) {
       const empreinteId = empreintes[index];
-      if (empreintes_utilisateur[empreinteId]) {
+      const empreinte = empreintes_utilisateur[empreinteId];
+      if (empreinte) {
+        const situationId = uuidv4();
+        await this.prisma.situationNGC.create({
+          data: {
+            id: situationId,
+            situation: empreinte.situation,
+          },
+        });
         let data = {
-          ...empreintes_utilisateur[empreinteId],
-          created_at: new Date(
-            Date.parse(empreintes_utilisateur[empreinteId].date),
-          ),
+          ...empreinte,
+          created_at: new Date(Date.parse(empreinte.date)),
+          id: uuidv4(),
+          utilisateurId,
+          situationId,
+          date: undefined,
+          situation: undefined,
         };
-        delete data.date;
-        data.id = uuidv4();
-        data.utilisateurId = utilisateurId;
         await this.prisma.empreinte.create({
           data,
         });
+      }
+    }
+  }
+  async insertQuestionsNGCForUtilisateur(utilisateurId: string) {
+    const questionsNGC = utilisateurs_content[utilisateurId].questionsNGC;
+    if (questionsNGC) {
+      const keyList = Object.keys(questionsNGC);
+      for (let index = 0; index < keyList.length; index++) {
+        const key = keyList[index];
+        await this.questionNGCRepository.saveOrUpdateQuestion(
+          utilisateurId,
+          key,
+          questionsNGC[key],
+        );
       }
     }
   }
@@ -276,6 +298,11 @@ export class TestDataController {
         utilisateurId,
       },
     });
+    await this.prisma.questionNGC.deleteMany({
+      where: {
+        utilisateurId,
+      },
+    });
     await this.prisma.utilisateur.deleteMany({
       where: { id: utilisateurId },
     });
@@ -286,6 +313,7 @@ export class TestDataController {
     delete clonedData.interactions;
     delete clonedData.bilans;
     delete clonedData.badges;
+    delete clonedData.questionsNGC;
     await this.prisma.utilisateur.upsert({
       where: {
         id: utilisateurId,

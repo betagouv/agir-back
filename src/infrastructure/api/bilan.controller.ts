@@ -1,48 +1,43 @@
 import { ApiTags } from '@nestjs/swagger';
 import { Controller, Get, Post, Param, Body, Headers } from '@nestjs/common';
 import { BilanUsecase } from '../../usecase/bilan.usecase';
+import { BilanExtra } from '../../../src/domain/bilan/bilanExtra';
+import { SituationNGC } from '@prisma/client';
 
 @Controller()
 @ApiTags('Bilan')
 export class BilanController {
   constructor(private readonly bilanUsecase: BilanUsecase) {}
   @Get('utilisateur/:utilisateurId/bilans/last')
-  async getBilan(@Param('utilisateurId') utilisateurId: string): Promise<any> {
-    const bilan = await this.bilanUsecase.getLastBilanByUtilisateurId(
-      utilisateurId,
-    );
-
-    return bilan;
+  async getBilan(
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<BilanExtra> {
+    return this.bilanUsecase.getLastBilanByUtilisateurId(utilisateurId);
   }
 
   @Get('utilisateur/:utilisateurId/bilans')
-  async getBilans(@Param('utilisateurId') utilisateurId: string): Promise<any> {
-    const bilan = await this.bilanUsecase.getAllBilansByUtilisateurId(
-      utilisateurId,
-    );
-
-    return bilan;
+  async getBilans(
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<BilanExtra[]> {
+    return this.bilanUsecase.getAllBilansByUtilisateurId(utilisateurId);
   }
 
-  @Post('bilan')
+  @Post('utilisateurs/:utilisateurId/bilans')
   async postEmpreinte(
     @Body() body: { utilisateurId: string; situationId: string },
   ): Promise<any> {
-    const result = await this.bilanUsecase.addBilanToUtilisateur(
+    return await this.bilanUsecase.addBilanToUtilisateur(
       body.utilisateurId,
       body.situationId,
     );
-
-    return result;
   }
 
   @Post('bilan/importFromNGC')
-  async importFromNGC(@Body() body: { situation: string }): Promise<any> {
-    const situation = body.situation; // todo : check situation for security
-    if (situation === '') return 0;
-    const result = await this.bilanUsecase.addSituation(situation);
-
-    return result;
+  async importFromNGC(
+    @Body() body: { situation: object },
+  ): Promise<SituationNGC> {
+    // todo : check situation for security
+    return this.bilanUsecase.addSituation(body.situation);
   }
 }
 

@@ -37,6 +37,7 @@ export class TestUtil {
     await this.prisma.quizzQuestion.deleteMany();
     await this.prisma.quizz.deleteMany();
     await this.prisma.empreinte.deleteMany();
+    await this.prisma.questionNGC.deleteMany();
     await this.prisma.utilisateur.deleteMany();
     await this.prisma.situationNGC.deleteMany();
   }
@@ -49,6 +50,25 @@ export class TestUtil {
       data: this[type.concat('Data')](override),
     });
   }
+  static situationNGCData(override?) {
+    return {
+      id: 'situationNGC-id',
+      situation: {
+        'transport . voiture . km': 12000,
+      },
+      created_at: new Date(),
+      ...override,
+    };
+  }
+  static questionNGCData(override?) {
+    return {
+      id: 'questionNGC-id',
+      key: '123',
+      value: '456',
+      utilisateurId: 'utilisateur-id',
+      ...override,
+    };
+  }
   static suiviData(override?) {
     return {
       id: 'suivi-id',
@@ -57,6 +77,25 @@ export class TestUtil {
         a: 1,
         b: 2,
         c: 3,
+      },
+      utilisateurId: 'utilisateur-id',
+      ...override,
+    };
+  }
+  static empreinteData(override?) {
+    return {
+      id: 'empreinte-id',
+      initial: false,
+      situationId: 'situationNGC-id',
+      bilan: {
+        details: {
+          divers: 852.8584599753638,
+          logement: 1424.3853917865213,
+          transport: 2533.9706912924553,
+          alimentation: 2033.7441687666667,
+          services_societaux: 1553.6358095597056,
+        },
+        bilan_carbone_annuel: 8398.594521380714,
       },
       utilisateurId: 'utilisateur-id',
       ...override,
