@@ -1,15 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import Publicodes from 'publicodes';
+import { Aide } from '../../../src/domain/aide';
 import rulesRetrofit from '../data/aidesRetrofit.json';
 import rulesVelo from '../data/aidesVelo.json';
 import localisations from '../data/communes.json';
 
-type Aides = {
-  libelle: string;
-  montant: string;
-  plafond: string;
-  lien: string;
-}[];
 type Localisation = {
   nom: string;
   slug: string;
@@ -28,7 +23,7 @@ export class AidesRepository {
     codePostal: string,
     revenuFiscalDeReference: string,
     type: 'retrofit' | 'velo',
-  ): Promise<Aides> {
+  ): Promise<Aide[]> {
     let rules = rulesRetrofit as Record<string, any>;
     if (type !== 'retrofit') {
       rules = rulesVelo as Record<string, any>;

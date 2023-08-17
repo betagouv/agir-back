@@ -1,12 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { Aide } from '../../src/domain/aide';
 import { AidesRepository } from '../infrastructure/repository/aides.repository';
-
-type Aides = {
-  libelle: string;
-  montant: string;
-  plafond: string;
-  lien: string;
-}[];
 
 @Injectable()
 export class AidesUsecase {
@@ -14,7 +8,7 @@ export class AidesUsecase {
   async getRetrofit(
     codePostal: string,
     revenuFiscalDeReference: string,
-  ): Promise<Aides> {
+  ): Promise<Aide[]> {
     return this.aidesRepository.get(
       codePostal,
       revenuFiscalDeReference,
@@ -24,7 +18,7 @@ export class AidesUsecase {
   async getVelo(
     codePostal: string,
     revenuFiscalDeReference: string,
-  ): Promise<Aides> {
+  ): Promise<Aide[]> {
     return this.aidesRepository.get(
       codePostal,
       revenuFiscalDeReference,
