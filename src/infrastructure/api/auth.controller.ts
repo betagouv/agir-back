@@ -61,7 +61,7 @@ export class AuthController {
     );
     if (!utilisateur) {
       utilisateur = await this.utilisateurRepository.createUtilisateur({
-        name: user_data.family_name || 'Jone Do '.concat(uuidv4()),
+        name: user_data.family_name || 'John Doe '.concat(uuidv4()),
         email: user_data.email,
       });
     }
