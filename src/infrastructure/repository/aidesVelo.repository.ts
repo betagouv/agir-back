@@ -101,7 +101,7 @@ function getAidesVeloTousTypes(
 
   for (const key of Object.keys(veloTypes)) {
     situationBase['vélo . type'] = key as keyof typeof veloTypes;
-    veloTypes[key].aides = getAidesVeloParType(engine, situationBase);
+    veloTypes[key] = getAidesVeloParType(engine, situationBase);
   }
 
   return veloTypes;
