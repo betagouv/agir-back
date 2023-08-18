@@ -18,16 +18,21 @@ describe('BadgeRepository', () => {
   });
 
   it('Creates a new badge', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
+    // WHEN
     await badgeRepository.createUniqueBadge(
       'utilisateur-id',
       BadgeTypeEnum.premier_quizz,
     );
+    // THEN
     const badges = await TestUtil.prisma.badge.findMany({});
     expect(badges).toHaveLength(1);
   });
-  it('Creates a new badge oncee', async () => {
+  it('Creates a new badge once only', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
+    // WHEN
     await badgeRepository.createUniqueBadge(
       'utilisateur-id',
       BadgeTypeEnum.premier_quizz,
@@ -36,6 +41,7 @@ describe('BadgeRepository', () => {
       'utilisateur-id',
       BadgeTypeEnum.premier_quizz,
     );
+    // THEN
     const badges = await TestUtil.prisma.badge.findMany({});
     expect(badges).toHaveLength(1);
   });

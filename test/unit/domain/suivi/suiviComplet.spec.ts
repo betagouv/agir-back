@@ -4,43 +4,46 @@ import { SuiviAlimentation } from '../../../../src/domain/suivi/suiviAlimentatio
 
 describe('Objet SuiviComplet', () => {
   it('isEmpty : should say empty when empty', () => {
+    // GIVEN
     let suiviComplet = new SuiviComplet();
+    // WHEN-THEN
     expect(suiviComplet.isEmpty()).toStrictEqual(true);
   });
   it('isOfSameDay : should say true when same day', () => {
-    let suiviComplet = new SuiviComplet();
-
     // GIVEN
+    let suiviComplet = new SuiviComplet();
     let a1 = new SuiviAlimentation(new Date(Date.parse('2023-01-01')));
     let a2 = new SuiviTransport(new Date(Date.parse('2023-01-01')));
     suiviComplet.addSuiviOfTypeIfNotAlreadyThereAndSameDay(a1);
-
-    // THEN
+    // WHEN-THEN
     expect(suiviComplet.isOfSameDay(a2)).toStrictEqual(true);
   });
   it('isOfSameDay : should say false when not same day', () => {
-    let suiviComplet = new SuiviComplet();
-
     // GIVEN
+    let suiviComplet = new SuiviComplet();
     let a1 = new SuiviAlimentation(new Date(Date.parse('2023-01-01')));
     let a2 = new SuiviTransport(new Date(Date.parse('2023-01-12')));
     suiviComplet.addSuiviOfTypeIfNotAlreadyThereAndSameDay(a1);
 
-    // THEN
+    // WHEN-THEN
     expect(suiviComplet.isOfSameDay(a2)).toStrictEqual(false);
   });
   it('should say not empty when not empty', () => {
+    // GIVEN
     let suiviComplet = new SuiviComplet();
     suiviComplet.addSuiviOfTypeIfNotAlreadyThereAndSameDay(
       new SuiviAlimentation(),
     );
+    // WHEN-THEN
     expect(suiviComplet.isEmpty()).toStrictEqual(false);
   });
   it('getNombreSuivi : should say 1 when 1 suivi', () => {
+    // GIVEN
     let suiviComplet = new SuiviComplet();
     suiviComplet.addSuiviOfTypeIfNotAlreadyThereAndSameDay(
       new SuiviAlimentation(),
     );
+    // WHEN-THEN
     expect(suiviComplet.getNombreSuivi()).toEqual(1);
   });
   it('addSuiviOfTypeIfNotAlreadyThere : should not add second suivi of same type', () => {

@@ -4,6 +4,7 @@ import { SuiviTransport } from '../../../../src/domain/suivi/suiviTransport';
 
 describe('Objet SuiviCollection', () => {
   it('mergeAll : should merge ok all data', () => {
+    // GIVEN
     let a1 = new SuiviAlimentation();
     let a2 = new SuiviAlimentation();
     let a3 = new SuiviAlimentation();
@@ -12,9 +13,11 @@ describe('Objet SuiviCollection', () => {
     let suiviCollection = new SuiviCollection();
     suiviCollection.alimentation = [a1, a2, a3];
     suiviCollection.transports = [t1, t2];
+    // WHEN-THEN
     expect(suiviCollection.mergeAll()).toHaveLength(5);
   });
   it('mergeAllAndOrderByDate : should order ok all suivi', () => {
+    // GIVEN
     let a1 = new SuiviAlimentation(new Date(1));
     let a2 = new SuiviAlimentation(new Date(4));
     let a3 = new SuiviAlimentation(new Date(3));
@@ -23,7 +26,9 @@ describe('Objet SuiviCollection', () => {
     let suiviCollection = new SuiviCollection();
     suiviCollection.alimentation = [a1, a2, a3];
     suiviCollection.transports = [t1, t2];
+    // WHEN
     const result = suiviCollection.mergeAllAndOrderByDate();
+    // THEN
     expect(result).toHaveLength(5);
     expect(result[0].getDate().getTime()).toEqual(1);
     expect(result[1].getDate().getTime()).toEqual(2);
@@ -32,15 +37,18 @@ describe('Objet SuiviCollection', () => {
     expect(result[4].getDate().getTime()).toEqual(5);
   });
   it('getLastSuiviDate : should return ok last suivi', () => {
+    // GIVEN
     let a1 = new SuiviAlimentation(new Date(1));
     let a2 = new SuiviAlimentation(new Date(4));
     let t1 = new SuiviTransport(new Date(5));
     let suiviCollection = new SuiviCollection();
     suiviCollection.alimentation = [a1, a2];
     suiviCollection.transports = [t1];
+    // WHEN-THEN
     expect(suiviCollection.getLastSuiviDate().getTime()).toEqual(5);
   });
   it('getLastSuiviDate : should return undefined date when no suivi', () => {
+    // GIVEN
     let suiviCollection = new SuiviCollection();
     expect(suiviCollection.getLastSuiviDate()).toStrictEqual(undefined);
   });

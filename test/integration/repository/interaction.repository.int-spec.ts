@@ -19,52 +19,65 @@ describe('InteractionRepository', () => {
   });
 
   it('listMaxInteractionsByUtilisateurIdAndType : desc order by reco score ', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', { id: '1', reco_score: 100 });
     await TestUtil.create('interaction', { id: '2', reco_score: 20 });
     await TestUtil.create('interaction', { id: '3', reco_score: 50 });
 
+    // WHEN
     const liste =
       await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
         'utilisateur-id',
       );
+
+    // THEN
     expect(liste).toHaveLength(3);
     expect(liste[0].reco_score).toEqual(20);
     expect(liste[1].reco_score).toEqual(50);
     expect(liste[2].reco_score).toEqual(100);
   });
   it('listMaxInteractionsByUtilisateurIdAndType : filters by type ', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', { id: '1', type: 'quizz' });
     await TestUtil.create('interaction', { id: '2', type: 'article' });
     await TestUtil.create('interaction', { id: '3', type: 'article' });
 
+    // WHEN
     const liste =
       await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
         'utilisateur-id',
         InteractionType.article,
       );
+    // THEN
     expect(liste).toHaveLength(2);
   });
   it('listMaxInteractionsByUtilisateurIdAndType : applies max number ', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', { id: '1', type: 'article' });
     await TestUtil.create('interaction', { id: '2', type: 'article' });
     await TestUtil.create('interaction', { id: '3', type: 'article' });
 
+    // WHEN
     const liste =
       await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
         'utilisateur-id',
         InteractionType.article,
         1,
       );
+    // THEN
     expect(liste).toHaveLength(1);
   });
   it('resetAllInteractionStatus : resets nothing when date after scheduled reset date', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', { scheduled_reset: new Date(100) });
 
+    // WHEN
     await interactionRepository.resetAllInteractionStatus(new Date(50));
+    // THEN
     const result = await TestUtil.prisma.interaction.findUnique({
       where: { id: 'interaction-id' },
     });
@@ -73,16 +86,20 @@ describe('InteractionRepository', () => {
     expect(result.succeeded).toStrictEqual(false);
   });
   it('resetAllInteractionStatus : resets nothing when no scheduled_reset date', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', { scheduled_reset: null, done: true });
 
+    // WHEN
     await interactionRepository.resetAllInteractionStatus(new Date(50));
+    // THEN
     const result = await TestUtil.prisma.interaction.findUnique({
       where: { id: 'interaction-id' },
     });
     expect(result.done).toStrictEqual(true);
   });
   it('resetAllInteractionStatus : resets one only when date passed', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
       id: '1',
@@ -105,7 +122,10 @@ describe('InteractionRepository', () => {
       succeeded_at: new Date(),
     });
 
+    // WHEN
     await interactionRepository.resetAllInteractionStatus(new Date(150));
+
+    // THEN
     let inter1 = await TestUtil.prisma.interaction.findUnique({
       where: { id: '1' },
     });
@@ -113,7 +133,6 @@ describe('InteractionRepository', () => {
       where: { id: '2' },
     });
 
-    // THEN
     expect(inter1.done).toStrictEqual(false);
     expect(inter1.clicked).toStrictEqual(false);
     expect(inter1.succeeded).toStrictEqual(false);

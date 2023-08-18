@@ -19,13 +19,17 @@ describe('SuiviRepository', () => {
   });
 
   it('Creates a new suivi', async () => {
+    // GIVEN
     await TestUtil.prisma.utilisateur.create({
       data: { id: '1', name: 'bob' },
     });
     let suiviAlimentation = new SuiviAlimentation();
     suiviAlimentation.viande_rouge = 2;
+
+    // WHEN
     await suiviRepository.createSuivi(suiviAlimentation, '1');
 
+    // THEN
     const suivis = await TestUtil.prisma.suivi.findMany({});
     expect(suivis).toHaveLength(1);
     expect(suivis[0].id).toHaveLength(36);
@@ -34,6 +38,7 @@ describe('SuiviRepository', () => {
   });
 
   it('erreur de type', async () => {
+    // GIVEN
     await TestUtil.prisma.utilisateur.create({
       data: { id: '1', name: 'bob' },
     });
@@ -50,8 +55,10 @@ describe('SuiviRepository', () => {
     });
 
     try {
+      // WHEN
       await suiviRepository.listAllSuivi('1');
     } catch (error) {
+      // THEN
       expect(error.message).toEqual('Unknown suivi type : bad_type');
       return;
     }
@@ -59,6 +66,7 @@ describe('SuiviRepository', () => {
   });
 
   it('liste par dates décroissantes, sans type', async () => {
+    // GIVEN
     await TestUtil.prisma.utilisateur.create({
       data: { id: '1', name: 'bob' },
     });
@@ -85,7 +93,10 @@ describe('SuiviRepository', () => {
       },
     });
 
+    // WHEN
     const suivis = await suiviRepository.listAllSuivi('1');
+
+    // THEN
     expect(suivis.alimentation).toHaveLength(1);
     expect(suivis.transports).toHaveLength(1);
     expect(suivis.alimentation[0].viande_rouge).toStrictEqual(1);
@@ -93,6 +104,7 @@ describe('SuiviRepository', () => {
   });
 
   it('liste et ventile par type', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('suivi', {
       id: '1',
@@ -107,12 +119,16 @@ describe('SuiviRepository', () => {
       type: 'transport',
     });
 
+    // WHEN
     const suivis = await suiviRepository.listAllSuivi('utilisateur-id');
+
+    // THEN
     expect(suivis.alimentation).toHaveLength(1);
     expect(suivis.transports).toHaveLength(2);
   });
 
   it('liste et filtre par type', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('suivi', {
       id: '1',
@@ -127,26 +143,32 @@ describe('SuiviRepository', () => {
       type: 'transport',
     });
 
+    // WHEN
     const suivis = await suiviRepository.listAllSuivi(
       'utilisateur-id',
       SuiviType.transport,
     );
+
+    // THEN
     expect(suivis.alimentation).toHaveLength(0);
     expect(suivis.transports).toHaveLength(2);
   });
 
   it('liste les X derniers suivis', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('suivi', { id: '1' });
     await TestUtil.create('suivi', { id: '2' });
     await TestUtil.create('suivi', { id: '3' });
     await TestUtil.create('suivi', { id: '4' });
 
+    // WHEN
     const suivis = await suiviRepository.listAllSuivi(
       'utilisateur-id',
       undefined,
       3,
     );
+    // THEN
     expect(suivis.mergeAll()).toHaveLength(3);
   });
 });

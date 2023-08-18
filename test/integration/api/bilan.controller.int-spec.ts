@@ -14,13 +14,17 @@ describe('/bilan (API test)', () => {
   });
 
   it('GET /utilisateur/id/bilans/last - get last bilan with proper data', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('situationNGC');
     await TestUtil.create('empreinte');
 
+    // WHEN
     const response = await TestUtil.getServer().get(
       '/utilisateur/utilisateur-id/bilans/last',
     );
+
+    //THEN
     expect(response.status).toBe(200);
     expect(response.body.details).toStrictEqual({
       divers: 852.8584599753638,
@@ -32,6 +36,7 @@ describe('/bilan (API test)', () => {
     expect(response.body.bilan_carbone_annuel).toStrictEqual(8398.594521380714);
   });
   it('GET /utilisateur/id/bilans/last - get last bilan by id user', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('situationNGC', { id: 'id1' });
     await TestUtil.create('situationNGC', { id: 'id2' });
@@ -46,13 +51,17 @@ describe('/bilan (API test)', () => {
       situationId: 'id2',
     });
 
+    // WHEN
     const response = await TestUtil.getServer().get(
       '/utilisateur/utilisateur-id/bilans/last',
     );
+
+    //THEN
     expect(response.status).toBe(200);
     expect(response.body.id).toBe('2');
   });
   it('GET /utilisateur/id/bilans - get list of bilans', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('situationNGC', { id: 'id1' });
     await TestUtil.create('situationNGC', { id: 'id2' });
@@ -67,9 +76,12 @@ describe('/bilan (API test)', () => {
       situationId: 'id2',
     });
 
+    // WHEN
     const response = await TestUtil.getServer().get(
       '/utilisateur/utilisateur-id/bilans',
     );
+
+    //THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(2);
     expect(response.body[0].id).toBe('2');

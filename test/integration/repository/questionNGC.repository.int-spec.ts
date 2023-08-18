@@ -17,12 +17,15 @@ describe('QuestionNGCRepository', () => {
   });
 
   it('saveOrUpdateQuestion : Creates a questionNGC', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
+    // WHEN
     await questionNGCRepository.saveOrUpdateQuestion(
       'utilisateur-id',
       'key-123',
       'value-456',
     );
+    // THEN
     const questions = await TestUtil.prisma.questionNGC.findMany({});
     expect(questions).toHaveLength(1);
     expect(questions[0].key).toEqual('key-123');
@@ -30,23 +33,29 @@ describe('QuestionNGCRepository', () => {
     expect(questions[0].utilisateurId).toEqual('utilisateur-id');
   });
   it('saveOrUpdateQuestion : Creates a questionNGC with numeric value OK', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
+    // WHEN
     await questionNGCRepository.saveOrUpdateQuestion(
       'utilisateur-id',
       'key-123',
       123,
     );
+    // THEN
     const questions = await TestUtil.prisma.questionNGC.findMany({});
     expect(questions[0].value).toEqual('123');
   });
   it('saveOrUpdateQuestion : Updates an existing questionNGC', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('questionNGC');
+    // WHEN
     await questionNGCRepository.saveOrUpdateQuestion(
       'utilisateur-id',
       '123',
       'new value',
     );
+    // THEN
     const questions = await TestUtil.prisma.questionNGC.findMany({});
     expect(questions).toHaveLength(1);
     expect(questions[0].value).toEqual('new value');

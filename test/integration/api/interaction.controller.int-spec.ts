@@ -24,11 +24,14 @@ describe('/utilisateurs/id/interactions (API test)', () => {
   });
 
   it('GET /utilisateurs/id/interactions - list all interactions', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction');
+    // WHEN
     const response = await TestUtil.getServer().get(
       '/utilisateurs/utilisateur-id/interactions',
     );
+    // THEN
     const dbInteraction = await TestUtil.prisma.interaction.findUnique({
       where: { id: 'interaction-id' },
     });
@@ -159,15 +162,19 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     expect(response.body[1].reco_score).toEqual(20);
   });
   it('GET /utilisateurs/id/interactions - no done interaction', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', { done: true });
+    // WHEN
     const response = await TestUtil.getServer().get(
       '/utilisateurs/utilisateur-id/interactions',
     );
+    // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(0);
   });
   it('GET /utilisateurs/id/interactions - pinned interaction at proper position', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', { id: 'id-1', reco_score: 1 });
     await TestUtil.create('interaction', { id: 'id-2', reco_score: 2 });
@@ -177,9 +184,11 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       reco_score: 4,
       pinned_at_position: 2,
     });
+    // WHEN
     const response = await TestUtil.getServer().get(
       '/utilisateurs/utilisateur-id/interactions',
     );
+    // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(4);
     expect(response.body[0].id).toEqual('id-1');
@@ -188,22 +197,29 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     expect(response.body[3].id).toEqual('id-3');
   });
   it('GET /utilisateurs/id/interactions - no succeeded interaction', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', { succeeded: true });
+    // WHEN
     const response = await TestUtil.getServer().get(
       '/utilisateurs/utilisateur-id/interactions',
     );
+    // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(0);
   });
   it('PATCH /utilisateurs/id/interactions/id - patch status of single interaction', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction');
+
+    // WHEN
     const response = await TestUtil.getServer()
       .patch('/utilisateurs/utilisateur-id/interactions/interaction-id')
       .send({
         done: true,
       });
+    // THEN
     expect(response.status).toBe(200);
     const dbInteraction = await TestUtil.prisma.interaction.findUnique({
       where: { id: 'interaction-id' },
@@ -218,13 +234,16 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     expect(dbUtilisateur.points).toStrictEqual(5);
   });
   it('PATCH /utilisateurs/id/interactions/id - win badge when first quizz', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', { type: InteractionType.quizz });
+    // WHEN
     const response = await TestUtil.getServer()
       .patch('/utilisateurs/utilisateur-id/interactions/interaction-id')
       .send({
         succeeded: true,
       });
+    // THEN
     expect(response.status).toBe(200);
     const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
@@ -238,15 +257,18 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     );
   });
   it('PATCH /utilisateurs/id/interactions/id - does not add points when already done', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
       done: true,
     });
+    // WHEN
     const response = await TestUtil.getServer()
       .patch('/utilisateurs/utilisateur-id/interactions/interaction-id')
       .send({
         done: true,
       });
+    // THEN
     expect(response.status).toBe(200);
     const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
@@ -254,16 +276,19 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     expect(dbUtilisateur.points).toStrictEqual(0);
   });
   it('PATCH /utilisateurs/id/interactions/id - set a scheduled_reset date when moving to done and day_period specified', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
       done: false,
       day_period: 1,
     });
+    // WHEN
     const response = await TestUtil.getServer()
       .patch('/utilisateurs/utilisateur-id/interactions/interaction-id')
       .send({
         done: true,
       });
+    // THEN
     expect(response.status).toBe(200);
     const dbInteraction = await TestUtil.prisma.interaction.findUnique({
       where: { id: 'interaction-id' },
@@ -271,6 +296,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     expect(dbInteraction.scheduled_reset).not.toBeNull();
   });
   it('POST /interactions/reset resets with current date when no date parameter', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
       id: '1',
@@ -282,11 +308,14 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       done: true,
       scheduled_reset: new Date(200),
     });
+    // WHEN
     const response = await TestUtil.getServer().post('/interactions/reset');
+    // THEN
     expect(response.status).toBe(200);
     expect(response.body.reset_interaction_number).toEqual(2);
   });
   it('POST /interactions/reset resets with param date', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
       id: '1',
@@ -298,9 +327,11 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       done: true,
       scheduled_reset: new Date(200),
     });
+    // WHEN
     const response = await TestUtil.getServer().post(
       '/interactions/reset?date='.concat(new Date(150).toISOString()),
     );
+    // THEN
     expect(response.status).toBe(200);
     expect(response.body.reset_interaction_number).toEqual(1);
   });

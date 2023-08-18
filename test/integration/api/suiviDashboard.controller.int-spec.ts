@@ -15,13 +15,17 @@ describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
   });
 
   it('GET /utilisateurs/id/suivi_dashboard - get empty dashboard when nothing in DB', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
+    // WHEN
     const response = await TestUtil.getServer().get(
       '/utilisateurs/utilisateur-id/suivi_dashboard',
     );
+    // THEN
     expect(response.status).toBe(200);
   });
   it('GET /utilisateurs/id/suivi_dashboard - get dashboard with proper last suivi date', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('suivi', {
       id: '1',
@@ -44,9 +48,11 @@ describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
         total_impact: 50,
       },
     });
+    // WHEN
     const response = await TestUtil.getServer().get(
       '/utilisateurs/utilisateur-id/suivi_dashboard',
     );
+    // THEN
     expect(response.status).toBe(200);
     expect(Date.parse(response.body.date_dernier_suivi)).toEqual(
       Date.parse('2023-01-15'),
@@ -54,6 +60,7 @@ describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
     expect(response.body.impact_dernier_suivi).toEqual(50);
   });
   it('GET /utilisateurs/id/suivi_dashboard - get dashboard with proper merged last suivi date', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('suivi', {
       id: '1',
@@ -82,9 +89,11 @@ describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
         viande_blanche: 36,
       },
     });
+    // WHEN
     const response = await TestUtil.getServer().get(
       '/utilisateurs/utilisateur-id/suivi_dashboard',
     );
+    // THEN
     expect(response.status).toBe(200);
     expect(Date.parse(response.body.date_dernier_suivi)).toEqual(
       Date.parse('2023-01-30'),

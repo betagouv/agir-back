@@ -14,10 +14,13 @@ describe('/Quizz (API test)', () => {
   });
 
   it('GET /quizz/id - get a quizz content by id', async () => {
+    // GIVEN
     await TestUtil.create('quizz');
     await TestUtil.create('quizzQuestion');
     await TestUtil.create('quizzQuestion', { id: 'quizzQuestion-id2' });
+    // WHEN
     const response = await TestUtil.getServer().get('/quizz/quizz-id');
+    // THEN
     expect(response.status).toBe(200);
     expect(response.body.titre).toEqual('titre');
     expect(response.body['questions']).toHaveLength(2);
@@ -27,10 +30,12 @@ describe('/Quizz (API test)', () => {
   });
 
   it('POST /quizz/id/evaluer - compute a success quizz result', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('quizz');
     await TestUtil.create('quizzQuestion');
     await TestUtil.create('quizzQuestion', { id: 'quizzQuestion-id2' });
+    // WHEN
     const response = await TestUtil.getServer()
       .post('/quizz/quizz-id/evaluer')
       .send({
@@ -50,10 +55,12 @@ describe('/Quizz (API test)', () => {
     expect(utilisateurDb['badges']).toHaveLength(1);
   });
   it('POST /quizz/id/evaluer - compute a fail quizz result', async () => {
+    // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('quizz');
     await TestUtil.create('quizzQuestion');
     await TestUtil.create('quizzQuestion', { id: 'quizzQuestion-id2' });
+    // WHEN
     const response = await TestUtil.getServer()
       .post('/quizz/quizz-id/evaluer')
       .send({
@@ -63,6 +70,7 @@ describe('/Quizz (API test)', () => {
           { 'quizzQuestion-id2': 'bad' },
         ],
       });
+    // THEN
     expect(response.status).toBe(200);
     expect(response.body.resultat).toEqual(false);
   });
