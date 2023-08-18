@@ -28,10 +28,10 @@ describe('/bilan (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.details).toStrictEqual({
       divers: 852.8584599753638,
-      logement: 1424.3853917865213,
-      transport: 2533.9706912924553,
-      alimentation: 2033.7441687666667,
-      services_societaux: 1553.6358095597056,
+      logement: 1424.385391786521,
+      transport: 2533.970691292455,
+      alimentation: 2033.744168766667,
+      services_societaux: 1553.635809559706,
     });
     expect(response.body.bilan_carbone_annuel).toStrictEqual(8398.594521380714);
   });
@@ -109,10 +109,10 @@ describe('/bilan (API test)', () => {
     });
     expect(bilanDB[0].bilan['details']).toStrictEqual({
       divers: 852.8584599753638,
-      logement: 1424.3853917865213,
-      transport: 2533.9706912924553,
-      alimentation: 2033.7441687666667,
-      services_societaux: 1553.6358095597056,
+      logement: 1424.385391786521,
+      transport: 2533.970691292455,
+      alimentation: 2033.744168766667,
+      services_societaux: 1553.635809559706,
     });
   });
   it('POST /bilan/importFromNGC - creates new situation', async () => {

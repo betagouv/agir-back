@@ -26,6 +26,8 @@ async function bootstrap() {
   // Activation des requetes cross origin pour le front
   app.enableCors();
 
+  app.enableShutdownHooks();
+
   await app.listen(process.env.PORT || 3000);
 }
 bootstrap();

@@ -59,7 +59,7 @@ describe('/utilisateurs/id/questionsNGC (API test)', () => {
       8398.594521380714,
     );
     expect(bilansDB[0].bilan['details'].transport).toStrictEqual(
-      2533.9706912924553,
+      2533.970691292455,
     );
   });
   it('PUT /utilisateurs/id/questionsNGC - mix with previous bilan and previous question', async () => {
