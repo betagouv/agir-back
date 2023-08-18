@@ -242,7 +242,10 @@ export class TestDataController {
     for (let index = 0; index < quizzIds.length; index++) {
       const quizzId = quizzIds[index];
       const quizz = this.quizz_set[quizzId];
-      quizzInterationCompilation[quizzId] = this.quizz_set[quizzId].interaction;
+      quizzInterationCompilation[quizzId] = {
+        ...this.quizz_set[quizzId].interaction,
+        content_id: quizzId,
+      };
       await this.prisma.quizz.upsert({
         where: {
           id: quizzId,

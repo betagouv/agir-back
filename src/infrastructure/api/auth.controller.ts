@@ -11,14 +11,15 @@ import {
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AuthGuard } from '../auth/guard';
-import { UtilisateurRepository } from '../repository/utilisateur.repository';
 import { OidcService } from '../auth/oidc.service';
-import { v4 as uuidv4 } from 'uuid';
+import { InteractionsUsecase } from '../../usecase/interactions.usecase';
+import { UtilisateurUsecase } from '../../usecase/utilisateur.usecase';
 
 @Controller()
 export class AuthController {
   constructor(
-    private utilisateurRepository: UtilisateurRepository,
+    private utilisateurUsecase: UtilisateurUsecase,
+    private interactionsUsecase: InteractionsUsecase,
     private oidcService: OidcService,
   ) {}
 
@@ -56,14 +57,18 @@ export class AuthController {
     );
 
     // FINDING USER
-    let utilisateur = await this.utilisateurRepository.findUtilisateurByEmail(
+    let utilisateur = await this.utilisateurUsecase.findUtilisateurByEmail(
       user_data.email,
     );
     if (!utilisateur) {
-      utilisateur = await this.utilisateurRepository.createUtilisateur({
-        name: user_data.family_name || 'John Doe '.concat(uuidv4()),
-        email: user_data.email,
-      });
+      utilisateur =
+        await this.utilisateurUsecase.createUtilisateurByOptionalNameAndEmail(
+          user_data.family_name,
+          user_data.email,
+        );
+      await this.interactionsUsecase.initUtilisateurInteractionSet(
+        utilisateur.id,
+      );
     }
     const utilisateurId = utilisateur.id;
 
@@ -85,7 +90,7 @@ export class AuthController {
     @Query('token') token: string,
     @Query('utilisateurId') utilisateurId: string,
   ) {
-    let utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    let utilisateur = await this.utilisateurUsecase.findUtilisateurById(
       utilisateurId,
     );
     return `<br>Bonjour ${utilisateur.name}
@@ -105,7 +110,7 @@ export class AuthController {
         `Vous n'avez pas le droit de consulter les données de l'utilisateur ${utilisateurId} `,
       );
     }
-    return this.utilisateurRepository.findUtilisateurById(utilisateurId);
+    return this.utilisateurUsecase.findUtilisateurById(utilisateurId);
   }
 
   @Get('logout/:id')

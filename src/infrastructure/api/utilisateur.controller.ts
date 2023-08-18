@@ -50,7 +50,7 @@ export class UtilisateurController {
     }
 })
   async createUtilisateur(@Body('name') name:string, @Response() res){
-    const utilisateur = await this.utilisateurUsecase.createUtilissateurByName(name);
+    const utilisateur = await this.utilisateurUsecase.createUtilisateurByName(name);
     return res
       .header('location', `https://agir.gouv.fr/api/utiliateurs/${(await utilisateur).id}`)
       .json(utilisateur);

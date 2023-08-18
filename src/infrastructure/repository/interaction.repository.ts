@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { Interaction as DBInteraction } from '@prisma/client';
 import { Interaction } from '../../domain/interaction/interaction';
 import { InteractionType } from 'src/domain/interaction/interactionType';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class InteractionRepository {
@@ -13,6 +14,19 @@ export class InteractionRepository {
       where: { id: interactionId },
     });
     return result ? new Interaction(result) : null;
+  }
+
+  async insertInteractionForUtilisateur(
+    utilisateurId: string,
+    interaction: Interaction,
+  ) {
+    return this.prisma.interaction.create({
+      data: {
+        ...interaction,
+        id: uuidv4(),
+        utilisateurId,
+      },
+    });
   }
 
   async listMaxEligibleInteractionsByUtilisateurIdAndType(
