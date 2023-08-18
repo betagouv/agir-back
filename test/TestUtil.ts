@@ -40,6 +40,7 @@ export class TestUtil {
     await this.prisma.questionNGC.deleteMany();
     await this.prisma.utilisateur.deleteMany();
     await this.prisma.situationNGC.deleteMany();
+    await this.prisma.interactionDefinition.deleteMany();
   }
 
   static getDate(date: string) {
@@ -166,6 +167,29 @@ export class TestUtil {
       scheduled_reset: null,
       day_period: null,
       utilisateurId: 'utilisateur-id',
+      ...override,
+    };
+  }
+  static interactionDefinitionData(override?) {
+    return {
+      id: 'interaction-id',
+      content_id: 'quizz-id',
+      type: InteractionType.quizz,
+      titre: 'titre',
+      soustitre: 'soustitre',
+      categorie: 'Consommation',
+      tags: ['quizz', 'nourriture', 'conso'],
+      duree: '⏱️ < 1 minute',
+      frequence: '🔄 1x/jour',
+      image_url: 'imageurl',
+      url: 'url',
+      difficulty: 1,
+      points: 5,
+      reco_score: 100,
+      locked: true,
+      pinned_at_position: null,
+      raison_lock: 'bla',
+      day_period: null,
       ...override,
     };
   }

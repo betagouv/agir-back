@@ -79,7 +79,7 @@ model Interaction {
   utilisateur        Utilisateur @relation(fields: [utilisateurId], references: [id])
 }
 
-model InteractionCatalog {
+model InteractionDefinition {
   id                 String   @id
   content_id         String?
   type               String

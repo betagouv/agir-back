@@ -6,7 +6,7 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
-import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
 import path from 'path';
 import fs from 'fs';
@@ -16,6 +16,9 @@ import { QuestionNGCRepository } from '../../../src/infrastructure/repository/qu
 import { Suivi } from '../../../src/domain/suivi/suivi';
 import { SuiviTransport } from '../../../src/domain/suivi/suiviTransport';
 import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
+import { InteractionDefinition } from '../../../src/domain/interaction/interactionDefinition';
+import { InteractionDefinitionRepository } from '../repository/interactionDefinition.repository';
+import { InteractionType } from '../../../src/domain/interaction/interactionType';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
 const articles = require('../../../test_data/interactions/_articles');
 const aides = require('../../../test_data/interactions/_aides');
@@ -40,6 +43,7 @@ export class TestDataController {
     private prisma: PrismaService,
     private suiviRepository: SuiviRepository,
     private questionNGCRepository: QuestionNGCRepository,
+    private interactionDefinitionRepository: InteractionDefinitionRepository,
   ) {
     this.quizz_set = {};
   }
@@ -93,6 +97,10 @@ export class TestDataController {
     }
   }
   async insertArticlesForUtilisateur(utilisateurId: string) {
+    await this.insertInteractionsWithTypeFromObject(
+      articles,
+      InteractionType.article,
+    );
     const interactions = utilisateurs_content[utilisateurId].interactions;
     if (!interactions) return;
     for (let index = 0; index < interactions.length; index++) {
@@ -170,6 +178,10 @@ export class TestDataController {
     }
   }
   async insertAidesForUtilisateur(utilisateurId: string) {
+    await this.insertInteractionsWithTypeFromObject(
+      aides,
+      InteractionType.aide,
+    );
     const interactions = utilisateurs_content[utilisateurId].interactions;
     if (!interactions) return;
     for (let index = 0; index < interactions.length; index++) {
@@ -186,6 +198,10 @@ export class TestDataController {
     }
   }
   async insertSuivisForUtilisateur(utilisateurId: string) {
+    await this.insertInteractionsWithTypeFromObject(
+      suivis,
+      InteractionType.suivi_du_jour,
+    );
     const interactions = utilisateurs_content[utilisateurId].interactions;
     if (!interactions) return;
     for (let index = 0; index < interactions.length; index++) {
@@ -222,9 +238,11 @@ export class TestDataController {
 
   async upsertAllQuizzDefinitions() {
     const quizzIds = Object.keys(this.quizz_set);
+    const quizzInterationCompilation = {};
     for (let index = 0; index < quizzIds.length; index++) {
       const quizzId = quizzIds[index];
       const quizz = this.quizz_set[quizzId];
+      quizzInterationCompilation[quizzId] = this.quizz_set[quizzId].interaction;
       await this.prisma.quizz.upsert({
         where: {
           id: quizzId,
@@ -249,6 +267,10 @@ export class TestDataController {
         });
       }
     }
+    await this.insertInteractionsWithTypeFromObject(
+      quizzInterationCompilation,
+      InteractionType.quizz,
+    );
   }
 
   async loadAllQuizz() {
@@ -321,5 +343,20 @@ export class TestDataController {
       update: clonedData,
       create: { ...clonedData, id: utilisateurId },
     });
+  }
+  private async insertInteractionsWithTypeFromObject(
+    theObject: object,
+    type: InteractionType,
+  ) {
+    const keyList = Object.keys(theObject);
+    for (let index = 0; index < keyList.length; index++) {
+      const key = keyList[index];
+      const intractionDefinition = theObject[key] as InteractionDefinition;
+      intractionDefinition.id = key;
+      intractionDefinition.type = type;
+      await this.interactionDefinitionRepository.createOrUpdateInteractionDefinition(
+        intractionDefinition,
+      );
+    }
   }
 }
