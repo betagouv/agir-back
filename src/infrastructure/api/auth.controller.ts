@@ -12,14 +12,12 @@ import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AuthGuard } from '../auth/guard';
 import { OidcService } from '../auth/oidc.service';
-import { InteractionsUsecase } from '../../usecase/interactions.usecase';
 import { UtilisateurUsecase } from '../../usecase/utilisateur.usecase';
 
 @Controller()
 export class AuthController {
   constructor(
     private utilisateurUsecase: UtilisateurUsecase,
-    private interactionsUsecase: InteractionsUsecase,
     private oidcService: OidcService,
   ) {}
 
@@ -66,9 +64,6 @@ export class AuthController {
           user_data.family_name,
           user_data.email,
         );
-      await this.interactionsUsecase.initUtilisateurInteractionSet(
-        utilisateur.id,
-      );
     }
     const utilisateurId = utilisateur.id;
 

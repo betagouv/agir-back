@@ -79,18 +79,6 @@ export class InteractionsUsecase {
     );
   }
 
-  async initUtilisateurInteractionSet(utilisateurId: string) {
-    const interactionDefinitions =
-      await this.interactionDefinitionRepository.getAll();
-
-    for (let index = 0; index < interactionDefinitions.length; index++) {
-      const interactionDefinition = interactionDefinitions[index];
-      await this.interactionRepository.insertInteractionForUtilisateur(
-        utilisateurId,
-        new Interaction(interactionDefinition),
-      );
-    }
-  }
   async reset(date?: Date): Promise<number> {
     const date_seuil = date || new Date();
     return this.interactionRepository.resetAllInteractionStatus(date_seuil);
