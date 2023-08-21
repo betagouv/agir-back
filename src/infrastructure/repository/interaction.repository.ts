@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Interaction as DBInteraction } from '@prisma/client';
 import { Interaction } from '../../domain/interaction/interaction';
-import { InteractionType } from 'src/domain/interaction/interactionType';
 import { v4 as uuidv4 } from 'uuid';
+import { SearchFilter } from '../../../src/domain/interaction/searchFilter';
 
 @Injectable()
 export class InteractionRepository {
@@ -30,19 +30,17 @@ export class InteractionRepository {
   }
 
   async listMaxEligibleInteractionsByUtilisateurIdAndType(
-    utilisateurId: string,
-    type?: InteractionType,
-    maxNumber?: number,
-    pinned?: boolean,
+    filter: SearchFilter,
   ): Promise<Interaction[] | null> {
     return this.prisma.interaction.findMany({
-      take: maxNumber,
+      take: filter.maxNumber,
       where: {
-        utilisateurId,
+        utilisateurId: filter.utilisateurId,
         done: false,
         succeeded: false,
-        type,
-        pinned_at_position: pinned ? { not: null } : null,
+        type: filter.type,
+        pinned_at_position: filter.pinned ? { not: null } : null,
+        locked: filter.locked,
       },
       orderBy: [
         {

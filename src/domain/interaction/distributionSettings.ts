@@ -1,9 +1,15 @@
+import { max } from 'rxjs';
 import { Interaction } from './interaction';
 import { InteractionDistribution } from './interactionDistribution';
 import { InteractionPlacement } from './interactionPosition';
 import { InteractionType } from './interactionType';
 
 export class DistributionSettings {
+  static readonly TARGET_LOCKED_INTERACTION_NUMBER = 3;
+  static readonly TARGET_LOCKED_INTERACTIONS_POSITIONS = [2, 5, 8]; // 1st position = 0
+
+  static enabled = true;
+
   static settings = new Map<InteractionType, InteractionDistribution>([
     [
       InteractionType.aide,
@@ -71,19 +77,102 @@ export class DistributionSettings {
 
   static insertPinnedInteractions(
     pinned_list: Interaction[],
-    target_list: Interaction[],
+    work_list: Interaction[],
   ) {
     pinned_list.sort((a, b) => a.pinned_at_position - b.pinned_at_position);
     pinned_list.forEach((pinned_interaction) => {
-      if (target_list.length < pinned_interaction.pinned_at_position + 1) {
-        target_list.push(pinned_interaction);
-      } else {
-        target_list.splice(
-          pinned_interaction.pinned_at_position,
-          0,
-          pinned_interaction,
-        );
-      }
+      this.insertInteractionAtPosition(
+        work_list,
+        pinned_interaction,
+        pinned_interaction.pinned_at_position,
+      );
     });
+  }
+
+  static insertInteractionAtPosition(
+    work_list: Interaction[],
+    interaction: Interaction,
+    position: number,
+  ) {
+    if (work_list.length < position + 1) {
+      work_list.push(interaction);
+    } else {
+      work_list.splice(position, 0, interaction);
+    }
+  }
+
+  static insertLockedInteractions(
+    locked_list: Interaction[],
+    work_list: Interaction[],
+  ): Interaction[] {
+    let result = this.repositionLockedItemsToTargetPositions(work_list);
+
+    const current_locked_number = this.countLockedInteractions(result);
+    const locked_to_insert_number = Math.max(
+      0,
+      this.TARGET_LOCKED_INTERACTION_NUMBER - current_locked_number,
+    );
+    const available_locked = Math.min(
+      locked_to_insert_number,
+      locked_list.length,
+    );
+    for (let index = 0; index < available_locked; index++) {
+      this.insertInteractionAtPosition(
+        result,
+        locked_list[index],
+        this.TARGET_LOCKED_INTERACTIONS_POSITIONS[
+          index + current_locked_number
+        ],
+      );
+    }
+    return result;
+  }
+
+  static repositionLockedItemsToTargetPositions(
+    work_list: Interaction[],
+  ): Interaction[] {
+    let result = [...work_list];
+
+    const locked_interactions_positions =
+      this.positionsOfLockedInteracion(work_list);
+
+    const number_of_interactions_to_move = Math.min(
+      locked_interactions_positions.length,
+      this.TARGET_LOCKED_INTERACTIONS_POSITIONS.length,
+    );
+
+    for (let index = number_of_interactions_to_move - 1; index >= 0; index--) {
+      this.moveInteraction(
+        result,
+        locked_interactions_positions[index],
+        this.TARGET_LOCKED_INTERACTIONS_POSITIONS[index],
+      );
+    }
+    return result;
+  }
+  static countLockedInteractions(list: Interaction[]) {
+    return list.reduce((accumulator, currentValue) => {
+      return accumulator + (currentValue.locked ? 1 : 0);
+    }, 0);
+  }
+  static positionsOfLockedInteracion(list: Interaction[]) {
+    let index = 0;
+    return list.reduce((accumulator, currentValue) => {
+      if (currentValue.locked) {
+        accumulator.push(index);
+      }
+      index++;
+      return accumulator;
+    }, []);
+  }
+
+  static moveInteraction(
+    list: Interaction[],
+    startPosition: number,
+    targetPosition: number,
+  ) {
+    const element = list[startPosition];
+    list.splice(startPosition, 1);
+    list.splice(targetPosition, 0, element);
   }
 }

@@ -28,7 +28,9 @@ describe('InteractionRepository', () => {
     // WHEN
     const liste =
       await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        'utilisateur-id',
+        {
+          utilisateurId: 'utilisateur-id',
+        },
       );
 
     // THEN
@@ -47,8 +49,10 @@ describe('InteractionRepository', () => {
     // WHEN
     const liste =
       await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        'utilisateur-id',
-        InteractionType.article,
+        {
+          utilisateurId: 'utilisateur-id',
+          type: InteractionType.article,
+        },
       );
     // THEN
     expect(liste).toHaveLength(2);
@@ -63,9 +67,11 @@ describe('InteractionRepository', () => {
     // WHEN
     const liste =
       await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        'utilisateur-id',
-        InteractionType.article,
-        1,
+        {
+          utilisateurId: 'utilisateur-id',
+          type: InteractionType.article,
+          maxNumber: 1,
+        },
       );
     // THEN
     expect(liste).toHaveLength(1);
@@ -176,10 +182,10 @@ describe('InteractionRepository', () => {
     //WHEN
     const result =
       await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        'utilisateur-id',
-        undefined,
-        undefined,
-        true,
+        {
+          utilisateurId: 'utilisateur-id',
+          pinned: true,
+        },
       );
 
     // THEN
@@ -194,10 +200,10 @@ describe('InteractionRepository', () => {
     //WHEN
     const result =
       await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        'utilisateur-id',
-        undefined,
-        undefined,
-        false,
+        {
+          utilisateurId: 'utilisateur-id',
+          pinned: false,
+        },
       );
 
     // THEN
@@ -212,10 +218,10 @@ describe('InteractionRepository', () => {
     //WHEN
     const result =
       await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        'utilisateur-id',
-        undefined,
-        undefined,
-        true,
+        {
+          utilisateurId: 'utilisateur-id',
+          pinned: true,
+        },
       );
 
     // THEN
@@ -229,12 +235,29 @@ describe('InteractionRepository', () => {
     //WHEN
     const result =
       await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        'utilisateur-id',
-        undefined,
-        undefined,
+        {
+          utilisateurId: 'utilisateur-id',
+        },
       );
 
     // THEN
     expect(result).toHaveLength(0);
+  });
+  it('listMaxInteractionsByUtilisateurIdAndTypev : locked boolean optional', async () => {
+    //GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', { id: '1', locked: true });
+    await TestUtil.create('interaction', { id: '2', locked: false });
+
+    //WHEN
+    const result =
+      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+        {
+          utilisateurId: 'utilisateur-id',
+        },
+      );
+
+    // THEN
+    expect(result).toHaveLength(2);
   });
 });

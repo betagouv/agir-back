@@ -21,13 +21,18 @@ export class InteractionsUsecase {
 
   async listInteractions(utilisateurId: string): Promise<DBInteraction[]> {
     let result: Interaction[] = [];
-    // Interactions by type
+
+    // Integration des interactions par types successifs
     for (const type in InteractionType) {
+      const interactionType = type as InteractionType;
       let listInteracionsOfType =
         await this.interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-          utilisateurId,
-          type as InteractionType,
-          DistributionSettings.getPreferedOfType(type as InteractionType),
+          {
+            utilisateurId,
+            maxNumber: DistributionSettings.getPreferedOfType(interactionType),
+            type: interactionType,
+            pinned: false,
+          },
         );
       result = DistributionSettings.addInteractionsToList(
         listInteracionsOfType,
@@ -40,12 +45,29 @@ export class InteractionsUsecase {
     // pinned insert
     const pinned_interactions =
       await this.interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        utilisateurId,
-        undefined,
-        undefined,
-        true,
+        {
+          utilisateurId,
+          maxNumber: 7,
+          pinned: true,
+          locked: false,
+        },
       );
     DistributionSettings.insertPinnedInteractions(pinned_interactions, result);
+
+    // locked insert at fixed positions
+    const locked_interactions =
+      await this.interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+        {
+          utilisateurId,
+          maxNumber: DistributionSettings.TARGET_LOCKED_INTERACTION_NUMBER,
+          locked: true,
+          pinned: false,
+        },
+      );
+    result = DistributionSettings.insertLockedInteractions(
+      locked_interactions,
+      result,
+    );
 
     return result;
   }
