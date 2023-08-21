@@ -41,8 +41,12 @@ export class InteractionRepository {
         type: filter.type,
         pinned_at_position: filter.pinned ? { not: null } : null,
         locked: filter.locked,
+        difficulty: { gte: filter.minDifficulty },
       },
       orderBy: [
+        {
+          difficulty: filter.minDifficulty ? 'asc' : undefined,
+        },
         {
           reco_score: 'asc',
         },

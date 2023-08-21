@@ -18,12 +18,24 @@ describe('InteractionRepository', () => {
     await TestUtil.appclose();
   });
 
-  it('listMaxInteractionsByUtilisateurIdAndType : desc order by reco score ', async () => {
+  it('listMaxInteractionsByUtilisateurIdAndType : desc order by reco score , no matter difficulty', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
-    await TestUtil.create('interaction', { id: '1', reco_score: 100 });
-    await TestUtil.create('interaction', { id: '2', reco_score: 20 });
-    await TestUtil.create('interaction', { id: '3', reco_score: 50 });
+    await TestUtil.create('interaction', {
+      id: '1',
+      reco_score: 100,
+      difficulty: 1,
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      reco_score: 20,
+      difficulty: 2,
+    });
+    await TestUtil.create('interaction', {
+      id: '3',
+      reco_score: 50,
+      difficulty: 3,
+    });
 
     // WHEN
     const liste =
@@ -243,7 +255,7 @@ describe('InteractionRepository', () => {
     // THEN
     expect(result).toHaveLength(0);
   });
-  it('listMaxInteractionsByUtilisateurIdAndTypev : locked boolean optional', async () => {
+  it('listMaxInteractionsByUtilisateurIdAndType : locked boolean optional', async () => {
     //GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', { id: '1', locked: true });
@@ -259,5 +271,77 @@ describe('InteractionRepository', () => {
 
     // THEN
     expect(result).toHaveLength(2);
+  });
+  it('listMaxInteractionsByUtilisateurIdAndType : min quizz difficulty', async () => {
+    //GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', { id: '1', difficulty: 1 });
+    await TestUtil.create('interaction', { id: '2', difficulty: 2 });
+    await TestUtil.create('interaction', { id: '3', difficulty: 3 });
+
+    //WHEN
+    const result =
+      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+        {
+          utilisateurId: 'utilisateur-id',
+          minDifficulty: 2,
+        },
+      );
+
+    // THEN
+    expect(result).toHaveLength(2);
+    expect(result[0].id).toEqual('2');
+    expect(result[1].id).toEqual('3');
+  });
+  it('listMaxInteractionsByUtilisateurIdAndType : second order by difficulty when present', async () => {
+    //GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      reco_score: 1,
+      difficulty: 1,
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      reco_score: 2,
+      difficulty: 2,
+    });
+    await TestUtil.create('interaction', {
+      id: '3',
+      reco_score: 3,
+      difficulty: 3,
+    });
+    await TestUtil.create('interaction', {
+      id: '4',
+      reco_score: 4,
+      difficulty: 4,
+    });
+    await TestUtil.create('interaction', {
+      id: '5',
+      reco_score: 5,
+      difficulty: 3,
+    });
+    await TestUtil.create('interaction', {
+      id: '6',
+      reco_score: 6,
+      difficulty: 2,
+    });
+
+    //WHEN
+    const result =
+      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+        {
+          utilisateurId: 'utilisateur-id',
+          minDifficulty: 2,
+        },
+      );
+
+    // THEN
+    expect(result).toHaveLength(5);
+    expect(result[0].id).toEqual('2');
+    expect(result[1].id).toEqual('6');
+    expect(result[2].id).toEqual('3');
+    expect(result[3].id).toEqual('5');
+    expect(result[4].id).toEqual('4');
   });
 });

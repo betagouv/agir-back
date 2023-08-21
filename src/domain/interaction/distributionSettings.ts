@@ -8,8 +8,6 @@ export class DistributionSettings {
   static readonly TARGET_LOCKED_INTERACTION_NUMBER = 3;
   static readonly TARGET_LOCKED_INTERACTIONS_POSITIONS = [2, 5, 8]; // 1st position = 0
 
-  static enabled = true;
-
   static settings = new Map<InteractionType, InteractionDistribution>([
     [
       InteractionType.aide,
@@ -50,22 +48,21 @@ export class DistributionSettings {
   static addInteractionsToList(
     sourceList: Interaction[],
     targetList: Interaction[],
-  ): Interaction[] {
-    let result = [...targetList];
+  ) {
+    //let result = [...targetList];
     sourceList.forEach((interaction) => {
       const interaction_distrib = this.getByType(interaction.type);
       if (interaction_distrib) {
         if (
-          this.numberOfInteractionsOfType(interaction.type, result) <
+          this.numberOfInteractionsOfType(interaction.type, targetList) <
           interaction_distrib.prefered
         ) {
-          result.push(interaction);
+          targetList.push(interaction);
         }
       } else {
-        result.push(interaction);
+        targetList.push(interaction);
       }
     });
-    return result;
   }
 
   static numberOfInteractionsOfType(

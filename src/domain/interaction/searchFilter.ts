@@ -6,4 +6,5 @@ export type SearchFilter = {
   maxNumber?: number;
   pinned?: boolean;
   locked?: boolean;
+  minDifficulty?: number;
 };

@@ -106,6 +106,7 @@ export class TestUtil {
     return {
       id: 'utilisateur-id',
       name: 'name',
+      quizzDifficulty: 1,
       ...override,
     };
   }

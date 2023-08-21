@@ -11,11 +11,13 @@ describe('DistributionSettings', () => {
     const i2 = new Interaction({ id: '2', type: InteractionType.article });
     const i3 = new Interaction({ id: '3', type: InteractionType.quizz });
 
+    const work_list = [i1, i2, i3];
+
     // WHEN
-    const result = DistributionSettings.addInteractionsToList([], [i1, i2, i3]);
+    DistributionSettings.addInteractionsToList([], [i1, i2, i3]);
 
     // THEN
-    expect(result).toStrictEqual([i1, i2, i3]);
+    expect(work_list).toStrictEqual([i1, i2, i3]);
   });
   it('addInteractionsToList : adds when not prefered reached', () => {
     // GIVEN
@@ -30,11 +32,12 @@ describe('DistributionSettings', () => {
         ],
       ]),
     );
+    const work_list = [i2];
     // WHEN
-    const result = DistributionSettings.addInteractionsToList([i1], [i2]);
+    DistributionSettings.addInteractionsToList([i1], work_list);
 
     // THEN
-    expect(result).toHaveLength(2);
+    expect(work_list).toHaveLength(2);
   });
   it('addInteractionsToList : does not add when prefered reached', () => {
     // GIVEN
@@ -49,11 +52,12 @@ describe('DistributionSettings', () => {
         ],
       ]),
     );
+    const work_list = [i2];
     // WHEN
-    const result = DistributionSettings.addInteractionsToList([i1], [i2]);
+    DistributionSettings.addInteractionsToList([i1], work_list);
 
     // THEN
-    expect(result).toHaveLength(1);
+    expect(work_list).toHaveLength(1);
   });
   it('addInteractionsToList : adds when no settings for given type', () => {
     // GIVEN
@@ -63,14 +67,12 @@ describe('DistributionSettings', () => {
     const i4 = new Interaction({ id: '4', type: InteractionType.aide });
 
     DistributionSettings.overrideSettings(new Map([]));
+    const work_list = [i4];
     // WHEN
-    const result = DistributionSettings.addInteractionsToList(
-      [i1, i2, i3],
-      [i4],
-    );
+    DistributionSettings.addInteractionsToList([i1, i2, i3], work_list);
 
     // THEN
-    expect(result).toHaveLength(4);
+    expect(work_list).toHaveLength(4);
   });
   it('insertPinnedInteractions : add one in empty list', () => {
     // GIVEN
