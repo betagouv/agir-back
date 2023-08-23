@@ -18,18 +18,21 @@ export class SuiviUsecase {
     suivi['id'] = idSuivi;
     return suivi;
   }
+
   async listeSuivi(
     utilisateurId: string,
     type?: SuiviType,
   ): Promise<SuiviCollection> {
     return this.suiviRepository.listAllSuivi(utilisateurId, type);
   }
+
   async getLastSuivi(
     utilisateurId: string,
     type?: SuiviType,
   ): Promise<Suivi | null> {
     return this.suiviRepository.getLastSuivi(utilisateurId, type);
   }
+
   async buildSuiviDashboard(utilisateurId: string): Promise<any> {
     let suiviCollection = await this.suiviRepository.listAllSuivi(
       utilisateurId,

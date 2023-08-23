@@ -18,12 +18,15 @@ export class UtilisateurUsecase {
   async findUtilisateursByName(name: string): Promise<Utilisateur[]> {
     return this.utilisaturRespository.findUtilisateursByName(name);
   }
+
   async findUtilisateurByEmail(email: string): Promise<Utilisateur> {
     return this.utilisaturRespository.findUtilisateurByEmail(email);
   }
+
   async createUtilisateurByName(name: string): Promise<Utilisateur> {
     return this.utilisaturRespository.createUtilisateurByName(name);
   }
+
   async createUtilisateurByOptionalNameAndEmail(
     name: string,
     email: string,
@@ -36,12 +39,15 @@ export class UtilisateurUsecase {
     await this.initUtilisateurInteractionSet(newUtilisateur.id);
     return newUtilisateur;
   }
+
   async findUtilisateurById(id: string): Promise<Utilisateur> {
     return this.utilisaturRespository.findUtilisateurById(id);
   }
+
   async listUtilisateurs(): Promise<Utilisateur[]> {
     return this.utilisaturRespository.listUtilisateur();
   }
+
   async initUtilisateurInteractionSet(utilisateurId: string) {
     const interactionDefinitions =
       await this.interactionDefinitionRepository.getAll();

@@ -10,11 +10,13 @@ export class BilanUsecase {
     private bilanRepository: BilanRepository,
     private nGCCalculator: NGCCalculator,
   ) {}
+
   async getLastBilanByUtilisateurId(
     utilisateurId: string,
   ): Promise<BilanExtra> {
     return this.bilanRepository.getLastBilanByUtilisateurId(utilisateurId);
   }
+
   async getAllBilansByUtilisateurId(
     utilisateurId: string,
   ): Promise<BilanExtra[]> {

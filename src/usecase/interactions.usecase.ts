@@ -118,6 +118,7 @@ export class InteractionsUsecase {
       },
     );
   }
+
   async getSuivisForUtilisateur(utilisateurId: string): Promise<Interaction[]> {
     return this.interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
       {
@@ -130,6 +131,7 @@ export class InteractionsUsecase {
       },
     );
   }
+
   async getQuizzForUtilisateur(
     utilisateur: Utilisateur,
   ): Promise<Interaction[]> {
@@ -145,6 +147,7 @@ export class InteractionsUsecase {
       },
     );
   }
+
   async getAidesForUtilisateur(utilisateurId: string): Promise<Interaction[]> {
     return this.interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
       {
