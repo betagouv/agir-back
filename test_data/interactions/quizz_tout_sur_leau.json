@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Petit test sur l'eau",
     "soustitre": "bla bla",
-    "categorie": "Eau",
+    "categorie": "consommation",
     "tags": ["vetements", "eau", "consommation"],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",
@@ -27,7 +27,7 @@
       "solution": "H20",
       "propositions": ["H20", "CO2", "CH4"],
       "texte_riche_ko": "Et Non !! C'est bien la vapeur d'eau le premier gaz a effe de serre",
-      "texte_riche_ok" : "Tout bon !"
+      "texte_riche_ok": "Tout bon !"
     }
   ]
 }

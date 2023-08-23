@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Les sources d'énergie",
     "soustitre": "D'où vient l'énergie ?",
-    "categorie": "Energie",
+    "categorie": "climat",
     "tags": ["énergie", "logement", "électricité"],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",
@@ -18,9 +18,13 @@
       "ordre": 1,
       "libelle": "Quelle est la principale source d'énergie utilisée dans le monde pour la production d'électricité ?",
       "solution": "Énergie fossile",
-      "propositions": ["Énergie nucléaire", "Énergie solaire", "Énergie fossile"],
+      "propositions": [
+        "Énergie nucléaire",
+        "Énergie solaire",
+        "Énergie fossile"
+      ],
       "texte_riche_ko": "Non, ce n'est pas l'énergie nucléaire. La principale source d'énergie utilisée dans le monde pour la production d'électricité est l'énergie fossile, qui inclut le charbon, le pétrole et le gaz naturel.",
-      "texte_riche_ok" : "Tout bon !"
+      "texte_riche_ok": "Tout bon !"
     }
   ]
 }

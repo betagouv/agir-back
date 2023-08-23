@@ -4,6 +4,8 @@ import { Interaction as DBInteraction } from '@prisma/client';
 import { Interaction } from '../../domain/interaction/interaction';
 import { v4 as uuidv4 } from 'uuid';
 import { SearchFilter } from '../../../src/domain/interaction/searchFilter';
+import { InteractionType } from '../../../src/domain/interaction/interactionType';
+import { Categorie } from '../../../src/domain/categorie';
 
 @Injectable()
 export class InteractionRepository {
@@ -32,6 +34,19 @@ export class InteractionRepository {
   async listMaxEligibleInteractionsByUtilisateurIdAndType(
     filter: SearchFilter,
   ): Promise<Interaction[] | null> {
+    let quizz_difficulty_filter;
+    if (filter.type === InteractionType.quizz) {
+      quizz_difficulty_filter = [];
+      for (const cat in Categorie) {
+        if (filter.quizzProfile.getLevel(cat as Categorie)) {
+          quizz_difficulty_filter.push({
+            type: InteractionType.quizz,
+            categorie: cat,
+            difficulty: filter.quizzProfile.getLevel(cat as Categorie),
+          });
+        }
+      }
+    }
     return this.prisma.interaction.findMany({
       take: filter.maxNumber,
       where: {
@@ -41,12 +56,9 @@ export class InteractionRepository {
         type: filter.type,
         pinned_at_position: filter.pinned ? { not: null } : null,
         locked: filter.locked,
-        difficulty: { gte: filter.minDifficulty },
+        OR: quizz_difficulty_filter,
       },
       orderBy: [
-        {
-          difficulty: filter.minDifficulty ? 'asc' : undefined,
-        },
         {
           reco_score: 'asc',
         },

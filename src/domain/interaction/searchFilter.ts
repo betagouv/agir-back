@@ -1,3 +1,4 @@
+import { QuizzProfile } from '../quizz/quizzProfile';
 import { InteractionType } from './interactionType';
 
 export type SearchFilter = {
@@ -6,5 +7,5 @@ export type SearchFilter = {
   maxNumber?: number;
   pinned?: boolean;
   locked?: boolean;
-  minDifficulty?: number;
+  quizzProfile?: QuizzProfile;
 };

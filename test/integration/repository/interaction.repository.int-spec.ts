@@ -2,6 +2,8 @@ import { TestUtil } from '../../TestUtil';
 import { InteractionRepository } from '../../../src/infrastructure/repository/interaction.repository';
 import { Interaction } from '../../../src/domain/interaction/interaction';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
+import { Categorie } from '../../../src/domain/categorie';
+import { QuizzProfile } from '../../../src/domain/quizz/quizzProfile';
 
 describe('InteractionRepository', () => {
   let interactionRepository = new InteractionRepository(TestUtil.prisma);
@@ -272,59 +274,30 @@ describe('InteractionRepository', () => {
     // THEN
     expect(result).toHaveLength(2);
   });
-  it('listMaxInteractionsByUtilisateurIdAndType : min quizz difficulty', async () => {
-    //GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('interaction', { id: '1', difficulty: 1 });
-    await TestUtil.create('interaction', { id: '2', difficulty: 2 });
-    await TestUtil.create('interaction', { id: '3', difficulty: 3 });
-
-    //WHEN
-    const result =
-      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        {
-          utilisateurId: 'utilisateur-id',
-          minDifficulty: 2,
-        },
-      );
-
-    // THEN
-    expect(result).toHaveLength(2);
-    expect(result[0].id).toEqual('2');
-    expect(result[1].id).toEqual('3');
-  });
-  it('listMaxInteractionsByUtilisateurIdAndType : second order by difficulty when present', async () => {
+  it('listMaxInteractionsByUtilisateurIdAndType : target quizz difficulty', async () => {
     //GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
       id: '1',
-      reco_score: 1,
       difficulty: 1,
+      categorie: Categorie.alimentation,
+      type: InteractionType.quizz,
     });
     await TestUtil.create('interaction', {
       id: '2',
-      reco_score: 2,
       difficulty: 2,
+      categorie: Categorie.alimentation,
+      type: InteractionType.quizz,
     });
     await TestUtil.create('interaction', {
       id: '3',
-      reco_score: 3,
       difficulty: 3,
+      categorie: Categorie.alimentation,
+      type: InteractionType.quizz,
     });
     await TestUtil.create('interaction', {
       id: '4',
-      reco_score: 4,
-      difficulty: 4,
-    });
-    await TestUtil.create('interaction', {
-      id: '5',
-      reco_score: 5,
-      difficulty: 3,
-    });
-    await TestUtil.create('interaction', {
-      id: '6',
-      reco_score: 6,
-      difficulty: 2,
+      type: InteractionType.article,
     });
 
     //WHEN
@@ -332,16 +305,43 @@ describe('InteractionRepository', () => {
       await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
         {
           utilisateurId: 'utilisateur-id',
-          minDifficulty: 2,
+          quizzProfile: new QuizzProfile({ alimentation: 2 }),
+          type: InteractionType.quizz,
         },
       );
 
     // THEN
-    expect(result).toHaveLength(5);
+    expect(result).toHaveLength(1);
     expect(result[0].id).toEqual('2');
-    expect(result[1].id).toEqual('6');
-    expect(result[2].id).toEqual('3');
-    expect(result[3].id).toEqual('5');
-    expect(result[4].id).toEqual('4');
+  });
+  it('listMaxInteractionsByUtilisateurIdAndType : rejects unknown categorie quizz', async () => {
+    //GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      difficulty: 1,
+      categorie: Categorie.alimentation,
+      type: InteractionType.quizz,
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      difficulty: 1,
+      categorie: Categorie.climat,
+      type: InteractionType.quizz,
+    });
+
+    //WHEN
+    const result =
+      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+        {
+          utilisateurId: 'utilisateur-id',
+          quizzProfile: new QuizzProfile({ alimentation: 1 }),
+          type: InteractionType.quizz,
+        },
+      );
+
+    // THEN
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toEqual('1');
   });
 });

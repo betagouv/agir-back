@@ -18,7 +18,7 @@ export class BilanRepository {
         situation: true,
       },
     });
-    return !empreintes.length ? {} : empreintes[0].situation.situation;
+    return !empreintes.length ? {} : empreintes[0]['situation'].situation;
   }
 
   async getSituationNGCbyId(id: string): Promise<SituationNGC | null> {

@@ -4,6 +4,7 @@ import { InteractionType } from '../../../src/domain/interaction/interactionType
 import { DistributionSettings } from '../../../src/domain/interaction/distributionSettings';
 import { TestUtil } from '../../TestUtil';
 import { BadgeTypeEnum } from '../../../src/domain/badgeType';
+import { Categorie } from '../../../src/domain/categorie';
 
 describe('/utilisateurs/id/interactions (API test)', () => {
   beforeAll(async () => {
@@ -335,32 +336,59 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.reset_interaction_number).toEqual(1);
   });
-  it('GET /utilisateurs/id/interactions - list quizz with target utilisateur difficulty and higher, higher are listed below', async () => {
+  it('GET /utilisateurs/id/interactions - list quizz with target utilisateur difficultys', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { quizzDifficulty: 2 });
+    await TestUtil.create('utilisateur', {
+      quizzLevels: { alimentation: 2, climat: 1 },
+    });
     await TestUtil.create('interaction', {
       id: '1',
       reco_score: 1,
       type: InteractionType.quizz,
       difficulty: 1,
+      categorie: Categorie.alimentation,
     });
     await TestUtil.create('interaction', {
       id: '2',
       reco_score: 2,
       type: InteractionType.quizz,
       difficulty: 2,
+      categorie: Categorie.alimentation,
     });
     await TestUtil.create('interaction', {
       id: '3',
       reco_score: 4,
       type: InteractionType.quizz,
       difficulty: 3,
+      categorie: Categorie.alimentation,
     });
     await TestUtil.create('interaction', {
       id: '4',
+      reco_score: 5,
+      type: InteractionType.quizz,
+      difficulty: 1,
+      categorie: Categorie.climat,
+    });
+    await TestUtil.create('interaction', {
+      id: '5',
       reco_score: 3,
       type: InteractionType.quizz,
-      difficulty: 4,
+      difficulty: 2,
+      categorie: Categorie.climat,
+    });
+    await TestUtil.create('interaction', {
+      id: '6',
+      reco_score: 3,
+      type: InteractionType.quizz,
+      difficulty: 3,
+      categorie: Categorie.climat,
+    });
+    await TestUtil.create('interaction', {
+      id: '7',
+      reco_score: 3,
+      type: InteractionType.quizz,
+      difficulty: 3,
+      categorie: Categorie.consommation,
     });
 
     // WHEN
@@ -370,9 +398,8 @@ describe('/utilisateurs/id/interactions (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(3);
+    expect(response.body).toHaveLength(2);
     expect(response.body[0].id).toEqual('2');
-    expect(response.body[1].id).toEqual('3');
-    expect(response.body[2].id).toEqual('4');
+    expect(response.body[1].id).toEqual('4');
   });
 });

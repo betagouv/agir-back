@@ -52,7 +52,7 @@ describe('/utilisateurs/id/questionsNGC (API test)', () => {
       include: { situation: true },
     });
     expect(bilansDB).toHaveLength(1);
-    expect(bilansDB[0].situation.situation).toStrictEqual({
+    expect(bilansDB[0]['situation'].situation).toStrictEqual({
       'transport . voiture . km': '12000',
     });
     expect(bilansDB[0].bilan['bilan_carbone_annuel']).toStrictEqual(
@@ -87,7 +87,7 @@ describe('/utilisateurs/id/questionsNGC (API test)', () => {
       include: { situation: true },
       orderBy: { created_at: 'desc' },
     });
-    expect(bilansDB[0].situation.situation).toStrictEqual({
+    expect(bilansDB[0]['situation'].situation).toStrictEqual({
       'transport . voiture . km': 12000,
       'transport . voiture . motorisation': "'électrique'",
       'transport . avion . usager': 'non',

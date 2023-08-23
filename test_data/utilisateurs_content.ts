@@ -20,7 +20,16 @@ const utilisateurs = {
         locked: true,
       },
     ],
-    suivis: [], //'sa1', 'sa2', 'st1'
+    suivis: [], //'sa1', 'sa2', 'st1',
+    quizzLevels: {
+      alimentation: 1,
+      transport: 1,
+      logement: 1,
+      consommation: 1,
+      climat: 1,
+      dechet: 1,
+      loisir: 1,
+    },
   },
   michel6: {
     name: 'Michel6',
@@ -47,6 +56,15 @@ const utilisateurs = {
     ],
     bilans: ['bilan1'],
     badges: ['badge1', 'badge2'],
+    quizzLevels: {
+      alimentation: 1,
+      transport: 1,
+      logement: 1,
+      consommation: 1,
+      climat: 1,
+      dechet: 1,
+      loisir: 1,
+    },
   },
   benoit: {
     name: 'Benoit',
@@ -58,6 +76,15 @@ const utilisateurs = {
       { id: 'quizz_objectif_GES', reco_score: 2 },
     ],
     suivis: [], //'sa1', 'sa2', 'st1'
+    quizzLevels: {
+      alimentation: 1,
+      transport: 1,
+      logement: 1,
+      consommation: 1,
+      climat: 1,
+      dechet: 1,
+      loisir: 1,
+    },
   },
   dorian: {
     name: 'Dorian_test',
@@ -71,6 +98,15 @@ const utilisateurs = {
       { id: 'quizz_bois_meubles', reco_score: 2 },
     ],
     suivis: [], //'sa1', 'sa2', 'st1'
+    quizzLevels: {
+      alimentation: 1,
+      transport: 1,
+      logement: 1,
+      consommation: 1,
+      climat: 1,
+      dechet: 1,
+      loisir: 1,
+    },
   },
   livio: {
     name: 'Livio_test',
@@ -83,6 +119,15 @@ const utilisateurs = {
       { id: 'quizz_poisson', reco_score: 10 },
     ],
     suivis: ['sa1', 'st1', 'st2'],
+    quizzLevels: {
+      alimentation: 1,
+      transport: 1,
+      logement: 1,
+      consommation: 1,
+      climat: 1,
+      dechet: 1,
+      loisir: 1,
+    },
   },
   wojtek: {
     name: 'Wojtek',
@@ -97,6 +142,15 @@ const utilisateurs = {
     badges: ['badge1', 'badge2'],
     questionsNGC: {
       'transport . voiture . km': 30000,
+    },
+    quizzLevels: {
+      alimentation: 1,
+      transport: 1,
+      logement: 1,
+      consommation: 1,
+      climat: 1,
+      dechet: 1,
+      loisir: 1,
     },
   },
 };

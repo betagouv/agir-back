@@ -8,6 +8,7 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur.
 import { BadgeRepository } from '../infrastructure/repository/badge.repository';
 import { InteractionType } from '../domain/interaction/interactionType';
 import { BadgeTypeEnum } from '../domain/badgeType';
+import { QuizzProfile } from '../../src/domain/quizz/quizzProfile';
 
 @Injectable()
 export class InteractionsUsecase {
@@ -36,14 +37,7 @@ export class InteractionsUsecase {
 
     // final sort
     result.sort((a, b) => {
-      if (
-        a.type === InteractionType.quizz &&
-        b.type === InteractionType.quizz
-      ) {
-        return a.difficulty - b.difficulty;
-      } else {
-        return a.reco_score - b.reco_score;
-      }
+      return a.reco_score - b.reco_score;
     });
 
     // pinned insert
@@ -147,7 +141,7 @@ export class InteractionsUsecase {
         ),
         type: InteractionType.quizz,
         pinned: false,
-        minDifficulty: utilisateur.quizzDifficulty,
+        quizzProfile: new QuizzProfile(utilisateur.quizzLevels),
       },
     );
   }

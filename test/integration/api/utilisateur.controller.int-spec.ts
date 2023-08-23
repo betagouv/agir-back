@@ -57,6 +57,10 @@ describe('/utilisateurs (API test)', () => {
     expect(response.body.id).toEqual('utilisateur-id');
     expect(response.body.name).toEqual('name');
     expect(response.body.points).toEqual(0);
+    expect(response.body.quizzLevels).toEqual({
+      alimentation: 1,
+      transport: 2,
+    });
     expect(response.body.created_at).toEqual(dbUser.created_at.toISOString());
   });
   it('GET /utilisateurs/id - list 1 badge', async () => {

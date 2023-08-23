@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Production du bois",
     "soustitre": "A quoi sert le bois ?",
-    "categorie": "Consommation",
+    "categorie": "consommation",
     "tags": ["logement", "ameublement", "forêts"],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",
@@ -20,7 +20,7 @@
       "solution": "Environ 40%",
       "propositions": ["Environ 10%", "Environ 25%", "Environ 40%"],
       "texte_riche_ko": "Incorrect ! En 2020, la FAO annonçait qu'environ 40% de la production mondiale de bois est utilisé pour l'ameublement. La demande croissante d'ameublement entraîne une pression sur les forêts, d'où l'importance de choisir des meubles en bois certifié FSC ou provenant de sources durables pour préserver les écosystèmes forestiers.",
-      "texte_riche_ok" : "Tout bon !"
+      "texte_riche_ok": "Tout bon !"
     }
   ]
 }

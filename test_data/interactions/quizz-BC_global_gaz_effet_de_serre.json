@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Quiz global",
     "soustitre": "",
-    "categorie": "Global",
+    "categorie": "climat",
     "tags": [],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",
@@ -18,9 +18,14 @@
       "ordre": 1,
       "libelle": "Dans l'atmosphère, quel gaz bien connu produit le plus d'effet de serre ?",
       "solution": "Eau (H2O)",
-      "propositions": ["Dioxyde de carbone (CO2)", "Eau (H2O)", "Méthane (CH4)","Hélium (He)"],
+      "propositions": [
+        "Dioxyde de carbone (CO2)",
+        "Eau (H2O)",
+        "Méthane (CH4)",
+        "Hélium (He)"
+      ],
       "texte_riche_ko": "Raté ! L'Hélium a de nombreuses propriétés rigolotes mais pas celle d'être un gaz à effet de serre ! Le principal Gaz à effet de serre disponilble dans l'atmosphère est la vapeur d'eau (H2O) ! La vapeur d'eau est responsable d'environ 55% de l'effet de serre. Viennent ensuite les nuages pour environ 17% et les 'autres gaz' (comme le CO2, le Méthane et d'autres) pour environ 28%. En revanche, on fait la différence entre les gaz qui produisent l'effet de serre de manière naturelle et ceux qui sont liés aux activités humaines. Et dans le cas des activités humaines, c'est le CO2 qui est le principal gaz à effet de serre. Il est responsable d'environ 65% de l'effet de serre lié aux activités humaines. Le Méthane (CH4), second contribteur à l'effet de serre lié aux activiés humaines est lui, responsable d'environ 15%.",
-      "texte_riche_ok" : "Tout bon !"
+      "texte_riche_ok": "Tout bon !"
     }
   ]
 }

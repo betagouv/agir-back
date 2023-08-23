@@ -106,7 +106,10 @@ export class TestUtil {
     return {
       id: 'utilisateur-id',
       name: 'name',
-      quizzDifficulty: 1,
+      quizzLevels: {
+        alimentation: 1,
+        transport: 2,
+      },
       ...override,
     };
   }
@@ -142,7 +145,7 @@ export class TestUtil {
     return {
       id: 'interaction-id',
       content_id: 'quizz-id',
-      type: InteractionType.quizz,
+      type: InteractionType.article,
       titre: 'titre',
       soustitre: 'soustitre',
       categorie: 'Consommation',
