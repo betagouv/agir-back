@@ -5,6 +5,7 @@ import { InteractionDefinitionRepository } from '../infrastructure/repository/in
 import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
 import { v4 as uuidv4 } from 'uuid';
 import { Interaction } from '../../src/domain/interaction/interaction';
+import { QuizzProfile } from '../../src/domain/quizz/quizzProfile';
 
 @Injectable()
 export class UtilisateurUsecase {
@@ -27,11 +28,12 @@ export class UtilisateurUsecase {
     name: string,
     email: string,
   ): Promise<Utilisateur> {
-    const newUtilisateur = this.utilisaturRespository.createUtilisateur({
+    const newUtilisateur = await this.utilisaturRespository.createUtilisateur({
       name: name || 'John Doe '.concat(uuidv4()),
       email: email,
+      quizzLevels: QuizzProfile.newLowProfile(),
     });
-    await this.initUtilisateurInteractionSet((await newUtilisateur).id);
+    await this.initUtilisateurInteractionSet(newUtilisateur.id);
     return newUtilisateur;
   }
   async findUtilisateurById(id: string): Promise<Utilisateur> {

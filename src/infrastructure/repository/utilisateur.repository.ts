@@ -1,13 +1,14 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Utilisateur, Prisma } from '@prisma/client';
+import { Utilisateur as UtilisateurDB, Prisma } from '@prisma/client';
+import { Utilisateur } from '../../../src/domain/utilisateur';
 
 @Injectable()
 export class UtilisateurRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findUtilisateursByName(name: string): Promise<Utilisateur[] | null> {
+  async findUtilisateursByName(name: string): Promise<UtilisateurDB[] | null> {
     return this.prisma.utilisateur.findMany({
       where: {
         name,
@@ -22,7 +23,7 @@ export class UtilisateurRepository {
       },
     });
   }
-  async findUtilisateurById(id: string): Promise<Utilisateur | null> {
+  async findUtilisateurById(id: string): Promise<UtilisateurDB | null> {
     return this.prisma.utilisateur.findUnique({
       where: {
         id,
@@ -32,7 +33,7 @@ export class UtilisateurRepository {
       },
     });
   }
-  async findUtilisateurByEmail(email: string): Promise<Utilisateur | null> {
+  async findUtilisateurByEmail(email: string): Promise<UtilisateurDB | null> {
     return this.prisma.utilisateur.findUnique({
       where: {
         email,
@@ -40,7 +41,7 @@ export class UtilisateurRepository {
     });
   }
 
-  async listUtilisateur(): Promise<Utilisateur[] | null> {
+  async listUtilisateur(): Promise<UtilisateurDB[] | null> {
     return this.prisma.utilisateur.findMany({
       orderBy: [
         {
@@ -50,7 +51,7 @@ export class UtilisateurRepository {
     });
   }
 
-  async createUtilisateurByName(name: string): Promise<Utilisateur | null> {
+  async createUtilisateurByName(name: string): Promise<UtilisateurDB | null> {
     return this.prisma.utilisateur.create({
       data: {
         id: uuidv4(),
@@ -58,11 +59,15 @@ export class UtilisateurRepository {
       },
     });
   }
-  async createUtilisateur(data: any): Promise<Utilisateur | null> {
+  async createUtilisateur(
+    utilisateur: Utilisateur,
+  ): Promise<UtilisateurDB | null> {
     return this.prisma.utilisateur.create({
       data: {
         id: uuidv4(),
-        ...data,
+        name: utilisateur.name,
+        email: utilisateur.email,
+        quizzLevels: utilisateur.quizzLevels.convertToKeyedObject(),
       },
     });
   }
