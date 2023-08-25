@@ -180,8 +180,6 @@ export class TestUtil {
       seen_at: null,
       clicked: false,
       clicked_at: null,
-      succeeded: false,
-      succeeded_at: null,
       done: false,
       done_at: null,
       difficulty: 1,
