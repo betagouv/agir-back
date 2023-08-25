@@ -6,7 +6,17 @@
     "deleteOutDir": true,
     "assets": [
       {
-        "include": "../test_data/interactions/*.json",
+        "include": "../test_data/interactions/quizz/*.json",
+        "outDir": "dist/test_data",
+        "watchAssets": true
+      },
+      {
+        "include": "../test_data/interactions/articles-internes/*.json",
+        "outDir": "dist/test_data",
+        "watchAssets": true
+      },
+      {
+        "include": "../test_data/interactions/articles-internes/*.html",
         "outDir": "dist/test_data",
         "watchAssets": true
       }

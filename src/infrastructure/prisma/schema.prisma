@@ -140,6 +140,12 @@ model Quizz {
   questions QuizzQuestion[]
 }
 
+model Article {
+  id      String @id
+  titre   String
+  contenu String
+}
+
 model QuizzQuestion {
   id             String   @id
   ordre          Int      @default(0)

@@ -133,6 +133,7 @@ const utilisateurs = {
     name: 'Wojtek',
     points: 10,
     interactions: [
+      { id: 'article-ngc', reco_score: 10 },
       { id: 'quizz_tout_sur_leau', reco_score: 3 },
       { id: 'article_eau', reco_score: 5 },
       { id: 'suivi_du_jour', reco_score: 1, locked: true },

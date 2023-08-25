@@ -20,13 +20,18 @@ import { InteractionDefinition } from '../../../src/domain/interaction/interacti
 import { InteractionDefinitionRepository } from '../repository/interactionDefinition.repository';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
-const articles = require('../../../test_data/interactions/_articles');
+const articles = require('../../../test_data/interactions/_articles-externes');
 const aides = require('../../../test_data/interactions/_aides');
 const suivis = require('../../../test_data/interactions/_suivis');
 const suivis_alimentation = require('../../../test_data/evenements/suivis_alimentation');
 const suivis_transport = require('../../../test_data/evenements/suivis_transport');
 const empreintes_utilisateur = require('../../../test_data/evenements/bilans');
 const badges_liste = require('../../../test_data/evenements/badges');
+
+const articles_internes_path =
+  '../../../test_data/interactions/articles-internes';
+
+const quizz_path = '../../../test_data/interactions/quizz';
 
 export enum TheBoolean {
   true = 'true',
@@ -46,9 +51,13 @@ export class TestDataController {
     private interactionDefinitionRepository: InteractionDefinitionRepository,
   ) {
     this.quizz_set = {};
+    this.article_contents = {};
+    this.article_definitions = {};
   }
 
   private quizz_set: Object;
+  private article_contents: Object;
+  private article_definitions: Object;
 
   @Get('testdata/:id')
   @ApiParam({ name: 'id', enum: utilisateurs_liste })
@@ -60,13 +69,17 @@ export class TestDataController {
   @Post('testdata/:id/inject')
   async injectData(@Param('id') id: string): Promise<string> {
     await this.loadAllQuizz();
+    await this.loadAllArticlesContents();
+    await this.loadAllArticlesDefinitions();
     if (!utilisateurs_content[id]) return '{}';
     await this.deleteUtilisateur(id);
     await this.upsertUtilisateur(id);
     await this.insertArticlesForUtilisateur(id);
+    await this.insertInnerArticlesForUtilisateur(id);
     await this.insertAidesForUtilisateur(id);
     await this.insertSuivisForUtilisateur(id);
     await this.upsertAllQuizzDefinitions();
+    await this.upsertAllArticleContents();
     await this.insertQuizzForUtilisateur(id);
     await this.insertSuivisAlimentationForUtilisateur(id);
     await this.insertEmpreintesForUtilisateur(id);
@@ -108,7 +121,30 @@ export class TestDataController {
       if (articles[interaction.id]) {
         let data = { ...articles[interaction.id], ...interaction };
         data.id = uuidv4();
-        data.type = 'article';
+        data.type = InteractionType.article;
+        data.utilisateurId = utilisateurId;
+        await this.prisma.interaction.create({
+          data,
+        });
+      }
+    }
+  }
+  async insertInnerArticlesForUtilisateur(utilisateurId: string) {
+    await this.insertInteractionsWithTypeFromObject(
+      this.article_definitions,
+      InteractionType.article,
+    );
+    const interactions = utilisateurs_content[utilisateurId].interactions;
+    if (!interactions) return;
+    for (let index = 0; index < interactions.length; index++) {
+      const interaction = interactions[index];
+      if (this.article_definitions[interaction.id]) {
+        let data = {
+          ...this.article_definitions[interaction.id],
+          ...interaction,
+        };
+        data.id = uuidv4();
+        data.type = InteractionType.article;
         data.utilisateurId = utilisateurId;
         await this.prisma.interaction.create({
           data,
@@ -189,7 +225,7 @@ export class TestDataController {
       if (aides[interaction.id]) {
         let data = { ...aides[interaction.id], ...interaction };
         data.id = uuidv4();
-        data.type = 'aide';
+        data.type = InteractionType.aide;
         data.utilisateurId = utilisateurId;
         await this.prisma.interaction.create({
           data,
@@ -209,7 +245,7 @@ export class TestDataController {
       if (suivis[interaction.id]) {
         let data = { ...suivis[interaction.id], ...interaction };
         data.id = uuidv4();
-        data.type = 'suivi_du_jour';
+        data.type = InteractionType.suivi_du_jour;
         data.utilisateurId = utilisateurId;
         await this.prisma.interaction.create({
           data,
@@ -226,7 +262,7 @@ export class TestDataController {
         const quizz = this.quizz_set[interaction.id];
         let data = { ...quizz.interaction, ...interaction };
         data.id = uuidv4();
-        data.type = 'quizz';
+        data.type = InteractionType.quizz;
         data.content_id = interaction.id;
         data.utilisateurId = utilisateurId;
         await this.prisma.interaction.create({
@@ -275,25 +311,94 @@ export class TestDataController {
       InteractionType.quizz,
     );
   }
+  async upsertAllArticleContents() {
+    const articleIds = Object.keys(this.article_contents);
+    for (let index = 0; index < articleIds.length; index++) {
+      const articleId = articleIds[index];
+      const article_def = this.article_definitions[articleId];
+      article_def.content_id = articleId;
+      await this.prisma.article.upsert({
+        where: {
+          id: articleId,
+        },
+        update: {
+          titre: article_def.titre,
+          contenu: this.article_contents[articleId],
+        },
+        create: {
+          titre: article_def.titre,
+          id: articleId,
+          contenu: this.article_contents[articleId],
+        },
+      });
+    }
+  }
 
   async loadAllQuizz() {
     let current_file;
     try {
       const jsonsInDir = fs
-        .readdirSync(path.resolve(__dirname, '../../../test_data/interactions'))
+        .readdirSync(path.resolve(__dirname, quizz_path))
+        .filter((file) => path.extname(file) === '.json');
+
+      for (let index = 0; index < jsonsInDir.length; index++) {
+        current_file = jsonsInDir[index];
+        const fileData = fs.readFileSync(
+          path.join(path.resolve(__dirname, quizz_path), current_file),
+        );
+        this.quizz_set[path.basename(current_file, '.json')] = JSON.parse(
+          fileData.toString(),
+        );
+      }
+    } catch (error) {
+      throw new BadRequestException(
+        error.message.concat(` for file : ${current_file}`),
+      );
+    }
+  }
+
+  async loadAllArticlesContents() {
+    let current_file;
+    try {
+      const htmlsInDir = fs
+        .readdirSync(path.resolve(__dirname, articles_internes_path))
+        .filter((file) => path.extname(file) === '.html');
+
+      for (let index = 0; index < htmlsInDir.length; index++) {
+        current_file = htmlsInDir[index];
+        const fileData = fs.readFileSync(
+          path.join(
+            path.resolve(__dirname, articles_internes_path),
+            current_file,
+          ),
+        );
+        this.article_contents[path.basename(current_file, '.html')] =
+          fileData.toString();
+      }
+    } catch (error) {
+      throw new BadRequestException(
+        error.message.concat(` for file : ${current_file}`),
+      );
+    }
+  }
+  async loadAllArticlesDefinitions() {
+    let current_file;
+    try {
+      const jsonsInDir = fs
+        .readdirSync(path.resolve(__dirname, articles_internes_path))
         .filter((file) => path.extname(file) === '.json');
 
       for (let index = 0; index < jsonsInDir.length; index++) {
         current_file = jsonsInDir[index];
         const fileData = fs.readFileSync(
           path.join(
-            path.resolve(__dirname, '../../../test_data/interactions'),
+            path.resolve(__dirname, articles_internes_path),
             current_file,
           ),
         );
-        this.quizz_set[path.basename(current_file, '.json')] = JSON.parse(
-          fileData.toString(),
-        );
+        let article_def = JSON.parse(fileData.toString());
+        article_def.content_id = path.basename(current_file, '.json');
+        this.article_definitions[article_def.content_id] = article_def;
       }
     } catch (error) {
       throw new BadRequestException(
