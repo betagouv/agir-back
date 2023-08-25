@@ -7,12 +7,14 @@ import { BilanController } from './infrastructure/api/bilan.controller';
 import { AidesController } from './infrastructure/api/aides.controller';
 import { IntractionsController } from './infrastructure/api/interactions.controller';
 import { TestDataController } from './infrastructure/api/testData.controller';
+import { ArticleController } from './infrastructure/api/article.controller';
 
 import { UtilisateurUsecase } from './usecase/utilisateur.usecase';
 import { EvaluerQuizzUsecase } from './usecase/evaluer_quizz.usecase';
 import { LireQuizzUsecase } from './usecase/lire_quizz.usecase';
 import { BilanUsecase } from './usecase/bilan.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
+import { ArticleUsecase } from './usecase/article.usecase';
 
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
@@ -29,6 +31,7 @@ import { AidesRepository } from './infrastructure/repository/aides.repository';
 import { SuiviDashboardController } from './infrastructure/api/suiviDashboard.controller';
 import { OIDCStateRepository } from '../src/infrastructure/repository/oidcState.repository';
 import { InteractionDefinitionRepository } from '../src/infrastructure/repository/interactionDefinition.repository';
+import { ArticleRepository } from '../src/infrastructure/repository/article.repository';
 
 import { JwtModule } from '@nestjs/jwt';
 import { OidcService } from '../src/infrastructure/auth/oidc.service';
@@ -56,6 +59,7 @@ import { QuestionsNGCController } from './infrastructure/api/questionNGC.control
     SuiviDashboardController,
     TestDataController,
     QuestionsNGCController,
+    ArticleController,
   ],
   providers: [
     PrismaService,
@@ -71,6 +75,7 @@ import { QuestionsNGCController } from './infrastructure/api/questionNGC.control
     NGCCalculator,
     QuestionNGCRepository,
     InteractionDefinitionRepository,
+    ArticleRepository,
 
     UtilisateurUsecase,
     EvaluerQuizzUsecase,
@@ -80,6 +85,7 @@ import { QuestionsNGCController } from './infrastructure/api/questionNGC.control
     InteractionsUsecase,
     SuiviUsecase,
     QuestionNGCUsecase,
+    ArticleUsecase,
   ],
 })
 export class AppModule {}
