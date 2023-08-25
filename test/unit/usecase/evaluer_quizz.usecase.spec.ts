@@ -1,8 +1,8 @@
-import { EvaluerQuizzUsecase } from '../../../src/usecase/evaluer_quizz.usecase';
+import { QuizzUsecase } from '../../../src/usecase/quizz.usecase';
 import { QuizzQuestion } from '@prisma/client';
 
 describe('EvaluerQuizzUsecase', () => {
-  let evaluerQuizzUsecase = new EvaluerQuizzUsecase(null, null);
+  let quizzUsecase = new QuizzUsecase(null, null);
 
   describe('findReponseForQuestionId', () => {
     it('should find value for given id', () => {
@@ -10,10 +10,7 @@ describe('EvaluerQuizzUsecase', () => {
         utilisateur: 'bob',
         reponses: [{ '1': '11' }, { '2': '22' }],
       };
-      const value = evaluerQuizzUsecase.findReponseForQuestionId(
-        listReponses,
-        '2',
-      );
+      const value = quizzUsecase.findReponseForQuestionId(listReponses, '2');
       expect(value).toEqual('22');
     });
   });
@@ -45,7 +42,7 @@ describe('EvaluerQuizzUsecase', () => {
       };
       const listQuestions = [quest1, quest2];
 
-      const value = evaluerQuizzUsecase.checkQuizz(listReponses, listQuestions);
+      const value = quizzUsecase.checkQuizz(listReponses, listQuestions);
       expect(value).toEqual(true);
     });
   });
@@ -77,7 +74,7 @@ describe('EvaluerQuizzUsecase', () => {
       };
       const listQuestions = [quest1, quest2];
 
-      const value = evaluerQuizzUsecase.checkQuizz(listReponses, listQuestions);
+      const value = quizzUsecase.checkQuizz(listReponses, listQuestions);
       expect(value).toEqual(false);
     });
   });

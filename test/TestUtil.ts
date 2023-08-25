@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { InteractionType } from '../src/domain/interaction/interactionType';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
+import { Categorie } from '../src/domain/categorie';
 const request = require('supertest');
 
 export class TestUtil {
@@ -58,6 +59,18 @@ export class TestUtil {
       situation: {
         'transport . voiture . km': 12000,
       },
+      created_at: new Date(),
+      ...override,
+    };
+  }
+  static quizzHistoryData(override?) {
+    return {
+      id: 'quizzHistory-id',
+      quizzId: 'quizz-id',
+      difficulty: '2',
+      score: '65',
+      categorie: Categorie.climat,
+      utilisateurId: 'utilisateur-id',
       created_at: new Date(),
       ...override,
     };
@@ -157,7 +170,7 @@ export class TestUtil {
       type: InteractionType.article,
       titre: 'titre',
       soustitre: 'soustitre',
-      categorie: 'Consommation',
+      categorie: Categorie.consommation,
       tags: ['quizz', 'nourriture', 'conso'],
       duree: '⏱️ < 1 minute',
       frequence: '🔄 1x/jour',
@@ -169,11 +182,10 @@ export class TestUtil {
       clicked_at: null,
       done: false,
       done_at: null,
-      succeeded: false,
-      succeeded_at: null,
       difficulty: 1,
       points: 5,
       reco_score: 100,
+      quizzScore: 50,
       locked: false,
       pinned_at_position: null,
       raison_lock: 'bla',
@@ -190,7 +202,7 @@ export class TestUtil {
       type: InteractionType.quizz,
       titre: 'titre',
       soustitre: 'soustitre',
-      categorie: 'Consommation',
+      categorie: Categorie.consommation,
       tags: ['quizz', 'nourriture', 'conso'],
       duree: '⏱️ < 1 minute',
       frequence: '🔄 1x/jour',

@@ -64,8 +64,7 @@ model Interaction {
   clicked_at         DateTime?
   done               Boolean     @default(false)
   done_at            DateTime?
-  succeeded          Boolean     @default(false)
-  succeeded_at       DateTime?
+  quizzScore         Int?
   locked             Boolean     @default(false)
   difficulty         Int         @default(1)
   points             Int         @default(0)

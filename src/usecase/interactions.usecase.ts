@@ -86,7 +86,7 @@ export class InteractionsUsecase {
       stored_interaction.setNextScheduledReset();
     }
 
-    if (status.succeeded && stored_interaction.type === InteractionType.quizz) {
+    if (status.quizzScore > 50) {
       await this.badgeRepository.createUniqueBadge(
         utilisateurId,
         BadgeTypeEnum.premier_quizz,
@@ -94,6 +94,7 @@ export class InteractionsUsecase {
     }
 
     stored_interaction.updateStatus(status);
+
     return this.interactionRepository.partialUpdateInteraction(
       stored_interaction,
     );

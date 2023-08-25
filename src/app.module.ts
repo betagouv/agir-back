@@ -10,8 +10,7 @@ import { TestDataController } from './infrastructure/api/testData.controller';
 import { ArticleController } from './infrastructure/api/article.controller';
 
 import { UtilisateurUsecase } from './usecase/utilisateur.usecase';
-import { EvaluerQuizzUsecase } from './usecase/evaluer_quizz.usecase';
-import { LireQuizzUsecase } from './usecase/lire_quizz.usecase';
+import { QuizzUsecase } from './usecase/quizz.usecase';
 import { BilanUsecase } from './usecase/bilan.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
 import { ArticleUsecase } from './usecase/article.usecase';
@@ -78,8 +77,7 @@ import { QuestionsNGCController } from './infrastructure/api/questionNGC.control
     ArticleRepository,
 
     UtilisateurUsecase,
-    EvaluerQuizzUsecase,
-    LireQuizzUsecase,
+    QuizzUsecase,
     BilanUsecase,
     AidesUsecase,
     InteractionsUsecase,

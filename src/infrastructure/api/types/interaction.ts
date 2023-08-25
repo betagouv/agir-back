@@ -15,8 +15,6 @@ export type APIInteractionType = {
   clicked_at: Date;
   done: boolean;
   done_at: Date;
-  succeeded: boolean;
-  succeeded_at: Date;
   difficulty: number;
   points: number;
   reco_score: number;

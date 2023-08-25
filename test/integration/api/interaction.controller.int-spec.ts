@@ -197,18 +197,6 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     expect(response.body[2].id).toEqual('pin');
     expect(response.body[3].id).toEqual('id-3');
   });
-  it('GET /utilisateurs/id/interactions - no succeeded interaction', async () => {
-    // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('interaction', { succeeded: true });
-    // WHEN
-    const response = await TestUtil.getServer().get(
-      '/utilisateurs/utilisateur-id/interactions',
-    );
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(0);
-  });
   it('PATCH /utilisateurs/id/interactions/id - patch status of single interaction', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
@@ -230,11 +218,10 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     });
     expect(dbInteraction.done).toStrictEqual(true);
     expect(dbInteraction.clicked).toStrictEqual(false);
-    expect(dbInteraction.succeeded).toStrictEqual(false);
     expect(dbInteraction.seen).toStrictEqual(0);
     expect(dbUtilisateur.points).toStrictEqual(5);
   });
-  it('PATCH /utilisateurs/id/interactions/id - win badge when first quizz', async () => {
+  it('PATCH /utilisateurs/id/interactions/id - win badge when first quizz score > 50', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', { type: InteractionType.quizz });
@@ -242,7 +229,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     const response = await TestUtil.getServer()
       .patch('/utilisateurs/utilisateur-id/interactions/interaction-id')
       .send({
-        succeeded: true,
+        quizzScore: 55,
       });
     // THEN
     expect(response.status).toBe(200);

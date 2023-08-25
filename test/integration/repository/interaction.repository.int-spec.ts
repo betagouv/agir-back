@@ -103,7 +103,6 @@ describe('InteractionRepository', () => {
     });
     expect(result.done).toStrictEqual(false);
     expect(result.clicked).toStrictEqual(false);
-    expect(result.succeeded).toStrictEqual(false);
   });
   it('resetAllInteractionStatus : resets nothing when no scheduled_reset date', async () => {
     // GIVEN
@@ -126,20 +125,16 @@ describe('InteractionRepository', () => {
       scheduled_reset: new Date(100),
       done: true,
       clicked: true,
-      succeeded: true,
       done_at: new Date(),
       clicked_at: new Date(),
-      succeeded_at: new Date(),
     });
     await TestUtil.create('interaction', {
       id: '2',
       scheduled_reset: new Date(200),
       done: true,
       clicked: true,
-      succeeded: true,
       done_at: new Date(),
       clicked_at: new Date(),
-      succeeded_at: new Date(),
     });
 
     // WHEN
@@ -155,17 +150,13 @@ describe('InteractionRepository', () => {
 
     expect(inter1.done).toStrictEqual(false);
     expect(inter1.clicked).toStrictEqual(false);
-    expect(inter1.succeeded).toStrictEqual(false);
     expect(inter1.done_at).toStrictEqual(null);
     expect(inter1.clicked_at).toStrictEqual(null);
-    expect(inter1.succeeded_at).toStrictEqual(null);
     expect(inter1.scheduled_reset).toStrictEqual(null);
     expect(inter2.done).toStrictEqual(true);
     expect(inter2.clicked).toStrictEqual(true);
-    expect(inter2.succeeded).toStrictEqual(true);
     expect(inter2.done_at).not.toBeNull();
     expect(inter2.clicked_at).not.toBeNull();
-    expect(inter2.succeeded_at).not.toBeNull();
     expect(inter2.scheduled_reset).not.toBeNull();
   });
   it('update : update interaction and proper update_at date', async () => {
@@ -184,7 +175,7 @@ describe('InteractionRepository', () => {
     const result = await TestUtil.prisma.interaction.findUnique({
       where: { id: 'interaction-id' },
     });
-    expect(result.categorie).toStrictEqual('Consommation');
+    expect(result.categorie).toStrictEqual('consommation');
     expect(result.points).toStrictEqual(123);
     expect(result.updated_at).not.toBeNull();
   });

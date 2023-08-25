@@ -1,18 +1,29 @@
+import { Quizz as QuizzDB } from '.prisma/client';
 import { Injectable } from '@nestjs/common';
 import { QuizzQuestion } from '@prisma/client';
-import { BodyReponsesQuizz } from 'src/infrastructure/api/types/reponsesQuizz';
-import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
-import { BadgeRepository } from '../infrastructure/repository/badge.repository';
+import { QuizzResultat } from '../../src/domain/quizz/quizzResultat';
 import { BadgeTypeEnum } from '../domain/badgeType';
+import { BodyReponsesQuizz } from '../infrastructure/api/types/reponsesQuizz';
+import { BadgeRepository } from '../infrastructure/repository/badge.repository';
+import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
 
 @Injectable()
-export class EvaluerQuizzUsecase {
+export class QuizzUsecase {
   constructor(
     private quizzRepository: QuizzRepository,
     private badgeRepository: BadgeRepository,
   ) {}
 
-  async doIt(
+  async getQuizzById(quizzId: string): Promise<QuizzDB> {
+    const result = await this.quizzRepository.getById(quizzId);
+    // FIXME : temp rename
+    result['questions'].forEach((question) => {
+      question['texte_riche_explication'] = question.texte_riche_ko;
+    });
+    return result;
+  }
+
+  async evaluerQuizz(
     bodyReponsesQuizz: BodyReponsesQuizz,
     quizzId: string,
   ): Promise<boolean> {
@@ -27,17 +38,7 @@ export class EvaluerQuizzUsecase {
     return success;
   }
 
-  public findReponseForQuestionId(
-    reponsesQuizz: BodyReponsesQuizz,
-    id: string,
-  ) {
-    const found = reponsesQuizz.reponses.find((element) => {
-      return Object.keys(element)[0] === id;
-    });
-    return Object.values(found)[0];
-  }
-
-  public checkQuizz(
+  checkQuizz(
     bodyReponsesQuizz: BodyReponsesQuizz,
     questions: QuizzQuestion[],
   ): boolean {
@@ -49,5 +50,12 @@ export class EvaluerQuizzUsecase {
           this.findReponseForQuestionId(bodyReponsesQuizz, element.id);
     });
     return success;
+  }
+
+  findReponseForQuestionId(reponsesQuizz: BodyReponsesQuizz, id: string) {
+    const found = reponsesQuizz.reponses.find((element) => {
+      return Object.keys(element)[0] === id;
+    });
+    return Object.values(found)[0];
   }
 }

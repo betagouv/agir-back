@@ -52,7 +52,6 @@ export class InteractionRepository {
       where: {
         utilisateurId: filter.utilisateurId,
         done: false,
-        succeeded: false,
         type: filter.type,
         pinned_at_position: filter.pinned ? { not: null } : null,
         locked: filter.locked,
@@ -89,10 +88,8 @@ export class InteractionRepository {
       data: {
         clicked: false,
         done: false,
-        succeeded: false,
         clicked_at: null,
         done_at: null,
-        succeeded_at: null,
         scheduled_reset: null,
       },
     });
