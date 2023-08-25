@@ -25,7 +25,7 @@ export class Interaction {
   done_at: Date;
   difficulty: number;
   points: number;
-  quizzScore: number;
+  quizz_score: number;
   reco_score: number;
   locked: boolean;
   pinned_at_position: number;
@@ -62,6 +62,6 @@ export class Interaction {
       this.clicked = true;
       this.clicked_at = new Date();
     }
-    this.quizzScore = status.quizzScore;
+    this.quizz_score = status.quizz_score;
   }
 }

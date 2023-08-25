@@ -47,7 +47,7 @@ export class InteractionRepository {
         }
       }
     }
-    return this.prisma.interaction.findMany({
+    const interList = await this.prisma.interaction.findMany({
       take: filter.maxNumber,
       where: {
         utilisateurId: filter.utilisateurId,
@@ -62,8 +62,10 @@ export class InteractionRepository {
           reco_score: 'asc',
         },
       ],
-    }) as Promise<Interaction[] | null>;
+    });
+    return interList.map((interactionDB) => new Interaction(interactionDB));
   }
+
   async partialUpdateInteraction(
     interaction: Interaction,
   ): Promise<DBInteraction | null> {

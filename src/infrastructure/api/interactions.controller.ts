@@ -37,7 +37,7 @@ export class IntractionsController {
       seen: body.seen,
       clicked: body.clicked,
       done: body.done,
-      quizzScore: body.quizzScore,
+      quizz_score: body.quizz_score,
     };
 
     await this.interactionsUsecase.updateStatus(

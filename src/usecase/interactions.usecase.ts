@@ -18,7 +18,7 @@ export class InteractionsUsecase {
     private badgeRepository: BadgeRepository,
   ) {}
 
-  async listInteractions(utilisateurId: string): Promise<DBInteraction[]> {
+  async listInteractions(utilisateurId: string): Promise<Interaction[]> {
     let result: Interaction[] = [];
 
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
@@ -86,7 +86,7 @@ export class InteractionsUsecase {
       stored_interaction.setNextScheduledReset();
     }
 
-    if (status.quizzScore > 50) {
+    if (status.quizz_score > 50) {
       await this.badgeRepository.createUniqueBadge(
         utilisateurId,
         BadgeTypeEnum.premier_quizz,

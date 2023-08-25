@@ -229,7 +229,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     const response = await TestUtil.getServer()
       .patch('/utilisateurs/utilisateur-id/interactions/interaction-id')
       .send({
-        quizzScore: 55,
+        quizz_score: 55,
       });
     // THEN
     expect(response.status).toBe(200);
