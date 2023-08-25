@@ -15,8 +15,8 @@ model Suivi {
   type            String
   data            Json        @default("{}")
   computed_impact Boolean     @default(false)
-  created_at      DateTime    @default(now())
-  updated_at      DateTime    @updatedAt
+  created_at      DateTime    @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime    @updatedAt @db.Timestamptz(3)
   utilisateurId   String
   utilisateur     Utilisateur @relation(fields: [utilisateurId], references: [id])
 }
@@ -27,8 +27,8 @@ model OIDC_STATE {
   state         String?
   nonce         String?
   idtoken       String?
-  created_at    DateTime @default(now())
-  updated_at    DateTime @default(now()) @updatedAt
+  created_at    DateTime @default(now()) @db.Timestamptz(3)
+  updated_at    DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model Utilisateur {
@@ -42,8 +42,8 @@ model Utilisateur {
   suivis       Suivi[]
   badges       Badge[]
   questionsNGC QuestionNGC[]
-  created_at   DateTime      @default(now())
-  updated_at   DateTime      @default(now()) @updatedAt
+  created_at   DateTime      @default(now()) @db.Timestamptz(3)
+  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model Interaction {
@@ -59,22 +59,22 @@ model Interaction {
   image_url          String?
   url                String?
   seen               Int         @default(0)
-  seen_at            DateTime?
+  seen_at            DateTime?   @db.Timestamptz(3)
   clicked            Boolean     @default(false)
-  clicked_at         DateTime?
+  clicked_at         DateTime?   @db.Timestamptz(3)
   done               Boolean     @default(false)
-  done_at            DateTime?
+  done_at            DateTime?   @db.Timestamptz(3)
   locked             Boolean     @default(false)
   difficulty         Int         @default(1)
   points             Int         @default(0)
   reco_score         Int         @default(1000)
   quizz_score        Int?
-  scheduled_reset    DateTime?
+  scheduled_reset    DateTime?   @db.Timestamptz(3)
   day_period         Int?
   pinned_at_position Int?
   raison_lock        String?
-  created_at         DateTime    @default(now())
-  updated_at         DateTime    @updatedAt
+  created_at         DateTime    @default(now()) @db.Timestamptz(3)
+  updated_at         DateTime    @updatedAt @db.Timestamptz(3)
   utilisateurId      String
   utilisateur        Utilisateur @relation(fields: [utilisateurId], references: [id])
 }
@@ -98,16 +98,16 @@ model InteractionDefinition {
   day_period         Int?
   pinned_at_position Int?
   raison_lock        String?
-  created_at         DateTime @default(now())
-  updated_at         DateTime @updatedAt
+  created_at         DateTime @default(now()) @db.Timestamptz(3)
+  updated_at         DateTime @updatedAt @db.Timestamptz(3)
 }
 
 model Empreinte {
   id            String       @id
   initial       Boolean      @default(true)
   bilan         Json?
-  created_at    DateTime     @default(now())
-  updated_at    DateTime     @default(now()) @updatedAt
+  created_at    DateTime     @default(now()) @db.Timestamptz(3)
+  updated_at    DateTime     @default(now()) @updatedAt @db.Timestamptz(3)
   utilisateur   Utilisateur  @relation(fields: [utilisateurId], references: [id])
   utilisateurId String
   situationId   String       @unique
@@ -120,8 +120,8 @@ model QuestionNGC {
   value         String?
   utilisateurId String
   utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
-  created_at    DateTime    @default(now())
-  updated_at    DateTime    @default(now()) @updatedAt
+  created_at    DateTime    @default(now()) @db.Timestamptz(3)
+  updated_at    DateTime    @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@unique([key, utilisateurId])
 }
@@ -130,7 +130,7 @@ model SituationNGC {
   id         String     @id
   situation  Json?
   empreinte  Empreinte?
-  created_at DateTime   @default(now())
+  created_at DateTime   @default(now()) @db.Timestamptz(3)
 }
 
 model Quizz {
@@ -163,6 +163,6 @@ model Badge {
   titre         String
   Utilisateur   Utilisateur? @relation(fields: [utilisateurId], references: [id])
   utilisateurId String
-  created_at    DateTime     @default(now())
-  updated_at    DateTime     @default(now()) @updatedAt
+  created_at    DateTime     @default(now()) @db.Timestamptz(3)
+  updated_at    DateTime     @default(now()) @updatedAt @db.Timestamptz(3)
 }
