@@ -20,7 +20,7 @@ describe('/articles (API test)', () => {
     const response = await TestUtil.getServer().get('/articles/article-id');
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.title).toEqual('titre');
-    expect(response.body.content).toEqual('<html>Hello World !!</html>');
+    expect(response.body.titre).toEqual('titre');
+    expect(response.body.contenu).toEqual('<html>Hello World !!</html>');
   });
 });
