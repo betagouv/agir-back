@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   HttpStatus,
-  NotFoundException,
   Param,
   Patch,
   Post,
@@ -25,7 +24,12 @@ export class IntractionsController {
   async getUserInteractions(
     @Param('id') id: string,
   ): Promise<APIInteractionType[]> {
-    return this.interactionsUsecase.listInteractions(id);
+    let result = await this.interactionsUsecase.listInteractions(id);
+    // FIXME : to remove
+    result.map((inter) => {
+      inter['reco_score'] = 666;
+    });
+    return result;
   }
   @Patch('utilisateurs/:utilisateurId/interactions/:interactionId')
   async patchInteractionStatus(

@@ -1,3 +1,4 @@
+import { Decimal } from '@prisma/client/runtime/library';
 import { InteractionStatus } from './interactionStatus';
 import { InteractionType } from './interactionType';
 
@@ -26,7 +27,7 @@ export class Interaction {
   difficulty: number;
   points: number;
   quizz_score: number;
-  reco_score: number;
+  score: Decimal;
   locked: boolean;
   pinned_at_position: number;
   raison_lock: string;

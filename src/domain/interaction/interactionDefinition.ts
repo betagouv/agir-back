@@ -14,7 +14,7 @@ export type InteractionDefinition = {
   url?: string;
   difficulty: number;
   points: number;
-  reco_score: number;
+  score: number;
   locked: boolean;
   pinned_at_position: number;
   raison_lock: string;

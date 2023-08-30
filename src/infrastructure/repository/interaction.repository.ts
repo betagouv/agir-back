@@ -59,7 +59,7 @@ export class InteractionRepository {
       },
       orderBy: [
         {
-          reco_score: 'asc',
+          score: 'desc',
         },
       ],
     });

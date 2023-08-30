@@ -67,7 +67,7 @@ model Interaction {
   locked             Boolean     @default(false)
   difficulty         Int         @default(1)
   points             Int         @default(0)
-  reco_score         Int         @default(1000)
+  score              Decimal     @default(0.5) @db.Decimal(10, 10)
   quizz_score        Int?
   scheduled_reset    DateTime?   @db.Timestamptz(3)
   day_period         Int?
@@ -94,7 +94,7 @@ model InteractionDefinition {
   locked             Boolean  @default(false)
   difficulty         Int      @default(1)
   points             Int      @default(0)
-  reco_score         Int      @default(1000)
+  score              Decimal  @default(0.5) @db.Decimal(10, 10)
   day_period         Int?
   pinned_at_position Int?
   raison_lock        String?

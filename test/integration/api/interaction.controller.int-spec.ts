@@ -42,16 +42,17 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       TestUtil.interactionData({
         created_at: dbInteraction.created_at.toISOString(),
         updated_at: dbInteraction.updated_at.toISOString(),
+        reco_score: 666,
       }),
     );
   });
   it('GET /utilisateurs/id/interactions - list interactions in reco order when no strategy', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
-    await TestUtil.create('interaction', { id: '1', reco_score: 1 });
-    await TestUtil.create('interaction', { id: '2', reco_score: 20 });
-    await TestUtil.create('interaction', { id: '3', reco_score: 10 });
-    await TestUtil.create('interaction', { id: '4', reco_score: 40 });
+    await TestUtil.create('interaction', { id: '1', score: 0.9 });
+    await TestUtil.create('interaction', { id: '2', score: 0.2 });
+    await TestUtil.create('interaction', { id: '3', score: 0.3 });
+    await TestUtil.create('interaction', { id: '4', score: 0.1 });
 
     // WHEN
     const response = await TestUtil.getServer().get(
@@ -61,32 +62,32 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(4);
-    expect(response.body[0].reco_score).toEqual(1);
-    expect(response.body[1].reco_score).toEqual(10);
-    expect(response.body[2].reco_score).toEqual(20);
-    expect(response.body[3].reco_score).toEqual(40);
+    expect(response.body[0].score).toEqual('0.9');
+    expect(response.body[1].score).toEqual('0.3');
+    expect(response.body[2].score).toEqual('0.2');
+    expect(response.body[3].score).toEqual('0.1');
   });
   it('GET /utilisateurs/id/interactions - list interactions with strategy, correct order', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
       id: '1',
-      reco_score: 10,
+      score: 0.9,
       type: InteractionType.aide,
     });
     await TestUtil.create('interaction', {
       id: '2',
-      reco_score: 30,
+      score: 0.2,
       type: InteractionType.aide,
     });
     await TestUtil.create('interaction', {
       id: '3',
-      reco_score: 20,
+      score: 0.5,
       type: InteractionType.article,
     });
     await TestUtil.create('interaction', {
       id: '4',
-      reco_score: 40,
+      score: 0.1,
       type: InteractionType.article,
     });
     DistributionSettings.overrideSettings(
@@ -110,32 +111,32 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(4);
-    expect(response.body[0].reco_score).toEqual(10);
-    expect(response.body[1].reco_score).toEqual(20);
-    expect(response.body[2].reco_score).toEqual(30);
-    expect(response.body[3].reco_score).toEqual(40);
+    expect(response.body[0].score).toEqual('0.9');
+    expect(response.body[1].score).toEqual('0.5');
+    expect(response.body[2].score).toEqual('0.2');
+    expect(response.body[3].score).toEqual('0.1');
   });
   it('GET /utilisateurs/id/interactions - list interactions with strategy, max per type', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
       id: '1',
-      reco_score: 10,
+      score: 0.9,
       type: InteractionType.aide,
     });
     await TestUtil.create('interaction', {
       id: '2',
-      reco_score: 30,
+      score: 0.2,
       type: InteractionType.aide,
     });
     await TestUtil.create('interaction', {
       id: '3',
-      reco_score: 20,
+      score: 0.5,
       type: InteractionType.article,
     });
     await TestUtil.create('interaction', {
       id: '4',
-      reco_score: 40,
+      score: 0.1,
       type: InteractionType.article,
     });
     DistributionSettings.overrideSettings(
@@ -159,8 +160,8 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(2);
-    expect(response.body[0].reco_score).toEqual(10);
-    expect(response.body[1].reco_score).toEqual(20);
+    expect(response.body[0].score).toEqual('0.9');
+    expect(response.body[1].score).toEqual('0.5');
   });
   it('GET /utilisateurs/id/interactions - no done interaction', async () => {
     // GIVEN
@@ -177,12 +178,12 @@ describe('/utilisateurs/id/interactions (API test)', () => {
   it('GET /utilisateurs/id/interactions - pinned interaction at proper position', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
-    await TestUtil.create('interaction', { id: 'id-1', reco_score: 1 });
-    await TestUtil.create('interaction', { id: 'id-2', reco_score: 2 });
-    await TestUtil.create('interaction', { id: 'id-3', reco_score: 3 });
+    await TestUtil.create('interaction', { id: 'id-1', score: 0.9 });
+    await TestUtil.create('interaction', { id: 'id-2', score: 0.5 });
+    await TestUtil.create('interaction', { id: 'id-3', score: 0.2 });
     await TestUtil.create('interaction', {
       id: 'pin',
-      reco_score: 4,
+      score: 0.1,
       pinned_at_position: 2,
     });
     // WHEN
@@ -330,49 +331,49 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     });
     await TestUtil.create('interaction', {
       id: '1',
-      reco_score: 1,
+      score: 0.9,
       type: InteractionType.quizz,
       difficulty: 1,
       categorie: Categorie.alimentation,
     });
     await TestUtil.create('interaction', {
       id: '2',
-      reco_score: 2,
+      score: 0.8,
       type: InteractionType.quizz,
       difficulty: 2,
       categorie: Categorie.alimentation,
     });
     await TestUtil.create('interaction', {
       id: '3',
-      reco_score: 4,
+      score: 0.6,
       type: InteractionType.quizz,
       difficulty: 3,
       categorie: Categorie.alimentation,
     });
     await TestUtil.create('interaction', {
       id: '4',
-      reco_score: 5,
+      score: 0.5,
       type: InteractionType.quizz,
       difficulty: 1,
       categorie: Categorie.climat,
     });
     await TestUtil.create('interaction', {
       id: '5',
-      reco_score: 3,
+      score: 0.7,
       type: InteractionType.quizz,
       difficulty: 2,
       categorie: Categorie.climat,
     });
     await TestUtil.create('interaction', {
       id: '6',
-      reco_score: 3,
+      score: 0.7,
       type: InteractionType.quizz,
       difficulty: 3,
       categorie: Categorie.climat,
     });
     await TestUtil.create('interaction', {
       id: '7',
-      reco_score: 3,
+      score: 0.7,
       type: InteractionType.quizz,
       difficulty: 3,
       categorie: Categorie.consommation,

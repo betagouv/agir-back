@@ -1,3 +1,5 @@
+import { Decimal } from '@prisma/client/runtime/library';
+
 export type APIInteractionType = {
   id: string;
   type: string;
@@ -17,5 +19,5 @@ export type APIInteractionType = {
   done_at: Date;
   difficulty: number;
   points: number;
-  reco_score: number;
+  score: Decimal;
 };

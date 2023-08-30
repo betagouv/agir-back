@@ -4,6 +4,7 @@ import { Interaction } from '../../../src/domain/interaction/interaction';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { Categorie } from '../../../src/domain/categorie';
 import { QuizzProfile } from '../../../src/domain/quizz/quizzProfile';
+import { Decimal } from '@prisma/client/runtime/library';
 
 describe('InteractionRepository', () => {
   let interactionRepository = new InteractionRepository(TestUtil.prisma);
@@ -25,17 +26,17 @@ describe('InteractionRepository', () => {
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
       id: '1',
-      reco_score: 100,
+      score: 0.1,
       difficulty: 1,
     });
     await TestUtil.create('interaction', {
       id: '2',
-      reco_score: 20,
+      score: 0.8,
       difficulty: 2,
     });
     await TestUtil.create('interaction', {
       id: '3',
-      reco_score: 50,
+      score: 0.5,
       difficulty: 3,
     });
 
@@ -49,9 +50,9 @@ describe('InteractionRepository', () => {
 
     // THEN
     expect(liste).toHaveLength(3);
-    expect(liste[0].reco_score).toEqual(20);
-    expect(liste[1].reco_score).toEqual(50);
-    expect(liste[2].reco_score).toEqual(100);
+    expect(liste[0].score).toEqual(new Decimal(0.8));
+    expect(liste[1].score).toEqual(new Decimal(0.5));
+    expect(liste[2].score).toEqual(new Decimal(0.1));
   });
   it('listMaxInteractionsByUtilisateurIdAndType : filters by type ', async () => {
     // GIVEN
