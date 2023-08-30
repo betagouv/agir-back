@@ -5,6 +5,7 @@ import { DistributionSettings } from '../../../src/domain/interaction/distributi
 import { TestUtil } from '../../TestUtil';
 import { BadgeTypeEnum } from '../../../src/domain/badgeType';
 import { Categorie } from '../../../src/domain/categorie';
+import { Decimal } from '@prisma/client/runtime/library';
 
 describe('/utilisateurs/id/interactions (API test)', () => {
   beforeAll(async () => {
@@ -389,5 +390,62 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     expect(response.body).toHaveLength(2);
     expect(response.body[0].id).toEqual('2');
     expect(response.body[1].id).toEqual('4');
+  });
+
+  it('POST /interactions/scoring augmente le scoring OK', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      score: 0.1,
+      categorie: Categorie.alimentation,
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      score: 0.2,
+      categorie: Categorie.climat,
+    });
+    // WHEN
+    const response = await TestUtil.getServer().post(
+      '/interactions/scoring?utilisateurId=utilisateur-id&categorie=climat&boost=4',
+    );
+    // THEN
+    expect(response.status).toBe(201);
+    const dbInter1 = await TestUtil.prisma.interaction.findUnique({
+      where: { id: '1' },
+    });
+    const dbInter2 = await TestUtil.prisma.interaction.findUnique({
+      where: { id: '2' },
+    });
+    expect(dbInter1.score).toEqual(new Decimal(0.1));
+    expect(dbInter2.score).toEqual(new Decimal(0.8));
+  });
+  it('POST /interactions/scoring diminue le scoring OK', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      score: 0.8,
+      categorie: Categorie.alimentation,
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      score: 0.8,
+      categorie: Categorie.climat,
+    });
+    // WHEN
+    const response = await TestUtil.getServer().post(
+      '/interactions/scoring?utilisateurId=utilisateur-id&categorie=climat&boost=-2',
+    );
+    // THEN
+    expect(response.status).toBe(201);
+    const dbInter1 = await TestUtil.prisma.interaction.findUnique({
+      where: { id: '1' },
+    });
+    const dbInter2 = await TestUtil.prisma.interaction.findUnique({
+      where: { id: '2' },
+    });
+    expect(dbInter1.score).toEqual(new Decimal(0.8));
+    expect(dbInter2.score).toEqual(new Decimal(0.4));
   });
 });

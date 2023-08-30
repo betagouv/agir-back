@@ -1,8 +1,8 @@
 const articles = {
   article_faire_nos_gestes_climat: {
-    titre: "Calculez votre empreinte carbone",
+    titre: 'Calculez votre empreinte carbone',
     soustitre: 'Une infographie qui vous explique tout !',
-    categorie: 'Global',
+    categorie: 'climat',
     tags: [],
     duree: '⏱️ 15 minutes',
     frequence: 'Une fois',
@@ -13,13 +13,14 @@ const articles = {
     locked: false,
   },
   article_transport_se_deplacer_autrement: {
-    titre: "Se déplacer autrement",
+    titre: 'Se déplacer autrement',
     soustitre: 'Une infographie qui vous explique tout !',
-    categorie: 'Transports',
+    categorie: 'transport',
     tags: ['article', 'transport', 'comportement'],
     duree: '⏱️ < 1 minute',
     frequence: 'Une fois',
-    image_url: 'https://librairie.ademe.fr/688798-large_default/comment-se-deplacer-autrement-et-moins-cher-.jpg',
+    image_url:
+      'https://librairie.ademe.fr/688798-large_default/comment-se-deplacer-autrement-et-moins-cher-.jpg',
     url: 'https://librairie.ademe.fr/cadic/7774/infographie-se-deplacer-autrement-moins-cher.pdf',
     difficulty: 1,
     points: 5,
@@ -28,11 +29,12 @@ const articles = {
   article_consommation_indice_de_reparabilite: {
     titre: "Comprendre l'indice de réparabilité",
     soustitre: 'Une infographie qui vous explique tout !',
-    categorie: 'Consommation',
+    categorie: 'consommation',
     tags: ['article'],
     duree: '⏱️ < 1 minute',
     frequence: 'Une fois',
-    image_url: 'https://longuevieauxobjets.gouv.fr/sites/default/files/inline-images/INDICE%20DE%20REPARABILITE_ARTICLE.jpeg',
+    image_url:
+      'https://longuevieauxobjets.gouv.fr/sites/default/files/inline-images/INDICE%20DE%20REPARABILITE_ARTICLE.jpeg',
     url: 'https://longuevieauxobjets.gouv.fr/acheter-durable/indice-de-reparabilite',
     difficulty: 1,
     points: 5,
@@ -41,24 +43,26 @@ const articles = {
   article_consommation_video_numerique_responsable: {
     titre: "L'impact du numérique",
     soustitre: 'Une vidéo pour tout capter !',
-    categorie: 'Consommation',
+    categorie: 'consommation',
     tags: ['article'],
     duree: '⏱️ < 1 minute',
     frequence: 'Une fois',
-    image_url: 'https://i.ytimg.com/vi/h1lWBRXRUak/hqdefault.jpg?sqp=-oaymwEcCPYBEIoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDnB35nlLdW1TiIR3Rzc90u_xs86Q',
+    image_url:
+      'https://i.ytimg.com/vi/h1lWBRXRUak/hqdefault.jpg?sqp=-oaymwEcCPYBEIoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDnB35nlLdW1TiIR3Rzc90u_xs86Q',
     url: 'https://www.youtube.com/watch?v=h1lWBRXRUak&list=PLIGbVmWpW-WxuUHtb6CRAEe_Eq1lpWapc',
     difficulty: 1,
     points: 5,
     locked: false,
   },
   article_alimentation_recettes_4_saisons: {
-    titre: "Recettes des 4 saisons à base de légumes et légumineuses",
+    titre: 'Recettes des 4 saisons à base de légumes et légumineuses',
     soustitre: 'Devenez un chef éco-responsable en peu de temps',
-    categorie: 'Alimentation',
+    categorie: 'alimentation',
     tags: ['article'],
     duree: '⏱️ < 1 minute',
     frequence: 'Une fois',
-    image_url: 'https://librairie.ademe.fr/697214-large_default/recettes-des-4-saisons-a-base-de-legumes-et-legumineuses.jpg',
+    image_url:
+      'https://librairie.ademe.fr/697214-large_default/recettes-des-4-saisons-a-base-de-legumes-et-legumineuses.jpg',
     url: 'https://librairie.ademe.fr/cadic/1774/recettes-4-saisons-legumes-legumineuses.pdf',
     difficulty: 1,
     points: 5,
@@ -68,7 +72,7 @@ const articles = {
   article_eau: {
     titre: "Tout savoir sur l'eau",
     soustitre: 'bla bla',
-    categorie: 'Consommation',
+    categorie: 'consommation',
     tags: ['article', 'eau', 'comportement'],
     duree: '⏱️ < 1 minute',
     frequence: 'Une fois',
@@ -81,7 +85,7 @@ const articles = {
   article_viande: {
     titre: 'Tout savoir sur la viande',
     soustitre: 'bla bla',
-    categorie: 'Consommation',
+    categorie: 'consommation',
     tags: ['article', 'nourriture', 'viande'],
     duree: '⏱️ < 2 minute',
     frequence: 'Une fois',

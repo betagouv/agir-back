@@ -9,6 +9,8 @@ import { BadgeRepository } from '../infrastructure/repository/badge.repository';
 import { InteractionType } from '../domain/interaction/interactionType';
 import { BadgeTypeEnum } from '../domain/badgeType';
 import { QuizzProfile } from '../../src/domain/quizz/quizzProfile';
+import { Categorie } from '../../src/domain/categorie';
+import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class InteractionsUsecase {
@@ -17,6 +19,30 @@ export class InteractionsUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private badgeRepository: BadgeRepository,
   ) {}
+
+  async updateInteractionScoreByCategories(
+    utilisateurId: string,
+    categories: Categorie[],
+    boost: number,
+  ) {
+    let interactionScores =
+      await this.interactionRepository.listInteractionScores(
+        utilisateurId,
+        categories,
+      );
+    if (boost > 1) {
+      interactionScores.forEach((inter) => {
+        inter.upScore(new Decimal(boost));
+      });
+    } else {
+      interactionScores.forEach((inter) => {
+        inter.downScore(new Decimal(-boost));
+      });
+    }
+    return this.interactionRepository.updateInteractionScores(
+      interactionScores,
+    );
+  }
 
   async listInteractions(utilisateurId: string): Promise<Interaction[]> {
     let result: Interaction[] = [];

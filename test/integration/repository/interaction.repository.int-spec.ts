@@ -5,6 +5,7 @@ import { InteractionType } from '../../../src/domain/interaction/interactionType
 import { Categorie } from '../../../src/domain/categorie';
 import { QuizzProfile } from '../../../src/domain/quizz/quizzProfile';
 import { Decimal } from '@prisma/client/runtime/library';
+import { InteractionScore } from '../../../src/domain/interaction/interactionScore';
 
 describe('InteractionRepository', () => {
   let interactionRepository = new InteractionRepository(TestUtil.prisma);
@@ -335,5 +336,67 @@ describe('InteractionRepository', () => {
     // THEN
     expect(result).toHaveLength(1);
     expect(result[0].id).toEqual('1');
+  });
+
+  it('listInteractionScores : liste par categories ', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      categorie: Categorie.alimentation,
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      categorie: Categorie.climat,
+    });
+    await TestUtil.create('interaction', {
+      id: '3',
+      categorie: Categorie.consommation,
+    });
+    await TestUtil.create('interaction', {
+      id: '4',
+      categorie: Categorie.consommation,
+    });
+    await TestUtil.create('interaction', {
+      id: '5',
+      categorie: Categorie.loisir,
+    });
+
+    // WHEN
+    const liste = await interactionRepository.listInteractionScores(
+      'utilisateur-id',
+      [Categorie.alimentation, Categorie.consommation],
+    );
+    // THEN
+    expect(liste).toHaveLength(3);
+  });
+  it('updateInteractionScores : update propelry ', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      categorie: Categorie.alimentation,
+      score: 0.1,
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      categorie: Categorie.climat,
+      score: 0.2,
+    });
+
+    let input = [
+      new InteractionScore('1', new Decimal(0.11)),
+      new InteractionScore('2', new Decimal(0.22)),
+    ];
+
+    // WHEN
+    const liste = await interactionRepository.updateInteractionScores(input);
+
+    // THEN
+    let dbInterations = await TestUtil.prisma.interaction.findMany({
+      orderBy: { id: 'asc' },
+    });
+    expect(dbInterations[0].score).toEqual(new Decimal(0.11));
+    expect(dbInterations[1].score).toEqual(new Decimal(0.22));
   });
 });

@@ -11,9 +11,10 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { InteractionsUsecase } from '../../usecase/interactions.usecase';
-import { ApiTags, ApiQuery, ApiBody, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiQuery } from '@nestjs/swagger';
 import { APIInteractionType } from './types/interaction';
 import { InteractionStatus } from '../../domain/interaction/interactionStatus';
+import { Categorie } from '../../../src/domain/categorie';
 
 @Controller()
 @ApiTags('Interactions')
@@ -26,7 +27,7 @@ export class IntractionsController {
   ): Promise<APIInteractionType[]> {
     let result = await this.interactionsUsecase.listInteractions(id);
     // FIXME : to remove
-    result.map((inter) => {
+    result.forEach((inter) => {
       inter['reco_score'] = 666;
     });
     return result;
@@ -62,5 +63,33 @@ export class IntractionsController {
       date ? new Date(Date.parse(date)) : null,
     );
     res.status(HttpStatus.OK).json({ reset_interaction_number: result }).send();
+  }
+  @ApiQuery({
+    name: 'utilisateurId',
+    type: String,
+    required: true,
+  })
+  @ApiQuery({
+    name: 'boost',
+    type: Number,
+    required: true,
+    description: 'un nombre plus petit que -1 ou plus grand que 1',
+  })
+  @ApiQuery({
+    name: 'categorie',
+    enum: Categorie,
+    required: true,
+  })
+  @Post('interactions/scoring')
+  async boostInteractions(
+    @Query('utilisateurId') utilisateurId: string,
+    @Query('boost') boost: number,
+    @Query('categorie') categorie: Categorie,
+  ) {
+    return this.interactionsUsecase.updateInteractionScoreByCategories(
+      utilisateurId,
+      [categorie],
+      boost,
+    );
   }
 }

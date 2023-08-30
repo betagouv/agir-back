@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { SearchFilter } from '../../../src/domain/interaction/searchFilter';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { Categorie } from '../../../src/domain/categorie';
+import { InteractionScore } from '../../../src/domain/interaction/interactionScore';
 
 @Injectable()
 export class InteractionRepository {
@@ -64,6 +65,42 @@ export class InteractionRepository {
       ],
     });
     return interList.map((interactionDB) => new Interaction(interactionDB));
+  }
+
+  async listInteractionScores(
+    utilisateurId: string,
+    categories: Categorie[],
+  ): Promise<InteractionScore[] | null> {
+    const result = await this.prisma.interaction.findMany({
+      where: {
+        utilisateurId,
+        categorie: {
+          in: categories,
+        },
+      },
+      select: {
+        score: true,
+        id: true,
+      },
+    });
+    return result.map(
+      (inter) => new InteractionScore(inter['id'], inter['score']),
+    );
+  }
+
+  async updateInteractionScores(interactionScores: InteractionScore[]) {
+    return await this.prisma.$transaction(
+      interactionScores.map((inter) => {
+        return this.prisma.interaction.updateMany({
+          where: {
+            id: inter.id,
+          },
+          data: {
+            score: inter.score,
+          },
+        });
+      }),
+    );
   }
 
   async partialUpdateInteraction(
