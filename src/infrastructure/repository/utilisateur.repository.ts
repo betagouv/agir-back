@@ -1,15 +1,16 @@
 import { v4 as uuidv4 } from 'uuid';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Utilisateur as UtilisateurDB, Prisma } from '@prisma/client';
 import { Utilisateur } from '../../../src/domain/utilisateur';
+import { UserQuizzProfile } from '../../domain/quizz/userQuizzProfile';
 
 @Injectable()
 export class UtilisateurRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findUtilisateursByName(name: string): Promise<UtilisateurDB[] | null> {
-    return this.prisma.utilisateur.findMany({
+  async findUtilisateursByName(name: string): Promise<Utilisateur[] | null> {
+    let liste = await this.prisma.utilisateur.findMany({
       where: {
         name,
       },
@@ -22,9 +23,10 @@ export class UtilisateurRepository {
         badges: true,
       },
     });
+    return liste.map((user) => this.buildUtilisateurFromDB(user));
   }
-  async findUtilisateurById(id: string): Promise<UtilisateurDB | null> {
-    return this.prisma.utilisateur.findUnique({
+  async findUtilisateurById(id: string): Promise<Utilisateur | null> {
+    const user = await this.prisma.utilisateur.findUnique({
       where: {
         id,
       },
@@ -32,44 +34,49 @@ export class UtilisateurRepository {
         badges: true,
       },
     });
+    return this.buildUtilisateurFromDB(user);
   }
-  async findUtilisateurByEmail(email: string): Promise<UtilisateurDB | null> {
-    return this.prisma.utilisateur.findUnique({
+  async findUtilisateurByEmail(email: string): Promise<Utilisateur | null> {
+    const user = await this.prisma.utilisateur.findUnique({
       where: {
         email,
       },
     });
+    return this.buildUtilisateurFromDB(user);
   }
 
-  async listUtilisateur(): Promise<UtilisateurDB[] | null> {
-    return this.prisma.utilisateur.findMany({
+  async listUtilisateur(): Promise<Utilisateur[] | null> {
+    const liste = await this.prisma.utilisateur.findMany({
       orderBy: [
         {
           created_at: 'desc',
         },
       ],
     });
+    return liste.map((user) => this.buildUtilisateurFromDB(user));
   }
 
-  async createUtilisateurByName(name: string): Promise<UtilisateurDB | null> {
-    return this.prisma.utilisateur.create({
+  async createUtilisateurByName(name: string): Promise<Utilisateur | null> {
+    const user = await this.prisma.utilisateur.create({
       data: {
         id: uuidv4(),
         name,
       },
     });
+    return this.buildUtilisateurFromDB(user);
   }
   async createUtilisateur(
     utilisateur: Utilisateur,
-  ): Promise<UtilisateurDB | null> {
-    return this.prisma.utilisateur.create({
+  ): Promise<Utilisateur | null> {
+    const user = await this.prisma.utilisateur.create({
       data: {
         id: uuidv4(),
         name: utilisateur.name,
         email: utilisateur.email,
-        quizzLevels: utilisateur.quizzLevels.convertToKeyedObject(),
+        quizzLevels: utilisateur.quizzProfile.getData(),
       },
     });
+    return this.buildUtilisateurFromDB(user);
   }
 
   async addPointsToUtilisateur(utilisateurId: string, points: number) {
@@ -83,5 +90,32 @@ export class UtilisateurRepository {
         },
       },
     });
+  }
+  async updateQuizzProfile(
+    utilisateurId: string,
+    quizzProfile: UserQuizzProfile,
+  ) {
+    await this.prisma.utilisateur.update({
+      where: {
+        id: utilisateurId,
+      },
+      data: {
+        quizzLevels: quizzProfile.getData(),
+      },
+    });
+  }
+
+  private buildUtilisateurFromDB(user: UtilisateurDB): Utilisateur {
+    return user
+      ? new Utilisateur(
+          user.id,
+          user.name,
+          user.email,
+          user.points,
+          new UserQuizzProfile(user.quizzLevels as any),
+          user.created_at,
+          user['badges'],
+        )
+      : null;
   }
 }

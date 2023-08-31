@@ -7,6 +7,7 @@ import { SearchFilter } from '../../../src/domain/interaction/searchFilter';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { Categorie } from '../../../src/domain/categorie';
 import { InteractionScore } from '../../../src/domain/interaction/interactionScore';
+import { DifficultyLevel } from 'src/domain/difficultyLevel';
 
 @Injectable()
 export class InteractionRepository {
@@ -30,6 +31,28 @@ export class InteractionRepository {
         utilisateurId,
       },
     });
+  }
+
+  async listLastDoneQuizzByCategorieAndDifficulty(
+    utilisateurId: string,
+    categorie: Categorie,
+    difficulty: DifficultyLevel,
+  ): Promise<Interaction[] | null> {
+    const liste = await this.prisma.interaction.findMany({
+      where: {
+        utilisateurId,
+        categorie,
+        done: true,
+        difficulty,
+        type: InteractionType.quizz,
+      },
+      orderBy: [
+        {
+          done_at: 'desc',
+        },
+      ],
+    });
+    return liste.map((interactionDB) => new Interaction(interactionDB));
   }
 
   async listMaxEligibleInteractionsByUtilisateurIdAndType(

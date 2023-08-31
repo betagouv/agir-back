@@ -3,7 +3,7 @@ import { InteractionRepository } from '../../../src/infrastructure/repository/in
 import { Interaction } from '../../../src/domain/interaction/interaction';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { Categorie } from '../../../src/domain/categorie';
-import { QuizzProfile } from '../../../src/domain/quizz/quizzProfile';
+import { UserQuizzProfile } from '../../../src/domain/quizz/userQuizzProfile';
 import { Decimal } from '@prisma/client/runtime/library';
 import { InteractionScore } from '../../../src/domain/interaction/interactionScore';
 
@@ -298,7 +298,9 @@ describe('InteractionRepository', () => {
       await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
         {
           utilisateurId: 'utilisateur-id',
-          quizzProfile: new QuizzProfile({ alimentation: 2 }),
+          quizzProfile: new UserQuizzProfile({
+            alimentation: { level: 2, isCompleted: false },
+          }),
           type: InteractionType.quizz,
         },
       );
@@ -307,37 +309,6 @@ describe('InteractionRepository', () => {
     expect(result).toHaveLength(1);
     expect(result[0].id).toEqual('2');
   });
-  it('listMaxInteractionsByUtilisateurIdAndType : rejects unknown categorie quizz', async () => {
-    //GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('interaction', {
-      id: '1',
-      difficulty: 1,
-      categorie: Categorie.alimentation,
-      type: InteractionType.quizz,
-    });
-    await TestUtil.create('interaction', {
-      id: '2',
-      difficulty: 1,
-      categorie: Categorie.climat,
-      type: InteractionType.quizz,
-    });
-
-    //WHEN
-    const result =
-      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        {
-          utilisateurId: 'utilisateur-id',
-          quizzProfile: new QuizzProfile({ alimentation: 1 }),
-          type: InteractionType.quizz,
-        },
-      );
-
-    // THEN
-    expect(result).toHaveLength(1);
-    expect(result[0].id).toEqual('1');
-  });
-
   it('listInteractionScores : liste par categories ', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');

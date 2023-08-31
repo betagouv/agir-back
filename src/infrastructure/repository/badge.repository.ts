@@ -1,14 +1,14 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Badge, Prisma } from '@prisma/client';
+import { Badge as BadgeDB, Prisma } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
-import { BadgeTypeEnum } from '../../domain/badgeType';
+import { Badge } from '../../domain/badge';
 
 @Injectable()
 export class BadgeRepository {
   constructor(private prisma: PrismaService) {}
 
-  async createUniqueBadge(utilisateurId: string, badge: BadgeTypeEnum) {
+  async createUniqueBadge(utilisateurId: string, badge: Badge) {
     try {
       await this.prisma.badge.create({
         data: {

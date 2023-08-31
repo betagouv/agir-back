@@ -1,8 +1,7 @@
 import { Quizz as QuizzDB } from '.prisma/client';
 import { Injectable } from '@nestjs/common';
 import { QuizzQuestion } from '@prisma/client';
-import { QuizzResultat } from '../../src/domain/quizz/quizzResultat';
-import { BadgeTypeEnum } from '../domain/badgeType';
+import { BadgeTypes } from '../domain/badgeTypes';
 import { BodyReponsesQuizz } from '../infrastructure/api/types/reponsesQuizz';
 import { BadgeRepository } from '../infrastructure/repository/badge.repository';
 import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
@@ -32,7 +31,7 @@ export class QuizzUsecase {
     if (success) {
       await this.badgeRepository.createUniqueBadge(
         bodyReponsesQuizz.utilisateur,
-        BadgeTypeEnum.premier_quizz,
+        BadgeTypes.premier_quizz,
       );
     }
     return success;

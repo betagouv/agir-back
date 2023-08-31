@@ -4,6 +4,7 @@ import { InteractionType } from '../src/domain/interaction/interactionType';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { Categorie } from '../src/domain/categorie';
+import { UserQuizzProfile } from '../src/domain/quizz/userQuizzProfile';
 const request = require('supertest');
 
 export class TestUtil {
@@ -120,10 +121,7 @@ export class TestUtil {
     return {
       id: 'utilisateur-id',
       name: 'name',
-      quizzLevels: {
-        alimentation: 1,
-        transport: 2,
-      },
+      quizzLevels: UserQuizzProfile.newLowProfile().getData(),
       ...override,
     };
   }

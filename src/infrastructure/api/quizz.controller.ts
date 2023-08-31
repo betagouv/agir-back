@@ -12,7 +12,6 @@ import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { BodyReponsesQuizz } from './types/reponsesQuizz';
 import { Quizz } from '.prisma/client';
-import { QuizzResultat } from '../../../src/domain/quizz/quizzResultat';
 
 @Controller()
 @ApiTags('Quizz')

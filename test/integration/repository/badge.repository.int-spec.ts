@@ -1,6 +1,6 @@
 import { TestUtil } from '../../TestUtil';
 import { BadgeRepository } from '../../../src/infrastructure/repository/badge.repository';
-import { BadgeTypeEnum } from '../../../src/domain/badgeType';
+import { BadgeTypes } from '../../../src/domain/badgeTypes';
 
 describe('BadgeRepository', () => {
   let badgeRepository = new BadgeRepository(TestUtil.prisma);
@@ -23,7 +23,7 @@ describe('BadgeRepository', () => {
     // WHEN
     await badgeRepository.createUniqueBadge(
       'utilisateur-id',
-      BadgeTypeEnum.premier_quizz,
+      BadgeTypes.premier_quizz,
     );
     // THEN
     const badges = await TestUtil.prisma.badge.findMany({});
@@ -35,11 +35,11 @@ describe('BadgeRepository', () => {
     // WHEN
     await badgeRepository.createUniqueBadge(
       'utilisateur-id',
-      BadgeTypeEnum.premier_quizz,
+      BadgeTypes.premier_quizz,
     );
     await badgeRepository.createUniqueBadge(
       'utilisateur-id',
-      BadgeTypeEnum.premier_quizz,
+      BadgeTypes.premier_quizz,
     );
     // THEN
     const badges = await TestUtil.prisma.badge.findMany({});

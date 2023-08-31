@@ -1,51 +1,51 @@
-import { Utilisateur } from '.prisma/client';
+import { Utilisateur } from '../../src/domain/utilisateur';
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur.repository';
 import { InteractionDefinitionRepository } from '../infrastructure/repository/interactionDefinition.repository';
 import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
 import { v4 as uuidv4 } from 'uuid';
 import { Interaction } from '../../src/domain/interaction/interaction';
-import { QuizzProfile } from '../../src/domain/quizz/quizzProfile';
+import { UserQuizzProfile } from '../domain/quizz/userQuizzProfile';
 
 @Injectable()
 export class UtilisateurUsecase {
   constructor(
-    private utilisaturRespository: UtilisateurRepository,
+    private utilisateurRespository: UtilisateurRepository,
     private interactionDefinitionRepository: InteractionDefinitionRepository,
     private interactionRepository: InteractionRepository,
   ) {}
 
   async findUtilisateursByName(name: string): Promise<Utilisateur[]> {
-    return this.utilisaturRespository.findUtilisateursByName(name);
+    return this.utilisateurRespository.findUtilisateursByName(name);
   }
 
   async findUtilisateurByEmail(email: string): Promise<Utilisateur> {
-    return this.utilisaturRespository.findUtilisateurByEmail(email);
+    return this.utilisateurRespository.findUtilisateurByEmail(email);
   }
 
   async createUtilisateurByName(name: string): Promise<Utilisateur> {
-    return this.utilisaturRespository.createUtilisateurByName(name);
+    return this.utilisateurRespository.createUtilisateurByName(name);
   }
 
   async createUtilisateurByOptionalNameAndEmail(
     name: string,
     email: string,
   ): Promise<Utilisateur> {
-    const newUtilisateur = await this.utilisaturRespository.createUtilisateur({
+    const newUtilisateur = await this.utilisateurRespository.createUtilisateur({
       name: name || 'John Doe '.concat(uuidv4()),
       email: email,
-      quizzLevels: QuizzProfile.newLowProfile(),
+      quizzProfile: UserQuizzProfile.newLowProfile(),
     });
     await this.initUtilisateurInteractionSet(newUtilisateur.id);
     return newUtilisateur;
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
-    return this.utilisaturRespository.findUtilisateurById(id);
+    return this.utilisateurRespository.findUtilisateurById(id);
   }
 
   async listUtilisateurs(): Promise<Utilisateur[]> {
-    return this.utilisaturRespository.listUtilisateur();
+    return this.utilisateurRespository.listUtilisateur();
   }
 
   async initUtilisateurInteractionSet(utilisateurId: string) {

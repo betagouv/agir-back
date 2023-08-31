@@ -67,25 +67,36 @@ export class TestDataController {
 
   @ApiParam({ name: 'id', enum: utilisateurs_liste })
   @Post('testdata/:id/inject')
-  async injectData(@Param('id') id: string): Promise<string> {
+  async injectData(@Param('id') inputId: string): Promise<string> {
     await this.loadAllQuizz();
     await this.loadAllArticlesContents();
     await this.loadAllArticlesDefinitions();
-    if (!utilisateurs_content[id]) return '{}';
-    await this.deleteUtilisateur(id);
-    await this.upsertUtilisateur(id);
-    await this.insertArticlesForUtilisateur(id);
-    await this.insertInnerArticlesForUtilisateur(id);
-    await this.insertAidesForUtilisateur(id);
-    await this.insertSuivisForUtilisateur(id);
     await this.upsertAllQuizzDefinitions();
     await this.upsertAllArticleContents();
-    await this.insertQuizzForUtilisateur(id);
-    await this.insertSuivisAlimentationForUtilisateur(id);
-    await this.insertEmpreintesForUtilisateur(id);
-    await this.insertBadgesForUtilisateur(id);
-    await this.insertQuestionsNGCForUtilisateur(id);
-    return utilisateurs_content[id];
+    if (inputId === 'ALL_USERS') {
+      for (const utilisateurId in utilisateurs_liste) {
+        await this.injectUserId(utilisateurId);
+      }
+      return 'OK';
+    } else {
+      return await this.injectUserId(inputId);
+    }
+  }
+
+  async injectUserId(utilisateurId: string): Promise<string> {
+    if (!utilisateurs_content[utilisateurId]) return '{}';
+    await this.deleteUtilisateur(utilisateurId);
+    await this.upsertUtilisateur(utilisateurId);
+    await this.insertArticlesForUtilisateur(utilisateurId);
+    await this.insertInnerArticlesForUtilisateur(utilisateurId);
+    await this.insertAidesForUtilisateur(utilisateurId);
+    await this.insertSuivisForUtilisateur(utilisateurId);
+    await this.insertQuizzForUtilisateur(utilisateurId);
+    await this.insertSuivisAlimentationForUtilisateur(utilisateurId);
+    await this.insertEmpreintesForUtilisateur(utilisateurId);
+    await this.insertBadgesForUtilisateur(utilisateurId);
+    await this.insertQuestionsNGCForUtilisateur(utilisateurId);
+    return utilisateurs_content[utilisateurId];
   }
 
   async insertSuivisAlimentationForUtilisateur(utilisateurId: string) {

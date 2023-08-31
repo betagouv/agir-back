@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Interaction as DBInteraction, Utilisateur } from '@prisma/client';
 import { Interaction } from '../domain/interaction/interaction';
 import { DistributionSettings } from '../domain/interaction/distributionSettings';
 import { InteractionStatus } from '../domain/interaction/interactionStatus';
@@ -7,10 +6,11 @@ import { InteractionRepository } from '../infrastructure/repository/interaction.
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur.repository';
 import { BadgeRepository } from '../infrastructure/repository/badge.repository';
 import { InteractionType } from '../domain/interaction/interactionType';
-import { BadgeTypeEnum } from '../domain/badgeType';
-import { QuizzProfile } from '../../src/domain/quizz/quizzProfile';
+import { BadgeTypes } from '../domain/badgeTypes';
+import { UserQuizzProfile } from '../domain/quizz/userQuizzProfile';
 import { Categorie } from '../../src/domain/categorie';
 import { Decimal } from '@prisma/client/runtime/library';
+import { QuizzLevelSettings } from '../../src/domain/quizz/quizzLevelSettings';
 
 @Injectable()
 export class InteractionsUsecase {
@@ -53,7 +53,10 @@ export class InteractionsUsecase {
     // Integration des interactions par types successifs
     const liste_articles = await this.getArticlesForUtilisateur(utilisateurId);
     const liste_suivis = await this.getSuivisForUtilisateur(utilisateurId);
-    const liste_quizz = await this.getQuizzForUtilisateur(utilisateur);
+    const liste_quizz = await this.getQuizzForUtilisateur(
+      utilisateurId,
+      utilisateur.quizzProfile,
+    );
     const liste_aides = await this.getAidesForUtilisateur(utilisateurId);
 
     DistributionSettings.addInteractionsToList(liste_articles, result);
@@ -104,6 +107,10 @@ export class InteractionsUsecase {
     const stored_interaction =
       await this.interactionRepository.getInteractionById(interactionId);
 
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+      utilisateurId,
+    );
+
     if (status.done && !stored_interaction.done) {
       await this.utilisateurRepository.addPointsToUtilisateur(
         utilisateurId,
@@ -112,18 +119,37 @@ export class InteractionsUsecase {
       stored_interaction.setNextScheduledReset();
     }
 
-    if (status.quizz_score > 50) {
-      await this.badgeRepository.createUniqueBadge(
-        utilisateurId,
-        BadgeTypeEnum.premier_quizz,
-      );
-    }
-
     stored_interaction.updateStatus(status);
 
-    return this.interactionRepository.partialUpdateInteraction(
+    await this.interactionRepository.partialUpdateInteraction(
       stored_interaction,
     );
+
+    if (status.quizz_score) {
+      await this.badgeRepository.createUniqueBadge(
+        utilisateurId,
+        BadgeTypes.premier_quizz,
+      );
+
+      const lastQuizzOfCategorie =
+        await this.interactionRepository.listLastDoneQuizzByCategorieAndDifficulty(
+          utilisateurId,
+          stored_interaction.categorie,
+          stored_interaction.difficulty,
+        );
+      let isLevelCompleted = QuizzLevelSettings.isLevelCompleted(
+        stored_interaction.difficulty,
+        lastQuizzOfCategorie,
+      );
+      utilisateur.quizzProfile.setLevelCompletion(
+        stored_interaction.categorie,
+        isLevelCompleted,
+      );
+      await this.utilisateurRepository.updateQuizzProfile(
+        utilisateurId,
+        utilisateur.quizzProfile,
+      );
+    }
   }
 
   async reset(date?: Date): Promise<number> {
@@ -160,17 +186,18 @@ export class InteractionsUsecase {
   }
 
   async getQuizzForUtilisateur(
-    utilisateur: Utilisateur,
+    utilisateurId: string,
+    quizzProfile: UserQuizzProfile,
   ): Promise<Interaction[]> {
     return this.interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
       {
-        utilisateurId: utilisateur.id,
+        utilisateurId,
         maxNumber: DistributionSettings.getPreferedOfType(
           InteractionType.quizz,
         ),
         type: InteractionType.quizz,
         pinned: false,
-        quizzProfile: new QuizzProfile(utilisateur.quizzLevels),
+        quizzProfile: quizzProfile,
       },
     );
   }

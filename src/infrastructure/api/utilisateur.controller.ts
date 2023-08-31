@@ -1,4 +1,4 @@
-import { Utilisateur } from '.prisma/client';
+import { Utilisateur } from '../../domain/utilisateur';
 import {
   Body,
   Controller,
@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { UtilisateurUsecase } from '../../usecase/utilisateur.usecase';
 import { ApiTags, ApiQuery, ApiBody, ApiOkResponse } from '@nestjs/swagger';
+import { UtilisateurAPI } from './types/utilisateurAPI';
 
 @Controller()
 @ApiTags('Utilisateur')
@@ -33,14 +34,20 @@ export class UtilisateurController {
   }
 
   @Get('utilisateurs/:id')
-  async getUtilisateurByIdOrName(
-    @Param('id') id: string,
-  ): Promise<Utilisateur> {
+  async getUtilisateurById(@Param('id') id: string): Promise<UtilisateurAPI> {
     let utilisateur = await this.utilisateurUsecase.findUtilisateurById(id);
     if (utilisateur == null) {
       throw new NotFoundException(`Pas d'utilisateur d'id ${id}`);
     }
-    return utilisateur;
+    return {
+      id: utilisateur.id,
+      name: utilisateur.name,
+      email: utilisateur.email,
+      points: utilisateur.points,
+      quizzProfile: utilisateur.quizzProfile.getData(),
+      created_at: utilisateur.created_at,
+      badges: utilisateur.badges,
+    };
   }
   @Post('utilisateurs')
   @ApiBody({

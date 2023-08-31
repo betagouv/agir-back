@@ -1,3 +1,13 @@
+const minQuizzLevel = {
+  alimentation: { level: 1, isCompleted: false },
+  transport: { level: 1, isCompleted: false },
+  logement: { level: 1, isCompleted: false },
+  consommation: { level: 1, isCompleted: false },
+  climat: { level: 1, isCompleted: false },
+  dechet: { level: 1, isCompleted: false },
+  loisir: { level: 1, isCompleted: false },
+};
+
 const utilisateurs = {
   michel0: {
     name: 'Michel0',
@@ -21,15 +31,7 @@ const utilisateurs = {
       },
     ],
     suivis: [], //'sa1', 'sa2', 'st1',
-    quizzLevels: {
-      alimentation: 1,
-      transport: 1,
-      logement: 1,
-      consommation: 1,
-      climat: 1,
-      dechet: 1,
-      loisir: 1,
-    },
+    quizzLevels: minQuizzLevel,
   },
   michel6: {
     name: 'Michel6',
@@ -56,15 +58,7 @@ const utilisateurs = {
     ],
     bilans: ['bilan1'],
     badges: ['badge1', 'badge2'],
-    quizzLevels: {
-      alimentation: 1,
-      transport: 1,
-      logement: 1,
-      consommation: 1,
-      climat: 1,
-      dechet: 1,
-      loisir: 1,
-    },
+    quizzLevels: minQuizzLevel,
   },
   benoit: {
     name: 'Benoit',
@@ -76,15 +70,7 @@ const utilisateurs = {
       { id: 'quizz_objectif_GES', score: 0.6 },
     ],
     suivis: [], //'sa1', 'sa2', 'st1'
-    quizzLevels: {
-      alimentation: 1,
-      transport: 1,
-      logement: 1,
-      consommation: 1,
-      climat: 1,
-      dechet: 1,
-      loisir: 1,
-    },
+    quizzLevels: minQuizzLevel,
   },
   dorian: {
     name: 'Dorian_test',
@@ -98,15 +84,7 @@ const utilisateurs = {
       { id: 'quizz_bois_meubles', score: 0.7 },
     ],
     suivis: [], //'sa1', 'sa2', 'st1'
-    quizzLevels: {
-      alimentation: 1,
-      transport: 1,
-      logement: 1,
-      consommation: 1,
-      climat: 1,
-      dechet: 1,
-      loisir: 1,
-    },
+    quizzLevels: minQuizzLevel,
   },
   livio: {
     name: 'Livio_test',
@@ -119,15 +97,7 @@ const utilisateurs = {
       { id: 'quizz_poisson', score: 0.2 },
     ],
     suivis: ['sa1', 'st1', 'st2'],
-    quizzLevels: {
-      alimentation: 1,
-      transport: 1,
-      logement: 1,
-      consommation: 1,
-      climat: 1,
-      dechet: 1,
-      loisir: 1,
-    },
+    quizzLevels: minQuizzLevel,
   },
   wojtek: {
     name: 'Wojtek',
@@ -144,15 +114,8 @@ const utilisateurs = {
     questionsNGC: {
       'transport . voiture . km': 30000,
     },
-    quizzLevels: {
-      alimentation: 1,
-      transport: 1,
-      logement: 1,
-      consommation: 1,
-      climat: 1,
-      dechet: 1,
-      loisir: 1,
-    },
+    quizzLevels: minQuizzLevel,
   },
 };
+
 module.exports = utilisateurs;

@@ -1,3 +1,4 @@
+import { DifficultyLevel } from '../difficultyLevel';
 import { InteractionType } from './interactionType';
 
 export type InteractionDefinition = {
@@ -12,7 +13,7 @@ export type InteractionDefinition = {
   frequence?: string;
   image_url: string;
   url?: string;
-  difficulty: number;
+  difficulty: DifficultyLevel;
   points: number;
   score: number;
   locked: boolean;

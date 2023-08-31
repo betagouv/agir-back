@@ -57,9 +57,14 @@ describe('/utilisateurs (API test)', () => {
     expect(response.body.id).toEqual('utilisateur-id');
     expect(response.body.name).toEqual('name');
     expect(response.body.points).toEqual(0);
-    expect(response.body.quizzLevels).toEqual({
-      alimentation: 1,
-      transport: 2,
+    expect(response.body.quizzProfile).toEqual({
+      alimentation: { level: 1, isCompleted: false },
+      transport: { level: 1, isCompleted: false },
+      logement: { level: 1, isCompleted: false },
+      consommation: { level: 1, isCompleted: false },
+      climat: { level: 1, isCompleted: false },
+      dechet: { level: 1, isCompleted: false },
+      loisir: { level: 1, isCompleted: false },
     });
     expect(response.body.created_at).toEqual(dbUser.created_at.toISOString());
   });

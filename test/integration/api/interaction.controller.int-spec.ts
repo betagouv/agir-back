@@ -3,7 +3,7 @@ import { InteractionPlacement } from '../../../src/domain/interaction/interactio
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { DistributionSettings } from '../../../src/domain/interaction/distributionSettings';
 import { TestUtil } from '../../TestUtil';
-import { BadgeTypeEnum } from '../../../src/domain/badgeType';
+import { BadgeTypes } from '../../../src/domain/badgeTypes';
 import { Categorie } from '../../../src/domain/categorie';
 import { Decimal } from '@prisma/client/runtime/library';
 
@@ -223,7 +223,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     expect(dbInteraction.seen).toStrictEqual(0);
     expect(dbUtilisateur.points).toStrictEqual(5);
   });
-  it('PATCH /utilisateurs/id/interactions/id - win badge when first quizz score > 50', async () => {
+  it('PATCH /utilisateurs/id/interactions/id - win badge when first quizz score present', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', { type: InteractionType.quizz });
@@ -243,7 +243,95 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     });
     expect(dbUtilisateur['badges']).toHaveLength(1);
     expect(dbUtilisateur['badges'][0].type).toEqual(
-      BadgeTypeEnum.premier_quizz.type,
+      BadgeTypes.premier_quizz.type,
+    );
+  });
+  it('PATCH /utilisateurs/id/interactions/id - set quizz level completion when reached', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      type: InteractionType.quizz,
+      difficulty: 1,
+      quizz_score: 85,
+      done: true,
+      done_at: new Date(1),
+      categorie: Categorie.climat,
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      type: InteractionType.quizz,
+      difficulty: 1,
+      quizz_score: 90,
+      done: true,
+      done_at: new Date(100),
+      categorie: Categorie.climat,
+    });
+    await TestUtil.create('interaction', {
+      id: '3',
+      type: InteractionType.quizz,
+      difficulty: 1,
+      quizz_score: 75,
+      done: false,
+      done_at: null,
+      categorie: Categorie.climat,
+    });
+    // WHEN
+    const response = await TestUtil.getServer()
+      .patch('/utilisateurs/utilisateur-id/interactions/3')
+      .send({
+        quizz_score: 79,
+      });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(dbUtilisateur.quizzLevels['climat'].isCompleted).toStrictEqual(true);
+  });
+  it('PATCH /utilisateurs/id/interactions/id - set quizz level completion to false when not reached', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      type: InteractionType.quizz,
+      difficulty: 1,
+      quizz_score: 85,
+      done: true,
+      done_at: new Date(1),
+      categorie: Categorie.climat,
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      type: InteractionType.quizz,
+      difficulty: 1,
+      quizz_score: 90,
+      done: true,
+      done_at: new Date(100),
+      categorie: Categorie.climat,
+    });
+    await TestUtil.create('interaction', {
+      id: '3',
+      type: InteractionType.quizz,
+      difficulty: 1,
+      quizz_score: 75,
+      done: false,
+      done_at: null,
+      categorie: Categorie.climat,
+    });
+    // WHEN
+    const response = await TestUtil.getServer()
+      .patch('/utilisateurs/utilisateur-id/interactions/3')
+      .send({
+        quizz_score: 45,
+      });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(dbUtilisateur.quizzLevels['climat'].isCompleted).toStrictEqual(
+      false,
     );
   });
   it('PATCH /utilisateurs/id/interactions/id - does not add points when already done', async () => {
@@ -328,7 +416,10 @@ describe('/utilisateurs/id/interactions (API test)', () => {
   it('GET /utilisateurs/id/interactions - list quizz with target utilisateur difficultys', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
-      quizzLevels: { alimentation: 2, climat: 1 },
+      quizzLevels: {
+        alimentation: { level: 2, isCompleted: false },
+        climat: { level: 1, isCompleted: false },
+      },
     });
     await TestUtil.create('interaction', {
       id: '1',

@@ -1,4 +1,6 @@
 import { Decimal } from '@prisma/client/runtime/library';
+import { Categorie } from '../categorie';
+import { DifficultyLevel } from '../difficultyLevel';
 import { InteractionStatus } from './interactionStatus';
 import { InteractionType } from './interactionType';
 
@@ -12,7 +14,7 @@ export class Interaction {
   type: InteractionType;
   titre: string;
   soustitre: string;
-  categorie: string;
+  categorie: Categorie;
   tags: [];
   duree: string;
   frequence: string;
@@ -24,7 +26,7 @@ export class Interaction {
   clicked_at: Date;
   done: boolean;
   done_at: Date;
-  difficulty: number;
+  difficulty: DifficultyLevel;
   points: number;
   quizz_score: number;
   score: Decimal;
@@ -63,6 +65,9 @@ export class Interaction {
       this.clicked = true;
       this.clicked_at = new Date();
     }
-    this.quizz_score = status.quizz_score;
+    if (status.quizz_score) {
+      this.done = true;
+      this.quizz_score = status.quizz_score;
+    }
   }
 }
