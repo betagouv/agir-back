@@ -3,25 +3,7 @@ import Publicodes from 'publicodes';
 import rulesRetrofit from '../data/aidesRetrofit.json';
 import localisations from '../data/communes.json';
 
-export type AideBase = {
-  libelle: string;
-  montant: string | null;
-  plafond: string | null;
-  lien: string;
-  logo?: string;
-};
-
-type Localisation = {
-  nom: string;
-  slug: string;
-  epci: string;
-  zfe: string;
-  code: string;
-  codesPostaux: string[];
-  departement: string;
-  region: string;
-  pays: string;
-};
+import { AideBase, Localisation } from 'src/domain/aides/aide';
 
 @Injectable()
 export class AidesRetrofitRepository {

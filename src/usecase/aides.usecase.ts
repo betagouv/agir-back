@@ -1,14 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  AidesVeloRepository,
-  AidesVeloParType,
-} from '../infrastructure/repository/aidesVelo.repository';
+import { AidesVeloRepository } from '../infrastructure/repository/aidesVelo.repository';
 
-import {
-  AidesRetrofitRepository,
-  AideBase,
-} from '../infrastructure/repository/aidesRetrofit.repository';
+import { AidesRetrofitRepository } from '../infrastructure/repository/aidesRetrofit.repository';
+
+import { AidesVeloParType, AideBase } from 'src/domain/aides/aide';
 
 @Injectable()
 export class AidesUsecase {

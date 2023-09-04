@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { AidesUsecase } from '../../usecase/aides.usecase';
 import { ApiTags } from '@nestjs/swagger';
-import { AidesVeloParType, AideBase } from '../repository/aidesVelo.repository';
+import { AidesVeloParType, AideBase } from 'src/domain/aides/aide';
 
 @Controller()
 @ApiTags('Aides')

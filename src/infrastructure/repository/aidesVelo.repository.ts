@@ -5,59 +5,14 @@ import rulesVelo from '../data/aidesVelo.json';
 import localisations from '../data/communes.json';
 import miniatures from '../data/miniatures.json';
 import aidesAndCollectivities from '../data/aides-collectivities.json';
-
-export type AideBase = {
-  libelle: string;
-  montant: string | null;
-  plafond: string | null;
-  lien: string;
-  collectivite?: Collectivite;
-  description?: string;
-  logo?: string;
-};
-interface Collectivite {
-  kind: string;
-  value: string;
-  code?: string;
-}
-type AidesVelo = AideBase[];
-
-export type AidesVeloParType = {
-  [category in TypeVelos]: number;
-};
-
-type Localisation = {
-  nom: string;
-  slug: string;
-  epci: string;
-  zfe: string;
-  code: string;
-  codesPostaux: string[];
-  departement: string;
-  region: string;
-  pays: string;
-};
-
-type InputParameters = Partial<{
-  'localisation . pays': string;
-  'localisation . code insee': string;
-  'localisation . epci': string;
-  'localisation . département': string;
-  'localisation . région': string;
-  'localisation . ZFE': boolean;
-  'vélo . type': TypeVelos;
-  'vélo . prix': string;
-  'revenu fiscal de référence': number;
-  'maximiser les aides'?: 'oui' | 'non';
-}>;
-
-type TypeVelos =
-  | 'mécanique simple'
-  | 'électrique'
-  | 'cargo'
-  | 'cargo électrique'
-  | 'pliant'
-  | 'motorisation';
+import {
+  AidesVeloParType,
+  InputParameters,
+  TypeVelos,
+  AidesVelo,
+  Localisation,
+  Collectivite,
+} from 'src/domain/aides/aide';
 
 @Injectable()
 export class AidesVeloRepository {
@@ -218,42 +173,3 @@ export function formatDescription({
     )
     .replace(/\$ville/, ville?.nom);
 }
-
-/*function getAidesVeloTousTypes(
-  situationBase: InputParameters,
-  engine: any,
-): AidesVeloParType {
-  const veloTypes: Record<TypeVelos, any> = {
-    'mécanique simple': {},
-    électrique: {},
-    cargo: {},
-    'cargo électrique': {},
-    pliant: {},
-    motorisation: {},
-  };
-
-  for (const key of Object.keys(veloTypes)) {
-    engine.setSituation(
-      formatInput({
-        ...situationBase,
-        'vélo . type': key as keyof typeof veloTypes,
-      }),
-    );
-    veloTypes[key] = engine.evaluate({
-      valeur: 'aides . montant',
-      unité: '€',
-    }).nodeValue;
-  }
-
-  const prime = engine
-    .setSituation(
-      formatInput({
-        ...situationBase,
-        'vélo . prix': '10000 €',
-      }),
-    )
-    .evaluate('aides . prime à la conversion').nodeValue;
-  console.log(situationBase);
-
-  return { ...veloTypes, prime };
-}*/
