@@ -12,7 +12,7 @@ export type AideBase = {
   plafond: string | null;
   lien: string;
   collectivite?: Collectivite;
-  descritpion?: string;
+  description?: string;
   logo?: string;
 };
 interface Collectivite {
