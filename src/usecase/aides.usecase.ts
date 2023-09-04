@@ -1,30 +1,36 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  AidesRepository,
+  AidesVeloRepository,
   AidesVeloParType,
-  AidesRetroFit,
-} from '../infrastructure/repository/aides.repository';
+} from '../infrastructure/repository/aidesVelo.repository';
+
+import {
+  AidesRetrofitRepository,
+  AideBase,
+} from '../infrastructure/repository/aidesRetrofit.repository';
 
 @Injectable()
 export class AidesUsecase {
-  constructor(private aidesRepository: AidesRepository) {}
-
+  constructor(
+    private aidesVeloRepository: AidesVeloRepository,
+    private aidesRetrofitRepository: AidesRetrofitRepository,
+  ) {}
   async getRetrofit(
     codePostal: string,
     revenuFiscalDeReference: string,
-  ): Promise<AidesRetroFit> {
-    return this.aidesRepository.getAidesRetrofit(
+  ): Promise<AideBase[]> {
+    return this.aidesRetrofitRepository.get(
       codePostal,
       revenuFiscalDeReference,
     );
   }
 
-  async getVelo(
+  async getSummaryVelos(
     codePostal: string,
     revenuFiscalDeReference: string,
   ): Promise<AidesVeloParType> {
-    return this.aidesRepository.getAidesVelo(
+    return this.aidesVeloRepository.getSummaryVelos(
       codePostal,
       revenuFiscalDeReference,
     );

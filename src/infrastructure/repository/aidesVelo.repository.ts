@@ -1,29 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import Publicodes from 'publicodes';
 import { formatValue } from 'publicodes';
-import rulesRetrofit from '../data/aidesRetrofit.json';
 import rulesVelo from '../data/aidesVelo.json';
 import localisations from '../data/communes.json';
+import miniatures from '../data/miniatures.json';
 import aidesAndCollectivities from '../data/aides-collectivities.json';
 
-type AideBase = {
+export type AideBase = {
   libelle: string;
   montant: string | null;
   plafond: string | null;
   lien: string;
   collectivite?: Collectivite;
   descritpion?: string;
+  logo?: string;
 };
 interface Collectivite {
   kind: string;
   value: string;
   code?: string;
 }
-export type AidesRetroFit = Omit<AideBase, 'descritpion' | 'collectivite'>[];
 type AidesVelo = AideBase[];
 
 export type AidesVeloParType = {
-  [category in TypeVelos]: AidesVelo;
+  [category in TypeVelos]: number;
 };
 
 type Localisation = {
@@ -46,8 +46,9 @@ type InputParameters = Partial<{
   'localisation . région': string;
   'localisation . ZFE': boolean;
   'vélo . type': TypeVelos;
-  'vélo . prix': number;
+  'vélo . prix': string;
   'revenu fiscal de référence': number;
+  'maximiser les aides'?: 'oui' | 'non';
 }>;
 
 type TypeVelos =
@@ -59,83 +60,36 @@ type TypeVelos =
   | 'motorisation';
 
 @Injectable()
-export class AidesRepository {
-  async getAidesVelo(
+export class AidesVeloRepository {
+  async getSummaryVelos(
     codePostal: string,
     revenuFiscalDeReference: string,
   ): Promise<AidesVeloParType> {
-    return aidesVelo(codePostal, revenuFiscalDeReference);
-  }
-
-  async getAidesRetrofit(
-    codePostal: string,
-    revenuFiscalDeReference: string,
-  ): Promise<AidesRetroFit> {
-    return aidesRetrofit(codePostal, revenuFiscalDeReference);
+    return summaryVelo(codePostal, revenuFiscalDeReference);
   }
 }
 
-async function aidesRetrofit(
+function summaryVelo(
   codePostal: string,
   revenuFiscalDeReference: string,
-): Promise<AidesRetroFit> {
-  const rules = rulesRetrofit as Record<string, any>;
-
+): AidesVeloParType {
   const lieu = getLocalisationByCP(codePostal);
 
-  const aides = Object.keys(rules).filter((aideName) =>
-    aideName.startsWith('aides . '),
-  );
-
-  const engine = new Publicodes(rules);
-
-  const situation = {
-    'localisation . epci': `'${lieu.epci}'`,
-    'localisation . région': `'${lieu.region}'`,
-    'localisation . code insee': `'${lieu.code}'`,
-    'revenu fiscal de référence': `'${revenuFiscalDeReference}€/an'`,
-  };
-  engine.setSituation(situation);
-
-  const activeAides = aides.filter(
-    (a) => engine.evaluate(a).nodeValue !== null,
-  );
-
-  const result = activeAides.map((aide) => {
-    const aideBrut: {
-      nom: string;
-      titre: string;
-      plafond: string;
-      lien: string;
-    } = engine.getRule(aide).rawNode as any;
-
-    return {
-      libelle: aideBrut.titre,
-      montant: engine.evaluate(aideBrut.nom).nodeValue.toString() || '',
-      plafond: aideBrut?.plafond || '',
-      lien: aideBrut?.lien || '',
-    };
-  });
-
-  return result;
-}
-
-async function aidesVelo(
-  codePostal: string,
-  revenuFiscalDeReference: string,
-): Promise<AidesVeloParType> {
   const rules = rulesVelo as Record<string, any>;
-
-  const lieu = getLocalisationByCP(codePostal);
-
   const engine = new Publicodes(rules);
-
   const situationBase: InputParameters = {
     'localisation . epci': `${lieu.epci}`,
     'localisation . région': `${lieu.region}`,
     'localisation . code insee': `${lieu.code}`,
     'revenu fiscal de référence': parseInt(revenuFiscalDeReference),
   };
+  return getAidesVeloTousTypes(situationBase, engine);
+}
+
+function getAidesVeloTousTypes(
+  situationBase: InputParameters,
+  engine: any,
+): AidesVeloParType {
   const veloTypes: Record<TypeVelos, any> = {
     'mécanique simple': {},
     électrique: {},
@@ -147,16 +101,19 @@ async function aidesVelo(
 
   for (const key of Object.keys(veloTypes)) {
     situationBase['vélo . type'] = key as keyof typeof veloTypes;
-    veloTypes[key] = getAidesVelo(engine, situationBase);
+    veloTypes[key].aides = getAidesVeloParType(engine, situationBase);
   }
 
   return veloTypes;
 }
 
-function getAidesVelo(engine, situation: InputParameters = {}): AidesVelo {
+function getAidesVeloParType(
+  engine,
+  situation: InputParameters = {},
+): AidesVelo {
   engine.setSituation(formatInput(situation));
   //maximiser les aides
-  return Object.entries(aidesAndCollectivities)
+  const aides = Object.entries(aidesAndCollectivities)
     .filter(
       ([, { country: aideCountry }]) =>
         !situation['localisation . pays'] ||
@@ -174,11 +131,13 @@ function getAidesVelo(engine, situation: InputParameters = {}): AidesVelo {
           collectivite: collectivity as Collectivite,
           montant: null,
           plafond: null,
+          logo: 'https://mesaidesvelo.fr/miniatures/' + miniatures[ruleName],
         };
         if (!situation['vélo . type']) {
           return [metaData];
         }
         const { nodeValue } = engine.evaluate({ valeur: ruleName, unité: '€' });
+
         if (typeof nodeValue === 'number' && nodeValue > 0) {
           return [
             {
@@ -200,6 +159,7 @@ function getAidesVelo(engine, situation: InputParameters = {}): AidesVelo {
         return [];
       }
     });
+  return aides;
 }
 
 const formatInput = (input: InputParameters) =>
@@ -258,3 +218,42 @@ export function formatDescription({
     )
     .replace(/\$ville/, ville?.nom);
 }
+
+/*function getAidesVeloTousTypes(
+  situationBase: InputParameters,
+  engine: any,
+): AidesVeloParType {
+  const veloTypes: Record<TypeVelos, any> = {
+    'mécanique simple': {},
+    électrique: {},
+    cargo: {},
+    'cargo électrique': {},
+    pliant: {},
+    motorisation: {},
+  };
+
+  for (const key of Object.keys(veloTypes)) {
+    engine.setSituation(
+      formatInput({
+        ...situationBase,
+        'vélo . type': key as keyof typeof veloTypes,
+      }),
+    );
+    veloTypes[key] = engine.evaluate({
+      valeur: 'aides . montant',
+      unité: '€',
+    }).nodeValue;
+  }
+
+  const prime = engine
+    .setSituation(
+      formatInput({
+        ...situationBase,
+        'vélo . prix': '10000 €',
+      }),
+    )
+    .evaluate('aides . prime à la conversion').nodeValue;
+  console.log(situationBase);
+
+  return { ...veloTypes, prime };
+}*/
