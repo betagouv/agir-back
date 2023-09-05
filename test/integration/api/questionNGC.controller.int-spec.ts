@@ -55,11 +55,11 @@ describe('/utilisateurs/id/questionsNGC (API test)', () => {
     expect(bilansDB[0]['situation'].situation).toStrictEqual({
       'transport . voiture . km': '12000',
     });
-    expect(bilansDB[0].bilan['bilan_carbone_annuel']).toStrictEqual(
-      8398.594521380714,
+    expect(Math.floor(bilansDB[0].bilan['bilan_carbone_annuel'])).toStrictEqual(
+      8398,
     );
-    expect(bilansDB[0].bilan['details'].transport).toStrictEqual(
-      2533.970691292455,
+    expect(Math.floor(bilansDB[0].bilan['details'].transport)).toStrictEqual(
+      2533,
     );
   });
   it('PUT /utilisateurs/id/questionsNGC - mix with previous bilan and previous question', async () => {

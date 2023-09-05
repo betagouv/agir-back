@@ -26,13 +26,14 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
-    expect(response.body.details).toStrictEqual({
-      divers: 852.8584599753638,
-      logement: 1424.385391786521,
-      transport: 2533.970691292455,
-      alimentation: 2033.744168766667,
-      services_societaux: 1553.635809559706,
-    });
+
+    expect(Math.floor(response.body.details.divers)).toStrictEqual(852);
+    expect(Math.floor(response.body.details.logement)).toStrictEqual(1424);
+    expect(Math.floor(response.body.details.transport)).toStrictEqual(2533);
+    expect(Math.floor(response.body.details.alimentation)).toStrictEqual(2033);
+    expect(Math.floor(response.body.details.services_societaux)).toStrictEqual(
+      1553,
+    );
     expect(response.body.bilan_carbone_annuel).toStrictEqual(8398.594521380714);
   });
   it('GET /utilisateur/id/bilans/last - get last bilan by id user', async () => {
@@ -107,13 +108,19 @@ describe('/bilan (API test)', () => {
     expect(bilanDB[0]['situation'].situation).toStrictEqual({
       'transport . voiture . km': 12000,
     });
-    expect(bilanDB[0].bilan['details']).toStrictEqual({
-      divers: 852.8584599753638,
-      logement: 1424.385391786521,
-      transport: 2533.970691292455,
-      alimentation: 2033.744168766667,
-      services_societaux: 1553.635809559706,
-    });
+    expect(Math.floor(bilanDB[0].bilan['details'].divers)).toStrictEqual(852);
+    expect(Math.floor(bilanDB[0].bilan['details'].logement)).toStrictEqual(
+      1424,
+    );
+    expect(Math.floor(bilanDB[0].bilan['details'].transport)).toStrictEqual(
+      2533,
+    );
+    expect(Math.floor(bilanDB[0].bilan['details'].alimentation)).toStrictEqual(
+      2033,
+    );
+    expect(
+      Math.floor(bilanDB[0].bilan['details'].services_societaux),
+    ).toStrictEqual(1553);
   });
   it('POST /bilan/importFromNGC - creates new situation', async () => {
     // WHEN

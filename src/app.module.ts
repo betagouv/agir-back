@@ -26,7 +26,8 @@ import { InteractionRepository } from './infrastructure/repository/interaction.r
 import { SuiviRepository } from './infrastructure/repository/suivi.repository';
 import { SuiviUsecase } from './usecase/suivi.usecase';
 import { SuiviController } from './infrastructure/api/suivi.controller';
-import { AidesRepository } from './infrastructure/repository/aides.repository';
+import { AidesVeloRepository } from './infrastructure/repository/aidesVelo.repository';
+import { AidesRetrofitRepository } from './infrastructure/repository/aidesRetrofit.repository';
 import { SuiviDashboardController } from './infrastructure/api/suiviDashboard.controller';
 import { OIDCStateRepository } from '../src/infrastructure/repository/oidcState.repository';
 import { InteractionDefinitionRepository } from '../src/infrastructure/repository/interactionDefinition.repository';
@@ -68,14 +69,15 @@ import { QuestionsNGCController } from './infrastructure/api/questionNGC.control
     BadgeRepository,
     InteractionRepository,
     SuiviRepository,
-    AidesRepository,
+
     OIDCStateRepository,
     OidcService,
     NGCCalculator,
     QuestionNGCRepository,
     InteractionDefinitionRepository,
     ArticleRepository,
-
+    AidesRetrofitRepository,
+    AidesVeloRepository,
     UtilisateurUsecase,
     QuizzUsecase,
     BilanUsecase,
