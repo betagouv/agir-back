@@ -1,6 +1,6 @@
 import { TestUtil } from '../../TestUtil';
 import { BadgeRepository } from '../../../src/infrastructure/repository/badge.repository';
-import { BadgeTypes } from '../../../src/domain/badgeTypes';
+import { BadgeTypes } from '../../../src/domain/badge/badgeTypes';
 
 describe('BadgeRepository', () => {
   let badgeRepository = new BadgeRepository(TestUtil.prisma);

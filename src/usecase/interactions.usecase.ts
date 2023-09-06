@@ -6,7 +6,7 @@ import { InteractionRepository } from '../infrastructure/repository/interaction.
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur.repository';
 import { BadgeRepository } from '../infrastructure/repository/badge.repository';
 import { InteractionType } from '../domain/interaction/interactionType';
-import { BadgeTypes } from '../domain/badgeTypes';
+import { BadgeTypes } from '../domain/badge/badgeTypes';
 import { UserQuizzProfile } from '../domain/quizz/userQuizzProfile';
 import { Categorie } from '../../src/domain/categorie';
 import { Decimal } from '@prisma/client/runtime/library';
@@ -137,14 +137,26 @@ export class InteractionsUsecase {
           stored_interaction.categorie,
           stored_interaction.difficulty,
         );
+
       let isLevelCompleted = QuizzLevelSettings.isLevelCompleted(
         stored_interaction.difficulty,
         lastQuizzOfCategorie,
       );
-      utilisateur.quizzProfile.setLevelCompletion(
-        stored_interaction.categorie,
-        isLevelCompleted,
-      );
+
+      if (isLevelCompleted) {
+        utilisateur.quizzProfile.increaseLevel(stored_interaction.categorie);
+
+        await this.badgeRepository.createUniqueBadge(utilisateurId, {
+          titre: `Niveau ${stored_interaction.difficulty
+            .toString()
+            .at(-1)} en catégorie ${stored_interaction.categorie} réussi !!`,
+          type: stored_interaction.categorie.concat(
+            '_',
+            stored_interaction.difficulty.toString(),
+          ),
+        });
+      }
+
       await this.utilisateurRepository.updateQuizzProfile(
         utilisateurId,
         utilisateur.quizzProfile,

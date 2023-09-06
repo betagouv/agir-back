@@ -1,7 +1,7 @@
 import { Quizz as QuizzDB } from '.prisma/client';
 import { Injectable } from '@nestjs/common';
 import { QuizzQuestion } from '@prisma/client';
-import { BadgeTypes } from '../domain/badgeTypes';
+import { BadgeTypes } from '../domain/badge/badgeTypes';
 import { BodyReponsesQuizz } from '../infrastructure/api/types/reponsesQuizz';
 import { BadgeRepository } from '../infrastructure/repository/badge.repository';
 import { QuizzRepository } from '../infrastructure/repository/quizz.repository';

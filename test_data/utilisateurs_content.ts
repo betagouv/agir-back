@@ -116,6 +116,20 @@ const utilisateurs = {
     },
     quizzLevels: minQuizzLevel,
   },
+  quizzman: {
+    name: 'Master of quizz',
+    points: 10,
+    interactions: [
+      { id: 'quizz_objectif_GES', score: 0.1, done: true, quizz_score: 100 },
+      { id: 'quizz_objectif_GES', score: 0.1, done: true, quizz_score: 100 },
+      { id: 'quizz-BC_global_rechauffement_climatique', score: 0.9 },
+      { id: 'quizz-BC_global_gaz_effet_de_serre', score: 0.8 },
+      { id: 'quizz_energie_fossile', score: 0.8 },
+    ],
+    bilans: ['bilan1'],
+    badges: ['badge1'],
+    quizzLevels: minQuizzLevel,
+  },
 };
 
 module.exports = utilisateurs;

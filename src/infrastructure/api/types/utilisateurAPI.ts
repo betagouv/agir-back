@@ -1,4 +1,4 @@
-import { Badge } from 'src/domain/badge';
+import { Badge } from 'src/domain/badge/badge';
 
 export type UtilisateurAPI = {
   id: string;

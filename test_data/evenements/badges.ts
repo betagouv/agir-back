@@ -2,6 +2,7 @@ const badges = {
   badge1: {
     date: '2023-07-01',
     titre: 'Premier quiz réussi !',
+    type: '1stquizz',
   },
   badge2: {
     date: '2023-07-02',

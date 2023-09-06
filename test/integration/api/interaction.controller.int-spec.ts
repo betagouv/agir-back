@@ -3,9 +3,10 @@ import { InteractionPlacement } from '../../../src/domain/interaction/interactio
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { DistributionSettings } from '../../../src/domain/interaction/distributionSettings';
 import { TestUtil } from '../../TestUtil';
-import { BadgeTypes } from '../../../src/domain/badgeTypes';
+import { BadgeTypes } from '../../../src/domain/badge/badgeTypes';
 import { Categorie } from '../../../src/domain/categorie';
 import { Decimal } from '@prisma/client/runtime/library';
+import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 
 describe('/utilisateurs/id/interactions (API test)', () => {
   beforeAll(async () => {
@@ -246,7 +247,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       BadgeTypes.premier_quizz.type,
     );
   });
-  it('PATCH /utilisateurs/id/interactions/id - set quizz level completion when reached', async () => {
+  it('PATCH /utilisateurs/id/interactions/id - increase categorie level when success condition', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
@@ -287,9 +288,23 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
     });
-    expect(dbUtilisateur.quizzLevels['climat'].isCompleted).toStrictEqual(true);
+    const dbBadges = await TestUtil.prisma.badge.findMany({
+      orderBy: {
+        created_at: 'asc',
+      },
+    });
+
+    expect(dbUtilisateur.quizzLevels['climat'].level).toStrictEqual(
+      DifficultyLevel.L2,
+    );
+    expect(dbBadges.length).toEqual(2);
+    expect(dbBadges[0].titre).toStrictEqual('1er quizz réussi !');
+    expect(dbBadges[1].titre).toStrictEqual(
+      'Niveau 1 en catégorie climat réussi !!',
+    );
+    expect(dbBadges[1].type).toStrictEqual('climat_1');
   });
-  it('PATCH /utilisateurs/id/interactions/id - set quizz level completion to false when not reached', async () => {
+  it('PATCH /utilisateurs/id/interactions/id - does not change level when not reached', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
@@ -330,9 +345,11 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
     });
-    expect(dbUtilisateur.quizzLevels['climat'].isCompleted).toStrictEqual(
-      false,
+    const dbBadges = await TestUtil.prisma.badge.findMany();
+    expect(dbUtilisateur.quizzLevels['climat'].level).toStrictEqual(
+      DifficultyLevel.L1,
     );
+    expect(dbBadges.length).toEqual(1);
   });
   it('PATCH /utilisateurs/id/interactions/id - does not add points when already done', async () => {
     // GIVEN

@@ -9,4 +9,5 @@ export enum utilisateurs_liste {
   benoit = 'benoit',
   michel0 = 'michel0',
   michel6 = 'michel6',
+  quizzman = 'quizzman',
 }

@@ -172,6 +172,7 @@ export class TestDataController {
         let data = {
           id: uuidv4(),
           titre: badges_liste[badgeId].titre,
+          type: badges_liste[badgeId].type,
           created_at: new Date(Date.parse(badges_liste[badgeId].date)),
           utilisateurId: utilisateurId,
         };

@@ -17,6 +17,7 @@ export class UserQuizzProfile {
 
   setLevel(categorie: Categorie, level: DifficultyLevel) {
     this.data[categorie] = { level, isCompleted: false };
+    return level;
   }
   getLevel(categorie: Categorie): DifficultyLevel {
     return this.data[categorie].level;
@@ -24,8 +25,22 @@ export class UserQuizzProfile {
   isLevelCompleted(categorie: Categorie): boolean {
     return this.data[categorie].isCompleted;
   }
-  setLevelCompletion(categorie: Categorie, isCompleted: boolean) {
+  setIsCompleted(categorie: Categorie, isCompleted: boolean) {
     this.data[categorie].isCompleted = isCompleted;
+  }
+  increaseLevel(categorie: Categorie) {
+    const level = this.getLevel(categorie);
+    switch (level) {
+      case DifficultyLevel.L1:
+        return this.setLevel(categorie, DifficultyLevel.L2);
+      case DifficultyLevel.L2:
+        return this.setLevel(categorie, DifficultyLevel.L3);
+      case DifficultyLevel.L3:
+        return this.setLevel(categorie, DifficultyLevel.L4);
+      case DifficultyLevel.L4:
+        return this.setLevel(categorie, DifficultyLevel.L5);
+    }
+    return DifficultyLevel.L5;
   }
   getData(): Record<Categorie, UserQuizzLevel> {
     return this.data;

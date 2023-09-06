@@ -1,4 +1,4 @@
-import { Badge } from './badge';
+import { Badge } from './badge/badge';
 import { UserQuizzProfile } from './quizz/userQuizzProfile';
 
 export class Utilisateur {
