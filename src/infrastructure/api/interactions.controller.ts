@@ -11,10 +11,11 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { InteractionsUsecase } from '../../usecase/interactions.usecase';
-import { ApiTags, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiQuery, ApiBody } from '@nestjs/swagger';
 import { APIInteractionType } from './types/interaction';
 import { InteractionStatus } from '../../domain/interaction/interactionStatus';
 import { Categorie } from '../../../src/domain/categorie';
+import { InteractionStatusAPI } from './types/interactionStatusAPI';
 
 @Controller()
 @ApiTags('Interactions')
@@ -36,7 +37,7 @@ export class IntractionsController {
   async patchInteractionStatus(
     @Param('utilisateurId') utilisateurId: string,
     @Param('interactionId') interactionId: string,
-    @Body() body: any,
+    @Body() body: InteractionStatusAPI,
   ) {
     const status: InteractionStatus = {
       seen: body.seen,
