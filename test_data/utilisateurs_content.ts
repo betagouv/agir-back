@@ -117,7 +117,7 @@ const utilisateurs = {
     quizzLevels: minQuizzLevel,
   },
   quizzman: {
-    name: 'Master of quizz',
+    name: 'quizzman',
     points: 10,
     interactions: [
       { id: 'quizz_objectif_GES', score: 0.1, done: true, quizz_score: 100 },
