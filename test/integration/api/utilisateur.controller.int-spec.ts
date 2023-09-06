@@ -124,4 +124,40 @@ describe('/utilisateurs (API test)', () => {
     expect(response.body.name).toEqual('george');
     expect(response.headers['location']).toContain(user.id);
   });
+  it('GET /utilisateurs/id/profile - read basic profile datas', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    const response = await TestUtil.getServer().get(
+      '/utilisateurs/utilisateur-id/profile',
+    );
+    // WHEN
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.name).toEqual('name');
+    expect(response.body.email).toEqual('yo@truc.com');
+    expect(response.body.code_postal).toEqual('91120');
+  });
+  it('PATCH /utilisateurs/id/profile - update basic profile datas', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    const response = await TestUtil.getServer()
+      .patch('/utilisateurs/utilisateur-id/profile')
+      .send({
+        name: 'George 4',
+        email: 'george@paris.com',
+        code_postal: '75008',
+      });
+    // WHEN
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    expect(dbUser.name).toEqual('George 4');
+    expect(dbUser.email).toEqual('george@paris.com');
+    expect(dbUser.code_postal).toEqual('75008');
+  });
 });

@@ -6,6 +6,7 @@ export class Utilisateur {
     public id?: string,
     public name?: string,
     public email?: string,
+    public code_postal?: string,
     public points?: number,
     public quizzProfile?: UserQuizzProfile,
     public created_at?: Date,

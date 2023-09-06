@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { Utilisateur as UtilisateurDB, Prisma } from '@prisma/client';
 import { Utilisateur } from '../../../src/domain/utilisateur';
 import { UserQuizzProfile } from '../../domain/quizz/userQuizzProfile';
+import { Profile } from '../../../src/domain/utilisateur/profile';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -43,6 +44,22 @@ export class UtilisateurRepository {
       },
     });
     return this.buildUtilisateurFromDB(user);
+  }
+
+  async updateProfile(
+    utilisateurId: string,
+    profile: Profile,
+  ): Promise<Utilisateur | null> {
+    return this.prisma.utilisateur.update({
+      where: {
+        id: utilisateurId,
+      },
+      data: {
+        name: profile.name,
+        email: profile.email,
+        code_postal: profile.code_postal,
+      },
+    });
   }
 
   async listUtilisateur(): Promise<Utilisateur[] | null> {
@@ -111,6 +128,7 @@ export class UtilisateurRepository {
           user.id,
           user.name,
           user.email,
+          user.code_postal,
           user.points,
           new UserQuizzProfile(user.quizzLevels as any),
           user.created_at,

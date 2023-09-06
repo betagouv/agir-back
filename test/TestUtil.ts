@@ -121,6 +121,8 @@ export class TestUtil {
     return {
       id: 'utilisateur-id',
       name: 'name',
+      email: 'yo@truc.com',
+      code_postal: '91120',
       quizzLevels: UserQuizzProfile.newLowProfile().getData(),
       ...override,
     };

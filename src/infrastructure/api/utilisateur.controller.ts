@@ -5,6 +5,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  Patch,
   Post,
   Query,
   Response,
@@ -12,6 +13,7 @@ import {
 import { UtilisateurUsecase } from '../../usecase/utilisateur.usecase';
 import { ApiTags, ApiQuery, ApiBody, ApiOkResponse } from '@nestjs/swagger';
 import { UtilisateurAPI } from './types/utilisateurAPI';
+import { UtilisateurProfileAPI } from './types/utilisateurProfileAPI';
 
 @Controller()
 @ApiTags('Utilisateur')
@@ -47,6 +49,22 @@ export class UtilisateurController {
       quizzProfile: utilisateur.quizzProfile.getData(),
       created_at: utilisateur.created_at,
       badges: utilisateur.badges,
+    };
+  }
+  @Get('utilisateurs/:id/profile')
+  async getUtilisateurProfileById(
+    @Param('id') utilisateurId: string,
+  ): Promise<UtilisateurProfileAPI> {
+    let utilisateur = await this.utilisateurUsecase.findUtilisateurById(
+      utilisateurId,
+    );
+    if (utilisateur == null) {
+      throw new NotFoundException(`Pas d'utilisateur d'id ${utilisateurId}`);
+    }
+    return {
+      name: utilisateur.name,
+      email: utilisateur.email,
+      code_postal: utilisateur.code_postal,
     };
   }
   @Post('utilisateurs')
@@ -85,5 +103,16 @@ export class UtilisateurController {
         `https://agir.gouv.fr/api/utiliateurs/${utilisateur.id}`,
       )
       .json(utilisateur);
+  }
+  @Patch('utilisateurs/:id/profile')
+  async updateProfile(
+    @Param('id') utilisateurId: string,
+    @Body() body: UtilisateurProfileAPI,
+  ) {
+    return this.utilisateurUsecase.updateUtilisateurProfile(utilisateurId, {
+      name: body.name,
+      email: body.email,
+      code_postal: body.code_postal,
+    });
   }
 }

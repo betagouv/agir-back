@@ -6,6 +6,7 @@ import { InteractionRepository } from '../infrastructure/repository/interaction.
 import { v4 as uuidv4 } from 'uuid';
 import { Interaction } from '../../src/domain/interaction/interaction';
 import { UserQuizzProfile } from '../domain/quizz/userQuizzProfile';
+import { UtilisateurProfileAPI } from '../../src/infrastructure/api/types/utilisateurProfileAPI';
 
 @Injectable()
 export class UtilisateurUsecase {
@@ -25,6 +26,12 @@ export class UtilisateurUsecase {
 
   async createUtilisateurByName(name: string): Promise<Utilisateur> {
     return this.utilisateurRespository.createUtilisateurByName(name);
+  }
+  async updateUtilisateurProfile(
+    utilisateurId: string,
+    profile: UtilisateurProfileAPI,
+  ): Promise<Utilisateur> {
+    return this.utilisateurRespository.updateProfile(utilisateurId, profile);
   }
 
   async createUtilisateurByOptionalNameAndEmail(

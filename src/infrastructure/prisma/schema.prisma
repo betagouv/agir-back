@@ -35,6 +35,7 @@ model Utilisateur {
   id           String        @id
   email        String?       @unique
   name         String
+  code_postal  String?
   points       Int           @default(0)
   quizzLevels  Json          @default("{}")
   empreintes   Empreinte[]
