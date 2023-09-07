@@ -8,7 +8,8 @@ import {
 } from '@nestjs/common';
 import { AidesUsecase } from '../../usecase/aides.usecase';
 import { ApiTags } from '@nestjs/swagger';
-import { AidesVeloParType, AideBase } from 'src/domain/aides/aide';
+import { AideAPI } from './types/AideAPI';
+import { AidesVeloParTypeAPI } from './types/AidesVeloParTypeAPI';
 
 @Controller()
 @ApiTags('Aides')
@@ -19,7 +20,7 @@ export class AidesController {
   async getRetrofit(
     @Query('codePostal') codePostal: string,
     @Query('revenuFiscalDeReference') revenuFiscalDeReference: string,
-  ): Promise<AideBase[]> {
+  ): Promise<AideAPI[]> {
     const aides = await this.aidesUsecase.getRetrofit(
       codePostal,
       revenuFiscalDeReference,
@@ -35,7 +36,7 @@ export class AidesController {
   async getAllVelos(
     @Query('codePostal') codePostal: string,
     @Query('revenuFiscalDeReference') revenuFiscalDeReference: string,
-  ): Promise<AidesVeloParType> {
+  ): Promise<AidesVeloParTypeAPI> {
     const aides = await this.aidesUsecase.getSummaryVelos(
       codePostal,
       revenuFiscalDeReference,

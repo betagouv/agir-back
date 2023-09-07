@@ -30,7 +30,7 @@ export class UtilisateurUsecase {
   async updateUtilisateurProfile(
     utilisateurId: string,
     profile: UtilisateurProfileAPI,
-  ): Promise<Utilisateur> {
+  ) {
     return this.utilisateurRespository.updateProfile(utilisateurId, profile);
   }
 
@@ -39,9 +39,14 @@ export class UtilisateurUsecase {
     email: string,
   ): Promise<Utilisateur> {
     const newUtilisateur = await this.utilisateurRespository.createUtilisateur({
+      id: undefined,
+      points: 0,
+      code_postal: undefined,
+      created_at: undefined,
       name: name || 'John Doe '.concat(uuidv4()),
       email: email,
       quizzProfile: UserQuizzProfile.newLowProfile(),
+      badges: undefined,
     });
     await this.initUtilisateurInteractionSet(newUtilisateur.id);
     return newUtilisateur;

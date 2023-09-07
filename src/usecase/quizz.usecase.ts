@@ -1,6 +1,7 @@
 import { Quizz as QuizzDB } from '.prisma/client';
 import { Injectable } from '@nestjs/common';
 import { QuizzQuestion } from '@prisma/client';
+import { QuizzAPI } from '../../src/infrastructure/api/types/quizzAPI';
 import { BadgeTypes } from '../domain/badge/badgeTypes';
 import { BodyReponsesQuizz } from '../infrastructure/api/types/reponsesQuizz';
 import { BadgeRepository } from '../infrastructure/repository/badge.repository';
@@ -13,7 +14,7 @@ export class QuizzUsecase {
     private badgeRepository: BadgeRepository,
   ) {}
 
-  async getQuizzById(quizzId: string): Promise<QuizzDB> {
+  async getQuizzById(quizzId: string): Promise<QuizzAPI> {
     const result = await this.quizzRepository.getById(quizzId);
     // FIXME : temp rename
     result['questions'].forEach((question) => {

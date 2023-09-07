@@ -1,11 +1,26 @@
-import { Badge } from 'src/domain/badge/badge';
+import { ApiProperty } from '@nestjs/swagger';
+import { BadgeAPI } from './badgeAPI';
+import { QuizzProfileAPI } from './quizzProfileAPI';
 
-export type UtilisateurAPI = {
+export class UtilisateurAPI {
+  @ApiProperty()
   id: string;
+
+  @ApiProperty()
   name: string;
+
+  @ApiProperty()
   email?: string;
+
+  @ApiProperty()
   points: number;
-  quizzProfile: object;
+
+  @ApiProperty()
+  quizzProfile: QuizzProfileAPI;
+
+  @ApiProperty()
   created_at: Date;
-  badges: Badge[];
-};
+
+  @ApiProperty({ type: [BadgeAPI] })
+  badges: BadgeAPI[];
+}

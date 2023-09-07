@@ -3,7 +3,8 @@ import { SuiviRepository } from '../infrastructure/repository/suivi.repository';
 import { Suivi } from '../domain/suivi/suivi';
 import { SuiviCollection } from '../domain/suivi/suiviCollection';
 import { SuiviComplet } from '../domain/suivi/suiviComplet';
-import { SuiviType } from 'src/domain/suivi/suiviType';
+import { SuiviType } from '../../src/domain/suivi/suiviType';
+import { SuiviDashboardAPI } from '../../src/infrastructure/api/types/suiviDashboardAPI';
 
 @Injectable()
 export class SuiviUsecase {
@@ -33,7 +34,7 @@ export class SuiviUsecase {
     return this.suiviRepository.getLastSuivi(utilisateurId, type);
   }
 
-  async buildSuiviDashboard(utilisateurId: string): Promise<any> {
+  async buildSuiviDashboard(utilisateurId: string): Promise<SuiviDashboardAPI> {
     let suiviCollection = await this.suiviRepository.listAllSuivi(
       utilisateurId,
       undefined,
@@ -41,7 +42,7 @@ export class SuiviUsecase {
     );
     const suiviCompletList = suiviCollection.getOrderedSuiviCompletList();
     if (suiviCompletList.length === 0) {
-      return {};
+      return {} as SuiviDashboardAPI;
     }
     const cleanLastSuiviData =
       suiviCompletList[suiviCompletList.length - 1].mergeAllToSingleSuivi();
@@ -60,6 +61,6 @@ export class SuiviUsecase {
       dernier_suivi: cleanLastSuiviData.cloneAndClean(),
       moyenne: SuiviComplet.computeMoyenne(suiviCompletList),
       derniers_totaux,
-    };
+    } as SuiviDashboardAPI;
   }
 }

@@ -16,31 +16,6 @@ describe('QuizzRepository', () => {
     await TestUtil.appclose();
   });
 
-  it('list quizz', async () => {
-    // GIVEN
-    await TestUtil.prisma.quizz.createMany({
-      data: [
-        { id: '1', titre: "l'eau c'est important" },
-        { id: '2', titre: 'Végé ?' },
-      ],
-    });
-    // WHEN
-    const quizz = await quizzRepository.list();
-    // THEN
-    expect(quizz).toHaveLength(2);
-  });
-
-  it('list quizz without questions', async () => {
-    // GIVEN
-    await TestUtil.create('quizz');
-    await TestUtil.create('quizzQuestion');
-    // WHEN
-    const quizz = await quizzRepository.list();
-    // THEN
-    expect(quizz).toHaveLength(1);
-    expect(quizz[0]['questions']).toBeUndefined();
-  });
-
   it('find unique quizz with children', async () => {
     // GIVEN
     await TestUtil.create('quizz');

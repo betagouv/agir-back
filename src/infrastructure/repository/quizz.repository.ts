@@ -1,30 +1,24 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Quizz, Prisma } from '@prisma/client';
+import { Quizz as QuizzDB, Prisma } from '@prisma/client';
+import { Quizz } from 'src/domain/quizz/quizz';
 
 @Injectable()
 export class QuizzRepository {
   constructor(private prisma: PrismaService) {}
 
-  async list(): Promise<Quizz[] | null> {
-    return this.prisma.quizz.findMany();
-  }
   async getById(id: string): Promise<Quizz | null> {
-    return this.prisma.quizz.findUnique({
+    const result = await this.prisma.quizz.findUnique({
       where: { id },
       include: {
         questions: true,
       },
     });
-  }
-  async getByListOfIds(listIds: string[]): Promise<Quizz[] | null> {
-    return this.prisma.quizz.findMany({
-      where: { id: { in: listIds } },
-    });
+    return result as Quizz;
   }
 
-  async create(titre: string, id?: string): Promise<Quizz | null> {
+  async create(titre: string, id?: string): Promise<QuizzDB | null> {
     let response;
     try {
       response = await this.prisma.quizz.create({

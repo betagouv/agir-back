@@ -27,11 +27,13 @@ export class UtilisateurController {
     description: "Nom optionel de l'uilisateur",
     required: false,
   })
-  async listUtilisateurs(@Query('name') name?: string): Promise<Utilisateur[]> {
+  async listUtilisateurs(
+    @Query('name') name?: string,
+  ): Promise<UtilisateurAPI[]> {
     if (name === null) {
-      return this.utilisateurUsecase.listUtilisateurs();
+      return this.utilisateurUsecase.listUtilisateurs() as any;
     } else {
-      return this.utilisateurUsecase.findUtilisateursByName(name);
+      return this.utilisateurUsecase.findUtilisateursByName(name) as any;
     }
   }
 

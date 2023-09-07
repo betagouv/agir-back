@@ -46,10 +46,7 @@ export class UtilisateurRepository {
     return this.buildUtilisateurFromDB(user);
   }
 
-  async updateProfile(
-    utilisateurId: string,
-    profile: Profile,
-  ): Promise<Utilisateur | null> {
+  async updateProfile(utilisateurId: string, profile: Profile) {
     return this.prisma.utilisateur.update({
       where: {
         id: utilisateurId,
@@ -124,16 +121,16 @@ export class UtilisateurRepository {
 
   private buildUtilisateurFromDB(user: UtilisateurDB): Utilisateur {
     return user
-      ? new Utilisateur(
-          user.id,
-          user.name,
-          user.email,
-          user.code_postal,
-          user.points,
-          new UserQuizzProfile(user.quizzLevels as any),
-          user.created_at,
-          user['badges'],
-        )
+      ? {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          code_postal: user.code_postal,
+          points: user.points,
+          quizzProfile: new UserQuizzProfile(user.quizzLevels as any),
+          created_at: user.created_at,
+          badges: user['badges'],
+        }
       : null;
   }
 }

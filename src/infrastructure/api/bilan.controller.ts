@@ -1,8 +1,8 @@
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { Controller, Get, Post, Param, Body, Headers } from '@nestjs/common';
 import { BilanUsecase } from '../../usecase/bilan.usecase';
-import { BilanExtra } from '../../../src/domain/bilan/bilanExtra';
-import { SituationNGC } from '@prisma/client';
+import { BilanAPI } from './types/bilanAPI';
+import { SituationNGCAPI } from './types/situationNGCAPI';
 
 @Controller()
 @ApiTags('Bilan')
@@ -11,14 +11,14 @@ export class BilanController {
   @Get('utilisateur/:utilisateurId/bilans/last')
   async getBilan(
     @Param('utilisateurId') utilisateurId: string,
-  ): Promise<BilanExtra> {
+  ): Promise<BilanAPI> {
     return this.bilanUsecase.getLastBilanByUtilisateurId(utilisateurId);
   }
 
   @Get('utilisateur/:utilisateurId/bilans')
   async getBilans(
     @Param('utilisateurId') utilisateurId: string,
-  ): Promise<BilanExtra[]> {
+  ): Promise<BilanAPI[]> {
     return this.bilanUsecase.getAllBilansByUtilisateurId(utilisateurId);
   }
 
@@ -33,12 +33,18 @@ export class BilanController {
     );
   }
 
+  @ApiBody({
+    schema: {
+      type: 'object',
+    },
+  })
   @Post('bilan/importFromNGC')
   async importFromNGC(
     @Body() body: { situation: object },
-  ): Promise<SituationNGC> {
+  ): Promise<SituationNGCAPI> {
     // todo : check situation for security
-    return this.bilanUsecase.addSituation(body.situation);
+    const result = await this.bilanUsecase.addSituation(body.situation);
+    return result as SituationNGCAPI;
   }
 }
 

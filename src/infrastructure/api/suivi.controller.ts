@@ -1,4 +1,15 @@
-import { ApiProperty, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiProperty,
+  ApiPropertyOptional,
+  ApiResponse,
+  ApiTags,
+  getSchemaPath,
+  refs,
+} from '@nestjs/swagger';
 import {
   Controller,
   Get,
@@ -14,23 +25,43 @@ import { Suivi } from '../../domain/suivi/suivi';
 import { SuiviAlimentation } from '../../domain/suivi/suiviAlimentation';
 import { SuiviTransport } from '../../domain/suivi/suiviTransport';
 import { SuiviType } from '../../domain/suivi/suiviType';
+import { SuiviAlimentationAPI, SuiviTransportAPI } from './types/suiviAPI';
 
+@ApiExtraModels(SuiviAlimentationAPI, SuiviTransportAPI)
 @Controller()
 @ApiTags('Suivi')
 export class SuiviController {
   constructor(private readonly suiviUsecase: SuiviUsecase) {}
+  @ApiOkResponse({
+    schema: {
+      items: {
+        anyOf: [
+          { $ref: getSchemaPath(SuiviAlimentationAPI) },
+          { $ref: getSchemaPath(SuiviTransportAPI) },
+        ],
+      },
+    },
+  })
   @Get('utilisateurs/:utilisateurId/suivis')
   async getSuivis(
     @Param('utilisateurId') utilisateurId: string,
     @Query('type') type?: string,
-  ): Promise<Suivi[]> {
+  ): Promise<(SuiviAlimentationAPI | SuiviTransportAPI)[]> {
     const suivisCollection = await this.suiviUsecase.listeSuivi(
       utilisateurId,
       SuiviType[type],
     );
-    return suivisCollection.mergeAll();
+    return suivisCollection.mergeAll() as any;
   }
 
+  @ApiOkResponse({
+    schema: {
+      anyOf: [
+        { $ref: getSchemaPath(SuiviAlimentationAPI) },
+        { $ref: getSchemaPath(SuiviTransportAPI) },
+      ],
+    },
+  })
   @Get('utilisateurs/:utilisateurId/suivis/last')
   async getLastSuivi(
     @Param('utilisateurId') utilisateurId: string,
@@ -48,6 +79,20 @@ export class SuiviController {
     return lastSuivi;
   }
 
+  @ApiBody({
+    schema: {
+      anyOf: [
+        { $ref: getSchemaPath(SuiviAlimentationAPI) },
+        { $ref: getSchemaPath(SuiviTransportAPI) },
+      ],
+    },
+    examples: {
+      SuiviAlimentationAPI: { value: SuiviAlimentationAPI.example() },
+      SuiviTransportAPI: {
+        value: SuiviTransportAPI.example(),
+      },
+    },
+  })
   @Post('utilisateurs/:utilisateurId/suivis')
   async postSuivi(
     @Param('utilisateurId') utilisateurId: string,

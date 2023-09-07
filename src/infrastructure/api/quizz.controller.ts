@@ -11,7 +11,7 @@ import { QuizzUsecase } from '../../usecase/quizz.usecase';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { BodyReponsesQuizz } from './types/reponsesQuizz';
-import { Quizz } from '.prisma/client';
+import { QuizzAPI } from './types/quizzAPI';
 
 @Controller()
 @ApiTags('Quizz')
@@ -45,7 +45,7 @@ export class QuizzController {
   }
 
   @Get('quizz/:id')
-  async getById(@Param('id') id: string): Promise<Quizz> {
+  async getById(@Param('id') id: string): Promise<QuizzAPI> {
     return this.quizzUsecase.getQuizzById(id);
   }
 }

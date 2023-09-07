@@ -12,7 +12,7 @@ import {
 import { Response } from 'express';
 import { InteractionsUsecase } from '../../usecase/interactions.usecase';
 import { ApiTags, ApiQuery, ApiBody } from '@nestjs/swagger';
-import { APIInteractionType } from './types/interaction';
+import { InteractionAPI } from './types/interactionAPI';
 import { InteractionStatus } from '../../domain/interaction/interactionStatus';
 import { Categorie } from '../../../src/domain/categorie';
 import { InteractionStatusAPI } from './types/interactionStatusAPI';
@@ -25,7 +25,7 @@ export class IntractionsController {
   @Get('utilisateurs/:id/interactions')
   async getUserInteractions(
     @Param('id') id: string,
-  ): Promise<APIInteractionType[]> {
+  ): Promise<InteractionAPI[]> {
     let result = await this.interactionsUsecase.listInteractions(id);
     // FIXME : to remove
     result.forEach((inter) => {

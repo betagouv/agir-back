@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class QuestionNGC {
+export class QuestionNGCAPI {
   @ApiProperty()
   key: string;
 
