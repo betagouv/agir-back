@@ -162,10 +162,12 @@ model QuizzQuestion {
 
 model Badge {
   id            String       @id
-  type          String?      @unique
+  type          String?
   titre         String
   Utilisateur   Utilisateur? @relation(fields: [utilisateurId], references: [id])
   utilisateurId String
   created_at    DateTime     @default(now()) @db.Timestamptz(3)
   updated_at    DateTime     @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@unique([type, utilisateurId])
 }
