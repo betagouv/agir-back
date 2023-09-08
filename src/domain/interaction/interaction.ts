@@ -35,6 +35,7 @@ export class Interaction {
   raison_lock: string;
   scheduled_reset: Date;
   day_period: number;
+  code_postaux: string[];
   utilisateurId: string;
   created_at: Date;
   updated_at: Date;

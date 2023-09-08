@@ -22,6 +22,7 @@ export class InteractionDefinition {
   locked: boolean;
   pinned_at_position: number;
   raison_lock: string;
+  code_postaux: string[];
   day_period: number;
   created_at?: Date;
   updated_at?: Date;

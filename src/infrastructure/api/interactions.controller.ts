@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { InteractionsUsecase } from '../../usecase/interactions.usecase';
-import { ApiTags, ApiQuery, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiQuery, ApiBody, ApiOkResponse } from '@nestjs/swagger';
 import { InteractionAPI } from './types/interactionAPI';
 import { InteractionStatus } from '../../domain/interaction/interactionStatus';
 import { Categorie } from '../../../src/domain/categorie';
@@ -23,6 +23,7 @@ export class IntractionsController {
   constructor(private readonly interactionsUsecase: InteractionsUsecase) {}
 
   @Get('utilisateurs/:id/interactions')
+  @ApiOkResponse({ type: [InteractionAPI] })
   async getUserInteractions(
     @Param('id') id: string,
   ): Promise<InteractionAPI[]> {

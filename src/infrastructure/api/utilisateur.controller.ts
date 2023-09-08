@@ -1,4 +1,3 @@
-import { Utilisateur } from '../../domain/utilisateur';
 import {
   Body,
   Controller,
@@ -27,6 +26,7 @@ export class UtilisateurController {
     description: "Nom optionel de l'uilisateur",
     required: false,
   })
+  @ApiOkResponse({ type: [UtilisateurAPI] })
   async listUtilisateurs(
     @Query('name') name?: string,
   ): Promise<UtilisateurAPI[]> {
@@ -38,6 +38,7 @@ export class UtilisateurController {
   }
 
   @Get('utilisateurs/:id')
+  @ApiOkResponse({ type: UtilisateurAPI })
   async getUtilisateurById(@Param('id') id: string): Promise<UtilisateurAPI> {
     let utilisateur = await this.utilisateurUsecase.findUtilisateurById(id);
     if (utilisateur == null) {
@@ -53,6 +54,7 @@ export class UtilisateurController {
       badges: utilisateur.badges,
     };
   }
+  @ApiOkResponse({ type: UtilisateurProfileAPI })
   @Get('utilisateurs/:id/profile')
   async getUtilisateurProfileById(
     @Param('id') utilisateurId: string,

@@ -1,4 +1,4 @@
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Controller, Get, Post, Param, Body, Headers } from '@nestjs/common';
 import { BilanUsecase } from '../../usecase/bilan.usecase';
 import { BilanAPI } from './types/bilanAPI';
@@ -8,6 +8,7 @@ import { SituationNGCAPI } from './types/situationNGCAPI';
 @ApiTags('Bilan')
 export class BilanController {
   constructor(private readonly bilanUsecase: BilanUsecase) {}
+  @ApiOkResponse({ type: BilanAPI })
   @Get('utilisateur/:utilisateurId/bilans/last')
   async getBilan(
     @Param('utilisateurId') utilisateurId: string,
@@ -16,6 +17,7 @@ export class BilanController {
   }
 
   @Get('utilisateur/:utilisateurId/bilans')
+  @ApiOkResponse({ type: BilanAPI })
   async getBilans(
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<BilanAPI[]> {

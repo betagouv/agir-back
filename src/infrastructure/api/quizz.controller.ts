@@ -8,7 +8,7 @@ import {
   Get,
 } from '@nestjs/common';
 import { QuizzUsecase } from '../../usecase/quizz.usecase';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { BodyReponsesQuizz } from './types/reponsesQuizz';
 import { QuizzAPI } from './types/quizzAPI';
@@ -45,6 +45,7 @@ export class QuizzController {
   }
 
   @Get('quizz/:id')
+  @ApiOkResponse({ type: QuizzAPI })
   async getById(@Param('id') id: string): Promise<QuizzAPI> {
     return this.quizzUsecase.getQuizzById(id);
   }

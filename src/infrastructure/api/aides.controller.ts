@@ -7,7 +7,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { AidesUsecase } from '../../usecase/aides.usecase';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AideAPI } from './types/AideAPI';
 import { AidesVeloParTypeAPI } from './types/AidesVeloParTypeAPI';
 
@@ -16,6 +16,7 @@ import { AidesVeloParTypeAPI } from './types/AidesVeloParTypeAPI';
 export class AidesController {
   constructor(private readonly aidesUsecase: AidesUsecase) {}
 
+  @ApiOkResponse({ type: AideAPI })
   @Get('aides/retrofit')
   async getRetrofit(
     @Query('codePostal') codePostal: string,
@@ -32,6 +33,7 @@ export class AidesController {
     return aides;
   }
 
+  @ApiOkResponse({ type: AidesVeloParTypeAPI })
   @Get('aides/velos')
   async getAllVelos(
     @Query('codePostal') codePostal: string,
