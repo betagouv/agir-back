@@ -22,7 +22,7 @@ export class SuiviDashboardController {
         {
           properties: {
             dernier_suivi: {
-              anyOf: [
+              allOf: [
                 { $ref: getSchemaPath(SuiviAlimentationAPI) },
                 { $ref: getSchemaPath(SuiviTransportAPI) },
               ],
