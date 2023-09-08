@@ -51,13 +51,20 @@ export class InteractionsUsecase {
       utilisateurId,
     );
     // Integration des interactions par types successifs
-    const liste_articles = await this.getArticlesForUtilisateur(utilisateurId);
+    const liste_articles = await this.getArticlesForUtilisateur(
+      utilisateurId,
+      utilisateur.code_postal,
+    );
     const liste_suivis = await this.getSuivisForUtilisateur(utilisateurId);
     const liste_quizz = await this.getQuizzForUtilisateur(
       utilisateurId,
       utilisateur.quizzProfile,
+      utilisateur.code_postal,
     );
-    const liste_aides = await this.getAidesForUtilisateur(utilisateurId);
+    const liste_aides = await this.getAidesForUtilisateur(
+      utilisateurId,
+      utilisateur.code_postal,
+    );
 
     DistributionSettings.addInteractionsToList(liste_articles, result);
     DistributionSettings.addInteractionsToList(liste_suivis, result);
@@ -77,6 +84,7 @@ export class InteractionsUsecase {
           maxNumber: 7,
           pinned: true,
           locked: false,
+          code_postal: utilisateur.code_postal,
         },
       );
     DistributionSettings.insertPinnedInteractions(pinned_interactions, result);
@@ -89,6 +97,7 @@ export class InteractionsUsecase {
           maxNumber: DistributionSettings.TARGET_LOCKED_INTERACTION_NUMBER,
           locked: true,
           pinned: false,
+          code_postal: utilisateur.code_postal,
         },
       );
     result = DistributionSettings.insertLockedInteractions(
@@ -171,6 +180,7 @@ export class InteractionsUsecase {
 
   async getArticlesForUtilisateur(
     utilisateurId: string,
+    code_postal: string,
   ): Promise<Interaction[]> {
     return this.interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
       {
@@ -180,6 +190,7 @@ export class InteractionsUsecase {
         ),
         type: InteractionType.article,
         pinned: false,
+        code_postal,
       },
     );
   }
@@ -200,6 +211,7 @@ export class InteractionsUsecase {
   async getQuizzForUtilisateur(
     utilisateurId: string,
     quizzProfile: UserQuizzProfile,
+    code_postal: string,
   ): Promise<Interaction[]> {
     return this.interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
       {
@@ -210,17 +222,22 @@ export class InteractionsUsecase {
         type: InteractionType.quizz,
         pinned: false,
         quizzProfile: quizzProfile,
+        code_postal,
       },
     );
   }
 
-  async getAidesForUtilisateur(utilisateurId: string): Promise<Interaction[]> {
+  async getAidesForUtilisateur(
+    utilisateurId: string,
+    code_postal: string,
+  ): Promise<Interaction[]> {
     return this.interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
       {
         utilisateurId,
         maxNumber: DistributionSettings.getPreferedOfType(InteractionType.aide),
         type: InteractionType.aide,
         pinned: false,
+        code_postal,
       },
     );
   }

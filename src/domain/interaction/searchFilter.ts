@@ -8,4 +8,5 @@ export type SearchFilter = {
   pinned?: boolean;
   locked?: boolean;
   quizzProfile?: UserQuizzProfile;
+  code_postal?: string;
 };

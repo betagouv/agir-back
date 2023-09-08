@@ -48,6 +48,31 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       }),
     );
   });
+  it('GET /utilisateurs/id/interactions - list all interactions, filtée par code postal', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { code_postal: '123' });
+    await TestUtil.create('interaction', {
+      id: '1',
+      codes_postaux: ['123'],
+      type: InteractionType.article,
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      codes_postaux: ['456'],
+      type: InteractionType.article,
+    });
+    // WHEN
+    const response = await TestUtil.getServer().get(
+      '/utilisateurs/utilisateur-id/interactions',
+    );
+    // THEN
+    const dbInteraction = await TestUtil.prisma.interaction.findUnique({
+      where: { id: 'interaction-id' },
+    });
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].id).toEqual('1');
+  });
   it('GET /utilisateurs/id/interactions - list interactions in reco order when no strategy', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');

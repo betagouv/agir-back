@@ -8,6 +8,7 @@ import { InteractionType } from '../../../src/domain/interaction/interactionType
 import { Categorie } from '../../../src/domain/categorie';
 import { InteractionScore } from '../../../src/domain/interaction/interactionScore';
 import { DifficultyLevel } from 'src/domain/difficultyLevel';
+import { isEmpty } from 'rxjs';
 
 @Injectable()
 export class InteractionRepository {
@@ -71,15 +72,26 @@ export class InteractionRepository {
         }
       }
     }
+    let codes_postaux_filter;
+
+    if (filter.code_postal) {
+      codes_postaux_filter = [
+        { codes_postaux: { has: filter.code_postal } },
+        { codes_postaux: { isEmpty: true } },
+      ];
+    }
     const interList = await this.prisma.interaction.findMany({
       take: filter.maxNumber,
       where: {
-        utilisateurId: filter.utilisateurId,
-        done: false,
-        type: filter.type,
-        pinned_at_position: filter.pinned ? { not: null } : null,
-        locked: filter.locked,
-        OR: quizz_difficulty_filter,
+        OR: codes_postaux_filter,
+        AND: {
+          utilisateurId: filter.utilisateurId,
+          done: false,
+          type: filter.type,
+          pinned_at_position: filter.pinned ? { not: null } : null,
+          locked: filter.locked,
+          OR: quizz_difficulty_filter,
+        },
       },
       orderBy: [
         {

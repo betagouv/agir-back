@@ -309,6 +309,109 @@ describe('InteractionRepository', () => {
     expect(result).toHaveLength(1);
     expect(result[0].id).toEqual('2');
   });
+  it('listMaxInteractionsByUtilisateurIdAndType : filtre par codes postaux', async () => {
+    //GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      type: InteractionType.article,
+      codes_postaux: ['123', '456'],
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      type: InteractionType.article,
+      codes_postaux: ['456', '789'],
+    });
+
+    //WHEN
+    const result =
+      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+        {
+          utilisateurId: 'utilisateur-id',
+          code_postal: '123',
+        },
+      );
+
+    // THEN
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toEqual('1');
+  });
+  it('listMaxInteractionsByUtilisateurIdAndType : ne filtre pas par codes postaux si pas de code postal dans le filtre de recherche', async () => {
+    //GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      type: InteractionType.article,
+      codes_postaux: ['123', '456'],
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      type: InteractionType.article,
+      codes_postaux: ['456', '789'],
+    });
+
+    //WHEN
+    const result =
+      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+        {
+          utilisateurId: 'utilisateur-id',
+        },
+      );
+
+    // THEN
+    expect(result).toHaveLength(2);
+  });
+  it('listMaxInteractionsByUtilisateurIdAndType : retourne des interations sans code postal même si code postal en filtre', async () => {
+    //GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      type: InteractionType.article,
+      codes_postaux: ['123', '456'],
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      type: InteractionType.article,
+      codes_postaux: [],
+    });
+
+    //WHEN
+    const result =
+      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+        {
+          utilisateurId: 'utilisateur-id',
+          code_postal: '123',
+        },
+      );
+
+    // THEN
+    expect(result).toHaveLength(2);
+  });
+  it('listMaxInteractionsByUtilisateurIdAndType : retourne des interations avec et sans code postal  quand pas de code postal en filtre', async () => {
+    //GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      type: InteractionType.article,
+      codes_postaux: ['123', '456'],
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      type: InteractionType.article,
+      codes_postaux: [],
+    });
+
+    //WHEN
+    const result =
+      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+        {
+          utilisateurId: 'utilisateur-id',
+        },
+      );
+
+    // THEN
+    expect(result).toHaveLength(2);
+  });
   it('listInteractionScores : liste par categories ', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');

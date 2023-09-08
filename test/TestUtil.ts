@@ -189,6 +189,7 @@ export class TestUtil {
       locked: false,
       pinned_at_position: null,
       raison_lock: 'bla',
+      codes_postaux: [],
       scheduled_reset: null,
       day_period: null,
       utilisateurId: 'utilisateur-id',
@@ -214,6 +215,7 @@ export class TestUtil {
       locked: false,
       pinned_at_position: null,
       raison_lock: 'bla',
+      codes_postaux: [],
       day_period: null,
       ...override,
     };
