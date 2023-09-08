@@ -1,5 +1,6 @@
 import { TestUtil } from '../../TestUtil';
 import { InteractionDefinitionRepository } from '../../../src/infrastructure/repository/interactionDefinition.repository';
+import { InteractionType } from '../../../src/domain/interaction/interactionType';
 
 describe('InteractionDefinitionRepository', () => {
   let interactionCatalogRepository = new InteractionDefinitionRepository(
@@ -30,6 +31,7 @@ describe('InteractionDefinitionRepository', () => {
 
     //THEN
     expect(liste).toHaveLength(3);
+    expect(liste[0].type).toStrictEqual(InteractionType.quizz);
   });
   it('createOrUpdateInteractionDefinition : inserts properly ', async () => {
     // GIVEN

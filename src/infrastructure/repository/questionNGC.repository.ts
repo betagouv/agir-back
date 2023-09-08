@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
-import { QuestionNGC } from '@prisma/client';
-import { Question } from 'src/domain/bilan/question';
+import { Question } from '../../../src/domain/bilan/question';
 
 @Injectable()
 export class QuestionNGCRepository {
@@ -12,7 +11,7 @@ export class QuestionNGCRepository {
     utilisateurId: string,
     key: string,
     value: any,
-  ): Promise<QuestionNGC | null> {
+  ): Promise<Question | null> {
     return this.prisma.questionNGC.upsert({
       where: {
         key_utilisateurId: {

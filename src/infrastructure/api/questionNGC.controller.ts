@@ -1,8 +1,8 @@
-import { ApiProperty, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { Controller, Put, Param, Body } from '@nestjs/common';
 import { QuestionNGCUsecase } from '../../usecase/questionNGC.usecase';
-import { QuestionNGC as QuestionNGCDB } from '.prisma/client';
 import { QuestionNGCAPI } from './types/questionNGCAPI';
+import { Question } from '../../../src/domain/bilan/question';
 
 @Controller()
 @ApiTags('QuestionsNGC')
@@ -13,7 +13,7 @@ export class QuestionsNGCController {
   async createOrUpdate(
     @Param('utilisateurId') utilisateurId: string,
     @Body() body: QuestionNGCAPI,
-  ): Promise<QuestionNGCDB> {
+  ): Promise<Question> {
     return this.questionNGCUsecase.createOrUpdateQuestion(
       utilisateurId,
       body.key,

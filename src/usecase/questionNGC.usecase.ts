@@ -2,8 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { QuestionNGCRepository } from '../infrastructure/repository/questionNGC.repository';
 import { BilanRepository } from '../infrastructure/repository/bilan.repository';
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
-import { QuestionNGC } from '@prisma/client';
-import { Question } from 'src/domain/bilan/question';
+import { Question } from '../../src/domain/bilan/question';
 
 @Injectable()
 export class QuestionNGCUsecase {
@@ -17,7 +16,7 @@ export class QuestionNGCUsecase {
     utilisateurId: string,
     key: string,
     value: string,
-  ): Promise<QuestionNGC> {
+  ): Promise<Question> {
     const savedQuestion = await this.questionNGCRepository.saveOrUpdateQuestion(
       utilisateurId,
       key,

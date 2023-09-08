@@ -1,7 +1,10 @@
 import { DifficultyLevel } from '../difficultyLevel';
 import { InteractionType } from './interactionType';
 
-export type InteractionDefinition = {
+export class InteractionDefinition {
+  constructor(data: object) {
+    Object.assign(this, data);
+  }
   id: string;
   content_id?: string;
   type: InteractionType;
@@ -22,4 +25,4 @@ export type InteractionDefinition = {
   day_period: number;
   created_at?: Date;
   updated_at?: Date;
-};
+}

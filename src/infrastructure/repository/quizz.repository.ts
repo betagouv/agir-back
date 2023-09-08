@@ -17,26 +17,4 @@ export class QuizzRepository {
     });
     return result as Quizz;
   }
-
-  async create(titre: string, id?: string): Promise<QuizzDB | null> {
-    let response;
-    try {
-      response = await this.prisma.quizz.create({
-        data: {
-          id: id ? id : uuidv4(),
-          titre,
-        },
-      });
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new BadRequestException(
-            `Un quizz d'id ${id} existe déjà en base`,
-          );
-        }
-      }
-      throw error;
-    }
-    return response;
-  }
 }

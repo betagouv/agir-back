@@ -130,7 +130,7 @@ export class InteractionsUsecase {
 
     stored_interaction.updateStatus(status);
 
-    await this.interactionRepository.partialUpdateInteraction(
+    await this.interactionRepository.updateInteraction(
       stored_interaction,
     );
 

@@ -138,10 +138,8 @@ export class InteractionRepository {
     );
   }
 
-  async partialUpdateInteraction(
-    interaction: Interaction,
-  ): Promise<DBInteraction | null> {
-    return this.prisma.interaction.update({
+  async updateInteraction(interaction: Interaction) {
+    await this.prisma.interaction.update({
       where: {
         id: interaction.id,
       },

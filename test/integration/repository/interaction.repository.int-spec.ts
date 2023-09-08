@@ -171,7 +171,7 @@ describe('InteractionRepository', () => {
     });
 
     //WHEN
-    await interactionRepository.partialUpdateInteraction(interactionToUpdate);
+    await interactionRepository.updateInteraction(interactionToUpdate);
 
     // THEN
     const result = await TestUtil.prisma.interaction.findUnique({
