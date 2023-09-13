@@ -9,6 +9,11 @@ import { BilanExtra } from '../../../src/domain/bilan/bilanExtra';
 export class BilanRepository {
   constructor(private prisma: PrismaService) {}
 
+  async delete(utilisateurId: string) {
+    if (utilisateurId)
+      await this.prisma.empreinte.deleteMany({ where: { utilisateurId } });
+  }
+
   async getLastSituationbyUtilisateurId(utilisateurId: string): Promise<any> {
     const empreintes = await this.prisma.empreinte.findMany({
       where: { utilisateurId },

@@ -12,6 +12,11 @@ import { SuiviType } from '../../domain/suivi/suiviType';
 export class SuiviRepository {
   constructor(private prisma: PrismaService) {}
 
+  async delete(utilisateurId: string) {
+    if (utilisateurId)
+      await this.prisma.suivi.deleteMany({ where: { utilisateurId } });
+  }
+
   async createSuivi(
     suivi: Suivi,
     utilisateurId: string,

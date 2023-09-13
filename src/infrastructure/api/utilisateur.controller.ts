@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
@@ -35,6 +36,11 @@ export class UtilisateurController {
     } else {
       return this.utilisateurUsecase.findUtilisateursByName(name) as any;
     }
+  }
+
+  @Delete('utilisateurs/:id')
+  async deleteUtilisateurById(@Param('id') id: string) {
+    await this.utilisateurUsecase.deleteUtilisateur(id);
   }
 
   @Get('utilisateurs/:id')

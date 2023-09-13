@@ -8,6 +8,11 @@ import { Badge } from '../../domain/badge/badge';
 export class BadgeRepository {
   constructor(private prisma: PrismaService) {}
 
+  async delete(utilisateurId: string) {
+    if (utilisateurId)
+      await this.prisma.badge.deleteMany({ where: { utilisateurId } });
+  }
+
   async createUniqueBadge(utilisateurId: string, badge: Badge) {
     try {
       await this.prisma.badge.create({

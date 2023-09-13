@@ -6,6 +6,11 @@ import { OIDCState } from '../auth/oidcState';
 export class OIDCStateRepository {
   constructor(private prisma: PrismaService) {}
 
+  async delete(utilisateurId: string) {
+    if (utilisateurId)
+      await this.prisma.oIDC_STATE.deleteMany({ where: { utilisateurId } });
+  }
+
   async createNewState(data: OIDCState) {
     return this.prisma.oIDC_STATE.create({
       data,

@@ -10,6 +10,10 @@ import { Profile } from '../../../src/domain/utilisateur/profile';
 export class UtilisateurRepository {
   constructor(private prisma: PrismaService) {}
 
+  async delete(utilisateurId: string) {
+    await this.prisma.utilisateur.delete({ where: { id: utilisateurId } });
+  }
+
   async findUtilisateursByName(name: string): Promise<Utilisateur[] | null> {
     let liste = await this.prisma.utilisateur.findMany({
       where: {

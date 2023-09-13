@@ -42,12 +42,12 @@ describe('/utilisateurs (API test)', () => {
     // THEN
     return TestUtil.getServer().get('/utilisateurs/1').expect(404);
   });
-  it.skip('DELETE /utilisateurs/id', async () => {
+  it('DELETE /utilisateurs/id', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('suivi');
-    await TestUtil.create('empreinte');
     await TestUtil.create('situationNGC');
+    await TestUtil.create('empreinte');
     await TestUtil.create('questionNGC');
     await TestUtil.create('badge');
     await TestUtil.create('quizz');
@@ -60,7 +60,7 @@ describe('/utilisateurs (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = TestUtil.prisma.utilisateur.findUnique({
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
     });
     expect(dbUser).toBeNull();

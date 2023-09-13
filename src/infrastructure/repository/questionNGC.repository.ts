@@ -7,6 +7,11 @@ import { Question } from '../../../src/domain/bilan/question';
 export class QuestionNGCRepository {
   constructor(private prisma: PrismaService) {}
 
+  async delete(utilisateurId: string) {
+    if (utilisateurId)
+      await this.prisma.questionNGC.deleteMany({ where: { utilisateurId } });
+  }
+
   async saveOrUpdateQuestion(
     utilisateurId: string,
     key: string,

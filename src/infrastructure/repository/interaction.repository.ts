@@ -14,6 +14,11 @@ import { isEmpty } from 'rxjs';
 export class InteractionRepository {
   constructor(private prisma: PrismaService) {}
 
+  async delete(utilisateurId: string) {
+    if (utilisateurId)
+      await this.prisma.interaction.deleteMany({ where: { utilisateurId } });
+  }
+
   async getInteractionById(interactionId): Promise<Interaction | null> {
     const result = await this.prisma.interaction.findUnique({
       where: { id: interactionId },

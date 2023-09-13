@@ -7,6 +7,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { Interaction } from '../../src/domain/interaction/interaction';
 import { UserQuizzProfile } from '../domain/quizz/userQuizzProfile';
 import { UtilisateurProfileAPI } from '../../src/infrastructure/api/types/utilisateurProfileAPI';
+import { SuiviRepository } from '../infrastructure/repository/suivi.repository';
+import { BadgeRepository } from '../infrastructure/repository/badge.repository';
+import { BilanRepository } from '../infrastructure/repository/bilan.repository';
+import { QuestionNGCRepository } from '../infrastructure/repository/questionNGC.repository';
+import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 
 @Injectable()
 export class UtilisateurUsecase {
@@ -14,6 +19,11 @@ export class UtilisateurUsecase {
     private utilisateurRespository: UtilisateurRepository,
     private interactionDefinitionRepository: InteractionDefinitionRepository,
     private interactionRepository: InteractionRepository,
+    private suiviRepository: SuiviRepository,
+    private badgeRepository: BadgeRepository,
+    private bilanRepository: BilanRepository,
+    private questionNGCRepository: QuestionNGCRepository,
+    private oIDCStateRepository: OIDCStateRepository,
   ) {}
 
   async findUtilisateursByName(name: string): Promise<Utilisateur[]> {
@@ -58,6 +68,16 @@ export class UtilisateurUsecase {
 
   async listUtilisateurs(): Promise<Utilisateur[]> {
     return this.utilisateurRespository.listUtilisateur();
+  }
+
+  async deleteUtilisateur(utilisateurId: string) {
+    await this.suiviRepository.delete(utilisateurId);
+    await this.interactionRepository.delete(utilisateurId);
+    await this.badgeRepository.delete(utilisateurId);
+    await this.bilanRepository.delete(utilisateurId);
+    await this.questionNGCRepository.delete(utilisateurId);
+    await this.oIDCStateRepository.delete(utilisateurId);
+    await this.utilisateurRespository.delete(utilisateurId);
   }
 
   async initUtilisateurInteractionSet(utilisateurId: string) {
