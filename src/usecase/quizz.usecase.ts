@@ -22,40 +22,4 @@ export class QuizzUsecase {
     });
     return result;
   }
-
-  async evaluerQuizz(
-    bodyReponsesQuizz: BodyReponsesQuizz,
-    quizzId: string,
-  ): Promise<boolean> {
-    let quizz = await this.quizzRepository.getById(quizzId);
-    const success = this.checkQuizz(bodyReponsesQuizz, quizz['questions']);
-    if (success) {
-      await this.badgeRepository.createUniqueBadge(
-        bodyReponsesQuizz.utilisateur,
-        BadgeTypes.premier_quizz,
-      );
-    }
-    return success;
-  }
-
-  checkQuizz(
-    bodyReponsesQuizz: BodyReponsesQuizz,
-    questions: QuizzQuestion[],
-  ): boolean {
-    let success = true;
-    questions.forEach((element) => {
-      success =
-        success &&
-        element.solution ==
-          this.findReponseForQuestionId(bodyReponsesQuizz, element.id);
-    });
-    return success;
-  }
-
-  findReponseForQuestionId(reponsesQuizz: BodyReponsesQuizz, id: string) {
-    const found = reponsesQuizz.reponses.find((element) => {
-      return Object.keys(element)[0] === id;
-    });
-    return Object.values(found)[0];
-  }
 }
