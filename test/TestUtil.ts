@@ -64,18 +64,6 @@ export class TestUtil {
       ...override,
     };
   }
-  static quizzHistoryData(override?) {
-    return {
-      id: 'quizzHistory-id',
-      quizzId: 'quizz-id',
-      difficulty: '2',
-      score: '65',
-      categorie: Categorie.climat,
-      utilisateurId: 'utilisateur-id',
-      created_at: new Date(),
-      ...override,
-    };
-  }
   static questionNGCData(override?) {
     return {
       id: 'questionNGC-id',

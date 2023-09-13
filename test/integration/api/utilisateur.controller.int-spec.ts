@@ -42,6 +42,29 @@ describe('/utilisateurs (API test)', () => {
     // THEN
     return TestUtil.getServer().get('/utilisateurs/1').expect(404);
   });
+  it.skip('DELETE /utilisateurs/id', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('suivi');
+    await TestUtil.create('empreinte');
+    await TestUtil.create('situationNGC');
+    await TestUtil.create('questionNGC');
+    await TestUtil.create('badge');
+    await TestUtil.create('quizz');
+    await TestUtil.create('quizzQuestion');
+    await TestUtil.create('interaction');
+    // WHEN
+    const response = await TestUtil.getServer().delete(
+      '/utilisateurs/utilisateur-id',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(dbUser).toBeNull();
+  });
   it('GET /utilisateurs/id - when present', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
