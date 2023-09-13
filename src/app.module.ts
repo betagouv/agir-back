@@ -8,6 +8,7 @@ import { AidesController } from './infrastructure/api/aides.controller';
 import { IntractionsController } from './infrastructure/api/interactions.controller';
 import { TestDataController } from './infrastructure/api/testData.controller';
 import { ArticleController } from './infrastructure/api/article.controller';
+import { WebhooksController } from './infrastructure/api/webhook.controller';
 
 import { UtilisateurUsecase } from './usecase/utilisateur.usecase';
 import { QuizzUsecase } from './usecase/quizz.usecase';
@@ -60,6 +61,7 @@ import { QuestionsNGCController } from './infrastructure/api/questionNGC.control
     TestDataController,
     QuestionsNGCController,
     ArticleController,
+    WebhooksController,
   ],
   providers: [
     PrismaService,
