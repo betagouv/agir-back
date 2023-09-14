@@ -43,7 +43,7 @@ const utilisateurs = {
       { id: 'aide_velo', score: 0.6, locked: true, pinned_at_position: 3 },
       { id: 'quizz-11_chaleur', score: 0.5 },
       { id: 'quizz-12_chauffage', score: 0.4 },
-      { id: 'quizz-13_rechauffement_climatique', score: 0.9 },
+      { id: 'quizz-13_rechauffement_climatique', score: 0.1 },
       { id: 'quizz-2_empreinte_carbone', score: 0.1 },
       { id: 'quizz-4_poids_objets', score: 0.5 },
       { id: 'quizz-5_vieobjets', score: 0.6 },
