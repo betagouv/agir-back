@@ -2,8 +2,8 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 
 @Controller()
-@ApiTags('Webhooks')
-export class WebhooksController {
+@ApiTags('Webhooks CMS')
+export class CMSController {
   @ApiBody({
     schema: {
       type: 'object',
