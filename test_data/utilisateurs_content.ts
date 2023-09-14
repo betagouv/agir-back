@@ -142,7 +142,7 @@ const utilisateurs = {
     interactions: [
       { id: 'quizz_objectif_GES', score: 0.1, done: true, quizz_score: 100 },
       { id: 'quizz_objectif_GES', score: 0.1, done: true, quizz_score: 100 },
-      { id: 'quizz-BC_global_rechauffement_climatique', score: 0.9 },
+      { id: 'quizz-13_rechauffement_climatique', score: 0.9 },
       { id: 'quizz-BC_global_gaz_effet_de_serre', score: 0.8 },
       { id: 'quizz_energie_fossile', score: 0.8 },
     ],
