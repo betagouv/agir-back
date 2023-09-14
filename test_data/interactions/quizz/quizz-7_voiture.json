@@ -1,0 +1,26 @@
+{
+  "interaction": {
+    "titre": "Voiture solitaire ou familiale ?",
+    "soustitre": "Le poids du trafic routier",
+    "categorie": "transport",
+    "tags": [],
+    "duree": "⏱️ < 1 minute",
+    "frequence": "Une fois",
+    "image_url": "https://images.unsplash.com/photo-1517965623714-cbaadea459b4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fGNhciUyMHNoYXJpbmd8ZW58MHx8MHx8fDI%3D&auto=format&fit=crop&w=800&q=60",
+    "url": null,
+    "difficulty": 2,
+    "points": 10,
+    "locked": false
+  },
+  "titre": "Voiture solitaire ou familiale ?",
+  "questions": [
+    {
+      "ordre": 1,
+      "libelle": "En moyenne, combien de personnes occupent une voiture sur une distance de moins de 100km en France ?",
+      "solution": "1,4 personne",
+      "propositions": ["1 personne", "1,4 personnes", "2,5 personnes "],
+      "texte_riche_ko": "Eh non. Aujourd'hui, on compte en moyenne 1,4 personne par voiture en France. Pourtant, 4 trajets sur 10 réalisés avec le moyen de transport favori des Français font moins de 3 km. Qu'est-ce que cela implique ? Plus de trafic sur la route, moins de places pour se garer (surtout dans les villes) et une augmentation des émissions de gaz à effet de serre associées. Pour réduire les émissions, avoir recours au covoiturage peut être une solution intéressante, d'autant plus pour se rendre sur son lieu de travail grâce au Forfait Mobilité Durable proposé par de nombreuses entreprises pour les salariés se déplaçant en covoiturage ou à vélo. Par ailleurs, depuis le 1er janvier 2023, les nouveaux conducteurs en covoiturage courte-distance pourront recevoir une prime de 100€ dispensée par l'Etat.",
+      "texte_riche_ok": "Bravo ! En baisse quasi-constante depuis plusieurs années, on compte aujourd'hui en moyenne 1,4 personne par voiture en France. Pourtant, 4 trajets sur 10 réalisés avec le moyen de transport favori des Français font moins de 3 km. Qu'est-ce que cela implique ? Plus de trafic sur la route, moins de places pour se garer (surtout dans les villes) et une augmentation des émissions de gaz à effet de serre associées. Pour réduire les émissions, avoir recours au covoiturage peut être une solution intéressante, d'autant plus pour se rendre sur son lieu de travail grâce au Forfait Mobilité Durable proposé par de nombreuses entreprises pour les salariés se déplaçant en covoiturage ou à vélo. Par ailleurs, depuis le 1er janvier 2023, les nouveaux conducteurs en covoiturage courte-distance pourront recevoir une prime de 100€ dispensée par l'Etat."
+    }
+  ]
+}
