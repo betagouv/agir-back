@@ -1,0 +1,26 @@
+{
+  "interaction": {
+    "titre": "Logement : par où s'échappe le plus la chaleur ?",
+    "soustitre": "Un logement mal isolé perd de la chaleur, mais par où exactement ?",
+    "categorie": "consommation",
+    "tags": ["logement", "ameublement", "forêts"],
+    "duree": "⏱️ < 1 minute",
+    "frequence": "Une fois",
+    "image_url": "https://images.unsplash.com/photo-1567080586917-e6ab6aa0df85?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80",
+    "url": null,
+    "difficulty": 3,
+    "points": 15,
+    "locked": false
+  },
+  "titre": "Chaleur et logement",
+  "questions": [
+    {
+      "ordre": 1,
+      "libelle": "Par où la chaleur s'échappe-t-elle le plus facilement du logement ?",
+      "solution": "Le toit",
+      "propositions": ["Le toit", "Les murs", "Les fenêtres", "Les sols"],
+      "texte_riche_ko": "Eh non ! Dans un logement mal isolé, 25 à 30 % de la chaleur s’échappe par le toit, 20 à 25 % par les murs, 10 à 15 % par les fenêtres, 7 à 10 % par le sous-sol. Isoler ses combles, qu’ils soient aménagés ou non, est ainsi l’action la plus rentable pour économiser l’énergie et gagner en confort.",
+      "texte_riche_ok": "Bravo ! Dans un logement mal isolé, 25 à 30 % de la chaleur s’échappe par le toit, 20 à 25 % par les murs, 10 à 15 % par les fenêtres, 7 à 10 % par le sous-sol. Isoler ses combles, qu’ils soient aménagés ou non, est ainsi l’action la plus rentable pour économiser l’énergie et gagner en confort."
+    }
+  ]
+}
