@@ -43,6 +43,26 @@ const utilisateurs = {
       { id: 'aide_velo', score: 0.6, locked: true, pinned_at_position: 3 },
       { id: 'article_alimentation_recettes_4_saisons', score: 0.5 },
       { id: 'article_consommation_video_numerique_responsable', score: 0.4 },
+      {
+        id: 'article-cms',
+        score: 0.99,
+      },
+      {
+        id: 'article-cms-2',
+        score: 0.98,
+      },
+      {
+        id: 'article-cms-3',
+        score: 0.97,
+      },
+      {
+        id: 'article-cms-4',
+        score: 0.96,
+      },
+      {
+        id: 'article-cms-5',
+        score: 0.95,
+      },
     ],
     suivis: [
       'sa1',
