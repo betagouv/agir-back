@@ -111,6 +111,10 @@ const utilisateurs = {
         id: 'article-cms',
         score: 0.99,
       },
+      {
+        id: 'article-cms-2',
+        score: 0.99,
+      },
     ],
     suivis: ['sa1', 'sa2', 'st1', 'st2'],
     bilans: ['bilan1'],
