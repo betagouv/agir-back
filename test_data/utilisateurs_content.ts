@@ -37,6 +37,8 @@ const utilisateurs = {
     name: 'Michel6',
     points: 36,
     interactions: [
+      { id: 'quizz_objectif_GES', score: 0.1, done: true, quizz_score: 100 },
+      { id: 'quizz_objectif_GES', score: 0.1, done: true, quizz_score: 100 },
       { id: 'suivi_du_jour', score: 0.9 },
       { id: 'quizz-6_cout_voiture', score: 0.8 },
       { id: 'quizz-10_chaleur', score: 0.7 },
@@ -84,7 +86,7 @@ const utilisateurs = {
       'st5',
     ],
     bilans: ['bilan1'],
-    badges: ['badge1', 'badge2'],
+    badges: [],
     quizzLevels: minQuizzLevel,
   },
   benoit: {

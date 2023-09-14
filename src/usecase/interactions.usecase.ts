@@ -130,9 +130,7 @@ export class InteractionsUsecase {
 
     stored_interaction.updateStatus(status);
 
-    await this.interactionRepository.updateInteraction(
-      stored_interaction,
-    );
+    await this.interactionRepository.updateInteraction(stored_interaction);
 
     if (status.quizz_score) {
       await this.badgeRepository.createUniqueBadge(
@@ -156,9 +154,10 @@ export class InteractionsUsecase {
         utilisateur.quizzProfile.increaseLevel(stored_interaction.categorie);
 
         await this.badgeRepository.createUniqueBadge(utilisateurId, {
-          titre: `Niveau ${stored_interaction.difficulty
+          titre: `Passage quizz niveau ${utilisateur.quizzProfile
+            .getLevel(stored_interaction.categorie)
             .toString()
-            .at(-1)} en catégorie ${stored_interaction.categorie} réussi !!`,
+            .at(-1)} en catégorie ${stored_interaction.categorie} !!`,
           type: stored_interaction.categorie.concat(
             '_',
             stored_interaction.difficulty.toString(),

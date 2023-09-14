@@ -325,7 +325,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     expect(dbBadges.length).toEqual(2);
     expect(dbBadges[0].titre).toStrictEqual('1er quizz réussi !');
     expect(dbBadges[1].titre).toStrictEqual(
-      'Niveau 1 en catégorie climat réussi !!',
+      'Passage quizz niveau 2 en catégorie climat !!',
     );
     expect(dbBadges[1].type).toStrictEqual('climat_1');
   });
