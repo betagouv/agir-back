@@ -329,7 +329,7 @@ export class TestDataController {
     for (let index = 0; index < articleIds.length; index++) {
       const articleId = articleIds[index];
       const article_def = this.article_definitions[articleId];
-      article_def.content_id = articleId;
+      //article_def.content_id = articleId;
       await this.prisma.article.upsert({
         where: {
           id: articleId,
@@ -410,8 +410,9 @@ export class TestDataController {
           ),
         );
         let article_def = JSON.parse(fileData.toString());
-        article_def.content_id = path.basename(current_file, '.json');
-        this.article_definitions[article_def.content_id] = article_def;
+        const filename = path.basename(current_file, '.json');
+        // article_def.content_id = path.basename(current_file, '.json');
+        this.article_definitions[filename] = article_def;
       }
     } catch (error) {
       throw new BadRequestException(
