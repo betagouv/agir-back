@@ -154,6 +154,7 @@ export class TestDataController {
           ...this.article_definitions[interaction.id],
           ...interaction,
         };
+        data.content_id = `${data.content_id}`;
         data.id = uuidv4();
         data.type = InteractionType.article;
         data.utilisateurId = utilisateurId;

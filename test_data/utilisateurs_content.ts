@@ -103,10 +103,14 @@ const utilisateurs = {
     name: 'Wojtek',
     points: 10,
     interactions: [
-      { id: 'article-ngc', score: 0.1 },
+      //{ id: 'article-ngc', score: 0.1 },
       { id: 'quizz_tout_sur_leau', score: 0.7 },
-      { id: 'article_eau', score: 0.4 },
+      //{ id: 'article_eau', score: 0.4 },
       { id: 'suivi_du_jour', score: 0.9, locked: true },
+      {
+        id: 'article-cms',
+        score: 0.99,
+      },
     ],
     suivis: ['sa1', 'sa2', 'st1', 'st2'],
     bilans: ['bilan1'],
