@@ -1,7 +1,7 @@
 {
   "interaction": {
-    "titre": "Quiz global 2",
-    "soustitre": "Réchauffementt climatique",
+    "titre": "Le réchauffement climatique",
+    "soustitre": "Quand la planète sort ses lunettes de soleil",
     "categorie": "climat",
     "tags": [],
     "duree": "⏱️ < 1 minute",
@@ -12,7 +12,7 @@
     "points": 10,
     "locked": false
   },
-  "titre": "Quiz global",
+  "titre": "Le réchauffement climatique",
   "questions": [
     {
       "ordre": 1,
@@ -23,8 +23,8 @@
         "Les changements de météo au long de l'année",
         "Les gaz à effet de serre générés par les voitures"
       ],
-      "texte_riche_ko": "Raté ! Il s'agit effectivement de l'augmentation progressive de la température moyenne de la Terre due à l'accumulation de gaz à effet de serre dans l'atmosphère. Aujourd'hui, cette augmentation est de +1,1°C par rapport à 1850. Les causes du réchauffement climatique sont multiples mais sont principalement liées aux activités humaines, comme l'utilisation des énergies fossiles (charbon, pétrole, gaz naturel) pour les transports, l'énergie et l'industrie, la déforestation et l'agriculture intensive.",
-      "texte_riche_ok": "Tout bon !"
+      "texte_riche_ko": "Eh non, quand on parle de réchauffement climatique, il s'agit de l'augmentation progressive de la température moyenne de la Terre due à l'accumulation de gaz à effet de serre dans l'atmosphère. Aujourd'hui, cette augmentation est de +1,1°C par rapport à 1850, période de référence prise par l'Accord de Paris qui marque l'ère préindustrielle. Les causes du réchauffement climatique sont multiples mais sont principalement liées aux activités humaines, comme l'utilisation des énergies fossiles (charbon, pétrole, gaz naturel) pour les transports, l'énergie et l'industrie, la déforestation et l'agriculture intensive.",
+      "texte_riche_ok": "Bravo ! Il s'agit effectivement de l'augmentation progressive de la température moyenne de la Terre due à l'accumulation de gaz à effet de serre dans l'atmosphère. Aujourd'hui, cette augmentation est de +1,1°C par rapport à 1850. Les causes du réchauffement climatique sont multiples mais sont principalement liées aux activités humaines, comme l'utilisation des énergies fossiles (charbon, pétrole, gaz naturel) pour les transports, l'énergie et l'industrie, la déforestation et l'agriculture intensive."
     }
   ]
 }
