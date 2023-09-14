@@ -1,0 +1,26 @@
+{
+  "interaction": {
+    "titre": "Comment se chauffer de manière écologique ?",
+    "soustitre": "L'énergie la plus efficace",
+    "categorie": "logement",
+    "tags": ["logement", "ameublement", "forêts"],
+    "duree": "⏱️ < 1 minute",
+    "frequence": "Une fois",
+    "image_url": "https://images.unsplash.com/photo-1567080586917-e6ab6aa0df85?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80",
+    "url": null,
+    "difficulty": 4,
+    "points": 15,
+    "locked": false
+  },
+  "titre": "L'énergie la plus efficace",
+  "questions": [
+    {
+      "ordre": 1,
+      "libelle": "Parmi ces systèmes de chauffage, lequel est le plus écologique ?",
+      "solution": "Le bois",
+      "propositions": ["Le gaz", "La pompe à chaleur", "Le fioul", "Le bois"],
+      "texte_riche_ko": "Mauvaise réponse. Se chauffer au bois permet d’utiliser une énergie renouvelable, de limiter le recours aux énergies fossiles et donc de lutter contre le changement climatique, contrairement au gaz et au fioul dont le bilan carbone est nettement plus élevé. Cependant, réalisée dans de mauvaises conditions, la combustion du bois émet des polluants qui dégradent la qualité de l’air extérieur. Remplacer son vieux poêle ou sa cheminée par un appareil performant permet de réduire jusqu'à 10 fois les émissions de particules fines, en plus d'améliorer le rendement. Vous pouvez d'ailleurs bénéficier d'aides pour votre chauffage !",
+      "texte_riche_ok": "Bravo ! Se chauffer au bois permet d’utiliser une énergie renouvelable, de limiter le recours aux énergies fossiles et donc de lutter contre le changement climatique, contrairement au gaz et au fioul dont le bilan carbone est nettement plus élevé. Cependant, réalisée dans de mauvaises conditions, la combustion du bois émet des polluants qui dégradent la qualité de l’air extérieur. Remplacer son vieux poêle ou sa cheminée par un appareil performant permet de réduire jusqu'à 10 fois les émissions de particules fines, en plus d'améliorer le rendement. Vous pouvez d'ailleurs bénéficier d'aides pour votre chauffage ! Les pompes à chaleur aérothermiques ou géothermiques, qui puisent la chaleur dans l’air ou le sol et disposent d’un excellent rendement, affichent aussi un bilan carbone satisfaisant."
+    }
+  ]
+}
