@@ -5,7 +5,7 @@ import { Interaction } from '../../domain/interaction/interaction';
 import { v4 as uuidv4 } from 'uuid';
 import { SearchFilter } from '../../../src/domain/interaction/searchFilter';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
-import { Categorie } from '../../../src/domain/categorie';
+import { Thematique } from '../../domain/thematique';
 import { InteractionScore } from '../../../src/domain/interaction/interactionScore';
 import { DifficultyLevel } from 'src/domain/difficultyLevel';
 import { isEmpty } from 'rxjs';
@@ -41,7 +41,7 @@ export class InteractionRepository {
 
   async listLastDoneQuizzByCategorieAndDifficulty(
     utilisateurId: string,
-    categorie: Categorie,
+    categorie: Thematique,
     difficulty: DifficultyLevel,
   ): Promise<Interaction[] | null> {
     const liste = await this.prisma.interaction.findMany({
@@ -67,12 +67,12 @@ export class InteractionRepository {
     let quizz_difficulty_filter;
     if (filter.type === InteractionType.quizz) {
       quizz_difficulty_filter = [];
-      for (const cat in Categorie) {
-        if (filter.quizzProfile.getLevel(cat as Categorie)) {
+      for (const cat in Thematique) {
+        if (filter.quizzProfile.getLevel(cat as Thematique)) {
           quizz_difficulty_filter.push({
             type: InteractionType.quizz,
             categorie: cat,
-            difficulty: filter.quizzProfile.getLevel(cat as Categorie),
+            difficulty: filter.quizzProfile.getLevel(cat as Thematique),
           });
         }
       }
@@ -109,7 +109,7 @@ export class InteractionRepository {
 
   async listInteractionScores(
     utilisateurId: string,
-    categories: Categorie[],
+    categories: Thematique[],
   ): Promise<InteractionScore[] | null> {
     const result = await this.prisma.interaction.findMany({
       where: {

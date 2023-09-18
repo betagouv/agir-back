@@ -14,7 +14,7 @@ import { InteractionsUsecase } from '../../usecase/interactions.usecase';
 import { ApiTags, ApiQuery, ApiBody, ApiOkResponse } from '@nestjs/swagger';
 import { InteractionAPI } from './types/interactionAPI';
 import { InteractionStatus } from '../../domain/interaction/interactionStatus';
-import { Categorie } from '../../../src/domain/categorie';
+import { Thematique } from '../../domain/thematique';
 import { InteractionStatusAPI } from './types/interactionStatusAPI';
 
 @Controller()
@@ -79,14 +79,14 @@ export class IntractionsController {
   })
   @ApiQuery({
     name: 'categorie',
-    enum: Categorie,
+    enum: Thematique,
     required: true,
   })
   @Post('interactions/scoring')
   async boostInteractions(
     @Query('utilisateurId') utilisateurId: string,
     @Query('boost') boost: number,
-    @Query('categorie') categorie: Categorie,
+    @Query('categorie') categorie: Thematique,
   ) {
     return this.interactionsUsecase.updateInteractionScoreByCategories(
       utilisateurId,

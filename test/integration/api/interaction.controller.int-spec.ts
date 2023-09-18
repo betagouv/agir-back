@@ -4,7 +4,7 @@ import { InteractionType } from '../../../src/domain/interaction/interactionType
 import { DistributionSettings } from '../../../src/domain/interaction/distributionSettings';
 import { TestUtil } from '../../TestUtil';
 import { BadgeTypes } from '../../../src/domain/badge/badgeTypes';
-import { Categorie } from '../../../src/domain/categorie';
+import { Thematique } from '../../../src/domain/thematique';
 import { Decimal } from '@prisma/client/runtime/library';
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 
@@ -282,7 +282,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       quizz_score: 85,
       done: true,
       done_at: new Date(1),
-      categorie: Categorie.climat,
+      categorie: Thematique.climat,
     });
     await TestUtil.create('interaction', {
       id: '2',
@@ -291,7 +291,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       quizz_score: 90,
       done: true,
       done_at: new Date(100),
-      categorie: Categorie.climat,
+      categorie: Thematique.climat,
     });
     await TestUtil.create('interaction', {
       id: '3',
@@ -300,7 +300,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       quizz_score: 75,
       done: false,
       done_at: null,
-      categorie: Categorie.climat,
+      categorie: Thematique.climat,
     });
     // WHEN
     const response = await TestUtil.getServer()
@@ -339,7 +339,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       quizz_score: 85,
       done: true,
       done_at: new Date(1),
-      categorie: Categorie.climat,
+      categorie: Thematique.climat,
     });
     await TestUtil.create('interaction', {
       id: '2',
@@ -348,7 +348,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       quizz_score: 90,
       done: true,
       done_at: new Date(100),
-      categorie: Categorie.climat,
+      categorie: Thematique.climat,
     });
     await TestUtil.create('interaction', {
       id: '3',
@@ -357,7 +357,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       quizz_score: 75,
       done: false,
       done_at: null,
-      categorie: Categorie.climat,
+      categorie: Thematique.climat,
     });
     // WHEN
     const response = await TestUtil.getServer()
@@ -468,49 +468,49 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       score: 0.9,
       type: InteractionType.quizz,
       difficulty: 1,
-      categorie: Categorie.alimentation,
+      categorie: Thematique.alimentation,
     });
     await TestUtil.create('interaction', {
       id: '2',
       score: 0.8,
       type: InteractionType.quizz,
       difficulty: 2,
-      categorie: Categorie.alimentation,
+      categorie: Thematique.alimentation,
     });
     await TestUtil.create('interaction', {
       id: '3',
       score: 0.6,
       type: InteractionType.quizz,
       difficulty: 3,
-      categorie: Categorie.alimentation,
+      categorie: Thematique.alimentation,
     });
     await TestUtil.create('interaction', {
       id: '4',
       score: 0.5,
       type: InteractionType.quizz,
       difficulty: 1,
-      categorie: Categorie.climat,
+      categorie: Thematique.climat,
     });
     await TestUtil.create('interaction', {
       id: '5',
       score: 0.7,
       type: InteractionType.quizz,
       difficulty: 2,
-      categorie: Categorie.climat,
+      categorie: Thematique.climat,
     });
     await TestUtil.create('interaction', {
       id: '6',
       score: 0.7,
       type: InteractionType.quizz,
       difficulty: 3,
-      categorie: Categorie.climat,
+      categorie: Thematique.climat,
     });
     await TestUtil.create('interaction', {
       id: '7',
       score: 0.7,
       type: InteractionType.quizz,
       difficulty: 3,
-      categorie: Categorie.consommation,
+      categorie: Thematique.consommation,
     });
 
     // WHEN
@@ -531,12 +531,12 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     await TestUtil.create('interaction', {
       id: '1',
       score: 0.1,
-      categorie: Categorie.alimentation,
+      categorie: Thematique.alimentation,
     });
     await TestUtil.create('interaction', {
       id: '2',
       score: 0.2,
-      categorie: Categorie.climat,
+      categorie: Thematique.climat,
     });
     // WHEN
     const response = await TestUtil.getServer().post(
@@ -559,12 +559,12 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     await TestUtil.create('interaction', {
       id: '1',
       score: 0.8,
-      categorie: Categorie.alimentation,
+      categorie: Thematique.alimentation,
     });
     await TestUtil.create('interaction', {
       id: '2',
       score: 0.8,
-      categorie: Categorie.climat,
+      categorie: Thematique.climat,
     });
     // WHEN
     const response = await TestUtil.getServer().post(

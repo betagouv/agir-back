@@ -1,4 +1,4 @@
-export enum Categorie {
+export enum Thematique {
   alimentation = 'alimentation',
   transport = 'transport',
   logement = 'logement',

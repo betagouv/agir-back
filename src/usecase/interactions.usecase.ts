@@ -8,7 +8,7 @@ import { BadgeRepository } from '../infrastructure/repository/badge.repository';
 import { InteractionType } from '../domain/interaction/interactionType';
 import { BadgeTypes } from '../domain/badge/badgeTypes';
 import { UserQuizzProfile } from '../domain/quizz/userQuizzProfile';
-import { Categorie } from '../../src/domain/categorie';
+import { Thematique } from '../domain/thematique';
 import { Decimal } from '@prisma/client/runtime/library';
 import { QuizzLevelSettings } from '../../src/domain/quizz/quizzLevelSettings';
 
@@ -22,7 +22,7 @@ export class InteractionsUsecase {
 
   async updateInteractionScoreByCategories(
     utilisateurId: string,
-    categories: Categorie[],
+    categories: Thematique[],
     boost: number,
   ) {
     let interactionScores =

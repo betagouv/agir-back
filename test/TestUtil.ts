@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { InteractionType } from '../src/domain/interaction/interactionType';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
-import { Categorie } from '../src/domain/categorie';
+import { Thematique } from '../src/domain/thematique';
 import { UserQuizzProfile } from '../src/domain/quizz/userQuizzProfile';
 const request = require('supertest');
 
@@ -158,7 +158,7 @@ export class TestUtil {
       type: InteractionType.article,
       titre: 'titre',
       soustitre: 'soustitre',
-      categorie: Categorie.consommation,
+      categorie: Thematique.consommation,
       tags: ['quizz', 'nourriture', 'conso'],
       duree: '⏱️ < 1 minute',
       frequence: '🔄 1x/jour',
@@ -191,7 +191,7 @@ export class TestUtil {
       type: InteractionType.quizz,
       titre: 'titre',
       soustitre: 'soustitre',
-      categorie: Categorie.consommation,
+      categorie: Thematique.consommation,
       tags: ['quizz', 'nourriture', 'conso'],
       duree: '⏱️ < 1 minute',
       frequence: '🔄 1x/jour',

@@ -1,5 +1,5 @@
 import { Decimal } from '@prisma/client/runtime/library';
-import { Categorie } from '../categorie';
+import { Thematique } from '../thematique';
 import { DifficultyLevel } from '../difficultyLevel';
 import { InteractionStatus } from './interactionStatus';
 import { InteractionType } from './interactionType';
@@ -14,7 +14,7 @@ export class Interaction {
   type: InteractionType;
   titre: string;
   soustitre: string;
-  categorie: Categorie;
+  categorie: Thematique;
   tags: [];
   duree: string;
   frequence: string;

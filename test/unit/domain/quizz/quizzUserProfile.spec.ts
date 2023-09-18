@@ -1,5 +1,5 @@
 import { DifficultyLevel } from '../../../../src/domain/difficultyLevel';
-import { Categorie } from '../../../../src/domain/categorie';
+import { Thematique } from '../../../../src/domain/thematique';
 import { UserQuizzProfile } from '../../../../src/domain/quizz/userQuizzProfile';
 
 describe('UserQuizzProfile', () => {
@@ -13,16 +13,16 @@ describe('UserQuizzProfile', () => {
     const quizzProfile = new UserQuizzProfile(levels);
 
     // THEN
-    expect(quizzProfile.getLevel(Categorie.alimentation)).toStrictEqual(
+    expect(quizzProfile.getLevel(Thematique.alimentation)).toStrictEqual(
       DifficultyLevel.L3,
     );
-    expect(quizzProfile.isLevelCompleted(Categorie.alimentation)).toStrictEqual(
+    expect(quizzProfile.isLevelCompleted(Thematique.alimentation)).toStrictEqual(
       true,
     );
-    expect(quizzProfile.getLevel(Categorie.climat)).toStrictEqual(
+    expect(quizzProfile.getLevel(Thematique.climat)).toStrictEqual(
       DifficultyLevel.L1,
     );
-    expect(quizzProfile.isLevelCompleted(Categorie.climat)).toStrictEqual(
+    expect(quizzProfile.isLevelCompleted(Thematique.climat)).toStrictEqual(
       false,
     );
   });

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Categorie } from '../../../../../src/domain/categorie';
+import { Thematique } from '../../../../domain/thematique';
 import { CMSEvent } from './CMSEvent';
 import { CMSModel } from './CMSModels';
 
@@ -10,7 +10,7 @@ export class CMSWebhookAPI {
 
   @ApiProperty() titre: string;
   @ApiProperty() sousTitre: string;
-  @ApiProperty({ enum: Categorie }) thematique: Categorie;
+  @ApiProperty({ enum: Thematique }) thematique: Thematique;
   @ApiProperty() rubriques: string[];
   @ApiProperty() duree: string;
   @ApiProperty() frequence: string;

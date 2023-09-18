@@ -1,34 +1,34 @@
-import { Categorie } from '../categorie';
+import { Thematique } from '../thematique';
 import { DifficultyLevel } from '../difficultyLevel';
 import { UserQuizzLevel } from './userQuizzLevel';
 
 export class UserQuizzProfile {
   constructor(profile: Record<string, UserQuizzLevel>) {
     this.data = profile;
-    for (const cat in Categorie) {
-      profile[Categorie[cat]] = profile[Categorie[cat]] || {
+    for (const cat in Thematique) {
+      profile[Thematique[cat]] = profile[Thematique[cat]] || {
         level: DifficultyLevel.L1,
         isCompleted: false,
       };
     }
   }
 
-  private data: Record<Categorie, UserQuizzLevel>;
+  private data: Record<Thematique, UserQuizzLevel>;
 
-  setLevel(categorie: Categorie, level: DifficultyLevel) {
+  setLevel(categorie: Thematique, level: DifficultyLevel) {
     this.data[categorie] = { level, isCompleted: false };
     return level;
   }
-  getLevel(categorie: Categorie): DifficultyLevel {
+  getLevel(categorie: Thematique): DifficultyLevel {
     return this.data[categorie].level;
   }
-  isLevelCompleted(categorie: Categorie): boolean {
+  isLevelCompleted(categorie: Thematique): boolean {
     return this.data[categorie].isCompleted;
   }
-  setIsCompleted(categorie: Categorie, isCompleted: boolean) {
+  setIsCompleted(categorie: Thematique, isCompleted: boolean) {
     this.data[categorie].isCompleted = isCompleted;
   }
-  increaseLevel(categorie: Categorie) {
+  increaseLevel(categorie: Thematique) {
     const level = this.getLevel(categorie);
     switch (level) {
       case DifficultyLevel.L1:
@@ -42,7 +42,7 @@ export class UserQuizzProfile {
     }
     return DifficultyLevel.L5;
   }
-  getData(): Record<Categorie, UserQuizzLevel> {
+  getData(): Record<Thematique, UserQuizzLevel> {
     return this.data;
   }
   static newLowProfile(): UserQuizzProfile {

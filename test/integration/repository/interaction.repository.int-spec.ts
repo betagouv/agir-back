@@ -2,7 +2,7 @@ import { TestUtil } from '../../TestUtil';
 import { InteractionRepository } from '../../../src/infrastructure/repository/interaction.repository';
 import { Interaction } from '../../../src/domain/interaction/interaction';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
-import { Categorie } from '../../../src/domain/categorie';
+import { Thematique } from '../../../src/domain/thematique';
 import { UserQuizzProfile } from '../../../src/domain/quizz/userQuizzProfile';
 import { Decimal } from '@prisma/client/runtime/library';
 import { InteractionScore } from '../../../src/domain/interaction/interactionScore';
@@ -273,19 +273,19 @@ describe('InteractionRepository', () => {
     await TestUtil.create('interaction', {
       id: '1',
       difficulty: 1,
-      categorie: Categorie.alimentation,
+      categorie: Thematique.alimentation,
       type: InteractionType.quizz,
     });
     await TestUtil.create('interaction', {
       id: '2',
       difficulty: 2,
-      categorie: Categorie.alimentation,
+      categorie: Thematique.alimentation,
       type: InteractionType.quizz,
     });
     await TestUtil.create('interaction', {
       id: '3',
       difficulty: 3,
-      categorie: Categorie.alimentation,
+      categorie: Thematique.alimentation,
       type: InteractionType.quizz,
     });
     await TestUtil.create('interaction', {
@@ -417,29 +417,29 @@ describe('InteractionRepository', () => {
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
       id: '1',
-      categorie: Categorie.alimentation,
+      categorie: Thematique.alimentation,
     });
     await TestUtil.create('interaction', {
       id: '2',
-      categorie: Categorie.climat,
+      categorie: Thematique.climat,
     });
     await TestUtil.create('interaction', {
       id: '3',
-      categorie: Categorie.consommation,
+      categorie: Thematique.consommation,
     });
     await TestUtil.create('interaction', {
       id: '4',
-      categorie: Categorie.consommation,
+      categorie: Thematique.consommation,
     });
     await TestUtil.create('interaction', {
       id: '5',
-      categorie: Categorie.loisir,
+      categorie: Thematique.loisir,
     });
 
     // WHEN
     const liste = await interactionRepository.listInteractionScores(
       'utilisateur-id',
-      [Categorie.alimentation, Categorie.consommation],
+      [Thematique.alimentation, Thematique.consommation],
     );
     // THEN
     expect(liste).toHaveLength(3);
@@ -449,12 +449,12 @@ describe('InteractionRepository', () => {
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
       id: '1',
-      categorie: Categorie.alimentation,
+      categorie: Thematique.alimentation,
       score: 0.1,
     });
     await TestUtil.create('interaction', {
       id: '2',
-      categorie: Categorie.climat,
+      categorie: Thematique.climat,
       score: 0.2,
     });
 
