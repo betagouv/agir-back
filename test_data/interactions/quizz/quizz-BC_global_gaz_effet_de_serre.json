@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Quiz global 1",
     "soustitre": "H2O",
-    "categorie": "climat",
+    "thematique_gamification": "climat",
     "tags": [],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",

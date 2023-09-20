@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Partager sa voiture ?",
     "soustitre": "autopartage",
-    "categorie": "transport",
+    "thematique_gamification": "transport",
     "tags": ["logement", "ameublement", "forêts"],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",

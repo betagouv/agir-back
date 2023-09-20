@@ -33,6 +33,7 @@ describe('UtilisateurRepository', () => {
     // WHEN
     const result = await utilisateurRepository.listUtilisateurIds();
 
+    result.sort((a, b) => parseInt(a.id) - parseInt(b.id));
     // THEN
     expect(result).toStrictEqual([{ id: '1' }, { id: '2' }, { id: '3' }]);
   });

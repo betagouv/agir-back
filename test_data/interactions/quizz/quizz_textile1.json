@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Textiles et déchets",
     "soustitre": "Planète textile",
-    "categorie": "consommation",
+    "thematique_gamification": "consommation",
     "tags": ["textiles", "déchets", "consommation durable"],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",

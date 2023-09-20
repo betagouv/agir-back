@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Comment se chauffer de manière écologique ?",
     "soustitre": "L'énergie la plus efficace",
-    "categorie": "logement",
+    "thematique_gamification": "logement",
     "tags": ["logement", "ameublement", "forêts"],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",

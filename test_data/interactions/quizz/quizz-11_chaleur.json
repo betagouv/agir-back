@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Logement : par où s'échappe le plus la chaleur ?",
     "soustitre": "Un logement mal isolé perd de la chaleur, mais par où exactement ?",
-    "categorie": "logement",
+    "thematique_gamification": "logement",
     "tags": ["logement", "ameublement", "forêts"],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",

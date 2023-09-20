@@ -39,13 +39,13 @@ export class InteractionRepository {
 
   async listLastDoneQuizzByCategorieAndDifficulty(
     utilisateurId: string,
-    categorie: Thematique,
+    thematique_gamification: Thematique,
     difficulty: DifficultyLevel,
   ): Promise<Interaction[] | null> {
     const liste = await this.prisma.interaction.findMany({
       where: {
         utilisateurId,
-        categorie,
+        thematique_gamification,
         done: true,
         difficulty,
         type: InteractionType.quizz,
@@ -69,7 +69,7 @@ export class InteractionRepository {
         if (filter.quizzProfile.getLevel(cat as Thematique)) {
           quizz_difficulty_filter.push({
             type: InteractionType.quizz,
-            categorie: cat,
+            thematique_gamification: cat,
             difficulty: filter.quizzProfile.getLevel(cat as Thematique),
           });
         }
@@ -107,13 +107,13 @@ export class InteractionRepository {
 
   async listInteractionScores(
     utilisateurId: string,
-    categories: Thematique[],
+    thematiques_gamification: Thematique[],
   ): Promise<InteractionScore[] | null> {
     const result = await this.prisma.interaction.findMany({
       where: {
         utilisateurId,
-        categorie: {
-          in: categories,
+        thematique_gamification: {
+          in: thematiques_gamification,
         },
       },
       select: {

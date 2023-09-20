@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Le réchauffement climatique",
     "soustitre": "Quand la planète sort ses lunettes de soleil",
-    "categorie": "climat",
+    "thematique_gamification": "climat",
     "tags": [],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",

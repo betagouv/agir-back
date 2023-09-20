@@ -2,7 +2,7 @@ const suivis = {
   suivi_du_jour: {
     titre: 'Faire le suivi du jour',
     soustitre: '-',
-    categorie: 'alimentation',
+    thematique_gamification: 'alimentation',
     tags: ['suivi', 'alimentation', 'kyc'],
     duree: '⏱️ < 1 minute',
     frequence: null,
@@ -17,7 +17,7 @@ const suivis = {
   ajouter_linky: {
     titre: 'Connectez votre compteur Linky',
     soustitre: '-',
-    categorie: 'logement',
+    thematique_gamification: 'logement',
     tags: [],
     duree: '⏱️ 2 minutes',
     frequence: null,
@@ -31,7 +31,7 @@ const suivis = {
   aide_velo: {
     titre: 'Simulez une aide pour acheter un vélo',
     soustitre: '-',
-    categorie: 'transport',
+    thematique_gamification: 'transport',
     tags: [],
     duree: '⏱️ 2 minutes',
     frequence: null,

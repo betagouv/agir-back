@@ -22,13 +22,13 @@ export class InteractionsUsecase {
 
   async updateInteractionScoreByCategories(
     utilisateurId: string,
-    categories: Thematique[],
+    thematiques: Thematique[],
     boost: number,
   ) {
     let interactionScores =
       await this.interactionRepository.listInteractionScores(
         utilisateurId,
-        categories,
+        thematiques,
       );
     if (boost > 1) {
       interactionScores.forEach((inter) => {
@@ -141,7 +141,7 @@ export class InteractionsUsecase {
       const lastQuizzOfCategorie =
         await this.interactionRepository.listLastDoneQuizzByCategorieAndDifficulty(
           utilisateurId,
-          stored_interaction.categorie,
+          stored_interaction.thematique_gamification,
           stored_interaction.difficulty,
         );
 
@@ -151,14 +151,18 @@ export class InteractionsUsecase {
       );
 
       if (isLevelCompleted) {
-        utilisateur.quizzProfile.increaseLevel(stored_interaction.categorie);
+        utilisateur.quizzProfile.increaseLevel(
+          stored_interaction.thematique_gamification,
+        );
 
         await this.badgeRepository.createUniqueBadge(utilisateurId, {
           titre: `Passage quizz niveau ${utilisateur.quizzProfile
-            .getLevel(stored_interaction.categorie)
+            .getLevel(stored_interaction.thematique_gamification)
             .toString()
-            .at(-1)} en catégorie ${stored_interaction.categorie} !!`,
-          type: stored_interaction.categorie.concat(
+            .at(-1)} en catégorie ${
+            stored_interaction.thematique_gamification
+          } !!`,
+          type: stored_interaction.thematique_gamification.concat(
             '_',
             stored_interaction.difficulty.toString(),
           ),

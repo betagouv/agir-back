@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "T'aime le poisson ?!",
     "soustitre": "bla bla",
-    "categorie": "alimentation",
+    "thematique_gamification": "alimentation",
     "tags": ["poisson", "mer", "consommation"],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",

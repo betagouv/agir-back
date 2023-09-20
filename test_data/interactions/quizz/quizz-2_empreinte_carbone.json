@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "L'empreinte carbone des Français",
     "soustitre": "Comprendre l'impact de nos modes de vie",
-    "categorie": "climat",
+    "thematique_gamification": "climat",
     "tags": ["climat", "GES"],
     "duree": "⏱️ < 1 minute",
     "frequence": "A tout moment",

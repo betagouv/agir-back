@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Les déchets électroniques",
     "soustitre": "Recyclage et objets électroniques",
-    "categorie": "consommation",
+    "thematique_gamification": "consommation",
     "tags": ["déchets", "objets électroniques", "recyclage"],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",

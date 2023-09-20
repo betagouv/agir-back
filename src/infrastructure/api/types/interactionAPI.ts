@@ -6,7 +6,8 @@ export class InteractionAPI {
   @ApiProperty() type: string;
   @ApiProperty() titre: string;
   @ApiProperty() soustitre: string;
-  @ApiProperty() categorie: string;
+  @ApiProperty() categorie: string; // FIXME : rename to thematique_gamification
+  @ApiProperty() thematique_gamification: string;
   @ApiProperty() tags: string[];
   @ApiProperty() duree: string;
   @ApiProperty() frequence: string;

@@ -2,7 +2,7 @@ const articles = {
   article_faire_nos_gestes_climat: {
     titre: 'Calculez votre empreinte carbone',
     soustitre: 'Une infographie qui vous explique tout !',
-    categorie: 'climat',
+    thematique_gamification: 'climat',
     tags: [],
     duree: '⏱️ 15 minutes',
     frequence: 'Une fois',
@@ -15,7 +15,7 @@ const articles = {
   article_transport_se_deplacer_autrement: {
     titre: 'Se déplacer autrement',
     soustitre: 'Une infographie qui vous explique tout !',
-    categorie: 'transport',
+    thematique_gamification: 'transport',
     tags: ['article', 'transport', 'comportement'],
     duree: '⏱️ < 1 minute',
     frequence: 'Une fois',
@@ -29,7 +29,7 @@ const articles = {
   article_consommation_indice_de_reparabilite: {
     titre: "Comprendre l'indice de réparabilité",
     soustitre: 'Une infographie qui vous explique tout !',
-    categorie: 'consommation',
+    thematique_gamification: 'consommation',
     tags: ['article'],
     duree: '⏱️ < 1 minute',
     frequence: 'Une fois',
@@ -43,7 +43,7 @@ const articles = {
   article_consommation_video_numerique_responsable: {
     titre: "L'impact du numérique",
     soustitre: 'Une vidéo pour tout capter !',
-    categorie: 'consommation',
+    thematique_gamification: 'consommation',
     tags: ['article'],
     duree: '⏱️ < 1 minute',
     frequence: 'Une fois',
@@ -57,7 +57,7 @@ const articles = {
   article_alimentation_recettes_4_saisons: {
     titre: 'Recettes des 4 saisons à base de légumes et légumineuses',
     soustitre: 'Devenez un chef éco-responsable en peu de temps',
-    categorie: 'alimentation',
+    thematique_gamification: 'alimentation',
     tags: ['article'],
     duree: '⏱️ < 1 minute',
     frequence: 'Une fois',
@@ -72,7 +72,7 @@ const articles = {
   article_eau: {
     titre: "Tout savoir sur l'eau",
     soustitre: 'bla bla',
-    categorie: 'consommation',
+    thematique_gamification: 'consommation',
     tags: ['article', 'eau', 'comportement'],
     duree: '⏱️ < 1 minute',
     frequence: 'Une fois',
@@ -85,7 +85,7 @@ const articles = {
   article_viande: {
     titre: 'Tout savoir sur la viande',
     soustitre: 'bla bla',
-    categorie: 'consommation',
+    thematique_gamification: 'consommation',
     tags: ['article', 'nourriture', 'viande'],
     duree: '⏱️ < 2 minute',
     frequence: 'Une fois',

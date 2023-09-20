@@ -10,7 +10,7 @@ export class InteractionDefinition {
   type: InteractionType;
   titre: string;
   soustitre?: string;
-  categorie: string;
+  thematique_gamification: string;
   tags: [];
   duree?: string;
   frequence?: string;

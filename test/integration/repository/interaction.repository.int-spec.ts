@@ -177,7 +177,7 @@ describe('InteractionRepository', () => {
     const result = await TestUtil.prisma.interaction.findUnique({
       where: { id: 'interaction-id' },
     });
-    expect(result.categorie).toStrictEqual('consommation');
+    expect(result.thematique_gamification).toStrictEqual('consommation');
     expect(result.points).toStrictEqual(123);
     expect(result.updated_at).not.toBeNull();
   });
@@ -273,19 +273,19 @@ describe('InteractionRepository', () => {
     await TestUtil.create('interaction', {
       id: '1',
       difficulty: 1,
-      categorie: Thematique.alimentation,
+      thematique_gamification: Thematique.alimentation,
       type: InteractionType.quizz,
     });
     await TestUtil.create('interaction', {
       id: '2',
       difficulty: 2,
-      categorie: Thematique.alimentation,
+      thematique_gamification: Thematique.alimentation,
       type: InteractionType.quizz,
     });
     await TestUtil.create('interaction', {
       id: '3',
       difficulty: 3,
-      categorie: Thematique.alimentation,
+      thematique_gamification: Thematique.alimentation,
       type: InteractionType.quizz,
     });
     await TestUtil.create('interaction', {
@@ -412,28 +412,28 @@ describe('InteractionRepository', () => {
     // THEN
     expect(result).toHaveLength(2);
   });
-  it('listInteractionScores : liste par categories ', async () => {
+  it('listInteractionScores : liste par thematique_gamification ', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
       id: '1',
-      categorie: Thematique.alimentation,
+      thematique_gamification: Thematique.alimentation,
     });
     await TestUtil.create('interaction', {
       id: '2',
-      categorie: Thematique.climat,
+      thematique_gamification: Thematique.climat,
     });
     await TestUtil.create('interaction', {
       id: '3',
-      categorie: Thematique.consommation,
+      thematique_gamification: Thematique.consommation,
     });
     await TestUtil.create('interaction', {
       id: '4',
-      categorie: Thematique.consommation,
+      thematique_gamification: Thematique.consommation,
     });
     await TestUtil.create('interaction', {
       id: '5',
-      categorie: Thematique.loisir,
+      thematique_gamification: Thematique.loisir,
     });
 
     // WHEN
@@ -449,12 +449,12 @@ describe('InteractionRepository', () => {
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
       id: '1',
-      categorie: Thematique.alimentation,
+      thematique_gamification: Thematique.alimentation,
       score: 0.1,
     });
     await TestUtil.create('interaction', {
       id: '2',
-      categorie: Thematique.climat,
+      thematique_gamification: Thematique.climat,
       score: 0.2,
     });
 
@@ -533,14 +533,14 @@ describe('InteractionRepository', () => {
       titre: 'titre 1',
       utilisateurId: 'utilisateur-id',
       type: InteractionType.article,
-      categorie: Thematique.alimentation,
+      thematique_gamification: Thematique.alimentation,
     });
     const inter2 = new Interaction({
       id: '2',
       titre: 'titre 2',
       utilisateurId: 'utilisateur-id',
       type: InteractionType.quizz,
-      categorie: Thematique.alimentation,
+      thematique_gamification: Thematique.alimentation,
     });
 
     // WHEN

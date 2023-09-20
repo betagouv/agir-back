@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Le coût annuel d'une voiture",
     "soustitre": "Sous le capot des dépenses",
-    "categorie": "transport",
+    "thematique_gamification": "transport",
     "tags": ["logement", "ameublement", "forêts"],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",

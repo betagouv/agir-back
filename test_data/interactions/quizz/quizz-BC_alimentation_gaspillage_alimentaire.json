@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Quiz alimentation",
     "soustitre": "",
-    "categorie": "alimentation",
+    "thematique_gamification": "alimentation",
     "tags": [],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",

@@ -15,30 +15,30 @@ export class UserQuizzProfile {
 
   private data: Record<Thematique, UserQuizzLevel>;
 
-  setLevel(categorie: Thematique, level: DifficultyLevel) {
-    this.data[categorie] = { level, isCompleted: false };
+  setLevel(thematique: Thematique, level: DifficultyLevel) {
+    this.data[thematique] = { level, isCompleted: false };
     return level;
   }
-  getLevel(categorie: Thematique): DifficultyLevel {
-    return this.data[categorie].level;
+  getLevel(thematique: Thematique): DifficultyLevel {
+    return this.data[thematique].level;
   }
-  isLevelCompleted(categorie: Thematique): boolean {
-    return this.data[categorie].isCompleted;
+  isLevelCompleted(thematique: Thematique): boolean {
+    return this.data[thematique].isCompleted;
   }
-  setIsCompleted(categorie: Thematique, isCompleted: boolean) {
-    this.data[categorie].isCompleted = isCompleted;
+  setIsCompleted(thematique: Thematique, isCompleted: boolean) {
+    this.data[thematique].isCompleted = isCompleted;
   }
-  increaseLevel(categorie: Thematique) {
-    const level = this.getLevel(categorie);
+  increaseLevel(thematique: Thematique) {
+    const level = this.getLevel(thematique);
     switch (level) {
       case DifficultyLevel.L1:
-        return this.setLevel(categorie, DifficultyLevel.L2);
+        return this.setLevel(thematique, DifficultyLevel.L2);
       case DifficultyLevel.L2:
-        return this.setLevel(categorie, DifficultyLevel.L3);
+        return this.setLevel(thematique, DifficultyLevel.L3);
       case DifficultyLevel.L3:
-        return this.setLevel(categorie, DifficultyLevel.L4);
+        return this.setLevel(thematique, DifficultyLevel.L4);
       case DifficultyLevel.L4:
-        return this.setLevel(categorie, DifficultyLevel.L5);
+        return this.setLevel(thematique, DifficultyLevel.L5);
     }
     return DifficultyLevel.L5;
   }

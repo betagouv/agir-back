@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Se déplacer",
     "soustitre": "bla bla",
-    "categorie": "transport",
+    "thematique_gamification": "transport",
     "tags": ["mobilité douce", "transports", "GES"],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",

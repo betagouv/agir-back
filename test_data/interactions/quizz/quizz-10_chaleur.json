@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Les gaz à effet de serre chez soi",
     "soustitre": "Logement",
-    "categorie": "logement",
+    "thematique_gamification": "logement",
     "tags": ["logement", "ameublement", "forêts"],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",

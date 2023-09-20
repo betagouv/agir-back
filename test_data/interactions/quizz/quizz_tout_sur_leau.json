@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Petit test sur l'eau",
     "soustitre": "bla bla",
-    "categorie": "consommation",
+    "thematique_gamification": "consommation",
     "tags": ["vetements", "eau", "consommation"],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",

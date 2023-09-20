@@ -48,61 +48,61 @@ model Utilisateur {
 }
 
 model Interaction {
-  id                 String      @id
-  content_id         String?
-  type               String
-  titre              String
-  soustitre          String?
-  categorie          String
-  tags               String[]    @default([])
-  duree              String?
-  frequence          String?
-  image_url          String?
-  url                String?
-  seen               Int         @default(0)
-  seen_at            DateTime?   @db.Timestamptz(3)
-  clicked            Boolean     @default(false)
-  clicked_at         DateTime?   @db.Timestamptz(3)
-  done               Boolean     @default(false)
-  done_at            DateTime?   @db.Timestamptz(3)
-  locked             Boolean     @default(false)
-  difficulty         Int         @default(1)
-  points             Int         @default(0)
-  score              Decimal     @default(0.5) @db.Decimal(10, 10)
-  quizz_score        Int?
-  scheduled_reset    DateTime?   @db.Timestamptz(3)
-  day_period         Int?
-  pinned_at_position Int?
-  raison_lock        String?
-  codes_postaux      String[]    @default([])
-  created_at         DateTime    @default(now()) @db.Timestamptz(3)
-  updated_at         DateTime    @updatedAt @db.Timestamptz(3)
-  utilisateurId      String
-  utilisateur        Utilisateur @relation(fields: [utilisateurId], references: [id])
+  id                      String      @id
+  content_id              String?
+  type                    String
+  titre                   String
+  soustitre               String?
+  thematique_gamification String
+  tags                    String[]    @default([])
+  duree                   String?
+  frequence               String?
+  image_url               String?
+  url                     String?
+  seen                    Int         @default(0)
+  seen_at                 DateTime?   @db.Timestamptz(3)
+  clicked                 Boolean     @default(false)
+  clicked_at              DateTime?   @db.Timestamptz(3)
+  done                    Boolean     @default(false)
+  done_at                 DateTime?   @db.Timestamptz(3)
+  locked                  Boolean     @default(false)
+  difficulty              Int         @default(1)
+  points                  Int         @default(0)
+  score                   Decimal     @default(0.5) @db.Decimal(10, 10)
+  quizz_score             Int?
+  scheduled_reset         DateTime?   @db.Timestamptz(3)
+  day_period              Int?
+  pinned_at_position      Int?
+  raison_lock             String?
+  codes_postaux           String[]    @default([])
+  created_at              DateTime    @default(now()) @db.Timestamptz(3)
+  updated_at              DateTime    @updatedAt @db.Timestamptz(3)
+  utilisateurId           String
+  utilisateur             Utilisateur @relation(fields: [utilisateurId], references: [id])
 }
 
 model InteractionDefinition {
-  id                 String   @id
-  content_id         String?  @unique
-  type               String
-  titre              String
-  soustitre          String?
-  categorie          String
-  tags               String[] @default([])
-  duree              String?
-  frequence          String?
-  image_url          String?
-  url                String?
-  locked             Boolean  @default(false)
-  difficulty         Int      @default(1)
-  points             Int      @default(0)
-  score              Decimal  @default(0.5) @db.Decimal(10, 10)
-  day_period         Int?
-  pinned_at_position Int?
-  raison_lock        String?
-  codes_postaux      String[] @default([])
-  created_at         DateTime @default(now()) @db.Timestamptz(3)
-  updated_at         DateTime @updatedAt @db.Timestamptz(3)
+  id                      String   @id
+  content_id              String?  @unique
+  type                    String
+  titre                   String
+  soustitre               String?
+  thematique_gamification String
+  tags                    String[] @default([])
+  duree                   String?
+  frequence               String?
+  image_url               String?
+  url                     String?
+  locked                  Boolean  @default(false)
+  difficulty              Int      @default(1)
+  points                  Int      @default(0)
+  score                   Decimal  @default(0.5) @db.Decimal(10, 10)
+  day_period              Int?
+  pinned_at_position      Int?
+  raison_lock             String?
+  codes_postaux           String[] @default([])
+  created_at              DateTime @default(now()) @db.Timestamptz(3)
+  updated_at              DateTime @updatedAt @db.Timestamptz(3)
 }
 
 model Empreinte {

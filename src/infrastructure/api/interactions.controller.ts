@@ -27,12 +27,16 @@ export class IntractionsController {
   async getUserInteractions(
     @Param('id') id: string,
   ): Promise<InteractionAPI[]> {
-    let result = await this.interactionsUsecase.listInteractions(id);
-    // FIXME : to remove
-    result.forEach((inter) => {
-      inter['reco_score'] = 666;
+    const list = await this.interactionsUsecase.listInteractions(id);
+    return list.map((inter) => {
+      const new_inter = new InteractionAPI();
+      Object.assign(new_inter, inter);
+      // FIXME : to remove
+      new_inter['categorie'] = inter.thematique_gamification;
+      // FIXME : to remove
+      new_inter['reco_score'] = 666;
+      return new_inter;
     });
-    return result;
   }
   @Patch('utilisateurs/:utilisateurId/interactions/:interactionId')
   async patchInteractionStatus(
@@ -78,7 +82,7 @@ export class IntractionsController {
     description: 'un nombre plus petit que -1 ou plus grand que 1',
   })
   @ApiQuery({
-    name: 'categorie',
+    name: 'thematique',
     enum: Thematique,
     required: true,
   })
@@ -86,11 +90,11 @@ export class IntractionsController {
   async boostInteractions(
     @Query('utilisateurId') utilisateurId: string,
     @Query('boost') boost: number,
-    @Query('categorie') categorie: Thematique,
+    @Query('thematique') thematique: Thematique,
   ) {
     return this.interactionsUsecase.updateInteractionScoreByCategories(
       utilisateurId,
-      [categorie],
+      [thematique],
       boost,
     );
   }

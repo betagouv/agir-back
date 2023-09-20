@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Les sources d'énergie",
     "soustitre": "D'où vient l'énergie ?",
-    "categorie": "climat",
+    "thematique_gamification": "climat",
     "tags": ["énergie", "logement", "électricité"],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",

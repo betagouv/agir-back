@@ -2,7 +2,7 @@ const aides = {
   aide_velo: {
     titre: 'Simulez une aide pour acheter un vélo',
     soustitre: '',
-    categorie: 'transport',
+    thematique_gamification: 'transport',
     tags: [],
     duree: '⏱️ 2 minute',
     frequence: 'Une fois',
@@ -16,7 +16,7 @@ const aides = {
   aide_retrofit: {
     titre: "Passer à l'électrique",
     soustitre: 'bla bla',
-    categorie: 'transport',
+    thematique_gamification: 'transport',
     tags: ['aide', 'mobilité', 'voiture', 'électrique'],
     duree: '⏱️ < 2 minute',
     frequence: 'Une fois',

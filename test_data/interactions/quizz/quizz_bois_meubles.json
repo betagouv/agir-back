@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Production du bois",
     "soustitre": "A quoi sert le bois ?",
-    "categorie": "consommation",
+    "thematique_gamification": "consommation",
     "tags": ["logement", "ameublement", "forêts"],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",

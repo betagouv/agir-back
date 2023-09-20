@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Le poids de l'alimentation",
     "soustitre": "Quel est l'impact de notre alimentation ?",
-    "categorie": "alimentation",
+    "thematique_gamification": "alimentation",
     "tags": ["alimentation", "climat", "GES"],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",

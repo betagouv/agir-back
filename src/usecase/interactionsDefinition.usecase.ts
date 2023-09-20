@@ -8,6 +8,7 @@ import { InteractionRepository } from '../../src/infrastructure/repository/inter
 import { Interaction } from '../../src/domain/interaction/interaction';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur.repository';
 import { Thematique } from '../../src/domain/thematique';
+import { CMSThematiqueAPI } from '../../src/infrastructure/api/types/cms/CMSThematiqueAPI';
 
 @Injectable()
 export class InteractionsDefinitionUsecase {
@@ -66,7 +67,11 @@ export class InteractionsDefinitionUsecase {
     result.content_id = cmsWebhookAPI.entry.id.toString();
     result.titre = cmsWebhookAPI.entry.titre;
     result.soustitre = cmsWebhookAPI.entry.sousTitre;
-    result.categorie = Thematique.climat; // FIXME : en dure pour le moment
+    result.thematique_gamification = cmsWebhookAPI.entry.thematique_gamification
+      ? CMSThematiqueAPI.getThematique(
+          cmsWebhookAPI.entry.thematique_gamification,
+        )
+      : Thematique.climat;
     result.tags = [];
     result.duree = cmsWebhookAPI.entry.duree;
     result.frequence = cmsWebhookAPI.entry.frequence;

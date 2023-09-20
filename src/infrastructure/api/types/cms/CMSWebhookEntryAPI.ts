@@ -1,12 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Thematique } from '../../../../domain/thematique';
+import { CMSThematiqueAPI } from './CMSThematiqueAPI';
 import { CMSWebhookImageURLAPI } from './CMSWebhookImageURLAPI';
 
 export class CMSWebhookEntryAPI {
   @ApiProperty() id: number;
   @ApiProperty() titre: string;
   @ApiProperty() sousTitre: string;
-  @ApiProperty({ enum: Thematique }) thematique: Thematique;
+  @ApiProperty({ type: CMSThematiqueAPI })
+  thematique_gamification: CMSThematiqueAPI;
+  @ApiProperty({ type: [CMSThematiqueAPI] })
+  thematiques: CMSThematiqueAPI[];
   @ApiProperty() rubriques: string[];
   @ApiProperty() duree: string;
   @ApiProperty() frequence: string;

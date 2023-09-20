@@ -2,7 +2,7 @@
   "interaction": {
     "titre": "Le poids caché des objets",
     "soustitre": "Des hippopotames et des éléphants",
-    "categorie": "consommation",
+    "thematique_gamification": "consommation",
     "tags": ["logement", "ameublement", "forêts"],
     "duree": "⏱️ < 1 minute",
     "frequence": "Une fois",

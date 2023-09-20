@@ -45,6 +45,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
         created_at: dbInteraction.created_at.toISOString(),
         updated_at: dbInteraction.updated_at.toISOString(),
         reco_score: 666,
+        categorie: 'consommation',
       }),
     );
   });
@@ -272,7 +273,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       BadgeTypes.premier_quizz.type,
     );
   });
-  it('PATCH /utilisateurs/id/interactions/id - increase categorie level when success condition', async () => {
+  it('PATCH /utilisateurs/id/interactions/id - increase thematique level when success condition', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
@@ -282,7 +283,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       quizz_score: 85,
       done: true,
       done_at: new Date(1),
-      categorie: Thematique.climat,
+      thematique_gamification: Thematique.climat,
     });
     await TestUtil.create('interaction', {
       id: '2',
@@ -291,7 +292,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       quizz_score: 90,
       done: true,
       done_at: new Date(100),
-      categorie: Thematique.climat,
+      thematique_gamification: Thematique.climat,
     });
     await TestUtil.create('interaction', {
       id: '3',
@@ -300,7 +301,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       quizz_score: 75,
       done: false,
       done_at: null,
-      categorie: Thematique.climat,
+      thematique_gamification: Thematique.climat,
     });
     // WHEN
     const response = await TestUtil.getServer()
@@ -339,7 +340,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       quizz_score: 85,
       done: true,
       done_at: new Date(1),
-      categorie: Thematique.climat,
+      thematique_gamification: Thematique.climat,
     });
     await TestUtil.create('interaction', {
       id: '2',
@@ -348,7 +349,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       quizz_score: 90,
       done: true,
       done_at: new Date(100),
-      categorie: Thematique.climat,
+      thematique_gamification: Thematique.climat,
     });
     await TestUtil.create('interaction', {
       id: '3',
@@ -357,7 +358,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       quizz_score: 75,
       done: false,
       done_at: null,
-      categorie: Thematique.climat,
+      thematique_gamification: Thematique.climat,
     });
     // WHEN
     const response = await TestUtil.getServer()
@@ -468,49 +469,49 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       score: 0.9,
       type: InteractionType.quizz,
       difficulty: 1,
-      categorie: Thematique.alimentation,
+      thematique_gamification: Thematique.alimentation,
     });
     await TestUtil.create('interaction', {
       id: '2',
       score: 0.8,
       type: InteractionType.quizz,
       difficulty: 2,
-      categorie: Thematique.alimentation,
+      thematique_gamification: Thematique.alimentation,
     });
     await TestUtil.create('interaction', {
       id: '3',
       score: 0.6,
       type: InteractionType.quizz,
       difficulty: 3,
-      categorie: Thematique.alimentation,
+      thematique_gamification: Thematique.alimentation,
     });
     await TestUtil.create('interaction', {
       id: '4',
       score: 0.5,
       type: InteractionType.quizz,
       difficulty: 1,
-      categorie: Thematique.climat,
+      thematique_gamification: Thematique.climat,
     });
     await TestUtil.create('interaction', {
       id: '5',
       score: 0.7,
       type: InteractionType.quizz,
       difficulty: 2,
-      categorie: Thematique.climat,
+      thematique_gamification: Thematique.climat,
     });
     await TestUtil.create('interaction', {
       id: '6',
       score: 0.7,
       type: InteractionType.quizz,
       difficulty: 3,
-      categorie: Thematique.climat,
+      thematique_gamification: Thematique.climat,
     });
     await TestUtil.create('interaction', {
       id: '7',
       score: 0.7,
       type: InteractionType.quizz,
       difficulty: 3,
-      categorie: Thematique.consommation,
+      thematique_gamification: Thematique.consommation,
     });
 
     // WHEN
@@ -531,16 +532,16 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     await TestUtil.create('interaction', {
       id: '1',
       score: 0.1,
-      categorie: Thematique.alimentation,
+      thematique_gamification: Thematique.alimentation,
     });
     await TestUtil.create('interaction', {
       id: '2',
       score: 0.2,
-      categorie: Thematique.climat,
+      thematique_gamification: Thematique.climat,
     });
     // WHEN
     const response = await TestUtil.getServer().post(
-      '/interactions/scoring?utilisateurId=utilisateur-id&categorie=climat&boost=4',
+      '/interactions/scoring?utilisateurId=utilisateur-id&thematique=climat&boost=4',
     );
     // THEN
     expect(response.status).toBe(201);
@@ -559,16 +560,16 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     await TestUtil.create('interaction', {
       id: '1',
       score: 0.8,
-      categorie: Thematique.alimentation,
+      thematique_gamification: Thematique.alimentation,
     });
     await TestUtil.create('interaction', {
       id: '2',
       score: 0.8,
-      categorie: Thematique.climat,
+      thematique_gamification: Thematique.climat,
     });
     // WHEN
     const response = await TestUtil.getServer().post(
-      '/interactions/scoring?utilisateurId=utilisateur-id&categorie=climat&boost=-2',
+      '/interactions/scoring?utilisateurId=utilisateur-id&thematique=climat&boost=-2',
     );
     // THEN
     expect(response.status).toBe(201);
