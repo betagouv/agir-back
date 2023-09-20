@@ -51,8 +51,6 @@ export class InteractionsDefinitionUsecase {
       InteractionsDefinitionUsecase.buildInteractionDefFromCMSData(
         cmsWebhookAPI,
       );
-    // TEMP FIX pour tester les body CMS
-    interactionDef.raison_lock = cmsWebhookAPI.toString();
 
     await this.interactionDefinitionRepository.createOrUpdateInteractionDefinitionBasedOnContentId(
       interactionDef,
