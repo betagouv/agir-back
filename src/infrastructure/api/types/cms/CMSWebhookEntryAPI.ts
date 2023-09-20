@@ -17,4 +17,5 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() difficulty: number;
   @ApiProperty() points?: number;
   @ApiProperty() codePostal?: string;
+  @ApiProperty() publishedAt: Date;
 }

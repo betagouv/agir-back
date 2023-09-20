@@ -194,4 +194,13 @@ export class InteractionRepository {
     });
     return result.count;
   }
+
+  async deleteByContentIdWhenNotDone(content_id: string) {
+    await this.prisma.interaction.deleteMany({
+      where: {
+        content_id,
+        done: false,
+      },
+    });
+  }
 }

@@ -1,9 +1,10 @@
+import { CMSEvent } from '../../../src/infrastructure/api/types/cms/CMSEvent';
 import { TestUtil } from '../../TestUtil';
 
 describe('/api/cms/income (API test)', () => {
   const CMS_DATA = {
     model: 'article',
-    event: 'entry.unpublish',
+    event: 'entry.publish',
     entry: {
       id: 123,
       titre: 'titre',
@@ -18,6 +19,7 @@ describe('/api/cms/income (API test)', () => {
       difficulty: 3,
       points: 20,
       codePostal: '91120',
+      publishedAt: '2023-09-20T14:42:12.941Z',
     },
   };
   beforeAll(async () => {
@@ -130,5 +132,90 @@ describe('/api/cms/income (API test)', () => {
     expect(interDefDB[0].soustitre).toEqual('soustitre 222');
     expect(interDB[0].soustitre).toEqual('soustitre 222');
     expect(interDB[1].soustitre).toEqual('soustitre 222');
+  });
+  it('POST /api/cms/income - does nothing when no publishedAt value', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    const data = { ...CMS_DATA };
+    data.entry = { ...data.entry };
+    data.entry.publishedAt = null;
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/api/cms/income')
+      .send(data);
+
+    // THEN
+    const interDB = await TestUtil.prisma.interaction.findMany({});
+    expect(response.status).toBe(201);
+    expect(interDB).toHaveLength(0);
+  });
+  it('POST /api/cms/income - optional points lead to 0 points', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    const data = { ...CMS_DATA };
+    data.entry = { ...data.entry };
+    data.entry.points = null;
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/api/cms/income')
+      .send(data);
+
+    // THEN
+    const interDB = await TestUtil.prisma.interaction.findMany({});
+    expect(response.status).toBe(201);
+    expect(interDB).toHaveLength(1);
+    expect(interDB[0].points).toEqual(0);
+  });
+  it('POST /api/cms/income - unpublish event removes interaction definition', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interactionDefinition', {
+      content_id: '123',
+    });
+
+    const data = { ...CMS_DATA };
+    data.event = CMSEvent['entry.unpublish'];
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/api/cms/income')
+      .send(data);
+
+    // THEN
+    const interDefDB = await TestUtil.prisma.interactionDefinition.findMany({});
+    expect(response.status).toBe(201);
+    expect(interDefDB).toHaveLength(0);
+  });
+  it('POST /api/cms/income - unpublish event removes interaction when not done', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { id: 'u1', email: 'e1' });
+    await TestUtil.create('utilisateur', { id: 'u2', email: 'e2' });
+    await TestUtil.create('interactionDefinition', {
+      content_id: '123',
+    });
+    await TestUtil.create('interaction', {
+      id: 'i1',
+      content_id: '123',
+      utilisateurId: 'u1',
+      done: true,
+    });
+    await TestUtil.create('interaction', {
+      id: 'i2',
+      content_id: '123',
+      utilisateurId: 'u2',
+      done: false,
+    });
+
+    const data = { ...CMS_DATA };
+    data.event = CMSEvent['entry.delete'];
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/api/cms/income')
+      .send(data);
+
+    // THEN
+    const interDB = await TestUtil.prisma.interaction.findMany({});
+    expect(response.status).toBe(201);
+    expect(interDB).toHaveLength(1);
+    expect(interDB[0].id).toEqual('i1');
   });
 });

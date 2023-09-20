@@ -32,4 +32,12 @@ export class InteractionDefinitionRepository {
       update: interaction,
     });
   }
+
+  async deleteByContentId(content_id: string) {
+    await this.prisma.interactionDefinition.deleteMany({
+      where: {
+        content_id,
+      },
+    });
+  }
 }

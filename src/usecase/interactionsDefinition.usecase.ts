@@ -9,6 +9,7 @@ import { Interaction } from '../../src/domain/interaction/interaction';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur.repository';
 import { Thematique } from '../../src/domain/thematique';
 import { CMSThematiqueAPI } from '../../src/infrastructure/api/types/cms/CMSThematiqueAPI';
+import { CMSEvent } from '../../src/infrastructure/api/types/cms/CMSEvent';
 
 @Injectable()
 export class InteractionsDefinitionUsecase {
@@ -19,6 +20,33 @@ export class InteractionsDefinitionUsecase {
   ) {}
 
   async insertOrUpdateInteractionDefFromCMS(cmsWebhookAPI: CMSWebhookAPI) {
+    switch (cmsWebhookAPI.event) {
+      case CMSEvent['entry.unpublish']:
+        return this.deleteContent(cmsWebhookAPI);
+      case CMSEvent['entry.delete']:
+        return this.deleteContent(cmsWebhookAPI);
+      case CMSEvent['entry.publish']:
+        return this.createOrUpdateContent(cmsWebhookAPI);
+      case CMSEvent['entry.update']:
+        return this.createOrUpdateContent(cmsWebhookAPI);
+      default:
+        break;
+    }
+  }
+
+  async deleteContent(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.interactionDefinitionRepository.deleteByContentId(
+      cmsWebhookAPI.entry.id.toString(),
+    );
+
+    await this.interactionRepository.deleteByContentIdWhenNotDone(
+      cmsWebhookAPI.entry.id.toString(),
+    );
+  }
+
+  async createOrUpdateContent(cmsWebhookAPI: CMSWebhookAPI) {
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
+
     let interactionDef: InteractionDefinition =
       InteractionsDefinitionUsecase.buildInteractionDefFromCMSData(
         cmsWebhookAPI,
@@ -79,7 +107,7 @@ export class InteractionsDefinitionUsecase {
       ? cmsWebhookAPI.entry.imageUrl.url
       : null;
     result.difficulty = cmsWebhookAPI.entry.difficulty;
-    result.points = cmsWebhookAPI.entry.points;
+    result.points = cmsWebhookAPI.entry.points || 0;
     result.codes_postaux = cmsWebhookAPI.entry.codePostal
       ? [cmsWebhookAPI.entry.codePostal]
       : undefined; // FIXME : manque la liste
