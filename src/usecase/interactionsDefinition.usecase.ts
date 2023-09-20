@@ -104,7 +104,7 @@ export class InteractionsDefinitionUsecase {
     result.image_url = cmsWebhookAPI.entry.imageUrl
       ? cmsWebhookAPI.entry.imageUrl.url
       : null;
-    result.difficulty = cmsWebhookAPI.entry.difficulty;
+    result.difficulty = cmsWebhookAPI.entry.difficulty ? cmsWebhookAPI.entry.difficulty : 1;
     result.points = cmsWebhookAPI.entry.points || 0;
     result.codes_postaux = cmsWebhookAPI.entry.codePostal
       ? [cmsWebhookAPI.entry.codePostal]
