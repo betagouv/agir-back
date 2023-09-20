@@ -17,6 +17,7 @@ export class CMSController {
   @ApiBody({ type: CMSWebhookAPI })
   @Post('api/cms/income')
   async income(@Body() body: CMSWebhookAPI) {
+    console.log(body.toString());
     await this.interactionsDefinitionUsecase.insertOrUpdateInteractionDefFromCMS(
       body,
     );
