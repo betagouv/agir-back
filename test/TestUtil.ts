@@ -58,19 +58,22 @@ export class TestUtil {
   }
   static CMSWebhookAPIData(override?) {
     return {
-      id: '123',
       model: CMSModel.article,
-      difficulty: 1,
-      duree: 'très long',
-      event: CMSEvent['entry.publish'],
-      frequence: 'souvent',
-      imageUrl: 'https://',
-      rubriques: ['A', 'B'],
-      titre: 'titre',
-      sousTitre: 'sous titre',
-      thematique: Thematique.alimentation,
-      codesPostaux: ['91120'],
-      points: 20,
+      event: 'entry.publish',
+      entry: {
+        id: '123',
+        titre: 'titre',
+        sousTitre: 'soustitre',
+        rubriques: ['A', 'B'],
+        duree: 'pas trop long',
+        frequence: 'souvent',
+        imageUrl: {
+          url: 'https://',
+        },
+        difficulty: 3,
+        points: 20,
+        codePostal: '91120',
+      },
       ...override,
     };
   }

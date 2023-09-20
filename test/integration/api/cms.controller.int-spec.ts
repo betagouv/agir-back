@@ -20,19 +20,23 @@ describe('/api/cms/income (API test)', () => {
     const response = await TestUtil.getServer()
       .post('/api/cms/income')
       .send({
-        id: '123',
         model: 'article',
         event: 'entry.unpublish',
-        titre: 'titre',
-        sousTitre: 'soustitre',
-        thematique: 'alimentation',
-        rubriques: ['A', 'B'],
-        duree: 'pas trop long',
-        frequence: 'souvent',
-        imageUrl: 'https://',
-        difficulty: 3,
-        points: 20,
-        codesPostaux: ['91120', '75002'],
+        entry: {
+          id: '123',
+          titre: 'titre',
+          sousTitre: 'soustitre',
+          //thematique: 'alimentation',
+          rubriques: ['A', 'B'],
+          duree: 'pas trop long',
+          frequence: 'souvent',
+          imageUrl: {
+            url: 'https://',
+          },
+          difficulty: 3,
+          points: 20,
+          codePostal: '91120',
+        },
       });
 
     // THEN
@@ -45,13 +49,13 @@ describe('/api/cms/income (API test)', () => {
     expect(interDefDB[0].type).toEqual('article');
     expect(interDefDB[0].titre).toEqual('titre');
     expect(interDefDB[0].soustitre).toEqual('soustitre');
-    expect(interDefDB[0].categorie).toEqual('alimentation');
+    expect(interDefDB[0].categorie).toEqual('climat'); // FIXME
     expect(interDefDB[0].duree).toEqual('pas trop long');
     expect(interDefDB[0].frequence).toEqual('souvent');
     expect(interDefDB[0].image_url).toEqual('https://');
     expect(interDefDB[0].difficulty).toEqual(3);
     expect(interDefDB[0].points).toEqual(20);
-    expect(interDefDB[0].codes_postaux).toStrictEqual(['91120', '75002']);
+    expect(interDefDB[0].codes_postaux).toStrictEqual(['91120']); // FIXME
     expect(interDefDB[0].content_id).toEqual('123');
   });
   it('POST /api/cms/income - create a new article, 1 user in db with not article, no error', async () => {
@@ -62,19 +66,23 @@ describe('/api/cms/income (API test)', () => {
     const response = await TestUtil.getServer()
       .post('/api/cms/income')
       .send({
-        id: '123',
         model: 'article',
         event: 'entry.unpublish',
-        titre: 'titre',
-        sousTitre: 'soustitre',
-        thematique: 'alimentation',
-        rubriques: ['A', 'B'],
-        duree: 'pas trop long',
-        frequence: 'souvent',
-        imageUrl: 'https://',
-        difficulty: 3,
-        points: 20,
-        codesPostaux: ['91120', '75002'],
+        entry: {
+          id: '123',
+          titre: 'titre',
+          sousTitre: 'soustitre',
+          //thematique: 'alimentation',
+          rubriques: ['A', 'B'],
+          duree: 'pas trop long',
+          frequence: 'souvent',
+          imageUrl: {
+            url: 'https://',
+          },
+          difficulty: 3,
+          points: 20,
+          codePostal: '91120',
+        },
       });
 
     // THEN
@@ -97,19 +105,23 @@ describe('/api/cms/income (API test)', () => {
     const response = await TestUtil.getServer()
       .post('/api/cms/income')
       .send({
-        id: '123',
         model: 'article',
         event: 'entry.unpublish',
-        titre: 'titre',
-        sousTitre: 'soustitre 222',
-        thematique: 'alimentation',
-        rubriques: ['A', 'B'],
-        duree: 'pas trop long',
-        frequence: 'souvent',
-        imageUrl: 'https://',
-        difficulty: 3,
-        points: 20,
-        codesPostaux: ['91120', '75002'],
+        entry: {
+          id: '123',
+          titre: 'titre',
+          sousTitre: 'soustitre 222',
+          //thematique: 'alimentation',
+          rubriques: ['A', 'B'],
+          duree: 'pas trop long',
+          frequence: 'souvent',
+          imageUrl: {
+            url: 'https://',
+          },
+          difficulty: 3,
+          points: 20,
+          codePostal: '91120',
+        },
       });
 
     // THEN

@@ -7,6 +7,7 @@ import { InteractionType } from '../../src/domain/interaction/interactionType';
 import { InteractionRepository } from '../../src/infrastructure/repository/interaction.repository';
 import { Interaction } from '../../src/domain/interaction/interaction';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur.repository';
+import { Thematique } from '../../src/domain/thematique';
 
 @Injectable()
 export class InteractionsDefinitionUsecase {
@@ -61,18 +62,17 @@ export class InteractionsDefinitionUsecase {
   ): InteractionDefinition {
     let result = new InteractionDefinition({});
     result.id = uuidv4();
-    result.content_id = cmsWebhookAPI.id;
-    result.titre = cmsWebhookAPI.titre;
-    result.soustitre = cmsWebhookAPI.sousTitre;
-    result.categorie = cmsWebhookAPI.thematique;
-    result.titre = cmsWebhookAPI.titre;
+    result.content_id = cmsWebhookAPI.entry.id;
+    result.titre = cmsWebhookAPI.entry.titre;
+    result.soustitre = cmsWebhookAPI.entry.sousTitre;
+    result.categorie = Thematique.climat; // FIXME : en dure pour le moment
     result.tags = [];
-    result.duree = cmsWebhookAPI.duree;
-    result.frequence = cmsWebhookAPI.frequence;
-    result.image_url = cmsWebhookAPI.imageUrl;
-    result.difficulty = cmsWebhookAPI.difficulty;
-    result.points = cmsWebhookAPI.points;
-    result.codes_postaux = cmsWebhookAPI.codesPostaux;
+    result.duree = cmsWebhookAPI.entry.duree;
+    result.frequence = cmsWebhookAPI.entry.frequence;
+    result.image_url = cmsWebhookAPI.entry.imageUrl.url;
+    result.difficulty = cmsWebhookAPI.entry.difficulty;
+    result.points = cmsWebhookAPI.entry.points;
+    result.codes_postaux = [cmsWebhookAPI.entry.codePostal]; // FIXME : manque la liste
     result.type = InteractionType[cmsWebhookAPI.model];
     if (result.type === undefined) {
       throw new BadRequestException(
