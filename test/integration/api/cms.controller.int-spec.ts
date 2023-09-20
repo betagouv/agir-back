@@ -23,7 +23,7 @@ describe('/api/cms/income (API test)', () => {
         model: 'article',
         event: 'entry.unpublish',
         entry: {
-          id: '123',
+          id: 123,
           titre: 'titre',
           sousTitre: 'soustitre',
           //thematique: 'alimentation',
@@ -69,7 +69,7 @@ describe('/api/cms/income (API test)', () => {
         model: 'article',
         event: 'entry.unpublish',
         entry: {
-          id: '123',
+          id: 123,
           titre: 'titre',
           sousTitre: 'soustitre',
           //thematique: 'alimentation',
@@ -108,7 +108,7 @@ describe('/api/cms/income (API test)', () => {
         model: 'article',
         event: 'entry.unpublish',
         entry: {
-          id: '123',
+          id: 123,
           titre: 'titre',
           sousTitre: 'soustitre 222',
           //thematique: 'alimentation',

@@ -3,7 +3,7 @@ import { Thematique } from '../../../../domain/thematique';
 import { CMSWebhookImageURLAPI } from './CMSWebhookImageURLAPI';
 
 export class CMSWebhookEntryAPI {
-  @ApiProperty() id: string;
+  @ApiProperty() id: number;
   @ApiProperty() titre: string;
   @ApiProperty() sousTitre: string;
   @ApiProperty({ enum: Thematique }) thematique: Thematique;

@@ -61,7 +61,7 @@ export class TestUtil {
       model: CMSModel.article,
       event: 'entry.publish',
       entry: {
-        id: '123',
+        id: 123,
         titre: 'titre',
         sousTitre: 'soustitre',
         rubriques: ['A', 'B'],

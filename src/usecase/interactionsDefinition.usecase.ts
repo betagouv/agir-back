@@ -62,14 +62,16 @@ export class InteractionsDefinitionUsecase {
   ): InteractionDefinition {
     let result = new InteractionDefinition({});
     result.id = uuidv4();
-    result.content_id = cmsWebhookAPI.entry.id;
+    result.content_id = cmsWebhookAPI.entry.id.toString();
     result.titre = cmsWebhookAPI.entry.titre;
     result.soustitre = cmsWebhookAPI.entry.sousTitre;
     result.categorie = Thematique.climat; // FIXME : en dure pour le moment
     result.tags = [];
     result.duree = cmsWebhookAPI.entry.duree;
     result.frequence = cmsWebhookAPI.entry.frequence;
-    result.image_url = cmsWebhookAPI.entry.imageUrl.url;
+    result.image_url = cmsWebhookAPI.entry.imageUrl
+      ? cmsWebhookAPI.entry.imageUrl.url
+      : null;
     result.difficulty = cmsWebhookAPI.entry.difficulty;
     result.points = cmsWebhookAPI.entry.points;
     result.codes_postaux = [cmsWebhookAPI.entry.codePostal]; // FIXME : manque la liste
