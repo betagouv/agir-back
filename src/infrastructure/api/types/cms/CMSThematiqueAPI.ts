@@ -12,8 +12,8 @@ export class CMSThematiqueAPI {
       Thematique.consommation,
       Thematique.dechet,
       Thematique.logement,
-      Thematique.loisir,
       Thematique.transport,
+      Thematique.loisir,
     ][cmsThematique.id - 1];
   }
 }
