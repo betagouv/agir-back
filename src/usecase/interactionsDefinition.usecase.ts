@@ -38,6 +38,7 @@ export class InteractionsDefinitionUsecase {
       );
 
     if (inter_already_deployed) {
+      interactionToUpdateOrCreate.id = undefined;
       await this.interactionRepository.updateInteractionByContentId(
         interactionToUpdateOrCreate,
       );
@@ -74,7 +75,9 @@ export class InteractionsDefinitionUsecase {
       : null;
     result.difficulty = cmsWebhookAPI.entry.difficulty;
     result.points = cmsWebhookAPI.entry.points;
-    result.codes_postaux = [cmsWebhookAPI.entry.codePostal]; // FIXME : manque la liste
+    result.codes_postaux = cmsWebhookAPI.entry.codePostal
+      ? [cmsWebhookAPI.entry.codePostal]
+      : undefined; // FIXME : manque la liste
     result.type = InteractionType[cmsWebhookAPI.model];
     if (result.type === undefined) {
       throw new BadRequestException(

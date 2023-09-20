@@ -548,36 +548,8 @@ describe('InteractionRepository', () => {
 
     // THEN
     const dbInterList = await TestUtil.prisma.interaction.findMany();
-    expect(dbInterList).toHaveLength(2);
-    expect(dbInterList[0].id).toEqual('1');
-    expect(dbInterList[0].titre).toEqual('titre 1');
-    expect(dbInterList[1].id).toEqual('2');
-    expect(dbInterList[1].titre).toEqual('titre 2');
-  });
-  it('insertInteractionList : inserts OK a list of interactions ', async () => {
-    // GIVEN
-    await TestUtil.create('utilisateur');
+    dbInterList.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
-    const inter1 = new Interaction({
-      id: '1',
-      titre: 'titre 1',
-      utilisateurId: 'utilisateur-id',
-      type: InteractionType.article,
-      categorie: Thematique.alimentation,
-    });
-    const inter2 = new Interaction({
-      id: '2',
-      titre: 'titre 2',
-      utilisateurId: 'utilisateur-id',
-      type: InteractionType.quizz,
-      categorie: Thematique.alimentation,
-    });
-
-    // WHEN
-    await interactionRepository.insertInteractionList([inter1, inter2]);
-
-    // THEN
-    const dbInterList = await TestUtil.prisma.interaction.findMany();
     expect(dbInterList).toHaveLength(2);
     expect(dbInterList[0].id).toEqual('1');
     expect(dbInterList[0].titre).toEqual('titre 1');

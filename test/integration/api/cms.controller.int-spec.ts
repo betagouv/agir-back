@@ -91,7 +91,7 @@ describe('/api/cms/income (API test)', () => {
     expect(interDB).toHaveLength(1);
     expect(interDB[0].utilisateurId).toEqual('utilisateur-id');
   });
-  it('POST /api/cms/income - updates existing article, 1 user in db with ', async () => {
+  it('POST /api/cms/income - updates existing article, 1 user in db ', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interactionDefinition', {
@@ -132,5 +132,56 @@ describe('/api/cms/income (API test)', () => {
     expect(interDefDB).toHaveLength(1);
     expect(interDefDB[0].soustitre).toEqual('soustitre 222');
     expect(interDB[0].soustitre).toEqual('soustitre 222');
+  });
+  it('POST /api/cms/income - updates existing 2 article for 2 users ', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { id: 'u1', email: 'e1' });
+    await TestUtil.create('utilisateur', { id: 'u2', email: 'e2' });
+    await TestUtil.create('interactionDefinition', {
+      content_id: '123',
+    });
+    await TestUtil.create('interaction', {
+      id: 'i1',
+      content_id: '123',
+      utilisateurId: 'u1',
+    });
+    await TestUtil.create('interaction', {
+      id: 'i2',
+      content_id: '123',
+      utilisateurId: 'u2',
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/api/cms/income')
+      .send({
+        model: 'article',
+        event: 'entry.unpublish',
+        entry: {
+          id: 123,
+          titre: 'titre',
+          sousTitre: 'soustitre 222',
+          //thematique: 'alimentation',
+          rubriques: ['A', 'B'],
+          duree: 'pas trop long',
+          frequence: 'souvent',
+          imageUrl: {
+            url: 'https://',
+          },
+          difficulty: 3,
+          points: 20,
+          codePostal: '91120',
+        },
+      });
+
+    // THEN
+    const interDB = await TestUtil.prisma.interaction.findMany({});
+    const interDefDB = await TestUtil.prisma.interactionDefinition.findMany({});
+    expect(response.status).toBe(201);
+    expect(interDB).toHaveLength(2);
+    expect(interDefDB).toHaveLength(1);
+    expect(interDefDB[0].soustitre).toEqual('soustitre 222');
+    expect(interDB[0].soustitre).toEqual('soustitre 222');
+    expect(interDB[1].soustitre).toEqual('soustitre 222');
   });
 });
