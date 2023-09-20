@@ -473,4 +473,115 @@ describe('InteractionRepository', () => {
     expect(dbInterations[0].score).toEqual(new Decimal(0.11));
     expect(dbInterations[1].score).toEqual(new Decimal(0.22));
   });
+  it('doesContentIdExists : false when no content id not found ', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      content_id: '123',
+    });
+
+    // WHEN
+    const result = await interactionRepository.doesContentIdExists('345');
+
+    // THEN
+    expect(result).toStrictEqual(false);
+  });
+  it('doesContentIdExists : true when no content id found ', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      content_id: '123',
+    });
+
+    // WHEN
+    const result = await interactionRepository.doesContentIdExists('123');
+
+    // THEN
+    expect(result).toStrictEqual(true);
+  });
+  it('updateInteractionByContentId : update interaction by content id without destroying user data ', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      done: true,
+      done_at: new Date(1),
+      content_id: '123',
+    });
+
+    const incomingInter = new Interaction({
+      content_id: '123',
+      titre: 'THE NEW TITLE',
+    });
+
+    // WHEN
+    await interactionRepository.updateInteractionByContentId(incomingInter);
+
+    // THEN
+    const dbInter = await TestUtil.prisma.interaction.findUnique({
+      where: { id: 'interaction-id' },
+    });
+    expect(dbInter.done).toStrictEqual(true);
+    expect(dbInter.done_at).toStrictEqual(new Date(1));
+    expect(dbInter.titre).toStrictEqual('THE NEW TITLE');
+  });
+  it('insertInteractionList : inserts OK a list of interactions ', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+
+    const inter1 = new Interaction({
+      id: '1',
+      titre: 'titre 1',
+      utilisateurId: 'utilisateur-id',
+      type: InteractionType.article,
+      categorie: Thematique.alimentation,
+    });
+    const inter2 = new Interaction({
+      id: '2',
+      titre: 'titre 2',
+      utilisateurId: 'utilisateur-id',
+      type: InteractionType.quizz,
+      categorie: Thematique.alimentation,
+    });
+
+    // WHEN
+    await interactionRepository.insertInteractionList([inter1, inter2]);
+
+    // THEN
+    const dbInterList = await TestUtil.prisma.interaction.findMany();
+    expect(dbInterList).toHaveLength(2);
+    expect(dbInterList[0].id).toEqual('1');
+    expect(dbInterList[0].titre).toEqual('titre 1');
+    expect(dbInterList[1].id).toEqual('2');
+    expect(dbInterList[1].titre).toEqual('titre 2');
+  });
+  it('insertInteractionList : inserts OK a list of interactions ', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+
+    const inter1 = new Interaction({
+      id: '1',
+      titre: 'titre 1',
+      utilisateurId: 'utilisateur-id',
+      type: InteractionType.article,
+      categorie: Thematique.alimentation,
+    });
+    const inter2 = new Interaction({
+      id: '2',
+      titre: 'titre 2',
+      utilisateurId: 'utilisateur-id',
+      type: InteractionType.quizz,
+      categorie: Thematique.alimentation,
+    });
+
+    // WHEN
+    await interactionRepository.insertInteractionList([inter1, inter2]);
+
+    // THEN
+    const dbInterList = await TestUtil.prisma.interaction.findMany();
+    expect(dbInterList).toHaveLength(2);
+    expect(dbInterList[0].id).toEqual('1');
+    expect(dbInterList[0].titre).toEqual('titre 1');
+    expect(dbInterList[1].id).toEqual('2');
+    expect(dbInterList[1].titre).toEqual('titre 2');
+  });
 });

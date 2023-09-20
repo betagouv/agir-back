@@ -24,4 +24,16 @@ describe('UtilisateurRepository', () => {
     expect(utilisateurs).toHaveLength(1);
     expect(utilisateurs[0].id).toHaveLength(36);
   });
+  it('listUtilisateurIds : list utilisateur Ids OK', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { id: '1', email: 'email1@truc.com' });
+    await TestUtil.create('utilisateur', { id: '2', email: 'email2@truc.com' });
+    await TestUtil.create('utilisateur', { id: '3', email: 'email3@truc.com' });
+
+    // WHEN
+    const result = await utilisateurRepository.listUtilisateurIds();
+
+    // THEN
+    expect(result).toStrictEqual([{ id: '1' }, { id: '2' }, { id: '3' }]);
+  });
 });

@@ -21,4 +21,15 @@ export class InteractionDefinitionRepository {
       update: interaction,
     });
   }
+  async createOrUpdateInteractionDefinitionBasedOnContentId(
+    interaction: InteractionDefinition,
+  ) {
+    await this.prisma.interactionDefinition.upsert({
+      where: {
+        content_id: interaction.content_id,
+      },
+      create: interaction,
+      update: interaction,
+    });
+  }
 }

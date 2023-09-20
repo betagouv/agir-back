@@ -83,7 +83,7 @@ model Interaction {
 
 model InteractionDefinition {
   id                 String   @id
-  content_id         String?
+  content_id         String?  @unique
   type               String
   titre              String
   soustitre          String?

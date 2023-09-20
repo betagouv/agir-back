@@ -22,9 +22,18 @@ describe('InteractionDefinitionRepository', () => {
   it('getAll : récupère tout ', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
-    await TestUtil.create('interactionDefinition', { id: '1' });
-    await TestUtil.create('interactionDefinition', { id: '2' });
-    await TestUtil.create('interactionDefinition', { id: '3' });
+    await TestUtil.create('interactionDefinition', {
+      id: '1',
+      content_id: '1',
+    });
+    await TestUtil.create('interactionDefinition', {
+      id: '2',
+      content_id: '2',
+    });
+    await TestUtil.create('interactionDefinition', {
+      id: '3',
+      content_id: '3',
+    });
 
     // WHEN
     const liste = await interactionCatalogRepository.getAll();
@@ -39,7 +48,7 @@ describe('InteractionDefinitionRepository', () => {
     await TestUtil.create('interactionDefinition');
     // WHEN
     await interactionCatalogRepository.createOrUpdateInteractionDefinition(
-      TestUtil.interactionDefinitionData({ id: '2' }),
+      TestUtil.interactionDefinitionData({ id: '2', content_id: '2' }),
     );
 
     //THEN

@@ -15,6 +15,7 @@ import { QuizzUsecase } from './usecase/quizz.usecase';
 import { BilanUsecase } from './usecase/bilan.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
 import { ArticleUsecase } from './usecase/article.usecase';
+import { InteractionsDefinitionUsecase } from './usecase/interactionsDefinition.usecase';
 
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
@@ -88,6 +89,7 @@ import { QuestionsNGCController } from './infrastructure/api/questionNGC.control
     SuiviUsecase,
     QuestionNGCUsecase,
     ArticleUsecase,
+    InteractionsDefinitionUsecase,
   ],
 })
 export class AppModule {}

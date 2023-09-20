@@ -73,6 +73,14 @@ export class UtilisateurRepository {
     });
     return liste.map((user) => this.buildUtilisateurFromDB(user));
   }
+  async listUtilisateurIds(): Promise<Record<'id', string>[] | null> {
+    const result = await this.prisma.utilisateur.findMany({
+      select: {
+        id: true,
+      },
+    });
+    return result as Record<'id', string>[];
+  }
 
   async createUtilisateurByName(name: string): Promise<Utilisateur | null> {
     const user = await this.prisma.utilisateur.create({

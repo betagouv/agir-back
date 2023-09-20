@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Interaction as DBInteraction } from '@prisma/client';
 import { Interaction } from '../../domain/interaction/interaction';
 import { v4 as uuidv4 } from 'uuid';
 import { SearchFilter } from '../../../src/domain/interaction/searchFilter';
@@ -8,7 +7,6 @@ import { InteractionType } from '../../../src/domain/interaction/interactionType
 import { Thematique } from '../../domain/thematique';
 import { InteractionScore } from '../../../src/domain/interaction/interactionScore';
 import { DifficultyLevel } from 'src/domain/difficultyLevel';
-import { isEmpty } from 'rxjs';
 
 @Injectable()
 export class InteractionRepository {
@@ -153,6 +151,30 @@ export class InteractionRepository {
         updated_at: undefined, // pour forcer la mise à jour auto
       },
     });
+  }
+
+  async updateInteractionByContentId(interaction: Interaction) {
+    await this.prisma.interaction.updateMany({
+      where: {
+        content_id: interaction.content_id,
+      },
+      data: {
+        ...interaction,
+        updated_at: undefined, // pour forcer la mise à jour auto
+      },
+    });
+  }
+  async doesContentIdExists(content_id: string): Promise<boolean> {
+    const count = await this.prisma.interaction.count({
+      where: {
+        content_id,
+      },
+    });
+    return count > 0;
+  }
+
+  async insertInteractionList(interactionList: Interaction[]) {
+    return this.prisma.interaction.createMany({ data: interactionList });
   }
 
   async resetAllInteractionStatus(date: Date) {

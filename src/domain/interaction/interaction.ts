@@ -3,6 +3,7 @@ import { Thematique } from '../thematique';
 import { DifficultyLevel } from '../difficultyLevel';
 import { InteractionStatus } from './interactionStatus';
 import { InteractionType } from './interactionType';
+import { InteractionDefinition } from './interactionDefinition';
 
 export class Interaction {
   constructor(data: object) {
@@ -35,7 +36,7 @@ export class Interaction {
   raison_lock: string;
   scheduled_reset: Date;
   day_period: number;
-  code_postaux: string[];
+  codes_postaux: string[];
   utilisateurId: string;
   created_at: Date;
   updated_at: Date;
@@ -70,5 +71,13 @@ export class Interaction {
       this.done = true;
       this.quizz_score = status.quizz_score;
     }
+  }
+
+  public static newDefaultInteractionFromDefinition(
+    interactionDefinition: InteractionDefinition,
+  ) {
+    let result = new Interaction(interactionDefinition);
+    result.score = new Decimal('0.5');
+    return result;
   }
 }

@@ -28,7 +28,7 @@ export class InteractionAPI {
   @ApiProperty() raison_lock: string;
   @ApiProperty() scheduled_reset: Date;
   @ApiProperty() day_period: number;
-  @ApiProperty() code_postaux: string[];
+  @ApiProperty() codes_postaux: string[];
   @ApiProperty() created_at: Date;
   @ApiProperty() updated_at: Date;
 }

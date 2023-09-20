@@ -5,6 +5,8 @@ import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { Thematique } from '../src/domain/thematique';
 import { UserQuizzProfile } from '../src/domain/quizz/userQuizzProfile';
+import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
+import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
 const request = require('supertest');
 
 export class TestUtil {
@@ -53,6 +55,24 @@ export class TestUtil {
     await this.prisma[type].create({
       data: this[type.concat('Data')](override),
     });
+  }
+  static CMSWebhookAPIData(override?) {
+    return {
+      id: '123',
+      model: CMSModel.article,
+      difficulty: 1,
+      duree: 'très long',
+      event: CMSEvent['entry.publish'],
+      frequence: 'souvent',
+      imageUrl: 'https://',
+      rubriques: ['A', 'B'],
+      titre: 'titre',
+      sousTitre: 'sous titre',
+      thematique: Thematique.alimentation,
+      codesPostaux: ['91120'],
+      points: 20,
+      ...override,
+    };
   }
   static situationNGCData(override?) {
     return {
