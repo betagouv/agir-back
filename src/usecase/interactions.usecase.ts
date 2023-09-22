@@ -55,7 +55,6 @@ export class InteractionsUsecase {
       utilisateurId,
       utilisateur.code_postal,
     );
-    console.log(liste_articles);
     const liste_suivis = await this.getSuivisForUtilisateur(utilisateurId);
     const liste_quizz = await this.getQuizzForUtilisateur(
       utilisateurId,
@@ -106,7 +105,6 @@ export class InteractionsUsecase {
       result,
     );
 
-    console.log(result);
     return result;
   }
 
