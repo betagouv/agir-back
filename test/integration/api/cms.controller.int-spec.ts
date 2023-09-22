@@ -2,7 +2,8 @@ import { CMSEvent } from '../../../src/infrastructure/api/types/cms/CMSEvent';
 import { TestUtil } from '../../TestUtil';
 
 describe('/api/cms/income (API test)', () => {
-  const CMS_DATA = {
+  const CMS_DATA = TestUtil.CMSWebhookAPIData();
+  const CMS_DATA2 = {
     model: 'article',
     event: 'entry.publish',
     entry: {
@@ -10,6 +11,10 @@ describe('/api/cms/income (API test)', () => {
       titre: 'titre',
       sousTitre: 'soustitre 222',
       thematique_gamification: { id: 1, titre: 'Alimentation' },
+      thematiques: [
+        { id: 1, titre: 'Alimentation' },
+        { id: 2, titre: 'Climat' },
+      ],
       rubriques: ['A', 'B'],
       duree: 'pas trop long',
       frequence: 'souvent',

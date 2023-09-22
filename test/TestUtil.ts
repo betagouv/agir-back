@@ -56,14 +56,19 @@ export class TestUtil {
       data: this[type.concat('Data')](override),
     });
   }
-  static CMSWebhookAPIData(override?) {
+  static CMSWebhookAPIData() {
     return {
       model: CMSModel.article,
-      event: 'entry.publish',
+      event: CMSEvent['entry.publish'],
       entry: {
         id: 123,
         titre: 'titre',
-        sousTitre: 'soustitre',
+        sousTitre: 'soustitre 222',
+        thematique_gamification: { id: 1, titre: 'Alimentation' },
+        thematiques: [
+          { id: 1, titre: 'Alimentation' },
+          { id: 2, titre: 'Climat' },
+        ],
         rubriques: ['A', 'B'],
         duree: 'pas trop long',
         frequence: 'souvent',
@@ -73,8 +78,8 @@ export class TestUtil {
         difficulty: 3,
         points: 20,
         codePostal: '91120',
+        publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       },
-      ...override,
     };
   }
   static situationNGCData(override?) {
@@ -182,6 +187,7 @@ export class TestUtil {
       titre: 'titre',
       soustitre: 'soustitre',
       thematique_gamification: Thematique.consommation,
+      thematiques: [],
       tags: ['quizz', 'nourriture', 'conso'],
       duree: '⏱️ < 1 minute',
       frequence: '🔄 1x/jour',
@@ -215,6 +221,7 @@ export class TestUtil {
       titre: 'titre',
       soustitre: 'soustitre',
       thematique_gamification: Thematique.consommation,
+      thematiques: [],
       tags: ['quizz', 'nourriture', 'conso'],
       duree: '⏱️ < 1 minute',
       frequence: '🔄 1x/jour',

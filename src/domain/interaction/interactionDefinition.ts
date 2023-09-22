@@ -1,4 +1,5 @@
 import { DifficultyLevel } from '../difficultyLevel';
+import { Thematique } from '../thematique';
 import { InteractionType } from './interactionType';
 
 export class InteractionDefinition {
@@ -10,7 +11,8 @@ export class InteractionDefinition {
   type: InteractionType;
   titre: string;
   soustitre?: string;
-  thematique_gamification: string;
+  thematique_gamification: Thematique;
+  thematiques: Thematique[];
   tags: [];
   duree?: string;
   frequence?: string;

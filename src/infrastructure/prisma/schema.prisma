@@ -54,6 +54,7 @@ model Interaction {
   titre                   String
   soustitre               String?
   thematique_gamification String
+  thematiques             String[]    @default([])
   tags                    String[]    @default([])
   duree                   String?
   frequence               String?
@@ -88,6 +89,7 @@ model InteractionDefinition {
   titre                   String
   soustitre               String?
   thematique_gamification String
+  thematiques             String[] @default([])
   tags                    String[] @default([])
   duree                   String?
   frequence               String?

@@ -47,7 +47,7 @@ export class InteractionsDefinitionUsecase {
   async createOrUpdateContent(cmsWebhookAPI: CMSWebhookAPI) {
     if (cmsWebhookAPI.entry.publishedAt === null) return;
 
-    let interactionDef: InteractionDefinition =
+    let interactionDef =
       InteractionsDefinitionUsecase.buildInteractionDefFromCMSData(
         cmsWebhookAPI,
       );
@@ -93,18 +93,26 @@ export class InteractionsDefinitionUsecase {
     result.content_id = cmsWebhookAPI.entry.id.toString();
     result.titre = cmsWebhookAPI.entry.titre;
     result.soustitre = cmsWebhookAPI.entry.sousTitre;
+
     result.thematique_gamification = cmsWebhookAPI.entry.thematique_gamification
       ? CMSThematiqueAPI.getThematique(
           cmsWebhookAPI.entry.thematique_gamification,
         )
       : Thematique.climat;
+
+    result.thematiques = cmsWebhookAPI.entry.thematiques
+      ? CMSThematiqueAPI.getThematiqueList(cmsWebhookAPI.entry.thematiques)
+      : [];
+
     result.tags = [];
     result.duree = cmsWebhookAPI.entry.duree;
     result.frequence = cmsWebhookAPI.entry.frequence;
     result.image_url = cmsWebhookAPI.entry.imageUrl
       ? cmsWebhookAPI.entry.imageUrl.url
       : null;
-    result.difficulty = cmsWebhookAPI.entry.difficulty ? cmsWebhookAPI.entry.difficulty : 1;
+    result.difficulty = cmsWebhookAPI.entry.difficulty
+      ? cmsWebhookAPI.entry.difficulty
+      : 1;
     result.points = cmsWebhookAPI.entry.points || 0;
     result.codes_postaux = cmsWebhookAPI.entry.codePostal
       ? [cmsWebhookAPI.entry.codePostal]

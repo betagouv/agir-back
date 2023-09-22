@@ -16,4 +16,8 @@ export class CMSThematiqueAPI {
       Thematique.loisir,
     ][cmsThematique.id - 1];
   }
+
+  public static getThematiqueList(list: CMSThematiqueAPI[]) {
+    return list.map((thematique) => CMSThematiqueAPI.getThematique(thematique));
+  }
 }

@@ -4,7 +4,6 @@ import { CMSModel } from './CMSModels';
 import { CMSWebhookEntryAPI } from './CMSWebhookEntryAPI';
 
 export class CMSWebhookAPI {
-  @ApiProperty() id: string;
   @ApiProperty({ enum: CMSModel }) model: CMSModel;
   @ApiProperty({ enum: CMSEvent }) event: CMSEvent;
 
