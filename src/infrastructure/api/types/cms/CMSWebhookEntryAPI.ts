@@ -16,6 +16,6 @@ export class CMSWebhookEntryAPI {
   @ApiProperty({ type: CMSWebhookImageURLAPI }) imageUrl: CMSWebhookImageURLAPI;
   @ApiProperty() difficulty: number;
   @ApiProperty() points?: number;
-  @ApiProperty() codePostal?: string;
+  @ApiProperty() codes_postaux?: string;
   @ApiProperty() publishedAt: Date;
 }

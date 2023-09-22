@@ -41,7 +41,7 @@ describe('/api/cms/income (API test)', () => {
     expect(interDefDB[0].image_url).toEqual('https://');
     expect(interDefDB[0].difficulty).toEqual(3);
     expect(interDefDB[0].points).toEqual(20);
-    expect(interDefDB[0].codes_postaux).toStrictEqual(['91120']); // FIXME
+    expect(interDefDB[0].codes_postaux).toStrictEqual(['91120', '75002']);
     expect(interDefDB[0].content_id).toEqual('123');
   });
   it('POST /api/cms/income - create a new article, 1 user in db with not article, no error', async () => {

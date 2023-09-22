@@ -114,9 +114,9 @@ export class InteractionsDefinitionUsecase {
       ? cmsWebhookAPI.entry.difficulty
       : 1;
     result.points = cmsWebhookAPI.entry.points || 0;
-    result.codes_postaux = cmsWebhookAPI.entry.codePostal
-      ? [cmsWebhookAPI.entry.codePostal]
-      : undefined; // FIXME : manque la liste
+    result.codes_postaux = cmsWebhookAPI.entry.codes_postaux
+      ? cmsWebhookAPI.entry.codes_postaux.split(',')
+      : undefined;
     result.type = InteractionType[cmsWebhookAPI.model];
     if (result.type === undefined) {
       throw new BadRequestException(

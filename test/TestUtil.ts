@@ -75,7 +75,7 @@ export class TestUtil {
         },
         difficulty: 3,
         points: 20,
-        codePostal: '91120',
+        codes_postaux: '91120,75002',
         publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       },
     };
@@ -166,7 +166,7 @@ export class TestUtil {
       titre: 'titre',
       soustitre: 'soustitre',
       thematique_gamification: Thematique.consommation,
-      thematiques: [],
+      thematiques: ['climat', 'logement'],
       tags: ['quizz', 'nourriture', 'conso'],
       duree: '⏱️ < 1 minute',
       frequence: '🔄 1x/jour',
