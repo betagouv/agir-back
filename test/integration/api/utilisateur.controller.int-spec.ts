@@ -50,8 +50,6 @@ describe('/utilisateurs (API test)', () => {
     await TestUtil.create('empreinte');
     await TestUtil.create('questionNGC');
     await TestUtil.create('badge');
-    await TestUtil.create('quizz');
-    await TestUtil.create('quizzQuestion');
     await TestUtil.create('interaction');
     // WHEN
     const response = await TestUtil.getServer().delete(

@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 
 import { UtilisateurController } from './infrastructure/api/utilisateur.controller';
 import { AuthController } from './infrastructure/api/auth.controller';
-import { QuizzController } from './infrastructure/api/quizz.controller';
 import { BilanController } from './infrastructure/api/bilan.controller';
 import { AidesController } from './infrastructure/api/aides.controller';
 import { IntractionsController } from './infrastructure/api/interactions.controller';
@@ -11,14 +10,12 @@ import { ArticleController } from './infrastructure/api/article.controller';
 import { CMSController } from './infrastructure/api/cms.controller';
 
 import { UtilisateurUsecase } from './usecase/utilisateur.usecase';
-import { QuizzUsecase } from './usecase/quizz.usecase';
 import { BilanUsecase } from './usecase/bilan.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
 import { ArticleUsecase } from './usecase/article.usecase';
 import { InteractionsDefinitionUsecase } from './usecase/interactionsDefinition.usecase';
 
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur.repository';
-import { QuizzRepository } from './infrastructure/repository/quizz.repository';
 import { BadgeRepository } from './infrastructure/repository/badge.repository';
 import { BilanRepository } from './infrastructure/repository/bilan.repository';
 
@@ -53,7 +50,6 @@ import { QuestionsNGCController } from './infrastructure/api/questionNGC.control
   controllers: [
     UtilisateurController,
     AuthController,
-    QuizzController,
     BilanController,
     AidesController,
     IntractionsController,
@@ -67,7 +63,6 @@ import { QuestionsNGCController } from './infrastructure/api/questionNGC.control
   providers: [
     PrismaService,
     UtilisateurRepository,
-    QuizzRepository,
     BilanRepository,
     BadgeRepository,
     InteractionRepository,
@@ -82,7 +77,6 @@ import { QuestionsNGCController } from './infrastructure/api/questionNGC.control
     AidesRetrofitRepository,
     AidesVeloRepository,
     UtilisateurUsecase,
-    QuizzUsecase,
     BilanUsecase,
     AidesUsecase,
     InteractionsUsecase,

@@ -38,8 +38,6 @@ export class TestUtil {
     await this.prisma.suivi.deleteMany();
     await this.prisma.interaction.deleteMany();
     await this.prisma.badge.deleteMany();
-    await this.prisma.quizzQuestion.deleteMany();
-    await this.prisma.quizz.deleteMany();
     await this.prisma.empreinte.deleteMany();
     await this.prisma.questionNGC.deleteMany();
     await this.prisma.utilisateur.deleteMany();
@@ -152,30 +150,11 @@ export class TestUtil {
       ...override,
     };
   }
-  static quizzData(override?) {
-    return {
-      id: 'quizz-id',
-      titre: 'titre',
-      ...override,
-    };
-  }
   static articleData(override?) {
     return {
       id: 'article-id',
       titre: 'titre',
       contenu: '<html>Hello World !!</html>',
-      ...override,
-    };
-  }
-  static quizzQuestionData(override?) {
-    return {
-      id: 'quizzQuestion-id',
-      libelle: 'libelle',
-      solution: '10',
-      propositions: ['1', '5', '10'],
-      quizzId: 'quizz-id',
-      texte_riche_ok: 'bla bla bla',
-      texte_riche_ko: 'bla bla bla',
       ...override,
     };
   }

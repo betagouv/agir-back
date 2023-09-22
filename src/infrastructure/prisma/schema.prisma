@@ -140,28 +140,10 @@ model SituationNGC {
   created_at DateTime   @default(now()) @db.Timestamptz(3)
 }
 
-model Quizz {
-  id        String          @id
-  titre     String
-  questions QuizzQuestion[]
-}
-
 model Article {
   id      String @id
   titre   String
   contenu String
-}
-
-model QuizzQuestion {
-  id             String   @id
-  ordre          Int      @default(0)
-  libelle        String
-  propositions   String[]
-  solution       String
-  texte_riche_ok String   @default("")
-  texte_riche_ko String   @default("")
-  quizz          Quizz    @relation(fields: [quizzId], references: [id])
-  quizzId        String
 }
 
 model Badge {
