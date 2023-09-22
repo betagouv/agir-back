@@ -58,6 +58,7 @@ describe('/api/cms/income (API test)', () => {
     expect(interDefDB[0].titre).toEqual('titre');
     expect(interDefDB[0].soustitre).toEqual('soustitre 222');
     expect(interDefDB[0].thematique_gamification).toEqual('alimentation');
+    expect(interDefDB[0].thematiques).toStrictEqual(['alimentation', 'climat']);
     expect(interDefDB[0].duree).toEqual('pas trop long');
     expect(interDefDB[0].frequence).toEqual('souvent');
     expect(interDefDB[0].image_url).toEqual('https://');
