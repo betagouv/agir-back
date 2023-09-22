@@ -84,7 +84,7 @@ model Interaction {
 
 model InteractionDefinition {
   id                      String   @id
-  content_id              String?  @unique
+  content_id              String?
   type                    String
   titre                   String
   soustitre               String?
@@ -105,6 +105,8 @@ model InteractionDefinition {
   codes_postaux           String[] @default([])
   created_at              DateTime @default(now()) @db.Timestamptz(3)
   updated_at              DateTime @updatedAt @db.Timestamptz(3)
+
+  @@unique([type, content_id])
 }
 
 model Empreinte {

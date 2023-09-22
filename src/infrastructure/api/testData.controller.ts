@@ -476,7 +476,7 @@ export class TestDataController {
       const intractionDefinition = theObject[key] as InteractionDefinition;
       intractionDefinition.id = key;
       intractionDefinition.type = type;
-      await this.interactionDefinitionRepository.createOrUpdateInteractionDefinition(
+      await this.interactionDefinitionRepository.createOrUpdateBasedOnId(
         intractionDefinition,
       );
     }

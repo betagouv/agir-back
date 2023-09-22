@@ -52,7 +52,7 @@ export class InteractionsDefinitionUsecase {
         cmsWebhookAPI,
       );
 
-    await this.interactionDefinitionRepository.createOrUpdateInteractionDefinitionBasedOnContentId(
+    await this.interactionDefinitionRepository.createOrUpdateBasedOnContentIdAndType(
       interactionDef,
     );
 

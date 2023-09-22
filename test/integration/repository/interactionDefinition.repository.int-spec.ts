@@ -47,7 +47,7 @@ describe('InteractionDefinitionRepository', () => {
     await TestUtil.create('utilisateur');
     await TestUtil.create('interactionDefinition');
     // WHEN
-    await interactionCatalogRepository.createOrUpdateInteractionDefinition(
+    await interactionCatalogRepository.createOrUpdateBasedOnId(
       TestUtil.interactionDefinitionData({ id: '2', content_id: '2' }),
     );
 
@@ -67,7 +67,7 @@ describe('InteractionDefinitionRepository', () => {
     });
 
     // WHEN
-    await interactionCatalogRepository.createOrUpdateInteractionDefinition(
+    await interactionCatalogRepository.createOrUpdateBasedOnId(
       updateInteraction,
     );
 
@@ -77,5 +77,43 @@ describe('InteractionDefinitionRepository', () => {
     );
     expect(interacionsDB).toHaveLength(1);
     expect(interacionsDB[0].titre).toEqual('le nouveau titre');
+  });
+  it('createOrUpdateBasedOnContentIdAndType : update properly existing ', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interactionDefinition', {
+      id: '1',
+      content_id: '1',
+      type: InteractionType.aide,
+    });
+    await TestUtil.create('interactionDefinition', {
+      id: '2',
+      content_id: '1',
+      type: InteractionType.article,
+    });
+
+    const updateInteraction = TestUtil.interactionDefinitionData({
+      titre: 'le nouveau titre',
+      content_id: '1',
+      type: InteractionType.aide,
+      id: '34',
+    });
+
+    // WHEN
+    await interactionCatalogRepository.createOrUpdateBasedOnContentIdAndType(
+      updateInteraction,
+    );
+
+    //THEN
+    const interacionsDB1 =
+      await TestUtil.prisma.interactionDefinition.findUnique({
+        where: { id: '34' },
+      });
+    const interacionsDB2 =
+      await TestUtil.prisma.interactionDefinition.findUnique({
+        where: { id: '2' },
+      });
+    expect(interacionsDB1.titre).toEqual('le nouveau titre');
+    expect(interacionsDB2.titre).toEqual('titre');
   });
 });

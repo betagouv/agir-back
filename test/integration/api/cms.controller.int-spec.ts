@@ -1,32 +1,9 @@
+import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { CMSEvent } from '../../../src/infrastructure/api/types/cms/CMSEvent';
 import { TestUtil } from '../../TestUtil';
 
 describe('/api/cms/income (API test)', () => {
   const CMS_DATA = TestUtil.CMSWebhookAPIData();
-  const CMS_DATA2 = {
-    model: 'article',
-    event: 'entry.publish',
-    entry: {
-      id: 123,
-      titre: 'titre',
-      sousTitre: 'soustitre 222',
-      thematique_gamification: { id: 1, titre: 'Alimentation' },
-      thematiques: [
-        { id: 1, titre: 'Alimentation' },
-        { id: 2, titre: 'Climat' },
-      ],
-      rubriques: ['A', 'B'],
-      duree: 'pas trop long',
-      frequence: 'souvent',
-      imageUrl: {
-        url: 'https://',
-      },
-      difficulty: 3,
-      points: 20,
-      codePostal: '91120',
-      publishedAt: '2023-09-20T14:42:12.941Z',
-    },
-  };
   beforeAll(async () => {
     await TestUtil.appinit();
   });
@@ -87,9 +64,11 @@ describe('/api/cms/income (API test)', () => {
     await TestUtil.create('utilisateur');
     await TestUtil.create('interactionDefinition', {
       content_id: '123',
+      type: InteractionType.article,
     });
     await TestUtil.create('interaction', {
       content_id: '123',
+      type: InteractionType.article,
     });
 
     // WHEN
@@ -112,15 +91,18 @@ describe('/api/cms/income (API test)', () => {
     await TestUtil.create('utilisateur', { id: 'u2', email: 'e2' });
     await TestUtil.create('interactionDefinition', {
       content_id: '123',
+      type: InteractionType.article,
     });
     await TestUtil.create('interaction', {
       id: 'i1',
       content_id: '123',
+      type: InteractionType.article,
       utilisateurId: 'u1',
     });
     await TestUtil.create('interaction', {
       id: 'i2',
       content_id: '123',
+      type: InteractionType.article,
       utilisateurId: 'u2',
     });
 
@@ -201,12 +183,14 @@ describe('/api/cms/income (API test)', () => {
     await TestUtil.create('interaction', {
       id: 'i1',
       content_id: '123',
+      type: InteractionType.article,
       utilisateurId: 'u1',
       done: true,
     });
     await TestUtil.create('interaction', {
       id: 'i2',
       content_id: '123',
+      type: InteractionType.article,
       utilisateurId: 'u2',
       done: false,
     });

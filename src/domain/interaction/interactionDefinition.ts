@@ -7,8 +7,8 @@ export class InteractionDefinition {
     Object.assign(this, data);
   }
   id: string;
-  content_id?: string;
   type: InteractionType;
+  content_id?: string;
   titre: string;
   soustitre?: string;
   thematique_gamification: Thematique;

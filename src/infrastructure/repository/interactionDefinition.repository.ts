@@ -10,9 +10,7 @@ export class InteractionDefinitionRepository {
     let result = await this.prisma.interactionDefinition.findMany({});
     return result.map((inter) => new InteractionDefinition(inter));
   }
-  async createOrUpdateInteractionDefinition(
-    interaction: InteractionDefinition,
-  ) {
+  async createOrUpdateBasedOnId(interaction: InteractionDefinition) {
     await this.prisma.interactionDefinition.upsert({
       where: {
         id: interaction.id,
@@ -21,12 +19,15 @@ export class InteractionDefinitionRepository {
       update: interaction,
     });
   }
-  async createOrUpdateInteractionDefinitionBasedOnContentId(
+  async createOrUpdateBasedOnContentIdAndType(
     interaction: InteractionDefinition,
   ) {
     await this.prisma.interactionDefinition.upsert({
       where: {
-        content_id: interaction.content_id,
+        type_content_id: {
+          content_id: interaction.content_id,
+          type: interaction.type,
+        },
       },
       create: interaction,
       update: interaction,
