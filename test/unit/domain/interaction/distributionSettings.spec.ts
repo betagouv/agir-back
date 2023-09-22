@@ -151,6 +151,24 @@ describe('DistributionSettings', () => {
     // THEN
     expect(result).toEqual(2);
   });
+  it('insertLockedInteractions : does not insert if already in list', () => {
+    // GIVEN
+    const il1 = new Interaction({ id: 'l1', locked: true });
+    const i1 = new Interaction({ id: 'l1' });
+    const locked_list = [il1];
+    const work_list = [i1];
+
+    // WHEN
+    const result = DistributionSettings.insertLockedInteractions(
+      locked_list,
+      work_list,
+    );
+
+    // THEN
+    expect(result).toHaveLength(1);
+    const id_list = result.map((inter) => inter.id);
+    expect(id_list).toStrictEqual(['l1']);
+  });
   it('insertLockedInteractions : insert locked interactions at configured position', () => {
     // GIVEN
     const il1 = new Interaction({ id: 'l1', locked: true });

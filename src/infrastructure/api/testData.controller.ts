@@ -116,7 +116,7 @@ export class TestDataController {
 
     for (let index = 0; index < interactions.length; index++) {
       const interaction = interactions[index];
-      if ((interaction.cms_type = 'article')) {
+      if (interaction.cms_type === 'article') {
         let interactionToCreate: Interaction;
         let interDef =
           await this.interactionDefinitionRepository.getByTypeAndContentId(
@@ -131,6 +131,9 @@ export class TestDataController {
         } else {
           interactionToCreate = new Interaction(interDef);
         }
+        interactionToCreate = { ...interactionToCreate, ...interaction };
+        delete interactionToCreate['cms_type'];
+        delete interactionToCreate['cms_id'];
         interactionToCreate.id = uuidv4();
         interactionToCreate.utilisateurId = utilisateurId;
         await this.prisma.interaction.create({
@@ -247,7 +250,7 @@ export class TestDataController {
 
     for (let index = 0; index < interactions.length; index++) {
       const interaction = interactions[index];
-      if ((interaction.cms_type = 'quizz')) {
+      if (interaction.cms_type === 'quizz') {
         let interactionToCreate: Interaction;
         let interDef =
           await this.interactionDefinitionRepository.getByTypeAndContentId(
@@ -262,6 +265,9 @@ export class TestDataController {
         } else {
           interactionToCreate = new Interaction(interDef);
         }
+        interactionToCreate = { ...interactionToCreate, ...interaction };
+        delete interactionToCreate['cms_type'];
+        delete interactionToCreate['cms_id'];
         interactionToCreate.id = uuidv4();
         interactionToCreate.utilisateurId = utilisateurId;
         await this.prisma.interaction.create({

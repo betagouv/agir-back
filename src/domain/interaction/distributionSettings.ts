@@ -114,15 +114,22 @@ export class DistributionSettings {
       locked_list.length,
     );
     for (let index = 0; index < available_locked; index++) {
-      this.insertInteractionAtPosition(
-        result,
-        locked_list[index],
-        this.TARGET_LOCKED_INTERACTIONS_POSITIONS[
-          index + current_locked_number
-        ],
-      );
+      if (!this.containsId(result, locked_list[index]))
+        this.insertInteractionAtPosition(
+          result,
+          locked_list[index],
+          this.TARGET_LOCKED_INTERACTIONS_POSITIONS[
+            index + current_locked_number
+          ],
+        );
     }
     return result;
+  }
+
+  static containsId(list: Interaction[], interaction: Interaction) {
+    return list.find((element) => {
+      return element.id === interaction.id;
+    });
   }
 
   static repositionLockedItemsToTargetPositions(
