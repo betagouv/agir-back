@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { InteractionDefinition } from '../../../src/domain/interaction/interactionDefinition';
+import { InteractionType } from 'src/domain/interaction/interactionType';
 
 @Injectable()
 export class InteractionDefinitionRepository {
@@ -32,6 +33,20 @@ export class InteractionDefinitionRepository {
       create: interaction,
       update: interaction,
     });
+  }
+  async getByTypeAndContentId(
+    type: InteractionType,
+    content_id: string,
+  ): Promise<InteractionDefinition | null> {
+    const result = await this.prisma.interactionDefinition.findUnique({
+      where: {
+        type_content_id: {
+          content_id,
+          type: type.toString(),
+        },
+      },
+    });
+    return result ? new InteractionDefinition(result) : null;
   }
 
   async deleteByContentId(content_id: string) {

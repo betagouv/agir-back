@@ -131,32 +131,7 @@ const utilisateurs = {
   wojtek: {
     name: 'Wojtek',
     points: 10,
-    interactions: [
-      //{ id: 'article-ngc', score: 0.1 },
-      { id: 'quizz_tout_sur_leau', score: 0.7 },
-      //{ id: 'article_eau', score: 0.4 },
-      { id: 'suivi_du_jour', score: 0.9, locked: true },
-      {
-        id: 'article-cms',
-        score: 0.99,
-      },
-      {
-        id: 'article-cms-2',
-        score: 0.98,
-      },
-      {
-        id: 'article-cms-3',
-        score: 0.97,
-      },
-      {
-        id: 'article-cms-4',
-        score: 0.96,
-      },
-      {
-        id: 'article-cms-5',
-        score: 0.95,
-      },
-    ],
+    interactions: [{ cms_id: 5, cms_type: 'article' }],
     suivis: ['sa1', 'sa2', 'st1', 'st2'],
     bilans: ['bilan1'],
     badges: ['badge1', 'badge2'],
