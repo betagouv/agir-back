@@ -6,13 +6,11 @@ import { BilanController } from './infrastructure/api/bilan.controller';
 import { AidesController } from './infrastructure/api/aides.controller';
 import { IntractionsController } from './infrastructure/api/interactions.controller';
 import { TestDataController } from './infrastructure/api/testData.controller';
-import { ArticleController } from './infrastructure/api/article.controller';
 import { CMSController } from './infrastructure/api/cms.controller';
 
 import { UtilisateurUsecase } from './usecase/utilisateur.usecase';
 import { BilanUsecase } from './usecase/bilan.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
-import { ArticleUsecase } from './usecase/article.usecase';
 import { InteractionsDefinitionUsecase } from './usecase/interactionsDefinition.usecase';
 
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur.repository';
@@ -30,7 +28,6 @@ import { AidesRetrofitRepository } from './infrastructure/repository/aidesRetrof
 import { SuiviDashboardController } from './infrastructure/api/suiviDashboard.controller';
 import { OIDCStateRepository } from '../src/infrastructure/repository/oidcState.repository';
 import { InteractionDefinitionRepository } from '../src/infrastructure/repository/interactionDefinition.repository';
-import { ArticleRepository } from '../src/infrastructure/repository/article.repository';
 
 import { JwtModule } from '@nestjs/jwt';
 import { OidcService } from '../src/infrastructure/auth/oidc.service';
@@ -57,7 +54,6 @@ import { QuestionsNGCController } from './infrastructure/api/questionNGC.control
     SuiviDashboardController,
     TestDataController,
     QuestionsNGCController,
-    ArticleController,
     CMSController,
   ],
   providers: [
@@ -73,7 +69,6 @@ import { QuestionsNGCController } from './infrastructure/api/questionNGC.control
     NGCCalculator,
     QuestionNGCRepository,
     InteractionDefinitionRepository,
-    ArticleRepository,
     AidesRetrofitRepository,
     AidesVeloRepository,
     UtilisateurUsecase,
@@ -82,7 +77,6 @@ import { QuestionsNGCController } from './infrastructure/api/questionNGC.control
     InteractionsUsecase,
     SuiviUsecase,
     QuestionNGCUsecase,
-    ArticleUsecase,
     InteractionsDefinitionUsecase,
   ],
 })
