@@ -127,7 +127,9 @@ export class TestDataController {
           interactionToCreate = new Interaction(DUMMY_INTERACTION);
           interactionToCreate.type = InteractionType.article;
           interactionToCreate.content_id = interaction.cms_id.toString();
-          interactionToCreate.titre = 'Article cms '.concat(interaction.cms_id);
+          interactionToCreate.titre = 'Article CMS manquant : '.concat(
+            interaction.cms_id,
+          );
         } else {
           interactionToCreate = new Interaction(interDef);
         }
@@ -261,7 +263,9 @@ export class TestDataController {
           interactionToCreate = new Interaction(DUMMY_INTERACTION);
           interactionToCreate.type = InteractionType.quizz;
           interactionToCreate.content_id = interaction.cms_id.toString();
-          interactionToCreate.titre = 'Quizz cms '.concat(interaction.cms_id);
+          interactionToCreate.titre = 'Quizz CMS manquant : '.concat(
+            interaction.cms_id,
+          );
         } else {
           interactionToCreate = new Interaction(interDef);
         }
