@@ -59,6 +59,20 @@ describe('/api/cms/income (API test)', () => {
     expect(interDB).toHaveLength(1);
     expect(interDB[0].utilisateurId).toEqual('utilisateur-id');
   });
+  it('POST /api/cms/income - does nothing when model = aide', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/api/cms/income')
+      .send({ ...CMS_DATA, model: 'aide' });
+
+    // THEN
+    const interDB = await TestUtil.prisma.interaction.findMany({});
+    expect(response.status).toBe(201);
+    expect(interDB).toHaveLength(0);
+  });
   it('POST /api/cms/income - updates existing article, 1 user in db ', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');

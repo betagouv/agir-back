@@ -10,6 +10,7 @@ import { UtilisateurRepository } from '../../src/infrastructure/repository/utili
 import { Thematique } from '../../src/domain/thematique';
 import { CMSThematiqueAPI } from '../../src/infrastructure/api/types/cms/CMSThematiqueAPI';
 import { CMSEvent } from '../../src/infrastructure/api/types/cms/CMSEvent';
+import { CMSModel } from '../../src/infrastructure/api/types/cms/CMSModels';
 
 @Injectable()
 export class InteractionsDefinitionUsecase {
@@ -20,6 +21,7 @@ export class InteractionsDefinitionUsecase {
   ) {}
 
   async insertOrUpdateInteractionDefFromCMS(cmsWebhookAPI: CMSWebhookAPI) {
+    if (cmsWebhookAPI.model === CMSModel.aide) return;
     switch (cmsWebhookAPI.event) {
       case CMSEvent['entry.unpublish']:
         return this.deleteContent(cmsWebhookAPI);
