@@ -102,6 +102,11 @@ export class InteractionsDefinitionUsecase {
         )
       : Thematique.climat;
 
+    result.thematique_gamification_titre = cmsWebhookAPI.entry
+      .thematique_gamification
+      ? cmsWebhookAPI.entry.thematique_gamification.titre
+      : '🌍 Climat';
+
     result.thematiques = cmsWebhookAPI.entry.thematiques
       ? CMSThematiqueAPI.getThematiqueList(cmsWebhookAPI.entry.thematiques)
       : [];

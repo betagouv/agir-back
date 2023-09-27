@@ -12,6 +12,7 @@ export class InteractionDefinition {
   titre: string;
   soustitre?: string;
   thematique_gamification: Thematique;
+  thematique_gamification_titre: string;
   thematiques: Thematique[];
   tags: [];
   duree?: string;
