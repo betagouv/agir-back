@@ -35,7 +35,6 @@ const utilisateurs = {
     interactions: [
       { cms_id: 1, cms_type: 'quizz', score: 0.5 },
       { cms_id: 2, cms_type: 'quizz', score: 0.5 },
-      { cms_id: 3, cms_type: 'quizz', score: 0.5 },
       { cms_id: 4, cms_type: 'quizz', score: 0.5 },
       { cms_id: 5, cms_type: 'quizz', score: 0.5 },
       { cms_id: 5, cms_type: 'quizz', score: 0.5 },
