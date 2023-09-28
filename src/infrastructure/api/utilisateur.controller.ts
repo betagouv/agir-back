@@ -11,10 +11,19 @@ import {
   Response,
 } from '@nestjs/common';
 import { UtilisateurUsecase } from '../../usecase/utilisateur.usecase';
-import { ApiTags, ApiQuery, ApiBody, ApiOkResponse } from '@nestjs/swagger';
-import { UtilisateurAPI } from './types/utilisateurAPI';
-import { UtilisateurProfileAPI } from './types/utilisateurProfileAPI';
+import {
+  ApiTags,
+  ApiQuery,
+  ApiBody,
+  ApiOkResponse,
+  getSchemaPath,
+  ApiExtraModels,
+} from '@nestjs/swagger';
+import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
+import { UtilisateurProfileAPI } from './types/utilisateur/utilisateurProfileAPI';
+import { CreateUtilisateurAPI } from './types/utilisateur/createUtilisateurAPI';
 
+@ApiExtraModels(CreateUtilisateurAPI)
 @Controller()
 @ApiTags('Utilisateur')
 export class UtilisateurController {
@@ -79,13 +88,7 @@ export class UtilisateurController {
   }
   @Post('utilisateurs')
   @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        name: { type: 'string', description: "nom de l'utilisateur à créer" },
-        email: { type: 'string', description: "email de l'utilisateur" },
-      },
-    },
+    schema: { $ref: getSchemaPath(CreateUtilisateurAPI) },
   })
   @ApiOkResponse({
     description: "l'utilisateur crée",

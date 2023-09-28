@@ -6,7 +6,7 @@ import { InteractionRepository } from '../infrastructure/repository/interaction.
 import { v4 as uuidv4 } from 'uuid';
 import { Interaction } from '../../src/domain/interaction/interaction';
 import { UserQuizzProfile } from '../domain/quizz/userQuizzProfile';
-import { UtilisateurProfileAPI } from '../../src/infrastructure/api/types/utilisateurProfileAPI';
+import { UtilisateurProfileAPI } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
 import { SuiviRepository } from '../infrastructure/repository/suivi.repository';
 import { BadgeRepository } from '../infrastructure/repository/badge.repository';
 import { BilanRepository } from '../infrastructure/repository/bilan.repository';
@@ -55,6 +55,7 @@ export class UtilisateurUsecase {
       created_at: undefined,
       name: name || 'John Doe '.concat(uuidv4()),
       email: email,
+      onboardingData: {},
       quizzProfile: UserQuizzProfile.newLowProfile(),
       badges: undefined,
     });

@@ -138,6 +138,7 @@ export class UtilisateurRepository {
           name: user.name,
           email: user.email,
           code_postal: user.code_postal,
+          onboardingData: user.onboardingData,
           points: user.points,
           quizzProfile: new UserQuizzProfile(user.quizzLevels as any),
           created_at: user.created_at,

@@ -32,19 +32,20 @@ model OIDC_STATE {
 }
 
 model Utilisateur {
-  id           String        @id
-  email        String?       @unique
-  name         String
-  code_postal  String?
-  points       Int           @default(0)
-  quizzLevels  Json          @default("{}")
-  empreintes   Empreinte[]
-  interactions Interaction[]
-  suivis       Suivi[]
-  badges       Badge[]
-  questionsNGC QuestionNGC[]
-  created_at   DateTime      @default(now()) @db.Timestamptz(3)
-  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
+  id             String        @id
+  email          String?       @unique
+  name           String
+  code_postal    String?
+  points         Int           @default(0)
+  quizzLevels    Json          @default("{}")
+  onboardingData Json          @default("{}")
+  empreintes     Empreinte[]
+  interactions   Interaction[]
+  suivis         Suivi[]
+  badges         Badge[]
+  questionsNGC   QuestionNGC[]
+  created_at     DateTime      @default(now()) @db.Timestamptz(3)
+  updated_at     DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model Interaction {

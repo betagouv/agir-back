@@ -5,6 +5,7 @@ export class Utilisateur {
   id: string;
   name: string;
   email: string;
+  onboardingData: {};
   code_postal: string;
   points: number;
   quizzProfile: UserQuizzProfile;
