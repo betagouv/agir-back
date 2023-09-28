@@ -1,4 +1,3 @@
-import { max } from 'rxjs';
 import { Interaction } from './interaction';
 import { InteractionDistribution } from './interactionDistribution';
 import { InteractionPlacement } from './interactionPosition';
@@ -57,10 +56,10 @@ export class DistributionSettings {
           this.numberOfInteractionsOfType(interaction.type, targetList) <
           interaction_distrib.prefered
         ) {
-          targetList.push(interaction);
+          this.pushIfNotContains(interaction, targetList);
         }
       } else {
-        targetList.push(interaction);
+        this.pushIfNotContains(interaction, targetList);
       }
     });
   }
@@ -78,7 +77,7 @@ export class DistributionSettings {
   ) {
     pinned_list.sort((a, b) => a.pinned_at_position - b.pinned_at_position);
     pinned_list.forEach((pinned_interaction) => {
-      this.insertInteractionAtPosition(
+      this.insertInteractionAtPositionIfNotContains(
         work_list,
         pinned_interaction,
         pinned_interaction.pinned_at_position,
@@ -86,11 +85,12 @@ export class DistributionSettings {
     });
   }
 
-  static insertInteractionAtPosition(
+  static insertInteractionAtPositionIfNotContains(
     work_list: Interaction[],
     interaction: Interaction,
     position: number,
   ) {
+    if (this.containsId(work_list, interaction)) return;
     if (work_list.length < position + 1) {
       work_list.push(interaction);
     } else {
@@ -114,14 +114,13 @@ export class DistributionSettings {
       locked_list.length,
     );
     for (let index = 0; index < available_locked; index++) {
-      if (!this.containsId(result, locked_list[index]))
-        this.insertInteractionAtPosition(
-          result,
-          locked_list[index],
-          this.TARGET_LOCKED_INTERACTIONS_POSITIONS[
-            index + current_locked_number
-          ],
-        );
+      this.insertInteractionAtPositionIfNotContains(
+        result,
+        locked_list[index],
+        this.TARGET_LOCKED_INTERACTIONS_POSITIONS[
+          index + current_locked_number
+        ],
+      );
     }
     return result;
   }
@@ -130,6 +129,12 @@ export class DistributionSettings {
     return list.find((element) => {
       return element.id === interaction.id;
     });
+  }
+
+  static pushIfNotContains(inter: Interaction, target_list: Interaction[]) {
+    if (!this.containsId(target_list, inter)) {
+      target_list.push(inter);
+    }
   }
 
   static repositionLockedItemsToTargetPositions(
