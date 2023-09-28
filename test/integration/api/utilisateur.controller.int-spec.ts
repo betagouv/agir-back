@@ -132,18 +132,29 @@ describe('/utilisateurs (API test)', () => {
     expect(response.body).toHaveLength(2);
   });
 
-  it('POST /utilisateurs - create new utilisateur with given name', async () => {
+  it('POST /utilisateurs - create new utilisateur with given all data', async () => {
     // WHEN
-    const response = await TestUtil.getServer().post('/utilisateurs').send({
-      name: 'george',
-    });
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs')
+      .send({
+        name: 'george',
+        nom: 'WW',
+        prenom: 'Wojtek',
+        mot_de_passe: 'to use',
+        email: 'mon mail',
+        onboardingData: { deladata: 'une valeur' },
+      });
     // THEN
     const user = await TestUtil.prisma.utilisateur.findFirst({
       where: { name: 'george' },
     });
     expect(response.status).toBe(201);
-    expect(response.body.name).toEqual('george');
     expect(response.headers['location']).toContain(user.id);
+    expect(user.nom).toEqual('WW');
+    expect(user.prenom).toEqual('Wojtek');
+    expect(user.email).toEqual('mon mail');
+    expect(user.onboardingData).toStrictEqual({ deladata: 'une valeur' });
+    expect(user.passwordHash).toEqual('to use');
   });
   it('GET /utilisateurs/id/profile - read basic profile datas', async () => {
     // GIVEN

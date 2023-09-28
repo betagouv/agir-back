@@ -3,7 +3,7 @@ import { OnboardingDataAPI } from './onboardingDataAPI';
 
 export class CreateUtilisateurAPI {
   @ApiProperty()
-  nom: string;
+  nom?: string;
   @ApiProperty()
   name?: string; // FIXME a supprimer
   @ApiProperty()

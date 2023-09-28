@@ -16,14 +16,6 @@ describe('UtilisateurRepository', () => {
     await TestUtil.appclose();
   });
 
-  it('Creates a new utilisateur without ID', async () => {
-    // WHEN
-    await utilisateurRepository.createUtilisateurByName('bob');
-    // THEN
-    const utilisateurs = await TestUtil.prisma.utilisateur.findMany({});
-    expect(utilisateurs).toHaveLength(1);
-    expect(utilisateurs[0].id).toHaveLength(36);
-  });
   it('listUtilisateurIds : list utilisateur Ids OK', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', { id: '1', email: 'email1@truc.com' });

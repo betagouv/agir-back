@@ -1,4 +1,4 @@
-import { Utilisateur } from '../../src/domain/utilisateur';
+import { Utilisateur } from '../domain/utilisateur/utilisateur';
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur.repository';
 import { InteractionDefinitionRepository } from '../infrastructure/repository/interactionDefinition.repository';
@@ -52,10 +52,11 @@ export class UtilisateurUsecase {
         ? utilisateurInput.onboardingData.code_postal
         : undefined,
       created_at: undefined,
-      name:
-        utilisateurInput.name ||
-        utilisateurInput.nom ||
-        'John Doe '.concat(uuidv4()),
+      name: utilisateurInput.name || 'Missing Name '.concat(uuidv4()),
+      nom: utilisateurInput.nom,
+      prenom: utilisateurInput.prenom,
+      passwordHash: utilisateurInput.mot_de_passe,
+      passwordSalt: uuidv4(),
       email: utilisateurInput.email,
       onboardingData: utilisateurInput.onboardingData,
       quizzProfile: UserQuizzProfile.newLowProfile(),

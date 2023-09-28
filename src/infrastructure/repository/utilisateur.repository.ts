@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Utilisateur as UtilisateurDB, Prisma } from '@prisma/client';
-import { Utilisateur } from '../../../src/domain/utilisateur';
+import { Utilisateur } from '../../domain/utilisateur/utilisateur';
 import { UserQuizzProfile } from '../../domain/quizz/userQuizzProfile';
 import { Profile } from '../../../src/domain/utilisateur/profile';
 
@@ -82,15 +82,6 @@ export class UtilisateurRepository {
     return result as Record<'id', string>[];
   }
 
-  async createUtilisateurByName(name: string): Promise<Utilisateur | null> {
-    const user = await this.prisma.utilisateur.create({
-      data: {
-        id: uuidv4(),
-        name,
-      },
-    });
-    return this.buildUtilisateurFromDB(user);
-  }
   async createUtilisateur(
     utilisateur: Utilisateur,
   ): Promise<Utilisateur | null> {
@@ -98,7 +89,12 @@ export class UtilisateurRepository {
       data: {
         id: uuidv4(),
         name: utilisateur.name,
+        nom: utilisateur.nom,
+        prenom: utilisateur.prenom,
+        passwordHash: utilisateur.passwordHash,
+        passwordSalt: utilisateur.passwordSalt,
         email: utilisateur.email,
+        onboardingData: utilisateur.onboardingData,
         quizzLevels: utilisateur.quizzProfile.getData(),
       },
     });
@@ -136,8 +132,12 @@ export class UtilisateurRepository {
       ? {
           id: user.id,
           name: user.name,
+          nom: user.nom,
+          prenom: user.prenom,
           email: user.email,
           code_postal: user.code_postal,
+          passwordHash: user.passwordHash,
+          passwordSalt: user.passwordSalt,
           onboardingData: user.onboardingData,
           points: user.points,
           quizzProfile: new UserQuizzProfile(user.quizzLevels as any),
