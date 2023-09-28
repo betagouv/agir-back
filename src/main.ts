@@ -12,7 +12,7 @@ async function bootstrap() {
   // Exposition Swagger
   const swaggerDocumentOptions: SwaggerCustomOptions = {
     swaggerOptions: {
-      tryItOutEnabled: true,
+      tryItOutEnabled: false,
     },
   };
   const config = new DocumentBuilder()
