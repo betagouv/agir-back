@@ -5,9 +5,9 @@ export class CreateUtilisateurAPI {
   @ApiProperty()
   nom: string;
   @ApiProperty()
-  name: string; // FIXME a supprimer
+  name?: string; // FIXME a supprimer
   @ApiProperty()
-  prenom: string;
+  prenom?: string;
   @ApiProperty()
   email: string;
   @ApiProperty({ required: false })

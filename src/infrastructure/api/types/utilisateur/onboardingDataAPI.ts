@@ -8,27 +8,27 @@ export class OnboardingDataAPI {
       enum: ['voiture', 'moto', 'pied', 'velo', 'commun'],
     },
   })
-  transports: string[];
+  transports?: string[];
   @ApiProperty({ type: 'integer' })
-  avion: number;
+  avion?: number;
   @ApiProperty()
-  code_postal: string;
+  code_postal?: string;
   @ApiProperty()
-  adultes: number;
+  adultes?: number;
   @ApiProperty()
-  enfants: number;
+  enfants?: number;
   @ApiProperty({ enum: ['maison', 'appartement'] })
-  residence: 'maison' | 'appartement';
+  residence?: 'maison' | 'appartement';
   @ApiProperty()
-  proprietaire: boolean;
+  proprietaire?: boolean;
   @ApiProperty({ enum: ['petit', 'moyen', 'grand'] })
-  superficie: 'petit' | 'moyen' | 'grand';
+  superficie?: 'petit' | 'moyen' | 'grand';
   @ApiProperty({ enum: ['electricite', 'bois', 'fioul', 'gaz', 'autre', '?'] })
-  chauffage: 'electricite' | 'bois' | 'fioul' | 'gaz' | 'autre' | '?';
+  chauffage?: 'electricite' | 'bois' | 'fioul' | 'gaz' | 'autre' | '?';
   @ApiProperty({ enum: ['tout', 'vege', 'vegan', 'viande'] })
-  repas: 'tout' | 'vege' | 'vegan' | 'viande';
+  repas?: 'tout' | 'vege' | 'vegan' | 'viande';
   @ApiProperty({
     enum: ['raisonnable', 'secondemain', 'shopping', 'jamais'],
   })
-  consommation: 'raisonnable' | 'secondemain' | 'shopping' | 'jamais';
+  consommation?: 'raisonnable' | 'secondemain' | 'shopping' | 'jamais';
 }

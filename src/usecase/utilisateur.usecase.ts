@@ -12,6 +12,7 @@ import { BadgeRepository } from '../infrastructure/repository/badge.repository';
 import { BilanRepository } from '../infrastructure/repository/bilan.repository';
 import { QuestionNGCRepository } from '../infrastructure/repository/questionNGC.repository';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
+import { CreateUtilisateurAPI } from '../../src/infrastructure/api/types/utilisateur/createUtilisateurAPI';
 
 @Injectable()
 export class UtilisateurUsecase {
@@ -34,9 +35,6 @@ export class UtilisateurUsecase {
     return this.utilisateurRespository.findUtilisateurByEmail(email);
   }
 
-  async createUtilisateurByName(name: string): Promise<Utilisateur> {
-    return this.utilisateurRespository.createUtilisateurByName(name);
-  }
   async updateUtilisateurProfile(
     utilisateurId: string,
     profile: UtilisateurProfileAPI,
@@ -44,18 +42,22 @@ export class UtilisateurUsecase {
     return this.utilisateurRespository.updateProfile(utilisateurId, profile);
   }
 
-  async createUtilisateurByOptionalNameAndEmail(
-    name: string,
-    email: string,
+  async createUtilisateur(
+    utilisateurInput: CreateUtilisateurAPI,
   ): Promise<Utilisateur> {
     const newUtilisateur = await this.utilisateurRespository.createUtilisateur({
       id: undefined,
       points: 0,
-      code_postal: undefined,
+      code_postal: utilisateurInput.onboardingData
+        ? utilisateurInput.onboardingData.code_postal
+        : undefined,
       created_at: undefined,
-      name: name || 'John Doe '.concat(uuidv4()),
-      email: email,
-      onboardingData: {},
+      name:
+        utilisateurInput.name ||
+        utilisateurInput.nom ||
+        'John Doe '.concat(uuidv4()),
+      email: utilisateurInput.email,
+      onboardingData: utilisateurInput.onboardingData,
       quizzProfile: UserQuizzProfile.newLowProfile(),
       badges: undefined,
     });

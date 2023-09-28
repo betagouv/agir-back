@@ -88,7 +88,7 @@ export class UtilisateurController {
   }
   @Post('utilisateurs')
   @ApiBody({
-    schema: { $ref: getSchemaPath(CreateUtilisateurAPI) },
+    type: CreateUtilisateurAPI,
   })
   @ApiOkResponse({
     description: "l'utilisateur crée",
@@ -100,16 +100,8 @@ export class UtilisateurController {
       },
     },
   })
-  async createUtilisateur(
-    @Body('name') name: string,
-    @Body('email') email: string,
-    @Response() res,
-  ) {
-    const utilisateur =
-      await this.utilisateurUsecase.createUtilisateurByOptionalNameAndEmail(
-        name,
-        email,
-      );
+  async createUtilisateur(@Body() body: CreateUtilisateurAPI, @Response() res) {
+    const utilisateur = await this.utilisateurUsecase.createUtilisateur(body);
     return res
       .header(
         'location',

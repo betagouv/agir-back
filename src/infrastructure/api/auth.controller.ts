@@ -59,11 +59,11 @@ export class AuthController {
       user_data.email,
     );
     if (!utilisateur) {
-      utilisateur =
-        await this.utilisateurUsecase.createUtilisateurByOptionalNameAndEmail(
-          user_data.family_name,
-          user_data.email,
-        );
+      utilisateur = await this.utilisateurUsecase.createUtilisateur({
+        nom: user_data.family_name,
+        email: user_data.email,
+        onboardingData: {},
+      });
     }
     const utilisateurId = utilisateur.id;
 
