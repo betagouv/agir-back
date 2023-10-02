@@ -156,6 +156,30 @@ describe('/utilisateurs (API test)', () => {
     expect(user.onboardingData).toStrictEqual({ deladata: 'une valeur' });
     expect(user.passwordHash).toEqual('to use');
   });
+  it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data to compute impact', async () => {
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/evaluate-onboarding')
+      .send({
+        transports: ['voiture', 'pied'],
+        avion: 1,
+        code_postal: '91120',
+        adultes: 2,
+        enfants: 1,
+        residence: 'maison',
+        proprietaire: true,
+        superficie: 'grand',
+        chauffage: 'bois',
+        repas: 'viande',
+        consommation: 'jamais',
+      });
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body.transports).toEqual(3);
+    expect(response.body.alimentation).toEqual(4);
+    expect(response.body.logement).toEqual(2);
+    expect(response.body.consommation).toEqual(1);
+  });
   it('POST /utilisateurs - erreur 400 quand email existant', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', { email: 'yo@truc.com' });

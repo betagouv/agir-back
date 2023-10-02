@@ -30,16 +30,16 @@ export enum Repas {
 }
 export enum Consommation {
   jamais = 'jamais',
-  raisonable = 'raisonnable',
+  raisonnable = 'raisonnable',
   secondemain = 'secondemain',
   shopping = 'shopping',
 }
 
 export enum Impact {
-  tres_faible,
-  faible,
-  eleve,
-  tres_eleve,
+  tres_faible = 1,
+  faible = 2,
+  eleve = 3,
+  tres_eleve = 4,
 }
 
 export class OnboardingData {

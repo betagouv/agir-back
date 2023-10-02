@@ -14,6 +14,8 @@ import { QuestionNGCRepository } from '../infrastructure/repository/questionNGC.
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { CreateUtilisateurAPI } from '../../src/infrastructure/api/types/utilisateur/createUtilisateurAPI';
 import { OnboardingData } from '../../src/domain/utilisateur/onboardingData';
+import { OnboardingDataAPI } from '../../src/infrastructure/api/types/utilisateur/onboardingDataAPI';
+import { OnboardingDataImpactAPI } from '../../src/infrastructure/api/types/utilisateur/onboardingDataAPI copy';
 
 @Injectable()
 export class UtilisateurUsecase {
@@ -41,6 +43,23 @@ export class UtilisateurUsecase {
     profile: UtilisateurProfileAPI,
   ) {
     return this.utilisateurRespository.updateProfile(utilisateurId, profile);
+  }
+
+  async evaluateOnboardingData(
+    input: OnboardingDataAPI,
+  ): Promise<OnboardingDataImpactAPI> {
+    const onboardingData = new OnboardingData(input);
+    try {
+      onboardingData.validateData();
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+    return {
+      transports: onboardingData.getTransportLevel(),
+      consommation: onboardingData.getConsommationLevel(),
+      logement: onboardingData.getLogementLevel(),
+      alimentation: onboardingData.getAlimentationLevel(),
+    };
   }
 
   async createUtilisateur(

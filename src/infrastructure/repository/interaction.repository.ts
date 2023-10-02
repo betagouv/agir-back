@@ -6,7 +6,7 @@ import { SearchFilter } from '../../../src/domain/interaction/searchFilter';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { Thematique } from '../../domain/thematique';
 import { InteractionScore } from '../../../src/domain/interaction/interactionScore';
-import { DifficultyLevel } from 'src/domain/difficultyLevel';
+import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 
 @Injectable()
 export class InteractionRepository {

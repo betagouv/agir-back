@@ -22,6 +22,8 @@ import {
 import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
 import { UtilisateurProfileAPI } from './types/utilisateur/utilisateurProfileAPI';
 import { CreateUtilisateurAPI } from './types/utilisateur/createUtilisateurAPI';
+import { OnboardingDataAPI } from './types/utilisateur/onboardingDataAPI';
+import { OnboardingDataImpactAPI } from './types/utilisateur/onboardingDataAPI copy';
 
 @ApiExtraModels(CreateUtilisateurAPI)
 @Controller()
@@ -108,6 +110,17 @@ export class UtilisateurController {
         `https://agir.gouv.fr/api/utiliateurs/${utilisateur.id}`,
       )
       .json(utilisateur);
+  }
+  @Post('utilisateurs/evaluate-onboarding')
+  @ApiBody({
+    type: OnboardingDataAPI,
+  })
+  @ApiOkResponse({
+    type: OnboardingDataImpactAPI,
+  })
+  async evaluateOnboardingData(@Body() body: OnboardingDataAPI) {
+    const result = await this.utilisateurUsecase.evaluateOnboardingData(body);
+    return result;
   }
   @Patch('utilisateurs/:id/profile')
   async updateProfile(
