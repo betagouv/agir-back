@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-
+export enum Transport {
+  voiture = 'voiture',
+  moto = 'moto',
+  pied = 'pied',
+  velo = 'velo',
+  commun = 'commun',
+}
 export class OnboardingDataAPI {
   @ApiProperty({
     type: 'array',
@@ -8,7 +14,7 @@ export class OnboardingDataAPI {
       enum: ['voiture', 'moto', 'pied', 'velo', 'commun'],
     },
   })
-  transports?: string[];
+  transports?: Transport[];
   @ApiProperty({ type: 'integer' })
   avion?: number;
   @ApiProperty()

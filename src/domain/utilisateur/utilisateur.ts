@@ -1,5 +1,6 @@
 import { Badge } from '../badge/badge';
 import { UserQuizzProfile } from '../quizz/userQuizzProfile';
+import { OnboardingData } from './onboardingData';
 
 export class Utilisateur {
   id: string;
@@ -9,7 +10,7 @@ export class Utilisateur {
   prenom: string;
   passwordHash: string;
   passwordSalt: string;
-  onboardingData: {};
+  onboardingData: OnboardingData;
   code_postal: string;
   points: number;
   quizzProfile: UserQuizzProfile;

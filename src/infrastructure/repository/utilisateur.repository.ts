@@ -5,6 +5,7 @@ import { Utilisateur as UtilisateurDB, Prisma } from '@prisma/client';
 import { Utilisateur } from '../../domain/utilisateur/utilisateur';
 import { UserQuizzProfile } from '../../domain/quizz/userQuizzProfile';
 import { Profile } from '../../../src/domain/utilisateur/profile';
+import { OnboardingData } from '../../../src/domain/utilisateur/onboardingData';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -94,7 +95,7 @@ export class UtilisateurRepository {
         passwordHash: utilisateur.passwordHash,
         passwordSalt: utilisateur.passwordSalt,
         email: utilisateur.email,
-        onboardingData: utilisateur.onboardingData,
+        onboardingData: { ...utilisateur.onboardingData },
         quizzLevels: utilisateur.quizzProfile.getData(),
       },
     });
@@ -138,7 +139,7 @@ export class UtilisateurRepository {
           code_postal: user.code_postal,
           passwordHash: user.passwordHash,
           passwordSalt: user.passwordSalt,
-          onboardingData: user.onboardingData,
+          onboardingData: user.onboardingData as OnboardingData,
           points: user.points,
           quizzProfile: new UserQuizzProfile(user.quizzLevels as any),
           created_at: user.created_at,
