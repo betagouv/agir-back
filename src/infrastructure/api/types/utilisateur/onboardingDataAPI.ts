@@ -27,8 +27,8 @@ export class OnboardingDataAPI {
   residence?: 'maison' | 'appartement';
   @ApiProperty()
   proprietaire?: boolean;
-  @ApiProperty({ enum: ['petit', 'moyen', 'grand'] })
-  superficie?: 'petit' | 'moyen' | 'grand';
+  @ApiProperty({ enum: ['petit', 'moyen', 'grand', 'tres_grand'] })
+  superficie?: 'petit' | 'moyen' | 'grand' | 'tres_grand';
   @ApiProperty({ enum: ['electricite', 'bois', 'fioul', 'gaz', 'autre', '?'] })
   chauffage?: 'electricite' | 'bois' | 'fioul' | 'gaz' | 'autre' | '?';
   @ApiProperty({ enum: ['tout', 'vege', 'vegan', 'viande'] })

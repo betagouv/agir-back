@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Utilisateur as UtilisateurDB, Prisma } from '@prisma/client';
 import { Utilisateur } from '../../domain/utilisateur/utilisateur';
@@ -86,20 +86,30 @@ export class UtilisateurRepository {
   async createUtilisateur(
     utilisateur: Utilisateur,
   ): Promise<Utilisateur | null> {
-    const user = await this.prisma.utilisateur.create({
-      data: {
-        id: uuidv4(),
-        name: utilisateur.name,
-        nom: utilisateur.nom,
-        prenom: utilisateur.prenom,
-        passwordHash: utilisateur.passwordHash,
-        passwordSalt: utilisateur.passwordSalt,
-        email: utilisateur.email,
-        onboardingData: { ...utilisateur.onboardingData },
-        quizzLevels: utilisateur.quizzProfile.getData(),
-      },
-    });
-    return this.buildUtilisateurFromDB(user);
+    try {
+      const user = await this.prisma.utilisateur.create({
+        data: {
+          id: uuidv4(),
+          name: utilisateur.name,
+          nom: utilisateur.nom,
+          prenom: utilisateur.prenom,
+          passwordHash: utilisateur.passwordHash,
+          passwordSalt: utilisateur.passwordSalt,
+          email: utilisateur.email,
+          onboardingData: { ...utilisateur.onboardingData },
+          quizzLevels: utilisateur.quizzProfile.getData(),
+        },
+      });
+      return this.buildUtilisateurFromDB(user);
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new BadRequestException(
+            `Adresse [${utilisateur.email}]email deja existante`,
+          );
+        }
+      }
+    }
   }
 
   async addPointsToUtilisateur(utilisateurId: string, points: number) {
@@ -139,7 +149,7 @@ export class UtilisateurRepository {
           code_postal: user.code_postal,
           passwordHash: user.passwordHash,
           passwordSalt: user.passwordSalt,
-          onboardingData: user.onboardingData as OnboardingData,
+          onboardingData: new OnboardingData(user.onboardingData as any),
           points: user.points,
           quizzProfile: new UserQuizzProfile(user.quizzLevels as any),
           created_at: user.created_at,

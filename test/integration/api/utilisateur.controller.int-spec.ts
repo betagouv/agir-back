@@ -156,6 +156,45 @@ describe('/utilisateurs (API test)', () => {
     expect(user.onboardingData).toStrictEqual({ deladata: 'une valeur' });
     expect(user.passwordHash).toEqual('to use');
   });
+  it('POST /utilisateurs - erreur 400 quand email existant', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { email: 'yo@truc.com' });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs')
+      .send({
+        name: 'george',
+        nom: 'WW',
+        prenom: 'Wojtek',
+        mot_de_passe: 'to use',
+        email: 'yo@truc.com',
+        onboardingData: { deladata: 'une valeur' },
+      });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      'Adresse [yo@truc.com]email deja existante',
+    );
+  });
+  it('POST /utilisateurs - error when bad value in onboarding data', async () => {
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs')
+      .send({
+        name: 'george',
+        nom: 'WW',
+        prenom: 'Wojtek',
+        mot_de_passe: 'to use',
+        email: 'mon mail',
+        onboardingData: { residence: 'mauvaise valeur' },
+      });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      'Valeur residence [mauvaise valeur] inconnue',
+    );
+  });
   it('GET /utilisateurs/id/profile - read basic profile datas', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');

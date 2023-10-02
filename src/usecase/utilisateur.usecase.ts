@@ -1,5 +1,5 @@
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur.repository';
 import { InteractionDefinitionRepository } from '../infrastructure/repository/interactionDefinition.repository';
 import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
@@ -13,6 +13,7 @@ import { BilanRepository } from '../infrastructure/repository/bilan.repository';
 import { QuestionNGCRepository } from '../infrastructure/repository/questionNGC.repository';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { CreateUtilisateurAPI } from '../../src/infrastructure/api/types/utilisateur/createUtilisateurAPI';
+import { OnboardingData } from '../../src/domain/utilisateur/onboardingData';
 
 @Injectable()
 export class UtilisateurUsecase {
@@ -45,6 +46,11 @@ export class UtilisateurUsecase {
   async createUtilisateur(
     utilisateurInput: CreateUtilisateurAPI,
   ): Promise<Utilisateur> {
+    try {
+      new OnboardingData(utilisateurInput.onboardingData).validateData();
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
     const newUtilisateur = await this.utilisateurRespository.createUtilisateur({
       id: undefined,
       points: 0,
@@ -58,7 +64,7 @@ export class UtilisateurUsecase {
       passwordHash: utilisateurInput.mot_de_passe,
       passwordSalt: uuidv4(),
       email: utilisateurInput.email,
-      onboardingData: utilisateurInput.onboardingData,
+      onboardingData: new OnboardingData(utilisateurInput.onboardingData),
       quizzProfile: UserQuizzProfile.newLowProfile(),
       badges: undefined,
     });
