@@ -119,8 +119,7 @@ export class UtilisateurController {
     type: OnboardingDataImpactAPI,
   })
   async evaluateOnboardingData(@Body() body: OnboardingDataAPI) {
-    const result = await this.utilisateurUsecase.evaluateOnboardingData(body);
-    return result;
+    return this.utilisateurUsecase.evaluateOnboardingData(body);
   }
   @Patch('utilisateurs/:id/profile')
   async updateProfile(

@@ -1,11 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-export enum Transport {
-  voiture = 'voiture',
-  moto = 'moto',
-  pied = 'pied',
-  velo = 'velo',
-  commun = 'commun',
-}
+import {
+  Chauffage,
+  Consommation,
+  Repas,
+  Residence,
+  Superficie,
+  Transport,
+} from '../../../../../src/domain/utilisateur/onboardingData';
 export class OnboardingDataAPI {
   @ApiProperty({
     type: 'array',
@@ -24,17 +25,17 @@ export class OnboardingDataAPI {
   @ApiProperty()
   enfants?: number;
   @ApiProperty({ enum: ['maison', 'appartement'] })
-  residence?: 'maison' | 'appartement';
+  residence?: Residence;
   @ApiProperty()
   proprietaire?: boolean;
   @ApiProperty({ enum: ['petit', 'moyen', 'grand', 'tres_grand'] })
-  superficie?: 'petit' | 'moyen' | 'grand' | 'tres_grand';
+  superficie?: Superficie;
   @ApiProperty({ enum: ['electricite', 'bois', 'fioul', 'gaz', 'autre', '?'] })
-  chauffage?: 'electricite' | 'bois' | 'fioul' | 'gaz' | 'autre' | '?';
+  chauffage?: Chauffage;
   @ApiProperty({ enum: ['tout', 'vege', 'vegan', 'viande'] })
-  repas?: 'tout' | 'vege' | 'vegan' | 'viande';
+  repas?: Repas;
   @ApiProperty({
     enum: ['raisonnable', 'secondemain', 'shopping', 'jamais'],
   })
-  consommation?: 'raisonnable' | 'secondemain' | 'shopping' | 'jamais';
+  consommation?: Consommation;
 }
