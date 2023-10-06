@@ -48,9 +48,9 @@ export class SuiviTransport extends Suivi {
     this.km_scooter_impact = this.km_scooter * 76;
     this.velo_impact = this.velo * 20;
     this.pied_impact = this.pied * 0;
-    this.train_impact = this.train * 1000;
-    this.metro_tram_impact = this.metro_tram * 500;
-    this.bus_impact = this.bus * 800;
+    this.train_impact = this.train * 16.45; // chiffre à modifier. NGC fournit par km, pas par hh:mm
+    this.metro_tram_impact = this.metro_tram * 8.225;
+    this.bus_impact = this.bus * 135.6;
 
     this.total_impact =
       this.km_voiture_impact +
