@@ -77,6 +77,9 @@ describe('/utilisateurs (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.id).toEqual('utilisateur-id');
     expect(response.body.name).toEqual('name');
+    expect(response.body.nom).toEqual('nom');
+    expect(response.body.prenom).toEqual('prenom');
+    expect(response.body.code_postal).toEqual('91120');
     expect(response.body.points).toEqual(0);
     expect(response.body.quizzProfile).toEqual({
       alimentation: { level: 1, isCompleted: false },
@@ -232,6 +235,8 @@ describe('/utilisateurs (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.name).toEqual('name');
+    expect(response.body.nom).toEqual('nom');
+    expect(response.body.prenom).toEqual('prenom');
     expect(response.body.email).toEqual('yo@truc.com');
     expect(response.body.code_postal).toEqual('91120');
   });
@@ -243,6 +248,8 @@ describe('/utilisateurs (API test)', () => {
       .send({
         name: 'George 4',
         email: 'george@paris.com',
+        nom: 'THE NOM',
+        prenom: 'THE PRENOM',
         code_postal: '75008',
       });
     // WHEN
@@ -252,6 +259,8 @@ describe('/utilisateurs (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(dbUser.name).toEqual('George 4');
+    expect(dbUser.nom).toEqual('THE NOM');
+    expect(dbUser.prenom).toEqual('THE PRENOM');
     expect(dbUser.email).toEqual('george@paris.com');
     expect(dbUser.code_postal).toEqual('75008');
   });

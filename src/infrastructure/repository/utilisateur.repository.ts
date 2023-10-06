@@ -58,6 +58,8 @@ export class UtilisateurRepository {
       },
       data: {
         name: profile.name,
+        nom: profile.nom,
+        prenom: profile.prenom,
         email: profile.email,
         code_postal: profile.code_postal,
       },

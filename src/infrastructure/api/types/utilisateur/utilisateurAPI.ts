@@ -6,8 +6,17 @@ export class UtilisateurAPI {
   @ApiProperty()
   id: string;
 
-  @ApiProperty()
+  @ApiProperty({ deprecated: true })
   name: string;
+
+  @ApiProperty()
+  nom: string;
+
+  @ApiProperty()
+  prenom: string;
+
+  @ApiProperty()
+  code_postal: string;
 
   @ApiProperty()
   email?: string;

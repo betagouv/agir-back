@@ -64,7 +64,10 @@ export class UtilisateurController {
     return {
       id: utilisateur.id,
       name: utilisateur.name,
+      nom: utilisateur.nom,
+      prenom: utilisateur.prenom,
       email: utilisateur.email,
+      code_postal: utilisateur.code_postal,
       points: utilisateur.points,
       quizzProfile: utilisateur.quizzProfile.getData(),
       created_at: utilisateur.created_at,
@@ -85,6 +88,8 @@ export class UtilisateurController {
     return {
       name: utilisateur.name,
       email: utilisateur.email,
+      nom: utilisateur.nom,
+      prenom: utilisateur.prenom,
       code_postal: utilisateur.code_postal,
     };
   }
@@ -129,6 +134,8 @@ export class UtilisateurController {
     return this.utilisateurUsecase.updateUtilisateurProfile(utilisateurId, {
       name: body.name,
       email: body.email,
+      nom: body.nom,
+      prenom: body.prenom,
       code_postal: body.code_postal,
     });
   }
