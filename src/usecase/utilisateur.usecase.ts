@@ -15,7 +15,7 @@ import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repo
 import { CreateUtilisateurAPI } from '../../src/infrastructure/api/types/utilisateur/createUtilisateurAPI';
 import { OnboardingData } from '../../src/domain/utilisateur/onboardingData';
 import { OnboardingDataAPI } from '../../src/infrastructure/api/types/utilisateur/onboardingDataAPI';
-import { OnboardingDataImpactAPI } from '../../src/infrastructure/api/types/utilisateur/onboardingDataAPI copy';
+import { OnboardingDataImpactAPI } from '../infrastructure/api/types/utilisateur/onboardingDataImpactAPI';
 
 @Injectable()
 export class UtilisateurUsecase {

@@ -35,6 +35,13 @@ export enum Consommation {
   shopping = 'shopping',
 }
 
+export enum Thematique {
+  transports = 'transports',
+  alimentation = 'alimentation',
+  logement = 'logement',
+  consommation = 'consommation',
+}
+
 export enum Impact {
   tres_faible = 1,
   faible = 2,

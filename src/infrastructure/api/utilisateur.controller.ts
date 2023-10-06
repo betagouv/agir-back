@@ -23,7 +23,7 @@ import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
 import { UtilisateurProfileAPI } from './types/utilisateur/utilisateurProfileAPI';
 import { CreateUtilisateurAPI } from './types/utilisateur/createUtilisateurAPI';
 import { OnboardingDataAPI } from './types/utilisateur/onboardingDataAPI';
-import { OnboardingDataImpactAPI } from './types/utilisateur/onboardingDataAPI copy';
+import { OnboardingDataImpactAPI } from './types/utilisateur/onboardingDataImpactAPI';
 
 @ApiExtraModels(CreateUtilisateurAPI)
 @Controller()
