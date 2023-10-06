@@ -22,6 +22,7 @@ export class InteractionsDefinitionUsecase {
 
   async insertOrUpdateInteractionDefFromCMS(cmsWebhookAPI: CMSWebhookAPI) {
     if (cmsWebhookAPI.model === CMSModel.aide) return;
+
     switch (cmsWebhookAPI.event) {
       case CMSEvent['entry.unpublish']:
         return this.deleteContent(cmsWebhookAPI);
@@ -115,7 +116,7 @@ export class InteractionsDefinitionUsecase {
     result.duree = cmsWebhookAPI.entry.duree;
     result.frequence = cmsWebhookAPI.entry.frequence;
     result.image_url = cmsWebhookAPI.entry.imageUrl
-      ? cmsWebhookAPI.entry.imageUrl.url
+      ? cmsWebhookAPI.entry.imageUrl.formats.thumbnail.url
       : null;
     result.difficulty = cmsWebhookAPI.entry.difficulty
       ? cmsWebhookAPI.entry.difficulty
