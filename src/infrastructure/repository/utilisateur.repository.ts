@@ -5,7 +5,11 @@ import { Utilisateur as UtilisateurDB, Prisma } from '@prisma/client';
 import { Utilisateur } from '../../domain/utilisateur/utilisateur';
 import { UserQuizzProfile } from '../../domain/quizz/userQuizzProfile';
 import { Profile } from '../../../src/domain/utilisateur/profile';
-import { OnboardingData } from '../../../src/domain/utilisateur/onboardingData';
+import {
+  Impact,
+  OnboardingData,
+  Thematique,
+} from '../../../src/domain/utilisateur/onboardingData';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -138,6 +142,62 @@ export class UtilisateurRepository {
         quizzLevels: quizzProfile.getData(),
       },
     });
+  }
+
+  async countUsersWithAtLeastNThematiquesOfImpactGreaterThan(
+    minImpact: Impact,
+    nombreThematiques: number,
+  ): Promise<number> {
+    let query = `
+    SELECT count(1)
+    FROM "Utilisateur"
+    WHERE ( 0 + `;
+    for (
+      let impact: number = minImpact;
+      impact <= Impact.tres_eleve;
+      impact++
+    ) {
+      query = query.concat(
+        `+ JSONB_ARRAY_LENGTH("onboardingResult" -> 'ventilation_par_impacts' -> '${impact}') `,
+      );
+    }
+    query = query.concat(`) >= ${nombreThematiques}`);
+    let result = await this.prisma.$queryRawUnsafe(query);
+    return Number(result[0].count);
+  }
+
+  async countUsersWithLessImpactOnThematique(
+    maxImpact: Impact,
+    targetThematique: Thematique,
+  ): Promise<number> {
+    let query = `
+    SELECT count(1)
+    FROM "Utilisateur"
+    WHERE CAST("onboardingResult" -> 'ventilation_par_thematiques' -> '${targetThematique}' AS INTEGER) < ${maxImpact}`;
+    let result = await this.prisma.$queryRawUnsafe(query);
+    return Number(result[0].count);
+  }
+
+  async countUsersWithMoreImpactOnThematiques(
+    minImpacts: Impact[],
+    targetThematiques: Thematique[],
+  ): Promise<number> {
+    let query = `
+    SELECT count(1)
+    FROM "Utilisateur"
+    WHERE 1=1 `;
+    for (let index = 0; index < minImpacts.length; index++) {
+      query = query.concat(
+        ` AND CAST("onboardingResult" -> 'ventilation_par_thematiques' -> '${targetThematiques[index]}' AS INTEGER) > ${minImpacts[index]} `,
+      );
+    }
+    let result = await this.prisma.$queryRawUnsafe(query);
+    return Number(result[0].count);
+  }
+
+  async nombreTotalUtilisateurs(): Promise<number> {
+    const count = await this.prisma.utilisateur.count();
+    return Number(count);
   }
 
   private buildUtilisateurFromDB(user: UtilisateurDB): Utilisateur {

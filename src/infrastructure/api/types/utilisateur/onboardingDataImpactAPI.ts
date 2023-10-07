@@ -8,4 +8,11 @@ export class OnboardingDataImpactAPI {
   logement: number;
   @ApiProperty({ type: 'integer' })
   alimentation: number;
+
+  @ApiProperty({ required: false })
+  phrase_1?: string;
+  @ApiProperty({ required: false })
+  phrase_2?: string;
+  @ApiProperty({ required: false })
+  phrase_3?: string;
 }

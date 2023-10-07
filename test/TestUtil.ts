@@ -4,9 +4,11 @@ import { InteractionType } from '../src/domain/interaction/interactionType';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { Thematique } from '../src/domain/thematique';
+import { Thematique as ThematiqueOnboarding } from '../src/domain/utilisateur/onboardingData';
 import { UserQuizzProfile } from '../src/domain/quizz/userQuizzProfile';
 import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
+import { Impact } from '../src/domain/utilisateur/onboardingData';
 const request = require('supertest');
 
 export class TestUtil {
@@ -152,6 +154,20 @@ export class TestUtil {
         chauffage: 'bois',
         repas: 'tout',
         consommation: 'raisonnable',
+      },
+      onboardingResult: {
+        ventilation_par_thematiques: {
+          alimentation: Impact.tres_faible,
+          transports: Impact.faible,
+          logement: Impact.eleve,
+          consommation: Impact.tres_eleve,
+        },
+        ventilation_par_impacts: {
+          '1': [ThematiqueOnboarding.alimentation],
+          '2': [ThematiqueOnboarding.transports],
+          '3': [ThematiqueOnboarding.logement],
+          '4': [ThematiqueOnboarding.consommation],
+        },
       },
       quizzLevels: UserQuizzProfile.newLowProfile().getData(),
       ...override,
