@@ -1,3 +1,5 @@
+import { Impact, Thematique } from '../src/domain/utilisateur/onboardingData';
+
 const minQuizzLevel = {
   alimentation: { level: 1, isCompleted: false },
   transport: { level: 1, isCompleted: false },
@@ -6,6 +8,82 @@ const minQuizzLevel = {
   climat: { level: 1, isCompleted: false },
   dechet: { level: 1, isCompleted: false },
   loisir: { level: 1, isCompleted: false },
+};
+
+const ONBOARD_DATA_1134 = `{
+    "transports": ["voiture", "pied"],
+    "avion": 1,
+    "code_postal": "91120",
+    "adultes": 2,
+    "enfants": 1,
+    "residence": "maison",
+    "proprietaire": true,
+    "superficie": "petit",
+    "chauffage": "bois",
+    "repas": "vegan",
+    "consommation": "shopping"
+}`;
+
+const ONBOARDING_RES_3344 = {
+  ventilation_par_thematiques: {
+    alimentation: Impact.eleve,
+    transports: Impact.eleve,
+    logement: Impact.tres_eleve,
+    consommation: Impact.tres_eleve,
+  },
+  ventilation_par_impacts: {
+    '1': [],
+    '2': [],
+    '3': [Thematique.alimentation, Thematique.transports],
+    '4': [Thematique.logement, Thematique.consommation],
+  },
+};
+const ONBOARDING_RES_1122 = {
+  ventilation_par_thematiques: {
+    alimentation: Impact.faible,
+    transports: Impact.faible,
+    logement: Impact.tres_faible,
+    consommation: Impact.tres_faible,
+  },
+  ventilation_par_impacts: {
+    '1': [Thematique.logement, Thematique.consommation],
+    '2': [Thematique.alimentation, Thematique.transports],
+    '3': [],
+    '4': [],
+  },
+};
+const ONBOARDING_RES_1234 = {
+  ventilation_par_thematiques: {
+    alimentation: Impact.tres_faible,
+    transports: Impact.tres_eleve,
+    logement: Impact.eleve,
+    consommation: Impact.faible,
+  },
+  ventilation_par_impacts: {
+    '1': [Thematique.alimentation],
+    '2': [Thematique.consommation],
+    '3': [Thematique.logement],
+    '4': [Thematique.transports],
+  },
+};
+const ONBOARDING_RES_4444 = {
+  ventilation_par_thematiques: {
+    alimentation: Impact.tres_eleve,
+    transports: Impact.tres_eleve,
+    logement: Impact.tres_eleve,
+    consommation: Impact.tres_eleve,
+  },
+  ventilation_par_impacts: {
+    '1': [],
+    '2': [],
+    '3': [],
+    '4': [
+      Thematique.logement,
+      Thematique.consommation,
+      Thematique.alimentation,
+      Thematique.transports,
+    ],
+  },
 };
 
 const utilisateurs = {
@@ -28,6 +106,7 @@ const utilisateurs = {
     ],
     suivis: [],
     quizzLevels: minQuizzLevel,
+    onboardingResult: ONBOARDING_RES_1234,
   },
   michel6: {
     name: 'Michel6',
@@ -66,6 +145,7 @@ const utilisateurs = {
     bilans: ['bilan1'],
     badges: [],
     quizzLevels: minQuizzLevel,
+    onboardingResult: ONBOARDING_RES_1234,
   },
   michel666: {
     name: 'michel666',
@@ -104,6 +184,7 @@ const utilisateurs = {
     bilans: ['bilan1'],
     badges: [],
     quizzLevels: minQuizzLevel,
+    onboardingResult: ONBOARDING_RES_1234,
   },
   benoit: {
     name: 'Benoit',
@@ -130,6 +211,7 @@ const utilisateurs = {
     ],
     suivis: [],
     quizzLevels: minQuizzLevel,
+    onboardingResult: ONBOARDING_RES_1122,
   },
   dorian: {
     name: 'Dorian_test',
@@ -155,6 +237,7 @@ const utilisateurs = {
     ],
     suivis: [],
     quizzLevels: minQuizzLevel,
+    onboardingResult: ONBOARDING_RES_1122,
   },
   livio: {
     name: 'Livio_test',
@@ -183,6 +266,7 @@ const utilisateurs = {
     ],
     suivis: ['sa1', 'st1', 'st2'],
     quizzLevels: minQuizzLevel,
+    onboardingResult: ONBOARDING_RES_3344,
   },
   wojtek: {
     name: 'Wojtek',
@@ -198,6 +282,7 @@ const utilisateurs = {
       'transport . voiture . km': 30000,
     },
     quizzLevels: minQuizzLevel,
+    onboardingResult: ONBOARDING_RES_3344,
   },
   quizzman: {
     name: 'quizzman',
@@ -224,6 +309,7 @@ const utilisateurs = {
     bilans: ['bilan1'],
     badges: ['badge1'],
     quizzLevels: minQuizzLevel,
+    onboardingResult: ONBOARDING_RES_4444,
   },
 };
 
