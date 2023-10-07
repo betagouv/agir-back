@@ -100,9 +100,8 @@ export class UtilisateurUsecase {
   async createUtilisateur(
     utilisateurInput: CreateUtilisateurAPI,
   ): Promise<Utilisateur> {
-    let onboardingData: OnboardingData;
+    const onboardingData = new OnboardingData(utilisateurInput.onboardingData);
     try {
-      onboardingData = new OnboardingData(utilisateurInput.onboardingData);
       onboardingData.validateData();
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -177,28 +176,28 @@ export class UtilisateurUsecase {
           Impact.eleve,
         );
       return `${pourcent}% des utilisateurs ont, comme vous, des impacts forts ou très forts dans ${N3} thématiques. Dans votre cas, il s'agit des thématiques : ${listThematiques}`;
-    } else {
-      const nb_users_N3_sup_1 =
-        await this.utilisateurRespository.countUsersWithAtLeastNThematiquesOfImpactGreaterThan(
-          Impact.eleve,
-          1,
-        );
-
-      if (N3 === 1) {
-        const pourcent = this.getPourcent(nb_users_N3_sup_1, nombre_user_total);
-        const listThematiques =
-          onboardingResult.listThematiquesAvecImpactSuperieurOuEgalA(
-            Impact.eleve,
-          );
-        return `${pourcent}% des utilisateurs ont, comme vous, des impacts forts ou très forts dans au moins une thématique. Dans votre cas, il s'agit de la thématique : ${listThematiques[0]}`;
-      } else {
-        const pourcent = this.getPourcent(
-          nombre_user_total - nb_users_N3_sup_1,
-          nombre_user_total,
-        );
-        return `${pourcent}% des utilisateurs ont, comme vous, des impacts faibles ou très faibles dans l'ensemble des thématiques. vous faîtes partie des utilisateurs les plus sobres, bravo !`;
-      }
     }
+
+    const nb_users_N3_sup_1 =
+      await this.utilisateurRespository.countUsersWithAtLeastNThematiquesOfImpactGreaterThan(
+        Impact.eleve,
+        1,
+      );
+
+    if (N3 === 1) {
+      const pourcent = this.getPourcent(nb_users_N3_sup_1, nombre_user_total);
+      const listThematiques =
+        onboardingResult.listThematiquesAvecImpactSuperieurOuEgalA(
+          Impact.eleve,
+        );
+      return `${pourcent}% des utilisateurs ont, comme vous, des impacts forts ou très forts dans au moins une thématique. Dans votre cas, il s'agit de la thématique : ${listThematiques[0]}`;
+    }
+
+    const pourcent = this.getPourcent(
+      nombre_user_total - nb_users_N3_sup_1,
+      nombre_user_total,
+    );
+    return `${pourcent}% des utilisateurs ont, comme vous, des impacts faibles ou très faibles dans l'ensemble des thématiques. vous faîtes partie des utilisateurs les plus sobres, bravo !`;
   }
   private async fabriquePhrase2(
     N2: number,

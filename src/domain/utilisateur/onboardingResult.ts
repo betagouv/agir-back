@@ -22,6 +22,7 @@ export class OnboardingResult {
   public getImpact(thematique: Thematique): Impact {
     return this.ventilation_par_thematiques[thematique];
   }
+
   public nombreThematiquesAvecImpactSuperieurOuEgalA(
     minImpact: Impact,
   ): number {
@@ -35,6 +36,7 @@ export class OnboardingResult {
     }
     return result;
   }
+
   public listThematiquesAvecImpactSuperieurOuEgalA(
     minImpact: Impact,
   ): Thematique[] {
@@ -69,15 +71,19 @@ export class OnboardingResult {
 
   public getThematiqueNo1SuperieureA(minImpact: Impact): Thematique {
     const list = this.listThematiquesAvecImpactSuperieurOuEgalA(minImpact);
+
     if (list.length === 0) return null;
+
     list.sort(
       (a, b) =>
         this.ventilation_par_thematiques[b] -
         this.ventilation_par_thematiques[a],
     );
+
     const maxImpact = this.ventilation_par_thematiques[list[0]];
     const maxList = [];
     let index = 0;
+
     while (
       this.ventilation_par_thematiques[list[index]] === maxImpact &&
       index < list.length
@@ -85,6 +91,7 @@ export class OnboardingResult {
       maxList.push(list[index]);
       index++;
     }
+
     if (maxList.indexOf(Thematique.transports) >= 0)
       return Thematique.transports;
     if (maxList.indexOf(Thematique.alimentation) >= 0)
