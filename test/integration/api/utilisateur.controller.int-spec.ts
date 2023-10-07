@@ -116,6 +116,20 @@ const ONBOARDING_RES_3344 = {
     '4': [Thematique.logement, Thematique.consommation],
   },
 };
+const ONBOARDING_RES_1234 = {
+  ventilation_par_thematiques: {
+    alimentation: Impact.tres_eleve,
+    transports: Impact.eleve,
+    logement: Impact.faible,
+    consommation: Impact.tres_faible,
+  },
+  ventilation_par_impacts: {
+    '1': [Thematique.consommation],
+    '2': [Thematique.logement],
+    '3': [Thematique.transports],
+    '4': [Thematique.alimentation],
+  },
+};
 const ONBOARDING_RES_4444 = {
   ventilation_par_thematiques: {
     alimentation: Impact.tres_eleve,
@@ -273,16 +287,14 @@ describe('/utilisateurs (API test)', () => {
 
   it('POST /utilisateurs - create new utilisateur with given all data', async () => {
     // WHEN
-    const response = await TestUtil.getServer()
-      .post('/utilisateurs')
-      .send({
-        name: 'george',
-        nom: 'WW',
-        prenom: 'Wojtek',
-        mot_de_passe: 'to use',
-        email: 'mon mail',
-        onboardingData: { deladata: 'une valeur' },
-      });
+    const response = await TestUtil.getServer().post('/utilisateurs').send({
+      name: 'george',
+      nom: 'WW',
+      prenom: 'Wojtek',
+      mot_de_passe: 'to use',
+      email: 'mon mail',
+      onboardingData: ONBOARDING_1_2_3_4_DATA,
+    });
     // THEN
     const user = await TestUtil.prisma.utilisateur.findFirst({
       where: { name: 'george' },
@@ -292,8 +304,9 @@ describe('/utilisateurs (API test)', () => {
     expect(user.nom).toEqual('WW');
     expect(user.prenom).toEqual('Wojtek');
     expect(user.email).toEqual('mon mail');
-    expect(user.onboardingData).toStrictEqual({ deladata: 'une valeur' });
     expect(user.passwordHash).toEqual('to use');
+    expect(user.onboardingData).toStrictEqual(ONBOARDING_1_2_3_4_DATA);
+    expect(user.onboardingResult).toStrictEqual(ONBOARDING_RES_1234);
   });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data to compute impact', async () => {
     // WHEN

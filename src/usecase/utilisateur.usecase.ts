@@ -100,8 +100,10 @@ export class UtilisateurUsecase {
   async createUtilisateur(
     utilisateurInput: CreateUtilisateurAPI,
   ): Promise<Utilisateur> {
+    let onboardingData: OnboardingData;
     try {
-      new OnboardingData(utilisateurInput.onboardingData).validateData();
+      onboardingData = new OnboardingData(utilisateurInput.onboardingData);
+      onboardingData.validateData();
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -118,7 +120,8 @@ export class UtilisateurUsecase {
       passwordHash: utilisateurInput.mot_de_passe,
       passwordSalt: uuidv4(),
       email: utilisateurInput.email,
-      onboardingData: new OnboardingData(utilisateurInput.onboardingData),
+      onboardingData: onboardingData,
+      onboardingResult: new OnboardingResult(onboardingData),
       quizzProfile: UserQuizzProfile.newLowProfile(),
       badges: undefined,
     });

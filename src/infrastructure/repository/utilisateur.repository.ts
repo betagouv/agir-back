@@ -10,6 +10,7 @@ import {
   OnboardingData,
   Thematique,
 } from '../../../src/domain/utilisateur/onboardingData';
+import { OnboardingResult } from '../../../src/domain/utilisateur/onboardingResult';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -103,6 +104,7 @@ export class UtilisateurRepository {
           passwordSalt: utilisateur.passwordSalt,
           email: utilisateur.email,
           onboardingData: { ...utilisateur.onboardingData },
+          onboardingResult: { ...utilisateur.onboardingResult },
           quizzLevels: utilisateur.quizzProfile.getData(),
         },
       });
@@ -201,22 +203,26 @@ export class UtilisateurRepository {
   }
 
   private buildUtilisateurFromDB(user: UtilisateurDB): Utilisateur {
-    return user
-      ? {
-          id: user.id,
-          name: user.name,
-          nom: user.nom,
-          prenom: user.prenom,
-          email: user.email,
-          code_postal: user.code_postal,
-          passwordHash: user.passwordHash,
-          passwordSalt: user.passwordSalt,
-          onboardingData: new OnboardingData(user.onboardingData as any),
-          points: user.points,
-          quizzProfile: new UserQuizzProfile(user.quizzLevels as any),
-          created_at: user.created_at,
-          badges: user['badges'],
-        }
-      : null;
+    if (user) {
+      const onboardingData = new OnboardingData(user.onboardingData as any);
+      const onboardingResult = new OnboardingResult(onboardingData);
+      return {
+        id: user.id,
+        name: user.name,
+        nom: user.nom,
+        prenom: user.prenom,
+        email: user.email,
+        code_postal: user.code_postal,
+        passwordHash: user.passwordHash,
+        passwordSalt: user.passwordSalt,
+        onboardingData: onboardingData,
+        onboardingResult: onboardingResult,
+        points: user.points,
+        quizzProfile: new UserQuizzProfile(user.quizzLevels as any),
+        created_at: user.created_at,
+        badges: user['badges'],
+      };
+    }
+    return null;
   }
 }
