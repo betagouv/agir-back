@@ -72,7 +72,9 @@ export class TestUtil {
         duree: 'pas trop long',
         frequence: 'souvent',
         imageUrl: {
-          url: 'https://',
+          formats: {
+            thumbnail: { url: 'https://' },
+          },
         },
         difficulty: 3,
         points: 20,
