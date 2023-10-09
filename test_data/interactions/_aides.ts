@@ -13,6 +13,20 @@ const aides = {
     points: 25,
     locked: false,
   },
+  ajouter_linky: {
+    titre: 'Connectez votre compteur Linky',
+    soustitre: '-',
+    thematique_gamification: 'logement',
+    tags: [],
+    duree: '⏱️ 2 minutes',
+    frequence: null,
+    image_url:
+      'https://images.unsplash.com/photo-1454779132693-e5cd0a216ed3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGVsZWN0cmljaXR5fGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60',
+    url: null,
+    difficulty: 3,
+    points: 25,
+    locked: true,
+  },
   aide_retrofit: {
     titre: "Passer à l'électrique",
     soustitre: 'bla bla',
