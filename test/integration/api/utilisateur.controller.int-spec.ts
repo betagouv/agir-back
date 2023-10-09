@@ -372,9 +372,10 @@ describe('/utilisateurs (API test)', () => {
       .send(ONBOARDING_1_2_3_4_DATA);
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body.phrase_1).toEqual(
-      `50% des utilisateurs ont, comme vous, des impacts forts ou très forts dans 2 thématiques. Dans votre cas, il s'agit des thématiques : transports,alimentation`,
-    );
+    expect(response.body.phrase_1).toEqual({
+      pourcent: 50,
+      phrase: `des utilisateurs ont, comme vous, des impacts forts ou très forts dans 2 thématiques. Dans votre cas, il s'agit des thématiques : transports,alimentation`,
+    });
   });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_1 v2', async () => {
     // WHEN
@@ -428,9 +429,10 @@ describe('/utilisateurs (API test)', () => {
       .send(ONBOARDING_1_1_2_3_DATA);
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body.phrase_1).toEqual(
-      `66% des utilisateurs ont, comme vous, des impacts forts ou très forts dans au moins une thématique. Dans votre cas, il s'agit de la thématique : transports`,
-    );
+    expect(response.body.phrase_1).toEqual({
+      pourcent: 66,
+      phrase: `des utilisateurs ont, comme vous, des impacts forts ou très forts dans au moins une thématique. Dans votre cas, il s'agit de la thématique : transports`,
+    });
   });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_1 v3', async () => {
     // WHEN
@@ -484,9 +486,10 @@ describe('/utilisateurs (API test)', () => {
       .send(ONBOARDING_1_1_2_2_DATA);
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body.phrase_1).toEqual(
-      `33% des utilisateurs ont, comme vous, des impacts faibles ou très faibles dans l'ensemble des thématiques. vous faîtes partie des utilisateurs les plus sobres, bravo !`,
-    );
+    expect(response.body.phrase_1).toEqual({
+      pourcent: 33,
+      phrase: `des utilisateurs ont, comme vous, des impacts faibles ou très faibles dans l'ensemble des thématiques. vous faîtes partie des utilisateurs les plus sobres, bravo !`,
+    });
   });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_2 v1 (null)', async () => {
     // WHEN
@@ -519,9 +522,10 @@ describe('/utilisateurs (API test)', () => {
       .send(ONBOARDING_1_1_2_2_DATA);
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body.phrase_2).toEqual(
-      `50% des utilisateurs parviennent à avoir moins d'impacts environnement en matière de transports.`,
-    );
+    expect(response.body.phrase_2).toEqual({
+      pourcent: 50,
+      phrase: `des utilisateurs parviennent à avoir moins d'impacts environnement en matière de transports.`,
+    });
   });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_2 v2.bis', async () => {
     // WHEN
@@ -538,9 +542,10 @@ describe('/utilisateurs (API test)', () => {
       .send(ONBOARDING_1_1_2_2_DATA);
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body.phrase_2).toEqual(
-      `25% des utilisateurs parviennent à avoir moins d'impacts environnement en matière de transports. Pas facile, mais les solutions ne manquent pas.`,
-    );
+    expect(response.body.phrase_2).toEqual({
+      pourcent: 25,
+      phrase: `des utilisateurs parviennent à avoir moins d'impacts environnement en matière de transports. Pas facile, mais les solutions ne manquent pas.`,
+    });
   });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_3 v1 (null)', async () => {
     // WHEN
@@ -586,9 +591,10 @@ describe('/utilisateurs (API test)', () => {
       .send(ONBOARDING_1_3_4_4_DATA);
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body.phrase_3).toEqual(
-      `80% des utilisateurs ont des impacts supérieurs au vôtre en matière de transports. Vous avez des bonnes pratiques à partager !`,
-    );
+    expect(response.body.phrase_3).toEqual({
+      pourcent: 80,
+      phrase: `des utilisateurs ont des impacts supérieurs au vôtre en matière de transports. Vous avez des bonnes pratiques à partager !`,
+    });
   });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_3 v3 - N3=2', async () => {
     // WHEN
@@ -622,9 +628,10 @@ describe('/utilisateurs (API test)', () => {
       .send(ONBOARDING_1_2_3_4_DATA);
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body.phrase_3).toEqual(
-      `60% des utilisateurs ont des impacts supérieurs au vôtre en matière de consommation et de logement. Vous avez des bonnes pratiques à partager !`,
-    );
+    expect(response.body.phrase_3).toEqual({
+      pourcent: 60,
+      phrase: `des utilisateurs ont des impacts supérieurs au vôtre en matière de consommation et de logement. Vous avez des bonnes pratiques à partager !`,
+    });
   });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_3 v3 - N3=1', async () => {
     // WHEN
@@ -653,9 +660,10 @@ describe('/utilisateurs (API test)', () => {
       .send(ONBOARDING_1_1_2_3_DATA);
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body.phrase_3).toEqual(
-      `75% des utilisateurs ont des impacts supérieurs au vôtre en matière de alimentation, consommation et de logement. Vous avez des bonnes pratiques à partager !`,
-    );
+    expect(response.body.phrase_3).toEqual({
+      pourcent: 75,
+      phrase: `des utilisateurs ont des impacts supérieurs au vôtre en matière de alimentation, consommation et de logement. Vous avez des bonnes pratiques à partager !`,
+    });
   });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_3 v3 - N3=0', async () => {
     // WHEN
@@ -684,9 +692,10 @@ describe('/utilisateurs (API test)', () => {
       .send(ONBOARDING_1_1_1_1_DATA);
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body.phrase_3).toEqual(
-      `25% des utilisateurs ont des impacts supérieurs au vôtre en matière de alimentation, transports, logement et de consommation. Vous avez des bonnes pratiques à partager !`,
-    );
+    expect(response.body.phrase_3).toEqual({
+      pourcent: 25,
+      phrase: `des utilisateurs ont des impacts supérieurs au vôtre en matière de alimentation, transports, logement et de consommation. Vous avez des bonnes pratiques à partager !`,
+    });
   });
   it('POST /utilisateurs - erreur 400 quand email existant', async () => {
     // GIVEN

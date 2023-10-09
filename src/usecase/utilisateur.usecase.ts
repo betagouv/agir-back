@@ -21,6 +21,10 @@ import { OnboardingDataAPI } from '../../src/infrastructure/api/types/utilisateu
 import { OnboardingDataImpactAPI } from '../infrastructure/api/types/utilisateur/onboardingDataImpactAPI';
 import { OnboardingResult } from '../../src/domain/utilisateur/onboardingResult';
 
+export type Phrase = {
+  phrase: string;
+  pourcent: number;
+};
 @Injectable()
 export class UtilisateurUsecase {
   constructor(
@@ -163,7 +167,7 @@ export class UtilisateurUsecase {
     N3: number,
     onboardingResult: OnboardingResult,
     nombre_user_total: number,
-  ): Promise<string> {
+  ): Promise<Phrase> {
     if (N3 >= 2) {
       const nb_users_N3_sup_2 =
         await this.utilisateurRespository.countUsersWithAtLeastNThematiquesOfImpactGreaterThan(
@@ -175,7 +179,10 @@ export class UtilisateurUsecase {
         onboardingResult.listThematiquesAvecImpactSuperieurOuEgalA(
           Impact.eleve,
         );
-      return `${pourcent}% des utilisateurs ont, comme vous, des impacts forts ou très forts dans ${N3} thématiques. Dans votre cas, il s'agit des thématiques : ${listThematiques}`;
+      return {
+        pourcent: pourcent,
+        phrase: `des utilisateurs ont, comme vous, des impacts forts ou très forts dans ${N3} thématiques. Dans votre cas, il s'agit des thématiques : ${listThematiques}`,
+      };
     }
 
     const nb_users_N3_sup_1 =
@@ -190,20 +197,26 @@ export class UtilisateurUsecase {
         onboardingResult.listThematiquesAvecImpactSuperieurOuEgalA(
           Impact.eleve,
         );
-      return `${pourcent}% des utilisateurs ont, comme vous, des impacts forts ou très forts dans au moins une thématique. Dans votre cas, il s'agit de la thématique : ${listThematiques[0]}`;
+      return {
+        pourcent: pourcent,
+        phrase: `des utilisateurs ont, comme vous, des impacts forts ou très forts dans au moins une thématique. Dans votre cas, il s'agit de la thématique : ${listThematiques[0]}`,
+      };
     }
 
     const pourcent = this.getPourcent(
       nombre_user_total - nb_users_N3_sup_1,
       nombre_user_total,
     );
-    return `${pourcent}% des utilisateurs ont, comme vous, des impacts faibles ou très faibles dans l'ensemble des thématiques. vous faîtes partie des utilisateurs les plus sobres, bravo !`;
+    return {
+      pourcent: pourcent,
+      phrase: `des utilisateurs ont, comme vous, des impacts faibles ou très faibles dans l'ensemble des thématiques. vous faîtes partie des utilisateurs les plus sobres, bravo !`,
+    };
   }
   private async fabriquePhrase2(
     N2: number,
     onboardingResult: OnboardingResult,
     nombre_user_total: number,
-  ): Promise<string> {
+  ): Promise<Phrase> {
     if (N2 === 0) return null;
 
     const thematique_No1 = onboardingResult.getThematiqueNo1SuperieureA(
@@ -221,19 +234,22 @@ export class UtilisateurUsecase {
       nombre_user_total,
     );
 
-    let phrase = `${pourcent}% des utilisateurs parviennent à avoir moins d'impacts environnement en matière de ${thematique_No1}.`;
+    let phrase = `des utilisateurs parviennent à avoir moins d'impacts environnement en matière de ${thematique_No1}.`;
     if (pourcent <= 30) {
       phrase = phrase.concat(
         ' Pas facile, mais les solutions ne manquent pas.',
       );
     }
-    return phrase;
+    return {
+      pourcent: pourcent,
+      phrase: phrase,
+    };
   }
   private async fabriquePhrase3(
     N3: number,
     onboardingResult: OnboardingResult,
     nombre_user_total: number,
-  ): Promise<string> {
+  ): Promise<Phrase> {
     if (N3 === 4) return null;
 
     const thematiques_moins_de_3 =
@@ -255,19 +271,31 @@ export class UtilisateurUsecase {
 
     if (thematiques_moins_de_3.length === 1) {
       // N3 === 3
-      return `${pourcent}% des utilisateurs ont des impacts supérieurs au vôtre en matière de ${thematiques_moins_de_3[0]}. Vous avez des bonnes pratiques à partager !`;
+      return {
+        pourcent: pourcent,
+        phrase: `des utilisateurs ont des impacts supérieurs au vôtre en matière de ${thematiques_moins_de_3[0]}. Vous avez des bonnes pratiques à partager !`,
+      };
     }
     if (thematiques_moins_de_3.length === 2) {
       // N3 === 2
-      return `${pourcent}% des utilisateurs ont des impacts supérieurs au vôtre en matière de ${thematiques_moins_de_3[0]} et de ${thematiques_moins_de_3[1]}. Vous avez des bonnes pratiques à partager !`;
+      return {
+        pourcent: pourcent,
+        phrase: `des utilisateurs ont des impacts supérieurs au vôtre en matière de ${thematiques_moins_de_3[0]} et de ${thematiques_moins_de_3[1]}. Vous avez des bonnes pratiques à partager !`,
+      };
     }
     if (thematiques_moins_de_3.length === 3) {
       // N3 === 1
-      return `${pourcent}% des utilisateurs ont des impacts supérieurs au vôtre en matière de ${thematiques_moins_de_3[0]}, ${thematiques_moins_de_3[1]} et de ${thematiques_moins_de_3[2]}. Vous avez des bonnes pratiques à partager !`;
+      return {
+        pourcent: pourcent,
+        phrase: `des utilisateurs ont des impacts supérieurs au vôtre en matière de ${thematiques_moins_de_3[0]}, ${thematiques_moins_de_3[1]} et de ${thematiques_moins_de_3[2]}. Vous avez des bonnes pratiques à partager !`,
+      };
     }
     if (thematiques_moins_de_3.length === 4) {
       // N3 === 0
-      return `${pourcent}% des utilisateurs ont des impacts supérieurs au vôtre en matière de ${thematiques_moins_de_3[0]}, ${thematiques_moins_de_3[1]}, ${thematiques_moins_de_3[2]} et de ${thematiques_moins_de_3[3]}. Vous avez des bonnes pratiques à partager !`;
+      return {
+        pourcent: pourcent,
+        phrase: `des utilisateurs ont des impacts supérieurs au vôtre en matière de ${thematiques_moins_de_3[0]}, ${thematiques_moins_de_3[1]}, ${thematiques_moins_de_3[2]} et de ${thematiques_moins_de_3[3]}. Vous avez des bonnes pratiques à partager !`,
+      };
     }
   }
 
