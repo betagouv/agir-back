@@ -88,7 +88,7 @@ export class AuthController {
     let utilisateur = await this.utilisateurUsecase.findUtilisateurById(
       utilisateurId,
     );
-    return `<br>Bonjour ${utilisateur.name}
+    return `<br>Bonjour ${utilisateur.nom}
     <br>utilisateurId = ${utilisateurId}
     <br>token = ${token}
     <br><a href='/logout/${utilisateurId}'>Se dé-connecter de France Connect</a>`;

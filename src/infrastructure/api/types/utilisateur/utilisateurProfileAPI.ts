@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UtilisateurProfileAPI {
-  @ApiProperty({ required: false, deprecated: true })
-  name: string;
   @ApiProperty({ required: false })
   nom: string;
   @ApiProperty({ required: false })

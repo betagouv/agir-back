@@ -21,7 +21,7 @@ describe('SuiviRepository', () => {
   it('Creates a new suivi', async () => {
     // GIVEN
     await TestUtil.prisma.utilisateur.create({
-      data: { id: '1', name: 'bob' },
+      data: { id: '1', nom: 'bob' },
     });
     let suiviAlimentation = new SuiviAlimentation();
     suiviAlimentation.viande_rouge = 2;
@@ -40,7 +40,7 @@ describe('SuiviRepository', () => {
   it('erreur de type', async () => {
     // GIVEN
     await TestUtil.prisma.utilisateur.create({
-      data: { id: '1', name: 'bob' },
+      data: { id: '1', nom: 'bob' },
     });
     await TestUtil.prisma.suivi.create({
       data: {
@@ -68,7 +68,7 @@ describe('SuiviRepository', () => {
   it('liste par dates décroissantes, sans type', async () => {
     // GIVEN
     await TestUtil.prisma.utilisateur.create({
-      data: { id: '1', name: 'bob' },
+      data: { id: '1', nom: 'bob' },
     });
     await TestUtil.prisma.suivi.create({
       data: {

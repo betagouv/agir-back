@@ -34,7 +34,6 @@ model OIDC_STATE {
 model Utilisateur {
   id               String        @id
   email            String?       @unique
-  name             String // FIXME REMOVE
   nom              String        @default("nom")
   prenom           String?       @default("prenom")
   passwordHash     String?       @default("hash")

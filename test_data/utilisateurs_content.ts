@@ -88,7 +88,8 @@ const ONBOARDING_RES_4444 = {
 
 const utilisateurs = {
   michel0: {
-    name: 'Michel0',
+    nom: 'Michel0',
+    prenom: 'Mimi0',
     points: 0,
     interactions: [
       { cms_id: 13, cms_type: 'quizz', score: 0.5 },
@@ -109,7 +110,8 @@ const utilisateurs = {
     onboardingResult: ONBOARDING_RES_1234,
   },
   michel6: {
-    name: 'Michel6',
+    nom: 'Michel6',
+    prenom: 'Mimi6',
     points: 36,
     interactions: [
       { cms_id: 1, cms_type: 'quizz', score: 0.5 },
@@ -148,7 +150,8 @@ const utilisateurs = {
     onboardingResult: ONBOARDING_RES_1234,
   },
   michel666: {
-    name: 'michel666',
+    nom: 'michel666',
+    prenom: 'Mimi666',
     points: 36,
     interactions: [
       { cms_id: 1, cms_type: 'quizz', score: 0.5 },
@@ -187,7 +190,8 @@ const utilisateurs = {
     onboardingResult: ONBOARDING_RES_1234,
   },
   benoit: {
-    name: 'Benoit',
+    nom: 'Benoit',
+    prenom: 'B',
     points: 0,
     interactions: [
       { id: 'suivi_du_jour', score: 0.9 },
@@ -214,7 +218,8 @@ const utilisateurs = {
     onboardingResult: ONBOARDING_RES_1122,
   },
   dorian: {
-    name: 'Dorian_test',
+    nom: 'Dorian_test',
+    prenom: 'D',
     points: 0,
     interactions: [
       { cms_id: 1, cms_type: 'quizz', score: 0.5 },
@@ -240,7 +245,8 @@ const utilisateurs = {
     onboardingResult: ONBOARDING_RES_1122,
   },
   livio: {
-    name: 'Livio_test',
+    nom: 'Livio_test',
+    prenom: 'L',
     points: 36,
     interactions: [
       { id: 'aide_velo', score: 0.6 },
@@ -269,7 +275,8 @@ const utilisateurs = {
     onboardingResult: ONBOARDING_RES_3344,
   },
   wojtek: {
-    name: 'Wojtek',
+    nom: 'Wojtek',
+    prenom: 'W',
     points: 10,
     interactions: [
       { cms_id: 5, cms_type: 'article' },
@@ -285,7 +292,8 @@ const utilisateurs = {
     onboardingResult: ONBOARDING_RES_3344,
   },
   quizzman: {
-    name: 'quizzman',
+    nom: 'quizzman',
+    prenom: 'man',
     points: 10,
     interactions: [
       { cms_id: 1, cms_type: 'quizz', score: 0.5 },

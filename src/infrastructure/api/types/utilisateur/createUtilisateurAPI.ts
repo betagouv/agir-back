@@ -4,8 +4,6 @@ import { OnboardingDataAPI } from './onboardingDataAPI';
 export class CreateUtilisateurAPI {
   @ApiProperty()
   nom?: string;
-  @ApiProperty({ deprecated: true })
-  name?: string; // FIXME a supprimer
   @ApiProperty()
   prenom?: string;
   @ApiProperty()

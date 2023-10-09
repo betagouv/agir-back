@@ -5,7 +5,6 @@ import { OnboardingResult } from './onboardingResult';
 
 export class Utilisateur {
   id: string;
-  name: string; // FIXME remove
   email: string;
   nom: string;
   prenom: string;

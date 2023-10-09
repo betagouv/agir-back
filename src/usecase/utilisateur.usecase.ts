@@ -38,8 +38,8 @@ export class UtilisateurUsecase {
     private oIDCStateRepository: OIDCStateRepository,
   ) {}
 
-  async findUtilisateursByName(name: string): Promise<Utilisateur[]> {
-    return this.utilisateurRespository.findUtilisateursByName(name);
+  async findUtilisateursByNom(nom: string): Promise<Utilisateur[]> {
+    return this.utilisateurRespository.findUtilisateursByNom(nom);
   }
 
   async findUtilisateurByEmail(email: string): Promise<Utilisateur> {
@@ -117,8 +117,7 @@ export class UtilisateurUsecase {
         ? utilisateurInput.onboardingData.code_postal
         : undefined,
       created_at: undefined,
-      name: utilisateurInput.name || 'Missing Name '.concat(uuidv4()),
-      nom: utilisateurInput.nom,
+      nom: utilisateurInput.nom || 'MISSING NAME'.concat(uuidv4()),
       prenom: utilisateurInput.prenom,
       passwordHash: utilisateurInput.mot_de_passe,
       passwordSalt: uuidv4(),

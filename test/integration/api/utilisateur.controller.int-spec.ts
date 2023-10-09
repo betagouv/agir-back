@@ -174,8 +174,8 @@ describe('/utilisateurs (API test)', () => {
     // GIVEN
     await TestUtil.prisma.utilisateur.createMany({
       data: [
-        { id: '1', name: 'bob' },
-        { id: '2', name: 'george' },
+        { id: '1', nom: 'bob' },
+        { id: '2', nom: 'george' },
       ],
     });
     // WHEN
@@ -226,7 +226,6 @@ describe('/utilisateurs (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.id).toEqual('utilisateur-id');
-    expect(response.body.name).toEqual('name');
     expect(response.body.nom).toEqual('nom');
     expect(response.body.prenom).toEqual('prenom');
     expect(response.body.code_postal).toEqual('91120');
@@ -274,8 +273,8 @@ describe('/utilisateurs (API test)', () => {
     // GIVEN
     await TestUtil.prisma.utilisateur.createMany({
       data: [
-        { id: '1', name: 'bob' },
-        { id: '2', name: 'george' },
+        { id: '1', nom: 'bob' },
+        { id: '2', nom: 'george' },
       ],
     });
     // WHEN
@@ -288,7 +287,6 @@ describe('/utilisateurs (API test)', () => {
   it('POST /utilisateurs - create new utilisateur with given all data', async () => {
     // WHEN
     const response = await TestUtil.getServer().post('/utilisateurs').send({
-      name: 'george',
       nom: 'WW',
       prenom: 'Wojtek',
       mot_de_passe: 'to use',
@@ -297,7 +295,7 @@ describe('/utilisateurs (API test)', () => {
     });
     // THEN
     const user = await TestUtil.prisma.utilisateur.findFirst({
-      where: { name: 'george' },
+      where: { nom: 'WW' },
     });
     expect(response.status).toBe(201);
     expect(response.headers['location']).toContain(user.id);
@@ -705,7 +703,6 @@ describe('/utilisateurs (API test)', () => {
     const response = await TestUtil.getServer()
       .post('/utilisateurs')
       .send({
-        name: 'george',
         nom: 'WW',
         prenom: 'Wojtek',
         mot_de_passe: 'to use',
@@ -723,7 +720,6 @@ describe('/utilisateurs (API test)', () => {
     const response = await TestUtil.getServer()
       .post('/utilisateurs')
       .send({
-        name: 'george',
         nom: 'WW',
         prenom: 'Wojtek',
         mot_de_passe: 'to use',
@@ -748,7 +744,6 @@ describe('/utilisateurs (API test)', () => {
     });
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.name).toEqual('name');
     expect(response.body.nom).toEqual('nom');
     expect(response.body.prenom).toEqual('prenom');
     expect(response.body.email).toEqual('yo@truc.com');
@@ -760,7 +755,6 @@ describe('/utilisateurs (API test)', () => {
     const response = await TestUtil.getServer()
       .patch('/utilisateurs/utilisateur-id/profile')
       .send({
-        name: 'George 4',
         email: 'george@paris.com',
         nom: 'THE NOM',
         prenom: 'THE PRENOM',
@@ -772,7 +766,6 @@ describe('/utilisateurs (API test)', () => {
     });
     // THEN
     expect(response.status).toBe(200);
-    expect(dbUser.name).toEqual('George 4');
     expect(dbUser.nom).toEqual('THE NOM');
     expect(dbUser.prenom).toEqual('THE PRENOM');
     expect(dbUser.email).toEqual('george@paris.com');

@@ -45,7 +45,7 @@ export class UtilisateurController {
     if (name === null) {
       return this.utilisateurUsecase.listUtilisateurs() as any;
     } else {
-      return this.utilisateurUsecase.findUtilisateursByName(name) as any;
+      return this.utilisateurUsecase.findUtilisateursByNom(name) as any;
     }
   }
 
@@ -63,7 +63,6 @@ export class UtilisateurController {
     }
     return {
       id: utilisateur.id,
-      name: utilisateur.name,
       nom: utilisateur.nom,
       prenom: utilisateur.prenom,
       email: utilisateur.email,
@@ -86,7 +85,6 @@ export class UtilisateurController {
       throw new NotFoundException(`Pas d'utilisateur d'id ${utilisateurId}`);
     }
     return {
-      name: utilisateur.name,
       email: utilisateur.email,
       nom: utilisateur.nom,
       prenom: utilisateur.prenom,
@@ -132,7 +130,6 @@ export class UtilisateurController {
     @Body() body: UtilisateurProfileAPI,
   ) {
     return this.utilisateurUsecase.updateUtilisateurProfile(utilisateurId, {
-      name: body.name,
       email: body.email,
       nom: body.nom,
       prenom: body.prenom,

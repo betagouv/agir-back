@@ -20,10 +20,10 @@ export class UtilisateurRepository {
     await this.prisma.utilisateur.delete({ where: { id: utilisateurId } });
   }
 
-  async findUtilisateursByName(name: string): Promise<Utilisateur[] | null> {
+  async findUtilisateursByNom(nom: string): Promise<Utilisateur[] | null> {
     let liste = await this.prisma.utilisateur.findMany({
       where: {
-        name,
+        nom: nom,
       },
       orderBy: [
         {
@@ -62,7 +62,6 @@ export class UtilisateurRepository {
         id: utilisateurId,
       },
       data: {
-        name: profile.name,
         nom: profile.nom,
         prenom: profile.prenom,
         email: profile.email,
@@ -97,7 +96,6 @@ export class UtilisateurRepository {
       const user = await this.prisma.utilisateur.create({
         data: {
           id: uuidv4(),
-          name: utilisateur.name,
           nom: utilisateur.nom,
           prenom: utilisateur.prenom,
           passwordHash: utilisateur.passwordHash,
@@ -208,7 +206,6 @@ export class UtilisateurRepository {
       const onboardingResult = new OnboardingResult(onboardingData);
       return {
         id: user.id,
-        name: user.name,
         nom: user.nom,
         prenom: user.prenom,
         email: user.email,

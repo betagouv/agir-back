@@ -137,7 +137,6 @@ export class TestUtil {
   static utilisateurData(override?) {
     return {
       id: 'utilisateur-id',
-      name: 'name', // FIXME remove
       nom: 'nom',
       prenom: 'prenom',
       passwordHash: 'hash',

@@ -6,9 +6,6 @@ export class UtilisateurAPI {
   @ApiProperty()
   id: string;
 
-  @ApiProperty({ deprecated: true })
-  name: string;
-
   @ApiProperty()
   nom: string;
 
