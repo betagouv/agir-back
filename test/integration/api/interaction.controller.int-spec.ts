@@ -402,8 +402,35 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     await TestUtil.create('interaction', {
       done: false,
       day_period: 1,
+      scheduled_reset: null,
     });
     // WHEN
+    const response = await TestUtil.getServer()
+      .patch('/utilisateurs/utilisateur-id/interactions/interaction-id')
+      .send({
+        done: true,
+      });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbInteraction = await TestUtil.prisma.interaction.findUnique({
+      where: { id: 'interaction-id' },
+    });
+    expect(dbInteraction.scheduled_reset).not.toBeNull();
+  });
+  it('PATCH /utilisateurs/id/interactions/id - set a scheduled_reset date when clicked then done and day_period specified', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      done: false,
+      day_period: 1,
+      scheduled_reset: null,
+    });
+    // WHEN
+    await TestUtil.getServer()
+      .patch('/utilisateurs/utilisateur-id/interactions/interaction-id')
+      .send({
+        clicked: true,
+      });
     const response = await TestUtil.getServer()
       .patch('/utilisateurs/utilisateur-id/interactions/interaction-id')
       .send({
