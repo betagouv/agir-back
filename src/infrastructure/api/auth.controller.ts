@@ -59,8 +59,10 @@ export class AuthController {
       user_data.email,
     );
     if (!utilisateur) {
+      // FIXME : revoir le moment venu, c'est plus en ligne avec la création de compte standalone
       utilisateur = await this.utilisateurUsecase.createUtilisateur({
         nom: user_data.family_name,
+        prenom: 'UNDEFINED',
         email: user_data.email,
         onboardingData: {},
       });

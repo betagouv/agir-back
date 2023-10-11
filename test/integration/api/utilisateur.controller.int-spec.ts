@@ -163,14 +163,14 @@ describe('/utilisateurs (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('GET /utilisateurs?name=bob - when missing name', async () => {
+  it('GET /utilisateurs?nom=bob - when missing nom', async () => {
     // WHEN
-    const response = await TestUtil.getServer().get('/utilisateurs?name=bob');
+    const response = await TestUtil.getServer().get('/utilisateurs?nom=bob');
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(0);
   });
-  it('GET /utilisateurs?name=george - by name when present', async () => {
+  it('GET /utilisateurs?nom=george - by nom when present', async () => {
     // GIVEN
     await TestUtil.prisma.utilisateur.createMany({
       data: [
@@ -179,9 +179,7 @@ describe('/utilisateurs (API test)', () => {
       ],
     });
     // WHEN
-    const response = await TestUtil.getServer().get(
-      '/utilisateurs?name=george',
-    );
+    const response = await TestUtil.getServer().get('/utilisateurs?nom=george');
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
@@ -289,7 +287,7 @@ describe('/utilisateurs (API test)', () => {
     const response = await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: 'to use',
+      mot_de_passe: '#1234567890HAHA',
       email: 'mon mail',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -302,9 +300,25 @@ describe('/utilisateurs (API test)', () => {
     expect(user.nom).toEqual('WW');
     expect(user.prenom).toEqual('Wojtek');
     expect(user.email).toEqual('mon mail');
-    expect(user.passwordHash).toEqual('to use');
+    expect(user.passwordHash.length).toBeGreaterThan(20);
+    expect(user.passwordSalt.length).toBeGreaterThan(20);
     expect(user.onboardingData).toStrictEqual(ONBOARDING_1_2_3_4_DATA);
     expect(user.onboardingResult).toStrictEqual(ONBOARDING_RES_1234);
+  });
+  it('POST /utilisateurs - bad password', async () => {
+    // WHEN
+    const response = await TestUtil.getServer().post('/utilisateurs').send({
+      nom: 'WW',
+      prenom: 'Wojtek',
+      mot_de_passe: 'to use',
+      email: 'mon mail',
+      onboardingData: ONBOARDING_1_2_3_4_DATA,
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      'Le mot de passe doit contenir au moins un chiffre',
+    );
   });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data to compute impact', async () => {
     // WHEN
@@ -705,14 +719,14 @@ describe('/utilisateurs (API test)', () => {
       .send({
         nom: 'WW',
         prenom: 'Wojtek',
-        mot_de_passe: 'to use',
+        mot_de_passe: '#1234567890HAHA',
         email: 'yo@truc.com',
         onboardingData: { deladata: 'une valeur' },
       });
     // THEN
     expect(response.status).toBe(400);
     expect(response.body.message).toEqual(
-      'Adresse [yo@truc.com]email deja existante',
+      'Adresse email yo@truc.com déjà existante',
     );
   });
   it('POST /utilisateurs - error when bad value in onboarding data', async () => {

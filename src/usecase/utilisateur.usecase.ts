@@ -104,31 +104,51 @@ export class UtilisateurUsecase {
   async createUtilisateur(
     utilisateurInput: CreateUtilisateurAPI,
   ): Promise<Utilisateur> {
+    this.checkInputToCreateUtilisateur(utilisateurInput);
+
     const onboardingData = new OnboardingData(utilisateurInput.onboardingData);
-    try {
-      onboardingData.validateData();
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-    const newUtilisateur = await this.utilisateurRespository.createUtilisateur({
+
+    const utilisateurToCreate = new Utilisateur({
       id: undefined,
       points: 0,
       code_postal: utilisateurInput.onboardingData
         ? utilisateurInput.onboardingData.code_postal
         : undefined,
       created_at: undefined,
-      nom: utilisateurInput.nom || 'MISSING NAME'.concat(uuidv4()),
+      nom: utilisateurInput.nom,
       prenom: utilisateurInput.prenom,
-      passwordHash: utilisateurInput.mot_de_passe,
-      passwordSalt: uuidv4(),
       email: utilisateurInput.email,
       onboardingData: onboardingData,
       onboardingResult: new OnboardingResult(onboardingData),
       quizzProfile: UserQuizzProfile.newLowProfile(),
       badges: undefined,
     });
+
+    utilisateurToCreate.setPassword(utilisateurInput.mot_de_passe);
+
+    const newUtilisateur = await this.utilisateurRespository.createUtilisateur(
+      utilisateurToCreate,
+    );
     await this.initUtilisateurInteractionSet(newUtilisateur.id);
     return newUtilisateur;
+  }
+
+  private checkInputToCreateUtilisateur(
+    utilisateurInput: CreateUtilisateurAPI,
+  ) {
+    new OnboardingData(utilisateurInput.onboardingData).validateData();
+
+    if (!utilisateurInput.nom) {
+      throw new Error('Nom obligatoire pour créer un utilisateur');
+    }
+    if (!utilisateurInput.prenom) {
+      throw new Error('Prénom obligatoire pour créer un utilisateur');
+    }
+    if (!utilisateurInput.email) {
+      throw new Error('Email obligatoire pour créer un utilisateur');
+    }
+
+    Utilisateur.checkPasswordFormat(utilisateurInput.mot_de_passe);
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {

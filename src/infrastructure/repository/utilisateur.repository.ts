@@ -111,7 +111,7 @@ export class UtilisateurRepository {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
           throw new BadRequestException(
-            `Adresse [${utilisateur.email}]email deja existante`,
+            `Adresse email ${utilisateur.email} déjà existante`,
           );
         }
       }
@@ -204,7 +204,7 @@ export class UtilisateurRepository {
     if (user) {
       const onboardingData = new OnboardingData(user.onboardingData as any);
       const onboardingResult = new OnboardingResult(onboardingData);
-      return {
+      return new Utilisateur({
         id: user.id,
         nom: user.nom,
         prenom: user.prenom,
@@ -218,7 +218,7 @@ export class UtilisateurRepository {
         quizzProfile: new UserQuizzProfile(user.quizzLevels as any),
         created_at: user.created_at,
         badges: user['badges'],
-      };
+      });
     }
     return null;
   }

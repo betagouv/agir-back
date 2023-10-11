@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -33,19 +34,19 @@ export class UtilisateurController {
 
   @Get('utilisateurs')
   @ApiQuery({
-    name: 'name',
+    name: 'nom',
     type: String,
-    description: "Nom optionel de l'uilisateur",
+    description: "Nom optionel de l'utilisateur",
     required: false,
   })
   @ApiOkResponse({ type: [UtilisateurAPI] })
   async listUtilisateurs(
-    @Query('name') name?: string,
+    @Query('nom') nom?: string,
   ): Promise<UtilisateurAPI[]> {
-    if (name === null) {
+    if (nom === null) {
       return this.utilisateurUsecase.listUtilisateurs() as any;
     } else {
-      return this.utilisateurUsecase.findUtilisateursByNom(name) as any;
+      return this.utilisateurUsecase.findUtilisateursByNom(nom) as any;
     }
   }
 
@@ -101,18 +102,21 @@ export class UtilisateurController {
       type: 'object',
       properties: {
         id: { type: 'string', description: "id unique de l'utiliateur" },
-        name: { type: 'string', description: "nom de l'utilisateur créé" },
       },
     },
   })
   async createUtilisateur(@Body() body: CreateUtilisateurAPI, @Response() res) {
-    const utilisateur = await this.utilisateurUsecase.createUtilisateur(body);
-    return res
-      .header(
-        'location',
-        `https://agir.gouv.fr/api/utiliateurs/${utilisateur.id}`,
-      )
-      .json(utilisateur);
+    try {
+      const utilisateur = await this.utilisateurUsecase.createUtilisateur(body);
+      return res
+        .header(
+          'location',
+          `https://agir.gouv.fr/api/utiliateurs/${utilisateur.id}`,
+        )
+        .json(utilisateur);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
   @Post('utilisateurs/evaluate-onboarding')
   @ApiBody({
