@@ -20,6 +20,7 @@ import {
 import { OnboardingDataAPI } from '../../src/infrastructure/api/types/utilisateur/onboardingDataAPI';
 import { OnboardingDataImpactAPI } from '../infrastructure/api/types/utilisateur/onboardingDataImpactAPI';
 import { OnboardingResult } from '../../src/domain/utilisateur/onboardingResult';
+import { OidcService } from '../../src/infrastructure/auth/oidc.service';
 
 export type Phrase = {
   phrase: string;
@@ -36,8 +37,17 @@ export class UtilisateurUsecase {
     private bilanRepository: BilanRepository,
     private questionNGCRepository: QuestionNGCRepository,
     private oIDCStateRepository: OIDCStateRepository,
+    private oidcService: OidcService,
   ) {}
 
+  async loginUtilisateur(email: string, password: string): Promise<string> {
+    const utilisateur =
+      await this.utilisateurRespository.findUtilisateurByEmail(email);
+    if (utilisateur && utilisateur.isPasswordOK(password)) {
+      return this.oidcService.createNewInnerAppToken(utilisateur.id);
+    }
+    throw new Error('Mauvais email ou mauvais mot de passe');
+  }
   async findUtilisateursByNom(nom: string): Promise<Utilisateur[]> {
     return this.utilisateurRespository.findUtilisateursByNom(nom);
   }

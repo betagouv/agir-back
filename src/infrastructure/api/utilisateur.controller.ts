@@ -25,6 +25,8 @@ import { UtilisateurProfileAPI } from './types/utilisateur/utilisateurProfileAPI
 import { CreateUtilisateurAPI } from './types/utilisateur/createUtilisateurAPI';
 import { OnboardingDataAPI } from './types/utilisateur/onboardingDataAPI';
 import { OnboardingDataImpactAPI } from './types/utilisateur/onboardingDataImpactAPI';
+import { LoginUtilisateurAPI } from './types/utilisateur/loginUtilisateurAPI';
+import { HttpStatus } from '@nestjs/common';
 
 @ApiExtraModels(CreateUtilisateurAPI)
 @Controller()
@@ -91,6 +93,29 @@ export class UtilisateurController {
       prenom: utilisateur.prenom,
       code_postal: utilisateur.code_postal,
     };
+  }
+  @Post('utilisateurs/login')
+  @ApiBody({
+    type: LoginUtilisateurAPI,
+  })
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        token: { type: 'string', description: "le token d'authentification" },
+      },
+    },
+  })
+  async loginUtilisateur(@Body() body: LoginUtilisateurAPI, @Response() res) {
+    try {
+      const token = await this.utilisateurUsecase.loginUtilisateur(
+        body.email,
+        body.mot_de_passe,
+      );
+      return res.status(HttpStatus.OK).json({ token: token });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
   @Post('utilisateurs')
   @ApiBody({

@@ -1,3 +1,4 @@
+import { Utilisateur } from '../../../src/domain/utilisateur/utilisateur';
 import {
   Impact,
   Thematique,
@@ -282,6 +283,73 @@ describe('/utilisateurs (API test)', () => {
     expect(response.body).toHaveLength(2);
   });
 
+  it('POST /utilisateurs/login - logs user and return a JWT token', async () => {
+    // GIVEN
+    const utilisateur = new Utilisateur({});
+    utilisateur.setPassword('#1234567890HAHA');
+
+    TestUtil.create('utilisateur', {
+      passwordHash: utilisateur.passwordHash,
+      passwordSalt: utilisateur.passwordSalt,
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/login')
+      .send({
+        mot_de_passe: '#1234567890HAHA',
+        email: 'yo@truc.com',
+      });
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.token.length).toBeGreaterThan(20);
+  });
+  it('POST /utilisateurs/login - bad password', async () => {
+    // GIVEN
+    const utilisateur = new Utilisateur({});
+    utilisateur.setPassword('#1234567890HAHA');
+
+    TestUtil.create('utilisateur', {
+      passwordHash: utilisateur.passwordHash,
+      passwordSalt: utilisateur.passwordSalt,
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/login')
+      .send({
+        mot_de_passe: '#bad password',
+        email: 'yo@truc.com',
+      });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      'Mauvais email ou mauvais mot de passe',
+    );
+  });
+  it('POST /utilisateurs/login - bad email', async () => {
+    // GIVEN
+    const utilisateur = new Utilisateur({});
+    utilisateur.setPassword('#1234567890HAHA');
+
+    TestUtil.create('utilisateur', {
+      passwordHash: utilisateur.passwordHash,
+      passwordSalt: utilisateur.passwordSalt,
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/login')
+      .send({
+        mot_de_passe: '#1234567890HAHA',
+        email: 'bademail@truc.com',
+      });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      'Mauvais email ou mauvais mot de passe',
+    );
+  });
   it('POST /utilisateurs - create new utilisateur with given all data', async () => {
     // WHEN
     const response = await TestUtil.getServer().post('/utilisateurs').send({

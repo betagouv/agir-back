@@ -30,7 +30,7 @@ export class Utilisateur {
       .toString(`hex`);
   }
 
-  public checkPassword(password: string) {
+  public isPasswordOK(password: string) {
     return (
       this.passwordHash ===
       crypto

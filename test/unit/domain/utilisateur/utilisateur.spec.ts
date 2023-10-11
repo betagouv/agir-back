@@ -68,7 +68,7 @@ describe('Objet Utilisateur', () => {
     utilisateur.setPassword('toto');
 
     // WHEN
-    const result = utilisateur.checkPassword('toto');
+    const result = utilisateur.isPasswordOK('toto');
 
     // THEN
     expect(result).toEqual(true);
@@ -79,7 +79,7 @@ describe('Objet Utilisateur', () => {
     utilisateur.setPassword('toto');
 
     // WHEN
-    const result = utilisateur.checkPassword('titi');
+    const result = utilisateur.isPasswordOK('titi');
 
     // THEN
     expect(result).toEqual(false);
