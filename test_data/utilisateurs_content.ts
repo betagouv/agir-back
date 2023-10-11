@@ -114,6 +114,7 @@ const utilisateurs = {
     prenom: 'Mimi6',
     points: 36,
     interactions: [
+      { id: 'suivi_du_jour', score: 0.5 },
       { cms_id: 1, cms_type: 'quizz', score: 0.5 },
       { cms_id: 2, cms_type: 'quizz', score: 0.5 },
       { cms_id: 4, cms_type: 'quizz', score: 0.5 },
@@ -222,6 +223,7 @@ const utilisateurs = {
     prenom: 'D',
     points: 0,
     interactions: [
+      { id: 'suivi_du_jour', score: 0.5 },
       { cms_id: 1, cms_type: 'quizz', score: 0.5 },
       { cms_id: 2, cms_type: 'quizz', score: 0.5 },
       { cms_id: 4, cms_type: 'quizz', score: 0.5 },
@@ -279,10 +281,11 @@ const utilisateurs = {
     prenom: 'W',
     points: 10,
     interactions: [
+      { id: 'suivi_du_jour', score: 0.5 },
       { cms_id: 5, cms_type: 'article' },
       { cms_id: 4, cms_type: 'article', locked: true },
     ],
-    suivis: ['sa1', 'sa2', 'st1', 'st2'],
+    suivis: ['sa1', 'sa2', 'sa3', 'st1', 'st2', 'st3'],
     bilans: ['bilan1'],
     badges: ['badge1', 'badge2'],
     questionsNGC: {
@@ -296,6 +299,7 @@ const utilisateurs = {
     prenom: 'man',
     points: 10,
     interactions: [
+      { id: 'suivi_du_jour', score: 0.5 },
       { cms_id: 1, cms_type: 'quizz', score: 0.5 },
       { cms_id: 2, cms_type: 'quizz', score: 0.5 },
       { cms_id: 4, cms_type: 'quizz', score: 0.5 },
