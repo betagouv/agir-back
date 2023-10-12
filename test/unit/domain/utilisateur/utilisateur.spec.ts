@@ -46,21 +46,16 @@ describe('Objet Utilisateur', () => {
     }
   });
 
-  it('setPassword : hash password', () => {
+  it('setPassword : hash and salt password', () => {
     // GIVEN
     const utilisateur = new Utilisateur({});
     utilisateur.setPassword('toto');
 
     // THEN
     expect(utilisateur.passwordHash.length).toBeGreaterThan(10);
-  });
-  it('setPassword : computes salt', () => {
-    // GIVEN
-    const utilisateur = new Utilisateur({});
-    utilisateur.setPassword('toto');
-
-    // THEN
     expect(utilisateur.passwordSalt.length).toBeGreaterThan(10);
+    console.log(utilisateur.passwordSalt);
+    console.log(utilisateur.passwordHash);
   });
   it('checkPassword : OK', () => {
     // GIVEN
