@@ -27,8 +27,9 @@ import { OnboardingDataAPI } from './types/utilisateur/onboardingDataAPI';
 import { OnboardingDataImpactAPI } from './types/utilisateur/onboardingDataImpactAPI';
 import { LoginUtilisateurAPI } from './types/utilisateur/loginUtilisateurAPI';
 import { HttpStatus } from '@nestjs/common';
+import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
 
-@ApiExtraModels(CreateUtilisateurAPI)
+@ApiExtraModels(CreateUtilisateurAPI, UtilisateurAPI)
 @Controller()
 @ApiTags('Utilisateur')
 export class UtilisateurController {
@@ -103,16 +104,34 @@ export class UtilisateurController {
       type: 'object',
       properties: {
         token: { type: 'string', description: "le token d'authentification" },
+        utilisateur: { $ref: getSchemaPath(UtilisateurAPI) },
       },
     },
   })
-  async loginUtilisateur(@Body() body: LoginUtilisateurAPI, @Response() res) {
+  async loginUtilisateur(
+    @Body() body: LoginUtilisateurAPI,
+    @Response() res,
+  ): Promise<LoggedUtilisateurAPI> {
     try {
-      const token = await this.utilisateurUsecase.loginUtilisateur(
+      const loggedUser = await this.utilisateurUsecase.loginUtilisateur(
         body.email,
         body.mot_de_passe,
       );
-      return res.status(HttpStatus.OK).json({ token: token });
+      const response: LoggedUtilisateurAPI = {
+        utilisateur: {
+          id: loggedUser.utilisateur.id,
+          nom: loggedUser.utilisateur.nom,
+          prenom: loggedUser.utilisateur.prenom,
+          code_postal: loggedUser.utilisateur.code_postal,
+          email: loggedUser.utilisateur.email,
+          points: loggedUser.utilisateur.points,
+          quizzProfile: loggedUser.utilisateur.quizzProfile.getData(),
+          created_at: loggedUser.utilisateur.created_at,
+          badges: loggedUser.utilisateur.badges,
+        },
+        token: loggedUser.token,
+      };
+      return res.status(HttpStatus.OK).json(response);
     } catch (error) {
       throw new BadRequestException(error.message);
     }

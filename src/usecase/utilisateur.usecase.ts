@@ -26,6 +26,7 @@ export type Phrase = {
   phrase: string;
   pourcent: number;
 };
+
 @Injectable()
 export class UtilisateurUsecase {
   constructor(
@@ -40,11 +41,17 @@ export class UtilisateurUsecase {
     private oidcService: OidcService,
   ) {}
 
-  async loginUtilisateur(email: string, password: string): Promise<string> {
+  async loginUtilisateur(
+    email: string,
+    password: string,
+  ): Promise<{ utilisateur: Utilisateur; token: string }> {
     const utilisateur =
       await this.utilisateurRespository.findUtilisateurByEmail(email);
     if (utilisateur && utilisateur.isPasswordOK(password)) {
-      return this.oidcService.createNewInnerAppToken(utilisateur.id);
+      return {
+        utilisateur: utilisateur,
+        token: await this.oidcService.createNewInnerAppToken(utilisateur.id),
+      };
     }
     throw new Error('Mauvais email ou mauvais mot de passe');
   }

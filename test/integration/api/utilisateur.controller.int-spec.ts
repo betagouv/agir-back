@@ -215,6 +215,7 @@ describe('/utilisateurs (API test)', () => {
   it('GET /utilisateurs/id - when present', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
+    await TestUtil.create('badge');
     const response = await TestUtil.getServer().get(
       '/utilisateurs/utilisateur-id',
     );
@@ -238,6 +239,7 @@ describe('/utilisateurs (API test)', () => {
       dechet: { level: 1, isCompleted: false },
       loisir: { level: 1, isCompleted: false },
     });
+    expect(response.body.badges[0].titre).toEqual('titre');
     expect(response.body.created_at).toEqual(dbUser.created_at.toISOString());
   });
   it('GET /utilisateurs/id - list 1 badge', async () => {
@@ -288,10 +290,11 @@ describe('/utilisateurs (API test)', () => {
     const utilisateur = new Utilisateur({});
     utilisateur.setPassword('#1234567890HAHA');
 
-    TestUtil.create('utilisateur', {
+    await TestUtil.create('utilisateur', {
       passwordHash: utilisateur.passwordHash,
       passwordSalt: utilisateur.passwordSalt,
     });
+    await TestUtil.create('badge');
 
     // WHEN
     const response = await TestUtil.getServer()
@@ -303,6 +306,21 @@ describe('/utilisateurs (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.token.length).toBeGreaterThan(20);
+    expect(response.body.utilisateur.id).toEqual('utilisateur-id');
+    expect(response.body.utilisateur.nom).toEqual('nom');
+    expect(response.body.utilisateur.prenom).toEqual('prenom');
+    expect(response.body.utilisateur.code_postal).toEqual('91120');
+    expect(response.body.utilisateur.points).toEqual(0);
+    expect(response.body.utilisateur.badges[0].titre).toEqual('titre');
+    expect(response.body.utilisateur.quizzProfile).toEqual({
+      alimentation: { level: 1, isCompleted: false },
+      transport: { level: 1, isCompleted: false },
+      logement: { level: 1, isCompleted: false },
+      consommation: { level: 1, isCompleted: false },
+      climat: { level: 1, isCompleted: false },
+      dechet: { level: 1, isCompleted: false },
+      loisir: { level: 1, isCompleted: false },
+    });
   });
   it('POST /utilisateurs/login - bad password', async () => {
     // GIVEN

@@ -52,6 +52,9 @@ export class UtilisateurRepository {
       where: {
         email,
       },
+      include: {
+        badges: true,
+      },
     });
     return this.buildUtilisateurFromDB(user);
   }
