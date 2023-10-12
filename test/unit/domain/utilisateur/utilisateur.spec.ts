@@ -54,8 +54,6 @@ describe('Objet Utilisateur', () => {
     // THEN
     expect(utilisateur.passwordHash.length).toBeGreaterThan(10);
     expect(utilisateur.passwordSalt.length).toBeGreaterThan(10);
-    console.log(utilisateur.passwordSalt);
-    console.log(utilisateur.passwordHash);
   });
   it('checkPassword : OK', () => {
     // GIVEN
