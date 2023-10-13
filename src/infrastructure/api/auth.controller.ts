@@ -7,6 +7,8 @@ import {
   Redirect,
   Req,
   UseGuards,
+  Response,
+  HttpStatus,
 } from '@nestjs/common';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import { Request } from 'express';
@@ -124,5 +126,14 @@ export class AuthController {
   async logout_callback() {
     return `<br>Vous êtes bien déconnecté !!
     <br><a href='/login'>Se connecter avec France Connect</a>`;
+  }
+
+  @Get('error_401')
+  async ERROR_401(@Response() res) {
+    return res.status(HttpStatus.UNAUTHORIZED).json('this is bad 401');
+  }
+  @Get('error_403')
+  async ERROR_403(@Response() res) {
+    return res.status(HttpStatus.FORBIDDEN).json('this is bad 403');
   }
 }
