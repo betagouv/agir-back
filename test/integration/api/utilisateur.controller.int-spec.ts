@@ -327,7 +327,7 @@ describe('/utilisateurs (API test)', () => {
     const utilisateur = new Utilisateur({});
     utilisateur.setPassword('#1234567890HAHA');
 
-    TestUtil.create('utilisateur', {
+    await TestUtil.create('utilisateur', {
       passwordHash: utilisateur.passwordHash,
       passwordSalt: utilisateur.passwordSalt,
     });
@@ -339,18 +339,21 @@ describe('/utilisateurs (API test)', () => {
         mot_de_passe: '#bad password',
         email: 'yo@truc.com',
       });
-    // THEN
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    }); // THEN
     expect(response.status).toBe(400);
     expect(response.body.message).toEqual(
       'Mauvais email ou mauvais mot de passe',
     );
+    expect(dbUser.failed_login_count).toEqual(1);
   });
   it('POST /utilisateurs/login - bad email', async () => {
     // GIVEN
     const utilisateur = new Utilisateur({});
     utilisateur.setPassword('#1234567890HAHA');
 
-    TestUtil.create('utilisateur', {
+    await TestUtil.create('utilisateur', {
       passwordHash: utilisateur.passwordHash,
       passwordSalt: utilisateur.passwordSalt,
     });

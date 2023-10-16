@@ -47,12 +47,24 @@ export class UtilisateurUsecase {
   ): Promise<{ utilisateur: Utilisateur; token: string }> {
     const utilisateur =
       await this.utilisateurRespository.findUtilisateurByEmail(email);
-    if (utilisateur && utilisateur.isPasswordOK(password)) {
+    if (!utilisateur) {
+      throw new Error('Mauvais email ou mauvais mot de passe');
+    }
+    if (utilisateur.isLoginLocked()) {
+      throw new Error(
+        `Trop d'essais successifs, compte bloqué jusqu'à ${utilisateur.getLockedUntilString()}`,
+      );
+    }
+    if (utilisateur.isPasswordOK(password)) {
       return {
         utilisateur: utilisateur,
         token: await this.oidcService.createNewInnerAppToken(utilisateur.id),
       };
     }
+    utilisateur.failedLogin();
+    await this.utilisateurRespository.updateUtilisateurLoginSecurity(
+      utilisateur,
+    );
     throw new Error('Mauvais email ou mauvais mot de passe');
   }
   async findUtilisateursByNom(nom: string): Promise<Utilisateur[]> {

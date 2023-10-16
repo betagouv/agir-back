@@ -18,9 +18,26 @@ export class Utilisateur {
   quizzProfile: UserQuizzProfile;
   created_at: Date;
   badges: Badge[];
+  failed_login_count: number;
+  prevent_login_before: Date;
 
   constructor(obj: object) {
     Object.assign(this, obj);
+  }
+
+  public failedLogin() {
+    if (!this.failed_login_count) {
+      this.failed_login_count = 0;
+    }
+    this.failed_login_count += 1;
+    if (this.failed_login_count > 3) {
+      this.prevent_login_before = this.prevent_login_before
+        ? this.prevent_login_before
+        : new Date();
+      this.prevent_login_before.setMinutes(
+        this.prevent_login_before.getMinutes() + 5,
+      );
+    }
   }
 
   public setPassword(password: string) {
@@ -30,6 +47,16 @@ export class Utilisateur {
       .toString(`hex`);
   }
 
+  public isLoginLocked(): boolean {
+    return (
+      !!this.prevent_login_before &&
+      new Date().getTime() < this.prevent_login_before.getTime()
+    );
+  }
+
+  public getLockedUntilString(): string {
+    return `${this.prevent_login_before.getHours()}h ${this.prevent_login_before.getMinutes()}min`;
+  }
   public isPasswordOK(password: string) {
     return (
       this.passwordHash ===

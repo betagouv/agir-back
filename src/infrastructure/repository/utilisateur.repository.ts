@@ -72,6 +72,21 @@ export class UtilisateurRepository {
       },
     });
   }
+  async updateUtilisateurLoginSecurity(utilisateur: Utilisateur) {
+    return this.prisma.utilisateur.update({
+      where: {
+        id: utilisateur.id,
+      },
+      data: {
+        failed_login_count: utilisateur.failed_login_count
+          ? utilisateur.failed_login_count
+          : 0,
+        prevent_login_before: utilisateur.prevent_login_before
+          ? utilisateur.prevent_login_before
+          : new Date(),
+      },
+    });
+  }
 
   async listUtilisateur(): Promise<Utilisateur[] | null> {
     const liste = await this.prisma.utilisateur.findMany({

@@ -143,6 +143,8 @@ export class TestUtil {
       passwordSalt: 'salt',
       email: 'yo@truc.com',
       code_postal: '91120',
+      failed_login_count: 0,
+      prevent_login_before: new Date(),
       onboardingData: {
         transports: ['voiture', 'pied'],
         avion: 2,
