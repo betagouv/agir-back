@@ -476,6 +476,10 @@ describe('/utilisateurs (API test)', () => {
     expect(user.onboardingData).toStrictEqual(ONBOARDING_1_2_3_4_DATA);
     expect(user.onboardingResult).toStrictEqual(ONBOARDING_RES_1234);
     expect(user.code).toHaveLength(6);
+    expect(user.failed_checkcode_count).toEqual(0);
+    expect(user.prevent_checkcode_before.getTime()).toBeLessThanOrEqual(
+      Date.now(),
+    );
   });
   it('POST /utilisateurs - bad password', async () => {
     // WHEN

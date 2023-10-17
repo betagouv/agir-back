@@ -154,6 +154,9 @@ export class UtilisateurUsecase {
       onboardingResult: new OnboardingResult(onboardingData),
       quizzProfile: UserQuizzProfile.newLowProfile(),
       badges: undefined,
+      active_account: false,
+      failed_checkcode_count: 0,
+      prevent_checkcode_before: new Date(),
     });
 
     utilisateurToCreate.setNew6DigitCode();
