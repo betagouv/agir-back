@@ -80,20 +80,14 @@ export class UtilisateurRepository {
         id: utilisateur.id,
       },
       data: {
-        failed_login_count: utilisateur.failed_login_count
-          ? utilisateur.failed_login_count
-          : 0,
-        prevent_login_before: utilisateur.prevent_login_before
-          ? utilisateur.prevent_login_before
-          : new Date(),
-        failed_checkcode_count: utilisateur.failed_checkcode_count
-          ? utilisateur.failed_checkcode_count
-          : 0,
-        prevent_checkcode_before: utilisateur.prevent_checkcode_before
-          ? utilisateur.prevent_checkcode_before
-          : new Date(),
+        failed_login_count: utilisateur.failed_login_count,
+        prevent_login_before: utilisateur.prevent_login_before,
+        failed_checkcode_count: utilisateur.failed_checkcode_count,
+        prevent_checkcode_before: utilisateur.prevent_checkcode_before,
         active_account: utilisateur.active_account,
         code: utilisateur.code,
+        sent_code_count: utilisateur.sent_code_count,
+        prevent_sendcode_before: utilisateur.prevent_sendcode_before,
       },
     });
   }
@@ -133,6 +127,8 @@ export class UtilisateurRepository {
           active_account: utilisateur.active_account,
           failed_checkcode_count: utilisateur.failed_checkcode_count,
           prevent_checkcode_before: utilisateur.prevent_checkcode_before,
+          sent_code_count: utilisateur.sent_code_count,
+          prevent_sendcode_before: utilisateur.prevent_sendcode_before,
           onboardingData: { ...utilisateur.onboardingData },
           onboardingResult: { ...utilisateur.onboardingResult },
           quizzLevels: utilisateur.quizzProfile.getData(),
@@ -253,6 +249,8 @@ export class UtilisateurRepository {
         prevent_checkcode_before: user.prevent_checkcode_before,
         failed_checkcode_count: user.failed_checkcode_count,
         active_account: user.active_account,
+        sent_code_count: user.sent_code_count,
+        prevent_sendcode_before: user.prevent_sendcode_before,
         quizzProfile: new UserQuizzProfile(user.quizzLevels as any),
         created_at: user.created_at,
         badges: user['badges'],

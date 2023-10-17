@@ -24,14 +24,29 @@ export class Utilisateur {
   active_account: boolean;
   failed_checkcode_count: number;
   prevent_checkcode_before: Date;
+  sent_code_count: number;
+  prevent_sendcode_before: Date;
 
   private MAX_LOGIN_ATTEMPT = 3;
   private MAX_CODE_ATTEMPT = 3;
+  private MAX_CODE_EMAIL_ATTEMPT = 3;
   private BLOCKED_LOGIN_DURATION_MIN = 5;
+  private BLOCKED_CODE_EMAIL_DURATION_MIN = 5;
   private BLOCKED_CODE_DURATION_MIN = 5;
 
   constructor(obj: object) {
     Object.assign(this, obj);
+    if (!this.failed_login_count) this.failed_login_count = 0;
+    if (!this.prevent_login_before) this.prevent_login_before = new Date();
+    if (!this.sent_code_count) this.sent_code_count = 0;
+    if (this.active_account === undefined) this.active_account = false;
+    if (!this.failed_checkcode_count) this.failed_checkcode_count = 0;
+    if (!this.prevent_checkcode_before)
+      this.prevent_checkcode_before = new Date();
+    if (!this.prevent_sendcode_before)
+      this.prevent_sendcode_before = new Date();
+
+    this.prevent_sendcode_before = new Date();
   }
 
   public setPassword(password: string) {
@@ -42,10 +57,16 @@ export class Utilisateur {
   }
 
   public isLoginLocked(): boolean {
-    return Date.now() < this.getPreventLoginBefore().getTime();
+    return Date.now() < this.prevent_login_before.getTime();
   }
   public isCodeLocked(): boolean {
-    return Date.now() < this.getPreventCodeBefore().getTime();
+    return Date.now() < this.prevent_checkcode_before.getTime();
+  }
+  public isCodeEmailLocked(): boolean {
+    return (
+      Date.now() < this.prevent_sendcode_before.getTime() ||
+      this.sent_code_count >= this.MAX_CODE_EMAIL_ATTEMPT
+    );
   }
 
   public getLockedUntilString(): string {
@@ -105,7 +126,7 @@ export class Utilisateur {
   }
 
   public incrementNextAllowedLoginTime() {
-    if (this.getPreventLoginBefore().getTime() <= Date.now()) {
+    if (this.prevent_login_before.getTime() <= Date.now()) {
       this.prevent_login_before = new Date();
     }
     this.prevent_login_before.setMinutes(
@@ -113,7 +134,7 @@ export class Utilisateur {
     );
   }
   public incrementNextAllowedCodeTime() {
-    if (this.getPreventCodeBefore().getTime() <= Date.now()) {
+    if (this.prevent_checkcode_before.getTime() <= Date.now()) {
       this.prevent_checkcode_before = new Date();
     }
     this.prevent_checkcode_before.setMinutes(
@@ -122,14 +143,33 @@ export class Utilisateur {
     );
   }
 
+  public incrementCodeEmailCount() {
+    this.sent_code_count++;
+    if (this.sent_code_count >= this.MAX_CODE_EMAIL_ATTEMPT) {
+      this.prevent_sendcode_before.setMinutes(
+        this.prevent_sendcode_before.getMinutes() +
+          this.BLOCKED_CODE_EMAIL_DURATION_MIN,
+      );
+    }
+  }
+
+  public resetCodeEmailCouterIfNeeded() {
+    if (
+      this.sent_code_count > this.MAX_CODE_EMAIL_ATTEMPT &&
+      this.prevent_sendcode_before.getTime() < Date.now()
+    ) {
+      this.sent_code_count = 0;
+    }
+  }
+
   private failLogin() {
-    this.incrementFailedLoginCount();
+    this.failed_login_count++;
     if (this.failed_login_count > this.MAX_LOGIN_ATTEMPT) {
       this.incrementNextAllowedLoginTime();
     }
   }
   private failCode() {
-    this.incrementFailedCodeCount();
+    this.failed_checkcode_count++;
     if (this.failed_checkcode_count > this.MAX_CODE_ATTEMPT) {
       this.incrementNextAllowedCodeTime();
     }
@@ -143,36 +183,6 @@ export class Utilisateur {
     this.active_account = true;
   }
 
-  private getFailedLoginCount() {
-    if (!this.failed_login_count) {
-      this.failed_login_count = 0;
-    }
-    return this.failed_login_count;
-  }
-  private getFailedCodeCount() {
-    if (!this.failed_checkcode_count) {
-      this.failed_checkcode_count = 0;
-    }
-    return this.failed_checkcode_count;
-  }
-  private incrementFailedLoginCount() {
-    this.failed_login_count = this.getFailedLoginCount() + 1;
-  }
-  private incrementFailedCodeCount() {
-    this.failed_checkcode_count = this.getFailedCodeCount() + 1;
-  }
-  private getPreventLoginBefore() {
-    if (!this.prevent_login_before) {
-      this.prevent_login_before = new Date();
-    }
-    return this.prevent_login_before;
-  }
-  private getPreventCodeBefore() {
-    if (!this.prevent_checkcode_before) {
-      this.prevent_checkcode_before = new Date();
-    }
-    return this.prevent_checkcode_before;
-  }
   private static auMoinsUnCaractereSpecial(password: string | null): boolean {
     const regexp = new RegExp(
       /([(&~»#)‘\-_`{[|`_\\^@)\]=}+%*$£¨!§/:;.?¿'"!,§éèêëàâä»])+/,

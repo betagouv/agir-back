@@ -500,6 +500,10 @@ describe('/utilisateurs (API test)', () => {
     expect(user.prevent_checkcode_before.getTime()).toBeLessThanOrEqual(
       Date.now(),
     );
+    expect(user.sent_code_count).toEqual(1);
+    expect(user.prevent_sendcode_before.getTime()).toBeLessThanOrEqual(
+      Date.now(),
+    );
   });
   it('POST /utilisateurs - bad password', async () => {
     // WHEN
@@ -514,6 +518,63 @@ describe('/utilisateurs (API test)', () => {
     expect(response.status).toBe(400);
     expect(response.body.message).toBe(
       'Le mot de passe doit contenir au moins un chiffre',
+    );
+  });
+  it('POST /utilisateurs/email/renvoyer_code - resend code ok for first time, counter + 1', async () => {
+    // GIVEN
+    await TestUtil.getServer().post('/utilisateurs').send({
+      nom: 'WW',
+      prenom: 'Wojtek',
+      mot_de_passe: '#1234567890HAHA',
+      email: 'monmail@truc.com',
+      onboardingData: ONBOARDING_1_2_3_4_DATA,
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer().post(
+      '/utilisateurs/monmail@truc.com/renvoyer_code',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const userDB = await TestUtil.prisma.utilisateur.findFirst({
+      where: { nom: 'WW' },
+    });
+
+    expect(userDB.sent_code_count).toEqual(2);
+  });
+  it('POST /utilisateurs/email/renvoyer_code - resend code 4 times => error', async () => {
+    // GIVEN
+    await TestUtil.getServer().post('/utilisateurs').send({
+      nom: 'WW',
+      prenom: 'Wojtek',
+      mot_de_passe: '#1234567890HAHA',
+      email: 'monmail@truc.com',
+      onboardingData: ONBOARDING_1_2_3_4_DATA,
+    });
+
+    // WHEN
+    await TestUtil.getServer().post(
+      '/utilisateurs/monmail@truc.com/renvoyer_code',
+    );
+    await TestUtil.getServer().post(
+      '/utilisateurs/monmail@truc.com/renvoyer_code',
+    );
+    const response = await TestUtil.getServer().post(
+      '/utilisateurs/monmail@truc.com/renvoyer_code',
+    );
+
+    // THEN
+    const userDB = await TestUtil.prisma.utilisateur.findFirst({
+      where: { nom: 'WW' },
+    });
+    console.log(userDB);
+    expect(response.status).toBe(400);
+
+    expect(userDB.sent_code_count).toEqual(3);
+    expect(userDB.prevent_sendcode_before.getTime()).toBeGreaterThan(
+      Date.now(),
     );
   });
   it('POST /utilisateurs/email/valider?code=XXXXXX - validate proper code OK, active user as outcome', async () => {

@@ -209,6 +209,19 @@ export class UtilisateurController {
     }
   }
 
+  @Post('utilisateurs/:email/renvoyer_code')
+  @ApiOkResponse({
+    type: LoggedUtilisateurAPI,
+  })
+  async renvoyerCode(@Param('email') email: string, @Response() res) {
+    try {
+      await this.utilisateurUsecase.renvoyerCode(email);
+      return res.status(HttpStatus.OK).json('code renvoyé');
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
   @Patch('utilisateurs/:id/profile')
   async updateProfile(
     @Param('id') utilisateurId: string,

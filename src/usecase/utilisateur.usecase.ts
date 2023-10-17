@@ -201,6 +201,8 @@ export class UtilisateurUsecase {
       active_account: false,
       failed_checkcode_count: 0,
       prevent_checkcode_before: new Date(),
+      sent_code_count: 1,
+      prevent_sendcode_before: new Date(),
     });
 
     utilisateurToCreate.setNew6DigitCode();
@@ -214,6 +216,31 @@ export class UtilisateurUsecase {
     this.sendValidationCode(utilisateurToCreate);
 
     return newUtilisateur;
+  }
+
+  async renvoyerCode(email: string) {
+    const utilisateur =
+      await this.utilisateurRespository.findUtilisateurByEmail(email);
+    if (!utilisateur) {
+      throw new Error(MAUVAIS_CODE_ERROR);
+    }
+    if (utilisateur.active_account) {
+      throw new Error('Ce compte est déjà actif');
+    }
+    if (utilisateur.isCodeEmailLocked()) {
+      throw new Error(
+        `Trop d'essais successifs, attendez jusqu'à ${utilisateur.getLockedUntilString()} avant de redemander un code`,
+      );
+    }
+    utilisateur.resetCodeEmailCouterIfNeeded();
+
+    utilisateur.incrementCodeEmailCount();
+
+    await this.utilisateurRespository.updateUtilisateurLoginSecurity(
+      utilisateur,
+    );
+
+    this.sendValidationCode(utilisateur);
   }
 
   private checkInputToCreateUtilisateur(

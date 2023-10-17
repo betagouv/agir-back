@@ -46,7 +46,7 @@ describe('Objet Utilisateur', () => {
     }
   });
 
-  it.only('setPassword : hash and salt password', () => {
+  it('setPassword : hash and salt password', () => {
     // GIVEN
     const utilisateur = new Utilisateur({});
     utilisateur.setPassword('toto');
@@ -112,17 +112,6 @@ describe('Objet Utilisateur', () => {
     // THEN
     expect(result).toEqual(false);
   });
-  it('isCodeLocked : false cause no date', () => {
-    // GIVEN
-    const utilisateur = new Utilisateur({});
-    utilisateur.prevent_checkcode_before = undefined;
-
-    // WHEN
-    const result = utilisateur.isCodeLocked();
-
-    // THEN
-    expect(result).toEqual(false);
-  });
   it('isCodeLocked : true because date in futur', () => {
     // GIVEN
     const utilisateur = new Utilisateur({});
@@ -140,17 +129,6 @@ describe('Objet Utilisateur', () => {
     // GIVEN
     const utilisateur = new Utilisateur({});
     utilisateur.prevent_login_before = new Date(new Date().getTime() - 10000);
-
-    // WHEN
-    const result = utilisateur.isLoginLocked();
-
-    // THEN
-    expect(result).toEqual(false);
-  });
-  it('isLoginLocked : false cause no date', () => {
-    // GIVEN
-    const utilisateur = new Utilisateur({});
-    utilisateur.prevent_login_before = undefined;
 
     // WHEN
     const result = utilisateur.isLoginLocked();
