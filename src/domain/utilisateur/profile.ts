@@ -3,4 +3,6 @@ export type Profile = {
   prenom?: string;
   email?: string;
   code_postal?: string;
+  passwordHash?: string;
+  passwordSalt?: string;
 };

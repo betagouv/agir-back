@@ -753,16 +753,20 @@ describe('/utilisateurs (API test)', () => {
         nom: 'THE NOM',
         prenom: 'THE PRENOM',
         code_postal: '75008',
+        mot_de_passe: '1234',
       });
     // WHEN
-    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
+    const dbUser = new Utilisateur(
+      await TestUtil.prisma.utilisateur.findUnique({
+        where: { id: 'utilisateur-id' },
+      }),
+    );
     // THEN
     expect(response.status).toBe(200);
     expect(dbUser.nom).toEqual('THE NOM');
     expect(dbUser.prenom).toEqual('THE PRENOM');
     expect(dbUser.email).toEqual('george@paris.com');
     expect(dbUser.code_postal).toEqual('75008');
+    expect(dbUser.checkPasswordOK('1234')).toEqual(true);
   });
 });

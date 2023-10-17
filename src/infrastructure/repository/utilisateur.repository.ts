@@ -69,6 +69,8 @@ export class UtilisateurRepository {
         prenom: profile.prenom,
         email: profile.email,
         code_postal: profile.code_postal,
+        passwordHash: profile.passwordHash,
+        passwordSalt: profile.passwordSalt,
       },
     });
   }

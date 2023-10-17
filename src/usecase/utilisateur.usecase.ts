@@ -87,7 +87,17 @@ export class UtilisateurUsecase {
     utilisateurId: string,
     profile: UtilisateurProfileAPI,
   ) {
-    return this.utilisateurRespository.updateProfile(utilisateurId, profile);
+    const fakeUser = new Utilisateur({});
+    fakeUser.setPassword(profile.mot_de_passe);
+
+    return this.utilisateurRespository.updateProfile(utilisateurId, {
+      code_postal: profile.code_postal,
+      email: profile.email,
+      nom: profile.nom,
+      prenom: profile.prenom,
+      passwordHash: fakeUser.passwordHash,
+      passwordSalt: fakeUser.passwordSalt,
+    });
   }
 
   async evaluateOnboardingData(

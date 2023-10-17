@@ -182,6 +182,7 @@ export class UtilisateurController {
       nom: body.nom,
       prenom: body.prenom,
       code_postal: body.code_postal,
+      mot_de_passe: body.mot_de_passe,
     });
   }
 }
