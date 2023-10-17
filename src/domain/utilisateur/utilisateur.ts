@@ -20,6 +20,10 @@ export class Utilisateur {
   badges: Badge[];
   failed_login_count: number;
   prevent_login_before: Date;
+  code: string;
+  active_account: boolean;
+  failed_checkcode_count: number;
+  prevent_checkcode_before: Date;
 
   private MAX_LOGIN_ATTEMPT = 3;
   private BLOCKED_DURATION_MIN = 5;
@@ -45,6 +49,9 @@ export class Utilisateur {
     });
   }
 
+  public setNew6DigitCode() {
+    this.code = Math.floor(100000 + Math.random() * 900000).toString();
+  }
   public checkPasswordOK(password: string) {
     const ok =
       this.passwordHash ===

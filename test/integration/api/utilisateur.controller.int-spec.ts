@@ -475,6 +475,7 @@ describe('/utilisateurs (API test)', () => {
     expect(user.passwordSalt.length).toBeGreaterThan(20);
     expect(user.onboardingData).toStrictEqual(ONBOARDING_1_2_3_4_DATA);
     expect(user.onboardingResult).toStrictEqual(ONBOARDING_RES_1234);
+    expect(user.code).toHaveLength(6);
   });
   it('POST /utilisateurs - bad password', async () => {
     // WHEN

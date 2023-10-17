@@ -121,6 +121,7 @@ export class UtilisateurRepository {
           passwordHash: utilisateur.passwordHash,
           passwordSalt: utilisateur.passwordSalt,
           email: utilisateur.email,
+          code: utilisateur.code,
           onboardingData: { ...utilisateur.onboardingData },
           onboardingResult: { ...utilisateur.onboardingResult },
           quizzLevels: utilisateur.quizzProfile.getData(),

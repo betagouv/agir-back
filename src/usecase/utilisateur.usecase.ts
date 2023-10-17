@@ -156,6 +156,8 @@ export class UtilisateurUsecase {
       badges: undefined,
     });
 
+    utilisateurToCreate.setNew6DigitCode();
+
     utilisateurToCreate.setPassword(utilisateurInput.mot_de_passe);
 
     const newUtilisateur = await this.utilisateurRespository.createUtilisateur(
