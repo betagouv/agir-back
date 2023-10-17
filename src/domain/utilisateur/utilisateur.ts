@@ -40,7 +40,7 @@ export class Utilisateur {
   }
 
   public getLockedUntilString(): string {
-    return `${this.prevent_login_before.getHours()}h ${this.prevent_login_before.getMinutes()}min`;
+    return `${this.prevent_login_before.getUTCHours()}h ${this.prevent_login_before.getUTCMinutes()}min`;
   }
 
   public checkPasswordOK(password: string) {
