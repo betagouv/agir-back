@@ -14,6 +14,7 @@ import { InteractionType } from '../../../src/domain/interaction/interactionType
 import { Interaction } from '../../../src/domain/interaction/interaction';
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 import { Thematique } from '../../../src/domain/thematique';
+import { EmailSender } from '../email/emailSender';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
 const aides = require('../../../test_data/interactions/_aides');
 const suivis = require('../../../test_data/interactions/_suivis');
@@ -53,6 +54,7 @@ export class TestDataController {
     private suiviRepository: SuiviRepository,
     private questionNGCRepository: QuestionNGCRepository,
     private interactionDefinitionRepository: InteractionDefinitionRepository,
+    private emailSender: EmailSender,
   ) {}
 
   @Get('testdata/:id')

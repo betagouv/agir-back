@@ -35,6 +35,7 @@ import { NGCCalculator } from './infrastructure/ngc/NGCCalculator';
 import { QuestionNGCUsecase } from './usecase/questionNGC.usecase';
 import { QuestionNGCRepository } from './infrastructure/repository/questionNGC.repository';
 import { QuestionsNGCController } from './infrastructure/api/questionNGC.controller';
+import { EmailSender } from './infrastructure/email/emailSender';
 
 @Module({
   imports: [
@@ -78,6 +79,7 @@ import { QuestionsNGCController } from './infrastructure/api/questionNGC.control
     SuiviUsecase,
     QuestionNGCUsecase,
     InteractionsDefinitionUsecase,
+    EmailSender,
   ],
 })
 export class AppModule {}

@@ -518,6 +518,7 @@ describe('/utilisateurs (API test)', () => {
   });
   it('POST /utilisateurs/email/valider?code=XXXXXX - validate proper code OK, active user as outcome', async () => {
     // GIVEN
+    await TestUtil.create('interactionDefinition');
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
@@ -537,7 +538,11 @@ describe('/utilisateurs (API test)', () => {
     const userDB = await TestUtil.prisma.utilisateur.findFirst({
       where: { nom: 'WW' },
     });
+    const userDB_interactions = await TestUtil.prisma.interaction.findMany();
+
     expect(userDB.active_account).toEqual(true);
+    expect(userDB_interactions).toHaveLength(1);
+    expect(userDB_interactions[0].utilisateurId).toEqual(userDB.id);
   });
   it('POST /utilisateurs/email/valider?code=XXXXXX - validate 2 times , already active account error', async () => {
     // GIVEN

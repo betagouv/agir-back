@@ -21,6 +21,7 @@ import { OnboardingDataAPI } from '../../src/infrastructure/api/types/utilisateu
 import { OnboardingDataImpactAPI } from '../infrastructure/api/types/utilisateur/onboardingDataImpactAPI';
 import { OnboardingResult } from '../../src/domain/utilisateur/onboardingResult';
 import { OidcService } from '../../src/infrastructure/auth/oidc.service';
+import { EmailSender } from '../../src/infrastructure/email/emailSender';
 
 export type Phrase = {
   phrase: string;
@@ -42,6 +43,7 @@ export class UtilisateurUsecase {
     private questionNGCRepository: QuestionNGCRepository,
     private oIDCStateRepository: OIDCStateRepository,
     private oidcService: OidcService,
+    private emailSender: EmailSender,
   ) {}
 
   async loginUtilisateur(
@@ -103,6 +105,7 @@ export class UtilisateurUsecase {
       utilisateur,
     );
     if (code_ok) {
+      await this.initUtilisateurInteractionSet(utilisateur.id);
       return {
         utilisateur: utilisateur,
         token: await this.oidcService.createNewInnerAppToken(utilisateur.id),
@@ -207,7 +210,9 @@ export class UtilisateurUsecase {
     const newUtilisateur = await this.utilisateurRespository.createUtilisateur(
       utilisateurToCreate,
     );
-    await this.initUtilisateurInteractionSet(newUtilisateur.id);
+
+    this.sendValidationCode(utilisateurToCreate);
+
     return newUtilisateur;
   }
 
@@ -351,6 +356,20 @@ export class UtilisateurUsecase {
         denum: 10,
       };
     }
+  }
+
+  private async sendValidationCode(utilisateur: Utilisateur) {
+    this.emailSender.sendEmail(
+      utilisateur.email,
+      utilisateur.prenom,
+      `Bonjour ${utilisateur.prenom},
+    Voici votre code pour valider votre inscription à l'application Agir !
+    
+    code : ${utilisateur.code}
+    
+    A très vite !`,
+      `Votre code d'inscription Agir`,
+    );
   }
 
   private listeThematiquesToText(list: Thematique[]) {
