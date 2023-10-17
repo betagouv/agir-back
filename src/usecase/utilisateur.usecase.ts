@@ -223,13 +223,11 @@ export class UtilisateurUsecase {
         onboardingResult.listThematiquesAvecImpactSuperieurOuEgalA(
           Impact.eleve,
         );
-      const fraction = this.getFractionFromPourcent(pourcent);
       let thematique_texte = this.listeThematiquesToText(listThematiques);
-      return `<strong>Comme ${fraction.num} utilisateur${
-        fraction.num > 1 ? 's' : ''
-      } sur ${
-        fraction.denum
-      }, vos impacts sont forts ou très forts dans ${N3} thématiques.</strong> Pour vous il s'agit des thématiques <strong>${thematique_texte}</strong>.`;
+
+      return this.buildStartPhrase(pourcent).concat(
+        `, vos impacts sont forts ou très forts dans ${N3} thématiques.</strong> Pour vous il s'agit des thématiques <strong>${thematique_texte}</strong>.`,
+      );
     }
 
     const nb_users_N3_sup_1 =
@@ -245,14 +243,9 @@ export class UtilisateurUsecase {
         onboardingResult.listThematiquesAvecImpactSuperieurOuEgalA(
           Impact.eleve,
         );
-      const fraction = this.getFractionFromPourcent(pourcent);
-      return `<strong>Comme ${fraction.num} utilisateur${
-        fraction.num > 1 ? 's' : ''
-      } sur ${
-        fraction.denum
-      }, vos impacts sont forts ou très forts dans au moins une thématique</strong>. Pour vous il s'agit de la thématique <strong>${
-        listThematiques[0]
-      }</strong>.`;
+      return this.buildStartPhrase(pourcent).concat(
+        `, vos impacts sont forts ou très forts dans au moins une thématique</strong>. Pour vous il s'agit de la thématique <strong>${listThematiques[0]}</strong>.`,
+      );
     }
 
     const pourcent = this.getPourcent(
@@ -260,28 +253,41 @@ export class UtilisateurUsecase {
       nombre_user_total,
     );
     if (isNaN(pourcent)) return null;
-    const fraction = this.getFractionFromPourcent(pourcent);
-    return `<strong>Comme ${fraction.num} utilisateur${
-      fraction.num > 1 ? 's' : ''
-    } sur ${
-      fraction.denum
-    }, vos impacts sont faibles ou très faibles dans l'ensemble des thématiques</strong>. Vous faîtes partie des utilisateurs les plus sobres, bravo !`;
+    return this.buildStartPhrase(pourcent).concat(
+      `, vos impacts sont faibles ou très faibles dans l'ensemble des thématiques</strong>. Vous faîtes partie des utilisateurs les plus sobres, bravo !`,
+    );
+  }
+
+  private buildStartPhrase(pourcent: number): string {
+    const fraction = UtilisateurUsecase.getFractionFromPourcent(pourcent);
+    if (fraction.num === fraction.denum) {
+      return '<strong>Comme la majorité des utilisateurs';
+    } else {
+      return `<strong>Comme ${fraction.num} utilisateur${
+        fraction.num > 1 ? 's' : ''
+      } sur ${fraction.denum}`;
+    }
   }
 
   private getPourcent(a, b) {
     return Math.floor((a / b) * 100);
   }
 
-  private getFractionFromPourcent(pourcent: number): {
+  public static getFractionFromPourcent(pourcent: number): {
     num: number;
     denum: number;
   } {
     const pourcent_arrondi_5 = Math.floor(pourcent / 5) * 5;
 
-    if (pourcent_arrondi_5 <= 50) {
+    if (pourcent_arrondi_5 < 55) {
       return {
         num: 1,
         denum: Math.floor(100 / pourcent_arrondi_5),
+      };
+    } else if (pourcent_arrondi_5 === 55) {
+      return {
+        num: 1,
+        denum: 2,
       };
     } else {
       return {
