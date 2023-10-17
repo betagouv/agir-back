@@ -42,6 +42,7 @@ export class Utilisateur {
   public getLockedUntilString(): string {
     return `${this.prevent_login_before.getHours()}h ${this.prevent_login_before.getMinutes()}min`;
   }
+
   public checkPasswordOK(password: string) {
     const ok =
       this.passwordHash ===
@@ -54,6 +55,12 @@ export class Utilisateur {
       this.failLogin();
     }
     return ok;
+  }
+
+  public static checkEmailFormat(email: string) {
+    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+      throw new Error(`Format de l'adresse électronique ${email} incorrect`);
+    }
   }
 
   public static checkPasswordFormat(password: string) {

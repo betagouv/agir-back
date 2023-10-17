@@ -129,7 +129,7 @@ export class UtilisateurRepository {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
           throw new BadRequestException(
-            `Adresse email ${utilisateur.email} déjà existante`,
+            `Adresse électronique ${utilisateur.email} déjà existante`,
           );
         }
       }

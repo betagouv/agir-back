@@ -459,7 +459,7 @@ describe('/utilisateurs (API test)', () => {
       nom: 'WW',
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHA',
-      email: 'mon mail',
+      email: 'monmail@truc.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
     // THEN
@@ -470,7 +470,7 @@ describe('/utilisateurs (API test)', () => {
     expect(response.headers['location']).toContain(user.id);
     expect(user.nom).toEqual('WW');
     expect(user.prenom).toEqual('Wojtek');
-    expect(user.email).toEqual('mon mail');
+    expect(user.email).toEqual('monmail@truc.com');
     expect(user.passwordHash.length).toBeGreaterThan(20);
     expect(user.passwordSalt.length).toBeGreaterThan(20);
     expect(user.onboardingData).toStrictEqual(ONBOARDING_1_2_3_4_DATA);
@@ -482,7 +482,7 @@ describe('/utilisateurs (API test)', () => {
       nom: 'WW',
       prenom: 'Wojtek',
       mot_de_passe: 'to use',
-      email: 'mon mail',
+      email: 'monmail@truc.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
     // THEN
@@ -689,7 +689,24 @@ describe('/utilisateurs (API test)', () => {
     // THEN
     expect(response.status).toBe(400);
     expect(response.body.message).toEqual(
-      'Adresse email yo@truc.com déjà existante',
+      'Adresse électronique yo@truc.com déjà existante',
+    );
+  });
+  it('POST /utilisateurs - email au mauvais format', async () => {
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs')
+      .send({
+        nom: 'WW',
+        prenom: 'Wojtek',
+        mot_de_passe: '#1234567890HAHA',
+        email: 'yotruc.com',
+        onboardingData: { deladata: 'une valeur' },
+      });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      `Format de l'adresse électronique yotruc.com incorrect`,
     );
   });
   it('POST /utilisateurs - error when bad value in onboarding data', async () => {

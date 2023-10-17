@@ -171,6 +171,7 @@ export class UtilisateurUsecase {
     }
 
     Utilisateur.checkPasswordFormat(utilisateurInput.mot_de_passe);
+    Utilisateur.checkEmailFormat(utilisateurInput.email);
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
