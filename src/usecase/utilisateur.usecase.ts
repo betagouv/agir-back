@@ -27,6 +27,8 @@ export type Phrase = {
   pourcent: number;
 };
 
+const MAUVAIS_MDP_ERROR = `Mauvaise adresse électronique ou mauvais mot de passe`;
+
 @Injectable()
 export class UtilisateurUsecase {
   constructor(
@@ -48,24 +50,30 @@ export class UtilisateurUsecase {
     const utilisateur =
       await this.utilisateurRespository.findUtilisateurByEmail(email);
     if (!utilisateur) {
-      throw new Error('Mauvais email ou mauvais mot de passe');
+      throw new Error(MAUVAIS_MDP_ERROR);
     }
     if (utilisateur.isLoginLocked()) {
       throw new Error(
         `Trop d'essais successifs, compte bloqué jusqu'à ${utilisateur.getLockedUntilString()}`,
       );
     }
-    if (utilisateur.isPasswordOK(password)) {
+
+    const password_ok = utilisateur.checkPasswordOK(password);
+    await this.utilisateurRespository.updateUtilisateurLoginSecurity(
+      utilisateur,
+    );
+    if (password_ok) {
       return {
         utilisateur: utilisateur,
         token: await this.oidcService.createNewInnerAppToken(utilisateur.id),
       };
     }
-    utilisateur.failedLogin();
-    await this.utilisateurRespository.updateUtilisateurLoginSecurity(
-      utilisateur,
-    );
-    throw new Error('Mauvais email ou mauvais mot de passe');
+    if (utilisateur.isLoginLocked()) {
+      throw new Error(
+        `Trop d'essais successifs, compte bloqué jusqu'à ${utilisateur.getLockedUntilString()}`,
+      );
+    }
+    throw new Error(MAUVAIS_MDP_ERROR);
   }
   async findUtilisateursByNom(nom: string): Promise<Utilisateur[]> {
     return this.utilisateurRespository.findUtilisateursByNom(nom);
@@ -99,14 +107,9 @@ export class UtilisateurUsecase {
     };
 
     // Nk = Nombre de thématiques avec un impact supérieur ou égal à k
-    const [N2, N3] = [
-      onboardingResult.nombreThematiquesAvecImpactSuperieurOuEgalA(
-        Impact.faible,
-      ),
-      onboardingResult.nombreThematiquesAvecImpactSuperieurOuEgalA(
-        Impact.eleve,
-      ),
-    ];
+    const N3 = onboardingResult.nombreThematiquesAvecImpactSuperieurOuEgalA(
+      Impact.eleve,
+    );
 
     const nombre_user_total =
       await this.utilisateurRespository.nombreTotalUtilisateurs();
@@ -116,18 +119,6 @@ export class UtilisateurUsecase {
       onboardingResult,
       nombre_user_total,
     );
-    /*
-    final_result['phrase_2'] = await this.fabriquePhrase2(
-      N2,
-      onboardingResult,
-      nombre_user_total,
-    );
-    final_result['phrase_3'] = await this.fabriquePhrase3(
-      N3,
-      onboardingResult,
-      nombre_user_total,
-    );
-    */
 
     return final_result;
   }
@@ -275,106 +266,10 @@ export class UtilisateurUsecase {
       fraction.denum
     }, vos impacts sont faibles ou très faibles dans l'ensemble des thématiques</strong>. Vous faîtes partie des utilisateurs les plus sobres, bravo !`;
   }
-  /*
-  private async fabriquePhrase2(
-    N2: number,
-    onboardingResult: OnboardingResult,
-    nombre_user_total: number,
-  ): Promise<Phrase> {
-    if (N2 === 0) return null;
-
-    const thematique_No1 = onboardingResult.getThematiqueNo1SuperieureA(
-      Impact.faible,
-    );
-
-    const nombre_user_inferieur_sur_th_No1 =
-      await this.utilisateurRespository.countUsersWithLessImpactOnThematique(
-        onboardingResult.ventilation_par_thematiques[thematique_No1],
-        thematique_No1,
-      );
-
-    const pourcent = this.getPourcent(
-      nombre_user_inferieur_sur_th_No1,
-      nombre_user_total,
-    );
-
-    let phrase = `des utilisateurs parviennent à avoir moins d'impacts environnement en matière de ${thematique_No1}.`;
-    if (pourcent <= 30) {
-      phrase = phrase.concat(
-        ' Pas facile, mais les solutions ne manquent pas.',
-      );
-    }
-    return {
-      pourcent: pourcent,
-      phrase: phrase,
-    };
-  }
-  private async fabriquePhrase3(
-    N3: number,
-    onboardingResult: OnboardingResult,
-    nombre_user_total: number,
-  ): Promise<Phrase> {
-    if (N3 === 4) return null;
-
-    const thematiques_moins_de_3 =
-      onboardingResult.listThematiquesAvecImpactInferieurA(Impact.eleve);
-
-    const impacts_par_thematiques = thematiques_moins_de_3.map((element) =>
-      onboardingResult.getImpact(element),
-    );
-
-    const nombre_user_moins_bon_thematiques =
-      await this.utilisateurRespository.countUsersWithMoreImpactOnThematiques(
-        impacts_par_thematiques,
-        thematiques_moins_de_3,
-      );
-    const pourcent = this.getPourcent(
-      nombre_user_moins_bon_thematiques,
-      nombre_user_total,
-    );
-
-    if (thematiques_moins_de_3.length === 1) {
-      // N3 === 3
-      return {
-        pourcent: pourcent,
-        phrase: `des utilisateurs ont des impacts supérieurs au vôtre en matière de ${thematiques_moins_de_3[0]}. Vous avez des bonnes pratiques à partager !`,
-      };
-    }
-    if (thematiques_moins_de_3.length === 2) {
-      // N3 === 2
-      return {
-        pourcent: pourcent,
-        phrase: `des utilisateurs ont des impacts supérieurs au vôtre en matière de ${thematiques_moins_de_3[0]} et de ${thematiques_moins_de_3[1]}. Vous avez des bonnes pratiques à partager !`,
-      };
-    }
-    if (thematiques_moins_de_3.length === 3) {
-      // N3 === 1
-      return {
-        pourcent: pourcent,
-        phrase: `des utilisateurs ont des impacts supérieurs au vôtre en matière de ${thematiques_moins_de_3[0]}, ${thematiques_moins_de_3[1]} et de ${thematiques_moins_de_3[2]}. Vous avez des bonnes pratiques à partager !`,
-      };
-    }
-    if (thematiques_moins_de_3.length === 4) {
-      // N3 === 0
-      return {
-        pourcent: pourcent,
-        phrase: `des utilisateurs ont des impacts supérieurs au vôtre en matière de ${thematiques_moins_de_3[0]}, ${thematiques_moins_de_3[1]}, ${thematiques_moins_de_3[2]} et de ${thematiques_moins_de_3[3]}. Vous avez des bonnes pratiques à partager !`,
-      };
-    }
-  }
-  */
 
   private getPourcent(a, b) {
     return Math.floor((a / b) * 100);
   }
-
-  /*
-
-  private gcd(a, b) {
-    if (b < 0.0000001) return a;
-    return this.gcd(b, Math.floor(a % b));
-  }
-  */
 
   private getFractionFromPourcent(pourcent: number): {
     num: number;
@@ -393,21 +288,6 @@ export class UtilisateurUsecase {
         denum: 10,
       };
     }
-    /*
-    const fraction = (Math.floor(pourcent / 5) * 5) / 100;
-    if (fraction) var len = fraction.toString().length - 2;
-
-    var denominator = Math.pow(10, len);
-    var numerator = fraction * denominator;
-
-    var divisor = this.gcd(numerator, denominator);
-    numerator /= divisor;
-    denominator /= divisor;
-    numerator = Math.floor(numerator);
-    denominator = Math.floor(denominator);
-
-    return { num: numerator, denum: denominator };
-    */
   }
 
   private listeThematiquesToText(list: Thematique[]) {

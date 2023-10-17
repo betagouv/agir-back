@@ -233,10 +233,12 @@ export class UtilisateurRepository {
         onboardingData: onboardingData,
         onboardingResult: onboardingResult,
         points: user.points,
+        failed_login_count: user.failed_login_count,
+        prevent_login_before: user.prevent_login_before,
         quizzProfile: new UserQuizzProfile(user.quizzLevels as any),
         created_at: user.created_at,
         badges: user['badges'],
-      });
+      } as Utilisateur);
     }
     return null;
   }

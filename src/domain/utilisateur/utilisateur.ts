@@ -21,23 +21,11 @@ export class Utilisateur {
   failed_login_count: number;
   prevent_login_before: Date;
 
+  private MAX_LOGIN_ATTEMPT = 3;
+  private BLOCKED_DURATION_MIN = 5;
+
   constructor(obj: object) {
     Object.assign(this, obj);
-  }
-
-  public failedLogin() {
-    if (!this.failed_login_count) {
-      this.failed_login_count = 0;
-    }
-    this.failed_login_count += 1;
-    if (this.failed_login_count > 3) {
-      this.prevent_login_before = this.prevent_login_before
-        ? this.prevent_login_before
-        : new Date();
-      this.prevent_login_before.setMinutes(
-        this.prevent_login_before.getMinutes() + 5,
-      );
-    }
   }
 
   public setPassword(password: string) {
@@ -48,22 +36,24 @@ export class Utilisateur {
   }
 
   public isLoginLocked(): boolean {
-    return (
-      !!this.prevent_login_before &&
-      new Date().getTime() < this.prevent_login_before.getTime()
-    );
+    return Date.now() < this.getPreventLoginBefore().getTime();
   }
 
   public getLockedUntilString(): string {
     return `${this.prevent_login_before.getHours()}h ${this.prevent_login_before.getMinutes()}min`;
   }
-  public isPasswordOK(password: string) {
-    return (
+  public checkPasswordOK(password: string) {
+    const ok =
       this.passwordHash ===
       crypto
         .pbkdf2Sync(password, this.passwordSalt, 1000, 64, `sha512`)
-        .toString(`hex`)
-    );
+        .toString(`hex`);
+    if (ok) {
+      this.initLoginState();
+    } else {
+      this.failLogin();
+    }
+    return ok;
   }
 
   public static checkPasswordFormat(password: string) {
@@ -80,6 +70,42 @@ export class Utilisateur {
     }
   }
 
+  public incrementNextAllowedLoginTime() {
+    if (this.getPreventLoginBefore().getTime() <= Date.now()) {
+      this.prevent_login_before = new Date();
+    }
+    this.prevent_login_before.setMinutes(
+      this.prevent_login_before.getMinutes() + this.BLOCKED_DURATION_MIN,
+    );
+  }
+
+  private failLogin() {
+    this.incrementFailedLoginCount();
+    if (this.failed_login_count > this.MAX_LOGIN_ATTEMPT) {
+      this.incrementNextAllowedLoginTime();
+    }
+  }
+
+  private initLoginState() {
+    this.failed_login_count = 0;
+    this.prevent_login_before = new Date();
+  }
+
+  private getFailedLoginCount() {
+    if (!this.failed_login_count) {
+      this.failed_login_count = 0;
+    }
+    return this.failed_login_count;
+  }
+  private incrementFailedLoginCount() {
+    this.failed_login_count = this.getFailedLoginCount() + 1;
+  }
+  private getPreventLoginBefore() {
+    if (!this.prevent_login_before) {
+      this.prevent_login_before = new Date();
+    }
+    return this.prevent_login_before;
+  }
   private static auMoinsUnCaractereSpecial(password: string | null): boolean {
     const regexp = new RegExp(
       /([(&~»#)‘\-_`{[|`_\\^@)\]=}+%*$£¨!§/:;.?¿'"!,§éèêëàâä»])+/,

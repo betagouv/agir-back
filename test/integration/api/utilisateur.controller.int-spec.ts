@@ -214,7 +214,7 @@ describe('/utilisateurs (API test)', () => {
   });
   it('GET /utilisateurs/id - when present', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create('utilisateur', { failed_login_count: 2 });
     await TestUtil.create('badge');
     const response = await TestUtil.getServer().get(
       '/utilisateurs/utilisateur-id',
@@ -241,6 +241,8 @@ describe('/utilisateurs (API test)', () => {
     });
     expect(response.body.badges[0].titre).toEqual('titre');
     expect(response.body.created_at).toEqual(dbUser.created_at.toISOString());
+    expect(response.body.failed_login_count).toEqual(undefined);
+    expect(response.body.prevent_login_before).toEqual(undefined);
   });
   it('GET /utilisateurs/id - list 1 badge', async () => {
     // GIVEN
@@ -344,9 +346,89 @@ describe('/utilisateurs (API test)', () => {
     }); // THEN
     expect(response.status).toBe(400);
     expect(response.body.message).toEqual(
-      'Mauvais email ou mauvais mot de passe',
+      'Mauvaise adresse électronique ou mauvais mot de passe',
     );
     expect(dbUser.failed_login_count).toEqual(1);
+  });
+  it('POST /utilisateurs/login - bad password twice, failed count = 2', async () => {
+    // GIVEN
+    const utilisateur = new Utilisateur({});
+    utilisateur.setPassword('#1234567890HAHA');
+
+    await TestUtil.create('utilisateur', {
+      passwordHash: utilisateur.passwordHash,
+      passwordSalt: utilisateur.passwordSalt,
+    });
+
+    // WHEN
+    await TestUtil.getServer().post('/utilisateurs/login').send({
+      mot_de_passe: '#bad password',
+      email: 'yo@truc.com',
+    });
+    await TestUtil.getServer().post('/utilisateurs/login').send({
+      mot_de_passe: '#bad password',
+      email: 'yo@truc.com',
+    });
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/login')
+      .send({
+        mot_de_passe: '#bad password',
+        email: 'yo@truc.com',
+      });
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    }); // THEN
+    expect(dbUser.failed_login_count).toEqual(3);
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      'Mauvaise adresse électronique ou mauvais mot de passe',
+    );
+  });
+  it('POST /utilisateurs/login - bad password 4 times, blocked account', async () => {
+    // GIVEN
+    const utilisateur = new Utilisateur({});
+    utilisateur.setPassword('#1234567890HAHA');
+
+    await TestUtil.create('utilisateur', {
+      passwordHash: utilisateur.passwordHash,
+      passwordSalt: utilisateur.passwordSalt,
+    });
+
+    // WHEN
+    await TestUtil.getServer().post('/utilisateurs/login').send({
+      mot_de_passe: '#bad password',
+      email: 'yo@truc.com',
+    });
+    await TestUtil.getServer().post('/utilisateurs/login').send({
+      mot_de_passe: '#bad password',
+      email: 'yo@truc.com',
+    });
+    await TestUtil.getServer().post('/utilisateurs/login').send({
+      mot_de_passe: '#bad password',
+      email: 'yo@truc.com',
+    });
+    await TestUtil.getServer().post('/utilisateurs/login').send({
+      mot_de_passe: '#bad password',
+      email: 'yo@truc.com',
+    });
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/login')
+      .send({
+        mot_de_passe: '#bad password',
+        email: 'yo@truc.com',
+      });
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+
+    // THEN
+    expect(response.body.message).toContain(
+      `Trop d'essais successifs, compte bloqué jusqu'à`,
+    );
+    expect(dbUser.failed_login_count).toEqual(4); // le compteur reste bloqué sur 4
+    expect(dbUser.prevent_login_before.getTime()).toBeGreaterThan(
+      new Date().getTime(),
+    );
   });
   it('POST /utilisateurs/login - bad email', async () => {
     // GIVEN
@@ -368,7 +450,7 @@ describe('/utilisateurs (API test)', () => {
     // THEN
     expect(response.status).toBe(400);
     expect(response.body.message).toEqual(
-      'Mauvais email ou mauvais mot de passe',
+      'Mauvaise adresse électronique ou mauvais mot de passe',
     );
   });
   it('POST /utilisateurs - create new utilisateur with given all data', async () => {
@@ -589,212 +671,7 @@ describe('/utilisateurs (API test)', () => {
       `<strong>Comme 1 utilisateur sur 3, vos impacts sont faibles ou très faibles dans l'ensemble des thématiques</strong>. Vous faîtes partie des utilisateurs les plus sobres, bravo !`,
     );
   });
-  it.skip('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_2 v1 (null)', async () => {
-    // WHEN
-    await TestUtil.create('utilisateur', { id: '1', email: '1' });
-    await TestUtil.create('utilisateur', { id: '2', email: '2' });
-    await TestUtil.create('utilisateur', { id: '3', email: '3' });
-    const response = await TestUtil.getServer()
-      .post('/utilisateurs/evaluate-onboarding')
-      .send(ONBOARDING_1_1_1_1_DATA);
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body.phrase_2).toEqual(null);
-  });
-  it.skip('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_2 v2', async () => {
-    // WHEN
-    await TestUtil.create('utilisateur', { id: '1', email: '1' });
-    await TestUtil.create('utilisateur', { id: '2', email: '2' });
-    await TestUtil.create('utilisateur', {
-      id: '3',
-      email: '3',
-      onboardingResult: ONBOARDING_RES_1111,
-    });
-    await TestUtil.create('utilisateur', {
-      id: '4',
-      email: '4',
-      onboardingResult: ONBOARDING_RES_1111,
-    });
-    const response = await TestUtil.getServer()
-      .post('/utilisateurs/evaluate-onboarding')
-      .send(ONBOARDING_1_1_2_2_DATA);
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body.phrase_2).toEqual({
-      pourcent: 50,
-      phrase: `des utilisateurs parviennent à avoir moins d'impacts environnement en matière de transports.`,
-    });
-  });
-  it.skip('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_2 v2.bis', async () => {
-    // WHEN
-    await TestUtil.create('utilisateur', { id: '1', email: '1' });
-    await TestUtil.create('utilisateur', { id: '2', email: '2' });
-    await TestUtil.create('utilisateur', { id: '3', email: '3' });
-    await TestUtil.create('utilisateur', {
-      id: '4',
-      email: '4',
-      onboardingResult: ONBOARDING_RES_1111,
-    });
-    const response = await TestUtil.getServer()
-      .post('/utilisateurs/evaluate-onboarding')
-      .send(ONBOARDING_1_1_2_2_DATA);
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body.phrase_2).toEqual({
-      pourcent: 25,
-      phrase: `des utilisateurs parviennent à avoir moins d'impacts environnement en matière de transports. Pas facile, mais les solutions ne manquent pas.`,
-    });
-  });
-  it.skip('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_3 v1 (null)', async () => {
-    // WHEN
-    await TestUtil.create('utilisateur', { id: '1', email: '1' });
-    await TestUtil.create('utilisateur', { id: '2', email: '2' });
-    await TestUtil.create('utilisateur', { id: '3', email: '3' });
-    const response = await TestUtil.getServer()
-      .post('/utilisateurs/evaluate-onboarding')
-      .send(ONBOARDING_3_3_4_4_DATA);
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body.phrase_3).toEqual(null);
-  });
-  it.skip('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_3 v2 - N3= 3', async () => {
-    // WHEN
-    await TestUtil.create('utilisateur', {
-      id: '1',
-      email: '1',
-      onboardingResult: ONBOARDING_RES_4444,
-    });
-    await TestUtil.create('utilisateur', {
-      id: '2',
-      email: '2',
-      onboardingResult: ONBOARDING_RES_4444,
-    });
-    await TestUtil.create('utilisateur', {
-      id: '3',
-      email: '3',
-      onboardingResult: ONBOARDING_RES_4444,
-    });
-    await TestUtil.create('utilisateur', {
-      id: '4',
-      email: '4',
-      onboardingResult: ONBOARDING_RES_4444,
-    });
-    await TestUtil.create('utilisateur', {
-      id: '5',
-      email: '5',
-      onboardingResult: ONBOARDING_RES_1111,
-    });
-    const response = await TestUtil.getServer()
-      .post('/utilisateurs/evaluate-onboarding')
-      .send(ONBOARDING_1_3_4_4_DATA);
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body.phrase_3).toEqual({
-      pourcent: 80,
-      phrase: `des utilisateurs ont des impacts supérieurs au vôtre en matière de transports. Vous avez des bonnes pratiques à partager !`,
-    });
-  });
-  it.skip('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_3 v3 - N3=2', async () => {
-    // WHEN
-    await TestUtil.create('utilisateur', {
-      id: '1',
-      email: '1',
-      onboardingResult: ONBOARDING_RES_4444,
-    });
-    await TestUtil.create('utilisateur', {
-      id: '2',
-      email: '2',
-      onboardingResult: ONBOARDING_RES_4444,
-    });
-    await TestUtil.create('utilisateur', {
-      id: '3',
-      email: '3',
-      onboardingResult: ONBOARDING_RES_4444,
-    });
-    await TestUtil.create('utilisateur', {
-      id: '4',
-      email: '4',
-      onboardingResult: ONBOARDING_RES_1111,
-    });
-    await TestUtil.create('utilisateur', {
-      id: '5',
-      email: '5',
-      onboardingResult: ONBOARDING_RES_1111,
-    });
-    const response = await TestUtil.getServer()
-      .post('/utilisateurs/evaluate-onboarding')
-      .send(ONBOARDING_1_2_3_4_DATA);
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body.phrase_3).toEqual({
-      pourcent: 60,
-      phrase: `des utilisateurs ont des impacts supérieurs au vôtre en matière de consommation et de logement. Vous avez des bonnes pratiques à partager !`,
-    });
-  });
-  it.skip('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_3 v3 - N3=1', async () => {
-    // WHEN
-    await TestUtil.create('utilisateur', {
-      id: '1',
-      email: '1',
-      onboardingResult: ONBOARDING_RES_4444,
-    });
-    await TestUtil.create('utilisateur', {
-      id: '2',
-      email: '2',
-      onboardingResult: ONBOARDING_RES_4444,
-    });
-    await TestUtil.create('utilisateur', {
-      id: '3',
-      email: '3',
-      onboardingResult: ONBOARDING_RES_4444,
-    });
-    await TestUtil.create('utilisateur', {
-      id: '5',
-      email: '5',
-      onboardingResult: ONBOARDING_RES_1111,
-    });
-    const response = await TestUtil.getServer()
-      .post('/utilisateurs/evaluate-onboarding')
-      .send(ONBOARDING_1_1_2_3_DATA);
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body.phrase_3).toEqual({
-      pourcent: 75,
-      phrase: `des utilisateurs ont des impacts supérieurs au vôtre en matière de alimentation, consommation et de logement. Vous avez des bonnes pratiques à partager !`,
-    });
-  });
-  it.skip('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_3 v3 - N3=0', async () => {
-    // WHEN
-    await TestUtil.create('utilisateur', {
-      id: '1',
-      email: '1',
-      onboardingResult: ONBOARDING_RES_4444,
-    });
-    await TestUtil.create('utilisateur', {
-      id: '2',
-      email: '2',
-      onboardingResult: ONBOARDING_RES_1111,
-    });
-    await TestUtil.create('utilisateur', {
-      id: '3',
-      email: '3',
-      onboardingResult: ONBOARDING_RES_1111,
-    });
-    await TestUtil.create('utilisateur', {
-      id: '5',
-      email: '5',
-      onboardingResult: ONBOARDING_RES_1111,
-    });
-    const response = await TestUtil.getServer()
-      .post('/utilisateurs/evaluate-onboarding')
-      .send(ONBOARDING_1_1_1_1_DATA);
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body.phrase_3).toEqual({
-      pourcent: 25,
-      phrase: `des utilisateurs ont des impacts supérieurs au vôtre en matière de alimentation, transports, logement et de consommation. Vous avez des bonnes pratiques à partager !`,
-    });
-  });
+
   it('POST /utilisateurs - erreur 400 quand email existant', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', { email: 'yo@truc.com' });

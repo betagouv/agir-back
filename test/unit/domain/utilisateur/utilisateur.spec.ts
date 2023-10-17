@@ -61,7 +61,7 @@ describe('Objet Utilisateur', () => {
     utilisateur.setPassword('toto');
 
     // WHEN
-    const result = utilisateur.isPasswordOK('toto');
+    const result = utilisateur.checkPasswordOK('toto');
 
     // THEN
     expect(result).toEqual(true);
@@ -72,7 +72,7 @@ describe('Objet Utilisateur', () => {
     utilisateur.setPassword('toto');
 
     // WHEN
-    const result = utilisateur.isPasswordOK('titi');
+    const result = utilisateur.checkPasswordOK('titi');
 
     // THEN
     expect(result).toEqual(false);
@@ -99,7 +99,7 @@ describe('Objet Utilisateur', () => {
     // THEN
     expect(result).toEqual(false);
   });
-  it('isLoginLocked : true cause no date', () => {
+  it('isLoginLocked : true because no date', () => {
     // GIVEN
     const utilisateur = new Utilisateur({});
     utilisateur.prevent_login_before = new Date(new Date().getTime() + 10000);
@@ -110,25 +110,26 @@ describe('Objet Utilisateur', () => {
     // THEN
     expect(result).toEqual(true);
   });
-  it('failedLogin : increase counter', () => {
+  it('failLogin : increase counter', () => {
     // GIVEN
     const utilisateur = new Utilisateur({});
+    utilisateur.setPassword('#1234567890HAHA');
     utilisateur.failed_login_count = 0;
 
     // WHEN
-    utilisateur.failedLogin();
+    utilisateur.checkPasswordOK('bad');
 
     // THEN
     expect(utilisateur.failed_login_count).toEqual(1);
-    expect(utilisateur.prevent_login_before).toBeUndefined();
   });
   it('failedLogin : sets block date + 5 mins', () => {
     // GIVEN
     const utilisateur = new Utilisateur({});
+    utilisateur.setPassword('#1234567890HAHA');
     utilisateur.failed_login_count = 3;
 
     // WHEN
-    utilisateur.failedLogin();
+    utilisateur.checkPasswordOK('bad');
 
     // THEN
     expect(utilisateur.failed_login_count).toEqual(4);
@@ -142,11 +143,12 @@ describe('Objet Utilisateur', () => {
   it('failedLogin : 2 times sets block date + 10 mins', () => {
     // GIVEN
     const utilisateur = new Utilisateur({});
+    utilisateur.setPassword('#1234567890HAHA');
     utilisateur.failed_login_count = 3;
 
     // WHEN
-    utilisateur.failedLogin();
-    utilisateur.failedLogin();
+    utilisateur.checkPasswordOK('bad');
+    utilisateur.checkPasswordOK('bad');
 
     // THEN
     expect(utilisateur.failed_login_count).toEqual(5);
