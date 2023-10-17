@@ -350,6 +350,26 @@ describe('/utilisateurs (API test)', () => {
     );
     expect(dbUser.failed_login_count).toEqual(1);
   });
+  it('POST /utilisateurs/login - utilisateur non actif', async () => {
+    // GIVEN
+    await TestUtil.getServer().post('/utilisateurs').send({
+      nom: 'WW',
+      prenom: 'Wojtek',
+      mot_de_passe: '#1234567890HAHA',
+      email: 'monmail@truc.com',
+      onboardingData: ONBOARDING_1_2_3_4_DATA,
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/login')
+      .send({
+        mot_de_passe: '#1234567890HAHA',
+        email: 'monmail@truc.com',
+      });
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual('Utilisateur non actif');
+  });
   it('POST /utilisateurs/login - bad password twice, failed count = 2', async () => {
     // GIVEN
     const utilisateur = new Utilisateur({});
@@ -494,6 +514,112 @@ describe('/utilisateurs (API test)', () => {
     expect(response.status).toBe(400);
     expect(response.body.message).toBe(
       'Le mot de passe doit contenir au moins un chiffre',
+    );
+  });
+  it('POST /utilisateurs/email/valider?code=XXXXXX - validate proper code OK, active user as outcome', async () => {
+    // GIVEN
+    await TestUtil.getServer().post('/utilisateurs').send({
+      nom: 'WW',
+      prenom: 'Wojtek',
+      mot_de_passe: '#1234567890HAHA',
+      email: 'monmail@truc.com',
+      onboardingData: ONBOARDING_1_2_3_4_DATA,
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer().post(
+      '/utilisateurs/monmail@truc.com/valider?code=123456',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const userDB = await TestUtil.prisma.utilisateur.findFirst({
+      where: { nom: 'WW' },
+    });
+    expect(userDB.active_account).toEqual(true);
+  });
+  it('POST /utilisateurs/email/valider?code=XXXXXX - validate 2 times , already active account error', async () => {
+    // GIVEN
+    await TestUtil.getServer().post('/utilisateurs').send({
+      nom: 'WW',
+      prenom: 'Wojtek',
+      mot_de_passe: '#1234567890HAHA',
+      email: 'monmail@truc.com',
+      onboardingData: ONBOARDING_1_2_3_4_DATA,
+    });
+
+    // WHEN
+    await TestUtil.getServer().post(
+      '/utilisateurs/monmail@truc.com/valider?code=123456',
+    );
+    const response = await TestUtil.getServer().post(
+      '/utilisateurs/monmail@truc.com/valider?code=123456',
+    );
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual('Ce compte est déjà actif');
+  });
+  it('POST /utilisateurs/email/valider?code=XXXXXX - bad code increase counter', async () => {
+    // GIVEN
+    await TestUtil.getServer().post('/utilisateurs').send({
+      nom: 'WW',
+      prenom: 'Wojtek',
+      mot_de_passe: '#1234567890HAHA',
+      email: 'monmail@truc.com',
+      onboardingData: ONBOARDING_1_2_3_4_DATA,
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer().post(
+      '/utilisateurs/monmail@truc.com/valider?code=bad',
+    );
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe('Mauvais code ou adresse électronique');
+
+    const userDB = await TestUtil.prisma.utilisateur.findFirst({
+      where: { nom: 'WW' },
+    });
+    expect(userDB.active_account).toEqual(false);
+    expect(userDB.failed_checkcode_count).toEqual(1);
+  });
+  it('POST /utilisateurs/email/valider?code=XXXXXX - bad code 4 times, blocked account', async () => {
+    // GIVEN
+    await TestUtil.getServer().post('/utilisateurs').send({
+      nom: 'WW',
+      prenom: 'Wojtek',
+      mot_de_passe: '#1234567890HAHA',
+      email: 'monmail@truc.com',
+      onboardingData: ONBOARDING_1_2_3_4_DATA,
+    });
+
+    // WHEN
+    await TestUtil.getServer().post(
+      '/utilisateurs/monmail@truc.com/valider?code=bad',
+    );
+    await TestUtil.getServer().post(
+      '/utilisateurs/monmail@truc.com/valider?code=bad',
+    );
+    await TestUtil.getServer().post(
+      '/utilisateurs/monmail@truc.com/valider?code=bad',
+    );
+    const response = await TestUtil.getServer().post(
+      '/utilisateurs/monmail@truc.com/valider?code=bad',
+    );
+    const dbUser = await TestUtil.prisma.utilisateur.findFirst({
+      where: { nom: 'WW' },
+    });
+
+    // THEN
+    expect(response.body.message).toContain(
+      `Trop d'essais successifs, compte bloqué jusqu'à`,
+    );
+    expect(dbUser.failed_checkcode_count).toEqual(4); // le compteur reste bloqué sur 4
+    expect(dbUser.prevent_checkcode_before.getTime()).toBeGreaterThan(
+      new Date().getTime(),
     );
   });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data to compute impact', async () => {

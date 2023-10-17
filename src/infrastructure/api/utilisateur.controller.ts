@@ -172,6 +172,47 @@ export class UtilisateurController {
   async evaluateOnboardingData(@Body() body: OnboardingDataAPI) {
     return this.utilisateurUsecase.evaluateOnboardingData(body);
   }
+
+  @Post('utilisateurs/:email/valider')
+  @ApiQuery({
+    name: 'code',
+    type: String,
+    description: 'code de validation de la création de compte',
+    required: true,
+  })
+  @ApiOkResponse({
+    type: LoginUtilisateurAPI,
+  })
+  async validerCode(
+    @Param('email') email: string,
+    @Query('code') code: string,
+    @Response() res,
+  ) {
+    try {
+      const loggedUser = await this.utilisateurUsecase.validateCode(
+        email,
+        code,
+      );
+      const response: LoggedUtilisateurAPI = {
+        utilisateur: {
+          id: loggedUser.utilisateur.id,
+          nom: loggedUser.utilisateur.nom,
+          prenom: loggedUser.utilisateur.prenom,
+          code_postal: loggedUser.utilisateur.code_postal,
+          email: loggedUser.utilisateur.email,
+          points: loggedUser.utilisateur.points,
+          quizzProfile: loggedUser.utilisateur.quizzProfile.getData(),
+          created_at: loggedUser.utilisateur.created_at,
+          badges: loggedUser.utilisateur.badges,
+        },
+        token: loggedUser.token,
+      };
+      return res.status(HttpStatus.OK).json(response);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
   @Patch('utilisateurs/:id/profile')
   async updateProfile(
     @Param('id') utilisateurId: string,

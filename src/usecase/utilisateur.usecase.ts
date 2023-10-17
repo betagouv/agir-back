@@ -28,6 +28,7 @@ export type Phrase = {
 };
 
 const MAUVAIS_MDP_ERROR = `Mauvaise adresse électronique ou mauvais mot de passe`;
+const MAUVAIS_CODE_ERROR = `Mauvais code ou adresse électronique`;
 
 @Injectable()
 export class UtilisateurUsecase {
@@ -52,6 +53,9 @@ export class UtilisateurUsecase {
     if (!utilisateur) {
       throw new Error(MAUVAIS_MDP_ERROR);
     }
+    if (!utilisateur.active_account) {
+      throw new Error('Utilisateur non actif');
+    }
     if (utilisateur.isLoginLocked()) {
       throw new Error(
         `Trop d'essais successifs, compte bloqué jusqu'à ${utilisateur.getLockedUntilString()}`,
@@ -75,6 +79,43 @@ export class UtilisateurUsecase {
     }
     throw new Error(MAUVAIS_MDP_ERROR);
   }
+
+  async validateCode(
+    email: string,
+    code: string,
+  ): Promise<{ utilisateur: Utilisateur; token: string }> {
+    const utilisateur =
+      await this.utilisateurRespository.findUtilisateurByEmail(email);
+    if (!utilisateur) {
+      throw new Error(MAUVAIS_CODE_ERROR);
+    }
+    if (utilisateur.active_account) {
+      throw new Error('Ce compte est déjà actif');
+    }
+    if (utilisateur.isCodeLocked()) {
+      throw new Error(
+        `Trop d'essais successifs, compte bloqué jusqu'à ${utilisateur.getLockedUntilString()}`,
+      );
+    }
+
+    const code_ok = utilisateur.checkCodeOK(code);
+    await this.utilisateurRespository.updateUtilisateurLoginSecurity(
+      utilisateur,
+    );
+    if (code_ok) {
+      return {
+        utilisateur: utilisateur,
+        token: await this.oidcService.createNewInnerAppToken(utilisateur.id),
+      };
+    }
+    if (utilisateur.isCodeLocked()) {
+      throw new Error(
+        `Trop d'essais successifs, compte bloqué jusqu'à ${utilisateur.getLockedUntilString()}`,
+      );
+    }
+    throw new Error(MAUVAIS_CODE_ERROR);
+  }
+
   async findUtilisateursByNom(nom: string): Promise<Utilisateur[]> {
     return this.utilisateurRespository.findUtilisateursByNom(nom);
   }

@@ -86,6 +86,14 @@ export class UtilisateurRepository {
         prevent_login_before: utilisateur.prevent_login_before
           ? utilisateur.prevent_login_before
           : new Date(),
+        failed_checkcode_count: utilisateur.failed_checkcode_count
+          ? utilisateur.failed_checkcode_count
+          : 0,
+        prevent_checkcode_before: utilisateur.prevent_checkcode_before
+          ? utilisateur.prevent_checkcode_before
+          : new Date(),
+        active_account: utilisateur.active_account,
+        code: utilisateur.code,
       },
     });
   }
@@ -122,6 +130,9 @@ export class UtilisateurRepository {
           passwordSalt: utilisateur.passwordSalt,
           email: utilisateur.email,
           code: utilisateur.code,
+          active_account: utilisateur.active_account,
+          failed_checkcode_count: utilisateur.failed_checkcode_count,
+          prevent_checkcode_before: utilisateur.prevent_checkcode_before,
           onboardingData: { ...utilisateur.onboardingData },
           onboardingResult: { ...utilisateur.onboardingResult },
           quizzLevels: utilisateur.quizzProfile.getData(),
@@ -238,6 +249,10 @@ export class UtilisateurRepository {
         points: user.points,
         failed_login_count: user.failed_login_count,
         prevent_login_before: user.prevent_login_before,
+        code: user.code,
+        prevent_checkcode_before: user.prevent_checkcode_before,
+        failed_checkcode_count: user.failed_checkcode_count,
+        active_account: user.active_account,
         quizzProfile: new UserQuizzProfile(user.quizzLevels as any),
         created_at: user.created_at,
         badges: user['badges'],

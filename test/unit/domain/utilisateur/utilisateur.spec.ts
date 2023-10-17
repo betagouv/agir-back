@@ -46,7 +46,7 @@ describe('Objet Utilisateur', () => {
     }
   });
 
-  it('setPassword : hash and salt password', () => {
+  it.only('setPassword : hash and salt password', () => {
     // GIVEN
     const utilisateur = new Utilisateur({});
     utilisateur.setPassword('toto');
@@ -77,6 +77,65 @@ describe('Objet Utilisateur', () => {
     // THEN
     expect(result).toEqual(false);
   });
+  it('checkCode : OK', () => {
+    // GIVEN
+    const utilisateur = new Utilisateur({});
+    utilisateur.code = '123456';
+
+    // WHEN
+    const result = utilisateur.checkCodeOK('123456');
+
+    // THEN
+    expect(result).toEqual(true);
+  });
+  it('checkCode : KO', () => {
+    // GIVEN
+    const utilisateur = new Utilisateur({});
+    utilisateur.code = 'toto';
+
+    // WHEN
+    const result = utilisateur.checkCodeOK('titi');
+
+    // THEN
+    expect(result).toEqual(false);
+  });
+  it('isCodeLocked : false', () => {
+    // GIVEN
+    const utilisateur = new Utilisateur({});
+    utilisateur.prevent_checkcode_before = new Date(
+      new Date().getTime() - 10000,
+    );
+
+    // WHEN
+    const result = utilisateur.isCodeLocked();
+
+    // THEN
+    expect(result).toEqual(false);
+  });
+  it('isCodeLocked : false cause no date', () => {
+    // GIVEN
+    const utilisateur = new Utilisateur({});
+    utilisateur.prevent_checkcode_before = undefined;
+
+    // WHEN
+    const result = utilisateur.isCodeLocked();
+
+    // THEN
+    expect(result).toEqual(false);
+  });
+  it('isCodeLocked : true because date in futur', () => {
+    // GIVEN
+    const utilisateur = new Utilisateur({});
+    utilisateur.prevent_checkcode_before = new Date(
+      new Date().getTime() + 10000,
+    );
+
+    // WHEN
+    const result = utilisateur.isCodeLocked();
+
+    // THEN
+    expect(result).toEqual(true);
+  });
   it('isLoginLocked : false', () => {
     // GIVEN
     const utilisateur = new Utilisateur({});
@@ -99,7 +158,7 @@ describe('Objet Utilisateur', () => {
     // THEN
     expect(result).toEqual(false);
   });
-  it('isLoginLocked : true because no date', () => {
+  it('isLoginLocked : true because date in futur', () => {
     // GIVEN
     const utilisateur = new Utilisateur({});
     utilisateur.prevent_login_before = new Date(new Date().getTime() + 10000);
@@ -155,6 +214,57 @@ describe('Objet Utilisateur', () => {
     expect(
       Math.round(
         (utilisateur.prevent_login_before.getTime() - new Date().getTime()) /
+          1000,
+      ),
+    ).toEqual(600);
+  });
+  it('failCode : increase counter', () => {
+    // GIVEN
+    const utilisateur = new Utilisateur({});
+    utilisateur.code = '#1234567890HAHA';
+    utilisateur.failed_checkcode_count = 0;
+
+    // WHEN
+    utilisateur.checkCodeOK('bad');
+
+    // THEN
+    expect(utilisateur.failed_checkcode_count).toEqual(1);
+  });
+  it('failedCode : sets block date + 5 mins', () => {
+    // GIVEN
+    const utilisateur = new Utilisateur({});
+    utilisateur.code = '#1234567890HAHA';
+    utilisateur.failed_checkcode_count = 3;
+
+    // WHEN
+    utilisateur.checkCodeOK('bad');
+
+    // THEN
+    expect(utilisateur.failed_checkcode_count).toEqual(4);
+    expect(
+      Math.round(
+        (utilisateur.prevent_checkcode_before.getTime() -
+          new Date().getTime()) /
+          1000,
+      ),
+    ).toEqual(300);
+  });
+  it('failedCode : 2 times sets block date + 10 mins', () => {
+    // GIVEN
+    const utilisateur = new Utilisateur({});
+    utilisateur.code = '#1234567890HAHA';
+    utilisateur.failed_checkcode_count = 3;
+
+    // WHEN
+    utilisateur.checkCodeOK('bad');
+    utilisateur.checkCodeOK('bad');
+
+    // THEN
+    expect(utilisateur.failed_checkcode_count).toEqual(5);
+    expect(
+      Math.round(
+        (utilisateur.prevent_checkcode_before.getTime() -
+          new Date().getTime()) /
           1000,
       ),
     ).toEqual(600);

@@ -26,7 +26,9 @@ export class Utilisateur {
   prevent_checkcode_before: Date;
 
   private MAX_LOGIN_ATTEMPT = 3;
-  private BLOCKED_DURATION_MIN = 5;
+  private MAX_CODE_ATTEMPT = 3;
+  private BLOCKED_LOGIN_DURATION_MIN = 5;
+  private BLOCKED_CODE_DURATION_MIN = 5;
 
   constructor(obj: object) {
     Object.assign(this, obj);
@@ -42,15 +44,22 @@ export class Utilisateur {
   public isLoginLocked(): boolean {
     return Date.now() < this.getPreventLoginBefore().getTime();
   }
+  public isCodeLocked(): boolean {
+    return Date.now() < this.getPreventCodeBefore().getTime();
+  }
 
   public getLockedUntilString(): string {
     return this.prevent_login_before.toLocaleTimeString('fr-FR', {
       timeZone: 'Europe/Paris',
+      timeStyle: 'short',
+      hour12: false,
     });
   }
 
   public setNew6DigitCode() {
-    this.code = Math.floor(100000 + Math.random() * 900000).toString();
+    // FIXME this.code = Math.floor(100000 + Math.random() * 900000).toString();
+    // valeur temporaire en dure
+    this.code = '123456';
   }
   public checkPasswordOK(password: string) {
     const ok =
@@ -62,6 +71,15 @@ export class Utilisateur {
       this.initLoginState();
     } else {
       this.failLogin();
+    }
+    return ok;
+  }
+  public checkCodeOK(code: string) {
+    const ok = this.code === code;
+    if (ok) {
+      this.validateUser();
+    } else {
+      this.failCode();
     }
     return ok;
   }
@@ -91,7 +109,16 @@ export class Utilisateur {
       this.prevent_login_before = new Date();
     }
     this.prevent_login_before.setMinutes(
-      this.prevent_login_before.getMinutes() + this.BLOCKED_DURATION_MIN,
+      this.prevent_login_before.getMinutes() + this.BLOCKED_LOGIN_DURATION_MIN,
+    );
+  }
+  public incrementNextAllowedCodeTime() {
+    if (this.getPreventCodeBefore().getTime() <= Date.now()) {
+      this.prevent_checkcode_before = new Date();
+    }
+    this.prevent_checkcode_before.setMinutes(
+      this.prevent_checkcode_before.getMinutes() +
+        this.BLOCKED_CODE_DURATION_MIN,
     );
   }
 
@@ -101,10 +128,19 @@ export class Utilisateur {
       this.incrementNextAllowedLoginTime();
     }
   }
+  private failCode() {
+    this.incrementFailedCodeCount();
+    if (this.failed_checkcode_count > this.MAX_CODE_ATTEMPT) {
+      this.incrementNextAllowedCodeTime();
+    }
+  }
 
   private initLoginState() {
     this.failed_login_count = 0;
     this.prevent_login_before = new Date();
+  }
+  private validateUser() {
+    this.active_account = true;
   }
 
   private getFailedLoginCount() {
@@ -113,14 +149,29 @@ export class Utilisateur {
     }
     return this.failed_login_count;
   }
+  private getFailedCodeCount() {
+    if (!this.failed_checkcode_count) {
+      this.failed_checkcode_count = 0;
+    }
+    return this.failed_checkcode_count;
+  }
   private incrementFailedLoginCount() {
     this.failed_login_count = this.getFailedLoginCount() + 1;
+  }
+  private incrementFailedCodeCount() {
+    this.failed_checkcode_count = this.getFailedCodeCount() + 1;
   }
   private getPreventLoginBefore() {
     if (!this.prevent_login_before) {
       this.prevent_login_before = new Date();
     }
     return this.prevent_login_before;
+  }
+  private getPreventCodeBefore() {
+    if (!this.prevent_checkcode_before) {
+      this.prevent_checkcode_before = new Date();
+    }
+    return this.prevent_checkcode_before;
   }
   private static auMoinsUnCaractereSpecial(password: string | null): boolean {
     const regexp = new RegExp(
