@@ -40,7 +40,9 @@ export class Utilisateur {
   }
 
   public getLockedUntilString(): string {
-    return `${this.prevent_login_before.getUTCHours()}h ${this.prevent_login_before.getUTCMinutes()}min`;
+    return this.prevent_login_before.toLocaleTimeString('fr-FR', {
+      timeZone: 'Europe/Paris',
+    });
   }
 
   public checkPasswordOK(password: string) {
