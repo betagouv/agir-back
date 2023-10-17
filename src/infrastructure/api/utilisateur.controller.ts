@@ -19,6 +19,7 @@ import {
   ApiOkResponse,
   getSchemaPath,
   ApiExtraModels,
+  ApiOperation,
 } from '@nestjs/swagger';
 import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
 import { UtilisateurProfileAPI } from './types/utilisateur/utilisateurProfileAPI';
@@ -140,24 +141,19 @@ export class UtilisateurController {
   @ApiBody({
     type: CreateUtilisateurAPI,
   })
-  @ApiOkResponse({
-    description: "l'utilisateur crée",
-    schema: {
-      type: 'object',
-      properties: {
-        id: { type: 'string', description: "id unique de l'utiliateur" },
-      },
-    },
+  @ApiOperation({
+    summary:
+      "création d'un compte, qui doit ensuite être activé via la soumission d'un code",
   })
   async createUtilisateur(@Body() body: CreateUtilisateurAPI, @Response() res) {
     try {
-      const utilisateur = await this.utilisateurUsecase.createUtilisateur(body);
+      await this.utilisateurUsecase.createUtilisateur(body);
       return res
         .header(
           'location',
-          `https://agir.gouv.fr/api/utiliateurs/${utilisateur.id}`,
+          `https://agir.gouv.fr/api/utiliateurs/${body.email}`,
         )
-        .json(utilisateur);
+        .json('user to activate');
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -181,7 +177,7 @@ export class UtilisateurController {
     required: true,
   })
   @ApiOkResponse({
-    type: LoginUtilisateurAPI,
+    type: LoggedUtilisateurAPI,
   })
   async validerCode(
     @Param('email') email: string,

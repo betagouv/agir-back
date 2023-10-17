@@ -487,7 +487,7 @@ describe('/utilisateurs (API test)', () => {
       where: { nom: 'WW' },
     });
     expect(response.status).toBe(201);
-    expect(response.headers['location']).toContain(user.id);
+    expect(response.headers['location']).toContain('monmail@truc.com');
     expect(user.nom).toEqual('WW');
     expect(user.prenom).toEqual('Wojtek');
     expect(user.email).toEqual('monmail@truc.com');
