@@ -24,8 +24,6 @@ import {
 import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
 import { UtilisateurProfileAPI } from './types/utilisateur/utilisateurProfileAPI';
 import { CreateUtilisateurAPI } from './types/utilisateur/createUtilisateurAPI';
-import { OnboardingDataAPI } from './types/utilisateur/onboardingDataAPI';
-import { OnboardingDataImpactAPI } from './types/utilisateur/onboardingDataImpactAPI';
 import { LoginUtilisateurAPI } from './types/utilisateur/loginUtilisateurAPI';
 import { HttpStatus } from '@nestjs/common';
 import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
@@ -37,6 +35,10 @@ export class UtilisateurController {
   constructor(private readonly utilisateurUsecase: UtilisateurUsecase) {}
 
   @Get('utilisateurs')
+  @ApiOperation({
+    summary:
+      "Liste l'ensemble des utilisateurs de la base, route temporaire pour debuggage - à supprimer à terme",
+  })
   @ApiQuery({
     name: 'nom',
     type: String,
@@ -55,11 +57,18 @@ export class UtilisateurController {
   }
 
   @Delete('utilisateurs/:id')
+  @ApiOperation({
+    summary: "Suppression du compte d'un utilisateur d'id donnée",
+  })
   async deleteUtilisateurById(@Param('id') id: string) {
     await this.utilisateurUsecase.deleteUtilisateur(id);
   }
 
   @Get('utilisateurs/:id')
+  @ApiOperation({
+    summary:
+      "Infromation complètes concernant l'utilisateur d'id donné : profile, badges, niveaux de quizz, etc",
+  })
   @ApiOkResponse({ type: UtilisateurAPI })
   async getUtilisateurById(@Param('id') id: string): Promise<UtilisateurAPI> {
     let utilisateur = await this.utilisateurUsecase.findUtilisateurById(id);
@@ -80,6 +89,10 @@ export class UtilisateurController {
   }
   @ApiOkResponse({ type: UtilisateurProfileAPI })
   @Get('utilisateurs/:id/profile')
+  @ApiOperation({
+    summary:
+      "Infromation de profile d'un utilisateur d'id donné (nom, prenom, code postal, ...)",
+  })
   async getUtilisateurProfileById(
     @Param('id') utilisateurId: string,
   ): Promise<UtilisateurProfileAPI> {
@@ -97,6 +110,10 @@ export class UtilisateurController {
     };
   }
   @Post('utilisateurs/login')
+  @ApiOperation({
+    summary:
+      "Opération de login d'un utilisateur existant et actif, renvoi les info de l'utilisateur complètes ainsi qu'un token de sécurité pour navigation dans les APIs",
+  })
   @ApiBody({
     type: LoginUtilisateurAPI,
   })
@@ -137,92 +154,12 @@ export class UtilisateurController {
       throw new BadRequestException(error.message);
     }
   }
-  @Post('utilisateurs')
-  @ApiBody({
-    type: CreateUtilisateurAPI,
-  })
-  @ApiOperation({
-    summary:
-      "création d'un compte, qui doit ensuite être activé via la soumission d'un code",
-  })
-  async createUtilisateur(@Body() body: CreateUtilisateurAPI, @Response() res) {
-    try {
-      await this.utilisateurUsecase.createUtilisateur(body);
-      return res
-        .header(
-          'location',
-          `https://agir.gouv.fr/api/utiliateurs/${body.email}`,
-        )
-        .json('user to activate');
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-  @Post('utilisateurs/evaluate-onboarding')
-  @ApiBody({
-    type: OnboardingDataAPI,
-  })
-  @ApiOkResponse({
-    type: OnboardingDataImpactAPI,
-  })
-  async evaluateOnboardingData(@Body() body: OnboardingDataAPI) {
-    return this.utilisateurUsecase.evaluateOnboardingData(body);
-  }
-
-  @Post('utilisateurs/:email/valider')
-  @ApiQuery({
-    name: 'code',
-    type: String,
-    description: 'code de validation de la création de compte',
-    required: true,
-  })
-  @ApiOkResponse({
-    type: LoggedUtilisateurAPI,
-  })
-  async validerCode(
-    @Param('email') email: string,
-    @Query('code') code: string,
-    @Response() res,
-  ) {
-    try {
-      const loggedUser = await this.utilisateurUsecase.validateCode(
-        email,
-        code,
-      );
-      const response: LoggedUtilisateurAPI = {
-        utilisateur: {
-          id: loggedUser.utilisateur.id,
-          nom: loggedUser.utilisateur.nom,
-          prenom: loggedUser.utilisateur.prenom,
-          code_postal: loggedUser.utilisateur.code_postal,
-          email: loggedUser.utilisateur.email,
-          points: loggedUser.utilisateur.points,
-          quizzProfile: loggedUser.utilisateur.quizzProfile.getData(),
-          created_at: loggedUser.utilisateur.created_at,
-          badges: loggedUser.utilisateur.badges,
-        },
-        token: loggedUser.token,
-      };
-      return res.status(HttpStatus.OK).json(response);
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  @Post('utilisateurs/:email/renvoyer_code')
-  @ApiOkResponse({
-    type: LoggedUtilisateurAPI,
-  })
-  async renvoyerCode(@Param('email') email: string, @Response() res) {
-    try {
-      await this.utilisateurUsecase.renvoyerCode(email);
-      return res.status(HttpStatus.OK).json('code renvoyé');
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
 
   @Patch('utilisateurs/:id/profile')
+  @ApiOperation({
+    summary:
+      "Mise à jour des infos de profile (nom, prenom, code postal, ...) d'un utilisateur d'id donné",
+  })
   async updateProfile(
     @Param('id') utilisateurId: string,
     @Body() body: UtilisateurProfileAPI,

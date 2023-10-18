@@ -36,6 +36,8 @@ import { QuestionNGCUsecase } from './usecase/questionNGC.usecase';
 import { QuestionNGCRepository } from './infrastructure/repository/questionNGC.repository';
 import { QuestionsNGCController } from './infrastructure/api/questionNGC.controller';
 import { EmailSender } from './infrastructure/email/emailSender';
+import { OnboardingUsecase } from './usecase/onboarding.usecase';
+import { OnboardingController } from './infrastructure/api/onboarding.controller';
 
 @Module({
   imports: [
@@ -46,6 +48,7 @@ import { EmailSender } from './infrastructure/email/emailSender';
     }),
   ],
   controllers: [
+    OnboardingController,
     UtilisateurController,
     AuthController,
     BilanController,
@@ -80,6 +83,7 @@ import { EmailSender } from './infrastructure/email/emailSender';
     QuestionNGCUsecase,
     InteractionsDefinitionUsecase,
     EmailSender,
+    OnboardingUsecase,
   ],
 })
 export class AppModule {}

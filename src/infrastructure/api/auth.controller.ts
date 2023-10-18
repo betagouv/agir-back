@@ -15,10 +15,12 @@ import { Request } from 'express';
 import { AuthGuard } from '../auth/guard';
 import { OidcService } from '../auth/oidc.service';
 import { UtilisateurUsecase } from '../../usecase/utilisateur.usecase';
+import { OnboardingUsecase } from '../../../src/usecase/onboarding.usecase';
 
 @Controller()
 export class AuthController {
   constructor(
+    private onboardingUsecase: OnboardingUsecase,
     private utilisateurUsecase: UtilisateurUsecase,
     private oidcService: OidcService,
   ) {}
@@ -62,7 +64,7 @@ export class AuthController {
     );
     if (!utilisateur) {
       // FIXME : revoir le moment venu, c'est plus en ligne avec la création de compte standalone
-      utilisateur = await this.utilisateurUsecase.createUtilisateur({
+      utilisateur = await this.onboardingUsecase.createUtilisateur({
         nom: user_data.family_name,
         prenom: 'UNDEFINED',
         email: user_data.email,
