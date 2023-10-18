@@ -2,6 +2,7 @@ import {
   ApiBody,
   ApiExtraModels,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger';
@@ -43,6 +44,10 @@ export class SuiviController extends GenericControler {
       },
     },
   })
+  @ApiOperation({
+    summary:
+      "Liste l'ensemble des suivi alimentation-transport réalisés depuis le début de l'utilisation du service",
+  })
   @Get('utilisateurs/:utilisateurId/suivis')
   @UseGuards(AuthGuard)
   async getSuivis(
@@ -65,6 +70,10 @@ export class SuiviController extends GenericControler {
         { $ref: getSchemaPath(SuiviTransportAPI) },
       ],
     },
+  })
+  @ApiOperation({
+    summary:
+      "Le dernier suivi alimentation-transport réalisé par l'utilisateur",
   })
   @Get('utilisateurs/:utilisateurId/suivis/last')
   @UseGuards(AuthGuard)
@@ -100,6 +109,9 @@ export class SuiviController extends GenericControler {
         value: SuiviTransportAPI.example(),
       },
     },
+  })
+  @ApiOperation({
+    summary: "Création d'un nouveau suivi, de type alimentation ou transport",
   })
   @Post('utilisateurs/:utilisateurId/suivis')
   @UseGuards(AuthGuard)

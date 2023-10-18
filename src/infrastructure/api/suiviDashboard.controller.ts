@@ -3,6 +3,7 @@ import { SuiviUsecase } from '../../usecase/suivi.usecase';
 import {
   ApiExtraModels,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger';
@@ -35,6 +36,10 @@ export class SuiviDashboardController extends GenericControler {
         },
       ],
     },
+  })
+  @ApiOperation({
+    summary:
+      "Données aggrégées de suivi alimentation et transport : dernier suivi et tendance",
   })
   @Get('utilisateurs/:id/suivi_dashboard')
   @UseGuards(AuthGuard)
