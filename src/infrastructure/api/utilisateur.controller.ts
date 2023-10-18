@@ -20,6 +20,7 @@ import {
   getSchemaPath,
   ApiExtraModels,
   ApiOperation,
+  ApiBadRequestResponse,
 } from '@nestjs/swagger';
 import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
 import { UtilisateurProfileAPI } from './types/utilisateur/utilisateurProfileAPI';
@@ -27,6 +28,7 @@ import { CreateUtilisateurAPI } from './types/utilisateur/createUtilisateurAPI';
 import { LoginUtilisateurAPI } from './types/utilisateur/loginUtilisateurAPI';
 import { HttpStatus } from '@nestjs/common';
 import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
+import { ErrorService } from '../errorService';
 
 @ApiExtraModels(CreateUtilisateurAPI, UtilisateurAPI)
 @Controller()
@@ -126,6 +128,7 @@ export class UtilisateurController {
       },
     },
   })
+  @ApiBadRequestResponse({ type: ErrorService })
   async loginUtilisateur(
     @Body() body: LoginUtilisateurAPI,
     @Response() res,
@@ -151,7 +154,7 @@ export class UtilisateurController {
       };
       return res.status(HttpStatus.OK).json(response);
     } catch (error) {
-      throw new BadRequestException(error.message);
+      throw new BadRequestException(ErrorService.toStringOrObject(error));
     }
   }
 

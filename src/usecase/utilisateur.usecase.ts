@@ -13,6 +13,7 @@ import {
   PasswordAwareUtilisateur,
   PasswordManager,
 } from '../../src/domain/utilisateur/manager/passwordManager';
+import { ErrorService } from '../infrastructure/errorService';
 
 export type Phrase = {
   phrase: string;
@@ -44,7 +45,7 @@ export class UtilisateurUsecase {
       throw new Error(MAUVAIS_MDP_ERROR);
     }
     if (!utilisateur.active_account) {
-      throw new Error('Utilisateur non actif');
+      ErrorService.throwInactiveAccountError();
     }
     if (utilisateur.isLoginLocked()) {
       throw new Error(
