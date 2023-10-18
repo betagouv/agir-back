@@ -4,6 +4,7 @@ import { TestUtil } from '../../TestUtil';
 describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
   beforeAll(async () => {
     await TestUtil.appinit();
+    await TestUtil.generateAuthorizationToken('utilisateur-id');
   });
 
   beforeEach(async () => {
@@ -18,11 +19,19 @@ describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     // WHEN
-    const response = await TestUtil.getServer().get(
+    const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/suivi_dashboard',
     );
     // THEN
     expect(response.status).toBe(200);
+  });
+  it('GET /utilisateurs/id/suivi_dashboard - 403 when other one dashboard', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/123/suivi_dashboard');
+    // THEN
+    expect(response.status).toBe(403);
   });
   it('GET /utilisateurs/id/suivi_dashboard - get dashboard with proper last suivi date', async () => {
     // GIVEN
@@ -49,7 +58,7 @@ describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
       },
     });
     // WHEN
-    const response = await TestUtil.getServer().get(
+    const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/suivi_dashboard',
     );
     // THEN
@@ -90,7 +99,7 @@ describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
       },
     });
     // WHEN
-    const response = await TestUtil.getServer().get(
+    const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/suivi_dashboard',
     );
     // THEN

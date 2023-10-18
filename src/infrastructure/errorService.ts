@@ -14,6 +14,9 @@ export class ErrorService {
   static throwInactiveAccountError() {
     throw new ErrorService('001', 'Utilisateur non actif');
   }
+  static throwForbiddenError() {
+    throw new ErrorService('002', 'Vous ne pouvez pas accéder à ces données');
+  }
 
   static toStringOrObject(error: object): object {
     if (error instanceof ErrorService) {

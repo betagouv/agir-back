@@ -1,18 +1,5 @@
-import {
-  Controller,
-  ForbiddenException,
-  Get,
-  Param,
-  Query,
-  Redirect,
-  Req,
-  UseGuards,
-  Response,
-  HttpStatus,
-} from '@nestjs/common';
+import { Controller, Get, Param, Query, Redirect } from '@nestjs/common';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
-import { Request } from 'express';
-import { AuthGuard } from '../auth/guard';
 import { OidcService } from '../auth/oidc.service';
 import { UtilisateurUsecase } from '../../usecase/utilisateur.usecase';
 import { OnboardingUsecase } from '../../../src/usecase/onboarding.usecase';
@@ -100,20 +87,6 @@ export class AuthController {
     <br><a href='/logout/${utilisateurId}'>Se dé-connecter de France Connect</a>`;
   }
 
-  @Get('profile/:id')
-  @ApiExcludeEndpoint()
-  @UseGuards(AuthGuard)
-  async profile(@Req() req: Request, @Param('id') utilisateurId: string) {
-    const tokenUtilisateurId =
-      AuthGuard.getUtilisateurIdFromTokenInRequest(req);
-    if (utilisateurId !== tokenUtilisateurId) {
-      throw new ForbiddenException(
-        `Vous n'avez pas le droit de consulter les données de l'utilisateur ${utilisateurId} `,
-      );
-    }
-    return this.utilisateurUsecase.findUtilisateurById(utilisateurId);
-  }
-
   @Get('logout/:id')
   @Redirect()
   @ApiExcludeEndpoint()
@@ -128,14 +101,5 @@ export class AuthController {
   async logout_callback() {
     return `<br>Vous êtes bien déconnecté !!
     <br><a href='/login'>Se connecter avec France Connect</a>`;
-  }
-
-  @Get('error_401')
-  async ERROR_401(@Response() res) {
-    return res.status(HttpStatus.UNAUTHORIZED).json('this is bad 401');
-  }
-  @Get('error_403')
-  async ERROR_403(@Response() res) {
-    return res.status(HttpStatus.FORBIDDEN).json('this is bad 403');
   }
 }

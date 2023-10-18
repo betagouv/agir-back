@@ -10,19 +10,27 @@ describe('/api/cms/income (API test)', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
+    TestUtil.token = process.env.CMS_WEBHOOK_API_KEY;
   });
 
   afterAll(async () => {
     await TestUtil.appclose();
   });
 
+  it('POST /api/cms/income - 403 si mauvaise clé API', async () => {
+    // GIVEN
+    TestUtil.token = 'bad';
+    // WHEN
+    const response = await TestUtil.POST('/api/cms/income').send(CMS_DATA);
+
+    // THEN
+    expect(response.status).toBe(403);
+  });
   it('POST /api/cms/income - create a new article, no user in db, no error', async () => {
     // GIVEN
 
     // WHEN
-    const response = await TestUtil.getServer()
-      .post('/api/cms/income')
-      .send(CMS_DATA);
+    const response = await TestUtil.POST('/api/cms/income').send(CMS_DATA);
 
     // THEN
     const interDefDB = await TestUtil.prisma.interactionDefinition.findMany({});
@@ -50,9 +58,7 @@ describe('/api/cms/income (API test)', () => {
     await TestUtil.create('utilisateur');
 
     // WHEN
-    const response = await TestUtil.getServer()
-      .post('/api/cms/income')
-      .send(CMS_DATA);
+    const response = await TestUtil.POST('/api/cms/income').send(CMS_DATA);
 
     // THEN
     const interDB = await TestUtil.prisma.interaction.findMany({});
@@ -65,9 +71,10 @@ describe('/api/cms/income (API test)', () => {
     await TestUtil.create('utilisateur');
 
     // WHEN
-    const response = await TestUtil.getServer()
-      .post('/api/cms/income')
-      .send({ ...CMS_DATA, model: 'aide' });
+    const response = await TestUtil.POST('/api/cms/income').send({
+      ...CMS_DATA,
+      model: 'aide',
+    });
 
     // THEN
     const interDB = await TestUtil.prisma.interaction.findMany({});
@@ -87,9 +94,7 @@ describe('/api/cms/income (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.getServer()
-      .post('/api/cms/income')
-      .send(CMS_DATA);
+    const response = await TestUtil.POST('/api/cms/income').send(CMS_DATA);
 
     // THEN
     const interDB = await TestUtil.prisma.interaction.findMany({});
@@ -122,9 +127,7 @@ describe('/api/cms/income (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.getServer()
-      .post('/api/cms/income')
-      .send(CMS_DATA);
+    const response = await TestUtil.POST('/api/cms/income').send(CMS_DATA);
 
     // THEN
     const interDB = await TestUtil.prisma.interaction.findMany({});
@@ -143,9 +146,7 @@ describe('/api/cms/income (API test)', () => {
     data.entry = { ...data.entry };
     data.entry.publishedAt = null;
     // WHEN
-    const response = await TestUtil.getServer()
-      .post('/api/cms/income')
-      .send(data);
+    const response = await TestUtil.POST('/api/cms/income').send(data);
 
     // THEN
     const interDB = await TestUtil.prisma.interaction.findMany({});
@@ -159,9 +160,7 @@ describe('/api/cms/income (API test)', () => {
     data.entry = { ...data.entry };
     data.entry.points = null;
     // WHEN
-    const response = await TestUtil.getServer()
-      .post('/api/cms/income')
-      .send(data);
+    const response = await TestUtil.POST('/api/cms/income').send(data);
 
     // THEN
     const interDB = await TestUtil.prisma.interaction.findMany({});
@@ -179,9 +178,7 @@ describe('/api/cms/income (API test)', () => {
     const data = { ...CMS_DATA };
     data.event = CMSEvent['entry.unpublish'];
     // WHEN
-    const response = await TestUtil.getServer()
-      .post('/api/cms/income')
-      .send(data);
+    const response = await TestUtil.POST('/api/cms/income').send(data);
 
     // THEN
     const interDefDB = await TestUtil.prisma.interactionDefinition.findMany({});
@@ -213,9 +210,7 @@ describe('/api/cms/income (API test)', () => {
     const data = { ...CMS_DATA };
     data.event = CMSEvent['entry.delete'];
     // WHEN
-    const response = await TestUtil.getServer()
-      .post('/api/cms/income')
-      .send(data);
+    const response = await TestUtil.POST('/api/cms/income').send(data);
 
     // THEN
     const interDB = await TestUtil.prisma.interaction.findMany({});

@@ -10,6 +10,8 @@ import {
   Post,
   Query,
   Response,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { UtilisateurUsecase } from '../../usecase/utilisateur.usecase';
 import {
@@ -29,12 +31,16 @@ import { LoginUtilisateurAPI } from './types/utilisateur/loginUtilisateurAPI';
 import { HttpStatus } from '@nestjs/common';
 import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
 import { ErrorService } from '../errorService';
+import { GenericControler } from './genericControler';
+import { AuthGuard } from '../auth/guard';
 
 @ApiExtraModels(CreateUtilisateurAPI, UtilisateurAPI)
 @Controller()
 @ApiTags('Utilisateur')
-export class UtilisateurController {
-  constructor(private readonly utilisateurUsecase: UtilisateurUsecase) {}
+export class UtilisateurController extends GenericControler {
+  constructor(private readonly utilisateurUsecase: UtilisateurUsecase) {
+    super();
+  }
 
   @Get('utilisateurs')
   @ApiOperation({
@@ -62,7 +68,9 @@ export class UtilisateurController {
   @ApiOperation({
     summary: "Suppression du compte d'un utilisateur d'id donnée",
   })
-  async deleteUtilisateurById(@Param('id') id: string) {
+  @UseGuards(AuthGuard)
+  async deleteUtilisateurById(@Request() req, @Param('id') id: string) {
+    this.checkCallerId(req, id);
     await this.utilisateurUsecase.deleteUtilisateur(id);
   }
 
@@ -72,7 +80,13 @@ export class UtilisateurController {
       "Infromation complètes concernant l'utilisateur d'id donné : profile, badges, niveaux de quizz, etc",
   })
   @ApiOkResponse({ type: UtilisateurAPI })
-  async getUtilisateurById(@Param('id') id: string): Promise<UtilisateurAPI> {
+  @UseGuards(AuthGuard)
+  async getUtilisateurById(
+    @Request() req,
+    @Param('id') id: string,
+  ): Promise<UtilisateurAPI> {
+    this.checkCallerId(req, id);
+
     let utilisateur = await this.utilisateurUsecase.findUtilisateurById(id);
     if (utilisateur == null) {
       throw new NotFoundException(`Pas d'utilisateur d'id ${id}`);
@@ -95,9 +109,13 @@ export class UtilisateurController {
     summary:
       "Infromation de profile d'un utilisateur d'id donné (nom, prenom, code postal, ...)",
   })
+  @UseGuards(AuthGuard)
   async getUtilisateurProfileById(
+    @Request() req,
     @Param('id') utilisateurId: string,
   ): Promise<UtilisateurProfileAPI> {
+    this.checkCallerId(req, utilisateurId);
+
     let utilisateur = await this.utilisateurUsecase.findUtilisateurById(
       utilisateurId,
     );
@@ -163,10 +181,13 @@ export class UtilisateurController {
     summary:
       "Mise à jour des infos de profile (nom, prenom, code postal, ...) d'un utilisateur d'id donné",
   })
+  @UseGuards(AuthGuard)
   async updateProfile(
+    @Request() req,
     @Param('id') utilisateurId: string,
     @Body() body: UtilisateurProfileAPI,
   ) {
+    this.checkCallerId(req, utilisateurId);
     return this.utilisateurUsecase.updateUtilisateurProfile(utilisateurId, {
       email: body.email,
       nom: body.nom,

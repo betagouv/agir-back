@@ -1,14 +1,9 @@
 import {
   ApiBody,
-  ApiConsumes,
   ApiExtraModels,
   ApiOkResponse,
-  ApiProperty,
-  ApiPropertyOptional,
-  ApiResponse,
   ApiTags,
   getSchemaPath,
-  refs,
 } from '@nestjs/swagger';
 import {
   Controller,
@@ -16,9 +11,11 @@ import {
   Post,
   Param,
   Body,
+  Request,
   Query,
   NotFoundException,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { SuiviUsecase } from '../../usecase/suivi.usecase';
 import { Suivi } from '../../domain/suivi/suivi';
@@ -26,12 +23,16 @@ import { SuiviAlimentation } from '../../domain/suivi/suiviAlimentation';
 import { SuiviTransport } from '../../domain/suivi/suiviTransport';
 import { SuiviType } from '../../domain/suivi/suiviType';
 import { SuiviAlimentationAPI, SuiviTransportAPI } from './types/suiviAPI';
+import { GenericControler } from './genericControler';
+import { AuthGuard } from '../auth/guard';
 
 @ApiExtraModels(SuiviAlimentationAPI, SuiviTransportAPI)
 @Controller()
 @ApiTags('Suivi')
-export class SuiviController {
-  constructor(private readonly suiviUsecase: SuiviUsecase) {}
+export class SuiviController extends GenericControler {
+  constructor(private readonly suiviUsecase: SuiviUsecase) {
+    super();
+  }
   @ApiOkResponse({
     schema: {
       items: {
@@ -43,10 +44,13 @@ export class SuiviController {
     },
   })
   @Get('utilisateurs/:utilisateurId/suivis')
+  @UseGuards(AuthGuard)
   async getSuivis(
+    @Request() req,
     @Param('utilisateurId') utilisateurId: string,
     @Query('type') type?: string,
   ): Promise<(SuiviAlimentationAPI | SuiviTransportAPI)[]> {
+    this.checkCallerId(req, utilisateurId);
     const suivisCollection = await this.suiviUsecase.listeSuivi(
       utilisateurId,
       SuiviType[type],
@@ -63,10 +67,14 @@ export class SuiviController {
     },
   })
   @Get('utilisateurs/:utilisateurId/suivis/last')
+  @UseGuards(AuthGuard)
   async getLastSuivi(
+    @Request() req,
     @Param('utilisateurId') utilisateurId: string,
     @Query('type') type?: string,
   ): Promise<Suivi> {
+    this.checkCallerId(req, utilisateurId);
+
     const lastSuivi = await this.suiviUsecase.getLastSuivi(
       utilisateurId,
       SuiviType[type],
@@ -94,10 +102,14 @@ export class SuiviController {
     },
   })
   @Post('utilisateurs/:utilisateurId/suivis')
+  @UseGuards(AuthGuard)
   async postSuivi(
+    @Request() req,
     @Param('utilisateurId') utilisateurId: string,
     @Body() body: any,
   ): Promise<Suivi> {
+    this.checkCallerId(req, utilisateurId);
+
     let suivi;
     switch (body.type) {
       case SuiviType.alimentation:

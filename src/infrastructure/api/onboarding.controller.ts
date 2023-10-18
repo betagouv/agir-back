@@ -2,15 +2,12 @@ import {
   BadRequestException,
   Body,
   Controller,
-  Param,
   Post,
-  Query,
   Response,
 } from '@nestjs/common';
 import { OnboardingUsecase } from '../../usecase/onboarding.usecase';
 import {
   ApiTags,
-  ApiQuery,
   ApiBody,
   ApiOkResponse,
   ApiExtraModels,
@@ -24,6 +21,7 @@ import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
 import { ProspectSubmitAPI } from './types/utilisateur/prospectSubmitAPI';
 import { ValidateCodeAPI } from './types/utilisateur/validateCodeAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
+import { ErrorService } from '../errorService';
 
 @ApiExtraModels(CreateUtilisateurAPI)
 @Controller()
@@ -54,7 +52,7 @@ export class OnboardingController {
           email: body.email,
         });
     } catch (error) {
-      throw new BadRequestException(error.message);
+      throw new BadRequestException(ErrorService.toStringOrObject(error));
     }
   }
   @Post('utilisateurs/evaluate-onboarding')
@@ -105,7 +103,7 @@ export class OnboardingController {
       };
       return res.status(HttpStatus.OK).json(response);
     } catch (error) {
-      throw new BadRequestException(error.message);
+      throw new BadRequestException(ErrorService.toStringOrObject(error));
     }
   }
 
@@ -122,7 +120,7 @@ export class OnboardingController {
       await this.onboardingUsecase.renvoyerCode(body.email);
       return res.status(HttpStatus.OK).json('code renvoyé');
     } catch (error) {
-      throw new BadRequestException(error.message);
+      throw new BadRequestException(ErrorService.toStringOrObject(error));
     }
   }
 }

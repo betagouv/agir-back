@@ -5,9 +5,11 @@ import {
   HttpStatus,
   Param,
   Patch,
+  Request,
   Post,
   Query,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { InteractionsUsecase } from '../../usecase/interactions.usecase';
@@ -16,17 +18,25 @@ import { InteractionAPI } from './types/interactionAPI';
 import { InteractionStatus } from '../../domain/interaction/interactionStatus';
 import { Thematique } from '../../domain/thematique';
 import { InteractionStatusAPI } from './types/interactionStatusAPI';
+import { AuthGuard } from '../auth/guard';
+import { GenericControler } from './genericControler';
 
 @Controller()
 @ApiTags('Interactions')
-export class IntractionsController {
-  constructor(private readonly interactionsUsecase: InteractionsUsecase) {}
+export class IntractionsController extends GenericControler {
+  constructor(private readonly interactionsUsecase: InteractionsUsecase) {
+    super();
+  }
 
   @Get('utilisateurs/:id/interactions')
   @ApiOkResponse({ type: [InteractionAPI] })
+  @UseGuards(AuthGuard)
   async getUserInteractions(
+    @Request() req,
     @Param('id') id: string,
   ): Promise<InteractionAPI[]> {
+    this.checkCallerId(req, id);
+
     const list = await this.interactionsUsecase.listInteractions(id);
     return list.map((inter) => {
       const new_inter = new InteractionAPI();
@@ -39,11 +49,14 @@ export class IntractionsController {
     });
   }
   @Patch('utilisateurs/:utilisateurId/interactions/:interactionId')
+  @UseGuards(AuthGuard)
   async patchInteractionStatus(
+    @Request() req,
     @Param('utilisateurId') utilisateurId: string,
     @Param('interactionId') interactionId: string,
     @Body() body: InteractionStatusAPI,
   ) {
+    this.checkCallerId(req, utilisateurId);
     const status: InteractionStatus = {
       seen: body.seen,
       clicked: body.clicked,
@@ -88,6 +101,7 @@ export class IntractionsController {
   })
   @Post('interactions/scoring')
   async boostInteractions(
+    @Request() req,
     @Query('utilisateurId') utilisateurId: string,
     @Query('boost') boost: number,
     @Query('thematique') thematique: Thematique,

@@ -10,6 +10,7 @@ import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
 import { Impact } from '../src/domain/utilisateur/onboardingData';
 const request = require('supertest');
+import { JwtService } from '@nestjs/jwt';
 
 export class TestUtil {
   constructor() {}
@@ -17,9 +18,45 @@ export class TestUtil {
   public static prisma = new PrismaService();
   public static utilisateur = 'utilisateur';
   public static suivi = 'suivi';
+  private static SECRET = process.env.INTERNAL_TOKEN_SECRET;
+  public static jwtService = new JwtService({
+    secret: TestUtil.SECRET,
+  });
+  public static token;
+
+  static async generateAuthorizationToken(utilisateurId: string) {
+    const result = await TestUtil.jwtService.signAsync({ utilisateurId });
+    TestUtil.token = result;
+  }
 
   static getServer() {
     return request(this.app.getHttpServer());
+  }
+
+  static GET(url: string) {
+    return TestUtil.getServer()
+      .get(url)
+      .set('Authorization', `Bearer ${TestUtil.token}`);
+  }
+  static PUT(url: string) {
+    return TestUtil.getServer()
+      .put(url)
+      .set('Authorization', `Bearer ${TestUtil.token}`);
+  }
+  static PATCH(url: string) {
+    return TestUtil.getServer()
+      .patch(url)
+      .set('Authorization', `Bearer ${TestUtil.token}`);
+  }
+  static DELETE(url: string) {
+    return TestUtil.getServer()
+      .delete(url)
+      .set('Authorization', `Bearer ${TestUtil.token}`);
+  }
+  static POST(url: string) {
+    return TestUtil.getServer()
+      .post(url)
+      .set('Authorization', `Bearer ${TestUtil.token}`);
   }
 
   static async appinit() {

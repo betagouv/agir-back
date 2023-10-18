@@ -3,6 +3,7 @@ import { TestUtil } from '../../TestUtil';
 describe('/utilisateurs/id/questionsNGC (API test)', () => {
   beforeAll(async () => {
     await TestUtil.appinit();
+    await TestUtil.generateAuthorizationToken('utilisateur-id');
   });
 
   beforeEach(async () => {
@@ -13,17 +14,32 @@ describe('/utilisateurs/id/questionsNGC (API test)', () => {
     await TestUtil.appclose();
   });
 
+  it('PUT /utilisateurs/id/questionsNGC - 403 when bad ID', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/autre-id/questionsNGC',
+    ).send({
+      key: 'transport . voiture . km',
+      value: 12000,
+    });
+
+    // THEN
+    expect(response.status).toBe(403);
+  });
   it('PUT /utilisateurs/id/questionsNGC - creates an new entry', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
 
     // WHEN
-    const response = await TestUtil.getServer()
-      .put('/utilisateurs/utilisateur-id/questionsNGC')
-      .send({
-        key: 'transport . voiture . km',
-        value: 12000,
-      });
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsNGC',
+    ).send({
+      key: 'transport . voiture . km',
+      value: 12000,
+    });
 
     // THEN
     expect(response.status).toBe(200);
@@ -38,12 +54,12 @@ describe('/utilisateurs/id/questionsNGC (API test)', () => {
     await TestUtil.create('utilisateur');
 
     // WHEN
-    const response = await TestUtil.getServer()
-      .put('/utilisateurs/utilisateur-id/questionsNGC')
-      .send({
-        key: 'transport . voiture . km',
-        value: 12000,
-      });
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsNGC',
+    ).send({
+      key: 'transport . voiture . km',
+      value: 12000,
+    });
 
     // THEN
     expect(response.status).toBe(200);
@@ -73,12 +89,12 @@ describe('/utilisateurs/id/questionsNGC (API test)', () => {
     await TestUtil.create('empreinte');
 
     // WHEN
-    const response = await TestUtil.getServer()
-      .put('/utilisateurs/utilisateur-id/questionsNGC')
-      .send({
-        key: 'transport . voiture . motorisation',
-        value: "'électrique'",
-      });
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsNGC',
+    ).send({
+      key: 'transport . voiture . motorisation',
+      value: "'électrique'",
+    });
 
     // THEN
     expect(response.status).toBe(200);

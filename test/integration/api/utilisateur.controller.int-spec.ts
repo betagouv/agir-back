@@ -167,6 +167,7 @@ function getFakeUtilisteur() {
 describe('/utilisateurs (API test)', () => {
   beforeAll(async () => {
     await TestUtil.appinit();
+    await TestUtil.generateAuthorizationToken('utilisateur-id');
   });
 
   beforeEach(async () => {
@@ -179,7 +180,7 @@ describe('/utilisateurs (API test)', () => {
 
   it('GET /utilisateurs?nom=bob - when missing nom', async () => {
     // WHEN
-    const response = await TestUtil.getServer().get('/utilisateurs?nom=bob');
+    const response = await TestUtil.GET('/utilisateurs?nom=bob');
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(0);
@@ -193,7 +194,7 @@ describe('/utilisateurs (API test)', () => {
       ],
     });
     // WHEN
-    const response = await TestUtil.getServer().get('/utilisateurs?nom=george');
+    const response = await TestUtil.GET('/utilisateurs?nom=george');
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
@@ -201,8 +202,10 @@ describe('/utilisateurs (API test)', () => {
   });
 
   it('GET /utilisateurs/id - when missing', async () => {
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id');
     // THEN
-    return TestUtil.getServer().get('/utilisateurs/1').expect(404);
+    expect(response.status).toBe(404);
   });
   it('DELETE /utilisateurs/id', async () => {
     // GIVEN
@@ -214,9 +217,7 @@ describe('/utilisateurs (API test)', () => {
     await TestUtil.create('badge');
     await TestUtil.create('interaction');
     // WHEN
-    const response = await TestUtil.getServer().delete(
-      '/utilisateurs/utilisateur-id',
-    );
+    const response = await TestUtil.DELETE('/utilisateurs/utilisateur-id');
 
     // THEN
     expect(response.status).toBe(200);
@@ -225,13 +226,42 @@ describe('/utilisateurs (API test)', () => {
     });
     expect(dbUser).toBeNull();
   });
+  it('GET /utilisateurs/id - 401 si pas de token', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    const response = await TestUtil.getServer().get(
+      '/utilisateurs/utilisateur-id',
+    );
+    // THEN
+    expect(response.status).toBe(401);
+  });
+  it('GET /utilisateurs/id - ok si token', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id');
+    /*.set(
+        'Authorization',
+        `Bearer ${await TestUtil.createNewInnerAppToken('utilisateur-id')}`,
+      )*/
+    // THEN
+    expect(response.status).toBe(200);
+  });
+  it('GET /utilisateurs/id - 403 si on accede à la ressource d un autre', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { email: '1' });
+    await TestUtil.create('utilisateur', { id: 'autre-id', email: '2' });
+    const response = await TestUtil.GET('/utilisateurs/autre-id');
+    expect(response.status).toBe(403);
+    expect(response.body.code).toEqual('002');
+    expect(response.body.message).toEqual(
+      'Vous ne pouvez pas accéder à ces données',
+    );
+  });
   it('GET /utilisateurs/id - when present', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', { failed_login_count: 2 });
     await TestUtil.create('badge');
-    const response = await TestUtil.getServer().get(
-      '/utilisateurs/utilisateur-id',
-    );
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id');
     // WHEN
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
@@ -262,9 +292,7 @@ describe('/utilisateurs (API test)', () => {
     await TestUtil.create('utilisateur');
     await TestUtil.create('badge');
     // WHEN
-    const response = await TestUtil.getServer().get(
-      '/utilisateurs/utilisateur-id',
-    );
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id');
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.badges).toHaveLength(1);
@@ -277,9 +305,7 @@ describe('/utilisateurs (API test)', () => {
     await TestUtil.create('badge');
     await TestUtil.create('badge', { id: '2', type: 'type2', titre: 'titre2' });
     // WHEN
-    const response = await TestUtil.getServer().get(
-      '/utilisateurs/utilisateur-id',
-    );
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id');
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.badges).toHaveLength(2);
@@ -294,7 +320,7 @@ describe('/utilisateurs (API test)', () => {
       ],
     });
     // WHEN
-    const response = await TestUtil.getServer().get('/utilisateurs');
+    const response = await TestUtil.GET('/utilisateurs');
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(2);
@@ -956,9 +982,7 @@ describe('/utilisateurs (API test)', () => {
   it('GET /utilisateurs/id/profile - read basic profile datas', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
-    const response = await TestUtil.getServer().get(
-      '/utilisateurs/utilisateur-id/profile',
-    );
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/profile');
     // WHEN
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
@@ -973,15 +997,15 @@ describe('/utilisateurs (API test)', () => {
   it('PATCH /utilisateurs/id/profile - update basic profile datas', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
-    const response = await TestUtil.getServer()
-      .patch('/utilisateurs/utilisateur-id/profile')
-      .send({
-        email: 'george@paris.com',
-        nom: 'THE NOM',
-        prenom: 'THE PRENOM',
-        code_postal: '75008',
-        mot_de_passe: '1234',
-      });
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      email: 'george@paris.com',
+      nom: 'THE NOM',
+      prenom: 'THE PRENOM',
+      code_postal: '75008',
+      mot_de_passe: '1234',
+    });
     // WHEN
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },

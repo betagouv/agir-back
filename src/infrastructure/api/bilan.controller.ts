@@ -1,34 +1,55 @@
 import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { Controller, Get, Post, Param, Body, Headers } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Body,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { BilanUsecase } from '../../usecase/bilan.usecase';
 import { BilanAPI } from './types/bilanAPI';
 import { SituationNGCAPI } from './types/situationNGCAPI';
+import { GenericControler } from './genericControler';
+import { AuthGuard } from '../auth/guard';
 
 @Controller()
 @ApiTags('Bilan')
-export class BilanController {
-  constructor(private readonly bilanUsecase: BilanUsecase) {}
+export class BilanController extends GenericControler {
+  constructor(private readonly bilanUsecase: BilanUsecase) {
+    super();
+  }
   @ApiOkResponse({ type: BilanAPI })
   @Get('utilisateur/:utilisateurId/bilans/last')
+  @UseGuards(AuthGuard)
   async getBilan(
+    @Request() req,
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<BilanAPI> {
+    this.checkCallerId(req, utilisateurId);
     return this.bilanUsecase.getLastBilanByUtilisateurId(utilisateurId);
   }
 
   @Get('utilisateur/:utilisateurId/bilans')
   @ApiOkResponse({ type: BilanAPI })
+  @UseGuards(AuthGuard)
   async getBilans(
+    @Request() req,
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<BilanAPI[]> {
+    this.checkCallerId(req, utilisateurId);
     return this.bilanUsecase.getAllBilansByUtilisateurId(utilisateurId);
   }
 
   @Post('utilisateurs/:utilisateurId/bilans/:situationId')
+  @UseGuards(AuthGuard)
   async postEmpreinte(
+    @Request() req,
     @Param('utilisateurId') utilisateurId: string,
     @Param('situationId') situationId: string,
   ): Promise<any> {
+    this.checkCallerId(req, utilisateurId);
     return await this.bilanUsecase.addBilanToUtilisateur(
       utilisateurId,
       situationId,

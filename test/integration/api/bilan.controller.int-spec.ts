@@ -3,6 +3,7 @@ import { TestUtil } from '../../TestUtil';
 describe('/bilan (API test)', () => {
   beforeAll(async () => {
     await TestUtil.appinit();
+    await TestUtil.generateAuthorizationToken('utilisateur-id');
   });
 
   beforeEach(async () => {
@@ -13,6 +14,18 @@ describe('/bilan (API test)', () => {
     await TestUtil.appclose();
   });
 
+  it('GET /utilisateur/id/bilans/last - 403 if bad id', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('situationNGC');
+    await TestUtil.create('empreinte');
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateur/autre-id/bilans/last');
+
+    //THEN
+    expect(response.status).toBe(403);
+  });
   it('GET /utilisateur/id/bilans/last - get last bilan with proper data', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
@@ -20,7 +33,7 @@ describe('/bilan (API test)', () => {
     await TestUtil.create('empreinte');
 
     // WHEN
-    const response = await TestUtil.getServer().get(
+    const response = await TestUtil.GET(
       '/utilisateur/utilisateur-id/bilans/last',
     );
 
@@ -53,7 +66,7 @@ describe('/bilan (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.getServer().get(
+    const response = await TestUtil.GET(
       '/utilisateur/utilisateur-id/bilans/last',
     );
 
@@ -78,9 +91,7 @@ describe('/bilan (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.getServer().get(
-      '/utilisateur/utilisateur-id/bilans',
-    );
+    const response = await TestUtil.GET('/utilisateur/utilisateur-id/bilans');
 
     //THEN
     expect(response.status).toBe(200);
@@ -94,7 +105,7 @@ describe('/bilan (API test)', () => {
     await TestUtil.create('situationNGC');
 
     // WHEN
-    const response = await TestUtil.getServer().post(
+    const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/bilans/situationNGC-id',
     );
 
@@ -124,13 +135,11 @@ describe('/bilan (API test)', () => {
   });
   it('POST /bilan/importFromNGC - creates new situation', async () => {
     // WHEN
-    const response = await TestUtil.getServer()
-      .post('/bilan/importFromNGC')
-      .send({
-        situation: {
-          'transport . voiture . km': 12000,
-        },
-      });
+    const response = await TestUtil.POST('/bilan/importFromNGC').send({
+      situation: {
+        'transport . voiture . km': 12000,
+      },
+    });
 
     //THEN
     expect(response.status).toBe(201);

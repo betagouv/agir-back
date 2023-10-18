@@ -4,6 +4,7 @@ import { TestUtil } from '../../TestUtil';
 describe('/suivis (API test)', () => {
   beforeAll(async () => {
     await TestUtil.appinit();
+    await TestUtil.generateAuthorizationToken('utilisateur-id');
   });
 
   beforeEach(async () => {
@@ -14,14 +15,22 @@ describe('/suivis (API test)', () => {
     await TestUtil.appclose();
   });
 
+  it('GET /utilisateurs/123/suivis - 403 si pas le bon ID', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/autre-id/suivis');
+
+    // THEN
+    expect(response.status).toBe(403);
+  });
   it('GET /utilisateurs/123/suivis - liste vide si pas de suivi', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
 
     // WHEN
-    const response = await TestUtil.getServer().get(
-      '/utilisateurs/utilisateur-id/suivis',
-    );
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/suivis');
 
     // THEN
     expect(response.status).toBe(200);
@@ -49,9 +58,7 @@ describe('/suivis (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.getServer().get(
-      '/utilisateurs/utilisateur-id/suivis',
-    );
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/suivis');
 
     // THEN
     expect(response.status).toBe(200);
@@ -79,7 +86,7 @@ describe('/suivis (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.getServer().get(
+    const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/suivis?type=alimentation',
     );
 
@@ -110,7 +117,7 @@ describe('/suivis (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.getServer().get(
+    const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/suivis/last',
     );
 
@@ -140,7 +147,7 @@ describe('/suivis (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.getServer().get(
+    const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/suivis/last?type=transport',
     );
 
@@ -170,7 +177,7 @@ describe('/suivis (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.getServer().get(
+    const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/suivis/last?type=alimentation',
     );
 
@@ -183,7 +190,7 @@ describe('/suivis (API test)', () => {
     await TestUtil.create('utilisateur');
 
     // WHEN
-    const response = await TestUtil.getServer().get(
+    const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/suivis/last?type=transport',
     );
 
@@ -198,13 +205,13 @@ describe('/suivis (API test)', () => {
     await TestUtil.create('utilisateur');
 
     // WHEN
-    const response = await TestUtil.getServer()
-      .post('/utilisateurs/utilisateur-id/suivis')
-      .send({
-        type: 'alimentation',
-        viande_rouge: 0,
-        tres_cher: true,
-      });
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/suivis',
+    ).send({
+      type: 'alimentation',
+      viande_rouge: 0,
+      tres_cher: true,
+    });
     // THEN
     expect(response.status).toBe(201);
 
@@ -217,20 +224,18 @@ describe('/suivis (API test)', () => {
     await TestUtil.create('utilisateur');
 
     // WHEN
-    let response = await TestUtil.getServer()
-      .post('/utilisateurs/utilisateur-id/suivis')
-      .send({
-        type: 'alimentation',
-        viande_rouge: 11,
-        poisson_blanc: 1,
-        tres_cher: true,
-      });
+    let response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/suivis',
+    ).send({
+      type: 'alimentation',
+      viande_rouge: 11,
+      poisson_blanc: 1,
+      tres_cher: true,
+    });
     // THEN
     expect(response.status).toBe(201);
 
-    response = await TestUtil.getServer().get(
-      '/utilisateurs/utilisateur-id/suivis',
-    );
+    response = await TestUtil.GET('/utilisateurs/utilisateur-id/suivis');
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0].viande_rouge).toStrictEqual(11);

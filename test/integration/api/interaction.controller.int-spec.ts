@@ -11,6 +11,7 @@ import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 describe('/utilisateurs/id/interactions (API test)', () => {
   beforeAll(async () => {
     await TestUtil.appinit();
+    await TestUtil.generateAuthorizationToken('utilisateur-id');
   });
 
   beforeEach(async () => {
@@ -26,12 +27,21 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     await TestUtil.appclose();
   });
 
+  it('GET /utilisateurs/id/interactions - 403 if bad id', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction');
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/autre-id/interactions');
+    // THEN
+    expect(response.status).toBe(403);
+  });
   it('GET /utilisateurs/id/interactions - list all interactions', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction');
     // WHEN
-    const response = await TestUtil.getServer().get(
+    const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/interactions',
     );
     // THEN
@@ -63,7 +73,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       type: InteractionType.article,
     });
     // WHEN
-    const response = await TestUtil.getServer().get(
+    const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/interactions',
     );
     // THEN
@@ -83,7 +93,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     await TestUtil.create('interaction', { id: '4', score: 0.1 });
 
     // WHEN
-    const response = await TestUtil.getServer().get(
+    const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/interactions',
     );
 
@@ -132,7 +142,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     );
 
     // WHEN
-    const response = await TestUtil.getServer().get(
+    const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/interactions',
     );
 
@@ -181,7 +191,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     );
 
     // WHEN
-    const response = await TestUtil.getServer().get(
+    const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/interactions',
     );
 
@@ -196,7 +206,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', { done: true });
     // WHEN
-    const response = await TestUtil.getServer().get(
+    const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/interactions',
     );
     // THEN
@@ -215,7 +225,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       pinned_at_position: 2,
     });
     // WHEN
-    const response = await TestUtil.getServer().get(
+    const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/interactions',
     );
     // THEN
@@ -232,11 +242,11 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     await TestUtil.create('interaction');
 
     // WHEN
-    const response = await TestUtil.getServer()
-      .patch('/utilisateurs/utilisateur-id/interactions/interaction-id')
-      .send({
-        done: true,
-      });
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/interactions/interaction-id',
+    ).send({
+      done: true,
+    });
     // THEN
     expect(response.status).toBe(200);
     const dbInteraction = await TestUtil.prisma.interaction.findUnique({
@@ -255,11 +265,11 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', { type: InteractionType.quizz });
     // WHEN
-    const response = await TestUtil.getServer()
-      .patch('/utilisateurs/utilisateur-id/interactions/interaction-id')
-      .send({
-        quizz_score: 55,
-      });
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/interactions/interaction-id',
+    ).send({
+      quizz_score: 55,
+    });
     // THEN
     expect(response.status).toBe(200);
     const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
@@ -304,11 +314,11 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       thematique_gamification: Thematique.climat,
     });
     // WHEN
-    const response = await TestUtil.getServer()
-      .patch('/utilisateurs/utilisateur-id/interactions/3')
-      .send({
-        quizz_score: 79,
-      });
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/interactions/3',
+    ).send({
+      quizz_score: 79,
+    });
     // THEN
     expect(response.status).toBe(200);
     const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
@@ -361,11 +371,11 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       thematique_gamification: Thematique.climat,
     });
     // WHEN
-    const response = await TestUtil.getServer()
-      .patch('/utilisateurs/utilisateur-id/interactions/3')
-      .send({
-        quizz_score: 45,
-      });
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/interactions/3',
+    ).send({
+      quizz_score: 45,
+    });
     // THEN
     expect(response.status).toBe(200);
     const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
@@ -384,11 +394,11 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       done: true,
     });
     // WHEN
-    const response = await TestUtil.getServer()
-      .patch('/utilisateurs/utilisateur-id/interactions/interaction-id')
-      .send({
-        done: true,
-      });
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/interactions/interaction-id',
+    ).send({
+      done: true,
+    });
     // THEN
     expect(response.status).toBe(200);
     const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
@@ -405,11 +415,11 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       scheduled_reset: null,
     });
     // WHEN
-    const response = await TestUtil.getServer()
-      .patch('/utilisateurs/utilisateur-id/interactions/interaction-id')
-      .send({
-        done: true,
-      });
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/interactions/interaction-id',
+    ).send({
+      done: true,
+    });
     // THEN
     expect(response.status).toBe(200);
     const dbInteraction = await TestUtil.prisma.interaction.findUnique({
@@ -426,16 +436,16 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       scheduled_reset: null,
     });
     // WHEN
-    await TestUtil.getServer()
-      .patch('/utilisateurs/utilisateur-id/interactions/interaction-id')
-      .send({
-        clicked: true,
-      });
-    const response = await TestUtil.getServer()
-      .patch('/utilisateurs/utilisateur-id/interactions/interaction-id')
-      .send({
-        done: true,
-      });
+    await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/interactions/interaction-id',
+    ).send({
+      clicked: true,
+    });
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/interactions/interaction-id',
+    ).send({
+      done: true,
+    });
     // THEN
     expect(response.status).toBe(200);
     const dbInteraction = await TestUtil.prisma.interaction.findUnique({
@@ -457,7 +467,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       scheduled_reset: new Date(200),
     });
     // WHEN
-    const response = await TestUtil.getServer().post('/interactions/reset');
+    const response = await TestUtil.POST('/interactions/reset');
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.reset_interaction_number).toEqual(2);
@@ -476,7 +486,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       scheduled_reset: new Date(200),
     });
     // WHEN
-    const response = await TestUtil.getServer().post(
+    const response = await TestUtil.POST(
       '/interactions/reset?date='.concat(new Date(150).toISOString()),
     );
     // THEN
@@ -542,7 +552,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.getServer().get(
+    const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/interactions',
     );
 
@@ -567,7 +577,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       thematique_gamification: Thematique.climat,
     });
     // WHEN
-    const response = await TestUtil.getServer().post(
+    const response = await TestUtil.POST(
       '/interactions/scoring?utilisateurId=utilisateur-id&thematique=climat&boost=4',
     );
     // THEN
@@ -595,7 +605,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       thematique_gamification: Thematique.climat,
     });
     // WHEN
-    const response = await TestUtil.getServer().post(
+    const response = await TestUtil.POST(
       '/interactions/scoring?utilisateurId=utilisateur-id&thematique=climat&boost=-2',
     );
     // THEN

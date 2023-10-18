@@ -1,4 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  ForbiddenException,
+  Headers,
+  Post,
+} from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { InteractionsDefinitionUsecase } from '../../../src/usecase/interactionsDefinition.usecase';
 import { CMSWebhookAPI } from './types/cms/CMSWebhookAPI';
@@ -16,7 +22,16 @@ export class CMSController {
   })
   @ApiBody({ type: CMSWebhookAPI })
   @Post('api/cms/income')
-  async income(@Body() body: CMSWebhookAPI) {
+  async income(
+    @Body() body: CMSWebhookAPI,
+    @Headers('Authorization') authorization: string,
+  ) {
+    if (
+      !authorization ||
+      !authorization.endsWith(process.env.CMS_WEBHOOK_API_KEY)
+    ) {
+      throw new ForbiddenException('API KEY webhook CMS incorrecte : ');
+    }
     console.log(JSON.stringify(body));
     await this.interactionsDefinitionUsecase.insertOrUpdateInteractionDefFromCMS(
       body,

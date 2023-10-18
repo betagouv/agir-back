@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards, Request } from '@nestjs/common';
 import { SuiviUsecase } from '../../usecase/suivi.usecase';
 import {
   ApiExtraModels,
@@ -8,12 +8,16 @@ import {
 } from '@nestjs/swagger';
 import { SuiviDashboardAPI } from './types/suiviDashboardAPI';
 import { SuiviAlimentationAPI, SuiviTransportAPI } from './types/suiviAPI';
+import { AuthGuard } from '../auth/guard';
+import { GenericControler } from './genericControler';
 
 @Controller()
 @ApiExtraModels(SuiviAlimentationAPI, SuiviTransportAPI, SuiviDashboardAPI)
 @ApiTags('Suivi Dashboard')
-export class SuiviDashboardController {
-  constructor(private readonly suiviUsecase: SuiviUsecase) {}
+export class SuiviDashboardController extends GenericControler {
+  constructor(private readonly suiviUsecase: SuiviUsecase) {
+    super();
+  }
 
   @ApiOkResponse({
     schema: {
@@ -33,7 +37,12 @@ export class SuiviDashboardController {
     },
   })
   @Get('utilisateurs/:id/suivi_dashboard')
-  async getSuiviDashboard(@Param('id') id: string): Promise<SuiviDashboardAPI> {
+  @UseGuards(AuthGuard)
+  async getSuiviDashboard(
+    @Request() req,
+    @Param('id') id: string,
+  ): Promise<SuiviDashboardAPI> {
+    this.checkCallerId(req, id);
     return this.suiviUsecase.buildSuiviDashboard(id);
   }
 }
