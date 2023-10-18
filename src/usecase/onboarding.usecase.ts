@@ -5,12 +5,6 @@ import { InteractionDefinitionRepository } from '../infrastructure/repository/in
 import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
 import { Interaction } from '../domain/interaction/interaction';
 import { UserQuizzProfile } from '../domain/quizz/userQuizzProfile';
-import { UtilisateurProfileAPI } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
-import { SuiviRepository } from '../infrastructure/repository/suivi.repository';
-import { BadgeRepository } from '../infrastructure/repository/badge.repository';
-import { BilanRepository } from '../infrastructure/repository/bilan.repository';
-import { QuestionNGCRepository } from '../infrastructure/repository/questionNGC.repository';
-import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/createUtilisateurAPI';
 import {
   Impact,
@@ -22,6 +16,7 @@ import { OnboardingDataImpactAPI } from '../infrastructure/api/types/utilisateur
 import { OnboardingResult } from '../domain/utilisateur/onboardingResult';
 import { OidcService } from '../infrastructure/auth/oidc.service';
 import { EmailSender } from '../infrastructure/email/emailSender';
+import { PasswordManager } from '../../src/domain/utilisateur/manager/passwordManager';
 
 export type Phrase = {
   phrase: string;
@@ -37,11 +32,6 @@ export class OnboardingUsecase {
     private utilisateurRespository: UtilisateurRepository,
     private interactionDefinitionRepository: InteractionDefinitionRepository,
     private interactionRepository: InteractionRepository,
-    private suiviRepository: SuiviRepository,
-    private badgeRepository: BadgeRepository,
-    private bilanRepository: BilanRepository,
-    private questionNGCRepository: QuestionNGCRepository,
-    private oIDCStateRepository: OIDCStateRepository,
     private oidcService: OidcService,
     private emailSender: EmailSender,
   ) {}
@@ -60,11 +50,11 @@ export class OnboardingUsecase {
     }
     if (utilisateur.isCodeLocked()) {
       throw new Error(
-        `Trop d'essais successifs, compte bloqué jusqu'à ${utilisateur.getLockedUntilString()}`,
+        `Trop d'essais successifs, compte bloqué jusqu'à ${utilisateur.getLoginLockedUntilString()}`,
       );
     }
 
-    const code_ok = utilisateur.checkCodeOK(code);
+    const code_ok = utilisateur.checkCodeOKAndChangeState(code);
     await this.utilisateurRespository.updateUtilisateurLoginSecurity(
       utilisateur,
     );
@@ -77,7 +67,7 @@ export class OnboardingUsecase {
     }
     if (utilisateur.isCodeLocked()) {
       throw new Error(
-        `Trop d'essais successifs, compte bloqué jusqu'à ${utilisateur.getLockedUntilString()}`,
+        `Trop d'essais successifs, compte bloqué jusqu'à ${utilisateur.getLoginLockedUntilString()}`,
       );
     }
     throw new Error(MAUVAIS_CODE_ERROR);
@@ -137,8 +127,13 @@ export class OnboardingUsecase {
       onboardingResult: new OnboardingResult(onboardingData),
       quizzProfile: UserQuizzProfile.newLowProfile(),
       badges: undefined,
+      passwordHash: null,
+      passwordSalt: null,
       active_account: false,
+      code: null,
       failed_checkcode_count: 0,
+      failed_login_count: 0,
+      prevent_login_before: new Date(),
       prevent_checkcode_before: new Date(),
       sent_code_count: 1,
       prevent_sendcode_before: new Date(),
@@ -168,7 +163,7 @@ export class OnboardingUsecase {
     }
     if (utilisateur.isCodeEmailLocked()) {
       throw new Error(
-        `Trop d'essais successifs, attendez jusqu'à ${utilisateur.getLockedUntilString()} avant de redemander un code`,
+        `Trop d'essais successifs, attendez jusqu'à ${utilisateur.getLoginLockedUntilString()} avant de redemander un code`,
       );
     }
     utilisateur.resetCodeEmailCouterIfNeeded();
@@ -197,7 +192,7 @@ export class OnboardingUsecase {
       throw new Error('Email obligatoire pour créer un utilisateur');
     }
 
-    Utilisateur.checkPasswordFormat(utilisateurInput.mot_de_passe);
+    PasswordManager.checkPasswordFormat(utilisateurInput.mot_de_passe);
     Utilisateur.checkEmailFormat(utilisateurInput.email);
   }
 

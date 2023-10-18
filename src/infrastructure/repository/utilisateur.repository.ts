@@ -254,7 +254,7 @@ export class UtilisateurRepository {
         quizzProfile: new UserQuizzProfile(user.quizzLevels as any),
         created_at: user.created_at,
         badges: user['badges'],
-      } as Utilisateur);
+      });
     }
     return null;
   }

@@ -1,6 +1,5 @@
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur.repository';
-import { InteractionDefinitionRepository } from '../infrastructure/repository/interactionDefinition.repository';
 import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
 import { UtilisateurProfileAPI } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
 import { SuiviRepository } from '../infrastructure/repository/suivi.repository';
@@ -9,8 +8,11 @@ import { BilanRepository } from '../infrastructure/repository/bilan.repository';
 import { QuestionNGCRepository } from '../infrastructure/repository/questionNGC.repository';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { OidcService } from '../../src/infrastructure/auth/oidc.service';
-import { EmailSender } from '../../src/infrastructure/email/emailSender';
 import { Injectable } from '@nestjs/common';
+import {
+  PasswordAwareUtilisateur,
+  PasswordManager,
+} from '../../src/domain/utilisateur/manager/passwordManager';
 
 export type Phrase = {
   phrase: string;
@@ -23,7 +25,6 @@ const MAUVAIS_MDP_ERROR = `Mauvaise adresse électronique ou mauvais mot de pass
 export class UtilisateurUsecase {
   constructor(
     private utilisateurRespository: UtilisateurRepository,
-    private interactionDefinitionRepository: InteractionDefinitionRepository,
     private interactionRepository: InteractionRepository,
     private suiviRepository: SuiviRepository,
     private badgeRepository: BadgeRepository,
@@ -31,7 +32,6 @@ export class UtilisateurUsecase {
     private questionNGCRepository: QuestionNGCRepository,
     private oIDCStateRepository: OIDCStateRepository,
     private oidcService: OidcService,
-    private emailSender: EmailSender,
   ) {}
 
   async loginUtilisateur(
@@ -48,11 +48,11 @@ export class UtilisateurUsecase {
     }
     if (utilisateur.isLoginLocked()) {
       throw new Error(
-        `Trop d'essais successifs, compte bloqué jusqu'à ${utilisateur.getLockedUntilString()}`,
+        `Trop d'essais successifs, compte bloqué jusqu'à ${utilisateur.getLoginLockedUntilString()}`,
       );
     }
 
-    const password_ok = utilisateur.checkPasswordOK(password);
+    const password_ok = utilisateur.checkPasswordOKAndChangeState(password);
     await this.utilisateurRespository.updateUtilisateurLoginSecurity(
       utilisateur,
     );
@@ -64,7 +64,7 @@ export class UtilisateurUsecase {
     }
     if (utilisateur.isLoginLocked()) {
       throw new Error(
-        `Trop d'essais successifs, compte bloqué jusqu'à ${utilisateur.getLockedUntilString()}`,
+        `Trop d'essais successifs, compte bloqué jusqu'à ${utilisateur.getLoginLockedUntilString()}`,
       );
     }
     throw new Error(MAUVAIS_MDP_ERROR);
@@ -82,8 +82,13 @@ export class UtilisateurUsecase {
     utilisateurId: string,
     profile: UtilisateurProfileAPI,
   ) {
-    const fakeUser = new Utilisateur({});
-    fakeUser.setPassword(profile.mot_de_passe);
+    const fakeUser: PasswordAwareUtilisateur = {
+      passwordHash: '',
+      passwordSalt: '',
+      failed_login_count: 0,
+      prevent_login_before: new Date(),
+    };
+    PasswordManager.setUserPassword(fakeUser, profile.mot_de_passe);
 
     return this.utilisateurRespository.updateProfile(utilisateurId, {
       code_postal: profile.code_postal,

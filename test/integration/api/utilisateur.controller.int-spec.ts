@@ -4,6 +4,10 @@ import {
   Thematique,
 } from '../../../src/domain/utilisateur/onboardingData';
 import { TestUtil } from '../../TestUtil';
+import {
+  PasswordAwareUtilisateur,
+  PasswordManager,
+} from '../../../src/domain/utilisateur/manager/passwordManager';
 
 const ONBOARDING_1_2_3_4_DATA = {
   transports: ['voiture', 'pied'],
@@ -151,6 +155,15 @@ const ONBOARDING_RES_4444 = {
   },
 };
 
+function getFakeUtilisteur() {
+  return {
+    passwordHash: '',
+    passwordSalt: '',
+    failed_login_count: 0,
+    prevent_login_before: new Date(),
+  };
+}
+
 describe('/utilisateurs (API test)', () => {
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -289,12 +302,13 @@ describe('/utilisateurs (API test)', () => {
 
   it('POST /utilisateurs/login - logs user and return a JWT token', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({});
-    utilisateur.setPassword('#1234567890HAHA');
+    const utilisateur = getFakeUtilisteur();
+    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHA');
 
     await TestUtil.create('utilisateur', {
       passwordHash: utilisateur.passwordHash,
       passwordSalt: utilisateur.passwordSalt,
+      active_account: true,
     });
     await TestUtil.create('badge');
 
@@ -326,8 +340,8 @@ describe('/utilisateurs (API test)', () => {
   });
   it('POST /utilisateurs/login - bad password', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({});
-    utilisateur.setPassword('#1234567890HAHA');
+    const utilisateur = getFakeUtilisteur();
+    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHA');
 
     await TestUtil.create('utilisateur', {
       passwordHash: utilisateur.passwordHash,
@@ -372,8 +386,8 @@ describe('/utilisateurs (API test)', () => {
   });
   it('POST /utilisateurs/login - bad password twice, failed count = 2', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({});
-    utilisateur.setPassword('#1234567890HAHA');
+    const utilisateur = getFakeUtilisteur();
+    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHA');
 
     await TestUtil.create('utilisateur', {
       passwordHash: utilisateur.passwordHash,
@@ -406,8 +420,8 @@ describe('/utilisateurs (API test)', () => {
   });
   it('POST /utilisateurs/login - bad password 4 times, blocked account', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({});
-    utilisateur.setPassword('#1234567890HAHA');
+    const utilisateur = getFakeUtilisteur();
+    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHA');
 
     await TestUtil.create('utilisateur', {
       passwordHash: utilisateur.passwordHash,
@@ -452,8 +466,8 @@ describe('/utilisateurs (API test)', () => {
   });
   it('POST /utilisateurs/login - bad email', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({});
-    utilisateur.setPassword('#1234567890HAHA');
+    const utilisateur = getFakeUtilisteur();
+    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHA');
 
     await TestUtil.create('utilisateur', {
       passwordHash: utilisateur.passwordHash,
@@ -569,7 +583,6 @@ describe('/utilisateurs (API test)', () => {
     const userDB = await TestUtil.prisma.utilisateur.findFirst({
       where: { nom: 'WW' },
     });
-    console.log(userDB);
     expect(response.status).toBe(400);
 
     expect(userDB.sent_code_count).toEqual(3);
@@ -953,17 +966,20 @@ describe('/utilisateurs (API test)', () => {
         mot_de_passe: '1234',
       });
     // WHEN
-    const dbUser = new Utilisateur(
-      await TestUtil.prisma.utilisateur.findUnique({
-        where: { id: 'utilisateur-id' },
-      }),
-    );
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
     // THEN
+    const fakeUser = getFakeUtilisteur();
+    fakeUser.passwordHash = dbUser.passwordHash;
+    fakeUser.passwordSalt = dbUser.passwordSalt;
     expect(response.status).toBe(200);
     expect(dbUser.nom).toEqual('THE NOM');
     expect(dbUser.prenom).toEqual('THE PRENOM');
     expect(dbUser.email).toEqual('george@paris.com');
     expect(dbUser.code_postal).toEqual('75008');
-    expect(dbUser.checkPasswordOK('1234')).toEqual(true);
+    expect(
+      PasswordManager.checkUserPasswordOKAndChangeState(fakeUser, '1234'),
+    ).toEqual(true);
   });
 });
