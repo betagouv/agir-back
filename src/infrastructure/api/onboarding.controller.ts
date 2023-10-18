@@ -22,7 +22,8 @@ import { OnboardingDataImpactAPI } from './types/utilisateur/onboardingDataImpac
 import { HttpStatus } from '@nestjs/common';
 import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
 import { ProspectSubmitAPI } from './types/utilisateur/prospectSubmitAPI';
-import { ValidateCodeAPI } from './types/utilisateur/validateCodeAPI copy';
+import { ValidateCodeAPI } from './types/utilisateur/validateCodeAPI';
+import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 
 @ApiExtraModels(CreateUtilisateurAPI)
 @Controller()
@@ -108,14 +109,17 @@ export class OnboardingController {
     }
   }
 
-  @Post('utilisateurs/:email/renvoyer_code')
+  @Post('utilisateurs/renvoyer_code')
   @ApiOperation({
     summary:
       "renvoi le code de validation de l'inscription par email à l'email précisé dans la route",
   })
-  async renvoyerCode(@Param('email') email: string, @Response() res) {
+  @ApiBody({
+    type: RenvoyerCodeAPI,
+  })
+  async renvoyerCode(@Body() body: RenvoyerCodeAPI, @Response() res) {
     try {
-      await this.onboardingUsecase.renvoyerCode(email);
+      await this.onboardingUsecase.renvoyerCode(body.email);
       return res.status(HttpStatus.OK).json('code renvoyé');
     } catch (error) {
       throw new BadRequestException(error.message);

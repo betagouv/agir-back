@@ -534,7 +534,7 @@ describe('/utilisateurs (API test)', () => {
       'Le mot de passe doit contenir au moins un chiffre',
     );
   });
-  it('POST /utilisateurs/email/renvoyer_code - resend code ok for first time, counter + 1', async () => {
+  it('POST /utilisateurs/renvoyer_code - resend code ok for first time, counter + 1', async () => {
     // GIVEN
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
@@ -545,9 +545,9 @@ describe('/utilisateurs (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.getServer().post(
-      '/utilisateurs/monmail@truc.com/renvoyer_code',
-    );
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/renvoyer_code')
+      .send({ email: 'monmail@truc.com' });
 
     // THEN
     expect(response.status).toBe(200);
@@ -569,15 +569,15 @@ describe('/utilisateurs (API test)', () => {
     });
 
     // WHEN
-    await TestUtil.getServer().post(
-      '/utilisateurs/monmail@truc.com/renvoyer_code',
-    );
-    await TestUtil.getServer().post(
-      '/utilisateurs/monmail@truc.com/renvoyer_code',
-    );
-    const response = await TestUtil.getServer().post(
-      '/utilisateurs/monmail@truc.com/renvoyer_code',
-    );
+    await TestUtil.getServer()
+      .post('/utilisateurs/renvoyer_code')
+      .send({ email: 'monmail@truc.com' });
+    await TestUtil.getServer()
+      .post('/utilisateurs/renvoyer_code')
+      .send({ email: 'monmail@truc.com' });
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/renvoyer_code')
+      .send({ email: 'monmail@truc.com' });
 
     // THEN
     const userDB = await TestUtil.prisma.utilisateur.findFirst({
