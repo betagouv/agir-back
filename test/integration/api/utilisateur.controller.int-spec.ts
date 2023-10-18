@@ -590,7 +590,7 @@ describe('/utilisateurs (API test)', () => {
       Date.now(),
     );
   });
-  it('POST /utilisateurs/email/valider?code=XXXXXX - validate proper code OK, active user as outcome', async () => {
+  it('POST /utilisateurs/valider - validate proper code OK, active user as outcome', async () => {
     // GIVEN
     await TestUtil.create('interactionDefinition');
     await TestUtil.getServer().post('/utilisateurs').send({
@@ -602,9 +602,12 @@ describe('/utilisateurs (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.getServer().post(
-      '/utilisateurs/monmail@truc.com/valider?code=123456',
-    );
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/valider')
+      .send({
+        email: 'monmail@truc.com',
+        code: '123456',
+      });
 
     // THEN
     expect(response.status).toBe(200);
@@ -618,7 +621,7 @@ describe('/utilisateurs (API test)', () => {
     expect(userDB_interactions).toHaveLength(1);
     expect(userDB_interactions[0].utilisateurId).toEqual(userDB.id);
   });
-  it('POST /utilisateurs/email/valider?code=XXXXXX - validate 2 times , already active account error', async () => {
+  it('POST /utilisateurs/valider - validate 2 times , already active account error', async () => {
     // GIVEN
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
@@ -629,18 +632,22 @@ describe('/utilisateurs (API test)', () => {
     });
 
     // WHEN
-    await TestUtil.getServer().post(
-      '/utilisateurs/monmail@truc.com/valider?code=123456',
-    );
-    const response = await TestUtil.getServer().post(
-      '/utilisateurs/monmail@truc.com/valider?code=123456',
-    );
+    await TestUtil.getServer().post('/utilisateurs/valider').send({
+      email: 'monmail@truc.com',
+      code: '123456',
+    });
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/valider')
+      .send({
+        email: 'monmail@truc.com',
+        code: '123456',
+      });
 
     // THEN
     expect(response.status).toBe(400);
     expect(response.body.message).toEqual('Ce compte est déjà actif');
   });
-  it('POST /utilisateurs/email/valider?code=XXXXXX - bad code increase counter', async () => {
+  it('POST /utilisateurs/valider - bad code increase counter', async () => {
     // GIVEN
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
@@ -651,9 +658,12 @@ describe('/utilisateurs (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.getServer().post(
-      '/utilisateurs/monmail@truc.com/valider?code=bad',
-    );
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/valider')
+      .send({
+        email: 'monmail@truc.com',
+        code: 'bad',
+      });
 
     // THEN
     expect(response.status).toBe(400);
@@ -665,7 +675,7 @@ describe('/utilisateurs (API test)', () => {
     expect(userDB.active_account).toEqual(false);
     expect(userDB.failed_checkcode_count).toEqual(1);
   });
-  it('POST /utilisateurs/email/valider?code=XXXXXX - bad code 4 times, blocked account', async () => {
+  it('POST /utilisateurs/valider - bad code 4 times, blocked account', async () => {
     // GIVEN
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
@@ -676,18 +686,25 @@ describe('/utilisateurs (API test)', () => {
     });
 
     // WHEN
-    await TestUtil.getServer().post(
-      '/utilisateurs/monmail@truc.com/valider?code=bad',
-    );
-    await TestUtil.getServer().post(
-      '/utilisateurs/monmail@truc.com/valider?code=bad',
-    );
-    await TestUtil.getServer().post(
-      '/utilisateurs/monmail@truc.com/valider?code=bad',
-    );
-    const response = await TestUtil.getServer().post(
-      '/utilisateurs/monmail@truc.com/valider?code=bad',
-    );
+    await TestUtil.getServer().post('/utilisateurs/valider').send({
+      email: 'monmail@truc.com',
+      code: 'bad',
+    });
+    await TestUtil.getServer().post('/utilisateurs/valider').send({
+      email: 'monmail@truc.com',
+      code: 'bad',
+    });
+    await TestUtil.getServer().post('/utilisateurs/valider').send({
+      email: 'monmail@truc.com',
+      code: 'bad',
+    });
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/valider')
+      .send({
+        email: 'monmail@truc.com',
+        code: 'bad',
+      });
+
     const dbUser = await TestUtil.prisma.utilisateur.findFirst({
       where: { nom: 'WW' },
     });

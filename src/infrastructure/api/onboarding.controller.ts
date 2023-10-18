@@ -21,6 +21,8 @@ import { OnboardingDataAPI } from './types/utilisateur/onboardingDataAPI';
 import { OnboardingDataImpactAPI } from './types/utilisateur/onboardingDataImpactAPI';
 import { HttpStatus } from '@nestjs/common';
 import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
+import { ProspectSubmitAPI } from './types/utilisateur/prospectSubmitAPI';
+import { ValidateCodeAPI } from './types/utilisateur/validateCodeAPI copy';
 
 @ApiExtraModels(CreateUtilisateurAPI)
 @Controller()
@@ -36,6 +38,9 @@ export class OnboardingController {
   @ApiBody({
     type: CreateUtilisateurAPI,
   })
+  @ApiOkResponse({
+    type: ProspectSubmitAPI,
+  })
   async createUtilisateur(@Body() body: CreateUtilisateurAPI, @Response() res) {
     try {
       await this.onboardingUsecase.createUtilisateur(body);
@@ -44,7 +49,9 @@ export class OnboardingController {
           'location',
           `https://agir.gouv.fr/api/utiliateurs/${body.email}`,
         )
-        .json('user to activate');
+        .json({
+          email: body.email,
+        });
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -64,27 +71,23 @@ export class OnboardingController {
     return this.onboardingUsecase.evaluateOnboardingData(body);
   }
 
-  @Post('utilisateurs/:email/valider')
+  @Post('utilisateurs/valider')
   @ApiOperation({
     summary:
       "valide l'inscription de l'utilisateur d'un email donné avec en entrée un code (code reçu par email), renvoie toutes les infos de l'utilisateur ainsi qu'un token de sécurité",
   })
-  @ApiQuery({
-    name: 'code',
-    type: String,
-    description: 'code de validation de la création de compte',
-    required: true,
+  @ApiBody({
+    type: ValidateCodeAPI,
   })
   @ApiOkResponse({
     type: LoggedUtilisateurAPI,
   })
-  async validerCode(
-    @Param('email') email: string,
-    @Query('code') code: string,
-    @Response() res,
-  ) {
+  async validerCode(@Body() body: ValidateCodeAPI, @Response() res) {
     try {
-      const loggedUser = await this.onboardingUsecase.validateCode(email, code);
+      const loggedUser = await this.onboardingUsecase.validateCode(
+        body.email,
+        body.code,
+      );
       const response: LoggedUtilisateurAPI = {
         utilisateur: {
           id: loggedUser.utilisateur.id,
