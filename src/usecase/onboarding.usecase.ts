@@ -313,12 +313,14 @@ export class OnboardingUsecase {
     this.emailSender.sendEmail(
       utilisateur.email,
       utilisateur.prenom,
-      `Bonjour ${utilisateur.prenom},
-    Voici votre code pour valider votre inscription à l'application Agir !
+      `Bonjour ${utilisateur.prenom},<br>
+Voici votre code pour valider votre inscription à l'application Agir !<br><br>
     
-    code : ${utilisateur.code}
+code : ${utilisateur.code}<br><br>
+
+Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="${process.env.BASE_URL}/validation-compte?email=${utilisateur.email}">Page pour rentrer le code</a><br><br>
     
-    A très vite !`,
+A très vite !`,
       `Votre code d'inscription Agir`,
     );
   }

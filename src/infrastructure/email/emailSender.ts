@@ -23,7 +23,8 @@ export class EmailSender {
     smtpEmail.to = [{ email: email_to, name: name }];
     smtpEmail.sender = { name: 'Agir', email: 'noreply@agir.gouv.fr' };
     smtpEmail.subject = subject;
-    smtpEmail.textContent = text_content;
+    //smtpEmail.textContent = text_content;
+    smtpEmail.htmlContent = text_content;
 
     if (process.env.EMAIL_ENABLED === 'true') {
       this.apiInstance.sendTransacEmail(smtpEmail);
