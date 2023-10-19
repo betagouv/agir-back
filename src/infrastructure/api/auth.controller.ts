@@ -65,7 +65,7 @@ export class AuthController {
     // CREATING INNER APP TOKEN
     const token = await this.oidcService.createNewInnerAppToken(utilisateurId);
     return {
-      url: process.env.FRONT_BASE_URL.concat(
+      url: process.env.BASE_URL_FRONT.concat(
         process.env.FINAL_LOGIN_REDIRECT,
         `?utilisateurId=${utilisateurId}&token=${token}`,
       ),

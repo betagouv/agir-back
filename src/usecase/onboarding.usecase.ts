@@ -318,9 +318,9 @@ Voici votre code pour valider votre inscription à l'application Agir !<br><br>
     
 code : ${utilisateur.code}<br><br>
 
-Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="${process.env.BASE_URL}/validation-compte?email=${utilisateur.email}">Page pour rentrer le code</a><br><br>
+Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="${process.env.BASE_URL_FRONT}/validation-compte?email=${utilisateur.email}">Page pour rentrer le code</a><br><br>
     
-A très vite !`,
+À très vite !`,
       `Votre code d'inscription Agir`,
     );
   }
