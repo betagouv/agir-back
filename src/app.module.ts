@@ -39,12 +39,14 @@ import { EmailSender } from './infrastructure/email/emailSender';
 import { OnboardingUsecase } from './usecase/onboarding.usecase';
 import { OnboardingController } from './infrastructure/api/onboarding.controller';
 
+const SESSION_LIFETIME = '12h';
+
 @Module({
   imports: [
     JwtModule.register({
       global: true,
       secret: process.env.INTERNAL_TOKEN_SECRET,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: SESSION_LIFETIME },
     }),
   ],
   controllers: [
