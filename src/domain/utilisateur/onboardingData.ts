@@ -10,10 +10,11 @@ export enum Residence {
   appartement = 'appartement',
 }
 export enum Superficie {
-  petit = 'petit',
-  moyen = 'moyen',
-  grand = 'grand',
-  tres_grand = 'tres_grand',
+  superficie_35 = 'superficie_35',
+  superficie_70 = 'superficie_70',
+  superficie_100 = 'superficie_100',
+  superficie_150 = 'superficie_150',
+  superficie_150_et_plus = 'superficie_150_et_plus',
 }
 export enum Chauffage {
   electricite = 'electricite',
@@ -90,21 +91,24 @@ export class OnboardingData {
     let superficie;
     let chauffage;
     switch (this.superficie) {
-      case 'petit':
+      case 'superficie_35':
         superficie = 1;
         break;
-      case 'moyen':
+      case 'superficie_70':
         superficie = 2;
         break;
-      case 'grand':
+      case 'superficie_100':
         superficie = 3;
         break;
-      case 'tres_grand':
+      case 'superficie_150':
         superficie = 4;
+        break;
+      case 'superficie_150_et_plus':
+        superficie = 5;
         break;
 
       default:
-        superficie = 4;
+        superficie = 5;
         break;
     }
     switch (this.chauffage) {

@@ -1,13 +1,9 @@
-import { Utilisateur } from '../../../src/domain/utilisateur/utilisateur';
 import {
   Impact,
   Thematique,
 } from '../../../src/domain/utilisateur/onboardingData';
 import { TestUtil } from '../../TestUtil';
-import {
-  PasswordAwareUtilisateur,
-  PasswordManager,
-} from '../../../src/domain/utilisateur/manager/passwordManager';
+import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 
 const ONBOARDING_1_2_3_4_DATA = {
   transports: ['voiture', 'pied'],
@@ -17,7 +13,7 @@ const ONBOARDING_1_2_3_4_DATA = {
   enfants: 1,
   residence: 'maison',
   proprietaire: true,
-  superficie: 'tres_grand',
+  superficie: 'superficie_150',
   chauffage: 'bois',
   repas: 'viande',
   consommation: 'jamais',
@@ -30,7 +26,7 @@ const ONBOARDING_3_3_4_4_DATA = {
   enfants: 1,
   residence: 'maison',
   proprietaire: true,
-  superficie: 'grand',
+  superficie: 'superficie_100',
   chauffage: 'gaz',
   repas: 'tout',
   consommation: 'shopping',
@@ -43,7 +39,7 @@ const ONBOARDING_1_3_4_4_DATA = {
   enfants: 1,
   residence: 'maison',
   proprietaire: true,
-  superficie: 'grand',
+  superficie: 'superficie_100',
   chauffage: 'gaz',
   repas: 'tout',
   consommation: 'shopping',
@@ -56,7 +52,7 @@ const ONBOARDING_1_1_2_3_DATA = {
   enfants: 1,
   residence: 'maison',
   proprietaire: true,
-  superficie: 'grand',
+  superficie: 'superficie_100',
   chauffage: 'bois',
   repas: 'vegan',
   consommation: 'jamais',
@@ -69,7 +65,7 @@ const ONBOARDING_1_1_2_2_DATA = {
   enfants: 1,
   residence: 'maison',
   proprietaire: true,
-  superficie: 'grand',
+  superficie: 'superficie_100',
   chauffage: 'bois',
   repas: 'vegan',
   consommation: 'jamais',
@@ -82,7 +78,7 @@ const ONBOARDING_1_1_1_1_DATA = {
   enfants: 2,
   residence: 'maison',
   proprietaire: false,
-  superficie: 'petit',
+  superficie: 'superficie_35',
   chauffage: 'bois',
   repas: 'vegan',
   consommation: 'jamais',

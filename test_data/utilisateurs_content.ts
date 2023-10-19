@@ -18,7 +18,7 @@ const ONBOARD_DATA_1134 = `{
     "enfants": 1,
     "residence": "maison",
     "proprietaire": true,
-    "superficie": "petit",
+    "superficie": "superficie_35",
     "chauffage": "bois",
     "repas": "vegan",
     "consommation": "shopping"

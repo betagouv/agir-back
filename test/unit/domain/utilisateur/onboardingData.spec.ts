@@ -242,7 +242,7 @@ describe('Objet OnboardingData', () => {
       residence: 'appartement',
       adultes: 1,
       enfants: 0,
-      superficie: 'petit',
+      superficie: 'superficie_35',
       chauffage: 'bois',
     } as OnboardingData;
     onboarding = new OnboardingData(onboarding);
@@ -259,7 +259,7 @@ describe('Objet OnboardingData', () => {
       residence: 'maison',
       adultes: 2,
       enfants: 2,
-      superficie: 'moyen',
+      superficie: 'superficie_70',
       chauffage: 'autre',
     } as OnboardingData;
     onboarding = new OnboardingData(onboarding);
@@ -276,7 +276,7 @@ describe('Objet OnboardingData', () => {
       residence: 'appartement',
       adultes: 2,
       enfants: 1,
-      superficie: 'grand',
+      superficie: 'superficie_100',
       chauffage: 'gaz',
     } as OnboardingData;
     onboarding = new OnboardingData(onboarding);
@@ -293,7 +293,7 @@ describe('Objet OnboardingData', () => {
       residence: 'maison',
       adultes: 2,
       enfants: 2,
-      superficie: 'tres_grand',
+      superficie: 'superficie_150',
       chauffage: 'gaz',
     } as OnboardingData;
     onboarding = new OnboardingData(onboarding);

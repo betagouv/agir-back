@@ -197,7 +197,7 @@ export class TestUtil {
         enfants: 1,
         residence: 'maison',
         proprietaire: true,
-        superficie: 'grand',
+        superficie: 'superficie_100',
         chauffage: 'bois',
         repas: 'tout',
         consommation: 'raisonnable',
