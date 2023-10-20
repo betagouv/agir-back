@@ -22,6 +22,7 @@ export type Phrase = {
 };
 
 const MAUVAIS_MDP_ERROR = `Mauvaise adresse électronique ou mauvais mot de passe`;
+const MAUVAIS_CODE = `Désolé, ce code n'est pas le bon`;
 
 @Injectable()
 export class UtilisateurUsecase {
@@ -129,6 +130,45 @@ export class UtilisateurUsecase {
     );
 
     this.sendMotDePasseCode(utilisateur);
+  }
+
+  async modifier_mot_de_passe(
+    email: string,
+    code: string,
+    mot_de_passe: string,
+  ) {
+    const utilisateur =
+      await this.utilisateurRespository.findUtilisateurByEmail(email);
+
+    if (!utilisateur) return; // pas d'erreur, silence ^^
+
+    if (!utilisateur.active_account) return; // pas d'erreur, silence ^^
+
+    if (utilisateur.isCodeLocked()) {
+      throw new Error(
+        `Trop d'essais successifs, attendez jusqu'à ${utilisateur.getLoginLockedUntilString()} pour réessayer`,
+      );
+    }
+
+    const code_ok = utilisateur.checkCodeOKAndChangeState(code);
+    await this.utilisateurRespository.updateUtilisateurLoginSecurity(
+      utilisateur,
+    );
+    if (code_ok) {
+      PasswordManager.checkPasswordFormat(mot_de_passe);
+      utilisateur.resetCodeSendingState();
+      utilisateur.setPassword(mot_de_passe);
+      await this.utilisateurRespository.updateUtilisateurLoginSecurity(
+        utilisateur,
+      );
+      return;
+    }
+    if (utilisateur.isCodeLocked()) {
+      throw new Error(
+        `Trop d'essais successifs, attendez jusqu'à ${utilisateur.getLoginLockedUntilString()} pour réessayer`,
+      );
+    }
+    throw new Error(MAUVAIS_CODE);
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {

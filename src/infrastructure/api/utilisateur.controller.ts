@@ -35,6 +35,7 @@ import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
 import { OubliMdpAPI } from './types/utilisateur/oubliMdpAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
+import { ModifierMdpAPI } from './types/utilisateur/modifierMdpAPI';
 
 @ApiExtraModels(CreateUtilisateurAPI, UtilisateurAPI)
 @Controller()
@@ -216,6 +217,31 @@ export class UtilisateurController extends GenericControler {
     try {
       await this.utilisateurUsecase.oubli_mot_de_passe(body.email);
       return res.status(HttpStatus.OK).json({ email: body.email });
+    } catch (error) {
+      throw new BadRequestException(ErrorService.toStringOrObject(error));
+    }
+  }
+
+  @Post('utilisateurs/modifier_mot_de_passe')
+  @ApiOperation({
+    summary:
+      "Modifie le mod de passe d'un utilisateur en fournissant son email et le code reçu par email",
+  })
+  @ApiBody({
+    type: ModifierMdpAPI,
+  })
+  @ApiBadRequestResponse({ type: ErrorService })
+  async modifier_mdp(
+    @Body() body: ModifierMdpAPI,
+    @Response() res,
+  ): Promise<RenvoyerCodeAPI> {
+    try {
+      await this.utilisateurUsecase.modifier_mot_de_passe(
+        body.email,
+        body.code,
+        body.mot_de_passe,
+      );
+      return res.status(HttpStatus.OK).json('OK');
     } catch (error) {
       throw new BadRequestException(ErrorService.toStringOrObject(error));
     }

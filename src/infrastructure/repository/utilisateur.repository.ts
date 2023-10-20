@@ -80,6 +80,8 @@ export class UtilisateurRepository {
         id: utilisateur.id,
       },
       data: {
+        passwordHash: utilisateur.passwordHash,
+        passwordSalt: utilisateur.passwordSalt,
         failed_login_count: utilisateur.failed_login_count,
         prevent_login_before: utilisateur.prevent_login_before,
         failed_checkcode_count: utilisateur.failed_checkcode_count,

@@ -4,6 +4,7 @@ import {
 } from '../../../src/domain/utilisateur/onboardingData';
 import { TestUtil } from '../../TestUtil';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
+import { Utilisateur } from '../../../src/domain/utilisateur/utilisateur';
 
 const ONBOARDING_1_2_3_4_DATA = {
   transports: ['voiture', 'pied'],
@@ -1047,6 +1048,110 @@ describe('/utilisateurs (API test)', () => {
     ).send({
       email: 'yo@truc.com',
     });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toContain(
+      "Trop d'essais successifs, attendez jusqu'à ",
+    );
+  });
+
+  it('POST /utilisateurs/modifier_mot_de_passe - si code ok le mot de passe est modifié', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/modifier_mot_de_passe')
+      .send({
+        code: '123456',
+        mot_de_passe: '#1234567890HAHA',
+        email: 'yo@truc.com',
+      });
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const userDB = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    const dbUtilisateur = new Utilisateur({
+      ...userDB,
+      badges: [],
+      quizzProfile: null,
+      onboardingData: null,
+      onboardingResult: null,
+    });
+
+    expect(
+      dbUtilisateur.checkPasswordOKAndChangeState('#1234567890HAHA'),
+    ).toEqual(true);
+  });
+  it('POST /utilisateurs/modifier_mot_de_passe - si code ko le mot de passe est PAS modifié', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/modifier_mot_de_passe')
+      .send({
+        code: 'bad_code',
+        mot_de_passe: '#1234567890HAHA',
+        email: 'yo@truc.com',
+      });
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe("Désolé, ce code n'est pas le bon");
+
+    const userDB = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    const dbUtilisateur = new Utilisateur({
+      ...userDB,
+      badges: [],
+      quizzProfile: null,
+      onboardingData: null,
+      onboardingResult: null,
+    });
+
+    expect(
+      dbUtilisateur.checkPasswordOKAndChangeState('#1234567890HAHA'),
+    ).toEqual(false);
+  });
+  it('POST /utilisateurs/modifier_mot_de_passe - si code ko 4 fois, blocage', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+
+    // WHEN
+    await TestUtil.getServer()
+      .post('/utilisateurs/modifier_mot_de_passe')
+      .send({
+        code: 'bad_code',
+        mot_de_passe: '#1234567890HAHA',
+        email: 'yo@truc.com',
+      });
+    await TestUtil.getServer()
+      .post('/utilisateurs/modifier_mot_de_passe')
+      .send({
+        code: 'bad_code',
+        mot_de_passe: '#1234567890HAHA',
+        email: 'yo@truc.com',
+      });
+    await TestUtil.getServer()
+      .post('/utilisateurs/modifier_mot_de_passe')
+      .send({
+        code: 'bad_code',
+        mot_de_passe: '#1234567890HAHA',
+        email: 'yo@truc.com',
+      });
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/modifier_mot_de_passe')
+      .send({
+        code: 'bad_code',
+        mot_de_passe: '#1234567890HAHA',
+        email: 'yo@truc.com',
+      });
+
     // THEN
     expect(response.status).toBe(400);
     expect(response.body.message).toContain(
