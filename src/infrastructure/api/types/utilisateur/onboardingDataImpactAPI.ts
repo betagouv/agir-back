@@ -18,4 +18,12 @@ export class OnboardingDataImpactAPI {
 
   @ApiProperty({ required: false, type: String })
   phrase?: string;
+  @ApiProperty({ required: false, type: String })
+  phrase_1?: string;
+  @ApiProperty({ required: false, type: String })
+  phrase_2?: string;
+  @ApiProperty({ required: false, type: String })
+  phrase_3?: string;
+  @ApiProperty({ required: false, type: String })
+  phrase_4?: string;
 }

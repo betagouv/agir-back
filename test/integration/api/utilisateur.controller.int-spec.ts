@@ -752,6 +752,17 @@ describe('/utilisateurs (API test)', () => {
     expect(response.body.alimentation).toEqual(4);
     expect(response.body.logement).toEqual(2);
     expect(response.body.consommation).toEqual(1);
+    expect(response.body.phrase_1).toEqual(
+      'Accédez à toutes les aides publiques pour la transition écologique en quelques clics : consommation responsable, vélo, voiture éléctrique, rénovation énergétique pour les propriétaires…',
+    );
+    expect(response.body.phrase_2).toEqual(
+      'Regarder les offres de transports dans la zone du 91120 en fonction de vos besoins et usages',
+    );
+    expect(response.body.phrase_3).toEqual(
+      'Trouver des solutions même quand on adore la viande',
+    );
+    expect(response.body.phrase_4).toEqual(`3 sous le même toit ?
+Comprendre ses impacts à l'échelle de votre famille ou de votre colocation`);
   });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_1 v1', async () => {
     // WHEN

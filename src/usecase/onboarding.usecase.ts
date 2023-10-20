@@ -88,7 +88,7 @@ export class OnboardingUsecase {
 
     const onboardingResult = new OnboardingResult(onboardingData);
 
-    let final_result = {
+    let final_result: OnboardingDataImpactAPI = {
       ...onboardingResult.ventilation_par_thematiques,
     };
 
@@ -100,12 +100,32 @@ export class OnboardingUsecase {
     const nombre_user_total =
       await this.utilisateurRespository.nombreTotalUtilisateurs();
 
-    final_result['phrase'] = await this.fabriquePhrase1(
+    final_result.phrase = await this.fabriquePhrase1(
       N3,
       onboardingResult,
       nombre_user_total,
     );
+    final_result.phrase_1 = `Accédez à toutes les aides publiques pour la transition écologique en quelques clics : consommation responsable, vélo, voiture éléctrique, rénovation énergétique pour les propriétaires…`;
 
+    if (final_result.transports >= 3) {
+      final_result.phrase_2 = `Regarder les offres de transports dans la zone du ${onboardingData.code_postal} en fonction de vos besoins et usages`;
+    } else {
+      final_result.phrase_2 = `Comment et où consommer de manière plus durable quand on habite dans le ${onboardingData.code_postal}`;
+    }
+    if ((final_result.alimentation = 4)) {
+      final_result.phrase_3 = `Trouver des solutions même quand on adore la viande`;
+    } else {
+      final_result.phrase_3 = `Comprendre en détails les impacts de vos repas préférés, trouver des recettes pour les réduire`;
+    }
+
+    if (onboardingData.adultes + onboardingData.enfants >= 3) {
+      final_result.phrase_4 = `${
+        onboardingData.adultes + onboardingData.enfants
+      } sous le même toit ?
+Comprendre ses impacts à l'échelle de votre famille ou de votre colocation`;
+    } else {
+      final_result.phrase_4 = `Suivre votre consommation énergétique, la comparer avec celles des foyers similaires et identifier les petits gestes pour faire de grosses économies`;
+    }
     return final_result;
   }
 
