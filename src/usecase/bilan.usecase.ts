@@ -44,10 +44,4 @@ export class BilanUsecase {
   async addSituation(situation: object): Promise<SituationNGC | null> {
     return this.bilanRepository.createSituation(situation);
   }
-  computeBilan(situation: any) {
-    return this.nGCCalculator.computeSingleEntryValue(
-      {},
-      'transport . métro ou tram . impact par heure',
-    );
-  }
 }
