@@ -1019,4 +1019,38 @@ describe('/utilisateurs (API test)', () => {
       PasswordManager.checkUserPasswordOKAndChangeState(fakeUser, '1234'),
     ).toEqual(true);
   });
+  it('POST /utilisateurs/oubli_mot_de_passe - renvoi OK si mail existe pas', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    const response = await TestUtil.POST(
+      '/utilisateurs/oubli_mot_de_passe',
+    ).send({
+      email: 'mailpas@connu.com',
+    });
+    // THEN
+    expect(response.status).toBe(200);
+  });
+  it('POST /utilisateurs/oubli_mot_de_passe - renvoi KO si 4 demandes de suite', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.POST('/utilisateurs/oubli_mot_de_passe').send({
+      email: 'yo@truc.com',
+    });
+    await TestUtil.POST('/utilisateurs/oubli_mot_de_passe').send({
+      email: 'yo@truc.com',
+    });
+    await TestUtil.POST('/utilisateurs/oubli_mot_de_passe').send({
+      email: 'yo@truc.com',
+    });
+    const response = await TestUtil.POST(
+      '/utilisateurs/oubli_mot_de_passe',
+    ).send({
+      email: 'yo@truc.com',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toContain(
+      "Trop d'essais successifs, attendez jusqu'à ",
+    );
+  });
 });

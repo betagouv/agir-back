@@ -33,6 +33,8 @@ import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
 import { ErrorService } from '../errorService';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
+import { OubliMdpAPI } from './types/utilisateur/oubliMdpAPI';
+import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 
 @ApiExtraModels(CreateUtilisateurAPI, UtilisateurAPI)
 @Controller()
@@ -195,5 +197,27 @@ export class UtilisateurController extends GenericControler {
       code_postal: body.code_postal,
       mot_de_passe: body.mot_de_passe,
     });
+  }
+
+  @Post('utilisateurs/oubli_mot_de_passe')
+  @ApiOperation({
+    summary:
+      "Déclenche une procédure d'oubli de mot de passe, envoi un code par mail à l'email, si le mail existe en base",
+  })
+  @ApiBody({
+    type: OubliMdpAPI,
+  })
+  @ApiOkResponse({ type: RenvoyerCodeAPI })
+  @ApiBadRequestResponse({ type: ErrorService })
+  async oubli_mdp(
+    @Body() body: OubliMdpAPI,
+    @Response() res,
+  ): Promise<RenvoyerCodeAPI> {
+    try {
+      await this.utilisateurUsecase.oubli_mot_de_passe(body.email);
+      return res.status(HttpStatus.OK).json({ email: body.email });
+    } catch (error) {
+      throw new BadRequestException(ErrorService.toStringOrObject(error));
+    }
   }
 }

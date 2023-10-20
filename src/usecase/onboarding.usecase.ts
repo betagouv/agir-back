@@ -23,7 +23,6 @@ export type Phrase = {
   pourcent: number;
 };
 
-const MAUVAIS_MDP_ERROR = `Mauvaise adresse électronique ou mauvais mot de passe`;
 const MAUVAIS_CODE_ERROR = `Mauvais code ou adresse électronique`;
 
 @Injectable()
@@ -59,6 +58,10 @@ export class OnboardingUsecase {
       utilisateur,
     );
     if (code_ok) {
+      utilisateur.resetCodeSendingState();
+      await this.utilisateurRespository.updateUtilisateurLoginSecurity(
+        utilisateur,
+      );
       await this.initUtilisateurInteractionSet(utilisateur.id);
       return {
         utilisateur: utilisateur,

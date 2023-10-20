@@ -78,6 +78,10 @@ export class Utilisateur {
     return CodeManager.checkCodeOKAndChangeState(this, code);
   }
 
+  public resetCodeSendingState() {
+    CodeEmailManager.resetCodeSendingState(this);
+  }
+
   public isLoginLocked(): boolean {
     return PasswordManager.isLoginLocked(this);
   }

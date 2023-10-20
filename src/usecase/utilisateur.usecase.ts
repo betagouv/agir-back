@@ -14,6 +14,7 @@ import {
   PasswordManager,
 } from '../../src/domain/utilisateur/manager/passwordManager';
 import { ErrorService } from '../infrastructure/errorService';
+import { EmailSender } from '../infrastructure/email/emailSender';
 
 export type Phrase = {
   phrase: string;
@@ -33,6 +34,7 @@ export class UtilisateurUsecase {
     private questionNGCRepository: QuestionNGCRepository,
     private oIDCStateRepository: OIDCStateRepository,
     private oidcService: OidcService,
+    private emailSender: EmailSender,
   ) {}
 
   async loginUtilisateur(
@@ -83,12 +85,14 @@ export class UtilisateurUsecase {
     utilisateurId: string,
     profile: UtilisateurProfileAPI,
   ) {
+    // FIXME : code à refacto, pas beau + check non existance utilisateur
     const fakeUser: PasswordAwareUtilisateur = {
       passwordHash: '',
       passwordSalt: '',
       failed_login_count: 0,
       prevent_login_before: new Date(),
     };
+    // FIXME : temporaire, faudra suivre un flow avec un code par email
     PasswordManager.setUserPassword(fakeUser, profile.mot_de_passe);
 
     return this.utilisateurRespository.updateProfile(utilisateurId, {
@@ -99,6 +103,32 @@ export class UtilisateurUsecase {
       passwordHash: fakeUser.passwordHash,
       passwordSalt: fakeUser.passwordSalt,
     });
+  }
+
+  async oubli_mot_de_passe(email: string) {
+    const utilisateur =
+      await this.utilisateurRespository.findUtilisateurByEmail(email);
+
+    if (!utilisateur) return; // pas d'erreur, silence ^^
+
+    if (!utilisateur.active_account) return; // pas d'erreur, silence ^^
+
+    if (utilisateur.isCodeEmailLocked()) {
+      throw new Error(
+        `Trop d'essais successifs, attendez jusqu'à ${utilisateur.getLoginLockedUntilString()} avant de redemander un code`,
+      );
+    }
+    utilisateur.resetCodeEmailCouterIfNeeded();
+
+    utilisateur.incrementCodeEmailCount();
+
+    utilisateur.setNew6DigitCode();
+
+    await this.utilisateurRespository.updateUtilisateurLoginSecurity(
+      utilisateur,
+    );
+
+    this.sendMotDePasseCode(utilisateur);
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
@@ -117,5 +147,21 @@ export class UtilisateurUsecase {
     await this.questionNGCRepository.delete(utilisateurId);
     await this.oIDCStateRepository.delete(utilisateurId);
     await this.utilisateurRespository.delete(utilisateurId);
+  }
+
+  private async sendMotDePasseCode(utilisateur: Utilisateur) {
+    this.emailSender.sendEmail(
+      utilisateur.email,
+      utilisateur.prenom,
+      `Bonjour ${utilisateur.prenom},<br>
+Voici votre code pour pouvoir modifier votre mot de passe de l'application Agir !<br><br>
+    
+code : ${utilisateur.code}<br><br>
+
+Si vous n'avez plus la page ouverte pour saisir le code et modifier le mot de passe, ici le lien : <a href="${process.env.BASE_URL_FRONT}/mot-de-passe-oublie/redefinir-mot-de-passe?email=${utilisateur.email}">Page pour modifier votre mot de passe</a><br><br>
+    
+À très vite !`,
+      `Modification de mot de passe Agir`,
+    );
   }
 }
