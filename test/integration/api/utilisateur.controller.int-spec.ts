@@ -1069,6 +1069,13 @@ Comprendre ses impacts à l'échelle de votre famille ou de votre colocation`);
   it('POST /utilisateurs/modifier_mot_de_passe - si code ok le mot de passe est modifié', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
+    await TestUtil.getServer()
+      .post('/utilisateurs/modifier_mot_de_passe')
+      .send({
+        code: 'bad_code',
+        mot_de_passe: '#1234567890HAHA',
+        email: 'yo@truc.com',
+      });
 
     // WHEN
     const response = await TestUtil.getServer()
@@ -1096,6 +1103,7 @@ Comprendre ses impacts à l'échelle de votre famille ou de votre colocation`);
     expect(
       dbUtilisateur.checkPasswordOKAndChangeState('#1234567890HAHA'),
     ).toEqual(true);
+    expect(dbUtilisateur.sent_code_count).toEqual(0);
   });
   it('POST /utilisateurs/modifier_mot_de_passe - si code ko le mot de passe est PAS modifié', async () => {
     // GIVEN
