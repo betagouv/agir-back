@@ -39,6 +39,8 @@ import { EmailSender } from './infrastructure/email/emailSender';
 import { OnboardingUsecase } from './usecase/onboarding.usecase';
 import { OnboardingController } from './infrastructure/api/onboarding.controller';
 import { CommuneRepository } from './infrastructure/repository/commune/commune.repository';
+import { CommunesUsecase } from './usecase/communes.usecase';
+import { CommunesController } from './infrastructure/api/communes.controller';
 
 const SESSION_LIFETIME = '12h';
 
@@ -62,6 +64,7 @@ const SESSION_LIFETIME = '12h';
     TestDataController,
     QuestionsNGCController,
     CMSController,
+    CommunesController,
   ],
   providers: [
     PrismaService,
@@ -88,6 +91,7 @@ const SESSION_LIFETIME = '12h';
     EmailSender,
     OnboardingUsecase,
     CommuneRepository,
+    CommunesUsecase,
   ],
 })
 export class AppModule {}
