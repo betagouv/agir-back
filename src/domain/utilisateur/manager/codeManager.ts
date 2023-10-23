@@ -14,9 +14,7 @@ export class CodeManager {
   }
 
   public static setNew6DigitCode(utilisateur: CodeAwareUtilisateur) {
-    // FIXME this.code = Math.floor(100000 + Math.random() * 900000).toString();
-    // valeur temporaire en dure
-    utilisateur.code = '123456';
+    utilisateur.code = Math.floor(100000 + Math.random() * 900000).toString();
   }
 
   public static checkCodeOKAndChangeState(

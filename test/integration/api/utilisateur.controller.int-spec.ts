@@ -623,19 +623,22 @@ describe('/utilisateurs (API test)', () => {
       email: 'monmail@truc.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
+    let userDB = await TestUtil.prisma.utilisateur.findFirst({
+      where: { nom: 'WW' },
+    });
 
     // WHEN
     const response = await TestUtil.getServer()
       .post('/utilisateurs/valider')
       .send({
         email: 'monmail@truc.com',
-        code: '123456',
+        code: userDB.code,
       });
 
     // THEN
     expect(response.status).toBe(200);
 
-    const userDB = await TestUtil.prisma.utilisateur.findFirst({
+    userDB = await TestUtil.prisma.utilisateur.findFirst({
       where: { nom: 'WW' },
     });
     const userDB_interactions = await TestUtil.prisma.interaction.findMany();
@@ -653,17 +656,20 @@ describe('/utilisateurs (API test)', () => {
       email: 'monmail@truc.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
+    let userDB = await TestUtil.prisma.utilisateur.findFirst({
+      where: { nom: 'WW' },
+    });
 
     // WHEN
     await TestUtil.getServer().post('/utilisateurs/valider').send({
       email: 'monmail@truc.com',
-      code: '123456',
+      code: userDB.code,
     });
     const response = await TestUtil.getServer()
       .post('/utilisateurs/valider')
       .send({
         email: 'monmail@truc.com',
-        code: '123456',
+        code: userDB.code,
       });
 
     // THEN
