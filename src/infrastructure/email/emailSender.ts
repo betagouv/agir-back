@@ -8,7 +8,7 @@ export class EmailSender {
 
   constructor() {
     this.client = Brevo.ApiClient.instance;
-    var apiKey = this.client.authentications['api-key'];
+    const apiKey = this.client.authentications['api-key'];
     apiKey.apiKey = process.env.EMAIL_API_TOKEN;
     this.apiInstance = new Brevo.TransactionalEmailsApi();
   }
@@ -21,7 +21,7 @@ export class EmailSender {
   ) {
     const smtpEmail = new Brevo.SendSmtpEmail();
     smtpEmail.to = [{ email: email_to, name: name }];
-    smtpEmail.sender = { name: 'Agir', email: 'noreply@agir.gouv.fr' };
+    smtpEmail.sender = { name: 'Agir', email: 'noreply-agir@beta.gouv.fr' };
     smtpEmail.subject = subject;
     //smtpEmail.textContent = text_content;
     smtpEmail.htmlContent = text_content;
