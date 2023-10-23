@@ -109,7 +109,7 @@ export class OnboardingUsecase {
     );
     final_result.phrase_1 = {
       icon: '💰',
-      phrase: `Accédez à toutes les aides publiques pour la transition écologique en quelques clics : consommation responsable, vélo, voiture éléctrique, rénovation énergétique pour les propriétaires…`,
+      phrase: `Accédez à toutes les <strong>aides publiques pour la transition écologique</strong> en quelques clics : <strong>consommation responsable, vélo, voiture éléctrique, rénovation énergétique</strong> pour les propriétaires…`,
     };
 
     let ville_candidates = this.communeRepository.getListCommunesParCodePostal(
@@ -120,31 +120,31 @@ export class OnboardingUsecase {
       if (ville_candidates.length > 0) {
         final_result.phrase_2 = {
           icon: '🚌',
-          phrase: `Regarder les offres de transports dans la zone de ${ville_candidates[0]} en fonction de vos besoins et usages`,
+          phrase: `Regarder les offres de <strong>transports dans la zone de ${ville_candidates[0]}</strong> en fonction de vos besoins et usages`,
         };
       } else {
         final_result.phrase_2 = {
           icon: '🚌',
-          phrase: `Regarder les offres de transports dans la zone du ${onboardingData.code_postal} en fonction de vos besoins et usages`,
+          phrase: `Regarder les offres de <strong>transports dans la zone du ${onboardingData.code_postal}</strong> en fonction de vos besoins et usages`,
         };
       }
     } else {
       if (ville_candidates.length > 0) {
         final_result.phrase_2 = {
           icon: '🛒',
-          phrase: `Comment et où consommer de manière plus durable quand on habite ${ville_candidates[0]}`,
+          phrase: `Comment et où <strong>consommer de manière plus durable</strong> quand on <strong>habite ${ville_candidates[0]}</strong>`,
         };
       } else {
         final_result.phrase_2 = {
           icon: '🛒',
-          phrase: `Comment et où consommer de manière plus durable quand on habite dans le ${onboardingData.code_postal}`,
+          phrase: `Comment et où <strong>consommer de manière plus durable</strong> quand on <strong>habite dans le ${onboardingData.code_postal}</strong>`,
         };
       }
     }
     if ((final_result.alimentation = 4)) {
       final_result.phrase_3 = {
         icon: '🍽️',
-        phrase: `Trouver des solutions même quand on adore la viande`,
+        phrase: `Trouver des solutions <strong>même quand on adore la viande</strong>`,
       };
     } else {
       final_result.phrase_3 = {
@@ -159,12 +159,12 @@ export class OnboardingUsecase {
         phrase: `${
           onboardingData.adultes + onboardingData.enfants
         } sous le même toit ?
-Comprendre ses impacts à l'échelle de votre famille ou de votre colocation`,
+<strong>Comprendre ses impacts à l'échelle de votre famille</strong> ou de votre colocation`,
       };
     } else {
       final_result.phrase_4 = {
         icon: '🏠',
-        phrase: `Suivre votre consommation énergétique, la comparer avec celles des foyers similaires et identifier les petits gestes pour faire de grosses économies`,
+        phrase: `Suivre votre <strong>consommation énergétique, la comparer avec celles des foyers similaires</strong> et identifier les petits gestes pour <strong>faire de grosses économies</strong>`,
       };
     }
     return final_result;

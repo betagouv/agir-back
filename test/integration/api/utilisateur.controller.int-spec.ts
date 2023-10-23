@@ -759,16 +759,16 @@ describe('/utilisateurs (API test)', () => {
     expect(response.body.logement).toEqual(2);
     expect(response.body.consommation).toEqual(1);
     expect(response.body.phrase_1.phrase).toEqual(
-      'Accédez à toutes les aides publiques pour la transition écologique en quelques clics : consommation responsable, vélo, voiture éléctrique, rénovation énergétique pour les propriétaires…',
+      'Accédez à toutes les <strong>aides publiques pour la transition écologique</strong> en quelques clics : <strong>consommation responsable, vélo, voiture éléctrique, rénovation énergétique</strong> pour les propriétaires…',
     );
     expect(response.body.phrase_2.phrase).toEqual(
-      'Regarder les offres de transports dans la zone de PALAISEAU en fonction de vos besoins et usages',
+      'Regarder les offres de <strong>transports dans la zone de PALAISEAU</strong> en fonction de vos besoins et usages',
     );
     expect(response.body.phrase_3.phrase).toEqual(
-      'Trouver des solutions même quand on adore la viande',
+      'Trouver des solutions <strong>même quand on adore la viande</strong>',
     );
     expect(response.body.phrase_4.phrase).toEqual(`3 sous le même toit ?
-Comprendre ses impacts à l'échelle de votre famille ou de votre colocation`);
+<strong>Comprendre ses impacts à l'échelle de votre famille</strong> ou de votre colocation`);
   });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_1 v1', async () => {
     // WHEN
