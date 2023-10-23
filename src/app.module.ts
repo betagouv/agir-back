@@ -38,6 +38,7 @@ import { QuestionsNGCController } from './infrastructure/api/questionNGC.control
 import { EmailSender } from './infrastructure/email/emailSender';
 import { OnboardingUsecase } from './usecase/onboarding.usecase';
 import { OnboardingController } from './infrastructure/api/onboarding.controller';
+import { CommuneRepository } from './infrastructure/repository/commune/commune.repository';
 
 const SESSION_LIFETIME = '12h';
 
@@ -86,6 +87,7 @@ const SESSION_LIFETIME = '12h';
     InteractionsDefinitionUsecase,
     EmailSender,
     OnboardingUsecase,
+    CommuneRepository,
   ],
 })
 export class AppModule {}

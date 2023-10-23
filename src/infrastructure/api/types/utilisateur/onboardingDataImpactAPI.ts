@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class Phrase {
-  @ApiProperty({ type: 'integer' })
-  pourcent: number;
+  @ApiProperty({ type: 'string' })
+  icon: string;
   @ApiProperty({ type: 'string' })
   phrase: string;
 }
@@ -18,12 +18,12 @@ export class OnboardingDataImpactAPI {
 
   @ApiProperty({ required: false, type: String })
   phrase?: string;
-  @ApiProperty({ required: false, type: String })
-  phrase_1?: string;
-  @ApiProperty({ required: false, type: String })
-  phrase_2?: string;
-  @ApiProperty({ required: false, type: String })
-  phrase_3?: string;
-  @ApiProperty({ required: false, type: String })
-  phrase_4?: string;
+  @ApiProperty({ required: false, type: Phrase })
+  phrase_1?: Phrase;
+  @ApiProperty({ required: false, type: Phrase })
+  phrase_2?: Phrase;
+  @ApiProperty({ required: false, type: Phrase })
+  phrase_3?: Phrase;
+  @ApiProperty({ required: false, type: Phrase })
+  phrase_4?: Phrase;
 }

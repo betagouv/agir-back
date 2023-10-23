@@ -17,6 +17,7 @@ import { OnboardingResult } from '../domain/utilisateur/onboardingResult';
 import { OidcService } from '../infrastructure/auth/oidc.service';
 import { EmailSender } from '../infrastructure/email/emailSender';
 import { PasswordManager } from '../../src/domain/utilisateur/manager/passwordManager';
+import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 
 export type Phrase = {
   phrase: string;
@@ -33,6 +34,7 @@ export class OnboardingUsecase {
     private interactionRepository: InteractionRepository,
     private oidcService: OidcService,
     private emailSender: EmailSender,
+    private communeRepository: CommuneRepository,
   ) {}
 
   async validateCode(
@@ -105,26 +107,65 @@ export class OnboardingUsecase {
       onboardingResult,
       nombre_user_total,
     );
-    final_result.phrase_1 = `Accédez à toutes les aides publiques pour la transition écologique en quelques clics : consommation responsable, vélo, voiture éléctrique, rénovation énergétique pour les propriétaires…`;
+    final_result.phrase_1 = {
+      icon: '💰',
+      phrase: `Accédez à toutes les aides publiques pour la transition écologique en quelques clics : consommation responsable, vélo, voiture éléctrique, rénovation énergétique pour les propriétaires…`,
+    };
+
+    let ville_candidates = this.communeRepository.getListCommunesParCodePostal(
+      onboardingData.code_postal,
+    );
 
     if (final_result.transports >= 3) {
-      final_result.phrase_2 = `Regarder les offres de transports dans la zone du ${onboardingData.code_postal} en fonction de vos besoins et usages`;
+      if (ville_candidates.length > 0) {
+        final_result.phrase_2 = {
+          icon: '🚌',
+          phrase: `Regarder les offres de transports dans la zone de ${ville_candidates[0]} en fonction de vos besoins et usages`,
+        };
+      } else {
+        final_result.phrase_2 = {
+          icon: '🚌',
+          phrase: `Regarder les offres de transports dans la zone du ${onboardingData.code_postal} en fonction de vos besoins et usages`,
+        };
+      }
     } else {
-      final_result.phrase_2 = `Comment et où consommer de manière plus durable quand on habite dans le ${onboardingData.code_postal}`;
+      if (ville_candidates.length > 0) {
+        final_result.phrase_2 = {
+          icon: '🛒',
+          phrase: `Comment et où consommer de manière plus durable quand on habite ${ville_candidates[0]}`,
+        };
+      } else {
+        final_result.phrase_2 = {
+          icon: '🛒',
+          phrase: `Comment et où consommer de manière plus durable quand on habite dans le ${onboardingData.code_postal}`,
+        };
+      }
     }
     if ((final_result.alimentation = 4)) {
-      final_result.phrase_3 = `Trouver des solutions même quand on adore la viande`;
+      final_result.phrase_3 = {
+        icon: '🍽️',
+        phrase: `Trouver des solutions même quand on adore la viande`,
+      };
     } else {
-      final_result.phrase_3 = `Comprendre en détails les impacts de vos repas préférés, trouver des recettes pour les réduire`;
+      final_result.phrase_3 = {
+        icon: '🍽️',
+        phrase: `Comprendre en détails les impacts de vos repas préférés, trouver des recettes pour les réduire`,
+      };
     }
 
     if (onboardingData.adultes + onboardingData.enfants >= 3) {
-      final_result.phrase_4 = `${
-        onboardingData.adultes + onboardingData.enfants
-      } sous le même toit ?
-Comprendre ses impacts à l'échelle de votre famille ou de votre colocation`;
+      final_result.phrase_4 = {
+        icon: '👪',
+        phrase: `${
+          onboardingData.adultes + onboardingData.enfants
+        } sous le même toit ?
+Comprendre ses impacts à l'échelle de votre famille ou de votre colocation`,
+      };
     } else {
-      final_result.phrase_4 = `Suivre votre consommation énergétique, la comparer avec celles des foyers similaires et identifier les petits gestes pour faire de grosses économies`;
+      final_result.phrase_4 = {
+        icon: '🏠',
+        phrase: `Suivre votre consommation énergétique, la comparer avec celles des foyers similaires et identifier les petits gestes pour faire de grosses économies`,
+      };
     }
     return final_result;
   }
