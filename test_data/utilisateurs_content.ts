@@ -281,9 +281,7 @@ const utilisateurs = {
     prenom: 'Wojtek',
     points: 10,
     email: 'ww@w.com',
-    passwordSalt: '49a74d3967c5cc16e3ece216417e11cf',
-    passwordHash:
-      'ef227678ba9dd41ca800c96aa58a758cf32f313129571dd2fc8da457cb5f74789eb94699c3a47bc836b6a0b7cc36147f976386009587605a329fd01068a2ec36',
+    mot_de_passe: 'haha',
     interactions: [
       { id: 'aide_velo', score: 0.6 },
       { id: 'aide_retrofit', score: 0.1 },

@@ -14,7 +14,7 @@ import { InteractionType } from '../../../src/domain/interaction/interactionType
 import { Interaction } from '../../../src/domain/interaction/interaction';
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 import { Thematique } from '../../../src/domain/thematique';
-import { EmailSender } from '../email/emailSender';
+import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
 const aides = require('../../../test_data/interactions/_aides');
 const suivis = require('../../../test_data/interactions/_suivis');
@@ -54,7 +54,6 @@ export class TestDataController {
     private suiviRepository: SuiviRepository,
     private questionNGCRepository: QuestionNGCRepository,
     private interactionDefinitionRepository: InteractionDefinitionRepository,
-    private emailSender: EmailSender,
   ) {}
 
   @Get('testdata/:id')
@@ -320,6 +319,10 @@ export class TestDataController {
     delete clonedData.bilans;
     delete clonedData.badges;
     delete clonedData.questionsNGC;
+
+    PasswordManager.setUserPassword(clonedData, clonedData.mot_de_passe);
+    delete clonedData.mot_de_passe;
+
     await this.prisma.utilisateur.upsert({
       where: {
         id: utilisateurId,
