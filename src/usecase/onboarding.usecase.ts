@@ -72,7 +72,7 @@ export class OnboardingUsecase {
     }
     if (utilisateur.isCodeLocked()) {
       throw new Error(
-        `Trop d'essais successifs, compte bloqué jusqu'à ${utilisateur.getLoginLockedUntilString()}`,
+        `Trop d'essais successifs, attendez jusqu'à ${utilisateur.getLoginLockedUntilString()}`,
       );
     }
     throw new Error(MAUVAIS_CODE_ERROR);

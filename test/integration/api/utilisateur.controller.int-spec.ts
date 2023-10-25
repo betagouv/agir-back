@@ -740,7 +740,7 @@ describe('/utilisateurs (API test)', () => {
 
     // THEN
     expect(response.body.message).toContain(
-      `Trop d'essais successifs, compte bloqué jusqu'à`,
+      `Trop d'essais successifs, attendez jusqu'à`,
     );
     expect(dbUser.failed_checkcode_count).toEqual(4); // le compteur reste bloqué sur 4
     expect(dbUser.prevent_checkcode_before.getTime()).toBeGreaterThan(
