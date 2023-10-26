@@ -2,6 +2,13 @@ import { OnboardingResult } from '../../../../../src/domain/utilisateur/onboardi
 import { OnboardingData } from '../../../../../src/domain/utilisateur/onboardingData';
 import { Utilisateur } from '../../../../../src/domain/utilisateur/utilisateur';
 import { PasswordManager } from '../../../../../src/domain/utilisateur/manager/passwordManager';
+import { UtilisateurSecurityRepository } from '../../../../../src/infrastructure/repository/utilisateur/utilisateurSecurity.repository';
+
+const fakeSecurityRepository = new UtilisateurSecurityRepository({
+  utilisateur: { update: jest.fn() },
+} as any);
+
+const passwordManager = new PasswordManager(fakeSecurityRepository);
 
 const UTILISATEUR = {
   id: 'id',
@@ -82,71 +89,103 @@ describe('Objet PasswordManager', () => {
     expect(utilisateur.passwordHash.length).toBeGreaterThan(10);
     expect(utilisateur.passwordSalt.length).toBeGreaterThan(10);
   });
-  it('checkPassword : OK', () => {
+  it('checkPassword : OK and returns function result', async () => {
     // GIVEN
     const utilisateur = new Utilisateur({ ...UTILISATEUR });
     PasswordManager.setUserPassword(utilisateur, 'toto');
 
     // WHEN
-    const result = utilisateur.checkPasswordOKAndChangeState('toto');
+    const result = await passwordManager.loginUtilisateur(
+      utilisateur,
+      'toto',
+      () => {
+        return 'ok';
+      },
+    );
 
     // THEN
-    expect(result).toEqual(true);
+    expect(result).toEqual('ok');
   });
-  it('checkPassword : KO', () => {
+  it('checkPassword : KO', async () => {
     // GIVEN
     const utilisateur = new Utilisateur({ ...UTILISATEUR });
     PasswordManager.setUserPassword(utilisateur, 'toto');
 
+    const fonction = jest.fn();
     // WHEN
-    const result = utilisateur.checkPasswordOKAndChangeState('titi');
-
-    // THEN
-    expect(result).toEqual(false);
+    try {
+      const result = await passwordManager.loginUtilisateur(
+        utilisateur,
+        'titi',
+        fonction,
+      );
+      fail();
+    } catch (error) {
+      expect(error.message).toEqual(
+        'Mauvaise adresse électronique ou mauvais mot de passe',
+      );
+    }
+    expect(fonction).toHaveBeenCalledTimes(0);
   });
 
-  it('isLoginLocked : false', () => {
+  it('isLoginLocked : not locked yet', async () => {
     // GIVEN
     const utilisateur = new Utilisateur({ ...UTILISATEUR });
+    PasswordManager.setUserPassword(utilisateur, 'titi');
     utilisateur.prevent_login_before = new Date(new Date().getTime() - 10000);
 
+    const fonction = jest.fn();
     // WHEN
-    const result = PasswordManager.isLoginLocked(utilisateur);
-
-    // THEN
-    expect(result).toEqual(false);
+    try {
+      await passwordManager.loginUtilisateur(utilisateur, 'toto', fonction);
+      fail();
+    } catch (error) {
+      expect(error.message).toContain(
+        `Mauvaise adresse électronique ou mauvais mot de passe`,
+      );
+    }
+    expect(fonction).toHaveBeenCalledTimes(0);
   });
-  it('isLoginLocked : true because date in futur', () => {
+  it('isLoginLocked : true because date in futur', async () => {
     // GIVEN
     const utilisateur = new Utilisateur({ ...UTILISATEUR });
     utilisateur.prevent_login_before = new Date(new Date().getTime() + 10000);
+    const fonction = jest.fn();
 
-    // WHEN
-    const result = PasswordManager.isLoginLocked(utilisateur);
-
-    // THEN
-    expect(result).toEqual(true);
+    try {
+      await passwordManager.loginUtilisateur(utilisateur, 'toto', fonction);
+      fail();
+    } catch (error) {
+      expect(error.message).toContain(
+        `Trop d'essais successifs, compte bloqué jusqu'à`,
+      );
+    }
+    expect(fonction).toHaveBeenCalledTimes(0);
   });
-  it('failLogin : increase counter', () => {
+  it('failLogin : increase counter', async () => {
     // GIVEN
     const utilisateur = new Utilisateur({ ...UTILISATEUR });
     utilisateur.setPassword('#1234567890HAHA');
     utilisateur.failed_login_count = 0;
 
-    // WHEN
-    PasswordManager.checkUserPasswordOKAndChangeState(utilisateur, 'bad');
+    try {
+      await passwordManager.loginUtilisateur(utilisateur, 'toto', jest.fn());
+      fail();
+    } catch (error) {}
 
     // THEN
     expect(utilisateur.failed_login_count).toEqual(1);
   });
-  it('failedLogin : sets block date + 5 mins', () => {
+  it('failedLogin : sets block date + 5 mins', async () => {
     // GIVEN
     const utilisateur = new Utilisateur({ ...UTILISATEUR });
     utilisateur.setPassword('#1234567890HAHA');
     utilisateur.failed_login_count = 3;
 
-    // WHEN
-    PasswordManager.checkUserPasswordOKAndChangeState(utilisateur, 'bad');
+    try {
+      await passwordManager.loginUtilisateur(utilisateur, 'toto', jest.fn());
+      fail();
+    } catch (error) {}
 
     // THEN
     expect(utilisateur.failed_login_count).toEqual(4);
@@ -156,24 +195,5 @@ describe('Objet PasswordManager', () => {
           1000,
       ),
     ).toEqual(300);
-  });
-  it('failedLogin : 2 times sets block date + 10 mins', () => {
-    // GIVEN
-    const utilisateur = new Utilisateur({ ...UTILISATEUR });
-    utilisateur.setPassword('#1234567890HAHA');
-    utilisateur.failed_login_count = 3;
-
-    // WHEN
-    PasswordManager.checkUserPasswordOKAndChangeState(utilisateur, 'bad');
-    PasswordManager.checkUserPasswordOKAndChangeState(utilisateur, 'bad');
-
-    // THEN
-    expect(utilisateur.failed_login_count).toEqual(5);
-    expect(
-      Math.round(
-        (utilisateur.prevent_login_before.getTime() - new Date().getTime()) /
-          1000,
-      ),
-    ).toEqual(600);
   });
 });

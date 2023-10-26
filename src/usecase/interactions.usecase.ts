@@ -3,7 +3,7 @@ import { Interaction } from '../domain/interaction/interaction';
 import { DistributionSettings } from '../domain/interaction/distributionSettings';
 import { InteractionStatus } from '../domain/interaction/interactionStatus';
 import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { BadgeRepository } from '../infrastructure/repository/badge.repository';
 import { InteractionType } from '../domain/interaction/interactionType';
 import { BadgeTypes } from '../domain/badge/badgeTypes';

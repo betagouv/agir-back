@@ -1,5 +1,5 @@
 import { TestUtil } from '../../TestUtil';
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur.repository';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Impact } from '../../../src/domain/utilisateur/onboardingData';
 import { Thematique as ThematiqueOnboarding } from '../../../src/domain/utilisateur/onboardingData';
 

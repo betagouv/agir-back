@@ -13,7 +13,7 @@ import { BilanUsecase } from './usecase/bilan.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
 import { InteractionsDefinitionUsecase } from './usecase/interactionsDefinition.usecase';
 
-import { UtilisateurRepository } from './infrastructure/repository/utilisateur.repository';
+import { UtilisateurRepository } from './infrastructure/repository/utilisateur/utilisateur.repository';
 import { BadgeRepository } from './infrastructure/repository/badge.repository';
 import { BilanRepository } from './infrastructure/repository/bilan.repository';
 
@@ -41,6 +41,10 @@ import { OnboardingController } from './infrastructure/api/onboarding.controller
 import { CommuneRepository } from './infrastructure/repository/commune/commune.repository';
 import { CommunesUsecase } from './usecase/communes.usecase';
 import { CommunesController } from './infrastructure/api/communes.controller';
+import { CodeManager } from '../src/domain/utilisateur/manager/codeManager';
+import { UtilisateurSecurityRepository } from './infrastructure/repository/utilisateur/utilisateurSecurity.repository';
+import { SecurityEmailManager } from './domain/utilisateur/manager/securityEmailManager';
+import { PasswordManager } from './domain/utilisateur/manager/passwordManager';
 
 const SESSION_LIFETIME = '12h';
 
@@ -73,6 +77,7 @@ const SESSION_LIFETIME = '12h';
     BadgeRepository,
     InteractionRepository,
     SuiviRepository,
+    CodeManager,
 
     OIDCStateRepository,
     OidcService,
@@ -92,6 +97,9 @@ const SESSION_LIFETIME = '12h';
     OnboardingUsecase,
     CommuneRepository,
     CommunesUsecase,
+    UtilisateurSecurityRepository,
+    SecurityEmailManager,
+    PasswordManager,
   ],
 })
 export class AppModule {}

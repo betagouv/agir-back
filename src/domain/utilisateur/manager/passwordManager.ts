@@ -1,15 +1,36 @@
 var crypto = require('crypto');
+import { Injectable } from '@nestjs/common';
+import { UtilisateurSecurityRepository } from '../../../infrastructure/repository/utilisateur/utilisateurSecurity.repository';
+import { PasswordAwareUtilisateur } from './passwordAwareUtilisateur';
 
-export type PasswordAwareUtilisateur = {
-  passwordHash: string;
-  passwordSalt: string;
-  failed_login_count: number;
-  prevent_login_before: Date;
-};
+const MAUVAIS_MDP_ERROR = `Mauvaise adresse électronique ou mauvais mot de passe`;
 
+@Injectable()
 export class PasswordManager {
+  constructor(private securityRepository: UtilisateurSecurityRepository) {}
+
   private static MAX_LOGIN_ATTEMPT = 3;
   private static BLOCKED_LOGIN_DURATION_MIN = 5;
+
+  public async loginUtilisateur(
+    utilisateur: PasswordAwareUtilisateur,
+    password: string,
+    okAction: Function,
+  ): Promise<any> {
+    PasswordManager.checkLoginLocked(utilisateur);
+
+    const login_ok = await this.checkUserPasswordOKAndUpdateState(
+      utilisateur,
+      password,
+    );
+
+    if (login_ok) {
+      return okAction();
+    } else {
+      PasswordManager.checkLoginLocked(utilisateur);
+      throw new Error(MAUVAIS_MDP_ERROR);
+    }
+  }
 
   public static checkPasswordFormat(password: string) {
     if (!this.auMoinsUnChiffre(password)) {
@@ -35,10 +56,20 @@ export class PasswordManager {
       .toString(`hex`);
   }
 
-  public static checkUserPasswordOKAndChangeState(
+  private static checkLoginLocked(utilisateur: PasswordAwareUtilisateur) {
+    if (PasswordManager.isLoginLocked(utilisateur)) {
+      throw new Error(
+        `Trop d'essais successifs, compte bloqué jusqu'à ${PasswordManager.lockedUntilString(
+          utilisateur,
+        )}`,
+      );
+    }
+  }
+
+  private async checkUserPasswordOKAndUpdateState(
     utilisateur: PasswordAwareUtilisateur,
     password: string,
-  ): boolean {
+  ): Promise<boolean> {
     const ok =
       utilisateur.passwordHash ===
       crypto
@@ -49,14 +80,15 @@ export class PasswordManager {
     } else {
       PasswordManager.failLogin(utilisateur);
     }
+    await this.securityRepository.updateLoginAttemptData(utilisateur);
     return ok;
   }
 
-  public static isLoginLocked(utilisateur: PasswordAwareUtilisateur): boolean {
+  private static isLoginLocked(utilisateur: PasswordAwareUtilisateur): boolean {
     return Date.now() < utilisateur.prevent_login_before.getTime();
   }
 
-  public static getLoginLockedUntilString(
+  private static lockedUntilString(
     utilisateur: PasswordAwareUtilisateur,
   ): string {
     return utilisateur.prevent_login_before.toLocaleTimeString('fr-FR', {

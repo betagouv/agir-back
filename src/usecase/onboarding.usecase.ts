@@ -1,6 +1,6 @@
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { InteractionDefinitionRepository } from '../infrastructure/repository/interactionDefinition.repository';
 import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
 import { Interaction } from '../domain/interaction/interaction';
@@ -14,10 +14,12 @@ import {
 import { OnboardingDataAPI } from '../infrastructure/api/types/utilisateur/onboardingDataAPI';
 import { OnboardingDataImpactAPI } from '../infrastructure/api/types/utilisateur/onboardingDataImpactAPI';
 import { OnboardingResult } from '../domain/utilisateur/onboardingResult';
-import { OidcService } from '../infrastructure/auth/oidc.service';
 import { EmailSender } from '../infrastructure/email/emailSender';
 import { PasswordManager } from '../../src/domain/utilisateur/manager/passwordManager';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
+import { CodeManager } from '../../src/domain/utilisateur/manager/codeManager';
+import { OidcService } from '../../src/infrastructure/auth/oidc.service';
+import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
 
 export type Phrase = {
   phrase: string;
@@ -32,9 +34,11 @@ export class OnboardingUsecase {
     private utilisateurRespository: UtilisateurRepository,
     private interactionDefinitionRepository: InteractionDefinitionRepository,
     private interactionRepository: InteractionRepository,
-    private oidcService: OidcService,
     private emailSender: EmailSender,
     private communeRepository: CommuneRepository,
+    private codeManager: CodeManager,
+    private oidcService: OidcService,
+    private securityEmailManager: SecurityEmailManager,
   ) {}
 
   async validateCode(
@@ -49,33 +53,23 @@ export class OnboardingUsecase {
     if (utilisateur.active_account) {
       throw new Error('Ce compte est déjà actif');
     }
-    if (utilisateur.isCodeLocked()) {
-      throw new Error(
-        `Trop d'essais successifs, compte bloqué jusqu'à ${utilisateur.getLoginLockedUntilString()}`,
-      );
-    }
 
-    const code_ok = utilisateur.checkCodeOKAndChangeState(code);
-    await this.utilisateurRespository.updateUtilisateurLoginSecurity(
-      utilisateur,
-    );
-    if (code_ok) {
-      utilisateur.resetCodeSendingState();
-      await this.utilisateurRespository.updateUtilisateurLoginSecurity(
-        utilisateur,
-      );
-      await this.initUtilisateurInteractionSet(utilisateur.id);
+    const _this = this;
+    const codeOkAction = async function () {
+      await _this.securityEmailManager.resetEmailSendingState(utilisateur);
+      await _this.utilisateurRespository.activateAccount(utilisateur.id);
+      await _this.initUtilisateurInteractionSet(utilisateur.id);
       return {
         utilisateur: utilisateur,
-        token: await this.oidcService.createNewInnerAppToken(utilisateur.id),
+        token: await _this.oidcService.createNewInnerAppToken(utilisateur.id),
       };
-    }
-    if (utilisateur.isCodeLocked()) {
-      throw new Error(
-        `Trop d'essais successifs, attendez jusqu'à ${utilisateur.getLoginLockedUntilString()}`,
-      );
-    }
-    throw new Error(MAUVAIS_CODE_ERROR);
+    };
+
+    return this.codeManager.processInputCodeAndDoActionIfOK(
+      code,
+      utilisateur,
+      codeOkAction,
+    );
   }
 
   async evaluateOnboardingData(
@@ -102,7 +96,7 @@ export class OnboardingUsecase {
     const nombre_user_total =
       await this.utilisateurRespository.nombreTotalUtilisateurs();
 
-    final_result.phrase = await this.fabriquePhrase1(
+    final_result.phrase = await this.fabriquePhrase(
       N3,
       onboardingResult,
       nombre_user_total,
@@ -225,20 +219,15 @@ export class OnboardingUsecase {
     if (utilisateur.active_account) {
       throw new Error('Ce compte est déjà actif');
     }
-    if (utilisateur.isCodeEmailLocked()) {
-      throw new Error(
-        `Trop d'essais successifs, attendez jusqu'à ${utilisateur.getLoginLockedUntilString()} avant de redemander un code`,
-      );
-    }
-    utilisateur.resetCodeEmailCouterIfNeeded();
+    const _this = this;
+    const okAction = async function () {
+      _this.sendValidationCode(utilisateur);
+    };
 
-    utilisateur.incrementCodeEmailCount();
-
-    await this.utilisateurRespository.updateUtilisateurLoginSecurity(
+    await this.securityEmailManager.attemptSecurityEmailEmission(
       utilisateur,
+      okAction,
     );
-
-    this.sendValidationCode(utilisateur);
   }
 
   private checkInputToCreateUtilisateur(
@@ -281,7 +270,7 @@ export class OnboardingUsecase {
     }
   }
 
-  private async fabriquePhrase1(
+  private async fabriquePhrase(
     N3: number,
     onboardingResult: OnboardingResult,
     nombre_user_total: number,

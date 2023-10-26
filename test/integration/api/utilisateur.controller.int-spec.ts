@@ -5,6 +5,7 @@ import {
 import { TestUtil } from '../../TestUtil';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 import { Utilisateur } from '../../../src/domain/utilisateur/utilisateur';
+var crypto = require('crypto');
 
 const ONBOARDING_1_2_3_4_DATA = {
   transports: ['voiture', 'pied'],
@@ -154,6 +155,7 @@ const ONBOARDING_RES_4444 = {
 
 function getFakeUtilisteur() {
   return {
+    id: null,
     passwordHash: '',
     passwordSalt: '',
     failed_login_count: 0,
@@ -1033,9 +1035,11 @@ describe('/utilisateurs (API test)', () => {
     expect(dbUser.prenom).toEqual('THE PRENOM');
     expect(dbUser.email).toEqual('george@paris.com');
     expect(dbUser.code_postal).toEqual('75008');
-    expect(
-      PasswordManager.checkUserPasswordOKAndChangeState(fakeUser, '1234'),
-    ).toEqual(true);
+    expect(dbUser.passwordHash).toEqual(
+      crypto
+        .pbkdf2Sync('1234', dbUser.passwordSalt, 1000, 64, `sha512`)
+        .toString(`hex`),
+    );
   });
   it('POST /utilisateurs/oubli_mot_de_passe - renvoi OK si mail existe pas', async () => {
     // GIVEN
@@ -1106,14 +1110,20 @@ describe('/utilisateurs (API test)', () => {
       onboardingResult: null,
     });
 
-    expect(
-      dbUtilisateur.checkPasswordOKAndChangeState('#1234567890HAHA'),
-    ).toEqual(true);
+    expect(userDB.passwordHash).toEqual(
+      crypto
+        .pbkdf2Sync('#1234567890HAHA', userDB.passwordSalt, 1000, 64, `sha512`)
+        .toString(`hex`),
+    );
     expect(dbUtilisateur.sent_code_count).toEqual(0);
   });
   it('POST /utilisateurs/modifier_mot_de_passe - si code ko le mot de passe est PAS modifié', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
+
+    const userDB_before = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
 
     // WHEN
     const response = await TestUtil.getServer()
@@ -1126,22 +1136,13 @@ describe('/utilisateurs (API test)', () => {
 
     // THEN
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe("Désolé, ce code n'est pas le bon");
+    expect(response.body.message).toBe('Mauvais code ou adresse électronique');
 
     const userDB = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
     });
-    const dbUtilisateur = new Utilisateur({
-      ...userDB,
-      badges: [],
-      quizzProfile: null,
-      onboardingData: null,
-      onboardingResult: null,
-    });
 
-    expect(
-      dbUtilisateur.checkPasswordOKAndChangeState('#1234567890HAHA'),
-    ).toEqual(false);
+    expect(userDB.passwordHash).toEqual(userDB_before.passwordHash);
   });
   it('POST /utilisateurs/modifier_mot_de_passe - si code ko 4 fois, blocage', async () => {
     // GIVEN

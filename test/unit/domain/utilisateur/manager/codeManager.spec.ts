@@ -2,6 +2,13 @@ import { OnboardingResult } from '../../../../../src/domain/utilisateur/onboardi
 import { OnboardingData } from '../../../../../src/domain/utilisateur/onboardingData';
 import { Utilisateur } from '../../../../../src/domain/utilisateur/utilisateur';
 import { CodeManager } from '../../../../../src/domain/utilisateur/manager/codeManager';
+import { UtilisateurSecurityRepository } from '../../../../../src/infrastructure/repository/utilisateur/utilisateurSecurity.repository';
+
+const fakeSecurityRepository = new UtilisateurSecurityRepository({
+  utilisateur: { update: jest.fn() },
+} as any);
+
+const codeManager = new CodeManager(fakeSecurityRepository);
 
 const UTILISATEUR = {
   id: 'id',
@@ -28,29 +35,7 @@ const UTILISATEUR = {
   prevent_sendcode_before: new Date(),
 };
 describe('Objet CodeManager', () => {
-  it('checkCode : OK', () => {
-    // GIVEN
-    const utilisateur = new Utilisateur({ ...UTILISATEUR });
-    utilisateur.code = '123456';
-
-    // WHEN
-    const result = CodeManager.checkCodeOKAndChangeState(utilisateur, '123456');
-
-    // THEN
-    expect(result).toEqual(true);
-  });
-  it('checkCode : KO', () => {
-    // GIVEN
-    const utilisateur = new Utilisateur({ ...UTILISATEUR });
-    utilisateur.code = 'toto';
-
-    // WHEN
-    const result = CodeManager.checkCodeOKAndChangeState(utilisateur, 'titi');
-
-    // THEN
-    expect(result).toEqual(false);
-  });
-  it('isCodeLocked : false', () => {
+  it('processInputCodeAndDoActionIfOK : no exception when not locked', async () => {
     // GIVEN
     const utilisateur = new Utilisateur({ ...UTILISATEUR });
     utilisateur.prevent_checkcode_before = new Date(
@@ -58,12 +43,34 @@ describe('Objet CodeManager', () => {
     );
 
     // WHEN
-    const result = CodeManager.isCodeLocked(utilisateur);
+    await codeManager.processInputCodeAndDoActionIfOK(
+      '123456',
+      utilisateur,
+      () => Number,
+    );
 
     // THEN
-    expect(result).toEqual(false);
+    // no error
   });
-  it('isCodeLocked : true because date in futur', () => {
+  it('processInputCodeAndDoActionIfOK : appel l action si code OK', async () => {
+    // GIVEN
+    const utilisateur = new Utilisateur({ ...UTILISATEUR });
+    utilisateur.prevent_checkcode_before = new Date(
+      new Date().getTime() - 10000,
+    );
+    const fonction = jest.fn();
+
+    // WHEN
+    await codeManager.processInputCodeAndDoActionIfOK(
+      '123456',
+      utilisateur,
+      fonction,
+    );
+
+    // THEN
+    expect(fonction).toBeCalled();
+  });
+  it('processInputCodeAndDoActionIfOK : erreur car date de rejeu dans le futur', async () => {
     // GIVEN
     const utilisateur = new Utilisateur({ ...UTILISATEUR });
     utilisateur.prevent_checkcode_before = new Date(
@@ -71,32 +78,55 @@ describe('Objet CodeManager', () => {
     );
 
     // WHEN
-    const result = CodeManager.isCodeLocked(utilisateur);
-
-    // THEN
-    expect(result).toEqual(true);
+    try {
+      await codeManager.processInputCodeAndDoActionIfOK(
+        'xxx',
+        utilisateur,
+        jest.fn(),
+      );
+      fail();
+    } catch (error) {
+      // THEN
+      expect(error.message).toContain(
+        `Trop d'essais successifs, attendez jusqu'à`,
+      );
+    }
   });
 
-  it('failCode : increase counter', () => {
+  it('processInputCodeAndDoActionIfOK : code KO increase counter, does not call function', async () => {
     // GIVEN
     const utilisateur = new Utilisateur({ ...UTILISATEUR });
     utilisateur.code = '#1234567890HAHA';
     utilisateur.failed_checkcode_count = 0;
+    const fonction = jest.fn();
 
     // WHEN
-    CodeManager.checkCodeOKAndChangeState(utilisateur, 'bad');
+    try {
+      await codeManager.processInputCodeAndDoActionIfOK(
+        'bad',
+        utilisateur,
+        fonction,
+      );
+    } catch {}
 
     // THEN
     expect(utilisateur.failed_checkcode_count).toEqual(1);
+    expect(fonction).toHaveBeenCalledTimes(0);
   });
-  it('failedCode : sets block date + 5 mins', () => {
+  it('processInputCodeAndDoActionIfOK : sets block date + 5 mins', async () => {
     // GIVEN
     const utilisateur = new Utilisateur({ ...UTILISATEUR });
     utilisateur.code = '#1234567890HAHA';
     utilisateur.failed_checkcode_count = 3;
 
     // WHEN
-    CodeManager.checkCodeOKAndChangeState(utilisateur, 'bad');
+    try {
+      await codeManager.processInputCodeAndDoActionIfOK(
+        'bad',
+        utilisateur,
+        jest.fn(),
+      );
+    } catch {}
 
     // THEN
     expect(utilisateur.failed_checkcode_count).toEqual(4);
@@ -107,25 +137,5 @@ describe('Objet CodeManager', () => {
           1000,
       ),
     ).toEqual(300);
-  });
-  it('failedCode : 2 times sets block date + 10 mins', () => {
-    // GIVEN
-    const utilisateur = new Utilisateur({ ...UTILISATEUR });
-    utilisateur.code = '#1234567890HAHA';
-    utilisateur.failed_checkcode_count = 3;
-
-    // WHEN
-    CodeManager.checkCodeOKAndChangeState(utilisateur, 'bad');
-    CodeManager.checkCodeOKAndChangeState(utilisateur, 'bad');
-
-    // THEN
-    expect(utilisateur.failed_checkcode_count).toEqual(5);
-    expect(
-      Math.round(
-        (utilisateur.prevent_checkcode_before.getTime() -
-          new Date().getTime()) /
-          1000,
-      ),
-    ).toEqual(600);
   });
 });

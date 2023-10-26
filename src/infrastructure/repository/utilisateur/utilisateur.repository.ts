@@ -1,16 +1,17 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { Utilisateur as UtilisateurDB, Prisma } from '@prisma/client';
-import { Utilisateur } from '../../domain/utilisateur/utilisateur';
-import { UserQuizzProfile } from '../../domain/quizz/userQuizzProfile';
-import { Profile } from '../../../src/domain/utilisateur/profile';
+import { Utilisateur } from '../../../domain/utilisateur/utilisateur';
+import { UserQuizzProfile } from '../../../domain/quizz/userQuizzProfile';
+import { Profile } from '../../../domain/utilisateur/profile';
 import {
   Impact,
   OnboardingData,
   Thematique,
-} from '../../../src/domain/utilisateur/onboardingData';
-import { OnboardingResult } from '../../../src/domain/utilisateur/onboardingResult';
+} from '../../../domain/utilisateur/onboardingData';
+import { OnboardingResult } from '../../../domain/utilisateur/onboardingResult';
+import { CodeAwareUtilisateur } from '../../../domain/utilisateur/manager/codeAwareUtilisateur';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -74,22 +75,20 @@ export class UtilisateurRepository {
       },
     });
   }
-  async updateUtilisateurLoginSecurity(utilisateur: Utilisateur) {
+
+  async activateAccount(utilisateurId: string): Promise<any> {
     return this.prisma.utilisateur.update({
-      where: {
-        id: utilisateur.id,
-      },
+      where: { id: utilisateurId },
       data: {
-        passwordHash: utilisateur.passwordHash,
-        passwordSalt: utilisateur.passwordSalt,
-        failed_login_count: utilisateur.failed_login_count,
-        prevent_login_before: utilisateur.prevent_login_before,
-        failed_checkcode_count: utilisateur.failed_checkcode_count,
-        prevent_checkcode_before: utilisateur.prevent_checkcode_before,
-        active_account: utilisateur.active_account,
-        code: utilisateur.code,
-        sent_code_count: utilisateur.sent_code_count,
-        prevent_sendcode_before: utilisateur.prevent_sendcode_before,
+        active_account: true,
+      },
+    });
+  }
+  async updateCode(utilisateurId: string, code: string): Promise<any> {
+    return this.prisma.utilisateur.update({
+      where: { id: utilisateurId },
+      data: {
+        code: code,
       },
     });
   }

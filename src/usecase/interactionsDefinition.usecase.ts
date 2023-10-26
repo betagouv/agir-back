@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { InteractionType } from '../../src/domain/interaction/interactionType';
 import { InteractionRepository } from '../../src/infrastructure/repository/interaction.repository';
 import { Interaction } from '../../src/domain/interaction/interaction';
-import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { Thematique } from '../../src/domain/thematique';
 import { CMSThematiqueAPI } from '../../src/infrastructure/api/types/cms/CMSThematiqueAPI';
 import { CMSEvent } from '../../src/infrastructure/api/types/cms/CMSEvent';

@@ -1,5 +1,5 @@
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
 import { UtilisateurProfileAPI } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
 import { SuiviRepository } from '../infrastructure/repository/suivi.repository';
@@ -9,12 +9,12 @@ import { QuestionNGCRepository } from '../infrastructure/repository/questionNGC.
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { OidcService } from '../../src/infrastructure/auth/oidc.service';
 import { Injectable } from '@nestjs/common';
-import {
-  PasswordAwareUtilisateur,
-  PasswordManager,
-} from '../../src/domain/utilisateur/manager/passwordManager';
+import { PasswordManager } from '../../src/domain/utilisateur/manager/passwordManager';
 import { ErrorService } from '../infrastructure/errorService';
 import { EmailSender } from '../infrastructure/email/emailSender';
+import { CodeManager } from '../../src/domain/utilisateur/manager/codeManager';
+import { SecurityEmailManager } from '../../src/domain/utilisateur/manager/securityEmailManager';
+import { PasswordAwareUtilisateur } from 'src/domain/utilisateur/manager/passwordAwareUtilisateur';
 
 export type Phrase = {
   phrase: string;
@@ -22,7 +22,6 @@ export type Phrase = {
 };
 
 const MAUVAIS_MDP_ERROR = `Mauvaise adresse électronique ou mauvais mot de passe`;
-const MAUVAIS_CODE = `Désolé, ce code n'est pas le bon`;
 
 @Injectable()
 export class UtilisateurUsecase {
@@ -36,6 +35,9 @@ export class UtilisateurUsecase {
     private oIDCStateRepository: OIDCStateRepository,
     private oidcService: OidcService,
     private emailSender: EmailSender,
+    private codeManager: CodeManager,
+    private securityEmailManager: SecurityEmailManager,
+    private passwordManager: PasswordManager,
   ) {}
 
   async loginUtilisateur(
@@ -50,28 +52,20 @@ export class UtilisateurUsecase {
     if (!utilisateur.active_account) {
       ErrorService.throwInactiveAccountError();
     }
-    if (utilisateur.isLoginLocked()) {
-      throw new Error(
-        `Trop d'essais successifs, compte bloqué jusqu'à ${utilisateur.getLoginLockedUntilString()}`,
-      );
-    }
 
-    const password_ok = utilisateur.checkPasswordOKAndChangeState(password);
-    await this.utilisateurRespository.updateUtilisateurLoginSecurity(
-      utilisateur,
-    );
-    if (password_ok) {
+    const _this = this;
+    const okAction = async function () {
       return {
         utilisateur: utilisateur,
-        token: await this.oidcService.createNewInnerAppToken(utilisateur.id),
+        token: await _this.oidcService.createNewInnerAppToken(utilisateur.id),
       };
-    }
-    if (utilisateur.isLoginLocked()) {
-      throw new Error(
-        `Trop d'essais successifs, compte bloqué jusqu'à ${utilisateur.getLoginLockedUntilString()}`,
-      );
-    }
-    throw new Error(MAUVAIS_MDP_ERROR);
+    };
+
+    return this.passwordManager.loginUtilisateur(
+      utilisateur,
+      password,
+      okAction,
+    );
   }
 
   async findUtilisateursByNom(nom: string): Promise<Utilisateur[]> {
@@ -88,6 +82,7 @@ export class UtilisateurUsecase {
   ) {
     // FIXME : code à refacto, pas beau + check non existance utilisateur
     const fakeUser: PasswordAwareUtilisateur = {
+      id: null,
       passwordHash: '',
       passwordSalt: '',
       failed_login_count: 0,
@@ -114,22 +109,20 @@ export class UtilisateurUsecase {
 
     if (!utilisateur.active_account) return; // pas d'erreur, silence ^^
 
-    if (utilisateur.isCodeEmailLocked()) {
-      throw new Error(
-        `Trop d'essais successifs, attendez jusqu'à ${utilisateur.getLoginLockedUntilString()} avant de redemander un code`,
+    const _this = this;
+    const okAction = async function () {
+      utilisateur.setNew6DigitCode();
+      await _this.utilisateurRespository.updateCode(
+        utilisateur.id,
+        utilisateur.code,
       );
-    }
-    utilisateur.resetCodeEmailCouterIfNeeded();
+      _this.sendMotDePasseCode(utilisateur);
+    };
 
-    utilisateur.incrementCodeEmailCount();
-
-    utilisateur.setNew6DigitCode();
-
-    await this.utilisateurRespository.updateUtilisateurLoginSecurity(
+    await this.securityEmailManager.attemptSecurityEmailEmission(
       utilisateur,
+      okAction,
     );
-
-    this.sendMotDePasseCode(utilisateur);
   }
 
   async modifier_mot_de_passe(
@@ -144,31 +137,24 @@ export class UtilisateurUsecase {
 
     if (!utilisateur.active_account) return; // pas d'erreur, silence ^^
 
-    if (utilisateur.isCodeLocked()) {
-      throw new Error(
-        `Trop d'essais successifs, attendez jusqu'à ${utilisateur.getLoginLockedUntilString()} pour réessayer`,
-      );
-    }
+    PasswordManager.checkPasswordFormat(mot_de_passe);
 
-    const code_ok = utilisateur.checkCodeOKAndChangeState(code);
-    await this.utilisateurRespository.updateUtilisateurLoginSecurity(
-      utilisateur,
-    );
-    if (code_ok) {
-      PasswordManager.checkPasswordFormat(mot_de_passe);
-      utilisateur.resetCodeSendingState();
+    const _this = this;
+    const codeOkAction = async function () {
+      await _this.securityEmailManager.resetEmailSendingState(utilisateur);
       utilisateur.setPassword(mot_de_passe);
-      await this.utilisateurRespository.updateUtilisateurLoginSecurity(
-        utilisateur,
-      );
+      await _this.utilisateurRespository.updateProfile(utilisateur.id, {
+        passwordSalt: utilisateur.passwordSalt,
+        passwordHash: utilisateur.passwordHash,
+      });
       return;
-    }
-    if (utilisateur.isCodeLocked()) {
-      throw new Error(
-        `Trop d'essais successifs, attendez jusqu'à ${utilisateur.getLoginLockedUntilString()} pour réessayer`,
-      );
-    }
-    throw new Error(MAUVAIS_CODE);
+    };
+
+    return this.codeManager.processInputCodeAndDoActionIfOK(
+      code,
+      utilisateur,
+      codeOkAction,
+    );
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {

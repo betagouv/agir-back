@@ -1,6 +1,6 @@
 import { Badge } from '../badge/badge';
 import { UserQuizzProfile } from '../quizz/userQuizzProfile';
-import { CodeEmailManager } from './manager/codeEmailManager';
+import { SecurityEmailManager } from './manager/securityEmailManager';
 import { CodeManager } from './manager/codeManager';
 import { OnboardingData } from './onboardingData';
 import { OnboardingResult } from './onboardingResult';
@@ -70,30 +70,6 @@ export class Utilisateur {
     PasswordManager.setUserPassword(this, password);
   }
 
-  public checkPasswordOKAndChangeState(password: string): boolean {
-    return PasswordManager.checkUserPasswordOKAndChangeState(this, password);
-  }
-
-  public checkCodeOKAndChangeState(code: string): boolean {
-    return CodeManager.checkCodeOKAndChangeState(this, code);
-  }
-
-  public resetCodeSendingState() {
-    CodeEmailManager.resetCodeSendingState(this);
-  }
-
-  public isLoginLocked(): boolean {
-    return PasswordManager.isLoginLocked(this);
-  }
-
-  public getLoginLockedUntilString(): string {
-    return PasswordManager.getLoginLockedUntilString(this);
-  }
-
-  public isCodeLocked(): boolean {
-    return CodeManager.isCodeLocked(this);
-  }
-
   public setNew6DigitCode() {
     CodeManager.setNew6DigitCode(this);
   }
@@ -102,14 +78,5 @@ export class Utilisateur {
     if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
       throw new Error(`Format de l'adresse électronique ${email} incorrect`);
     }
-  }
-  public isCodeEmailLocked(): boolean {
-    return CodeEmailManager.isCodeEmailLocked(this);
-  }
-  public incrementCodeEmailCount() {
-    CodeEmailManager.incrementCodeEmailCount(this);
-  }
-  public resetCodeEmailCouterIfNeeded() {
-    CodeEmailManager.resetCodeEmailCouterIfNeeded(this);
   }
 }
