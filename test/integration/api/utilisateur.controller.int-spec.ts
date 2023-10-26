@@ -1022,6 +1022,28 @@ describe('/utilisateurs (API test)', () => {
     expect(response.body.email).toEqual('yo@truc.com');
     expect(response.body.code_postal).toEqual('91120');
   });
+  it('PATCH /utilisateurs/id/profile - update basic profile datas without password', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      email: 'george@paris.com',
+      nom: 'THE NOM',
+      prenom: 'THE PRENOM',
+      code_postal: '75008',
+    });
+    // WHEN
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    expect(dbUser.nom).toEqual('THE NOM');
+    expect(dbUser.prenom).toEqual('THE PRENOM');
+    expect(dbUser.email).toEqual('george@paris.com');
+    expect(dbUser.code_postal).toEqual('75008');
+  });
   it('PATCH /utilisateurs/id/profile - update basic profile datas', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');

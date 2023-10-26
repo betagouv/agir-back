@@ -14,7 +14,8 @@ import { ErrorService } from '../infrastructure/errorService';
 import { EmailSender } from '../infrastructure/email/emailSender';
 import { CodeManager } from '../../src/domain/utilisateur/manager/codeManager';
 import { SecurityEmailManager } from '../../src/domain/utilisateur/manager/securityEmailManager';
-import { PasswordAwareUtilisateur } from 'src/domain/utilisateur/manager/passwordAwareUtilisateur';
+import { PasswordAwareUtilisateur } from '../../src/domain/utilisateur/manager/passwordAwareUtilisateur';
+import { Profile } from '../../src/domain/utilisateur/profile';
 
 export type Phrase = {
   phrase: string;
@@ -80,25 +81,31 @@ export class UtilisateurUsecase {
     utilisateurId: string,
     profile: UtilisateurProfileAPI,
   ) {
-    // FIXME : code à refacto, pas beau + check non existance utilisateur
-    const fakeUser: PasswordAwareUtilisateur = {
-      id: null,
-      passwordHash: '',
-      passwordSalt: '',
-      failed_login_count: 0,
-      prevent_login_before: new Date(),
-    };
-    // FIXME : temporaire, faudra suivre un flow avec un code par email
-    PasswordManager.setUserPassword(fakeUser, profile.mot_de_passe);
+    const profileToUpdate = {} as Profile;
 
-    return this.utilisateurRespository.updateProfile(utilisateurId, {
-      code_postal: profile.code_postal,
-      email: profile.email,
-      nom: profile.nom,
-      prenom: profile.prenom,
-      passwordHash: fakeUser.passwordHash,
-      passwordSalt: fakeUser.passwordSalt,
-    });
+    if (profile.mot_de_passe) {
+      // FIXME : code à refacto, pas beau + check non existance utilisateur
+      const fakeUser: PasswordAwareUtilisateur = {
+        id: null,
+        passwordHash: '',
+        passwordSalt: '',
+        failed_login_count: 0,
+        prevent_login_before: new Date(),
+      };
+      // FIXME : temporaire, faudra suivre un flow avec un code par email
+      PasswordManager.setUserPassword(fakeUser, profile.mot_de_passe);
+      profileToUpdate.passwordHash = fakeUser.passwordHash;
+      profileToUpdate.passwordSalt = fakeUser.passwordSalt;
+    }
+    profileToUpdate.code_postal = profile.code_postal;
+    profileToUpdate.email = profile.email;
+    profileToUpdate.nom = profile.nom;
+    profileToUpdate.prenom = profile.prenom;
+
+    return this.utilisateurRespository.updateProfile(
+      utilisateurId,
+      profileToUpdate,
+    );
   }
 
   async oubli_mot_de_passe(email: string) {
