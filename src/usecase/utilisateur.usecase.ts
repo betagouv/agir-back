@@ -56,8 +56,8 @@ export class UtilisateurUsecase {
     const _this = this;
     const okAction = async function () {
       return {
-        utilisateur: utilisateur,
         token: await _this.oidcService.createNewInnerAppToken(utilisateur.id),
+        utilisateur: utilisateur,
       };
     };
 
