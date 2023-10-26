@@ -48,7 +48,7 @@ export class UtilisateurController extends GenericControler {
   @Get('utilisateurs')
   @ApiOperation({
     summary:
-      "Liste l'ensemble des utilisateurs de la base, route temporaire pour debuggage - à supprimer à terme",
+      "Liste l'ensemble des utilisateurs de la base, route temporaire pour debuggage - seul un admin peut y accéder",
   })
   @ApiQuery({
     name: 'nom',
@@ -57,9 +57,12 @@ export class UtilisateurController extends GenericControler {
     required: false,
   })
   @ApiOkResponse({ type: [UtilisateurAPI] })
+  @UseGuards(AuthGuard)
   async listUtilisateurs(
+    @Request() req,
     @Query('nom') nom?: string,
   ): Promise<UtilisateurAPI[]> {
+    this.checkCallerId(req, '1');
     if (nom === null) {
       return this.utilisateurUsecase.listUtilisateurs() as any;
     } else {

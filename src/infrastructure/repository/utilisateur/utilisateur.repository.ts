@@ -11,7 +11,6 @@ import {
   Thematique,
 } from '../../../domain/utilisateur/onboardingData';
 import { OnboardingResult } from '../../../domain/utilisateur/onboardingResult';
-import { CodeAwareUtilisateur } from '../../../domain/utilisateur/manager/codeAwareUtilisateur';
 
 @Injectable()
 export class UtilisateurRepository {

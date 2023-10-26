@@ -166,18 +166,31 @@ function getFakeUtilisteur() {
 describe('/utilisateurs (API test)', () => {
   beforeAll(async () => {
     await TestUtil.appinit();
-    await TestUtil.generateAuthorizationToken('utilisateur-id');
   });
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
+    await TestUtil.generateAuthorizationToken('utilisateur-id');
   });
 
   afterAll(async () => {
     await TestUtil.appclose();
   });
 
+  it('GET /utilisateurs 403 when not user of ID 1', async () => {
+    // GIVEN
+    await TestUtil.generateAuthorizationToken('2');
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs?nom=bob');
+
+    // THEN
+    expect(response.status).toBe(403);
+  });
   it('GET /utilisateurs?nom=bob - when missing nom', async () => {
+    // GIVEN
+    await TestUtil.generateAuthorizationToken('1');
+
     // WHEN
     const response = await TestUtil.GET('/utilisateurs?nom=bob');
     // THEN
@@ -186,6 +199,7 @@ describe('/utilisateurs (API test)', () => {
   });
   it('GET /utilisateurs?nom=george - by nom when present', async () => {
     // GIVEN
+    await TestUtil.generateAuthorizationToken('1');
     await TestUtil.prisma.utilisateur.createMany({
       data: [
         { id: '1', nom: 'bob' },
@@ -238,10 +252,7 @@ describe('/utilisateurs (API test)', () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id');
-    /*.set(
-        'Authorization',
-        `Bearer ${await TestUtil.createNewInnerAppToken('utilisateur-id')}`,
-      )*/
+
     // THEN
     expect(response.status).toBe(200);
   });
@@ -312,6 +323,7 @@ describe('/utilisateurs (API test)', () => {
 
   it('GET /utilisateurs - list all 2', async () => {
     // GIVEN
+    await TestUtil.generateAuthorizationToken('1');
     await TestUtil.prisma.utilisateur.createMany({
       data: [
         { id: '1', nom: 'bob' },
