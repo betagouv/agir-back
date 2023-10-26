@@ -23,6 +23,7 @@ import {
   ApiExtraModels,
   ApiOperation,
   ApiBadRequestResponse,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
 import { UtilisateurProfileAPI } from './types/utilisateur/utilisateurProfileAPI';
@@ -39,6 +40,7 @@ import { ModifierMdpAPI } from './types/utilisateur/modifierMdpAPI';
 
 @ApiExtraModels(CreateUtilisateurAPI, UtilisateurAPI)
 @Controller()
+@ApiBearerAuth()
 @ApiTags('Utilisateur')
 export class UtilisateurController extends GenericControler {
   constructor(private readonly utilisateurUsecase: UtilisateurUsecase) {
