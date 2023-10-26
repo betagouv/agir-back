@@ -39,8 +39,8 @@ export class UtilisateurSecurityRepository {
         id: utilisateur.id,
       },
       data: {
-        sent_code_count: utilisateur.sent_code_count,
-        prevent_sendcode_before: utilisateur.prevent_sendcode_before,
+        sent_email_count: utilisateur.sent_email_count,
+        prevent_sendemail_before: utilisateur.prevent_sendemail_before,
       },
     });
   }

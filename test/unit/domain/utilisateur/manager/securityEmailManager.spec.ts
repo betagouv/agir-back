@@ -31,14 +31,14 @@ const UTILISATEUR = {
   active_account: true,
   failed_checkcode_count: 0,
   prevent_checkcode_before: new Date(),
-  sent_code_count: 0,
-  prevent_sendcode_before: new Date(),
+  sent_email_count: 0,
+  prevent_sendemail_before: new Date(),
 };
 describe('Objet SecurityEmailManager', () => {
   it('attemptSecurityEmailEmission : no exception when not locked', async () => {
     // GIVEN
     const utilisateur = new Utilisateur({ ...UTILISATEUR });
-    utilisateur.prevent_sendcode_before = new Date(
+    utilisateur.prevent_sendemail_before = new Date(
       new Date().getTime() - 10000,
     );
 
@@ -54,7 +54,7 @@ describe('Objet SecurityEmailManager', () => {
   it('attemptSecurityEmailEmission : si tout ok realise l action et incremente le compteur', async () => {
     // GIVEN
     const utilisateur = new Utilisateur({ ...UTILISATEUR });
-    utilisateur.prevent_sendcode_before = new Date(
+    utilisateur.prevent_sendemail_before = new Date(
       new Date().getTime() - 10000,
     );
     const fonction = jest.fn();
@@ -66,13 +66,13 @@ describe('Objet SecurityEmailManager', () => {
 
     // THEN
     expect(fonction).toBeCalled();
-    expect(utilisateur.sent_code_count).toEqual(1);
+    expect(utilisateur.sent_email_count).toEqual(1);
   });
   it('attemptSecurityEmailEmission : si compteur deja à 3 , erreur et pas d action realisée', async () => {
     // GIVEN
     const utilisateur = new Utilisateur({ ...UTILISATEUR });
-    utilisateur.sent_code_count = 3;
-    utilisateur.prevent_sendcode_before = new Date();
+    utilisateur.sent_email_count = 3;
+    utilisateur.prevent_sendemail_before = new Date();
     const fonction = jest.fn();
     // WHEN
     try {
@@ -85,10 +85,11 @@ describe('Objet SecurityEmailManager', () => {
 
     // THEN
     expect(fonction).toBeCalledTimes(0);
-    expect(utilisateur.sent_code_count).toEqual(4);
+    expect(utilisateur.sent_email_count).toEqual(4);
     expect(
       Math.round(
-        (utilisateur.prevent_sendcode_before.getTime() - new Date().getTime()) /
+        (utilisateur.prevent_sendemail_before.getTime() -
+          new Date().getTime()) /
           1000,
       ),
     ).toEqual(300);
@@ -96,8 +97,8 @@ describe('Objet SecurityEmailManager', () => {
   it('attemptSecurityEmailEmission : si compteur deja à 4 , mais compte pas bloqué alors re init', async () => {
     // GIVEN
     const utilisateur = new Utilisateur({ ...UTILISATEUR });
-    utilisateur.sent_code_count = 4;
-    utilisateur.prevent_sendcode_before = new Date(
+    utilisateur.sent_email_count = 4;
+    utilisateur.prevent_sendemail_before = new Date(
       new Date().getTime() - 10000,
     );
     const fonction = jest.fn();
@@ -109,8 +110,8 @@ describe('Objet SecurityEmailManager', () => {
 
     // THEN
     expect(fonction).toBeCalled();
-    expect(utilisateur.sent_code_count).toEqual(1);
-    expect(utilisateur.prevent_sendcode_before.getTime()).toBeLessThan(
+    expect(utilisateur.sent_email_count).toEqual(1);
+    expect(utilisateur.prevent_sendemail_before.getTime()).toBeLessThan(
       Date.now(),
     );
   });

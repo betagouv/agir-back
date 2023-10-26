@@ -23,6 +23,6 @@ export type UtilisateurData = {
   active_account: boolean;
   failed_checkcode_count: number;
   prevent_checkcode_before: Date;
-  sent_code_count: number;
-  prevent_sendcode_before: Date;
+  sent_email_count: number;
+  prevent_sendemail_before: Date;
 };

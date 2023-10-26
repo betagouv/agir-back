@@ -1,6 +1,5 @@
 export type SecurityEmailAwareUtilisateur = {
-  // FIXME : rename, remove 'code' word
   id: string;
-  sent_code_count: number;
-  prevent_sendcode_before: Date;
+  sent_email_count: number;
+  prevent_sendemail_before: Date;
 };

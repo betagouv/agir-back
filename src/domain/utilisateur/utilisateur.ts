@@ -28,8 +28,8 @@ export class Utilisateur {
   active_account: boolean;
   failed_checkcode_count: number;
   prevent_checkcode_before: Date;
-  sent_code_count: number;
-  prevent_sendcode_before: Date;
+  sent_email_count: number;
+  prevent_sendemail_before: Date;
 
   constructor(data: UtilisateurData) {
     this.id = data.id;
@@ -49,21 +49,21 @@ export class Utilisateur {
     this.passwordSalt = data.passwordSalt;
     this.failed_login_count = data.failed_login_count;
     this.prevent_login_before = data.prevent_login_before;
-    this.sent_code_count = data.sent_code_count;
+    this.sent_email_count = data.sent_email_count;
     this.active_account = data.active_account;
     this.failed_checkcode_count = data.failed_checkcode_count;
     this.prevent_checkcode_before = data.prevent_checkcode_before;
-    this.prevent_sendcode_before = data.prevent_sendcode_before;
+    this.prevent_sendemail_before = data.prevent_sendemail_before;
 
     if (!this.failed_login_count) this.failed_login_count = 0;
     if (!this.prevent_login_before) this.prevent_login_before = new Date();
-    if (!this.sent_code_count) this.sent_code_count = 0;
+    if (!this.sent_email_count) this.sent_email_count = 0;
     if (this.active_account === undefined) this.active_account = false;
     if (!this.failed_checkcode_count) this.failed_checkcode_count = 0;
     if (!this.prevent_checkcode_before)
       this.prevent_checkcode_before = new Date();
-    if (!this.prevent_sendcode_before)
-      this.prevent_sendcode_before = new Date();
+    if (!this.prevent_sendemail_before)
+      this.prevent_sendemail_before = new Date();
   }
 
   public setPassword(password: string) {

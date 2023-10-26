@@ -193,8 +193,8 @@ export class OnboardingUsecase {
       failed_login_count: 0,
       prevent_login_before: new Date(),
       prevent_checkcode_before: new Date(),
-      sent_code_count: 1,
-      prevent_sendcode_before: new Date(),
+      sent_email_count: 1,
+      prevent_sendemail_before: new Date(),
     });
 
     utilisateurToCreate.setNew6DigitCode();

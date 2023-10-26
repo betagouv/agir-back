@@ -551,8 +551,8 @@ describe('/utilisateurs (API test)', () => {
     expect(user.prevent_checkcode_before.getTime()).toBeLessThanOrEqual(
       Date.now(),
     );
-    expect(user.sent_code_count).toEqual(1);
-    expect(user.prevent_sendcode_before.getTime()).toBeLessThanOrEqual(
+    expect(user.sent_email_count).toEqual(1);
+    expect(user.prevent_sendemail_before.getTime()).toBeLessThanOrEqual(
       Date.now(),
     );
   });
@@ -593,7 +593,7 @@ describe('/utilisateurs (API test)', () => {
       where: { nom: 'WW' },
     });
 
-    expect(userDB.sent_code_count).toEqual(2);
+    expect(userDB.sent_email_count).toEqual(2);
   });
   it('POST /utilisateurs/email/renvoyer_code - resend code 4 times => error', async () => {
     // GIVEN
@@ -622,8 +622,8 @@ describe('/utilisateurs (API test)', () => {
     });
     expect(response.status).toBe(400);
 
-    expect(userDB.sent_code_count).toEqual(3);
-    expect(userDB.prevent_sendcode_before.getTime()).toBeGreaterThan(
+    expect(userDB.sent_email_count).toEqual(3);
+    expect(userDB.prevent_sendemail_before.getTime()).toBeGreaterThan(
       Date.now(),
     );
   });
@@ -1127,7 +1127,7 @@ describe('/utilisateurs (API test)', () => {
         .pbkdf2Sync('#1234567890HAHA', userDB.passwordSalt, 1000, 64, `sha512`)
         .toString(`hex`),
     );
-    expect(dbUtilisateur.sent_code_count).toEqual(0);
+    expect(dbUtilisateur.sent_email_count).toEqual(0);
   });
   it('POST /utilisateurs/modifier_mot_de_passe - si code ko le mot de passe est PAS modifié', async () => {
     // GIVEN

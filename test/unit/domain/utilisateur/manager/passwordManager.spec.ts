@@ -31,8 +31,8 @@ const UTILISATEUR = {
   active_account: true,
   failed_checkcode_count: 0,
   prevent_checkcode_before: new Date(),
-  sent_code_count: 0,
-  prevent_sendcode_before: new Date(),
+  sent_email_count: 0,
+  prevent_sendemail_before: new Date(),
 };
 describe('Objet PasswordManager', () => {
   it('checkPasswordFormat : au moins contenir 1 chiffre', () => {

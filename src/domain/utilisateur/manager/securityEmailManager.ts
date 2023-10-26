@@ -29,8 +29,8 @@ export class SecurityEmailManager {
   public async resetEmailSendingState(
     utilisateur: SecurityEmailAwareUtilisateur,
   ) {
-    utilisateur.sent_code_count = 0;
-    utilisateur.prevent_sendcode_before = new Date();
+    utilisateur.sent_email_count = 0;
+    utilisateur.prevent_sendemail_before = new Date();
     await this.securityRepository.updateSecurityEmailEmissionData(utilisateur);
   }
 
@@ -46,30 +46,31 @@ export class SecurityEmailManager {
   private static isEmailLocked(
     utilisateur: SecurityEmailAwareUtilisateur,
   ): boolean {
-    return Date.now() < utilisateur.prevent_sendcode_before.getTime();
+    return Date.now() < utilisateur.prevent_sendemail_before.getTime();
   }
 
   public static resetEmailCouterIfNeeded(
     utilisateur: SecurityEmailAwareUtilisateur,
   ) {
     if (
-      utilisateur.sent_code_count >
+      utilisateur.sent_email_count >
         SecurityEmailManager.MAX_CODE_EMAIL_ATTEMPT &&
-      utilisateur.prevent_sendcode_before.getTime() < Date.now()
+      utilisateur.prevent_sendemail_before.getTime() < Date.now()
     ) {
-      utilisateur.sent_code_count = 0;
+      utilisateur.sent_email_count = 0;
     }
   }
 
   public static incrementEmailCount(
     utilisateur: SecurityEmailAwareUtilisateur,
   ) {
-    utilisateur.sent_code_count++;
+    utilisateur.sent_email_count++;
     if (
-      utilisateur.sent_code_count >= SecurityEmailManager.MAX_CODE_EMAIL_ATTEMPT
+      utilisateur.sent_email_count >=
+      SecurityEmailManager.MAX_CODE_EMAIL_ATTEMPT
     ) {
-      utilisateur.prevent_sendcode_before.setMinutes(
-        utilisateur.prevent_sendcode_before.getMinutes() +
+      utilisateur.prevent_sendemail_before.setMinutes(
+        utilisateur.prevent_sendemail_before.getMinutes() +
           SecurityEmailManager.BLOCKED_CODE_EMAIL_DURATION_MIN,
       );
     }
@@ -77,7 +78,7 @@ export class SecurityEmailManager {
   private static lockedUntilString(
     utilisateur: SecurityEmailAwareUtilisateur,
   ): string {
-    return utilisateur.prevent_sendcode_before.toLocaleTimeString('fr-FR', {
+    return utilisateur.prevent_sendemail_before.toLocaleTimeString('fr-FR', {
       timeZone: 'Europe/Paris',
       timeStyle: 'short',
       hour12: false,

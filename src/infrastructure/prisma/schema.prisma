@@ -56,8 +56,8 @@ model Utilisateur {
   active_account           Boolean       @default(true)
   failed_checkcode_count   Int           @default(0)
   prevent_checkcode_before DateTime      @default(now())
-  sent_code_count          Int           @default(0)
-  prevent_sendcode_before  DateTime      @default(now())
+  sent_email_count         Int           @default(0)
+  prevent_sendemail_before DateTime      @default(now())
 }
 
 model Interaction {
