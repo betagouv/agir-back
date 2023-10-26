@@ -84,6 +84,8 @@ export class UtilisateurUsecase {
     const profileToUpdate = {} as Profile;
 
     if (profile.mot_de_passe) {
+      PasswordManager.checkPasswordFormat(profile.mot_de_passe);
+
       // FIXME : code à refacto, pas beau + check non existance utilisateur
       const fakeUser: PasswordAwareUtilisateur = {
         id: null,

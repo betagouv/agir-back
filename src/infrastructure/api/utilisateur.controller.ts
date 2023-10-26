@@ -196,13 +196,20 @@ export class UtilisateurController extends GenericControler {
     @Body() body: UtilisateurProfileAPI,
   ) {
     this.checkCallerId(req, utilisateurId);
-    return this.utilisateurUsecase.updateUtilisateurProfile(utilisateurId, {
-      email: body.email,
-      nom: body.nom,
-      prenom: body.prenom,
-      code_postal: body.code_postal,
-      mot_de_passe: body.mot_de_passe,
-    });
+    try {
+      return await this.utilisateurUsecase.updateUtilisateurProfile(
+        utilisateurId,
+        {
+          email: body.email,
+          nom: body.nom,
+          prenom: body.prenom,
+          code_postal: body.code_postal,
+          mot_de_passe: body.mot_de_passe,
+        },
+      );
+    } catch (error) {
+      throw new BadRequestException(ErrorService.toStringOrObject(error));
+    }
   }
 
   @Post('utilisateurs/oubli_mot_de_passe')
