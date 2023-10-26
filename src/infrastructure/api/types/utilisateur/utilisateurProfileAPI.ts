@@ -10,5 +10,7 @@ export class UtilisateurProfileAPI {
   @ApiProperty({ required: false })
   code_postal?: string;
   @ApiProperty({ required: false })
+  revenu_fiscal?: number;
+  @ApiProperty({ required: false })
   mot_de_passe?: string;
 }

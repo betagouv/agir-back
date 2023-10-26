@@ -146,6 +146,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.nom).toEqual('nom');
     expect(response.body.prenom).toEqual('prenom');
     expect(response.body.code_postal).toEqual('91120');
+    expect(response.body.revenu_fiscal).toEqual(10000);
     expect(response.body.points).toEqual(0);
     expect(response.body.quizzProfile).toEqual({
       alimentation: { level: 1, isCompleted: false },
@@ -227,6 +228,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.utilisateur.nom).toEqual('nom');
     expect(response.body.utilisateur.prenom).toEqual('prenom');
     expect(response.body.utilisateur.code_postal).toEqual('91120');
+    expect(response.body.utilisateur.revenu_fiscal).toEqual(10000);
     expect(response.body.utilisateur.points).toEqual(0);
     expect(response.body.utilisateur.badges[0].titre).toEqual('titre');
     expect(response.body.utilisateur.quizzProfile).toEqual({
@@ -403,6 +405,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.prenom).toEqual('prenom');
     expect(response.body.email).toEqual('yo@truc.com');
     expect(response.body.code_postal).toEqual('91120');
+    expect(response.body.revenu_fiscal).toEqual(10000);
   });
   it('PATCH /utilisateurs/id/profile - update basic profile datas without password', async () => {
     // GIVEN
@@ -415,6 +418,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       nom: 'THE NOM',
       prenom: 'THE PRENOM',
       code_postal: '75008',
+      revenu_fiscal: 12345,
     });
     // THEN
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
@@ -425,6 +429,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.prenom).toEqual('THE PRENOM');
     expect(dbUser.email).toEqual('george@paris.com');
     expect(dbUser.code_postal).toEqual('75008');
+    expect(dbUser.revenu_fiscal).toEqual(12345);
   });
   it('PATCH /utilisateurs/id/profile - update basic profile datas', async () => {
     // GIVEN
@@ -438,6 +443,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       prenom: 'THE PRENOM',
       code_postal: '75008',
       mot_de_passe: '123456789012#',
+      revenu_fiscal: 12345,
     });
     // THEN
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
@@ -451,6 +457,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.prenom).toEqual('THE PRENOM');
     expect(dbUser.email).toEqual('george@paris.com');
     expect(dbUser.code_postal).toEqual('75008');
+    expect(dbUser.revenu_fiscal).toEqual(12345);
     expect(dbUser.passwordHash).toEqual(
       crypto
         .pbkdf2Sync('123456789012#', dbUser.passwordSalt, 1000, 64, `sha512`)

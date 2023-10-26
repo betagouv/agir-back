@@ -100,6 +100,7 @@ export class UtilisateurUsecase {
       profileToUpdate.passwordSalt = fakeUser.passwordSalt;
     }
     profileToUpdate.code_postal = profile.code_postal;
+    profileToUpdate.revenu_fiscal = profile.revenu_fiscal;
     profileToUpdate.email = profile.email;
     profileToUpdate.nom = profile.nom;
     profileToUpdate.prenom = profile.prenom;

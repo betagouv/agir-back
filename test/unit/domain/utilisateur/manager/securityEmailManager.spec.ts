@@ -18,6 +18,7 @@ const UTILISATEUR = {
   onboardingData: new OnboardingData({}),
   onboardingResult: new OnboardingResult(new OnboardingData({})),
   code_postal: '12345',
+  revenu_fiscal: 12333,
   points: 0,
   quizzProfile: null,
   created_at: new Date(),

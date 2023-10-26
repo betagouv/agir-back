@@ -11,6 +11,7 @@ export type UtilisateurData = {
   onboardingData: OnboardingData;
   onboardingResult: OnboardingResult;
   code_postal: string;
+  revenu_fiscal: number;
   points: number;
   quizzProfile: UserQuizzProfile;
   created_at: Date;

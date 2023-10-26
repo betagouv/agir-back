@@ -15,6 +15,7 @@ export class Utilisateur {
   onboardingData: OnboardingData;
   onboardingResult: OnboardingResult;
   code_postal: string;
+  revenu_fiscal: number;
   points: number;
   quizzProfile: UserQuizzProfile;
   created_at: Date;
@@ -39,6 +40,7 @@ export class Utilisateur {
     this.onboardingData = data.onboardingData;
     this.onboardingResult = data.onboardingResult;
     this.code_postal = data.code_postal;
+    this.revenu_fiscal = data.revenu_fiscal;
     this.points = data.points;
     this.quizzProfile = data.quizzProfile;
     this.created_at = data.created_at;
