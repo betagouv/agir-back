@@ -4,8 +4,33 @@ import { CodeManager } from './manager/codeManager';
 import { OnboardingData } from './onboardingData';
 import { OnboardingResult } from './onboardingResult';
 import { PasswordManager } from './manager/passwordManager';
-import { UtilisateurData } from './utilisateurData';
 import { Service } from '../service';
+
+export type UtilisateurConstructorData = {
+  id: string;
+  email: string;
+  nom: string;
+  prenom: string;
+  onboardingData: OnboardingData;
+  onboardingResult: OnboardingResult;
+  code_postal: string;
+  revenu_fiscal: number;
+  points: number;
+  quizzProfile: UserQuizzProfile;
+  created_at: Date;
+  badges: Badge[];
+  services: Service[];
+  passwordHash: string;
+  passwordSalt: string;
+  failed_login_count: number;
+  prevent_login_before: Date;
+  code: string;
+  active_account: boolean;
+  failed_checkcode_count: number;
+  prevent_checkcode_before: Date;
+  sent_email_count: number;
+  prevent_sendemail_before: Date;
+};
 
 export class Utilisateur {
   id: string;
@@ -33,7 +58,7 @@ export class Utilisateur {
   sent_email_count: number;
   prevent_sendemail_before: Date;
 
-  constructor(data: UtilisateurData) {
+  constructor(data: UtilisateurConstructorData) {
     this.id = data.id;
     this.email = data.email;
     this.nom = data.nom;
