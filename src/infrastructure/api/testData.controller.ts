@@ -16,8 +16,9 @@ import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 import { Thematique } from '../../../src/domain/thematique';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
-const aides = require('../../../test_data/interactions/_aides');
-const suivis = require('../../../test_data/interactions/_suivis');
+const _aides = require('../../../test_data/interactions/_aides');
+const _suivis = require('../../../test_data/interactions/_suivis');
+const _services = require('../../../test_data/interactions/_services');
 const suivis_alimentation = require('../../../test_data/evenements/suivis_alimentation');
 const suivis_transport = require('../../../test_data/evenements/suivis_transport');
 const empreintes_utilisateur = require('../../../test_data/evenements/bilans');
@@ -79,8 +80,10 @@ export class TestDataController {
     if (!utilisateurs_content[utilisateurId]) return '{}';
     await this.deleteUtilisateur(utilisateurId);
     await this.upsertUtilisateur(utilisateurId);
+    await this.upsertServicesDefinitions();
     await this.insertArticlesForUtilisateur(utilisateurId);
     await this.insertAidesForUtilisateur(utilisateurId);
+    await this.insertServicesForUtilisateur(utilisateurId);
     await this.insertSuivisForUtilisateur(utilisateurId);
     await this.insertQuizzForUtilisateur(utilisateurId);
     await this.insertSuivisAlimentationForUtilisateur(utilisateurId);
@@ -88,6 +91,28 @@ export class TestDataController {
     await this.insertBadgesForUtilisateur(utilisateurId);
     await this.insertQuestionsNGCForUtilisateur(utilisateurId);
     return utilisateurs_content[utilisateurId];
+  }
+
+  async upsertServicesDefinitions() {
+    const keyList = Object.keys(_services);
+    for (let index = 0; index < keyList.length; index++) {
+      const serviceId = keyList[index];
+      const service = _services[serviceId];
+      const data = {
+        id: serviceId,
+        titre: service.titre,
+        url: service.url,
+        local: service.local,
+        is_url_externe: service.is_url_externe,
+      };
+      await this.prisma.serviceDefinition.upsert({
+        where: {
+          id: serviceId,
+        },
+        update: data,
+        create: data,
+      });
+    }
   }
 
   async insertSuivisAlimentationForUtilisateur(utilisateurId: string) {
@@ -207,17 +232,34 @@ export class TestDataController {
       }
     }
   }
+  async insertServicesForUtilisateur(utilisateurId: string) {
+    const services = utilisateurs_content[utilisateurId].services;
+    if (!services) return;
+    for (let index = 0; index < services.length; index++) {
+      const serviceId = services[index];
+      if (_services[serviceId]) {
+        let data = {
+          id: uuidv4(),
+          utilisateurId: utilisateurId,
+          serviceDefinitionId: serviceId,
+        };
+        await this.prisma.service.create({
+          data,
+        });
+      }
+    }
+  }
   async insertAidesForUtilisateur(utilisateurId: string) {
     await this.insertInteractionsWithTypeFromObject(
-      aides,
+      _aides,
       InteractionType.aide,
     );
     const interactions = utilisateurs_content[utilisateurId].interactions;
     if (!interactions) return;
     for (let index = 0; index < interactions.length; index++) {
       const interaction = interactions[index];
-      if (aides[interaction.id]) {
-        let data = { ...aides[interaction.id], ...interaction };
+      if (_aides[interaction.id]) {
+        let data = { ..._aides[interaction.id], ...interaction };
         data.id = uuidv4();
         data.type = InteractionType.aide;
         data.utilisateurId = utilisateurId;
@@ -229,15 +271,15 @@ export class TestDataController {
   }
   async insertSuivisForUtilisateur(utilisateurId: string) {
     await this.insertInteractionsWithTypeFromObject(
-      suivis,
+      _suivis,
       InteractionType.suivi_du_jour,
     );
     const interactions = utilisateurs_content[utilisateurId].interactions;
     if (!interactions) return;
     for (let index = 0; index < interactions.length; index++) {
       const interaction = interactions[index];
-      if (suivis[interaction.id]) {
-        let data = { ...suivis[interaction.id], ...interaction };
+      if (_suivis[interaction.id]) {
+        let data = { ..._suivis[interaction.id], ...interaction };
         data.id = uuidv4();
         data.type = InteractionType.suivi_du_jour;
         data.utilisateurId = utilisateurId;
@@ -288,6 +330,11 @@ export class TestDataController {
         utilisateurId,
       },
     });
+    await this.prisma.service.deleteMany({
+      where: {
+        utilisateurId,
+      },
+    });
     await this.prisma.interaction.deleteMany({
       where: {
         utilisateurId,
@@ -318,6 +365,7 @@ export class TestDataController {
     delete clonedData.interactions;
     delete clonedData.bilans;
     delete clonedData.badges;
+    delete clonedData.services;
     delete clonedData.questionsNGC;
 
     PasswordManager.setUserPassword(clonedData, clonedData.mot_de_passe);
