@@ -20,22 +20,6 @@ export class UtilisateurRepository {
     await this.prisma.utilisateur.delete({ where: { id: utilisateurId } });
   }
 
-  async findUtilisateursByNom(nom: string): Promise<Utilisateur[] | null> {
-    let liste = await this.prisma.utilisateur.findMany({
-      where: {
-        nom: nom,
-      },
-      orderBy: [
-        {
-          created_at: 'desc',
-        },
-      ],
-      include: {
-        badges: true,
-      },
-    });
-    return liste.map((user) => this.buildUtilisateurFromDB(user));
-  }
   async findUtilisateurById(id: string): Promise<Utilisateur | null> {
     const user = await this.prisma.utilisateur.findUnique({
       where: {
@@ -43,6 +27,7 @@ export class UtilisateurRepository {
       },
       include: {
         badges: true,
+        services: true,
       },
     });
     return this.buildUtilisateurFromDB(user);
@@ -256,6 +241,7 @@ export class UtilisateurRepository {
         quizzProfile: new UserQuizzProfile(user.quizzLevels as any),
         created_at: user.created_at,
         badges: user['badges'],
+        services: user['services'],
       });
     }
     return null;

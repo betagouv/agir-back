@@ -69,10 +69,6 @@ export class UtilisateurUsecase {
     );
   }
 
-  async findUtilisateursByNom(nom: string): Promise<Utilisateur[]> {
-    return this.utilisateurRespository.findUtilisateursByNom(nom);
-  }
-
   async findUtilisateurByEmail(email: string): Promise<Utilisateur> {
     return this.utilisateurRespository.findUtilisateurByEmail(email);
   }

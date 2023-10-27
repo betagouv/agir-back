@@ -46,36 +46,10 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     await TestUtil.generateAuthorizationToken('2');
 
     // WHEN
-    const response = await TestUtil.GET('/utilisateurs?nom=bob');
+    const response = await TestUtil.GET('/utilisateurs');
 
     // THEN
     expect(response.status).toBe(403);
-  });
-  it('GET /utilisateurs?nom=bob - when missing nom', async () => {
-    // GIVEN
-    await TestUtil.generateAuthorizationToken('1');
-
-    // WHEN
-    const response = await TestUtil.GET('/utilisateurs?nom=bob');
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(0);
-  });
-  it('GET /utilisateurs?nom=george - by nom when present', async () => {
-    // GIVEN
-    await TestUtil.generateAuthorizationToken('1');
-    await TestUtil.prisma.utilisateur.createMany({
-      data: [
-        { id: '1', nom: 'bob' },
-        { id: '2', nom: 'george' },
-      ],
-    });
-    // WHEN
-    const response = await TestUtil.GET('/utilisateurs?nom=george');
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0].id).toEqual('2');
   });
 
   it('GET /utilisateurs/id - when missing', async () => {
@@ -135,6 +109,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // GIVEN
     await TestUtil.create('utilisateur', { failed_login_count: 2 });
     await TestUtil.create('badge');
+    await TestUtil.create('service');
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id');
     // WHEN
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
@@ -158,6 +133,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       loisir: { level: 1, isCompleted: false },
     });
     expect(response.body.badges[0].titre).toEqual('titre');
+    expect(response.body.services).toHaveLength(1);
+    expect(response.body.services[0].titre).toEqual('titre');
     expect(response.body.created_at).toEqual(dbUser.created_at.toISOString());
     expect(response.body.failed_login_count).toEqual(undefined);
     expect(response.body.prevent_login_before).toEqual(undefined);
@@ -543,6 +520,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const dbUtilisateur = new Utilisateur({
       ...userDB,
       badges: [],
+      services: [],
       quizzProfile: null,
       onboardingData: null,
       onboardingResult: null,

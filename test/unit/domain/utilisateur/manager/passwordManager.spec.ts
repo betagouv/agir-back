@@ -1,8 +1,7 @@
-import { OnboardingResult } from '../../../../../src/domain/utilisateur/onboardingResult';
-import { OnboardingData } from '../../../../../src/domain/utilisateur/onboardingData';
 import { Utilisateur } from '../../../../../src/domain/utilisateur/utilisateur';
 import { PasswordManager } from '../../../../../src/domain/utilisateur/manager/passwordManager';
 import { UtilisateurSecurityRepository } from '../../../../../src/infrastructure/repository/utilisateur/utilisateurSecurity.repository';
+import { TestUtil } from '../../../../../test/TestUtil';
 
 const fakeSecurityRepository = new UtilisateurSecurityRepository({
   utilisateur: { update: jest.fn() },
@@ -10,31 +9,6 @@ const fakeSecurityRepository = new UtilisateurSecurityRepository({
 
 const passwordManager = new PasswordManager(fakeSecurityRepository);
 
-const UTILISATEUR = {
-  id: 'id',
-  email: 'email',
-  nom: 'nom',
-  prenom: 'prenom',
-  onboardingData: new OnboardingData({}),
-  onboardingResult: new OnboardingResult(new OnboardingData({})),
-  code_postal: '12345',
-  revenu_fiscal: 12333,
-  points: 0,
-  quizzProfile: null,
-  created_at: new Date(),
-  badges: [],
-
-  passwordHash: 'passwordHash',
-  passwordSalt: 'passwordSalt',
-  failed_login_count: 0,
-  prevent_login_before: new Date(),
-  code: '123456',
-  active_account: true,
-  failed_checkcode_count: 0,
-  prevent_checkcode_before: new Date(),
-  sent_email_count: 0,
-  prevent_sendemail_before: new Date(),
-};
 describe('Objet PasswordManager', () => {
   it('checkPasswordFormat : au moins contenir 1 chiffre', () => {
     // WHEN
@@ -83,7 +57,7 @@ describe('Objet PasswordManager', () => {
 
   it('setPassword : hash and salt password', () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...UTILISATEUR });
+    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
     PasswordManager.setUserPassword(utilisateur, 'toto');
 
     // THEN
@@ -92,7 +66,7 @@ describe('Objet PasswordManager', () => {
   });
   it('checkPassword : OK and returns function result', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...UTILISATEUR });
+    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
     PasswordManager.setUserPassword(utilisateur, 'toto');
 
     // WHEN
@@ -109,7 +83,7 @@ describe('Objet PasswordManager', () => {
   });
   it('checkPassword : KO', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...UTILISATEUR });
+    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
     PasswordManager.setUserPassword(utilisateur, 'toto');
 
     const fonction = jest.fn();
@@ -131,7 +105,7 @@ describe('Objet PasswordManager', () => {
 
   it('isLoginLocked : not locked yet', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...UTILISATEUR });
+    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
     PasswordManager.setUserPassword(utilisateur, 'titi');
     utilisateur.prevent_login_before = new Date(new Date().getTime() - 10000);
 
@@ -149,7 +123,7 @@ describe('Objet PasswordManager', () => {
   });
   it('isLoginLocked : true because date in futur', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...UTILISATEUR });
+    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
     utilisateur.prevent_login_before = new Date(new Date().getTime() + 10000);
     const fonction = jest.fn();
 
@@ -165,7 +139,7 @@ describe('Objet PasswordManager', () => {
   });
   it('failLogin : increase counter', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...UTILISATEUR });
+    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
     utilisateur.setPassword('#1234567890HAHA');
     utilisateur.failed_login_count = 0;
 
@@ -179,7 +153,7 @@ describe('Objet PasswordManager', () => {
   });
   it('failedLogin : sets block date + 5 mins', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...UTILISATEUR });
+    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
     utilisateur.setPassword('#1234567890HAHA');
     utilisateur.failed_login_count = 3;
 

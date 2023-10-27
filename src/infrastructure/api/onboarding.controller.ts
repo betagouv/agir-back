@@ -99,6 +99,7 @@ export class OnboardingController {
           quizzProfile: loggedUser.utilisateur.quizzProfile.getData(),
           created_at: loggedUser.utilisateur.created_at,
           badges: loggedUser.utilisateur.badges,
+          services: loggedUser.utilisateur.services,
         },
         token: loggedUser.token,
       };

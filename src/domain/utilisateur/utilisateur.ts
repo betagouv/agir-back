@@ -1,11 +1,11 @@
 import { Badge } from '../badge/badge';
 import { UserQuizzProfile } from '../quizz/userQuizzProfile';
-import { SecurityEmailManager } from './manager/securityEmailManager';
 import { CodeManager } from './manager/codeManager';
 import { OnboardingData } from './onboardingData';
 import { OnboardingResult } from './onboardingResult';
 import { PasswordManager } from './manager/passwordManager';
 import { UtilisateurData } from './utilisateurData';
+import { Service } from '../service';
 
 export class Utilisateur {
   id: string;
@@ -20,6 +20,7 @@ export class Utilisateur {
   quizzProfile: UserQuizzProfile;
   created_at: Date;
   badges: Badge[];
+  services: Service[];
 
   passwordHash: string;
   passwordSalt: string;
@@ -45,6 +46,7 @@ export class Utilisateur {
     this.quizzProfile = data.quizzProfile;
     this.created_at = data.created_at;
     this.badges = data.badges;
+    this.services = data.services;
 
     this.code = data.code;
     this.passwordHash = data.passwordHash;

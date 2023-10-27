@@ -1,5 +1,6 @@
 import { Badge } from '../badge/badge';
 import { UserQuizzProfile } from '../quizz/userQuizzProfile';
+import { Service } from '../service';
 import { OnboardingData } from './onboardingData';
 import { OnboardingResult } from './onboardingResult';
 
@@ -16,6 +17,7 @@ export type UtilisateurData = {
   quizzProfile: UserQuizzProfile;
   created_at: Date;
   badges: Badge[];
+  services: Service[];
   passwordHash: string;
   passwordSalt: string;
   failed_login_count: number;

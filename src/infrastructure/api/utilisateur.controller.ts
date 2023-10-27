@@ -60,16 +60,9 @@ export class UtilisateurController extends GenericControler {
   })
   @ApiOkResponse({ type: [UtilisateurAPI] })
   @UseGuards(AuthGuard)
-  async listUtilisateurs(
-    @Request() req,
-    @Query('nom') nom?: string,
-  ): Promise<UtilisateurAPI[]> {
+  async listUtilisateurs(@Request() req): Promise<UtilisateurAPI[]> {
     this.checkCallerId(req, '1');
-    if (nom === null) {
-      return this.utilisateurUsecase.listUtilisateurs() as any;
-    } else {
-      return this.utilisateurUsecase.findUtilisateursByNom(nom) as any;
-    }
+    return this.utilisateurUsecase.listUtilisateurs() as any;
   }
 
   @Delete('utilisateurs/:id')
@@ -110,6 +103,7 @@ export class UtilisateurController extends GenericControler {
       quizzProfile: utilisateur.quizzProfile.getData(),
       created_at: utilisateur.created_at,
       badges: utilisateur.badges,
+      services: utilisateur.services,
     };
   }
   @ApiOkResponse({ type: UtilisateurProfileAPI })
@@ -178,6 +172,7 @@ export class UtilisateurController extends GenericControler {
           quizzProfile: loggedUser.utilisateur.quizzProfile.getData(),
           created_at: loggedUser.utilisateur.created_at,
           badges: loggedUser.utilisateur.badges,
+          services: loggedUser.utilisateur.services,
         },
         token: loggedUser.token,
       };

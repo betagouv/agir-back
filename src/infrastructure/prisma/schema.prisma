@@ -59,6 +59,7 @@ model Utilisateur {
   prevent_checkcode_before DateTime      @default(now())
   sent_email_count         Int           @default(0)
   prevent_sendemail_before DateTime      @default(now())
+  services                 Service[]
 }
 
 model Interaction {
@@ -166,4 +167,14 @@ model Badge {
   updated_at    DateTime     @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@unique([type, utilisateurId])
+}
+
+model Service {
+  id            String       @id
+  titre         String
+  url           String?
+  Utilisateur   Utilisateur? @relation(fields: [utilisateurId], references: [id])
+  utilisateurId String
+  created_at    DateTime     @default(now()) @db.Timestamptz(3)
+  updated_at    DateTime     @default(now()) @updatedAt @db.Timestamptz(3)
 }
