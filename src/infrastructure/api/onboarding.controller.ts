@@ -22,6 +22,7 @@ import { ProspectSubmitAPI } from './types/utilisateur/prospectSubmitAPI';
 import { ValidateCodeAPI } from './types/utilisateur/validateCodeAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { ErrorService } from '../errorService';
+import { ServiceAPI } from './types/service/serviceAPI';
 
 @ApiExtraModels(CreateUtilisateurAPI)
 @Controller()
@@ -99,7 +100,9 @@ export class OnboardingController {
           quizzProfile: loggedUser.utilisateur.quizzProfile.getData(),
           created_at: loggedUser.utilisateur.created_at,
           badges: loggedUser.utilisateur.badges,
-          services: loggedUser.utilisateur.services,
+          services: ServiceAPI.mapServicesToServicesAPI(
+            loggedUser.utilisateur.services,
+          ),
         },
         token: loggedUser.token,
       };

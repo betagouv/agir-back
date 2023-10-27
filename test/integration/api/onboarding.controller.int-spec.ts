@@ -199,6 +199,23 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
+    console.log(response.body);
+    expect(response.body.utilisateur.id.length).toBeGreaterThan(15);
+    expect(response.body.utilisateur.nom).toEqual('WW');
+    expect(response.body.utilisateur.prenom).toEqual('Wojtek');
+    expect(response.body.utilisateur.code_postal).toEqual('91120');
+    expect(response.body.utilisateur.points).toEqual(0);
+    expect(response.body.utilisateur.quizzProfile).toEqual({
+      alimentation: { level: 1, isCompleted: false },
+      transport: { level: 1, isCompleted: false },
+      logement: { level: 1, isCompleted: false },
+      consommation: { level: 1, isCompleted: false },
+      climat: { level: 1, isCompleted: false },
+      dechet: { level: 1, isCompleted: false },
+      loisir: { level: 1, isCompleted: false },
+    });
+    expect(response.body.utilisateur.badges).toHaveLength(0);
+    expect(response.body.utilisateur.services).toHaveLength(0);
 
     userDB = await TestUtil.prisma.utilisateur.findFirst({
       where: { nom: 'WW' },
@@ -208,6 +225,8 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(userDB.active_account).toEqual(true);
     expect(userDB_interactions).toHaveLength(1);
     expect(userDB_interactions[0].utilisateurId).toEqual(userDB.id);
+    expect(userDB.failed_login_count).toEqual(0);
+    expect(userDB.prevent_login_before.getTime()).toBeLessThan(Date.now());
   });
   it('POST /utilisateurs/valider - validate 2 times , already active account error', async () => {
     // GIVEN

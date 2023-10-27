@@ -78,6 +78,7 @@ export class TestUtil {
     await this.prisma.interaction.deleteMany();
     await this.prisma.badge.deleteMany();
     await this.prisma.service.deleteMany();
+    await this.prisma.serviceDefinition.deleteMany();
     await this.prisma.empreinte.deleteMany();
     await this.prisma.questionNGC.deleteMany();
     await this.prisma.utilisateur.deleteMany();
@@ -234,9 +235,16 @@ export class TestUtil {
   static serviceData(override?) {
     return {
       id: 'service-id',
+      utilisateurId: 'utilisateur-id',
+      serviceDefinitionId: 'serviceDefinition-id',
+      ...override,
+    };
+  }
+  static serviceDefinitionData(override?) {
+    return {
+      id: 'serviceDefinition-id',
       titre: 'titre',
       url: 'url',
-      utilisateurId: 'utilisateur-id',
       ...override,
     };
   }

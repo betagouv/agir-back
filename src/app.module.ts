@@ -45,6 +45,9 @@ import { CodeManager } from '../src/domain/utilisateur/manager/codeManager';
 import { UtilisateurSecurityRepository } from './infrastructure/repository/utilisateur/utilisateurSecurity.repository';
 import { SecurityEmailManager } from './domain/utilisateur/manager/securityEmailManager';
 import { PasswordManager } from './domain/utilisateur/manager/passwordManager';
+import { ServiceController } from './infrastructure/api/service.controller';
+import { ServiceUsecase } from './usecase/service.usecase';
+import { ServiceRepository } from './infrastructure/repository/service.repository';
 
 const SESSION_LIFETIME = '12h';
 
@@ -69,6 +72,7 @@ const SESSION_LIFETIME = '12h';
     QuestionsNGCController,
     CMSController,
     CommunesController,
+    ServiceController
   ],
   providers: [
     PrismaService,
@@ -100,6 +104,8 @@ const SESSION_LIFETIME = '12h';
     UtilisateurSecurityRepository,
     SecurityEmailManager,
     PasswordManager,
+    ServiceUsecase,
+    ServiceRepository
   ],
 })
 export class AppModule {}

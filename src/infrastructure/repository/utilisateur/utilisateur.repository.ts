@@ -27,7 +27,7 @@ export class UtilisateurRepository {
       },
       include: {
         badges: true,
-        services: true,
+        services: { include: { serviceDefinition: true } },
       },
     });
     return this.buildUtilisateurFromDB(user);
@@ -39,6 +39,7 @@ export class UtilisateurRepository {
       },
       include: {
         badges: true,
+        services: { include: { serviceDefinition: true } },
       },
     });
     return this.buildUtilisateurFromDB(user);
@@ -108,6 +109,7 @@ export class UtilisateurRepository {
           prenom: utilisateur.prenom,
           passwordHash: utilisateur.passwordHash,
           passwordSalt: utilisateur.passwordSalt,
+          code_postal: utilisateur.code_postal,
           email: utilisateur.email,
           code: utilisateur.code,
           active_account: utilisateur.active_account,

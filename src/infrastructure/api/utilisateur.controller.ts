@@ -37,6 +37,7 @@ import { AuthGuard } from '../auth/guard';
 import { OubliMdpAPI } from './types/utilisateur/oubliMdpAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { ModifierMdpAPI } from './types/utilisateur/modifierMdpAPI';
+import { ServiceAPI } from './types/service/serviceAPI';
 
 @ApiExtraModels(CreateUtilisateurAPI, UtilisateurAPI)
 @Controller()
@@ -92,6 +93,7 @@ export class UtilisateurController extends GenericControler {
     if (utilisateur == null) {
       throw new NotFoundException(`Pas d'utilisateur d'id ${id}`);
     }
+
     return {
       id: utilisateur.id,
       nom: utilisateur.nom,
@@ -103,7 +105,7 @@ export class UtilisateurController extends GenericControler {
       quizzProfile: utilisateur.quizzProfile.getData(),
       created_at: utilisateur.created_at,
       badges: utilisateur.badges,
-      services: utilisateur.services,
+      services: ServiceAPI.mapServicesToServicesAPI(utilisateur.services),
     };
   }
   @ApiOkResponse({ type: UtilisateurProfileAPI })
@@ -172,7 +174,9 @@ export class UtilisateurController extends GenericControler {
           quizzProfile: loggedUser.utilisateur.quizzProfile.getData(),
           created_at: loggedUser.utilisateur.created_at,
           badges: loggedUser.utilisateur.badges,
-          services: loggedUser.utilisateur.services,
+          services: ServiceAPI.mapServicesToServicesAPI(
+            loggedUser.utilisateur.services,
+          ),
         },
         token: loggedUser.token,
       };

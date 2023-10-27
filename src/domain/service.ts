@@ -1,4 +1,6 @@
+import { ServiceDefinition } from './serviceDefinition';
+
 export class Service {
-  titre: string;
-  url: string;
+  id: string;
+  serviceDefinition: ServiceDefinition;
 }

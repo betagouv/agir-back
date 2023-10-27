@@ -170,11 +170,22 @@ model Badge {
 }
 
 model Service {
-  id            String       @id
-  titre         String
-  url           String?
-  Utilisateur   Utilisateur? @relation(fields: [utilisateurId], references: [id])
-  utilisateurId String
-  created_at    DateTime     @default(now()) @db.Timestamptz(3)
-  updated_at    DateTime     @default(now()) @updatedAt @db.Timestamptz(3)
+  id                  String             @id
+  serviceDefinitionId String
+  serviceDefinition   ServiceDefinition? @relation(fields: [serviceDefinitionId], references: [id])
+  utilisateurId       String
+  utilisateur         Utilisateur        @relation(fields: [utilisateurId], references: [id])
+
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+}
+
+model ServiceDefinition {
+  id         String    @id
+  titre      String
+  url        String?
+  local      Boolean   @default(false)
+  created_at DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
+  services   Service[]
 }

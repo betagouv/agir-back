@@ -109,6 +109,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // GIVEN
     await TestUtil.create('utilisateur', { failed_login_count: 2 });
     await TestUtil.create('badge');
+    await TestUtil.create('serviceDefinition');
     await TestUtil.create('service');
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id');
     // WHEN
@@ -190,6 +191,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       active_account: true,
     });
     await TestUtil.create('badge');
+    await TestUtil.create('serviceDefinition');
+    await TestUtil.create('service');
 
     // WHEN
     const response = await TestUtil.getServer()
@@ -208,6 +211,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.utilisateur.revenu_fiscal).toEqual(10000);
     expect(response.body.utilisateur.points).toEqual(0);
     expect(response.body.utilisateur.badges[0].titre).toEqual('titre');
+    expect(response.body.utilisateur.services[0].titre).toEqual('titre');
     expect(response.body.utilisateur.quizzProfile).toEqual({
       alimentation: { level: 1, isCompleted: false },
       transport: { level: 1, isCompleted: false },
@@ -297,6 +301,37 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.message).toEqual(
       'Mauvaise adresse électronique ou mauvais mot de passe',
     );
+  });
+  it('POST /utilisateurs/login - bad password twice then ok, resets login count', async () => {
+    // GIVEN
+    const utilisateur = getFakeUtilisteur();
+    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHA');
+
+    await TestUtil.create('utilisateur', {
+      passwordHash: utilisateur.passwordHash,
+      passwordSalt: utilisateur.passwordSalt,
+    });
+
+    // WHEN
+    await TestUtil.getServer().post('/utilisateurs/login').send({
+      mot_de_passe: '#bad password',
+      email: 'yo@truc.com',
+    });
+    await TestUtil.getServer().post('/utilisateurs/login').send({
+      mot_de_passe: '#bad password',
+      email: 'yo@truc.com',
+    });
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/login')
+      .send({
+        mot_de_passe: '#1234567890HAHA',
+        email: 'yo@truc.com',
+      });
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    }); // THEN
+    expect(response.status).toEqual(200);
+    expect(dbUser.failed_login_count).toEqual(0);
   });
   it('POST /utilisateurs/login - bad password 4 times, blocked account', async () => {
     // GIVEN

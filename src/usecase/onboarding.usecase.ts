@@ -171,12 +171,11 @@ export class OnboardingUsecase {
 
     const onboardingData = new OnboardingData(utilisateurInput.onboardingData);
 
+    console.log(onboardingData);
     const utilisateurToCreate = new Utilisateur({
       id: undefined,
       points: 0,
-      code_postal: utilisateurInput.onboardingData
-        ? utilisateurInput.onboardingData.code_postal
-        : undefined,
+      code_postal: onboardingData.code_postal,
       created_at: undefined,
       nom: utilisateurInput.nom,
       prenom: utilisateurInput.prenom,
