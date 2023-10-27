@@ -1,15 +1,27 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+  Request,
+  BadRequestException,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOkResponse,
   ApiExtraModels,
   ApiOperation,
   ApiBearerAuth,
+  ApiBody,
 } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
 import { ServiceDefinitionAPI } from './types/service/serviceDefinitionAPI';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
+import { AddServiceAPI } from './types/service/addServiceAPI';
+import { ErrorService } from '../errorService';
 
 @ApiExtraModels(ServiceDefinitionAPI)
 @Controller()
@@ -36,5 +48,29 @@ export class ServiceController extends GenericControler {
         url: def.url,
       };
     });
+  }
+  @Post('utilisateurs/:id/services')
+  @ApiOperation({
+    summary: "Ajoute un service du catalogue à l'utilisateur",
+  })
+  @ApiBody({
+    type: AddServiceAPI,
+  })
+  @UseGuards(AuthGuard)
+  async addServiceToUtilisateur(
+    @Body() body: AddServiceAPI,
+    @Param('id') utilisateurId: string,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+
+    try {
+      return await this.serviceUsecase.addServiceToUtilisateur(
+        utilisateurId,
+        body.service_definition_id,
+      );
+    } catch (error) {
+      throw new BadRequestException(ErrorService.toStringOrObject(error));
+    }
   }
 }
