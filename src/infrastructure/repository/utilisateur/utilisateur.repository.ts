@@ -11,6 +11,8 @@ import {
   Thematique,
 } from '../../../domain/utilisateur/onboardingData';
 import { OnboardingResult } from '../../../domain/utilisateur/onboardingResult';
+import { ServiceRepository } from '../service.repository';
+import { Badge } from '../../../../src/domain/badge/badge';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -242,8 +244,21 @@ export class UtilisateurRepository {
         prevent_sendemail_before: user.prevent_sendemail_before,
         quizzProfile: new UserQuizzProfile(user.quizzLevels as any),
         created_at: user.created_at,
-        badges: user['badges'],
-        services: user['services'],
+        badges: user['badges']
+          ? user['badges'].map(
+              (badge) =>
+                new Badge({
+                  titre: badge.titre,
+                  type: badge.type,
+                  created_at: badge.created_at,
+                }),
+            )
+          : [],
+        services: user['services']
+          ? user['services'].map((service) =>
+              ServiceRepository.buildService(service),
+            )
+          : [],
       });
     }
     return null;

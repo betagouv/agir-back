@@ -3,9 +3,11 @@ import { Injectable } from '@nestjs/common';
 import {
   Prisma,
   ServiceDefinition as ServiceDefinitionDB,
+  Service as ServiceDB,
 } from '@prisma/client';
 import { ServiceDefinition } from '../../../src/domain/serviceDefinition';
 import { v4 as uuidv4 } from 'uuid';
+import { Service } from '../../../src/domain/service';
 
 @Injectable()
 export class ServiceRepository {
@@ -13,7 +15,9 @@ export class ServiceRepository {
 
   async listeServiceDefinitions(): Promise<ServiceDefinition[]> {
     const result = await this.prisma.serviceDefinition.findMany();
-    return result.map((service) => this.buildServicefinition(service));
+    return result.map((service) =>
+      ServiceRepository.buildServicefinition(service),
+    );
   }
   async addServiceToUtilisateur(
     utilisateurId: string,
@@ -44,14 +48,22 @@ export class ServiceRepository {
     }
   }
 
-  private buildServicefinition(
+  public static buildService(serviceDB: ServiceDB): Service {
+    return new Service({
+      id: serviceDB.id,
+      serviceDefinition: serviceDB['serviceDefinition'],
+    });
+  }
+
+  private static buildServicefinition(
     serviceDefinition: ServiceDefinitionDB,
   ): ServiceDefinition {
-    return {
+    return new ServiceDefinition({
       id: serviceDefinition.id,
       titre: serviceDefinition.titre,
       url: serviceDefinition.url,
       local: serviceDefinition.local,
-    };
+      is_url_externe: serviceDefinition.is_url_externe,
+    });
   }
 }

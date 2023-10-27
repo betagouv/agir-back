@@ -199,7 +199,6 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    console.log(response.body);
     expect(response.body.utilisateur.id.length).toBeGreaterThan(15);
     expect(response.body.utilisateur.nom).toEqual('WW');
     expect(response.body.utilisateur.prenom).toEqual('Wojtek');

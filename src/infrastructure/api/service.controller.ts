@@ -46,6 +46,7 @@ export class ServiceController extends GenericControler {
         local: def.local,
         titre: def.titre,
         url: def.url,
+        is_url_externe: def.is_url_externe,
       };
     });
   }

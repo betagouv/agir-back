@@ -39,6 +39,7 @@ describe('Service (API test)', () => {
     expect(response.body[0].titre).toEqual('titre');
     expect(response.body[0].url).toEqual('url');
     expect(response.body[0].local).toEqual(false);
+    expect(response.body[0].is_url_externe).toEqual(true);
   });
   it('POST /utilisateurs/id/services ajout un nouveau service à l utilisateur', async () => {
     // GIVEN

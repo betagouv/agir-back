@@ -23,6 +23,7 @@ import { ValidateCodeAPI } from './types/utilisateur/validateCodeAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { ErrorService } from '../errorService';
 import { ServiceAPI } from './types/service/serviceAPI';
+import { BadgeAPI } from './types/badgeAPI';
 
 @ApiExtraModels(CreateUtilisateurAPI)
 @Controller()
@@ -99,7 +100,9 @@ export class OnboardingController {
           points: loggedUser.utilisateur.points,
           quizzProfile: loggedUser.utilisateur.quizzProfile.getData(),
           created_at: loggedUser.utilisateur.created_at,
-          badges: loggedUser.utilisateur.badges,
+          badges: BadgeAPI.mapServicesToBadgesAPI(
+            loggedUser.utilisateur.badges,
+          ),
           services: ServiceAPI.mapServicesToServicesAPI(
             loggedUser.utilisateur.services,
           ),

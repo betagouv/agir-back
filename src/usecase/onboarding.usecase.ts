@@ -171,7 +171,6 @@ export class OnboardingUsecase {
 
     const onboardingData = new OnboardingData(utilisateurInput.onboardingData);
 
-    console.log(onboardingData);
     const utilisateurToCreate = new Utilisateur({
       id: undefined,
       points: 0,

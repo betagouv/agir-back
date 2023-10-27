@@ -135,7 +135,10 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     });
     expect(response.body.badges[0].titre).toEqual('titre');
     expect(response.body.services).toHaveLength(1);
-    expect(response.body.services[0].titre).toEqual('titre');
+    expect(response.body.services[0].label).toEqual('titre');
+    expect(response.body.services[0].url).toEqual('url');
+    expect(response.body.services[0].local).toEqual(true);
+    expect(response.body.services[0].is_url_externe).toEqual(true);
     expect(response.body.created_at).toEqual(dbUser.created_at.toISOString());
     expect(response.body.failed_login_count).toEqual(undefined);
     expect(response.body.prevent_login_before).toEqual(undefined);
@@ -211,7 +214,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.utilisateur.revenu_fiscal).toEqual(10000);
     expect(response.body.utilisateur.points).toEqual(0);
     expect(response.body.utilisateur.badges[0].titre).toEqual('titre');
-    expect(response.body.utilisateur.services[0].titre).toEqual('titre');
+    expect(response.body.utilisateur.services[0].label).toEqual('titre');
     expect(response.body.utilisateur.quizzProfile).toEqual({
       alimentation: { level: 1, isCompleted: false },
       transport: { level: 1, isCompleted: false },

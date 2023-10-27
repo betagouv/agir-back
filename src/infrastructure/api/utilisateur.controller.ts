@@ -38,6 +38,7 @@ import { OubliMdpAPI } from './types/utilisateur/oubliMdpAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { ModifierMdpAPI } from './types/utilisateur/modifierMdpAPI';
 import { ServiceAPI } from './types/service/serviceAPI';
+import { BadgeAPI } from './types/badgeAPI';
 
 @ApiExtraModels(CreateUtilisateurAPI, UtilisateurAPI)
 @Controller()
@@ -104,7 +105,7 @@ export class UtilisateurController extends GenericControler {
       points: utilisateur.points,
       quizzProfile: utilisateur.quizzProfile.getData(),
       created_at: utilisateur.created_at,
-      badges: utilisateur.badges,
+      badges: BadgeAPI.mapServicesToBadgesAPI(utilisateur.badges),
       services: ServiceAPI.mapServicesToServicesAPI(utilisateur.services),
     };
   }
@@ -173,7 +174,9 @@ export class UtilisateurController extends GenericControler {
           points: loggedUser.utilisateur.points,
           quizzProfile: loggedUser.utilisateur.quizzProfile.getData(),
           created_at: loggedUser.utilisateur.created_at,
-          badges: loggedUser.utilisateur.badges,
+          badges: BadgeAPI.mapServicesToBadgesAPI(
+            loggedUser.utilisateur.badges,
+          ),
           services: ServiceAPI.mapServicesToServicesAPI(
             loggedUser.utilisateur.services,
           ),
