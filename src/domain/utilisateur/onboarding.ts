@@ -51,9 +51,6 @@ export enum Impact {
 }
 
 export class OnboardingData {
-  constructor(data: object) {
-    Object.assign(this, data);
-  }
   transports?: Transport[];
   avion?: number;
   code_postal?: string;
@@ -65,6 +62,13 @@ export class OnboardingData {
   chauffage?: Chauffage;
   repas?: Repas;
   consommation?: Consommation;
+}
+
+export class Onboarding extends OnboardingData {
+  constructor(data: object) {
+    super();
+    Object.assign(this, data);
+  }
 
   getTransportLevel(): Impact {
     let avion: boolean = this.avion ? this.avion > 0 : false;

@@ -52,9 +52,9 @@ describe('InteractionRepository', () => {
 
     // THEN
     expect(liste).toHaveLength(3);
-    expect(liste[0].score).toEqual(new Decimal(0.8));
-    expect(liste[1].score).toEqual(new Decimal(0.5));
-    expect(liste[2].score).toEqual(new Decimal(0.1));
+    expect(liste[0].score).toEqual(0.8);
+    expect(liste[1].score).toEqual(0.5);
+    expect(liste[2].score).toEqual(0.1);
   });
   it('listMaxInteractionsByUtilisateurIdAndType : filters by type ', async () => {
     // GIVEN

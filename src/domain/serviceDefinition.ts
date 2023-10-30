@@ -1,18 +1,13 @@
-export type ServiceDefinitionConstructorData = {
+export class ServiceDefinitionData {
   id: string;
   titre: string;
   local: boolean;
   url?: string;
   is_url_externe?: boolean;
-};
-export class ServiceDefinition {
-  id: string;
-  titre: string;
-  url?: string;
-  local: boolean;
-  is_url_externe?: boolean;
-
-  constructor(data: ServiceDefinitionConstructorData) {
+}
+export class ServiceDefinition extends ServiceDefinitionData {
+  constructor(data: ServiceDefinitionData) {
+    super();
     this.id = data.id;
     this.titre = data.titre;
     this.local = data.local;

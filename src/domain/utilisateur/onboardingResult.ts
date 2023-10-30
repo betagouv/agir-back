@@ -1,10 +1,10 @@
-import { Impact, OnboardingData, Thematique } from './onboardingData';
+import { Impact, Onboarding, Thematique } from './onboarding';
 
 export class OnboardingResult {
   ventilation_par_impacts: Record<Impact, Thematique[]>;
   ventilation_par_thematiques: Record<Thematique, Impact>;
 
-  constructor(data: OnboardingData) {
+  constructor(data: Onboarding) {
     this.ventilation_par_thematiques = {
       alimentation: data.getAlimentationLevel(),
       transports: data.getTransportLevel(),

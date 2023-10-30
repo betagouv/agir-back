@@ -1,17 +1,16 @@
 import {
   ServiceDefinition,
-  ServiceDefinitionConstructorData,
+  ServiceDefinitionData,
 } from './serviceDefinition';
 
-export type ServiceConstructorData = {
+export class ServiceData {
   id: string;
-  serviceDefinition: ServiceDefinitionConstructorData;
-};
-export class Service {
-  constructor(data: ServiceConstructorData) {
+  serviceDefinition: ServiceDefinitionData;
+}
+export class Service extends ServiceData {
+  constructor(data: ServiceData) {
+    super();
     this.id = data.id;
     this.serviceDefinition = new ServiceDefinition(data.serviceDefinition);
   }
-  id: string;
-  serviceDefinition: ServiceDefinition;
 }

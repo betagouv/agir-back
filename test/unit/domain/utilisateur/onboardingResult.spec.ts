@@ -1,8 +1,8 @@
 import {
   Impact,
-  OnboardingData,
+  Onboarding,
   Thematique,
-} from '../../../../src/domain/utilisateur/onboardingData';
+} from '../../../../src/domain/utilisateur/onboarding';
 import { OnboardingResult } from '../../../../src/domain/utilisateur/onboardingResult';
 
 const ONBOARDING_1_2_3_4 = {
@@ -22,7 +22,7 @@ describe('Objet OnboardingData', () => {
   it('converts ok to JSON', () => {
     // GIVEN
     let onboardingResult = new OnboardingResult(
-      new OnboardingData(ONBOARDING_1_2_3_4),
+      new Onboarding(ONBOARDING_1_2_3_4),
     );
 
     onboardingResult.ventilation_par_thematiques = {
@@ -49,7 +49,7 @@ describe('Objet OnboardingData', () => {
   it('converts ok to JSON', () => {
     // GIVEN
     let onboardingResult = new OnboardingResult(
-      new OnboardingData(ONBOARDING_1_2_3_4),
+      new Onboarding(ONBOARDING_1_2_3_4),
     );
 
     onboardingResult.ventilation_par_thematiques = {
@@ -76,7 +76,7 @@ describe('Objet OnboardingData', () => {
   it('builds ok basic impact', () => {
     // WHEN
     let onboardingResult = new OnboardingResult(
-      new OnboardingData(ONBOARDING_1_2_3_4),
+      new Onboarding(ONBOARDING_1_2_3_4),
     );
 
     // THEN
@@ -96,7 +96,7 @@ describe('Objet OnboardingData', () => {
   it('regroupe correctement par impacts similaires', () => {
     // WHEN
     let onboardingResult = new OnboardingResult(
-      new OnboardingData({
+      new Onboarding({
         transports: ['velo'],
         avion: 2,
         adultes: 2,
@@ -121,7 +121,7 @@ describe('Objet OnboardingData', () => {
   it('listThematiquesAvecImpactInferieurA : compte le bon nombre', () => {
     // GIVEN
     let onboardingResult = new OnboardingResult(
-      new OnboardingData(ONBOARDING_1_2_3_4),
+      new Onboarding(ONBOARDING_1_2_3_4),
     );
     onboardingResult.ventilation_par_thematiques = {
       alimentation: Impact.tres_faible,
@@ -162,7 +162,7 @@ describe('Objet OnboardingData', () => {
   it('listThematiquesAvecImpactSuperieurOuEgalA : compte le bon nombre', () => {
     // GIVEN
     let onboardingResult = new OnboardingResult(
-      new OnboardingData(ONBOARDING_1_2_3_4),
+      new Onboarding(ONBOARDING_1_2_3_4),
     );
     onboardingResult.ventilation_par_thematiques = {
       alimentation: Impact.tres_faible,
@@ -208,7 +208,7 @@ describe('Objet OnboardingData', () => {
   it('nombreThematiquesAvecImpactSuperieurOuEgalA : compte le bon nombre', () => {
     // GIVEN
     let onboardingResult = new OnboardingResult(
-      new OnboardingData(ONBOARDING_1_2_3_4),
+      new Onboarding(ONBOARDING_1_2_3_4),
     );
     onboardingResult.ventilation_par_thematiques = {
       alimentation: Impact.tres_faible,
@@ -245,7 +245,7 @@ describe('Objet OnboardingData', () => {
   it('nombreThematiquesAvecImpactSuperieurOuEgalA : compte correctement les regroupements', () => {
     // GIVEN
     let onboardingResult = new OnboardingResult(
-      new OnboardingData(ONBOARDING_1_2_3_4),
+      new Onboarding(ONBOARDING_1_2_3_4),
     );
 
     onboardingResult.ventilation_par_thematiques = {
@@ -284,7 +284,7 @@ describe('Objet OnboardingData', () => {
   it('trieCroissaint : tir thematiques par impact', () => {
     // GIVEN
     let onboardingResult = new OnboardingResult(
-      new OnboardingData(ONBOARDING_1_2_3_4),
+      new Onboarding(ONBOARDING_1_2_3_4),
     );
     onboardingResult.ventilation_par_thematiques = {
       alimentation: Impact.tres_faible,
@@ -317,7 +317,7 @@ describe('Objet OnboardingData', () => {
   it('getThematiqueNo1SuperieureA : renvoie la bonne thématique maximal supérieur à X', () => {
     // GIVEN
     let onboardingResult = new OnboardingResult(
-      new OnboardingData(ONBOARDING_1_2_3_4),
+      new Onboarding(ONBOARDING_1_2_3_4),
     );
     onboardingResult.ventilation_par_thematiques = {
       alimentation: Impact.tres_faible,
@@ -354,7 +354,7 @@ describe('Objet OnboardingData', () => {
   it('getThematiqueNo1SuperieureA : renvoie la bonne thématique maximal d ordre fonctionnel attendu #Transport', () => {
     // GIVEN
     let onboardingResult = new OnboardingResult(
-      new OnboardingData(ONBOARDING_1_2_3_4),
+      new Onboarding(ONBOARDING_1_2_3_4),
     );
     onboardingResult.ventilation_par_thematiques = {
       alimentation: Impact.eleve,
@@ -396,7 +396,7 @@ describe('Objet OnboardingData', () => {
   it('getThematiqueNo1SuperieureA : renvoie la bonne thématique maximal d ordre fonctionnel attendu #alimentation', () => {
     // GIVEN
     let onboardingResult = new OnboardingResult(
-      new OnboardingData(ONBOARDING_1_2_3_4),
+      new Onboarding(ONBOARDING_1_2_3_4),
     );
     onboardingResult.ventilation_par_thematiques = {
       alimentation: Impact.eleve,
@@ -437,7 +437,7 @@ describe('Objet OnboardingData', () => {
   it('getThematiqueNo1SuperieureA : renvoie la bonne thématique maximal d ordre fonctionnel attendu #logement', () => {
     // GIVEN
     let onboardingResult = new OnboardingResult(
-      new OnboardingData(ONBOARDING_1_2_3_4),
+      new Onboarding(ONBOARDING_1_2_3_4),
     );
     onboardingResult.ventilation_par_thematiques = {
       alimentation: Impact.faible,
@@ -474,7 +474,7 @@ describe('Objet OnboardingData', () => {
   it('getThematiqueNo1SuperieureA : renvoie la bonne thématique maximal d ordre fonctionnel attendu #consommation', () => {
     // GIVEN
     let onboardingResult = new OnboardingResult(
-      new OnboardingData(ONBOARDING_1_2_3_4),
+      new Onboarding(ONBOARDING_1_2_3_4),
     );
     onboardingResult.ventilation_par_thematiques = {
       alimentation: Impact.faible,

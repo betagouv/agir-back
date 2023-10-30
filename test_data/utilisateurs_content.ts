@@ -1,4 +1,4 @@
-import { Impact, Thematique } from '../src/domain/utilisateur/onboardingData';
+import { Impact, Thematique } from '../src/domain/utilisateur/onboarding';
 
 const minQuizzLevel = {
   alimentation: { level: 1, isCompleted: false },

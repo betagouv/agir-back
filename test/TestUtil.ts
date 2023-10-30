@@ -4,11 +4,11 @@ import { InteractionType } from '../src/domain/interaction/interactionType';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { Thematique } from '../src/domain/thematique';
-import { Thematique as ThematiqueOnboarding } from '../src/domain/utilisateur/onboardingData';
+import { Thematique as ThematiqueOnboarding } from '../src/domain/utilisateur/onboarding';
 import { UserQuizzProfile } from '../src/domain/quizz/userQuizzProfile';
 import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
-import { Impact } from '../src/domain/utilisateur/onboardingData';
+import { Impact } from '../src/domain/utilisateur/onboarding';
 const request = require('supertest');
 import { JwtService } from '@nestjs/jwt';
 
@@ -273,7 +273,7 @@ export class TestUtil {
       done_at: null,
       difficulty: 1,
       points: 5,
-      score: '0.5',
+      score: 0.5,
       quizz_score: 50,
       locked: false,
       pinned_at_position: null,

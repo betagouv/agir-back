@@ -7,9 +7,9 @@ import { UserQuizzProfile } from '../../../domain/quizz/userQuizzProfile';
 import { Profile } from '../../../domain/utilisateur/profile';
 import {
   Impact,
-  OnboardingData,
+  Onboarding,
   Thematique,
-} from '../../../domain/utilisateur/onboardingData';
+} from '../../../domain/utilisateur/onboarding';
 import { OnboardingResult } from '../../../domain/utilisateur/onboardingResult';
 import { ServiceRepository } from '../service.repository';
 import { Badge } from '../../../../src/domain/badge/badge';
@@ -220,7 +220,7 @@ export class UtilisateurRepository {
 
   private buildUtilisateurFromDB(user: UtilisateurDB): Utilisateur {
     if (user) {
-      const onboardingData = new OnboardingData(user.onboardingData as any);
+      const onboardingData = new Onboarding(user.onboardingData as any);
       const onboardingResult = new OnboardingResult(onboardingData);
       return new Utilisateur({
         id: user.id,

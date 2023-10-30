@@ -6,7 +6,7 @@ import {
   Residence,
   Superficie,
   Transport,
-} from '../../../../../src/domain/utilisateur/onboardingData';
+} from '../../../../domain/utilisateur/onboarding';
 export class OnboardingDataAPI {
   @ApiProperty({
     type: 'array',

@@ -73,7 +73,7 @@ export class InteractionsUsecase {
 
     // final sort
     result.sort((a, b) => {
-      return b.score.minus(a.score).isNegative() ? -1 : 1;
+      return b.score - a.score;
     });
 
     // pinned insert

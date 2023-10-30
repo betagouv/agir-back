@@ -5,39 +5,22 @@ import { InteractionStatus } from './interactionStatus';
 import { InteractionType } from './interactionType';
 import { InteractionDefinition } from './interactionDefinition';
 
-export class InteractionData {
+export class InteractionData extends InteractionDefinition {
   id: string;
-  content_id: string;
-  type: InteractionType;
-  titre: string;
-  soustitre: string;
-  thematique_gamification: Thematique;
-  thematique_gamification_titre: string;
-  thematiques: Thematique[];
-  tags: string[];
-  duree?: string;
-  frequence: string;
-  image_url: string;
-  url: string;
   seen: number;
   seen_at: Date;
   clicked: boolean;
   clicked_at: Date;
   done: boolean;
   done_at: Date;
-  difficulty: DifficultyLevel;
-  points: number;
   quizz_score: number;
-  score: Decimal;
-  locked: boolean;
-  pinned_at_position: number;
-  raison_lock: string;
+  score: number;
   scheduled_reset: Date;
-  day_period: number;
-  codes_postaux: string[];
   utilisateurId: string;
-  created_at: Date;
-  updated_at: Date;
+
+  constructor() {
+    super({} as any);
+  }
 }
 export class Interaction extends InteractionData {
   constructor(data: InteractionData) {
@@ -91,7 +74,7 @@ export class Interaction extends InteractionData {
       quizz_score: null,
       scheduled_reset: null,
       utilisateurId: undefined,
-      score: new Decimal(0.5),
+      score: 0.5,
     });
   }
 }

@@ -8,9 +8,9 @@ import { UserQuizzProfile } from '../domain/quizz/userQuizzProfile';
 import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/createUtilisateurAPI';
 import {
   Impact,
-  OnboardingData,
+  Onboarding,
   Thematique,
-} from '../domain/utilisateur/onboardingData';
+} from '../domain/utilisateur/onboarding';
 import { OnboardingDataAPI } from '../infrastructure/api/types/utilisateur/onboardingDataAPI';
 import { OnboardingDataImpactAPI } from '../infrastructure/api/types/utilisateur/onboardingDataImpactAPI';
 import { OnboardingResult } from '../domain/utilisateur/onboardingResult';
@@ -75,7 +75,7 @@ export class OnboardingUsecase {
   async evaluateOnboardingData(
     input: OnboardingDataAPI,
   ): Promise<OnboardingDataImpactAPI> {
-    const onboardingData = new OnboardingData(input);
+    const onboardingData = new Onboarding(input);
     try {
       onboardingData.validateData();
     } catch (error) {
@@ -169,7 +169,7 @@ export class OnboardingUsecase {
   ): Promise<Utilisateur> {
     this.checkInputToCreateUtilisateur(utilisateurInput);
 
-    const onboardingData = new OnboardingData(utilisateurInput.onboardingData);
+    const onboardingData = new Onboarding(utilisateurInput.onboardingData);
 
     const utilisateurToCreate = new Utilisateur({
       id: undefined,
@@ -233,7 +233,7 @@ export class OnboardingUsecase {
   private checkInputToCreateUtilisateur(
     utilisateurInput: CreateUtilisateurAPI,
   ) {
-    new OnboardingData(utilisateurInput.onboardingData).validateData();
+    new Onboarding(utilisateurInput.onboardingData).validateData();
 
     if (!utilisateurInput.nom) {
       throw new Error('Nom obligatoire pour créer un utilisateur');

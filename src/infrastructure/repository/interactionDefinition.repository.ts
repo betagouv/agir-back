@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { InteractionDefinition } from '../../../src/domain/interaction/interactionDefinition';
-import { InteractionType } from 'src/domain/interaction/interactionType';
+import { InteractionType } from '../../../src/domain/interaction/interactionType';
+import { InteractionDefinition as InteractionDefinitionDB } from '@prisma/client';
+import { Thematique } from '../../../src/domain/thematique';
 
 @Injectable()
 export class InteractionDefinitionRepository {
@@ -9,7 +11,7 @@ export class InteractionDefinitionRepository {
 
   async getAll(): Promise<InteractionDefinition[] | null> {
     let result = await this.prisma.interactionDefinition.findMany({});
-    return result.map((inter) => new InteractionDefinition(inter));
+    return result.map((inter) => this.buildInteractionDefinitionFromDB(inter));
   }
   async createOrUpdateBasedOnId(interaction: InteractionDefinition) {
     await this.prisma.interactionDefinition.upsert({
@@ -46,7 +48,7 @@ export class InteractionDefinitionRepository {
         },
       },
     });
-    return result ? new InteractionDefinition(result) : null;
+    return result ? this.buildInteractionDefinitionFromDB(result) : null;
   }
 
   async deleteByContentId(content_id: string) {
@@ -54,6 +56,17 @@ export class InteractionDefinitionRepository {
       where: {
         content_id,
       },
+    });
+  }
+
+  private buildInteractionDefinitionFromDB(
+    interDefDB: InteractionDefinitionDB,
+  ): InteractionDefinition {
+    return new InteractionDefinition({
+      ...interDefDB,
+      type: InteractionType[interDefDB.type],
+      thematique_gamification: Thematique[interDefDB.thematique_gamification],
+      thematiques: interDefDB.thematiques.map((th) => Thematique[th]),
     });
   }
 }

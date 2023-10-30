@@ -1,13 +1,13 @@
 import {
   Impact,
-  OnboardingData,
+  Onboarding,
   Transport,
-} from '../../../../src/domain/utilisateur/onboardingData';
+} from '../../../../src/domain/utilisateur/onboarding';
 
 describe('Objet OnboardingData', () => {
   it('getTransportLevel : renvoie "tres_faible" si tout à zéro', () => {
     // GIVEN
-    let onboarding = new OnboardingData({
+    let onboarding = new Onboarding({
       transports: [],
     });
 
@@ -19,7 +19,7 @@ describe('Objet OnboardingData', () => {
   });
   it('getTransportLevel : renvoie "tres_faible" même si velo, marche , metro', () => {
     // GIVEN
-    let onboarding = new OnboardingData({
+    let onboarding = new Onboarding({
       transports: [Transport.pied, Transport.velo, Transport.commun],
     });
 
@@ -31,7 +31,7 @@ describe('Objet OnboardingData', () => {
   });
   it('getTransportLevel : renvoie "faible" si moto seule', () => {
     // GIVEN
-    let onboarding = new OnboardingData({
+    let onboarding = new Onboarding({
       transports: [Transport.moto],
     });
 
@@ -43,7 +43,7 @@ describe('Objet OnboardingData', () => {
   });
   it('getTransportLevel : renvoie "elevé" si voiture seule ', () => {
     // GIVEN
-    let onboarding = new OnboardingData({
+    let onboarding = new Onboarding({
       transports: [Transport.voiture],
     });
 
@@ -55,7 +55,7 @@ describe('Objet OnboardingData', () => {
   });
   it('getTransportLevel : renvoie "elevé" si un voyage en avion ', () => {
     // GIVEN
-    let onboarding = new OnboardingData({
+    let onboarding = new Onboarding({
       avion: 1,
     });
 
@@ -67,7 +67,7 @@ describe('Objet OnboardingData', () => {
   });
   it('getTransportLevel : renvoie "elevé" si 2 voyages en avion ', () => {
     // GIVEN
-    let onboarding = new OnboardingData({
+    let onboarding = new Onboarding({
       avion: 2,
     });
 
@@ -79,7 +79,7 @@ describe('Objet OnboardingData', () => {
   });
   it('getTransportLevel : renvoie "elevé" si un voyage en avion et de la voiture ', () => {
     // GIVEN
-    let onboarding = new OnboardingData({
+    let onboarding = new Onboarding({
       avion: 1,
       transports: [Transport.voiture],
     });
@@ -92,7 +92,7 @@ describe('Objet OnboardingData', () => {
   });
   it('getTransportLevel : renvoie "tres elevé" si 2 voyages en avion et de la voiture ', () => {
     // GIVEN
-    let onboarding = new OnboardingData({
+    let onboarding = new Onboarding({
       avion: 2,
       transports: [Transport.voiture],
     });
@@ -105,7 +105,7 @@ describe('Objet OnboardingData', () => {
   });
   it('getTransportLevel : renvoie "tres elevé" si 3 voyages en avion', () => {
     // GIVEN
-    let onboarding = new OnboardingData({
+    let onboarding = new Onboarding({
       avion: 3,
     });
 
@@ -117,7 +117,7 @@ describe('Objet OnboardingData', () => {
   });
   it('getAlimentationLevel : renvoie "tres faible" si vegan', () => {
     // GIVEN
-    let onboarding = new OnboardingData({
+    let onboarding = new Onboarding({
       repas: 'vegan',
     });
 
@@ -129,7 +129,7 @@ describe('Objet OnboardingData', () => {
   });
   it('getAlimentationLevel : renvoie "faible" si vege', () => {
     // GIVEN
-    let onboarding = new OnboardingData({
+    let onboarding = new Onboarding({
       repas: 'vege',
     });
 
@@ -141,7 +141,7 @@ describe('Objet OnboardingData', () => {
   });
   it('getAlimentationLevel : renvoie "elevé" si de tout', () => {
     // GIVEN
-    let onboarding = new OnboardingData({
+    let onboarding = new Onboarding({
       repas: 'tout',
     });
 
@@ -153,7 +153,7 @@ describe('Objet OnboardingData', () => {
   });
   it('getAlimentationLevel : renvoie "tres elevé" si viande', () => {
     // GIVEN
-    let onboarding = new OnboardingData({
+    let onboarding = new Onboarding({
       repas: 'viande',
     });
 
@@ -166,7 +166,7 @@ describe('Objet OnboardingData', () => {
 
   it('getConsommationLevel : renvoie "tres faible" si "jamais" de courses', () => {
     // GIVEN
-    let onboarding = new OnboardingData({
+    let onboarding = new Onboarding({
       consommation: 'jamais',
     });
 
@@ -178,7 +178,7 @@ describe('Objet OnboardingData', () => {
   });
   it('getConsommationLevel : renvoie "faible" si secondemain', () => {
     // GIVEN
-    let onboarding = new OnboardingData({
+    let onboarding = new Onboarding({
       consommation: 'secondemain',
     });
 
@@ -190,7 +190,7 @@ describe('Objet OnboardingData', () => {
   });
   it('getConsommationLevel : renvoie "elevé" si raisonnable', () => {
     // GIVEN
-    let onboarding = new OnboardingData({
+    let onboarding = new Onboarding({
       consommation: 'raisonnable',
     });
 
@@ -202,7 +202,7 @@ describe('Objet OnboardingData', () => {
   });
   it('getConsommationLevel : renvoie "tres elevé" si shopping', () => {
     // GIVEN
-    let onboarding = new OnboardingData({
+    let onboarding = new Onboarding({
       consommation: 'shopping',
     });
 
@@ -214,7 +214,7 @@ describe('Objet OnboardingData', () => {
   });
   it('getConsommationLevel : renvoie tres_eleve si valeur non connue', () => {
     // GIVEN
-    let onboarding = new OnboardingData({
+    let onboarding = new Onboarding({
       consommation: 'XXX',
     });
 
@@ -226,7 +226,7 @@ describe('Objet OnboardingData', () => {
   });
   it('getLogementLevel : renvoie tres_eleve si valeur non connue', () => {
     // GIVEN
-    let onboarding = new OnboardingData({
+    let onboarding = new Onboarding({
       residence: 'XXX',
     });
 
@@ -244,8 +244,8 @@ describe('Objet OnboardingData', () => {
       enfants: 0,
       superficie: 'superficie_35',
       chauffage: 'bois',
-    } as OnboardingData;
-    onboarding = new OnboardingData(onboarding);
+    } as Onboarding;
+    onboarding = new Onboarding(onboarding);
 
     // WHEN
     let levelTranspo = onboarding.getLogementLevel();
@@ -261,8 +261,8 @@ describe('Objet OnboardingData', () => {
       enfants: 2,
       superficie: 'superficie_70',
       chauffage: 'autre',
-    } as OnboardingData;
-    onboarding = new OnboardingData(onboarding);
+    } as Onboarding;
+    onboarding = new Onboarding(onboarding);
 
     // WHEN
     let levelTranspo = onboarding.getLogementLevel();
@@ -278,8 +278,8 @@ describe('Objet OnboardingData', () => {
       enfants: 1,
       superficie: 'superficie_100',
       chauffage: 'gaz',
-    } as OnboardingData;
-    onboarding = new OnboardingData(onboarding);
+    } as Onboarding;
+    onboarding = new Onboarding(onboarding);
 
     // WHEN
     let levelTranspo = onboarding.getLogementLevel();
@@ -295,8 +295,8 @@ describe('Objet OnboardingData', () => {
       enfants: 2,
       superficie: 'superficie_150',
       chauffage: 'gaz',
-    } as OnboardingData;
-    onboarding = new OnboardingData(onboarding);
+    } as Onboarding;
+    onboarding = new Onboarding(onboarding);
 
     // WHEN
     let levelTranspo = onboarding.getLogementLevel();

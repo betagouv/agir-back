@@ -1,7 +1,7 @@
 import { Badge } from '../badge/badge';
 import { UserQuizzProfile } from '../quizz/userQuizzProfile';
 import { CodeManager } from './manager/codeManager';
-import { OnboardingData } from './onboardingData';
+import { Onboarding } from './onboarding';
 import { OnboardingResult } from './onboardingResult';
 import { PasswordManager } from './manager/passwordManager';
 import { Service } from '../service';
@@ -11,7 +11,7 @@ export class UtilisateurData {
   email: string;
   nom: string;
   prenom: string;
-  onboardingData: OnboardingData;
+  onboardingData: Onboarding;
   onboardingResult: OnboardingResult;
   code_postal: string;
   revenu_fiscal: number;

@@ -223,6 +223,7 @@ export class InteractionRepository {
       type: InteractionType[interDB.type],
       thematique_gamification: Thematique[interDB.thematique_gamification],
       thematiques: interDB.thematiques.map((th) => Thematique[th]),
+      score: interDB.score.toNumber(),
     });
   }
 }

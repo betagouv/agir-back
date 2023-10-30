@@ -100,10 +100,10 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(4);
-    expect(response.body[0].score).toEqual('0.9');
-    expect(response.body[1].score).toEqual('0.3');
-    expect(response.body[2].score).toEqual('0.2');
-    expect(response.body[3].score).toEqual('0.1');
+    expect(response.body[0].score).toEqual(0.9);
+    expect(response.body[1].score).toEqual(0.3);
+    expect(response.body[2].score).toEqual(0.2);
+    expect(response.body[3].score).toEqual(0.1);
   });
   it('GET /utilisateurs/id/interactions - list interactions with strategy, correct order', async () => {
     // GIVEN
@@ -149,10 +149,10 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(4);
-    expect(response.body[0].score).toEqual('0.9');
-    expect(response.body[1].score).toEqual('0.5');
-    expect(response.body[2].score).toEqual('0.2');
-    expect(response.body[3].score).toEqual('0.1');
+    expect(response.body[0].score).toEqual(0.9);
+    expect(response.body[1].score).toEqual(0.5);
+    expect(response.body[2].score).toEqual(0.2);
+    expect(response.body[3].score).toEqual(0.1);
   });
   it('GET /utilisateurs/id/interactions - list interactions with strategy, max per type', async () => {
     // GIVEN
@@ -198,8 +198,8 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(2);
-    expect(response.body[0].score).toEqual('0.9');
-    expect(response.body[1].score).toEqual('0.5');
+    expect(response.body[0].score).toEqual(0.9);
+    expect(response.body[1].score).toEqual(0.5);
   });
   it('GET /utilisateurs/id/interactions - no done interaction', async () => {
     // GIVEN

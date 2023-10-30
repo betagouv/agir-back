@@ -1,7 +1,7 @@
 import {
   Impact,
   Thematique,
-} from '../../../src/domain/utilisateur/onboardingData';
+} from '../../../src/domain/utilisateur/onboarding';
 import { TestUtil } from '../../TestUtil';
 
 const ONBOARDING_1_2_3_4_DATA = {
