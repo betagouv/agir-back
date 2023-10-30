@@ -1,9 +1,12 @@
 import { Interaction } from '../../../../src/domain/interaction/interaction';
+import { TestUtil } from '../../../../test/TestUtil';
 
 describe('Interaction', () => {
   it('setNextScheduledReset : should compute OK next day schedule', () => {
     // GIVEN
-    const scheduledInteraction = new Interaction({ day_period: 1 });
+    const scheduledInteraction = new Interaction(
+      TestUtil.interactionData({ day_period: 1 }),
+    );
 
     // WHEN
     const demainMinuit = scheduledInteraction.setNextScheduledReset();
@@ -20,7 +23,9 @@ describe('Interaction', () => {
   });
   it('setNextScheduledReset : should compute null when no day period', () => {
     // GIVEN
-    const scheduledInteraction = new Interaction({ day_period: null });
+    const scheduledInteraction = new Interaction(
+      TestUtil.interactionData({ day_period: null }),
+    );
 
     // WHEN
     const result = scheduledInteraction.setNextScheduledReset();

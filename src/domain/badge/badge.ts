@@ -1,17 +1,12 @@
-export type BadgeData = {
-  titre: string;
-  type: string;
-  created_at: Date;
-};
-
-export class Badge {
+export class BadgeData {
   titre: string;
   type: string;
   created_at?: Date;
+}
 
+export class Badge extends BadgeData {
   constructor(data: BadgeData) {
-    this.titre = data.titre;
-    this.type = data.type;
-    this.created_at = data.created_at;
+    super();
+    Object.assign(this, data);
   }
 }

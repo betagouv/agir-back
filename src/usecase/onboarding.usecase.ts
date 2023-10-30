@@ -265,7 +265,7 @@ export class OnboardingUsecase {
       const interactionDefinition = interactionDefinitions[index];
       await this.interactionRepository.insertInteractionForUtilisateur(
         utilisateurId,
-        new Interaction(interactionDefinition),
+        Interaction.newDefaultInteractionFromDefinition(interactionDefinition),
       );
     }
   }

@@ -5,11 +5,7 @@ import { InteractionStatus } from './interactionStatus';
 import { InteractionType } from './interactionType';
 import { InteractionDefinition } from './interactionDefinition';
 
-export class Interaction {
-  constructor(data: object) {
-    Object.assign(this, data);
-  }
-
+export class InteractionData {
   id: string;
   content_id: string;
   type: InteractionType;
@@ -18,8 +14,8 @@ export class Interaction {
   thematique_gamification: Thematique;
   thematique_gamification_titre: string;
   thematiques: Thematique[];
-  tags: [];
-  duree: string;
+  tags: string[];
+  duree?: string;
   frequence: string;
   image_url: string;
   url: string;
@@ -42,6 +38,12 @@ export class Interaction {
   utilisateurId: string;
   created_at: Date;
   updated_at: Date;
+}
+export class Interaction extends InteractionData {
+  constructor(data: InteractionData) {
+    super();
+    Object.assign(this, data);
+  }
 
   public setNextScheduledReset(): Date {
     if (this.day_period) {
@@ -78,8 +80,18 @@ export class Interaction {
   public static newDefaultInteractionFromDefinition(
     interactionDefinition: InteractionDefinition,
   ) {
-    let result = new Interaction(interactionDefinition);
-    result.score = new Decimal('0.5');
-    return result;
+    return new Interaction({
+      ...interactionDefinition,
+      seen: 0,
+      seen_at: null,
+      clicked: false,
+      clicked_at: null,
+      done: false,
+      done_at: null,
+      quizz_score: null,
+      scheduled_reset: null,
+      utilisateurId: undefined,
+      score: new Decimal(0.5),
+    });
   }
 }

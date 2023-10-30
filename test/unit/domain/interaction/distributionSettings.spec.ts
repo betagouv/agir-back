@@ -3,13 +3,32 @@ import { Interaction } from '../../../../src/domain/interaction/interaction';
 import { InteractionType } from '../../../../src/domain/interaction/interactionType';
 import { InteractionPlacement } from '../../../../src/domain/interaction/interactionPosition';
 import { DistributionSettings } from '../../../../src/domain/interaction/distributionSettings';
+import { TestUtil } from '../../../../test/TestUtil';
 
 describe('DistributionSettings', () => {
   it('addInteractionsToList : should return target list when empty source list', () => {
     // GIVEN
-    const i1 = new Interaction({ id: '1', type: InteractionType.aide });
-    const i2 = new Interaction({ id: '2', type: InteractionType.article });
-    const i3 = new Interaction({ id: '3', type: InteractionType.quizz });
+    const i1 = new Interaction(
+      new Interaction(
+        TestUtil.interactionData({ id: '1', type: InteractionType.aide }),
+      ),
+    );
+    const i2 = new Interaction(
+      new Interaction(
+        TestUtil.interactionData({
+          id: '2',
+          type: InteractionType.article,
+        }),
+      ),
+    );
+    const i3 = new Interaction(
+      new Interaction(
+        TestUtil.interactionData({
+          id: '3',
+          type: InteractionType.quizz,
+        }),
+      ),
+    );
 
     const work_list = [i1, i2, i3];
 
@@ -21,8 +40,18 @@ describe('DistributionSettings', () => {
   });
   it('addInteractionsToList : adds when not prefered reached', () => {
     // GIVEN
-    const i1 = new Interaction({ id: '1', type: InteractionType.aide });
-    const i2 = new Interaction({ id: '2', type: InteractionType.aide });
+    const i1 = new Interaction(
+      TestUtil.interactionData({
+        id: '1',
+        type: InteractionType.aide,
+      }),
+    );
+    const i2 = new Interaction(
+      TestUtil.interactionData({
+        id: '2',
+        type: InteractionType.aide,
+      }),
+    );
 
     DistributionSettings.overrideSettings(
       new Map([
@@ -41,8 +70,18 @@ describe('DistributionSettings', () => {
   });
   it('addInteractionsToList : does not add when prefered reached', () => {
     // GIVEN
-    const i1 = new Interaction({ id: '1', type: InteractionType.aide });
-    const i2 = new Interaction({ id: '2', type: InteractionType.aide });
+    const i1 = new Interaction(
+      TestUtil.interactionData({
+        id: '1',
+        type: InteractionType.aide,
+      }),
+    );
+    const i2 = new Interaction(
+      TestUtil.interactionData({
+        id: '2',
+        type: InteractionType.aide,
+      }),
+    );
 
     DistributionSettings.overrideSettings(
       new Map([
@@ -61,10 +100,30 @@ describe('DistributionSettings', () => {
   });
   it('addInteractionsToList : adds when no settings for given type', () => {
     // GIVEN
-    const i1 = new Interaction({ id: '1', type: InteractionType.aide });
-    const i2 = new Interaction({ id: '2', type: InteractionType.aide });
-    const i3 = new Interaction({ id: '3', type: InteractionType.aide });
-    const i4 = new Interaction({ id: '4', type: InteractionType.aide });
+    const i1 = new Interaction(
+      TestUtil.interactionData({
+        id: '1',
+        type: InteractionType.aide,
+      }),
+    );
+    const i2 = new Interaction(
+      TestUtil.interactionData({
+        id: '2',
+        type: InteractionType.aide,
+      }),
+    );
+    const i3 = new Interaction(
+      TestUtil.interactionData({
+        id: '3',
+        type: InteractionType.aide,
+      }),
+    );
+    const i4 = new Interaction(
+      TestUtil.interactionData({
+        id: '4',
+        type: InteractionType.aide,
+      }),
+    );
 
     DistributionSettings.overrideSettings(new Map([]));
     const work_list = [i4];
@@ -77,7 +136,9 @@ describe('DistributionSettings', () => {
   it('insertPinnedInteractions : add one in empty list', () => {
     // GIVEN
     const target = [];
-    const i = new Interaction({ pinned_at_position: 1 });
+    const i = new Interaction(
+      TestUtil.interactionData({ pinned_at_position: 1 }),
+    );
 
     // WHEN
     DistributionSettings.insertPinnedInteractions([i], target);
@@ -87,9 +148,11 @@ describe('DistributionSettings', () => {
   });
   it('insertPinnedInteractions : add one in middle of list', () => {
     // GIVEN
-    const i1 = new Interaction({ id: '1' });
-    const i2 = new Interaction({ id: '2' });
-    const i3 = new Interaction({ id: 'pin', pinned_at_position: 1 });
+    const i1 = new Interaction(TestUtil.interactionData({ id: '1' }));
+    const i2 = new Interaction(TestUtil.interactionData({ id: '2' }));
+    const i3 = new Interaction(
+      TestUtil.interactionData({ id: 'pin', pinned_at_position: 1 }),
+    );
     const target = [i1, i2];
 
     // WHEN
@@ -103,10 +166,14 @@ describe('DistributionSettings', () => {
   });
   it('insertPinnedInteractions : add pinned in pin position when several, one in between', () => {
     // GIVEN
-    const i1 = new Interaction({ id: '1' });
-    const i2 = new Interaction({ id: '2' });
-    const i3 = new Interaction({ id: 'pin1', pinned_at_position: 1 });
-    const i4 = new Interaction({ id: 'pin3', pinned_at_position: 3 });
+    const i1 = new Interaction(TestUtil.interactionData({ id: '1' }));
+    const i2 = new Interaction(TestUtil.interactionData({ id: '2' }));
+    const i3 = new Interaction(
+      TestUtil.interactionData({ id: 'pin1', pinned_at_position: 1 }),
+    );
+    const i4 = new Interaction(
+      TestUtil.interactionData({ id: 'pin3', pinned_at_position: 3 }),
+    );
     const target = [i1, i2];
 
     // WHEN
@@ -121,10 +188,14 @@ describe('DistributionSettings', () => {
   });
   it('insertPinnedInteractions : add pinned in pin position when several, one after other pushing back remaining', () => {
     // GIVEN
-    const i1 = new Interaction({ id: '1' });
-    const i2 = new Interaction({ id: '2' });
-    const i3 = new Interaction({ id: 'pin1', pinned_at_position: 1 });
-    const i4 = new Interaction({ id: 'pin2', pinned_at_position: 2 });
+    const i1 = new Interaction(TestUtil.interactionData({ id: '1' }));
+    const i2 = new Interaction(TestUtil.interactionData({ id: '2' }));
+    const i3 = new Interaction(
+      TestUtil.interactionData({ id: 'pin1', pinned_at_position: 1 }),
+    );
+    const i4 = new Interaction(
+      TestUtil.interactionData({ id: 'pin2', pinned_at_position: 2 }),
+    );
     const target = [i1, i2];
 
     // WHEN
@@ -139,10 +210,10 @@ describe('DistributionSettings', () => {
   });
   it('countLockedInteractions : Count 2 locked inteeractitons', () => {
     // GIVEN
-    const i1 = new Interaction({ locked: true });
-    const i2 = new Interaction({ locked: true });
-    const i3 = new Interaction({ locked: false });
-    const i4 = new Interaction({});
+    const i1 = new Interaction(TestUtil.interactionData({ locked: true }));
+    const i2 = new Interaction(TestUtil.interactionData({ locked: true }));
+    const i3 = new Interaction(TestUtil.interactionData({ locked: false }));
+    const i4 = new Interaction(TestUtil.interactionData({}));
     const list = [i1, i2, i3, i4];
 
     // WHEN
@@ -153,8 +224,10 @@ describe('DistributionSettings', () => {
   });
   it('insertLockedInteractions : does not insert if already in list', () => {
     // GIVEN
-    const il1 = new Interaction({ id: 'l1', locked: true });
-    const i1 = new Interaction({ id: 'l1' });
+    const il1 = new Interaction(
+      TestUtil.interactionData({ id: 'l1', locked: true }),
+    );
+    const i1 = new Interaction(TestUtil.interactionData({ id: 'l1' }));
     const locked_list = [il1];
     const work_list = [i1];
 
@@ -171,15 +244,21 @@ describe('DistributionSettings', () => {
   });
   it('insertLockedInteractions : insert locked interactions at configured position', () => {
     // GIVEN
-    const il1 = new Interaction({ id: 'l1', locked: true });
-    const il2 = new Interaction({ id: 'l2', locked: true });
-    const il3 = new Interaction({ id: 'l3', locked: true });
-    const i1 = new Interaction({ id: '1' });
-    const i2 = new Interaction({ id: '2' });
-    const i3 = new Interaction({ id: '3' });
-    const i4 = new Interaction({ id: '4' });
-    const i5 = new Interaction({ id: '5' });
-    const i6 = new Interaction({ id: '6' });
+    const il1 = new Interaction(
+      TestUtil.interactionData({ id: 'l1', locked: true }),
+    );
+    const il2 = new Interaction(
+      TestUtil.interactionData({ id: 'l2', locked: true }),
+    );
+    const il3 = new Interaction(
+      TestUtil.interactionData({ id: 'l3', locked: true }),
+    );
+    const i1 = new Interaction(TestUtil.interactionData({ id: '1' }));
+    const i2 = new Interaction(TestUtil.interactionData({ id: '2' }));
+    const i3 = new Interaction(TestUtil.interactionData({ id: '3' }));
+    const i4 = new Interaction(TestUtil.interactionData({ id: '4' }));
+    const i5 = new Interaction(TestUtil.interactionData({ id: '5' }));
+    const i6 = new Interaction(TestUtil.interactionData({ id: '6' }));
     const locked_list = [il1, il2, il3];
     const work_list = [i1, i2, i3, i4, i5, i6];
 
@@ -206,12 +285,14 @@ describe('DistributionSettings', () => {
   });
   it('insertLockedInteractions : insert less locked when less available', () => {
     // GIVEN
-    const il1 = new Interaction({ id: 'l1', locked: true });
-    const i1 = new Interaction({ id: '1' });
-    const i2 = new Interaction({ id: '2' });
-    const i3 = new Interaction({ id: '3' });
-    const i4 = new Interaction({ id: '4' });
-    const i5 = new Interaction({ id: '5' });
+    const il1 = new Interaction(
+      TestUtil.interactionData({ id: 'l1', locked: true }),
+    );
+    const i1 = new Interaction(TestUtil.interactionData({ id: '1' }));
+    const i2 = new Interaction(TestUtil.interactionData({ id: '2' }));
+    const i3 = new Interaction(TestUtil.interactionData({ id: '3' }));
+    const i4 = new Interaction(TestUtil.interactionData({ id: '4' }));
+    const i5 = new Interaction(TestUtil.interactionData({ id: '5' }));
     const locked_list = [il1];
     const work_list = [i1, i2, i3, i4, i5];
 
@@ -228,13 +309,17 @@ describe('DistributionSettings', () => {
   });
   it('insertLockedInteractions : reposition already present locked interactions', () => {
     // GIVEN
-    const il1 = new Interaction({ id: 'l1', locked: true });
-    const il2 = new Interaction({ id: 'l2', locked: true });
-    const i3 = new Interaction({ id: '3' });
-    const i4 = new Interaction({ id: '4' });
-    const i5 = new Interaction({ id: '5' });
-    const i6 = new Interaction({ id: '6' });
-    const i7 = new Interaction({ id: '7' });
+    const il1 = new Interaction(
+      TestUtil.interactionData({ id: 'l1', locked: true }),
+    );
+    const il2 = new Interaction(
+      TestUtil.interactionData({ id: 'l2', locked: true }),
+    );
+    const i3 = new Interaction(TestUtil.interactionData({ id: '3' }));
+    const i4 = new Interaction(TestUtil.interactionData({ id: '4' }));
+    const i5 = new Interaction(TestUtil.interactionData({ id: '5' }));
+    const i6 = new Interaction(TestUtil.interactionData({ id: '6' }));
+    const i7 = new Interaction(TestUtil.interactionData({ id: '7' }));
     const work_list = [il1, il2, i3, i4, i5, i6, i7];
 
     // WHEN
@@ -247,15 +332,21 @@ describe('DistributionSettings', () => {
   });
   it('insertLockedInteractions : reposition and inserts remaining locked', () => {
     // GIVEN
-    const il1 = new Interaction({ id: 'l1', locked: true });
-    const il2 = new Interaction({ id: 'l2', locked: true });
-    const il3 = new Interaction({ id: 'l3', locked: true });
-    const i3 = new Interaction({ id: '3' });
-    const i4 = new Interaction({ id: '4' });
-    const i5 = new Interaction({ id: '5' });
-    const i6 = new Interaction({ id: '6' });
-    const i7 = new Interaction({ id: '7' });
-    const i8 = new Interaction({ id: '8' });
+    const il1 = new Interaction(
+      TestUtil.interactionData({ id: 'l1', locked: true }),
+    );
+    const il2 = new Interaction(
+      TestUtil.interactionData({ id: 'l2', locked: true }),
+    );
+    const il3 = new Interaction(
+      TestUtil.interactionData({ id: 'l3', locked: true }),
+    );
+    const i3 = new Interaction(TestUtil.interactionData({ id: '3' }));
+    const i4 = new Interaction(TestUtil.interactionData({ id: '4' }));
+    const i5 = new Interaction(TestUtil.interactionData({ id: '5' }));
+    const i6 = new Interaction(TestUtil.interactionData({ id: '6' }));
+    const i7 = new Interaction(TestUtil.interactionData({ id: '7' }));
+    const i8 = new Interaction(TestUtil.interactionData({ id: '8' }));
     const work_list = [il1, il2, i3, i4, i5, i6, i7, i8];
 
     // WHEN
@@ -281,12 +372,18 @@ describe('DistributionSettings', () => {
   });
   it('insertLockedInteractions : position locked at end when not enough unlocked', () => {
     // GIVEN
-    const il1 = new Interaction({ id: 'l1', locked: true });
-    const il2 = new Interaction({ id: 'l2', locked: true });
-    const il3 = new Interaction({ id: 'l3', locked: true });
-    const i1 = new Interaction({ id: '1' });
-    const i2 = new Interaction({ id: '2' });
-    const i3 = new Interaction({ id: '3' });
+    const il1 = new Interaction(
+      TestUtil.interactionData({ id: 'l1', locked: true }),
+    );
+    const il2 = new Interaction(
+      TestUtil.interactionData({ id: 'l2', locked: true }),
+    );
+    const il3 = new Interaction(
+      TestUtil.interactionData({ id: 'l3', locked: true }),
+    );
+    const i1 = new Interaction(TestUtil.interactionData({ id: '1' }));
+    const i2 = new Interaction(TestUtil.interactionData({ id: '2' }));
+    const i3 = new Interaction(TestUtil.interactionData({ id: '3' }));
     const work_list = [il1, il2, i1, i2, i3];
 
     // WHEN
@@ -302,11 +399,21 @@ describe('DistributionSettings', () => {
   });
   it('insertLockedInteractions : does not change position of fully locked item list', () => {
     // GIVEN
-    const il1 = new Interaction({ id: 'l1', locked: true });
-    const il2 = new Interaction({ id: 'l2', locked: true });
-    const il3 = new Interaction({ id: 'l3', locked: true });
-    const il5 = new Interaction({ id: 'l5', locked: true });
-    const il6 = new Interaction({ id: 'l6', locked: true });
+    const il1 = new Interaction(
+      TestUtil.interactionData({ id: 'l1', locked: true }),
+    );
+    const il2 = new Interaction(
+      TestUtil.interactionData({ id: 'l2', locked: true }),
+    );
+    const il3 = new Interaction(
+      TestUtil.interactionData({ id: 'l3', locked: true }),
+    );
+    const il5 = new Interaction(
+      TestUtil.interactionData({ id: 'l5', locked: true }),
+    );
+    const il6 = new Interaction(
+      TestUtil.interactionData({ id: 'l6', locked: true }),
+    );
     const work_list = [il1, il2, il3];
 
     // WHEN

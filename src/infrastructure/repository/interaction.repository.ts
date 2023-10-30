@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Interaction } from '../../domain/interaction/interaction';
+import { Interaction as InteractionDB } from '@prisma/client';
+
 import { v4 as uuidv4 } from 'uuid';
 import { SearchFilter } from '../../../src/domain/interaction/searchFilter';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { Thematique } from '../../domain/thematique';
 import { InteractionScore } from '../../../src/domain/interaction/interactionScore';
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
+import { InteractionDefinition } from 'src/domain/interaction/interactionDefinition';
 
 @Injectable()
 export class InteractionRepository {
@@ -21,7 +24,7 @@ export class InteractionRepository {
     const result = await this.prisma.interaction.findUnique({
       where: { id: interactionId },
     });
-    return result ? new Interaction(result) : null;
+    return result ? this.buildInteractionFromInteractionDB(result) : null;
   }
 
   async insertInteractionForUtilisateur(
@@ -56,7 +59,9 @@ export class InteractionRepository {
         },
       ],
     });
-    return liste.map((interactionDB) => new Interaction(interactionDB));
+    return liste.map((interactionDB) =>
+      this.buildInteractionFromInteractionDB(interactionDB),
+    );
   }
 
   async listMaxEligibleInteractionsByUtilisateurIdAndType(
@@ -102,7 +107,9 @@ export class InteractionRepository {
         },
       ],
     });
-    return interList.map((interactionDB) => new Interaction(interactionDB));
+    return interList.map((interactionDB) =>
+      this.buildInteractionFromInteractionDB(interactionDB),
+    );
   }
 
   async listInteractionScores(
@@ -153,14 +160,18 @@ export class InteractionRepository {
     });
   }
 
-  async updateInteractionByContentId(interaction: Interaction) {
+  async updateInteractionFromDefinitionByContentId(
+    interactionDefinition: InteractionDefinition,
+  ) {
+    // FIXME : refacto code autour des valeurs à pas toucher
     await this.prisma.interaction.updateMany({
       where: {
-        content_id: interaction.content_id,
+        content_id: interactionDefinition.content_id,
       },
       data: {
-        ...interaction,
+        ...interactionDefinition,
         updated_at: undefined, // pour forcer la mise à jour auto
+        id: undefined,
       },
     });
   }
@@ -201,6 +212,17 @@ export class InteractionRepository {
         content_id,
         done: false,
       },
+    });
+  }
+
+  private buildInteractionFromInteractionDB(
+    interDB: InteractionDB,
+  ): Interaction {
+    return new Interaction({
+      ...interDB,
+      type: InteractionType[interDB.type],
+      thematique_gamification: Thematique[interDB.thematique_gamification],
+      thematiques: interDB.thematiques.map((th) => Thematique[th]),
     });
   }
 }

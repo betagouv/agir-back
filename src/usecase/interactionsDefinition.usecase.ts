@@ -59,26 +59,24 @@ export class InteractionsDefinitionUsecase {
       interactionDef,
     );
 
-    const interactionToUpdateOrCreate =
-      Interaction.newDefaultInteractionFromDefinition(interactionDef);
-
     const inter_already_deployed =
       await this.interactionRepository.doesContentIdExists(
-        interactionToUpdateOrCreate.content_id,
+        interactionDef.content_id,
       );
 
     if (inter_already_deployed) {
-      interactionToUpdateOrCreate.id = undefined;
-      await this.interactionRepository.updateInteractionByContentId(
-        interactionToUpdateOrCreate,
+      await this.interactionRepository.updateInteractionFromDefinitionByContentId(
+        interactionDef,
       );
     } else {
+      const interactionToCreate =
+        Interaction.newDefaultInteractionFromDefinition(interactionDef);
       const utilisateur_ids =
         await this.utilisateurRepository.listUtilisateurIds();
 
       const interactionListToInsert =
         this.duplicateInteractionForEachUtilisateur(
-          interactionToUpdateOrCreate,
+          interactionToCreate,
           utilisateur_ids,
         );
 

@@ -6,6 +6,7 @@ import { Thematique } from '../../../src/domain/thematique';
 import { UserQuizzProfile } from '../../../src/domain/quizz/userQuizzProfile';
 import { Decimal } from '@prisma/client/runtime/library';
 import { InteractionScore } from '../../../src/domain/interaction/interactionScore';
+import { InteractionDefinition } from '../../../src/domain/interaction/interactionDefinition';
 
 describe('InteractionRepository', () => {
   let interactionRepository = new InteractionRepository(TestUtil.prisma);
@@ -165,10 +166,12 @@ describe('InteractionRepository', () => {
     //GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction');
-    const interactionToUpdate = new Interaction({
-      points: 123,
-      id: 'interaction-id',
-    });
+    const interactionToUpdate = new Interaction(
+      TestUtil.interactionData({
+        points: 123,
+        id: 'interaction-id',
+      }),
+    );
 
     //WHEN
     await interactionRepository.updateInteraction(interactionToUpdate);
@@ -499,7 +502,7 @@ describe('InteractionRepository', () => {
     // THEN
     expect(result).toStrictEqual(true);
   });
-  it('updateInteractionByContentId : update interaction by content id without destroying user data ', async () => {
+  it('updateInteractionFromDefinitionByContentId : update interaction by content id without destroying user data ', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
@@ -508,13 +511,17 @@ describe('InteractionRepository', () => {
       content_id: '123',
     });
 
-    const incomingInter = new Interaction({
-      content_id: '123',
-      titre: 'THE NEW TITLE',
-    });
+    const incomingInterDef = new InteractionDefinition(
+      TestUtil.interactionDefinitionData({
+        content_id: '123',
+        titre: 'THE NEW TITLE',
+      }),
+    );
 
     // WHEN
-    await interactionRepository.updateInteractionByContentId(incomingInter);
+    await interactionRepository.updateInteractionFromDefinitionByContentId(
+      incomingInterDef,
+    );
 
     // THEN
     const dbInter = await TestUtil.prisma.interaction.findUnique({
@@ -528,20 +535,24 @@ describe('InteractionRepository', () => {
     // GIVEN
     await TestUtil.create('utilisateur');
 
-    const inter1 = new Interaction({
-      id: '1',
-      titre: 'titre 1',
-      utilisateurId: 'utilisateur-id',
-      type: InteractionType.article,
-      thematique_gamification: Thematique.alimentation,
-    });
-    const inter2 = new Interaction({
-      id: '2',
-      titre: 'titre 2',
-      utilisateurId: 'utilisateur-id',
-      type: InteractionType.quizz,
-      thematique_gamification: Thematique.alimentation,
-    });
+    const inter1 = new Interaction(
+      TestUtil.interactionData({
+        id: '1',
+        titre: 'titre 1',
+        utilisateurId: 'utilisateur-id',
+        type: InteractionType.article,
+        thematique_gamification: Thematique.alimentation,
+      }),
+    );
+    const inter2 = new Interaction(
+      TestUtil.interactionData({
+        id: '2',
+        titre: 'titre 2',
+        utilisateurId: 'utilisateur-id',
+        type: InteractionType.quizz,
+        thematique_gamification: Thematique.alimentation,
+      }),
+    );
 
     // WHEN
     await interactionRepository.insertInteractionList([inter1, inter2]);

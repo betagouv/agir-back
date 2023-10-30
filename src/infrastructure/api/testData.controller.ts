@@ -32,8 +32,9 @@ export enum TheTypes {
   utilisateur = 'utilisateur',
 }
 
-const DUMMY_INTERACTION = {
+const DUMMY_INTERACTION_DEF = {
   titre: 'Titre',
+  soustitre: 'Sous titre',
   thematique_gamification: Thematique.climat,
   thematiques: [Thematique.climat, Thematique.logement],
   duree: '⏱️ < 1 minute',
@@ -45,6 +46,17 @@ const DUMMY_INTERACTION = {
   score: 0.9,
   locked: false,
   codes_postaux: [],
+  content_id: null,
+  type: null,
+  tags: null,
+  url: null,
+  thematique_gamification_titre: 'Climat',
+  pinned_at_position: null,
+  raison_lock: null,
+  day_period: null,
+  created_at: null,
+  updated_at: null,
+  id: null,
 };
 
 @Controller()
@@ -150,14 +162,16 @@ export class TestDataController {
             interaction.cms_id.toString(),
           );
         if (interDef === null) {
-          interactionToCreate = new Interaction(DUMMY_INTERACTION);
+          interactionToCreate =
+            Interaction.newDefaultInteractionFromDefinition(DUMMY_INTERACTION_DEF);
           interactionToCreate.type = InteractionType.article;
           interactionToCreate.content_id = interaction.cms_id.toString();
           interactionToCreate.titre = 'Article CMS manquant : '.concat(
             interaction.cms_id,
           );
         } else {
-          interactionToCreate = new Interaction(interDef);
+          interactionToCreate =
+            Interaction.newDefaultInteractionFromDefinition(interDef);
         }
         interactionToCreate = { ...interactionToCreate, ...interaction };
         delete interactionToCreate['cms_type'];
@@ -303,14 +317,16 @@ export class TestDataController {
             interaction.cms_id.toString(),
           );
         if (interDef === null) {
-          interactionToCreate = new Interaction(DUMMY_INTERACTION);
+          interactionToCreate =
+            Interaction.newDefaultInteractionFromDefinition(DUMMY_INTERACTION_DEF);
           interactionToCreate.type = InteractionType.quizz;
           interactionToCreate.content_id = interaction.cms_id.toString();
           interactionToCreate.titre = 'Quizz CMS manquant : '.concat(
             interaction.cms_id,
           );
         } else {
-          interactionToCreate = new Interaction(interDef);
+          interactionToCreate =
+            Interaction.newDefaultInteractionFromDefinition(interDef);
         }
         interactionToCreate = { ...interactionToCreate, ...interaction };
         delete interactionToCreate['cms_type'];
