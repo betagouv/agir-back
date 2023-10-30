@@ -10,6 +10,7 @@ const services = {
     url: 'https://www.enedis.fr/le-compteur-linky-un-outil-pour-la-transition-ecologique',
     is_url_externe: true,
     local: false,
+    thematiques: ['climat', 'logement'],
   },
   suivi_transport: {
     titre: `Suivez l'impact de vos trajets quotidiens`,

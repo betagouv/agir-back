@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Decimal } from '@prisma/client/runtime/library';
+import { Thematique } from '../../../../src/domain/thematique';
 
 export class InteractionAPI {
   @ApiProperty() id: string;
@@ -7,8 +8,8 @@ export class InteractionAPI {
   @ApiProperty() titre: string;
   @ApiProperty() soustitre: string;
   @ApiProperty({ deprecated: true }) categorie: string; // FIXME : rename to thematique_gamification
-  @ApiProperty() thematique_gamification: string;
-  @ApiProperty() thematiques: string[];
+  @ApiProperty() thematique_gamification: Thematique;
+  @ApiProperty({ type: [String] }) thematiques: Thematique[];
   @ApiProperty() tags: string[];
   @ApiProperty() duree: string;
   @ApiProperty() frequence: string;

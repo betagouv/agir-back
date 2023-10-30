@@ -95,7 +95,6 @@ describe('/api/cms/income (API test)', () => {
 
     // WHEN
     const response = await TestUtil.POST('/api/cms/income').send(CMS_DATA);
-    console.log(response.body);
     // THEN
     const interDB = await TestUtil.prisma.interaction.findMany({});
     const interDefDB = await TestUtil.prisma.interactionDefinition.findMany({});

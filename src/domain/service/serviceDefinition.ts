@@ -1,9 +1,12 @@
+import { Thematique } from '../thematique';
+
 export class ServiceDefinitionData {
   id: string;
   titre: string;
   local: boolean;
   url: string;
   is_url_externe: boolean;
+  thematiques: Thematique[] = [];
 }
 export class ServiceDefinition extends ServiceDefinitionData {
   constructor(data: ServiceDefinitionData) {

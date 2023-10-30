@@ -247,6 +247,7 @@ export class TestUtil {
       url: 'url',
       local: true,
       is_url_externe: true,
+      thematiques: ['climat', 'logement'],
       ...override,
     };
   }

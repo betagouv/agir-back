@@ -1,3 +1,4 @@
+import { Thematique } from '../../../src/domain/thematique';
 import { TestUtil } from '../../TestUtil';
 
 describe('Service (API test)', () => {
@@ -40,6 +41,10 @@ describe('Service (API test)', () => {
     expect(response.body[0].url).toEqual('url');
     expect(response.body[0].local).toEqual(false);
     expect(response.body[0].is_url_externe).toEqual(true);
+    expect(response.body[0].thematiques).toStrictEqual([
+      Thematique.climat,
+      Thematique.logement,
+    ]);
   });
   it('POST /utilisateurs/id/services ajout un nouveau service à l utilisateur', async () => {
     // GIVEN
@@ -137,5 +142,9 @@ describe('Service (API test)', () => {
     expect(response.body[0].url).toEqual('url');
     expect(response.body[0].local).toEqual(true);
     expect(response.body[0].is_url_externe).toEqual(true);
+    expect(response.body[0].thematiques).toStrictEqual([
+      Thematique.climat,
+      Thematique.logement,
+    ]);
   });
 });

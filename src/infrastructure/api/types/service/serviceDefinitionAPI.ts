@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ServiceDefinition } from 'src/domain/serviceDefinition';
+import { ServiceDefinition } from '../../../../../src/domain/service/serviceDefinition';
+import { Thematique } from '../../../../../src/domain/thematique';
 
 export class ServiceDefinitionAPI {
   @ApiProperty() id: string;
@@ -7,6 +8,7 @@ export class ServiceDefinitionAPI {
   @ApiProperty() url: string;
   @ApiProperty() local: boolean;
   @ApiProperty() is_url_externe: boolean;
+  @ApiProperty({ type: [String] }) thematiques: Thematique[];
 
   static mapServiceDefintionToServiceDefinitionAPI(
     serviceDefinition: ServiceDefinition,
@@ -17,6 +19,7 @@ export class ServiceDefinitionAPI {
       url: serviceDefinition.url,
       local: serviceDefinition.local,
       is_url_externe: serviceDefinition.is_url_externe,
+      thematiques: serviceDefinition.thematiques,
     };
   }
 }

@@ -5,9 +5,10 @@ import {
   ServiceDefinition as ServiceDefinitionDB,
   Service as ServiceDB,
 } from '@prisma/client';
-import { ServiceDefinition } from '../../../src/domain/serviceDefinition';
+import { ServiceDefinition } from '../../domain/service/serviceDefinition';
 import { v4 as uuidv4 } from 'uuid';
-import { Service } from '../../../src/domain/service';
+import { Service } from '../../domain/service/service';
+import { Thematique } from '../../../src/domain/thematique';
 
 @Injectable()
 export class ServiceRepository {
@@ -15,7 +16,6 @@ export class ServiceRepository {
 
   async listeServiceDefinitions(): Promise<ServiceDefinition[]> {
     const result = await this.prisma.serviceDefinition.findMany();
-    console.log(result);
     return result.map((service) => this.buildServicefinition(service));
   }
   async addServiceToUtilisateur(
@@ -75,6 +75,9 @@ export class ServiceRepository {
   private buildServicefinition(
     serviceDefinitionDB: ServiceDefinitionDB,
   ): ServiceDefinition {
-    return new ServiceDefinition({ ...serviceDefinitionDB });
+    return new ServiceDefinition({
+      ...serviceDefinitionDB,
+      thematiques: serviceDefinitionDB.thematiques.map((th) => Thematique[th]),
+    });
   }
 }

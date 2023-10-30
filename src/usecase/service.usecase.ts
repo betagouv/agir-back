@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Service } from 'src/domain/service';
-import { ServiceDefinition } from '../../src/domain/serviceDefinition';
+import { Service } from 'src/domain/service/service';
+import { ServiceDefinition } from '../domain/service/serviceDefinition';
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
 
 @Injectable()

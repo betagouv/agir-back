@@ -181,7 +181,6 @@ export class TestDataController {
         delete interactionToCreate['cms_id'];
         interactionToCreate.id = uuidv4();
         interactionToCreate.utilisateurId = utilisateurId;
-        console.log(interactionToCreate);
         await this.interactionRepository.insertInteractionForUtilisateur(
           utilisateurId,
           interactionToCreate,
