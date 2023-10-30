@@ -100,4 +100,20 @@ describe('Service (API test)', () => {
       `Le service d'id serviceDefinition-id est dejà associé à cet utilisateur`,
     );
   });
+  it('DELETE /utilisateurs/id/services/id supprime un service associé à l utilisateur', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition');
+    await TestUtil.create('service');
+
+    // WHEN
+    const response = await TestUtil.DELETE(
+      '/utilisateurs/utilisateur-id/services/service-id',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbServices = await TestUtil.prisma.service.findMany();
+    expect(dbServices).toHaveLength(0);
+  });
 });

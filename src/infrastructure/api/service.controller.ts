@@ -7,6 +7,7 @@ import {
   UseGuards,
   Request,
   BadRequestException,
+  Delete,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -52,7 +53,7 @@ export class ServiceController extends GenericControler {
   }
   @Post('utilisateurs/:id/services')
   @ApiOperation({
-    summary: "Ajoute un service du catalogue à l'utilisateur",
+    summary: "Ajoute un service provenant du catalogue à l'utilisateur donné",
   })
   @ApiBody({
     type: AddServiceAPI,
@@ -73,5 +74,19 @@ export class ServiceController extends GenericControler {
     } catch (error) {
       throw new BadRequestException(ErrorService.toStringOrObject(error));
     }
+  }
+  @Delete('utilisateurs/:id/services/:id_service')
+  @ApiOperation({
+    summary: "Supprime un service d'id donné associé à l'utilisateur",
+  })
+  @UseGuards(AuthGuard)
+  async deleteServiceFromUtilisateur(
+    @Param('id') utilisateurId: string,
+    @Param('id_service') id_service: string,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+
+    return await this.serviceUsecase.removeServiceFromUtilisateur(id_service);
   }
 }

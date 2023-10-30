@@ -18,4 +18,7 @@ export class ServiceUsecase {
       serviceDefinitionId,
     );
   }
+  async removeServiceFromUtilisateur(serviceId: string) {
+    return this.serviceRepository.removeServiceFromUtilisateur(serviceId);
+  }
 }

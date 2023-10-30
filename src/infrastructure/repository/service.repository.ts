@@ -47,6 +47,13 @@ export class ServiceRepository {
       }
     }
   }
+  async removeServiceFromUtilisateur(serviceId: string) {
+    await this.prisma.service.delete({
+      where: {
+        id: serviceId,
+      },
+    });
+  }
 
   public static buildService(serviceDB: ServiceDB): Service {
     return new Service({
