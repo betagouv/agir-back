@@ -109,8 +109,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // GIVEN
     await TestUtil.create('utilisateur', { failed_login_count: 2 });
     await TestUtil.create('badge');
-    await TestUtil.create('serviceDefinition');
-    await TestUtil.create('service');
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id');
     // WHEN
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
@@ -134,11 +132,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       loisir: { level: 1, isCompleted: false },
     });
     expect(response.body.badges[0].titre).toEqual('titre');
-    expect(response.body.services).toHaveLength(1);
-    expect(response.body.services[0].label).toEqual('titre');
-    expect(response.body.services[0].url).toEqual('url');
-    expect(response.body.services[0].local).toEqual(true);
-    expect(response.body.services[0].is_url_externe).toEqual(true);
     expect(response.body.created_at).toEqual(dbUser.created_at.toISOString());
     expect(response.body.failed_login_count).toEqual(undefined);
     expect(response.body.prevent_login_before).toEqual(undefined);
@@ -194,8 +187,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       active_account: true,
     });
     await TestUtil.create('badge');
-    await TestUtil.create('serviceDefinition');
-    await TestUtil.create('service');
 
     // WHEN
     const response = await TestUtil.getServer()
@@ -214,7 +205,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.utilisateur.revenu_fiscal).toEqual(10000);
     expect(response.body.utilisateur.points).toEqual(0);
     expect(response.body.utilisateur.badges[0].titre).toEqual('titre');
-    expect(response.body.utilisateur.services[0].label).toEqual('titre');
     expect(response.body.utilisateur.quizzProfile).toEqual({
       alimentation: { level: 1, isCompleted: false },
       transport: { level: 1, isCompleted: false },
@@ -529,7 +519,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     );
   });
 
-  it('POST /utilisateurs/modifier_mot_de_passe - si code ok le mot de passe est modifié', async () => {
+  it('POST /utilisateurs/modifier_mot_de_passe - si code ok le mot de passe est modifié, compteur à zero', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.getServer()
@@ -558,12 +548,11 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const dbUtilisateur = new Utilisateur({
       ...userDB,
       badges: [],
-      services: [],
       quizzProfile: null,
       onboardingData: null,
       onboardingResult: null,
     });
-
+    expect(userDB.failed_checkcode_count).toEqual(0);
     expect(userDB.passwordHash).toEqual(
       crypto
         .pbkdf2Sync('#1234567890HAHA', userDB.passwordSalt, 1000, 64, `sha512`)

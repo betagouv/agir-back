@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Service } from 'src/domain/service';
 import { ServiceDefinition } from '../../src/domain/serviceDefinition';
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
 
@@ -20,5 +21,15 @@ export class ServiceUsecase {
   }
   async removeServiceFromUtilisateur(serviceId: string) {
     return this.serviceRepository.removeServiceFromUtilisateur(serviceId);
+  }
+  async listeServicesOfUtilisateur(utilisateurId: string): Promise<Service[]> {
+    let result = await this.serviceRepository.listeServicesOfUtilisateur(
+      utilisateurId,
+    );
+    // FIXME : temp value for label, dynamic data in the end
+    result.forEach((service) => {
+      service.label = service.titre;
+    });
+    return result;
   }
 }

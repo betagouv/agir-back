@@ -62,7 +62,7 @@ export class Interaction extends InteractionData {
 
   public static newDefaultInteractionFromDefinition(
     interactionDefinition: InteractionDefinition,
-  ) {
+  ): Interaction {
     return new Interaction({
       ...interactionDefinition,
       seen: 0,

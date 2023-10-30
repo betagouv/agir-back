@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BadgeAPI } from '../badgeAPI';
 import { QuizzProfileAPI } from '../quizz/quizzProfileAPI';
-import { ServiceAPI } from '../service/serviceAPI';
 
 export class UtilisateurAPI {
   @ApiProperty()
@@ -33,6 +32,4 @@ export class UtilisateurAPI {
 
   @ApiProperty({ type: [BadgeAPI] })
   badges: BadgeAPI[];
-  @ApiProperty({ type: [ServiceAPI] })
-  services: ServiceAPI[];
 }

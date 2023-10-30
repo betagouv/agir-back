@@ -23,6 +23,7 @@ import { ServiceDefinitionAPI } from './types/service/serviceDefinitionAPI';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
 import { AddServiceAPI } from './types/service/addServiceAPI';
 import { ErrorService } from '../errorService';
+import { ServiceAPI } from './types/service/serviceAPI';
 
 @ApiExtraModels(ServiceDefinitionAPI)
 @Controller()
@@ -41,15 +42,9 @@ export class ServiceController extends GenericControler {
   @UseGuards(AuthGuard)
   async listeServicesDef(): Promise<ServiceDefinitionAPI[]> {
     const result = await this.serviceUsecase.listServicesDefinitions();
-    return result.map((def) => {
-      return {
-        id: def.id,
-        local: def.local,
-        titre: def.titre,
-        url: def.url,
-        is_url_externe: def.is_url_externe,
-      };
-    });
+    return result.map((def) =>
+      ServiceDefinitionAPI.mapServiceDefintionToServiceDefinitionAPI(def),
+    );
   }
   @Post('utilisateurs/:id/services')
   @ApiOperation({
@@ -74,6 +69,26 @@ export class ServiceController extends GenericControler {
     } catch (error) {
       throw new BadRequestException(ErrorService.toStringOrObject(error));
     }
+  }
+  @Get('utilisateurs/:id/services')
+  @ApiOperation({
+    summary: "Liste tous les services associés à l'utilisateur",
+  })
+  @ApiOkResponse({ type: [ServiceAPI] })
+  @UseGuards(AuthGuard)
+  async listServicesOfUtilisateur(
+    @Param('id') utilisateurId: string,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+
+    const result = await this.serviceUsecase.listeServicesOfUtilisateur(
+      utilisateurId,
+    );
+
+    return result.map((service) =>
+      ServiceAPI.mapServicesToServicesAPI(service),
+    );
   }
   @Delete('utilisateurs/:id/services/:id_service')
   @ApiOperation({

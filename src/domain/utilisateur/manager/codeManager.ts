@@ -41,6 +41,9 @@ export class CodeManager {
     if (!ok) {
       CodeManager.failCode(utilisateur);
       await this.securityRepository.updateCodeValidationData(utilisateur);
+    } else {
+      CodeManager.successCode(utilisateur);
+      await this.securityRepository.updateCodeValidationData(utilisateur);
     }
     return ok;
   }
@@ -71,6 +74,9 @@ export class CodeManager {
     if (utilisateur.failed_checkcode_count > this.MAX_CODE_ATTEMPT) {
       CodeManager.incrementNextAllowedCodeTime(utilisateur);
     }
+  }
+  private static successCode(utilisateur: CodeAwareUtilisateur) {
+    utilisateur.failed_checkcode_count = 0;
   }
 
   private static incrementNextAllowedCodeTime(

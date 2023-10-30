@@ -116,4 +116,26 @@ describe('Service (API test)', () => {
     const dbServices = await TestUtil.prisma.service.findMany();
     expect(dbServices).toHaveLength(0);
   });
+  it('GET /utilisateurs/id/services liste les services associés à l utilisateur', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', { id: '1' });
+    await TestUtil.create('serviceDefinition', { id: '2' });
+    await TestUtil.create('service', { id: '1', serviceDefinitionId: '1' });
+    await TestUtil.create('service', { id: '2', serviceDefinitionId: '2' });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/services',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(2);
+    expect(response.body[0].label).toEqual('titre'); // FIXME :temp value
+    expect(response.body[0].titre).toEqual('titre');
+    expect(response.body[0].url).toEqual('url');
+    expect(response.body[0].local).toEqual(true);
+    expect(response.body[0].is_url_externe).toEqual(true);
+  });
 });

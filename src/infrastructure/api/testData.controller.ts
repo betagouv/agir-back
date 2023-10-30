@@ -15,6 +15,7 @@ import { Interaction } from '../../../src/domain/interaction/interaction';
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 import { Thematique } from '../../../src/domain/thematique';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
+import { InteractionRepository } from '../repository/interaction.repository';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
 const _aides = require('../../../test_data/interactions/_aides');
 const _suivis = require('../../../test_data/interactions/_suivis');
@@ -48,15 +49,15 @@ const DUMMY_INTERACTION_DEF = {
   codes_postaux: [],
   content_id: null,
   type: null,
-  tags: null,
+  tags: [],
   url: null,
   thematique_gamification_titre: 'Climat',
-  pinned_at_position: null,
-  raison_lock: null,
-  day_period: null,
-  created_at: null,
-  updated_at: null,
-  id: null,
+  pinned_at_position: undefined,
+  raison_lock: undefined,
+  day_period: undefined,
+  created_at: undefined,
+  updated_at: undefined,
+  id: undefined,
 };
 
 @Controller()
@@ -67,6 +68,7 @@ export class TestDataController {
     private suiviRepository: SuiviRepository,
     private questionNGCRepository: QuestionNGCRepository,
     private interactionDefinitionRepository: InteractionDefinitionRepository,
+    private interactionRepository: InteractionRepository,
   ) {}
 
   @Get('testdata/:id')
@@ -162,8 +164,9 @@ export class TestDataController {
             interaction.cms_id.toString(),
           );
         if (interDef === null) {
-          interactionToCreate =
-            Interaction.newDefaultInteractionFromDefinition(DUMMY_INTERACTION_DEF);
+          interactionToCreate = Interaction.newDefaultInteractionFromDefinition(
+            DUMMY_INTERACTION_DEF,
+          );
           interactionToCreate.type = InteractionType.article;
           interactionToCreate.content_id = interaction.cms_id.toString();
           interactionToCreate.titre = 'Article CMS manquant : '.concat(
@@ -178,9 +181,11 @@ export class TestDataController {
         delete interactionToCreate['cms_id'];
         interactionToCreate.id = uuidv4();
         interactionToCreate.utilisateurId = utilisateurId;
-        await this.prisma.interaction.create({
-          data: interactionToCreate,
-        });
+        console.log(interactionToCreate);
+        await this.interactionRepository.insertInteractionForUtilisateur(
+          utilisateurId,
+          interactionToCreate,
+        );
       }
     }
   }
@@ -317,8 +322,9 @@ export class TestDataController {
             interaction.cms_id.toString(),
           );
         if (interDef === null) {
-          interactionToCreate =
-            Interaction.newDefaultInteractionFromDefinition(DUMMY_INTERACTION_DEF);
+          interactionToCreate = Interaction.newDefaultInteractionFromDefinition(
+            DUMMY_INTERACTION_DEF,
+          );
           interactionToCreate.type = InteractionType.quizz;
           interactionToCreate.content_id = interaction.cms_id.toString();
           interactionToCreate.titre = 'Quizz CMS manquant : '.concat(

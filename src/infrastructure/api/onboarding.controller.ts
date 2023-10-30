@@ -100,12 +100,7 @@ export class OnboardingController {
           points: loggedUser.utilisateur.points,
           quizzProfile: loggedUser.utilisateur.quizzProfile.getData(),
           created_at: loggedUser.utilisateur.created_at,
-          badges: BadgeAPI.mapServicesToBadgesAPI(
-            loggedUser.utilisateur.badges,
-          ),
-          services: ServiceAPI.mapServicesToServicesAPI(
-            loggedUser.utilisateur.services,
-          ),
+          badges: [],
         },
         token: loggedUser.token,
       };

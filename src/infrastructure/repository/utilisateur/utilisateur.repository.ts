@@ -254,11 +254,6 @@ export class UtilisateurRepository {
                 }),
             )
           : [],
-        services: user['services']
-          ? user['services'].map((service) =>
-              ServiceRepository.buildService(service),
-            )
-          : [],
       });
     }
     return null;

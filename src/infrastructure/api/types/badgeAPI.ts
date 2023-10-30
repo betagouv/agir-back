@@ -6,14 +6,11 @@ export class BadgeAPI {
   @ApiProperty() type: string;
   @ApiProperty() created_at: Date;
 
-  static mapServicesToBadgesAPI(badges: Badge[]): BadgeAPI[] {
-    if (!badges) return [];
-    return badges.map((badge) => {
-      return {
-        titre: badge.titre,
-        type: badge.type,
-        created_at: badge.created_at,
-      } as BadgeAPI;
-    });
+  static mapBadgeToBadgeAPI(badge: Badge): BadgeAPI {
+    return {
+      titre: badge.titre,
+      type: badge.type,
+      created_at: badge.created_at,
+    };
   }
 }

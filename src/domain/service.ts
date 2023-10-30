@@ -1,16 +1,15 @@
-import {
-  ServiceDefinition,
-  ServiceDefinitionData,
-} from './serviceDefinition';
+import { ServiceDefinition } from './serviceDefinition';
 
-export class ServiceData {
+export class ServiceData extends ServiceDefinition {
   id: string;
-  serviceDefinition: ServiceDefinitionData;
+  label: string;
+  constructor() {
+    super({} as any);
+  }
 }
 export class Service extends ServiceData {
   constructor(data: ServiceData) {
     super();
-    this.id = data.id;
-    this.serviceDefinition = new ServiceDefinition(data.serviceDefinition);
+    Object.assign(this, data);
   }
 }

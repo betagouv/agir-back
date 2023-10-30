@@ -11,7 +11,7 @@ export class InteractionDefinitionData {
   thematique_gamification: Thematique;
   thematique_gamification_titre: string;
   thematiques: Thematique[];
-  tags: string[];
+  tags: string[] = [];
   duree: string;
   frequence: string;
   image_url: string;
@@ -21,7 +21,7 @@ export class InteractionDefinitionData {
   locked: boolean;
   pinned_at_position: number;
   raison_lock: string;
-  codes_postaux: string[];
+  codes_postaux: string[] = [];
   day_period: number;
   created_at: Date;
   updated_at: Date;

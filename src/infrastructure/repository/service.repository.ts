@@ -15,9 +15,8 @@ export class ServiceRepository {
 
   async listeServiceDefinitions(): Promise<ServiceDefinition[]> {
     const result = await this.prisma.serviceDefinition.findMany();
-    return result.map((service) =>
-      ServiceRepository.buildServicefinition(service),
-    );
+    console.log(result);
+    return result.map((service) => this.buildServicefinition(service));
   }
   async addServiceToUtilisateur(
     utilisateurId: string,
@@ -54,23 +53,28 @@ export class ServiceRepository {
       },
     });
   }
+  async listeServicesOfUtilisateur(utilisateurId: string): Promise<Service[]> {
+    const result = await this.prisma.service.findMany({
+      where: {
+        utilisateurId: utilisateurId,
+      },
+      include: {
+        serviceDefinition: true,
+      },
+    });
+    return result.map((service) => this.buildService(service));
+  }
 
-  public static buildService(serviceDB: ServiceDB): Service {
+  private buildService(serviceDB: ServiceDB): Service {
     return new Service({
+      ...serviceDB['serviceDefinition'],
       id: serviceDB.id,
-      serviceDefinition: serviceDB['serviceDefinition'],
     });
   }
 
-  private static buildServicefinition(
-    serviceDefinition: ServiceDefinitionDB,
+  private buildServicefinition(
+    serviceDefinitionDB: ServiceDefinitionDB,
   ): ServiceDefinition {
-    return new ServiceDefinition({
-      id: serviceDefinition.id,
-      titre: serviceDefinition.titre,
-      url: serviceDefinition.url,
-      local: serviceDefinition.local,
-      is_url_externe: serviceDefinition.is_url_externe,
-    });
+    return new ServiceDefinition({ ...serviceDefinitionDB });
   }
 }

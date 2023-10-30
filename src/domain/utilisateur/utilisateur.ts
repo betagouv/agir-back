@@ -4,7 +4,6 @@ import { CodeManager } from './manager/codeManager';
 import { Onboarding } from './onboarding';
 import { OnboardingResult } from './onboardingResult';
 import { PasswordManager } from './manager/passwordManager';
-import { Service } from '../service';
 
 export class UtilisateurData {
   id: string;
@@ -19,7 +18,6 @@ export class UtilisateurData {
   quizzProfile: UserQuizzProfile;
   created_at: Date;
   badges: Badge[];
-  services: Service[];
   passwordHash: string;
   passwordSalt: string;
   failed_login_count: number;
@@ -56,6 +54,7 @@ export class Utilisateur extends UtilisateurData {
   }
 
   public static checkEmailFormat(email: string) {
+    // FIXME : move to mail manager
     if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
       throw new Error(`Format de l'adresse électronique ${email} incorrect`);
     }
