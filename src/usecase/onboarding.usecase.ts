@@ -195,7 +195,7 @@ export class OnboardingUsecase {
       prevent_checkcode_before: new Date(),
       sent_email_count: 1,
       prevent_sendemail_before: new Date(),
-      todo: new Todo({ niveau: 1 }),
+      todo: Todo.buildTodoOfNiveau(1),
     });
 
     utilisateurToCreate.setNew6DigitCode();

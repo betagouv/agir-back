@@ -24,6 +24,13 @@ describe('TODO list (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.todo.niveau).toEqual(1);
+    expect(response.body.todo.elements[0].ordre).toEqual(1);
+    expect(response.body.todo.elements[0].titre).toEqual('titre');
+    expect(response.body.todo.elements[0].url).toEqual('/article/123');
+    expect(response.body.todo.elements[0].thematiques).toEqual([
+      'climat',
+      'logement',
+    ]);
   });
   it('GET /utilisateurs/id/todo retourne la todo liste courante seule', async () => {
     // GIVEN
@@ -35,5 +42,12 @@ describe('TODO list (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.niveau).toEqual(1);
+    expect(response.body.elements[0].ordre).toEqual(1);
+    expect(response.body.elements[0].titre).toEqual('titre');
+    expect(response.body.elements[0].url).toEqual('/article/123');
+    expect(response.body.elements[0].thematiques).toEqual([
+      'climat',
+      'logement',
+    ]);
   });
 });

@@ -1,4 +1,7 @@
-import { Impact, Thematique } from '../../../src/domain/utilisateur/onboarding/onboarding';
+import {
+  Impact,
+  Thematique,
+} from '../../../src/domain/utilisateur/onboarding/onboarding';
 import { TestUtil } from '../../TestUtil';
 
 const ONBOARDING_1_2_3_4_DATA = {
@@ -211,6 +214,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       loisir: { level: 1, isCompleted: false },
     });
     expect(response.body.utilisateur.badges).toHaveLength(0);
+    expect(response.body.utilisateur.todo.niveau).toEqual(1);
 
     userDB = await TestUtil.prisma.utilisateur.findFirst({
       where: { nom: 'WW' },

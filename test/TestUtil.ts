@@ -194,6 +194,14 @@ export class TestUtil {
 
       todo: {
         niveau: 1,
+        elements: [
+          {
+            ordre: 1,
+            titre: 'titre',
+            thematiques: ['climat', 'logement'],
+            url: '/article/123',
+          },
+        ],
       },
       onboardingData: {
         transports: ['voiture', 'pied'],

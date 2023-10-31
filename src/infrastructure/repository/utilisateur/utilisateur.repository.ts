@@ -122,7 +122,7 @@ export class UtilisateurRepository {
           onboardingData: { ...utilisateur.onboardingData },
           onboardingResult: { ...utilisateur.onboardingResult },
           quizzLevels: utilisateur.quizzProfile.getData(),
-          todo: { ...utilisateur.todo },
+          todo: { ...utilisateur.todo } as any,
         },
       });
       return this.buildUtilisateurFromDB(user);

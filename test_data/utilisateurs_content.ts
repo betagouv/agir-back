@@ -291,6 +291,9 @@ const utilisateurs = {
     points: 10,
     email: 'ww@w.com',
     mot_de_passe: 'haha',
+    todo: {
+      niveau: 1,
+    },
     interactions: [
       { id: 'aide_velo', score: 0.6 },
       { id: 'aide_retrofit', score: 0.1 },
