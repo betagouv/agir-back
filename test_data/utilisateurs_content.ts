@@ -1,6 +1,7 @@
+import { Thematique } from '../src/domain/thematique';
 import {
   Impact,
-  Thematique,
+  Thematique as ThemaOnbo,
 } from '../src/domain/utilisateur/onboarding/onboarding';
 
 const minQuizzLevel = {
@@ -37,8 +38,8 @@ const ONBOARDING_RES_3344 = {
   ventilation_par_impacts: {
     '1': [],
     '2': [],
-    '3': [Thematique.alimentation, Thematique.transports],
-    '4': [Thematique.logement, Thematique.consommation],
+    '3': [ThemaOnbo.alimentation, ThemaOnbo.transports],
+    '4': [ThemaOnbo.logement, ThemaOnbo.consommation],
   },
 };
 const ONBOARDING_RES_1122 = {
@@ -49,8 +50,8 @@ const ONBOARDING_RES_1122 = {
     consommation: Impact.tres_faible,
   },
   ventilation_par_impacts: {
-    '1': [Thematique.logement, Thematique.consommation],
-    '2': [Thematique.alimentation, Thematique.transports],
+    '1': [ThemaOnbo.logement, ThemaOnbo.consommation],
+    '2': [ThemaOnbo.alimentation, ThemaOnbo.transports],
     '3': [],
     '4': [],
   },
@@ -63,10 +64,10 @@ const ONBOARDING_RES_1234 = {
     consommation: Impact.faible,
   },
   ventilation_par_impacts: {
-    '1': [Thematique.alimentation],
-    '2': [Thematique.consommation],
-    '3': [Thematique.logement],
-    '4': [Thematique.transports],
+    '1': [ThemaOnbo.alimentation],
+    '2': [ThemaOnbo.consommation],
+    '3': [ThemaOnbo.logement],
+    '4': [ThemaOnbo.transports],
   },
 };
 const ONBOARDING_RES_4444 = {
@@ -81,10 +82,10 @@ const ONBOARDING_RES_4444 = {
     '2': [],
     '3': [],
     '4': [
-      Thematique.logement,
-      Thematique.consommation,
-      Thematique.alimentation,
-      Thematique.transports,
+      ThemaOnbo.logement,
+      ThemaOnbo.consommation,
+      ThemaOnbo.alimentation,
+      ThemaOnbo.transports,
     ],
   },
 };
@@ -293,6 +294,14 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     todo: {
       niveau: 1,
+      elements: [
+        {
+          ordre: 1,
+          url: '/article/123',
+          titre: 'lire un article',
+          thematiques: [Thematique.climat],
+        },
+      ],
     },
     interactions: [
       { id: 'aide_velo', score: 0.6 },
