@@ -8,7 +8,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { QuestionNGCUsecase } from '../../usecase/questionNGC.usecase';
-import { QuestionNGCAPI } from './types/questionNGCAPI';
+import { QuestionNGCAPI } from './types/ngc/questionNGCAPI';
 import { Question } from '../../../src/domain/bilan/question';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';

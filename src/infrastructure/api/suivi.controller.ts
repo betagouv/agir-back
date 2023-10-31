@@ -23,7 +23,7 @@ import { Suivi } from '../../domain/suivi/suivi';
 import { SuiviAlimentation } from '../../domain/suivi/suiviAlimentation';
 import { SuiviTransport } from '../../domain/suivi/suiviTransport';
 import { SuiviType } from '../../domain/suivi/suiviType';
-import { SuiviAlimentationAPI, SuiviTransportAPI } from './types/suiviAPI';
+import { SuiviAlimentationAPI, SuiviTransportAPI } from './types/suivi/suiviAPI';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
 

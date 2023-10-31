@@ -9,8 +9,8 @@ import {
   Impact,
   Onboarding,
   Thematique,
-} from '../../../domain/utilisateur/onboarding';
-import { OnboardingResult } from '../../../domain/utilisateur/onboardingResult';
+} from '../../../domain/utilisateur/onboarding/onboarding';
+import { OnboardingResult } from '../../../domain/utilisateur/onboarding/onboardingResult';
 import { ServiceRepository } from '../service.repository';
 import { Badge } from '../../../../src/domain/badge/badge';
 

@@ -9,8 +9,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { BilanUsecase } from '../../usecase/bilan.usecase';
-import { BilanAPI } from './types/bilanAPI';
-import { SituationNGCAPI } from './types/situationNGCAPI';
+import { BilanAPI } from './types/ngc/bilanAPI';
+import { SituationNGCAPI } from './types/ngc/situationNGCAPI';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
 

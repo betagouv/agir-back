@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common';
 import { AidesUsecase } from '../../usecase/aides.usecase';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { AideAPI } from './types/AideAPI';
-import { AidesVeloParTypeAPI } from './types/AidesVeloParTypeAPI';
+import { AideAPI } from './types/aide/AideAPI';
+import { AidesVeloParTypeAPI } from './types/aide/AidesVeloParTypeAPI';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
 

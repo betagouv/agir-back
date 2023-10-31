@@ -1,4 +1,4 @@
-import { Impact, Thematique } from '../../../src/domain/utilisateur/onboarding';
+import { Impact, Thematique } from '../../../src/domain/utilisateur/onboarding/onboarding';
 import { TestUtil } from '../../TestUtil';
 
 const ONBOARDING_1_2_3_4_DATA = {

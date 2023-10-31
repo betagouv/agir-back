@@ -14,10 +14,10 @@ import {
 import { Response } from 'express';
 import { InteractionsUsecase } from '../../usecase/interactions.usecase';
 import { ApiTags, ApiQuery, ApiBody, ApiOkResponse } from '@nestjs/swagger';
-import { InteractionAPI } from './types/interactionAPI';
+import { InteractionAPI } from './types/interaction/interactionAPI';
 import { InteractionStatus } from '../../domain/interaction/interactionStatus';
 import { Thematique } from '../../domain/thematique';
-import { InteractionStatusAPI } from './types/interactionStatusAPI';
+import { InteractionStatusAPI } from './types/interaction/interactionStatusAPI';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 

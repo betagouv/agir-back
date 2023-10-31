@@ -27,7 +27,7 @@ import {
 } from '@nestjs/swagger';
 import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
 import { UtilisateurProfileAPI } from './types/utilisateur/utilisateurProfileAPI';
-import { CreateUtilisateurAPI } from './types/utilisateur/createUtilisateurAPI';
+import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
 import { LoginUtilisateurAPI } from './types/utilisateur/loginUtilisateurAPI';
 import { HttpStatus } from '@nestjs/common';
 import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';

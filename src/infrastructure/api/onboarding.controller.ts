@@ -13,17 +13,15 @@ import {
   ApiExtraModels,
   ApiOperation,
 } from '@nestjs/swagger';
-import { CreateUtilisateurAPI } from './types/utilisateur/createUtilisateurAPI';
-import { OnboardingDataAPI } from './types/utilisateur/onboardingDataAPI';
-import { OnboardingDataImpactAPI } from './types/utilisateur/onboardingDataImpactAPI';
+import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
+import { OnboardingDataAPI } from './types/utilisateur/onboarding/onboardingDataAPI';
+import { OnboardingDataImpactAPI } from './types/utilisateur/onboarding/onboardingDataImpactAPI';
 import { HttpStatus } from '@nestjs/common';
 import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
-import { ProspectSubmitAPI } from './types/utilisateur/prospectSubmitAPI';
-import { ValidateCodeAPI } from './types/utilisateur/validateCodeAPI';
+import { ProspectSubmitAPI } from './types/utilisateur/onboarding/prospectSubmitAPI';
+import { ValidateCodeAPI } from './types/utilisateur/onboarding/validateCodeAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { ErrorService } from '../errorService';
-import { ServiceAPI } from './types/service/serviceAPI';
-import { BadgeAPI } from './types/badgeAPI';
 
 @ApiExtraModels(CreateUtilisateurAPI)
 @Controller()

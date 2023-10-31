@@ -7,8 +7,8 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { SuiviDashboardAPI } from './types/suiviDashboardAPI';
-import { SuiviAlimentationAPI, SuiviTransportAPI } from './types/suiviAPI';
+import { SuiviDashboardAPI } from './types/suivi/suiviDashboardAPI';
+import { SuiviAlimentationAPI, SuiviTransportAPI } from './types/suivi/suiviAPI';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 

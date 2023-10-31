@@ -4,11 +4,11 @@ import { InteractionType } from '../src/domain/interaction/interactionType';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { Thematique } from '../src/domain/thematique';
-import { Thematique as ThematiqueOnboarding } from '../src/domain/utilisateur/onboarding';
+import { Thematique as ThematiqueOnboarding } from '../src/domain/utilisateur/onboarding/onboarding';
 import { UserQuizzProfile } from '../src/domain/quizz/userQuizzProfile';
 import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
-import { Impact } from '../src/domain/utilisateur/onboarding';
+import { Impact } from '../src/domain/utilisateur/onboarding/onboarding';
 const request = require('supertest');
 import { JwtService } from '@nestjs/jwt';
 

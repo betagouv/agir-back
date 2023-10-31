@@ -2,7 +2,7 @@ import {
   Impact,
   Onboarding,
   Transport,
-} from '../../../../src/domain/utilisateur/onboarding';
+} from '../../../../src/domain/utilisateur/onboarding/onboarding';
 
 describe('Objet OnboardingData', () => {
   it('getTransportLevel : renvoie "tres_faible" si tout à zéro', () => {

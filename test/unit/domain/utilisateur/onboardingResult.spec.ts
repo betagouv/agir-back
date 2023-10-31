@@ -2,8 +2,8 @@ import {
   Impact,
   Onboarding,
   Thematique,
-} from '../../../../src/domain/utilisateur/onboarding';
-import { OnboardingResult } from '../../../../src/domain/utilisateur/onboardingResult';
+} from '../../../../src/domain/utilisateur/onboarding/onboarding';
+import { OnboardingResult } from '../../../../src/domain/utilisateur/onboarding/onboardingResult';
 
 const ONBOARDING_1_2_3_4 = {
   transports: ['velo', 'voiture'],

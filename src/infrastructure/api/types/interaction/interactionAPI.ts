@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Decimal } from '@prisma/client/runtime/library';
-import { Thematique } from '../../../../src/domain/thematique';
+import { Thematique } from '../../../../domain/thematique';
 
 export class InteractionAPI {
   @ApiProperty() id: string;

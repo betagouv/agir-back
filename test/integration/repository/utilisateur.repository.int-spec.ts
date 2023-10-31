@@ -1,7 +1,7 @@
 import { TestUtil } from '../../TestUtil';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { Impact } from '../../../src/domain/utilisateur/onboarding';
-import { Thematique as ThematiqueOnboarding } from '../../../src/domain/utilisateur/onboarding';
+import { Impact } from '../../../src/domain/utilisateur/onboarding/onboarding';
+import { Thematique as ThematiqueOnboarding } from '../../../src/domain/utilisateur/onboarding/onboarding';
 
 describe('UtilisateurRepository', () => {
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);

@@ -5,15 +5,15 @@ import { InteractionDefinitionRepository } from '../infrastructure/repository/in
 import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
 import { Interaction } from '../domain/interaction/interaction';
 import { UserQuizzProfile } from '../domain/quizz/userQuizzProfile';
-import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/createUtilisateurAPI';
+import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/onboarding/createUtilisateurAPI';
 import {
   Impact,
   Onboarding,
   Thematique,
-} from '../domain/utilisateur/onboarding';
-import { OnboardingDataAPI } from '../infrastructure/api/types/utilisateur/onboardingDataAPI';
-import { OnboardingDataImpactAPI } from '../infrastructure/api/types/utilisateur/onboardingDataImpactAPI';
-import { OnboardingResult } from '../domain/utilisateur/onboardingResult';
+} from '../domain/utilisateur/onboarding/onboarding';
+import { OnboardingDataAPI } from '../infrastructure/api/types/utilisateur/onboarding/onboardingDataAPI';
+import { OnboardingDataImpactAPI } from '../infrastructure/api/types/utilisateur/onboarding/onboardingDataImpactAPI';
+import { OnboardingResult } from '../domain/utilisateur/onboarding/onboardingResult';
 import { EmailSender } from '../infrastructure/email/emailSender';
 import { PasswordManager } from '../../src/domain/utilisateur/manager/passwordManager';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';

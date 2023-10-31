@@ -1,8 +1,8 @@
 import { Badge } from '../badge/badge';
 import { UserQuizzProfile } from '../quizz/userQuizzProfile';
 import { CodeManager } from './manager/codeManager';
-import { Onboarding } from './onboarding';
-import { OnboardingResult } from './onboardingResult';
+import { Onboarding } from './onboarding/onboarding';
+import { OnboardingResult } from './onboarding/onboardingResult';
 import { PasswordManager } from './manager/passwordManager';
 
 export class UtilisateurData {

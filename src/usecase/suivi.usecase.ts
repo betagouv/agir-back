@@ -4,7 +4,7 @@ import { Suivi } from '../domain/suivi/suivi';
 import { SuiviCollection } from '../domain/suivi/suiviCollection';
 import { SuiviComplet } from '../domain/suivi/suiviComplet';
 import { SuiviType } from '../../src/domain/suivi/suiviType';
-import { SuiviDashboardAPI } from '../../src/infrastructure/api/types/suiviDashboardAPI';
+import { SuiviDashboardAPI } from '../infrastructure/api/types/suivi/suiviDashboardAPI';
 
 @Injectable()
 export class SuiviUsecase {
