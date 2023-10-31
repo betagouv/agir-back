@@ -116,7 +116,7 @@ export class TestDataController {
         id: serviceId,
         titre: service.titre,
         url: service.url,
-        local: service.local,
+        is_local: service.is_local,
         is_url_externe: service.is_url_externe,
         thematiques: service.thematiques,
       };

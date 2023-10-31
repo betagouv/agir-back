@@ -29,7 +29,7 @@ describe('Service (API test)', () => {
   });
   it('GET /services listes 1 def with correct date', async () => {
     // GIVEN
-    await TestUtil.create('serviceDefinition', { local: false });
+    await TestUtil.create('serviceDefinition', { is_local: false });
 
     // WHEN
     const response = await TestUtil.GET('/services');
@@ -39,7 +39,7 @@ describe('Service (API test)', () => {
     expect(response.body).toHaveLength(1);
     expect(response.body[0].titre).toEqual('titre');
     expect(response.body[0].url).toEqual('url');
-    expect(response.body[0].local).toEqual(false);
+    expect(response.body[0].is_local).toEqual(false);
     expect(response.body[0].is_url_externe).toEqual(true);
     expect(response.body[0].thematiques).toStrictEqual([
       Thematique.climat,
@@ -164,7 +164,7 @@ describe('Service (API test)', () => {
     expect(response.body[0].label).toEqual('titre'); // FIXME :temp value
     expect(response.body[0].titre).toEqual('titre');
     expect(response.body[0].url).toEqual('url');
-    expect(response.body[0].local).toEqual(true);
+    expect(response.body[0].is_local).toEqual(true);
     expect(response.body[0].is_url_externe).toEqual(true);
     expect(response.body[0].thematiques).toStrictEqual([
       Thematique.climat,

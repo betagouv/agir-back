@@ -245,7 +245,7 @@ export class TestUtil {
       id: 'serviceDefinition-id',
       titre: 'titre',
       url: 'url',
-      local: true,
+      is_local: true,
       is_url_externe: true,
       thematiques: ['climat', 'logement'],
       ...override,

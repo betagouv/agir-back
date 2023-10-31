@@ -6,7 +6,7 @@ export class ServiceDefinitionAPI {
   @ApiProperty() id: string;
   @ApiProperty() titre: string;
   @ApiProperty() url: string;
-  @ApiProperty() local: boolean;
+  @ApiProperty() is_local: boolean;
   @ApiProperty() is_url_externe: boolean;
 
   @ApiProperty({ enum: Thematique, enumName: 'Thematique', isArray: true })
@@ -21,7 +21,7 @@ export class ServiceDefinitionAPI {
       id: serviceDefinition.id,
       titre: serviceDefinition.titre,
       url: serviceDefinition.url,
-      local: serviceDefinition.local,
+      is_local: serviceDefinition.is_local,
       is_url_externe: serviceDefinition.is_url_externe,
       thematiques: serviceDefinition.thematiques,
       nombre_installation: serviceDefinition.nombre_installation,

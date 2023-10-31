@@ -8,7 +8,7 @@ export class ServiceAPI {
   @ApiProperty() titre: string;
   @ApiProperty() url?: string;
   @ApiProperty() is_url_externe?: boolean;
-  @ApiProperty() local: boolean;
+  @ApiProperty() is_local: boolean;
   @ApiProperty({ enum: Thematique, enumName: 'Thematique', isArray: true })
   thematiques: Thematique[];
 
@@ -18,7 +18,7 @@ export class ServiceAPI {
       label: service.label,
       titre: service.titre,
       url: service.url,
-      local: service.local,
+      is_local: service.is_local,
       is_url_externe: service.is_url_externe,
       thematiques: service.thematiques,
     };
