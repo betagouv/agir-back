@@ -1,4 +1,7 @@
-import { Impact, Thematique } from '../src/domain/utilisateur/onboarding/onboarding';
+import {
+  Impact,
+  Thematique,
+} from '../src/domain/utilisateur/onboarding/onboarding';
 
 const minQuizzLevel = {
   alimentation: { level: 1, isCompleted: false },
@@ -91,6 +94,7 @@ const utilisateurs = {
     nom: 'Michel0',
     prenom: 'Mimi0',
     points: 0,
+    mot_de_passe: 'incroyable',
     interactions: [
       { cms_id: 13, cms_type: 'quizz', score: 0.5 },
       { cms_id: 6, cms_type: 'article', score: 0.5 },
@@ -113,6 +117,7 @@ const utilisateurs = {
     nom: 'Michel6',
     prenom: 'Mimi6',
     points: 36,
+    mot_de_passe: 'incroyable',
     interactions: [
       { id: 'suivi_du_jour', score: 0.5 },
       { cms_id: 1, cms_type: 'quizz', score: 0.5 },
@@ -154,6 +159,7 @@ const utilisateurs = {
     nom: 'michel666',
     prenom: 'Mimi666',
     points: 36,
+    mot_de_passe: 'incroyable',
     interactions: [
       { cms_id: 1, cms_type: 'quizz', score: 0.5 },
       { cms_id: 2, cms_type: 'quizz', score: 0.5 },
@@ -194,6 +200,7 @@ const utilisateurs = {
     nom: 'Benoit',
     prenom: 'B',
     points: 0,
+    mot_de_passe: 'incroyable',
     interactions: [
       { id: 'suivi_du_jour', score: 0.9 },
       { cms_id: 1, cms_type: 'quizz', score: 0.5 },
@@ -222,6 +229,7 @@ const utilisateurs = {
     nom: 'Dorian_test',
     prenom: 'D',
     points: 0,
+    mot_de_passe: 'incroyable',
     interactions: [
       { id: 'suivi_du_jour', score: 0.5 },
       { cms_id: 1, cms_type: 'quizz', score: 0.5 },
@@ -250,6 +258,7 @@ const utilisateurs = {
     nom: 'Livio_test',
     prenom: 'L',
     points: 36,
+    mot_de_passe: 'incroyable',
     interactions: [
       { id: 'aide_velo', score: 0.6 },
       { id: 'aide_retrofit', score: 0.1 },
@@ -318,6 +327,7 @@ const utilisateurs = {
     nom: 'quizzman',
     prenom: 'man',
     points: 10,
+    mot_de_passe: 'incroyable',
     interactions: [
       { id: 'suivi_du_jour', score: 0.5 },
       { cms_id: 1, cms_type: 'quizz', score: 0.5 },
