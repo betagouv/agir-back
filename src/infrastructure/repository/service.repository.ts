@@ -15,9 +15,10 @@ export class ServiceRepository {
   constructor(private prisma: PrismaService) {}
 
   async listeServiceDefinitions(): Promise<ServiceDefinition[]> {
-    const result = await this.prisma.serviceDefinition.findMany();
-    return result.map((service) => this.buildServicefinition(service));
+    const list = await this.prisma.serviceDefinition.findMany();
+    return this.buildServicefinitionList(list);
   }
+
   async addServiceToUtilisateur(
     utilisateurId: string,
     serviceDefinitionId: string,
@@ -65,6 +66,23 @@ export class ServiceRepository {
     return result.map((service) => this.buildService(service));
   }
 
+  async countServicesByDefinition(): Promise<Record<string, number>> {
+    const query = `
+    SELECT
+      COUNT(*) AS "count", "serviceDefinitionId"
+    FROM
+      "Service"
+    GROUP BY "serviceDefinitionId";
+    `;
+    const count: [{ count: BigInt; serviceDefinitionId: string }] =
+      await this.prisma.$queryRawUnsafe(query);
+    let result = {};
+    count.forEach((element) => {
+      result[element.serviceDefinitionId] = Number(element.count);
+    });
+    return result;
+  }
+
   private buildService(serviceDB: ServiceDB): Service {
     return new Service({
       ...serviceDB['serviceDefinition'],
@@ -72,12 +90,25 @@ export class ServiceRepository {
     });
   }
 
+  private async buildServicefinitionList(
+    serviceDefinitionDB: ServiceDefinitionDB[],
+  ): Promise<ServiceDefinition[]> {
+    // FIXME : plus tard en cache ou autre, pas besoin de recalculer à chaque affiche du catalogue de service
+    const repartition = await this.countServicesByDefinition();
+    return serviceDefinitionDB.map((serviceDefDB) => {
+      let occurence = repartition[serviceDefDB.id] || 0;
+      return this.buildServicefinition(serviceDefDB, occurence);
+    });
+  }
+
   private buildServicefinition(
     serviceDefinitionDB: ServiceDefinitionDB,
+    occurence: number,
   ): ServiceDefinition {
     return new ServiceDefinition({
       ...serviceDefinitionDB,
       thematiques: serviceDefinitionDB.thematiques.map((th) => Thematique[th]),
+      nombre_installation: occurence,
     });
   }
 }

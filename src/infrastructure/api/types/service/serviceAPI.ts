@@ -9,7 +9,7 @@ export class ServiceAPI {
   @ApiProperty() url?: string;
   @ApiProperty() is_url_externe?: boolean;
   @ApiProperty() local: boolean;
-  @ApiProperty({ type: [String] })
+  @ApiProperty({ enum: Thematique, enumName: 'Thematique', isArray: true })
   thematiques: Thematique[];
 
   static mapServicesToServicesAPI(service: Service): ServiceAPI {

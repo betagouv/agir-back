@@ -118,6 +118,7 @@ export class TestDataController {
         url: service.url,
         local: service.local,
         is_url_externe: service.is_url_externe,
+        thematiques: service.thematiques,
       };
       await this.prisma.serviceDefinition.upsert({
         where: {

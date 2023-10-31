@@ -46,6 +46,30 @@ describe('Service (API test)', () => {
       Thematique.logement,
     ]);
   });
+  it('GET /services avec les occurences d installation', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { id: '1', email: '1' });
+    await TestUtil.create('utilisateur', { id: '2', email: '2' });
+
+    await TestUtil.create('serviceDefinition', { id: '1' });
+
+    await TestUtil.create('service', {
+      id: '1',
+      utilisateurId: '1',
+      serviceDefinitionId: '1',
+    });
+    await TestUtil.create('service', {
+      id: '2',
+      utilisateurId: '2',
+      serviceDefinitionId: '1',
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/services');
+
+    // THEN
+    expect(response.body[0].nombre_installation).toEqual(2);
+  });
   it('POST /utilisateurs/id/services ajout un nouveau service à l utilisateur', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');

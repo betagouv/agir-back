@@ -27,6 +27,7 @@ export class EmailSender {
     smtpEmail.htmlContent = text_content;
 
     if (process.env.EMAIL_ENABLED === 'true') {
+      console.log(`Sending email to ${email_to}`);
       this.apiInstance.sendTransacEmail(smtpEmail);
     } else {
       console.log(`Email not sent in test mode: 

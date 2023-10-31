@@ -9,7 +9,8 @@ export class InteractionAPI {
   @ApiProperty() soustitre: string;
   @ApiProperty({ deprecated: true }) categorie: string; // FIXME : rename to thematique_gamification
   @ApiProperty() thematique_gamification: Thematique;
-  @ApiProperty({ type: [String] }) thematiques: Thematique[];
+  @ApiProperty({ enum: Thematique, enumName: 'Thematique', isArray: true })
+  thematiques: Thematique[];
   @ApiProperty() tags: string[];
   @ApiProperty() duree: string;
   @ApiProperty() frequence: string;

@@ -4,6 +4,7 @@ const services = {
     url: 'https://cuisine-facile.com/index.php',
     is_url_externe: true,
     local: true,
+    thematiques: ['alimentation'],
   },
   linky: {
     titre: 'Votre conso élec au jour le jour',
@@ -17,6 +18,7 @@ const services = {
     url: 'coach/suivi-du-jour',
     is_url_externe: false,
     local: false,
+    thematiques: ['transport'],
   },
 };
 module.exports = services;
