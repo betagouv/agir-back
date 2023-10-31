@@ -192,6 +192,9 @@ export class TestUtil {
       sent_email_count: 0,
       prevent_sendemail_before: new Date(),
 
+      todo: {
+        niveau: 1,
+      },
       onboardingData: {
         transports: ['voiture', 'pied'],
         avion: 2,

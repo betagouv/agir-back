@@ -12,7 +12,6 @@ import {
 import {
   ApiTags,
   ApiOkResponse,
-  ApiExtraModels,
   ApiOperation,
   ApiBearerAuth,
   ApiBody,
@@ -25,7 +24,6 @@ import { AddServiceAPI } from './types/service/addServiceAPI';
 import { ErrorService } from '../errorService';
 import { ServiceAPI } from './types/service/serviceAPI';
 
-@ApiExtraModels(ServiceDefinitionAPI)
 @Controller()
 @ApiBearerAuth()
 @ApiTags('Services')

@@ -38,6 +38,7 @@ import { OubliMdpAPI } from './types/utilisateur/oubliMdpAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { ModifierMdpAPI } from './types/utilisateur/modifierMdpAPI';
 import { BadgeAPI } from './types/badgeAPI';
+import { TodoAPI } from './types/todo/todoAPI';
 
 @ApiExtraModels(CreateUtilisateurAPI, UtilisateurAPI)
 @Controller()
@@ -107,6 +108,7 @@ export class UtilisateurController extends GenericControler {
       badges: utilisateur.badges
         ? utilisateur.badges.map((badge) => BadgeAPI.mapBadgeToBadgeAPI(badge))
         : null,
+      todo: TodoAPI.mapTodoToTodoAPI(utilisateur.todo),
     };
   }
   @ApiOkResponse({ type: UtilisateurProfileAPI })
@@ -179,6 +181,7 @@ export class UtilisateurController extends GenericControler {
                 BadgeAPI.mapBadgeToBadgeAPI(badge),
               )
             : null,
+          todo: TodoAPI.mapTodoToTodoAPI(loggedUser.utilisateur.todo),
         },
         token: loggedUser.token,
       };

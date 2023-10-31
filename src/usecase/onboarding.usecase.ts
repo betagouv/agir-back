@@ -20,6 +20,7 @@ import { CommuneRepository } from '../../src/infrastructure/repository/commune/c
 import { CodeManager } from '../../src/domain/utilisateur/manager/codeManager';
 import { OidcService } from '../../src/infrastructure/auth/oidc.service';
 import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
+import { Todo } from '../../src/domain/todo/todo';
 
 export type Phrase = {
   phrase: string;
@@ -194,6 +195,7 @@ export class OnboardingUsecase {
       prevent_checkcode_before: new Date(),
       sent_email_count: 1,
       prevent_sendemail_before: new Date(),
+      todo: new Todo({ niveau: 1 }),
     });
 
     utilisateurToCreate.setNew6DigitCode();

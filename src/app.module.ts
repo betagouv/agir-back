@@ -48,6 +48,9 @@ import { PasswordManager } from './domain/utilisateur/manager/passwordManager';
 import { ServiceController } from './infrastructure/api/service.controller';
 import { ServiceUsecase } from './usecase/service.usecase';
 import { ServiceRepository } from './infrastructure/repository/service.repository';
+import { TodoController } from './infrastructure/api/todo.controller';
+import { TodoUsecase } from './usecase/todo.usecase';
+import { TodoRepository } from './infrastructure/repository/todo.repository';
 
 const SESSION_LIFETIME = '12h';
 
@@ -72,7 +75,8 @@ const SESSION_LIFETIME = '12h';
     QuestionsNGCController,
     CMSController,
     CommunesController,
-    ServiceController
+    ServiceController,
+    TodoController,
   ],
   providers: [
     PrismaService,
@@ -105,7 +109,9 @@ const SESSION_LIFETIME = '12h';
     SecurityEmailManager,
     PasswordManager,
     ServiceUsecase,
-    ServiceRepository
+    ServiceRepository,
+    TodoUsecase,
+    TodoRepository,
   ],
 })
 export class AppModule {}

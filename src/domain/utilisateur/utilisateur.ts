@@ -4,6 +4,7 @@ import { CodeManager } from './manager/codeManager';
 import { Onboarding } from './onboarding/onboarding';
 import { OnboardingResult } from './onboarding/onboardingResult';
 import { PasswordManager } from './manager/passwordManager';
+import { Todo } from '../todo/todo';
 
 export class UtilisateurData {
   id: string;
@@ -28,6 +29,7 @@ export class UtilisateurData {
   prevent_checkcode_before: Date;
   sent_email_count: number;
   prevent_sendemail_before: Date;
+  todo: Todo;
 }
 
 export class Utilisateur extends UtilisateurData {

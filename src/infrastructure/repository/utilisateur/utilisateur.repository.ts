@@ -11,8 +11,8 @@ import {
   Thematique,
 } from '../../../domain/utilisateur/onboarding/onboarding';
 import { OnboardingResult } from '../../../domain/utilisateur/onboarding/onboardingResult';
-import { ServiceRepository } from '../service.repository';
 import { Badge } from '../../../../src/domain/badge/badge';
+import { Todo } from '../../../../src/domain/todo/todo';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -122,6 +122,7 @@ export class UtilisateurRepository {
           onboardingData: { ...utilisateur.onboardingData },
           onboardingResult: { ...utilisateur.onboardingResult },
           quizzLevels: utilisateur.quizzProfile.getData(),
+          todo: { ...utilisateur.todo },
         },
       });
       return this.buildUtilisateurFromDB(user);
@@ -244,6 +245,7 @@ export class UtilisateurRepository {
         prevent_sendemail_before: user.prevent_sendemail_before,
         quizzProfile: new UserQuizzProfile(user.quizzLevels as any),
         created_at: user.created_at,
+        todo: new Todo(user.todo as any),
         badges: user['badges']
           ? user['badges'].map(
               (badge) =>

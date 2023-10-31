@@ -551,6 +551,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       quizzProfile: null,
       onboardingData: null,
       onboardingResult: null,
+      todo: null,
     });
     expect(userDB.failed_checkcode_count).toEqual(0);
     expect(userDB.passwordHash).toEqual(

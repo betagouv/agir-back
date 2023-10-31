@@ -22,6 +22,7 @@ import { ProspectSubmitAPI } from './types/utilisateur/onboarding/prospectSubmit
 import { ValidateCodeAPI } from './types/utilisateur/onboarding/validateCodeAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { ErrorService } from '../errorService';
+import { TodoAPI } from './types/todo/todoAPI';
 
 @ApiExtraModels(CreateUtilisateurAPI)
 @Controller()
@@ -99,6 +100,7 @@ export class OnboardingController {
           quizzProfile: loggedUser.utilisateur.quizzProfile.getData(),
           created_at: loggedUser.utilisateur.created_at,
           badges: [],
+          todo: TodoAPI.mapTodoToTodoAPI(loggedUser.utilisateur.todo),
         },
         token: loggedUser.token,
       };

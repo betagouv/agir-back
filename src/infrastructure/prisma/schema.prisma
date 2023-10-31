@@ -44,6 +44,7 @@ model Utilisateur {
   quizzLevels              Json          @default("{}")
   onboardingData           Json          @default("{}")
   onboardingResult         Json          @default("{}")
+  todo                     Json          @default("{}")
   empreintes               Empreinte[]
   interactions             Interaction[]
   suivis                   Suivi[]
