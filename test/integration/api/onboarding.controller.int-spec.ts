@@ -8,6 +8,7 @@ const ONBOARDING_1_2_3_4_DATA = {
   transports: ['voiture', 'pied'],
   avion: 1,
   code_postal: '91120',
+  commune: 'Palaiseau',
   adultes: 2,
   enfants: 1,
   residence: 'maison',
@@ -21,6 +22,7 @@ const ONBOARDING_1_1_2_3_DATA = {
   transports: ['voiture', 'pied'],
   avion: 1,
   code_postal: '91120',
+  commune: 'Palaiseau',
   adultes: 2,
   enfants: 1,
   residence: 'maison',
@@ -34,6 +36,7 @@ const ONBOARDING_1_1_2_2_DATA = {
   transports: ['moto', 'velo'],
   avion: 0,
   code_postal: '91120',
+  commune: 'Palaiseau',
   adultes: 2,
   enfants: 1,
   residence: 'maison',
@@ -89,6 +92,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(response.headers['location']).toContain('monmail@truc.com');
     expect(user.nom).toEqual('WW');
     expect(user.prenom).toEqual('Wojtek');
+    expect(user.email).toEqual('monmail@truc.com');
+    expect(user.code_postal).toEqual('91120');
+    expect(user.commune).toEqual('Palaiseau');
     expect(user.email).toEqual('monmail@truc.com');
     expect(user.passwordHash.length).toBeGreaterThan(20);
     expect(user.passwordSalt.length).toBeGreaterThan(20);
@@ -203,6 +209,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(response.body.utilisateur.nom).toEqual('WW');
     expect(response.body.utilisateur.prenom).toEqual('Wojtek');
     expect(response.body.utilisateur.code_postal).toEqual('91120');
+    expect(response.body.utilisateur.commune).toEqual('Palaiseau');
     expect(response.body.utilisateur.points).toEqual(0);
     expect(response.body.utilisateur.quizzProfile).toEqual({
       alimentation: { level: 1, isCompleted: false },

@@ -101,6 +101,7 @@ export class UtilisateurController extends GenericControler {
       prenom: utilisateur.prenom,
       email: utilisateur.email,
       code_postal: utilisateur.code_postal,
+      commune: utilisateur.commnune,
       revenu_fiscal: utilisateur.revenu_fiscal,
       points: utilisateur.points,
       quizzProfile: utilisateur.quizzProfile.getData(),
@@ -135,6 +136,7 @@ export class UtilisateurController extends GenericControler {
       nom: utilisateur.nom,
       prenom: utilisateur.prenom,
       code_postal: utilisateur.code_postal,
+      commune: utilisateur.commnune,
       revenu_fiscal: utilisateur.revenu_fiscal,
     };
   }
@@ -171,6 +173,7 @@ export class UtilisateurController extends GenericControler {
           nom: loggedUser.utilisateur.nom,
           prenom: loggedUser.utilisateur.prenom,
           code_postal: loggedUser.utilisateur.code_postal,
+          commune: loggedUser.utilisateur.commnune,
           revenu_fiscal: loggedUser.utilisateur.revenu_fiscal,
           email: loggedUser.utilisateur.email,
           points: loggedUser.utilisateur.points,
@@ -206,14 +209,7 @@ export class UtilisateurController extends GenericControler {
     try {
       return await this.utilisateurUsecase.updateUtilisateurProfile(
         utilisateurId,
-        {
-          email: body.email,
-          nom: body.nom,
-          prenom: body.prenom,
-          code_postal: body.code_postal,
-          revenu_fiscal: body.revenu_fiscal,
-          mot_de_passe: body.mot_de_passe,
-        },
+        body,
       );
     } catch (error) {
       throw new BadRequestException(ErrorService.toStringOrObject(error));

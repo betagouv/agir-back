@@ -182,6 +182,7 @@ export class TestUtil {
       passwordSalt: 'salt',
       email: 'yo@truc.com',
       code_postal: '91120',
+      commune: 'Palaiseau',
       revenu_fiscal: 10000,
       active_account: true,
       failed_login_count: 0,

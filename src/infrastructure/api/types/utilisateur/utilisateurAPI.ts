@@ -17,6 +17,9 @@ export class UtilisateurAPI {
   code_postal: string;
 
   @ApiProperty()
+  commune: string;
+
+  @ApiProperty()
   revenu_fiscal: number;
 
   @ApiProperty()

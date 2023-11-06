@@ -14,6 +14,7 @@ export class UtilisateurData {
   onboardingData: Onboarding;
   onboardingResult: OnboardingResult;
   code_postal: string;
+  commnune: string;
   revenu_fiscal: number;
   points: number;
   quizzProfile: UserQuizzProfile;

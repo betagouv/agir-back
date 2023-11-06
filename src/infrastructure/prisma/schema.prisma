@@ -39,6 +39,7 @@ model Utilisateur {
   passwordHash             String?       @default("hash")
   passwordSalt             String?       @default("salt")
   code_postal              String?
+  commune                  String?
   revenu_fiscal            Int?
   points                   Int           @default(0)
   quizzLevels              Json          @default("{}")

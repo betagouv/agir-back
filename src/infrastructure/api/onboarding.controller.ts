@@ -94,6 +94,7 @@ export class OnboardingController {
           nom: loggedUser.utilisateur.nom,
           prenom: loggedUser.utilisateur.prenom,
           code_postal: loggedUser.utilisateur.code_postal,
+          commune: loggedUser.utilisateur.commnune,
           revenu_fiscal: loggedUser.utilisateur.revenu_fiscal,
           email: loggedUser.utilisateur.email,
           points: loggedUser.utilisateur.points,

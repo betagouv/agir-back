@@ -176,6 +176,7 @@ export class OnboardingUsecase {
       id: undefined,
       points: 0,
       code_postal: onboardingData.code_postal,
+      commnune: onboardingData.commune,
       created_at: undefined,
       nom: utilisateurInput.nom,
       prenom: utilisateurInput.prenom,

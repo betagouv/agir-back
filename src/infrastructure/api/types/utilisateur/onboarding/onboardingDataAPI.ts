@@ -15,19 +15,21 @@ export class OnboardingDataAPI {
       enum: ['voiture', 'moto', 'pied', 'velo', 'commun'],
     },
   })
-  transports?: Transport[];
+  transports: Transport[];
   @ApiProperty({ type: 'integer' })
-  avion?: number;
+  avion: number;
   @ApiProperty()
-  code_postal?: string;
+  code_postal: string;
   @ApiProperty()
-  adultes?: number;
+  commune: string;
   @ApiProperty()
-  enfants?: number;
+  adultes: number;
+  @ApiProperty()
+  enfants: number;
   @ApiProperty({ enum: ['maison', 'appartement'] })
-  residence?: Residence;
+  residence: Residence;
   @ApiProperty()
-  proprietaire?: boolean;
+  proprietaire: boolean;
   @ApiProperty({
     enum: [
       'superficie_35',
@@ -37,11 +39,11 @@ export class OnboardingDataAPI {
       'superficie_150_et_plus',
     ],
   })
-  superficie?: Superficie;
+  superficie: Superficie;
   @ApiProperty({ enum: ['electricite', 'bois', 'fioul', 'gaz', 'autre'] })
-  chauffage?: Chauffage;
+  chauffage: Chauffage;
   @ApiProperty({ enum: ['tout', 'vege', 'vegan', 'viande'] })
-  repas?: Repas;
+  repas: Repas;
   @ApiProperty({
     enum: ['raisonnable', 'secondemain', 'shopping', 'jamais'],
   })

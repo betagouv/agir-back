@@ -51,17 +51,18 @@ export enum Impact {
 }
 
 export class OnboardingData {
-  transports?: Transport[];
-  avion?: number;
-  code_postal?: string;
-  adultes?: number;
-  enfants?: number;
-  residence?: Residence;
-  proprietaire?: boolean;
-  superficie?: Superficie;
-  chauffage?: Chauffage;
-  repas?: Repas;
-  consommation?: Consommation;
+  transports: Transport[];
+  avion: number;
+  code_postal: string;
+  commune: string;
+  adultes: number;
+  enfants: number;
+  residence: Residence;
+  proprietaire: boolean;
+  superficie: Superficie;
+  chauffage: Chauffage;
+  repas: Repas;
+  consommation: Consommation;
 }
 
 export class Onboarding extends OnboardingData {

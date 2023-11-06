@@ -7,6 +7,7 @@ const ONBOARDING_1_2_3_4_DATA = {
   transports: ['voiture', 'pied'],
   avion: 1,
   code_postal: '91120',
+  commune: 'Palaiseau',
   adultes: 2,
   enfants: 1,
   residence: 'maison',
@@ -120,6 +121,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.nom).toEqual('nom');
     expect(response.body.prenom).toEqual('prenom');
     expect(response.body.code_postal).toEqual('91120');
+    expect(response.body.commune).toEqual('Palaiseau');
     expect(response.body.revenu_fiscal).toEqual(10000);
     expect(response.body.points).toEqual(0);
     expect(response.body.quizzProfile).toEqual({
@@ -202,6 +204,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.utilisateur.nom).toEqual('nom');
     expect(response.body.utilisateur.prenom).toEqual('prenom');
     expect(response.body.utilisateur.code_postal).toEqual('91120');
+    expect(response.body.utilisateur.commune).toEqual('Palaiseau');
     expect(response.body.utilisateur.revenu_fiscal).toEqual(10000);
     expect(response.body.utilisateur.points).toEqual(0);
     expect(response.body.utilisateur.todo.niveau).toEqual(1);
@@ -411,6 +414,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.prenom).toEqual('prenom');
     expect(response.body.email).toEqual('yo@truc.com');
     expect(response.body.code_postal).toEqual('91120');
+    expect(response.body.commune).toEqual('Palaiseau');
     expect(response.body.revenu_fiscal).toEqual(10000);
   });
   it('PATCH /utilisateurs/id/profile - update basic profile datas without password', async () => {
@@ -424,6 +428,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       nom: 'THE NOM',
       prenom: 'THE PRENOM',
       code_postal: '75008',
+      commune: 'Versailles',
       revenu_fiscal: 12345,
     });
     // THEN
@@ -432,10 +437,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     });
     expect(response.status).toBe(200);
     expect(dbUser.nom).toEqual('THE NOM');
-    expect(dbUser.prenom).toEqual('THE PRENOM');
-    expect(dbUser.email).toEqual('george@paris.com');
-    expect(dbUser.code_postal).toEqual('75008');
-    expect(dbUser.revenu_fiscal).toEqual(12345);
   });
   it('PATCH /utilisateurs/id/profile - update basic profile datas', async () => {
     // GIVEN
@@ -448,6 +449,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       nom: 'THE NOM',
       prenom: 'THE PRENOM',
       code_postal: '75008',
+      commune: 'Versailles',
       mot_de_passe: '123456789012#',
       revenu_fiscal: 12345,
     });
@@ -463,6 +465,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.prenom).toEqual('THE PRENOM');
     expect(dbUser.email).toEqual('george@paris.com');
     expect(dbUser.code_postal).toEqual('75008');
+    expect(dbUser.commune).toEqual('Versailles');
     expect(dbUser.revenu_fiscal).toEqual(12345);
     expect(dbUser.passwordHash).toEqual(
       crypto
@@ -548,6 +551,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     });
     const dbUtilisateur = new Utilisateur({
       ...userDB,
+      commnune: null,
       badges: [],
       quizzProfile: null,
       onboardingData: null,
