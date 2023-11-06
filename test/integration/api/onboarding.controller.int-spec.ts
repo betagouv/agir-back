@@ -349,7 +349,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       'Accédez à toutes les <strong>aides publiques pour la transition écologique</strong> en quelques clics : <strong>consommation responsable, vélo, voiture éléctrique, rénovation énergétique</strong> pour les propriétaires…',
     );
     expect(response.body.phrase_2.phrase).toEqual(
-      'Regarder les offres de <strong>transports dans la zone de PALAISEAU</strong> en fonction de vos besoins et usages',
+      'Regarder les offres de <strong>transports dans la zone de Palaiseau</strong> en fonction de vos besoins et usages',
     );
     expect(response.body.phrase_3.phrase).toEqual(
       'Trouver des solutions <strong>même quand on adore la viande</strong>',

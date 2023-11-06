@@ -107,34 +107,16 @@ export class OnboardingUsecase {
       phrase: `Accédez à toutes les <strong>aides publiques pour la transition écologique</strong> en quelques clics : <strong>consommation responsable, vélo, voiture éléctrique, rénovation énergétique</strong> pour les propriétaires…`,
     };
 
-    let ville_candidates = this.communeRepository.getListCommunesParCodePostal(
-      onboardingData.code_postal,
-    );
-
     if (final_result.transports >= 3) {
-      if (ville_candidates.length > 0) {
-        final_result.phrase_2 = {
-          icon: '🚌',
-          phrase: `Regarder les offres de <strong>transports dans la zone de ${ville_candidates[0]}</strong> en fonction de vos besoins et usages`,
-        };
-      } else {
-        final_result.phrase_2 = {
-          icon: '🚌',
-          phrase: `Regarder les offres de <strong>transports dans la zone du ${onboardingData.code_postal}</strong> en fonction de vos besoins et usages`,
-        };
-      }
+      final_result.phrase_2 = {
+        icon: '🚌',
+        phrase: `Regarder les offres de <strong>transports dans la zone de ${onboardingData.commune}</strong> en fonction de vos besoins et usages`,
+      };
     } else {
-      if (ville_candidates.length > 0) {
-        final_result.phrase_2 = {
-          icon: '🛒',
-          phrase: `Comment et où <strong>consommer de manière plus durable</strong> quand on <strong>habite ${ville_candidates[0]}</strong>`,
-        };
-      } else {
-        final_result.phrase_2 = {
-          icon: '🛒',
-          phrase: `Comment et où <strong>consommer de manière plus durable</strong> quand on <strong>habite dans le ${onboardingData.code_postal}</strong>`,
-        };
-      }
+      final_result.phrase_2 = {
+        icon: '🛒',
+        phrase: `Comment et où <strong>consommer de manière plus durable</strong> quand on <strong>habite ${onboardingData.commune}</strong>`,
+      };
     }
     if ((final_result.alimentation = 4)) {
       final_result.phrase_3 = {
