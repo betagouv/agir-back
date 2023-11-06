@@ -69,6 +69,7 @@ export class ServiceController extends GenericControler {
     }
   }
   @Get('utilisateurs/:id/services')
+  // FIXME : set cache-control
   @ApiOperation({
     summary: "Liste tous les services associés à l'utilisateur",
   })

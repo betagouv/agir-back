@@ -5,4 +5,5 @@ export class TodoElement {
   titre: string;
   url: string;
   ordre: number;
+  done: boolean;
 }

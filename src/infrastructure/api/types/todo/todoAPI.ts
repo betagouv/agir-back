@@ -8,6 +8,7 @@ export class TodoElementAPI {
   @ApiProperty() titre: string;
   @ApiProperty() url: string;
   @ApiProperty() ordre: number;
+  @ApiProperty() done: boolean;
 }
 export class TodoAPI {
   @ApiProperty() niveau: number;

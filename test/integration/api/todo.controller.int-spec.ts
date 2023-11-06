@@ -27,6 +27,7 @@ describe('TODO list (API test)', () => {
     expect(response.body.todo.elements[0].ordre).toEqual(1);
     expect(response.body.todo.elements[0].titre).toEqual('titre');
     expect(response.body.todo.elements[0].url).toEqual('/article/123');
+    expect(response.body.todo.elements[0].done).toEqual(false);
     expect(response.body.todo.elements[0].thematiques).toEqual([
       'climat',
       'logement',
@@ -44,6 +45,7 @@ describe('TODO list (API test)', () => {
     expect(response.body.niveau).toEqual(1);
     expect(response.body.elements[0].ordre).toEqual(1);
     expect(response.body.elements[0].titre).toEqual('titre');
+    expect(response.body.elements[0].done).toEqual(false);
     expect(response.body.elements[0].url).toEqual('/article/123');
     expect(response.body.elements[0].thematiques).toEqual([
       'climat',

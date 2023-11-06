@@ -300,6 +300,7 @@ const utilisateurs = {
           url: '/article/123',
           titre: 'lire un article',
           thematiques: [Thematique.climat],
+          done: false,
         },
       ],
     },

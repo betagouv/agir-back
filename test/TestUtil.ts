@@ -200,6 +200,7 @@ export class TestUtil {
             titre: 'titre',
             thematiques: ['climat', 'logement'],
             url: '/article/123',
+            done: false,
           },
         ],
       },

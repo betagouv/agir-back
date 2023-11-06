@@ -23,6 +23,7 @@ export class Todo extends TodoData {
               url: '/article/123',
               titre: 'lire un article',
               thematiques: [Thematique.climat],
+              done: false,
             },
           ],
         };
