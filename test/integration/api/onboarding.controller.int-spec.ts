@@ -357,6 +357,18 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(response.body.phrase_4.phrase).toEqual(`3 sous le même toit ?
 <strong>Comprendre ses impacts à l'échelle de votre famille</strong> ou de votre colocation`);
   });
+  it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data to compute impact , other dataset', async () => {
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/evaluate-onboarding')
+      .send(ONBOARDING_1_1_2_2_DATA);
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body.transports).toEqual(2);
+    expect(response.body.logement).toEqual(2);
+    expect(response.body.alimentation).toEqual(1);
+    expect(response.body.consommation).toEqual(1);
+  });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_1 v1', async () => {
     // WHEN
     await TestUtil.create('utilisateur', { id: '1', email: '1' });
@@ -538,7 +550,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
         prenom: 'Wojtek',
         mot_de_passe: '#1234567890HAHA',
         email: 'yo@truc.com',
-        onboardingData: { deladata: 'une valeur' },
+        onboardingData: { ...ONBOARDING_1_2_3_4_DATA },
       });
     // THEN
     expect(response.status).toBe(400);
@@ -555,7 +567,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
         prenom: 'Wojtek',
         mot_de_passe: '#1234567890HAHA',
         email: 'yotruc.com',
-        onboardingData: { deladata: 'une valeur' },
+        onboardingData: { ...ONBOARDING_1_2_3_4_DATA },
       });
     // THEN
     expect(response.status).toBe(400);
@@ -572,7 +584,10 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
         prenom: 'Wojtek',
         mot_de_passe: 'to use',
         email: 'mon mail',
-        onboardingData: { residence: 'mauvaise valeur' },
+        onboardingData: {
+          ...ONBOARDING_1_2_3_4_DATA,
+          residence: 'mauvaise valeur',
+        },
       });
     // THEN
     expect(response.status).toBe(400);

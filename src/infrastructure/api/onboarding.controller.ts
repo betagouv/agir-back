@@ -67,7 +67,9 @@ export class OnboardingController {
   @ApiOkResponse({
     type: OnboardingDataImpactAPI,
   })
-  async evaluateOnboardingData(@Body() body: OnboardingDataAPI) {
+  async evaluateOnboardingData(
+    @Body() body: OnboardingDataAPI,
+  ): Promise<OnboardingDataImpactAPI> {
     return this.onboardingUsecase.evaluateOnboardingData(body);
   }
 

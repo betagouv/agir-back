@@ -66,7 +66,7 @@ export class OnboardingData {
 }
 
 export class Onboarding extends OnboardingData {
-  constructor(data: object) {
+  constructor(data: OnboardingData) {
     super();
     Object.assign(this, data);
   }
@@ -92,44 +92,43 @@ export class Onboarding extends OnboardingData {
     if (adultes >= 2) adultes = 1 + 0.66 * (adultes - 1);
     let enfants = this.enfants || 0;
     enfants = enfants * 0.33;
-    let residence = this.residence === 'maison' ? 2 : 1;
+    let residence = this.residence === Residence.maison ? 2 : 1;
     let superficie;
     let chauffage;
     switch (this.superficie) {
-      case 'superficie_35':
+      case Superficie.superficie_35:
         superficie = 1;
         break;
-      case 'superficie_70':
+      case Superficie.superficie_70:
         superficie = 2;
         break;
-      case 'superficie_100':
+      case Superficie.superficie_100:
         superficie = 3;
         break;
-      case 'superficie_150':
+      case Superficie.superficie_150:
         superficie = 4;
         break;
-      case 'superficie_150_et_plus':
+      case Superficie.superficie_150_et_plus:
         superficie = 5;
         break;
-
       default:
         superficie = 5;
         break;
     }
     switch (this.chauffage) {
-      case 'electricite':
+      case Chauffage.electricite:
         chauffage = 1;
         break;
-      case 'bois':
+      case Chauffage.bois:
         chauffage = 1;
         break;
-      case 'autre':
+      case Chauffage.autre:
         chauffage = 2;
         break;
-      case 'gaz':
+      case Chauffage.gaz:
         chauffage = 3;
         break;
-      case 'fioul':
+      case Chauffage.fioul:
         chauffage = 4;
         break;
       default:
@@ -145,18 +144,16 @@ export class Onboarding extends OnboardingData {
     if (score < 2.1) return Impact.tres_faible;
   }
   getAlimentationLevel(): Impact {
-    if (this.repas === 'vegan') return Impact.tres_faible;
-    if (this.repas === 'vege') return Impact.faible;
-    if (this.repas === 'tout') return Impact.eleve;
-    if (this.repas === 'viande') return Impact.tres_eleve;
-    return Impact.tres_eleve;
+    if (this.repas === Repas.vegan) return Impact.tres_faible;
+    if (this.repas === Repas.vege) return Impact.faible;
+    if (this.repas === Repas.tout) return Impact.eleve;
+    if (this.repas === Repas.viande) return Impact.tres_eleve;
   }
   getConsommationLevel(): Impact {
-    if (this.consommation === 'jamais') return Impact.tres_faible;
-    if (this.consommation === 'secondemain') return Impact.faible;
-    if (this.consommation === 'raisonnable') return Impact.eleve;
-    if (this.consommation === 'shopping') return Impact.tres_eleve;
-    return Impact.tres_eleve;
+    if (this.consommation === Consommation.jamais) return Impact.tres_faible;
+    if (this.consommation === Consommation.secondemain) return Impact.faible;
+    if (this.consommation === Consommation.raisonnable) return Impact.eleve;
+    if (this.consommation === Consommation.shopping) return Impact.tres_eleve;
   }
   private hasTransport(transport: Transport) {
     return this.transports ? this.transports.indexOf(transport) >= 0 : false;
@@ -168,26 +165,38 @@ export class Onboarding extends OnboardingData {
         if (!(value in Transport))
           throw new Error(`Valeur transport [${value}] inconnue`);
       });
+    } else {
+      throw new Error(`Valeur transport obligatoire`);
     }
     if (this.residence) {
       if (!(this.residence in Residence))
         throw new Error(`Valeur residence [${this.residence}] inconnue`);
+    } else {
+      throw new Error(`Valeur residence obligatoire`);
     }
     if (this.superficie) {
       if (!(this.superficie in Superficie))
         throw new Error(`Valeur superficie [${this.superficie}] inconnue`);
+    } else {
+      throw new Error(`Valeur superficie obligatoire`);
     }
     if (this.chauffage) {
       if (!(this.chauffage in Chauffage))
         throw new Error(`Valeur chauffage [${this.chauffage}] inconnue`);
+    } else {
+      throw new Error(`Valeur chauffage obligatoire`);
     }
     if (this.repas) {
       if (!(this.repas in Repas))
         throw new Error(`Valeur repas [${this.repas}] inconnue`);
+    } else {
+      throw new Error(`Valeur repas obligatoire`);
     }
     if (this.consommation) {
       if (!(this.consommation in Consommation))
         throw new Error(`Valeur consommation [${this.consommation}] inconnue`);
+    } else {
+      throw new Error(`Valeur consommation obligatoire`);
     }
   }
 }

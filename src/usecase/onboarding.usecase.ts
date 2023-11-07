@@ -118,7 +118,7 @@ export class OnboardingUsecase {
         phrase: `Comment et où <strong>consommer de manière plus durable</strong> quand on <strong>habite ${onboardingData.commune}</strong>`,
       };
     }
-    if ((final_result.alimentation = 4)) {
+    if (final_result.alimentation == 4) {
       final_result.phrase_3 = {
         icon: '🍽️',
         phrase: `Trouver des solutions <strong>même quand on adore la viande</strong>`,
