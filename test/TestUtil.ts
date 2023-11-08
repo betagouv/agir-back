@@ -258,6 +258,8 @@ export class TestUtil {
       id: 'serviceDefinition-id',
       titre: 'titre',
       url: 'url',
+      icon_url: 'icon_url',
+      image_url: 'image_url',
       is_local: true,
       is_url_externe: true,
       thematiques: ['climat', 'logement'],

@@ -39,6 +39,8 @@ describe('Service (API test)', () => {
     expect(response.body).toHaveLength(1);
     expect(response.body[0].titre).toEqual('titre');
     expect(response.body[0].url).toEqual('url');
+    expect(response.body[0].icon_url).toEqual('icon_url');
+    expect(response.body[0].image_url).toEqual('image_url');
     expect(response.body[0].is_local).toEqual(false);
     expect(response.body[0].is_url_externe).toEqual(true);
     expect(response.body[0].thematiques).toStrictEqual([
@@ -164,6 +166,8 @@ describe('Service (API test)', () => {
     expect(response.body[0].label).toEqual('titre'); // FIXME :temp value
     expect(response.body[0].titre).toEqual('titre');
     expect(response.body[0].url).toEqual('url');
+    expect(response.body[0].icon_url).toEqual('icon_url');
+    expect(response.body[0].image_url).toEqual('image_url');
     expect(response.body[0].is_local).toEqual(true);
     expect(response.body[0].is_url_externe).toEqual(true);
     expect(response.body[0].thematiques).toStrictEqual([

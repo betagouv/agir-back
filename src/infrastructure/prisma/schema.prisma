@@ -187,6 +187,8 @@ model Service {
 model ServiceDefinition {
   id             String    @id
   titre          String
+  icon_url       String?
+  image_url      String?
   url            String?
   is_url_externe Boolean?
   is_local       Boolean   @default(false)

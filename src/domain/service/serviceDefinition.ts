@@ -5,6 +5,8 @@ export class ServiceDefinitionData {
   titre: string;
   is_local: boolean;
   url: string;
+  icon_url: string;
+  image_url: string;
   is_url_externe: boolean;
   thematiques: Thematique[] = [];
   nombre_installation: number = 0;
