@@ -71,12 +71,15 @@ describe('ServiceRepository', () => {
     expect(result['3']).toEqual(1);
     expect(result['4']).toBeUndefined();
   });
-  it('listeServicesUsage  : renvoie le bon nbr d usage de chaque service', async () => {
+  it('listeServiceDefinitionsAndUserRelatedServices  : renvoie le bon nbr d usage de chaque service', async () => {
     // GIVEN
     await injectData();
 
     // WHEN
-    let result = await serviceRepository.listeServiceDefinitions();
+    let result =
+      await serviceRepository.listeServiceDefinitionsAndUserRelatedServices(
+        null,
+      );
 
     // THEN
     let id_count = result.map((def) => ({
@@ -101,5 +104,22 @@ describe('ServiceRepository', () => {
         count: 0,
       },
     ]);
+  });
+  it('listeServiceDefinitionsAndUserRelatedServices  : flag d installation de service', async () => {
+    // GIVEN
+    await injectData();
+
+    // WHEN
+    let result =
+      await serviceRepository.listeServiceDefinitionsAndUserRelatedServices(
+        '1',
+      );
+
+    // THEN
+    expect(result).toHaveLength(4);
+    expect(result[0].is_installed).toEqual(true);
+    expect(result[1].is_installed).toEqual(true);
+    expect(result[2].is_installed).toEqual(false);
+    expect(result[3].is_installed).toEqual(false);
   });
 });

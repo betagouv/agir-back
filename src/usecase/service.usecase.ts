@@ -10,7 +10,9 @@ export class ServiceUsecase {
   async listServicesDefinitions(
     utilisateurId: string,
   ): Promise<ServiceDefinition[]> {
-    return this.serviceRepository.listeServiceDefinitions();
+    return this.serviceRepository.listeServiceDefinitionsAndUserRelatedServices(
+      utilisateurId,
+    );
   }
   async addServiceToUtilisateur(
     utilisateurId: string,

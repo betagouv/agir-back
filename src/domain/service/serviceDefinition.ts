@@ -10,6 +10,7 @@ export class ServiceDefinitionData {
   is_url_externe: boolean;
   thematiques: Thematique[] = [];
   nombre_installation: number = 0;
+  is_installed: boolean;
 }
 export class ServiceDefinition extends ServiceDefinitionData {
   constructor(data: ServiceDefinitionData) {

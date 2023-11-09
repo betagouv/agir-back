@@ -65,6 +65,23 @@ export class ServiceRepository {
     });
     return result.map((service) => this.buildService(service));
   }
+  async listeServiceDefinitionsAndUserRelatedServices(
+    utilisateurId?: string,
+  ): Promise<ServiceDefinition[]> {
+    const result = await this.prisma.serviceDefinition.findMany({
+      include: {
+        services: {
+          where: {
+            utilisateurId: utilisateurId || 'XXX',
+          },
+        },
+      },
+      orderBy: {
+        id: 'asc',
+      },
+    });
+    return this.buildServiceDefinitionList(result);
+  }
 
   async countServicesByDefinition(): Promise<Record<string, number>> {
     const query = `
@@ -106,11 +123,16 @@ export class ServiceRepository {
     serviceDefinitionDB: ServiceDefinitionDB,
     occurence: number,
   ): ServiceDefinition {
+    const isInstalledForUser =
+      serviceDefinitionDB['services'] != undefined
+        ? serviceDefinitionDB['services'].length > 0
+        : false;
     return new ServiceDefinition({
       ...serviceDefinitionDB,
       serviceDefinitionId: serviceDefinitionDB.id,
       thematiques: serviceDefinitionDB.thematiques.map((th) => Thematique[th]),
       nombre_installation: occurence,
+      is_installed: isInstalledForUser,
     });
   }
 }

@@ -10,6 +10,7 @@ export class ServiceDefinitionAPI {
   @ApiProperty() image_url: string;
   @ApiProperty() is_local: boolean;
   @ApiProperty() is_url_externe: boolean;
+  @ApiProperty() is_installed: boolean;
 
   @ApiProperty({ enum: Thematique, enumName: 'Thematique', isArray: true })
   thematiques: Thematique[];
@@ -29,6 +30,7 @@ export class ServiceDefinitionAPI {
       is_url_externe: serviceDefinition.is_url_externe,
       thematiques: serviceDefinition.thematiques,
       nombre_installation: serviceDefinition.nombre_installation,
+      is_installed: serviceDefinition.is_installed,
     };
   }
 }

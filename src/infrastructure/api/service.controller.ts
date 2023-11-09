@@ -16,6 +16,7 @@ import {
   ApiOperation,
   ApiBearerAuth,
   ApiBody,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
@@ -37,12 +38,20 @@ export class ServiceController extends GenericControler {
   @ApiOperation({
     summary: "Liste l'ensemble des services disponibles dans l'application",
   })
+  @ApiQuery({
+    name: 'utilisateurId',
+    type: String,
+    description: `Permet d'indiquer pour chaque service du catalogue si celui est installé pour l'utlisateur de cet id, champ optionnel`,
+    required: false,
+  })
   @ApiOkResponse({ type: [ServiceDefinitionAPI] })
   @UseGuards(AuthGuard)
   async listeServicesDef(
     @Query('utilisateurId') utilisateurId?: string,
   ): Promise<ServiceDefinitionAPI[]> {
-    const result = await this.serviceUsecase.listServicesDefinitions(utilisateurId);
+    const result = await this.serviceUsecase.listServicesDefinitions(
+      utilisateurId,
+    );
     return result.map((def) =>
       ServiceDefinitionAPI.mapServiceDefintionToServiceDefinitionAPI(def),
     );
