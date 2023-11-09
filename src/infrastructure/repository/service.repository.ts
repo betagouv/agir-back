@@ -16,7 +16,7 @@ export class ServiceRepository {
 
   async listeServiceDefinitions(): Promise<ServiceDefinition[]> {
     const list = await this.prisma.serviceDefinition.findMany();
-    return this.buildServicefinitionList(list);
+    return this.buildServiceDefinitionList(list);
   }
 
   async addServiceToUtilisateur(
@@ -86,11 +86,12 @@ export class ServiceRepository {
   private buildService(serviceDB: ServiceDB): Service {
     return new Service({
       ...serviceDB['serviceDefinition'],
-      id: serviceDB.id,
+      serviceId: serviceDB.id,
+      serviceDefinitionId: serviceDB['serviceDefinition'].id,
     });
   }
 
-  private async buildServicefinitionList(
+  private async buildServiceDefinitionList(
     serviceDefinitionDB: ServiceDefinitionDB[],
   ): Promise<ServiceDefinition[]> {
     // FIXME : plus tard en cache ou autre, pas besoin de recalculer à chaque affiche du catalogue de service
@@ -107,6 +108,7 @@ export class ServiceRepository {
   ): ServiceDefinition {
     return new ServiceDefinition({
       ...serviceDefinitionDB,
+      serviceDefinitionId: serviceDefinitionDB.id,
       thematiques: serviceDefinitionDB.thematiques.map((th) => Thematique[th]),
       nombre_installation: occurence,
     });

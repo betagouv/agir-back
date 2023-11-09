@@ -7,7 +7,9 @@ import { ServiceRepository } from '../../src/infrastructure/repository/service.r
 export class ServiceUsecase {
   constructor(private serviceRepository: ServiceRepository) {}
 
-  async listServicesDefinitions(): Promise<ServiceDefinition[]> {
+  async listServicesDefinitions(
+    utilisateurId: string,
+  ): Promise<ServiceDefinition[]> {
     return this.serviceRepository.listeServiceDefinitions();
   }
   async addServiceToUtilisateur(

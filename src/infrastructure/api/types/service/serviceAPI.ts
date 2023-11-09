@@ -3,7 +3,8 @@ import { Thematique } from '../../../../../src/domain/thematique';
 import { Service } from '../../../../domain/service/service';
 
 export class ServiceAPI {
-  @ApiProperty() id: string;
+  @ApiProperty() serviceId: string;
+  @ApiProperty() serviceDefinitionId: string;
   @ApiProperty() label: string;
   @ApiProperty() titre: string;
   @ApiProperty() url: string;
@@ -16,7 +17,8 @@ export class ServiceAPI {
 
   static mapServicesToServicesAPI(service: Service): ServiceAPI {
     return {
-      id: service.id,
+      serviceId: service.serviceId,
+      serviceDefinitionId: service.serviceDefinitionId,
       label: service.label,
       titre: service.titre,
       url: service.url,

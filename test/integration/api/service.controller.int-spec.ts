@@ -37,6 +37,9 @@ describe('Service (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
+    expect(response.body[0].serviceDefinitionId).toEqual(
+      'serviceDefinition-id',
+    );
     expect(response.body[0].titre).toEqual('titre');
     expect(response.body[0].url).toEqual('url');
     expect(response.body[0].icon_url).toEqual('icon_url');
@@ -163,6 +166,24 @@ describe('Service (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(2);
+  });
+  it('GET /utilisateurs/id/services liste 1 services associés à l utilisateur, check data', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition');
+    await TestUtil.create('service');
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/services',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body[0].serviceId).toEqual('service-id'); // FIXME :temp value
+    expect(response.body[0].serviceDefinitionId).toEqual(
+      'serviceDefinition-id',
+    ); // FIXME :temp value
     expect(response.body[0].label).toEqual('titre'); // FIXME :temp value
     expect(response.body[0].titre).toEqual('titre');
     expect(response.body[0].url).toEqual('url');

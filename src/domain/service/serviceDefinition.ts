@@ -1,7 +1,7 @@
 import { Thematique } from '../thematique';
 
 export class ServiceDefinitionData {
-  id: string;
+  serviceDefinitionId: string;
   titre: string;
   is_local: boolean;
   url: string;

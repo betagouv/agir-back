@@ -8,6 +8,7 @@ import {
   Request,
   BadRequestException,
   Delete,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -38,8 +39,10 @@ export class ServiceController extends GenericControler {
   })
   @ApiOkResponse({ type: [ServiceDefinitionAPI] })
   @UseGuards(AuthGuard)
-  async listeServicesDef(): Promise<ServiceDefinitionAPI[]> {
-    const result = await this.serviceUsecase.listServicesDefinitions();
+  async listeServicesDef(
+    @Query('utilisateurId') utilisateurId?: string,
+  ): Promise<ServiceDefinitionAPI[]> {
+    const result = await this.serviceUsecase.listServicesDefinitions(utilisateurId);
     return result.map((def) =>
       ServiceDefinitionAPI.mapServiceDefintionToServiceDefinitionAPI(def),
     );

@@ -80,7 +80,7 @@ describe('ServiceRepository', () => {
 
     // THEN
     let id_count = result.map((def) => ({
-      id: def.id,
+      id: def.serviceDefinitionId,
       count: def.nombre_installation,
     }));
     expect(id_count).toStrictEqual([
