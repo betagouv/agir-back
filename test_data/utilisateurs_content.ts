@@ -292,6 +292,9 @@ const utilisateurs = {
     points: 10,
     email: 'ww@w.com',
     mot_de_passe: 'haha',
+    code_postal: '91120',
+    commune: 'Palaiseau',
+    revenu_fiscal: 666,
     todo: {
       niveau: 1,
       elements: [
