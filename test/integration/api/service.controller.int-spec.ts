@@ -222,7 +222,6 @@ describe('Service (API test)', () => {
     await TestUtil.create('serviceDefinition', {
       thematiques: ['alimentation'],
     });
-    await TestUtil.create('service');
     await TestUtil.create('thematique', {
       id_cms: 1,
       titre: 'THE ALIMENTATION',

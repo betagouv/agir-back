@@ -41,6 +41,7 @@ describe('ThematiqueRepository', () => {
 
     // WHEN
     await thematiqueRepository.upsertThematique(1, 'new titre');
+    await thematiqueRepository.loadThematiques();
 
     // THEN
     const dbTh1 = await TestUtil.prisma.thematique.findUnique({
@@ -61,6 +62,7 @@ describe('ThematiqueRepository', () => {
 
     // WHEN
     await thematiqueRepository.upsertThematique(2, 'new them');
+    await thematiqueRepository.loadThematiques();
 
     // THEN
     const dbTh1 = await TestUtil.prisma.thematique.findUnique({
@@ -81,6 +83,7 @@ describe('ThematiqueRepository', () => {
 
     // WHEN
     await thematiqueRepository.upsertThematique(10, 'new them');
+    await thematiqueRepository.loadThematiques();
 
     // THEN
     const dbTh1 = await TestUtil.prisma.thematique.findUnique({

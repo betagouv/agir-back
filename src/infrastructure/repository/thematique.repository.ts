@@ -12,12 +12,17 @@ export class ThematiqueRepository {
     ThematiqueRepository.titres_thematiques = new Map();
   }
 
+  async onApplicationBootstrap(): Promise<void> {
+    await this.loadThematiques();
+  }
+
   public static getLibelleThematique(thematique: Thematique): string {
     const libelle = ThematiqueRepository.titres_thematiques.get(thematique);
     return libelle || thematique.toString();
   }
 
   public static resetThematiques() {
+    // FOR TEST ONLY
     ThematiqueRepository.titres_thematiques = new Map();
   }
 
@@ -29,7 +34,6 @@ export class ThematiqueRepository {
   }
 
   public async upsertThematique(id_cms: number, titre: string) {
-    this.setTitreOfThematiqueByCmsId(id_cms, titre);
     await this.prisma.thematique.upsert({
       where: {
         id_cms: id_cms,
