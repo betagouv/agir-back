@@ -47,8 +47,12 @@ export class ServiceController extends GenericControler {
   @ApiOkResponse({ type: [ServiceDefinitionAPI] })
   @UseGuards(AuthGuard)
   async listeServicesDef(
+    @Request() req,
     @Query('utilisateurId') utilisateurId?: string,
   ): Promise<ServiceDefinitionAPI[]> {
+    if (utilisateurId) {
+      this.checkCallerId(req, utilisateurId);
+    }
     const result = await this.serviceUsecase.listServicesDefinitions(
       utilisateurId,
     );

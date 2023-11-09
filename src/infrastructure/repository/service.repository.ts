@@ -14,11 +14,6 @@ import { Thematique } from '../../../src/domain/thematique';
 export class ServiceRepository {
   constructor(private prisma: PrismaService) {}
 
-  async listeServiceDefinitions(): Promise<ServiceDefinition[]> {
-    const list = await this.prisma.serviceDefinition.findMany();
-    return this.buildServiceDefinitionList(list);
-  }
-
   async addServiceToUtilisateur(
     utilisateurId: string,
     serviceDefinitionId: string,
@@ -84,7 +79,7 @@ export class ServiceRepository {
         id: 'asc',
       },
     });
-    return this.buildServiceDefinitionList(result);
+    return this.buildServiceDefinitionList(result, utilisateurId != undefined);
   }
 
   async countServiceDefinitionUsage(): Promise<Record<string, number>> {
@@ -114,29 +109,33 @@ export class ServiceRepository {
 
   private async buildServiceDefinitionList(
     serviceDefinitionDB: ServiceDefinitionDB[],
+    includeInstalledFlag: boolean,
   ): Promise<ServiceDefinition[]> {
     // FIXME : plus tard en cache ou autre, pas besoin de recalculer à chaque affiche du catalogue de service
     const repartition = await this.countServiceDefinitionUsage();
     return serviceDefinitionDB.map((serviceDefDB) => {
       let occurence = repartition[serviceDefDB.id] || 0;
-      return this.buildServicefinition(serviceDefDB, occurence);
+      return this.buildServicefinition(
+        serviceDefDB,
+        occurence,
+        includeInstalledFlag,
+      );
     });
   }
 
   private buildServicefinition(
     serviceDefinitionDB: ServiceDefinitionDB,
     occurence: number,
+    includeInstalledFlag: boolean,
   ): ServiceDefinition {
-    const isInstalledForUser =
-      serviceDefinitionDB['services'] != undefined
-        ? serviceDefinitionDB['services'].length > 0
-        : false;
     return new ServiceDefinition({
       ...serviceDefinitionDB,
       serviceDefinitionId: serviceDefinitionDB.id,
       thematiques: serviceDefinitionDB.thematiques.map((th) => Thematique[th]),
       nombre_installation: occurence,
-      is_installed: isInstalledForUser,
+      is_installed: includeInstalledFlag
+        ? serviceDefinitionDB['services'].length > 0
+        : undefined,
     });
   }
 }

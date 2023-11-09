@@ -43,6 +43,7 @@ describe('Service (API test)', () => {
     expect(response.body[0].id).toEqual('serviceDefinition-id');
     expect(response.body[0].titre).toEqual('titre');
     expect(response.body[0].url).toEqual('url');
+    expect(response.body[0].is_installed).toBeUndefined();
     expect(response.body[0].icon_url).toEqual('icon_url');
     expect(response.body[0].image_url).toEqual('image_url');
     expect(response.body[0].is_local).toEqual(false);
@@ -75,6 +76,44 @@ describe('Service (API test)', () => {
 
     // THEN
     expect(response.body[0].nombre_installation).toEqual(2);
+  });
+  it('GET /services?utilisateurId=XXX avec le flag d installation propre à l utilisateur ', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { email: '1' });
+    await TestUtil.create('utilisateur', { id: '2', email: '2' });
+
+    await TestUtil.create('serviceDefinition', { id: '1' });
+    await TestUtil.create('serviceDefinition', { id: '2' });
+
+    await TestUtil.create('service', {
+      id: '1',
+      utilisateurId: 'utilisateur-id',
+      serviceDefinitionId: '1',
+    });
+    await TestUtil.create('service', {
+      id: '2',
+      utilisateurId: '2',
+      serviceDefinitionId: '2',
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/services?utilisateurId=utilisateur-id',
+    );
+
+    // THEN
+    expect(response.body[0].is_installed).toEqual(true);
+    expect(response.body[1].is_installed).toEqual(false);
+  });
+  it('GET /services?utilisateurId=XXX erreur 403 si pas le bon user', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+
+    // WHEN
+    const response = await TestUtil.GET('/services?utilisateurId=BAD');
+
+    // THEN
+    expect(response.status).toBe(403);
   });
   it('POST /utilisateurs/id/services ajout un nouveau service à l utilisateur', async () => {
     // GIVEN

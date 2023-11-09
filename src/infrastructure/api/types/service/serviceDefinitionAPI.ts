@@ -11,7 +11,7 @@ export class ServiceDefinitionAPI {
   @ApiProperty() image_url: string;
   @ApiProperty() is_local: boolean;
   @ApiProperty() is_url_externe: boolean;
-  @ApiProperty() is_installed: boolean;
+  @ApiProperty() is_installed?: boolean;
 
   @ApiProperty({ type: [String] })
   thematiques: string[];
@@ -21,7 +21,7 @@ export class ServiceDefinitionAPI {
   static mapServiceDefintionToServiceDefinitionAPI(
     serviceDefinition: ServiceDefinition,
   ): ServiceDefinitionAPI {
-    return {
+    let result = {
       id: serviceDefinition.serviceDefinitionId,
       titre: serviceDefinition.titre,
       url: serviceDefinition.url,
@@ -35,6 +35,7 @@ export class ServiceDefinitionAPI {
       nombre_installation: serviceDefinition.nombre_installation,
       is_installed: serviceDefinition.is_installed,
     };
+    return result;
   }
 
   public static convertThematiquesListeToLibelleListe(
