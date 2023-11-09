@@ -1,7 +1,10 @@
+import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { Thematique } from '../../../src/domain/thematique';
 import { TestUtil } from '../../TestUtil';
 
 describe('Service (API test)', () => {
+  let thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
+
   beforeAll(async () => {
     await TestUtil.appinit();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
@@ -190,5 +193,47 @@ describe('Service (API test)', () => {
       Thematique.climat,
       Thematique.logement,
     ]);
+  });
+  it('GET /utilisateurs/id/services renvoi le libellé de la thématique en base si existe', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', {
+      thematiques: ['alimentation'],
+    });
+    await TestUtil.create('service');
+    await TestUtil.create('thematique', {
+      id_cms: 1,
+      titre: 'THE ALIMENTATION',
+    });
+    await thematiqueRepository.loadThematiques();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/services',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body[0].thematiques[0]).toEqual('THE ALIMENTATION');
+  });
+  it('GET /services renvoi le libellé de la thématique en base si existe', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', {
+      thematiques: ['alimentation'],
+    });
+    await TestUtil.create('service');
+    await TestUtil.create('thematique', {
+      id_cms: 1,
+      titre: 'THE ALIMENTATION',
+    });
+    await thematiqueRepository.loadThematiques();
+
+    // WHEN
+    const response = await TestUtil.GET('/services');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body[0].thematiques[0]).toEqual('THE ALIMENTATION');
   });
 });

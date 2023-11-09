@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Thematique } from '../../../../../src/domain/thematique';
 import { Service } from '../../../../domain/service/service';
+import { ServiceDefinitionAPI } from './serviceDefinitionAPI';
 
 export class ServiceAPI {
   @ApiProperty() id: string;
@@ -11,8 +11,8 @@ export class ServiceAPI {
   @ApiProperty() image_url: string;
   @ApiProperty() is_url_externe?: boolean;
   @ApiProperty() is_local: boolean;
-  @ApiProperty({ enum: Thematique, enumName: 'Thematique', isArray: true })
-  thematiques: Thematique[];
+  @ApiProperty({ type: [String] })
+  thematiques: string[];
 
   static mapServicesToServicesAPI(service: Service): ServiceAPI {
     return {
@@ -24,7 +24,9 @@ export class ServiceAPI {
       image_url: service.image_url,
       is_local: service.is_local,
       is_url_externe: service.is_url_externe,
-      thematiques: service.thematiques,
+      thematiques: ServiceDefinitionAPI.convertThematiquesListeToLibelleListe(
+        service.thematiques,
+      ),
     };
   }
 }

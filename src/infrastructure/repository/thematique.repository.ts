@@ -6,13 +6,19 @@ import { CMSThematiqueAPI } from '../api/types/cms/CMSThematiqueAPI';
 
 @Injectable()
 export class ThematiqueRepository {
-  titres_thematiques: Map<Thematique, string>;
+  static titres_thematiques: Map<Thematique, string>;
+
   constructor(private prisma: PrismaService) {
-    this.titres_thematiques = new Map();
+    ThematiqueRepository.titres_thematiques = new Map();
   }
 
-  public getLibelleThematique(thematique: Thematique): string {
-    return this.titres_thematiques.get(thematique);
+  public static getLibelleThematique(thematique: Thematique): string {
+    const libelle = ThematiqueRepository.titres_thematiques.get(thematique);
+    return libelle || thematique.toString();
+  }
+
+  public static resetThematiques() {
+    ThematiqueRepository.titres_thematiques = new Map();
   }
 
   public async loadThematiques() {
@@ -40,7 +46,7 @@ export class ThematiqueRepository {
   }
 
   private setTitreOfThematiqueByCmsId(cms_id: number, titre: string) {
-    this.titres_thematiques.set(
+    ThematiqueRepository.titres_thematiques.set(
       CMSThematiqueAPI.getThematiqueByCmsId(cms_id),
       titre,
     );

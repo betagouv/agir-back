@@ -19,7 +19,7 @@ describe('ThematiqueRepository', () => {
 
   it('loadThematiques : charge 2 thematiques OK', async () => {
     // GIVEN
-    thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
+    ThematiqueRepository.resetThematiques();
     await TestUtil.create('thematique', { id: '1', id_cms: 1, titre: 't1' });
     await TestUtil.create('thematique', { id: '2', id_cms: 2, titre: 't2' });
 
@@ -28,10 +28,10 @@ describe('ThematiqueRepository', () => {
 
     // THEN
     expect(
-      thematiqueRepository.getLibelleThematique(Thematique.alimentation),
+      ThematiqueRepository.getLibelleThematique(Thematique.alimentation),
     ).toEqual('t1');
     expect(
-      thematiqueRepository.getLibelleThematique(Thematique.climat),
+      ThematiqueRepository.getLibelleThematique(Thematique.climat),
     ).toEqual('t2');
   });
   it('upsertThematique : met a jour correctement une thematique', async () => {
@@ -52,7 +52,7 @@ describe('ThematiqueRepository', () => {
     expect(dbTh1.titre).toEqual('new titre');
     expect(dbTh2.titre).toEqual('t2');
     expect(
-      thematiqueRepository.getLibelleThematique(Thematique.alimentation),
+      ThematiqueRepository.getLibelleThematique(Thematique.alimentation),
     ).toEqual('new titre');
   });
   it('upsertThematique : crée une thematique', async () => {
@@ -72,7 +72,7 @@ describe('ThematiqueRepository', () => {
     expect(dbTh1.titre).toEqual('t1');
     expect(dbTh2.titre).toEqual('new them');
     expect(
-      thematiqueRepository.getLibelleThematique(Thematique.climat),
+      ThematiqueRepository.getLibelleThematique(Thematique.climat),
     ).toEqual('new them');
   });
   it('upsertThematique : thematique non connue, silencieux', async () => {
