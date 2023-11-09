@@ -41,7 +41,7 @@ export class ServiceController extends GenericControler {
   @ApiQuery({
     name: 'utilisateurId',
     type: String,
-    description: `Permet d'indiquer pour chaque service du catalogue si celui est installé pour l'utlisateur de cet id, champ optionnel`,
+    description: `Champ optionnel. Permet d'indiquer de valoriser pour chaque service du catalogue si celui ci est installé ou pas pour l'utlisateur d'id en paramètre.`,
     required: false,
   })
   @ApiOkResponse({ type: [ServiceDefinitionAPI] })

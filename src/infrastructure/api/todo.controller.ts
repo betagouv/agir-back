@@ -18,13 +18,16 @@ export class TodoController extends GenericControler {
     super();
   }
 
-  @Get('utilisateurs/:id/todo')
+  @Get('utilisateurs/:utilisateurId/todo')
   @ApiOperation({
     summary: "renvoie la todo liste courante de l'utilisateur d'id donné",
   })
   @ApiOkResponse({ type: TodoAPI })
   @UseGuards(AuthGuard)
-  async getUtilisateurTodo(@Param('id') utilisateurId: string, @Request() req) {
+  async getUtilisateurTodo(
+    @Param('utilisateurId') utilisateurId: string,
+    @Request() req,
+  ) {
     this.checkCallerId(req, utilisateurId);
 
     const result = await this.todoUsecase.getUtilisateurTodo(utilisateurId);
