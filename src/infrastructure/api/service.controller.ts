@@ -56,7 +56,7 @@ export class ServiceController extends GenericControler {
       ServiceDefinitionAPI.mapServiceDefintionToServiceDefinitionAPI(def),
     );
   }
-  @Post('utilisateurs/:id/services')
+  @Post('utilisateurs/:utilisateurId/services')
   @ApiOperation({
     summary: "Ajoute un service provenant du catalogue à l'utilisateur donné",
   })
@@ -66,7 +66,7 @@ export class ServiceController extends GenericControler {
   @UseGuards(AuthGuard)
   async addServiceToUtilisateur(
     @Body() body: AddServiceAPI,
-    @Param('id') utilisateurId: string,
+    @Param('utilisateurId') utilisateurId: string,
     @Request() req,
   ) {
     this.checkCallerId(req, utilisateurId);
@@ -80,7 +80,7 @@ export class ServiceController extends GenericControler {
       throw new BadRequestException(ErrorService.toStringOrObject(error));
     }
   }
-  @Get('utilisateurs/:id/services')
+  @Get('utilisateurs/:utilisateurId/services')
   // FIXME : set cache-control
   @ApiOperation({
     summary: "Liste tous les services associés à l'utilisateur",
@@ -88,7 +88,7 @@ export class ServiceController extends GenericControler {
   @ApiOkResponse({ type: [ServiceAPI] })
   @UseGuards(AuthGuard)
   async listServicesOfUtilisateur(
-    @Param('id') utilisateurId: string,
+    @Param('utilisateurId') utilisateurId: string,
     @Request() req,
   ) {
     this.checkCallerId(req, utilisateurId);
@@ -101,18 +101,21 @@ export class ServiceController extends GenericControler {
       ServiceAPI.mapServicesToServicesAPI(service),
     );
   }
-  @Delete('utilisateurs/:id/services/:id_service')
+  @Delete('utilisateurs/:utilisateurId/services/:serviceId')
   @ApiOperation({
     summary: "Supprime un service d'id donné associé à l'utilisateur",
   })
   @UseGuards(AuthGuard)
   async deleteServiceFromUtilisateur(
-    @Param('id') utilisateurId: string,
-    @Param('id_service') id_service: string,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('serviceId') serviceId: string,
     @Request() req,
   ) {
     this.checkCallerId(req, utilisateurId);
 
-    return await this.serviceUsecase.removeServiceFromUtilisateur(id_service);
+    return await this.serviceUsecase.removeServiceFromUtilisateur(
+      utilisateurId,
+      serviceId,
+    );
   }
 }

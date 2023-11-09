@@ -23,8 +23,14 @@ export class ServiceUsecase {
       serviceDefinitionId,
     );
   }
-  async removeServiceFromUtilisateur(serviceId: string) {
-    return this.serviceRepository.removeServiceFromUtilisateur(serviceId);
+  async removeServiceFromUtilisateur(
+    utilisateurId: string,
+    serviceDefinitionId: string,
+  ) {
+    return this.serviceRepository.removeServiceFromUtilisateurByServiceDefinitionId(
+      utilisateurId,
+      serviceDefinitionId,
+    );
   }
   async listeServicesOfUtilisateur(utilisateurId: string): Promise<Service[]> {
     let result = await this.serviceRepository.listeServicesOfUtilisateur(

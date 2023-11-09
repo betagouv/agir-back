@@ -47,10 +47,14 @@ export class ServiceRepository {
       }
     }
   }
-  async removeServiceFromUtilisateur(serviceId: string) {
-    await this.prisma.service.delete({
+  async removeServiceFromUtilisateurByServiceDefinitionId(
+    utilisateurId: string,
+    serviceDefinitionId: string,
+  ) {
+    await this.prisma.service.deleteMany({
       where: {
-        id: serviceId,
+        utilisateurId: utilisateurId,
+        serviceDefinitionId: serviceDefinitionId,
       },
     });
   }
@@ -83,7 +87,7 @@ export class ServiceRepository {
     return this.buildServiceDefinitionList(result);
   }
 
-  async countServicesByDefinition(): Promise<Record<string, number>> {
+  async countServiceDefinitionUsage(): Promise<Record<string, number>> {
     const query = `
     SELECT
       COUNT(*) AS "count", "serviceDefinitionId"
@@ -112,7 +116,7 @@ export class ServiceRepository {
     serviceDefinitionDB: ServiceDefinitionDB[],
   ): Promise<ServiceDefinition[]> {
     // FIXME : plus tard en cache ou autre, pas besoin de recalculer à chaque affiche du catalogue de service
-    const repartition = await this.countServicesByDefinition();
+    const repartition = await this.countServiceDefinitionUsage();
     return serviceDefinitionDB.map((serviceDefDB) => {
       let occurence = repartition[serviceDefDB.id] || 0;
       return this.buildServicefinition(serviceDefDB, occurence);

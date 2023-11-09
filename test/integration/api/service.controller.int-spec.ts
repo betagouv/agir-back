@@ -37,9 +37,7 @@ describe('Service (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
-    expect(response.body[0].serviceDefinitionId).toEqual(
-      'serviceDefinition-id',
-    );
+    expect(response.body[0].id).toEqual('serviceDefinition-id');
     expect(response.body[0].titre).toEqual('titre');
     expect(response.body[0].url).toEqual('url');
     expect(response.body[0].icon_url).toEqual('icon_url');
@@ -142,7 +140,7 @@ describe('Service (API test)', () => {
 
     // WHEN
     const response = await TestUtil.DELETE(
-      '/utilisateurs/utilisateur-id/services/service-id',
+      '/utilisateurs/utilisateur-id/services/serviceDefinition-id',
     );
 
     // THEN
@@ -180,10 +178,7 @@ describe('Service (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body[0].serviceId).toEqual('service-id'); // FIXME :temp value
-    expect(response.body[0].serviceDefinitionId).toEqual(
-      'serviceDefinition-id',
-    ); // FIXME :temp value
+    expect(response.body[0].id).toEqual('serviceDefinition-id');
     expect(response.body[0].label).toEqual('titre'); // FIXME :temp value
     expect(response.body[0].titre).toEqual('titre');
     expect(response.body[0].url).toEqual('url');

@@ -3,7 +3,7 @@ import { ServiceDefinition } from '../../../../../src/domain/service/serviceDefi
 import { Thematique } from '../../../../../src/domain/thematique';
 
 export class ServiceDefinitionAPI {
-  @ApiProperty() serviceDefinitionId: string;
+  @ApiProperty() id: string;
   @ApiProperty() titre: string;
   @ApiProperty() url: string;
   @ApiProperty() icon_url: string;
@@ -21,7 +21,7 @@ export class ServiceDefinitionAPI {
     serviceDefinition: ServiceDefinition,
   ): ServiceDefinitionAPI {
     return {
-      serviceDefinitionId: serviceDefinition.serviceDefinitionId,
+      id: serviceDefinition.serviceDefinitionId,
       titre: serviceDefinition.titre,
       url: serviceDefinition.url,
       icon_url: serviceDefinition.icon_url,
