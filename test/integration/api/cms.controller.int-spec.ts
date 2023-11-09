@@ -1,3 +1,4 @@
+import { CMSModel } from '../../../src/infrastructure/api/types/cms/CMSModels';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { CMSEvent } from '../../../src/infrastructure/api/types/cms/CMSEvent';
 import { TestUtil } from '../../TestUtil';
@@ -65,6 +66,23 @@ describe('/api/cms/income (API test)', () => {
     expect(response.status).toBe(201);
     expect(interDB).toHaveLength(1);
     expect(interDB[0].utilisateurId).toEqual('utilisateur-id');
+  });
+  it('POST /api/cms/income - create 1 thematique', async () => {
+    // GIVEN
+    // WHEN
+    const response = await TestUtil.POST('/api/cms/income').send({
+      ...CMS_DATA,
+      model: CMSModel.thematique,
+      event: CMSEvent['entry.publish'],
+      entry: { id: 1, titre: 'yo' },
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    const thematiqueDB = await TestUtil.prisma.thematique.findMany({});
+    expect(thematiqueDB).toHaveLength(1);
+    expect(thematiqueDB[0].id_cms).toEqual(1);
+    expect(thematiqueDB[0].titre).toEqual('yo');
   });
   it('POST /api/cms/income - does nothing when model = aide', async () => {
     // GIVEN

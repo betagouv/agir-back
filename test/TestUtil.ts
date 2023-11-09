@@ -84,6 +84,7 @@ export class TestUtil {
     await this.prisma.utilisateur.deleteMany();
     await this.prisma.situationNGC.deleteMany();
     await this.prisma.interactionDefinition.deleteMany();
+    await this.prisma.thematique.deleteMany();
   }
 
   static getDate(date: string) {
@@ -242,6 +243,14 @@ export class TestUtil {
       type: 'type',
       titre: 'titre',
       utilisateurId: 'utilisateur-id',
+      ...override,
+    };
+  }
+  static thematiqueData(override?) {
+    return {
+      id: 'thematique-id',
+      id_cms: 1,
+      titre: 'titre',
       ...override,
     };
   }

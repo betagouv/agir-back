@@ -6,7 +6,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { InteractionsDefinitionUsecase } from '../../../src/usecase/interactionsDefinition.usecase';
+import { InteractionsDefinitionUsecase } from '../../usecase/cms.usecase';
 import { CMSWebhookAPI } from './types/cms/CMSWebhookAPI';
 
 @Controller()
@@ -33,7 +33,7 @@ export class CMSController {
       throw new ForbiddenException('API KEY webhook CMS incorrecte : ');
     }
     console.log(JSON.stringify(body));
-    await this.interactionsDefinitionUsecase.insertOrUpdateInteractionDefFromCMS(
+    await this.interactionsDefinitionUsecase.manageIncomingCMSData(
       body,
     );
   }

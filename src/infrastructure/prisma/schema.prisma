@@ -152,6 +152,13 @@ model QuestionNGC {
   @@unique([key, utilisateurId])
 }
 
+model Thematique {
+  id         String   @id
+  id_cms     Int      @unique
+  titre      String
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+}
+
 model SituationNGC {
   id         String     @id
   situation  Json?

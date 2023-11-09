@@ -11,7 +11,7 @@ import { CMSController } from './infrastructure/api/cms.controller';
 import { UtilisateurUsecase } from './usecase/utilisateur.usecase';
 import { BilanUsecase } from './usecase/bilan.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
-import { InteractionsDefinitionUsecase } from './usecase/interactionsDefinition.usecase';
+import { InteractionsDefinitionUsecase } from './usecase/cms.usecase';
 
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur/utilisateur.repository';
 import { BadgeRepository } from './infrastructure/repository/badge.repository';
@@ -51,6 +51,7 @@ import { ServiceRepository } from './infrastructure/repository/service.repositor
 import { TodoController } from './infrastructure/api/todo.controller';
 import { TodoUsecase } from './usecase/todo.usecase';
 import { TodoRepository } from './infrastructure/repository/todo.repository';
+import { ThematiqueRepository } from './infrastructure/repository/thematique.repository';
 
 const SESSION_LIFETIME = '12h';
 
@@ -112,6 +113,7 @@ const SESSION_LIFETIME = '12h';
     ServiceRepository,
     TodoUsecase,
     TodoRepository,
+    ThematiqueRepository,
   ],
 })
 export class AppModule {}
