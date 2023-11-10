@@ -223,7 +223,6 @@ describe('Service (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body[0].id).toEqual('serviceDefinition-id');
-    expect(response.body[0].label).toEqual('titre'); // FIXME :temp value
     expect(response.body[0].titre).toEqual('titre');
     expect(response.body[0].url).toEqual('url');
     expect(response.body[0].icon_url).toEqual('icon_url');

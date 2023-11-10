@@ -71,14 +71,7 @@ export class ServiceUsecase {
     );
   }
   async listeServicesOfUtilisateur(utilisateurId: string): Promise<Service[]> {
-    let result = await this.serviceRepository.listeServicesOfUtilisateur(
-      utilisateurId,
-    );
-    // FIXME : temp value for label, dynamic data in the end
-    result.forEach((service) => {
-      service.label = service.titre;
-    });
-    return result;
+    return this.serviceRepository.listeServicesOfUtilisateur(utilisateurId);
   }
 
   private async refreshService(serviceDefinition: ServiceDefinition) {
