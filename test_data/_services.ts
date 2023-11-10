@@ -7,6 +7,8 @@ const services = {
     is_url_externe: true,
     is_local: true,
     thematiques: ['alimentation'],
+    description: 'description',
+    sous_description: 'Sous description',
   },
   linky: {
     titre: 'Votre conso élec au jour le jour',
@@ -16,6 +18,8 @@ const services = {
     is_url_externe: true,
     is_local: false,
     thematiques: ['climat', 'logement'],
+    description: 'description',
+    sous_description: 'Sous description',
   },
   suivi_transport: {
     titre: `Suivez l'impact de vos trajets quotidiens`,
@@ -25,6 +29,8 @@ const services = {
     is_url_externe: false,
     is_local: false,
     thematiques: ['transport'],
+    description: 'description',
+    sous_description: 'Sous description',
   },
   ecowatt: {
     titre: `Etat du réseau en France`,
@@ -36,6 +42,9 @@ const services = {
     is_local: false,
     thematiques: ['logement'],
     minute_period: 20,
+    description: 'Ecowatt aide les Français à mieux consommer l’électricité.',
+    sous_description:
+      'Véritable météo de l’électricité, Ecowatt qualifie en temps réel le niveau de consommation des Français.',
   },
 };
 module.exports = services;

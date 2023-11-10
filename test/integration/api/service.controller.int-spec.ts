@@ -48,6 +48,8 @@ describe('Service (API test)', () => {
     expect(response.body[0].image_url).toEqual('image_url');
     expect(response.body[0].is_local).toEqual(false);
     expect(response.body[0].is_url_externe).toEqual(true);
+    expect(response.body[0].description).toEqual('desc');
+    expect(response.body[0].sous_description).toEqual('sous desc');
     expect(response.body[0].thematiques).toStrictEqual([
       Thematique.climat,
       Thematique.logement,
@@ -228,6 +230,8 @@ describe('Service (API test)', () => {
     expect(response.body[0].image_url).toEqual('image_url');
     expect(response.body[0].is_local).toEqual(true);
     expect(response.body[0].is_url_externe).toEqual(true);
+    expect(response.body[0].description).toEqual('desc');
+    expect(response.body[0].sous_description).toEqual('sous desc');
     expect(response.body[0].thematiques).toStrictEqual([
       Thematique.climat,
       Thematique.logement,

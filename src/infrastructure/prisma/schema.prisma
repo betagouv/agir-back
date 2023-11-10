@@ -204,6 +204,8 @@ model ServiceDefinition {
   last_refresh      DateTime? @db.Timestamptz(3)
   dynamic_data      Json      @default("{}")
   thematiques       String[]  @default([])
+  description       String?
+  sous_description  String?
   created_at        DateTime  @default(now()) @db.Timestamptz(3)
   updated_at        DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
   services          Service[]

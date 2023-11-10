@@ -9,6 +9,8 @@ export class ServiceAPI {
   @ApiProperty() url: string;
   @ApiProperty() icon_url: string;
   @ApiProperty() image_url: string;
+  @ApiProperty() description: string;
+  @ApiProperty() sous_description: string;
   @ApiProperty() is_url_externe?: boolean;
   @ApiProperty() is_local: boolean;
   @ApiProperty({ type: [String] })
@@ -24,6 +26,8 @@ export class ServiceAPI {
       image_url: service.image_url,
       is_local: service.is_local,
       is_url_externe: service.is_url_externe,
+      description: service.description,
+      sous_description: service.sous_description,
       thematiques: ServiceDefinitionAPI.convertThematiquesListeToLibelleListe(
         service.thematiques,
       ),

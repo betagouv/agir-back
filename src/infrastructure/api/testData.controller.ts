@@ -120,6 +120,9 @@ export class TestDataController {
         image_url: service.image_url,
         is_local: service.is_local,
         is_url_externe: service.is_url_externe,
+        minute_period: service.minute_period,
+        description: service.description,
+        sous_description: service.sous_description,
         thematiques: service.thematiques,
       };
       await this.prisma.serviceDefinition.upsert({

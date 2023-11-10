@@ -275,6 +275,8 @@ export class TestUtil {
       scheduled_refresh: null,
       dynamic_data: {},
       last_refresh: null,
+      description: 'desc',
+      sous_description: 'sous desc',
       thematiques: ['climat', 'logement'],
       ...override,
     };

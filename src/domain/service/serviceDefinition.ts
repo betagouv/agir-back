@@ -15,6 +15,8 @@ export class ServiceDefinitionData {
   scheduled_refresh: Date;
   last_refresh: Date;
   dynamic_data: Object;
+  description: string;
+  sous_description: string;
 }
 export class ServiceDefinition extends ServiceDefinitionData {
   constructor(data: ServiceDefinitionData) {
