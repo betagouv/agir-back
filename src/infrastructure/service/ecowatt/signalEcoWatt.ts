@@ -6,6 +6,7 @@ export enum EcoWattLevel {
 }
 
 export class SignalEcoWatt {
+  label: string;
   niveau: EcoWattLevel;
   message: string;
 }

@@ -236,6 +236,38 @@ describe('Service (API test)', () => {
       Thematique.logement,
     ]);
   });
+  it('GET /utilisateurs/id/services , label a pour valeur titre si pas de label dans les données dynamic', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition');
+    await TestUtil.create('service');
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/services',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body[0].label).toEqual('titre');
+  });
+  it('GET /utilisateurs/id/services , label a pour valeur label des données dynamic', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', {
+      dynamic_data: { label: 'the label' },
+    });
+    await TestUtil.create('service');
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/services',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body[0].label).toEqual('the label');
+  });
   it('GET /utilisateurs/id/services renvoi le libellé de la thématique en base si existe', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
@@ -297,7 +329,7 @@ describe('Service (API test)', () => {
     // THEN
     expect(response.status).toBe(403);
   });
-  it('POST /services/refreshDynamicData appel ok, renvoie 0 quand aucun service en base', async () => {
+  it('POST /services/refreshDynamicData appel ok, renvoie liste vide quand aucun service en base', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
 
@@ -306,7 +338,7 @@ describe('Service (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.refreshed_services).toEqual(0);
+    expect(response.body).toHaveLength(0);
   });
   it('POST /services/refreshDynamicData appel ok, renvoie 1 quand 1 service cible, donnée mises à jour', async () => {
     // GIVEN
@@ -324,8 +356,9 @@ describe('Service (API test)', () => {
     const serviceDefDB = await TestUtil.prisma.serviceDefinition.findFirst();
 
     expect(response.status).toBe(200);
-    expect(response.body.refreshed_services).toEqual(1);
-    expect(serviceDefDB.dynamic_data['message']).toContain('Hello');
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toEqual('REFRESHED OK : dummy');
+    expect(serviceDefDB.dynamic_data['label']).toContain('En construction');
     expect(
       Math.round(
         (serviceDefDB.scheduled_refresh.getTime() - Date.now()) / 1000,

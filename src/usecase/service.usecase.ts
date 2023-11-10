@@ -8,6 +8,12 @@ import { ServiceRepository } from '../../src/infrastructure/repository/service.r
 import { EcoWattServiceManager } from '../infrastructure/service/ecowatt/ecoWattServiceManager';
 import { GenericServiceManager } from 'src/infrastructure/service/GenericServiceManager';
 
+const fake_manager = {
+  computeDynamicData: async () => {
+    return { label: `En construction 🚧` };
+  },
+};
+
 @Injectable()
 export class ServiceUsecase {
   private readonly refreshableServiceManagerMap: Record<
@@ -19,11 +25,6 @@ export class ServiceUsecase {
     private serviceRepository: ServiceRepository,
     private readonly ecoWattServiceManager: EcoWattServiceManager,
   ) {
-    const fake_manager = {
-      computeDynamicData: async () => {
-        return { message: `Hello ${Math.random()}` };
-      },
-    };
     this.refreshableServiceManagerMap = {
       ecowatt: this.ecoWattServiceManager,
       linky: fake_manager,
@@ -32,7 +33,7 @@ export class ServiceUsecase {
     };
   }
 
-  async refreshServiceDynamicData(): Promise<number> {
+  async refreshServiceDynamicData(): Promise<string[]> {
     let serviceListToRefresh =
       await this.serviceRepository.listeServiceDefinitionsByIdArray(
         Object.values(RefreshableService),
@@ -42,11 +43,13 @@ export class ServiceUsecase {
       serviceDefinition.isReadyForRefresh(),
     );
 
+    let resultStatusList = [];
     for (let index = 0; index < serviceListToRefresh.length; index++) {
       const serviceDefinition = serviceListToRefresh[index];
-      await this.refreshService(serviceDefinition);
+      const refreshStatus = await this.refreshService(serviceDefinition);
+      resultStatusList.push(refreshStatus);
     }
-    return serviceListToRefresh.length;
+    return resultStatusList;
   }
 
   async listServicesDefinitions(
@@ -82,20 +85,14 @@ export class ServiceUsecase {
     const manager: GenericServiceManager =
       this.refreshableServiceManagerMap[serviceDefinition.serviceDefinitionId];
 
-    console.log(
-      `START REFRESHING SERVICE : ${serviceDefinition.serviceDefinitionId}`,
-    );
     const result = await manager.computeDynamicData();
     if (result === null) {
-      console.log(
-        `FAILED TO REFRESH SERVICE : ${serviceDefinition.serviceDefinitionId}`,
-      );
-      return;
+      return `FAILED REFRESH : ${serviceDefinition.serviceDefinitionId}`;
     }
-    console.log(`REFRESHED SERVICE : ${serviceDefinition.serviceDefinitionId}`);
     serviceDefinition.dynamic_data = result;
     serviceDefinition.setNextRefreshDate();
     serviceDefinition.last_refresh = new Date();
     await this.serviceRepository.updateServiceDefinition(serviceDefinition);
+    return `REFRESHED OK : ${serviceDefinition.serviceDefinitionId}`;
   }
 }

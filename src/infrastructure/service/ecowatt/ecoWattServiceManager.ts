@@ -16,6 +16,7 @@ export class EcoWattServiceManager implements GenericServiceManager {
       return await this.getEcoWattSignal();
     }
     return {
+      label: '🚫 EcoWatt',
       message: 'Service disabled',
       niveau: 0,
     };
@@ -38,6 +39,9 @@ export class EcoWattServiceManager implements GenericServiceManager {
       }
     }
     return {
+      label: [`🟢 Pas d'alerte`, `🟠 Tendu`, `🔴 Attentions coupures`][
+        signal.data.signals[0].dvalue - 1
+      ],
       message: signal.data.signals[0].message,
       niveau: signal.data.signals[0].dvalue,
     };

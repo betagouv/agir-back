@@ -7,6 +7,10 @@ export enum RefreshableService {
   dummy = 'dummy',
 }
 
+export interface ServiceDynamicData {
+  label: string;
+}
+
 export class ServiceDefinitionData {
   serviceDefinitionId: string;
   titre: string;
@@ -21,7 +25,7 @@ export class ServiceDefinitionData {
   minute_period: number;
   scheduled_refresh: Date;
   last_refresh: Date;
-  dynamic_data: Object;
+  dynamic_data: ServiceDynamicData;
   description: string;
   sous_description: string;
 }

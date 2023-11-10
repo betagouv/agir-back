@@ -158,6 +158,7 @@ export class ServiceRepository {
   ): ServiceDefinition {
     return new ServiceDefinition({
       ...serviceDefinitionDB,
+      dynamic_data: serviceDefinitionDB.dynamic_data as any,
       serviceDefinitionId: serviceDefinitionDB.id,
       thematiques: serviceDefinitionDB.thematiques.map((th) => Thematique[th]),
       nombre_installation: occurence,

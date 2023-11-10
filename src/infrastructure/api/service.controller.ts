@@ -112,6 +112,7 @@ export class ServiceController extends GenericControler {
     );
   }
   @Post('services/refreshDynamicData')
+  @ApiOkResponse({ type: [String] })
   async refreshServiceDynamicData(
     @Res() res: Response,
     @Headers('Authorization') authorization: string,
@@ -123,7 +124,8 @@ export class ServiceController extends GenericControler {
       throw new ForbiddenException('CRON API KEY incorrecte');
     }
     const result = await this.serviceUsecase.refreshServiceDynamicData();
-    res.status(HttpStatus.OK).json({ refreshed_services: result }).send();
+    console.log(JSON.stringify(result));
+    res.status(HttpStatus.OK).json(result).send();
   }
   @Delete('utilisateurs/:utilisateurId/services/:serviceId')
   @ApiOperation({
