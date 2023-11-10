@@ -42,7 +42,7 @@ const services = {
     is_url_externe: true,
     is_local: false,
     thematiques: ['logement'],
-    minute_period: 20,
+    minute_period: 30,
     description: 'Ecowatt aide les Français à mieux consommer l’électricité.',
     sous_description:
       'Véritable météo de l’électricité, Ecowatt qualifie en temps réel le niveau de consommation des Français.',

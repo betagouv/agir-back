@@ -111,3 +111,7 @@ $ npm run start:prod
 ## Convertisseur CSV => JSON pour les questions NGC
 
 https://www.convertcsv.com/csv-to-json.htm?utm_content=cmp-true
+
+## Assistant d'écriture de CRON
+
+https://crontab.guru/
