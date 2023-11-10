@@ -1,5 +1,6 @@
 import { TestUtil } from '../../TestUtil';
 import { ServiceRepository } from '../../../src/infrastructure/repository/service.repository';
+import { RefreshableService } from '../../../src/domain/service/serviceDefinition';
 
 async function injectData() {
   await TestUtil.create('utilisateur', { id: 'u1', email: '1' });
@@ -142,5 +143,72 @@ describe('ServiceRepository', () => {
 
     expect(servicesDB).toHaveLength(5);
     expect(servicesDBU1).toHaveLength(1);
+  });
+  it('listeServiceDefinitionsToRefresh  : list services with date less than now', async () => {
+    // GIVEN
+    await TestUtil.create('serviceDefinition', {
+      id: 'linky',
+      scheduled_refresh: null,
+    });
+    await TestUtil.create('serviceDefinition', {
+      id: 'ecowatt',
+      scheduled_refresh: new Date(Date.now() - 1000),
+    });
+    await TestUtil.create('serviceDefinition', {
+      id: 'recettes',
+      scheduled_refresh: new Date(Date.now() + 10000),
+    });
+
+    // WHEN
+    const servicesDBList =
+      await serviceRepository.listeServiceDefinitionsToRefresh([
+        RefreshableService.ecowatt,
+      ]);
+
+    // THEN
+    expect(servicesDBList).toHaveLength(1);
+    expect(servicesDBList[0].serviceDefinitionId).toEqual(
+      RefreshableService.ecowatt,
+    );
+  });
+  it('listeServiceDefinitionsToRefresh  : does not retrieve if no of asked type', async () => {
+    // GIVEN
+    await TestUtil.create('serviceDefinition', {
+      id: 'linky',
+      scheduled_refresh: null,
+    });
+    await TestUtil.create('serviceDefinition', {
+      id: 'ecowatt',
+      scheduled_refresh: new Date(Date.now() - 1000),
+    });
+    await TestUtil.create('serviceDefinition', {
+      id: 'recettes',
+      scheduled_refresh: new Date(Date.now() + 10000),
+    });
+
+    // WHEN
+    const servicesDBList =
+      await serviceRepository.listeServiceDefinitionsToRefresh([
+        RefreshableService.linky,
+      ]);
+
+    // THEN
+    expect(servicesDBList).toHaveLength(0);
+  });
+  it('listeServiceDefinitionsToRefresh  : does not retrieve if given type is missing', async () => {
+    // GIVEN
+    await TestUtil.create('serviceDefinition', {
+      id: 'linky',
+      scheduled_refresh: null,
+    });
+
+    // WHEN
+    const servicesDBList =
+      await serviceRepository.listeServiceDefinitionsToRefresh([
+        RefreshableService.ecowatt,
+      ]);
+
+    // THEN
+    expect(servicesDBList).toHaveLength(0);
   });
 });

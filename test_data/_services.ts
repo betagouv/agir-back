@@ -35,7 +35,8 @@ const services = {
   ecowatt: {
     titre: `Etat du réseau en France`,
     url: 'https://www.monecowatt.fr/',
-    icon_url: 'https://www.monecowatt.fr/themes/ecowatt/images/logoecowatt.png',
+    icon_url:
+      'https://play-lh.googleusercontent.com/wtQahY_I8TVLQJ_Rcue7aC-dJ3FfZLNQe84smsyfRa9Qbs1-TG3CJvdrmQ9VUXUVO8vh=w480-h960',
     image_url:
       'https://agirpourlatransition.ademe.fr/particuliers/sites/default/files/styles/550x330/public/2022-03/thermostat-programmable.jpg?itok=4HIKhFAI',
     is_url_externe: true,

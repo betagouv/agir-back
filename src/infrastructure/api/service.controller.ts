@@ -11,6 +11,9 @@ import {
   Query,
   Res,
   HttpStatus,
+  Headers,
+  ForbiddenException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Response } from 'express';
 import {
@@ -109,8 +112,16 @@ export class ServiceController extends GenericControler {
     );
   }
   @Post('services/refreshDynamicData')
-  // FIXME : secure
-  async refreshServiceDynamicData(@Res() res: Response) {
+  async refreshServiceDynamicData(
+    @Res() res: Response,
+    @Headers('Authorization') authorization: string,
+  ) {
+    if (!authorization) {
+      throw new UnauthorizedException('CRON API KEY manquante');
+    }
+    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
+      throw new ForbiddenException('CRON API KEY incorrecte');
+    }
     const result = await this.serviceUsecase.refreshServiceDynamicData();
     res.status(HttpStatus.OK).json({ refreshed_services: result }).send();
   }

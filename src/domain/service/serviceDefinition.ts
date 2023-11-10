@@ -1,5 +1,12 @@
 import { Thematique } from '../thematique';
 
+export enum RefreshableService {
+  ecowatt = 'ecowatt',
+  linky = 'linky',
+  recettes = 'recettes',
+  dummy = 'dummy',
+}
+
 export class ServiceDefinitionData {
   serviceDefinitionId: string;
   titre: string;
@@ -18,9 +25,18 @@ export class ServiceDefinitionData {
   description: string;
   sous_description: string;
 }
+
 export class ServiceDefinition extends ServiceDefinitionData {
   constructor(data: ServiceDefinitionData) {
     super();
     Object.assign(this, data);
+  }
+
+  public setNextRefreshDate() {
+    if (this.minute_period) {
+      this.scheduled_refresh = new Date(
+        Date.now() + 1000 * 60 * this.minute_period,
+      );
+    }
   }
 }

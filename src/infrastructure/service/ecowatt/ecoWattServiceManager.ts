@@ -1,17 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { GenericServiceManager } from '../GenericServiceManager';
 import { SignalEcoWatt } from './signalEcoWatt';
 
 const ACCESS_TOKEN_URL = 'https://digital.iservices.rte-france.com/token/oauth';
 const ECOWATT_URL =
   'https://digital.iservices.rte-france.com/open_api/ecowatt/v5/signals';
-const CLIENT_ID_SECRET =
-  'MDNhZTE2ZGYtNTUyZS00NzVhLWIwM2EtZDhkYmFiNmI5MmY4OmI2ZmUyZGQ5LTE5YTgtNDNhOC04ZjJiLWYwOGYxMDg4MzZiMQ==';
 
 @Injectable()
-export class EcoWattConnector {
+export class EcoWattServiceManager implements GenericServiceManager {
   private access_token: string;
-  constructor() {}
+
+  async computeDynamicData(): Promise<SignalEcoWatt> {
+    if (process.env.SERVICE_APIS_ENABLED == 'true') {
+      return await this.getEcoWattSignal();
+    }
+    return {
+      message: 'Service disabled',
+      niveau: 0,
+    };
+  }
 
   async getEcoWattSignal(): Promise<SignalEcoWatt> {
     let signal;
@@ -41,7 +49,7 @@ export class EcoWattConnector {
       response = await axios.post(ACCESS_TOKEN_URL, '', {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          Authorization: `Basic ${CLIENT_ID_SECRET}`,
+          Authorization: `Basic ${process.env.ECOWATT_CLIENT_ID_SECRET}`,
         },
       });
     } catch (error) {

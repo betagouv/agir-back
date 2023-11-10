@@ -1,4 +1,5 @@
 export enum EcoWattLevel {
+  absent = 0,
   vert = 1,
   orange = 2,
   rouge = 3,

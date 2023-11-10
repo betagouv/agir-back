@@ -4,6 +4,7 @@ import {
   ForbiddenException,
   Headers,
   Post,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { InteractionsDefinitionUsecase } from '../../usecase/cms.usecase';
@@ -26,15 +27,13 @@ export class CMSController {
     @Body() body: CMSWebhookAPI,
     @Headers('Authorization') authorization: string,
   ) {
-    if (
-      !authorization ||
-      !authorization.endsWith(process.env.CMS_WEBHOOK_API_KEY)
-    ) {
-      throw new ForbiddenException('API KEY webhook CMS incorrecte : ');
+    if (!authorization) {
+      throw new UnauthorizedException('API KEY webhook CMS manquante');
+    }
+    if (!authorization.endsWith(process.env.CMS_WEBHOOK_API_KEY)) {
+      throw new ForbiddenException('API KEY webhook CMS incorrecte');
     }
     console.log(JSON.stringify(body));
-    await this.interactionsDefinitionUsecase.manageIncomingCMSData(
-      body,
-    );
+    await this.interactionsDefinitionUsecase.manageIncomingCMSData(body);
   }
 }

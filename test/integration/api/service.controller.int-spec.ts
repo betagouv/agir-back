@@ -7,11 +7,11 @@ describe('Service (API test)', () => {
 
   beforeAll(async () => {
     await TestUtil.appinit();
-    await TestUtil.generateAuthorizationToken('utilisateur-id');
   });
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
+    await TestUtil.generateAuthorizationToken('utilisateur-id');
   });
 
   afterAll(async () => {
@@ -278,8 +278,29 @@ describe('Service (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body[0].thematiques[0]).toEqual('THE ALIMENTATION');
   });
-  it('POST /services/refreshDynamicData appel ok, renvoie 0', async () => {
+  it('POST /services/refreshDynamicData 401 si pas header authorization', async () => {
     // GIVEN
+    // WHEN
+    const response = await TestUtil.getServer().post(
+      '/services/refreshDynamicData',
+    );
+
+    // THEN
+    expect(response.status).toBe(401);
+  });
+  it('POST /services/refreshDynamicData 403 si mauvais token', async () => {
+    // GIVEN
+    TestUtil.token = 'bad';
+
+    // WHEN
+    const response = await TestUtil.POST('/services/refreshDynamicData');
+
+    // THEN
+    expect(response.status).toBe(403);
+  });
+  it('POST /services/refreshDynamicData appel ok, renvoie 0 quand aucun service en base', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
 
     // WHEN
     const response = await TestUtil.POST('/services/refreshDynamicData');
@@ -287,5 +308,29 @@ describe('Service (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.refreshed_services).toEqual(0);
+  });
+  it('POST /services/refreshDynamicData appel ok, renvoie 1 quand 1 service cible, donnée mises à jour', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create('serviceDefinition', {
+      id: 'dummy',
+      scheduled_refresh: new Date(Date.now() - 1000),
+      minute_period: 30,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/services/refreshDynamicData');
+
+    // THEN
+    const serviceDefDB = await TestUtil.prisma.serviceDefinition.findFirst();
+
+    expect(response.status).toBe(200);
+    expect(response.body.refreshed_services).toEqual(1);
+    expect(serviceDefDB.dynamic_data['message']).toContain('Hello');
+    expect(
+      Math.round(
+        (serviceDefDB.scheduled_refresh.getTime() - Date.now()) / 1000,
+      ),
+    ).toEqual(30 * 60);
   });
 });

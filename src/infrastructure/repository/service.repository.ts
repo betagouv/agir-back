@@ -5,7 +5,10 @@ import {
   ServiceDefinition as ServiceDefinitionDB,
   Service as ServiceDB,
 } from '@prisma/client';
-import { ServiceDefinition } from '../../domain/service/serviceDefinition';
+import {
+  RefreshableService,
+  ServiceDefinition,
+} from '../../domain/service/serviceDefinition';
 import { v4 as uuidv4 } from 'uuid';
 import { Service } from '../../domain/service/service';
 import { Thematique } from '../../../src/domain/thematique';
@@ -13,6 +16,19 @@ import { Thematique } from '../../../src/domain/thematique';
 @Injectable()
 export class ServiceRepository {
   constructor(private prisma: PrismaService) {}
+
+  async updateServiceDefinition(serviceDefinition: ServiceDefinition) {
+    const data = { ...serviceDefinition };
+    delete data.nombre_installation;
+    delete data.serviceDefinitionId;
+
+    return this.prisma.serviceDefinition.update({
+      where: {
+        id: serviceDefinition.serviceDefinitionId,
+      },
+      data: { ...data, dynamic_data: serviceDefinition.dynamic_data as any },
+    });
+  }
 
   async addServiceToUtilisateur(
     utilisateurId: string,
@@ -81,6 +97,21 @@ export class ServiceRepository {
     });
     return this.buildServiceDefinitionList(result, utilisateurId != undefined);
   }
+  async listeServiceDefinitionsToRefresh(
+    targetServices: RefreshableService[],
+  ): Promise<ServiceDefinition[]> {
+    const result = await this.prisma.serviceDefinition.findMany({
+      where: {
+        scheduled_refresh: {
+          lt: new Date(),
+        },
+        id: {
+          in: targetServices,
+        },
+      },
+    });
+    return this.buildServiceDefinitionList(result);
+  }
 
   async countServiceDefinitionUsage(): Promise<Record<string, number>> {
     const query = `
@@ -109,7 +140,7 @@ export class ServiceRepository {
 
   private async buildServiceDefinitionList(
     serviceDefinitionDB: ServiceDefinitionDB[],
-    includeInstalledFlag: boolean,
+    includeInstalledFlag = false,
   ): Promise<ServiceDefinition[]> {
     // FIXME : plus tard en cache ou autre, pas besoin de recalculer à chaque affiche du catalogue de service
     const repartition = await this.countServiceDefinitionUsage();

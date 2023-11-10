@@ -14,13 +14,14 @@ export class ServiceDefinitionAPI {
   @ApiProperty() is_local: boolean;
   @ApiProperty() is_url_externe: boolean;
   @ApiProperty() is_installed?: boolean;
+  @ApiProperty() dynamic_data: Object;
 
   @ApiProperty({ type: [String] })
   thematiques: string[];
 
   @ApiProperty() nombre_installation: number;
 
-  static mapServiceDefintionToServiceDefinitionAPI(
+  public static mapServiceDefintionToServiceDefinitionAPI(
     serviceDefinition: ServiceDefinition,
   ): ServiceDefinitionAPI {
     let result = {
@@ -38,6 +39,7 @@ export class ServiceDefinitionAPI {
       ),
       nombre_installation: serviceDefinition.nombre_installation,
       is_installed: serviceDefinition.is_installed,
+      dynamic_data: serviceDefinition.dynamic_data,
     };
     return result;
   }

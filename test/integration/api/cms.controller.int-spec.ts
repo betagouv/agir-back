@@ -18,6 +18,16 @@ describe('/api/cms/income (API test)', () => {
     await TestUtil.appclose();
   });
 
+  it('POST /api/cms/income - 401 si header manquant', async () => {
+    // GIVEN
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/api/cms/income')
+      .send(CMS_DATA);
+
+    // THEN
+    expect(response.status).toBe(401);
+  });
   it('POST /api/cms/income - 403 si mauvaise clé API', async () => {
     // GIVEN
     TestUtil.token = 'bad';
