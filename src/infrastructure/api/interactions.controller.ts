@@ -73,12 +73,6 @@ export class IntractionsController extends GenericControler {
       status,
     );
   }
-  @ApiQuery({
-    name: 'date',
-    type: Date,
-    description: 'date seuil de reset, eg 2023-03-19',
-    required: false,
-  })
   @Post('interactions/reset')
   async resetInteractions(
     @Res() res: Response,
