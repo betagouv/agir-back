@@ -124,7 +124,6 @@ export class ServiceController extends GenericControler {
       throw new ForbiddenException('CRON API KEY incorrecte');
     }
     const result = await this.serviceUsecase.refreshServiceDynamicData();
-    console.log(JSON.stringify(result));
     res.status(HttpStatus.OK).json(result).send();
   }
   @Delete('utilisateurs/:utilisateurId/services/:serviceId')

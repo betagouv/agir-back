@@ -39,9 +39,11 @@ export class EcoWattServiceManager implements GenericServiceManager {
       }
     }
     return {
-      label: [`🟢 Pas d'alerte`, `🟠 Tendu`, `🔴 Attentions coupures`][
-        signal.data.signals[0].dvalue - 1
-      ],
+      label: [
+        `🟢 EcoWatt - Pas d'alerte`,
+        `🟠 EcoWatt - Tendu`,
+        `🔴 EcoWatt - Attention !!`,
+      ][signal.data.signals[0].dvalue - 1],
       message: signal.data.signals[0].message,
       niveau: signal.data.signals[0].dvalue,
     };
