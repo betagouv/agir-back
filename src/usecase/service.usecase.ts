@@ -2,10 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { Service } from 'src/domain/service/service';
 import { ServiceDefinition } from '../domain/service/serviceDefinition';
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
+import { EcoWattConnector } from '../../src/infrastructure/service/ecowatt/ecoWattConnector';
 
 @Injectable()
 export class ServiceUsecase {
-  constructor(private serviceRepository: ServiceRepository) {}
+  constructor(
+    private serviceRepository: ServiceRepository,
+    private readonly ecoWattConnector: EcoWattConnector,
+  ) {}
+
+  async refreshServiceDynamicData(): Promise<number> {
+    // await this.ecoWattConnector.getEcoWattSignal();
+    return 0;
+  }
 
   async listServicesDefinitions(
     utilisateurId: string,

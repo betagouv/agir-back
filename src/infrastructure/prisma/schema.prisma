@@ -192,15 +192,19 @@ model Service {
 }
 
 model ServiceDefinition {
-  id             String    @id
-  titre          String
-  icon_url       String?
-  image_url      String?
-  url            String?
-  is_url_externe Boolean?
-  is_local       Boolean   @default(false)
-  thematiques    String[]  @default([])
-  created_at     DateTime  @default(now()) @db.Timestamptz(3)
-  updated_at     DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
-  services       Service[]
+  id                String    @id
+  titre             String
+  icon_url          String?
+  image_url         String?
+  url               String?
+  is_url_externe    Boolean?
+  is_local          Boolean   @default(false)
+  minute_period     Int?
+  scheduled_refresh DateTime? @db.Timestamptz(3)
+  last_refresh      DateTime? @db.Timestamptz(3)
+  dynamic_data      Json      @default("{}")
+  thematiques       String[]  @default([])
+  created_at        DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at        DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
+  services          Service[]
 }

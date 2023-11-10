@@ -77,6 +77,7 @@ export class IntractionsController extends GenericControler {
     required: false,
   })
   @Post('interactions/reset')
+  // FIXME : secure
   async resetInteractions(@Res() res: Response, @Query('date') date?: string) {
     const result = await this.interactionsUsecase.reset(
       date ? new Date(Date.parse(date)) : null,

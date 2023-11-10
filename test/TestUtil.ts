@@ -271,6 +271,10 @@ export class TestUtil {
       image_url: 'image_url',
       is_local: true,
       is_url_externe: true,
+      minute_period: 20,
+      scheduled_refresh: null,
+      dynamic_data: {},
+      last_refresh: null,
       thematiques: ['climat', 'logement'],
       ...override,
     };

@@ -26,5 +26,16 @@ const services = {
     is_local: false,
     thematiques: ['transport'],
   },
+  ecowatt: {
+    titre: `Etat du réseau en France`,
+    url: 'https://www.monecowatt.fr/',
+    icon_url: 'https://www.monecowatt.fr/themes/ecowatt/images/logoecowatt.png',
+    image_url:
+      'https://agirpourlatransition.ademe.fr/particuliers/sites/default/files/styles/550x330/public/2022-03/thermostat-programmable.jpg?itok=4HIKhFAI',
+    is_url_externe: true,
+    is_local: false,
+    thematiques: ['logement'],
+    minute_period: 20,
+  },
 };
 module.exports = services;

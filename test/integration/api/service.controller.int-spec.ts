@@ -274,4 +274,14 @@ describe('Service (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body[0].thematiques[0]).toEqual('THE ALIMENTATION');
   });
+  it('POST /services/refreshDynamicData appel ok, renvoie 0', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/services/refreshDynamicData');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.refreshed_services).toEqual(0);
+  });
 });

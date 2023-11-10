@@ -1,0 +1,1 @@
+curl -d "" ${BASE_URL}/services/refreshDynamicData

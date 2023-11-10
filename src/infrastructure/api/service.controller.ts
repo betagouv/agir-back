@@ -9,7 +9,10 @@ import {
   BadRequestException,
   Delete,
   Query,
+  Res,
+  HttpStatus,
 } from '@nestjs/common';
+import { Response } from 'express';
 import {
   ApiTags,
   ApiOkResponse,
@@ -104,6 +107,12 @@ export class ServiceController extends GenericControler {
     return result.map((service) =>
       ServiceAPI.mapServicesToServicesAPI(service),
     );
+  }
+  @Post('services/refreshDynamicData')
+  // FIXME : secure
+  async refreshServiceDynamicData(@Res() res: Response) {
+    const result = await this.serviceUsecase.refreshServiceDynamicData();
+    res.status(HttpStatus.OK).json({ refreshed_services: result }).send();
   }
   @Delete('utilisateurs/:utilisateurId/services/:serviceId')
   @ApiOperation({

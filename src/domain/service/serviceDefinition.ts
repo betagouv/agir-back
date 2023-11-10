@@ -11,6 +11,10 @@ export class ServiceDefinitionData {
   thematiques: Thematique[] = [];
   nombre_installation: number = 0;
   is_installed: boolean;
+  minute_period: number;
+  scheduled_refresh: Date;
+  last_refresh: Date;
+  dynamic_data: Object;
 }
 export class ServiceDefinition extends ServiceDefinitionData {
   constructor(data: ServiceDefinitionData) {

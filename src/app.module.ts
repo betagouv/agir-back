@@ -52,6 +52,7 @@ import { TodoController } from './infrastructure/api/todo.controller';
 import { TodoUsecase } from './usecase/todo.usecase';
 import { TodoRepository } from './infrastructure/repository/todo.repository';
 import { ThematiqueRepository } from './infrastructure/repository/thematique.repository';
+import { EcoWattConnector } from './infrastructure/service/ecowatt/ecoWattConnector';
 
 const SESSION_LIFETIME = '12h';
 
@@ -114,6 +115,7 @@ const SESSION_LIFETIME = '12h';
     TodoUsecase,
     TodoRepository,
     ThematiqueRepository,
+    EcoWattConnector,
   ],
 })
 export class AppModule {}

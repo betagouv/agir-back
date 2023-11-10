@@ -293,7 +293,7 @@ const utilisateurs = {
     email: 'ww@w.com',
     mot_de_passe: 'haha',
     code_postal: '91120',
-    commune: 'Palaiseau',
+    commune: 'PALAISEAU',
     revenu_fiscal: 666,
     todo: {
       niveau: 1,
