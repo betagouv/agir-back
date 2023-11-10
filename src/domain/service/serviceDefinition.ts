@@ -39,4 +39,12 @@ export class ServiceDefinition extends ServiceDefinitionData {
       );
     }
   }
+
+  public isReadyForRefresh(): boolean {
+    return (
+      this.minute_period != null &&
+      (this.scheduled_refresh == null ||
+        this.scheduled_refresh.getTime() < Date.now())
+    );
+  }
 }

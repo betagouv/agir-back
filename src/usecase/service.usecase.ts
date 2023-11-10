@@ -33,10 +33,14 @@ export class ServiceUsecase {
   }
 
   async refreshServiceDynamicData(): Promise<number> {
-    const serviceListToRefresh =
-      await this.serviceRepository.listeServiceDefinitionsToRefresh(
+    let serviceListToRefresh =
+      await this.serviceRepository.listeServiceDefinitionsByIdArray(
         Object.values(RefreshableService),
       );
+
+    serviceListToRefresh = serviceListToRefresh.filter((serviceDefinition) =>
+      serviceDefinition.isReadyForRefresh(),
+    );
 
     for (let index = 0; index < serviceListToRefresh.length; index++) {
       const serviceDefinition = serviceListToRefresh[index];
@@ -91,6 +95,7 @@ export class ServiceUsecase {
     console.log(`REFRESHED SERVICE : ${serviceDefinition.serviceDefinitionId}`);
     serviceDefinition.dynamic_data = result;
     serviceDefinition.setNextRefreshDate();
+    serviceDefinition.last_refresh = new Date();
     await this.serviceRepository.updateServiceDefinition(serviceDefinition);
   }
 }

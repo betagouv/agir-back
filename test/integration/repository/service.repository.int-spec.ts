@@ -161,7 +161,7 @@ describe('ServiceRepository', () => {
 
     // WHEN
     const servicesDBList =
-      await serviceRepository.listeServiceDefinitionsToRefresh([
+      await serviceRepository.listeServiceDefinitionsByIdArray([
         RefreshableService.ecowatt,
       ]);
 
@@ -171,40 +171,59 @@ describe('ServiceRepository', () => {
       RefreshableService.ecowatt,
     );
   });
-  it('listeServiceDefinitionsToRefresh  : does not retrieve if no of asked type', async () => {
+  it('listeServiceDefinitionsToRefresh  : does retrieve of asked type', async () => {
     // GIVEN
     await TestUtil.create('serviceDefinition', {
       id: 'linky',
-      scheduled_refresh: null,
     });
     await TestUtil.create('serviceDefinition', {
       id: 'ecowatt',
-      scheduled_refresh: new Date(Date.now() - 1000),
     });
     await TestUtil.create('serviceDefinition', {
       id: 'recettes',
-      scheduled_refresh: new Date(Date.now() + 10000),
     });
 
     // WHEN
     const servicesDBList =
-      await serviceRepository.listeServiceDefinitionsToRefresh([
+      await serviceRepository.listeServiceDefinitionsByIdArray([
         RefreshableService.linky,
       ]);
 
     // THEN
-    expect(servicesDBList).toHaveLength(0);
+    expect(servicesDBList).toHaveLength(1);
+    expect(servicesDBList[0].serviceDefinitionId).toEqual('linky');
+  });
+  it('listeServiceDefinitionsToRefresh  : does retrieve proper number', async () => {
+    // GIVEN
+    await TestUtil.create('serviceDefinition', {
+      id: 'linky',
+    });
+    await TestUtil.create('serviceDefinition', {
+      id: 'ecowatt',
+    });
+    await TestUtil.create('serviceDefinition', {
+      id: 'recettes',
+    });
+
+    // WHEN
+    const servicesDBList =
+      await serviceRepository.listeServiceDefinitionsByIdArray([
+        RefreshableService.linky,
+        RefreshableService.ecowatt,
+      ]);
+
+    // THEN
+    expect(servicesDBList).toHaveLength(2);
   });
   it('listeServiceDefinitionsToRefresh  : does not retrieve if given type is missing', async () => {
     // GIVEN
     await TestUtil.create('serviceDefinition', {
       id: 'linky',
-      scheduled_refresh: null,
     });
 
     // WHEN
     const servicesDBList =
-      await serviceRepository.listeServiceDefinitionsToRefresh([
+      await serviceRepository.listeServiceDefinitionsByIdArray([
         RefreshableService.ecowatt,
       ]);
 

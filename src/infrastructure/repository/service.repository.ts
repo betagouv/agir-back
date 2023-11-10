@@ -97,14 +97,11 @@ export class ServiceRepository {
     });
     return this.buildServiceDefinitionList(result, utilisateurId != undefined);
   }
-  async listeServiceDefinitionsToRefresh(
+  async listeServiceDefinitionsByIdArray(
     targetServices: RefreshableService[],
   ): Promise<ServiceDefinition[]> {
     const result = await this.prisma.serviceDefinition.findMany({
       where: {
-        scheduled_refresh: {
-          lt: new Date(),
-        },
         id: {
           in: targetServices,
         },
