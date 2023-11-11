@@ -239,7 +239,7 @@ describe('Service (API test)', () => {
   it('GET /utilisateurs/id/services , label a pour valeur titre si pas de label dans les données dynamic', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition');
+    await TestUtil.create('serviceDefinition', { dynamic_data: {} });
     await TestUtil.create('service');
 
     // WHEN
@@ -255,7 +255,7 @@ describe('Service (API test)', () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('serviceDefinition', {
-      dynamic_data: { label: 'the label' },
+      dynamic_data: { label: 'the label', isInError: false },
     });
     await TestUtil.create('service');
 
@@ -267,6 +267,7 @@ describe('Service (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body[0].label).toEqual('the label');
+    expect(response.body[0].isInError).toEqual(false);
   });
   it('GET /utilisateurs/id/services renvoi le libellé de la thématique en base si existe', async () => {
     // GIVEN

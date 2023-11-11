@@ -9,6 +9,7 @@ export enum RefreshableService {
 
 export interface ServiceDynamicData {
   label: string;
+  isInError: boolean;
 }
 
 export class ServiceDefinitionData {

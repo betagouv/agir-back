@@ -16,9 +16,8 @@ export class EcoWattServiceManager implements GenericServiceManager {
       return await this.getEcoWattSignal();
     }
     return {
-      label: '🚫 EcoWatt',
-      message: 'Service disabled',
-      niveau: 0,
+      label: '🚫 EcoWatt désactivé',
+      isInError: true,
     };
   }
 
@@ -28,24 +27,34 @@ export class EcoWattServiceManager implements GenericServiceManager {
       signal = await this.callEcoWattAPI();
     } catch (error) {
       if (error.message === '401') {
-        await this.refreshAccessToken();
+        try {
+          await this.refreshAccessToken();
+        } catch (error) {
+          return {
+            label: '🚫 EcoWatt indispo',
+            isInError: true,
+          };
+        }
       }
       // RETRY
       try {
         signal = await this.callEcoWattAPI();
       } catch {
-        // NO CAN DO
-        return null;
+        return {
+          label: '🚫 EcoWatt indispo',
+          isInError: true,
+        };
       }
     }
     return {
       label: [
         `🟢 EcoWatt - Pas d'alerte`,
         `🟠 EcoWatt - Tendu`,
-        `🔴 EcoWatt - Attention !!`,
+        `🔴 EcoWatt - Attention coupures !!`,
       ][signal.data.signals[0].dvalue - 1],
       message: signal.data.signals[0].message,
       niveau: signal.data.signals[0].dvalue,
+      isInError: false,
     };
   }
 
@@ -61,9 +70,7 @@ export class EcoWattServiceManager implements GenericServiceManager {
     } catch (error) {
       console.log('Erreur à la récupération du token ecowatt');
       console.log(error.message);
-      console.log(error.response.data);
-      console.log(error.response.status);
-      console.log(error.response.headers);
+      throw error;
     }
     this.access_token = response.data.access_token;
   }
@@ -78,11 +85,9 @@ export class EcoWattServiceManager implements GenericServiceManager {
         },
       });
     } catch (error) {
-      console.log('Erreur à la récupération du signal ecowatt');
-      console.log(error.message);
-      console.log(error.response.data);
-      console.log(error.response.status);
-      console.log(error.response.headers);
+      if (error.response.status != 401) {
+        console.log(error.message);
+      }
       throw new Error(error.response.status);
     }
     return response;

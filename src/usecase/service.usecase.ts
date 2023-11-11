@@ -10,7 +10,7 @@ import { GenericServiceManager } from 'src/infrastructure/service/GenericService
 
 const fake_manager = {
   computeDynamicData: async () => {
-    return { label: `En construction 🚧` };
+    return { label: `En construction 🚧`, isInError: true };
   },
 };
 

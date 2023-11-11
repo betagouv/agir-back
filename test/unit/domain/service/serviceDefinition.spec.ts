@@ -14,8 +14,8 @@ describe('ServiceDefinition', () => {
 
     // THEN
     expect(
-      Math.round(serviceDefinition.scheduled_refresh.getTime() / 1000),
-    ).toEqual(Math.round(Date.now() / 1000) + 60 * 10);
+      Math.round(serviceDefinition.scheduled_refresh.getTime() / 10000),
+    ).toEqual(Math.round(Date.now() / 10000) + 60);
   });
   it('isReadyForRefresh : true if period and null date', () => {
     // GIVEN

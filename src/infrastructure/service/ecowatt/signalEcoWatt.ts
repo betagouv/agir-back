@@ -1,5 +1,4 @@
 export enum EcoWattLevel {
-  absent = 0,
   vert = 1,
   orange = 2,
   rouge = 3,
@@ -7,6 +6,7 @@ export enum EcoWattLevel {
 
 export class SignalEcoWatt {
   label: string;
-  niveau: EcoWattLevel;
-  message: string;
+  isInError: boolean;
+  niveau?: EcoWattLevel;
+  message?: string;
 }

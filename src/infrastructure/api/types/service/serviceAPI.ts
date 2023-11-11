@@ -4,6 +4,7 @@ import { ServiceDefinitionAPI } from './serviceDefinitionAPI';
 
 export class ServiceAPI extends ServiceDefinitionAPI {
   @ApiProperty() label: string;
+  @ApiProperty() isInError: boolean;
 
   public static mapServicesToServicesAPI(service: Service): ServiceAPI {
     return {
@@ -11,6 +12,7 @@ export class ServiceAPI extends ServiceDefinitionAPI {
         service,
       ),
       label: service.dynamic_data.label || service.titre,
+      isInError: service.dynamic_data.isInError,
     };
   }
 }
