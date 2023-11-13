@@ -51,6 +51,9 @@ import { ServiceRepository } from './infrastructure/repository/service.repositor
 import { TodoController } from './infrastructure/api/todo.controller';
 import { TodoUsecase } from './usecase/todo.usecase';
 import { TodoRepository } from './infrastructure/repository/todo.repository';
+import { GroupeController } from './infrastructure/api/groupe.controller';
+import { GroupeUseCase } from './usecase/groupe.usecase';
+import { GroupeRepository } from './infrastructure/repository/groupe.repository';
 
 const SESSION_LIFETIME = '12h';
 
@@ -77,6 +80,7 @@ const SESSION_LIFETIME = '12h';
     CommunesController,
     ServiceController,
     TodoController,
+    GroupeController,
   ],
   providers: [
     PrismaService,
@@ -112,6 +116,8 @@ const SESSION_LIFETIME = '12h';
     ServiceRepository,
     TodoUsecase,
     TodoRepository,
+    GroupeUseCase,
+    GroupeRepository,
   ],
 })
 export class AppModule {}

@@ -50,6 +50,7 @@ model Utilisateur {
   suivis                   Suivi[]
   badges                   Badge[]
   questionsNGC             QuestionNGC[]
+  groupes                  GroupeAbonnement[]
   created_at               DateTime      @default(now()) @db.Timestamptz(3)
   updated_at               DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   failed_login_count       Int           @default(0)
@@ -193,4 +194,25 @@ model ServiceDefinition {
   created_at     DateTime  @default(now()) @db.Timestamptz(3)
   updated_at     DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
   services       Service[]
+}
+
+model Groupe {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  utilisateurs     GroupeAbonnement[]
+  created_at  DateTime @default(now()) @db.Timestamptz(3)
+  updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+}
+
+model GroupeAbonnement {
+  groupe       Groupe     @relation(fields: [groupeId], references: [id])
+  groupeId     String
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
+  utilisateurId String
+  admin         Boolean    @default(false)
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@id([groupeId, utilisateurId])
 }
