@@ -23,6 +23,7 @@ import { GroupeAPI } from './types/groupe/groupeApi';
 import { GroupeUseCase } from '../../../src/usecase/groupe.usecase';
 import { GroupeAbonnement } from '@prisma/client';
 import { ErrorService } from '../errorService';
+import { Groupe } from 'src/domain/groupe/groupe';
 
 @Controller()
 @ApiBearerAuth()
@@ -36,10 +37,7 @@ export class GroupeController extends GenericControler {
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Récupérer les infos d'un groupe" })
   @ApiOkResponse({ type: GroupeAPI })
-  async getGroupeById(
-    @Param('id') id: string,
-    @Request() req: any,
-  ): Promise<GroupeAPI> {
+  async getGroupeById(@Param('id') id: string): Promise<GroupeAPI> {
     const group = await this.groupeUsecase.getGroupeById(id);
     if (!group) throw new NotFoundException(`Le groupe ${id} n'existe pas`);
     return this.toGroupeAPI(group);
@@ -142,7 +140,7 @@ export class GroupeController extends GenericControler {
     );
   }
 
-  private toGroupeAPI(group: any): GroupeAPI {
+  private toGroupeAPI(group: Groupe): GroupeAPI {
     return {
       id: group.id,
       name: group.name,

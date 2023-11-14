@@ -20,10 +20,9 @@ export class GroupeRepository {
   }
 
   async getGroupeById(groupeId: string): Promise<Groupe> {
-    const result = await this.prisma.groupe.findUnique({
+    return this.prisma.groupe.findUnique({
       where: { id: groupeId },
     });
-    return result;
   }
 
   async updateGroupe(groupeId: string, group: Groupe): Promise<Groupe> {
@@ -72,10 +71,12 @@ export class GroupeRepository {
     utilisateurId: string,
     groupeId: string,
   ): Promise<boolean> {
-    const result = await this.prisma.groupeAbonnement.findFirst({
+    const result = await this.prisma.groupeAbonnement.findUnique({
       where: {
-        groupeId: groupeId,
-        utilisateurId: utilisateurId,
+        groupeId_utilisateurId: {
+          groupeId: groupeId,
+          utilisateurId: utilisateurId,
+        },
       },
     });
 
@@ -105,6 +106,7 @@ export class GroupeRepository {
     utilisateurId: string,
     admin: boolean,
   ): Promise<GroupeAbonnement> {
+    // FIXME : remove 'connect', pas utile
     const result = await this.prisma.groupeAbonnement.create({
       data: {
         groupe: {

@@ -24,12 +24,12 @@ export class GroupeUseCase {
       utilisateurId,
       true,
     );
+    // FIXME : exception plutôt que false
     return result ? groupe : false;
   }
 
   async getGroupeById(groupeId: string): Promise<Groupe> {
-    const result = await this.groupeRepository.getGroupeById(groupeId);
-    return result;
+    return this.groupeRepository.getGroupeById(groupeId);
   }
 
   async updateOneOfMyGroupe(
@@ -65,6 +65,7 @@ export class GroupeUseCase {
       groupeId,
       utilisateurId,
     );
+    // FIXME : supprimer tous les membres du groupe avec de supprimer le groupe
     return await this.groupeRepository.deleteGroupe(groupeId);
   }
 
@@ -72,6 +73,7 @@ export class GroupeUseCase {
     return this.groupeRepository.getGroupesByUtilisateurId(utilisateurId);
   }
 
+  // FIXME : supprimer le boolean, toujours join en mode non admin
   async joinGroupe(
     groupeId: string,
     utilisateurId: string,
