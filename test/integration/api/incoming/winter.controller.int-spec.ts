@@ -1,6 +1,6 @@
-import { TestUtil } from '../../TestUtil';
+import { TestUtil } from '../../../TestUtil';
 
-describe('/incoming/winter-energies (API test)', () => {
+describe('/api/incoming/winter-energies (API test)', () => {
   beforeAll(async () => {
     await TestUtil.appinit();
   });
@@ -14,11 +14,11 @@ describe('/incoming/winter-energies (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('POST /incoming/winter-energies - 200 par défaut', async () => {
+  it('POST /api/incoming/winter-energies - 200 par défaut', async () => {
     // GIVEN
     // WHEN
     const response = await TestUtil.getServer()
-      .post('/incoming/winter-energies')
+      .post('/api/incoming/winter-energies')
       .send({ some: 'random' });
 
     // THEN

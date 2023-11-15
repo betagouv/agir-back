@@ -1,9 +1,9 @@
-import { CMSModel } from '../../../src/infrastructure/api/types/cms/CMSModels';
-import { InteractionType } from '../../../src/domain/interaction/interactionType';
-import { CMSEvent } from '../../../src/infrastructure/api/types/cms/CMSEvent';
-import { TestUtil } from '../../TestUtil';
+import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels';
+import { InteractionType } from '../../../../src/domain/interaction/interactionType';
+import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
+import { TestUtil } from '../../../TestUtil';
 
-describe('/api/cms/income (API test)', () => {
+describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA = TestUtil.CMSWebhookAPIData();
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -18,30 +18,30 @@ describe('/api/cms/income (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('POST /api/cms/income - 401 si header manquant', async () => {
+  it('POST /api/incoming/cms - 401 si header manquant', async () => {
     // GIVEN
     // WHEN
     const response = await TestUtil.getServer()
-      .post('/api/cms/income')
+      .post('/api/incoming/cms')
       .send(CMS_DATA);
 
     // THEN
     expect(response.status).toBe(401);
   });
-  it('POST /api/cms/income - 403 si mauvaise clé API', async () => {
+  it('POST /api/incoming/cms - 403 si mauvaise clé API', async () => {
     // GIVEN
     TestUtil.token = 'bad';
     // WHEN
-    const response = await TestUtil.POST('/api/cms/income').send(CMS_DATA);
+    const response = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA);
 
     // THEN
     expect(response.status).toBe(403);
   });
-  it('POST /api/cms/income - create a new article, no user in db, no error', async () => {
+  it('POST /api/incoming/cms - create a new article, no user in db, no error', async () => {
     // GIVEN
 
     // WHEN
-    const response = await TestUtil.POST('/api/cms/income').send(CMS_DATA);
+    const response = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA);
 
     // THEN
     const interDefDB = await TestUtil.prisma.interactionDefinition.findMany({});
@@ -64,12 +64,12 @@ describe('/api/cms/income (API test)', () => {
     expect(interDefDB[0].codes_postaux).toStrictEqual(['91120', '75002']);
     expect(interDefDB[0].content_id).toEqual('123');
   });
-  it('POST /api/cms/income - create a new article, 1 user in db with not article, no error', async () => {
+  it('POST /api/incoming/cms - create a new article, 1 user in db with not article, no error', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
 
     // WHEN
-    const response = await TestUtil.POST('/api/cms/income').send(CMS_DATA);
+    const response = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA);
 
     // THEN
     const interDB = await TestUtil.prisma.interaction.findMany({});
@@ -77,10 +77,10 @@ describe('/api/cms/income (API test)', () => {
     expect(interDB).toHaveLength(1);
     expect(interDB[0].utilisateurId).toEqual('utilisateur-id');
   });
-  it('POST /api/cms/income - create 1 thematique', async () => {
+  it('POST /api/incoming/cms - create 1 thematique', async () => {
     // GIVEN
     // WHEN
-    const response = await TestUtil.POST('/api/cms/income').send({
+    const response = await TestUtil.POST('/api/incoming/cms').send({
       ...CMS_DATA,
       model: CMSModel.thematique,
       event: CMSEvent['entry.publish'],
@@ -94,12 +94,12 @@ describe('/api/cms/income (API test)', () => {
     expect(thematiqueDB[0].id_cms).toEqual(1);
     expect(thematiqueDB[0].titre).toEqual('yo');
   });
-  it('POST /api/cms/income - does nothing when model = aide', async () => {
+  it('POST /api/incoming/cms - does nothing when model = aide', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
 
     // WHEN
-    const response = await TestUtil.POST('/api/cms/income').send({
+    const response = await TestUtil.POST('/api/incoming/cms').send({
       ...CMS_DATA,
       model: 'aide',
     });
@@ -109,7 +109,7 @@ describe('/api/cms/income (API test)', () => {
     expect(response.status).toBe(201);
     expect(interDB).toHaveLength(0);
   });
-  it('POST /api/cms/income - updates existing article, 1 user in db ', async () => {
+  it('POST /api/incoming/cms - updates existing article, 1 user in db ', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interactionDefinition', {
@@ -122,7 +122,7 @@ describe('/api/cms/income (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.POST('/api/cms/income').send(CMS_DATA);
+    const response = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA);
     // THEN
     const interDB = await TestUtil.prisma.interaction.findMany({});
     const interDefDB = await TestUtil.prisma.interactionDefinition.findMany({});
@@ -132,7 +132,7 @@ describe('/api/cms/income (API test)', () => {
     expect(interDefDB[0].soustitre).toEqual('soustitre 222');
     expect(interDB[0].soustitre).toEqual('soustitre 222');
   });
-  it('POST /api/cms/income - updates existing 2 article for 2 users ', async () => {
+  it('POST /api/incoming/cms - updates existing 2 article for 2 users ', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', { id: 'u1', email: 'e1' });
     await TestUtil.create('utilisateur', { id: 'u2', email: 'e2' });
@@ -154,7 +154,7 @@ describe('/api/cms/income (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.POST('/api/cms/income').send(CMS_DATA);
+    const response = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA);
 
     // THEN
     const interDB = await TestUtil.prisma.interaction.findMany({});
@@ -166,28 +166,28 @@ describe('/api/cms/income (API test)', () => {
     expect(interDB[0].soustitre).toEqual('soustitre 222');
     expect(interDB[1].soustitre).toEqual('soustitre 222');
   });
-  it('POST /api/cms/income - does nothing when no publishedAt value', async () => {
+  it('POST /api/incoming/cms - does nothing when no publishedAt value', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     const data = { ...CMS_DATA };
     data.entry = { ...data.entry };
     data.entry.publishedAt = null;
     // WHEN
-    const response = await TestUtil.POST('/api/cms/income').send(data);
+    const response = await TestUtil.POST('/api/incoming/cms').send(data);
 
     // THEN
     const interDB = await TestUtil.prisma.interaction.findMany({});
     expect(response.status).toBe(201);
     expect(interDB).toHaveLength(0);
   });
-  it('POST /api/cms/income - optional points lead to 0 points', async () => {
+  it('POST /api/incoming/cms - optional points lead to 0 points', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     const data = { ...CMS_DATA };
     data.entry = { ...data.entry };
     data.entry.points = null;
     // WHEN
-    const response = await TestUtil.POST('/api/cms/income').send(data);
+    const response = await TestUtil.POST('/api/incoming/cms').send(data);
 
     // THEN
     const interDB = await TestUtil.prisma.interaction.findMany({});
@@ -195,7 +195,7 @@ describe('/api/cms/income (API test)', () => {
     expect(interDB).toHaveLength(1);
     expect(interDB[0].points).toEqual(0);
   });
-  it('POST /api/cms/income - unpublish event removes interaction definition', async () => {
+  it('POST /api/incoming/cms - unpublish event removes interaction definition', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interactionDefinition', {
@@ -205,14 +205,14 @@ describe('/api/cms/income (API test)', () => {
     const data = { ...CMS_DATA };
     data.event = CMSEvent['entry.unpublish'];
     // WHEN
-    const response = await TestUtil.POST('/api/cms/income').send(data);
+    const response = await TestUtil.POST('/api/incoming/cms').send(data);
 
     // THEN
     const interDefDB = await TestUtil.prisma.interactionDefinition.findMany({});
     expect(response.status).toBe(201);
     expect(interDefDB).toHaveLength(0);
   });
-  it('POST /api/cms/income - unpublish event removes interaction when not done', async () => {
+  it('POST /api/incoming/cms - unpublish event removes interaction when not done', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', { id: 'u1', email: 'e1' });
     await TestUtil.create('utilisateur', { id: 'u2', email: 'e2' });
@@ -237,7 +237,7 @@ describe('/api/cms/income (API test)', () => {
     const data = { ...CMS_DATA };
     data.event = CMSEvent['entry.delete'];
     // WHEN
-    const response = await TestUtil.POST('/api/cms/income').send(data);
+    const response = await TestUtil.POST('/api/incoming/cms').send(data);
 
     // THEN
     const interDB = await TestUtil.prisma.interaction.findMany({});

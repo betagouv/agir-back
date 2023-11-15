@@ -14,7 +14,7 @@ import { Response } from 'express';
 export class WinterController {
   constructor() {}
   @ApiBody({ type: Object })
-  @Post('incoming/winter-energies')
+  @Post('api/incoming/winter-energies')
   async income(@Body() body: object, @Res() res: Response, @Headers() headers) {
     console.log(JSON.stringify(headers));
     console.log(JSON.stringify(body));

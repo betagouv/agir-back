@@ -7,11 +7,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { InteractionsDefinitionUsecase } from '../../usecase/cms.usecase';
-import { CMSWebhookAPI } from './types/cms/CMSWebhookAPI';
+import { InteractionsDefinitionUsecase } from '../../../usecase/cms.usecase';
+import { CMSWebhookAPI } from '../types/cms/CMSWebhookAPI';
 
 @Controller()
-@ApiTags('Webhooks CMS')
+@ApiTags('Incoming Data')
 export class CMSController {
   constructor(
     private readonly interactionsDefinitionUsecase: InteractionsDefinitionUsecase,
@@ -22,7 +22,7 @@ export class CMSController {
     },
   })
   @ApiBody({ type: CMSWebhookAPI })
-  @Post('api/cms/income')
+  @Post('api/incoming/cms')
   async income(
     @Body() body: CMSWebhookAPI,
     @Headers('Authorization') authorization: string,

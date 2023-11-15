@@ -6,7 +6,7 @@ import { BilanController } from './infrastructure/api/bilan.controller';
 import { AidesController } from './infrastructure/api/aides.controller';
 import { IntractionsController } from './infrastructure/api/interactions.controller';
 import { TestDataController } from './infrastructure/api/testData.controller';
-import { CMSController } from './infrastructure/api/cms.controller';
+import { CMSController } from './infrastructure/api/incoming/cms.controller';
 
 import { UtilisateurUsecase } from './usecase/utilisateur.usecase';
 import { BilanUsecase } from './usecase/bilan.usecase';
@@ -53,7 +53,7 @@ import { TodoUsecase } from './usecase/todo.usecase';
 import { TodoRepository } from './infrastructure/repository/todo.repository';
 import { ThematiqueRepository } from './infrastructure/repository/thematique.repository';
 import { EcoWattServiceManager } from './infrastructure/service/ecowatt/ecoWattServiceManager';
-import { WinterController } from './infrastructure/api/winter.controller';
+import { WinterController } from './infrastructure/api/incoming/winter.controller';
 
 const SESSION_LIFETIME = '12h';
 
