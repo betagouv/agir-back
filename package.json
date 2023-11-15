@@ -30,7 +30,7 @@
     "test:repo": "dotenv -e .env.test -- jest --config ./test/jest-repo.json --runInBand --bail",
     "test": "npm run test:unit && npm run test:int",
     "prepare": "husky install",
-    "kube:start": "minikube start && npm run kub:env",
+    "kube:start": "minikube start && npm run kube:env",
     "kube:stop": "minikube stop",
     "kube:env": "eval $(minikube docker-env)"
   },

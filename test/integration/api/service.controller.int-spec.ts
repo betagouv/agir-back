@@ -258,6 +258,23 @@ describe('Service (API test)', () => {
     expect(response.body[0].label).toEqual('En construction 🚧🚧');
     expect(response.body[0].isInError).toEqual(false);
   });
+  it('GET /utilisateurs/id/services , label a pour valeur titre pour les service non dynamic live', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', { id: 'inconnu' });
+    await TestUtil.create('service', { serviceDefinitionId: 'inconnu' });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/services',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].label).toEqual('titre');
+    expect(response.body[0].isInError).toEqual(false);
+  });
   it('GET /utilisateurs/id/services renvoi le libellé de la thématique en base si existe', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
@@ -381,5 +398,24 @@ describe('Service (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0].label).toEqual('En construction 🚧');
+  });
+  it('GET /utilisateurs/id/services pas d erreur si service non dynamic (comme le suivi transport)', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', {
+      id: 'inconnu',
+    });
+    await TestUtil.create('service', {
+      serviceDefinitionId: 'inconnu',
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/services',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
   });
 });

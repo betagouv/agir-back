@@ -99,16 +99,17 @@ export class ServiceUsecase {
       await this.serviceRepository.listeServicesOfUtilisateur(utilisateurId);
     for (let index = 0; index < userServiceList.length; index++) {
       const service = userServiceList[index];
-      await this.refreshLiveService(service);
+      await this.refreshLiveServiceIf(service);
     }
     return userServiceList;
   }
 
-  private async refreshLiveService(service: Service) {
+  private async refreshLiveServiceIf(service: Service) {
     const manager = this.getServiceManager(service);
-
-    const result = await manager.computeLiveDynamicData(service);
-    service.dynamic_data = result;
+    if (manager) {
+      const result = await manager.computeLiveDynamicData(service);
+      service.dynamic_data = result;
+    }
   }
 
   private async refreshScheduledService(serviceDefinition: ServiceDefinition) {

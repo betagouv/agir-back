@@ -107,9 +107,10 @@ export class ServiceController extends GenericControler {
       utilisateurId,
     );
 
-    return result.map((service) =>
+    const mappedResult = result.map((service) =>
       ServiceAPI.mapServicesToServicesAPI(service),
     );
+    return mappedResult;
   }
   @Post('services/refreshDynamicData')
   @ApiOkResponse({ type: [String] })

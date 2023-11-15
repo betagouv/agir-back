@@ -273,7 +273,7 @@ export class TestUtil {
       is_url_externe: true,
       minute_period: 20,
       scheduled_refresh: null,
-      dynamic_data: { label: 'label', isInError: false },
+      dynamic_data: {},
       last_refresh: null,
       description: 'desc',
       sous_description: 'sous desc',
