@@ -1,16 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { ServiceDefinition } from '../../../../src/domain/service/serviceDefinition';
-import { Service } from '../../../../src/domain/service/service';
-import { GenericServiceManager } from '../GenericServiceManager';
-import { SignalEcoWatt } from './signalEcoWatt';
+import { ScheduledServiceManager } from '../ScheduledServiceManager';
 
 const ACCESS_TOKEN_URL = 'https://digital.iservices.rte-france.com/token/oauth';
 const ECOWATT_URL =
   'https://digital.iservices.rte-france.com/open_api/ecowatt/v5/signals';
 
+export enum EcoWattLevel {
+  vert = 1,
+  orange = 2,
+  rouge = 3,
+}
+
+export class SignalEcoWatt {
+  label: string;
+  isInError: boolean;
+  niveau?: EcoWattLevel;
+  message?: string;
+}
+
 @Injectable()
-export class EcoWattServiceManager implements GenericServiceManager {
+export class EcoWattServiceManager implements ScheduledServiceManager {
   private access_token: string;
 
   async computeScheduledDynamicData(): Promise<SignalEcoWatt> {
@@ -21,10 +31,6 @@ export class EcoWattServiceManager implements GenericServiceManager {
       label: '🚫 EcoWatt désactivé',
       isInError: true,
     };
-  }
-
-  async computeLiveDynamicData(service: Service): Promise<SignalEcoWatt> {
-    return service.dynamic_data;
   }
 
   async getEcoWattSignal(): Promise<SignalEcoWatt> {

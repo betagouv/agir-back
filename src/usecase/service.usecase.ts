@@ -8,22 +8,17 @@ import {
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
 import { EcoWattServiceManager } from '../infrastructure/service/ecowatt/ecoWattServiceManager';
 import { FruitsEtLegumesServiceManager } from '../infrastructure/service/fruits/fruitEtLegumesServiceManager';
-import { GenericServiceManager } from 'src/infrastructure/service/GenericServiceManager';
+import { ScheduledServiceManager } from 'src/infrastructure/service/ScheduledServiceManager';
+import { LiveServiceManager } from 'src/infrastructure/service/LiveServiceManager';
 
 const dummy_live_manager = {
-  computeScheduledDynamicData: async (serviceDefinition: ServiceDefinition) => {
-    return { label: `live data only`, isInError: false };
-  },
   computeLiveDynamicData: async (service: Service) => {
-    return { label: `En construction 🚧🚧`, isInError: false };
+    return { label: `En construction 🚧`, isInError: false };
   },
 };
 const dummy_scheduled_manager = {
   computeScheduledDynamicData: async (serviceDefinition: ServiceDefinition) => {
     return { label: `En construction 🚧`, isInError: false };
-  },
-  computeLiveDynamicData: async (service: Service) => {
-    return service.dynamic_data;
   },
 };
 
@@ -31,9 +26,9 @@ const dummy_scheduled_manager = {
 export class ServiceUsecase {
   private readonly SCHEDULED_SERVICES: Record<
     ScheduledService,
-    GenericServiceManager
+    ScheduledServiceManager
   >;
-  private readonly LIVE_SERVICES: Record<LiveService, GenericServiceManager>;
+  private readonly LIVE_SERVICES: Record<LiveService, LiveServiceManager>;
 
   constructor(
     private serviceRepository: ServiceRepository,
@@ -51,7 +46,8 @@ export class ServiceUsecase {
   }
 
   async refreshScheduledServices(): Promise<string[]> {
-    let serviceList = await this.serviceRepository.listeServiceDefinitionsToRefresh();
+    let serviceList =
+      await this.serviceRepository.listeServiceDefinitionsToRefresh();
 
     const serviceToRefreshList = serviceList.filter(
       (serviceDefinition) =>
@@ -108,13 +104,13 @@ export class ServiceUsecase {
   }
 
   private async refreshLiveService(service: Service) {
-    const manager = this.getServiceManager(service);
+    const manager = this.getLiveServiceManager(service);
     const result = await manager.computeLiveDynamicData(service);
     service.dynamic_data = result;
   }
 
   private async refreshScheduledService(serviceDefinition: ServiceDefinition) {
-    const manager = this.getServiceManager(serviceDefinition);
+    const manager = this.getScheduledServiceManager(serviceDefinition);
 
     const result = await manager.computeScheduledDynamicData(serviceDefinition);
     if (result.isInError) {
@@ -127,11 +123,14 @@ export class ServiceUsecase {
     return `REFRESHED OK : ${serviceDefinition.serviceDefinitionId}`;
   }
 
-  private getServiceManager(
+  private getLiveServiceManager(
     serviceDefinition: ServiceDefinition,
-  ): GenericServiceManager {
-    return { ...this.SCHEDULED_SERVICES, ...this.LIVE_SERVICES }[
-      serviceDefinition.serviceDefinitionId
-    ];
+  ): LiveServiceManager {
+    return this.LIVE_SERVICES[serviceDefinition.serviceDefinitionId];
+  }
+  private getScheduledServiceManager(
+    serviceDefinition: ServiceDefinition,
+  ): ScheduledServiceManager {
+    return this.SCHEDULED_SERVICES[serviceDefinition.serviceDefinitionId];
   }
 }

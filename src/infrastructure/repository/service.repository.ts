@@ -6,7 +6,6 @@ import {
   Service as ServiceDB,
 } from '@prisma/client';
 import {
-  ScheduledService,
   ServiceDefinition,
 } from '../../domain/service/serviceDefinition';
 import { v4 as uuidv4 } from 'uuid';

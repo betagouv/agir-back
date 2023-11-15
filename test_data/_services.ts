@@ -47,5 +47,18 @@ const services = {
     sous_description:
       'Véritable météo de l’électricité, Ecowatt qualifie en temps réel le niveau de consommation des Français.',
   },
+  fruits: {
+    titre: `Fruits et légumes de saison`,
+    url: 'https://impactco2.fr/fruitsetlegumes',
+    icon_url:
+      'https://static.vecteezy.com/ti/vecteur-libre/p1/3179773-fruits-et-legumes-icon-set-vector-design-gratuit-vectoriel.jpg',
+    image_url:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Broccoli_bunches.jpg/320px-Broccoli_bunches.jpg',
+    is_url_externe: true,
+    is_local: true,
+    thematiques: ['alimentation'],
+    description: 'Découvrez les fruits et légumes dus mois',
+    sous_description: `Manger local et de saison est un changement d'habitude à impact fort sur votre bilan carbone, alors GO GO GO  !!!`,
+  },
 };
 module.exports = services;

@@ -1,24 +1,42 @@
 import { Injectable } from '@nestjs/common';
-import { Service } from '../../../../src/domain/service/service';
-import {
-  ServiceDefinition,
-  ServiceDynamicData,
-} from '../../../../src/domain/service/serviceDefinition';
-import { GenericServiceManager } from '../GenericServiceManager';
+import { ServiceDynamicData } from '../../../../src/domain/service/serviceDefinition';
+import { LiveServiceManager } from '../LiveServiceManager';
+import fruits_legumes from './fruits_legumes.json';
+
+export type rawEntry = {
+  label: Record<'fr', string>;
+  months: number[];
+  emoji: string;
+  local: boolean;
+  pef: number;
+  CO2: number;
+  suggestions: boolean;
+};
 
 @Injectable()
-export class FruitsEtLegumesServiceManager implements GenericServiceManager {
-  async computeScheduledDynamicData(
-    serviceDefinition: ServiceDefinition,
-  ): Promise<ServiceDynamicData> {
-    return {
-      label: '🥦 Broccoli',
-      isInError: false,
-    };
+export class FruitsEtLegumesServiceManager implements LiveServiceManager {
+  private entriesByMonthMap: Map<number, string[]>;
+
+  constructor() {
+    let load: rawEntry[] = fruits_legumes as rawEntry[];
+    this.entriesByMonthMap = new Map();
+    for (let month = 0; month < 12; month++) {
+      this.entriesByMonthMap.set(month, []);
+      load.forEach((entry) => {
+        if (entry.months.includes(month)) {
+          this.entriesByMonthMap
+            .get(month)
+            .push(entry.emoji.concat(' ', entry.label.fr));
+        }
+      });
+    }
   }
-  async computeLiveDynamicData(service: Service): Promise<ServiceDynamicData> {
+  async computeLiveDynamicData(): Promise<ServiceDynamicData> {
+    const current_month = new Date().getMonth();
+    const current_list = this.entriesByMonthMap.get(current_month);
+    const random_position = Math.floor(Math.random() * current_list.length);
     return {
-      label: '🥦 Broccoli',
+      label: current_list[random_position],
       isInError: false,
     };
   }

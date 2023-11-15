@@ -255,7 +255,7 @@ describe('Service (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body[0].label).toEqual('En construction 🚧🚧');
+    expect(response.body[0].label).toEqual('En construction 🚧');
     expect(response.body[0].isInError).toEqual(false);
   });
   it('GET /utilisateurs/id/services , label a pour valeur titre pour les service non dynamic live', async () => {
