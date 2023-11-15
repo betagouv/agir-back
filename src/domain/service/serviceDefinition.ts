@@ -2,9 +2,11 @@ import { Thematique } from '../thematique';
 
 export enum RefreshableService {
   ecowatt = 'ecowatt',
+  fruits = 'fruits',
   linky = 'linky',
   recettes = 'recettes',
-  dummy = 'dummy',
+  dummy_live = 'dummy_live',
+  dummy_schduled = 'dummy_scheduled',
 }
 
 export interface ServiceDynamicData {

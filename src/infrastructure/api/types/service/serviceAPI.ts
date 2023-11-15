@@ -11,7 +11,7 @@ export class ServiceAPI extends ServiceDefinitionAPI {
       ...ServiceDefinitionAPI.mapServiceDefintionToServiceDefinitionAPI(
         service,
       ),
-      label: service.dynamic_data.label || service.titre,
+      label: service.dynamic_data.label,
       isInError: service.dynamic_data.isInError,
     };
   }

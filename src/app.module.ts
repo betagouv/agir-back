@@ -54,6 +54,7 @@ import { TodoRepository } from './infrastructure/repository/todo.repository';
 import { ThematiqueRepository } from './infrastructure/repository/thematique.repository';
 import { EcoWattServiceManager } from './infrastructure/service/ecowatt/ecoWattServiceManager';
 import { WinterController } from './infrastructure/api/incoming/winter.controller';
+import { FruitsEtLegumesServiceManager } from './infrastructure/service/fruits/fruitEtLegumesServiceManager';
 
 const SESSION_LIFETIME = '12h';
 
@@ -118,6 +119,7 @@ const SESSION_LIFETIME = '12h';
     TodoRepository,
     ThematiqueRepository,
     EcoWattServiceManager,
+    FruitsEtLegumesServiceManager,
   ],
 })
 export class AppModule {}

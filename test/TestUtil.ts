@@ -258,13 +258,13 @@ export class TestUtil {
     return {
       id: 'service-id',
       utilisateurId: 'utilisateur-id',
-      serviceDefinitionId: 'serviceDefinition-id',
+      serviceDefinitionId: 'dummy_live',
       ...override,
     };
   }
   static serviceDefinitionData(override?) {
     return {
-      id: 'serviceDefinition-id',
+      id: 'dummy_live',
       titre: 'titre',
       url: 'url',
       icon_url: 'icon_url',

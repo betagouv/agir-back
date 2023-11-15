@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { ServiceDefinition } from '../../../../src/domain/service/serviceDefinition';
+import { Service } from '../../../../src/domain/service/service';
 import { GenericServiceManager } from '../GenericServiceManager';
 import { SignalEcoWatt } from './signalEcoWatt';
 
@@ -11,7 +13,7 @@ const ECOWATT_URL =
 export class EcoWattServiceManager implements GenericServiceManager {
   private access_token: string;
 
-  async computeDynamicData(): Promise<SignalEcoWatt> {
+  async computeScheduledDynamicData(): Promise<SignalEcoWatt> {
     if (process.env.SERVICE_APIS_ENABLED == 'true') {
       return await this.getEcoWattSignal();
     }
@@ -19,6 +21,10 @@ export class EcoWattServiceManager implements GenericServiceManager {
       label: '🚫 EcoWatt désactivé',
       isInError: true,
     };
+  }
+
+  async computeLiveDynamicData(service: Service): Promise<SignalEcoWatt> {
+    return service.dynamic_data;
   }
 
   async getEcoWattSignal(): Promise<SignalEcoWatt> {

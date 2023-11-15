@@ -6,17 +6,29 @@ import {
 } from '../domain/service/serviceDefinition';
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
 import { EcoWattServiceManager } from '../infrastructure/service/ecowatt/ecoWattServiceManager';
+import { FruitsEtLegumesServiceManager } from '../infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { GenericServiceManager } from 'src/infrastructure/service/GenericServiceManager';
 
-const fake_manager = {
-  computeDynamicData: async () => {
-    return { label: `En construction 🚧`, isInError: true };
+const fake_manager_live = {
+  computeScheduledDynamicData: async (serviceDefinition: ServiceDefinition) => {
+    return { label: `live data only`, isInError: false };
+  },
+  computeLiveDynamicData: async (service: Service) => {
+    return { label: `En construction 🚧🚧`, isInError: false };
+  },
+};
+const fake_manager_scheduled = {
+  computeScheduledDynamicData: async (serviceDefinition: ServiceDefinition) => {
+    return { label: `En construction 🚧`, isInError: false };
+  },
+  computeLiveDynamicData: async (service: Service) => {
+    return service.dynamic_data;
   },
 };
 
 @Injectable()
 export class ServiceUsecase {
-  private readonly refreshableServiceManagerMap: Record<
+  private readonly SERVICE_MANAGER_MAP: Record<
     RefreshableService,
     GenericServiceManager
   >;
@@ -24,12 +36,15 @@ export class ServiceUsecase {
   constructor(
     private serviceRepository: ServiceRepository,
     private readonly ecoWattServiceManager: EcoWattServiceManager,
+    private readonly fruitsEtLegumesServiceManager: FruitsEtLegumesServiceManager,
   ) {
-    this.refreshableServiceManagerMap = {
+    this.SERVICE_MANAGER_MAP = {
       ecowatt: this.ecoWattServiceManager,
-      linky: fake_manager,
-      recettes: fake_manager,
-      dummy: fake_manager,
+      fruits: this.fruitsEtLegumesServiceManager,
+      linky: fake_manager_live,
+      recettes: fake_manager_live,
+      dummy_live: fake_manager_live,
+      dummy_scheduled: fake_manager_scheduled,
     };
   }
 
@@ -46,7 +61,9 @@ export class ServiceUsecase {
     let resultStatusList = [];
     for (let index = 0; index < serviceListToRefresh.length; index++) {
       const serviceDefinition = serviceListToRefresh[index];
-      const refreshStatus = await this.refreshService(serviceDefinition);
+      const refreshStatus = await this.refreshScheduledService(
+        serviceDefinition,
+      );
       resultStatusList.push(refreshStatus);
     }
     return resultStatusList;
@@ -78,15 +95,27 @@ export class ServiceUsecase {
     );
   }
   async listeServicesOfUtilisateur(utilisateurId: string): Promise<Service[]> {
-    return this.serviceRepository.listeServicesOfUtilisateur(utilisateurId);
+    const userServiceList =
+      await this.serviceRepository.listeServicesOfUtilisateur(utilisateurId);
+    for (let index = 0; index < userServiceList.length; index++) {
+      const service = userServiceList[index];
+      await this.refreshLiveService(service);
+    }
+    return userServiceList;
   }
 
-  private async refreshService(serviceDefinition: ServiceDefinition) {
-    const manager: GenericServiceManager =
-      this.refreshableServiceManagerMap[serviceDefinition.serviceDefinitionId];
+  private async refreshLiveService(service: Service) {
+    const manager = this.getServiceManager(service);
 
-    const result = await manager.computeDynamicData();
-    if (result === null) {
+    const result = await manager.computeLiveDynamicData(service);
+    service.dynamic_data = result;
+  }
+
+  private async refreshScheduledService(serviceDefinition: ServiceDefinition) {
+    const manager = this.getServiceManager(serviceDefinition);
+
+    const result = await manager.computeScheduledDynamicData(serviceDefinition);
+    if (result.isInError) {
       return `FAILED REFRESH : ${serviceDefinition.serviceDefinitionId}`;
     }
     serviceDefinition.dynamic_data = result;
@@ -94,5 +123,11 @@ export class ServiceUsecase {
     serviceDefinition.last_refresh = new Date();
     await this.serviceRepository.updateServiceDefinition(serviceDefinition);
     return `REFRESHED OK : ${serviceDefinition.serviceDefinitionId}`;
+  }
+
+  private getServiceManager(
+    serviceDefinition: ServiceDefinition,
+  ): GenericServiceManager {
+    return this.SERVICE_MANAGER_MAP[serviceDefinition.serviceDefinitionId];
   }
 }

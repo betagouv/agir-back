@@ -20,8 +20,8 @@ describe('Service (API test)', () => {
 
   it('GET /services listes 2 def', async () => {
     // GIVEN
-    await TestUtil.create('serviceDefinition', { id: '1' });
-    await TestUtil.create('serviceDefinition', { id: '2' });
+    await TestUtil.create('serviceDefinition', { id: 'dummy_live' });
+    await TestUtil.create('serviceDefinition', { id: 'dummy_scheduled' });
 
     // WHEN
     const response = await TestUtil.GET('/services');
@@ -40,7 +40,7 @@ describe('Service (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
-    expect(response.body[0].id).toEqual('serviceDefinition-id');
+    expect(response.body[0].id).toEqual('dummy_live');
     expect(response.body[0].titre).toEqual('titre');
     expect(response.body[0].url).toEqual('url');
     expect(response.body[0].is_installed).toBeUndefined();
@@ -60,17 +60,17 @@ describe('Service (API test)', () => {
     await TestUtil.create('utilisateur', { id: '1', email: '1' });
     await TestUtil.create('utilisateur', { id: '2', email: '2' });
 
-    await TestUtil.create('serviceDefinition', { id: '1' });
+    await TestUtil.create('serviceDefinition');
 
     await TestUtil.create('service', {
       id: '1',
       utilisateurId: '1',
-      serviceDefinitionId: '1',
+      serviceDefinitionId: 'dummy_live',
     });
     await TestUtil.create('service', {
       id: '2',
       utilisateurId: '2',
-      serviceDefinitionId: '1',
+      serviceDefinitionId: 'dummy_live',
     });
 
     // WHEN
@@ -84,18 +84,18 @@ describe('Service (API test)', () => {
     await TestUtil.create('utilisateur', { email: '1' });
     await TestUtil.create('utilisateur', { id: '2', email: '2' });
 
-    await TestUtil.create('serviceDefinition', { id: '1' });
-    await TestUtil.create('serviceDefinition', { id: '2' });
+    await TestUtil.create('serviceDefinition', { id: 'dummy_live' });
+    await TestUtil.create('serviceDefinition', { id: 'dummy_scheduled' });
 
     await TestUtil.create('service', {
       id: '1',
       utilisateurId: 'utilisateur-id',
-      serviceDefinitionId: '1',
+      serviceDefinitionId: 'dummy_live',
     });
     await TestUtil.create('service', {
       id: '2',
       utilisateurId: '2',
-      serviceDefinitionId: '2',
+      serviceDefinitionId: 'dummy_scheduled',
     });
 
     // WHEN
@@ -126,7 +126,7 @@ describe('Service (API test)', () => {
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/services',
     ).send({
-      service_definition_id: 'serviceDefinition-id',
+      service_definition_id: 'dummy_live',
     });
 
     // THEN
@@ -167,13 +167,13 @@ describe('Service (API test)', () => {
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/services',
     ).send({
-      service_definition_id: 'serviceDefinition-id',
+      service_definition_id: 'dummy_live',
     });
 
     // THEN
     expect(response.status).toBe(400);
     expect(response.body.message).toEqual(
-      `Le service d'id serviceDefinition-id est dejà associé à cet utilisateur`,
+      `Le service d'id dummy_live est dejà associé à cet utilisateur`,
     );
   });
   it('DELETE /utilisateurs/id/services/id supprime un service associé à l utilisateur', async () => {
@@ -184,7 +184,7 @@ describe('Service (API test)', () => {
 
     // WHEN
     const response = await TestUtil.DELETE(
-      '/utilisateurs/utilisateur-id/services/serviceDefinition-id',
+      '/utilisateurs/utilisateur-id/services/dummy_live',
     );
 
     // THEN
@@ -195,10 +195,16 @@ describe('Service (API test)', () => {
   it('GET /utilisateurs/id/services liste les services associés à l utilisateur', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: '1' });
-    await TestUtil.create('serviceDefinition', { id: '2' });
-    await TestUtil.create('service', { id: '1', serviceDefinitionId: '1' });
-    await TestUtil.create('service', { id: '2', serviceDefinitionId: '2' });
+    await TestUtil.create('serviceDefinition', { id: 'dummy_live' });
+    await TestUtil.create('serviceDefinition', { id: 'dummy_scheduled' });
+    await TestUtil.create('service', {
+      id: '1',
+      serviceDefinitionId: 'dummy_live',
+    });
+    await TestUtil.create('service', {
+      id: '2',
+      serviceDefinitionId: 'dummy_scheduled',
+    });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -222,7 +228,7 @@ describe('Service (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body[0].id).toEqual('serviceDefinition-id');
+    expect(response.body[0].id).toEqual('dummy_live');
     expect(response.body[0].titre).toEqual('titre');
     expect(response.body[0].url).toEqual('url');
     expect(response.body[0].icon_url).toEqual('icon_url');
@@ -236,10 +242,10 @@ describe('Service (API test)', () => {
       Thematique.logement,
     ]);
   });
-  it('GET /utilisateurs/id/services , label a pour valeur titre si pas de label dans les données dynamic', async () => {
+  it('GET /utilisateurs/id/services , label a pour valeur label des données dynamic live', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { dynamic_data: {} });
+    await TestUtil.create('serviceDefinition');
     await TestUtil.create('service');
 
     // WHEN
@@ -249,24 +255,7 @@ describe('Service (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body[0].label).toEqual('titre');
-  });
-  it('GET /utilisateurs/id/services , label a pour valeur label des données dynamic', async () => {
-    // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', {
-      dynamic_data: { label: 'the label', isInError: false },
-    });
-    await TestUtil.create('service');
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/services',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body[0].label).toEqual('the label');
+    expect(response.body[0].label).toEqual('En construction 🚧🚧');
     expect(response.body[0].isInError).toEqual(false);
   });
   it('GET /utilisateurs/id/services renvoi le libellé de la thématique en base si existe', async () => {
@@ -345,7 +334,7 @@ describe('Service (API test)', () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.create('serviceDefinition', {
-      id: 'dummy',
+      id: 'dummy_scheduled',
       scheduled_refresh: new Date(Date.now() - 1000),
       minute_period: 30,
     });
@@ -358,12 +347,39 @@ describe('Service (API test)', () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual('REFRESHED OK : dummy');
-    expect(serviceDefDB.dynamic_data['label']).toContain('En construction');
+    expect(response.body[0]).toEqual('REFRESHED OK : dummy_scheduled');
+    expect(serviceDefDB.dynamic_data['label']).toEqual('En construction 🚧');
     expect(
       Math.round(
         (serviceDefDB.scheduled_refresh.getTime() - Date.now()) / 1000,
       ),
     ).toEqual(30 * 60);
+  });
+  it('POST /services/refreshDynamicData puis GET /utilisateurs/id/services appel récupère les données calculées en schedule', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', {
+      id: 'dummy_scheduled',
+      scheduled_refresh: new Date(Date.now() - 1000),
+      minute_period: 30,
+    });
+    await TestUtil.create('service', {
+      serviceDefinitionId: 'dummy_scheduled',
+    });
+
+    // WHEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.POST('/services/refreshDynamicData');
+
+    await TestUtil.generateAuthorizationToken('utilisateur-id');
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/services',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].label).toEqual('En construction 🚧');
   });
 });
