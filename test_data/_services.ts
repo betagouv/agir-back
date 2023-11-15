@@ -57,7 +57,7 @@ const services = {
     is_url_externe: true,
     is_local: true,
     thematiques: ['alimentation'],
-    description: 'Découvrez les fruits et légumes dus mois',
+    description: 'Découvrez les fruits et légumes du mois',
     sous_description: `Manger local et de saison est un changement d'habitude à impact fort sur votre bilan carbone, alors GO GO GO  !!!`,
   },
 };
