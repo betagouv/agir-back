@@ -1,6 +1,6 @@
 import { TestUtil } from '../../TestUtil';
 import { ServiceRepository } from '../../../src/infrastructure/repository/service.repository';
-import { RefreshableService } from '../../../src/domain/service/serviceDefinition';
+import { ScheduledService } from '../../../src/domain/service/serviceDefinition';
 
 async function injectData() {
   await TestUtil.create('utilisateur', { id: 'u1', email: '1' });
@@ -160,74 +160,12 @@ describe('ServiceRepository', () => {
     });
 
     // WHEN
-    const servicesDBList =
-      await serviceRepository.listeServiceDefinitionsByIdArray([
-        RefreshableService.ecowatt,
-      ]);
+    const servicesDBList = await serviceRepository.listeServiceDefinitionsToRefresh();
 
     // THEN
     expect(servicesDBList).toHaveLength(1);
     expect(servicesDBList[0].serviceDefinitionId).toEqual(
-      RefreshableService.ecowatt,
+      ScheduledService.ecowatt,
     );
-  });
-  it('listeServiceDefinitionsToRefresh  : does retrieve of asked type', async () => {
-    // GIVEN
-    await TestUtil.create('serviceDefinition', {
-      id: 'linky',
-    });
-    await TestUtil.create('serviceDefinition', {
-      id: 'ecowatt',
-    });
-    await TestUtil.create('serviceDefinition', {
-      id: 'recettes',
-    });
-
-    // WHEN
-    const servicesDBList =
-      await serviceRepository.listeServiceDefinitionsByIdArray([
-        RefreshableService.linky,
-      ]);
-
-    // THEN
-    expect(servicesDBList).toHaveLength(1);
-    expect(servicesDBList[0].serviceDefinitionId).toEqual('linky');
-  });
-  it('listeServiceDefinitionsToRefresh  : does retrieve proper number', async () => {
-    // GIVEN
-    await TestUtil.create('serviceDefinition', {
-      id: 'linky',
-    });
-    await TestUtil.create('serviceDefinition', {
-      id: 'ecowatt',
-    });
-    await TestUtil.create('serviceDefinition', {
-      id: 'recettes',
-    });
-
-    // WHEN
-    const servicesDBList =
-      await serviceRepository.listeServiceDefinitionsByIdArray([
-        RefreshableService.linky,
-        RefreshableService.ecowatt,
-      ]);
-
-    // THEN
-    expect(servicesDBList).toHaveLength(2);
-  });
-  it('listeServiceDefinitionsToRefresh  : does not retrieve if given type is missing', async () => {
-    // GIVEN
-    await TestUtil.create('serviceDefinition', {
-      id: 'linky',
-    });
-
-    // WHEN
-    const servicesDBList =
-      await serviceRepository.listeServiceDefinitionsByIdArray([
-        RefreshableService.ecowatt,
-      ]);
-
-    // THEN
-    expect(servicesDBList).toHaveLength(0);
   });
 });

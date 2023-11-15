@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Service } from 'src/domain/service/service';
 import {
-  RefreshableService,
+  LiveService,
+  ScheduledService,
   ServiceDefinition,
 } from '../domain/service/serviceDefinition';
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
@@ -9,7 +10,7 @@ import { EcoWattServiceManager } from '../infrastructure/service/ecowatt/ecoWatt
 import { FruitsEtLegumesServiceManager } from '../infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { GenericServiceManager } from 'src/infrastructure/service/GenericServiceManager';
 
-const fake_manager_live = {
+const dummy_live_manager = {
   computeScheduledDynamicData: async (serviceDefinition: ServiceDefinition) => {
     return { label: `live data only`, isInError: false };
   },
@@ -17,7 +18,7 @@ const fake_manager_live = {
     return { label: `En construction 🚧🚧`, isInError: false };
   },
 };
-const fake_manager_scheduled = {
+const dummy_scheduled_manager = {
   computeScheduledDynamicData: async (serviceDefinition: ServiceDefinition) => {
     return { label: `En construction 🚧`, isInError: false };
   },
@@ -28,39 +29,39 @@ const fake_manager_scheduled = {
 
 @Injectable()
 export class ServiceUsecase {
-  private readonly SERVICE_MANAGER_MAP: Record<
-    RefreshableService,
+  private readonly SCHEDULED_SERVICES: Record<
+    ScheduledService,
     GenericServiceManager
   >;
+  private readonly LIVE_SERVICES: Record<LiveService, GenericServiceManager>;
 
   constructor(
     private serviceRepository: ServiceRepository,
     private readonly ecoWattServiceManager: EcoWattServiceManager,
     private readonly fruitsEtLegumesServiceManager: FruitsEtLegumesServiceManager,
   ) {
-    this.SERVICE_MANAGER_MAP = {
+    this.SCHEDULED_SERVICES = {
       ecowatt: this.ecoWattServiceManager,
+      dummy_scheduled: dummy_scheduled_manager,
+    };
+    this.LIVE_SERVICES = {
       fruits: this.fruitsEtLegumesServiceManager,
-      linky: fake_manager_live,
-      recettes: fake_manager_live,
-      dummy_live: fake_manager_live,
-      dummy_scheduled: fake_manager_scheduled,
+      dummy_live: dummy_live_manager,
     };
   }
 
-  async refreshServiceDynamicData(): Promise<string[]> {
-    let serviceListToRefresh =
-      await this.serviceRepository.listeServiceDefinitionsByIdArray(
-        Object.values(RefreshableService),
-      );
+  async refreshScheduledServices(): Promise<string[]> {
+    let serviceList = await this.serviceRepository.listeServiceDefinitionsToRefresh();
 
-    serviceListToRefresh = serviceListToRefresh.filter((serviceDefinition) =>
-      serviceDefinition.isReadyForRefresh(),
+    const serviceToRefreshList = serviceList.filter(
+      (serviceDefinition) =>
+        serviceDefinition.isScheduledServiceType() &&
+        serviceDefinition.isReadyForRefresh(),
     );
 
     let resultStatusList = [];
-    for (let index = 0; index < serviceListToRefresh.length; index++) {
-      const serviceDefinition = serviceListToRefresh[index];
+    for (let index = 0; index < serviceToRefreshList.length; index++) {
+      const serviceDefinition = serviceToRefreshList[index];
       const refreshStatus = await this.refreshScheduledService(
         serviceDefinition,
       );
@@ -99,17 +100,17 @@ export class ServiceUsecase {
       await this.serviceRepository.listeServicesOfUtilisateur(utilisateurId);
     for (let index = 0; index < userServiceList.length; index++) {
       const service = userServiceList[index];
-      await this.refreshLiveServiceIf(service);
+      if (service.isLiveServiceType()) {
+        await this.refreshLiveService(service);
+      }
     }
     return userServiceList;
   }
 
-  private async refreshLiveServiceIf(service: Service) {
+  private async refreshLiveService(service: Service) {
     const manager = this.getServiceManager(service);
-    if (manager) {
-      const result = await manager.computeLiveDynamicData(service);
-      service.dynamic_data = result;
-    }
+    const result = await manager.computeLiveDynamicData(service);
+    service.dynamic_data = result;
   }
 
   private async refreshScheduledService(serviceDefinition: ServiceDefinition) {
@@ -129,6 +130,8 @@ export class ServiceUsecase {
   private getServiceManager(
     serviceDefinition: ServiceDefinition,
   ): GenericServiceManager {
-    return this.SERVICE_MANAGER_MAP[serviceDefinition.serviceDefinitionId];
+    return { ...this.SCHEDULED_SERVICES, ...this.LIVE_SERVICES }[
+      serviceDefinition.serviceDefinitionId
+    ];
   }
 }

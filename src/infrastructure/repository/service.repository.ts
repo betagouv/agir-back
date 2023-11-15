@@ -6,7 +6,7 @@ import {
   Service as ServiceDB,
 } from '@prisma/client';
 import {
-  RefreshableService,
+  ScheduledService,
   ServiceDefinition,
 } from '../../domain/service/serviceDefinition';
 import { v4 as uuidv4 } from 'uuid';
@@ -97,13 +97,11 @@ export class ServiceRepository {
     });
     return this.buildServiceDefinitionList(result, utilisateurId != undefined);
   }
-  async listeServiceDefinitionsByIdArray(
-    targetServices: RefreshableService[],
-  ): Promise<ServiceDefinition[]> {
+  async listeServiceDefinitionsToRefresh(): Promise<ServiceDefinition[]> {
     const result = await this.prisma.serviceDefinition.findMany({
       where: {
-        id: {
-          in: targetServices,
+        scheduled_refresh: {
+          lt: new Date(),
         },
       },
     });

@@ -59,4 +59,56 @@ describe('ServiceDefinition', () => {
     // THEN
     expect(result).toEqual(false);
   });
+  it('isLiveServiceType : true si l id fait partie de l enum des srvices lives', () => {
+    // GIVEN
+    const serviceDefinition = new ServiceDefinition({
+      ...TestUtil.serviceDefinitionData(),
+      serviceDefinitionId: 'dummy_live',
+    });
+
+    // WHEN
+    const result = serviceDefinition.isLiveServiceType();
+
+    // THEN
+    expect(result).toEqual(true);
+  });
+  it('isLiveServiceType : false si l id ne fait pas partie de l enum des srvices lives', () => {
+    // GIVEN
+    const serviceDefinition = new ServiceDefinition({
+      ...TestUtil.serviceDefinitionData(),
+      serviceDefinitionId: 'other',
+    });
+
+    // WHEN
+    const result = serviceDefinition.isLiveServiceType();
+
+    // THEN
+    expect(result).toEqual(false);
+  });
+  it('isScheduledServiceType : true si l id fait partie de l enum des srvices scheduled', () => {
+    // GIVEN
+    const serviceDefinition = new ServiceDefinition({
+      ...TestUtil.serviceDefinitionData(),
+      serviceDefinitionId: 'dummy_scheduled',
+    });
+
+    // WHEN
+    const result = serviceDefinition.isScheduledServiceType();
+
+    // THEN
+    expect(result).toEqual(true);
+  });
+  it('isScheduledServiceType : false si l id fait partie de l enum des srvices scheduled', () => {
+    // GIVEN
+    const serviceDefinition = new ServiceDefinition({
+      ...TestUtil.serviceDefinitionData(),
+      serviceDefinitionId: 'other',
+    });
+
+    // WHEN
+    const result = serviceDefinition.isScheduledServiceType();
+
+    // THEN
+    expect(result).toEqual(false);
+  });
 });
