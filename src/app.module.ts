@@ -53,6 +53,7 @@ import { TodoUsecase } from './usecase/todo.usecase';
 import { TodoRepository } from './infrastructure/repository/todo.repository';
 import { ThematiqueRepository } from './infrastructure/repository/thematique.repository';
 import { EcoWattServiceManager } from './infrastructure/service/ecowatt/ecoWattServiceManager';
+import { WinterController } from './infrastructure/api/winter.controller';
 
 const SESSION_LIFETIME = '12h';
 
@@ -79,6 +80,7 @@ const SESSION_LIFETIME = '12h';
     CommunesController,
     ServiceController,
     TodoController,
+    WinterController,
   ],
   providers: [
     PrismaService,
