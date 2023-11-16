@@ -2,35 +2,39 @@ const services = {
   recettes: {
     titre: 'La recette du jour, de saison !',
     url: 'https://cuisine-facile.com/index.php',
-    icon_url: 'https://picsum.photos/50',
-    image_url: 'https://picsum.photos/200/300',
+    icon_url: 'https://cdn-icons-png.flaticon.com/512/823/823214.png',
+    image_url:
+      'https://img.mesrecettesfaciles.fr/wp-content/uploads/2017/02/Quichericottaepinards-1000x500.webp',
     is_url_externe: true,
     is_local: true,
     thematiques: ['alimentation'],
-    description: 'description',
-    sous_description: 'Sous description',
+    description: 'Recette éco !!',
+    sous_description: `Des recettes riches en plaisir et faibles en CO2, rien d'impossible !! Des milliers de recettes par thèmes et ingrédients, et toujours avec fruits et légumes de saison !`,
   },
   linky: {
     titre: 'Votre conso élec au jour le jour',
     url: 'https://www.enedis.fr/le-compteur-linky-un-outil-pour-la-transition-ecologique',
-    icon_url: 'https://picsum.photos/50',
-    image_url: 'https://picsum.photos/200/300',
+    icon_url: 'https://www.gwa.fr/actualites/media/compteur-linky.jpg',
+    image_url:
+      'https://www.maison-travaux.fr/wp-content/uploads/sites/8/2022/10/multiprise-electricite-incendie-dangers.png',
     is_url_externe: true,
     is_local: false,
     thematiques: ['climat', 'logement'],
-    description: 'description',
-    sous_description: 'Sous description',
+    description: 'Votre suivi consommation, sans rien faire',
+    sous_description: `Surveillez en un click l'évolution quotidienne de votre consommation électrique, comprenez vos habitudes, chassez toutes les pertes inutiles !!`,
   },
   suivi_transport: {
     titre: `Suivez l'impact de vos trajets quotidiens`,
     url: 'coach/suivi-du-jour',
-    icon_url: 'https://picsum.photos/50',
-    image_url: 'https://picsum.photos/200/300',
+    icon_url: 'https://cdn-icons-png.flaticon.com/512/664/664535.png', // https://cdn-icons-png.flaticon.com/512/4684/4684011.png
+    image_url:
+      'https://www.ecologie.gouv.fr/sites/default/files/Covoiturage.JPG',
     is_url_externe: false,
     is_local: false,
     thematiques: ['transport'],
-    description: 'description',
-    sous_description: 'Sous description',
+    description: `Suivez dans le temps l'impact de vos déplacement`,
+    sous_description:
+      'Voiture, avions, train... tout comprendre de vos habitudes et de leur impacts : les suivre dans le temps, se fixer des objectifs concrets et voir vos progrès',
   },
   ecowatt: {
     titre: `Etat du réseau en France`,
