@@ -11,6 +11,7 @@ import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
 import { Impact } from '../src/domain/utilisateur/onboarding/onboarding';
 const request = require('supertest');
 import { JwtService } from '@nestjs/jwt';
+import { TodoCatalogue } from '../src/domain/todo/todoCatalogue';
 
 export class TestUtil {
   constructor() {}
@@ -194,18 +195,7 @@ export class TestUtil {
       sent_email_count: 0,
       prevent_sendemail_before: new Date(),
 
-      todo: {
-        niveau: 1,
-        elements: [
-          {
-            ordre: 1,
-            titre: 'titre',
-            thematiques: ['climat', 'logement'],
-            url: '/article/123',
-            done: false,
-          },
-        ],
-      },
+      todo: TodoCatalogue.getNewTodoOfNumero(1),
       onboardingData: {
         transports: ['voiture', 'pied'],
         avion: 2,

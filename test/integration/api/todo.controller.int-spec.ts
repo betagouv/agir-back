@@ -14,25 +14,6 @@ describe('TODO list (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('GET /utilisateurs/id retourne la todo liste courante parmi les infos utilisateur', async () => {
-    // GIVEN
-    await TestUtil.create('utilisateur');
-
-    // WHEN
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id');
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.todo.niveau).toEqual(1);
-    expect(response.body.todo.elements[0].ordre).toEqual(1);
-    expect(response.body.todo.elements[0].titre).toEqual('titre');
-    expect(response.body.todo.elements[0].url).toEqual('/article/123');
-    expect(response.body.todo.elements[0].done).toEqual(false);
-    expect(response.body.todo.elements[0].thematiques).toEqual([
-      'climat',
-      'logement',
-    ]);
-  });
   it('GET /utilisateurs/id/todo retourne la todo liste courante seule', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
@@ -42,14 +23,19 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.niveau).toEqual(1);
-    expect(response.body.elements[0].ordre).toEqual(1);
-    expect(response.body.elements[0].titre).toEqual('titre');
-    expect(response.body.elements[0].done).toEqual(false);
-    expect(response.body.elements[0].url).toEqual('/article/123');
-    expect(response.body.elements[0].thematiques).toEqual([
-      'climat',
-      'logement',
-    ]);
+    expect(response.body.numero_todo).toEqual(1);
+    expect(response.body.points_todo).toEqual(25);
+    expect(response.body.todo[0].titre).toEqual(
+      'Faire un premier quizz climat - facile',
+    );
+    expect(response.body.todo[0].progression).toEqual({
+      current: 0,
+      target: 1,
+    });
+    expect(response.body.todo[0].sont_points_en_poche).toEqual(false);
+    expect(response.body.todo[0].type).toEqual('quizz');
+    expect(response.body.todo[0].content_id).toEqual(null);
+    expect(response.body.todo[0].points).toEqual(10);
+    expect(response.body.todo[0].thematiques).toEqual(['climat']);
   });
 });

@@ -103,7 +103,6 @@ export class OnboardingController {
           quizzProfile: loggedUser.utilisateur.quizzProfile.getData(),
           created_at: loggedUser.utilisateur.created_at,
           badges: [],
-          todo: TodoAPI.mapTodoToTodoAPI(loggedUser.utilisateur.todo),
         },
         token: loggedUser.token,
       };

@@ -207,7 +207,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.utilisateur.commune).toEqual('Palaiseau');
     expect(response.body.utilisateur.revenu_fiscal).toEqual(10000);
     expect(response.body.utilisateur.points).toEqual(0);
-    expect(response.body.utilisateur.todo.niveau).toEqual(1);
     expect(response.body.utilisateur.badges[0].titre).toEqual('titre');
     expect(response.body.utilisateur.quizzProfile).toEqual({
       alimentation: { level: 1, isCompleted: false },

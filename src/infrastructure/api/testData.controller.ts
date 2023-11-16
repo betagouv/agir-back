@@ -16,6 +16,7 @@ import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 import { Thematique } from '../../../src/domain/thematique';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 import { InteractionRepository } from '../repository/interaction.repository';
+import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
 const _aides = require('../../../test_data/_aides');
 const _suivis = require('../../../test_data/_suivis');
@@ -394,6 +395,10 @@ export class TestDataController {
     delete clonedData.badges;
     delete clonedData.services;
     delete clonedData.questionsNGC;
+
+    const numero_todo = clonedData.numero_todo;
+    clonedData.todo = TodoCatalogue.getNewTodoOfNumero(numero_todo);
+    delete clonedData.numero_todo;
 
     PasswordManager.setUserPassword(clonedData, clonedData.mot_de_passe);
     delete clonedData.mot_de_passe;

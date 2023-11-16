@@ -221,7 +221,6 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       loisir: { level: 1, isCompleted: false },
     });
     expect(response.body.utilisateur.badges).toHaveLength(0);
-    expect(response.body.utilisateur.todo.niveau).toEqual(1);
 
     userDB = await TestUtil.prisma.utilisateur.findFirst({
       where: { nom: 'WW' },

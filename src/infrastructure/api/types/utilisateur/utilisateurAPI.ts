@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BadgeAPI } from '../badgeAPI';
 import { QuizzProfileAPI } from '../quizz/quizzProfileAPI';
-import { TodoAPI } from '../todo/todoAPI';
 
 export class UtilisateurAPI {
   @ApiProperty()
@@ -36,7 +35,4 @@ export class UtilisateurAPI {
 
   @ApiProperty({ type: [BadgeAPI] })
   badges: BadgeAPI[];
-
-  @ApiProperty({ type: TodoAPI })
-  todo: TodoAPI;
 }
