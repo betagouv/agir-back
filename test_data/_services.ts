@@ -32,7 +32,7 @@ const services = {
     is_url_externe: false,
     is_local: false,
     thematiques: ['transport'],
-    description: `Suivez dans le temps l'impact de vos déplacement`,
+    description: `Suivez dans le temps l'impact de vos déplacements`,
     sous_description:
       'Voiture, avions, train... tout comprendre de vos habitudes et de leur impacts : les suivre dans le temps, se fixer des objectifs concrets et voir vos progrès',
   },
