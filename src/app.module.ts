@@ -51,6 +51,9 @@ import { ServiceRepository } from './infrastructure/repository/service.repositor
 import { TodoController } from './infrastructure/api/todo.controller';
 import { TodoUsecase } from './usecase/todo.usecase';
 import { TodoRepository } from './infrastructure/repository/todo.repository';
+import { GroupeController } from './infrastructure/api/groupe.controller';
+import { GroupeUseCase } from './usecase/groupe.usecase';
+import { GroupeRepository } from './infrastructure/repository/groupe.repository';
 import { ThematiqueRepository } from './infrastructure/repository/thematique.repository';
 import { EcoWattServiceManager } from './infrastructure/service/ecowatt/ecoWattServiceManager';
 import { WinterController } from './infrastructure/api/incoming/winter.controller';
@@ -81,6 +84,7 @@ const SESSION_LIFETIME = '12h';
     CommunesController,
     ServiceController,
     TodoController,
+    GroupeController,
     WinterController,
   ],
   providers: [
@@ -117,6 +121,8 @@ const SESSION_LIFETIME = '12h';
     ServiceRepository,
     TodoUsecase,
     TodoRepository,
+    GroupeUseCase,
+    GroupeRepository,
     ThematiqueRepository,
     EcoWattServiceManager,
     FruitsEtLegumesServiceManager,

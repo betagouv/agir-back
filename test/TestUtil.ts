@@ -80,6 +80,8 @@ export class TestUtil {
     await this.prisma.interaction.deleteMany();
     await this.prisma.badge.deleteMany();
     await this.prisma.service.deleteMany();
+    await this.prisma.groupeAbonnement.deleteMany();
+    await this.prisma.groupe.deleteMany();
     await this.prisma.serviceDefinition.deleteMany();
     await this.prisma.empreinte.deleteMany();
     await this.prisma.questionNGC.deleteMany();
@@ -330,6 +332,15 @@ export class TestUtil {
       raison_lock: 'bla',
       codes_postaux: [],
       day_period: null,
+      ...override,
+    };
+  }
+
+  static groupeData(override?) {
+    return {
+      id: 'groupe-id',
+      name: 'name',
+      description: 'description',
       ...override,
     };
   }
