@@ -8,13 +8,21 @@ import {
   Request,
   BadRequestException,
   Delete,
+  Query,
+  Res,
+  HttpStatus,
+  Headers,
+  ForbiddenException,
+  UnauthorizedException,
 } from '@nestjs/common';
+import { Response } from 'express';
 import {
   ApiTags,
   ApiOkResponse,
   ApiOperation,
   ApiBearerAuth,
   ApiBody,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
@@ -36,15 +44,29 @@ export class ServiceController extends GenericControler {
   @ApiOperation({
     summary: "Liste l'ensemble des services disponibles dans l'application",
   })
+  @ApiQuery({
+    name: 'utilisateurId',
+    type: String,
+    description: `Champ optionnel. Permet d'indiquer de valoriser pour chaque service du catalogue si celui ci est installé ou pas pour l'utlisateur d'id en paramètre.`,
+    required: false,
+  })
   @ApiOkResponse({ type: [ServiceDefinitionAPI] })
   @UseGuards(AuthGuard)
-  async listeServicesDef(): Promise<ServiceDefinitionAPI[]> {
-    const result = await this.serviceUsecase.listServicesDefinitions();
+  async listeServicesDef(
+    @Request() req,
+    @Query('utilisateurId') utilisateurId?: string,
+  ): Promise<ServiceDefinitionAPI[]> {
+    if (utilisateurId) {
+      this.checkCallerId(req, utilisateurId);
+    }
+    const result = await this.serviceUsecase.listServicesDefinitions(
+      utilisateurId,
+    );
     return result.map((def) =>
       ServiceDefinitionAPI.mapServiceDefintionToServiceDefinitionAPI(def),
     );
   }
-  @Post('utilisateurs/:id/services')
+  @Post('utilisateurs/:utilisateurId/services')
   @ApiOperation({
     summary: "Ajoute un service provenant du catalogue à l'utilisateur donné",
   })
@@ -54,7 +76,7 @@ export class ServiceController extends GenericControler {
   @UseGuards(AuthGuard)
   async addServiceToUtilisateur(
     @Body() body: AddServiceAPI,
-    @Param('id') utilisateurId: string,
+    @Param('utilisateurId') utilisateurId: string,
     @Request() req,
   ) {
     this.checkCallerId(req, utilisateurId);
@@ -68,14 +90,15 @@ export class ServiceController extends GenericControler {
       throw new BadRequestException(ErrorService.toStringOrObject(error));
     }
   }
-  @Get('utilisateurs/:id/services')
+  @Get('utilisateurs/:utilisateurId/services')
+  // FIXME : set cache-control
   @ApiOperation({
     summary: "Liste tous les services associés à l'utilisateur",
   })
   @ApiOkResponse({ type: [ServiceAPI] })
   @UseGuards(AuthGuard)
   async listServicesOfUtilisateur(
-    @Param('id') utilisateurId: string,
+    @Param('utilisateurId') utilisateurId: string,
     @Request() req,
   ) {
     this.checkCallerId(req, utilisateurId);
@@ -84,22 +107,41 @@ export class ServiceController extends GenericControler {
       utilisateurId,
     );
 
-    return result.map((service) =>
+    const mappedResult = result.map((service) =>
       ServiceAPI.mapServicesToServicesAPI(service),
     );
+    return mappedResult;
   }
-  @Delete('utilisateurs/:id/services/:id_service')
+  @Post('services/refreshDynamicData')
+  @ApiOkResponse({ type: [String] })
+  async refreshServiceDynamicData(
+    @Res() res: Response,
+    @Headers('Authorization') authorization: string,
+  ) {
+    if (!authorization) {
+      throw new UnauthorizedException('CRON API KEY manquante');
+    }
+    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
+      throw new ForbiddenException('CRON API KEY incorrecte');
+    }
+    const result = await this.serviceUsecase.refreshScheduledServices();
+    res.status(HttpStatus.OK).json(result).send();
+  }
+  @Delete('utilisateurs/:utilisateurId/services/:serviceId')
   @ApiOperation({
     summary: "Supprime un service d'id donné associé à l'utilisateur",
   })
   @UseGuards(AuthGuard)
   async deleteServiceFromUtilisateur(
-    @Param('id') utilisateurId: string,
-    @Param('id_service') id_service: string,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('serviceId') serviceId: string,
     @Request() req,
   ) {
     this.checkCallerId(req, utilisateurId);
 
-    return await this.serviceUsecase.removeServiceFromUtilisateur(id_service);
+    return await this.serviceUsecase.removeServiceFromUtilisateur(
+      utilisateurId,
+      serviceId,
+    );
   }
 }

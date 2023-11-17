@@ -4,13 +4,14 @@ import {
   ForbiddenException,
   Headers,
   Post,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { InteractionsDefinitionUsecase } from '../../../src/usecase/interactionsDefinition.usecase';
-import { CMSWebhookAPI } from './types/cms/CMSWebhookAPI';
+import { InteractionsDefinitionUsecase } from '../../../usecase/cms.usecase';
+import { CMSWebhookAPI } from '../types/cms/CMSWebhookAPI';
 
 @Controller()
-@ApiTags('Webhooks CMS')
+@ApiTags('Incoming Data')
 export class CMSController {
   constructor(
     private readonly interactionsDefinitionUsecase: InteractionsDefinitionUsecase,
@@ -21,20 +22,18 @@ export class CMSController {
     },
   })
   @ApiBody({ type: CMSWebhookAPI })
-  @Post('api/cms/income')
+  @Post('api/incoming/cms')
   async income(
     @Body() body: CMSWebhookAPI,
     @Headers('Authorization') authorization: string,
   ) {
-    if (
-      !authorization ||
-      !authorization.endsWith(process.env.CMS_WEBHOOK_API_KEY)
-    ) {
-      throw new ForbiddenException('API KEY webhook CMS incorrecte : ');
+    if (!authorization) {
+      throw new UnauthorizedException('API KEY webhook CMS manquante');
+    }
+    if (!authorization.endsWith(process.env.CMS_WEBHOOK_API_KEY)) {
+      throw new ForbiddenException('API KEY webhook CMS incorrecte');
     }
     console.log(JSON.stringify(body));
-    await this.interactionsDefinitionUsecase.insertOrUpdateInteractionDefFromCMS(
-      body,
-    );
+    await this.interactionsDefinitionUsecase.manageIncomingCMSData(body);
   }
 }

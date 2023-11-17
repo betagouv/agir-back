@@ -292,17 +292,10 @@ const utilisateurs = {
     points: 10,
     email: 'ww@w.com',
     mot_de_passe: 'haha',
-    todo: {
-      niveau: 1,
-      elements: [
-        {
-          ordre: 1,
-          url: '/article/123',
-          titre: 'lire un article',
-          thematiques: [Thematique.climat],
-        },
-      ],
-    },
+    code_postal: '91120',
+    commune: 'PALAISEAU',
+    revenu_fiscal: 666,
+    numero_todo: 1,
     interactions: [
       { id: 'aide_velo', score: 0.6 },
       { id: 'aide_retrofit', score: 0.1 },

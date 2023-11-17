@@ -39,6 +39,7 @@ model Utilisateur {
   passwordHash             String?       @default("hash")
   passwordSalt             String?       @default("salt")
   code_postal              String?
+  commune                  String?
   revenu_fiscal            Int?
   points                   Int           @default(0)
   quizzLevels              Json          @default("{}")
@@ -152,6 +153,13 @@ model QuestionNGC {
   @@unique([key, utilisateurId])
 }
 
+model Thematique {
+  id         String   @id
+  id_cms     Int      @unique
+  titre      String
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+}
+
 model SituationNGC {
   id         String     @id
   situation  Json?
@@ -185,15 +193,23 @@ model Service {
 }
 
 model ServiceDefinition {
-  id             String    @id
-  titre          String
-  url            String?
-  is_url_externe Boolean?
-  is_local       Boolean   @default(false)
-  thematiques    String[]  @default([])
-  created_at     DateTime  @default(now()) @db.Timestamptz(3)
-  updated_at     DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
-  services       Service[]
+  id                String    @id
+  titre             String
+  icon_url          String?
+  image_url         String?
+  url               String?
+  is_url_externe    Boolean?
+  is_local          Boolean   @default(false)
+  minute_period     Int?
+  scheduled_refresh DateTime? @db.Timestamptz(3)
+  last_refresh      DateTime? @db.Timestamptz(3)
+  dynamic_data      Json      @default("{}")
+  thematiques       String[]  @default([])
+  description       String?
+  sous_description  String?
+  created_at        DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at        DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
+  services          Service[]
 }
 
 model Groupe {

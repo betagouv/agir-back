@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Interaction } from '../../domain/interaction/interaction';
+import {
+  Interaction,
+  InteractionIdProjection,
+} from '../../domain/interaction/interaction';
 import { Interaction as InteractionDB } from '@prisma/client';
 
 import { v4 as uuidv4 } from 'uuid';
@@ -9,7 +12,8 @@ import { InteractionType } from '../../../src/domain/interaction/interactionType
 import { Thematique } from '../../domain/thematique';
 import { InteractionScore } from '../../../src/domain/interaction/interactionScore';
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
-import { InteractionDefinition } from 'src/domain/interaction/interactionDefinition';
+import { InteractionDefinition } from '../../../src/domain/interaction/interactionDefinition';
+import { UserQuizzProfile } from '../../../src/domain/quizz/userQuizzProfile';
 
 @Injectable()
 export class InteractionRepository {
@@ -64,52 +68,21 @@ export class InteractionRepository {
     );
   }
 
-  async listMaxEligibleInteractionsByUtilisateurIdAndType(
-    filter: SearchFilter,
-  ): Promise<Interaction[] | null> {
-    let quizz_difficulty_filter;
-    if (filter.type === InteractionType.quizz) {
-      quizz_difficulty_filter = [];
-      for (const cat in Thematique) {
-        if (filter.quizzProfile.getLevel(cat as Thematique)) {
-          quizz_difficulty_filter.push({
-            type: InteractionType.quizz,
-            thematique_gamification: cat,
-            difficulty: filter.quizzProfile.getLevel(cat as Thematique),
-          });
-        }
-      }
-    }
-    let codes_postaux_filter;
+  async listInteractionsByFilter(filter: SearchFilter): Promise<Interaction[]> {
+    const query = this.buildInteractionComplexFilterQuery(filter, false);
 
-    if (filter.code_postal) {
-      codes_postaux_filter = [
-        { codes_postaux: { has: filter.code_postal } },
-        { codes_postaux: { isEmpty: true } },
-      ];
-    }
-    const interList = await this.prisma.interaction.findMany({
-      take: filter.maxNumber,
-      where: {
-        OR: codes_postaux_filter,
-        AND: {
-          utilisateurId: filter.utilisateurId,
-          done: false,
-          type: filter.type,
-          pinned_at_position: filter.pinned ? { not: null } : null,
-          locked: filter.locked,
-          OR: quizz_difficulty_filter,
-        },
-      },
-      orderBy: [
-        {
-          score: 'desc',
-        },
-      ],
-    });
+    const interList = await this.prisma.interaction.findMany(query);
+
     return interList.map((interactionDB) =>
       this.buildInteractionFromInteractionDB(interactionDB),
     );
+  }
+  async listInteractionIdProjectionByFilter(
+    filter: SearchFilter,
+  ): Promise<InteractionIdProjection[]> {
+    const query = this.buildInteractionComplexFilterQuery(filter, true);
+
+    return this.prisma.interaction.findMany(query);
   }
 
   async listInteractionScores(
@@ -215,6 +188,20 @@ export class InteractionRepository {
     });
   }
 
+  private buildQuizzGlobalSQLFilter(quizzProfile: UserQuizzProfile): any[] {
+    let result = [];
+    for (const cat in Thematique) {
+      if (quizzProfile.getLevel(cat as Thematique)) {
+        result.push({
+          type: InteractionType.quizz,
+          thematique_gamification: cat,
+          difficulty: quizzProfile.getLevel(cat as Thematique),
+        });
+      }
+    }
+    return result;
+  }
+
   private buildInteractionFromInteractionDB(
     interDB: InteractionDB,
   ): Interaction {
@@ -225,5 +212,63 @@ export class InteractionRepository {
       thematiques: interDB.thematiques.map((th) => Thematique[th]),
       score: interDB.score.toNumber(),
     });
+  }
+
+  private buildInteractionComplexFilterQuery(
+    filter: SearchFilter,
+    project: boolean,
+  ): object {
+    let quizz_difficulty_filter;
+    if (filter.type === InteractionType.quizz && filter.quizzProfile) {
+      quizz_difficulty_filter = this.buildQuizzGlobalSQLFilter(
+        filter.quizzProfile,
+      );
+    }
+    let codes_postaux_filter;
+
+    if (filter.code_postal) {
+      codes_postaux_filter = [
+        { codes_postaux: { has: filter.code_postal } },
+        { codes_postaux: { isEmpty: true } },
+      ];
+    }
+    let main_filter = {
+      utilisateurId: filter.utilisateurId,
+      done: false,
+      type: filter.type,
+      pinned_at_position: filter.pinned ? { not: null } : null,
+      locked: filter.locked,
+      difficulty: filter.difficulty,
+      OR: quizz_difficulty_filter,
+    };
+    if (filter.thematiques) {
+      main_filter['thematiques'] = {
+        hasSome: filter.thematiques,
+      };
+    }
+    if (filter.thematique_gamification) {
+      main_filter['thematique_gamification'] = {
+        in: filter.thematique_gamification,
+      };
+    }
+    let finalQuery = {
+      take: filter.maxNumber,
+      where: {
+        OR: codes_postaux_filter,
+        AND: main_filter,
+      },
+      orderBy: [
+        {
+          score: 'desc',
+        },
+      ],
+    };
+    if (project) {
+      finalQuery['select'] = {
+        id: true,
+        content_id: true,
+      };
+    }
+    return finalQuery;
   }
 }

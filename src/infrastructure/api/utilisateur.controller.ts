@@ -38,7 +38,6 @@ import { OubliMdpAPI } from './types/utilisateur/oubliMdpAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { ModifierMdpAPI } from './types/utilisateur/modifierMdpAPI';
 import { BadgeAPI } from './types/badgeAPI';
-import { TodoAPI } from './types/todo/todoAPI';
 
 @ApiExtraModels(CreateUtilisateurAPI, UtilisateurAPI)
 @Controller()
@@ -67,17 +66,20 @@ export class UtilisateurController extends GenericControler {
     return this.utilisateurUsecase.listUtilisateurs() as any;
   }
 
-  @Delete('utilisateurs/:id')
+  @Delete('utilisateurs/:utilisateurId')
   @ApiOperation({
     summary: "Suppression du compte d'un utilisateur d'id donnée",
   })
   @UseGuards(AuthGuard)
-  async deleteUtilisateurById(@Request() req, @Param('id') id: string) {
-    this.checkCallerId(req, id);
-    await this.utilisateurUsecase.deleteUtilisateur(id);
+  async deleteUtilisateurById(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    await this.utilisateurUsecase.deleteUtilisateur(utilisateurId);
   }
 
-  @Get('utilisateurs/:id')
+  @Get('utilisateurs/:utilisateurId')
   @ApiOperation({
     summary:
       "Infromation complètes concernant l'utilisateur d'id donné : profile, badges, niveaux de quizz, etc ",
@@ -86,13 +88,15 @@ export class UtilisateurController extends GenericControler {
   @UseGuards(AuthGuard)
   async getUtilisateurById(
     @Request() req,
-    @Param('id') id: string,
+    @Param('utilisateurId') utilisateurId: string,
   ): Promise<UtilisateurAPI> {
-    this.checkCallerId(req, id);
+    this.checkCallerId(req, utilisateurId);
 
-    let utilisateur = await this.utilisateurUsecase.findUtilisateurById(id);
+    let utilisateur = await this.utilisateurUsecase.findUtilisateurById(
+      utilisateurId,
+    );
     if (utilisateur == null) {
-      throw new NotFoundException(`Pas d'utilisateur d'id ${id}`);
+      throw new NotFoundException(`Pas d'utilisateur d'id ${utilisateurId}`);
     }
 
     return {
@@ -101,6 +105,7 @@ export class UtilisateurController extends GenericControler {
       prenom: utilisateur.prenom,
       email: utilisateur.email,
       code_postal: utilisateur.code_postal,
+      commune: utilisateur.commnune,
       revenu_fiscal: utilisateur.revenu_fiscal,
       points: utilisateur.points,
       quizzProfile: utilisateur.quizzProfile.getData(),
@@ -108,11 +113,10 @@ export class UtilisateurController extends GenericControler {
       badges: utilisateur.badges
         ? utilisateur.badges.map((badge) => BadgeAPI.mapBadgeToBadgeAPI(badge))
         : null,
-      todo: TodoAPI.mapTodoToTodoAPI(utilisateur.todo),
     };
   }
   @ApiOkResponse({ type: UtilisateurProfileAPI })
-  @Get('utilisateurs/:id/profile')
+  @Get('utilisateurs/:utilisateurId/profile')
   @ApiOperation({
     summary:
       "Infromation de profile d'un utilisateur d'id donné (nom, prenom, code postal, ...)",
@@ -120,7 +124,7 @@ export class UtilisateurController extends GenericControler {
   @UseGuards(AuthGuard)
   async getUtilisateurProfileById(
     @Request() req,
-    @Param('id') utilisateurId: string,
+    @Param('utilisateurId') utilisateurId: string,
   ): Promise<UtilisateurProfileAPI> {
     this.checkCallerId(req, utilisateurId);
 
@@ -135,6 +139,7 @@ export class UtilisateurController extends GenericControler {
       nom: utilisateur.nom,
       prenom: utilisateur.prenom,
       code_postal: utilisateur.code_postal,
+      commune: utilisateur.commnune,
       revenu_fiscal: utilisateur.revenu_fiscal,
     };
   }
@@ -171,6 +176,7 @@ export class UtilisateurController extends GenericControler {
           nom: loggedUser.utilisateur.nom,
           prenom: loggedUser.utilisateur.prenom,
           code_postal: loggedUser.utilisateur.code_postal,
+          commune: loggedUser.utilisateur.commnune,
           revenu_fiscal: loggedUser.utilisateur.revenu_fiscal,
           email: loggedUser.utilisateur.email,
           points: loggedUser.utilisateur.points,
@@ -181,7 +187,6 @@ export class UtilisateurController extends GenericControler {
                 BadgeAPI.mapBadgeToBadgeAPI(badge),
               )
             : null,
-          todo: TodoAPI.mapTodoToTodoAPI(loggedUser.utilisateur.todo),
         },
         token: loggedUser.token,
       };
@@ -191,7 +196,7 @@ export class UtilisateurController extends GenericControler {
     }
   }
 
-  @Patch('utilisateurs/:id/profile')
+  @Patch('utilisateurs/:utilisateurId/profile')
   @ApiOperation({
     summary:
       "Mise à jour des infos de profile (nom, prenom, code postal, ...) d'un utilisateur d'id donné",
@@ -199,21 +204,14 @@ export class UtilisateurController extends GenericControler {
   @UseGuards(AuthGuard)
   async updateProfile(
     @Request() req,
-    @Param('id') utilisateurId: string,
+    @Param('utilisateurId') utilisateurId: string,
     @Body() body: UtilisateurProfileAPI,
   ) {
     this.checkCallerId(req, utilisateurId);
     try {
       return await this.utilisateurUsecase.updateUtilisateurProfile(
         utilisateurId,
-        {
-          email: body.email,
-          nom: body.nom,
-          prenom: body.prenom,
-          code_postal: body.code_postal,
-          revenu_fiscal: body.revenu_fiscal,
-          mot_de_passe: body.mot_de_passe,
-        },
+        body,
       );
     } catch (error) {
       throw new BadRequestException(ErrorService.toStringOrObject(error));

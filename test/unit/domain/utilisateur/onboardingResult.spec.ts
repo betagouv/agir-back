@@ -1,21 +1,29 @@
 import {
+  Chauffage,
+  Consommation,
   Impact,
   Onboarding,
+  Repas,
+  Residence,
+  Superficie,
   Thematique,
+  Transport,
 } from '../../../../src/domain/utilisateur/onboarding/onboarding';
 import { OnboardingResult } from '../../../../src/domain/utilisateur/onboarding/onboardingResult';
 
 const ONBOARDING_1_2_3_4 = {
-  transports: ['velo', 'voiture'],
+  transports: [Transport.velo, Transport.voiture],
   avion: 2,
   adultes: 2,
   enfants: 2,
-  residence: 'maison',
+  residence: Residence.maison,
   proprietaire: true,
-  superficie: 'superficie_35',
-  chauffage: 'bois',
-  repas: 'vege',
-  consommation: 'raisonnable',
+  superficie: Superficie.superficie_35,
+  chauffage: Chauffage.bois,
+  repas: Repas.vege,
+  consommation: Consommation.raisonnable,
+  code_postal: '91120',
+  commune: 'Palaiseau',
 };
 
 describe('Objet OnboardingData', () => {
@@ -97,16 +105,18 @@ describe('Objet OnboardingData', () => {
     // WHEN
     let onboardingResult = new OnboardingResult(
       new Onboarding({
-        transports: ['velo'],
+        transports: [Transport.velo],
         avion: 2,
         adultes: 2,
         enfants: 2,
-        residence: 'appartement',
+        residence: Residence.appartement,
         proprietaire: true,
-        superficie: 'superficie_35',
-        chauffage: 'bois',
-        repas: 'vegan',
-        consommation: 'raisonnable',
+        superficie: Superficie.superficie_35,
+        chauffage: Chauffage.bois,
+        repas: Repas.vegan,
+        consommation: Consommation.raisonnable,
+        code_postal: '91120',
+        commune: 'Palaiseau',
       }),
     );
 

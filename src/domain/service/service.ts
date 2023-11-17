@@ -1,8 +1,7 @@
 import { ServiceDefinition } from './serviceDefinition';
 
 export class ServiceData extends ServiceDefinition {
-  id: string;
-  label: string;
+  serviceId: string;
   constructor() {
     super({} as any);
   }

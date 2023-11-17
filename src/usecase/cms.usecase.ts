@@ -1,46 +1,62 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InteractionDefinitionRepository } from '../../src/infrastructure/repository/interactionDefinition.repository';
-import { CMSWebhookAPI } from '../../src/infrastructure/api/types/cms/CMSWebhookAPI';
+import { InteractionDefinitionRepository } from '../infrastructure/repository/interactionDefinition.repository';
+import { CMSWebhookAPI } from '../infrastructure/api/types/cms/CMSWebhookAPI';
 import {
   InteractionDefinition,
   InteractionDefinitionData,
-} from '../../src/domain/interaction/interactionDefinition';
+} from '../domain/interaction/interactionDefinition';
 import { v4 as uuidv4 } from 'uuid';
-import { InteractionType } from '../../src/domain/interaction/interactionType';
-import { InteractionRepository } from '../../src/infrastructure/repository/interaction.repository';
-import { Interaction } from '../../src/domain/interaction/interaction';
+import { InteractionType } from '../domain/interaction/interactionType';
+import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
+import { Interaction } from '../domain/interaction/interaction';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { Thematique } from '../../src/domain/thematique';
-import { CMSThematiqueAPI } from '../../src/infrastructure/api/types/cms/CMSThematiqueAPI';
-import { CMSEvent } from '../../src/infrastructure/api/types/cms/CMSEvent';
-import { CMSModel } from '../../src/infrastructure/api/types/cms/CMSModels';
+import { Thematique } from '../domain/thematique';
+import { CMSThematiqueAPI } from '../infrastructure/api/types/cms/CMSThematiqueAPI';
+import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
+import { CMSModel } from '../infrastructure/api/types/cms/CMSModels';
+import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 
 @Injectable()
 export class InteractionsDefinitionUsecase {
   constructor(
     private interactionDefinitionRepository: InteractionDefinitionRepository,
+    private thematiqueRepository: ThematiqueRepository,
     private interactionRepository: InteractionRepository,
     private utilisateurRepository: UtilisateurRepository,
   ) {}
 
-  async insertOrUpdateInteractionDefFromCMS(cmsWebhookAPI: CMSWebhookAPI) {
+  async manageIncomingCMSData(cmsWebhookAPI: CMSWebhookAPI) {
     if (cmsWebhookAPI.model === CMSModel.aide) return;
-
-    switch (cmsWebhookAPI.event) {
-      case CMSEvent['entry.unpublish']:
-        return this.deleteContent(cmsWebhookAPI);
-      case CMSEvent['entry.delete']:
-        return this.deleteContent(cmsWebhookAPI);
-      case CMSEvent['entry.publish']:
-        return this.createOrUpdateContent(cmsWebhookAPI);
-      case CMSEvent['entry.update']:
-        return this.createOrUpdateContent(cmsWebhookAPI);
-      default:
-        break;
+    if (cmsWebhookAPI.model === CMSModel.thematique) {
+      switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.publish']:
+          return this.createOrUpdateThematique(cmsWebhookAPI);
+        case CMSEvent['entry.update']:
+          return this.createOrUpdateThematique(cmsWebhookAPI);
+      }
+    }
+    if ([CMSModel.article, CMSModel.quizz].includes(cmsWebhookAPI.model)) {
+      switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.unpublish']:
+          return this.deleteInteraction(cmsWebhookAPI);
+        case CMSEvent['entry.delete']:
+          return this.deleteInteraction(cmsWebhookAPI);
+        case CMSEvent['entry.publish']:
+          return this.createOrUpdateContentInteraction(cmsWebhookAPI);
+        case CMSEvent['entry.update']:
+          return this.createOrUpdateContentInteraction(cmsWebhookAPI);
+      }
     }
   }
 
-  async deleteContent(cmsWebhookAPI: CMSWebhookAPI) {
+  async createOrUpdateThematique(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.thematiqueRepository.upsertThematique(
+      cmsWebhookAPI.entry.id,
+      cmsWebhookAPI.entry.titre,
+    );
+  }
+
+  async deleteInteraction(cmsWebhookAPI: CMSWebhookAPI) {
     await this.interactionDefinitionRepository.deleteByContentId(
       cmsWebhookAPI.entry.id.toString(),
     );
@@ -50,7 +66,7 @@ export class InteractionsDefinitionUsecase {
     );
   }
 
-  async createOrUpdateContent(cmsWebhookAPI: CMSWebhookAPI) {
+  async createOrUpdateContentInteraction(cmsWebhookAPI: CMSWebhookAPI) {
     if (cmsWebhookAPI.entry.publishedAt === null) return;
 
     let interactionDef =

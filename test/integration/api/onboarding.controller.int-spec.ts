@@ -8,6 +8,7 @@ const ONBOARDING_1_2_3_4_DATA = {
   transports: ['voiture', 'pied'],
   avion: 1,
   code_postal: '91120',
+  commune: 'Palaiseau',
   adultes: 2,
   enfants: 1,
   residence: 'maison',
@@ -21,6 +22,7 @@ const ONBOARDING_1_1_2_3_DATA = {
   transports: ['voiture', 'pied'],
   avion: 1,
   code_postal: '91120',
+  commune: 'Palaiseau',
   adultes: 2,
   enfants: 1,
   residence: 'maison',
@@ -34,6 +36,7 @@ const ONBOARDING_1_1_2_2_DATA = {
   transports: ['moto', 'velo'],
   avion: 0,
   code_postal: '91120',
+  commune: 'Palaiseau',
   adultes: 2,
   enfants: 1,
   residence: 'maison',
@@ -89,6 +92,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(response.headers['location']).toContain('monmail@truc.com');
     expect(user.nom).toEqual('WW');
     expect(user.prenom).toEqual('Wojtek');
+    expect(user.email).toEqual('monmail@truc.com');
+    expect(user.code_postal).toEqual('91120');
+    expect(user.commune).toEqual('Palaiseau');
     expect(user.email).toEqual('monmail@truc.com');
     expect(user.passwordHash.length).toBeGreaterThan(20);
     expect(user.passwordSalt.length).toBeGreaterThan(20);
@@ -203,6 +209,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(response.body.utilisateur.nom).toEqual('WW');
     expect(response.body.utilisateur.prenom).toEqual('Wojtek');
     expect(response.body.utilisateur.code_postal).toEqual('91120');
+    expect(response.body.utilisateur.commune).toEqual('Palaiseau');
     expect(response.body.utilisateur.points).toEqual(0);
     expect(response.body.utilisateur.quizzProfile).toEqual({
       alimentation: { level: 1, isCompleted: false },
@@ -214,7 +221,6 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       loisir: { level: 1, isCompleted: false },
     });
     expect(response.body.utilisateur.badges).toHaveLength(0);
-    expect(response.body.utilisateur.todo.niveau).toEqual(1);
 
     userDB = await TestUtil.prisma.utilisateur.findFirst({
       where: { nom: 'WW' },
@@ -342,13 +348,25 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       'Accédez à toutes les <strong>aides publiques pour la transition écologique</strong> en quelques clics : <strong>consommation responsable, vélo, voiture éléctrique, rénovation énergétique</strong> pour les propriétaires…',
     );
     expect(response.body.phrase_2.phrase).toEqual(
-      'Regarder les offres de <strong>transports dans la zone de PALAISEAU</strong> en fonction de vos besoins et usages',
+      'Regarder les offres de <strong>transports dans la zone de Palaiseau</strong> en fonction de vos besoins et usages',
     );
     expect(response.body.phrase_3.phrase).toEqual(
       'Trouver des solutions <strong>même quand on adore la viande</strong>',
     );
     expect(response.body.phrase_4.phrase).toEqual(`3 sous le même toit ?
 <strong>Comprendre ses impacts à l'échelle de votre famille</strong> ou de votre colocation`);
+  });
+  it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data to compute impact , other dataset', async () => {
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/evaluate-onboarding')
+      .send(ONBOARDING_1_1_2_2_DATA);
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body.transports).toEqual(2);
+    expect(response.body.logement).toEqual(2);
+    expect(response.body.alimentation).toEqual(1);
+    expect(response.body.consommation).toEqual(1);
   });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_1 v1', async () => {
     // WHEN
@@ -531,7 +549,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
         prenom: 'Wojtek',
         mot_de_passe: '#1234567890HAHA',
         email: 'yo@truc.com',
-        onboardingData: { deladata: 'une valeur' },
+        onboardingData: { ...ONBOARDING_1_2_3_4_DATA },
       });
     // THEN
     expect(response.status).toBe(400);
@@ -548,7 +566,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
         prenom: 'Wojtek',
         mot_de_passe: '#1234567890HAHA',
         email: 'yotruc.com',
-        onboardingData: { deladata: 'une valeur' },
+        onboardingData: { ...ONBOARDING_1_2_3_4_DATA },
       });
     // THEN
     expect(response.status).toBe(400);
@@ -565,7 +583,10 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
         prenom: 'Wojtek',
         mot_de_passe: 'to use',
         email: 'mon mail',
-        onboardingData: { residence: 'mauvaise valeur' },
+        onboardingData: {
+          ...ONBOARDING_1_2_3_4_DATA,
+          residence: 'mauvaise valeur',
+        },
       });
     // THEN
     expect(response.status).toBe(400);

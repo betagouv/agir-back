@@ -11,12 +11,12 @@ import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 describe('/utilisateurs/id/interactions (API test)', () => {
   beforeAll(async () => {
     await TestUtil.appinit();
-    await TestUtil.generateAuthorizationToken('utilisateur-id');
   });
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
     DistributionSettings.overrideSettings(new Map([]));
+    await TestUtil.generateAuthorizationToken('utilisateur-id');
   });
 
   afterEach(() => {
@@ -453,8 +453,24 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     });
     expect(dbInteraction.scheduled_reset).not.toBeNull();
   });
+  it('POST /interactions/reset 403 when bad token', async () => {
+    // GIVEN
+    TestUtil.token = 'bad';
+    // WHEN
+    const response = await TestUtil.POST('/interactions/reset');
+    // THEN
+    expect(response.status).toBe(403);
+  });
+  it('POST /interactions/reset 401 when missing authorization header', async () => {
+    // GIVEN
+    // WHEN
+    const response = await TestUtil.getServer().post('/interactions/reset');
+    // THEN
+    expect(response.status).toBe(401);
+  });
   it('POST /interactions/reset resets with current date when no date parameter', async () => {
     // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
       id: '1',
@@ -469,29 +485,10 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     // WHEN
     const response = await TestUtil.POST('/interactions/reset');
     // THEN
+    const interactionDB = await TestUtil.prisma.interaction.findFirst();
     expect(response.status).toBe(200);
     expect(response.body.reset_interaction_number).toEqual(2);
-  });
-  it('POST /interactions/reset resets with param date', async () => {
-    // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('interaction', {
-      id: '1',
-      done: true,
-      scheduled_reset: new Date(100),
-    });
-    await TestUtil.create('interaction', {
-      id: '2',
-      done: true,
-      scheduled_reset: new Date(200),
-    });
-    // WHEN
-    const response = await TestUtil.POST(
-      '/interactions/reset?date='.concat(new Date(150).toISOString()),
-    );
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.reset_interaction_number).toEqual(1);
+    expect(interactionDB.done).toEqual(false);
   });
   it('GET /utilisateurs/id/interactions - list quizz with target utilisateur difficultys', async () => {
     // GIVEN

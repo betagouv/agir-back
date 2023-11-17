@@ -11,6 +11,8 @@ import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
 import { Impact } from '../src/domain/utilisateur/onboarding/onboarding';
 const request = require('supertest');
 import { JwtService } from '@nestjs/jwt';
+import { TodoCatalogue } from '../src/domain/todo/todoCatalogue';
+import { Badge } from '@prisma/client';
 
 export class TestUtil {
   constructor() {}
@@ -86,6 +88,7 @@ export class TestUtil {
     await this.prisma.utilisateur.deleteMany();
     await this.prisma.situationNGC.deleteMany();
     await this.prisma.interactionDefinition.deleteMany();
+    await this.prisma.thematique.deleteMany();
   }
 
   static getDate(date: string) {
@@ -184,6 +187,7 @@ export class TestUtil {
       passwordSalt: 'salt',
       email: 'yo@truc.com',
       code_postal: '91120',
+      commune: 'Palaiseau',
       revenu_fiscal: 10000,
       active_account: true,
       failed_login_count: 0,
@@ -194,17 +198,7 @@ export class TestUtil {
       sent_email_count: 0,
       prevent_sendemail_before: new Date(),
 
-      todo: {
-        niveau: 1,
-        elements: [
-          {
-            ordre: 1,
-            titre: 'titre',
-            thematiques: ['climat', 'logement'],
-            url: '/article/123',
-          },
-        ],
-      },
+      todo: TodoCatalogue.getNewTodoOfNumero(1),
       onboardingData: {
         transports: ['voiture', 'pied'],
         avion: 2,
@@ -245,21 +239,37 @@ export class TestUtil {
       ...override,
     };
   }
+  static thematiqueData(override?) {
+    return {
+      id: 'thematique-id',
+      id_cms: 1,
+      titre: 'titre',
+      ...override,
+    };
+  }
   static serviceData(override?) {
     return {
       id: 'service-id',
       utilisateurId: 'utilisateur-id',
-      serviceDefinitionId: 'serviceDefinition-id',
+      serviceDefinitionId: 'dummy_live',
       ...override,
     };
   }
   static serviceDefinitionData(override?) {
     return {
-      id: 'serviceDefinition-id',
+      id: 'dummy_live',
       titre: 'titre',
       url: 'url',
+      icon_url: 'icon_url',
+      image_url: 'image_url',
       is_local: true,
       is_url_externe: true,
+      minute_period: 20,
+      scheduled_refresh: null,
+      dynamic_data: {},
+      last_refresh: null,
+      description: 'desc',
+      sous_description: 'sous desc',
       thematiques: ['climat', 'logement'],
       ...override,
     };

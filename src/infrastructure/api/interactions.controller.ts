@@ -10,6 +10,9 @@ import {
   Query,
   Res,
   UseGuards,
+  Headers,
+  ForbiddenException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { InteractionsUsecase } from '../../usecase/interactions.usecase';
@@ -70,17 +73,18 @@ export class IntractionsController extends GenericControler {
       status,
     );
   }
-  @ApiQuery({
-    name: 'date',
-    type: Date,
-    description: 'date seuil de reset, eg 2023-03-19',
-    required: false,
-  })
   @Post('interactions/reset')
-  async resetInteractions(@Res() res: Response, @Query('date') date?: string) {
-    const result = await this.interactionsUsecase.reset(
-      date ? new Date(Date.parse(date)) : null,
-    );
+  async resetInteractions(
+    @Res() res: Response,
+    @Headers('Authorization') authorization: string,
+  ) {
+    if (!authorization) {
+      throw new UnauthorizedException('CRON API KEY manquante');
+    }
+    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
+      throw new ForbiddenException('CRON API KEY incorrecte');
+    }
+    const result = await this.interactionsUsecase.reset();
     res.status(HttpStatus.OK).json({ reset_interaction_number: result }).send();
   }
   @ApiQuery({

@@ -1,5 +1,5 @@
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
-import { InteractionsDefinitionUsecase } from '../../../src/usecase/interactionsDefinition.usecase';
+import { InteractionsDefinitionUsecase } from '../../../src/usecase/cms.usecase';
 import { TestUtil } from '../../../test/TestUtil';
 import { CMSWebhookAPI } from '../../../src/infrastructure/api/types/cms/CMSWebhookAPI';
 import { CMSModel } from '../../../src/infrastructure/api/types/cms/CMSModels';

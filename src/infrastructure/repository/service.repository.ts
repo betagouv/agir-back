@@ -5,7 +5,9 @@ import {
   ServiceDefinition as ServiceDefinitionDB,
   Service as ServiceDB,
 } from '@prisma/client';
-import { ServiceDefinition } from '../../domain/service/serviceDefinition';
+import {
+  ServiceDefinition,
+} from '../../domain/service/serviceDefinition';
 import { v4 as uuidv4 } from 'uuid';
 import { Service } from '../../domain/service/service';
 import { Thematique } from '../../../src/domain/thematique';
@@ -14,9 +16,17 @@ import { Thematique } from '../../../src/domain/thematique';
 export class ServiceRepository {
   constructor(private prisma: PrismaService) {}
 
-  async listeServiceDefinitions(): Promise<ServiceDefinition[]> {
-    const list = await this.prisma.serviceDefinition.findMany();
-    return this.buildServicefinitionList(list);
+  async updateServiceDefinition(serviceDefinition: ServiceDefinition) {
+    const data = { ...serviceDefinition };
+    delete data.nombre_installation;
+    delete data.serviceDefinitionId;
+
+    return this.prisma.serviceDefinition.update({
+      where: {
+        id: serviceDefinition.serviceDefinitionId,
+      },
+      data: { ...data, dynamic_data: serviceDefinition.dynamic_data as any },
+    });
   }
 
   async addServiceToUtilisateur(
@@ -47,10 +57,14 @@ export class ServiceRepository {
       }
     }
   }
-  async removeServiceFromUtilisateur(serviceId: string) {
-    await this.prisma.service.delete({
+  async removeServiceFromUtilisateurByServiceDefinitionId(
+    utilisateurId: string,
+    serviceDefinitionId: string,
+  ) {
+    await this.prisma.service.deleteMany({
       where: {
-        id: serviceId,
+        utilisateurId: utilisateurId,
+        serviceDefinitionId: serviceDefinitionId,
       },
     });
   }
@@ -65,8 +79,35 @@ export class ServiceRepository {
     });
     return result.map((service) => this.buildService(service));
   }
+  async listeServiceDefinitionsAndUserRelatedServices(
+    utilisateurId?: string,
+  ): Promise<ServiceDefinition[]> {
+    const result = await this.prisma.serviceDefinition.findMany({
+      include: {
+        services: {
+          where: {
+            utilisateurId: utilisateurId || 'XXX',
+          },
+        },
+      },
+      orderBy: {
+        id: 'asc',
+      },
+    });
+    return this.buildServiceDefinitionList(result, utilisateurId != undefined);
+  }
+  async listeServiceDefinitionsToRefresh(): Promise<ServiceDefinition[]> {
+    const result = await this.prisma.serviceDefinition.findMany({
+      where: {
+        scheduled_refresh: {
+          lt: new Date(),
+        },
+      },
+    });
+    return this.buildServiceDefinitionList(result);
+  }
 
-  async countServicesByDefinition(): Promise<Record<string, number>> {
+  async countServiceDefinitionUsage(): Promise<Record<string, number>> {
     const query = `
     SELECT
       COUNT(*) AS "count", "serviceDefinitionId"
@@ -86,29 +127,41 @@ export class ServiceRepository {
   private buildService(serviceDB: ServiceDB): Service {
     return new Service({
       ...serviceDB['serviceDefinition'],
-      id: serviceDB.id,
+      serviceId: serviceDB.id,
+      serviceDefinitionId: serviceDB['serviceDefinition'].id,
     });
   }
 
-  private async buildServicefinitionList(
+  private async buildServiceDefinitionList(
     serviceDefinitionDB: ServiceDefinitionDB[],
+    includeInstalledFlag = false,
   ): Promise<ServiceDefinition[]> {
     // FIXME : plus tard en cache ou autre, pas besoin de recalculer à chaque affiche du catalogue de service
-    const repartition = await this.countServicesByDefinition();
+    const repartition = await this.countServiceDefinitionUsage();
     return serviceDefinitionDB.map((serviceDefDB) => {
       let occurence = repartition[serviceDefDB.id] || 0;
-      return this.buildServicefinition(serviceDefDB, occurence);
+      return this.buildServicefinition(
+        serviceDefDB,
+        occurence,
+        includeInstalledFlag,
+      );
     });
   }
 
   private buildServicefinition(
     serviceDefinitionDB: ServiceDefinitionDB,
     occurence: number,
+    includeInstalledFlag: boolean,
   ): ServiceDefinition {
     return new ServiceDefinition({
       ...serviceDefinitionDB,
+      dynamic_data: serviceDefinitionDB.dynamic_data as any,
+      serviceDefinitionId: serviceDefinitionDB.id,
       thematiques: serviceDefinitionDB.thematiques.map((th) => Thematique[th]),
       nombre_installation: occurence,
+      is_installed: includeInstalledFlag
+        ? serviceDefinitionDB['services'].length > 0
+        : undefined,
     });
   }
 }

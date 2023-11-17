@@ -55,7 +55,7 @@ export class AuthController {
         nom: user_data.family_name,
         prenom: 'UNDEFINED',
         email: user_data.email,
-        onboardingData: {},
+        onboardingData: {} as any,
       });
     }
     const utilisateurId = utilisateur.id;

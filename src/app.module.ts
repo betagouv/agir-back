@@ -6,12 +6,12 @@ import { BilanController } from './infrastructure/api/bilan.controller';
 import { AidesController } from './infrastructure/api/aides.controller';
 import { IntractionsController } from './infrastructure/api/interactions.controller';
 import { TestDataController } from './infrastructure/api/testData.controller';
-import { CMSController } from './infrastructure/api/cms.controller';
+import { CMSController } from './infrastructure/api/incoming/cms.controller';
 
 import { UtilisateurUsecase } from './usecase/utilisateur.usecase';
 import { BilanUsecase } from './usecase/bilan.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
-import { InteractionsDefinitionUsecase } from './usecase/interactionsDefinition.usecase';
+import { InteractionsDefinitionUsecase } from './usecase/cms.usecase';
 
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur/utilisateur.repository';
 import { BadgeRepository } from './infrastructure/repository/badge.repository';
@@ -54,6 +54,10 @@ import { TodoRepository } from './infrastructure/repository/todo.repository';
 import { GroupeController } from './infrastructure/api/groupe.controller';
 import { GroupeUseCase } from './usecase/groupe.usecase';
 import { GroupeRepository } from './infrastructure/repository/groupe.repository';
+import { ThematiqueRepository } from './infrastructure/repository/thematique.repository';
+import { EcoWattServiceManager } from './infrastructure/service/ecowatt/ecoWattServiceManager';
+import { WinterController } from './infrastructure/api/incoming/winter.controller';
+import { FruitsEtLegumesServiceManager } from './infrastructure/service/fruits/fruitEtLegumesServiceManager';
 
 const SESSION_LIFETIME = '12h';
 
@@ -81,6 +85,7 @@ const SESSION_LIFETIME = '12h';
     ServiceController,
     TodoController,
     GroupeController,
+    WinterController,
   ],
   providers: [
     PrismaService,
@@ -118,6 +123,9 @@ const SESSION_LIFETIME = '12h';
     TodoRepository,
     GroupeUseCase,
     GroupeRepository,
+    ThematiqueRepository,
+    EcoWattServiceManager,
+    FruitsEtLegumesServiceManager,
   ],
 })
 export class AppModule {}

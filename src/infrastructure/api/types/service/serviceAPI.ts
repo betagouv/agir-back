@@ -1,26 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Thematique } from '../../../../../src/domain/thematique';
 import { Service } from '../../../../domain/service/service';
+import { ServiceDefinitionAPI } from './serviceDefinitionAPI';
 
-export class ServiceAPI {
-  @ApiProperty() id: string;
+export class ServiceAPI extends ServiceDefinitionAPI {
   @ApiProperty() label: string;
-  @ApiProperty() titre: string;
-  @ApiProperty() url?: string;
-  @ApiProperty() is_url_externe?: boolean;
-  @ApiProperty() is_local: boolean;
-  @ApiProperty({ enum: Thematique, enumName: 'Thematique', isArray: true })
-  thematiques: Thematique[];
+  @ApiProperty() isInError: boolean;
 
-  static mapServicesToServicesAPI(service: Service): ServiceAPI {
+  public static mapServicesToServicesAPI(service: Service): ServiceAPI {
     return {
-      id: service.id,
-      label: service.label,
-      titre: service.titre,
-      url: service.url,
-      is_local: service.is_local,
-      is_url_externe: service.is_url_externe,
-      thematiques: service.thematiques,
+      ...ServiceDefinitionAPI.mapServiceDefintionToServiceDefinitionAPI(
+        service,
+      ),
+      label: service.dynamic_data.label || service.titre,
+      isInError: service.dynamic_data.isInError || false,
     };
   }
 }

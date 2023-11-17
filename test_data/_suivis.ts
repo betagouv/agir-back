@@ -3,6 +3,8 @@ const suivis = {
     titre: 'Faire le suivi du jour',
     soustitre: '-',
     thematique_gamification: 'alimentation',
+    thematiques: ['alimentation', 'transport'],
+    thematique_gamification_titre: '🚗 Transports',
     tags: ['suivi', 'alimentation', 'kyc'],
     duree: '⏱️ < 1 minute',
     frequence: null,
