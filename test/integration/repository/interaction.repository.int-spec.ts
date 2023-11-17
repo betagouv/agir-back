@@ -7,6 +7,7 @@ import { UserQuizzProfile } from '../../../src/domain/quizz/userQuizzProfile';
 import { Decimal } from '@prisma/client/runtime/library';
 import { InteractionScore } from '../../../src/domain/interaction/interactionScore';
 import { InteractionDefinition } from '../../../src/domain/interaction/interactionDefinition';
+import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 
 describe('InteractionRepository', () => {
   let interactionRepository = new InteractionRepository(TestUtil.prisma);
@@ -389,6 +390,96 @@ describe('InteractionRepository', () => {
 
     // THEN
     expect(result).toHaveLength(2);
+  });
+  it('listMaxInteractionsByUtilisateurIdAndType : retourne une interaction par thematique de gamification', async () => {
+    //GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      thematique_gamification: Thematique.alimentation,
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      thematique_gamification: Thematique.climat,
+    });
+    await TestUtil.create('interaction', {
+      id: '3',
+      thematique_gamification: Thematique.logement,
+    });
+
+    //WHEN
+    const result =
+      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+        {
+          utilisateurId: 'utilisateur-id',
+          thematique_gamification: [
+            Thematique.alimentation,
+            Thematique.logement,
+          ],
+        },
+      );
+
+    // THEN
+    expect(result).toHaveLength(2);
+    expect(result.map((inter) => inter.id)).toStrictEqual(['1', '3']);
+  });
+  it('listMaxInteractionsByUtilisateurIdAndType : retourne une interaction par thematiques incluses', async () => {
+    //GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      thematiques: [Thematique.alimentation, Thematique.climat],
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      thematiques: [Thematique.transport, Thematique.logement],
+    });
+    await TestUtil.create('interaction', {
+      id: '3',
+      thematiques: [Thematique.loisir, Thematique.dechet],
+    });
+
+    //WHEN
+    const result =
+      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+        {
+          utilisateurId: 'utilisateur-id',
+          thematiques: [Thematique.alimentation, Thematique.logement],
+        },
+      );
+
+    // THEN
+    expect(result).toHaveLength(2);
+    expect(result.map((inter) => inter.id)).toStrictEqual(['1', '2']);
+  });
+  it('listMaxInteractionsByUtilisateurIdAndType : retourne une interaction par difficulty', async () => {
+    //GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      difficulty: DifficultyLevel.L1,
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      difficulty: DifficultyLevel.L2,
+    });
+    await TestUtil.create('interaction', {
+      id: '3',
+      difficulty: DifficultyLevel.L3,
+    });
+
+    //WHEN
+    const result =
+      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+        {
+          utilisateurId: 'utilisateur-id',
+          difficulty: DifficultyLevel.L2,
+        },
+      );
+
+    // THEN
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toEqual('2');
   });
   it('listMaxInteractionsByUtilisateurIdAndType : retourne des interations avec et sans code postal  quand pas de code postal en filtre', async () => {
     //GIVEN

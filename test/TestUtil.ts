@@ -12,6 +12,7 @@ import { Impact } from '../src/domain/utilisateur/onboarding/onboarding';
 const request = require('supertest');
 import { JwtService } from '@nestjs/jwt';
 import { TodoCatalogue } from '../src/domain/todo/todoCatalogue';
+import { Badge } from '@prisma/client';
 
 export class TestUtil {
   constructor() {}

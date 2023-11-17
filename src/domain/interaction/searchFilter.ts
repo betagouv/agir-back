@@ -1,4 +1,6 @@
+import { DifficultyLevel } from '../difficultyLevel';
 import { UserQuizzProfile } from '../quizz/userQuizzProfile';
+import { Thematique } from '../thematique';
 import { InteractionType } from './interactionType';
 
 export type SearchFilter = {
@@ -8,5 +10,8 @@ export type SearchFilter = {
   pinned?: boolean;
   locked?: boolean;
   quizzProfile?: UserQuizzProfile;
+  thematique_gamification?: Thematique[];
+  thematiques?: Thematique[];
   code_postal?: string;
+  difficulty?: DifficultyLevel;
 };

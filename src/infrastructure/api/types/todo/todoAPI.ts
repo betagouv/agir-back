@@ -1,4 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { InteractionType } from '../../../../../src/domain/interaction/interactionType';
+import { DifficultyLevel } from '../../../../../src/domain/difficultyLevel';
 import { Thematique } from '../../../../../src/domain/thematique';
 import { Todo } from '../../../../../src/domain/todo/todo';
 
@@ -11,8 +13,10 @@ export class TodoElementAPI {
   @ApiProperty({ enum: Thematique, enumName: 'Thematique', isArray: true })
   thematiques: Thematique[];
   @ApiProperty() titre: string;
-  @ApiProperty() type: string;
-  @ApiProperty() content_id: string;
+  @ApiProperty({ enum: InteractionType }) type: InteractionType;
+  @ApiProperty({ enum: DifficultyLevel }) quizz_level: DifficultyLevel;
+  @ApiProperty() content_id?: string;
+  @ApiProperty() interaction_id?: string;
   @ApiProperty() points: number;
   @ApiProperty() sont_points_en_poche: boolean;
   @ApiProperty({ type: ProgressionAPI }) progression: ProgressionAPI;

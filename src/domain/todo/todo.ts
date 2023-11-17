@@ -1,10 +1,14 @@
+import { DifficultyLevel } from '../difficultyLevel';
+import { InteractionType } from '../interaction/interactionType';
 import { Thematique } from '../thematique';
 
 export class TodoElement {
   thematiques: Thematique[];
   titre: string;
-  type: string;
-  content_id: string;
+  type: InteractionType;
+  quizz_level: DifficultyLevel;
+  content_id?: string;
+  interaction_id?: string;
   points: number;
   sont_points_en_poche: boolean;
   progression: { current: number; target: number };

@@ -1,3 +1,5 @@
+import { DifficultyLevel } from '../difficultyLevel';
+import { InteractionType } from '../interaction/interactionType';
 import { Thematique } from '../thematique';
 import { Todo } from './todo';
 
@@ -13,8 +15,8 @@ export class TodoCatalogue {
           thematiques: [Thematique.climat],
           progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
-          type: 'quizz',
-          content_id: null,
+          type: InteractionType.quizz,
+          quizz_level: DifficultyLevel.L1,
           points: 10,
         },
       ],
@@ -29,8 +31,8 @@ export class TodoCatalogue {
           thematiques: [Thematique.climat],
           progression: { current: 0, target: 2 },
           sont_points_en_poche: false,
-          type: 'quizz',
-          content_id: null,
+          type: InteractionType.quizz,
+          quizz_level: DifficultyLevel.L2,
           points: 10,
         },
       ],

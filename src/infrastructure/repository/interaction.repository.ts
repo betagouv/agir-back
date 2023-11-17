@@ -10,6 +10,7 @@ import { Thematique } from '../../domain/thematique';
 import { InteractionScore } from '../../../src/domain/interaction/interactionScore';
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 import { InteractionDefinition } from 'src/domain/interaction/interactionDefinition';
+import { UserQuizzProfile } from '../../../src/domain/quizz/userQuizzProfile';
 
 @Injectable()
 export class InteractionRepository {
@@ -68,17 +69,10 @@ export class InteractionRepository {
     filter: SearchFilter,
   ): Promise<Interaction[] | null> {
     let quizz_difficulty_filter;
-    if (filter.type === InteractionType.quizz) {
-      quizz_difficulty_filter = [];
-      for (const cat in Thematique) {
-        if (filter.quizzProfile.getLevel(cat as Thematique)) {
-          quizz_difficulty_filter.push({
-            type: InteractionType.quizz,
-            thematique_gamification: cat,
-            difficulty: filter.quizzProfile.getLevel(cat as Thematique),
-          });
-        }
-      }
+    if (filter.type === InteractionType.quizz && filter.quizzProfile) {
+      quizz_difficulty_filter = this.buildQuizzGlobalSQLFilter(
+        filter.quizzProfile,
+      );
     }
     let codes_postaux_filter;
 
@@ -88,18 +82,30 @@ export class InteractionRepository {
         { codes_postaux: { isEmpty: true } },
       ];
     }
+    let main_filter = {
+      utilisateurId: filter.utilisateurId,
+      done: false,
+      type: filter.type,
+      pinned_at_position: filter.pinned ? { not: null } : null,
+      locked: filter.locked,
+      difficulty: filter.difficulty,
+      OR: quizz_difficulty_filter,
+    };
+    if (filter.thematiques) {
+      main_filter['thematiques'] = {
+        hasSome: filter.thematiques,
+      };
+    }
+    if (filter.thematique_gamification) {
+      main_filter['thematique_gamification'] = {
+        in: filter.thematique_gamification,
+      };
+    }
     const interList = await this.prisma.interaction.findMany({
       take: filter.maxNumber,
       where: {
         OR: codes_postaux_filter,
-        AND: {
-          utilisateurId: filter.utilisateurId,
-          done: false,
-          type: filter.type,
-          pinned_at_position: filter.pinned ? { not: null } : null,
-          locked: filter.locked,
-          OR: quizz_difficulty_filter,
-        },
+        AND: main_filter,
       },
       orderBy: [
         {
@@ -213,6 +219,20 @@ export class InteractionRepository {
         done: false,
       },
     });
+  }
+
+  private buildQuizzGlobalSQLFilter(quizzProfile: UserQuizzProfile): any[] {
+    let result = [];
+    for (const cat in Thematique) {
+      if (quizzProfile.getLevel(cat as Thematique)) {
+        result.push({
+          type: InteractionType.quizz,
+          thematique_gamification: cat,
+          difficulty: quizzProfile.getLevel(cat as Thematique),
+        });
+      }
+    }
+    return result;
   }
 
   private buildInteractionFromInteractionDB(
