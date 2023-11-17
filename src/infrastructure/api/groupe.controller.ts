@@ -20,7 +20,7 @@ import {
 } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
-import { GroupeAPI } from './types/groupe/groupeApi';
+import { GroupeAPI } from './types/groupe/groupeAPI';
 import { GroupeUseCase } from '../../../src/usecase/groupe.usecase';
 import { GroupeAbonnement } from '@prisma/client';
 import { ErrorService } from '../errorService';

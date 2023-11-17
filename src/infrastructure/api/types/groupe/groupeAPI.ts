@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { UtilisateurAPI } from '../utilisateur/utilisateurAPI';
 
 export class GroupeAPI {
   @ApiProperty() id: string;
