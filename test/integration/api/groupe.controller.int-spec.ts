@@ -34,7 +34,7 @@ describe('Groupe (API test)', () => {
 
     // WHEN
     const response = await TestUtil.getServer()
-      .post('/utilisateurs/utilisateur-id/groupe')
+      .post('/groupes?id_utilisateur=utilisateur-id')
       .send(group)
       .set('Authorization', `Bearer ${TestUtil.token}`);
 
@@ -47,7 +47,7 @@ describe('Groupe (API test)', () => {
 
     const group = { name: 'Test' };
     const response = await TestUtil.getServer()
-      .post('/utilisateurs/utilisateur-id/groupe')
+      .post('/groupes?id_utilisateur=utilisateur-id')
       .send(group)
       .set('Authorization', `Bearer ${TestUtil.token}`);
     // WHEN
@@ -67,18 +67,17 @@ describe('Groupe (API test)', () => {
     await TestUtil.create('utilisateur', { id: 'utilisateur-id', email: '1' });
     const group = { name: 'TestDelete' };
     const response = await TestUtil.getServer()
-      .post('/utilisateurs/utilisateur-id/groupe')
+      .post('/groupes?id_utilisateur=utilisateur-id')
       .send(group)
       .set('Authorization', `Bearer ${TestUtil.token}`);
     // WHEN
 
     const responseTest = await TestUtil.GET('/groupes/' + response.body.id);
-    console.log(responseTest.body);
     const responseSupp = await TestUtil.DELETE(
-      '/utilisateurs/utilisateur-id/groupes/' + responseTest.body.id,
+      '/groupes/' + responseTest.body.id + '?id_utilisateur=utilisateur-id',
     );
     // THEN
-    expect(responseSupp.body).toEqual({});
+    expect(responseSupp.body.name).toEqual('TestDelete');
     const responseTest2 = await TestUtil.GET('/groupes/' + response.body.id);
     expect(responseTest2.status).toBe(404);
   });
@@ -89,11 +88,11 @@ describe('Groupe (API test)', () => {
     await TestUtil.create('groupe', { id: 'groupe-id', name: 'Test' });
     // WHEN
     const responseJoin = await TestUtil.getServer()
-      .put('/groupes/groupe-id/join/utilisateur-id')
+      .post('/utilisateurs/utilisateur-id/groupes/groupe-id')
       .set('Authorization', `Bearer ${TestUtil.token}`);
 
     // THEN
-    expect(responseJoin.status).toBe(200);
+    expect(responseJoin.status).toBe(201);
     expect(responseJoin.body.utilisateurId).toBe('utilisateur-id');
     expect(responseJoin.body.groupeId).toBe('groupe-id');
   });
@@ -103,15 +102,15 @@ describe('Groupe (API test)', () => {
     await TestUtil.create('utilisateur', { id: 'utilisateur-id', email: '1' });
     await TestUtil.create('groupe', { id: 'groupe-id', name: 'Test' });
     const responseJoin = await TestUtil.getServer()
-      .put('/groupes/groupe-id/join/utilisateur-id')
+      .post('/utilisateurs/utilisateur-id/groupes/groupe-id')
       .set('Authorization', `Bearer ${TestUtil.token}`);
-    console.log(responseJoin.body);
     // WHEN
     const responseQuit = await TestUtil.getServer()
-      .put('/groupes/groupe-id/quit/utilisateur-id')
+      .delete('/utilisateurs/utilisateur-id/groupes/groupe-id')
       .set('Authorization', `Bearer ${TestUtil.token}`);
 
     // THEN
+    expect(responseJoin.status).toBe(201);
     expect(responseQuit.status).toBe(200);
     expect(responseQuit.body.groupeId).toBe('groupe-id');
   });

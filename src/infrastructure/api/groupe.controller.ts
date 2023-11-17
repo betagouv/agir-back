@@ -10,6 +10,7 @@ import {
   Body,
   NotFoundException,
   BadRequestException,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -33,6 +34,16 @@ export class GroupeController extends GenericControler {
     super();
   }
 
+  @Get('groupes')
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Liste les groupes publiques' })
+  @ApiOkResponse({ type: GroupeAPI })
+  async getGroupes(): Promise<GroupeAPI[]> {
+    const groupes = await this.groupeUsecase.listGroupes();
+    if (!groupes) throw new NotFoundException(`Pas de groupe`);
+    return groupes.map((groupe) => this.toGroupeAPI(groupe));
+  }
+
   @Get('groupes/:id')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Récupérer les infos d'un groupe" })
@@ -43,23 +54,43 @@ export class GroupeController extends GenericControler {
     return this.toGroupeAPI(group);
   }
 
-  @Post('utilisateurs/:id/groupe')
+  @Get('utilisateurs/:id/groupes')
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Créer un nouveau groupe dont je suis admin' })
+  @ApiOkResponse({ type: GroupeAPI })
+  async listMyGroupes(
+    @Body() group: GroupeAPI,
+    @Param('id') utilisateurId: string,
+    @Request() req: any,
+  ): Promise<GroupeAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+
+    const groupes = await this.groupeUsecase.listMyGroupes(utilisateurId);
+    if (!groupes) throw new NotFoundException(`Pas de groupe`);
+    return groupes.map((groupe) => this.toGroupeAPI(groupe));
+  }
+
+  @Post('groupes')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Créer un nouveau groupe dont je suis admin' })
   @ApiOkResponse({ type: GroupeAPI })
   async createGroup(
     @Body() group: GroupeAPI,
-    @Param('id') utilisateurId: string,
+    @Query('id_utilisateur') utilisateurId: string,
     @Request() req: any,
-  ): Promise<GroupeAPI | false> {
+  ): Promise<GroupeAPI> {
     this.checkCallerId(req, utilisateurId);
-    const createdGroupe = await this.groupeUsecase.createGroupeWithAdmin(
-      group.name,
-      group.description,
-      utilisateurId,
-    );
-
-    return createdGroupe ? this.toGroupeAPI(createdGroupe) : false;
+    try {
+      return this.toGroupeAPI(
+        await this.groupeUsecase.createGroupeWithAdmin(
+          group.name,
+          group.description,
+          utilisateurId,
+        ),
+      );
+    } catch (error) {
+      throw new BadRequestException(ErrorService.toStringOrObject(error));
+    }
   }
 
   @Put('utilisateurs/:id/groupes/:id_groupe')
@@ -71,34 +102,42 @@ export class GroupeController extends GenericControler {
     @Param('id') utilisateurId: string,
     @Body() group: GroupeAPI,
     @Request() req: any,
-  ): Promise<GroupeAPI | false> {
+  ): Promise<GroupeAPI> {
     this.checkCallerId(req, utilisateurId);
-    const updatedGroupe = await this.groupeUsecase.updateOneOfMyGroupe(
-      utilisateurId,
-      groupeId,
-      group.name,
-      group.description,
-    );
-    return updatedGroupe ? this.toGroupeAPI(updatedGroupe) : false;
+    try {
+      return this.toGroupeAPI(
+        await this.groupeUsecase.updateOneOfMyGroupe(
+          utilisateurId,
+          groupeId,
+          group.name,
+          group.description,
+        ),
+      );
+    } catch (error) {
+      throw new BadRequestException(ErrorService.toStringOrObject(error));
+    }
   }
 
-  @Delete('utilisateurs/:id/groupes/:id_groupe')
+  @Delete('groupes/:id_groupe')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Supprimme un groupe dont je suis admin' })
   @ApiOkResponse()
   async deleteGroupById(
     @Param('id_groupe') groupeId: string,
-    @Param('id') utilisateurId: string,
+    @Query('id_utilisateur') utilisateurId: string,
     @Request() req: any,
-  ): Promise<boolean> {
+  ): Promise<GroupeAPI> {
     this.checkCallerId(req, utilisateurId);
-    return await this.groupeUsecase.deleteOneOfMyGroupe(
-      utilisateurId,
-      groupeId,
-    );
+    try {
+      return this.toGroupeAPI(
+        await this.groupeUsecase.deleteOneOfMyGroupe(utilisateurId, groupeId),
+      );
+    } catch (error) {
+      throw new BadRequestException(ErrorService.toStringOrObject(error));
+    }
   }
 
-  @Put('groupes/:id_groupe/join/:id_utilisateur')
+  @Post('utilisateurs/:id_utilisateur/groupes/:id_groupe')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Joindre un groupe' })
   @ApiOkResponse({ type: GroupeAPI })
@@ -111,17 +150,15 @@ export class GroupeController extends GenericControler {
     // todo check if groupe exist
     // todo check if groupe is not private
     try {
-      return await this.groupeUsecase.joinGroupe(
-        groupeId,
-        utilisateurId,
-        false,
-      );
+      return await this.groupeUsecase.joinGroupe(groupeId, utilisateurId);
     } catch (error) {
       throw new BadRequestException(ErrorService.toStringOrObject(error));
     }
   }
 
-  @Put('groupes/:id_groupe/quit/:id_utilisateur')
+  // quitter un groupe
+  //delete(`/utilisateurs/${utilisateurId}/groupes/${serviceId}`);
+  @Delete('utilisateurs/:id_utilisateur/groupes/:id_groupe')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Quitter un groupe' })
   @ApiOkResponse({ type: GroupeAPI })
@@ -142,9 +179,9 @@ export class GroupeController extends GenericControler {
 
   private toGroupeAPI(group: Groupe): GroupeAPI {
     return {
-      id: group.id,
-      name: group.name,
-      description: group.description,
+      id: group?.id,
+      name: group?.name,
+      description: group?.description,
     };
   }
 }

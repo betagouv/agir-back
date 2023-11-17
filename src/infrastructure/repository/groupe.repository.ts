@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Groupe } from '../../domain/groupe/groupe';
-import { GroupeAbonnement, Groupe as GroupeDB } from '@prisma/client';
+import { GroupeAbonnement, Groupe as GroupeDB, Prisma } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class GroupeRepository {
   constructor(private prisma: PrismaService) {}
+
+  async listGroupes(): Promise<Groupe[]> {
+    return this.prisma.groupe.findMany({});
+  }
 
   async createGroupe(groupe: Groupe): Promise<Groupe> {
     const group = await this.prisma.groupe.create({
@@ -33,9 +37,8 @@ export class GroupeRepository {
     return result;
   }
 
-  async deleteGroupe(groupeId: string): Promise<boolean> {
-    const result = await this.prisma.groupe.delete({ where: { id: groupeId } });
-    return result.id ? true : false;
+  async deleteGroupe(groupeId: string): Promise<Groupe> {
+    return await this.prisma.groupe.delete({ where: { id: groupeId } });
   }
 
   async getGroupesByUtilisateurId(utilisateurId: string): Promise<Groupe[]> {
@@ -52,31 +55,18 @@ export class GroupeRepository {
     });
   }
 
-  /*async getUtilisateursByGroupeId(groupeId: string): Promise<Groupe[]> {
-    return this.prisma.groupe.findMany({
-      where: {
-        id: groupeId,
-      },
-      include: {
-        utilisateurs: {
-          include: {
-            utilisateur: true,
-          },
-        },
-      },
-    });
-  }*/
-
-  async utilisateurIsAdminOfGroupe(
+  async isAdminOfGroupe(
     utilisateurId: string,
     groupeId: string,
   ): Promise<boolean> {
     const result = await this.prisma.groupeAbonnement.findUnique({
+      select: { admin: true },
       where: {
         groupeId_utilisateurId: {
-          groupeId: groupeId,
-          utilisateurId: utilisateurId,
+          groupeId,
+          utilisateurId,
         },
+        admin: true,
       },
     });
 
@@ -101,7 +91,21 @@ export class GroupeRepository {
     });
   }
 
-  async addUtilisateurToGroupe(
+  async addMember(
+    groupeId: string,
+    utilisateurId: string,
+  ): Promise<GroupeAbonnement> {
+    return this.addUtilisateurToGroupe(groupeId, utilisateurId, false);
+  }
+
+  async addAdmin(
+    groupeId: string,
+    utilisateurId: string,
+  ): Promise<GroupeAbonnement> {
+    return this.addUtilisateurToGroupe(groupeId, utilisateurId, true);
+  }
+
+  private async addUtilisateurToGroupe(
     groupeId: string,
     utilisateurId: string,
     admin: boolean,
@@ -138,5 +142,15 @@ export class GroupeRepository {
       },
     });
     return result;
+  }
+
+  async removeAllUtilisateursFromGroupe(
+    groupeId: string,
+  ): Promise<Prisma.BatchPayload> {
+    return await this.prisma.groupeAbonnement.deleteMany({
+      where: {
+        groupeId,
+      },
+    });
   }
 }
