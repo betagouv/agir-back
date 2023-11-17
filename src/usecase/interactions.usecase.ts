@@ -78,7 +78,7 @@ export class InteractionsUsecase {
 
     // pinned insert
     const pinned_interactions =
-      await this.interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+      await this.interactionRepository.listInteractionsByFilter(
         {
           utilisateurId,
           maxNumber: 7,
@@ -91,7 +91,7 @@ export class InteractionsUsecase {
 
     // locked insert at fixed positions
     const locked_interactions =
-      await this.interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+      await this.interactionRepository.listInteractionsByFilter(
         {
           utilisateurId,
           maxNumber: DistributionSettings.TARGET_LOCKED_INTERACTION_NUMBER,
@@ -185,7 +185,7 @@ export class InteractionsUsecase {
     utilisateurId: string,
     code_postal: string,
   ): Promise<Interaction[]> {
-    return this.interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+    return this.interactionRepository.listInteractionsByFilter(
       {
         utilisateurId,
         maxNumber: DistributionSettings.getPreferedOfType(
@@ -199,7 +199,7 @@ export class InteractionsUsecase {
   }
 
   async getSuivisForUtilisateur(utilisateurId: string): Promise<Interaction[]> {
-    return this.interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+    return this.interactionRepository.listInteractionsByFilter(
       {
         utilisateurId,
         maxNumber: DistributionSettings.getPreferedOfType(
@@ -216,7 +216,7 @@ export class InteractionsUsecase {
     quizzProfile: UserQuizzProfile,
     code_postal: string,
   ): Promise<Interaction[]> {
-    return this.interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+    return this.interactionRepository.listInteractionsByFilter(
       {
         utilisateurId,
         maxNumber: DistributionSettings.getPreferedOfType(
@@ -234,7 +234,7 @@ export class InteractionsUsecase {
     utilisateurId: string,
     code_postal: string,
   ): Promise<Interaction[]> {
-    return this.interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
+    return this.interactionRepository.listInteractionsByFilter(
       {
         utilisateurId,
         maxNumber: DistributionSettings.getPreferedOfType(InteractionType.aide),

@@ -44,12 +44,9 @@ describe('InteractionRepository', () => {
     });
 
     // WHEN
-    const liste =
-      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        {
-          utilisateurId: 'utilisateur-id',
-        },
-      );
+    const liste = await interactionRepository.listInteractionsByFilter({
+      utilisateurId: 'utilisateur-id',
+    });
 
     // THEN
     expect(liste).toHaveLength(3);
@@ -65,13 +62,10 @@ describe('InteractionRepository', () => {
     await TestUtil.create('interaction', { id: '3', type: 'article' });
 
     // WHEN
-    const liste =
-      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        {
-          utilisateurId: 'utilisateur-id',
-          type: InteractionType.article,
-        },
-      );
+    const liste = await interactionRepository.listInteractionsByFilter({
+      utilisateurId: 'utilisateur-id',
+      type: InteractionType.article,
+    });
     // THEN
     expect(liste).toHaveLength(2);
   });
@@ -83,14 +77,11 @@ describe('InteractionRepository', () => {
     await TestUtil.create('interaction', { id: '3', type: 'article' });
 
     // WHEN
-    const liste =
-      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        {
-          utilisateurId: 'utilisateur-id',
-          type: InteractionType.article,
-          maxNumber: 1,
-        },
-      );
+    const liste = await interactionRepository.listInteractionsByFilter({
+      utilisateurId: 'utilisateur-id',
+      type: InteractionType.article,
+      maxNumber: 1,
+    });
     // THEN
     expect(liste).toHaveLength(1);
   });
@@ -191,13 +182,10 @@ describe('InteractionRepository', () => {
     await TestUtil.create('interaction', { pinned_at_position: 4 });
 
     //WHEN
-    const result =
-      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        {
-          utilisateurId: 'utilisateur-id',
-          pinned: true,
-        },
-      );
+    const result = await interactionRepository.listInteractionsByFilter({
+      utilisateurId: 'utilisateur-id',
+      pinned: true,
+    });
 
     // THEN
     expect(result).toHaveLength(1);
@@ -209,13 +197,10 @@ describe('InteractionRepository', () => {
     await TestUtil.create('interaction', { id: 'id-2' });
 
     //WHEN
-    const result =
-      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        {
-          utilisateurId: 'utilisateur-id',
-          pinned: false,
-        },
-      );
+    const result = await interactionRepository.listInteractionsByFilter({
+      utilisateurId: 'utilisateur-id',
+      pinned: false,
+    });
 
     // THEN
     expect(result).toHaveLength(1);
@@ -227,13 +212,10 @@ describe('InteractionRepository', () => {
     await TestUtil.create('interaction');
 
     //WHEN
-    const result =
-      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        {
-          utilisateurId: 'utilisateur-id',
-          pinned: true,
-        },
-      );
+    const result = await interactionRepository.listInteractionsByFilter({
+      utilisateurId: 'utilisateur-id',
+      pinned: true,
+    });
 
     // THEN
     expect(result).toHaveLength(0);
@@ -244,12 +226,9 @@ describe('InteractionRepository', () => {
     await TestUtil.create('interaction', { pinned_at_position: 4 });
 
     //WHEN
-    const result =
-      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        {
-          utilisateurId: 'utilisateur-id',
-        },
-      );
+    const result = await interactionRepository.listInteractionsByFilter({
+      utilisateurId: 'utilisateur-id',
+    });
 
     // THEN
     expect(result).toHaveLength(0);
@@ -261,12 +240,9 @@ describe('InteractionRepository', () => {
     await TestUtil.create('interaction', { id: '2', locked: false });
 
     //WHEN
-    const result =
-      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        {
-          utilisateurId: 'utilisateur-id',
-        },
-      );
+    const result = await interactionRepository.listInteractionsByFilter({
+      utilisateurId: 'utilisateur-id',
+    });
 
     // THEN
     expect(result).toHaveLength(2);
@@ -298,16 +274,13 @@ describe('InteractionRepository', () => {
     });
 
     //WHEN
-    const result =
-      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        {
-          utilisateurId: 'utilisateur-id',
-          quizzProfile: new UserQuizzProfile({
-            alimentation: { level: 2, isCompleted: false },
-          }),
-          type: InteractionType.quizz,
-        },
-      );
+    const result = await interactionRepository.listInteractionsByFilter({
+      utilisateurId: 'utilisateur-id',
+      quizzProfile: new UserQuizzProfile({
+        alimentation: { level: 2, isCompleted: false },
+      }),
+      type: InteractionType.quizz,
+    });
 
     // THEN
     expect(result).toHaveLength(1);
@@ -328,13 +301,10 @@ describe('InteractionRepository', () => {
     });
 
     //WHEN
-    const result =
-      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        {
-          utilisateurId: 'utilisateur-id',
-          code_postal: '123',
-        },
-      );
+    const result = await interactionRepository.listInteractionsByFilter({
+      utilisateurId: 'utilisateur-id',
+      code_postal: '123',
+    });
 
     // THEN
     expect(result).toHaveLength(1);
@@ -355,12 +325,9 @@ describe('InteractionRepository', () => {
     });
 
     //WHEN
-    const result =
-      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        {
-          utilisateurId: 'utilisateur-id',
-        },
-      );
+    const result = await interactionRepository.listInteractionsByFilter({
+      utilisateurId: 'utilisateur-id',
+    });
 
     // THEN
     expect(result).toHaveLength(2);
@@ -380,13 +347,10 @@ describe('InteractionRepository', () => {
     });
 
     //WHEN
-    const result =
-      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        {
-          utilisateurId: 'utilisateur-id',
-          code_postal: '123',
-        },
-      );
+    const result = await interactionRepository.listInteractionsByFilter({
+      utilisateurId: 'utilisateur-id',
+      code_postal: '123',
+    });
 
     // THEN
     expect(result).toHaveLength(2);
@@ -408,16 +372,10 @@ describe('InteractionRepository', () => {
     });
 
     //WHEN
-    const result =
-      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        {
-          utilisateurId: 'utilisateur-id',
-          thematique_gamification: [
-            Thematique.alimentation,
-            Thematique.logement,
-          ],
-        },
-      );
+    const result = await interactionRepository.listInteractionsByFilter({
+      utilisateurId: 'utilisateur-id',
+      thematique_gamification: [Thematique.alimentation, Thematique.logement],
+    });
 
     // THEN
     expect(result).toHaveLength(2);
@@ -440,13 +398,10 @@ describe('InteractionRepository', () => {
     });
 
     //WHEN
-    const result =
-      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        {
-          utilisateurId: 'utilisateur-id',
-          thematiques: [Thematique.alimentation, Thematique.logement],
-        },
-      );
+    const result = await interactionRepository.listInteractionsByFilter({
+      utilisateurId: 'utilisateur-id',
+      thematiques: [Thematique.alimentation, Thematique.logement],
+    });
 
     // THEN
     expect(result).toHaveLength(2);
@@ -469,17 +424,32 @@ describe('InteractionRepository', () => {
     });
 
     //WHEN
-    const result =
-      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        {
-          utilisateurId: 'utilisateur-id',
-          difficulty: DifficultyLevel.L2,
-        },
-      );
+    const result = await interactionRepository.listInteractionsByFilter({
+      utilisateurId: 'utilisateur-id',
+      difficulty: DifficultyLevel.L2,
+    });
 
     // THEN
     expect(result).toHaveLength(1);
     expect(result[0].id).toEqual('2');
+  });
+  it('listMaxInteractionsByUtilisateurIdAndType : retourne une projection', async () => {
+    //GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction');
+
+    //WHEN
+    const result =
+      await interactionRepository.listInteractionIdProjectionByFilter({
+        utilisateurId: 'utilisateur-id',
+      });
+
+    // THEN
+    console.log(result);
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toEqual('interaction-id');
+    expect(result[0].content_id).toEqual('quizz-id');
+    expect(result[0]['done']).toEqual(undefined);
   });
   it('listMaxInteractionsByUtilisateurIdAndType : retourne des interations avec et sans code postal  quand pas de code postal en filtre', async () => {
     //GIVEN
@@ -496,12 +466,9 @@ describe('InteractionRepository', () => {
     });
 
     //WHEN
-    const result =
-      await interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-        {
-          utilisateurId: 'utilisateur-id',
-        },
-      );
+    const result = await interactionRepository.listInteractionsByFilter({
+      utilisateurId: 'utilisateur-id',
+    });
 
     // THEN
     expect(result).toHaveLength(2);

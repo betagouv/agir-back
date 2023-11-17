@@ -17,18 +17,17 @@ export class TodoUsecase {
       const element = todo.todo[index];
       if (element.type === InteractionType.quizz) {
         const interaction =
-          await this.interactionRepository.listMaxEligibleInteractionsByUtilisateurIdAndType(
-            {
-              utilisateurId: utilisateurId,
-              type: InteractionType.quizz,
-              maxNumber: 1,
-              thematique_gamification: element.thematiques,
-              difficulty: element.quizz_level,
-            },
-          );
-        if (interaction.length === 1) {
-          element.content_id = interaction[0].content_id;
-          element.interaction_id = interaction[0].id;
+          await this.interactionRepository.listInteractionIdProjectionByFilter({
+            utilisateurId: utilisateurId,
+            type: InteractionType.quizz,
+            thematique_gamification: element.thematiques,
+            difficulty: element.quizz_level,
+          });
+        if (interaction.length > 0) {
+          const randomIteraction =
+            interaction[Math.floor(Math.random() * interaction.length)];
+          element.content_id = randomIteraction.content_id;
+          element.interaction_id = randomIteraction.id;
         }
       }
     }

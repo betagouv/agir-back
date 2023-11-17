@@ -1,8 +1,4 @@
-import { Decimal } from '@prisma/client/runtime/library';
-import { Thematique } from '../thematique';
-import { DifficultyLevel } from '../difficultyLevel';
 import { InteractionStatus } from './interactionStatus';
-import { InteractionType } from './interactionType';
 import { InteractionDefinition } from './interactionDefinition';
 
 export class InteractionData extends InteractionDefinition {
@@ -21,6 +17,11 @@ export class InteractionData extends InteractionDefinition {
   constructor() {
     super({} as any);
   }
+}
+
+export class InteractionIdProjection {
+  id: string;
+  content_id: string;
 }
 export class Interaction extends InteractionData {
   constructor(data: InteractionData) {
