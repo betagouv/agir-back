@@ -197,7 +197,7 @@ export class TestUtil {
       prevent_checkcode_before: new Date(),
       sent_email_count: 0,
       prevent_sendemail_before: new Date(),
-
+      points: 0,
       todo: TodoCatalogue.getNewTodoOfNumero(1),
       onboardingData: {
         transports: ['voiture', 'pied'],

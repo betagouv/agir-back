@@ -58,6 +58,8 @@ import { ThematiqueRepository } from './infrastructure/repository/thematique.rep
 import { EcoWattServiceManager } from './infrastructure/service/ecowatt/ecoWattServiceManager';
 import { WinterController } from './infrastructure/api/incoming/winter.controller';
 import { FruitsEtLegumesServiceManager } from './infrastructure/service/fruits/fruitEtLegumesServiceManager';
+import { EventUsecase } from './usecase/event.usecase';
+import { EventController } from './infrastructure/api/event.controller';
 
 const SESSION_LIFETIME = '12h';
 
@@ -86,6 +88,7 @@ const SESSION_LIFETIME = '12h';
     TodoController,
     GroupeController,
     WinterController,
+    EventController,
   ],
   providers: [
     PrismaService,
@@ -126,6 +129,7 @@ const SESSION_LIFETIME = '12h';
     ThematiqueRepository,
     EcoWattServiceManager,
     FruitsEtLegumesServiceManager,
+    EventUsecase,
   ],
 })
 export class AppModule {}

@@ -44,11 +44,11 @@ export class InteractionRepository {
     });
   }
 
-  async listLastDoneQuizzByCategorieAndDifficulty(
+  async listDoneQuizzByCategorieAndDifficulty(
     utilisateurId: string,
     thematique_gamification: Thematique,
     difficulty: DifficultyLevel,
-  ): Promise<Interaction[] | null> {
+  ): Promise<Interaction[]> {
     const liste = await this.prisma.interaction.findMany({
       where: {
         utilisateurId,

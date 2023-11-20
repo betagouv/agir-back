@@ -139,7 +139,7 @@ export class InteractionsUsecase {
       );
 
       const lastQuizzOfCategorie =
-        await this.interactionRepository.listLastDoneQuizzByCategorieAndDifficulty(
+        await this.interactionRepository.listDoneQuizzByCategorieAndDifficulty(
           utilisateurId,
           stored_interaction.thematique_gamification,
           stored_interaction.difficulty,

@@ -260,6 +260,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     expect(dbInteraction.seen).toStrictEqual(0);
     expect(dbUtilisateur.points).toStrictEqual(5);
   });
+  // FIXME : REMOVE from here
   it('PATCH /utilisateurs/id/interactions/id - win badge when first quizz score present', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
@@ -283,6 +284,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       BadgeTypes.premier_quizz.type,
     );
   });
+  // FIXME : REMOVE from here
   it('PATCH /utilisateurs/id/interactions/id - increase thematique level when success condition', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
@@ -387,6 +389,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     );
     expect(dbBadges.length).toEqual(1);
   });
+  // FIXME : REMOVE from here
   it('PATCH /utilisateurs/id/interactions/id - does not add points when already done', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');

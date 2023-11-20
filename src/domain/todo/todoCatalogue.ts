@@ -1,10 +1,10 @@
 import { DifficultyLevel } from '../difficultyLevel';
 import { InteractionType } from '../interaction/interactionType';
 import { Thematique } from '../thematique';
-import { Todo } from './todo';
+import { Todo, TodoData } from './todo';
 
 export class TodoCatalogue {
-  private static catalogue: Todo[] = [
+  private static catalogue: TodoData[] = [
     {
       numero_todo: 1,
       points_todo: 25,
