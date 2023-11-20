@@ -445,7 +445,6 @@ describe('InteractionRepository', () => {
       });
 
     // THEN
-    console.log(result);
     expect(result).toHaveLength(1);
     expect(result[0].id).toEqual('interaction-id');
     expect(result[0].content_id).toEqual('quizz-id');

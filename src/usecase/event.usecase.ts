@@ -89,7 +89,6 @@ export class EventUsecase {
       interaction.difficulty,
       doneQuizz,
     );
-    console.log(isLevelCompleted);
 
     if (isLevelCompleted) {
       await this.increaseQuizzLevel({ utilisateur, interaction });
