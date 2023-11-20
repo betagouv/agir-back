@@ -81,6 +81,20 @@ export class UtilisateurRepository {
       },
     });
   }
+  async updateUtilisateur(utilisateur: Utilisateur): Promise<any> {
+    let dataToUpdate = {
+      ...utilisateur,
+      onboardingData: utilisateur.onboardingData as any,
+      onboardingResult: utilisateur.onboardingResult as any,
+      todo: utilisateur.todo as any,
+      quizzLevels: utilisateur.quizzProfile.getData() as any,
+    };
+    delete dataToUpdate.quizzProfile;
+    return this.prisma.utilisateur.update({
+      where: { id: utilisateur.id },
+      data: { ...dataToUpdate },
+    });
+  }
 
   async listUtilisateur(): Promise<Utilisateur[] | null> {
     const liste = await this.prisma.utilisateur.findMany({
@@ -113,7 +127,7 @@ export class UtilisateurRepository {
           passwordHash: utilisateur.passwordHash,
           passwordSalt: utilisateur.passwordSalt,
           code_postal: utilisateur.code_postal,
-          commune: utilisateur.commnune,
+          commune: utilisateur.commune,
           email: utilisateur.email,
           code: utilisateur.code,
           active_account: utilisateur.active_account,
@@ -124,7 +138,7 @@ export class UtilisateurRepository {
           onboardingData: { ...utilisateur.onboardingData },
           onboardingResult: { ...utilisateur.onboardingResult },
           quizzLevels: utilisateur.quizzProfile.getData(),
-          todo: { ...utilisateur.todo } as any,
+          todo: utilisateur.todo as any,
         },
       });
       return this.buildUtilisateurFromDB(user);
@@ -231,7 +245,7 @@ export class UtilisateurRepository {
         prenom: user.prenom,
         email: user.email,
         code_postal: user.code_postal,
-        commnune: user.commune,
+        commune: user.commune,
         revenu_fiscal: user.revenu_fiscal,
         passwordHash: user.passwordHash,
         passwordSalt: user.passwordSalt,
@@ -249,6 +263,7 @@ export class UtilisateurRepository {
         quizzProfile: new UserQuizzProfile(user.quizzLevels as any),
         created_at: user.created_at,
         todo: new Todo(user.todo as any),
+        /*
         badges: user['badges']
           ? user['badges'].map(
               (badge) =>
@@ -259,6 +274,7 @@ export class UtilisateurRepository {
                 }),
             )
           : [],
+          */
       });
     }
     return null;

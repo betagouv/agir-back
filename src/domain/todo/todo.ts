@@ -40,6 +40,18 @@ export class Todo extends TodoData {
   constructor(data: TodoData) {
     super();
     Object.assign(this, data);
+    this.done = [];
+    this.todo = [];
+    if (data.done) {
+      data.done.forEach((element) => {
+        this.done.push(new TodoElement(element));
+      });
+    }
+    if (data.todo) {
+      data.todo.forEach((element) => {
+        this.todo.push(new TodoElement(element));
+      });
+    }
   }
 
   public findTodoElementLike?(

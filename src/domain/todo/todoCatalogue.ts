@@ -4,7 +4,7 @@ import { Thematique } from '../thematique';
 import { Todo, TodoData } from './todo';
 
 export class TodoCatalogue {
-  private static catalogue: TodoData[] = [
+  private static catalogue: Todo[] = [
     {
       numero_todo: 1,
       points_todo: 25,

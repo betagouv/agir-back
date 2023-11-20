@@ -58,23 +58,24 @@ export class EventUsecase {
 
     await this.interactionRepository.updateInteraction(ctx.interaction);
 
-    await this.quizzLevelPromotion(ctx);
+    await this.promoteUserQuizzLevel(ctx);
+
+    await this.updateUserTodo(ctx);
+
+    await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
   }
 
-  private async updateTodoIfNeeded({
-    utilisateur,
-    interaction,
-  }: User_Interaction) {
+  private async updateUserTodo({ utilisateur, interaction }: User_Interaction) {
     const matchingTodoElement = utilisateur.todo.findTodoElementLike(
       interaction.type,
       interaction.thematique_gamification,
     );
-    if (!matchingTodoElement.isDone()) {
+    if (matchingTodoElement && !matchingTodoElement.isDone()) {
       matchingTodoElement.makeProgress();
     }
   }
 
-  private async quizzLevelPromotion({
+  private async promoteUserQuizzLevel({
     utilisateur,
     interaction,
   }: User_Interaction) {
@@ -101,10 +102,6 @@ export class EventUsecase {
   }: User_Interaction) {
     utilisateur.quizzProfile.increaseLevel(interaction.thematique_gamification);
 
-    await this.utilisateurRepository.updateQuizzProfile(
-      utilisateur.id,
-      utilisateur.quizzProfile,
-    );
     await this.badgeRepository.createUniqueBadge(utilisateur.id, {
       titre: `Passage quizz niveau ${utilisateur.quizzProfile
         .getLevel(interaction.thematique_gamification)
@@ -130,12 +127,9 @@ export class EventUsecase {
     return { utilisateur, interaction };
   }
 
-  private async addPoints({ utilisateur, interaction }: User_Interaction) {
+  private addPoints({ utilisateur, interaction }: User_Interaction) {
     if (!interaction.done) {
-      await this.utilisateurRepository.addPointsToUtilisateur(
-        utilisateur.id,
-        interaction.points,
-      );
+      utilisateur.points += interaction.points;
     }
   }
 }

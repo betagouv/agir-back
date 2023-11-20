@@ -380,4 +380,21 @@ describe('UtilisateurRepository', () => {
     // THEN
     expect(result).toEqual(3);
   });
+  it('updateUtilisateur : update OK without loss', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+
+    // WHEN
+
+    const user = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    await utilisateurRepository.updateUtilisateur(user);
+    const userReadBack = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+
+    // THEN
+    expect(user).toStrictEqual(userReadBack);
+  });
 });

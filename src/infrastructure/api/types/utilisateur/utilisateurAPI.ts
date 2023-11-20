@@ -32,7 +32,8 @@ export class UtilisateurAPI {
 
   @ApiProperty()
   created_at: Date;
-
+  /*
   @ApiProperty({ type: [BadgeAPI] })
   badges: BadgeAPI[];
+  */
 }

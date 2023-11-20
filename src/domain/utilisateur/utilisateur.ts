@@ -14,12 +14,11 @@ export class UtilisateurData {
   onboardingData: Onboarding;
   onboardingResult: OnboardingResult;
   code_postal: string;
-  commnune: string;
+  commune: string;
   revenu_fiscal: number;
   points: number;
   quizzProfile: UserQuizzProfile;
   created_at: Date;
-  badges: Badge[];
   passwordHash: string;
   passwordSalt: string;
   failed_login_count: number;

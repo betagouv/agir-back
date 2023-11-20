@@ -105,14 +105,16 @@ export class UtilisateurController extends GenericControler {
       prenom: utilisateur.prenom,
       email: utilisateur.email,
       code_postal: utilisateur.code_postal,
-      commune: utilisateur.commnune,
+      commune: utilisateur.commune,
       revenu_fiscal: utilisateur.revenu_fiscal,
       points: utilisateur.points,
       quizzProfile: utilisateur.quizzProfile.getData(),
       created_at: utilisateur.created_at,
+      /** FIXME
       badges: utilisateur.badges
         ? utilisateur.badges.map((badge) => BadgeAPI.mapBadgeToBadgeAPI(badge))
         : null,
+         */
     };
   }
   @ApiOkResponse({ type: UtilisateurProfileAPI })
@@ -139,7 +141,7 @@ export class UtilisateurController extends GenericControler {
       nom: utilisateur.nom,
       prenom: utilisateur.prenom,
       code_postal: utilisateur.code_postal,
-      commune: utilisateur.commnune,
+      commune: utilisateur.commune,
       revenu_fiscal: utilisateur.revenu_fiscal,
     };
   }
@@ -176,17 +178,18 @@ export class UtilisateurController extends GenericControler {
           nom: loggedUser.utilisateur.nom,
           prenom: loggedUser.utilisateur.prenom,
           code_postal: loggedUser.utilisateur.code_postal,
-          commune: loggedUser.utilisateur.commnune,
+          commune: loggedUser.utilisateur.commune,
           revenu_fiscal: loggedUser.utilisateur.revenu_fiscal,
           email: loggedUser.utilisateur.email,
           points: loggedUser.utilisateur.points,
           quizzProfile: loggedUser.utilisateur.quizzProfile.getData(),
           created_at: loggedUser.utilisateur.created_at,
+          /* FIXME
           badges: loggedUser.utilisateur.badges
             ? loggedUser.utilisateur.badges.map((badge) =>
                 BadgeAPI.mapBadgeToBadgeAPI(badge),
               )
-            : null,
+            : null,        */
         },
         token: loggedUser.token,
       };

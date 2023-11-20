@@ -4,8 +4,11 @@ import { InteractionType } from '../../../src/domain/interaction/interactionType
 import { TestUtil } from '../../TestUtil';
 import { Thematique } from '../../../src/domain/thematique';
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
+import { TodoRepository } from '../../../src/infrastructure/repository/todo.repository';
 
 describe('EVENT (API test)', () => {
+  let todoRepository = new TodoRepository(TestUtil.prisma);
+
   beforeAll(async () => {
     await TestUtil.appinit();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
@@ -109,7 +112,6 @@ describe('EVENT (API test)', () => {
         created_at: 'asc',
       },
     });
-
     expect(dbUtilisateur.quizzLevels['climat'].level).toStrictEqual(
       DifficultyLevel.L2,
     );
@@ -120,6 +122,33 @@ describe('EVENT (API test)', () => {
       'Passage quizz niveau 2 en catégorie climat !!',
     );
     expect(dbBadges[1].type).toStrictEqual('climat_1');
+  });
+
+  it('POST /utilisateurs/id/events - increase todo element progression', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { points: 10 });
+    await TestUtil.create('interaction', {
+      id: '3',
+      points: 20,
+      type: InteractionType.quizz,
+      difficulty: 1,
+      quizz_score: undefined,
+      done: false,
+      done_at: null,
+      thematique_gamification: Thematique.climat,
+    });
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.quizz_score,
+      interaction_id: '3',
+      number_value: 100,
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const todo = await todoRepository.getUtilisateurTodo('utilisateur-id');
+    expect(todo.todo[0].progression.current).toEqual(1);
   });
 
   it('POST /utilisateurs/id/events - does not add points when already done', async () => {
