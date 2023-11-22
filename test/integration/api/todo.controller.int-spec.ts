@@ -88,7 +88,7 @@ describe('TODO list (API test)', () => {
     expect(response.body.todo[0].content_id).toEqual('quizz-id-l1');
     expect(response.body.todo[0].interaction_id).toEqual('1');
   });
-  it('POST /utilisateurs/id/todo/id/earn_points encaissse les points associé à cet élément', async () => {
+  it('POST /utilisateurs/id/todo/id/gagne_points encaissse les points associé à cet élément', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       points: 11,
@@ -113,7 +113,7 @@ describe('TODO list (API test)', () => {
 
     // WHEN
     const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/todo/123/earn_points',
+      '/utilisateurs/utilisateur-id/todo/123/gagne_points',
     );
 
     // THEN
@@ -126,7 +126,7 @@ describe('TODO list (API test)', () => {
     expect(todoDB.done[0].sont_points_en_poche).toEqual(true);
     expect(dbUtilisateur.points).toEqual(21);
   });
-  it('POST /utilisateurs/id/todo/id/earn_points encaissse les points qu une seule fois ', async () => {
+  it('POST /utilisateurs/id/todo/id/gagne_points encaissse les points qu une seule fois ', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       points: 11,
@@ -151,11 +151,11 @@ describe('TODO list (API test)', () => {
 
     // WHEN
     let response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/todo/123/earn_points',
+      '/utilisateurs/utilisateur-id/todo/123/gagne_points',
     );
     expect(response.status).toBe(200);
     response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/todo/123/earn_points',
+      '/utilisateurs/utilisateur-id/todo/123/gagne_points',
     );
     expect(response.status).toBe(200);
 
@@ -165,7 +165,7 @@ describe('TODO list (API test)', () => {
     });
     expect(dbUtilisateur.points).toEqual(21);
   });
-  it('POST /utilisateurs/id/todo/id/earn_points encaissse pas les points d un truc pas fait ', async () => {
+  it('POST /utilisateurs/id/todo/id/gagne_points encaissse pas les points d un truc pas fait ', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       points: 11,
@@ -190,7 +190,7 @@ describe('TODO list (API test)', () => {
 
     // WHEN
     let response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/todo/123/earn_points',
+      '/utilisateurs/utilisateur-id/todo/123/gagne_points',
     );
     expect(response.status).toBe(200);
 

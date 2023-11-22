@@ -21,7 +21,7 @@ export class TodoUsecase {
     private interactionRepository: InteractionRepository,
   ) {}
 
-  async earnPointsFromTodoElement(utilisateurId: string, elementId: string) {
+  async gagnePointsFromTodoElement(utilisateurId: string, elementId: string) {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );

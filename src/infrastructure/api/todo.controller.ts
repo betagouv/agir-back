@@ -48,7 +48,7 @@ export class TodoController extends GenericControler {
     summary:
       "empoche les points d'un element de todo terminé pour l'utilisateur",
   })
-  @Post('utilisateurs/:utilisateurId/todo/:elementId/earn_points')
+  @Post('utilisateurs/:utilisateurId/todo/:elementId/gagne_points')
   @UseGuards(AuthGuard)
   async gagnePoints(
     @Request() req,
@@ -58,7 +58,7 @@ export class TodoController extends GenericControler {
   ) {
     this.checkCallerId(req, utilisateurId);
 
-    await this.todoUsecase.earnPointsFromTodoElement(utilisateurId, elementId);
+    await this.todoUsecase.gagnePointsFromTodoElement(utilisateurId, elementId);
 
     res.status(HttpStatus.OK).json('ok').send();
   }
