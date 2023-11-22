@@ -124,7 +124,7 @@ describe('EVENT (API test)', () => {
     expect(dbBadges[1].type).toStrictEqual('climat_1');
   });
 
-  it('POST /utilisateurs/id/events - increase todo element progression', async () => {
+  it('POST /utilisateurs/id/events - increase todo element progression and moves to done', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', { points: 10 });
     await TestUtil.create('interaction', {
@@ -148,7 +148,7 @@ describe('EVENT (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     const todo = await todoRepository.getUtilisateurTodo('utilisateur-id');
-    expect(todo.todo[0].progression.current).toEqual(1);
+    expect(todo.done[0].progression.current).toEqual(1);
   });
 
   it('POST /utilisateurs/id/events - does not add points when already done', async () => {

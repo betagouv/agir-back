@@ -3,6 +3,7 @@ import { InteractionType } from '../interaction/interactionType';
 import { Thematique } from '../thematique';
 
 export class TodoElementData {
+  id: string;
   thematiques: Thematique[];
   titre: string;
   type: InteractionType;
@@ -15,16 +16,12 @@ export class TodoElementData {
 }
 
 export class TodoElement extends TodoElementData {
-  constructor(data: TodoElementData) {
+  constructor(data: TodoElementData, parent: Todo) {
     super();
     Object.assign(this, data);
   }
   public isDone?() {
     return this.progression.current === this.progression.target;
-  }
-
-  public makeProgress?() {
-    this.progression.current++;
   }
 }
 
@@ -44,17 +41,22 @@ export class Todo extends TodoData {
     this.todo = [];
     if (data.done) {
       data.done.forEach((element) => {
-        this.done.push(new TodoElement(element));
+        this.done.push(new TodoElement(element, this));
       });
     }
     if (data.todo) {
       data.todo.forEach((element) => {
-        this.todo.push(new TodoElement(element));
+        this.todo.push(new TodoElement(element, this));
       });
     }
   }
+  public moveElementToDone?(element: TodoElement) {
+    this.done.push(element);
+    const index = this.todo.indexOf(element);
+    this.todo.splice(index, 1);
+  }
 
-  public findTodoElementLike?(
+  public findTodoElementByTypeAndThematique?(
     type: InteractionType,
     thematique: Thematique,
   ): TodoElement {
@@ -62,5 +64,15 @@ export class Todo extends TodoData {
       (element) =>
         element.type === type && element.thematiques.includes(thematique),
     );
+  }
+  public findDoneElementById?(elementId: string): TodoElement {
+    return this.done.find((element) => element.id === elementId);
+  }
+
+  public makeProgress?(element: TodoElement) {
+    element.progression.current++;
+    if (element.progression.current === element.progression.target) {
+      this.moveElementToDone(element);
+    }
   }
 }

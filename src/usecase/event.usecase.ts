@@ -66,12 +66,12 @@ export class EventUsecase {
   }
 
   private async updateUserTodo({ utilisateur, interaction }: User_Interaction) {
-    const matchingTodoElement = utilisateur.todo.findTodoElementLike(
+    const matchingTodoElement = utilisateur.todo.findTodoElementByTypeAndThematique(
       interaction.type,
       interaction.thematique_gamification,
     );
     if (matchingTodoElement && !matchingTodoElement.isDone()) {
-      matchingTodoElement.makeProgress();
+      utilisateur.todo.makeProgress(matchingTodoElement);
     }
   }
 

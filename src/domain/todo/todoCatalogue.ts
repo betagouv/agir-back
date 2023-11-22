@@ -1,7 +1,8 @@
 import { DifficultyLevel } from '../difficultyLevel';
 import { InteractionType } from '../interaction/interactionType';
 import { Thematique } from '../thematique';
-import { Todo, TodoData } from './todo';
+import { Todo } from './todo';
+import { v4 as uuidv4 } from 'uuid';
 
 export class TodoCatalogue {
   private static catalogue: Todo[] = [
@@ -11,6 +12,7 @@ export class TodoCatalogue {
       done: [],
       todo: [
         {
+          id: uuidv4(),
           titre: 'Faire un premier quizz climat - facile',
           thematiques: [Thematique.climat],
           progression: { current: 0, target: 1 },
@@ -27,6 +29,7 @@ export class TodoCatalogue {
       done: [],
       todo: [
         {
+          id: uuidv4(),
           titre: 'Faire 2 quizz climat - facile',
           thematiques: [Thematique.climat],
           progression: { current: 0, target: 2 },

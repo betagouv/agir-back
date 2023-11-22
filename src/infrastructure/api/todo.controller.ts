@@ -1,4 +1,13 @@
-import { Controller, Get, Param, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  UseGuards,
+  Request,
+  Post,
+  Res,
+  HttpStatus,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOkResponse,
@@ -9,6 +18,7 @@ import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
 import { TodoAPI } from './types/todo/todoAPI';
 import { TodoUsecase } from '../../../src/usecase/todo.usecase';
+import { Response } from 'express';
 
 @Controller()
 @ApiBearerAuth()
@@ -33,5 +43,23 @@ export class TodoController extends GenericControler {
     const result = await this.todoUsecase.getUtilisateurTodo(utilisateurId);
 
     return TodoAPI.mapTodoToTodoAPI(result);
+  }
+  @ApiOperation({
+    summary:
+      "empoche les points d'un element de todo terminé pour l'utilisateur",
+  })
+  @Post('utilisateurs/:utilisateurId/todo/:elementId/earn_points')
+  @UseGuards(AuthGuard)
+  async gagnePoints(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('elementId') elementId: string,
+    @Res() res: Response,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+
+    await this.todoUsecase.earnPointsFromTodoElement(utilisateurId, elementId);
+
+    res.status(HttpStatus.OK).json('ok').send();
   }
 }
