@@ -295,7 +295,7 @@ const utilisateurs = {
     code_postal: '91120',
     commune: 'PALAISEAU',
     revenu_fiscal: 666,
-    numero_todo: 1,
+    numero_todo: 2,
     interactions: [
       { id: 'aide_velo', score: 0.6 },
       { id: 'aide_retrofit', score: 0.1 },

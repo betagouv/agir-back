@@ -1,5 +1,6 @@
 export enum EventType {
   quizz_score = 'quizz_score',
+  article_lu = 'article_lu',
 }
 
 export class UtilisateurEvent {

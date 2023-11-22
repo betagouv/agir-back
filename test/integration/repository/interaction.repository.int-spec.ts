@@ -379,7 +379,7 @@ describe('InteractionRepository', () => {
 
     // THEN
     expect(result).toHaveLength(2);
-    expect(result.map((inter) => inter.id)).toStrictEqual(['1', '3']);
+    expect(result.map((inter) => inter.id)).toEqual(['1', '3']);
   });
   it('listMaxInteractionsByUtilisateurIdAndType : retourne une interaction par thematiques incluses', async () => {
     //GIVEN
@@ -405,7 +405,7 @@ describe('InteractionRepository', () => {
 
     // THEN
     expect(result).toHaveLength(2);
-    expect(result.map((inter) => inter.id)).toStrictEqual(['1', '2']);
+    expect(result.map((inter) => inter.id)).toEqual(['1', '2']);
   });
   it('listMaxInteractionsByUtilisateurIdAndType : retourne une interaction par difficulty', async () => {
     //GIVEN

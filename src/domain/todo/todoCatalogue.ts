@@ -49,6 +49,16 @@ export class TodoCatalogue {
           quizz_level: DifficultyLevel.L1,
           points: 10,
         },
+        {
+          id: uuidv4(),
+          titre: 'lire un premier article transport',
+          thematiques: [Thematique.transport],
+          progression: { current: 0, target: 1 },
+          sont_points_en_poche: false,
+          type: InteractionType.article,
+          quizz_level: DifficultyLevel.L1,
+          points: 10,
+        },
       ],
     },
     {

@@ -4,7 +4,10 @@ import { InteractionType } from '../../src/domain/interaction/interactionType';
 import { Todo } from '../../src/domain/todo/todo';
 import { TodoRepository } from '../../src/infrastructure/repository/todo.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
-import { Interaction } from '../../src/domain/interaction/interaction';
+import {
+  Interaction,
+  InteractionIdProjection,
+} from '../../src/domain/interaction/interaction';
 
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 
@@ -37,20 +40,24 @@ export class TodoUsecase {
     const todo = await this.todoRepository.getUtilisateurTodo(utilisateurId);
     for (let index = 0; index < todo.todo.length; index++) {
       const element = todo.todo[index];
-      if (element.type === InteractionType.quizz) {
-        const interaction =
+      let interactions: InteractionIdProjection[];
+      if (
+        element.type === InteractionType.quizz ||
+        element.type === InteractionType.article
+      ) {
+        interactions =
           await this.interactionRepository.listInteractionIdProjectionByFilter({
             utilisateurId: utilisateurId,
-            type: InteractionType.quizz,
+            type: element.type,
             thematique_gamification: element.thematiques,
             difficulty: element.quizz_level,
           });
-        if (interaction.length > 0) {
-          const randomIteraction =
-            interaction[Math.floor(Math.random() * interaction.length)];
-          element.content_id = randomIteraction.content_id;
-          element.interaction_id = randomIteraction.id;
-        }
+      }
+      if (interactions.length > 0) {
+        const randomIteraction =
+          interactions[Math.floor(Math.random() * interactions.length)];
+        element.content_id = randomIteraction.content_id;
+        element.interaction_id = randomIteraction.id;
       }
     }
     return todo;

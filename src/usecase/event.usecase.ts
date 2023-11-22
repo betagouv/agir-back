@@ -30,9 +30,30 @@ export class EventUsecase {
     switch (event.type) {
       case EventType.quizz_score:
         return await this.processQuizzScore(utilisateurId, event);
+      case EventType.article_lu:
+        return await this.processLectureArticle(utilisateurId, event);
     }
   }
 
+  private async processLectureArticle(
+    utilisateurId: string,
+    event: UtilisateurEvent,
+  ) {
+    const ctx = await this.getUserAndInteraction(
+      utilisateurId,
+      event.interaction_id,
+    );
+
+    ctx.interaction.updateStatus({
+      done: true,
+    });
+    await this.interactionRepository.updateInteraction(ctx.interaction);
+
+    this.addPoints(ctx);
+    this.updateUserTodo(ctx);
+
+    await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
+  }
   private async processQuizzScore(
     utilisateurId: string,
     event: UtilisateurEvent,
@@ -60,16 +81,17 @@ export class EventUsecase {
 
     await this.promoteUserQuizzLevel(ctx);
 
-    await this.updateUserTodo(ctx);
+    this.updateUserTodo(ctx);
 
     await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
   }
 
-  private async updateUserTodo({ utilisateur, interaction }: User_Interaction) {
-    const matchingTodoElement = utilisateur.todo.findTodoElementByTypeAndThematique(
-      interaction.type,
-      interaction.thematique_gamification,
-    );
+  private updateUserTodo({ utilisateur, interaction }: User_Interaction) {
+    const matchingTodoElement =
+      utilisateur.todo.findTodoElementByTypeAndThematique(
+        interaction.type,
+        interaction.thematique_gamification,
+      );
     if (matchingTodoElement && !matchingTodoElement.isDone()) {
       utilisateur.todo.makeProgress(matchingTodoElement);
     }
