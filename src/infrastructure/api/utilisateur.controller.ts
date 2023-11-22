@@ -31,7 +31,7 @@ import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtili
 import { LoginUtilisateurAPI } from './types/utilisateur/loginUtilisateurAPI';
 import { HttpStatus } from '@nestjs/common';
 import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
-import { ErrorService } from '../errorService';
+import { ApplicationError } from '../applicationError';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
 import { OubliMdpAPI } from './types/utilisateur/oubliMdpAPI';
@@ -162,7 +162,7 @@ export class UtilisateurController extends GenericControler {
       },
     },
   })
-  @ApiBadRequestResponse({ type: ErrorService })
+  @ApiBadRequestResponse({ type: ApplicationError })
   async loginUtilisateur(
     @Body() body: LoginUtilisateurAPI,
     @Response() res,
@@ -195,7 +195,7 @@ export class UtilisateurController extends GenericControler {
       };
       return res.status(HttpStatus.OK).json(response);
     } catch (error) {
-      throw new BadRequestException(ErrorService.toStringOrObject(error));
+      ApplicationError.throwBadRequestOrServerError(error);
     }
   }
 
@@ -217,7 +217,7 @@ export class UtilisateurController extends GenericControler {
         body,
       );
     } catch (error) {
-      throw new BadRequestException(ErrorService.toStringOrObject(error));
+      ApplicationError.throwBadRequestOrServerError(error);
     }
   }
 
@@ -230,7 +230,7 @@ export class UtilisateurController extends GenericControler {
     type: OubliMdpAPI,
   })
   @ApiOkResponse({ type: RenvoyerCodeAPI })
-  @ApiBadRequestResponse({ type: ErrorService })
+  @ApiBadRequestResponse({ type: ApplicationError })
   async oubli_mdp(
     @Body() body: OubliMdpAPI,
     @Response() res,
@@ -239,7 +239,7 @@ export class UtilisateurController extends GenericControler {
       await this.utilisateurUsecase.oubli_mot_de_passe(body.email);
       return res.status(HttpStatus.OK).json({ email: body.email });
     } catch (error) {
-      throw new BadRequestException(ErrorService.toStringOrObject(error));
+      ApplicationError.throwBadRequestOrServerError(error);
     }
   }
 
@@ -251,7 +251,7 @@ export class UtilisateurController extends GenericControler {
   @ApiBody({
     type: ModifierMdpAPI,
   })
-  @ApiBadRequestResponse({ type: ErrorService })
+  @ApiBadRequestResponse({ type: ApplicationError })
   async modifier_mdp(
     @Body() body: ModifierMdpAPI,
     @Response() res,
@@ -264,7 +264,7 @@ export class UtilisateurController extends GenericControler {
       );
       return res.status(HttpStatus.OK).json('OK');
     } catch (error) {
-      throw new BadRequestException(ErrorService.toStringOrObject(error));
+      ApplicationError.throwBadRequestOrServerError(error);
     }
   }
 }

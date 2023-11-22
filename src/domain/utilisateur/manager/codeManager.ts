@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { response } from 'express';
+import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { UtilisateurSecurityRepository } from '../../../infrastructure/repository/utilisateur/utilisateurSecurity.repository';
 import { CodeAwareUtilisateur } from './codeAwareUtilisateur';
-
-const MAUVAIS_CODE_ERROR = `Mauvais code ou adresse électronique`;
 
 @Injectable()
 export class CodeManager {
@@ -29,7 +27,7 @@ export class CodeManager {
       return okAction();
     } else {
       CodeManager.checkCodeLocked(utilisateur);
-      throw new Error(MAUVAIS_CODE_ERROR);
+      ApplicationError.throwBadCodeOrEmailError();
     }
   }
 
@@ -53,10 +51,8 @@ export class CodeManager {
       Date.now() < utilisateur.prevent_checkcode_before.getTime();
 
     if (isLocked) {
-      throw new Error(
-        `Trop d'essais successifs, attendez jusqu'à ${CodeManager.lockedUntilString(
-          utilisateur,
-        )} pour réessayer`,
+      ApplicationError.throwToManyAttemptsError(
+        CodeManager.lockedUntilString(utilisateur),
       );
     }
   }

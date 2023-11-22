@@ -1,6 +1,7 @@
 import { DifficultyLevel } from '../difficultyLevel';
 import { InteractionType } from '../interaction/interactionType';
 import { Thematique } from '../thematique';
+import { TodoCatalogue } from './todoCatalogue';
 
 export class TodoElementData {
   id: string;
@@ -49,6 +50,23 @@ export class Todo extends TodoData {
         this.todo.push(new TodoElement(element, this));
       });
     }
+  }
+
+  public isDone?(): boolean {
+    return this.todo.length === 0 && !this.hasPointsToEarn();
+  }
+
+  public hasPointsToEarn?(): boolean {
+    return (
+      this.done.findIndex(
+        (element) =>
+          element.progression.current === element.progression.target &&
+          !element.sont_points_en_poche,
+      ) >= 0
+    );
+  }
+  public getNextTodo?() {
+    return TodoCatalogue.getNewTodoOfNumero(this.numero_todo + 1);
   }
   public moveElementToDone?(element: TodoElement) {
     this.done.push(element);

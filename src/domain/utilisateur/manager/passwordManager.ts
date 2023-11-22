@@ -1,9 +1,8 @@
 var crypto = require('crypto');
 import { Injectable } from '@nestjs/common';
+import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { UtilisateurSecurityRepository } from '../../../infrastructure/repository/utilisateur/utilisateurSecurity.repository';
 import { PasswordAwareUtilisateur } from './passwordAwareUtilisateur';
-
-const MAUVAIS_MDP_ERROR = `Mauvaise adresse électronique ou mauvais mot de passe`;
 
 @Injectable()
 export class PasswordManager {
@@ -28,21 +27,19 @@ export class PasswordManager {
       return okAction();
     } else {
       PasswordManager.checkLoginLocked(utilisateur);
-      throw new Error(MAUVAIS_MDP_ERROR);
+      ApplicationError.throwBadPasswordOrEmailError();
     }
   }
 
   public static checkPasswordFormat(password: string) {
     if (!this.auMoinsUnChiffre(password)) {
-      throw new Error('Le mot de passe doit contenir au moins un chiffre');
+      ApplicationError.throwPasswordOneDigit();
     }
     if (!this.auMoinsDouzeCaracteres(password)) {
-      throw new Error('Le mot de passe doit contenir au moins 12 caractères');
+      ApplicationError.throwPassword12Char();
     }
     if (!this.auMoinsUnCaractereSpecial(password)) {
-      throw new Error(
-        'Le mot de passe doit contenir au moins un caractère spécial',
-      );
+      ApplicationError.throwPasswordCharSpe();
     }
   }
 
@@ -58,10 +55,8 @@ export class PasswordManager {
 
   private static checkLoginLocked(utilisateur: PasswordAwareUtilisateur) {
     if (PasswordManager.isLoginLocked(utilisateur)) {
-      throw new Error(
-        `Trop d'essais successifs, compte bloqué jusqu'à ${PasswordManager.lockedUntilString(
-          utilisateur,
-        )}`,
+      ApplicationError.throwTropEssaisCompteBloque(
+        PasswordManager.lockedUntilString(utilisateur),
       );
     }
   }

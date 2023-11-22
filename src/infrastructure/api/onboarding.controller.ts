@@ -21,7 +21,7 @@ import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
 import { ProspectSubmitAPI } from './types/utilisateur/onboarding/prospectSubmitAPI';
 import { ValidateCodeAPI } from './types/utilisateur/onboarding/validateCodeAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
-import { ErrorService } from '../errorService';
+import { ApplicationError } from '../applicationError';
 import { TodoAPI } from './types/todo/todoAPI';
 
 @ApiExtraModels(CreateUtilisateurAPI)
@@ -53,7 +53,7 @@ export class OnboardingController {
           email: body.email,
         });
     } catch (error) {
-      throw new BadRequestException(ErrorService.toStringOrObject(error));
+      ApplicationError.throwBadRequestOrServerError(error);
     }
   }
   @Post('utilisateurs/evaluate-onboarding')
@@ -108,7 +108,7 @@ export class OnboardingController {
       };
       return res.status(HttpStatus.OK).json(response);
     } catch (error) {
-      throw new BadRequestException(ErrorService.toStringOrObject(error));
+      ApplicationError.throwBadRequestOrServerError(error);
     }
   }
 
@@ -125,7 +125,7 @@ export class OnboardingController {
       await this.onboardingUsecase.renvoyerCode(body.email);
       return res.status(HttpStatus.OK).json('code renvoyé');
     } catch (error) {
-      throw new BadRequestException(ErrorService.toStringOrObject(error));
+      ApplicationError.throwBadRequestOrServerError(error);
     }
   }
 }

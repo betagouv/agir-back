@@ -23,7 +23,7 @@ import { AuthGuard } from '../auth/guard';
 import { GroupeAPI } from './types/groupe/groupeAPI';
 import { GroupeUseCase } from '../../../src/usecase/groupe.usecase';
 import { GroupeAbonnement } from '@prisma/client';
-import { ErrorService } from '../errorService';
+import { ApplicationError } from '../applicationError';
 import { Groupe } from 'src/domain/groupe/groupe';
 
 @Controller()
@@ -89,7 +89,7 @@ export class GroupeController extends GenericControler {
         ),
       );
     } catch (error) {
-      throw new BadRequestException(ErrorService.toStringOrObject(error));
+      ApplicationError.throwBadRequestOrServerError(error);
     }
   }
 
@@ -114,7 +114,7 @@ export class GroupeController extends GenericControler {
         ),
       );
     } catch (error) {
-      throw new BadRequestException(ErrorService.toStringOrObject(error));
+      ApplicationError.throwBadRequestOrServerError(error);
     }
   }
 
@@ -133,7 +133,7 @@ export class GroupeController extends GenericControler {
         await this.groupeUsecase.deleteOneOfMyGroupe(utilisateurId, groupeId),
       );
     } catch (error) {
-      throw new BadRequestException(ErrorService.toStringOrObject(error));
+      ApplicationError.throwBadRequestOrServerError(error);
     }
   }
 
@@ -152,7 +152,7 @@ export class GroupeController extends GenericControler {
     try {
       return await this.groupeUsecase.joinGroupe(groupeId, utilisateurId);
     } catch (error) {
-      throw new BadRequestException(ErrorService.toStringOrObject(error));
+      ApplicationError.throwBadRequestOrServerError(error);
     }
   }
 

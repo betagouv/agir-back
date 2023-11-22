@@ -7,6 +7,7 @@ import { SuiviCollection } from '../../domain/suivi/suiviCollection';
 import { SuiviTransport } from '../..//domain/suivi/suiviTransport';
 import { SuiviAlimentation } from '../../domain/suivi/suiviAlimentation';
 import { SuiviType } from '../../domain/suivi/suiviType';
+import { ApplicationError } from '../applicationError';
 
 @Injectable()
 export class SuiviRepository {
@@ -86,7 +87,7 @@ export class SuiviRepository {
           result.transports.push(transport);
           break;
         default:
-          throw new Error(`Unknown suivi type : ${suiviDB.type}`);
+          ApplicationError.throwTypeSuiviInconnuError(suiviDB.type);
       }
     }
     return result;

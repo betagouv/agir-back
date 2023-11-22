@@ -5,6 +5,7 @@ import { Onboarding } from './onboarding/onboarding';
 import { OnboardingResult } from './onboarding/onboardingResult';
 import { PasswordManager } from './manager/passwordManager';
 import { Todo } from '../todo/todo';
+import { ApplicationError } from '../../../src/infrastructure/applicationError';
 
 export class UtilisateurData {
   id: string;
@@ -58,7 +59,7 @@ export class Utilisateur extends UtilisateurData {
   public static checkEmailFormat(email: string) {
     // FIXME : move to mail manager
     if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
-      throw new Error(`Format de l'adresse électronique ${email} incorrect`);
+      ApplicationError.throwBaddEmailFormatError(email);
     }
   }
 }

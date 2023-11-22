@@ -29,7 +29,7 @@ import { AuthGuard } from '../auth/guard';
 import { ServiceDefinitionAPI } from './types/service/serviceDefinitionAPI';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
 import { AddServiceAPI } from './types/service/addServiceAPI';
-import { ErrorService } from '../errorService';
+import { ApplicationError } from '../applicationError';
 import { ServiceAPI } from './types/service/serviceAPI';
 
 @Controller()
@@ -87,7 +87,7 @@ export class ServiceController extends GenericControler {
         body.service_definition_id,
       );
     } catch (error) {
-      throw new BadRequestException(ErrorService.toStringOrObject(error));
+      ApplicationError.throwBadRequestOrServerError(error);
     }
   }
   @Get('utilisateurs/:utilisateurId/services')

@@ -5,12 +5,11 @@ import {
   ServiceDefinition as ServiceDefinitionDB,
   Service as ServiceDB,
 } from '@prisma/client';
-import {
-  ServiceDefinition,
-} from '../../domain/service/serviceDefinition';
+import { ServiceDefinition } from '../../domain/service/serviceDefinition';
 import { v4 as uuidv4 } from 'uuid';
 import { Service } from '../../domain/service/service';
 import { Thematique } from '../../../src/domain/thematique';
+import { ApplicationError } from '../applicationError';
 
 @Injectable()
 export class ServiceRepository {
@@ -44,14 +43,10 @@ export class ServiceRepository {
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2003') {
-          throw new Error(
-            `Le service d'id ${serviceDefinitionId} n'existe pas`,
-          );
+          ApplicationError.throwServiceInconnuError(serviceDefinitionId);
         }
         if (error.code === 'P2002') {
-          throw new Error(
-            `Le service d'id ${serviceDefinitionId} est dejà associé à cet utilisateur`,
-          );
+          ApplicationError.throwServiceDejaInstalleError(serviceDefinitionId);
         }
         throw error;
       }

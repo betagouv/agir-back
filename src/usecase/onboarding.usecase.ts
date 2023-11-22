@@ -21,13 +21,12 @@ import { CodeManager } from '../../src/domain/utilisateur/manager/codeManager';
 import { OidcService } from '../../src/infrastructure/auth/oidc.service';
 import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
 import { TodoCatalogue } from '../../src/domain/todo/todoCatalogue';
+import { ApplicationError } from '../../src/infrastructure/applicationError';
 
 export type Phrase = {
   phrase: string;
   pourcent: number;
 };
-
-const MAUVAIS_CODE_ERROR = `Mauvais code ou adresse électronique`;
 
 @Injectable()
 export class OnboardingUsecase {
@@ -49,10 +48,10 @@ export class OnboardingUsecase {
     const utilisateur =
       await this.utilisateurRespository.findUtilisateurByEmail(email);
     if (!utilisateur) {
-      throw new Error(MAUVAIS_CODE_ERROR);
+      ApplicationError.throwBadCodeOrEmailError();
     }
     if (utilisateur.active_account) {
-      throw new Error('Ce compte est déjà actif');
+      ApplicationError.throwCompteDejaActifError();
     }
 
     const _this = this;
@@ -198,10 +197,10 @@ export class OnboardingUsecase {
     const utilisateur =
       await this.utilisateurRespository.findUtilisateurByEmail(email);
     if (!utilisateur) {
-      throw new Error(MAUVAIS_CODE_ERROR);
+      ApplicationError.throwBadCodeOrEmailError();
     }
     if (utilisateur.active_account) {
-      throw new Error('Ce compte est déjà actif');
+      ApplicationError.throwCompteDejaActifError();
     }
     const _this = this;
     const okAction = async function () {
@@ -220,13 +219,13 @@ export class OnboardingUsecase {
     new Onboarding(utilisateurInput.onboardingData).validateData();
 
     if (!utilisateurInput.nom) {
-      throw new Error('Nom obligatoire pour créer un utilisateur');
+      ApplicationError.throwNomObligatoireError();
     }
     if (!utilisateurInput.prenom) {
-      throw new Error('Prénom obligatoire pour créer un utilisateur');
+      ApplicationError.throwPrenomObligatoireError();
     }
     if (!utilisateurInput.email) {
-      throw new Error('Email obligatoire pour créer un utilisateur');
+      ApplicationError.throwEmailObligatoireError();
     }
 
     PasswordManager.checkPasswordFormat(utilisateurInput.mot_de_passe);

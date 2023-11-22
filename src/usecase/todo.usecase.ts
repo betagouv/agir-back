@@ -10,6 +10,7 @@ import {
 } from '../../src/domain/interaction/interaction';
 
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { ApplicationError } from '../infrastructure/applicationError';
 
 export type User_Interaction = {
   utilisateur: Utilisateur;
@@ -35,22 +36,39 @@ export class TodoUsecase {
     }
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
+  async gagnerPointsFromTodo(utilisateurId: string) {
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+      utilisateurId,
+    );
+    if (utilisateur.todo.isDone()) {
+      utilisateur.points += utilisateur.todo.points_todo;
+      utilisateur.todo = utilisateur.todo.getNextTodo();
+    } else {
+      ApplicationError.throwUnfinishedTodoError();
+    }
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
 
   async getUtilisateurTodo(utilisateurId: string): Promise<Todo> {
     const todo = await this.todoRepository.getUtilisateurTodo(utilisateurId);
     for (let index = 0; index < todo.todo.length; index++) {
       const element = todo.todo[index];
       let interactions: InteractionIdProjection[];
-      if (
-        element.type === InteractionType.quizz ||
-        element.type === InteractionType.article
-      ) {
+      if (element.type === InteractionType.quizz) {
         interactions =
           await this.interactionRepository.listInteractionIdProjectionByFilter({
             utilisateurId: utilisateurId,
             type: element.type,
             thematique_gamification: element.thematiques,
             difficulty: element.level,
+          });
+      }
+      if (element.type === InteractionType.article) {
+        interactions =
+          await this.interactionRepository.listInteractionIdProjectionByFilter({
+            utilisateurId: utilisateurId,
+            type: element.type,
+            thematique_gamification: element.thematiques,
           });
       }
       if (interactions.length > 0) {

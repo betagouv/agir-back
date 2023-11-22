@@ -81,8 +81,25 @@ export class TodoCatalogue {
   ];
 
   public static getNewTodoOfNumero(numero: number): Todo {
-    return (
-      TodoCatalogue.catalogue[numero - 1] || TodoCatalogue.getNewTodoOfNumero(1)
-    );
+    const todoData = TodoCatalogue.catalogue[numero - 1];
+    return todoData
+      ? new Todo(todoData)
+      : new Todo({
+          numero_todo: numero,
+          points_todo: 0,
+          done: [
+            {
+              id: uuidv4(),
+              titre: 'Bravo, toutes les missions sont faites !!',
+              thematiques: [],
+              progression: { current: 1, target: 1 },
+              sont_points_en_poche: true,
+              type: InteractionType.onboarding,
+              level: DifficultyLevel.L1,
+              points: 0,
+            },
+          ],
+          todo: [],
+        });
   }
 }

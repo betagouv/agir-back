@@ -2,6 +2,7 @@ import { GroupeRepository } from '../infrastructure/repository/groupe.repository
 import { Groupe } from '../domain/groupe/groupe';
 import { Injectable } from '@nestjs/common';
 import { GroupeAbonnement } from '@prisma/client';
+import { ApplicationError } from '../../src/infrastructure/applicationError';
 
 @Injectable()
 export class GroupeUseCase {
@@ -42,7 +43,7 @@ export class GroupeUseCase {
       utilisateurId,
       groupeId,
     );
-    if (!isAdmin) throw new Error('User is not admin of this group');
+    if (!isAdmin) ApplicationError.throwUserGroupNotAdminError();
     return this.groupeRepository.updateGroupe(
       groupeId,
       new Groupe({ name, description }),
@@ -58,7 +59,7 @@ export class GroupeUseCase {
       utilisateurId,
       groupeId,
     );
-    if (!isAdmin) throw new Error('User is not admin of this group');
+    if (!isAdmin) ApplicationError.throwUserGroupNotAdminError();
     // delete membres
     await this.groupeRepository.removeAllUtilisateursFromGroupe(groupeId);
     // delete group

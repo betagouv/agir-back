@@ -7,6 +7,7 @@ import {
   Post,
   Res,
   HttpStatus,
+  BadRequestException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -19,6 +20,7 @@ import { AuthGuard } from '../auth/guard';
 import { TodoAPI } from './types/todo/todoAPI';
 import { TodoUsecase } from '../../../src/usecase/todo.usecase';
 import { Response } from 'express';
+import { ApplicationError } from '../applicationError';
 
 @Controller()
 @ApiBearerAuth()
@@ -58,8 +60,31 @@ export class TodoController extends GenericControler {
   ) {
     this.checkCallerId(req, utilisateurId);
 
-    await this.todoUsecase.gagnerPointsFromTodoElement(utilisateurId, elementId);
+    await this.todoUsecase.gagnerPointsFromTodoElement(
+      utilisateurId,
+      elementId,
+    );
 
+    res.status(HttpStatus.OK).json('ok').send();
+  }
+
+  @ApiOperation({
+    summary: "empoche les points d'une todo complètement terminée",
+  })
+  @Post('utilisateurs/:utilisateurId/todo/gagner_points')
+  @UseGuards(AuthGuard)
+  async gagnerPointsTodo(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Res() res: Response,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+
+    try {
+      await this.todoUsecase.gagnerPointsFromTodo(utilisateurId);
+    } catch (error) {
+      ApplicationError.throwBadRequestOrServerError(error);
+    }
     res.status(HttpStatus.OK).json('ok').send();
   }
 }

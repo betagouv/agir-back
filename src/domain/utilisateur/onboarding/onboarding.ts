@@ -1,3 +1,5 @@
+import { ApplicationError } from '../../../../src/infrastructure/applicationError';
+
 export enum Transport {
   voiture = 'voiture',
   moto = 'moto',
@@ -163,40 +165,52 @@ export class Onboarding extends OnboardingData {
     if (this.transports) {
       this.transports.forEach((value) => {
         if (!(value in Transport))
-          throw new Error(`Valeur transport [${value}] inconnue`);
+          ApplicationError.throwValeurInconnueOnboarding('transport', value);
       });
     } else {
-      throw new Error(`Valeur transport obligatoire`);
+      ApplicationError.throwDonneeObligatoireOnboarding(`transport`);
     }
     if (this.residence) {
       if (!(this.residence in Residence))
-        throw new Error(`Valeur residence [${this.residence}] inconnue`);
+        ApplicationError.throwValeurInconnueOnboarding(
+          'residence',
+          this.residence,
+        );
     } else {
-      throw new Error(`Valeur residence obligatoire`);
+      ApplicationError.throwDonneeObligatoireOnboarding(`residence`);
     }
     if (this.superficie) {
       if (!(this.superficie in Superficie))
-        throw new Error(`Valeur superficie [${this.superficie}] inconnue`);
+        ApplicationError.throwValeurInconnueOnboarding(
+          'superficie',
+          this.superficie,
+        );
     } else {
-      throw new Error(`Valeur superficie obligatoire`);
+      ApplicationError.throwDonneeObligatoireOnboarding(`superficie`);
     }
     if (this.chauffage) {
       if (!(this.chauffage in Chauffage))
-        throw new Error(`Valeur chauffage [${this.chauffage}] inconnue`);
+        ApplicationError.throwValeurInconnueOnboarding(
+          'chauffage',
+          this.chauffage,
+        );
     } else {
-      throw new Error(`Valeur chauffage obligatoire`);
+      ApplicationError.throwDonneeObligatoireOnboarding('chauffage');
     }
     if (this.repas) {
       if (!(this.repas in Repas))
-        throw new Error(`Valeur repas [${this.repas}] inconnue`);
+        ApplicationError.throwValeurInconnueOnboarding('repas', this.repas);
     } else {
-      throw new Error(`Valeur repas obligatoire`);
+      ApplicationError.throwDonneeObligatoireOnboarding('repas');
     }
     if (this.consommation) {
       if (!(this.consommation in Consommation))
-        throw new Error(`Valeur consommation [${this.consommation}] inconnue`);
+        ApplicationError.throwValeurInconnueOnboarding(
+          'consommation',
+          this.consommation,
+        );
     } else {
-      throw new Error(`Valeur consommation obligatoire`);
+      ApplicationError.throwDonneeObligatoireOnboarding('consommation');
     }
   }
 }

@@ -115,13 +115,6 @@ describe('TODO list (API test)', () => {
       difficulty: DifficultyLevel.L1,
       type: InteractionType.article,
     });
-    await TestUtil.create('interaction', {
-      id: '2',
-      content_id: 'article-id-2',
-      thematique_gamification: Thematique.climat,
-      difficulty: DifficultyLevel.L2,
-      type: InteractionType.article,
-    });
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
@@ -209,6 +202,108 @@ describe('TODO list (API test)', () => {
       where: { id: 'utilisateur-id' },
     });
     expect(dbUtilisateur.points).toEqual(21);
+  });
+  it('POST /utilisateurs/id/todo/gagner_points encaissse les points d une todo terminée , passe à la todo suivante', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      points: 11,
+      todo: {
+        numero_todo: 1,
+        points_todo: 25,
+        todo: [],
+        done: [
+          {
+            id: '123',
+            titre: 'Faire un premier quizz climat - facile',
+            thematiques: [Thematique.climat],
+            progression: { current: 1, target: 1 },
+            sont_points_en_poche: true,
+            type: InteractionType.quizz,
+            level: DifficultyLevel.L1,
+            points: 10,
+          },
+        ],
+      },
+    });
+
+    // WHEN
+    let response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/todo/gagner_points',
+    );
+    expect(response.status).toBe(200);
+    // THEN
+    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(dbUtilisateur.points).toEqual(36);
+    const todoDB = await todoRepository.getUtilisateurTodo('utilisateur-id');
+    expect(todoDB.numero_todo).toEqual(2);
+  });
+  it('POST /utilisateurs/id/todo/gagner_points 400 si todo pas faite', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      points: 11,
+      todo: {
+        numero_todo: 1,
+        points_todo: 25,
+        todo: [
+          {
+            id: '123',
+            titre: 'Faire un premier quizz climat - facile',
+            thematiques: [Thematique.climat],
+            progression: { current: 0, target: 1 },
+            sont_points_en_poche: false,
+            type: InteractionType.quizz,
+            level: DifficultyLevel.L1,
+            points: 10,
+          },
+        ],
+        done: [],
+      },
+    });
+
+    // WHEN
+    let response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/todo/gagner_points',
+    );
+    expect(response.status).toBe(400);
+    // THEN
+    expect(response.body.message).toEqual(
+      "todo pas terminée, impossible d'encaisser les points",
+    );
+  });
+  it('POST /utilisateurs/id/todo/gagner_points 400 si todo faite mais d autres points pas encaissés', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      points: 11,
+      todo: {
+        numero_todo: 1,
+        points_todo: 25,
+        todo: [,],
+        done: [
+          {
+            id: '123',
+            titre: 'Faire un premier quizz climat - facile',
+            thematiques: [Thematique.climat],
+            progression: { current: 1, target: 1 },
+            sont_points_en_poche: false,
+            type: InteractionType.quizz,
+            level: DifficultyLevel.L1,
+            points: 10,
+          },
+        ],
+      },
+    });
+
+    // WHEN
+    let response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/todo/gagner_points',
+    );
+    expect(response.status).toBe(400);
+    // THEN
+    expect(response.body.message).toEqual(
+      "todo pas terminée, impossible d'encaisser les points",
+    );
   });
   it('POST /utilisateurs/id/todo/id/gagner_points encaissse pas les points d un truc pas fait ', async () => {
     // GIVEN

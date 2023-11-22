@@ -10,7 +10,7 @@ import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repo
 import { OidcService } from '../../src/infrastructure/auth/oidc.service';
 import { Injectable } from '@nestjs/common';
 import { PasswordManager } from '../../src/domain/utilisateur/manager/passwordManager';
-import { ErrorService } from '../infrastructure/errorService';
+import { ApplicationError } from '../infrastructure/applicationError';
 import { EmailSender } from '../infrastructure/email/emailSender';
 import { CodeManager } from '../../src/domain/utilisateur/manager/codeManager';
 import { SecurityEmailManager } from '../../src/domain/utilisateur/manager/securityEmailManager';
@@ -21,8 +21,6 @@ export type Phrase = {
   phrase: string;
   pourcent: number;
 };
-
-const MAUVAIS_MDP_ERROR = `Mauvaise adresse électronique ou mauvais mot de passe`;
 
 @Injectable()
 export class UtilisateurUsecase {
@@ -48,10 +46,10 @@ export class UtilisateurUsecase {
     const utilisateur =
       await this.utilisateurRespository.findUtilisateurByEmail(email);
     if (!utilisateur) {
-      throw new Error(MAUVAIS_MDP_ERROR);
+      ApplicationError.throwBadPasswordOrEmailError();
     }
     if (!utilisateur.active_account) {
-      ErrorService.throwInactiveAccountError();
+      ApplicationError.throwInactiveAccountError();
     }
 
     const _this = this;

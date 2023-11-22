@@ -13,6 +13,7 @@ import {
 import { OnboardingResult } from '../../../domain/utilisateur/onboarding/onboardingResult';
 import { Badge } from '../../../../src/domain/badge/badge';
 import { Todo } from '../../../../src/domain/todo/todo';
+import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -145,9 +146,7 @@ export class UtilisateurRepository {
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
-          throw new BadRequestException(
-            `Adresse électronique ${utilisateur.email} déjà existante`,
-          );
+          ApplicationError.throwEmailAlreadyExistError(utilisateur.email);
         }
       }
     }

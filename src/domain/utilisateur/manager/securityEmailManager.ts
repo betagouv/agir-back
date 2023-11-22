@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { UtilisateurSecurityRepository } from '../../../infrastructure/repository/utilisateur/utilisateurSecurity.repository';
 import { SecurityEmailAwareUtilisateur } from './securityEmailAwareUtilisateur';
 
@@ -36,10 +37,8 @@ export class SecurityEmailManager {
 
   private static checkEmailLocked(utilisateur: SecurityEmailAwareUtilisateur) {
     if (SecurityEmailManager.isEmailLocked(utilisateur)) {
-      throw new Error(
-        `Trop d'essais successifs, attendez jusqu'à ${SecurityEmailManager.lockedUntilString(
-          utilisateur,
-        )} avant de redemander un code`,
+      ApplicationError.throwTropEssaisCode(
+        SecurityEmailManager.lockedUntilString(utilisateur),
       );
     }
   }

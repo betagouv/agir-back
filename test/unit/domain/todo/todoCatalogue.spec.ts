@@ -9,21 +9,15 @@ describe('TodoCatalogue', () => {
     // THEN
     expect(result.numero_todo).toEqual(1);
   });
-  it('getNewTodoOfNumero : return 1st element if out of bound numbers', () => {
+  it('getNewTodoOfNumero : retourn todo vide finale quand todo pas identifié', () => {
     // GIVEN
     // WHEN
     const result = TodoCatalogue.getNewTodoOfNumero(34567);
 
     // THEN
-    expect(result.numero_todo).toEqual(1);
-  });
-  it('getNewTodoOfNumero : return 1st element number = zero', () => {
-    // GIVEN
-    // WHEN
-    const result = TodoCatalogue.getNewTodoOfNumero(0);
-
-    // THEN
-    expect(result.numero_todo).toEqual(1);
+    expect(result.done[0].titre).toEqual(
+      'Bravo, toutes les missions sont faites !!',
+    );
   });
   it('getNewTodoOfNumero : return 2nd element ', () => {
     // GIVEN
