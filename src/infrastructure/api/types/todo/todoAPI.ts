@@ -15,7 +15,7 @@ export class TodoElementAPI {
   @ApiProperty() id: string;
   @ApiProperty() titre: string;
   @ApiProperty({ enum: InteractionType }) type: InteractionType;
-  @ApiProperty({ enum: DifficultyLevel }) quizz_level: DifficultyLevel;
+  @ApiProperty({ enum: DifficultyLevel }) level: DifficultyLevel;
   @ApiProperty() content_id?: string;
   @ApiProperty() interaction_id?: string;
   @ApiProperty() points: number;

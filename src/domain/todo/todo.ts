@@ -7,8 +7,7 @@ export class TodoElementData {
   thematiques: Thematique[];
   titre: string;
   type: InteractionType;
-  // FIXME RENAME => level
-  quizz_level: DifficultyLevel;
+  level: DifficultyLevel;
   content_id?: string;
   interaction_id?: string;
   points: number;
