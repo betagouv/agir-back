@@ -102,7 +102,6 @@ export class OnboardingController {
           points: loggedUser.utilisateur.points,
           quizzProfile: loggedUser.utilisateur.quizzProfile.getData(),
           created_at: loggedUser.utilisateur.created_at,
-          // FIXME badges: [],
         },
         token: loggedUser.token,
       };

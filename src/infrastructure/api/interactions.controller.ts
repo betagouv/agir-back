@@ -44,10 +44,6 @@ export class IntractionsController extends GenericControler {
     return list.map((inter) => {
       const new_inter = new InteractionAPI();
       Object.assign(new_inter, inter);
-      // FIXME : to remove
-      new_inter['categorie'] = inter.thematique_gamification;
-      // FIXME : to remove
-      new_inter['reco_score'] = 666;
       return new_inter;
     });
   }

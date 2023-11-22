@@ -54,8 +54,6 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       TestUtil.interactionData({
         created_at: dbInteraction.created_at.toISOString(),
         updated_at: dbInteraction.updated_at.toISOString(),
-        reco_score: 666,
-        categorie: 'consommation',
       }),
     );
   });
@@ -260,88 +258,6 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     expect(dbInteraction.seen).toStrictEqual(0);
     expect(dbUtilisateur.points).toStrictEqual(5);
   });
-  // FIXME : REMOVE from here
-  it('PATCH /utilisateurs/id/interactions/id - win badge when first quizz score present', async () => {
-    // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('interaction', { type: InteractionType.quizz });
-    // WHEN
-    const response = await TestUtil.PATCH(
-      '/utilisateurs/utilisateur-id/interactions/interaction-id',
-    ).send({
-      quizz_score: 55,
-    });
-    // THEN
-    expect(response.status).toBe(200);
-    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-      include: {
-        badges: true,
-      },
-    });
-    expect(dbUtilisateur['badges']).toHaveLength(1);
-    expect(dbUtilisateur['badges'][0].type).toEqual(
-      BadgeTypes.premier_quizz.type,
-    );
-  });
-  // FIXME : REMOVE from here
-  it('PATCH /utilisateurs/id/interactions/id - increase thematique level when success condition', async () => {
-    // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('interaction', {
-      id: '1',
-      type: InteractionType.quizz,
-      difficulty: 1,
-      quizz_score: 85,
-      done: true,
-      done_at: new Date(1),
-      thematique_gamification: Thematique.climat,
-    });
-    await TestUtil.create('interaction', {
-      id: '2',
-      type: InteractionType.quizz,
-      difficulty: 1,
-      quizz_score: 90,
-      done: true,
-      done_at: new Date(100),
-      thematique_gamification: Thematique.climat,
-    });
-    await TestUtil.create('interaction', {
-      id: '3',
-      type: InteractionType.quizz,
-      difficulty: 1,
-      quizz_score: 75,
-      done: false,
-      done_at: null,
-      thematique_gamification: Thematique.climat,
-    });
-    // WHEN
-    const response = await TestUtil.PATCH(
-      '/utilisateurs/utilisateur-id/interactions/3',
-    ).send({
-      quizz_score: 79,
-    });
-    // THEN
-    expect(response.status).toBe(200);
-    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
-    const dbBadges = await TestUtil.prisma.badge.findMany({
-      orderBy: {
-        created_at: 'asc',
-      },
-    });
-
-    expect(dbUtilisateur.quizzLevels['climat'].level).toStrictEqual(
-      DifficultyLevel.L2,
-    );
-    expect(dbBadges.length).toEqual(2);
-    expect(dbBadges[0].titre).toStrictEqual('1er quizz réussi !');
-    expect(dbBadges[1].titre).toStrictEqual(
-      'Passage quizz niveau 2 en catégorie climat !!',
-    );
-    expect(dbBadges[1].type).toStrictEqual('climat_1');
-  });
   it('PATCH /utilisateurs/id/interactions/id - does not change level when not reached', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
@@ -388,26 +304,6 @@ describe('/utilisateurs/id/interactions (API test)', () => {
       DifficultyLevel.L1,
     );
     expect(dbBadges.length).toEqual(1);
-  });
-  // FIXME : REMOVE from here
-  it('PATCH /utilisateurs/id/interactions/id - does not add points when already done', async () => {
-    // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('interaction', {
-      done: true,
-    });
-    // WHEN
-    const response = await TestUtil.PATCH(
-      '/utilisateurs/utilisateur-id/interactions/interaction-id',
-    ).send({
-      done: true,
-    });
-    // THEN
-    expect(response.status).toBe(200);
-    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
-    expect(dbUtilisateur.points).toStrictEqual(0);
   });
   it('PATCH /utilisateurs/id/interactions/id - set a scheduled_reset date when moving to done and day_period specified', async () => {
     // GIVEN

@@ -133,33 +133,9 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       dechet: { level: 1, isCompleted: false },
       loisir: { level: 1, isCompleted: false },
     });
-    //FIXME expect(response.body.badges[0].titre).toEqual('titre');
     expect(response.body.created_at).toEqual(dbUser.created_at.toISOString());
     expect(response.body.failed_login_count).toEqual(undefined);
     expect(response.body.prevent_login_before).toEqual(undefined);
-  });
-  it('GET /utilisateurs/id - list 1 badge', async () => {
-    // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('badge');
-    // WHEN
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id');
-    // THEN
-    expect(response.status).toBe(200);
-    //FIXME expect(response.body.badges).toHaveLength(1);
-    //FIXME expect(response.body.badges[0].titre).toEqual('titre');
-    //FIXME expect(response.body.badges[0].created_at).toBeDefined();
-  });
-  it('GET /utilisateurs/id - list 2 badge', async () => {
-    // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('badge');
-    await TestUtil.create('badge', { id: '2', type: 'type2', titre: 'titre2' });
-    // WHEN
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id');
-    // THEN
-    expect(response.status).toBe(200);
-    // FIXME expect(response.body.badges).toHaveLength(2);
   });
 
   it('GET /utilisateurs - list all 2', async () => {
@@ -207,7 +183,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.utilisateur.commune).toEqual('Palaiseau');
     expect(response.body.utilisateur.revenu_fiscal).toEqual(10000);
     expect(response.body.utilisateur.points).toEqual(0);
-    //FIXME expect(response.body.utilisateur.badges[0].titre).toEqual('titre');
     expect(response.body.utilisateur.quizzProfile).toEqual({
       alimentation: { level: 1, isCompleted: false },
       transport: { level: 1, isCompleted: false },

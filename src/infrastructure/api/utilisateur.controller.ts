@@ -110,11 +110,6 @@ export class UtilisateurController extends GenericControler {
       points: utilisateur.points,
       quizzProfile: utilisateur.quizzProfile.getData(),
       created_at: utilisateur.created_at,
-      /** FIXME
-      badges: utilisateur.badges
-        ? utilisateur.badges.map((badge) => BadgeAPI.mapBadgeToBadgeAPI(badge))
-        : null,
-         */
     };
   }
   @ApiOkResponse({ type: UtilisateurProfileAPI })

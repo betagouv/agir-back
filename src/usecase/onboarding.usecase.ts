@@ -165,7 +165,6 @@ export class OnboardingUsecase {
       onboardingData: onboardingData,
       onboardingResult: new OnboardingResult(onboardingData),
       quizzProfile: UserQuizzProfile.newLowProfile(),
-      // FIXME badges: undefined,
       revenu_fiscal: null,
       passwordHash: null,
       passwordSalt: null,
