@@ -60,7 +60,7 @@ export class GroupeRepository {
     groupeId: string,
   ): Promise<boolean> {
     const result = await this.prisma.groupeAbonnement.findUnique({
-      select: { admin: true },
+      select: { utilisateurId: true },
       where: {
         groupeId_utilisateurId: {
           groupeId,
@@ -70,7 +70,7 @@ export class GroupeRepository {
       },
     });
 
-    return result?.admin || false;
+    return result != null;
   }
 
   async getAdminsByGroupeId(groupeId: string): Promise<Groupe[]> {
@@ -113,16 +113,8 @@ export class GroupeRepository {
     // FIXME : remove 'connect', pas utile
     const result = await this.prisma.groupeAbonnement.create({
       data: {
-        groupe: {
-          connect: {
-            id: groupeId,
-          },
-        },
-        utilisateur: {
-          connect: {
-            id: utilisateurId,
-          },
-        },
+        groupeId: groupeId,
+        utilisateurId: utilisateurId,
         admin: admin,
       },
     });

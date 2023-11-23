@@ -57,7 +57,6 @@ export class Utilisateur extends UtilisateurData {
   }
 
   public static checkEmailFormat(email: string) {
-    // FIXME : move to mail manager
     if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
       ApplicationError.throwBaddEmailFormatError(email);
     }

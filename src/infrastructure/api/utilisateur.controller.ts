@@ -179,12 +179,6 @@ export class UtilisateurController extends GenericControler {
           points: loggedUser.utilisateur.points,
           quizzProfile: loggedUser.utilisateur.quizzProfile.getData(),
           created_at: loggedUser.utilisateur.created_at,
-          /* FIXME
-          badges: loggedUser.utilisateur.badges
-            ? loggedUser.utilisateur.badges.map((badge) =>
-                BadgeAPI.mapBadgeToBadgeAPI(badge),
-              )
-            : null,        */
         },
         token: loggedUser.token,
       };

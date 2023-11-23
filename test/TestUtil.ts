@@ -343,4 +343,12 @@ export class TestUtil {
       ...override,
     };
   }
+  static groupeAbonnementData(override?) {
+    return {
+      groupeId: 'groupe-id',
+      utilisateurId: 'utilisateur-id',
+      admin: true,
+      ...override,
+    };
+  }
 }
