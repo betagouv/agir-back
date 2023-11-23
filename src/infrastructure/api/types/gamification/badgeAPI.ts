@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Badge } from '../../../../src/domain/badge/badge';
+import { Badge } from '../../../../domain/badge/badge';
 
 export class BadgeAPI {
   @ApiProperty() titre: string;

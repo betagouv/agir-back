@@ -60,6 +60,8 @@ import { WinterController } from './infrastructure/api/incoming/winter.controlle
 import { FruitsEtLegumesServiceManager } from './infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { EventUsecase } from './usecase/event.usecase';
 import { EventController } from './infrastructure/api/event.controller';
+import { GamificationUsecase } from './usecase/gamification.usecase';
+import { GamificationController } from './infrastructure/api/gamification.controller';
 
 const SESSION_LIFETIME = '12h';
 
@@ -89,6 +91,7 @@ const SESSION_LIFETIME = '12h';
     GroupeController,
     WinterController,
     EventController,
+    GamificationController,
   ],
   providers: [
     PrismaService,
@@ -130,6 +133,7 @@ const SESSION_LIFETIME = '12h';
     EcoWattServiceManager,
     FruitsEtLegumesServiceManager,
     EventUsecase,
+    GamificationUsecase,
   ],
 })
 export class AppModule {}

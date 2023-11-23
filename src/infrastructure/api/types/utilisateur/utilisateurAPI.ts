@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BadgeAPI } from '../badgeAPI';
+import { BadgeAPI } from '../gamification/badgeAPI';
 import { QuizzProfileAPI } from '../quizz/quizzProfileAPI';
 
 export class UtilisateurAPI {

@@ -3,7 +3,6 @@ import { InteractionPlacement } from '../../../src/domain/interaction/interactio
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { DistributionSettings } from '../../../src/domain/interaction/distributionSettings';
 import { TestUtil } from '../../TestUtil';
-import { BadgeTypes } from '../../../src/domain/badge/badgeTypes';
 import { Thematique } from '../../../src/domain/thematique';
 import { Decimal } from '@prisma/client/runtime/library';
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';

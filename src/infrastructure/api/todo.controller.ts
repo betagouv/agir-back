@@ -7,7 +7,6 @@ import {
   Post,
   Res,
   HttpStatus,
-  BadRequestException,
 } from '@nestjs/common';
 import {
   ApiTags,
