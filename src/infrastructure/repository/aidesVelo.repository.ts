@@ -24,18 +24,17 @@ export class AidesVeloRepository {
   }
 }
 
-function summaryVelo(
+async function summaryVelo(
   codePostal: string,
   revenuFiscalDeReference: string,
-): AidesVeloParType {
-  const lieu = getLocalisationByCP(codePostal);
-
+): Promise<AidesVeloParType> {
+  const lieu = await getLocalisationByCP(codePostal);
   const rules = rulesVelo as Record<string, any>;
   const engine = new Publicodes(rules);
   const situationBase: InputParameters = {
-    'localisation . epci': `${lieu.epci}`,
-    'localisation . région': `${lieu.region}`,
-    'localisation . code insee': `${lieu.code}`,
+    'localisation . epci': `${lieu?.epci}`,
+    'localisation . région': `${lieu?.region}`,
+    'localisation . code insee': `${lieu?.code}`,
     'revenu fiscal de référence': parseInt(revenuFiscalDeReference),
   };
   return getAidesVeloTousTypes(situationBase, engine);
@@ -67,6 +66,7 @@ function getAidesVeloParType(
   situation: InputParameters = {},
 ): AidesVelo {
   engine.setSituation(formatInput(situation));
+
   //maximiser les aides
   const aides = Object.entries(aidesAndCollectivities)
     .filter(
@@ -117,21 +117,29 @@ function getAidesVeloParType(
   return aides;
 }
 
-const formatInput = (input: InputParameters) =>
-  Object.fromEntries(
-    Object.entries(input).map(([key, val]) => [
-      key,
-      typeof val === 'boolean'
-        ? val
-          ? 'oui'
-          : 'non'
-        : key === 'localisation . epci'
-        ? `'${epciSirenToName[val]}'`
-        : typeof val === 'string'
-        ? `'${val}'`
-        : val,
-    ]),
-  );
+const formatInput = (input: InputParameters) => {
+  const entries = Object.entries(input);
+
+  const transformedEntries = entries.map(([key, val]) => {
+    let transformedVal;
+
+    if (typeof val === 'boolean') {
+      transformedVal = val ? 'oui' : 'non';
+    } else if (key === 'localisation . epci') {
+      transformedVal = `'${epciSirenToName[val] || val}'`;
+    } else if (typeof val === 'string') {
+      transformedVal = `'${val}'`;
+    } else {
+      transformedVal = val;
+    }
+
+    return [key, transformedVal];
+  });
+
+  const transformedInput = Object.fromEntries(transformedEntries);
+
+  return transformedInput;
+};
 
 const epciSirenToName = Object.fromEntries(
   Object.values(aidesAndCollectivities).flatMap(({ collectivity }) => {
@@ -142,7 +150,7 @@ const epciSirenToName = Object.fromEntries(
   }),
 );
 
-function getLocalisationByCP(cp: string): Localisation {
+async function getLocalisationByCP(cp: string): Promise<Localisation> {
   const lieux = localisations as Localisation[];
   const lieu = lieux.find((lieu) => lieu.codesPostaux.includes(cp));
   return lieu;
