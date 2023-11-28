@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Stats } from '../../../../../src/domain/stats';
+import { Gamification } from '../../../../domain/gamification';
 import { CelebrationType } from './celebration';
 
 export class CelebrationAPI {
@@ -14,7 +14,7 @@ export class StatsAPI {
   @ApiProperty() point_target_in_niveau: number;
   @ApiProperty({ type: [CelebrationAPI] }) celebrations: CelebrationAPI[];
 
-  public static mapToStatsAPI(stats: Stats): StatsAPI {
+  public static mapToStatsAPI(stats: Gamification): StatsAPI {
     return {
       points: stats.points,
       niveau: stats.niveau,

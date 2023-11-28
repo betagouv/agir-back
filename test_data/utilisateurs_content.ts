@@ -1,4 +1,4 @@
-import { Thematique } from '../src/domain/thematique';
+import { CelebrationType } from '../src/infrastructure/api/types/gamification/celebration';
 import {
   Impact,
   Thematique as ThemaOnbo,
@@ -296,6 +296,19 @@ const utilisateurs = {
     commune: 'PALAISEAU',
     revenu_fiscal: 666,
     numero_todo: 1,
+    gamification: {
+      points: 0,
+      niveau: 1,
+      current_points_in_niveau: 0,
+      point_target_in_niveau: 5,
+      celebrations: [
+        {
+          id: 1,
+          type: CelebrationType.niveau,
+          new_niveau: 2,
+        },
+      ],
+    },
     interactions: [
       { id: 'aide_velo', score: 0.6 },
       { id: 'aide_retrofit', score: 0.1 },

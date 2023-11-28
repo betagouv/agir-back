@@ -22,6 +22,7 @@ import { OidcService } from '../../src/infrastructure/auth/oidc.service';
 import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
 import { TodoCatalogue } from '../../src/domain/todo/todoCatalogue';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
+import { Gamification } from '../../src/domain/gamification';
 
 export type Phrase = {
   phrase: string;
@@ -177,6 +178,7 @@ export class OnboardingUsecase {
       sent_email_count: 1,
       prevent_sendemail_before: new Date(),
       todo: TodoCatalogue.getNewTodoOfNumero(1),
+      gamification: Gamification.newDefaultGamification(),
     });
 
     utilisateurToCreate.setNew6DigitCode();

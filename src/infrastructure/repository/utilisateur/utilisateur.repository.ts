@@ -11,9 +11,9 @@ import {
   Thematique,
 } from '../../../domain/utilisateur/onboarding/onboarding';
 import { OnboardingResult } from '../../../domain/utilisateur/onboarding/onboardingResult';
-import { Badge } from '../../../../src/domain/badge/badge';
 import { Todo } from '../../../../src/domain/todo/todo';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
+import { Gamification } from '../../../../src/domain/gamification';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -89,6 +89,7 @@ export class UtilisateurRepository {
       onboardingResult: utilisateur.onboardingResult as any,
       todo: utilisateur.todo as any,
       quizzLevels: utilisateur.quizzProfile.getData() as any,
+      gamification: utilisateur.gamification as any,
     };
     delete dataToUpdate.quizzProfile;
     return this.prisma.utilisateur.update({
@@ -140,6 +141,7 @@ export class UtilisateurRepository {
           onboardingResult: { ...utilisateur.onboardingResult },
           quizzLevels: utilisateur.quizzProfile.getData(),
           todo: utilisateur.todo as any,
+          gamification: utilisateur.gamification as any,
         },
       });
       return this.buildUtilisateurFromDB(user);
@@ -262,18 +264,7 @@ export class UtilisateurRepository {
         quizzProfile: new UserQuizzProfile(user.quizzLevels as any),
         created_at: user.created_at,
         todo: new Todo(user.todo as any),
-        /*
-        badges: user['badges']
-          ? user['badges'].map(
-              (badge) =>
-                new Badge({
-                  titre: badge.titre,
-                  type: badge.type,
-                  created_at: badge.created_at,
-                }),
-            )
-          : [],
-          */
+        gamification: new Gamification(user.gamification as any),
       });
     }
     return null;
