@@ -45,7 +45,7 @@ export type InputParameters = Partial<{
   'localisation . région': string;
   'localisation . ZFE': boolean;
   'vélo . type': TypeVelos;
-  'vélo . prix': string;
+  'vélo . prix': number;
   'revenu fiscal de référence': number;
   'maximiser les aides'?: 'oui' | 'non';
 }>;

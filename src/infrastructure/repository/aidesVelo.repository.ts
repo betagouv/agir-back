@@ -18,15 +18,17 @@ import {
 export class AidesVeloRepository {
   async getSummaryVelos(
     codePostal: string,
-    revenuFiscalDeReference: string,
+    revenuParPart: number,
+    prixVelo: number,
   ): Promise<AidesVeloParType> {
-    return summaryVelo(codePostal, revenuFiscalDeReference);
+    return summaryVelo(codePostal, revenuParPart, prixVelo);
   }
 }
 
 async function summaryVelo(
   codePostal: string,
-  revenuFiscalDeReference: string,
+  revenuParPart: number,
+  prixVelo: number,
 ): Promise<AidesVeloParType> {
   const lieu = await getLocalisationByCP(codePostal);
   const rules = rulesVelo as Record<string, any>;
@@ -35,7 +37,8 @@ async function summaryVelo(
     'localisation . epci': `${lieu?.epci}`,
     'localisation . région': `${lieu?.region}`,
     'localisation . code insee': `${lieu?.code}`,
-    'revenu fiscal de référence': parseInt(revenuFiscalDeReference),
+    'revenu fiscal de référence': revenuParPart, // revenu fiscal de référence par part
+    'vélo . prix': prixVelo,
   };
   return getAidesVeloTousTypes(situationBase, engine);
 }

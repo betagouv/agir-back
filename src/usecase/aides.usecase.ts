@@ -24,11 +24,13 @@ export class AidesUsecase {
 
   async getSummaryVelos(
     codePostal: string,
-    revenuFiscalDeReference: string,
+    revenuParPart: number,
+    prixVelo: number,
   ): Promise<AidesVeloParType> {
     return this.aidesVeloRepository.getSummaryVelos(
       codePostal,
-      revenuFiscalDeReference,
+      revenuParPart,
+      prixVelo,
     );
   }
 }

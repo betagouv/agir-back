@@ -15,3 +15,17 @@ export class AideAPI {
   @ApiProperty() description?: string;
   @ApiProperty() logo?: string;
 }
+
+export class prixVeloDTO {
+  @ApiProperty({ default: 10000, required: false })
+  prixVelo: number;
+}
+export class nbPartsDTO {
+  @ApiProperty({ default: 1, required: false })
+  nbParts: number;
+}
+
+export class revenuFiscalDeReferenceDTO {
+  @ApiProperty({ default: 1, required: false })
+  revenuFiscalDeReference: number;
+}
