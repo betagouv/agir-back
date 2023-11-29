@@ -90,21 +90,10 @@ export class OnboardingController {
         body.email,
         body.code,
       );
-      const response: LoggedUtilisateurAPI = {
-        utilisateur: {
-          id: loggedUser.utilisateur.id,
-          nom: loggedUser.utilisateur.nom,
-          prenom: loggedUser.utilisateur.prenom,
-          code_postal: loggedUser.utilisateur.code_postal,
-          commune: loggedUser.utilisateur.commune,
-          revenu_fiscal: loggedUser.utilisateur.revenu_fiscal,
-          email: loggedUser.utilisateur.email,
-          points: loggedUser.utilisateur.points,
-          quizzProfile: loggedUser.utilisateur.quizzProfile.getData(),
-          created_at: loggedUser.utilisateur.created_at,
-        },
-        token: loggedUser.token,
-      };
+      const response = LoggedUtilisateurAPI.mapToAPI(
+        loggedUser.token,
+        loggedUser.utilisateur,
+      );
       return res.status(HttpStatus.OK).json(response);
     } catch (error) {
       ApplicationError.throwBadRequestOrServerError(error);

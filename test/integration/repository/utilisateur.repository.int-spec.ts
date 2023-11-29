@@ -397,4 +397,15 @@ describe('UtilisateurRepository', () => {
     // THEN
     expect(user).toStrictEqual(userReadBack);
   });
+  it('creation et lecture d un utilisateur avec une part à null ', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { parts: null });
+
+    // WHEN
+    const userDB = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    // THEN
+    expect(userDB.parts).toEqual(null);
+  });
 });

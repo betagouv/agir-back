@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BadgeAPI } from '../gamification/badgeAPI';
+import { Utilisateur } from 'src/domain/utilisateur/utilisateur';
 import { QuizzProfileAPI } from '../quizz/quizzProfileAPI';
 
 export class UtilisateurAPI {
@@ -22,6 +22,9 @@ export class UtilisateurAPI {
   revenu_fiscal: number;
 
   @ApiProperty()
+  nombre_de_parts_fiscales: number;
+
+  @ApiProperty()
   email?: string;
 
   @ApiProperty()
@@ -32,8 +35,20 @@ export class UtilisateurAPI {
 
   @ApiProperty()
   created_at: Date;
-  /*
-  @ApiProperty({ type: [BadgeAPI] })
-  badges: BadgeAPI[];
-  */
+
+  public static mapToAPI(user: Utilisateur): UtilisateurAPI {
+    return {
+      id: user.id,
+      nom: user.nom,
+      prenom: user.prenom,
+      email: user.email,
+      code_postal: user.code_postal,
+      commune: user.commune,
+      revenu_fiscal: user.revenu_fiscal,
+      nombre_de_parts_fiscales: user.parts,
+      points: user.points,
+      quizzProfile: user.quizzProfile.getData(),
+      created_at: user.created_at,
+    };
+  }
 }

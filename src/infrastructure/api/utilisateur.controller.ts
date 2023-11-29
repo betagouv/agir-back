@@ -37,7 +37,6 @@ import { AuthGuard } from '../auth/guard';
 import { OubliMdpAPI } from './types/utilisateur/oubliMdpAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { ModifierMdpAPI } from './types/utilisateur/modifierMdpAPI';
-import { BadgeAPI } from './types/gamification/badgeAPI';
 
 @ApiExtraModels(CreateUtilisateurAPI, UtilisateurAPI)
 @Controller()
@@ -99,18 +98,7 @@ export class UtilisateurController extends GenericControler {
       throw new NotFoundException(`Pas d'utilisateur d'id ${utilisateurId}`);
     }
 
-    return {
-      id: utilisateur.id,
-      nom: utilisateur.nom,
-      prenom: utilisateur.prenom,
-      email: utilisateur.email,
-      code_postal: utilisateur.code_postal,
-      commune: utilisateur.commune,
-      revenu_fiscal: utilisateur.revenu_fiscal,
-      points: utilisateur.points,
-      quizzProfile: utilisateur.quizzProfile.getData(),
-      created_at: utilisateur.created_at,
-    };
+    return UtilisateurAPI.mapToAPI(utilisateur);
   }
   @ApiOkResponse({ type: UtilisateurProfileAPI })
   @Get('utilisateurs/:utilisateurId/profile')
@@ -131,14 +119,7 @@ export class UtilisateurController extends GenericControler {
     if (utilisateur == null) {
       throw new NotFoundException(`Pas d'utilisateur d'id ${utilisateurId}`);
     }
-    return {
-      email: utilisateur.email,
-      nom: utilisateur.nom,
-      prenom: utilisateur.prenom,
-      code_postal: utilisateur.code_postal,
-      commune: utilisateur.commune,
-      revenu_fiscal: utilisateur.revenu_fiscal,
-    };
+    return UtilisateurProfileAPI.mapToAPI(utilisateur);
   }
   @Post('utilisateurs/login')
   @ApiOperation({
@@ -167,21 +148,10 @@ export class UtilisateurController extends GenericControler {
         body.email,
         body.mot_de_passe,
       );
-      const response: LoggedUtilisateurAPI = {
-        utilisateur: {
-          id: loggedUser.utilisateur.id,
-          nom: loggedUser.utilisateur.nom,
-          prenom: loggedUser.utilisateur.prenom,
-          code_postal: loggedUser.utilisateur.code_postal,
-          commune: loggedUser.utilisateur.commune,
-          revenu_fiscal: loggedUser.utilisateur.revenu_fiscal,
-          email: loggedUser.utilisateur.email,
-          points: loggedUser.utilisateur.points,
-          quizzProfile: loggedUser.utilisateur.quizzProfile.getData(),
-          created_at: loggedUser.utilisateur.created_at,
-        },
-        token: loggedUser.token,
-      };
+      const response = LoggedUtilisateurAPI.mapToAPI(
+        loggedUser.token,
+        loggedUser.utilisateur,
+      );
       return res.status(HttpStatus.OK).json(response);
     } catch (error) {
       ApplicationError.throwBadRequestOrServerError(error);

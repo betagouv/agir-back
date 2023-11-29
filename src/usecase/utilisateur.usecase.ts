@@ -96,6 +96,7 @@ export class UtilisateurUsecase {
     profileToUpdate.code_postal = profile.code_postal;
     profileToUpdate.commune = profile.commune;
     profileToUpdate.revenu_fiscal = profile.revenu_fiscal;
+    profileToUpdate.parts = profile.nombre_de_parts_fiscales;
     profileToUpdate.email = profile.email;
     profileToUpdate.nom = profile.nom;
     profileToUpdate.prenom = profile.prenom;

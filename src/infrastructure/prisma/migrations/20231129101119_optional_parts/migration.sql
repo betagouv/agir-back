@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Utilisateur" ALTER COLUMN "parts" DROP NOT NULL,
+ALTER COLUMN "parts" DROP DEFAULT;

@@ -18,6 +18,7 @@ export class UtilisateurData {
   code_postal: string;
   commune: string;
   revenu_fiscal: number;
+  parts: number;
   points: number;
   quizzProfile: UserQuizzProfile;
   created_at: Date;

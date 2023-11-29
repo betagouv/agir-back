@@ -64,6 +64,7 @@ model Utilisateur {
   sent_email_count         Int                @default(0)
   prevent_sendemail_before DateTime           @default(now())
   services                 Service[]
+  parts                    Decimal?           @db.Decimal(4, 2)
 }
 
 model Interaction {

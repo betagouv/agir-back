@@ -167,6 +167,7 @@ export class OnboardingUsecase {
       onboardingResult: new OnboardingResult(onboardingData),
       quizzProfile: UserQuizzProfile.newLowProfile(),
       revenu_fiscal: null,
+      parts: null,
       passwordHash: null,
       passwordSalt: null,
       active_account: false,

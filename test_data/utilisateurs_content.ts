@@ -295,6 +295,7 @@ const utilisateurs = {
     code_postal: '91120',
     commune: 'PALAISEAU',
     revenu_fiscal: 666,
+    parts: 7.5,
     numero_todo: 1,
     gamification: {
       points: 0,

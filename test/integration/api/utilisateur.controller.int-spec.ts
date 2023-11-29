@@ -377,11 +377,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   it('GET /utilisateurs/id/profile - read basic profile datas', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/profile');
     // WHEN
-    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/profile');
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.nom).toEqual('nom');
@@ -390,6 +387,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.code_postal).toEqual('91120');
     expect(response.body.commune).toEqual('Palaiseau');
     expect(response.body.revenu_fiscal).toEqual(10000);
+    expect(response.body.nombre_de_parts_fiscales).toEqual(2);
   });
   it('PATCH /utilisateurs/id/profile - update basic profile datas without password', async () => {
     // GIVEN
@@ -404,6 +402,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       code_postal: '75008',
       commune: 'Versailles',
       revenu_fiscal: 12345,
+      nombre_de_parts_fiscales: 3,
     });
     // THEN
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
@@ -426,6 +425,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       commune: 'Versailles',
       mot_de_passe: '123456789012#',
       revenu_fiscal: 12345,
+      nombre_de_parts_fiscales: 3,
     });
     // THEN
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
@@ -441,6 +441,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.code_postal).toEqual('75008');
     expect(dbUser.commune).toEqual('Versailles');
     expect(dbUser.revenu_fiscal).toEqual(12345);
+    expect(dbUser.parts.toNumber()).toEqual(3);
     expect(dbUser.passwordHash).toEqual(
       crypto
         .pbkdf2Sync('123456789012#', dbUser.passwordSalt, 1000, 64, `sha512`)
@@ -531,6 +532,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       onboardingResult: null,
       todo: null,
       gamification: null,
+      parts: 0,
     });
     expect(userDB.failed_checkcode_count).toEqual(0);
     expect(userDB.passwordHash).toEqual(
