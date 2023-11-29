@@ -13,6 +13,10 @@ export class Gamification extends GamificationData {
     Object.assign(this, data);
   }
 
+  public ajoutePoints?(new_points: number) {
+    this.points += new_points;
+  }
+
   public static newDefaultGamification(): Gamification {
     return new Gamification({
       points: 0,
