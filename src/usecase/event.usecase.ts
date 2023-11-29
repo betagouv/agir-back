@@ -80,9 +80,9 @@ export class EventUsecase {
 
     if (event.number_value === 100 && !already_done) {
       this.addPointsToUser(ctx);
+      this.updateUserTodo(ctx);
     }
-    await this.promoteUserQuizzLevel(ctx);
-    this.updateUserTodo(ctx);
+    await this.promoteUserQuizzLevelIfNeeded(ctx);
     await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
   }
 
@@ -97,7 +97,7 @@ export class EventUsecase {
     }
   }
 
-  private async promoteUserQuizzLevel({
+  private async promoteUserQuizzLevelIfNeeded({
     utilisateur,
     interaction,
   }: User_Interaction) {

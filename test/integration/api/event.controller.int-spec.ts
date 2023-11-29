@@ -173,6 +173,28 @@ describe('EVENT (API test)', () => {
     });
     expect(dbUtilisateur.gamification['points']).toStrictEqual(10);
   });
+  it('POST /utilisateurs/id/events - does not add points when not 100% quizz', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      done: false,
+    });
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.quizz_score,
+      interaction_id: 'interaction-id',
+      number_value: 79,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(dbUtilisateur.gamification['points']).toStrictEqual(10);
+  });
   it('POST /utilisateurs/id/events - ajoute points pour article lu', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
