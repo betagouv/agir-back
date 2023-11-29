@@ -43,16 +43,18 @@ export class EventUsecase {
       utilisateurId,
       event.interaction_id,
     );
+    const already_done = ctx.interaction.done;
+
+    if (!already_done) {
+      this.addPointsToUser(ctx);
+    }
+    this.updateUserTodo(ctx);
+    await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
 
     ctx.interaction.updateStatus({
       done: true,
     });
     await this.interactionRepository.updateInteraction(ctx.interaction);
-
-    this.addPoints(ctx);
-    this.updateUserTodo(ctx);
-
-    await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
   }
   private async processQuizzScore(
     utilisateurId: string,
@@ -63,26 +65,24 @@ export class EventUsecase {
       event.interaction_id,
     );
 
+    const already_done = ctx.interaction.done;
+
     await this.badgeRepository.createUniqueBadge(
       utilisateurId,
       BadgeTypes.premier_quizz,
     );
 
-    if (event.number_value === 100) {
-      this.addPoints(ctx);
-    }
-
     ctx.interaction.updateStatus({
       done: true,
       quizz_score: event.number_value,
     });
-
     await this.interactionRepository.updateInteraction(ctx.interaction);
 
+    if (event.number_value === 100 && !already_done) {
+      this.addPointsToUser(ctx);
+    }
     await this.promoteUserQuizzLevel(ctx);
-
     this.updateUserTodo(ctx);
-
     await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
   }
 
@@ -149,9 +149,7 @@ export class EventUsecase {
     return { utilisateur, interaction };
   }
 
-  private addPoints({ utilisateur, interaction }: User_Interaction) {
-    if (!interaction.done) {
-      utilisateur.gamification.ajoutePoints(interaction.points);
-    }
+  private addPointsToUser({ utilisateur, interaction }: User_Interaction) {
+    utilisateur.gamification.ajoutePoints(interaction.points);
   }
 }
