@@ -12,7 +12,7 @@ export class TodoCatalogue {
       done: [
         {
           id: uuidv4(),
-          titre: `Faire l'onboarding !`,
+          titre: `Faire le bilan simplifié de vos impacts`,
           thematiques: [],
           progression: { current: 1, target: 1 },
           sont_points_en_poche: false,
