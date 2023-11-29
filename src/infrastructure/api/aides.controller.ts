@@ -6,8 +6,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AidesUsecase } from '../../usecase/aides.usecase';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { AideAPI } from './types/aide/AideAPI';
+import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  AideAPI,
+  nbPartsDTO,
+  prixVeloDTO,
+  revenuFiscalDeReferenceDTO,
+} from './types/aide/AideAPI';
 import { AidesVeloParTypeAPI } from './types/aide/AidesVeloParTypeAPI';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
@@ -39,14 +44,23 @@ export class AidesController extends GenericControler {
 
   @ApiOkResponse({ type: AidesVeloParTypeAPI })
   @Get('aides/velos')
+  @ApiQuery({ name: 'prixVelo', type: prixVeloDTO })
+  @ApiQuery({ name: 'nbParts', type: nbPartsDTO })
+  @ApiQuery({
+    name: 'revenuFiscalDeReference',
+    type: revenuFiscalDeReferenceDTO,
+  })
   @UseGuards(AuthGuard)
   async getAllVelos(
     @Query('codePostal') codePostal: string,
-    @Query('revenuFiscalDeReference') revenuFiscalDeReference: string,
+    @Query('prixVelo') prixVelo: 10000,
+    @Query('nbParts') nbParts: 1,
+    @Query('revenuFiscalDeReference') revenuFiscalDeReference: 1,
   ): Promise<AidesVeloParTypeAPI> {
     const aides = await this.aidesUsecase.getSummaryVelos(
       codePostal,
-      revenuFiscalDeReference,
+      revenuFiscalDeReference / nbParts,
+      prixVelo,
     );
     // FIXME : retourner liste vide ?
     if (!aides) {
