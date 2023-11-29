@@ -94,7 +94,6 @@ const utilisateurs = {
   michel0: {
     nom: 'Michel0',
     prenom: 'Mimi0',
-    points: 0,
     mot_de_passe: 'incroyable',
     interactions: [
       { cms_id: 13, cms_type: 'quizz', score: 0.5 },
@@ -117,7 +116,6 @@ const utilisateurs = {
   michel6: {
     nom: 'Michel6',
     prenom: 'Mimi6',
-    points: 36,
     mot_de_passe: 'incroyable',
     interactions: [
       { id: 'suivi_du_jour', score: 0.5 },
@@ -159,7 +157,6 @@ const utilisateurs = {
   michel666: {
     nom: 'michel666',
     prenom: 'Mimi666',
-    points: 36,
     mot_de_passe: 'incroyable',
     interactions: [
       { cms_id: 1, cms_type: 'quizz', score: 0.5 },
@@ -200,7 +197,6 @@ const utilisateurs = {
   benoit: {
     nom: 'Benoit',
     prenom: 'B',
-    points: 0,
     mot_de_passe: 'incroyable',
     interactions: [
       { id: 'suivi_du_jour', score: 0.9 },
@@ -229,7 +225,6 @@ const utilisateurs = {
   dorian: {
     nom: 'Dorian_test',
     prenom: 'D',
-    points: 0,
     mot_de_passe: 'incroyable',
     interactions: [
       { id: 'suivi_du_jour', score: 0.5 },
@@ -258,7 +253,6 @@ const utilisateurs = {
   livio: {
     nom: 'Livio_test',
     prenom: 'L',
-    points: 36,
     mot_de_passe: 'incroyable',
     interactions: [
       { id: 'aide_velo', score: 0.6 },
@@ -289,7 +283,6 @@ const utilisateurs = {
   wojtek: {
     nom: 'WOJCIK',
     prenom: 'Wojtek',
-    points: 10,
     email: 'ww@w.com',
     mot_de_passe: 'haha',
     code_postal: '91120',
@@ -298,7 +291,7 @@ const utilisateurs = {
     parts: 7.5,
     numero_todo: 1,
     gamification: {
-      points: 0,
+      points: 12,
       niveau: 1,
       current_points_in_niveau: 0,
       point_target_in_niveau: 5,
@@ -345,7 +338,6 @@ const utilisateurs = {
   quizzman: {
     nom: 'quizzman',
     prenom: 'man',
-    points: 10,
     mot_de_passe: 'incroyable',
     interactions: [
       { id: 'suivi_du_jour', score: 0.5 },

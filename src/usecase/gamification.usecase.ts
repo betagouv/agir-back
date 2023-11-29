@@ -12,10 +12,11 @@ export class GamificationUsecase {
       utilisateurId,
     );
     return {
-      points: utilisateur.points,
-      niveau: 1,
-      current_points_in_niveau: 5,
-      point_target_in_niveau: 7,
+      points: utilisateur.gamification.points,
+      niveau: utilisateur.gamification.niveau,
+      current_points_in_niveau:
+        utilisateur.gamification.current_points_in_niveau,
+      point_target_in_niveau: utilisateur.gamification.point_target_in_niveau,
       celebrations: utilisateur.gamification.celebrations,
     };
   }

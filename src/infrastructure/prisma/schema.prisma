@@ -41,7 +41,6 @@ model Utilisateur {
   code_postal              String?
   commune                  String?
   revenu_fiscal            Int?
-  points                   Int                @default(0)
   quizzLevels              Json               @default("{}")
   onboardingData           Json               @default("{}")
   onboardingResult         Json               @default("{}")

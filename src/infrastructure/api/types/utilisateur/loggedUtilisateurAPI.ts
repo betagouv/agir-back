@@ -23,7 +23,6 @@ export class LoggedUtilisateurAPI {
         revenu_fiscal: user.revenu_fiscal,
         nombre_de_parts_fiscales: user.parts,
         email: user.email,
-        points: user.points,
         quizzProfile: user.quizzProfile.getData(),
         created_at: user.created_at,
       },

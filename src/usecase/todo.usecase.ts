@@ -32,7 +32,7 @@ export class TodoUsecase {
     const element = utilisateur.todo.findDoneElementById(elementId);
     if (element && !element.sont_points_en_poche) {
       element.sont_points_en_poche = true;
-      utilisateur.points += element.points;
+      utilisateur.gamification.ajoutePoints(element.points);
     }
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -41,7 +41,7 @@ export class TodoUsecase {
       utilisateurId,
     );
     if (utilisateur.todo.isDone()) {
-      utilisateur.points += utilisateur.todo.points_todo;
+      utilisateur.gamification.ajoutePoints(utilisateur.todo.points_todo);
       utilisateur.todo = utilisateur.todo.getNextTodo();
     } else {
       ApplicationError.throwUnfinishedTodoError();

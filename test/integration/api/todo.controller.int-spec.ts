@@ -129,7 +129,6 @@ describe('TODO list (API test)', () => {
   it('POST /utilisateurs/id/todo/id/gagner_points encaissse les points associé à cet élément', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
-      points: 11,
       todo: {
         numero_todo: 1,
         points_todo: 25,
@@ -162,12 +161,11 @@ describe('TODO list (API test)', () => {
     });
 
     expect(todoDB.done[0].sont_points_en_poche).toEqual(true);
-    expect(dbUtilisateur.points).toEqual(21);
+    expect(dbUtilisateur.gamification['points']).toEqual(20);
   });
   it('POST /utilisateurs/id/todo/id/gagner_points encaissse les points qu une seule fois ', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
-      points: 11,
       todo: {
         numero_todo: 1,
         points_todo: 25,
@@ -201,12 +199,11 @@ describe('TODO list (API test)', () => {
     const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
     });
-    expect(dbUtilisateur.points).toEqual(21);
+    expect(dbUtilisateur.gamification['points']).toEqual(20);
   });
   it('POST /utilisateurs/id/todo/gagner_points encaissse les points d une todo terminée , passe à la todo suivante', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
-      points: 11,
       todo: {
         numero_todo: 1,
         points_todo: 25,
@@ -235,14 +232,13 @@ describe('TODO list (API test)', () => {
     const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
     });
-    expect(dbUtilisateur.points).toEqual(36);
+    expect(dbUtilisateur.gamification['points']).toEqual(35);
     const todoDB = await todoRepository.getUtilisateurTodo('utilisateur-id');
     expect(todoDB.numero_todo).toEqual(2);
   });
   it('POST /utilisateurs/id/todo/gagner_points 400 si todo pas faite', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
-      points: 11,
       todo: {
         numero_todo: 1,
         points_todo: 25,
@@ -275,7 +271,6 @@ describe('TODO list (API test)', () => {
   it('POST /utilisateurs/id/todo/gagner_points 400 si todo faite mais d autres points pas encaissés', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
-      points: 11,
       todo: {
         numero_todo: 1,
         points_todo: 25,
@@ -308,7 +303,6 @@ describe('TODO list (API test)', () => {
   it('POST /utilisateurs/id/todo/id/gagner_points encaissse pas les points d un truc pas fait ', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
-      points: 11,
       todo: {
         numero_todo: 1,
         points_todo: 25,
@@ -338,6 +332,6 @@ describe('TODO list (API test)', () => {
     const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
     });
-    expect(dbUtilisateur.points).toEqual(11);
+    expect(dbUtilisateur.gamification['points']).toEqual(10);
   });
 });

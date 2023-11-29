@@ -28,9 +28,6 @@ export class UtilisateurAPI {
   email?: string;
 
   @ApiProperty()
-  points: number;
-
-  @ApiProperty()
   quizzProfile: QuizzProfileAPI;
 
   @ApiProperty()
@@ -46,7 +43,6 @@ export class UtilisateurAPI {
       commune: user.commune,
       revenu_fiscal: user.revenu_fiscal,
       nombre_de_parts_fiscales: user.parts,
-      points: user.points,
       quizzProfile: user.quizzProfile.getData(),
       created_at: user.created_at,
     };

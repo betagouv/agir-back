@@ -156,7 +156,6 @@ export class OnboardingUsecase {
 
     const utilisateurToCreate = new Utilisateur({
       id: undefined,
-      points: 0,
       code_postal: onboardingData.code_postal,
       commune: onboardingData.commune,
       created_at: undefined,

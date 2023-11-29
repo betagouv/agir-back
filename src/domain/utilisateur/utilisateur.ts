@@ -1,4 +1,3 @@
-import { Badge } from '../badge/badge';
 import { UserQuizzProfile } from '../quizz/userQuizzProfile';
 import { CodeManager } from './manager/codeManager';
 import { Onboarding } from './onboarding/onboarding';
@@ -19,7 +18,6 @@ export class UtilisateurData {
   commune: string;
   revenu_fiscal: number;
   parts: number;
-  points: number;
   quizzProfile: UserQuizzProfile;
   created_at: Date;
   passwordHash: string;

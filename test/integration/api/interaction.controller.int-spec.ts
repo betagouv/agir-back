@@ -255,7 +255,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     expect(dbInteraction.done).toStrictEqual(true);
     expect(dbInteraction.clicked).toStrictEqual(false);
     expect(dbInteraction.seen).toStrictEqual(0);
-    expect(dbUtilisateur.points).toStrictEqual(5);
+    expect(dbUtilisateur.gamification['points']).toStrictEqual(15);
   });
   it('PATCH /utilisateurs/id/interactions/id - does not change level when not reached', async () => {
     // GIVEN

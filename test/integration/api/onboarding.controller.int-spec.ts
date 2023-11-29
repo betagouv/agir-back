@@ -210,7 +210,6 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(response.body.utilisateur.prenom).toEqual('Wojtek');
     expect(response.body.utilisateur.code_postal).toEqual('91120');
     expect(response.body.utilisateur.commune).toEqual('Palaiseau');
-    expect(response.body.utilisateur.points).toEqual(0);
     expect(response.body.utilisateur.quizzProfile).toEqual({
       alimentation: { level: 1, isCompleted: false },
       transport: { level: 1, isCompleted: false },

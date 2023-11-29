@@ -157,18 +157,6 @@ export class UtilisateurRepository {
     }
   }
 
-  async addPointsToUtilisateur(utilisateurId: string, points: number) {
-    await this.prisma.utilisateur.update({
-      where: {
-        id: utilisateurId,
-      },
-      data: {
-        points: {
-          increment: points,
-        },
-      },
-    });
-  }
   async updateQuizzProfile(
     utilisateurId: string,
     quizzProfile: UserQuizzProfile,
@@ -256,7 +244,6 @@ export class UtilisateurRepository {
         passwordSalt: user.passwordSalt,
         onboardingData: onboardingData,
         onboardingResult: onboardingResult,
-        points: user.points,
         failed_login_count: user.failed_login_count,
         prevent_login_before: user.prevent_login_before,
         code: user.code,

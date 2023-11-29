@@ -65,7 +65,7 @@ describe('EVENT (API test)', () => {
 
   it('POST /utilisateurs/id/events - increase thematique level when 100% success condition and win badge and add points', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { points: 10 });
+    await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
       id: '1',
       type: InteractionType.quizz,
@@ -115,7 +115,7 @@ describe('EVENT (API test)', () => {
     expect(dbUtilisateur.quizzLevels['climat'].level).toStrictEqual(
       DifficultyLevel.L2,
     );
-    expect(dbUtilisateur.points).toEqual(30);
+    expect(dbUtilisateur.gamification['points']).toEqual(30);
     expect(dbBadges.length).toEqual(2);
     expect(dbBadges[0].titre).toStrictEqual('1er quizz réussi !');
     expect(dbBadges[1].titre).toStrictEqual(
@@ -126,7 +126,7 @@ describe('EVENT (API test)', () => {
 
   it('POST /utilisateurs/id/events - increase todo element progression and moves to done', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { points: 10 });
+    await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
       id: '3',
       points: 20,
@@ -171,6 +171,6 @@ describe('EVENT (API test)', () => {
     const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
     });
-    expect(dbUtilisateur.points).toStrictEqual(0);
+    expect(dbUtilisateur.gamification['points']).toStrictEqual(10);
   });
 });

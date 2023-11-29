@@ -78,28 +78,24 @@ export class InteractionsUsecase {
 
     // pinned insert
     const pinned_interactions =
-      await this.interactionRepository.listInteractionsByFilter(
-        {
-          utilisateurId,
-          maxNumber: 7,
-          pinned: true,
-          locked: false,
-          code_postal: utilisateur.code_postal,
-        },
-      );
+      await this.interactionRepository.listInteractionsByFilter({
+        utilisateurId,
+        maxNumber: 7,
+        pinned: true,
+        locked: false,
+        code_postal: utilisateur.code_postal,
+      });
     DistributionSettings.insertPinnedInteractions(pinned_interactions, result);
 
     // locked insert at fixed positions
     const locked_interactions =
-      await this.interactionRepository.listInteractionsByFilter(
-        {
-          utilisateurId,
-          maxNumber: DistributionSettings.TARGET_LOCKED_INTERACTION_NUMBER,
-          locked: true,
-          pinned: false,
-          code_postal: utilisateur.code_postal,
-        },
-      );
+      await this.interactionRepository.listInteractionsByFilter({
+        utilisateurId,
+        maxNumber: DistributionSettings.TARGET_LOCKED_INTERACTION_NUMBER,
+        locked: true,
+        pinned: false,
+        code_postal: utilisateur.code_postal,
+      });
     result = DistributionSettings.insertLockedInteractions(
       locked_interactions,
       result,
@@ -121,10 +117,9 @@ export class InteractionsUsecase {
     );
 
     if (status.done && !stored_interaction.done) {
-      await this.utilisateurRepository.addPointsToUtilisateur(
-        utilisateurId,
-        stored_interaction.points,
-      );
+      // FIXME : doit disparaître au profit des events
+      utilisateur.gamification.ajoutePoints(stored_interaction.points);
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
       stored_interaction.setNextScheduledReset();
     }
 
@@ -185,30 +180,26 @@ export class InteractionsUsecase {
     utilisateurId: string,
     code_postal: string,
   ): Promise<Interaction[]> {
-    return this.interactionRepository.listInteractionsByFilter(
-      {
-        utilisateurId,
-        maxNumber: DistributionSettings.getPreferedOfType(
-          InteractionType.article,
-        ),
-        type: InteractionType.article,
-        pinned: false,
-        code_postal,
-      },
-    );
+    return this.interactionRepository.listInteractionsByFilter({
+      utilisateurId,
+      maxNumber: DistributionSettings.getPreferedOfType(
+        InteractionType.article,
+      ),
+      type: InteractionType.article,
+      pinned: false,
+      code_postal,
+    });
   }
 
   async getSuivisForUtilisateur(utilisateurId: string): Promise<Interaction[]> {
-    return this.interactionRepository.listInteractionsByFilter(
-      {
-        utilisateurId,
-        maxNumber: DistributionSettings.getPreferedOfType(
-          InteractionType.suivi_du_jour,
-        ),
-        type: InteractionType.suivi_du_jour,
-        pinned: false,
-      },
-    );
+    return this.interactionRepository.listInteractionsByFilter({
+      utilisateurId,
+      maxNumber: DistributionSettings.getPreferedOfType(
+        InteractionType.suivi_du_jour,
+      ),
+      type: InteractionType.suivi_du_jour,
+      pinned: false,
+    });
   }
 
   async getQuizzForUtilisateur(
@@ -216,32 +207,26 @@ export class InteractionsUsecase {
     quizzProfile: UserQuizzProfile,
     code_postal: string,
   ): Promise<Interaction[]> {
-    return this.interactionRepository.listInteractionsByFilter(
-      {
-        utilisateurId,
-        maxNumber: DistributionSettings.getPreferedOfType(
-          InteractionType.quizz,
-        ),
-        type: InteractionType.quizz,
-        pinned: false,
-        quizzProfile: quizzProfile,
-        code_postal,
-      },
-    );
+    return this.interactionRepository.listInteractionsByFilter({
+      utilisateurId,
+      maxNumber: DistributionSettings.getPreferedOfType(InteractionType.quizz),
+      type: InteractionType.quizz,
+      pinned: false,
+      quizzProfile: quizzProfile,
+      code_postal,
+    });
   }
 
   async getAidesForUtilisateur(
     utilisateurId: string,
     code_postal: string,
   ): Promise<Interaction[]> {
-    return this.interactionRepository.listInteractionsByFilter(
-      {
-        utilisateurId,
-        maxNumber: DistributionSettings.getPreferedOfType(InteractionType.aide),
-        type: InteractionType.aide,
-        pinned: false,
-        code_postal,
-      },
-    );
+    return this.interactionRepository.listInteractionsByFilter({
+      utilisateurId,
+      maxNumber: DistributionSettings.getPreferedOfType(InteractionType.aide),
+      type: InteractionType.aide,
+      pinned: false,
+      code_postal,
+    });
   }
 }

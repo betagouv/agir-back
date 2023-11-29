@@ -151,7 +151,7 @@ export class EventUsecase {
 
   private addPoints({ utilisateur, interaction }: User_Interaction) {
     if (!interaction.done) {
-      utilisateur.points += interaction.points;
+      utilisateur.gamification.ajoutePoints(interaction.points);
     }
   }
 }
