@@ -42,7 +42,7 @@ export class GamificationController extends GenericControler {
   ): Promise<StatsAPI> {
     this.checkCallerId(req, utilisateurId);
 
-    const result = await this.gamificationUsecase.getStats(utilisateurId);
+    const result = await this.gamificationUsecase.getGamificationData(utilisateurId);
 
     return StatsAPI.mapToStatsAPI(result);
   }

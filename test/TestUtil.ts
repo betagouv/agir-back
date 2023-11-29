@@ -200,9 +200,6 @@ export class TestUtil {
       todo: TodoCatalogue.getNewTodoOfNumero(1),
       gamification: {
         points: 10,
-        niveau: 1,
-        current_points_in_niveau: 5,
-        point_target_in_niveau: 7,
         celebrations: [{ id: 'celebration-id', type: 'niveau', new_niveau: 2 }],
       },
       onboardingData: {

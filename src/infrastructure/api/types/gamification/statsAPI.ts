@@ -14,13 +14,13 @@ export class StatsAPI {
   @ApiProperty() point_target_in_niveau: number;
   @ApiProperty({ type: [CelebrationAPI] }) celebrations: CelebrationAPI[];
 
-  public static mapToStatsAPI(stats: Gamification): StatsAPI {
+  public static mapToStatsAPI(gamif: Gamification): StatsAPI {
     return {
-      points: stats.points,
-      niveau: stats.niveau,
-      current_points_in_niveau: stats.current_points_in_niveau,
-      point_target_in_niveau: stats.point_target_in_niveau,
-      celebrations: stats.celebrations,
+      points: gamif.points,
+      niveau: gamif.getNiveau(),
+      current_points_in_niveau: gamif.getCurrent_points_in_niveau(),
+      point_target_in_niveau: gamif.getPoint_target_in_niveau(),
+      celebrations: gamif.celebrations,
     };
   }
 }

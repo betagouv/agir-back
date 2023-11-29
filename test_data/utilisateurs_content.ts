@@ -291,10 +291,7 @@ const utilisateurs = {
     parts: 7.5,
     numero_todo: 1,
     gamification: {
-      points: 12,
-      niveau: 1,
-      current_points_in_niveau: 0,
-      point_target_in_niveau: 5,
+      points: 0,
       celebrations: [
         {
           id: 1,
