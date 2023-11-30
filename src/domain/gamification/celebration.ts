@@ -5,5 +5,5 @@ export enum CelebrationType {
 export class Celebration {
   id: string;
   type: CelebrationType;
-  new_niveau: number;
+  new_niveau?: number;
 }

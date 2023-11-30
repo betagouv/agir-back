@@ -1,3 +1,4 @@
+import { CelebrationType } from '../../../../src/domain/gamification/celebration';
 import { Gamification } from '../../../../src/domain/gamification/gamification';
 
 describe('Gamification', () => {
@@ -188,5 +189,27 @@ describe('Gamification', () => {
 
     // THEN
     expect(points).toEqual(9999999);
+  });
+  it('terminerCelebration : supprime correctement la bonne occurence', () => {
+    // GIVEN
+    const gamification = new Gamification(
+      {
+        points: 20,
+        celebrations: [
+          { id: '1', type: CelebrationType.niveau },
+          { id: '2', type: CelebrationType.niveau },
+          { id: '3', type: CelebrationType.niveau },
+        ],
+      },
+      [5, 15],
+    );
+
+    // WHEN
+    gamification.terminerCelebration('2');
+
+    // THEN
+    expect(gamification.celebrations).toHaveLength(2);
+    expect(gamification.celebrations[0].id).toEqual('1');
+    expect(gamification.celebrations[1].id).toEqual('3');
   });
 });

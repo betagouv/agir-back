@@ -5,7 +5,7 @@ import { CelebrationType } from '../../../../domain/gamification/celebration';
 export class CelebrationAPI {
   @ApiProperty() id: string;
   @ApiProperty({ enum: CelebrationType }) type: CelebrationType;
-  @ApiProperty() new_niveau: number;
+  @ApiProperty({ required: false }) new_niveau?: number;
 }
 export class StatsAPI {
   @ApiProperty() points: number;

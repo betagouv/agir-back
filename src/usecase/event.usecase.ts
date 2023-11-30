@@ -32,9 +32,22 @@ export class EventUsecase {
         return await this.processQuizzScore(utilisateurId, event);
       case EventType.article_lu:
         return await this.processLectureArticle(utilisateurId, event);
+      case EventType.celebration:
+        return await this.processCelebration(utilisateurId, event);
     }
   }
 
+  private async processCelebration(
+    utilisateurId: string,
+    event: UtilisateurEvent,
+  ) {
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+      utilisateurId,
+    );
+    console.log(utilisateur);
+    utilisateur.gamification.terminerCelebration(event.celebration_id);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
   private async processLectureArticle(
     utilisateurId: string,
     event: UtilisateurEvent,

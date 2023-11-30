@@ -19,6 +19,12 @@ export class Gamification extends GamificationData {
     }
   }
 
+  public terminerCelebration(id: string) {
+    console.log(this.celebrations);
+    const index = this.celebrations.findIndex((element) => element.id === id);
+    this.celebrations.splice(index, 1);
+  }
+
   public ajoutePoints?(new_points: number) {
     const current_nivau = this.getNiveau();
     this.points += new_points;
