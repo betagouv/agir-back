@@ -5,7 +5,7 @@ import { OnboardingResult } from './onboarding/onboardingResult';
 import { PasswordManager } from './manager/passwordManager';
 import { Todo } from '../todo/todo';
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
-import { Gamification } from '../gamification';
+import { Gamification } from '../gamification/gamification';
 
 export class UtilisateurData {
   id: string;

@@ -1,4 +1,4 @@
-import { CelebrationType } from '../src/infrastructure/api/types/gamification/celebration';
+import { CelebrationType } from '../src/domain/gamification/celebration';
 import {
   Impact,
   Thematique as ThemaOnbo,
@@ -292,13 +292,6 @@ const utilisateurs = {
     numero_todo: 1,
     gamification: {
       points: 0,
-      celebrations: [
-        {
-          id: 1,
-          type: CelebrationType.niveau,
-          new_niveau: 2,
-        },
-      ],
     },
     interactions: [
       { id: 'aide_velo', score: 0.6 },

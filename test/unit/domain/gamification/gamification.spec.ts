@@ -1,4 +1,4 @@
-import { Gamification } from '../../../../src/domain/gamification';
+import { Gamification } from '../../../../src/domain/gamification/gamification';
 
 describe('Gamification', () => {
   it('ajoutePoints : ajoute bien les points ', () => {

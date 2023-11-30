@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Gamification } from '../../../../domain/gamification';
-import { CelebrationType } from './celebration';
+import { Gamification } from '../../../../domain/gamification/gamification';
+import { CelebrationType } from '../../../../domain/gamification/celebration';
 
 export class CelebrationAPI {
   @ApiProperty() id: string;

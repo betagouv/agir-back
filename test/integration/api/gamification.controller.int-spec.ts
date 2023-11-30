@@ -1,3 +1,6 @@
+import { CelebrationType } from '../../../src/domain/gamification/celebration';
+import { InteractionType } from '../../../src/domain/interaction/interactionType';
+import { EventType } from '../../../src/domain/utilisateur/utilisateurEvent';
 import { TestUtil } from '../../TestUtil';
 
 describe('Gamification  (API test)', () => {
@@ -59,5 +62,37 @@ describe('Gamification  (API test)', () => {
       type: 'niveau',
       new_niveau: 2,
     });
+  });
+  it('Le passage d un niveau ajoute une célebration ', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      gamification: {
+        points: 10,
+        celebrations: [],
+      },
+    });
+    await TestUtil.create('interaction', {
+      done: false,
+      type: InteractionType.article,
+      points: 15,
+    });
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.article_lu,
+      interaction_id: 'interaction-id',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(dbUtilisateur.gamification['celebrations']).toHaveLength(1);
+    expect(dbUtilisateur.gamification['celebrations'][0].type).toEqual(
+      CelebrationType.niveau,
+    );
+    expect(dbUtilisateur.gamification['celebrations'][0].new_niveau).toEqual(3);
   });
 });

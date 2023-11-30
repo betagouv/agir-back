@@ -13,7 +13,7 @@ import {
 import { OnboardingResult } from '../../../domain/utilisateur/onboarding/onboardingResult';
 import { Todo } from '../../../../src/domain/todo/todo';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
-import { Gamification } from '../../../../src/domain/gamification';
+import { Gamification } from '../../../domain/gamification/gamification';
 
 @Injectable()
 export class UtilisateurRepository {

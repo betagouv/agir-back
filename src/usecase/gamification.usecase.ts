@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { Gamification } from '../domain/gamification';
+import { Gamification } from '../domain/gamification/gamification';
 
 @Injectable()
 export class GamificationUsecase {

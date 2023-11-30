@@ -1,4 +1,5 @@
-import { Celebration } from '../infrastructure/api/types/gamification/celebration';
+import { Celebration, CelebrationType } from './celebration';
+import { v4 as uuidv4 } from 'uuid';
 
 let SEUILS_NIVEAUX: number[] = [5, 20, 40, 70];
 
@@ -13,10 +14,23 @@ export class Gamification extends GamificationData {
     if (seuils) {
       SEUILS_NIVEAUX = seuils;
     }
+    if (!data.celebrations) {
+      this.celebrations = [];
+    }
   }
 
   public ajoutePoints?(new_points: number) {
+    const current_nivau = this.getNiveau();
     this.points += new_points;
+    const new_niveau = this.getNiveau();
+
+    if (current_nivau != new_niveau) {
+      this.celebrations.push({
+        id: uuidv4(),
+        type: CelebrationType.niveau,
+        new_niveau: new_niveau,
+      });
+    }
   }
 
   public getNiveau(): number {

@@ -22,7 +22,7 @@ import { OidcService } from '../../src/infrastructure/auth/oidc.service';
 import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
 import { TodoCatalogue } from '../../src/domain/todo/todoCatalogue';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
-import { Gamification } from '../../src/domain/gamification';
+import { Gamification } from '../domain/gamification/gamification';
 
 export type Phrase = {
   phrase: string;
