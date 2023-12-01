@@ -1,12 +1,17 @@
 import {
+  Body,
   Controller,
   Get,
+  HttpStatus,
   NotFoundException,
+  Param,
+  Post,
   Query,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AidesUsecase } from '../../usecase/aides.usecase';
-import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import {
   AideAPI,
   nbPartsDTO,
@@ -16,6 +21,8 @@ import {
 import { AidesVeloParTypeAPI } from './types/aide/AidesVeloParTypeAPI';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
+import { InputAideVeloAPI } from './types/aide/inputAideVeloAPI';
+import { Response } from 'express';
 
 @Controller()
 @ApiTags('Aides')
@@ -60,7 +67,8 @@ export class AidesController extends GenericControler {
     // FIXME AIDE : pas de règles de gestion - à la volée - dans un controller
     const aides = await this.aidesUsecase.getSummaryVelos(
       codePostal,
-      revenuFiscalDeReference / nbParts,
+      revenuFiscalDeReference,
+      nbParts,
       prixVelo,
     );
     // FIXME : retourner liste vide ?
@@ -68,5 +76,24 @@ export class AidesController extends GenericControler {
       throw new NotFoundException(`Pas d'aides pour le vélo`);
     }
     return aides;
+  }
+
+  @ApiOkResponse({ type: AidesVeloParTypeAPI })
+  @Post('utilisateurs/:utilisateurId/simulerAideVelo')
+  @ApiBody({
+    type: InputAideVeloAPI,
+  })
+  @UseGuards(AuthGuard)
+  async getAllVelosByUtilisateur(
+    @Param('utilisateurId') utilisateurId: string,
+    @Res() res: Response,
+
+    @Body() body: InputAideVeloAPI,
+  ) {
+    const result = await this.aidesUsecase.simulerAideVeloV2(
+      utilisateurId,
+      body.prix_du_velo,
+    );
+    return res.status(HttpStatus.OK).json(result).send();
   }
 }

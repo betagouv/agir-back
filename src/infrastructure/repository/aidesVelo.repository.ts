@@ -18,10 +18,12 @@ import {
 export class AidesVeloRepository {
   async getSummaryVelos(
     codePostal: string,
-    revenuParPart: number,
+    revenu_fiscal: number,
+    parts_fiscal: number,
     prixVelo: number,
   ): Promise<AidesVeloParType> {
-    return summaryVelo(codePostal, revenuParPart, prixVelo);
+    const revenu_part = revenu_fiscal / parts_fiscal;
+    return summaryVelo(codePostal, revenu_part, prixVelo);
   }
 }
 
