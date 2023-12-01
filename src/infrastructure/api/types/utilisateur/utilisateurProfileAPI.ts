@@ -18,6 +18,8 @@ export class UtilisateurProfileAPI {
   mot_de_passe?: string;
   @ApiProperty({ required: false })
   nombre_de_parts_fiscales: number;
+  @ApiProperty({ required: false })
+  abonnement_ter_loire: boolean;
 
   public static mapToAPI(user: Utilisateur): UtilisateurProfileAPI {
     return {
@@ -28,6 +30,7 @@ export class UtilisateurProfileAPI {
       commune: user.commune,
       revenu_fiscal: user.revenu_fiscal,
       nombre_de_parts_fiscales: user.parts,
+      abonnement_ter_loire: user.abonnement_ter_loire,
     };
   }
 }

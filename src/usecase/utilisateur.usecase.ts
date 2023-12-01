@@ -93,10 +93,12 @@ export class UtilisateurUsecase {
       profileToUpdate.passwordHash = fakeUser.passwordHash;
       profileToUpdate.passwordSalt = fakeUser.passwordSalt;
     }
+    // FIXME : c'est tout moche là deessous
     profileToUpdate.code_postal = profile.code_postal;
     profileToUpdate.commune = profile.commune;
     profileToUpdate.revenu_fiscal = profile.revenu_fiscal;
     profileToUpdate.parts = profile.nombre_de_parts_fiscales;
+    profileToUpdate.abonnement_ter_loire = profile.abonnement_ter_loire;
     profileToUpdate.email = profile.email;
     profileToUpdate.nom = profile.nom;
     profileToUpdate.prenom = profile.prenom;
@@ -164,7 +166,20 @@ export class UtilisateurUsecase {
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
-    return this.utilisateurRespository.findUtilisateurById(id);
+    const result = await this.utilisateurRespository.findUtilisateurById(id);
+    if (!result) return null;
+    if (result.parts === null) {
+      if (result.onboardingData.adultes) {
+        const enfants =
+          result.onboardingData.enfants > 2
+            ? result.onboardingData.enfants
+            : result.onboardingData.enfants * 0.5;
+        result.parts = result.onboardingData.adultes + enfants;
+      } else {
+        result.parts = null;
+      }
+    }
+    return result;
   }
 
   async listUtilisateurs(): Promise<Utilisateur[]> {

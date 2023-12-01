@@ -189,6 +189,7 @@ export class TestUtil {
       commune: 'Palaiseau',
       revenu_fiscal: 10000,
       parts: 2,
+      abonnement_ter_loire: false,
       active_account: true,
       failed_login_count: 0,
       prevent_login_before: new Date(),

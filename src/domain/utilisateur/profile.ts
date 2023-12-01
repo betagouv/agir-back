@@ -6,6 +6,7 @@ export type Profile = {
   commune?: string;
   revenu_fiscal?: number;
   parts?: number;
+  abonnement_ter_loire?: boolean;
   passwordHash?: string;
   passwordSalt?: string;
 };

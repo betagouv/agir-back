@@ -386,6 +386,25 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.commune).toEqual('Palaiseau');
     expect(response.body.revenu_fiscal).toEqual(10000);
     expect(response.body.nombre_de_parts_fiscales).toEqual(2);
+    expect(response.body.abonnement_ter_loire).toEqual(false);
+  });
+  it('GET /utilisateurs/id/profile - use onboarding data when missing parts in user account', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { parts: null });
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/profile');
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.nombre_de_parts_fiscales).toEqual(2.5);
+  });
+  it('GET /utilisateurs/id/profile - default to null when no onboarding data', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { parts: null, onboardingData: {} });
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/profile');
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.nombre_de_parts_fiscales).toEqual(null);
   });
   it('PATCH /utilisateurs/id/profile - update basic profile datas without password', async () => {
     // GIVEN
@@ -401,6 +420,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       commune: 'Versailles',
       revenu_fiscal: 12345,
       nombre_de_parts_fiscales: 3,
+      abonnement_ter_loire: true,
     });
     // THEN
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
@@ -424,6 +444,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       mot_de_passe: '123456789012#',
       revenu_fiscal: 12345,
       nombre_de_parts_fiscales: 3,
+      abonnement_ter_loire: true,
     });
     // THEN
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
@@ -440,6 +461,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.commune).toEqual('Versailles');
     expect(dbUser.revenu_fiscal).toEqual(12345);
     expect(dbUser.parts.toNumber()).toEqual(3);
+    expect(dbUser.abonnement_ter_loire).toEqual(true);
     expect(dbUser.passwordHash).toEqual(
       crypto
         .pbkdf2Sync('123456789012#', dbUser.passwordSalt, 1000, 64, `sha512`)

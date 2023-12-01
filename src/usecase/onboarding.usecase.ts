@@ -167,6 +167,7 @@ export class OnboardingUsecase {
       quizzProfile: UserQuizzProfile.newLowProfile(),
       revenu_fiscal: null,
       parts: null,
+      abonnement_ter_loire: false,
       passwordHash: null,
       passwordSalt: null,
       active_account: false,

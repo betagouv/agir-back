@@ -18,6 +18,7 @@ export class UtilisateurData {
   commune: string;
   revenu_fiscal: number;
   parts: number;
+  abonnement_ter_loire: boolean;
   quizzProfile: UserQuizzProfile;
   created_at: Date;
   passwordHash: string;

@@ -64,6 +64,7 @@ model Utilisateur {
   prevent_sendemail_before DateTime           @default(now())
   services                 Service[]
   parts                    Decimal?           @db.Decimal(4, 2)
+  abonnement_ter_loire     Boolean            @default(false)
 }
 
 model Interaction {
