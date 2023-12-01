@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Service } from 'src/domain/service/service';
+import { Service } from '../../src/domain/service/service';
 import {
   LiveService,
   ScheduledService,
@@ -8,8 +8,10 @@ import {
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
 import { EcoWattServiceManager } from '../infrastructure/service/ecowatt/ecoWattServiceManager';
 import { FruitsEtLegumesServiceManager } from '../infrastructure/service/fruits/fruitEtLegumesServiceManager';
-import { ScheduledServiceManager } from 'src/infrastructure/service/ScheduledServiceManager';
-import { LiveServiceManager } from 'src/infrastructure/service/LiveServiceManager';
+import { ScheduledServiceManager } from '../../src/infrastructure/service/ScheduledServiceManager';
+import { LiveServiceManager } from '../../src/infrastructure/service/LiveServiceManager';
+import { EventUsecase } from '../../src/usecase/event.usecase';
+import { EventType } from '../../src/domain/utilisateur/utilisateurEvent';
 
 const dummy_live_manager = {
   computeLiveDynamicData: async (service: Service) => {
@@ -34,6 +36,7 @@ export class ServiceUsecase {
     private serviceRepository: ServiceRepository,
     private readonly ecoWattServiceManager: EcoWattServiceManager,
     private readonly fruitsEtLegumesServiceManager: FruitsEtLegumesServiceManager,
+    private readonly eventUsecase: EventUsecase,
   ) {
     this.SCHEDULED_SERVICES = {
       ecowatt: this.ecoWattServiceManager,
@@ -77,10 +80,14 @@ export class ServiceUsecase {
     utilisateurId: string,
     serviceDefinitionId: string,
   ) {
-    return this.serviceRepository.addServiceToUtilisateur(
+    await this.serviceRepository.addServiceToUtilisateur(
       utilisateurId,
       serviceDefinitionId,
     );
+    await this.eventUsecase.processEvent(utilisateurId, {
+      type: EventType.service_installed,
+      service_id: ScheduledService.ecowatt,
+    });
   }
   async removeServiceFromUtilisateur(
     utilisateurId: string,

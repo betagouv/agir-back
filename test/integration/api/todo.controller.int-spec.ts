@@ -3,6 +3,8 @@ import { Thematique } from '../../../src/domain/thematique';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { TestUtil } from '../../TestUtil';
 import { TodoRepository } from '../../../src/infrastructure/repository/todo.repository';
+import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
+import { ScheduledService } from '../../../src/domain/service/serviceDefinition';
 
 describe('TODO list (API test)', () => {
   let todoRepository = new TodoRepository(TestUtil.prisma);
@@ -333,5 +335,31 @@ describe('TODO list (API test)', () => {
       where: { id: 'utilisateur-id' },
     });
     expect(dbUtilisateur.gamification['points']).toEqual(10);
+  });
+  it('POST /utilisateurs/id/services ajout du service ecowatt sur la todo 3 réalise l objctif', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      todo: TodoCatalogue.getNewTodoOfNumero(3),
+    });
+    await TestUtil.create('serviceDefinition', {
+      id: ScheduledService.ecowatt,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/services',
+    ).send({
+      service_definition_id: ScheduledService.ecowatt,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(dbUser['todo']['done']).toHaveLength(1);
+    expect(dbUser['todo']['done'][0].titre).toEqual(
+      'Installer le service EcoWATT',
+    );
   });
 });

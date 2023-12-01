@@ -3,6 +3,7 @@ import { InteractionType } from '../interaction/interactionType';
 import { Thematique } from '../thematique';
 import { Todo } from './todo';
 import { v4 as uuidv4 } from 'uuid';
+import { ScheduledService } from '../service/serviceDefinition';
 
 export class TodoCatalogue {
   private static catalogue: Todo[] = [
@@ -75,6 +76,17 @@ export class TodoCatalogue {
           type: InteractionType.quizz,
           level: DifficultyLevel.L2,
           points: 20,
+        },
+        {
+          id: uuidv4(),
+          titre: 'Installer le service EcoWATT',
+          thematiques: [Thematique.logement],
+          progression: { current: 0, target: 1 },
+          sont_points_en_poche: false,
+          service_id: ScheduledService.ecowatt,
+          type: InteractionType.service,
+          level: DifficultyLevel.L1,
+          points: 42,
         },
       ],
     },

@@ -10,6 +10,7 @@ export class TodoElementData {
   type: InteractionType;
   level: DifficultyLevel;
   content_id?: string;
+  service_id?: string;
   interaction_id?: string;
   points: number;
   sont_points_en_poche: boolean;
@@ -85,6 +86,9 @@ export class Todo extends TodoData {
   }
   public findDoneElementById?(elementId: string): TodoElement {
     return this.done.find((element) => element.id === elementId);
+  }
+  public findTodoElementByServiceId?(service_id: string): TodoElement {
+    return this.todo.find((element) => element.service_id === service_id);
   }
 
   public makeProgress?(element: TodoElement) {

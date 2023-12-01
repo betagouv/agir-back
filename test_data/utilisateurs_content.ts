@@ -131,7 +131,7 @@ const utilisateurs = {
     suivis: ['sa1', 'sa2', 'sa3', 'st1', 'st2', 'st3'],
     bilans: ['bilan1'],
     badges: ['badge1', 'badge2'],
-    services: ['ecowatt'],
+    services: [],
     questionsNGC: {
       'transport . voiture . km': 30000,
     },

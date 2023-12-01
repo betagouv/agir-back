@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
-import { TodoRepository } from '../infrastructure/repository/todo.repository';
 import {
   EventType,
   UtilisateurEvent,
@@ -20,7 +19,6 @@ export type User_Interaction = {
 @Injectable()
 export class EventUsecase {
   constructor(
-    private todoRepository: TodoRepository,
     private interactionRepository: InteractionRepository,
     private utilisateurRepository: UtilisateurRepository,
     private badgeRepository: BadgeRepository,
@@ -34,9 +32,27 @@ export class EventUsecase {
         return await this.processLectureArticle(utilisateurId, event);
       case EventType.celebration:
         return await this.processCelebration(utilisateurId, event);
+      case EventType.service_installed:
+        return await this.processServiceInstalled(utilisateurId, event);
     }
   }
 
+  private async processServiceInstalled(
+    utilisateurId: string,
+    event: UtilisateurEvent,
+  ) {
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+      utilisateurId,
+    );
+    const element = utilisateur.todo.findTodoElementByServiceId(
+      event.service_id,
+    );
+    if (element) {
+      utilisateur.todo.moveElementToDone(element);
+    }
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
   private async processCelebration(
     utilisateurId: string,
     event: UtilisateurEvent,
