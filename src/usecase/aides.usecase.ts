@@ -46,7 +46,7 @@ export class AidesUsecase {
     );
     return this.aidesVeloRepository.getSummaryVelos(
       utilisateur.code_postal,
-      utilisateur.revenu_fiscal,
+      utilisateur.revenu_fiscal + 1, // prise en compte du concept de borne inf FIXME : solution temporaire,
       utilisateur.parts,
       prix_velo,
     );
