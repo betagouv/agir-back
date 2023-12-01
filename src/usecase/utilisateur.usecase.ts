@@ -182,10 +182,6 @@ export class UtilisateurUsecase {
     return result;
   }
 
-  async listUtilisateurs(): Promise<Utilisateur[]> {
-    return this.utilisateurRespository.listUtilisateur();
-  }
-
   async deleteUtilisateur(utilisateurId: string) {
     await this.suiviRepository.delete(utilisateurId);
     await this.interactionRepository.delete(utilisateurId);

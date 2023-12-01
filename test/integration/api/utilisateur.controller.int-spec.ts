@@ -42,17 +42,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('GET /utilisateurs 403 when not user of ID 1', async () => {
-    // GIVEN
-    await TestUtil.generateAuthorizationToken('2');
-
-    // WHEN
-    const response = await TestUtil.GET('/utilisateurs');
-
-    // THEN
-    expect(response.status).toBe(403);
-  });
-
   it('GET /utilisateurs/id - when missing', async () => {
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id');
@@ -135,22 +124,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.created_at).toEqual(dbUser.created_at.toISOString());
     expect(response.body.failed_login_count).toEqual(undefined);
     expect(response.body.prevent_login_before).toEqual(undefined);
-  });
-
-  it('GET /utilisateurs - list all 2', async () => {
-    // GIVEN
-    await TestUtil.generateAuthorizationToken('1');
-    await TestUtil.prisma.utilisateur.createMany({
-      data: [
-        { id: '1', nom: 'bob' },
-        { id: '2', nom: 'george' },
-      ],
-    });
-    // WHEN
-    const response = await TestUtil.GET('/utilisateurs');
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(2);
   });
 
   it('POST /utilisateurs/login - logs user and return a JWT token', async () => {

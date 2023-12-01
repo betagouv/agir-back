@@ -238,10 +238,6 @@ export class OnboardingUsecase {
     return this.utilisateurRespository.findUtilisateurById(id);
   }
 
-  async listUtilisateurs(): Promise<Utilisateur[]> {
-    return this.utilisateurRespository.listUtilisateur();
-  }
-
   async initUtilisateurInteractionSet(utilisateurId: string) {
     const interactionDefinitions =
       await this.interactionDefinitionRepository.getAll();

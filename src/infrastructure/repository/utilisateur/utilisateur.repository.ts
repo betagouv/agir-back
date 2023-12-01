@@ -100,16 +100,6 @@ export class UtilisateurRepository {
     });
   }
 
-  async listUtilisateur(): Promise<Utilisateur[] | null> {
-    const liste = await this.prisma.utilisateur.findMany({
-      orderBy: [
-        {
-          created_at: 'desc',
-        },
-      ],
-    });
-    return liste.map((user) => this.buildUtilisateurFromDB(user));
-  }
   async listUtilisateurIds(): Promise<Record<'id', string>[] | null> {
     const result = await this.prisma.utilisateur.findMany({
       select: {

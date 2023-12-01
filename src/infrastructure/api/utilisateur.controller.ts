@@ -45,24 +45,6 @@ export class UtilisateurController extends GenericControler {
     super();
   }
 
-  @Get('utilisateurs')
-  @ApiOperation({
-    summary:
-      "Liste l'ensemble des utilisateurs de la base, route temporaire pour debuggage - seul un admin peut y accéder",
-  })
-  @ApiQuery({
-    name: 'nom',
-    type: String,
-    description: "Nom optionel de l'utilisateur",
-    required: false,
-  })
-  @ApiOkResponse({ type: [UtilisateurAPI] })
-  @UseGuards(AuthGuard)
-  async listUtilisateurs(@Request() req): Promise<UtilisateurAPI[]> {
-    this.checkCallerId(req, '1');
-    return this.utilisateurUsecase.listUtilisateurs() as any;
-  }
-
   @Delete('utilisateurs/:utilisateurId')
   @ApiOperation({
     summary: "Suppression du compte d'un utilisateur d'id donnée",
