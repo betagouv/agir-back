@@ -19,7 +19,7 @@ import { AuthGuard } from '../auth/guard';
 import { Response } from 'express';
 import { ApplicationError } from '../applicationError';
 import { GamificationUsecase } from '../../../src/usecase/gamification.usecase';
-import { StatsAPI } from './types/gamification/statsAPI';
+import { GamificationAPI } from './types/gamification/gamificationAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -34,16 +34,16 @@ export class GamificationController extends GenericControler {
     summary:
       'renvoie les données relatives à la gamification (score, niveaux, badges, etc)',
   })
-  @ApiOkResponse({ type: StatsAPI })
+  @ApiOkResponse({ type: GamificationAPI })
   @UseGuards(AuthGuard)
   async getUtilisateurGamification(
     @Param('utilisateurId') utilisateurId: string,
     @Request() req,
-  ): Promise<StatsAPI> {
+  ): Promise<GamificationAPI> {
     this.checkCallerId(req, utilisateurId);
 
     const result = await this.gamificationUsecase.getGamificationData(utilisateurId);
 
-    return StatsAPI.mapToStatsAPI(result);
+    return GamificationAPI.mapToStatsAPI(result);
   }
 }

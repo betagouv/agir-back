@@ -1,4 +1,4 @@
-import { CelebrationType } from '../../../../src/domain/gamification/celebration';
+import { CelebrationType } from '../../../../src/domain/gamification/celebrations/celebration';
 import { Gamification } from '../../../../src/domain/gamification/gamification';
 
 describe('Gamification', () => {
@@ -196,9 +196,9 @@ describe('Gamification', () => {
       {
         points: 20,
         celebrations: [
-          { id: '1', type: CelebrationType.niveau },
-          { id: '2', type: CelebrationType.niveau },
-          { id: '3', type: CelebrationType.niveau },
+          { id: '1', type: CelebrationType.niveau, titre: '1' },
+          { id: '2', type: CelebrationType.niveau, titre: '2' },
+          { id: '3', type: CelebrationType.niveau, titre: '3' },
         ],
       },
       [5, 15],

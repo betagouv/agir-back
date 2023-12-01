@@ -1,5 +1,5 @@
-import { Celebration, CelebrationType } from './celebration';
-import { v4 as uuidv4 } from 'uuid';
+import { Celebration, CelebrationType } from './celebrations/celebration';
+import { Celeb_Niveau } from './celebrations/celeb_niveau';
 
 let SEUILS_NIVEAUX: number[] = [5, 20, 40, 70];
 
@@ -20,7 +20,6 @@ export class Gamification extends GamificationData {
   }
 
   public terminerCelebration(id: string) {
-    console.log(this.celebrations);
     const index = this.celebrations.findIndex((element) => element.id === id);
     this.celebrations.splice(index, 1);
   }
@@ -31,11 +30,7 @@ export class Gamification extends GamificationData {
     const new_niveau = this.getNiveau();
 
     if (current_nivau != new_niveau) {
-      this.celebrations.push({
-        id: uuidv4(),
-        type: CelebrationType.niveau,
-        new_niveau: new_niveau,
-      });
+      this.celebrations.push(new Celeb_Niveau(new_niveau));
     }
   }
 

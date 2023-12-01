@@ -1,4 +1,4 @@
-import { CelebrationType } from '../../../src/domain/gamification/celebration';
+import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { EventType } from '../../../src/domain/utilisateur/utilisateurEvent';
 import { TestUtil } from '../../TestUtil';
@@ -61,6 +61,7 @@ describe('Gamification  (API test)', () => {
       id: 'celebration-id',
       type: 'niveau',
       new_niveau: 2,
+      titre: 'the titre',
     });
   });
   it('Le passage d un niveau ajoute une célebration ', async () => {
