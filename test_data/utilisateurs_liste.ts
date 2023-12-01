@@ -3,12 +3,7 @@ export enum utilisateurs_liste {
   // ce sont les clés dans le fichier utilisateurs_contents
 
   ALL_USERS = 'ALL_USERS',
-  dorian = 'dorian',
-  livio = 'livio',
   wojtek = 'wojtek',
-  benoit = 'benoit',
   michel0 = 'michel0',
   michel6 = 'michel6',
-  michel666 = 'michel666',
-  quizzman = 'quizzman',
 }
