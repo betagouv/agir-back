@@ -25,6 +25,7 @@ export class AidesVeloRepository {
   }
 }
 
+// FIXME AIDE : quelle dif entre cette fonction et celle dessus ?
 async function summaryVelo(
   codePostal: string,
   revenuParPart: number,
@@ -38,6 +39,7 @@ async function summaryVelo(
     'localisation . région': `${lieu?.region}`,
     'localisation . code insee': `${lieu?.code}`,
     'revenu fiscal de référence': revenuParPart, // revenu fiscal de référence par part
+    // FIXME AIDE : faut encore diviser par 12 non ?
     'vélo . prix': prixVelo,
   };
   return getAidesVeloTousTypes(situationBase, engine);
@@ -155,6 +157,7 @@ const epciSirenToName = Object.fromEntries(
 
 async function getLocalisationByCP(cp: string): Promise<Localisation> {
   const lieux = localisations as Localisation[];
+  // FIXME AIDE : sens fonctionel du premier match ?
   const lieu = lieux.find((lieu) => lieu.codesPostaux.includes(cp));
   return lieu;
 }

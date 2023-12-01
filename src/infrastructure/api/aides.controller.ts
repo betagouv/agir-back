@@ -57,6 +57,7 @@ export class AidesController extends GenericControler {
     @Query('nbParts') nbParts: 1,
     @Query('revenuFiscalDeReference') revenuFiscalDeReference: 1,
   ): Promise<AidesVeloParTypeAPI> {
+    // FIXME AIDE : pas de règles de gestion - à la volée - dans un controller
     const aides = await this.aidesUsecase.getSummaryVelos(
       codePostal,
       revenuFiscalDeReference / nbParts,
