@@ -17,6 +17,7 @@ import { Thematique } from '../../../src/domain/thematique';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 import { InteractionRepository } from '../repository/interaction.repository';
 import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
+import { OnboardingUsecase } from '../../../src/usecase/onboarding.usecase';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
 const _aides = require('../../../test_data/_aides');
 const _suivis = require('../../../test_data/_suivis');
@@ -70,6 +71,7 @@ export class TestDataController {
     private questionNGCRepository: QuestionNGCRepository,
     private interactionDefinitionRepository: InteractionDefinitionRepository,
     private interactionRepository: InteractionRepository,
+    private onboardingUsecase: OnboardingUsecase,
   ) {}
 
   @Get('testdata/:id')
@@ -96,11 +98,15 @@ export class TestDataController {
     await this.deleteUtilisateur(utilisateurId);
     await this.upsertUtilisateur(utilisateurId);
     await this.upsertServicesDefinitions();
-    await this.insertArticlesForUtilisateur(utilisateurId);
-    await this.insertAidesForUtilisateur(utilisateurId);
+    if (utilisateurs_content[utilisateurId].interactions) {
+      await this.insertArticlesForUtilisateur(utilisateurId);
+      await this.insertAidesForUtilisateur(utilisateurId);
+      await this.insertQuizzForUtilisateur(utilisateurId);
+      await this.insertSuivisForUtilisateur(utilisateurId);
+    } else {
+      await this.onboardingUsecase.initUtilisateurInteractionSet(utilisateurId);
+    }
     await this.insertServicesForUtilisateur(utilisateurId);
-    await this.insertSuivisForUtilisateur(utilisateurId);
-    await this.insertQuizzForUtilisateur(utilisateurId);
     await this.insertSuivisAlimentationForUtilisateur(utilisateurId);
     await this.insertEmpreintesForUtilisateur(utilisateurId);
     await this.insertBadgesForUtilisateur(utilisateurId);
