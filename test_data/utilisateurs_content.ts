@@ -31,6 +31,10 @@ const ALL_INTERACTIONS = [
   { cms_id: 4, cms_type: 'article', score: 0.5 },
   { cms_id: 5, cms_type: 'article', score: 0.5 },
   { cms_id: 6, cms_type: 'article', score: 0.5 },
+  { cms_id: 11, cms_type: 'article', score: 0.5 },
+  { cms_id: 12, cms_type: 'article', score: 0.5 },
+  { cms_id: 13, cms_type: 'article', score: 0.5 },
+  { cms_id: 14, cms_type: 'article', score: 0.5 },
 ];
 
 const ONBOARD_DATA_1234 = {
