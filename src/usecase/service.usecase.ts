@@ -86,7 +86,7 @@ export class ServiceUsecase {
     );
     await this.eventUsecase.processEvent(utilisateurId, {
       type: EventType.service_installed,
-      service_id: ScheduledService.ecowatt,
+      service_id: serviceDefinitionId,
     });
   }
   async removeServiceFromUtilisateur(

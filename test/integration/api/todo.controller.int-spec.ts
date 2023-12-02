@@ -4,7 +4,10 @@ import { InteractionType } from '../../../src/domain/interaction/interactionType
 import { TestUtil } from '../../TestUtil';
 import { TodoRepository } from '../../../src/infrastructure/repository/todo.repository';
 import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
-import { ScheduledService } from '../../../src/domain/service/serviceDefinition';
+import {
+  LiveService,
+  ScheduledService,
+} from '../../../src/domain/service/serviceDefinition';
 
 describe('TODO list (API test)', () => {
   let todoRepository = new TodoRepository(TestUtil.prisma);
@@ -88,6 +91,51 @@ describe('TODO list (API test)', () => {
     expect(response.body.numero_todo).toEqual(1);
     expect(response.body.todo[0].type).toEqual(InteractionType.quizz);
     expect(response.body.todo[0].content_id).toEqual('quizz-id-l1');
+    expect(response.body.todo[0].interaction_id).toEqual('1');
+  });
+  it('GET /utilisateurs/id/todo retourne la todo avec un article basé sur la thématique non gamification', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      todo: {
+        numero_todo: 1,
+        points_todo: 25,
+        done: [],
+        todo: [
+          {
+            titre: 'article',
+            thematiques: [Thematique.logement],
+            progression: { current: 0, target: 1 },
+            sont_points_en_poche: false,
+            type: InteractionType.article,
+            level: DifficultyLevel.ANY,
+            points: 10,
+          },
+        ],
+      },
+    });
+    await TestUtil.create('interaction', {
+      id: '1',
+      content_id: 'article-1',
+      thematiques: [Thematique.climat, Thematique.logement],
+      difficulty: DifficultyLevel.L1,
+      type: InteractionType.article,
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      content_id: 'article-1',
+      thematiques: [Thematique.climat, Thematique.alimentation],
+      difficulty: DifficultyLevel.L2,
+      type: InteractionType.article,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.numero_todo).toEqual(1);
+    expect(response.body.todo[0].type).toEqual(InteractionType.article);
+    expect(response.body.todo[0].content_id).toEqual('article-1');
     expect(response.body.todo[0].interaction_id).toEqual('1');
   });
   it('GET /utilisateurs/id/todo retourne la todo avec une ref d article', async () => {
@@ -361,6 +409,29 @@ describe('TODO list (API test)', () => {
     expect(dbUser['todo']['done'][0].titre).toEqual(
       'Installer le service EcoWATT',
     );
+  });
+  it('POST /utilisateurs/id/services ajout du service fruits sur la todo 3 ne réalise PAS l objctif', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      todo: TodoCatalogue.getNewTodoOfNumero(3),
+    });
+    await TestUtil.create('serviceDefinition', {
+      id: LiveService.fruits,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/services',
+    ).send({
+      service_definition_id: LiveService.fruits,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(dbUser['todo']['done']).toHaveLength(0);
   });
   it('GET /utilisateurs/id/todo répond OK pour todo #1', async () => {
     // GIVEN

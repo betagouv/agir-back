@@ -68,7 +68,7 @@ export class TodoUsecase {
           await this.interactionRepository.listInteractionIdProjectionByFilter({
             utilisateurId: utilisateurId,
             type: element.type,
-            thematique_gamification: element.thematiques,
+            thematiques: element.thematiques,
             difficulty: element.level,
           });
       }
