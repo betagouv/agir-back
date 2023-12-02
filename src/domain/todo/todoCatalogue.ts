@@ -57,7 +57,7 @@ export class TodoCatalogue {
           progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
           type: InteractionType.article,
-          level: DifficultyLevel.L1,
+          level: DifficultyLevel.ANY,
           points: 10,
         },
       ],

@@ -1,7 +1,7 @@
-import { Celebration, CelebrationType } from './celebrations/celebration';
+import { Celebration } from './celebrations/celebration';
 import { Celeb_Niveau } from './celebrations/celeb_niveau';
 
-let SEUILS_NIVEAUX: number[] = [5, 20, 40, 70];
+let SEUILS_NIVEAUX: number[] = [10, 50, 100, 150];
 
 export class GamificationData {
   points: number;
