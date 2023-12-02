@@ -188,7 +188,7 @@ describe('Gamification', () => {
     const points = gamification.getPoint_target_in_niveau();
 
     // THEN
-    expect(points).toEqual(9999999);
+    expect(points).toEqual(999);
   });
   it('terminerCelebration : supprime correctement la bonne occurence', () => {
     // GIVEN

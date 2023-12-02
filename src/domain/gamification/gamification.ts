@@ -48,7 +48,7 @@ export class Gamification extends GamificationData {
   public getPoint_target_in_niveau(): number {
     const niveau = this.getNiveau();
     if (niveau === SEUILS_NIVEAUX.length + 1) {
-      return 9999999;
+      return 999;
     }
     const seuil_bas = this.getSeuilOfNiveau(niveau);
     const seuil_haut = this.getSeuilOfNiveau(niveau + 1);

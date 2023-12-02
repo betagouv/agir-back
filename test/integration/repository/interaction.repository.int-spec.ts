@@ -69,6 +69,63 @@ describe('InteractionRepository', () => {
     // THEN
     expect(liste).toHaveLength(2);
   });
+  it('listMaxInteractionsByUtilisateurIdAndType : filters by difficulty ', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      type: 'article',
+      difficulty: DifficultyLevel.L1,
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      type: 'article',
+      difficulty: DifficultyLevel.L2,
+    });
+    await TestUtil.create('interaction', {
+      id: '3',
+      type: 'article',
+      difficulty: DifficultyLevel.L3,
+    });
+
+    // WHEN
+    const liste = await interactionRepository.listInteractionsByFilter({
+      utilisateurId: 'utilisateur-id',
+      type: InteractionType.article,
+      difficulty: DifficultyLevel.L2,
+    });
+    // THEN
+    expect(liste).toHaveLength(1);
+    expect(liste[0].id).toEqual('2');
+  });
+  it('listMaxInteractionsByUtilisateurIdAndType : filters by difficulty when ANY', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      id: '1',
+      type: 'article',
+      difficulty: DifficultyLevel.L1,
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      type: 'article',
+      difficulty: DifficultyLevel.L2,
+    });
+    await TestUtil.create('interaction', {
+      id: '3',
+      type: 'article',
+      difficulty: DifficultyLevel.L3,
+    });
+
+    // WHEN
+    const liste = await interactionRepository.listInteractionsByFilter({
+      utilisateurId: 'utilisateur-id',
+      type: InteractionType.article,
+      difficulty: DifficultyLevel.ANY,
+    });
+    // THEN
+    expect(liste).toHaveLength(3);
+  });
   it('listMaxInteractionsByUtilisateurIdAndType : applies max number ', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
@@ -434,6 +491,23 @@ describe('InteractionRepository', () => {
     // THEN
     expect(result).toHaveLength(1);
     expect(result[0].id).toEqual('2');
+  });
+  it('listMaxInteractionsByUtilisateurIdAndType : retourne une projection', async () => {
+    //GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction');
+
+    //WHEN
+    const result =
+      await interactionRepository.listInteractionIdProjectionByFilter({
+        utilisateurId: 'utilisateur-id',
+      });
+
+    // THEN
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toEqual('interaction-id');
+    expect(result[0].content_id).toEqual('quizz-id');
+    expect(result[0]['done']).toEqual(undefined);
   });
   it('listMaxInteractionsByUtilisateurIdAndType : retourne une projection', async () => {
     //GIVEN

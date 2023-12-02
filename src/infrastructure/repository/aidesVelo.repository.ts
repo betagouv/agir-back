@@ -41,7 +41,6 @@ async function summaryVelo(
     'localisation . région': `${lieu?.region}`,
     'localisation . code insee': `${lieu?.code}`,
     'revenu fiscal de référence': revenuParPart, // revenu fiscal de référence par part
-    // FIXME AIDE : faut encore diviser par 12 non ?
     'vélo . prix': prixVelo,
   };
   return getAidesVeloTousTypes(situationBase, engine);

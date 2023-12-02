@@ -238,7 +238,10 @@ export class InteractionRepository {
       type: filter.type,
       pinned_at_position: filter.pinned ? { not: null } : null,
       locked: filter.locked,
-      difficulty: filter.difficulty,
+      difficulty:
+        filter.difficulty == DifficultyLevel.ANY
+          ? undefined
+          : filter.difficulty,
       OR: quizz_difficulty_filter,
     };
     if (filter.thematiques) {

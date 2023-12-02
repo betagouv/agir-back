@@ -69,6 +69,7 @@ export class TodoUsecase {
             utilisateurId: utilisateurId,
             type: element.type,
             thematique_gamification: element.thematiques,
+            difficulty: element.level,
           });
       }
       if (interactions.length > 0) {

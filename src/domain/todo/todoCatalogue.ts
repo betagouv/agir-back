@@ -42,8 +42,8 @@ export class TodoCatalogue {
       todo: [
         {
           id: uuidv4(),
-          titre: 'Faire 2 premier quizz climat - facile',
-          thematiques: [Thematique.climat],
+          titre: 'Faire 2 premier quizz logement - facile',
+          thematiques: [Thematique.logement],
           progression: { current: 0, target: 2 },
           sont_points_en_poche: false,
           type: InteractionType.quizz,
@@ -69,12 +69,12 @@ export class TodoCatalogue {
       todo: [
         {
           id: uuidv4(),
-          titre: 'Faire 2 quizz climat - niveau moyens',
-          thematiques: [Thematique.climat],
+          titre: `Lire 2 article sur l'alimentation`,
+          thematiques: [Thematique.alimentation],
           progression: { current: 0, target: 2 },
           sont_points_en_poche: false,
-          type: InteractionType.quizz,
-          level: DifficultyLevel.L2,
+          type: InteractionType.article,
+          level: DifficultyLevel.ANY,
           points: 20,
         },
         {
