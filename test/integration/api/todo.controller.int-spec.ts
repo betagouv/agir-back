@@ -362,4 +362,43 @@ describe('TODO list (API test)', () => {
       'Installer le service EcoWATT',
     );
   });
+  it('GET /utilisateurs/id/todo répond OK pour todo #1', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      todo: TodoCatalogue.getNewTodoOfNumero(1),
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.todo).toHaveLength(1);
+  });
+  it('GET /utilisateurs/id/todo répond OK pour todo #2', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      todo: TodoCatalogue.getNewTodoOfNumero(2),
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.todo).toHaveLength(2);
+  });
+  it('GET /utilisateurs/id/todo répond OK pour todo #3', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      todo: TodoCatalogue.getNewTodoOfNumero(3),
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.todo).toHaveLength(2);
+  });
 });

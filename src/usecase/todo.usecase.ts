@@ -53,7 +53,7 @@ export class TodoUsecase {
     const todo = await this.todoRepository.getUtilisateurTodo(utilisateurId);
     for (let index = 0; index < todo.todo.length; index++) {
       const element = todo.todo[index];
-      let interactions: InteractionIdProjection[];
+      let interactions: InteractionIdProjection[] = [];
       if (element.type === InteractionType.quizz) {
         interactions =
           await this.interactionRepository.listInteractionIdProjectionByFilter({
