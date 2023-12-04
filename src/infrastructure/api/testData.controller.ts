@@ -26,6 +26,8 @@ const suivis_alimentation = require('../../../test_data/evenements/suivis_alimen
 const suivis_transport = require('../../../test_data/evenements/suivis_transport');
 const empreintes_utilisateur = require('../../../test_data/evenements/bilans');
 const badges_liste = require('../../../test_data/evenements/badges');
+import axios from 'axios';
+import { CMSModel } from './types/cms/CMSModels';
 
 export enum TheBoolean {
   true = 'true',
@@ -98,6 +100,7 @@ export class TestDataController {
     await this.deleteUtilisateur(utilisateurId);
     await this.upsertUtilisateur(utilisateurId);
     await this.upsertServicesDefinitions();
+    await this.injectCMSDataFromProd();
     if (utilisateurs_content[utilisateurId].interactions) {
       await this.insertArticlesForUtilisateur(utilisateurId);
       await this.insertAidesForUtilisateur(utilisateurId);
@@ -113,6 +116,34 @@ export class TestDataController {
     await this.insertQuestionsNGCForUtilisateur(utilisateurId);
     return utilisateurs_content[utilisateurId];
   }
+  async injectCMSDataFromProd() {}
+
+  /*
+  private async callCMSForType(url_suffix: string, type: CMSModel) {
+    let response = null;
+    try {
+      response = await axios.get(
+        process.env.CMS_URL.concat(
+          '/',
+          url_suffix,
+          '?pagination[start]=0&pagination[limit]=100',
+        ),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${process.env.CMS_API_KEY}`,
+          },
+        },
+      );
+    } catch (error) {
+      if (error.response.status != 401) {
+        console.log(error.message);
+      }
+      throw new Error(error.response.status);
+    }
+    return response;
+  }
+  */
 
   async upsertServicesDefinitions() {
     const keyList = Object.keys(_services);
