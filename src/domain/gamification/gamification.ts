@@ -1,7 +1,9 @@
 import { Celebration } from './celebrations/celebration';
 import { Celeb_Niveau } from './celebrations/celeb_niveau';
 
-let SEUILS_NIVEAUX: number[] = [10, 50, 100, 150];
+let SEUILS_NIVEAUX: number[] = [
+  100, 250, 400, 600, 850, 1150, 1500, 2000, 2600, 3300,
+];
 
 export class GamificationData {
   points: number;

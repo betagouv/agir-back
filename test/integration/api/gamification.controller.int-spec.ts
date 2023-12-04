@@ -41,9 +41,9 @@ describe('Gamification  (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.niveau).toEqual(2);
-    expect(response.body.current_points_in_niveau).toEqual(0);
-    expect(response.body.point_target_in_niveau).toEqual(40);
+    expect(response.body.niveau).toEqual(1);
+    expect(response.body.current_points_in_niveau).toEqual(10);
+    expect(response.body.point_target_in_niveau).toEqual(100);
   });
   it('GET /utilisateurs/id/gamification retourne la liste de celebrations ', async () => {
     // GIVEN
@@ -75,7 +75,7 @@ describe('Gamification  (API test)', () => {
     await TestUtil.create('interaction', {
       done: false,
       type: InteractionType.article,
-      points: 15,
+      points: 65,
     });
     // WHEN
     const response = await TestUtil.POST(
@@ -94,6 +94,6 @@ describe('Gamification  (API test)', () => {
     expect(dbUtilisateur.gamification['celebrations'][0].type).toEqual(
       CelebrationType.niveau,
     );
-    expect(dbUtilisateur.gamification['celebrations'][0].new_niveau).toEqual(3);
+    expect(dbUtilisateur.gamification['celebrations'][0].new_niveau).toEqual(2);
   });
 });
