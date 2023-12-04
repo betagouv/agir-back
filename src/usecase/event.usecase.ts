@@ -106,10 +106,8 @@ export class EventUsecase {
     });
     await this.interactionRepository.updateInteraction(ctx.interaction);
 
-    if (event.number_value === 100 && !already_done) {
-      this.addPointsToUser(ctx);
-    }
     if (event.number_value === 100) {
+      this.addPointsToUser(ctx);
       this.updateUserTodo(ctx);
     }
     await this.promoteUserQuizzLevelIfNeeded(ctx);
