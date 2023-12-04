@@ -232,6 +232,45 @@ describe('TODO list (API test)', () => {
     expect(dbUser['todo']['done']).toHaveLength(1);
     expect(dbUser['todo']['done'][0].progression.current).toEqual(1);
   });
+  it('GET /utilisateurs/id/todo retourne la todo sans pointeur car le seul quizz déjà réussi', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      todo: {
+        numero_todo: 1,
+        points_todo: 25,
+        done: [],
+        todo: [
+          {
+            titre: 'faire quizz climat',
+            thematiques: [Thematique.climat],
+            progression: { current: 0, target: 1 },
+            sont_points_en_poche: false,
+            type: 'quizz',
+            level: DifficultyLevel.ANY,
+            points: 10,
+          },
+        ],
+      },
+    });
+    await TestUtil.create('interaction', {
+      id: '1',
+      content_id: 'quizz-id-l1',
+      thematique_gamification: Thematique.climat,
+      difficulty: DifficultyLevel.L1,
+      type: InteractionType.quizz,
+      done: true,
+      quizz_score: 100,
+    });
+
+    // WHEN
+    let response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.numero_todo).toEqual(1);
+    expect(response.body.todo[0].type).toEqual(InteractionType.quizz);
+    expect(response.body.todo[0].content_id).toBeUndefined();
+  });
   it('GET /utilisateurs/id/todo propose un article déjà lu', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {

@@ -232,10 +232,16 @@ export class InteractionRepository {
         { codes_postaux: { isEmpty: true } },
       ];
     }
+    let quizz_score = undefined;
+    if (filter.quizz_full_success !== undefined && filter.quizz_full_success) {
+      quizz_score = 100;
+    } else {
+      quizz_score = { not: 100 };
+    }
     let main_filter = {
       utilisateurId: filter.utilisateurId,
       done: filter.done,
-      quizz_score: filter.quizz_full_success ? 100 : undefined,
+      quizz_score: quizz_score,
       type: filter.type,
       pinned_at_position: filter.pinned ? { not: null } : null,
       locked: filter.locked,
