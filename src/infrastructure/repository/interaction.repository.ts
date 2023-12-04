@@ -233,10 +233,12 @@ export class InteractionRepository {
       ];
     }
     let quizz_score = undefined;
-    if (filter.quizz_full_success !== undefined && filter.quizz_full_success) {
-      quizz_score = 100;
-    } else {
-      quizz_score = { not: 100 };
+    if (filter.quizz_full_success !== undefined) {
+      if (filter.quizz_full_success) {
+        quizz_score = 100;
+      } else {
+        quizz_score = { not: 100 };
+      }
     }
     let main_filter = {
       utilisateurId: filter.utilisateurId,

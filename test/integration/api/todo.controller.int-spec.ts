@@ -75,6 +75,8 @@ describe('TODO list (API test)', () => {
       thematique_gamification: Thematique.climat,
       difficulty: DifficultyLevel.L1,
       type: InteractionType.quizz,
+      done: false,
+      quizz_score: null,
     });
     await TestUtil.create('interaction', {
       id: '2',
@@ -82,6 +84,8 @@ describe('TODO list (API test)', () => {
       thematique_gamification: Thematique.climat,
       difficulty: DifficultyLevel.L2,
       type: InteractionType.quizz,
+      done: false,
+      quizz_score: null,
     });
 
     // WHEN
