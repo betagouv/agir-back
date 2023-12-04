@@ -195,6 +195,34 @@ describe('EVENT (API test)', () => {
     });
     expect(dbUtilisateur.gamification['points']).toStrictEqual(10);
   });
+  it('POST /utilisateurs/id/events - saves score at 0 properly', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      type: InteractionType.quizz,
+      difficulty: 1,
+      quizz_score: null,
+      done: false,
+      done_at: null,
+      thematique_gamification: Thematique.climat,
+    });
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.quizz_score,
+      interaction_id: 'interaction-id',
+      number_value: 0,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const interaction = await TestUtil.prisma.interaction.findUnique({
+      where: { id: 'interaction-id' },
+    });
+    expect(interaction.done).toStrictEqual(true);
+    expect(interaction.quizz_score).toStrictEqual(0);
+  });
   it('POST /utilisateurs/id/events - ajoute points pour article lu', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');

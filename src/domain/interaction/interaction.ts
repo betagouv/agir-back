@@ -43,19 +43,19 @@ export class Interaction extends InteractionData {
   }
 
   public updateStatus(status: InteractionStatus) {
-    if (status.seen && status.seen !== this.seen) {
+    if (status.seen !== undefined) {
       this.seen = status.seen;
       this.seen_at = new Date();
     }
-    if (status.done && !this.done) {
+    if (status.done !== undefined) {
       this.done = true;
       this.done_at = new Date();
     }
-    if (status.clicked && !this.clicked) {
+    if (status.clicked !== undefined) {
       this.clicked = true;
       this.clicked_at = new Date();
     }
-    if (status.quizz_score) {
+    if (status.quizz_score !== undefined) {
       this.done = true;
       this.quizz_score = status.quizz_score;
     }
