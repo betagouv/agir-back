@@ -62,6 +62,8 @@ import { EventUsecase } from './usecase/event.usecase';
 import { EventController } from './infrastructure/api/event.controller';
 import { GamificationUsecase } from './usecase/gamification.usecase';
 import { GamificationController } from './infrastructure/api/gamification.controller';
+import { LinkyUsecase } from './usecase/linky.usecase';
+import { LinkyController } from './infrastructure/api/linky.controller';
 
 const SESSION_LIFETIME = '12h';
 
@@ -92,6 +94,7 @@ const SESSION_LIFETIME = '12h';
     WinterController,
     EventController,
     GamificationController,
+    LinkyController,
   ],
   providers: [
     PrismaService,
@@ -134,6 +137,7 @@ const SESSION_LIFETIME = '12h';
     FruitsEtLegumesServiceManager,
     EventUsecase,
     GamificationUsecase,
+    LinkyUsecase,
   ],
 })
 export class AppModule {}
