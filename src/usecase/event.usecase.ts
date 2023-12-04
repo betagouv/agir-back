@@ -108,6 +108,8 @@ export class EventUsecase {
 
     if (event.number_value === 100 && !already_done) {
       this.addPointsToUser(ctx);
+    }
+    if (event.number_value === 100) {
       this.updateUserTodo(ctx);
     }
     await this.promoteUserQuizzLevelIfNeeded(ctx);

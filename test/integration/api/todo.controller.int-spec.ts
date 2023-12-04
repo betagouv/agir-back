@@ -208,7 +208,7 @@ describe('TODO list (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
+    let response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
 
     // THEN
     expect(response.status).toBe(200);
@@ -216,6 +216,21 @@ describe('TODO list (API test)', () => {
     expect(response.body.todo[0].type).toEqual(InteractionType.quizz);
     expect(response.body.todo[0].content_id).toEqual('quizz-id-l1');
     expect(response.body.todo[0].interaction_id).toEqual('1');
+
+    // WHEN
+    response = await TestUtil.POST('/utilisateurs/utilisateur-id/events').send({
+      type: 'quizz_score',
+      interaction_id: '1',
+      number_value: 100,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(dbUser['todo']['done']).toHaveLength(1);
+    expect(dbUser['todo']['done'][0].progression.current).toEqual(1);
   });
   it('GET /utilisateurs/id/todo propose un article déjà lu', async () => {
     // GIVEN
@@ -247,7 +262,7 @@ describe('TODO list (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
+    let response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
 
     // THEN
     expect(response.status).toBe(200);
@@ -255,6 +270,20 @@ describe('TODO list (API test)', () => {
     expect(response.body.todo[0].type).toEqual(InteractionType.article);
     expect(response.body.todo[0].content_id).toEqual('article-1');
     expect(response.body.todo[0].interaction_id).toEqual('1');
+
+    // WHEN
+    response = await TestUtil.POST('/utilisateurs/utilisateur-id/events').send({
+      type: 'article_lu',
+      interaction_id: '1',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(dbUser['todo']['done']).toHaveLength(1);
+    expect(dbUser['todo']['done'][0].progression.current).toEqual(1);
   });
   it('GET /utilisateurs/id/todo propose un article non lu en prio par rapport à un lu déjà', async () => {
     // GIVEN
