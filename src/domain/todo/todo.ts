@@ -77,13 +77,15 @@ export class Todo extends TodoData {
 
   public findTodoElementByTypeAndThematique?(
     type: InteractionType,
-    thematique: Thematique,
+    thematiques: Thematique[],
   ): TodoElement {
     return this.todo.find(
       (element) =>
-        element.type === type && element.thematiques.includes(thematique),
+        element.type === type &&
+        this.includesAtLeastOneOf(element.thematiques, thematiques),
     );
   }
+
   public findDoneElementById?(elementId: string): TodoElement {
     return this.done.find((element) => element.id === elementId);
   }
@@ -96,5 +98,17 @@ export class Todo extends TodoData {
     if (element.progression.current === element.progression.target) {
       this.moveElementToDone(element);
     }
+  }
+  private includesAtLeastOneOf?(
+    list1: Thematique[],
+    list2: Thematique[],
+  ): boolean {
+    for (let index = 0; index < list2.length; index++) {
+      const e2 = list2[index];
+      if (list1.includes(e2)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

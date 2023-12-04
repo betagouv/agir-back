@@ -118,7 +118,7 @@ export class EventUsecase {
     const matchingTodoElement =
       utilisateur.todo.findTodoElementByTypeAndThematique(
         interaction.type,
-        interaction.thematique_gamification,
+        interaction.thematiques,
       );
     if (matchingTodoElement && !matchingTodoElement.isDone()) {
       utilisateur.todo.makeProgress(matchingTodoElement);

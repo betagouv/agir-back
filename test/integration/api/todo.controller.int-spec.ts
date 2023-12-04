@@ -8,6 +8,7 @@ import {
   LiveService,
   ScheduledService,
 } from '../../../src/domain/service/serviceDefinition';
+import { Todo } from '../../../src/domain/todo/todo';
 
 describe('TODO list (API test)', () => {
   let todoRepository = new TodoRepository(TestUtil.prisma);
@@ -432,6 +433,50 @@ describe('TODO list (API test)', () => {
       where: { id: 'utilisateur-id' },
     });
     expect(dbUser['todo']['done']).toHaveLength(0);
+  });
+  it('POST /utilisateurs/id/event fait avancer la todo si un sous thematique du quizz match', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      todo: new Todo({
+        numero_todo: 1,
+        points_todo: 25,
+        done: [],
+        todo: [
+          {
+            id: '1234',
+            titre: 'Faire un premier quizz climat - facile',
+            thematiques: [Thematique.climat, Thematique.logement],
+            progression: { current: 0, target: 1 },
+            sont_points_en_poche: false,
+            type: InteractionType.quizz,
+            level: DifficultyLevel.L1,
+            points: 10,
+          },
+        ],
+      }),
+    });
+    await TestUtil.create('interaction', {
+      type: InteractionType.quizz,
+      done: false,
+      difficulty: DifficultyLevel.L1,
+      thematiques: [Thematique.loisir, Thematique.logement],
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: 'quizz_score',
+      number_value: 100,
+      interaction_id: 'interaction-id',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(dbUser['todo']['done']).toHaveLength(1);
   });
   it('GET /utilisateurs/id/todo répond OK pour todo #1', async () => {
     // GIVEN

@@ -36,7 +36,7 @@ describe('Todo', () => {
     // WHEN
     const result = todo.findTodoElementByTypeAndThematique(
       InteractionType.quizz,
-      Thematique.logement,
+      [Thematique.logement],
     );
 
     // THEN
@@ -73,7 +73,7 @@ describe('Todo', () => {
     });
     const element = todo.findTodoElementByTypeAndThematique(
       InteractionType.quizz,
-      Thematique.logement,
+      [Thematique.logement],
     );
     // WHEN
     todo.moveElementToDone(element);
@@ -113,7 +113,7 @@ describe('Todo', () => {
     });
     const element = todo.findTodoElementByTypeAndThematique(
       InteractionType.quizz,
-      Thematique.logement,
+      [Thematique.logement],
     );
     // WHEN
     todo.makeProgress(element);
