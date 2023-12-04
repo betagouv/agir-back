@@ -61,7 +61,21 @@ export class TodoUsecase {
             type: element.type,
             thematiques: element.thematiques,
             difficulty: element.level,
+            done: false,
           });
+        if (interactions.length === 0) {
+          interactions =
+            await this.interactionRepository.listInteractionIdProjectionByFilter(
+              {
+                utilisateurId: utilisateurId,
+                type: element.type,
+                thematiques: element.thematiques,
+                difficulty: element.level,
+                done: true,
+                quizz_full_success: false,
+              },
+            );
+        }
       }
       if (element.type === InteractionType.article) {
         interactions =
@@ -70,7 +84,20 @@ export class TodoUsecase {
             type: element.type,
             thematiques: element.thematiques,
             difficulty: element.level,
+            done: false,
           });
+        if (interactions.length === 0) {
+          interactions =
+            await this.interactionRepository.listInteractionIdProjectionByFilter(
+              {
+                utilisateurId: utilisateurId,
+                type: element.type,
+                thematiques: element.thematiques,
+                difficulty: element.level,
+                done: true,
+              },
+            );
+        }
       }
       if (interactions.length > 0) {
         const randomIteraction =

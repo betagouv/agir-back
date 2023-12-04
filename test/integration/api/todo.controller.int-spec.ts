@@ -177,6 +177,132 @@ describe('TODO list (API test)', () => {
     expect(response.body.todo[0].content_id).toEqual('article-id-1');
     expect(response.body.todo[0].interaction_id).toEqual('1');
   });
+  it('GET /utilisateurs/id/todo retourne la todo avec quizz tout frais, si échec du quizz, ce quizz est tjrs proposé dans la todo', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      todo: {
+        numero_todo: 1,
+        points_todo: 25,
+        done: [],
+        todo: [
+          {
+            titre: 'faire quizz climat',
+            thematiques: [Thematique.climat],
+            progression: { current: 0, target: 1 },
+            sont_points_en_poche: false,
+            type: 'quizz',
+            level: DifficultyLevel.ANY,
+            points: 10,
+          },
+        ],
+      },
+    });
+    await TestUtil.create('interaction', {
+      id: '1',
+      content_id: 'quizz-id-l1',
+      thematique_gamification: Thematique.climat,
+      difficulty: DifficultyLevel.L1,
+      type: InteractionType.quizz,
+      done: true,
+      quizz_score: 0,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.numero_todo).toEqual(1);
+    expect(response.body.todo[0].type).toEqual(InteractionType.quizz);
+    expect(response.body.todo[0].content_id).toEqual('quizz-id-l1');
+    expect(response.body.todo[0].interaction_id).toEqual('1');
+  });
+  it('GET /utilisateurs/id/todo propose un article déjà lu', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      todo: {
+        numero_todo: 1,
+        points_todo: 25,
+        done: [],
+        todo: [
+          {
+            titre: 'lire un article',
+            thematiques: [Thematique.climat],
+            progression: { current: 0, target: 1 },
+            sont_points_en_poche: false,
+            type: InteractionType.article,
+            level: DifficultyLevel.ANY,
+            points: 10,
+          },
+        ],
+      },
+    });
+    await TestUtil.create('interaction', {
+      id: '1',
+      content_id: 'article-1',
+      thematique_gamification: Thematique.climat,
+      difficulty: DifficultyLevel.L1,
+      type: InteractionType.article,
+      done: true,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.numero_todo).toEqual(1);
+    expect(response.body.todo[0].type).toEqual(InteractionType.article);
+    expect(response.body.todo[0].content_id).toEqual('article-1');
+    expect(response.body.todo[0].interaction_id).toEqual('1');
+  });
+  it('GET /utilisateurs/id/todo propose un article non lu en prio par rapport à un lu déjà', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      todo: {
+        numero_todo: 1,
+        points_todo: 25,
+        done: [],
+        todo: [
+          {
+            titre: 'lire un article',
+            thematiques: [Thematique.climat],
+            progression: { current: 0, target: 1 },
+            sont_points_en_poche: false,
+            type: InteractionType.article,
+            level: DifficultyLevel.ANY,
+            points: 10,
+          },
+        ],
+      },
+    });
+    await TestUtil.create('interaction', {
+      id: '1',
+      content_id: 'article-1',
+      thematique_gamification: Thematique.climat,
+      difficulty: DifficultyLevel.L1,
+      type: InteractionType.article,
+      done: true,
+    });
+    await TestUtil.create('interaction', {
+      id: '2',
+      content_id: 'article-2',
+      thematique_gamification: Thematique.climat,
+      difficulty: DifficultyLevel.L1,
+      type: InteractionType.article,
+      done: false,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.numero_todo).toEqual(1);
+    expect(response.body.todo[0].type).toEqual(InteractionType.article);
+    expect(response.body.todo[0].content_id).toEqual('article-2');
+    expect(response.body.todo[0].interaction_id).toEqual('2');
+  });
   it('POST /utilisateurs/id/todo/id/gagner_points encaissse les points associé à cet élément', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {

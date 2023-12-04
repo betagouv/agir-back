@@ -84,6 +84,7 @@ export class InteractionsUsecase {
         pinned: true,
         locked: false,
         code_postal: utilisateur.code_postal,
+        done: false,
       });
     DistributionSettings.insertPinnedInteractions(pinned_interactions, result);
 
@@ -95,6 +96,7 @@ export class InteractionsUsecase {
         locked: true,
         pinned: false,
         code_postal: utilisateur.code_postal,
+        done: false,
       });
     result = DistributionSettings.insertLockedInteractions(
       locked_interactions,
@@ -188,6 +190,7 @@ export class InteractionsUsecase {
       type: InteractionType.article,
       pinned: false,
       code_postal,
+      done: false,
     });
   }
 
@@ -199,6 +202,7 @@ export class InteractionsUsecase {
       ),
       type: InteractionType.suivi_du_jour,
       pinned: false,
+      done: false,
     });
   }
 
@@ -214,6 +218,7 @@ export class InteractionsUsecase {
       pinned: false,
       quizzProfile: quizzProfile,
       code_postal,
+      done: false,
     });
   }
 
@@ -227,6 +232,7 @@ export class InteractionsUsecase {
       type: InteractionType.aide,
       pinned: false,
       code_postal,
+      done: false,
     });
   }
 }

@@ -14,4 +14,6 @@ export type SearchFilter = {
   thematiques?: Thematique[];
   code_postal?: string;
   difficulty?: DifficultyLevel;
+  done?: boolean;
+  quizz_full_success?: boolean;
 };

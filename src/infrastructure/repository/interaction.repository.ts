@@ -234,7 +234,8 @@ export class InteractionRepository {
     }
     let main_filter = {
       utilisateurId: filter.utilisateurId,
-      done: false,
+      done: filter.done,
+      quizz_score: filter.quizz_full_success ? 100 : undefined,
       type: filter.type,
       pinned_at_position: filter.pinned ? { not: null } : null,
       locked: filter.locked,
