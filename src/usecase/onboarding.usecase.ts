@@ -1,5 +1,5 @@
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { InteractionDefinitionRepository } from '../infrastructure/repository/interactionDefinition.repository';
 import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
@@ -77,11 +77,7 @@ export class OnboardingUsecase {
     input: OnboardingDataAPI,
   ): Promise<OnboardingDataImpactAPI> {
     const onboardingData = new Onboarding(input);
-    try {
-      onboardingData.validateData();
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
+    onboardingData.validateData();
 
     const onboardingResult = new OnboardingResult(onboardingData);
 
@@ -151,6 +147,12 @@ export class OnboardingUsecase {
     utilisateurInput: CreateUtilisateurAPI,
   ): Promise<Utilisateur> {
     this.checkInputToCreateUtilisateur(utilisateurInput);
+
+    if (process.env.WHITE_LIST_ENABLED === 'true') {
+      if (!process.env.WHITE_LIST.includes(utilisateurInput.email)) {
+        ApplicationError.throwNotAuthorizedEmailError();
+      }
+    }
 
     const onboardingData = new Onboarding(utilisateurInput.onboardingData);
 

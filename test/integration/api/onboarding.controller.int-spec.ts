@@ -81,7 +81,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       nom: 'WW',
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHA',
-      email: 'monmail@truc.com',
+      email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
     // THEN
@@ -89,13 +89,11 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       where: { nom: 'WW' },
     });
     expect(response.status).toBe(201);
-    expect(response.headers['location']).toContain('monmail@truc.com');
     expect(user.nom).toEqual('WW');
     expect(user.prenom).toEqual('Wojtek');
-    expect(user.email).toEqual('monmail@truc.com');
+    expect(user.email).toEqual('w@w.com');
     expect(user.code_postal).toEqual('91120');
     expect(user.commune).toEqual('Palaiseau');
-    expect(user.email).toEqual('monmail@truc.com');
     expect(user.passwordHash.length).toBeGreaterThan(20);
     expect(user.passwordSalt.length).toBeGreaterThan(20);
     expect(user.onboardingData).toStrictEqual(ONBOARDING_1_2_3_4_DATA);
@@ -109,6 +107,25 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(user.prevent_sendemail_before.getTime()).toBeLessThanOrEqual(
       Date.now(),
     );
+  });
+  it('POST /utilisateurs - returns error when not white listed email', async () => {
+    // WHEN
+    const response = await TestUtil.getServer().post('/utilisateurs').send({
+      nom: 'WW',
+      prenom: 'Wojtek',
+      mot_de_passe: '#1234567890HAHA',
+      email: 'monmail@truc.com',
+      onboardingData: ONBOARDING_1_2_3_4_DATA,
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      'La beta de ce service est pour le moment réservée aux beta-testeurs, merci de nous contacter si vous voulez en être !',
+    );
+    const user = await TestUtil.prisma.utilisateur.findFirst({
+      where: { nom: 'WW' },
+    });
+    expect(user).toBeNull();
   });
   it('POST /utilisateurs - bad password', async () => {
     // WHEN
@@ -131,14 +148,14 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       nom: 'WW',
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHA',
-      email: 'monmail@truc.com',
+      email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
 
     // WHEN
     const response = await TestUtil.getServer()
       .post('/utilisateurs/renvoyer_code')
-      .send({ email: 'monmail@truc.com' });
+      .send({ email: 'w@w.com' });
 
     // THEN
     expect(response.status).toBe(200);
@@ -155,20 +172,20 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       nom: 'WW',
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHA',
-      email: 'monmail@truc.com',
+      email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
 
     // WHEN
     await TestUtil.getServer()
       .post('/utilisateurs/renvoyer_code')
-      .send({ email: 'monmail@truc.com' });
+      .send({ email: 'w@w.com' });
     await TestUtil.getServer()
       .post('/utilisateurs/renvoyer_code')
-      .send({ email: 'monmail@truc.com' });
+      .send({ email: 'w@w.com' });
     const response = await TestUtil.getServer()
       .post('/utilisateurs/renvoyer_code')
-      .send({ email: 'monmail@truc.com' });
+      .send({ email: 'w@w.com' });
 
     // THEN
     const userDB = await TestUtil.prisma.utilisateur.findFirst({
@@ -188,7 +205,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       nom: 'WW',
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHA',
-      email: 'monmail@truc.com',
+      email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
     let userDB = await TestUtil.prisma.utilisateur.findFirst({
@@ -199,7 +216,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     const response = await TestUtil.getServer()
       .post('/utilisateurs/valider')
       .send({
-        email: 'monmail@truc.com',
+        email: 'w@w.com',
         code: userDB.code,
       });
 
@@ -237,7 +254,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       nom: 'WW',
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHA',
-      email: 'monmail@truc.com',
+      email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
     let userDB = await TestUtil.prisma.utilisateur.findFirst({
@@ -246,13 +263,13 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
 
     // WHEN
     await TestUtil.getServer().post('/utilisateurs/valider').send({
-      email: 'monmail@truc.com',
+      email: 'w@w.com',
       code: userDB.code,
     });
     const response = await TestUtil.getServer()
       .post('/utilisateurs/valider')
       .send({
-        email: 'monmail@truc.com',
+        email: 'w@w.com',
         code: userDB.code,
       });
 
@@ -266,7 +283,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       nom: 'WW',
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHA',
-      email: 'monmail@truc.com',
+      email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
 
@@ -274,7 +291,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     const response = await TestUtil.getServer()
       .post('/utilisateurs/valider')
       .send({
-        email: 'monmail@truc.com',
+        email: 'w@w.com',
         code: 'bad',
       });
 
@@ -294,27 +311,27 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       nom: 'WW',
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHA',
-      email: 'monmail@truc.com',
+      email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
 
     // WHEN
     await TestUtil.getServer().post('/utilisateurs/valider').send({
-      email: 'monmail@truc.com',
+      email: 'w@w.com',
       code: 'bad',
     });
     await TestUtil.getServer().post('/utilisateurs/valider').send({
-      email: 'monmail@truc.com',
+      email: 'w@w.com',
       code: 'bad',
     });
     await TestUtil.getServer().post('/utilisateurs/valider').send({
-      email: 'monmail@truc.com',
+      email: 'w@w.com',
       code: 'bad',
     });
     const response = await TestUtil.getServer()
       .post('/utilisateurs/valider')
       .send({
-        email: 'monmail@truc.com',
+        email: 'w@w.com',
         code: 'bad',
       });
 
@@ -537,7 +554,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
 
   it('POST /utilisateurs - erreur 400 quand email existant', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { email: 'yo@truc.com' });
+    await TestUtil.create('utilisateur', { email: 'w@w.com' });
 
     // WHEN
     const response = await TestUtil.getServer()
@@ -546,13 +563,13 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
         nom: 'WW',
         prenom: 'Wojtek',
         mot_de_passe: '#1234567890HAHA',
-        email: 'yo@truc.com',
+        email: 'w@w.com',
         onboardingData: { ...ONBOARDING_1_2_3_4_DATA },
       });
     // THEN
     expect(response.status).toBe(400);
     expect(response.body.message).toEqual(
-      'Adresse électronique yo@truc.com déjà existante',
+      'Adresse électronique w@w.com déjà existante',
     );
   });
   it('POST /utilisateurs - email au mauvais format', async () => {

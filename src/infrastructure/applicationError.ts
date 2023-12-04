@@ -124,6 +124,30 @@ export class ApplicationError {
   static throwEmailAlreadyExistError(email) {
     this.throwAppError('022', `Adresse électronique ${email} déjà existante`);
   }
+  static throwNotAuthorizedEmailError() {
+    this.throwAppError(
+      '023',
+      `La beta de ce service est pour le moment réservée aux beta-testeurs, merci de nous contacter si vous voulez en être !`,
+    );
+  }
+  static throwSituationAlreadyExistsError(
+    situationId: string,
+    utilisateurId: string,
+  ) {
+    this.throwAppError(
+      '024',
+      `Une situation d'id ${situationId} existe déjà en base pour l'utilisateur ${utilisateurId}`,
+    );
+  }
+  static throwSuiviInconnuError(type: string) {
+    this.throwAppError('025', `Suivi de type ${type} inconnu`);
+  }
+  static throwModelCMSInconnuError(model: string) {
+    this.throwAppError(
+      '026',
+      `Model de contenu CMS [${model}] manquant ou inconnu`,
+    );
+  }
 
   private static throwAppError(code: string, message: string) {
     throw new ApplicationError(code, message);

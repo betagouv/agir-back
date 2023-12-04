@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Post,
-  Response,
-} from '@nestjs/common';
+import { Body, Controller, Post, Response } from '@nestjs/common';
 import { OnboardingUsecase } from '../../usecase/onboarding.usecase';
 import {
   ApiTags,
@@ -44,14 +38,9 @@ export class OnboardingController {
   async createUtilisateur(@Body() body: CreateUtilisateurAPI, @Response() res) {
     try {
       await this.onboardingUsecase.createUtilisateur(body);
-      return res
-        .header(
-          'location',
-          `https://agir.gouv.fr/api/utiliateurs/${body.email}`,
-        )
-        .json({
-          email: body.email,
-        });
+      return res.json({
+        email: body.email,
+      });
     } catch (error) {
       ApplicationError.throwBadRequestOrServerError(error);
     }

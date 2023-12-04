@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InteractionDefinitionRepository } from '../infrastructure/repository/interactionDefinition.repository';
 import { CMSWebhookAPI } from '../infrastructure/api/types/cms/CMSWebhookAPI';
 import {
@@ -15,6 +15,7 @@ import { CMSThematiqueAPI } from '../infrastructure/api/types/cms/CMSThematiqueA
 import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
 import { CMSModel } from '../infrastructure/api/types/cms/CMSModels';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
+import { ApplicationError } from '../../src/infrastructure/applicationError';
 
 @Injectable()
 export class InteractionsDefinitionUsecase {
@@ -109,9 +110,7 @@ export class InteractionsDefinitionUsecase {
     cmsWebhookAPI: CMSWebhookAPI,
   ): InteractionDefinition {
     if (InteractionType[cmsWebhookAPI.model] === undefined) {
-      throw new BadRequestException(
-        `Model de contenu CMS [${cmsWebhookAPI.model}] manquant ou inconnu`,
-      );
+      ApplicationError.throwModelCMSInconnuError(cmsWebhookAPI.model);
     }
 
     const interactionDef: InteractionDefinitionData = {

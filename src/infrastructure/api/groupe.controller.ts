@@ -9,7 +9,6 @@ import {
   Put,
   Body,
   NotFoundException,
-  BadRequestException,
   Query,
 } from '@nestjs/common';
 import {

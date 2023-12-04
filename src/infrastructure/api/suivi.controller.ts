@@ -15,7 +15,6 @@ import {
   Request,
   Query,
   NotFoundException,
-  BadRequestException,
   UseGuards,
 } from '@nestjs/common';
 import { SuiviUsecase } from '../../usecase/suivi.usecase';
@@ -23,9 +22,13 @@ import { Suivi } from '../../domain/suivi/suivi';
 import { SuiviAlimentation } from '../../domain/suivi/suiviAlimentation';
 import { SuiviTransport } from '../../domain/suivi/suiviTransport';
 import { SuiviType } from '../../domain/suivi/suiviType';
-import { SuiviAlimentationAPI, SuiviTransportAPI } from './types/suivi/suiviAPI';
+import {
+  SuiviAlimentationAPI,
+  SuiviTransportAPI,
+} from './types/suivi/suiviAPI';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
+import { ApplicationError } from '../applicationError';
 
 @ApiExtraModels(SuiviAlimentationAPI, SuiviTransportAPI)
 @Controller()
@@ -131,7 +134,7 @@ export class SuiviController extends GenericControler {
         suivi = new SuiviTransport();
         break;
       default:
-        throw new BadRequestException(`Suivi de type ${body.type} inconnu`);
+        ApplicationError.throwSuiviInconnuError(body.type);
     }
     suivi.injectValuesFromObject(body);
     const result = await this.suiviUsecase.createSuivi(suivi, utilisateurId);

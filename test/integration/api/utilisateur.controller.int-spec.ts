@@ -192,21 +192,20 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('POST /utilisateurs/login - utilisateur non actif', async () => {
     // GIVEN
-    await TestUtil.getServer().post('/utilisateurs').send({
+    let response = await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHA',
-      email: 'monmail@truc.com',
+      email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
+    expect(response.status).toBe(201);
 
     // WHEN
-    const response = await TestUtil.getServer()
-      .post('/utilisateurs/login')
-      .send({
-        mot_de_passe: '#1234567890HAHA',
-        email: 'monmail@truc.com',
-      });
+    response = await TestUtil.getServer().post('/utilisateurs/login').send({
+      mot_de_passe: '#1234567890HAHA',
+      email: 'w@w.com',
+    });
     expect(response.status).toBe(400);
     expect(response.body.message).toEqual('Utilisateur non actif');
   });
