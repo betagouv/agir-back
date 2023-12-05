@@ -35,6 +35,9 @@ async function summaryVelo(
 ): Promise<AidesVeloParType> {
   const lieu = await getLocalisationByCP(codePostal);
   const rules = rulesVelo as Record<string, any>;
+  delete rules['aides . prime à la conversion'];
+  delete rules['aides . prime à la conversion . surprime ZFE'];
+
   const engine = new Publicodes(rules);
   const situationBase: InputParameters = {
     'localisation . epci': `${lieu?.epci}`,
