@@ -16,6 +16,8 @@ import { CodeManager } from '../../src/domain/utilisateur/manager/codeManager';
 import { SecurityEmailManager } from '../../src/domain/utilisateur/manager/securityEmailManager';
 import { PasswordAwareUtilisateur } from '../../src/domain/utilisateur/manager/passwordAwareUtilisateur';
 import { Profile } from '../../src/domain/utilisateur/profile';
+import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
+import { GroupeRepository } from '../../src/infrastructure/repository/groupe.repository';
 
 export type Phrase = {
   phrase: string;
@@ -26,6 +28,8 @@ export type Phrase = {
 export class UtilisateurUsecase {
   constructor(
     private utilisateurRespository: UtilisateurRepository,
+    private groupeRepository: GroupeRepository,
+    private serviceRepository: ServiceRepository,
     private interactionRepository: InteractionRepository,
     private suiviRepository: SuiviRepository,
     private badgeRepository: BadgeRepository,
@@ -189,6 +193,9 @@ export class UtilisateurUsecase {
     await this.bilanRepository.delete(utilisateurId);
     await this.questionNGCRepository.delete(utilisateurId);
     await this.oIDCStateRepository.delete(utilisateurId);
+    await this.bilanRepository.delete(utilisateurId);
+    await this.serviceRepository.delete(utilisateurId);
+    await this.groupeRepository.delete(utilisateurId);
     await this.utilisateurRespository.delete(utilisateurId);
   }
 

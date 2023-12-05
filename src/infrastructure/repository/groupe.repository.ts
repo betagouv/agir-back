@@ -12,6 +12,11 @@ export class GroupeRepository {
     return this.prisma.groupe.findMany({});
   }
 
+  async delete(utilisateurId: string): Promise<any> {
+    return this.prisma.groupeAbonnement.deleteMany({
+      where: { utilisateurId: utilisateurId },
+    });
+  }
   async createGroupe(groupe: Groupe): Promise<Groupe> {
     const group = await this.prisma.groupe.create({
       data: {

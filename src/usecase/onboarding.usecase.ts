@@ -16,7 +16,6 @@ import { OnboardingDataImpactAPI } from '../infrastructure/api/types/utilisateur
 import { OnboardingResult } from '../domain/utilisateur/onboarding/onboardingResult';
 import { EmailSender } from '../infrastructure/email/emailSender';
 import { PasswordManager } from '../../src/domain/utilisateur/manager/passwordManager';
-import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 import { CodeManager } from '../../src/domain/utilisateur/manager/codeManager';
 import { OidcService } from '../../src/infrastructure/auth/oidc.service';
 import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
@@ -36,7 +35,6 @@ export class OnboardingUsecase {
     private interactionDefinitionRepository: InteractionDefinitionRepository,
     private interactionRepository: InteractionRepository,
     private emailSender: EmailSender,
-    private communeRepository: CommuneRepository,
     private codeManager: CodeManager,
     private oidcService: OidcService,
     private securityEmailManager: SecurityEmailManager,

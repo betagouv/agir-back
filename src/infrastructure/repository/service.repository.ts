@@ -28,6 +28,12 @@ export class ServiceRepository {
     });
   }
 
+  async delete(utilisateurId: string): Promise<any> {
+    return this.prisma.service.deleteMany({
+      where: { utilisateurId: utilisateurId },
+    });
+  }
+
   async addServiceToUtilisateur(
     utilisateurId: string,
     serviceDefinitionId: string,
