@@ -42,6 +42,8 @@
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^6.3.0",
     "@prisma/client": "^5.1.1",
+    "@sentry/node": "^7.85.0",
+    "@sentry/tracing": "^7.85.0",
     "axios": "^1.4.0",
     "publicodes": "^1.0.0-beta.70",
     "reflect-metadata": "^0.1.13",
