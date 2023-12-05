@@ -34,6 +34,10 @@ export class CMSController {
       throw new ForbiddenException('API KEY webhook CMS incorrecte');
     }
     console.log(JSON.stringify(body));
-    await this.interactionsDefinitionUsecase.manageIncomingCMSData(body);
+    try {
+      await this.interactionsDefinitionUsecase.manageIncomingCMSData(body);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

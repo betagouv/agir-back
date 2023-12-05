@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { InteractionDefinition } from '../../../src/domain/interaction/interactionDefinition';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
-import { InteractionDefinition as InteractionDefinitionDB } from '@prisma/client';
+import {
+  InteractionDefinition as InteractionDefinitionDB,
+  Prisma,
+} from '@prisma/client';
 import { Thematique } from '../../../src/domain/thematique';
 
 @Injectable()
@@ -51,12 +54,26 @@ export class InteractionDefinitionRepository {
     return result ? this.buildInteractionDefinitionFromDB(result) : null;
   }
 
-  async deleteByContentId(content_id: string) {
-    await this.prisma.interactionDefinition.deleteMany({
-      where: {
-        content_id,
-      },
-    });
+  async deleteByContentIdAndType(type: InteractionType, content_id: string) {
+    try {
+      await this.prisma.interactionDefinition.delete({
+        where: {
+          type_content_id: {
+            content_id,
+            type: type.toString(),
+          },
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        // NOTHING TO DO ^^
+      } else {
+        throw error;
+      }
+    }
   }
 
   private buildInteractionDefinitionFromDB(

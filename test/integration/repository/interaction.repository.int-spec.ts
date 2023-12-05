@@ -614,10 +614,14 @@ describe('InteractionRepository', () => {
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
       content_id: '123',
+      type: InteractionType.article,
     });
 
     // WHEN
-    const result = await interactionRepository.doesContentIdExists('345');
+    const result = await interactionRepository.doesContentIdAndTypeExists(
+      InteractionType.article,
+      '345',
+    );
 
     // THEN
     expect(result).toStrictEqual(false);
@@ -627,10 +631,14 @@ describe('InteractionRepository', () => {
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
       content_id: '123',
+      type: InteractionType.article,
     });
 
     // WHEN
-    const result = await interactionRepository.doesContentIdExists('123');
+    const result = await interactionRepository.doesContentIdAndTypeExists(
+      InteractionType.article,
+      '123',
+    );
 
     // THEN
     expect(result).toStrictEqual(true);
@@ -642,17 +650,19 @@ describe('InteractionRepository', () => {
       done: true,
       done_at: new Date(1),
       content_id: '123',
+      type: InteractionType.article,
     });
 
     const incomingInterDef = new InteractionDefinition(
       TestUtil.interactionDefinitionData({
         content_id: '123',
+        type: InteractionType.article,
         titre: 'THE NEW TITLE',
       }),
     );
 
     // WHEN
-    await interactionRepository.updateInteractionFromDefinitionByContentId(
+    await interactionRepository.updateInteractionFromDefinitionByContentIdAndType(
       incomingInterDef,
     );
 

@@ -58,11 +58,13 @@ export class InteractionsDefinitionUsecase {
   }
 
   async deleteInteraction(cmsWebhookAPI: CMSWebhookAPI) {
-    await this.interactionDefinitionRepository.deleteByContentId(
+    await this.interactionDefinitionRepository.deleteByContentIdAndType(
+      InteractionType[cmsWebhookAPI.model],
       cmsWebhookAPI.entry.id.toString(),
     );
 
-    await this.interactionRepository.deleteByContentIdWhenNotDone(
+    await this.interactionRepository.deleteByContentIdAndTypeWhenNotDone(
+      InteractionType[cmsWebhookAPI.model],
       cmsWebhookAPI.entry.id.toString(),
     );
   }
@@ -80,12 +82,13 @@ export class InteractionsDefinitionUsecase {
     );
 
     const inter_already_deployed =
-      await this.interactionRepository.doesContentIdExists(
+      await this.interactionRepository.doesContentIdAndTypeExists(
+        InteractionType[cmsWebhookAPI.model],
         interactionDef.content_id,
       );
 
     if (inter_already_deployed) {
-      await this.interactionRepository.updateInteractionFromDefinitionByContentId(
+      await this.interactionRepository.updateInteractionFromDefinitionByContentIdAndType(
         interactionDef,
       );
     } else {

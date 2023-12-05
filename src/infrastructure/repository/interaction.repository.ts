@@ -133,13 +133,14 @@ export class InteractionRepository {
     });
   }
 
-  async updateInteractionFromDefinitionByContentId(
+  async updateInteractionFromDefinitionByContentIdAndType(
     interactionDefinition: InteractionDefinition,
   ) {
     // FIXME : refacto code autour des valeurs à pas toucher
     await this.prisma.interaction.updateMany({
       where: {
         content_id: interactionDefinition.content_id,
+        type: interactionDefinition.type,
       },
       data: {
         ...interactionDefinition,
@@ -148,10 +149,14 @@ export class InteractionRepository {
       },
     });
   }
-  async doesContentIdExists(content_id: string): Promise<boolean> {
+  async doesContentIdAndTypeExists(
+    type: InteractionType,
+    content_id: string,
+  ): Promise<boolean> {
     const count = await this.prisma.interaction.count({
       where: {
-        content_id,
+        type: type.toString(),
+        content_id: content_id,
       },
     });
     return count > 0;
@@ -179,10 +184,14 @@ export class InteractionRepository {
     return result.count;
   }
 
-  async deleteByContentIdWhenNotDone(content_id: string) {
+  async deleteByContentIdAndTypeWhenNotDone(
+    type: InteractionType,
+    content_id: string,
+  ) {
     await this.prisma.interaction.deleteMany({
       where: {
         content_id,
+        type: type.toString(),
         done: false,
       },
     });

@@ -4,7 +4,84 @@ import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent'
 import { TestUtil } from '../../../TestUtil';
 
 describe('/api/incoming/cms (API test)', () => {
-  const CMS_DATA = TestUtil.CMSWebhookAPIData();
+  const CMS_DATA_ARTICLE = {
+    model: CMSModel.article,
+    event: CMSEvent['entry.publish'],
+    entry: {
+      id: 123,
+      titre: 'titre',
+      sousTitre: 'soustitre 222',
+      thematique_gamification: { id: 1, titre: 'Alimentation' },
+      thematiques: [
+        { id: 1, titre: 'Alimentation' },
+        { id: 2, titre: 'Climat' },
+      ],
+      rubriques: ['A', 'B'],
+      duree: 'pas trop long',
+      frequence: 'souvent',
+      imageUrl: {
+        formats: {
+          thumbnail: { url: 'https://' },
+        },
+      },
+      difficulty: 3,
+      points: 20,
+      codes_postaux: '91120,75002',
+      publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+    },
+  };
+  const CMS_DATA_QUIZZ = {
+    model: CMSModel.quizz,
+    event: CMSEvent['entry.publish'],
+    entry: {
+      id: 123,
+      titre: 'titre',
+      sousTitre: 'soustitre 222',
+      thematique_gamification: { id: 1, titre: 'Alimentation' },
+      thematiques: [
+        { id: 1, titre: 'Alimentation' },
+        { id: 2, titre: 'Climat' },
+      ],
+      rubriques: ['A', 'B'],
+      duree: 'pas trop long',
+      frequence: 'souvent',
+      imageUrl: {
+        formats: {
+          thumbnail: { url: 'https://' },
+        },
+      },
+      difficulty: 3,
+      points: 20,
+      codes_postaux: '91120,75002',
+      publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+    },
+  };
+  const CMS_DATA_QUIZZ_UNPUBLISH = {
+    model: CMSModel.quizz,
+    event: CMSEvent['entry.unpublish'],
+    entry: {
+      id: 123,
+      titre: 'titre',
+      sousTitre: 'soustitre 222',
+      thematique_gamification: { id: 1, titre: 'Alimentation' },
+      thematiques: [
+        { id: 1, titre: 'Alimentation' },
+        { id: 2, titre: 'Climat' },
+      ],
+      rubriques: ['A', 'B'],
+      duree: 'pas trop long',
+      frequence: 'souvent',
+      imageUrl: {
+        formats: {
+          thumbnail: { url: 'https://' },
+        },
+      },
+      difficulty: 3,
+      points: 20,
+      codes_postaux: '91120,75002',
+      publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+    },
+  };
   beforeAll(async () => {
     await TestUtil.appinit();
   });
@@ -23,7 +100,7 @@ describe('/api/incoming/cms (API test)', () => {
     // WHEN
     const response = await TestUtil.getServer()
       .post('/api/incoming/cms')
-      .send(CMS_DATA);
+      .send(CMS_DATA_ARTICLE);
 
     // THEN
     expect(response.status).toBe(401);
@@ -32,7 +109,7 @@ describe('/api/incoming/cms (API test)', () => {
     // GIVEN
     TestUtil.token = 'bad';
     // WHEN
-    const response = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA);
+    const response = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA_ARTICLE);
 
     // THEN
     expect(response.status).toBe(403);
@@ -41,7 +118,7 @@ describe('/api/incoming/cms (API test)', () => {
     // GIVEN
 
     // WHEN
-    const response = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA);
+    const response = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA_ARTICLE);
 
     // THEN
     const interDefDB = await TestUtil.prisma.interactionDefinition.findMany({});
@@ -64,12 +141,44 @@ describe('/api/incoming/cms (API test)', () => {
     expect(interDefDB[0].codes_postaux).toStrictEqual(['91120', '75002']);
     expect(interDefDB[0].content_id).toEqual('123');
   });
+  it('POST /api/incoming/cms - creates a new article then a new quizz of same id, unpublish quizz leaves article', async () => {
+    // GIVEN
+
+    // WHEN
+    const response1 = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA_ARTICLE);
+    const response2 = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA_QUIZZ);
+    const response3 = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_QUIZZ_UNPUBLISH,
+    );
+
+    // THEN
+    const interDefDB = await TestUtil.prisma.interactionDefinition.findMany({});
+
+    expect(response1.status).toBe(201);
+    expect(response2.status).toBe(201);
+    expect(response3.status).toBe(201);
+    expect(interDefDB).toHaveLength(1);
+  });
+  it('POST /api/incoming/cms - creates a new article then a new quizz with same id, 2 contents in the end', async () => {
+    // GIVEN
+
+    // WHEN
+    const response1 = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA_ARTICLE);
+    const response2 = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA_QUIZZ);
+
+    // THEN
+    const interDefDB = await TestUtil.prisma.interactionDefinition.findMany({});
+
+    expect(response1.status).toBe(201);
+    expect(response2.status).toBe(201);
+    expect(interDefDB).toHaveLength(2);
+  });
   it('POST /api/incoming/cms - create a new article, 1 user in db with not article, no error', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
 
     // WHEN
-    const response = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA);
+    const response = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA_ARTICLE);
 
     // THEN
     const interDB = await TestUtil.prisma.interaction.findMany({});
@@ -81,7 +190,7 @@ describe('/api/incoming/cms (API test)', () => {
     // GIVEN
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send({
-      ...CMS_DATA,
+      ...CMS_DATA_ARTICLE,
       model: CMSModel.thematique,
       event: CMSEvent['entry.publish'],
       entry: { id: 1, titre: 'yo' },
@@ -100,7 +209,7 @@ describe('/api/incoming/cms (API test)', () => {
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send({
-      ...CMS_DATA,
+      ...CMS_DATA_ARTICLE,
       model: 'aide',
     });
 
@@ -122,7 +231,7 @@ describe('/api/incoming/cms (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA);
+    const response = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA_ARTICLE);
     // THEN
     const interDB = await TestUtil.prisma.interaction.findMany({});
     const interDefDB = await TestUtil.prisma.interactionDefinition.findMany({});
@@ -154,7 +263,7 @@ describe('/api/incoming/cms (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA);
+    const response = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA_ARTICLE);
 
     // THEN
     const interDB = await TestUtil.prisma.interaction.findMany({});
@@ -169,7 +278,7 @@ describe('/api/incoming/cms (API test)', () => {
   it('POST /api/incoming/cms - does nothing when no publishedAt value', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
-    const data = { ...CMS_DATA };
+    const data = { ...CMS_DATA_ARTICLE };
     data.entry = { ...data.entry };
     data.entry.publishedAt = null;
     // WHEN
@@ -183,7 +292,7 @@ describe('/api/incoming/cms (API test)', () => {
   it('POST /api/incoming/cms - optional points lead to 0 points', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
-    const data = { ...CMS_DATA };
+    const data = { ...CMS_DATA_ARTICLE };
     data.entry = { ...data.entry };
     data.entry.points = null;
     // WHEN
@@ -200,9 +309,10 @@ describe('/api/incoming/cms (API test)', () => {
     await TestUtil.create('utilisateur');
     await TestUtil.create('interactionDefinition', {
       content_id: '123',
+      type: InteractionType.article,
     });
 
-    const data = { ...CMS_DATA };
+    const data = { ...CMS_DATA_ARTICLE };
     data.event = CMSEvent['entry.unpublish'];
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(data);
@@ -212,7 +322,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(response.status).toBe(201);
     expect(interDefDB).toHaveLength(0);
   });
-  it('POST /api/incoming/cms - unpublish event removes interaction when not done', async () => {
+  it('POST /api/incoming/cms - unpublish event removes interaction when not done, does not remove other type of content', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', { id: 'u1', email: 'e1' });
     await TestUtil.create('utilisateur', { id: 'u2', email: 'e2' });
@@ -233,16 +343,32 @@ describe('/api/incoming/cms (API test)', () => {
       utilisateurId: 'u2',
       done: false,
     });
+    await TestUtil.create('interaction', {
+      id: 'i3',
+      content_id: '123',
+      type: InteractionType.quizz,
+      utilisateurId: 'u2',
+      done: false,
+    });
 
-    const data = { ...CMS_DATA };
+    const data = { ...CMS_DATA_ARTICLE };
     data.event = CMSEvent['entry.delete'];
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(data);
 
     // THEN
-    const interDB = await TestUtil.prisma.interaction.findMany({});
+    const interDB_1 = await TestUtil.prisma.interaction.findUnique({
+      where: { id: 'i1' },
+    });
+    const interDB_2 = await TestUtil.prisma.interaction.findUnique({
+      where: { id: 'i2' },
+    });
+    const interDB_3 = await TestUtil.prisma.interaction.findUnique({
+      where: { id: 'i3' },
+    });
     expect(response.status).toBe(201);
-    expect(interDB).toHaveLength(1);
-    expect(interDB[0].id).toEqual('i1');
+    expect(interDB_1).not.toBeNull();
+    expect(interDB_2).toBeNull();
+    expect(interDB_3).not.toBeNull();
   });
 });
