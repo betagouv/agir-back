@@ -13,7 +13,9 @@ export class ThematiqueRepository {
   }
 
   async onApplicationBootstrap(): Promise<void> {
-    await this.loadThematiques();
+    if (process.env.FIRST_START === 'false') {
+      await this.loadThematiques();
+    }
   }
 
   public static getLibelleThematique(thematique: Thematique): string {
