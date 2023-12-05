@@ -71,18 +71,20 @@ export class EventUsecase {
       utilisateurId,
       event.interaction_id,
     );
-    const already_done = ctx.interaction.done;
 
-    if (!already_done) {
-      this.addPointsToUser(ctx);
+    // FIXME : rustine car pas d'id interaction du front quand un lit un article hors todo/reco
+    if (ctx.interaction) {
+      const already_done = ctx.interaction.done;
+      if (!already_done) {
+        this.addPointsToUser(ctx);
+      }
+      this.updateUserTodo(ctx);
+      await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
+      ctx.interaction.updateStatus({
+        done: true,
+      });
+      await this.interactionRepository.updateInteraction(ctx.interaction);
     }
-    this.updateUserTodo(ctx);
-    await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
-
-    ctx.interaction.updateStatus({
-      done: true,
-    });
-    await this.interactionRepository.updateInteraction(ctx.interaction);
   }
   private async processQuizzScore(
     utilisateurId: string,
