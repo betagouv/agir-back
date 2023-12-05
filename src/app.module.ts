@@ -4,7 +4,7 @@ import { UtilisateurController } from './infrastructure/api/utilisateur.controll
 import { AuthController } from './infrastructure/api/auth.controller';
 import { BilanController } from './infrastructure/api/bilan.controller';
 import { AidesController } from './infrastructure/api/aides.controller';
-import { IntractionsController } from './infrastructure/api/interactions.controller';
+import { InteractionsController } from './infrastructure/api/interactions.controller';
 import { TestDataController } from './infrastructure/api/testData.controller';
 import { CMSController } from './infrastructure/api/incoming/cms.controller';
 
@@ -67,24 +67,16 @@ import { LinkyController } from './infrastructure/api/linky.controller';
 
 const SESSION_LIFETIME = '12h';
 
-@Module({
-  imports: [
-    JwtModule.register({
-      global: true,
-      secret: process.env.INTERNAL_TOKEN_SECRET,
-      signOptions: { expiresIn: SESSION_LIFETIME },
-    }),
-  ],
-  controllers: [
+function getControllers(): any[] {
+  const controllers = [];
+  controllers.push(
     OnboardingController,
     UtilisateurController,
-    AuthController,
     BilanController,
     AidesController,
-    IntractionsController,
+    InteractionsController,
     SuiviController,
     SuiviDashboardController,
-    TestDataController,
     QuestionsNGCController,
     CMSController,
     CommunesController,
@@ -95,7 +87,22 @@ const SESSION_LIFETIME = '12h';
     EventController,
     GamificationController,
     LinkyController,
+  );
+  if (process.env.IS_PROD === 'false') {
+    controllers.push(TestDataController);
+    controllers.push(AuthController);
+  }
+  return controllers;
+}
+@Module({
+  imports: [
+    JwtModule.register({
+      global: true,
+      secret: process.env.INTERNAL_TOKEN_SECRET,
+      signOptions: { expiresIn: SESSION_LIFETIME },
+    }),
   ],
+  controllers: getControllers(),
   providers: [
     PrismaService,
     UtilisateurRepository,

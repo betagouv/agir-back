@@ -26,7 +26,7 @@ import { GenericControler } from './genericControler';
 
 @Controller()
 @ApiTags('Interactions')
-export class IntractionsController extends GenericControler {
+export class InteractionsController extends GenericControler {
   constructor(private readonly interactionsUsecase: InteractionsUsecase) {
     super();
   }
