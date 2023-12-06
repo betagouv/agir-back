@@ -5,11 +5,15 @@ export class LinkyDataElement {
 }
 
 export class LinkyData {
-  constructor(data: LinkyData) {
-    this.serie = data.serie;
-    this.serie.forEach((element) => {
-      element.time = new Date(element.time);
-    });
+  constructor(data?: LinkyData) {
+    if (data) {
+      this.serie = data.serie;
+      this.serie.forEach((element) => {
+        element.time = new Date(element.time);
+      });
+    } else {
+      this.serie = [];
+    }
   }
   serie: LinkyDataElement[];
 

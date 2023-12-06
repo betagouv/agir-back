@@ -77,6 +77,23 @@ describe('Linky (API test)', () => {
     expect(dbUser.code_departement).toEqual('91');
     expect(linky_prm.data['serie']).toEqual([]);
   });
+  it('POST /utilisateurs/id/linky_souscription/empty vide les données stockées du PRM', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { prm: 'abc' });
+    await TestUtil.create('linky');
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/linky_souscription/empty',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    const linky_prm = await TestUtil.prisma.linky.findUnique({
+      where: { prm: 'abc' },
+    });
+    expect(linky_prm.data['serie']).toEqual([]);
+  });
   it('GET /linky_souscriptions renvoie une souscription', async () => {
     // GIVEN
     // WHEN

@@ -58,6 +58,7 @@ describe('/api/incoming/winter-energies (API test)', () => {
     // WHEN
     const response = await TestUtil.getServer()
       .post('/api/incoming/winter-energies')
+      .set('key', process.env.WINTER_API_KEY)
       .send(INCOMMING_DATA);
 
     // THEN
@@ -67,5 +68,16 @@ describe('/api/incoming/winter-energies (API test)', () => {
       where: { prm: 'abc' },
     });
     expect(dbData.data['serie']).toHaveLength(6);
+  });
+  it('POST /api/incoming/winter-energies - erreur 401 si mauvaise clé API', async () => {
+    // GIVEN
+    await TestUtil.create('linky');
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/api/incoming/winter-energies')
+      .send(INCOMMING_DATA);
+
+    // THEN
+    expect(response.status).toBe(401);
   });
 });

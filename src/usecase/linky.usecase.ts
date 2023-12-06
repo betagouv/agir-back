@@ -49,8 +49,16 @@ export class LinkyUsecase {
     return this.linkyServiceManager.list_souscriptions(page);
   }
 
+  async emptyPRMData(utilisateurId: string): Promise<any> {
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+      utilisateurId,
+    );
+    await this.linkyRepository.emptyData(utilisateur.prm);
+  }
+
   async process_incoming_data(incoming: WinterDataSentAPI): Promise<any> {
     console.log(JSON.stringify(incoming));
+
     if (
       incoming.error &&
       incoming.error.code !== null &&
@@ -62,10 +70,8 @@ export class LinkyUsecase {
       );
     }
     const prm = incoming.info.prm;
-    console.log(prm);
 
     const current_data = await this.linkyRepository.getData(prm);
-    console.log(current_data);
 
     for (let index = 0; index < incoming.data.length; index++) {
       const element = incoming.data[index];

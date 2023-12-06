@@ -5,6 +5,8 @@ import {
   Post,
   Res,
   Headers,
+  ForbiddenException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -24,6 +26,9 @@ export class WinterController {
     @Headers() headers,
   ) {
     console.log(JSON.stringify(headers));
+    if (headers['key'] !== process.env.WINTER_API_KEY) {
+      throw new UnauthorizedException('clé API manquante ou incorrecte');
+    }
     try {
       await this.linkyUsecase.process_incoming_data(body);
     } catch (error) {

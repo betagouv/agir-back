@@ -77,4 +77,23 @@ export class LinkyController extends GenericControler {
     }
     res.status(HttpStatus.OK).json(result).send();
   }
+  @Post('utilisateurs/:utilisateurId/linky_souscription/empty')
+  @ApiOperation({
+    summary: 'Supprime les données associées au PRM de cet utilisateur',
+  })
+  @UseGuards(AuthGuard)
+  async emptyPRM(
+    @Res() res: Response,
+    @Param('utilisateurId') utilisateurId: string,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    try {
+      await this.linkyUsecase.emptyPRMData(utilisateurId);
+    } catch (error) {
+      console.log(error);
+      ApplicationError.throwBadRequestOrServerError(error);
+    }
+    res.status(HttpStatus.OK).send();
+  }
 }

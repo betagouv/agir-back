@@ -35,4 +35,14 @@ export class LinkyRepository {
     });
     return new LinkyData(result.data as any);
   }
+  async emptyData(prm: string): Promise<void> {
+    await this.prisma.linky.update({
+      where: {
+        prm: prm,
+      },
+      data: {
+        data: new LinkyData() as any,
+      },
+    });
+  }
 }

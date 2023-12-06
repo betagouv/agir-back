@@ -61,4 +61,16 @@ describe('LinkyRepository', () => {
     expect(linky_data.serie[0].value).toEqual(50);
     expect(linky_data.serie[0].value_at_normal_temperature).toEqual(55);
   });
+  it('empty  data', async () => {
+    // GIVEN
+    await TestUtil.create('linky');
+    // WHEN
+    await linkyRepository.emptyData('abc');
+    // THEN
+    const prm = await TestUtil.prisma.linky.findUnique({
+      where: { prm: 'abc' },
+    });
+    const linky_data = new LinkyData(prm.data as any);
+    expect(linky_data.serie).toHaveLength(0);
+  });
 });
