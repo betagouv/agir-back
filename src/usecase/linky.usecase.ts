@@ -51,7 +51,11 @@ export class LinkyUsecase {
 
   async process_incoming_data(incoming: WinterDataSentAPI): Promise<any> {
     console.log(JSON.stringify(incoming));
-    if (incoming.error) {
+    if (
+      incoming.error &&
+      incoming.error.code !== null &&
+      incoming.error.code !== undefined
+    ) {
       ApplicationError.throwLinkyError(
         incoming.error.code,
         incoming.error.message,
