@@ -49,11 +49,8 @@ export class LinkyUsecase {
     return this.linkyServiceManager.list_souscriptions(page);
   }
 
-  async emptyPRMData(utilisateurId: string): Promise<any> {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
-      utilisateurId,
-    );
-    await this.linkyRepository.emptyData(utilisateur.prm);
+  async emptyPRMData(prm: string): Promise<any> {
+    await this.linkyRepository.emptyData(prm);
   }
 
   async process_incoming_data(incoming: WinterDataSentAPI): Promise<any> {
