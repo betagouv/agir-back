@@ -1,20 +1,74 @@
 import { Injectable } from '@nestjs/common';
-import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
-import { InteractionType } from '../domain/interaction/interactionType';
-import { Todo } from '../domain/todo/todo';
-import { TodoRepository } from '../infrastructure/repository/todo.repository';
-import { Utilisateur } from '../domain/utilisateur/utilisateur';
-import {
-  Interaction,
-  InteractionIdProjection,
-} from '../domain/interaction/interaction';
-
+import { ApplicationError } from '../../src/infrastructure/applicationError';
+import { WinterDataSentAPI } from '../../src/infrastructure/api/types/winter/WinterIncomingDataAPI';
+import { LinkyServiceManager } from '../../src/infrastructure/service/linky/LinkyServiceManager';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { ApplicationError } from '../infrastructure/applicationError';
+import { LinkyRepository } from '../../src/infrastructure/repository/linky.repository';
 
 @Injectable()
 export class LinkyUsecase {
-  constructor(private utilisateurRepository: UtilisateurRepository) {}
+  constructor(
+    private utilisateurRepository: UtilisateurRepository,
+    private linkyRepository: LinkyRepository,
+    private linkyServiceManager: LinkyServiceManager,
+  ) {}
 
-  souscription(utilisateurId: string) {}
+  async souscription(
+    utilisateurId: string,
+    prm: string,
+    code_departement: string,
+  ) {
+    if (!prm) {
+      ApplicationError.throwMissingPRM();
+    }
+    if (!code_departement) {
+      ApplicationError.throwMissingCodeDepartement();
+    }
+
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+      utilisateurId,
+    );
+
+    if (utilisateur.pk_winter) {
+      ApplicationError.throwAlreadySubscribedError();
+    }
+    utilisateur.prm = prm;
+    utilisateur.code_departement = code_departement;
+
+    const pk = await this.linkyServiceManager.souscription(
+      prm,
+      code_departement,
+    );
+    utilisateur.pk_winter = pk;
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
+    await this.linkyRepository.createNewPRM(prm);
+  }
+
+  async liste_souscriptions(page?: number): Promise<any> {
+    return this.linkyServiceManager.list_souscriptions(page);
+  }
+
+  async process_incoming_data(incoming: WinterDataSentAPI): Promise<any> {
+    console.log(JSON.stringify(incoming));
+    if (incoming.error) {
+      ApplicationError.throwLinkyError(
+        incoming.error.code,
+        incoming.error.message,
+      );
+    }
+    const prm = incoming.info.prm;
+
+    const current_data = await this.linkyRepository.getData(prm);
+    for (let index = 0; index < incoming.data.length; index++) {
+      const element = incoming.data[index];
+      current_data.addDataElement({
+        time: new Date(element.utc_timestamp),
+        value: element.value,
+        value_at_normal_temperature: element.value_at_normal_temperature,
+      });
+    }
+
+    await this.linkyRepository.updateData(prm, current_data);
+  }
 }

@@ -1,0 +1,10 @@
+-- CreateTable
+CREATE TABLE "Linky" (
+    "id" TEXT NOT NULL,
+    "prm" TEXT NOT NULL,
+    "data" JSONB NOT NULL DEFAULT '{}',
+    "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Linky_pkey" PRIMARY KEY ("id")
+);

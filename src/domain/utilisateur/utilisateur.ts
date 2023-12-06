@@ -19,6 +19,9 @@ export class UtilisateurData {
   revenu_fiscal: number;
   parts: number;
   abonnement_ter_loire: boolean;
+  prm: string;
+  code_departement: string;
+  pk_winter: string;
   quizzProfile: UserQuizzProfile;
   created_at: Date;
   passwordHash: string;

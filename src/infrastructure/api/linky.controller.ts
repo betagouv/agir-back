@@ -7,20 +7,21 @@ import {
   Post,
   Res,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
   ApiOkResponse,
   ApiOperation,
   ApiBearerAuth,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
-import { TodoAPI } from './types/todo/todoAPI';
-import { TodoUsecase } from '../../usecase/todo.usecase';
 import { Response } from 'express';
 import { ApplicationError } from '../applicationError';
 import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
+import { WinterListeSubAPI } from './types/winter/WinterListeSubAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -40,11 +41,40 @@ export class LinkyController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
     @Res() res: Response,
     @Request() req,
+    @Query('prm') prm: string,
+    @Query('code_departement') code_departement: string,
   ) {
     this.checkCallerId(req, utilisateurId);
-
-    const result = await this.linkyUsecase.souscription(utilisateurId);
-
-    res.status(HttpStatus.OK).json('ok').send();
+    let result;
+    try {
+      result = await this.linkyUsecase.souscription(
+        utilisateurId,
+        prm,
+        code_departement,
+      );
+    } catch (error) {
+      ApplicationError.throwBadRequestOrServerError(error);
+    }
+    res.status(HttpStatus.OK).json(result).send();
+  }
+  @Get('linky_souscriptions')
+  @ApiOperation({
+    summary: 'Consulte les souscriptions actives',
+  })
+  @ApiQuery({
+    name: 'page',
+    type: Number,
+    required: false,
+  })
+  @ApiOkResponse({ type: WinterListeSubAPI })
+  @UseGuards(AuthGuard)
+  async get_souscriptions(@Res() res: Response, @Query('page') page?: number) {
+    let result;
+    try {
+      result = await this.linkyUsecase.liste_souscriptions(page);
+    } catch (error) {
+      ApplicationError.throwBadRequestOrServerError(error);
+    }
+    res.status(HttpStatus.OK).json(result).send();
   }
 }

@@ -6,6 +6,7 @@ export enum ScheduledService {
 }
 export enum LiveService {
   fruits = 'fruits',
+  linky = 'linky',
   dummy_live = 'dummy_live',
 }
 

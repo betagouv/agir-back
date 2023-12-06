@@ -180,6 +180,9 @@ export class OnboardingUsecase {
       prevent_sendemail_before: new Date(),
       todo: TodoCatalogue.getNewTodoOfNumero(1),
       gamification: Gamification.newDefaultGamification(),
+      code_departement: null,
+      prm: null,
+      pk_winter: null,
     });
 
     utilisateurToCreate.setNew6DigitCode();

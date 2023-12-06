@@ -88,6 +88,7 @@ export class TestUtil {
     await this.prisma.situationNGC.deleteMany();
     await this.prisma.interactionDefinition.deleteMany();
     await this.prisma.thematique.deleteMany();
+    await this.prisma.linky.deleteMany();
   }
 
   static getDate(date: string) {
@@ -190,6 +191,9 @@ export class TestUtil {
       revenu_fiscal: 10000,
       parts: 2,
       abonnement_ter_loire: false,
+      prm: null,
+      code_departement: null,
+      pk_winter: null,
       active_account: true,
       failed_login_count: 0,
       prevent_login_before: new Date(),
@@ -360,6 +364,22 @@ export class TestUtil {
       groupeId: 'groupe-id',
       utilisateurId: 'utilisateur-id',
       admin: true,
+      ...override,
+    };
+  }
+  static linkyData(override?) {
+    return {
+      id: 'linky-id',
+      prm: 'abc',
+      data: {
+        serie: [
+          {
+            time: new Date(),
+            value: 100,
+            value_at_normal_temperature: 110,
+          },
+        ],
+      },
       ...override,
     };
   }

@@ -12,6 +12,7 @@ import { ScheduledServiceManager } from '../../src/infrastructure/service/Schedu
 import { LiveServiceManager } from '../../src/infrastructure/service/LiveServiceManager';
 import { EventUsecase } from '../../src/usecase/event.usecase';
 import { EventType } from '../../src/domain/utilisateur/utilisateurEvent';
+import { LinkyServiceManager } from '../../src/infrastructure/service/linky/LinkyServiceManager';
 
 const dummy_live_manager = {
   computeLiveDynamicData: async (service: Service) => {
@@ -36,6 +37,7 @@ export class ServiceUsecase {
     private serviceRepository: ServiceRepository,
     private readonly ecoWattServiceManager: EcoWattServiceManager,
     private readonly fruitsEtLegumesServiceManager: FruitsEtLegumesServiceManager,
+    private readonly linkyServiceManager: LinkyServiceManager,
     private readonly eventUsecase: EventUsecase,
   ) {
     this.SCHEDULED_SERVICES = {
@@ -44,6 +46,7 @@ export class ServiceUsecase {
     };
     this.LIVE_SERVICES = {
       fruits: this.fruitsEtLegumesServiceManager,
+      linky: this.linkyServiceManager,
       dummy_live: dummy_live_manager,
     };
   }

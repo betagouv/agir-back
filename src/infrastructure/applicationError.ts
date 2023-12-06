@@ -148,6 +148,21 @@ export class ApplicationError {
       `Model de contenu CMS [${model}] manquant ou inconnu`,
     );
   }
+  static throwAlreadySubscribedError() {
+    this.throwAppError(
+      '027',
+      `Il y a déjà une souscription linky pour cet utilisateur`,
+    );
+  }
+  static throwMissingPRM() {
+    this.throwAppError('028', `PRM manquant`);
+  }
+  static throwMissingCodeDepartement() {
+    this.throwAppError('029', `Code département manquant`);
+  }
+  static throwLinkyError(code, message) {
+    this.throwAppError(code, message);
+  }
 
   private static throwAppError(code: string, message: string) {
     throw new ApplicationError(code, message);

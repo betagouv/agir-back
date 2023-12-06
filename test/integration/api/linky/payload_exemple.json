@@ -1,0 +1,141 @@
+{
+    "data_sent": {
+        "ok": true,
+        "sent_on": "2023-12-04T16:00:16.796375+00:00",
+        "error": {
+            "code": null,
+            "message": null
+        },
+        "info": {
+            "prm": "22293632381261",
+            "data_type": "energy",
+            "unit": "kWh",
+            "enedis_reading_date": "2023-12-04",
+            "processed_on": "2023-12-04T16:00:16.796386+00:00"
+        },
+        "data": [
+            {
+                "utc_timestamp": "2023-12-04T00:00:00+00:00",
+                "value": 0.33951590073077637,
+                "value_at_normal_temperature": 0.22355511897321267
+            },
+            {
+                "utc_timestamp": "2023-12-04T01:00:00+00:00",
+                "value": 0.4583726714829544,
+                "value_at_normal_temperature": 0.30040729005714384
+            },
+            {
+                "utc_timestamp": "2023-12-04T02:00:00+00:00",
+                "value": 0.22902165458585222,
+                "value_at_normal_temperature": 0.21865304225683613
+            },
+            {
+                "utc_timestamp": "2023-12-04T03:00:00+00:00",
+                "value": 0.0697905506736527,
+                "value_at_normal_temperature": 0.16460693380557062
+            },
+            {
+                "utc_timestamp": "2023-12-04T04:00:00+00:00",
+                "value": 0.4950439046116773,
+                "value_at_normal_temperature": 0.37340895862808376
+            },
+            {
+                "utc_timestamp": "2023-12-04T05:00:00+00:00",
+                "value": 0.24736109413755747,
+                "value_at_normal_temperature": 0.27516267227447355
+            },
+            {
+                "utc_timestamp": "2023-12-04T06:00:00+00:00",
+                "value": 0.497791593308143,
+                "value_at_normal_temperature": 0.0238369310123957
+            },
+            {
+                "utc_timestamp": "2023-12-04T07:00:00+00:00",
+                "value": 0.0021128925292022704,
+                "value_at_normal_temperature": 0.43989214943907523
+            },
+            {
+                "utc_timestamp": "2023-12-04T08:00:00+00:00",
+                "value": 0.3364960094616057,
+                "value_at_normal_temperature": 0.36149291816079093
+            },
+            {
+                "utc_timestamp": "2023-12-04T09:00:00+00:00",
+                "value": 0.3709926168606481,
+                "value_at_normal_temperature": 0.24206701625671495
+            },
+            {
+                "utc_timestamp": "2023-12-04T10:00:00+00:00",
+                "value": 0.4036539722070301,
+                "value_at_normal_temperature": 0.3409268846697731
+            },
+            {
+                "utc_timestamp": "2023-12-04T11:00:00+00:00",
+                "value": 0.303719647432316,
+                "value_at_normal_temperature": 0.048004950746290354
+            },
+            {
+                "utc_timestamp": "2023-12-04T12:00:00+00:00",
+                "value": 0.2741390395158567,
+                "value_at_normal_temperature": 0.05211930445871216
+            },
+            {
+                "utc_timestamp": "2023-12-04T13:00:00+00:00",
+                "value": 0.47278884055557396,
+                "value_at_normal_temperature": 0.12556853480996866
+            },
+            {
+                "utc_timestamp": "2023-12-04T14:00:00+00:00",
+                "value": 0.29346269765881655,
+                "value_at_normal_temperature": 0.45434555145809497
+            },
+            {
+                "utc_timestamp": "2023-12-04T15:00:00+00:00",
+                "value": 0.11275184457908255,
+                "value_at_normal_temperature": 0.3807936334482855
+            },
+            {
+                "utc_timestamp": "2023-12-04T16:00:00+00:00",
+                "value": 0.2112811622286011,
+                "value_at_normal_temperature": 0.2363739732039516
+            },
+            {
+                "utc_timestamp": "2023-12-04T17:00:00+00:00",
+                "value": 0.4046339284437799,
+                "value_at_normal_temperature": 0.10646413569406254
+            },
+            {
+                "utc_timestamp": "2023-12-04T18:00:00+00:00",
+                "value": 0.25828456954498313,
+                "value_at_normal_temperature": 0.07542170764431722
+            },
+            {
+                "utc_timestamp": "2023-12-04T19:00:00+00:00",
+                "value": 0.01782335047531647,
+                "value_at_normal_temperature": 0.35125565143420634
+            },
+            {
+                "utc_timestamp": "2023-12-04T20:00:00+00:00",
+                "value": 0.4597631193535484,
+                "value_at_normal_temperature": 0.13791930956680531
+            },
+            {
+                "utc_timestamp": "2023-12-04T21:00:00+00:00",
+                "value": 0.03996528041319175,
+                "value_at_normal_temperature": 0.09432166867555491
+            },
+            {
+                "utc_timestamp": "2023-12-04T22:00:00+00:00",
+                "value": 0.30638592637689915,
+                "value_at_normal_temperature": 0.320117245753517
+            },
+            {
+                "utc_timestamp": "2023-12-04T23:00:00+00:00",
+                "value": 0.14579793181643064,
+                "value_at_normal_temperature": 0.1892942475228676
+            }
+        ]
+    },
+    "callback_url": "https://agir-back-dev.osc-fr1.scalingo.io/api/incoming/winter-energies/",
+    "errors": []
+}
