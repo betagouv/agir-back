@@ -12,12 +12,6 @@ export class AuthController {
     private oidcService: OidcService,
   ) {}
 
-  @Get()
-  @ApiExcludeEndpoint()
-  async getHello() {
-    return "<br><a href='/login'>Se connecter avec France Connect</a>";
-  }
-
   @Get('login')
   @Redirect()
   @ApiExcludeEndpoint()
