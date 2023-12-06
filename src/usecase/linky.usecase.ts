@@ -58,8 +58,11 @@ export class LinkyUsecase {
       );
     }
     const prm = incoming.info.prm;
+    console.log(prm);
 
     const current_data = await this.linkyRepository.getData(prm);
+    console.log(current_data);
+
     for (let index = 0; index < incoming.data.length; index++) {
       const element = incoming.data[index];
       current_data.addDataElement({
