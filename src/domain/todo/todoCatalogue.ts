@@ -47,7 +47,7 @@ export class TodoCatalogue {
           progression: { current: 0, target: 2 },
           sont_points_en_poche: false,
           type: InteractionType.quizz,
-          level: DifficultyLevel.L1,
+          level: DifficultyLevel.ANY,
           points: 10,
         },
         {
@@ -85,7 +85,7 @@ export class TodoCatalogue {
           sont_points_en_poche: false,
           service_id: ScheduledService.ecowatt,
           type: InteractionType.service,
-          level: DifficultyLevel.L1,
+          level: DifficultyLevel.ANY,
           points: 42,
         },
       ],
