@@ -16,7 +16,7 @@ describe('Linky (API test)', () => {
 
   it('POST /utilisateurs/id/linky_souscription renvoie 400 si deja une pk winter sur le compte', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { pk_winter: '1234' });
+    await TestUtil.create('linky');
 
     // WHEN
     const response = await TestUtil.POST(
@@ -72,10 +72,11 @@ describe('Linky (API test)', () => {
     const linky_prm = await TestUtil.prisma.linky.findUnique({
       where: { prm: 'abc' },
     });
-    expect(dbUser.pk_winter).toEqual('7614671637');
     expect(dbUser.prm).toEqual('abc');
     expect(dbUser.code_departement).toEqual('91');
-    expect(linky_prm.data['serie']).toEqual([]);
+    expect(linky_prm.data).toEqual([]);
+    expect(linky_prm.prm).toEqual('abc');
+    expect(linky_prm.pk_winter).toEqual('7614671637');
   });
   it('POST /linky_souscriptions/:prm/empty vide les données stockées du PRM', async () => {
     // GIVEN
@@ -89,7 +90,7 @@ describe('Linky (API test)', () => {
     const linky_prm = await TestUtil.prisma.linky.findUnique({
       where: { prm: 'abc' },
     });
-    expect(linky_prm.data['serie']).toEqual([]);
+    expect(linky_prm.data).toEqual([]);
   });
   it('GET /linky_souscriptions renvoie une souscription', async () => {
     // GIVEN

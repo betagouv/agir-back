@@ -19,15 +19,21 @@ describe('LinkyRepository', () => {
 
   it('Creates a new entry', async () => {
     // GIVEN
+    const linky_data = new LinkyData({
+      prm: 'prm-123',
+      pk_winter: '1234',
+      serie: [],
+    });
     // WHEN
-    await linkyRepository.createNewPRM('prm-123');
+    await linkyRepository.createNewPRMData(linky_data);
     // THEN
     const prms = await TestUtil.prisma.linky.findMany({});
     expect(prms).toHaveLength(1);
     expect(prms[0].prm).toEqual('prm-123');
-    expect(prms[0].data['serie']).toEqual([]);
+    expect(prms[0].pk_winter).toEqual('1234');
+    expect(prms[0].data).toEqual([]);
   });
-  it('get  data', async () => {
+  it('get data', async () => {
     // GIVEN
     await TestUtil.create('linky');
     // WHEN
@@ -37,10 +43,12 @@ describe('LinkyRepository', () => {
     expect(result.serie[0].value).toEqual(100);
     expect(result.serie[0].value_at_normal_temperature).toEqual(110);
   });
-  it('update  data', async () => {
+  it('update data', async () => {
     // GIVEN
     await TestUtil.create('linky');
     const new_data = new LinkyData({
+      pk_winter: '1234',
+      prm: 'abc',
       serie: [
         {
           time: new Date(1000),
@@ -50,16 +58,15 @@ describe('LinkyRepository', () => {
       ],
     });
     // WHEN
-    await linkyRepository.updateData('abc', new_data);
+    await linkyRepository.updateData(new_data);
     // THEN
     const prm = await TestUtil.prisma.linky.findUnique({
       where: { prm: 'abc' },
     });
-    const linky_data = new LinkyData(prm.data as any);
-    expect(linky_data.serie).toHaveLength(1);
-    expect(linky_data.serie[0].time).toEqual(new Date(1000));
-    expect(linky_data.serie[0].value).toEqual(50);
-    expect(linky_data.serie[0].value_at_normal_temperature).toEqual(55);
+    expect(prm.data).toHaveLength(1);
+    expect(prm.data[0].time).toEqual(new Date(1000).toISOString());
+    expect(prm.data[0].value).toEqual(50);
+    expect(prm.data[0].value_at_normal_temperature).toEqual(55);
   });
   it('empty  data', async () => {
     // GIVEN
@@ -70,7 +77,6 @@ describe('LinkyRepository', () => {
     const prm = await TestUtil.prisma.linky.findUnique({
       where: { prm: 'abc' },
     });
-    const linky_data = new LinkyData(prm.data as any);
-    expect(linky_data.serie).toHaveLength(0);
+    expect(prm.data).toHaveLength(0);
   });
 });

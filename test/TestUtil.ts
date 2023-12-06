@@ -193,7 +193,6 @@ export class TestUtil {
       abonnement_ter_loire: false,
       prm: null,
       code_departement: null,
-      pk_winter: null,
       active_account: true,
       failed_login_count: 0,
       prevent_login_before: new Date(),
@@ -371,15 +370,14 @@ export class TestUtil {
     return {
       id: 'linky-id',
       prm: 'abc',
-      data: {
-        serie: [
-          {
-            time: new Date(),
-            value: 100,
-            value_at_normal_temperature: 110,
-          },
-        ],
-      },
+      pk_winter: '1234',
+      data: [
+        {
+          time: new Date(),
+          value: 100,
+          value_at_normal_temperature: 110,
+        },
+      ],
       ...override,
     };
   }

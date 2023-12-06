@@ -4,6 +4,7 @@ import { WinterDataSentAPI } from '../../src/infrastructure/api/types/winter/Win
 import { LinkyServiceManager } from '../../src/infrastructure/service/linky/LinkyServiceManager';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { LinkyRepository } from '../../src/infrastructure/repository/linky.repository';
+import { LinkyData } from '../../src/domain/linky/linkyData';
 
 @Injectable()
 export class LinkyUsecase {
@@ -25,13 +26,16 @@ export class LinkyUsecase {
       ApplicationError.throwMissingCodeDepartement();
     }
 
+    const existing_linky_data = await this.linkyRepository.getData(prm);
+
+    if (existing_linky_data !== null) {
+      ApplicationError.throwAlreadySubscribedError();
+    }
+
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );
 
-    if (utilisateur.pk_winter) {
-      ApplicationError.throwAlreadySubscribedError();
-    }
     utilisateur.prm = prm;
     utilisateur.code_departement = code_departement;
 
@@ -39,10 +43,13 @@ export class LinkyUsecase {
       prm,
       code_departement,
     );
-    utilisateur.pk_winter = pk;
+    const new_linky_data = new LinkyData({
+      prm: prm,
+      pk_winter: pk,
+      serie: [],
+    });
+    await this.linkyRepository.createNewPRMData(new_linky_data);
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
-
-    await this.linkyRepository.createNewPRM(prm);
   }
 
   async liste_souscriptions(page?: number): Promise<any> {
@@ -79,6 +86,6 @@ export class LinkyUsecase {
       });
     }
 
-    await this.linkyRepository.updateData(prm, current_data);
+    await this.linkyRepository.updateData(current_data);
   }
 }

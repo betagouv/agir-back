@@ -126,7 +126,6 @@ export class UtilisateurRepository {
           abonnement_ter_loire: utilisateur.abonnement_ter_loire,
           prm: utilisateur.prm,
           code_departement: utilisateur.code_departement,
-          pk_winter: utilisateur.pk_winter,
           commune: utilisateur.commune,
           email: utilisateur.email,
           code: utilisateur.code,
@@ -254,7 +253,6 @@ export class UtilisateurRepository {
         gamification: new Gamification(user.gamification as any),
         prm: user.prm,
         code_departement: user.code_departement,
-        pk_winter: user.pk_winter,
       });
     }
     return null;

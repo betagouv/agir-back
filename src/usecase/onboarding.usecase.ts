@@ -182,7 +182,6 @@ export class OnboardingUsecase {
       gamification: Gamification.newDefaultGamification(),
       code_departement: null,
       prm: null,
-      pk_winter: null,
     });
 
     utilisateurToCreate.setNew6DigitCode();

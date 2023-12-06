@@ -67,7 +67,6 @@ model Utilisateur {
   abonnement_ter_loire     Boolean            @default(false)
   prm                      String?
   code_departement         String?
-  pk_winter                String?
 }
 
 model Interaction {
@@ -242,6 +241,7 @@ model Linky {
   id         String   @id
   prm        String   @unique
   data       Json     @default("{}")
+  pk_winter  String   @default("")
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }

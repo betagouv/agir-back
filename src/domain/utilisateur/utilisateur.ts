@@ -21,7 +21,6 @@ export class UtilisateurData {
   abonnement_ter_loire: boolean;
   prm: string;
   code_departement: string;
-  pk_winter: string;
   quizzProfile: UserQuizzProfile;
   created_at: Date;
   passwordHash: string;

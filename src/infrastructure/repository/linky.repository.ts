@@ -7,23 +7,24 @@ import { LinkyData } from '../../../src/domain/linky/linkyData';
 export class LinkyRepository {
   constructor(private prisma: PrismaService) {}
 
-  async createNewPRM(prm: string) {
+  async createNewPRMData(linky_data: LinkyData) {
     await this.prisma.linky.create({
       data: {
         id: uuidv4(),
-        prm: prm,
-        data: new LinkyData({ serie: [] }) as any,
+        prm: linky_data.prm,
+        pk_winter: linky_data.pk_winter,
+        data: linky_data.serie as any,
       },
     });
   }
 
-  async updateData(prm: string, data: LinkyData): Promise<void> {
+  async updateData(linky_data: LinkyData): Promise<void> {
     await this.prisma.linky.update({
       where: {
-        prm: prm,
+        prm: linky_data.prm,
       },
       data: {
-        data: data as any,
+        data: linky_data.serie as any,
       },
     });
   }
@@ -33,7 +34,14 @@ export class LinkyRepository {
         prm: prm,
       },
     });
-    return new LinkyData(result.data as any);
+    if (result === null) {
+      return null;
+    }
+    return new LinkyData({
+      prm: result.prm,
+      pk_winter: result.pk_winter,
+      serie: result.data as any,
+    });
   }
   async emptyData(prm: string): Promise<void> {
     await this.prisma.linky.update({
@@ -41,7 +49,7 @@ export class LinkyRepository {
         prm: prm,
       },
       data: {
-        data: new LinkyData() as any,
+        data: [],
       },
     });
   }

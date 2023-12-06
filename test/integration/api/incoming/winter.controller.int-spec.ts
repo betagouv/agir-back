@@ -67,7 +67,7 @@ describe('/api/incoming/winter-energies (API test)', () => {
     const dbData = await TestUtil.prisma.linky.findUnique({
       where: { prm: 'abc' },
     });
-    expect(dbData.data['serie']).toHaveLength(6);
+    expect(dbData.data).toHaveLength(6);
   });
   it('POST /api/incoming/winter-energies - erreur 401 si mauvaise clé API', async () => {
     // GIVEN
