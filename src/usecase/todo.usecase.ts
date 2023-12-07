@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InteractionRepository } from '../../src/infrastructure/repository/interaction.repository';
 import { InteractionType } from '../../src/domain/interaction/interactionType';
 import { Todo } from '../../src/domain/todo/todo';
-import { TodoRepository } from '../../src/infrastructure/repository/todo.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import {
   Interaction,
@@ -21,7 +20,6 @@ export type User_Interaction = {
 export class TodoUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
-    private todoRepository: TodoRepository,
     private interactionRepository: InteractionRepository,
   ) {}
 
