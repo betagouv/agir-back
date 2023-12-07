@@ -98,7 +98,7 @@ const utilisateurs = {
     mot_de_passe: 'incroyable',
     code_postal: '49100',
     commune: 'ANGERS',
-    revenu_fiscal: 20000,
+    revenu_fiscal: 0,
     parts: 2.5,
     gamification: {
       points: 0,
@@ -116,7 +116,7 @@ const utilisateurs = {
     mot_de_passe: 'incroyable',
     code_postal: '49100',
     commune: 'ANGERS',
-    revenu_fiscal: 20000,
+    revenu_fiscal: 0,
     parts: 2.5,
     gamification: {
       points: 0,
@@ -147,7 +147,7 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     code_postal: '91120',
     commune: 'PALAISEAU',
-    revenu_fiscal: 666,
+    revenu_fiscal: null,
     parts: 7.5,
     gamification: {
       points: 0,
