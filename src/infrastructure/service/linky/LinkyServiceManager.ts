@@ -44,6 +44,7 @@ export class LinkyServiceManager implements LiveServiceManager {
     }
     return response.data;
   }
+
   async souscription(prm: string, code_departement: string): Promise<string> {
     if (process.env.WINTER_API_ENABLED !== 'true') {
       return '7614671637';
@@ -66,5 +67,22 @@ export class LinkyServiceManager implements LiveServiceManager {
       throw error;
     }
     return response.data.pk;
+  }
+  async deleteSouscription(pk_winter: string): Promise<void> {
+    if (process.env.WINTER_API_ENABLED !== 'true') {
+      return;
+    }
+    try {
+      await axios.delete(process.env.WINTER_URL.concat(pk_winter, '/'), {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-KEY': process.env.WINTER_API_KEY,
+        },
+      });
+    } catch (error) {
+      console.log('Erreur à la suppression souscription linky');
+      console.log(error.message);
+      throw error;
+    }
   }
 }

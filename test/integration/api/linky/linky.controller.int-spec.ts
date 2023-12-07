@@ -92,6 +92,27 @@ describe('Linky (API test)', () => {
     });
     expect(linky_prm.data).toEqual([]);
   });
+  it('DELETE /utilisateurs/:id/linky_souscription supprime la souscription linky et donnée associées', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { prm: 'abc' });
+    await TestUtil.create('linky');
+
+    // WHEN
+    const response = await TestUtil.DELETE(
+      '/utilisateurs/utilisateur-id/linky_souscription',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    const linky_prm = await TestUtil.prisma.linky.findMany();
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: {
+        id: 'utilisateur-id',
+      },
+    });
+    expect(linky_prm).toHaveLength(0);
+    expect(dbUser.prm).toBeNull();
+  });
   it('GET /linky_souscriptions renvoie une souscription', async () => {
     // GIVEN
     // WHEN

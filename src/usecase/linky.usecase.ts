@@ -26,7 +26,7 @@ export class LinkyUsecase {
       ApplicationError.throwMissingCodeDepartement();
     }
 
-    const existing_linky_data = await this.linkyRepository.getData(prm);
+    const existing_linky_data = await this.linkyRepository.getLinky(prm);
 
     if (existing_linky_data !== null) {
       ApplicationError.throwAlreadySubscribedError();
@@ -48,7 +48,7 @@ export class LinkyUsecase {
       pk_winter: pk,
       serie: [],
     });
-    await this.linkyRepository.createNewPRMData(new_linky_data);
+    await this.linkyRepository.createNewLinky(new_linky_data);
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
@@ -58,6 +58,21 @@ export class LinkyUsecase {
 
   async emptyPRMData(prm: string): Promise<any> {
     await this.linkyRepository.emptyData(prm);
+  }
+
+  async supprimeSouscription(utilisateurId: string): Promise<any> {
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+      utilisateurId,
+    );
+
+    const linky = await this.linkyRepository.getLinky(utilisateur.prm);
+
+    await this.linkyServiceManager.deleteSouscription(linky.pk_winter);
+
+    await this.linkyRepository.deleteLinky(utilisateur.prm);
+
+    utilisateur.prm = null;
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   async process_incoming_data(incoming: WinterDataSentAPI): Promise<any> {
@@ -75,7 +90,7 @@ export class LinkyUsecase {
     }
     const prm = incoming.info.prm;
 
-    const current_data = await this.linkyRepository.getData(prm);
+    const current_data = await this.linkyRepository.getLinky(prm);
 
     for (let index = 0; index < incoming.data.length; index++) {
       const element = incoming.data[index];

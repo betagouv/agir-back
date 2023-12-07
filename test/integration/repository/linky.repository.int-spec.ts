@@ -25,7 +25,7 @@ describe('LinkyRepository', () => {
       serie: [],
     });
     // WHEN
-    await linkyRepository.createNewPRMData(linky_data);
+    await linkyRepository.createNewLinky(linky_data);
     // THEN
     const prms = await TestUtil.prisma.linky.findMany({});
     expect(prms).toHaveLength(1);
@@ -37,7 +37,7 @@ describe('LinkyRepository', () => {
     // GIVEN
     await TestUtil.create('linky');
     // WHEN
-    const result = await linkyRepository.getData('abc');
+    const result = await linkyRepository.getLinky('abc');
     // THEN
     expect(result.serie[0].time.getTime()).toBeLessThan(Date.now());
     expect(result.serie[0].value).toEqual(100);
@@ -78,5 +78,21 @@ describe('LinkyRepository', () => {
       where: { prm: 'abc' },
     });
     expect(prm.data).toHaveLength(0);
+  });
+  it('delete all', async () => {
+    // GIVEN
+    await TestUtil.create('linky', { id: '1', pk_winter: 'a', prm: 'p1' });
+    await TestUtil.create('linky', { id: '2', pk_winter: 'b', prm: 'p2' });
+    // WHEN
+    await linkyRepository.deleteLinky('p2');
+    // THEN
+    const prm_a = await TestUtil.prisma.linky.findUnique({
+      where: { id: '1' },
+    });
+    const prm_b = await TestUtil.prisma.linky.findUnique({
+      where: { id: '2' },
+    });
+    expect(prm_a).not.toBeNull();
+    expect(prm_b).toBeNull();
   });
 });

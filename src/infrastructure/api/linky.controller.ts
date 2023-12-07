@@ -8,6 +8,7 @@ import {
   Res,
   HttpStatus,
   Query,
+  Delete,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -31,6 +32,25 @@ export class LinkyController extends GenericControler {
     super();
   }
 
+  @Delete('utilisateurs/:utilisateurId/linky_souscription')
+  @ApiOperation({
+    summary:
+      'Supprime complètement une souscription linky et les données associées',
+  })
+  @UseGuards(AuthGuard)
+  async delete(
+    @Param('utilisateurId') utilisateurId: string,
+    @Res() res: Response,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    try {
+      await this.linkyUsecase.supprimeSouscription(utilisateurId);
+    } catch (error) {
+      ApplicationError.throwBadRequestOrServerError(error);
+    }
+    res.status(HttpStatus.OK).json('Souscription supprimée').send();
+  }
   @Post('utilisateurs/:utilisateurId/linky_souscription')
   @ApiOperation({
     summary:

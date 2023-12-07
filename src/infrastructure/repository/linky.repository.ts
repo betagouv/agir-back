@@ -7,7 +7,7 @@ import { LinkyData } from '../../../src/domain/linky/linkyData';
 export class LinkyRepository {
   constructor(private prisma: PrismaService) {}
 
-  async createNewPRMData(linky_data: LinkyData) {
+  async createNewLinky(linky_data: LinkyData) {
     await this.prisma.linky.create({
       data: {
         id: uuidv4(),
@@ -28,7 +28,7 @@ export class LinkyRepository {
       },
     });
   }
-  async getData(prm: string): Promise<LinkyData> {
+  async getLinky(prm: string): Promise<LinkyData> {
     const result = await this.prisma.linky.findUnique({
       where: {
         prm: prm,
@@ -50,6 +50,13 @@ export class LinkyRepository {
       },
       data: {
         data: [],
+      },
+    });
+  }
+  async deleteLinky(prm: string): Promise<void> {
+    await this.prisma.linky.delete({
+      where: {
+        prm: prm,
       },
     });
   }
