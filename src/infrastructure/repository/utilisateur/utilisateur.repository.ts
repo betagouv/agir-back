@@ -14,6 +14,7 @@ import { OnboardingResult } from '../../../domain/utilisateur/onboarding/onboard
 import { Todo } from '../../../../src/domain/todo/todo';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { Gamification } from '../../../domain/gamification/gamification';
+import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -89,11 +90,12 @@ export class UtilisateurRepository {
       ...utilisateur,
       onboardingData: utilisateur.onboardingData as any,
       onboardingResult: utilisateur.onboardingResult as any,
-      todo: utilisateur.todo as any,
+      todo: utilisateur.parcours_todo as any,
       quizzLevels: utilisateur.quizzProfile.getData() as any,
       gamification: utilisateur.gamification as any,
     };
     delete dataToUpdate.quizzProfile;
+    delete dataToUpdate.parcours_todo;
     return this.prisma.utilisateur.update({
       where: { id: utilisateur.id },
       data: { ...dataToUpdate },
@@ -137,7 +139,7 @@ export class UtilisateurRepository {
           onboardingData: { ...utilisateur.onboardingData },
           onboardingResult: { ...utilisateur.onboardingResult },
           quizzLevels: utilisateur.quizzProfile.getData(),
-          todo: utilisateur.todo as any,
+          todo: utilisateur.parcours_todo as any,
           gamification: utilisateur.gamification as any,
         },
       });
@@ -249,7 +251,7 @@ export class UtilisateurRepository {
         prevent_sendemail_before: user.prevent_sendemail_before,
         quizzProfile: new UserQuizzProfile(user.quizzLevels as any),
         created_at: user.created_at,
-        todo: new Todo(user.todo as any),
+        parcours_todo: new ParcoursTodo(user.todo as any),
         gamification: new Gamification(user.gamification as any),
         prm: user.prm,
         code_departement: user.code_departement,

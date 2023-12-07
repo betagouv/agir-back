@@ -2,16 +2,16 @@ import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 import { Thematique } from '../../../src/domain/thematique';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { TestUtil } from '../../TestUtil';
-import { TodoRepository } from '../../../src/infrastructure/repository/todo.repository';
-import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
 import {
   LiveService,
   ScheduledService,
 } from '../../../src/domain/service/serviceDefinition';
-import { Todo } from '../../../src/domain/todo/todo';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 
 describe('TODO list (API test)', () => {
-  let todoRepository = new TodoRepository(TestUtil.prisma);
+  let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+
   beforeAll(async () => {
     await TestUtil.appinit();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
@@ -53,20 +53,25 @@ describe('TODO list (API test)', () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       todo: {
-        numero_todo: 1,
-        points_todo: 25,
-        done: [],
-        todo: [
+        liste_todo: [
           {
-            titre: 'faire quizz climat',
-            thematiques: [Thematique.climat],
-            progression: { current: 0, target: 1 },
-            sont_points_en_poche: false,
-            type: 'quizz',
-            level: DifficultyLevel.L1,
-            points: 10,
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                titre: 'faire quizz climat',
+                thematiques: [Thematique.climat],
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: 'quizz',
+                level: DifficultyLevel.L1,
+                points: 10,
+              },
+            ],
           },
         ],
+        todo_active: 0,
       },
     });
     await TestUtil.create('interaction', {
@@ -102,20 +107,25 @@ describe('TODO list (API test)', () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       todo: {
-        numero_todo: 1,
-        points_todo: 25,
-        done: [],
-        todo: [
+        liste_todo: [
           {
-            titre: 'article',
-            thematiques: [Thematique.logement],
-            progression: { current: 0, target: 1 },
-            sont_points_en_poche: false,
-            type: InteractionType.article,
-            level: DifficultyLevel.ANY,
-            points: 10,
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                titre: 'article',
+                thematiques: [Thematique.logement],
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: InteractionType.article,
+                level: DifficultyLevel.ANY,
+                points: 10,
+              },
+            ],
           },
         ],
+        todo_active: 0,
       },
     });
     await TestUtil.create('interaction', {
@@ -147,20 +157,25 @@ describe('TODO list (API test)', () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       todo: {
-        numero_todo: 1,
-        points_todo: 25,
-        done: [],
-        todo: [
+        liste_todo: [
           {
-            titre: 'Lire article',
-            thematiques: [Thematique.climat],
-            progression: { current: 0, target: 1 },
-            sont_points_en_poche: false,
-            type: 'article',
-            level: DifficultyLevel.L1,
-            points: 10,
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                titre: 'Lire article',
+                thematiques: [Thematique.climat],
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: 'article',
+                level: DifficultyLevel.L1,
+                points: 10,
+              },
+            ],
           },
         ],
+        todo_active: 0,
       },
     });
     await TestUtil.create('interaction', {
@@ -185,20 +200,25 @@ describe('TODO list (API test)', () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       todo: {
-        numero_todo: 1,
-        points_todo: 25,
-        done: [],
-        todo: [
+        liste_todo: [
           {
-            titre: 'faire quizz climat',
-            thematiques: [Thematique.climat],
-            progression: { current: 0, target: 1 },
-            sont_points_en_poche: false,
-            type: 'quizz',
-            level: DifficultyLevel.ANY,
-            points: 10,
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                titre: 'faire quizz climat',
+                thematiques: [Thematique.climat],
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: 'quizz',
+                level: DifficultyLevel.ANY,
+                points: 10,
+              },
+            ],
           },
         ],
+        todo_active: 0,
       },
     });
     await TestUtil.create('interaction', {
@@ -230,30 +250,37 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
-    expect(dbUser['todo']['done']).toHaveLength(1);
-    expect(dbUser['todo']['done'][0].progression.current).toEqual(1);
+    const dbUser = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
+    expect(
+      dbUser.parcours_todo.getActiveTodo().done[0].progression.current,
+    ).toEqual(1);
   });
   it('GET /utilisateurs/id/todo retourne la todo sans pointeur car le seul quizz déjà réussi', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       todo: {
-        numero_todo: 1,
-        points_todo: 25,
-        done: [],
-        todo: [
+        liste_todo: [
           {
-            titre: 'faire quizz climat',
-            thematiques: [Thematique.climat],
-            progression: { current: 0, target: 1 },
-            sont_points_en_poche: false,
-            type: 'quizz',
-            level: DifficultyLevel.ANY,
-            points: 10,
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                titre: 'faire quizz climat',
+                thematiques: [Thematique.climat],
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: 'quizz',
+                level: DifficultyLevel.ANY,
+                points: 10,
+              },
+            ],
           },
         ],
+        todo_active: 0,
       },
     });
     await TestUtil.create('interaction', {
@@ -279,20 +306,25 @@ describe('TODO list (API test)', () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       todo: {
-        numero_todo: 1,
-        points_todo: 25,
-        done: [],
-        todo: [
+        liste_todo: [
           {
-            titre: 'lire un article',
-            thematiques: [Thematique.climat],
-            progression: { current: 0, target: 1 },
-            sont_points_en_poche: false,
-            type: InteractionType.article,
-            level: DifficultyLevel.ANY,
-            points: 10,
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                titre: 'lire un article',
+                thematiques: [Thematique.climat],
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: InteractionType.article,
+                level: DifficultyLevel.ANY,
+                points: 10,
+              },
+            ],
           },
         ],
+        todo_active: 0,
       },
     });
     await TestUtil.create('interaction', {
@@ -322,30 +354,37 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
-    expect(dbUser['todo']['done']).toHaveLength(1);
-    expect(dbUser['todo']['done'][0].progression.current).toEqual(1);
+    const dbUser = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
+    expect(
+      dbUser.parcours_todo.getActiveTodo().done[0].progression.current,
+    ).toEqual(1);
   });
   it('GET /utilisateurs/id/todo propose un article non lu en prio par rapport à un lu déjà', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       todo: {
-        numero_todo: 1,
-        points_todo: 25,
-        done: [],
-        todo: [
+        liste_todo: [
           {
-            titre: 'lire un article',
-            thematiques: [Thematique.climat],
-            progression: { current: 0, target: 1 },
-            sont_points_en_poche: false,
-            type: InteractionType.article,
-            level: DifficultyLevel.ANY,
-            points: 10,
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                titre: 'lire un article',
+                thematiques: [Thematique.climat],
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: InteractionType.article,
+                level: DifficultyLevel.ANY,
+                points: 10,
+              },
+            ],
           },
         ],
+        todo_active: 0,
       },
     });
     await TestUtil.create('interaction', {
@@ -379,21 +418,26 @@ describe('TODO list (API test)', () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       todo: {
-        numero_todo: 1,
-        points_todo: 25,
-        todo: [],
-        done: [
+        liste_todo: [
           {
-            id: '123',
-            titre: 'Faire un premier quizz climat - facile',
-            thematiques: [Thematique.climat],
-            progression: { current: 1, target: 1 },
-            sont_points_en_poche: false,
-            type: InteractionType.quizz,
-            level: DifficultyLevel.L1,
-            points: 10,
+            numero_todo: 1,
+            points_todo: 25,
+            todo: [],
+            done: [
+              {
+                id: '123',
+                titre: 'Faire un premier quizz climat - facile',
+                thematiques: [Thematique.climat],
+                progression: { current: 1, target: 1 },
+                sont_points_en_poche: false,
+                type: InteractionType.quizz,
+                level: DifficultyLevel.L1,
+                points: 10,
+              },
+            ],
           },
         ],
+        todo_active: 0,
       },
     });
 
@@ -404,33 +448,39 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const todoDB = await todoRepository.getUtilisateurTodo('utilisateur-id');
-    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
+    const userDB = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
 
-    expect(todoDB.done[0].sont_points_en_poche).toEqual(true);
-    expect(dbUtilisateur.gamification['points']).toEqual(20);
+    expect(
+      userDB.parcours_todo.getActiveTodo().done[0].sont_points_en_poche,
+    ).toEqual(true);
+    expect(userDB.gamification['points']).toEqual(20);
   });
   it('POST /utilisateurs/id/todo/id/gagner_points encaissse les points qu une seule fois ', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       todo: {
-        numero_todo: 1,
-        points_todo: 25,
-        todo: [],
-        done: [
+        liste_todo: [
           {
-            id: '123',
-            titre: 'Faire un premier quizz climat - facile',
-            thematiques: [Thematique.climat],
-            progression: { current: 1, target: 1 },
-            sont_points_en_poche: false,
-            type: InteractionType.quizz,
-            level: DifficultyLevel.L1,
-            points: 10,
+            numero_todo: 1,
+            points_todo: 25,
+            todo: [],
+            done: [
+              {
+                id: '123',
+                titre: 'Faire un premier quizz climat - facile',
+                thematiques: [Thematique.climat],
+                progression: { current: 1, target: 1 },
+                sont_points_en_poche: false,
+                type: InteractionType.quizz,
+                level: DifficultyLevel.L1,
+                points: 10,
+              },
+            ],
           },
         ],
+        todo_active: 0,
       },
     });
 
@@ -454,21 +504,32 @@ describe('TODO list (API test)', () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       todo: {
-        numero_todo: 1,
-        points_todo: 25,
-        todo: [],
-        done: [
+        liste_todo: [
           {
-            id: '123',
-            titre: 'Faire un premier quizz climat - facile',
-            thematiques: [Thematique.climat],
-            progression: { current: 1, target: 1 },
-            sont_points_en_poche: true,
-            type: InteractionType.quizz,
-            level: DifficultyLevel.L1,
-            points: 10,
+            numero_todo: 1,
+            points_todo: 25,
+            todo: [],
+            done: [
+              {
+                id: '123',
+                titre: 'Faire un premier quizz climat - facile',
+                thematiques: [Thematique.climat],
+                progression: { current: 1, target: 1 },
+                sont_points_en_poche: true,
+                type: InteractionType.quizz,
+                level: DifficultyLevel.L1,
+                points: 10,
+              },
+            ],
+          },
+          {
+            numero_todo: 2,
+            points_todo: 25,
+            todo: [],
+            done: [],
           },
         ],
+        todo_active: 0,
       },
     });
 
@@ -478,32 +539,36 @@ describe('TODO list (API test)', () => {
     );
     expect(response.status).toBe(200);
     // THEN
-    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
+    const dbUtilisateur = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
     expect(dbUtilisateur.gamification['points']).toEqual(35);
-    const todoDB = await todoRepository.getUtilisateurTodo('utilisateur-id');
-    expect(todoDB.numero_todo).toEqual(2);
+    expect(dbUtilisateur.parcours_todo.getActiveTodo().numero_todo).toEqual(2);
   });
   it('POST /utilisateurs/id/todo/gagner_points 400 si todo pas faite', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       todo: {
-        numero_todo: 1,
-        points_todo: 25,
-        todo: [
+        liste_todo: [
           {
-            id: '123',
-            titre: 'Faire un premier quizz climat - facile',
-            thematiques: [Thematique.climat],
-            progression: { current: 0, target: 1 },
-            sont_points_en_poche: false,
-            type: InteractionType.quizz,
-            level: DifficultyLevel.L1,
-            points: 10,
+            numero_todo: 1,
+            points_todo: 25,
+            todo: [
+              {
+                id: '123',
+                titre: 'Faire un premier quizz climat - facile',
+                thematiques: [Thematique.climat],
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: InteractionType.quizz,
+                level: DifficultyLevel.L1,
+                points: 10,
+              },
+            ],
+            done: [],
           },
         ],
-        done: [],
+        todo_active: 0,
       },
     });
 
@@ -521,21 +586,26 @@ describe('TODO list (API test)', () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       todo: {
-        numero_todo: 1,
-        points_todo: 25,
-        todo: [,],
-        done: [
+        liste_todo: [
           {
-            id: '123',
-            titre: 'Faire un premier quizz climat - facile',
-            thematiques: [Thematique.climat],
-            progression: { current: 1, target: 1 },
-            sont_points_en_poche: false,
-            type: InteractionType.quizz,
-            level: DifficultyLevel.L1,
-            points: 10,
+            numero_todo: 1,
+            points_todo: 25,
+            todo: [,],
+            done: [
+              {
+                id: '123',
+                titre: 'Faire un premier quizz climat - facile',
+                thematiques: [Thematique.climat],
+                progression: { current: 1, target: 1 },
+                sont_points_en_poche: false,
+                type: InteractionType.quizz,
+                level: DifficultyLevel.L1,
+                points: 10,
+              },
+            ],
           },
         ],
+        todo_active: 0,
       },
     });
 
@@ -553,21 +623,26 @@ describe('TODO list (API test)', () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       todo: {
-        numero_todo: 1,
-        points_todo: 25,
-        done: [],
-        todo: [
+        liste_todo: [
           {
-            id: '123',
-            titre: 'Faire un premier quizz climat - facile',
-            thematiques: [Thematique.climat],
-            progression: { current: 0, target: 1 },
-            sont_points_en_poche: false,
-            type: InteractionType.quizz,
-            level: DifficultyLevel.L1,
-            points: 10,
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                id: '123',
+                titre: 'Faire un premier quizz climat - facile',
+                thematiques: [Thematique.climat],
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: InteractionType.quizz,
+                level: DifficultyLevel.L1,
+                points: 10,
+              },
+            ],
           },
         ],
+        todo_active: 0,
       },
     });
 
@@ -585,9 +660,7 @@ describe('TODO list (API test)', () => {
   });
   it('POST /utilisateurs/id/services ajout du service ecowatt sur la todo 3 réalise l objctif', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
-      todo: TodoCatalogue.getNewTodoOfNumero(3),
-    });
+    await TestUtil.create('utilisateur');
     await TestUtil.create('serviceDefinition', {
       id: ScheduledService.ecowatt,
     });
@@ -601,18 +674,18 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
-    expect(dbUser['todo']['done']).toHaveLength(1);
-    expect(dbUser['todo']['done'][0].titre).toEqual(
+    const dbUser = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(dbUser.parcours_todo.getTodoByNumero(3).done).toHaveLength(1);
+    expect(dbUser.parcours_todo.getTodoByNumero(3).done[0].titre).toEqual(
       'Installer le service EcoWATT',
     );
   });
   it('POST /utilisateurs/id/services ajout du service fruits sur la todo 3 ne réalise PAS l objctif', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
-      todo: TodoCatalogue.getNewTodoOfNumero(3),
+      todo: new ParcoursTodo(),
     });
     await TestUtil.create('serviceDefinition', {
       id: LiveService.fruits,
@@ -626,32 +699,36 @@ describe('TODO list (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(201);
-    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
-    expect(dbUser['todo']['done']).toHaveLength(0);
+    const dbUser = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(dbUser.parcours_todo.getTodoByNumero(3).done).toHaveLength(0);
   });
-  it('POST /utilisateurs/id/event fait avancer la todo si un sous thematique du quizz match', async () => {
+  it('POST /utilisateurs/id/event met à jour la todo si un sous thematique du quizz match', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
-      todo: new Todo({
-        numero_todo: 1,
-        points_todo: 25,
-        done: [],
-        todo: [
+      todo: {
+        liste_todo: [
           {
-            id: '1234',
-            titre: 'Faire un premier quizz climat - facile',
-            thematiques: [Thematique.climat, Thematique.logement],
-            progression: { current: 0, target: 1 },
-            sont_points_en_poche: false,
-            type: InteractionType.quizz,
-            level: DifficultyLevel.L1,
-            points: 10,
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                id: '1234',
+                titre: 'Faire un premier quizz climat - facile',
+                thematiques: [Thematique.climat, Thematique.logement],
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: InteractionType.quizz,
+                level: DifficultyLevel.L1,
+                points: 10,
+              },
+            ],
           },
         ],
-      }),
+        todo_active: 0,
+      },
     });
     await TestUtil.create('interaction', {
       type: InteractionType.quizz,
@@ -671,31 +748,36 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
-    expect(dbUser['todo']['done']).toHaveLength(1);
+    const dbUser = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
   });
-  it('POST /utilisateurs/id/event fait avancer la todo si un sous thematique d un articl match', async () => {
+  it('POST /utilisateurs/id/event met à jour la todo si un sous thematique d un articl match', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
-      todo: new Todo({
-        numero_todo: 1,
-        points_todo: 25,
-        done: [],
-        todo: [
+      todo: {
+        liste_todo: [
           {
-            id: '1234',
-            titre: 'lire 2 article logement',
-            thematiques: [Thematique.logement],
-            progression: { current: 0, target: 2 },
-            sont_points_en_poche: false,
-            type: InteractionType.article,
-            level: DifficultyLevel.ANY,
-            points: 10,
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                id: '1234',
+                titre: 'lire 2 article logement',
+                thematiques: [Thematique.logement],
+                progression: { current: 0, target: 2 },
+                sont_points_en_poche: false,
+                type: InteractionType.article,
+                level: DifficultyLevel.ANY,
+                points: 10,
+              },
+            ],
           },
         ],
-      }),
+        todo_active: 0,
+      },
     });
     await TestUtil.create('interaction', {
       type: InteractionType.article,
@@ -715,17 +797,17 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
-    expect(dbUser['todo']['todo']).toHaveLength(1);
-    expect(dbUser['todo']['todo'][0].progression.current).toEqual(1);
+    const dbUser = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(dbUser.parcours_todo.getActiveTodo().todo).toHaveLength(1);
+    expect(
+      dbUser.parcours_todo.getActiveTodo().todo[0].progression.current,
+    ).toEqual(1);
   });
   it('GET /utilisateurs/id/todo répond OK pour todo #1', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
-      todo: TodoCatalogue.getNewTodoOfNumero(1),
-    });
+    await TestUtil.create('utilisateur');
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
@@ -736,8 +818,10 @@ describe('TODO list (API test)', () => {
   });
   it('GET /utilisateurs/id/todo répond OK pour todo #2', async () => {
     // GIVEN
+    const parcours = new ParcoursTodo();
+    parcours.avanceDansParcours();
     await TestUtil.create('utilisateur', {
-      todo: TodoCatalogue.getNewTodoOfNumero(2),
+      todo: parcours,
     });
 
     // WHEN
@@ -746,11 +830,15 @@ describe('TODO list (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.todo).toHaveLength(2);
+    expect(response.body.numero_todo).toEqual(2);
   });
   it('GET /utilisateurs/id/todo répond OK pour todo #3', async () => {
     // GIVEN
+    const parcours = new ParcoursTodo();
+    parcours.avanceDansParcours();
+    parcours.avanceDansParcours();
     await TestUtil.create('utilisateur', {
-      todo: TodoCatalogue.getNewTodoOfNumero(3),
+      todo: parcours,
     });
 
     // WHEN
@@ -759,5 +847,6 @@ describe('TODO list (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.todo).toHaveLength(2);
+    expect(response.body.numero_todo).toEqual(3);
   });
 });

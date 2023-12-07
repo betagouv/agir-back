@@ -22,6 +22,7 @@ import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmai
 import { TodoCatalogue } from '../../src/domain/todo/todoCatalogue';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { Gamification } from '../domain/gamification/gamification';
+import { ParcoursTodo } from '../../src/domain/todo/parcoursTodo';
 
 export type Phrase = {
   phrase: string;
@@ -178,7 +179,7 @@ export class OnboardingUsecase {
       prevent_checkcode_before: new Date(),
       sent_email_count: 1,
       prevent_sendemail_before: new Date(),
-      todo: TodoCatalogue.getNewTodoOfNumero(1),
+      parcours_todo: new ParcoursTodo(),
       gamification: Gamification.newDefaultGamification(),
       code_departement: null,
       prm: null,

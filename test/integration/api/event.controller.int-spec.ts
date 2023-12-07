@@ -4,10 +4,10 @@ import { InteractionType } from '../../../src/domain/interaction/interactionType
 import { TestUtil } from '../../TestUtil';
 import { Thematique } from '../../../src/domain/thematique';
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
-import { TodoRepository } from '../../../src/infrastructure/repository/todo.repository';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 
 describe('EVENT (API test)', () => {
-  let todoRepository = new TodoRepository(TestUtil.prisma);
+  let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -147,8 +147,12 @@ describe('EVENT (API test)', () => {
     });
     // THEN
     expect(response.status).toBe(200);
-    const todo = await todoRepository.getUtilisateurTodo('utilisateur-id');
-    expect(todo.done[0].progression.current).toEqual(1);
+    const userDB = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(
+      userDB.parcours_todo.getActiveTodo().done[0].progression.current,
+    ).toEqual(1);
   });
 
   it('POST /utilisateurs/id/events - does not add points when already done', async () => {

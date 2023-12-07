@@ -44,11 +44,11 @@ export class EventUsecase {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );
-    const element = utilisateur.todo.findTodoElementByServiceId(
+    const found = utilisateur.parcours_todo.findTodoElementByServiceId(
       event.service_id,
     );
-    if (element) {
-      utilisateur.todo.moveElementToDone(element);
+    if (found) {
+      found.todo.moveElementToDone(found.element);
     }
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
@@ -117,13 +117,13 @@ export class EventUsecase {
   }
 
   private updateUserTodo({ utilisateur, interaction }: User_Interaction) {
-    const matchingTodoElement =
-      utilisateur.todo.findTodoElementByTypeAndThematique(
+    const matching =
+      utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
         interaction.type,
         interaction.thematiques,
       );
-    if (matchingTodoElement && !matchingTodoElement.isDone()) {
-      utilisateur.todo.makeProgress(matchingTodoElement);
+    if (matching && !matching.element.isDone()) {
+      matching.todo.makeProgress(matching.element);
     }
   }
 

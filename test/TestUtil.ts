@@ -11,7 +11,7 @@ import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
 import { Impact } from '../src/domain/utilisateur/onboarding/onboarding';
 const request = require('supertest');
 import { JwtService } from '@nestjs/jwt';
-import { TodoCatalogue } from '../src/domain/todo/todoCatalogue';
+import { ParcoursTodo } from '../src/domain/todo/parcoursTodo';
 
 export class TestUtil {
   constructor() {}
@@ -201,7 +201,7 @@ export class TestUtil {
       prevent_checkcode_before: new Date(),
       sent_email_count: 0,
       prevent_sendemail_before: new Date(),
-      todo: TodoCatalogue.getNewTodoOfNumero(1),
+      todo: new ParcoursTodo(),
       gamification: {
         points: 10,
         celebrations: [

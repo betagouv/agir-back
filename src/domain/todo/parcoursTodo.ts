@@ -32,6 +32,9 @@ export class ParcoursTodo {
   public getCurrentTodoNumero?(): number {
     return this.liste_todo[this.todo_active].numero_todo;
   }
+  public getTodoByNumero(numero: number): Todo {
+    return this.liste_todo[numero - 1];
+  }
   public findTodoElementByTypeAndThematique?(
     type: InteractionType,
     thematiques: Thematique[],

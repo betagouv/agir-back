@@ -28,6 +28,7 @@ const empreintes_utilisateur = require('../../../test_data/evenements/bilans');
 const badges_liste = require('../../../test_data/evenements/badges');
 import axios from 'axios';
 import { CMSModel } from './types/cms/CMSModels';
+import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 
 export enum TheBoolean {
   true = 'true',
@@ -433,9 +434,7 @@ export class TestDataController {
     delete clonedData.services;
     delete clonedData.questionsNGC;
 
-    const numero_todo = clonedData.numero_todo;
-    clonedData.todo = TodoCatalogue.getNewTodoOfNumero(numero_todo);
-    delete clonedData.numero_todo;
+    clonedData.todo = new ParcoursTodo();
 
     PasswordManager.setUserPassword(clonedData, clonedData.mot_de_passe);
     delete clonedData.mot_de_passe;

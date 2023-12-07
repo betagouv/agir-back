@@ -29,20 +29,26 @@ export class TodoUsecase {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );
-    const element = utilisateur.todo.findDoneElementById(elementId);
+    const element = utilisateur.parcours_todo
+      .getActiveTodo()
+      .findDoneElementById(elementId);
+
     if (element && !element.sont_points_en_poche) {
       element.sont_points_en_poche = true;
       utilisateur.gamification.ajoutePoints(element.points);
     }
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
+
   async gagnerPointsFromTodo(utilisateurId: string) {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );
-    if (utilisateur.todo.isDone()) {
-      utilisateur.gamification.ajoutePoints(utilisateur.todo.points_todo);
-      utilisateur.todo = utilisateur.todo.getNextTodo();
+    if (utilisateur.parcours_todo.getActiveTodo().isDone()) {
+      utilisateur.gamification.ajoutePoints(
+        utilisateur.parcours_todo.getActiveTodo().points_todo,
+      );
+      utilisateur.parcours_todo.avanceDansParcours();
     } else {
       ApplicationError.throwUnfinishedTodoError();
     }
@@ -50,7 +56,12 @@ export class TodoUsecase {
   }
 
   async getUtilisateurTodo(utilisateurId: string): Promise<Todo> {
-    const todo = await this.todoRepository.getUtilisateurTodo(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+      utilisateurId,
+    );
+
+    const todo = utilisateur.parcours_todo.getActiveTodo();
+
     for (let index = 0; index < todo.todo.length; index++) {
       const element = todo.todo[index];
       let interactions: InteractionIdProjection[] = [];

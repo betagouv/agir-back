@@ -528,7 +528,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       quizzProfile: null,
       onboardingData: null,
       onboardingResult: null,
-      todo: null,
+      parcours_todo: null,
       gamification: null,
       parts: 0,
     });

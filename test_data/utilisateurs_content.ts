@@ -100,7 +100,6 @@ const utilisateurs = {
     commune: 'ANGERS',
     revenu_fiscal: 20000,
     parts: 2.5,
-    numero_todo: 1,
     gamification: {
       points: 0,
     },
@@ -119,7 +118,6 @@ const utilisateurs = {
     commune: 'ANGERS',
     revenu_fiscal: 20000,
     parts: 2.5,
-    numero_todo: 1,
     gamification: {
       points: 0,
     },
@@ -151,7 +149,6 @@ const utilisateurs = {
     commune: 'PALAISEAU',
     revenu_fiscal: 666,
     parts: 7.5,
-    numero_todo: 1,
     gamification: {
       points: 0,
     },
