@@ -88,11 +88,11 @@ function getControllers(): any[] {
     WinterController,
     EventController,
     GamificationController,
+    LinkyController,
   );
   if (process.env.IS_PROD === 'false') {
     controllers.push(TestDataController);
     controllers.push(AuthController);
-    controllers.push(LinkyController);
   }
   return controllers;
 }
