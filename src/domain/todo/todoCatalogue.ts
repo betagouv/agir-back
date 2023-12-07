@@ -6,6 +6,26 @@ import { v4 as uuidv4 } from 'uuid';
 import { ScheduledService } from '../service/serviceDefinition';
 
 export class TodoCatalogue {
+  public static getNombreTodo(): number {
+    return TodoCatalogue.catalogue.length;
+  }
+
+  public static getAllTodos(): Todo[] {
+    const result: Todo[] = [];
+    TodoCatalogue.catalogue.forEach((current_todo) => {
+      result.push(new Todo(current_todo));
+    });
+    return result;
+  }
+
+  public static getNewTodoOfNumero(numero: number): Todo {
+    return new Todo(
+      TodoCatalogue.catalogue[
+        Math.min(numero, TodoCatalogue.catalogue.length) - 1
+      ],
+    );
+  }
+
   private static catalogue: Todo[] = [
     {
       numero_todo: 1,
@@ -30,7 +50,7 @@ export class TodoCatalogue {
           progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
           type: InteractionType.quizz,
-          level: DifficultyLevel.L1,
+          level: DifficultyLevel.ANY,
           points: 10,
         },
       ],
@@ -90,28 +110,22 @@ export class TodoCatalogue {
         },
       ],
     },
+    {
+      numero_todo: 4,
+      points_todo: 0,
+      done: [
+        {
+          id: uuidv4(),
+          titre: 'Bravo, toutes les missions sont faites !!',
+          thematiques: [],
+          progression: { current: 1, target: 1 },
+          sont_points_en_poche: true,
+          type: InteractionType.onboarding,
+          level: DifficultyLevel.ANY,
+          points: 0,
+        },
+      ],
+      todo: [],
+    },
   ];
-
-  public static getNewTodoOfNumero(numero: number): Todo {
-    const todoData = TodoCatalogue.catalogue[numero - 1];
-    return todoData
-      ? new Todo(todoData)
-      : new Todo({
-          numero_todo: numero,
-          points_todo: 0,
-          done: [
-            {
-              id: uuidv4(),
-              titre: 'Bravo, toutes les missions sont faites !!',
-              thematiques: [],
-              progression: { current: 1, target: 1 },
-              sont_points_en_poche: true,
-              type: InteractionType.onboarding,
-              level: DifficultyLevel.L1,
-              points: 0,
-            },
-          ],
-          todo: [],
-        });
-  }
 }

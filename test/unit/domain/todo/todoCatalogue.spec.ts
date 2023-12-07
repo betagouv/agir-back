@@ -27,4 +27,15 @@ describe('TodoCatalogue', () => {
     // THEN
     expect(result.numero_todo).toEqual(2);
   });
+  it('getAllTodos : return all 4 todos', () => {
+    // GIVEN
+    // WHEN
+    const result = TodoCatalogue.getAllTodos();
+
+    // THEN
+    expect(result).toHaveLength(4);
+    expect(result[3].done[0].titre).toEqual(
+      'Bravo, toutes les missions sont faites !!',
+    );
+  });
 });
