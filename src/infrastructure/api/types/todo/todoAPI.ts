@@ -28,6 +28,7 @@ export class TodoElementAPI {
 export class TodoAPI {
   @ApiProperty() numero_todo: number;
   @ApiProperty() points_todo: number;
+  @ApiProperty() titre: string;
   @ApiProperty({ type: [TodoElementAPI] }) todo: TodoElementAPI[];
   @ApiProperty({ type: [TodoElementAPI] }) done: TodoElementAPI[];
 
@@ -35,6 +36,7 @@ export class TodoAPI {
     return {
       numero_todo: todo.numero_todo,
       points_todo: todo.points_todo,
+      titre: todo.titre,
       todo: todo.todo,
       done: todo.done,
     };

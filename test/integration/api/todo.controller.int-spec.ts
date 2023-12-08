@@ -37,6 +37,9 @@ describe('TODO list (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.numero_todo).toEqual(1);
     expect(response.body.points_todo).toEqual(25);
+    expect(response.body.titre).toEqual(
+      `C'est parti pour la découverte du service Agir`,
+    );
     expect(response.body.todo[0].id.length).toBeGreaterThan(12);
     expect(response.body.todo[0].titre).toEqual(
       'Faire un premier quizz climat - facile',

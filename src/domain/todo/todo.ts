@@ -32,6 +32,7 @@ export class TodoElement extends TodoElementData {
 export class TodoData {
   numero_todo: number;
   points_todo: number;
+  titre: string;
 
   done: TodoElement[];
   todo: TodoElement[];

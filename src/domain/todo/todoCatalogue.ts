@@ -31,6 +31,7 @@ export class TodoCatalogue {
     {
       numero_todo: 1,
       points_todo: 25,
+      titre: "C'est parti pour la découverte du service Agir",
       done: [
         {
           id: uuidv4(),
@@ -60,6 +61,7 @@ export class TodoCatalogue {
     {
       numero_todo: 2,
       points_todo: 25,
+      titre: 'Des quiz, mais aussi des articles !',
       done: [],
       todo: [
         {
@@ -87,6 +89,7 @@ export class TodoCatalogue {
     {
       numero_todo: 3,
       points_todo: 50,
+      titre: 'Les services à VOTRE service',
       done: [],
       todo: [
         {
@@ -115,6 +118,7 @@ export class TodoCatalogue {
     {
       numero_todo: 4,
       points_todo: 0,
+      titre: 'Maintenant, vous êtes AU-TO-NOMES',
       done: [
         {
           id: uuidv4(),

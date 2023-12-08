@@ -10,6 +10,7 @@ describe('Todo', () => {
       done: [],
       numero_todo: 1,
       points_todo: 20,
+      titre: 'titre',
       todo: [
         {
           id: '1',
@@ -48,6 +49,7 @@ describe('Todo', () => {
       done: [],
       numero_todo: 1,
       points_todo: 20,
+      titre: 'titre',
       todo: [
         {
           id: '1',
@@ -88,6 +90,7 @@ describe('Todo', () => {
       done: [],
       numero_todo: 1,
       points_todo: 20,
+      titre: 'titre',
       todo: [
         {
           id: '1',
