@@ -48,6 +48,7 @@ export type InputParameters = Partial<{
   'vélo . prix': number;
   'revenu fiscal de référence': number;
   'maximiser les aides'?: 'oui' | 'non';
+  'aides . pays de la loire . abonné TER'?: 'oui' | 'non';
 }>;
 
 export type TypeVelos =

@@ -21,17 +21,21 @@ export class AidesVeloRepository {
     revenu_fiscal: number,
     parts_fiscal: number,
     prixVelo: number,
+    is_abonnement?: boolean,
   ): Promise<AidesVeloParType> {
     const revenu_part = revenu_fiscal / parts_fiscal;
-    return summaryVelo(codePostal, revenu_part, prixVelo);
+    if (is_abonnement === undefined) {
+      is_abonnement = false;
+    }
+    return summaryVelo(codePostal, revenu_part, prixVelo, is_abonnement);
   }
 }
 
-// FIXME AIDE : quelle dif entre cette fonction et celle dessus ?
 async function summaryVelo(
   codePostal: string,
   revenuParPart: number,
   prixVelo: number,
+  is_abonnement: boolean,
 ): Promise<AidesVeloParType> {
   const lieu = await getLocalisationByCP(codePostal);
   const rules = rulesVelo as Record<string, any>;
@@ -45,6 +49,7 @@ async function summaryVelo(
     'localisation . code insee': `${lieu?.code}`,
     'revenu fiscal de référence': revenuParPart, // revenu fiscal de référence par part
     'vélo . prix': prixVelo,
+    'aides . pays de la loire . abonné TER': is_abonnement ? 'oui' : 'non',
   };
   return getAidesVeloTousTypes(situationBase, engine);
 }
