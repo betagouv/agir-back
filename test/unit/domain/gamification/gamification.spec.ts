@@ -1,12 +1,30 @@
+import { RevealType } from '../../../../src/domain/gamification/celebrations/reveal';
 import { CelebrationType } from '../../../../src/domain/gamification/celebrations/celebration';
 import { Gamification } from '../../../../src/domain/gamification/gamification';
 
 describe('Gamification', () => {
+  it('ajouterReveal : ajoute bien un reveal ', () => {
+    // GIVEN
+    const gamification = new Gamification({
+      points: 0,
+      celebrations: [],
+      reveals: [],
+    });
+    // WHEN
+    gamification.ajouterReveal(RevealType.aides);
+
+    // THEN
+    expect(gamification.reveals).toHaveLength(1);
+    expect(gamification.reveals[0].titre).toEqual(
+      "Découvrez le catalogue d'aides nationnales et locales !",
+    );
+  });
   it('ajoutePoints : ajoute bien les points ', () => {
     // GIVEN
     const gamification = new Gamification({
       points: 0,
       celebrations: [],
+      reveals: [],
     });
     // WHEN
     gamification.ajoutePoints(5);
@@ -20,6 +38,7 @@ describe('Gamification', () => {
       {
         points: 0,
         celebrations: [],
+        reveals: [],
       },
       [5, 10],
     );
@@ -36,6 +55,7 @@ describe('Gamification', () => {
       {
         points: 5,
         celebrations: [],
+        reveals: [],
       },
       [5, 10],
     );
@@ -52,6 +72,7 @@ describe('Gamification', () => {
       {
         points: 50,
         celebrations: [],
+        reveals: [],
       },
       [5, 10],
     );
@@ -68,6 +89,7 @@ describe('Gamification', () => {
       {
         points: 50,
         celebrations: [],
+        reveals: [],
       },
       [5, 10],
     );
@@ -84,6 +106,7 @@ describe('Gamification', () => {
       {
         points: 7,
         celebrations: [],
+        reveals: [],
       },
       [5, 10],
     );
@@ -100,6 +123,7 @@ describe('Gamification', () => {
       {
         points: 10,
         celebrations: [],
+        reveals: [],
       },
       [5, 10],
     );
@@ -116,6 +140,7 @@ describe('Gamification', () => {
       {
         points: 5,
         celebrations: [],
+        reveals: [],
       },
       [5, 10],
     );
@@ -132,6 +157,7 @@ describe('Gamification', () => {
       {
         points: 7,
         celebrations: [],
+        reveals: [],
       },
       [5, 10],
     );
@@ -148,6 +174,7 @@ describe('Gamification', () => {
       {
         points: 7,
         celebrations: [],
+        reveals: [],
       },
       [5, 15],
     );
@@ -164,6 +191,7 @@ describe('Gamification', () => {
       {
         points: 3,
         celebrations: [],
+        reveals: [],
       },
       [5, 15],
     );
@@ -180,6 +208,7 @@ describe('Gamification', () => {
       {
         points: 20,
         celebrations: [],
+        reveals: [],
       },
       [5, 15],
     );
@@ -200,6 +229,7 @@ describe('Gamification', () => {
           { id: '2', type: CelebrationType.niveau, titre: '2' },
           { id: '3', type: CelebrationType.niveau, titre: '3' },
         ],
+        reveals: [],
       },
       [5, 15],
     );
@@ -211,5 +241,23 @@ describe('Gamification', () => {
     expect(gamification.celebrations).toHaveLength(2);
     expect(gamification.celebrations[0].id).toEqual('1');
     expect(gamification.celebrations[1].id).toEqual('3');
+  });
+  it('terminerReveal : supprime correctement la bonne occurence', () => {
+    // GIVEN
+    const gamification = new Gamification({
+      points: 20,
+      celebrations: [],
+      reveals: [
+        { id: '1', type: RevealType.aides, titre: '1' },
+        { id: '2', type: RevealType.services, titre: '2' },
+      ],
+    });
+
+    // WHEN
+    gamification.terminerReveal('2');
+
+    // THEN
+    expect(gamification.reveals).toHaveLength(1);
+    expect(gamification.reveals[0].id).toEqual('1');
   });
 });

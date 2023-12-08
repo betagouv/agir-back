@@ -1,5 +1,6 @@
 import { Celebration } from './celebrations/celebration';
-import { Celeb_Niveau } from './celebrations/celeb_niveau';
+import { CelebrationDeNiveau } from './celebrations/celebrationDeNiveau';
+import { Reveal, RevealType } from './celebrations/reveal';
 
 let SEUILS_NIVEAUX: number[] = [
   100, 250, 400, 600, 850, 1150, 1500, 2000, 2600, 3300,
@@ -8,6 +9,7 @@ let SEUILS_NIVEAUX: number[] = [
 export class GamificationData {
   points: number;
   celebrations: Celebration[];
+  reveals: Reveal[];
 }
 export class Gamification extends GamificationData {
   constructor(data: GamificationData, seuils?: number[]) {
@@ -19,9 +21,21 @@ export class Gamification extends GamificationData {
     if (!data.celebrations) {
       this.celebrations = [];
     }
+    if (!data.reveals) {
+      this.reveals = [];
+    }
   }
 
-  public terminerCelebration(id: string) {
+  public ajouterReveal?(type: RevealType) {
+    this.reveals.push(new Reveal(type));
+  }
+
+  public terminerReveal?(id: string) {
+    const index = this.reveals.findIndex((element) => element.id === id);
+    this.reveals.splice(index, 1);
+  }
+
+  public terminerCelebration?(id: string) {
     const index = this.celebrations.findIndex((element) => element.id === id);
     this.celebrations.splice(index, 1);
   }
@@ -32,22 +46,22 @@ export class Gamification extends GamificationData {
     const new_niveau = this.getNiveau();
 
     if (current_nivau != new_niveau) {
-      this.celebrations.push(new Celeb_Niveau(new_niveau));
+      this.celebrations.push(new CelebrationDeNiveau(new_niveau));
     }
   }
 
-  public getNiveau(): number {
+  public getNiveau?(): number {
     const position = SEUILS_NIVEAUX.findIndex((n) => n > this.points);
     return position === -1 ? SEUILS_NIVEAUX.length + 1 : position + 1;
   }
 
-  public getCurrent_points_in_niveau(): number {
+  public getCurrent_points_in_niveau?(): number {
     const niveau = this.getNiveau();
     const seuil = this.getSeuilOfNiveau(niveau);
     return this.points - seuil;
   }
 
-  public getPoint_target_in_niveau(): number {
+  public getPoint_target_in_niveau?(): number {
     const niveau = this.getNiveau();
     if (niveau === SEUILS_NIVEAUX.length + 1) {
       return 999;
@@ -57,15 +71,16 @@ export class Gamification extends GamificationData {
     return seuil_haut - seuil_bas;
   }
 
-  public getSeuilOfNiveau(niveau: number): number {
+  public getSeuilOfNiveau?(niveau: number): number {
     if (niveau === 1) return 0;
     return SEUILS_NIVEAUX[niveau - 2];
   }
 
-  public static newDefaultGamification(): Gamification {
+  public static newDefaultGamification?(): Gamification {
     return new Gamification({
       points: 0,
       celebrations: [],
+      reveals: [],
     });
   }
 }

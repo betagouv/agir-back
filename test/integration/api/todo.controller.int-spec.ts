@@ -8,6 +8,7 @@ import {
 } from '../../../src/domain/service/serviceDefinition';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
+import { RevealType } from '../../../src/domain/gamification/celebrations/reveal';
 
 describe('TODO list (API test)', () => {
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -804,6 +805,110 @@ describe('TODO list (API test)', () => {
     expect(
       dbUser.parcours_todo.getActiveTodo().todo[0].progression.current,
     ).toEqual(1);
+  });
+  it('POST /utilisateurs/id/event met à jour la todo si un sous thematique d un articl match', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      todo: {
+        liste_todo: [
+          {
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                id: '1234',
+                titre: 'lire 2 article logement',
+                thematiques: [Thematique.logement],
+                progression: { current: 0, target: 2 },
+                sont_points_en_poche: false,
+                type: InteractionType.article,
+                level: DifficultyLevel.ANY,
+                points: 10,
+              },
+            ],
+          },
+        ],
+        todo_active: 0,
+      },
+    });
+    await TestUtil.create('interaction', {
+      type: InteractionType.article,
+      done: false,
+      difficulty: DifficultyLevel.L1,
+      thematique_gamification: Thematique.climat,
+      thematiques: [Thematique.loisir, Thematique.logement],
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: 'article_lu',
+      interaction_id: 'interaction-id',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(dbUser.parcours_todo.getActiveTodo().todo).toHaveLength(1);
+    expect(
+      dbUser.parcours_todo.getActiveTodo().todo[0].progression.current,
+    ).toEqual(1);
+  });
+  it('POST /utilisateurs/id/event delcenche un reveal si un objectif de la todo realise l indique', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      todo: {
+        liste_todo: [
+          {
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                id: '1234',
+                titre: 'lire 1 article logement',
+                thematiques: [Thematique.logement],
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: InteractionType.article,
+                level: DifficultyLevel.ANY,
+                points: 10,
+                reveal: RevealType.aides,
+              },
+            ],
+          },
+        ],
+        todo_active: 0,
+      },
+      gamification: { points: 0 },
+    });
+    await TestUtil.create('interaction', {
+      type: InteractionType.article,
+      done: false,
+      difficulty: DifficultyLevel.L1,
+      thematique_gamification: Thematique.climat,
+      thematiques: [Thematique.logement],
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: 'article_lu',
+      interaction_id: 'interaction-id',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(dbUser.gamification.reveals).toHaveLength(1);
+    expect(dbUser.gamification.reveals[0].type).toEqual(RevealType.aides);
   });
   it('GET /utilisateurs/id/todo répond OK pour todo #1', async () => {
     // GIVEN

@@ -4,6 +4,7 @@ import { Thematique } from '../thematique';
 import { Todo } from './todo';
 import { v4 as uuidv4 } from 'uuid';
 import { ScheduledService } from '../service/serviceDefinition';
+import { RevealType } from '../gamification/celebrations/reveal';
 
 export class TodoCatalogue {
   public static getNombreTodo(): number {
@@ -51,6 +52,7 @@ export class TodoCatalogue {
           sont_points_en_poche: false,
           type: InteractionType.quizz,
           level: DifficultyLevel.ANY,
+          reveal: RevealType.aides,
           points: 10,
         },
       ],

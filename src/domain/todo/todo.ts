@@ -1,4 +1,5 @@
 import { DifficultyLevel } from '../difficultyLevel';
+import { RevealType } from '../gamification/celebrations/reveal';
 import { InteractionType } from '../interaction/interactionType';
 import { Thematique } from '../thematique';
 import { TodoCatalogue } from './todoCatalogue';
@@ -8,12 +9,13 @@ export class TodoElementData {
   thematiques: Thematique[];
   titre: string;
   type: InteractionType;
-  level: DifficultyLevel;
+  level?: DifficultyLevel;
   content_id?: string;
   service_id?: string;
   interaction_id?: string;
   points: number;
   sont_points_en_poche: boolean;
+  reveal?: RevealType;
   progression: { current: number; target: number };
 }
 

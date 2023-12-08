@@ -32,6 +32,8 @@ export class EventUsecase {
         return await this.processLectureArticle(utilisateurId, event);
       case EventType.celebration:
         return await this.processCelebration(utilisateurId, event);
+      case EventType.reveal:
+        return await this.processReveal(utilisateurId, event);
       case EventType.service_installed:
         return await this.processServiceInstalled(utilisateurId, event);
     }
@@ -53,6 +55,7 @@ export class EventUsecase {
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
+
   private async processCelebration(
     utilisateurId: string,
     event: UtilisateurEvent,
@@ -63,6 +66,15 @@ export class EventUsecase {
     utilisateur.gamification.terminerCelebration(event.celebration_id);
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
+
+  private async processReveal(utilisateurId: string, event: UtilisateurEvent) {
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+      utilisateurId,
+    );
+    utilisateur.gamification.terminerReveal(event.reveal_id);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
   private async processLectureArticle(
     utilisateurId: string,
     event: UtilisateurEvent,
@@ -86,6 +98,7 @@ export class EventUsecase {
       await this.interactionRepository.updateInteraction(ctx.interaction);
     }
   }
+
   private async processQuizzScore(
     utilisateurId: string,
     event: UtilisateurEvent,
@@ -124,6 +137,11 @@ export class EventUsecase {
       );
     if (matching && !matching.element.isDone()) {
       matching.todo.makeProgress(matching.element);
+      if (matching.element.isDone()) {
+        if (matching.element.reveal) {
+          utilisateur.gamification.ajouterReveal(matching.element.reveal);
+        }
+      }
     }
   }
 

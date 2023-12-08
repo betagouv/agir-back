@@ -1,6 +1,6 @@
 import { Celebration, CelebrationType } from './celebration';
 
-export class Celeb_Niveau extends Celebration {
+export class CelebrationDeNiveau extends Celebration {
   constructor(new_niveau: number) {
     super(CelebrationType.niveau);
     this.new_niveau = new_niveau;

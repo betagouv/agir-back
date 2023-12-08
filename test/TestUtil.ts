@@ -212,6 +212,13 @@ export class TestUtil {
             titre: 'the titre',
           },
         ],
+        reveals: [
+          {
+            id: 'reveal-id',
+            type: 'aides',
+            titre: 'Les aides !',
+          },
+        ],
       },
       onboardingData: {
         transports: ['voiture', 'pied'],

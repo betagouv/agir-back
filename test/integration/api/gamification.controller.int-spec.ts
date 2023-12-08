@@ -45,6 +45,24 @@ describe('Gamification  (API test)', () => {
     expect(response.body.current_points_in_niveau).toEqual(10);
     expect(response.body.point_target_in_niveau).toEqual(100);
   });
+  it('GET /utilisateurs/id/gamification retourne la liste de reveals ', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/gamification',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.reveals).toHaveLength(1);
+    expect(response.body.reveals[0]).toEqual({
+      id: 'reveal-id',
+      type: 'aides',
+      titre: 'Les aides !',
+    });
+  });
   it('GET /utilisateurs/id/gamification retourne la liste de celebrations ', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
