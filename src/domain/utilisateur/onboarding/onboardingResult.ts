@@ -4,26 +4,33 @@ export class OnboardingResult {
   ventilation_par_impacts: Record<Impact, Thematique[]>;
   ventilation_par_thematiques: Record<Thematique, Impact>;
 
-  constructor(data: Onboarding) {
-    this.ventilation_par_thematiques = {
-      alimentation: data.getAlimentationLevel(),
-      transports: data.getTransportLevel(),
-      logement: data.getLogementLevel(),
-      consommation: data.getConsommationLevel(),
-    };
-    this.ventilation_par_impacts = {
-      '1': this.listeByImpact(Impact.tres_faible),
-      '2': this.listeByImpact(Impact.faible),
-      '3': this.listeByImpact(Impact.eleve),
-      '4': this.listeByImpact(Impact.tres_eleve),
-    };
+  constructor(data?: Onboarding) {
+    if (data) {
+      this.ventilation_par_thematiques = {
+        alimentation: data.getAlimentationLevel(),
+        transports: data.getTransportLevel(),
+        logement: data.getLogementLevel(),
+        consommation: data.getConsommationLevel(),
+      };
+      this.ventilation_par_impacts = {
+        '1': this.listeByImpact(Impact.tres_faible),
+        '2': this.listeByImpact(Impact.faible),
+        '3': this.listeByImpact(Impact.eleve),
+        '4': this.listeByImpact(Impact.tres_eleve),
+      };
+    }
   }
 
-  public getImpact(thematique: Thematique): Impact {
+  public setOnboardingResultData(data: OnboardingResult) {
+    this.ventilation_par_thematiques = data.ventilation_par_thematiques;
+    this.ventilation_par_impacts = data.ventilation_par_impacts;
+  }
+
+  public getImpact?(thematique: Thematique): Impact {
     return this.ventilation_par_thematiques[thematique];
   }
 
-  public nombreThematiquesAvecImpactSuperieurOuEgalA(
+  public nombreThematiquesAvecImpactSuperieurOuEgalA?(
     minImpact: Impact,
   ): number {
     let result = 0;
@@ -37,7 +44,7 @@ export class OnboardingResult {
     return result;
   }
 
-  public listThematiquesAvecImpactSuperieurOuEgalA(
+  public listThematiquesAvecImpactSuperieurOuEgalA?(
     minImpact: Impact,
   ): Thematique[] {
     let result = [];
@@ -51,7 +58,7 @@ export class OnboardingResult {
     return result;
   }
 
-  public listThematiquesAvecImpactInferieurA(maxImpact: Impact): Thematique[] {
+  public listThematiquesAvecImpactInferieurA?(maxImpact: Impact): Thematique[] {
     let result = [];
     for (let impact = Impact.tres_faible; impact < maxImpact; impact++) {
       result = result.concat(this.ventilation_par_impacts[`${impact}`]);
@@ -59,7 +66,7 @@ export class OnboardingResult {
     return result;
   }
 
-  public trieDecroissant(listThematiques: Thematique[]): Thematique[] {
+  public trieDecroissant?(listThematiques: Thematique[]): Thematique[] {
     let result = [...listThematiques];
     result.sort(
       (a, b) =>
@@ -69,7 +76,7 @@ export class OnboardingResult {
     return result;
   }
 
-  public getThematiqueNo1SuperieureA(minImpact: Impact): Thematique {
+  public getThematiqueNo1SuperieureA?(minImpact: Impact): Thematique {
     const list = this.listThematiquesAvecImpactSuperieurOuEgalA(minImpact);
 
     if (list.length === 0) return null;
@@ -102,7 +109,7 @@ export class OnboardingResult {
     return null;
   }
 
-  private listeByImpact(impact: Impact): Thematique[] {
+  private listeByImpact?(impact: Impact): Thematique[] {
     let result = [];
     if (this.ventilation_par_thematiques.alimentation === impact)
       result.push(Thematique.alimentation);

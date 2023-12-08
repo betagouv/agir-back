@@ -1,6 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { OnboardingResult } from 'src/domain/utilisateur/onboarding/onboardingResult';
 import { Utilisateur } from '../../../../../src/domain/utilisateur/utilisateur';
 
+export class OnboardingResultAPI {
+  @ApiProperty({ required: false })
+  alimentation: number;
+  @ApiProperty({ required: false })
+  transports: number;
+  @ApiProperty({ required: false })
+  logement: number;
+  @ApiProperty({ required: false })
+  consommation: number;
+}
 export class UtilisateurProfileAPI {
   @ApiProperty({ required: true })
   nom: string;
@@ -21,6 +32,9 @@ export class UtilisateurProfileAPI {
   @ApiProperty({ required: false })
   abonnement_ter_loire: boolean;
 
+  @ApiProperty({ type: OnboardingResultAPI })
+  onboarding_result: OnboardingResultAPI;
+
   public static mapToAPI(user: Utilisateur): UtilisateurProfileAPI {
     return {
       email: user.email,
@@ -31,6 +45,7 @@ export class UtilisateurProfileAPI {
       revenu_fiscal: user.revenu_fiscal,
       nombre_de_parts_fiscales: user.parts,
       abonnement_ter_loire: user.abonnement_ter_loire,
+      onboarding_result: user.onboardingResult.ventilation_par_thematiques,
     };
   }
 }

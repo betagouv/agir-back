@@ -1,6 +1,7 @@
 import { TestUtil } from '../../TestUtil';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 import { Utilisateur } from '../../../src/domain/utilisateur/utilisateur';
+import { Impact } from '../../../src/domain/utilisateur/onboarding/onboarding';
 var crypto = require('crypto');
 
 const ONBOARDING_1_2_3_4_DATA = {
@@ -365,6 +366,12 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.revenu_fiscal).toEqual(10000);
     expect(response.body.nombre_de_parts_fiscales).toEqual(2);
     expect(response.body.abonnement_ter_loire).toEqual(false);
+    expect(response.body.onboarding_result).toEqual({
+      alimentation: Impact.tres_faible,
+      transports: Impact.faible,
+      logement: Impact.eleve,
+      consommation: Impact.tres_eleve,
+    });
   });
   it('GET /utilisateurs/id/profile - use onboarding data when missing parts in user account', async () => {
     // GIVEN

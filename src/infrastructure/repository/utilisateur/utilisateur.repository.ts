@@ -226,7 +226,8 @@ export class UtilisateurRepository {
   private buildUtilisateurFromDB(user: UtilisateurDB): Utilisateur {
     if (user) {
       const onboardingData = new Onboarding(user.onboardingData as any);
-      const onboardingResult = new OnboardingResult(onboardingData);
+      const onboardingResult = new OnboardingResult();
+      onboardingResult.setOnboardingResultData(user.onboardingResult as any);
       return new Utilisateur({
         id: user.id,
         nom: user.nom,
