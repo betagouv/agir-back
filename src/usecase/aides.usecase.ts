@@ -24,31 +24,26 @@ export class AidesUsecase {
     );
   }
 
-  async getSummaryVelos(
-    codePostal: string,
-    revenu_fiscal: number,
-    parts: number,
-    prixVelo: number,
-  ): Promise<AidesVeloParType> {
-    return this.aidesVeloRepository.getSummaryVelos(
-      codePostal,
-      revenu_fiscal,
-      parts,
-      prixVelo,
-    );
-  }
-  async simulerAideVeloV2(
+  async simulerAideVelo(
     utilisateurId: string,
     prix_velo: number,
   ): Promise<AidesVeloParType> {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );
+    const RFR = utilisateur.revenu_fiscal ? utilisateur.revenu_fiscal + 1 : 1;
+    const PARTS = utilisateur.parts ? utilisateur.parts : 0;
+    const ABONNEMENT =
+      utilisateur.abonnement_ter_loire === null
+        ? false
+        : utilisateur.abonnement_ter_loire;
+
     return this.aidesVeloRepository.getSummaryVelos(
       utilisateur.code_postal,
-      utilisateur.revenu_fiscal + 1, // prise en compte du concept de borne inf FIXME : solution temporaire,
-      utilisateur.parts,
+      RFR,
+      PARTS,
       prix_velo,
+      ABONNEMENT,
     );
   }
 }

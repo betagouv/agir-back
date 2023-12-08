@@ -43,7 +43,7 @@ describe('AideVeloRepository', () => {
     expect(result['électrique'][1].description).toContain('TER');
     expect(result['électrique'][1].montant).toBe(50);
   });
-  it.skip('getSummaryVelos : sans abonnement TER à Anger', async () => {
+  it('getSummaryVelos : sans abonnement TER à Anger', async () => {
     // WHEN
     const result = await aidesVeloRepository.getSummaryVelos(
       '49000',

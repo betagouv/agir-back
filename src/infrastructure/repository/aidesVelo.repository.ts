@@ -49,7 +49,7 @@ async function summaryVelo(
     'localisation . code insee': `${lieu?.code}`,
     'revenu fiscal de référence': revenuParPart, // revenu fiscal de référence par part
     'vélo . prix': prixVelo,
-    'aides . pays de la loire . abonné TER': is_abonnement ? 'oui' : 'non',
+    'aides . pays de la loire . abonné TER': is_abonnement,
   };
   return getAidesVeloTousTypes(situationBase, engine);
 }

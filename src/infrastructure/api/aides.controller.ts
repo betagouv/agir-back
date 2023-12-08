@@ -50,35 +50,6 @@ export class AidesController extends GenericControler {
   }
 
   @ApiOkResponse({ type: AidesVeloParTypeAPI })
-  @Get('aides/velos')
-  @ApiQuery({ name: 'prixVelo', type: prixVeloDTO })
-  @ApiQuery({ name: 'nbParts', type: nbPartsDTO })
-  @ApiQuery({
-    name: 'revenuFiscalDeReference',
-    type: revenuFiscalDeReferenceDTO,
-  })
-  @UseGuards(AuthGuard)
-  async getAllVelos(
-    @Query('codePostal') codePostal: string,
-    @Query('prixVelo') prixVelo: 10000,
-    @Query('nbParts') nbParts: 1,
-    @Query('revenuFiscalDeReference') revenuFiscalDeReference: 1,
-  ): Promise<AidesVeloParTypeAPI> {
-    // FIXME AIDE : pas de règles de gestion - à la volée - dans un controller
-    const aides = await this.aidesUsecase.getSummaryVelos(
-      codePostal,
-      revenuFiscalDeReference,
-      nbParts,
-      prixVelo,
-    );
-    // FIXME : retourner liste vide ?
-    if (!aides) {
-      throw new NotFoundException(`Pas d'aides pour le vélo`);
-    }
-    return aides;
-  }
-
-  @ApiOkResponse({ type: AidesVeloParTypeAPI })
   @Post('utilisateurs/:utilisateurId/simulerAideVelo')
   @ApiBody({
     type: InputAideVeloAPI,
@@ -90,7 +61,7 @@ export class AidesController extends GenericControler {
 
     @Body() body: InputAideVeloAPI,
   ) {
-    const result = await this.aidesUsecase.simulerAideVeloV2(
+    const result = await this.aidesUsecase.simulerAideVelo(
       utilisateurId,
       body.prix_du_velo,
     );
