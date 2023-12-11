@@ -97,7 +97,7 @@ export class UtilisateurUsecase {
       profileToUpdate.passwordHash = fakeUser.passwordHash;
       profileToUpdate.passwordSalt = fakeUser.passwordSalt;
     }
-    // FIXME : c'est tout moche là deessous
+    // FIXME : c'est tout moche là dessous
     profileToUpdate.code_postal = profile.code_postal;
     profileToUpdate.commune = profile.commune;
     profileToUpdate.revenu_fiscal = profile.revenu_fiscal;

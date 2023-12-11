@@ -29,10 +29,6 @@ export class UtilisateurRepository {
       where: {
         id,
       },
-      include: {
-        badges: true,
-        services: { include: { serviceDefinition: true } },
-      },
     });
     return this.buildUtilisateurFromDB(user);
   }
@@ -40,10 +36,6 @@ export class UtilisateurRepository {
     const user = await this.prisma.utilisateur.findUnique({
       where: {
         email,
-      },
-      include: {
-        badges: true,
-        services: { include: { serviceDefinition: true } },
       },
     });
     return this.buildUtilisateurFromDB(user);

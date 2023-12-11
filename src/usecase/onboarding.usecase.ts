@@ -207,6 +207,13 @@ export class OnboardingUsecase {
     if (utilisateur.active_account) {
       ApplicationError.throwCompteDejaActifError();
     }
+
+    utilisateur.setNew6DigitCode();
+    await this.utilisateurRespository.updateCode(
+      utilisateur.id,
+      utilisateur.code,
+    );
+
     const _this = this;
     const okAction = async function () {
       _this.sendValidationCode(utilisateur);

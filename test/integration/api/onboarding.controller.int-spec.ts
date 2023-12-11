@@ -142,7 +142,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       'Le mot de passe doit contenir au moins un chiffre',
     );
   });
-  it('POST /utilisateurs/renvoyer_code - resend code ok for first time, counter + 1', async () => {
+  it('POST /utilisateurs/renvoyer_code - resend code ok for first time, counter + 1, new code generated', async () => {
     // GIVEN
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
@@ -150,6 +150,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       mot_de_passe: '#1234567890HAHA',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
+    });
+    const userDB_before = await TestUtil.prisma.utilisateur.findFirst({
+      where: { nom: 'WW' },
     });
 
     // WHEN
@@ -165,6 +168,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     });
 
     expect(userDB.sent_email_count).toEqual(2);
+    expect(userDB.code).not.toEqual(userDB_before.code);
   });
   it('POST /utilisateurs/email/renvoyer_code - resend code 4 times => error', async () => {
     // GIVEN
