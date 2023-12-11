@@ -50,7 +50,7 @@ export class EventUsecase {
       event.service_id,
     );
     if (found) {
-      found.todo.moveElementToDone(found.element);
+      found.todo.makeProgress(found.element);
     }
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);

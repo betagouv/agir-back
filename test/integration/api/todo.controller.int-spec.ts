@@ -685,6 +685,12 @@ describe('TODO list (API test)', () => {
     expect(dbUser.parcours_todo.getTodoByNumero(3).done[0].titre).toEqual(
       'Installer le service EcoWATT',
     );
+    expect(
+      dbUser.parcours_todo.getTodoByNumero(3).done[0].progression.current,
+    ).toEqual(1);
+    expect(
+      dbUser.parcours_todo.getTodoByNumero(3).done[0].sont_points_en_poche,
+    ).toStrictEqual(false);
   });
   it('POST /utilisateurs/id/services ajout du service fruits sur la todo 3 ne réalise PAS l objctif', async () => {
     // GIVEN
