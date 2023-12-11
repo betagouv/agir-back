@@ -25,6 +25,7 @@ export class LoggedUtilisateurAPI {
         email: user.email,
         quizzProfile: user.quizzProfile.getData(),
         created_at: user.created_at,
+        fonctionnalites_debloquees: user.unlocked_features.getUnlockedList(),
       },
       token: token,
     };

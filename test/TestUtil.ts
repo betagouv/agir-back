@@ -221,6 +221,7 @@ export class TestUtil {
           },
         ],
       },
+      unlocked_features: { unlocked_feature_list: ['aides'] },
       onboardingData: {
         transports: ['voiture', 'pied'],
         avion: 2,

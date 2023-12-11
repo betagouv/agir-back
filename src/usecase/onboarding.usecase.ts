@@ -19,10 +19,10 @@ import { PasswordManager } from '../../src/domain/utilisateur/manager/passwordMa
 import { CodeManager } from '../../src/domain/utilisateur/manager/codeManager';
 import { OidcService } from '../../src/infrastructure/auth/oidc.service';
 import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
-import { TodoCatalogue } from '../../src/domain/todo/todoCatalogue';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { Gamification } from '../domain/gamification/gamification';
 import { ParcoursTodo } from '../../src/domain/todo/parcoursTodo';
+import { UnlockedFeatures } from '../../src/domain/gamification/unlockedFeatures';
 
 export type Phrase = {
   phrase: string;
@@ -182,6 +182,7 @@ export class OnboardingUsecase {
       prevent_sendemail_before: new Date(),
       parcours_todo: new ParcoursTodo(),
       gamification: Gamification.newDefaultGamification(),
+      unlocked_features: new UnlockedFeatures(),
       code_departement: null,
       prm: null,
     });

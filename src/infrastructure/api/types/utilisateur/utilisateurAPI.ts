@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Utilisateur } from 'src/domain/utilisateur/utilisateur';
+import { Feature } from '../../../../../src/domain/gamification/unlockedFeatures';
+import { Utilisateur } from '../../../../../src/domain/utilisateur/utilisateur';
 import { QuizzProfileAPI } from '../quizz/quizzProfileAPI';
 
 export class UtilisateurAPI {
@@ -33,6 +34,9 @@ export class UtilisateurAPI {
   @ApiProperty()
   created_at: Date;
 
+  @ApiProperty({ type: [Feature] })
+  fonctionnalites_debloquees: Feature[];
+
   public static mapToAPI(user: Utilisateur): UtilisateurAPI {
     return {
       id: user.id,
@@ -45,6 +49,7 @@ export class UtilisateurAPI {
       nombre_de_parts_fiscales: user.parts,
       quizzProfile: user.quizzProfile.getData(),
       created_at: user.created_at,
+      fonctionnalites_debloquees: user.unlocked_features.getUnlockedList(),
     };
   }
 }

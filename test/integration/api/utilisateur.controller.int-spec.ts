@@ -105,7 +105,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   it('GET /utilisateurs/id - when present', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', { failed_login_count: 2 });
-    await TestUtil.create('badge');
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id');
     // WHEN
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
@@ -129,8 +128,9 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       loisir: { level: 1, isCompleted: false },
     });
     expect(response.body.created_at).toEqual(dbUser.created_at.toISOString());
-    expect(response.body.failed_login_count).toEqual(undefined);
-    expect(response.body.prevent_login_before).toEqual(undefined);
+    expect(response.body.failed_login_count).toEqual(undefined); // donnée cachée
+    expect(response.body.prevent_login_before).toEqual(undefined); // donnée cachée
+    expect(response.body.fonctionnalites_debloquees).toEqual(['aides']);
   });
 
   it('POST /utilisateurs/login - logs user and return a JWT token', async () => {
@@ -537,6 +537,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       onboardingResult: null,
       parcours_todo: null,
       gamification: null,
+      unlocked_features: null,
       parts: 0,
     });
     expect(userDB.failed_checkcode_count).toEqual(0);

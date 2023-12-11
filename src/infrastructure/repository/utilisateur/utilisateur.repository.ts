@@ -11,10 +11,10 @@ import {
   Thematique,
 } from '../../../domain/utilisateur/onboarding/onboarding';
 import { OnboardingResult } from '../../../domain/utilisateur/onboarding/onboardingResult';
-import { Todo } from '../../../../src/domain/todo/todo';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { Gamification } from '../../../domain/gamification/gamification';
 import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
+import { UnlockedFeatures } from '../../../../src/domain/gamification/unlockedFeatures';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -90,6 +90,7 @@ export class UtilisateurRepository {
       todo: utilisateur.parcours_todo as any,
       quizzLevels: utilisateur.quizzProfile.getData() as any,
       gamification: utilisateur.gamification as any,
+      unlocked_features: utilisateur.unlocked_features as any,
     };
     delete dataToUpdate.quizzProfile;
     delete dataToUpdate.parcours_todo;
@@ -139,6 +140,7 @@ export class UtilisateurRepository {
           quizzLevels: utilisateur.quizzProfile.getData(),
           todo: utilisateur.parcours_todo as any,
           gamification: utilisateur.gamification as any,
+          unlocked_features: utilisateur.unlocked_features as any,
         },
       });
       return this.buildUtilisateurFromDB(user);
@@ -255,6 +257,7 @@ export class UtilisateurRepository {
         gamification: new Gamification(user.gamification as any),
         prm: user.prm,
         code_departement: user.code_departement,
+        unlocked_features: new UnlockedFeatures(user.unlocked_features as any),
       });
     }
     return null;

@@ -6,6 +6,7 @@ import { PasswordManager } from './manager/passwordManager';
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Gamification } from '../gamification/gamification';
 import { ParcoursTodo } from '../todo/parcoursTodo';
+import { UnlockedFeatures } from '../gamification/unlockedFeatures';
 
 export class UtilisateurData {
   id: string;
@@ -36,6 +37,7 @@ export class UtilisateurData {
   prevent_sendemail_before: Date;
   parcours_todo: ParcoursTodo;
   gamification: Gamification;
+  unlocked_features: UnlockedFeatures;
 }
 
 export class Utilisateur extends UtilisateurData {

@@ -58,6 +58,7 @@ model Utilisateur {
   prevent_login_before     DateTime           @default(now())
   code                     String?
   code_generation_time     DateTime?
+  unlocked_features        Json               @default("{}")
   active_account           Boolean            @default(true)
   failed_checkcode_count   Int                @default(0)
   prevent_checkcode_before DateTime           @default(now())
