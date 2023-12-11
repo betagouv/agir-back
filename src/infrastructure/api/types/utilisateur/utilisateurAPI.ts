@@ -34,7 +34,7 @@ export class UtilisateurAPI {
   @ApiProperty()
   created_at: Date;
 
-  @ApiProperty({ type: [Feature] })
+  @ApiProperty({ enum: Feature, enumName: 'Feature', isArray: true })
   fonctionnalites_debloquees: Feature[];
 
   public static mapToAPI(user: Utilisateur): UtilisateurAPI {

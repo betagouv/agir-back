@@ -14,19 +14,7 @@ export class LoggedUtilisateurAPI {
     user: Utilisateur,
   ): LoggedUtilisateurAPI {
     return {
-      utilisateur: {
-        id: user.id,
-        nom: user.nom,
-        prenom: user.prenom,
-        code_postal: user.code_postal,
-        commune: user.commune,
-        revenu_fiscal: user.revenu_fiscal,
-        nombre_de_parts_fiscales: user.parts,
-        email: user.email,
-        quizzProfile: user.quizzProfile.getData(),
-        created_at: user.created_at,
-        fonctionnalites_debloquees: user.unlocked_features.getUnlockedList(),
-      },
+      utilisateur: UtilisateurAPI.mapToAPI(user),
       token: token,
     };
   }
