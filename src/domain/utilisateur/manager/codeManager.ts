@@ -9,6 +9,7 @@ export class CodeManager {
 
   private static MAX_CODE_ATTEMPT = 3;
   private static BLOCKED_CODE_DURATION_MIN = 5;
+  private static CODE_VALIDITY_TIME_MS = 10 * 60 * 1000;
 
   public static setNew6DigitCode(utilisateur: CodeAwareUtilisateur) {
     utilisateur.code = Math.floor(100000 + Math.random() * 900000).toString();
@@ -35,7 +36,10 @@ export class CodeManager {
     utilisateur: CodeAwareUtilisateur,
     code: string,
   ): Promise<boolean> {
-    const ok = utilisateur.code === code;
+    let ok =
+      utilisateur.code === code &&
+      utilisateur.code_generation_time.getTime() >
+        Date.now() - CodeManager.CODE_VALIDITY_TIME_MS;
     if (!ok) {
       CodeManager.failCode(utilisateur);
       await this.securityRepository.updateCodeValidationData(utilisateur);

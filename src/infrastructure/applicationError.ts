@@ -43,7 +43,10 @@ export class ApplicationError {
     );
   }
   static throwBadCodeOrEmailError() {
-    this.throwAppError('005', `Mauvais code ou adresse électronique`);
+    this.throwAppError(
+      '005',
+      `Mauvais code, code expiré, ou mauvaise adresse électronique`,
+    );
   }
   static throwCompteDejaActifError() {
     this.throwAppError('006', `Ce compte est déjà actif`);

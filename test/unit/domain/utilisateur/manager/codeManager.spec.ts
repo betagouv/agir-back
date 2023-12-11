@@ -88,6 +88,27 @@ describe('Objet CodeManager', () => {
     expect(utilisateur.failed_checkcode_count).toEqual(1);
     expect(fonction).toHaveBeenCalledTimes(0);
   });
+  it('processInputCodeAndDoActionIfOK : code expiré increase counter, does not call function', async () => {
+    // GIVEN
+    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    utilisateur.code = '#1234567890HAHA';
+    utilisateur.failed_checkcode_count = 0;
+    utilisateur.code_generation_time = new Date(Date.now() - 11 * 60 * 1000);
+    const fonction = jest.fn();
+
+    // WHEN
+    try {
+      await codeManager.processInputCodeAndDoActionIfOK(
+        '#1234567890HAHA',
+        utilisateur,
+        fonction,
+      );
+    } catch {}
+
+    // THEN
+    expect(utilisateur.failed_checkcode_count).toEqual(1);
+    expect(fonction).toHaveBeenCalledTimes(0);
+  });
   it('processInputCodeAndDoActionIfOK : sets block date + 5 mins', async () => {
     // GIVEN
     const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });

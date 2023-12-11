@@ -252,6 +252,39 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(userDB.failed_login_count).toEqual(0);
     expect(userDB.prevent_login_before.getTime()).toBeLessThan(Date.now());
   });
+  it('POST /utilisateurs/valider - code trop vieux (+10 min) renvoie une erreur', async () => {
+    // GIVEN
+    await TestUtil.getServer().post('/utilisateurs').send({
+      nom: 'WW',
+      prenom: 'Wojtek',
+      mot_de_passe: '#1234567890HAHA',
+      email: 'w@w.com',
+      onboardingData: ONBOARDING_1_2_3_4_DATA,
+    });
+    await TestUtil.prisma.utilisateur.update({
+      where: { email: 'w@w.com' },
+      data: {
+        code_generation_time: new Date(Date.now() - 10 * 60 * 1000),
+      },
+    });
+    let userDB = await TestUtil.prisma.utilisateur.findFirst({
+      where: { nom: 'WW' },
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/valider')
+      .send({
+        email: 'w@w.com',
+        code: userDB.code,
+      });
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      'Mauvais code, code expiré, ou mauvaise adresse électronique',
+    );
+  });
   it('POST /utilisateurs/valider - validate 2 times , already active account error', async () => {
     // GIVEN
     await TestUtil.getServer().post('/utilisateurs').send({
@@ -301,7 +334,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
 
     // THEN
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe('Mauvais code ou adresse électronique');
+    expect(response.body.message).toBe(
+      'Mauvais code, code expiré, ou mauvaise adresse électronique',
+    );
 
     const userDB = await TestUtil.prisma.utilisateur.findFirst({
       where: { nom: 'WW' },

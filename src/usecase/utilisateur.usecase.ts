@@ -127,6 +127,7 @@ export class UtilisateurUsecase {
       await _this.utilisateurRespository.updateCode(
         utilisateur.id,
         utilisateur.code,
+        utilisateur.code_generation_time,
       );
       _this.sendMotDePasseCode(utilisateur);
     };

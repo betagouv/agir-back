@@ -69,11 +69,16 @@ export class UtilisateurRepository {
       },
     });
   }
-  async updateCode(utilisateurId: string, code: string): Promise<any> {
+  async updateCode(
+    utilisateurId: string,
+    code: string,
+    code_generation_time: Date,
+  ): Promise<any> {
     return this.prisma.utilisateur.update({
       where: { id: utilisateurId },
       data: {
         code: code,
+        code_generation_time: code_generation_time,
       },
     });
   }
@@ -123,6 +128,7 @@ export class UtilisateurRepository {
           commune: utilisateur.commune,
           email: utilisateur.email,
           code: utilisateur.code,
+          code_generation_time: utilisateur.code_generation_time,
           active_account: utilisateur.active_account,
           failed_checkcode_count: utilisateur.failed_checkcode_count,
           prevent_checkcode_before: utilisateur.prevent_checkcode_before,
@@ -237,6 +243,7 @@ export class UtilisateurRepository {
         failed_login_count: user.failed_login_count,
         prevent_login_before: user.prevent_login_before,
         code: user.code,
+        code_generation_time: user.code_generation_time,
         prevent_checkcode_before: user.prevent_checkcode_before,
         failed_checkcode_count: user.failed_checkcode_count,
         active_account: user.active_account,

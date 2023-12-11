@@ -566,7 +566,9 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     // THEN
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe('Mauvais code ou adresse électronique');
+    expect(response.body.message).toBe(
+      'Mauvais code, code expiré, ou mauvaise adresse électronique',
+    );
 
     const userDB = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },

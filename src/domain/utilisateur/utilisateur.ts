@@ -28,6 +28,7 @@ export class UtilisateurData {
   failed_login_count: number;
   prevent_login_before: Date;
   code: string;
+  code_generation_time: Date;
   active_account: boolean;
   failed_checkcode_count: number;
   prevent_checkcode_before: Date;
@@ -58,6 +59,7 @@ export class Utilisateur extends UtilisateurData {
 
   public setNew6DigitCode() {
     CodeManager.setNew6DigitCode(this);
+    this.code_generation_time = new Date();
   }
 
   public static checkEmailFormat(email: string) {

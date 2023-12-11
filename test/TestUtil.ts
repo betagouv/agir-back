@@ -197,6 +197,7 @@ export class TestUtil {
       failed_login_count: 0,
       prevent_login_before: new Date(),
       code: '123456',
+      code_generation_time: new Date(),
       failed_checkcode_count: 0,
       prevent_checkcode_before: new Date(),
       sent_email_count: 0,

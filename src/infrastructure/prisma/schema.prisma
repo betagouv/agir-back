@@ -57,6 +57,7 @@ model Utilisateur {
   failed_login_count       Int                @default(0)
   prevent_login_before     DateTime           @default(now())
   code                     String?
+  code_generation_time     DateTime?
   active_account           Boolean            @default(true)
   failed_checkcode_count   Int                @default(0)
   prevent_checkcode_before DateTime           @default(now())

@@ -173,6 +173,7 @@ export class OnboardingUsecase {
       passwordSalt: null,
       active_account: false,
       code: null,
+      code_generation_time: null,
       failed_checkcode_count: 0,
       failed_login_count: 0,
       prevent_login_before: new Date(),
@@ -212,6 +213,7 @@ export class OnboardingUsecase {
     await this.utilisateurRespository.updateCode(
       utilisateur.id,
       utilisateur.code,
+      utilisateur.code_generation_time,
     );
 
     const _this = this;
