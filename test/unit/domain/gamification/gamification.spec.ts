@@ -1,24 +1,7 @@
-import { RevealType } from '../../../../src/domain/gamification/celebrations/reveal';
 import { CelebrationType } from '../../../../src/domain/gamification/celebrations/celebration';
 import { Gamification } from '../../../../src/domain/gamification/gamification';
 
 describe('Gamification', () => {
-  it('ajouterReveal : ajoute bien un reveal ', () => {
-    // GIVEN
-    const gamification = new Gamification({
-      points: 0,
-      celebrations: [],
-      reveals: [],
-    });
-    // WHEN
-    gamification.ajouterReveal(RevealType.aides);
-
-    // THEN
-    expect(gamification.reveals).toHaveLength(1);
-    expect(gamification.reveals[0].titre).toEqual(
-      "Découvrez le catalogue d'aides nationnales et locales !",
-    );
-  });
   it('ajoutePoints : ajoute bien les points ', () => {
     // GIVEN
     const gamification = new Gamification({
@@ -241,23 +224,5 @@ describe('Gamification', () => {
     expect(gamification.celebrations).toHaveLength(2);
     expect(gamification.celebrations[0].id).toEqual('1');
     expect(gamification.celebrations[1].id).toEqual('3');
-  });
-  it('terminerReveal : supprime correctement la bonne occurence', () => {
-    // GIVEN
-    const gamification = new Gamification({
-      points: 20,
-      celebrations: [],
-      reveals: [
-        { id: '1', type: RevealType.aides, titre: '1' },
-        { id: '2', type: RevealType.services, titre: '2' },
-      ],
-    });
-
-    // WHEN
-    gamification.terminerReveal('2');
-
-    // THEN
-    expect(gamification.reveals).toHaveLength(1);
-    expect(gamification.reveals[0].id).toEqual('1');
   });
 });

@@ -270,33 +270,4 @@ describe('EVENT (API test)', () => {
     });
     expect(dbUtilisateur.gamification['celebrations']).toHaveLength(0);
   });
-  it('POST /utilisateurs/id/events - supprime un reveal', async () => {
-    // GIVEN
-    await TestUtil.create('utilisateur', {
-      gamification: {
-        points: 10,
-        reveals: [
-          {
-            id: 'reveal-id',
-            type: 'aides',
-            titre: 'Les aides !',
-          },
-        ],
-      },
-    });
-    // WHEN
-    const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/events',
-    ).send({
-      type: EventType.reveal,
-      reveal_id: 'reveal-id',
-    });
-
-    // THEN
-    expect(response.status).toBe(200);
-    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
-    expect(dbUtilisateur.gamification['reveals']).toHaveLength(0);
-  });
 });

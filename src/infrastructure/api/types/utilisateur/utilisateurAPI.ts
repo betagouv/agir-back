@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Feature } from '../../../../../src/domain/gamification/unlockedFeatures';
+import { Feature } from '../../../../../src/domain/gamification/feature';
 import { Utilisateur } from '../../../../../src/domain/utilisateur/utilisateur';
 import { QuizzProfileAPI } from '../quizz/quizzProfileAPI';
 

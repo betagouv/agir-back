@@ -3,7 +3,6 @@ import { InteractionType } from '../../../../../src/domain/interaction/interacti
 import { DifficultyLevel } from '../../../../../src/domain/difficultyLevel';
 import { Thematique } from '../../../../../src/domain/thematique';
 import { Todo } from '../../../../../src/domain/todo/todo';
-import { RevealType } from '../../../../../src/domain/gamification/celebrations/reveal';
 
 export class ProgressionAPI {
   @ApiProperty() current: number;
@@ -20,7 +19,6 @@ export class TodoElementAPI {
   @ApiProperty() content_id?: string;
   @ApiProperty() interaction_id?: string;
   @ApiProperty() points: number;
-  @ApiProperty() reveal?: RevealType;
   @ApiProperty() sont_points_en_poche: boolean;
   @ApiProperty({ type: ProgressionAPI }) progression: ProgressionAPI;
 }

@@ -1,8 +1,5 @@
-export enum Feature {
-  aides = 'aides',
-  services = 'services',
-  recommendations = 'recommendations',
-}
+import { Feature } from './feature';
+
 export class UnlockedFeatures {
   constructor(data?: UnlockedFeatures) {
     if (data) {

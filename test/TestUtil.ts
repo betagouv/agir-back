@@ -211,13 +211,13 @@ export class TestUtil {
             type: 'niveau',
             new_niveau: 2,
             titre: 'the titre',
-          },
-        ],
-        reveals: [
-          {
-            id: 'reveal-id',
-            type: 'aides',
-            titre: 'Les aides !',
+            reveal: {
+              id: 'reveal-id',
+              feature: 'aides',
+              titre: 'Les aides !',
+              description: 'bla',
+              url: 'url',
+            },
           },
         ],
       },

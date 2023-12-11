@@ -1,6 +1,7 @@
 import { Celebration } from './celebrations/celebration';
 import { CelebrationDeNiveau } from './celebrations/celebrationDeNiveau';
-import { Reveal, RevealType } from './celebrations/reveal';
+import { Reveal } from './celebrations/reveal';
+import { Feature } from './feature';
 
 let SEUILS_NIVEAUX: number[] = [
   100, 250, 400, 600, 850, 1150, 1500, 2000, 2600, 3300,
@@ -24,15 +25,6 @@ export class Gamification extends GamificationData {
     if (!data.reveals) {
       this.reveals = [];
     }
-  }
-
-  public ajouterReveal?(type: RevealType) {
-    this.reveals.push(new Reveal(type));
-  }
-
-  public terminerReveal?(id: string) {
-    const index = this.reveals.findIndex((element) => element.id === id);
-    this.reveals.splice(index, 1);
   }
 
   public terminerCelebration?(id: string) {

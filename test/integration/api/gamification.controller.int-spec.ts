@@ -45,24 +45,6 @@ describe('Gamification  (API test)', () => {
     expect(response.body.current_points_in_niveau).toEqual(10);
     expect(response.body.point_target_in_niveau).toEqual(100);
   });
-  it('GET /utilisateurs/id/gamification retourne la liste de reveals ', async () => {
-    // GIVEN
-    await TestUtil.create('utilisateur');
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/gamification',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.reveals).toHaveLength(1);
-    expect(response.body.reveals[0]).toEqual({
-      id: 'reveal-id',
-      type: 'aides',
-      titre: 'Les aides !',
-    });
-  });
   it('GET /utilisateurs/id/gamification retourne la liste de celebrations ', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
@@ -80,6 +62,13 @@ describe('Gamification  (API test)', () => {
       type: 'niveau',
       new_niveau: 2,
       titre: 'the titre',
+      reveal: {
+        id: 'reveal-id',
+        feature: 'aides',
+        titre: 'Les aides !',
+        description: 'bla',
+        url: 'url',
+      },
     });
   });
   it('Le passage d un niveau ajoute une célebration ', async () => {
@@ -113,5 +102,8 @@ describe('Gamification  (API test)', () => {
       CelebrationType.niveau,
     );
     expect(dbUtilisateur.gamification['celebrations'][0].new_niveau).toEqual(2);
+    expect(dbUtilisateur.gamification['celebrations'][0].reveal.titre).toEqual(
+      "Un service permet d'avoir toujours sous les yeux vos fonctionnalités clés",
+    );
   });
 });
