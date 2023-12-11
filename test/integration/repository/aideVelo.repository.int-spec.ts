@@ -39,7 +39,6 @@ describe('AideVeloRepository', () => {
     );
 
     // THEN
-    console.log(result);
     expect(result['électrique'][1].description).toContain('TER');
     expect(result['électrique'][1].montant).toBe(50);
   });
@@ -54,7 +53,6 @@ describe('AideVeloRepository', () => {
     );
 
     // THEN
-    console.log(result);
     expect(result['électrique'][1].description).not.toContain('TER');
   });
 });
