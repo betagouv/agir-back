@@ -250,6 +250,8 @@ export class TestUtil {
         },
       },
       quizzLevels: UserQuizzProfile.newLowProfile().getData(),
+      created_at: undefined,
+      updated_at: undefined,
       ...override,
     };
   }

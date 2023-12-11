@@ -24,6 +24,7 @@ export class UtilisateurData {
   code_departement: string;
   quizzProfile: UserQuizzProfile;
   created_at: Date;
+  updated_at?: Date;
   passwordHash: string;
   passwordSalt: string;
   failed_login_count: number;

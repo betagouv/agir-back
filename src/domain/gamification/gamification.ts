@@ -1,7 +1,5 @@
 import { Celebration } from './celebrations/celebration';
 import { CelebrationDeNiveau } from './celebrations/celebrationDeNiveau';
-import { Reveal } from './celebrations/reveal';
-import { Feature } from './feature';
 
 let SEUILS_NIVEAUX: number[] = [
   100, 250, 400, 600, 850, 1150, 1500, 2000, 2600, 3300,
@@ -10,7 +8,6 @@ let SEUILS_NIVEAUX: number[] = [
 export class GamificationData {
   points: number;
   celebrations: Celebration[];
-  reveals: Reveal[];
 }
 export class Gamification extends GamificationData {
   constructor(data: GamificationData, seuils?: number[]) {
@@ -21,9 +18,6 @@ export class Gamification extends GamificationData {
     }
     if (!data.celebrations) {
       this.celebrations = [];
-    }
-    if (!data.reveals) {
-      this.reveals = [];
     }
   }
 
@@ -72,7 +66,6 @@ export class Gamification extends GamificationData {
     return new Gamification({
       points: 0,
       celebrations: [],
-      reveals: [],
     });
   }
 }

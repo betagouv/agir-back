@@ -7,7 +7,6 @@ describe('Gamification', () => {
     const gamification = new Gamification({
       points: 0,
       celebrations: [],
-      reveals: [],
     });
     // WHEN
     gamification.ajoutePoints(5);
@@ -21,7 +20,6 @@ describe('Gamification', () => {
       {
         points: 0,
         celebrations: [],
-        reveals: [],
       },
       [5, 10],
     );
@@ -38,7 +36,6 @@ describe('Gamification', () => {
       {
         points: 5,
         celebrations: [],
-        reveals: [],
       },
       [5, 10],
     );
@@ -55,7 +52,6 @@ describe('Gamification', () => {
       {
         points: 50,
         celebrations: [],
-        reveals: [],
       },
       [5, 10],
     );
@@ -72,7 +68,6 @@ describe('Gamification', () => {
       {
         points: 50,
         celebrations: [],
-        reveals: [],
       },
       [5, 10],
     );
@@ -89,7 +84,6 @@ describe('Gamification', () => {
       {
         points: 7,
         celebrations: [],
-        reveals: [],
       },
       [5, 10],
     );
@@ -106,7 +100,6 @@ describe('Gamification', () => {
       {
         points: 10,
         celebrations: [],
-        reveals: [],
       },
       [5, 10],
     );
@@ -123,7 +116,6 @@ describe('Gamification', () => {
       {
         points: 5,
         celebrations: [],
-        reveals: [],
       },
       [5, 10],
     );
@@ -140,7 +132,6 @@ describe('Gamification', () => {
       {
         points: 7,
         celebrations: [],
-        reveals: [],
       },
       [5, 10],
     );
@@ -157,7 +148,6 @@ describe('Gamification', () => {
       {
         points: 7,
         celebrations: [],
-        reveals: [],
       },
       [5, 15],
     );
@@ -174,7 +164,6 @@ describe('Gamification', () => {
       {
         points: 3,
         celebrations: [],
-        reveals: [],
       },
       [5, 15],
     );
@@ -191,7 +180,6 @@ describe('Gamification', () => {
       {
         points: 20,
         celebrations: [],
-        reveals: [],
       },
       [5, 15],
     );
@@ -212,7 +200,6 @@ describe('Gamification', () => {
           { id: '2', type: CelebrationType.niveau, titre: '2' },
           { id: '3', type: CelebrationType.niveau, titre: '3' },
         ],
-        reveals: [],
       },
       [5, 15],
     );

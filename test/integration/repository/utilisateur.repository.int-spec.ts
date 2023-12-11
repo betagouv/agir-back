@@ -385,16 +385,106 @@ describe('UtilisateurRepository', () => {
     await TestUtil.create('utilisateur');
 
     // WHEN
-
     const user = await utilisateurRepository.findUtilisateurById(
       'utilisateur-id',
     );
+    const rawUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    // THEN
+    expect(Object.keys(TestUtil.utilisateurData()).length).toEqual(
+      Object.keys(user).length,
+    );
+    expect(Object.keys(user).length).toEqual(Object.keys(rawUser).length);
+
+    expect(user.email).toEqual(rawUser.email);
+    expect(user.nom).toEqual(rawUser.nom);
+    expect(user.prenom).toEqual(rawUser.prenom);
+    expect(user.code_postal).toEqual(rawUser.code_postal);
+    expect(user.commune).toEqual(rawUser.commune);
+    expect(user.revenu_fiscal).toEqual(rawUser.revenu_fiscal);
+    expect(user.parts).toEqual(rawUser.parts.toNumber());
+    expect(user.abonnement_ter_loire).toEqual(rawUser.abonnement_ter_loire);
+    expect(user.prm).toEqual(rawUser.prm);
+    expect(user.code_departement).toEqual(rawUser.code_departement);
+    expect(user.created_at).toEqual(rawUser.created_at);
+    expect(user.updated_at).toEqual(rawUser.updated_at);
+    expect(user.passwordHash).toEqual(rawUser.passwordHash);
+    expect(user.passwordSalt).toEqual(rawUser.passwordSalt);
+    expect(user.failed_login_count).toEqual(rawUser.failed_login_count);
+    expect(user.prevent_login_before).toEqual(rawUser.prevent_login_before);
+    expect(user.code).toEqual(rawUser.code);
+    expect(user.code_generation_time).toEqual(rawUser.code_generation_time);
+    expect(user.active_account).toEqual(rawUser.active_account);
+    expect(user.failed_checkcode_count).toEqual(rawUser.failed_checkcode_count);
+    expect(user.prevent_checkcode_before).toEqual(
+      rawUser.prevent_checkcode_before,
+    );
+    expect(user.sent_email_count).toEqual(rawUser.sent_email_count);
+    expect(user.prevent_sendemail_before).toEqual(
+      rawUser.prevent_sendemail_before,
+    );
+    expect(user.passwordHash).toEqual(rawUser.passwordHash);
+    expect(user.passwordHash).toEqual(rawUser.passwordHash);
+
+    expect(user.onboardingData).toEqual(rawUser.onboardingData);
+    expect(user.onboardingResult).toEqual(rawUser.onboardingResult);
+    expect(user.parcours_todo).toEqual(rawUser.todo);
+    expect(user.gamification).toEqual(rawUser.gamification);
+    expect(user.unlocked_features).toEqual(rawUser.unlocked_features);
+    expect(user.quizzProfile.getData()).toEqual(rawUser.quizzLevels);
+
+    // WHEN
     await utilisateurRepository.updateUtilisateur(user);
     const userReadBack = await utilisateurRepository.findUtilisateurById(
       'utilisateur-id',
     );
-
     // THEN
+    expect(userReadBack.email).toEqual(rawUser.email);
+    expect(userReadBack.nom).toEqual(rawUser.nom);
+    expect(userReadBack.prenom).toEqual(rawUser.prenom);
+    expect(userReadBack.code_postal).toEqual(rawUser.code_postal);
+    expect(userReadBack.commune).toEqual(rawUser.commune);
+    expect(userReadBack.revenu_fiscal).toEqual(rawUser.revenu_fiscal);
+    expect(userReadBack.parts).toEqual(rawUser.parts.toNumber());
+    expect(userReadBack.abonnement_ter_loire).toEqual(
+      rawUser.abonnement_ter_loire,
+    );
+    expect(userReadBack.prm).toEqual(rawUser.prm);
+    expect(userReadBack.code_departement).toEqual(rawUser.code_departement);
+    expect(userReadBack.created_at).toEqual(rawUser.created_at);
+    expect(userReadBack.updated_at).toEqual(rawUser.updated_at);
+    expect(userReadBack.passwordHash).toEqual(rawUser.passwordHash);
+    expect(userReadBack.passwordSalt).toEqual(rawUser.passwordSalt);
+    expect(userReadBack.failed_login_count).toEqual(rawUser.failed_login_count);
+    expect(userReadBack.prevent_login_before).toEqual(
+      rawUser.prevent_login_before,
+    );
+    expect(userReadBack.code).toEqual(rawUser.code);
+    expect(userReadBack.code_generation_time).toEqual(
+      rawUser.code_generation_time,
+    );
+    expect(userReadBack.active_account).toEqual(rawUser.active_account);
+    expect(userReadBack.failed_checkcode_count).toEqual(
+      rawUser.failed_checkcode_count,
+    );
+    expect(userReadBack.prevent_checkcode_before).toEqual(
+      rawUser.prevent_checkcode_before,
+    );
+    expect(userReadBack.sent_email_count).toEqual(rawUser.sent_email_count);
+    expect(userReadBack.prevent_sendemail_before).toEqual(
+      rawUser.prevent_sendemail_before,
+    );
+    expect(userReadBack.passwordHash).toEqual(rawUser.passwordHash);
+    expect(userReadBack.passwordHash).toEqual(rawUser.passwordHash);
+
+    expect(userReadBack.onboardingData).toEqual(rawUser.onboardingData);
+    expect(userReadBack.onboardingResult).toEqual(rawUser.onboardingResult);
+    expect(userReadBack.parcours_todo).toEqual(rawUser.todo);
+    expect(userReadBack.gamification).toEqual(rawUser.gamification);
+    expect(userReadBack.unlocked_features).toEqual(rawUser.unlocked_features);
+    expect(userReadBack.quizzProfile.getData()).toEqual(rawUser.quizzLevels);
+
     expect(user).toStrictEqual(userReadBack);
   });
   it('creation et lecture d un utilisateur avec une part à null ', async () => {

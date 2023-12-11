@@ -253,6 +253,7 @@ export class UtilisateurRepository {
         prevent_sendemail_before: user.prevent_sendemail_before,
         quizzProfile: new UserQuizzProfile(user.quizzLevels as any),
         created_at: user.created_at,
+        updated_at: user.updated_at,
         parcours_todo: new ParcoursTodo(user.todo as any),
         gamification: new Gamification(user.gamification as any),
         prm: user.prm,
