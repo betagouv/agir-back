@@ -32,6 +32,7 @@ export class ServiceDefinitionData {
   dynamic_data: ServiceDynamicData;
   description: string;
   sous_description: string;
+  en_construction: boolean;
 }
 
 export class ServiceDefinition extends ServiceDefinitionData {

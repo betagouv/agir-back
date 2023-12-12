@@ -151,19 +151,8 @@ export class TestDataController {
     for (let index = 0; index < keyList.length; index++) {
       const serviceId = keyList[index];
       const service = _services[serviceId];
-      const data = {
-        id: serviceId,
-        titre: service.titre,
-        url: service.url,
-        icon_url: service.icon_url,
-        image_url: service.image_url,
-        is_local: service.is_local,
-        is_url_externe: service.is_url_externe,
-        minute_period: service.minute_period,
-        description: service.description,
-        sous_description: service.sous_description,
-        thematiques: service.thematiques,
-      };
+      const data = { ...service };
+      data.id = serviceId;
       await this.prisma.serviceDefinition.upsert({
         where: {
           id: serviceId,

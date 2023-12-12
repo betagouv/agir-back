@@ -14,6 +14,7 @@ export class ServiceDefinitionAPI {
   @ApiProperty() image_url: string;
   @ApiProperty() description: string;
   @ApiProperty() sous_description: string;
+  @ApiProperty() en_construction: boolean;
   @ApiProperty() is_local: boolean;
   @ApiProperty() is_url_externe: boolean;
   @ApiProperty() is_installed?: boolean;
@@ -37,6 +38,7 @@ export class ServiceDefinitionAPI {
       is_url_externe: serviceDefinition.is_url_externe,
       description: serviceDefinition.description,
       sous_description: serviceDefinition.sous_description,
+      en_construction: serviceDefinition.en_construction,
       thematiques: ServiceDefinitionAPI.convertThematiquesListeToLibelleListe(
         serviceDefinition.thematiques,
       ),

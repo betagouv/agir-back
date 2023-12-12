@@ -10,6 +10,7 @@ const services = {
     thematiques: ['alimentation'],
     description: 'Recette éco !!',
     sous_description: `Des recettes riches en plaisir et faibles en CO2, rien d'impossible !! Des milliers de recettes par thèmes et ingrédients, et toujours avec fruits et légumes de saison !`,
+    en_construction: true,
   },
   linky: {
     titre: 'Votre conso élec au jour le jour',
@@ -22,6 +23,7 @@ const services = {
     thematiques: ['climat', 'logement'],
     description: 'Votre suivi consommation, sans rien faire',
     sous_description: `Surveillez en un click l'évolution quotidienne de votre consommation électrique, comprenez vos habitudes, chassez toutes les pertes inutiles !!`,
+    en_construction: true,
   },
   suivi_transport: {
     titre: `Suivez l'impact de vos trajets quotidiens`,
@@ -35,6 +37,7 @@ const services = {
     description: `Suivez dans le temps l'impact de vos déplacements`,
     sous_description:
       'Voiture, avions, train... tout comprendre de vos habitudes et de leur impacts : les suivre dans le temps, se fixer des objectifs concrets et voir vos progrès',
+    en_construction: true,
   },
   ecowatt: {
     titre: `Etat du réseau en France`,
@@ -50,6 +53,7 @@ const services = {
     description: 'Ecowatt aide les Français à mieux consommer l’électricité.',
     sous_description:
       'Véritable météo de l’électricité, Ecowatt qualifie en temps réel le niveau de consommation des Français.',
+    en_construction: false,
   },
   fruits: {
     titre: `Fruits et légumes de saison`,
@@ -63,6 +67,7 @@ const services = {
     thematiques: ['alimentation'],
     description: 'Découvrez les fruits et légumes du mois',
     sous_description: `Manger local et de saison est un changement d'habitude à impact fort sur votre bilan carbone, alors GO GO GO  !!!`,
+    en_construction: false,
   },
 };
 module.exports = services;
