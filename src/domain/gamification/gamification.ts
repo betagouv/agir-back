@@ -1,4 +1,5 @@
-import { Celebration } from './celebrations/celebration';
+import { Utilisateur } from '../utilisateur/utilisateur';
+import { Celebration, CelebrationType } from './celebrations/celebration';
 import { CelebrationDeNiveau } from './celebrations/celebrationDeNiveau';
 
 let SEUILS_NIVEAUX: number[] = [
@@ -12,17 +13,24 @@ export class GamificationData {
 export class Gamification extends GamificationData {
   constructor(data: GamificationData, seuils?: number[]) {
     super();
-    Object.assign(this, data);
+    this.points = data.points;
     if (seuils) {
       SEUILS_NIVEAUX = seuils;
     }
-    if (!data.celebrations) {
-      this.celebrations = [];
+    this.celebrations = [];
+    if (data.celebrations) {
+      data.celebrations.forEach((celeb_data) => {
+        this.celebrations.push(new Celebration(celeb_data));
+      });
     }
   }
 
-  public terminerCelebration?(id: string) {
+  public terminerCelebration?(id: string, utilisateur: Utilisateur) {
     const index = this.celebrations.findIndex((element) => element.id === id);
+    const celebration = this.celebrations[index];
+    if (celebration.hasReveal()) {
+      utilisateur.unlocked_features.add(celebration.getReveal().feature);
+    }
     this.celebrations.splice(index, 1);
   }
 

@@ -61,7 +61,10 @@ export class EventUsecase {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );
-    utilisateur.gamification.terminerCelebration(event.celebration_id);
+    utilisateur.gamification.terminerCelebration(
+      event.celebration_id,
+      utilisateur,
+    );
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 

@@ -1,5 +1,8 @@
-import { CelebrationType } from '../../../../src/domain/gamification/celebrations/celebration';
+import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
+import { TestUtil } from '../../../../test/TestUtil';
 import { Gamification } from '../../../../src/domain/gamification/gamification';
+import { CelebrationDeNiveau } from '../../../../src/domain/gamification/celebrations/celebrationDeNiveau';
+import { UnlockedFeatures } from '../../../../src/domain/gamification/unlockedFeatures';
 
 describe('Gamification', () => {
   it('ajoutePoints : ajoute bien les points ', () => {
@@ -192,24 +195,47 @@ describe('Gamification', () => {
   });
   it('terminerCelebration : supprime correctement la bonne occurence', () => {
     // GIVEN
+    const celeb_1 = new CelebrationDeNiveau(2);
+    const celeb_2 = new CelebrationDeNiveau(2);
+    const celeb_3 = new CelebrationDeNiveau(2);
     const gamification = new Gamification(
       {
         points: 20,
-        celebrations: [
-          { id: '1', type: CelebrationType.niveau, titre: '1' },
-          { id: '2', type: CelebrationType.niveau, titre: '2' },
-          { id: '3', type: CelebrationType.niveau, titre: '3' },
-        ],
+        celebrations: [celeb_1, celeb_2, celeb_3],
       },
       [5, 15],
     );
+    let utilisateur = new Utilisateur(TestUtil.utilisateurData());
+    utilisateur.unlocked_features = new UnlockedFeatures();
 
     // WHEN
-    gamification.terminerCelebration('2');
+    gamification.terminerCelebration(celeb_2.id, utilisateur);
 
     // THEN
     expect(gamification.celebrations).toHaveLength(2);
-    expect(gamification.celebrations[0].id).toEqual('1');
-    expect(gamification.celebrations[1].id).toEqual('3');
+    expect(gamification.celebrations[0].id).toEqual(celeb_1.id);
+    expect(gamification.celebrations[1].id).toEqual(celeb_3.id);
+  });
+  it('terminerCelebration : debloque un fonctionnalité si la celebration contient un Reveal', () => {
+    // GIVEN
+    const celeb = new CelebrationDeNiveau(2);
+    const gamification = new Gamification(
+      {
+        points: 20,
+        celebrations: [celeb],
+      },
+      [5, 15],
+    );
+    let utilisateur = new Utilisateur(TestUtil.utilisateurData());
+    utilisateur.unlocked_features = new UnlockedFeatures();
+    // WHEN
+    gamification.terminerCelebration(celeb.id, utilisateur);
+
+    // THEN
+    expect(gamification.celebrations).toHaveLength(0);
+    expect(utilisateur.unlocked_features.getUnlockedList()).toHaveLength(1);
+    expect(utilisateur.unlocked_features.getUnlockedList()[0]).toEqual(
+      'services',
+    );
   });
 });

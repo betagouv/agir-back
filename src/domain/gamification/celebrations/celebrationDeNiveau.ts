@@ -1,12 +1,16 @@
 import { Feature } from '../feature';
 import { Celebration, CelebrationType } from './celebration';
 import { Reveal } from './reveal';
+import { v4 as uuidv4 } from 'uuid';
 
 export class CelebrationDeNiveau extends Celebration {
   constructor(new_niveau: number) {
-    super(CelebrationType.niveau);
-    this.new_niveau = new_niveau;
-    this.titre = `Bravo ! grâce à vos points récoltés vous passez au niveau ${new_niveau} !`;
+    super({
+      new_niveau: new_niveau,
+      type: CelebrationType.niveau,
+      id: uuidv4(),
+      titre: `Bravo ! grâce à vos points récoltés vous passez au niveau ${new_niveau} !`,
+    });
     switch (new_niveau) {
       case 2:
         this.reveal = new Reveal(Feature.services);
@@ -19,6 +23,4 @@ export class CelebrationDeNiveau extends Celebration {
         break;
     }
   }
-  new_niveau: number;
-  reveal: Reveal;
 }

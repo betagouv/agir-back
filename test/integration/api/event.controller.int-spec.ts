@@ -5,6 +5,8 @@ import { TestUtil } from '../../TestUtil';
 import { Thematique } from '../../../src/domain/thematique';
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { CelebrationDeNiveau } from '../../../src/domain/gamification/celebrations/celebrationDeNiveau';
+import { UnlockedFeatures } from '../../../src/domain/gamification/unlockedFeatures';
 
 describe('EVENT (API test)', () => {
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -252,22 +254,45 @@ describe('EVENT (API test)', () => {
   });
   it('POST /utilisateurs/id/events - supprime une celebration', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
-      gamification: { points: 10, celebrations: [{ id: '1', type: 'niveau' }] },
-    });
+    await TestUtil.create('utilisateur');
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/events',
     ).send({
       type: EventType.celebration,
-      celebration_id: '1',
+      celebration_id: 'celebration-id',
     });
-
     // THEN
     expect(response.status).toBe(200);
     const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
     });
     expect(dbUtilisateur.gamification['celebrations']).toHaveLength(0);
+  });
+  it('POST /utilisateurs/id/events - celebration consommée ajoute une fonctionnalité débloquée', async () => {
+    // GIVEN
+    const celeb = new CelebrationDeNiveau(2);
+    await TestUtil.create('utilisateur', {
+      gamification: { points: 10, celebrations: [celeb] },
+      unlocked_features: new UnlockedFeatures(),
+    });
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.celebration,
+      celebration_id: celeb.id,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUtilisateur = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(dbUtilisateur.gamification.celebrations).toHaveLength(0);
+    expect(dbUtilisateur.unlocked_features.getUnlockedList()).toHaveLength(1);
+    expect(dbUtilisateur.unlocked_features.getUnlockedList()[0]).toEqual(
+      'services',
+    );
   });
 });

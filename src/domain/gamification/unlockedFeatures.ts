@@ -11,7 +11,7 @@ export class UnlockedFeatures {
   }
   private unlocked_feature_list: Feature[];
 
-  public unlock?(feature: Feature) {
+  public add?(feature: Feature) {
     if (!this.unlocked_feature_list.includes(feature)) {
       this.unlocked_feature_list.push(feature);
     }
