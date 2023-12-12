@@ -65,6 +65,7 @@ import { LinkyUsecase } from './usecase/linky.usecase';
 import { LinkyController } from './infrastructure/api/linky.controller';
 import { LinkyServiceManager } from './infrastructure/service/linky/LinkyServiceManager';
 import { LinkyRepository } from './infrastructure/repository/linky.repository';
+import { AdminController } from './infrastructure/api/admin.controller';
 
 const SESSION_LIFETIME = '12h';
 
@@ -88,6 +89,7 @@ function getControllers(): any[] {
     EventController,
     GamificationController,
     LinkyController,
+    AdminController,
   );
   if (process.env.IS_PROD === 'false') {
     controllers.push(TestDataController);

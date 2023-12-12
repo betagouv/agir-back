@@ -9,4 +9,12 @@ export class GenericControler {
       });
     }
   }
+  checkCallerIsAdmin(req: Request) {
+    if (!process.env.ADMIN_IDS.includes(req['tokenUtilisateurId'])) {
+      throw new ForbiddenException({
+        code: '002',
+        message: 'Vous ne pouvez pas accéder à cette API',
+      });
+    }
+  }
 }
