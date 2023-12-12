@@ -1,11 +1,12 @@
 import { Controller, Post, Request, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guard';
 import { PrismaService } from '../prisma/prisma.service';
 const _services = require('../../../test_data/_services');
 import { GenericControler } from './genericControler';
 
 @Controller()
+@ApiBearerAuth()
 @ApiTags('Admin')
 export class AdminController extends GenericControler {
   constructor(private prisma: PrismaService) {
