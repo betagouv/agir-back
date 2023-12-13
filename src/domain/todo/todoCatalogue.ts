@@ -74,6 +74,7 @@ export class TodoCatalogue {
           level: DifficultyLevel.ANY,
           points: 10,
         },
+        /**
         {
           id: uuidv4(),
           titre: `Allez découvrir le catalogue d'aides !`,
@@ -90,6 +91,7 @@ export class TodoCatalogue {
           type: InteractionType.profile,
           points: 21,
         },
+         */
         {
           id: uuidv4(),
           titre: 'lire un premier article transport',
