@@ -1,3 +1,6 @@
+import { DifficultyLevel } from '../src/domain/difficultyLevel';
+import { InteractionType } from '../src/domain/interaction/interactionType';
+import { Thematique } from '../src/domain/thematique';
 import {
   Impact,
   Thematique as ThemaOnbo,
@@ -120,6 +123,56 @@ const utilisateurs = {
     parts: 2.5,
     gamification: {
       points: 0,
+    },
+    todo: {
+      todo_active: 0,
+      liste_todo: [
+        {
+          numero_todo: 2,
+          points_todo: 25,
+          titre: 'Des quiz, mais aussi des articles !',
+          done_at: null,
+          done: [],
+          todo: [
+            {
+              id: 1,
+              titre: 'Faire 1 quizz logement',
+              thematiques: [Thematique.logement],
+              progression: { current: 0, target: 1 },
+              sont_points_en_poche: false,
+              type: InteractionType.quizz,
+              level: DifficultyLevel.ANY,
+              points: 10,
+            },
+            {
+              id: 2,
+              titre: `Allez découvrir le catalogue d'aides !`,
+              progression: { current: 0, target: 1 },
+              sont_points_en_poche: false,
+              type: InteractionType.aides,
+              points: 33,
+            },
+            {
+              id: 3,
+              titre: `Consultez votre profile et complétez le si besoin`,
+              progression: { current: 0, target: 1 },
+              sont_points_en_poche: false,
+              type: InteractionType.profile,
+              points: 21,
+            },
+            {
+              id: 4,
+              titre: 'lire un premier article transport',
+              thematiques: [Thematique.transport],
+              progression: { current: 0, target: 1 },
+              sont_points_en_poche: false,
+              type: InteractionType.article,
+              level: DifficultyLevel.ANY,
+              points: 10,
+            },
+          ],
+        },
+      ],
     },
     interactions: ALL_INTERACTIONS,
     suivis: [

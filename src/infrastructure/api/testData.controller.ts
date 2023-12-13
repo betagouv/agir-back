@@ -423,7 +423,9 @@ export class TestDataController {
     delete clonedData.services;
     delete clonedData.questionsNGC;
 
-    clonedData.todo = new ParcoursTodo();
+    if (!clonedData.todo) {
+      clonedData.todo = new ParcoursTodo();
+    }
 
     PasswordManager.setUserPassword(clonedData, clonedData.mot_de_passe);
     delete clonedData.mot_de_passe;
