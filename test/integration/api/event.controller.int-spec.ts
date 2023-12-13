@@ -252,6 +252,29 @@ describe('EVENT (API test)', () => {
     });
     expect(dbUtilisateur.gamification['points']).toStrictEqual(30);
   });
+  it('POST /utilisateurs/id/events - ajoute points pour article lu', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      done: false,
+      type: InteractionType.article,
+      points: 20,
+    });
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.article_lu,
+      interaction_id: 'interaction-id',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(dbUtilisateur.gamification['points']).toStrictEqual(30);
+  });
   it('POST /utilisateurs/id/events - supprime une celebration', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');

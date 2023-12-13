@@ -52,6 +52,7 @@ describe('TODO list (API test)', () => {
     expect(response.body.todo[0].points).toEqual(10);
     expect(response.body.todo[0].thematiques).toEqual(['climat']);
   });
+
   it('GET /utilisateurs/id/todo retourne la todo n°1 avec une ref de quizz qui va bien : thematique  climat', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
@@ -503,7 +504,7 @@ describe('TODO list (API test)', () => {
     });
     expect(dbUtilisateur.gamification['points']).toEqual(20);
   });
-  it('POST /utilisateurs/id/todo/gagner_points encaissse les points d une todo terminée , passe à la todo suivante', async () => {
+  it('POST /utilisateurs/id/todo/gagner_points encaissse les points d une todo terminée , passe à la todo suivante, et valorise la date de fin', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       todo: {
@@ -547,6 +548,10 @@ describe('TODO list (API test)', () => {
     );
     expect(dbUtilisateur.gamification['points']).toEqual(35);
     expect(dbUtilisateur.parcours_todo.getActiveTodo().numero_todo).toEqual(2);
+    console.log(dbUtilisateur.parcours_todo.liste_todo[0]);
+    expect(
+      dbUtilisateur.parcours_todo.liste_todo[0].done_at.getTime(),
+    ).toBeGreaterThan(Date.now() - 1000);
   });
   it('POST /utilisateurs/id/todo/gagner_points 400 si todo pas faite', async () => {
     // GIVEN

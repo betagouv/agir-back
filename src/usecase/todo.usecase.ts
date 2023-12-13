@@ -27,13 +27,12 @@ export class TodoUsecase {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );
-    const element = utilisateur.parcours_todo
-      .getActiveTodo()
-      .findDoneElementById(elementId);
+    const todo_active = utilisateur.parcours_todo.getActiveTodo();
+    const element = todo_active.findDoneElementById(elementId);
 
-    if (element && !element.sont_points_en_poche) {
-      element.sont_points_en_poche = true;
-      utilisateur.gamification.ajoutePoints(element.points);
+    if (element && !element.sontPointsEnPoche()) {
+      const points = todo_active.empochePoints(element);
+      utilisateur.gamification.ajoutePoints(points);
     }
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -42,10 +41,10 @@ export class TodoUsecase {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );
-    if (utilisateur.parcours_todo.getActiveTodo().isDone()) {
-      utilisateur.gamification.ajoutePoints(
-        utilisateur.parcours_todo.getActiveTodo().points_todo,
-      );
+    const todo_active = utilisateur.parcours_todo.getActiveTodo();
+    if (todo_active.isDone()) {
+      utilisateur.gamification.ajoutePoints(todo_active.points_todo);
+      todo_active.done_at = new Date();
       utilisateur.parcours_todo.avanceDansParcours();
     } else {
       ApplicationError.throwUnfinishedTodoError();

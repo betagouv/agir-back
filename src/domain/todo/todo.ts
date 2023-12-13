@@ -25,11 +25,15 @@ export class TodoElement extends TodoElementData {
   public isDone?() {
     return this.progression.current === this.progression.target;
   }
+  public sontPointsEnPoche?(): boolean {
+    return this.sont_points_en_poche;
+  }
 }
 
 export class TodoData {
   numero_todo: number;
   points_todo: number;
+  done_at: Date;
   titre: string;
 
   done: TodoElement[];
@@ -40,6 +44,9 @@ export class Todo extends TodoData {
   constructor(data: TodoData) {
     super();
     Object.assign(this, data);
+    if (data.done_at) {
+      this.done_at = new Date(data.done_at);
+    }
     this.done = [];
     this.todo = [];
     if (data.done) {
@@ -56,6 +63,11 @@ export class Todo extends TodoData {
 
   public isDone?(): boolean {
     return this.todo.length === 0 && !this.hasPointsToEarn();
+  }
+
+  public empochePoints?(element: TodoElement): number {
+    element.sont_points_en_poche = true;
+    return element.points;
   }
 
   public hasPointsToEarn?(): boolean {
