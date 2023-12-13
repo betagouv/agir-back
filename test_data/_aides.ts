@@ -1,4 +1,5 @@
 const aides = {
+  /*
   aide_velo: {
     titre: 'Simulez une aide pour acheter un vélo',
     soustitre: '',
@@ -14,6 +15,7 @@ const aides = {
     difficulty: 1,
     points: 25,
     locked: false,
+    score: 0.999,
   },
   ajouter_linky: {
     titre: 'Connectez votre compteur Linky',
@@ -46,5 +48,6 @@ const aides = {
     points: 50,
     locked: false,
   },
+  */
 };
 module.exports = aides;
