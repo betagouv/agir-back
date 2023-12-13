@@ -100,7 +100,7 @@ function getAidesVeloParType(
           collectivite: collectivity as Collectivite,
           montant: null,
           plafond: null,
-          logo: 'https://mesaidesvelo.fr/miniatures/' + miniatures[ruleName],
+          logo: process.env.MINIATURES_URL + miniatures[ruleName],
         };
         if (!situation['vélo . type']) {
           return [metaData];
