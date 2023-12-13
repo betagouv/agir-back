@@ -76,6 +76,14 @@ export class TodoCatalogue {
         },
         {
           id: uuidv4(),
+          titre: `Allez découvrir le catalogue d'aides !`,
+          progression: { current: 0, target: 1 },
+          sont_points_en_poche: false,
+          type: InteractionType.aides,
+          points: 33,
+        },
+        {
+          id: uuidv4(),
           titre: 'lire un premier article transport',
           thematiques: [Thematique.transport],
           progression: { current: 0, target: 1 },

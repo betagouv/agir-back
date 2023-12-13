@@ -4,6 +4,7 @@ export enum EventType {
   celebration = 'celebration',
   reveal = 'reveal',
   service_installed = 'service_installed',
+  access_catalogue_aides = 'access_catalogue_aides',
 }
 
 export class UtilisateurEvent {

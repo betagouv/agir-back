@@ -10,6 +10,7 @@ import { Interaction } from '../../src/domain/interaction/interaction';
 import { QuizzLevelSettings } from '../../src/domain/quizz/quizzLevelSettings';
 import { BadgeRepository } from '../../src/infrastructure/repository/badge.repository';
 import { BadgeTypes } from '../../src/domain/badge/badgeTypes';
+import { InteractionType } from '../../src/domain/interaction/interactionType';
 
 export type User_Interaction = {
   utilisateur: Utilisateur;
@@ -34,7 +35,26 @@ export class EventUsecase {
         return await this.processCelebration(utilisateurId, event);
       case EventType.service_installed:
         return await this.processServiceInstalled(utilisateurId, event);
+      case EventType.access_catalogue_aides:
+        return await this.processAccessCatalogueAides(utilisateurId, event);
     }
+  }
+
+  private async processAccessCatalogueAides(
+    utilisateurId: string,
+    event: UtilisateurEvent,
+  ) {
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+      utilisateurId,
+    );
+    const found = utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
+      InteractionType.aides,
+    );
+    if (found) {
+      found.todo.makeProgress(found.element);
+    }
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private async processServiceInstalled(

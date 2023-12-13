@@ -5,7 +5,7 @@ import { TodoCatalogue } from './todoCatalogue';
 
 export class TodoElementData {
   id: string;
-  thematiques: Thematique[];
+  thematiques?: Thematique[];
   titre: string;
   type: InteractionType;
   level?: DifficultyLevel;
@@ -15,6 +15,7 @@ export class TodoElementData {
   points: number;
   sont_points_en_poche: boolean;
   progression: { current: number; target: number };
+  url?: string;
 }
 
 export class TodoElement extends TodoElementData {
@@ -90,7 +91,7 @@ export class Todo extends TodoData {
 
   public findTodoElementByTypeAndThematique?(
     type: InteractionType,
-    thematiques: Thematique[],
+    thematiques?: Thematique[],
   ): TodoElement {
     return this.todo.find(
       (element) =>
@@ -113,12 +114,15 @@ export class Todo extends TodoData {
     }
   }
   private includesAtLeastOneOf?(
-    list1: Thematique[],
-    list2: Thematique[],
+    thematiquesElement: Thematique[],
+    searchedThematiques?: Thematique[],
   ): boolean {
-    for (let index = 0; index < list2.length; index++) {
-      const e2 = list2[index];
-      if (list1.includes(e2)) {
+    if (searchedThematiques === undefined || searchedThematiques.length === 0) {
+      return true;
+    }
+    for (let index = 0; index < searchedThematiques.length; index++) {
+      const thematique = searchedThematiques[index];
+      if (thematiquesElement.includes(thematique)) {
         return true;
       }
     }

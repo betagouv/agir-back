@@ -11,13 +11,14 @@ export class ProgressionAPI {
 
 export class TodoElementAPI {
   @ApiProperty({ enum: Thematique, enumName: 'Thematique', isArray: true })
-  thematiques: Thematique[];
+  thematiques?: Thematique[];
   @ApiProperty() id: string;
   @ApiProperty() titre: string;
   @ApiProperty({ enum: InteractionType }) type?: InteractionType;
   @ApiProperty({ enum: DifficultyLevel }) level?: DifficultyLevel;
   @ApiProperty() content_id?: string;
   @ApiProperty() interaction_id?: string;
+  @ApiProperty() url?: string;
   @ApiProperty() points: number;
   @ApiProperty() sont_points_en_poche: boolean;
   @ApiProperty({ type: ProgressionAPI }) progression: ProgressionAPI;

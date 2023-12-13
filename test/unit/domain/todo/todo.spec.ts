@@ -44,6 +44,63 @@ describe('Todo', () => {
     // THEN
     expect(result.id).toEqual('2');
   });
+  it('findTodoElementLike : retourne element de todo qui mach sans thematique ', () => {
+    // GIVEN
+    const todo = new Todo({
+      done: [],
+      numero_todo: 1,
+      points_todo: 20,
+      done_at: null,
+      titre: 'titre',
+      todo: [
+        {
+          id: '1',
+          points: 10,
+          progression: { current: 0, target: 1 },
+          level: DifficultyLevel.L1,
+          titre: 'titre',
+          type: InteractionType.aides,
+          sont_points_en_poche: false,
+        },
+      ],
+    });
+    // WHEN
+    const result = todo.findTodoElementByTypeAndThematique(
+      InteractionType.aides,
+    );
+
+    // THEN
+    expect(result.id).toEqual('1');
+  });
+  it('findTodoElementLike : retourne element de todo qui mach avec thematique mais recherche optionnelle', () => {
+    // GIVEN
+    const todo = new Todo({
+      done: [],
+      numero_todo: 1,
+      points_todo: 20,
+      done_at: null,
+      titre: 'titre',
+      todo: [
+        {
+          id: '1',
+          points: 10,
+          progression: { current: 0, target: 1 },
+          level: DifficultyLevel.L1,
+          titre: 'titre',
+          thematiques: [Thematique.climat],
+          type: InteractionType.aides,
+          sont_points_en_poche: false,
+        },
+      ],
+    });
+    // WHEN
+    const result = todo.findTodoElementByTypeAndThematique(
+      InteractionType.aides,
+    );
+
+    // THEN
+    expect(result.id).toEqual('1');
+  });
   it('moveElementToDone : bouge un element de todo à done ', () => {
     // GIVEN
     const todo = new Todo({

@@ -37,7 +37,7 @@ export class ParcoursTodo {
   }
   public findTodoElementByTypeAndThematique?(
     type: InteractionType,
-    thematiques: Thematique[],
+    thematiques?: Thematique[],
   ): { element: TodoElement; todo: Todo } {
     for (let index = 0; index < this.liste_todo.length; index++) {
       const current_todo = this.liste_todo[index];

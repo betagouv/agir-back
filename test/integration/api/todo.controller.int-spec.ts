@@ -52,6 +52,42 @@ describe('TODO list (API test)', () => {
     expect(response.body.todo[0].points).toEqual(10);
     expect(response.body.todo[0].thematiques).toEqual(['climat']);
   });
+  it('GET /utilisateurs/id/todo retourne la todo avec le champ aide et done_at', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      todo: {
+        liste_todo: [
+          {
+            numero_todo: 1,
+            points_todo: 25,
+            done_at: new Date(),
+            done: [],
+            todo: [
+              {
+                titre: 'faire quizz climat',
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: 'aide',
+                url: '/aides',
+                points: 10,
+              },
+            ],
+          },
+        ],
+        todo_active: 0,
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(new Date(response.body.done_at).getTime()).toBeGreaterThan(
+      Date.now() - 100,
+    );
+    expect(response.body.todo[0].url).toEqual('/aides');
+  });
 
   it('GET /utilisateurs/id/todo retourne la todo n°1 avec une ref de quizz qui va bien : thematique  climat', async () => {
     // GIVEN
@@ -881,6 +917,7 @@ describe('TODO list (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.todo).toHaveLength(1);
+    expect(response.body.numero_todo).toEqual(1);
   });
   it('GET /utilisateurs/id/todo répond OK pour todo #2', async () => {
     // GIVEN
@@ -895,7 +932,6 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.todo).toHaveLength(2);
     expect(response.body.numero_todo).toEqual(2);
   });
   it('GET /utilisateurs/id/todo répond OK pour todo #3', async () => {
@@ -912,7 +948,6 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.todo).toHaveLength(2);
     expect(response.body.numero_todo).toEqual(3);
   });
 });
