@@ -84,6 +84,14 @@ export class TodoCatalogue {
         },
         {
           id: uuidv4(),
+          titre: `Consultez votre profile et complétez le si besoin`,
+          progression: { current: 0, target: 1 },
+          sont_points_en_poche: false,
+          type: InteractionType.profile,
+          points: 21,
+        },
+        {
+          id: uuidv4(),
           titre: 'lire un premier article transport',
           thematiques: [Thematique.transport],
           progression: { current: 0, target: 1 },

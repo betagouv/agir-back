@@ -907,6 +907,90 @@ describe('TODO list (API test)', () => {
       dbUser.parcours_todo.getActiveTodo().todo[0].progression.current,
     ).toEqual(1);
   });
+  it('POST /utilisateurs/id/event aides valide un objecif aides', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      todo: {
+        liste_todo: [
+          {
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                id: '1234',
+                titre: 'catalogue aides',
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: InteractionType.aides,
+                points: 10,
+              },
+            ],
+          },
+        ],
+        todo_active: 0,
+      },
+    });
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: 'access_catalogue_aides',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
+    expect(
+      dbUser.parcours_todo.getActiveTodo().done[0].progression.current,
+    ).toEqual(1);
+    expect(dbUser.parcours_todo.getActiveTodo().done[0].id).toEqual('1234');
+  });
+  it('POST /utilisateurs/id/event aides valide un objecif profile', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      todo: {
+        liste_todo: [
+          {
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                id: '1234',
+                titre: 'compte utilisateur',
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: InteractionType.profile,
+                points: 10,
+              },
+            ],
+          },
+        ],
+        todo_active: 0,
+      },
+    });
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: 'access_profile',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
+    expect(
+      dbUser.parcours_todo.getActiveTodo().done[0].progression.current,
+    ).toEqual(1);
+    expect(dbUser.parcours_todo.getActiveTodo().done[0].id).toEqual('1234');
+  });
   it('GET /utilisateurs/id/todo répond OK pour todo #1', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');

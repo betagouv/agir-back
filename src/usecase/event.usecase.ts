@@ -36,14 +36,27 @@ export class EventUsecase {
       case EventType.service_installed:
         return await this.processServiceInstalled(utilisateurId, event);
       case EventType.access_catalogue_aides:
-        return await this.processAccessCatalogueAides(utilisateurId, event);
+        return await this.processAccessCatalogueAides(utilisateurId);
+      case EventType.access_profile:
+        return await this.processAccessProfile(utilisateurId);
     }
   }
 
-  private async processAccessCatalogueAides(
-    utilisateurId: string,
-    event: UtilisateurEvent,
-  ) {
+  private async processAccessProfile(utilisateurId: string) {
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+      utilisateurId,
+    );
+    const found = utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
+      InteractionType.profile,
+    );
+    if (found) {
+      found.todo.makeProgress(found.element);
+    }
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
+  private async processAccessCatalogueAides(utilisateurId: string) {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );

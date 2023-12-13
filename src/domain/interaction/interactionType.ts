@@ -6,4 +6,5 @@ export enum InteractionType {
   quizz = 'quizz',
   onboarding = 'onboarding',
   service = 'service',
+  profile = 'profile',
 }
