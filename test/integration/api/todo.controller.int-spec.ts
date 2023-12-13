@@ -8,6 +8,7 @@ import {
 } from '../../../src/domain/service/serviceDefinition';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
+import { EventType } from '../../../src/domain/utilisateur/utilisateurEvent';
 
 describe('TODO list (API test)', () => {
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -584,7 +585,6 @@ describe('TODO list (API test)', () => {
     );
     expect(dbUtilisateur.gamification['points']).toEqual(35);
     expect(dbUtilisateur.parcours_todo.getActiveTodo().numero_todo).toEqual(2);
-    console.log(dbUtilisateur.parcours_todo.liste_todo[0]);
     expect(
       dbUtilisateur.parcours_todo.liste_todo[0].done_at.getTime(),
     ).toBeGreaterThan(Date.now() - 1000);
@@ -991,6 +991,49 @@ describe('TODO list (API test)', () => {
     ).toEqual(1);
     expect(dbUser.parcours_todo.getActiveTodo().done[0].id).toEqual('1234');
   });
+  it('POST /utilisateurs/id/event aides valide un objecif reco', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      todo: {
+        liste_todo: [
+          {
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                id: '1234',
+                titre: 'recommandationss',
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: InteractionType.recommandations,
+                points: 10,
+              },
+            ],
+          },
+        ],
+        todo_active: 0,
+      },
+    });
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.access_recommandations,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
+    expect(
+      dbUser.parcours_todo.getActiveTodo().done[0].progression.current,
+    ).toEqual(1);
+    expect(dbUser.parcours_todo.getActiveTodo().done[0].id).toEqual('1234');
+  });
+
   it('GET /utilisateurs/id/todo répond OK pour todo #1', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');

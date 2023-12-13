@@ -7,4 +7,5 @@ export enum InteractionType {
   onboarding = 'onboarding',
   service = 'service',
   profile = 'profile',
+  recommandations = 'recommandations',
 }

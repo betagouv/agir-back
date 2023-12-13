@@ -162,6 +162,14 @@ const utilisateurs = {
             },
             {
               id: 4,
+              titre: `Allez voir les recommandations pour vous`,
+              progression: { current: 0, target: 1 },
+              sont_points_en_poche: false,
+              type: InteractionType.recommandations,
+              points: 5,
+            },
+            {
+              id: 5,
               titre: 'lire un premier article transport',
               thematiques: [Thematique.transport],
               progression: { current: 0, target: 1 },

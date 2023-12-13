@@ -6,6 +6,7 @@ export enum EventType {
   service_installed = 'service_installed',
   access_catalogue_aides = 'access_catalogue_aides',
   access_profile = 'access_profile',
+  access_recommandations = 'access_recommandations',
 }
 
 export class UtilisateurEvent {
