@@ -52,7 +52,9 @@ export class TodoUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  async getUtilisateurTodo(utilisateurId: string): Promise<Todo> {
+  async getUtilisateurTodo(
+    utilisateurId: string,
+  ): Promise<{ todo: Todo; is_last: boolean }> {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );
@@ -114,6 +116,6 @@ export class TodoUsecase {
         element.interaction_id = randomIteraction.id;
       }
     }
-    return todo;
+    return { todo: todo, is_last: utilisateur.parcours_todo.isLastTodo() };
   }
 }

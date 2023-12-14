@@ -43,7 +43,7 @@ export class TodoController extends GenericControler {
 
     const result = await this.todoUsecase.getUtilisateurTodo(utilisateurId);
 
-    return TodoAPI.mapTodoToTodoAPI(result);
+    return TodoAPI.mapTodoToTodoAPI(result.todo, result.is_last);
   }
   @ApiOperation({
     summary:

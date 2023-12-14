@@ -23,6 +23,10 @@ export class ParcoursTodo {
     return this.liste_todo[this.todo_active];
   }
 
+  public isLastTodo?(): boolean {
+    return this.todo_active === this.liste_todo.length - 1;
+  }
+
   public avanceDansParcours?() {
     this.todo_active = Math.min(
       this.todo_active + 1,

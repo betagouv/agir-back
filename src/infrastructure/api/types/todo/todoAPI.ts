@@ -29,10 +29,11 @@ export class TodoAPI {
   @ApiProperty() points_todo: number;
   @ApiProperty() done_at: Date;
   @ApiProperty() titre: string;
+  @ApiProperty() is_last: boolean;
   @ApiProperty({ type: [TodoElementAPI] }) todo: TodoElementAPI[];
   @ApiProperty({ type: [TodoElementAPI] }) done: TodoElementAPI[];
 
-  public static mapTodoToTodoAPI(todo: Todo): TodoAPI {
+  public static mapTodoToTodoAPI(todo: Todo, is_last: boolean): TodoAPI {
     return {
       numero_todo: todo.numero_todo,
       points_todo: todo.points_todo,
@@ -40,6 +41,7 @@ export class TodoAPI {
       todo: todo.todo,
       done: todo.done,
       done_at: todo.done_at,
+      is_last: is_last,
     };
   }
 }

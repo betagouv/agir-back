@@ -48,12 +48,13 @@ describe('TODO list (API test)', () => {
       current: 0,
       target: 1,
     });
+    expect(response.body.is_last).toEqual(false);
     expect(response.body.todo[0].sont_points_en_poche).toEqual(false);
     expect(response.body.todo[0].type).toEqual('quizz');
     expect(response.body.todo[0].points).toEqual(10);
     expect(response.body.todo[0].thematiques).toEqual(['climat']);
   });
-  it('GET /utilisateurs/id/todo retourne la todo avec le champ aide et done_at', async () => {
+  it('GET /utilisateurs/id/todo retourne la todo avec le champ aide et done_at, ainsi que todo_end = true', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       todo: {
@@ -88,6 +89,7 @@ describe('TODO list (API test)', () => {
       Date.now() - 100,
     );
     expect(response.body.todo[0].url).toEqual('/aides');
+    expect(response.body.is_last).toEqual(true);
   });
 
   it('GET /utilisateurs/id/todo retourne la todo n°1 avec une ref de quizz qui va bien : thematique  climat', async () => {
