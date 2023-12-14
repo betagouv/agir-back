@@ -56,6 +56,8 @@ export class UtilisateurUsecase {
       ApplicationError.throwInactiveAccountError();
     }
 
+    this.setEstimatedPartsIfNeeded(utilisateur);
+
     const _this = this;
     const okAction = async function () {
       return {
@@ -171,20 +173,24 @@ export class UtilisateurUsecase {
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
-    const result = await this.utilisateurRespository.findUtilisateurById(id);
-    if (!result) return null;
-    if (result.parts === null) {
-      if (result.onboardingData.adultes) {
+    const utilisateur = await this.utilisateurRespository.findUtilisateurById(
+      id,
+    );
+    this.setEstimatedPartsIfNeeded(utilisateur);
+    return utilisateur;
+  }
+
+  private setEstimatedPartsIfNeeded(utilisateur: Utilisateur) {
+    if (!utilisateur) return;
+    if (utilisateur.parts === null) {
+      if (utilisateur.onboardingData.adultes) {
         const enfants =
-          result.onboardingData.enfants > 2
-            ? result.onboardingData.enfants
-            : result.onboardingData.enfants * 0.5;
-        result.parts = result.onboardingData.adultes + enfants;
-      } else {
-        result.parts = null;
+          utilisateur.onboardingData.enfants > 2
+            ? utilisateur.onboardingData.enfants
+            : utilisateur.onboardingData.enfants * 0.5;
+        utilisateur.parts = utilisateur.onboardingData.adultes + enfants;
       }
     }
-    return result;
   }
 
   async deleteUtilisateur(utilisateurId: string) {
