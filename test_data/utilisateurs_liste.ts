@@ -6,7 +6,6 @@ export enum utilisateurs_liste {
   recette_livio = 'recette_livio',
   recette_benoit = 'recette_benoit',
   wojtek = 'wojtek',
-  michel0 = 'michel0',
-  michel6 = 'michel6',
+  experimental = 'experimental',
   fruggr = 'fruggr',
 }
