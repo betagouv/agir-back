@@ -260,6 +260,24 @@ const utilisateurs = {
     onboardingResult: ONBOARDING_RES_1234,
     onboardingData: ONBOARD_DATA_1234,
   },
+  fruggr: {
+    nom: 'D4B',
+    prenom: 'fruggr',
+    email: 'fruggr@agir.dev',
+    mot_de_passe: 'gofruggr',
+    code_postal: '75001',
+    commune: 'PARIS',
+    revenu_fiscal: null,
+    parts: null,
+    gamification: {
+      points: 0,
+    },
+    suivis: [],
+    services: [],
+    quizzLevels: minQuizzLevel,
+    onboardingResult: ONBOARDING_RES_1234,
+    onboardingData: ONBOARD_DATA_1234,
+  },
 };
 
 module.exports = utilisateurs;

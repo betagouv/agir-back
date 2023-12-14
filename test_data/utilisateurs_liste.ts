@@ -8,4 +8,5 @@ export enum utilisateurs_liste {
   wojtek = 'wojtek',
   michel0 = 'michel0',
   michel6 = 'michel6',
+  fruggr = 'fruggr',
 }
