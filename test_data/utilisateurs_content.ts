@@ -179,8 +179,8 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     code_postal: '91120',
     commune: 'PALAISEAU',
-    revenu_fiscal: null,
-    parts: 7.5,
+    revenu_fiscal: 0,
+    parts: 2,
     gamification: {
       points: 0,
     },
@@ -202,8 +202,8 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     code_postal: '91120',
     commune: 'PALAISEAU',
-    revenu_fiscal: null,
-    parts: null,
+    revenu_fiscal: 0,
+    parts: 2,
     gamification: {
       points: 0,
     },
@@ -220,8 +220,8 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     code_postal: '91120',
     commune: 'PALAISEAU',
-    revenu_fiscal: null,
-    parts: null,
+    revenu_fiscal: 0,
+    parts: 2,
     gamification: {
       points: 0,
     },
@@ -238,8 +238,8 @@ const utilisateurs = {
     mot_de_passe: 'gofruggr',
     code_postal: '75001',
     commune: 'PARIS',
-    revenu_fiscal: null,
-    parts: null,
+    revenu_fiscal: 0,
+    parts: 2,
     gamification: {
       points: 0,
     },
