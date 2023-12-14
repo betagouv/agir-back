@@ -8,20 +8,20 @@ export class Reveal {
   > = {
     aides: {
       titre: "Découvrez le catalogue d'aides nationnales et locales !",
-      description: 'bla bla bla',
-      url: 'url',
+      description: `Mais oui c'est trop génial`,
+      url: '/vos-aides',
     },
     services: {
       titre:
         "Un service permet d'avoir toujours sous les yeux vos fonctionnalités clés",
-      description: 'bla bla bla',
-      url: 'url',
+      description: `C'est magique`,
+      url: '/coach/services',
     },
     recommendations: {
       titre:
         "Encore des articles et des quiz rien que pour vous ! Esn fonction de vos centres d'intérêt",
-      description: 'bla bla bla',
-      url: 'url',
+      description: `Une cascade de connaissance`,
+      url: '/coach',
     },
   };
   constructor(feature: Feature) {
