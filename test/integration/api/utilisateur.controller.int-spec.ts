@@ -118,6 +118,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.code_postal).toEqual('91120');
     expect(response.body.commune).toEqual('Palaiseau');
     expect(response.body.revenu_fiscal).toEqual(10000);
+    expect(response.body.nombre_de_parts_fiscales).toEqual(2);
     expect(response.body.quizzProfile).toEqual({
       alimentation: { level: 1, isCompleted: false },
       transport: { level: 1, isCompleted: false },
@@ -132,6 +133,17 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.prevent_login_before).toEqual(undefined); // donnée cachée
     expect(response.body.fonctionnalites_debloquees).toEqual(['aides']);
   });
+  it('GET /utilisateurs/id - part fiscale estimée', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      failed_login_count: 2,
+      parts: null,
+    });
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id');
+    // THEN
+    expect(response.body.nombre_de_parts_fiscales).toEqual(2.5);
+  });
 
   it('POST /utilisateurs/login - logs user and return a JWT token', async () => {
     // GIVEN
@@ -142,6 +154,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       passwordHash: utilisateur.passwordHash,
       passwordSalt: utilisateur.passwordSalt,
       active_account: true,
+      parts: null,
     });
     await TestUtil.create('badge');
 
@@ -161,6 +174,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.utilisateur.code_postal).toEqual('91120');
     expect(response.body.utilisateur.commune).toEqual('Palaiseau');
     expect(response.body.utilisateur.revenu_fiscal).toEqual(10000);
+    expect(response.body.utilisateur.nombre_de_parts_fiscales).toEqual(2.5); // valeur estimée depuis l'onboarding
     expect(response.body.utilisateur.quizzProfile).toEqual({
       alimentation: { level: 1, isCompleted: false },
       transport: { level: 1, isCompleted: false },
@@ -170,6 +184,28 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       dechet: { level: 1, isCompleted: false },
       loisir: { level: 1, isCompleted: false },
     });
+  });
+  it('POST /utilisateurs/login - part réelle quand pas nulle', async () => {
+    // GIVEN
+    const utilisateur = getFakeUtilisteur();
+    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHA');
+
+    await TestUtil.create('utilisateur', {
+      passwordHash: utilisateur.passwordHash,
+      passwordSalt: utilisateur.passwordSalt,
+      active_account: true,
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/login')
+      .send({
+        mot_de_passe: '#1234567890HAHA',
+        email: 'yo@truc.com',
+      });
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.utilisateur.nombre_de_parts_fiscales).toEqual(2);
   });
   it('POST /utilisateurs/login - bad password', async () => {
     // GIVEN
