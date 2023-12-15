@@ -179,8 +179,8 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     code_postal: '91120',
     commune: 'PALAISEAU',
-    revenu_fiscal: 0,
-    parts: 2,
+    revenu_fiscal: null,
+    parts: null,
     gamification: {
       points: 0,
     },
