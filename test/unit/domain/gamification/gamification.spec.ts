@@ -234,8 +234,6 @@ describe('Gamification', () => {
     // THEN
     expect(gamification.celebrations).toHaveLength(0);
     expect(utilisateur.unlocked_features.getUnlockedList()).toHaveLength(1);
-    expect(utilisateur.unlocked_features.getUnlockedList()[0]).toEqual(
-      'services',
-    );
+    expect(utilisateur.unlocked_features.getUnlockedList()[0]).toEqual('aides');
   });
 });

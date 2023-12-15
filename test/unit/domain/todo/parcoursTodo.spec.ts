@@ -1,4 +1,7 @@
-import { ScheduledService } from '../../../../src/domain/service/serviceDefinition';
+import {
+  LiveService,
+  ScheduledService,
+} from '../../../../src/domain/service/serviceDefinition';
 import { InteractionType } from '../../../../src/domain/interaction/interactionType';
 import { Thematique } from '../../../../src/domain/thematique';
 import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
@@ -12,7 +15,7 @@ describe('ParcoursTodo', () => {
 
     // THEN
     expect(result.todo_active).toEqual(0);
-    expect(result.liste_todo).toHaveLength(4);
+    expect(result.liste_todo).toHaveLength(6);
   });
   it('getActiveTodo : renvoie la bonne todo', () => {
     // GIVEN
@@ -31,7 +34,9 @@ describe('ParcoursTodo', () => {
       [Thematique.transport],
     );
     // THEN
-    expect(found.element.titre).toEqual(`lire un premier article transport`);
+    expect(found.element.titre).toEqual(
+      `Lire un article Transports - très facile`,
+    );
     expect(found.todo.numero_todo).toEqual(2);
   });
   it('findTodoElementByTypeAndThematique : pas trouvé renvoi undefined', () => {
@@ -49,10 +54,10 @@ describe('ParcoursTodo', () => {
     // GIVEN
     const parcours = new ParcoursTodo();
     // WHEN
-    const found = parcours.findTodoElementByServiceId(ScheduledService.ecowatt);
+    const found = parcours.findTodoElementByServiceId(LiveService.fruits);
     // THEN
-    expect(found.element.titre).toEqual(`Installer le service EcoWATT`);
-    expect(found.todo.numero_todo).toEqual(3);
+    expect(found.element.titre).toEqual(`Installer Est-ce bien la saison ?`);
+    expect(found.todo.numero_todo).toEqual(4);
   });
   it('findTodoElementByServiceId : pas trouvé renvoi undefined', () => {
     // GIVEN
@@ -84,6 +89,14 @@ describe('ParcoursTodo', () => {
     // WHEN
     parcours.avanceDansParcours();
     // THEN
-    expect(parcours.getCurrentTodoNumero()).toEqual(4);
+    expect(parcours.getCurrentTodoNumero()).toEqual(5);
+    // WHEN
+    parcours.avanceDansParcours();
+    // THEN
+    expect(parcours.getCurrentTodoNumero()).toEqual(6);
+    // WHEN
+    parcours.avanceDansParcours();
+    // THEN
+    expect(parcours.getCurrentTodoNumero()).toEqual(6);
   });
 });

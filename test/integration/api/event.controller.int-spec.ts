@@ -315,7 +315,7 @@ describe('EVENT (API test)', () => {
     expect(dbUtilisateur.gamification.celebrations).toHaveLength(0);
     expect(dbUtilisateur.unlocked_features.getUnlockedList()).toHaveLength(1);
     expect(dbUtilisateur.unlocked_features.getUnlockedList()[0]).toEqual(
-      'services',
+      'aides',
     );
   });
 });

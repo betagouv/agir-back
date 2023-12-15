@@ -7,20 +7,18 @@ export class Reveal {
     { titre: string; description: string; url: string }
   > = {
     aides: {
-      titre: "Découvrez le catalogue d'aides nationnales et locales !",
-      description: `Mais oui c'est trop génial`,
+      titre: 'Vos aides',
+      description: `En fonction de votre situation et de où vous êtes !`,
       url: '/vos-aides',
     },
     services: {
-      titre:
-        "Un service permet d'avoir toujours sous les yeux vos fonctionnalités clés",
-      description: `C'est magique`,
+      titre: 'Vos services',
+      description: `Un service permet d'avoir toujours sous les yeux vos fonctionnalités clés`,
       url: '/coach/services',
     },
     recommendations: {
-      titre:
-        "Encore des articles et des quiz rien que pour vous ! Esn fonction de vos centres d'intérêt",
-      description: `Une cascade de connaissance`,
+      titre: 'Vos recommendations',
+      description: `Toujours plus de contenu, et en fonction de vos centres d'intérêt`,
       url: '/coach',
     },
   };

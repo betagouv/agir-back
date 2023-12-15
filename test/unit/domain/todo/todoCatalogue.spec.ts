@@ -15,9 +15,7 @@ describe('TodoCatalogue', () => {
     const result = TodoCatalogue.getNewTodoOfNumero(34567);
 
     // THEN
-    expect(result.done[0].titre).toEqual(
-      'Bravo, toutes les missions sont faites !!',
-    );
+    expect(result.titre).toEqual('Plus de mission, pour le moment...');
   });
   it('getNewTodoOfNumero : return 2nd element ', () => {
     // GIVEN
@@ -27,15 +25,12 @@ describe('TodoCatalogue', () => {
     // THEN
     expect(result.numero_todo).toEqual(2);
   });
-  it('getAllTodos : return all 4 todos', () => {
+  it('getAllTodos : return all 6 todos', () => {
     // GIVEN
     // WHEN
     const result = TodoCatalogue.getAllTodos();
 
     // THEN
-    expect(result).toHaveLength(4);
-    expect(result[3].done[0].titre).toEqual(
-      'Bravo, toutes les missions sont faites !!',
-    );
+    expect(result).toHaveLength(6);
   });
 });

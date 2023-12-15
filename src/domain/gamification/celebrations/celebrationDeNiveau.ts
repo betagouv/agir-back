@@ -9,14 +9,14 @@ export class CelebrationDeNiveau extends Celebration {
       new_niveau: new_niveau,
       type: CelebrationType.niveau,
       id: uuidv4(),
-      titre: `Bravo ! grâce à vos points récoltés vous passez au niveau ${new_niveau} !`,
+      titre: `NOUVEAU NIVEAU`,
     });
     switch (new_niveau) {
       case 2:
-        this.reveal = new Reveal(Feature.services);
+        this.reveal = new Reveal(Feature.aides);
         break;
       case 3:
-        this.reveal = new Reveal(Feature.aides);
+        this.reveal = new Reveal(Feature.services);
         break;
       case 4:
         this.reveal = new Reveal(Feature.recommendations);

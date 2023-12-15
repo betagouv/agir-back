@@ -103,7 +103,7 @@ describe('Gamification  (API test)', () => {
     );
     expect(dbUtilisateur.gamification['celebrations'][0].new_niveau).toEqual(2);
     expect(dbUtilisateur.gamification['celebrations'][0].reveal.titre).toEqual(
-      "Un service permet d'avoir toujours sous les yeux vos fonctionnalités clés",
+      'Vos aides',
     );
   });
 });

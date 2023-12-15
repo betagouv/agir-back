@@ -36,13 +36,11 @@ describe('TODO list (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.numero_todo).toEqual(1);
-    expect(response.body.points_todo).toEqual(25);
-    expect(response.body.titre).toEqual(
-      `C'est parti pour la découverte du service Agir`,
-    );
+    expect(response.body.points_todo).toEqual(30);
+    expect(response.body.titre).toEqual(`Votre 1ère mission`);
     expect(response.body.todo[0].id.length).toBeGreaterThan(12);
     expect(response.body.todo[0].titre).toEqual(
-      'Faire un premier quizz climat - facile',
+      'Réussir 1 quiz environnement/climat - très facile',
     );
     expect(response.body.todo[0].progression).toEqual({
       current: 0,
@@ -51,7 +49,7 @@ describe('TODO list (API test)', () => {
     expect(response.body.is_last).toEqual(false);
     expect(response.body.todo[0].sont_points_en_poche).toEqual(false);
     expect(response.body.todo[0].type).toEqual('quizz');
-    expect(response.body.todo[0].points).toEqual(10);
+    expect(response.body.todo[0].points).toEqual(20);
     expect(response.body.todo[0].thematiques).toEqual(['climat']);
   });
   it('GET /utilisateurs/id/todo retourne la todo avec le champ aide et done_at, ainsi que todo_end = true', async () => {
@@ -708,14 +706,14 @@ describe('TODO list (API test)', () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('serviceDefinition', {
-      id: ScheduledService.ecowatt,
+      id: LiveService.fruits,
     });
 
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/services',
     ).send({
-      service_definition_id: ScheduledService.ecowatt,
+      service_definition_id: LiveService.fruits,
     });
 
     // THEN
@@ -723,15 +721,15 @@ describe('TODO list (API test)', () => {
     const dbUser = await utilisateurRepository.findUtilisateurById(
       'utilisateur-id',
     );
-    expect(dbUser.parcours_todo.getTodoByNumero(3).done).toHaveLength(1);
-    expect(dbUser.parcours_todo.getTodoByNumero(3).done[0].titre).toEqual(
-      'Installer le service EcoWATT',
+    expect(dbUser.parcours_todo.getTodoByNumero(4).done).toHaveLength(1);
+    expect(dbUser.parcours_todo.getTodoByNumero(4).done[0].titre).toEqual(
+      'Installer Est-ce bien la saison ?',
     );
     expect(
-      dbUser.parcours_todo.getTodoByNumero(3).done[0].progression.current,
+      dbUser.parcours_todo.getTodoByNumero(4).done[0].progression.current,
     ).toEqual(1);
     expect(
-      dbUser.parcours_todo.getTodoByNumero(3).done[0].sont_points_en_poche,
+      dbUser.parcours_todo.getTodoByNumero(4).done[0].sont_points_en_poche,
     ).toStrictEqual(false);
   });
   it('POST /utilisateurs/id/services ajout du service fruits sur la todo 3 ne réalise PAS l objctif', async () => {
