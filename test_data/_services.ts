@@ -1,6 +1,6 @@
 const services = {
   recettes: {
-    titre: 'La recette du jour, de saison !',
+    titre: 'Un délice végétarien chaque jour',
     url: 'https://cuisine-facile.com/index.php',
     icon_url: 'https://cdn-icons-png.flaticon.com/512/823/823214.png',
     image_url:
@@ -8,8 +8,9 @@ const services = {
     is_url_externe: true,
     is_local: true,
     thematiques: ['alimentation'],
-    description: 'Recette éco !!',
-    sous_description: `Des recettes riches en plaisir et faibles en CO2, rien d'impossible !! Des milliers de recettes par thèmes et ingrédients, et toujours avec fruits et légumes de saison !`,
+    description:
+      'Découvrez notre service quotidien de recettes 100% légumes, une expérience culinaire délicieuse et saine.',
+    sous_description: `Chaque jour, nous vous livrons une nouvelle recette végétarienne savoureuse, mettant en avant la fraîcheur des légumes de saison.`,
     en_construction: true,
   },
   linky: {
@@ -40,7 +41,7 @@ const services = {
     en_construction: true,
   },
   ecowatt: {
-    titre: `Etat du réseau en France`,
+    titre: `⚡️ ÉcosWatt`,
     url: 'https://www.monecowatt.fr/',
     icon_url:
       'https://play-lh.googleusercontent.com/wtQahY_I8TVLQJ_Rcue7aC-dJ3FfZLNQe84smsyfRa9Qbs1-TG3CJvdrmQ9VUXUVO8vh=w480-h960',
@@ -56,7 +57,7 @@ const services = {
     en_construction: false,
   },
   fruits: {
-    titre: `Fruits et légumes de saison`,
+    titre: `🗓️ Fruits et légumes de saison`,
     url: 'https://impactco2.fr/fruitsetlegumes',
     icon_url:
       'https://static.vecteezy.com/ti/vecteur-libre/p1/3179773-fruits-et-legumes-icon-set-vector-design-gratuit-vectoriel.jpg',
