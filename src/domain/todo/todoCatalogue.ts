@@ -125,11 +125,13 @@ export class TodoCatalogue {
         {
           id: uuidv4(),
           titre: `Installer Est-ce bien la saison ?`,
+          thematiques: [Thematique.alimentation],
           progression: { current: 0, target: 1 },
           service_id: LiveService.fruits,
           sont_points_en_poche: false,
           type: InteractionType.service,
           points: 20,
+          level: DifficultyLevel.ANY,
         },
         {
           id: uuidv4(),
