@@ -160,7 +160,7 @@ export class TodoCatalogue {
           sont_points_en_poche: false,
           type: InteractionType.article,
           level: DifficultyLevel.L1,
-          points: 0,
+          points: 20,
         },
         {
           id: uuidv4(),
