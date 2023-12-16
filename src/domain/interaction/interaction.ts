@@ -11,6 +11,7 @@ export class InteractionData extends InteractionDefinition {
   done_at: Date;
   quizz_score: number;
   score: number;
+  like_level: number;
   scheduled_reset: Date;
   utilisateurId: string;
 
@@ -76,6 +77,7 @@ export class Interaction extends InteractionData {
       scheduled_reset: null,
       utilisateurId: undefined,
       score: 0.5,
+      like_level: null,
     });
   }
 }

@@ -32,6 +32,7 @@ export class InteractionAPI {
   @ApiProperty() scheduled_reset: Date;
   @ApiProperty() day_period: number;
   @ApiProperty() codes_postaux: string[];
+  @ApiProperty() like_level: number;
   @ApiProperty() created_at: Date;
   @ApiProperty() updated_at: Date;
 }

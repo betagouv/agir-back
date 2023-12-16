@@ -332,6 +332,7 @@ export class TestUtil {
       scheduled_reset: null,
       day_period: null,
       utilisateurId: 'utilisateur-id',
+      like_level: 2,
       ...override,
     };
   }

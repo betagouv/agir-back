@@ -318,4 +318,24 @@ describe('EVENT (API test)', () => {
       'aides',
     );
   });
+  it('POST /utilisateurs/id/events - like event set la valeur du like sur une interaction', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction');
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.like,
+      interaction_id: 'interaction-id',
+      number_value: 3,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbInteraction = await TestUtil.prisma.interaction.findUnique({
+      where: { id: 'interaction-id' },
+    });
+    expect(dbInteraction.like_level).toEqual(3);
+  });
 });

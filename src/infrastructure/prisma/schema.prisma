@@ -101,6 +101,7 @@ model Interaction {
   pinned_at_position            Int?
   raison_lock                   String?
   codes_postaux                 String[]    @default([])
+  like_level                    Int?
   created_at                    DateTime    @default(now()) @db.Timestamptz(3)
   updated_at                    DateTime    @updatedAt @db.Timestamptz(3)
   utilisateurId                 String

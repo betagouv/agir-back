@@ -41,6 +41,19 @@ export class EventUsecase {
         return await this.processAccessProfile(utilisateurId);
       case EventType.access_recommandations:
         return await this.processAccessRecommendations(utilisateurId);
+      case EventType.like:
+        return await this.processLike(utilisateurId, event);
+    }
+  }
+
+  private async processLike(utilisateurId: string, event: UtilisateurEvent) {
+    const interaction = await this.interactionRepository.getInteractionById(
+      event.interaction_id,
+    );
+    if (interaction) {
+      interaction.like_level = event.number_value;
+
+      await this.interactionRepository.updateInteraction(interaction);
     }
   }
 
