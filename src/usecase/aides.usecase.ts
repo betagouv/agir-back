@@ -31,8 +31,9 @@ export class AidesUsecase {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );
-    const RFR = utilisateur.revenu_fiscal ? utilisateur.revenu_fiscal + 1 : 1;
-    const PARTS = utilisateur.parts ? utilisateur.parts : 0;
+    const RFR =
+      utilisateur.revenu_fiscal === null ? 0 : utilisateur.revenu_fiscal + 1;
+    const PARTS = utilisateur.getNombrePartsFiscalesOuEstimee();
     const ABONNEMENT =
       utilisateur.abonnement_ter_loire === null
         ? false

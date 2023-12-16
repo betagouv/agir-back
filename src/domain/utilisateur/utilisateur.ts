@@ -56,6 +56,24 @@ export class Utilisateur extends UtilisateurData {
       this.prevent_sendemail_before = new Date();
   }
 
+  public getNombrePartsFiscalesOuEstimee() {
+    if (this.parts !== null) {
+      return this.parts;
+    }
+    let parts_estimee = 0;
+    if (this.onboardingData && this.onboardingData.adultes) {
+      parts_estimee += this.onboardingData.adultes;
+    }
+    if (this.onboardingData && this.onboardingData.enfants) {
+      const total_enfants =
+        this.onboardingData.enfants > 2
+          ? this.onboardingData.enfants
+          : this.onboardingData.enfants * 0.5;
+      parts_estimee += total_enfants;
+    }
+    return parts_estimee === 0 ? 1 : parts_estimee;
+  }
+
   public setPassword(password: string) {
     PasswordManager.setUserPassword(this, password);
   }

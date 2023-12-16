@@ -418,14 +418,14 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.nombre_de_parts_fiscales).toEqual(2.5);
   });
-  it('GET /utilisateurs/id/profile - default to null when no onboarding data', async () => {
+  it('GET /utilisateurs/id/profile - default to 1 when no onboarding data', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', { parts: null, onboardingData: {} });
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/profile');
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.nombre_de_parts_fiscales).toEqual(null);
+    expect(response.body.nombre_de_parts_fiscales).toEqual(1);
   });
   it('PATCH /utilisateurs/id/profile - update basic profile datas without password', async () => {
     // GIVEN

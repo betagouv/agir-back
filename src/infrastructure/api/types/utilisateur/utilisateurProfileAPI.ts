@@ -43,7 +43,7 @@ export class UtilisateurProfileAPI {
       code_postal: user.code_postal,
       commune: user.commune,
       revenu_fiscal: user.revenu_fiscal,
-      nombre_de_parts_fiscales: user.parts,
+      nombre_de_parts_fiscales: user.getNombrePartsFiscalesOuEstimee(),
       abonnement_ter_loire: user.abonnement_ter_loire,
       onboarding_result: user.onboardingResult.ventilation_par_thematiques,
     };

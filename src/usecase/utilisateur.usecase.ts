@@ -56,8 +56,6 @@ export class UtilisateurUsecase {
       ApplicationError.throwInactiveAccountError();
     }
 
-    this.setEstimatedPartsIfNeeded(utilisateur);
-
     const _this = this;
     const okAction = async function () {
       return {
@@ -173,24 +171,7 @@ export class UtilisateurUsecase {
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
-    const utilisateur = await this.utilisateurRespository.findUtilisateurById(
-      id,
-    );
-    this.setEstimatedPartsIfNeeded(utilisateur);
-    return utilisateur;
-  }
-
-  private setEstimatedPartsIfNeeded(utilisateur: Utilisateur) {
-    if (!utilisateur) return;
-    if (utilisateur.parts === null) {
-      if (utilisateur.onboardingData.adultes) {
-        const enfants =
-          utilisateur.onboardingData.enfants > 2
-            ? utilisateur.onboardingData.enfants
-            : utilisateur.onboardingData.enfants * 0.5;
-        utilisateur.parts = utilisateur.onboardingData.adultes + enfants;
-      }
-    }
+    return this.utilisateurRespository.findUtilisateurById(id);
   }
 
   async deleteUtilisateur(utilisateurId: string) {

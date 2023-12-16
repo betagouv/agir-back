@@ -46,7 +46,7 @@ export class UtilisateurAPI {
       code_postal: user.code_postal,
       commune: user.commune,
       revenu_fiscal: user.revenu_fiscal,
-      nombre_de_parts_fiscales: user.parts,
+      nombre_de_parts_fiscales: user.getNombrePartsFiscalesOuEstimee(),
       quizzProfile: user.quizzProfile.getData(),
       created_at: user.created_at,
       fonctionnalites_debloquees: user.unlocked_features.getUnlockedList(),
