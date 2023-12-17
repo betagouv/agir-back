@@ -723,7 +723,7 @@ describe('TODO list (API test)', () => {
     );
     expect(dbUser.parcours_todo.getTodoByNumero(4).done).toHaveLength(1);
     expect(dbUser.parcours_todo.getTodoByNumero(4).done[0].titre).toEqual(
-      'Installer Est-ce bien la saison ?',
+      'Installer "Fruits et légumes de saison"',
     );
     expect(
       dbUser.parcours_todo.getTodoByNumero(4).done[0].progression.current,

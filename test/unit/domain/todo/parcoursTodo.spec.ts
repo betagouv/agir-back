@@ -56,7 +56,9 @@ describe('ParcoursTodo', () => {
     // WHEN
     const found = parcours.findTodoElementByServiceId(LiveService.fruits);
     // THEN
-    expect(found.element.titre).toEqual(`Installer Est-ce bien la saison ?`);
+    expect(found.element.titre).toEqual(
+      `Installer "Fruits et légumes de saison"`,
+    );
     expect(found.todo.numero_todo).toEqual(4);
   });
   it('findTodoElementByServiceId : pas trouvé renvoi undefined', () => {

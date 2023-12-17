@@ -124,7 +124,7 @@ export class TodoCatalogue {
       todo: [
         {
           id: uuidv4(),
-          titre: `Installer Est-ce bien la saison ?`,
+          titre: `Installer "Fruits et légumes de saison"`,
           thematiques: [Thematique.alimentation],
           progression: { current: 0, target: 1 },
           service_id: LiveService.fruits,
