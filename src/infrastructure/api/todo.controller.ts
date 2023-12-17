@@ -79,11 +79,7 @@ export class TodoController extends GenericControler {
   ) {
     this.checkCallerId(req, utilisateurId);
 
-    try {
-      await this.todoUsecase.gagnerPointsFromTodo(utilisateurId);
-    } catch (error) {
-      ApplicationError.throwHttpException(error);
-    }
+    await this.todoUsecase.gagnerPointsFromTodo(utilisateurId);
     res.status(HttpStatus.OK).json('ok').send();
   }
 }

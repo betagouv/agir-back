@@ -1,8 +1,3 @@
-import {
-  BadRequestException,
-  HttpException,
-  InternalServerErrorException,
-} from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ApplicationError {
@@ -18,21 +13,6 @@ export class ApplicationError {
     this.http_status = http_status ? http_status : 400;
   }
 
-  static throwHttpException(error) {
-    if (error instanceof ApplicationError) {
-      throw new HttpException(
-        {
-          code: error.code,
-          message: error.message,
-        },
-        error.http_status,
-      );
-    }
-    throw new InternalServerErrorException({
-      code: '000',
-      message: error['message'],
-    });
-  }
   static throwInactiveAccountError() {
     this.throwAppError('001', 'Utilisateur non actif');
   }

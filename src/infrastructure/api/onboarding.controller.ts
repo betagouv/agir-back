@@ -17,12 +17,15 @@ import { ValidateCodeAPI } from './types/utilisateur/onboarding/validateCodeAPI'
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { ApplicationError } from '../applicationError';
 import { TodoAPI } from './types/todo/todoAPI';
+import { GenericControler } from './genericControler';
 
 @ApiExtraModels(CreateUtilisateurAPI)
 @Controller()
 @ApiTags('Onboarding Utilisateur')
-export class OnboardingController {
-  constructor(private readonly onboardingUsecase: OnboardingUsecase) {}
+export class OnboardingController extends GenericControler {
+  constructor(private readonly onboardingUsecase: OnboardingUsecase) {
+    super();
+  }
 
   @Post('utilisateurs')
   @ApiOperation({
@@ -36,14 +39,10 @@ export class OnboardingController {
     type: ProspectSubmitAPI,
   })
   async createUtilisateur(@Body() body: CreateUtilisateurAPI, @Response() res) {
-    try {
-      await this.onboardingUsecase.createUtilisateur(body);
-      return res.json({
-        email: body.email,
-      });
-    } catch (error) {
-      ApplicationError.throwHttpException(error);
-    }
+    await this.onboardingUsecase.createUtilisateur(body);
+    return res.json({
+      email: body.email,
+    });
   }
   @Post('utilisateurs/evaluate-onboarding')
   @ApiBody({
@@ -74,19 +73,15 @@ export class OnboardingController {
     type: LoggedUtilisateurAPI,
   })
   async validerCode(@Body() body: ValidateCodeAPI, @Response() res) {
-    try {
-      const loggedUser = await this.onboardingUsecase.validateCode(
-        body.email,
-        body.code,
-      );
-      const response = LoggedUtilisateurAPI.mapToAPI(
-        loggedUser.token,
-        loggedUser.utilisateur,
-      );
-      return res.status(HttpStatus.OK).json(response);
-    } catch (error) {
-      ApplicationError.throwHttpException(error);
-    }
+    const loggedUser = await this.onboardingUsecase.validateCode(
+      body.email,
+      body.code,
+    );
+    const response = LoggedUtilisateurAPI.mapToAPI(
+      loggedUser.token,
+      loggedUser.utilisateur,
+    );
+    return res.status(HttpStatus.OK).json(response);
   }
 
   @Post('utilisateurs/renvoyer_code')
@@ -98,11 +93,7 @@ export class OnboardingController {
     type: RenvoyerCodeAPI,
   })
   async renvoyerCode(@Body() body: RenvoyerCodeAPI, @Response() res) {
-    try {
-      await this.onboardingUsecase.renvoyerCode(body.email);
-      return res.status(HttpStatus.OK).json('code renvoyé');
-    } catch (error) {
-      ApplicationError.throwHttpException(error);
-    }
+    await this.onboardingUsecase.renvoyerCode(body.email);
+    return res.status(HttpStatus.OK).json('code renvoyé');
   }
 }

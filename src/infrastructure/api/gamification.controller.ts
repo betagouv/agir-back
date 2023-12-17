@@ -7,6 +7,7 @@ import {
   Post,
   Res,
   HttpStatus,
+  UseFilters,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -20,6 +21,7 @@ import { Response } from 'express';
 import { ApplicationError } from '../applicationError';
 import { GamificationUsecase } from '../../../src/usecase/gamification.usecase';
 import { GamificationAPI } from './types/gamification/gamificationAPI';
+import { ControllerExceptionFilter } from './controllerException.filter';
 
 @Controller()
 @ApiBearerAuth()
@@ -42,7 +44,9 @@ export class GamificationController extends GenericControler {
   ): Promise<GamificationAPI> {
     this.checkCallerId(req, utilisateurId);
 
-    const result = await this.gamificationUsecase.getGamificationData(utilisateurId);
+    const result = await this.gamificationUsecase.getGamificationData(
+      utilisateurId,
+    );
 
     return GamificationAPI.mapToStatsAPI(result);
   }

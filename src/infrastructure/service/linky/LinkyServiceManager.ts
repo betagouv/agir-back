@@ -40,6 +40,7 @@ export class LinkyServiceManager implements LiveServiceManager {
     } catch (error) {
       console.log('Erreur à la lecture des souscriptions linky');
       console.log(error.message);
+      console.log(error);
       throw error;
     }
     return response.data;
@@ -64,6 +65,7 @@ export class LinkyServiceManager implements LiveServiceManager {
     } catch (error) {
       console.log('Erreur à la souscription linky');
       console.log(error.message);
+      console.log(error);
       throw error;
     }
     return response.data.pk;
@@ -82,6 +84,7 @@ export class LinkyServiceManager implements LiveServiceManager {
     } catch (error) {
       console.log('Erreur à la suppression souscription linky');
       console.log(error.message);
+      console.log(error);
       throw error;
     }
   }

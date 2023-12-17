@@ -1,4 +1,10 @@
-import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   Controller,
   Put,
@@ -9,6 +15,7 @@ import {
   Request,
   Get,
   HttpStatus,
+  UseFilters,
 } from '@nestjs/common';
 import { QuestionNGCUsecase } from '../../usecase/questionNGC.usecase';
 import { Question } from '../../domain/bilan/question';
@@ -18,10 +25,12 @@ import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
 import { QuestionKYCAPI } from './types/kyc/questionsKYCAPI';
 import { ApplicationError } from '../applicationError';
 import { ReponseAPI } from './types/kyc/reponseAPI';
+import { ControllerExceptionFilter } from './controllerException.filter';
 
 @Controller()
 @ApiBearerAuth()
 @ApiTags('QuestionsKYC')
+//@UseFilters(new ControllerExceptionFilter())
 export class QuestionsKYCController extends GenericControler {
   constructor(private readonly questionKYCUsecase: QuestionKYCUsecase) {
     super();
@@ -59,15 +68,10 @@ export class QuestionsKYCController extends GenericControler {
     @Param('questionId') questionId: string,
   ): Promise<QuestionKYCAPI> {
     this.checkCallerId(req, utilisateurId);
-    let result;
-    try {
-      result = await this.questionKYCUsecase.getQuestion(
-        utilisateurId,
-        questionId,
-      );
-    } catch (error) {
-      ApplicationError.throwHttpException(error);
-    }
+    const result = await this.questionKYCUsecase.getQuestion(
+      utilisateurId,
+      questionId,
+    );
     return QuestionKYCAPI.mapToAPI(result);
   }
 
@@ -87,15 +91,11 @@ export class QuestionsKYCController extends GenericControler {
     @Response() res,
   ): Promise<QuestionKYCAPI> {
     this.checkCallerId(req, utilisateurId);
-    try {
-      await this.questionKYCUsecase.updateResponse(
-        utilisateurId,
-        questionId,
-        body.reponse,
-      );
-    } catch (error) {
-      ApplicationError.throwHttpException(error);
-    }
+    await this.questionKYCUsecase.updateResponse(
+      utilisateurId,
+      questionId,
+      body.reponse,
+    );
     return res.status(HttpStatus.OK).json('OK').send();
   }
 }

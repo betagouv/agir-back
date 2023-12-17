@@ -80,14 +80,10 @@ export class ServiceController extends GenericControler {
   ) {
     this.checkCallerId(req, utilisateurId);
 
-    try {
-      return await this.serviceUsecase.addServiceToUtilisateur(
-        utilisateurId,
-        body.service_definition_id,
-      );
-    } catch (error) {
-      ApplicationError.throwHttpException(error);
-    }
+    return await this.serviceUsecase.addServiceToUtilisateur(
+      utilisateurId,
+      body.service_definition_id,
+    );
   }
   @Get('utilisateurs/:utilisateurId/services')
   // FIXME : set cache-control

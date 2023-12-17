@@ -1,5 +1,8 @@
-import { ForbiddenException } from '@nestjs/common';
+import { ForbiddenException, UseFilters } from '@nestjs/common';
 import { Request } from 'express';
+import { ControllerExceptionFilter } from './controllerException.filter';
+
+@UseFilters(new ControllerExceptionFilter())
 export class GenericControler {
   checkCallerId(req: Request, utilisateurId: string) {
     if (req['tokenUtilisateurId'] !== utilisateurId) {

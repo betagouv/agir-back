@@ -10,14 +10,16 @@ import {
 } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { LinkyUsecase } from '../../../../src/usecase/linky.usecase';
+import { GenericControler } from '../genericControler';
 import { WinterDataSentAPI } from '../types/winter/WinterIncomingDataAPI';
 
 @Controller()
 @ApiTags('Incoming Data')
-export class WinterController {
-  constructor(private readonly linkyUsecase: LinkyUsecase) {}
+export class WinterController extends GenericControler {
+  constructor(private readonly linkyUsecase: LinkyUsecase) {
+    super();
+  }
   @ApiBody({ type: WinterDataSentAPI })
   @Post('api/incoming/winter-energies')
   async income(
@@ -29,12 +31,7 @@ export class WinterController {
     if (headers['key'] !== process.env.WINTER_API_KEY) {
       throw new UnauthorizedException('clé API manquante ou incorrecte');
     }
-    try {
-      await this.linkyUsecase.process_incoming_data(body);
-    } catch (error) {
-      console.log(error);
-      ApplicationError.throwHttpException(error);
-    }
+    await this.linkyUsecase.process_incoming_data(body);
     res.status(HttpStatus.OK).json({ message: 'Received OK !' }).send();
   }
 }

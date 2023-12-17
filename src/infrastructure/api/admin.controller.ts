@@ -1,7 +1,14 @@
-import { Controller, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Request,
+  UseFilters,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guard';
 import { PrismaService } from '../prisma/prisma.service';
+import { ControllerExceptionFilter } from './controllerException.filter';
 const _services = require('../../../test_data/_services');
 import { GenericControler } from './genericControler';
 

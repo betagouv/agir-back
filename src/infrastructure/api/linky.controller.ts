@@ -44,11 +44,7 @@ export class LinkyController extends GenericControler {
     @Request() req,
   ) {
     this.checkCallerId(req, utilisateurId);
-    try {
-      await this.linkyUsecase.supprimeSouscription(utilisateurId);
-    } catch (error) {
-      ApplicationError.throwHttpException(error);
-    }
+    await this.linkyUsecase.supprimeSouscription(utilisateurId);
     res.status(HttpStatus.OK).json('Souscription supprimée').send();
   }
   @Post('utilisateurs/:utilisateurId/linky_souscription')
@@ -65,16 +61,11 @@ export class LinkyController extends GenericControler {
     @Query('code_departement') code_departement: string,
   ) {
     this.checkCallerId(req, utilisateurId);
-    let result;
-    try {
-      result = await this.linkyUsecase.souscription(
-        utilisateurId,
-        prm,
-        code_departement,
-      );
-    } catch (error) {
-      ApplicationError.throwHttpException(error);
-    }
+    let result = await this.linkyUsecase.souscription(
+      utilisateurId,
+      prm,
+      code_departement,
+    );
     res.status(HttpStatus.OK).json(result).send();
   }
   @Get('linky_souscriptions')
@@ -89,12 +80,7 @@ export class LinkyController extends GenericControler {
   @ApiOkResponse({ type: WinterListeSubAPI })
   @UseGuards(AuthGuard)
   async get_souscriptions(@Res() res: Response, @Query('page') page?: number) {
-    let result;
-    try {
-      result = await this.linkyUsecase.liste_souscriptions(page);
-    } catch (error) {
-      ApplicationError.throwHttpException(error);
-    }
+    let result = await this.linkyUsecase.liste_souscriptions(page);
     res.status(HttpStatus.OK).json(result).send();
   }
   @Post('linky_souscriptions/:prm/empty')
@@ -104,12 +90,7 @@ export class LinkyController extends GenericControler {
   })
   @UseGuards(AuthGuard)
   async emptyPRM(@Res() res: Response, @Param('prm') prm: string) {
-    try {
-      await this.linkyUsecase.emptyPRMData(prm);
-    } catch (error) {
-      console.log(error);
-      ApplicationError.throwHttpException(error);
-    }
+    await this.linkyUsecase.emptyPRMData(prm);
     res.status(HttpStatus.OK).send();
   }
 }

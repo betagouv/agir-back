@@ -7,6 +7,7 @@ import {
 import { AppModule } from './app.module';
 import * as Sentry from '@sentry/node';
 import { SentryFilter } from './infrastructure/sentry.filter';
+import { ControllerExceptionFilter } from './infrastructure/api/controllerException.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

@@ -8,6 +8,7 @@ import {
   Post,
   Query,
   Res,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import { AidesUsecase } from '../../usecase/aides.usecase';
@@ -29,6 +30,7 @@ import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
 import { InputAideVeloAPI } from './types/aide/inputAideVeloAPI';
 import { Response } from 'express';
+import { ControllerExceptionFilter } from './controllerException.filter';
 
 @Controller()
 @ApiBearerAuth()

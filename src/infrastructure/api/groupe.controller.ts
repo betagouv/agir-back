@@ -79,17 +79,13 @@ export class GroupeController extends GenericControler {
     @Request() req: any,
   ): Promise<GroupeAPI> {
     this.checkCallerId(req, utilisateurId);
-    try {
-      return this.toGroupeAPI(
-        await this.groupeUsecase.createGroupeWithAdmin(
-          group.name,
-          group.description,
-          utilisateurId,
-        ),
-      );
-    } catch (error) {
-      ApplicationError.throwHttpException(error);
-    }
+    return this.toGroupeAPI(
+      await this.groupeUsecase.createGroupeWithAdmin(
+        group.name,
+        group.description,
+        utilisateurId,
+      ),
+    );
   }
 
   @Put('utilisateurs/:id/groupes/:id_groupe')
@@ -103,18 +99,14 @@ export class GroupeController extends GenericControler {
     @Request() req: any,
   ): Promise<GroupeAPI> {
     this.checkCallerId(req, utilisateurId);
-    try {
-      return this.toGroupeAPI(
-        await this.groupeUsecase.updateOneOfMyGroupe(
-          utilisateurId,
-          groupeId,
-          group.name,
-          group.description,
-        ),
-      );
-    } catch (error) {
-      ApplicationError.throwHttpException(error);
-    }
+    return this.toGroupeAPI(
+      await this.groupeUsecase.updateOneOfMyGroupe(
+        utilisateurId,
+        groupeId,
+        group.name,
+        group.description,
+      ),
+    );
   }
 
   @Delete('groupes/:id_groupe')
@@ -127,13 +119,9 @@ export class GroupeController extends GenericControler {
     @Request() req: any,
   ): Promise<GroupeAPI> {
     this.checkCallerId(req, utilisateurId);
-    try {
-      return this.toGroupeAPI(
-        await this.groupeUsecase.deleteOneOfMyGroupe(utilisateurId, groupeId),
-      );
-    } catch (error) {
-      ApplicationError.throwHttpException(error);
-    }
+    return this.toGroupeAPI(
+      await this.groupeUsecase.deleteOneOfMyGroupe(utilisateurId, groupeId),
+    );
   }
 
   @Post('utilisateurs/:id_utilisateur/groupes/:id_groupe')
@@ -148,11 +136,7 @@ export class GroupeController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
     // todo check if groupe exist
     // todo check if groupe is not private
-    try {
-      return await this.groupeUsecase.joinGroupe(groupeId, utilisateurId);
-    } catch (error) {
-      ApplicationError.throwHttpException(error);
-    }
+    return await this.groupeUsecase.joinGroupe(groupeId, utilisateurId);
   }
 
   // quitter un groupe

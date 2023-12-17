@@ -123,19 +123,15 @@ export class UtilisateurController extends GenericControler {
     @Body() body: LoginUtilisateurAPI,
     @Response() res,
   ): Promise<LoggedUtilisateurAPI> {
-    try {
-      const loggedUser = await this.utilisateurUsecase.loginUtilisateur(
-        body.email,
-        body.mot_de_passe,
-      );
-      const response = LoggedUtilisateurAPI.mapToAPI(
-        loggedUser.token,
-        loggedUser.utilisateur,
-      );
-      return res.status(HttpStatus.OK).json(response);
-    } catch (error) {
-      ApplicationError.throwHttpException(error);
-    }
+    const loggedUser = await this.utilisateurUsecase.loginUtilisateur(
+      body.email,
+      body.mot_de_passe,
+    );
+    const response = LoggedUtilisateurAPI.mapToAPI(
+      loggedUser.token,
+      loggedUser.utilisateur,
+    );
+    return res.status(HttpStatus.OK).json(response);
   }
 
   @Patch('utilisateurs/:utilisateurId/profile')
@@ -150,14 +146,10 @@ export class UtilisateurController extends GenericControler {
     @Body() body: UtilisateurProfileAPI,
   ) {
     this.checkCallerId(req, utilisateurId);
-    try {
-      return await this.utilisateurUsecase.updateUtilisateurProfile(
-        utilisateurId,
-        body,
-      );
-    } catch (error) {
-      ApplicationError.throwHttpException(error);
-    }
+    return await this.utilisateurUsecase.updateUtilisateurProfile(
+      utilisateurId,
+      body,
+    );
   }
 
   @Post('utilisateurs/oubli_mot_de_passe')
@@ -174,12 +166,8 @@ export class UtilisateurController extends GenericControler {
     @Body() body: OubliMdpAPI,
     @Response() res,
   ): Promise<RenvoyerCodeAPI> {
-    try {
-      await this.utilisateurUsecase.oubli_mot_de_passe(body.email);
-      return res.status(HttpStatus.OK).json({ email: body.email });
-    } catch (error) {
-      ApplicationError.throwHttpException(error);
-    }
+    await this.utilisateurUsecase.oubli_mot_de_passe(body.email);
+    return res.status(HttpStatus.OK).json({ email: body.email });
   }
 
   @Post('utilisateurs/modifier_mot_de_passe')
@@ -195,15 +183,11 @@ export class UtilisateurController extends GenericControler {
     @Body() body: ModifierMdpAPI,
     @Response() res,
   ): Promise<RenvoyerCodeAPI> {
-    try {
-      await this.utilisateurUsecase.modifier_mot_de_passe(
-        body.email,
-        body.code,
-        body.mot_de_passe,
-      );
-      return res.status(HttpStatus.OK).json('OK');
-    } catch (error) {
-      ApplicationError.throwHttpException(error);
-    }
+    await this.utilisateurUsecase.modifier_mot_de_passe(
+      body.email,
+      body.code,
+      body.mot_de_passe,
+    );
+    return res.status(HttpStatus.OK).json('OK');
   }
 }

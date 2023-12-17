@@ -7,6 +7,7 @@ import {
   Res,
   Body,
   Post,
+  UseFilters,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
@@ -14,6 +15,7 @@ import { AuthGuard } from '../auth/guard';
 import { EventUsecase } from '../../../src/usecase/event.usecase';
 import { Response } from 'express';
 import { EventAPI } from './types/event/eventAPI';
+import { ControllerExceptionFilter } from './controllerException.filter';
 
 @Controller()
 @ApiBearerAuth()
