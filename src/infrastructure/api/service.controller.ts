@@ -86,7 +86,7 @@ export class ServiceController extends GenericControler {
         body.service_definition_id,
       );
     } catch (error) {
-      ApplicationError.throwBadRequestOrServerError(error);
+      ApplicationError.throwHttpException(error);
     }
   }
   @Get('utilisateurs/:utilisateurId/services')

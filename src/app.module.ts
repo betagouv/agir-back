@@ -66,6 +66,9 @@ import { LinkyController } from './infrastructure/api/linky.controller';
 import { LinkyServiceManager } from './infrastructure/service/linky/LinkyServiceManager';
 import { LinkyRepository } from './infrastructure/repository/linky.repository';
 import { AdminController } from './infrastructure/api/admin.controller';
+import { QuestionsKYCController } from './infrastructure/api/questionKYC.controller';
+import { QuestionKYCRepository } from './infrastructure/repository/questionKYC.repository';
+import { QuestionKYCUsecase } from './usecase/questionKYC.usecase';
 
 const SESSION_LIFETIME = '12h';
 
@@ -90,6 +93,7 @@ function getControllers(): any[] {
     GamificationController,
     LinkyController,
     AdminController,
+    QuestionsKYCController,
   );
   if (process.env.IS_PROD === 'false') {
     controllers.push(TestDataController);
@@ -149,6 +153,8 @@ function getControllers(): any[] {
     LinkyUsecase,
     LinkyServiceManager,
     LinkyRepository,
+    QuestionKYCRepository,
+    QuestionKYCUsecase,
   ],
 })
 export class AppModule {}

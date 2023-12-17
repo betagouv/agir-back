@@ -88,7 +88,7 @@ export class GroupeController extends GenericControler {
         ),
       );
     } catch (error) {
-      ApplicationError.throwBadRequestOrServerError(error);
+      ApplicationError.throwHttpException(error);
     }
   }
 
@@ -113,7 +113,7 @@ export class GroupeController extends GenericControler {
         ),
       );
     } catch (error) {
-      ApplicationError.throwBadRequestOrServerError(error);
+      ApplicationError.throwHttpException(error);
     }
   }
 
@@ -132,7 +132,7 @@ export class GroupeController extends GenericControler {
         await this.groupeUsecase.deleteOneOfMyGroupe(utilisateurId, groupeId),
       );
     } catch (error) {
-      ApplicationError.throwBadRequestOrServerError(error);
+      ApplicationError.throwHttpException(error);
     }
   }
 
@@ -151,7 +151,7 @@ export class GroupeController extends GenericControler {
     try {
       return await this.groupeUsecase.joinGroupe(groupeId, utilisateurId);
     } catch (error) {
-      ApplicationError.throwBadRequestOrServerError(error);
+      ApplicationError.throwHttpException(error);
     }
   }
 

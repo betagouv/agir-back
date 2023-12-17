@@ -47,7 +47,7 @@ export class LinkyController extends GenericControler {
     try {
       await this.linkyUsecase.supprimeSouscription(utilisateurId);
     } catch (error) {
-      ApplicationError.throwBadRequestOrServerError(error);
+      ApplicationError.throwHttpException(error);
     }
     res.status(HttpStatus.OK).json('Souscription supprimée').send();
   }
@@ -73,7 +73,7 @@ export class LinkyController extends GenericControler {
         code_departement,
       );
     } catch (error) {
-      ApplicationError.throwBadRequestOrServerError(error);
+      ApplicationError.throwHttpException(error);
     }
     res.status(HttpStatus.OK).json(result).send();
   }
@@ -93,7 +93,7 @@ export class LinkyController extends GenericControler {
     try {
       result = await this.linkyUsecase.liste_souscriptions(page);
     } catch (error) {
-      ApplicationError.throwBadRequestOrServerError(error);
+      ApplicationError.throwHttpException(error);
     }
     res.status(HttpStatus.OK).json(result).send();
   }
@@ -108,7 +108,7 @@ export class LinkyController extends GenericControler {
       await this.linkyUsecase.emptyPRMData(prm);
     } catch (error) {
       console.log(error);
-      ApplicationError.throwBadRequestOrServerError(error);
+      ApplicationError.throwHttpException(error);
     }
     res.status(HttpStatus.OK).send();
   }

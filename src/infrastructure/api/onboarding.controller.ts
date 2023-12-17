@@ -42,7 +42,7 @@ export class OnboardingController {
         email: body.email,
       });
     } catch (error) {
-      ApplicationError.throwBadRequestOrServerError(error);
+      ApplicationError.throwHttpException(error);
     }
   }
   @Post('utilisateurs/evaluate-onboarding')
@@ -85,7 +85,7 @@ export class OnboardingController {
       );
       return res.status(HttpStatus.OK).json(response);
     } catch (error) {
-      ApplicationError.throwBadRequestOrServerError(error);
+      ApplicationError.throwHttpException(error);
     }
   }
 
@@ -102,7 +102,7 @@ export class OnboardingController {
       await this.onboardingUsecase.renvoyerCode(body.email);
       return res.status(HttpStatus.OK).json('code renvoyé');
     } catch (error) {
-      ApplicationError.throwBadRequestOrServerError(error);
+      ApplicationError.throwHttpException(error);
     }
   }
 }

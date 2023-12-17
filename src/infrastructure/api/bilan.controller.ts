@@ -1,4 +1,4 @@
-import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import {
   Controller,
   Get,
@@ -15,6 +15,7 @@ import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
 
 @Controller()
+@ApiBearerAuth()
 @ApiTags('Bilan')
 export class BilanController extends GenericControler {
   constructor(private readonly bilanUsecase: BilanUsecase) {

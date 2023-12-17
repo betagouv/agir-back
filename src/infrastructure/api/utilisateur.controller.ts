@@ -134,7 +134,7 @@ export class UtilisateurController extends GenericControler {
       );
       return res.status(HttpStatus.OK).json(response);
     } catch (error) {
-      ApplicationError.throwBadRequestOrServerError(error);
+      ApplicationError.throwHttpException(error);
     }
   }
 
@@ -156,7 +156,7 @@ export class UtilisateurController extends GenericControler {
         body,
       );
     } catch (error) {
-      ApplicationError.throwBadRequestOrServerError(error);
+      ApplicationError.throwHttpException(error);
     }
   }
 
@@ -178,7 +178,7 @@ export class UtilisateurController extends GenericControler {
       await this.utilisateurUsecase.oubli_mot_de_passe(body.email);
       return res.status(HttpStatus.OK).json({ email: body.email });
     } catch (error) {
-      ApplicationError.throwBadRequestOrServerError(error);
+      ApplicationError.throwHttpException(error);
     }
   }
 
@@ -203,7 +203,7 @@ export class UtilisateurController extends GenericControler {
       );
       return res.status(HttpStatus.OK).json('OK');
     } catch (error) {
-      ApplicationError.throwBadRequestOrServerError(error);
+      ApplicationError.throwHttpException(error);
     }
   }
 }

@@ -33,7 +33,7 @@ export class WinterController {
       await this.linkyUsecase.process_incoming_data(body);
     } catch (error) {
       console.log(error);
-      ApplicationError.throwBadRequestOrServerError(error);
+      ApplicationError.throwHttpException(error);
     }
     res.status(HttpStatus.OK).json({ message: 'Received OK !' }).send();
   }

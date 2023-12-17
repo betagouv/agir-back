@@ -69,6 +69,7 @@ model Utilisateur {
   abonnement_ter_loire     Boolean            @default(false)
   prm                      String?
   code_departement         String?
+  questionsKYC             QuestionsKYC[]
 }
 
 model Interaction {
@@ -158,6 +159,14 @@ model QuestionNGC {
   updated_at    DateTime    @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@unique([key, utilisateurId])
+}
+
+model QuestionsKYC {
+  utilisateurId String      @id
+  data          Json        @default("{}")
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
+  created_at    DateTime    @default(now()) @db.Timestamptz(3)
+  updated_at    DateTime    @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model Thematique {

@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  HttpException,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
@@ -9,15 +10,23 @@ export class ApplicationError {
   code: string;
   @ApiProperty()
   message: string;
+  http_status: number;
 
-  private constructor(code: string, message: string) {
+  private constructor(code: string, message: string, http_status?: number) {
     this.code = code;
     this.message = message;
+    this.http_status = http_status ? http_status : 400;
   }
 
-  static throwBadRequestOrServerError(error) {
+  static throwHttpException(error) {
     if (error instanceof ApplicationError) {
-      throw new BadRequestException(error);
+      throw new HttpException(
+        {
+          code: error.code,
+          message: error.message,
+        },
+        error.http_status,
+      );
     }
     throw new InternalServerErrorException({
       code: '000',
@@ -166,8 +175,15 @@ export class ApplicationError {
   static throwLinkyError(code, message) {
     this.throwAppError(code, message);
   }
+  static throwQuestionInconnue(id: string) {
+    this.throwAppError('030', `Question d'id ${id} inconnue`, 404);
+  }
 
-  private static throwAppError(code: string, message: string) {
-    throw new ApplicationError(code, message);
+  private static throwAppError(
+    code: string,
+    message: string,
+    http_status?: number,
+  ) {
+    throw new ApplicationError(code, message, http_status);
   }
 }

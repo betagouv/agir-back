@@ -1,4 +1,5 @@
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiExtraModels,
   ApiOkResponse,
@@ -33,6 +34,7 @@ import { ApplicationError } from '../applicationError';
 @ApiExtraModels(SuiviAlimentationAPI, SuiviTransportAPI)
 @Controller()
 @ApiTags('Suivi')
+@ApiBearerAuth()
 export class SuiviController extends GenericControler {
   constructor(private readonly suiviUsecase: SuiviUsecase) {
     super();

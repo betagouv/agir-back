@@ -63,6 +63,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     await TestUtil.create('groupe');
     await TestUtil.create('groupeAbonnement');
     await TestUtil.create('thematique');
+    await TestUtil.create('questionsKYC');
 
     // WHEN
     const response = await TestUtil.DELETE('/utilisateurs/utilisateur-id');

@@ -16,7 +16,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { InteractionsUsecase } from '../../usecase/interactions.usecase';
-import { ApiTags, ApiQuery, ApiBody, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiQuery, ApiBody, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { InteractionAPI } from './types/interaction/interactionAPI';
 import { InteractionStatus } from '../../domain/interaction/interactionStatus';
 import { Thematique } from '../../domain/thematique';
@@ -25,6 +25,7 @@ import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 
 @Controller()
+@ApiBearerAuth()
 @ApiTags('Interactions')
 export class InteractionsController extends GenericControler {
   constructor(private readonly interactionsUsecase: InteractionsUsecase) {

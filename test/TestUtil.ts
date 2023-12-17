@@ -76,6 +76,7 @@ export class TestUtil {
 
   static async deleteAll() {
     await this.prisma.suivi.deleteMany();
+    await this.prisma.questionsKYC.deleteMany();
     await this.prisma.interaction.deleteMany();
     await this.prisma.badge.deleteMany();
     await this.prisma.service.deleteMany();
@@ -143,6 +144,17 @@ export class TestUtil {
       key: '123',
       value: '456',
       utilisateurId: 'utilisateur-id',
+      ...override,
+    };
+  }
+  static questionsKYCData(override?) {
+    return {
+      utilisateurId: 'utilisateur-id',
+      data: {
+        liste_questions: [
+          { id: '1', question: 'whats up ?', reponse: 'all good' },
+        ],
+      },
       ...override,
     };
   }

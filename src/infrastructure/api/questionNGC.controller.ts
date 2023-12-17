@@ -1,4 +1,4 @@
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
   Controller,
   Put,
@@ -15,6 +15,7 @@ import { GenericControler } from './genericControler';
 
 @Controller()
 @ApiTags('QuestionsNGC')
+@ApiBearerAuth()
 export class QuestionsNGCController extends GenericControler {
   constructor(private readonly questionNGCUsecase: QuestionNGCUsecase) {
     super();

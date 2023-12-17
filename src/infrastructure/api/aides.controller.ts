@@ -11,7 +11,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AidesUsecase } from '../../usecase/aides.usecase';
-import { ApiBody, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOkResponse,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   AideAPI,
   nbPartsDTO,
@@ -25,6 +31,7 @@ import { InputAideVeloAPI } from './types/aide/inputAideVeloAPI';
 import { Response } from 'express';
 
 @Controller()
+@ApiBearerAuth()
 @ApiTags('Aides')
 export class AidesController extends GenericControler {
   constructor(private readonly aidesUsecase: AidesUsecase) {
