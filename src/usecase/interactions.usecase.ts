@@ -55,21 +55,25 @@ export class InteractionsUsecase {
       utilisateurId,
       utilisateur.code_postal,
     );
-    const liste_suivis = await this.getSuivisForUtilisateur(utilisateurId);
+
+    // FIXME : DESACTIVIATION TEMPORAIRE DES AIDES ET SUIVI
+    // const liste_suivis = await this.getSuivisForUtilisateur(utilisateurId);
     const liste_quizz = await this.getQuizzForUtilisateur(
       utilisateurId,
       utilisateur.quizzProfile,
       utilisateur.code_postal,
     );
+    /*
     const liste_aides = await this.getAidesForUtilisateur(
       utilisateurId,
       utilisateur.code_postal,
     );
+    */
 
     DistributionSettings.addInteractionsToList(liste_articles, result);
-    DistributionSettings.addInteractionsToList(liste_suivis, result);
+    //DistributionSettings.addInteractionsToList(liste_suivis, result);
     DistributionSettings.addInteractionsToList(liste_quizz, result);
-    DistributionSettings.addInteractionsToList(liste_aides, result);
+    //DistributionSettings.addInteractionsToList(liste_aides, result);
 
     // final sort
     result.sort((a, b) => {
@@ -77,6 +81,8 @@ export class InteractionsUsecase {
     });
 
     // pinned insert
+    // FIXME : DESACTIVATION TEMPORAIRE
+    /*
     const pinned_interactions =
       await this.interactionRepository.listInteractionsByFilter({
         utilisateurId,
@@ -87,8 +93,11 @@ export class InteractionsUsecase {
         done: false,
       });
     DistributionSettings.insertPinnedInteractions(pinned_interactions, result);
+    */
 
     // locked insert at fixed positions
+    // FIXME : DESACTIVATION TEMPORAIRE
+    /*
     const locked_interactions =
       await this.interactionRepository.listInteractionsByFilter({
         utilisateurId,
@@ -102,6 +111,7 @@ export class InteractionsUsecase {
       locked_interactions,
       result,
     );
+    */
 
     return result;
   }

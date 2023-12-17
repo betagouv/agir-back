@@ -108,12 +108,12 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     await TestUtil.create('interaction', {
       id: '1',
       score: 0.9,
-      type: InteractionType.aide,
+      type: InteractionType.quizz,
     });
     await TestUtil.create('interaction', {
       id: '2',
       score: 0.2,
-      type: InteractionType.aide,
+      type: InteractionType.quizz,
     });
     await TestUtil.create('interaction', {
       id: '3',
@@ -128,11 +128,11 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     DistributionSettings.overrideSettings(
       new Map([
         [
-          InteractionType.aide,
+          InteractionType.quizz,
           new InteractionDistribution(2, InteractionPlacement.any),
         ],
         [
-          InteractionType.article,
+          InteractionType.quizz,
           new InteractionDistribution(2, InteractionPlacement.any),
         ],
       ]),
@@ -157,12 +157,12 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     await TestUtil.create('interaction', {
       id: '1',
       score: 0.9,
-      type: InteractionType.aide,
+      type: InteractionType.quizz,
     });
     await TestUtil.create('interaction', {
       id: '2',
       score: 0.2,
-      type: InteractionType.aide,
+      type: InteractionType.quizz,
     });
     await TestUtil.create('interaction', {
       id: '3',
@@ -177,7 +177,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     DistributionSettings.overrideSettings(
       new Map([
         [
-          InteractionType.aide,
+          InteractionType.quizz,
           new InteractionDistribution(1, InteractionPlacement.any),
         ],
         [
@@ -210,7 +210,7 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(0);
   });
-  it('GET /utilisateurs/id/interactions - pinned interaction at proper position', async () => {
+  it.skip('GET /utilisateurs/id/interactions - pinned interaction at proper position', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', { id: 'id-1', score: 0.9 });
