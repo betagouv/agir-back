@@ -19,7 +19,7 @@ export class CelebrationDeNiveau extends Celebration {
         this.reveal = new Reveal(Feature.services);
         break;
       case 4:
-        this.reveal = new Reveal(Feature.recommendations);
+        this.reveal = new Reveal(Feature.recommandations);
         break;
     }
   }

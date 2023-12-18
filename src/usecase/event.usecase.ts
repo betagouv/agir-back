@@ -40,7 +40,7 @@ export class EventUsecase {
       case EventType.access_profile:
         return await this.processAccessProfile(utilisateurId);
       case EventType.access_recommandations:
-        return await this.processAccessRecommendations(utilisateurId);
+        return await this.processAccessRecommandations(utilisateurId);
       case EventType.like:
         return await this.processLike(utilisateurId, event);
     }
@@ -57,7 +57,7 @@ export class EventUsecase {
     }
   }
 
-  private async processAccessRecommendations(utilisateurId: string) {
+  private async processAccessRecommandations(utilisateurId: string) {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );

@@ -16,8 +16,8 @@ export class Reveal {
       description: `Un service permet d'avoir toujours sous les yeux vos fonctionnalités clés`,
       url: '/coach/services',
     },
-    recommendations: {
-      titre: 'Vos recommendations',
+    recommandations: {
+      titre: 'Vos recommandations',
       description: `Toujours plus de contenu, et en fonction de vos centres d'intérêt`,
       url: '/coach',
     },
