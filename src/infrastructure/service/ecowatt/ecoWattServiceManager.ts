@@ -59,11 +59,9 @@ export class EcoWattServiceManager implements ScheduledServiceManager {
       }
     }
     return {
-      label: [
-        `🟢 EcoWatt - Pas d'alerte`,
-        `🟠 EcoWatt - Tendu`,
-        `🔴 EcoWatt - Attention coupures !!`,
-      ][signal.data.signals[0].dvalue - 1],
+      label: [`🟢 Pas d'alerte`, `🟠 Tendu`, `🔴 Attention coupures !!`][
+        signal.data.signals[0].dvalue - 1
+      ],
       message: signal.data.signals[0].message,
       niveau: signal.data.signals[0].dvalue,
       isInError: false,
