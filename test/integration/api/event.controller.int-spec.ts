@@ -157,11 +157,11 @@ describe('EVENT (API test)', () => {
     ).toEqual(1);
   });
 
-  it('POST /utilisateurs/id/events - does not add points when already done', async () => {
+  it('POST /utilisateurs/id/events - does not add points when points en poche', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
-      done: true,
+      points_en_poche: true,
     });
     // WHEN
     const response = await TestUtil.POST(
@@ -169,7 +169,7 @@ describe('EVENT (API test)', () => {
     ).send({
       type: EventType.quizz_score,
       interaction_id: 'interaction-id',
-      number_value: 79,
+      number_value: 100,
     });
 
     // THEN
@@ -178,6 +178,32 @@ describe('EVENT (API test)', () => {
       where: { id: 'utilisateur-id' },
     });
     expect(dbUtilisateur.gamification['points']).toStrictEqual(10);
+  });
+  it('POST /utilisateurs/id/events - does not add points twice on quizz', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction');
+    // WHEN
+    await TestUtil.POST('/utilisateurs/utilisateur-id/events').send({
+      type: EventType.quizz_score,
+      interaction_id: 'interaction-id',
+      number_value: 100,
+    });
+
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.quizz_score,
+      interaction_id: 'interaction-id',
+      number_value: 100,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(dbUtilisateur.gamification['points']).toStrictEqual(15);
   });
   it('POST /utilisateurs/id/events - does not add points when not 100% quizz', async () => {
     // GIVEN
@@ -250,9 +276,13 @@ describe('EVENT (API test)', () => {
     const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
     });
+    const dbInter = await TestUtil.prisma.interaction.findUnique({
+      where: { id: 'interaction-id' },
+    });
     expect(dbUtilisateur.gamification['points']).toStrictEqual(30);
+    expect(dbInter.points_en_poche).toStrictEqual(true);
   });
-  it('POST /utilisateurs/id/events - ajoute points pour article lu', async () => {
+  it('POST /utilisateurs/id/events - ajoute pas deux fois points pour article lu', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
@@ -261,6 +291,10 @@ describe('EVENT (API test)', () => {
       points: 20,
     });
     // WHEN
+    await TestUtil.POST('/utilisateurs/utilisateur-id/events').send({
+      type: EventType.article_lu,
+      interaction_id: 'interaction-id',
+    });
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/events',
     ).send({

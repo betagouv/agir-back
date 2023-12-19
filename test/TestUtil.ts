@@ -335,6 +335,7 @@ export class TestUtil {
       done_at: null,
       difficulty: 1,
       points: 5,
+      points_en_poche: false,
       score: 0.5,
       quizz_score: 50,
       locked: false,

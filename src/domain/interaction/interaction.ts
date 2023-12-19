@@ -9,6 +9,7 @@ export class InteractionData extends InteractionDefinition {
   clicked_at: Date;
   done: boolean;
   done_at: Date;
+  points_en_poche: boolean;
   quizz_score: number;
   like_level: number;
   scheduled_reset: Date;
@@ -76,6 +77,7 @@ export class Interaction extends InteractionData {
       scheduled_reset: null,
       utilisateurId: undefined,
       like_level: null,
+      points_en_poche: false,
     });
   }
 }

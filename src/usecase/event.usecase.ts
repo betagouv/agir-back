@@ -141,10 +141,11 @@ export class EventUsecase {
 
     // FIXME : rustine car pas d'id interaction du front quand un lit un article hors todo/reco
     if (ctx.interaction) {
-      const already_done = ctx.interaction.done;
-      if (!already_done) {
+      if (!ctx.interaction.points_en_poche) {
         this.addPointsToUser(ctx);
+        ctx.interaction.points_en_poche = true;
       }
+
       this.updateUserTodo(ctx);
       await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
       ctx.interaction.updateStatus({
@@ -163,8 +164,6 @@ export class EventUsecase {
       event.interaction_id,
     );
 
-    const already_done = ctx.interaction.done;
-
     await this.badgeRepository.createUniqueBadge(
       utilisateurId,
       BadgeTypes.premier_quizz,
@@ -174,12 +173,15 @@ export class EventUsecase {
       done: true,
       quizz_score: event.number_value,
     });
-    await this.interactionRepository.updateInteraction(ctx.interaction);
 
     if (event.number_value === 100) {
-      this.addPointsToUser(ctx);
+      if (!ctx.interaction.points_en_poche) {
+        this.addPointsToUser(ctx);
+        ctx.interaction.points_en_poche = true;
+      }
       this.updateUserTodo(ctx);
     }
+    await this.interactionRepository.updateInteraction(ctx.interaction);
     await this.promoteUserQuizzLevelIfNeeded(ctx);
     await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
   }
