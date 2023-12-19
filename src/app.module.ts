@@ -70,7 +70,7 @@ import { QuestionsKYCController } from './infrastructure/api/questionKYC.control
 import { QuestionKYCRepository } from './infrastructure/repository/questionKYC.repository';
 import { QuestionKYCUsecase } from './usecase/questionKYC.usecase';
 
-const SESSION_LIFETIME = '12h';
+const SESSION_LIFETIME = '30 days';
 
 function getControllers(): any[] {
   const controllers = [];
