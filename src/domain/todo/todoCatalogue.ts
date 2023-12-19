@@ -47,7 +47,7 @@ export class TodoCatalogue {
       todo: [
         {
           id: uuidv4(),
-          titre: 'Réussir 1 quiz environnement/climat - très facile',
+          titre: 'Réussir 1 quiz Climat - très facile',
           thematiques: [Thematique.climat],
           progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
@@ -66,7 +66,7 @@ export class TodoCatalogue {
       todo: [
         {
           id: uuidv4(),
-          titre: 'Réussir 2 quiz environnement/climat - très facile',
+          titre: 'Réussir 2 quiz Climat - très facile',
           thematiques: [Thematique.climat],
           progression: { current: 1, target: 2 },
           sont_points_en_poche: false,

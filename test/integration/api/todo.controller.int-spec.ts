@@ -40,7 +40,7 @@ describe('TODO list (API test)', () => {
     expect(response.body.titre).toEqual(`Votre 1ère mission`);
     expect(response.body.todo[0].id.length).toBeGreaterThan(12);
     expect(response.body.todo[0].titre).toEqual(
-      'Réussir 1 quiz environnement/climat - très facile',
+      'Réussir 1 quiz Climat - très facile',
     );
     expect(response.body.todo[0].progression).toEqual({
       current: 0,
