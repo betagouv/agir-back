@@ -1,6 +1,5 @@
 import { InteractionStatus } from './interactionStatus';
 import { InteractionDefinition } from './interactionDefinition';
-import { resourceLimits } from 'worker_threads';
 
 export class InteractionData extends InteractionDefinition {
   id: string;
@@ -11,7 +10,6 @@ export class InteractionData extends InteractionDefinition {
   done: boolean;
   done_at: Date;
   quizz_score: number;
-  score: number;
   like_level: number;
   scheduled_reset: Date;
   utilisateurId: string;
@@ -66,7 +64,7 @@ export class Interaction extends InteractionData {
   public static newDefaultInteractionFromDefinition(
     interactionDefinition: InteractionDefinition,
   ): Interaction {
-    let result = new Interaction({
+    return new Interaction({
       ...interactionDefinition,
       seen: 0,
       seen_at: null,
@@ -77,10 +75,7 @@ export class Interaction extends InteractionData {
       quizz_score: null,
       scheduled_reset: null,
       utilisateurId: undefined,
-      score: interactionDefinition.score,
       like_level: null,
     });
-
-    return result;
   }
 }
