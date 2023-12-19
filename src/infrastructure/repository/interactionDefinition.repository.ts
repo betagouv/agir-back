@@ -81,6 +81,7 @@ export class InteractionDefinitionRepository {
   ): InteractionDefinition {
     return new InteractionDefinition({
       ...interDefDB,
+      score: interDefDB.score.toNumber(),
       type: InteractionType[interDefDB.type],
       thematique_gamification: Thematique[interDefDB.thematique_gamification],
       thematiques: interDefDB.thematiques.map((th) => Thematique[th]),

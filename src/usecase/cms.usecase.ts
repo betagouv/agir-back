@@ -157,7 +157,22 @@ export class InteractionsDefinitionUsecase {
       pinned_at_position: null,
       created_at: undefined,
       updated_at: undefined,
+      score: 0.5,
     };
+
+    const rubriques = cmsWebhookAPI.entry.rubriques;
+    if (rubriques) {
+      const foundNoel = rubriques.find((str) => {
+        const a = str.indexOf('Noël') > -1;
+        const b = str.indexOf('noël') > -1;
+        const c = str.indexOf('Noel') > -1;
+        const d = str.indexOf('noel') > -1;
+        return a || b || c || d;
+      });
+      if (foundNoel) {
+        interactionDef.score = 0.7;
+      }
+    }
 
     return new InteractionDefinition(interactionDef);
   }

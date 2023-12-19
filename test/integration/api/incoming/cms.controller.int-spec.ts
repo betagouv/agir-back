@@ -30,6 +30,32 @@ describe('/api/incoming/cms (API test)', () => {
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
     },
   };
+  const CMS_DATA_ARTICLE_NOEL = {
+    model: CMSModel.article,
+    event: CMSEvent['entry.publish'],
+    entry: {
+      id: 123,
+      titre: 'titre',
+      sousTitre: 'soustitre 222',
+      thematique_gamification: { id: 1, titre: 'Alimentation' },
+      thematiques: [
+        { id: 1, titre: 'Alimentation' },
+        { id: 2, titre: 'Climat' },
+      ],
+      rubriques: ['A', 'Ceci est Noël'],
+      duree: 'pas trop long',
+      frequence: 'souvent',
+      imageUrl: {
+        formats: {
+          thumbnail: { url: 'https://' },
+        },
+      },
+      difficulty: 3,
+      points: 20,
+      codes_postaux: '91120,75002',
+      publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+    },
+  };
   const CMS_DATA_QUIZZ = {
     model: CMSModel.quizz,
     event: CMSEvent['entry.publish'],
@@ -109,7 +135,9 @@ describe('/api/incoming/cms (API test)', () => {
     // GIVEN
     TestUtil.token = 'bad';
     // WHEN
-    const response = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA_ARTICLE);
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_ARTICLE,
+    );
 
     // THEN
     expect(response.status).toBe(403);
@@ -118,7 +146,9 @@ describe('/api/incoming/cms (API test)', () => {
     // GIVEN
 
     // WHEN
-    const response = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA_ARTICLE);
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_ARTICLE,
+    );
 
     // THEN
     const interDefDB = await TestUtil.prisma.interactionDefinition.findMany({});
@@ -140,13 +170,32 @@ describe('/api/incoming/cms (API test)', () => {
     expect(interDefDB[0].points).toEqual(20);
     expect(interDefDB[0].codes_postaux).toStrictEqual(['91120', '75002']);
     expect(interDefDB[0].content_id).toEqual('123');
+    expect(interDefDB[0].score.toNumber()).toEqual(0.5);
+  });
+  it('POST /api/incoming/cms - create a new article with score 0.7 if rubriques contains Noel', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_ARTICLE_NOEL,
+    );
+
+    // THEN
+    const interDefDB = await TestUtil.prisma.interactionDefinition.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(interDefDB[0].score.toNumber()).toEqual(0.7);
   });
   it('POST /api/incoming/cms - creates a new article then a new quizz of same id, unpublish quizz leaves article', async () => {
     // GIVEN
 
     // WHEN
-    const response1 = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA_ARTICLE);
-    const response2 = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA_QUIZZ);
+    const response1 = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_ARTICLE,
+    );
+    const response2 = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_QUIZZ,
+    );
     const response3 = await TestUtil.POST('/api/incoming/cms').send(
       CMS_DATA_QUIZZ_UNPUBLISH,
     );
@@ -163,8 +212,12 @@ describe('/api/incoming/cms (API test)', () => {
     // GIVEN
 
     // WHEN
-    const response1 = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA_ARTICLE);
-    const response2 = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA_QUIZZ);
+    const response1 = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_ARTICLE,
+    );
+    const response2 = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_QUIZZ,
+    );
 
     // THEN
     const interDefDB = await TestUtil.prisma.interactionDefinition.findMany({});
@@ -178,7 +231,9 @@ describe('/api/incoming/cms (API test)', () => {
     await TestUtil.create('utilisateur');
 
     // WHEN
-    const response = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA_ARTICLE);
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_ARTICLE,
+    );
 
     // THEN
     const interDB = await TestUtil.prisma.interaction.findMany({});
@@ -231,7 +286,9 @@ describe('/api/incoming/cms (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA_ARTICLE);
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_ARTICLE,
+    );
     // THEN
     const interDB = await TestUtil.prisma.interaction.findMany({});
     const interDefDB = await TestUtil.prisma.interactionDefinition.findMany({});
@@ -240,6 +297,33 @@ describe('/api/incoming/cms (API test)', () => {
     expect(interDefDB).toHaveLength(1);
     expect(interDefDB[0].soustitre).toEqual('soustitre 222');
     expect(interDB[0].soustitre).toEqual('soustitre 222');
+  });
+  it('POST /api/incoming/cms - updates existing article, sets 0.7 if contains Noel ', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interactionDefinition', {
+      content_id: '123',
+      type: InteractionType.article,
+    });
+    await TestUtil.create('interaction', {
+      content_id: '123',
+      type: InteractionType.article,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_ARTICLE_NOEL,
+    );
+    // THEN
+    const interDB = await TestUtil.prisma.interaction.findMany({});
+    const interDefDB = await TestUtil.prisma.interactionDefinition.findMany({});
+    expect(response.status).toBe(201);
+    expect(interDB).toHaveLength(1);
+    expect(interDefDB).toHaveLength(1);
+    expect(interDefDB[0].soustitre).toEqual('soustitre 222');
+    expect(interDefDB[0].score.toNumber()).toEqual(0.7);
+    expect(interDB[0].soustitre).toEqual('soustitre 222');
+    expect(interDB[0].score.toNumber()).toEqual(0.7);
   });
   it('POST /api/incoming/cms - updates existing 2 article for 2 users ', async () => {
     // GIVEN
@@ -263,7 +347,9 @@ describe('/api/incoming/cms (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.POST('/api/incoming/cms').send(CMS_DATA_ARTICLE);
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_ARTICLE,
+    );
 
     // THEN
     const interDB = await TestUtil.prisma.interaction.findMany({});

@@ -25,6 +25,7 @@ export class InteractionDefinitionData {
   day_period: number;
   created_at: Date;
   updated_at: Date;
+  score: number;
 }
 
 export class InteractionDefinition extends InteractionDefinitionData {

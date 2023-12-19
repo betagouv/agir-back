@@ -103,6 +103,7 @@ model Interaction {
   raison_lock                   String?
   codes_postaux                 String[]    @default([])
   like_level                    Int?
+  boost                         Int?
   created_at                    DateTime    @default(now()) @db.Timestamptz(3)
   updated_at                    DateTime    @updatedAt @db.Timestamptz(3)
   utilisateurId                 String

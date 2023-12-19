@@ -204,7 +204,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
   });
   it('POST /utilisateurs/valider - validate proper code OK, active user as outcome', async () => {
     // GIVEN
-    await TestUtil.create('interactionDefinition');
+    await TestUtil.create('interactionDefinition', { score: 0.123 });
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
@@ -249,6 +249,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(userDB.active_account).toEqual(true);
     expect(userDB_interactions).toHaveLength(1);
     expect(userDB_interactions[0].utilisateurId).toEqual(userDB.id);
+    expect(userDB_interactions[0].score.toNumber()).toEqual(0.123);
     expect(userDB.failed_login_count).toEqual(0);
     expect(userDB.prevent_login_before.getTime()).toBeLessThan(Date.now());
   });
