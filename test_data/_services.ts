@@ -41,7 +41,7 @@ const services = {
     en_construction: true,
   },
   ecowatt: {
-    titre: `⚡️ ÉcosWatt`,
+    titre: `⚡️ ÉcoWatt`,
     url: 'https://www.monecowatt.fr/',
     icon_url:
       'https://play-lh.googleusercontent.com/wtQahY_I8TVLQJ_Rcue7aC-dJ3FfZLNQe84smsyfRa9Qbs1-TG3CJvdrmQ9VUXUVO8vh=w480-h960',
