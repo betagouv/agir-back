@@ -226,7 +226,6 @@ export class InteractionsUsecase {
       maxNumber: DistributionSettings.getPreferedOfType(InteractionType.quizz),
       type: InteractionType.quizz,
       pinned: false,
-      quizzProfile: quizzProfile,
       code_postal,
       done: false,
     });
