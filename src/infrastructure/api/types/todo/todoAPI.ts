@@ -33,7 +33,7 @@ export class TodoAPI {
   @ApiProperty({ type: [TodoElementAPI] }) todo: TodoElementAPI[];
   @ApiProperty({ type: [TodoElementAPI] }) done: TodoElementAPI[];
 
-  public static mapTodoToTodoAPI(todo: Todo, is_last: boolean): TodoAPI {
+  public static mapTodoToTodoAPI(todo: Todo): TodoAPI {
     return {
       numero_todo: todo.numero_todo,
       points_todo: todo.points_todo,
@@ -41,7 +41,7 @@ export class TodoAPI {
       todo: todo.todo,
       done: todo.done,
       done_at: todo.done_at,
-      is_last: is_last,
+      is_last: todo.is_last,
     };
   }
 }

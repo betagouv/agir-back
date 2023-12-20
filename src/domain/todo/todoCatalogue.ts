@@ -3,7 +3,7 @@ import { InteractionType } from '../interaction/interactionType';
 import { Thematique } from '../thematique';
 import { Todo } from './todo';
 import { v4 as uuidv4 } from 'uuid';
-import { LiveService, ScheduledService } from '../service/serviceDefinition';
+import { LiveService } from '../service/serviceDefinition';
 
 export class TodoCatalogue {
   public static getNombreTodo(): number {
@@ -18,12 +18,20 @@ export class TodoCatalogue {
     return result;
   }
 
-  public static getNewTodoOfNumero(numero: number): Todo {
-    return new Todo(
-      TodoCatalogue.catalogue[
-        Math.min(numero, TodoCatalogue.catalogue.length) - 1
-      ],
-    );
+  public static getTodoOfNumero(numero: number) {
+    return new Todo(TodoCatalogue.catalogue[numero - 1]);
+  }
+
+  public static getEmptyLastMission(): Todo {
+    return new Todo({
+      numero_todo: null,
+      points_todo: 0,
+      titre: 'Plus de mission, pour le moment...',
+      done_at: null,
+      done: [],
+      todo: [],
+      is_last: true,
+    });
   }
 
   private static catalogue: Todo[] = [
@@ -183,14 +191,6 @@ export class TodoCatalogue {
           points: 20,
         },
       ],
-    },
-    {
-      numero_todo: 6,
-      points_todo: 0,
-      titre: 'Plus de mission, pour le moment...',
-      done_at: null,
-      done: [],
-      todo: [],
     },
   ];
 }

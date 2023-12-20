@@ -6,6 +6,8 @@ import { InteractionType } from '../../../../src/domain/interaction/interactionT
 import { Thematique } from '../../../../src/domain/thematique';
 import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
 import { TodoCatalogue } from '../../../../src/domain/todo/todoCatalogue';
+import { Todo } from '../../../../src/domain/todo/todo';
+import { DifficultyLevel } from '../../../../src/domain/difficultyLevel';
 
 describe('ParcoursTodo', () => {
   it('constructor : build ok init Parcours', () => {
@@ -15,7 +17,7 @@ describe('ParcoursTodo', () => {
 
     // THEN
     expect(result.todo_active).toEqual(0);
-    expect(result.liste_todo).toHaveLength(6);
+    expect(result.liste_todo).toHaveLength(5);
   });
   it('getActiveTodo : renvoie la bonne todo', () => {
     // GIVEN
@@ -100,5 +102,139 @@ describe('ParcoursTodo', () => {
     parcours.avanceDansParcours();
     // THEN
     expect(parcours.getCurrentTodoNumero()).toEqual(6);
+  });
+  it('appendNewFromCatalogue : ajoute une todo depuis le catalogue', () => {
+    // GIVEN
+    const parcours = new ParcoursTodo({
+      todo_active: 0,
+      liste_todo: [
+        {
+          done: [],
+          numero_todo: 1,
+          points_todo: 20,
+          done_at: null,
+          titre: 'titre',
+          todo: [
+            {
+              id: '1',
+              points: 10,
+              progression: { current: 0, target: 1 },
+              level: DifficultyLevel.L1,
+              titre: 'titre',
+              type: InteractionType.aides,
+              sont_points_en_poche: false,
+            },
+          ],
+        },
+      ],
+    });
+    // WHEN
+    parcours.appendNewFromCatalogue();
+    // THEN
+    expect(parcours.liste_todo).toHaveLength(TodoCatalogue.getNombreTodo());
+    expect(parcours.isLastTodo()).toEqual(false);
+  });
+  it('isLast : quand position un cran au dela', () => {
+    // GIVEN
+    const parcours = new ParcoursTodo({
+      todo_active: 0,
+      liste_todo: [
+        {
+          done: [],
+          numero_todo: 1,
+          points_todo: 20,
+          done_at: null,
+          titre: 'titre',
+          todo: [
+            {
+              id: '1',
+              points: 10,
+              progression: { current: 0, target: 1 },
+              level: DifficultyLevel.L1,
+              titre: 'titre',
+              type: InteractionType.aides,
+              sont_points_en_poche: false,
+            },
+          ],
+        },
+      ],
+    });
+    // WHEN
+    // THEN
+    expect(parcours.isLastTodo()).toEqual(false);
+    parcours.avanceDansParcours();
+    expect(parcours.isLastTodo()).toEqual(true);
+    parcours.avanceDansParcours();
+    expect(parcours.isLastTodo()).toEqual(true);
+    expect(parcours.getCurrentTodoNumero()).toEqual(2);
+  });
+  it('upgradeParcoursIfNeeded : supprime elment end et fusionne', () => {
+    // GIVEN
+    const parcours = new ParcoursTodo({
+      todo_active: 0,
+      liste_todo: [
+        {
+          done: [],
+          numero_todo: 1,
+          points_todo: 20,
+          done_at: null,
+          titre: 'titre',
+          todo: [
+            {
+              id: '1',
+              points: 10,
+              progression: { current: 0, target: 1 },
+              level: DifficultyLevel.L1,
+              titre: 'titre',
+              type: InteractionType.aides,
+              sont_points_en_poche: false,
+            },
+          ],
+        },
+        {
+          numero_todo: null,
+          points_todo: 0,
+          titre: 'Plus de mission, pour le moment...',
+          done_at: null,
+          done: [],
+          todo: [],
+          is_last: true,
+        },
+      ],
+    });
+    // WHEN
+    parcours.upgradeParcoursIfNeeded();
+    // THEN
+    expect(parcours.liste_todo).toHaveLength(1);
+  });
+  it('upgradeParcoursIfNeeded : supprime rien si pas d element final', () => {
+    // GIVEN
+    const parcours = new ParcoursTodo({
+      todo_active: 0,
+      liste_todo: [
+        {
+          done: [],
+          numero_todo: 1,
+          points_todo: 20,
+          done_at: null,
+          titre: 'titre',
+          todo: [
+            {
+              id: '1',
+              points: 10,
+              progression: { current: 0, target: 1 },
+              level: DifficultyLevel.L1,
+              titre: 'titre',
+              type: InteractionType.aides,
+              sont_points_en_poche: false,
+            },
+          ],
+        },
+      ],
+    });
+    // WHEN
+    parcours.upgradeParcoursIfNeeded();
+    // THEN
+    expect(parcours.liste_todo).toHaveLength(1);
   });
 });

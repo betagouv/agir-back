@@ -29,6 +29,7 @@ const badges_liste = require('../../../test_data/evenements/badges');
 import axios from 'axios';
 import { CMSModel } from './types/cms/CMSModels';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
+import { CMSThematiqueAPI } from './types/cms/CMSThematiqueAPI';
 
 export enum TheBoolean {
   true = 'true',
@@ -101,7 +102,7 @@ export class TestDataController {
     await this.deleteUtilisateur(utilisateurId);
     await this.upsertUtilisateur(utilisateurId);
     await this.upsertServicesDefinitions();
-    await this.injectCMSDataFromProd();
+    await this.injectCMSDataFromProd(utilisateurId);
     if (utilisateurs_content[utilisateurId].interactions) {
       await this.insertArticlesForUtilisateur(utilisateurId);
       await this.insertAidesForUtilisateur(utilisateurId);
@@ -117,34 +118,87 @@ export class TestDataController {
     await this.insertQuestionsNGCForUtilisateur(utilisateurId);
     return utilisateurs_content[utilisateurId];
   }
-  async injectCMSDataFromProd() {}
+  async injectCMSDataFromProd(utilisateurId: string) {
+    if (process.env.BASE_URL.includes('localhost')) {
+      const articles = await this.callCMSForType('articles');
+      const quizzes = await this.callCMSForType('quizzes');
 
-  /*
-  private async callCMSForType(url_suffix: string, type: CMSModel) {
+      for (let index = 0; index < articles.length; index++) {
+        const article = articles[index];
+        const interactionToCreate =
+          Interaction.newDefaultInteractionFromDefinition(
+            DUMMY_INTERACTION_DEF,
+          );
+        interactionToCreate.type = InteractionType.article;
+        interactionToCreate.content_id = article.id;
+        interactionToCreate.titre = 'Article CMS manquant : '.concat(
+          article.id,
+        );
+        interactionToCreate.id = uuidv4();
+        interactionToCreate.difficulty = article.difficulty;
+        interactionToCreate.thematiques = article.thematiques as Thematique[];
+        interactionToCreate.utilisateurId = utilisateurId;
+        await this.interactionRepository.insertInteractionForUtilisateur(
+          utilisateurId,
+          interactionToCreate,
+        );
+      }
+
+      for (let index = 0; index < quizzes.length; index++) {
+        const quizz = quizzes[index];
+        const interactionToCreate =
+          Interaction.newDefaultInteractionFromDefinition(
+            DUMMY_INTERACTION_DEF,
+          );
+        interactionToCreate.type = InteractionType.quizz;
+        interactionToCreate.content_id = quizz.id;
+        interactionToCreate.titre = 'Quizz CMS manquant : '.concat(quizz.id);
+        interactionToCreate.id = uuidv4();
+        interactionToCreate.utilisateurId = utilisateurId;
+        interactionToCreate.difficulty = quizz.difficulty;
+        interactionToCreate.thematiques = quizz.thematiques as Thematique[];
+        await this.interactionRepository.insertInteractionForUtilisateur(
+          utilisateurId,
+          interactionToCreate,
+        );
+      }
+    }
+  }
+
+  private async callCMSForType(
+    type: string,
+  ): Promise<{ id: string; difficulty: number; thematiques: string[] }[]> {
     let response = null;
+    const URL = process.env.CMS_URL.concat(
+      '/',
+      type,
+      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques',
+    );
+    console.log(URL);
     try {
-      response = await axios.get(
-        process.env.CMS_URL.concat(
-          '/',
-          url_suffix,
-          '?pagination[start]=0&pagination[limit]=100',
-        ),
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${process.env.CMS_API_KEY}`,
-          },
+      response = await axios.get(URL, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.CMS_API_KEY}`,
         },
-      );
+      });
     } catch (error) {
       if (error.response.status != 401) {
         console.log(error.message);
       }
       throw new Error(error.response.status);
     }
-    return response;
+    console.log(response.data.data[0]);
+    return response.data.data.map((element) => {
+      return {
+        id: element.id.toString(),
+        difficulty: element.attributes.difficulty,
+        thematiques: CMSThematiqueAPI.getThematiqueList(
+          element.attributes.thematiques.data,
+        ),
+      };
+    });
   }
-  */
 
   async upsertServicesDefinitions() {
     const keyList = Object.keys(_services);
@@ -406,6 +460,11 @@ export class TestDataController {
       },
     });
     await this.prisma.questionNGC.deleteMany({
+      where: {
+        utilisateurId,
+      },
+    });
+    await this.prisma.questionsKYC.deleteMany({
       where: {
         utilisateurId,
       },

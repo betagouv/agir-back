@@ -19,25 +19,52 @@ export class ParcoursTodo {
   liste_todo: Todo[];
   todo_active: number;
 
+  public upgradeParcoursIfNeeded?() {
+    const last_element = this.liste_todo[this.liste_todo.length - 1];
+    if (last_element.titre === 'Plus de mission, pour le moment...') {
+      this.liste_todo.pop();
+    }
+  }
+
   public getActiveTodo?(): Todo {
-    return this.liste_todo[this.todo_active];
+    if (this.todo_active < this.liste_todo.length) {
+      return this.liste_todo[this.todo_active];
+    }
+    const result = TodoCatalogue.getEmptyLastMission();
+    result.numero_todo = this.liste_todo.length + 1;
+    return result;
   }
 
   public isLastTodo?(): boolean {
-    return this.todo_active === this.liste_todo.length - 1;
+    return this.todo_active === this.liste_todo.length;
+  }
+
+  public appendNewFromCatalogue?() {
+    const current_todo_length = this.liste_todo.length;
+    const catalogue_length = TodoCatalogue.getNombreTodo();
+
+    if (catalogue_length > current_todo_length) {
+      for (
+        let index = current_todo_length + 1;
+        index <= catalogue_length;
+        index++
+      ) {
+        this.liste_todo.push(TodoCatalogue.getTodoOfNumero(index));
+      }
+    }
   }
 
   public avanceDansParcours?() {
-    this.todo_active = Math.min(
-      this.todo_active + 1,
-      this.liste_todo.length - 1,
-    );
+    this.todo_active = Math.min(this.todo_active + 1, this.liste_todo.length);
   }
   public getCurrentTodoNumero?(): number {
-    return this.liste_todo[this.todo_active].numero_todo;
+    return this.todo_active + 1;
   }
-  public getTodoByNumero(numero: number): Todo {
-    return this.liste_todo[numero - 1];
+  public getTodoByNumero?(numero: number): Todo {
+    if (numero <= this.liste_todo.length) {
+      return this.liste_todo[numero - 1];
+    }
+    return TodoCatalogue.getEmptyLastMission();
   }
   public findTodoElementByTypeAndThematique?(
     type: InteractionType,

@@ -44,6 +44,7 @@ export class LinkyController extends GenericControler {
     @Request() req,
   ) {
     this.checkCallerId(req, utilisateurId);
+    this.checkCallerIsAdmin(req);
     await this.linkyUsecase.supprimeSouscription(utilisateurId);
     res.status(HttpStatus.OK).json('Souscription supprimée').send();
   }
@@ -61,6 +62,7 @@ export class LinkyController extends GenericControler {
     @Query('code_departement') code_departement: string,
   ) {
     this.checkCallerId(req, utilisateurId);
+    this.checkCallerIsAdmin(req);
     let result = await this.linkyUsecase.souscription(
       utilisateurId,
       prm,
@@ -79,7 +81,12 @@ export class LinkyController extends GenericControler {
   })
   @ApiOkResponse({ type: WinterListeSubAPI })
   @UseGuards(AuthGuard)
-  async get_souscriptions(@Res() res: Response, @Query('page') page?: number) {
+  async get_souscriptions(
+    @Request() req,
+    @Res() res: Response,
+    @Query('page') page?: number,
+  ) {
+    this.checkCallerIsAdmin(req);
     let result = await this.linkyUsecase.liste_souscriptions(page);
     res.status(HttpStatus.OK).json(result).send();
   }
@@ -89,7 +96,12 @@ export class LinkyController extends GenericControler {
       'Supprime les données associées au PRM, sans toucher la souscription',
   })
   @UseGuards(AuthGuard)
-  async emptyPRM(@Res() res: Response, @Param('prm') prm: string) {
+  async emptyPRM(
+    @Request() req,
+    @Res() res: Response,
+    @Param('prm') prm: string,
+  ) {
+    this.checkCallerIsAdmin(req);
     await this.linkyUsecase.emptyPRMData(prm);
     res.status(HttpStatus.OK).send();
   }

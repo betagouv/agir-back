@@ -9,6 +9,7 @@ import {
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { EventType } from '../../../src/domain/utilisateur/utilisateurEvent';
+import { TodoCatalogue } from 'src/domain/todo/todoCatalogue';
 
 describe('TODO list (API test)', () => {
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -52,7 +53,7 @@ describe('TODO list (API test)', () => {
     expect(response.body.todo[0].points).toEqual(20);
     expect(response.body.todo[0].thematiques).toEqual(['climat']);
   });
-  it('GET /utilisateurs/id/todo retourne la todo avec le champ aide et done_at, ainsi que todo_end = true', async () => {
+  it('GET /utilisateurs/id/todo retourne la todo avec le champ aide et done_at, ainsi que todo_end = false', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       todo: {
@@ -87,7 +88,24 @@ describe('TODO list (API test)', () => {
       Date.now() - 100,
     );
     expect(response.body.todo[0].url).toEqual('/aides');
+    expect(response.body.is_last).toEqual(false);
+  });
+  it('GET /utilisateurs/id/todo retourne la TODO de terminaison + is_last = true', async () => {
+    // GIVEN
+    const todo = new ParcoursTodo();
+    todo.todo_active = 5;
+    await TestUtil.create('utilisateur', {
+      todo: todo,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.titre).toEqual('Plus de mission, pour le moment...');
     expect(response.body.is_last).toEqual(true);
+    expect(response.body.numero_todo).toEqual(6);
   });
 
   it('GET /utilisateurs/id/todo retourne la todo n°1 avec une ref de quizz qui va bien : thematique  climat', async () => {
@@ -721,6 +739,8 @@ describe('TODO list (API test)', () => {
     const dbUser = await utilisateurRepository.findUtilisateurById(
       'utilisateur-id',
     );
+    console.log(dbUser.parcours_todo);
+    console.log(dbUser.parcours_todo.getTodoByNumero(4));
     expect(dbUser.parcours_todo.getTodoByNumero(4).done).toHaveLength(1);
     expect(dbUser.parcours_todo.getTodoByNumero(4).done[0].titre).toEqual(
       'Installer "Fruits et légumes de saison"',

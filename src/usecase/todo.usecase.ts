@@ -27,6 +27,9 @@ export class TodoUsecase {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );
+
+    await this.upgradeTodoIfNeeded(utilisateur);
+
     const todo_active = utilisateur.parcours_todo.getActiveTodo();
     const element = todo_active.findDoneElementById(elementId);
 
@@ -41,6 +44,9 @@ export class TodoUsecase {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );
+
+    await this.upgradeTodoIfNeeded(utilisateur);
+
     const todo_active = utilisateur.parcours_todo.getActiveTodo();
     if (todo_active.isDone()) {
       utilisateur.gamification.ajoutePoints(todo_active.points_todo);
@@ -52,12 +58,12 @@ export class TodoUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  async getUtilisateurTodo(
-    utilisateurId: string,
-  ): Promise<{ todo: Todo; is_last: boolean }> {
+  async getUtilisateurTodo(utilisateurId: string): Promise<Todo> {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );
+
+    await this.upgradeTodoIfNeeded(utilisateur);
 
     const todo = utilisateur.parcours_todo.getActiveTodo();
 
@@ -116,6 +122,11 @@ export class TodoUsecase {
         element.interaction_id = randomIteraction.id;
       }
     }
-    return { todo: todo, is_last: utilisateur.parcours_todo.isLastTodo() };
+    return todo;
+  }
+  private async upgradeTodoIfNeeded(utilisateur: Utilisateur) {
+    utilisateur.parcours_todo.upgradeParcoursIfNeeded();
+    utilisateur.parcours_todo.appendNewFromCatalogue();
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 }

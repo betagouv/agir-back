@@ -36,6 +36,7 @@ export class TodoData {
   points_todo: number;
   done_at: Date;
   titre: string;
+  is_last?: boolean;
 
   done: TodoElement[];
   todo: TodoElement[];
@@ -47,6 +48,9 @@ export class Todo extends TodoData {
     Object.assign(this, data);
     if (data.done_at) {
       this.done_at = new Date(data.done_at);
+    }
+    if (data.is_last === undefined) {
+      this.is_last = false;
     }
     this.done = [];
     this.todo = [];
@@ -79,9 +83,6 @@ export class Todo extends TodoData {
           !element.sont_points_en_poche,
       ) >= 0
     );
-  }
-  public getNextTodo?() {
-    return TodoCatalogue.getNewTodoOfNumero(this.numero_todo + 1);
   }
   public moveElementToDone?(element: TodoElement) {
     this.done.push(element);
