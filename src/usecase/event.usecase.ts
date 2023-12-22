@@ -47,14 +47,15 @@ export class EventUsecase {
   }
 
   private async processLike(utilisateurId: string, event: UtilisateurEvent) {
-    const interaction = await this.interactionRepository.getInteractionById(
-      event.interaction_id,
+    const ctx = await this.getUserAndInteraction(
+      utilisateurId,
+      event,
+      event.content_type,
     );
-    if (interaction) {
-      interaction.like_level = event.number_value;
 
-      await this.interactionRepository.updateInteraction(interaction);
-    }
+    ctx.interaction.like_level = event.number_value;
+
+    await this.interactionRepository.updateInteraction(ctx.interaction);
   }
 
   private async processAccessRecommandations(utilisateurId: string) {
@@ -136,23 +137,21 @@ export class EventUsecase {
   ) {
     const ctx = await this.getUserAndInteraction(
       utilisateurId,
-      event.interaction_id,
+      event,
+      InteractionType.article,
     );
 
-    // FIXME : rustine car pas d'id interaction du front quand un lit un article hors todo/reco
-    if (ctx.interaction) {
-      if (!ctx.interaction.points_en_poche) {
-        this.addPointsToUser(ctx);
-        ctx.interaction.points_en_poche = true;
-      }
-
-      this.updateUserTodo(ctx);
-      await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
-      ctx.interaction.updateStatus({
-        done: true,
-      });
-      await this.interactionRepository.updateInteraction(ctx.interaction);
+    if (!ctx.interaction.points_en_poche) {
+      this.addPointsToUser(ctx.utilisateur, ctx.interaction.points);
+      ctx.interaction.points_en_poche = true;
     }
+
+    this.updateUserTodo(ctx);
+    await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
+    ctx.interaction.updateStatus({
+      done: true,
+    });
+    await this.interactionRepository.updateInteraction(ctx.interaction);
   }
 
   private async processQuizzScore(
@@ -161,7 +160,8 @@ export class EventUsecase {
   ) {
     const ctx = await this.getUserAndInteraction(
       utilisateurId,
-      event.interaction_id,
+      event,
+      InteractionType.quizz,
     );
 
     await this.badgeRepository.createUniqueBadge(
@@ -176,7 +176,7 @@ export class EventUsecase {
 
     if (event.number_value === 100) {
       if (!ctx.interaction.points_en_poche) {
-        this.addPointsToUser(ctx);
+        this.addPointsToUser(ctx.utilisateur, ctx.interaction.points);
         ctx.interaction.points_en_poche = true;
       }
       this.updateUserTodo(ctx);
@@ -236,20 +236,32 @@ export class EventUsecase {
     });
   }
 
+  // FIXME ; séparer user et interaction en 2 méthodes
   private async getUserAndInteraction(
     utilisateurId: string,
-    interactionId: string,
+    event: UtilisateurEvent,
+    type_interaction: InteractionType,
   ): Promise<User_Interaction> {
-    const interaction = await this.interactionRepository.getInteractionById(
-      interactionId,
-    );
+    let interaction: Interaction;
+    if (event.interaction_id) {
+      interaction = await this.interactionRepository.getInteractionById(
+        event.interaction_id,
+      );
+    } else {
+      interaction =
+        await this.interactionRepository.getInteractionOfUserByTypeAndContentId(
+          utilisateurId,
+          type_interaction,
+          event.content_id,
+        );
+    }
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );
     return { utilisateur, interaction };
   }
 
-  private addPointsToUser({ utilisateur, interaction }: User_Interaction) {
-    utilisateur.gamification.ajoutePoints(interaction.points);
+  private addPointsToUser(utilisateur: Utilisateur, points: number) {
+    utilisateur.gamification.ajoutePoints(points);
   }
 }

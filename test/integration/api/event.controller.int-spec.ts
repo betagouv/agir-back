@@ -64,6 +64,31 @@ describe('EVENT (API test)', () => {
       BadgeTypes.premier_quizz.type,
     );
   });
+  it('POST /utilisateurs/id/event - valide un quizz par content_id', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      type: InteractionType.quizz,
+      content_id: '123',
+      done: false,
+      points_en_poche: false,
+    });
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.quizz_score,
+      content_id: '123',
+      number_value: 100,
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbInter = await TestUtil.prisma.interaction.findUnique({
+      where: { id: 'interaction-id' },
+    });
+    expect(dbInter.points_en_poche).toStrictEqual(true);
+    expect(dbInter.done).toStrictEqual(true);
+  });
 
   it('POST /utilisateurs/id/events - increase thematique level when 100% success condition and win badge and add points', async () => {
     // GIVEN
@@ -281,6 +306,36 @@ describe('EVENT (API test)', () => {
     });
     expect(dbUtilisateur.gamification['points']).toStrictEqual(30);
     expect(dbInter.points_en_poche).toStrictEqual(true);
+    expect(dbInter.done).toStrictEqual(true);
+  });
+  it('POST /utilisateurs/id/events - ajoute points pour article lu par content_id', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      done: false,
+      type: InteractionType.article,
+      points: 20,
+      content_id: '123',
+    });
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.article_lu,
+      content_id: '123',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    const dbInter = await TestUtil.prisma.interaction.findUnique({
+      where: { id: 'interaction-id' },
+    });
+    expect(dbUtilisateur.gamification['points']).toStrictEqual(30);
+    expect(dbInter.points_en_poche).toStrictEqual(true);
+    expect(dbInter.done).toStrictEqual(true);
   });
   it('POST /utilisateurs/id/events - ajoute pas deux fois points pour article lu', async () => {
     // GIVEN
@@ -362,6 +417,30 @@ describe('EVENT (API test)', () => {
     ).send({
       type: EventType.like,
       interaction_id: 'interaction-id',
+      number_value: 3,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbInteraction = await TestUtil.prisma.interaction.findUnique({
+      where: { id: 'interaction-id' },
+    });
+    expect(dbInteraction.like_level).toEqual(3);
+  });
+  it('POST /utilisateurs/id/events - like event set la valeur du like sur une interaction par type et content_id', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      content_id: '123',
+      type: InteractionType.article,
+    });
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.like,
+      content_id: '123',
+      content_type: 'article',
       number_value: 3,
     });
 

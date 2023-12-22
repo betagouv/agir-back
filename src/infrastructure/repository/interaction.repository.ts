@@ -30,6 +30,20 @@ export class InteractionRepository {
     });
     return result ? this.buildInteractionFromInteractionDB(result) : null;
   }
+  async getInteractionOfUserByTypeAndContentId(
+    utilisateurId: string,
+    type: InteractionType,
+    content_id: string,
+  ): Promise<Interaction | null> {
+    const result = await this.prisma.interaction.findFirst({
+      where: {
+        type: type,
+        content_id: content_id,
+        utilisateurId: utilisateurId,
+      },
+    });
+    return result ? this.buildInteractionFromInteractionDB(result) : null;
+  }
 
   async insertInteractionForUtilisateur(
     utilisateurId: string,

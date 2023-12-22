@@ -1,3 +1,5 @@
+import { InteractionType } from '../interaction/interactionType';
+
 export enum EventType {
   quizz_score = 'quizz_score',
   article_lu = 'article_lu',
@@ -17,4 +19,6 @@ export class UtilisateurEvent {
   celebration_id?: string;
   reveal_id?: string;
   service_id?: string;
+  content_id?: string;
+  content_type?: InteractionType.article | InteractionType.quizz;
 }
