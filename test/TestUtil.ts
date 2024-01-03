@@ -113,7 +113,10 @@ export class TestUtil {
           { id: 1, titre: 'Alimentation' },
           { id: 2, titre: 'Climat' },
         ],
-        rubriques: ['A', 'B'],
+        rubriques: [
+          { id: 1, titre: 'A' },
+          { id: 2, titre: 'B' },
+        ],
         duree: 'pas trop long',
         frequence: 'souvent',
         imageUrl: {
