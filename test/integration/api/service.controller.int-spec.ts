@@ -375,6 +375,31 @@ describe('Service (API test)', () => {
       ),
     ).toEqual(30 * 60);
   });
+  it('POST /services/refreshDynamicData appel ok, renvoie 1 quand 1 service cible avec period de refresh, mais pas de scheduled_refresh, donnée mises à jour', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create('serviceDefinition', {
+      id: 'dummy_scheduled',
+      scheduled_refresh: null,
+      minute_period: 30,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/services/refreshDynamicData');
+
+    // THEN
+    const serviceDefDB = await TestUtil.prisma.serviceDefinition.findFirst();
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toEqual('REFRESHED OK : dummy_scheduled');
+    expect(serviceDefDB.dynamic_data['label']).toEqual('En construction 🚧');
+    expect(
+      Math.round(
+        (serviceDefDB.scheduled_refresh.getTime() - Date.now()) / 1000,
+      ),
+    ).toEqual(30 * 60);
+  });
   it('POST /services/refreshDynamicData puis GET /utilisateurs/id/services appel récupère les données calculées en schedule', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;

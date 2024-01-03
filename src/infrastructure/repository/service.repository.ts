@@ -100,9 +100,17 @@ export class ServiceRepository {
   async listeServiceDefinitionsToRefresh(): Promise<ServiceDefinition[]> {
     const result = await this.prisma.serviceDefinition.findMany({
       where: {
-        scheduled_refresh: {
-          lt: new Date(),
-        },
+        OR: [
+          {
+            scheduled_refresh: {
+              lt: new Date(),
+            },
+          },
+          {
+            scheduled_refresh: null,
+            minute_period: { not: null },
+          },
+        ],
       },
     });
     return this.buildServiceDefinitionList(result);

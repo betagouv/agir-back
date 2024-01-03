@@ -149,6 +149,7 @@ describe('ServiceRepository', () => {
     await TestUtil.create('serviceDefinition', {
       id: 'linky',
       scheduled_refresh: null,
+      minute_period: null,
     });
     await TestUtil.create('serviceDefinition', {
       id: 'ecowatt',
@@ -160,7 +161,26 @@ describe('ServiceRepository', () => {
     });
 
     // WHEN
-    const servicesDBList = await serviceRepository.listeServiceDefinitionsToRefresh();
+    const servicesDBList =
+      await serviceRepository.listeServiceDefinitionsToRefresh();
+
+    // THEN
+    expect(servicesDBList).toHaveLength(1);
+    expect(servicesDBList[0].serviceDefinitionId).toEqual(
+      ScheduledService.ecowatt,
+    );
+  });
+  it('listeServiceDefinitionsToRefresh  : list service with no date but period', async () => {
+    // GIVEN
+    await TestUtil.create('serviceDefinition', {
+      id: 'ecowatt',
+      scheduled_refresh: null,
+      minute_period: 20,
+    });
+
+    // WHEN
+    const servicesDBList =
+      await serviceRepository.listeServiceDefinitionsToRefresh();
 
     // THEN
     expect(servicesDBList).toHaveLength(1);
