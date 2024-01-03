@@ -183,6 +183,8 @@ describe('/api/incoming/cms (API test)', () => {
     expect(interDefDB[0].codes_postaux).toStrictEqual(['91120', '75002']);
     expect(interDefDB[0].content_id).toEqual('123');
     expect(interDefDB[0].score.toNumber()).toEqual(0.5);
+    expect(interDefDB[0].tags).toContain('A');
+    expect(interDefDB[0].tags).toContain('B');
   });
   it('POST /api/incoming/cms - create a new article with score 0.7 if rubriques contains Noel', async () => {
     // GIVEN

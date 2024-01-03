@@ -16,6 +16,7 @@ import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
 import { CMSModel } from '../infrastructure/api/types/cms/CMSModels';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
+import { CMSWebhookRubriqueAPI } from 'src/infrastructure/api/types/cms/CMSWebhookEntryAPI';
 
 @Injectable()
 export class InteractionsDefinitionUsecase {
@@ -136,7 +137,7 @@ export class InteractionsDefinitionUsecase {
         ? CMSThematiqueAPI.getThematiqueList(cmsWebhookAPI.entry.thematiques)
         : [],
 
-      tags: [],
+      tags: this.getTagsFromRubriques(cmsWebhookAPI.entry.rubriques),
       duree: cmsWebhookAPI.entry.duree,
       frequence: cmsWebhookAPI.entry.frequence,
       image_url: cmsWebhookAPI.entry.imageUrl
@@ -177,6 +178,11 @@ export class InteractionsDefinitionUsecase {
     return new InteractionDefinition(interactionDef);
   }
 
+  private static getTagsFromRubriques(
+    rubriques: CMSWebhookRubriqueAPI[],
+  ): string[] {
+    return rubriques.map((rubrique) => rubrique.titre);
+  }
   private duplicateInteractionForEachUtilisateur(
     interaction: Interaction,
     user_ids: Record<'id', string>[],
