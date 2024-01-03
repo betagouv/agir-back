@@ -21,7 +21,7 @@ const services = {
       'https://www.maison-travaux.fr/wp-content/uploads/sites/8/2022/10/multiprise-electricite-incendie-dangers.png',
     is_url_externe: true,
     is_local: false,
-    thematiques: ['climat', 'logement'],
+    thematiques: ['logement'],
     description: 'Votre suivi consommation, sans rien faire',
     sous_description: `Surveillez en un click l'évolution quotidienne de votre consommation électrique, comprenez vos habitudes, chassez toutes les pertes inutiles !!`,
     en_construction: true,
