@@ -11,7 +11,7 @@ import { CMSController } from './infrastructure/api/incoming/cms.controller';
 import { UtilisateurUsecase } from './usecase/utilisateur.usecase';
 import { BilanUsecase } from './usecase/bilan.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
-import { InteractionsDefinitionUsecase } from './usecase/cms.usecase';
+import { CMSUsecase } from './usecase/cms.usecase';
 
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur/utilisateur.repository';
 import { BadgeRepository } from './infrastructure/repository/badge.repository';
@@ -69,6 +69,7 @@ import { AdminController } from './infrastructure/api/admin.controller';
 import { QuestionsKYCController } from './infrastructure/api/questionKYC.controller';
 import { QuestionKYCRepository } from './infrastructure/repository/questionKYC.repository';
 import { QuestionKYCUsecase } from './usecase/questionKYC.usecase';
+import { ArticleRepository } from './infrastructure/repository/article.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -132,7 +133,7 @@ function getControllers(): any[] {
     InteractionsUsecase,
     SuiviUsecase,
     QuestionNGCUsecase,
-    InteractionsDefinitionUsecase,
+    CMSUsecase,
     EmailSender,
     OnboardingUsecase,
     CommuneRepository,
@@ -155,6 +156,7 @@ function getControllers(): any[] {
     LinkyRepository,
     QuestionKYCRepository,
     QuestionKYCUsecase,
+    ArticleRepository,
   ],
 })
 export class AppModule {}

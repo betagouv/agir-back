@@ -6,6 +6,10 @@ export class CMSWebhookRubriqueAPI {
   @ApiProperty() id: number;
   @ApiProperty() titre: string;
 }
+export class CMSWebhookPartenaireAPI {
+  @ApiProperty() id: number;
+  @ApiProperty() nom: string;
+}
 export class CMSWebhookEntryAPI {
   @ApiProperty() id: number;
   @ApiProperty() titre: string;
@@ -16,7 +20,10 @@ export class CMSWebhookEntryAPI {
   thematiques: CMSThematiqueAPI[];
   @ApiProperty({ type: [CMSWebhookRubriqueAPI] })
   rubriques: CMSWebhookRubriqueAPI[];
+  @ApiProperty({ type: CMSWebhookPartenaireAPI })
+  partenaire: CMSWebhookPartenaireAPI;
   @ApiProperty() duree: string;
+  @ApiProperty() source: string;
   @ApiProperty() frequence: string;
   @ApiProperty({ type: CMSWebhookImageURLAPI }) imageUrl: CMSWebhookImageURLAPI;
   @ApiProperty() difficulty: number;

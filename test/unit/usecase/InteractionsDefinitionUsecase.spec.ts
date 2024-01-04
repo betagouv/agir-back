@@ -1,5 +1,5 @@
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
-import { InteractionsDefinitionUsecase } from '../../../src/usecase/cms.usecase';
+import { CMSUsecase } from '../../../src/usecase/cms.usecase';
 import { TestUtil } from '../../../test/TestUtil';
 import { CMSWebhookAPI } from '../../../src/infrastructure/api/types/cms/CMSWebhookAPI';
 import { CMSModel } from '../../../src/infrastructure/api/types/cms/CMSModels';
@@ -12,7 +12,7 @@ describe('InteractionDefinitionUsecase', () => {
 
     // WHEN
     const result =
-      InteractionsDefinitionUsecase.buildInteractionDefFromCMSData(cms_data);
+      CMSUsecase.buildInteractionDefFromCMSData(cms_data);
 
     // THEN
     expect(result.type).toEqual(InteractionType.article);
@@ -24,7 +24,7 @@ describe('InteractionDefinitionUsecase', () => {
 
     // WHEN
     try {
-      InteractionsDefinitionUsecase.buildInteractionDefFromCMSData(cms_data);
+      CMSUsecase.buildInteractionDefFromCMSData(cms_data);
       fail();
     } catch (error) {
       // THEN

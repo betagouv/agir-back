@@ -16,12 +16,15 @@ import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
 import { CMSModel } from '../infrastructure/api/types/cms/CMSModels';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
-import { CMSWebhookRubriqueAPI } from 'src/infrastructure/api/types/cms/CMSWebhookEntryAPI';
+import { CMSWebhookRubriqueAPI } from '../../src/infrastructure/api/types/cms/CMSWebhookEntryAPI';
+import { Article } from '../../src/domain/article';
+import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 
 @Injectable()
-export class InteractionsDefinitionUsecase {
+export class CMSUsecase {
   constructor(
     private interactionDefinitionRepository: InteractionDefinitionRepository,
+    private articleRepository: ArticleRepository,
     private thematiqueRepository: ThematiqueRepository,
     private interactionRepository: InteractionRepository,
     private utilisateurRepository: UtilisateurRepository,
@@ -73,8 +76,15 @@ export class InteractionsDefinitionUsecase {
   async createOrUpdateContentInteraction(cmsWebhookAPI: CMSWebhookAPI) {
     if (cmsWebhookAPI.entry.publishedAt === null) return;
 
+    // NEW MODEL
+    if (cmsWebhookAPI.model === CMSModel.article) {
+      await this.articleRepository.upsert(
+        CMSUsecase.buildArticleFromCMSData(cmsWebhookAPI),
+      );
+    }
+
     let interactionDef =
-      InteractionsDefinitionUsecase.buildInteractionDefFromCMSData(
+      CMSUsecase.buildInteractionDefFromCMSData(
         cmsWebhookAPI,
       );
 
@@ -137,7 +147,7 @@ export class InteractionsDefinitionUsecase {
         ? CMSThematiqueAPI.getThematiqueList(cmsWebhookAPI.entry.thematiques)
         : [],
 
-      tags: this.getTagsFromRubriques(cmsWebhookAPI.entry.rubriques),
+      tags: this.getTitresFromRubriques(cmsWebhookAPI.entry.rubriques),
       duree: cmsWebhookAPI.entry.duree,
       frequence: cmsWebhookAPI.entry.frequence,
       image_url: cmsWebhookAPI.entry.imageUrl
@@ -178,10 +188,49 @@ export class InteractionsDefinitionUsecase {
     return new InteractionDefinition(interactionDef);
   }
 
-  private static getTagsFromRubriques(
+  static buildArticleFromCMSData(cmsWebhookAPI: CMSWebhookAPI): Article {
+    return {
+      content_id: cmsWebhookAPI.entry.id.toString(),
+      titre: cmsWebhookAPI.entry.titre,
+      soustitre: cmsWebhookAPI.entry.sousTitre,
+      source: cmsWebhookAPI.entry.source,
+      image_url: cmsWebhookAPI.entry.imageUrl
+        ? cmsWebhookAPI.entry.imageUrl.formats.thumbnail.url
+        : null,
+      partenaire: cmsWebhookAPI.entry.partenaire.nom,
+      rubrique_ids: this.getIdsFromRubriques(cmsWebhookAPI.entry.rubriques),
+      rubrique_labels: this.getTitresFromRubriques(
+        cmsWebhookAPI.entry.rubriques,
+      ),
+      codes_postaux: cmsWebhookAPI.entry.codes_postaux
+        ? cmsWebhookAPI.entry.codes_postaux.split(',')
+        : undefined,
+      duree: cmsWebhookAPI.entry.duree,
+      frequence: cmsWebhookAPI.entry.frequence,
+      difficulty: cmsWebhookAPI.entry.difficulty
+        ? cmsWebhookAPI.entry.difficulty
+        : 1,
+      points: cmsWebhookAPI.entry.points ? cmsWebhookAPI.entry.points : 0,
+      thematique_gamification: cmsWebhookAPI.entry.thematique_gamification
+        ? CMSThematiqueAPI.getThematique(
+            cmsWebhookAPI.entry.thematique_gamification,
+          )
+        : Thematique.climat,
+      thematiques: cmsWebhookAPI.entry.thematiques
+        ? CMSThematiqueAPI.getThematiqueList(cmsWebhookAPI.entry.thematiques)
+        : [],
+    };
+  }
+
+  private static getTitresFromRubriques(
     rubriques: CMSWebhookRubriqueAPI[],
   ): string[] {
     return rubriques.map((rubrique) => rubrique.titre);
+  }
+  private static getIdsFromRubriques(
+    rubriques: CMSWebhookRubriqueAPI[],
+  ): string[] {
+    return rubriques.map((rubrique) => rubrique.id.toString());
   }
   private duplicateInteractionForEachUtilisateur(
     interaction: Interaction,

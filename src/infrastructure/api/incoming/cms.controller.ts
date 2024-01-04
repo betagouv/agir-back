@@ -7,14 +7,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { InteractionsDefinitionUsecase } from '../../../usecase/cms.usecase';
+import { CMSUsecase } from '../../../usecase/cms.usecase';
 import { CMSWebhookAPI } from '../types/cms/CMSWebhookAPI';
 
 @Controller()
 @ApiTags('Incoming Data')
 export class CMSController {
   constructor(
-    private readonly interactionsDefinitionUsecase: InteractionsDefinitionUsecase,
+    private readonly interactionsDefinitionUsecase: CMSUsecase,
   ) {}
   @ApiBody({
     schema: {

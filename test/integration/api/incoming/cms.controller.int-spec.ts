@@ -20,11 +20,17 @@ describe('/api/incoming/cms (API test)', () => {
         { id: 1, titre: 'A' },
         { id: 2, titre: 'B' },
       ],
+      partenaire: {
+        id: 1,
+        nom: 'Angers Loire Métropole',
+        lien: 'https://www.angersloiremetropole.fr/',
+      },
+      source: 'La source',
       duree: 'pas trop long',
       frequence: 'souvent',
       imageUrl: {
         formats: {
-          thumbnail: { url: 'https://' },
+          thumbnail: { url: 'https://haha' },
         },
       },
       difficulty: 3,
@@ -49,6 +55,12 @@ describe('/api/incoming/cms (API test)', () => {
         { id: 1, titre: 'A' },
         { id: 2, titre: 'Ceci est Noël' },
       ],
+      partenaire: {
+        id: 1,
+        nom: 'Angers Loire Métropole',
+        lien: 'https://www.angersloiremetropole.fr/',
+      },
+      source: 'La source',
       duree: 'pas trop long',
       frequence: 'souvent',
       imageUrl: {
@@ -177,7 +189,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(interDefDB[0].thematiques).toStrictEqual(['alimentation', 'climat']);
     expect(interDefDB[0].duree).toEqual('pas trop long');
     expect(interDefDB[0].frequence).toEqual('souvent');
-    expect(interDefDB[0].image_url).toEqual('https://');
+    expect(interDefDB[0].image_url).toEqual('https://haha');
     expect(interDefDB[0].difficulty).toEqual(3);
     expect(interDefDB[0].points).toEqual(20);
     expect(interDefDB[0].codes_postaux).toStrictEqual(['91120', '75002']);
@@ -185,6 +197,35 @@ describe('/api/incoming/cms (API test)', () => {
     expect(interDefDB[0].score.toNumber()).toEqual(0.5);
     expect(interDefDB[0].tags).toContain('A');
     expect(interDefDB[0].tags).toContain('B');
+  });
+  it('POST /api/incoming/cms - create a new article in article table', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_ARTICLE,
+    );
+
+    // THEN
+    const articles = await TestUtil.prisma.article.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(articles).toHaveLength(1);
+    expect(articles[0].titre).toEqual('titre');
+    expect(articles[0].soustitre).toEqual('soustitre 222');
+    expect(articles[0].thematique_gamification).toEqual('alimentation');
+    expect(articles[0].thematiques).toStrictEqual(['alimentation', 'climat']);
+    expect(articles[0].duree).toEqual('pas trop long');
+    expect(articles[0].frequence).toEqual('souvent');
+    expect(articles[0].image_url).toEqual('https://haha');
+    expect(articles[0].difficulty).toEqual(3);
+    expect(articles[0].points).toEqual(20);
+    expect(articles[0].source).toEqual('La source');
+    expect(articles[0].codes_postaux).toStrictEqual(['91120', '75002']);
+    expect(articles[0].content_id).toEqual('123');
+    expect(articles[0].partenaire).toEqual('Angers Loire Métropole');
+    expect(articles[0].rubrique_ids).toEqual(['1', '2']);
+    expect(articles[0].rubrique_labels).toEqual(['A', 'B']);
   });
   it('POST /api/incoming/cms - create a new article with score 0.7 if rubriques contains Noel', async () => {
     // GIVEN
