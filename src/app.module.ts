@@ -82,7 +82,7 @@ function getControllers(): any[] {
     InteractionsController,
     SuiviController,
     SuiviDashboardController,
-    QuestionsNGCController,
+    //QuestionsNGCController,
     CMSController,
     CommunesController,
     ServiceController,

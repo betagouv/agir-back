@@ -1,6 +1,6 @@
 import { TestUtil } from '../../TestUtil';
 
-describe('/utilisateurs/id/questionsNGC (API test)', () => {
+describe.skip('/utilisateurs/id/questionsNGC (API test)', () => {
   beforeAll(async () => {
     await TestUtil.appinit();
     await TestUtil.generateAuthorizationToken('utilisateur-id');

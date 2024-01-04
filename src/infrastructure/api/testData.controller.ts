@@ -16,7 +16,6 @@ import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 import { Thematique } from '../../../src/domain/thematique';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 import { InteractionRepository } from '../repository/interaction.repository';
-import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
 import { OnboardingUsecase } from '../../../src/usecase/onboarding.usecase';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
 const _aides = require('../../../test_data/_aides');
@@ -27,7 +26,6 @@ const suivis_transport = require('../../../test_data/evenements/suivis_transport
 const empreintes_utilisateur = require('../../../test_data/evenements/bilans');
 const badges_liste = require('../../../test_data/evenements/badges');
 import axios from 'axios';
-import { CMSModel } from './types/cms/CMSModels';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { CMSThematiqueAPI } from './types/cms/CMSThematiqueAPI';
 

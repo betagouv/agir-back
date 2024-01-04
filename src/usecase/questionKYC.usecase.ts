@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { QuestionKYCRepository } from '../../src/infrastructure/repository/questionKYC.repository';
-import { QuestionKYC } from '../../src/domain/utilisateur/questionsKYC';
+import { QuestionKYC } from '../domain/kyc/questionsKYC';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 
 @Injectable()
@@ -23,7 +23,7 @@ export class QuestionKYCUsecase {
   async updateResponse(
     utilisateurId: string,
     questionId,
-    reponse: string,
+    reponse: string[],
   ): Promise<void> {
     const collection = await this.questionKYCRepository.getAll(utilisateurId);
     collection.updateQuestion(questionId, reponse);

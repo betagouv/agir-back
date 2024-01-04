@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CollectionQuestionsKYC } from '../../../src/domain/utilisateur/questionsKYC';
+import { CollectionQuestionsKYC } from '../../domain/kyc/questionsKYC';
 
 @Injectable()
 export class QuestionKYCRepository {

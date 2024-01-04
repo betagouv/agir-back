@@ -12,6 +12,10 @@ import { Impact } from '../src/domain/utilisateur/onboarding/onboarding';
 const request = require('supertest');
 import { JwtService } from '@nestjs/jwt';
 import { ParcoursTodo } from '../src/domain/todo/parcoursTodo';
+import {
+  TypeReponseQuestionKYC,
+  CategorieQuestionKYC,
+} from '../src/domain/kyc/questionsKYC';
 
 export class TestUtil {
   constructor() {}
@@ -155,7 +159,20 @@ export class TestUtil {
       utilisateurId: 'utilisateur-id',
       data: {
         liste_questions: [
-          { id: '1', question: 'whats up ?', reponse: 'all good' },
+          {
+            id: '2',
+            question: `Quel est votre sujet principal d'intéret ?`,
+            type: TypeReponseQuestionKYC.choix_multiple,
+            is_NGC: false,
+            categorie: CategorieQuestionKYC.service,
+            points: 10,
+            reponse: ['Le climat', 'Mon logement'],
+            reponses_possibles: [
+              'Le climat',
+              'Mon logement',
+              'Ce que je mange',
+            ],
+          },
         ],
       },
       ...override,

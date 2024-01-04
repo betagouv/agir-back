@@ -739,8 +739,6 @@ describe('TODO list (API test)', () => {
     const dbUser = await utilisateurRepository.findUtilisateurById(
       'utilisateur-id',
     );
-    console.log(dbUser.parcours_todo);
-    console.log(dbUser.parcours_todo.getTodoByNumero(4));
     expect(dbUser.parcours_todo.getTodoByNumero(4).done).toHaveLength(1);
     expect(dbUser.parcours_todo.getTodoByNumero(4).done[0].titre).toEqual(
       'Installer "Fruits et légumes de saison"',
