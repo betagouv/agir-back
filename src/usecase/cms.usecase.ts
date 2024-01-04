@@ -206,7 +206,7 @@ export class CMSUsecase {
       image_url: cmsWebhookAPI.entry.imageUrl
         ? cmsWebhookAPI.entry.imageUrl.formats.thumbnail.url
         : null,
-      partenaire: cmsWebhookAPI.entry.partenaire.nom,
+      partenaire: cmsWebhookAPI.entry.partenaire ? cmsWebhookAPI.entry.partenaire.nom : null,
       rubrique_ids: this.getIdsFromRubriques(cmsWebhookAPI.entry.rubriques),
       rubrique_labels: this.getTitresFromRubriques(
         cmsWebhookAPI.entry.rubriques,
