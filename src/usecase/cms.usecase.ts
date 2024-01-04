@@ -19,12 +19,15 @@ import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { CMSWebhookRubriqueAPI } from '../../src/infrastructure/api/types/cms/CMSWebhookEntryAPI';
 import { Article } from '../../src/domain/article';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
+import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
+import { Quizz } from '../../src/domain/quizz/quizz';
 
 @Injectable()
 export class CMSUsecase {
   constructor(
     private interactionDefinitionRepository: InteractionDefinitionRepository,
     private articleRepository: ArticleRepository,
+    private quizzRepository: QuizzRepository,
     private thematiqueRepository: ThematiqueRepository,
     private interactionRepository: InteractionRepository,
     private utilisateurRepository: UtilisateurRepository,
@@ -79,14 +82,18 @@ export class CMSUsecase {
     // NEW MODEL
     if (cmsWebhookAPI.model === CMSModel.article) {
       await this.articleRepository.upsert(
-        CMSUsecase.buildArticleFromCMSData(cmsWebhookAPI),
+        CMSUsecase.buildArticleOrQuizzFromCMSData(cmsWebhookAPI),
+      );
+    }
+    // NEW MODEL
+    if (cmsWebhookAPI.model === CMSModel.quizz) {
+      await this.quizzRepository.upsert(
+        CMSUsecase.buildArticleOrQuizzFromCMSData(cmsWebhookAPI),
       );
     }
 
     let interactionDef =
-      CMSUsecase.buildInteractionDefFromCMSData(
-        cmsWebhookAPI,
-      );
+      CMSUsecase.buildInteractionDefFromCMSData(cmsWebhookAPI);
 
     await this.interactionDefinitionRepository.createOrUpdateBasedOnContentIdAndType(
       interactionDef,
@@ -188,7 +195,9 @@ export class CMSUsecase {
     return new InteractionDefinition(interactionDef);
   }
 
-  static buildArticleFromCMSData(cmsWebhookAPI: CMSWebhookAPI): Article {
+  static buildArticleOrQuizzFromCMSData(
+    cmsWebhookAPI: CMSWebhookAPI,
+  ): Article | Quizz {
     return {
       content_id: cmsWebhookAPI.entry.id.toString(),
       titre: cmsWebhookAPI.entry.titre,
@@ -225,12 +234,18 @@ export class CMSUsecase {
   private static getTitresFromRubriques(
     rubriques: CMSWebhookRubriqueAPI[],
   ): string[] {
-    return rubriques.map((rubrique) => rubrique.titre);
+    if (rubriques) {
+      return rubriques.map((rubrique) => rubrique.titre);
+    }
+    return [];
   }
   private static getIdsFromRubriques(
     rubriques: CMSWebhookRubriqueAPI[],
   ): string[] {
-    return rubriques.map((rubrique) => rubrique.id.toString());
+    if (rubriques) {
+      return rubriques.map((rubrique) => rubrique.id.toString());
+    }
+    return [];
   }
   private duplicateInteractionForEachUtilisateur(
     interaction: Interaction,

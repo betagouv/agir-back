@@ -95,6 +95,7 @@ export class TestUtil {
     await this.prisma.thematique.deleteMany();
     await this.prisma.linky.deleteMany();
     await this.prisma.article.deleteMany();
+    await this.prisma.quizz.deleteMany();
   }
 
   static getDate(date: string) {
@@ -200,6 +201,26 @@ export class TestUtil {
   }
 
   static articleData(override?) {
+    return {
+      content_id: '1',
+      titre: 'titre',
+      soustitre: 'sousTitre',
+      source: 'ADEME',
+      image_url: 'https://',
+      partenaire: 'Angers',
+      rubrique_ids: ['3', '4'],
+      rubrique_labels: ['r3', 'r4'],
+      codes_postaux: ['91120'],
+      duree: 'pas long',
+      frequence: 'souvent',
+      difficulty: 1,
+      points: 10,
+      thematique_gamification: Thematique.climat,
+      thematiques: [Thematique.climat, Thematique.logement],
+      ...override,
+    };
+  }
+  static quizzData(override?) {
     return {
       content_id: '1',
       titre: 'titre',

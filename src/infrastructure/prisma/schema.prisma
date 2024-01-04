@@ -158,6 +158,26 @@ model Article {
   updated_at              DateTime @updatedAt @db.Timestamptz(3)
 }
 
+model Quizz {
+  content_id              String   @id
+  titre                   String
+  soustitre               String?
+  source                  String?
+  image_url               String?
+  partenaire              String?
+  rubrique_ids            String[] @default([])
+  rubrique_labels         String[] @default([])
+  codes_postaux           String[] @default([])
+  duree                   String?
+  frequence               String?
+  difficulty              Int      @default(1)
+  points                  Int      @default(0)
+  thematique_gamification String?
+  thematiques             String[] @default([])
+  created_at              DateTime @default(now()) @db.Timestamptz(3)
+  updated_at              DateTime @updatedAt @db.Timestamptz(3)
+}
+
 model Empreinte {
   id            String       @id
   initial       Boolean      @default(true)

@@ -70,6 +70,7 @@ import { QuestionsKYCController } from './infrastructure/api/questionKYC.control
 import { QuestionKYCRepository } from './infrastructure/repository/questionKYC.repository';
 import { QuestionKYCUsecase } from './usecase/questionKYC.usecase';
 import { ArticleRepository } from './infrastructure/repository/article.repository';
+import { QuizzRepository } from './infrastructure/repository/quizz.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -157,6 +158,7 @@ function getControllers(): any[] {
     QuestionKYCRepository,
     QuestionKYCUsecase,
     ArticleRepository,
+    QuizzRepository,
   ],
 })
 export class AppModule {}
