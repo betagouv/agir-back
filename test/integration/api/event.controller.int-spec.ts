@@ -298,13 +298,22 @@ describe('EVENT (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
+    const dbUtilisateur = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
     const dbInter = await TestUtil.prisma.interaction.findUnique({
       where: { id: 'interaction-id' },
     });
-    expect(dbUtilisateur.gamification['points']).toStrictEqual(30);
+    expect(dbUtilisateur.gamification.points).toStrictEqual(30);
+    expect(
+      dbUtilisateur.history.getArticleHistoryById('quizz-id').points_en_poche,
+    ).toStrictEqual(true);
+    expect(
+      dbUtilisateur.history
+        .getArticleHistoryById('quizz-id')
+        .read_date.getTime(),
+    ).toBeGreaterThan(Date.now() - 100);
+
     expect(dbInter.points_en_poche).toStrictEqual(true);
     expect(dbInter.done).toStrictEqual(true);
   });
@@ -327,15 +336,21 @@ describe('EVENT (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
+    const dbUtilisateur = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
     const dbInter = await TestUtil.prisma.interaction.findUnique({
       where: { id: 'interaction-id' },
     });
-    expect(dbUtilisateur.gamification['points']).toStrictEqual(30);
+    expect(dbUtilisateur.gamification.points).toStrictEqual(30);
     expect(dbInter.points_en_poche).toStrictEqual(true);
     expect(dbInter.done).toStrictEqual(true);
+    expect(
+      dbUtilisateur.history.getArticleHistoryById('123').points_en_poche,
+    ).toStrictEqual(true);
+    expect(
+      dbUtilisateur.history.getArticleHistoryById('123').read_date.getTime(),
+    ).toBeGreaterThan(Date.now() - 100);
   });
   it('POST /utilisateurs/id/events - ajoute pas deux fois points pour article lu', async () => {
     // GIVEN
@@ -359,10 +374,10 @@ describe('EVENT (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
-    expect(dbUtilisateur.gamification['points']).toStrictEqual(30);
+    const dbUtilisateur = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(dbUtilisateur.gamification.points).toStrictEqual(30);
   });
   it('POST /utilisateurs/id/events - supprime une celebration', async () => {
     // GIVEN
@@ -427,7 +442,7 @@ describe('EVENT (API test)', () => {
     });
     expect(dbInteraction.like_level).toEqual(3);
   });
-  it('POST /utilisateurs/id/events - like event set la valeur du like sur une interaction par type et content_id', async () => {
+  it('POST /utilisateurs/id/events - like event set la valeur du like sur une interaction par type et content_id && history', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
@@ -450,5 +465,10 @@ describe('EVENT (API test)', () => {
       where: { id: 'interaction-id' },
     });
     expect(dbInteraction.like_level).toEqual(3);
+    expect(dbInteraction.like_level).toEqual(3);
+    const userDB = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(userDB.history.getArticleHistoryById('123').like_level).toEqual(3);
   });
 });

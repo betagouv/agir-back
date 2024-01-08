@@ -31,6 +31,22 @@ const CATALOGUE_QUESTIONS: QuestionKYCData[] = [
     points: 10,
     reponses_possibles: ['Oui', 'Non', 'A voir'],
   },
+  {
+    id: '4',
+    question: `Quel est ton age`,
+    type: TypeReponseQuestionKYC.entier,
+    is_NGC: false,
+    categorie: CategorieQuestionKYC.service,
+    points: 10,
+  },
+  {
+    id: '5',
+    question: `Combient coute un malabar`,
+    type: TypeReponseQuestionKYC.decimal,
+    is_NGC: false,
+    categorie: CategorieQuestionKYC.service,
+    points: 10,
+  },
 ];
 
 module.exports = CATALOGUE_QUESTIONS;

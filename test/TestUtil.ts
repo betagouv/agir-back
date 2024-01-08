@@ -311,7 +311,7 @@ export class TestUtil {
             content_id: '1',
             like_level: 2,
             points_en_poche: true,
-            read_date: new Date(123),
+            read_date: new Date(123).toISOString(),
           },
         ],
       },

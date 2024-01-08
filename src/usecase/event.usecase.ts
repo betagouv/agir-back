@@ -56,6 +56,15 @@ export class EventUsecase {
     ctx.interaction.like_level = event.number_value;
 
     await this.interactionRepository.updateInteraction(ctx.interaction);
+
+    // NEW MODEL
+    if (event.content_type === InteractionType.article) {
+      ctx.utilisateur.history.likerArticle(
+        event.content_id,
+        event.number_value,
+      );
+      await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
+    }
   }
 
   private async processAccessRecommandations(utilisateurId: string) {
@@ -144,7 +153,17 @@ export class EventUsecase {
     if (!ctx.interaction.points_en_poche) {
       this.addPointsToUser(ctx.utilisateur, ctx.interaction.points);
       ctx.interaction.points_en_poche = true;
+
+      // NEW MODEL
+      ctx.utilisateur.history.metPointsArticleEnPoche(
+        ctx.interaction.content_id,
+      );
     }
+
+    // NEW MODEL
+    ctx.utilisateur.history.articleLu(
+      event.content_id || ctx.interaction.content_id,
+    );
 
     this.updateUserTodo(ctx);
     await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);

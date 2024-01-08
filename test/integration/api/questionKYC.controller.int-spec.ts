@@ -32,7 +32,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(3);
+    expect(response.body.length).toBe(5);
   });
   it('GET /utilisateurs/id/questionsKYC - liste 3 questions dont une remplie', async () => {
     // GIVEN
@@ -46,7 +46,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(3);
+    expect(response.body.length).toBe(5);
     expect(response.body[1].reponse).toStrictEqual([
       'Le climat',
       'Mon logement',

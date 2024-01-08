@@ -431,7 +431,18 @@ describe('UtilisateurRepository', () => {
     expect(user.onboardingResult).toEqual(rawUser.onboardingResult);
     expect(user.parcours_todo).toEqual(rawUser.todo);
     expect(user.gamification).toEqual(rawUser.gamification);
-    expect(user.history).toEqual(rawUser.history);
+    expect(user.history.article_interactions[0].content_id).toEqual(
+      rawUser.history['article_interactions'][0].content_id,
+    );
+    expect(user.history.article_interactions[0].like_level).toEqual(
+      rawUser.history['article_interactions'][0].like_level,
+    );
+    expect(user.history.article_interactions[0].points_en_poche).toEqual(
+      rawUser.history['article_interactions'][0].points_en_poche,
+    );
+    expect(
+      user.history.article_interactions[0].read_date.toISOString(),
+    ).toEqual(rawUser.history['article_interactions'][0].read_date);
     expect(user.unlocked_features).toEqual(rawUser.unlocked_features);
     expect(user.quizzProfile.getData()).toEqual(rawUser.quizzLevels);
     expect(user.version).toEqual(rawUser.version);
@@ -485,7 +496,18 @@ describe('UtilisateurRepository', () => {
     expect(userReadBack.parcours_todo).toEqual(rawUser.todo);
     expect(userReadBack.gamification).toEqual(rawUser.gamification);
     expect(userReadBack.gamification).toEqual(rawUser.gamification);
-    expect(userReadBack.history).toEqual(rawUser.history);
+    expect(userReadBack.history.article_interactions[0].content_id).toEqual(
+      rawUser.history['article_interactions'][0].content_id,
+    );
+    expect(userReadBack.history.article_interactions[0].like_level).toEqual(
+      rawUser.history['article_interactions'][0].like_level,
+    );
+    expect(
+      userReadBack.history.article_interactions[0].points_en_poche,
+    ).toEqual(rawUser.history['article_interactions'][0].points_en_poche);
+    expect(
+      userReadBack.history.article_interactions[0].read_date.toISOString(),
+    ).toEqual(rawUser.history['article_interactions'][0].read_date);
     expect(userReadBack.version).toEqual(rawUser.version);
     expect(userReadBack.unlocked_features).toEqual(rawUser.unlocked_features);
     expect(userReadBack.quizzProfile.getData()).toEqual(rawUser.quizzLevels);

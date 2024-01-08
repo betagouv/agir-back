@@ -1,17 +1,21 @@
 import { ArticleHistory } from './articleHistory';
 
 export class History {
-  constructor(data?: History) {
-    if (!data) data = {};
+  constructor(data: History) {
+    this.article_interactions = [];
 
-    Object.assign(this, data);
-    if (data.article_interactions === undefined) {
-      this.article_interactions = [];
+    if (data.article_interactions) {
+      data.article_interactions.forEach((articleh) =>
+        this.article_interactions.push(new ArticleHistory(articleh)),
+      );
     }
   }
 
   article_interactions?: ArticleHistory[];
 
+  public static newHistory(): History {
+    return new History({});
+  }
   public getArticleHistoryById?(content_id: string) {
     return this.article_interactions.find(
       (article) => article.content_id === content_id,
@@ -26,7 +30,7 @@ export class History {
     article.read_date = new Date();
   }
 
-  public pointsArticleSontEnPoche?(content_id: string) {
+  public metPointsArticleEnPoche?(content_id: string) {
     let article = this.findOrCreateArticleById(content_id);
     article.points_en_poche = true;
   }
@@ -43,8 +47,7 @@ export class History {
     if (result) {
       return result;
     } else {
-      result = new ArticleHistory();
-      result.content_id = content_id;
+      result = new ArticleHistory({ content_id: content_id });
       this.article_interactions.push(result);
     }
     return result;

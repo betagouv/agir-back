@@ -1,0 +1,49 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "UNIT File",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": ["${fileBasenameNoExtension}"],
+      "console": "integratedTerminal",
+      "disableOptimisticBPs": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "UNIT All",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": [],
+      "console": "integratedTerminal",
+      "disableOptimisticBPs": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "INT File",
+      "envFile": "${workspaceFolder}/.env.test",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": [
+        "${fileBasenameNoExtension}",
+        "--config",
+        "./test/jest-int.json"
+      ],
+      "runtimeArgs": [],
+      "console": "integratedTerminal",
+      "disableOptimisticBPs": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "INT ALL",
+      "envFile": "${workspaceFolder}/.env.test",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": ["--config", "./test/jest-int.json", "--runInBand", "--bail"],
+      "runtimeArgs": [],
+      "console": "integratedTerminal",
+      "disableOptimisticBPs": true
+    }
+  ]
+}

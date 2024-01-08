@@ -1,6 +1,13 @@
 import { History } from '../../../../src/domain/history/history';
 
 describe('History', () => {
+  it('WHEN un vie historique ok', () => {
+    // WHEN
+    const history = History.newHistory();
+
+    // THEN
+    expect(history.nombreArticles()).toEqual(0);
+  });
   it('cree un historique ok', () => {
     // GIVEN
     const history = new History({
@@ -66,7 +73,7 @@ describe('History', () => {
     );
 
     // WHEN
-    history.pointsArticleSontEnPoche('1');
+    history.metPointsArticleEnPoche('1');
 
     // THEN
     const article = history.getArticleHistoryById('1');

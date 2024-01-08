@@ -189,7 +189,7 @@ export class OnboardingUsecase {
       parcours_todo: new ParcoursTodo(),
       gamification: Gamification.newDefaultGamification(),
       unlocked_features: new UnlockedFeatures(),
-      history: new History(),
+      history: History.newHistory(),
       code_departement: null,
       prm: null,
       version: Utilisateur.getCurrrentSystemUserVersion(),
