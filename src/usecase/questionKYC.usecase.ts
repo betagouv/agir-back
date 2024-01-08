@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { QuestionKYCRepository } from '../../src/infrastructure/repository/questionKYC.repository';
-import { QuestionKYC } from '../domain/kyc/collectionQuestionsKYC';
+import { QuestionKYC } from '../domain/kyc/questionQYC';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Utilisateur } from 'src/domain/utilisateur/utilisateur';
@@ -43,8 +43,6 @@ export class QuestionKYCUsecase {
       utilisateur.gamification.ajoutePoints(question.points);
 
       this.updateUserTodo(utilisateur, questionId);
-
-      console.log(utilisateur.parcours_todo);
 
       await this.utilisateurRepository.updateUtilisateur(utilisateur);
     }

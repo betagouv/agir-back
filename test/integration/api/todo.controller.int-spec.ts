@@ -9,7 +9,7 @@ import { EventType } from '../../../src/domain/utilisateur/utilisateurEvent';
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
-} from '../../../src/domain/kyc/collectionQuestionsKYC';
+} from '../../../src/domain/kyc/questionQYC';
 
 describe('TODO list (API test)', () => {
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);

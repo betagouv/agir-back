@@ -3,7 +3,7 @@ import {
   CategorieQuestionKYC,
   QuestionKYC,
   TypeReponseQuestionKYC,
-} from '../../../../domain/kyc/collectionQuestionsKYC';
+} from '../../../../domain/kyc/questionQYC';
 
 export class QuestionKYCAPI {
   @ApiProperty()

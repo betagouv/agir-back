@@ -2,7 +2,7 @@ import { UtilisateurRepository } from '../../../src/infrastructure/repository/ut
 import {
   CategorieQuestionKYC,
   TypeReponseQuestionKYC,
-} from '../../../src/domain/kyc/collectionQuestionsKYC';
+} from '../../../src/domain/kyc/questionQYC';
 import { QuestionKYCRepository } from '../../../src/infrastructure/repository/questionKYC.repository';
 import { TestUtil } from '../../TestUtil';
 
@@ -147,7 +147,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     );
     expect(userDB.gamification.points).toEqual(10);
   });
-  it.only('PUT /utilisateurs/id/questionsKYC/bad - erreur 404 ', async () => {
+  it('PUT /utilisateurs/id/questionsKYC/bad - erreur 404 ', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
 

@@ -1,8 +1,4 @@
-import { response } from 'express';
-import {
-  CollectionQuestionsKYC,
-  QuestionKYC,
-} from '../../../../src/domain/kyc/collectionQuestionsKYC';
+import { CollectionQuestionsKYC } from '../../../../src/domain/kyc/collectionQuestionsKYC';
 
 describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('constructeur OK', () => {

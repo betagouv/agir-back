@@ -160,7 +160,6 @@ export class OnboardingUsecase {
 
     const onboardingData = new Onboarding(utilisateurInput.onboardingData);
 
-    console.log(Utilisateur.getCurrrentSystemUserVersion());
     const utilisateurToCreate = new Utilisateur({
       id: undefined,
       code_postal: onboardingData.code_postal,
