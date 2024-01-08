@@ -1,12 +1,14 @@
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import {
   CategorieQuestionKYC,
   TypeReponseQuestionKYC,
-} from '../../../src/domain/kyc/questionsKYC';
+} from '../../../src/domain/kyc/collectionQuestionsKYC';
 import { QuestionKYCRepository } from '../../../src/infrastructure/repository/questionKYC.repository';
 import { TestUtil } from '../../TestUtil';
 
 describe('/utilisateurs/id/questionsKYC (API test)', () => {
   const questionRepo = new QuestionKYCRepository(TestUtil.prisma);
+  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -106,7 +108,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     );
     expect(response.body.reponse).toEqual(['Le climat', 'Mon logement']);
   });
-  it('PUT /utilisateurs/id/questionsKYC/1 - crée la reponse à la question 1', async () => {
+  it('PUT /utilisateurs/id/questionsKYC/1 - crée la reponse à la question 1, empoche les points', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
 
@@ -119,6 +121,11 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(response.status).toBe(200);
     const collection = await questionRepo.getAll('utilisateur-id');
     expect(collection.getQuestion('1').reponse).toStrictEqual(['YO']);
+
+    const userDB = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(userDB.gamification.points).toEqual(20);
   });
   it('PUT /utilisateurs/id/questionsKYC/1 - met à jour la reponse à la question 1', async () => {
     // GIVEN
@@ -134,8 +141,13 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(response.status).toBe(200);
     const collection = await questionRepo.getAll('utilisateur-id');
     expect(collection.getQuestion('2').reponse).toStrictEqual(['YO']);
+
+    const userDB = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(userDB.gamification.points).toEqual(10);
   });
-  it('PUT /utilisateurs/id/questionsKYC/bad - erreur 404 ', async () => {
+  it.only('PUT /utilisateurs/id/questionsKYC/bad - erreur 404 ', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
 

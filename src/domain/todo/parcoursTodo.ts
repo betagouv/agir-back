@@ -81,6 +81,18 @@ export class ParcoursTodo {
       }
     }
   }
+  public findTodoKYCElementByQuestionID?(content_id: string): {
+    element: TodoElement;
+    todo: Todo;
+  } {
+    for (let index = 0; index < this.liste_todo.length; index++) {
+      const current_todo = this.liste_todo[index];
+      const found = current_todo.findTodoKYCElementByQuestionID(content_id);
+      if (found) {
+        return { element: found, todo: current_todo };
+      }
+    }
+  }
   public findTodoElementByServiceId?(service_id: string): {
     element: TodoElement;
     todo: Todo;

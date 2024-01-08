@@ -100,6 +100,14 @@ export class Todo extends TodoData {
     );
   }
 
+  public findTodoKYCElementByQuestionID?(content_id: string): TodoElement {
+    return this.todo.find(
+      (element) =>
+        element.type === InteractionType.kyc &&
+        element.content_id === content_id,
+    );
+  }
+
   public findDoneElementById?(elementId: string): TodoElement {
     return this.done.find((element) => element.id === elementId);
   }

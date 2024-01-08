@@ -31,7 +31,7 @@ export class QuestionKYC extends QuestionKYCData {
   }
 }
 
-const CATALOGUE_QUESTIONS = require('./catalogue_questions');
+const CATALOGUE_QUESTIONS = require('./catalogueKYC');
 
 export class CollectionQuestionsKYC {
   constructor(data: CollectionQuestionsKYC) {
@@ -44,6 +44,9 @@ export class CollectionQuestionsKYC {
   }
   liste_questions: QuestionKYC[];
 
+  public static newCollectionQuestionsKYC(): CollectionQuestionsKYC {
+    return new CollectionQuestionsKYC(undefined);
+  }
   public getAllQuestions(): QuestionKYC[] {
     let result: QuestionKYC[] = [];
     CATALOGUE_QUESTIONS.forEach((element) => {
@@ -60,18 +63,28 @@ export class CollectionQuestionsKYC {
     if (catalogue_question) return new QuestionKYC(catalogue_question);
     return undefined;
   }
+
+  public isQuestionAnswered(id: string): boolean {
+    let answered_question = this.getAnsweredQuestion(id);
+    if (!answered_question) return false;
+    return !!answered_question.reponse;
+  }
+
   public updateQuestion(questionId: string, reponse: string[]) {
     let question = this.getAnsweredQuestion(questionId);
     if (question) {
       question.reponse = reponse;
     } else {
       let catalogue_question = this.getCatalogueQuestion(questionId);
-      if (catalogue_question) {
-        catalogue_question.reponse = reponse;
-        this.liste_questions.push(catalogue_question);
-      } else {
-        ApplicationError.throwQuestionInconnue(questionId);
-      }
+      catalogue_question.reponse = reponse;
+      this.liste_questions.push(catalogue_question);
+    }
+  }
+
+  public checkQuestionExistsOrThrowException(questionId: string) {
+    let catalogue_question = this.getCatalogueQuestion(questionId);
+    if (!catalogue_question) {
+      ApplicationError.throwQuestionInconnue(questionId);
     }
   }
 

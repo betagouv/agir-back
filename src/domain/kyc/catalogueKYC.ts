@@ -2,7 +2,7 @@ import {
   CategorieQuestionKYC,
   QuestionKYCData,
   TypeReponseQuestionKYC,
-} from './questionsKYC';
+} from './collectionQuestionsKYC';
 
 const CATALOGUE_QUESTIONS: QuestionKYCData[] = [
   {

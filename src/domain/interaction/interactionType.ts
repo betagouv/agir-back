@@ -8,4 +8,5 @@ export enum InteractionType {
   service = 'service',
   profile = 'profile',
   recommandations = 'recommandations',
+  kyc = 'kyc',
 }

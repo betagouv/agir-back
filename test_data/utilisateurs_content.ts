@@ -131,13 +131,13 @@ const utilisateurs = {
           todo: [
             {
               id: uuidv4(),
-              titre: 'Réussir 1 quiz Climat - très facile',
+              titre: 'Nous en dire plus sur vous',
               thematiques: [Thematique.climat],
               progression: { current: 0, target: 1 },
               sont_points_en_poche: false,
-              type: InteractionType.quizz,
-              level: DifficultyLevel.L1,
+              type: InteractionType.kyc,
               points: 20,
+              content_id: '1',
             },
           ],
         },

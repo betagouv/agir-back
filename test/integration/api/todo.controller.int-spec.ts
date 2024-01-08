@@ -2,14 +2,14 @@ import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 import { Thematique } from '../../../src/domain/thematique';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { TestUtil } from '../../TestUtil';
-import {
-  LiveService,
-  ScheduledService,
-} from '../../../src/domain/service/serviceDefinition';
+import { LiveService } from '../../../src/domain/service/serviceDefinition';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { EventType } from '../../../src/domain/utilisateur/utilisateurEvent';
-import { TodoCatalogue } from 'src/domain/todo/todoCatalogue';
+import {
+  TypeReponseQuestionKYC,
+  CategorieQuestionKYC,
+} from '../../../src/domain/kyc/collectionQuestionsKYC';
 
 describe('TODO list (API test)', () => {
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -923,6 +923,70 @@ describe('TODO list (API test)', () => {
     expect(dbUser.parcours_todo.getActiveTodo().todo).toHaveLength(1);
     expect(
       dbUser.parcours_todo.getActiveTodo().todo[0].progression.current,
+    ).toEqual(1);
+  });
+  it('POST KYC met à jour la todo si la question correspond', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      todo: {
+        liste_todo: [
+          {
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                id: '1234',
+                titre: 'repondre à cette question',
+                thematiques: [Thematique.logement],
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: InteractionType.kyc,
+                level: DifficultyLevel.ANY,
+                content_id: '2',
+                points: 10,
+              },
+            ],
+          },
+        ],
+        todo_active: 0,
+      },
+    });
+    await TestUtil.create('questionsKYC', {
+      utilisateurId: 'utilisateur-id',
+      data: {
+        liste_questions: [
+          {
+            id: '2',
+            question: `Quel est votre sujet principal d'intéret ?`,
+            type: TypeReponseQuestionKYC.choix_multiple,
+            is_NGC: false,
+            categorie: CategorieQuestionKYC.service,
+            points: 10,
+            reponses_possibles: [
+              'Le climat',
+              'Mon logement',
+              'Ce que je mange',
+            ],
+          },
+        ],
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/2',
+    ).send({ reponse: ['YO'] });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(dbUser.parcours_todo.getActiveTodo().todo).toHaveLength(0);
+    expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
+    expect(
+      dbUser.parcours_todo.getActiveTodo().done[0].progression.current,
     ).toEqual(1);
   });
   it('POST /utilisateurs/id/event aides valide un objecif aides', async () => {

@@ -15,7 +15,7 @@ import { ParcoursTodo } from '../src/domain/todo/parcoursTodo';
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
-} from '../src/domain/kyc/questionsKYC';
+} from '../src/domain/kyc/collectionQuestionsKYC';
 
 export class TestUtil {
   constructor() {}

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CollectionQuestionsKYC } from '../../domain/kyc/questionsKYC';
+import { CollectionQuestionsKYC } from '../../domain/kyc/collectionQuestionsKYC';
 
 @Injectable()
 export class QuestionKYCRepository {
@@ -15,9 +15,9 @@ export class QuestionKYCRepository {
     let reponse = await this.prisma.questionsKYC.findUnique({
       where: { utilisateurId },
     });
-    return new CollectionQuestionsKYC(
-      reponse === null ? null : (reponse.data as any),
-    );
+    return reponse === null
+      ? CollectionQuestionsKYC.newCollectionQuestionsKYC()
+      : new CollectionQuestionsKYC(reponse.data as any);
   }
 
   async update(
