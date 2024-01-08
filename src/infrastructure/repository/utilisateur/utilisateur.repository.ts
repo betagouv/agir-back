@@ -15,6 +15,7 @@ import { ApplicationError } from '../../../../src/infrastructure/applicationErro
 import { Gamification } from '../../../domain/gamification/gamification';
 import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
 import { UnlockedFeatures } from '../../../../src/domain/gamification/unlockedFeatures';
+import { History } from '../../../../src/domain/history/history';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -91,6 +92,7 @@ export class UtilisateurRepository {
       quizzLevels: utilisateur.quizzProfile.getData() as any,
       gamification: utilisateur.gamification as any,
       unlocked_features: utilisateur.unlocked_features as any,
+      history: utilisateur.history as any,
     };
     delete dataToUpdate.quizzProfile;
     delete dataToUpdate.parcours_todo;
@@ -141,6 +143,8 @@ export class UtilisateurRepository {
           todo: utilisateur.parcours_todo as any,
           gamification: utilisateur.gamification as any,
           unlocked_features: utilisateur.unlocked_features as any,
+          history: utilisateur.history as any,
+          version: utilisateur.version,
         },
       });
       return this.buildUtilisateurFromDB(user);
@@ -256,9 +260,11 @@ export class UtilisateurRepository {
         updated_at: user.updated_at,
         parcours_todo: new ParcoursTodo(user.todo as any),
         gamification: new Gamification(user.gamification as any),
+        history: new History(user.history as any),
         prm: user.prm,
         code_departement: user.code_departement,
         unlocked_features: new UnlockedFeatures(user.unlocked_features as any),
+        version: user.version,
       });
     }
     return null;

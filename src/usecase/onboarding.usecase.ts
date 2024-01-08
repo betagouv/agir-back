@@ -23,6 +23,7 @@ import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { Gamification } from '../domain/gamification/gamification';
 import { ParcoursTodo } from '../../src/domain/todo/parcoursTodo';
 import { UnlockedFeatures } from '../../src/domain/gamification/unlockedFeatures';
+import { History } from '../../src/domain/history/history';
 
 export type Phrase = {
   phrase: string;
@@ -148,13 +149,18 @@ export class OnboardingUsecase {
     this.checkInputToCreateUtilisateur(utilisateurInput);
 
     if (process.env.WHITE_LIST_ENABLED === 'true') {
-      if (!process.env.WHITE_LIST.includes(utilisateurInput.email)) {
+      if (
+        !process.env.WHITE_LIST.toLowerCase().includes(
+          utilisateurInput.email.toLowerCase(),
+        )
+      ) {
         ApplicationError.throwNotAuthorizedEmailError();
       }
     }
 
     const onboardingData = new Onboarding(utilisateurInput.onboardingData);
 
+    console.log(Utilisateur.getCurrrentSystemUserVersion());
     const utilisateurToCreate = new Utilisateur({
       id: undefined,
       code_postal: onboardingData.code_postal,
@@ -183,8 +189,10 @@ export class OnboardingUsecase {
       parcours_todo: new ParcoursTodo(),
       gamification: Gamification.newDefaultGamification(),
       unlocked_features: new UnlockedFeatures(),
+      history: new History(),
       code_departement: null,
       prm: null,
+      version: Utilisateur.getCurrrentSystemUserVersion(),
     });
 
     utilisateurToCreate.setNew6DigitCode();

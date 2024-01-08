@@ -62,20 +62,30 @@ const ONBOARDING_RES_1234 = {
 };
 
 describe('/utilisateurs - Onboarding - (API test)', () => {
+  const OLD_ENV = process.env;
+
   beforeAll(async () => {
     await TestUtil.appinit();
   });
 
   beforeEach(async () => {
+    jest.resetModules();
+    process.env = { ...OLD_ENV }; // Make a copy
     await TestUtil.deleteAll();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
   });
 
   afterAll(async () => {
+    process.env = OLD_ENV;
     await TestUtil.appclose();
   });
 
   it('POST /utilisateurs - create new utilisateur with given all data', async () => {
+    // GIVEN
+    process.env.USER_CURRENT_VERSION = '2';
+    process.env.WHITE_LIST_ENABLED = 'false';
+    process.env.WHITE_LIST = 'hahah';
+
     // WHEN
     const response = await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
@@ -107,8 +117,33 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(user.prevent_sendemail_before.getTime()).toBeLessThanOrEqual(
       Date.now(),
     );
+    expect(user.version).toEqual(2);
+  });
+  it('POST /utilisateurs - no user version defaults to 0', async () => {
+    // GIVEN
+    process.env.USER_CURRENT_VERSION = undefined;
+    process.env.WHITE_LIST_ENABLED = 'false';
+
+    // WHEN
+    const response = await TestUtil.getServer().post('/utilisateurs').send({
+      nom: 'WW',
+      prenom: 'Wojtek',
+      mot_de_passe: '#1234567890HAHA',
+      email: 'w@w.com',
+      onboardingData: ONBOARDING_1_2_3_4_DATA,
+    });
+    // THEN
+    const user = await TestUtil.prisma.utilisateur.findFirst({
+      where: { nom: 'WW' },
+    });
+    expect(response.status).toBe(201);
+    expect(user.version).toEqual(0);
   });
   it('POST /utilisateurs - returns error when not white listed email', async () => {
+    // GIVEN
+    process.env.WHITE_LIST_ENABLED = 'true';
+    process.env.WHITE_LIST = 'w@w.com';
+
     // WHEN
     const response = await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
@@ -127,7 +162,25 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     });
     expect(user).toBeNull();
   });
+  it('POST /utilisateurs - returns NO error when email match as case insensitive', async () => {
+    // GIVEN
+    process.env.WHITE_LIST_ENABLED = 'true';
+    process.env.WHITE_LIST = 'w@w.com';
+
+    // WHEN
+    const response = await TestUtil.getServer().post('/utilisateurs').send({
+      nom: 'WW',
+      prenom: 'Wojtek',
+      mot_de_passe: '#1234567890HAHA',
+      email: 'W@W.COM',
+      onboardingData: ONBOARDING_1_2_3_4_DATA,
+    });
+    // THEN
+    expect(response.status).toBe(201);
+  });
   it('POST /utilisateurs - bad password', async () => {
+    // GIVEN
+    process.env.WHITE_LIST_ENABLED = 'false';
     // WHEN
     const response = await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',

@@ -46,6 +46,7 @@ model Utilisateur {
   onboardingResult         Json               @default("{}")
   todo                     Json               @default("{}")
   gamification             Json               @default("{}")
+  history                  Json               @default("{}")
   empreintes               Empreinte[]
   interactions             Interaction[]
   suivis                   Suivi[]
@@ -70,6 +71,7 @@ model Utilisateur {
   prm                      String?
   code_departement         String?
   questionsKYC             QuestionsKYC[]
+  version                  Int                @default(0)
 }
 
 model Interaction {

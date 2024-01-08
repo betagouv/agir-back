@@ -575,6 +575,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       parcours_todo: null,
       gamification: null,
       unlocked_features: null,
+      history: null,
       parts: 0,
     });
     expect(userDB.failed_checkcode_count).toEqual(0);

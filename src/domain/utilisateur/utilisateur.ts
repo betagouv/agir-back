@@ -7,6 +7,7 @@ import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Gamification } from '../gamification/gamification';
 import { ParcoursTodo } from '../todo/parcoursTodo';
 import { UnlockedFeatures } from '../gamification/unlockedFeatures';
+import { History } from '../history/history';
 
 export class UtilisateurData {
   id: string;
@@ -38,7 +39,9 @@ export class UtilisateurData {
   prevent_sendemail_before: Date;
   parcours_todo: ParcoursTodo;
   gamification: Gamification;
+  history: History;
   unlocked_features: UnlockedFeatures;
+  version: number;
 }
 
 export class Utilisateur extends UtilisateurData {
@@ -87,5 +90,9 @@ export class Utilisateur extends UtilisateurData {
     if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
       ApplicationError.throwBaddEmailFormatError(email);
     }
+  }
+
+  public static getCurrrentSystemUserVersion(): number {
+    return Number.parseInt(process.env.USER_CURRENT_VERSION) || 0;
   }
 }

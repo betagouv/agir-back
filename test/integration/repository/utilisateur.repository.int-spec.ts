@@ -431,8 +431,10 @@ describe('UtilisateurRepository', () => {
     expect(user.onboardingResult).toEqual(rawUser.onboardingResult);
     expect(user.parcours_todo).toEqual(rawUser.todo);
     expect(user.gamification).toEqual(rawUser.gamification);
+    expect(user.history).toEqual(rawUser.history);
     expect(user.unlocked_features).toEqual(rawUser.unlocked_features);
     expect(user.quizzProfile.getData()).toEqual(rawUser.quizzLevels);
+    expect(user.version).toEqual(rawUser.version);
 
     // WHEN
     await utilisateurRepository.updateUtilisateur(user);
@@ -482,6 +484,9 @@ describe('UtilisateurRepository', () => {
     expect(userReadBack.onboardingResult).toEqual(rawUser.onboardingResult);
     expect(userReadBack.parcours_todo).toEqual(rawUser.todo);
     expect(userReadBack.gamification).toEqual(rawUser.gamification);
+    expect(userReadBack.gamification).toEqual(rawUser.gamification);
+    expect(userReadBack.history).toEqual(rawUser.history);
+    expect(userReadBack.version).toEqual(rawUser.version);
     expect(userReadBack.unlocked_features).toEqual(rawUser.unlocked_features);
     expect(userReadBack.quizzProfile.getData()).toEqual(rawUser.quizzLevels);
 

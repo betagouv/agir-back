@@ -284,6 +284,7 @@ export class TestUtil {
       prevent_checkcode_before: new Date(),
       sent_email_count: 0,
       prevent_sendemail_before: new Date(),
+      version: 2,
       todo: new ParcoursTodo(),
       gamification: {
         points: 10,
@@ -304,6 +305,16 @@ export class TestUtil {
         ],
       },
       unlocked_features: { unlocked_feature_list: ['aides'] },
+      history: {
+        article_interactions: [
+          {
+            content_id: '1',
+            like_level: 2,
+            points_en_poche: true,
+            read_date: new Date(123),
+          },
+        ],
+      },
       onboardingData: {
         transports: ['voiture', 'pied'],
         avion: 2,

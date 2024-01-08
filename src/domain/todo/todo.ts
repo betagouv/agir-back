@@ -1,7 +1,6 @@
 import { DifficultyLevel } from '../difficultyLevel';
 import { InteractionType } from '../interaction/interactionType';
 import { Thematique } from '../thematique';
-import { TodoCatalogue } from './todoCatalogue';
 
 export class TodoElementData {
   id: string;
