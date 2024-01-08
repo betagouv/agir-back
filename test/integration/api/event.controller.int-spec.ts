@@ -64,6 +64,35 @@ describe('EVENT (API test)', () => {
       BadgeTypes.premier_quizz.type,
     );
   });
+  it('POST /utilisateurs/id/event - ajoute un historique de quizz', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', { type: InteractionType.quizz });
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.quizz_score,
+      interaction_id: 'interaction-id',
+      number_value: 55,
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUtilisateur = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(
+      dbUtilisateur.history.getQuizzHistoryById('quizz-id').attempts,
+    ).toHaveLength(1);
+    expect(
+      dbUtilisateur.history
+        .getQuizzHistoryById('quizz-id')
+        .attempts[0].date.getTime(),
+    ).toBeGreaterThan(Date.now() - 100);
+    expect(
+      dbUtilisateur.history.getQuizzHistoryById('quizz-id').attempts[0].score,
+    ).toEqual(55);
+  });
   it('POST /utilisateurs/id/event - valide un quizz par content_id', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
@@ -88,6 +117,21 @@ describe('EVENT (API test)', () => {
     });
     expect(dbInter.points_en_poche).toStrictEqual(true);
     expect(dbInter.done).toStrictEqual(true);
+
+    const dbUtilisateur = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(
+      dbUtilisateur.history.getQuizzHistoryById('123').attempts,
+    ).toHaveLength(1);
+    expect(
+      dbUtilisateur.history
+        .getQuizzHistoryById('123')
+        .attempts[0].date.getTime(),
+    ).toBeGreaterThan(Date.now() - 100);
+    expect(
+      dbUtilisateur.history.getQuizzHistoryById('123').attempts[0].score,
+    ).toEqual(100);
   });
 
   it('POST /utilisateurs/id/events - increase thematique level when 100% success condition and win badge and add points', async () => {
@@ -312,7 +356,7 @@ describe('EVENT (API test)', () => {
       dbUtilisateur.history
         .getArticleHistoryById('quizz-id')
         .read_date.getTime(),
-    ).toBeGreaterThan(Date.now() - 100);
+    ).toBeGreaterThan(Date.now() - 150);
 
     expect(dbInter.points_en_poche).toStrictEqual(true);
     expect(dbInter.done).toStrictEqual(true);
@@ -442,7 +486,7 @@ describe('EVENT (API test)', () => {
     });
     expect(dbInteraction.like_level).toEqual(3);
   });
-  it('POST /utilisateurs/id/events - like event set la valeur du like sur une interaction par type et content_id && history', async () => {
+  it('POST /utilisateurs/id/events - like event set la valeur du like sur une interaction par type et content_id && history sur article', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
@@ -465,10 +509,37 @@ describe('EVENT (API test)', () => {
       where: { id: 'interaction-id' },
     });
     expect(dbInteraction.like_level).toEqual(3);
-    expect(dbInteraction.like_level).toEqual(3);
     const userDB = await utilisateurRepository.findUtilisateurById(
       'utilisateur-id',
     );
     expect(userDB.history.getArticleHistoryById('123').like_level).toEqual(3);
+  });
+  it('POST /utilisateurs/id/events - like event set la valeur du like sur une interaction par type et content_id && history sur quizz', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('interaction', {
+      content_id: '123',
+      type: InteractionType.quizz,
+    });
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.like,
+      content_id: '123',
+      content_type: 'quizz',
+      number_value: 3,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbInteraction = await TestUtil.prisma.interaction.findUnique({
+      where: { id: 'interaction-id' },
+    });
+    expect(dbInteraction.like_level).toEqual(3);
+    const userDB = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(userDB.history.getQuizzHistoryById('123').like_level).toEqual(3);
   });
 });

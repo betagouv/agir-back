@@ -65,6 +65,11 @@ export class EventUsecase {
       );
       await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
     }
+    // NEW MODEL
+    if (event.content_type === InteractionType.quizz) {
+      ctx.utilisateur.history.likerQuizz(event.content_id, event.number_value);
+      await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
+    }
   }
 
   private async processAccessRecommandations(utilisateurId: string) {
@@ -150,7 +155,12 @@ export class EventUsecase {
       InteractionType.article,
     );
 
-    if (!ctx.interaction.points_en_poche) {
+    if (
+      !ctx.interaction.points_en_poche &&
+      !ctx.utilisateur.history.sontPointsArticleEnPoche(
+        ctx.interaction.content_id,
+      )
+    ) {
       this.addPointsToUser(ctx.utilisateur, ctx.interaction.points);
       ctx.interaction.points_en_poche = true;
 
@@ -193,10 +203,25 @@ export class EventUsecase {
       quizz_score: event.number_value,
     });
 
+    // NEW MODEL
+    ctx.utilisateur.history.quizzAttempt(
+      ctx.interaction.content_id,
+      event.number_value,
+    );
+
     if (event.number_value === 100) {
-      if (!ctx.interaction.points_en_poche) {
+      if (
+        !ctx.interaction.points_en_poche &&
+        !ctx.utilisateur.history.sontPointsQuizzEnPoche(
+          ctx.interaction.content_id,
+        )
+      ) {
         this.addPointsToUser(ctx.utilisateur, ctx.interaction.points);
         ctx.interaction.points_en_poche = true;
+        // NEW MODEL
+        ctx.utilisateur.history.metPointsArticleEnPoche(
+          ctx.interaction.content_id,
+        );
       }
       this.updateUserTodo(ctx);
     }
