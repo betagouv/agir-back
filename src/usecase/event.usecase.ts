@@ -188,14 +188,14 @@ export class EventUsecase {
     event: UtilisateurEvent,
   ) {
     console.log(utilisateurId);
-    console.log(event);
+    console.log(JSON.stringify(event));
     const ctx = await this.getUserAndInteraction(
       utilisateurId,
       event,
       InteractionType.quizz,
     );
 
-    console.log(ctx.interaction);
+    console.log(JSON.stringify(ctx.interaction));
 
     await this.badgeRepository.createUniqueBadge(
       utilisateurId,
@@ -230,7 +230,7 @@ export class EventUsecase {
       this.updateUserTodo(ctx);
     }
     console.log('UPDATED INTERACTION');
-    console.log(ctx.interaction);
+    console.log(JSON.stringify(ctx.interaction));
     await this.interactionRepository.updateInteraction(ctx.interaction);
     console.log('DONE');
     await this.promoteUserQuizzLevelIfNeeded(ctx);
