@@ -147,7 +147,7 @@ const utilisateurs = {
               sont_points_en_poche: false,
               type: InteractionType.quizz,
               level: DifficultyLevel.L1,
-              points: 20,
+              points: 5,
             },
           ],
         },
