@@ -139,6 +139,16 @@ const utilisateurs = {
               points: 20,
               content_id: '1',
             },
+            {
+              id: uuidv4(),
+              titre: 'Bouffe du quiz !!!',
+              thematiques: [Thematique.climat],
+              progression: { current: 0, target: 6 },
+              sont_points_en_poche: false,
+              type: InteractionType.quizz,
+              level: DifficultyLevel.L1,
+              points: 20,
+            },
           ],
         },
         {
