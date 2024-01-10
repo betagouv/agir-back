@@ -10,6 +10,7 @@ import {
 
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ApplicationError } from '../infrastructure/applicationError';
+import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 
 export type User_Interaction = {
   utilisateur: Utilisateur;
@@ -21,6 +22,7 @@ export class TodoUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private interactionRepository: InteractionRepository,
+    private articleRepository: ArticleRepository,
   ) {}
 
   async gagnerPointsFromTodoElement(utilisateurId: string, elementId: string) {
@@ -92,17 +94,31 @@ export class TodoUsecase {
               },
             );
         }
+        if (interactions.length > 0) {
+          const randomIteraction = this.randomFromArray(interactions);
+          element.content_id = randomIteraction.content_id;
+          element.interaction_id = randomIteraction.id;
+        }
       }
       if (element.type === InteractionType.article) {
-        interactions =
-          await this.interactionRepository.listInteractionIdProjectionByFilter({
-            utilisateurId: utilisateurId,
-            type: element.type,
+        if (utilisateur.does_get_articles_from_articlerepo()) {
+          const articles_lus = utilisateur.history.listeIdsArticlesLus();
+          let articles = await this.articleRepository.searchArticles({
             thematiques: element.thematiques,
             difficulty: element.level,
-            done: false,
+            exclude_ids: articles_lus,
           });
-        if (interactions.length === 0) {
+          if (articles.length === 0) {
+            articles = await this.articleRepository.searchArticles({
+              thematiques: element.thematiques,
+              difficulty: element.level,
+            });
+          }
+          if (articles.length > 0) {
+            const randomArticle = this.randomFromArray(articles);
+            element.content_id = randomArticle.content_id;
+          }
+        } else {
           interactions =
             await this.interactionRepository.listInteractionIdProjectionByFilter(
               {
@@ -110,16 +126,27 @@ export class TodoUsecase {
                 type: element.type,
                 thematiques: element.thematiques,
                 difficulty: element.level,
-                done: true,
+                done: false,
               },
             );
+          if (interactions.length === 0) {
+            interactions =
+              await this.interactionRepository.listInteractionIdProjectionByFilter(
+                {
+                  utilisateurId: utilisateurId,
+                  type: element.type,
+                  thematiques: element.thematiques,
+                  difficulty: element.level,
+                  done: true,
+                },
+              );
+          }
+          if (interactions.length > 0) {
+            const randomIteraction = this.randomFromArray(interactions);
+            element.content_id = randomIteraction.content_id;
+            element.interaction_id = randomIteraction.id;
+          }
         }
-      }
-      if (interactions.length > 0) {
-        const randomIteraction =
-          interactions[Math.floor(Math.random() * interactions.length)];
-        element.content_id = randomIteraction.content_id;
-        element.interaction_id = randomIteraction.id;
       }
     }
     return todo;
@@ -128,5 +155,9 @@ export class TodoUsecase {
     utilisateur.parcours_todo.upgradeParcoursIfNeeded();
     utilisateur.parcours_todo.appendNewFromCatalogue();
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
+  private randomFromArray(array: any[]): any {
+    return array[Math.floor(Math.random() * array.length)];
   }
 }

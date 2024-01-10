@@ -91,4 +91,8 @@ export class Utilisateur extends UtilisateurData {
       ApplicationError.throwBaddEmailFormatError(email);
     }
   }
+
+  public does_get_articles_from_articlerepo(): boolean {
+    return this.version > 0;
+  }
 }

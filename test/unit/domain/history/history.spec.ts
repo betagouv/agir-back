@@ -125,4 +125,23 @@ describe('History', () => {
     expect(quizz.points_en_poche).toStrictEqual(true);
     expect(history.sontPointsQuizzEnPoche('1')).toStrictEqual(true);
   });
+  it('liste articles lus', () => {
+    // GIVEN
+    const history = new History({
+      article_interactions: [
+        { content_id: '1', read_date: new Date() },
+        { content_id: '2', read_date: null },
+        { content_id: '3', read_date: new Date() },
+        { content_id: '4' },
+      ],
+    });
+
+    // WHEN
+    const result = history.listeIdsArticlesLus();
+
+    // THEN
+    expect(result).toHaveLength(2);
+    expect(result).toContain('1');
+    expect(result).toContain('3');
+  });
 });

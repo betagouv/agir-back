@@ -284,7 +284,7 @@ export class TestUtil {
       prevent_checkcode_before: new Date(),
       sent_email_count: 0,
       prevent_sendemail_before: new Date(),
-      version: 2,
+      version: 0,
       todo: new ParcoursTodo(),
       gamification: {
         points: 10,

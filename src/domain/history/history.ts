@@ -38,6 +38,11 @@ export class History {
   public nombreArticles?() {
     return this.article_interactions.length;
   }
+  public listeIdsArticlesLus?() {
+    return this.article_interactions
+      .filter((article) => !!article.read_date)
+      .map((article) => article.content_id);
+  }
   public nombreQuizz?() {
     return this.quizz_interactions.length;
   }
