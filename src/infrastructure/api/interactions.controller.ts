@@ -1,10 +1,8 @@
 import {
-  Body,
   Controller,
   Get,
   HttpStatus,
   Param,
-  Patch,
   Request,
   Post,
   Query,
@@ -16,7 +14,13 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { InteractionsUsecase } from '../../usecase/interactions.usecase';
-import { ApiTags, ApiQuery, ApiBody, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiQuery,
+  ApiBody,
+  ApiOkResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { InteractionAPI } from './types/interaction/interactionAPI';
 import { InteractionStatus } from '../../domain/interaction/interactionStatus';
 import { Thematique } from '../../domain/thematique';
@@ -48,28 +52,7 @@ export class InteractionsController extends GenericControler {
       return new_inter;
     });
   }
-  @Patch('utilisateurs/:utilisateurId/interactions/:interactionId')
-  @UseGuards(AuthGuard)
-  async patchInteractionStatus(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-    @Param('interactionId') interactionId: string,
-    @Body() body: InteractionStatusAPI,
-  ) {
-    this.checkCallerId(req, utilisateurId);
-    const status: InteractionStatus = {
-      seen: body.seen,
-      clicked: body.clicked,
-      done: body.done,
-      quizz_score: body.quizz_score,
-    };
 
-    await this.interactionsUsecase.updateStatus(
-      utilisateurId,
-      interactionId,
-      status,
-    );
-  }
   @Post('interactions/reset')
   async resetInteractions(
     @Res() res: Response,
