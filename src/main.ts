@@ -31,7 +31,7 @@ async function bootstrap() {
   Sentry.init({
     dsn: process.env.SENTRY_DNS,
     tracesSampleRate: 1.0,
-    environment: process.env.is_prod ? 'production' : 'development',
+    environment: process.env.IS_PROD ? 'production' : 'development',
   });
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new SentryFilter(httpAdapter));
