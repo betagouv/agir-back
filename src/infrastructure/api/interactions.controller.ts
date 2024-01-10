@@ -1,17 +1,4 @@
-import {
-  Controller,
-  Get,
-  HttpStatus,
-  Param,
-  Request,
-  Post,
-  Res,
-  UseGuards,
-  Headers,
-  ForbiddenException,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { Response } from 'express';
+import { Controller, Get, Param, Request, UseGuards } from '@nestjs/common';
 import { InteractionsUsecase } from '../../usecase/interactions.usecase';
 import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { InteractionAPI } from './types/interaction/interactionAPI';

@@ -255,4 +255,31 @@ describe('ArticleRepository', () => {
     // THEN
     expect(liste).toHaveLength(2);
   });
+  it('searchArticles : order by difficulté ', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('article', {
+      content_id: '1',
+      difficulty: DifficultyLevel.L3,
+    });
+    await TestUtil.create('article', {
+      content_id: '2',
+      difficulty: DifficultyLevel.L2,
+    });
+    await TestUtil.create('article', {
+      content_id: '3',
+      difficulty: DifficultyLevel.L1,
+    });
+
+    // WHEN
+    const liste = await articleRepository.searchArticles({
+      asc_difficulty: true,
+    });
+
+    // THEN
+    expect(liste).toHaveLength(3);
+    expect(liste[0].content_id).toEqual('3');
+    expect(liste[1].content_id).toEqual('2');
+    expect(liste[2].content_id).toEqual('1');
+  });
 });

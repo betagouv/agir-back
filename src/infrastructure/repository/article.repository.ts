@@ -10,6 +10,7 @@ export type ArticleFilter = {
   code_postal?: string;
   difficulty?: DifficultyLevel;
   exclude_ids?: string[];
+  asc_difficulty?: boolean;
 };
 
 @Injectable()
@@ -73,6 +74,10 @@ export class ArticleRepository {
         AND: main_filter,
       },
     };
+
+    if (filter.asc_difficulty) {
+      finalQuery['orderBy'] = [{ difficulty: 'asc' }];
+    }
 
     return this.prisma.article.findMany(finalQuery);
   }

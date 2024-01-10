@@ -1,16 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { Interaction } from '../domain/interaction/interaction';
-import { DistributionSettings } from '../domain/interaction/distributionSettings';
 import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { InteractionType } from '../domain/interaction/interactionType';
-import { UserQuizzProfile } from '../domain/quizz/userQuizzProfile';
+import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
+import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
+import { Thematique } from '../../src/domain/thematique';
 
 @Injectable()
 export class InteractionsUsecase {
   constructor(
     private interactionRepository: InteractionRepository,
     private utilisateurRepository: UtilisateurRepository,
+    private articleRepository: ArticleRepository,
+    private quizzRepository: QuizzRepository,
   ) {}
 
   async listInteractions(utilisateurId: string): Promise<Interaction[]> {
@@ -19,70 +22,110 @@ export class InteractionsUsecase {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );
-    // Integration des interactions par types successifs
+
+    if (utilisateur.does_get_article_quizz_from_repo()) {
+      const articles_lus = utilisateur.history.listeIdsArticlesLus();
+      const articles = await this.articleRepository.searchArticles({
+        code_postal: utilisateur.code_postal,
+        maxNumber: 2,
+        asc_difficulty: true,
+        exclude_ids: articles_lus,
+      });
+
+      const quizz_attempted = utilisateur.history.listeIdsQuizzAttempted();
+      const quizzes = await this.quizzRepository.searchQuizzes({
+        code_postal: utilisateur.code_postal,
+        maxNumber: 2,
+        asc_difficulty: true,
+        exclude_ids: quizz_attempted,
+      });
+      const interactions_articles = articles.map(
+        (article) =>
+          new Interaction({
+            ...article,
+            id: 'FAKE_ID',
+            type: InteractionType.article,
+            tags: [],
+            locked: false,
+            url: null,
+            done: false,
+            done_at: null,
+            clicked: false,
+            clicked_at: null,
+            day_period: null,
+            like_level: null,
+            pinned_at_position: null,
+            points_en_poche: false,
+            quizz_score: null,
+            raison_lock: null,
+            scheduled_reset: null,
+            score: 0,
+            seen: 0,
+            seen_at: null,
+            utilisateurId: utilisateur.id,
+            thematique_gamification_titre: null,
+            soustitre: null,
+            thematique_gamification: Thematique.climat,
+            thematiques: [],
+            duree: null,
+            frequence: null,
+            created_at: null,
+            updated_at: null,
+          }),
+      );
+      result = result.concat(interactions_articles);
+
+      const interactions_quizz = quizzes.map(
+        (quizz) =>
+          new Interaction({
+            ...quizz,
+            id: 'FAKE_ID',
+            type: InteractionType.article,
+            tags: [],
+            locked: false,
+            url: null,
+            done: false,
+            done_at: null,
+            clicked: false,
+            clicked_at: null,
+            day_period: null,
+            like_level: null,
+            pinned_at_position: null,
+            points_en_poche: false,
+            quizz_score: null,
+            raison_lock: null,
+            scheduled_reset: null,
+            score: 0,
+            seen: 0,
+            seen_at: null,
+            utilisateurId: utilisateur.id,
+            thematique_gamification_titre: null,
+            soustitre: null,
+            thematique_gamification: Thematique.climat,
+            thematiques: [],
+            duree: null,
+            frequence: null,
+            created_at: null,
+            updated_at: null,
+          }),
+      );
+      return result.concat(interactions_quizz);
+    }
+
     const liste_articles = await this.getArticlesForUtilisateur(
       utilisateurId,
       utilisateur.code_postal,
     );
 
-    // FIXME : DESACTIVIATION TEMPORAIRE DES AIDES ET SUIVI
-    // const liste_suivis = await this.getSuivisForUtilisateur(utilisateurId);
     const liste_quizz = await this.getQuizzForUtilisateur(
       utilisateurId,
-      utilisateur.quizzProfile,
       utilisateur.code_postal,
     );
-    /*
-    const liste_aides = await this.getAidesForUtilisateur(
-      utilisateurId,
-      utilisateur.code_postal,
-    );
-    */
 
-    DistributionSettings.addInteractionsToList(liste_articles, result);
-    //DistributionSettings.addInteractionsToList(liste_suivis, result);
-    DistributionSettings.addInteractionsToList(liste_quizz, result);
-    //DistributionSettings.addInteractionsToList(liste_aides, result);
+    result = result.concat(liste_articles);
+    result = result.concat(liste_quizz);
 
-    // final sort
-    result.sort((a, b) => {
-      return b.score - a.score;
-    });
-
-    // pinned insert
-    // FIXME : DESACTIVATION TEMPORAIRE
-    /*
-    const pinned_interactions =
-      await this.interactionRepository.listInteractionsByFilter({
-        utilisateurId,
-        maxNumber: 7,
-        pinned: true,
-        locked: false,
-        code_postal: utilisateur.code_postal,
-        done: false,
-      });
-    DistributionSettings.insertPinnedInteractions(pinned_interactions, result);
-    */
-
-    // locked insert at fixed positions
-    // FIXME : DESACTIVATION TEMPORAIRE
-    /*
-    const locked_interactions =
-      await this.interactionRepository.listInteractionsByFilter({
-        utilisateurId,
-        maxNumber: DistributionSettings.TARGET_LOCKED_INTERACTION_NUMBER,
-        locked: true,
-        pinned: false,
-        code_postal: utilisateur.code_postal,
-        done: false,
-      });
-    result = DistributionSettings.insertLockedInteractions(
-      locked_interactions,
-      result,
-    );
-    */
-
-    return result;
+    return result.concat();
   }
 
   async getArticlesForUtilisateur(
@@ -91,9 +134,7 @@ export class InteractionsUsecase {
   ): Promise<Interaction[]> {
     return this.interactionRepository.listInteractionsByFilter({
       utilisateurId,
-      maxNumber: DistributionSettings.getPreferedOfType(
-        InteractionType.article,
-      ),
+      maxNumber: 2,
       type: InteractionType.article,
       pinned: false,
       code_postal,
@@ -101,26 +142,13 @@ export class InteractionsUsecase {
     });
   }
 
-  async getSuivisForUtilisateur(utilisateurId: string): Promise<Interaction[]> {
-    return this.interactionRepository.listInteractionsByFilter({
-      utilisateurId,
-      maxNumber: DistributionSettings.getPreferedOfType(
-        InteractionType.suivi_du_jour,
-      ),
-      type: InteractionType.suivi_du_jour,
-      pinned: false,
-      done: false,
-    });
-  }
-
   async getQuizzForUtilisateur(
     utilisateurId: string,
-    quizzProfile: UserQuizzProfile,
     code_postal: string,
   ): Promise<Interaction[]> {
     return this.interactionRepository.listInteractionsByFilter({
       utilisateurId,
-      maxNumber: DistributionSettings.getPreferedOfType(InteractionType.quizz),
+      maxNumber: 2,
       type: InteractionType.quizz,
       pinned: false,
       code_postal,

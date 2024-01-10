@@ -1,7 +1,4 @@
-import { InteractionDistribution } from '../../../src/domain/interaction/interactionDistribution';
-import { InteractionPlacement } from '../../../src/domain/interaction/interactionPosition';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
-import { DistributionSettings } from '../../../src/domain/interaction/distributionSettings';
 import { TestUtil } from '../../TestUtil';
 import { Thematique } from '../../../src/domain/thematique';
 
@@ -12,13 +9,10 @@ describe('/utilisateurs/id/interactions (API test)', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
-    DistributionSettings.overrideSettings(new Map([]));
     await TestUtil.generateAuthorizationToken('utilisateur-id');
   });
 
-  afterEach(() => {
-    DistributionSettings.resetSettings();
-  });
+  afterEach(() => {});
 
   afterAll(async () => {
     await TestUtil.appclose();
@@ -78,123 +72,6 @@ describe('/utilisateurs/id/interactions (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0].id).toEqual('1');
-  });
-  it('GET /utilisateurs/id/interactions - list interactions in reco order when no strategy', async () => {
-    // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('interaction', { id: '1', score: 0.9 });
-    await TestUtil.create('interaction', { id: '2', score: 0.2 });
-    await TestUtil.create('interaction', { id: '3', score: 0.3 });
-    await TestUtil.create('interaction', { id: '4', score: 0.1 });
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/interactions',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(4);
-    expect(response.body[0].score).toEqual(0.9);
-    expect(response.body[1].score).toEqual(0.3);
-    expect(response.body[2].score).toEqual(0.2);
-    expect(response.body[3].score).toEqual(0.1);
-  });
-  it('GET /utilisateurs/id/interactions - list interactions with strategy, correct order', async () => {
-    // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('interaction', {
-      id: '1',
-      score: 0.9,
-      type: InteractionType.quizz,
-    });
-    await TestUtil.create('interaction', {
-      id: '2',
-      score: 0.2,
-      type: InteractionType.quizz,
-    });
-    await TestUtil.create('interaction', {
-      id: '3',
-      score: 0.5,
-      type: InteractionType.article,
-    });
-    await TestUtil.create('interaction', {
-      id: '4',
-      score: 0.1,
-      type: InteractionType.article,
-    });
-    DistributionSettings.overrideSettings(
-      new Map([
-        [
-          InteractionType.quizz,
-          new InteractionDistribution(2, InteractionPlacement.any),
-        ],
-        [
-          InteractionType.quizz,
-          new InteractionDistribution(2, InteractionPlacement.any),
-        ],
-      ]),
-    );
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/interactions',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(4);
-    expect(response.body[0].score).toEqual(0.9);
-    expect(response.body[1].score).toEqual(0.5);
-    expect(response.body[2].score).toEqual(0.2);
-    expect(response.body[3].score).toEqual(0.1);
-  });
-  it('GET /utilisateurs/id/interactions - list interactions with strategy, max per type', async () => {
-    // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('interaction', {
-      id: '1',
-      score: 0.9,
-      type: InteractionType.quizz,
-    });
-    await TestUtil.create('interaction', {
-      id: '2',
-      score: 0.2,
-      type: InteractionType.quizz,
-    });
-    await TestUtil.create('interaction', {
-      id: '3',
-      score: 0.5,
-      type: InteractionType.article,
-    });
-    await TestUtil.create('interaction', {
-      id: '4',
-      score: 0.1,
-      type: InteractionType.article,
-    });
-    DistributionSettings.overrideSettings(
-      new Map([
-        [
-          InteractionType.quizz,
-          new InteractionDistribution(1, InteractionPlacement.any),
-        ],
-        [
-          InteractionType.article,
-          new InteractionDistribution(1, InteractionPlacement.any),
-        ],
-      ]),
-    );
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/interactions',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(2);
-    expect(response.body[0].score).toEqual(0.9);
-    expect(response.body[1].score).toEqual(0.5);
   });
   it('GET /utilisateurs/id/interactions - no done interaction', async () => {
     // GIVEN

@@ -75,7 +75,7 @@ export class TodoUsecase {
       const element = todo.todo[index];
       let interactions: InteractionIdProjection[] = [];
       if (element.type === InteractionType.quizz) {
-        if (utilisateur.does_get_quizzes_from_quizzrepo()) {
+        if (utilisateur.does_get_article_quizz_from_repo()) {
           let quizzes = await this.quizzRepository.searchQuizzes({
             thematiques: element.thematiques,
             difficulty: element.level,
@@ -124,7 +124,7 @@ export class TodoUsecase {
         }
       }
       if (element.type === InteractionType.article) {
-        if (utilisateur.does_get_articles_from_articlerepo()) {
+        if (utilisateur.does_get_article_quizz_from_repo()) {
           const articles_lus = utilisateur.history.listeIdsArticlesLus();
           let articles = await this.articleRepository.searchArticles({
             thematiques: element.thematiques,
