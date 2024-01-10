@@ -144,4 +144,65 @@ describe('History', () => {
     expect(result).toContain('1');
     expect(result).toContain('3');
   });
+  it('liste articles lus', () => {
+    // GIVEN
+    const history = new History({
+      article_interactions: [
+        { content_id: '1', read_date: new Date() },
+        { content_id: '2', read_date: null },
+        { content_id: '3', read_date: new Date() },
+        { content_id: '4' },
+      ],
+    });
+
+    // WHEN
+    const result = history.listeIdsArticlesLus();
+
+    // THEN
+    expect(result).toHaveLength(2);
+    expect(result).toContain('1');
+    expect(result).toContain('3');
+  });
+  it('liste quizz avec 100%', () => {
+    // GIVEN
+    const history = new History({
+      quizz_interactions: [
+        { content_id: '1', attempts: [{ date: new Date(), score: 40 }] },
+        { content_id: '2', attempts: [{ date: new Date(), score: 100 }] },
+        {
+          content_id: '3',
+          attempts: [
+            { date: new Date(), score: 10 },
+            { date: new Date(), score: 100 },
+          ],
+        },
+      ],
+    });
+
+    // WHEN
+    const result = history.listeIdsQuizz100Pour100();
+
+    // THEN
+    expect(result).toHaveLength(2);
+    expect(result).toContain('2');
+    expect(result).toContain('3');
+  });
+  it('liste quizz avec des attempts', () => {
+    // GIVEN
+    const history = new History({
+      quizz_interactions: [
+        { content_id: '1', attempts: [{ date: new Date(), score: 40 }] },
+        { content_id: '2', attempts: [{ date: new Date(), score: 100 }] },
+        { content_id: '3', attempts: [] },
+      ],
+    });
+
+    // WHEN
+    const result = history.listeIdsQuizzAttempted();
+
+    // THEN
+    expect(result).toHaveLength(2);
+    expect(result).toContain('1');
+    expect(result).toContain('2');
+  });
 });

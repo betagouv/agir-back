@@ -43,6 +43,16 @@ export class History {
       .filter((article) => !!article.read_date)
       .map((article) => article.content_id);
   }
+  public listeIdsQuizz100Pour100?() {
+    return this.quizz_interactions
+      .filter((quizz) => quizz.has100ScoreAmongAttempts())
+      .map((article) => article.content_id);
+  }
+  public listeIdsQuizzAttempted?() {
+    return this.quizz_interactions
+      .filter((quizz) => quizz.hasAttempt())
+      .map((article) => article.content_id);
+  }
   public nombreQuizz?() {
     return this.quizz_interactions.length;
   }

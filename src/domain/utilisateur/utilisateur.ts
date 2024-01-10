@@ -95,4 +95,7 @@ export class Utilisateur extends UtilisateurData {
   public does_get_articles_from_articlerepo(): boolean {
     return this.version > 0;
   }
+  public does_get_quizzes_from_quizzrepo(): boolean {
+    return this.version > 0;
+  }
 }

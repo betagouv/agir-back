@@ -11,6 +11,7 @@ import {
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
+import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
 
 export type User_Interaction = {
   utilisateur: Utilisateur;
@@ -23,6 +24,7 @@ export class TodoUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private interactionRepository: InteractionRepository,
     private articleRepository: ArticleRepository,
+    private quizzRepository: QuizzRepository,
   ) {}
 
   async gagnerPointsFromTodoElement(utilisateurId: string, elementId: string) {
@@ -73,15 +75,24 @@ export class TodoUsecase {
       const element = todo.todo[index];
       let interactions: InteractionIdProjection[] = [];
       if (element.type === InteractionType.quizz) {
-        interactions =
-          await this.interactionRepository.listInteractionIdProjectionByFilter({
-            utilisateurId: utilisateurId,
-            type: element.type,
+        if (utilisateur.does_get_quizzes_from_quizzrepo()) {
+          let quizzes = await this.quizzRepository.searchQuizzes({
             thematiques: element.thematiques,
             difficulty: element.level,
-            done: false,
+            exclude_ids: utilisateur.history.listeIdsQuizzAttempted(),
           });
-        if (interactions.length === 0) {
+          if (quizzes.length === 0) {
+            quizzes = await this.quizzRepository.searchQuizzes({
+              thematiques: element.thematiques,
+              difficulty: element.level,
+              exclude_ids: utilisateur.history.listeIdsQuizz100Pour100(),
+            });
+          }
+          if (quizzes.length > 0) {
+            const randomQuizz = this.randomFromArray(quizzes);
+            element.content_id = randomQuizz.content_id;
+          }
+        } else {
           interactions =
             await this.interactionRepository.listInteractionIdProjectionByFilter(
               {
@@ -89,15 +100,27 @@ export class TodoUsecase {
                 type: element.type,
                 thematiques: element.thematiques,
                 difficulty: element.level,
-                done: true,
-                quizz_full_success: false,
+                done: false,
               },
             );
-        }
-        if (interactions.length > 0) {
-          const randomIteraction = this.randomFromArray(interactions);
-          element.content_id = randomIteraction.content_id;
-          element.interaction_id = randomIteraction.id;
+          if (interactions.length === 0) {
+            interactions =
+              await this.interactionRepository.listInteractionIdProjectionByFilter(
+                {
+                  utilisateurId: utilisateurId,
+                  type: element.type,
+                  thematiques: element.thematiques,
+                  difficulty: element.level,
+                  done: true,
+                  quizz_full_success: false,
+                },
+              );
+          }
+          if (interactions.length > 0) {
+            const randomIteraction = this.randomFromArray(interactions);
+            element.content_id = randomIteraction.content_id;
+            element.interaction_id = randomIteraction.id;
+          }
         }
       }
       if (element.type === InteractionType.article) {

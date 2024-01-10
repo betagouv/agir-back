@@ -166,6 +166,217 @@ describe('TODO list (API test)', () => {
     expect(response.body.todo[0].content_id).toEqual('quizz-id-l1');
     expect(response.body.todo[0].interaction_id).toEqual('1');
   });
+  it('GET /utilisateurs/id/todo retourne la todo n°1 avec une ref de quizz qui va bien : thematique  climat', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      version: 2,
+      todo: {
+        liste_todo: [
+          {
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                titre: 'faire quizz climat',
+                thematiques: [Thematique.climat],
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: 'quizz',
+                level: DifficultyLevel.L1,
+                points: 10,
+              },
+            ],
+          },
+        ],
+        todo_active: 0,
+      },
+    });
+    await TestUtil.create('quizz', {
+      content_id: 'quizz-id-l1',
+      thematiques: [Thematique.climat],
+      difficulty: DifficultyLevel.L1,
+    });
+    await TestUtil.create('quizz', {
+      content_id: 'quizz-id-l2',
+      thematiques: [Thematique.climat],
+      difficulty: DifficultyLevel.L2,
+    });
+    await TestUtil.create('quizz', {
+      content_id: 'quizz-id-l3',
+      thematiques: [Thematique.logement],
+      difficulty: DifficultyLevel.L1,
+    });
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.numero_todo).toEqual(1);
+    expect(response.body.todo[0].type).toEqual(InteractionType.quizz);
+    expect(response.body.todo[0].content_id).toEqual('quizz-id-l1');
+    expect(response.body.todo[0].interaction_id).toBeUndefined();
+  });
+  it('GET /utilisateurs/id/todo retourne la todo n°1 avec une ref de quizz qui va bien : thematique  climat', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      version: 2,
+      todo: {
+        liste_todo: [
+          {
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                titre: 'faire quizz climat',
+                thematiques: [Thematique.climat],
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: 'quizz',
+                level: DifficultyLevel.L1,
+                points: 10,
+              },
+            ],
+          },
+        ],
+        todo_active: 0,
+      },
+    });
+    await TestUtil.create('quizz', {
+      content_id: 'quizz-id-l1',
+      thematiques: [Thematique.climat],
+      difficulty: DifficultyLevel.L1,
+    });
+    await TestUtil.create('quizz', {
+      content_id: 'quizz-id-l2',
+      thematiques: [Thematique.climat],
+      difficulty: DifficultyLevel.L2,
+    });
+    await TestUtil.create('quizz', {
+      content_id: 'quizz-id-l3',
+      thematiques: [Thematique.logement],
+      difficulty: DifficultyLevel.L1,
+    });
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.numero_todo).toEqual(1);
+    expect(response.body.todo[0].type).toEqual(InteractionType.quizz);
+    expect(response.body.todo[0].content_id).toEqual('quizz-id-l1');
+    expect(response.body.todo[0].interaction_id).toBeUndefined();
+  });
+  it('GET /utilisateurs/id/todo retourne la todo n°1 avec une ref de quizz qui va bien : thematique  climat, non 100%, sans essaies', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      version: 2,
+      history: {
+        quizz_interactions: [
+          { content_id: '1', attempts: [{ date: new Date(), score: 100 }] },
+          { content_id: '2', attempts: [{ date: new Date(), score: 20 }] },
+        ],
+      },
+      todo: {
+        liste_todo: [
+          {
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                titre: 'faire quizz climat',
+                thematiques: [Thematique.climat],
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: 'quizz',
+                level: DifficultyLevel.L1,
+                points: 10,
+              },
+            ],
+          },
+        ],
+        todo_active: 0,
+      },
+    });
+    await TestUtil.create('quizz', {
+      content_id: '1',
+      thematiques: [Thematique.climat],
+      difficulty: DifficultyLevel.L1,
+    });
+    await TestUtil.create('quizz', {
+      content_id: '2',
+      thematiques: [Thematique.climat],
+      difficulty: DifficultyLevel.L1,
+    });
+    await TestUtil.create('quizz', {
+      content_id: '3',
+      thematiques: [Thematique.climat],
+      difficulty: DifficultyLevel.L1,
+    });
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.numero_todo).toEqual(1);
+    expect(response.body.todo[0].type).toEqual(InteractionType.quizz);
+    expect(response.body.todo[0].content_id).toEqual('3');
+    expect(response.body.todo[0].interaction_id).toBeUndefined();
+  });
+  it('GET /utilisateurs/id/todo retourne la todo n°1 avec une ref de quizz qui va bien : thematique  climat, non 100%, avec essaies', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      version: 2,
+      history: {
+        quizz_interactions: [
+          { content_id: '1', attempts: [{ date: new Date(), score: 100 }] },
+          { content_id: '2', attempts: [{ date: new Date(), score: 20 }] },
+        ],
+      },
+      todo: {
+        liste_todo: [
+          {
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                titre: 'faire quizz climat',
+                thematiques: [Thematique.climat],
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: 'quizz',
+                level: DifficultyLevel.L1,
+                points: 10,
+              },
+            ],
+          },
+        ],
+        todo_active: 0,
+      },
+    });
+    await TestUtil.create('quizz', {
+      content_id: '1',
+      thematiques: [Thematique.climat],
+      difficulty: DifficultyLevel.L1,
+    });
+    await TestUtil.create('quizz', {
+      content_id: '2',
+      thematiques: [Thematique.climat],
+      difficulty: DifficultyLevel.L1,
+    });
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.numero_todo).toEqual(1);
+    expect(response.body.todo[0].type).toEqual(InteractionType.quizz);
+    expect(response.body.todo[0].content_id).toEqual('2');
+    expect(response.body.todo[0].interaction_id).toBeUndefined();
+  });
   it('GET /utilisateurs/id/todo retourne la todo avec un article basé sur la thématique non gamification', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {

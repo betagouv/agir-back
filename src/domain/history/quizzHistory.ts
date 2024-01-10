@@ -30,4 +30,11 @@ export class QuizzHistory {
   public addAttempt?(score: number) {
     this.attempts.push(new QuizzAttempt(score, new Date()));
   }
+
+  public has100ScoreAmongAttempts?(): boolean {
+    return this.attempts.findIndex((attempt) => attempt.score === 100) >= 0;
+  }
+  public hasAttempt?(): boolean {
+    return this.attempts.length > 0;
+  }
 }
