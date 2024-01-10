@@ -1,9 +1,6 @@
 {
   "jobs": [
     {
-      "command": "30 0 * * * ./scripts/reset_scheduled_interactions.sh"
-    },
-    {
       "command": "0 */3 * * * ./scripts/refresh_service_dynamic_data.sh"
     }
   ]

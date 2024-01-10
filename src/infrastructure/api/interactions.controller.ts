@@ -42,19 +42,4 @@ export class InteractionsController extends GenericControler {
       return new_inter;
     });
   }
-
-  @Post('interactions/reset')
-  async resetInteractions(
-    @Res() res: Response,
-    @Headers('Authorization') authorization: string,
-  ) {
-    if (!authorization) {
-      throw new UnauthorizedException('CRON API KEY manquante');
-    }
-    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
-      throw new ForbiddenException('CRON API KEY incorrecte');
-    }
-    const result = await this.interactionsUsecase.reset();
-    res.status(HttpStatus.OK).json({ reset_interaction_number: result }).send();
-  }
 }

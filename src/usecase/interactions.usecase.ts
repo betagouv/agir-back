@@ -85,11 +85,6 @@ export class InteractionsUsecase {
     return result;
   }
 
-  async reset(date?: Date): Promise<number> {
-    const date_seuil = date || new Date();
-    return this.interactionRepository.resetAllInteractionStatus(date_seuil);
-  }
-
   async getArticlesForUtilisateur(
     utilisateurId: string,
     code_postal: string,

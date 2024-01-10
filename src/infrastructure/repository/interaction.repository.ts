@@ -143,24 +143,6 @@ export class InteractionRepository {
     return this.prisma.interaction.createMany({ data: interactionList });
   }
 
-  async resetAllInteractionStatus(date: Date) {
-    const result = await this.prisma.interaction.updateMany({
-      where: {
-        scheduled_reset: {
-          lt: date,
-        },
-      },
-      data: {
-        clicked: false,
-        done: false,
-        clicked_at: null,
-        done_at: null,
-        scheduled_reset: null,
-      },
-    });
-    return result.count;
-  }
-
   async deleteByContentIdAndTypeWhenNotDone(
     type: InteractionType,
     content_id: string,
