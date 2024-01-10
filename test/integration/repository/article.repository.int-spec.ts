@@ -1,12 +1,5 @@
 import { TestUtil } from '../../TestUtil';
-import { InteractionRepository } from '../../../src/infrastructure/repository/interaction.repository';
-import { Interaction } from '../../../src/domain/interaction/interaction';
-import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { Thematique } from '../../../src/domain/thematique';
-import { UserQuizzProfile } from '../../../src/domain/quizz/userQuizzProfile';
-import { Decimal } from '@prisma/client/runtime/library';
-import { InteractionScore } from '../../../src/domain/interaction/interactionScore';
-import { InteractionDefinition } from '../../../src/domain/interaction/interactionDefinition';
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 
