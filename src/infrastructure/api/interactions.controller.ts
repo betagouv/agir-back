@@ -5,7 +5,6 @@ import {
   Param,
   Request,
   Post,
-  Query,
   Res,
   UseGuards,
   Headers,
@@ -14,17 +13,8 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { InteractionsUsecase } from '../../usecase/interactions.usecase';
-import {
-  ApiTags,
-  ApiQuery,
-  ApiBody,
-  ApiOkResponse,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { InteractionAPI } from './types/interaction/interactionAPI';
-import { InteractionStatus } from '../../domain/interaction/interactionStatus';
-import { Thematique } from '../../domain/thematique';
-import { InteractionStatusAPI } from './types/interaction/interactionStatusAPI';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 
@@ -66,34 +56,5 @@ export class InteractionsController extends GenericControler {
     }
     const result = await this.interactionsUsecase.reset();
     res.status(HttpStatus.OK).json({ reset_interaction_number: result }).send();
-  }
-  @ApiQuery({
-    name: 'utilisateurId',
-    type: String,
-    required: true,
-  })
-  @ApiQuery({
-    name: 'boost',
-    type: Number,
-    required: true,
-    description: 'un nombre plus petit que -1 ou plus grand que 1',
-  })
-  @ApiQuery({
-    name: 'thematique',
-    enum: Thematique,
-    required: true,
-  })
-  @Post('interactions/scoring')
-  async boostInteractions(
-    @Request() req,
-    @Query('utilisateurId') utilisateurId: string,
-    @Query('boost') boost: number,
-    @Query('thematique') thematique: Thematique,
-  ) {
-    return this.interactionsUsecase.updateInteractionScoreByCategories(
-      utilisateurId,
-      [thematique],
-      boost,
-    );
   }
 }

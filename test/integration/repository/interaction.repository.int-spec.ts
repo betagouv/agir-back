@@ -4,8 +4,6 @@ import { Interaction } from '../../../src/domain/interaction/interaction';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { Thematique } from '../../../src/domain/thematique';
 import { UserQuizzProfile } from '../../../src/domain/quizz/userQuizzProfile';
-import { Decimal } from '@prisma/client/runtime/library';
-import { InteractionScore } from '../../../src/domain/interaction/interactionScore';
 import { InteractionDefinition } from '../../../src/domain/interaction/interactionDefinition';
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 
@@ -547,67 +545,6 @@ describe('InteractionRepository', () => {
 
     // THEN
     expect(result).toHaveLength(2);
-  });
-  it('listInteractionScores : liste par thematique_gamification ', async () => {
-    // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('interaction', {
-      id: '1',
-      thematique_gamification: Thematique.alimentation,
-    });
-    await TestUtil.create('interaction', {
-      id: '2',
-      thematique_gamification: Thematique.climat,
-    });
-    await TestUtil.create('interaction', {
-      id: '3',
-      thematique_gamification: Thematique.consommation,
-    });
-    await TestUtil.create('interaction', {
-      id: '4',
-      thematique_gamification: Thematique.consommation,
-    });
-    await TestUtil.create('interaction', {
-      id: '5',
-      thematique_gamification: Thematique.loisir,
-    });
-
-    // WHEN
-    const liste = await interactionRepository.listInteractionScores(
-      'utilisateur-id',
-      [Thematique.alimentation, Thematique.consommation],
-    );
-    // THEN
-    expect(liste).toHaveLength(3);
-  });
-  it('updateInteractionScores : update propelry ', async () => {
-    // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('interaction', {
-      id: '1',
-      thematique_gamification: Thematique.alimentation,
-      score: 0.1,
-    });
-    await TestUtil.create('interaction', {
-      id: '2',
-      thematique_gamification: Thematique.climat,
-      score: 0.2,
-    });
-
-    let input = [
-      new InteractionScore('1', new Decimal(0.11)),
-      new InteractionScore('2', new Decimal(0.22)),
-    ];
-
-    // WHEN
-    const liste = await interactionRepository.updateInteractionScores(input);
-
-    // THEN
-    let dbInterations = await TestUtil.prisma.interaction.findMany({
-      orderBy: { id: 'asc' },
-    });
-    expect(dbInterations[0].score).toEqual(new Decimal(0.11));
-    expect(dbInterations[1].score).toEqual(new Decimal(0.22));
   });
   it('doesContentIdExists : false when no content id not found ', async () => {
     // GIVEN

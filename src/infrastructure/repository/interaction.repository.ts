@@ -10,7 +10,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { SearchFilter } from '../../../src/domain/interaction/searchFilter';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { Thematique } from '../../domain/thematique';
-import { InteractionScore } from '../../../src/domain/interaction/interactionScore';
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 import { InteractionDefinition } from '../../../src/domain/interaction/interactionDefinition';
 import { UserQuizzProfile } from '../../../src/domain/quizz/userQuizzProfile';
@@ -97,42 +96,6 @@ export class InteractionRepository {
     const query = this.buildInteractionComplexFilterQuery(filter, true);
 
     return this.prisma.interaction.findMany(query);
-  }
-
-  async listInteractionScores(
-    utilisateurId: string,
-    thematiques_gamification: Thematique[],
-  ): Promise<InteractionScore[] | null> {
-    const result = await this.prisma.interaction.findMany({
-      where: {
-        utilisateurId,
-        thematique_gamification: {
-          in: thematiques_gamification,
-        },
-      },
-      select: {
-        score: true,
-        id: true,
-      },
-    });
-    return result.map(
-      (inter) => new InteractionScore(inter['id'], inter['score']),
-    );
-  }
-
-  async updateInteractionScores(interactionScores: InteractionScore[]) {
-    return await this.prisma.$transaction(
-      interactionScores.map((inter) => {
-        return this.prisma.interaction.updateMany({
-          where: {
-            id: inter.id,
-          },
-          data: {
-            score: inter.score,
-          },
-        });
-      }),
-    );
   }
 
   async updateInteraction(interaction: Interaction) {

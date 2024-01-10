@@ -1,48 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { Interaction } from '../domain/interaction/interaction';
 import { DistributionSettings } from '../domain/interaction/distributionSettings';
-import { InteractionStatus } from '../domain/interaction/interactionStatus';
 import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { BadgeRepository } from '../infrastructure/repository/badge.repository';
 import { InteractionType } from '../domain/interaction/interactionType';
-import { BadgeTypes } from '../domain/badge/badgeTypes';
 import { UserQuizzProfile } from '../domain/quizz/userQuizzProfile';
-import { Thematique } from '../domain/thematique';
-import { Decimal } from '@prisma/client/runtime/library';
-import { QuizzLevelSettings } from '../../src/domain/quizz/quizzLevelSettings';
 
 @Injectable()
 export class InteractionsUsecase {
   constructor(
     private interactionRepository: InteractionRepository,
     private utilisateurRepository: UtilisateurRepository,
-    private badgeRepository: BadgeRepository,
   ) {}
-
-  async updateInteractionScoreByCategories(
-    utilisateurId: string,
-    thematiques: Thematique[],
-    boost: number,
-  ) {
-    let interactionScores =
-      await this.interactionRepository.listInteractionScores(
-        utilisateurId,
-        thematiques,
-      );
-    if (boost > 1) {
-      interactionScores.forEach((inter) => {
-        inter.upScore(new Decimal(boost));
-      });
-    } else {
-      interactionScores.forEach((inter) => {
-        inter.downScore(new Decimal(-boost));
-      });
-    }
-    return this.interactionRepository.updateInteractionScores(
-      interactionScores,
-    );
-  }
 
   async listInteractions(utilisateurId: string): Promise<Interaction[]> {
     let result: Interaction[] = [];
@@ -158,20 +127,6 @@ export class InteractionsUsecase {
       utilisateurId,
       maxNumber: DistributionSettings.getPreferedOfType(InteractionType.quizz),
       type: InteractionType.quizz,
-      pinned: false,
-      code_postal,
-      done: false,
-    });
-  }
-
-  async getAidesForUtilisateur(
-    utilisateurId: string,
-    code_postal: string,
-  ): Promise<Interaction[]> {
-    return this.interactionRepository.listInteractionsByFilter({
-      utilisateurId,
-      maxNumber: DistributionSettings.getPreferedOfType(InteractionType.aide),
-      type: InteractionType.aide,
       pinned: false,
       code_postal,
       done: false,
