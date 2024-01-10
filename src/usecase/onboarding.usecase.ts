@@ -24,6 +24,7 @@ import { Gamification } from '../domain/gamification/gamification';
 import { ParcoursTodo } from '../../src/domain/todo/parcoursTodo';
 import { UnlockedFeatures } from '../../src/domain/gamification/unlockedFeatures';
 import { History } from '../../src/domain/history/history';
+import { UtilisateurBehavior } from '../../src/domain/utilisateur/utilisateurBehavior';
 
 export type Phrase = {
   phrase: string;
@@ -59,7 +60,9 @@ export class OnboardingUsecase {
     const codeOkAction = async function () {
       await _this.securityEmailManager.resetEmailSendingState(utilisateur);
       await _this.utilisateurRespository.activateAccount(utilisateur.id);
-      await _this.initUtilisateurInteractionSet(utilisateur.id);
+      if (UtilisateurBehavior.does_init_interactions_from_def()) {
+        await _this.initUtilisateurInteractionSet(utilisateur.id);
+      }
       return {
         utilisateur: utilisateur,
         token: await _this.oidcService.createNewInnerAppToken(utilisateur.id),
@@ -191,7 +194,7 @@ export class OnboardingUsecase {
       history: History.newHistory(),
       code_departement: null,
       prm: null,
-      version: Utilisateur.getCurrrentSystemUserVersion(),
+      version: UtilisateurBehavior.systemVersion(),
     });
 
     utilisateurToCreate.setNew6DigitCode();

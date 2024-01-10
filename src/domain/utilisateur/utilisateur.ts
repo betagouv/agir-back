@@ -91,8 +91,4 @@ export class Utilisateur extends UtilisateurData {
       ApplicationError.throwBaddEmailFormatError(email);
     }
   }
-
-  public static getCurrrentSystemUserVersion(): number {
-    return Number.parseInt(process.env.USER_CURRENT_VERSION) || 0;
-  }
 }
