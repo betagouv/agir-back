@@ -117,7 +117,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(user.prevent_sendemail_before.getTime()).toBeLessThanOrEqual(
       Date.now(),
     );
-    expect(user.version).toEqual(2);
+    expect(user.version).toEqual(0); // NEW MODEL ==> 2
   });
   it('POST /utilisateurs - no user version defaults to 0', async () => {
     // GIVEN

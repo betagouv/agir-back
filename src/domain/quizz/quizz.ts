@@ -1,3 +1,5 @@
+import { Thematique } from '../thematique';
+
 export type Quizz = {
   content_id: string;
   titre: string;
@@ -12,8 +14,6 @@ export type Quizz = {
   frequence?: string;
   difficulty: number;
   points: number;
-  thematique_gamification?: string;
-  thematiques: string[];
-  created_at?: Date;
-  updated_at?: Date;
+  thematique_gamification?: Thematique;
+  thematiques: Thematique[];
 };

@@ -203,7 +203,7 @@ export class TestUtil {
   static articleData(override?) {
     return {
       content_id: '1',
-      titre: 'titre',
+      titre: 'titreA',
       soustitre: 'sousTitre',
       source: 'ADEME',
       image_url: 'https://',
@@ -223,7 +223,7 @@ export class TestUtil {
   static quizzData(override?) {
     return {
       content_id: '1',
-      titre: 'titre',
+      titre: 'titreQ',
       soustitre: 'sousTitre',
       source: 'ADEME',
       image_url: 'https://',

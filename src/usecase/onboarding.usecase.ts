@@ -194,7 +194,7 @@ export class OnboardingUsecase {
       history: History.newHistory(),
       code_departement: null,
       prm: null,
-      version: UtilisateurBehavior.systemVersion(),
+      version: 0, // NEW MODEL UtilisateurBehavior.systemVersion()
     });
 
     utilisateurToCreate.setNew6DigitCode();

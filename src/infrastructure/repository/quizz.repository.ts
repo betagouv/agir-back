@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Quizz } from '../../../src/domain/quizz/quizz';
+import { Quizz as QuizzDB } from '@prisma/client';
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 import { Thematique } from '../../../src/domain/thematique';
 
@@ -33,9 +34,10 @@ export class QuizzRepository {
   }
 
   async getQuizzByContentId(content_id: string): Promise<Quizz> {
-    return this.prisma.quizz.findUnique({
+    const result = await this.prisma.quizz.findUnique({
       where: { content_id: content_id },
     });
+    return this.buildQuizzFromDB(result);
   }
 
   async searchQuizzes(filter: QuizzFilter): Promise<Quizz[]> {
@@ -79,6 +81,28 @@ export class QuizzRepository {
       finalQuery['orderBy'] = [{ difficulty: 'asc' }];
     }
 
-    return this.prisma.quizz.findMany(finalQuery);
+    const result = await this.prisma.quizz.findMany(finalQuery);
+    return result.map((elem) => this.buildQuizzFromDB(elem));
+  }
+
+  private buildQuizzFromDB(quizzDB: QuizzDB): Quizz {
+    if (quizzDB === null) return null;
+    return {
+      content_id: quizzDB.content_id,
+      titre: quizzDB.titre,
+      soustitre: quizzDB.soustitre,
+      source: quizzDB.source,
+      image_url: quizzDB.image_url,
+      partenaire: quizzDB.partenaire,
+      rubrique_ids: quizzDB.rubrique_ids,
+      rubrique_labels: quizzDB.rubrique_labels,
+      codes_postaux: quizzDB.codes_postaux,
+      duree: quizzDB.duree,
+      frequence: quizzDB.frequence,
+      difficulty: quizzDB.difficulty,
+      points: quizzDB.points,
+      thematique_gamification: Thematique[quizzDB.thematique_gamification],
+      thematiques: quizzDB.thematiques.map((th) => Thematique[th]),
+    };
   }
 }

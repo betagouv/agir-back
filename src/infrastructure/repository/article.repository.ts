@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Article } from '../../../src/domain/article';
+import { Article as ArticleDB } from '@prisma/client';
 import { Thematique } from '../../../src/domain/thematique';
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 
@@ -33,9 +34,10 @@ export class ArticleRepository {
   }
 
   async getArticleByContentId(content_id: string): Promise<Article> {
-    return this.prisma.article.findUnique({
+    const result = await this.prisma.article.findUnique({
       where: { content_id: content_id },
     });
+    return this.buildArticleFromDB(result);
   }
 
   async searchArticles(filter: ArticleFilter): Promise<Article[]> {
@@ -79,6 +81,28 @@ export class ArticleRepository {
       finalQuery['orderBy'] = [{ difficulty: 'asc' }];
     }
 
-    return this.prisma.article.findMany(finalQuery);
+    const result = await this.prisma.article.findMany(finalQuery);
+    return result.map((elem) => this.buildArticleFromDB(elem));
+  }
+
+  private buildArticleFromDB(articleDB: ArticleDB): Article {
+    if (articleDB === null) return null;
+    return {
+      content_id: articleDB.content_id,
+      titre: articleDB.titre,
+      soustitre: articleDB.soustitre,
+      source: articleDB.source,
+      image_url: articleDB.image_url,
+      partenaire: articleDB.partenaire,
+      rubrique_ids: articleDB.rubrique_ids,
+      rubrique_labels: articleDB.rubrique_labels,
+      codes_postaux: articleDB.codes_postaux,
+      duree: articleDB.duree,
+      frequence: articleDB.frequence,
+      difficulty: articleDB.difficulty,
+      points: articleDB.points,
+      thematique_gamification: Thematique[articleDB.thematique_gamification],
+      thematiques: articleDB.thematiques.map((th) => Thematique[th]),
+    };
   }
 }

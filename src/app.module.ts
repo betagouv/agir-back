@@ -71,6 +71,8 @@ import { QuestionKYCRepository } from './infrastructure/repository/questionKYC.r
 import { QuestionKYCUsecase } from './usecase/questionKYC.usecase';
 import { ArticleRepository } from './infrastructure/repository/article.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
+import { RecommandationsController } from './infrastructure/api/recommandations.controller';
+import { RecommandationUsecase } from './usecase/recommandation.usecase';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -96,6 +98,7 @@ function getControllers(): any[] {
     LinkyController,
     AdminController,
     QuestionsKYCController,
+    RecommandationsController,
   );
   if (process.env.IS_PROD === 'false') {
     controllers.push(TestDataController);
@@ -159,6 +162,7 @@ function getControllers(): any[] {
     QuestionKYCUsecase,
     ArticleRepository,
     QuizzRepository,
+    RecommandationUsecase,
   ],
 })
 export class AppModule {}
