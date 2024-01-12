@@ -56,13 +56,13 @@ export class History {
   public nombreQuizz?() {
     return this.quizz_interactions.length;
   }
-  public articleLu?(content_id: string) {
+  public articleLu?(content_id: string, date?: Date) {
     let article = this.findOrCreateArticleById(content_id);
-    article.read_date = new Date();
+    article.read_date = date || new Date();
   }
-  public quizzAttempt?(content_id: string, score: number) {
+  public quizzAttempt?(content_id: string, score: number, date?: Date) {
     let quizz = this.findOrCreateQuizzById(content_id);
-    quizz.addAttempt(score);
+    quizz.addAttempt(score, date);
   }
 
   public sontPointsArticleEnPoche?(content_id: string): boolean {

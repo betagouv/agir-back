@@ -27,8 +27,8 @@ export class QuizzHistory {
   like_level?: number;
   points_en_poche?: boolean;
 
-  public addAttempt?(score: number) {
-    this.attempts.push(new QuizzAttempt(score, new Date()));
+  public addAttempt?(score: number, date?: Date) {
+    this.attempts.push(new QuizzAttempt(score, date || new Date()));
   }
 
   public has100ScoreAmongAttempts?(): boolean {
