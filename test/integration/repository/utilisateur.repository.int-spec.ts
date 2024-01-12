@@ -27,9 +27,9 @@ describe('UtilisateurRepository', () => {
     // WHEN
     const result = await utilisateurRepository.listUtilisateurIds();
 
-    result.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+    result.sort((a, b) => parseInt(a) - parseInt(b));
     // THEN
-    expect(result).toStrictEqual([{ id: '1' }, { id: '2' }, { id: '3' }]);
+    expect(result).toStrictEqual(['1', '2', '3']);
   });
 
   it('countUserWithAtLeastNThematiquesOfImpactGreaterThan : select ok single user', async () => {

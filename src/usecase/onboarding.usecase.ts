@@ -195,6 +195,7 @@ export class OnboardingUsecase {
       code_departement: null,
       prm: null,
       version: 0, // NEW MODEL UtilisateurBehavior.systemVersion()
+      migration_enabled: false, // NEW MODEL : default will be true
     });
 
     utilisateurToCreate.setNew6DigitCode();

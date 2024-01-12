@@ -287,25 +287,17 @@ export class EventUsecase {
     });
   }
 
-  // FIXME ; séparer user et interaction en 2 méthodes
   private async getUserAndInteraction(
     utilisateurId: string,
     event: UtilisateurEvent,
     type_interaction: InteractionType,
   ): Promise<User_Interaction> {
-    let interaction: Interaction;
-    if (event.interaction_id) {
-      interaction = await this.interactionRepository.getInteractionById(
-        event.interaction_id,
+    const interaction =
+      await this.interactionRepository.getInteractionOfUserByTypeAndContentId(
+        utilisateurId,
+        type_interaction,
+        event.content_id,
       );
-    } else {
-      interaction =
-        await this.interactionRepository.getInteractionOfUserByTypeAndContentId(
-          utilisateurId,
-          type_interaction,
-          event.content_id,
-        );
-    }
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );

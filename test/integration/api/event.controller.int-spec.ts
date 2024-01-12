@@ -48,7 +48,7 @@ describe('EVENT (API test)', () => {
       '/utilisateurs/utilisateur-id/events',
     ).send({
       type: EventType.quizz_score,
-      interaction_id: 'interaction-id',
+      content_id: 'quizz-id',
       number_value: 55,
     });
     // THEN
@@ -73,7 +73,7 @@ describe('EVENT (API test)', () => {
       '/utilisateurs/utilisateur-id/events',
     ).send({
       type: EventType.quizz_score,
-      interaction_id: 'interaction-id',
+      content_id: 'quizz-id',
       number_value: 55,
     });
     // THEN
@@ -138,7 +138,8 @@ describe('EVENT (API test)', () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
-      id: '1',
+      id: 'i1',
+      content_id: '1',
       type: InteractionType.quizz,
       difficulty: 1,
       quizz_score: 85,
@@ -147,7 +148,8 @@ describe('EVENT (API test)', () => {
       thematique_gamification: Thematique.climat,
     });
     await TestUtil.create('interaction', {
-      id: '2',
+      id: 'i2',
+      content_id: '2',
       type: InteractionType.quizz,
       difficulty: 1,
       quizz_score: 90,
@@ -156,7 +158,8 @@ describe('EVENT (API test)', () => {
       thematique_gamification: Thematique.climat,
     });
     await TestUtil.create('interaction', {
-      id: '3',
+      id: 'i3',
+      content_id: '3',
       points: 20,
       type: InteractionType.quizz,
       difficulty: 1,
@@ -170,7 +173,7 @@ describe('EVENT (API test)', () => {
       '/utilisateurs/utilisateur-id/events',
     ).send({
       type: EventType.quizz_score,
-      interaction_id: '3',
+      content_id: '3',
       number_value: 100,
     });
     // THEN
@@ -199,7 +202,7 @@ describe('EVENT (API test)', () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('interaction', {
-      id: '3',
+      content_id: 'quizz-id',
       points: 20,
       type: InteractionType.quizz,
       difficulty: 1,
@@ -213,7 +216,7 @@ describe('EVENT (API test)', () => {
       '/utilisateurs/utilisateur-id/events',
     ).send({
       type: EventType.quizz_score,
-      interaction_id: '3',
+      content_id: 'quizz-id',
       number_value: 100,
     });
     // THEN
@@ -237,7 +240,7 @@ describe('EVENT (API test)', () => {
       '/utilisateurs/utilisateur-id/events',
     ).send({
       type: EventType.quizz_score,
-      interaction_id: 'interaction-id',
+      content_id: 'quizz-id',
       number_value: 100,
     });
 
@@ -255,7 +258,7 @@ describe('EVENT (API test)', () => {
     // WHEN
     await TestUtil.POST('/utilisateurs/utilisateur-id/events').send({
       type: EventType.quizz_score,
-      interaction_id: 'interaction-id',
+      content_id: 'quizz-id',
       number_value: 100,
     });
 
@@ -263,7 +266,7 @@ describe('EVENT (API test)', () => {
       '/utilisateurs/utilisateur-id/events',
     ).send({
       type: EventType.quizz_score,
-      interaction_id: 'interaction-id',
+      content_id: 'quizz-id',
       number_value: 100,
     });
 
@@ -285,7 +288,7 @@ describe('EVENT (API test)', () => {
       '/utilisateurs/utilisateur-id/events',
     ).send({
       type: EventType.quizz_score,
-      interaction_id: 'interaction-id',
+      content_id: 'quizz-id',
       number_value: 79,
     });
 
@@ -312,7 +315,7 @@ describe('EVENT (API test)', () => {
       '/utilisateurs/utilisateur-id/events',
     ).send({
       type: EventType.quizz_score,
-      interaction_id: 'interaction-id',
+      content_id: 'quizz-id',
       number_value: 0,
     });
 
@@ -337,7 +340,7 @@ describe('EVENT (API test)', () => {
       '/utilisateurs/utilisateur-id/events',
     ).send({
       type: EventType.article_lu,
-      interaction_id: 'interaction-id',
+      content_id: 'quizz-id',
     });
 
     // THEN
@@ -407,13 +410,13 @@ describe('EVENT (API test)', () => {
     // WHEN
     await TestUtil.POST('/utilisateurs/utilisateur-id/events').send({
       type: EventType.article_lu,
-      interaction_id: 'interaction-id',
+      content_id: 'quizz-id',
     });
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/events',
     ).send({
       type: EventType.article_lu,
-      interaction_id: 'interaction-id',
+      content_id: 'quizz-id',
     });
 
     // THEN
@@ -475,7 +478,7 @@ describe('EVENT (API test)', () => {
       '/utilisateurs/utilisateur-id/events',
     ).send({
       type: EventType.like,
-      interaction_id: 'interaction-id',
+      content_id: 'quizz-id',
       number_value: 3,
     });
 

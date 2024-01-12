@@ -206,7 +206,9 @@ export class CMSUsecase {
       image_url: cmsWebhookAPI.entry.imageUrl
         ? cmsWebhookAPI.entry.imageUrl.formats.thumbnail.url
         : null,
-      partenaire: cmsWebhookAPI.entry.partenaire ? cmsWebhookAPI.entry.partenaire.nom : null,
+      partenaire: cmsWebhookAPI.entry.partenaire
+        ? cmsWebhookAPI.entry.partenaire.nom
+        : null,
       rubrique_ids: this.getIdsFromRubriques(cmsWebhookAPI.entry.rubriques),
       rubrique_labels: this.getTitresFromRubriques(
         cmsWebhookAPI.entry.rubriques,
@@ -249,12 +251,12 @@ export class CMSUsecase {
   }
   private duplicateInteractionForEachUtilisateur(
     interaction: Interaction,
-    user_ids: Record<'id', string>[],
+    user_ids: string[],
   ): Interaction[] {
     const result = [];
-    user_ids.forEach((id_object) => {
+    user_ids.forEach((user_id) => {
       const newInter = new Interaction(interaction);
-      newInter.utilisateurId = id_object.id;
+      newInter.utilisateurId = user_id;
       newInter.id = uuidv4();
       result.push(newInter);
     });

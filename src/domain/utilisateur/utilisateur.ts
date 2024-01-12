@@ -42,6 +42,7 @@ export class UtilisateurData {
   history: History;
   unlocked_features: UnlockedFeatures;
   version: number;
+  migration_enabled: boolean;
 }
 
 export class Utilisateur extends UtilisateurData {

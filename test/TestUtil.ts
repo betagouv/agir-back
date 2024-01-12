@@ -285,6 +285,7 @@ export class TestUtil {
       sent_email_count: 0,
       prevent_sendemail_before: new Date(),
       version: 0,
+      migration_enabled: false,
       todo: new ParcoursTodo(),
       gamification: {
         points: 10,
@@ -397,7 +398,7 @@ export class TestUtil {
     return {
       id: 'interaction-id',
       content_id: 'quizz-id',
-      type: InteractionType.article,
+      type: InteractionType.quizz,
       titre: 'titre',
       soustitre: 'soustitre',
       thematique_gamification: Thematique.consommation,

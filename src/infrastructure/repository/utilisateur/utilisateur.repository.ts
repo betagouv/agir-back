@@ -62,6 +62,24 @@ export class UtilisateurRepository {
     });
   }
 
+  async updateVersion(utilisateurId: string, version: number): Promise<any> {
+    return this.prisma.utilisateur.update({
+      where: { id: utilisateurId },
+      data: { version: version },
+    });
+  }
+
+  async lockUserMigration(): Promise<any> {
+    return this.prisma.utilisateur.updateMany({
+      data: { migration_enabled: false },
+    });
+  }
+  async unlockUserMigration(): Promise<any> {
+    return this.prisma.utilisateur.updateMany({
+      data: { migration_enabled: true },
+    });
+  }
+
   async activateAccount(utilisateurId: string): Promise<any> {
     return this.prisma.utilisateur.update({
       where: { id: utilisateurId },
@@ -102,13 +120,13 @@ export class UtilisateurRepository {
     });
   }
 
-  async listUtilisateurIds(): Promise<Record<'id', string>[] | null> {
+  async listUtilisateurIds(): Promise<string[]> {
     const result = await this.prisma.utilisateur.findMany({
       select: {
         id: true,
       },
     });
-    return result as Record<'id', string>[];
+    return result.map((elem) => elem['id']);
   }
 
   async createUtilisateur(
@@ -265,6 +283,7 @@ export class UtilisateurRepository {
         code_departement: user.code_departement,
         unlocked_features: new UnlockedFeatures(user.unlocked_features as any),
         version: user.version,
+        migration_enabled: user.migration_enabled,
       });
     }
     return null;

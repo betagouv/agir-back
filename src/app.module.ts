@@ -73,6 +73,7 @@ import { ArticleRepository } from './infrastructure/repository/article.repositor
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
 import { RecommandationsController } from './infrastructure/api/recommandations.controller';
 import { RecommandationUsecase } from './usecase/recommandation.usecase';
+import { MigrationUsecase } from './usecase/migration.usescase';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -163,6 +164,7 @@ function getControllers(): any[] {
     ArticleRepository,
     QuizzRepository,
     RecommandationUsecase,
+    MigrationUsecase,
   ],
 })
 export class AppModule {}

@@ -72,6 +72,7 @@ model Utilisateur {
   code_departement         String?
   questionsKYC             QuestionsKYC[]
   version                  Int                @default(0)
+  migration_enabled        Boolean            @default(false)
 }
 
 model Interaction {
