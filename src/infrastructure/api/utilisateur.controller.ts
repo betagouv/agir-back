@@ -14,10 +14,8 @@ import {
 import { UtilisateurUsecase } from '../../usecase/utilisateur.usecase';
 import {
   ApiTags,
-  ApiQuery,
   ApiBody,
   ApiOkResponse,
-  getSchemaPath,
   ApiExtraModels,
   ApiOperation,
   ApiBadRequestResponse,
@@ -80,6 +78,7 @@ export class UtilisateurController extends GenericControler {
 
     return UtilisateurAPI.mapToAPI(utilisateur);
   }
+
   @ApiOkResponse({ type: UtilisateurProfileAPI })
   @Get('utilisateurs/:utilisateurId/profile')
   @ApiOperation({
@@ -101,6 +100,7 @@ export class UtilisateurController extends GenericControler {
     }
     return UtilisateurProfileAPI.mapToAPI(utilisateur);
   }
+
   @Post('utilisateurs/login')
   @ApiOperation({
     summary:
@@ -109,28 +109,17 @@ export class UtilisateurController extends GenericControler {
   @ApiBody({
     type: LoginUtilisateurAPI,
   })
-  @ApiOkResponse({
-    schema: {
-      type: 'object',
-      properties: {
-        token: { type: 'string', description: "le token d'authentification" },
-        utilisateur: { $ref: getSchemaPath(UtilisateurAPI) },
-      },
-    },
-  })
+  @ApiOkResponse({ type: String })
   @ApiBadRequestResponse({ type: ApplicationError })
   async loginUtilisateur(
     @Body() body: LoginUtilisateurAPI,
     @Response() res,
   ): Promise<LoggedUtilisateurAPI> {
-    const loggedUser = await this.utilisateurUsecase.loginUtilisateur(
+    const token = await this.utilisateurUsecase.loginUtilisateur(
       body.email,
       body.mot_de_passe,
     );
-    const response = LoggedUtilisateurAPI.mapToAPI(
-      loggedUser.token,
-      loggedUser.utilisateur,
-    );
+    const response = LoggedUtilisateurAPI.mapToAPI(token);
     return res.status(HttpStatus.OK).json(response);
   }
 
@@ -146,10 +135,7 @@ export class UtilisateurController extends GenericControler {
     @Body() body: UtilisateurProfileAPI,
   ) {
     this.checkCallerId(req, utilisateurId);
-    return await this.utilisateurUsecase.updateUtilisateurProfile(
-      utilisateurId,
-      body,
-    );
+    await this.utilisateurUsecase.updateUtilisateurProfile(utilisateurId, body);
   }
 
   @Post('utilisateurs/oubli_mot_de_passe')
@@ -179,10 +165,7 @@ export class UtilisateurController extends GenericControler {
     type: ModifierMdpAPI,
   })
   @ApiBadRequestResponse({ type: ApplicationError })
-  async modifier_mdp(
-    @Body() body: ModifierMdpAPI,
-    @Response() res,
-  ): Promise<RenvoyerCodeAPI> {
+  async modifier_mdp(@Body() body: ModifierMdpAPI, @Response() res) {
     await this.utilisateurUsecase.modifier_mot_de_passe(
       body.email,
       body.code,

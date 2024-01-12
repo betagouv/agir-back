@@ -43,10 +43,7 @@ export class OnboardingUsecase {
     private securityEmailManager: SecurityEmailManager,
   ) {}
 
-  async validateCode(
-    email: string,
-    code: string,
-  ): Promise<{ utilisateur: Utilisateur; token: string }> {
+  async validateCode(email: string, code: string): Promise<string> {
     const utilisateur =
       await this.utilisateurRespository.findUtilisateurByEmail(email);
     if (!utilisateur) {
@@ -63,10 +60,7 @@ export class OnboardingUsecase {
       if (UtilisateurBehavior.does_init_interactions_from_def()) {
         await _this.initUtilisateurInteractionSet(utilisateur.id);
       }
-      return {
-        utilisateur: utilisateur,
-        token: await _this.oidcService.createNewInnerAppToken(utilisateur.id),
-      };
+      return await _this.oidcService.createNewInnerAppToken(utilisateur.id);
     };
 
     return this.codeManager.processInputCodeAndDoActionIfOK(

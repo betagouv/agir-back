@@ -45,10 +45,7 @@ export class UtilisateurUsecase {
     private passwordManager: PasswordManager,
   ) {}
 
-  async loginUtilisateur(
-    email: string,
-    password: string,
-  ): Promise<{ utilisateur: Utilisateur; token: string }> {
+  async loginUtilisateur(email: string, password: string): Promise<string> {
     const utilisateur =
       await this.utilisateurRespository.findUtilisateurByEmail(email);
     if (!utilisateur) {
@@ -60,10 +57,7 @@ export class UtilisateurUsecase {
 
     const _this = this;
     const okAction = async function () {
-      return {
-        token: await _this.oidcService.createNewInnerAppToken(utilisateur.id),
-        utilisateur: utilisateur,
-      };
+      return await _this.oidcService.createNewInnerAppToken(utilisateur.id);
     };
 
     return this.passwordManager.loginUtilisateur(

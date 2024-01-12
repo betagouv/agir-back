@@ -281,20 +281,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.utilisateur.id.length).toBeGreaterThan(15);
-    expect(response.body.utilisateur.nom).toEqual('WW');
-    expect(response.body.utilisateur.prenom).toEqual('Wojtek');
-    expect(response.body.utilisateur.code_postal).toEqual('91120');
-    expect(response.body.utilisateur.commune).toEqual('Palaiseau');
-    expect(response.body.utilisateur.quizzProfile).toEqual({
-      alimentation: { level: 1, isCompleted: false },
-      transport: { level: 1, isCompleted: false },
-      logement: { level: 1, isCompleted: false },
-      consommation: { level: 1, isCompleted: false },
-      climat: { level: 1, isCompleted: false },
-      dechet: { level: 1, isCompleted: false },
-      loisir: { level: 1, isCompleted: false },
-    });
+    expect(response.body.token.length).toBeGreaterThan(20);
 
     userDB = await TestUtil.prisma.utilisateur.findFirst({
       where: { nom: 'WW' },

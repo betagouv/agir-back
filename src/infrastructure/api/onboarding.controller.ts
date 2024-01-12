@@ -15,8 +15,6 @@ import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
 import { ProspectSubmitAPI } from './types/utilisateur/onboarding/prospectSubmitAPI';
 import { ValidateCodeAPI } from './types/utilisateur/onboarding/validateCodeAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
-import { ApplicationError } from '../applicationError';
-import { TodoAPI } from './types/todo/todoAPI';
 import { GenericControler } from './genericControler';
 
 @ApiExtraModels(CreateUtilisateurAPI)
@@ -44,6 +42,7 @@ export class OnboardingController extends GenericControler {
       email: body.email,
     });
   }
+
   @Post('utilisateurs/evaluate-onboarding')
   @ApiBody({
     type: OnboardingDataAPI,
@@ -64,7 +63,7 @@ export class OnboardingController extends GenericControler {
   @Post('utilisateurs/valider')
   @ApiOperation({
     summary:
-      "valide l'inscription de l'utilisateur d'un email donné avec en entrée un code (code reçu par email), renvoie toutes les infos de l'utilisateur ainsi qu'un token de sécurité",
+      "valide l'inscription de l'utilisateur d'un email donné avec en entrée un code (code reçu par email), renvoie le token de sécurité",
   })
   @ApiBody({
     type: ValidateCodeAPI,
@@ -73,14 +72,11 @@ export class OnboardingController extends GenericControler {
     type: LoggedUtilisateurAPI,
   })
   async validerCode(@Body() body: ValidateCodeAPI, @Response() res) {
-    const loggedUser = await this.onboardingUsecase.validateCode(
+    const token = await this.onboardingUsecase.validateCode(
       body.email,
       body.code,
     );
-    const response = LoggedUtilisateurAPI.mapToAPI(
-      loggedUser.token,
-      loggedUser.utilisateur,
-    );
+    const response = LoggedUtilisateurAPI.mapToAPI(token);
     return res.status(HttpStatus.OK).json(response);
   }
 

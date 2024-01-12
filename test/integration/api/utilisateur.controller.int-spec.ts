@@ -169,44 +169,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.token.length).toBeGreaterThan(20);
-    expect(response.body.utilisateur.id).toEqual('utilisateur-id');
-    expect(response.body.utilisateur.nom).toEqual('nom');
-    expect(response.body.utilisateur.prenom).toEqual('prenom');
-    expect(response.body.utilisateur.code_postal).toEqual('91120');
-    expect(response.body.utilisateur.commune).toEqual('Palaiseau');
-    expect(response.body.utilisateur.revenu_fiscal).toEqual(10000);
-    expect(response.body.utilisateur.nombre_de_parts_fiscales).toEqual(2.5); // valeur estimée depuis l'onboarding
-    expect(response.body.utilisateur.quizzProfile).toEqual({
-      alimentation: { level: 1, isCompleted: false },
-      transport: { level: 1, isCompleted: false },
-      logement: { level: 1, isCompleted: false },
-      consommation: { level: 1, isCompleted: false },
-      climat: { level: 1, isCompleted: false },
-      dechet: { level: 1, isCompleted: false },
-      loisir: { level: 1, isCompleted: false },
-    });
-  });
-  it('POST /utilisateurs/login - part réelle quand pas nulle', async () => {
-    // GIVEN
-    const utilisateur = getFakeUtilisteur();
-    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHA');
-
-    await TestUtil.create('utilisateur', {
-      passwordHash: utilisateur.passwordHash,
-      passwordSalt: utilisateur.passwordSalt,
-      active_account: true,
-    });
-
-    // WHEN
-    const response = await TestUtil.getServer()
-      .post('/utilisateurs/login')
-      .send({
-        mot_de_passe: '#1234567890HAHA',
-        email: 'yo@truc.com',
-      });
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.utilisateur.nombre_de_parts_fiscales).toEqual(2);
   });
   it('POST /utilisateurs/login - bad password', async () => {
     // GIVEN
