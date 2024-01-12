@@ -1,12 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Utilisateur } from '../../../../../src/domain/utilisateur/utilisateur';
+import { UtilisateurAPI } from './utilisateurAPI';
 
 export class LoggedUtilisateurAPI {
   @ApiProperty({ type: String })
   token: string;
 
-  public static mapToAPI(token: string): LoggedUtilisateurAPI {
-    return {
+  @ApiProperty({ type: UtilisateurAPI })
+  utilisateur?: UtilisateurAPI;
+
+  public static mapToAPI(
+    token: string,
+    user?: Utilisateur,
+  ): LoggedUtilisateurAPI {
+    const result = {
       token: token,
     };
+    if (user) {
+      result['utilisateur'] = UtilisateurAPI.mapToAPI(user);
+    }
+    return result;
   }
 }

@@ -31,7 +31,7 @@ export class AdminController extends GenericControler {
     super();
   }
 
-  @Post('/admin/insert_service_definitions')
+  @Post('/admin/upsert_service_definitions')
   @ApiOperation({
     summary:
       'Upsert toutes les définitions de services à partir du fichier /test_data/_services.ts',

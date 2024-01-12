@@ -43,7 +43,7 @@ export class MigrationUsecase {
           log.migrations.push({
             version: current_version,
             ok: true,
-            info: 'Migrations disable for that user',
+            info: 'Migrations disabled for that user',
           });
           break;
         }

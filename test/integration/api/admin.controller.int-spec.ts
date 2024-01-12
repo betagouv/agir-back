@@ -99,7 +99,7 @@ describe('Admin (API test)', () => {
           {
             version: 3,
             ok: true,
-            info: 'Migrations disable for that user',
+            info: 'Migrations disabled for that user',
           },
         ],
       },

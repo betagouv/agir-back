@@ -187,15 +187,11 @@ export class EventUsecase {
     utilisateurId: string,
     event: UtilisateurEvent,
   ) {
-    console.log(utilisateurId);
-    console.log(JSON.stringify(event));
     const ctx = await this.getUserAndInteraction(
       utilisateurId,
       event,
       InteractionType.quizz,
     );
-
-    console.log(JSON.stringify(ctx.interaction));
 
     await this.badgeRepository.createUniqueBadge(
       utilisateurId,
@@ -223,26 +219,27 @@ export class EventUsecase {
         this.addPointsToUser(ctx.utilisateur, ctx.interaction.points);
         ctx.interaction.points_en_poche = true;
         // NEW MODEL
-        ctx.utilisateur.history.metPointsArticleEnPoche(
+        ctx.utilisateur.history.metPointsQuizzEnPoche(
           ctx.interaction.content_id,
         );
       }
       this.updateUserTodo(ctx);
     }
-    console.log('UPDATED INTERACTION');
-    console.log(JSON.stringify(ctx.interaction));
     await this.interactionRepository.updateInteraction(ctx.interaction);
-    console.log('DONE');
     await this.promoteUserQuizzLevelIfNeeded(ctx);
     await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
   }
 
   private updateUserTodo({ utilisateur, interaction }: User_Interaction) {
+    console.log(`interaction.type ${interaction.type}`);
+    console.log(`interaction.thematiques ${interaction.thematiques}`);
+    console.log(`content_id ${interaction.content_id}`);
     const matching =
       utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
         interaction.type,
         interaction.thematiques,
       );
+    console.log(matching);
     if (matching && !matching.element.isDone()) {
       matching.todo.makeProgress(matching.element);
     }

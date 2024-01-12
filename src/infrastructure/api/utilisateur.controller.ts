@@ -115,11 +115,14 @@ export class UtilisateurController extends GenericControler {
     @Body() body: LoginUtilisateurAPI,
     @Response() res,
   ): Promise<LoggedUtilisateurAPI> {
-    const token = await this.utilisateurUsecase.loginUtilisateur(
+    const loggedUser = await this.utilisateurUsecase.loginUtilisateur(
       body.email,
       body.mot_de_passe,
     );
-    const response = LoggedUtilisateurAPI.mapToAPI(token);
+    const response = LoggedUtilisateurAPI.mapToAPI(
+      loggedUser.token,
+      loggedUser.utilisateur,
+    );
     return res.status(HttpStatus.OK).json(response);
   }
 
