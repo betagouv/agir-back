@@ -9,8 +9,10 @@ import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { Interaction } from '../../src/domain/interaction/interaction';
 import { QuizzLevelSettings } from '../../src/domain/quizz/quizzLevelSettings';
 import { BadgeRepository } from '../../src/infrastructure/repository/badge.repository';
-import { BadgeTypes } from '../../src/domain/badge/badgeTypes';
 import { InteractionType } from '../../src/domain/interaction/interactionType';
+import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
+import { Thematique } from '../../src/domain/thematique';
+import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
 
 export type User_Interaction = {
   utilisateur: Utilisateur;
@@ -22,7 +24,8 @@ export class EventUsecase {
   constructor(
     private interactionRepository: InteractionRepository,
     private utilisateurRepository: UtilisateurRepository,
-    private badgeRepository: BadgeRepository,
+    private articleRepository: ArticleRepository,
+    private quizzRepository: QuizzRepository,
   ) {}
 
   async processEvent(utilisateurId: string, event: UtilisateurEvent) {
@@ -47,28 +50,27 @@ export class EventUsecase {
   }
 
   private async processLike(utilisateurId: string, event: UtilisateurEvent) {
-    const ctx = await this.getUserAndInteraction(
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
-      event,
-      event.content_type,
     );
-
-    ctx.interaction.like_level = event.number_value;
-
-    await this.interactionRepository.updateInteraction(ctx.interaction);
-
-    // NEW MODEL
-    if (event.content_type === InteractionType.article) {
-      ctx.utilisateur.history.likerArticle(
-        event.content_id,
-        event.number_value,
-      );
-      await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
-    }
-    // NEW MODEL
-    if (event.content_type === InteractionType.quizz) {
-      ctx.utilisateur.history.likerQuizz(event.content_id, event.number_value);
-      await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
+    if (utilisateur.does_get_article_quizz_from_repo()) {
+      if (event.content_type === InteractionType.article) {
+        utilisateur.history.likerArticle(event.content_id, event.number_value);
+        await this.utilisateurRepository.updateUtilisateur(utilisateur);
+      }
+      if (event.content_type === InteractionType.quizz) {
+        utilisateur.history.likerQuizz(event.content_id, event.number_value);
+        await this.utilisateurRepository.updateUtilisateur(utilisateur);
+      }
+    } else {
+      const interaction =
+        await this.interactionRepository.getInteractionOfUserByTypeAndContentId(
+          utilisateurId,
+          event.content_type,
+          event.content_id,
+        );
+      interaction.like_level = event.number_value;
+      await this.interactionRepository.updateInteraction(interaction);
     }
   }
 
@@ -149,97 +151,110 @@ export class EventUsecase {
     utilisateurId: string,
     event: UtilisateurEvent,
   ) {
-    const ctx = await this.getUserAndInteraction(
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
-      event,
-      InteractionType.article,
     );
-
-    if (
-      !ctx.interaction.points_en_poche &&
-      !ctx.utilisateur.history.sontPointsArticleEnPoche(
-        ctx.interaction.content_id,
-      )
-    ) {
-      this.addPointsToUser(ctx.utilisateur, ctx.interaction.points);
-      ctx.interaction.points_en_poche = true;
-
-      // NEW MODEL
-      ctx.utilisateur.history.metPointsArticleEnPoche(
-        ctx.interaction.content_id,
+    if (utilisateur.does_get_article_quizz_from_repo()) {
+      utilisateur.history.articleLu(event.content_id);
+      const article = await this.articleRepository.getArticleByContentId(
+        event.content_id,
+      );
+      if (!utilisateur.history.sontPointsArticleEnPoche(event.content_id)) {
+        utilisateur.gamification.ajoutePoints(article.points);
+        utilisateur.history.metPointsArticleEnPoche(event.content_id);
+      }
+      this.updateUserTodo(
+        utilisateur,
+        InteractionType.article,
+        article.thematiques,
+      );
+    } else {
+      const interaction =
+        await this.interactionRepository.getInteractionOfUserByTypeAndContentId(
+          utilisateurId,
+          InteractionType.article,
+          event.content_id,
+        );
+      if (!interaction.points_en_poche) {
+        utilisateur.gamification.ajoutePoints(interaction.points);
+        interaction.points_en_poche = true;
+      }
+      interaction.updateStatus({
+        done: true,
+      });
+      await this.interactionRepository.updateInteraction(interaction);
+      this.updateUserTodo(
+        utilisateur,
+        InteractionType.article,
+        interaction.thematiques,
       );
     }
-
-    // NEW MODEL
-    ctx.utilisateur.history.articleLu(
-      event.content_id || ctx.interaction.content_id,
-    );
-
-    this.updateUserTodo(ctx);
-    await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
-    ctx.interaction.updateStatus({
-      done: true,
-    });
-    await this.interactionRepository.updateInteraction(ctx.interaction);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private async processQuizzScore(
     utilisateurId: string,
     event: UtilisateurEvent,
   ) {
-    const ctx = await this.getUserAndInteraction(
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
-      event,
-      InteractionType.quizz,
     );
+    if (utilisateur.does_get_article_quizz_from_repo()) {
+      utilisateur.history.quizzAttempt(event.content_id, event.number_value);
 
-    await this.badgeRepository.createUniqueBadge(
-      utilisateurId,
-      BadgeTypes.premier_quizz,
-    );
-
-    ctx.interaction.updateStatus({
-      done: true,
-      quizz_score: event.number_value,
-    });
-
-    // NEW MODEL
-    ctx.utilisateur.history.quizzAttempt(
-      ctx.interaction.content_id,
-      event.number_value,
-    );
-
-    if (event.number_value === 100) {
+      const quizz = await this.quizzRepository.getQuizzByContentId(
+        event.content_id,
+      );
       if (
-        !ctx.interaction.points_en_poche &&
-        !ctx.utilisateur.history.sontPointsQuizzEnPoche(
-          ctx.interaction.content_id,
-        )
+        !utilisateur.history.sontPointsQuizzEnPoche(event.content_id) &&
+        event.number_value === 100
       ) {
-        this.addPointsToUser(ctx.utilisateur, ctx.interaction.points);
-        ctx.interaction.points_en_poche = true;
-        // NEW MODEL
-        ctx.utilisateur.history.metPointsQuizzEnPoche(
-          ctx.interaction.content_id,
-        );
+        utilisateur.gamification.ajoutePoints(quizz.points);
+        utilisateur.history.metPointsQuizzEnPoche(event.content_id);
       }
-      this.updateUserTodo(ctx);
-    }
-    await this.interactionRepository.updateInteraction(ctx.interaction);
-    await this.promoteUserQuizzLevelIfNeeded(ctx);
-    await this.utilisateurRepository.updateUtilisateur(ctx.utilisateur);
-  }
+      this.updateUserTodo(
+        utilisateur,
+        InteractionType.quizz,
+        quizz.thematiques,
+      );
+    } else {
+      const interaction =
+        await this.interactionRepository.getInteractionOfUserByTypeAndContentId(
+          utilisateurId,
+          InteractionType.quizz,
+          event.content_id,
+        );
+      interaction.updateStatus({
+        done: true,
+        quizz_score: event.number_value,
+      });
 
-  private updateUserTodo({ utilisateur, interaction }: User_Interaction) {
-    console.log(`interaction.type ${interaction.type}`);
-    console.log(`interaction.thematiques ${interaction.thematiques}`);
-    console.log(`content_id ${interaction.content_id}`);
-    const matching =
-      utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
-        interaction.type,
+      if (!interaction.points_en_poche && event.number_value === 100) {
+        utilisateur.gamification.ajoutePoints(interaction.points);
+        interaction.points_en_poche = true;
+      }
+      await this.interactionRepository.updateInteraction(interaction);
+      this.updateUserTodo(
+        utilisateur,
+        InteractionType.quizz,
         interaction.thematiques,
       );
-    console.log(matching);
+      // FIXME : à répliquer dans le NEW MODEL
+      await this.promoteUserQuizzLevelIfNeeded({ utilisateur, interaction });
+    }
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
+  private updateUserTodo(
+    utilisateur: Utilisateur,
+    type: InteractionType,
+    thematiques: Thematique[],
+  ) {
+    const matching =
+      utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
+        type,
+        thematiques,
+      );
     if (matching && !matching.element.isDone()) {
       matching.todo.makeProgress(matching.element);
     }
@@ -262,46 +277,9 @@ export class EventUsecase {
     );
 
     if (isLevelCompleted) {
-      await this.increaseQuizzLevel({ utilisateur, interaction });
-    }
-  }
-
-  private async increaseQuizzLevel({
-    utilisateur,
-    interaction,
-  }: User_Interaction) {
-    utilisateur.quizzProfile.increaseLevel(interaction.thematique_gamification);
-
-    await this.badgeRepository.createUniqueBadge(utilisateur.id, {
-      titre: `Passage quizz niveau ${utilisateur.quizzProfile
-        .getLevel(interaction.thematique_gamification)
-        .toString()
-        .at(-1)} en catégorie ${interaction.thematique_gamification} !!`,
-      type: interaction.thematique_gamification.concat(
-        '_',
-        interaction.difficulty.toString(),
-      ),
-    });
-  }
-
-  private async getUserAndInteraction(
-    utilisateurId: string,
-    event: UtilisateurEvent,
-    type_interaction: InteractionType,
-  ): Promise<User_Interaction> {
-    const interaction =
-      await this.interactionRepository.getInteractionOfUserByTypeAndContentId(
-        utilisateurId,
-        type_interaction,
-        event.content_id,
+      utilisateur.quizzProfile.increaseLevel(
+        interaction.thematique_gamification,
       );
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
-      utilisateurId,
-    );
-    return { utilisateur, interaction };
-  }
-
-  private addPointsToUser(utilisateur: Utilisateur, points: number) {
-    utilisateur.gamification.ajoutePoints(points);
+    }
   }
 }

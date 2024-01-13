@@ -16,11 +16,16 @@ import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
 import { CMSModel } from '../infrastructure/api/types/cms/CMSModels';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
-import { CMSWebhookRubriqueAPI } from '../../src/infrastructure/api/types/cms/CMSWebhookEntryAPI';
+import {
+  CMSWebhookEntryAPI,
+  CMSWebhookPopulateAPI,
+  CMSWebhookRubriqueAPI,
+} from '../../src/infrastructure/api/types/cms/CMSWebhookEntryAPI';
 import { Article } from '../../src/domain/article';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
 import { Quizz } from '../../src/domain/quizz/quizz';
+import axios from 'axios';
 
 @Injectable()
 export class CMSUsecase {
@@ -57,6 +62,74 @@ export class CMSUsecase {
     }
   }
 
+  async loadArticlesFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste_articles: Article[] = [];
+    const CMS_ARTICLE_DATA = await this.loadDataFromCMS('articles');
+
+    for (let index = 0; index < CMS_ARTICLE_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_ARTICLE_DATA[index];
+      let article: Article;
+      try {
+        article = CMSUsecase.buildArticleOrQuizzFromCMSPopulateData(element);
+        liste_articles.push(article);
+        loading_result.push(`loaded article : ${article.content_id}`);
+      } catch (error) {
+        loading_result.push(
+          `Could not load article ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (let index = 0; index < liste_articles.length; index++) {
+      await this.articleRepository.upsert(liste_articles[index]);
+    }
+    return loading_result;
+  }
+
+  async loadQuizzFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste_quizzes: Quizz[] = [];
+    const CMS_QUIZZ_DATA = await this.loadDataFromCMS('quizzes');
+
+    for (let index = 0; index < CMS_QUIZZ_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_QUIZZ_DATA[index];
+      let quizz: Quizz;
+      try {
+        quizz = CMSUsecase.buildArticleOrQuizzFromCMSPopulateData(element);
+        liste_quizzes.push(quizz);
+        loading_result.push(`loaded quizz : ${quizz.content_id}`);
+      } catch (error) {
+        loading_result.push(
+          `Could not load quizz ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (let index = 0; index < liste_quizzes.length; index++) {
+      await this.quizzRepository.upsert(liste_quizzes[index]);
+    }
+    return loading_result;
+  }
+
+  private async loadDataFromCMS(
+    type: 'articles' | 'quizzes',
+  ): Promise<CMSWebhookPopulateAPI[]> {
+    let response = null;
+    const URL = process.env.CMS_URL.concat(
+      '/',
+      type,
+      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques',
+    );
+    response = await axios.get(URL, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.CMS_API_KEY}`,
+      },
+    });
+    return response.data.data;
+  }
+
   async createOrUpdateThematique(cmsWebhookAPI: CMSWebhookAPI) {
     await this.thematiqueRepository.upsertThematique(
       cmsWebhookAPI.entry.id,
@@ -82,13 +155,13 @@ export class CMSUsecase {
     // NEW MODEL
     if (cmsWebhookAPI.model === CMSModel.article) {
       await this.articleRepository.upsert(
-        CMSUsecase.buildArticleOrQuizzFromCMSData(cmsWebhookAPI),
+        CMSUsecase.buildArticleOrQuizzFromCMSData(cmsWebhookAPI.entry),
       );
     }
     // NEW MODEL
     if (cmsWebhookAPI.model === CMSModel.quizz) {
       await this.quizzRepository.upsert(
-        CMSUsecase.buildArticleOrQuizzFromCMSData(cmsWebhookAPI),
+        CMSUsecase.buildArticleOrQuizzFromCMSData(cmsWebhookAPI.entry),
       );
     }
 
@@ -196,40 +269,72 @@ export class CMSUsecase {
   }
 
   static buildArticleOrQuizzFromCMSData(
-    cmsWebhookAPI: CMSWebhookAPI,
+    entry: CMSWebhookEntryAPI,
   ): Article | Quizz {
     return {
-      content_id: cmsWebhookAPI.entry.id.toString(),
-      titre: cmsWebhookAPI.entry.titre,
-      soustitre: cmsWebhookAPI.entry.sousTitre,
-      source: cmsWebhookAPI.entry.source,
-      image_url: cmsWebhookAPI.entry.imageUrl
-        ? cmsWebhookAPI.entry.imageUrl.formats.thumbnail.url
-        : null,
-      partenaire: cmsWebhookAPI.entry.partenaire
-        ? cmsWebhookAPI.entry.partenaire.nom
-        : null,
-      rubrique_ids: this.getIdsFromRubriques(cmsWebhookAPI.entry.rubriques),
-      rubrique_labels: this.getTitresFromRubriques(
-        cmsWebhookAPI.entry.rubriques,
-      ),
-      codes_postaux: cmsWebhookAPI.entry.codes_postaux
-        ? cmsWebhookAPI.entry.codes_postaux.split(',')
+      content_id: entry.id.toString(),
+      titre: entry.titre,
+      soustitre: entry.sousTitre,
+      source: entry.source,
+      image_url: entry.imageUrl ? entry.imageUrl.formats.thumbnail.url : null,
+      partenaire: entry.partenaire ? entry.partenaire.nom : null,
+      rubrique_ids: this.getIdsFromRubriques(entry.rubriques),
+      rubrique_labels: this.getTitresFromRubriques(entry.rubriques),
+      codes_postaux: entry.codes_postaux
+        ? entry.codes_postaux.split(',')
         : undefined,
-      duree: cmsWebhookAPI.entry.duree,
-      frequence: cmsWebhookAPI.entry.frequence,
-      difficulty: cmsWebhookAPI.entry.difficulty
-        ? cmsWebhookAPI.entry.difficulty
-        : 1,
-      points: cmsWebhookAPI.entry.points ? cmsWebhookAPI.entry.points : 0,
-      thematique_gamification: cmsWebhookAPI.entry.thematique_gamification
-        ? CMSThematiqueAPI.getThematique(
-            cmsWebhookAPI.entry.thematique_gamification,
+      duree: entry.duree,
+      frequence: entry.frequence,
+      difficulty: entry.difficulty ? entry.difficulty : 1,
+      points: entry.points ? entry.points : 0,
+      thematique_gamification: entry.thematique_gamification
+        ? CMSThematiqueAPI.getThematique(entry.thematique_gamification)
+        : Thematique.climat,
+      thematiques: entry.thematiques
+        ? CMSThematiqueAPI.getThematiqueList(entry.thematiques)
+        : [],
+    };
+  }
+  static buildArticleOrQuizzFromCMSPopulateData(
+    entry: CMSWebhookPopulateAPI,
+  ): Article | Quizz {
+    return {
+      content_id: entry.id.toString(),
+      titre: entry.attributes.titre,
+      soustitre: entry.attributes.sousTitre,
+      source: entry.attributes.source,
+      image_url: entry.attributes.imageUrl
+        ? entry.attributes.imageUrl.data.attributes.formats.thumbnail.url
+        : null,
+      partenaire: entry.attributes.partenaire.data
+        ? entry.attributes.partenaire.data.attributes.nom
+        : null,
+      rubrique_ids:
+        entry.attributes.rubriques.data.length > 0
+          ? entry.attributes.rubriques.data.map((elem) => elem.id.toString())
+          : [],
+      rubrique_labels:
+        entry.attributes.rubriques.data.length > 0
+          ? entry.attributes.rubriques.data.map((elem) => elem.attributes.titre)
+          : [],
+      codes_postaux: entry.attributes.codes_postaux
+        ? entry.attributes.codes_postaux.split(',')
+        : [],
+      duree: entry.attributes.duree,
+      frequence: entry.attributes.frequence,
+      difficulty: entry.attributes.difficulty ? entry.attributes.difficulty : 1,
+      points: entry.attributes.points ? entry.attributes.points : 0,
+      thematique_gamification: entry.attributes.thematique_gamification.data
+        ? CMSThematiqueAPI.getThematiqueByCmsId(
+            entry.attributes.thematique_gamification.data.id,
           )
         : Thematique.climat,
-      thematiques: cmsWebhookAPI.entry.thematiques
-        ? CMSThematiqueAPI.getThematiqueList(cmsWebhookAPI.entry.thematiques)
-        : [],
+      thematiques:
+        entry.attributes.thematiques.data.length > 0
+          ? entry.attributes.thematiques.data.map((elem) =>
+              CMSThematiqueAPI.getThematiqueByCmsId(elem.id),
+            )
+          : [Thematique.climat],
     };
   }
 

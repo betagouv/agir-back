@@ -1166,9 +1166,10 @@ describe('TODO list (API test)', () => {
     );
     expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
   });
-  it('POST /utilisateurs/id/event met à jour la todo si un sous thematique d un articl match', async () => {
+  it('POST /utilisateurs/id/event met à jour la todo si un sous thematique d un articl match v0', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
+      version: 0,
       todo: {
         liste_todo: [
           {
@@ -1194,6 +1195,7 @@ describe('TODO list (API test)', () => {
     });
     await TestUtil.create('interaction', {
       type: InteractionType.article,
+      content_id: '123',
       done: false,
       difficulty: DifficultyLevel.L1,
       thematique_gamification: Thematique.climat,
@@ -1205,7 +1207,59 @@ describe('TODO list (API test)', () => {
       '/utilisateurs/utilisateur-id/events',
     ).send({
       type: 'article_lu',
-      interaction_id: 'interaction-id',
+      content_id: '123',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(dbUser.parcours_todo.getActiveTodo().todo).toHaveLength(1);
+    expect(
+      dbUser.parcours_todo.getActiveTodo().todo[0].progression.current,
+    ).toEqual(1);
+  });
+  it('POST /utilisateurs/id/event met à jour la todo si un sous thematique d un articl match v2', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      version: 2,
+      todo: {
+        liste_todo: [
+          {
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                id: '1234',
+                titre: 'lire 2 article logement',
+                thematiques: [Thematique.logement],
+                progression: { current: 0, target: 2 },
+                sont_points_en_poche: false,
+                type: InteractionType.article,
+                level: DifficultyLevel.ANY,
+                points: 10,
+              },
+            ],
+          },
+        ],
+        todo_active: 0,
+      },
+    });
+    await TestUtil.create('article', {
+      content_id: '123',
+      difficulty: DifficultyLevel.L1,
+      thematique_gamification: Thematique.climat,
+      thematiques: [Thematique.loisir, Thematique.logement],
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: 'article_lu',
+      content_id: '123',
     });
 
     // THEN

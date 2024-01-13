@@ -13,6 +13,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { CMSUsecase } from '../../../src/usecase/cms.usecase';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { AuthGuard } from '../auth/guard';
 import { PrismaService } from '../prisma/prisma.service';
@@ -27,8 +28,43 @@ export class AdminController extends GenericControler {
   constructor(
     private prisma: PrismaService,
     private migrationUsecase: MigrationUsecase,
+    private cmsUsecase: CMSUsecase,
   ) {
     super();
+  }
+
+  @Post('/admin/load_articles_from_cms')
+  @ApiOperation({
+    summary: 'Upsert tous les articles publiés du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async upsertAllCMSArticles(
+    @Headers('Authorization') authorization: string,
+  ): Promise<string[]> {
+    if (!authorization) {
+      throw new UnauthorizedException('CRON API KEY manquante');
+    }
+    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
+      throw new ForbiddenException('CRON API KEY incorrecte');
+    }
+    return await this.cmsUsecase.loadArticlesFromCMS();
+  }
+
+  @Post('/admin/load_quizzes_from_cms')
+  @ApiOperation({
+    summary: 'Upsert tous les quizz publiés du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async upsertAllCMSquizzes(
+    @Headers('Authorization') authorization: string,
+  ): Promise<string[]> {
+    if (!authorization) {
+      throw new UnauthorizedException('CRON API KEY manquante');
+    }
+    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
+      throw new ForbiddenException('CRON API KEY incorrecte');
+    }
+    return await this.cmsUsecase.loadQuizzFromCMS();
   }
 
   @Post('/admin/upsert_service_definitions')

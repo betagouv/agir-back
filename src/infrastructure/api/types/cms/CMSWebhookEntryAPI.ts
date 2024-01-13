@@ -31,3 +31,58 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() codes_postaux?: string;
   @ApiProperty() publishedAt: Date;
 }
+export type CMSWebhookPopulateAPI = {
+  id: number;
+  attributes: {
+    titre: string;
+    sousTitre: string;
+    source: string;
+    codes_postaux: string;
+    duree: string;
+    frequence: string;
+    points: number;
+    difficulty: number;
+    publishedAt: string;
+    thematiques: {
+      data: [
+        {
+          id: number;
+        },
+      ];
+    };
+    thematique_gamification: {
+      data: {
+        id: number;
+      };
+    };
+
+    imageUrl: {
+      data: {
+        attributes: {
+          formats: {
+            thumbnail: {
+              url: string;
+            };
+          };
+        };
+      };
+    };
+    partenaire: {
+      data: {
+        attributes: {
+          nom: string;
+        };
+      };
+    };
+    rubriques: {
+      data: [
+        {
+          id: string;
+          attributes: {
+            titre: string;
+          };
+        },
+      ];
+    };
+  };
+};

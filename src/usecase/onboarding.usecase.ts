@@ -188,8 +188,8 @@ export class OnboardingUsecase {
       history: History.newHistory(),
       code_departement: null,
       prm: null,
-      version: 0, // NEW MODEL UtilisateurBehavior.systemVersion()
-      migration_enabled: false, // NEW MODEL : default will be true
+      version: UtilisateurBehavior.systemVersion(),
+      migration_enabled: false,
     });
 
     utilisateurToCreate.setNew6DigitCode();
