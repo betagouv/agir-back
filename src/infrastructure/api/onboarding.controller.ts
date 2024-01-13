@@ -72,11 +72,14 @@ export class OnboardingController extends GenericControler {
     type: LoggedUtilisateurAPI,
   })
   async validerCode(@Body() body: ValidateCodeAPI, @Response() res) {
-    const token = await this.onboardingUsecase.validateCode(
+    const loggedUser = await this.onboardingUsecase.validateCode(
       body.email,
       body.code,
     );
-    const response = LoggedUtilisateurAPI.mapToAPI(token);
+    const response = LoggedUtilisateurAPI.mapToAPI(
+      loggedUser.token,
+      loggedUser.utilisateur,
+    );
     return res.status(HttpStatus.OK).json(response);
   }
 
