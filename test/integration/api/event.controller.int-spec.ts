@@ -208,6 +208,36 @@ describe('EVENT (API test)', () => {
       userDB.parcours_todo.getActiveTodo().done[0].progression.current,
     ).toEqual(1);
   });
+  it('POST /utilisateurs/id/events - NOT increase todo element progression when quizz not 100% v0', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { version: 0 });
+    await TestUtil.create('interaction', {
+      content_id: 'quizz-id',
+      points: 20,
+      type: InteractionType.quizz,
+      difficulty: 1,
+      quizz_score: undefined,
+      done: false,
+      done_at: null,
+      thematique_gamification: Thematique.climat,
+    });
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.quizz_score,
+      content_id: 'quizz-id',
+      number_value: 50,
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(
+      userDB.parcours_todo.getActiveTodo().todo[0].progression.current,
+    ).toEqual(0);
+  });
   it('POST /utilisateurs/id/events - increase todo element progression and moves to done v2', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', { version: 2 });
@@ -232,6 +262,31 @@ describe('EVENT (API test)', () => {
     expect(
       userDB.parcours_todo.getActiveTodo().done[0].progression.current,
     ).toEqual(1);
+  });
+  it('POST /utilisateurs/id/events - NOT increase todo element progression when not 100% v2', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { version: 2 });
+    await TestUtil.create('quizz', {
+      content_id: 'quizz-id',
+      points: 20,
+      thematique_gamification: Thematique.climat,
+    });
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.quizz_score,
+      content_id: 'quizz-id',
+      number_value: 50,
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(
+      userDB.parcours_todo.getActiveTodo().todo[0].progression.current,
+    ).toEqual(0);
   });
 
   it('POST /utilisateurs/id/events - does not add points when points en poche v0', async () => {

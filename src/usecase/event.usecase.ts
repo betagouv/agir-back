@@ -8,7 +8,6 @@ import { UtilisateurRepository } from '../../src/infrastructure/repository/utili
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { Interaction } from '../../src/domain/interaction/interaction';
 import { QuizzLevelSettings } from '../../src/domain/quizz/quizzLevelSettings';
-import { BadgeRepository } from '../../src/infrastructure/repository/badge.repository';
 import { InteractionType } from '../../src/domain/interaction/interactionType';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 import { Thematique } from '../../src/domain/thematique';
@@ -211,12 +210,12 @@ export class EventUsecase {
       ) {
         utilisateur.gamification.ajoutePoints(quizz.points);
         utilisateur.history.metPointsQuizzEnPoche(event.content_id);
+        this.updateUserTodo(
+          utilisateur,
+          InteractionType.quizz,
+          quizz.thematiques,
+        );
       }
-      this.updateUserTodo(
-        utilisateur,
-        InteractionType.quizz,
-        quizz.thematiques,
-      );
     } else {
       const interaction =
         await this.interactionRepository.getInteractionOfUserByTypeAndContentId(
@@ -232,13 +231,13 @@ export class EventUsecase {
       if (!interaction.points_en_poche && event.number_value === 100) {
         utilisateur.gamification.ajoutePoints(interaction.points);
         interaction.points_en_poche = true;
+        this.updateUserTodo(
+          utilisateur,
+          InteractionType.quizz,
+          interaction.thematiques,
+        );
       }
       await this.interactionRepository.updateInteraction(interaction);
-      this.updateUserTodo(
-        utilisateur,
-        InteractionType.quizz,
-        interaction.thematiques,
-      );
       // FIXME : à répliquer dans le NEW MODEL
       await this.promoteUserQuizzLevelIfNeeded({ utilisateur, interaction });
     }
