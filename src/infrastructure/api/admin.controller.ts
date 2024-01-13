@@ -5,14 +5,18 @@ import {
   Headers,
   UseGuards,
   ForbiddenException,
+  Res,
   UnauthorizedException,
+  HttpStatus,
 } from '@nestjs/common';
+import { Response } from 'express';
 import {
   ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { ServiceUsecase } from '../../../src/usecase/service.usecase';
 import { CMSUsecase } from '../../../src/usecase/cms.usecase';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { AuthGuard } from '../auth/guard';
@@ -28,9 +32,26 @@ export class AdminController extends GenericControler {
   constructor(
     private prisma: PrismaService,
     private migrationUsecase: MigrationUsecase,
+    private serviceUsecase: ServiceUsecase,
     private cmsUsecase: CMSUsecase,
   ) {
     super();
+  }
+
+  @Post('services/refresh_dynamic_data')
+  @ApiOkResponse({ type: [String] })
+  async refreshServiceDynamicData(
+    @Res() res: Response,
+    @Headers('Authorization') authorization: string,
+  ) {
+    if (!authorization) {
+      throw new UnauthorizedException('CRON API KEY manquante');
+    }
+    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
+      throw new ForbiddenException('CRON API KEY incorrecte');
+    }
+    const result = await this.serviceUsecase.refreshScheduledServices();
+    res.status(HttpStatus.OK).json(result).send();
   }
 
   @Post('/admin/load_articles_from_cms')

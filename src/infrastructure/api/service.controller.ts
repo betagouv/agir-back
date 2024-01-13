@@ -8,13 +8,7 @@ import {
   Request,
   Delete,
   Query,
-  Res,
-  HttpStatus,
-  Headers,
-  ForbiddenException,
-  UnauthorizedException,
 } from '@nestjs/common';
-import { Response } from 'express';
 import {
   ApiTags,
   ApiOkResponse,
@@ -106,21 +100,6 @@ export class ServiceController extends GenericControler {
       ServiceAPI.mapServicesToServicesAPI(service),
     );
     return mappedResult;
-  }
-  @Post('services/refreshDynamicData')
-  @ApiOkResponse({ type: [String] })
-  async refreshServiceDynamicData(
-    @Res() res: Response,
-    @Headers('Authorization') authorization: string,
-  ) {
-    if (!authorization) {
-      throw new UnauthorizedException('CRON API KEY manquante');
-    }
-    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
-      throw new ForbiddenException('CRON API KEY incorrecte');
-    }
-    const result = await this.serviceUsecase.refreshScheduledServices();
-    res.status(HttpStatus.OK).json(result).send();
   }
   @Delete('utilisateurs/:utilisateurId/services/:serviceId')
   @ApiOperation({
