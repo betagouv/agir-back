@@ -297,6 +297,7 @@ const utilisateurs = {
     commune: 'PALAISEAU',
     revenu_fiscal: null,
     parts: null,
+    version: 0,
     gamification: {
       points: 0,
     },
