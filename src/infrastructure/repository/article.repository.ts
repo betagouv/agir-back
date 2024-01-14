@@ -4,6 +4,7 @@ import { Article } from '../../../src/domain/article';
 import { Article as ArticleDB } from '@prisma/client';
 import { Thematique } from '../../../src/domain/thematique';
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
+import { ContentRecommandation } from '../../domain/contentRecommandation';
 
 export type ArticleFilter = {
   maxNumber?: number;
@@ -83,6 +84,39 @@ export class ArticleRepository {
 
     const result = await this.prisma.article.findMany(finalQuery);
     return result.map((elem) => this.buildArticleFromDB(elem));
+  }
+
+  public async getArticleRecommandations(
+    version: number,
+  ): Promise<ContentRecommandation> {
+    const result = new ContentRecommandation();
+    const query = `
+    SELECT
+      coalesce(SUM(CAST(poids_rubrique->rubrique_article as INTEGER)),0) as score, content_id
+    FROM
+      (
+        SELECT
+          "Ponderation".rubriques AS poids_rubrique,
+          unnest("Article".rubrique_ids) as rubrique_article,
+          "Article".content_id as content_id
+        FROM
+          "Ponderation",
+          "Article"
+        WHERE
+          "Ponderation".version = ${version}
+      ) as SUBQUERY
+    GROUP BY
+      content_id
+    ORDER BY
+      score desc
+    ;
+    `;
+    const recos: { score: BigInt; content_id: string }[] =
+      await this.prisma.$queryRawUnsafe(query);
+    recos.forEach((element) => {
+      result.append(Number(element.score), element.content_id);
+    });
+    return result;
   }
 
   private buildArticleFromDB(articleDB: ArticleDB): Article {

@@ -1,3 +1,4 @@
+import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 import { TestUtil } from '../../TestUtil';
 
 describe('/utilisateurs/id/recommandations (API test)', () => {
@@ -89,6 +90,87 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0].content_id).toEqual('1');
+  });
+  it('GET /utilisateurs/id/interactions - applique les ponderations aux articles', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      history: {},
+      code_postal: null,
+      version_ponderation: 0,
+    });
+    await TestUtil.create('ponderation', {
+      version: 0,
+      rubriques: {
+        '1': 10,
+        '2': 20,
+        '3': 30,
+      },
+    });
+
+    await TestUtil.create('article', {
+      content_id: '1',
+      rubrique_ids: ['1'],
+    });
+    await TestUtil.create('article', {
+      content_id: '2',
+      rubrique_ids: ['3'],
+    });
+    await TestUtil.create('article', {
+      content_id: '3',
+      rubrique_ids: ['2'],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(2);
+    expect(response.body[0].content_id).toEqual('2');
+    expect(response.body[1].content_id).toEqual('3');
+  });
+  it('GET /utilisateurs/id/interactions - applique les ponderations aux quizz, avec groupement par difficulté', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      history: {},
+      code_postal: null,
+      version_ponderation: 0,
+    });
+    await TestUtil.create('ponderation', {
+      version: 0,
+      rubriques: {
+        '1': 10,
+        '2': 20,
+        '3': 30,
+      },
+    });
+
+    await TestUtil.create('quizz', {
+      content_id: '1',
+      rubrique_ids: ['1'],
+      difficulty: DifficultyLevel.L1,
+    });
+    await TestUtil.create('quizz', {
+      content_id: '2',
+      rubrique_ids: ['2'],
+      difficulty: DifficultyLevel.L1,
+    });
+    await TestUtil.create('quizz', {
+      content_id: '3',
+      rubrique_ids: ['3'],
+      difficulty: DifficultyLevel.L2,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(2);
+    expect(response.body[0].content_id).toEqual('2');
+    expect(response.body[1].content_id).toEqual('1');
   });
   it('GET /utilisateurs/id/interactions - pas de article lu', async () => {
     // GIVEN

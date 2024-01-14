@@ -23,6 +23,134 @@ describe('Admin (API test)', () => {
     await TestUtil.appclose();
   });
 
+  it('POST /admin/upsert_service_definitions integre correctement les services', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/upsert_service_definitions');
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const services = await TestUtil.prisma.serviceDefinition.findMany();
+    expect(services).toHaveLength(5);
+
+    const service = await TestUtil.prisma.serviceDefinition.findUnique({
+      where: { id: 'ecowatt' },
+    });
+    expect(service.image_url).toEqual(
+      'https://agirpourlatransition.ademe.fr/particuliers/sites/default/files/styles/550x330/public/2022-03/thermostat-programmable.jpg?itok=4HIKhFAI',
+    );
+    expect(service.titre).toEqual(`⚡️ ÉcoWatt`);
+    expect(service.url).toEqual('https://www.monecowatt.fr/');
+    expect(service.icon_url).toEqual(
+      'https://play-lh.googleusercontent.com/wtQahY_I8TVLQJ_Rcue7aC-dJ3FfZLNQe84smsyfRa9Qbs1-TG3CJvdrmQ9VUXUVO8vh=w480-h960',
+    );
+    expect(service.is_url_externe).toEqual(true);
+    expect(service.is_local).toEqual(false);
+    expect(service.thematiques).toEqual(['logement']);
+    expect(service.minute_period).toEqual(30);
+    expect(service.description).toEqual(
+      'Ecowatt aide les Français à mieux consommer l’électricité.',
+    );
+    expect(service.sous_description).toEqual(
+      'Véritable météo de l’électricité, Ecowatt qualifie en temps réel le niveau de consommation des Français.',
+    );
+    expect(service.en_construction).toEqual(false);
+  });
+  it('POST /admin/upsert_service_definitions integre correctement les services', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/upsert_service_definitions');
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const services = await TestUtil.prisma.serviceDefinition.findMany();
+    expect(services).toHaveLength(5);
+
+    const service = await TestUtil.prisma.serviceDefinition.findUnique({
+      where: { id: 'ecowatt' },
+    });
+    expect(service.image_url).toEqual(
+      'https://agirpourlatransition.ademe.fr/particuliers/sites/default/files/styles/550x330/public/2022-03/thermostat-programmable.jpg?itok=4HIKhFAI',
+    );
+    expect(service.titre).toEqual(`⚡️ ÉcoWatt`);
+    expect(service.url).toEqual('https://www.monecowatt.fr/');
+    expect(service.icon_url).toEqual(
+      'https://play-lh.googleusercontent.com/wtQahY_I8TVLQJ_Rcue7aC-dJ3FfZLNQe84smsyfRa9Qbs1-TG3CJvdrmQ9VUXUVO8vh=w480-h960',
+    );
+    expect(service.is_url_externe).toEqual(true);
+    expect(service.is_local).toEqual(false);
+    expect(service.thematiques).toEqual(['logement']);
+    expect(service.minute_period).toEqual(30);
+    expect(service.description).toEqual(
+      'Ecowatt aide les Français à mieux consommer l’électricité.',
+    );
+    expect(service.sous_description).toEqual(
+      'Véritable météo de l’électricité, Ecowatt qualifie en temps réel le niveau de consommation des Français.',
+    );
+    expect(service.en_construction).toEqual(false);
+  });
+  it('POST /admin/upsert_ponderations integre correctement les ponderations', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/upsert_ponderations');
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const ponderations = await TestUtil.prisma.ponderation.findMany();
+    expect(ponderations).toHaveLength(1);
+
+    const ponderation = await TestUtil.prisma.ponderation.findUnique({
+      where: { id: 'noel' },
+    });
+    expect(ponderation.id).toEqual('noel');
+    expect(ponderation.rubriques).toEqual({
+      '1': 0,
+      '2': 0,
+      '3': 0,
+      '4': 0,
+      '5': 0,
+      '6': 0,
+      '7': 0,
+      '8': 0,
+      '9': 0,
+      '10': 0,
+      '11': 0,
+      '12': 0,
+      '13': 0,
+      '14': 0,
+      '15': 0,
+      '16': 0,
+      '17': 0,
+      '18': 0,
+      '19': 0,
+      '20': 0,
+      '21': 0,
+      '22': 0,
+      '23': 0,
+      '24': 0,
+      '25': 0,
+      '26': 0,
+      '27': 0,
+      '28': 0,
+      '29': 0,
+      '30': 0,
+      '31': 0,
+      '32': 10,
+      '33': 10,
+      '34': 10,
+      '35': 10,
+      '36': 10,
+    });
+  });
   it('POST /admin/lock_user_migration retourne une 403 si pas le bon id d utilisateur', async () => {
     // GIVEN
     await TestUtil.generateAuthorizationToken('bad_id');

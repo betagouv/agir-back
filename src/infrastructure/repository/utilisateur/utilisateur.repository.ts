@@ -284,6 +284,7 @@ export class UtilisateurRepository {
         unlocked_features: new UnlockedFeatures(user.unlocked_features as any),
         version: user.version,
         migration_enabled: user.migration_enabled,
+        version_ponderation: user.version_ponderation,
       });
     }
     return null;

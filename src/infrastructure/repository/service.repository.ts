@@ -15,6 +15,23 @@ import { ApplicationError } from '../applicationError';
 export class ServiceRepository {
   constructor(private prisma: PrismaService) {}
 
+  async upsert(serviceDefinition: ServiceDefinition) {
+    const clone = {
+      ...serviceDefinition,
+      id: serviceDefinition.serviceDefinitionId,
+      dynamic_data: serviceDefinition.dynamic_data as any,
+    };
+    delete clone.serviceDefinitionId;
+
+    await this.prisma.serviceDefinition.upsert({
+      where: {
+        id: serviceDefinition.serviceDefinitionId,
+      },
+      create: clone,
+      update: clone,
+    });
+  }
+
   async updateServiceDefinition(serviceDefinition: ServiceDefinition) {
     const data = { ...serviceDefinition };
     delete data.nombre_installation;

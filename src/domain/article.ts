@@ -1,7 +1,8 @@
+import { ContentRecommandation } from './contentRecommandation';
 import { DifficultyLevel } from './difficultyLevel';
 import { Thematique } from './thematique';
 
-export type Article = {
+export class Article {
   content_id: string;
   titre: string;
   soustitre?: string;
@@ -17,4 +18,4 @@ export type Article = {
   points: number;
   thematique_gamification?: Thematique;
   thematiques: Thematique[];
-};
+}

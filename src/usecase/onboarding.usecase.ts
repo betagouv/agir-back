@@ -196,6 +196,7 @@ export class OnboardingUsecase {
       prm: null,
       version: UtilisateurBehavior.systemVersion(),
       migration_enabled: false,
+      version_ponderation: UtilisateurBehavior.ponderationSystemVersion(),
     });
 
     utilisateurToCreate.setNew6DigitCode();

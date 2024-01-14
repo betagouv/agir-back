@@ -96,6 +96,7 @@ export class TestUtil {
     await this.prisma.linky.deleteMany();
     await this.prisma.article.deleteMany();
     await this.prisma.quizz.deleteMany();
+    await this.prisma.ponderation.deleteMany();
   }
 
   static getDate(date: string) {
@@ -285,6 +286,7 @@ export class TestUtil {
       sent_email_count: 0,
       prevent_sendemail_before: new Date(),
       version: 0,
+      version_ponderation: 0,
       migration_enabled: false,
       todo: new ParcoursTodo(),
       gamification: {
@@ -355,6 +357,18 @@ export class TestUtil {
       type: 'type',
       titre: 'titre',
       utilisateurId: 'utilisateur-id',
+      ...override,
+    };
+  }
+  static ponderationData(override?) {
+    return {
+      id: 'ponderation-id',
+      version: 0,
+      rubriques: {
+        '1': 10,
+        '2': 20,
+        '3': 30,
+      },
       ...override,
     };
   }

@@ -16,7 +16,7 @@ export class RecommandationsController extends GenericControler {
   @Get('utilisateurs/:utilisateurId/recommandations')
   @ApiOkResponse({ type: [RecommandationAPI] })
   @UseGuards(AuthGuard)
-  async getUserInteractions(
+  async getUserRecommandation(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<RecommandationAPI[]> {

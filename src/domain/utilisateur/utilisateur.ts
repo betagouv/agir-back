@@ -43,6 +43,7 @@ export class UtilisateurData {
   unlocked_features: UnlockedFeatures;
   version: number;
   migration_enabled: boolean;
+  version_ponderation: number;
 }
 
 export class Utilisateur extends UtilisateurData {

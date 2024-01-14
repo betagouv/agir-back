@@ -4,6 +4,7 @@ import { Quizz } from '../../../src/domain/quizz/quizz';
 import { Quizz as QuizzDB } from '@prisma/client';
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 import { Thematique } from '../../../src/domain/thematique';
+import { ContentRecommandation } from '../../../src/domain/contentRecommandation';
 
 export type QuizzFilter = {
   maxNumber?: number;
@@ -83,6 +84,41 @@ export class QuizzRepository {
 
     const result = await this.prisma.quizz.findMany(finalQuery);
     return result.map((elem) => this.buildQuizzFromDB(elem));
+  }
+
+  public async getQuizzRecommandations(
+    version: number,
+  ): Promise<ContentRecommandation> {
+    const result = new ContentRecommandation();
+    const query = `
+    SELECT
+      coalesce(SUM(CAST(poids_rubrique->rubrique_quizz as INTEGER)),0) as score, content_id, difficulty
+    FROM
+      (
+        SELECT
+          "Ponderation".rubriques AS poids_rubrique,
+          unnest("Quizz".rubrique_ids) as rubrique_quizz,
+          "Quizz".content_id as content_id,
+          "Quizz".difficulty as difficulty
+        FROM
+          "Ponderation",
+          "Quizz"
+        WHERE
+          "Ponderation".version = ${version}
+      ) as SUBQUERY
+    GROUP BY
+      content_id, difficulty
+    ORDER BY
+      difficulty ASC,
+      score DESC
+    ;
+    `;
+    const recos: { score: BigInt; content_id: string }[] =
+      await this.prisma.$queryRawUnsafe(query);
+    recos.forEach((element) => {
+      result.append(Number(element.score), element.content_id);
+    });
+    return result;
   }
 
   private buildQuizzFromDB(quizzDB: QuizzDB): Quizz {

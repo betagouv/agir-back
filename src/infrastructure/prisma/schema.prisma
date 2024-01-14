@@ -73,6 +73,7 @@ model Utilisateur {
   questionsKYC             QuestionsKYC[]
   version                  Int                @default(0)
   migration_enabled        Boolean            @default(false)
+  version_ponderation      Int                @default(0)
 }
 
 model Interaction {
@@ -139,6 +140,12 @@ model InteractionDefinition {
   updated_at                    DateTime @updatedAt @db.Timestamptz(3)
 
   @@unique([type, content_id])
+}
+
+model Ponderation {
+  id        String @id
+  version   Int    @unique
+  rubriques Json   @default("{}")
 }
 
 model Article {

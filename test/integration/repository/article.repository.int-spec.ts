@@ -275,4 +275,173 @@ describe('ArticleRepository', () => {
     expect(liste[1].content_id).toEqual('2');
     expect(liste[2].content_id).toEqual('1');
   });
+  it('getArticleRecommendations : order by rubrique ponderation', async () => {
+    // GIVEN
+    await TestUtil.create('ponderation', {
+      version: 0,
+      rubriques: {
+        '1': 10,
+        '2': 20,
+        '3': 30,
+      },
+    });
+    await TestUtil.create('article', {
+      content_id: '1',
+      difficulty: DifficultyLevel.L1,
+      rubrique_ids: ['2'],
+    });
+    await TestUtil.create('article', {
+      content_id: '2',
+      difficulty: DifficultyLevel.L1,
+      rubrique_ids: ['1'],
+    });
+    await TestUtil.create('article', {
+      content_id: '3',
+      difficulty: DifficultyLevel.L1,
+      rubrique_ids: ['3'],
+    });
+
+    // WHEN
+    const reco = await articleRepository.getArticleRecommandations(0);
+
+    // THEN
+    expect(reco.liste).toHaveLength(3);
+    expect(reco.liste[0].content_id).toEqual('3');
+    expect(reco.liste[1].content_id).toEqual('1');
+    expect(reco.liste[2].content_id).toEqual('2');
+    expect(reco.liste[0].score).toEqual(30);
+    expect(reco.liste[1].score).toEqual(20);
+    expect(reco.liste[2].score).toEqual(10);
+  });
+  it('getArticleRecommendations : ne plante pas si version manquante', async () => {
+    // GIVEN
+    await TestUtil.create('ponderation', {
+      version: 2,
+      rubriques: {
+        '1': 10,
+        '2': 20,
+        '3': 30,
+      },
+    });
+    await TestUtil.create('article', {
+      content_id: '1',
+      difficulty: DifficultyLevel.L1,
+      rubrique_ids: ['2'],
+    });
+    await TestUtil.create('article', {
+      content_id: '2',
+      difficulty: DifficultyLevel.L1,
+      rubrique_ids: ['1'],
+    });
+    await TestUtil.create('article', {
+      content_id: '3',
+      difficulty: DifficultyLevel.L1,
+      rubrique_ids: ['3'],
+    });
+
+    // WHEN
+    const reco = await articleRepository.getArticleRecommandations(0);
+
+    // THEN
+    expect(reco.liste).toHaveLength(0);
+  });
+  it('getArticleRecommendations : ne plante pas si table ponderation vide', async () => {
+    // GIVEN
+    await TestUtil.create('article', {
+      content_id: '1',
+      difficulty: DifficultyLevel.L1,
+      rubrique_ids: ['2'],
+    });
+    await TestUtil.create('article', {
+      content_id: '2',
+      difficulty: DifficultyLevel.L1,
+      rubrique_ids: ['1'],
+    });
+    await TestUtil.create('article', {
+      content_id: '3',
+      difficulty: DifficultyLevel.L1,
+      rubrique_ids: ['3'],
+    });
+
+    // WHEN
+    const reco = await articleRepository.getArticleRecommandations(0);
+
+    // THEN
+    expect(reco.liste).toHaveLength(0);
+  });
+  it('getArticleRecommendations : works OK if missing ponderation rubrique, unclassified at the end', async () => {
+    // GIVEN
+    await TestUtil.create('ponderation', {
+      version: 0,
+      rubriques: {
+        '1': 10,
+        '3': 30,
+      },
+    });
+    await TestUtil.create('article', {
+      content_id: '1',
+      difficulty: DifficultyLevel.L1,
+      rubrique_ids: ['2'],
+    });
+    await TestUtil.create('article', {
+      content_id: '2',
+      difficulty: DifficultyLevel.L1,
+      rubrique_ids: ['1'],
+    });
+    await TestUtil.create('article', {
+      content_id: '3',
+      difficulty: DifficultyLevel.L1,
+      rubrique_ids: ['3'],
+    });
+
+    // WHEN
+    const reco = await articleRepository.getArticleRecommandations(0);
+
+    // THEN
+    expect(reco.liste).toHaveLength(3);
+    expect(reco.liste[0].content_id).toEqual('3');
+    expect(reco.liste[1].content_id).toEqual('2');
+    expect(reco.liste[2].content_id).toEqual('1');
+    expect(reco.liste[0].score).toEqual(30);
+    expect(reco.liste[1].score).toEqual(10);
+    expect(reco.liste[2].score).toEqual(0);
+  });
+  it('getArticleRecommendations : works OK if unknown ponderation rubrique, counting as 0', async () => {
+    // GIVEN
+    await TestUtil.create('ponderation', {
+      version: 0,
+      rubriques: {
+        '1': 10,
+        '2': 20,
+        '3': 30,
+      },
+    });
+    await TestUtil.create('article', {
+      content_id: '1',
+      difficulty: DifficultyLevel.L1,
+      rubrique_ids: ['2', '4'],
+    });
+    await TestUtil.create('article', {
+      content_id: '2',
+      difficulty: DifficultyLevel.L1,
+      rubrique_ids: ['1'],
+    });
+    await TestUtil.create('article', {
+      content_id: '3',
+      difficulty: DifficultyLevel.L1,
+      rubrique_ids: ['3'],
+    });
+
+    // WHEN
+    const reco = await articleRepository.getArticleRecommandations(0);
+
+    // THEN
+    expect(reco.liste).toHaveLength(3);
+    expect(reco.liste[0].content_id).toEqual('3');
+    expect(reco.liste[1].content_id).toEqual('1');
+    expect(reco.liste[2].content_id).toEqual('2');
+    expect(reco.liste[0].score).toEqual(30);
+    expect(reco.liste[1].score).toEqual(20);
+    expect(reco.liste[2].score).toEqual(10);
+  });
 });
