@@ -1,5 +1,5 @@
 import { Utilisateur } from '../utilisateur/utilisateur';
-import { Celebration, CelebrationType } from './celebrations/celebration';
+import { Celebration } from './celebrations/celebration';
 import { CelebrationDeNiveau } from './celebrations/celebrationDeNiveau';
 
 let SEUILS_NIVEAUX: number[] = [
