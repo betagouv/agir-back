@@ -148,9 +148,13 @@ export class UtilisateurUsecase {
     const utilisateur =
       await this.utilisateurRespository.findUtilisateurByEmail(email);
 
-    if (!utilisateur) return; // pas d'erreur, silence ^^
+    if (!utilisateur) {
+      ApplicationError.throwBadCodeOrEmailError();
+    }
 
-    if (!utilisateur.active_account) return; // pas d'erreur, silence ^^
+    if (!utilisateur.active_account) {
+      ApplicationError.throwBadCodeOrEmailError();
+    }
 
     PasswordManager.checkPasswordFormat(mot_de_passe);
 

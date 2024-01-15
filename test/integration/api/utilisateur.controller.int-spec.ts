@@ -594,6 +594,35 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     expect(userDB.passwordHash).toEqual(userDB_before.passwordHash);
   });
+  it('POST /utilisateurs/modifier_mot_de_passe - si email ko erreur generique', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+
+    const userDB_before = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/modifier_mot_de_passe')
+      .send({
+        code: '123456',
+        mot_de_passe: '#1234567890HAHA',
+        email: 'bad@truc.com',
+      });
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      'Mauvais code, code expiré, ou mauvaise adresse électronique',
+    );
+
+    const userDB = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+
+    expect(userDB.passwordHash).toEqual(userDB_before.passwordHash);
+  });
   it('POST /utilisateurs/modifier_mot_de_passe - si code ko 4 fois, blocage', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
