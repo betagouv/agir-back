@@ -8,6 +8,7 @@ import {
   Request,
   Delete,
   Query,
+  Put,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -16,15 +17,18 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiQuery,
+  getSchemaPath,
+  ApiExtraModels,
 } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
 import { ServiceDefinitionAPI } from './types/service/serviceDefinitionAPI';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
 import { AddServiceAPI } from './types/service/addServiceAPI';
-import { ApplicationError } from '../applicationError';
 import { ServiceAPI } from './types/service/serviceAPI';
+import { LinkyConfigurationAPI } from './types/service/linkyConfigurationAPI';
 
+@ApiExtraModels(LinkyConfigurationAPI)
 @Controller()
 @ApiBearerAuth()
 @ApiTags('Services')
@@ -79,6 +83,33 @@ export class ServiceController extends GenericControler {
       body.service_definition_id,
     );
   }
+
+  @Put('utilisateurs/:utilisateurId/services/:serviceId/configuration')
+  @ApiOperation({
+    summary:
+      'Met à jour la configuration du service cible, la payload est un json clés-valeurs, propre à chaque service',
+  })
+  @ApiBody({
+    schema: {
+      oneOf: [{ $ref: getSchemaPath(LinkyConfigurationAPI) }],
+    },
+  })
+  @UseGuards(AuthGuard)
+  async setServiceConfiguration(
+    @Body() body: any,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('serviceId') serviceId: string,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+
+    await this.serviceUsecase.updateServiceConfiguration(
+      utilisateurId,
+      serviceId,
+      body,
+    );
+  }
+
   @Get('utilisateurs/:utilisateurId/services')
   // FIXME : set cache-control
   @ApiOperation({

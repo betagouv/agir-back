@@ -1,6 +1,10 @@
 import { TestUtil } from '../../TestUtil';
 import { ServiceRepository } from '../../../src/infrastructure/repository/service.repository';
-import { ScheduledService } from '../../../src/domain/service/serviceDefinition';
+import {
+  LiveService,
+  ScheduledService,
+} from '../../../src/domain/service/serviceDefinition';
+import { Thematique } from '../../../src/domain/thematique';
 
 async function injectData() {
   await TestUtil.create('utilisateur', { id: 'u1', email: '1' });
@@ -187,5 +191,54 @@ describe('ServiceRepository', () => {
     expect(servicesDBList[0].serviceDefinitionId).toEqual(
       ScheduledService.ecowatt,
     );
+  });
+  it('listeServicesOfUtilisateur  : get proper data', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition');
+    await TestUtil.create('service');
+
+    // WHEN
+    const servicesDBList = await serviceRepository.listeServicesOfUtilisateur(
+      'utilisateur-id',
+    );
+
+    // THEN
+    expect(servicesDBList).toHaveLength(1);
+    expect(servicesDBList[0].serviceDefinitionId).toEqual(
+      LiveService.dummy_live,
+    );
+    expect(servicesDBList[0].configuration).toEqual({ prm: '12345' });
+    expect(servicesDBList[0].titre).toEqual('titre');
+    expect(servicesDBList[0].url).toEqual('url');
+    expect(servicesDBList[0].thematiques).toEqual([
+      Thematique.climat,
+      Thematique.logement,
+    ]);
+  });
+  it('updateServiceConfiguration  : saves conf ok', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition');
+    await TestUtil.create('service');
+
+    // WHEN
+    await serviceRepository.updateServiceConfiguration(
+      'utilisateur-id',
+      'dummy_live',
+      {
+        a: '1',
+        b: '2',
+      },
+    );
+
+    // THEN
+    const serviceDB = await TestUtil.prisma.service.findUnique({
+      where: { id: 'service-id' },
+    });
+    expect(serviceDB.configuration).toEqual({
+      a: '1',
+      b: '2',
+    });
   });
 });

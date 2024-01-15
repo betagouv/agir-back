@@ -13,6 +13,7 @@ import { LiveServiceManager } from '../../src/infrastructure/service/LiveService
 import { EventUsecase } from '../../src/usecase/event.usecase';
 import { EventType } from '../../src/domain/utilisateur/utilisateurEvent';
 import { LinkyServiceManager } from '../../src/infrastructure/service/linky/LinkyServiceManager';
+import { LinkyConfigurationAPI } from '../../src/infrastructure/api/types/service/linkyConfigurationAPI';
 
 const dummy_live_manager = {
   computeLiveDynamicData: async (service: Service) => {
@@ -49,6 +50,18 @@ export class ServiceUsecase {
       linky: this.linkyServiceManager,
       dummy_live: dummy_live_manager,
     };
+  }
+
+  async updateServiceConfiguration(
+    utilisateurId: string,
+    serviceId: string,
+    payload: LinkyConfigurationAPI,
+  ) {
+    await this.serviceRepository.updateServiceConfiguration(
+      utilisateurId,
+      serviceId,
+      payload,
+    );
   }
 
   async refreshScheduledServices(): Promise<string[]> {

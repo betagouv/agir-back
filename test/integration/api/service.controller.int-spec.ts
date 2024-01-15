@@ -339,4 +339,32 @@ describe('Service (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
   });
+  it('PUT /utilisateurs/id/services/serviceid/configuration OK pour linky', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition');
+    await TestUtil.create('service');
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/services/dummy_live/configuration',
+    ).send({
+      a: '123',
+      b: 456,
+      c: true,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const serviceDB = await TestUtil.prisma.service.findUnique({
+      where: { id: 'service-id' },
+    });
+
+    expect(serviceDB.configuration).toEqual({
+      a: '123',
+      b: 456,
+      c: true,
+    });
+  });
 });

@@ -252,6 +252,7 @@ model Service {
   serviceDefinition   ServiceDefinition? @relation(fields: [serviceDefinitionId], references: [id])
   utilisateurId       String
   utilisateur         Utilisateur        @relation(fields: [utilisateurId], references: [id])
+  configuration       Json               @default("{}")
 
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)

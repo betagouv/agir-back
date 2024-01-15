@@ -45,6 +45,22 @@ export class ServiceRepository {
     });
   }
 
+  async updateServiceConfiguration(
+    utilisateurId: string,
+    serviceDefinitionId: string,
+    configuration: Object,
+  ) {
+    await this.prisma.service.update({
+      where: {
+        serviceDefinitionId_utilisateurId: {
+          serviceDefinitionId: serviceDefinitionId,
+          utilisateurId: utilisateurId,
+        },
+      },
+      data: { configuration: configuration as any },
+    });
+  }
+
   async delete(utilisateurId: string): Promise<any> {
     return this.prisma.service.deleteMany({
       where: { utilisateurId: utilisateurId },
@@ -155,6 +171,7 @@ export class ServiceRepository {
       ...serviceDB['serviceDefinition'],
       serviceId: serviceDB.id,
       serviceDefinitionId: serviceDB['serviceDefinition'].id,
+      configuration: serviceDB.configuration,
     });
   }
 
