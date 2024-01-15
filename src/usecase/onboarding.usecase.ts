@@ -66,7 +66,7 @@ export class OnboardingUsecase {
       const token = await _this.oidcService.createNewInnerAppToken(
         utilisateur.id,
       );
-      return { token, utilisateur };
+      return { token };
     };
 
     return this.codeManager.processInputCodeAndDoActionIfOK(

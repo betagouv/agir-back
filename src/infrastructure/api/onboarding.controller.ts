@@ -76,10 +76,7 @@ export class OnboardingController extends GenericControler {
       body.email,
       body.code,
     );
-    const response = LoggedUtilisateurAPI.mapToAPI(
-      loggedUser.token,
-      loggedUser.utilisateur,
-    );
+    const response = LoggedUtilisateurAPI.mapToAPI(loggedUser.token);
     return res.status(HttpStatus.OK).json(response);
   }
 
