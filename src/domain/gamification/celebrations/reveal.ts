@@ -14,7 +14,7 @@ export class Reveal {
     services: {
       titre: 'Vos services',
       description: `Un service permet d'avoir toujours sous les yeux vos fonctionnalités clés`,
-      url: '/coach/services',
+      url: '/agir/services',
     },
     recommandations: {
       titre: 'Vos recommandations',
@@ -27,7 +27,8 @@ export class Reveal {
     this.id = uuidv4();
     this.feature = feature;
     this.titre = data.titre;
-    (this.description = data.description), (this.url = data.url);
+    this.description = data.description;
+    this.url = data.url;
   }
   id: string;
   feature: Feature;
