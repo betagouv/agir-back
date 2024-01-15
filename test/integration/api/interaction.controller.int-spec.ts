@@ -1,3 +1,4 @@
+import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { TestUtil } from '../../TestUtil';
 
@@ -46,6 +47,37 @@ describe('/utilisateurs/id/interactions (API test)', () => {
         updated_at: dbInteraction.updated_at.toISOString(),
       }),
     );
+  });
+  it('GET /utilisateurs/id/interactions - list all interactions in v2', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      version: 2,
+      code_postal: null,
+      history: {},
+    });
+    await TestUtil.create('article', {
+      content_id: '1',
+      difficulty: DifficultyLevel.L1,
+    });
+    await TestUtil.create('article', {
+      content_id: '2',
+      difficulty: DifficultyLevel.L1,
+    });
+    await TestUtil.create('quizz', {
+      content_id: '1',
+      difficulty: DifficultyLevel.L1,
+    });
+    await TestUtil.create('quizz', {
+      content_id: '2',
+      difficulty: DifficultyLevel.L1,
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/interactions',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(4);
   });
   it('GET /utilisateurs/id/interactions - list all interactions, filtée par code postal', async () => {
     // GIVEN

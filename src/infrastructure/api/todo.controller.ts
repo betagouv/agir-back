@@ -19,7 +19,6 @@ import { AuthGuard } from '../auth/guard';
 import { TodoAPI } from './types/todo/todoAPI';
 import { TodoUsecase } from '../../../src/usecase/todo.usecase';
 import { Response } from 'express';
-import { ApplicationError } from '../applicationError';
 
 @Controller()
 @ApiBearerAuth()
