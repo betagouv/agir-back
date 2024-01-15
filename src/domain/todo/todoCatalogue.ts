@@ -192,25 +192,5 @@ export class TodoCatalogue {
         },
       ],
     },
-    {
-      numero_todo: 6,
-      points_todo: 30,
-      titre: `T'as vu comme c'est fou !!`,
-      done_at: null,
-      done: [],
-      todo: [
-        {
-          id: uuidv4(),
-          titre: 'Raconte moi ta vie :3',
-          thematiques: [Thematique.consommation],
-          progression: { current: 0, target: 1 },
-          sont_points_en_poche: false,
-          type: InteractionType.kyc,
-          level: DifficultyLevel.L1,
-          content_id: '1',
-          points: 20,
-        },
-      ],
-    },
   ];
 }
