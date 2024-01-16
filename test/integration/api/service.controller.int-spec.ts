@@ -259,7 +259,6 @@ describe('Service (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body[0].label).toEqual('En construction 🚧');
-    expect(response.body[0].isInError).toEqual(false);
   });
   it('GET /utilisateurs/id/services , label a pour valeur titre pour les service non dynamic live', async () => {
     // GIVEN
@@ -276,7 +275,6 @@ describe('Service (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0].label).toEqual('titre');
-    expect(response.body[0].isInError).toEqual(false);
   });
   it('GET /utilisateurs/id/services renvoi le libellé de la thématique en base si existe', async () => {
     // GIVEN

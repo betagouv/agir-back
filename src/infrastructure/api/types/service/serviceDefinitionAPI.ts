@@ -1,9 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
-import {
-  ServiceDefinition,
-  ServiceDynamicData,
-} from '../../../../../src/domain/service/serviceDefinition';
+import { ServiceDefinition } from '../../../../../src/domain/service/serviceDefinition';
 import { Thematique } from '../../../../../src/domain/thematique';
 
 export class ServiceDefinitionAPI {
@@ -18,7 +15,6 @@ export class ServiceDefinitionAPI {
   @ApiProperty() is_local: boolean;
   @ApiProperty() is_url_externe: boolean;
   @ApiProperty() is_installed?: boolean;
-  @ApiProperty() dynamic_data: ServiceDynamicData;
 
   @ApiProperty({ type: [String] })
   thematiques: string[];
@@ -44,7 +40,6 @@ export class ServiceDefinitionAPI {
       ),
       nombre_installation: serviceDefinition.nombre_installation,
       is_installed: serviceDefinition.is_installed,
-      dynamic_data: serviceDefinition.dynamic_data,
     };
     return result;
   }
