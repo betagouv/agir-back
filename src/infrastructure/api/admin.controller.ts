@@ -22,6 +22,7 @@ import { UserMigrationReportAPI } from './types/userMigrationReportAPI';
 import { ReferentielUsecase } from '../../../src/usecase/referentiel/referentiel.usecase';
 import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
 import { TodoUsecase } from '../../../src/usecase/todo.usecase';
+import { ContactUsecase } from '../../usecase/contact.usescase';
 
 @Controller()
 @ApiBearerAuth()
@@ -34,6 +35,7 @@ export class AdminController extends GenericControler {
     private cmsUsecase: CMSUsecase,
     private referentielUsecase: ReferentielUsecase,
     private todoUsecase: TodoUsecase,
+    private contactUsecase: ContactUsecase,
   ) {
     super();
   }
@@ -207,12 +209,23 @@ export class AdminController extends GenericControler {
   async upgrade_user_todo(
     @Headers('Authorization') authorization: string,
   ): Promise<string[]> {
+    return await this.todoUsecase.updateAllUsersTodo();
+  }
+
+  @Post('admin/contacts/synchronize')
+  @ApiOperation({
+    summary: "Synchronise les contacts de l'application avec ceux de Brevo ",
+  })
+  async SynchronizeContacts(
+    @Headers('Authorization') authorization: string,
+  ): Promise<void> {
     if (!authorization) {
       throw new UnauthorizedException('CRON API KEY manquante');
     }
     if (!authorization.endsWith(process.env.CRON_API_KEY)) {
       throw new ForbiddenException('CRON API KEY incorrecte');
     }
-    return await this.todoUsecase.updateAllUsersTodo();
+
+    await this.contactUsecase.updateUtilisateursContacts();
   }
 }
