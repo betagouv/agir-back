@@ -519,9 +519,13 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     );
   });
 
-  it('POST /utilisateurs/modifier_mot_de_passe - si code ok le mot de passe est modifié, compteur à zero', async () => {
+  it('POST /utilisateurs/modifier_mot_de_passe - si code ok le mot de passe est modifié, compteurs à zero', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
+    await TestUtil.getServer().post('/utilisateurs/login').send({
+      mot_de_passe: '#bad password',
+      email: 'yo@truc.com',
+    });
     await TestUtil.getServer()
       .post('/utilisateurs/modifier_mot_de_passe')
       .send({
@@ -564,6 +568,10 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
         .toString(`hex`),
     );
     expect(dbUtilisateur.sent_email_count).toEqual(0);
+    expect(dbUtilisateur.failed_login_count).toEqual(0);
+    expect(dbUtilisateur.prevent_login_before.getTime()).toBeGreaterThan(
+      Date.now() - 200,
+    );
   });
   it('POST /utilisateurs/modifier_mot_de_passe - si code ko le mot de passe est PAS modifié', async () => {
     // GIVEN

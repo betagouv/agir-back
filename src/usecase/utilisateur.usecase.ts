@@ -161,6 +161,8 @@ export class UtilisateurUsecase {
     const _this = this;
     const codeOkAction = async function () {
       await _this.securityEmailManager.resetEmailSendingState(utilisateur);
+      await _this.passwordManager.initLoginState(utilisateur);
+
       utilisateur.setPassword(mot_de_passe);
       await _this.utilisateurRespository.updateProfile(utilisateur.id, {
         passwordSalt: utilisateur.passwordSalt,

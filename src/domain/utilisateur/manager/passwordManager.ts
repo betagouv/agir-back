@@ -53,6 +53,12 @@ export class PasswordManager {
       .toString(`hex`);
   }
 
+  public async initLoginState(utilisateur: PasswordAwareUtilisateur) {
+    utilisateur.failed_login_count = 0;
+    utilisateur.prevent_login_before = new Date();
+    await this.securityRepository.updateLoginAttemptData(utilisateur);
+  }
+
   private static checkLoginLocked(utilisateur: PasswordAwareUtilisateur) {
     if (PasswordManager.isLoginLocked(utilisateur)) {
       ApplicationError.throwTropEssaisCompteBloque(
@@ -71,11 +77,10 @@ export class PasswordManager {
         .pbkdf2Sync(password, utilisateur.passwordSalt, 1000, 64, `sha512`)
         .toString(`hex`);
     if (ok) {
-      PasswordManager.initLoginState(utilisateur);
+      await this.initLoginState(utilisateur);
     } else {
-      PasswordManager.failLogin(utilisateur);
+      await this.failLogin(utilisateur);
     }
-    await this.securityRepository.updateLoginAttemptData(utilisateur);
     return ok;
   }
 
@@ -93,16 +98,12 @@ export class PasswordManager {
     });
   }
 
-  private static initLoginState(utilisateur: PasswordAwareUtilisateur) {
-    utilisateur.failed_login_count = 0;
-    utilisateur.prevent_login_before = new Date();
-  }
-
-  private static failLogin(utilisateur: PasswordAwareUtilisateur) {
+  private async failLogin(utilisateur: PasswordAwareUtilisateur) {
     utilisateur.failed_login_count++;
     if (utilisateur.failed_login_count > PasswordManager.MAX_LOGIN_ATTEMPT) {
       PasswordManager.incrementNextAllowedLoginTime(utilisateur);
     }
+    await this.securityRepository.updateLoginAttemptData(utilisateur);
   }
 
   private static incrementNextAllowedLoginTime(
