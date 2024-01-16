@@ -1,20 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-const Brevo = require('@getbrevo/brevo');
-
-type Contact = {
-  attributes: {
-    POINTS: number;
-    EMAIL: string;
-  };
-  email: string;
-  ext_id?: string;
-  emailBlacklisted?: boolean;
-  smtpBlacklistSender?: boolean;
-  smsBlacklisted?: boolean;
-  listIds?: number[];
-  unlinkListIds?: number[];
-};
+import { Contact } from 'src/domain/contact/contact';
+import Brevo from '@getbrevo/brevo';
 
 @Injectable()
 export class ContactSynchro {
@@ -54,7 +41,35 @@ export class ContactSynchro {
       });
   }
 
-  // todo : add createContact
-  // todo : add deleteContact
+  // add createContact
+  public async createContact(contact: Contact): Promise<boolean> {
+    return await this.apiInstance.createContact(contact).then(
+      function (data) {
+        console.log(
+          'API called successfully. Returned data: ' + JSON.stringify(data),
+        );
+        return true;
+      },
+      function (error) {
+        console.error(error);
+        return false;
+      },
+    );
+  }
+
+  // add deleteContact
+  public async deleteContact(email: string): Promise<boolean> {
+    const identifier = email; // can be email or id
+
+    return await this.apiInstance.deleteContact(identifier).then(
+      function () {
+        return true;
+      },
+      function (error) {
+        console.error(error);
+        return false;
+      },
+    );
+  }
   // todo : add updateContact
 }

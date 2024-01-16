@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { ContactSynchro } from 'src/infrastructure/contact/contactSynchro';
+import { ContactSynchro } from '../../src/infrastructure/contact/contactSynchro';
+import { Contact } from '../../src/domain/contact/contact';
+import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 
 @Injectable()
 export class ContactUsecase {
@@ -14,7 +16,15 @@ export class ContactUsecase {
     for (let index = 0; index < nombreTotalUtilisateurs; index += 100) {
       const utilisateurs =
         await this.utilisateurRepository.findUtilisateursForBatch(100, index);
-      this.contactSynchro.BatchUpdateContacts(utilisateurs);
+      const contacts = utilisateurs.map((utilisateur) => {
+        return new Contact(utilisateur);
+      });
+      this.contactSynchro.BatchUpdateContacts(contacts);
     }
+  }
+
+  async createUtilisateurContact(utilisateur: Utilisateur): Promise<boolean> {
+    const contact = new Contact(utilisateur);
+    return await this.contactSynchro.createContact(contact);
   }
 }
