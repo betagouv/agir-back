@@ -138,24 +138,30 @@ export class AdminController extends GenericControler {
   @ApiOperation({
     summary: `Bloque la capacité de migrer des utilisateurs, pour des besoins de tests contrôlés`,
   })
-  @UseGuards(AuthGuard)
   async lockUsers(
     @Headers('Authorization') authorization: string,
-    @Request() req,
   ): Promise<any> {
-    this.checkCallerIsAdmin(req);
+    if (!authorization) {
+      throw new UnauthorizedException('CRON API KEY manquante');
+    }
+    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
+      throw new ForbiddenException('CRON API KEY incorrecte');
+    }
     await this.migrationUsecase.lockUserMigration();
   }
   @Post('/admin/unlock_user_migration')
   @ApiOperation({
     summary: `Active la capacité de migrer des utilisateurs`,
   })
-  @UseGuards(AuthGuard)
   async unlockUsers(
     @Headers('Authorization') authorization: string,
-    @Request() req,
   ): Promise<any> {
-    this.checkCallerIsAdmin(req);
+    if (!authorization) {
+      throw new UnauthorizedException('CRON API KEY manquante');
+    }
+    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
+      throw new ForbiddenException('CRON API KEY incorrecte');
+    }
     await this.migrationUsecase.unlockUserMigration();
   }
 }

@@ -161,8 +161,9 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(403);
   });
-  it('POST /admin/lock_user_migration retourne une 200 si utilisateur est admin', async () => {
+  it('POST /admin/lock_user_migration retourne une 200 si API CRON', async () => {
     // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
 
     // WHEN
     const response = await TestUtil.POST('/admin/lock_user_migration');
@@ -296,6 +297,7 @@ describe('Admin (API test)', () => {
   });
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.create('utilisateur');
     await TestUtil.create('utilisateur', {
       id: '1',
@@ -319,6 +321,7 @@ describe('Admin (API test)', () => {
   });
   it('POST /admin/unlock_user_migration lock les utilisateur', async () => {
     // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.create('utilisateur');
     await TestUtil.create('utilisateur', {
       id: '1',
