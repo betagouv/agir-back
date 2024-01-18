@@ -196,7 +196,7 @@ describe('ServiceRepository', () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('serviceDefinition');
-    await TestUtil.create('service');
+    await TestUtil.create('service', { configuration: { prm: '12345' } });
 
     // WHEN
     const servicesDBList = await serviceRepository.listeServicesOfUtilisateur(
@@ -220,7 +220,7 @@ describe('ServiceRepository', () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('serviceDefinition');
-    await TestUtil.create('service');
+    await TestUtil.create('service', { configuration: {} });
 
     // WHEN
     await serviceRepository.updateServiceConfiguration(
@@ -239,6 +239,32 @@ describe('ServiceRepository', () => {
     expect(serviceDB.configuration).toEqual({
       a: '1',
       b: '2',
+    });
+  });
+  it('updateServiceConfiguration  : merge conf ok', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition');
+    await TestUtil.create('service', { configuration: { a: '10', c: '30' } });
+
+    // WHEN
+    await serviceRepository.updateServiceConfiguration(
+      'utilisateur-id',
+      'dummy_live',
+      {
+        a: '1',
+        b: '2',
+      },
+    );
+
+    // THEN
+    const serviceDB = await TestUtil.prisma.service.findUnique({
+      where: { id: 'service-id' },
+    });
+    expect(serviceDB.configuration).toEqual({
+      a: '1',
+      b: '2',
+      c: '30',
     });
   });
 });

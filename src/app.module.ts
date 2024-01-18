@@ -76,6 +76,7 @@ import { RecommandationUsecase } from './usecase/recommandation.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
 import { ReferentielUsecase } from './usecase/referentiel/referentiel.usecase';
 import { PonderationRepository } from './infrastructure/repository/ponderation.repository';
+import { DepartementRepository } from './infrastructure/repository/departement/departement.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -169,6 +170,7 @@ function getControllers(): any[] {
     MigrationUsecase,
     ReferentielUsecase,
     PonderationRepository,
+    DepartementRepository,
   ],
 })
 export class AppModule {}

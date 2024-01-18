@@ -50,6 +50,19 @@ export class ServiceRepository {
     serviceDefinitionId: string,
     configuration: Object,
   ) {
+    const current_service = await this.prisma.service.findUnique({
+      where: {
+        serviceDefinitionId_utilisateurId: {
+          serviceDefinitionId: serviceDefinitionId,
+          utilisateurId: utilisateurId,
+        },
+      },
+    });
+    current_service.configuration;
+    const new_configuration = {
+      ...(current_service.configuration as any),
+      ...configuration,
+    };
     await this.prisma.service.update({
       where: {
         serviceDefinitionId_utilisateurId: {
@@ -57,7 +70,7 @@ export class ServiceRepository {
           utilisateurId: utilisateurId,
         },
       },
-      data: { configuration: configuration as any },
+      data: { configuration: new_configuration },
     });
   }
 

@@ -39,7 +39,7 @@ export class LinkyUsecase {
     utilisateur.prm = prm;
     utilisateur.code_departement = code_departement;
 
-    const pk = await this.linkyServiceManager.souscription(
+    const pk = await this.linkyServiceManager.souscription_API(
       prm,
       code_departement,
     );

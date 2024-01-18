@@ -44,6 +44,7 @@ export class ServiceUsecase {
     this.SCHEDULED_SERVICES = {
       ecowatt: this.ecoWattServiceManager,
       dummy_scheduled: dummy_scheduled_manager,
+      linky: this.linkyServiceManager,
     };
     this.LIVE_SERVICES = {
       fruits: this.fruitsEtLegumesServiceManager,

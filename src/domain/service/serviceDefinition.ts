@@ -3,6 +3,7 @@ import { Thematique } from '../thematique';
 export enum ScheduledService {
   ecowatt = 'ecowatt',
   dummy_scheduled = 'dummy_scheduled',
+  linky = 'linky',
 }
 export enum LiveService {
   fruits = 'fruits',

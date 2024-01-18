@@ -1,18 +1,65 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { WinterListeSubAPI } from '../../api/types/winter/WinterListeSubAPI';
-import { ServiceDynamicData } from '../../../domain/service/serviceDefinition';
+import {
+  ServiceDefinition,
+  ServiceDynamicData,
+} from '../../../domain/service/serviceDefinition';
 import { LiveServiceManager } from '../LiveServiceManager';
+import { ScheduledServiceManager } from '../ScheduledServiceManager';
 
 @Injectable()
-export class LinkyServiceManager implements LiveServiceManager {
+export class LinkyServiceManager
+  implements LiveServiceManager, ScheduledServiceManager
+{
   constructor() {}
   async computeLiveDynamicData(): Promise<ServiceDynamicData> {
     return {
-      label: 'Votre Linky 🔌',
+      label: '🔌 Votre Linky',
       isInError: false,
     };
   }
+  async computeScheduledDynamicData(
+    serviceDefinition: ServiceDefinition,
+  ): Promise<ServiceDynamicData> {
+    return { label: 'toImplement', isInError: false };
+  }
+
+  /*
+  async souscription(prm: string, code_departement: string) {
+    if (!prm) {
+      ApplicationError.throwMissingPRM();
+    }
+    if (!code_departement) {
+      ApplicationError.throwMissingCodeDepartement();
+    }
+
+    const existing_linky_data = await this.linkyRepository.getLinky(prm);
+
+    if (existing_linky_data !== null) {
+      ApplicationError.throwAlreadySubscribedError();
+    }
+
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+      utilisateurId,
+    );
+
+    utilisateur.prm = prm;
+    utilisateur.code_departement = code_departement;
+
+    const pk = await this.linkyServiceManager.souscription(
+      prm,
+      code_departement,
+    );
+    const new_linky_data = new LinkyData({
+      prm: prm,
+      pk_winter: pk,
+      serie: [],
+    });
+    await this.linkyRepository.createNewLinky(new_linky_data);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+  */
 
   async list_souscriptions(page?: number): Promise<WinterListeSubAPI> {
     if (process.env.WINTER_API_ENABLED !== 'true') {
@@ -46,7 +93,10 @@ export class LinkyServiceManager implements LiveServiceManager {
     return response.data;
   }
 
-  async souscription(prm: string, code_departement: string): Promise<string> {
+  async souscription_API(
+    prm: string,
+    code_departement: string,
+  ): Promise<string> {
     if (process.env.WINTER_API_ENABLED !== 'true') {
       return '7614671637';
     }

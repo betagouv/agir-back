@@ -385,7 +385,7 @@ export class TestUtil {
       id: 'service-id',
       utilisateurId: 'utilisateur-id',
       serviceDefinitionId: 'dummy_live',
-      configuration: { prm: '12345' },
+      configuration: {},
       ...override,
     };
   }
