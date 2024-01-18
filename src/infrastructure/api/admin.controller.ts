@@ -53,6 +53,22 @@ export class AdminController extends GenericControler {
     res.status(HttpStatus.OK).json(result).send();
   }
 
+  @Post('services/process_async_service')
+  @ApiOkResponse({ type: [String] })
+  async processAsyncService(
+    @Res() res: Response,
+    @Headers('Authorization') authorization: string,
+  ) {
+    if (!authorization) {
+      throw new UnauthorizedException('CRON API KEY manquante');
+    }
+    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
+      throw new ForbiddenException('CRON API KEY incorrecte');
+    }
+    const result = await this.serviceUsecase.processAsyncServices();
+    res.status(HttpStatus.OK).json(result).send();
+  }
+
   @Post('/admin/load_articles_from_cms')
   @ApiOperation({
     summary: 'Upsert tous les articles publiés du CMS',

@@ -253,6 +253,7 @@ model Service {
   utilisateurId       String
   utilisateur         Utilisateur        @relation(fields: [utilisateurId], references: [id])
   configuration       Json               @default("{}")
+  status              String             @default("CREATED")
 
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
@@ -304,10 +305,8 @@ model GroupeAbonnement {
 }
 
 model Linky {
-  id         String   @id
-  prm        String   @unique
+  prm        String   @id
   data       Json     @default("{}")
-  pk_winter  String   @default("")
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }

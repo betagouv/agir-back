@@ -1,6 +1,7 @@
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { TestUtil } from '../../TestUtil';
+import { ServiceStatus } from '../../../src/domain/service/service';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
@@ -528,6 +529,188 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(0);
+  });
+  it('POST /services/process_async_service appel ok, renvoi id du service traité', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', {
+      id: 'dummy_async',
+    });
+    await TestUtil.create('service', {
+      serviceDefinitionId: 'dummy_async',
+      status: 'LIVE',
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/services/process_async_service');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toEqual('service-id');
+  });
+  it('POST /services/process_async_service appel ok, renvoi id info service linly deja LIVE', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', {
+      id: 'linky',
+    });
+    await TestUtil.create('service', {
+      serviceDefinitionId: 'linky',
+      status: 'LIVE',
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/services/process_async_service');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toEqual('ALREADY LIVE : linky - service-id');
+  });
+  it('POST /services/process_async_service appel ok, 2 service linky LIVE', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create('utilisateur', { id: '1', email: 'a' });
+    await TestUtil.create('utilisateur', { id: '2', email: 'b' });
+    await TestUtil.create('serviceDefinition', {
+      id: 'linky',
+    });
+    await TestUtil.create('service', {
+      id: '123',
+      utilisateurId: '1',
+      serviceDefinitionId: 'linky',
+      status: 'LIVE',
+    });
+    await TestUtil.create('service', {
+      id: '456',
+      utilisateurId: '2',
+      serviceDefinitionId: 'linky',
+      status: 'LIVE',
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/services/process_async_service');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(2);
+  });
+  it('POST /services/process_async_service appel ok, status inconnu', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', {
+      id: 'linky',
+    });
+    await TestUtil.create('service', {
+      serviceDefinitionId: 'linky',
+      status: 'blurp',
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/services/process_async_service');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toEqual(
+      'UNKNOWN STATUS : linky - service-id - blurp',
+    );
+  });
+  it('POST /services/process_async_service appel ok, prm manquant', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    process.env.WINTER_API_ENABLED = 'false';
+
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', {
+      id: 'linky',
+    });
+    await TestUtil.create('service', {
+      serviceDefinitionId: 'linky',
+      status: 'CREATED',
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/services/process_async_service');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toEqual(
+      'ERROR : linky - service-id : missing prm data',
+    );
+  });
+  it('POST /services/process_async_service appel ok, CREATED delcenche traitement pour linky', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    process.env.WINTER_API_ENABLED = 'false';
+
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', {
+      id: 'linky',
+    });
+    await TestUtil.create('service', {
+      serviceDefinitionId: 'linky',
+      status: 'CREATED',
+      configuration: { prm: '123' },
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/services/process_async_service');
+
+    // THEN
+    const serviceDB = await TestUtil.prisma.service.findUnique({
+      where: { id: 'service-id' },
+    });
+    const linkyDB = await TestUtil.prisma.linky.findUnique({
+      where: { prm: '123' },
+    });
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toEqual(
+      'INITIALISED : linky - service-id - prm:123',
+    );
+    expect(serviceDB.status).toEqual(ServiceStatus.LIVE);
+    expect(serviceDB.configuration['prm']).toEqual('123');
+    expect(serviceDB.configuration['winter_pk']).toEqual('7614671637');
+
+    expect(linkyDB.data).toEqual([]);
+  });
+  it('POST /services/process_async_service appel ok, supprime le serice linky OK', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    process.env.WINTER_API_ENABLED = 'false';
+
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', {
+      id: 'linky',
+    });
+    await TestUtil.create('service', {
+      serviceDefinitionId: 'linky',
+      status: 'TO_DELETE',
+      configuration: { prm: '123', winter_pk: 'abc' },
+    });
+    await TestUtil.create('linky', { prm: '123' });
+
+    // WHEN
+    const response = await TestUtil.POST('/services/process_async_service');
+
+    // THEN
+    const serviceDB = await TestUtil.prisma.service.findUnique({
+      where: { id: 'service-id' },
+    });
+    const linkyDB = await TestUtil.prisma.linky.findUnique({
+      where: { prm: '123' },
+    });
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toEqual('DELETED : linky - service-id - prm:123');
+    expect(serviceDB).toBeNull();
+    expect(linkyDB).toBeNull();
   });
   it('POST /services/refresh_dynamic_data appel ok, renvoie 1 quand 1 service cible, donnée mises à jour', async () => {
     // GIVEN

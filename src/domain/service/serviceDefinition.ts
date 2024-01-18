@@ -3,12 +3,15 @@ import { Thematique } from '../thematique';
 export enum ScheduledService {
   ecowatt = 'ecowatt',
   dummy_scheduled = 'dummy_scheduled',
-  linky = 'linky',
 }
 export enum LiveService {
   fruits = 'fruits',
   linky = 'linky',
   dummy_live = 'dummy_live',
+}
+export enum AsyncService {
+  linky = 'linky',
+  dummy_async = 'dummy_async',
 }
 
 export interface ServiceDynamicData {
@@ -48,6 +51,9 @@ export class ServiceDefinition extends ServiceDefinitionData {
   }
   public isLiveServiceType(): boolean {
     return LiveService[this.serviceDefinitionId] != undefined;
+  }
+  public isAsyncServiceType(): boolean {
+    return AsyncService[this.serviceDefinitionId] != undefined;
   }
   public setNextRefreshDate() {
     if (this.minute_period) {

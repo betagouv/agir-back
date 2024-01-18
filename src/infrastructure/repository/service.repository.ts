@@ -7,7 +7,7 @@ import {
 } from '@prisma/client';
 import { ServiceDefinition } from '../../domain/service/serviceDefinition';
 import { v4 as uuidv4 } from 'uuid';
-import { Service } from '../../domain/service/service';
+import { Service, ServiceStatus } from '../../domain/service/service';
 import { Thematique } from '../../../src/domain/thematique';
 import { ApplicationError } from '../applicationError';
 
@@ -49,6 +49,7 @@ export class ServiceRepository {
     utilisateurId: string,
     serviceDefinitionId: string,
     configuration: Object,
+    status?: ServiceStatus,
   ) {
     const current_service = await this.prisma.service.findUnique({
       where: {
@@ -70,11 +71,11 @@ export class ServiceRepository {
           utilisateurId: utilisateurId,
         },
       },
-      data: { configuration: new_configuration },
+      data: { configuration: new_configuration, status: status },
     });
   }
 
-  async delete(utilisateurId: string): Promise<any> {
+  async deleteAllUserServices(utilisateurId: string): Promise<any> {
     return this.prisma.service.deleteMany({
       where: { utilisateurId: utilisateurId },
     });
@@ -161,6 +162,27 @@ export class ServiceRepository {
     });
     return this.buildServiceDefinitionList(result);
   }
+  async listeServiceDefinitions(): Promise<ServiceDefinition[]> {
+    const result = await this.prisma.serviceDefinition.findMany();
+    return this.buildServiceDefinitionList(result);
+  }
+  async getServiceById(): Promise<ServiceDefinition[]> {
+    const result = await this.prisma.serviceDefinition.findMany({});
+    return this.buildServiceDefinitionList(result);
+  }
+  async listeServicesByDefinitionId(
+    serviceDefinitionId: string,
+  ): Promise<Service[]> {
+    const result = await this.prisma.service.findMany({
+      where: {
+        serviceDefinitionId: serviceDefinitionId,
+      },
+      include: {
+        serviceDefinition: true,
+      },
+    });
+    return result.map((ser) => this.buildService(ser));
+  }
 
   async countServiceDefinitionUsage(): Promise<Record<string, number>> {
     const query = `
@@ -183,8 +205,10 @@ export class ServiceRepository {
     return new Service({
       ...serviceDB['serviceDefinition'],
       serviceId: serviceDB.id,
+      utilisateurId: serviceDB.utilisateurId,
       serviceDefinitionId: serviceDB['serviceDefinition'].id,
       configuration: serviceDB.configuration,
+      status: serviceDB.status,
     });
   }
 

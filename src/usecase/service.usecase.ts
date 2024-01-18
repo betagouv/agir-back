@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Service } from '../../src/domain/service/service';
 import {
+  AsyncService,
   LiveService,
   ScheduledService,
   ServiceDefinition,
@@ -14,10 +15,16 @@ import { EventUsecase } from '../../src/usecase/event.usecase';
 import { EventType } from '../../src/domain/utilisateur/utilisateurEvent';
 import { LinkyServiceManager } from '../../src/infrastructure/service/linky/LinkyServiceManager';
 import { LinkyConfigurationAPI } from '../../src/infrastructure/api/types/service/linkyConfigurationAPI';
+import { AsyncServiceManager } from '../../src/infrastructure/service/AsyncServiceManager';
 
 const dummy_live_manager = {
   computeLiveDynamicData: async (service: Service) => {
     return { label: `En construction 🚧`, isInError: false };
+  },
+};
+const dummy_async_manager = {
+  runAsyncProcessing: async (service: Service) => {
+    return service.serviceId;
   },
 };
 const dummy_scheduled_manager = {
@@ -33,6 +40,7 @@ export class ServiceUsecase {
     ScheduledServiceManager
   >;
   private readonly LIVE_SERVICES: Record<LiveService, LiveServiceManager>;
+  private readonly ASYNC_SERVICES: Record<AsyncService, AsyncServiceManager>;
 
   constructor(
     private serviceRepository: ServiceRepository,
@@ -44,32 +52,35 @@ export class ServiceUsecase {
     this.SCHEDULED_SERVICES = {
       ecowatt: this.ecoWattServiceManager,
       dummy_scheduled: dummy_scheduled_manager,
-      linky: this.linkyServiceManager,
     };
     this.LIVE_SERVICES = {
       fruits: this.fruitsEtLegumesServiceManager,
       linky: this.linkyServiceManager,
       dummy_live: dummy_live_manager,
     };
+    this.ASYNC_SERVICES = {
+      linky: this.linkyServiceManager,
+      dummy_async: dummy_async_manager,
+    };
   }
 
   async updateServiceConfiguration(
     utilisateurId: string,
-    serviceId: string,
+    serviceDefinitionId: string,
     payload: LinkyConfigurationAPI,
   ) {
     await this.serviceRepository.updateServiceConfiguration(
       utilisateurId,
-      serviceId,
+      serviceDefinitionId,
       payload,
     );
   }
 
   async refreshScheduledServices(): Promise<string[]> {
-    let serviceList =
+    let serviceDefinitionList =
       await this.serviceRepository.listeServiceDefinitionsToRefresh();
 
-    const serviceToRefreshList = serviceList.filter(
+    const serviceToRefreshList = serviceDefinitionList.filter(
       (serviceDefinition) =>
         serviceDefinition.isScheduledServiceType() &&
         serviceDefinition.isReadyForRefresh(),
@@ -86,6 +97,31 @@ export class ServiceUsecase {
     return resultStatusList;
   }
 
+  async processAsyncServices(): Promise<string[]> {
+    let resultStatusList = [];
+    let serviceDefinitionList =
+      await this.serviceRepository.listeServiceDefinitions();
+
+    const serviceDefsToProcess = serviceDefinitionList.filter(
+      (serviceDefinition) => serviceDefinition.isAsyncServiceType(),
+    );
+
+    for (let index = 0; index < serviceDefsToProcess.length; index++) {
+      const serviceDefinition = serviceDefsToProcess[index];
+      const serviceList =
+        await this.serviceRepository.listeServicesByDefinitionId(
+          serviceDefinition.serviceDefinitionId,
+        );
+      for (let index2 = 0; index2 < serviceList.length; index2++) {
+        const service = serviceList[index2];
+        const manager = this.getAsyncServiceManager(serviceDefinition);
+        const result = await manager.runAsyncProcessing(service);
+        resultStatusList.push(result);
+      }
+    }
+    return resultStatusList;
+  }
+
   async listServicesDefinitions(
     utilisateurId: string,
   ): Promise<ServiceDefinition[]> {
@@ -93,6 +129,7 @@ export class ServiceUsecase {
       utilisateurId,
     );
   }
+
   async addServiceToUtilisateur(
     utilisateurId: string,
     serviceDefinitionId: string,
@@ -106,6 +143,7 @@ export class ServiceUsecase {
       service_id: serviceDefinitionId,
     });
   }
+
   async removeServiceFromUtilisateur(
     utilisateurId: string,
     serviceDefinitionId: string,
@@ -156,5 +194,10 @@ export class ServiceUsecase {
     serviceDefinition: ServiceDefinition,
   ): ScheduledServiceManager {
     return this.SCHEDULED_SERVICES[serviceDefinition.serviceDefinitionId];
+  }
+  private getAsyncServiceManager(
+    serviceDefinition: ServiceDefinition,
+  ): AsyncServiceManager {
+    return this.ASYNC_SERVICES[serviceDefinition.serviceDefinitionId];
   }
 }

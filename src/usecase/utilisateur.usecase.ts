@@ -191,7 +191,7 @@ export class UtilisateurUsecase {
     await this.questionNGCRepository.delete(utilisateurId);
     await this.oIDCStateRepository.delete(utilisateurId);
     await this.bilanRepository.delete(utilisateurId);
-    await this.serviceRepository.delete(utilisateurId);
+    await this.serviceRepository.deleteAllUserServices(utilisateurId);
     await this.groupeRepository.delete(utilisateurId);
     await this.utilisateurRespository.delete(utilisateurId);
   }

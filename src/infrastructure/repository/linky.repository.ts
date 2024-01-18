@@ -1,6 +1,5 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { v4 as uuidv4 } from 'uuid';
 import { LinkyData } from '../../../src/domain/linky/linkyData';
 
 @Injectable()
@@ -10,9 +9,7 @@ export class LinkyRepository {
   async createNewLinky(linky_data: LinkyData) {
     await this.prisma.linky.create({
       data: {
-        id: uuidv4(),
         prm: linky_data.prm,
-        pk_winter: linky_data.pk_winter,
         data: linky_data.serie as any,
       },
     });
@@ -39,7 +36,6 @@ export class LinkyRepository {
     }
     return new LinkyData({
       prm: result.prm,
-      pk_winter: result.pk_winter,
       serie: result.data as any,
     });
   }

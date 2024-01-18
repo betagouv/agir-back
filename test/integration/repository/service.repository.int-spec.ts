@@ -5,6 +5,7 @@ import {
   ScheduledService,
 } from '../../../src/domain/service/serviceDefinition';
 import { Thematique } from '../../../src/domain/thematique';
+import { ServiceStatus } from '../../../src/domain/service/service';
 
 async function injectData() {
   await TestUtil.create('utilisateur', { id: 'u1', email: '1' });
@@ -211,6 +212,8 @@ describe('ServiceRepository', () => {
     expect(servicesDBList[0].configuration).toEqual({ prm: '12345' });
     expect(servicesDBList[0].titre).toEqual('titre');
     expect(servicesDBList[0].url).toEqual('url');
+    expect(servicesDBList[0].status).toEqual(ServiceStatus.CREATED);
+    expect(servicesDBList[0].utilisateurId).toEqual('utilisateur-id');
     expect(servicesDBList[0].thematiques).toEqual([
       Thematique.climat,
       Thematique.logement,

@@ -386,6 +386,7 @@ export class TestUtil {
       utilisateurId: 'utilisateur-id',
       serviceDefinitionId: 'dummy_live',
       configuration: {},
+      status: 'CREATED',
       ...override,
     };
   }
@@ -492,9 +493,7 @@ export class TestUtil {
   }
   static linkyData(override?) {
     return {
-      id: 'linky-id',
       prm: 'abc',
-      pk_winter: '1234',
       data: [
         {
           time: new Date(),
