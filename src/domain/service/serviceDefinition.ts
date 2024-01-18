@@ -34,6 +34,7 @@ export class ServiceDefinitionData {
   description: string;
   sous_description: string;
   en_construction: boolean;
+  parametrage_requis: boolean;
 }
 
 export class ServiceDefinition extends ServiceDefinitionData {

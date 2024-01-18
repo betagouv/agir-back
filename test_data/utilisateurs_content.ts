@@ -108,6 +108,9 @@ const utilisateurs = {
     gamification: {
       points: 0,
     },
+    unlocked_features: {
+      unlocked_feature_list: ['aides', 'services', 'recommandations'],
+    },
     todo: {
       todo_active: 0,
       liste_todo: [

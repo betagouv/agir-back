@@ -51,6 +51,7 @@ describe('Service (API test)', () => {
     expect(response.body[0].description).toEqual('desc');
     expect(response.body[0].sous_description).toEqual('sous desc');
     expect(response.body[0].en_construction).toEqual(false);
+    expect(response.body[0].parametrage_requis).toEqual(true);
     expect(response.body[0].thematiques).toStrictEqual([
       Thematique.climat,
       Thematique.logement,

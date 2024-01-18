@@ -15,6 +15,7 @@ export class ServiceDefinitionAPI {
   @ApiProperty() is_local: boolean;
   @ApiProperty() is_url_externe: boolean;
   @ApiProperty() is_installed?: boolean;
+  @ApiProperty() parametrage_requis: boolean;
 
   @ApiProperty({ type: [String] })
   thematiques: string[];
@@ -40,6 +41,7 @@ export class ServiceDefinitionAPI {
       ),
       nombre_installation: serviceDefinition.nombre_installation,
       is_installed: serviceDefinition.is_installed,
+      parametrage_requis: serviceDefinition.parametrage_requis,
     };
     return result;
   }

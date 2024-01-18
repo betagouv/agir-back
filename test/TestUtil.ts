@@ -405,6 +405,7 @@ export class TestUtil {
       description: 'desc',
       sous_description: 'sous desc',
       en_construction: false,
+      parametrage_requis: true,
       thematiques: ['climat', 'logement'],
       ...override,
     };
