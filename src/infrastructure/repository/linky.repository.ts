@@ -15,12 +15,16 @@ export class LinkyRepository {
     });
   }
 
-  async updateData(linky_data: LinkyData): Promise<void> {
-    await this.prisma.linky.update({
+  async upsertData(linky_data: LinkyData): Promise<void> {
+    await this.prisma.linky.upsert({
       where: {
         prm: linky_data.prm,
       },
-      data: {
+      create: {
+        prm: linky_data.prm,
+        data: linky_data.serie as any,
+      },
+      update: {
         data: linky_data.serie as any,
       },
     });

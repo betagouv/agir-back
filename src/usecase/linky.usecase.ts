@@ -3,6 +3,7 @@ import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { WinterDataSentAPI } from '../../src/infrastructure/api/types/winter/WinterIncomingDataAPI';
 import { LinkyServiceManager } from '../../src/infrastructure/service/linky/LinkyServiceManager';
 import { LinkyRepository } from '../../src/infrastructure/repository/linky.repository';
+import { LinkyData } from '../../src/domain/linky/linkyData';
 
 @Injectable()
 export class LinkyUsecase {
@@ -30,7 +31,10 @@ export class LinkyUsecase {
     }
     const prm = incoming.info.prm;
 
-    const current_data = await this.linkyRepository.getLinky(prm);
+    let current_data = await this.linkyRepository.getLinky(prm);
+    if (!current_data) {
+      current_data = new LinkyData({ prm: prm, serie: [] });
+    }
 
     for (let index = 0; index < incoming.data.length; index++) {
       const element = incoming.data[index];
@@ -41,6 +45,6 @@ export class LinkyUsecase {
       });
     }
 
-    await this.linkyRepository.updateData(current_data);
+    await this.linkyRepository.upsertData(current_data);
   }
 }

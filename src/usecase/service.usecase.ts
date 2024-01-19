@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Service } from '../../src/domain/service/service';
+import { Service, ServiceStatus } from '../../src/domain/service/service';
 import {
   AsyncService,
   LiveService,
@@ -26,6 +26,7 @@ const dummy_async_manager = {
   runAsyncProcessing: async (service: Service) => {
     return service.serviceId;
   },
+  checkConfiguration(conf: Object) {},
 };
 const dummy_scheduled_manager = {
   computeScheduledDynamicData: async (serviceDefinition: ServiceDefinition) => {
@@ -69,6 +70,10 @@ export class ServiceUsecase {
     serviceDefinitionId: string,
     payload: LinkyConfigurationAPI,
   ) {
+    const manager = this.getAsyncServiceManager(serviceDefinitionId);
+
+    manager.checkConfiguration(payload);
+
     await this.serviceRepository.updateServiceConfiguration(
       utilisateurId,
       serviceDefinitionId,
@@ -114,7 +119,9 @@ export class ServiceUsecase {
         );
       for (let index2 = 0; index2 < serviceList.length; index2++) {
         const service = serviceList[index2];
-        const manager = this.getAsyncServiceManager(serviceDefinition);
+        const manager = this.getAsyncServiceManager(
+          serviceDefinition.serviceDefinitionId,
+        );
         const result = await manager.runAsyncProcessing(service);
         resultStatusList.push(result);
       }
@@ -134,10 +141,25 @@ export class ServiceUsecase {
     utilisateurId: string,
     serviceDefinitionId: string,
   ) {
-    await this.serviceRepository.addServiceToUtilisateur(
-      utilisateurId,
-      serviceDefinitionId,
-    );
+    const existing_service =
+      await this.serviceRepository.getServiceOfUtilisateur(
+        utilisateurId,
+        serviceDefinitionId,
+      );
+
+    if (existing_service && existing_service.isAsyncServiceType()) {
+      this.serviceRepository.updateServiceConfiguration(
+        utilisateurId,
+        serviceDefinitionId,
+        existing_service.configuration,
+        ServiceStatus.CREATED,
+      );
+    } else {
+      await this.serviceRepository.addServiceToUtilisateur(
+        utilisateurId,
+        serviceDefinitionId,
+      );
+    }
     await this.eventUsecase.processEvent(utilisateurId, {
       type: EventType.service_installed,
       service_id: serviceDefinitionId,
@@ -148,10 +170,28 @@ export class ServiceUsecase {
     utilisateurId: string,
     serviceDefinitionId: string,
   ) {
-    return this.serviceRepository.removeServiceFromUtilisateurByServiceDefinitionId(
-      utilisateurId,
-      serviceDefinitionId,
-    );
+    const existing_service =
+      await this.serviceRepository.getServiceOfUtilisateur(
+        utilisateurId,
+        serviceDefinitionId,
+      );
+
+    if (
+      existing_service.isAsyncServiceType() &&
+      existing_service.status === ServiceStatus.LIVE
+    ) {
+      await this.serviceRepository.updateServiceConfiguration(
+        utilisateurId,
+        serviceDefinitionId,
+        existing_service.configuration,
+        ServiceStatus.TO_DELETE,
+      );
+    } else {
+      await this.serviceRepository.removeServiceFromUtilisateurByServiceDefinitionId(
+        utilisateurId,
+        serviceDefinitionId,
+      );
+    }
   }
   async listeServicesOfUtilisateur(utilisateurId: string): Promise<Service[]> {
     const userServiceList =
@@ -163,6 +203,20 @@ export class ServiceUsecase {
       }
     }
     return userServiceList;
+  }
+
+  async getServiceOfUtilisateur(
+    utilisateurId: string,
+    serviceDefinitionId: string,
+  ): Promise<Service> {
+    const service = await this.serviceRepository.getServiceOfUtilisateur(
+      utilisateurId,
+      serviceDefinitionId,
+    );
+    if (service.isLiveServiceType()) {
+      await this.refreshLiveService(service);
+    }
+    return service;
   }
 
   private async refreshLiveService(service: Service) {
@@ -196,8 +250,8 @@ export class ServiceUsecase {
     return this.SCHEDULED_SERVICES[serviceDefinition.serviceDefinitionId];
   }
   private getAsyncServiceManager(
-    serviceDefinition: ServiceDefinition,
+    serviceDefinitionId: string,
   ): AsyncServiceManager {
-    return this.ASYNC_SERVICES[serviceDefinition.serviceDefinitionId];
+    return this.ASYNC_SERVICES[serviceDefinitionId];
   }
 }

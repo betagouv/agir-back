@@ -10,6 +10,7 @@ import { UtilisateurRepository } from '../../../../src/infrastructure/repository
 import { DepartementRepository } from '../../../../src/infrastructure/repository/departement/departement.repository';
 import { LinkyData } from '../../../../src/domain/linky/linkyData';
 import { LinkyRepository } from '../../../../src/infrastructure/repository/linky.repository';
+import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 
 @Injectable()
 export class LinkyServiceManager
@@ -26,6 +27,17 @@ export class LinkyServiceManager
       label: '🔌 Votre Linky',
       isInError: false,
     };
+  }
+
+  checkConfiguration(configuration: Object) {
+    const prm = configuration['prm'];
+    if (!prm) {
+      ApplicationError.throwMissingPRM();
+    }
+    const regex = new RegExp('^[0-9]{14}$');
+    if (!regex.test(prm)) {
+      ApplicationError.throwBadPRM(prm);
+    }
   }
 
   async runAsyncProcessing(service: Service): Promise<string> {

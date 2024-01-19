@@ -69,6 +69,39 @@ describe('/api/incoming/winter-energies (API test)', () => {
     });
     expect(dbData.data).toHaveLength(6);
   });
+  it('POST /api/incoming/winter-energies - creation entree si pas de prm deja connu', async () => {
+    // GIVEN
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/api/incoming/winter-energies')
+      .set('key', process.env.WINTER_API_KEY)
+      .send(INCOMMING_DATA);
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe('Received OK !');
+    const dbData = await TestUtil.prisma.linky.findUnique({
+      where: { prm: 'abc' },
+    });
+    expect(dbData.data).toHaveLength(5);
+  });
+  it('POST /api/incoming/winter-energies - 200 par défaut', async () => {
+    // GIVEN
+    await TestUtil.create('linky');
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/api/incoming/winter-energies')
+      .set('key', process.env.WINTER_API_KEY)
+      .send(INCOMMING_DATA);
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe('Received OK !');
+    const dbData = await TestUtil.prisma.linky.findUnique({
+      where: { prm: 'abc' },
+    });
+    expect(dbData.data).toHaveLength(6);
+  });
   it('POST /api/incoming/winter-energies - erreur 401 si mauvaise clé API', async () => {
     // GIVEN
     await TestUtil.create('linky');

@@ -55,7 +55,7 @@ describe('LinkyRepository', () => {
       ],
     });
     // WHEN
-    await linkyRepository.updateData(new_data);
+    await linkyRepository.upsertData(new_data);
     // THEN
     const prm = await TestUtil.prisma.linky.findUnique({
       where: { prm: 'abc' },

@@ -158,6 +158,12 @@ export class ApplicationError {
   static throwQuestionInconnue(id: string) {
     this.throwAppError('030', `Question d'id ${id} inconnue`, 404);
   }
+  static throwBadPRM(prm: string) {
+    this.throwAppError(
+      '031',
+      `Mauvais format de PRM : ${prm}, nombre à 14 chiffres attendu`,
+    );
+  }
 
   private static throwAppError(
     code: string,

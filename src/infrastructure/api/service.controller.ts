@@ -132,6 +132,31 @@ export class ServiceController extends GenericControler {
     );
     return mappedResult;
   }
+
+  @Get('utilisateurs/:utilisateurId/services/:serviceDefinitionId')
+  // FIXME : set cache-control
+  @ApiOperation({
+    summary: "Consulte un service unique de l'utilisateur",
+  })
+  @ApiOkResponse({ type: ServiceAPI })
+  @UseGuards(AuthGuard)
+  async getServiceOfUtilisateur(
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('serviceDefinitionId') serviceDefinitionId: string,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+
+    const result = await this.serviceUsecase.getServiceOfUtilisateur(
+      utilisateurId,
+      serviceDefinitionId,
+    );
+
+    const mappedResult = ServiceAPI.mapServicesToServicesAPI(result);
+
+    return mappedResult;
+  }
+
   @Delete('utilisateurs/:utilisateurId/services/:serviceId')
   @ApiOperation({
     summary: "Supprime un service d'id donné associé à l'utilisateur",
