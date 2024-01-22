@@ -21,6 +21,7 @@ const utilisateurs_content = require('../../../test_data/utilisateurs_content');
 const _aides = require('../../../test_data/_aides');
 const _suivis = require('../../../test_data/_suivis');
 const _services = require('../../../test_data/_services');
+const _linky_data = require('../../../test_data/PRM_thermo_sensible');
 const suivis_alimentation = require('../../../test_data/evenements/suivis_alimentation');
 const suivis_transport = require('../../../test_data/evenements/suivis_transport');
 const empreintes_utilisateur = require('../../../test_data/evenements/bilans');
@@ -368,7 +369,7 @@ export class TestDataController {
     if (!linky) return;
     const linkyData = new LinkyData({
       prm: linky.prm,
-      serie: linky.data,
+      serie: _linky_data,
     });
     this.linkyRepository.upsertData(linkyData);
   }
