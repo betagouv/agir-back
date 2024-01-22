@@ -496,7 +496,7 @@ export class TestUtil {
       prm: 'abc',
       data: [
         {
-          time: new Date(),
+          time: new Date(123),
           value: 100,
           value_at_normal_temperature: 110,
         },

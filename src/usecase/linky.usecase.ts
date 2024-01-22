@@ -4,16 +4,34 @@ import { WinterDataSentAPI } from '../../src/infrastructure/api/types/winter/Win
 import { LinkyServiceManager } from '../../src/infrastructure/service/linky/LinkyServiceManager';
 import { LinkyRepository } from '../../src/infrastructure/repository/linky.repository';
 import { LinkyData } from '../../src/domain/linky/linkyData';
+import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
+import { AsyncService } from '../../src/domain/service/serviceDefinition';
 
 @Injectable()
 export class LinkyUsecase {
   constructor(
     private linkyRepository: LinkyRepository,
     private linkyServiceManager: LinkyServiceManager,
+    private serviceRepository: ServiceRepository,
   ) {}
 
   async liste_souscriptions(page?: number): Promise<any> {
     return this.linkyServiceManager.list_souscriptions(page);
+  }
+  async getUserData(utilisateurId: string): Promise<LinkyData> {
+    const serviceLinky = await this.serviceRepository.getServiceOfUtilisateur(
+      utilisateurId,
+      AsyncService.linky,
+    );
+    if (!serviceLinky) return new LinkyData();
+
+    const linkyData = await this.linkyRepository.getLinky(
+      serviceLinky.configuration['prm'],
+    );
+    if (!linkyData) return new LinkyData();
+
+    return linkyData;
   }
 
   async process_incoming_data(incoming: WinterDataSentAPI): Promise<any> {

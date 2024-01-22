@@ -28,6 +28,9 @@ const badges_liste = require('../../../test_data/evenements/badges');
 import axios from 'axios';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { CMSThematiqueAPI } from './types/cms/CMSThematiqueAPI';
+import { LinkyRepository } from '../repository/linky.repository';
+import { LinkyData } from '../../../src/domain/linky/linkyData';
+import { ServiceStatus } from '../../../src/domain/service/service';
 
 export enum TheBoolean {
   true = 'true',
@@ -73,6 +76,7 @@ export class TestDataController {
     private questionNGCRepository: QuestionNGCRepository,
     private interactionDefinitionRepository: InteractionDefinitionRepository,
     private interactionRepository: InteractionRepository,
+    private linkyRepository: LinkyRepository,
     private onboardingUsecase: OnboardingUsecase,
   ) {}
 
@@ -110,6 +114,7 @@ export class TestDataController {
       await this.onboardingUsecase.initUtilisateurInteractionSet(utilisateurId);
     }
     await this.insertServicesForUtilisateur(utilisateurId);
+    await this.insertLinkyDataForUtilisateur(utilisateurId);
     await this.insertSuivisAlimentationForUtilisateur(utilisateurId);
     await this.insertEmpreintesForUtilisateur(utilisateurId);
     await this.insertBadgesForUtilisateur(utilisateurId);
@@ -205,6 +210,7 @@ export class TestDataController {
       const service = _services[serviceId];
       const data = { ...service };
       data.id = serviceId;
+      delete data.configuration;
       await this.prisma.serviceDefinition.upsert({
         where: {
           id: serviceId,
@@ -346,6 +352,10 @@ export class TestDataController {
           id: uuidv4(),
           utilisateurId: utilisateurId,
           serviceDefinitionId: serviceId,
+          status: ServiceStatus.LIVE,
+          configuration: _services[serviceId].configuration
+            ? _services[serviceId].configuration
+            : {},
         };
         await this.prisma.service.create({
           data,
@@ -353,6 +363,16 @@ export class TestDataController {
       }
     }
   }
+  async insertLinkyDataForUtilisateur(utilisateurId: string) {
+    const linky = utilisateurs_content[utilisateurId].linky;
+    if (!linky) return;
+    const linkyData = new LinkyData({
+      prm: linky.prm,
+      serie: linky.data,
+    });
+    this.linkyRepository.upsertData(linkyData);
+  }
+
   async insertAidesForUtilisateur(utilisateurId: string) {
     await this.insertInteractionsWithTypeFromObject(
       _aides,
@@ -479,6 +499,7 @@ export class TestDataController {
     delete clonedData.badges;
     delete clonedData.services;
     delete clonedData.questionsNGC;
+    delete clonedData.linky;
 
     if (!clonedData.todo) {
       clonedData.todo = new ParcoursTodo();

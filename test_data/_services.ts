@@ -24,7 +24,8 @@ const services = {
     thematiques: ['logement'],
     description: 'Votre suivi consommation, sans rien faire',
     sous_description: `Surveillez en un click l'évolution quotidienne de votre consommation électrique, comprenez vos habitudes, chassez toutes les pertes inutiles !!`,
-    en_construction: true,
+    en_construction: false,
+    configuration: { prm: '123', winter_pk: 'abc' },
   },
   suivi_transport: {
     titre: `Suivez l'impact de vos trajets quotidiens`,

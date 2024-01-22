@@ -1,11 +1,15 @@
 import {
   Controller,
   Get,
-  UseGuards,
-  Request,
+  Headers,
   Res,
   HttpStatus,
+  Request,
   Query,
+  ForbiddenException,
+  UnauthorizedException,
+  UseGuards,
+  Param,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -19,6 +23,7 @@ import { AuthGuard } from '../auth/guard';
 import { Response } from 'express';
 import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
 import { WinterListeSubAPI } from './types/winter/WinterListeSubAPI';
+import { LinkyDataAPI } from './types/service/linkyDataAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -28,7 +33,7 @@ export class LinkyController extends GenericControler {
     super();
   }
 
-  @Get('linky_souscriptions')
+  @Get('/linky/souscriptions')
   @ApiOperation({
     summary: 'Consulte les souscriptions actives',
   })
@@ -38,14 +43,35 @@ export class LinkyController extends GenericControler {
     required: false,
   })
   @ApiOkResponse({ type: WinterListeSubAPI })
-  @UseGuards(AuthGuard)
   async get_souscriptions(
-    @Request() req,
+    @Headers('Authorization') authorization: string,
     @Res() res: Response,
     @Query('page') page?: number,
   ) {
-    this.checkCallerIsAdmin(req);
+    if (!authorization) {
+      throw new UnauthorizedException('CRON API KEY manquante');
+    }
+    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
+      throw new ForbiddenException('CRON API KEY incorrecte');
+    }
     let result = await this.linkyUsecase.liste_souscriptions(page);
+    res.status(HttpStatus.OK).json(result).send();
+  }
+  @Get('/utilisateurs/:utilisateurId/linky')
+  @ApiOperation({
+    summary: `renvoie les données linky de utilisateur`,
+  })
+  @ApiOkResponse({ type: [LinkyDataAPI] })
+  @UseGuards(AuthGuard)
+  async getDataa(
+    @Request() req,
+    @Res() res: Response,
+    @Param('utilisateurId') utilisateurId: string,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    const data = await this.linkyUsecase.getUserData(utilisateurId);
+    const result = data.serie.map((elem) => LinkyDataAPI.map(elem));
+
     res.status(HttpStatus.OK).json(result).send();
   }
 }
