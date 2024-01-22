@@ -71,6 +71,11 @@ export class LinkyController extends GenericControler {
     type: Number,
     required: false,
   })
+  @ApiQuery({
+    name: 'end_date',
+    type: Date,
+    required: false,
+  })
   @ApiOkResponse({ type: [LinkyDataAPI] })
   @UseGuards(AuthGuard)
   async getDataa(
@@ -79,6 +84,7 @@ export class LinkyController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
     @Query('detail') detail?: LinkyDataDetailAPI,
     @Query('nombre') nombre?: number,
+    @Query('end_date') end_date?: string,
   ) {
     this.checkCallerId(req, utilisateurId);
 
@@ -86,6 +92,7 @@ export class LinkyController extends GenericControler {
       utilisateurId,
       detail,
       nombre,
+      end_date,
     );
     const result = data.serie.map((elem) => LinkyDataAPI.map(elem));
 

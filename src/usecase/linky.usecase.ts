@@ -23,6 +23,7 @@ export class LinkyUsecase {
     utilisateurId: string,
     detail: LinkyDataDetailAPI,
     nombre: number,
+    end_date: string,
   ): Promise<LinkyData> {
     const serviceLinky = await this.serviceRepository.getServiceOfUtilisateur(
       utilisateurId,
@@ -40,6 +41,12 @@ export class LinkyUsecase {
     }
     if (detail === LinkyDataDetailAPI.semaine && nombre) {
       linkyData.serie = linkyData.extractLastNWeeks(nombre);
+    }
+    if (detail === LinkyDataDetailAPI.mois && nombre) {
+      linkyData.serie = linkyData.extractLastNMonths(
+        nombre,
+        end_date ? new Date(end_date) : new Date(),
+      );
     }
     return linkyData;
   }
