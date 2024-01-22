@@ -23,7 +23,7 @@ import { AuthGuard } from '../auth/guard';
 import { Response } from 'express';
 import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
 import { WinterListeSubAPI } from './types/winter/WinterListeSubAPI';
-import { LinkyDataAPI } from './types/service/linkyDataAPI';
+import { LinkyDataAPI, LinkyDataDetailAPI } from './types/service/linkyDataAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -61,15 +61,32 @@ export class LinkyController extends GenericControler {
   @ApiOperation({
     summary: `renvoie les données linky de utilisateur`,
   })
+  @ApiQuery({
+    name: 'detail',
+    enum: LinkyDataDetailAPI,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'nombre',
+    type: Number,
+    required: false,
+  })
   @ApiOkResponse({ type: [LinkyDataAPI] })
   @UseGuards(AuthGuard)
   async getDataa(
     @Request() req,
     @Res() res: Response,
     @Param('utilisateurId') utilisateurId: string,
+    @Query('detail') detail?: LinkyDataDetailAPI,
+    @Query('nombre') nombre?: number,
   ) {
     this.checkCallerId(req, utilisateurId);
-    const data = await this.linkyUsecase.getUserData(utilisateurId);
+
+    const data = await this.linkyUsecase.getUserData(
+      utilisateurId,
+      detail,
+      nombre,
+    );
     const result = data.serie.map((elem) => LinkyDataAPI.map(elem));
 
     res.status(HttpStatus.OK).json(result).send();

@@ -4,9 +4,9 @@ import { WinterDataSentAPI } from '../../src/infrastructure/api/types/winter/Win
 import { LinkyServiceManager } from '../../src/infrastructure/service/linky/LinkyServiceManager';
 import { LinkyRepository } from '../../src/infrastructure/repository/linky.repository';
 import { LinkyData } from '../../src/domain/linky/linkyData';
-import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
 import { AsyncService } from '../../src/domain/service/serviceDefinition';
+import { LinkyDataDetailAPI } from '../../src/infrastructure/api/types/service/linkyDataAPI';
 
 @Injectable()
 export class LinkyUsecase {
@@ -19,7 +19,11 @@ export class LinkyUsecase {
   async liste_souscriptions(page?: number): Promise<any> {
     return this.linkyServiceManager.list_souscriptions(page);
   }
-  async getUserData(utilisateurId: string): Promise<LinkyData> {
+  async getUserData(
+    utilisateurId: string,
+    detail: LinkyDataDetailAPI,
+    nombre: number,
+  ): Promise<LinkyData> {
     const serviceLinky = await this.serviceRepository.getServiceOfUtilisateur(
       utilisateurId,
       AsyncService.linky,
@@ -31,6 +35,12 @@ export class LinkyUsecase {
     );
     if (!linkyData) return new LinkyData();
 
+    if (detail === LinkyDataDetailAPI.jour && nombre) {
+      linkyData.serie = linkyData.extractLastNDays(nombre);
+    }
+    if (detail === LinkyDataDetailAPI.semaine && nombre) {
+      linkyData.serie = linkyData.extractLastNWeeks(nombre);
+    }
     return linkyData;
   }
 

@@ -1,5 +1,7 @@
 import { TestUtil } from '../../../TestUtil';
 
+const _linky_data = require('../../../../test_data/PRM_thermo_sensible');
+
 describe('Linky (API test)', () => {
   const OLD_ENV = process.env;
 
@@ -58,7 +60,7 @@ describe('Linky (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(0);
   });
-  it('GET /utilisateurs/id/linky renvoie les ata linky', async () => {
+  it('GET /utilisateurs/id/linky renvoie les data linky', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('serviceDefinition', { id: 'linky' });
@@ -77,5 +79,162 @@ describe('Linky (API test)', () => {
     expect(response.body[0].date).toEqual(new Date(123).toISOString());
     expect(response.body[0].valeur).toEqual(100);
     expect(response.body[0].valeur_corrigee).toEqual(110);
+  });
+  it('GET /utilisateurs/id/linky renvoie les data linky full', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', { id: 'linky' });
+    await TestUtil.create('service', {
+      serviceDefinitionId: 'linky',
+      configuration: { prm: 'abc' },
+    });
+    await TestUtil.create('linky', { data: _linky_data });
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/linky');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(724);
+  });
+  it('GET /utilisateurs/id/linky renvoie data full si on demande plus que existant', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', { id: 'linky' });
+    await TestUtil.create('service', {
+      serviceDefinitionId: 'linky',
+      configuration: { prm: 'abc' },
+    });
+    await TestUtil.create('linky', { data: _linky_data });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/linky?detail=jour&nombre=1000',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(724);
+  });
+  it('GET /utilisateurs/id/linky renvoie les 13 derniers jours', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', { id: 'linky' });
+    await TestUtil.create('service', {
+      serviceDefinitionId: 'linky',
+      configuration: { prm: 'abc' },
+    });
+    await TestUtil.create('linky', { data: _linky_data });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/linky?detail=jour&nombre=13',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(13);
+    expect(response.body[0].jour).toEqual('vendredi');
+  });
+  it('GET /utilisateurs/id/linky renvoie les 2 dernière sem', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', { id: 'linky' });
+    await TestUtil.create('service', {
+      serviceDefinitionId: 'linky',
+      configuration: { prm: 'abc' },
+    });
+    await TestUtil.create('linky', {
+      data: [
+        {
+          time: '2021-11-30T12:00:00.000Z',
+          value: 1000,
+          value_at_normal_temperature: 2000,
+        },
+        {
+          time: '2021-12-01T12:00:00.000Z',
+          value: 1,
+          value_at_normal_temperature: 2,
+        },
+        {
+          time: '2021-12-02T12:00:00.000Z',
+          value: 1,
+          value_at_normal_temperature: 2,
+        },
+        {
+          time: '2021-12-03T12:00:00.000Z',
+          value: 1,
+          value_at_normal_temperature: 2,
+        },
+        {
+          time: '2021-12-04T12:00:00.000Z',
+          value: 1,
+          value_at_normal_temperature: 2,
+        },
+        {
+          time: '2021-12-05T12:00:00.000Z',
+          value: 1,
+          value_at_normal_temperature: 2,
+        },
+        {
+          time: '2021-12-06T12:00:00.000Z',
+          value: 1,
+          value_at_normal_temperature: 2,
+        },
+        {
+          time: '2021-12-07T12:00:00.000Z',
+          value: 1,
+          value_at_normal_temperature: 2,
+        },
+        {
+          time: '2021-12-08T12:00:00.000Z',
+          value: 2,
+          value_at_normal_temperature: 4,
+        },
+        {
+          time: '2021-12-09T12:00:00.000Z',
+          value: 2,
+          value_at_normal_temperature: 4,
+        },
+        {
+          time: '2021-12-10T12:00:00.000Z',
+          value: 2,
+          value_at_normal_temperature: 4,
+        },
+        {
+          time: '2021-12-11T12:00:00.000Z',
+          value: 2,
+          value_at_normal_temperature: 4,
+        },
+        {
+          time: '2021-12-12T12:00:00.000Z',
+          value: 2,
+          value_at_normal_temperature: 4,
+        },
+        {
+          time: '2021-12-12T12:00:00.000Z',
+          value: 2,
+          value_at_normal_temperature: 4,
+        },
+        {
+          time: '2021-12-14T12:00:00.000Z',
+          value: 2,
+          value_at_normal_temperature: 4,
+        },
+      ],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/linky?detail=semaine&nombre=2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(2);
+    expect(response.body[0].valeur).toEqual(1);
+    expect(response.body[0].valeur_corrigee).toEqual(2);
+    expect(response.body[1].valeur).toEqual(2);
+    expect(response.body[1].valeur_corrigee).toEqual(4);
   });
 });
