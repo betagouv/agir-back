@@ -1,9 +1,7 @@
 import {
   Controller,
   Post,
-  Request,
   Headers,
-  UseGuards,
   ForbiddenException,
   Res,
   UnauthorizedException,

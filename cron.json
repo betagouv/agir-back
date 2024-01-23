@@ -8,6 +8,9 @@
     },
     {
       "command": "0 3 * * * ./scripts/refresh_ponderation_catalogue.sh"
+    },
+    {
+      "command": "30 * * * * ./scripts/process_async_service.sh"
     }
   ]
 }
