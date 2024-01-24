@@ -38,6 +38,7 @@ export class LinkyUsecase {
     detail: LinkyDataDetailAPI,
     nombre: number,
     end_date: string,
+    compare_annees: boolean,
   ): Promise<LinkyData> {
     const serviceLinky = await this.serviceRepository.getServiceOfUtilisateur(
       utilisateurId,
@@ -49,6 +50,10 @@ export class LinkyUsecase {
       serviceLinky.configuration['prm'],
     );
     if (!linkyData) return new LinkyData();
+
+    if (compare_annees) {
+      linkyData.serie = linkyData.compare2AnsParMois();
+    }
 
     if (detail === LinkyDataDetailAPI.jour && nombre) {
       linkyData.serie = linkyData.extractLastNDays(nombre);

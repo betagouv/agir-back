@@ -72,18 +72,24 @@ export class LinkyController extends GenericControler {
     required: false,
   })
   @ApiQuery({
+    name: 'compare_annees',
+    type: Boolean,
+    required: false,
+  })
+  @ApiQuery({
     name: 'end_date',
     type: Date,
     required: false,
   })
   @ApiOkResponse({ type: [LinkyDataAPI] })
   @UseGuards(AuthGuard)
-  async getDataa(
+  async getData(
     @Request() req,
     @Res() res: Response,
     @Param('utilisateurId') utilisateurId: string,
     @Query('detail') detail?: LinkyDataDetailAPI,
     @Query('nombre') nombre?: number,
+    @Query('compare_annees') compare_annees?: boolean,
     @Query('end_date') end_date?: string,
   ) {
     this.checkCallerId(req, utilisateurId);
@@ -93,6 +99,7 @@ export class LinkyController extends GenericControler {
       detail,
       nombre,
       end_date,
+      compare_annees
     );
     const result = data.serie.map((elem) => LinkyDataAPI.map(elem));
 

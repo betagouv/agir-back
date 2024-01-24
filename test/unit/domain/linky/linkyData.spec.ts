@@ -351,4 +351,155 @@ describe('LinkyData', () => {
     expect(linkyData.serie[0].value).toEqual(12);
     expect(linkyData.serie[1].value).toEqual(34);
   });
+  it('compare2AnsParMois : extait correctement 24 mois', () => {
+    // GIVEN
+    const linkyData = new LinkyData({
+      prm: 'abc',
+      serie: [
+        {
+          time: new Date('2000-01-01T12:00:00.000Z'),
+          value: 1,
+          value_at_normal_temperature: 10,
+        },
+        {
+          time: new Date('2000-02-01T12:00:00.000Z'),
+          value: 2,
+          value_at_normal_temperature: 20,
+        },
+        {
+          time: new Date('2000-03-01T12:00:00.000Z'),
+          value: 3,
+          value_at_normal_temperature: 30,
+        },
+        {
+          time: new Date('2000-04-01T12:00:00.000Z'),
+          value: 4,
+          value_at_normal_temperature: 40,
+        },
+        {
+          time: new Date('2000-05-01T12:00:00.000Z'),
+          value: 5,
+          value_at_normal_temperature: 50,
+        },
+        {
+          time: new Date('2000-06-01T12:00:00.000Z'),
+          value: 6,
+          value_at_normal_temperature: 60,
+        },
+        {
+          time: new Date('2000-07-01T12:00:00.000Z'),
+          value: 7,
+          value_at_normal_temperature: 70,
+        },
+        {
+          time: new Date('2000-08-01T12:00:00.000Z'),
+          value: 8,
+          value_at_normal_temperature: 80,
+        },
+        {
+          time: new Date('2000-09-01T12:00:00.000Z'),
+          value: 9,
+          value_at_normal_temperature: 90,
+        },
+        {
+          time: new Date('2000-10-01T12:00:00.000Z'),
+          value: 10,
+          value_at_normal_temperature: 100,
+        },
+        {
+          time: new Date('2000-11-01T12:00:00.000Z'),
+          value: 11,
+          value_at_normal_temperature: 110,
+        },
+        {
+          time: new Date('2000-12-01T12:00:00.000Z'),
+          value: 12,
+          value_at_normal_temperature: 120,
+        },
+        {
+          time: new Date('2000-12-02T12:00:00.000Z'),
+          value: 13,
+          value_at_normal_temperature: 130,
+        },
+        //############################################
+        {
+          time: new Date('2001-01-01T12:00:00.000Z'),
+          value: 10,
+          value_at_normal_temperature: 100,
+        },
+        {
+          time: new Date('2001-02-01T12:00:00.000Z'),
+          value: 20,
+          value_at_normal_temperature: 200,
+        },
+        {
+          time: new Date('2001-03-01T12:00:00.000Z'),
+          value: 30,
+          value_at_normal_temperature: 300,
+        },
+        {
+          time: new Date('2001-04-01T12:00:00.000Z'),
+          value: 40,
+          value_at_normal_temperature: 400,
+        },
+        {
+          time: new Date('2001-05-01T12:00:00.000Z'),
+          value: 50,
+          value_at_normal_temperature: 500,
+        },
+        {
+          time: new Date('2001-06-01T12:00:00.000Z'),
+          value: 60,
+          value_at_normal_temperature: 600,
+        },
+        {
+          time: new Date('2001-07-01T12:00:00.000Z'),
+          value: 70,
+          value_at_normal_temperature: 700,
+        },
+        {
+          time: new Date('2001-08-01T12:00:00.000Z'),
+          value: 80,
+          value_at_normal_temperature: 800,
+        },
+        {
+          time: new Date('2001-09-01T12:00:00.000Z'),
+          value: 90,
+          value_at_normal_temperature: 900,
+        },
+        {
+          time: new Date('2001-10-01T12:00:00.000Z'),
+          value: 100,
+          value_at_normal_temperature: 1000,
+        },
+        {
+          time: new Date('2001-11-01T12:00:00.000Z'),
+          value: 110,
+          value_at_normal_temperature: 1100,
+        },
+        {
+          time: new Date('2001-12-01T12:00:00.000Z'),
+          value: 120,
+          value_at_normal_temperature: 1200,
+        },
+        {
+          time: new Date('2001-12-02T12:00:00.000Z'),
+          value: 130,
+          value_at_normal_temperature: 1300,
+        },
+      ],
+    });
+
+    // WHEN
+    const result = linkyData.compare2AnsParMois();
+
+    // THEN
+    expect(result).toHaveLength(24);
+    expect(result[0].value).toEqual(1);
+    expect(result[1].value).toEqual(10);
+    expect(result[2].value).toEqual(2);
+    expect(result[3].value).toEqual(20);
+    expect(result[4].value).toEqual(3);
+    expect(result[5].value).toEqual(30);
+  });
 });

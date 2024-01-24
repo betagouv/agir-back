@@ -264,4 +264,33 @@ describe('Linky (API test)', () => {
     expect(response.body[2].mois).toEqual('décembre');
     expect(Math.floor(response.body[2].valeur)).toEqual(289);
   });
+  it('GET /utilisateurs/id/linky comparaison 2 dernieres annéee', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', { id: 'linky' });
+    await TestUtil.create('service', {
+      serviceDefinitionId: 'linky',
+      configuration: { prm: 'abc' },
+    });
+    await TestUtil.create('linky', {
+      data: _linky_data,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/linky?compare_annees=true',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(24);
+    expect(response.body[0].mois).toEqual('janvier');
+    expect(response.body[0].annee).toEqual('2022');
+    expect(response.body[1].mois).toEqual('janvier');
+    expect(response.body[1].annee).toEqual('2023');
+    expect(response.body[2].mois).toEqual('février');
+    expect(response.body[2].annee).toEqual('2022');
+    expect(response.body[3].mois).toEqual('février');
+    expect(response.body[3].annee).toEqual('2023');
+  });
 });

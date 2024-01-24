@@ -39,6 +39,22 @@ export class LinkyData {
     this.serie.push(element);
   }
 
+  public compare2AnsParMois?(): LinkyDataElement[] {
+    const result = [];
+
+    const last_value = this.serie[this.serie.length - 1];
+
+    const extract = this.extractLastNMonths(24, last_value.time);
+
+    for (let index = 0; index < 12; index++) {
+      const mois = extract[index];
+      const mois_annee_suivante = extract[index + 12];
+      result.push(mois);
+      result.push(mois_annee_suivante);
+    }
+    return result;
+  }
+
   public extractLastNDays?(nombre: number): LinkyDataElement[] {
     let result = this.serie.slice(-nombre);
     result = result.map((elem) => {
