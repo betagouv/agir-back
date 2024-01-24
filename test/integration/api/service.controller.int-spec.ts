@@ -5,17 +5,21 @@ import { ServiceStatus } from '../../../src/domain/service/service';
 
 describe('Service (API test)', () => {
   let thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
+  const OLD_ENV = process.env;
 
   beforeAll(async () => {
     await TestUtil.appinit();
   });
 
   beforeEach(async () => {
+    jest.resetModules();
+    process.env = { ...OLD_ENV }; // Make a copy
     await TestUtil.deleteAll();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
   });
 
   afterAll(async () => {
+    process.env = OLD_ENV;
     await TestUtil.appclose();
   });
 
@@ -33,6 +37,7 @@ describe('Service (API test)', () => {
   });
   it('GET /services listes 1 def with correct date', async () => {
     // GIVEN
+    process.env.SERVICES_ACTIFS = 'dummy_live';
     await TestUtil.create('serviceDefinition', { is_local: false });
 
     // WHEN
@@ -57,6 +62,19 @@ describe('Service (API test)', () => {
       Thematique.climat,
       Thematique.logement,
     ]);
+  });
+  it('GET /services listes 1 def en construction', async () => {
+    // GIVEN
+    process.env.SERVICES_ACTIFS = '';
+    await TestUtil.create('serviceDefinition', { is_local: false });
+
+    // WHEN
+    const response = await TestUtil.GET('/services');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].en_construction).toEqual(true);
   });
   it('GET /services avec les occurences d installation', async () => {
     // GIVEN
@@ -289,6 +307,7 @@ describe('Service (API test)', () => {
   });
   it('GET /utilisateurs/id/services liste 1 services associés à l utilisateur, check data', async () => {
     // GIVEN
+    process.env.SERVICES_ACTIFS = '';
     await TestUtil.create('utilisateur');
     await TestUtil.create('serviceDefinition');
     await TestUtil.create('service', { configuration: { toto: '123' } });
@@ -309,7 +328,7 @@ describe('Service (API test)', () => {
     expect(response.body[0].is_url_externe).toEqual(true);
     expect(response.body[0].description).toEqual('desc');
     expect(response.body[0].sous_description).toEqual('sous desc');
-    expect(response.body[0].en_construction).toEqual(false);
+    expect(response.body[0].en_construction).toEqual(true);
     expect(response.body[0].configuration).toEqual({ toto: '123' });
     expect(response.body[0].label).toEqual(`En construction 🚧`);
 
@@ -318,8 +337,26 @@ describe('Service (API test)', () => {
       Thematique.logement,
     ]);
   });
+  it('GET /utilisateurs/id/services liste 1 services associés à l utilisateur, check data, actif', async () => {
+    // GIVEN
+    process.env.SERVICES_ACTIFS = 'dummy_live';
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition');
+    await TestUtil.create('service', { configuration: { toto: '123' } });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/services',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body[0].en_construction).toEqual(false);
+  });
   it('GET /utilisateurs/id/services/serviceID lit 1 unique services associés à l utilisateur, check data', async () => {
     // GIVEN
+    process.env.SERVICES_ACTIFS = 'dummy_live';
+
     await TestUtil.create('utilisateur');
     await TestUtil.create('serviceDefinition');
     await TestUtil.create('service', { configuration: { toto: '123' } });

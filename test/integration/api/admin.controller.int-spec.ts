@@ -58,7 +58,6 @@ describe('Admin (API test)', () => {
     expect(service.sous_description).toEqual(
       'Véritable météo de l’électricité, Ecowatt qualifie en temps réel le niveau de consommation des Français.',
     );
-    expect(service.en_construction).toEqual(false);
   });
   it('POST /admin/upsert_service_definitions integre correctement les services', async () => {
     // GIVEN
@@ -94,7 +93,6 @@ describe('Admin (API test)', () => {
     expect(service.sous_description).toEqual(
       'Véritable météo de l’électricité, Ecowatt qualifie en temps réel le niveau de consommation des Français.',
     );
-    expect(service.en_construction).toEqual(false);
   });
   it('POST /admin/upsert_ponderations integre correctement les ponderations', async () => {
     // GIVEN

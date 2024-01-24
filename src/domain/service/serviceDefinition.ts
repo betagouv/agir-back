@@ -36,7 +36,6 @@ export class ServiceDefinitionData {
   dynamic_data: ServiceDynamicData;
   description: string;
   sous_description: string;
-  en_construction: boolean;
   parametrage_requis: boolean;
 }
 
@@ -60,6 +59,13 @@ export class ServiceDefinition extends ServiceDefinitionData {
       this.scheduled_refresh = new Date(
         Date.now() + 1000 * 60 * this.minute_period,
       );
+    }
+  }
+  public isEnConstruction(): boolean {
+    if (process.env.SERVICES_ACTIFS) {
+      return !process.env.SERVICES_ACTIFS.includes(this.serviceDefinitionId);
+    } else {
+      return true;
     }
   }
 

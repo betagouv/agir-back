@@ -35,7 +35,7 @@ export class ServiceDefinitionAPI {
       is_url_externe: serviceDefinition.is_url_externe,
       description: serviceDefinition.description,
       sous_description: serviceDefinition.sous_description,
-      en_construction: serviceDefinition.en_construction,
+      en_construction: serviceDefinition.isEnConstruction(),
       thematiques: ServiceDefinitionAPI.convertThematiquesListeToLibelleListe(
         serviceDefinition.thematiques,
       ),

@@ -11,7 +11,6 @@ const service_catalogue = {
     description:
       'Découvrez notre service quotidien de recettes 100% légumes, une expérience culinaire délicieuse et saine.',
     sous_description: `Chaque jour, nous vous livrons une nouvelle recette végétarienne savoureuse, mettant en avant la fraîcheur des légumes de saison.`,
-    en_construction: true,
     parametrage_requis: false,
   },
   linky: {
@@ -25,7 +24,6 @@ const service_catalogue = {
     thematiques: ['logement'],
     description: 'Votre suivi consommation, sans rien faire',
     sous_description: `Surveillez en un click l'évolution quotidienne de votre consommation électrique, comprenez vos habitudes, chassez toutes les pertes inutiles !!`,
-    en_construction: true,
     minute_period: 3600,
     parametrage_requis: true,
   },
@@ -41,7 +39,6 @@ const service_catalogue = {
     description: `Suivez dans le temps l'impact de vos déplacements`,
     sous_description:
       'Voiture, avions, train... tout comprendre de vos habitudes et de leur impacts : les suivre dans le temps, se fixer des objectifs concrets et voir vos progrès',
-    en_construction: true,
     parametrage_requis: false,
   },
   ecowatt: {
@@ -58,7 +55,6 @@ const service_catalogue = {
     description: 'Ecowatt aide les Français à mieux consommer l’électricité.',
     sous_description:
       'Véritable météo de l’électricité, Ecowatt qualifie en temps réel le niveau de consommation des Français.',
-    en_construction: false,
     parametrage_requis: false,
   },
   fruits: {
@@ -73,7 +69,6 @@ const service_catalogue = {
     thematiques: ['alimentation'],
     description: 'Découvrez les fruits et légumes du mois',
     sous_description: `Manger local et de saison est un changement d'habitude à impact fort sur votre bilan carbone, alors GO GO GO  !!!`,
-    en_construction: false,
     parametrage_requis: false,
   },
 };
