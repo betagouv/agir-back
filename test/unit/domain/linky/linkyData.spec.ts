@@ -5,6 +5,166 @@ import {
 } from '../../../../src/domain/linky/linkyData';
 
 describe('LinkyData', () => {
+  it('getLastValue : null if no value', () => {
+    // GIVEN
+    const linkyData = new LinkyData({
+      prm: 'abc',
+      serie: [],
+    });
+
+    // WHEN
+    const result = linkyData.getLastRoundedValue();
+
+    // THEN
+    expect(result).toBeNull();
+  });
+  it('getLastValue :correct value', () => {
+    // GIVEN
+    const linkyData = new LinkyData({
+      prm: 'abc',
+      serie: [
+        {
+          time: new Date('2021-12-21T12:00:00.000Z'),
+          value: 0,
+          value_at_normal_temperature: 1,
+        },
+        {
+          time: new Date('2021-12-22T12:00:00.000Z'),
+          value: 2,
+          value_at_normal_temperature: 3,
+        },
+      ],
+    });
+
+    // WHEN
+    const result = linkyData.getLastRoundedValue();
+
+    // THEN
+    expect(result).toEqual(2);
+  });
+  it('getLastValue :correct rounded value', () => {
+    // GIVEN
+    const linkyData = new LinkyData({
+      prm: 'abc',
+      serie: [
+        {
+          time: new Date('2021-12-21T12:00:00.000Z'),
+          value: 12.123456876,
+          value_at_normal_temperature: 1,
+        },
+      ],
+    });
+
+    // WHEN
+    const result = linkyData.getLastRoundedValue();
+
+    // THEN
+    expect(result).toEqual(12.123);
+  });
+  it('getLastVariation : null not long enough', () => {
+    // GIVEN
+    const linkyData = new LinkyData({
+      prm: 'abc',
+      serie: [],
+    });
+
+    // WHEN
+    const result = linkyData.getLastVariation();
+
+    // THEN
+    expect(result).toBeNull();
+  });
+  it('getLastVariation : null not long enough', () => {
+    // GIVEN
+    const linkyData = new LinkyData({
+      prm: 'abc',
+      serie: [
+        {
+          time: new Date('2021-12-21T12:00:00.000Z'),
+          value: 0,
+          value_at_normal_temperature: 1,
+        },
+      ],
+    });
+
+    // WHEN
+    const result = linkyData.getLastVariation();
+
+    // THEN
+    expect(result).toBeNull();
+  });
+  it('getLastVariation : correct pourcent', () => {
+    // GIVEN
+    const linkyData = new LinkyData({
+      prm: 'abc',
+      serie: [
+        {
+          time: new Date('2021-12-21T12:00:00.000Z'),
+          value: 10,
+          value_at_normal_temperature: 1,
+        },
+        {
+          time: new Date('2021-12-22T12:00:00.000Z'),
+          value: 12,
+          value_at_normal_temperature: 1,
+        },
+      ],
+    });
+
+    // WHEN
+    const result = linkyData.getLastVariation();
+
+    // THEN
+    expect(result).toEqual(20);
+  });
+  it('getLastVariation : correct negative pourcent', () => {
+    // GIVEN
+    const linkyData = new LinkyData({
+      prm: 'abc',
+      serie: [
+        {
+          time: new Date('2021-12-21T12:00:00.000Z'),
+          value: 10,
+          value_at_normal_temperature: 1,
+        },
+        {
+          time: new Date('2021-12-22T12:00:00.000Z'),
+          value: 8,
+          value_at_normal_temperature: 1,
+        },
+      ],
+    });
+
+    // WHEN
+    const result = linkyData.getLastVariation();
+
+    // THEN
+    expect(result).toEqual(-20);
+  });
+  it('getLastVariation : correct pourcent 2 digits after comma', () => {
+    // GIVEN
+    const linkyData = new LinkyData({
+      prm: 'abc',
+      serie: [
+        {
+          time: new Date('2021-12-21T12:00:00.000Z'),
+          value: 14,
+          value_at_normal_temperature: 1,
+        },
+        {
+          time: new Date('2021-12-22T12:00:00.000Z'),
+          value: 15,
+          value_at_normal_temperature: 1,
+        },
+      ],
+    });
+
+    // WHEN
+    const result = linkyData.getLastVariation();
+
+    // THEN
+    expect(result).toEqual(7.14);
+  });
   it('extractLastNDays : extract last 2 days with proper labels ', () => {
     // GIVEN
     const linkyData = new LinkyData({

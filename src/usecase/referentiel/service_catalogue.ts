@@ -24,7 +24,6 @@ const service_catalogue = {
     thematiques: ['logement'],
     description: 'Votre suivi consommation, sans rien faire',
     sous_description: `Surveillez en un click l'évolution quotidienne de votre consommation électrique, comprenez vos habitudes, chassez toutes les pertes inutiles !!`,
-    minute_period: 3600,
     parametrage_requis: true,
   },
   suivi_transport: {

@@ -26,9 +26,29 @@ export class LinkyServiceManager
     private readonly departementRepository: DepartementRepository,
     private readonly linkyRepository: LinkyRepository,
   ) {}
-  async computeLiveDynamicData(): Promise<ServiceDynamicData> {
+  async computeLiveDynamicData(service: Service): Promise<ServiceDynamicData> {
+    const prm = service.configuration[PRM_CONF_KEY];
+    if (!prm) {
+      return {
+        label: '🔌 configurez linky',
+        isInError: false,
+      };
+    }
+    const linky_data = await this.linkyRepository.getLinky(prm);
+
+    if (!linky_data || linky_data.serie.length === 0) {
+      return {
+        label: '🔌 vos données arrivent bientôt...',
+        isInError: false,
+      };
+    }
+
+    const last_value = linky_data.getLastRoundedValue();
+    const pourcent = linky_data.getLastVariation();
+    let couleur = pourcent <= 0 ? '🟢' : '🔴';
+    let plus = pourcent > 0 ? '+' : '';
     return {
-      label: '🔌 Votre Linky',
+      label: `🔌 ${last_value} kWh ${couleur} ${plus}${pourcent}%`,
       isInError: false,
     };
   }

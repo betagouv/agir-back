@@ -55,6 +55,17 @@ export class LinkyData {
     return result;
   }
 
+  public getLastRoundedValue?(): number {
+    if (this.serie.length === 0) return null;
+    return Math.round(this.serie[this.serie.length - 1].value * 1000) / 1000;
+  }
+  public getLastVariation?(): number {
+    if (this.serie.length < 2) return null;
+    const valN_2 = this.serie[this.serie.length - 2].value;
+    const valN_1 = this.serie[this.serie.length - 1].value;
+    return Math.floor(((valN_1 - valN_2) / valN_2) * 10000) / 100;
+  }
+
   public extractLastNDays?(nombre: number): LinkyDataElement[] {
     let result = this.serie.slice(-nombre);
     result = result.map((elem) => {
