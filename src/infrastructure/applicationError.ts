@@ -173,6 +173,12 @@ export class ApplicationError {
       `Retour erreur inconnu de winter energies pour le ${prm} : ${error}`,
     );
   }
+  static throwUnknownLinkyErrorWhenDelete(winter_pk: string, error: string) {
+    this.throwAppError(
+      '034',
+      `Retour erreur inconnu de winter energies pour la suppresson du winter_pk ${winter_pk} : ${error}`,
+    );
+  }
 
   private static throwAppError(
     code: string,

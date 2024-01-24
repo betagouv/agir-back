@@ -57,7 +57,11 @@ export class LinkyServiceManager
           return `UNKNOWN STATUS : ${service.serviceDefinitionId} - ${service.serviceId} - ${service.status}`;
       }
     } catch (error) {
-      return `ERROR : ${service.serviceDefinitionId} - ${service.serviceId} : ${error.message}`;
+      return `ERROR ${
+        service.status === ServiceStatus.CREATED ? 'CREATING' : 'DELETING'
+      }: ${service.serviceDefinitionId} - ${service.serviceId} : ${
+        error.code
+      }/${error.message}`;
     }
   }
   private async removeService(service: Service): Promise<string> {
@@ -67,7 +71,14 @@ export class LinkyServiceManager
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       service.utilisateurId,
     );
-    await this.deleteSouscription(winter_pk);
+
+    try {
+      await this.deleteSouscription(winter_pk);
+    } catch (error) {
+      service.addErrorCodeToConfiguration(error.code);
+      service.addErrorMessageToConfiguration(error.message);
+      throw error;
+    }
 
     await this.linkyRepository.deleteLinky(prm);
 
@@ -115,10 +126,9 @@ export class LinkyServiceManager
     try {
       winter_pk = await this.souscription_API(prm, code_departement);
     } catch (error) {
-      if (error instanceof ApplicationError) {
-        service.addErrorCodeToConfiguration(error.code);
-        service.addErrorMessageToConfiguration(error.message);
-      }
+      service.addErrorCodeToConfiguration(error.code);
+      service.addErrorMessageToConfiguration(error.message);
+      throw error;
     }
 
     service.configuration[WINTER_PK_KEY] = winter_pk;
@@ -213,22 +223,22 @@ export class LinkyServiceManager
         );
       } else if (error.request) {
         // erreur technique
-        console.log(error.request);
         ApplicationError.throwUnknownLinkyError(
           prm,
           JSON.stringify(error.request),
         );
       }
+      ApplicationError.throwUnknownLinkyError(prm, JSON.stringify(error));
     }
     return response.data.pk;
   }
-  async deleteSouscription(pk_winter: string): Promise<void> {
+  async deleteSouscription(winter_pk: string): Promise<void> {
     if (process.env.WINTER_API_ENABLED !== 'true') {
       return;
     }
 
     try {
-      await axios.delete(process.env.WINTER_URL.concat(pk_winter, '/'), {
+      await axios.delete(process.env.WINTER_URL.concat(winter_pk, '/'), {
         headers: {
           'Content-Type': 'application/json',
           'X-API-KEY': process.env.WINTER_API_KEY,
@@ -236,13 +246,17 @@ export class LinkyServiceManager
       });
     } catch (error) {
       if (error.response) {
-        console.log(error.response);
-        // erreur fonctionnelle
+        ApplicationError.throwUnknownLinkyErrorWhenDelete(
+          winter_pk,
+          JSON.stringify(error.response),
+        );
       } else if (error.request) {
-        // erreur technique
-        console.log(error.request);
+        ApplicationError.throwUnknownLinkyErrorWhenDelete(
+          winter_pk,
+          JSON.stringify(error.request),
+        );
       }
-      throw error;
+      ApplicationError.throwUnknownLinkyError(winter_pk, JSON.stringify(error));
     }
   }
 }
