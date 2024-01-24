@@ -311,7 +311,7 @@ const utilisateurs = {
     suivis: [],
     bilans: [],
     badges: [],
-    services: ['linky'],
+    services: [],
     questionsNGC: {
       'transport . voiture . km': 30000,
     },

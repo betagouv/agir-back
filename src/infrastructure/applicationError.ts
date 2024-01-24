@@ -164,6 +164,15 @@ export class ApplicationError {
       `Mauvais format de PRM : ${prm}, nombre à 14 chiffres attendu`,
     );
   }
+  static throwUnknownPRM(prm: string) {
+    this.throwAppError('032', `PRM inconnu d'Enedis : ${prm}`);
+  }
+  static throwUnknownLinkyError(prm: string, error: string) {
+    this.throwAppError(
+      '033',
+      `Retour erreur inconnu de winter energies pour le ${prm} : ${error}`,
+    );
+  }
 
   private static throwAppError(
     code: string,

@@ -17,20 +17,6 @@ describe('LinkyRepository', () => {
     await TestUtil.appclose();
   });
 
-  it('Creates a new entry', async () => {
-    // GIVEN
-    const linky_data = new LinkyData({
-      prm: 'prm-123',
-      serie: [],
-    });
-    // WHEN
-    await linkyRepository.createNewLinky(linky_data);
-    // THEN
-    const prms = await TestUtil.prisma.linky.findMany({});
-    expect(prms).toHaveLength(1);
-    expect(prms[0].prm).toEqual('prm-123');
-    expect(prms[0].data).toEqual([]);
-  });
   it('get data', async () => {
     // GIVEN
     await TestUtil.create('linky');
@@ -64,17 +50,6 @@ describe('LinkyRepository', () => {
     expect(prm.data[0].time).toEqual(new Date(1000).toISOString());
     expect(prm.data[0].value).toEqual(50);
     expect(prm.data[0].value_at_normal_temperature).toEqual(55);
-  });
-  it('empty  data', async () => {
-    // GIVEN
-    await TestUtil.create('linky');
-    // WHEN
-    await linkyRepository.emptyData('abc');
-    // THEN
-    const prm = await TestUtil.prisma.linky.findUnique({
-      where: { prm: 'abc' },
-    });
-    expect(prm.data).toHaveLength(0);
   });
   it('delete all', async () => {
     // GIVEN

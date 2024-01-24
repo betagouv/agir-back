@@ -6,15 +6,6 @@ import { LinkyData } from '../../../src/domain/linky/linkyData';
 export class LinkyRepository {
   constructor(private prisma: PrismaService) {}
 
-  async createNewLinky(linky_data: LinkyData) {
-    await this.prisma.linky.create({
-      data: {
-        prm: linky_data.prm,
-        data: linky_data.serie as any,
-      },
-    });
-  }
-
   async upsertData(linky_data: LinkyData): Promise<void> {
     await this.prisma.linky.upsert({
       where: {
@@ -50,16 +41,6 @@ export class LinkyRepository {
     return new LinkyData({
       prm: result.prm,
       serie: result.data as any,
-    });
-  }
-  async emptyData(prm: string): Promise<void> {
-    await this.prisma.linky.update({
-      where: {
-        prm: prm,
-      },
-      data: {
-        data: [],
-      },
     });
   }
   async deleteLinky(prm: string): Promise<void> {

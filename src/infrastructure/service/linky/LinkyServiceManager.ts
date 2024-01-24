@@ -12,6 +12,10 @@ import { LinkyData } from '../../../../src/domain/linky/linkyData';
 import { LinkyRepository } from '../../../../src/infrastructure/repository/linky.repository';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 
+const PRM_CONF_KEY = 'prm';
+const LIVE_PRM_CONF_KEY = 'live_prm';
+const WINTER_PK_KEY = 'winter_pk';
+
 @Injectable()
 export class LinkyServiceManager
   implements LiveServiceManager, AsyncServiceManager
@@ -30,7 +34,7 @@ export class LinkyServiceManager
   }
 
   checkConfiguration(configuration: Object) {
-    const prm = configuration['prm'];
+    const prm = configuration[PRM_CONF_KEY];
     if (!prm) {
       ApplicationError.throwMissingPRM();
     }
@@ -57,8 +61,8 @@ export class LinkyServiceManager
     }
   }
   private async removeService(service: Service): Promise<string> {
-    const winter_pk = service.configuration['winter_pk'];
-    const prm = service.configuration['prm'];
+    const winter_pk = service.configuration[WINTER_PK_KEY];
+    const prm = service.configuration[PRM_CONF_KEY];
 
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       service.utilisateurId,
@@ -76,7 +80,7 @@ export class LinkyServiceManager
   }
 
   private async activateService(service: Service): Promise<string> {
-    const prm = service.configuration['prm'];
+    const prm = service.configuration[PRM_CONF_KEY];
 
     if (!prm) {
       return `ERROR : ${service.serviceDefinitionId} - ${service.serviceId} : missing prm data`;
@@ -86,21 +90,46 @@ export class LinkyServiceManager
       service.utilisateurId,
     );
 
+    if (service.configuration[LIVE_PRM_CONF_KEY]) {
+      if (
+        service.configuration[LIVE_PRM_CONF_KEY] ===
+        service.configuration[PRM_CONF_KEY]
+      ) {
+        await this.serviceRepository.updateServiceConfiguration(
+          utilisateur.id,
+          service.serviceDefinitionId,
+          service.configuration,
+          ServiceStatus.LIVE,
+        );
+
+        return `PREVIOUSLY LIVE : ${service.serviceDefinitionId} - ${service.serviceId} - prm:${prm}`;
+      }
+    }
+
     const code_departement =
       this.departementRepository.findDepartementByCodePostal(
         utilisateur.code_postal,
       );
 
-    const winter_pk = await this.souscription_API(prm, code_departement);
+    let winter_pk;
+    try {
+      winter_pk = await this.souscription_API(prm, code_departement);
+    } catch (error) {
+      if (error instanceof ApplicationError) {
+        service.addErrorCodeToConfiguration(error.code);
+        service.addErrorMessageToConfiguration(error.message);
+      }
+    }
 
-    service.configuration['winter_pk'] = winter_pk;
+    service.configuration[WINTER_PK_KEY] = winter_pk;
+    service.configuration[LIVE_PRM_CONF_KEY] = prm;
+
     const new_linky_data = new LinkyData({
       prm: prm,
       serie: [],
     });
 
-    await this.linkyRepository.createNewLinky(new_linky_data);
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.linkyRepository.upsertData(new_linky_data);
     await this.serviceRepository.updateServiceConfiguration(
       utilisateur.id,
       service.serviceDefinitionId,
@@ -147,7 +176,7 @@ export class LinkyServiceManager
     code_departement: string,
   ): Promise<string> {
     if (process.env.WINTER_API_ENABLED !== 'true') {
-      return '7614671637';
+      return 'fake_winter_pk';
     }
     let response;
     const data = `{
@@ -162,10 +191,34 @@ export class LinkyServiceManager
         },
       });
     } catch (error) {
-      console.log('Erreur à la souscription linky');
-      console.log(error);
-      console.log(response);
-      throw error;
+      if (error.response) {
+        console.log(error.response);
+        if (
+          response.data.enedis_prm &&
+          response.data.enedis_prm[0] === 'Invalid Enedis PRM'
+        ) {
+          // erreur fonctionnelle pas sensé se produire (pre contrôle du PRM à la conf)
+          ApplicationError.throwBadPRM(prm);
+        }
+        if (
+          response.data.error.message &&
+          response.data.error.message.includes('SGT401')
+        ) {
+          // PRM inconnu, saisie utilisateur sans doute avec une coquille
+          ApplicationError.throwUnknownPRM(prm);
+        }
+        ApplicationError.throwUnknownLinkyError(
+          prm,
+          JSON.stringify(error.response),
+        );
+      } else if (error.request) {
+        // erreur technique
+        console.log(error.request);
+        ApplicationError.throwUnknownLinkyError(
+          prm,
+          JSON.stringify(error.request),
+        );
+      }
     }
     return response.data.pk;
   }
@@ -174,21 +227,21 @@ export class LinkyServiceManager
       return;
     }
 
-    let response;
     try {
-      response = await axios.delete(
-        process.env.WINTER_URL.concat(pk_winter, '/'),
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'X-API-KEY': process.env.WINTER_API_KEY,
-          },
+      await axios.delete(process.env.WINTER_URL.concat(pk_winter, '/'), {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-KEY': process.env.WINTER_API_KEY,
         },
-      );
+      });
     } catch (error) {
-      console.log('Erreur à la suppression souscription linky');
-      console.log(error);
-      console.log(response);
+      if (error.response) {
+        console.log(error.response);
+        // erreur fonctionnelle
+      } else if (error.request) {
+        // erreur technique
+        console.log(error.request);
+      }
       throw error;
     }
   }

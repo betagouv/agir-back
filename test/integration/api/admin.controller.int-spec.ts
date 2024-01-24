@@ -610,7 +610,7 @@ describe('Admin (API test)', () => {
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual('service-id');
   });
-  it('POST /services/process_async_service appel ok, renvoi id info service linly deja LIVE', async () => {
+  it('POST /services/process_async_service appel ok, renvoi id info service linky deja LIVE', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.create('utilisateur');
@@ -736,9 +736,45 @@ describe('Admin (API test)', () => {
     );
     expect(serviceDB.status).toEqual(ServiceStatus.LIVE);
     expect(serviceDB.configuration['prm']).toEqual('123');
-    expect(serviceDB.configuration['winter_pk']).toEqual('7614671637');
+    expect(serviceDB.configuration['live_prm']).toEqual('123');
+    expect(serviceDB.configuration['winter_pk']).toEqual('fake_winter_pk');
 
     expect(linkyDB.data).toEqual([]);
+  });
+  it('POST /services/process_async_service appel ok, CREATED avec un ancien PRM live retourn qu il est deja live', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    process.env.WINTER_API_ENABLED = 'false';
+
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', {
+      id: 'linky',
+    });
+    await TestUtil.create('service', {
+      serviceDefinitionId: 'linky',
+      status: 'CREATED',
+      configuration: { prm: '123', live_prm: '123' },
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/services/process_async_service');
+
+    // THEN
+    const serviceDB = await TestUtil.prisma.service.findUnique({
+      where: { id: 'service-id' },
+    });
+    const linkyDB = await TestUtil.prisma.linky.findUnique({
+      where: { prm: '123' },
+    });
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toEqual(
+      'PREVIOUSLY LIVE : linky - service-id - prm:123',
+    );
+    expect(serviceDB.status).toEqual(ServiceStatus.LIVE);
+    expect(serviceDB.configuration['prm']).toEqual('123');
+    expect(serviceDB.configuration['live_prm']).toEqual('123');
+    expect(linkyDB).toBeNull(); // pas de recreation, ça existe a priori déjà
   });
   it('POST /services/process_async_service appel ok, supprime le serice linky OK', async () => {
     // GIVEN
