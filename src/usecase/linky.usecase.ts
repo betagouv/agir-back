@@ -16,6 +16,20 @@ export class LinkyUsecase {
     private serviceRepository: ServiceRepository,
   ) {}
 
+  async cleanLinkyData(): Promise<number> {
+    const prm_list = await this.linkyRepository.getAllPRMs();
+    for (let index = 0; index < prm_list.length; index++) {
+      const prm = prm_list[index];
+
+      const linky_data = await this.linkyRepository.getLinky(prm);
+
+      linky_data.cleanData();
+
+      await this.linkyRepository.upsertData(linky_data);
+    }
+    return prm_list.length;
+  }
+
   async liste_souscriptions(page?: number): Promise<any> {
     return this.linkyServiceManager.list_souscriptions(page);
   }

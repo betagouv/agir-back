@@ -29,6 +29,15 @@ export class LinkyRepository {
       },
     });
   }
+  async getAllPRMs(): Promise<string[]> {
+    const result = await this.prisma.linky.findMany({
+      select: {
+        prm: true,
+      },
+    });
+    return result.map((entry) => entry['prm']);
+  }
+
   async getLinky(prm: string): Promise<LinkyData> {
     const result = await this.prisma.linky.findUnique({
       where: {

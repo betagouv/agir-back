@@ -530,6 +530,68 @@ describe('Admin (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(0);
   });
+  it('POST /services/clean_linky_data appel ok si aucune donnee linky', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    // WHEN
+    const response = await TestUtil.POST('/services/clean_linky_data');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual('Cleaned 0 PRMs');
+  });
+  it('POST /services/clean_linky_data appel ok si aucune donnee linky', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create('linky', {
+      prm: 'abc',
+      data: [
+        {
+          time: new Date(123),
+          value: 100,
+          value_at_normal_temperature: 0,
+        },
+        {
+          time: new Date(123),
+          value: 110,
+          value_at_normal_temperature: 0,
+        },
+      ],
+    });
+    await TestUtil.create('linky', {
+      prm: 'efg',
+      data: [
+        {
+          time: new Date(456),
+          value: 210,
+          value_at_normal_temperature: 0,
+        },
+        {
+          time: new Date(123),
+          value: 200,
+          value_at_normal_temperature: 0,
+        },
+      ],
+    });
+    // WHEN
+    const response = await TestUtil.POST('/services/clean_linky_data');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual('Cleaned 2 PRMs');
+    const linky_abc = await TestUtil.prisma.linky.findUnique({
+      where: { prm: 'abc' },
+    });
+    const linky_efg = await TestUtil.prisma.linky.findUnique({
+      where: { prm: 'efg' },
+    });
+    expect(linky_abc.data).toHaveLength(1);
+    expect(linky_abc.data[0].value).toEqual(110);
+    expect(linky_efg.data).toHaveLength(2);
+    expect(linky_efg.data[0].value).toEqual(200);
+    expect(linky_efg.data[1].value).toEqual(210);
+  });
   it('POST /services/process_async_service appel ok, renvoi id du service traité', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;

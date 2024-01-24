@@ -284,4 +284,71 @@ describe('LinkyData', () => {
     expect(result.years.get(2021).months.size).toEqual(1);
     expect(result.years.get(2021).months.get(11)).toEqual([]);
   });
+  it('cleanData : order inner serie by descending dates ', () => {
+    // GIVEN
+    const linkyData = new LinkyData({
+      prm: 'abc',
+      serie: [
+        {
+          time: new Date('2022-03-24T12:00:00.000Z'),
+          value: 33,
+          value_at_normal_temperature: 1,
+        },
+        {
+          time: new Date('2022-01-10T12:00:00.000Z'),
+          value: 11,
+          value_at_normal_temperature: 1,
+        },
+        {
+          time: new Date('2022-02-25T12:00:00.000Z'),
+          value: 22,
+          value_at_normal_temperature: 1,
+        },
+      ],
+    });
+
+    // WHEN
+    linkyData.cleanData();
+
+    // THEN
+    expect(linkyData.serie[0].value).toEqual(11);
+    expect(linkyData.serie[1].value).toEqual(22);
+    expect(linkyData.serie[2].value).toEqual(33);
+  });
+  it('cleanData : supprime les doublons de date par un parcours gauche droite ddes série (réception ancienne vers nouvelles)', () => {
+    // GIVEN
+    const linkyData = new LinkyData({
+      prm: 'abc',
+      serie: [
+        {
+          time: new Date('2022-01-10T12:00:00.000Z'),
+          value: 11,
+          value_at_normal_temperature: 1,
+        },
+        {
+          time: new Date('2022-03-24T12:00:00.000Z'),
+          value: 33,
+          value_at_normal_temperature: 1,
+        },
+        {
+          time: new Date('2022-01-10T12:00:00.000Z'),
+          value: 12,
+          value_at_normal_temperature: 1,
+        },
+        {
+          time: new Date('2022-03-24T12:00:00.000Z'),
+          value: 34,
+          value_at_normal_temperature: 1,
+        },
+      ],
+    });
+
+    // WHEN
+    linkyData.cleanData();
+
+    // THEN
+    expect(linkyData.serie).toHaveLength(2);
+    expect(linkyData.serie[0].value).toEqual(12);
+    expect(linkyData.serie[1].value).toEqual(34);
+  });
 });

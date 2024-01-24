@@ -17,10 +17,10 @@ import {
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
 import { CMSUsecase } from '../../../src/usecase/cms.usecase';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
-import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { UserMigrationReportAPI } from './types/userMigrationReportAPI';
 import { ReferentielUsecase } from '../../../src/usecase/referentiel/referentiel.usecase';
+import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
 
 @Controller()
 @ApiBearerAuth()
@@ -29,6 +29,7 @@ export class AdminController extends GenericControler {
   constructor(
     private migrationUsecase: MigrationUsecase,
     private serviceUsecase: ServiceUsecase,
+    private linkyUsecase: LinkyUsecase,
     private cmsUsecase: CMSUsecase,
     private referentielUsecase: ReferentielUsecase,
   ) {
@@ -65,6 +66,23 @@ export class AdminController extends GenericControler {
     }
     const result = await this.serviceUsecase.processAsyncServices();
     res.status(HttpStatus.OK).json(result).send();
+  }
+
+  @Post('services/clean_linky_data')
+  @ApiOkResponse({ type: [String] })
+  async cleanLinkyData(
+    @Res() res: Response,
+    @Headers('Authorization') authorization: string,
+  ) {
+    if (!authorization) {
+      throw new UnauthorizedException('CRON API KEY manquante');
+    }
+    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
+      throw new ForbiddenException('CRON API KEY incorrecte');
+    }
+    const result = await this.linkyUsecase.cleanLinkyData();
+
+    res.status(HttpStatus.OK).json(`Cleaned ${result} PRMs`).send();
   }
 
   @Post('/admin/load_articles_from_cms')

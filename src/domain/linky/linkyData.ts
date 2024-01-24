@@ -79,6 +79,7 @@ export class LinkyData {
   }
   public extractLastNMonths?(nombre: number, date: Date): LinkyDataElement[] {
     const result = [];
+
     const years_months = LinkyData.listMonthsFromDate(nombre, date);
 
     this.fillRequiredYearMonthsData(years_months);
@@ -93,6 +94,11 @@ export class LinkyData {
     result.reverse();
 
     return result;
+  }
+
+  public cleanData?() {
+    this.unduplicateDataSerie();
+    this.orderDataSerie();
   }
 
   static listMonthsFromDate?(
@@ -154,5 +160,18 @@ export class LinkyData {
         }
       }
     });
+  }
+
+  private orderDataSerie?() {
+    this.serie.sort((a, b) => a.time.getTime() - b.time.getTime());
+  }
+  private unduplicateDataSerie?() {
+    const time_map: Map<string, LinkyDataElement> = new Map();
+
+    this.serie.forEach((element) => {
+      time_map.set(element.time.toISOString(), element);
+    });
+
+    this.serie = Array.from(time_map.values());
   }
 }

@@ -11,6 +11,9 @@
     },
     {
       "command": "30 * * * * ./scripts/process_async_service.sh"
+    },
+    {
+      "command": "0 6 * * * ./scripts/clean_linky_data.sh"
     }
   ]
 }
