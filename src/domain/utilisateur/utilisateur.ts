@@ -97,4 +97,8 @@ export class Utilisateur extends UtilisateurData {
   public does_get_article_quizz_from_repo(): boolean {
     return this.version > 0;
   }
+
+  public isAdmin(): boolean {
+    return process.env.ADMIN_IDS.includes(this.id);
+  }
 }

@@ -359,6 +359,23 @@ describe('Service (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body[0].en_construction).toEqual(false);
   });
+  it('GET /utilisateurs/id/services service actif si utilisateur est amin', async () => {
+    // GIVEN
+    process.env.SERVICES_ACTIFS = '';
+    process.env.ADMIN_IDS = 'utilisateur-id';
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition');
+    await TestUtil.create('service', { configuration: { toto: '123' } });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/services',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body[0].en_construction).toEqual(false);
+  });
   it('GET /utilisateurs/id/services/serviceID lit 1 unique services associés à l utilisateur, check data', async () => {
     // GIVEN
     process.env.SERVICES_ACTIFS = 'dummy_live';

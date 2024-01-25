@@ -18,54 +18,6 @@ const minQuizzLevel = {
   loisir: { level: 1, isCompleted: false },
 };
 
-const ALL_INTERACTIONS = [
-  { cms_id: 2, cms_type: 'quizz', score: 0.5 },
-  { cms_id: 4, cms_type: 'quizz', score: 0.5 },
-  { cms_id: 5, cms_type: 'quizz', score: 0.5 },
-  { cms_id: 6, cms_type: 'quizz', score: 0.5 },
-  { cms_id: 7, cms_type: 'quizz', score: 0.5 },
-  { cms_id: 8, cms_type: 'quizz', score: 0.5 },
-  { cms_id: 9, cms_type: 'quizz', score: 0.5 },
-  { cms_id: 10, cms_type: 'quizz', score: 0.5 },
-  { cms_id: 11, cms_type: 'quizz', score: 0.5 },
-  { cms_id: 12, cms_type: 'quizz', score: 0.5 },
-  { cms_id: 13, cms_type: 'quizz', score: 0.5 },
-  { cms_id: 14, cms_type: 'quizz', score: 0.5 },
-  { cms_id: 15, cms_type: 'quizz', score: 0.5 },
-  { cms_id: 16, cms_type: 'quizz', score: 0.5 },
-  { cms_id: 17, cms_type: 'quizz', score: 0.5 },
-  { cms_id: 18, cms_type: 'quizz', score: 0.5 },
-  { cms_id: 19, cms_type: 'quizz', score: 0.5 },
-  { cms_id: 20, cms_type: 'quizz', score: 0.5 },
-  { cms_id: 21, cms_type: 'quizz', score: 0.5 },
-
-  { cms_id: 2, cms_type: 'article', score: 0.5 },
-  { cms_id: 3, cms_type: 'article', score: 0.5 },
-  { cms_id: 4, cms_type: 'article', score: 0.5 },
-  { cms_id: 5, cms_type: 'article', score: 0.5 },
-  { cms_id: 6, cms_type: 'article', score: 0.5 },
-  { cms_id: 11, cms_type: 'article', score: 0.5 },
-  { cms_id: 12, cms_type: 'article', score: 0.5 },
-  { cms_id: 13, cms_type: 'article', score: 0.5 },
-  { cms_id: 14, cms_type: 'article', score: 0.5 },
-  { cms_id: 15, cms_type: 'article', score: 0.5 },
-  { cms_id: 16, cms_type: 'article', score: 0.5 },
-  { cms_id: 17, cms_type: 'article', score: 0.5 },
-  { cms_id: 18, cms_type: 'article', score: 0.5 },
-  { cms_id: 19, cms_type: 'article', score: 0.5 },
-  { cms_id: 20, cms_type: 'article', score: 0.5 },
-  { cms_id: 21, cms_type: 'article', score: 0.5 },
-  { cms_id: 22, cms_type: 'article', score: 0.5 },
-  { cms_id: 23, cms_type: 'article', score: 0.5 },
-  { cms_id: 24, cms_type: 'article', score: 0.5 },
-  { cms_id: 25, cms_type: 'article', score: 0.5 },
-  { cms_id: 26, cms_type: 'article', score: 0.5 },
-  { cms_id: 27, cms_type: 'article', score: 0.5 },
-  { cms_id: 28, cms_type: 'article', score: 0.5 },
-  { cms_id: 29, cms_type: 'article', score: 0.5 },
-  { cms_id: 30, cms_type: 'article', score: 0.5 },
-];
-
 const ONBOARD_DATA_1234 = {
   transports: ['voiture', 'pied'],
   avion: 2,
@@ -293,7 +245,7 @@ const utilisateurs = {
     onboardingData: ONBOARD_DATA_1234,
   },
   wojtek: {
-    nom: 'WOJCIK',
+    nom: 'WWW',
     prenom: 'Wojtek',
     email: 'ww@w.com',
     mot_de_passe: 'haha',
@@ -308,9 +260,11 @@ const utilisateurs = {
     unlocked_features: {
       unlocked_feature_list: ['aides', 'services', 'recommandations'],
     },
+    /*
     linky: {
       prm: '123',
     },
+    */
     suivis: [],
     bilans: [],
     badges: [],

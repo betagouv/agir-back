@@ -13,11 +13,14 @@ export class GenericControler {
     }
   }
   checkCallerIsAdmin(req: Request) {
-    if (!process.env.ADMIN_IDS.includes(req['tokenUtilisateurId'])) {
+    if (!this.isCallerAdmin(req)) {
       throw new ForbiddenException({
         code: '002',
         message: 'Vous ne pouvez pas accéder à cette API',
       });
     }
+  }
+  isCallerAdmin(req: Request) {
+    return process.env.ADMIN_IDS.includes(req['tokenUtilisateurId']);
   }
 }

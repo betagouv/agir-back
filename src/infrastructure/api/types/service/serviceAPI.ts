@@ -7,10 +7,14 @@ export class ServiceAPI extends ServiceDefinitionAPI {
   @ApiProperty() error_code?: string;
   @ApiProperty() configuration: Object;
 
-  public static mapServicesToServicesAPI(service: Service): ServiceAPI {
+  public static mapServicesToServicesAPI(
+    service: Service,
+    isAdmin: boolean,
+  ): ServiceAPI {
     const result: ServiceAPI = {
       ...ServiceDefinitionAPI.mapServiceDefintionToServiceDefinitionAPI(
         service,
+        isAdmin,
       ),
       label: service.dynamic_data.label || service.titre,
       configuration: service.configuration,

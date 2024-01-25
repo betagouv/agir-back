@@ -24,6 +24,7 @@ export class ServiceDefinitionAPI {
 
   public static mapServiceDefintionToServiceDefinitionAPI(
     serviceDefinition: ServiceDefinition,
+    isAdmin: boolean,
   ): ServiceDefinitionAPI {
     let result = {
       id: serviceDefinition.serviceDefinitionId,
@@ -35,7 +36,10 @@ export class ServiceDefinitionAPI {
       is_url_externe: serviceDefinition.is_url_externe,
       description: serviceDefinition.description,
       sous_description: serviceDefinition.sous_description,
-      en_construction: serviceDefinition.isEnConstruction(),
+      en_construction: ServiceDefinitionAPI.isEnConstruction(
+        serviceDefinition,
+        isAdmin,
+      ),
       thematiques: ServiceDefinitionAPI.convertThematiquesListeToLibelleListe(
         serviceDefinition.thematiques,
       ),
@@ -44,6 +48,14 @@ export class ServiceDefinitionAPI {
       parametrage_requis: serviceDefinition.parametrage_requis,
     };
     return result;
+  }
+
+  private static isEnConstruction(
+    serviceDefinition: ServiceDefinition,
+    isAdmin: boolean,
+  ) {
+    if (isAdmin) return false;
+    return serviceDefinition.isEnConstruction();
   }
 
   public static convertThematiquesListeToLibelleListe(

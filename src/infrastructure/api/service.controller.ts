@@ -60,7 +60,10 @@ export class ServiceController extends GenericControler {
       utilisateurId,
     );
     return result.map((def) =>
-      ServiceDefinitionAPI.mapServiceDefintionToServiceDefinitionAPI(def),
+      ServiceDefinitionAPI.mapServiceDefintionToServiceDefinitionAPI(
+        def,
+        this.isCallerAdmin(req),
+      ),
     );
   }
   @Post('utilisateurs/:utilisateurId/services')
@@ -128,7 +131,7 @@ export class ServiceController extends GenericControler {
     );
 
     const mappedResult = result.map((service) =>
-      ServiceAPI.mapServicesToServicesAPI(service),
+      ServiceAPI.mapServicesToServicesAPI(service, this.isCallerAdmin(req)),
     );
     return mappedResult;
   }
@@ -152,7 +155,10 @@ export class ServiceController extends GenericControler {
       serviceDefinitionId,
     );
 
-    const mappedResult = ServiceAPI.mapServicesToServicesAPI(result);
+    const mappedResult = ServiceAPI.mapServicesToServicesAPI(
+      result,
+      this.isCallerAdmin(req),
+    );
 
     return mappedResult;
   }
