@@ -67,7 +67,6 @@ describe('Gamification  (API test)', () => {
         feature: 'aides',
         titre: 'Les aides !',
         description: 'bla',
-        url: 'url',
       },
     });
   });

@@ -8,7 +8,6 @@ export class RevealAPI {
   @ApiProperty({ enum: Feature }) feature: Feature;
   @ApiProperty() titre: string;
   @ApiProperty() description: string;
-  @ApiProperty() url: string;
 }
 export class CelebrationAPI {
   @ApiProperty() id: string;

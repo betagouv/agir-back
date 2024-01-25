@@ -302,7 +302,6 @@ export class TestUtil {
               feature: 'aides',
               titre: 'Les aides !',
               description: 'bla',
-              url: 'url',
             },
           },
         ],

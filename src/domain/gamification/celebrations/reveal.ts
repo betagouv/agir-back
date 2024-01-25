@@ -4,22 +4,19 @@ import { Feature } from '../feature';
 export class Reveal {
   private static readonly DATA_REVEAL: Record<
     Feature,
-    { titre: string; description: string; url: string }
+    { titre: string; description: string }
   > = {
     aides: {
       titre: 'Vos aides',
       description: `En fonction de votre situation et de où vous êtes !`,
-      url: '/vos-aides',
     },
     services: {
       titre: 'Vos services',
       description: `Un service permet d'avoir toujours sous les yeux vos fonctionnalités clés`,
-      url: '/agir/services',
     },
     recommandations: {
       titre: 'Vos recommandations',
       description: `Toujours plus de contenu, et en fonction de vos centres d'intérêt`,
-      url: '/coach',
     },
   };
   constructor(feature: Feature) {
@@ -28,11 +25,9 @@ export class Reveal {
     this.feature = feature;
     this.titre = data.titre;
     this.description = data.description;
-    this.url = data.url;
   }
   id: string;
   feature: Feature;
   titre: string;
   description: string;
-  url: string;
 }
