@@ -11,7 +11,10 @@ import { DepartementRepository } from '../../../../src/infrastructure/repository
 import { LinkyData } from '../../../../src/domain/linky/linkyData';
 import { LinkyRepository } from '../../../../src/infrastructure/repository/linky.repository';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
+import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
+import { EmailSender } from '../../../../src/infrastructure/email/emailSender';
 
+const SENT_DATA_EMAIL_CONF_KEY = 'sent_data_email';
 const PRM_CONF_KEY = 'prm';
 const LIVE_PRM_CONF_KEY = 'live_prm';
 const WINTER_PK_KEY = 'winter_pk';
@@ -24,6 +27,7 @@ export class LinkyServiceManager
     private readonly serviceRepository: ServiceRepository,
     private readonly utilisateurRepository: UtilisateurRepository,
     private readonly departementRepository: DepartementRepository,
+    private readonly emailSender: EmailSender,
     private readonly linkyRepository: LinkyRepository,
   ) {}
   async computeLiveDynamicData(service: Service): Promise<ServiceDynamicData> {
@@ -65,25 +69,32 @@ export class LinkyServiceManager
   }
 
   async runAsyncProcessing(service: Service): Promise<string> {
+    const email_sent = await this.sendDataEmailIfNeeded(service);
+
     try {
       switch (service.status) {
         case ServiceStatus.LIVE:
-          return `ALREADY LIVE : ${service.serviceDefinitionId} - ${service.serviceId}`;
+          return `ALREADY LIVE : ${service.serviceDefinitionId} - ${service.serviceId} | data_email:${email_sent}`;
         case ServiceStatus.CREATED:
-          return await this.activateService(service);
+          return (await this.activateService(service)).concat(
+            ` | data_email:${email_sent}`,
+          );
         case ServiceStatus.TO_DELETE:
-          return await this.removeService(service);
+          return (await this.removeService(service)).concat(
+            ` | data_email:${email_sent}`,
+          );
         default:
-          return `UNKNOWN STATUS : ${service.serviceDefinitionId} - ${service.serviceId} - ${service.status}`;
+          return `UNKNOWN STATUS : ${service.serviceDefinitionId} - ${service.serviceId} - ${service.status} | data_email:${email_sent}`;
       }
     } catch (error) {
       return `ERROR ${
         service.status === ServiceStatus.CREATED ? 'CREATING' : 'DELETING'
       }: ${service.serviceDefinitionId} - ${service.serviceId} : ${
         error.code
-      }/${error.message}`;
+      }/${error.message} | data_email:${email_sent}`;
     }
   }
+
   private async removeService(service: Service): Promise<string> {
     const winter_pk = service.configuration[WINTER_PK_KEY];
     const prm = service.configuration[PRM_CONF_KEY];
@@ -166,6 +177,9 @@ export class LinkyServiceManager
       service.configuration,
       ServiceStatus.LIVE,
     );
+
+    await this.sendConfigurationOKEmail(utilisateur);
+
     return `INITIALISED : ${service.serviceDefinitionId} - ${service.serviceId} - prm:${prm}`;
   }
 
@@ -278,5 +292,61 @@ export class LinkyServiceManager
       }
       ApplicationError.throwUnknownLinkyError(winter_pk, JSON.stringify(error));
     }
+  }
+
+  private async sendDataEmailIfNeeded(service: Service): Promise<boolean> {
+    const sentDataEmail = service.configuration[SENT_DATA_EMAIL_CONF_KEY];
+    if (!sentDataEmail) {
+      const live_prm = service.configuration[LIVE_PRM_CONF_KEY];
+      if (live_prm) {
+        const utilisateur =
+          await this.utilisateurRepository.findUtilisateurById(
+            service.utilisateurId,
+          );
+        const linky_data = await this.linkyRepository.getLinky(live_prm);
+        if (linky_data && linky_data.serie.length > 0) {
+          await this.sendAvailableDataEmail(utilisateur);
+          service.configuration[SENT_DATA_EMAIL_CONF_KEY] = true;
+          await this.serviceRepository.updateServiceConfiguration(
+            utilisateur.id,
+            service.serviceDefinitionId,
+            service.configuration,
+          );
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private async sendConfigurationOKEmail(utilisateur: Utilisateur) {
+    this.emailSender.sendEmail(
+      utilisateur.email,
+      utilisateur.prenom,
+      `Bonjour ${utilisateur.prenom},<br>
+Votre service linky est bien configuré !<br> 
+Encore un peu de patience et vos données de consommation seront disponibles !<br>
+Généralement dans les 24h qui viennent.<br><br>
+
+À très vite !`,
+      `Bravo, vous avez bien configuré le service Linky`,
+    );
+  }
+
+  private async sendAvailableDataEmail(utilisateur: Utilisateur) {
+    this.emailSender.sendEmail(
+      utilisateur.email,
+      utilisateur.prenom,
+      `Bonjour ${utilisateur.prenom},<br>
+Vous pouvez dès à présent :
+- voir votre consommation électrique quotidienne<br>
+- consulter votre historique jusqu'à deux ans dès maintenant<br>
+- comparer d'une année à l'autre l'évolution de votre consommation<br><br>
+
+<a href="${process.env.BASE_URL_FRONT}/agir/service/linky">Votre tableau de bord personnel</a><br><br>
+
+À très vite !`,
+      `Votre suivi de consommation électrique est disponible !`,
+    );
   }
 }

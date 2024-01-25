@@ -2,6 +2,7 @@ import { UtilisateurRepository } from '../../../src/infrastructure/repository/ut
 import { InteractionType } from '../../../src/domain/interaction/interactionType';
 import { TestUtil } from '../../TestUtil';
 import { ServiceStatus } from '../../../src/domain/service/service';
+import { LinkyDataElement } from 'src/domain/linky/linkyData';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
@@ -628,7 +629,9 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual('ALREADY LIVE : linky - service-id');
+    expect(response.body[0]).toEqual(
+      'ALREADY LIVE : linky - service-id | data_email:false',
+    );
   });
   it('POST /services/process_async_service appel ok, 2 service linky LIVE', async () => {
     // GIVEN
@@ -677,7 +680,7 @@ describe('Admin (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual(
-      'UNKNOWN STATUS : linky - service-id - blurp',
+      'UNKNOWN STATUS : linky - service-id - blurp | data_email:false',
     );
   });
   it('POST /services/process_async_service appel ok, prm manquant', async () => {
@@ -701,7 +704,7 @@ describe('Admin (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual(
-      'ERROR : linky - service-id : missing prm data',
+      'ERROR : linky - service-id : missing prm data | data_email:false',
     );
   });
   it('POST /services/process_async_service appel ok, CREATED delcenche traitement pour linky', async () => {
@@ -732,7 +735,7 @@ describe('Admin (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual(
-      'INITIALISED : linky - service-id - prm:123',
+      'INITIALISED : linky - service-id - prm:123 | data_email:false',
     );
     expect(serviceDB.status).toEqual(ServiceStatus.LIVE);
     expect(serviceDB.configuration['prm']).toEqual('123');
@@ -740,6 +743,91 @@ describe('Admin (API test)', () => {
     expect(serviceDB.configuration['winter_pk']).toEqual('fake_winter_pk');
 
     expect(linkyDB.data).toEqual([]);
+  });
+  it('POST /services/process_async_service appel ok, la presence de donnee declenche une unique fois envoi de mail data', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    process.env.WINTER_API_ENABLED = 'false';
+
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', {
+      id: 'linky',
+    });
+    await TestUtil.create('service', {
+      serviceDefinitionId: 'linky',
+      status: 'CREATED',
+      configuration: { prm: '123' },
+    });
+
+    // WHEN
+    let response = await TestUtil.POST('/services/process_async_service');
+
+    // THEN
+    let serviceDB = await TestUtil.prisma.service.findUnique({
+      where: { id: 'service-id' },
+    });
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toEqual(
+      'INITIALISED : linky - service-id - prm:123 | data_email:false',
+    );
+    expect(serviceDB.configuration['sent_data_email']).toBeUndefined();
+
+    // WHEN
+    response = await TestUtil.POST('/services/process_async_service');
+
+    // THEN
+    serviceDB = await TestUtil.prisma.service.findUnique({
+      where: { id: 'service-id' },
+    });
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toEqual(
+      'ALREADY LIVE : linky - service-id | data_email:false',
+    );
+    expect(serviceDB.configuration['sent_data_email']).toBeUndefined();
+
+    // WHEN
+    await TestUtil.prisma.linky.update({
+      where: { prm: '123' },
+      data: {
+        data: [
+          {
+            time: new Date(),
+            value: 12,
+            value_at_normal_temperature: 14,
+          },
+        ],
+      },
+    });
+
+    // WHEN
+    response = await TestUtil.POST('/services/process_async_service');
+
+    // THEN
+    serviceDB = await TestUtil.prisma.service.findUnique({
+      where: { id: 'service-id' },
+    });
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toEqual(
+      'ALREADY LIVE : linky - service-id | data_email:true',
+    );
+    expect(serviceDB.configuration['sent_data_email']).toEqual(true);
+
+    // WHEN
+    response = await TestUtil.POST('/services/process_async_service');
+
+    // THEN
+    serviceDB = await TestUtil.prisma.service.findUnique({
+      where: { id: 'service-id' },
+    });
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toEqual(
+      'ALREADY LIVE : linky - service-id | data_email:false',
+    );
+    expect(serviceDB.configuration['sent_data_email']).toEqual(true);
   });
   it('POST /services/process_async_service appel ok, CREATED avec un ancien PRM live retourn qu il est deja live', async () => {
     // GIVEN
@@ -769,7 +857,7 @@ describe('Admin (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual(
-      'PREVIOUSLY LIVE : linky - service-id - prm:123',
+      'PREVIOUSLY LIVE : linky - service-id - prm:123 | data_email:false',
     );
     expect(serviceDB.status).toEqual(ServiceStatus.LIVE);
     expect(serviceDB.configuration['prm']).toEqual('123');
@@ -804,7 +892,9 @@ describe('Admin (API test)', () => {
     });
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual('DELETED : linky - service-id - prm:123');
+    expect(response.body[0]).toEqual(
+      'DELETED : linky - service-id - prm:123 | data_email:false',
+    );
     expect(serviceDB).toBeNull();
     expect(linkyDB).toBeNull();
   });
