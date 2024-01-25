@@ -183,38 +183,6 @@ export class LinkyServiceManager
     return `INITIALISED : ${service.serviceDefinitionId} - ${service.serviceId} - prm:${prm}`;
   }
 
-  async list_souscriptions(page?: number): Promise<WinterListeSubAPI> {
-    if (process.env.WINTER_API_ENABLED !== 'true') {
-      return {
-        count: 1,
-        next: '1',
-        previous: '1',
-        results: [
-          { enedis_prm: '12345', department_number: '91', pk: '7614671637' },
-        ],
-      };
-    }
-    const final_page = page ? page : 1;
-    let response;
-    try {
-      response = await axios.get(
-        process.env.WINTER_URL.concat(`?page=${final_page}`),
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'X-API-KEY': process.env.WINTER_API_KEY,
-          },
-        },
-      );
-    } catch (error) {
-      console.log('Erreur à la lecture des souscriptions linky');
-      console.log(error.message);
-      console.log(error);
-      throw error;
-    }
-    return response.data;
-  }
-
   async souscription_API(
     prm: string,
     code_departement: string,

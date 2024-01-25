@@ -33,30 +33,6 @@ export class LinkyController extends GenericControler {
     super();
   }
 
-  @Get('/linky/souscriptions')
-  @ApiOperation({
-    summary: 'Consulte les souscriptions actives',
-  })
-  @ApiQuery({
-    name: 'page',
-    type: Number,
-    required: false,
-  })
-  @ApiOkResponse({ type: WinterListeSubAPI })
-  async get_souscriptions(
-    @Headers('Authorization') authorization: string,
-    @Res() res: Response,
-    @Query('page') page?: number,
-  ) {
-    if (!authorization) {
-      throw new UnauthorizedException('CRON API KEY manquante');
-    }
-    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
-      throw new ForbiddenException('CRON API KEY incorrecte');
-    }
-    let result = await this.linkyUsecase.liste_souscriptions(page);
-    res.status(HttpStatus.OK).json(result).send();
-  }
   @Get('/utilisateurs/:utilisateurId/linky')
   @ApiOperation({
     summary: `renvoie les données linky de utilisateur`,
@@ -99,7 +75,7 @@ export class LinkyController extends GenericControler {
       detail,
       nombre,
       end_date,
-      compare_annees
+      compare_annees,
     );
     const result = data.serie.map((elem) => LinkyDataAPI.map(elem));
 

@@ -30,9 +30,6 @@ export class LinkyUsecase {
     return prm_list.length;
   }
 
-  async liste_souscriptions(page?: number): Promise<any> {
-    return this.linkyServiceManager.list_souscriptions(page);
-  }
   async getUserData(
     utilisateurId: string,
     detail: LinkyDataDetailAPI,

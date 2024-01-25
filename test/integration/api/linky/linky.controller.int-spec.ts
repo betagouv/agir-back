@@ -23,17 +23,6 @@ describe('Linky (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('GET /linky/souscriptions renvoie une souscription', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-
-    // WHEN
-    const response = await TestUtil.GET('/linky/souscriptions');
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.results[0].enedis_prm).toEqual('12345');
-  });
   it('GET /utilisateurs/id/linky renvoie tableau vide si pas de service', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
