@@ -57,6 +57,16 @@ export class LinkyServiceManager
     };
   }
 
+  isConfigured(service: Service) {
+    return !!service.configuration[PRM_CONF_KEY];
+  }
+  isActivated(service: Service) {
+    return !!service.configuration[LIVE_PRM_CONF_KEY];
+  }
+  isFullyRunning(service: Service) {
+    return !!service.configuration[SENT_DATA_EMAIL_CONF_KEY];
+  }
+
   checkConfiguration(configuration: Object) {
     const prm = configuration[PRM_CONF_KEY];
     if (!prm) {
@@ -105,6 +115,7 @@ export class LinkyServiceManager
 
     try {
       await this.deleteSouscription(winter_pk);
+      service.resetErrorState();
     } catch (error) {
       service.addErrorCodeToConfiguration(error.code);
       service.addErrorMessageToConfiguration(error.message);
@@ -156,6 +167,7 @@ export class LinkyServiceManager
     let winter_pk;
     try {
       winter_pk = await this.souscription_API(prm, code_departement);
+      service.resetErrorState();
     } catch (error) {
       service.addErrorCodeToConfiguration(error.code);
       service.addErrorMessageToConfiguration(error.message);

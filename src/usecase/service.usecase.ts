@@ -27,6 +27,15 @@ const dummy_async_manager = {
     return service.serviceId;
   },
   checkConfiguration(conf: Object) {},
+  isActivated(service: Service) {
+    return true;
+  },
+  isConfigured(service: Service) {
+    return true;
+  },
+  isFullyRunning(service: Service) {
+    return true;
+  },
 };
 const dummy_scheduled_manager = {
   computeScheduledDynamicData: async (serviceDefinition: ServiceDefinition) => {
@@ -201,6 +210,7 @@ export class ServiceUsecase {
       if (service.isLiveServiceType()) {
         await this.refreshLiveService(service);
       }
+      this.setAsyncServiceStateIfNeeded(service);
     }
     return userServiceList;
   }
@@ -216,6 +226,8 @@ export class ServiceUsecase {
     if (service.isLiveServiceType()) {
       await this.refreshLiveService(service);
     }
+    this.setAsyncServiceStateIfNeeded(service);
+
     return service;
   }
 
@@ -253,5 +265,14 @@ export class ServiceUsecase {
     serviceDefinitionId: string,
   ): AsyncServiceManager {
     return this.ASYNC_SERVICES[serviceDefinitionId];
+  }
+
+  private setAsyncServiceStateIfNeeded(service: Service) {
+    if (service.isAsyncServiceType()) {
+      const manager = this.getAsyncServiceManager(service.serviceDefinitionId);
+      service.is_configured = manager.isConfigured(service);
+      service.is_activated = manager.isActivated(service);
+      service.is_fully_running = manager.isFullyRunning(service);
+    }
   }
 }

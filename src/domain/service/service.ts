@@ -13,6 +13,10 @@ export class ServiceData extends ServiceDefinition {
   utilisateurId: string;
   configuration: Object;
   status?: ServiceStatus;
+  is_configured?: boolean;
+  is_activated?: boolean;
+  is_fully_running?: boolean;
+
   constructor() {
     super({} as any);
   }
@@ -34,6 +38,11 @@ export class Service extends ServiceData {
   }
   public addErrorMessageToConfiguration?(message: string) {
     this.configuration[ERROR_MESSAGE_KEY] = message;
+  }
+
+  public resetErrorState?() {
+    delete this.configuration[ERROR_CODE_KEY];
+    delete this.configuration[ERROR_MESSAGE_KEY];
   }
 
   public isInError?(): boolean {
