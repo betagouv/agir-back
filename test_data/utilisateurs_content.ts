@@ -236,7 +236,6 @@ const utilisateurs = {
         },
       ],
     },
-    //interactions: ALL_INTERACTIONS,
     suivis: [],
     bilans: [],
     badges: [],
@@ -260,11 +259,9 @@ const utilisateurs = {
     unlocked_features: {
       unlocked_feature_list: ['aides', 'services', 'recommandations'],
     },
-    /*
     linky: {
       prm: '123',
     },
-    */
     suivis: [],
     bilans: [],
     badges: [],
