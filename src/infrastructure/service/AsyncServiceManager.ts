@@ -7,4 +7,5 @@ export interface AsyncServiceManager {
   isConfigured(service: Service);
   isFullyRunning(service: Service);
   checkConfiguration(configuration: Object);
+  processConfiguration(configuration: Object);
 }

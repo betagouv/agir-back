@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { WinterDataSentAPI } from '../../src/infrastructure/api/types/winter/WinterIncomingDataAPI';
-import { LinkyServiceManager } from '../../src/infrastructure/service/linky/LinkyServiceManager';
 import { LinkyRepository } from '../../src/infrastructure/repository/linky.repository';
 import { LinkyData } from '../../src/domain/linky/linkyData';
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
@@ -12,7 +11,6 @@ import { LinkyDataDetailAPI } from '../../src/infrastructure/api/types/service/l
 export class LinkyUsecase {
   constructor(
     private linkyRepository: LinkyRepository,
-    private linkyServiceManager: LinkyServiceManager,
     private serviceRepository: ServiceRepository,
   ) {}
 

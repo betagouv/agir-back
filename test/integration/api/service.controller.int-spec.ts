@@ -698,6 +698,26 @@ describe('Service (API test)', () => {
     ).send({ prm: '22293632381261' });
 
     // THEN
+    const service = await TestUtil.prisma.service.findFirst({
+      where: { utilisateurId: 'utilisateur-id' },
+    });
     expect(response.status).toBe(200);
+    expect(service.configuration['prm']).toEqual('22293632381261');
+    expect(
+      new Date(service.configuration['date_consent']).getTime(),
+    ).toBeGreaterThan(Date.now() - 100);
+    expect(
+      new Date(service.configuration['date_consent']).getTime(),
+    ).toBeLessThan(Date.now());
+
+    const now_plus_3years = new Date();
+    now_plus_3years.setFullYear(now_plus_3years.getFullYear() + 3);
+
+    expect(
+      new Date(service.configuration['date_fin_consent']).getTime(),
+    ).toBeGreaterThan(now_plus_3years.getTime() - 100);
+    expect(
+      new Date(service.configuration['date_fin_consent']).getTime(),
+    ).toBeLessThan(now_plus_3years.getTime());
   });
 });

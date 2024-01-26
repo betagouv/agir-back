@@ -40,6 +40,10 @@ export class LinkyData {
   }
 
   public compare2AnsParMois?(): LinkyDataElement[] {
+    if (this.serie.length < 2) {
+      return [];
+    }
+
     const result = [];
 
     const last_value = this.serie[this.serie.length - 1];

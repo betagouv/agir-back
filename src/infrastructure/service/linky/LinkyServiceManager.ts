@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { WinterListeSubAPI } from '../../api/types/winter/WinterListeSubAPI';
 import { ServiceDynamicData } from '../../../domain/service/serviceDefinition';
 import { LiveServiceManager } from '../LiveServiceManager';
 import { ServiceRepository } from '../../../../src/infrastructure/repository/service.repository';
@@ -8,7 +7,6 @@ import { AsyncServiceManager } from '../AsyncServiceManager';
 import { Service, ServiceStatus } from '../../../../src/domain/service/service';
 import { UtilisateurRepository } from '../../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DepartementRepository } from '../../../../src/infrastructure/repository/departement/departement.repository';
-import { LinkyData } from '../../../../src/domain/linky/linkyData';
 import { LinkyRepository } from '../../../../src/infrastructure/repository/linky.repository';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
@@ -18,6 +16,10 @@ const SENT_DATA_EMAIL_CONF_KEY = 'sent_data_email';
 const PRM_CONF_KEY = 'prm';
 const LIVE_PRM_CONF_KEY = 'live_prm';
 const WINTER_PK_KEY = 'winter_pk';
+const DATE_CONSENT_KEY = 'date_consent';
+const DATE_FIN_CONSENT_KEY = 'date_fin_consent';
+
+const DUREE_CONSENT_ANNEES = 3;
 
 @Injectable()
 export class LinkyServiceManager
@@ -32,9 +34,21 @@ export class LinkyServiceManager
   ) {}
   async computeLiveDynamicData(service: Service): Promise<ServiceDynamicData> {
     const prm = service.configuration[PRM_CONF_KEY];
-    if (!prm) {
+    if (!this.isConfigured(service)) {
       return {
-        label: '🔌 configurez linky',
+        label: '🔌 configurez Linky',
+        isInError: false,
+      };
+    }
+    if (this.isConfigured(service) && !this.isActivated(service)) {
+      return {
+        label: `🔌 Linky en cours d'activation...`,
+        isInError: false,
+      };
+    }
+    if (this.isActivated(service) && !this.isFullyRunning(service)) {
+      return {
+        label: '🔌 Vos données sont en chemin !',
         isInError: false,
       };
     }
@@ -42,7 +56,7 @@ export class LinkyServiceManager
 
     if (!linky_data || linky_data.serie.length === 0) {
       return {
-        label: '🔌 vos données arrivent bientôt...',
+        label: '🔌 Vos données sont en chemin !',
         isInError: false,
       };
     }
@@ -65,6 +79,16 @@ export class LinkyServiceManager
   }
   isFullyRunning(service: Service) {
     return !!service.configuration[SENT_DATA_EMAIL_CONF_KEY];
+  }
+
+  processConfiguration(configuration: Object) {
+    configuration[DATE_CONSENT_KEY] = new Date();
+
+    const current_year = new Date().getFullYear();
+    const end_date = new Date();
+    end_date.setFullYear(current_year + DUREE_CONSENT_ANNEES);
+
+    configuration[DATE_FIN_CONSENT_KEY] = end_date;
   }
 
   checkConfiguration(configuration: Object) {
@@ -177,12 +201,6 @@ export class LinkyServiceManager
     service.configuration[WINTER_PK_KEY] = winter_pk;
     service.configuration[LIVE_PRM_CONF_KEY] = prm;
 
-    const new_linky_data = new LinkyData({
-      prm: prm,
-      serie: [],
-    });
-
-    await this.linkyRepository.upsertData(new_linky_data);
     await this.serviceRepository.updateServiceConfiguration(
       utilisateur.id,
       service.serviceDefinitionId,

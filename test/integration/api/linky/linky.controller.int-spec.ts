@@ -282,4 +282,25 @@ describe('Linky (API test)', () => {
     expect(response.body[3].mois).toEqual('février');
     expect(response.body[3].annee).toEqual('2023');
   });
+  it('GET /utilisateurs/id/linky comparaison 2 dernieres annéee - pas d erreurs si pas de donnees', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', { id: 'linky' });
+    await TestUtil.create('service', {
+      serviceDefinitionId: 'linky',
+      configuration: { prm: 'abc' },
+    });
+    await TestUtil.create('linky', {
+      data: [],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/linky?compare_annees=true',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(0);
+  });
 });

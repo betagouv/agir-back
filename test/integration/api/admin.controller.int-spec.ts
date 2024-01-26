@@ -729,9 +729,6 @@ describe('Admin (API test)', () => {
     const serviceDB = await TestUtil.prisma.service.findUnique({
       where: { id: 'service-id' },
     });
-    const linkyDB = await TestUtil.prisma.linky.findUnique({
-      where: { prm: '123' },
-    });
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual(
@@ -741,8 +738,6 @@ describe('Admin (API test)', () => {
     expect(serviceDB.configuration['prm']).toEqual('123');
     expect(serviceDB.configuration['live_prm']).toEqual('123');
     expect(serviceDB.configuration['winter_pk']).toEqual('fake_winter_pk');
-
-    expect(linkyDB.data).toEqual([]);
   });
   it('POST /services/process_async_service appel ok, la presence de donnee declenche une unique fois envoi de mail data', async () => {
     // GIVEN
@@ -788,9 +783,9 @@ describe('Admin (API test)', () => {
     expect(serviceDB.configuration['sent_data_email']).toBeUndefined();
 
     // WHEN
-    await TestUtil.prisma.linky.update({
-      where: { prm: '123' },
+    await TestUtil.prisma.linky.create({
       data: {
+        prm: '123',
         data: [
           {
             time: new Date(),

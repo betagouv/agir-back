@@ -36,6 +36,7 @@ const dummy_async_manager = {
   isFullyRunning(service: Service) {
     return true;
   },
+  processConfiguration(conf: Object) {},
 };
 const dummy_scheduled_manager = {
   computeScheduledDynamicData: async (serviceDefinition: ServiceDefinition) => {
@@ -82,6 +83,8 @@ export class ServiceUsecase {
     const manager = this.getAsyncServiceManager(serviceDefinitionId);
 
     manager.checkConfiguration(payload);
+
+    manager.processConfiguration(payload);
 
     await this.serviceRepository.updateServiceConfiguration(
       utilisateurId,
