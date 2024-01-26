@@ -305,7 +305,7 @@ export class LinkyServiceManager
       utilisateur.prenom,
       `Bonjour ${utilisateur.prenom},<br>
 Votre service linky est bien configuré !<br> 
-Encore un peu de patience et vos données de consommation seront disponibles !<br>
+Encore un peu de patience et vos données de consommation seront disponibles.<br>
 Généralement dans les 24h qui viennent.<br><br>
 
 À très vite !`,
