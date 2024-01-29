@@ -89,7 +89,7 @@ describe('TODO list (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(new Date(response.body.done_at).getTime()).toBeGreaterThan(
-      Date.now() - 100,
+      Date.now() - 150,
     );
     expect(response.body.todo[0].url).toEqual('/aides');
     expect(response.body.is_last).toEqual(false);

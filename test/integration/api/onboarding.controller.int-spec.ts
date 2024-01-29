@@ -195,8 +195,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       'Le mot de passe doit contenir au moins un chiffre',
     );
   });
-  it('POST /utilisateurs/renvoyer_code - resend code ok for first time, counter + 1, new code generated', async () => {
+  it('POST /utilisateurs/renvoyer_code - PROD true - resend code ok for first time, counter + 1, new code generated', async () => {
     // GIVEN
+    process.env.IS_PROD = 'true';
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
@@ -223,6 +224,38 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(userDB.sent_email_count).toEqual(2);
     expect(userDB.code).not.toEqual(userDB_before.code);
   });
+
+  it('POST /utilisateurs/renvoyer_code - PROD false - resend code ok for first time, counter + 1, same code generated', async () => {
+    // GIVEN
+    process.env.IS_PROD = 'false';
+    process.env.OTP_DEV = '123456';
+    await TestUtil.getServer().post('/utilisateurs').send({
+      nom: 'WW',
+      prenom: 'Wojtek',
+      mot_de_passe: '#1234567890HAHA',
+      email: 'w@w.com',
+      onboardingData: ONBOARDING_1_2_3_4_DATA,
+    });
+    const userDB_before = await TestUtil.prisma.utilisateur.findFirst({
+      where: { nom: 'WW' },
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+        .post('/utilisateurs/renvoyer_code')
+        .send({ email: 'w@w.com' });
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const userDB = await TestUtil.prisma.utilisateur.findFirst({
+      where: { nom: 'WW' },
+    });
+
+    expect(userDB.sent_email_count).toEqual(2);
+    expect(userDB.code).toEqual(userDB_before.code);
+  });
+
   it('POST /utilisateurs/email/renvoyer_code - resend code 4 times => error', async () => {
     // GIVEN
     await TestUtil.getServer().post('/utilisateurs').send({

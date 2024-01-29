@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { UtilisateurSecurityRepository } from '../../../infrastructure/repository/utilisateur/utilisateurSecurity.repository';
 import { CodeAwareUtilisateur } from './codeAwareUtilisateur';
+import * as process from "process";
 
 @Injectable()
 export class CodeManager {
@@ -12,7 +13,11 @@ export class CodeManager {
   private static CODE_VALIDITY_TIME_MS = 10 * 60 * 1000;
 
   public static setNew6DigitCode(utilisateur: CodeAwareUtilisateur) {
-    utilisateur.code = Math.floor(100000 + Math.random() * 900000).toString();
+    if (process.env.IS_PROD === 'false') {
+      utilisateur.code = process.env.OTP_DEV
+    } else {
+      utilisateur.code = Math.floor(100000 + Math.random() * 900000).toString();
+    }
   }
 
   public async processInputCodeAndDoActionIfOK(
