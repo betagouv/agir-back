@@ -1,4 +1,4 @@
-export enum InteractionType {
+export enum ContentType {
   article = 'article',
   aide = 'aide',
   aides = 'aides',

@@ -259,7 +259,6 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     // GIVEN
     process.env.USER_CURRENT_VERSION = '0';
 
-    await TestUtil.create('interactionDefinition', { score: 0.123 });
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
@@ -286,45 +285,10 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     userDB = await TestUtil.prisma.utilisateur.findFirst({
       where: { nom: 'WW' },
     });
-    const userDB_interactions = await TestUtil.prisma.interaction.findMany();
 
     expect(userDB.active_account).toEqual(true);
-    expect(userDB_interactions).toHaveLength(1);
-    expect(userDB_interactions[0].utilisateurId).toEqual(userDB.id);
-    expect(userDB_interactions[0].score.toNumber()).toEqual(0.123);
     expect(userDB.failed_login_count).toEqual(0);
     expect(userDB.prevent_login_before.getTime()).toBeLessThan(Date.now());
-  });
-  it('POST /utilisateurs/valider - does not affect interactions if user version > 0', async () => {
-    // GIVEN
-    process.env.USER_CURRENT_VERSION = '1';
-
-    await TestUtil.create('interactionDefinition', { score: 0.123 });
-    await TestUtil.getServer().post('/utilisateurs').send({
-      nom: 'WW',
-      prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
-      email: 'w@w.com',
-      onboardingData: ONBOARDING_1_2_3_4_DATA,
-    });
-    let userDB = await TestUtil.prisma.utilisateur.findFirst({
-      where: { nom: 'WW' },
-    });
-
-    // WHEN
-    const response = await TestUtil.getServer()
-      .post('/utilisateurs/valider')
-      .send({
-        email: 'w@w.com',
-        code: userDB.code,
-      });
-
-    // THEN
-    expect(response.status).toBe(200);
-
-    const userDB_interactions = await TestUtil.prisma.interaction.findMany();
-
-    expect(userDB_interactions).toHaveLength(0);
   });
   it('POST /utilisateurs/valider - code trop vieux (+10 min) renvoie une erreur', async () => {
     // GIVEN

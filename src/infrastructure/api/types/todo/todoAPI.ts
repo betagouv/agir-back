@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { InteractionType } from '../../../../../src/domain/interaction/interactionType';
+import { ContentType } from '../../../../../src/domain/interaction/interactionType';
 import { DifficultyLevel } from '../../../../../src/domain/difficultyLevel';
 import { Thematique } from '../../../../../src/domain/thematique';
 import { Todo } from '../../../../../src/domain/todo/todo';
@@ -14,7 +14,7 @@ export class TodoElementAPI {
   thematiques?: Thematique[];
   @ApiProperty() id: string;
   @ApiProperty() titre: string;
-  @ApiProperty({ enum: InteractionType }) type?: InteractionType;
+  @ApiProperty({ enum: ContentType }) type?: ContentType;
   @ApiProperty({ enum: DifficultyLevel }) level?: DifficultyLevel;
   @ApiProperty() content_id?: string;
   @ApiProperty() interaction_id?: string;

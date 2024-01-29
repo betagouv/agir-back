@@ -1,7 +1,7 @@
 import { Thematique } from '../../../../src/domain/thematique';
 import { DifficultyLevel } from '../../../../src/domain/difficultyLevel';
 import { Todo } from '../../../../src/domain/todo/todo';
-import { InteractionType } from '../../../../src/domain/interaction/interactionType';
+import { ContentType } from '../../../../src/domain/interaction/interactionType';
 
 describe('Todo', () => {
   it('findTodoElementLike : retourne element de todo qui mach ', () => {
@@ -20,7 +20,7 @@ describe('Todo', () => {
           level: DifficultyLevel.L1,
           thematiques: [Thematique.climat],
           titre: 'titre',
-          type: InteractionType.quizz,
+          type: ContentType.quizz,
           sont_points_en_poche: false,
         },
         {
@@ -30,14 +30,14 @@ describe('Todo', () => {
           level: DifficultyLevel.L2,
           thematiques: [Thematique.logement],
           titre: 'titre',
-          type: InteractionType.quizz,
+          type: ContentType.quizz,
           sont_points_en_poche: false,
         },
       ],
     });
     // WHEN
     const result = todo.findTodoElementByTypeAndThematique(
-      InteractionType.quizz,
+      ContentType.quizz,
       [Thematique.logement],
     );
 
@@ -59,14 +59,14 @@ describe('Todo', () => {
           progression: { current: 0, target: 1 },
           level: DifficultyLevel.L1,
           titre: 'titre',
-          type: InteractionType.aides,
+          type: ContentType.aides,
           sont_points_en_poche: false,
         },
       ],
     });
     // WHEN
     const result = todo.findTodoElementByTypeAndThematique(
-      InteractionType.aides,
+      ContentType.aides,
     );
 
     // THEN
@@ -88,14 +88,14 @@ describe('Todo', () => {
           level: DifficultyLevel.L1,
           titre: 'titre',
           thematiques: [Thematique.climat],
-          type: InteractionType.aides,
+          type: ContentType.aides,
           sont_points_en_poche: false,
         },
       ],
     });
     // WHEN
     const result = todo.findTodoElementByTypeAndThematique(
-      InteractionType.aides,
+      ContentType.aides,
     );
 
     // THEN
@@ -117,7 +117,7 @@ describe('Todo', () => {
           level: DifficultyLevel.L1,
           thematiques: [Thematique.climat],
           titre: 'titre',
-          type: InteractionType.quizz,
+          type: ContentType.quizz,
           sont_points_en_poche: false,
         },
         {
@@ -127,13 +127,13 @@ describe('Todo', () => {
           level: DifficultyLevel.L2,
           thematiques: [Thematique.logement],
           titre: 'titre',
-          type: InteractionType.quizz,
+          type: ContentType.quizz,
           sont_points_en_poche: false,
         },
       ],
     });
     const element = todo.findTodoElementByTypeAndThematique(
-      InteractionType.quizz,
+      ContentType.quizz,
       [Thematique.logement],
     );
     // WHEN
@@ -159,7 +159,7 @@ describe('Todo', () => {
           level: DifficultyLevel.L1,
           thematiques: [Thematique.climat],
           titre: 'titre',
-          type: InteractionType.quizz,
+          type: ContentType.quizz,
           sont_points_en_poche: false,
         },
         {
@@ -169,13 +169,13 @@ describe('Todo', () => {
           level: DifficultyLevel.L2,
           thematiques: [Thematique.logement],
           titre: 'titre',
-          type: InteractionType.quizz,
+          type: ContentType.quizz,
           sont_points_en_poche: false,
         },
       ],
     });
     const element = todo.findTodoElementByTypeAndThematique(
-      InteractionType.quizz,
+      ContentType.quizz,
       [Thematique.logement],
     );
     // WHEN
@@ -206,7 +206,7 @@ describe('Todo', () => {
           level: DifficultyLevel.L1,
           thematiques: [Thematique.climat],
           titre: 'titre',
-          type: InteractionType.quizz,
+          type: ContentType.quizz,
           sont_points_en_poche: true,
         },
         {
@@ -216,7 +216,7 @@ describe('Todo', () => {
           level: DifficultyLevel.L2,
           thematiques: [Thematique.logement],
           titre: 'titre',
-          type: InteractionType.quizz,
+          type: ContentType.quizz,
           sont_points_en_poche: true,
         },
       ],
@@ -243,7 +243,7 @@ describe('Todo', () => {
           level: DifficultyLevel.L1,
           thematiques: [Thematique.climat],
           titre: 'titre',
-          type: InteractionType.quizz,
+          type: ContentType.quizz,
           sont_points_en_poche: true,
         },
         {
@@ -253,7 +253,7 @@ describe('Todo', () => {
           level: DifficultyLevel.L2,
           thematiques: [Thematique.logement],
           titre: 'titre',
-          type: InteractionType.quizz,
+          type: ContentType.quizz,
           sont_points_en_poche: false,
         },
       ],

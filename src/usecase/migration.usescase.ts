@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { InteractionRepository } from '../../src/infrastructure/repository/interaction.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { UtilisateurBehavior } from '../../src/domain/utilisateur/utilisateurBehavior';
-import { InteractionType } from '../../src/domain/interaction/interactionType';
 
 export type UserMigrationReport = {
   user_id: string;
@@ -12,10 +10,7 @@ export type UserMigrationReport = {
 
 @Injectable()
 export class MigrationUsecase {
-  constructor(
-    public utilisateurRepository: UtilisateurRepository,
-    public interactionRepository: InteractionRepository,
-  ) {}
+  constructor(public utilisateurRepository: UtilisateurRepository) {}
 
   async lockUserMigration(): Promise<any> {
     return this.utilisateurRepository.lockUserMigration();
@@ -85,43 +80,7 @@ export class MigrationUsecase {
     utilisateur: Utilisateur,
     _this: MigrationUsecase,
   ): Promise<{ ok: boolean; info: string }> {
-    const user_articles =
-      await _this.interactionRepository.listInteractionsByFilter({
-        utilisateurId: utilisateur.id,
-        type: InteractionType.article,
-        done: true,
-      });
-    user_articles.forEach((article) => {
-      utilisateur.history.articleLu(article.content_id, article.done_at);
-      utilisateur.history.likerArticle(article.content_id, article.like_level);
-      if (article.points_en_poche) {
-        utilisateur.history.metPointsArticleEnPoche(article.content_id);
-      }
-    });
-
-    const user_quizz_done =
-      await _this.interactionRepository.listInteractionsByFilter({
-        utilisateurId: utilisateur.id,
-        type: InteractionType.quizz,
-        done: true,
-      });
-    user_quizz_done.forEach((quizz) => {
-      utilisateur.history.quizzAttempt(
-        quizz.content_id,
-        quizz.quizz_score,
-        quizz.done_at,
-      );
-      utilisateur.history.likerQuizz(quizz.content_id, quizz.like_level);
-      if (quizz.points_en_poche) {
-        utilisateur.history.metPointsQuizzEnPoche(quizz.content_id);
-      }
-    });
-
-    return {
-      ok: true,
-      info: `- migrated ${user_articles.length} articles to user hisotry
-- migrated ${user_quizz_done.length} quizzes to user hisotry`,
-    };
+    return { ok: true, info: 'Migration obsolete' };
   }
   private async migrate_3(
     utilisateur: Utilisateur,

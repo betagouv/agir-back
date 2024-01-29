@@ -33,6 +33,11 @@ export class ArticleRepository {
       },
     });
   }
+  async delete(content_id: string): Promise<void> {
+    await this.prisma.article.delete({
+      where: { content_id: content_id },
+    });
+  }
 
   async getArticleByContentId(content_id: string): Promise<Article> {
     const result = await this.prisma.article.findUnique({

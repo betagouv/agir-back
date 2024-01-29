@@ -1,12 +1,12 @@
 import { DifficultyLevel } from '../difficultyLevel';
-import { InteractionType } from '../interaction/interactionType';
+import { ContentType } from '../interaction/interactionType';
 import { Thematique } from '../thematique';
 
 export class TodoElementData {
   id: string;
   thematiques?: Thematique[];
   titre: string;
-  type: InteractionType;
+  type: ContentType;
   level?: DifficultyLevel;
   content_id?: string;
   service_id?: string;
@@ -90,7 +90,7 @@ export class Todo extends TodoData {
   }
 
   public findTodoElementByTypeAndThematique?(
-    type: InteractionType,
+    type: ContentType,
     thematiques?: Thematique[],
   ): TodoElement {
     return this.todo.find(
@@ -103,7 +103,7 @@ export class Todo extends TodoData {
   public findTodoKYCElementByQuestionID?(content_id: string): TodoElement {
     return this.todo.find(
       (element) =>
-        element.type === InteractionType.kyc &&
+        element.type === ContentType.kyc &&
         element.content_id === content_id,
     );
   }

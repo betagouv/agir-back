@@ -1,5 +1,5 @@
 import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
-import { InteractionType } from '../../../src/domain/interaction/interactionType';
+import { ContentType } from '../../../src/domain/interaction/interactionType';
 import { EventType } from '../../../src/domain/utilisateur/utilisateurEvent';
 import { TestUtil } from '../../TestUtil';
 
@@ -74,21 +74,17 @@ describe('Gamification  (API test)', () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       gamification: {
-        points: 40,
+        points: 95,
         celebrations: [],
       },
     });
-    await TestUtil.create('interaction', {
-      done: false,
-      type: InteractionType.article,
-      points: 65,
-    });
+    await TestUtil.create('article', { content_id: '123' });
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/events',
     ).send({
       type: EventType.article_lu,
-      interaction_id: 'interaction-id',
+      content_id: '123',
     });
 
     // THEN

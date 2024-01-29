@@ -1,9 +1,6 @@
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { InteractionDefinitionRepository } from '../infrastructure/repository/interactionDefinition.repository';
-import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
-import { Interaction } from '../domain/interaction/interaction';
 import { UserQuizzProfile } from '../domain/quizz/userQuizzProfile';
 import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/onboarding/createUtilisateurAPI';
 import {
@@ -35,8 +32,6 @@ export type Phrase = {
 export class OnboardingUsecase {
   constructor(
     private utilisateurRespository: UtilisateurRepository,
-    private interactionDefinitionRepository: InteractionDefinitionRepository,
-    private interactionRepository: InteractionRepository,
     private emailSender: EmailSender,
     private codeManager: CodeManager,
     private oidcService: OidcService,
@@ -60,9 +55,7 @@ export class OnboardingUsecase {
     const codeOkAction = async function () {
       await _this.securityEmailManager.resetEmailSendingState(utilisateur);
       await _this.utilisateurRespository.activateAccount(utilisateur.id);
-      if (UtilisateurBehavior.does_init_interactions_from_def()) {
-        await _this.initUtilisateurInteractionSet(utilisateur.id);
-      }
+
       const token = await _this.oidcService.createNewInnerAppToken(
         utilisateur.id,
       );
@@ -261,19 +254,6 @@ export class OnboardingUsecase {
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
     return this.utilisateurRespository.findUtilisateurById(id);
-  }
-
-  async initUtilisateurInteractionSet(utilisateurId: string) {
-    const interactionDefinitions =
-      await this.interactionDefinitionRepository.getAll();
-
-    for (let index = 0; index < interactionDefinitions.length; index++) {
-      const interactionDefinition = interactionDefinitions[index];
-      await this.interactionRepository.insertInteractionForUtilisateur(
-        utilisateurId,
-        Interaction.newDefaultInteractionFromDefinition(interactionDefinition),
-      );
-    }
   }
 
   private async fabriquePhrase(

@@ -2,7 +2,7 @@ import {
   LiveService,
   ScheduledService,
 } from '../../../../src/domain/service/serviceDefinition';
-import { InteractionType } from '../../../../src/domain/interaction/interactionType';
+import { ContentType } from '../../../../src/domain/interaction/interactionType';
 import { Thematique } from '../../../../src/domain/thematique';
 import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
 import { TodoCatalogue } from '../../../../src/domain/todo/todoCatalogue';
@@ -32,7 +32,7 @@ describe('ParcoursTodo', () => {
     const parcours = new ParcoursTodo();
     // WHEN
     const found = parcours.findTodoElementByTypeAndThematique(
-      InteractionType.article,
+      ContentType.article,
       [Thematique.transport],
     );
     // THEN
@@ -46,7 +46,7 @@ describe('ParcoursTodo', () => {
     const parcours = new ParcoursTodo();
     // WHEN
     const found = parcours.findTodoElementByTypeAndThematique(
-      InteractionType.article,
+      ContentType.article,
       [Thematique.loisir],
     );
     // THEN
@@ -121,7 +121,7 @@ describe('ParcoursTodo', () => {
               progression: { current: 0, target: 1 },
               level: DifficultyLevel.L1,
               titre: 'titre',
-              type: InteractionType.aides,
+              type: ContentType.aides,
               sont_points_en_poche: false,
             },
           ],
@@ -152,7 +152,7 @@ describe('ParcoursTodo', () => {
               progression: { current: 0, target: 1 },
               level: DifficultyLevel.L1,
               titre: 'titre',
-              type: InteractionType.aides,
+              type: ContentType.aides,
               sont_points_en_poche: false,
             },
           ],
@@ -186,7 +186,7 @@ describe('ParcoursTodo', () => {
               progression: { current: 0, target: 1 },
               level: DifficultyLevel.L1,
               titre: 'titre',
-              type: InteractionType.aides,
+              type: ContentType.aides,
               sont_points_en_poche: false,
             },
           ],
@@ -225,7 +225,7 @@ describe('ParcoursTodo', () => {
               progression: { current: 0, target: 1 },
               level: DifficultyLevel.L1,
               titre: 'titre',
-              type: InteractionType.aides,
+              type: ContentType.aides,
               sont_points_en_poche: false,
             },
           ],

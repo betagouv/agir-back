@@ -33,6 +33,11 @@ export class QuizzRepository {
       },
     });
   }
+  async delete(content_id: string): Promise<void> {
+    await this.prisma.quizz.delete({
+      where: { content_id: content_id },
+    });
+  }
 
   async getQuizzByContentId(content_id: string): Promise<Quizz> {
     const result = await this.prisma.quizz.findUnique({

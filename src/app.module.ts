@@ -19,7 +19,6 @@ import { BilanRepository } from './infrastructure/repository/bilan.repository';
 
 import { PrismaService } from './infrastructure/prisma/prisma.service';
 import { InteractionsUsecase } from './usecase/interactions.usecase';
-import { InteractionRepository } from './infrastructure/repository/interaction.repository';
 import { SuiviRepository } from './infrastructure/repository/suivi.repository';
 import { SuiviUsecase } from './usecase/suivi.usecase';
 import { SuiviController } from './infrastructure/api/suivi.controller';
@@ -27,7 +26,6 @@ import { AidesVeloRepository } from './infrastructure/repository/aidesVelo.repos
 import { AidesRetrofitRepository } from './infrastructure/repository/aidesRetrofit.repository';
 import { SuiviDashboardController } from './infrastructure/api/suiviDashboard.controller';
 import { OIDCStateRepository } from '../src/infrastructure/repository/oidcState.repository';
-import { InteractionDefinitionRepository } from '../src/infrastructure/repository/interactionDefinition.repository';
 
 import { JwtModule } from '@nestjs/jwt';
 import { OidcService } from '../src/infrastructure/auth/oidc.service';
@@ -124,7 +122,6 @@ function getControllers(): any[] {
     UtilisateurRepository,
     BilanRepository,
     BadgeRepository,
-    InteractionRepository,
     SuiviRepository,
     CodeManager,
 
@@ -132,7 +129,6 @@ function getControllers(): any[] {
     OidcService,
     NGCCalculator,
     QuestionNGCRepository,
-    InteractionDefinitionRepository,
     AidesRetrofitRepository,
     AidesVeloRepository,
     UtilisateurUsecase,

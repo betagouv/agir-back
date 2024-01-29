@@ -1,6 +1,5 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { InteractionType } from '../src/domain/interaction/interactionType';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { Thematique } from '../src/domain/thematique';
@@ -81,7 +80,6 @@ export class TestUtil {
   static async deleteAll() {
     await this.prisma.suivi.deleteMany();
     await this.prisma.questionsKYC.deleteMany();
-    await this.prisma.interaction.deleteMany();
     await this.prisma.badge.deleteMany();
     await this.prisma.service.deleteMany();
     await this.prisma.groupeAbonnement.deleteMany();
@@ -91,7 +89,6 @@ export class TestUtil {
     await this.prisma.questionNGC.deleteMany();
     await this.prisma.utilisateur.deleteMany();
     await this.prisma.situationNGC.deleteMany();
-    await this.prisma.interactionDefinition.deleteMany();
     await this.prisma.thematique.deleteMany();
     await this.prisma.linky.deleteMany();
     await this.prisma.article.deleteMany();
@@ -409,70 +406,6 @@ export class TestUtil {
       ...override,
     };
   }
-  static interactionData(override?) {
-    return {
-      id: 'interaction-id',
-      content_id: 'quizz-id',
-      type: InteractionType.quizz,
-      titre: 'titre',
-      soustitre: 'soustitre',
-      thematique_gamification: Thematique.consommation,
-      thematique_gamification_titre: 'Consommation',
-      thematiques: ['climat', 'logement'],
-      tags: ['quizz', 'nourriture', 'conso'],
-      duree: '⏱️ < 1 minute',
-      frequence: '🔄 1x/jour',
-      image_url: 'imageurl',
-      url: 'url',
-      seen: 0,
-      seen_at: null,
-      clicked: false,
-      clicked_at: null,
-      done: false,
-      done_at: null,
-      difficulty: 1,
-      points: 5,
-      points_en_poche: false,
-      score: 0.5,
-      quizz_score: 50,
-      locked: false,
-      pinned_at_position: null,
-      raison_lock: 'bla',
-      codes_postaux: [],
-      scheduled_reset: null,
-      day_period: null,
-      utilisateurId: 'utilisateur-id',
-      like_level: 2,
-      ...override,
-    };
-  }
-  static interactionDefinitionData(override?) {
-    return {
-      id: 'interaction-id',
-      content_id: 'quizz-id',
-      type: InteractionType.quizz,
-      titre: 'titre',
-      soustitre: 'soustitre',
-      thematique_gamification: Thematique.consommation,
-      thematique_gamification_titre: 'Consommation',
-      thematiques: [],
-      tags: ['quizz', 'nourriture', 'conso'],
-      duree: '⏱️ < 1 minute',
-      frequence: '🔄 1x/jour',
-      image_url: 'imageurl',
-      url: 'url',
-      difficulty: 1,
-      points: 5,
-      score: '0.5',
-      locked: false,
-      pinned_at_position: null,
-      raison_lock: 'bla',
-      codes_postaux: [],
-      day_period: null,
-      ...override,
-    };
-  }
-
   static groupeData(override?) {
     return {
       id: 'groupe-id',

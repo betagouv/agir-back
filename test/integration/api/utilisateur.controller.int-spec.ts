@@ -57,8 +57,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     await TestUtil.create('empreinte');
     await TestUtil.create('questionNGC');
     await TestUtil.create('badge');
-    await TestUtil.create('interactionDefinition');
-    await TestUtil.create('interaction');
     await TestUtil.create('serviceDefinition');
     await TestUtil.create('groupe');
     await TestUtil.create('groupeAbonnement');

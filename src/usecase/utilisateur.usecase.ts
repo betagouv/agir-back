@@ -1,6 +1,5 @@
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { InteractionRepository } from '../infrastructure/repository/interaction.repository';
 import { UtilisateurProfileAPI } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
 import { SuiviRepository } from '../infrastructure/repository/suivi.repository';
 import { BadgeRepository } from '../infrastructure/repository/badge.repository';
@@ -31,7 +30,6 @@ export class UtilisateurUsecase {
     private utilisateurRespository: UtilisateurRepository,
     private groupeRepository: GroupeRepository,
     private serviceRepository: ServiceRepository,
-    private interactionRepository: InteractionRepository,
     private suiviRepository: SuiviRepository,
     private badgeRepository: BadgeRepository,
     private bilanRepository: BilanRepository,
@@ -185,7 +183,6 @@ export class UtilisateurUsecase {
   async deleteUtilisateur(utilisateurId: string) {
     await this.suiviRepository.delete(utilisateurId);
     await this.questionKYCRepository.delete(utilisateurId);
-    await this.interactionRepository.delete(utilisateurId);
     await this.badgeRepository.delete(utilisateurId);
     await this.bilanRepository.delete(utilisateurId);
     await this.questionNGCRepository.delete(utilisateurId);

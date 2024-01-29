@@ -1,4 +1,4 @@
-import { InteractionType } from '../interaction/interactionType';
+import { ContentType } from '../interaction/interactionType';
 import { Thematique } from '../thematique';
 import { Todo, TodoElement } from './todo';
 import { TodoCatalogue } from './todoCatalogue';
@@ -67,7 +67,7 @@ export class ParcoursTodo {
     return TodoCatalogue.getEmptyLastMission();
   }
   public findTodoElementByTypeAndThematique?(
-    type: InteractionType,
+    type: ContentType,
     thematiques?: Thematique[],
   ): { element: TodoElement; todo: Todo } {
     for (let index = 0; index < this.liste_todo.length; index++) {

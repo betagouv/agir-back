@@ -1,6 +1,3 @@
-import { Interaction } from '../interaction/interaction';
-import { DifficultyLevel } from '../difficultyLevel';
-
 export class QuizzLevelSettings {
   static LEVEL_1_SERIE = 3;
   static LEVEL_1_MIN_POURCENT = 70;
@@ -17,6 +14,7 @@ export class QuizzLevelSettings {
   static LEVEL_5_SERIE = 10;
   static LEVEL_5_MIN_POURCENT = 95;
 
+  /*
   public static isLevelCompleted(
     niveauCourant: DifficultyLevel,
     derniersQuizz: Interaction[],
@@ -45,4 +43,5 @@ export class QuizzLevelSettings {
       eligible && serie == QuizzLevelSettings[`LEVEL_${niveauCourant}_SERIE`]
     );
   }
+  */
 }

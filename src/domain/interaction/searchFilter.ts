@@ -1,11 +1,11 @@
 import { DifficultyLevel } from '../difficultyLevel';
 import { UserQuizzProfile } from '../quizz/userQuizzProfile';
 import { Thematique } from '../thematique';
-import { InteractionType } from './interactionType';
+import { ContentType } from './interactionType';
 
 export type SearchFilter = {
   utilisateurId: string;
-  type?: InteractionType;
+  type?: ContentType;
   maxNumber?: number;
   pinned?: boolean;
   locked?: boolean;

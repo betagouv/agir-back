@@ -8,18 +8,11 @@ import { QuestionNGCRepository } from '../../../src/infrastructure/repository/qu
 import { Suivi } from '../../../src/domain/suivi/suivi';
 import { SuiviTransport } from '../../../src/domain/suivi/suiviTransport';
 import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
-import { InteractionDefinition } from '../../../src/domain/interaction/interactionDefinition';
-import { InteractionDefinitionRepository } from '../repository/interactionDefinition.repository';
-import { InteractionType } from '../../../src/domain/interaction/interactionType';
-import { Interaction } from '../../../src/domain/interaction/interaction';
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 import { Thematique } from '../../../src/domain/thematique';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
-import { InteractionRepository } from '../repository/interaction.repository';
 import { OnboardingUsecase } from '../../../src/usecase/onboarding.usecase';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
-const _aides = require('../../../test_data/_aides');
-const _suivis = require('../../../test_data/_suivis');
 const _services = require('../../../test_data/_services');
 const _linky_data = require('../../../test_data/PRM_thermo_sensible');
 const suivis_alimentation = require('../../../test_data/evenements/suivis_alimentation');
@@ -75,8 +68,6 @@ export class TestDataController {
     private prisma: PrismaService,
     private suiviRepository: SuiviRepository,
     private questionNGCRepository: QuestionNGCRepository,
-    private interactionDefinitionRepository: InteractionDefinitionRepository,
-    private interactionRepository: InteractionRepository,
     private linkyRepository: LinkyRepository,
     private onboardingUsecase: OnboardingUsecase,
   ) {}
@@ -105,15 +96,6 @@ export class TestDataController {
     await this.deleteUtilisateur(utilisateurId);
     await this.upsertUtilisateur(utilisateurId);
     await this.upsertServicesDefinitions();
-    await this.injectCMSDataFromProd(utilisateurId);
-    if (utilisateurs_content[utilisateurId].interactions) {
-      await this.insertArticlesForUtilisateur(utilisateurId);
-      await this.insertAidesForUtilisateur(utilisateurId);
-      await this.insertQuizzForUtilisateur(utilisateurId);
-      await this.insertSuivisForUtilisateur(utilisateurId);
-    } else {
-      await this.onboardingUsecase.initUtilisateurInteractionSet(utilisateurId);
-    }
     await this.insertServicesForUtilisateur(utilisateurId);
     await this.insertLinkyDataForUtilisateur(utilisateurId);
     await this.insertSuivisAlimentationForUtilisateur(utilisateurId);
@@ -121,52 +103,6 @@ export class TestDataController {
     await this.insertBadgesForUtilisateur(utilisateurId);
     await this.insertQuestionsNGCForUtilisateur(utilisateurId);
     return utilisateurs_content[utilisateurId];
-  }
-  async injectCMSDataFromProd(utilisateurId: string) {
-    if (process.env.BASE_URL.includes('localhost')) {
-      const articles = await this.callCMSForType('articles');
-      const quizzes = await this.callCMSForType('quizzes');
-
-      for (let index = 0; index < articles.length; index++) {
-        const article = articles[index];
-        const interactionToCreate =
-          Interaction.newDefaultInteractionFromDefinition(
-            DUMMY_INTERACTION_DEF,
-          );
-        interactionToCreate.type = InteractionType.article;
-        interactionToCreate.content_id = article.id;
-        interactionToCreate.titre = 'Article CMS manquant : '.concat(
-          article.id,
-        );
-        interactionToCreate.id = uuidv4();
-        interactionToCreate.difficulty = article.difficulty;
-        interactionToCreate.thematiques = article.thematiques as Thematique[];
-        interactionToCreate.utilisateurId = utilisateurId;
-        await this.interactionRepository.insertInteractionForUtilisateur(
-          utilisateurId,
-          interactionToCreate,
-        );
-      }
-
-      for (let index = 0; index < quizzes.length; index++) {
-        const quizz = quizzes[index];
-        const interactionToCreate =
-          Interaction.newDefaultInteractionFromDefinition(
-            DUMMY_INTERACTION_DEF,
-          );
-        interactionToCreate.type = InteractionType.quizz;
-        interactionToCreate.content_id = quizz.id;
-        interactionToCreate.titre = 'Quizz CMS manquant : '.concat(quizz.id);
-        interactionToCreate.id = uuidv4();
-        interactionToCreate.utilisateurId = utilisateurId;
-        interactionToCreate.difficulty = quizz.difficulty;
-        interactionToCreate.thematiques = quizz.thematiques as Thematique[];
-        await this.interactionRepository.insertInteractionForUtilisateur(
-          utilisateurId,
-          interactionToCreate,
-        );
-      }
-    }
   }
 
   private async callCMSForType(
@@ -241,44 +177,6 @@ export class TestDataController {
       }
       suiviToCreate.calculImpacts();
       await this.suiviRepository.createSuivi(suiviToCreate, utilisateurId);
-    }
-  }
-  async insertArticlesForUtilisateur(utilisateurId: string) {
-    const interactions = utilisateurs_content[utilisateurId].interactions;
-    if (!interactions) return;
-
-    for (let index = 0; index < interactions.length; index++) {
-      const interaction = interactions[index];
-      if (interaction.cms_type === 'article') {
-        let interactionToCreate: Interaction;
-        let interDef =
-          await this.interactionDefinitionRepository.getByTypeAndContentId(
-            InteractionType.article,
-            interaction.cms_id.toString(),
-          );
-        if (interDef === null) {
-          interactionToCreate = Interaction.newDefaultInteractionFromDefinition(
-            DUMMY_INTERACTION_DEF,
-          );
-          interactionToCreate.type = InteractionType.article;
-          interactionToCreate.content_id = interaction.cms_id.toString();
-          interactionToCreate.titre = 'Article CMS manquant : '.concat(
-            interaction.cms_id,
-          );
-        } else {
-          interactionToCreate =
-            Interaction.newDefaultInteractionFromDefinition(interDef);
-        }
-        interactionToCreate = { ...interactionToCreate, ...interaction };
-        delete interactionToCreate['cms_type'];
-        delete interactionToCreate['cms_id'];
-        interactionToCreate.id = uuidv4();
-        interactionToCreate.utilisateurId = utilisateurId;
-        await this.interactionRepository.insertInteractionForUtilisateur(
-          utilisateurId,
-          interactionToCreate,
-        );
-      }
     }
   }
   async insertBadgesForUtilisateur(utilisateurId: string) {
@@ -374,84 +272,6 @@ export class TestDataController {
     this.linkyRepository.upsertData(linkyData);
   }
 
-  async insertAidesForUtilisateur(utilisateurId: string) {
-    await this.insertInteractionsWithTypeFromObject(
-      _aides,
-      InteractionType.aide,
-    );
-    const interactions = utilisateurs_content[utilisateurId].interactions;
-    if (!interactions) return;
-    for (let index = 0; index < interactions.length; index++) {
-      const interaction = interactions[index];
-      if (_aides[interaction.id]) {
-        let data = { ..._aides[interaction.id], ...interaction };
-        data.id = uuidv4();
-        data.type = InteractionType.aide;
-        data.utilisateurId = utilisateurId;
-        await this.prisma.interaction.create({
-          data,
-        });
-      }
-    }
-  }
-  async insertSuivisForUtilisateur(utilisateurId: string) {
-    await this.insertInteractionsWithTypeFromObject(
-      _suivis,
-      InteractionType.suivi_du_jour,
-    );
-    const interactions = utilisateurs_content[utilisateurId].interactions;
-    if (!interactions) return;
-    for (let index = 0; index < interactions.length; index++) {
-      const interaction = interactions[index];
-      if (_suivis[interaction.id]) {
-        let data = { ..._suivis[interaction.id], ...interaction };
-        data.id = uuidv4();
-        data.type = InteractionType.suivi_du_jour;
-        data.utilisateurId = utilisateurId;
-        await this.prisma.interaction.create({
-          data,
-        });
-      }
-    }
-  }
-  async insertQuizzForUtilisateur(utilisateurId: string) {
-    const interactions = utilisateurs_content[utilisateurId].interactions;
-    if (!interactions) return;
-
-    for (let index = 0; index < interactions.length; index++) {
-      const interaction = interactions[index];
-      if (interaction.cms_type === 'quizz') {
-        let interactionToCreate: Interaction;
-        let interDef =
-          await this.interactionDefinitionRepository.getByTypeAndContentId(
-            InteractionType.quizz,
-            interaction.cms_id.toString(),
-          );
-        if (interDef === null) {
-          interactionToCreate = Interaction.newDefaultInteractionFromDefinition(
-            DUMMY_INTERACTION_DEF,
-          );
-          interactionToCreate.type = InteractionType.quizz;
-          interactionToCreate.content_id = interaction.cms_id.toString();
-          interactionToCreate.titre = 'Quizz CMS manquant : '.concat(
-            interaction.cms_id,
-          );
-        } else {
-          interactionToCreate =
-            Interaction.newDefaultInteractionFromDefinition(interDef);
-        }
-        interactionToCreate = { ...interactionToCreate, ...interaction };
-        delete interactionToCreate['cms_type'];
-        delete interactionToCreate['cms_id'];
-        interactionToCreate.id = uuidv4();
-        interactionToCreate.utilisateurId = utilisateurId;
-        await this.prisma.interaction.create({
-          data: interactionToCreate,
-        });
-      }
-    }
-  }
-
   async deleteUtilisateur(utilisateurId: string) {
     await this.prisma.suivi.deleteMany({
       where: {
@@ -459,11 +279,6 @@ export class TestDataController {
       },
     });
     await this.prisma.service.deleteMany({
-      where: {
-        utilisateurId,
-      },
-    });
-    await this.prisma.interaction.deleteMany({
       where: {
         utilisateurId,
       },
@@ -516,20 +331,5 @@ export class TestDataController {
       update: clonedData,
       create: { ...clonedData, id: utilisateurId },
     });
-  }
-  private async insertInteractionsWithTypeFromObject(
-    theObject: object,
-    type: InteractionType,
-  ) {
-    const keyList = Object.keys(theObject);
-    for (let index = 0; index < keyList.length; index++) {
-      const key = keyList[index];
-      const intractionDefinition = theObject[key] as InteractionDefinition;
-      intractionDefinition.id = key;
-      intractionDefinition.type = type;
-      await this.interactionDefinitionRepository.createOrUpdateBasedOnId(
-        intractionDefinition,
-      );
-    }
   }
 }
