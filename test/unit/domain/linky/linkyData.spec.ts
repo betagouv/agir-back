@@ -3,6 +3,7 @@ import {
   MonthLinkyData,
   YearMonthLinkyData,
 } from '../../../../src/domain/linky/linkyData';
+const _linky_data = require('../../../../test_data/PRM_thermo_sensible');
 
 describe('LinkyData', () => {
   it('getLastValue : null if no value', () => {
@@ -661,5 +662,159 @@ describe('LinkyData', () => {
     expect(result[3].value).toEqual(20);
     expect(result[4].value).toEqual(3);
     expect(result[5].value).toEqual(30);
+  });
+
+  it('getPreviousWeekFirstDay : renvoie le lundi précédent précédent', () => {
+    // GIVEN
+    // WHEN
+    const day = LinkyData.getPreviousWeekFirstDay(new Date('2024-01-24'));
+
+    // THEN
+    expect(day.toLocaleDateString('fr-FR')).toEqual('15/01/2024');
+  });
+  it('getPreviousWeekFirstDay : renvoie le lundi précédent précédent partant de dimanche', () => {
+    // GIVEN
+    // WHEN
+    const day = LinkyData.getPreviousWeekFirstDay(new Date('2024-01-21'));
+
+    // THEN
+    expect(day.toLocaleDateString('fr-FR')).toEqual('08/01/2024');
+  });
+  it('getPreviousWeekFirstDay : renvoie le lundi précédent partant de lundi', () => {
+    // GIVEN
+    // WHEN
+    const day = LinkyData.getPreviousWeekFirstDay(new Date('2024-01-22'));
+
+    // THEN
+    expect(day.toLocaleDateString('fr-FR')).toEqual('15/01/2024');
+  });
+  it('getPreviousWeekLastDay : renvoie le dimanche précédent', () => {
+    // GIVEN
+    // WHEN
+    const day = LinkyData.getPreviousWeekLastDay(new Date('2024-01-24'));
+
+    // THEN
+    expect(day.toLocaleDateString('fr-FR')).toEqual('21/01/2024');
+  });
+  it('getPreviousWeekLastDay : renvoie le dimanche précédent précédent partant de dimanche', () => {
+    // GIVEN
+    // WHEN
+    const day = LinkyData.getPreviousWeekLastDay(new Date('2024-01-21'));
+
+    // THEN
+    expect(day.toLocaleDateString('fr-FR')).toEqual('14/01/2024');
+  });
+  it('searchDay : renvoie les bon enregirtrement', () => {
+    // GIVEN
+    const linkyData = new LinkyData({
+      prm: 'abc',
+      serie: [
+        {
+          time: new Date('2000-01-01T12:00:00.000Z'),
+          value: 1,
+          value_at_normal_temperature: 10,
+        },
+        {
+          time: new Date('2000-01-02T12:00:00.000Z'),
+          value: 2,
+          value_at_normal_temperature: 20,
+        },
+        {
+          time: new Date('2000-01-03T12:00:00.000Z'),
+          value: 3,
+          value_at_normal_temperature: 30,
+        },
+        {
+          time: new Date('2000-01-04T12:00:00.000Z'),
+          value: 4,
+          value_at_normal_temperature: 40,
+        },
+        {
+          time: new Date('2000-01-05T12:00:00.000Z'),
+          value: 5,
+          value_at_normal_temperature: 50,
+        },
+        {
+          time: new Date('2000-01-06T12:00:00.000Z'),
+          value: 6,
+          value_at_normal_temperature: 60,
+        },
+      ],
+    });
+    // WHEN
+    const elems = linkyData.searchDays(
+      new Date('2000-01-03'),
+      new Date('2000-01-05'),
+    );
+
+    // THEN
+    expect(elems).toHaveLength(3);
+    expect(elems[0].value).toEqual(3);
+    expect(elems[1].value).toEqual(4);
+    expect(elems[2].value).toEqual(5);
+  });
+  it('compareWeekDataTwoYears : compute OK', () => {
+    // GIVEN
+    const linky_data = new LinkyData({ prm: 'abc', serie: _linky_data });
+
+    // WHEN
+    const week_cumul = linky_data.compareWeekDataTwoYears(
+      new Date('2023-11-15'),
+    );
+
+    // THEN
+    expect(week_cumul).toHaveLength(2);
+    expect(Math.floor(week_cumul[0].value)).toEqual(62);
+    expect(Math.floor(week_cumul[0].value_at_normal_temperature)).toEqual(79);
+    expect(week_cumul[0].semaine).toEqual('45');
+    expect(week_cumul[0].annee).toEqual('2022');
+    expect(Math.floor(week_cumul[1].value)).toEqual(87);
+    expect(Math.floor(week_cumul[1].value_at_normal_temperature)).toEqual(98);
+    expect(week_cumul[1].semaine).toEqual('45');
+    expect(week_cumul[1].annee).toEqual('2023');
+  });
+  it('compareMonthDataTwoYears : compute OK', () => {
+    // GIVEN
+    const linky_data = new LinkyData({ prm: 'abc', serie: _linky_data });
+
+    // WHEN
+    const month_cumul = linky_data.compareMonthDataTwoYears(
+      new Date('2023-10-15'),
+    );
+
+    // THEN
+    expect(month_cumul).toHaveLength(2);
+    expect(month_cumul[0].mois).toEqual('septembre');
+    expect(month_cumul[0].annee).toEqual('2022');
+    expect(Math.floor(month_cumul[0].value)).toEqual(143);
+    expect(month_cumul[1].mois).toEqual('septembre');
+    expect(month_cumul[1].annee).toEqual('2023');
+    expect(Math.floor(month_cumul[1].value)).toEqual(156);
+  });
+  it('compareDayDataTwoYears : compute OK', () => {
+    // GIVEN
+    const linky_data = new LinkyData({ prm: 'abc', serie: _linky_data });
+
+    // WHEN
+    const res = linky_data.compareDayDataTwoYears();
+
+    // THEN
+    expect(res).toHaveLength(2);
+    expect(res[0].jour).toEqual('mardi');
+    expect(res[0].annee).toEqual('2022');
+    expect(Math.floor(res[0].value)).toEqual(29);
+    expect(res[1].jour).toEqual('mercredi');
+    expect(res[1].annee).toEqual('2023');
+    expect(Math.floor(res[1].value)).toEqual(18);
+  });
+  it('dynamicCompareTwoYears : compute OK', () => {
+    // GIVEN
+    const linky_data = new LinkyData({ prm: 'abc', serie: _linky_data });
+
+    // WHEN
+    const res = linky_data.dynamicCompareTwoYears();
+
+    // THEN
+    expect(res).toHaveLength(6);
   });
 });

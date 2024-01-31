@@ -282,6 +282,33 @@ describe('Linky (API test)', () => {
     expect(response.body[3].mois).toEqual('février');
     expect(response.body[3].annee).toEqual('2023');
   });
+  it('GET /utilisateurs/id/linky comparaison dynamic dernieres annéee', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', { id: 'linky' });
+    await TestUtil.create('service', {
+      serviceDefinitionId: 'linky',
+      configuration: { prm: 'abc' },
+    });
+    await TestUtil.create('linky', {
+      data: _linky_data,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/linky?compare_mois_sem_jour=true',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(6);
+    expect(Math.floor(response.body[0].valeur)).toEqual(288);
+    expect(Math.floor(response.body[1].valeur)).toEqual(435);
+    expect(Math.floor(response.body[2].valeur)).toEqual(137);
+    expect(Math.floor(response.body[3].valeur)).toEqual(157);
+    expect(Math.floor(response.body[4].valeur)).toEqual(29);
+    expect(Math.floor(response.body[5].valeur)).toEqual(18);
+  });
   it('GET /utilisateurs/id/linky comparaison 2 dernieres annéee - pas d erreurs si pas de donnees', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
@@ -297,6 +324,27 @@ describe('Linky (API test)', () => {
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/linky?compare_annees=true',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(0);
+  });
+  it('GET /utilisateurs/id/linky comparaison annees dynamiques - pas d erreurs si pas de donnees', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', { id: 'linky' });
+    await TestUtil.create('service', {
+      serviceDefinitionId: 'linky',
+      configuration: { prm: 'abc' },
+    });
+    await TestUtil.create('linky', {
+      data: [],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/linky?compare_mois_sem_jour=true',
     );
 
     // THEN

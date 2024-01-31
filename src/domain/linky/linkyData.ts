@@ -20,6 +20,16 @@ export class MonthLinkyData {
     this.months = new Map();
   }
 }
+export class DayLinkyData {
+  days: Map<number, LinkyDataElement>;
+  start_date: Date;
+  end_date: Date;
+  constructor(startDate: Date, endDate: Date) {
+    this.start_date = startDate;
+    this.end_date = endDate;
+    this.days = new Map();
+  }
+}
 export class LinkyData {
   constructor(data?: LinkyData) {
     if (data) {
@@ -46,7 +56,7 @@ export class LinkyData {
 
     const result = [];
 
-    const last_value = this.serie[this.serie.length - 1];
+    const last_value = this.getLastDataNotNull();
 
     const extract = this.extractLastNMonths(24, last_value.time);
 
@@ -77,9 +87,7 @@ export class LinkyData {
         time: elem.time,
         value: elem.value,
         value_at_normal_temperature: elem.value_at_normal_temperature,
-        jour: new Intl.DateTimeFormat('fr-FR', { weekday: 'long' }).format(
-          elem.time,
-        ),
+        jour: LinkyData.formatJour(elem.time),
       };
       return new_data;
     });
@@ -166,12 +174,8 @@ export class LinkyData {
             time: date_to_set,
             value: cumul,
             value_at_normal_temperature: cumul_corrigee,
-            mois: new Intl.DateTimeFormat('fr-FR', { month: 'long' }).format(
-              date_to_set,
-            ),
-            annee: new Intl.DateTimeFormat('fr-FR', { year: 'numeric' }).format(
-              date_to_set,
-            ),
+            mois: LinkyData.formatMois(date_to_set),
+            annee: LinkyData.formatAnnee(date_to_set),
           },
         ]);
       });
@@ -193,6 +197,137 @@ export class LinkyData {
     });
   }
 
+  public dynamicCompareTwoYears?(): LinkyDataElement[] {
+    const last_date = this.getLastDataNotNull();
+    if (!last_date) return [];
+    const month = this.compareMonthDataTwoYears(last_date.time);
+    const week = this.compareWeekDataTwoYears(last_date.time);
+    const day = this.compareDayDataTwoYears();
+    return [].concat(month, week, day);
+  }
+
+  compareDayDataTwoYears?(): LinkyDataElement[] {
+    if (this.serie.length < 366) return [];
+
+    const last_element = this.getLastDataNotNull();
+    const last_day = new Date(last_element.time);
+    const last_day_previous_year = new Date(last_day);
+    last_day_previous_year.setFullYear(
+      last_day_previous_year.getFullYear() - 1,
+    );
+
+    const last_day_last_year_element = this.searchDays(
+      last_day_previous_year,
+      last_day_previous_year,
+    )[0];
+
+    last_element.jour = LinkyData.formatJour(last_element.time);
+    last_element.annee = LinkyData.formatAnnee(last_element.time);
+    last_day_last_year_element.jour = LinkyData.formatJour(
+      last_day_last_year_element.time,
+    );
+    last_day_last_year_element.annee = LinkyData.formatAnnee(
+      last_day_last_year_element.time,
+    );
+    return [last_day_last_year_element, last_element];
+  }
+  compareMonthDataTwoYears?(current_date: Date): LinkyDataElement[] {
+    if (this.serie.length < 425) return [];
+    const previous_month = new Date(current_date);
+    previous_month.setMonth(previous_month.getMonth() - 1);
+
+    const previous_month_previous_year = new Date(previous_month);
+    previous_month_previous_year.setFullYear(previous_month.getFullYear() - 1);
+
+    const last_month_data = this.extractLastNMonths(1, previous_month);
+    const last_year_month_data = this.extractLastNMonths(
+      1,
+      previous_month_previous_year,
+    );
+    return last_year_month_data.concat(last_month_data);
+  }
+
+  compareWeekDataTwoYears?(current_date: Date): LinkyDataElement[] {
+    if (this.serie.length < 380) return [];
+    const start_date = LinkyData.getPreviousWeekFirstDay(current_date);
+    const end_date = LinkyData.getPreviousWeekLastDay(current_date);
+    const currentYearDaysToCumulate = this.searchDays(start_date, end_date);
+
+    const current_year = current_date.getFullYear();
+
+    const previous_year_start_date = new Date(start_date);
+    previous_year_start_date.setFullYear(current_year - 1);
+
+    const previous_year_end_date = new Date(end_date);
+    previous_year_end_date.setFullYear(current_year - 1);
+
+    const previousYearDaysToCumulate = this.searchDays(
+      previous_year_start_date,
+      previous_year_end_date,
+    );
+
+    let previous_year_cumul = 0;
+    let previous_year_cumul_norm = 0;
+    let current_year_cumul = 0;
+    let current_year_cumul_norm = 0;
+
+    previousYearDaysToCumulate.forEach((element) => {
+      previous_year_cumul += element.value;
+      previous_year_cumul_norm += element.value_at_normal_temperature;
+    });
+    currentYearDaysToCumulate.forEach((element) => {
+      current_year_cumul += element.value;
+      current_year_cumul_norm += element.value_at_normal_temperature;
+    });
+
+    const week = LinkyData.getWeek(start_date).toString();
+    return [
+      {
+        time: previous_year_start_date,
+        value: previous_year_cumul,
+        value_at_normal_temperature: previous_year_cumul_norm,
+        semaine: week,
+        annee: previous_year_start_date.getFullYear().toString(),
+      },
+      {
+        time: start_date,
+        value: current_year_cumul,
+        value_at_normal_temperature: current_year_cumul_norm,
+        semaine: week,
+        annee: start_date.getFullYear().toString(),
+      },
+    ];
+  }
+
+  searchDays?(startDate: Date, endDate: Date): LinkyDataElement[] {
+    const dayLinkyData = new DayLinkyData(startDate, endDate);
+    this.serie.forEach((element) => {
+      if (LinkyData.isBetween(element.time, startDate, endDate)) {
+        dayLinkyData.days.set(element.time.getTime(), element);
+      }
+    });
+    return Array.from(dayLinkyData.days.values());
+  }
+
+  static isBetween(day: Date, startDate: Date, endDate: Date): boolean {
+    const start_time = new Date(startDate).setHours(0, 0, 0, 0);
+    const end_time = new Date(endDate).setHours(23, 59, 59, 999);
+    const dayTime = day.getTime();
+    return start_time <= dayTime && dayTime <= end_time;
+  }
+  static getPreviousWeekFirstDay(now: Date): Date {
+    const day_in_week = now.getDay() === 0 ? 6 : now.getDay() - 1;
+    const day = now.getDate() - day_in_week - 7;
+    const result = new Date(now.getTime());
+    result.setDate(day);
+    return result;
+  }
+  static getPreviousWeekLastDay(now: Date): Date {
+    const monday = LinkyData.getPreviousWeekFirstDay(now);
+    const result = new Date(now.getTime());
+    result.setDate(monday.getDate() + 6);
+    return result;
+  }
   private orderDataSerie?() {
     this.serie.sort((a, b) => a.time.getTime() - b.time.getTime());
   }
@@ -204,5 +339,50 @@ export class LinkyData {
     });
 
     this.serie = Array.from(time_map.values());
+  }
+
+  // Returns the ISO week of the date.
+  static getWeek?(input: Date) {
+    let date = new Date(input.getTime());
+    date.setHours(0, 0, 0, 0);
+    // Thursday in current week decides the year.
+    date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
+    // January 4 is always in week 1.
+    let week1 = new Date(date.getFullYear(), 0, 4);
+    // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+    return (
+      1 +
+      Math.round(
+        ((date.getTime() - week1.getTime()) / 86400000 -
+          3 +
+          ((week1.getDay() + 6) % 7)) /
+          7,
+      )
+    );
+  }
+
+  private getLastDataNotNull?(): LinkyDataElement {
+    for (let index = this.serie.length - 1; index >= 0; index--) {
+      const element = this.serie[index];
+      if (element.value !== null) {
+        return element;
+      }
+    }
+  }
+  private static formatJour?(date: Date): string {
+    return new Intl.DateTimeFormat('fr-FR', { weekday: 'long' }).format(date);
+  }
+  private static formatMois?(date: Date): string {
+    return new Intl.DateTimeFormat('fr-FR', { month: 'long' }).format(date);
+  }
+  private static formatAnnee?(date: Date): string {
+    return new Intl.DateTimeFormat('fr-FR', { year: 'numeric' }).format(date);
+  }
+
+  // Returns the four-digit year corresponding to the ISO week of the date.
+  static getWeekYear?(input: Date) {
+    let date = new Date(input.getTime());
+    date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
+    return date.getFullYear();
   }
 }
