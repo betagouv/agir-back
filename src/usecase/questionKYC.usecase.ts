@@ -34,18 +34,19 @@ export class QuestionKYCUsecase {
 
     collection.checkQuestionExistsOrThrowException(questionId);
 
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+      utilisateurId,
+    );
+
+    this.updateUserTodo(utilisateur, questionId);
+
     if (!collection.isQuestionAnswered(questionId)) {
-      const utilisateur = await this.utilisateurRepository.findUtilisateurById(
-        utilisateurId,
-      );
       const question = collection.getQuestion(questionId);
-
       utilisateur.gamification.ajoutePoints(question.points);
-
-      this.updateUserTodo(utilisateur, questionId);
-
-      await this.utilisateurRepository.updateUtilisateur(utilisateur);
     }
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
     collection.updateQuestion(questionId, reponse);
     await this.questionKYCRepository.update(utilisateurId, collection);
   }

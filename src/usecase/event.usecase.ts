@@ -5,7 +5,6 @@ import {
 } from '../../src/domain/utilisateur/utilisateurEvent';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
-import { QuizzLevelSettings } from '../../src/domain/quizz/quizzLevelSettings';
 import { ContentType } from '../../src/domain/interaction/interactionType';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 import { Thematique } from '../../src/domain/thematique';
@@ -142,11 +141,7 @@ export class EventUsecase {
       utilisateur.gamification.ajoutePoints(article.points);
       utilisateur.history.metPointsArticleEnPoche(event.content_id);
     }
-    this.updateUserTodo(
-      utilisateur,
-      ContentType.article,
-      article.thematiques,
-    );
+    this.updateUserTodo(utilisateur, ContentType.article, article.thematiques);
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
@@ -168,11 +163,7 @@ export class EventUsecase {
     ) {
       utilisateur.gamification.ajoutePoints(quizz.points);
       utilisateur.history.metPointsQuizzEnPoche(event.content_id);
-      this.updateUserTodo(
-        utilisateur,
-        ContentType.quizz,
-        quizz.thematiques,
-      );
+      this.updateUserTodo(utilisateur, ContentType.quizz, quizz.thematiques);
     }
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
