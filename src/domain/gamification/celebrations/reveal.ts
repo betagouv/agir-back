@@ -18,6 +18,10 @@ export class Reveal {
       titre: 'Vos recommandations',
       description: `Toujours plus de contenu, et en fonction de vos centres d'intérêt`,
     },
+    bibliotheque: {
+      titre: 'Votre bibliothèque',
+      description: `Retrouvez tout ce que vous avez lu et aimé comme articles`,
+    },
   };
   constructor(feature: Feature) {
     const data = Reveal.DATA_REVEAL[feature];
