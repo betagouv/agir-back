@@ -53,6 +53,11 @@ export class LinkyController extends GenericControler {
     required: false,
   })
   @ApiQuery({
+    name: 'compare_mois_sem_jour',
+    type: Boolean,
+    required: false,
+  })
+  @ApiQuery({
     name: 'end_date',
     type: Date,
     required: false,
