@@ -85,6 +85,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     process.env.USER_CURRENT_VERSION = '2';
     process.env.WHITE_LIST_ENABLED = 'false';
     process.env.WHITE_LIST = 'hahah';
+    process.env.OTP_DEV = '123456';
 
     // WHEN
     const response = await TestUtil.getServer().post('/utilisateurs').send({
@@ -108,7 +109,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(user.passwordSalt.length).toBeGreaterThan(20);
     expect(user.onboardingData).toStrictEqual(ONBOARDING_1_2_3_4_DATA);
     expect(user.onboardingResult).toStrictEqual(ONBOARDING_RES_1234);
-    expect(user.code).toHaveLength(6);
+    expect(user.code).toEqual('123456');
     expect(user.failed_checkcode_count).toEqual(0);
     expect(user.prevent_checkcode_before.getTime()).toBeLessThanOrEqual(
       Date.now(),
@@ -242,8 +243,8 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
 
     // WHEN
     const response = await TestUtil.getServer()
-        .post('/utilisateurs/renvoyer_code')
-        .send({ email: 'w@w.com' });
+      .post('/utilisateurs/renvoyer_code')
+      .send({ email: 'w@w.com' });
 
     // THEN
     expect(response.status).toBe(200);

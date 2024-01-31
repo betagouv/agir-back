@@ -8,6 +8,7 @@ import { Gamification } from '../gamification/gamification';
 import { ParcoursTodo } from '../todo/parcoursTodo';
 import { UnlockedFeatures } from '../gamification/unlockedFeatures';
 import { History } from '../history/history';
+import { Environment } from '../environment';
 
 export class UtilisateurData {
   id: string;
@@ -99,6 +100,6 @@ export class Utilisateur extends UtilisateurData {
   }
 
   public isAdmin(): boolean {
-    return process.env.ADMIN_IDS.includes(this.id);
+    return Environment.getAdminIdsStringList().includes(this.id);
   }
 }

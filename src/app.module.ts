@@ -75,6 +75,7 @@ import { MigrationUsecase } from './usecase/migration.usescase';
 import { ReferentielUsecase } from './usecase/referentiel/referentiel.usecase';
 import { PonderationRepository } from './infrastructure/repository/ponderation.repository';
 import { DepartementRepository } from './infrastructure/repository/departement/departement.repository';
+import { Environment } from './domain/environment';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -102,7 +103,7 @@ function getControllers(): any[] {
     QuestionsKYCController,
     RecommandationsController,
   );
-  if (process.env.IS_PROD === 'false') {
+  if (!Environment.isProd()) {
     controllers.push(TestDataController);
     controllers.push(AuthController);
   }
