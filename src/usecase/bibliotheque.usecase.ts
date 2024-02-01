@@ -43,9 +43,8 @@ export class BibliothequeUsecase {
     for (const thematique of Object.values(Thematique)) {
       result.addSelectedThematique(
         thematique,
-        filtre_thematiques.includes(thematique),
+        filtre_thematiques.includes(thematique) || !filtre_thematiques.length,
       );
-      console.log(filtre_thematiques.includes(thematique));
     }
 
     return result;
