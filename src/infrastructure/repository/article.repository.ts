@@ -14,6 +14,7 @@ export type ArticleFilter = {
   exclude_ids?: string[];
   include_ids?: string[];
   asc_difficulty?: boolean;
+  titre_fragment?: string;
 };
 
 @Injectable()
@@ -71,6 +72,13 @@ export class ArticleRepository {
     }
     if (filter.include_ids) {
       main_filter['content_id'] = { in: filter.include_ids };
+    }
+
+    if (filter.titre_fragment) {
+      main_filter['titre'] = {
+        contains: filter.titre_fragment,
+        mode: 'insensitive',
+      };
     }
 
     if (filter.thematiques) {

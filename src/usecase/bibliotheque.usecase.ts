@@ -15,6 +15,7 @@ export class BibliothequeUsecase {
   async listContenuDejaConsulte(
     utilisateurId: string,
     filtre_thematiques: Thematique[],
+    titre: string,
   ): Promise<Bibliotheque> {
     let result = new Bibliotheque();
 
@@ -28,6 +29,7 @@ export class BibliothequeUsecase {
       include_ids: articles_lus,
       thematiques:
         filtre_thematiques.length === 0 ? undefined : filtre_thematiques,
+      titre_fragment: titre,
     });
 
     articles = utilisateur.history.orderReadArticlesByReadDate(articles);

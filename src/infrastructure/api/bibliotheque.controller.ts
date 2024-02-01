@@ -34,11 +34,18 @@ export class BibliothequeController extends GenericControler {
     required: false,
     description: `Une liste de codes de thématiques spérarées par des virgules`,
   })
+  @ApiQuery({
+    name: 'titre',
+    type: String,
+    required: false,
+    description: `une fragment du titre, insensible à la casse`,
+  })
   @UseGuards(AuthGuard)
   async getBibliotheque(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
     @Query('filtre_thematiques') filtre_thematiques?: string,
+    @Query('titre') titre?: string,
   ): Promise<BibliothequeAPI> {
     this.checkCallerId(req, utilisateurId);
 
@@ -51,6 +58,7 @@ export class BibliothequeController extends GenericControler {
     const biblio = await this.bibliothequeUsecase.listContenuDejaConsulte(
       utilisateurId,
       thematiques,
+      titre,
     );
     return BibliothequeAPI.mapToAPI(biblio);
   }

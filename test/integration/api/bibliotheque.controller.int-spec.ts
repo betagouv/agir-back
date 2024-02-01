@@ -20,7 +20,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('GET /utilisateurs/id/recommandation - 403 if bad id', async () => {
+  it('GET /utilisateurs/id/bibliotheque - 403 if bad id', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', { history: {} });
     await TestUtil.create('article');
@@ -29,7 +29,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     // THEN
     expect(response.status).toBe(403);
   });
-  it('GET /utilisateurs/id/recommandation - 200 et liste vide', async () => {
+  it('GET /utilisateurs/id/bibliotheque - 200 et liste vide', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', { history: {} });
 
@@ -41,7 +41,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.contenu).toHaveLength(0);
   });
-  it('GET /utilisateurs/id/recommandation - ne renvoie pas un article non lu', async () => {
+  it('GET /utilisateurs/id/bibliotheque - ne renvoie pas un article non lu', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', { history: {} });
     await TestUtil.create('article');
@@ -53,7 +53,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.contenu).toHaveLength(0);
   });
-  it('GET /utilisateurs/id/recommandation - renvoie un article  lu', async () => {
+  it('GET /utilisateurs/id/bibliotheque - renvoie un article  lu', async () => {
     // GIVEN
     await thematiqueRepository.upsertThematique(1, 'Alimentation !!');
     await thematiqueRepository.upsertThematique(2, 'Climat !!');
@@ -104,7 +104,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.filtres[5].selected).toEqual(true);
     expect(response.body.filtres[6].selected).toEqual(true);
   });
-  it('GET /utilisateurs/id/recommandation - renvoie les articles de bonne thematique', async () => {
+  it('GET /utilisateurs/id/bibliotheque - renvoie les articles de bonne thematique', async () => {
     // GIVEN
     await thematiqueRepository.upsertThematique(1, 'Alimentation !!');
     await thematiqueRepository.upsertThematique(2, 'Climat !!');
@@ -162,7 +162,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(logement.label).toEqual('Logement !!');
     expect(climat.selected).toEqual(false);
   });
-  it('GET /utilisateurs/id/recommandation - renvoie les articles par ordre chronologique', async () => {
+  it('GET /utilisateurs/id/bibliotheque - renvoie les articles par ordre chronologique', async () => {
     // GIVEN
     await TestUtil.create('utilisateur', {
       history: {
@@ -207,5 +207,55 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.contenu[0].content_id).toEqual('2');
     expect(response.body.contenu[1].content_id).toEqual('1');
     expect(response.body.contenu[2].content_id).toEqual('3');
+  });
+  it('GET /utilisateurs/id/bibliotheque - recherche par fragment de titre, case insensitive', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      history: {
+        article_interactions: [
+          {
+            content_id: '1',
+            read_date: new Date(1).toISOString(),
+          },
+          {
+            content_id: '2',
+            read_date: new Date(2).toISOString(),
+          },
+          {
+            content_id: '3',
+            read_date: new Date(3).toISOString(),
+          },
+          {
+            content_id: '4',
+            read_date: new Date(4).toISOString(),
+          },
+        ],
+      },
+    });
+    await TestUtil.create('article', {
+      content_id: '1',
+      titre: 'hello mistere',
+    });
+    await TestUtil.create('article', {
+      content_id: '2',
+      titre: 'hello mistèr',
+    });
+    await TestUtil.create('article', {
+      content_id: '3',
+      titre: 'pas la même chose',
+    });
+    await TestUtil.create('article', {
+      content_id: '4',
+      titre: 'Huge Mistery',
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque?titre=MISTER',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.contenu).toHaveLength(2);
+    expect(response.body.contenu[0].content_id).toEqual('4');
+    expect(response.body.contenu[1].content_id).toEqual('1');
   });
 });
