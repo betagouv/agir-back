@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Recommandation } from 'src/domain/recommandation';
+import { Recommandation } from 'src/domain/contenu/recommandation';
 
 export class RecommandationAPI {
   @ApiProperty() type: string;

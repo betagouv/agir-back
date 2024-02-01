@@ -2,7 +2,7 @@ import {
   LiveService,
   ScheduledService,
 } from '../../../../src/domain/service/serviceDefinition';
-import { ContentType } from '../../../../src/domain/interaction/interactionType';
+import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { Thematique } from '../../../../src/domain/thematique';
 import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
 import { TodoCatalogue } from '../../../../src/domain/todo/todoCatalogue';

@@ -1,5 +1,5 @@
 import { DifficultyLevel } from '../src/domain/difficultyLevel';
-import { ContentType } from '../src/domain/interaction/interactionType';
+import { ContentType } from '../src/domain/contenu/contentType';
 import { Thematique } from '../src/domain/thematique';
 import {
   Impact,

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ContentType } from '../../../../../src/domain/interaction/interactionType';
+import { ContentType } from '../../../../domain/contenu/contentType';
 import { DifficultyLevel } from '../../../../../src/domain/difficultyLevel';
 import { Thematique } from '../../../../../src/domain/thematique';
 import { Todo } from '../../../../../src/domain/todo/todo';

@@ -2,7 +2,7 @@ import { Controller, Get, Param, Request, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
-import { RecommandationAPI } from './types/recommandationAPI';
+import { RecommandationAPI } from './types/contenu/recommandationAPI';
 import { RecommandationUsecase } from '../../../src/usecase/recommandation.usecase';
 
 @Controller()

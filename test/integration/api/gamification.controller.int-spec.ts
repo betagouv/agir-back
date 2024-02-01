@@ -1,5 +1,5 @@
 import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
-import { ContentType } from '../../../src/domain/interaction/interactionType';
+import { ContentType } from '../../../src/domain/contenu/contentType';
 import { EventType } from '../../../src/domain/utilisateur/utilisateurEvent';
 import { TestUtil } from '../../TestUtil';
 

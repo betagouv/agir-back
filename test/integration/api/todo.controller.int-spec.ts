@@ -1,6 +1,6 @@
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
 import { Thematique } from '../../../src/domain/thematique';
-import { ContentType } from '../../../src/domain/interaction/interactionType';
+import { ContentType } from '../../../src/domain/contenu/contentType';
 import { TestUtil } from '../../TestUtil';
 import { LiveService } from '../../../src/domain/service/serviceDefinition';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';

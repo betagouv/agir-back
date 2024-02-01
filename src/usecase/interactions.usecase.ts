@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Recommandation } from '../../src/domain/recommandation';
+import { Recommandation } from '../domain/contenu/recommandation';
 import { RecommandationUsecase } from './recommandation.usecase';
 
 @Injectable()

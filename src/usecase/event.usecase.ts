@@ -5,7 +5,7 @@ import {
 } from '../../src/domain/utilisateur/utilisateurEvent';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
-import { ContentType } from '../../src/domain/interaction/interactionType';
+import { ContentType } from '../domain/contenu/contentType';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 import { Thematique } from '../../src/domain/thematique';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';

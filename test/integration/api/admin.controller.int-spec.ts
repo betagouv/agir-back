@@ -1,5 +1,5 @@
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { ContentType } from '../../../src/domain/interaction/interactionType';
+import { ContentType } from '../../../src/domain/contenu/contentType';
 import { TestUtil } from '../../TestUtil';
 import { ServiceStatus } from '../../../src/domain/service/service';
 import { LinkyDataElement } from 'src/domain/linky/linkyData';

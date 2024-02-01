@@ -1,5 +1,5 @@
 import { EventType } from '../../../src/domain/utilisateur/utilisateurEvent';
-import { ContentType } from '../../../src/domain/interaction/interactionType';
+import { ContentType } from '../../../src/domain/contenu/contentType';
 import { TestUtil } from '../../TestUtil';
 import { Thematique } from '../../../src/domain/thematique';
 import { DifficultyLevel } from '../../../src/domain/difficultyLevel';

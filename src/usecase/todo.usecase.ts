@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ContentType } from '../../src/domain/interaction/interactionType';
+import { ContentType } from '../domain/contenu/contentType';
 import { Todo } from '../../src/domain/todo/todo';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 

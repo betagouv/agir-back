@@ -1,7 +1,7 @@
 import { Thematique } from '../../../../src/domain/thematique';
 import { DifficultyLevel } from '../../../../src/domain/difficultyLevel';
 import { Todo } from '../../../../src/domain/todo/todo';
-import { ContentType } from '../../../../src/domain/interaction/interactionType';
+import { ContentType } from '../../../../src/domain/contenu/contentType';
 
 describe('Todo', () => {
   it('findTodoElementLike : retourne element de todo qui mach ', () => {

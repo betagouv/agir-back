@@ -2,11 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { ArticleRepository } from '../infrastructure/repository/article.repository';
 import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
-import {
-  Recommandation,
-  RecommandationType,
-} from '../../src/domain/recommandation';
+import { Recommandation } from '../domain/contenu/recommandation';
 import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
+import { ContentType } from '../../src/domain/contenu/contentType';
 
 @Injectable()
 export class RecommandationUsecase {
@@ -44,7 +42,7 @@ export class RecommandationUsecase {
     articles.forEach((article) => {
       result.push({
         ...article,
-        type: RecommandationType.article,
+        type: ContentType.article,
         thematique_gamification_titre:
           ThematiqueRepository.getLibelleThematique(
             article.thematique_gamification,
@@ -74,7 +72,7 @@ export class RecommandationUsecase {
     quizzes.forEach((quizz) => {
       result.push({
         ...quizz,
-        type: RecommandationType.quizz,
+        type: ContentType.quizz,
         thematique_gamification_titre:
           ThematiqueRepository.getLibelleThematique(
             quizz.thematique_gamification,

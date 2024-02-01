@@ -1,5 +1,5 @@
 import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels';
-import { ContentType } from '../../../../src/domain/interaction/interactionType';
+import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
 import { TestUtil } from '../../../TestUtil';
 

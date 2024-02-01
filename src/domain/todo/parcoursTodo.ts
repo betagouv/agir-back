@@ -1,4 +1,4 @@
-import { ContentType } from '../interaction/interactionType';
+import { ContentType } from '../contenu/contentType';
 import { Thematique } from '../thematique';
 import { Todo, TodoElement } from './todo';
 import { TodoCatalogue } from './todoCatalogue';

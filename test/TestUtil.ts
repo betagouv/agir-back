@@ -15,6 +15,7 @@ import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
 } from '../src/domain/kyc/questionQYC';
+import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
 
 export class TestUtil {
   constructor() {}
@@ -94,6 +95,7 @@ export class TestUtil {
     await this.prisma.article.deleteMany();
     await this.prisma.quizz.deleteMany();
     await this.prisma.ponderation.deleteMany();
+    ThematiqueRepository.resetThematiques();
   }
 
   static getDate(date: string) {

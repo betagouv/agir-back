@@ -12,6 +12,7 @@ export type ArticleFilter = {
   code_postal?: string;
   difficulty?: DifficultyLevel;
   exclude_ids?: string[];
+  include_ids?: string[];
   asc_difficulty?: boolean;
 };
 
@@ -67,6 +68,9 @@ export class ArticleRepository {
 
     if (filter.exclude_ids) {
       main_filter['content_id'] = { not: { in: filter.exclude_ids } };
+    }
+    if (filter.include_ids) {
+      main_filter['content_id'] = { in: filter.include_ids };
     }
 
     if (filter.thematiques) {

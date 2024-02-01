@@ -76,6 +76,8 @@ import { ReferentielUsecase } from './usecase/referentiel/referentiel.usecase';
 import { PonderationRepository } from './infrastructure/repository/ponderation.repository';
 import { DepartementRepository } from './infrastructure/repository/departement/departement.repository';
 import { Environment } from './domain/environment';
+import { BibliothequeController } from './infrastructure/api/bibliotheque.controller';
+import { BibliothequeUsecase } from './usecase/bibliotheque.usecase';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -102,6 +104,7 @@ function getControllers(): any[] {
     AdminController,
     QuestionsKYCController,
     RecommandationsController,
+    BibliothequeController,
   );
   if (!Environment.isProd()) {
     controllers.push(TestDataController);
@@ -168,6 +171,7 @@ function getControllers(): any[] {
     ReferentielUsecase,
     PonderationRepository,
     DepartementRepository,
+    BibliothequeUsecase,
   ],
 })
 export class AppModule {}
