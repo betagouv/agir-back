@@ -113,7 +113,7 @@ export class TestUtil {
         id: 123,
         titre: 'titre',
         sousTitre: 'soustitre 222',
-        thematique_gamification: { id: 1, titre: 'Alimentation' },
+        thematique_principale: { id: 1, titre: 'Alimentation' },
         thematiques: [
           { id: 1, titre: 'Alimentation' },
           { id: 2, titre: 'Climat' },
@@ -214,7 +214,7 @@ export class TestUtil {
       frequence: 'souvent',
       difficulty: 1,
       points: 10,
-      thematique_gamification: Thematique.climat,
+      thematique_principale: Thematique.climat,
       thematiques: [Thematique.climat, Thematique.logement],
       ...override,
     };
@@ -234,7 +234,7 @@ export class TestUtil {
       frequence: 'souvent',
       difficulty: 1,
       points: 10,
-      thematique_gamification: Thematique.climat,
+      thematique_principale: Thematique.climat,
       thematiques: [Thematique.climat, Thematique.logement],
       ...override,
     };

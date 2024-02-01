@@ -1,4 +1,3 @@
-import { ContentRecommandation } from './contentRecommandation';
 import { DifficultyLevel } from './difficultyLevel';
 import { Thematique } from './thematique';
 
@@ -16,6 +15,6 @@ export class Article {
   frequence?: string;
   difficulty: DifficultyLevel;
   points: number;
-  thematique_gamification?: Thematique;
+  thematique_principale: Thematique;
   thematiques: Thematique[];
 }

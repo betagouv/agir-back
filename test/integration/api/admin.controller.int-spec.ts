@@ -1,12 +1,8 @@
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { ContentType } from '../../../src/domain/contenu/contentType';
 import { TestUtil } from '../../TestUtil';
 import { ServiceStatus } from '../../../src/domain/service/service';
-import { LinkyDataElement } from 'src/domain/linky/linkyData';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
-  let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();

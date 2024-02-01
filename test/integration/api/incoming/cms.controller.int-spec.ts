@@ -192,7 +192,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles).toHaveLength(1);
     expect(articles[0].titre).toEqual('titre');
     expect(articles[0].soustitre).toEqual('soustitre 222');
-    expect(articles[0].thematique_gamification).toEqual('alimentation');
+    expect(articles[0].thematique_principale).toEqual('alimentation');
     expect(articles[0].thematiques).toStrictEqual(['alimentation', 'climat']);
     expect(articles[0].duree).toEqual('pas trop long');
     expect(articles[0].frequence).toEqual('souvent');
@@ -221,7 +221,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(quizzes).toHaveLength(1);
     expect(quizzes[0].titre).toEqual('titre');
     expect(quizzes[0].soustitre).toEqual('soustitre 222');
-    expect(quizzes[0].thematique_gamification).toEqual('alimentation');
+    expect(quizzes[0].thematique_principale).toEqual('alimentation');
     expect(quizzes[0].thematiques).toStrictEqual(['alimentation', 'climat']);
     expect(quizzes[0].duree).toEqual('pas trop long');
     expect(quizzes[0].frequence).toEqual('souvent');
@@ -250,7 +250,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles).toHaveLength(1);
     expect(articles[0].titre).toEqual('titre');
     expect(articles[0].soustitre).toEqual('soustitre 222');
-    expect(articles[0].thematique_gamification).toEqual('alimentation');
+    expect(articles[0].thematique_principale).toEqual('alimentation');
     expect(articles[0].thematiques).toStrictEqual(['alimentation', 'climat']);
     expect(articles[0].duree).toEqual('pas trop long');
     expect(articles[0].frequence).toEqual('souvent');
@@ -280,7 +280,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(quizzes).toHaveLength(1);
     expect(quizzes[0].titre).toEqual('titre');
     expect(quizzes[0].soustitre).toEqual('soustitre 222');
-    expect(quizzes[0].thematique_gamification).toEqual('alimentation');
+    expect(quizzes[0].thematique_principale).toEqual('alimentation');
     expect(quizzes[0].thematiques).toStrictEqual(['alimentation', 'climat']);
     expect(quizzes[0].duree).toEqual('pas trop long');
     expect(quizzes[0].frequence).toEqual('souvent');

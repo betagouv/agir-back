@@ -3,7 +3,7 @@ import Publicodes from 'publicodes';
 import rulesRetrofit from '../data/aidesRetrofit.json';
 import localisations from '../data/communes.json';
 
-import { AideBase, Localisation } from 'src/domain/aides/aide';
+import { AideBase, Localisation } from '../../../src/domain/aides/aide';
 
 @Injectable()
 export class AidesRetrofitRepository {

@@ -4,7 +4,6 @@ import { UtilisateurController } from './infrastructure/api/utilisateur.controll
 import { AuthController } from './infrastructure/api/auth.controller';
 import { BilanController } from './infrastructure/api/bilan.controller';
 import { AidesController } from './infrastructure/api/aides.controller';
-import { InteractionsController } from './infrastructure/api/interactions.controller';
 import { TestDataController } from './infrastructure/api/testData.controller';
 import { CMSController } from './infrastructure/api/incoming/cms.controller';
 
@@ -86,7 +85,6 @@ function getControllers(): any[] {
     UtilisateurController,
     BilanController,
     AidesController,
-    InteractionsController,
     SuiviController,
     SuiviDashboardController,
     //QuestionsNGCController,

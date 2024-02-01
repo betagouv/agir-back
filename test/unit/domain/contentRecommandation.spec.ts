@@ -1,4 +1,4 @@
-import { Article } from 'src/domain/article';
+import { Article } from '../../../src/domain/article';
 import { ContentRecommandation } from '../../../src/domain/ContentRecommandation';
 
 describe('ContentRecommandation', () => {
@@ -12,6 +12,7 @@ describe('ContentRecommandation', () => {
     difficulty: 1,
     points: 0,
     thematiques: [],
+    thematique_principale: null,
   };
 
   it('append : append OK', () => {

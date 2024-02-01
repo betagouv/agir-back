@@ -786,7 +786,7 @@ describe('TODO list (API test)', () => {
     await TestUtil.create('article', {
       content_id: '123',
       difficulty: DifficultyLevel.L1,
-      thematique_gamification: Thematique.climat,
+      thematique_principale: Thematique.climat,
       thematiques: [Thematique.loisir, Thematique.logement],
     });
 

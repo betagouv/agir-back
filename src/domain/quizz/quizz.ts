@@ -14,6 +14,6 @@ export type Quizz = {
   frequence?: string;
   difficulty: number;
   points: number;
-  thematique_gamification?: Thematique;
+  thematique_principale: Thematique;
   thematiques: Thematique[];
 };

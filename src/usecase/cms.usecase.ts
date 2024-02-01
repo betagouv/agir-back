@@ -168,7 +168,7 @@ export class CMSUsecase {
       frequence: entry.frequence,
       difficulty: entry.difficulty ? entry.difficulty : 1,
       points: entry.points ? entry.points : 0,
-      thematique_gamification: entry.thematique_gamification
+      thematique_principale: entry.thematique_gamification
         ? CMSThematiqueAPI.getThematique(entry.thematique_gamification)
         : Thematique.climat,
       thematiques: entry.thematiques
@@ -206,7 +206,7 @@ export class CMSUsecase {
       frequence: entry.attributes.frequence,
       difficulty: entry.attributes.difficulty ? entry.attributes.difficulty : 1,
       points: entry.attributes.points ? entry.attributes.points : 0,
-      thematique_gamification: entry.attributes.thematique_gamification.data
+      thematique_principale: entry.attributes.thematique_gamification.data
         ? CMSThematiqueAPI.getThematiqueByCmsId(
             entry.attributes.thematique_gamification.data.id,
           )

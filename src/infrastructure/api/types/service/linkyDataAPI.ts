@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { LinkyDataElement } from 'src/domain/linky/linkyData';
+import { LinkyDataElement } from '../../../../../src/domain/linky/linkyData';
 
 export enum LinkyDataDetailAPI {
   jour = 'jour',

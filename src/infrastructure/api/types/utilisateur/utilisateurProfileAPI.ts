@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { OnboardingResult } from 'src/domain/utilisateur/onboarding/onboardingResult';
 import { Utilisateur } from '../../../../../src/domain/utilisateur/utilisateur';
 
 export class OnboardingResultAPI {

@@ -44,7 +44,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[0].titre).toEqual('titreA');
     expect(response.body[0].soustitre).toEqual('sousTitre');
     expect(response.body[0].type).toEqual('article');
-    expect(response.body[0].thematique_gamification).toEqual('climat');
+    expect(response.body[0].thematique_principale).toEqual('climat');
     expect(response.body[0].duree).toEqual('pas long');
     expect(response.body[0].image_url).toEqual('https://');
     expect(response.body[0].points).toEqual(10);
@@ -65,7 +65,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[0].titre).toEqual('titreQ');
     expect(response.body[0].soustitre).toEqual('sousTitre');
     expect(response.body[0].type).toEqual('quizz');
-    expect(response.body[0].thematique_gamification).toEqual('climat');
+    expect(response.body[0].thematique_principale).toEqual('climat');
     expect(response.body[0].duree).toEqual('pas long');
     expect(response.body[0].image_url).toEqual('https://');
     expect(response.body[0].points).toEqual(10);

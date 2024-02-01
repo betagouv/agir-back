@@ -3,7 +3,7 @@ import { QuestionKYCRepository } from '../../src/infrastructure/repository/quest
 import { QuestionKYC } from '../domain/kyc/questionQYC';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { Utilisateur } from 'src/domain/utilisateur/utilisateur';
+import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 
 @Injectable()
 export class QuestionKYCUsecase {

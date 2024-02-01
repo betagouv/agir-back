@@ -22,8 +22,7 @@ import { AuthGuard } from '../auth/guard';
 import { GroupeAPI } from './types/groupe/groupeAPI';
 import { GroupeUseCase } from '../../../src/usecase/groupe.usecase';
 import { GroupeAbonnement } from '@prisma/client';
-import { ApplicationError } from '../applicationError';
-import { Groupe } from 'src/domain/groupe/groupe';
+import { Groupe } from '../../../src/domain/groupe/groupe';
 
 @Controller()
 @ApiBearerAuth()

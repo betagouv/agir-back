@@ -33,33 +33,6 @@ export enum TheTypes {
   utilisateur = 'utilisateur',
 }
 
-const DUMMY_INTERACTION_DEF = {
-  titre: 'Titre',
-  soustitre: 'Sous titre',
-  thematique_gamification: Thematique.climat,
-  thematiques: [Thematique.climat, Thematique.logement],
-  duree: '⏱️ < 1 minute',
-  frequence: 'Une fois',
-  image_url:
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/The_Blue_Marble_%28remastered%29.jpg/240px-The_Blue_Marble_%28remastered%29.jpg',
-  difficulty: DifficultyLevel.L1,
-  points: 10,
-  score: 0.9,
-  locked: false,
-  codes_postaux: [],
-  content_id: null,
-  type: null,
-  tags: [],
-  url: null,
-  thematique_gamification_titre: 'Climat',
-  pinned_at_position: undefined,
-  raison_lock: undefined,
-  day_period: undefined,
-  created_at: undefined,
-  updated_at: undefined,
-  id: undefined,
-};
-
 @Controller()
 @ApiTags('TestData')
 export class TestDataController {

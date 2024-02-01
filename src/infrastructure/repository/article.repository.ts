@@ -151,7 +151,7 @@ export class ArticleRepository {
       frequence: articleDB.frequence,
       difficulty: articleDB.difficulty,
       points: articleDB.points,
-      thematique_gamification: Thematique[articleDB.thematique_gamification],
+      thematique_principale: Thematique[articleDB.thematique_principale],
       thematiques: articleDB.thematiques.map((th) => Thematique[th]),
     };
   }

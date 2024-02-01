@@ -107,7 +107,7 @@ describe('EVENT (API test)', () => {
     await TestUtil.create('quizz', {
       content_id: 'quizz-id',
       points: 20,
-      thematique_gamification: Thematique.climat,
+      thematique_principale: Thematique.climat,
     });
     // WHEN
     const response = await TestUtil.POST(
@@ -132,7 +132,7 @@ describe('EVENT (API test)', () => {
     await TestUtil.create('quizz', {
       content_id: 'quizz-id',
       points: 20,
-      thematique_gamification: Thematique.climat,
+      thematique_principale: Thematique.climat,
     });
     // WHEN
     const response = await TestUtil.POST(
@@ -240,7 +240,7 @@ describe('EVENT (API test)', () => {
     await TestUtil.create('utilisateur', { version: 2 });
     await TestUtil.create('quizz', {
       content_id: 'quizz-id',
-      thematique_gamification: Thematique.climat,
+      thematique_principale: Thematique.climat,
     });
     // WHEN
     const response = await TestUtil.POST(

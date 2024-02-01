@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { UserMigrationReport } from 'src/usecase/migration.usescase';
+import { UserMigrationReport } from '../../../../src/usecase/migration.usescase';
 
 export class MigrationAPI {
   @ApiProperty() version: number;

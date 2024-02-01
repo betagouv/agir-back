@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { ArticleRepository } from '../infrastructure/repository/article.repository';
-import { Bibliotheque } from '../../src/domain/contenu/contenuBibliotheque';
+import { Bibliotheque } from '../domain/contenu/bibliotheque';
 import { ContentType } from '../../src/domain/contenu/contentType';
 import { Thematique } from '../../src/domain/thematique';
 
@@ -42,7 +42,6 @@ export class BibliothequeUsecase {
       result.contenu.push({
         ...article,
         type: ContentType.article,
-        thematique_principale: article.thematique_gamification,
       });
     });
 

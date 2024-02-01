@@ -3,7 +3,6 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { ArticleRepository } from '../infrastructure/repository/article.repository';
 import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
 import { Recommandation } from '../domain/contenu/recommandation';
-import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
 import { ContentType } from '../../src/domain/contenu/contentType';
 
 @Injectable()
@@ -45,10 +44,7 @@ export class RecommandationUsecase {
       result.push({
         ...article,
         type: ContentType.article,
-        thematique_gamification_titre:
-          ThematiqueRepository.getLibelleThematique(
-            article.thematique_gamification,
-          ),
+        thematique_principale: article.thematique_principale,
       });
     });
 
@@ -75,10 +71,7 @@ export class RecommandationUsecase {
       result.push({
         ...quizz,
         type: ContentType.quizz,
-        thematique_gamification_titre:
-          ThematiqueRepository.getLibelleThematique(
-            quizz.thematique_gamification,
-          ),
+        thematique_principale: quizz.thematique_principale,
       });
     });
 

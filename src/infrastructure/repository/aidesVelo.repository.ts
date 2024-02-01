@@ -12,7 +12,7 @@ import {
   AidesVelo,
   Localisation,
   Collectivite,
-} from 'src/domain/aides/aide';
+} from '../../../src/domain/aides/aide';
 
 @Injectable()
 export class AidesVeloRepository {

@@ -1,3 +1,4 @@
+import { Thematique } from '../thematique';
 import { ContentType } from './contentType';
 
 export class Recommandation {
@@ -5,7 +6,7 @@ export class Recommandation {
   type: ContentType;
   titre: string;
   soustitre?: string;
-  thematique_gamification_titre: string;
+  thematique_principale: Thematique;
   duree?: string;
   image_url: string;
   points: number;

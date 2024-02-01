@@ -142,7 +142,7 @@ export class QuizzRepository {
       frequence: quizzDB.frequence,
       difficulty: quizzDB.difficulty,
       points: quizzDB.points,
-      thematique_gamification: Thematique[quizzDB.thematique_gamification],
+      thematique_principale: Thematique[quizzDB.thematique_principale],
       thematiques: quizzDB.thematiques.map((th) => Thematique[th]),
     };
   }

@@ -5,7 +5,7 @@ import {
   Bibliotheque,
   ContenuBibliotheque,
   ThematiqueFilter,
-} from '../../../../../src/domain/contenu/contenuBibliotheque';
+} from '../../../../domain/contenu/bibliotheque';
 import { Thematique } from '../../../../../src/domain/thematique';
 
 export class ContenuBibliothequeAPI {
