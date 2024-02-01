@@ -16,7 +16,7 @@ describe('BilanRepository', () => {
     await TestUtil.appclose();
   });
 
-  it('Get null situation when  a new badge', async () => {
+  it('Get null situation when a new utilisateur', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
 

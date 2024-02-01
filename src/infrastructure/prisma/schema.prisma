@@ -49,7 +49,6 @@ model Utilisateur {
   history                  Json               @default("{}")
   empreintes               Empreinte[]
   suivis                   Suivi[]
-  badges                   Badge[]
   questionsNGC             QuestionNGC[]
   groupes                  GroupeAbonnement[]
   created_at               DateTime           @default(now()) @db.Timestamptz(3)
@@ -165,18 +164,6 @@ model SituationNGC {
   situation  Json?
   empreinte  Empreinte?
   created_at DateTime   @default(now()) @db.Timestamptz(3)
-}
-
-model Badge {
-  id            String       @id
-  type          String?
-  titre         String
-  Utilisateur   Utilisateur? @relation(fields: [utilisateurId], references: [id])
-  utilisateurId String
-  created_at    DateTime     @default(now()) @db.Timestamptz(3)
-  updated_at    DateTime     @default(now()) @updatedAt @db.Timestamptz(3)
-
-  @@unique([type, utilisateurId])
 }
 
 model Service {

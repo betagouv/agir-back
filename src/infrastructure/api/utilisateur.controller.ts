@@ -58,8 +58,7 @@ export class UtilisateurController extends GenericControler {
 
   @Get('utilisateurs/:utilisateurId')
   @ApiOperation({
-    summary:
-      "Infromation complètes concernant l'utilisateur d'id donné : profile, badges, niveaux de quizz, etc ",
+    summary: "Infromation complètes concernant l'utilisateur d'id donné",
   })
   @ApiOkResponse({ type: UtilisateurAPI })
   @UseGuards(AuthGuard)

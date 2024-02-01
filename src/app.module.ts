@@ -14,7 +14,6 @@ import { AidesUsecase } from './usecase/aides.usecase';
 import { CMSUsecase } from './usecase/cms.usecase';
 
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur/utilisateur.repository';
-import { BadgeRepository } from './infrastructure/repository/badge.repository';
 import { BilanRepository } from './infrastructure/repository/bilan.repository';
 
 import { PrismaService } from './infrastructure/prisma/prisma.service';
@@ -32,7 +31,6 @@ import { OidcService } from '../src/infrastructure/auth/oidc.service';
 import { NGCCalculator } from './infrastructure/ngc/NGCCalculator';
 import { QuestionNGCUsecase } from './usecase/questionNGC.usecase';
 import { QuestionNGCRepository } from './infrastructure/repository/questionNGC.repository';
-import { QuestionsNGCController } from './infrastructure/api/questionNGC.controller';
 import { EmailSender } from './infrastructure/email/emailSender';
 import { OnboardingUsecase } from './usecase/onboarding.usecase';
 import { OnboardingController } from './infrastructure/api/onboarding.controller';
@@ -125,7 +123,6 @@ function getControllers(): any[] {
     PrismaService,
     UtilisateurRepository,
     BilanRepository,
-    BadgeRepository,
     SuiviRepository,
     CodeManager,
 

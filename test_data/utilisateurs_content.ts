@@ -238,7 +238,6 @@ const utilisateurs = {
     },
     suivis: [],
     bilans: [],
-    badges: [],
     quizzLevels: minQuizzLevel,
     onboardingResult: ONBOARDING_RES_1234,
     onboardingData: ONBOARD_DATA_1234,
@@ -264,7 +263,6 @@ const utilisateurs = {
     },
     suivis: [],
     bilans: [],
-    badges: [],
     services: [],
     questionsNGC: {
       'transport . voiture . km': 30000,

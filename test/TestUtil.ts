@@ -81,7 +81,6 @@ export class TestUtil {
   static async deleteAll() {
     await this.prisma.suivi.deleteMany();
     await this.prisma.questionsKYC.deleteMany();
-    await this.prisma.badge.deleteMany();
     await this.prisma.service.deleteMany();
     await this.prisma.groupeAbonnement.deleteMany();
     await this.prisma.groupe.deleteMany();
@@ -346,15 +345,6 @@ export class TestUtil {
       quizzLevels: UserQuizzProfile.newLowProfile().getData(),
       created_at: undefined,
       updated_at: undefined,
-      ...override,
-    };
-  }
-  static badgeData(override?) {
-    return {
-      id: 'badge-id',
-      type: 'type',
-      titre: 'titre',
-      utilisateurId: 'utilisateur-id',
       ...override,
     };
   }

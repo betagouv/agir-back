@@ -18,7 +18,6 @@ const _linky_data = require('../../../test_data/PRM_thermo_sensible');
 const suivis_alimentation = require('../../../test_data/evenements/suivis_alimentation');
 const suivis_transport = require('../../../test_data/evenements/suivis_transport');
 const empreintes_utilisateur = require('../../../test_data/evenements/bilans');
-const badges_liste = require('../../../test_data/evenements/badges');
 import axios from 'axios';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { CMSThematiqueAPI } from './types/cms/CMSThematiqueAPI';
@@ -100,7 +99,6 @@ export class TestDataController {
     await this.insertLinkyDataForUtilisateur(utilisateurId);
     await this.insertSuivisAlimentationForUtilisateur(utilisateurId);
     await this.insertEmpreintesForUtilisateur(utilisateurId);
-    await this.insertBadgesForUtilisateur(utilisateurId);
     await this.insertQuestionsNGCForUtilisateur(utilisateurId);
     return utilisateurs_content[utilisateurId];
   }
@@ -177,25 +175,6 @@ export class TestDataController {
       }
       suiviToCreate.calculImpacts();
       await this.suiviRepository.createSuivi(suiviToCreate, utilisateurId);
-    }
-  }
-  async insertBadgesForUtilisateur(utilisateurId: string) {
-    const badges = utilisateurs_content[utilisateurId].badges;
-    if (!badges) return;
-    for (let index = 0; index < badges.length; index++) {
-      const badgeId = badges[index];
-      if (badges_liste[badgeId]) {
-        let data = {
-          id: uuidv4(),
-          titre: badges_liste[badgeId].titre,
-          type: badges_liste[badgeId].type,
-          created_at: new Date(Date.parse(badges_liste[badgeId].date)),
-          utilisateurId: utilisateurId,
-        };
-        await this.prisma.badge.create({
-          data,
-        });
-      }
     }
   }
   async insertEmpreintesForUtilisateur(utilisateurId: string) {
@@ -288,11 +267,6 @@ export class TestDataController {
         utilisateurId,
       },
     });
-    await this.prisma.badge.deleteMany({
-      where: {
-        utilisateurId,
-      },
-    });
     await this.prisma.questionNGC.deleteMany({
       where: {
         utilisateurId,
@@ -312,7 +286,6 @@ export class TestDataController {
     delete clonedData.suivis;
     delete clonedData.interactions;
     delete clonedData.bilans;
-    delete clonedData.badges;
     delete clonedData.services;
     delete clonedData.questionsNGC;
     delete clonedData.linky;

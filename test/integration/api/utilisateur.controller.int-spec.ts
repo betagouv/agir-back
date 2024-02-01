@@ -56,7 +56,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     await TestUtil.create('situationNGC');
     await TestUtil.create('empreinte');
     await TestUtil.create('questionNGC');
-    await TestUtil.create('badge');
     await TestUtil.create('serviceDefinition');
     await TestUtil.create('groupe');
     await TestUtil.create('groupeAbonnement');
@@ -155,7 +154,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       active_account: true,
       parts: null,
     });
-    await TestUtil.create('badge');
 
     // WHEN
     const response = await TestUtil.getServer()
