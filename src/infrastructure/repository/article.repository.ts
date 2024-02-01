@@ -90,7 +90,6 @@ export class ArticleRepository {
     if (filter.asc_difficulty) {
       finalQuery['orderBy'] = [{ difficulty: 'asc' }];
     }
-
     const result = await this.prisma.article.findMany(finalQuery);
     return result.map((elem) => this.buildArticleFromDB(elem));
   }

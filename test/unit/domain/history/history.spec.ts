@@ -1,3 +1,5 @@
+import { TestUtil } from '../../../../test/TestUtil';
+import { Article } from '../../../../src/domain/article';
 import { History } from '../../../../src/domain/history/history';
 
 describe('History', () => {
@@ -204,5 +206,31 @@ describe('History', () => {
     expect(result).toHaveLength(2);
     expect(result).toContain('1');
     expect(result).toContain('2');
+  });
+  it('liste articles lus par date desc', () => {
+    // GIVEN
+    const history = new History({
+      article_interactions: [
+        { content_id: '1', read_date: new Date(1) },
+        { content_id: '2', read_date: null },
+        { content_id: '3', read_date: new Date(2) },
+        { content_id: '4' },
+        { content_id: '5', read_date: new Date(0) },
+      ],
+    });
+
+    const liste_articles: Article[] = [];
+    liste_articles.push(TestUtil.articleData({ content_id: '1' }));
+    liste_articles.push(TestUtil.articleData({ content_id: '3' }));
+    liste_articles.push(TestUtil.articleData({ content_id: '5' }));
+
+    // WHEN
+    const result = history.orderReadArticlesByReadDate(liste_articles);
+
+    // THEN
+    expect(result).toHaveLength(3);
+    expect(result[0].content_id).toEqual('3');
+    expect(result[1].content_id).toEqual('1');
+    expect(result[2].content_id).toEqual('5');
   });
 });

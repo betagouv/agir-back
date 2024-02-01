@@ -1,3 +1,5 @@
+import { Article } from '../article';
+import { Quizz } from '../quizz/quizz';
 import { ArticleHistory } from './articleHistory';
 import { QuizzHistory } from './quizzHistory';
 
@@ -43,6 +45,19 @@ export class History {
       .filter((article) => !!article.read_date)
       .map((article) => article.content_id);
   }
+
+  public orderReadArticlesByReadDate?(articles: Article[]): Article[] {
+    const timestamped_articles: { article: Article; date: Date }[] = [];
+    articles.forEach((article) => {
+      timestamped_articles.push({
+        article: article,
+        date: this.getArticleHistoryById(article.content_id).read_date,
+      });
+    });
+    timestamped_articles.sort((a, b) => b.date.getTime() - a.date.getTime());
+    return timestamped_articles.map((a) => a.article);
+  }
+
   public listeIdsQuizz100Pour100?() {
     return this.quizz_interactions
       .filter((quizz) => quizz.has100ScoreAmongAttempts())
