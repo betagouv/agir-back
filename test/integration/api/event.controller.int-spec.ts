@@ -432,4 +432,48 @@ describe('EVENT (API test)', () => {
     );
     expect(userDB.history.getQuizzHistoryById('123').like_level).toEqual(3);
   });
+  it('POST /utilisateurs/id/events - like event set la valeur du like sur une interaction par type et content_id && history sur article v2', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { version: 2 });
+    await TestUtil.create('quizz', {
+      content_id: '123',
+    });
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.like,
+      content_id: '123',
+      content_type: 'quizz',
+      number_value: 3,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(userDB.history.getQuizzHistoryById('123').like_level).toEqual(3);
+  });
+  it('POST /utilisateurs/id/events - favoris event set un favoris sur un article', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('article', {
+      content_id: '123',
+    });
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.article_favoris,
+      content_id: '123',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(userDB.history.getArticleHistoryById('123').favoris).toEqual(true);
+  });
 });

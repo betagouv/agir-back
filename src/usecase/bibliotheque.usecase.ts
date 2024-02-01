@@ -16,6 +16,7 @@ export class BibliothequeUsecase {
     utilisateurId: string,
     filtre_thematiques: Thematique[],
     titre: string,
+    favoris: boolean,
   ): Promise<Bibliotheque> {
     let result = new Bibliotheque();
 
@@ -23,7 +24,10 @@ export class BibliothequeUsecase {
       utilisateurId,
     );
 
-    const articles_lus = utilisateur.history.listeIdsArticlesLus();
+    const articles_lus = utilisateur.history.searchArticlesIds({
+      est_lu: true,
+      est_favoris: favoris,
+    });
 
     let articles = await this.articleRepository.searchArticles({
       include_ids: articles_lus,
@@ -32,7 +36,7 @@ export class BibliothequeUsecase {
       titre_fragment: titre,
     });
 
-    articles = utilisateur.history.orderReadArticlesByReadDate(articles);
+    articles = utilisateur.history.orderArticlesByReadDate(articles);
 
     articles.forEach((article) => {
       result.contenu.push({

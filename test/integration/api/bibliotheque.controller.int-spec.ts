@@ -258,4 +258,54 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.contenu[0].content_id).toEqual('4');
     expect(response.body.contenu[1].content_id).toEqual('1');
   });
+  it('GET /utilisateurs/id/bibliotheque - recherche articles favoris', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      history: {
+        article_interactions: [
+          {
+            content_id: '1',
+            read_date: new Date(1).toISOString(),
+            favoris: true,
+          },
+          {
+            content_id: '2',
+            read_date: new Date(2).toISOString(),
+            favoris: false,
+          },
+          {
+            content_id: '3',
+            read_date: new Date(3).toISOString(),
+            favoris: true,
+          },
+          {
+            content_id: '4',
+            read_date: new Date(4).toISOString(),
+            favoris: false,
+          },
+        ],
+      },
+    });
+    await TestUtil.create('article', {
+      content_id: '1',
+    });
+    await TestUtil.create('article', {
+      content_id: '2',
+    });
+    await TestUtil.create('article', {
+      content_id: '3',
+    });
+    await TestUtil.create('article', {
+      content_id: '4',
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque?favoris=true',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.contenu).toHaveLength(2);
+    expect(response.body.contenu[0].content_id).toEqual('3');
+    expect(response.body.contenu[1].content_id).toEqual('1');
+  });
 });

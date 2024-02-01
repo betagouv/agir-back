@@ -3,6 +3,10 @@ import { Quizz } from '../quizz/quizz';
 import { ArticleHistory } from './articleHistory';
 import { QuizzHistory } from './quizzHistory';
 
+export type SearchArticleFilter = {
+  est_lu?: boolean;
+  est_favoris?: boolean;
+};
 export class History {
   constructor(data: History) {
     this.article_interactions = [];
@@ -26,27 +30,36 @@ export class History {
   public static newHistory(): History {
     return new History({});
   }
-  public getArticleHistoryById?(content_id: string) {
+  public getArticleHistoryById?(content_id: string): ArticleHistory {
     return this.article_interactions.find(
       (article) => article.content_id === content_id,
     );
   }
-  public getQuizzHistoryById?(content_id: string) {
+  public getQuizzHistoryById?(content_id: string): QuizzHistory {
     return this.quizz_interactions.find(
       (quizz) => quizz.content_id === content_id,
     );
   }
 
-  public nombreArticles?() {
+  public nombreArticles?(): number {
     return this.article_interactions.length;
   }
-  public listeIdsArticlesLus?() {
-    return this.article_interactions
-      .filter((article) => !!article.read_date)
-      .map((article) => article.content_id);
-  }
 
-  public orderReadArticlesByReadDate?(articles: Article[]): Article[] {
+  public searchArticlesIds?(filter: SearchArticleFilter): string[] {
+    const filtered = this.article_interactions.filter((article) => {
+      let select = true;
+      if (filter.est_lu) {
+        select = select && !!article.read_date;
+      }
+      if (filter.est_favoris) {
+        select = select && article.favoris;
+      }
+      return select;
+    });
+
+    return filtered.map((article) => article.content_id);
+  }
+  public orderArticlesByReadDate?(articles: Article[]): Article[] {
     const timestamped_articles: { article: Article; date: Date }[] = [];
     articles.forEach((article) => {
       timestamped_articles.push({
@@ -58,20 +71,20 @@ export class History {
     return timestamped_articles.map((a) => a.article);
   }
 
-  public listeIdsQuizz100Pour100?() {
+  public listeIdsQuizz100Pour100?(): string[] {
     return this.quizz_interactions
       .filter((quizz) => quizz.has100ScoreAmongAttempts())
       .map((article) => article.content_id);
   }
-  public listeIdsQuizzAttempted?() {
+  public listeIdsQuizzAttempted?(): string[] {
     return this.quizz_interactions
       .filter((quizz) => quizz.hasAttempt())
       .map((article) => article.content_id);
   }
-  public nombreQuizz?() {
+  public nombreQuizz?(): number {
     return this.quizz_interactions.length;
   }
-  public articleLu?(content_id: string, date?: Date) {
+  public lireArticle?(content_id: string, date?: Date) {
     let article = this.findOrCreateArticleById(content_id);
     article.read_date = date || new Date();
   }
@@ -88,11 +101,11 @@ export class History {
     let quizz = this.getQuizzHistoryById(content_id);
     return quizz && quizz.points_en_poche;
   }
-  public metPointsArticleEnPoche?(content_id: string) {
+  public declarePointsArticleEnPoche?(content_id: string) {
     let article = this.findOrCreateArticleById(content_id);
     article.points_en_poche = true;
   }
-  public metPointsQuizzEnPoche?(content_id: string) {
+  public declarePointsQuizzEnPoche?(content_id: string) {
     let quizz = this.findOrCreateQuizzById(content_id);
     quizz.points_en_poche = true;
   }
@@ -105,8 +118,12 @@ export class History {
     let quizz = this.findOrCreateQuizzById(content_id);
     quizz.like_level = level;
   }
+  public favoriserArticle?(content_id: string) {
+    let article = this.findOrCreateArticleById(content_id);
+    article.favoris = true;
+  }
 
-  private findOrCreateArticleById?(content_id: string) {
+  private findOrCreateArticleById?(content_id: string): ArticleHistory {
     let result = this.article_interactions.find(
       (article) => article.content_id === content_id,
     );
@@ -118,7 +135,7 @@ export class History {
     }
     return result;
   }
-  private findOrCreateQuizzById?(content_id: string) {
+  private findOrCreateQuizzById?(content_id: string): QuizzHistory {
     let result = this.quizz_interactions.find(
       (quizz) => quizz.content_id === content_id,
     );

@@ -21,7 +21,9 @@ export class RecommandationUsecase {
       utilisateurId,
     );
 
-    const articles_lus = utilisateur.history.listeIdsArticlesLus();
+    const articles_lus = utilisateur.history.searchArticlesIds({
+      est_lu: true,
+    });
     let articles = await this.articleRepository.searchArticles({
       code_postal: utilisateur.code_postal,
       exclude_ids: articles_lus,

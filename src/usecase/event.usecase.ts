@@ -36,7 +36,17 @@ export class EventUsecase {
         return await this.processAccessRecommandations(utilisateurId);
       case EventType.like:
         return await this.processLike(utilisateurId, event);
+      case EventType.article_favoris:
+        return await this.processArticleFavoris(utilisateurId, event);
     }
+  }
+
+  private async processArticleFavoris(utilisateurId: string, event: UtilisateurEvent) {
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+      utilisateurId,
+    );
+    utilisateur.history.favoriserArticle(event.content_id);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private async processLike(utilisateurId: string, event: UtilisateurEvent) {
@@ -133,13 +143,13 @@ export class EventUsecase {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );
-    utilisateur.history.articleLu(event.content_id);
+    utilisateur.history.lireArticle(event.content_id);
     const article = await this.articleRepository.getArticleByContentId(
       event.content_id,
     );
     if (!utilisateur.history.sontPointsArticleEnPoche(event.content_id)) {
       utilisateur.gamification.ajoutePoints(article.points);
-      utilisateur.history.metPointsArticleEnPoche(event.content_id);
+      utilisateur.history.declarePointsArticleEnPoche(event.content_id);
     }
     this.updateUserTodo(utilisateur, ContentType.article, article.thematiques);
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
@@ -162,7 +172,7 @@ export class EventUsecase {
       event.number_value === 100
     ) {
       utilisateur.gamification.ajoutePoints(quizz.points);
-      utilisateur.history.metPointsQuizzEnPoche(event.content_id);
+      utilisateur.history.declarePointsQuizzEnPoche(event.content_id);
       this.updateUserTodo(utilisateur, ContentType.quizz, quizz.thematiques);
     }
     await this.utilisateurRepository.updateUtilisateur(utilisateur);

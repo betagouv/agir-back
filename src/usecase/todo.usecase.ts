@@ -81,7 +81,9 @@ export class TodoUsecase {
         }
       }
       if (element.type === ContentType.article) {
-        const articles_lus = utilisateur.history.listeIdsArticlesLus();
+        const articles_lus = utilisateur.history.searchArticlesIds({
+          est_lu: true,
+        });
         let articles = await this.articleRepository.searchArticles({
           thematiques: element.thematiques,
           difficulty: element.level,

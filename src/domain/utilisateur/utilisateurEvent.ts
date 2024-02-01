@@ -10,6 +10,7 @@ export enum EventType {
   access_profile = 'access_profile',
   access_recommandations = 'access_recommandations',
   like = 'like',
+  article_favoris = 'article_favoris',
 }
 
 export class UtilisateurEvent {

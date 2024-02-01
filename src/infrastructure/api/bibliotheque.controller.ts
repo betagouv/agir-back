@@ -40,12 +40,19 @@ export class BibliothequeController extends GenericControler {
     required: false,
     description: `une fragment du titre, insensible à la casse`,
   })
+  @ApiQuery({
+    name: 'favoris',
+    type: Boolean,
+    required: false,
+    description: `si à 'true' ne ramène que le contenu en favoris utilisateur`,
+  })
   @UseGuards(AuthGuard)
   async getBibliotheque(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
     @Query('filtre_thematiques') filtre_thematiques?: string,
     @Query('titre') titre?: string,
+    @Query('favoris') favoris?: boolean,
   ): Promise<BibliothequeAPI> {
     this.checkCallerId(req, utilisateurId);
 
@@ -59,6 +66,7 @@ export class BibliothequeController extends GenericControler {
       utilisateurId,
       thematiques,
       titre,
+      favoris ? favoris : false,
     );
     return BibliothequeAPI.mapToAPI(biblio);
   }

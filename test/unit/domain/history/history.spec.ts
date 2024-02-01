@@ -37,7 +37,7 @@ describe('History', () => {
     const history = new History({});
 
     // WHEN
-    history.articleLu('1');
+    history.lireArticle('1');
 
     // THEN
     expect(history.nombreArticles()).toEqual(1);
@@ -62,8 +62,8 @@ describe('History', () => {
     const history = new History({});
 
     // WHEN
-    history.articleLu('1');
-    history.articleLu('1');
+    history.lireArticle('1');
+    history.lireArticle('1');
 
     // THEN
     expect(history.nombreArticles()).toEqual(1);
@@ -85,7 +85,7 @@ describe('History', () => {
     const history = new History({});
 
     // WHEN
-    history.articleLu('1');
+    history.lireArticle('1');
 
     // THEN
     const article = history.getArticleHistoryById('1');
@@ -94,7 +94,7 @@ describe('History', () => {
   it('dire qu on a empoché les points d un article', () => {
     // GIVEN
     const history = new History({});
-    history.articleLu('1');
+    history.lireArticle('1');
 
     // THEN
     expect(history.getArticleHistoryById('1').points_en_poche).toStrictEqual(
@@ -102,7 +102,7 @@ describe('History', () => {
     );
 
     // WHEN
-    history.metPointsArticleEnPoche('1');
+    history.declarePointsArticleEnPoche('1');
 
     // THEN
     const article = history.getArticleHistoryById('1');
@@ -120,7 +120,7 @@ describe('History', () => {
     );
 
     // WHEN
-    history.metPointsQuizzEnPoche('1');
+    history.declarePointsQuizzEnPoche('1');
 
     // THEN
     const quizz = history.getQuizzHistoryById('1');
@@ -139,31 +139,30 @@ describe('History', () => {
     });
 
     // WHEN
-    const result = history.listeIdsArticlesLus();
+    const result = history.searchArticlesIds({ est_lu: true });
 
     // THEN
     expect(result).toHaveLength(2);
     expect(result).toContain('1');
     expect(result).toContain('3');
   });
-  it('liste articles lus', () => {
+  it('liste articles favoris', () => {
     // GIVEN
     const history = new History({
       article_interactions: [
-        { content_id: '1', read_date: new Date() },
-        { content_id: '2', read_date: null },
-        { content_id: '3', read_date: new Date() },
+        { content_id: '1', favoris: true },
+        { content_id: '2', favoris: null },
+        { content_id: '3', favoris: false },
         { content_id: '4' },
       ],
     });
 
     // WHEN
-    const result = history.listeIdsArticlesLus();
+    const result = history.searchArticlesIds({ est_favoris: true });
 
     // THEN
-    expect(result).toHaveLength(2);
+    expect(result).toHaveLength(1);
     expect(result).toContain('1');
-    expect(result).toContain('3');
   });
   it('liste quizz avec 100%', () => {
     // GIVEN
@@ -225,7 +224,7 @@ describe('History', () => {
     liste_articles.push(TestUtil.articleData({ content_id: '5' }));
 
     // WHEN
-    const result = history.orderReadArticlesByReadDate(liste_articles);
+    const result = history.orderArticlesByReadDate(liste_articles);
 
     // THEN
     expect(result).toHaveLength(3);
