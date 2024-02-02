@@ -350,6 +350,62 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.contenu[1].content_id).toEqual('1');
     expect(response.body.contenu[1].favoris).toEqual(true);
     expect(response.body.contenu[1].like_level).toEqual(1);
-    expect(response.body.contenu[1].read_date).toEqual(new Date(1).toISOString());
+    expect(response.body.contenu[1].read_date).toEqual(
+      new Date(1).toISOString(),
+    );
+  });
+  it('GET /utilisateurs/id/bibliotheque/article/123 - renvoi un article unique avec ses meta données', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      history: {
+        article_interactions: [
+          {
+            content_id: '1',
+            read_date: new Date(1).toISOString(),
+            favoris: true,
+            like_level: 1,
+          },
+        ],
+      },
+    });
+    await TestUtil.create('article', {
+      content_id: '1',
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque/articles/1',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.content_id).toEqual('1');
+    expect(response.body.titre).toEqual('titreA');
+    expect(response.body.favoris).toEqual(true);
+    expect(response.body.like_level).toEqual(1);
+    expect(response.body.read_date).toEqual(new Date(1).toISOString());
+  });
+  it('GET /utilisateurs/id/bibliotheque/article/bad - 404 si article pas connu', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      history: {
+        article_interactions: [
+          {
+            content_id: '1',
+            read_date: new Date(1).toISOString(),
+            favoris: true,
+            like_level: 1,
+          },
+        ],
+      },
+    });
+    await TestUtil.create('article', {
+      content_id: '1',
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque/articles/bad',
+    );
+    // THEN
+    expect(response.status).toBe(404);
+    expect(response.body.message).toEqual(`l'article d'id [bad] n'existe pas`);
   });
 });

@@ -179,6 +179,13 @@ export class ApplicationError {
       `Retour erreur inconnu de winter energies pour la suppresson du winter_pk ${winter_pk} : ${error}`,
     );
   }
+  static throwArticleNotFound(content_id: string) {
+    this.throwAppError(
+      '035',
+      `l'article d'id [${content_id}] n'existe pas`,
+      404,
+    );
+  }
 
   private static throwAppError(
     code: string,

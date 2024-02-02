@@ -1,4 +1,5 @@
 import { DifficultyLevel } from './difficultyLevel';
+import { ArticleHistory } from './history/articleHistory';
 import { Thematique } from './thematique';
 
 export class Article {
@@ -20,6 +21,19 @@ export class Article {
 }
 
 export class PersonalArticle extends Article {
+  constructor(article: Article, articleHistory?: ArticleHistory) {
+    super();
+    Object.assign(this, article);
+    if (articleHistory) {
+      this.favoris = articleHistory.favoris;
+      this.read_date = articleHistory.read_date;
+      this.like_level = articleHistory.like_level;
+    } else {
+      this.favoris = false;
+      this.read_date = null;
+      this.like_level = null;
+    }
+  }
   favoris: boolean;
   read_date?: Date;
   like_level?: number;

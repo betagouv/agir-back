@@ -44,6 +44,13 @@ export class History {
     return this.article_interactions.length;
   }
 
+  public personnaliserArticle?(article: Article): PersonalArticle {
+    const found_article_history = this.getArticleHistoryById(
+      article.content_id,
+    );
+    return new PersonalArticle(article, found_article_history);
+  }
+
   public searchArticlesIds?(filter: SearchArticleFilter): string[] {
     const filtered = this.article_interactions.filter((article) => {
       let select = true;
@@ -62,15 +69,9 @@ export class History {
   public orderArticlesByReadDate?(articles: Article[]): PersonalArticle[] {
     const personalArticles: PersonalArticle[] = [];
 
-    articles.forEach((article) => {
-      const articleHisto = this.getArticleHistoryById(article.content_id);
-      personalArticles.push({
-        ...article,
-        read_date: articleHisto.read_date,
-        favoris: articleHisto.favoris,
-        like_level: articleHisto.like_level,
-      });
-    });
+    articles.forEach((article) =>
+      personalArticles.push(this.personnaliserArticle(article)),
+    );
 
     personalArticles.sort(
       (a, b) => b.read_date.getTime() - a.read_date.getTime(),

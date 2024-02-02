@@ -7,6 +7,7 @@ import {
   ThematiqueFilter,
 } from '../../../../domain/contenu/bibliotheque';
 import { Thematique } from '../../../../../src/domain/thematique';
+import { PersonalArticle } from 'src/domain/article';
 
 export class ContenuBibliothequeAPI {
   @ApiProperty({ enum: ContentType }) type: ContentType;
@@ -27,6 +28,26 @@ export class ContenuBibliothequeAPI {
     return {
       content_id: content.content_id,
       type: content.type,
+      titre: content.titre,
+      soustitre: content.soustitre,
+      thematique_principale: content.thematique_principale,
+      thematique_principale_label: ThematiqueRepository.getLibelleThematique(
+        content.thematique_principale,
+      ),
+      thematiques: content.thematiques,
+      image_url: content.image_url,
+      points: content.points,
+      favoris: content.favoris,
+      like_level: content.like_level,
+      read_date: content.read_date,
+    };
+  }
+  public static mapArticleToAPI(
+    content: PersonalArticle,
+  ): ContenuBibliothequeAPI {
+    return {
+      content_id: content.content_id,
+      type: ContentType.article,
       titre: content.titre,
       soustitre: content.soustitre,
       thematique_principale: content.thematique_principale,

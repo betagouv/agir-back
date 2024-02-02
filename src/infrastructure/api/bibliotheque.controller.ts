@@ -14,9 +14,13 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
-import { BibliothequeAPI } from './types/contenu/contenuBiblioAPI';
+import {
+  BibliothequeAPI,
+  ContenuBibliothequeAPI,
+} from './types/contenu/contenuBiblioAPI';
 import { BibliothequeUsecase } from '../../../src/usecase/bibliotheque.usecase';
 import { Thematique } from '../../../src/domain/thematique';
+import { ContentType } from '../../../src/domain/contenu/contentType';
 
 @Controller()
 @ApiBearerAuth()
@@ -46,6 +50,18 @@ export class BibliothequeController extends GenericControler {
     required: false,
     description: `si à 'true' ne ramène que le contenu en favoris utilisateur`,
   })
+  @ApiQuery({
+    name: 'type',
+    enum: ContentType,
+    required: false,
+    description: `le type de contenu recherché : article, quizz, etc`,
+  })
+  @ApiQuery({
+    name: 'content_id',
+    type: String,
+    required: false,
+    description: `l'id de contenu pour récupérer un contenu spécifique, si présent, les bloc de filtre n'est pas présent dans la réponse`,
+  })
   @UseGuards(AuthGuard)
   async getBibliotheque(
     @Request() req,
@@ -62,12 +78,35 @@ export class BibliothequeController extends GenericControler {
       thematiques = thematiques_strings.map((them) => Thematique[them]);
     }
 
-    const biblio = await this.bibliothequeUsecase.listContenuDejaConsulte(
+    const biblio = await this.bibliothequeUsecase.rechercheBiblio(
       utilisateurId,
       thematiques,
       titre,
       favoris ? favoris : false,
     );
     return BibliothequeAPI.mapToAPI(biblio);
+  }
+
+  @Get('utilisateurs/:utilisateurId/bibliotheque/articles/:content_id')
+  @ApiOkResponse({ type: ContenuBibliothequeAPI })
+  @ApiQuery({
+    name: 'content_id',
+    type: String,
+    required: false,
+    description: `l'id d'un article`,
+  })
+  @UseGuards(AuthGuard)
+  async getArticleBiblio(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('content_id') content_id: string,
+  ): Promise<ContenuBibliothequeAPI> {
+    this.checkCallerId(req, utilisateurId);
+
+    const article = await this.bibliothequeUsecase.geArticle(
+      utilisateurId,
+      content_id,
+    );
+    return ContenuBibliothequeAPI.mapArticleToAPI(article);
   }
 }
