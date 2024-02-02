@@ -19,6 +19,9 @@ export class ContenuBibliothequeAPI {
   @ApiProperty() thematique_principale_label: string;
   @ApiProperty() points: number;
   @ApiProperty() content_id: string;
+  @ApiProperty() favoris: boolean;
+  @ApiProperty() like_level?: number;
+  @ApiProperty() read_date?: Date;
 
   public static mapToAPI(content: ContenuBibliotheque): ContenuBibliothequeAPI {
     return {
@@ -33,6 +36,9 @@ export class ContenuBibliothequeAPI {
       thematiques: content.thematiques,
       image_url: content.image_url,
       points: content.points,
+      favoris: content.favoris,
+      like_level: content.like_level,
+      read_date: content.read_date,
     };
   }
 }

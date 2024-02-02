@@ -36,11 +36,12 @@ export class BibliothequeUsecase {
       titre_fragment: titre,
     });
 
-    articles = utilisateur.history.orderArticlesByReadDate(articles);
+    const ordered_personal_articles =
+      utilisateur.history.orderArticlesByReadDate(articles);
 
-    articles.forEach((article) => {
+    ordered_personal_articles.forEach((personal_article) => {
       result.contenu.push({
-        ...article,
+        ...personal_article,
         type: ContentType.article,
       });
     });

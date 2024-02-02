@@ -1,5 +1,4 @@
-import { Article } from '../article';
-import { Quizz } from '../quizz/quizz';
+import { Article, PersonalArticle } from '../article';
 import { ArticleHistory } from './articleHistory';
 import { QuizzHistory } from './quizzHistory';
 
@@ -59,16 +58,25 @@ export class History {
 
     return filtered.map((article) => article.content_id);
   }
-  public orderArticlesByReadDate?(articles: Article[]): Article[] {
-    const timestamped_articles: { article: Article; date: Date }[] = [];
+
+  public orderArticlesByReadDate?(articles: Article[]): PersonalArticle[] {
+    const personalArticles: PersonalArticle[] = [];
+
     articles.forEach((article) => {
-      timestamped_articles.push({
-        article: article,
-        date: this.getArticleHistoryById(article.content_id).read_date,
+      const articleHisto = this.getArticleHistoryById(article.content_id);
+      personalArticles.push({
+        ...article,
+        read_date: articleHisto.read_date,
+        favoris: articleHisto.favoris,
+        like_level: articleHisto.like_level,
       });
     });
-    timestamped_articles.sort((a, b) => b.date.getTime() - a.date.getTime());
-    return timestamped_articles.map((a) => a.article);
+
+    personalArticles.sort(
+      (a, b) => b.read_date.getTime() - a.read_date.getTime(),
+    );
+
+    return personalArticles;
   }
 
   public listeIdsQuizz100Pour100?(): string[] {
@@ -130,7 +138,11 @@ export class History {
     if (result) {
       return result;
     } else {
-      result = new ArticleHistory({ content_id: content_id });
+      result = new ArticleHistory({
+        content_id: content_id,
+        favoris: false,
+        points_en_poche: false,
+      });
       this.article_interactions.push(result);
     }
     return result;

@@ -18,3 +18,9 @@ export class Article {
   thematique_principale: Thematique;
   thematiques: Thematique[];
 }
+
+export class PersonalArticle extends Article {
+  favoris: boolean;
+  read_date?: Date;
+  like_level?: number;
+}

@@ -14,6 +14,9 @@ export class ContenuBibliotheque {
   duree?: string;
   image_url: string;
   points: number;
+  favoris: boolean;
+  like_level?: number;
+  read_date?: Date;
 }
 
 export class Bibliotheque {

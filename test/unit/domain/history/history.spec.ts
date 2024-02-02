@@ -19,6 +19,7 @@ describe('History', () => {
           like_level: 2,
           points_en_poche: true,
           read_date: new Date(123),
+          favoris: true,
         },
       ],
     });
@@ -131,10 +132,25 @@ describe('History', () => {
     // GIVEN
     const history = new History({
       article_interactions: [
-        { content_id: '1', read_date: new Date() },
-        { content_id: '2', read_date: null },
-        { content_id: '3', read_date: new Date() },
-        { content_id: '4' },
+        {
+          content_id: '1',
+          read_date: new Date(),
+          points_en_poche: true,
+          favoris: false,
+        },
+        {
+          content_id: '2',
+          read_date: null,
+          points_en_poche: true,
+          favoris: false,
+        },
+        {
+          content_id: '3',
+          read_date: new Date(),
+          points_en_poche: true,
+          favoris: false,
+        },
+        { content_id: '4', points_en_poche: true, favoris: false },
       ],
     });
 
@@ -150,10 +166,10 @@ describe('History', () => {
     // GIVEN
     const history = new History({
       article_interactions: [
-        { content_id: '1', favoris: true },
-        { content_id: '2', favoris: null },
-        { content_id: '3', favoris: false },
-        { content_id: '4' },
+        { content_id: '1', favoris: true, points_en_poche: true },
+        { content_id: '2', favoris: null, points_en_poche: true },
+        { content_id: '3', favoris: false, points_en_poche: true },
+        { content_id: '4', points_en_poche: true, favoris: false },
       ],
     });
 
@@ -210,11 +226,31 @@ describe('History', () => {
     // GIVEN
     const history = new History({
       article_interactions: [
-        { content_id: '1', read_date: new Date(1) },
-        { content_id: '2', read_date: null },
-        { content_id: '3', read_date: new Date(2) },
-        { content_id: '4' },
-        { content_id: '5', read_date: new Date(0) },
+        {
+          content_id: '1',
+          read_date: new Date(1),
+          points_en_poche: true,
+          favoris: false,
+        },
+        {
+          content_id: '2',
+          read_date: null,
+          points_en_poche: true,
+          favoris: false,
+        },
+        {
+          content_id: '3',
+          read_date: new Date(2),
+          points_en_poche: true,
+          favoris: false,
+        },
+        { content_id: '4', points_en_poche: true, favoris: false },
+        {
+          content_id: '5',
+          read_date: new Date(0),
+          points_en_poche: true,
+          favoris: false,
+        },
       ],
     });
 
@@ -231,5 +267,44 @@ describe('History', () => {
     expect(result[0].content_id).toEqual('3');
     expect(result[1].content_id).toEqual('1');
     expect(result[2].content_id).toEqual('5');
+  });
+  it('Ajoute les like_levels, read_date et favoris', () => {
+    // GIVEN
+    const history = new History({
+      article_interactions: [
+        {
+          content_id: '1',
+          read_date: new Date(1),
+          favoris: true,
+          points_en_poche: true,
+          like_level: 1,
+        },
+        {
+          content_id: '2',
+          read_date: new Date(2),
+          favoris: false,
+          points_en_poche: true,
+          like_level: 2,
+        },
+      ],
+    });
+
+    const liste_articles: Article[] = [];
+    liste_articles.push(TestUtil.articleData({ content_id: '1' }));
+    liste_articles.push(TestUtil.articleData({ content_id: '2' }));
+
+    // WHEN
+    const result = history.orderArticlesByReadDate(liste_articles);
+
+    // THEN
+    expect(result).toHaveLength(2);
+    expect(result[0].content_id).toEqual('2');
+    expect(result[0].like_level).toEqual(2);
+    expect(result[0].read_date.getTime()).toEqual(2);
+    expect(result[0].favoris).toEqual(false);
+    expect(result[1].content_id).toEqual('1');
+    expect(result[1].like_level).toEqual(1);
+    expect(result[1].read_date.getTime()).toEqual(1);
+    expect(result[1].favoris).toEqual(true);
   });
 });
