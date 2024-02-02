@@ -21,7 +21,7 @@ export class TodoUsecase {
       utilisateurId,
     );
 
-    await this.upgradeTodoIfNeeded(utilisateur);
+    await this.upgradeTodoIfNeeded(utilisateur); // FIXME : to remove
 
     const todo_active = utilisateur.parcours_todo.getActiveTodo();
     const element = todo_active.findDoneElementById(elementId);
@@ -38,7 +38,7 @@ export class TodoUsecase {
       utilisateurId,
     );
 
-    await this.upgradeTodoIfNeeded(utilisateur);
+    await this.upgradeTodoIfNeeded(utilisateur); // FIXME : to remove
 
     const todo_active = utilisateur.parcours_todo.getActiveTodo();
     if (todo_active.isDone()) {
@@ -56,7 +56,7 @@ export class TodoUsecase {
       utilisateurId,
     );
 
-    await this.upgradeTodoIfNeeded(utilisateur);
+    await this.upgradeTodoIfNeeded(utilisateur); // FIXME : to remove
 
     const todo = utilisateur.parcours_todo.getActiveTodo();
 
@@ -103,9 +103,29 @@ export class TodoUsecase {
     }
     return todo;
   }
+
+  public async updateAllUsersTodo(): Promise<string[]> {
+    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
+    const log: string[] = [];
+    for (let index = 0; index < userIdList.length; index++) {
+      const user_id = userIdList[index];
+
+      const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+        user_id,
+      );
+
+      const evolved = utilisateur.parcours_todo.appendNewFromCatalogue();
+
+      log.push(`utilisateur ${utilisateur.id} : ${evolved}`);
+
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    }
+    return log;
+  }
+
+  // FIXME : to remove
   private async upgradeTodoIfNeeded(utilisateur: Utilisateur) {
     utilisateur.parcours_todo.upgradeParcoursIfNeeded();
-    utilisateur.parcours_todo.appendNewFromCatalogue();
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 

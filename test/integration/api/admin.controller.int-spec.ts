@@ -1,8 +1,13 @@
 import { TestUtil } from '../../TestUtil';
 import { ServiceStatus } from '../../../src/domain/service/service';
+import { Thematique } from '../../../src/domain/thematique';
+import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
+  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -811,5 +816,59 @@ describe('Admin (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0].label).toEqual('En construction 🚧');
+  });
+  it('POST /admin/upgrade_user_todo complète la todo des utilisateurs', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await TestUtil.create('utilisateur', {
+      email: '1',
+      todo: {
+        liste_todo: [
+          {
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                titre: 'faire quizz climat',
+                thematiques: [Thematique.climat],
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: 'quizz',
+                level: DifficultyLevel.L1,
+                points: 10,
+              },
+            ],
+          },
+        ],
+        todo_active: 0,
+      },
+    });
+    await TestUtil.create('utilisateur', {
+      id: 'user-2',
+      email: '2',
+      todo: {
+        liste_todo: TodoCatalogue.getAllTodos(),
+        todo_active: 0,
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/upgrade_user_todo');
+
+    // THEN
+    const userDB_1 = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    const userDB_2 = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(2);
+    expect(response.body).toContain(`utilisateur utilisateur-id : true`);
+    expect(response.body).toContain(`utilisateur user-2 : false`);
+    expect(userDB_1.parcours_todo.todo_active).toEqual(0);
+    expect(userDB_2.parcours_todo.liste_todo).toHaveLength(5);
   });
 });

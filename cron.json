@@ -15,5 +15,8 @@
     {
       "command": "0 6 * * * ./scripts/clean_linky_data.sh"
     }
+    {
+      "command": "0 5 * * * ./scripts/upgrade_user_todo.sh"
+    }
   ]
 }

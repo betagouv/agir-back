@@ -85,7 +85,8 @@ export class MigrationUsecase {
   private async migrate_3(
     utilisateur: Utilisateur,
   ): Promise<{ ok: boolean; info: string }> {
-    return { ok: false, info: 'to implement' };
+    utilisateur.parcours_todo.upgradeParcoursIfNeeded();
+    return { ok: true, info: `migrated todo for ${utilisateur.id}` };
   }
   private async migrate_4(
     utilisateur: Utilisateur,

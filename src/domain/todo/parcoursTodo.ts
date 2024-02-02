@@ -39,7 +39,7 @@ export class ParcoursTodo {
     return this.todo_active === this.liste_todo.length;
   }
 
-  public appendNewFromCatalogue?() {
+  public appendNewFromCatalogue?(): boolean {
     const current_todo_length = this.liste_todo.length;
     const catalogue_length = TodoCatalogue.getNombreTodo();
 
@@ -51,7 +51,9 @@ export class ParcoursTodo {
       ) {
         this.liste_todo.push(TodoCatalogue.getTodoOfNumero(index));
       }
+      return true;
     }
+    return false;
   }
 
   public avanceDansParcours?() {

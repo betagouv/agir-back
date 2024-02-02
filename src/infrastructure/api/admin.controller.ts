@@ -21,6 +21,7 @@ import { GenericControler } from './genericControler';
 import { UserMigrationReportAPI } from './types/userMigrationReportAPI';
 import { ReferentielUsecase } from '../../../src/usecase/referentiel/referentiel.usecase';
 import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
+import { TodoUsecase } from '../../../src/usecase/todo.usecase';
 
 @Controller()
 @ApiBearerAuth()
@@ -32,6 +33,7 @@ export class AdminController extends GenericControler {
     private linkyUsecase: LinkyUsecase,
     private cmsUsecase: CMSUsecase,
     private referentielUsecase: ReferentielUsecase,
+    private todoUsecase: TodoUsecase,
   ) {
     super();
   }
@@ -195,5 +197,22 @@ export class AdminController extends GenericControler {
       throw new ForbiddenException('CRON API KEY incorrecte');
     }
     await this.migrationUsecase.unlockUserMigration();
+  }
+
+  @Post('/admin/upgrade_user_todo')
+  @ApiOperation({
+    summary: `enrichit la TODO des utilisateurs si besoin`,
+  })
+  @ApiOkResponse({ type: [String] })
+  async upgrade_user_todo(
+    @Headers('Authorization') authorization: string,
+  ): Promise<string[]> {
+    if (!authorization) {
+      throw new UnauthorizedException('CRON API KEY manquante');
+    }
+    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
+      throw new ForbiddenException('CRON API KEY incorrecte');
+    }
+    return await this.todoUsecase.updateAllUsersTodo();
   }
 }
