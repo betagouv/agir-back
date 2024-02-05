@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { QuestionNGCRepository } from '../infrastructure/repository/questionNGC.repository';
 import { BilanRepository } from '../infrastructure/repository/bilan.repository';
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
-import { Question } from '../../src/domain/bilan/question';
+import { Question } from '../domain/bilan/question';
 
 @Injectable()
-export class QuestionNGCUsecase {
+export class QuestionNGCUsecase_deprecated {
   constructor(
-    private questionNGCRepository: QuestionNGCRepository,
     private bilanRepository: BilanRepository,
     private nGCCalculator: NGCCalculator,
   ) {}
@@ -17,6 +15,7 @@ export class QuestionNGCUsecase {
     key: string,
     value: string,
   ): Promise<Question> {
+    /*
     const savedQuestion = await this.questionNGCRepository.saveOrUpdateQuestion(
       utilisateurId,
       key,
@@ -50,6 +49,8 @@ export class QuestionNGCUsecase {
     );
 
     return savedQuestion;
+    */
+    return null;
   }
 
   private overrideSituationWithQuestionListe(

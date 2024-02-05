@@ -4,12 +4,9 @@ import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
 import { SuiviAlimentation } from '../../../src/domain/suivi/suiviAlimentation';
 import { SuiviRepository } from '../../../src/infrastructure/repository/suivi.repository';
-import { QuestionNGCRepository } from '../../../src/infrastructure/repository/questionNGC.repository';
 import { Suivi } from '../../../src/domain/suivi/suivi';
 import { SuiviTransport } from '../../../src/domain/suivi/suiviTransport';
 import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
-import { DifficultyLevel } from '../../domain/contenu/difficultyLevel';
-import { Thematique } from '../../domain/contenu/thematique';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 import { OnboardingUsecase } from '../../../src/usecase/onboarding.usecase';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
@@ -39,9 +36,7 @@ export class TestDataController {
   constructor(
     private prisma: PrismaService,
     private suiviRepository: SuiviRepository,
-    private questionNGCRepository: QuestionNGCRepository,
     private linkyRepository: LinkyRepository,
-    private onboardingUsecase: OnboardingUsecase,
   ) {}
 
   @Get('testdata/:id')
@@ -72,7 +67,6 @@ export class TestDataController {
     await this.insertLinkyDataForUtilisateur(utilisateurId);
     await this.insertSuivisAlimentationForUtilisateur(utilisateurId);
     await this.insertEmpreintesForUtilisateur(utilisateurId);
-    await this.insertQuestionsNGCForUtilisateur(utilisateurId);
     return utilisateurs_content[utilisateurId];
   }
 
@@ -179,20 +173,6 @@ export class TestDataController {
       }
     }
   }
-  async insertQuestionsNGCForUtilisateur(utilisateurId: string) {
-    const questionsNGC = utilisateurs_content[utilisateurId].questionsNGC;
-    if (questionsNGC) {
-      const keyList = Object.keys(questionsNGC);
-      for (let index = 0; index < keyList.length; index++) {
-        const key = keyList[index];
-        await this.questionNGCRepository.saveOrUpdateQuestion(
-          utilisateurId,
-          key,
-          questionsNGC[key],
-        );
-      }
-    }
-  }
   async insertServicesForUtilisateur(utilisateurId: string) {
     const services = utilisateurs_content[utilisateurId].services;
     if (!services) return;
@@ -236,11 +216,6 @@ export class TestDataController {
       },
     });
     await this.prisma.empreinte.deleteMany({
-      where: {
-        utilisateurId,
-      },
-    });
-    await this.prisma.questionNGC.deleteMany({
       where: {
         utilisateurId,
       },

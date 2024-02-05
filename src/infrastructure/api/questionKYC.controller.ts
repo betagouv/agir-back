@@ -17,7 +17,7 @@ import {
   HttpStatus,
   UseFilters,
 } from '@nestjs/common';
-import { QuestionNGCUsecase } from '../../usecase/questionNGC.usecase';
+import { QuestionNGCUsecase_deprecated } from '../../usecase/questionNGC.deprecated.usecase';
 import { Question } from '../../domain/bilan/question';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';

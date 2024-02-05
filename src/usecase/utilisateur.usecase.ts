@@ -3,7 +3,6 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { UtilisateurProfileAPI } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
 import { SuiviRepository } from '../infrastructure/repository/suivi.repository';
 import { BilanRepository } from '../infrastructure/repository/bilan.repository';
-import { QuestionNGCRepository } from '../infrastructure/repository/questionNGC.repository';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { OidcService } from '../../src/infrastructure/auth/oidc.service';
 import { Injectable } from '@nestjs/common';
@@ -31,7 +30,6 @@ export class UtilisateurUsecase {
     private serviceRepository: ServiceRepository,
     private suiviRepository: SuiviRepository,
     private bilanRepository: BilanRepository,
-    private questionNGCRepository: QuestionNGCRepository,
     private questionKYCRepository: QuestionKYCRepository,
     private oIDCStateRepository: OIDCStateRepository,
     private oidcService: OidcService,
@@ -182,7 +180,6 @@ export class UtilisateurUsecase {
     await this.suiviRepository.delete(utilisateurId);
     await this.questionKYCRepository.delete(utilisateurId);
     await this.bilanRepository.delete(utilisateurId);
-    await this.questionNGCRepository.delete(utilisateurId);
     await this.oIDCStateRepository.delete(utilisateurId);
     await this.bilanRepository.delete(utilisateurId);
     await this.serviceRepository.deleteAllUserServices(utilisateurId);

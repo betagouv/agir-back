@@ -49,7 +49,6 @@ model Utilisateur {
   history                  Json               @default("{}")
   empreintes               Empreinte[]
   suivis                   Suivi[]
-  questionsNGC             QuestionNGC[]
   groupes                  GroupeAbonnement[]
   created_at               DateTime           @default(now()) @db.Timestamptz(3)
   updated_at               DateTime           @default(now()) @updatedAt @db.Timestamptz(3)
@@ -130,18 +129,6 @@ model Empreinte {
   utilisateurId String
   situationId   String       @unique
   situation     SituationNGC @relation(fields: [situationId], references: [id])
-}
-
-model QuestionNGC {
-  id            String      @id
-  key           String
-  value         String?
-  utilisateurId String
-  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
-  created_at    DateTime    @default(now()) @db.Timestamptz(3)
-  updated_at    DateTime    @default(now()) @updatedAt @db.Timestamptz(3)
-
-  @@unique([key, utilisateurId])
 }
 
 model QuestionsKYC {

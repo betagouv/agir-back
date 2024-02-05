@@ -28,8 +28,7 @@ import { OIDCStateRepository } from '../src/infrastructure/repository/oidcState.
 import { JwtModule } from '@nestjs/jwt';
 import { OidcService } from '../src/infrastructure/auth/oidc.service';
 import { NGCCalculator } from './infrastructure/ngc/NGCCalculator';
-import { QuestionNGCUsecase } from './usecase/questionNGC.usecase';
-import { QuestionNGCRepository } from './infrastructure/repository/questionNGC.repository';
+import { QuestionNGCUsecase_deprecated } from './usecase/questionNGC.deprecated.usecase';
 import { EmailSender } from './infrastructure/email/emailSender';
 import { OnboardingUsecase } from './usecase/onboarding.usecase';
 import { OnboardingController } from './infrastructure/api/onboarding.controller';
@@ -127,7 +126,6 @@ function getControllers(): any[] {
     OIDCStateRepository,
     OidcService,
     NGCCalculator,
-    QuestionNGCRepository,
     AidesRetrofitRepository,
     AidesVeloRepository,
     UtilisateurUsecase,
@@ -135,7 +133,7 @@ function getControllers(): any[] {
     AidesUsecase,
     InteractionsUsecase,
     SuiviUsecase,
-    QuestionNGCUsecase,
+    QuestionNGCUsecase_deprecated,
     CMSUsecase,
     EmailSender,
     OnboardingUsecase,
