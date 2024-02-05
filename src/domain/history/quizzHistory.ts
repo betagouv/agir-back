@@ -7,8 +7,16 @@ export class QuizzAttempt {
   date: Date;
 }
 
-export class QuizzHistory {
-  constructor(data: QuizzHistory) {
+export class QuizzHistoryData {
+  content_id: string;
+  attempts?: QuizzAttempt[];
+  like_level?: number;
+  points_en_poche?: boolean;
+}
+
+export class QuizzHistory extends QuizzHistoryData {
+  constructor(data: QuizzHistoryData) {
+    super();
     this.content_id = data.content_id;
     this.attempts = [];
     if (data.attempts) {
@@ -22,19 +30,14 @@ export class QuizzHistory {
     this.points_en_poche = data.points_en_poche ? data.points_en_poche : false;
   }
 
-  content_id: string;
-  attempts?: QuizzAttempt[];
-  like_level?: number;
-  points_en_poche?: boolean;
-
-  public addAttempt?(score: number, date?: Date) {
+  public addAttempt(score: number, date?: Date) {
     this.attempts.push(new QuizzAttempt(score, date || new Date()));
   }
 
-  public has100ScoreAmongAttempts?(): boolean {
+  public has100ScoreAmongAttempts(): boolean {
     return this.attempts.findIndex((attempt) => attempt.score === 100) >= 0;
   }
-  public hasAttempt?(): boolean {
+  public hasAttempt(): boolean {
     return this.attempts.length > 0;
   }
 }

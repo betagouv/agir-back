@@ -1,5 +1,5 @@
-import { Thematique } from '../thematique';
-import { DifficultyLevel } from '../difficultyLevel';
+import { Thematique } from '../contenu/thematique';
+import { DifficultyLevel } from '../contenu/difficultyLevel';
 import { UserQuizzLevel } from './userQuizzLevel';
 
 export class UserQuizzProfile {

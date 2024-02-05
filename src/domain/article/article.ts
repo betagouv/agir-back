@@ -1,6 +1,6 @@
-import { DifficultyLevel } from './difficultyLevel';
-import { ArticleHistory } from './history/articleHistory';
-import { Thematique } from './thematique';
+import { DifficultyLevel } from '../contenu/difficultyLevel';
+import { ArticleHistory } from '../history/articleHistory';
+import { Thematique } from '../contenu/thematique';
 
 export class Article {
   content_id: string;

@@ -1,5 +1,5 @@
-import { Thematique } from '../../../../src/domain/thematique';
-import { DifficultyLevel } from '../../../../src/domain/difficultyLevel';
+import { Thematique } from '../../../../src/domain/contenu/thematique';
+import { DifficultyLevel } from '../../../../src/domain/contenu/difficultyLevel';
 import { Todo } from '../../../../src/domain/todo/todo';
 import { ContentType } from '../../../../src/domain/contenu/contentType';
 

@@ -120,7 +120,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     const collection = await questionRepo.getAll('utilisateur-id');
-    expect(collection.getQuestion('1').reponse).toStrictEqual(['YO']);
+    expect(collection.getAnyQuestion('1').reponse).toStrictEqual(['YO']);
 
     const userDB = await utilisateurRepository.findUtilisateurById(
       'utilisateur-id',
@@ -140,7 +140,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     const collection = await questionRepo.getAll('utilisateur-id');
-    expect(collection.getQuestion('2').reponse).toStrictEqual(['YO']);
+    expect(collection.getAnyQuestion('2').reponse).toStrictEqual(['YO']);
 
     const userDB = await utilisateurRepository.findUtilisateurById(
       'utilisateur-id',

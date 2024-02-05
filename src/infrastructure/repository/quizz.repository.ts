@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Quizz } from '../../../src/domain/quizz/quizz';
 import { Quizz as QuizzDB } from '@prisma/client';
-import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
-import { Thematique } from '../../../src/domain/thematique';
-import { ContentRecommandation } from '../../../src/domain/contentRecommandation';
+import { DifficultyLevel } from '../../domain/contenu/difficultyLevel';
+import { Thematique } from '../../domain/contenu/thematique';
+import { ContentRecommandation } from '../../domain/contenu/contentRecommandation';
 
 export type QuizzFilter = {
   maxNumber?: number;

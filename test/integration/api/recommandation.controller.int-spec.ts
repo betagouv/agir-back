@@ -1,4 +1,4 @@
-import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
+import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
 import { TestUtil } from '../../TestUtil';
 
 describe('/utilisateurs/id/recommandations (API test)', () => {

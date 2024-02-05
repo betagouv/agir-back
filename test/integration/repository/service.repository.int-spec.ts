@@ -4,7 +4,7 @@ import {
   LiveService,
   ScheduledService,
 } from '../../../src/domain/service/serviceDefinition';
-import { Thematique } from '../../../src/domain/thematique';
+import { Thematique } from '../../../src/domain/contenu/thematique';
 import { ServiceStatus } from '../../../src/domain/service/service';
 
 async function injectData() {

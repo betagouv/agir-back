@@ -1,8 +1,8 @@
 import { EventType } from '../../../src/domain/utilisateur/utilisateurEvent';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import { TestUtil } from '../../TestUtil';
-import { Thematique } from '../../../src/domain/thematique';
-import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
+import { Thematique } from '../../../src/domain/contenu/thematique';
+import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { CelebrationDeNiveau } from '../../../src/domain/gamification/celebrations/celebrationDeNiveau';
 import { UnlockedFeatures } from '../../../src/domain/gamification/unlockedFeatures';
@@ -381,8 +381,8 @@ describe('EVENT (API test)', () => {
       'utilisateur-id',
     );
     expect(dbUtilisateur.gamification.celebrations).toHaveLength(0);
-    expect(dbUtilisateur.unlocked_features.getUnlockedList()).toHaveLength(1);
-    expect(dbUtilisateur.unlocked_features.getUnlockedList()[0]).toEqual(
+    expect(dbUtilisateur.unlocked_features.getUnlockedFeatures()).toHaveLength(1);
+    expect(dbUtilisateur.unlocked_features.getUnlockedFeatures()[0]).toEqual(
       'aides',
     );
   });

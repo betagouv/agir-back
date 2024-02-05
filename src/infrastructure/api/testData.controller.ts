@@ -8,8 +8,8 @@ import { QuestionNGCRepository } from '../../../src/infrastructure/repository/qu
 import { Suivi } from '../../../src/domain/suivi/suivi';
 import { SuiviTransport } from '../../../src/domain/suivi/suiviTransport';
 import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
-import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
-import { Thematique } from '../../../src/domain/thematique';
+import { DifficultyLevel } from '../../domain/contenu/difficultyLevel';
+import { Thematique } from '../../domain/contenu/thematique';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 import { OnboardingUsecase } from '../../../src/usecase/onboarding.usecase';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');

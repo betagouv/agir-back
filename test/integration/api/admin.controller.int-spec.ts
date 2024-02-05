@@ -1,7 +1,7 @@
 import { TestUtil } from '../../TestUtil';
 import { ServiceStatus } from '../../../src/domain/service/service';
-import { Thematique } from '../../../src/domain/thematique';
-import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
+import { Thematique } from '../../../src/domain/contenu/thematique';
+import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
 

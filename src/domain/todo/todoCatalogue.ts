@@ -1,6 +1,6 @@
-import { DifficultyLevel } from '../difficultyLevel';
+import { DifficultyLevel } from '../contenu/difficultyLevel';
 import { ContentType } from '../contenu/contentType';
-import { Thematique } from '../thematique';
+import { Thematique } from '../contenu/thematique';
 import { Todo } from './todo';
 import { v4 as uuidv4 } from 'uuid';
 import { LiveService } from '../service/serviceDefinition';

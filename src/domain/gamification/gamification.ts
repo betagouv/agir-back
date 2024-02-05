@@ -25,7 +25,7 @@ export class Gamification extends GamificationData {
     }
   }
 
-  public terminerCelebration?(id: string, utilisateur: Utilisateur) {
+  public terminerCelebration(id: string, utilisateur: Utilisateur) {
     const index = this.celebrations.findIndex((element) => element.id === id);
     const celebration = this.celebrations[index];
     if (celebration.hasReveal()) {
@@ -34,7 +34,7 @@ export class Gamification extends GamificationData {
     this.celebrations.splice(index, 1);
   }
 
-  public ajoutePoints?(new_points: number) {
+  public ajoutePoints(new_points: number) {
     const current_nivau = this.getNiveau();
     this.points += new_points;
     const new_niveau = this.getNiveau();
@@ -44,18 +44,18 @@ export class Gamification extends GamificationData {
     }
   }
 
-  public getNiveau?(): number {
+  public getNiveau(): number {
     const position = SEUILS_NIVEAUX.findIndex((n) => n > this.points);
     return position === -1 ? SEUILS_NIVEAUX.length + 1 : position + 1;
   }
 
-  public getCurrent_points_in_niveau?(): number {
+  public getCurrent_points_in_niveau(): number {
     const niveau = this.getNiveau();
     const seuil = this.getSeuilOfNiveau(niveau);
     return this.points - seuil;
   }
 
-  public getPoint_target_in_niveau?(): number {
+  public getPoint_target_in_niveau(): number {
     const niveau = this.getNiveau();
     if (niveau === SEUILS_NIVEAUX.length + 1) {
       return 999;
@@ -65,12 +65,12 @@ export class Gamification extends GamificationData {
     return seuil_haut - seuil_bas;
   }
 
-  public getSeuilOfNiveau?(niveau: number): number {
+  public getSeuilOfNiveau(niveau: number): number {
     if (niveau === 1) return 0;
     return SEUILS_NIVEAUX[niveau - 2];
   }
 
-  public static newDefaultGamification?(): Gamification {
+  public static newDefaultGamification(): Gamification {
     return new Gamification({
       points: 0,
       celebrations: [],

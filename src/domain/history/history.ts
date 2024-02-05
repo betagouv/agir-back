@@ -1,4 +1,4 @@
-import { Article, PersonalArticle } from '../article';
+import { Article, PersonalArticle } from '../article/article';
 import { ArticleHistory } from './articleHistory';
 import { QuizzHistory } from './quizzHistory';
 
@@ -6,8 +6,14 @@ export type SearchArticleFilter = {
   est_lu?: boolean;
   est_favoris?: boolean;
 };
-export class History {
-  constructor(data: History) {
+
+export class HistoryData {
+  article_interactions?: ArticleHistory[];
+  quizz_interactions?: QuizzHistory[];
+}
+export class History extends HistoryData {
+  constructor(data: HistoryData) {
+    super();
     this.article_interactions = [];
     this.quizz_interactions = [];
 
@@ -23,35 +29,32 @@ export class History {
     }
   }
 
-  article_interactions?: ArticleHistory[];
-  quizz_interactions?: QuizzHistory[];
-
   public static newHistory(): History {
     return new History({});
   }
-  public getArticleHistoryById?(content_id: string): ArticleHistory {
+  public getArticleHistoryById(content_id: string): ArticleHistory {
     return this.article_interactions.find(
       (article) => article.content_id === content_id,
     );
   }
-  public getQuizzHistoryById?(content_id: string): QuizzHistory {
+  public getQuizzHistoryById(content_id: string): QuizzHistory {
     return this.quizz_interactions.find(
       (quizz) => quizz.content_id === content_id,
     );
   }
 
-  public nombreArticles?(): number {
+  public nombreArticles(): number {
     return this.article_interactions.length;
   }
 
-  public personnaliserArticle?(article: Article): PersonalArticle {
+  public personnaliserArticle(article: Article): PersonalArticle {
     const found_article_history = this.getArticleHistoryById(
       article.content_id,
     );
     return new PersonalArticle(article, found_article_history);
   }
 
-  public searchArticlesIds?(filter: SearchArticleFilter): string[] {
+  public searchArticlesIds(filter: SearchArticleFilter): string[] {
     const filtered = this.article_interactions.filter((article) => {
       let select = true;
       if (filter.est_lu) {
@@ -66,7 +69,7 @@ export class History {
     return filtered.map((article) => article.content_id);
   }
 
-  public orderArticlesByReadDate?(articles: Article[]): PersonalArticle[] {
+  public orderArticlesByReadDate(articles: Article[]): PersonalArticle[] {
     const personalArticles: PersonalArticle[] = [];
 
     articles.forEach((article) =>
@@ -80,59 +83,59 @@ export class History {
     return personalArticles;
   }
 
-  public listeIdsQuizz100Pour100?(): string[] {
+  public listeIdsQuizz100Pour100(): string[] {
     return this.quizz_interactions
       .filter((quizz) => quizz.has100ScoreAmongAttempts())
       .map((article) => article.content_id);
   }
-  public listeIdsQuizzAttempted?(): string[] {
+  public listeIdsQuizzAttempted(): string[] {
     return this.quizz_interactions
       .filter((quizz) => quizz.hasAttempt())
       .map((article) => article.content_id);
   }
-  public nombreQuizz?(): number {
+  public nombreQuizz(): number {
     return this.quizz_interactions.length;
   }
-  public lireArticle?(content_id: string, date?: Date) {
+  public lireArticle(content_id: string, date?: Date) {
     let article = this.findOrCreateArticleById(content_id);
     article.read_date = date || new Date();
   }
-  public quizzAttempt?(content_id: string, score: number, date?: Date) {
+  public quizzAttempt(content_id: string, score: number, date?: Date) {
     let quizz = this.findOrCreateQuizzById(content_id);
     quizz.addAttempt(score, date);
   }
 
-  public sontPointsArticleEnPoche?(content_id: string): boolean {
+  public sontPointsArticleEnPoche(content_id: string): boolean {
     let article = this.getArticleHistoryById(content_id);
     return article && article.points_en_poche;
   }
-  public sontPointsQuizzEnPoche?(content_id: string): boolean {
+  public sontPointsQuizzEnPoche(content_id: string): boolean {
     let quizz = this.getQuizzHistoryById(content_id);
     return quizz && quizz.points_en_poche;
   }
-  public declarePointsArticleEnPoche?(content_id: string) {
+  public declarePointsArticleEnPoche(content_id: string) {
     let article = this.findOrCreateArticleById(content_id);
     article.points_en_poche = true;
   }
-  public declarePointsQuizzEnPoche?(content_id: string) {
+  public declarePointsQuizzEnPoche(content_id: string) {
     let quizz = this.findOrCreateQuizzById(content_id);
     quizz.points_en_poche = true;
   }
 
-  public likerArticle?(content_id: string, level: number) {
+  public likerArticle(content_id: string, level: number) {
     let article = this.findOrCreateArticleById(content_id);
     article.like_level = level;
   }
-  public likerQuizz?(content_id: string, level: number) {
+  public likerQuizz(content_id: string, level: number) {
     let quizz = this.findOrCreateQuizzById(content_id);
     quizz.like_level = level;
   }
-  public favoriserArticle?(content_id: string) {
+  public favoriserArticle(content_id: string) {
     let article = this.findOrCreateArticleById(content_id);
     article.favoris = true;
   }
 
-  private findOrCreateArticleById?(content_id: string): ArticleHistory {
+  private findOrCreateArticleById(content_id: string): ArticleHistory {
     let result = this.article_interactions.find(
       (article) => article.content_id === content_id,
     );
@@ -148,7 +151,7 @@ export class History {
     }
     return result;
   }
-  private findOrCreateQuizzById?(content_id: string): QuizzHistory {
+  private findOrCreateQuizzById(content_id: string): QuizzHistory {
     let result = this.quizz_interactions.find(
       (quizz) => quizz.content_id === content_id,
     );

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ContentType } from '../../../../domain/contenu/contentType';
-import { DifficultyLevel } from '../../../../../src/domain/difficultyLevel';
-import { Thematique } from '../../../../../src/domain/thematique';
+import { DifficultyLevel } from '../../../../domain/contenu/difficultyLevel';
+import { Thematique } from '../../../../domain/contenu/thematique';
 import { Todo } from '../../../../../src/domain/todo/todo';
 
 export class ProgressionAPI {

@@ -1,5 +1,5 @@
-import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
-import { Thematique } from '../../../src/domain/thematique';
+import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
+import { Thematique } from '../../../src/domain/contenu/thematique';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import { TestUtil } from '../../TestUtil';
 import { LiveService } from '../../../src/domain/service/serviceDefinition';
@@ -839,7 +839,7 @@ describe('TODO list (API test)', () => {
     await TestUtil.create('questionsKYC', {
       utilisateurId: 'utilisateur-id',
       data: {
-        liste_questions: [
+        answered_questions: [
           {
             id: '2',
             question: `Quel est votre sujet principal d'intéret ?`,

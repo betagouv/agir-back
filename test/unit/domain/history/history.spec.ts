@@ -1,6 +1,10 @@
 import { TestUtil } from '../../../../test/TestUtil';
-import { Article } from '../../../../src/domain/article';
+import { Article } from '../../../../src/domain/article/article';
 import { History } from '../../../../src/domain/history/history';
+import {
+  QuizzAttempt,
+  QuizzHistory,
+} from '../../../../src/domain/history/quizzHistory';
 
 describe('History', () => {
   it('WHEN un vie historique ok', () => {
@@ -184,15 +188,21 @@ describe('History', () => {
     // GIVEN
     const history = new History({
       quizz_interactions: [
-        { content_id: '1', attempts: [{ date: new Date(), score: 40 }] },
-        { content_id: '2', attempts: [{ date: new Date(), score: 100 }] },
-        {
+        new QuizzHistory({
+          content_id: '1',
+          attempts: [{ date: new Date(), score: 40 }],
+        }),
+        new QuizzHistory({
+          content_id: '2',
+          attempts: [{ date: new Date(), score: 100 }],
+        }),
+        new QuizzHistory({
           content_id: '3',
           attempts: [
             { date: new Date(), score: 10 },
             { date: new Date(), score: 100 },
           ],
-        },
+        }),
       ],
     });
 
@@ -208,9 +218,15 @@ describe('History', () => {
     // GIVEN
     const history = new History({
       quizz_interactions: [
-        { content_id: '1', attempts: [{ date: new Date(), score: 40 }] },
-        { content_id: '2', attempts: [{ date: new Date(), score: 100 }] },
-        { content_id: '3', attempts: [] },
+        new QuizzHistory({
+          content_id: '1',
+          attempts: [{ date: new Date(), score: 40 }],
+        }),
+        new QuizzHistory({
+          content_id: '2',
+          attempts: [{ date: new Date(), score: 100 }],
+        }),
+        new QuizzHistory({ content_id: '3', attempts: [] }),
       ],
     });
 

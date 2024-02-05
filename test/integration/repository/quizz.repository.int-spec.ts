@@ -1,7 +1,7 @@
 import { TestUtil } from '../../TestUtil';
-import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
+import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
 import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
-import { Thematique } from '../../../src/domain/thematique';
+import { Thematique } from '../../../src/domain/contenu/thematique';
 
 describe('QuizzRepository', () => {
   let quizzRepository = new QuizzRepository(TestUtil.prisma);

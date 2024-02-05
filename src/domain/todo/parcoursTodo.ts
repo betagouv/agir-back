@@ -1,5 +1,5 @@
 import { ContentType } from '../contenu/contentType';
-import { Thematique } from '../thematique';
+import { Thematique } from '../contenu/thematique';
 import { Todo, TodoElement } from './todo';
 import { TodoCatalogue } from './todoCatalogue';
 

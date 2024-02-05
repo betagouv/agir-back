@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Article } from '../../../src/domain/article';
+import { Article } from '../../domain/article/article';
 import { Article as ArticleDB } from '@prisma/client';
-import { Thematique } from '../../../src/domain/thematique';
-import { DifficultyLevel } from '../../../src/domain/difficultyLevel';
-import { ContentRecommandation } from '../../domain/contentRecommandation';
+import { Thematique } from '../../domain/contenu/thematique';
+import { DifficultyLevel } from '../../domain/contenu/difficultyLevel';
+import { ContentRecommandation } from '../../domain/contenu/contentRecommandation';
 
 export type ArticleFilter = {
   maxNumber?: number;

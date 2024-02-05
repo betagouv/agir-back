@@ -1,4 +1,4 @@
-import { Thematique } from '../../../src/domain/thematique';
+import { Thematique } from '../../../src/domain/contenu/thematique';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { TestUtil } from '../../TestUtil';
 

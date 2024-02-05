@@ -14,12 +14,12 @@ export class QuestionKYCUsecase {
 
   async getALL(utilisateurId: string): Promise<QuestionKYC[]> {
     const collection = await this.questionKYCRepository.getAll(utilisateurId);
-    return collection.getAllQuestions();
+    return collection.getAllQuestionSet();
   }
 
   async getQuestion(utilisateurId: string, questionId): Promise<QuestionKYC> {
     const collection = await this.questionKYCRepository.getAll(utilisateurId);
-    const question = collection.getQuestion(questionId);
+    const question = collection.getAnyQuestion(questionId);
     if (!question) {
       ApplicationError.throwQuestionInconnue(questionId);
     }
@@ -41,7 +41,7 @@ export class QuestionKYCUsecase {
     this.updateUserTodo(utilisateur, questionId);
 
     if (!collection.isQuestionAnswered(questionId)) {
-      const question = collection.getQuestion(questionId);
+      const question = collection.getAnyQuestion(questionId);
       utilisateur.gamification.ajoutePoints(question.points);
     }
 

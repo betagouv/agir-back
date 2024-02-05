@@ -3,8 +3,8 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { ArticleRepository } from '../infrastructure/repository/article.repository';
 import { Bibliotheque } from '../domain/contenu/bibliotheque';
 import { ContentType } from '../../src/domain/contenu/contentType';
-import { Thematique } from '../../src/domain/thematique';
-import { PersonalArticle } from '../../src/domain/article';
+import { Thematique } from '../domain/contenu/thematique';
+import { PersonalArticle } from '../domain/article/article';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 
 @Injectable()

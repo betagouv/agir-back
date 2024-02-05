@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Recommandation } from '../../../../../src/domain/contenu/recommandation';
-import { Thematique } from '../../../../../src/domain/thematique';
+import { Thematique } from '../../../../domain/contenu/thematique';
 import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
 
 export class RecommandationAPI {

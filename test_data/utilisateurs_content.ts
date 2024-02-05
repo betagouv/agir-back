@@ -1,6 +1,6 @@
-import { DifficultyLevel } from '../src/domain/difficultyLevel';
+import { DifficultyLevel } from '../src/domain/contenu/difficultyLevel';
 import { ContentType } from '../src/domain/contenu/contentType';
-import { Thematique } from '../src/domain/thematique';
+import { Thematique } from '../src/domain/contenu/thematique';
 import {
   Impact,
   Thematique as ThemaOnbo,

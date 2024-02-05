@@ -8,7 +8,7 @@ import {
 import { ServiceDefinition } from '../../domain/service/serviceDefinition';
 import { v4 as uuidv4 } from 'uuid';
 import { Service, ServiceStatus } from '../../domain/service/service';
-import { Thematique } from '../../../src/domain/thematique';
+import { Thematique } from '../../domain/contenu/thematique';
 import { ApplicationError } from '../applicationError';
 
 @Injectable()

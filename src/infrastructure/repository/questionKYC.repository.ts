@@ -16,7 +16,7 @@ export class QuestionKYCRepository {
       where: { utilisateurId },
     });
     return reponse === null
-      ? CollectionQuestionsKYC.newCollectionQuestionsKYC()
+      ? new CollectionQuestionsKYC()
       : new CollectionQuestionsKYC(reponse.data as any);
   }
 

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Thematique } from '../../../../../src/domain/thematique';
+import { Thematique } from '../../../../domain/contenu/thematique';
 
 export class CMSThematiqueAPI {
   @ApiProperty() id: number;

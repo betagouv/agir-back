@@ -1,5 +1,5 @@
-import { Article } from '../../../src/domain/article';
-import { ContentRecommandation } from '../../../src/domain/ContentRecommandation';
+import { Article } from '../../../src/domain/article/article';
+import { ContentRecommandation } from '../../../src/domain/contenu/contentRecommandation';
 
 describe('ContentRecommandation', () => {
   const ARTICLE: Article = {

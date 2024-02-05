@@ -3,11 +3,11 @@ import {
   ScheduledService,
 } from '../../../../src/domain/service/serviceDefinition';
 import { ContentType } from '../../../../src/domain/contenu/contentType';
-import { Thematique } from '../../../../src/domain/thematique';
+import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
 import { TodoCatalogue } from '../../../../src/domain/todo/todoCatalogue';
 import { Todo } from '../../../../src/domain/todo/todo';
-import { DifficultyLevel } from '../../../../src/domain/difficultyLevel';
+import { DifficultyLevel } from '../../../../src/domain/contenu/difficultyLevel';
 
 describe('ParcoursTodo', () => {
   it('constructor : build ok init Parcours', () => {

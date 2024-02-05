@@ -6,8 +6,8 @@ import {
   ContenuBibliotheque,
   ThematiqueFilter,
 } from '../../../../domain/contenu/bibliotheque';
-import { Thematique } from '../../../../../src/domain/thematique';
-import { PersonalArticle } from 'src/domain/article';
+import { Thematique } from '../../../../domain/contenu/thematique';
+import { PersonalArticle } from 'src/domain/article/article';
 
 export class ContenuBibliothequeAPI {
   @ApiProperty({ enum: ContentType }) type: ContentType;

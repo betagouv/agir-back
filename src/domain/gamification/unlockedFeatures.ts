@@ -1,7 +1,11 @@
 import { Feature } from './feature';
 
-export class UnlockedFeatures {
+export class UnlockedFeaturesData {
+  unlocked_feature_list?: Feature[];
+}
+export class UnlockedFeatures extends UnlockedFeaturesData {
   constructor(data?: UnlockedFeatures) {
+    super();
     if (data) {
       Object.assign(this, data);
     }
@@ -9,15 +13,14 @@ export class UnlockedFeatures {
       this.unlocked_feature_list = [];
     }
   }
-  private unlocked_feature_list: Feature[];
 
-  public add?(feature: Feature) {
+  public add(feature: Feature) {
     if (!this.unlocked_feature_list.includes(feature)) {
       this.unlocked_feature_list.push(feature);
     }
   }
 
-  public getUnlockedList?(): Feature[] {
+  public getUnlockedFeatures(): Feature[] {
     return this.unlocked_feature_list;
   }
 }

@@ -1,5 +1,5 @@
-import { DifficultyLevel } from '../../../../src/domain/difficultyLevel';
-import { Thematique } from '../../../../src/domain/thematique';
+import { DifficultyLevel } from '../../../../src/domain/contenu/difficultyLevel';
+import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { UserQuizzProfile } from '../../../../src/domain/quizz/userQuizzProfile';
 
 describe('UserQuizzProfile', () => {

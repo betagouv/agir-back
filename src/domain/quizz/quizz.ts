@@ -1,4 +1,4 @@
-import { Thematique } from '../thematique';
+import { Thematique } from '../contenu/thematique';
 
 export type Quizz = {
   content_id: string;

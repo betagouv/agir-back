@@ -3,21 +3,22 @@ import { QuestionKYC } from './questionQYC';
 
 const CATALOGUE_QUESTIONS = require('./catalogueKYC');
 
-export class CollectionQuestionsKYC {
-  constructor(data: CollectionQuestionsKYC) {
-    this.liste_questions = [];
-    if (data && data.liste_questions) {
-      data.liste_questions.forEach((element) => {
-        this.liste_questions.push(new QuestionKYC(element));
+export class CollectionQuestionsKYCData {
+  answered_questions: QuestionKYC[];
+}
+
+export class CollectionQuestionsKYC extends CollectionQuestionsKYCData {
+  constructor(data?: CollectionQuestionsKYCData) {
+    super();
+    this.answered_questions = [];
+    if (data && data.answered_questions) {
+      data.answered_questions.forEach((element) => {
+        this.answered_questions.push(new QuestionKYC(element));
       });
     }
   }
-  liste_questions: QuestionKYC[];
 
-  public static newCollectionQuestionsKYC(): CollectionQuestionsKYC {
-    return new CollectionQuestionsKYC(undefined);
-  }
-  public getAllQuestions(): QuestionKYC[] {
+  public getAllQuestionSet(): QuestionKYC[] {
     let result: QuestionKYC[] = [];
     CATALOGUE_QUESTIONS.forEach((element) => {
       let reponse = this.getAnsweredQuestion(element.id);
@@ -25,7 +26,8 @@ export class CollectionQuestionsKYC {
     });
     return result;
   }
-  public getQuestion(id: string): QuestionKYC {
+
+  public getAnyQuestion(id: string): QuestionKYC {
     let answered_question = this.getAnsweredQuestion(id);
     if (answered_question) return answered_question;
 
@@ -47,7 +49,7 @@ export class CollectionQuestionsKYC {
     } else {
       let catalogue_question = this.getCatalogueQuestion(questionId);
       catalogue_question.reponse = reponse;
-      this.liste_questions.push(catalogue_question);
+      this.answered_questions.push(catalogue_question);
     }
   }
 
@@ -59,7 +61,7 @@ export class CollectionQuestionsKYC {
   }
 
   private getAnsweredQuestion(id: string): QuestionKYC {
-    return this.liste_questions.find((element) => element.id === id);
+    return this.answered_questions.find((element) => element.id === id);
   }
   private getCatalogueQuestion(id: string): QuestionKYC {
     const question = CATALOGUE_QUESTIONS.find((element) => element.id === id);

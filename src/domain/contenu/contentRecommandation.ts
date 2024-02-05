@@ -1,5 +1,5 @@
-import { Article } from './article';
-import { Quizz } from './quizz/quizz';
+import { Article } from '../article/article';
+import { Quizz } from '../quizz/quizz';
 
 export class ContentRecommandation {
   liste: { score: number; content_id: string }[];

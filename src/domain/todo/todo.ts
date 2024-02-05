@@ -1,6 +1,6 @@
-import { DifficultyLevel } from '../difficultyLevel';
+import { DifficultyLevel } from '../contenu/difficultyLevel';
 import { ContentType } from '../contenu/contentType';
-import { Thematique } from '../thematique';
+import { Thematique } from '../contenu/thematique';
 
 export class TodoElementData {
   id: string;

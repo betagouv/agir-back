@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
-import { Thematique } from '../src/domain/thematique';
+import { Thematique } from '../src/domain/contenu/thematique';
 import { Thematique as ThematiqueOnboarding } from '../src/domain/utilisateur/onboarding/onboarding';
 import { UserQuizzProfile } from '../src/domain/quizz/userQuizzProfile';
 import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
@@ -165,7 +165,7 @@ export class TestUtil {
     return {
       utilisateurId: 'utilisateur-id',
       data: {
-        liste_questions: [
+        answered_questions: [
           {
             id: '2',
             question: `Quel est votre sujet principal d'intéret ?`,

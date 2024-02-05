@@ -1,4 +1,4 @@
-import { Thematique } from '../thematique';
+import { Thematique } from './thematique';
 import { ContentType } from './contentType';
 
 export type ThematiqueFilter = {

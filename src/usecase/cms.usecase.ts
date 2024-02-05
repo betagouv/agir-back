@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CMSWebhookAPI } from '../infrastructure/api/types/cms/CMSWebhookAPI';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { Thematique } from '../domain/thematique';
+import { Thematique } from '../domain/contenu/thematique';
 import { CMSThematiqueAPI } from '../infrastructure/api/types/cms/CMSThematiqueAPI';
 import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
 import { CMSModel } from '../infrastructure/api/types/cms/CMSModels';
@@ -11,7 +11,7 @@ import {
   CMSWebhookPopulateAPI,
   CMSWebhookRubriqueAPI,
 } from '../../src/infrastructure/api/types/cms/CMSWebhookEntryAPI';
-import { Article } from '../../src/domain/article';
+import { Article } from '../domain/article/article';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
 import { Quizz } from '../../src/domain/quizz/quizz';

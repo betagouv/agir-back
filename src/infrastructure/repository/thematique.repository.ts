@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
-import { Thematique } from '../../../src/domain/thematique';
+import { Thematique } from '../../domain/contenu/thematique';
 import { CMSThematiqueAPI } from '../api/types/cms/CMSThematiqueAPI';
 
 @Injectable()

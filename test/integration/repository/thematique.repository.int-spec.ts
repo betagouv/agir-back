@@ -1,6 +1,6 @@
 import { TestUtil } from '../../TestUtil';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
-import { Thematique } from '../../../src/domain/thematique';
+import { Thematique } from '../../../src/domain/contenu/thematique';
 
 describe('ThematiqueRepository', () => {
   let thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);

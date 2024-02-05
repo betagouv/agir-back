@@ -19,7 +19,7 @@ import {
   ContenuBibliothequeAPI,
 } from './types/contenu/contenuBiblioAPI';
 import { BibliothequeUsecase } from '../../../src/usecase/bibliotheque.usecase';
-import { Thematique } from '../../../src/domain/thematique';
+import { Thematique } from '../../domain/contenu/thematique';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 
 @Controller()

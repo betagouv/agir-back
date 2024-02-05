@@ -7,7 +7,7 @@ import { UtilisateurRepository } from '../../src/infrastructure/repository/utili
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { ContentType } from '../domain/contenu/contentType';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
-import { Thematique } from '../../src/domain/thematique';
+import { Thematique } from '../domain/contenu/thematique';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
 
 @Injectable()

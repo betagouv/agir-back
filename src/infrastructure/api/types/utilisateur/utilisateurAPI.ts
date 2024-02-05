@@ -49,7 +49,7 @@ export class UtilisateurAPI {
       nombre_de_parts_fiscales: user.getNombrePartsFiscalesOuEstimee(),
       quizzProfile: user.quizzProfile.getData(),
       created_at: user.created_at,
-      fonctionnalites_debloquees: user.unlocked_features.getUnlockedList(),
+      fonctionnalites_debloquees: user.unlocked_features.getUnlockedFeatures(),
     };
   }
 }
