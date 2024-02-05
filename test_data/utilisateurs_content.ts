@@ -319,6 +319,9 @@ const utilisateurs = {
     revenu_fiscal: 0,
     parts: null,
     version: 2,
+    unlocked_features: {
+      unlocked_feature_list: ['aides', 'services', 'recommandations'],
+    },
     gamification: {
       points: 0,
     },
