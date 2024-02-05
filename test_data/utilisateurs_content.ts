@@ -256,7 +256,12 @@ const utilisateurs = {
       points: 0,
     },
     unlocked_features: {
-      unlocked_feature_list: ['aides', 'services', 'recommandations'],
+      unlocked_feature_list: [
+        'aides',
+        'services',
+        'recommandations',
+        'bibliotheque',
+      ],
     },
     linky: {
       prm: '12345678912345',
