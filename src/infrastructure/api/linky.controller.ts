@@ -70,8 +70,8 @@ export class LinkyController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
     @Query('detail') detail?: LinkyDataDetailAPI,
     @Query('nombre') nombre?: number,
-    @Query('compare_annees') compare_annees?: boolean,
-    @Query('compare_mois_sem_jour') compare_mois_sem_jour?: boolean,
+    @Query('compare_annees') compare_annees?: string,
+    @Query('compare_mois_sem_jour') compare_mois_sem_jour?: string,
     @Query('end_date') end_date?: string,
   ) {
     this.checkCallerId(req, utilisateurId);
@@ -81,8 +81,8 @@ export class LinkyController extends GenericControler {
       detail,
       nombre,
       end_date,
-      compare_annees,
-      compare_mois_sem_jour,
+      compare_annees === 'true',
+      compare_mois_sem_jour === 'true',
     );
     const result = data.serie.map((elem) => LinkyDataAPI.map(elem));
 

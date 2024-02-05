@@ -49,22 +49,27 @@ export class LinkyUsecase {
 
     if (compare_annees) {
       linkyData.serie = linkyData.compare2AnsParMois();
+      return linkyData;
     }
     if (compare_mois_sem_jour) {
       linkyData.serie = linkyData.dynamicCompareTwoYears();
+      return linkyData;
     }
 
     if (detail === LinkyDataDetailAPI.jour && nombre) {
       linkyData.serie = linkyData.extractLastNDays(nombre);
+      return linkyData;
     }
     if (detail === LinkyDataDetailAPI.semaine && nombre) {
       linkyData.serie = linkyData.extractLastNWeeks(nombre);
+      return linkyData;
     }
     if (detail === LinkyDataDetailAPI.mois && nombre) {
       linkyData.serie = linkyData.extractLastNMonths(
         nombre,
         end_date ? new Date(end_date) : new Date(),
       );
+      return linkyData;
     }
     return linkyData;
   }
