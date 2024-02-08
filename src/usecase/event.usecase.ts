@@ -38,10 +38,26 @@ export class EventUsecase {
         return await this.processLike(utilisateurId, event);
       case EventType.article_favoris:
         return await this.processArticleFavoris(utilisateurId, event);
+      case EventType.article_non_favoris:
+        return await this.processArticleNonFavoris(utilisateurId, event);
     }
   }
 
-  private async processArticleFavoris(utilisateurId: string, event: UtilisateurEvent) {
+  private async processArticleNonFavoris(
+    utilisateurId: string,
+    event: UtilisateurEvent,
+  ) {
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+      utilisateurId,
+    );
+    utilisateur.history.defavoriserArticle(event.content_id);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
+  private async processArticleFavoris(
+    utilisateurId: string,
+    event: UtilisateurEvent,
+  ) {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );

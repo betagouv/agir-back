@@ -381,7 +381,9 @@ describe('EVENT (API test)', () => {
       'utilisateur-id',
     );
     expect(dbUtilisateur.gamification.celebrations).toHaveLength(0);
-    expect(dbUtilisateur.unlocked_features.getUnlockedFeatures()).toHaveLength(1);
+    expect(dbUtilisateur.unlocked_features.getUnlockedFeatures()).toHaveLength(
+      1,
+    );
     expect(dbUtilisateur.unlocked_features.getUnlockedFeatures()[0]).toEqual(
       'aides',
     );
@@ -475,5 +477,36 @@ describe('EVENT (API test)', () => {
       'utilisateur-id',
     );
     expect(userDB.history.getArticleHistoryById('123').favoris).toEqual(true);
+  });
+  it('POST /utilisateurs/id/events - supprime un favoris sur un article', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      history: {
+        article_interactions: [
+          {
+            content_id: '123',
+            like_level: 2,
+            points_en_poche: true,
+            favoris: true,
+          },
+        ],
+      },
+    });
+    let userDB = await utilisateurRepository.findUtilisateurById(
+      'utilisateur-id',
+    );
+    expect(userDB.history.getArticleHistoryById('123').favoris).toEqual(true);
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.article_non_favoris,
+      content_id: '123',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    userDB = await utilisateurRepository.findUtilisateurById('utilisateur-id');
+    expect(userDB.history.getArticleHistoryById('123').favoris).toEqual(false);
   });
 });

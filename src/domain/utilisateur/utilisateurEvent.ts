@@ -11,6 +11,7 @@ export enum EventType {
   access_recommandations = 'access_recommandations',
   like = 'like',
   article_favoris = 'article_favoris',
+  article_non_favoris = 'article_non_favoris',
 }
 
 export class UtilisateurEvent {

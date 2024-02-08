@@ -142,6 +142,11 @@ export class History extends HistoryData {
     article.favoris = true;
   }
 
+  public defavoriserArticle(content_id: string) {
+    let article = this.findOrCreateArticleById(content_id);
+    article.favoris = false;
+  }
+
   private findOrCreateArticleById(content_id: string): ArticleHistory {
     let result = this.article_interactions.find(
       (article) => article.content_id === content_id,
