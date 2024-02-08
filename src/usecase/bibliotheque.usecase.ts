@@ -39,7 +39,7 @@ export class BibliothequeUsecase {
     });
 
     const ordered_personal_articles =
-      utilisateur.history.orderArticlesByReadDate(articles);
+      utilisateur.history.orderArticlesByReadDateAndFavoris(articles);
 
     ordered_personal_articles.forEach((personal_article) => {
       result.contenu.push({

@@ -69,18 +69,25 @@ export class History extends HistoryData {
     return filtered.map((article) => article.content_id);
   }
 
-  public orderArticlesByReadDate(articles: Article[]): PersonalArticle[] {
-    const personalArticles: PersonalArticle[] = [];
+  public orderArticlesByReadDateAndFavoris(
+    articles: Article[],
+  ): PersonalArticle[] {
+    const personalArticlesFavoris: PersonalArticle[] = [];
+    const personalArticlesPasFavoris: PersonalArticle[] = [];
 
-    articles.forEach((article) =>
-      personalArticles.push(this.personnaliserArticle(article)),
-    );
+    articles.forEach((article) => {
+      const perso = this.personnaliserArticle(article);
+      if (perso.favoris) {
+        personalArticlesFavoris.push(perso);
+      } else {
+        personalArticlesPasFavoris.push(perso);
+      }
+    });
 
-    personalArticles.sort(
-      (a, b) => b.read_date.getTime() - a.read_date.getTime(),
-    );
+    this.sortByDate(personalArticlesFavoris);
+    this.sortByDate(personalArticlesPasFavoris);
 
-    return personalArticles;
+    return [].concat(personalArticlesFavoris, personalArticlesPasFavoris);
   }
 
   public listeIdsQuizz100Pour100(): string[] {
@@ -151,6 +158,11 @@ export class History extends HistoryData {
     }
     return result;
   }
+
+  private sortByDate(articles: PersonalArticle[]) {
+    articles.sort((a, b) => b.read_date.getTime() - a.read_date.getTime());
+  }
+
   private findOrCreateQuizzById(content_id: string): QuizzHistory {
     let result = this.quizz_interactions.find(
       (quizz) => quizz.content_id === content_id,
