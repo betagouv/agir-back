@@ -16,7 +16,6 @@ import { UtilisateurRepository } from './infrastructure/repository/utilisateur/u
 import { BilanRepository } from './infrastructure/repository/bilan.repository';
 
 import { PrismaService } from './infrastructure/prisma/prisma.service';
-import { InteractionsUsecase } from './usecase/interactions.usecase';
 import { SuiviRepository } from './infrastructure/repository/suivi.repository';
 import { SuiviUsecase } from './usecase/suivi.usecase';
 import { SuiviController } from './infrastructure/api/suivi.controller';
@@ -74,6 +73,7 @@ import { DepartementRepository } from './infrastructure/repository/departement/d
 import { Environment } from './domain/environment';
 import { BibliothequeController } from './infrastructure/api/bibliotheque.controller';
 import { BibliothequeUsecase } from './usecase/bibliotheque.usecase';
+import { ObjectUpgrader } from './infrastructure/object_store/objectUpgrader';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -131,7 +131,6 @@ function getControllers(): any[] {
     UtilisateurUsecase,
     BilanUsecase,
     AidesUsecase,
-    InteractionsUsecase,
     SuiviUsecase,
     QuestionNGCUsecase_deprecated,
     CMSUsecase,
@@ -165,6 +164,7 @@ function getControllers(): any[] {
     PonderationRepository,
     DepartementRepository,
     BibliothequeUsecase,
+    ObjectUpgrader,
   ],
 })
 export class AppModule {}

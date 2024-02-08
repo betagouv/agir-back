@@ -30,7 +30,6 @@ export class BibliothequeUsecase {
       est_lu: true,
       est_favoris: favoris,
     });
-    console.log(articles_lus);
 
     let articles = await this.articleRepository.searchArticles({
       include_ids: articles_lus,
@@ -38,12 +37,9 @@ export class BibliothequeUsecase {
         filtre_thematiques.length === 0 ? undefined : filtre_thematiques,
       titre_fragment: titre,
     });
-    console.log(articles);
 
     const ordered_personal_articles =
       utilisateur.history.orderArticlesByReadDate(articles);
-
-    console.log(ordered_personal_articles);
 
     ordered_personal_articles.forEach((personal_article) => {
       result.contenu.push({

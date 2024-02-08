@@ -4,7 +4,7 @@ export class UnlockedFeaturesData {
   unlocked_feature_list?: Feature[];
 }
 export class UnlockedFeatures extends UnlockedFeaturesData {
-  constructor(data?: UnlockedFeatures) {
+  constructor(data?: UnlockedFeaturesData) {
     super();
     if (data) {
       Object.assign(this, data);
