@@ -206,7 +206,7 @@ describe('Gamification', () => {
       [5, 15],
     );
     let utilisateur = new Utilisateur(TestUtil.utilisateurData());
-    utilisateur.unlocked_features = new UnlockedFeatures();
+    utilisateur.unlocked_features = UnlockedFeatures.buildDefault();
 
     // WHEN
     gamification.terminerCelebration(celeb_2.id, utilisateur);
@@ -227,13 +227,15 @@ describe('Gamification', () => {
       [5, 15],
     );
     let utilisateur = new Utilisateur(TestUtil.utilisateurData());
-    utilisateur.unlocked_features = new UnlockedFeatures();
+    utilisateur.unlocked_features = UnlockedFeatures.buildDefault();
     // WHEN
     gamification.terminerCelebration(celeb.id, utilisateur);
 
     // THEN
     expect(gamification.celebrations).toHaveLength(0);
     expect(utilisateur.unlocked_features.getUnlockedFeatures()).toHaveLength(1);
-    expect(utilisateur.unlocked_features.getUnlockedFeatures()[0]).toEqual('aides');
+    expect(utilisateur.unlocked_features.getUnlockedFeatures()[0]).toEqual(
+      'aides',
+    );
   });
 });

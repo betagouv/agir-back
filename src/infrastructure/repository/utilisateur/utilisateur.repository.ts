@@ -16,6 +16,7 @@ import { Gamification } from '../../../domain/gamification/gamification';
 import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
 import { UnlockedFeatures } from '../../../../src/domain/gamification/unlockedFeatures';
 import { History } from '../../../../src/domain/history/history';
+import { Serialised_UnlockedFeatures } from '../../../../src/infrastructure/object_store/catalogue/serialisable_UnlockedFeatures';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -245,11 +246,17 @@ export class UtilisateurRepository {
     return Number(count);
   }
 
-  private buildUtilisateurFromDB(user: UtilisateurDB): Utilisateur {
+  private async buildUtilisateurFromDB(
+    user: UtilisateurDB,
+  ): Promise<Utilisateur> {
     if (user) {
       const onboardingData = new Onboarding(user.onboardingData as any);
       const onboardingResult = new OnboardingResult();
       onboardingResult.setOnboardingResultData(user.onboardingResult as any);
+
+      const unlocked_features = await Serialised_UnlockedFeatures.deSerialise(
+        user.unlocked_features as any,
+      );
       return new Utilisateur({
         id: user.id,
         nom: user.nom,
@@ -281,7 +288,7 @@ export class UtilisateurRepository {
         history: new History(user.history as any),
         prm: user.prm,
         code_departement: user.code_departement,
-        unlocked_features: new UnlockedFeatures(user.unlocked_features as any),
+        unlocked_features: unlocked_features,
         version: user.version,
         migration_enabled: user.migration_enabled,
         version_ponderation: user.version_ponderation,

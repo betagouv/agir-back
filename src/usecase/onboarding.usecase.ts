@@ -183,7 +183,7 @@ export class OnboardingUsecase {
       prevent_sendemail_before: new Date(),
       parcours_todo: new ParcoursTodo(),
       gamification: Gamification.newDefaultGamification(),
-      unlocked_features: new UnlockedFeatures(),
+      unlocked_features: UnlockedFeatures.buildDefault(),
       history: History.newHistory(),
       code_departement: null,
       prm: null,

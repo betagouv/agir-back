@@ -365,7 +365,7 @@ describe('EVENT (API test)', () => {
     const celeb = new CelebrationDeNiveau(2);
     await TestUtil.create('utilisateur', {
       gamification: { points: 10, celebrations: [celeb] },
-      unlocked_features: new UnlockedFeatures(),
+      unlocked_features: UnlockedFeatures.buildDefault(),
     });
     // WHEN
     const response = await TestUtil.POST(
