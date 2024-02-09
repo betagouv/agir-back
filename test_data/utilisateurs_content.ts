@@ -253,14 +253,14 @@ const utilisateurs = {
     parts: null,
     version: 2,
     gamification: {
-      points: 0,
+      points: 590,
     },
     unlocked_features: {
       unlocked_feature_list: [
         'aides',
         'services',
         'recommandations',
-        'bibliotheque',
+        //'bibliotheque',
       ],
     },
     linky: {
