@@ -41,7 +41,7 @@ export class TodoAPI {
       todo: todo.todo,
       done: todo.done,
       done_at: todo.done_at,
-      is_last: todo.is_last,
+      is_last: todo.is_last ? todo.is_last : false,
     };
   }
 }

@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Feature } from '../../../../../src/domain/gamification/feature';
 import { Utilisateur } from '../../../../../src/domain/utilisateur/utilisateur';
-import { QuizzProfileAPI } from '../quizz/quizzProfileAPI';
 
 export class UtilisateurAPI {
   @ApiProperty()
@@ -29,9 +28,6 @@ export class UtilisateurAPI {
   email?: string;
 
   @ApiProperty()
-  quizzProfile: QuizzProfileAPI;
-
-  @ApiProperty()
   created_at: Date;
 
   @ApiProperty({ enum: Feature, enumName: 'Feature', isArray: true })
@@ -47,7 +43,6 @@ export class UtilisateurAPI {
       commune: user.commune,
       revenu_fiscal: user.revenu_fiscal,
       nombre_de_parts_fiscales: user.getNombrePartsFiscalesOuEstimee(),
-      quizzProfile: user.quizzProfile.getData(),
       created_at: user.created_at,
       fonctionnalites_debloquees: user.unlocked_features.getUnlockedFeatures(),
     };

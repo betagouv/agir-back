@@ -116,15 +116,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.commune).toEqual('Palaiseau');
     expect(response.body.revenu_fiscal).toEqual(10000);
     expect(response.body.nombre_de_parts_fiscales).toEqual(2);
-    expect(response.body.quizzProfile).toEqual({
-      alimentation: { level: 1, isCompleted: false },
-      transport: { level: 1, isCompleted: false },
-      logement: { level: 1, isCompleted: false },
-      consommation: { level: 1, isCompleted: false },
-      climat: { level: 1, isCompleted: false },
-      dechet: { level: 1, isCompleted: false },
-      loisir: { level: 1, isCompleted: false },
-    });
     expect(response.body.created_at).toEqual(dbUser.created_at.toISOString());
     expect(response.body.failed_login_count).toEqual(undefined); // donnée cachée
     expect(response.body.prevent_login_before).toEqual(undefined); // donnée cachée
@@ -172,15 +163,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.utilisateur.commune).toEqual('Palaiseau');
     expect(response.body.utilisateur.revenu_fiscal).toEqual(10000);
     expect(response.body.utilisateur.nombre_de_parts_fiscales).toEqual(2.5); // valeur estimée depuis l'onboarding
-    expect(response.body.utilisateur.quizzProfile).toEqual({
-      alimentation: { level: 1, isCompleted: false },
-      transport: { level: 1, isCompleted: false },
-      logement: { level: 1, isCompleted: false },
-      consommation: { level: 1, isCompleted: false },
-      climat: { level: 1, isCompleted: false },
-      dechet: { level: 1, isCompleted: false },
-      loisir: { level: 1, isCompleted: false },
-    });
   });
   it('POST /utilisateurs/login - bad password', async () => {
     // GIVEN
@@ -547,7 +529,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const dbUtilisateur = new Utilisateur({
       ...userDB,
       commune: null,
-      quizzProfile: null,
       onboardingData: null,
       onboardingResult: null,
       parcours_todo: null,

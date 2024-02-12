@@ -1,8 +1,12 @@
 import { DifficultyLevel } from '../contenu/difficultyLevel';
 import { ContentType } from '../contenu/contentType';
 import { Thematique } from '../contenu/thematique';
+import {
+  TodoElement_v0,
+  Todo_v0,
+} from '../object_store/parcoursTodo/parcoursTodo_v0';
 
-export class TodoElementData {
+export class TodoElement {
   id: string;
   thematiques?: Thematique[];
   titre: string;
@@ -15,12 +19,20 @@ export class TodoElementData {
   sont_points_en_poche: boolean;
   progression: { current: number; target: number };
   url?: string;
-}
 
-export class TodoElement extends TodoElementData {
-  constructor(data: TodoElementData, parent: Todo) {
-    super();
-    Object.assign(this, data);
+  constructor(data: TodoElement_v0) {
+    this.id = data.id;
+    this.thematiques = data.thematiques;
+    this.titre = data.titre;
+    this.type = data.type;
+    this.level = data.level;
+    this.content_id = data.content_id;
+    this.service_id = data.service_id;
+    this.interaction_id = data.interaction_id;
+    this.points = data.points;
+    this.sont_points_en_poche = data.sont_points_en_poche;
+    this.progression = data.progression;
+    this.url = data.url;
   }
   public isDone?() {
     return this.progression.current === this.progression.target;
@@ -30,37 +42,34 @@ export class TodoElement extends TodoElementData {
   }
 }
 
-export class TodoData {
+export class Todo {
   numero_todo: number;
   points_todo: number;
   done_at: Date;
   titre: string;
-  is_last?: boolean;
+  is_last?: boolean; // sans persistence
 
   done: TodoElement[];
   todo: TodoElement[];
-}
 
-export class Todo extends TodoData {
-  constructor(data: TodoData) {
-    super();
-    Object.assign(this, data);
+  constructor(data: Todo_v0) {
+    this.numero_todo = data.numero_todo;
+    this.points_todo = data.points_todo;
+    this.titre = data.titre;
     if (data.done_at) {
       this.done_at = new Date(data.done_at);
     }
-    if (data.is_last === undefined) {
-      this.is_last = false;
-    }
+
     this.done = [];
     this.todo = [];
     if (data.done) {
       data.done.forEach((element) => {
-        this.done.push(new TodoElement(element, this));
+        this.done.push(new TodoElement(element));
       });
     }
     if (data.todo) {
       data.todo.forEach((element) => {
-        this.todo.push(new TodoElement(element, this));
+        this.todo.push(new TodoElement(element));
       });
     }
   }
@@ -103,8 +112,7 @@ export class Todo extends TodoData {
   public findTodoKYCElementByQuestionID?(content_id: string): TodoElement {
     return this.todo.find(
       (element) =>
-        element.type === ContentType.kyc &&
-        element.content_id === content_id,
+        element.type === ContentType.kyc && element.content_id === content_id,
     );
   }
 

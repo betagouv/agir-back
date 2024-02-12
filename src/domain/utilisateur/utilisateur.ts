@@ -1,4 +1,3 @@
-import { UserQuizzProfile } from '../quizz/userQuizzProfile';
 import { CodeManager } from './manager/codeManager';
 import { Onboarding } from './onboarding/onboarding';
 import { OnboardingResult } from './onboarding/onboardingResult';
@@ -24,7 +23,6 @@ export class UtilisateurData {
   abonnement_ter_loire: boolean;
   prm: string;
   code_departement: string;
-  quizzProfile: UserQuizzProfile;
   created_at: Date;
   updated_at?: Date;
   passwordHash: string;

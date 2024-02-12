@@ -1,11 +1,9 @@
 import { EventType } from '../../../src/domain/utilisateur/utilisateurEvent';
-import { ContentType } from '../../../src/domain/contenu/contentType';
 import { TestUtil } from '../../TestUtil';
 import { Thematique } from '../../../src/domain/contenu/thematique';
-import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { CelebrationDeNiveau } from '../../../src/domain/gamification/celebrations/celebrationDeNiveau';
-import { UnlockedFeatures } from '../../../src/domain/gamification/unlockedFeatures';
+import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 
 describe('EVENT (API test)', () => {
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -363,9 +361,13 @@ describe('EVENT (API test)', () => {
   it('POST /utilisateurs/id/events - celebration consommée ajoute une fonctionnalité débloquée', async () => {
     // GIVEN
     const celeb = new CelebrationDeNiveau(2);
+    const unlocked: UnlockedFeatures_v1 = {
+      version: 1,
+      unlocked_features: [],
+    };
     await TestUtil.create('utilisateur', {
       gamification: { points: 10, celebrations: [celeb] },
-      unlocked_features: UnlockedFeatures.buildDefault(),
+      unlocked_features: unlocked,
     });
     // WHEN
     const response = await TestUtil.POST(

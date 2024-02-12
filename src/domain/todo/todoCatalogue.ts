@@ -4,6 +4,7 @@ import { Thematique } from '../contenu/thematique';
 import { Todo } from './todo';
 import { v4 as uuidv4 } from 'uuid';
 import { LiveService } from '../service/serviceDefinition';
+import { Todo_v0 } from '../object_store/parcoursTodo/parcoursTodo_v0';
 
 export class TodoCatalogue {
   public static getNombreTodo(): number {
@@ -23,18 +24,19 @@ export class TodoCatalogue {
   }
 
   public static getEmptyLastMission(): Todo {
-    return new Todo({
+    const result = new Todo({
       numero_todo: null,
       points_todo: 0,
       titre: 'Plus de mission, pour le moment...',
       done_at: null,
       done: [],
       todo: [],
-      is_last: true,
     });
+    result.is_last = true;
+    return result;
   }
 
-  private static catalogue: Todo[] = [
+  private static catalogue: Todo_v0[] = [
     {
       numero_todo: 1,
       points_todo: 30,

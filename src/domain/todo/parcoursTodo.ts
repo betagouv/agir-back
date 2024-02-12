@@ -1,10 +1,14 @@
+import { ParcoursTodo_v0 } from '../object_store/parcoursTodo/parcoursTodo_v0';
 import { ContentType } from '../contenu/contentType';
 import { Thematique } from '../contenu/thematique';
 import { Todo, TodoElement } from './todo';
 import { TodoCatalogue } from './todoCatalogue';
 
 export class ParcoursTodo {
-  constructor(data?: ParcoursTodo) {
+  liste_todo: Todo[];
+  todo_active: number;
+
+  constructor(data?: ParcoursTodo_v0) {
     this.liste_todo = [];
     if (data) {
       data.liste_todo.forEach((current_todo) => {
@@ -16,8 +20,6 @@ export class ParcoursTodo {
       this.todo_active = 0;
     }
   }
-  liste_todo: Todo[];
-  todo_active: number;
 
   public upgradeParcoursIfNeeded?() {
     const last_element = this.liste_todo[this.liste_todo.length - 1];

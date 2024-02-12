@@ -1,7 +1,6 @@
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { UserQuizzProfile } from '../domain/quizz/userQuizzProfile';
 import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/onboarding/createUtilisateurAPI';
 import {
   Impact,
@@ -139,9 +138,7 @@ export class OnboardingUsecase {
     return final_result;
   }
 
-  async createUtilisateur(
-    utilisateurInput: CreateUtilisateurAPI,
-  ): Promise<Utilisateur> {
+  async createUtilisateur(utilisateurInput: CreateUtilisateurAPI) {
     this.checkInputToCreateUtilisateur(utilisateurInput);
 
     if (process.env.WHITE_LIST_ENABLED === 'true') {
@@ -166,7 +163,6 @@ export class OnboardingUsecase {
       email: utilisateurInput.email,
       onboardingData: onboardingData,
       onboardingResult: new OnboardingResult(onboardingData),
-      quizzProfile: UserQuizzProfile.newLowProfile(),
       revenu_fiscal: null,
       parts: null,
       abonnement_ter_loire: false,
@@ -183,7 +179,7 @@ export class OnboardingUsecase {
       prevent_sendemail_before: new Date(),
       parcours_todo: new ParcoursTodo(),
       gamification: Gamification.newDefaultGamification(),
-      unlocked_features: UnlockedFeatures.buildDefault(),
+      unlocked_features: new UnlockedFeatures(),
       history: History.newHistory(),
       code_departement: null,
       prm: null,
@@ -196,13 +192,9 @@ export class OnboardingUsecase {
 
     utilisateurToCreate.setPassword(utilisateurInput.mot_de_passe);
 
-    const newUtilisateur = await this.utilisateurRespository.createUtilisateur(
-      utilisateurToCreate,
-    );
+    await this.utilisateurRespository.createUtilisateur(utilisateurToCreate);
 
     this.sendValidationCode(utilisateurToCreate);
-
-    return newUtilisateur;
   }
 
   async renvoyerCode(email: string) {

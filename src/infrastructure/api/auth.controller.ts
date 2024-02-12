@@ -45,14 +45,14 @@ export class AuthController {
     );
     if (!utilisateur) {
       // FIXME : revoir le moment venu, c'est plus en ligne avec la création de compte standalone
-      utilisateur = await this.onboardingUsecase.createUtilisateur({
+      await this.onboardingUsecase.createUtilisateur({
         nom: user_data.family_name,
         prenom: 'UNDEFINED',
         email: user_data.email,
         onboardingData: {} as any,
       });
     }
-    const utilisateurId = utilisateur.id;
+    const utilisateurId = utilisateur.id; // FIXME : broken for now
 
     await this.oidcService.injectUtilisateurIdToState(loginId, utilisateurId);
 

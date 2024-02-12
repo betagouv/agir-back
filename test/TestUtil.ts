@@ -4,7 +4,6 @@ import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { Thematique } from '../src/domain/contenu/thematique';
 import { Thematique as ThematiqueOnboarding } from '../src/domain/utilisateur/onboarding/onboarding';
-import { UserQuizzProfile } from '../src/domain/quizz/userQuizzProfile';
 import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
 import { Impact } from '../src/domain/utilisateur/onboarding/onboarding';
@@ -16,6 +15,9 @@ import {
   CategorieQuestionKYC,
 } from '../src/domain/kyc/questionQYC';
 import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
+import { Feature } from '../src/domain/gamification/feature';
+import { UnlockedFeatures_v1 } from '../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
+import { ParcoursTodo_v0 } from '../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
 
 export class TestUtil {
   constructor() {}
@@ -250,6 +252,13 @@ export class TestUtil {
     };
   }
   static utilisateurData(override?) {
+    const unlocked: UnlockedFeatures_v1 = {
+      version: 1,
+      unlocked_features: [Feature.aides],
+    };
+
+    const todo: ParcoursTodo_v0 = ParcoursTodo_v0.serialise(new ParcoursTodo());
+
     return {
       id: 'utilisateur-id',
       nom: 'nom',
@@ -276,7 +285,7 @@ export class TestUtil {
       version: 0,
       version_ponderation: 0,
       migration_enabled: false,
-      todo: new ParcoursTodo(),
+      todo: todo,
       gamification: {
         points: 10,
         celebrations: [
@@ -294,7 +303,7 @@ export class TestUtil {
           },
         ],
       },
-      unlocked_features: { unlocked_feature_list: ['aides'] },
+      unlocked_features: unlocked,
       history: {
         article_interactions: [
           {
@@ -332,7 +341,6 @@ export class TestUtil {
           '4': [ThematiqueOnboarding.consommation],
         },
       },
-      quizzLevels: UserQuizzProfile.newLowProfile().getData(),
       created_at: undefined,
       updated_at: undefined,
       ...override,

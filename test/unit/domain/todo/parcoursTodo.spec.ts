@@ -106,6 +106,7 @@ describe('ParcoursTodo', () => {
   it('appendNewFromCatalogue : ajoute une todo depuis le catalogue', () => {
     // GIVEN
     const parcours = new ParcoursTodo({
+      version: 2,
       todo_active: 0,
       liste_todo: [
         {
@@ -137,6 +138,7 @@ describe('ParcoursTodo', () => {
   it('isLast : quand position un cran au dela', () => {
     // GIVEN
     const parcours = new ParcoursTodo({
+      version: 2,
       todo_active: 0,
       liste_todo: [
         {
@@ -171,6 +173,7 @@ describe('ParcoursTodo', () => {
   it('upgradeParcoursIfNeeded : supprime elment end et fusionne', () => {
     // GIVEN
     const parcours = new ParcoursTodo({
+      version: 2,
       todo_active: 0,
       liste_todo: [
         {
@@ -198,7 +201,6 @@ describe('ParcoursTodo', () => {
           done_at: null,
           done: [],
           todo: [],
-          is_last: true,
         },
       ],
     });
@@ -210,6 +212,7 @@ describe('ParcoursTodo', () => {
   it('upgradeParcoursIfNeeded : supprime rien si pas d element final', () => {
     // GIVEN
     const parcours = new ParcoursTodo({
+      version: 2,
       todo_active: 0,
       liste_todo: [
         {

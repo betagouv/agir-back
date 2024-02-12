@@ -206,7 +206,7 @@ describe('Gamification', () => {
       [5, 15],
     );
     let utilisateur = new Utilisateur(TestUtil.utilisateurData());
-    utilisateur.unlocked_features = UnlockedFeatures.buildDefault();
+    utilisateur.unlocked_features = new UnlockedFeatures();
 
     // WHEN
     gamification.terminerCelebration(celeb_2.id, utilisateur);
@@ -227,7 +227,7 @@ describe('Gamification', () => {
       [5, 15],
     );
     let utilisateur = new Utilisateur(TestUtil.utilisateurData());
-    utilisateur.unlocked_features = UnlockedFeatures.buildDefault();
+    utilisateur.unlocked_features = new UnlockedFeatures();
     // WHEN
     gamification.terminerCelebration(celeb.id, utilisateur);
 

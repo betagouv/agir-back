@@ -8,16 +8,6 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { LiveService } from '../src/domain/service/serviceDefinition';
 
-const minQuizzLevel = {
-  alimentation: { level: 1, isCompleted: false },
-  transport: { level: 1, isCompleted: false },
-  logement: { level: 1, isCompleted: false },
-  consommation: { level: 1, isCompleted: false },
-  climat: { level: 1, isCompleted: false },
-  dechet: { level: 1, isCompleted: false },
-  loisir: { level: 1, isCompleted: false },
-};
-
 const ONBOARD_DATA_1234 = {
   transports: ['voiture', 'pied'],
   avion: 2,
@@ -62,7 +52,7 @@ const utilisateurs = {
       points: 0,
     },
     unlocked_features: {
-      unlocked_feature_list: ['aides', 'services', 'recommandations'],
+      unlocked_features: ['aides', 'services', 'recommandations'],
     },
     todo: {
       todo_active: 0,
@@ -238,7 +228,6 @@ const utilisateurs = {
     },
     suivis: [],
     bilans: [],
-    quizzLevels: minQuizzLevel,
     onboardingResult: ONBOARDING_RES_1234,
     onboardingData: ONBOARD_DATA_1234,
   },
@@ -256,7 +245,7 @@ const utilisateurs = {
       points: 590,
     },
     unlocked_features: {
-      unlocked_feature_list: [
+      unlocked_features: [
         'aides',
         'services',
         'recommandations',
@@ -272,7 +261,6 @@ const utilisateurs = {
     questionsNGC: {
       'transport . voiture . km': 30000,
     },
-    quizzLevels: minQuizzLevel,
     onboardingResult: ONBOARDING_RES_1234,
     onboardingData: ONBOARD_DATA_1234,
   },
@@ -291,7 +279,6 @@ const utilisateurs = {
     },
     suivis: [],
     services: [],
-    quizzLevels: minQuizzLevel,
     onboardingResult: ONBOARDING_RES_1234,
     onboardingData: ONBOARD_DATA_1234,
   },
@@ -310,7 +297,6 @@ const utilisateurs = {
     },
     suivis: [],
     services: [],
-    quizzLevels: minQuizzLevel,
     onboardingResult: ONBOARDING_RES_1234,
     onboardingData: ONBOARD_DATA_1234,
   },
@@ -325,14 +311,13 @@ const utilisateurs = {
     parts: null,
     version: 2,
     unlocked_features: {
-      unlocked_feature_list: ['aides', 'services', 'recommandations'],
+      unlocked_features: ['aides', 'services', 'recommandations'],
     },
     gamification: {
       points: 0,
     },
     suivis: [],
     services: [],
-    quizzLevels: minQuizzLevel,
     onboardingResult: ONBOARDING_RES_1234,
     onboardingData: ONBOARD_DATA_1234,
   },
