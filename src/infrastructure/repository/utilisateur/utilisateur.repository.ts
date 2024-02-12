@@ -206,6 +206,9 @@ export class UtilisateurRepository {
       const parcours_todo = new ParcoursTodo(
         Upgrader.upgradeRaw(user.todo, SerialisableDomain.ParcoursTodo),
       );
+      const history = new History(
+        Upgrader.upgradeRaw(user.history, SerialisableDomain.History),
+      );
 
       return new Utilisateur({
         id: user.id,
@@ -234,7 +237,7 @@ export class UtilisateurRepository {
         updated_at: user.updated_at,
         parcours_todo: parcours_todo,
         gamification: new Gamification(user.gamification as any),
-        history: new History(user.history as any),
+        history: history,
         prm: user.prm,
         code_departement: user.code_departement,
         unlocked_features: unlocked_features,
@@ -278,7 +281,10 @@ export class UtilisateurRepository {
         user.unlocked_features,
         SerialisableDomain.UnlockedFeatures,
       ),
-      history: user.history as any,
+      history: Upgrader.serialiseToLastVersion(
+        user.history,
+        SerialisableDomain.History,
+      ),
       version: user.version,
       failed_login_count: user.failed_login_count,
       prevent_login_before: user.prevent_login_before,

@@ -46,7 +46,7 @@ describe('ParcoursTodo vN ', () => {
     // WHEN
     const raw = ParcoursTodo_v0.serialise(todo);
     const upgrade = Upgrader.upgradeRaw(raw, SerialisableDomain.ParcoursTodo);
-    const domain = new ParcoursTodo(raw);
+    const domain = new ParcoursTodo(upgrade);
 
     // THEN
     expect(todo).toStrictEqual(domain);

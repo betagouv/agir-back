@@ -1,15 +1,11 @@
 import { TestUtil } from '../../../../test/TestUtil';
 import { Article } from '../../../../src/domain/article/article';
 import { History } from '../../../../src/domain/history/history';
-import {
-  QuizzAttempt,
-  QuizzHistory,
-} from '../../../../src/domain/history/quizzHistory';
 
 describe('History', () => {
   it('WHEN un vie historique ok', () => {
     // WHEN
-    const history = History.newHistory();
+    const history = new History();
 
     // THEN
     expect(history.nombreArticles()).toEqual(0);
@@ -17,6 +13,8 @@ describe('History', () => {
   it('cree un historique ok', () => {
     // GIVEN
     const history = new History({
+      version: 0,
+      quizz_interactions: [],
       article_interactions: [
         {
           content_id: '1',
@@ -37,9 +35,29 @@ describe('History', () => {
     expect(article.points_en_poche).toEqual(true);
     expect(article.read_date.getTime()).toEqual(123);
   });
+  it('cree un historique ok avec favoris et point en poche undefined', () => {
+    // WHEN
+    const history = new History({
+      version: 0,
+      quizz_interactions: [],
+      article_interactions: [
+        {
+          content_id: '1',
+          like_level: 2,
+          points_en_poche: undefined,
+          read_date: new Date(123),
+          favoris: undefined,
+        },
+      ],
+    });
+
+    // THEN
+    expect(history.sontPointsArticleEnPoche('1')).toStrictEqual(false);
+    expect(history.getArticleHistoryById('1').favoris).toStrictEqual(false);
+  });
   it('lire un nouveau article insert un nouveau aricle', () => {
     // GIVEN
-    const history = new History({});
+    const history = new History();
 
     // WHEN
     history.lireArticle('1');
@@ -49,7 +67,7 @@ describe('History', () => {
   });
   it('faire un nouveau quizz insert un nouveau quizz', () => {
     // GIVEN
-    const history = new History({});
+    const history = new History();
 
     // WHEN
     history.quizzAttempt('1', 12);
@@ -64,7 +82,7 @@ describe('History', () => {
   });
   it('on peut lire 2 fois le meme article', () => {
     // GIVEN
-    const history = new History({});
+    const history = new History();
 
     // WHEN
     history.lireArticle('1');
@@ -75,7 +93,7 @@ describe('History', () => {
   });
   it('on peut tenter 2 fois le meme quizz', () => {
     // GIVEN
-    const history = new History({});
+    const history = new History();
 
     // WHEN
     history.quizzAttempt('1', 10);
@@ -87,7 +105,7 @@ describe('History', () => {
   });
   it('lire un aricle valorise la date de lecture', () => {
     // GIVEN
-    const history = new History({});
+    const history = new History();
 
     // WHEN
     history.lireArticle('1');
@@ -98,7 +116,7 @@ describe('History', () => {
   });
   it('dire qu on a empoché les points d un article', () => {
     // GIVEN
-    const history = new History({});
+    const history = new History();
     history.lireArticle('1');
 
     // THEN
@@ -116,7 +134,7 @@ describe('History', () => {
   });
   it('dire qu on a empoché les points d un quizz', () => {
     // GIVEN
-    const history = new History({});
+    const history = new History();
     history.quizzAttempt('1', 100);
 
     // THEN
@@ -135,6 +153,8 @@ describe('History', () => {
   it('liste articles lus', () => {
     // GIVEN
     const history = new History({
+      version: 0,
+      quizz_interactions: [],
       article_interactions: [
         {
           content_id: '1',
@@ -169,6 +189,8 @@ describe('History', () => {
   it('liste articles favoris', () => {
     // GIVEN
     const history = new History({
+      version: 0,
+      quizz_interactions: [],
       article_interactions: [
         { content_id: '1', favoris: true, points_en_poche: true },
         { content_id: '2', favoris: null, points_en_poche: true },
@@ -187,22 +209,27 @@ describe('History', () => {
   it('liste quizz avec 100%', () => {
     // GIVEN
     const history = new History({
+      version: 0,
+      article_interactions: [],
       quizz_interactions: [
-        new QuizzHistory({
+        {
           content_id: '1',
           attempts: [{ date: new Date(), score: 40 }],
-        }),
-        new QuizzHistory({
+          points_en_poche: false,
+        },
+        {
           content_id: '2',
           attempts: [{ date: new Date(), score: 100 }],
-        }),
-        new QuizzHistory({
+          points_en_poche: false,
+        },
+        {
           content_id: '3',
           attempts: [
             { date: new Date(), score: 10 },
             { date: new Date(), score: 100 },
           ],
-        }),
+          points_en_poche: false,
+        },
       ],
     });
 
@@ -217,16 +244,20 @@ describe('History', () => {
   it('liste quizz avec des attempts', () => {
     // GIVEN
     const history = new History({
+      version: 0,
+      article_interactions: [],
       quizz_interactions: [
-        new QuizzHistory({
+        {
           content_id: '1',
           attempts: [{ date: new Date(), score: 40 }],
-        }),
-        new QuizzHistory({
+          points_en_poche: false,
+        },
+        {
           content_id: '2',
           attempts: [{ date: new Date(), score: 100 }],
-        }),
-        new QuizzHistory({ content_id: '3', attempts: [] }),
+          points_en_poche: false,
+        },
+        { content_id: '3', attempts: [], points_en_poche: false },
       ],
     });
 
@@ -241,6 +272,8 @@ describe('History', () => {
   it('liste articles lus par date desc', () => {
     // GIVEN
     const history = new History({
+      version: 0,
+      quizz_interactions: [],
       article_interactions: [
         {
           content_id: '1',
@@ -287,6 +320,8 @@ describe('History', () => {
   it('liste articles lus par date desc, favoris en premier', () => {
     // GIVEN
     const history = new History({
+      version: 0,
+      quizz_interactions: [],
       article_interactions: [
         {
           content_id: '1',
@@ -334,6 +369,8 @@ describe('History', () => {
   it('Ajoute les like_levels, read_date et favoris', () => {
     // GIVEN
     const history = new History({
+      version: 0,
+      quizz_interactions: [],
       article_interactions: [
         {
           content_id: '1',

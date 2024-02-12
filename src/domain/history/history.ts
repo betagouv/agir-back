@@ -1,4 +1,5 @@
 import { Article, PersonalArticle } from '../article/article';
+import { History_v0 } from '../object_store/history/history_v0';
 import { ArticleHistory } from './articleHistory';
 import { QuizzHistory } from './quizzHistory';
 
@@ -7,31 +8,27 @@ export type SearchArticleFilter = {
   est_favoris?: boolean;
 };
 
-export class HistoryData {
-  article_interactions?: ArticleHistory[];
-  quizz_interactions?: QuizzHistory[];
-}
-export class History extends HistoryData {
-  constructor(data: HistoryData) {
-    super();
+export class History {
+  article_interactions: ArticleHistory[];
+  quizz_interactions: QuizzHistory[];
+
+  constructor(data?: History_v0) {
     this.article_interactions = [];
     this.quizz_interactions = [];
-
-    if (data.article_interactions) {
-      data.article_interactions.forEach((articleh) =>
-        this.article_interactions.push(new ArticleHistory(articleh)),
-      );
-    }
-    if (data.quizz_interactions) {
-      data.quizz_interactions.forEach((quizzh) =>
-        this.quizz_interactions.push(new QuizzHistory(quizzh)),
-      );
+    if (data) {
+      if (data.article_interactions) {
+        data.article_interactions.forEach((articleh) =>
+          this.article_interactions.push(new ArticleHistory(articleh)),
+        );
+      }
+      if (data.quizz_interactions) {
+        data.quizz_interactions.forEach((quizzh) =>
+          this.quizz_interactions.push(new QuizzHistory(quizzh)),
+        );
+      }
     }
   }
 
-  public static newHistory(): History {
-    return new History({});
-  }
   public getArticleHistoryById(content_id: string): ArticleHistory {
     return this.article_interactions.find(
       (article) => article.content_id === content_id,
@@ -175,7 +172,11 @@ export class History extends HistoryData {
     if (result) {
       return result;
     } else {
-      result = new QuizzHistory({ content_id: content_id });
+      result = new QuizzHistory({
+        content_id: content_id,
+        attempts: [],
+        points_en_poche: false,
+      });
       this.quizz_interactions.push(result);
     }
     return result;

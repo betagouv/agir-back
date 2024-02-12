@@ -17,7 +17,6 @@ export class ParcoursTodo {
         });
         this.todo_active = data.todo_active;
       } else {
-        this.liste_todo = [];
         this.todo_active = 0;
       }
     } else {

@@ -18,6 +18,7 @@ import { ThematiqueRepository } from '../src/infrastructure/repository/thematiqu
 import { Feature } from '../src/domain/gamification/feature';
 import { UnlockedFeatures_v1 } from '../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { ParcoursTodo_v0 } from '../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
+import { History_v0 } from 'src/domain/object_store/history/history_v0';
 
 export class TestUtil {
   constructor() {}
@@ -259,6 +260,12 @@ export class TestUtil {
 
     const todo: ParcoursTodo_v0 = ParcoursTodo_v0.serialise(new ParcoursTodo());
 
+    const history: History_v0 = {
+      version: 0,
+      article_interactions: [],
+      quizz_interactions: [],
+    };
+
     return {
       id: 'utilisateur-id',
       nom: 'nom',
@@ -304,16 +311,7 @@ export class TestUtil {
         ],
       },
       unlocked_features: unlocked,
-      history: {
-        article_interactions: [
-          {
-            content_id: '1',
-            like_level: 2,
-            points_en_poche: true,
-            read_date: new Date(123).toISOString(),
-          },
-        ],
-      },
+      history: history,
       onboardingData: {
         transports: ['voiture', 'pied'],
         avion: 2,

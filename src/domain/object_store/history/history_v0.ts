@@ -3,6 +3,7 @@ import {
   QuizzHistory,
 } from '../../../../src/domain/history/quizzHistory';
 import { ArticleHistory } from '../../../../src/domain/history/articleHistory';
+import { History } from '../../../../src/domain/history/history';
 import { Versioned } from '../versioned';
 
 export class ArticleHistory_v0 {
@@ -39,7 +40,7 @@ export class QuizzHistory_v0 {
   content_id: string;
   attempts: QuizzAttempt_v0[];
   like_level?: number;
-  points_en_poche?: boolean;
+  points_en_poche: boolean;
 
   static map(elem: QuizzHistory): QuizzHistory_v0 {
     return {
@@ -52,14 +53,18 @@ export class QuizzHistory_v0 {
 }
 
 export class History_v0 extends Versioned {
-  article_interactions?: ArticleHistory_v0[];
-  quizz_interactions?: QuizzHistory_v0[];
+  article_interactions: ArticleHistory_v0[];
+  quizz_interactions: QuizzHistory_v0[];
 
   static serialise(domain: History): History_v0 {
     return {
       version: 0,
-      article_interactions : null, // FIXME : WIP
-      quizz_interactions: null, // FIXME : WIP
+      article_interactions: domain.article_interactions.map((elem) =>
+        ArticleHistory_v0.map(elem),
+      ),
+      quizz_interactions: domain.quizz_interactions.map((elem) =>
+        QuizzHistory_v0.map(elem),
+      ),
     };
   }
 }

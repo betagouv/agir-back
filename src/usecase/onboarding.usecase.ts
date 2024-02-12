@@ -180,7 +180,7 @@ export class OnboardingUsecase {
       parcours_todo: new ParcoursTodo(),
       gamification: Gamification.newDefaultGamification(),
       unlocked_features: new UnlockedFeatures(),
-      history: History.newHistory(),
+      history: new History(),
       code_departement: null,
       prm: null,
       version: UtilisateurBehavior.systemVersion(),

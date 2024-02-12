@@ -1,37 +1,44 @@
+import {
+  QuizzAttempt_v0,
+  QuizzHistory_v0,
+} from '../object_store/history/history_v0';
+
 export class QuizzAttempt {
-  constructor(score: number, date: Date) {
-    this.score = score;
-    this.date = date;
-  }
   score: number;
   date: Date;
+
+  constructor(data: QuizzAttempt_v0) {
+    this.score = data.score;
+    this.date = data.date;
+  }
 }
 
-export class QuizzHistoryData {
+export class QuizzHistory {
   content_id: string;
   attempts?: QuizzAttempt[];
   like_level?: number;
-  points_en_poche?: boolean;
-}
+  points_en_poche: boolean;
 
-export class QuizzHistory extends QuizzHistoryData {
-  constructor(data: QuizzHistoryData) {
-    super();
-    this.content_id = data.content_id;
+  constructor(data?: QuizzHistory_v0) {
     this.attempts = [];
-    if (data.attempts) {
-      data.attempts.forEach((attempt) => {
-        this.attempts.push(
-          new QuizzAttempt(attempt.score, new Date(attempt.date)),
-        );
-      });
+    if (data) {
+      this.content_id = data.content_id;
+      this.like_level = data.like_level;
+      this.points_en_poche = data.points_en_poche
+        ? data.points_en_poche
+        : false;
+      if (data.attempts) {
+        data.attempts.forEach((attempt) => {
+          this.attempts.push(new QuizzAttempt(attempt));
+        });
+      }
     }
-    this.like_level = data.like_level;
-    this.points_en_poche = data.points_en_poche ? data.points_en_poche : false;
   }
 
   public addAttempt(score: number, date?: Date) {
-    this.attempts.push(new QuizzAttempt(score, date || new Date()));
+    this.attempts.push(
+      new QuizzAttempt({ score: score, date: date || new Date() }),
+    );
   }
 
   public has100ScoreAmongAttempts(): boolean {

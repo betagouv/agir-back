@@ -1,3 +1,4 @@
+import { History_v0 } from './history/history_v0';
 import { ParcoursTodo_v0 } from './parcoursTodo/parcoursTodo_v0';
 import { UnlockedFeatures_v0 } from './unlockedFeatures/unlockedFeatures_v0';
 import { UnlockedFeatures_v1 } from './unlockedFeatures/unlockedFeatures_v1';
@@ -5,12 +6,14 @@ import { UnlockedFeatures_v1 } from './unlockedFeatures/unlockedFeatures_v1';
 export enum SerialisableDomain {
   UnlockedFeatures = 'UnlockedFeatures',
   ParcoursTodo = 'ParcoursTodo',
+  History = 'History',
   Object = 'Object',
 }
 const CLASS_DICTIONNARY = {
   UnlockedFeatures_v0: UnlockedFeatures_v0,
   UnlockedFeatures_v1: UnlockedFeatures_v1,
   ParcoursTodo_v0: ParcoursTodo_v0,
+  History_v0: History_v0,
 };
 
 const DATE_REGEXP =
@@ -20,7 +23,7 @@ export class Upgrader {
   public static upgradeRaw(raw: any, className: SerialisableDomain): any {
     let current_version: number = raw['version'] || 0;
 
-    current_version++;
+    current_version++; // starting from 1 or more
 
     let current_raw = raw;
     let current_class = Upgrader.getClassFromVersion(
