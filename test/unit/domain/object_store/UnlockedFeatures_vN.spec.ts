@@ -8,6 +8,18 @@ import { UnlockedFeatures_v0 } from '../../../../src/domain/object_store/unlocke
 import { UnlockedFeatures_v1 } from '../../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 
 describe('UnlockedFeatures_vN ', () => {
+  it('build ok from empty', async () => {
+    // GIVEN
+    const raw = Upgrader.upgradeRaw({}, SerialisableDomain.UnlockedFeatures);
+
+    // WHEN
+
+    const domain = new UnlockedFeatures(raw);
+    domain.add(Feature.aides);
+    // THEN
+
+    expect(domain.unlocked_features).toEqual([Feature.aides]);
+  });
   it('serialise <=> deSerialise v1 OK', async () => {
     // GIVEN
     const unlockF = new UnlockedFeatures();

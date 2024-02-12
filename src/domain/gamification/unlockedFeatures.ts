@@ -5,7 +5,7 @@ export class UnlockedFeatures {
   unlocked_features: Feature[];
 
   constructor(data?: UnlockedFeatures_v1) {
-    if (data) {
+    if (data && data.unlocked_features) {
       this.unlocked_features = data.unlocked_features;
     } else {
       this.unlocked_features = [];

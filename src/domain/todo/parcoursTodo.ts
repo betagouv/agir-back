@@ -11,10 +11,15 @@ export class ParcoursTodo {
   constructor(data?: ParcoursTodo_v0) {
     this.liste_todo = [];
     if (data) {
-      data.liste_todo.forEach((current_todo) => {
-        this.liste_todo.push(new Todo(current_todo));
-      });
-      this.todo_active = data.todo_active;
+      if (data.liste_todo) {
+        data.liste_todo.forEach((current_todo) => {
+          this.liste_todo.push(new Todo(current_todo));
+        });
+        this.todo_active = data.todo_active;
+      } else {
+        this.liste_todo = [];
+        this.todo_active = 0;
+      }
     } else {
       this.liste_todo = TodoCatalogue.getAllTodos();
       this.todo_active = 0;

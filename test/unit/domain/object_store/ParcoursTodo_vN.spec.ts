@@ -6,6 +6,22 @@ import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
 import { ParcoursTodo_v0 } from '../../../../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
 
 describe('ParcoursTodo vN ', () => {
+  it('build OK from empty', () => {
+    // GIVEN
+    const raw = Upgrader.upgradeRaw({}, SerialisableDomain.ParcoursTodo);
+
+    // WHEN
+
+    const domain = new ParcoursTodo(raw);
+    // THEN
+
+    expect(domain.isLastTodo()).toEqual(true);
+    expect(domain.todo_active).toEqual(0);
+    expect(domain.liste_todo).toEqual([]);
+    expect(domain.getActiveTodo().titre).toEqual(
+      'Plus de mission, pour le moment...',
+    );
+  });
   it('serialise <=> deserialise v0 OK', () => {
     // GIVEN
     const todo = new ParcoursTodo();
