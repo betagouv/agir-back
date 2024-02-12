@@ -52,9 +52,11 @@ const utilisateurs = {
       points: 0,
     },
     unlocked_features: {
+      version: 1,
       unlocked_features: ['aides', 'services', 'recommandations'],
     },
     todo: {
+      version: 0,
       todo_active: 0,
       liste_todo: [
         {
@@ -312,6 +314,7 @@ const utilisateurs = {
     parts: null,
     version: 2,
     unlocked_features: {
+      veersion: 1,
       unlocked_features: ['aides', 'services', 'recommandations'],
     },
     gamification: {
