@@ -245,6 +245,7 @@ const utilisateurs = {
       points: 590,
     },
     unlocked_features: {
+      version: 1,
       unlocked_features: [
         'aides',
         'services',
