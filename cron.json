@@ -7,7 +7,7 @@
       "command": "30 * * * * ./scripts/process_async_service.sh"
     },
     {
-      "command": "0 6 * * * ./scripts/nightly_pocessing.sh"
+      "command": "0 6 * * * ./scripts/nightly_processing.sh"
     }
   ]
 }

@@ -1,5 +1,10 @@
 import { Controller, Get, Param, Request, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiBearerAuth,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { RecommandationAPI } from './types/contenu/recommandationAPI';
@@ -35,7 +40,8 @@ export class RecommandationsController extends GenericControler {
   @Get('utilisateurs/:utilisateurId/interactions')
   @ApiOkResponse({ type: [RecommandationAPI] })
   @ApiOperation({
-    summary: "DEPRECATED : Liste les interactions personnalisées de l'utilisateur",
+    summary:
+      "DEPRECATED : Liste les interactions personnalisées de l'utilisateur",
   })
   @UseGuards(AuthGuard)
   async getUserInteractions(
