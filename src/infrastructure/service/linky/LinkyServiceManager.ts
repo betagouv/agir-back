@@ -336,7 +336,7 @@ Généralement dans les 24h qui viennent.<br><br>
       utilisateur.email,
       utilisateur.prenom,
       `Bonjour ${utilisateur.prenom},<br>
-Vous pouvez dès à présent :
+Vous pouvez dès à présent :<br>
 - voir votre consommation électrique quotidienne<br>
 - consulter votre historique jusqu'à deux ans dès maintenant<br>
 - comparer d'une année à l'autre l'évolution de votre consommation<br><br>
