@@ -282,7 +282,7 @@ describe('Service (API test)', () => {
     });
     expect(serviceDB).toBeNull();
   });
-  it('GET /utilisateurs/id/services liste les services associés à l utilisateur', async () => {
+  it('GET /utilisateurs/id/services liste les services associés à l utilisateur, ne liste pas les service TO_DELETE', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('serviceDefinition', { id: 'dummy_live' });
@@ -304,6 +304,25 @@ describe('Service (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(2);
+  });
+  it('GET /utilisateurs/id/services liste les services associés à l utilisateur, ne liste pas les service TO_DELETE', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition', { id: 'dummy_live' });
+    await TestUtil.create('service', {
+      status: ServiceStatus.TO_DELETE,
+      id: '1',
+      serviceDefinitionId: 'dummy_live',
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/services',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(0);
   });
   it('GET /utilisateurs/id/services liste 1 services associés à l utilisateur, check data', async () => {
     // GIVEN

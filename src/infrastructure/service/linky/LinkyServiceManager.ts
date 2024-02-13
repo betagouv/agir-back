@@ -234,7 +234,6 @@ export class LinkyServiceManager
       });
     } catch (error) {
       if (error.response) {
-        console.log(error.response);
         if (
           response.data.enedis_prm &&
           response.data.enedis_prm[0] === 'Invalid Enedis PRM'

@@ -121,6 +121,7 @@ export class ServiceRepository {
     const result = await this.prisma.service.findMany({
       where: {
         utilisateurId: utilisateurId,
+        status: { not: ServiceStatus.TO_DELETE },
       },
       include: {
         serviceDefinition: true,
