@@ -232,6 +232,6 @@ export class AdminController extends GenericControler {
       throw new ForbiddenException('CRON API KEY incorrecte');
     }
 
-    await this.contactUsecase.updateContacts();
+    await this.contactUsecase.batchUpdate();
   }
 }
