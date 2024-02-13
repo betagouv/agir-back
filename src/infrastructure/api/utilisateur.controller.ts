@@ -33,13 +33,17 @@ import { AuthGuard } from '../auth/guard';
 import { OubliMdpAPI } from './types/utilisateur/oubliMdpAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { ModifierMdpAPI } from './types/utilisateur/modifierMdpAPI';
+import { ContactUsecase } from 'src/usecase/contact.usecase';
 
 @ApiExtraModels(CreateUtilisateurAPI, UtilisateurAPI)
 @Controller()
 @ApiBearerAuth()
 @ApiTags('Utilisateur')
 export class UtilisateurController extends GenericControler {
-  constructor(private readonly utilisateurUsecase: UtilisateurUsecase) {
+  constructor(
+    private readonly utilisateurUsecase: UtilisateurUsecase,
+    private readonly contactUsecase: ContactUsecase,
+  ) {
     super();
   }
 
@@ -53,6 +57,7 @@ export class UtilisateurController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
   ) {
     this.checkCallerId(req, utilisateurId);
+    this.contactUsecase.delete(utilisateurId);
     await this.utilisateurUsecase.deleteUtilisateur(utilisateurId);
   }
 

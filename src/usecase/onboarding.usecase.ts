@@ -21,6 +21,7 @@ import { ParcoursTodo } from '../../src/domain/todo/parcoursTodo';
 import { UnlockedFeatures } from '../../src/domain/gamification/unlockedFeatures';
 import { History } from '../../src/domain/history/history';
 import { UtilisateurBehavior } from '../../src/domain/utilisateur/utilisateurBehavior';
+import { ContactUsecase } from './contact.usecase';
 
 export type Phrase = {
   phrase: string;
@@ -34,6 +35,7 @@ export class OnboardingUsecase {
     private emailSender: EmailSender,
     private codeManager: CodeManager,
     private oidcService: OidcService,
+    private contactUsecase: ContactUsecase,
     private securityEmailManager: SecurityEmailManager,
   ) {}
 
@@ -50,12 +52,12 @@ export class OnboardingUsecase {
       ApplicationError.throwCompteDejaActifError();
     }
 
-    const _this = this;
-    const codeOkAction = async function () {
-      await _this.securityEmailManager.resetEmailSendingState(utilisateur);
-      await _this.utilisateurRespository.activateAccount(utilisateur.id);
+    const codeOkAction = async () => {
+      await this.securityEmailManager.resetEmailSendingState(utilisateur);
+      await this.utilisateurRespository.activateAccount(utilisateur.id);
+      await this.contactUsecase.create(utilisateur);
 
-      const token = await _this.oidcService.createNewInnerAppToken(
+      const token = await this.oidcService.createNewInnerAppToken(
         utilisateur.id,
       );
       return { token };

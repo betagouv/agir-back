@@ -11,9 +11,6 @@ export class ContactSynchro {
   private apiKey = process.env.EMAIL_API_TOKEN;
 
   constructor() {
-    this.apiKey = process.env.EMAIL_API_TOKEN;
-    this.batchApiUrl = 'https://api.brevo.com/v3/contacts/batch';
-
     this.client = Brevo.ApiClient.instance;
     const apiKey = this.client.authentications['api-key'];
     apiKey.apiKey = process.env.EMAIL_API_TOKEN;
@@ -41,13 +38,10 @@ export class ContactSynchro {
       });
   }
 
-  // add createContact
   public async createContact(contact: Contact): Promise<boolean> {
     return await this.apiInstance.createContact(contact).then(
       function (data) {
-        console.log(
-          'API called successfully. Returned data: ' + JSON.stringify(data),
-        );
+        console.log('BREVO contact created called successfully ');
         return true;
       },
       function (error) {
@@ -57,12 +51,24 @@ export class ContactSynchro {
     );
   }
 
-  // add deleteContact
+  public async addContactsToList(emails: string[], listId: number) {
+    return this.apiInstance.addContactToList(listId, emails).then(
+      function (data) {
+        console.log('BREVO contact add to list');
+        return true;
+      },
+      function (error) {
+        return false;
+      },
+    );
+  }
+
   public async deleteContact(email: string): Promise<boolean> {
     const identifier = email; // can be email or id
 
     return await this.apiInstance.deleteContact(identifier).then(
       function () {
+        console.log('BREVO contact deleted');
         return true;
       },
       function (error) {
@@ -71,5 +77,4 @@ export class ContactSynchro {
       },
     );
   }
-  // todo : add updateContact
 }

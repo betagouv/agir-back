@@ -299,17 +299,33 @@ export class UtilisateurRepository {
     const count = await this.prisma.utilisateur.count();
     return Number(count);
   }
-  async findUtilisateursForBatch(
+
+  async findLastActiveUtilisateurs(
     limit: number,
     offset: number,
+    date: Date,
   ): Promise<Utilisateur[]> {
     const utilisateurs = await this.prisma.utilisateur.findMany({
       take: limit | 1,
       skip: offset | 0,
+      where: {
+        active_account: true,
+        updated_at: { gte: date },
+      },
       orderBy: {
         updated_at: 'desc',
       },
     });
     return utilisateurs.map((elem) => this.buildUtilisateurFromDB(elem));
+  }
+
+  async countActiveUsersWithRecentActivity(date: Date): Promise<number> {
+    const count = await this.prisma.utilisateur.count({
+      where: {
+        active_account: true,
+        updated_at: { gte: date },
+      },
+    });
+    return Number(count);
   }
 }

@@ -22,7 +22,7 @@ import { UserMigrationReportAPI } from './types/userMigrationReportAPI';
 import { ReferentielUsecase } from '../../../src/usecase/referentiel/referentiel.usecase';
 import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
 import { TodoUsecase } from '../../../src/usecase/todo.usecase';
-import { ContactUsecase } from '../../usecase/contact.usescase';
+import { ContactUsecase } from '../../usecase/contact.usecase';
 
 @Controller()
 @ApiBearerAuth()
@@ -209,6 +209,12 @@ export class AdminController extends GenericControler {
   async upgrade_user_todo(
     @Headers('Authorization') authorization: string,
   ): Promise<string[]> {
+    if (!authorization) {
+      throw new UnauthorizedException('CRON API KEY manquante');
+    }
+    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
+      throw new ForbiddenException('CRON API KEY incorrecte');
+    }
     return await this.todoUsecase.updateAllUsersTodo();
   }
 
@@ -226,6 +232,6 @@ export class AdminController extends GenericControler {
       throw new ForbiddenException('CRON API KEY incorrecte');
     }
 
-    await this.contactUsecase.updateUtilisateursContacts();
+    await this.contactUsecase.updateContacts();
   }
 }

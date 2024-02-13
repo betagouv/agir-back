@@ -16,6 +16,7 @@ import { Profile } from '../../src/domain/utilisateur/profile';
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
 import { GroupeRepository } from '../../src/infrastructure/repository/groupe.repository';
 import { QuestionKYCRepository } from '../../src/infrastructure/repository/questionKYC.repository';
+import { ContactUsecase } from './contact.usecase';
 
 export type Phrase = {
   phrase: string;
@@ -25,7 +26,7 @@ export type Phrase = {
 @Injectable()
 export class UtilisateurUsecase {
   constructor(
-    private utilisateurRespository: UtilisateurRepository,
+    private utilisateurRepository: UtilisateurRepository,
     private groupeRepository: GroupeRepository,
     private serviceRepository: ServiceRepository,
     private suiviRepository: SuiviRepository,
@@ -37,14 +38,16 @@ export class UtilisateurUsecase {
     private codeManager: CodeManager,
     private securityEmailManager: SecurityEmailManager,
     private passwordManager: PasswordManager,
+    private contactUsecase: ContactUsecase,
   ) {}
 
   async loginUtilisateur(
     email: string,
     password: string,
   ): Promise<{ token: string; utilisateur: Utilisateur }> {
-    const utilisateur =
-      await this.utilisateurRespository.findUtilisateurByEmail(email);
+    const utilisateur = await this.utilisateurRepository.findUtilisateurByEmail(
+      email,
+    );
     if (!utilisateur) {
       ApplicationError.throwBadPasswordOrEmailError();
     }
@@ -68,7 +71,7 @@ export class UtilisateurUsecase {
   }
 
   async findUtilisateurByEmail(email: string): Promise<Utilisateur> {
-    return this.utilisateurRespository.findUtilisateurByEmail(email);
+    return this.utilisateurRepository.findUtilisateurByEmail(email);
   }
 
   async updateUtilisateurProfile(
@@ -103,15 +106,16 @@ export class UtilisateurUsecase {
     profileToUpdate.nom = profile.nom;
     profileToUpdate.prenom = profile.prenom;
 
-    return this.utilisateurRespository.updateProfile(
+    return this.utilisateurRepository.updateProfile(
       utilisateurId,
       profileToUpdate,
     );
   }
 
   async oubli_mot_de_passe(email: string) {
-    const utilisateur =
-      await this.utilisateurRespository.findUtilisateurByEmail(email);
+    const utilisateur = await this.utilisateurRepository.findUtilisateurByEmail(
+      email,
+    );
 
     if (!utilisateur) return; // pas d'erreur, silence ^^
 
@@ -120,7 +124,7 @@ export class UtilisateurUsecase {
     const _this = this;
     const okAction = async function () {
       utilisateur.setNew6DigitCode();
-      await _this.utilisateurRespository.updateCode(
+      await _this.utilisateurRepository.updateCode(
         utilisateur.id,
         utilisateur.code,
         utilisateur.code_generation_time,
@@ -139,8 +143,9 @@ export class UtilisateurUsecase {
     code: string,
     mot_de_passe: string,
   ) {
-    const utilisateur =
-      await this.utilisateurRespository.findUtilisateurByEmail(email);
+    const utilisateur = await this.utilisateurRepository.findUtilisateurByEmail(
+      email,
+    );
 
     if (!utilisateur) {
       ApplicationError.throwBadCodeOrEmailError();
@@ -158,7 +163,7 @@ export class UtilisateurUsecase {
       await _this.passwordManager.initLoginState(utilisateur);
 
       utilisateur.setPassword(mot_de_passe);
-      await _this.utilisateurRespository.updateProfile(utilisateur.id, {
+      await _this.utilisateurRepository.updateProfile(utilisateur.id, {
         passwordSalt: utilisateur.passwordSalt,
         passwordHash: utilisateur.passwordHash,
       });
@@ -173,7 +178,7 @@ export class UtilisateurUsecase {
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
-    return this.utilisateurRespository.findUtilisateurById(id);
+    return this.utilisateurRepository.findUtilisateurById(id);
   }
 
   async deleteUtilisateur(utilisateurId: string) {
@@ -184,7 +189,8 @@ export class UtilisateurUsecase {
     await this.bilanRepository.delete(utilisateurId);
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
     await this.groupeRepository.delete(utilisateurId);
-    await this.utilisateurRespository.delete(utilisateurId);
+    await this.utilisateurRepository.delete(utilisateurId);
+    await this.contactUsecase.delete(utilisateurId);
   }
 
   private async sendMotDePasseCode(utilisateur: Utilisateur) {
