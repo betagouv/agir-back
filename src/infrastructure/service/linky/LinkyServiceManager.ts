@@ -251,8 +251,10 @@ export class LinkyServiceManager
           await this.utilisateurRepository.findUtilisateurById(
             service.utilisateurId,
           );
-        const linky_data = await this.linkyRepository.getLinky(live_prm);
-        if (linky_data && linky_data.serie.length > 0) {
+        const empty = await this.linkyRepository.isPRMDataEmptyOrMissing(
+          live_prm,
+        );
+        if (!empty) {
           await this.linkyEmailer.sendAvailableDataEmail(utilisateur);
           service.configuration[SENT_DATA_EMAIL_CONF_KEY] = true;
           await this.serviceRepository.updateServiceConfiguration(
