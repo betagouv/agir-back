@@ -67,4 +67,33 @@ describe('LinkyRepository', () => {
     expect(prm_a).not.toBeNull();
     expect(prm_b).toBeNull();
   });
+  it('isPRMDataEmptyOrMissing: no PRM => true', async () => {
+    // GIVEN
+
+    // WHEN
+    const result = await linkyRepository.isPRMDataEmptyOrMissing('123');
+
+    // THEN
+    expect(result).toEqual(true);
+  });
+  it('isPRMDataEmptyOrMissing: empty Data => true', async () => {
+    // GIVEN
+    await TestUtil.create('linky', { prm: '123', data: [] });
+
+    // WHEN
+    const result = await linkyRepository.isPRMDataEmptyOrMissing('123');
+
+    // THEN
+    expect(result).toEqual(true);
+  });
+  it('isPRMDataEmptyOrMissing: some data => false', async () => {
+    // GIVEN
+    await TestUtil.create('linky', { prm: '123' });
+
+    // WHEN
+    const result = await linkyRepository.isPRMDataEmptyOrMissing('123');
+
+    // THEN
+    expect(result).toEqual(false);
+  });
 });

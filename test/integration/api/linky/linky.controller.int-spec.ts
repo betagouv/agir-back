@@ -64,7 +64,7 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(1);
+    expect(response.body).toHaveLength(2);
     expect(response.body[0].date).toEqual(new Date(123).toISOString());
     expect(response.body[0].valeur).toEqual(100);
     expect(response.body[0].valeur_corrigee).toEqual(110);

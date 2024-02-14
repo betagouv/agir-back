@@ -3,8 +3,8 @@ const Brevo = require('@getbrevo/brevo');
 
 @Injectable()
 export class EmailSender {
-  private client;
-  private apiInstance;
+  private client?;
+  private apiInstance?;
 
   constructor() {
     this.client = Brevo.ApiClient.instance;

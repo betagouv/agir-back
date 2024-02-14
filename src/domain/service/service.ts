@@ -1,8 +1,9 @@
 import { ServiceDefinition } from './serviceDefinition';
 
-const ERROR_CODE_KEY = 'error_code';
-const ERROR_MESSAGE_KEY = 'error_message';
-
+export enum ServiceErrorKey {
+  error_code = 'error_code',
+  error_message = 'error_message',
+}
 export enum ServiceStatus {
   CREATED = 'CREATED',
   LIVE = 'LIVE',
@@ -34,25 +35,25 @@ export class Service extends ServiceData {
   }
 
   public addErrorCodeToConfiguration?(code: string) {
-    this.configuration[ERROR_CODE_KEY] = code;
+    this.configuration[ServiceErrorKey.error_code] = code;
   }
   public addErrorMessageToConfiguration?(message: string) {
-    this.configuration[ERROR_MESSAGE_KEY] = message;
+    this.configuration[ServiceErrorKey.error_message] = message;
   }
 
   public resetErrorState?() {
-    delete this.configuration[ERROR_CODE_KEY];
-    delete this.configuration[ERROR_MESSAGE_KEY];
+    delete this.configuration[ServiceErrorKey.error_code];
+    delete this.configuration[ServiceErrorKey.error_message];
   }
 
   public isInError?(): boolean {
-    return this.configuration[ERROR_CODE_KEY] !== undefined;
+    return this.configuration[ServiceErrorKey.error_code] !== undefined;
   }
 
   public getErrorCode?(): string {
-    return this.configuration[ERROR_CODE_KEY];
+    return this.configuration[ServiceErrorKey.error_code];
   }
   public getErrorMessage?(): string {
-    return this.configuration[ERROR_MESSAGE_KEY];
+    return this.configuration[ServiceErrorKey.error_message];
   }
 }

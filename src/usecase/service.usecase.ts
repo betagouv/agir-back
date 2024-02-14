@@ -27,13 +27,13 @@ const dummy_async_manager = {
     return service.serviceId;
   },
   checkConfiguration(conf: Object) {},
-  isActivated(service: Service) {
+  async isActivated(service: Service) {
     return true;
   },
-  isConfigured(service: Service) {
+  async isConfigured(service: Service) {
     return true;
   },
-  isFullyRunning(service: Service) {
+  async isFullyRunning(service: Service) {
     return true;
   },
   processConfiguration(conf: Object) {},
@@ -80,6 +80,11 @@ export class ServiceUsecase {
     serviceDefinitionId: string,
     payload: LinkyConfigurationAPI,
   ) {
+    const service = await this.serviceRepository.getServiceOfUtilisateur(
+      utilisateurId,
+      serviceDefinitionId,
+    );
+
     const manager = this.getAsyncServiceManager(serviceDefinitionId);
 
     manager.checkConfiguration(payload);
@@ -89,7 +94,7 @@ export class ServiceUsecase {
     await this.serviceRepository.updateServiceConfiguration(
       utilisateurId,
       serviceDefinitionId,
-      payload,
+      { ...service.configuration, ...payload },
     );
   }
 
@@ -213,7 +218,7 @@ export class ServiceUsecase {
       if (service.isLiveServiceType()) {
         await this.refreshLiveService(service);
       }
-      this.setAsyncServiceStateIfNeeded(service);
+      await this.setAsyncServiceStateIfNeeded(service);
     }
     return userServiceList;
   }
@@ -229,7 +234,7 @@ export class ServiceUsecase {
     if (service.isLiveServiceType()) {
       await this.refreshLiveService(service);
     }
-    this.setAsyncServiceStateIfNeeded(service);
+    await this.setAsyncServiceStateIfNeeded(service);
 
     return service;
   }
@@ -270,12 +275,12 @@ export class ServiceUsecase {
     return this.ASYNC_SERVICES[serviceDefinitionId];
   }
 
-  private setAsyncServiceStateIfNeeded(service: Service) {
+  private async setAsyncServiceStateIfNeeded(service: Service) {
     if (service.isAsyncServiceType()) {
       const manager = this.getAsyncServiceManager(service.serviceDefinitionId);
-      service.is_configured = manager.isConfigured(service);
-      service.is_activated = manager.isActivated(service);
-      service.is_fully_running = manager.isFullyRunning(service);
+      service.is_configured = await manager.isConfigured(service);
+      service.is_activated = await manager.isActivated(service);
+      service.is_fully_running = await manager.isFullyRunning(service);
     }
   }
 }

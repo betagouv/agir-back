@@ -43,6 +43,29 @@ export class LinkyRepository {
       serie: result.data as any,
     });
   }
+  async isPRMDataEmptyOrMissing(prm: string): Promise<boolean> {
+    if (!prm) return true;
+
+    const prm_count = await this.prisma.linky.count({
+      where: {
+        prm: prm,
+      },
+    });
+    if (prm_count === 1) {
+      const prm_empty = await this.prisma.linky.count({
+        where: {
+          prm: prm,
+          data: {
+            equals: [],
+          },
+        },
+      });
+      return prm_empty === 1;
+    } else {
+      return true;
+    }
+  }
+
   async deleteLinky(prm: string): Promise<void> {
     await this.prisma.linky.delete({
       where: {

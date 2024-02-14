@@ -440,14 +440,15 @@ describe('Service (API test)', () => {
     await TestUtil.create('serviceDefinition', { id: 'linky' });
     await TestUtil.create('service', {
       serviceDefinitionId: 'linky',
-      status: ServiceStatus.CREATED,
+      status: ServiceStatus.LIVE,
       configuration: {
         prm: '123',
         winter_pk: 'abc',
         live_prm: '123',
-        sent_data_email: true,
       },
     });
+
+    await TestUtil.create('linky', { prm: '123' });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -568,9 +569,9 @@ describe('Service (API test)', () => {
         prm: '123',
         winter_pk: 'abc',
         live_prm: '123',
-        sent_data_email: true,
       },
     });
+    await TestUtil.create('linky', { prm: '123' });
 
     // WHEN
     const response = await TestUtil.GET(

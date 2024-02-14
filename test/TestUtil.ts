@@ -419,6 +419,11 @@ export class TestUtil {
           value: 100,
           value_at_normal_temperature: 110,
         },
+        {
+          time: new Date(456),
+          value: 110,
+          value_at_normal_temperature: 120,
+        },
       ],
       ...override,
     };

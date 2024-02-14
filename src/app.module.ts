@@ -73,6 +73,8 @@ import { DepartementRepository } from './infrastructure/repository/departement/d
 import { Environment } from './domain/environment';
 import { BibliothequeController } from './infrastructure/api/bibliotheque.controller';
 import { BibliothequeUsecase } from './usecase/bibliotheque.usecase';
+import { LinkyAPIConnector } from './infrastructure/service/linky/LinkyAPIConnector';
+import { LinkyEmailer } from './infrastructure/service/linky/LinkyEmailer';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -163,6 +165,8 @@ function getControllers(): any[] {
     PonderationRepository,
     DepartementRepository,
     BibliothequeUsecase,
+    LinkyAPIConnector,
+    LinkyEmailer,
   ],
 })
 export class AppModule {}
