@@ -234,19 +234,30 @@ export class LinkyServiceManager
       });
     } catch (error) {
       if (error.response) {
-        if (
-          response.data.enedis_prm &&
-          response.data.enedis_prm[0] === 'Invalid Enedis PRM'
-        ) {
-          // erreur fonctionnelle pas sensé se produire (pre contrôle du PRM à la conf)
-          ApplicationError.throwBadPRM(prm);
-        }
-        if (
-          response.data.error.message &&
-          response.data.error.message.includes('SGT401')
-        ) {
-          // PRM inconnu, saisie utilisateur sans doute avec une coquille
-          ApplicationError.throwUnknownPRM(prm);
+        if (response.data) {
+          if (
+            response.data.enedis_prm &&
+            response.data.enedis_prm[0] === 'Invalid Enedis PRM'
+          ) {
+            // erreur fonctionnelle pas sensé se produire (pre contrôle du PRM à la conf)
+            ApplicationError.throwBadPRM(prm);
+          }
+          if (
+            response.data.error &&
+            response.data.error.message &&
+            response.data.error.message.includes('SGT401')
+          ) {
+            // PRM inconnu, saisie utilisateur sans doute avec une coquille
+            ApplicationError.throwUnknownPRM(prm);
+          }
+          if (response.data.error) {
+            // Erreur Enedis
+            ApplicationError.throwUnknownEnedisError(
+              prm,
+              response.data.error.code,
+              response.data.error.message,
+            );
+          }
         }
         ApplicationError.throwUnknownLinkyError(
           prm,
@@ -279,7 +290,7 @@ export class LinkyServiceManager
       if (error.response) {
         ApplicationError.throwUnknownLinkyErrorWhenDelete(
           winter_pk,
-          JSON.stringify(error.response),
+          JSON.stringify(error.response.data),
         );
       } else if (error.request) {
         ApplicationError.throwUnknownLinkyErrorWhenDelete(

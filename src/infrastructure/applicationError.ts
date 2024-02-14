@@ -186,6 +186,12 @@ export class ApplicationError {
       404,
     );
   }
+  static throwUnknownEnedisError(prm: string, code: string, message: string) {
+    this.throwAppError(
+      '036',
+      `PRM ${prm}, code : ${code}, message : ${message}`,
+    );
+  }
 
   private static throwAppError(
     code: string,
