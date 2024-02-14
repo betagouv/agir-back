@@ -73,6 +73,7 @@ export class LinkyController extends GenericControler {
     @Query('compare_annees') compare_annees?: string,
     @Query('compare_mois_sem_jour') compare_mois_sem_jour?: string,
     @Query('end_date') end_date?: string,
+    @Query('derniers_14_jours') derniers_14_jours?: string,
   ) {
     this.checkCallerId(req, utilisateurId);
 
@@ -83,6 +84,7 @@ export class LinkyController extends GenericControler {
       end_date,
       compare_annees === 'true',
       compare_mois_sem_jour === 'true',
+      derniers_14_jours === 'true',
     );
     const result = data.serie.map((elem) => LinkyDataAPI.map(elem));
 

@@ -2,7 +2,8 @@ export class LinkyDataElement {
   time: Date;
   value: number;
   value_at_normal_temperature: number;
-  jour?: string;
+  jour_text?: string;
+  jour_val?: number;
   semaine?: string;
   mois?: string;
   annee?: string;
@@ -49,6 +50,51 @@ export class LinkyData {
     this.serie.push(element);
   }
 
+  public compare15jousEntre2ans?(): LinkyDataElement[] {
+    if (this.serie.length < 380) return [];
+
+    const last_element = this.getLastDataNotNull();
+    const last_element_date = new Date(last_element.time);
+    const last_element_date_minus14 = new Date(last_element_date);
+    last_element_date_minus14.setDate(last_element_date.getDate() - 13);
+
+    const last_element_date_minus_one_year = new Date(last_element_date);
+    last_element_date_minus_one_year.setFullYear(
+      last_element_date.getFullYear() - 1,
+    );
+
+    const last_element_date_minus14_minus_one_year = new Date(
+      last_element_date_minus14,
+    );
+    last_element_date_minus14_minus_one_year.setFullYear(
+      last_element_date.getFullYear() - 1,
+    );
+
+    const block = this.searchDays(last_element_date_minus14, last_element_date);
+
+    const block_last_year = this.searchDays(
+      last_element_date_minus14_minus_one_year,
+      last_element_date_minus_one_year,
+    );
+
+    const result: LinkyDataElement[] = [];
+
+    // Entrelassage
+    block.forEach((elem, index) => {
+      result.push(block_last_year[index]);
+      result.push(elem);
+    });
+
+    result.forEach((elem) => {
+      elem.jour_text = LinkyData.formatJour(elem.time);
+      elem.mois = LinkyData.formatMois(elem.time);
+      elem.annee = LinkyData.formatAnnee(elem.time);
+      elem.jour_val = elem.time.getDate();
+    });
+
+    return result;
+  }
+
   public compare2AnsParMois?(): LinkyDataElement[] {
     if (this.serie.length < 2) {
       return [];
@@ -87,7 +133,7 @@ export class LinkyData {
         time: elem.time,
         value: elem.value,
         value_at_normal_temperature: elem.value_at_normal_temperature,
-        jour: LinkyData.formatJour(elem.time),
+        jour_text: LinkyData.formatJour(elem.time),
       };
       return new_data;
     });
@@ -221,9 +267,9 @@ export class LinkyData {
       last_day_previous_year,
     )[0];
 
-    last_element.jour = LinkyData.formatJour(last_element.time);
+    last_element.jour_text = LinkyData.formatJour(last_element.time);
     last_element.annee = LinkyData.formatAnnee(last_element.time);
-    last_day_last_year_element.jour = LinkyData.formatJour(
+    last_day_last_year_element.jour_text = LinkyData.formatJour(
       last_day_last_year_element.time,
     );
     last_day_last_year_element.annee = LinkyData.formatAnnee(

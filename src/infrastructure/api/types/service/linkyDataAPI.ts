@@ -13,6 +13,7 @@ export class LinkyDataAPI {
   @ApiProperty() valeur: number;
   @ApiProperty() valeur_corrigee: number;
   @ApiProperty() jour?: string;
+  @ApiProperty() jour_val?: number;
   @ApiProperty() semaine?: string;
   @ApiProperty() mois?: string;
   @ApiProperty() annee?: string;
@@ -22,7 +23,8 @@ export class LinkyDataAPI {
       date: elem.time,
       valeur: elem.value,
       valeur_corrigee: elem.value_at_normal_temperature,
-      jour: elem.jour,
+      jour: elem.jour_text,
+      jour_val: elem.jour_val,
       semaine: elem.semaine,
       mois: elem.mois,
       annee: elem.annee,

@@ -199,8 +199,8 @@ describe('LinkyData', () => {
 
     // THEN
     expect(result).toHaveLength(2);
-    expect(result[0].jour).toEqual('jeudi');
-    expect(result[1].jour).toEqual('vendredi');
+    expect(result[0].jour_text).toEqual('jeudi');
+    expect(result[1].jour_text).toEqual('vendredi');
   });
   it('extractLastNDays : extract last 2 days with proper labels ', () => {
     // GIVEN
@@ -800,10 +800,10 @@ describe('LinkyData', () => {
 
     // THEN
     expect(res).toHaveLength(2);
-    expect(res[0].jour).toEqual('mardi');
+    expect(res[0].jour_text).toEqual('mardi');
     expect(res[0].annee).toEqual('2022');
     expect(Math.floor(res[0].value)).toEqual(29);
-    expect(res[1].jour).toEqual('mercredi');
+    expect(res[1].jour_text).toEqual('mercredi');
     expect(res[1].annee).toEqual('2023');
     expect(Math.floor(res[1].value)).toEqual(18);
   });
@@ -816,5 +816,71 @@ describe('LinkyData', () => {
 
     // THEN
     expect(res).toHaveLength(6);
+  });
+  it('compare15jousEntre2ans : [] si pas assez de données', () => {
+    // GIVEN
+    const linky_data = new LinkyData({
+      prm: 'abc',
+      serie: [
+        {
+          time: new Date('2021-12-21T12:00:00.000Z'),
+          value: 0,
+          value_at_normal_temperature: 1,
+        },
+        {
+          time: new Date('2021-12-22T12:00:00.000Z'),
+          value: 2,
+          value_at_normal_temperature: 3,
+        },
+      ],
+    });
+
+    // WHEN
+    const res = linky_data.compare15jousEntre2ans();
+
+    // THEN
+    expect(res).toHaveLength(0);
+  });
+  it('compare15jousEntre2ans : 28 elements de base', () => {
+    // GIVEN
+    const linky_data = new LinkyData({
+      prm: 'abc',
+      serie: _linky_data,
+    });
+
+    // WHEN
+    const res = linky_data.compare15jousEntre2ans();
+
+    // THEN
+    expect(res).toHaveLength(28);
+  });
+  it('compare15jousEntre2ans :valeurs OK', () => {
+    // GIVEN
+    const linky_data = new LinkyData({
+      prm: 'abc',
+      serie: _linky_data,
+    });
+
+    // WHEN
+    const res = linky_data.compare15jousEntre2ans();
+
+    // THEN
+    expect(res[0].annee).toEqual('2022');
+    expect(res[0].mois).toEqual('novembre');
+    expect(res[0].jour_text).toEqual('mercredi');
+    expect(res[0].jour_val).toEqual(30);
+    expect(res[1].annee).toEqual('2023');
+    expect(res[1].mois).toEqual('novembre');
+    expect(res[1].jour_text).toEqual('jeudi');
+    expect(res[1].jour_val).toEqual(30);
+
+    expect(res[26].annee).toEqual('2022');
+    expect(res[26].mois).toEqual('décembre');
+    expect(res[26].jour_text).toEqual('mardi');
+    expect(res[26].jour_val).toEqual(13);
+    expect(res[27].annee).toEqual('2023');
+    expect(res[27].mois).toEqual('décembre');
+    expect(res[27].jour_text).toEqual('mercredi');
+    expect(res[27].jour_val).toEqual(13);
   });
 });
