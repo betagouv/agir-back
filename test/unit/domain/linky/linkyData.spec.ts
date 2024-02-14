@@ -753,70 +753,7 @@ describe('LinkyData', () => {
     expect(elems[1].value).toEqual(4);
     expect(elems[2].value).toEqual(5);
   });
-  it('compareWeekDataTwoYears : compute OK', () => {
-    // GIVEN
-    const linky_data = new LinkyData({ prm: 'abc', serie: _linky_data });
 
-    // WHEN
-    const week_cumul = linky_data.compareWeekDataTwoYears(
-      new Date('2023-11-15'),
-    );
-
-    // THEN
-    expect(week_cumul).toHaveLength(2);
-    expect(Math.floor(week_cumul[0].value)).toEqual(62);
-    expect(Math.floor(week_cumul[0].value_at_normal_temperature)).toEqual(79);
-    expect(week_cumul[0].semaine).toEqual('45');
-    expect(week_cumul[0].annee).toEqual('2022');
-    expect(Math.floor(week_cumul[1].value)).toEqual(87);
-    expect(Math.floor(week_cumul[1].value_at_normal_temperature)).toEqual(98);
-    expect(week_cumul[1].semaine).toEqual('45');
-    expect(week_cumul[1].annee).toEqual('2023');
-  });
-  it('compareMonthDataTwoYears : compute OK', () => {
-    // GIVEN
-    const linky_data = new LinkyData({ prm: 'abc', serie: _linky_data });
-
-    // WHEN
-    const month_cumul = linky_data.compareMonthDataTwoYears(
-      new Date('2023-10-15'),
-    );
-
-    // THEN
-    expect(month_cumul).toHaveLength(2);
-    expect(month_cumul[0].mois).toEqual('septembre');
-    expect(month_cumul[0].annee).toEqual('2022');
-    expect(Math.floor(month_cumul[0].value)).toEqual(143);
-    expect(month_cumul[1].mois).toEqual('septembre');
-    expect(month_cumul[1].annee).toEqual('2023');
-    expect(Math.floor(month_cumul[1].value)).toEqual(156);
-  });
-  it('compareDayDataTwoYears : compute OK', () => {
-    // GIVEN
-    const linky_data = new LinkyData({ prm: 'abc', serie: _linky_data });
-
-    // WHEN
-    const res = linky_data.compareDayDataTwoYears();
-
-    // THEN
-    expect(res).toHaveLength(2);
-    expect(res[0].jour_text).toEqual('mardi');
-    expect(res[0].annee).toEqual('2022');
-    expect(Math.floor(res[0].value)).toEqual(29);
-    expect(res[1].jour_text).toEqual('mercredi');
-    expect(res[1].annee).toEqual('2023');
-    expect(Math.floor(res[1].value)).toEqual(18);
-  });
-  it('dynamicCompareTwoYears : compute OK', () => {
-    // GIVEN
-    const linky_data = new LinkyData({ prm: 'abc', serie: _linky_data });
-
-    // WHEN
-    const res = linky_data.dynamicCompareTwoYears();
-
-    // THEN
-    expect(res).toHaveLength(6);
-  });
   it('compare15jousEntre2ans : [] si pas assez de données', () => {
     // GIVEN
     const linky_data = new LinkyData({
@@ -865,6 +802,8 @@ describe('LinkyData', () => {
     const res = linky_data.compare15jousEntre2ans();
 
     // THEN
+    expect(res).toHaveLength(28);
+
     expect(res[0].annee).toEqual('2022');
     expect(res[0].mois).toEqual('novembre');
     expect(res[0].jour_text).toEqual('mercredi');
@@ -882,5 +821,242 @@ describe('LinkyData', () => {
     expect(res[27].mois).toEqual('décembre');
     expect(res[27].jour_text).toEqual('mercredi');
     expect(res[27].jour_val).toEqual(13);
+  });
+  it('compare15jousEntre2ans : data partielle OK 7 jours au lieu de 14', () => {
+    // GIVEN
+    const linky_data = new LinkyData({
+      prm: 'abc',
+      serie: [
+        {
+          time: new Date('2022-12-07T12:00:00.000Z'),
+          value: 19.684,
+          value_at_normal_temperature: 16.79139716249968,
+        },
+        {
+          time: new Date('2022-12-08T12:00:00.000Z'),
+          value: 17.606,
+          value_at_normal_temperature: 13.95703802438703,
+        },
+        {
+          time: new Date('2022-12-09T12:00:00.000Z'),
+          value: 25.669,
+          value_at_normal_temperature: 21.55115483653999,
+        },
+        {
+          time: new Date('2022-12-10T12:00:00.000Z'),
+          value: 27.912,
+          value_at_normal_temperature: 21.35866354237153,
+        },
+        {
+          time: new Date('2022-12-11T12:00:00.000Z'),
+          value: 31.666,
+          value_at_normal_temperature: 24.88540884720465,
+        },
+        {
+          time: new Date('2022-12-12T12:00:00.000Z'),
+          value: 20.935,
+          value_at_normal_temperature: 14.6325854386163,
+        },
+        {
+          time: new Date('2022-12-13T12:00:00.000Z'),
+          value: 29.003,
+          value_at_normal_temperature: 24.96383898672045,
+        },
+        {
+          time: new Date('2023-12-07T12:00:00.000Z'),
+          value: 29.613,
+          value_at_normal_temperature: 32.67808840765969,
+        },
+        {
+          time: new Date('2023-12-08T12:00:00.000Z'),
+          value: 20.153,
+          value_at_normal_temperature: 26.20635134585184,
+        },
+        {
+          time: new Date('2023-12-09T12:00:00.000Z'),
+          value: 19.462,
+          value_at_normal_temperature: 26.85310581096721,
+        },
+        {
+          time: new Date('2023-12-10T12:00:00.000Z'),
+          value: 21.578,
+          value_at_normal_temperature: 29.73550182492967,
+        },
+        {
+          time: new Date('2023-12-11T12:00:00.000Z'),
+          value: 15.265,
+          value_at_normal_temperature: 23.95111061968533,
+        },
+        {
+          time: new Date('2023-12-12T12:00:00.000Z'),
+          value: 13.681,
+          value_at_normal_temperature: 18.93957947300541,
+        },
+        {
+          time: new Date('2023-12-13T12:00:00.000Z'),
+          value: 18.362,
+          value_at_normal_temperature: 22.77116238719901,
+        },
+      ],
+    });
+
+    // WHEN
+    const res = linky_data.compare15jousEntre2ans();
+
+    // THEN
+    expect(res).toHaveLength(14);
+    expect(res[0].annee).toEqual('2022');
+    expect(res[0].mois).toEqual('décembre');
+    expect(res[0].jour_text).toEqual('mercredi');
+    expect(res[0].jour_val).toEqual(7);
+    expect(res[1].annee).toEqual('2023');
+    expect(res[1].mois).toEqual('décembre');
+    expect(res[1].jour_text).toEqual('jeudi');
+    expect(res[1].jour_val).toEqual(7);
+
+    expect(res[12].annee).toEqual('2022');
+    expect(res[12].mois).toEqual('décembre');
+    expect(res[12].jour_text).toEqual('mardi');
+    expect(res[12].jour_val).toEqual(13);
+    expect(res[13].annee).toEqual('2023');
+    expect(res[13].mois).toEqual('décembre');
+    expect(res[13].jour_text).toEqual('mercredi');
+    expect(res[13].jour_val).toEqual(13);
+  });
+  it('compare15jousEntre2ans : data partielle OK 7 jours au lieu de 14, coupure au restant de l annee d avant', () => {
+    // GIVEN
+    const linky_data = new LinkyData({
+      prm: 'abc',
+      serie: [
+        {
+          time: new Date('2022-12-10T12:00:00.000Z'),
+          value: 27.912,
+          value_at_normal_temperature: 21.35866354237153,
+        },
+        {
+          time: new Date('2022-12-11T12:00:00.000Z'),
+          value: 31.666,
+          value_at_normal_temperature: 24.88540884720465,
+        },
+        {
+          time: new Date('2022-12-12T12:00:00.000Z'),
+          value: 20.935,
+          value_at_normal_temperature: 14.6325854386163,
+        },
+        {
+          time: new Date('2022-12-13T12:00:00.000Z'),
+          value: 29.003,
+          value_at_normal_temperature: 24.96383898672045,
+        },
+
+        {
+          time: new Date('2023-12-07T12:00:00.000Z'),
+          value: 29.613,
+          value_at_normal_temperature: 32.67808840765969,
+        },
+        {
+          time: new Date('2023-12-08T12:00:00.000Z'),
+          value: 20.153,
+          value_at_normal_temperature: 26.20635134585184,
+        },
+        {
+          time: new Date('2023-12-09T12:00:00.000Z'),
+          value: 19.462,
+          value_at_normal_temperature: 26.85310581096721,
+        },
+        {
+          time: new Date('2023-12-10T12:00:00.000Z'),
+          value: 21.578,
+          value_at_normal_temperature: 29.73550182492967,
+        },
+        {
+          time: new Date('2023-12-11T12:00:00.000Z'),
+          value: 15.265,
+          value_at_normal_temperature: 23.95111061968533,
+        },
+        {
+          time: new Date('2023-12-12T12:00:00.000Z'),
+          value: 13.681,
+          value_at_normal_temperature: 18.93957947300541,
+        },
+        {
+          time: new Date('2023-12-13T12:00:00.000Z'),
+          value: 18.362,
+          value_at_normal_temperature: 22.77116238719901,
+        },
+      ],
+    });
+
+    // WHEN
+    const res = linky_data.compare15jousEntre2ans();
+
+    // THEN
+    expect(res).toHaveLength(8);
+    expect(res[0].annee).toEqual('2022');
+    expect(res[0].mois).toEqual('décembre');
+    expect(res[0].jour_text).toEqual('samedi');
+    expect(res[0].jour_val).toEqual(10);
+    expect(res[1].annee).toEqual('2023');
+    expect(res[1].mois).toEqual('décembre');
+    expect(res[1].jour_text).toEqual('dimanche');
+    expect(res[1].jour_val).toEqual(10);
+
+    expect(res[6].annee).toEqual('2022');
+    expect(res[6].mois).toEqual('décembre');
+    expect(res[6].jour_text).toEqual('mardi');
+    expect(res[6].jour_val).toEqual(13);
+    expect(res[7].annee).toEqual('2023');
+    expect(res[7].mois).toEqual('décembre');
+    expect(res[7].jour_text).toEqual('mercredi');
+    expect(res[7].jour_val).toEqual(13);
+  });
+  it('compare15jousEntre2ans : pas de data y a un an...', () => {
+    // GIVEN
+    const linky_data = new LinkyData({
+      prm: 'abc',
+      serie: [
+        {
+          time: new Date('2023-12-07T12:00:00.000Z'),
+          value: 29.613,
+          value_at_normal_temperature: 32.67808840765969,
+        },
+        {
+          time: new Date('2023-12-08T12:00:00.000Z'),
+          value: 20.153,
+          value_at_normal_temperature: 26.20635134585184,
+        },
+        {
+          time: new Date('2023-12-09T12:00:00.000Z'),
+          value: 19.462,
+          value_at_normal_temperature: 26.85310581096721,
+        },
+        {
+          time: new Date('2023-12-10T12:00:00.000Z'),
+          value: 21.578,
+          value_at_normal_temperature: 29.73550182492967,
+        },
+        {
+          time: new Date('2023-12-11T12:00:00.000Z'),
+          value: 15.265,
+          value_at_normal_temperature: 23.95111061968533,
+        },
+        {
+          time: new Date('2023-12-12T12:00:00.000Z'),
+          value: 13.681,
+          value_at_normal_temperature: 18.93957947300541,
+        },
+        {
+          time: new Date('2023-12-13T12:00:00.000Z'),
+          value: 18.362,
+          value_at_normal_temperature: 22.77116238719901,
+        },
+      ],
+    });
+
+    // WHEN
+    const res = linky_data.compare15jousEntre2ans();
+
+    // THEN
+    expect(res).toHaveLength(0);
   });
 });

@@ -51,8 +51,6 @@ export class LinkyData {
   }
 
   public compare15jousEntre2ans?(): LinkyDataElement[] {
-    if (this.serie.length < 380) return [];
-
     const last_element = this.getLastDataNotNull();
     const last_element_date = new Date(last_element.time);
     const last_element_date_minus14 = new Date(last_element_date);
@@ -70,12 +68,17 @@ export class LinkyData {
       last_element_date.getFullYear() - 1,
     );
 
-    const block = this.searchDays(last_element_date_minus14, last_element_date);
+    let block = this.searchDays(last_element_date_minus14, last_element_date);
 
     const block_last_year = this.searchDays(
       last_element_date_minus14_minus_one_year,
       last_element_date_minus_one_year,
     );
+    console.log(block);
+    console.log(block_last_year);
+
+    // Re alignement des blocks
+    block = block.slice(block.length - block_last_year.length);
 
     const result: LinkyDataElement[] = [];
 
@@ -241,108 +244,6 @@ export class LinkyData {
         }
       }
     });
-  }
-
-  public dynamicCompareTwoYears?(): LinkyDataElement[] {
-    const last_date = this.getLastDataNotNull();
-    if (!last_date) return [];
-    const month = this.compareMonthDataTwoYears(last_date.time);
-    const week = this.compareWeekDataTwoYears(last_date.time);
-    const day = this.compareDayDataTwoYears();
-    return [].concat(month, week, day);
-  }
-
-  compareDayDataTwoYears?(): LinkyDataElement[] {
-    if (this.serie.length < 366) return [];
-
-    const last_element = this.getLastDataNotNull();
-    const last_day = new Date(last_element.time);
-    const last_day_previous_year = new Date(last_day);
-    last_day_previous_year.setFullYear(
-      last_day_previous_year.getFullYear() - 1,
-    );
-
-    const last_day_last_year_element = this.searchDays(
-      last_day_previous_year,
-      last_day_previous_year,
-    )[0];
-
-    last_element.jour_text = LinkyData.formatJour(last_element.time);
-    last_element.annee = LinkyData.formatAnnee(last_element.time);
-    last_day_last_year_element.jour_text = LinkyData.formatJour(
-      last_day_last_year_element.time,
-    );
-    last_day_last_year_element.annee = LinkyData.formatAnnee(
-      last_day_last_year_element.time,
-    );
-    return [last_day_last_year_element, last_element];
-  }
-  compareMonthDataTwoYears?(current_date: Date): LinkyDataElement[] {
-    if (this.serie.length < 425) return [];
-    const previous_month = new Date(current_date);
-    previous_month.setMonth(previous_month.getMonth() - 1);
-
-    const previous_month_previous_year = new Date(previous_month);
-    previous_month_previous_year.setFullYear(previous_month.getFullYear() - 1);
-
-    const last_month_data = this.extractLastNMonths(1, previous_month);
-    const last_year_month_data = this.extractLastNMonths(
-      1,
-      previous_month_previous_year,
-    );
-    return last_year_month_data.concat(last_month_data);
-  }
-
-  compareWeekDataTwoYears?(current_date: Date): LinkyDataElement[] {
-    if (this.serie.length < 380) return [];
-    const start_date = LinkyData.getPreviousWeekFirstDay(current_date);
-    const end_date = LinkyData.getPreviousWeekLastDay(current_date);
-    const currentYearDaysToCumulate = this.searchDays(start_date, end_date);
-
-    const current_year = current_date.getFullYear();
-
-    const previous_year_start_date = new Date(start_date);
-    previous_year_start_date.setFullYear(current_year - 1);
-
-    const previous_year_end_date = new Date(end_date);
-    previous_year_end_date.setFullYear(current_year - 1);
-
-    const previousYearDaysToCumulate = this.searchDays(
-      previous_year_start_date,
-      previous_year_end_date,
-    );
-
-    let previous_year_cumul = 0;
-    let previous_year_cumul_norm = 0;
-    let current_year_cumul = 0;
-    let current_year_cumul_norm = 0;
-
-    previousYearDaysToCumulate.forEach((element) => {
-      previous_year_cumul += element.value;
-      previous_year_cumul_norm += element.value_at_normal_temperature;
-    });
-    currentYearDaysToCumulate.forEach((element) => {
-      current_year_cumul += element.value;
-      current_year_cumul_norm += element.value_at_normal_temperature;
-    });
-
-    const week = LinkyData.getWeek(start_date).toString();
-    return [
-      {
-        time: previous_year_start_date,
-        value: previous_year_cumul,
-        value_at_normal_temperature: previous_year_cumul_norm,
-        semaine: week,
-        annee: previous_year_start_date.getFullYear().toString(),
-      },
-      {
-        time: start_date,
-        value: current_year_cumul,
-        value_at_normal_temperature: current_year_cumul_norm,
-        semaine: week,
-        annee: start_date.getFullYear().toString(),
-      },
-    ];
   }
 
   searchDays?(startDate: Date, endDate: Date): LinkyDataElement[] {

@@ -34,7 +34,6 @@ export class LinkyUsecase {
     nombre: number,
     end_date: string,
     compare_annees: boolean,
-    compare_mois_sem_jour: boolean,
     derniers_14_jours: boolean,
   ): Promise<LinkyData> {
     const serviceLinky = await this.serviceRepository.getServiceOfUtilisateur(
@@ -54,10 +53,6 @@ export class LinkyUsecase {
     }
     if (derniers_14_jours) {
       linkyData.serie = linkyData.compare15jousEntre2ans();
-      return linkyData;
-    }
-    if (compare_mois_sem_jour) {
-      linkyData.serie = linkyData.dynamicCompareTwoYears();
       return linkyData;
     }
 
