@@ -50,7 +50,10 @@ export class LinkyData {
     this.serie.push(element);
   }
 
-  public compare15jousEntre2ans?(): LinkyDataElement[] {
+  public compare15jousEntre2ans?(): {
+    data: LinkyDataElement[];
+    commentaires: string[];
+  } {
     const last_element = this.getLastDataNotNull();
     const last_element_date = new Date(last_element.time);
     const last_element_date_minus14 = new Date(last_element_date);
@@ -95,7 +98,19 @@ export class LinkyData {
       elem.jour_val = elem.time.getDate();
     });
 
-    return result;
+    const somme_block = this.sommeElements(block);
+    const somme_block_last_year = this.sommeElements(block_last_year);
+
+    const variation = Math.floor(
+      ((somme_block - somme_block_last_year) / somme_block_last_year) * 100,
+    );
+
+    return {
+      data: result,
+      commentaires: [
+        `Au cours des 2 dernières semaines, votre consommation éléctrique a augmenté/diminué de...`,
+      ],
+    };
   }
 
   public compare2AnsParMois?(): LinkyDataElement[] {
@@ -205,6 +220,14 @@ export class LinkyData {
       result.years.get(current_year).months.set(current_month, []);
       current_date.setDate(0);
     }
+    return result;
+  }
+
+  sommeElements?(list: LinkyDataElement[]): number {
+    let result = 0;
+    list.forEach((elem) => {
+      result += elem.value;
+    });
     return result;
   }
 

@@ -31,7 +31,7 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(0);
+    expect(response.body.data).toHaveLength(0);
   });
   it('GET /utilisateurs/id/linky renvoie tableau vide si pas data linky', async () => {
     // GIVEN
@@ -47,7 +47,7 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(0);
+    expect(response.body.data).toHaveLength(0);
   });
   it('GET /utilisateurs/id/linky renvoie les data linky', async () => {
     // GIVEN
@@ -64,10 +64,10 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(2);
-    expect(response.body[0].date).toEqual(new Date(123).toISOString());
-    expect(response.body[0].valeur).toEqual(100);
-    expect(response.body[0].valeur_corrigee).toEqual(110);
+    expect(response.body.data).toHaveLength(2);
+    expect(response.body.data[0].date).toEqual(new Date(123).toISOString());
+    expect(response.body.data[0].valeur).toEqual(100);
+    expect(response.body.data[0].valeur_corrigee).toEqual(110);
   });
   it('GET /utilisateurs/id/linky renvoie les data linky full', async () => {
     // GIVEN
@@ -84,7 +84,7 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(724);
+    expect(response.body.data).toHaveLength(724);
   });
   it('GET /utilisateurs/id/linky renvoie data full si on demande plus que existant', async () => {
     // GIVEN
@@ -103,7 +103,7 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(724);
+    expect(response.body.data).toHaveLength(724);
   });
   it('GET /utilisateurs/id/linky renvoie les 13 derniers jours', async () => {
     // GIVEN
@@ -122,8 +122,8 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(13);
-    expect(response.body[0].jour).toEqual('vendredi');
+    expect(response.body.data).toHaveLength(13);
+    expect(response.body.data[0].jour).toEqual('vendredi');
   });
   it('GET /utilisateurs/id/linky renvoie les 2 dernière sem', async () => {
     // GIVEN
@@ -220,11 +220,11 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(2);
-    expect(response.body[0].valeur).toEqual(7);
-    expect(response.body[0].valeur_corrigee).toEqual(14);
-    expect(response.body[1].valeur).toEqual(14);
-    expect(response.body[1].valeur_corrigee).toEqual(28);
+    expect(response.body.data).toHaveLength(2);
+    expect(response.body.data[0].valeur).toEqual(7);
+    expect(response.body.data[0].valeur_corrigee).toEqual(14);
+    expect(response.body.data[1].valeur).toEqual(14);
+    expect(response.body.data[1].valeur_corrigee).toEqual(28);
   });
   it('GET /utilisateurs/id/linky renvoie les 3 derniers mois', async () => {
     // GIVEN
@@ -245,13 +245,13 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(3);
-    expect(response.body[0].mois).toEqual('octobre');
-    expect(Math.floor(response.body[0].valeur)).toEqual(213);
-    expect(response.body[1].mois).toEqual('novembre');
-    expect(Math.floor(response.body[1].valeur)).toEqual(435);
-    expect(response.body[2].mois).toEqual('décembre');
-    expect(Math.floor(response.body[2].valeur)).toEqual(289);
+    expect(response.body.data).toHaveLength(3);
+    expect(response.body.data[0].mois).toEqual('octobre');
+    expect(Math.floor(response.body.data[0].valeur)).toEqual(213);
+    expect(response.body.data[1].mois).toEqual('novembre');
+    expect(Math.floor(response.body.data[1].valeur)).toEqual(435);
+    expect(response.body.data[2].mois).toEqual('décembre');
+    expect(Math.floor(response.body.data[2].valeur)).toEqual(289);
   });
   it('GET /utilisateurs/id/linky comparaison 2 dernieres annéee', async () => {
     // GIVEN
@@ -272,15 +272,15 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(24);
-    expect(response.body[0].mois).toEqual('janvier');
-    expect(response.body[0].annee).toEqual('2022');
-    expect(response.body[1].mois).toEqual('janvier');
-    expect(response.body[1].annee).toEqual('2023');
-    expect(response.body[2].mois).toEqual('février');
-    expect(response.body[2].annee).toEqual('2022');
-    expect(response.body[3].mois).toEqual('février');
-    expect(response.body[3].annee).toEqual('2023');
+    expect(response.body.data).toHaveLength(24);
+    expect(response.body.data[0].mois).toEqual('janvier');
+    expect(response.body.data[0].annee).toEqual('2022');
+    expect(response.body.data[1].mois).toEqual('janvier');
+    expect(response.body.data[1].annee).toEqual('2023');
+    expect(response.body.data[2].mois).toEqual('février');
+    expect(response.body.data[2].annee).toEqual('2022');
+    expect(response.body.data[3].mois).toEqual('février');
+    expect(response.body.data[3].annee).toEqual('2023');
   });
   it('GET /utilisateurs/id/linky compare_annees=false', async () => {
     // GIVEN
@@ -301,7 +301,7 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(724);
+    expect(response.body.data).toHaveLength(724);
   });
   it('GET /utilisateurs/id/linky comparaison 2 dernieres annéee - pas d erreurs si pas de donnees', async () => {
     // GIVEN
@@ -322,7 +322,7 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(0);
+    expect(response.body.data).toHaveLength(0);
   });
   it('GET /utilisateurs/id/linky comparaison 15 derniers jours', async () => {
     // GIVEN
@@ -343,6 +343,6 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(28);
+    expect(response.body.data).toHaveLength(28);
   });
 });

@@ -773,7 +773,7 @@ describe('LinkyData', () => {
     });
 
     // WHEN
-    const res = linky_data.compare15jousEntre2ans();
+    const res = linky_data.compare15jousEntre2ans().data;
 
     // THEN
     expect(res).toHaveLength(0);
@@ -786,7 +786,7 @@ describe('LinkyData', () => {
     });
 
     // WHEN
-    const res = linky_data.compare15jousEntre2ans();
+    const res = linky_data.compare15jousEntre2ans().data;
 
     // THEN
     expect(res).toHaveLength(28);
@@ -799,7 +799,7 @@ describe('LinkyData', () => {
     });
 
     // WHEN
-    const res = linky_data.compare15jousEntre2ans();
+    const res = linky_data.compare15jousEntre2ans().data;
 
     // THEN
     expect(res).toHaveLength(28);
@@ -901,7 +901,7 @@ describe('LinkyData', () => {
     });
 
     // WHEN
-    const res = linky_data.compare15jousEntre2ans();
+    const res = linky_data.compare15jousEntre2ans().data;
 
     // THEN
     expect(res).toHaveLength(14);
@@ -988,7 +988,7 @@ describe('LinkyData', () => {
     });
 
     // WHEN
-    const res = linky_data.compare15jousEntre2ans();
+    const res = linky_data.compare15jousEntre2ans().data;
 
     // THEN
     expect(res).toHaveLength(8);
@@ -1057,6 +1057,6 @@ describe('LinkyData', () => {
     const res = linky_data.compare15jousEntre2ans();
 
     // THEN
-    expect(res).toHaveLength(0);
+    expect(res.data).toHaveLength(0);
   });
 });

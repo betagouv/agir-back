@@ -35,43 +35,44 @@ export class LinkyUsecase {
     end_date: string,
     compare_annees: boolean,
     derniers_14_jours: boolean,
-  ): Promise<LinkyData> {
+  ): Promise<{ data: LinkyData; commentaires?: string[] }> {
     const serviceLinky = await this.serviceRepository.getServiceOfUtilisateur(
       utilisateurId,
       AsyncService.linky,
     );
-    if (!serviceLinky) return new LinkyData();
+    if (!serviceLinky) return { data: new LinkyData() };
 
     const linkyData = await this.linkyRepository.getLinky(
       serviceLinky.configuration['prm'],
     );
-    if (!linkyData) return new LinkyData();
+    if (!linkyData) return { data: new LinkyData() };
 
     if (compare_annees) {
       linkyData.serie = linkyData.compare2AnsParMois();
-      return linkyData;
+      return { data: linkyData };
     }
     if (derniers_14_jours) {
-      linkyData.serie = linkyData.compare15jousEntre2ans();
-      return linkyData;
+      const result = linkyData.compare15jousEntre2ans();
+      linkyData.serie = result.data;
+      return { data: linkyData, commentaires: result.commentaires };
     }
 
     if (detail === LinkyDataDetailAPI.jour && nombre) {
       linkyData.serie = linkyData.extractLastNDays(nombre);
-      return linkyData;
+      return { data: linkyData };
     }
     if (detail === LinkyDataDetailAPI.semaine && nombre) {
       linkyData.serie = linkyData.extractLastNWeeks(nombre);
-      return linkyData;
+      return { data: linkyData };
     }
     if (detail === LinkyDataDetailAPI.mois && nombre) {
       linkyData.serie = linkyData.extractLastNMonths(
         nombre,
         end_date ? new Date(end_date) : new Date(),
       );
-      return linkyData;
+      return { data: linkyData };
     }
-    return linkyData;
+    return { data: linkyData };
   }
 
   async process_incoming_data(incoming: WinterDataSentAPI): Promise<any> {

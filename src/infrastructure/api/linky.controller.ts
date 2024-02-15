@@ -85,7 +85,7 @@ export class LinkyController extends GenericControler {
       compare_annees === 'true',
       derniers_14_jours === 'true',
     );
-    const result = data.serie.map((elem) => LinkyDataAPI.map(elem));
+    const result = LinkyDataAPI.map(data.data.serie, data.commentaires);
 
     res.status(HttpStatus.OK).json(result).send();
   }
