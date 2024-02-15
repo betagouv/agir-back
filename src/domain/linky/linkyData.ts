@@ -113,9 +113,12 @@ export class LinkyData {
     };
   }
 
-  public compare2AnsParMois?(): LinkyDataElement[] {
+  public compare2AnsParMois?(): {
+    data: LinkyDataElement[];
+    commentaires: string[];
+  } {
     if (this.serie.length < 2) {
-      return [];
+      return { data: [], commentaires: [] };
     }
 
     const result = [];
@@ -124,13 +127,32 @@ export class LinkyData {
 
     const extract = this.extractLastNMonths(24, last_value.time);
 
+    let total_last_year = 0;
+    let total_this_year = 0;
+
     for (let index = 0; index < 12; index++) {
       const mois = extract[index];
+      total_last_year += mois.value;
+
       const mois_annee_suivante = extract[index + 12];
+      total_this_year += mois_annee_suivante.value;
+
       result.push(mois);
       result.push(mois_annee_suivante);
     }
-    return result;
+
+    const variation = Math.round(
+      ((total_this_year - total_last_year) / total_last_year) * 100,
+    );
+
+    return {
+      data: result,
+      commentaires: [
+        `Au cours des 12 derniers mois, votre consommation éléctrique a <strong>${
+          variation > 0 ? 'augmenté de +' : 'diminué de -'
+        }${variation}%</strong> par rapport aux 12 mois précédents`,
+      ],
+    };
   }
 
   public getLastRoundedValue?(): number {

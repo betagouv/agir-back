@@ -652,7 +652,7 @@ describe('LinkyData', () => {
     });
 
     // WHEN
-    const result = linkyData.compare2AnsParMois();
+    const result = linkyData.compare2AnsParMois().data;
 
     // THEN
     expect(result).toHaveLength(24);
@@ -662,6 +662,22 @@ describe('LinkyData', () => {
     expect(result[3].value).toEqual(20);
     expect(result[4].value).toEqual(3);
     expect(result[5].value).toEqual(30);
+  });
+  it('compare2AnsParMois : commentaire sur set complet', () => {
+    // GIVEN
+    const linkyData = new LinkyData({
+      prm: 'abc',
+      serie: JSON.parse(JSON.stringify(_linky_data)),
+    });
+
+    // WHEN
+    const result = linkyData.compare2AnsParMois();
+
+    // THEN
+    expect(result.data).toHaveLength(24);
+    expect(result.commentaires).toEqual([
+      'Au cours des 12 derniers mois, votre consommation éléctrique a <strong>augmenté de +2%</strong> par rapport aux 12 mois précédents',
+    ]);
   });
 
   it('getPreviousWeekFirstDay : renvoie le lundi précédent précédent', () => {
@@ -782,7 +798,7 @@ describe('LinkyData', () => {
     // GIVEN
     const linky_data = new LinkyData({
       prm: 'abc',
-      serie: _linky_data,
+      serie: JSON.parse(JSON.stringify(_linky_data)),
     });
 
     // WHEN
@@ -795,7 +811,7 @@ describe('LinkyData', () => {
     // GIVEN
     const linky_data = new LinkyData({
       prm: 'abc',
-      serie: _linky_data,
+      serie: JSON.parse(JSON.stringify(_linky_data)),
     });
 
     // WHEN

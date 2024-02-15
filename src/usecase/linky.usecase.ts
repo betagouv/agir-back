@@ -48,8 +48,9 @@ export class LinkyUsecase {
     if (!linkyData) return { data: new LinkyData() };
 
     if (compare_annees) {
-      linkyData.serie = linkyData.compare2AnsParMois();
-      return { data: linkyData };
+      const result = linkyData.compare2AnsParMois();
+      linkyData.serie = result.data;
+      return { data: linkyData, commentaires: result.commentaires };
     }
     if (derniers_14_jours) {
       const result = linkyData.compare15jousEntre2ans();
