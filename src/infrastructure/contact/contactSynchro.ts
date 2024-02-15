@@ -18,27 +18,30 @@ export class ContactSynchro {
   }
 
   public async BatchUpdateContacts(contacts: Contact[]) {
-    const data = {
-      contacts,
-    };
+    if (process.env.EMAIL_ENABLED === 'true') {
+      const data = {
+        contacts,
+      };
 
-    axios
-      .post(this.batchApiUrl, data, {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          'api-key': this.apiKey,
-        },
-      })
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+      axios
+        .post(this.batchApiUrl, data, {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'api-key': this.apiKey,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   }
 
   public async createContact(contact: Contact): Promise<boolean> {
+    if (process.env.EMAIL_ENABLED !== 'true') return true;
     return await this.apiInstance.createContact(contact).then(
       function (data) {
         console.log('BREVO contact created called successfully ');
@@ -52,6 +55,7 @@ export class ContactSynchro {
   }
 
   public async addContactsToList(emails: string[], listId: number) {
+    if (process.env.EMAIL_ENABLED !== 'true') return true;
     return this.apiInstance.addContactToList(listId, emails).then(
       function (data) {
         console.log('BREVO contact add to list');
@@ -64,8 +68,8 @@ export class ContactSynchro {
   }
 
   public async deleteContact(email: string): Promise<boolean> {
+    if (process.env.EMAIL_ENABLED !== 'true') return true;
     const identifier = email; // can be email or id
-
     return await this.apiInstance.deleteContact(identifier).then(
       function () {
         console.log('BREVO contact deleted');

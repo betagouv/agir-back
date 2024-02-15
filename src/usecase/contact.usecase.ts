@@ -33,6 +33,7 @@ export class ContactUsecase {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );
+    if (!utilisateur || !utilisateur.email) return false;
     return await this.contactSynchro.deleteContact(utilisateur.email);
   }
 

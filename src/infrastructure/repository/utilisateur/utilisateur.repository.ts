@@ -295,10 +295,6 @@ export class UtilisateurRepository {
       updated_at: undefined,
     };
   }
-  async count(): Promise<number> {
-    const count = await this.prisma.utilisateur.count();
-    return Number(count);
-  }
 
   async findLastActiveUtilisateurs(
     limit: number,
