@@ -77,8 +77,6 @@ export class LinkyData {
       last_element_date_minus14_minus_one_year,
       last_element_date_minus_one_year,
     );
-    console.log(block);
-    console.log(block_last_year);
 
     // Re alignement des blocks
     block = block.slice(block.length - block_last_year.length);
@@ -101,14 +99,16 @@ export class LinkyData {
     const somme_block = this.sommeElements(block);
     const somme_block_last_year = this.sommeElements(block_last_year);
 
-    const variation = Math.floor(
+    const variation = Math.round(
       ((somme_block - somme_block_last_year) / somme_block_last_year) * 100,
     );
 
     return {
       data: result,
       commentaires: [
-        `Au cours des 2 dernières semaines, votre consommation éléctrique a augmenté/diminué de...`,
+        `Au cours des 2 dernières semaines, votre consommation éléctrique a <strong>${
+          variation > 0 ? 'augmenté de +' : 'diminué de -'
+        }${variation}%</strong> par rapport à la même période l'année dernière`,
       ],
     };
   }

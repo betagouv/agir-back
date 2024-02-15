@@ -799,7 +799,8 @@ describe('LinkyData', () => {
     });
 
     // WHEN
-    const res = linky_data.compare15jousEntre2ans().data;
+    const result = linky_data.compare15jousEntre2ans();
+    const res = result.data;
 
     // THEN
     expect(res).toHaveLength(28);
@@ -821,6 +822,11 @@ describe('LinkyData', () => {
     expect(res[27].mois).toEqual('décembre');
     expect(res[27].jour_text).toEqual('mercredi');
     expect(res[27].jour_val).toEqual(13);
+
+    expect(result.commentaires).toHaveLength(1);
+    expect(result.commentaires[0]).toEqual(
+      `Au cours des 2 dernières semaines, votre consommation éléctrique a <strong>augmenté de +15%</strong> par rapport à la même période l'année dernière`,
+    );
   });
   it('compare15jousEntre2ans : data partielle OK 7 jours au lieu de 14', () => {
     // GIVEN

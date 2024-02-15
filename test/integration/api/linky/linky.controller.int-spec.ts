@@ -344,5 +344,8 @@ describe('Linky (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.data).toHaveLength(28);
+    expect(response.body.commentaires[0]).toEqual(
+      `Au cours des 2 dernières semaines, votre consommation éléctrique a <strong>augmenté de +15%</strong> par rapport à la même période l'année dernière`,
+    );
   });
 });
