@@ -1,7 +1,7 @@
 import { TestUtil } from '../../TestUtil';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Impact } from '../../../src/domain/utilisateur/onboarding/onboarding';
-import { Thematique as ThematiqueOnboarding } from '../../../src/domain/utilisateur/onboarding/onboarding';
+import { ThematiqueOnboarding as ThematiqueOnboarding } from '../../../src/domain/utilisateur/onboarding/onboarding';
 import { Utilisateur } from '../../../src/domain/utilisateur/utilisateur';
 
 describe('UtilisateurRepository', () => {

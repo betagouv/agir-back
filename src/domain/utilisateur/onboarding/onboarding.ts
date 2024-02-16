@@ -38,7 +38,7 @@ export enum Consommation {
   shopping = 'shopping',
 }
 
-export enum Thematique {
+export enum ThematiqueOnboarding {
   transports = 'transports',
   alimentation = 'alimentation',
   logement = 'logement',

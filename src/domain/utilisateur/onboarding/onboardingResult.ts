@@ -1,24 +1,43 @@
-import { Impact, Onboarding, Thematique } from './onboarding';
+import { OnboardingResult_v0 } from 'src/domain/object_store/onboardingResult/onboardingResult_v0';
+import { Impact, Onboarding, ThematiqueOnboarding } from './onboarding';
 
 export class OnboardingResult {
-  ventilation_par_impacts: Record<Impact, Thematique[]>;
-  ventilation_par_thematiques: Record<Thematique, Impact>;
+  ventilation_par_impacts: Record<Impact, ThematiqueOnboarding[]>;
+  ventilation_par_thematiques: Record<ThematiqueOnboarding, Impact>;
 
-  constructor(data?: Onboarding) {
+  constructor(data?: OnboardingResult_v0) {
     if (data) {
-      this.ventilation_par_thematiques = {
-        alimentation: data.getAlimentationLevel(),
-        transports: data.getTransportLevel(),
-        logement: data.getLogementLevel(),
-        consommation: data.getConsommationLevel(),
-      };
-      this.ventilation_par_impacts = {
-        '1': this.listeByImpact(Impact.tres_faible),
-        '2': this.listeByImpact(Impact.faible),
-        '3': this.listeByImpact(Impact.eleve),
-        '4': this.listeByImpact(Impact.tres_eleve),
-      };
+      this.ventilation_par_thematiques = data.ventilation_par_thematiques;
+      this.ventilation_par_impacts = data.ventilation_par_impacts;
     }
+  }
+
+  public static buildFromOnboarding(data: Onboarding) {
+    const ventilation_par_them = {
+      alimentation: data.getAlimentationLevel(),
+      transports: data.getTransportLevel(),
+      logement: data.getLogementLevel(),
+      consommation: data.getConsommationLevel(),
+    };
+    return new OnboardingResult({
+      version: 0,
+      ventilation_par_thematiques: ventilation_par_them,
+      ventilation_par_impacts: {
+        '1': OnboardingResult.listeByImpact(
+          Impact.tres_faible,
+          ventilation_par_them,
+        ),
+        '2': OnboardingResult.listeByImpact(
+          Impact.faible,
+          ventilation_par_them,
+        ),
+        '3': OnboardingResult.listeByImpact(Impact.eleve, ventilation_par_them),
+        '4': OnboardingResult.listeByImpact(
+          Impact.tres_eleve,
+          ventilation_par_them,
+        ),
+      },
+    });
   }
 
   public setOnboardingResultData(data: OnboardingResult) {
@@ -26,7 +45,7 @@ export class OnboardingResult {
     this.ventilation_par_impacts = data.ventilation_par_impacts;
   }
 
-  public getImpact?(thematique: Thematique): Impact {
+  public getImpact?(thematique: ThematiqueOnboarding): Impact {
     return this.ventilation_par_thematiques[thematique];
   }
 
@@ -46,7 +65,7 @@ export class OnboardingResult {
 
   public listThematiquesAvecImpactSuperieurOuEgalA?(
     minImpact: Impact,
-  ): Thematique[] {
+  ): ThematiqueOnboarding[] {
     let result = [];
     for (
       let impact: number = minImpact;
@@ -58,7 +77,9 @@ export class OnboardingResult {
     return result;
   }
 
-  public listThematiquesAvecImpactInferieurA?(maxImpact: Impact): Thematique[] {
+  public listThematiquesAvecImpactInferieurA?(
+    maxImpact: Impact,
+  ): ThematiqueOnboarding[] {
     let result = [];
     for (let impact = Impact.tres_faible; impact < maxImpact; impact++) {
       result = result.concat(this.ventilation_par_impacts[`${impact}`]);
@@ -66,7 +87,9 @@ export class OnboardingResult {
     return result;
   }
 
-  public trieDecroissant?(listThematiques: Thematique[]): Thematique[] {
+  public trieDecroissant?(
+    listThematiques: ThematiqueOnboarding[],
+  ): ThematiqueOnboarding[] {
     let result = [...listThematiques];
     result.sort(
       (a, b) =>
@@ -76,7 +99,7 @@ export class OnboardingResult {
     return result;
   }
 
-  public getThematiqueNo1SuperieureA?(minImpact: Impact): Thematique {
+  public getThematiqueNo1SuperieureA?(minImpact: Impact): ThematiqueOnboarding {
     const list = this.listThematiquesAvecImpactSuperieurOuEgalA(minImpact);
 
     if (list.length === 0) return null;
@@ -99,26 +122,30 @@ export class OnboardingResult {
       index++;
     }
 
-    if (maxList.indexOf(Thematique.transports) >= 0)
-      return Thematique.transports;
-    if (maxList.indexOf(Thematique.alimentation) >= 0)
-      return Thematique.alimentation;
-    if (maxList.indexOf(Thematique.logement) >= 0) return Thematique.logement;
-    if (maxList.indexOf(Thematique.consommation) >= 0)
-      return Thematique.consommation;
+    if (maxList.indexOf(ThematiqueOnboarding.transports) >= 0)
+      return ThematiqueOnboarding.transports;
+    if (maxList.indexOf(ThematiqueOnboarding.alimentation) >= 0)
+      return ThematiqueOnboarding.alimentation;
+    if (maxList.indexOf(ThematiqueOnboarding.logement) >= 0)
+      return ThematiqueOnboarding.logement;
+    if (maxList.indexOf(ThematiqueOnboarding.consommation) >= 0)
+      return ThematiqueOnboarding.consommation;
     return null;
   }
 
-  private listeByImpact?(impact: Impact): Thematique[] {
+  private static listeByImpact?(
+    impact: Impact,
+    ventilation_par_thematiques: Record<ThematiqueOnboarding, Impact>,
+  ): ThematiqueOnboarding[] {
     let result = [];
-    if (this.ventilation_par_thematiques.alimentation === impact)
-      result.push(Thematique.alimentation);
-    if (this.ventilation_par_thematiques.transports === impact)
-      result.push(Thematique.transports);
-    if (this.ventilation_par_thematiques.logement === impact)
-      result.push(Thematique.logement);
-    if (this.ventilation_par_thematiques.consommation === impact)
-      result.push(Thematique.consommation);
+    if (ventilation_par_thematiques.alimentation === impact)
+      result.push(ThematiqueOnboarding.alimentation);
+    if (ventilation_par_thematiques.transports === impact)
+      result.push(ThematiqueOnboarding.transports);
+    if (ventilation_par_thematiques.logement === impact)
+      result.push(ThematiqueOnboarding.logement);
+    if (ventilation_par_thematiques.consommation === impact)
+      result.push(ThematiqueOnboarding.consommation);
     return result;
   }
 }

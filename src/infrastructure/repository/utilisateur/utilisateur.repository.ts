@@ -7,7 +7,7 @@ import { Profile } from '../../../domain/utilisateur/profile';
 import {
   Impact,
   Onboarding,
-  Thematique,
+  ThematiqueOnboarding,
 } from '../../../domain/utilisateur/onboarding/onboarding';
 import { OnboardingResult } from '../../../domain/utilisateur/onboarding/onboardingResult';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
@@ -159,7 +159,7 @@ export class UtilisateurRepository {
 
   async countUsersWithLessImpactOnThematique(
     maxImpact: Impact,
-    targetThematique: Thematique,
+    targetThematique: ThematiqueOnboarding,
   ): Promise<number> {
     let query = `
     SELECT count(1)
@@ -171,7 +171,7 @@ export class UtilisateurRepository {
 
   async countUsersWithMoreImpactOnThematiques(
     minImpacts: Impact[],
-    targetThematiques: Thematique[],
+    targetThematiques: ThematiqueOnboarding[],
   ): Promise<number> {
     let query = `
     SELECT count(1)
@@ -194,8 +194,6 @@ export class UtilisateurRepository {
   private buildUtilisateurFromDB(user: UtilisateurDB): Utilisateur {
     if (user) {
       const onboardingData = new Onboarding(user.onboardingData as any);
-      const onboardingResult = new OnboardingResult();
-      onboardingResult.setOnboardingResultData(user.onboardingResult as any);
 
       const unlocked_features = new UnlockedFeatures(
         Upgrader.upgradeRaw(
@@ -211,6 +209,12 @@ export class UtilisateurRepository {
       );
       const gamification = new Gamification(
         Upgrader.upgradeRaw(user.gamification, SerialisableDomain.Gamification),
+      );
+      const onboardingResult = new OnboardingResult(
+        Upgrader.upgradeRaw(
+          user.onboardingResult,
+          SerialisableDomain.OnboardingResult,
+        ),
       );
 
       return new Utilisateur({
@@ -274,7 +278,10 @@ export class UtilisateurRepository {
       sent_email_count: user.sent_email_count,
       prevent_sendemail_before: user.prevent_sendemail_before,
       onboardingData: { ...user.onboardingData },
-      onboardingResult: { ...user.onboardingResult },
+      onboardingResult: Upgrader.serialiseToLastVersion(
+        user.onboardingResult,
+        SerialisableDomain.OnboardingResult,
+      ),
       todo: Upgrader.serialiseToLastVersion(
         user.parcours_todo,
         SerialisableDomain.ParcoursTodo,

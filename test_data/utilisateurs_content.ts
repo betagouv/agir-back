@@ -3,7 +3,7 @@ import { ContentType } from '../src/domain/contenu/contentType';
 import { Thematique } from '../src/domain/contenu/thematique';
 import {
   Impact,
-  Thematique as ThemaOnbo,
+  ThematiqueOnboarding as ThemaOnbo,
 } from '../src/domain/utilisateur/onboarding/onboarding';
 import { v4 as uuidv4 } from 'uuid';
 import { LiveService } from '../src/domain/service/serviceDefinition';

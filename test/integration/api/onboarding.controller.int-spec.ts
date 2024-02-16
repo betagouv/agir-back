@@ -1,6 +1,6 @@
 import {
   Impact,
-  Thematique,
+  ThematiqueOnboarding,
 } from '../../../src/domain/utilisateur/onboarding/onboarding';
 import { TestUtil } from '../../TestUtil';
 
@@ -47,6 +47,7 @@ const ONBOARDING_1_1_2_2_DATA = {
   consommation: 'jamais',
 };
 const ONBOARDING_RES_1234 = {
+  version :0,
   ventilation_par_thematiques: {
     alimentation: Impact.tres_eleve,
     transports: Impact.eleve,
@@ -54,10 +55,10 @@ const ONBOARDING_RES_1234 = {
     consommation: Impact.tres_faible,
   },
   ventilation_par_impacts: {
-    '1': [Thematique.consommation],
-    '2': [Thematique.logement],
-    '3': [Thematique.transports],
-    '4': [Thematique.alimentation],
+    '1': [ThematiqueOnboarding.consommation],
+    '2': [ThematiqueOnboarding.logement],
+    '3': [ThematiqueOnboarding.transports],
+    '4': [ThematiqueOnboarding.alimentation],
   },
 };
 
@@ -516,8 +517,8 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
           consommation: Impact.faible,
         },
         ventilation_par_impacts: {
-          '1': [Thematique.alimentation, Thematique.transports],
-          '2': [Thematique.consommation, Thematique.logement],
+          '1': [ThematiqueOnboarding.alimentation, ThematiqueOnboarding.transports],
+          '2': [ThematiqueOnboarding.consommation, ThematiqueOnboarding.logement],
           '3': [],
           '4': [],
         },
@@ -534,9 +535,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
           consommation: Impact.eleve,
         },
         ventilation_par_impacts: {
-          '1': [Thematique.alimentation, Thematique.transports],
-          '2': [Thematique.logement],
-          '3': [Thematique.consommation],
+          '1': [ThematiqueOnboarding.alimentation, ThematiqueOnboarding.transports],
+          '2': [ThematiqueOnboarding.logement],
+          '3': [ThematiqueOnboarding.consommation],
           '4': [],
         },
       },
@@ -572,8 +573,8 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
           consommation: Impact.faible,
         },
         ventilation_par_impacts: {
-          '1': [Thematique.alimentation, Thematique.transports],
-          '2': [Thematique.consommation, Thematique.logement],
+          '1': [ThematiqueOnboarding.alimentation, ThematiqueOnboarding.transports],
+          '2': [ThematiqueOnboarding.consommation, ThematiqueOnboarding.logement],
           '3': [],
           '4': [],
         },
@@ -590,9 +591,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
           consommation: Impact.eleve,
         },
         ventilation_par_impacts: {
-          '1': [Thematique.alimentation, Thematique.transports],
-          '2': [Thematique.logement],
-          '3': [Thematique.consommation],
+          '1': [ThematiqueOnboarding.alimentation, ThematiqueOnboarding.transports],
+          '2': [ThematiqueOnboarding.logement],
+          '3': [ThematiqueOnboarding.consommation],
           '4': [],
         },
       },
@@ -628,8 +629,8 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
           consommation: Impact.faible,
         },
         ventilation_par_impacts: {
-          '1': [Thematique.alimentation, Thematique.transports],
-          '2': [Thematique.consommation, Thematique.logement],
+          '1': [ThematiqueOnboarding.alimentation, ThematiqueOnboarding.transports],
+          '2': [ThematiqueOnboarding.consommation, ThematiqueOnboarding.logement],
           '3': [],
           '4': [],
         },
@@ -646,9 +647,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
           consommation: Impact.eleve,
         },
         ventilation_par_impacts: {
-          '1': [Thematique.alimentation, Thematique.transports],
-          '2': [Thematique.logement],
-          '3': [Thematique.consommation],
+          '1': [ThematiqueOnboarding.alimentation, ThematiqueOnboarding.transports],
+          '2': [ThematiqueOnboarding.logement],
+          '3': [ThematiqueOnboarding.consommation],
           '4': [],
         },
       },

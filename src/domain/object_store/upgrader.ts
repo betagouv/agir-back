@@ -1,5 +1,6 @@
 import { Gamification_v0 } from './gamification/gamification_v0';
 import { History_v0 } from './history/history_v0';
+import { OnboardingResult_v0 } from './onboardingResult/onboardingResult_v0';
 import { ParcoursTodo_v0 } from './parcoursTodo/parcoursTodo_v0';
 import { UnlockedFeatures_v0 } from './unlockedFeatures/unlockedFeatures_v0';
 import { UnlockedFeatures_v1 } from './unlockedFeatures/unlockedFeatures_v1';
@@ -9,6 +10,7 @@ export enum SerialisableDomain {
   ParcoursTodo = 'ParcoursTodo',
   History = 'History',
   Gamification = 'Gamification',
+  OnboardingResult = 'OnboardingResult',
   Object = 'Object',
 }
 const CLASS_DICTIONNARY = {
@@ -17,6 +19,7 @@ const CLASS_DICTIONNARY = {
   ParcoursTodo_v0: ParcoursTodo_v0,
   History_v0: History_v0,
   Gamification_v0: Gamification_v0,
+  OnboardingResult_v0: OnboardingResult_v0,
 };
 
 const DATE_REGEXP =

@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { Thematique } from '../src/domain/contenu/thematique';
-import { Thematique as ThematiqueOnboarding } from '../src/domain/utilisateur/onboarding/onboarding';
+import { ThematiqueOnboarding as ThematiqueOnboarding } from '../src/domain/utilisateur/onboarding/onboarding';
 import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
 import { Impact } from '../src/domain/utilisateur/onboarding/onboarding';

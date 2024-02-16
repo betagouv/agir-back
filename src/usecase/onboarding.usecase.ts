@@ -5,7 +5,7 @@ import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/on
 import {
   Impact,
   Onboarding,
-  Thematique,
+  ThematiqueOnboarding,
 } from '../domain/utilisateur/onboarding/onboarding';
 import { OnboardingDataAPI } from '../infrastructure/api/types/utilisateur/onboarding/onboardingDataAPI';
 import { OnboardingDataImpactAPI } from '../infrastructure/api/types/utilisateur/onboarding/onboardingDataImpactAPI';
@@ -71,10 +71,10 @@ export class OnboardingUsecase {
   async evaluateOnboardingData(
     input: OnboardingDataAPI,
   ): Promise<OnboardingDataImpactAPI> {
-    const onboardingData = new Onboarding(input);
-    onboardingData.validateData();
+    const onboarding = new Onboarding(input);
+    onboarding.validateData();
 
-    const onboardingResult = new OnboardingResult(onboardingData);
+    const onboardingResult = OnboardingResult.buildFromOnboarding(onboarding);
 
     let final_result: OnboardingDataImpactAPI = {
       ...onboardingResult.ventilation_par_thematiques,
@@ -101,12 +101,12 @@ export class OnboardingUsecase {
     if (final_result.transports >= 3) {
       final_result.phrase_2 = {
         icon: '🚌',
-        phrase: `Regarder les offres de <strong>transports dans la zone de ${onboardingData.commune}</strong> en fonction de vos besoins et usages`,
+        phrase: `Regarder les offres de <strong>transports dans la zone de ${onboarding.commune}</strong> en fonction de vos besoins et usages`,
       };
     } else {
       final_result.phrase_2 = {
         icon: '🛒',
-        phrase: `Comment et où <strong>consommer de manière plus durable</strong> quand on <strong>habite ${onboardingData.commune}</strong>`,
+        phrase: `Comment et où <strong>consommer de manière plus durable</strong> quand on <strong>habite ${onboarding.commune}</strong>`,
       };
     }
     if (final_result.alimentation == 4) {
@@ -121,12 +121,10 @@ export class OnboardingUsecase {
       };
     }
 
-    if (onboardingData.adultes + onboardingData.enfants >= 3) {
+    if (onboarding.adultes + onboarding.enfants >= 3) {
       final_result.phrase_4 = {
         icon: '👪',
-        phrase: `${
-          onboardingData.adultes + onboardingData.enfants
-        } sous le même toit ?
+        phrase: `${onboarding.adultes + onboarding.enfants} sous le même toit ?
 <strong>Comprendre ses impacts à l'échelle de votre famille</strong> ou de votre colocation`,
       };
     } else {
@@ -151,18 +149,18 @@ export class OnboardingUsecase {
       }
     }
 
-    const onboardingData = new Onboarding(utilisateurInput.onboardingData);
+    const onboarding = new Onboarding(utilisateurInput.onboardingData);
 
     const utilisateurToCreate = new Utilisateur({
       id: undefined,
-      code_postal: onboardingData.code_postal,
-      commune: onboardingData.commune,
+      code_postal: onboarding.code_postal,
+      commune: onboarding.commune,
       created_at: undefined,
       nom: utilisateurInput.nom,
       prenom: utilisateurInput.prenom,
       email: utilisateurInput.email,
-      onboardingData: onboardingData,
-      onboardingResult: new OnboardingResult(onboardingData),
+      onboardingData: onboarding,
+      onboardingResult: OnboardingResult.buildFromOnboarding(onboarding),
       revenu_fiscal: null,
       parts: null,
       abonnement_ter_loire: false,
@@ -356,7 +354,7 @@ Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="
     );
   }
 
-  private listeThematiquesToText(list: Thematique[]) {
+  private listeThematiquesToText(list: ThematiqueOnboarding[]) {
     switch (list.length) {
       case 1:
         return `${list[0]}`;

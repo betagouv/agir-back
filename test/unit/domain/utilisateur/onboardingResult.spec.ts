@@ -6,7 +6,7 @@ import {
   Repas,
   Residence,
   Superficie,
-  Thematique,
+  ThematiqueOnboarding,
   Transport,
 } from '../../../../src/domain/utilisateur/onboarding/onboarding';
 import { OnboardingResult } from '../../../../src/domain/utilisateur/onboarding/onboardingResult';
@@ -29,7 +29,7 @@ const ONBOARDING_1_2_3_4 = {
 describe('Objet OnboardingData', () => {
   it('converts ok to JSON', () => {
     // GIVEN
-    let onboardingResult = new OnboardingResult(
+    let onboardingResult = OnboardingResult.buildFromOnboarding(
       new Onboarding(ONBOARDING_1_2_3_4),
     );
 
@@ -40,10 +40,10 @@ describe('Objet OnboardingData', () => {
       consommation: Impact.tres_eleve,
     };
     onboardingResult.ventilation_par_impacts = {
-      '1': [Thematique.alimentation],
-      '2': [Thematique.transports],
-      '3': [Thematique.logement],
-      '4': [Thematique.consommation],
+      '1': [ThematiqueOnboarding.alimentation],
+      '2': [ThematiqueOnboarding.transports],
+      '3': [ThematiqueOnboarding.logement],
+      '4': [ThematiqueOnboarding.consommation],
     };
 
     // WHEN
@@ -56,7 +56,7 @@ describe('Objet OnboardingData', () => {
   });
   it('converts ok to JSON', () => {
     // GIVEN
-    let onboardingResult = new OnboardingResult(
+    let onboardingResult = OnboardingResult.buildFromOnboarding(
       new Onboarding(ONBOARDING_1_2_3_4),
     );
 
@@ -67,10 +67,10 @@ describe('Objet OnboardingData', () => {
       consommation: Impact.tres_eleve,
     };
     onboardingResult.ventilation_par_impacts = {
-      '1': [Thematique.alimentation],
-      '2': [Thematique.transports],
-      '3': [Thematique.logement],
-      '4': [Thematique.consommation],
+      '1': [ThematiqueOnboarding.alimentation],
+      '2': [ThematiqueOnboarding.transports],
+      '3': [ThematiqueOnboarding.logement],
+      '4': [ThematiqueOnboarding.consommation],
     };
 
     // WHEN
@@ -83,7 +83,7 @@ describe('Objet OnboardingData', () => {
   });
   it('builds ok basic impact', () => {
     // WHEN
-    let onboardingResult = new OnboardingResult(
+    let onboardingResult = OnboardingResult.buildFromOnboarding(
       new Onboarding(ONBOARDING_1_2_3_4),
     );
 
@@ -95,15 +95,15 @@ describe('Objet OnboardingData', () => {
       consommation: Impact.eleve,
     });
     expect(onboardingResult.ventilation_par_impacts).toStrictEqual({
-      '1': [Thematique.logement],
-      '2': [Thematique.alimentation],
-      '3': [Thematique.consommation],
-      '4': [Thematique.transports],
+      '1': [ThematiqueOnboarding.logement],
+      '2': [ThematiqueOnboarding.alimentation],
+      '3': [ThematiqueOnboarding.consommation],
+      '4': [ThematiqueOnboarding.transports],
     });
   });
   it('regroupe correctement par impacts similaires', () => {
     // WHEN
-    let onboardingResult = new OnboardingResult(
+    let onboardingResult = OnboardingResult.buildFromOnboarding(
       new Onboarding({
         transports: [Transport.velo],
         avion: 2,
@@ -122,15 +122,15 @@ describe('Objet OnboardingData', () => {
 
     // THEN
     expect(onboardingResult.ventilation_par_impacts).toStrictEqual({
-      '1': [Thematique.alimentation, Thematique.logement],
+      '1': [ThematiqueOnboarding.alimentation, ThematiqueOnboarding.logement],
       '2': [],
-      '3': [Thematique.transports, Thematique.consommation],
+      '3': [ThematiqueOnboarding.transports, ThematiqueOnboarding.consommation],
       '4': [],
     });
   });
   it('listThematiquesAvecImpactInferieurA : compte le bon nombre', () => {
     // GIVEN
-    let onboardingResult = new OnboardingResult(
+    let onboardingResult = OnboardingResult.buildFromOnboarding(
       new Onboarding(ONBOARDING_1_2_3_4),
     );
     onboardingResult.ventilation_par_thematiques = {
@@ -140,10 +140,10 @@ describe('Objet OnboardingData', () => {
       consommation: Impact.tres_eleve,
     };
     onboardingResult.ventilation_par_impacts = {
-      '1': [Thematique.alimentation],
-      '2': [Thematique.transports],
-      '3': [Thematique.logement],
-      '4': [Thematique.consommation],
+      '1': [ThematiqueOnboarding.alimentation],
+      '2': [ThematiqueOnboarding.transports],
+      '3': [ThematiqueOnboarding.logement],
+      '4': [ThematiqueOnboarding.consommation],
     };
     // WHEN
     const N1 = onboardingResult.listThematiquesAvecImpactInferieurA(
@@ -161,17 +161,20 @@ describe('Objet OnboardingData', () => {
 
     // THEN
     expect(N1).toStrictEqual([]);
-    expect(N2).toStrictEqual([Thematique.alimentation]);
-    expect(N3).toStrictEqual([Thematique.alimentation, Thematique.transports]);
+    expect(N2).toStrictEqual([ThematiqueOnboarding.alimentation]);
+    expect(N3).toStrictEqual([
+      ThematiqueOnboarding.alimentation,
+      ThematiqueOnboarding.transports,
+    ]);
     expect(N4).toStrictEqual([
-      Thematique.alimentation,
-      Thematique.transports,
-      Thematique.logement,
+      ThematiqueOnboarding.alimentation,
+      ThematiqueOnboarding.transports,
+      ThematiqueOnboarding.logement,
     ]);
   });
   it('listThematiquesAvecImpactSuperieurOuEgalA : compte le bon nombre', () => {
     // GIVEN
-    let onboardingResult = new OnboardingResult(
+    let onboardingResult = OnboardingResult.buildFromOnboarding(
       new Onboarding(ONBOARDING_1_2_3_4),
     );
     onboardingResult.ventilation_par_thematiques = {
@@ -181,10 +184,10 @@ describe('Objet OnboardingData', () => {
       consommation: Impact.tres_eleve,
     };
     onboardingResult.ventilation_par_impacts = {
-      '1': [Thematique.alimentation],
-      '2': [Thematique.transports],
-      '3': [Thematique.logement],
-      '4': [Thematique.consommation],
+      '1': [ThematiqueOnboarding.alimentation],
+      '2': [ThematiqueOnboarding.transports],
+      '3': [ThematiqueOnboarding.logement],
+      '4': [ThematiqueOnboarding.consommation],
     };
     // WHEN
     const N1 = onboardingResult.listThematiquesAvecImpactSuperieurOuEgalA(
@@ -202,22 +205,25 @@ describe('Objet OnboardingData', () => {
 
     // THEN
     expect(N1).toStrictEqual([
-      Thematique.alimentation,
-      Thematique.transports,
-      Thematique.logement,
-      Thematique.consommation,
+      ThematiqueOnboarding.alimentation,
+      ThematiqueOnboarding.transports,
+      ThematiqueOnboarding.logement,
+      ThematiqueOnboarding.consommation,
     ]);
     expect(N2).toStrictEqual([
-      Thematique.transports,
-      Thematique.logement,
-      Thematique.consommation,
+      ThematiqueOnboarding.transports,
+      ThematiqueOnboarding.logement,
+      ThematiqueOnboarding.consommation,
     ]);
-    expect(N3).toStrictEqual([Thematique.logement, Thematique.consommation]);
-    expect(N4).toStrictEqual([Thematique.consommation]);
+    expect(N3).toStrictEqual([
+      ThematiqueOnboarding.logement,
+      ThematiqueOnboarding.consommation,
+    ]);
+    expect(N4).toStrictEqual([ThematiqueOnboarding.consommation]);
   });
   it('nombreThematiquesAvecImpactSuperieurOuEgalA : compte le bon nombre', () => {
     // GIVEN
-    let onboardingResult = new OnboardingResult(
+    let onboardingResult = OnboardingResult.buildFromOnboarding(
       new Onboarding(ONBOARDING_1_2_3_4),
     );
     onboardingResult.ventilation_par_thematiques = {
@@ -227,10 +233,10 @@ describe('Objet OnboardingData', () => {
       consommation: Impact.tres_eleve,
     };
     onboardingResult.ventilation_par_impacts = {
-      '1': [Thematique.alimentation],
-      '2': [Thematique.transports],
-      '3': [Thematique.logement],
-      '4': [Thematique.consommation],
+      '1': [ThematiqueOnboarding.alimentation],
+      '2': [ThematiqueOnboarding.transports],
+      '3': [ThematiqueOnboarding.logement],
+      '4': [ThematiqueOnboarding.consommation],
     };
     // WHEN
     const N1 = onboardingResult.nombreThematiquesAvecImpactSuperieurOuEgalA(
@@ -254,7 +260,7 @@ describe('Objet OnboardingData', () => {
   });
   it('nombreThematiquesAvecImpactSuperieurOuEgalA : compte correctement les regroupements', () => {
     // GIVEN
-    let onboardingResult = new OnboardingResult(
+    let onboardingResult = OnboardingResult.buildFromOnboarding(
       new Onboarding(ONBOARDING_1_2_3_4),
     );
 
@@ -265,9 +271,9 @@ describe('Objet OnboardingData', () => {
       consommation: Impact.eleve,
     };
     onboardingResult.ventilation_par_impacts = {
-      '1': [Thematique.alimentation, Thematique.transports],
+      '1': [ThematiqueOnboarding.alimentation, ThematiqueOnboarding.transports],
       '2': [],
-      '3': [Thematique.logement, Thematique.consommation],
+      '3': [ThematiqueOnboarding.logement, ThematiqueOnboarding.consommation],
       '4': [],
     };
 
@@ -293,7 +299,7 @@ describe('Objet OnboardingData', () => {
   });
   it('trieCroissaint : tir thematiques par impact', () => {
     // GIVEN
-    let onboardingResult = new OnboardingResult(
+    let onboardingResult = OnboardingResult.buildFromOnboarding(
       new Onboarding(ONBOARDING_1_2_3_4),
     );
     onboardingResult.ventilation_par_thematiques = {
@@ -303,30 +309,30 @@ describe('Objet OnboardingData', () => {
       consommation: Impact.tres_eleve,
     };
     onboardingResult.ventilation_par_impacts = {
-      '1': [Thematique.alimentation],
-      '2': [Thematique.transports],
-      '3': [Thematique.logement],
-      '4': [Thematique.consommation],
+      '1': [ThematiqueOnboarding.alimentation],
+      '2': [ThematiqueOnboarding.transports],
+      '3': [ThematiqueOnboarding.logement],
+      '4': [ThematiqueOnboarding.consommation],
     };
     // WHEN
     const result = onboardingResult.trieDecroissant([
-      Thematique.transports,
-      Thematique.consommation,
-      Thematique.logement,
-      Thematique.alimentation,
+      ThematiqueOnboarding.transports,
+      ThematiqueOnboarding.consommation,
+      ThematiqueOnboarding.logement,
+      ThematiqueOnboarding.alimentation,
     ]);
 
     // THEN
     expect(result).toStrictEqual([
-      Thematique.consommation,
-      Thematique.logement,
-      Thematique.transports,
-      Thematique.alimentation,
+      ThematiqueOnboarding.consommation,
+      ThematiqueOnboarding.logement,
+      ThematiqueOnboarding.transports,
+      ThematiqueOnboarding.alimentation,
     ]);
   });
   it('getThematiqueNo1SuperieureA : renvoie la bonne thématique maximal supérieur à X', () => {
     // GIVEN
-    let onboardingResult = new OnboardingResult(
+    let onboardingResult = OnboardingResult.buildFromOnboarding(
       new Onboarding(ONBOARDING_1_2_3_4),
     );
     onboardingResult.ventilation_par_thematiques = {
@@ -336,10 +342,10 @@ describe('Objet OnboardingData', () => {
       consommation: Impact.tres_eleve,
     };
     onboardingResult.ventilation_par_impacts = {
-      '1': [Thematique.alimentation],
-      '2': [Thematique.transports],
-      '3': [Thematique.logement],
-      '4': [Thematique.consommation],
+      '1': [ThematiqueOnboarding.alimentation],
+      '2': [ThematiqueOnboarding.transports],
+      '3': [ThematiqueOnboarding.logement],
+      '4': [ThematiqueOnboarding.consommation],
     };
     // WHEN
     const result_tres_eleve = onboardingResult.getThematiqueNo1SuperieureA(
@@ -356,14 +362,14 @@ describe('Objet OnboardingData', () => {
     );
 
     // THEN
-    expect(result_tres_eleve).toEqual(Thematique.consommation);
-    expect(result_eleve).toEqual(Thematique.consommation);
-    expect(result_faible).toEqual(Thematique.consommation);
-    expect(result_tres_faible).toEqual(Thematique.consommation);
+    expect(result_tres_eleve).toEqual(ThematiqueOnboarding.consommation);
+    expect(result_eleve).toEqual(ThematiqueOnboarding.consommation);
+    expect(result_faible).toEqual(ThematiqueOnboarding.consommation);
+    expect(result_tres_faible).toEqual(ThematiqueOnboarding.consommation);
   });
   it('getThematiqueNo1SuperieureA : renvoie la bonne thématique maximal d ordre fonctionnel attendu #Transport', () => {
     // GIVEN
-    let onboardingResult = new OnboardingResult(
+    let onboardingResult = OnboardingResult.buildFromOnboarding(
       new Onboarding(ONBOARDING_1_2_3_4),
     );
     onboardingResult.ventilation_par_thematiques = {
@@ -376,10 +382,10 @@ describe('Objet OnboardingData', () => {
       '1': [],
       '2': [],
       '3': [
-        Thematique.logement,
-        Thematique.consommation,
-        Thematique.alimentation,
-        Thematique.transports,
+        ThematiqueOnboarding.logement,
+        ThematiqueOnboarding.consommation,
+        ThematiqueOnboarding.alimentation,
+        ThematiqueOnboarding.transports,
       ],
       '4': [],
     };
@@ -399,13 +405,13 @@ describe('Objet OnboardingData', () => {
 
     // THEN
     expect(result_tres_eleve).toEqual(null);
-    expect(result_eleve).toEqual(Thematique.transports);
-    expect(result_faible).toEqual(Thematique.transports);
-    expect(result_tres_faible).toEqual(Thematique.transports);
+    expect(result_eleve).toEqual(ThematiqueOnboarding.transports);
+    expect(result_faible).toEqual(ThematiqueOnboarding.transports);
+    expect(result_tres_faible).toEqual(ThematiqueOnboarding.transports);
   });
   it('getThematiqueNo1SuperieureA : renvoie la bonne thématique maximal d ordre fonctionnel attendu #alimentation', () => {
     // GIVEN
-    let onboardingResult = new OnboardingResult(
+    let onboardingResult = OnboardingResult.buildFromOnboarding(
       new Onboarding(ONBOARDING_1_2_3_4),
     );
     onboardingResult.ventilation_par_thematiques = {
@@ -416,11 +422,11 @@ describe('Objet OnboardingData', () => {
     };
     onboardingResult.ventilation_par_impacts = {
       '1': [],
-      '2': [Thematique.transports],
+      '2': [ThematiqueOnboarding.transports],
       '3': [
-        Thematique.logement,
-        Thematique.consommation,
-        Thematique.alimentation,
+        ThematiqueOnboarding.logement,
+        ThematiqueOnboarding.consommation,
+        ThematiqueOnboarding.alimentation,
       ],
       '4': [],
     };
@@ -440,13 +446,13 @@ describe('Objet OnboardingData', () => {
 
     // THEN
     expect(result_tres_eleve).toEqual(null);
-    expect(result_eleve).toEqual(Thematique.alimentation);
-    expect(result_faible).toEqual(Thematique.alimentation);
-    expect(result_tres_faible).toEqual(Thematique.alimentation);
+    expect(result_eleve).toEqual(ThematiqueOnboarding.alimentation);
+    expect(result_faible).toEqual(ThematiqueOnboarding.alimentation);
+    expect(result_tres_faible).toEqual(ThematiqueOnboarding.alimentation);
   });
   it('getThematiqueNo1SuperieureA : renvoie la bonne thématique maximal d ordre fonctionnel attendu #logement', () => {
     // GIVEN
-    let onboardingResult = new OnboardingResult(
+    let onboardingResult = OnboardingResult.buildFromOnboarding(
       new Onboarding(ONBOARDING_1_2_3_4),
     );
     onboardingResult.ventilation_par_thematiques = {
@@ -457,8 +463,8 @@ describe('Objet OnboardingData', () => {
     };
     onboardingResult.ventilation_par_impacts = {
       '1': [],
-      '2': [Thematique.transports, Thematique.alimentation],
-      '3': [Thematique.logement, Thematique.consommation],
+      '2': [ThematiqueOnboarding.transports, ThematiqueOnboarding.alimentation],
+      '3': [ThematiqueOnboarding.logement, ThematiqueOnboarding.consommation],
       '4': [],
     };
     // WHEN
@@ -477,13 +483,13 @@ describe('Objet OnboardingData', () => {
 
     // THEN
     expect(result_tres_eleve).toEqual(null);
-    expect(result_eleve).toEqual(Thematique.logement);
-    expect(result_faible).toEqual(Thematique.logement);
-    expect(result_tres_faible).toEqual(Thematique.logement);
+    expect(result_eleve).toEqual(ThematiqueOnboarding.logement);
+    expect(result_faible).toEqual(ThematiqueOnboarding.logement);
+    expect(result_tres_faible).toEqual(ThematiqueOnboarding.logement);
   });
   it('getThematiqueNo1SuperieureA : renvoie la bonne thématique maximal d ordre fonctionnel attendu #consommation', () => {
     // GIVEN
-    let onboardingResult = new OnboardingResult(
+    let onboardingResult = OnboardingResult.buildFromOnboarding(
       new Onboarding(ONBOARDING_1_2_3_4),
     );
     onboardingResult.ventilation_par_thematiques = {
@@ -495,11 +501,11 @@ describe('Objet OnboardingData', () => {
     onboardingResult.ventilation_par_impacts = {
       '1': [],
       '2': [
-        Thematique.transports,
-        Thematique.alimentation,
-        Thematique.logement,
+        ThematiqueOnboarding.transports,
+        ThematiqueOnboarding.alimentation,
+        ThematiqueOnboarding.logement,
       ],
-      '3': [Thematique.consommation],
+      '3': [ThematiqueOnboarding.consommation],
       '4': [],
     };
     // WHEN
@@ -518,8 +524,8 @@ describe('Objet OnboardingData', () => {
 
     // THEN
     expect(result_tres_eleve).toEqual(null);
-    expect(result_eleve).toEqual(Thematique.consommation);
-    expect(result_faible).toEqual(Thematique.consommation);
-    expect(result_tres_faible).toEqual(Thematique.consommation);
+    expect(result_eleve).toEqual(ThematiqueOnboarding.consommation);
+    expect(result_faible).toEqual(ThematiqueOnboarding.consommation);
+    expect(result_tres_faible).toEqual(ThematiqueOnboarding.consommation);
   });
 });
