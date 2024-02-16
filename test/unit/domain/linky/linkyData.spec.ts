@@ -719,10 +719,10 @@ describe('LinkyData', () => {
       'Au cours des 12 derniers mois, votre consommation éléctrique a <strong>augmenté de +3%</strong> par rapport aux 12 mois précédents',
     );
     expect(result.commentaires[1]).toEqual(
-      `C'est au mois de décembre 2023 que vous avez fait le plus d'économie (-46%)`,
+      `C'est au mois de <strong>décembre 2023</strong> que vous avez fait le <strong>plus d'économie (-46%)</strong>`,
     );
     expect(result.commentaires[2]).toEqual(
-      `C'est au mois de novembre 2023 que vous avez particulièrement surconsommé (+51%)`,
+      `C'est au mois de <strong>novembre 2023</strong> que vous avez particulièrement <strong>surconsommé (+51%)</strong>`,
     );
   });
   it('compare2AnsParMois : commentaires de bonne valeur', () => {
@@ -782,10 +782,10 @@ describe('LinkyData', () => {
       'Au cours des 12 derniers mois, votre consommation éléctrique a <strong>diminué de -10%</strong> par rapport aux 12 mois précédents',
     );
     expect(result.commentaires[1]).toEqual(
-      `C'est au mois de mars 2001 que vous avez fait le plus d'économie (-50%)`,
+      `C'est au mois de <strong>mars 2001</strong> que vous avez fait le <strong>plus d'économie (-50%)</strong>`,
     );
     expect(result.commentaires[2]).toEqual(
-      `C'est au mois de février 2001 que vous avez particulièrement surconsommé (+20%)`,
+      `C'est au mois de <strong>février 2001</strong> que vous avez particulièrement <strong>surconsommé (+20%)</strong>`,
     );
   });
 

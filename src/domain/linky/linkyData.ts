@@ -175,8 +175,8 @@ export class LinkyData {
         `Au cours des 12 derniers mois, votre consommation éléctrique a <strong>${
           variation > 0 ? 'augmenté de +' : 'diminué de -'
         }${Math.abs(variation)}%</strong> par rapport aux 12 mois précédents`,
-        `C'est au mois de ${mois_frugal} ${last_value.time.getUTCFullYear()} que vous avez fait le plus d'économie (-${mois_frugal_val_percent}%)`,
-        `C'est au mois de ${mois_max} ${last_value.time.getFullYear()} que vous avez particulièrement surconsommé (+${mois_max_val_percent}%)`,
+        `C'est au mois de <strong>${mois_frugal} ${last_value.time.getUTCFullYear()}</strong> que vous avez fait le <strong>plus d'économie (-${mois_frugal_val_percent}%)</strong>`,
+        `C'est au mois de <strong>${mois_max} ${last_value.time.getFullYear()}</strong> que vous avez particulièrement <strong>surconsommé (+${mois_max_val_percent}%)</strong>`,
       ],
     };
   }
