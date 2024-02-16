@@ -209,6 +209,9 @@ export class UtilisateurRepository {
       const history = new History(
         Upgrader.upgradeRaw(user.history, SerialisableDomain.History),
       );
+      const gamification = new Gamification(
+        Upgrader.upgradeRaw(user.gamification, SerialisableDomain.Gamification),
+      );
 
       return new Utilisateur({
         id: user.id,
@@ -236,7 +239,7 @@ export class UtilisateurRepository {
         created_at: user.created_at,
         updated_at: user.updated_at,
         parcours_todo: parcours_todo,
-        gamification: new Gamification(user.gamification as any),
+        gamification: gamification,
         history: history,
         prm: user.prm,
         code_departement: user.code_departement,
@@ -276,7 +279,10 @@ export class UtilisateurRepository {
         user.parcours_todo,
         SerialisableDomain.ParcoursTodo,
       ),
-      gamification: user.gamification as any,
+      gamification: Upgrader.serialiseToLastVersion(
+        user.gamification,
+        SerialisableDomain.Gamification,
+      ),
       unlocked_features: Upgrader.serialiseToLastVersion(
         user.unlocked_features,
         SerialisableDomain.UnlockedFeatures,

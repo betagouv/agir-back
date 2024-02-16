@@ -2,8 +2,12 @@ import { EventType } from '../../../src/domain/utilisateur/utilisateurEvent';
 import { TestUtil } from '../../TestUtil';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { CelebrationDeNiveau } from '../../../src/domain/gamification/celebrations/celebrationDeNiveau';
 import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
+import {
+  Celebration,
+  CelebrationType,
+} from '../../../src/domain/gamification/celebrations/celebration';
+import { Gamification } from '../../../src/domain/gamification/gamification';
 
 describe('EVENT (API test)', () => {
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -360,7 +364,13 @@ describe('EVENT (API test)', () => {
   });
   it('POST /utilisateurs/id/events - celebration consommée ajoute une fonctionnalité débloquée', async () => {
     // GIVEN
-    const celeb = new CelebrationDeNiveau(2);
+    const celeb = new Celebration({
+      id: '1',
+      titre: 'yo',
+      type: CelebrationType.niveau,
+      new_niveau: 2,
+      reveal: Gamification.getRevealByNiveau(2),
+    });
     const unlocked: UnlockedFeatures_v1 = {
       version: 1,
       unlocked_features: [],

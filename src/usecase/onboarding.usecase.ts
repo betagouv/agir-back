@@ -178,7 +178,7 @@ export class OnboardingUsecase {
       sent_email_count: 1,
       prevent_sendemail_before: new Date(),
       parcours_todo: new ParcoursTodo(),
-      gamification: Gamification.newDefaultGamification(),
+      gamification: new Gamification(),
       unlocked_features: new UnlockedFeatures(),
       history: new History(),
       code_departement: null,

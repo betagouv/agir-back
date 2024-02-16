@@ -22,32 +22,32 @@ describe('UnlockedFeatures_vN ', () => {
   });
   it('serialise <=> deSerialise v1 OK', async () => {
     // GIVEN
-    const unlockF = new UnlockedFeatures();
-    unlockF.add(Feature.bibliotheque);
+    const domain_start = new UnlockedFeatures();
+    domain_start.add(Feature.bibliotheque);
 
     // WHEN
-    const raw = UnlockedFeatures_v1.serialise(unlockF);
+    const raw = UnlockedFeatures_v1.serialise(domain_start);
 
-    const domain = new UnlockedFeatures(raw);
+    const domain_end = new UnlockedFeatures(raw);
 
     // THEN
-    expect(unlockF).toStrictEqual(domain);
+    expect(domain_end).toStrictEqual(domain_start);
   });
   it('serialise <=> upgrade <=> deSerialise v1 OK', async () => {
     // GIVEN
-    const unlockF = new UnlockedFeatures();
-    unlockF.add(Feature.bibliotheque);
+    const domain_start = new UnlockedFeatures();
+    domain_start.add(Feature.bibliotheque);
 
     // WHEN
-    const raw = UnlockedFeatures_v0.serialise(unlockF);
+    const raw = UnlockedFeatures_v0.serialise(domain_start);
     const upgrade = Upgrader.upgradeRaw(
       raw,
       SerialisableDomain.UnlockedFeatures,
     );
 
-    const domain = new UnlockedFeatures(upgrade);
+    const domain_end = new UnlockedFeatures(upgrade);
 
     // THEN
-    expect(unlockF).toStrictEqual(domain);
+    expect(domain_end).toStrictEqual(domain_start);
   });
 });

@@ -24,31 +24,31 @@ describe('ParcoursTodo vN ', () => {
   });
   it('serialise <=> deserialise v0 OK', () => {
     // GIVEN
-    const todo = new ParcoursTodo();
-    todo.getActiveTodo().done_at = new Date();
-    todo.getActiveTodo().todo[0].interaction_id = '123';
-    todo.getActiveTodo().todo[0].service_id = '456';
+    const domain_start = new ParcoursTodo();
+    domain_start.getActiveTodo().done_at = new Date();
+    domain_start.getActiveTodo().todo[0].interaction_id = '123';
+    domain_start.getActiveTodo().todo[0].service_id = '456';
 
     // WHEN
-    const raw = ParcoursTodo_v0.serialise(todo);
-    const domain = new ParcoursTodo(raw);
+    const raw = ParcoursTodo_v0.serialise(domain_start);
+    const domain_end = new ParcoursTodo(raw);
 
     // THEN
-    expect(todo).toStrictEqual(domain);
+    expect(domain_end).toStrictEqual(domain_start);
   });
   it('serialise <=> upgade <=> deserialise v0 OK', () => {
     // GIVEN
-    const todo = new ParcoursTodo();
-    todo.getActiveTodo().done_at = new Date();
-    todo.getActiveTodo().todo[0].interaction_id = '123';
-    todo.getActiveTodo().todo[0].service_id = '456';
+    const domain_start = new ParcoursTodo();
+    domain_start.getActiveTodo().done_at = new Date();
+    domain_start.getActiveTodo().todo[0].interaction_id = '123';
+    domain_start.getActiveTodo().todo[0].service_id = '456';
 
     // WHEN
-    const raw = ParcoursTodo_v0.serialise(todo);
+    const raw = ParcoursTodo_v0.serialise(domain_start);
     const upgrade = Upgrader.upgradeRaw(raw, SerialisableDomain.ParcoursTodo);
-    const domain = new ParcoursTodo(upgrade);
+    const domain_end = new ParcoursTodo(upgrade);
 
     // THEN
-    expect(todo).toStrictEqual(domain);
+    expect(domain_end).toStrictEqual(domain_start);
   });
 });

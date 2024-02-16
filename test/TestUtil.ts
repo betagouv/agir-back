@@ -18,7 +18,9 @@ import { ThematiqueRepository } from '../src/infrastructure/repository/thematiqu
 import { Feature } from '../src/domain/gamification/feature';
 import { UnlockedFeatures_v1 } from '../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { ParcoursTodo_v0 } from '../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
-import { History_v0 } from 'src/domain/object_store/history/history_v0';
+import { History_v0 } from '../src/domain/object_store/history/history_v0';
+import { Gamification_v0 } from '../src/domain/object_store/gamification/gamification_v0';
+import { CelebrationType } from '../src/domain/gamification/celebrations/celebration';
 
 export class TestUtil {
   constructor() {}
@@ -266,6 +268,25 @@ export class TestUtil {
       quizz_interactions: [],
     };
 
+    const gamiification: Gamification_v0 = {
+      version: 0,
+      points: 10,
+      celebrations: [
+        {
+          id: 'celebration-id',
+          type: CelebrationType.niveau,
+          new_niveau: 2,
+          titre: 'the titre',
+          reveal: {
+            id: 'reveal-id',
+            feature: Feature.aides,
+            titre: 'Les aides !',
+            description: 'bla',
+          },
+        },
+      ],
+    };
+
     return {
       id: 'utilisateur-id',
       nom: 'nom',
@@ -293,23 +314,7 @@ export class TestUtil {
       version_ponderation: 0,
       migration_enabled: false,
       todo: todo,
-      gamification: {
-        points: 10,
-        celebrations: [
-          {
-            id: 'celebration-id',
-            type: 'niveau',
-            new_niveau: 2,
-            titre: 'the titre',
-            reveal: {
-              id: 'reveal-id',
-              feature: 'aides',
-              titre: 'Les aides !',
-              description: 'bla',
-            },
-          },
-        ],
-      },
+      gamification: gamiification,
       unlocked_features: unlocked,
       history: history,
       onboardingData: {
