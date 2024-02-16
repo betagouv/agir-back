@@ -427,7 +427,7 @@ describe('LinkyData', () => {
     expect(result[2].value).toEqual(121);
     expect(result[3].value).toEqual(0);
   });
-  it.skip('extractLastNMonths : handles ok le premier janvier ', () => {
+  it('extractLastNMonths : handles ok le premier janvier ', () => {
     // GIVEN
     const linkyData = new LinkyData({
       prm: 'abc',

@@ -25,13 +25,6 @@ export class ParcoursTodo {
     }
   }
 
-  public upgradeParcoursIfNeeded?() {
-    const last_element = this.liste_todo[this.liste_todo.length - 1];
-    if (last_element.titre === 'Plus de mission, pour le moment...') {
-      this.liste_todo.pop();
-    }
-  }
-
   public getActiveTodo?(): Todo {
     if (this.todo_active < this.liste_todo.length) {
       return this.liste_todo[this.todo_active];

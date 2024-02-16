@@ -21,8 +21,6 @@ export class TodoUsecase {
       utilisateurId,
     );
 
-    await this.upgradeTodoIfNeeded(utilisateur); // FIXME : to remove
-
     const todo_active = utilisateur.parcours_todo.getActiveTodo();
     const element = todo_active.findDoneElementById(elementId);
 
@@ -37,8 +35,6 @@ export class TodoUsecase {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );
-
-    await this.upgradeTodoIfNeeded(utilisateur); // FIXME : to remove
 
     const todo_active = utilisateur.parcours_todo.getActiveTodo();
     if (todo_active.isDone()) {
@@ -55,8 +51,6 @@ export class TodoUsecase {
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );
-
-    await this.upgradeTodoIfNeeded(utilisateur); // FIXME : to remove
 
     const todo = utilisateur.parcours_todo.getActiveTodo();
 
@@ -121,12 +115,6 @@ export class TodoUsecase {
       await this.utilisateurRepository.updateUtilisateur(utilisateur);
     }
     return log;
-  }
-
-  // FIXME : to remove
-  private async upgradeTodoIfNeeded(utilisateur: Utilisateur) {
-    utilisateur.parcours_todo.upgradeParcoursIfNeeded();
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private randomFromArray(array: any[]): any {
