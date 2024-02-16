@@ -242,7 +242,7 @@ const utilisateurs = {
     commune: 'PALAISEAU',
     revenu_fiscal: null,
     parts: null,
-    version: 2,
+    version: 3,
     gamification: {
       points: 590,
     },
@@ -276,7 +276,7 @@ const utilisateurs = {
     commune: 'PALAISEAU',
     revenu_fiscal: 0,
     parts: null,
-    version: 2,
+    version: 3,
     gamification: {
       points: 0,
     },
@@ -294,7 +294,34 @@ const utilisateurs = {
     commune: 'PALAISEAU',
     revenu_fiscal: 0,
     parts: null,
-    version: 2,
+    version: 3,
+    gamification: {
+      points: 0,
+    },
+    suivis: [],
+    services: [],
+    onboardingResult: ONBOARDING_RES_1234,
+    onboardingData: ONBOARD_DATA_1234,
+  },
+  margaux: {
+    nom: 'RECETTEUR',
+    prenom: 'Margaux',
+    email: 'recette_margaux@agir.dev',
+    mot_de_passe: 'haha',
+    code_postal: '91120',
+    commune: 'PALAISEAU',
+    revenu_fiscal: 0,
+    parts: null,
+    version: 3,
+    unlocked_features: {
+      version: 1,
+      unlocked_features: [
+        'aides',
+        'services',
+        'recommandations',
+        'bibliotheque',
+      ],
+    },
     gamification: {
       points: 0,
     },
@@ -312,10 +339,15 @@ const utilisateurs = {
     commune: 'PARIS',
     revenu_fiscal: 0,
     parts: null,
-    version: 2,
+    version: 3,
     unlocked_features: {
-      veersion: 1,
-      unlocked_features: ['aides', 'services', 'recommandations'],
+      version: 1,
+      unlocked_features: [
+        'aides',
+        'services',
+        'recommandations',
+        'bibliotheque',
+      ],
     },
     gamification: {
       points: 0,
