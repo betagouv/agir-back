@@ -244,7 +244,7 @@ const utilisateurs = {
     parts: null,
     version: 3,
     gamification: {
-      points: 590,
+      points: 650,
     },
     unlocked_features: {
       version: 1,
