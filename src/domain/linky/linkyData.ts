@@ -129,6 +129,12 @@ export class LinkyData {
 
     let total_last_year = 0;
     let total_this_year = 0;
+    let mois_frugal;
+    let mois_frugal_val = 0;
+    let mois_frugal_val_percent = 0;
+    let mois_max;
+    let mois_max_val = 0;
+    let mois_max_val_percent = 0;
 
     for (let index = 0; index < 12; index++) {
       const mois = extract[index];
@@ -137,6 +143,24 @@ export class LinkyData {
       const mois_annee_suivante = extract[index + 12];
       total_this_year += mois_annee_suivante.value;
 
+      if (mois_annee_suivante.value - mois.value < mois_frugal_val) {
+        mois_frugal_val = mois_annee_suivante.value - mois.value;
+        mois_frugal = LinkyData.formatMois(mois.time);
+        mois_frugal_val_percent = Math.round(
+          (Math.abs(mois_frugal_val) /
+            Math.max(mois_annee_suivante.value, mois.value)) *
+            100,
+        );
+      }
+      if (mois_annee_suivante.value - mois.value > mois_max_val) {
+        mois_max_val = mois_annee_suivante.value - mois.value;
+        mois_max = LinkyData.formatMois(mois.time);
+        mois_max_val_percent = Math.round(
+          (Math.abs(mois_max_val) /
+            Math.min(mois_annee_suivante.value, mois.value)) *
+            100,
+        );
+      }
       result.push(mois);
       result.push(mois_annee_suivante);
     }
@@ -150,7 +174,9 @@ export class LinkyData {
       commentaires: [
         `Au cours des 12 derniers mois, votre consommation éléctrique a <strong>${
           variation > 0 ? 'augmenté de +' : 'diminué de -'
-        }${variation}%</strong> par rapport aux 12 mois précédents`,
+        }${Math.abs(variation)}%</strong> par rapport aux 12 mois précédents`,
+        `C'est au mois de ${mois_frugal} ${last_value.time.getUTCFullYear()} que vous avez fait le plus d'économie (-${mois_frugal_val_percent}%)`,
+        `C'est au mois de ${mois_max} ${last_value.time.getFullYear()} que vous avez particulièrement surconsommé (+${mois_max_val_percent}%)`,
       ],
     };
   }
@@ -231,7 +257,7 @@ export class LinkyData {
     start_date: Date,
   ): YearMonthLinkyData {
     const result = new YearMonthLinkyData();
-    let current_date = start_date;
+    let current_date = new Date(start_date);
 
     for (let index = 0; index < nombre; index++) {
       const current_year = current_date.getFullYear();

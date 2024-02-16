@@ -427,6 +427,46 @@ describe('LinkyData', () => {
     expect(result[2].value).toEqual(121);
     expect(result[3].value).toEqual(0);
   });
+  it.skip('extractLastNMonths : handles ok le premier janvier ', () => {
+    // GIVEN
+    const linkyData = new LinkyData({
+      prm: 'abc',
+      serie: [
+        {
+          time: new Date('2000-01-01T12:00:00.000Z'),
+          value: 100,
+          value_at_normal_temperature: 100,
+        },
+        {
+          time: new Date('2001-01-01T12:00:00.000Z'),
+          value: 110,
+          value_at_normal_temperature: 110,
+        },
+      ],
+    });
+
+    // WHEN
+    const result = linkyData.extractLastNMonths(
+      24,
+      new Date('2001-01-01T12:00:00.000Z'),
+    );
+
+    // THEN
+    expect(result).toHaveLength(24);
+
+    expect(result[23].annee).toEqual('2001');
+    expect(result[23].value).toEqual(110);
+    expect(result[23].mois).toEqual('janvier');
+
+    expect(result[11].annee).toEqual('2000');
+    expect(result[11].value).toEqual(100);
+    expect(result[11].mois).toEqual('janvier');
+
+    expect(result[22].value).toEqual(0);
+    expect(result[13].value).toEqual(0);
+    expect(result[10].value).toEqual(0);
+  });
+
   it('listMonthsFromDate : list months backward from date ', () => {
     // GIVEN
 
@@ -675,9 +715,78 @@ describe('LinkyData', () => {
 
     // THEN
     expect(result.data).toHaveLength(24);
-    expect(result.commentaires).toEqual([
-      'Au cours des 12 derniers mois, votre consommation éléctrique a <strong>augmenté de +2%</strong> par rapport aux 12 mois précédents',
-    ]);
+    expect(result.commentaires[0]).toEqual(
+      'Au cours des 12 derniers mois, votre consommation éléctrique a <strong>augmenté de +3%</strong> par rapport aux 12 mois précédents',
+    );
+    expect(result.commentaires[1]).toEqual(
+      `C'est au mois de décembre 2023 que vous avez fait le plus d'économie (-46%)`,
+    );
+    expect(result.commentaires[2]).toEqual(
+      `C'est au mois de novembre 2023 que vous avez particulièrement surconsommé (+51%)`,
+    );
+  });
+  it('compare2AnsParMois : commentaires de bonne valeur', () => {
+    // GIVEN
+    const linkyData = new LinkyData({
+      prm: 'abc',
+      serie: [
+        {
+          time: new Date('2000-01-01T12:00:00.000Z'),
+          value: 100,
+          value_at_normal_temperature: 100,
+        },
+        {
+          time: new Date('2000-02-01T12:00:00.000Z'),
+          value: 100,
+          value_at_normal_temperature: 100,
+        },
+        {
+          time: new Date('2000-03-01T12:00:00.000Z'),
+          value: 100,
+          value_at_normal_temperature: 100,
+        },
+        {
+          time: new Date('2000-04-01T12:00:00.000Z'),
+          value: 100,
+          value_at_normal_temperature: 100,
+        },
+        {
+          time: new Date('2001-01-01T12:00:00.000Z'),
+          value: 110,
+          value_at_normal_temperature: 110,
+        },
+        {
+          time: new Date('2001-02-01T12:00:00.000Z'),
+          value: 120,
+          value_at_normal_temperature: 120,
+        },
+        {
+          time: new Date('2001-03-01T12:00:00.000Z'),
+          value: 50,
+          value_at_normal_temperature: 50,
+        },
+        {
+          time: new Date('2001-04-01T12:00:00.000Z'),
+          value: 80,
+          value_at_normal_temperature: 80,
+        },
+      ],
+    });
+
+    // WHEN
+    const result = linkyData.compare2AnsParMois();
+
+    // THEN
+    expect(result.data).toHaveLength(24);
+    expect(result.commentaires[0]).toEqual(
+      'Au cours des 12 derniers mois, votre consommation éléctrique a <strong>diminué de -10%</strong> par rapport aux 12 mois précédents',
+    );
+    expect(result.commentaires[1]).toEqual(
+      `C'est au mois de mars 2001 que vous avez fait le plus d'économie (-50%)`,
+    );
+    expect(result.commentaires[2]).toEqual(
+      `C'est au mois de février 2001 que vous avez particulièrement surconsommé (+20%)`,
+    );
   });
 
   it('getPreviousWeekFirstDay : renvoie le lundi précédent précédent', () => {
