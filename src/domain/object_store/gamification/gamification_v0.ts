@@ -35,7 +35,7 @@ export class Celebration_v0 {
       id: elem.id,
       type: elem.type,
       titre: elem.titre,
-      reveal: Reveal_v0.map(elem.reveal),
+      reveal: elem.reveal ? Reveal_v0.map(elem.reveal) : undefined,
       new_niveau: elem.new_niveau,
     };
   }

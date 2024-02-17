@@ -1,6 +1,7 @@
+import { Onboarding_v0 } from '../../../../src/domain/object_store/Onboarding/onboarding_v0';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 
-export enum Transport {
+export enum TransportOnboarding {
   voiture = 'voiture',
   moto = 'moto',
   pied = 'pied',
@@ -52,8 +53,8 @@ export enum Impact {
   tres_eleve = 4,
 }
 
-export class OnboardingData {
-  transports: Transport[];
+export class Onboarding {
+  transports: TransportOnboarding[];
   avion: number;
   code_postal: string;
   commune: string;
@@ -65,19 +66,27 @@ export class OnboardingData {
   chauffage: Chauffage;
   repas: Repas;
   consommation: Consommation;
-}
 
-export class Onboarding extends OnboardingData {
-  constructor(data: OnboardingData) {
-    super();
-    Object.assign(this, data);
+  constructor(data: Onboarding_v0) {
+    this.transports = data.transports;
+    this.avion = data.avion;
+    this.code_postal = data.code_postal;
+    this.commune = data.commune;
+    this.adultes = data.adultes;
+    this.enfants = data.enfants;
+    this.residence = data.residence;
+    this.proprietaire = data.proprietaire;
+    this.superficie = data.superficie;
+    this.chauffage = data.chauffage;
+    this.repas = data.repas;
+    this.consommation = data.consommation;
   }
 
   getTransportLevel(): Impact {
     let avion: boolean = this.avion ? this.avion > 0 : false;
     let nbr_avion = this.avion ? this.avion : 0;
-    let voiture: boolean = this.hasTransport(Transport.voiture);
-    let moto: boolean = this.hasTransport(Transport.moto);
+    let voiture: boolean = this.hasTransport(TransportOnboarding.voiture);
+    let moto: boolean = this.hasTransport(TransportOnboarding.moto);
 
     if (!avion && !voiture && moto) return Impact.faible;
 
@@ -157,14 +166,14 @@ export class Onboarding extends OnboardingData {
     if (this.consommation === Consommation.raisonnable) return Impact.eleve;
     if (this.consommation === Consommation.shopping) return Impact.tres_eleve;
   }
-  private hasTransport(transport: Transport) {
+  private hasTransport(transport: TransportOnboarding) {
     return this.transports ? this.transports.indexOf(transport) >= 0 : false;
   }
 
   validateData() {
     if (this.transports) {
       this.transports.forEach((value) => {
-        if (!(value in Transport))
+        if (!(value in TransportOnboarding))
           ApplicationError.throwValeurInconnueOnboarding('transport', value);
       });
     } else {

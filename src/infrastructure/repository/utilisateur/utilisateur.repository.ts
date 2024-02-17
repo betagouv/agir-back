@@ -210,6 +210,9 @@ export class UtilisateurRepository {
       const gamification = new Gamification(
         Upgrader.upgradeRaw(user.gamification, SerialisableDomain.Gamification),
       );
+      const onboarding = new Onboarding(
+        Upgrader.upgradeRaw(user.onboardingData, SerialisableDomain.Onboarding),
+      );
       const onboardingResult = new OnboardingResult(
         Upgrader.upgradeRaw(
           user.onboardingResult,
@@ -229,7 +232,7 @@ export class UtilisateurRepository {
         abonnement_ter_loire: user.abonnement_ter_loire,
         passwordHash: user.passwordHash,
         passwordSalt: user.passwordSalt,
-        onboardingData: onboardingData,
+        onboardingData: onboarding,
         onboardingResult: onboardingResult,
         failed_login_count: user.failed_login_count,
         prevent_login_before: user.prevent_login_before,
@@ -277,7 +280,10 @@ export class UtilisateurRepository {
       prevent_checkcode_before: user.prevent_checkcode_before,
       sent_email_count: user.sent_email_count,
       prevent_sendemail_before: user.prevent_sendemail_before,
-      onboardingData: { ...user.onboardingData },
+      onboardingData: Upgrader.serialiseToLastVersion(
+        user.onboardingData,
+        SerialisableDomain.Onboarding,
+      ),
       onboardingResult: Upgrader.serialiseToLastVersion(
         user.onboardingResult,
         SerialisableDomain.OnboardingResult,

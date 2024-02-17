@@ -3,7 +3,7 @@ import {
   Upgrader,
 } from '../../../../src/domain/object_store/upgrader';
 import { OnboardingResult } from '../../../../src/domain/utilisateur/onboarding/onboardingResult';
-import { OnboardingResult_v0 } from 'src/domain/object_store/onboardingResult/onboardingResult_v0';
+import { OnboardingResult_v0 } from '../../../../src/domain/object_store/onboardingResult/onboardingResult_v0';
 import {
   Chauffage,
   Consommation,
@@ -11,8 +11,8 @@ import {
   Repas,
   Residence,
   Superficie,
-  Transport,
-} from 'src/domain/utilisateur/onboarding/onboarding';
+  TransportOnboarding,
+} from '../../../../src/domain/utilisateur/onboarding/onboarding';
 
 describe('OnboardingResult vN ', () => {
   it('build OK from empty', () => {
@@ -31,7 +31,8 @@ describe('OnboardingResult vN ', () => {
     // GIVEN
     let domain_start = OnboardingResult.buildFromOnboarding(
       new Onboarding({
-        transports: [Transport.voiture],
+        version: 0,
+        transports: [TransportOnboarding.voiture],
         avion: 2,
         code_postal: '91120',
         adultes: 2,
@@ -57,7 +58,8 @@ describe('OnboardingResult vN ', () => {
     // GIVEN
     let domain_start = OnboardingResult.buildFromOnboarding(
       new Onboarding({
-        transports: [Transport.voiture],
+        version: 0,
+        transports: [TransportOnboarding.voiture],
         avion: 2,
         code_postal: '91120',
         adultes: 2,

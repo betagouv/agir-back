@@ -71,7 +71,8 @@ export class OnboardingUsecase {
   async evaluateOnboardingData(
     input: OnboardingDataAPI,
   ): Promise<OnboardingDataImpactAPI> {
-    const onboarding = new Onboarding(input);
+    const onboarding = new Onboarding(OnboardingDataAPI.convertToDomain(input));
+
     onboarding.validateData();
 
     const onboardingResult = OnboardingResult.buildFromOnboarding(onboarding);
@@ -148,8 +149,11 @@ export class OnboardingUsecase {
         ApplicationError.throwNotAuthorizedEmailError();
       }
     }
+    const onboardingAPI = utilisateurInput.onboardingData;
 
-    const onboarding = new Onboarding(utilisateurInput.onboardingData);
+    const onboarding = new Onboarding(
+      OnboardingDataAPI.convertToDomain(utilisateurInput.onboardingData),
+    );
 
     const utilisateurToCreate = new Utilisateur({
       id: undefined,
@@ -226,7 +230,9 @@ export class OnboardingUsecase {
   private checkInputToCreateUtilisateur(
     utilisateurInput: CreateUtilisateurAPI,
   ) {
-    new Onboarding(utilisateurInput.onboardingData).validateData();
+    new Onboarding(
+      OnboardingDataAPI.convertToDomain(utilisateurInput.onboardingData),
+    ).validateData();
 
     if (!utilisateurInput.nom) {
       ApplicationError.throwNomObligatoireError();

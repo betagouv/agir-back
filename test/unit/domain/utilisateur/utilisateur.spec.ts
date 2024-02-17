@@ -8,11 +8,11 @@ import {
   Repas,
   Residence,
   Superficie,
-  Transport,
+  TransportOnboarding,
 } from '../../../../src/domain/utilisateur/onboarding/onboarding';
 
 const ONBOARDING_DATA = {
-  transports: [Transport.moto, Transport.voiture],
+  transports: [TransportOnboarding.moto, TransportOnboarding.voiture],
   adultes: 1,
   avion: 0,
   chauffage: Chauffage.bois,

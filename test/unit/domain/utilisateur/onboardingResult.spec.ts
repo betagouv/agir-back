@@ -7,12 +7,13 @@ import {
   Residence,
   Superficie,
   ThematiqueOnboarding,
-  Transport,
+  TransportOnboarding,
 } from '../../../../src/domain/utilisateur/onboarding/onboarding';
 import { OnboardingResult } from '../../../../src/domain/utilisateur/onboarding/onboardingResult';
 
 const ONBOARDING_1_2_3_4 = {
-  transports: [Transport.velo, Transport.voiture],
+  version: 0,
+  transports: [TransportOnboarding.velo, TransportOnboarding.voiture],
   avion: 2,
   adultes: 2,
   enfants: 2,
@@ -105,7 +106,8 @@ describe('Objet OnboardingData', () => {
     // WHEN
     let onboardingResult = OnboardingResult.buildFromOnboarding(
       new Onboarding({
-        transports: [Transport.velo],
+        version: 0,
+        transports: [TransportOnboarding.velo],
         avion: 2,
         adultes: 2,
         enfants: 2,

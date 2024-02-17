@@ -41,8 +41,8 @@ model Utilisateur {
   code_postal              String?
   commune                  String?
   revenu_fiscal            Int?
-  onboardingData           Json               @default("{}")
-  onboardingResult         Json               @default("{}")
+  onboardingData           Json               @default("{}") // versioné 
+  onboardingResult         Json               @default("{}") // versioné 
   todo                     Json               @default("{}") // versioné 
   gamification             Json               @default("{}") // versioné 
   history                  Json               @default("{}") // versioné 

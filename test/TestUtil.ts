@@ -3,7 +3,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { Thematique } from '../src/domain/contenu/thematique';
-import { ThematiqueOnboarding as ThematiqueOnboarding } from '../src/domain/utilisateur/onboarding/onboarding';
+import {
+  Chauffage,
+  Consommation,
+  Repas,
+  Residence,
+  Superficie,
+  ThematiqueOnboarding as ThematiqueOnboarding,
+  TransportOnboarding,
+} from '../src/domain/utilisateur/onboarding/onboarding';
 import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
 import { Impact } from '../src/domain/utilisateur/onboarding/onboarding';
@@ -21,6 +29,8 @@ import { ParcoursTodo_v0 } from '../src/domain/object_store/parcoursTodo/parcour
 import { History_v0 } from '../src/domain/object_store/history/history_v0';
 import { Gamification_v0 } from '../src/domain/object_store/gamification/gamification_v0';
 import { CelebrationType } from '../src/domain/gamification/celebrations/celebration';
+import { Onboarding_v0 } from 'src/domain/object_store/Onboarding/onboarding_v0';
+import { OnboardingResult_v0 } from 'src/domain/object_store/onboardingResult/onboardingResult_v0';
 
 export class TestUtil {
   constructor() {}
@@ -287,6 +297,38 @@ export class TestUtil {
       ],
     };
 
+    const onboarding: Onboarding_v0 = {
+      version: 0,
+      transports: [TransportOnboarding.voiture, TransportOnboarding.pied],
+      avion: 2,
+      code_postal: '91120',
+      adultes: 2,
+      enfants: 1,
+      residence: Residence.maison,
+      proprietaire: true,
+      superficie: Superficie.superficie_100,
+      chauffage: Chauffage.bois,
+      repas: Repas.tout,
+      consommation: Consommation.raisonnable,
+      commune: 'PALAISEAU',
+    };
+
+    const onboardingRes: OnboardingResult_v0 = {
+      version: 0,
+      ventilation_par_thematiques: {
+        alimentation: Impact.tres_faible,
+        transports: Impact.faible,
+        logement: Impact.eleve,
+        consommation: Impact.tres_eleve,
+      },
+      ventilation_par_impacts: {
+        '1': [ThematiqueOnboarding.alimentation],
+        '2': [ThematiqueOnboarding.transports],
+        '3': [ThematiqueOnboarding.logement],
+        '4': [ThematiqueOnboarding.consommation],
+      },
+    };
+
     return {
       id: 'utilisateur-id',
       nom: 'nom',
@@ -317,33 +359,8 @@ export class TestUtil {
       gamification: gamiification,
       unlocked_features: unlocked,
       history: history,
-      onboardingData: {
-        transports: ['voiture', 'pied'],
-        avion: 2,
-        code_postal: '91120',
-        adultes: 2,
-        enfants: 1,
-        residence: 'maison',
-        proprietaire: true,
-        superficie: 'superficie_100',
-        chauffage: 'bois',
-        repas: 'tout',
-        consommation: 'raisonnable',
-      },
-      onboardingResult: {
-        ventilation_par_thematiques: {
-          alimentation: Impact.tres_faible,
-          transports: Impact.faible,
-          logement: Impact.eleve,
-          consommation: Impact.tres_eleve,
-        },
-        ventilation_par_impacts: {
-          '1': [ThematiqueOnboarding.alimentation],
-          '2': [ThematiqueOnboarding.transports],
-          '3': [ThematiqueOnboarding.logement],
-          '4': [ThematiqueOnboarding.consommation],
-        },
-      },
+      onboardingData: onboarding,
+      onboardingResult: onboardingRes,
       created_at: undefined,
       updated_at: undefined,
       ...override,

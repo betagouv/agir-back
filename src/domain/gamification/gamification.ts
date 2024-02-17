@@ -50,6 +50,7 @@ export class Gamification {
           id: undefined,
           titre: 'NOUVEAU NIVEAU',
           type: CelebrationType.niveau,
+          new_niveau: new_niveau,
           reveal: Gamification.getRevealByNiveau(new_niveau),
         }),
       );
