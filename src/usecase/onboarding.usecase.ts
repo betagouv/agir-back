@@ -21,6 +21,7 @@ import { ParcoursTodo } from '../../src/domain/todo/parcoursTodo';
 import { UnlockedFeatures } from '../../src/domain/gamification/unlockedFeatures';
 import { History } from '../../src/domain/history/history';
 import { UtilisateurBehavior } from '../../src/domain/utilisateur/utilisateurBehavior';
+import { KYC } from '../../src/domain/kyc/collectionQuestionsKYC';
 
 export type Phrase = {
   phrase: string;
@@ -149,7 +150,6 @@ export class OnboardingUsecase {
         ApplicationError.throwNotAuthorizedEmailError();
       }
     }
-    const onboardingAPI = utilisateurInput.onboardingData;
 
     const onboarding = new Onboarding(
       OnboardingDataAPI.convertToDomain(utilisateurInput.onboardingData),
@@ -184,6 +184,7 @@ export class OnboardingUsecase {
       unlocked_features: new UnlockedFeatures(),
       history: new History(),
       code_departement: null,
+      kyc: new KYC(),
       prm: null,
       version: UtilisateurBehavior.systemVersion(),
       migration_enabled: false,

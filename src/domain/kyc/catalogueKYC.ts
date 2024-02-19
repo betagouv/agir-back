@@ -1,10 +1,7 @@
-import {
-  CategorieQuestionKYC,
-  QuestionKYCData,
-  TypeReponseQuestionKYC,
-} from './questionQYC';
+import { QuestionKYC_v0 } from '../object_store/kyc/kyc_v0';
+import { CategorieQuestionKYC, TypeReponseQuestionKYC } from './questionQYC';
 
-const CATALOGUE_QUESTIONS: QuestionKYCData[] = [
+const CATALOGUE_QUESTIONS: QuestionKYC_v0[] = [
   {
     id: '1',
     question: 'Comment avez vous connu le service ?',

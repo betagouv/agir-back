@@ -1,3 +1,5 @@
+import { QuestionKYC_v0 } from '../object_store/kyc/kyc_v0';
+
 export enum TypeReponseQuestionKYC {
   libre = 'libre',
   choix_unique = 'choix_unique',
@@ -10,7 +12,7 @@ export enum CategorieQuestionKYC {
   service = 'service',
 }
 
-export class QuestionKYCData {
+export class QuestionKYC {
   id: string;
   question: string;
   type: TypeReponseQuestionKYC;
@@ -20,11 +22,16 @@ export class QuestionKYCData {
   reponse?: string[];
   reponses_possibles?: string[];
   ngc_key?: string;
-}
 
-export class QuestionKYC extends QuestionKYCData {
-  constructor(data: QuestionKYCData) {
-    super();
-    Object.assign(this, data);
+  constructor(data: QuestionKYC_v0) {
+    this.id = data.id;
+    this.question = data.question;
+    this.type = data.type;
+    this.categorie = data.categorie;
+    this.points = data.points;
+    this.is_NGC = data.is_NGC;
+    this.reponse = data.reponse;
+    this.reponses_possibles = data.reponses_possibles;
+    this.ngc_key = data.ngc_key;
   }
 }

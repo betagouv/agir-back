@@ -10,6 +10,7 @@ import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
 } from '../../../src/domain/kyc/questionQYC';
+import { KYC_v0 } from 'src/domain/object_store/kyc/kyc_v0';
 
 describe('TODO list (API test)', () => {
   const OLD_ENV = process.env;
@@ -810,8 +811,23 @@ describe('TODO list (API test)', () => {
   });
 
   it('POST KYC met à jour la todo si la question correspond', async () => {
+    const kyc: KYC_v0 = {
+      version: 0,
+      answered_questions: [
+        {
+          id: '2',
+          question: `Quel est votre sujet principal d'intéret ?`,
+          type: TypeReponseQuestionKYC.choix_multiple,
+          is_NGC: false,
+          categorie: CategorieQuestionKYC.service,
+          points: 10,
+          reponses_possibles: ['Le climat', 'Mon logement', 'Ce que je mange'],
+        },
+      ],
+    };
     // GIVEN
     await TestUtil.create('utilisateur', {
+      kyc: kyc,
       todo: {
         liste_todo: [
           {
@@ -834,26 +850,6 @@ describe('TODO list (API test)', () => {
           },
         ],
         todo_active: 0,
-      },
-    });
-    await TestUtil.create('questionsKYC', {
-      utilisateurId: 'utilisateur-id',
-      data: {
-        answered_questions: [
-          {
-            id: '2',
-            question: `Quel est votre sujet principal d'intéret ?`,
-            type: TypeReponseQuestionKYC.choix_multiple,
-            is_NGC: false,
-            categorie: CategorieQuestionKYC.service,
-            points: 10,
-            reponses_possibles: [
-              'Le climat',
-              'Mon logement',
-              'Ce que je mange',
-            ],
-          },
-        ],
       },
     });
 

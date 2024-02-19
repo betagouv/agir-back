@@ -14,7 +14,6 @@ describe('History vN ', () => {
 
     const domain = new History(raw);
     // THEN
-
     expect(domain.nombreArticles()).toEqual(0);
     expect(domain.nombreQuizz()).toEqual(0);
   });

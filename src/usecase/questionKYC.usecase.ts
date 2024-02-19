@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { QuestionKYCRepository } from '../../src/infrastructure/repository/questionKYC.repository';
 import { QuestionKYC } from '../domain/kyc/questionQYC';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
@@ -7,48 +6,46 @@ import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 
 @Injectable()
 export class QuestionKYCUsecase {
-  constructor(
-    private questionKYCRepository: QuestionKYCRepository,
-    private utilisateurRepository: UtilisateurRepository,
-  ) {}
+  constructor(private utilisateurRepository: UtilisateurRepository) {}
 
   async getALL(utilisateurId: string): Promise<QuestionKYC[]> {
-    const collection = await this.questionKYCRepository.getAll(utilisateurId);
-    return collection.getAllQuestionSet();
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+      utilisateurId,
+    );
+    return utilisateur.kyc.getAllQuestionSet();
   }
 
   async getQuestion(utilisateurId: string, questionId): Promise<QuestionKYC> {
-    const collection = await this.questionKYCRepository.getAll(utilisateurId);
-    const question = collection.getAnyQuestion(questionId);
+    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+      utilisateurId,
+    );
+
+    const question = utilisateur.kyc.getAnyQuestion(questionId);
     if (!question) {
       ApplicationError.throwQuestionInconnue(questionId);
     }
     return question;
   }
+
   async updateResponse(
     utilisateurId: string,
     questionId: string,
     reponse: string[],
   ): Promise<void> {
-    const collection = await this.questionKYCRepository.getAll(utilisateurId);
-
-    collection.checkQuestionExistsOrThrowException(questionId);
-
     const utilisateur = await this.utilisateurRepository.findUtilisateurById(
       utilisateurId,
     );
 
+    utilisateur.kyc.checkQuestionExistsOrThrowException(questionId);
+
     this.updateUserTodo(utilisateur, questionId);
 
-    if (!collection.isQuestionAnswered(questionId)) {
-      const question = collection.getAnyQuestion(questionId);
+    if (!utilisateur.kyc.isQuestionAnswered(questionId)) {
+      const question = utilisateur.kyc.getAnyQuestion(questionId);
       utilisateur.gamification.ajoutePoints(question.points);
     }
-
+    utilisateur.kyc.updateQuestion(questionId, reponse);
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
-
-    collection.updateQuestion(questionId, reponse);
-    await this.questionKYCRepository.update(utilisateurId, collection);
   }
 
   private updateUserTodo(utilisateur: Utilisateur, questionId: string) {

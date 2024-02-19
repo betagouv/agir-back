@@ -8,7 +8,6 @@ import { Suivi } from '../../../src/domain/suivi/suivi';
 import { SuiviTransport } from '../../../src/domain/suivi/suiviTransport';
 import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
-import { OnboardingUsecase } from '../../../src/usecase/onboarding.usecase';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
 const _services = require('../../../test_data/_services');
 const _linky_data = require('../../../test_data/PRM_thermo_sensible');
@@ -216,11 +215,6 @@ export class TestDataController {
       },
     });
     await this.prisma.empreinte.deleteMany({
-      where: {
-        utilisateurId,
-      },
-    });
-    await this.prisma.questionsKYC.deleteMany({
       where: {
         utilisateurId,
       },

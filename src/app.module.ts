@@ -60,7 +60,6 @@ import { LinkyServiceManager } from './infrastructure/service/linky/LinkyService
 import { LinkyRepository } from './infrastructure/repository/linky.repository';
 import { AdminController } from './infrastructure/api/admin.controller';
 import { QuestionsKYCController } from './infrastructure/api/questionKYC.controller';
-import { QuestionKYCRepository } from './infrastructure/repository/questionKYC.repository';
 import { QuestionKYCUsecase } from './usecase/questionKYC.usecase';
 import { ArticleRepository } from './infrastructure/repository/article.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
@@ -155,7 +154,6 @@ function getControllers(): any[] {
     LinkyUsecase,
     LinkyServiceManager,
     LinkyRepository,
-    QuestionKYCRepository,
     QuestionKYCUsecase,
     ArticleRepository,
     QuizzRepository,

@@ -8,6 +8,7 @@ import { ParcoursTodo } from '../todo/parcoursTodo';
 import { UnlockedFeatures } from '../gamification/unlockedFeatures';
 import { History } from '../history/history';
 import { Environment } from '../environment';
+import { KYC } from '../kyc/collectionQuestionsKYC';
 
 export class UtilisateurData {
   id: string;
@@ -43,6 +44,7 @@ export class UtilisateurData {
   version: number;
   migration_enabled: boolean;
   version_ponderation: number;
+  kyc: KYC;
 }
 
 export class Utilisateur extends UtilisateurData {

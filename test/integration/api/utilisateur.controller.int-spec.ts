@@ -59,7 +59,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     await TestUtil.create('groupe');
     await TestUtil.create('groupeAbonnement');
     await TestUtil.create('thematique');
-    await TestUtil.create('questionsKYC');
 
     // WHEN
     const response = await TestUtil.DELETE('/utilisateurs/utilisateur-id');
@@ -535,6 +534,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       gamification: null,
       unlocked_features: null,
       history: null,
+      kyc: null,
       parts: 0,
     });
     expect(userDB.failed_checkcode_count).toEqual(0);

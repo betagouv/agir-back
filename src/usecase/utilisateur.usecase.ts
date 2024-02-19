@@ -15,7 +15,6 @@ import { PasswordAwareUtilisateur } from '../../src/domain/utilisateur/manager/p
 import { Profile } from '../../src/domain/utilisateur/profile';
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
 import { GroupeRepository } from '../../src/infrastructure/repository/groupe.repository';
-import { QuestionKYCRepository } from '../../src/infrastructure/repository/questionKYC.repository';
 
 export type Phrase = {
   phrase: string;
@@ -30,7 +29,6 @@ export class UtilisateurUsecase {
     private serviceRepository: ServiceRepository,
     private suiviRepository: SuiviRepository,
     private bilanRepository: BilanRepository,
-    private questionKYCRepository: QuestionKYCRepository,
     private oIDCStateRepository: OIDCStateRepository,
     private oidcService: OidcService,
     private emailSender: EmailSender,
@@ -178,7 +176,6 @@ export class UtilisateurUsecase {
 
   async deleteUtilisateur(utilisateurId: string) {
     await this.suiviRepository.delete(utilisateurId);
-    await this.questionKYCRepository.delete(utilisateurId);
     await this.bilanRepository.delete(utilisateurId);
     await this.oIDCStateRepository.delete(utilisateurId);
     await this.bilanRepository.delete(utilisateurId);

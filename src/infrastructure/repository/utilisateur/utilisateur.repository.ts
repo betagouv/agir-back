@@ -19,6 +19,7 @@ import {
   Upgrader,
 } from '../../../domain/object_store/upgrader';
 import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
+import { KYC } from '../../../../src/domain/kyc/collectionQuestionsKYC';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -219,6 +220,9 @@ export class UtilisateurRepository {
           SerialisableDomain.OnboardingResult,
         ),
       );
+      const kyc = new KYC(
+        Upgrader.upgradeRaw(user.kyc, SerialisableDomain.KYC),
+      );
 
       return new Utilisateur({
         id: user.id,
@@ -248,6 +252,7 @@ export class UtilisateurRepository {
         parcours_todo: parcours_todo,
         gamification: gamification,
         history: history,
+        kyc: kyc,
         prm: user.prm,
         code_departement: user.code_departement,
         unlocked_features: unlocked_features,
@@ -304,6 +309,7 @@ export class UtilisateurRepository {
         user.history,
         SerialisableDomain.History,
       ),
+      kyc: Upgrader.serialiseToLastVersion(user.kyc, SerialisableDomain.KYC),
       version: user.version,
       failed_login_count: user.failed_login_count,
       prevent_login_before: user.prevent_login_before,

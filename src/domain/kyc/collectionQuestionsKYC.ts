@@ -1,15 +1,13 @@
 import { ApplicationError } from '../../infrastructure/applicationError';
+import { KYC_v0 } from '../object_store/kyc/kyc_v0';
 import { QuestionKYC } from './questionQYC';
 
 const CATALOGUE_QUESTIONS = require('./catalogueKYC');
 
-export class CollectionQuestionsKYCData {
+export class KYC {
   answered_questions: QuestionKYC[];
-}
 
-export class CollectionQuestionsKYC extends CollectionQuestionsKYCData {
-  constructor(data?: CollectionQuestionsKYCData) {
-    super();
+  constructor(data?: KYC_v0) {
     this.answered_questions = [];
     if (data && data.answered_questions) {
       data.answered_questions.forEach((element) => {

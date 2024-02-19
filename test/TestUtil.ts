@@ -31,6 +31,7 @@ import { Gamification_v0 } from '../src/domain/object_store/gamification/gamific
 import { CelebrationType } from '../src/domain/gamification/celebrations/celebration';
 import { Onboarding_v0 } from 'src/domain/object_store/Onboarding/onboarding_v0';
 import { OnboardingResult_v0 } from 'src/domain/object_store/onboardingResult/onboardingResult_v0';
+import { KYC_v0 } from 'src/domain/object_store/kyc/kyc_v0';
 
 export class TestUtil {
   constructor() {}
@@ -95,7 +96,6 @@ export class TestUtil {
 
   static async deleteAll() {
     await this.prisma.suivi.deleteMany();
-    await this.prisma.questionsKYC.deleteMany();
     await this.prisma.service.deleteMany();
     await this.prisma.groupeAbonnement.deleteMany();
     await this.prisma.groupe.deleteMany();
@@ -163,30 +163,6 @@ export class TestUtil {
         'transport . voiture . km': 12000,
       },
       created_at: new Date(),
-      ...override,
-    };
-  }
-  static questionsKYCData(override?) {
-    return {
-      utilisateurId: 'utilisateur-id',
-      data: {
-        answered_questions: [
-          {
-            id: '2',
-            question: `Quel est votre sujet principal d'intéret ?`,
-            type: TypeReponseQuestionKYC.choix_multiple,
-            is_NGC: false,
-            categorie: CategorieQuestionKYC.service,
-            points: 10,
-            reponse: ['Le climat', 'Mon logement'],
-            reponses_possibles: [
-              'Le climat',
-              'Mon logement',
-              'Ce que je mange',
-            ],
-          },
-        ],
-      },
       ...override,
     };
   }
@@ -270,6 +246,21 @@ export class TestUtil {
       unlocked_features: [Feature.aides],
     };
 
+    const kyc: KYC_v0 = {
+      version: 0,
+      answered_questions: [
+        {
+          id: '2',
+          question: `Quel est votre sujet principal d'intéret ?`,
+          type: TypeReponseQuestionKYC.choix_multiple,
+          is_NGC: false,
+          categorie: CategorieQuestionKYC.service,
+          points: 10,
+          reponse: ['Le climat', 'Mon logement'],
+          reponses_possibles: ['Le climat', 'Mon logement', 'Ce que je mange'],
+        },
+      ],
+    };
     const todo: ParcoursTodo_v0 = ParcoursTodo_v0.serialise(new ParcoursTodo());
 
     const history: History_v0 = {
@@ -363,6 +354,7 @@ export class TestUtil {
       onboardingResult: onboardingRes,
       created_at: undefined,
       updated_at: undefined,
+      kyc: kyc,
       ...override,
     };
   }
