@@ -10,7 +10,8 @@ import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
 } from '../../../src/domain/kyc/questionQYC';
-import { KYC_v0 } from 'src/domain/object_store/kyc/kyc_v0';
+import { KYC_v0 } from '../../../src/domain/object_store/kyc/kyc_v0';
+import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
 
 describe('TODO list (API test)', () => {
   const OLD_ENV = process.env;
@@ -98,7 +99,7 @@ describe('TODO list (API test)', () => {
   it('GET /utilisateurs/id/todo retourne la TODO de terminaison + is_last = true', async () => {
     // GIVEN
     const todo = new ParcoursTodo();
-    todo.todo_active = 5;
+    todo.todo_active = TodoCatalogue.getNombreTodo();
     await TestUtil.create('utilisateur', {
       todo: todo,
     });
@@ -110,7 +111,9 @@ describe('TODO list (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.titre).toEqual('Plus de mission, pour le moment...');
     expect(response.body.is_last).toEqual(true);
-    expect(response.body.numero_todo).toEqual(6);
+    expect(response.body.numero_todo).toEqual(
+      TodoCatalogue.getNombreTodo() + 1,
+    );
   });
 
   it('GET /utilisateurs/id/todo retourne la todo n°1 avec une ref de quizz qui va bien : thematique  climat', async () => {
@@ -491,9 +494,7 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const userDB = await utilisateurRepository.getById(
-      'utilisateur-id',
-    );
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
 
     expect(
       userDB.parcours_todo.getActiveTodo().done[0].sont_points_en_poche,
@@ -582,9 +583,7 @@ describe('TODO list (API test)', () => {
     );
     expect(response.status).toBe(200);
     // THEN
-    const dbUtilisateur = await utilisateurRepository.getById(
-      'utilisateur-id',
-    );
+    const dbUtilisateur = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUtilisateur.gamification['points']).toEqual(35);
     expect(dbUtilisateur.parcours_todo.getActiveTodo().numero_todo).toEqual(2);
     expect(
@@ -720,9 +719,7 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const dbUser = await utilisateurRepository.getById(
-      'utilisateur-id',
-    );
+    const dbUser = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUser.parcours_todo.getTodoByNumero(4).done).toHaveLength(1);
     expect(dbUser.parcours_todo.getTodoByNumero(4).done[0].titre).toEqual(
       'Installer "Fruits et légumes de saison"',
@@ -751,9 +748,7 @@ describe('TODO list (API test)', () => {
     });
 
     // THEN
-    const dbUser = await utilisateurRepository.getById(
-      'utilisateur-id',
-    );
+    const dbUser = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUser.parcours_todo.getTodoByNumero(3).done).toHaveLength(0);
   });
 
@@ -801,9 +796,7 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = await utilisateurRepository.getById(
-      'utilisateur-id',
-    );
+    const dbUser = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUser.parcours_todo.getActiveTodo().todo).toHaveLength(1);
     expect(
       dbUser.parcours_todo.getActiveTodo().todo[0].progression.current,
@@ -815,7 +808,7 @@ describe('TODO list (API test)', () => {
       version: 0,
       answered_questions: [
         {
-          id: '2',
+          id: '1',
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -843,7 +836,7 @@ describe('TODO list (API test)', () => {
                 sont_points_en_poche: false,
                 type: ContentType.kyc,
                 level: DifficultyLevel.ANY,
-                content_id: '2',
+                content_id: '1',
                 points: 10,
               },
             ],
@@ -855,14 +848,12 @@ describe('TODO list (API test)', () => {
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/2',
+      '/utilisateurs/utilisateur-id/questionsKYC/1',
     ).send({ reponse: ['YO'] });
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = await utilisateurRepository.getById(
-      'utilisateur-id',
-    );
+    const dbUser = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUser.parcours_todo.getActiveTodo().todo).toHaveLength(0);
     expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
     expect(
@@ -902,9 +893,7 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = await utilisateurRepository.getById(
-      'utilisateur-id',
-    );
+    const dbUser = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
     expect(
       dbUser.parcours_todo.getActiveTodo().done[0].progression.current,
@@ -944,9 +933,7 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = await utilisateurRepository.getById(
-      'utilisateur-id',
-    );
+    const dbUser = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
     expect(
       dbUser.parcours_todo.getActiveTodo().done[0].progression.current,
@@ -986,9 +973,7 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = await utilisateurRepository.getById(
-      'utilisateur-id',
-    );
+    const dbUser = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
     expect(
       dbUser.parcours_todo.getActiveTodo().done[0].progression.current,

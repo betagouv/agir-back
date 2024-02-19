@@ -919,6 +919,8 @@ describe('Admin (API test)', () => {
     expect(response.body).toContain(`utilisateur utilisateur-id : true`);
     expect(response.body).toContain(`utilisateur user-2 : false`);
     expect(userDB_1.parcours_todo.todo_active).toEqual(0);
-    expect(userDB_2.parcours_todo.liste_todo).toHaveLength(5);
+    expect(userDB_2.parcours_todo.liste_todo).toHaveLength(
+      TodoCatalogue.getNombreTodo(),
+    );
   });
 });

@@ -257,7 +257,7 @@ export class TestUtil {
       version: 0,
       answered_questions: [
         {
-          id: '2',
+          id: '1',
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,

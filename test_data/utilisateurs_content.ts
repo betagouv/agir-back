@@ -244,8 +244,9 @@ const utilisateurs = {
     parts: null,
     version: 3,
     gamification: {
-      points: 650,
+      points: 0,
     },
+    /*
     unlocked_features: {
       version: 1,
       unlocked_features: [
@@ -255,6 +256,7 @@ const utilisateurs = {
         //'bibliotheque',
       ],
     },
+    */
     linky: {
       prm: '12345678912345',
     },

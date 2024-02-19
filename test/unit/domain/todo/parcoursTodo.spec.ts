@@ -17,7 +17,7 @@ describe('ParcoursTodo', () => {
 
     // THEN
     expect(result.todo_active).toEqual(0);
-    expect(result.liste_todo).toHaveLength(5);
+    expect(result.liste_todo).toHaveLength(TodoCatalogue.getNombreTodo());
   });
   it('getActiveTodo : renvoie la bonne todo', () => {
     // GIVEN
@@ -76,32 +76,21 @@ describe('ParcoursTodo', () => {
   it('avanceDansParcours : avance, puis se bloque à la dernière', () => {
     // GIVEN
     const parcours = new ParcoursTodo();
+
     // THEN
-    expect(parcours.getCurrentTodoNumero()).toEqual(1);
-    // WHEN
+    let index = 1;
+    while (index <= TodoCatalogue.getNombreTodo()) {
+      expect(parcours.getCurrentTodoNumero()).toEqual(index);
+      parcours.avanceDansParcours();
+      index++;
+    }
+    expect(parcours.getCurrentTodoNumero()).toEqual(
+      TodoCatalogue.getNombreTodo() + 1,
+    );
     parcours.avanceDansParcours();
-    // THEN
-    expect(parcours.getCurrentTodoNumero()).toEqual(2);
-    // WHEN
-    parcours.avanceDansParcours();
-    // THEN
-    expect(parcours.getCurrentTodoNumero()).toEqual(3);
-    // WHEN
-    parcours.avanceDansParcours();
-    // THEN
-    expect(parcours.getCurrentTodoNumero()).toEqual(4);
-    // WHEN
-    parcours.avanceDansParcours();
-    // THEN
-    expect(parcours.getCurrentTodoNumero()).toEqual(5);
-    // WHEN
-    parcours.avanceDansParcours();
-    // THEN
-    expect(parcours.getCurrentTodoNumero()).toEqual(6);
-    // WHEN
-    parcours.avanceDansParcours();
-    // THEN
-    expect(parcours.getCurrentTodoNumero()).toEqual(6);
+    expect(parcours.getCurrentTodoNumero()).toEqual(
+      TodoCatalogue.getNombreTodo() + 1,
+    );
   });
   it('appendNewFromCatalogue : ajoute une todo depuis le catalogue', () => {
     // GIVEN
