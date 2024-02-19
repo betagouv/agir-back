@@ -29,7 +29,7 @@ export class UtilisateurRepository {
     await this.prisma.utilisateur.delete({ where: { id: utilisateurId } });
   }
 
-  async findUtilisateurById(id: string): Promise<Utilisateur | null> {
+  async getById(id: string): Promise<Utilisateur | null> {
     const user = await this.prisma.utilisateur.findUnique({
       where: {
         id,
@@ -37,7 +37,7 @@ export class UtilisateurRepository {
     });
     return this.buildUtilisateurFromDB(user);
   }
-  async findUtilisateurByEmail(email: string): Promise<Utilisateur | null> {
+  async findByEmail(email: string): Promise<Utilisateur | null> {
     const user = await this.prisma.utilisateur.findUnique({
       where: {
         email,
@@ -194,8 +194,6 @@ export class UtilisateurRepository {
 
   private buildUtilisateurFromDB(user: UtilisateurDB): Utilisateur {
     if (user) {
-      const onboardingData = new Onboarding(user.onboardingData as any);
-
       const unlocked_features = new UnlockedFeatures(
         Upgrader.upgradeRaw(
           user.unlocked_features,

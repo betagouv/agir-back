@@ -18,6 +18,10 @@ export class UnlockedFeatures {
     }
   }
 
+  public isUnlocked?(feature: Feature) {
+    return this.unlocked_features.includes(feature);
+  }
+
   public getUnlockedFeatures?(): Feature[] {
     return this.unlocked_features;
   }

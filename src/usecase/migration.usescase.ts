@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { UtilisateurBehavior } from '../../src/domain/utilisateur/utilisateurBehavior';
+import { Feature } from '../../src/domain/gamification/feature';
 
 export type UserMigrationReport = {
   user_id: string;
@@ -26,9 +27,7 @@ export class MigrationUsecase {
     for (let index = 0; index < userIdList.length; index++) {
       const user_id = userIdList[index];
       const log = { user_id: user_id, migrations: [] };
-      const utilisateur = await this.utilisateurRepository.findUtilisateurById(
-        user_id,
-      );
+      const utilisateur = await this.utilisateurRepository.getById(user_id);
       for (
         let current_version = utilisateur.version + 1;
         current_version <= version_target;
@@ -80,17 +79,23 @@ export class MigrationUsecase {
     utilisateur: Utilisateur,
     _this: MigrationUsecase,
   ): Promise<{ ok: boolean; info: string }> {
-    return { ok: true, info: 'Migration obsolete' };
+    return { ok: true, info: 'Migration already done' };
   }
   private async migrate_3(
     utilisateur: Utilisateur,
   ): Promise<{ ok: boolean; info: string }> {
-    return { ok: true, info: 'Migration obsolete' };
+    return { ok: true, info: 'Migration already done' };
   }
   private async migrate_4(
     utilisateur: Utilisateur,
   ): Promise<{ ok: boolean; info: string }> {
-    return { ok: false, info: 'to implement' };
+    if (utilisateur.gamification.points > 600) {
+      utilisateur.unlocked_features.add(Feature.bibliotheque);
+    }
+    return {
+      ok: true,
+      info: `revealed bilbio for user ${utilisateur.id} of ${utilisateur.gamification.points} points`,
+    };
   }
   private async migrate_5(
     utilisateur: Utilisateur,

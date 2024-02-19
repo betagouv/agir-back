@@ -28,7 +28,7 @@ export class AidesUsecase {
     utilisateurId: string,
     prix_velo: number,
   ): Promise<AidesVeloParType> {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
     const RFR =

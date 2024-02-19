@@ -148,7 +148,7 @@ export class LinkyServiceManager
     const winter_pk = service.configuration[WINTER_PK_KEY];
     const prm = service.configuration[PRM_CONF_KEY];
 
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       service.utilisateurId,
     );
 
@@ -183,7 +183,7 @@ export class LinkyServiceManager
       return `ERROR : ${service.serviceDefinitionId} - ${service.serviceId} : missing prm data`;
     }
 
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       service.utilisateurId,
     );
 
@@ -248,7 +248,7 @@ export class LinkyServiceManager
       const live_prm = service.configuration[LIVE_PRM_CONF_KEY];
       if (live_prm) {
         const utilisateur =
-          await this.utilisateurRepository.findUtilisateurById(
+          await this.utilisateurRepository.getById(
             service.utilisateurId,
           );
         const empty = await this.linkyRepository.isPRMDataEmptyOrMissing(

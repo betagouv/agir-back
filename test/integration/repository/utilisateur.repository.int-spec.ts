@@ -387,7 +387,7 @@ describe('UtilisateurRepository', () => {
     await TestUtil.create('utilisateur', { parts: null });
 
     // WHEN
-    const userDB = await utilisateurRepository.findUtilisateurById(
+    const userDB = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     // THEN

@@ -22,7 +22,7 @@ export class BibliothequeUsecase {
   ): Promise<Bibliotheque> {
     let result = new Bibliotheque();
 
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
 
@@ -70,7 +70,7 @@ export class BibliothequeUsecase {
       ApplicationError.throwArticleNotFound(content_id);
     }
 
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
 

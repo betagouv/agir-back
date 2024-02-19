@@ -16,7 +16,7 @@ export class RecommandationUsecase {
   async listRecommandations(utilisateurId: string): Promise<Recommandation[]> {
     let result: Recommandation[] = [];
 
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
 

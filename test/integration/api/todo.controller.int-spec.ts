@@ -491,7 +491,7 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const userDB = await utilisateurRepository.findUtilisateurById(
+    const userDB = await utilisateurRepository.getById(
       'utilisateur-id',
     );
 
@@ -582,7 +582,7 @@ describe('TODO list (API test)', () => {
     );
     expect(response.status).toBe(200);
     // THEN
-    const dbUtilisateur = await utilisateurRepository.findUtilisateurById(
+    const dbUtilisateur = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(dbUtilisateur.gamification['points']).toEqual(35);
@@ -720,7 +720,7 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const dbUser = await utilisateurRepository.findUtilisateurById(
+    const dbUser = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(dbUser.parcours_todo.getTodoByNumero(4).done).toHaveLength(1);
@@ -751,7 +751,7 @@ describe('TODO list (API test)', () => {
     });
 
     // THEN
-    const dbUser = await utilisateurRepository.findUtilisateurById(
+    const dbUser = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(dbUser.parcours_todo.getTodoByNumero(3).done).toHaveLength(0);
@@ -801,7 +801,7 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = await utilisateurRepository.findUtilisateurById(
+    const dbUser = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(dbUser.parcours_todo.getActiveTodo().todo).toHaveLength(1);
@@ -860,7 +860,7 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = await utilisateurRepository.findUtilisateurById(
+    const dbUser = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(dbUser.parcours_todo.getActiveTodo().todo).toHaveLength(0);
@@ -902,7 +902,7 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = await utilisateurRepository.findUtilisateurById(
+    const dbUser = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
@@ -944,7 +944,7 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = await utilisateurRepository.findUtilisateurById(
+    const dbUser = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
@@ -986,7 +986,7 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = await utilisateurRepository.findUtilisateurById(
+    const dbUser = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);

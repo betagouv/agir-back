@@ -269,7 +269,7 @@ export class TestUtil {
       quizz_interactions: [],
     };
 
-    const gamiification: Gamification_v0 = {
+    const gamification: Gamification_v0 = {
       version: 0,
       points: 10,
       celebrations: [
@@ -347,7 +347,7 @@ export class TestUtil {
       version_ponderation: 0,
       migration_enabled: false,
       todo: todo,
-      gamification: gamiification,
+      gamification: gamification,
       unlocked_features: unlocked,
       history: history,
       onboardingData: onboarding,

@@ -54,7 +54,7 @@ describe('EVENT (API test)', () => {
     });
     // THEN
     expect(response.status).toBe(200);
-    const dbUtilisateur = await utilisateurRepository.findUtilisateurById(
+    const dbUtilisateur = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(
@@ -87,7 +87,7 @@ describe('EVENT (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
 
-    const dbUtilisateur = await utilisateurRepository.findUtilisateurById(
+    const dbUtilisateur = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(
@@ -121,7 +121,7 @@ describe('EVENT (API test)', () => {
     });
     // THEN
     expect(response.status).toBe(200);
-    const userDB = await utilisateurRepository.findUtilisateurById(
+    const userDB = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(
@@ -146,7 +146,7 @@ describe('EVENT (API test)', () => {
     });
     // THEN
     expect(response.status).toBe(200);
-    const userDB = await utilisateurRepository.findUtilisateurById(
+    const userDB = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(
@@ -255,7 +255,7 @@ describe('EVENT (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const userDB = await utilisateurRepository.findUtilisateurById(
+    const userDB = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(
@@ -280,7 +280,7 @@ describe('EVENT (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUtilisateur = await utilisateurRepository.findUtilisateurById(
+    const dbUtilisateur = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(dbUtilisateur.gamification.points).toStrictEqual(30);
@@ -307,7 +307,7 @@ describe('EVENT (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUtilisateur = await utilisateurRepository.findUtilisateurById(
+    const dbUtilisateur = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(dbUtilisateur.gamification.points).toStrictEqual(30);
@@ -340,7 +340,7 @@ describe('EVENT (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUtilisateur = await utilisateurRepository.findUtilisateurById(
+    const dbUtilisateur = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(dbUtilisateur.gamification.points).toStrictEqual(30);
@@ -389,7 +389,7 @@ describe('EVENT (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUtilisateur = await utilisateurRepository.findUtilisateurById(
+    const dbUtilisateur = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(dbUtilisateur.gamification.celebrations).toHaveLength(0);
@@ -417,7 +417,7 @@ describe('EVENT (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const userDB = await utilisateurRepository.findUtilisateurById(
+    const userDB = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(userDB.history.getArticleHistoryById('123').like_level).toEqual(3);
@@ -441,7 +441,7 @@ describe('EVENT (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const userDB = await utilisateurRepository.findUtilisateurById(
+    const userDB = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(userDB.history.getQuizzHistoryById('123').like_level).toEqual(3);
@@ -464,7 +464,7 @@ describe('EVENT (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const userDB = await utilisateurRepository.findUtilisateurById(
+    const userDB = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(userDB.history.getQuizzHistoryById('123').like_level).toEqual(3);
@@ -485,7 +485,7 @@ describe('EVENT (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const userDB = await utilisateurRepository.findUtilisateurById(
+    const userDB = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(userDB.history.getArticleHistoryById('123').favoris).toEqual(true);
@@ -504,7 +504,7 @@ describe('EVENT (API test)', () => {
         ],
       },
     });
-    let userDB = await utilisateurRepository.findUtilisateurById(
+    let userDB = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(userDB.history.getArticleHistoryById('123').favoris).toEqual(true);
@@ -518,7 +518,7 @@ describe('EVENT (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    userDB = await utilisateurRepository.findUtilisateurById('utilisateur-id');
+    userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.history.getArticleHistoryById('123').favoris).toEqual(false);
   });
 });

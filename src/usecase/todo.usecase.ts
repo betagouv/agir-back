@@ -17,7 +17,7 @@ export class TodoUsecase {
   ) {}
 
   async gagnerPointsFromTodoElement(utilisateurId: string, elementId: string) {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
 
@@ -32,7 +32,7 @@ export class TodoUsecase {
   }
 
   async gagnerPointsFromTodo(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
 
@@ -48,7 +48,7 @@ export class TodoUsecase {
   }
 
   async getUtilisateurTodo(utilisateurId: string): Promise<Todo> {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
 
@@ -104,7 +104,7 @@ export class TodoUsecase {
     for (let index = 0; index < userIdList.length; index++) {
       const user_id = userIdList[index];
 
-      const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+      const utilisateur = await this.utilisateurRepository.getById(
         user_id,
       );
 

@@ -42,7 +42,7 @@ export class UtilisateurUsecase {
     password: string,
   ): Promise<{ token: string; utilisateur: Utilisateur }> {
     const utilisateur =
-      await this.utilisateurRespository.findUtilisateurByEmail(email);
+      await this.utilisateurRespository.findByEmail(email);
     if (!utilisateur) {
       ApplicationError.throwBadPasswordOrEmailError();
     }
@@ -66,7 +66,7 @@ export class UtilisateurUsecase {
   }
 
   async findUtilisateurByEmail(email: string): Promise<Utilisateur> {
-    return this.utilisateurRespository.findUtilisateurByEmail(email);
+    return this.utilisateurRespository.findByEmail(email);
   }
 
   async updateUtilisateurProfile(
@@ -109,7 +109,7 @@ export class UtilisateurUsecase {
 
   async oubli_mot_de_passe(email: string) {
     const utilisateur =
-      await this.utilisateurRespository.findUtilisateurByEmail(email);
+      await this.utilisateurRespository.findByEmail(email);
 
     if (!utilisateur) return; // pas d'erreur, silence ^^
 
@@ -138,7 +138,7 @@ export class UtilisateurUsecase {
     mot_de_passe: string,
   ) {
     const utilisateur =
-      await this.utilisateurRespository.findUtilisateurByEmail(email);
+      await this.utilisateurRespository.findByEmail(email);
 
     if (!utilisateur) {
       ApplicationError.throwBadCodeOrEmailError();
@@ -171,7 +171,7 @@ export class UtilisateurUsecase {
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
-    return this.utilisateurRespository.findUtilisateurById(id);
+    return this.utilisateurRespository.getById(id);
   }
 
   async deleteUtilisateur(utilisateurId: string) {

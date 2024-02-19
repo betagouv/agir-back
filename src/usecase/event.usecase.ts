@@ -47,7 +47,7 @@ export class EventUsecase {
     utilisateurId: string,
     event: UtilisateurEvent,
   ) {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
     utilisateur.history.defavoriserArticle(event.content_id);
@@ -58,7 +58,7 @@ export class EventUsecase {
     utilisateurId: string,
     event: UtilisateurEvent,
   ) {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
     utilisateur.history.favoriserArticle(event.content_id);
@@ -66,7 +66,7 @@ export class EventUsecase {
   }
 
   private async processLike(utilisateurId: string, event: UtilisateurEvent) {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
     if (event.content_type === ContentType.article) {
@@ -80,7 +80,7 @@ export class EventUsecase {
   }
 
   private async processAccessRecommandations(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
     const found = utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
@@ -94,7 +94,7 @@ export class EventUsecase {
   }
 
   private async processAccessProfile(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
     const found = utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
@@ -108,7 +108,7 @@ export class EventUsecase {
   }
 
   private async processAccessCatalogueAides(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
     const found = utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
@@ -125,7 +125,7 @@ export class EventUsecase {
     utilisateurId: string,
     event: UtilisateurEvent,
   ) {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
     const found = utilisateur.parcours_todo.findTodoElementByServiceId(
@@ -142,7 +142,7 @@ export class EventUsecase {
     utilisateurId: string,
     event: UtilisateurEvent,
   ) {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
     utilisateur.gamification.terminerCelebration(
@@ -156,7 +156,7 @@ export class EventUsecase {
     utilisateurId: string,
     event: UtilisateurEvent,
   ) {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
     utilisateur.history.lireArticle(event.content_id);
@@ -175,7 +175,7 @@ export class EventUsecase {
     utilisateurId: string,
     event: UtilisateurEvent,
   ) {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
     utilisateur.history.quizzAttempt(event.content_id, event.number_value);

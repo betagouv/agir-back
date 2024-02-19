@@ -9,14 +9,14 @@ export class QuestionKYCUsecase {
   constructor(private utilisateurRepository: UtilisateurRepository) {}
 
   async getALL(utilisateurId: string): Promise<QuestionKYC[]> {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
     return utilisateur.kyc.getAllQuestionSet();
   }
 
   async getQuestion(utilisateurId: string, questionId): Promise<QuestionKYC> {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
 
@@ -32,7 +32,7 @@ export class QuestionKYCUsecase {
     questionId: string,
     reponse: string[],
   ): Promise<void> {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
+    const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
 

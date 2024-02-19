@@ -111,12 +111,12 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const user = await utilisateurRepository.findUtilisateurById(
+    const user = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(user.kyc.getAnyQuestion('1').reponse).toStrictEqual(['YO']);
 
-    const userDB = await utilisateurRepository.findUtilisateurById(
+    const userDB = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(userDB.gamification.points).toEqual(20);
@@ -132,12 +132,12 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const user = await utilisateurRepository.findUtilisateurById(
+    const user = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(user.kyc.getAnyQuestion('2').reponse).toStrictEqual(['YO']);
 
-    const userDB = await utilisateurRepository.findUtilisateurById(
+    const userDB = await utilisateurRepository.getById(
       'utilisateur-id',
     );
     expect(userDB.gamification.points).toEqual(10);

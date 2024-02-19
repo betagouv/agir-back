@@ -43,7 +43,7 @@ export class OnboardingUsecase {
     code: string,
   ): Promise<{ token: string; utilisateur: Utilisateur }> {
     const utilisateur =
-      await this.utilisateurRespository.findUtilisateurByEmail(email);
+      await this.utilisateurRespository.findByEmail(email);
     if (!utilisateur) {
       ApplicationError.throwBadCodeOrEmailError();
     }
@@ -202,7 +202,7 @@ export class OnboardingUsecase {
 
   async renvoyerCode(email: string) {
     const utilisateur =
-      await this.utilisateurRespository.findUtilisateurByEmail(email);
+      await this.utilisateurRespository.findByEmail(email);
     if (!utilisateur) {
       ApplicationError.throwBadCodeOrEmailError();
     }
@@ -250,7 +250,7 @@ export class OnboardingUsecase {
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
-    return this.utilisateurRespository.findUtilisateurById(id);
+    return this.utilisateurRespository.getById(id);
   }
 
   private async fabriquePhrase(

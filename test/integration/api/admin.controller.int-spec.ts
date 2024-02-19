@@ -4,6 +4,9 @@ import { Thematique } from '../../../src/domain/contenu/thematique';
 import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
+import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
+import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
+import { Feature } from '../../../src/domain/gamification/feature';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
@@ -183,7 +186,7 @@ describe('Admin (API test)', () => {
     expect(response.status).toBe(201);
     expect(response.body).toEqual([]);
   });
-  it('POST /admin/migrate_users retourne migre pas un user qui a pas besoin', async () => {
+  it('POST /admin/migrate_users migre pas un user qui a pas besoin', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.create('utilisateur', { version: 2 });
@@ -291,6 +294,57 @@ describe('Admin (API test)', () => {
             version: 1,
             ok: true,
             info: 'dummy migration',
+          },
+        ],
+      },
+    ]);
+  });
+  it('POST /admin/migrate_users migration V4 OK', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 620,
+      celebrations: [
+        {
+          id: 'celebration-id',
+          type: CelebrationType.niveau,
+          new_niveau: 2,
+          titre: 'the titre',
+          reveal: {
+            id: 'reveal-id',
+            feature: Feature.aides,
+            titre: 'Les aides !',
+            description: 'bla',
+          },
+        },
+      ],
+    };
+    await TestUtil.create('utilisateur', {
+      version: 3,
+      migration_enabled: true,
+      gamification: gamification,
+    });
+    process.env.USER_CURRENT_VERSION = '4';
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.version).toBe(4);
+    expect(userDB.unlocked_features.isUnlocked(Feature.bibliotheque)).toEqual(
+      true,
+    );
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 4,
+            ok: true,
+            info: `revealed bilbio for user utilisateur-id of 620 points`,
           },
         ],
       },
@@ -858,12 +912,8 @@ describe('Admin (API test)', () => {
     const response = await TestUtil.POST('/admin/upgrade_user_todo');
 
     // THEN
-    const userDB_1 = await utilisateurRepository.findUtilisateurById(
-      'utilisateur-id',
-    );
-    const userDB_2 = await utilisateurRepository.findUtilisateurById(
-      'utilisateur-id',
-    );
+    const userDB_1 = await utilisateurRepository.getById('utilisateur-id');
+    const userDB_2 = await utilisateurRepository.getById('utilisateur-id');
     expect(response.status).toBe(201);
     expect(response.body).toHaveLength(2);
     expect(response.body).toContain(`utilisateur utilisateur-id : true`);
