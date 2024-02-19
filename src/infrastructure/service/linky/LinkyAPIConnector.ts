@@ -31,7 +31,7 @@ export class LinkyAPIConnector {
           error.response.data.enedis_prm &&
           error.response.data.enedis_prm[0] === 'Invalid Enedis PRM'
         ) {
-          // erreur fonctionnelle pas sensé se produire (pre contrôle du PRM à la conf)
+          // erreur fonctionnelle pas sensée se produire (pre contrôle du PRM à la conf)
           ApplicationError.throwBadPRM(prm);
         }
         if (
@@ -80,6 +80,12 @@ export class LinkyAPIConnector {
       });
     } catch (error) {
       if (error.response) {
+        if (
+          error.response.data &&
+          error.response.data.detail === 'Pas trouvé.'
+        ) {
+          ApplicationError.throwAlreadyDeletedLinkyError(winter_pk);
+        }
         ApplicationError.throwUnknownLinkyErrorWhenDelete(
           winter_pk,
           JSON.stringify(error.response.data),

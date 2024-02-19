@@ -192,6 +192,12 @@ export class ApplicationError {
       `PRM ${prm}, code : ${code}, message : ${message}`,
     );
   }
+  static throwAlreadyDeletedLinkyError(winter_pk: string) {
+    this.throwAppError(
+      '037',
+      `Le PRM lié à la clé ${winter_pk} n'existe déjà plus`,
+    );
+  }
 
   private static throwAppError(
     code: string,

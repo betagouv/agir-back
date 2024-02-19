@@ -3,8 +3,15 @@ import { ServiceRepository } from '../../../src/infrastructure/repository/servic
 import { DepartementRepository } from '../../../src/infrastructure/repository/departement/departement.repository';
 import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { LinkyServiceManager } from '../../../src/infrastructure/service/linky/LinkyServiceManager';
-import { Service, ServiceStatus } from '../../../src/domain/service/service';
+import {
+  LinkyServiceManager,
+  LINKY_CONF_KEY,
+} from '../../../src/infrastructure/service/linky/LinkyServiceManager';
+import {
+  Service,
+  ServiceErrorKey,
+  ServiceStatus,
+} from '../../../src/domain/service/service';
 import { LiveService } from '../../../src/domain/service/serviceDefinition';
 
 describe('linkyServiceManager', () => {
@@ -154,6 +161,17 @@ describe('linkyServiceManager', () => {
       Date.now() + 1000 * 60 * 60 * 24 * 1100,
     );
   });
+  it(`processConfiguration : supprime l'état en erreur d'une conf précédentee`, async () => {
+    // GIVEN
+    const conf = { error_code: '123', error_message: 'bad' };
+
+    // WHEN
+    linkyServiceManager.processConfiguration(conf);
+
+    // THEN
+    expect(conf['error_code']).toBeUndefined();
+    expect(conf['error_message']).toBeUndefined();
+  });
   it('activateService : pas PRM => error', async () => {
     // GIVEN
     const serviceDefData = TestUtil.serviceDefinitionData();
@@ -248,7 +266,55 @@ describe('linkyServiceManager', () => {
     expect(serviceDB.configuration['live_prm']).toEqual('123');
     expect(serviceDB.configuration['departement']).toEqual('75');
     expect(linkyEmailer.sendConfigurationOKEmail).toBeCalled();
+    expect(linkyAPIConnector.souscription_API).toBeCalledTimes(1);
   });
+  it(`activateService : ne soumet pas l'activation si une erreur 032 en cours`, async () => {
+    // GIVEN
+    linkyAPIConnector.souscription_API.mockReturnValue('pk_123');
+
+    await TestUtil.create('utilisateur', { code_postal: '75002' });
+    await TestUtil.create('serviceDefinition', { id: LiveService.linky });
+    await TestUtil.create('service', {
+      serviceDefinitionId: LiveService.linky,
+      configuration: {
+        prm: '123',
+        error_code: '032',
+        error_message: 'aie aie',
+      },
+      status: ServiceStatus.CREATED,
+    });
+
+    const serviceDefData = TestUtil.serviceDefinitionData({
+      id: LiveService.linky,
+    });
+    const serviceData = TestUtil.serviceData({
+      serviceDefinitionId: LiveService.linky,
+      configuration: {
+        prm: '123',
+        error_code: '032',
+        error_message: 'aie aie',
+      },
+    });
+
+    const service = new Service({
+      ...serviceDefData,
+      ...serviceData,
+    });
+
+    // WHEN
+    const result = await linkyServiceManager.activateService(service);
+
+    // THEN
+    expect(result).toContain('SKIP');
+    const serviceDB = await serviceRepository.getServiceOfUtilisateur(
+      'utilisateur-id',
+      LiveService.linky,
+    );
+    expect(serviceDB.configuration['error_code']).toEqual('032');
+    expect(serviceDB.configuration['error_message']).toEqual('aie aie');
+    expect(linkyAPIConnector.souscription_API).toBeCalledTimes(0);
+  });
+
   it('activateService : re init une ancienne erreur', async () => {
     // GIVEN
     linkyAPIConnector.souscription_API.mockReturnValue('pk_123');
@@ -293,6 +359,7 @@ describe('linkyServiceManager', () => {
     );
     expect(serviceDB.configuration['error_code']).toBeUndefined();
     expect(serviceDB.configuration['error_message']).toBeUndefined();
+    expect(linkyAPIConnector.souscription_API).toBeCalledTimes(1);
   });
   it('activateService : Une exception est consignée dans la configuration', async () => {
     // GIVEN
@@ -352,12 +419,15 @@ describe('linkyServiceManager', () => {
       serviceDefinitionId: LiveService.linky,
       configuration: {
         prm: '123',
+        live_prm: '123',
         winter_pk: 'abc',
       },
-      status: ServiceStatus.CREATED,
+      status: ServiceStatus.TO_DELETE,
     });
 
-    await TestUtil.create('linky', { prm: '123' });
+    await TestUtil.create('linky', {
+      prm: '123',
+    });
 
     const serviceDefData = TestUtil.serviceDefinitionData({
       id: LiveService.linky,
@@ -385,6 +455,57 @@ describe('linkyServiceManager', () => {
     expect(result).toContain('DELETED');
     expect(serviceDB).toBeNull();
     expect(linkyDB).toBeNull();
+    expect(linkyAPIConnector.deleteSouscription).toBeCalledTimes(1);
+  });
+  it(`removeService : ne tente pas de supprimer si erreur courrante 037`, async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { code_postal: '75002' });
+    await TestUtil.create('serviceDefinition', { id: LiveService.linky });
+    await TestUtil.create('service', {
+      serviceDefinitionId: LiveService.linky,
+      configuration: {
+        prm: '123',
+        live_prm: '123',
+        winter_pk: 'abc',
+        error_code: '037',
+      },
+      status: ServiceStatus.TO_DELETE,
+    });
+
+    await TestUtil.create('linky', { prm: '123' });
+
+    const serviceDefData = TestUtil.serviceDefinitionData({
+      id: LiveService.linky,
+    });
+    const serviceData = TestUtil.serviceData({
+      serviceDefinitionId: LiveService.linky,
+      configuration: {
+        prm: '123',
+        live_prm: '123',
+        winter_pk: 'abc',
+        error_code: '037',
+      },
+    });
+
+    const service = new Service({
+      ...serviceDefData,
+      ...serviceData,
+    });
+
+    // WHEN
+    const result = await linkyServiceManager.removeService(service);
+
+    // THEN
+    const serviceDB = await serviceRepository.getServiceOfUtilisateur(
+      'utilisateur-id',
+      LiveService.linky,
+    );
+    const linkyDB = await linkyRepository.getLinky('123)');
+
+    expect(result).toContain('ALREADY DELETED');
+    expect(serviceDB).toBeNull();
+    expect(linkyDB).toBeNull();
+    expect(linkyAPIConnector.deleteSouscription).toBeCalledTimes(0);
   });
   it('removeService : Une exception est consignée dans la configuration', async () => {
     // GIVEN

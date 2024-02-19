@@ -67,7 +67,7 @@ export class LinkyRepository {
   }
 
   async deleteLinky(prm: string): Promise<void> {
-    await this.prisma.linky.delete({
+    await this.prisma.linky.deleteMany({
       where: {
         prm: prm,
       },

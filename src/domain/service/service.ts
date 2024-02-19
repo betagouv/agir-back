@@ -45,6 +45,10 @@ export class Service extends ServiceData {
     delete this.configuration[ServiceErrorKey.error_code];
     delete this.configuration[ServiceErrorKey.error_message];
   }
+  public static resetErrorState?(configuration: Object) {
+    delete configuration[ServiceErrorKey.error_code];
+    delete configuration[ServiceErrorKey.error_message];
+  }
 
   public isInError?(): boolean {
     return this.configuration[ServiceErrorKey.error_code] !== undefined;
