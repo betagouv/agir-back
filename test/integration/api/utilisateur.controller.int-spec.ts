@@ -535,6 +535,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       unlocked_features: null,
       history: null,
       kyc: null,
+      equipements: null,
       parts: 0,
     });
     expect(userDB.failed_checkcode_count).toEqual(0);

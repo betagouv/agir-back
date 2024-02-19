@@ -22,6 +22,7 @@ import { UnlockedFeatures } from '../../src/domain/gamification/unlockedFeatures
 import { History } from '../../src/domain/history/history';
 import { UtilisateurBehavior } from '../../src/domain/utilisateur/utilisateurBehavior';
 import { KYC } from '../../src/domain/kyc/collectionQuestionsKYC';
+import { Equipements } from '../../src/domain/equipements/equipements';
 
 export type Phrase = {
   phrase: string;
@@ -42,8 +43,7 @@ export class OnboardingUsecase {
     email: string,
     code: string,
   ): Promise<{ token: string; utilisateur: Utilisateur }> {
-    const utilisateur =
-      await this.utilisateurRespository.findByEmail(email);
+    const utilisateur = await this.utilisateurRespository.findByEmail(email);
     if (!utilisateur) {
       ApplicationError.throwBadCodeOrEmailError();
     }
@@ -185,6 +185,7 @@ export class OnboardingUsecase {
       history: new History(),
       code_departement: null,
       kyc: new KYC(),
+      equipements: new Equipements(),
       prm: null,
       version: UtilisateurBehavior.systemVersion(),
       migration_enabled: false,
@@ -201,8 +202,7 @@ export class OnboardingUsecase {
   }
 
   async renvoyerCode(email: string) {
-    const utilisateur =
-      await this.utilisateurRespository.findByEmail(email);
+    const utilisateur = await this.utilisateurRespository.findByEmail(email);
     if (!utilisateur) {
       ApplicationError.throwBadCodeOrEmailError();
     }

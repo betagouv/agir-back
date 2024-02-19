@@ -1,3 +1,4 @@
+import { Equipements_v0 } from './equipement/equipement_v0';
 import { Gamification_v0 } from './gamification/gamification_v0';
 import { History_v0 } from './history/history_v0';
 import { KYC_v0 } from './kyc/kyc_v0';
@@ -15,6 +16,7 @@ export enum SerialisableDomain {
   OnboardingResult = 'OnboardingResult',
   Onboarding = 'Onboarding',
   KYC = 'KYC',
+  Equipements = 'Equipements',
   Object = 'Object',
 }
 const CLASS_DICTIONNARY = {
@@ -26,6 +28,7 @@ const CLASS_DICTIONNARY = {
   OnboardingResult_v0: OnboardingResult_v0,
   Onboarding_v0: Onboarding_v0,
   KYC_v0: KYC_v0,
+  Equipements_v0: Equipements_v0,
 };
 
 const DATE_REGEXP =

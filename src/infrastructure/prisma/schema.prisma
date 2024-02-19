@@ -48,6 +48,7 @@ model Utilisateur {
   history                  Json               @default("{}") // versioné 
   kyc                      Json               @default("{}") // versioné
   unlocked_features        Json               @default("{}") // versioné 
+  equipements              Json               @default("{}") // versioné 
   empreintes               Empreinte[]
   suivis                   Suivi[]
   groupes                  GroupeAbonnement[]

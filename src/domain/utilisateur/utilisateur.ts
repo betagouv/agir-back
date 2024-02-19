@@ -9,6 +9,7 @@ import { UnlockedFeatures } from '../gamification/unlockedFeatures';
 import { History } from '../history/history';
 import { Environment } from '../environment';
 import { KYC } from '../kyc/collectionQuestionsKYC';
+import { Equipements } from '../equipements/equipements';
 
 export class UtilisateurData {
   id: string;
@@ -40,6 +41,7 @@ export class UtilisateurData {
   parcours_todo: ParcoursTodo;
   gamification: Gamification;
   history: History;
+  equipements: Equipements;
   unlocked_features: UnlockedFeatures;
   version: number;
   migration_enabled: boolean;

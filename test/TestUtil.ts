@@ -29,9 +29,16 @@ import { ParcoursTodo_v0 } from '../src/domain/object_store/parcoursTodo/parcour
 import { History_v0 } from '../src/domain/object_store/history/history_v0';
 import { Gamification_v0 } from '../src/domain/object_store/gamification/gamification_v0';
 import { CelebrationType } from '../src/domain/gamification/celebrations/celebration';
-import { Onboarding_v0 } from 'src/domain/object_store/Onboarding/onboarding_v0';
-import { OnboardingResult_v0 } from 'src/domain/object_store/onboardingResult/onboardingResult_v0';
-import { KYC_v0 } from 'src/domain/object_store/kyc/kyc_v0';
+import { Onboarding_v0 } from '../src/domain/object_store/Onboarding/onboarding_v0';
+import { OnboardingResult_v0 } from '../src/domain/object_store/onboardingResult/onboardingResult_v0';
+import { KYC_v0 } from '../src/domain/object_store/kyc/kyc_v0';
+import { Equipements_v0 } from '../src/domain/object_store/equipement/equipement_v0';
+import {
+  Consommation100km,
+  VehiculeType,
+  VoitureCarburant,
+  VoitureGabarit,
+} from '../src/domain/equipements/vehicule';
 
 export class TestUtil {
   constructor() {}
@@ -269,6 +276,21 @@ export class TestUtil {
       quizz_interactions: [],
     };
 
+    const equipements: Equipements_v0 = {
+      version: 0,
+      vehicules: [
+        {
+          nom: 'titine',
+          carburant: VoitureCarburant.E85,
+          a_plus_de_10_ans: true,
+          est_en_autopartage: false,
+          conso_100_km: Consommation100km.entre_5_10L,
+          gabarit: VoitureGabarit.berline,
+          type: VehiculeType.voiture,
+        },
+      ],
+    };
+
     const gamification: Gamification_v0 = {
       version: 0,
       points: 10,
@@ -355,6 +377,7 @@ export class TestUtil {
       created_at: undefined,
       updated_at: undefined,
       kyc: kyc,
+      equipements: equipements,
       ...override,
     };
   }
