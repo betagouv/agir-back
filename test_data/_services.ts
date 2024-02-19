@@ -2,9 +2,10 @@ const services = {
   recettes: {
     titre: 'Un délice végétarien chaque jour',
     url: 'https://cuisine-facile.com/index.php',
-    icon_url: 'https://cdn-icons-png.flaticon.com/512/823/823214.png',
+    icon_url:
+      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335563/services/823214.png',
     image_url:
-      'https://img.mesrecettesfaciles.fr/wp-content/uploads/2017/02/Quichericottaepinards-1000x500.webp',
+      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335725/services/Quichericottaepinards-1000x500.webp',
     is_url_externe: true,
     is_local: true,
     thematiques: ['alimentation'],
@@ -15,9 +16,10 @@ const services = {
   linky: {
     titre: 'Votre conso élec au jour le jour',
     url: 'https://www.enedis.fr/le-compteur-linky-un-outil-pour-la-transition-ecologique',
-    icon_url: 'https://www.gwa.fr/actualites/media/compteur-linky.jpg',
+    icon_url:
+      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335751/services/compteur-linky.jpg',
     image_url:
-      'https://www.maison-travaux.fr/wp-content/uploads/sites/8/2022/10/multiprise-electricite-incendie-dangers.png',
+      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335771/services/multiprise-electricite-incendie-dangers.png',
     is_url_externe: true,
     is_local: false,
     thematiques: ['logement'],
@@ -28,9 +30,10 @@ const services = {
   suivi_transport: {
     titre: `Suivez l'impact de vos trajets quotidiens`,
     url: 'coach/suivi-du-jour',
-    icon_url: 'https://cdn-icons-png.flaticon.com/512/664/664535.png', // https://cdn-icons-png.flaticon.com/512/4684/4684011.png
+    icon_url:
+      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335811/services/664535.png', // https://cdn-icons-png.flaticon.com/512/4684/4684011.png
     image_url:
-      'https://www.ecologie.gouv.fr/sites/default/files/Covoiturage.JPG',
+      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335828/services/Covoiturage.jpg',
     is_url_externe: false,
     is_local: false,
     thematiques: ['transport'],
@@ -42,9 +45,9 @@ const services = {
     titre: `⚡️ ÉcoWatt`,
     url: 'https://www.monecowatt.fr/',
     icon_url:
-      'https://play-lh.googleusercontent.com/wtQahY_I8TVLQJ_Rcue7aC-dJ3FfZLNQe84smsyfRa9Qbs1-TG3CJvdrmQ9VUXUVO8vh=w480-h960',
+      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335871/services/wtQahY_I8TVLQJ_Rcue7aC-dJ3FfZLNQe84smsyfRa9Qbs1-TG3CJvdrmQ9VUXUVO8vh_w480-h960.png',
     image_url:
-      'https://agirpourlatransition.ademe.fr/particuliers/sites/default/files/styles/550x330/public/2022-03/thermostat-programmable.jpg?itok=4HIKhFAI',
+      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335965/services/thermostat-programmable.jpg',
     is_url_externe: true,
     is_local: false,
     thematiques: ['logement'],
@@ -57,9 +60,9 @@ const services = {
     titre: `🗓️ Fruits et légumes de saison`,
     url: 'https://impactco2.fr/fruitsetlegumes',
     icon_url:
-      'https://static.vecteezy.com/ti/vecteur-libre/p1/3179773-fruits-et-legumes-icon-set-vector-design-gratuit-vectoriel.jpg',
+      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335996/services/3179773-fruits-et-legumes-icon-set-vector-design-gratuit-vectoriel.jpg',
     image_url:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Broccoli_bunches.jpg/320px-Broccoli_bunches.jpg',
+      'https://res.cloudinary.com/dq023imd8/image/upload/v1708336015/services/320px-Broccoli_bunches.jpg',
     is_url_externe: true,
     is_local: true,
     thematiques: ['alimentation'],
