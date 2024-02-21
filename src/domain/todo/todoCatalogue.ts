@@ -230,7 +230,7 @@ export class TodoCatalogue {
           type: ContentType.kyc,
           level: DifficultyLevel.ANY,
           points: 20,
-          content_id: '1',
+          content_id: '001',
         },
       ],
     },
