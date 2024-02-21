@@ -71,12 +71,11 @@ export class LinkyServiceManager
       };
     }
 
-    const last_value = linky_data.getLastRoundedValue();
     const pourcent = linky_data.getLastVariation();
-    let couleur = pourcent <= 0 ? '🟢' : '🔴';
+    let couleur = pourcent <= 0 ? `↘` : '↗';
     let plus = pourcent > 0 ? '+' : '';
     return {
-      label: `🔌 ${last_value} kWh ${couleur} ${plus}${pourcent}%`,
+      label: `${couleur} ${plus}${pourcent}%`,
       isInError: false,
     };
   }

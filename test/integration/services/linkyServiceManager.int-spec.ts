@@ -142,7 +142,7 @@ describe('linkyServiceManager', () => {
     const result = await linkyServiceManager.computeLiveDynamicData(service);
 
     // THEN
-    expect(result.label).toEqual(`🔌 110 kWh 🔴 +10%`);
+    expect(result.label).toEqual(`↗ +10%`);
   });
   it('processConfiguration :positionne la date de consentement et de fin de consentement à + 3 ans', async () => {
     // GIVEN

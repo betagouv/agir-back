@@ -14,7 +14,7 @@ const service_catalogue = {
     parametrage_requis: false,
   },
   linky: {
-    titre: 'Votre conso élec au jour le jour',
+    titre: `⚡️ Electricité`,
     url: 'https://www.enedis.fr/le-compteur-linky-un-outil-pour-la-transition-ecologique',
     icon_url: 'https://www.gwa.fr/actualites/media/compteur-linky.jpg',
     image_url:
