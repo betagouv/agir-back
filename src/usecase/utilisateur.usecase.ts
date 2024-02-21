@@ -15,6 +15,7 @@ import { PasswordAwareUtilisateur } from '../../src/domain/utilisateur/manager/p
 import { Profile } from '../../src/domain/utilisateur/profile';
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
 import { GroupeRepository } from '../../src/infrastructure/repository/groupe.repository';
+import { LinkyRepository } from '../../src/infrastructure/repository/linky.repository';
 
 export type Phrase = {
   phrase: string;
@@ -29,6 +30,7 @@ export class UtilisateurUsecase {
     private serviceRepository: ServiceRepository,
     private suiviRepository: SuiviRepository,
     private bilanRepository: BilanRepository,
+    private linkyRepository: LinkyRepository,
     private oIDCStateRepository: OIDCStateRepository,
     private oidcService: OidcService,
     private emailSender: EmailSender,
@@ -41,8 +43,7 @@ export class UtilisateurUsecase {
     email: string,
     password: string,
   ): Promise<{ token: string; utilisateur: Utilisateur }> {
-    const utilisateur =
-      await this.utilisateurRespository.findByEmail(email);
+    const utilisateur = await this.utilisateurRespository.findByEmail(email);
     if (!utilisateur) {
       ApplicationError.throwBadPasswordOrEmailError();
     }
@@ -108,8 +109,7 @@ export class UtilisateurUsecase {
   }
 
   async oubli_mot_de_passe(email: string) {
-    const utilisateur =
-      await this.utilisateurRespository.findByEmail(email);
+    const utilisateur = await this.utilisateurRespository.findByEmail(email);
 
     if (!utilisateur) return; // pas d'erreur, silence ^^
 
@@ -137,8 +137,7 @@ export class UtilisateurUsecase {
     code: string,
     mot_de_passe: string,
   ) {
-    const utilisateur =
-      await this.utilisateurRespository.findByEmail(email);
+    const utilisateur = await this.utilisateurRespository.findByEmail(email);
 
     if (!utilisateur) {
       ApplicationError.throwBadCodeOrEmailError();

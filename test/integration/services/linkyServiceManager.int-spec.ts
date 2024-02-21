@@ -3,15 +3,8 @@ import { ServiceRepository } from '../../../src/infrastructure/repository/servic
 import { DepartementRepository } from '../../../src/infrastructure/repository/departement/departement.repository';
 import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import {
-  LinkyServiceManager,
-  LINKY_CONF_KEY,
-} from '../../../src/infrastructure/service/linky/LinkyServiceManager';
-import {
-  Service,
-  ServiceErrorKey,
-  ServiceStatus,
-} from '../../../src/domain/service/service';
+import { LinkyServiceManager } from '../../../src/infrastructure/service/linky/LinkyServiceManager';
+import { Service, ServiceStatus } from '../../../src/domain/service/service';
 import { LiveService } from '../../../src/domain/service/serviceDefinition';
 
 describe('linkyServiceManager', () => {
@@ -340,9 +333,15 @@ describe('linkyServiceManager', () => {
       'utilisateur-id',
       LiveService.linky,
     );
+    const linky_data = await linkyRepository.getByPRM('123');
+
+    expect(linky_data.serie).toHaveLength(0);
+    expect(linky_data.utilisateurId).toEqual('utilisateur-id');
+
     expect(serviceDB.configuration['winter_pk']).toEqual('pk_123');
     expect(serviceDB.configuration['live_prm']).toEqual('123');
     expect(serviceDB.configuration['departement']).toEqual('75');
+
     expect(linkyEmailer.sendConfigurationKOEmail).toBeCalledTimes(0);
     expect(linkyAPIConnector.souscription_API).toBeCalledTimes(1);
   });
@@ -532,7 +531,7 @@ describe('linkyServiceManager', () => {
       'utilisateur-id',
       LiveService.linky,
     );
-    const linkyDB = await linkyRepository.getLinky('123)');
+    const linkyDB = await linkyRepository.getByPRM('123)');
 
     expect(result).toContain('DELETED');
     expect(serviceDB).toBeNull();
@@ -583,7 +582,7 @@ describe('linkyServiceManager', () => {
       'utilisateur-id',
       LiveService.linky,
     );
-    const linkyDB = await linkyRepository.getLinky('123)');
+    const linkyDB = await linkyRepository.getByPRM('123)');
 
     expect(result).toContain('ALREADY DELETED');
     expect(serviceDB).toBeNull();
@@ -636,7 +635,7 @@ describe('linkyServiceManager', () => {
       'utilisateur-id',
       LiveService.linky,
     );
-    const linkyDB = await linkyRepository.getLinky('123');
+    const linkyDB = await linkyRepository.getByPRM('123');
 
     expect(linkyDB).not.toBeNull();
     expect(serviceDB.configuration['error_code']).toEqual('11');
@@ -839,7 +838,7 @@ describe('linkyServiceManager', () => {
       'utilisateur-id',
       LiveService.linky,
     );
-    const linkyDB = await linkyRepository.getLinky('123');
+    const linkyDB = await linkyRepository.getByPRM('123');
 
     expect(result).toContain('DELETED');
     expect(result).not.toContain('true');

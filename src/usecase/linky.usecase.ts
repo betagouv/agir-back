@@ -19,7 +19,7 @@ export class LinkyUsecase {
     for (let index = 0; index < prm_list.length; index++) {
       const prm = prm_list[index];
 
-      const linky_data = await this.linkyRepository.getLinky(prm);
+      const linky_data = await this.linkyRepository.getByPRM(prm);
 
       linky_data.cleanData();
 
@@ -42,7 +42,7 @@ export class LinkyUsecase {
     );
     if (!serviceLinky) return { data: new LinkyData() };
 
-    const linkyData = await this.linkyRepository.getLinky(
+    const linkyData = await this.linkyRepository.getByPRM(
       serviceLinky.configuration['prm'],
     );
     if (!linkyData) return { data: new LinkyData() };
@@ -91,7 +91,7 @@ export class LinkyUsecase {
     }
     const prm = incoming.info.prm;
 
-    let current_data = await this.linkyRepository.getLinky(prm);
+    let current_data = await this.linkyRepository.getByPRM(prm);
     if (!current_data) {
       current_data = new LinkyData({ prm: prm, serie: [] });
     }

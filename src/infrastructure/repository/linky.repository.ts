@@ -14,6 +14,7 @@ export class LinkyRepository {
       create: {
         prm: linky_data.prm,
         data: linky_data.serie as any,
+        utilisateurId: linky_data.utilisateurId,
       },
       update: {
         data: linky_data.serie as any,
@@ -29,7 +30,7 @@ export class LinkyRepository {
     return result.map((entry) => entry['prm']);
   }
 
-  async getLinky(prm: string): Promise<LinkyData> {
+  async getByPRM(prm: string): Promise<LinkyData> {
     const result = await this.prisma.linky.findUnique({
       where: {
         prm: prm,
@@ -41,6 +42,7 @@ export class LinkyRepository {
     return new LinkyData({
       prm: result.prm,
       serie: result.data as any,
+      utilisateurId: result.utilisateurId,
     });
   }
   async isPRMDataEmptyOrMissing(prm: string): Promise<boolean> {
@@ -66,10 +68,17 @@ export class LinkyRepository {
     }
   }
 
-  async deleteLinky(prm: string): Promise<void> {
+  async delete(prm: string): Promise<void> {
     await this.prisma.linky.deleteMany({
       where: {
         prm: prm,
+      },
+    });
+  }
+  async deleteOfUtilisateur(utilisateurId: string): Promise<void> {
+    await this.prisma.linky.deleteMany({
+      where: {
+        utilisateurId: utilisateurId,
       },
     });
   }

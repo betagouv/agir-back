@@ -199,6 +199,7 @@ export class TestDataController {
     const linkyData = new LinkyData({
       prm: linky.prm,
       serie: _linky_data,
+      utilisateurId: utilisateurId,
     });
     this.linkyRepository.upsertData(linkyData);
   }

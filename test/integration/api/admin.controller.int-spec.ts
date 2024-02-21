@@ -7,10 +7,13 @@ import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
 import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
 import { Feature } from '../../../src/domain/gamification/feature';
+import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
+import { LinkyData } from '../../../src/domain/linky/linkyData';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const linkyRepository = new LinkyRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -446,6 +449,7 @@ describe('Admin (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.create('linky', {
       prm: 'abc',
+      utilisateurId: '1',
       data: [
         {
           time: new Date(123),
@@ -461,6 +465,7 @@ describe('Admin (API test)', () => {
     });
     await TestUtil.create('linky', {
       prm: 'efg',
+      utilisateurId: '2',
       data: [
         {
           time: new Date(456),
@@ -684,18 +689,18 @@ describe('Admin (API test)', () => {
     expect(serviceDB.configuration['sent_data_email']).toBeUndefined();
 
     // WHEN
-    await TestUtil.prisma.linky.create({
-      data: {
+    await linkyRepository.upsertData(
+      new LinkyData({
         prm: '123',
-        data: [
+        serie: [
           {
             time: new Date(),
             value: 12,
             value_at_normal_temperature: 14,
           },
         ],
-      },
-    });
+      }),
+    );
 
     // WHEN
     response = await TestUtil.POST('/services/process_async_service');

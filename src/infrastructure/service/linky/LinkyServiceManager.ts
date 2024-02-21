@@ -14,7 +14,8 @@ import { LinkyRepository } from '../../../../src/infrastructure/repository/linky
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { LinkyAPIConnector } from './LinkyAPIConnector';
 import { LinkyEmailer } from './LinkyEmailer';
-import { Utilisateur } from 'src/domain/utilisateur/utilisateur';
+import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
+import { LinkyData } from '../../../../src/domain/linky/linkyData';
 
 const DUREE_CONSENT_ANNEES = 3;
 
@@ -63,7 +64,7 @@ export class LinkyServiceManager
         isInError: false,
       };
     }
-    const linky_data = await this.linkyRepository.getLinky(prm);
+    const linky_data = await this.linkyRepository.getByPRM(prm);
 
     if (!linky_data || linky_data.serie.length === 0) {
       return {
@@ -175,7 +176,7 @@ export class LinkyServiceManager
     const error_code = service.configuration[ServiceErrorKey.error_code];
 
     if (error_code === '037') {
-      await this.linkyRepository.deleteLinky(prm);
+      await this.linkyRepository.delete(prm);
       await this.serviceRepository.removeServiceFromUtilisateurByServiceDefinitionId(
         utilisateur.id,
         service.serviceDefinitionId,
@@ -195,7 +196,7 @@ export class LinkyServiceManager
         );
         throw error;
       }
-      await this.linkyRepository.deleteLinky(prm);
+      await this.linkyRepository.delete(prm);
 
       await this.serviceRepository.removeServiceFromUtilisateurByServiceDefinitionId(
         utilisateur.id,
@@ -268,6 +269,14 @@ export class LinkyServiceManager
       service.serviceDefinitionId,
       service.configuration,
       ServiceStatus.LIVE,
+    );
+
+    await this.linkyRepository.upsertData(
+      new LinkyData({
+        prm: prm,
+        serie: [],
+        utilisateurId: utilisateur.id,
+      }),
     );
 
     return `INITIALISED : ${service.serviceDefinitionId} - ${service.serviceId} - prm:${prm}`;
