@@ -14,6 +14,7 @@ import { LinkyRepository } from '../../../../src/infrastructure/repository/linky
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { LinkyAPIConnector } from './LinkyAPIConnector';
 import { LinkyEmailer } from './LinkyEmailer';
+import { Utilisateur } from 'src/domain/utilisateur/utilisateur';
 
 const DUREE_CONSENT_ANNEES = 3;
 
@@ -43,7 +44,7 @@ export class LinkyServiceManager
     const prm = service.configuration[LINKY_CONF_KEY.prm];
     if (this.isBadPRM(service)) {
       return {
-        label: '⚠️ PRM invalide, reconfigurez le !',
+        label: '⚠️ PRM incorrect, mettez le à jour !',
         isInError: true,
       };
     }
@@ -58,7 +59,7 @@ export class LinkyServiceManager
       !(await this.isActivated(service))
     ) {
       return {
-        label: `🔌 Linky en cours d'activation...`,
+        label: '🔌 Vos données sont en chemin !',
         isInError: false,
       };
     }
@@ -121,24 +122,31 @@ export class LinkyServiceManager
   }
 
   async runAsyncProcessing(service: Service): Promise<string> {
-    const email_sent = await this.sendDataEmailIfNeeded(service);
+    const utilisateur = await this.utilisateurRepository.getById(
+      service.utilisateurId,
+    );
+
+    const email_sent = await this.sendDataEmailIfNeeded(service, utilisateur);
 
     try {
       switch (service.status) {
         case ServiceStatus.LIVE:
           return `ALREADY LIVE : ${service.serviceDefinitionId} - ${service.serviceId} | data_email:${email_sent}`;
         case ServiceStatus.CREATED:
-          return (await this.activateService(service)).concat(
+          return (await this.activateService(service, utilisateur)).concat(
             ` | data_email:${email_sent}`,
           );
         case ServiceStatus.TO_DELETE:
-          return (await this.removeService(service)).concat(
+          return (await this.removeService(service, utilisateur)).concat(
             ` | data_email:${email_sent}`,
           );
         default:
           return `UNKNOWN STATUS : ${service.serviceDefinitionId} - ${service.serviceId} - ${service.status} | data_email:${email_sent}`;
       }
     } catch (error) {
+      if (error.code === '032') {
+        await this.linkyEmailer.sendConfigurationKOEmail(utilisateur);
+      }
       return `ERROR ${
         service.status === ServiceStatus.CREATED ? 'CREATING' : 'DELETING'
       }: ${service.serviceDefinitionId} - ${service.serviceId} : ${
@@ -147,14 +155,13 @@ export class LinkyServiceManager
     }
   }
 
-  async removeService(service: Service): Promise<string> {
+  async removeService(
+    service: Service,
+    utilisateur: Utilisateur,
+  ): Promise<string> {
     const winter_pk = service.configuration[LINKY_CONF_KEY.winter_pk];
     const prm = service.configuration[LINKY_CONF_KEY.prm];
     const error_code = service.configuration[ServiceErrorKey.error_code];
-
-    const utilisateur = await this.utilisateurRepository.getById(
-      service.utilisateurId,
-    );
 
     if (error_code === '037') {
       await this.linkyRepository.deleteLinky(prm);
@@ -188,7 +195,10 @@ export class LinkyServiceManager
     }
   }
 
-  async activateService(service: Service): Promise<string> {
+  async activateService(
+    service: Service,
+    utilisateur: Utilisateur,
+  ): Promise<string> {
     const prm = service.configuration[LINKY_CONF_KEY.prm];
     const error_code = service.configuration[ServiceErrorKey.error_code];
 
@@ -198,10 +208,6 @@ export class LinkyServiceManager
     if (error_code === '032') {
       return `SKIP : ${service.serviceDefinitionId} - ${service.serviceId} prm = ${prm} : unkonwn prm`;
     }
-
-    const utilisateur = await this.utilisateurRepository.getById(
-      service.utilisateurId,
-    );
 
     if (service.configuration[LINKY_CONF_KEY.live_prm]) {
       if (
@@ -253,19 +259,17 @@ export class LinkyServiceManager
       ServiceStatus.LIVE,
     );
 
-    await this.linkyEmailer.sendConfigurationOKEmail(utilisateur);
-
     return `INITIALISED : ${service.serviceDefinitionId} - ${service.serviceId} - prm:${prm}`;
   }
 
-  private async sendDataEmailIfNeeded(service: Service): Promise<boolean> {
+  private async sendDataEmailIfNeeded(
+    service: Service,
+    utilisateur: Utilisateur,
+  ): Promise<boolean> {
     const sentDataEmail = service.configuration[LINKY_CONF_KEY.sent_data_email];
     if (!sentDataEmail) {
       const live_prm = service.configuration[LINKY_CONF_KEY.live_prm];
       if (live_prm) {
-        const utilisateur = await this.utilisateurRepository.getById(
-          service.utilisateurId,
-        );
         const empty = await this.linkyRepository.isPRMDataEmptyOrMissing(
           live_prm,
         );

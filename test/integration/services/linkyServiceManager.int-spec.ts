@@ -19,7 +19,7 @@ describe('linkyServiceManager', () => {
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   let departementRepository = new DepartementRepository();
   let linkyEmailer = {
-    sendConfigurationOKEmail: jest.fn(),
+    sendConfigurationKOEmail: jest.fn(),
     sendAvailableDataEmail: jest.fn(),
   };
   let linkyAPIConnector = {
@@ -45,7 +45,7 @@ describe('linkyServiceManager', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     linkyEmailer.sendAvailableDataEmail.mockReset();
-    linkyEmailer.sendConfigurationOKEmail.mockReset();
+    linkyEmailer.sendConfigurationKOEmail.mockReset();
     linkyAPIConnector.deleteSouscription.mockReset();
     linkyAPIConnector.souscription_API.mockReset();
 
@@ -71,7 +71,7 @@ describe('linkyServiceManager', () => {
     const result = await linkyServiceManager.computeLiveDynamicData(service);
 
     // THEN
-    expect(result.label).toEqual('⚠️ PRM invalide, reconfigurez le !');
+    expect(result.label).toEqual('⚠️ PRM incorrect, mettez le à jour !');
     expect(result.isInError).toEqual(true);
   });
   it('computeLiveDynamicData : prm manquant', async () => {
@@ -106,7 +106,7 @@ describe('linkyServiceManager', () => {
     const result = await linkyServiceManager.computeLiveDynamicData(service);
 
     // THEN
-    expect(result.label).toEqual(`🔌 Linky en cours d'activation...`);
+    expect(result.label).toEqual(`🔌 Vos données sont en chemin !`);
   });
   it('computeLiveDynamicData : prm présent et live', async () => {
     // GIVEN
@@ -176,6 +176,7 @@ describe('linkyServiceManager', () => {
     // GIVEN
     const serviceDefData = TestUtil.serviceDefinitionData();
     const serviceData = TestUtil.serviceData();
+    await TestUtil.create('utilisateur');
 
     const service = new Service({
       ...serviceDefData,
@@ -183,8 +184,10 @@ describe('linkyServiceManager', () => {
       configuration: {},
     });
 
+    const user = await utilisateurRepository.getById('utilisateur-id');
+
     // WHEN
-    const result = await linkyServiceManager.activateService(service);
+    const result = await linkyServiceManager.activateService(service, user);
 
     // THEN
     expect(result).toContain('ERROR');
@@ -201,6 +204,7 @@ describe('linkyServiceManager', () => {
       },
       status: ServiceStatus.CREATED,
     });
+    const user = await utilisateurRepository.getById('utilisateur-id');
 
     const serviceDefData = TestUtil.serviceDefinitionData({
       id: LiveService.linky,
@@ -216,7 +220,7 @@ describe('linkyServiceManager', () => {
     });
 
     // WHEN
-    const result = await linkyServiceManager.activateService(service);
+    const result = await linkyServiceManager.activateService(service, user);
 
     // THEN
     expect(result).toContain('PREVIOUSLY LIVE');
@@ -239,6 +243,7 @@ describe('linkyServiceManager', () => {
       },
       status: ServiceStatus.CREATED,
     });
+    const user = await utilisateurRepository.getById('utilisateur-id');
 
     const serviceDefData = TestUtil.serviceDefinitionData({
       id: LiveService.linky,
@@ -254,7 +259,7 @@ describe('linkyServiceManager', () => {
     });
 
     // WHEN
-    const result = await linkyServiceManager.activateService(service);
+    const result = await linkyServiceManager.activateService(service, user);
 
     // THEN
     expect(result).toContain('INITIALISED');
@@ -265,7 +270,7 @@ describe('linkyServiceManager', () => {
     expect(serviceDB.configuration['winter_pk']).toEqual('pk_123');
     expect(serviceDB.configuration['live_prm']).toEqual('123');
     expect(serviceDB.configuration['departement']).toEqual('75');
-    expect(linkyEmailer.sendConfigurationOKEmail).toBeCalled();
+    expect(linkyEmailer.sendConfigurationKOEmail).toBeCalledTimes(0);
     expect(linkyAPIConnector.souscription_API).toBeCalledTimes(1);
   });
   it(`activateService : ne soumet pas l'activation si une erreur 032 en cours`, async () => {
@@ -283,6 +288,7 @@ describe('linkyServiceManager', () => {
       },
       status: ServiceStatus.CREATED,
     });
+    const user = await utilisateurRepository.getById('utilisateur-id');
 
     const serviceDefData = TestUtil.serviceDefinitionData({
       id: LiveService.linky,
@@ -302,7 +308,7 @@ describe('linkyServiceManager', () => {
     });
 
     // WHEN
-    const result = await linkyServiceManager.activateService(service);
+    const result = await linkyServiceManager.activateService(service, user);
 
     // THEN
     expect(result).toContain('SKIP');
@@ -330,6 +336,7 @@ describe('linkyServiceManager', () => {
       },
       status: ServiceStatus.CREATED,
     });
+    const user = await utilisateurRepository.getById('utilisateur-id');
 
     const serviceDefData = TestUtil.serviceDefinitionData({
       id: LiveService.linky,
@@ -349,7 +356,7 @@ describe('linkyServiceManager', () => {
     });
 
     // WHEN
-    const result = await linkyServiceManager.activateService(service);
+    const result = await linkyServiceManager.activateService(service, user);
 
     // THEN
     expect(result).toContain('INITIALISED');
@@ -376,6 +383,7 @@ describe('linkyServiceManager', () => {
       },
       status: ServiceStatus.CREATED,
     });
+    const user = await utilisateurRepository.getById('utilisateur-id');
 
     const serviceDefData = TestUtil.serviceDefinitionData({
       id: LiveService.linky,
@@ -392,7 +400,7 @@ describe('linkyServiceManager', () => {
 
     // WHEN
     try {
-      await linkyServiceManager.activateService(service);
+      await linkyServiceManager.activateService(service, user);
     } catch (error) {
       expect(error.code).toEqual('11');
       expect(error.message).toEqual('aie');
@@ -409,7 +417,7 @@ describe('linkyServiceManager', () => {
     expect(serviceDB.configuration['winter_pk']).toBeUndefined();
     expect(serviceDB.configuration['live_prm']).toBeUndefined();
     expect(serviceDB.status).toEqual(ServiceStatus.CREATED);
-    expect(linkyEmailer.sendConfigurationOKEmail).not.toBeCalled();
+    expect(linkyEmailer.sendConfigurationKOEmail).not.toBeCalled();
   });
   it('removeService : cas passant, supprime le service et les données linky', async () => {
     // GIVEN
@@ -424,6 +432,7 @@ describe('linkyServiceManager', () => {
       },
       status: ServiceStatus.TO_DELETE,
     });
+    const user = await utilisateurRepository.getById('utilisateur-id');
 
     await TestUtil.create('linky', {
       prm: '123',
@@ -443,7 +452,7 @@ describe('linkyServiceManager', () => {
     });
 
     // WHEN
-    const result = await linkyServiceManager.removeService(service);
+    const result = await linkyServiceManager.removeService(service, user);
 
     // THEN
     const serviceDB = await serviceRepository.getServiceOfUtilisateur(
@@ -471,6 +480,7 @@ describe('linkyServiceManager', () => {
       },
       status: ServiceStatus.TO_DELETE,
     });
+    const user = await utilisateurRepository.getById('utilisateur-id');
 
     await TestUtil.create('linky', { prm: '123' });
 
@@ -493,7 +503,7 @@ describe('linkyServiceManager', () => {
     });
 
     // WHEN
-    const result = await linkyServiceManager.removeService(service);
+    const result = await linkyServiceManager.removeService(service, user);
 
     // THEN
     const serviceDB = await serviceRepository.getServiceOfUtilisateur(
@@ -522,6 +532,7 @@ describe('linkyServiceManager', () => {
       },
       status: ServiceStatus.TO_DELETE,
     });
+    const user = await utilisateurRepository.getById('utilisateur-id');
 
     await TestUtil.create('linky', { prm: '123' });
 
@@ -540,7 +551,7 @@ describe('linkyServiceManager', () => {
 
     // WHEN
     try {
-      await linkyServiceManager.removeService(service);
+      await linkyServiceManager.removeService(service, user);
       fail();
     } catch (error) {
       expect(error.code).toEqual('11');
@@ -630,6 +641,93 @@ describe('linkyServiceManager', () => {
     expect(result).toContain('INITIALISED');
     expect(result).not.toContain('true');
     expect(serviceDB.status).toEqual(ServiceStatus.LIVE);
+  });
+  it('runAsyncProcessing :service CREATED => erreur 032 => envoie de mail', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { code_postal: '75002' });
+    await TestUtil.create('serviceDefinition', { id: LiveService.linky });
+    await TestUtil.create('service', {
+      serviceDefinitionId: LiveService.linky,
+      configuration: {
+        prm: '123',
+      },
+      status: ServiceStatus.CREATED,
+    });
+    linkyAPIConnector.souscription_API.mockImplementation(() => {
+      throw { code: '032', message: 'aie' };
+    });
+
+    const serviceDefData = TestUtil.serviceDefinitionData({
+      id: LiveService.linky,
+    });
+    const serviceData = TestUtil.serviceData({
+      serviceDefinitionId: LiveService.linky,
+      configuration: { prm: '123' },
+      status: ServiceStatus.CREATED,
+    });
+
+    const service = new Service({
+      ...serviceDefData,
+      ...serviceData,
+    });
+
+    // WHEN
+    const result = await linkyServiceManager.runAsyncProcessing(service);
+
+    // THEN
+    const serviceDB = await serviceRepository.getServiceOfUtilisateur(
+      'utilisateur-id',
+      LiveService.linky,
+    );
+
+    expect(result).toContain('ERROR CREATING');
+    expect(result).not.toContain('true');
+    expect(serviceDB.status).toEqual(ServiceStatus.CREATED);
+    expect(linkyEmailer.sendConfigurationKOEmail).toBeCalledTimes(1);
+  });
+  it(`runAsyncProcessing : double traitement en erreur n'envoie pas deux fois le mail`, async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { code_postal: '75002' });
+    await TestUtil.create('serviceDefinition', { id: LiveService.linky });
+    await TestUtil.create('service', {
+      serviceDefinitionId: LiveService.linky,
+      configuration: {
+        prm: '123',
+      },
+      status: ServiceStatus.CREATED,
+    });
+    linkyAPIConnector.souscription_API.mockImplementation(() => {
+      throw { code: '032', message: 'aie' };
+    });
+
+    const serviceDefData = TestUtil.serviceDefinitionData({
+      id: LiveService.linky,
+    });
+    const serviceData = TestUtil.serviceData({
+      serviceDefinitionId: LiveService.linky,
+      configuration: { prm: '123' },
+      status: ServiceStatus.CREATED,
+    });
+
+    const service = new Service({
+      ...serviceDefData,
+      ...serviceData,
+    });
+
+    // WHEN
+    let result = await linkyServiceManager.runAsyncProcessing(service);
+    result = await linkyServiceManager.runAsyncProcessing(service);
+
+    // THEN
+    const serviceDB = await serviceRepository.getServiceOfUtilisateur(
+      'utilisateur-id',
+      LiveService.linky,
+    );
+
+    expect(result).toContain('SKIP');
+    expect(result).not.toContain('true');
+    expect(serviceDB.status).toEqual(ServiceStatus.CREATED);
+    expect(linkyEmailer.sendConfigurationKOEmail).toBeCalledTimes(1);
   });
   it('runAsyncProcessing :service TO_DELETE => suppression du service', async () => {
     // GIVEN
