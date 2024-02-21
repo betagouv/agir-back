@@ -98,16 +98,24 @@ export class LinkyServiceManager
     return !empty;
   }
 
-  processConfiguration(configuration: Object) {
-    configuration[LINKY_CONF_KEY.date_consent] = new Date();
+  async processConfiguration(service: Service): Promise<void> {
+    service.configuration[LINKY_CONF_KEY.date_consent] = new Date();
 
     const current_year = new Date().getFullYear();
     const end_date = new Date();
     end_date.setFullYear(current_year + DUREE_CONSENT_ANNEES);
 
-    configuration[LINKY_CONF_KEY.date_fin_consent] = end_date;
+    service.configuration[LINKY_CONF_KEY.date_fin_consent] = end_date;
 
-    Service.resetErrorState(configuration);
+    Service.resetErrorState(service.configuration);
+
+    const result = await this.runAsyncProcessing(service, true);
+
+    if (result.includes('error_code:032')) {
+      ApplicationError.throwUnknownPRM(
+        service.configuration[LINKY_CONF_KEY.prm],
+      );
+    }
   }
 
   checkConfiguration(configuration: Object) {
@@ -121,7 +129,10 @@ export class LinkyServiceManager
     }
   }
 
-  async runAsyncProcessing(service: Service): Promise<string> {
+  async runAsyncProcessing(
+    service: Service,
+    disable_error_email?: boolean,
+  ): Promise<string> {
     const utilisateur = await this.utilisateurRepository.getById(
       service.utilisateurId,
     );
@@ -144,12 +155,12 @@ export class LinkyServiceManager
           return `UNKNOWN STATUS : ${service.serviceDefinitionId} - ${service.serviceId} - ${service.status} | data_email:${email_sent}`;
       }
     } catch (error) {
-      if (error.code === '032') {
+      if (error.code === '032' && !disable_error_email) {
         await this.linkyEmailer.sendConfigurationKOEmail(utilisateur);
       }
       return `ERROR ${
         service.status === ServiceStatus.CREATED ? 'CREATING' : 'DELETING'
-      }: ${service.serviceDefinitionId} - ${service.serviceId} : ${
+      }: ${service.serviceDefinitionId} - ${service.serviceId} : error_code:${
         error.code
       }/${error.message} | data_email:${email_sent}`;
     }

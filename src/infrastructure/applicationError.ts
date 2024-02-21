@@ -165,7 +165,10 @@ export class ApplicationError {
     );
   }
   static throwUnknownPRM(prm: string) {
-    this.throwAppError('032', `PRM inconnu d'Enedis : ${prm}`);
+    this.throwAppError(
+      '032',
+      `PRM ${prm} inconnu sur réseau électrique, merci dd corriger votre saisie.`,
+    );
   }
   static throwUnknownLinkyError(prm: string, error: string) {
     this.throwAppError(

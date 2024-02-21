@@ -146,10 +146,14 @@ describe('linkyServiceManager', () => {
   });
   it('processConfiguration :positionne la date de consentement et de fin de consentement à + 3 ans', async () => {
     // GIVEN
-    const conf = {};
+    const service = new Service({
+      ...TestUtil.serviceDefinitionData(),
+      ...TestUtil.serviceData({ configuration: {} }),
+    });
 
     // WHEN
-    linkyServiceManager.processConfiguration(conf);
+    linkyServiceManager.processConfiguration(service);
+    const conf = service.configuration;
 
     // THEN
     expect(conf['date_consent'].getTime()).toBeGreaterThan(Date.now() - 100);
@@ -164,13 +168,82 @@ describe('linkyServiceManager', () => {
   it(`processConfiguration : supprime l'état en erreur d'une conf précédentee`, async () => {
     // GIVEN
     const conf = { error_code: '123', error_message: 'bad' };
+    const service = new Service({
+      ...TestUtil.serviceDefinitionData(),
+      ...TestUtil.serviceData({
+        configuration: { error_code: '123', error_message: 'bad' },
+      }),
+    });
 
     // WHEN
-    linkyServiceManager.processConfiguration(conf);
+    linkyServiceManager.processConfiguration(service);
 
     // THEN
-    expect(conf['error_code']).toBeUndefined();
-    expect(conf['error_message']).toBeUndefined();
+    expect(service.configuration['error_code']).toBeUndefined();
+    expect(service.configuration['error_message']).toBeUndefined();
+  });
+  it(`processConfiguration : lance une erreur 032 si erreur 032, mais d'email d'erreur`, async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { code_postal: '75002' });
+
+    const def = { id: LiveService.linky };
+    const serviceDef = {
+      serviceDefinitionId: LiveService.linky,
+      configuration: {
+        prm: '123',
+      },
+      status: ServiceStatus.CREATED,
+    };
+    await TestUtil.create('serviceDefinition', def);
+    await TestUtil.create('service', serviceDef);
+    const service = await serviceRepository.getServiceOfUtilisateur(
+      'utilisateur-id',
+      'linky',
+    );
+
+    linkyAPIConnector.souscription_API.mockImplementation(() => {
+      throw { code: '032', message: 'aie' };
+    });
+
+    // WHEN
+    try {
+      await linkyServiceManager.processConfiguration(service);
+      throw new Error('it should not reach here');
+    } catch (error) {
+      // THEN
+      expect(error.code).toEqual('032');
+      expect(linkyEmailer.sendConfigurationKOEmail).toBeCalledTimes(0);
+    }
+  });
+  it(`processConfiguration : silencieux si erreur pas 032`, async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { code_postal: '75002' });
+
+    const def = { id: LiveService.linky };
+    const serviceDef = {
+      serviceDefinitionId: LiveService.linky,
+      configuration: {
+        prm: '123',
+      },
+      status: ServiceStatus.CREATED,
+    };
+    await TestUtil.create('serviceDefinition', def);
+    await TestUtil.create('service', serviceDef);
+    const service = await serviceRepository.getServiceOfUtilisateur(
+      'utilisateur-id',
+      'linky',
+    );
+
+    linkyAPIConnector.souscription_API.mockImplementation(() => {
+      throw { code: '123', message: 'aie' };
+    });
+
+    // WHEN
+    await linkyServiceManager.processConfiguration(service);
+
+    // THEN
+    // pas d'rreur
+    expect(service.getErrorCode()).toEqual('123');
   });
   it('activateService : pas PRM => error', async () => {
     // GIVEN
