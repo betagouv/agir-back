@@ -719,13 +719,13 @@ describe('LinkyData', () => {
       'Au cours des 12 derniers mois, votre consommation éléctrique a <strong>augmenté de +3%</strong> par rapport aux 12 mois précédents',
     );
     expect(result.commentaires[1]).toEqual(
-      `C'est au mois de <strong>janvier 2023</strong> que vous avez fait le <strong>plus d'économie (-10%)</strong>`,
+      `C'est au mois de <strong>janvier 2023</strong> que vous avez fait le <strong>plus d'économie d’électricité</strong> (<strong>-10%</strong> par rapport à janvier 2022)`,
     );
     expect(result.commentaires[2]).toEqual(
-      `C'est au mois de <strong>novembre 2023</strong> que vous avez particulièrement <strong>surconsommé (+51%)</strong>`,
+      `C'est au mois de <strong>novembre 2023</strong> que votre consommation d’électricité a le plus augmenté (<strong>+51%</strong> par rapport à novembre 2022)</strong>`,
     );
   });
-  it('compare2AnsParMois : commentaires de bonne valeur', () => {
+  it('compare2AnsParMois : commentaires de bonne valeur, exclusion du dernier mois', () => {
     // GIVEN
     const linkyData = new LinkyData({
       prm: 'abc',
@@ -762,13 +762,13 @@ describe('LinkyData', () => {
         },
         {
           time: new Date('2001-03-01T12:00:00.000Z'),
-          value: 50,
-          value_at_normal_temperature: 50,
+          value: 80,
+          value_at_normal_temperature: 80,
         },
         {
           time: new Date('2001-04-01T12:00:00.000Z'),
-          value: 80,
-          value_at_normal_temperature: 80,
+          value: 50,
+          value_at_normal_temperature: 50,
         },
       ],
     });
@@ -782,10 +782,10 @@ describe('LinkyData', () => {
       'Au cours des 12 derniers mois, votre consommation éléctrique a <strong>diminué de -10%</strong> par rapport aux 12 mois précédents',
     );
     expect(result.commentaires[1]).toEqual(
-      `C'est au mois de <strong>mars 2001</strong> que vous avez fait le <strong>plus d'économie (-50%)</strong>`,
+      `C'est au mois de <strong>mars 2001</strong> que vous avez fait le <strong>plus d'économie d’électricité</strong> (<strong>-20%</strong> par rapport à mars 2000)`,
     );
     expect(result.commentaires[2]).toEqual(
-      `C'est au mois de <strong>février 2001</strong> que vous avez particulièrement <strong>surconsommé (+20%)</strong>`,
+      `C'est au mois de <strong>février 2001</strong> que votre consommation d’électricité a le plus augmenté (<strong>+20%</strong> par rapport à février 2000)</strong>`,
     );
   });
 

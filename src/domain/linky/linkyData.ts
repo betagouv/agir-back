@@ -129,10 +129,12 @@ export class LinkyData {
 
     let total_last_year = 0;
     let total_this_year = 0;
-    let mois_frugal;
+    let mois_frugal: string;
+    let annee_frugal: number;
     let mois_frugal_val = 0;
     let mois_frugal_val_percent = 0;
-    let mois_max;
+    let mois_max: string;
+    let annee_max: number;
     let mois_max_val = 0;
     let mois_max_val_percent = 0;
 
@@ -149,6 +151,7 @@ export class LinkyData {
       ) {
         mois_frugal_val = mois_annee_suivante.value - mois.value;
         mois_frugal = LinkyData.formatMois(mois.time);
+        annee_frugal = mois_annee_suivante.time.getFullYear();
         mois_frugal_val_percent = Math.round(
           (Math.abs(mois_frugal_val) /
             Math.max(mois_annee_suivante.value, mois.value)) *
@@ -158,6 +161,7 @@ export class LinkyData {
       if (mois_annee_suivante.value - mois.value > mois_max_val && index < 11) {
         mois_max_val = mois_annee_suivante.value - mois.value;
         mois_max = LinkyData.formatMois(mois.time);
+        annee_max = mois_annee_suivante.time.getFullYear();
         mois_max_val_percent = Math.round(
           (Math.abs(mois_max_val) /
             Math.min(mois_annee_suivante.value, mois.value)) *
@@ -178,8 +182,12 @@ export class LinkyData {
         `Au cours des 12 derniers mois, votre consommation éléctrique a <strong>${
           variation > 0 ? 'augmenté de +' : 'diminué de -'
         }${Math.abs(variation)}%</strong> par rapport aux 12 mois précédents`,
-        `C'est au mois de <strong>${mois_frugal} ${last_value.time.getUTCFullYear()}</strong> que vous avez fait le <strong>plus d'économie (-${mois_frugal_val_percent}%)</strong>`,
-        `C'est au mois de <strong>${mois_max} ${last_value.time.getFullYear()}</strong> que vous avez particulièrement <strong>surconsommé (+${mois_max_val_percent}%)</strong>`,
+        `C'est au mois de <strong>${mois_frugal} ${annee_frugal}</strong> que vous avez fait le <strong>plus d'économie d’électricité</strong> (<strong>-${mois_frugal_val_percent}%</strong> par rapport à ${mois_frugal} ${
+          annee_frugal - 1
+        })`,
+        `C'est au mois de <strong>${mois_max} ${annee_max}</strong> que votre consommation d’électricité a le plus augmenté (<strong>+${mois_max_val_percent}%</strong> par rapport à ${mois_max} ${
+          annee_max - 1
+        })</strong>`,
       ],
     };
   }
