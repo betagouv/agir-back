@@ -1,3 +1,4 @@
+import { VoitureGabarit } from '../../../../src/domain/equipements/vehicule';
 import { NGCCalculator } from '../../../../src/infrastructure/ngc/NGCCalculator';
 
 describe('NGCCalculator', () => {
@@ -20,6 +21,20 @@ describe('NGCCalculator', () => {
 
     //THEN
     expect(response).toEqual(2533.9706912924553);
+  });
+  it('computeSingleEntry : compute ok vehicule type info ', () => {
+    //GIVEN
+    let calculator = new NGCCalculator();
+    const situation = {
+      'transport . voiture . gabarit': { valeur: VoitureGabarit.petite },
+    };
+    const entry = 'transport . voiture . empreinte';
+
+    //WHEN
+    const response = calculator.computeSingleEntryValue(situation, entry);
+
+    //THEN
+    expect(Math.round(response.valueOf() as number)).toEqual(1926);
   });
   it('computeSingleEntry : compute ok single entry, complexe situation', () => {
     //GIVEN

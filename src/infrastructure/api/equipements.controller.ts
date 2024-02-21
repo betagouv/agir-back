@@ -6,6 +6,7 @@ import {
   UseGuards,
   Request,
   Put,
+  Post,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -20,6 +21,7 @@ import { AuthGuard } from '../auth/guard';
 import { LinkyConfigurationAPI } from './types/service/linkyConfigurationAPI';
 import { EquipementUsecase } from '../../../src/usecase/equipements.usecase';
 import { VehiculeAPI } from './types/equipements/vehiculeAPI';
+import { ImpactAPI } from './types/equipements/impactAPI';
 
 @ApiExtraModels(LinkyConfigurationAPI)
 @Controller()
@@ -65,5 +67,17 @@ export class EquipementsController extends GenericControler {
       ...body,
       nom: nom,
     });
+  }
+
+  @Post('vehicules/calculer_impact')
+  @ApiOperation({
+    summary: `calcul l'impact CO2 du vehicule, unité : grammes CO2 eq`,
+  })
+  @ApiBody({ type: VehiculeAPI })
+  @ApiOkResponse({ type: ImpactAPI })
+  @UseGuards(AuthGuard)
+  async impact(@Body() body: VehiculeAPI): Promise<ImpactAPI> {
+    const result = await this.equipementUsecase.calculerImpact(body);
+    return ImpactAPI.toAPI(result);
   }
 }
