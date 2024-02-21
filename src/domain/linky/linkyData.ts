@@ -143,7 +143,10 @@ export class LinkyData {
       const mois_annee_suivante = extract[index + 12];
       total_this_year += mois_annee_suivante.value;
 
-      if (mois_annee_suivante.value - mois.value < mois_frugal_val) {
+      if (
+        mois_annee_suivante.value - mois.value < mois_frugal_val &&
+        index < 11
+      ) {
         mois_frugal_val = mois_annee_suivante.value - mois.value;
         mois_frugal = LinkyData.formatMois(mois.time);
         mois_frugal_val_percent = Math.round(
@@ -152,7 +155,7 @@ export class LinkyData {
             100,
         );
       }
-      if (mois_annee_suivante.value - mois.value > mois_max_val) {
+      if (mois_annee_suivante.value - mois.value > mois_max_val && index < 11) {
         mois_max_val = mois_annee_suivante.value - mois.value;
         mois_max = LinkyData.formatMois(mois.time);
         mois_max_val_percent = Math.round(

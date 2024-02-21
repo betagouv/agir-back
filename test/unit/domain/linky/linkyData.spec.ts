@@ -719,7 +719,7 @@ describe('LinkyData', () => {
       'Au cours des 12 derniers mois, votre consommation éléctrique a <strong>augmenté de +3%</strong> par rapport aux 12 mois précédents',
     );
     expect(result.commentaires[1]).toEqual(
-      `C'est au mois de <strong>décembre 2023</strong> que vous avez fait le <strong>plus d'économie (-46%)</strong>`,
+      `C'est au mois de <strong>janvier 2023</strong> que vous avez fait le <strong>plus d'économie (-10%)</strong>`,
     );
     expect(result.commentaires[2]).toEqual(
       `C'est au mois de <strong>novembre 2023</strong> que vous avez particulièrement <strong>surconsommé (+51%)</strong>`,
