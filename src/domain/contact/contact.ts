@@ -1,5 +1,6 @@
 import { UtilisateurData } from '../utilisateur/utilisateur';
 
+// TODO : pas un objet du domain, c'est une interface d'API Brevo
 export class ContactData {
   attributes: {
     POINTS: number;

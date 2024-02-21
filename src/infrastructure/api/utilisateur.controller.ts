@@ -57,6 +57,7 @@ export class UtilisateurController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
   ) {
     this.checkCallerId(req, utilisateurId);
+    // TODO : gérer le cas d'erreur de la suppression du contact, sinon risque d'orphelins ?
     this.contactUsecase.delete(utilisateurId);
     await this.utilisateurUsecase.deleteUtilisateur(utilisateurId);
   }

@@ -190,6 +190,7 @@ export class UtilisateurUsecase {
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
     await this.groupeRepository.delete(utilisateurId);
     await this.utilisateurRepository.delete(utilisateurId);
+    // TODO : gérer le cas d'erreur de la suppression du contact, sinon risque d'orphelins ?
     await this.contactUsecase.delete(utilisateurId);
   }
 

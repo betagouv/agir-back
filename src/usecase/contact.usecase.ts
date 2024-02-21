@@ -22,9 +22,9 @@ export class ContactUsecase {
           index,
           date,
         );
-      const contacts = utilisateurs.map((utilisateur) => {
-        return new Contact(utilisateur);
-      });
+      const contacts = utilisateurs.map(
+        (utilisateur) => new Contact(utilisateur),
+      );
       this.contactSynchro.BatchUpdateContacts(contacts);
     }
   }
