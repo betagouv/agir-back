@@ -44,6 +44,7 @@ export class ContactUsecase {
     return await this.contactSynchro.createContact(contact);
   }
 
+  // TODO : pas utilisé ?
   async addContactsToList(utilisateurs: Utilisateur[], listId: number) {
     const emails = utilisateurs.map((utilisateur) => utilisateur.email);
     return await this.contactSynchro.addContactsToList(emails, listId);

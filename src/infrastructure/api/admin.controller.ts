@@ -222,6 +222,7 @@ export class AdminController extends GenericControler {
   @ApiOperation({
     summary: "Synchronise les contacts de l'application avec ceux de Brevo ",
   })
+  // TODO : ajouter des tests de l'API ?
   async SynchronizeContacts(
     @Headers('Authorization') authorization: string,
   ): Promise<void> {
