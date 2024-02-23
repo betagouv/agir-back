@@ -6,6 +6,7 @@ import {
   Res,
   UnauthorizedException,
   HttpStatus,
+  Request,
 } from '@nestjs/common';
 import { Response } from 'express';
 import {
@@ -40,48 +41,24 @@ export class AdminController extends GenericControler {
 
   @Post('services/refresh_dynamic_data')
   @ApiOkResponse({ type: [String] })
-  async refreshServiceDynamicData(
-    @Res() res: Response,
-    @Headers('Authorization') authorization: string,
-  ) {
-    if (!authorization) {
-      throw new UnauthorizedException('CRON API KEY manquante');
-    }
-    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
-      throw new ForbiddenException('CRON API KEY incorrecte');
-    }
+  async refreshServiceDynamicData(@Res() res: Response, @Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
     const result = await this.serviceUsecase.refreshScheduledServices();
     res.status(HttpStatus.OK).json(result).send();
   }
 
   @Post('services/process_async_service')
   @ApiOkResponse({ type: [String] })
-  async processAsyncService(
-    @Res() res: Response,
-    @Headers('Authorization') authorization: string,
-  ) {
-    if (!authorization) {
-      throw new UnauthorizedException('CRON API KEY manquante');
-    }
-    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
-      throw new ForbiddenException('CRON API KEY incorrecte');
-    }
+  async processAsyncService(@Res() res: Response, @Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
     const result = await this.serviceUsecase.processAsyncServices();
     res.status(HttpStatus.OK).json(result).send();
   }
 
   @Post('services/clean_linky_data')
   @ApiOkResponse({ type: [String] })
-  async cleanLinkyData(
-    @Res() res: Response,
-    @Headers('Authorization') authorization: string,
-  ) {
-    if (!authorization) {
-      throw new UnauthorizedException('CRON API KEY manquante');
-    }
-    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
-      throw new ForbiddenException('CRON API KEY incorrecte');
-    }
+  async cleanLinkyData(@Res() res: Response, @Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
     const result = await this.linkyUsecase.cleanLinkyData();
 
     res.status(HttpStatus.OK).json(`Cleaned ${result} PRMs`).send();
@@ -92,15 +69,8 @@ export class AdminController extends GenericControler {
     summary: 'Upsert tous les articles publiés du CMS',
   })
   @ApiOkResponse({ type: [String] })
-  async upsertAllCMSArticles(
-    @Headers('Authorization') authorization: string,
-  ): Promise<string[]> {
-    if (!authorization) {
-      throw new UnauthorizedException('CRON API KEY manquante');
-    }
-    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
-      throw new ForbiddenException('CRON API KEY incorrecte');
-    }
+  async upsertAllCMSArticles(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
     return await this.cmsUsecase.loadArticlesFromCMS();
   }
 
@@ -109,15 +79,8 @@ export class AdminController extends GenericControler {
     summary: 'Upsert tous les quizz publiés du CMS',
   })
   @ApiOkResponse({ type: [String] })
-  async upsertAllCMSquizzes(
-    @Headers('Authorization') authorization: string,
-  ): Promise<string[]> {
-    if (!authorization) {
-      throw new UnauthorizedException('CRON API KEY manquante');
-    }
-    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
-      throw new ForbiddenException('CRON API KEY incorrecte');
-    }
+  async upsertAllCMSquizzes(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
     return await this.cmsUsecase.loadQuizzFromCMS();
   }
 
@@ -126,13 +89,8 @@ export class AdminController extends GenericControler {
     summary:
       'Upsert toutes les définitions de services à partir du fichier /test_data/_services.ts',
   })
-  async upsertAllServices(@Headers('Authorization') authorization: string) {
-    if (!authorization) {
-      throw new UnauthorizedException('CRON API KEY manquante');
-    }
-    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
-      throw new ForbiddenException('CRON API KEY incorrecte');
-    }
+  async upsertAllServices(@Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
     await this.referentielUsecase.upsertServicesDefinitions();
   }
 
@@ -141,13 +99,8 @@ export class AdminController extends GenericControler {
     summary:
       'Upsert toutes les valeurs de pondération systeme pour les recommandation (tel que les rubriques pour les aricles et quizz)',
   })
-  async upsertAllPonderations(@Headers('Authorization') authorization: string) {
-    if (!authorization) {
-      throw new UnauthorizedException('CRON API KEY manquante');
-    }
-    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
-      throw new ForbiddenException('CRON API KEY incorrecte');
-    }
+  async upsertAllPonderations(@Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
     await this.referentielUsecase.upsertPonderations();
   }
 
@@ -156,15 +109,8 @@ export class AdminController extends GenericControler {
     summary: `monte la version de tous les utlisateurs éligibles à migration jusqu'à la version cible courante de l'application`,
   })
   @ApiOkResponse({ type: [UserMigrationReportAPI] })
-  async migrateUsers(
-    @Headers('Authorization') authorization: string,
-  ): Promise<UserMigrationReportAPI[]> {
-    if (!authorization) {
-      throw new UnauthorizedException('CRON API KEY manquante');
-    }
-    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
-      throw new ForbiddenException('CRON API KEY incorrecte');
-    }
+  async migrateUsers(@Request() req): Promise<UserMigrationReportAPI[]> {
+    this.checkCronAPIProtectedEndpoint(req);
     const result = await this.migrationUsecase.migrateUsers();
     return result.map((elem) => UserMigrationReportAPI.mapToAPI(elem));
   }
@@ -172,30 +118,16 @@ export class AdminController extends GenericControler {
   @ApiOperation({
     summary: `Bloque la capacité de migrer des utilisateurs, pour des besoins de tests contrôlés`,
   })
-  async lockUsers(
-    @Headers('Authorization') authorization: string,
-  ): Promise<any> {
-    if (!authorization) {
-      throw new UnauthorizedException('CRON API KEY manquante');
-    }
-    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
-      throw new ForbiddenException('CRON API KEY incorrecte');
-    }
+  async lockUsers(@Request() req): Promise<any> {
+    this.checkCronAPIProtectedEndpoint(req);
     await this.migrationUsecase.lockUserMigration();
   }
   @Post('/admin/unlock_user_migration')
   @ApiOperation({
     summary: `Active la capacité de migrer des utilisateurs`,
   })
-  async unlockUsers(
-    @Headers('Authorization') authorization: string,
-  ): Promise<any> {
-    if (!authorization) {
-      throw new UnauthorizedException('CRON API KEY manquante');
-    }
-    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
-      throw new ForbiddenException('CRON API KEY incorrecte');
-    }
+  async unlockUsers(@Request() req): Promise<any> {
+    this.checkCronAPIProtectedEndpoint(req);
     await this.migrationUsecase.unlockUserMigration();
   }
 
@@ -203,15 +135,8 @@ export class AdminController extends GenericControler {
   @ApiOperation({
     summary: `Dé inscrit les prms orphelins (suite à suppression de comptes)`,
   })
-  async unsubscribe_oprhan_prms(
-    @Headers('Authorization') authorization: string,
-  ): Promise<string[]> {
-    if (!authorization) {
-      throw new UnauthorizedException('CRON API KEY manquante');
-    }
-    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
-      throw new ForbiddenException('CRON API KEY incorrecte');
-    }
+  async unsubscribe_oprhan_prms(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
     return await this.linkyUsecase.unsubscribeOrphanPRMs();
   }
 
@@ -220,15 +145,8 @@ export class AdminController extends GenericControler {
     summary: `enrichit la TODO des utilisateurs si besoin`,
   })
   @ApiOkResponse({ type: [String] })
-  async upgrade_user_todo(
-    @Headers('Authorization') authorization: string,
-  ): Promise<string[]> {
-    if (!authorization) {
-      throw new UnauthorizedException('CRON API KEY manquante');
-    }
-    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
-      throw new ForbiddenException('CRON API KEY incorrecte');
-    }
+  async upgrade_user_todo(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
     return await this.todoUsecase.updateAllUsersTodo();
   }
 }
