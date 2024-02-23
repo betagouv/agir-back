@@ -2,12 +2,12 @@ import { Controller, Get, Param, Query, Redirect } from '@nestjs/common';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import { OidcService } from '../auth/oidc.service';
 import { UtilisateurUsecase } from '../../usecase/utilisateur.usecase';
-import { OnboardingUsecase } from '../../../src/usecase/onboarding.usecase';
+import { InscriptionUsecase } from '../../../src/usecase/inscription.usecase';
 
 @Controller()
 export class AuthController {
   constructor(
-    private onboardingUsecase: OnboardingUsecase,
+    private inscriptionUsecase: InscriptionUsecase,
     private utilisateurUsecase: UtilisateurUsecase,
     private oidcService: OidcService,
   ) {}
@@ -45,7 +45,7 @@ export class AuthController {
     );
     if (!utilisateur) {
       // FIXME : revoir le moment venu, c'est plus en ligne avec la création de compte standalone
-      await this.onboardingUsecase.createUtilisateur({
+      await this.inscriptionUsecase.createUtilisateur({
         nom: user_data.family_name,
         prenom: 'UNDEFINED',
         email: user_data.email,

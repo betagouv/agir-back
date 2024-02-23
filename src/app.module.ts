@@ -76,6 +76,8 @@ import { LinkyAPIConnector } from './infrastructure/service/linky/LinkyAPIConnec
 import { LinkyEmailer } from './infrastructure/service/linky/LinkyEmailer';
 import { EquipementUsecase } from './usecase/equipements.usecase';
 import { EquipementsController } from './infrastructure/api/equipements.controller';
+import { InscriptionUsecase } from './usecase/inscription.usecase';
+import { InscriptionController } from './infrastructure/api/inscription.controller';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -103,6 +105,7 @@ function getControllers(): any[] {
     RecommandationsController,
     BibliothequeController,
     EquipementsController,
+    InscriptionController,
   );
   if (!Environment.isProd()) {
     controllers.push(TestDataController);
@@ -169,6 +172,7 @@ function getControllers(): any[] {
     LinkyAPIConnector,
     LinkyEmailer,
     EquipementUsecase,
+    InscriptionUsecase,
   ],
 })
 export class AppModule {}
