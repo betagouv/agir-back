@@ -6,13 +6,43 @@ import { LinkyData } from '../../src/domain/linky/linkyData';
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
 import { AsyncService } from '../../src/domain/service/serviceDefinition';
 import { LinkyDataDetailAPI } from '../../src/infrastructure/api/types/service/linkyDataAPI';
+import { LinkyAPIConnector } from '../../src/infrastructure/service/linky/LinkyAPIConnector';
 
 @Injectable()
 export class LinkyUsecase {
   constructor(
     private linkyRepository: LinkyRepository,
     private serviceRepository: ServiceRepository,
+    private linkyAPIConnector: LinkyAPIConnector,
   ) {}
+
+  async unsubscribeOrphanPRMs(): Promise<string[]> {
+    const result = [];
+    const orphans = await this.linkyRepository.findWinterPKsOrphanEntries();
+
+    for (let index = 0; index < orphans.length; index++) {
+      const orphan = orphans[index];
+      try {
+        await this.linkyAPIConnector.deleteSouscription(orphan.winter_pk);
+        await this.linkyRepository.delete(orphan.prm);
+        result.push(
+          `DELETED orphan winter_pk:${orphan.winter_pk} / prm:${orphan.prm} / user:${orphan.utilisateurId}`,
+        );
+      } catch (error) {
+        if (error.code === '037') {
+          await this.linkyRepository.delete(orphan.prm);
+          result.push(
+            `ALREADY unsubscribed winter_pk:${orphan.winter_pk} / prm:${orphan.prm} / user:${orphan.utilisateurId}`,
+          );
+        } else {
+          result.push(
+            `ERROR unsubscribing winter_pk:${orphan.winter_pk} / prm:${orphan.prm} / user:${orphan.utilisateurId} => ${error.code}/${error.message}`,
+          );
+        }
+      }
+    }
+    return result;
+  }
 
   async cleanLinkyData(): Promise<number> {
     const prm_list = await this.linkyRepository.getAllPRMs();

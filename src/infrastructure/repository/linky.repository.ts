@@ -82,4 +82,32 @@ export class LinkyRepository {
       },
     });
   }
+
+  async findWinterPKsOrphanEntries(): Promise<
+    { utilisateurId: string; winter_pk: string; prm: string }[]
+  > {
+    const query = `
+    SELECT
+      "utilisateurId",
+      "winter_pk",
+      "prm"
+    FROM
+      "Linky" l
+    WHERE NOT EXISTS (
+      SELECT "id"
+      FROM
+        "Utilisateur"
+      WHERE
+        "id" = l."utilisateurId"
+    )
+    AND
+      "utilisateurId" IS NOT NULL
+    AND
+      "winter_pk" IS NOT NULL
+    ;
+    `;
+    const result: { utilisateurId: string; winter_pk: string; prm: string }[] =
+      await this.prisma.$queryRawUnsafe(query);
+    return result;
+  }
 }

@@ -450,6 +450,7 @@ export class TestUtil {
   static linkyData(override?) {
     return {
       prm: 'abc',
+      winter_pk: '123',
       utilisateurId: 'utilisateur-id',
       data: [
         {

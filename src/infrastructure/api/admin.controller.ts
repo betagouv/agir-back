@@ -199,6 +199,22 @@ export class AdminController extends GenericControler {
     await this.migrationUsecase.unlockUserMigration();
   }
 
+  @Post('/admin/unsubscribe_oprhan_prms')
+  @ApiOperation({
+    summary: `Dé inscrit les prms orphelins (suite à suppression de comptes)`,
+  })
+  async unsubscribe_oprhan_prms(
+    @Headers('Authorization') authorization: string,
+  ): Promise<string[]> {
+    if (!authorization) {
+      throw new UnauthorizedException('CRON API KEY manquante');
+    }
+    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
+      throw new ForbiddenException('CRON API KEY incorrecte');
+    }
+    return await this.linkyUsecase.unsubscribeOrphanPRMs();
+  }
+
   @Post('/admin/upgrade_user_todo')
   @ApiOperation({
     summary: `enrichit la TODO des utilisateurs si besoin`,

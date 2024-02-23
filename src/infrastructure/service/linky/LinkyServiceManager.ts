@@ -274,6 +274,7 @@ export class LinkyServiceManager
     await this.linkyRepository.upsertData(
       new LinkyData({
         prm: prm,
+        winter_pk: winter_pk,
         serie: [],
         utilisateurId: utilisateur.id,
       }),

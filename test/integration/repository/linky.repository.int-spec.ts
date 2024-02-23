@@ -82,8 +82,16 @@ describe('LinkyRepository', () => {
   });
   it('delete all', async () => {
     // GIVEN
-    await TestUtil.create('linky', { prm: 'p1', utilisateurId: '1' });
-    await TestUtil.create('linky', { prm: 'p2', utilisateurId: '2' });
+    await TestUtil.create('linky', {
+      prm: 'p1',
+      utilisateurId: '1',
+      winter_pk: '1',
+    });
+    await TestUtil.create('linky', {
+      prm: 'p2',
+      utilisateurId: '2',
+      winter_pk: '2',
+    });
     // WHEN
     await linkyRepository.delete('p2');
     // THEN
@@ -98,9 +106,21 @@ describe('LinkyRepository', () => {
   });
   it('delete by user id', async () => {
     // GIVEN
-    await TestUtil.create('linky', { prm: 'p1', utilisateurId: '12' });
-    await TestUtil.create('linky', { prm: 'p2', utilisateurId: undefined });
-    await TestUtil.create('linky', { prm: 'p3', utilisateurId: '45' });
+    await TestUtil.create('linky', {
+      prm: 'p1',
+      utilisateurId: '12',
+      winter_pk: '1',
+    });
+    await TestUtil.create('linky', {
+      prm: 'p2',
+      utilisateurId: undefined,
+      winter_pk: '2',
+    });
+    await TestUtil.create('linky', {
+      prm: 'p3',
+      utilisateurId: '45',
+      winter_pk: '3',
+    });
     // WHEN
     await linkyRepository.deleteOfUtilisateur('12');
     // THEN
@@ -145,5 +165,44 @@ describe('LinkyRepository', () => {
 
     // THEN
     expect(result).toEqual(false);
+  });
+  it('findOrphanEntries: retrieve lost PRMs', async () => {
+    // GIVEN
+    await TestUtil.create('linky', {
+      prm: '000',
+      utilisateurId: null,
+      winter_pk: '000',
+    });
+    await TestUtil.create('linky', {
+      prm: '123',
+      utilisateurId: null,
+      winter_pk: '111',
+    });
+    await TestUtil.create('linky', {
+      prm: '456',
+      utilisateurId: '1',
+      winter_pk: '222',
+    });
+    await TestUtil.create('linky', {
+      prm: '789',
+      utilisateurId: '2',
+      winter_pk: 'abc',
+    });
+    await TestUtil.create('linky', {
+      prm: '999',
+      utilisateurId: '3',
+      winter_pk: null,
+    });
+
+    await TestUtil.create('utilisateur', { id: '1' });
+
+    // WHEN
+    const result = await linkyRepository.findWinterPKsOrphanEntries();
+
+    // THEN
+    expect(result).toHaveLength(1);
+    expect(result[0].prm).toEqual('789');
+    expect(result[0].winter_pk).toEqual('abc');
+    expect(result[0].utilisateurId).toEqual('2');
   });
 });

@@ -36,6 +36,7 @@ export class LinkyData {
     if (data) {
       this.prm = data.prm;
       this.utilisateurId = data.utilisateurId;
+      this.winter_pk = data.winter_pk;
       this.serie = data.serie;
       this.serie.forEach((element) => {
         element.time = new Date(element.time);
@@ -47,6 +48,7 @@ export class LinkyData {
   serie: LinkyDataElement[];
   prm: string;
   utilisateurId?: string;
+  winter_pk?: string;
 
   public addDataElement?(element: LinkyDataElement) {
     this.serie.push(element);

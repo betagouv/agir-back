@@ -158,6 +158,26 @@ describe('Admin (API test)', () => {
       '36': 10,
     });
   });
+  it('POST /admin/unsubscribe_oprhan_prms retourne liste des suppressions', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create('linky', {
+      utilisateurId: '123',
+      prm: '111',
+      winter_pk: 'abc',
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/unsubscribe_oprhan_prms');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toContain('DELETED');
+    expect(response.body[0]).toContain('123');
+    expect(response.body[0]).toContain('111');
+    expect(response.body[0]).toContain('abc');
+  });
   it('POST /admin/lock_user_migration retourne une 403 si pas le bon id d utilisateur', async () => {
     // GIVEN
     await TestUtil.generateAuthorizationToken('bad_id');
@@ -444,11 +464,12 @@ describe('Admin (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual('Cleaned 0 PRMs');
   });
-  it('POST /services/clean_linky_data appel ok si aucune donnee linky', async () => {
+  it('POST /services/clean_linky_data clean ok', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.create('linky', {
       prm: 'abc',
+      winter_pk: '111',
       utilisateurId: '1',
       data: [
         {
@@ -466,6 +487,7 @@ describe('Admin (API test)', () => {
     await TestUtil.create('linky', {
       prm: 'efg',
       utilisateurId: '2',
+      winter_pk: '222',
       data: [
         {
           time: new Date(456),
