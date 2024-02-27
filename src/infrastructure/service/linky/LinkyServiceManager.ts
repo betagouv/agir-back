@@ -73,11 +73,11 @@ export class LinkyServiceManager
       };
     }
 
-    const pourcent = linky_data.getLastVariation();
-    let couleur = pourcent <= 0 ? `🟢↘️` : '🔴↗️';
-    let plus = pourcent > 0 ? '+' : '';
+    const last_variation = linky_data.getLastVariation();
+    let couleur = last_variation.pourcent <= 0 ? `🟢` : '🔴';
+    let plus = last_variation.pourcent > 0 ? '+' : '';
     return {
-      label: `${couleur} ${plus}${pourcent}%`,
+      label: `${couleur} ${last_variation.day} ${plus}${last_variation.pourcent}%`,
       isInError: false,
     };
   }

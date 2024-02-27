@@ -116,7 +116,8 @@ describe('LinkyData', () => {
     const result = linkyData.getLastVariation();
 
     // THEN
-    expect(result).toEqual(20);
+    expect(result.pourcent).toEqual(20);
+    expect(result.day).toEqual('mercredi');
   });
   it('getLastVariation : correct negative pourcent', () => {
     // GIVEN
@@ -140,7 +141,7 @@ describe('LinkyData', () => {
     const result = linkyData.getLastVariation();
 
     // THEN
-    expect(result).toEqual(-20);
+    expect(result.pourcent).toEqual(-20);
   });
   it('getLastVariation : correct pourcent 2 digits after comma', () => {
     // GIVEN
@@ -164,7 +165,7 @@ describe('LinkyData', () => {
     const result = linkyData.getLastVariation();
 
     // THEN
-    expect(result).toEqual(7.14);
+    expect(result.pourcent).toEqual(7.14);
   });
   it('extractLastNDays : extract last 2 days with proper labels ', () => {
     // GIVEN
@@ -898,7 +899,7 @@ describe('LinkyData', () => {
     });
 
     // WHEN
-    const res = linky_data.compare15jousEntre2ans().data;
+    const res = linky_data.compare14joursEntre2ans().data;
 
     // THEN
     expect(res).toHaveLength(0);
@@ -911,7 +912,7 @@ describe('LinkyData', () => {
     });
 
     // WHEN
-    const res = linky_data.compare15jousEntre2ans().data;
+    const res = linky_data.compare14joursEntre2ans().data;
 
     // THEN
     expect(res).toHaveLength(28);
@@ -924,7 +925,7 @@ describe('LinkyData', () => {
     });
 
     // WHEN
-    const result = linky_data.compare15jousEntre2ans();
+    const result = linky_data.compare14joursEntre2ans();
     const res = result.data;
 
     // THEN
@@ -948,8 +949,11 @@ describe('LinkyData', () => {
     expect(res[27].jour_text).toEqual('mercredi');
     expect(res[27].jour_val).toEqual(13);
 
-    expect(result.commentaires).toHaveLength(1);
+    expect(result.commentaires).toHaveLength(2);
     expect(result.commentaires[0]).toEqual(
+      `Votre consommation a augmenté de +34.21% entre mardi et mercredi dernier`,
+    );
+    expect(result.commentaires[1]).toEqual(
       `Au cours des 2 dernières semaines, votre consommation éléctrique a <strong>augmenté de +15%</strong> par rapport à la même période l'année dernière`,
     );
   });
@@ -1032,7 +1036,7 @@ describe('LinkyData', () => {
     });
 
     // WHEN
-    const res = linky_data.compare15jousEntre2ans().data;
+    const res = linky_data.compare14joursEntre2ans().data;
 
     // THEN
     expect(res).toHaveLength(14);
@@ -1119,7 +1123,7 @@ describe('LinkyData', () => {
     });
 
     // WHEN
-    const res = linky_data.compare15jousEntre2ans().data;
+    const res = linky_data.compare14joursEntre2ans().data;
 
     // THEN
     expect(res).toHaveLength(8);
@@ -1185,7 +1189,7 @@ describe('LinkyData', () => {
     });
 
     // WHEN
-    const res = linky_data.compare15jousEntre2ans();
+    const res = linky_data.compare14joursEntre2ans();
 
     // THEN
     expect(res.data).toHaveLength(0);

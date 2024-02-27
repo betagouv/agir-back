@@ -83,7 +83,7 @@ export class LinkyUsecase {
       return { data: linkyData, commentaires: result.commentaires };
     }
     if (derniers_14_jours) {
-      const result = linkyData.compare15jousEntre2ans();
+      const result = linkyData.compare14joursEntre2ans();
       linkyData.serie = result.data;
       return { data: linkyData, commentaires: result.commentaires };
     }

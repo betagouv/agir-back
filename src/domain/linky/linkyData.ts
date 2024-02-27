@@ -54,7 +54,7 @@ export class LinkyData {
     this.serie.push(element);
   }
 
-  public compare15jousEntre2ans?(): {
+  public compare14joursEntre2ans?(): {
     data: LinkyDataElement[];
     commentaires: string[];
   } {
@@ -107,11 +107,18 @@ export class LinkyData {
       ((somme_block - somme_block_last_year) / somme_block_last_year) * 100,
     );
 
+    const last_variation = this.getLastVariation();
+
     return {
       data: result,
       commentaires: [
+        `Votre consommation a ${
+          last_variation.pourcent > 0 ? 'augmenté de +' : 'diminué de '
+        }${last_variation.pourcent}% entre ${last_variation.previous_day} et ${
+          last_variation.day
+        } dernier`,
         `Au cours des 2 dernières semaines, votre consommation éléctrique a <strong>${
-          variation > 0 ? 'augmenté de +' : 'diminué de -'
+          variation > 0 ? 'augmenté de +' : 'diminué de '
         }${variation}%</strong> par rapport à la même période l'année dernière`,
       ],
     };
@@ -200,11 +207,23 @@ export class LinkyData {
     if (this.serie.length === 0) return null;
     return Math.round(this.serie[this.serie.length - 1].value * 1000) / 1000;
   }
-  public getLastVariation?(): number {
+
+  public getLastVariation?(): {
+    pourcent: number;
+    day: string;
+    previous_day: string;
+  } {
     if (this.serie.length < 2) return null;
-    const valN_2 = this.serie[this.serie.length - 2].value;
-    const valN_1 = this.serie[this.serie.length - 1].value;
-    return Math.floor(((valN_1 - valN_2) / valN_2) * 10000) / 100;
+
+    const last_day = this.serie[this.serie.length - 1];
+    const previous_day = this.serie[this.serie.length - 2];
+    const valN_2 = previous_day.value;
+    const valN_1 = last_day.value;
+    return {
+      pourcent: Math.floor(((valN_1 - valN_2) / valN_2) * 10000) / 100,
+      day: LinkyData.formatJour(last_day.time),
+      previous_day: LinkyData.formatJour(previous_day.time),
+    };
   }
 
   public extractLastNDays?(nombre: number): LinkyDataElement[] {
