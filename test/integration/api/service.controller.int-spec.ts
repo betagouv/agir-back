@@ -16,6 +16,7 @@ describe('Service (API test)', () => {
     process.env = { ...OLD_ENV }; // Make a copy
     await TestUtil.deleteAll();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
+    process.env.ADMIN_IDS = '';
   });
 
   afterAll(async () => {
