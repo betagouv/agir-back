@@ -25,6 +25,9 @@ describe('Admin (API test)', () => {
 
     await TestUtil.deleteAll();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
+
+    process.env.EMAIL_ENABLED = 'false';
+    process.env.SERVICE_APIS_ENABLED = 'false';
   });
 
   afterAll(async () => {

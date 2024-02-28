@@ -74,6 +74,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     process.env = { ...OLD_ENV }; // Make a copy
     await TestUtil.deleteAll();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
+    process.env.EMAIL_ENABLED = 'false';
   });
 
   afterAll(async () => {

@@ -30,16 +30,22 @@ function getFakeUtilisteur() {
 }
 
 describe('/utilisateurs - Compte utilisateur (API test)', () => {
+  const OLD_ENV = process.env;
+
   beforeAll(async () => {
     await TestUtil.appinit();
   });
 
   beforeEach(async () => {
+    jest.resetModules();
+    process.env = { ...OLD_ENV }; // Make a copy
     await TestUtil.deleteAll();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
+    process.env.EMAIL_ENABLED = 'false';
   });
 
   afterAll(async () => {
+    process.env = OLD_ENV;
     await TestUtil.appclose();
   });
 

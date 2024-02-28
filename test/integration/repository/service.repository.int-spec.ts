@@ -50,6 +50,7 @@ async function injectData() {
 }
 
 describe('ServiceRepository', () => {
+  const OLD_ENV = process.env;
   let serviceRepository = new ServiceRepository(TestUtil.prisma);
 
   beforeAll(async () => {
@@ -58,9 +59,13 @@ describe('ServiceRepository', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
+    jest.resetModules();
+    process.env = { ...OLD_ENV }; // Make a copy
+    process.env.SERVICE_APIS_ENABLED = 'false';
   });
 
   afterAll(async () => {
+    process.env = OLD_ENV;
     await TestUtil.appclose();
   });
 

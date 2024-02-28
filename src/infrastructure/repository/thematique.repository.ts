@@ -13,7 +13,7 @@ export class ThematiqueRepository {
   }
 
   async onApplicationBootstrap(): Promise<void> {
-    if (process.env.FIRST_START === 'false') {
+    if (process.env.FIRST_START !== 'true') {
       await this.loadThematiques();
     }
   }
