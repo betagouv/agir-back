@@ -113,8 +113,8 @@ export class LinkyData {
       data: result,
       commentaires: [
         `Votre consommation a ${
-          last_variation.pourcent > 0 ? 'augmenté de +' : 'diminué de '
-        }${last_variation.pourcent}% entre ${last_variation.previous_day} et ${
+          last_variation.pourcent > 0 ? '<strong>augmenté de +' : '<strong>diminué de '
+        }${last_variation.pourcent}%</strong> entre ${last_variation.previous_day} et ${
           last_variation.day
         } dernier`,
         `Au cours des 2 dernières semaines, votre consommation éléctrique a <strong>${

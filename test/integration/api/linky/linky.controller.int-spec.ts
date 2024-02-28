@@ -346,7 +346,7 @@ describe('Linky (API test)', () => {
     expect(response.body.data).toHaveLength(28);
     expect(response.body.commentaires).toHaveLength(2);
     expect(response.body.commentaires[0]).toEqual(
-      `Votre consommation a augmenté de +34.21% entre mardi et mercredi dernier`,
+      `Votre consommation a <strong>augmenté de +34.21%</strong> entre mardi et mercredi dernier`,
     );
     expect(response.body.commentaires[1]).toEqual(
       `Au cours des 2 dernières semaines, votre consommation éléctrique a <strong>augmenté de +15%</strong> par rapport à la même période l'année dernière`,
