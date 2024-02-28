@@ -271,14 +271,7 @@ export class LinkyServiceManager
       ServiceStatus.LIVE,
     );
 
-    await this.linkyRepository.upsertData(
-      new LinkyData({
-        prm: prm,
-        winter_pk: winter_pk,
-        serie: [],
-        utilisateurId: utilisateur.id,
-      }),
-    );
+    await this.linkyRepository.upsertLinkyEntry(prm, winter_pk, utilisateur.id);
 
     return `INITIALISED : ${service.serviceDefinitionId} - ${service.serviceId} - prm:${prm}`;
   }

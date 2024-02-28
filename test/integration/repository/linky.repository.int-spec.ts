@@ -42,40 +42,69 @@ describe('LinkyRepository', () => {
     });
 
     // WHEN
-    await linkyRepository.upsertData(new_data);
+    await linkyRepository.upsertDataForPRM('abc', [
+      {
+        time: new Date(1000),
+        value: 50,
+        value_at_normal_temperature: 55,
+      },
+    ]);
 
     // THEN
     const prm = await TestUtil.prisma.linky.findUnique({
       where: { prm: 'abc' },
     });
     expect(prm.data).toHaveLength(1);
-    expect(prm.utilisateurId).toEqual('123');
     expect(prm.data[0].time).toEqual(new Date(1000).toISOString());
     expect(prm.data[0].value).toEqual(50);
     expect(prm.data[0].value_at_normal_temperature).toEqual(55);
   });
+  it('upsertLinkyEntry create', async () => {
+    // WHEN
+    await linkyRepository.upsertLinkyEntry('abc', 'def', '123');
+
+    // THEN
+    const prm = await TestUtil.prisma.linky.findUnique({
+      where: { prm: 'abc' },
+    });
+    expect(prm.utilisateurId).toEqual('123');
+    expect(prm.winter_pk).toEqual('def');
+    expect(prm.data).toHaveLength(0);
+  });
+  it('upsertLinkyEntry update', async () => {
+    // GIVEN
+    await linkyRepository.upsertLinkyEntry('abc', 'def', '123');
+
+    // WHEN
+    await linkyRepository.upsertLinkyEntry('abc', 'GHJ', '456');
+
+    // THEN
+    const prm = await TestUtil.prisma.linky.findUnique({
+      where: { prm: 'abc' },
+    });
+    expect(prm.utilisateurId).toEqual('456');
+    expect(prm.winter_pk).toEqual('GHJ');
+    expect(prm.data).toHaveLength(0);
+  });
   it('update data', async () => {
     // GIVEN
     await TestUtil.create('linky');
-    const new_data = new LinkyData({
-      prm: 'abc',
-      serie: [
-        {
-          time: new Date(1000),
-          value: 50,
-          value_at_normal_temperature: 55,
-        },
-      ],
-      utilisateurId: '123',
-    });
+
     // WHEN
-    await linkyRepository.upsertData(new_data);
+    await linkyRepository.upsertDataForPRM('abc', [
+      {
+        time: new Date(1000),
+        value: 50,
+        value_at_normal_temperature: 55,
+      },
+    ]);
     // THEN
     const prm = await TestUtil.prisma.linky.findUnique({
       where: { prm: 'abc' },
     });
     expect(prm.data).toHaveLength(1);
     expect(prm.utilisateurId).toEqual('utilisateur-id'); // pas de maj de user ID !
+    expect(prm.winter_pk).toEqual('123'); // pas de maj de user ID !
     expect(prm.data[0].time).toEqual(new Date(1000).toISOString());
     expect(prm.data[0].value).toEqual(50);
     expect(prm.data[0].value_at_normal_temperature).toEqual(55);

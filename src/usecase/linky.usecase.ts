@@ -53,7 +53,7 @@ export class LinkyUsecase {
 
       linky_data.cleanData();
 
-      await this.linkyRepository.upsertData(linky_data);
+      await this.linkyRepository.upsertDataForPRM(prm, linky_data.serie);
     }
     return prm_list.length;
   }
@@ -135,6 +135,6 @@ export class LinkyUsecase {
       });
     }
 
-    await this.linkyRepository.upsertData(current_data);
+    await this.linkyRepository.upsertDataForPRM(prm, current_data.serie);
   }
 }

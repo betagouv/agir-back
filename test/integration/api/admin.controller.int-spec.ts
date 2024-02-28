@@ -714,18 +714,13 @@ describe('Admin (API test)', () => {
     expect(serviceDB.configuration['sent_data_email']).toBeUndefined();
 
     // WHEN
-    await linkyRepository.upsertData(
-      new LinkyData({
-        prm: '123',
-        serie: [
-          {
-            time: new Date(),
-            value: 12,
-            value_at_normal_temperature: 14,
-          },
-        ],
-      }),
-    );
+    await linkyRepository.upsertDataForPRM('123', [
+      {
+        time: new Date(),
+        value: 12,
+        value_at_normal_temperature: 14,
+      },
+    ]);
 
     // WHEN
     response = await TestUtil.POST('/services/process_async_service');

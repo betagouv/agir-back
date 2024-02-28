@@ -1,23 +1,47 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { LinkyData } from '../../../src/domain/linky/linkyData';
+import {
+  LinkyData,
+  LinkyDataElement,
+} from '../../../src/domain/linky/linkyData';
 
 @Injectable()
 export class LinkyRepository {
   constructor(private prisma: PrismaService) {}
 
-  async upsertData(linky_data: LinkyData): Promise<void> {
+  async upsertDataForPRM(prm: string, data: LinkyDataElement[]): Promise<void> {
     await this.prisma.linky.upsert({
       where: {
-        prm: linky_data.prm,
+        prm: prm,
       },
       create: {
-        prm: linky_data.prm,
-        data: linky_data.serie as any,
-        utilisateurId: linky_data.utilisateurId,
+        prm: prm,
+        data: data as any,
       },
       update: {
-        data: linky_data.serie as any,
+        data: data as any,
+      },
+    });
+  }
+
+  async upsertLinkyEntry(
+    prm: string,
+    winter_pk: string,
+    utilisateurId: string,
+  ): Promise<void> {
+    await this.prisma.linky.upsert({
+      where: {
+        prm: prm,
+      },
+      create: {
+        prm: prm,
+        winter_pk: winter_pk,
+        data: [],
+        utilisateurId: utilisateurId,
+      },
+      update: {
+        winter_pk: winter_pk,
+        utilisateurId: utilisateurId,
       },
     });
   }

@@ -69,41 +69,6 @@ export class TestDataController {
     return utilisateurs_content[utilisateurId];
   }
 
-  private async callCMSForType(
-    type: string,
-  ): Promise<{ id: string; difficulty: number; thematiques: string[] }[]> {
-    let response = null;
-    const URL = process.env.CMS_URL.concat(
-      '/',
-      type,
-      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques',
-    );
-    console.log(URL);
-    try {
-      response = await axios.get(URL, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.CMS_API_KEY}`,
-        },
-      });
-    } catch (error) {
-      if (error.response.status != 401) {
-        console.log(error.message);
-      }
-      throw new Error(error.response.status);
-    }
-    console.log(response.data.data[0]);
-    return response.data.data.map((element) => {
-      return {
-        id: element.id.toString(),
-        difficulty: element.attributes.difficulty,
-        thematiques: CMSThematiqueAPI.getThematiqueList(
-          element.attributes.thematiques.data,
-        ),
-      };
-    });
-  }
-
   async upsertServicesDefinitions() {
     const keyList = Object.keys(_services);
     for (let index = 0; index < keyList.length; index++) {
@@ -196,12 +161,12 @@ export class TestDataController {
   async insertLinkyDataForUtilisateur(utilisateurId: string) {
     const linky = utilisateurs_content[utilisateurId].linky;
     if (!linky) return;
-    const linkyData = new LinkyData({
-      prm: linky.prm,
-      serie: _linky_data,
-      utilisateurId: utilisateurId,
-    });
-    this.linkyRepository.upsertData(linkyData);
+    await this.linkyRepository.upsertLinkyEntry(
+      linky.prm,
+      '12345',
+      utilisateurId,
+    );
+    await this.linkyRepository.upsertDataForPRM(linky.prm, _linky_data);
   }
 
   async deleteUtilisateur(utilisateurId: string) {
