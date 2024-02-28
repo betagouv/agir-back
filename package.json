@@ -17,7 +17,7 @@
     "db:destroy": "docker-compose down",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "dotenv -e .env.test -- node dist/src/main.js",
+    "start": "node dist/src/main.js",
     "start:dev": "dotenv -e .env.run -- nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/main",
