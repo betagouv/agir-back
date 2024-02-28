@@ -880,6 +880,20 @@ describe('LinkyData', () => {
     expect(elems[2].value).toEqual(5);
   });
 
+  it('compare15jousEntre2ans : [] si pas de données du tout', () => {
+    // GIVEN
+    const linky_data = new LinkyData({
+      prm: 'abc',
+      serie: [],
+    });
+
+    // WHEN
+    const res = linky_data.compare14joursEntre2ans();
+
+    // THEN
+    expect(res.data).toHaveLength(0);
+    expect(res.commentaires).toHaveLength(0);
+  });
   it('compare15jousEntre2ans : [] si pas assez de données', () => {
     // GIVEN
     const linky_data = new LinkyData({

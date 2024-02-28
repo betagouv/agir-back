@@ -58,6 +58,9 @@ export class LinkyData {
     data: LinkyDataElement[];
     commentaires: string[];
   } {
+    if (this.serie.length === 0) {
+      return { data: [], commentaires: [] };
+    }
     const last_element = this.getLastDataNotNull();
     const last_element_date = new Date(last_element.time);
     const last_element_date_minus14 = new Date(last_element_date);
@@ -113,10 +116,12 @@ export class LinkyData {
       data: result,
       commentaires: [
         `Votre consommation a ${
-          last_variation.pourcent > 0 ? '<strong>augmenté de +' : '<strong>diminué de '
-        }${last_variation.pourcent}%</strong> entre ${last_variation.previous_day} et ${
-          last_variation.day
-        } dernier`,
+          last_variation.pourcent > 0
+            ? '<strong>augmenté de +'
+            : '<strong>diminué de '
+        }${last_variation.pourcent}%</strong> entre ${
+          last_variation.previous_day
+        } et ${last_variation.day} dernier`,
         `Au cours des 2 dernières semaines, votre consommation éléctrique a <strong>${
           variation > 0 ? 'augmenté de +' : 'diminué de '
         }${variation}%</strong> par rapport à la même période l'année dernière`,
@@ -413,13 +418,14 @@ export class LinkyData {
     );
   }
 
-  private getLastDataNotNull?(): LinkyDataElement {
+  private getLastDataNotNull?(): LinkyDataElement | null {
     for (let index = this.serie.length - 1; index >= 0; index--) {
       const element = this.serie[index];
       if (element.value !== null) {
         return element;
       }
     }
+    return null;
   }
   private static formatJour?(date: Date): string {
     return new Intl.DateTimeFormat('fr-FR', { weekday: 'long' }).format(date);
