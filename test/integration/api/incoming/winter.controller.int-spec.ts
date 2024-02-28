@@ -39,6 +39,7 @@ const INCOMMING_DATA = {
   ],
 };
 describe('/api/incoming/winter-energies (API test)', () => {
+  const OLD_ENV = process.env;
   beforeAll(async () => {
     await TestUtil.appinit();
   });
@@ -46,10 +47,14 @@ describe('/api/incoming/winter-energies (API test)', () => {
   beforeEach(async () => {
     await TestUtil.deleteAll();
     TestUtil.token = process.env.CMS_WEBHOOK_API_KEY;
+    jest.resetModules();
+    process.env = { ...OLD_ENV }; // Make a copy
+    process.env.WINTER_API_KEY = '123456789';
   });
 
   afterAll(async () => {
     await TestUtil.appclose();
+    process.env = OLD_ENV;
   });
 
   it('POST /api/incoming/winter-energies - 200 par défaut append des valeurs', async () => {

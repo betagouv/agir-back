@@ -40,7 +40,8 @@ docker run hello-world
 
 ### Paramétrage des URLs
 
-- Dupliquer le fichier `.env.sample` en un fichier `.env` et un second fichier `.env.test`
+- Dupliquer le fichier `.env.run.sample` en `.env.run`, le remplir, ce fichier est utilisé pour les run local du back, cad `npm run start:dev`
+- Dupliquer le fichier `.env.test.sample` en `.env.test`, le remplir, ce fichier est utilisé pour les lignes de commande de test, eg. `npm run test`
 - renseigner les URLs respectives de votre base de test base de dev
 
 ### Lancer les bases de données
@@ -62,7 +63,7 @@ npm run db:update
 Pour vérifier que tout marche bien
 
 ```bash
-npm run test:all
+npm run test
 ```
 
 ```bash
@@ -70,7 +71,7 @@ npm run test:int # pour les tests d'intégration seuls
 ```
 
 ```bash
-npm run test # pour les tests unitaires seuls
+npm run test:unit # pour les tests unitaires seuls
 ```
 
 ### Stoper et détruire les bases de dev et tests

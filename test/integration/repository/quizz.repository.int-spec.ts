@@ -4,6 +4,7 @@ import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.re
 import { Thematique } from '../../../src/domain/contenu/thematique';
 
 describe('QuizzRepository', () => {
+  const OLD_ENV = process.env;
   let quizzRepository = new QuizzRepository(TestUtil.prisma);
 
   beforeAll(async () => {
@@ -12,9 +13,13 @@ describe('QuizzRepository', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
+    jest.resetModules();
+    process.env = { ...OLD_ENV }; // Make a copy
+    process.env.PONDERATION_VERSION = '0';
   });
 
   afterAll(async () => {
+    process.env = OLD_ENV;
     await TestUtil.appclose();
   });
   it('searchQuizzes : liste quizz par code postal parmi plusieurs', async () => {

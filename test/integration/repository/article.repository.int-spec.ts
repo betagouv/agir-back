@@ -4,6 +4,7 @@ import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 
 describe('ArticleRepository', () => {
+  const OLD_ENV = process.env;
   let articleRepository = new ArticleRepository(TestUtil.prisma);
 
   beforeAll(async () => {
@@ -12,9 +13,13 @@ describe('ArticleRepository', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
+    jest.resetModules();
+    process.env = { ...OLD_ENV }; // Make a copy
+    process.env.PONDERATION_VERSION = '0';
   });
 
   afterAll(async () => {
+    process.env = OLD_ENV;
     await TestUtil.appclose();
   });
 

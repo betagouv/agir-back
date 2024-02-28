@@ -2,6 +2,8 @@ import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
 import { TestUtil } from '../../TestUtil';
 
 describe('/utilisateurs/id/recommandations (API test)', () => {
+  const OLD_ENV = process.env;
+
   beforeAll(async () => {
     await TestUtil.appinit();
   });
@@ -9,11 +11,15 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   beforeEach(async () => {
     await TestUtil.deleteAll();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
+    jest.resetModules();
+    process.env = { ...OLD_ENV }; // Make a copy
+    process.env.PONDERATION_VERSION = '0';
   });
 
   afterEach(() => {});
 
   afterAll(async () => {
+    process.env = OLD_ENV;
     await TestUtil.appclose();
   });
 

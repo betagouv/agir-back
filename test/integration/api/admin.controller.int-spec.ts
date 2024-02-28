@@ -28,6 +28,7 @@ describe('Admin (API test)', () => {
 
     process.env.EMAIL_ENABLED = 'false';
     process.env.SERVICE_APIS_ENABLED = 'false';
+    process.env.PONDERATION_VERSION = '0';
   });
 
   afterAll(async () => {
