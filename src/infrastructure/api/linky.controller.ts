@@ -53,7 +53,7 @@ export class LinkyController extends GenericControler {
     required: false,
   })
   @ApiQuery({
-    name: 'compare_mois_sem_jour',
+    name: 'derniers_14_jours',
     type: Boolean,
     required: false,
   })
@@ -71,7 +71,6 @@ export class LinkyController extends GenericControler {
     @Query('detail') detail?: LinkyDataDetailAPI,
     @Query('nombre') nombre?: number,
     @Query('compare_annees') compare_annees?: string,
-    @Query('compare_mois_sem_jour') compare_mois_sem_jour?: string,
     @Query('end_date') end_date?: string,
     @Query('derniers_14_jours') derniers_14_jours?: string,
   ) {
