@@ -242,8 +242,9 @@ const utilisateurs = {
     commune: 'PALAISEAU',
     revenu_fiscal: null,
     parts: null,
-    version: 3,
+    version: 4,
     gamification: {
+      version: 0,
       points: 0,
     },
     unlocked_features: {
@@ -255,15 +256,9 @@ const utilisateurs = {
         'bibliotheque',
       ],
     },
-    linky: {
-      prm: '12345678912345',
-    },
     suivis: [],
     bilans: [],
     services: [],
-    questionsNGC: {
-      'transport . voiture . km': 30000,
-    },
     onboardingResult: ONBOARDING_RES_1234,
     onboardingData: ONBOARD_DATA_1234,
   },
