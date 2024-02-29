@@ -37,33 +37,40 @@ export class LinkyAPIConnector {
       });
     } catch (error) {
       if (error.response) {
-        if (
-          error.response.data.enedis_prm &&
-          error.response.data.enedis_prm[0] === 'Invalid Enedis PRM'
-        ) {
-          // erreur fonctionnelle pas sensée se produire (pre contrôle du PRM à la conf)
-          ApplicationError.throwBadPRM(prm);
-        }
-        if (
-          error.response.data.error &&
-          error.response.data.error.message &&
-          error.response.data.error.message.includes('SGT401')
-        ) {
-          // PRM inconnu, saisie utilisateur sans doute avec une coquille
-          ApplicationError.throwUnknownPRM(prm);
-        }
-        if (error.response.data.error) {
-          // Erreur Enedis
-          ApplicationError.throwUnknownEnedisError(
+        if (error.response.data) {
+          if (
+            error.response.data.enedis_prm &&
+            error.response.data.enedis_prm[0] === 'Invalid Enedis PRM'
+          ) {
+            // erreur fonctionnelle pas sensée se produire (pre contrôle du PRM à la conf)
+            ApplicationError.throwBadPRM(prm);
+          }
+          if (
+            error.response.data.error &&
+            error.response.data.error.message &&
+            error.response.data.error.message.includes('SGT401')
+          ) {
+            // PRM inconnu, saisie utilisateur sans doute avec une coquille
+            ApplicationError.throwUnknownPRM(prm);
+          }
+          if (error.response.data.error) {
+            // Erreur Enedis
+            ApplicationError.throwUnknownEnedisError(
+              prm,
+              response.data.error.code,
+              response.data.error.message,
+            );
+          }
+          ApplicationError.throwUnknownLinkyError(
             prm,
-            response.data.error.code,
-            response.data.error.message,
+            JSON.stringify(error.response),
+          );
+        } else {
+          ApplicationError.throwUnknownLinkyError(
+            prm,
+            JSON.stringify(error.response),
           );
         }
-        ApplicationError.throwUnknownLinkyError(
-          prm,
-          JSON.stringify(error.response),
-        );
       } else if (error.request) {
         // erreur technique
         ApplicationError.throwUnknownLinkyError(
@@ -98,7 +105,7 @@ export class LinkyAPIConnector {
         }
         ApplicationError.throwUnknownLinkyErrorWhenDelete(
           winter_pk,
-          JSON.stringify(error.response.data),
+          JSON.stringify(error.response),
         );
       } else if (error.request) {
         ApplicationError.throwUnknownLinkyErrorWhenDelete(

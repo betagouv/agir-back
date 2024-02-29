@@ -15,7 +15,6 @@ import { ApplicationError } from '../../../../src/infrastructure/applicationErro
 import { LinkyAPIConnector } from './LinkyAPIConnector';
 import { LinkyEmailer } from './LinkyEmailer';
 import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
-import { LinkyData } from '../../../../src/domain/linky/linkyData';
 
 const DUREE_CONSENT_ANNEES = 3;
 
