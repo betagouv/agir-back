@@ -5,7 +5,7 @@ const CATALOGUE_QUESTIONS: QuestionKYC_v0[] = [
   {
     id: '001',
     question:
-      'Sur quel(s) sujet(s) voudriez-vous être accompagné pour réduire votre impact environnemental ?',
+      'Sur quel(s) sujet(s) souhaitez-vous en savoir plus pour réduire votre impact environnemental ?',
     type: TypeReponseQuestionKYC.choix_multiple,
     is_NGC: false,
     categorie: CategorieQuestionKYC.service,
