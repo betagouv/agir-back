@@ -13,6 +13,16 @@ export class LinkyAPIConnector {
     if (process.env.WINTER_API_ENABLED !== 'true') {
       return 'fake_winter_pk';
     }
+
+    // FIXME : TEMP FOR TESTS
+    if (prm === '12345678901111') {
+      return 'ok_winter_pk';
+    }
+    // FIXME : TEMP FOR TESTS
+    if (prm === '12345678902222') {
+      ApplicationError.throwUnknownPRM('12345678902222');
+    }
+
     let response;
     const data = `{
       "enedis_prm": "${prm}",
