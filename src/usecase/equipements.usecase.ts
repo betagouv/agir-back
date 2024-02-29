@@ -26,7 +26,7 @@ export class EquipementUsecase {
     const situation = {
       'transport . voiture . gabarit': { valeur: payload.gabarit },
     };
-    const entry = 'transport . voiture . empreinte';
+    const entry = 'transport . voiture . empreinte moyenne';
 
     const result = this.nGCCalculator.computeSingleEntryValue(situation, entry);
 
