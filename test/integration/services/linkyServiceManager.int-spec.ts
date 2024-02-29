@@ -49,7 +49,7 @@ describe('linkyServiceManager', () => {
     await TestUtil.appclose();
   });
 
-  it('computeLiveDynamicData : PRM invalide', async () => {
+  it('computeLiveDynamicData : PRM invalide 032', async () => {
     // GIVEN
     const serviceDefData = TestUtil.serviceDefinitionData();
     const serviceData = TestUtil.serviceData();
@@ -58,6 +58,24 @@ describe('linkyServiceManager', () => {
       ...serviceDefData,
       ...serviceData,
       configuration: { error_code: '032' },
+    });
+
+    // WHEN
+    const result = await linkyServiceManager.computeLiveDynamicData(service);
+
+    // THEN
+    expect(result.label).toEqual('⚠️ PRM incorrect, mettez le à jour !');
+    expect(result.isInError).toEqual(true);
+  });
+  it('computeLiveDynamicData : PRM invalide 039', async () => {
+    // GIVEN
+    const serviceDefData = TestUtil.serviceDefinitionData();
+    const serviceData = TestUtil.serviceData();
+
+    const service = new Service({
+      ...serviceDefData,
+      ...serviceData,
+      configuration: { error_code: '039' },
     });
 
     // WHEN
@@ -242,7 +260,40 @@ describe('linkyServiceManager', () => {
       expect(linkyEmailer.sendConfigurationKOEmail).toBeCalledTimes(0);
     }
   });
-  it(`processConfiguration : silencieux si erreur pas 032`, async () => {
+  it(`processConfiguration : lance une erreur 039 si erreur 039, mais d'email d'erreur`, async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { code_postal: '75002' });
+
+    const def = { id: LiveService.linky };
+    const serviceDef = {
+      serviceDefinitionId: LiveService.linky,
+      configuration: {
+        prm: '123',
+      },
+      status: ServiceStatus.CREATED,
+    };
+    await TestUtil.create('serviceDefinition', def);
+    await TestUtil.create('service', serviceDef);
+    const service = await serviceRepository.getServiceOfUtilisateur(
+      'utilisateur-id',
+      'linky',
+    );
+
+    linkyAPIConnector.souscription_API.mockImplementation(() => {
+      throw { code: '039', message: 'aie' };
+    });
+
+    // WHEN
+    try {
+      await linkyServiceManager.processAndUpdateConfiguration(service);
+      throw new Error('it should not reach here');
+    } catch (error) {
+      // THEN
+      expect(error.code).toEqual('039');
+      expect(linkyEmailer.sendConfigurationKOEmail).toBeCalledTimes(0);
+    }
+  });
+  it(`processConfiguration : silencieux si erreur pas 032 ou 039`, async () => {
     // GIVEN
     await TestUtil.create('utilisateur', { code_postal: '75002' });
 

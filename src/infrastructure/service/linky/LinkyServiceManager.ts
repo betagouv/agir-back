@@ -82,7 +82,10 @@ export class LinkyServiceManager
   }
 
   private isBadPRM(service: Service) {
-    return service.configuration[ServiceErrorKey.error_code] === '032';
+    return (
+      service.configuration[ServiceErrorKey.error_code] === '032' ||
+      service.configuration[ServiceErrorKey.error_code] === '039'
+    );
   }
 
   async isConfigured(service: Service) {
@@ -119,6 +122,11 @@ export class LinkyServiceManager
 
     if (result.includes('error_code:032')) {
       ApplicationError.throwUnknownPRM(
+        service.configuration[LINKY_CONF_KEY.prm],
+      );
+    }
+    if (result.includes('error_code:039')) {
+      ApplicationError.throwUnknownPRM_2(
         service.configuration[LINKY_CONF_KEY.prm],
       );
     }
@@ -217,7 +225,6 @@ export class LinkyServiceManager
     service: Service,
     utilisateur: Utilisateur,
   ): Promise<string> {
-    console.log(service);
     const prm = service.configuration[LINKY_CONF_KEY.prm];
     const error_code = service.configuration[ServiceErrorKey.error_code];
 
