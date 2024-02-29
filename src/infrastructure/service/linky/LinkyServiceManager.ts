@@ -161,6 +161,7 @@ export class LinkyServiceManager
           return `UNKNOWN STATUS : ${service.serviceDefinitionId} - ${service.serviceId} - ${service.status} | data_email:${email_sent}`;
       }
     } catch (error) {
+      console.log(error);
       if (error.code === '032' && !disable_error_email) {
         await this.linkyEmailer.sendConfigurationKOEmail(utilisateur);
       }
@@ -216,6 +217,7 @@ export class LinkyServiceManager
     service: Service,
     utilisateur: Utilisateur,
   ): Promise<string> {
+    console.log(service);
     const prm = service.configuration[LINKY_CONF_KEY.prm];
     const error_code = service.configuration[ServiceErrorKey.error_code];
 

@@ -53,12 +53,20 @@ export class LinkyAPIConnector {
             // PRM inconnu, saisie utilisateur sans doute avec une coquille
             ApplicationError.throwUnknownPRM(prm);
           }
+          if (
+            error.response.data.error &&
+            error.response.data.error.message &&
+            error.response.data.error.message.includes('SGT483')
+          ) {
+            // PRM inconnu, saisie utilisateur sans doute avec une coquille
+            ApplicationError.throwUnknownPRM_2(prm);
+          }
           if (error.response.data.error) {
             // Erreur Enedis
             ApplicationError.throwUnknownEnedisError(
               prm,
-              response.data.error.code,
-              response.data.error.message,
+              error.response.data.error.code,
+              error.response.data.error.message,
             );
           }
           ApplicationError.throwUnknownLinkyError(

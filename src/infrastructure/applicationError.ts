@@ -212,6 +212,12 @@ export class ApplicationError {
       404,
     );
   }
+  static throwUnknownPRM_2(prm: string) {
+    this.throwAppError(
+      '039',
+      `PRM ${prm} inconnu sur réseau le électrique, merci de corriger votre saisie.`,
+    );
+  }
 
   private static throwAppError(
     code: string,
