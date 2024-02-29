@@ -239,6 +239,18 @@ describe('Service (API test)', () => {
     const dbServices = await TestUtil.prisma.service.findMany();
     expect(dbServices).toHaveLength(0);
   });
+  it('DELETE /utilisateurs/id/services/id 404 si le service existe pas', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+
+    // WHEN
+    const response = await TestUtil.DELETE(
+      '/utilisateurs/utilisateur-id/services/dummy_live',
+    );
+
+    // THEN
+    expect(response.status).toBe(404);
+  });
   it('DELETE /utilisateurs/id/services/id supprime logiquement un service LIVE async ', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');

@@ -16,6 +16,7 @@ import { EventType } from '../../src/domain/utilisateur/utilisateurEvent';
 import { LinkyServiceManager } from '../../src/infrastructure/service/linky/LinkyServiceManager';
 import { LinkyConfigurationAPI } from '../../src/infrastructure/api/types/service/linkyConfigurationAPI';
 import { AsyncServiceManager } from '../../src/infrastructure/service/AsyncServiceManager';
+import { ApplicationError } from '../../src/infrastructure/applicationError';
 
 const dummy_live_manager = {
   computeLiveDynamicData: async (service: Service) => {
@@ -188,6 +189,9 @@ export class ServiceUsecase {
         utilisateurId,
         serviceDefinitionId,
       );
+    if (existing_service === null) {
+      ApplicationError.throwServiceNotFound(serviceDefinitionId, utilisateurId);
+    }
 
     if (
       existing_service.isAsyncServiceType() &&
