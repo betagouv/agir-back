@@ -167,7 +167,7 @@ export class ApplicationError {
   static throwUnknownPRM(prm: string) {
     this.throwAppError(
       '032',
-      `PRM ${prm} inconnu sur réseau électrique, merci dd corriger votre saisie.`,
+      `PRM ${prm} inconnu sur réseau le électrique, merci de corriger votre saisie.`,
     );
   }
   static throwUnknownLinkyError(prm: string, error: string) {
@@ -199,6 +199,17 @@ export class ApplicationError {
     this.throwAppError(
       '037',
       `Le PRM lié à la clé ${winter_pk} n'existe déjà plus`,
+    );
+  }
+
+  static throwServiceNotFound(
+    service_definition_id: string,
+    utilisateurId: string,
+  ) {
+    this.throwAppError(
+      '038',
+      `le service [${service_definition_id}] n'est pas installé pour l'utilisateur`,
+      404,
     );
   }
 

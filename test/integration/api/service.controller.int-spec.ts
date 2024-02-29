@@ -435,6 +435,27 @@ describe('Service (API test)', () => {
       Thematique.logement,
     ]);
   });
+  it('GET /utilisateurs/id/services/bad-id renvoie 404 si service pas install pour utilsateur', async () => {
+    // GIVEN
+
+    await TestUtil.create('utilisateur');
+    await TestUtil.create('serviceDefinition');
+    await TestUtil.create('service', {
+      configuration: { toto: '123', error_code: '456' },
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/services/linky',
+    );
+
+    // THEN
+    expect(response.status).toBe(404);
+    expect(response.body.code).toEqual('038');
+    expect(response.body.message).toEqual(
+      `le service [linky] n'est pas installé pour l'utilisateur`,
+    );
+  });
   it('GET /utilisateurs/id/services/serviceID lit 1 unique services flag de conf OK', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');

@@ -233,6 +233,8 @@ export class ServiceUsecase {
       utilisateurId,
       serviceDefinitionId,
     );
+    if (service === null) return null;
+
     if (service.isLiveServiceType()) {
       await this.refreshLiveService(service);
     }

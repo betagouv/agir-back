@@ -27,6 +27,7 @@ import { ServiceUsecase } from '../../../src/usecase/service.usecase';
 import { AddServiceAPI } from './types/service/addServiceAPI';
 import { ServiceAPI } from './types/service/serviceAPI';
 import { LinkyConfigurationAPI } from './types/service/linkyConfigurationAPI';
+import { ApplicationError } from '../applicationError';
 
 @ApiExtraModels(LinkyConfigurationAPI)
 @Controller()
@@ -137,7 +138,6 @@ export class ServiceController extends GenericControler {
   }
 
   @Get('utilisateurs/:utilisateurId/services/:serviceDefinitionId')
-  // FIXME : set cache-control
   @ApiOperation({
     summary: "Consulte un service unique de l'utilisateur",
   })
@@ -154,6 +154,10 @@ export class ServiceController extends GenericControler {
       utilisateurId,
       serviceDefinitionId,
     );
+
+    if (result === null) {
+      ApplicationError.throwServiceNotFound(serviceDefinitionId, utilisateurId);
+    }
 
     const mappedResult = ServiceAPI.mapServicesToServicesAPI(
       result,
