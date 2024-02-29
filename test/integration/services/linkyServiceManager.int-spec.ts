@@ -139,37 +139,71 @@ describe('linkyServiceManager', () => {
   });
   it('processConfiguration :positionne la date de consentement et de fin de consentement à + 3 ans', async () => {
     // GIVEN
-    const service = new Service({
-      ...TestUtil.serviceDefinitionData(),
-      ...TestUtil.serviceData({ configuration: {} }),
-    });
+    await TestUtil.create('utilisateur');
+
+    const def = { id: LiveService.linky };
+    const serviceDef = {
+      serviceDefinitionId: LiveService.linky,
+      configuration: {},
+      status: ServiceStatus.CREATED,
+    };
+    await TestUtil.create('serviceDefinition', def);
+    await TestUtil.create('service', serviceDef);
+    let service = await serviceRepository.getServiceOfUtilisateur(
+      'utilisateur-id',
+      'linky',
+    );
 
     // WHEN
-    linkyServiceManager.processConfiguration(service);
-    const conf = service.configuration;
+    await linkyServiceManager.processAndUpdateConfiguration(service);
 
     // THEN
-    expect(conf['date_consent'].getTime()).toBeGreaterThan(Date.now() - 100);
-    expect(conf['date_consent'].getTime()).toBeLessThan(Date.now() + 100);
-    expect(conf['date_fin_consent'].getTime()).toBeGreaterThan(
-      Date.now() + 1000 * 60 * 60 * 24 * 1090,
+    service = await serviceRepository.getServiceOfUtilisateur(
+      'utilisateur-id',
+      'linky',
     );
-    expect(conf['date_fin_consent'].getTime()).toBeLessThan(
-      Date.now() + 1000 * 60 * 60 * 24 * 1100,
-    );
+
+    expect(
+      new Date(service.configuration['date_consent']).getTime(),
+    ).toBeGreaterThan(Date.now() - 100);
+    expect(
+      new Date(service.configuration['date_consent']).getTime(),
+    ).toBeLessThan(Date.now() + 100);
+    expect(
+      new Date(service.configuration['date_fin_consent']).getTime(),
+    ).toBeGreaterThan(Date.now() + 1000 * 60 * 60 * 24 * 1090);
+    expect(
+      new Date(service.configuration['date_fin_consent']).getTime(),
+    ).toBeLessThan(Date.now() + 1000 * 60 * 60 * 24 * 1100);
   });
   it(`processConfiguration : supprime l'état en erreur d'une conf précédentee`, async () => {
     // GIVEN
-    const conf = { error_code: '123', error_message: 'bad' };
-    const service = new Service({
-      ...TestUtil.serviceDefinitionData(),
-      ...TestUtil.serviceData({
-        configuration: { error_code: '123', error_message: 'bad' },
-      }),
-    });
+    await TestUtil.create('utilisateur', { code_postal: '75002' });
+
+    const def = { id: LiveService.linky };
+    const serviceDef = {
+      serviceDefinitionId: LiveService.linky,
+      configuration: {
+        prm: '123',
+        error_code: '123',
+        error_message: 'bad',
+      },
+      status: ServiceStatus.LIVE,
+    };
+    await TestUtil.create('serviceDefinition', def);
+    await TestUtil.create('service', serviceDef);
+    let service = await serviceRepository.getServiceOfUtilisateur(
+      'utilisateur-id',
+      'linky',
+    );
 
     // WHEN
-    linkyServiceManager.processConfiguration(service);
+    await linkyServiceManager.processAndUpdateConfiguration(service);
+
+    service = await serviceRepository.getServiceOfUtilisateur(
+      'utilisateur-id',
+      'linky',
+    );
 
     // THEN
     expect(service.configuration['error_code']).toBeUndefined();
@@ -200,7 +234,7 @@ describe('linkyServiceManager', () => {
 
     // WHEN
     try {
-      await linkyServiceManager.processConfiguration(service);
+      await linkyServiceManager.processAndUpdateConfiguration(service);
       throw new Error('it should not reach here');
     } catch (error) {
       // THEN
@@ -222,7 +256,7 @@ describe('linkyServiceManager', () => {
     };
     await TestUtil.create('serviceDefinition', def);
     await TestUtil.create('service', serviceDef);
-    const service = await serviceRepository.getServiceOfUtilisateur(
+    let service = await serviceRepository.getServiceOfUtilisateur(
       'utilisateur-id',
       'linky',
     );
@@ -232,10 +266,15 @@ describe('linkyServiceManager', () => {
     });
 
     // WHEN
-    await linkyServiceManager.processConfiguration(service);
+    await linkyServiceManager.processAndUpdateConfiguration(service);
 
     // THEN
-    // pas d'rreur
+    service = await serviceRepository.getServiceOfUtilisateur(
+      'utilisateur-id',
+      'linky',
+    );
+
+    // pas d'erreur
     expect(service.getErrorCode()).toEqual('123');
   });
   it('activateService : pas PRM => error', async () => {

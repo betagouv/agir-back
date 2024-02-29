@@ -7,5 +7,5 @@ export interface AsyncServiceManager {
   isConfigured(service: Service): Promise<boolean>;
   isFullyRunning(service: Service): Promise<boolean>;
   checkConfiguration(configuration: Object);
-  processConfiguration(service: Service): Promise<void>;
+  processAndUpdateConfiguration(service: Service): Promise<void>;
 }

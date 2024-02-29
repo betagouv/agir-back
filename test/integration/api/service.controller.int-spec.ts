@@ -668,34 +668,6 @@ describe('Service (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
   });
-  it('PUT /utilisateurs/id/services/serviceid/configuration OK', async () => {
-    // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'dummy_async' });
-    await TestUtil.create('service', { serviceDefinitionId: 'dummy_async' });
-
-    // WHEN
-    const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/services/dummy_async/configuration',
-    ).send({
-      a: '123',
-      b: 456,
-      c: true,
-    });
-
-    // THEN
-    expect(response.status).toBe(200);
-
-    const serviceDB = await TestUtil.prisma.service.findUnique({
-      where: { id: 'service-id' },
-    });
-
-    expect(serviceDB.configuration).toEqual({
-      a: '123',
-      b: 456,
-      c: true,
-    });
-  });
   it('PUT /utilisateurs/id/services/serviceid/configuration KO pour linky, prm manquant', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
@@ -732,12 +704,15 @@ describe('Service (API test)', () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', { serviceDefinitionId: 'linky' });
+    await TestUtil.create('service', {
+      serviceDefinitionId: 'linky',
+      configuration: { titi: 'yo' },
+    });
 
     // WHEN
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/services/linky/configuration',
-    ).send({ prm: '22293632381261' });
+    ).send({ prm: '22293632381261', toto: 'haha' });
 
     // THEN
     const service = await TestUtil.prisma.service.findFirst({
@@ -745,6 +720,8 @@ describe('Service (API test)', () => {
     });
     expect(response.status).toBe(200);
     expect(service.configuration['prm']).toEqual('22293632381261');
+    expect(service.configuration['toto']).toEqual('haha');
+    expect(service.configuration['titi']).toEqual('yo');
     expect(
       new Date(service.configuration['date_consent']).getTime(),
     ).toBeGreaterThan(Date.now() - 100);

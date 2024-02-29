@@ -99,7 +99,7 @@ export class LinkyServiceManager
     return !empty;
   }
 
-  async processConfiguration(service: Service): Promise<void> {
+  async processAndUpdateConfiguration(service: Service): Promise<void> {
     service.configuration[LINKY_CONF_KEY.date_consent] = new Date();
 
     const current_year = new Date().getFullYear();
@@ -109,6 +109,12 @@ export class LinkyServiceManager
     service.configuration[LINKY_CONF_KEY.date_fin_consent] = end_date;
 
     Service.resetErrorState(service.configuration);
+
+    await this.serviceRepository.updateServiceConfiguration(
+      service.utilisateurId,
+      service.serviceDefinitionId,
+      service.configuration,
+    );
 
     const result = await this.runAsyncProcessing(service, true);
 
