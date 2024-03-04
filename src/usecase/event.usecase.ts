@@ -9,6 +9,7 @@ import { ContentType } from '../domain/contenu/contentType';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 import { Thematique } from '../domain/contenu/thematique';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
+import { LiveService } from '../../src/domain/service/serviceDefinition';
 
 @Injectable()
 export class EventUsecase {
@@ -40,16 +41,28 @@ export class EventUsecase {
         return await this.processArticleFavoris(utilisateurId, event);
       case EventType.article_non_favoris:
         return await this.processArticleNonFavoris(utilisateurId, event);
+      case EventType.access_conf_linky:
+        return await this.processAccessConfLinky(utilisateurId);
     }
+  }
+
+  private async processAccessConfLinky(utilisateurId: string) {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const found = utilisateur.parcours_todo.findTodoElementByServiceId(
+      LiveService.linky,
+    );
+    if (found) {
+      found.todo.makeProgress(found.element);
+    }
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private async processArticleNonFavoris(
     utilisateurId: string,
     event: UtilisateurEvent,
   ) {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.history.defavoriserArticle(event.content_id);
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -58,17 +71,13 @@ export class EventUsecase {
     utilisateurId: string,
     event: UtilisateurEvent,
   ) {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.history.favoriserArticle(event.content_id);
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private async processLike(utilisateurId: string, event: UtilisateurEvent) {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     if (event.content_type === ContentType.article) {
       utilisateur.history.likerArticle(event.content_id, event.number_value);
       await this.utilisateurRepository.updateUtilisateur(utilisateur);
@@ -80,9 +89,7 @@ export class EventUsecase {
   }
 
   private async processAccessRecommandations(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     const found = utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
       ContentType.recommandations,
     );
@@ -94,9 +101,7 @@ export class EventUsecase {
   }
 
   private async processAccessProfile(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     const found = utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
       ContentType.profile,
     );
@@ -108,9 +113,7 @@ export class EventUsecase {
   }
 
   private async processAccessCatalogueAides(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     const found = utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
       ContentType.aides,
     );
@@ -125,9 +128,7 @@ export class EventUsecase {
     utilisateurId: string,
     event: UtilisateurEvent,
   ) {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     const found = utilisateur.parcours_todo.findTodoElementByServiceId(
       event.service_id,
     );
@@ -142,9 +143,7 @@ export class EventUsecase {
     utilisateurId: string,
     event: UtilisateurEvent,
   ) {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.gamification.terminerCelebration(
       event.celebration_id,
       utilisateur,
@@ -156,9 +155,7 @@ export class EventUsecase {
     utilisateurId: string,
     event: UtilisateurEvent,
   ) {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.history.lireArticle(event.content_id);
     const article = await this.articleRepository.getArticleByContentId(
       event.content_id,
@@ -175,9 +172,7 @@ export class EventUsecase {
     utilisateurId: string,
     event: UtilisateurEvent,
   ) {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.history.quizzAttempt(event.content_id, event.number_value);
 
     const quizz = await this.quizzRepository.getQuizzByContentId(

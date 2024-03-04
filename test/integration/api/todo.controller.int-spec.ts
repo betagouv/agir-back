@@ -12,6 +12,7 @@ import {
 } from '../../../src/domain/kyc/questionQYC';
 import { KYC_v0 } from '../../../src/domain/object_store/kyc/kyc_v0';
 import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
+import { ParcoursTodo_v0 } from 'src/domain/object_store/parcoursTodo/parcoursTodo_v0';
 
 describe('TODO list (API test)', () => {
   const OLD_ENV = process.env;
@@ -704,7 +705,7 @@ describe('TODO list (API test)', () => {
     });
     expect(dbUtilisateur.gamification['points']).toEqual(10);
   });
-  it('POST /utilisateurs/id/services ajout du service ecowatt sur la todo 3 réalise l objctif', async () => {
+  it('POST /utilisateurs/id/services ajout du service fruits sur la todo 3 réalise l objctif', async () => {
     // GIVEN
     await TestUtil.create('utilisateur');
     await TestUtil.create('serviceDefinition', {
@@ -731,6 +732,55 @@ describe('TODO list (API test)', () => {
     expect(
       dbUser.parcours_todo.getTodoByNumero(4).done[0].sont_points_en_poche,
     ).toStrictEqual(false);
+  });
+  it(`POST /utilisateurs/id/event voir la conf lonky valide l'objectif`, async () => {
+    // GIVEN
+    const todo: ParcoursTodo_v0 = {
+      version: 0,
+      todo_active: 0,
+      liste_todo: [
+        {
+          numero_todo: 1,
+          points_todo: 25,
+          done_at: null,
+          titre: 'mission 1',
+          todo: [
+            {
+              id: '123',
+              titre: 'voir la conf linky',
+              thematiques: [Thematique.climat],
+              progression: { current: 0, target: 1 },
+              sont_points_en_poche: true,
+              service_id: LiveService.linky,
+              type: ContentType.service,
+              level: DifficultyLevel.L1,
+              points: 10,
+            },
+          ],
+          done: [],
+        },
+      ],
+    };
+
+    await TestUtil.create('utilisateur', {
+      todo: todo,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: 'access_conf_linky',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.getById('utilisateur-id');
+    expect(dbUser.parcours_todo.liste_todo[0].done).toHaveLength(1);
+    expect(dbUser.parcours_todo.liste_todo[0].done[0].isDone()).toEqual(true);
+    expect(
+      dbUser.parcours_todo.liste_todo[0].done[0].progression.current,
+    ).toEqual(1);
   });
   it('POST /utilisateurs/id/services ajout du service fruits sur la todo 3 ne réalise PAS l objctif', async () => {
     // GIVEN

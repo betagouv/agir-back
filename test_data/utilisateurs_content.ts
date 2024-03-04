@@ -49,11 +49,17 @@ const utilisateurs = {
     parts: null,
     version: 2,
     gamification: {
+      version: 0,
       points: 0,
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: ['aides', 'services', 'recommandations'],
+      unlocked_features: [
+        'aides',
+        'services',
+        'recommandations',
+        'bibliotheque',
+      ],
     },
     todo: {
       version: 0,
@@ -234,6 +240,17 @@ const utilisateurs = {
               service_id: LiveService.linky,
               level: DifficultyLevel.L1,
               points: 20,
+            },
+            {
+              id: uuidv4(),
+              titre: 'Répondre à une question pour mieux vous connaître',
+              thematiques: [Thematique.climat],
+              progression: { current: 0, target: 1 },
+              sont_points_en_poche: false,
+              type: ContentType.kyc,
+              level: DifficultyLevel.ANY,
+              points: 20,
+              content_id: '001',
             },
           ],
         },
