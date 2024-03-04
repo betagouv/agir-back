@@ -628,7 +628,60 @@ describe('linkyServiceManager', () => {
     expect(linkyDB).toBeNull();
     expect(linkyAPIConnector.deleteSouscription).toBeCalledTimes(1);
   });
-  it(`removeService : ne tente pas de supprimer si erreur courrante 037`, async () => {
+  it(`removeService : si API répond déjà supprimé, supprime bien le serrvice et les data`, async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', { code_postal: '75002' });
+    await TestUtil.create('serviceDefinition', { id: LiveService.linky });
+    await TestUtil.create('service', {
+      serviceDefinitionId: LiveService.linky,
+      configuration: {
+        prm: '123',
+        live_prm: '123',
+        winter_pk: 'abc',
+      },
+      status: ServiceStatus.TO_DELETE,
+    });
+    const user = await utilisateurRepository.getById('utilisateur-id');
+
+    await TestUtil.create('linky', { prm: '123' });
+
+    const serviceDefData = TestUtil.serviceDefinitionData({
+      id: LiveService.linky,
+    });
+    const serviceData = TestUtil.serviceData({
+      serviceDefinitionId: LiveService.linky,
+      configuration: {
+        prm: '123',
+        live_prm: '123',
+        winter_pk: 'abc',
+      },
+    });
+
+    const service = new Service({
+      ...serviceDefData,
+      ...serviceData,
+    });
+
+    linkyAPIConnector.deleteSouscription.mockImplementation(() => {
+      throw { code: '037', message: 'aie' };
+    });
+
+    // WHEN
+    const result = await linkyServiceManager.removeService(service, user);
+
+    // THEN
+    const serviceDB = await serviceRepository.getServiceOfUtilisateur(
+      'utilisateur-id',
+      LiveService.linky,
+    );
+    const linkyDB = await linkyRepository.getByPRM('123)');
+
+    expect(result).toContain('ALREADY DELETED');
+    expect(serviceDB).toBeNull();
+    expect(linkyDB).toBeNull();
+    expect(linkyAPIConnector.deleteSouscription).toBeCalledTimes(1);
+  });
+  it(`removeService : ne tente pas de supprimer via API si erreur courrante 037, en revanche supprime bien le serrvice et les data`, async () => {
     // GIVEN
     await TestUtil.create('utilisateur', { code_postal: '75002' });
     await TestUtil.create('serviceDefinition', { id: LiveService.linky });

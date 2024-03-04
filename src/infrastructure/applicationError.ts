@@ -218,6 +218,9 @@ export class ApplicationError {
       `PRM ${prm} inconnu sur réseau le électrique, merci de corriger votre saisie.`,
     );
   }
+  static throwUnknownLinky404() {
+    this.throwAppError('040', `Service winter down avec retour 404`);
+  }
 
   private static throwAppError(
     code: string,

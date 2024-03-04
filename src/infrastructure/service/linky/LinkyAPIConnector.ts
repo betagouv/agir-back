@@ -10,19 +10,31 @@ export class LinkyAPIConnector {
     prm: string,
     code_departement: string,
   ): Promise<string> {
-    if (process.env.WINTER_API_ENABLED !== 'true') {
-      return 'fake_winter_pk';
-    }
-
     // FIXME : TEMP FOR TESTS
     if (prm === '12345678901111') {
-      return 'ok_winter_pk';
+      return 'ok_winter_pk_1';
+    }
+    if (prm === '12345678903333') {
+      return 'ok_winter_pk_3';
+    }
+    if (prm === '12345678904444') {
+      return 'ok_winter_pk_4';
     }
     // FIXME : TEMP FOR TESTS
     if (prm === '12345678902222') {
       ApplicationError.throwUnknownPRM('12345678902222');
     }
+    if (prm === '12345678905555') {
+      ApplicationError.throwUnknownEnedisError(
+        '12345678902222',
+        'code_123',
+        'blurp',
+      );
+    }
 
+    if (process.env.WINTER_API_ENABLED !== 'true') {
+      return 'fake_winter_pk';
+    }
     let response;
     const data = `{
       "enedis_prm": "${prm}",
@@ -38,6 +50,10 @@ export class LinkyAPIConnector {
     } catch (error) {
       if (error.response) {
         if (error.response.data) {
+          console.log(error.response.data);
+          if (error.response.status === 404) {
+            ApplicationError.throwUnknownLinky404();
+          }
           if (
             error.response.data.enedis_prm &&
             error.response.data.enedis_prm[0] === 'Invalid Enedis PRM'
@@ -92,6 +108,15 @@ export class LinkyAPIConnector {
   }
 
   async deleteSouscription(winter_pk: string): Promise<void> {
+    if (winter_pk === 'ok_winter_pk_3') {
+      return;
+    }
+    if (winter_pk === 'ok_winter_pk_1') {
+      ApplicationError.throwAlreadyDeletedLinkyError(winter_pk);
+    }
+    if (winter_pk === 'ok_winter_pk_4') {
+      ApplicationError.throwUnknownLinkyErrorWhenDelete(winter_pk, 'blurp');
+    }
     if (process.env.WINTER_API_ENABLED !== 'true') {
       return;
     }

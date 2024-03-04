@@ -195,30 +195,48 @@ export class LinkyServiceManager
         utilisateur.id,
         service.serviceDefinitionId,
       );
+      await this.deletePRM(prm, utilisateur.id, service.serviceDefinitionId);
       return `ALREADY DELETED : ${service.serviceDefinitionId} - ${service.serviceId} prm = ${prm} winter_pk=${winter_pk}`;
     } else {
       try {
         await this.linkyAPIConnector.deleteSouscription(winter_pk);
         service.resetErrorState();
       } catch (error) {
-        service.addErrorCodeToConfiguration(error.code);
-        service.addErrorMessageToConfiguration(error.message);
-        await this.serviceRepository.updateServiceConfiguration(
-          utilisateur.id,
-          service.serviceDefinitionId,
-          service.configuration,
-        );
-        throw error;
+        if (error.code === '037') {
+          await this.deletePRM(
+            prm,
+            utilisateur.id,
+            service.serviceDefinitionId,
+          );
+          return `ALREADY DELETED : ${service.serviceDefinitionId} - ${service.serviceId} prm = ${prm} winter_pk=${winter_pk}`;
+        } else {
+          service.addErrorCodeToConfiguration(error.code);
+          service.addErrorMessageToConfiguration(error.message);
+          await this.serviceRepository.updateServiceConfiguration(
+            utilisateur.id,
+            service.serviceDefinitionId,
+            service.configuration,
+          );
+          throw error;
+        }
       }
-      await this.linkyRepository.delete(prm);
-
-      await this.serviceRepository.removeServiceFromUtilisateurByServiceDefinitionId(
-        utilisateur.id,
-        service.serviceDefinitionId,
-      );
+      await this.deletePRM(prm, utilisateur.id, service.serviceDefinitionId);
 
       return `DELETED : ${service.serviceDefinitionId} - ${service.serviceId} - prm:${prm}`;
     }
+  }
+
+  private async deletePRM(
+    prm: string,
+    utilisateurId: string,
+    serviceDefinitionId: string,
+  ): Promise<void> {
+    await this.linkyRepository.delete(prm);
+
+    await this.serviceRepository.removeServiceFromUtilisateurByServiceDefinitionId(
+      utilisateurId,
+      serviceDefinitionId,
+    );
   }
 
   async activateService(

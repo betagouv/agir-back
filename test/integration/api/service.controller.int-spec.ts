@@ -184,7 +184,10 @@ describe('Service (API test)', () => {
       where: { id: 'service-id' },
     });
     expect(serviceDB.status).toEqual(ServiceStatus.CREATED);
-    expect(serviceDB.configuration).toEqual({ prm: '123', winter_pk: 'abc' });
+    expect(serviceDB.configuration).toEqual({
+      prm: '123',
+      winter_pk: 'abc',
+    });
   });
   it('POST /utilisateurs/id/services erreur si service definition non connue', async () => {
     // GIVEN
