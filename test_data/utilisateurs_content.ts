@@ -57,7 +57,7 @@ const utilisateurs = {
     },
     todo: {
       version: 0,
-      todo_active: 0,
+      todo_active: 4,
       liste_todo: [
         {
           numero_todo: 1,
@@ -221,6 +221,17 @@ const utilisateurs = {
               progression: { current: 0, target: 1 },
               sont_points_en_poche: false,
               type: ContentType.article,
+              level: DifficultyLevel.L1,
+              points: 20,
+            },
+            {
+              id: uuidv4(),
+              titre: 'va voir Linky',
+              thematiques: [Thematique.consommation],
+              progression: { current: 0, target: 1 },
+              sont_points_en_poche: false,
+              type: ContentType.service,
+              service_id: LiveService.linky,
               level: DifficultyLevel.L1,
               points: 20,
             },
