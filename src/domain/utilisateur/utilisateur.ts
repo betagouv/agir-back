@@ -25,7 +25,6 @@ export class UtilisateurData {
   revenu_fiscal: number;
   parts: number;
   abonnement_ter_loire: boolean;
-  prm: string;
   code_departement: string;
   created_at: Date;
   updated_at?: Date;
@@ -86,7 +85,6 @@ export class Utilisateur extends UtilisateurData {
 
       id: undefined,
       code_departement: null,
-      prm: null,
       revenu_fiscal: null,
       parts: null,
       abonnement_ter_loire: false,
