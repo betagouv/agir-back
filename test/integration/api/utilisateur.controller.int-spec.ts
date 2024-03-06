@@ -2,6 +2,12 @@ import { TestUtil } from '../../TestUtil';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 import { Impact } from '../../../src/domain/utilisateur/onboarding/onboarding';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../../../src/domain/utilisateur/logement';
 var crypto = require('crypto');
 
 const ONBOARDING_1_2_3_4_DATA = {
@@ -371,6 +377,18 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       logement: Impact.eleve,
       consommation: Impact.tres_eleve,
     });
+    expect(response.body.logement.dpe).toEqual(DPE.B);
+    expect(response.body.logement.superficie).toEqual(
+      Superficie.superficie_150,
+    );
+    expect(response.body.logement.type).toEqual(TypeLogement.maison);
+    expect(response.body.logement.code_postal).toEqual('91120');
+    expect(response.body.logement.chauffage).toEqual(Chauffage.bois);
+    expect(response.body.logement.commune).toEqual('PALAISEAU');
+    expect(response.body.logement.nombre_adultes).toEqual(2);
+    expect(response.body.logement.nombre_enfants).toEqual(2);
+    expect(response.body.logement.plus_de_15_ans).toEqual(true);
+    expect(response.body.logement.proprietaire).toEqual(true);
   });
   it('GET /utilisateurs/id/profile - use onboarding data when missing parts in user account', async () => {
     // GIVEN
