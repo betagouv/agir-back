@@ -3,6 +3,9 @@ import { ArticleHistory } from '../history/articleHistory';
 import { Thematique } from '../contenu/thematique';
 
 export class Article {
+  constructor(data: Article) {
+    Object.assign(this, data);
+  }
   content_id: string;
   titre: string;
   soustitre?: string;
@@ -21,9 +24,12 @@ export class Article {
 }
 
 export class PersonalArticle extends Article {
+  favoris: boolean;
+  read_date?: Date;
+  like_level?: number;
+
   constructor(article: Article, articleHistory?: ArticleHistory) {
-    super();
-    Object.assign(this, article);
+    super(article);
     if (articleHistory) {
       this.favoris = articleHistory.favoris;
       this.read_date = articleHistory.read_date;
@@ -34,7 +40,4 @@ export class PersonalArticle extends Article {
       this.like_level = null;
     }
   }
-  favoris: boolean;
-  read_date?: Date;
-  like_level?: number;
 }

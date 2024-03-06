@@ -21,6 +21,7 @@ import {
 import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
 import { KYC } from '../../../../src/domain/kyc/collectionQuestionsKYC';
 import { Equipements } from '../../../../src/domain/equipements/equipements';
+import { Logement } from '../../../../src/domain/utilisateur/logement';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -225,6 +226,9 @@ export class UtilisateurRepository {
       const equipements = new Equipements(
         Upgrader.upgradeRaw(user.equipements, SerialisableDomain.Equipements),
       );
+      const logement = new Logement(
+        Upgrader.upgradeRaw(user.logement, SerialisableDomain.Logement),
+      );
 
       return new Utilisateur({
         id: user.id,
@@ -262,6 +266,7 @@ export class UtilisateurRepository {
         version: user.version,
         migration_enabled: user.migration_enabled,
         version_ponderation: user.version_ponderation,
+        logement: logement,
       });
     }
     return null;
@@ -315,6 +320,10 @@ export class UtilisateurRepository {
       equipements: Upgrader.serialiseToLastVersion(
         user.equipements,
         SerialisableDomain.Equipements,
+      ),
+      logement: Upgrader.serialiseToLastVersion(
+        user.logement,
+        SerialisableDomain.Logement,
       ),
       kyc: Upgrader.serialiseToLastVersion(user.kyc, SerialisableDomain.KYC),
       version: user.version,

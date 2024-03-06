@@ -1,7 +1,7 @@
 import { TestUtil } from '../../TestUtil';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
-import { Utilisateur } from '../../../src/domain/utilisateur/utilisateur';
 import { Impact } from '../../../src/domain/utilisateur/onboarding/onboarding';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 var crypto = require('crypto');
 
 const ONBOARDING_1_2_3_4_DATA = {
@@ -31,6 +31,7 @@ function getFakeUtilisteur() {
 
 describe('/utilisateurs - Compte utilisateur (API test)', () => {
   const OLD_ENV = process.env;
+  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -528,31 +529,16 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
 
-    const userDB = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
-    const dbUtilisateur = new Utilisateur({
-      ...userDB,
-      commune: null,
-      onboardingData: null,
-      onboardingResult: null,
-      parcours_todo: null,
-      gamification: null,
-      unlocked_features: null,
-      history: null,
-      kyc: null,
-      equipements: null,
-      parts: 0,
-    });
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.failed_checkcode_count).toEqual(0);
     expect(userDB.passwordHash).toEqual(
       crypto
         .pbkdf2Sync('#1234567890HAHA', userDB.passwordSalt, 1000, 64, `sha512`)
         .toString(`hex`),
     );
-    expect(dbUtilisateur.sent_email_count).toEqual(0);
-    expect(dbUtilisateur.failed_login_count).toEqual(0);
-    expect(dbUtilisateur.prevent_login_before.getTime()).toBeGreaterThan(
+    expect(userDB.sent_email_count).toEqual(0);
+    expect(userDB.failed_login_count).toEqual(0);
+    expect(userDB.prevent_login_before.getTime()).toBeGreaterThan(
       Date.now() - 200,
     );
   });

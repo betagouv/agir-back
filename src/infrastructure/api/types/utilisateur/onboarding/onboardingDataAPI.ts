@@ -1,11 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Onboarding_v0 } from 'src/domain/object_store/Onboarding/onboarding_v0';
+import { Onboarding_v0 } from '../../../../../../src/domain/object_store/Onboarding/onboarding_v0';
 import {
+  TypeLogement,
+  Superficie,
   Chauffage,
+} from '../../../../../../src/domain/utilisateur/logement';
+import {
   Consommation,
   Repas,
-  Residence,
-  Superficie,
   TransportOnboarding,
 } from '../../../../../domain/utilisateur/onboarding/onboarding';
 
@@ -28,8 +30,8 @@ export class OnboardingDataAPI {
   adultes: number;
   @ApiProperty()
   enfants: number;
-  @ApiProperty({ enum: Residence })
-  residence: Residence;
+  @ApiProperty({ enum: TypeLogement })
+  residence: TypeLogement;
   @ApiProperty()
   proprietaire: boolean;
   @ApiProperty({

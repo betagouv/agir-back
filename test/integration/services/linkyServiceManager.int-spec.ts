@@ -4,8 +4,44 @@ import { DepartementRepository } from '../../../src/infrastructure/repository/de
 import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { LinkyServiceManager } from '../../../src/infrastructure/service/linky/LinkyServiceManager';
-import { Service, ServiceStatus } from '../../../src/domain/service/service';
-import { LiveService } from '../../../src/domain/service/serviceDefinition';
+import {
+  Service,
+  ServiceData,
+  ServiceStatus,
+} from '../../../src/domain/service/service';
+import {
+  LiveService,
+  ServiceDefinitionData,
+} from '../../../src/domain/service/serviceDefinition';
+import { Thematique } from '../../../src/domain/contenu/thematique';
+
+const SERVICE_DEF_DATA: ServiceDefinitionData = {
+  serviceDefinitionId: 'dummy_live',
+  titre: 'titre',
+  url: 'url',
+  icon_url: 'icon_url',
+  image_url: 'image_url',
+  is_local: true,
+  is_url_externe: true,
+  minute_period: 20,
+  scheduled_refresh: null,
+  dynamic_data: null,
+  last_refresh: null,
+  description: 'desc',
+  sous_description: 'sous desc',
+  parametrage_requis: true,
+  thematiques: [Thematique.climat, Thematique.logement],
+  nombre_installation: 0,
+  is_installed: true,
+};
+
+const SERVICE_DATA = {
+  serviceId: 'service-id',
+  utilisateurId: 'utilisateur-id',
+  serviceDefinitionId: 'dummy_live',
+  configuration: {},
+  status: ServiceStatus.CREATED,
+};
 
 describe('linkyServiceManager', () => {
   let serviceRepository = new ServiceRepository(TestUtil.prisma);
@@ -51,12 +87,11 @@ describe('linkyServiceManager', () => {
 
   it('computeLiveDynamicData : PRM invalide 032', async () => {
     // GIVEN
-    const serviceDefData = TestUtil.serviceDefinitionData();
-    const serviceData = TestUtil.serviceData();
 
     const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
+      serviceId: 'service-id',
       configuration: { error_code: '032' },
     });
 
@@ -73,8 +108,8 @@ describe('linkyServiceManager', () => {
     const serviceData = TestUtil.serviceData();
 
     const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       configuration: { error_code: '039' },
     });
 
@@ -91,8 +126,8 @@ describe('linkyServiceManager', () => {
     const serviceData = TestUtil.serviceData();
 
     const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       configuration: {},
     });
 
@@ -108,8 +143,8 @@ describe('linkyServiceManager', () => {
     const serviceData = TestUtil.serviceData();
 
     const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       configuration: { prm: '12345678901234' },
     });
 
@@ -125,8 +160,8 @@ describe('linkyServiceManager', () => {
     const serviceData = TestUtil.serviceData();
 
     const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       configuration: { prm: '12345678901234', live_prm: '12345678901234' },
     });
 
@@ -144,8 +179,8 @@ describe('linkyServiceManager', () => {
     await TestUtil.create('linky', { prm: '12345678901234' });
 
     const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       configuration: { prm: '12345678901234', live_prm: '12345678901234' },
     });
 
@@ -330,13 +365,11 @@ describe('linkyServiceManager', () => {
   });
   it('activateService : pas PRM => error', async () => {
     // GIVEN
-    const serviceDefData = TestUtil.serviceDefinitionData();
-    const serviceData = TestUtil.serviceData();
     await TestUtil.create('utilisateur');
 
     const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       configuration: {},
     });
 
@@ -362,17 +395,11 @@ describe('linkyServiceManager', () => {
     });
     const user = await utilisateurRepository.getById('utilisateur-id');
 
-    const serviceDefData = TestUtil.serviceDefinitionData({
-      id: LiveService.linky,
-    });
-    const serviceData = TestUtil.serviceData({
+    const service = new Service({
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       serviceDefinitionId: LiveService.linky,
       configuration: { prm: '123', live_prm: '123' },
-    });
-
-    const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
     });
 
     // WHEN
@@ -401,17 +428,11 @@ describe('linkyServiceManager', () => {
     });
     const user = await utilisateurRepository.getById('utilisateur-id');
 
-    const serviceDefData = TestUtil.serviceDefinitionData({
-      id: LiveService.linky,
-    });
-    const serviceData = TestUtil.serviceData({
+    const service = new Service({
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       serviceDefinitionId: LiveService.linky,
       configuration: { prm: '123' },
-    });
-
-    const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
     });
 
     // WHEN
@@ -452,21 +473,15 @@ describe('linkyServiceManager', () => {
     });
     const user = await utilisateurRepository.getById('utilisateur-id');
 
-    const serviceDefData = TestUtil.serviceDefinitionData({
-      id: LiveService.linky,
-    });
-    const serviceData = TestUtil.serviceData({
+    const service = new Service({
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       serviceDefinitionId: LiveService.linky,
       configuration: {
         prm: '123',
         error_code: '032',
         error_message: 'aie aie',
       },
-    });
-
-    const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
     });
 
     // WHEN
@@ -500,21 +515,15 @@ describe('linkyServiceManager', () => {
     });
     const user = await utilisateurRepository.getById('utilisateur-id');
 
-    const serviceDefData = TestUtil.serviceDefinitionData({
-      id: LiveService.linky,
-    });
-    const serviceData = TestUtil.serviceData({
+    const service = new Service({
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       serviceDefinitionId: LiveService.linky,
       configuration: {
         prm: '123',
         error_code: '12345',
         error_message: 'aie aie',
       },
-    });
-
-    const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
     });
 
     // WHEN
@@ -547,17 +556,11 @@ describe('linkyServiceManager', () => {
     });
     const user = await utilisateurRepository.getById('utilisateur-id');
 
-    const serviceDefData = TestUtil.serviceDefinitionData({
-      id: LiveService.linky,
-    });
-    const serviceData = TestUtil.serviceData({
+    const service = new Service({
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       serviceDefinitionId: LiveService.linky,
       configuration: { prm: '123' },
-    });
-
-    const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
     });
 
     // WHEN
@@ -600,17 +603,11 @@ describe('linkyServiceManager', () => {
       prm: '123',
     });
 
-    const serviceDefData = TestUtil.serviceDefinitionData({
-      id: LiveService.linky,
-    });
-    const serviceData = TestUtil.serviceData({
+    const service = new Service({
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       serviceDefinitionId: LiveService.linky,
       configuration: { prm: '123', winter_pk: 'abc' },
-    });
-
-    const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
     });
 
     // WHEN
@@ -645,21 +642,15 @@ describe('linkyServiceManager', () => {
 
     await TestUtil.create('linky', { prm: '123' });
 
-    const serviceDefData = TestUtil.serviceDefinitionData({
-      id: LiveService.linky,
-    });
-    const serviceData = TestUtil.serviceData({
+    const service = new Service({
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       serviceDefinitionId: LiveService.linky,
       configuration: {
         prm: '123',
         live_prm: '123',
         winter_pk: 'abc',
       },
-    });
-
-    const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
     });
 
     linkyAPIConnector.deleteSouscription.mockImplementation(() => {
@@ -699,10 +690,9 @@ describe('linkyServiceManager', () => {
 
     await TestUtil.create('linky', { prm: '123' });
 
-    const serviceDefData = TestUtil.serviceDefinitionData({
-      id: LiveService.linky,
-    });
-    const serviceData = TestUtil.serviceData({
+    const service = new Service({
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       serviceDefinitionId: LiveService.linky,
       configuration: {
         prm: '123',
@@ -710,11 +700,6 @@ describe('linkyServiceManager', () => {
         winter_pk: 'abc',
         error_code: '037',
       },
-    });
-
-    const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
     });
 
     // WHEN
@@ -751,17 +736,11 @@ describe('linkyServiceManager', () => {
 
     await TestUtil.create('linky', { prm: '123' });
 
-    const serviceDefData = TestUtil.serviceDefinitionData({
-      id: LiveService.linky,
-    });
-    const serviceData = TestUtil.serviceData({
+    const service = new Service({
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       serviceDefinitionId: LiveService.linky,
       configuration: { prm: '123' },
-    });
-
-    const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
     });
 
     // WHEN
@@ -798,18 +777,12 @@ describe('linkyServiceManager', () => {
       status: ServiceStatus.LIVE,
     });
 
-    const serviceDefData = TestUtil.serviceDefinitionData({
-      id: LiveService.linky,
-    });
-    const serviceData = TestUtil.serviceData({
+    const service = new Service({
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       serviceDefinitionId: LiveService.linky,
       configuration: { prm: '123', live_prm: '123' },
       status: ServiceStatus.LIVE,
-    });
-
-    const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
     });
 
     // WHEN
@@ -830,18 +803,12 @@ describe('linkyServiceManager', () => {
       status: ServiceStatus.CREATED,
     });
 
-    const serviceDefData = TestUtil.serviceDefinitionData({
-      id: LiveService.linky,
-    });
-    const serviceData = TestUtil.serviceData({
+    const service = new Service({
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       serviceDefinitionId: LiveService.linky,
       configuration: { prm: '123' },
       status: ServiceStatus.CREATED,
-    });
-
-    const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
     });
 
     // WHEN
@@ -872,18 +839,12 @@ describe('linkyServiceManager', () => {
       throw { code: '032', message: 'aie' };
     });
 
-    const serviceDefData = TestUtil.serviceDefinitionData({
-      id: LiveService.linky,
-    });
-    const serviceData = TestUtil.serviceData({
+    const service = new Service({
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       serviceDefinitionId: LiveService.linky,
       configuration: { prm: '123' },
       status: ServiceStatus.CREATED,
-    });
-
-    const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
     });
 
     // WHEN
@@ -915,18 +876,12 @@ describe('linkyServiceManager', () => {
       throw { code: '032', message: 'aie' };
     });
 
-    const serviceDefData = TestUtil.serviceDefinitionData({
-      id: LiveService.linky,
-    });
-    const serviceData = TestUtil.serviceData({
+    const service = new Service({
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       serviceDefinitionId: LiveService.linky,
       configuration: { prm: '123' },
       status: ServiceStatus.CREATED,
-    });
-
-    const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
     });
 
     // WHEN
@@ -959,18 +914,12 @@ describe('linkyServiceManager', () => {
     });
     await TestUtil.create('linky', { prm: '123' });
 
-    const serviceDefData = TestUtil.serviceDefinitionData({
-      id: LiveService.linky,
-    });
-    const serviceData = TestUtil.serviceData({
+    const service = new Service({
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       serviceDefinitionId: LiveService.linky,
       configuration: { prm: '123', live_prm: '123', sent_data_email: true },
       status: ServiceStatus.TO_DELETE,
-    });
-
-    const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
     });
 
     // WHEN
@@ -1002,18 +951,12 @@ describe('linkyServiceManager', () => {
     });
     await TestUtil.create('linky', { prm: '123' });
 
-    const serviceDefData = TestUtil.serviceDefinitionData({
-      id: LiveService.linky,
-    });
-    const serviceData = TestUtil.serviceData({
+    const service = new Service({
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
       serviceDefinitionId: LiveService.linky,
       configuration: { prm: '123', live_prm: '123' },
       status: ServiceStatus.LIVE,
-    });
-
-    const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
     });
 
     // WHEN
@@ -1044,18 +987,12 @@ describe('linkyServiceManager', () => {
     });
     await TestUtil.create('linky', { prm: '123' });
 
-    const serviceDefData = TestUtil.serviceDefinitionData({
-      id: LiveService.linky,
-    });
-    const serviceData = TestUtil.serviceData({
-      serviceDefinitionId: LiveService.linky,
+    const service = new Service({
+      ...SERVICE_DEF_DATA,
+      ...SERVICE_DATA,
+      serviceDefinitionId: 'linky',
       configuration: { prm: '123', live_prm: '123' },
       status: ServiceStatus.LIVE,
-    });
-
-    const service = new Service({
-      ...serviceDefData,
-      ...serviceData,
     });
 
     // WHEN

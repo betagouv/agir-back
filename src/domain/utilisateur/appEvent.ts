@@ -15,7 +15,7 @@ export enum EventType {
   access_conf_linky = 'access_conf_linky',
 }
 
-export class UtilisateurEvent {
+export class AppEvent {
   type: EventType;
   number_value?: number;
   interaction_id?: string;

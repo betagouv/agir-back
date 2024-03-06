@@ -235,7 +235,7 @@ describe('Gamification', () => {
       },
       [5, 15],
     );
-    let utilisateur = new Utilisateur(TestUtil.utilisateurData());
+    let utilisateur = new Utilisateur();
     utilisateur.unlocked_features = new UnlockedFeatures();
 
     // WHEN
@@ -263,7 +263,7 @@ describe('Gamification', () => {
       },
       [5, 15],
     );
-    let utilisateur = new Utilisateur(TestUtil.utilisateurData());
+    let utilisateur = new Utilisateur();
     utilisateur.unlocked_features = new UnlockedFeatures();
 
     // WHEN

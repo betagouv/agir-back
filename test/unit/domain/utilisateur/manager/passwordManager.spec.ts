@@ -1,13 +1,24 @@
 import { Utilisateur } from '../../../../../src/domain/utilisateur/utilisateur';
 import { PasswordManager } from '../../../../../src/domain/utilisateur/manager/passwordManager';
 import { UtilisateurSecurityRepository } from '../../../../../src/infrastructure/repository/utilisateur/utilisateurSecurity.repository';
-import { TestUtil } from '../../../../../test/TestUtil';
 
 const fakeSecurityRepository = new UtilisateurSecurityRepository({
   utilisateur: { update: jest.fn() },
 } as any);
 
 const passwordManager = new PasswordManager(fakeSecurityRepository);
+
+const BASIC_USER_DATA = {
+  active_account: true,
+  failed_login_count: 0,
+  prevent_login_before: new Date(),
+  code: '123456',
+  code_generation_time: new Date(),
+  failed_checkcode_count: 0,
+  prevent_checkcode_before: new Date(),
+  sent_email_count: 0,
+  prevent_sendemail_before: new Date(),
+};
 
 describe('Objet PasswordManager', () => {
   it('checkPasswordFormat : au moins contenir 1 chiffre', () => {
@@ -57,7 +68,7 @@ describe('Objet PasswordManager', () => {
 
   it('setPassword : hash and salt password', () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    let utilisateur = new Utilisateur();
     PasswordManager.setUserPassword(utilisateur, 'toto');
 
     // THEN
@@ -66,7 +77,7 @@ describe('Objet PasswordManager', () => {
   });
   it('checkPassword : OK and returns function result', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    let utilisateur = new Utilisateur();
     PasswordManager.setUserPassword(utilisateur, 'toto');
 
     // WHEN
@@ -83,7 +94,7 @@ describe('Objet PasswordManager', () => {
   });
   it('checkPassword : KO', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    let utilisateur = new Utilisateur();
     PasswordManager.setUserPassword(utilisateur, 'toto');
 
     const fonction = jest.fn();
@@ -105,7 +116,7 @@ describe('Objet PasswordManager', () => {
 
   it('isLoginLocked : not locked yet', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    let utilisateur = new Utilisateur();
     PasswordManager.setUserPassword(utilisateur, 'titi');
     utilisateur.prevent_login_before = new Date(new Date().getTime() - 10000);
 
@@ -123,7 +134,7 @@ describe('Objet PasswordManager', () => {
   });
   it('isLoginLocked : true because date in futur', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    let utilisateur = new Utilisateur();
     utilisateur.prevent_login_before = new Date(new Date().getTime() + 10000);
     const fonction = jest.fn();
 
@@ -139,7 +150,7 @@ describe('Objet PasswordManager', () => {
   });
   it('failLogin : increase counter', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    let utilisateur = new Utilisateur();
     utilisateur.setPassword('#1234567890HAHA');
     utilisateur.failed_login_count = 0;
 
@@ -153,7 +164,7 @@ describe('Objet PasswordManager', () => {
   });
   it('failedLogin : sets block date + 5 mins', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    let utilisateur = new Utilisateur();
     utilisateur.setPassword('#1234567890HAHA');
     utilisateur.failed_login_count = 3;
 

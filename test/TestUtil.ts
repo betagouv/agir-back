@@ -4,11 +4,8 @@ import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { Thematique } from '../src/domain/contenu/thematique';
 import {
-  Chauffage,
   Consommation,
   Repas,
-  Residence,
-  Superficie,
   ThematiqueOnboarding as ThematiqueOnboarding,
   TransportOnboarding,
 } from '../src/domain/utilisateur/onboarding/onboarding';
@@ -39,6 +36,25 @@ import {
   VoitureCarburant,
   VoitureGabarit,
 } from '../src/domain/equipements/vehicule';
+import { Logement_v0 } from '../src/domain/object_store/logement/logement_v0';
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../src/domain/utilisateur/logement';
+import { Empreinte, Ponderation, SituationNGC, Suivi } from '.prisma/client';
+import {
+  Article,
+  Groupe,
+  GroupeAbonnement,
+  Linky,
+  Quizz,
+  Service,
+  ServiceDefinition,
+  Utilisateur,
+} from '@prisma/client';
+import { ServiceStatus } from '../src/domain/service/service';
 
 export class TestUtil {
   constructor() {}
@@ -171,7 +187,7 @@ export class TestUtil {
       },
       created_at: new Date(),
       ...override,
-    };
+    } as SituationNGC;
   }
   static suiviData(override?) {
     return {
@@ -184,7 +200,7 @@ export class TestUtil {
       },
       utilisateurId: 'utilisateur-id',
       ...override,
-    };
+    } as Suivi;
   }
 
   static articleData(override?) {
@@ -205,7 +221,7 @@ export class TestUtil {
       thematique_principale: Thematique.climat,
       thematiques: [Thematique.climat, Thematique.logement],
       ...override,
-    };
+    } as Article;
   }
   static quizzData(override?) {
     return {
@@ -225,7 +241,7 @@ export class TestUtil {
       thematique_principale: Thematique.climat,
       thematiques: [Thematique.climat, Thematique.logement],
       ...override,
-    };
+    } as Quizz;
   }
 
   static empreinteData(override?) {
@@ -245,7 +261,7 @@ export class TestUtil {
       },
       utilisateurId: 'utilisateur-id',
       ...override,
-    };
+    } as Empreinte;
   }
   static utilisateurData(override?) {
     const unlocked: UnlockedFeatures_v1 = {
@@ -310,6 +326,20 @@ export class TestUtil {
       ],
     };
 
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+    };
+
     const onboarding: Onboarding_v0 = {
       version: 0,
       transports: [TransportOnboarding.voiture, TransportOnboarding.pied],
@@ -317,7 +347,7 @@ export class TestUtil {
       code_postal: '91120',
       adultes: 2,
       enfants: 1,
-      residence: Residence.maison,
+      residence: TypeLogement.maison,
       proprietaire: true,
       superficie: Superficie.superficie_100,
       chauffage: Chauffage.bois,
@@ -378,8 +408,9 @@ export class TestUtil {
       updated_at: undefined,
       kyc: kyc,
       equipements: equipements,
+      logement: logement,
       ...override,
-    };
+    } as Utilisateur;
   }
   static ponderationData(override?) {
     return {
@@ -391,7 +422,7 @@ export class TestUtil {
         '3': 30,
       },
       ...override,
-    };
+    } as Ponderation;
   }
   static thematiqueData(override?) {
     return {
@@ -399,7 +430,7 @@ export class TestUtil {
       id_cms: 1,
       titre: 'titre',
       ...override,
-    };
+    } as Thematique;
   }
   static serviceData(override?) {
     return {
@@ -407,9 +438,9 @@ export class TestUtil {
       utilisateurId: 'utilisateur-id',
       serviceDefinitionId: 'dummy_live',
       configuration: {},
-      status: 'CREATED',
+      status: ServiceStatus.CREATED,
       ...override,
-    };
+    } as Service;
   }
   static serviceDefinitionData(override?) {
     return {
@@ -429,7 +460,7 @@ export class TestUtil {
       parametrage_requis: true,
       thematiques: ['climat', 'logement'],
       ...override,
-    };
+    } as ServiceDefinition;
   }
   static groupeData(override?) {
     return {
@@ -437,7 +468,7 @@ export class TestUtil {
       name: 'name',
       description: 'description',
       ...override,
-    };
+    } as Groupe;
   }
   static groupeAbonnementData(override?) {
     return {
@@ -445,7 +476,7 @@ export class TestUtil {
       utilisateurId: 'utilisateur-id',
       admin: true,
       ...override,
-    };
+    } as GroupeAbonnement;
   }
   static linkyData(override?) {
     return {
@@ -465,6 +496,6 @@ export class TestUtil {
         },
       ],
       ...override,
-    };
+    } as Linky;
   }
 }

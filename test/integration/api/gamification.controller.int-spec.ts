@@ -1,6 +1,6 @@
-import { Gamification_v0 } from 'src/domain/object_store/gamification/gamification_v0';
+import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
-import { EventType } from '../../../src/domain/utilisateur/utilisateurEvent';
+import { EventType } from '../../../src/domain/utilisateur/appEvent';
 import { TestUtil } from '../../TestUtil';
 
 describe('Gamification  (API test)', () => {

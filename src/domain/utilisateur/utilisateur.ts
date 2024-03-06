@@ -10,6 +10,8 @@ import { History } from '../history/history';
 import { Environment } from '../environment';
 import { KYC } from '../kyc/collectionQuestionsKYC';
 import { Equipements } from '../equipements/equipements';
+import { Logement } from './logement';
+import { UtilisateurBehavior } from './utilisateurBehavior';
 
 export class UtilisateurData {
   id: string;
@@ -18,8 +20,8 @@ export class UtilisateurData {
   prenom: string;
   onboardingData: Onboarding;
   onboardingResult: OnboardingResult;
-  code_postal: string;
-  commune: string;
+  code_postal: string; // FIXME to delete
+  commune: string; // FIXME to delete
   revenu_fiscal: number;
   parts: number;
   abonnement_ter_loire: boolean;
@@ -47,12 +49,15 @@ export class UtilisateurData {
   migration_enabled: boolean;
   version_ponderation: number;
   kyc: KYC;
+  logement: Logement;
 }
 
 export class Utilisateur extends UtilisateurData {
-  constructor(data: UtilisateurData) {
+  constructor(data?: UtilisateurData) {
     super();
-    Object.assign(this, data);
+    if (data) {
+      Object.assign(this, data);
+    }
     if (!this.failed_login_count) this.failed_login_count = 0;
     if (!this.prevent_login_before) this.prevent_login_before = new Date();
     if (!this.sent_email_count) this.sent_email_count = 0;
@@ -64,7 +69,53 @@ export class Utilisateur extends UtilisateurData {
       this.prevent_sendemail_before = new Date();
   }
 
-  public getNombrePartsFiscalesOuEstimee() {
+  public static createNewUtilisateur(
+    nom: string,
+    prenom: string,
+    email: string,
+    onboarding: Onboarding,
+  ): Utilisateur {
+    return new Utilisateur({
+      nom: nom,
+      code_postal: onboarding.code_postal,
+      commune: onboarding.commune,
+      prenom: prenom,
+      email: email,
+      onboardingData: onboarding,
+      onboardingResult: OnboardingResult.buildFromOnboarding(onboarding),
+
+      id: undefined,
+      code_departement: null,
+      prm: null,
+      revenu_fiscal: null,
+      parts: null,
+      abonnement_ter_loire: false,
+      passwordHash: null,
+      passwordSalt: null,
+      active_account: false,
+      code: null,
+      code_generation_time: null,
+      created_at: undefined,
+      migration_enabled: false,
+      failed_checkcode_count: 0,
+      failed_login_count: 0,
+      prevent_login_before: new Date(),
+      prevent_checkcode_before: new Date(),
+      sent_email_count: 1,
+      prevent_sendemail_before: new Date(),
+      parcours_todo: new ParcoursTodo(),
+      gamification: new Gamification(),
+      unlocked_features: new UnlockedFeatures(),
+      history: new History(),
+      kyc: new KYC(),
+      equipements: new Equipements(),
+      version: UtilisateurBehavior.systemVersion(),
+      version_ponderation: UtilisateurBehavior.ponderationSystemVersion(),
+      logement: Logement.buildFromOnboarding(onboarding),
+    });
+  }
+
+  public getNombrePartsFiscalesOuEstimee?() {
     if (this.parts !== null) {
       return this.parts;
     }
@@ -82,11 +133,11 @@ export class Utilisateur extends UtilisateurData {
     return parts_estimee === 0 ? 1 : parts_estimee;
   }
 
-  public setPassword(password: string) {
+  public setPassword?(password: string) {
     PasswordManager.setUserPassword(this, password);
   }
 
-  public setNew6DigitCode() {
+  public setNew6DigitCode?() {
     CodeManager.setNew6DigitCode(this);
     this.code_generation_time = new Date();
   }
@@ -97,11 +148,11 @@ export class Utilisateur extends UtilisateurData {
     }
   }
 
-  public does_get_article_quizz_from_repo(): boolean {
+  public does_get_article_quizz_from_repo?(): boolean {
     return this.version > 0;
   }
 
-  public isAdmin(): boolean {
+  public isAdmin?(): boolean {
     return Environment.getAdminIdsStringList().includes(this.id);
   }
 }

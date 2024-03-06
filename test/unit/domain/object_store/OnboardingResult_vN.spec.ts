@@ -5,14 +5,16 @@ import {
 import { OnboardingResult } from '../../../../src/domain/utilisateur/onboarding/onboardingResult';
 import { OnboardingResult_v0 } from '../../../../src/domain/object_store/onboardingResult/onboardingResult_v0';
 import {
-  Chauffage,
   Consommation,
   Onboarding,
   Repas,
-  Residence,
-  Superficie,
   TransportOnboarding,
 } from '../../../../src/domain/utilisateur/onboarding/onboarding';
+import {
+  TypeLogement,
+  Superficie,
+  Chauffage,
+} from '../../../../src/domain/utilisateur/logement';
 
 describe('OnboardingResult vN ', () => {
   it('build OK from empty', () => {
@@ -37,7 +39,7 @@ describe('OnboardingResult vN ', () => {
         code_postal: '91120',
         adultes: 2,
         enfants: 1,
-        residence: Residence.maison,
+        residence: TypeLogement.maison,
         proprietaire: true,
         superficie: Superficie.superficie_150,
         chauffage: Chauffage.bois,
@@ -64,7 +66,7 @@ describe('OnboardingResult vN ', () => {
         code_postal: '91120',
         adultes: 2,
         enfants: 1,
-        residence: Residence.maison,
+        residence: TypeLogement.maison,
         proprietaire: true,
         superficie: Superficie.superficie_150,
         chauffage: Chauffage.bois,

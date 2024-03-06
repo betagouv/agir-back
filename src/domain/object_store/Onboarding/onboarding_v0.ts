@@ -1,9 +1,11 @@
+import {
+  TypeLogement,
+  Superficie,
+  Chauffage,
+} from '../../../../src/domain/utilisateur/logement';
 import { Onboarding } from '../../utilisateur/onboarding/onboarding';
 import {
   TransportOnboarding,
-  Residence,
-  Superficie,
-  Chauffage,
   Repas,
   Consommation,
 } from '../../utilisateur/onboarding/onboarding';
@@ -16,7 +18,7 @@ export class Onboarding_v0 extends Versioned {
   commune: string;
   adultes: number;
   enfants: number;
-  residence: Residence;
+  residence: TypeLogement;
   proprietaire: boolean;
   superficie: Superficie;
   chauffage: Chauffage;

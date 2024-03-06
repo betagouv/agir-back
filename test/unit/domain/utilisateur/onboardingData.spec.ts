@@ -1,11 +1,13 @@
 import {
   Chauffage,
+  TypeLogement,
+  Superficie,
+} from '../../../../src/domain/utilisateur/logement';
+import {
   Consommation,
   Impact,
   Onboarding,
   Repas,
-  Residence,
-  Superficie,
   TransportOnboarding,
 } from '../../../../src/domain/utilisateur/onboarding/onboarding';
 
@@ -21,7 +23,7 @@ const ONBOARDING_DATA = {
   enfants: 1,
   consommation: Consommation.jamais,
   repas: Repas.vegan,
-  residence: Residence.appartement,
+  residence: TypeLogement.appartement,
   superficie: Superficie.superficie_150,
 };
 
@@ -256,7 +258,7 @@ describe('Objet OnboardingData', () => {
     // GIVEN
     let onboarding = {
       ...ONBOARDING_DATA,
-      residence: Residence.appartement,
+      residence: TypeLogement.appartement,
       adultes: 1,
       enfants: 0,
       superficie: Superficie.superficie_35,
@@ -274,7 +276,7 @@ describe('Objet OnboardingData', () => {
     // GIVEN
     let onboarding = {
       ...ONBOARDING_DATA,
-      residence: Residence.maison,
+      residence: TypeLogement.maison,
       adultes: 2,
       enfants: 2,
       superficie: Superficie.superficie_70,
@@ -292,7 +294,7 @@ describe('Objet OnboardingData', () => {
     // GIVEN
     let onboarding = {
       ...ONBOARDING_DATA,
-      residence: Residence.appartement,
+      residence: TypeLogement.appartement,
       adultes: 2,
       enfants: 1,
       superficie: Superficie.superficie_100,
@@ -310,7 +312,7 @@ describe('Objet OnboardingData', () => {
     // GIVEN
     let onboarding = {
       ...ONBOARDING_DATA,
-      residence: Residence.maison,
+      residence: TypeLogement.maison,
       adultes: 2,
       enfants: 2,
       superficie: Superficie.superficie_150,

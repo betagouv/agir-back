@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Vehicule } from 'src/domain/equipements/vehicule';
+import { Vehicule } from '../../src/domain/equipements/vehicule';
 import { VehiculeAPI } from '../../src/infrastructure/api/types/equipements/vehiculeAPI';
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
 

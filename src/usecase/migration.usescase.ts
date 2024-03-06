@@ -89,12 +89,13 @@ export class MigrationUsecase {
   private async migrate_4(
     utilisateur: Utilisateur,
   ): Promise<{ ok: boolean; info: string }> {
-    if (utilisateur.gamification.points > 600) {
+    const plus_600 = utilisateur.gamification.points > 600;
+    if (plus_600) {
       utilisateur.unlocked_features.add(Feature.bibliotheque);
     }
     return {
       ok: true,
-      info: `revealed bilbio for user ${utilisateur.id} of ${utilisateur.gamification.points} points`,
+      info: `revealed bilbio for user ${utilisateur.id} of ${utilisateur.gamification.points} points : ${plus_600}`,
     };
   }
   private async migrate_5(

@@ -1,5 +1,6 @@
 import { Onboarding_v0 } from '../../../../src/domain/object_store/Onboarding/onboarding_v0';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
+import { TypeLogement, Superficie, Chauffage } from '../logement';
 
 export enum TransportOnboarding {
   voiture = 'voiture',
@@ -8,24 +9,7 @@ export enum TransportOnboarding {
   velo = 'velo',
   commun = 'commun',
 }
-export enum Residence {
-  maison = 'maison',
-  appartement = 'appartement',
-}
-export enum Superficie {
-  superficie_35 = 'superficie_35',
-  superficie_70 = 'superficie_70',
-  superficie_100 = 'superficie_100',
-  superficie_150 = 'superficie_150',
-  superficie_150_et_plus = 'superficie_150_et_plus',
-}
-export enum Chauffage {
-  electricite = 'electricite',
-  bois = 'bois',
-  fioul = 'fioul',
-  gaz = 'gaz',
-  autre = 'autre',
-}
+
 export enum Repas {
   tout = 'tout',
   vege = 'vege',
@@ -60,14 +44,15 @@ export class Onboarding {
   commune: string;
   adultes: number;
   enfants: number;
-  residence: Residence;
+  residence: TypeLogement;
   proprietaire: boolean;
   superficie: Superficie;
   chauffage: Chauffage;
   repas: Repas;
   consommation: Consommation;
 
-  constructor(data: Onboarding_v0) {
+  constructor(data?: Onboarding_v0) {
+    if (!data) return;
     this.transports = data.transports;
     this.avion = data.avion;
     this.code_postal = data.code_postal;
@@ -103,7 +88,7 @@ export class Onboarding {
     if (adultes >= 2) adultes = 1 + 0.66 * (adultes - 1);
     let enfants = this.enfants || 0;
     enfants = enfants * 0.33;
-    let residence = this.residence === Residence.maison ? 2 : 1;
+    let residence = this.residence === TypeLogement.maison ? 2 : 1;
     let superficie;
     let chauffage;
     switch (this.superficie) {
@@ -180,7 +165,7 @@ export class Onboarding {
       ApplicationError.throwDonneeObligatoireOnboarding(`transport`);
     }
     if (this.residence) {
-      if (!(this.residence in Residence))
+      if (!(this.residence in TypeLogement))
         ApplicationError.throwValeurInconnueOnboarding(
           'residence',
           this.residence,

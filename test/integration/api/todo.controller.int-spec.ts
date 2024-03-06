@@ -5,14 +5,14 @@ import { TestUtil } from '../../TestUtil';
 import { LiveService } from '../../../src/domain/service/serviceDefinition';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
-import { EventType } from '../../../src/domain/utilisateur/utilisateurEvent';
+import { EventType } from '../../../src/domain/utilisateur/appEvent';
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
 } from '../../../src/domain/kyc/questionQYC';
 import { KYC_v0 } from '../../../src/domain/object_store/kyc/kyc_v0';
 import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
-import { ParcoursTodo_v0 } from 'src/domain/object_store/parcoursTodo/parcoursTodo_v0';
+import { ParcoursTodo_v0 } from '../../../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
 
 describe('TODO list (API test)', () => {
   const OLD_ENV = process.env;

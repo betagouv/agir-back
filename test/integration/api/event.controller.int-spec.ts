@@ -1,4 +1,4 @@
-import { EventType } from '../../../src/domain/utilisateur/utilisateurEvent';
+import { EventType } from '../../../src/domain/utilisateur/appEvent';
 import { TestUtil } from '../../TestUtil';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';

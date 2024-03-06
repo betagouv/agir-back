@@ -1,11 +1,13 @@
 import {
+  TypeLogement,
+  Superficie,
   Chauffage,
+} from '../../../../src/domain/utilisateur/logement';
+import {
   Consommation,
   Impact,
   Onboarding,
   Repas,
-  Residence,
-  Superficie,
   ThematiqueOnboarding,
   TransportOnboarding,
 } from '../../../../src/domain/utilisateur/onboarding/onboarding';
@@ -17,7 +19,7 @@ const ONBOARDING_1_2_3_4 = {
   avion: 2,
   adultes: 2,
   enfants: 2,
-  residence: Residence.maison,
+  residence: TypeLogement.maison,
   proprietaire: true,
   superficie: Superficie.superficie_35,
   chauffage: Chauffage.bois,
@@ -111,7 +113,7 @@ describe('Objet OnboardingData', () => {
         avion: 2,
         adultes: 2,
         enfants: 2,
-        residence: Residence.appartement,
+        residence: TypeLogement.appartement,
         proprietaire: true,
         superficie: Superficie.superficie_35,
         chauffage: Chauffage.bois,

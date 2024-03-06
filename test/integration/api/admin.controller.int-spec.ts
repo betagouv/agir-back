@@ -371,7 +371,7 @@ describe('Admin (API test)', () => {
           {
             version: 4,
             ok: true,
-            info: `revealed bilbio for user utilisateur-id of 620 points`,
+            info: `revealed bilbio for user utilisateur-id of 620 points : true`,
           },
         ],
       },

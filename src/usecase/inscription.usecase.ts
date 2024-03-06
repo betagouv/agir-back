@@ -4,20 +4,12 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/onboarding/createUtilisateurAPI';
 import { Onboarding } from '../domain/utilisateur/onboarding/onboarding';
 import { OnboardingDataAPI } from '../infrastructure/api/types/utilisateur/onboarding/onboardingDataAPI';
-import { OnboardingResult } from '../domain/utilisateur/onboarding/onboardingResult';
 import { EmailSender } from '../infrastructure/email/emailSender';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import { CodeManager } from '../domain/utilisateur/manager/codeManager';
 import { OidcService } from '../infrastructure/auth/oidc.service';
 import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { Gamification } from '../domain/gamification/gamification';
-import { ParcoursTodo } from '../domain/todo/parcoursTodo';
-import { UnlockedFeatures } from '../domain/gamification/unlockedFeatures';
-import { History } from '../domain/history/history';
-import { UtilisateurBehavior } from '../domain/utilisateur/utilisateurBehavior';
-import { KYC } from '../domain/kyc/collectionQuestionsKYC';
-import { Equipements } from '../domain/equipements/equipements';
 
 export type Phrase = {
   phrase: string;
@@ -81,42 +73,12 @@ export class InscriptionUsecase {
       OnboardingDataAPI.convertToDomain(utilisateurInput.onboardingData),
     );
 
-    const utilisateurToCreate = new Utilisateur({
-      id: undefined,
-      code_postal: onboarding.code_postal,
-      commune: onboarding.commune,
-      created_at: undefined,
-      nom: utilisateurInput.nom,
-      prenom: utilisateurInput.prenom,
-      email: utilisateurInput.email,
-      onboardingData: onboarding,
-      onboardingResult: OnboardingResult.buildFromOnboarding(onboarding),
-      revenu_fiscal: null,
-      parts: null,
-      abonnement_ter_loire: false,
-      passwordHash: null,
-      passwordSalt: null,
-      active_account: false,
-      code: null,
-      code_generation_time: null,
-      failed_checkcode_count: 0,
-      failed_login_count: 0,
-      prevent_login_before: new Date(),
-      prevent_checkcode_before: new Date(),
-      sent_email_count: 1,
-      prevent_sendemail_before: new Date(),
-      parcours_todo: new ParcoursTodo(),
-      gamification: new Gamification(),
-      unlocked_features: new UnlockedFeatures(),
-      history: new History(),
-      code_departement: null,
-      kyc: new KYC(),
-      equipements: new Equipements(),
-      prm: null,
-      version: UtilisateurBehavior.systemVersion(),
-      migration_enabled: false,
-      version_ponderation: UtilisateurBehavior.ponderationSystemVersion(),
-    });
+    const utilisateurToCreate = Utilisateur.createNewUtilisateur(
+      utilisateurInput.nom,
+      utilisateurInput.prenom,
+      utilisateurInput.email,
+      onboarding,
+    );
 
     utilisateurToCreate.setNew6DigitCode();
 
