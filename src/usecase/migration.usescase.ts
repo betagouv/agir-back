@@ -101,6 +101,22 @@ export class MigrationUsecase {
   private async migrate_5(
     utilisateur: Utilisateur,
   ): Promise<{ ok: boolean; info: string }> {
+    utilisateur.logement.chauffage = utilisateur.onboardingData.chauffage;
+    utilisateur.logement.code_postal = utilisateur.code_postal;
+    utilisateur.logement.commune = utilisateur.commune;
+    utilisateur.logement.nombre_adultes = utilisateur.onboardingData.adultes;
+    utilisateur.logement.nombre_enfants = utilisateur.onboardingData.enfants;
+    utilisateur.logement.proprietaire = utilisateur.onboardingData.proprietaire;
+    utilisateur.logement.superficie = utilisateur.onboardingData.superficie;
+    utilisateur.logement.type = utilisateur.onboardingData.residence;
+    return {
+      ok: true,
+      info: `migrated logement data`,
+    };
+  }
+  private async migrate_6(
+    utilisateur: Utilisateur,
+  ): Promise<{ ok: boolean; info: string }> {
     return { ok: false, info: 'to implement' };
   }
 }

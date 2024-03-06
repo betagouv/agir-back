@@ -8,7 +8,11 @@ import { Gamification_v0 } from '../../../src/domain/object_store/gamification/g
 import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
 import { Feature } from '../../../src/domain/gamification/feature';
 import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
-import { LinkyData } from '../../../src/domain/linky/linkyData';
+import {
+  Chauffage,
+  Superficie,
+  TypeLogement,
+} from '../../../src/domain/utilisateur/logement';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
@@ -376,6 +380,48 @@ describe('Admin (API test)', () => {
         ],
       },
     ]);
+  });
+  it('POST /admin/migrate_users migration V5 OK', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create('utilisateur', {
+      version: 4,
+      migration_enabled: true,
+      logement: {},
+      code_postal: '12345',
+      commune: 'YO',
+    });
+    process.env.USER_CURRENT_VERSION = '5';
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 5,
+            ok: true,
+            info: `migrated logement data`,
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.version).toBe(5);
+    expect(userDB.logement.type).toEqual(TypeLogement.maison);
+    expect(userDB.logement.chauffage).toEqual(Chauffage.bois);
+    expect(userDB.logement.code_postal).toEqual('12345');
+    expect(userDB.logement.commune).toEqual('YO');
+    expect(userDB.logement.dpe).toEqual(undefined);
+    expect(userDB.logement.nombre_adultes).toEqual(2);
+    expect(userDB.logement.nombre_enfants).toEqual(1);
+    expect(userDB.logement.plus_de_15_ans).toEqual(undefined);
+    expect(userDB.logement.proprietaire).toEqual(true);
+    expect(userDB.logement.superficie).toEqual(Superficie.superficie_100);
   });
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
