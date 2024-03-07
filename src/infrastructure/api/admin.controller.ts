@@ -84,6 +84,16 @@ export class AdminController extends GenericControler {
     return await this.cmsUsecase.loadQuizzFromCMS();
   }
 
+  @Post('/admin/load_aides_from_cms')
+  @ApiOperation({
+    summary: 'Upsert toures les aides publiés du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async upsertAllCMSaides(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.cmsUsecase.loadAidesFromCMS();
+  }
+
   @Post('/admin/upsert_service_definitions')
   @ApiOperation({
     summary:

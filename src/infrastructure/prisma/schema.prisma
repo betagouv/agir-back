@@ -79,6 +79,19 @@ model Ponderation {
   rubriques Json   @default("{}")
 }
 
+model Aide {
+  content_id     String   @id
+  titre          String
+  contenu        String
+  url_simulateur String?
+  is_simulateur  Boolean?
+  codes_postaux  String[] @default([])
+  thematiques    String[] @default([])
+  montant_max    Int?
+  created_at     DateTime @default(now()) @db.Timestamptz(3)
+  updated_at     DateTime @updatedAt @db.Timestamptz(3)
+}
+
 model Article {
   content_id            String   @id
   titre                 String

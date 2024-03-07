@@ -78,6 +78,7 @@ import { EquipementUsecase } from './usecase/equipements.usecase';
 import { EquipementsController } from './infrastructure/api/equipements.controller';
 import { InscriptionUsecase } from './usecase/inscription.usecase';
 import { InscriptionController } from './infrastructure/api/inscription.controller';
+import { AideRepository } from './infrastructure/repository/aide.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -173,6 +174,7 @@ function getControllers(): any[] {
     LinkyEmailer,
     EquipementUsecase,
     InscriptionUsecase,
+    AideRepository,
   ],
 })
 export class AppModule {}

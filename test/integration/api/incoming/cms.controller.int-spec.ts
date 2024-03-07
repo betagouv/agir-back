@@ -1,9 +1,26 @@
 import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels';
-import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
 import { TestUtil } from '../../../TestUtil';
 
 describe('/api/incoming/cms (API test)', () => {
+  const CMS_DATA_AIDE = {
+    model: CMSModel.aide,
+    event: CMSEvent['entry.publish'],
+    entry: {
+      id: 123,
+      titre: 'titre',
+      description: "Contenu de l'aide",
+      url_detail_front: '/aide/velo',
+      is_simulation: true,
+      montantMaximum: '123',
+      thematiques: [
+        { id: 1, titre: 'Alimentation' },
+        { id: 2, titre: 'Climat' },
+      ],
+      codes_postaux: '91120,75002',
+      publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+    },
+  };
   const CMS_DATA_ARTICLE = {
     model: CMSModel.article,
     event: CMSEvent['entry.publish'],
@@ -206,6 +223,89 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles[0].rubrique_ids).toEqual(['1', '2']);
     expect(articles[0].rubrique_labels).toEqual(['A', 'B']);
   });
+
+  it('POST /api/incoming/cms - create a new aide in aide table', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_AIDE,
+    );
+
+    // THEN
+    const aides = await TestUtil.prisma.aide.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(aides).toHaveLength(1);
+    const aide = aides[0];
+    expect(aide.titre).toEqual('titre');
+    expect(aide.contenu).toEqual("Contenu de l'aide");
+    expect(aide.url_simulateur).toEqual('/aide/velo');
+    expect(aide.is_simulateur).toEqual(true);
+    expect(aide.montant_max).toEqual(123);
+    expect(aide.thematiques).toStrictEqual(['alimentation', 'climat']);
+    expect(aide.codes_postaux).toStrictEqual(['91120', '75002']);
+    expect(aide.content_id).toEqual('123');
+  });
+
+  it('POST /api/incoming/cms - updates exisying aide in aide table', async () => {
+    // GIVEN
+    await TestUtil.create('aide', { content_id: '123' });
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_AIDE,
+    );
+
+    // THEN
+    const aides = await TestUtil.prisma.aide.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(aides).toHaveLength(1);
+    const aide = aides[0];
+    expect(aide.titre).toEqual('titre');
+    expect(aide.contenu).toEqual("Contenu de l'aide");
+    expect(aide.url_simulateur).toEqual('/aide/velo');
+    expect(aide.is_simulateur).toEqual(true);
+    expect(aide.montant_max).toEqual(123);
+    expect(aide.thematiques).toStrictEqual(['alimentation', 'climat']);
+    expect(aide.codes_postaux).toStrictEqual(['91120', '75002']);
+    expect(aide.content_id).toEqual('123');
+  });
+
+  it('POST /api/incoming/cms - removes existing aide when unpublish', async () => {
+    // GIVEN
+    await TestUtil.create('aide', { content_id: '123' });
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send({
+      ...CMS_DATA_AIDE,
+      event: CMSEvent['entry.unpublish'],
+    });
+
+    // THEN
+    const aides = await TestUtil.prisma.aide.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(aides).toHaveLength(0);
+  });
+  it('POST /api/incoming/cms - removes existing aide when delete', async () => {
+    // GIVEN
+    await TestUtil.create('aide', { content_id: '123' });
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send({
+      ...CMS_DATA_AIDE,
+      event: CMSEvent['entry.delete'],
+    });
+
+    // THEN
+    const aides = await TestUtil.prisma.aide.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(aides).toHaveLength(0);
+  });
+
   it('POST /api/incoming/cms - create a new quizz in quizz table', async () => {
     // GIVEN
 

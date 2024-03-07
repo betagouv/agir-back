@@ -3,14 +3,14 @@ import Publicodes from 'publicodes';
 import rulesRetrofit from '../data/aidesRetrofit.json';
 import localisations from '../data/communes.json';
 
-import { AideBase, Localisation } from '../../../src/domain/aides/aide';
+import { AideVelo, Localisation } from '../../domain/aides/aideVelo';
 
 @Injectable()
 export class AidesRetrofitRepository {
   async get(
     codePostal: string,
     revenuFiscalDeReference: string,
-  ): Promise<AideBase[]> {
+  ): Promise<AideVelo[]> {
     return aidesRetrofit(codePostal, revenuFiscalDeReference);
   }
 }
@@ -18,7 +18,7 @@ export class AidesRetrofitRepository {
 async function aidesRetrofit(
   codePostal: string,
   revenuFiscalDeReference: string,
-): Promise<AideBase[]> {
+): Promise<AideVelo[]> {
   const rules = rulesRetrofit as Record<string, any>;
 
   const lieu = getLocalisationByCP(codePostal);

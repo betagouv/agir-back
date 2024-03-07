@@ -14,6 +14,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() id: number;
   @ApiProperty() titre: string;
   @ApiProperty() sousTitre: string;
+  @ApiProperty() description: string;
   @ApiProperty({ type: CMSThematiqueAPI })
   thematique_gamification: CMSThematiqueAPI;
   @ApiProperty({ type: [CMSThematiqueAPI] })
@@ -30,12 +31,16 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() points?: number;
   @ApiProperty() codes_postaux?: string;
   @ApiProperty() publishedAt: Date;
+  @ApiProperty() url_detail_front: string;
+  @ApiProperty() is_simulation: boolean;
+  @ApiProperty() montantMaximum: string;
 }
 export type CMSWebhookPopulateAPI = {
   id: number;
   attributes: {
     titre: string;
     sousTitre: string;
+    description: string;
     source: string;
     codes_postaux: string;
     duree: string;
@@ -43,6 +48,9 @@ export type CMSWebhookPopulateAPI = {
     points: number;
     difficulty: number;
     publishedAt: string;
+    is_simulation: boolean;
+    montantMaximum: string;
+    url_detail_front: string;
     thematiques: {
       data: [
         {

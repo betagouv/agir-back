@@ -16,6 +16,8 @@ import { ArticleRepository } from '../../src/infrastructure/repository/article.r
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
 import { Quizz } from '../../src/domain/quizz/quizz';
 import axios from 'axios';
+import { Aide } from '../../src/domain/aides/aide';
+import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
 
 @Injectable()
 export class CMSUsecase {
@@ -23,11 +25,10 @@ export class CMSUsecase {
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
     private thematiqueRepository: ThematiqueRepository,
-    private utilisateurRepository: UtilisateurRepository,
+    private aideRepository: AideRepository,
   ) {}
 
   async manageIncomingCMSData(cmsWebhookAPI: CMSWebhookAPI) {
-    if (cmsWebhookAPI.model === CMSModel.aide) return;
     if (cmsWebhookAPI.model === CMSModel.thematique) {
       switch (cmsWebhookAPI.event) {
         case CMSEvent['entry.publish']:
@@ -48,6 +49,30 @@ export class CMSUsecase {
           return this.createOrUpdateArticleOrQuizz(cmsWebhookAPI);
       }
     }
+    if (cmsWebhookAPI.model === CMSModel.aide) {
+      switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.unpublish']:
+          return this.deleteAide(cmsWebhookAPI);
+        case CMSEvent['entry.delete']:
+          return this.deleteAide(cmsWebhookAPI);
+        case CMSEvent['entry.publish']:
+          return this.createOrUpdateAide(cmsWebhookAPI);
+        case CMSEvent['entry.update']:
+          return this.createOrUpdateAide(cmsWebhookAPI);
+      }
+    }
+  }
+
+  async deleteAide(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.aideRepository.delete(cmsWebhookAPI.entry.id.toString());
+  }
+
+  async createOrUpdateAide(cmsWebhookAPI: CMSWebhookAPI) {
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
+
+    await this.aideRepository.upsert(
+      CMSUsecase.buildAideFromCMSData(cmsWebhookAPI.entry),
+    );
   }
 
   async loadArticlesFromCMS(): Promise<string[]> {
@@ -71,6 +96,31 @@ export class CMSUsecase {
     }
     for (let index = 0; index < liste_articles.length; index++) {
       await this.articleRepository.upsert(liste_articles[index]);
+    }
+    return loading_result;
+  }
+
+  async loadAidesFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste_aides: Aide[] = [];
+    const CMS_AIDE_DATA = await this.loadDataFromCMS('aides');
+
+    for (let index = 0; index < CMS_AIDE_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_AIDE_DATA[index];
+      let aide: Aide;
+      try {
+        aide = CMSUsecase.buildAideFromCMSPopulateData(element);
+        liste_aides.push(aide);
+        loading_result.push(`loaded aide : ${aide.content_id}`);
+      } catch (error) {
+        loading_result.push(
+          `Could not load article ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (let index = 0; index < liste_aides.length; index++) {
+      await this.aideRepository.upsert(liste_aides[index]);
     }
     return loading_result;
   }
@@ -101,7 +151,7 @@ export class CMSUsecase {
   }
 
   private async loadDataFromCMS(
-    type: 'articles' | 'quizzes',
+    type: 'articles' | 'quizzes' | 'aides',
   ): Promise<CMSWebhookPopulateAPI[]> {
     let response = null;
     const URL = process.env.CMS_URL.concat(
@@ -177,6 +227,25 @@ export class CMSUsecase {
     };
   }
 
+  static buildAideFromCMSData(entry: CMSWebhookEntryAPI): Aide {
+    return {
+      content_id: entry.id.toString(),
+      titre: entry.titre,
+      codes_postaux: entry.codes_postaux
+        ? entry.codes_postaux.split(',')
+        : undefined,
+      thematiques: entry.thematiques
+        ? CMSThematiqueAPI.getThematiqueList(entry.thematiques)
+        : [],
+      contenu: entry.description,
+      is_simulateur: entry.is_simulation ? true : false,
+      montant_max: entry.montantMaximum
+        ? Math.round(parseFloat(entry.montantMaximum))
+        : null,
+      url_simulateur: entry.url_detail_front,
+    };
+  }
+
   static buildArticleOrQuizzFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
   ): Article | Quizz {
@@ -217,6 +286,27 @@ export class CMSUsecase {
               CMSThematiqueAPI.getThematiqueByCmsId(elem.id),
             )
           : [Thematique.climat],
+    };
+  }
+  static buildAideFromCMSPopulateData(entry: CMSWebhookPopulateAPI): Aide {
+    return {
+      content_id: entry.id.toString(),
+      titre: entry.attributes.titre,
+      codes_postaux: entry.attributes.codes_postaux
+        ? entry.attributes.codes_postaux.split(',')
+        : [],
+      contenu: entry.attributes.description,
+      thematiques:
+        entry.attributes.thematiques.data.length > 0
+          ? entry.attributes.thematiques.data.map((elem) =>
+              CMSThematiqueAPI.getThematiqueByCmsId(elem.id),
+            )
+          : [Thematique.climat],
+      is_simulateur: entry.attributes.is_simulation ? true : false,
+      montant_max: entry.attributes.montantMaximum
+        ? Math.round(parseFloat(entry.attributes.montantMaximum))
+        : null,
+      url_simulateur: entry.attributes.url_detail_front,
     };
   }
 

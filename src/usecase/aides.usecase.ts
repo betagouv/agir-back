@@ -4,7 +4,7 @@ import { AidesVeloRepository } from '../infrastructure/repository/aidesVelo.repo
 
 import { AidesRetrofitRepository } from '../infrastructure/repository/aidesRetrofit.repository';
 
-import { AidesVeloParType, AideBase } from '../../src/domain/aides/aide';
+import { AidesVeloParType, AideVelo } from '../domain/aides/aideVelo';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class AidesUsecase {
   async getRetrofit(
     codePostal: string,
     revenuFiscalDeReference: string,
-  ): Promise<AideBase[]> {
+  ): Promise<AideVelo[]> {
     return this.aidesRetrofitRepository.get(
       codePostal,
       revenuFiscalDeReference,

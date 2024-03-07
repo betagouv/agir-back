@@ -45,6 +45,7 @@ import {
 } from '../src/domain/utilisateur/logement';
 import { Empreinte, Ponderation, SituationNGC, Suivi } from '.prisma/client';
 import {
+  Aide,
   Article,
   Groupe,
   GroupeAbonnement,
@@ -131,6 +132,7 @@ export class TestUtil {
     await this.prisma.article.deleteMany();
     await this.prisma.quizz.deleteMany();
     await this.prisma.ponderation.deleteMany();
+    await this.prisma.aide.deleteMany();
     ThematiqueRepository.resetThematiques();
   }
 
@@ -222,6 +224,19 @@ export class TestUtil {
       thematiques: [Thematique.climat, Thematique.logement],
       ...override,
     } as Article;
+  }
+  static aideData(override?): Aide {
+    return {
+      content_id: '1',
+      titre: 'titreA',
+      codes_postaux: ['91120'],
+      thematiques: [Thematique.climat, Thematique.logement],
+      contenu: "Contenu de l'aide",
+      is_simulateur: true,
+      montant_max: 999,
+      url_simulateur: '/aides/velo',
+      ...override,
+    };
   }
   static quizzData(override?) {
     return {
