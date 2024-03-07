@@ -377,18 +377,45 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       logement: Impact.eleve,
       consommation: Impact.tres_eleve,
     });
-    expect(response.body.logement.dpe).toEqual(DPE.B);
-    expect(response.body.logement.superficie).toEqual(
-      Superficie.superficie_150,
+  });
+  it('GET /utilisateurs/id/logement - read logement datas', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur', {
+      code_postal: '11111',
+      commune: 'Patelin',
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/logement',
     );
-    expect(response.body.logement.type).toEqual(TypeLogement.maison);
-    expect(response.body.logement.code_postal).toEqual('91120');
-    expect(response.body.logement.chauffage).toEqual(Chauffage.bois);
-    expect(response.body.logement.commune).toEqual('PALAISEAU');
-    expect(response.body.logement.nombre_adultes).toEqual(2);
-    expect(response.body.logement.nombre_enfants).toEqual(2);
-    expect(response.body.logement.plus_de_15_ans).toEqual(true);
-    expect(response.body.logement.proprietaire).toEqual(true);
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.dpe).toEqual(DPE.B);
+    expect(response.body.superficie).toEqual(Superficie.superficie_150);
+    expect(response.body.type).toEqual(TypeLogement.maison);
+    expect(response.body.code_postal).toEqual('91120');
+    expect(response.body.chauffage).toEqual(Chauffage.bois);
+    expect(response.body.commune).toEqual('PALAISEAU');
+    expect(response.body.nombre_adultes).toEqual(2);
+    expect(response.body.nombre_enfants).toEqual(2);
+    expect(response.body.plus_de_15_ans).toEqual(true);
+    expect(response.body.proprietaire).toEqual(true);
+  });
+  it('GET /utilisateurs/id/logement - read logement datas et prio sur donnee commune code postal utilisateur', async () => {
+    // GIVEN
+    const user = await TestUtil.create('utilisateur', {
+      code_postal: '11111',
+      commune: 'Patelin',
+      logement: {},
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/logement',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.code_postal).toEqual('11111');
+    expect(response.body.commune).toEqual('Patelin');
   });
   it('GET /utilisateurs/id/profile - use onboarding data when missing parts in user account', async () => {
     // GIVEN
@@ -469,6 +496,40 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
         .pbkdf2Sync('123456789012#', dbUser.passwordSalt, 1000, 64, `sha512`)
         .toString(`hex`),
     );
+  });
+  it('PATCH /utilisateurs/id/logement - update logement datas', async () => {
+    // GIVEN
+    await TestUtil.create('utilisateur');
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      nombre_adultes: 4,
+      nombre_enfants: 0,
+      code_postal: '11111',
+      commune: 'Patelin',
+      type: TypeLogement.appartement,
+      superficie: Superficie.superficie_35,
+      proprietaire: false,
+      chauffage: Chauffage.electricite,
+      plus_de_15_ans: false,
+      dpe: DPE.E,
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.getById('utilisateur-id');
+    expect(dbUser.code_postal).toEqual('11111');
+    expect(dbUser.commune).toEqual('Patelin');
+    expect(dbUser.logement.code_postal).toEqual('11111');
+    expect(dbUser.logement.commune).toEqual('Patelin');
+    expect(dbUser.logement.nombre_adultes).toEqual(4);
+    expect(dbUser.logement.nombre_enfants).toEqual(0);
+    expect(dbUser.logement.type).toEqual(TypeLogement.appartement);
+    expect(dbUser.logement.superficie).toEqual(Superficie.superficie_35);
+    expect(dbUser.logement.proprietaire).toEqual(false);
+    expect(dbUser.logement.plus_de_15_ans).toEqual(false);
+    expect(dbUser.logement.chauffage).toEqual(Chauffage.electricite);
+    expect(dbUser.logement.dpe).toEqual(DPE.E);
   });
   it('PATCH /utilisateurs/id/profile - bad password format', async () => {
     // GIVEN

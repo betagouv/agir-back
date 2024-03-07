@@ -22,7 +22,10 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
-import { UtilisateurProfileAPI } from './types/utilisateur/utilisateurProfileAPI';
+import {
+  LogementAPI,
+  UtilisateurProfileAPI,
+} from './types/utilisateur/utilisateurProfileAPI';
 import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
 import { LoginUtilisateurAPI } from './types/utilisateur/loginUtilisateurAPI';
 import { HttpStatus } from '@nestjs/common';
@@ -85,7 +88,7 @@ export class UtilisateurController extends GenericControler {
       "Infromation de profile d'un utilisateur d'id donné (nom, prenom, code postal, ...)",
   })
   @UseGuards(AuthGuard)
-  async getUtilisateurProfileById(
+  async getUtilisateurProfile(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<UtilisateurProfileAPI> {
@@ -98,6 +101,36 @@ export class UtilisateurController extends GenericControler {
       throw new NotFoundException(`Pas d'utilisateur d'id ${utilisateurId}`);
     }
     return UtilisateurProfileAPI.mapToAPI(utilisateur);
+  }
+
+  @ApiOkResponse({ type: LogementAPI })
+  @Get('utilisateurs/:utilisateurId/logement')
+  @ApiOperation({
+    summary:
+      "Infromation de logement d'un utilisateur d'id donné (code postal, supericie, etc)",
+  })
+  @UseGuards(AuthGuard)
+  async getUtilisateurLogement(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<LogementAPI> {
+    this.checkCallerId(req, utilisateurId);
+
+    let utilisateur = await this.utilisateurUsecase.findUtilisateurById(
+      utilisateurId,
+    );
+    if (utilisateur == null) {
+      throw new NotFoundException(`Pas d'utilisateur d'id ${utilisateurId}`);
+    }
+    // FIXME : to remove after migration
+    const result = LogementAPI.mapToAPI(utilisateur.logement);
+    if (result.code_postal === undefined) {
+      result.code_postal = utilisateur.code_postal;
+    }
+    if (result.commune === undefined) {
+      result.commune = utilisateur.commune;
+    }
+    return result;
   }
 
   @Post('utilisateurs/login')
@@ -126,6 +159,9 @@ export class UtilisateurController extends GenericControler {
   }
 
   @Patch('utilisateurs/:utilisateurId/profile')
+  @ApiBody({
+    type: UtilisateurProfileAPI,
+  })
   @ApiOperation({
     summary:
       "Mise à jour des infos de profile (nom, prenom, code postal, ...) d'un utilisateur d'id donné",
@@ -138,6 +174,27 @@ export class UtilisateurController extends GenericControler {
   ) {
     this.checkCallerId(req, utilisateurId);
     await this.utilisateurUsecase.updateUtilisateurProfile(utilisateurId, body);
+  }
+
+  @Patch('utilisateurs/:utilisateurId/logement')
+  @ApiBody({
+    type: LogementAPI,
+  })
+  @ApiOperation({
+    summary:
+      "Mise à jour des infos de logement (code postal, superficie, etc) d'un utilisateur d'id donné",
+  })
+  @UseGuards(AuthGuard)
+  async updateLogement(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Body() body: LogementAPI,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    await this.utilisateurUsecase.updateUtilisateurLogement(
+      utilisateurId,
+      body,
+    );
   }
 
   @Post('utilisateurs/oubli_mot_de_passe')

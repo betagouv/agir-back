@@ -1,6 +1,9 @@
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { UtilisateurProfileAPI } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
+import {
+  LogementAPI,
+  UtilisateurProfileAPI,
+} from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
 import { SuiviRepository } from '../infrastructure/repository/suivi.repository';
 import { BilanRepository } from '../infrastructure/repository/bilan.repository';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
@@ -106,6 +109,68 @@ export class UtilisateurUsecase {
     );
   }
 
+  async updateUtilisateurLogement(utilisateurId: string, input: LogementAPI) {
+    const utilisateur = await this.utilisateurRespository.getById(
+      utilisateurId,
+    );
+
+    utilisateur.logement.chauffage = this.AorB(
+      input.chauffage,
+      utilisateur.logement.chauffage,
+    );
+
+    utilisateur.logement.code_postal = this.AorB(
+      input.code_postal,
+      utilisateur.logement.code_postal,
+    );
+
+    utilisateur.logement.commune = this.AorB(
+      input.commune,
+      utilisateur.logement.commune,
+    );
+
+    utilisateur.logement.dpe = this.AorB(input.dpe, utilisateur.logement.dpe);
+
+    utilisateur.logement.nombre_adultes = this.AorB(
+      input.nombre_adultes,
+      utilisateur.logement.nombre_adultes,
+    );
+
+    utilisateur.logement.nombre_enfants = this.AorB(
+      input.nombre_enfants,
+      utilisateur.logement.nombre_enfants,
+    );
+
+    utilisateur.logement.proprietaire = this.AorB(
+      input.proprietaire,
+      utilisateur.logement.proprietaire,
+    );
+
+    utilisateur.logement.plus_de_15_ans = this.AorB(
+      input.plus_de_15_ans,
+      utilisateur.logement.plus_de_15_ans,
+    );
+
+    utilisateur.logement.superficie = this.AorB(
+      input.superficie,
+      utilisateur.logement.superficie,
+    );
+
+    utilisateur.logement.type = this.AorB(
+      input.type,
+      utilisateur.logement.type,
+    );
+
+    utilisateur.code_postal = this.AorB(
+      input.code_postal,
+      utilisateur.code_postal,
+    );
+
+    utilisateur.commune = this.AorB(input.commune, utilisateur.commune);
+
+    await this.utilisateurRespository.updateUtilisateur(utilisateur);
+  }
+
   async oubli_mot_de_passe(email: string) {
     const utilisateur = await this.utilisateurRespository.findByEmail(email);
 
@@ -179,6 +244,11 @@ export class UtilisateurUsecase {
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
     await this.groupeRepository.delete(utilisateurId);
     await this.utilisateurRespository.delete(utilisateurId);
+  }
+
+  private AorB<T>(a: T, b: T): T {
+    if (a === undefined) return b;
+    return a;
   }
 
   private async sendMotDePasseCode(utilisateur: Utilisateur) {
