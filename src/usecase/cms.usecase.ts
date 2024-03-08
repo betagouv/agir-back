@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CMSWebhookAPI } from '../infrastructure/api/types/cms/CMSWebhookAPI';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { Thematique } from '../domain/contenu/thematique';
 import { CMSThematiqueAPI } from '../infrastructure/api/types/cms/CMSThematiqueAPI';
 import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
@@ -219,10 +218,14 @@ export class CMSUsecase {
       difficulty: entry.difficulty ? entry.difficulty : 1,
       points: entry.points ? entry.points : 0,
       thematique_principale: entry.thematique_gamification
-        ? CMSThematiqueAPI.getThematique(entry.thematique_gamification)
+        ? ThematiqueRepository.getThematiqueByCmsId(
+            entry.thematique_gamification.id,
+          )
         : Thematique.climat,
       thematiques: entry.thematiques
-        ? CMSThematiqueAPI.getThematiqueList(entry.thematiques)
+        ? entry.thematiques.map((elem) =>
+            ThematiqueRepository.getThematiqueByCmsId(elem.id),
+          )
         : [],
     };
   }
@@ -235,7 +238,9 @@ export class CMSUsecase {
         ? entry.codes_postaux.split(',')
         : undefined,
       thematiques: entry.thematiques
-        ? CMSThematiqueAPI.getThematiqueList(entry.thematiques)
+        ? entry.thematiques.map((elem) =>
+            ThematiqueRepository.getThematiqueByCmsId(elem.id),
+          )
         : [],
       contenu: entry.description,
       is_simulateur: entry.is_simulation ? true : false,
@@ -276,14 +281,14 @@ export class CMSUsecase {
       difficulty: entry.attributes.difficulty ? entry.attributes.difficulty : 1,
       points: entry.attributes.points ? entry.attributes.points : 0,
       thematique_principale: entry.attributes.thematique_gamification.data
-        ? CMSThematiqueAPI.getThematiqueByCmsId(
+        ? ThematiqueRepository.getThematiqueByCmsId(
             entry.attributes.thematique_gamification.data.id,
           )
         : Thematique.climat,
       thematiques:
         entry.attributes.thematiques.data.length > 0
           ? entry.attributes.thematiques.data.map((elem) =>
-              CMSThematiqueAPI.getThematiqueByCmsId(elem.id),
+              ThematiqueRepository.getThematiqueByCmsId(elem.id),
             )
           : [Thematique.climat],
     };
@@ -299,7 +304,7 @@ export class CMSUsecase {
       thematiques:
         entry.attributes.thematiques.data.length > 0
           ? entry.attributes.thematiques.data.map((elem) =>
-              CMSThematiqueAPI.getThematiqueByCmsId(elem.id),
+              ThematiqueRepository.getThematiqueByCmsId(elem.id),
             )
           : [Thematique.climat],
       is_simulateur: entry.attributes.is_simulation ? true : false,
