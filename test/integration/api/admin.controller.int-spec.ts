@@ -13,6 +13,7 @@ import {
   Superficie,
   TypeLogement,
 } from '../../../src/domain/utilisateur/logement';
+const ponderation_catalogue = require('../../../src/usecase/referentiel/ponderation_catalogue');
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
@@ -121,7 +122,9 @@ describe('Admin (API test)', () => {
     expect(response.status).toBe(201);
 
     const ponderations = await TestUtil.prisma.ponderation.findMany();
-    expect(ponderations).toHaveLength(1);
+    expect(ponderations.length).toEqual(
+      Object.keys(ponderation_catalogue).length,
+    );
 
     const ponderation = await TestUtil.prisma.ponderation.findUnique({
       where: { id: 'noel' },

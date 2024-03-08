@@ -104,29 +104,38 @@ export class ArticleRepository {
 
   public async getArticleRecommandations(
     version: number,
+    utilisateurId: string,
   ): Promise<ContentRecommandation> {
     const result = new ContentRecommandation();
     const query = `
     SELECT
-      coalesce(SUM(CAST(poids_rubrique->rubrique_article as INTEGER)),0) as score, content_id
+      coalesce(SUM(CAST(poids_rubrique->rubrique_article as INTEGER)),0)
+      +
+      coalesce(SUM(CAST(ponderation_tags->tags as INTEGER)),0)
+      as score, content_id
     FROM
       (
         SELECT
-          "Ponderation".rubriques AS poids_rubrique,
-          unnest("Article".rubrique_ids) as rubrique_article,
-          "Article".content_id as content_id
+        "Utilisateur".ponderation_tags AS ponderation_tags,
+        "Ponderation".rubriques AS poids_rubrique,
+        unnest("Article".rubrique_ids) as rubrique_article,
+        unnest("Article".tags) as tags,
+        "Article".content_id as content_id
         FROM
           "Ponderation",
-          "Article"
+          "Article",
+          "Utilisateur"
         WHERE
-          "Ponderation".version = ${version}
-      ) as SUBQUERY
+        "Ponderation".version = ${version} AND
+        "Utilisateur".id = '${utilisateurId}'
+        ) as SUBQUERY
     GROUP BY
       content_id
     ORDER BY
       score desc
     ;
     `;
+    console.log(query);
     const recos: { score: BigInt; content_id: string }[] =
       await this.prisma.$queryRawUnsafe(query);
     recos.forEach((element) => {
@@ -153,6 +162,7 @@ export class ArticleRepository {
       points: articleDB.points,
       thematique_principale: Thematique[articleDB.thematique_principale],
       thematiques: articleDB.thematiques.map((th) => Thematique[th]),
+      tags: articleDB.tags,
     };
   }
 }

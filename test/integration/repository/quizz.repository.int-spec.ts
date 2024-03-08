@@ -281,6 +281,7 @@ describe('QuizzRepository', () => {
   });
   it('getQuizzRecommendations : order by rubrique/diffculty ponderation', async () => {
     // GIVEN
+    await TestUtil.create('utilisateur');
     await TestUtil.create('ponderation', {
       version: 0,
       rubriques: {
@@ -316,7 +317,10 @@ describe('QuizzRepository', () => {
     });
 
     // WHEN
-    const reco = await quizzRepository.getQuizzRecommandations(0);
+    const reco = await quizzRepository.getQuizzRecommandations(
+      0,
+      'utilisateur-id',
+    );
 
     // THEN
     expect(reco.liste).toHaveLength(5);
@@ -328,6 +332,7 @@ describe('QuizzRepository', () => {
   });
   it('getQuizzRecommendations : ne plante pas si version manquante', async () => {
     // GIVEN
+    await TestUtil.create('utilisateur');
     await TestUtil.create('ponderation', {
       version: 2,
       rubriques: {
@@ -353,13 +358,17 @@ describe('QuizzRepository', () => {
     });
 
     // WHEN
-    const reco = await quizzRepository.getQuizzRecommandations(0);
+    const reco = await quizzRepository.getQuizzRecommandations(
+      0,
+      'utilisateur-id',
+    );
 
     // THEN
     expect(reco.liste).toHaveLength(0);
   });
   it('getQuizzRecommendations : ne plante pas si table ponderation vide', async () => {
     // GIVEN
+    await TestUtil.create('utilisateur');
     await TestUtil.create('quizz', {
       content_id: '1',
       difficulty: DifficultyLevel.L1,
@@ -377,7 +386,10 @@ describe('QuizzRepository', () => {
     });
 
     // WHEN
-    const reco = await quizzRepository.getQuizzRecommandations(0);
+    const reco = await quizzRepository.getQuizzRecommandations(
+      0,
+      'utilisateur-id',
+    );
 
     // THEN
     expect(reco.liste).toHaveLength(0);

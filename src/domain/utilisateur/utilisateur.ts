@@ -12,6 +12,11 @@ import { KYC } from '../kyc/collectionQuestionsKYC';
 import { Equipements } from '../equipements/equipements';
 import { Logement } from './logement';
 import { UtilisateurBehavior } from './utilisateurBehavior';
+import {
+  PonderationTagHelper,
+  PonderationTagSet,
+  Tag,
+} from './ponderationTags';
 
 export class UtilisateurData {
   id: string;
@@ -49,6 +54,7 @@ export class UtilisateurData {
   version_ponderation: number;
   kyc: KYC;
   logement: Logement;
+  ponderation_tags: PonderationTagSet;
 }
 
 export class Utilisateur extends UtilisateurData {
@@ -110,6 +116,7 @@ export class Utilisateur extends UtilisateurData {
       version: UtilisateurBehavior.systemVersion(),
       version_ponderation: UtilisateurBehavior.ponderationSystemVersion(),
       logement: Logement.buildFromOnboarding(onboarding),
+      ponderation_tags: {},
     });
   }
 
@@ -152,5 +159,9 @@ export class Utilisateur extends UtilisateurData {
 
   public isAdmin?(): boolean {
     return Environment.getAdminIdsStringList().includes(this.id);
+  }
+
+  public setTag?(tag: Tag, value: number) {
+    PonderationTagHelper.addTagToSet(this.ponderation_tags, tag, value);
   }
 }

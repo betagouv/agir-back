@@ -203,6 +203,7 @@ export class CMSUsecase {
   ): Article | Quizz {
     return {
       content_id: entry.id.toString(),
+      tags: [],
       titre: entry.titre,
       soustitre: entry.sousTitre,
       source: entry.source,
@@ -256,6 +257,7 @@ export class CMSUsecase {
   ): Article | Quizz {
     return {
       content_id: entry.id.toString(),
+      tags: [],
       titre: entry.attributes.titre,
       soustitre: entry.attributes.sousTitre,
       source: entry.attributes.source,

@@ -213,6 +213,7 @@ export class TestUtil {
       source: 'ADEME',
       image_url: 'https://',
       partenaire: 'Angers',
+      tags: [],
       rubrique_ids: ['3', '4'],
       rubrique_labels: ['r3', 'r4'],
       codes_postaux: ['91120'],
@@ -246,6 +247,7 @@ export class TestUtil {
       source: 'ADEME',
       image_url: 'https://',
       partenaire: 'Angers',
+      tags: [],
       rubrique_ids: ['3', '4'],
       rubrique_labels: ['r3', 'r4'],
       codes_postaux: ['91120'],
@@ -423,6 +425,7 @@ export class TestUtil {
       kyc: kyc,
       equipements: equipements,
       logement: logement,
+      ponderation_tags: {},
       ...override,
     } as Utilisateur;
   }

@@ -71,6 +71,7 @@ model Utilisateur {
   version                  Int                @default(0)
   migration_enabled        Boolean            @default(false)
   version_ponderation      Int                @default(0)
+  ponderation_tags         Json               @default("{}")
 }
 
 model Ponderation {
@@ -99,6 +100,7 @@ model Article {
   source                String?
   image_url             String?
   partenaire            String?
+  tags                  String[] @default([])
   rubrique_ids          String[] @default([])
   rubrique_labels       String[] @default([])
   codes_postaux         String[] @default([])
@@ -119,6 +121,7 @@ model Quizz {
   source                String?
   image_url             String?
   partenaire            String?
+  tags                  String[] @default([])
   rubrique_ids          String[] @default([])
   rubrique_labels       String[] @default([])
   codes_postaux         String[] @default([])

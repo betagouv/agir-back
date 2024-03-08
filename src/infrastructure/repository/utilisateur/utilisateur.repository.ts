@@ -266,6 +266,7 @@ export class UtilisateurRepository {
         migration_enabled: user.migration_enabled,
         version_ponderation: user.version_ponderation,
         logement: logement,
+        ponderation_tags: user.ponderation_tags as any,
       });
     }
     return null;
@@ -329,6 +330,7 @@ export class UtilisateurRepository {
       prevent_login_before: user.prevent_login_before,
       migration_enabled: user.migration_enabled,
       version_ponderation: user.version_ponderation,
+      ponderation_tags: user.ponderation_tags,
       created_at: undefined,
       updated_at: undefined,
     };

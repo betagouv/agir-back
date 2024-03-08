@@ -93,23 +93,31 @@ export class QuizzRepository {
 
   public async getQuizzRecommandations(
     version: number,
+    utilisateurId: string,
   ): Promise<ContentRecommandation> {
     const result = new ContentRecommandation();
     const query = `
     SELECT
-      coalesce(SUM(CAST(poids_rubrique->rubrique_quizz as INTEGER)),0) as score, content_id, difficulty
+      coalesce(SUM(CAST(poids_rubrique->rubrique_quizz as INTEGER)),0)
+      +
+      coalesce(SUM(CAST(ponderation_tags->tags as INTEGER)),0)
+      as score, content_id, difficulty
     FROM
       (
         SELECT
+          "Utilisateur".ponderation_tags AS ponderation_tags,
           "Ponderation".rubriques AS poids_rubrique,
           unnest("Quizz".rubrique_ids) as rubrique_quizz,
+          unnest("Quizz".tags) as tags,
           "Quizz".content_id as content_id,
           "Quizz".difficulty as difficulty
         FROM
           "Ponderation",
-          "Quizz"
+          "Quizz",
+          "Utilisateur"
         WHERE
-          "Ponderation".version = ${version}
+          "Ponderation".version = ${version} AND
+          "Utilisateur".id = '${utilisateurId}'
       ) as SUBQUERY
     GROUP BY
       content_id, difficulty
@@ -144,6 +152,7 @@ export class QuizzRepository {
       points: quizzDB.points,
       thematique_principale: Thematique[quizzDB.thematique_principale],
       thematiques: quizzDB.thematiques.map((th) => Thematique[th]),
+      tags: quizzDB.tags,
     };
   }
 }

@@ -13,6 +13,7 @@ describe('ContentRecommandation', () => {
     points: 0,
     thematiques: [],
     thematique_principale: null,
+    tags: [],
   };
 
   it('append : append OK', () => {

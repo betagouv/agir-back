@@ -16,4 +16,5 @@ export type Quizz = {
   points: number;
   thematique_principale: Thematique;
   thematiques: Thematique[];
+  tags: string[];
 };

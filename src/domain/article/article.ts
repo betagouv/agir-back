@@ -21,6 +21,7 @@ export class Article {
   points: number;
   thematique_principale: Thematique;
   thematiques: Thematique[];
+  tags: string[];
 }
 
 export class PersonalArticle extends Article {
