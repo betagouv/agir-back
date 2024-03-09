@@ -22,15 +22,17 @@ export class ArticleRepository {
   constructor(private prisma: PrismaService) {}
 
   async upsert(article: Article): Promise<void> {
+    const article_to_save = { ...article };
+    delete article_to_save.score;
     await this.prisma.article.upsert({
       where: { content_id: article.content_id },
       create: {
-        ...article,
+        ...article_to_save,
         created_at: undefined,
         updated_at: undefined,
       },
       update: {
-        ...article,
+        ...article_to_save,
         updated_at: undefined,
       },
     });
@@ -134,7 +136,6 @@ export class ArticleRepository {
       score desc
     ;
     `;
-    console.log(query);
     const recos: { score: BigInt; content_id: string }[] =
       await this.prisma.$queryRawUnsafe(query);
     recos.forEach((element) => {
@@ -162,6 +163,7 @@ export class ArticleRepository {
       thematique_principale: Thematique[articleDB.thematique_principale],
       thematiques: articleDB.thematiques.map((th) => Thematique[th]),
       tags: articleDB.tags,
+      score: 0,
     };
   }
 }

@@ -7,6 +7,7 @@ const BASIC_ARTICLE: Article = new Article({
   ...TestUtil.articleData(),
   thematique_principale: Thematique.alimentation,
   thematiques: [Thematique.alimentation, Thematique.climat],
+  score: 0,
 });
 
 describe('History', () => {

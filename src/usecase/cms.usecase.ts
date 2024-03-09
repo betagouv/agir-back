@@ -228,6 +228,7 @@ export class CMSUsecase {
             ThematiqueRepository.getThematiqueByCmsId(elem.id),
           )
         : [],
+      score: 0,
     };
   }
 
@@ -293,6 +294,7 @@ export class CMSUsecase {
               ThematiqueRepository.getThematiqueByCmsId(elem.id),
             )
           : [Thematique.climat],
+      score: 0,
     };
   }
   static buildAideFromCMSPopulateData(entry: CMSWebhookPopulateAPI): Aide {

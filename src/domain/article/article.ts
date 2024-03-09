@@ -5,6 +5,9 @@ import { Thematique } from '../contenu/thematique';
 export class Article {
   constructor(data: Article) {
     Object.assign(this, data);
+    if (!this.score) {
+      this.score = 0;
+    }
   }
   content_id: string;
   titre: string;
@@ -22,6 +25,7 @@ export class Article {
   thematique_principale: Thematique;
   thematiques: Thematique[];
   tags: string[];
+  score: number;
 }
 
 export class PersonalArticle extends Article {

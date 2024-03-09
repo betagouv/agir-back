@@ -322,12 +322,12 @@ describe('QuizzRepository', () => {
     );
 
     // THEN
-    expect(reco.liste).toHaveLength(5);
-    expect(reco.liste[0].content_id).toEqual('2');
-    expect(reco.liste[1].content_id).toEqual('3');
-    expect(reco.liste[2].content_id).toEqual('1');
-    expect(reco.liste[3].content_id).toEqual('5');
-    expect(reco.liste[4].content_id).toEqual('4');
+    expect(reco.content_scores).toHaveLength(5);
+    expect(reco.content_scores[0].content_id).toEqual('2');
+    expect(reco.content_scores[1].content_id).toEqual('3');
+    expect(reco.content_scores[2].content_id).toEqual('1');
+    expect(reco.content_scores[3].content_id).toEqual('5');
+    expect(reco.content_scores[4].content_id).toEqual('4');
   });
   it('getQuizzRecommendations : ne plante pas si version manquante', async () => {
     // GIVEN
@@ -362,7 +362,7 @@ describe('QuizzRepository', () => {
     );
 
     // THEN
-    expect(reco.liste).toHaveLength(0);
+    expect(reco.content_scores).toHaveLength(0);
   });
   it('getQuizzRecommendations : ne plante pas si table ponderation vide', async () => {
     // GIVEN
@@ -389,6 +389,6 @@ describe('QuizzRepository', () => {
     );
 
     // THEN
-    expect(reco.liste).toHaveLength(0);
+    expect(reco.content_scores).toHaveLength(0);
   });
 });

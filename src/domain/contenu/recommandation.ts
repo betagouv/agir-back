@@ -10,4 +10,5 @@ export class Recommandation {
   duree?: string;
   image_url: string;
   points: number;
+  score: number;
 }

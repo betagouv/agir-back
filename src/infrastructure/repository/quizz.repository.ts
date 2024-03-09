@@ -20,15 +20,17 @@ export class QuizzRepository {
   constructor(private prisma: PrismaService) {}
 
   async upsert(quizz: Quizz): Promise<void> {
+    const quizz_to_save = { ...quizz };
+    delete quizz_to_save.score;
     await this.prisma.quizz.upsert({
       where: { content_id: quizz.content_id },
       create: {
-        ...quizz,
+        ...quizz_to_save,
         created_at: undefined,
         updated_at: undefined,
       },
       update: {
-        ...quizz,
+        ...quizz_to_save,
         updated_at: undefined,
       },
     });
@@ -152,6 +154,7 @@ export class QuizzRepository {
       thematique_principale: Thematique[quizzDB.thematique_principale],
       thematiques: quizzDB.thematiques.map((th) => Thematique[th]),
       tags: quizzDB.tags,
+      score: 0,
     };
   }
 }

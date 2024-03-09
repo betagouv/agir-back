@@ -29,7 +29,6 @@ export class RecommandationUsecase {
       result.push({
         ...article,
         type: ContentType.article,
-        thematique_principale: article.thematique_principale,
       });
     });
 
@@ -37,9 +36,12 @@ export class RecommandationUsecase {
       result.push({
         ...quizz,
         type: ContentType.quizz,
-        thematique_principale: quizz.thematique_principale,
       });
     });
+
+    result.sort((a, b) => b.score - a.score);
+
+    if (result.length > 10) result = result.slice(0, 10);
 
     return result;
   }
@@ -53,15 +55,11 @@ export class RecommandationUsecase {
       exclude_ids: articles_lus,
     });
 
-    const article_recommandation =
-      await this.articleRepository.getArticleRecommandations(utilisateur.id);
+    const scoring = await this.articleRepository.getArticleRecommandations(
+      utilisateur.id,
+    );
 
-    if (article_recommandation.liste.length > 0) {
-      articles =
-        article_recommandation.filterAndOrderArticlesOrQuizzes(articles);
-    }
-
-    if (articles.length > 2) articles = articles.slice(0, 2);
+    scoring.affectScores(articles);
 
     return articles;
   }
@@ -71,18 +69,14 @@ export class RecommandationUsecase {
 
     let quizzes = await this.quizzRepository.searchQuizzes({
       code_postal: utilisateur.code_postal,
-      asc_difficulty: true,
       exclude_ids: quizz_attempted,
     });
 
-    const quizz_recommandation =
-      await this.quizzRepository.getQuizzRecommandations(utilisateur.id);
+    const scoring = await this.quizzRepository.getQuizzRecommandations(
+      utilisateur.id,
+    );
 
-    if (quizz_recommandation.liste.length > 0) {
-      quizzes = quizz_recommandation.filterAndOrderArticlesOrQuizzes(quizzes);
-    }
-
-    if (quizzes.length > 2) quizzes = quizzes.slice(0, 2);
+    scoring.affectScores(quizzes);
 
     return quizzes;
   }

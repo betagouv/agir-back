@@ -14,6 +14,7 @@ describe('ContentRecommandation', () => {
     thematiques: [],
     thematique_principale: null,
     tags: [],
+    score: 0,
   };
 
   it('append : append OK', () => {
@@ -24,9 +25,46 @@ describe('ContentRecommandation', () => {
     reco.append(10, 'A');
 
     // THEN
-    expect(reco.liste).toHaveLength(1);
-    expect(reco.liste[0].score).toEqual(10);
-    expect(reco.liste[0].content_id).toEqual('A');
+    expect(reco.content_scores).toHaveLength(1);
+    expect(reco.content_scores[0].score).toEqual(10);
+    expect(reco.content_scores[0].content_id).toEqual('A');
+  });
+  it('affectScores : OK', () => {
+    // GIVEN
+    const reco = new ContentRecommandation();
+    reco.append(10, 'A');
+    reco.append(20, 'B');
+    reco.append(30, 'C');
+
+    const a: Article = { ...ARTICLE, content_id: 'A' };
+    const b: Article = { ...ARTICLE, content_id: 'B' };
+    const c: Article = { ...ARTICLE, content_id: 'C' };
+
+    // WHEN
+    reco.affectScores([c, a, b]);
+
+    // THEN
+    expect(a.score).toEqual(10);
+    expect(b.score).toEqual(20);
+    expect(c.score).toEqual(30);
+  });
+  it('affectScores : OK if missing ids', () => {
+    // GIVEN
+    const reco = new ContentRecommandation();
+    reco.append(10, 'A');
+    reco.append(30, 'C');
+
+    const a: Article = { ...ARTICLE, content_id: 'A' };
+    const b: Article = { ...ARTICLE, content_id: 'B' };
+    const c: Article = { ...ARTICLE, content_id: 'C' };
+
+    // WHEN
+    reco.affectScores([c, a, b]);
+
+    // THEN
+    expect(a.score).toEqual(10);
+    expect(b.score).toEqual(0);
+    expect(c.score).toEqual(30);
   });
   it('filterAndOrderArticles : order OK', () => {
     // GIVEN

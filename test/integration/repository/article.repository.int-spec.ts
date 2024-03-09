@@ -313,13 +313,13 @@ describe('ArticleRepository', () => {
     );
 
     // THEN
-    expect(reco.liste).toHaveLength(3);
-    expect(reco.liste[0].content_id).toEqual('3');
-    expect(reco.liste[1].content_id).toEqual('1');
-    expect(reco.liste[2].content_id).toEqual('2');
-    expect(reco.liste[0].score).toEqual(30);
-    expect(reco.liste[1].score).toEqual(20);
-    expect(reco.liste[2].score).toEqual(10);
+    expect(reco.content_scores).toHaveLength(3);
+    expect(reco.content_scores[0].content_id).toEqual('3');
+    expect(reco.content_scores[1].content_id).toEqual('1');
+    expect(reco.content_scores[2].content_id).toEqual('2');
+    expect(reco.content_scores[0].score).toEqual(30);
+    expect(reco.content_scores[1].score).toEqual(20);
+    expect(reco.content_scores[2].score).toEqual(10);
   });
   it('getArticleRecommendations : order by rubrique ponderation', async () => {
     // GIVEN
@@ -353,13 +353,13 @@ describe('ArticleRepository', () => {
     );
 
     // THEN
-    expect(reco.liste).toHaveLength(3);
-    expect(reco.liste[0].content_id).toEqual('3');
-    expect(reco.liste[1].content_id).toEqual('1');
-    expect(reco.liste[2].content_id).toEqual('2');
-    expect(reco.liste[0].score).toEqual(30);
-    expect(reco.liste[1].score).toEqual(20);
-    expect(reco.liste[2].score).toEqual(10);
+    expect(reco.content_scores).toHaveLength(3);
+    expect(reco.content_scores[0].content_id).toEqual('3');
+    expect(reco.content_scores[1].content_id).toEqual('1');
+    expect(reco.content_scores[2].content_id).toEqual('2');
+    expect(reco.content_scores[0].score).toEqual(30);
+    expect(reco.content_scores[1].score).toEqual(20);
+    expect(reco.content_scores[2].score).toEqual(10);
   });
   it('getArticleRecommendations : integre les tags', async () => {
     // GIVEN
@@ -391,13 +391,13 @@ describe('ArticleRepository', () => {
     );
 
     // THEN
-    expect(reco.liste).toHaveLength(3);
-    expect(reco.liste[0].content_id).toEqual('3');
-    expect(reco.liste[1].content_id).toEqual('1');
-    expect(reco.liste[2].content_id).toEqual('2');
-    expect(reco.liste[0].score).toEqual(30);
-    expect(reco.liste[1].score).toEqual(20);
-    expect(reco.liste[2].score).toEqual(10);
+    expect(reco.content_scores).toHaveLength(3);
+    expect(reco.content_scores[0].content_id).toEqual('3');
+    expect(reco.content_scores[1].content_id).toEqual('1');
+    expect(reco.content_scores[2].content_id).toEqual('2');
+    expect(reco.content_scores[0].score).toEqual(30);
+    expect(reco.content_scores[1].score).toEqual(20);
+    expect(reco.content_scores[2].score).toEqual(10);
   });
   it('getArticleRecommendations : ne plante pas si version manquante', async () => {
     // GIVEN
@@ -432,7 +432,7 @@ describe('ArticleRepository', () => {
     );
 
     // THEN
-    expect(reco.liste).toHaveLength(0);
+    expect(reco.content_scores).toHaveLength(0);
   });
   it('getArticleRecommendations : ne plante pas si table ponderation vide', async () => {
     // GIVEN
@@ -459,7 +459,7 @@ describe('ArticleRepository', () => {
     );
 
     // THEN
-    expect(reco.liste).toHaveLength(0);
+    expect(reco.content_scores).toHaveLength(0);
   });
   it('getArticleRecommendations : works OK if missing ponderation rubrique, unclassified at the end', async () => {
     // GIVEN
@@ -492,13 +492,13 @@ describe('ArticleRepository', () => {
     );
 
     // THEN
-    expect(reco.liste).toHaveLength(3);
-    expect(reco.liste[0].content_id).toEqual('3');
-    expect(reco.liste[1].content_id).toEqual('2');
-    expect(reco.liste[2].content_id).toEqual('1');
-    expect(reco.liste[0].score).toEqual(30);
-    expect(reco.liste[1].score).toEqual(10);
-    expect(reco.liste[2].score).toEqual(0);
+    expect(reco.content_scores).toHaveLength(3);
+    expect(reco.content_scores[0].content_id).toEqual('3');
+    expect(reco.content_scores[1].content_id).toEqual('2');
+    expect(reco.content_scores[2].content_id).toEqual('1');
+    expect(reco.content_scores[0].score).toEqual(30);
+    expect(reco.content_scores[1].score).toEqual(10);
+    expect(reco.content_scores[2].score).toEqual(0);
   });
   it('getArticleRecommendations : works OK if unknown ponderation rubrique, counting as 0', async () => {
     // GIVEN
@@ -532,12 +532,12 @@ describe('ArticleRepository', () => {
     );
 
     // THEN
-    expect(reco.liste).toHaveLength(3);
-    expect(reco.liste[0].content_id).toEqual('3');
-    expect(reco.liste[1].content_id).toEqual('1');
-    expect(reco.liste[2].content_id).toEqual('2');
-    expect(reco.liste[0].score).toEqual(30);
-    expect(reco.liste[1].score).toEqual(20);
-    expect(reco.liste[2].score).toEqual(10);
+    expect(reco.content_scores).toHaveLength(3);
+    expect(reco.content_scores[0].content_id).toEqual('3');
+    expect(reco.content_scores[1].content_id).toEqual('1');
+    expect(reco.content_scores[2].content_id).toEqual('2');
+    expect(reco.content_scores[0].score).toEqual(30);
+    expect(reco.content_scores[1].score).toEqual(20);
+    expect(reco.content_scores[2].score).toEqual(10);
   });
 });

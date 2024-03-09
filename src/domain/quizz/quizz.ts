@@ -1,6 +1,12 @@
 import { Thematique } from '../contenu/thematique';
 
-export type Quizz = {
+export class Quizz {
+  constructor(data: Quizz) {
+    Object.assign(this, data);
+    if (!this.score) {
+      this.score = 0;
+    }
+  }
   content_id: string;
   titre: string;
   soustitre?: string;
@@ -17,4 +23,5 @@ export type Quizz = {
   thematique_principale: Thematique;
   thematiques: Thematique[];
   tags: string[];
-};
+  score: number;
+}
