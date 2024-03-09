@@ -1,7 +1,7 @@
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { AideAPI } from '../../../src/infrastructure/api/types/aide/AideAPI';
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('Aide (API test)', () => {
   let thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -20,7 +20,7 @@ describe('Aide (API test)', () => {
 
   it('POST /utilisateurs/:utilisateurId/simulerAideVelo ok', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.POST(
@@ -38,8 +38,8 @@ describe('Aide (API test)', () => {
     await thematiqueRepository.upsertThematique(2, 'Climat !!');
     await thematiqueRepository.upsertThematique(5, 'Logement !!');
     await thematiqueRepository.loadThematiques();
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('aide');
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide);
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/aides');
@@ -64,14 +64,14 @@ describe('Aide (API test)', () => {
   });
   it('GET /utilisateurs/:utilisateurId/aides filtre par code postal', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       logement: { code_postal: '22222' },
     });
-    await TestUtil.create('aide', {
+    await TestUtil.create(DB.aide, {
       content_id: '1',
       codes_postaux: ['11111'],
     });
-    await TestUtil.create('aide', {
+    await TestUtil.create(DB.aide, {
       content_id: '2',
       codes_postaux: ['22222'],
     });

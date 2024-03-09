@@ -1,4 +1,4 @@
-import { TestUtil } from '../../../TestUtil';
+import { DB, TestUtil } from '../../../TestUtil';
 
 const INCOMMING_DATA = {
   ok: true,
@@ -59,7 +59,7 @@ describe('/api/incoming/winter-energies (API test)', () => {
 
   it('POST /api/incoming/winter-energies - 200 par défaut append des valeurs', async () => {
     // GIVEN
-    await TestUtil.create('linky');
+    await TestUtil.create(DB.linky);
     // WHEN
     const response = await TestUtil.getServer()
       .post('/api/incoming/winter-energies')
@@ -92,7 +92,7 @@ describe('/api/incoming/winter-energies (API test)', () => {
   });
   it('POST /api/incoming/winter-energies - erreur 401 si mauvaise clé API', async () => {
     // GIVEN
-    await TestUtil.create('linky');
+    await TestUtil.create(DB.linky);
     // WHEN
     const response = await TestUtil.getServer()
       .post('/api/incoming/winter-energies')

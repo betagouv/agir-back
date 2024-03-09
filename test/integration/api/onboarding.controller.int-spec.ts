@@ -9,7 +9,7 @@ import {
   Impact,
   ThematiqueOnboarding,
 } from '../../../src/domain/utilisateur/onboarding/onboarding';
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 
 const ONBOARDING_1_2_3_4_DATA = {
   transports: ['voiture', 'pied'],
@@ -518,16 +518,16 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
   });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_1 v1', async () => {
     // WHEN
-    await TestUtil.create('utilisateur', { id: '1', email: '1' });
-    await TestUtil.create('utilisateur', { id: '2', email: '2' });
-    await TestUtil.create('utilisateur', { id: '3', email: '3' });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, { id: '1', email: '1' });
+    await TestUtil.create(DB.utilisateur, { id: '2', email: '2' });
+    await TestUtil.create(DB.utilisateur, { id: '3', email: '3' });
+    await TestUtil.create(DB.utilisateur, {
       // cas onboarding vide pour anciens utilisateurs, ou ceux qui on pas onboardé
       id: '4',
       email: '4',
       onboardingResult: {},
     });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '5',
       email: '5',
       onboardingResult: {
@@ -551,7 +551,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
         },
       },
     });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '6',
       email: '6',
       onboardingResult: {
@@ -583,16 +583,16 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
   });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_1 v2', async () => {
     // WHEN
-    await TestUtil.create('utilisateur', { id: '1', email: '1' });
-    await TestUtil.create('utilisateur', { id: '2', email: '2' });
-    await TestUtil.create('utilisateur', { id: '3', email: '3' });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, { id: '1', email: '1' });
+    await TestUtil.create(DB.utilisateur, { id: '2', email: '2' });
+    await TestUtil.create(DB.utilisateur, { id: '3', email: '3' });
+    await TestUtil.create(DB.utilisateur, {
       // cas onboarding vide pour anciens utilisateurs, ou ceux qui on pas onboardé
       id: '4',
       email: '4',
       onboardingResult: {},
     });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '5',
       email: '5',
       onboardingResult: {
@@ -616,7 +616,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
         },
       },
     });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '6',
       email: '6',
       onboardingResult: {
@@ -648,16 +648,16 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
   });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_1 v3', async () => {
     // WHEN
-    await TestUtil.create('utilisateur', { id: '1', email: '1' });
-    await TestUtil.create('utilisateur', { id: '2', email: '2' });
-    await TestUtil.create('utilisateur', { id: '3', email: '3' });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, { id: '1', email: '1' });
+    await TestUtil.create(DB.utilisateur, { id: '2', email: '2' });
+    await TestUtil.create(DB.utilisateur, { id: '3', email: '3' });
+    await TestUtil.create(DB.utilisateur, {
       // cas onboarding vide pour anciens utilisateurs, ou ceux qui on pas onboardé
       id: '4',
       email: '4',
       onboardingResult: {},
     });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '5',
       email: '5',
       onboardingResult: {
@@ -681,7 +681,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
         },
       },
     });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '6',
       email: '6',
       onboardingResult: {
@@ -714,7 +714,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
 
   it('POST /utilisateurs - erreur 400 quand email existant', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { email: 'w@w.com' });
+    await TestUtil.create(DB.utilisateur, { email: 'w@w.com' });
 
     // WHEN
     const response = await TestUtil.getServer()

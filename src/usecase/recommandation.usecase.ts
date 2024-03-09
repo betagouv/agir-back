@@ -54,10 +54,7 @@ export class RecommandationUsecase {
     });
 
     const article_recommandation =
-      await this.articleRepository.getArticleRecommandations(
-        utilisateur.version_ponderation,
-        utilisateur.id,
-      );
+      await this.articleRepository.getArticleRecommandations(utilisateur.id);
 
     if (article_recommandation.liste.length > 0) {
       articles =
@@ -79,10 +76,7 @@ export class RecommandationUsecase {
     });
 
     const quizz_recommandation =
-      await this.quizzRepository.getQuizzRecommandations(
-        utilisateur.version_ponderation,
-        utilisateur.id,
-      );
+      await this.quizzRepository.getQuizzRecommandations(utilisateur.id);
 
     if (quizz_recommandation.liste.length > 0) {
       quizzes = quizz_recommandation.filterAndOrderArticlesOrQuizzes(quizzes);

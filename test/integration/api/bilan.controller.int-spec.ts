@@ -1,4 +1,4 @@
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('/bilan (API test)', () => {
   beforeAll(async () => {
@@ -16,9 +16,9 @@ describe('/bilan (API test)', () => {
 
   it('GET /utilisateur/id/bilans/last - 403 if bad id', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('situationNGC');
-    await TestUtil.create('empreinte');
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.situationNGC);
+    await TestUtil.create(DB.empreinte);
 
     // WHEN
     const response = await TestUtil.GET('/utilisateur/autre-id/bilans/last');
@@ -28,9 +28,9 @@ describe('/bilan (API test)', () => {
   });
   it('GET /utilisateur/id/bilans/last - get last bilan with proper data', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('situationNGC');
-    await TestUtil.create('empreinte');
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.situationNGC);
+    await TestUtil.create(DB.empreinte);
 
     // WHEN
     const response = await TestUtil.GET(
@@ -51,15 +51,15 @@ describe('/bilan (API test)', () => {
   });
   it('GET /utilisateur/id/bilans/last - get last bilan by id user', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('situationNGC', { id: 'id1' });
-    await TestUtil.create('situationNGC', { id: 'id2' });
-    await TestUtil.create('empreinte', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.situationNGC, { id: 'id1' });
+    await TestUtil.create(DB.situationNGC, { id: 'id2' });
+    await TestUtil.create(DB.empreinte, {
       id: '1',
       created_at: new Date(0),
       situationId: 'id1',
     });
-    await TestUtil.create('empreinte', {
+    await TestUtil.create(DB.empreinte, {
       id: '2',
       created_at: new Date(100),
       situationId: 'id2',
@@ -76,15 +76,15 @@ describe('/bilan (API test)', () => {
   });
   it('GET /utilisateur/id/bilans - get list of bilans', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('situationNGC', { id: 'id1' });
-    await TestUtil.create('situationNGC', { id: 'id2' });
-    await TestUtil.create('empreinte', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.situationNGC, { id: 'id1' });
+    await TestUtil.create(DB.situationNGC, { id: 'id2' });
+    await TestUtil.create(DB.empreinte, {
       id: '1',
       created_at: new Date(0),
       situationId: 'id1',
     });
-    await TestUtil.create('empreinte', {
+    await TestUtil.create(DB.empreinte, {
       id: '2',
       created_at: new Date(100),
       situationId: 'id2',
@@ -101,8 +101,8 @@ describe('/bilan (API test)', () => {
   });
   it('POST /utilisateur/id/bilans - compute and create new Bilan', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('situationNGC');
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.situationNGC);
 
     // WHEN
     const response = await TestUtil.POST(

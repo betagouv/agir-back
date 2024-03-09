@@ -1,5 +1,6 @@
+import { RubriquePonderationSetName } from '../../../src/usecase/referentiel/ponderation';
 import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('/utilisateurs/id/recommandations (API test)', () => {
   const OLD_ENV = process.env;
@@ -13,7 +14,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     await TestUtil.generateAuthorizationToken('utilisateur-id');
     jest.resetModules();
     process.env = { ...OLD_ENV }; // Make a copy
-    process.env.PONDERATION_VERSION = '0';
+    process.env.PONDERATION_RUBRIQUES = RubriquePonderationSetName.neutre;
   });
 
   afterEach(() => {});
@@ -25,8 +26,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
   it('GET /utilisateurs/id/recommandation - 403 if bad id', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { history: {} });
-    await TestUtil.create('article');
+    await TestUtil.create(DB.utilisateur, { history: {} });
+    await TestUtil.create(DB.article);
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/autre-id/recommandations',
@@ -36,8 +37,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandation - list article recommandation', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { history: {} });
-    await TestUtil.create('article');
+    await TestUtil.create(DB.utilisateur, { history: {} });
+    await TestUtil.create(DB.article);
 
     // WHEN
     const response = await TestUtil.GET(
@@ -57,8 +58,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandation - list article recommandation', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { history: {} });
-    await TestUtil.create('quizz');
+    await TestUtil.create(DB.utilisateur, { history: {} });
+    await TestUtil.create(DB.quizz);
 
     // WHEN
     const response = await TestUtil.GET(
@@ -78,12 +79,15 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/interactions - list all recos, filtée par code postal', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { history: {}, code_postal: '123' });
-    await TestUtil.create('article', {
+    await TestUtil.create(DB.utilisateur, {
+      history: {},
+      code_postal: '123',
+    });
+    await TestUtil.create(DB.article, {
       content_id: '1',
       codes_postaux: ['123'],
     });
-    await TestUtil.create('article', {
+    await TestUtil.create(DB.article, {
       content_id: '2',
       codes_postaux: ['456'],
     });
@@ -99,13 +103,11 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/interactions - applique les ponderations aux articles', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       history: {},
       code_postal: null,
-      version_ponderation: 0,
     });
-    await TestUtil.create('ponderation', {
-      version: 0,
+    await TestUtil.create(DB.ponderationRubriques, {
       rubriques: {
         '1': 10,
         '2': 20,
@@ -113,15 +115,15 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       },
     });
 
-    await TestUtil.create('article', {
+    await TestUtil.create(DB.article, {
       content_id: '1',
       rubrique_ids: ['1'],
     });
-    await TestUtil.create('article', {
+    await TestUtil.create(DB.article, {
       content_id: '2',
       rubrique_ids: ['3'],
     });
-    await TestUtil.create('article', {
+    await TestUtil.create(DB.article, {
       content_id: '3',
       rubrique_ids: ['2'],
     });
@@ -138,13 +140,11 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/interactions - applique les ponderations aux quizz, avec groupement par difficulté', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       history: {},
       code_postal: null,
-      version_ponderation: 0,
     });
-    await TestUtil.create('ponderation', {
-      version: 0,
+    await TestUtil.create(DB.ponderationRubriques, {
       rubriques: {
         '1': 10,
         '2': 20,
@@ -152,17 +152,17 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       },
     });
 
-    await TestUtil.create('quizz', {
+    await TestUtil.create(DB.quizz, {
       content_id: '1',
       rubrique_ids: ['1'],
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create('quizz', {
+    await TestUtil.create(DB.quizz, {
       content_id: '2',
       rubrique_ids: ['2'],
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create('quizz', {
+    await TestUtil.create(DB.quizz, {
       content_id: '3',
       rubrique_ids: ['3'],
       difficulty: DifficultyLevel.L2,
@@ -180,7 +180,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/interactions - pas de article lu', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       history: {
         article_interactions: [
           {
@@ -192,11 +192,11 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         ],
       },
     });
-    await TestUtil.create('article', {
+    await TestUtil.create(DB.article, {
       content_id: '1',
       codes_postaux: [],
     });
-    await TestUtil.create('article', {
+    await TestUtil.create(DB.article, {
       content_id: '2',
       codes_postaux: [],
     });
@@ -212,7 +212,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/interactions - que des quizz jamais touchés', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       history: {
         quizz_interactions: [
           { content_id: '1', attempts: [{ date: new Date(), score: 100 }] },
@@ -220,15 +220,15 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         ],
       },
     });
-    await TestUtil.create('quizz', {
+    await TestUtil.create(DB.quizz, {
       content_id: '1',
       codes_postaux: [],
     });
-    await TestUtil.create('quizz', {
+    await TestUtil.create(DB.quizz, {
       content_id: '2',
       codes_postaux: [],
     });
-    await TestUtil.create('quizz', {
+    await TestUtil.create(DB.quizz, {
       content_id: '3',
       codes_postaux: [],
     });

@@ -1,4 +1,4 @@
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('Groupe (API test)', () => {
   beforeAll(async () => {
@@ -16,8 +16,14 @@ describe('Groupe (API test)', () => {
 
   it('retourne group id 1', async () => {
     // GIVEN
-    await TestUtil.create('groupe', { id: '1', description: 'description 1' });
-    await TestUtil.create('groupe', { id: '2', description: 'description 2' });
+    await TestUtil.create(DB.groupe, {
+      id: '1',
+      description: 'description 1',
+    });
+    await TestUtil.create(DB.groupe, {
+      id: '2',
+      description: 'description 2',
+    });
 
     // WHEN
     const response = await TestUtil.GET('/groupes/1');
@@ -29,7 +35,10 @@ describe('Groupe (API test)', () => {
 
   it('Un utilisateur créer un groupe', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { id: 'utilisateur-id', email: '1' });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'utilisateur-id',
+      email: '1',
+    });
     const group = { name: 'Test' };
 
     // WHEN
@@ -43,7 +52,10 @@ describe('Groupe (API test)', () => {
 
   it('Un utilisateur met à jour un groupe', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { id: 'utilisateur-id', email: '1' });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'utilisateur-id',
+      email: '1',
+    });
 
     const group = { name: 'Test' };
     const response = await TestUtil.getServer()
@@ -64,7 +76,10 @@ describe('Groupe (API test)', () => {
 
   it('Un utilisateur supprime un groupe', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { id: 'utilisateur-id', email: '1' });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'utilisateur-id',
+      email: '1',
+    });
     const group = { name: 'TestDelete' };
     const response = await TestUtil.getServer()
       .post('/groupes?id_utilisateur=utilisateur-id')
@@ -84,8 +99,11 @@ describe('Groupe (API test)', () => {
 
   it('Un utilisateur rejoint un groupe', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { id: 'utilisateur-id', email: '1' });
-    await TestUtil.create('groupe', { id: 'groupe-id', name: 'Test' });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'utilisateur-id',
+      email: '1',
+    });
+    await TestUtil.create(DB.groupe, { id: 'groupe-id', name: 'Test' });
     // WHEN
     const responseJoin = await TestUtil.getServer()
       .post('/utilisateurs/utilisateur-id/groupes/groupe-id')
@@ -99,8 +117,11 @@ describe('Groupe (API test)', () => {
 
   it('Un utilisateur quitte un groupe', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { id: 'utilisateur-id', email: '1' });
-    await TestUtil.create('groupe', { id: 'groupe-id', name: 'Test' });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'utilisateur-id',
+      email: '1',
+    });
+    await TestUtil.create(DB.groupe, { id: 'groupe-id', name: 'Test' });
     const responseJoin = await TestUtil.getServer()
       .post('/utilisateurs/utilisateur-id/groupes/groupe-id')
       .set('Authorization', `Bearer ${TestUtil.token}`);

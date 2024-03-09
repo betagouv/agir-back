@@ -1,4 +1,4 @@
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 import { Impact } from '../../../src/domain/utilisateur/onboarding/onboarding';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
@@ -64,14 +64,14 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('DELETE /utilisateurs/id', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('suivi');
-    await TestUtil.create('situationNGC');
-    await TestUtil.create('empreinte');
-    await TestUtil.create('serviceDefinition');
-    await TestUtil.create('groupe');
-    await TestUtil.create('groupeAbonnement');
-    await TestUtil.create('thematique');
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.suivi);
+    await TestUtil.create(DB.situationNGC);
+    await TestUtil.create(DB.empreinte);
+    await TestUtil.create(DB.serviceDefinition);
+    await TestUtil.create(DB.groupe);
+    await TestUtil.create(DB.groupeAbonnement);
+    await TestUtil.create(DB.thematique);
 
     // WHEN
     const response = await TestUtil.DELETE('/utilisateurs/utilisateur-id');
@@ -85,7 +85,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('GET /utilisateurs/id - 401 si pas de token', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
     const response = await TestUtil.getServer().get(
       '/utilisateurs/utilisateur-id',
     );
@@ -94,7 +94,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('GET /utilisateurs/id - ok si token', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id');
 
     // THEN
@@ -102,8 +102,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('GET /utilisateurs/id - 403 si on accede à la ressource d un autre', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { email: '1' });
-    await TestUtil.create('utilisateur', { id: 'autre-id', email: '2' });
+    await TestUtil.create(DB.utilisateur, { email: '1' });
+    await TestUtil.create(DB.utilisateur, { id: 'autre-id', email: '2' });
     const response = await TestUtil.GET('/utilisateurs/autre-id');
     expect(response.status).toBe(403);
     expect(response.body.code).toEqual('002');
@@ -113,7 +113,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('GET /utilisateurs/id - when present', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { failed_login_count: 2 });
+    await TestUtil.create(DB.utilisateur, { failed_login_count: 2 });
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id');
     // WHEN
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
@@ -135,7 +135,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('GET /utilisateurs/id - part fiscale estimée', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       failed_login_count: 2,
       parts: null,
     });
@@ -150,7 +150,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const utilisateur = getFakeUtilisteur();
     PasswordManager.setUserPassword(utilisateur, '#1234567890HAHA');
 
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       passwordHash: utilisateur.passwordHash,
       passwordSalt: utilisateur.passwordSalt,
       active_account: true,
@@ -181,7 +181,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const utilisateur = getFakeUtilisteur();
     PasswordManager.setUserPassword(utilisateur, '#1234567890HAHA');
 
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       passwordHash: utilisateur.passwordHash,
       passwordSalt: utilisateur.passwordSalt,
     });
@@ -226,7 +226,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const utilisateur = getFakeUtilisteur();
     PasswordManager.setUserPassword(utilisateur, '#1234567890HAHA');
 
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       passwordHash: utilisateur.passwordHash,
       passwordSalt: utilisateur.passwordSalt,
     });
@@ -260,7 +260,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const utilisateur = getFakeUtilisteur();
     PasswordManager.setUserPassword(utilisateur, '#1234567890HAHA');
 
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       passwordHash: utilisateur.passwordHash,
       passwordSalt: utilisateur.passwordSalt,
     });
@@ -291,7 +291,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const utilisateur = getFakeUtilisteur();
     PasswordManager.setUserPassword(utilisateur, '#1234567890HAHA');
 
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       passwordHash: utilisateur.passwordHash,
       passwordSalt: utilisateur.passwordSalt,
     });
@@ -337,7 +337,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const utilisateur = getFakeUtilisteur();
     PasswordManager.setUserPassword(utilisateur, '#1234567890HAHA');
 
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       passwordHash: utilisateur.passwordHash,
       passwordSalt: utilisateur.passwordSalt,
     });
@@ -358,7 +358,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
   it('GET /utilisateurs/id/profile - read basic profile datas', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/profile');
     // THEN
@@ -380,7 +380,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('GET /utilisateurs/id/logement - read logement datas', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       code_postal: '11111',
       commune: 'Patelin',
     });
@@ -403,7 +403,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('GET /utilisateurs/id/logement - read logement datas et prio sur donnee commune code postal utilisateur', async () => {
     // GIVEN
-    const user = await TestUtil.create('utilisateur', {
+    const user = await TestUtil.create(DB.utilisateur, {
       code_postal: '11111',
       commune: 'Patelin',
       logement: {},
@@ -419,7 +419,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('GET /utilisateurs/id/profile - use onboarding data when missing parts in user account', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { parts: null });
+    await TestUtil.create(DB.utilisateur, { parts: null });
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/profile');
     // THEN
@@ -428,7 +428,10 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('GET /utilisateurs/id/profile - default to 1 when no onboarding data', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { parts: null, onboardingData: {} });
+    await TestUtil.create(DB.utilisateur, {
+      parts: null,
+      onboardingData: {},
+    });
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/profile');
     // THEN
@@ -437,7 +440,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('PATCH /utilisateurs/id/profile - update basic profile datas without password', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
     // WHEN
     const response = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/profile',
@@ -460,7 +463,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('PATCH /utilisateurs/id/profile - update basic profile datas', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
     // WHEN
     const response = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/profile',
@@ -499,7 +502,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('PATCH /utilisateurs/id/logement - update logement datas', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
     // WHEN
     const response = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/logement',
@@ -533,7 +536,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('PATCH /utilisateurs/id/profile - bad password format', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
     // WHEN
     const response = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/profile',
@@ -548,7 +551,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('POST /utilisateurs/oubli_mot_de_passe - renvoi OK si mail existe pas', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
     const response = await TestUtil.POST(
       '/utilisateurs/oubli_mot_de_passe',
     ).send({
@@ -559,7 +562,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('POST /utilisateurs/oubli_mot_de_passe - renvoi KO si 4 demandes de suite', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
     await TestUtil.POST('/utilisateurs/oubli_mot_de_passe').send({
       email: 'yo@truc.com',
     });
@@ -583,7 +586,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
   it('POST /utilisateurs/modifier_mot_de_passe - si code ok le mot de passe est modifié, compteurs à zero', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
     await TestUtil.getServer().post('/utilisateurs/login').send({
       mot_de_passe: '#bad password',
       email: 'yo@truc.com',
@@ -623,7 +626,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('POST /utilisateurs/modifier_mot_de_passe - si code ko le mot de passe est PAS modifié', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     const userDB_before = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
@@ -652,7 +655,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('POST /utilisateurs/modifier_mot_de_passe - si email ko erreur generique', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     const userDB_before = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
@@ -681,7 +684,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('POST /utilisateurs/modifier_mot_de_passe - si code ko 4 fois, blocage', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     await TestUtil.getServer()

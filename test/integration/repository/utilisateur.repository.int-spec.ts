@@ -1,4 +1,4 @@
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import {
   Impact,
@@ -33,9 +33,18 @@ describe('UtilisateurRepository', () => {
 
   it('listUtilisateurIds : list utilisateur Ids OK', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { id: '1', email: 'email1@truc.com' });
-    await TestUtil.create('utilisateur', { id: '2', email: 'email2@truc.com' });
-    await TestUtil.create('utilisateur', { id: '3', email: 'email3@truc.com' });
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      email: 'email1@truc.com',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      email: 'email2@truc.com',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '3',
+      email: 'email3@truc.com',
+    });
 
     // WHEN
     const result = await utilisateurRepository.listUtilisateurIds();
@@ -47,7 +56,7 @@ describe('UtilisateurRepository', () => {
 
   it('countUserWithAtLeastNThematiquesOfImpactGreaterThan : select ok single user', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '1',
       onboardingResult: {
         ventilation_par_thematiques: {
@@ -77,7 +86,7 @@ describe('UtilisateurRepository', () => {
   });
   it('countUserWithAtLeastNThematiquesOfImpactGreaterThan : select 1 when zéro thmetique expected', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '1',
       onboardingResult: {
         ventilation_par_thematiques: {
@@ -110,7 +119,7 @@ describe('UtilisateurRepository', () => {
   });
   it('countUserWithAtLeastNThematiquesOfImpactGreaterThan : select 0 when not enough impact', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '1',
       onboardingResult: {
         ventilation_par_thematiques: {
@@ -143,7 +152,7 @@ describe('UtilisateurRepository', () => {
   });
   it('countUserWithAtLeastNThematiquesOfImpactGreaterThan : select 0 when not enough thematiques', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '1',
       onboardingResult: {
         ventilation_par_thematiques: {
@@ -173,7 +182,7 @@ describe('UtilisateurRepository', () => {
   });
   it('countUserWithAtLeastNThematiquesOfImpactGreaterThan : select 1 when enough thematiques', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '1',
       onboardingResult: {
         ventilation_par_thematiques: {
@@ -203,7 +212,7 @@ describe('UtilisateurRepository', () => {
   });
   it('countUsersWithLessImpactOnThematique : compte le bon nombre de user avec moins de X sur thematiquee Y', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '1',
       email: 'a',
       onboardingResult: {
@@ -224,7 +233,7 @@ describe('UtilisateurRepository', () => {
         },
       },
     });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '2',
       email: 'b',
       onboardingResult: {
@@ -248,7 +257,7 @@ describe('UtilisateurRepository', () => {
         },
       },
     });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '3',
       email: 'c',
       onboardingResult: {
@@ -291,7 +300,7 @@ describe('UtilisateurRepository', () => {
   });
   it('countUsersWithMoreImpactOnThematiques : compte le bon nombre de user avec moins de X sur thematiquee Y', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '1',
       email: 'a',
       onboardingResult: {
@@ -312,7 +321,7 @@ describe('UtilisateurRepository', () => {
         },
       },
     });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '2',
       email: 'b',
       onboardingResult: {
@@ -336,7 +345,7 @@ describe('UtilisateurRepository', () => {
         },
       },
     });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '3',
       email: 'c',
       onboardingResult: {
@@ -383,9 +392,9 @@ describe('UtilisateurRepository', () => {
   });
   it('nombreTotalUtilisateurs :  compte le bon nombre', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { id: '1', email: 'a' });
-    await TestUtil.create('utilisateur', { id: '2', email: 'b' });
-    await TestUtil.create('utilisateur', { id: '3', email: 'c' });
+    await TestUtil.create(DB.utilisateur, { id: '1', email: 'a' });
+    await TestUtil.create(DB.utilisateur, { id: '2', email: 'b' });
+    await TestUtil.create(DB.utilisateur, { id: '3', email: 'c' });
 
     // WHEN
     const result = await utilisateurRepository.nombreTotalUtilisateurs();
@@ -396,7 +405,7 @@ describe('UtilisateurRepository', () => {
 
   it('creation et lecture d un utilisateur avec une part à null ', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { parts: null });
+    await TestUtil.create(DB.utilisateur, { parts: null });
 
     // WHEN
     const userDB = await utilisateurRepository.getById('utilisateur-id');

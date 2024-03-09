@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PonderationRepository } from '../../../src/infrastructure/repository/ponderation.repository';
 import { ServiceRepository } from '../../../src/infrastructure/repository/service.repository';
+import {
+  PonderationManager,
+  RubriquePonderationSetName,
+} from './ponderation';
 
 const service_catalogue = require('./service_catalogue');
-const ponderation_catalogue = require('./ponderation_catalogue');
 
 @Injectable()
 export class ReferentielUsecase {
@@ -22,12 +25,10 @@ export class ReferentielUsecase {
     }
   }
   async upsertPonderations() {
-    const keyList = Object.keys(ponderation_catalogue);
-    for (let index = 0; index < keyList.length; index++) {
-      const ponderationId = keyList[index];
-      const ponderation = ponderation_catalogue[ponderationId];
-      ponderation['id'] = ponderationId;
-      await this.ponderationRepository.upsert(ponderation);
+    for (const setName in RubriquePonderationSetName) {
+      const set = RubriquePonderationSetName[setName];
+      const ponderation = PonderationManager.getPonderations(set);
+      await this.ponderationRepository.upsert(set, ponderation);
     }
   }
 }

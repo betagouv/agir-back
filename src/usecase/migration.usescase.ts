@@ -21,7 +21,7 @@ export class MigrationUsecase {
   }
 
   async migrateUsers(): Promise<UserMigrationReport[]> {
-    const version_target = UtilisateurBehavior.systemVersion();
+    const version_target = UtilisateurBehavior.currentUserSystemVersion();
     const result = [];
     const userIdList = await this.utilisateurRepository.listUtilisateurIds();
     for (let index = 0; index < userIdList.length; index++) {

@@ -1,4 +1,4 @@
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 import { ServiceStatus } from '../../../src/domain/service/service';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
@@ -13,7 +13,7 @@ import {
   Superficie,
   TypeLogement,
 } from '../../../src/domain/utilisateur/logement';
-const ponderation_catalogue = require('../../../src/usecase/referentiel/ponderation_catalogue');
+import { RubriquePonderationSetName } from '../../../src/usecase/referentiel/ponderation';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
@@ -33,7 +33,7 @@ describe('Admin (API test)', () => {
 
     process.env.EMAIL_ENABLED = 'false';
     process.env.SERVICE_APIS_ENABLED = 'false';
-    process.env.PONDERATION_VERSION = '0';
+    process.env.PONDERATION_RUBRIQUES = RubriquePonderationSetName.neutre;
   });
 
   afterAll(async () => {
@@ -121,47 +121,15 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
 
-    const ponderations = await TestUtil.prisma.ponderation.findMany();
+    const ponderations = await TestUtil.prisma.ponderationRubriques.findMany();
     expect(ponderations.length).toEqual(
-      Object.keys(ponderation_catalogue).length,
+      Object.keys(RubriquePonderationSetName).length,
     );
 
-    const ponderation = await TestUtil.prisma.ponderation.findUnique({
+    const ponderation = await TestUtil.prisma.ponderationRubriques.findUnique({
       where: { id: 'noel' },
     });
-    expect(ponderation.id).toEqual('noel');
     expect(ponderation.rubriques).toEqual({
-      '1': 0,
-      '2': 0,
-      '3': 0,
-      '4': 0,
-      '5': 0,
-      '6': 0,
-      '7': 0,
-      '8': 0,
-      '9': 0,
-      '10': 0,
-      '11': 0,
-      '12': 0,
-      '13': 0,
-      '14': 0,
-      '15': 0,
-      '16': 0,
-      '17': 0,
-      '18': 0,
-      '19': 0,
-      '20': 0,
-      '21': 0,
-      '22': 0,
-      '23': 0,
-      '24': 0,
-      '25': 0,
-      '26': 0,
-      '27': 0,
-      '28': 0,
-      '29': 0,
-      '30': 0,
-      '31': 0,
       '32': 10,
       '33': 10,
       '34': 10,
@@ -172,7 +140,7 @@ describe('Admin (API test)', () => {
   it('POST /admin/unsubscribe_oprhan_prms retourne liste des suppressions', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       utilisateurId: '123',
       prm: '111',
       winter_pk: 'abc',
@@ -223,7 +191,7 @@ describe('Admin (API test)', () => {
   it('POST /admin/migrate_users migre pas un user qui a pas besoin', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create('utilisateur', { version: 2 });
+    await TestUtil.create(DB.utilisateur, { version: 2 });
     process.env.USER_CURRENT_VERSION = '2';
 
     // WHEN
@@ -245,7 +213,7 @@ describe('Admin (API test)', () => {
   it(`POST /admin/migrate_users verifie si migration active pour l'utilisateur`, async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       version: 2,
       migration_enabled: false,
     });
@@ -275,7 +243,7 @@ describe('Admin (API test)', () => {
   it('POST /admin/migrate_users migration manquante', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       version: 100,
       migration_enabled: true,
     });
@@ -305,7 +273,7 @@ describe('Admin (API test)', () => {
   it('POST /admin/migrate_users premiere migration bidon OK', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       version: 0,
       migration_enabled: true,
     });
@@ -354,7 +322,7 @@ describe('Admin (API test)', () => {
         },
       ],
     };
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       version: 3,
       migration_enabled: true,
       gamification: gamification,
@@ -387,7 +355,7 @@ describe('Admin (API test)', () => {
   it('POST /admin/migrate_users migration V5 OK', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       version: 4,
       migration_enabled: true,
       logement: {},
@@ -429,13 +397,13 @@ describe('Admin (API test)', () => {
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.utilisateur, {
       id: '1',
       migration_enabled: true,
       email: '1',
     });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '2',
       migration_enabled: true,
       email: '2',
@@ -453,13 +421,13 @@ describe('Admin (API test)', () => {
   it('POST /admin/unlock_user_migration lock les utilisateur', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.utilisateur, {
       id: '1',
       migration_enabled: true,
       email: '1',
     });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '2',
       migration_enabled: true,
       email: '2',
@@ -520,7 +488,7 @@ describe('Admin (API test)', () => {
   it('POST /services/clean_linky_data clean ok', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       prm: 'abc',
       winter_pk: '111',
       utilisateurId: '1',
@@ -537,7 +505,7 @@ describe('Admin (API test)', () => {
         },
       ],
     });
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       prm: 'efg',
       utilisateurId: '2',
       winter_pk: '222',
@@ -575,11 +543,11 @@ describe('Admin (API test)', () => {
   it('POST /services/process_async_service appel ok, renvoi id du service traité', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, {
       id: 'dummy_async',
     });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'dummy_async',
       status: 'LIVE',
     });
@@ -595,11 +563,11 @@ describe('Admin (API test)', () => {
   it('POST /services/process_async_service appel ok, renvoi id info service linky deja LIVE', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, {
       id: 'linky',
     });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       status: 'LIVE',
     });
@@ -617,18 +585,18 @@ describe('Admin (API test)', () => {
   it('POST /services/process_async_service appel ok, 2 service linky LIVE', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create('utilisateur', { id: '1', email: 'a' });
-    await TestUtil.create('utilisateur', { id: '2', email: 'b' });
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.utilisateur, { id: '1', email: 'a' });
+    await TestUtil.create(DB.utilisateur, { id: '2', email: 'b' });
+    await TestUtil.create(DB.serviceDefinition, {
       id: 'linky',
     });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.service, {
       id: '123',
       utilisateurId: '1',
       serviceDefinitionId: 'linky',
       status: 'LIVE',
     });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.service, {
       id: '456',
       utilisateurId: '2',
       serviceDefinitionId: 'linky',
@@ -645,11 +613,11 @@ describe('Admin (API test)', () => {
   it('POST /services/process_async_service appel ok, status inconnu', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, {
       id: 'linky',
     });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       status: 'blurp',
     });
@@ -669,11 +637,11 @@ describe('Admin (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     process.env.WINTER_API_ENABLED = 'false';
 
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, {
       id: 'linky',
     });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       status: 'CREATED',
     });
@@ -693,11 +661,11 @@ describe('Admin (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     process.env.WINTER_API_ENABLED = 'false';
 
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, {
       id: 'linky',
     });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       status: 'CREATED',
       configuration: { prm: '123' },
@@ -725,11 +693,11 @@ describe('Admin (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     process.env.WINTER_API_ENABLED = 'false';
 
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, {
       id: 'linky',
     });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       status: 'CREATED',
       configuration: { prm: '123' },
@@ -805,11 +773,11 @@ describe('Admin (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     process.env.WINTER_API_ENABLED = 'false';
 
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, {
       id: 'linky',
     });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       status: 'CREATED',
       configuration: { prm: '123', live_prm: '123' },
@@ -840,16 +808,16 @@ describe('Admin (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     process.env.WINTER_API_ENABLED = 'false';
 
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, {
       id: 'linky',
     });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       status: 'TO_DELETE',
       configuration: { prm: '123', winter_pk: 'abc' },
     });
-    await TestUtil.create('linky', { prm: '123' });
+    await TestUtil.create(DB.linky, { prm: '123' });
 
     // WHEN
     const response = await TestUtil.POST('/services/process_async_service');
@@ -872,7 +840,7 @@ describe('Admin (API test)', () => {
   it('POST /services/refresh_dynamic_data appel ok, renvoie 1 quand 1 service cible, donnée mises à jour', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.serviceDefinition, {
       id: 'dummy_scheduled',
       scheduled_refresh: new Date(Date.now() - 1000),
       minute_period: 30,
@@ -897,7 +865,7 @@ describe('Admin (API test)', () => {
   it('POST /services/refresh_dynamic_data appel ok, renvoie 1 quand 1 service cible avec period de refresh, mais pas de scheduled_refresh, donnée mises à jour', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.serviceDefinition, {
       id: 'dummy_scheduled',
       scheduled_refresh: null,
       minute_period: 30,
@@ -923,13 +891,13 @@ describe('Admin (API test)', () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     process.env.ADMIN_IDS = '';
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, {
       id: 'dummy_scheduled',
       scheduled_refresh: new Date(Date.now() - 1000),
       minute_period: 30,
     });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'dummy_scheduled',
     });
 
@@ -951,7 +919,7 @@ describe('Admin (API test)', () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
 
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       email: '1',
       todo: {
         liste_todo: [
@@ -975,7 +943,7 @@ describe('Admin (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: 'user-2',
       email: '2',
       todo: {

@@ -1,4 +1,4 @@
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
 import { LinkyData } from '../../../src/domain/linky/linkyData';
 
@@ -19,7 +19,7 @@ describe('LinkyRepository', () => {
 
   it('get data', async () => {
     // GIVEN
-    await TestUtil.create('linky');
+    await TestUtil.create(DB.linky);
     // WHEN
     const result = await linkyRepository.getByPRM('abc');
     // THEN
@@ -88,7 +88,7 @@ describe('LinkyRepository', () => {
   });
   it('update data', async () => {
     // GIVEN
-    await TestUtil.create('linky');
+    await TestUtil.create(DB.linky);
 
     // WHEN
     await linkyRepository.upsertDataForPRM('abc', [
@@ -111,12 +111,12 @@ describe('LinkyRepository', () => {
   });
   it('delete all', async () => {
     // GIVEN
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       prm: 'p1',
       utilisateurId: '1',
       winter_pk: '1',
     });
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       prm: 'p2',
       utilisateurId: '2',
       winter_pk: '2',
@@ -135,17 +135,17 @@ describe('LinkyRepository', () => {
   });
   it('delete by user id', async () => {
     // GIVEN
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       prm: 'p1',
       utilisateurId: '12',
       winter_pk: '1',
     });
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       prm: 'p2',
       utilisateurId: undefined,
       winter_pk: '2',
     });
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       prm: 'p3',
       utilisateurId: '45',
       winter_pk: '3',
@@ -177,7 +177,7 @@ describe('LinkyRepository', () => {
   });
   it('isPRMDataEmptyOrMissing: empty Data => true', async () => {
     // GIVEN
-    await TestUtil.create('linky', { prm: '123', data: [] });
+    await TestUtil.create(DB.linky, { prm: '123', data: [] });
 
     // WHEN
     const result = await linkyRepository.isPRMDataEmptyOrMissing('123');
@@ -187,7 +187,7 @@ describe('LinkyRepository', () => {
   });
   it('isPRMDataEmptyOrMissing: some data => false', async () => {
     // GIVEN
-    await TestUtil.create('linky', { prm: '123' });
+    await TestUtil.create(DB.linky, { prm: '123' });
 
     // WHEN
     const result = await linkyRepository.isPRMDataEmptyOrMissing('123');
@@ -197,33 +197,33 @@ describe('LinkyRepository', () => {
   });
   it('findOrphanEntries: retrieve lost PRMs', async () => {
     // GIVEN
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       prm: '000',
       utilisateurId: null,
       winter_pk: '000',
     });
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       prm: '123',
       utilisateurId: null,
       winter_pk: '111',
     });
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       prm: '456',
       utilisateurId: '1',
       winter_pk: '222',
     });
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       prm: '789',
       utilisateurId: '2',
       winter_pk: 'abc',
     });
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       prm: '999',
       utilisateurId: '3',
       winter_pk: null,
     });
 
-    await TestUtil.create('utilisateur', { id: '1' });
+    await TestUtil.create(DB.utilisateur, { id: '1' });
 
     // WHEN
     const result = await linkyRepository.findWinterPKsOrphanEntries();

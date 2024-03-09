@@ -264,7 +264,7 @@ export class UtilisateurRepository {
         unlocked_features: unlocked_features,
         version: user.version,
         migration_enabled: user.migration_enabled,
-        version_ponderation: user.version_ponderation,
+        ponderationId: user.ponderationId,
         logement: logement,
         ponderation_tags: user.ponderation_tags as any,
       });
@@ -329,7 +329,7 @@ export class UtilisateurRepository {
       failed_login_count: user.failed_login_count,
       prevent_login_before: user.prevent_login_before,
       migration_enabled: user.migration_enabled,
-      version_ponderation: user.version_ponderation,
+      ponderationId: user.ponderationId,
       ponderation_tags: user.ponderation_tags,
       created_at: undefined,
       updated_at: undefined,

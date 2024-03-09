@@ -92,7 +92,6 @@ export class QuizzRepository {
   }
 
   public async getQuizzRecommandations(
-    version: number,
     utilisateurId: string,
   ): Promise<ContentRecommandation> {
     const result = new ContentRecommandation();
@@ -106,17 +105,17 @@ export class QuizzRepository {
       (
         SELECT
           "Utilisateur".ponderation_tags AS ponderation_tags,
-          "Ponderation".rubriques AS poids_rubrique,
+          "PonderationRubriques".rubriques AS poids_rubrique,
           unnest("Quizz".rubrique_ids) as rubrique_quizz,
           unnest("Quizz".tags) as tags,
           "Quizz".content_id as content_id,
           "Quizz".difficulty as difficulty
         FROM
-          "Ponderation",
+          "PonderationRubriques",
           "Quizz",
           "Utilisateur"
         WHERE
-          "Ponderation".version = ${version} AND
+          "PonderationRubriques".id = "Utilisateur"."ponderationId" AND
           "Utilisateur".id = '${utilisateurId}'
       ) as SUBQUERY
     GROUP BY

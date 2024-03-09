@@ -1,4 +1,4 @@
-import { TestUtil } from '../../../TestUtil';
+import { DB, TestUtil } from '../../../TestUtil';
 
 const _linky_data = require('../../../../test_data/PRM_thermo_sensible');
 
@@ -25,7 +25,7 @@ describe('Linky (API test)', () => {
 
   it('GET /utilisateurs/id/linky renvoie tableau vide si pas de service', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/linky');
 
@@ -35,9 +35,9 @@ describe('Linky (API test)', () => {
   });
   it('GET /utilisateurs/id/linky renvoie tableau vide si pas data linky', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
@@ -51,13 +51,13 @@ describe('Linky (API test)', () => {
   });
   it('GET /utilisateurs/id/linky renvoie les data linky', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
-    await TestUtil.create('linky');
+    await TestUtil.create(DB.linky);
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/linky');
@@ -71,13 +71,13 @@ describe('Linky (API test)', () => {
   });
   it('GET /utilisateurs/id/linky renvoie les data linky full', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
-    await TestUtil.create('linky', { data: _linky_data });
+    await TestUtil.create(DB.linky, { data: _linky_data });
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/linky');
@@ -88,13 +88,13 @@ describe('Linky (API test)', () => {
   });
   it('GET /utilisateurs/id/linky renvoie data full si on demande plus que existant', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
-    await TestUtil.create('linky', { data: _linky_data });
+    await TestUtil.create(DB.linky, { data: _linky_data });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -107,13 +107,13 @@ describe('Linky (API test)', () => {
   });
   it('GET /utilisateurs/id/linky renvoie les 13 derniers jours', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
-    await TestUtil.create('linky', { data: _linky_data });
+    await TestUtil.create(DB.linky, { data: _linky_data });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -127,13 +127,13 @@ describe('Linky (API test)', () => {
   });
   it('GET /utilisateurs/id/linky renvoie les 2 dernière sem', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       data: [
         {
           time: '2021-11-30T12:00:00.000Z',
@@ -228,13 +228,13 @@ describe('Linky (API test)', () => {
   });
   it('GET /utilisateurs/id/linky renvoie les 3 derniers mois', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       data: _linky_data,
     });
 
@@ -255,13 +255,13 @@ describe('Linky (API test)', () => {
   });
   it('GET /utilisateurs/id/linky comparaison 2 dernieres annéee', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       data: _linky_data,
     });
 
@@ -284,13 +284,13 @@ describe('Linky (API test)', () => {
   });
   it('GET /utilisateurs/id/linky compare_annees=false', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       data: _linky_data,
     });
 
@@ -305,13 +305,13 @@ describe('Linky (API test)', () => {
   });
   it('GET /utilisateurs/id/linky comparaison 2 dernieres annéee - pas d erreurs si pas de donnees', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       data: [],
     });
 
@@ -326,13 +326,13 @@ describe('Linky (API test)', () => {
   });
   it('GET /utilisateurs/id/linky comparaison 15 derniers jours', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       data: _linky_data,
     });
 

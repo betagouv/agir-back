@@ -6,7 +6,7 @@ import {
 } from '../../../src/domain/equipements/vehicule';
 import { VehiculeAPI } from '../../../src/infrastructure/api/types/equipements/vehiculeAPI';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('Equipements (API test)', () => {
   const utilisateurRepo = new UtilisateurRepository(TestUtil.prisma);
@@ -30,7 +30,7 @@ describe('Equipements (API test)', () => {
 
   it('GET /utilisateurs/:utilisateurId/vehicules listes 1 vehicule avec bonne data', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.GET(
@@ -53,7 +53,7 @@ describe('Equipements (API test)', () => {
   });
   it(`POST /vehicules/calculer_impact calcul l'impact CO2 du payload`, async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
     const payload: VehiculeAPI = {
       nom: 'titine',
       carburant: VoitureCarburant.E85,
@@ -74,7 +74,7 @@ describe('Equipements (API test)', () => {
   });
   it('PUT /utilisateurs/:utilisateurId/vehicules/toto ajoute un vehicule au nom de toto', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     const payload: VehiculeAPI = {
       type: VehiculeType.camping_car,
@@ -105,7 +105,7 @@ describe('Equipements (API test)', () => {
   });
   it('PUT /utilisateurs/:utilisateurId/vehicules/toto ecrase un vehicule au nom de titine', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     const payload: VehiculeAPI = {
       type: VehiculeType.camping_car,

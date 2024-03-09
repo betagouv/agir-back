@@ -1,18 +1,29 @@
 import { PrismaService } from '../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { Ponderation } from '.prisma/client';
+import {
+  RubriquePonderationSetName,
+  RubriquePonderationSetValues,
+} from '../../../src/usecase/referentiel/ponderation';
 
 @Injectable()
 export class PonderationRepository {
   constructor(private prisma: PrismaService) {}
 
-  async upsert(ponderation: Ponderation) {
-    await this.prisma.ponderation.upsert({
+  async upsert(
+    set: RubriquePonderationSetName,
+    ponderations: RubriquePonderationSetValues,
+  ) {
+    await this.prisma.ponderationRubriques.upsert({
       where: {
-        id: ponderation.id,
+        id: set,
       },
-      create: ponderation,
-      update: ponderation,
+      create: {
+        id: set,
+        rubriques: ponderations,
+      },
+      update: {
+        rubriques: ponderations,
+      },
     });
   }
 }

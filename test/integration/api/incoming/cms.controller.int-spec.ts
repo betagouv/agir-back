@@ -1,6 +1,6 @@
 import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels';
 import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
-import { TestUtil } from '../../../TestUtil';
+import { DB, TestUtil } from '../../../TestUtil';
 
 describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA_AIDE = {
@@ -250,7 +250,7 @@ describe('/api/incoming/cms (API test)', () => {
 
   it('POST /api/incoming/cms - updates exisying aide in aide table', async () => {
     // GIVEN
-    await TestUtil.create('aide', { content_id: '123' });
+    await TestUtil.create(DB.aide, { content_id: '123' });
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(
@@ -275,7 +275,7 @@ describe('/api/incoming/cms (API test)', () => {
 
   it('POST /api/incoming/cms - removes existing aide when unpublish', async () => {
     // GIVEN
-    await TestUtil.create('aide', { content_id: '123' });
+    await TestUtil.create(DB.aide, { content_id: '123' });
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send({
@@ -291,7 +291,7 @@ describe('/api/incoming/cms (API test)', () => {
   });
   it('POST /api/incoming/cms - removes existing aide when delete', async () => {
     // GIVEN
-    await TestUtil.create('aide', { content_id: '123' });
+    await TestUtil.create(DB.aide, { content_id: '123' });
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send({
@@ -336,7 +336,7 @@ describe('/api/incoming/cms (API test)', () => {
   });
   it('POST /api/incoming/cms - updates existing article in article table', async () => {
     // GIVEN
-    await TestUtil.create('article', { content_id: '123' });
+    await TestUtil.create(DB.article, { content_id: '123' });
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(
@@ -366,7 +366,7 @@ describe('/api/incoming/cms (API test)', () => {
   });
   it('POST /api/incoming/cms - updates existing quizz in quizz table', async () => {
     // GIVEN
-    await TestUtil.create('quizz', { content_id: '123' });
+    await TestUtil.create(DB.quizz, { content_id: '123' });
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(
@@ -436,8 +436,8 @@ describe('/api/incoming/cms (API test)', () => {
   });
   it('POST /api/incoming/cms - updates existing article, 1 user in db ', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('article', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.article, {
       content_id: '123',
       soustitre: 'hahah',
     });
@@ -455,7 +455,7 @@ describe('/api/incoming/cms (API test)', () => {
 
   it('POST /api/incoming/cms - does nothing when no publishedAt value', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
     const data = { ...CMS_DATA_ARTICLE };
     data.entry = { ...data.entry };
     data.entry.publishedAt = null;
@@ -469,7 +469,7 @@ describe('/api/incoming/cms (API test)', () => {
   });
   it('POST /api/incoming/cms - optional points lead to 0 points', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
     const data = { ...CMS_DATA_ARTICLE };
     data.entry = { ...data.entry };
     data.entry.points = null;

@@ -70,13 +70,12 @@ model Utilisateur {
   code_departement         String?
   version                  Int                @default(0)
   migration_enabled        Boolean            @default(false)
-  version_ponderation      Int                @default(0)
+  ponderationId            String             @default("neutre")
   ponderation_tags         Json               @default("{}")
 }
 
-model Ponderation {
+model PonderationRubriques {
   id        String @id
-  version   Int    @unique
   rubriques Json   @default("{}")
 }
 

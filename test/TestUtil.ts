@@ -43,7 +43,12 @@ import {
   Superficie,
   TypeLogement,
 } from '../src/domain/utilisateur/logement';
-import { Empreinte, Ponderation, SituationNGC, Suivi } from '.prisma/client';
+import {
+  Empreinte,
+  PonderationRubriques,
+  SituationNGC,
+  Suivi,
+} from '.prisma/client';
 import {
   Aide,
   Article,
@@ -57,7 +62,42 @@ import {
 } from '@prisma/client';
 import { ServiceStatus } from '../src/domain/service/service';
 
+export enum DB {
+  CMSWebhookAPI = 'CMSWebhookAPI',
+  situationNGC = 'situationNGC',
+  suivi = 'suivi',
+  utilisateur = 'utilisateur',
+  article = 'article',
+  aide = 'aide',
+  quizz = 'quizz',
+  empreinte = 'empreinte',
+  service = 'service',
+  groupeAbonnement = 'groupeAbonnement',
+  groupe = 'groupe',
+  serviceDefinition = 'serviceDefinition',
+  thematique = 'thematique',
+  linky = 'linky',
+  ponderationRubriques = 'ponderationRubriques',
+}
 export class TestUtil {
+  private static TYPE_DATA_MAP: Record<DB, Function> = {
+    CMSWebhookAPI: TestUtil.CMSWebhookAPIData,
+    situationNGC: TestUtil.situationNGCData,
+    suivi: TestUtil.suiviData,
+    utilisateur: TestUtil.utilisateurData,
+    article: TestUtil.articleData,
+    aide: TestUtil.aideData,
+    quizz: TestUtil.quizzData,
+    empreinte: TestUtil.empreinteData,
+    service: TestUtil.serviceData,
+    groupeAbonnement: TestUtil.groupeAbonnementData,
+    groupe: TestUtil.groupeData,
+    serviceDefinition: TestUtil.serviceDefinitionData,
+    thematique: TestUtil.thematiqueData,
+    linky: TestUtil.linkyData,
+    ponderationRubriques: TestUtil.ponderationRubriquesData,
+  };
+
   constructor() {}
   public static app: INestApplication;
   public static prisma = new PrismaService();
@@ -131,7 +171,7 @@ export class TestUtil {
     await this.prisma.linky.deleteMany();
     await this.prisma.article.deleteMany();
     await this.prisma.quizz.deleteMany();
-    await this.prisma.ponderation.deleteMany();
+    await this.prisma.ponderationRubriques.deleteMany();
     await this.prisma.aide.deleteMany();
     ThematiqueRepository.resetThematiques();
   }
@@ -139,11 +179,13 @@ export class TestUtil {
   static getDate(date: string) {
     return new Date(Date.parse(date));
   }
-  static async create(type: string, override?) {
+
+  static async create(type: DB, override?) {
     await this.prisma[type].create({
-      data: this[type.concat('Data')](override),
+      data: TestUtil.TYPE_DATA_MAP[type](override),
     });
   }
+
   static CMSWebhookAPIData() {
     return {
       model: CMSModel.article,
@@ -181,7 +223,7 @@ export class TestUtil {
       },
     };
   }
-  static situationNGCData(override?) {
+  static situationNGCData(override?): SituationNGC {
     return {
       id: 'situationNGC-id',
       situation: {
@@ -189,9 +231,9 @@ export class TestUtil {
       },
       created_at: new Date(),
       ...override,
-    } as SituationNGC;
+    };
   }
-  static suiviData(override?) {
+  static suiviData(override?): Suivi {
     return {
       id: 'suivi-id',
       type: 'alimentation',
@@ -202,10 +244,10 @@ export class TestUtil {
       },
       utilisateurId: 'utilisateur-id',
       ...override,
-    } as Suivi;
+    };
   }
 
-  static articleData(override?) {
+  static articleData(override?): Article {
     return {
       content_id: '1',
       titre: 'titreA',
@@ -224,7 +266,7 @@ export class TestUtil {
       thematique_principale: Thematique.climat,
       thematiques: [Thematique.climat, Thematique.logement],
       ...override,
-    } as Article;
+    };
   }
   static aideData(override?): Aide {
     return {
@@ -239,7 +281,7 @@ export class TestUtil {
       ...override,
     };
   }
-  static quizzData(override?) {
+  static quizzData(override?): Quizz {
     return {
       content_id: '1',
       titre: 'titreQ',
@@ -258,10 +300,10 @@ export class TestUtil {
       thematique_principale: Thematique.climat,
       thematiques: [Thematique.climat, Thematique.logement],
       ...override,
-    } as Quizz;
+    };
   }
 
-  static empreinteData(override?) {
+  static empreinteData(override?): Empreinte {
     return {
       id: 'empreinte-id',
       initial: false,
@@ -278,9 +320,9 @@ export class TestUtil {
       },
       utilisateurId: 'utilisateur-id',
       ...override,
-    } as Empreinte;
+    };
   }
-  static utilisateurData(override?) {
+  static utilisateurData(override?): Utilisateur {
     const unlocked: UnlockedFeatures_v1 = {
       version: 1,
       unlocked_features: [Feature.aides],
@@ -412,7 +454,7 @@ export class TestUtil {
       sent_email_count: 0,
       prevent_sendemail_before: new Date(),
       version: 0,
-      version_ponderation: 0,
+      ponderationId: 'ponderation-id',
       migration_enabled: false,
       todo: todo,
       gamification: gamification,
@@ -427,29 +469,28 @@ export class TestUtil {
       logement: logement,
       ponderation_tags: {},
       ...override,
-    } as Utilisateur;
+    };
   }
-  static ponderationData(override?) {
+  static ponderationRubriquesData(override?): PonderationRubriques {
     return {
       id: 'ponderation-id',
-      version: 0,
       rubriques: {
         '1': 10,
         '2': 20,
         '3': 30,
       },
       ...override,
-    } as Ponderation;
+    };
   }
-  static thematiqueData(override?) {
+  static thematiqueData(override?): Thematique {
     return {
       id: 'thematique-id',
       id_cms: 1,
       titre: 'titre',
       ...override,
-    } as Thematique;
+    };
   }
-  static serviceData(override?) {
+  static serviceData(override?): Service {
     return {
       id: 'service-id',
       utilisateurId: 'utilisateur-id',
@@ -457,9 +498,9 @@ export class TestUtil {
       configuration: {},
       status: ServiceStatus.CREATED,
       ...override,
-    } as Service;
+    };
   }
-  static serviceDefinitionData(override?) {
+  static serviceDefinitionData(override?): ServiceDefinition {
     return {
       id: 'dummy_live',
       titre: 'titre',
@@ -477,25 +518,25 @@ export class TestUtil {
       parametrage_requis: true,
       thematiques: ['climat', 'logement'],
       ...override,
-    } as ServiceDefinition;
+    };
   }
-  static groupeData(override?) {
+  static groupeData(override?): Groupe {
     return {
       id: 'groupe-id',
       name: 'name',
       description: 'description',
       ...override,
-    } as Groupe;
+    };
   }
-  static groupeAbonnementData(override?) {
+  static groupeAbonnementData(override?): GroupeAbonnement {
     return {
       groupeId: 'groupe-id',
       utilisateurId: 'utilisateur-id',
       admin: true,
       ...override,
-    } as GroupeAbonnement;
+    };
   }
-  static linkyData(override?) {
+  static linkyData(override?): Linky {
     return {
       prm: 'abc',
       winter_pk: '123',
@@ -513,6 +554,6 @@ export class TestUtil {
         },
       ],
       ...override,
-    } as Linky;
+    };
   }
 }

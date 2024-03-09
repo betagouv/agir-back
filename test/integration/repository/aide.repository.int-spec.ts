@@ -1,4 +1,4 @@
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { AideRepository } from '../../../src/infrastructure/repository/aide.repository';
 
@@ -23,8 +23,8 @@ describe('AideRepository', () => {
 
   it('searchsearch : liste aide par code postal parmi plusieurs', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('aide', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
@@ -40,8 +40,8 @@ describe('AideRepository', () => {
   });
   it('search : liste aide sans code postaux', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('aide', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
       content_id: '1',
       codes_postaux: [],
     });
@@ -57,8 +57,8 @@ describe('AideRepository', () => {
   });
   it('search : liste aide filtre code postal à null', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('aide', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
@@ -74,8 +74,8 @@ describe('AideRepository', () => {
   });
   it('search : liste aide filtre sans code postal ', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('aide', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
@@ -89,10 +89,10 @@ describe('AideRepository', () => {
   });
   it('search : liste avec max number', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('aide', { content_id: '1' });
-    await TestUtil.create('aide', { content_id: '2' });
-    await TestUtil.create('aide', { content_id: '3' });
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, { content_id: '1' });
+    await TestUtil.create(DB.aide, { content_id: '2' });
+    await TestUtil.create(DB.aide, { content_id: '3' });
 
     // WHEN
     const liste = await aideRepository.search({ maxNumber: 2 });
@@ -102,14 +102,14 @@ describe('AideRepository', () => {
   });
   it('search : select sans filtre', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('aide', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
       content_id: '1',
     });
-    await TestUtil.create('aide', {
+    await TestUtil.create(DB.aide, {
       content_id: '2',
     });
-    await TestUtil.create('aide', {
+    await TestUtil.create(DB.aide, {
       content_id: '3',
     });
 
@@ -121,16 +121,16 @@ describe('AideRepository', () => {
   });
   it('searchArticles : filtre par thematiques ', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('aide', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
       content_id: '1',
       thematiques: [Thematique.climat],
     });
-    await TestUtil.create('aide', {
+    await TestUtil.create(DB.aide, {
       content_id: '2',
       thematiques: [Thematique.logement],
     });
-    await TestUtil.create('aide', {
+    await TestUtil.create(DB.aide, {
       content_id: '3',
       thematiques: [Thematique.alimentation],
     });
@@ -146,16 +146,16 @@ describe('AideRepository', () => {
   });
   it('search : filtre par plusieurs thematiques ', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('aide', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
       content_id: '1',
       thematiques: [Thematique.climat],
     });
-    await TestUtil.create('aide', {
+    await TestUtil.create(DB.aide, {
       content_id: '2',
       thematiques: [Thematique.logement],
     });
-    await TestUtil.create('aide', {
+    await TestUtil.create(DB.aide, {
       content_id: '3',
       thematiques: [Thematique.alimentation],
     });

@@ -1,7 +1,7 @@
 import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
 import { EventType } from '../../../src/domain/utilisateur/appEvent';
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('Gamification  (API test)', () => {
   beforeAll(async () => {
@@ -19,7 +19,7 @@ describe('Gamification  (API test)', () => {
 
   it('GET /utilisateurs/id/gamification retourne le nombre de points de l utilisateur ', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.GET(
@@ -32,7 +32,7 @@ describe('Gamification  (API test)', () => {
   });
   it('GET /utilisateurs/id/gamification retourne le bon niveau et les bonnes bornes ', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.GET(
@@ -47,7 +47,7 @@ describe('Gamification  (API test)', () => {
   });
   it('GET /utilisateurs/id/gamification retourne la liste de celebrations ', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.GET(
@@ -77,10 +77,10 @@ describe('Gamification  (API test)', () => {
       points: 95,
       celebrations: [],
     };
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       gamification: gamification,
     });
-    await TestUtil.create('article', { content_id: '123' });
+    await TestUtil.create(DB.article, { content_id: '123' });
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/events',

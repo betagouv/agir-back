@@ -103,7 +103,6 @@ export class ArticleRepository {
   }
 
   public async getArticleRecommandations(
-    version: number,
     utilisateurId: string,
   ): Promise<ContentRecommandation> {
     const result = new ContentRecommandation();
@@ -117,16 +116,16 @@ export class ArticleRepository {
       (
         SELECT
         "Utilisateur".ponderation_tags AS ponderation_tags,
-        "Ponderation".rubriques AS poids_rubrique,
+        "PonderationRubriques".rubriques AS poids_rubrique,
         unnest("Article".rubrique_ids) as rubrique_article,
         unnest("Article".tags) as tags,
         "Article".content_id as content_id
         FROM
-          "Ponderation",
+          "PonderationRubriques",
           "Article",
           "Utilisateur"
         WHERE
-        "Ponderation".version = ${version} AND
+        "PonderationRubriques".id = "Utilisateur"."ponderationId" AND
         "Utilisateur".id = '${utilisateurId}'
         ) as SUBQUERY
     GROUP BY

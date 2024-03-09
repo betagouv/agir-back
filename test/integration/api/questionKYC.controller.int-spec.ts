@@ -3,7 +3,7 @@ import {
   CategorieQuestionKYC,
   TypeReponseQuestionKYC,
 } from '../../../src/domain/kyc/questionQYC';
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 const CATALOGUE_QUESTIONS = require('../../../src/domain/kyc/catalogueKYC');
 
 describe('/utilisateurs/id/questionsKYC (API test)', () => {
@@ -24,7 +24,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
   it('GET /utilisateurs/id/questionsKYC - liste N questions', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.GET(
@@ -37,7 +37,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
   });
   it('GET /utilisateurs/id/questionsKYC - liste N questions dont une remplie', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.GET(
@@ -52,7 +52,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
   });
   it('GET /utilisateurs/id/questionsKYC/3 - renvoie la question sans réponse', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.GET(
@@ -73,7 +73,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
   });
   it('GET /utilisateurs/id/questionsKYC/bad - renvoie 404', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.GET(
@@ -85,7 +85,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
   });
   it('GET /utilisateurs/id/questionsKYC/question - renvoie la quesition avec la réponse', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.GET(
@@ -101,7 +101,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
   });
   it('PUT /utilisateurs/id/questionsKYC/1 - crée la reponse à la question 1, empoche les points', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -118,7 +118,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
   });
   it('PUT /utilisateurs/id/questionsKYC/1 - met à jour la reponse à la question 1', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -135,7 +135,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
   });
   it('PUT /utilisateurs/id/questionsKYC/bad - erreur 404 ', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.PUT(

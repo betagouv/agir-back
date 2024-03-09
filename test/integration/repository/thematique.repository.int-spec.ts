@@ -1,4 +1,4 @@
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 
@@ -20,8 +20,16 @@ describe('ThematiqueRepository', () => {
   it('loadThematiques : charge 2 thematiques OK', async () => {
     // GIVEN
     ThematiqueRepository.resetThematiques();
-    await TestUtil.create('thematique', { id: '1', id_cms: 1, titre: 't1' });
-    await TestUtil.create('thematique', { id: '2', id_cms: 2, titre: 't2' });
+    await TestUtil.create(DB.thematique, {
+      id: '1',
+      id_cms: 1,
+      titre: 't1',
+    });
+    await TestUtil.create(DB.thematique, {
+      id: '2',
+      id_cms: 2,
+      titre: 't2',
+    });
 
     // WHEN
     await thematiqueRepository.loadThematiques();
@@ -36,8 +44,16 @@ describe('ThematiqueRepository', () => {
   });
   it('upsertThematique : met a jour correctement une thematique', async () => {
     // GIVEN
-    await TestUtil.create('thematique', { id: '1', id_cms: 1, titre: 't1' });
-    await TestUtil.create('thematique', { id: '2', id_cms: 2, titre: 't2' });
+    await TestUtil.create(DB.thematique, {
+      id: '1',
+      id_cms: 1,
+      titre: 't1',
+    });
+    await TestUtil.create(DB.thematique, {
+      id: '2',
+      id_cms: 2,
+      titre: 't2',
+    });
 
     // WHEN
     await thematiqueRepository.upsertThematique(1, 'new titre');
@@ -58,7 +74,11 @@ describe('ThematiqueRepository', () => {
   });
   it('upsertThematique : crée une thematique', async () => {
     // GIVEN
-    await TestUtil.create('thematique', { id: '1', id_cms: 1, titre: 't1' });
+    await TestUtil.create(DB.thematique, {
+      id: '1',
+      id_cms: 1,
+      titre: 't1',
+    });
 
     // WHEN
     await thematiqueRepository.upsertThematique(2, 'new them');
@@ -79,7 +99,11 @@ describe('ThematiqueRepository', () => {
   });
   it('upsertThematique : thematique non connue, silencieux', async () => {
     // GIVEN
-    await TestUtil.create('thematique', { id: '1', id_cms: 1, titre: 't1' });
+    await TestUtil.create(DB.thematique, {
+      id: '1',
+      id_cms: 1,
+      titre: 't1',
+    });
 
     // WHEN
     await thematiqueRepository.upsertThematique(10, 'new them');

@@ -51,7 +51,7 @@ export class UtilisateurData {
   unlocked_features: UnlockedFeatures;
   version: number;
   migration_enabled: boolean;
-  version_ponderation: number;
+  ponderationId: string;
   kyc: KYC;
   logement: Logement;
   ponderation_tags: PonderationTagSet;
@@ -113,8 +113,8 @@ export class Utilisateur extends UtilisateurData {
       history: new History(),
       kyc: new KYC(),
       equipements: new Equipements(),
-      version: UtilisateurBehavior.systemVersion(),
-      version_ponderation: UtilisateurBehavior.ponderationSystemVersion(),
+      version: UtilisateurBehavior.currentUserSystemVersion(),
+      ponderationId: UtilisateurBehavior.ponderationRubriques(),
       logement: Logement.buildFromOnboarding(onboarding),
       ponderation_tags: {},
     });
