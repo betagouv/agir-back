@@ -9,4 +9,5 @@ export enum ContentType {
   profile = 'profile',
   recommandations = 'recommandations',
   kyc = 'kyc',
+  defi = 'defi',
 }

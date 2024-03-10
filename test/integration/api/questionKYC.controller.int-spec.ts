@@ -4,7 +4,7 @@ import {
   TypeReponseQuestionKYC,
 } from '../../../src/domain/kyc/questionQYC';
 import { DB, TestUtil } from '../../TestUtil';
-const CATALOGUE_QUESTIONS = require('../../../src/domain/kyc/catalogueKYC');
+import { CatalogueQuestionsKYC } from '../../../src/domain/kyc/catalogueQuestionsKYC';
 
 describe('/utilisateurs/id/questionsKYC (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -33,7 +33,9 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(CATALOGUE_QUESTIONS.length);
+    expect(response.body.length).toBe(
+      CatalogueQuestionsKYC.getTailleCatalogue(),
+    );
   });
   it('GET /utilisateurs/id/questionsKYC - liste N questions dont une remplie', async () => {
     // GIVEN
@@ -46,7 +48,9 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(CATALOGUE_QUESTIONS.length);
+    expect(response.body.length).toBe(
+      CatalogueQuestionsKYC.getTailleCatalogue(),
+    );
     const quest = response.body.find((e) => e.id === '2');
     expect(quest.reponse).toStrictEqual(['Le climat', 'Mon logement']);
   });
@@ -111,7 +115,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     const user = await utilisateurRepository.getById('utilisateur-id');
-    expect(user.kyc.getAnyQuestion('1').reponse).toStrictEqual(['YO']);
+    expect(user.kyc.getQuestionOrException('1').reponse).toStrictEqual(['YO']);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.gamification.points).toEqual(20);
@@ -128,7 +132,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     const user = await utilisateurRepository.getById('utilisateur-id');
-    expect(user.kyc.getAnyQuestion('2').reponse).toStrictEqual(['YO']);
+    expect(user.kyc.getQuestionOrException('2').reponse).toStrictEqual(['YO']);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.gamification.points).toEqual(10);

@@ -866,6 +866,7 @@ describe('TODO list (API test)', () => {
           categorie: CategorieQuestionKYC.service,
           points: 10,
           reponses_possibles: ['Le climat', 'Mon logement', 'Ce que je mange'],
+          tags: [],
         },
       ],
     };

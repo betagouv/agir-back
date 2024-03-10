@@ -2,7 +2,7 @@ import {
   SerialisableDomain,
   Upgrader,
 } from '../../../../src/domain/object_store/upgrader';
-import { KYC } from '../../../../src/domain/kyc/collectionQuestionsKYC';
+import { KYC } from '../../../../src/domain/kyc/kyc';
 import { KYC_v0 } from '../../../../src/domain/object_store/kyc/kyc_v0';
 
 describe('KYC vN ', () => {

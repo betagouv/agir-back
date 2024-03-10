@@ -340,6 +340,7 @@ export class TestUtil {
           points: 10,
           reponse: ['Le climat', 'Mon logement'],
           reponses_possibles: ['Le climat', 'Mon logement', 'Ce que je mange'],
+          tags: [],
         },
       ],
     };

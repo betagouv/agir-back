@@ -5,10 +5,11 @@ export class Recommandation {
   content_id: string;
   type: ContentType;
   titre: string;
-  soustitre?: string;
   thematique_principale: Thematique;
-  duree?: string;
   image_url: string;
   points: number;
   score: number;
+
+  soustitre?: string;
+  duree?: string;
 }

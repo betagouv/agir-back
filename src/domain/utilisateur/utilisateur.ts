@@ -8,7 +8,7 @@ import { ParcoursTodo } from '../todo/parcoursTodo';
 import { UnlockedFeatures } from '../gamification/unlockedFeatures';
 import { History } from '../history/history';
 import { Environment } from '../environment';
-import { KYC } from '../kyc/collectionQuestionsKYC';
+import { KYC } from '../kyc/kyc';
 import { Equipements } from '../equipements/equipements';
 import { Logement } from './logement';
 import { UtilisateurBehavior } from './utilisateurBehavior';

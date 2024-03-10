@@ -1,5 +1,4 @@
 import { RubriquePonderationSetName } from '../../../src/usecase/referentiel/ponderation';
-import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('/utilisateurs/id/recommandations (API test)', () => {
@@ -42,7 +41,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations',
+      '/utilisateurs/utilisateur-id/recommandations?exclude_defi=true',
     );
     // THEN
     expect(response.status).toBe(200);
@@ -63,7 +62,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations',
+      '/utilisateurs/utilisateur-id/recommandations?exclude_defi=true',
     );
     // THEN
     expect(response.status).toBe(200);
@@ -77,7 +76,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[0].image_url).toEqual('https://');
     expect(response.body[0].points).toEqual(10);
   });
-  it('GET /utilisateurs/id/interactions - list all recos, filtée par code postal', async () => {
+  it('GET /utilisateurs/id/recommandations - list all recos, filtée par code postal', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       history: {},
@@ -94,14 +93,14 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations',
+      '/utilisateurs/utilisateur-id/recommandations?exclude_defi=true',
     );
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0].content_id).toEqual('1');
   });
-  it('GET /utilisateurs/id/interactions - applique les ponderations aux articles', async () => {
+  it('GET /utilisateurs/id/recommandations - applique les ponderations aux articles', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       history: {},
@@ -130,7 +129,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations',
+      '/utilisateurs/utilisateur-id/recommandations?exclude_defi=true',
     );
     // THEN
     expect(response.status).toBe(200);
@@ -139,7 +138,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[1].content_id).toEqual('3');
     expect(response.body[2].content_id).toEqual('1');
   });
-  it('GET /utilisateurs/id/interactions - applique les ponderations aux quizz', async () => {
+  it('GET /utilisateurs/id/recommandations - applique les ponderations aux quizz', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       history: {},
@@ -168,7 +167,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations',
+      '/utilisateurs/utilisateur-id/recommandations?exclude_defi=true',
     );
     // THEN
     expect(response.status).toBe(200);
@@ -177,7 +176,42 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[1].content_id).toEqual('2');
     expect(response.body[2].content_id).toEqual('1');
   });
-  it('GET /utilisateurs/id/interactions - pas de article lu', async () => {
+  it('GET /utilisateurs/id/recommandations - renvoie un défis en premier', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      history: {},
+      code_postal: null,
+      ponderation_tags: { utilise_moto_ou_voiture: 100 },
+    });
+    await TestUtil.create(DB.ponderationRubriques, {
+      rubriques: {
+        '1': 10,
+        '2': 20,
+        '3': 30,
+      },
+    });
+
+    await TestUtil.create(DB.quizz, {
+      content_id: '1',
+      rubrique_ids: ['1'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+      rubrique_ids: ['2'],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(3);
+    expect(response.body[0].content_id).toEqual('101');
+    expect(response.body[1].content_id).toEqual('2');
+    expect(response.body[2].content_id).toEqual('1');
+  });
+  it('GET /utilisateurs/id/recommandations - pas de article lu', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       history: {
@@ -201,7 +235,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     });
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations',
+      '/utilisateurs/utilisateur-id/recommandations?exclude_defi=true',
     );
     // THEN
     expect(response.status).toBe(200);
@@ -209,7 +243,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[0].content_id).toEqual('2');
     expect(response.body[0].type).toEqual('article');
   });
-  it('GET /utilisateurs/id/interactions - que des quizz jamais touchés', async () => {
+  it('GET /utilisateurs/id/recommandations - que des quizz jamais touchés', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       history: {
@@ -233,7 +267,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     });
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations',
+      '/utilisateurs/utilisateur-id/recommandations?exclude_defi=true',
     );
     // THEN
     expect(response.status).toBe(200);

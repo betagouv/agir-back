@@ -1,4 +1,6 @@
+import { Thematique } from '../contenu/thematique';
 import { QuestionKYC_v0 } from '../object_store/kyc/kyc_v0';
+import { Tag } from '../utilisateur/ponderationTags';
 
 export enum TypeReponseQuestionKYC {
   libre = 'libre',
@@ -10,6 +12,7 @@ export enum TypeReponseQuestionKYC {
 
 export enum CategorieQuestionKYC {
   service = 'service',
+  defi = 'defi',
 }
 
 export class QuestionKYC {
@@ -17,11 +20,14 @@ export class QuestionKYC {
   question: string;
   type: TypeReponseQuestionKYC;
   categorie: CategorieQuestionKYC;
+  thematique?: Thematique;
   points: number;
   is_NGC: boolean;
   reponse?: string[];
   reponses_possibles?: string[];
   ngc_key?: string;
+  tags: Tag[];
+  score: number;
 
   constructor(data: QuestionKYC_v0) {
     this.id = data.id;
@@ -33,5 +39,8 @@ export class QuestionKYC {
     this.reponse = data.reponse;
     this.reponses_possibles = data.reponses_possibles;
     this.ngc_key = data.ngc_key;
+    this.thematique = data.thematique;
+    this.tags = data.tags ? data.tags : [];
+    this.score = 0;
   }
 }

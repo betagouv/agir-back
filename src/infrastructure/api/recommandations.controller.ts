@@ -1,9 +1,17 @@
-import { Controller, Get, Param, Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOkResponse,
   ApiBearerAuth,
   ApiOperation,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
@@ -24,34 +32,22 @@ export class RecommandationsController extends GenericControler {
   @ApiOperation({
     summary: "Liste les recommendations personnalisées de l'utilisateur",
   })
+  @ApiQuery({
+    name: 'exclude_defi',
+    type: Boolean,
+    description: `boolean qui indique que l'on ne souhaite pas de défis dans les recos`,
+    required: false,
+  })
   async getUserRecommandation(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
+    @Query('exclude_defi') exclude_defi: string,
   ): Promise<RecommandationAPI[]> {
     this.checkCallerId(req, utilisateurId);
 
     const list = await this.recommandationUsecase.listRecommandations(
       utilisateurId,
-    );
-    return list.map((reco) => RecommandationAPI.mapToAPI(reco));
-  }
-
-  // FIXME : to remove
-  @Get('utilisateurs/:utilisateurId/interactions')
-  @ApiOkResponse({ type: [RecommandationAPI] })
-  @ApiOperation({
-    summary:
-      "DEPRECATED : Liste les interactions personnalisées de l'utilisateur",
-  })
-  @UseGuards(AuthGuard)
-  async getUserInteractions(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-  ): Promise<RecommandationAPI[]> {
-    this.checkCallerId(req, utilisateurId);
-
-    const list = await this.recommandationUsecase.listRecommandations(
-      utilisateurId,
+      exclude_defi === 'true',
     );
     return list.map((reco) => RecommandationAPI.mapToAPI(reco));
   }

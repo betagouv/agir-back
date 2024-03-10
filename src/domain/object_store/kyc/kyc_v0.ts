@@ -1,10 +1,12 @@
 import { Versioned } from '../versioned';
-import { KYC } from '../../../../src/domain/kyc/collectionQuestionsKYC';
+import { KYC } from '../../kyc/kyc';
 import {
   CategorieQuestionKYC,
   QuestionKYC,
   TypeReponseQuestionKYC,
 } from '../../../../src/domain/kyc/questionQYC';
+import { Thematique } from '../../../../src/domain/contenu/thematique';
+import { Tag } from '../../../../src/domain/utilisateur/ponderationTags';
 
 export class QuestionKYC_v0 {
   id: string;
@@ -16,6 +18,8 @@ export class QuestionKYC_v0 {
   reponse?: string[];
   reponses_possibles?: string[];
   ngc_key?: string;
+  thematique?: Thematique;
+  tags: Tag[];
 
   static map(elem: QuestionKYC): QuestionKYC_v0 {
     return {
@@ -28,6 +32,8 @@ export class QuestionKYC_v0 {
       reponse: elem.reponse,
       reponses_possibles: elem.reponses_possibles,
       ngc_key: elem.ngc_key,
+      thematique: elem.thematique,
+      tags: elem.tags,
     };
   }
 }

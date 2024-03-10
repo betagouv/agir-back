@@ -19,7 +19,7 @@ import {
   Upgrader,
 } from '../../../domain/object_store/upgrader';
 import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
-import { KYC } from '../../../../src/domain/kyc/collectionQuestionsKYC';
+import { KYC } from '../../../domain/kyc/kyc';
 import { Equipements } from '../../../../src/domain/equipements/equipements';
 import { Logement } from '../../../../src/domain/utilisateur/logement';
 

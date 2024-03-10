@@ -5,8 +5,7 @@ import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
 import { Recommandation } from '../domain/contenu/recommandation';
 import { ContentType } from '../../src/domain/contenu/contentType';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
-import { Article } from '../../src/domain/article/article';
-import { Quizz } from '../../src/domain/quizz/quizz';
+import { PonderationTagHelper } from '../../src/domain/utilisateur/ponderationTags';
 
 @Injectable()
 export class RecommandationUsecase {
@@ -16,7 +15,10 @@ export class RecommandationUsecase {
     private quizzRepository: QuizzRepository,
   ) {}
 
-  async listRecommandations(utilisateurId: string): Promise<Recommandation[]> {
+  async listRecommandations(
+    utilisateurId: string,
+    exclude_defi: boolean,
+  ): Promise<Recommandation[]> {
     let result: Recommandation[] = [];
 
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
@@ -25,19 +27,14 @@ export class RecommandationUsecase {
 
     const quizzes = await this.getQuizzes(utilisateur);
 
-    articles.forEach((article) => {
-      result.push({
-        ...article,
-        type: ContentType.article,
-      });
-    });
+    let defis = [];
+    if (!exclude_defi) {
+      defis = await this.getDefis(utilisateur);
+    }
 
-    quizzes.forEach((quizz) => {
-      result.push({
-        ...quizz,
-        type: ContentType.quizz,
-      });
-    });
+    result.push(...articles);
+    result.push(...quizzes);
+    result.push(...defis);
 
     result.sort((a, b) => b.score - a.score);
 
@@ -46,7 +43,26 @@ export class RecommandationUsecase {
     return result;
   }
 
-  private async getArticles(utilisateur: Utilisateur): Promise<Article[]> {
+  private async getDefis(utilisateur: Utilisateur): Promise<Recommandation[]> {
+    const defis = utilisateur.kyc.getDefisRestants();
+
+    PonderationTagHelper.computeAndAffectScores(defis, utilisateur);
+
+    return defis.map((e) => ({
+      content_id: e.id,
+      image_url:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Logo_Relevez_le_d%C3%A9fi.png/320px-Logo_Relevez_le_d%C3%A9fi.png',
+      points: e.points,
+      thematique_principale: e.thematique,
+      score: e.score,
+      titre: e.question,
+      type: ContentType.defi,
+    }));
+  }
+
+  private async getArticles(
+    utilisateur: Utilisateur,
+  ): Promise<Recommandation[]> {
     const articles_lus = utilisateur.history.searchArticlesIds({
       est_lu: true,
     });
@@ -61,10 +77,15 @@ export class RecommandationUsecase {
 
     scoring.affectScores(articles);
 
-    return articles;
+    return articles.map((e) => ({
+      ...e,
+      type: ContentType.article,
+    }));
   }
 
-  private async getQuizzes(utilisateur: Utilisateur): Promise<Quizz[]> {
+  private async getQuizzes(
+    utilisateur: Utilisateur,
+  ): Promise<Recommandation[]> {
     const quizz_attempted = utilisateur.history.listeIdsQuizzAttempted();
 
     let quizzes = await this.quizzRepository.searchQuizzes({
@@ -78,6 +99,9 @@ export class RecommandationUsecase {
 
     scoring.affectScores(quizzes);
 
-    return quizzes;
+    return quizzes.map((e) => ({
+      ...e,
+      type: ContentType.quizz,
+    }));
   }
 }
