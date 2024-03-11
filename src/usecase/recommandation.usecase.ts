@@ -32,8 +32,6 @@ export class RecommandationUsecase {
       defis = await this.getDefis(utilisateur);
     }
 
-    console.log(defis);
-
     result.push(...articles);
     result.push(...quizzes);
     result.push(...defis);
