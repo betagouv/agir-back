@@ -8,13 +8,13 @@ import {
   Consommation,
   Onboarding,
   Repas,
-  TransportOnboarding,
 } from '../../../../src/domain/utilisateur/onboarding/onboarding';
 import {
   TypeLogement,
   Superficie,
   Chauffage,
 } from '../../../../src/domain/utilisateur/logement';
+import { TransportQuotidien } from '../../../../src/domain/utilisateur/transport';
 
 describe('OnboardingResult vN ', () => {
   it('build OK from empty', () => {
@@ -34,7 +34,7 @@ describe('OnboardingResult vN ', () => {
     let domain_start = OnboardingResult.buildFromOnboarding(
       new Onboarding({
         version: 0,
-        transports: [TransportOnboarding.voiture],
+        transports: [TransportQuotidien.voiture],
         avion: 2,
         code_postal: '91120',
         adultes: 2,
@@ -61,7 +61,7 @@ describe('OnboardingResult vN ', () => {
     let domain_start = OnboardingResult.buildFromOnboarding(
       new Onboarding({
         version: 0,
-        transports: [TransportOnboarding.voiture],
+        transports: [TransportQuotidien.voiture],
         avion: 2,
         code_postal: '91120',
         adultes: 2,

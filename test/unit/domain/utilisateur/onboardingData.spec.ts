@@ -1,3 +1,4 @@
+import { TransportQuotidien } from '../../../../src/domain/utilisateur/transport';
 import {
   Chauffage,
   TypeLogement,
@@ -8,12 +9,11 @@ import {
   Impact,
   Onboarding,
   Repas,
-  TransportOnboarding,
 } from '../../../../src/domain/utilisateur/onboarding/onboarding';
 
 const ONBOARDING_DATA = {
   version: 0,
-  transports: [TransportOnboarding.moto, TransportOnboarding.voiture],
+  transports: [TransportQuotidien.moto, TransportQuotidien.voiture],
   adultes: 1,
   avion: 0,
   chauffage: Chauffage.bois,
@@ -43,9 +43,9 @@ describe('Objet OnboardingData', () => {
     let onboarding = new Onboarding({
       ...ONBOARDING_DATA,
       transports: [
-        TransportOnboarding.pied,
-        TransportOnboarding.velo,
-        TransportOnboarding.commun,
+        TransportQuotidien.pied,
+        TransportQuotidien.velo,
+        TransportQuotidien.commun,
       ],
     });
 
@@ -59,7 +59,7 @@ describe('Objet OnboardingData', () => {
     // GIVEN
     let onboarding = new Onboarding({
       ...ONBOARDING_DATA,
-      transports: [TransportOnboarding.moto],
+      transports: [TransportQuotidien.moto],
     });
 
     // WHEN
@@ -72,7 +72,7 @@ describe('Objet OnboardingData', () => {
     // GIVEN
     let onboarding = new Onboarding({
       ...ONBOARDING_DATA,
-      transports: [TransportOnboarding.voiture],
+      transports: [TransportQuotidien.voiture],
     });
 
     // WHEN
@@ -113,7 +113,7 @@ describe('Objet OnboardingData', () => {
     let onboarding = new Onboarding({
       ...ONBOARDING_DATA,
       avion: 1,
-      transports: [TransportOnboarding.voiture],
+      transports: [TransportQuotidien.voiture],
     });
 
     // WHEN
@@ -127,7 +127,7 @@ describe('Objet OnboardingData', () => {
     let onboarding = new Onboarding({
       ...ONBOARDING_DATA,
       avion: 2,
-      transports: [TransportOnboarding.voiture],
+      transports: [TransportQuotidien.voiture],
     });
 
     // WHEN

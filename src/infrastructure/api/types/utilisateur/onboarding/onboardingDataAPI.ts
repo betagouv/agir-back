@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { TransportQuotidien } from '../../../../../../src/domain/utilisateur/transport';
 import { Onboarding_v0 } from '../../../../../../src/domain/object_store/Onboarding/onboarding_v0';
 import {
   TypeLogement,
@@ -8,7 +9,6 @@ import {
 import {
   Consommation,
   Repas,
-  TransportOnboarding,
 } from '../../../../../domain/utilisateur/onboarding/onboarding';
 
 export class OnboardingDataAPI {
@@ -16,10 +16,10 @@ export class OnboardingDataAPI {
     type: 'array',
     items: {
       type: 'string',
-      enum: Object.keys(TransportOnboarding),
+      enum: Object.keys(TransportQuotidien),
     },
   })
-  transports: TransportOnboarding[];
+  transports: TransportQuotidien[];
   @ApiProperty({ type: 'integer' })
   avion: number;
   @ApiProperty()

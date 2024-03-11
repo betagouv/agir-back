@@ -1,14 +1,7 @@
 import { Onboarding_v0 } from '../../../../src/domain/object_store/Onboarding/onboarding_v0';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { TypeLogement, Superficie, Chauffage } from '../logement';
-
-export enum TransportOnboarding {
-  voiture = 'voiture',
-  moto = 'moto',
-  pied = 'pied',
-  velo = 'velo',
-  commun = 'commun',
-}
+import { TransportQuotidien } from '../transport';
 
 export enum Repas {
   tout = 'tout',
@@ -38,7 +31,7 @@ export enum Impact {
 }
 
 export class Onboarding {
-  transports: TransportOnboarding[];
+  transports: TransportQuotidien[];
   avion: number;
   code_postal: string;
   commune: string;
@@ -70,8 +63,8 @@ export class Onboarding {
   getTransportLevel(): Impact {
     let avion: boolean = this.avion ? this.avion > 0 : false;
     let nbr_avion = this.avion ? this.avion : 0;
-    let voiture: boolean = this.hasTransport(TransportOnboarding.voiture);
-    let moto: boolean = this.hasTransport(TransportOnboarding.moto);
+    let voiture: boolean = this.hasTransport(TransportQuotidien.voiture);
+    let moto: boolean = this.hasTransport(TransportQuotidien.moto);
 
     if (!avion && !voiture && moto) return Impact.faible;
 
@@ -151,14 +144,14 @@ export class Onboarding {
     if (this.consommation === Consommation.raisonnable) return Impact.eleve;
     if (this.consommation === Consommation.shopping) return Impact.tres_eleve;
   }
-  private hasTransport(transport: TransportOnboarding) {
+  private hasTransport(transport: TransportQuotidien) {
     return this.transports ? this.transports.indexOf(transport) >= 0 : false;
   }
 
   validateData() {
     if (this.transports) {
       this.transports.forEach((value) => {
-        if (!(value in TransportOnboarding))
+        if (!(value in TransportQuotidien))
           ApplicationError.throwValeurInconnueOnboarding('transport', value);
       });
     } else {

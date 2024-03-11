@@ -6,6 +6,7 @@ import { Logement_v0 } from './logement/logement_v0';
 import { Onboarding_v0 } from './Onboarding/onboarding_v0';
 import { OnboardingResult_v0 } from './onboardingResult/onboardingResult_v0';
 import { ParcoursTodo_v0 } from './parcoursTodo/parcoursTodo_v0';
+import { Transport_v0 } from './transport/transport_v0';
 import { UnlockedFeatures_v0 } from './unlockedFeatures/unlockedFeatures_v0';
 import { UnlockedFeatures_v1 } from './unlockedFeatures/unlockedFeatures_v1';
 
@@ -19,6 +20,7 @@ export enum SerialisableDomain {
   KYC = 'KYC',
   Equipements = 'Equipements',
   Logement = 'Logement',
+  Transport = 'Transport',
   Object = 'Object',
 }
 const CLASS_DICTIONNARY = {
@@ -32,6 +34,7 @@ const CLASS_DICTIONNARY = {
   KYC_v0: KYC_v0,
   Equipements_v0: Equipements_v0,
   Logement_v0: Logement_v0,
+  Transport_v0: Transport_v0,
 };
 
 const DATE_REGEXP =

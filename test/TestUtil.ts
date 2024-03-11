@@ -7,7 +7,6 @@ import {
   Consommation,
   Repas,
   ThematiqueOnboarding as ThematiqueOnboarding,
-  TransportOnboarding,
 } from '../src/domain/utilisateur/onboarding/onboarding';
 import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
@@ -61,6 +60,8 @@ import {
   Utilisateur,
 } from '@prisma/client';
 import { ServiceStatus } from '../src/domain/service/service';
+import { TransportQuotidien } from '../src/domain/utilisateur/transport';
+import { Transport_v0 } from 'src/domain/object_store/transport/transport_v0';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -400,9 +401,18 @@ export class TestUtil {
       proprietaire: true,
     };
 
+    const transport: Transport_v0 = {
+      version: 0,
+      avions_par_an: 2,
+      transports_quotidiens: [
+        TransportQuotidien.velo,
+        TransportQuotidien.voiture,
+      ],
+    };
+
     const onboarding: Onboarding_v0 = {
       version: 0,
-      transports: [TransportOnboarding.voiture, TransportOnboarding.pied],
+      transports: [TransportQuotidien.voiture, TransportQuotidien.pied],
       avion: 2,
       code_postal: '91120',
       adultes: 2,
@@ -468,6 +478,7 @@ export class TestUtil {
       kyc: kyc,
       equipements: equipements,
       logement: logement,
+      transport: transport,
       ponderation_tags: {},
       ...override,
     };

@@ -8,6 +8,7 @@ import {
   Superficie,
   TypeLogement,
 } from '../../../src/domain/utilisateur/logement';
+import { TransportQuotidien } from '../../../src/domain/utilisateur/transport';
 var crypto = require('crypto');
 
 const ONBOARDING_1_2_3_4_DATA = {
@@ -401,6 +402,21 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.plus_de_15_ans).toEqual(true);
     expect(response.body.proprietaire).toEqual(true);
   });
+  it('GET /utilisateurs/id/transport - read transport datas', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/transport',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.transports_quotidiens).toEqual([
+      TransportQuotidien.velo,
+      TransportQuotidien.voiture,
+    ]);
+    expect(response.body.avions_par_an).toEqual(2);
+  });
   it('GET /utilisateurs/id/logement - read logement datas et prio sur donnee commune code postal utilisateur', async () => {
     // GIVEN
     const user = await TestUtil.create(DB.utilisateur, {
@@ -533,6 +549,25 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.logement.plus_de_15_ans).toEqual(false);
     expect(dbUser.logement.chauffage).toEqual(Chauffage.electricite);
     expect(dbUser.logement.dpe).toEqual(DPE.E);
+  });
+  it('PATCH /utilisateurs/id/transport - update transport datas', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/transport',
+    ).send({
+      avions_par_an: 1,
+      transports_quotidiens: [TransportQuotidien.pied],
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.getById('utilisateur-id');
+
+    expect(dbUser.transport.avions_par_an).toEqual(1);
+    expect(dbUser.transport.transports_quotidiens).toEqual([
+      TransportQuotidien.pied,
+    ]);
   });
   it('PATCH /utilisateurs/id/profile - bad password format', async () => {
     // GIVEN

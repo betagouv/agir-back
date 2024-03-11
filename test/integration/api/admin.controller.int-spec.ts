@@ -15,10 +15,10 @@ import {
 } from '../../../src/domain/utilisateur/logement';
 import { RubriquePonderationSetName } from '../../../src/usecase/referentiel/ponderation';
 import {
-  TransportOnboarding,
   Repas,
   Consommation,
 } from '../../../src/domain/utilisateur/onboarding/onboarding';
+import { TransportQuotidien } from '../../../src/domain/utilisateur/transport';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
@@ -398,6 +398,43 @@ describe('Admin (API test)', () => {
     expect(userDB.logement.plus_de_15_ans).toEqual(undefined);
     expect(userDB.logement.proprietaire).toEqual(true);
     expect(userDB.logement.superficie).toEqual(Superficie.superficie_100);
+  });
+  it('POST /admin/migrate_users migration V6 OK', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur, {
+      version: 5,
+      migration_enabled: true,
+      logement: {},
+      code_postal: '12345',
+      commune: 'YO',
+    });
+    process.env.USER_CURRENT_VERSION = '6';
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 6,
+            ok: true,
+            info: `migrated transport data`,
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.version).toBe(6);
+    expect(userDB.transport.avions_par_an).toEqual(2);
+    expect(userDB.transport.transports_quotidiens).toEqual([
+      TransportQuotidien.voiture,
+      TransportQuotidien.pied,
+    ]);
   });
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
@@ -978,7 +1015,7 @@ describe('Admin (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       onboardingData: {
         version: 0,
-        transports: [TransportOnboarding.pied, TransportOnboarding.voiture],
+        transports: [TransportQuotidien.pied, TransportQuotidien.voiture],
         avion: 2,
         code_postal: '91120',
         adultes: 2,

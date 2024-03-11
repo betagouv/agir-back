@@ -24,6 +24,7 @@ import {
 import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
 import {
   LogementAPI,
+  TransportAPI,
   UtilisateurProfileAPI,
 } from './types/utilisateur/utilisateurProfileAPI';
 import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
@@ -133,6 +134,29 @@ export class UtilisateurController extends GenericControler {
     return result;
   }
 
+  @ApiOkResponse({ type: TransportAPI })
+  @Get('utilisateurs/:utilisateurId/transport')
+  @ApiOperation({
+    summary:
+      "Information de transport d'un utilisateur d'id donné (frequence avions, transports du quotidien)",
+  })
+  @UseGuards(AuthGuard)
+  async getUtilisateurTransport(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<TransportAPI> {
+    this.checkCallerId(req, utilisateurId);
+
+    let utilisateur = await this.utilisateurUsecase.findUtilisateurById(
+      utilisateurId,
+    );
+    if (utilisateur == null) {
+      throw new NotFoundException(`Pas d'utilisateur d'id ${utilisateurId}`);
+    }
+
+    return TransportAPI.mapToAPI(utilisateur.transport);
+  }
+
   @Post('utilisateurs/login')
   @ApiOperation({
     summary:
@@ -192,6 +216,27 @@ export class UtilisateurController extends GenericControler {
   ) {
     this.checkCallerId(req, utilisateurId);
     await this.utilisateurUsecase.updateUtilisateurLogement(
+      utilisateurId,
+      body,
+    );
+  }
+
+  @Patch('utilisateurs/:utilisateurId/transport')
+  @ApiBody({
+    type: TransportAPI,
+  })
+  @ApiOperation({
+    summary:
+      'Mise à jour des infos de transport (frequence avion, transports du quotidien, etc)',
+  })
+  @UseGuards(AuthGuard)
+  async updateTransport(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Body() body: TransportAPI,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    await this.utilisateurUsecase.updateUtilisateurTransport(
       utilisateurId,
       body,
     );

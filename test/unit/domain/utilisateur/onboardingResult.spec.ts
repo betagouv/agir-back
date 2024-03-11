@@ -1,3 +1,4 @@
+import { TransportQuotidien } from '../../../../src/domain/utilisateur/transport';
 import {
   TypeLogement,
   Superficie,
@@ -9,13 +10,12 @@ import {
   Onboarding,
   Repas,
   ThematiqueOnboarding,
-  TransportOnboarding,
 } from '../../../../src/domain/utilisateur/onboarding/onboarding';
 import { OnboardingResult } from '../../../../src/domain/utilisateur/onboarding/onboardingResult';
 
 const ONBOARDING_1_2_3_4 = {
   version: 0,
-  transports: [TransportOnboarding.velo, TransportOnboarding.voiture],
+  transports: [TransportQuotidien.velo, TransportQuotidien.voiture],
   avion: 2,
   adultes: 2,
   enfants: 2,
@@ -109,7 +109,7 @@ describe('Objet OnboardingData', () => {
     let onboardingResult = OnboardingResult.buildFromOnboarding(
       new Onboarding({
         version: 0,
-        transports: [TransportOnboarding.velo],
+        transports: [TransportQuotidien.velo],
         avion: 2,
         adultes: 2,
         enfants: 2,

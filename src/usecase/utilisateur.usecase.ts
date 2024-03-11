@@ -2,6 +2,7 @@ import { Utilisateur } from '../domain/utilisateur/utilisateur';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import {
   LogementAPI,
+  TransportAPI,
   UtilisateurProfileAPI,
 } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
 import { SuiviRepository } from '../infrastructure/repository/suivi.repository';
@@ -117,6 +118,23 @@ export class UtilisateurUsecase {
       utilisateurId,
       profileToUpdate,
     );
+  }
+
+  async updateUtilisateurTransport(utilisateurId: string, input: TransportAPI) {
+    const utilisateur = await this.utilisateurRespository.getById(
+      utilisateurId,
+    );
+
+    utilisateur.transport.avions_par_an = this.AorB(
+      input.avions_par_an,
+      utilisateur.transport.avions_par_an,
+    );
+    utilisateur.transport.transports_quotidiens = this.AorB(
+      input.transports_quotidiens,
+      utilisateur.transport.transports_quotidiens,
+    );
+
+    await this.utilisateurRespository.updateUtilisateur(utilisateur);
   }
 
   async updateUtilisateurLogement(utilisateurId: string, input: LogementAPI) {

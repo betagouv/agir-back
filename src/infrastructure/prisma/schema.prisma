@@ -50,6 +50,7 @@ model Utilisateur {
   unlocked_features        Json               @default("{}") // versioné 
   equipements              Json               @default("{}") // versioné 
   logement                 Json               @default("{}") // versioné 
+  transport                Json               @default("{}") // versioné 
   empreintes               Empreinte[]
   suivis                   Suivi[]
   groupes                  GroupeAbonnement[]

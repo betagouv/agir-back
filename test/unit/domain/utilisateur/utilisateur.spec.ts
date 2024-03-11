@@ -3,7 +3,6 @@ import {
   Consommation,
   Onboarding,
   Repas,
-  TransportOnboarding,
 } from '../../../../src/domain/utilisateur/onboarding/onboarding';
 import { Onboarding_v0 } from '../../../../src/domain/object_store/Onboarding/onboarding_v0';
 import {
@@ -11,10 +10,11 @@ import {
   TypeLogement,
   Superficie,
 } from '../../../../src/domain/utilisateur/logement';
+import { TransportQuotidien } from '../../../../src/domain/utilisateur/transport';
 
 const ONBOARDING_DATA: Onboarding_v0 = {
   version: 0,
-  transports: [TransportOnboarding.moto, TransportOnboarding.voiture],
+  transports: [TransportQuotidien.moto, TransportQuotidien.voiture],
   adultes: 1,
   avion: 0,
   chauffage: Chauffage.bois,

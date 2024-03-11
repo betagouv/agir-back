@@ -117,6 +117,17 @@ export class MigrationUsecase {
   private async migrate_6(
     utilisateur: Utilisateur,
   ): Promise<{ ok: boolean; info: string }> {
+    utilisateur.transport.avions_par_an = utilisateur.onboardingData.avion;
+    utilisateur.transport.transports_quotidiens =
+      utilisateur.onboardingData.transports;
+    return {
+      ok: true,
+      info: `migrated transport data`,
+    };
+  }
+  private async migrate_7(
+    utilisateur: Utilisateur,
+  ): Promise<{ ok: boolean; info: string }> {
     return { ok: false, info: 'to implement' };
   }
 }

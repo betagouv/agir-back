@@ -1,5 +1,5 @@
 import { CodeManager } from './manager/codeManager';
-import { Onboarding, TransportOnboarding } from './onboarding/onboarding';
+import { Onboarding } from './onboarding/onboarding';
 import { OnboardingResult } from './onboarding/onboardingResult';
 import { PasswordManager } from './manager/passwordManager';
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
@@ -17,6 +17,7 @@ import {
   PonderationTagSet,
   Tag,
 } from './ponderationTags';
+import { Transport, TransportQuotidien } from './transport';
 
 export class UtilisateurData {
   id: string;
@@ -54,6 +55,7 @@ export class UtilisateurData {
   ponderationId: string;
   kyc: KYC;
   logement: Logement;
+  transport: Transport;
   ponderation_tags: PonderationTagSet;
 }
 
@@ -116,6 +118,7 @@ export class Utilisateur extends UtilisateurData {
       version: UtilisateurBehavior.currentUserSystemVersion(),
       ponderationId: UtilisateurBehavior.ponderationRubriques(),
       logement: Logement.buildFromOnboarding(onboarding),
+      transport: Transport.buildFromOnboarding(onboarding),
       ponderation_tags: {},
     });
   }
@@ -168,9 +171,9 @@ export class Utilisateur extends UtilisateurData {
   public recomputeRecoTags?() {
     // FIXME : refacto comme pour logement, ne plus utiliser l'onboarding data
     if (this.onboardingData.transports) {
-      if (this.onboardingData.transports.includes(TransportOnboarding.moto))
+      if (this.onboardingData.transports.includes(TransportQuotidien.moto))
         this.setTag(Tag.utilise_moto_ou_voiture, 100);
-      if (this.onboardingData.transports.includes(TransportOnboarding.voiture))
+      if (this.onboardingData.transports.includes(TransportQuotidien.voiture))
         this.setTag(Tag.utilise_moto_ou_voiture, 100);
     }
 
