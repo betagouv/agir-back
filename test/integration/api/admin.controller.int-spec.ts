@@ -14,6 +14,11 @@ import {
   TypeLogement,
 } from '../../../src/domain/utilisateur/logement';
 import { RubriquePonderationSetName } from '../../../src/usecase/referentiel/ponderation';
+import {
+  TransportOnboarding,
+  Repas,
+  Consommation,
+} from '../../../src/domain/utilisateur/onboarding/onboarding';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
@@ -966,5 +971,41 @@ describe('Admin (API test)', () => {
     expect(userDB_2.parcours_todo.liste_todo).toHaveLength(
       TodoCatalogue.getNombreTodo(),
     );
+  });
+  it('POST /utilisateurs/compute_reco_tags - recalcul les tags de reco', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur, {
+      onboardingData: {
+        version: 0,
+        transports: [TransportOnboarding.pied, TransportOnboarding.voiture],
+        avion: 2,
+        code_postal: '91120',
+        adultes: 2,
+        enfants: 1,
+        residence: TypeLogement.maison,
+        proprietaire: true,
+        superficie: Superficie.superficie_100,
+        chauffage: Chauffage.bois,
+        repas: Repas.tout,
+        consommation: Consommation.raisonnable,
+        commune: 'PALAISEAU',
+      },
+    });
+
+    const userDB_before = await utilisateurRepository.getById('utilisateur-id');
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/compute_reco_tags');
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+
+    expect(userDB_before.ponderation_tags.utilise_moto_ou_voiture).toEqual(
+      undefined,
+    );
+    expect(userDB.ponderation_tags.utilise_moto_ou_voiture).toEqual(100);
   });
 });

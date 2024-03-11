@@ -137,6 +137,41 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.gamification.points).toEqual(10);
   });
+  it('PUT /utilisateurs/id/questionsKYC/2 - met à jour les tags de reco', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      kyc: {
+        version: 0,
+        answered_questions: [
+          {
+            id: '101',
+            question: `Quel est votre sujet principal d'intéret ?`,
+            type: TypeReponseQuestionKYC.choix_multiple,
+            is_NGC: false,
+            categorie: CategorieQuestionKYC.service,
+            points: 10,
+            reponse: undefined,
+            reponses_possibles: [
+              'Le climat',
+              'Mon logement',
+              'Ce que je mange',
+            ],
+            tags: [],
+          },
+        ],
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/101',
+    ).send({ reponse: ['🚗 Transports'] });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.ponderation_tags.interet_transports).toEqual(50);
+  });
   it('PUT /utilisateurs/id/questionsKYC/bad - erreur 404 ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);

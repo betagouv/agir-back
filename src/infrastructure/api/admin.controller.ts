@@ -23,6 +23,7 @@ import { UserMigrationReportAPI } from './types/userMigrationReportAPI';
 import { ReferentielUsecase } from '../../../src/usecase/referentiel/referentiel.usecase';
 import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
 import { TodoUsecase } from '../../../src/usecase/todo.usecase';
+import { UtilisateurUsecase } from '../../../src/usecase/utilisateur.usecase';
 
 @Controller()
 @ApiBearerAuth()
@@ -30,6 +31,7 @@ import { TodoUsecase } from '../../../src/usecase/todo.usecase';
 export class AdminController extends GenericControler {
   constructor(
     private migrationUsecase: MigrationUsecase,
+    private utilisateurUsecase: UtilisateurUsecase,
     private serviceUsecase: ServiceUsecase,
     private linkyUsecase: LinkyUsecase,
     private cmsUsecase: CMSUsecase,
@@ -158,5 +160,14 @@ export class AdminController extends GenericControler {
   async upgrade_user_todo(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.todoUsecase.updateAllUsersTodo();
+  }
+
+  @Post('/admin/compute_reco_tags')
+  @ApiOperation({
+    summary: `recalcule les valorisations de tags de reco pour tous les utilisateurs`,
+  })
+  async compute_reco_tags(@Request() req): Promise<void> {
+    this.checkCronAPIProtectedEndpoint(req);
+    await this.utilisateurUsecase.computeAllUsersRecoTags();
   }
 }

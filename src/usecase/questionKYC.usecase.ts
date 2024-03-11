@@ -34,6 +34,9 @@ export class QuestionKYCUsecase {
       utilisateur.gamification.ajoutePoints(question.points);
     }
     utilisateur.kyc.updateQuestion(questionId, reponse);
+
+    utilisateur.recomputeRecoTags();
+
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 

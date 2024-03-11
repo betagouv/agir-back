@@ -40,6 +40,16 @@ export class UtilisateurUsecase {
     private passwordManager: PasswordManager,
   ) {}
 
+  async computeAllUsersRecoTags() {
+    const userIdList = await this.utilisateurRespository.listUtilisateurIds();
+    for (let index = 0; index < userIdList.length; index++) {
+      const user_id = userIdList[index];
+      const utilisateur = await this.utilisateurRespository.getById(user_id);
+      utilisateur.recomputeRecoTags();
+      await this.utilisateurRespository.updateUtilisateur(utilisateur);
+    }
+  }
+
   async loginUtilisateur(
     email: string,
     password: string,

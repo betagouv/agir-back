@@ -1,5 +1,5 @@
 import { CodeManager } from './manager/codeManager';
-import { Onboarding } from './onboarding/onboarding';
+import { Onboarding, TransportOnboarding } from './onboarding/onboarding';
 import { OnboardingResult } from './onboarding/onboardingResult';
 import { PasswordManager } from './manager/passwordManager';
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
@@ -163,5 +163,17 @@ export class Utilisateur extends UtilisateurData {
 
   public setTag?(tag: Tag, value: number) {
     PonderationTagHelper.addTagToSet(this.ponderation_tags, tag, value);
+  }
+
+  public recomputeRecoTags?() {
+    if (this.onboardingData.transports.includes(TransportOnboarding.moto))
+      this.setTag(Tag.utilise_moto_ou_voiture, 100);
+    if (this.onboardingData.transports.includes(TransportOnboarding.voiture))
+      this.setTag(Tag.utilise_moto_ou_voiture, 100);
+
+    // FIXME : refacto comme pour logement
+    const kyc_101 = this.kyc.getQuestionOrException('101');
+    if (kyc_101.reponse && kyc_101.reponse.includes('🚗 Transports'))
+      this.setTag(Tag.interet_transports, 50);
   }
 }
