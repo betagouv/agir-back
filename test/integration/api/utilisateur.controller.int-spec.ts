@@ -550,11 +550,11 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.logement.chauffage).toEqual(Chauffage.electricite);
     expect(dbUser.logement.dpe).toEqual(DPE.E);
   });
-  it('PATCH /utilisateurs/id/transport - update transport datas', async () => {
+  it('PATCH /utilisateurs/id/transport - update transport datas and reco tags', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     // WHEN
-    const response = await TestUtil.PATCH(
+    let response = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/transport',
     ).send({
       avions_par_an: 1,
@@ -562,12 +562,24 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     });
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = await utilisateurRepository.getById('utilisateur-id');
+    let dbUser = await utilisateurRepository.getById('utilisateur-id');
 
     expect(dbUser.transport.avions_par_an).toEqual(1);
     expect(dbUser.transport.transports_quotidiens).toEqual([
       TransportQuotidien.pied,
     ]);
+    expect(dbUser.ponderation_tags.utilise_moto_ou_voiture).toEqual(0);
+    // WHEN
+    response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/transport',
+    ).send({
+      avions_par_an: 1,
+      transports_quotidiens: [TransportQuotidien.voiture],
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    dbUser = await utilisateurRepository.getById('utilisateur-id');
+    expect(dbUser.ponderation_tags.utilise_moto_ou_voiture).toEqual(100);
   });
   it('PATCH /utilisateurs/id/profile - bad password format', async () => {
     // GIVEN

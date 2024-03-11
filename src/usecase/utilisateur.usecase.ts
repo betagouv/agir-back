@@ -134,6 +134,8 @@ export class UtilisateurUsecase {
       utilisateur.transport.transports_quotidiens,
     );
 
+    utilisateur.recomputeRecoTags();
+
     await this.utilisateurRespository.updateUtilisateur(utilisateur);
   }
 
