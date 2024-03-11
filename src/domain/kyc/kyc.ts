@@ -50,9 +50,7 @@ export class KYC {
   }
 
   public isQuestionAnswered(id: string): boolean {
-    let answered_question = this.getAnsweredQuestion(id);
-    if (!answered_question) return false;
-    return !!answered_question.reponse;
+    return !!this.getAnsweredQuestion(id);
   }
 
   public updateQuestion(questionId: string, reponse: string[]) {

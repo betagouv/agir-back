@@ -21,6 +21,19 @@ const ONBOARD_DATA_1234 = {
   repas: 'vegan',
   consommation: 'secondemain',
 };
+const ONBOARD_DATA_NO_CAR_MOTO = {
+  transports: ['pied'],
+  avion: 2,
+  code_postal: '91120',
+  adultes: 2,
+  enfants: 1,
+  residence: 'maison',
+  proprietaire: true,
+  superficie: 'superficie_70',
+  chauffage: 'gaz',
+  repas: 'vegan',
+  consommation: 'secondemain',
+};
 
 const ONBOARDING_RES_1234 = {
   ventilation_par_thematiques: {
@@ -39,7 +52,7 @@ const ONBOARDING_RES_1234 = {
 
 const utilisateurs = {
   experimental: {
-    nom: 'Erimental',
+    nom: 'Experimental',
     prenom: 'Exp',
     email: 'exp@agir.dev',
     mot_de_passe: 'hoho',
@@ -63,140 +76,12 @@ const utilisateurs = {
     },
     todo: {
       version: 0,
-      todo_active: 4,
+      todo_active: 0,
       liste_todo: [
         {
           numero_todo: 1,
           points_todo: 30,
-          titre: 'Votre 1ère mission',
-          done_at: null,
-          done: [
-            {
-              id: uuidv4(),
-              titre: `Faire le bilan simplifié de vos impacts`,
-              thematiques: [],
-              progression: { current: 1, target: 1 },
-              sont_points_en_poche: false,
-              type: ContentType.onboarding,
-              level: null,
-              points: 10,
-            },
-          ],
-          todo: [
-            {
-              id: uuidv4(),
-              titre: 'Nous en dire plus sur vous',
-              thematiques: [Thematique.climat],
-              progression: { current: 0, target: 1 },
-              sont_points_en_poche: false,
-              type: ContentType.kyc,
-              points: 20,
-              content_id: '1',
-            },
-            {
-              id: uuidv4(),
-              titre: 'Une reco à voir !',
-              thematiques: [Thematique.climat],
-              progression: { current: 0, target: 1 },
-              sont_points_en_poche: false,
-              type: ContentType.recommandations,
-              level: DifficultyLevel.L1,
-              points: 50,
-            },
-          ],
-        },
-        {
-          numero_todo: 2,
-          points_todo: 30,
-          titre: 'Mission 2',
-          done_at: null,
-          done: [],
-          todo: [
-            {
-              id: uuidv4(),
-              titre: 'Réussir 2 quiz Climat - très facile',
-              thematiques: [Thematique.climat],
-              progression: { current: 1, target: 2 },
-              sont_points_en_poche: false,
-              type: ContentType.quizz,
-              level: DifficultyLevel.L1,
-              points: 20,
-            },
-            {
-              id: uuidv4(),
-              titre: 'Lire un article Transports - très facile',
-              thematiques: [Thematique.transport],
-              progression: { current: 0, target: 1 },
-              sont_points_en_poche: false,
-              type: ContentType.article,
-              level: DifficultyLevel.L1,
-              points: 20,
-            },
-          ],
-        },
-        {
-          numero_todo: 3,
-          points_todo: 30,
-          titre: 'Mission 3',
-          done_at: null,
-          done: [],
-          todo: [
-            {
-              id: uuidv4(),
-              titre: `Réussir 2 quiz Transports - très facile`,
-              thematiques: [Thematique.transport],
-              progression: { current: 0, target: 2 },
-              sont_points_en_poche: false,
-              type: ContentType.quizz,
-              level: DifficultyLevel.L1,
-              points: 20,
-            },
-            {
-              id: uuidv4(),
-              titre: 'Lire un article Alimentation - très facile',
-              thematiques: [Thematique.alimentation],
-              progression: { current: 0, target: 1 },
-              sont_points_en_poche: false,
-              type: ContentType.article,
-              level: DifficultyLevel.L1,
-              points: 20,
-            },
-          ],
-        },
-        {
-          numero_todo: 4,
-          points_todo: 30,
-          titre: 'Mission 4',
-          done_at: null,
-          done: [],
-          todo: [
-            {
-              id: uuidv4(),
-              titre: `Installer "Fruits et légumes de saison"`,
-              thematiques: [Thematique.alimentation],
-              progression: { current: 0, target: 1 },
-              service_id: LiveService.fruits,
-              sont_points_en_poche: false,
-              type: ContentType.service,
-              points: 20,
-              level: DifficultyLevel.ANY,
-            },
-            {
-              id: uuidv4(),
-              titre: `Réussir 3 quiz Logement - très facile`,
-              thematiques: [Thematique.logement],
-              progression: { current: 0, target: 3 },
-              sont_points_en_poche: false,
-              type: ContentType.quizz,
-              level: DifficultyLevel.L1,
-              points: 20,
-            },
-          ],
-        },
-        {
-          numero_todo: 5,
-          points_todo: 30,
-          titre: 'Mission 5',
+          titre: 'Mission EXP',
           done_at: null,
           done: [],
           todo: [
@@ -259,7 +144,7 @@ const utilisateurs = {
     suivis: [],
     bilans: [],
     onboardingResult: ONBOARDING_RES_1234,
-    onboardingData: ONBOARD_DATA_1234,
+    onboardingData: ONBOARD_DATA_NO_CAR_MOTO,
   },
   wojtek: {
     nom: 'WWW',

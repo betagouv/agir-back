@@ -1,3 +1,7 @@
+import {
+  CategorieQuestionKYC,
+  TypeReponseQuestionKYC,
+} from '../../../src/domain/kyc/questionQYC';
 import { RubriquePonderationSetName } from '../../../src/usecase/referentiel/ponderation';
 import { DB, TestUtil } from '../../TestUtil';
 
@@ -210,6 +214,61 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[0].content_id).toEqual('101');
     expect(response.body[1].content_id).toEqual('2');
     expect(response.body[2].content_id).toEqual('1');
+  });
+  it('GET /utilisateurs/id/recommandations - ne renvoie pas le défi si KYC dejà répondu', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      history: {},
+      code_postal: null,
+      ponderation_tags: { utilise_moto_ou_voiture: 100 },
+      kyc: {
+        version: 0,
+        answered_questions: [
+          {
+            id: '101', // ID du prermier défi
+            question: `Quel est votre sujet principal d'intéret ?`,
+            type: TypeReponseQuestionKYC.choix_multiple,
+            is_NGC: false,
+            categorie: CategorieQuestionKYC.service,
+            points: 10,
+            reponse: ['Le climat'],
+            reponses_possibles: [
+              'Le climat',
+              'Mon logement',
+              'Ce que je mange',
+            ],
+            tags: [],
+          },
+        ],
+      },
+    });
+
+    await TestUtil.create(DB.ponderationRubriques, {
+      rubriques: {
+        '1': 10,
+        '2': 20,
+        '3': 30,
+      },
+    });
+
+    await TestUtil.create(DB.quizz, {
+      content_id: '1',
+      rubrique_ids: ['1'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+      rubrique_ids: ['2'],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(2);
+    expect(response.body[0].content_id).toEqual('2');
+    expect(response.body[1].content_id).toEqual('1');
   });
   it('GET /utilisateurs/id/recommandations - pas de article lu', async () => {
     // GIVEN

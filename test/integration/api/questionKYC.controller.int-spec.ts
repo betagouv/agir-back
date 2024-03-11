@@ -137,14 +137,14 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.gamification.points).toEqual(10);
   });
-  it('PUT /utilisateurs/id/questionsKYC/2 - met à jour les tags de reco', async () => {
+  it('PUT /utilisateurs/id/questionsKYC/001 - met à jour les tags de reco', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       kyc: {
         version: 0,
         answered_questions: [
           {
-            id: '101',
+            id: '001',
             question: `Quel est votre sujet principal d'intéret ?`,
             type: TypeReponseQuestionKYC.choix_multiple,
             is_NGC: false,
@@ -164,7 +164,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/101',
+      '/utilisateurs/utilisateur-id/questionsKYC/001',
     ).send({ reponse: ['🚗 Transports'] });
 
     // THEN

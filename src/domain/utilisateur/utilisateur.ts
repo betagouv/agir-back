@@ -172,8 +172,9 @@ export class Utilisateur extends UtilisateurData {
       this.setTag(Tag.utilise_moto_ou_voiture, 100);
 
     // FIXME : refacto comme pour logement
-    const kyc_101 = this.kyc.getQuestionOrException('101');
-    if (kyc_101.reponse && kyc_101.reponse.includes('🚗 Transports'))
+    const kyc_001 = this.kyc.getQuestionOrException('001');
+    if (kyc_001.reponse && kyc_001.reponse.includes('🚗 Transports')) {
       this.setTag(Tag.interet_transports, 50);
+    }
   }
 }
