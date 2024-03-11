@@ -169,13 +169,19 @@ export class Utilisateur extends UtilisateurData {
   }
 
   public recomputeRecoTags?() {
-    if (
-      this.transport.transports_quotidiens.includes(TransportQuotidien.moto) ||
-      this.transport.transports_quotidiens.includes(TransportQuotidien.voiture)
-    ) {
-      this.setTag(Tag.utilise_moto_ou_voiture, 100);
-    } else {
-      this.setTag(Tag.utilise_moto_ou_voiture, 0);
+    if (this.transport.transports_quotidiens) {
+      if (
+        this.transport.transports_quotidiens.includes(
+          TransportQuotidien.moto,
+        ) ||
+        this.transport.transports_quotidiens.includes(
+          TransportQuotidien.voiture,
+        )
+      ) {
+        this.setTag(Tag.utilise_moto_ou_voiture, 100);
+      } else {
+        this.setTag(Tag.utilise_moto_ou_voiture, 0);
+      }
     }
 
     const kyc_001 = this.kyc.getQuestionOrException('001');
