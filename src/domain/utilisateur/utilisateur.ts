@@ -166,15 +166,17 @@ export class Utilisateur extends UtilisateurData {
   }
 
   public recomputeRecoTags?() {
+    // FIXME : refacto comme pour logement, ne plus utiliser l'onboarding data
     if (this.onboardingData.transports.includes(TransportOnboarding.moto))
       this.setTag(Tag.utilise_moto_ou_voiture, 100);
     if (this.onboardingData.transports.includes(TransportOnboarding.voiture))
       this.setTag(Tag.utilise_moto_ou_voiture, 100);
 
-    // FIXME : refacto comme pour logement
     const kyc_001 = this.kyc.getQuestionOrException('001');
     if (kyc_001.reponse && kyc_001.reponse.includes('🚗 Transports')) {
       this.setTag(Tag.interet_transports, 50);
+    } else {
+      this.setTag(Tag.interet_transports, 0);
     }
   }
 }

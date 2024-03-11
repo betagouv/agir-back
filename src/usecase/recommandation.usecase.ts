@@ -56,7 +56,7 @@ export class RecommandationUsecase {
       thematique_principale: e.thematique,
       score: e.score,
       titre: e.question,
-      type: ContentType.defi,
+      type: ContentType.kyc,
     }));
   }
 
