@@ -19,11 +19,23 @@ export class Transport {
     this.avions_par_an = data.avions_par_an;
   }
 
+  patch?(input: Transport) {
+    this.transports_quotidiens = this.AorB(
+      input.transports_quotidiens,
+      this.transports_quotidiens,
+    );
+    this.avions_par_an = this.AorB(input.avions_par_an, this.avions_par_an);
+  }
+
   public static buildFromOnboarding(data: Onboarding): Transport {
     return new Transport({
       version: 0,
       transports_quotidiens: data.transports,
       avions_par_an: data.avion,
     });
+  }
+  private AorB?<T>(a: T, b: T): T {
+    if (a === undefined) return b;
+    return a;
   }
 }

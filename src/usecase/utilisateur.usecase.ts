@@ -125,14 +125,7 @@ export class UtilisateurUsecase {
       utilisateurId,
     );
 
-    utilisateur.transport.avions_par_an = this.AorB(
-      input.avions_par_an,
-      utilisateur.transport.avions_par_an,
-    );
-    utilisateur.transport.transports_quotidiens = this.AorB(
-      input.transports_quotidiens,
-      utilisateur.transport.transports_quotidiens,
-    );
+    utilisateur.transport.patch(input);
 
     utilisateur.recomputeRecoTags();
 
@@ -144,59 +137,17 @@ export class UtilisateurUsecase {
       utilisateurId,
     );
 
-    utilisateur.logement.chauffage = this.AorB(
-      input.chauffage,
-      utilisateur.logement.chauffage,
-    );
+    utilisateur.logement.patch(input);
 
-    utilisateur.logement.code_postal = this.AorB(
-      input.code_postal,
-      utilisateur.logement.code_postal,
-    );
-
-    utilisateur.logement.commune = this.AorB(
-      input.commune,
-      utilisateur.logement.commune,
-    );
-
-    utilisateur.logement.dpe = this.AorB(input.dpe, utilisateur.logement.dpe);
-
-    utilisateur.logement.nombre_adultes = this.AorB(
-      input.nombre_adultes,
-      utilisateur.logement.nombre_adultes,
-    );
-
-    utilisateur.logement.nombre_enfants = this.AorB(
-      input.nombre_enfants,
-      utilisateur.logement.nombre_enfants,
-    );
-
-    utilisateur.logement.proprietaire = this.AorB(
-      input.proprietaire,
-      utilisateur.logement.proprietaire,
-    );
-
-    utilisateur.logement.plus_de_15_ans = this.AorB(
-      input.plus_de_15_ans,
-      utilisateur.logement.plus_de_15_ans,
-    );
-
-    utilisateur.logement.superficie = this.AorB(
-      input.superficie,
-      utilisateur.logement.superficie,
-    );
-
-    utilisateur.logement.type = this.AorB(
-      input.type,
-      utilisateur.logement.type,
-    );
-
+    // FIXME : remove when migrated users
     utilisateur.code_postal = this.AorB(
       input.code_postal,
       utilisateur.code_postal,
     );
 
     utilisateur.commune = this.AorB(input.commune, utilisateur.commune);
+
+    utilisateur.recomputeRecoTags();
 
     await this.utilisateurRespository.updateUtilisateur(utilisateur);
   }
@@ -276,7 +227,7 @@ export class UtilisateurUsecase {
     await this.utilisateurRespository.delete(utilisateurId);
   }
 
-  private AorB<T>(a: T, b: T): T {
+  private AorB?<T>(a: T, b: T): T {
     if (a === undefined) return b;
     return a;
   }

@@ -56,6 +56,19 @@ export class Logement {
     this.dpe = log.dpe;
   }
 
+  patch?(input: Logement) {
+    this.nombre_adultes = this.AorB(input.nombre_adultes, this.nombre_adultes);
+    this.nombre_enfants = this.AorB(input.nombre_enfants, this.nombre_enfants);
+    this.code_postal = this.AorB(input.code_postal, this.code_postal);
+    this.commune = this.AorB(input.commune, this.commune);
+    this.type = this.AorB(input.type, this.type);
+    this.superficie = this.AorB(input.superficie, this.superficie);
+    this.proprietaire = this.AorB(input.proprietaire, this.proprietaire);
+    this.chauffage = this.AorB(input.chauffage, this.chauffage);
+    this.plus_de_15_ans = this.AorB(input.plus_de_15_ans, this.plus_de_15_ans);
+    this.dpe = this.AorB(input.dpe, this.dpe);
+  }
+
   public static buildFromOnboarding(data: Onboarding): Logement {
     return new Logement({
       version: 0,
@@ -70,5 +83,10 @@ export class Logement {
       superficie: data.superficie,
       type: data.residence,
     });
+  }
+
+  private AorB?<T>(a: T, b: T): T {
+    if (a === undefined) return b;
+    return a;
   }
 }
