@@ -48,7 +48,7 @@ export class AidesUsecase {
         : utilisateur.abonnement_ter_loire;
 
     return this.aidesVeloRepository.getSummaryVelos(
-      utilisateur.code_postal,
+      utilisateur.logement.code_postal,
       RFR,
       PARTS,
       prix_velo,

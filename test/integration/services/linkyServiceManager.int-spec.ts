@@ -417,7 +417,9 @@ describe('linkyServiceManager', () => {
     // GIVEN
     linkyAPIConnector.souscription_API.mockReturnValue('pk_123');
 
-    await TestUtil.create(DB.utilisateur, { code_postal: '75002' });
+    await TestUtil.create(DB.utilisateur, {
+      logement: { version: 0, code_postal: '75002' },
+    });
     await TestUtil.create(DB.serviceDefinition, { id: LiveService.linky });
     await TestUtil.create(DB.service, {
       serviceDefinitionId: LiveService.linky,

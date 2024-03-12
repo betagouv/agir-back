@@ -271,7 +271,7 @@ export class LinkyServiceManager
 
     const code_departement =
       this.departementRepository.findDepartementByCodePostal(
-        utilisateur.code_postal,
+        utilisateur.logement.code_postal,
       );
 
     let winter_pk;
