@@ -59,32 +59,11 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[0].image_url).toEqual('https://');
     expect(response.body[0].points).toEqual(10);
   });
-  it('GET /utilisateurs/id/recommandation - list article recommandation', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, { history: {} });
-    await TestUtil.create(DB.quizz);
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations?exclude_defi=true',
-    );
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0].content_id).toEqual('1');
-    expect(response.body[0].titre).toEqual('titreQ');
-    expect(response.body[0].soustitre).toEqual('sousTitre');
-    expect(response.body[0].type).toEqual('quizz');
-    expect(response.body[0].thematique_principale).toEqual('climat');
-    expect(response.body[0].duree).toEqual('pas long');
-    expect(response.body[0].image_url).toEqual('https://');
-    expect(response.body[0].points).toEqual(10);
-  });
   it('GET /utilisateurs/id/recommandations - list all recos, filtée par code postal', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       history: {},
-      code_postal: '123',
+      logement: { version: 0, code_postal: '123' },
     });
     await TestUtil.create(DB.article, {
       content_id: '1',

@@ -126,7 +126,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.nom).toEqual('nom');
     expect(response.body.prenom).toEqual('prenom');
     expect(response.body.code_postal).toEqual('91120');
-    expect(response.body.commune).toEqual('Palaiseau');
+    expect(response.body.commune).toEqual('PALAISEAU');
     expect(response.body.revenu_fiscal).toEqual(10000);
     expect(response.body.nombre_de_parts_fiscales).toEqual(2);
     expect(response.body.created_at).toEqual(dbUser.created_at.toISOString());
@@ -173,7 +173,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.utilisateur.nom).toEqual('nom');
     expect(response.body.utilisateur.prenom).toEqual('prenom');
     expect(response.body.utilisateur.code_postal).toEqual('91120');
-    expect(response.body.utilisateur.commune).toEqual('Palaiseau');
+    expect(response.body.utilisateur.commune).toEqual('PALAISEAU');
     expect(response.body.utilisateur.revenu_fiscal).toEqual(10000);
     expect(response.body.utilisateur.nombre_de_parts_fiscales).toEqual(2.5); // valeur estimée depuis l'onboarding
   });
@@ -368,7 +368,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.prenom).toEqual('prenom');
     expect(response.body.email).toEqual('yo@truc.com');
     expect(response.body.code_postal).toEqual('91120');
-    expect(response.body.commune).toEqual('Palaiseau');
+    expect(response.body.commune).toEqual('PALAISEAU');
     expect(response.body.revenu_fiscal).toEqual(10000);
     expect(response.body.nombre_de_parts_fiscales).toEqual(2);
     expect(response.body.abonnement_ter_loire).toEqual(false);

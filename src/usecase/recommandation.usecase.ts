@@ -67,7 +67,7 @@ export class RecommandationUsecase {
       est_lu: true,
     });
     let articles = await this.articleRepository.searchArticles({
-      code_postal: utilisateur.code_postal,
+      code_postal: utilisateur.logement.code_postal,
       exclude_ids: articles_lus,
     });
 
@@ -89,7 +89,7 @@ export class RecommandationUsecase {
     const quizz_attempted = utilisateur.history.listeIdsQuizzAttempted();
 
     let quizzes = await this.quizzRepository.searchQuizzes({
-      code_postal: utilisateur.code_postal,
+      code_postal: utilisateur.logement.code_postal,
       exclude_ids: quizz_attempted,
     });
 

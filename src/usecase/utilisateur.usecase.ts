@@ -15,8 +15,6 @@ import { ApplicationError } from '../infrastructure/applicationError';
 import { EmailSender } from '../infrastructure/email/emailSender';
 import { CodeManager } from '../../src/domain/utilisateur/manager/codeManager';
 import { SecurityEmailManager } from '../../src/domain/utilisateur/manager/securityEmailManager';
-import { PasswordAwareUtilisateur } from '../../src/domain/utilisateur/manager/passwordAwareUtilisateur';
-import { Profile } from '../../src/domain/utilisateur/profile';
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
 import { GroupeRepository } from '../../src/infrastructure/repository/groupe.repository';
 
@@ -86,38 +84,29 @@ export class UtilisateurUsecase {
     utilisateurId: string,
     profile: UtilisateurProfileAPI,
   ) {
-    const profileToUpdate = {} as Profile;
+    const utilisateur = await this.utilisateurRespository.getById(
+      utilisateurId,
+    );
 
     if (profile.mot_de_passe) {
       PasswordManager.checkPasswordFormat(profile.mot_de_passe);
-
-      // FIXME : code à refacto, pas beau + check non existance utilisateur
-      const fakeUser: PasswordAwareUtilisateur = {
-        id: null,
-        passwordHash: '',
-        passwordSalt: '',
-        failed_login_count: 0,
-        prevent_login_before: new Date(),
-      };
-      // FIXME : temporaire, faudra suivre un flow avec un code par email
-      PasswordManager.setUserPassword(fakeUser, profile.mot_de_passe);
-      profileToUpdate.passwordHash = fakeUser.passwordHash;
-      profileToUpdate.passwordSalt = fakeUser.passwordSalt;
+      PasswordManager.setUserPassword(utilisateur, profile.mot_de_passe);
     }
-    // FIXME : c'est tout moche là dessous
-    profileToUpdate.code_postal = profile.code_postal;
-    profileToUpdate.commune = profile.commune;
-    profileToUpdate.revenu_fiscal = profile.revenu_fiscal;
-    profileToUpdate.parts = profile.nombre_de_parts_fiscales;
-    profileToUpdate.abonnement_ter_loire = profile.abonnement_ter_loire;
-    profileToUpdate.email = profile.email;
-    profileToUpdate.nom = profile.nom;
-    profileToUpdate.prenom = profile.prenom;
 
-    return this.utilisateurRespository.updateProfile(
-      utilisateurId,
-      profileToUpdate,
-    );
+    utilisateur.code_postal = profile.code_postal;
+    utilisateur.commune = profile.commune;
+    utilisateur.revenu_fiscal = profile.revenu_fiscal;
+    utilisateur.parts = profile.nombre_de_parts_fiscales;
+    utilisateur.abonnement_ter_loire = profile.abonnement_ter_loire;
+    utilisateur.email = profile.email;
+    utilisateur.nom = profile.nom;
+    utilisateur.prenom = profile.prenom;
+    if (utilisateur.logement) {
+      utilisateur.logement.code_postal = profile.code_postal;
+      utilisateur.logement.commune = profile.commune;
+    }
+
+    return this.utilisateurRespository.updateUtilisateur(utilisateur);
   }
 
   async updateUtilisateurTransport(utilisateurId: string, input: TransportAPI) {
