@@ -5,7 +5,7 @@ import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
 import { Recommandation } from '../domain/contenu/recommandation';
 import { ContentType } from '../../src/domain/contenu/contentType';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
-import { PonderationTagHelper } from '../../src/domain/utilisateur/ponderationTags';
+import { PonderationTagHelper } from '../domain/utilisateur/scoring/ponderationTags';
 
 @Injectable()
 export class RecommandationUsecase {

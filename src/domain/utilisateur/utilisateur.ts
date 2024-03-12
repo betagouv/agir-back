@@ -16,7 +16,7 @@ import {
   PonderationTagHelper,
   PonderationTagSet,
   Tag,
-} from './ponderationTags';
+} from './scoring/ponderationTags';
 import { Transport, TransportQuotidien } from './transport';
 
 export class UtilisateurData {

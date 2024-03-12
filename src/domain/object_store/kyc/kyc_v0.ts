@@ -6,7 +6,7 @@ import {
   TypeReponseQuestionKYC,
 } from '../../../../src/domain/kyc/questionQYC';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
-import { Tag } from '../../../../src/domain/utilisateur/ponderationTags';
+import { Tag } from '../../utilisateur/scoring/ponderationTags';
 
 export class QuestionKYC_v0 {
   id: string;

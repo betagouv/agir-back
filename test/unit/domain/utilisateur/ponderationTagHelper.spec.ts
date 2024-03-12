@@ -4,7 +4,7 @@ import {
   PonderationTagSet,
   Tag,
   TaggedAndScoredContent,
-} from '../../../../src/domain/utilisateur/ponderationTags';
+} from '../../../../src/domain/utilisateur/scoring/ponderationTags';
 
 describe('Objet PonderationTagHelper', () => {
   it('addTagToSet : ajoute le bon tag', () => {

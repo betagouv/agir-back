@@ -1,7 +1,7 @@
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Thematique } from '../contenu/thematique';
 import { QuestionKYC_v0 } from '../object_store/kyc/kyc_v0';
-import { Tag } from '../utilisateur/ponderationTags';
+import { Tag } from '../utilisateur/scoring/ponderationTags';
 import {
   CategorieQuestionKYC,
   QuestionKYC,

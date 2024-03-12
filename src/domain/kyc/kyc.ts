@@ -1,5 +1,5 @@
 import { KYC_v0 } from '../object_store/kyc/kyc_v0';
-import { PonderationTagHelper } from '../utilisateur/ponderationTags';
+import { PonderationTagHelper } from '../utilisateur/scoring/ponderationTags';
 import { CatalogueQuestionsKYC } from './catalogueQuestionsKYC';
 import { CategorieQuestionKYC, QuestionKYC } from './questionQYC';
 

@@ -188,10 +188,7 @@ export class UtilisateurUsecase {
       await _this.passwordManager.initLoginState(utilisateur);
 
       utilisateur.setPassword(mot_de_passe);
-      await _this.utilisateurRespository.updateProfile(utilisateur.id, {
-        passwordSalt: utilisateur.passwordSalt,
-        passwordHash: utilisateur.passwordHash,
-      });
+      await _this.utilisateurRespository.updateUtilisateur(utilisateur);
       return;
     };
 

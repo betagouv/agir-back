@@ -1,4 +1,4 @@
-import { Utilisateur } from './utilisateur';
+import { Utilisateur } from '../utilisateur';
 
 export enum Tag {
   utilise_moto_ou_voiture = 'utilise_moto_ou_voiture',

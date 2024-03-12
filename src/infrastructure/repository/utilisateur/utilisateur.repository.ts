@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Utilisateur as UtilisateurDB, Prisma } from '@prisma/client';
 import { Utilisateur } from '../../../domain/utilisateur/utilisateur';
-import { Profile } from '../../../domain/utilisateur/profile';
 import {
   Impact,
   Onboarding,
@@ -47,26 +46,6 @@ export class UtilisateurRepository {
       },
     });
     return this.buildUtilisateurFromDB(user);
-  }
-
-  async updateProfile(utilisateurId: string, profile: Profile) {
-    return this.prisma.utilisateur.update({
-      where: {
-        id: utilisateurId,
-      },
-      data: {
-        nom: profile.nom,
-        prenom: profile.prenom,
-        email: profile.email,
-        code_postal: profile.code_postal,
-        commune: profile.commune,
-        revenu_fiscal: profile.revenu_fiscal,
-        parts: profile.parts,
-        abonnement_ter_loire: profile.abonnement_ter_loire,
-        passwordHash: profile.passwordHash,
-        passwordSalt: profile.passwordSalt,
-      },
-    });
   }
 
   async updateVersion(utilisateurId: string, version: number): Promise<any> {
