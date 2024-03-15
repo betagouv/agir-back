@@ -71,13 +71,7 @@ model Utilisateur {
   code_departement         String?
   version                  Int                @default(0)
   migration_enabled        Boolean            @default(false)
-  ponderationId            String             @default("neutre")
-  ponderation_tags         Json               @default("{}")
-}
-
-model PonderationRubriques {
-  id        String @id
-  rubriques Json   @default("{}")
+  tag_ponderation_set      Json               @default("{}")
 }
 
 model Aide {
@@ -100,7 +94,7 @@ model Article {
   source                String?
   image_url             String?
   partenaire            String?
-  tags                  String[] @default([])
+  tags_utilisateur      String[] @default([])
   rubrique_ids          String[] @default([])
   rubrique_labels       String[] @default([])
   codes_postaux         String[] @default([])
@@ -121,7 +115,7 @@ model Quizz {
   source                String?
   image_url             String?
   partenaire            String?
-  tags                  String[] @default([])
+  tags_utilisateur      String[] @default([])
   rubrique_ids          String[] @default([])
   rubrique_labels       String[] @default([])
   codes_postaux         String[] @default([])

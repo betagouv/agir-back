@@ -2,7 +2,10 @@ import { DB, TestUtil } from '../../TestUtil';
 import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
 import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
 import { Thematique } from '../../../src/domain/contenu/thematique';
-import { RubriquePonderationSetName } from '../../../src/usecase/referentiel/ponderation';
+import {
+  ApplicativePonderationSetName,
+  PonderationApplicativeManager,
+} from '../../../src/domain/scoring/ponderationApplicative';
 
 describe('QuizzRepository', () => {
   const OLD_ENV = process.env;
@@ -16,17 +19,18 @@ describe('QuizzRepository', () => {
     await TestUtil.deleteAll();
     jest.resetModules();
     process.env = { ...OLD_ENV }; // Make a copy
-    process.env.PONDERATION_RUBRIQUES = RubriquePonderationSetName.neutre;
+    process.env.PONDERATION_RUBRIQUES = ApplicativePonderationSetName.neutre;
   });
 
   afterAll(async () => {
     process.env = OLD_ENV;
     await TestUtil.appclose();
+    PonderationApplicativeManager.resetCatalogue();
   });
   it('searchQuizzes : liste quizz par code postal parmi plusieurs', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
@@ -43,7 +47,7 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : liste quizz sans code postaux', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '1',
       codes_postaux: [],
     });
@@ -60,7 +64,7 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : liste quizz filtre code postal à null', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
@@ -77,7 +81,7 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : liste quizz filtre sans code postal ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
@@ -92,9 +96,9 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : liste avec max number', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.quizz, { content_id: '1' });
-    await TestUtil.create(DB.quizz, { content_id: '2' });
-    await TestUtil.create(DB.quizz, { content_id: '3' });
+    await TestUtil.create_quizz({ content_id: '1' });
+    await TestUtil.create_quizz({ content_id: '2' });
+    await TestUtil.create_quizz({ content_id: '3' });
 
     // WHEN
     const liste = await quizzRepository.searchQuizzes({ maxNumber: 2 });
@@ -105,15 +109,15 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : select par difficulté', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '1',
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '2',
       difficulty: DifficultyLevel.L2,
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '3',
       difficulty: DifficultyLevel.L3,
     });
@@ -130,15 +134,15 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : select par difficulté ANY', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '1',
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '2',
       difficulty: DifficultyLevel.L2,
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '3',
       difficulty: DifficultyLevel.L3,
     });
@@ -154,15 +158,15 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : select sans filtre', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '1',
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '2',
       difficulty: DifficultyLevel.L2,
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '3',
       difficulty: DifficultyLevel.L3,
     });
@@ -176,9 +180,9 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : exlucde ids', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.quizz, { content_id: '1' });
-    await TestUtil.create(DB.quizz, { content_id: '2' });
-    await TestUtil.create(DB.quizz, { content_id: '3' });
+    await TestUtil.create_quizz({ content_id: '1' });
+    await TestUtil.create_quizz({ content_id: '2' });
+    await TestUtil.create_quizz({ content_id: '3' });
 
     // WHEN
     const liste = await quizzRepository.searchQuizzes({
@@ -191,9 +195,9 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : exlucde ids #2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.quizz, { content_id: '1' });
-    await TestUtil.create(DB.quizz, { content_id: '2' });
-    await TestUtil.create(DB.quizz, { content_id: '3' });
+    await TestUtil.create_quizz({ content_id: '1' });
+    await TestUtil.create_quizz({ content_id: '2' });
+    await TestUtil.create_quizz({ content_id: '3' });
 
     // WHEN
     const liste = await quizzRepository.searchQuizzes({
@@ -207,15 +211,15 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : filtre par thematiques ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '1',
       thematiques: [Thematique.climat],
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '2',
       thematiques: [Thematique.logement],
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '3',
       thematiques: [Thematique.alimentation],
     });
@@ -232,15 +236,15 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : filtre par plusieurs thematiques ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '1',
       thematiques: [Thematique.climat],
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '2',
       thematiques: [Thematique.logement],
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '3',
       thematiques: [Thematique.alimentation],
     });
@@ -256,15 +260,15 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : order by difficulté ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '1',
       difficulty: DifficultyLevel.L3,
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '2',
       difficulty: DifficultyLevel.L2,
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '3',
       difficulty: DifficultyLevel.L1,
     });
@@ -279,116 +283,5 @@ describe('QuizzRepository', () => {
     expect(liste[0].content_id).toEqual('3');
     expect(liste[1].content_id).toEqual('2');
     expect(liste[2].content_id).toEqual('1');
-  });
-  it('getQuizzRecommendations : order by rubrique/diffculty ponderation', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.ponderationRubriques, {
-      rubriques: {
-        '1': 10,
-        '2': 20,
-        '3': 30,
-      },
-    });
-    await TestUtil.create(DB.quizz, {
-      content_id: '1',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['1'],
-    });
-    await TestUtil.create(DB.quizz, {
-      content_id: '2',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['3'],
-    });
-    await TestUtil.create(DB.quizz, {
-      content_id: '3',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['2'],
-    });
-    await TestUtil.create(DB.quizz, {
-      content_id: '4',
-      difficulty: DifficultyLevel.L2,
-      rubrique_ids: ['1'],
-    });
-    await TestUtil.create(DB.quizz, {
-      content_id: '5',
-      difficulty: DifficultyLevel.L2,
-      rubrique_ids: ['3'],
-    });
-
-    // WHEN
-    const reco = await quizzRepository.getQuizzRecommandations(
-      'utilisateur-id',
-    );
-
-    // THEN
-    expect(reco.content_scores).toHaveLength(5);
-    expect(reco.content_scores[0].content_id).toEqual('2');
-    expect(reco.content_scores[1].content_id).toEqual('3');
-    expect(reco.content_scores[2].content_id).toEqual('1');
-    expect(reco.content_scores[3].content_id).toEqual('5');
-    expect(reco.content_scores[4].content_id).toEqual('4');
-  });
-  it('getQuizzRecommendations : ne plante pas si version manquante', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.ponderationRubriques, {
-      id: 'toto',
-      rubriques: {
-        '1': 10,
-        '2': 20,
-        '3': 30,
-      },
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '1',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['2'],
-    });
-    await TestUtil.create(DB.quizz, {
-      content_id: '2',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['1'],
-    });
-    await TestUtil.create(DB.quizz, {
-      content_id: '3',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['3'],
-    });
-
-    // WHEN
-    const reco = await quizzRepository.getQuizzRecommandations(
-      'utilisateur-id',
-    );
-
-    // THEN
-    expect(reco.content_scores).toHaveLength(0);
-  });
-  it('getQuizzRecommendations : ne plante pas si table ponderation vide', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.quizz, {
-      content_id: '1',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['2'],
-    });
-    await TestUtil.create(DB.quizz, {
-      content_id: '2',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['1'],
-    });
-    await TestUtil.create(DB.quizz, {
-      content_id: '3',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['3'],
-    });
-
-    // WHEN
-    const reco = await quizzRepository.getQuizzRecommandations(
-      'utilisateur-id',
-    );
-
-    // THEN
-    expect(reco.content_scores).toHaveLength(0);
   });
 });

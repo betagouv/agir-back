@@ -170,7 +170,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     const userDB = await utilisateurRepository.getById('utilisateur-id');
-    expect(userDB.ponderation_tags.interet_transports).toEqual(50);
+    expect(userDB.tag_ponderation_set.interet_transports).toEqual(50);
   });
   it('PUT /utilisateurs/id/questionsKYC/001 - met à jour les tags de reco - suppression boost', async () => {
     // GIVEN
@@ -208,7 +208,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     const userDB = await utilisateurRepository.getById('utilisateur-id');
-    expect(userDB.ponderation_tags.interet_transports).toEqual(0);
+    expect(userDB.tag_ponderation_set.interet_transports).toEqual(0);
   });
   it('PUT /utilisateurs/id/questionsKYC/bad - erreur 404 ', async () => {
     // GIVEN

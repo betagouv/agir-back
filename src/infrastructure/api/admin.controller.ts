@@ -106,16 +106,6 @@ export class AdminController extends GenericControler {
     await this.referentielUsecase.upsertServicesDefinitions();
   }
 
-  @Post('/admin/upsert_ponderations')
-  @ApiOperation({
-    summary:
-      'Upsert toutes les valeurs de pondération systeme pour les recommandation (tel que les rubriques pour les aricles et quizz)',
-  })
-  async upsertAllPonderations(@Request() req) {
-    this.checkCronAPIProtectedEndpoint(req);
-    await this.referentielUsecase.upsertPonderations();
-  }
-
   @Post('/admin/migrate_users')
   @ApiOperation({
     summary: `monte la version de tous les utlisateurs éligibles à migration jusqu'à la version cible courante de l'application`,

@@ -5,7 +5,7 @@ import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
 import { Recommandation } from '../domain/contenu/recommandation';
 import { ContentType } from '../../src/domain/contenu/contentType';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
-import { PonderationTagHelper } from '../domain/utilisateur/scoring/ponderationTags';
+import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
 
 @Injectable()
 export class RecommandationUsecase {
@@ -34,6 +34,8 @@ export class RecommandationUsecase {
 
     result.push(...articles);
     result.push(...quizzes);
+    result = this.shuffle(result);
+
     result.push(...defis);
 
     result.sort((a, b) => b.score - a.score);
@@ -46,7 +48,12 @@ export class RecommandationUsecase {
   private async getDefis(utilisateur: Utilisateur): Promise<Recommandation[]> {
     const defis = utilisateur.kyc.getDefisRestants();
 
-    PonderationTagHelper.computeAndAffectScores(defis, utilisateur);
+    defis.forEach((defi) => {
+      PonderationApplicativeManager.increaseScoreContent(
+        defi,
+        utilisateur.tag_ponderation_set,
+      );
+    });
 
     return defis.map((e) => ({
       content_id: e.id,
@@ -71,11 +78,12 @@ export class RecommandationUsecase {
       exclude_ids: articles_lus,
     });
 
-    const scoring = await this.articleRepository.getArticleRecommandations(
-      utilisateur.id,
-    );
-
-    scoring.affectScores(articles);
+    articles.forEach((article) => {
+      PonderationApplicativeManager.increaseScoreContent(
+        article,
+        utilisateur.tag_ponderation_set,
+      );
+    });
 
     return articles.map((e) => ({
       ...e,
@@ -93,15 +101,23 @@ export class RecommandationUsecase {
       exclude_ids: quizz_attempted,
     });
 
-    const scoring = await this.quizzRepository.getQuizzRecommandations(
-      utilisateur.id,
-    );
-
-    scoring.affectScores(quizzes);
+    quizzes.forEach((quizz) => {
+      PonderationApplicativeManager.increaseScoreContent(
+        quizz,
+        utilisateur.tag_ponderation_set,
+      );
+    });
 
     return quizzes.map((e) => ({
       ...e,
       type: ContentType.quizz,
     }));
+  }
+
+  private shuffle<T>(array: T[]): T[] {
+    return array
+      .map((value) => ({ value, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map(({ value }) => value);
   }
 }

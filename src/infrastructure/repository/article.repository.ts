@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Article } from '../../domain/article/article';
+import { Article, ArticleData } from '../../domain/contenu/article';
 import { Article as ArticleDB } from '@prisma/client';
 import { Thematique } from '../../domain/contenu/thematique';
 import { DifficultyLevel } from '../../domain/contenu/difficultyLevel';
-import { ContentRecommandation } from '../../domain/contenu/contentRecommandation';
+import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 
 export type ArticleFilter = {
   maxNumber?: number;
@@ -21,9 +21,10 @@ export type ArticleFilter = {
 export class ArticleRepository {
   constructor(private prisma: PrismaService) {}
 
-  async upsert(article: Article): Promise<void> {
+  async upsert(article: ArticleData): Promise<void> {
     const article_to_save = { ...article };
     delete article_to_save.score;
+    delete article_to_save.tags_rubriques;
     await this.prisma.article.upsert({
       where: { content_id: article.content_id },
       create: {
@@ -104,49 +105,9 @@ export class ArticleRepository {
     return result.map((elem) => this.buildArticleFromDB(elem));
   }
 
-  public async getArticleRecommandations(
-    utilisateurId: string,
-  ): Promise<ContentRecommandation> {
-    const result = new ContentRecommandation();
-    const query = `
-    SELECT
-      coalesce(SUM(CAST(poids_rubrique->rubrique_article as INTEGER)),0)
-      +
-      coalesce(SUM(CAST(ponderation_tags->tags as INTEGER)),0)
-      as score, content_id
-    FROM
-      (
-        SELECT
-        "Utilisateur".ponderation_tags AS ponderation_tags,
-        "PonderationRubriques".rubriques AS poids_rubrique,
-        unnest("Article".rubrique_ids) as rubrique_article,
-        unnest("Article".tags) as tags,
-        "Article".content_id as content_id
-        FROM
-          "PonderationRubriques",
-          "Article",
-          "Utilisateur"
-        WHERE
-        "PonderationRubriques".id = "Utilisateur"."ponderationId" AND
-        "Utilisateur".id = '${utilisateurId}'
-        ) as SUBQUERY
-    GROUP BY
-      content_id
-    ORDER BY
-      score desc
-    ;
-    `;
-    const recos: { score: BigInt; content_id: string }[] =
-      await this.prisma.$queryRawUnsafe(query);
-    recos.forEach((element) => {
-      result.append(Number(element.score), element.content_id);
-    });
-    return result;
-  }
-
   private buildArticleFromDB(articleDB: ArticleDB): Article {
     if (articleDB === null) return null;
-    return {
+    return new Article({
       content_id: articleDB.content_id,
       titre: articleDB.titre,
       soustitre: articleDB.soustitre,
@@ -162,8 +123,11 @@ export class ArticleRepository {
       points: articleDB.points,
       thematique_principale: Thematique[articleDB.thematique_principale],
       thematiques: articleDB.thematiques.map((th) => Thematique[th]),
-      tags: articleDB.tags,
+      tags_utilisateur: articleDB.tags_utilisateur.map(
+        (t) => TagUtilisateur[t],
+      ),
+      tags_rubriques: [],
       score: 0,
-    };
+    });
   }
 }

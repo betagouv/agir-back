@@ -12,12 +12,9 @@ import { KYC } from '../kyc/kyc';
 import { Equipements } from '../equipements/equipements';
 import { Logement } from './logement';
 import { UtilisateurBehavior } from './utilisateurBehavior';
-import {
-  PonderationTagHelper,
-  PonderationTagSet,
-  Tag,
-} from './scoring/ponderationTags';
+import { TagPonderationSet } from '../scoring/tagPonderationSet';
 import { Transport, TransportQuotidien } from './transport';
+import { Tag } from '../scoring/tag';
 
 export class UtilisateurData {
   id: string;
@@ -52,11 +49,10 @@ export class UtilisateurData {
   unlocked_features: UnlockedFeatures;
   version: number;
   migration_enabled: boolean;
-  ponderationId: string;
   kyc: KYC;
   logement: Logement;
   transport: Transport;
-  ponderation_tags: PonderationTagSet;
+  tag_ponderation_set: TagPonderationSet;
 }
 
 export class Utilisateur extends UtilisateurData {
@@ -116,10 +112,9 @@ export class Utilisateur extends UtilisateurData {
       kyc: new KYC(),
       equipements: new Equipements(),
       version: UtilisateurBehavior.currentUserSystemVersion(),
-      ponderationId: UtilisateurBehavior.ponderationRubriques(),
       logement: Logement.buildFromOnboarding(onboarding),
       transport: Transport.buildFromOnboarding(onboarding),
-      ponderation_tags: {},
+      tag_ponderation_set: {},
     });
   }
 
@@ -165,7 +160,7 @@ export class Utilisateur extends UtilisateurData {
   }
 
   public setTag?(tag: Tag, value: number) {
-    PonderationTagHelper.addTagToSet(this.ponderation_tags, tag, value);
+    this.tag_ponderation_set[tag] = value;
   }
 
   public recomputeRecoTags?() {

@@ -1,19 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { PonderationRepository } from '../../../src/infrastructure/repository/ponderation.repository';
 import { ServiceRepository } from '../../../src/infrastructure/repository/service.repository';
-import {
-  PonderationManager,
-  RubriquePonderationSetName,
-} from './ponderation';
 
 const service_catalogue = require('./service_catalogue');
 
 @Injectable()
 export class ReferentielUsecase {
-  constructor(
-    private serviceRepository: ServiceRepository,
-    private ponderationRepository: PonderationRepository,
-  ) {}
+  constructor(private serviceRepository: ServiceRepository) {}
 
   async upsertServicesDefinitions() {
     const keyList = Object.keys(service_catalogue);
@@ -22,13 +14,6 @@ export class ReferentielUsecase {
       const service = service_catalogue[serviceId];
       service['serviceDefinitionId'] = serviceId;
       await this.serviceRepository.upsert(service);
-    }
-  }
-  async upsertPonderations() {
-    for (const setName in RubriquePonderationSetName) {
-      const set = RubriquePonderationSetName[setName];
-      const ponderation = PonderationManager.getPonderations(set);
-      await this.ponderationRepository.upsert(set, ponderation);
     }
   }
 }

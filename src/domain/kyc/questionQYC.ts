@@ -1,6 +1,7 @@
 import { Thematique } from '../contenu/thematique';
 import { QuestionKYC_v0 } from '../object_store/kyc/kyc_v0';
-import { Tag } from '../utilisateur/scoring/ponderationTags';
+import { Tag } from '../scoring/tag';
+import { TaggedContent } from '../scoring/taggedContent';
 
 export enum TypeReponseQuestionKYC {
   libre = 'libre',
@@ -15,7 +16,7 @@ export enum CategorieQuestionKYC {
   defi = 'defi',
 }
 
-export class QuestionKYC {
+export class QuestionKYC implements TaggedContent {
   id: string;
   question: string;
   type: TypeReponseQuestionKYC;
@@ -42,5 +43,9 @@ export class QuestionKYC {
     this.thematique = data.thematique;
     this.tags = data.tags ? data.tags : [];
     this.score = 0;
+  }
+
+  public getTags(): Tag[] {
+    return this.tags.concat(this.thematique);
   }
 }

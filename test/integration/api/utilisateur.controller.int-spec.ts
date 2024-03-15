@@ -568,7 +568,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.transport.transports_quotidiens).toEqual([
       TransportQuotidien.pied,
     ]);
-    expect(dbUser.ponderation_tags.utilise_moto_ou_voiture).toEqual(0);
+    expect(dbUser.tag_ponderation_set.utilise_moto_ou_voiture).toEqual(0);
     // WHEN
     response = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/transport',
@@ -579,7 +579,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     dbUser = await utilisateurRepository.getById('utilisateur-id');
-    expect(dbUser.ponderation_tags.utilise_moto_ou_voiture).toEqual(100);
+    expect(dbUser.tag_ponderation_set.utilise_moto_ou_voiture).toEqual(100);
   });
   it('PATCH /utilisateurs/id/profile - bad password format', async () => {
     // GIVEN

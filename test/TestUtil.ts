@@ -42,12 +42,7 @@ import {
   Superficie,
   TypeLogement,
 } from '../src/domain/utilisateur/logement';
-import {
-  Empreinte,
-  PonderationRubriques,
-  SituationNGC,
-  Suivi,
-} from '.prisma/client';
+import { Empreinte, SituationNGC, Suivi } from '.prisma/client';
 import {
   Aide,
   Article,
@@ -68,9 +63,7 @@ export enum DB {
   situationNGC = 'situationNGC',
   suivi = 'suivi',
   utilisateur = 'utilisateur',
-  article = 'article',
   aide = 'aide',
-  quizz = 'quizz',
   empreinte = 'empreinte',
   service = 'service',
   groupeAbonnement = 'groupeAbonnement',
@@ -78,7 +71,6 @@ export enum DB {
   serviceDefinition = 'serviceDefinition',
   thematique = 'thematique',
   linky = 'linky',
-  ponderationRubriques = 'ponderationRubriques',
 }
 export class TestUtil {
   private static TYPE_DATA_MAP: Record<DB, Function> = {
@@ -86,9 +78,7 @@ export class TestUtil {
     situationNGC: TestUtil.situationNGCData,
     suivi: TestUtil.suiviData,
     utilisateur: TestUtil.utilisateurData,
-    article: TestUtil.articleData,
     aide: TestUtil.aideData,
-    quizz: TestUtil.quizzData,
     empreinte: TestUtil.empreinteData,
     service: TestUtil.serviceData,
     groupeAbonnement: TestUtil.groupeAbonnementData,
@@ -96,7 +86,6 @@ export class TestUtil {
     serviceDefinition: TestUtil.serviceDefinitionData,
     thematique: TestUtil.thematiqueData,
     linky: TestUtil.linkyData,
-    ponderationRubriques: TestUtil.ponderationRubriquesData,
   };
 
   constructor() {}
@@ -172,7 +161,6 @@ export class TestUtil {
     await this.prisma.linky.deleteMany();
     await this.prisma.article.deleteMany();
     await this.prisma.quizz.deleteMany();
-    await this.prisma.ponderationRubriques.deleteMany();
     await this.prisma.aide.deleteMany();
     ThematiqueRepository.resetThematiques();
   }
@@ -247,8 +235,12 @@ export class TestUtil {
       ...override,
     };
   }
-
-  static articleData(override?): Article {
+  static async create_article(override?: Partial<Article>) {
+    await this.prisma.article.create({
+      data: TestUtil.getArticleData(override),
+    });
+  }
+  static getArticleData(override?: Partial<Article>): Article {
     return {
       content_id: '1',
       titre: 'titreA',
@@ -256,7 +248,7 @@ export class TestUtil {
       source: 'ADEME',
       image_url: 'https://',
       partenaire: 'Angers',
-      tags: [],
+      tags_utilisateur: [],
       rubrique_ids: ['3', '4'],
       rubrique_labels: ['r3', 'r4'],
       codes_postaux: ['91120'],
@@ -266,8 +258,34 @@ export class TestUtil {
       points: 10,
       thematique_principale: Thematique.climat,
       thematiques: [Thematique.climat, Thematique.logement],
+      created_at: undefined,
+      updated_at: undefined,
       ...override,
     };
+  }
+
+  static async create_quizz(override?: Partial<Quizz>) {
+    await this.prisma.quizz.create({
+      data: {
+        content_id: '1',
+        titre: 'titreA',
+        soustitre: 'sousTitre',
+        source: 'ADEME',
+        image_url: 'https://',
+        partenaire: 'Angers',
+        tags_utilisateur: [],
+        rubrique_ids: ['3', '4'],
+        rubrique_labels: ['r3', 'r4'],
+        codes_postaux: ['91120'],
+        duree: 'pas long',
+        frequence: 'souvent',
+        difficulty: 1,
+        points: 10,
+        thematique_principale: Thematique.climat,
+        thematiques: [Thematique.climat, Thematique.logement],
+        ...override,
+      },
+    });
   }
   static aideData(override?): Aide {
     return {
@@ -282,28 +300,6 @@ export class TestUtil {
       ...override,
     };
   }
-  static quizzData(override?): Quizz {
-    return {
-      content_id: '1',
-      titre: 'titreQ',
-      soustitre: 'sousTitre',
-      source: 'ADEME',
-      image_url: 'https://',
-      partenaire: 'Angers',
-      tags: [],
-      rubrique_ids: ['3', '4'],
-      rubrique_labels: ['r3', 'r4'],
-      codes_postaux: ['91120'],
-      duree: 'pas long',
-      frequence: 'souvent',
-      difficulty: 1,
-      points: 10,
-      thematique_principale: Thematique.climat,
-      thematiques: [Thematique.climat, Thematique.logement],
-      ...override,
-    };
-  }
-
   static empreinteData(override?): Empreinte {
     return {
       id: 'empreinte-id',
@@ -465,7 +461,6 @@ export class TestUtil {
       sent_email_count: 0,
       prevent_sendemail_before: new Date(),
       version: 0,
-      ponderationId: 'ponderation-id',
       migration_enabled: false,
       todo: todo,
       gamification: gamification,
@@ -479,18 +474,7 @@ export class TestUtil {
       equipements: equipements,
       logement: logement,
       transport: transport,
-      ponderation_tags: {},
-      ...override,
-    };
-  }
-  static ponderationRubriquesData(override?): PonderationRubriques {
-    return {
-      id: 'ponderation-id',
-      rubriques: {
-        '1': 10,
-        '2': 20,
-        '3': 30,
-      },
+      tag_ponderation_set: {},
       ...override,
     };
   }

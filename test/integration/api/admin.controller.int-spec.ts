@@ -13,7 +13,7 @@ import {
   Superficie,
   TypeLogement,
 } from '../../../src/domain/utilisateur/logement';
-import { RubriquePonderationSetName } from '../../../src/usecase/referentiel/ponderation';
+import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
 import {
   Repas,
   Consommation,
@@ -38,7 +38,7 @@ describe('Admin (API test)', () => {
 
     process.env.EMAIL_ENABLED = 'false';
     process.env.SERVICE_APIS_ENABLED = 'false';
-    process.env.PONDERATION_RUBRIQUES = RubriquePonderationSetName.neutre;
+    process.env.PONDERATION_RUBRIQUES = ApplicativePonderationSetName.neutre;
   });
 
   afterAll(async () => {
@@ -115,32 +115,6 @@ describe('Admin (API test)', () => {
     expect(service.sous_description).toEqual(
       'Véritable météo de l’électricité, Ecowatt qualifie en temps réel le niveau de consommation des Français.',
     );
-  });
-  it('POST /admin/upsert_ponderations integre correctement les ponderations', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-
-    // WHEN
-    const response = await TestUtil.POST('/admin/upsert_ponderations');
-
-    // THEN
-    expect(response.status).toBe(201);
-
-    const ponderations = await TestUtil.prisma.ponderationRubriques.findMany();
-    expect(ponderations.length).toEqual(
-      Object.keys(RubriquePonderationSetName).length,
-    );
-
-    const ponderation = await TestUtil.prisma.ponderationRubriques.findUnique({
-      where: { id: 'noel' },
-    });
-    expect(ponderation.rubriques).toEqual({
-      '32': 10,
-      '33': 10,
-      '34': 10,
-      '35': 10,
-      '36': 10,
-    });
   });
   it('POST /admin/unsubscribe_oprhan_prms retourne liste des suppressions', async () => {
     // GIVEN
@@ -1040,9 +1014,9 @@ describe('Admin (API test)', () => {
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
 
-    expect(userDB_before.ponderation_tags.utilise_moto_ou_voiture).toEqual(
+    expect(userDB_before.tag_ponderation_set.utilise_moto_ou_voiture).toEqual(
       undefined,
     );
-    expect(userDB.ponderation_tags.utilise_moto_ou_voiture).toEqual(100);
+    expect(userDB.tag_ponderation_set.utilise_moto_ou_voiture).toEqual(100);
   });
 });

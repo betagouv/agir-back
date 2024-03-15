@@ -1,8 +1,12 @@
+import { Thematique } from '../../../src/domain/contenu/thematique';
 import {
   CategorieQuestionKYC,
   TypeReponseQuestionKYC,
 } from '../../../src/domain/kyc/questionQYC';
-import { RubriquePonderationSetName } from '../../../src/usecase/referentiel/ponderation';
+import {
+  ApplicativePonderationSetName,
+  PonderationApplicativeManager,
+} from '../../../src/domain/scoring/ponderationApplicative';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('/utilisateurs/id/recommandations (API test)', () => {
@@ -17,10 +21,12 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     await TestUtil.generateAuthorizationToken('utilisateur-id');
     jest.resetModules();
     process.env = { ...OLD_ENV }; // Make a copy
-    process.env.PONDERATION_RUBRIQUES = RubriquePonderationSetName.neutre;
+    process.env.PONDERATION_RUBRIQUES = ApplicativePonderationSetName.neutre;
   });
 
-  afterEach(() => {});
+  afterEach(() => {
+    PonderationApplicativeManager.resetCatalogue();
+  });
 
   afterAll(async () => {
     process.env = OLD_ENV;
@@ -30,7 +36,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   it('GET /utilisateurs/id/recommandation - 403 if bad id', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { history: {} });
-    await TestUtil.create(DB.article);
+    await TestUtil.create_article();
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/autre-id/recommandations',
@@ -41,7 +47,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   it('GET /utilisateurs/id/recommandation - list article recommandation', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { history: {} });
-    await TestUtil.create(DB.article);
+    await TestUtil.create_article();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -65,11 +71,11 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       history: {},
       logement: { version: 0, code_postal: '123' },
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
       codes_postaux: ['123'],
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '2',
       codes_postaux: ['456'],
     });
@@ -89,23 +95,25 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       history: {},
       code_postal: null,
     });
-    await TestUtil.create(DB.ponderationRubriques, {
-      rubriques: {
-        '1': 10,
-        '2': 20,
-        '3': 30,
+    PonderationApplicativeManager.setCatalogue({
+      neutre: {
+        R1: 10,
+        R2: 20,
+        R3: 30,
       },
+      noel: {},
+      exp: {},
     });
 
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
       rubrique_ids: ['1'],
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '2',
       rubrique_ids: ['3'],
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '3',
       rubrique_ids: ['2'],
     });
@@ -127,23 +135,25 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       history: {},
       code_postal: null,
     });
-    await TestUtil.create(DB.ponderationRubriques, {
-      rubriques: {
-        '1': 10,
-        '2': 20,
-        '3': 30,
+    PonderationApplicativeManager.setCatalogue({
+      neutre: {
+        R1: 10,
+        R2: 20,
+        R3: 30,
       },
+      noel: {},
+      exp: {},
     });
 
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '1',
       rubrique_ids: ['1'],
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '2',
       rubrique_ids: ['2'],
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '3',
       rubrique_ids: ['3'],
     });
@@ -164,21 +174,23 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       history: {},
       code_postal: null,
-      ponderation_tags: { utilise_moto_ou_voiture: 100 },
+      tag_ponderation_set: { utilise_moto_ou_voiture: 100 },
     });
-    await TestUtil.create(DB.ponderationRubriques, {
-      rubriques: {
-        '1': 10,
-        '2': 20,
-        '3': 30,
+    PonderationApplicativeManager.setCatalogue({
+      neutre: {
+        R1: 10,
+        R2: 20,
+        R3: 30,
       },
+      noel: {},
+      exp: {},
     });
 
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '1',
       rubrique_ids: ['1'],
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '2',
       rubrique_ids: ['2'],
     });
@@ -191,15 +203,86 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(3);
     expect(response.body[0].content_id).toEqual('101');
+    expect(response.body[0].score).toEqual(100);
     expect(response.body[1].content_id).toEqual('2');
+    expect(response.body[1].score).toEqual(20);
     expect(response.body[2].content_id).toEqual('1');
+    expect(response.body[2].score).toEqual(10);
+  });
+  it('GET /utilisateurs/id/recommandations - renvoie un défis en premier car tag climat ++', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      history: {},
+      code_postal: null,
+      tag_ponderation_set: {},
+    });
+    PonderationApplicativeManager.setCatalogue({
+      neutre: {
+        logement: 100,
+        transport: 300,
+        dechet: 200,
+      },
+      noel: {},
+      exp: {},
+    });
+
+    await TestUtil.create_quizz({
+      content_id: '1',
+      rubrique_ids: ['1'],
+      thematiques: [Thematique.logement],
+    });
+    await TestUtil.create_article({
+      content_id: '2',
+      rubrique_ids: ['2'],
+      thematiques: [Thematique.dechet],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(3);
+    expect(response.body[0].content_id).toEqual('101');
+    expect(response.body[0].score).toEqual(300);
+    expect(response.body[1].content_id).toEqual('2');
+    expect(response.body[1].score).toEqual(200);
+    expect(response.body[2].content_id).toEqual('1');
+    expect(response.body[2].score).toEqual(100);
+  });
+  it('GET /utilisateurs/id/recommandations - tag climat 2 fois renforce le score', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      history: {},
+      code_postal: null,
+      tag_ponderation_set: { transport: 50 },
+    });
+    PonderationApplicativeManager.setCatalogue({
+      neutre: {
+        logement: 100,
+        transport: 300,
+        dechet: 200,
+      },
+      noel: {},
+      exp: {},
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body[0].content_id).toEqual('101');
+    expect(response.body[0].score).toEqual(350);
   });
   it('GET /utilisateurs/id/recommandations - ne renvoie pas le défi si KYC dejà répondu', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       history: {},
       code_postal: null,
-      ponderation_tags: { utilise_moto_ou_voiture: 100 },
+      tag_ponderation_set: { utilise_moto_ou_voiture: 100 },
       kyc: {
         version: 0,
         answered_questions: [
@@ -222,19 +305,21 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       },
     });
 
-    await TestUtil.create(DB.ponderationRubriques, {
-      rubriques: {
-        '1': 10,
-        '2': 20,
-        '3': 30,
+    PonderationApplicativeManager.setCatalogue({
+      neutre: {
+        R1: 10,
+        R2: 20,
+        R3: 30,
       },
+      noel: {},
+      exp: {},
     });
 
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '1',
       rubrique_ids: ['1'],
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '2',
       rubrique_ids: ['2'],
     });
@@ -263,11 +348,11 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         ],
       },
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
       codes_postaux: [],
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '2',
       codes_postaux: [],
     });
@@ -291,15 +376,15 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         ],
       },
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '1',
       codes_postaux: [],
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '2',
       codes_postaux: [],
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '3',
       codes_postaux: [],
     });

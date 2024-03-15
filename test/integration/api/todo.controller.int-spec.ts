@@ -144,17 +144,17 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: 'quizz-id-l1',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: 'quizz-id-l2',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L2,
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: 'quizz-id-l3',
       thematiques: [Thematique.logement],
       difficulty: DifficultyLevel.L1,
@@ -195,17 +195,17 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: 'quizz-id-l1',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: 'quizz-id-l2',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L2,
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: 'quizz-id-l3',
       thematiques: [Thematique.logement],
       difficulty: DifficultyLevel.L1,
@@ -252,17 +252,17 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '1',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '2',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '3',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L1,
@@ -309,12 +309,12 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '1',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create(DB.quizz, {
+    await TestUtil.create_quizz({
       content_id: '2',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L1,
@@ -356,7 +356,7 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '123',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L1,
@@ -404,7 +404,7 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create(DB.article, { content_id: 'article-1' });
+    await TestUtil.create_article({ content_id: 'article-1' });
 
     // WHEN
     let response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
@@ -449,8 +449,8 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create(DB.article, { content_id: 'article-1' });
-    await TestUtil.create(DB.article, { content_id: 'article-2' });
+    await TestUtil.create_article({ content_id: 'article-1' });
+    await TestUtil.create_article({ content_id: 'article-2' });
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
@@ -830,7 +830,7 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '123',
       difficulty: DifficultyLevel.L1,
       thematique_principale: Thematique.climat,

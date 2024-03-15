@@ -67,7 +67,6 @@ import { RecommandationsController } from './infrastructure/api/recommandations.
 import { RecommandationUsecase } from './usecase/recommandation.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
 import { ReferentielUsecase } from './usecase/referentiel/referentiel.usecase';
-import { PonderationRepository } from './infrastructure/repository/ponderation.repository';
 import { DepartementRepository } from './infrastructure/repository/departement/departement.repository';
 import { Environment } from './domain/environment';
 import { BibliothequeController } from './infrastructure/api/bibliotheque.controller';
@@ -167,7 +166,6 @@ function getControllers(): any[] {
     RecommandationUsecase,
     MigrationUsecase,
     ReferentielUsecase,
-    PonderationRepository,
     DepartementRepository,
     BibliothequeUsecase,
     LinkyAPIConnector,

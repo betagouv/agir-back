@@ -10,10 +10,10 @@ import {
   CMSWebhookPopulateAPI,
   CMSWebhookRubriqueAPI,
 } from '../../src/infrastructure/api/types/cms/CMSWebhookEntryAPI';
-import { Article } from '../domain/article/article';
+import { Article, ArticleData } from '../domain/contenu/article';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
-import { Quizz } from '../../src/domain/quizz/quizz';
+import { Quizz, QuizzData } from '../domain/contenu/quizz';
 import axios from 'axios';
 import { Aide } from '../../src/domain/aides/aide';
 import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
@@ -76,12 +76,12 @@ export class CMSUsecase {
 
   async loadArticlesFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
-    const liste_articles: Article[] = [];
+    const liste_articles: ArticleData[] = [];
     const CMS_ARTICLE_DATA = await this.loadDataFromCMS('articles');
 
     for (let index = 0; index < CMS_ARTICLE_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_ARTICLE_DATA[index];
-      let article: Article;
+      let article: ArticleData;
       try {
         article = CMSUsecase.buildArticleOrQuizzFromCMSPopulateData(element);
         liste_articles.push(article);
@@ -126,12 +126,12 @@ export class CMSUsecase {
 
   async loadQuizzFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
-    const liste_quizzes: Quizz[] = [];
+    const liste_quizzes: QuizzData[] = [];
     const CMS_QUIZZ_DATA = await this.loadDataFromCMS('quizzes');
 
     for (let index = 0; index < CMS_QUIZZ_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_QUIZZ_DATA[index];
-      let quizz: Quizz;
+      let quizz: QuizzData;
       try {
         quizz = CMSUsecase.buildArticleOrQuizzFromCMSPopulateData(element);
         liste_quizzes.push(quizz);
@@ -200,10 +200,10 @@ export class CMSUsecase {
 
   static buildArticleOrQuizzFromCMSData(
     entry: CMSWebhookEntryAPI,
-  ): Article | Quizz {
+  ): ArticleData | QuizzData {
     return {
       content_id: entry.id.toString(),
-      tags: [],
+      tags_utilisateur: [],
       titre: entry.titre,
       soustitre: entry.sousTitre,
       source: entry.source,
@@ -229,6 +229,7 @@ export class CMSUsecase {
           )
         : [],
       score: 0,
+      tags_rubriques: [],
     };
   }
 
@@ -255,10 +256,10 @@ export class CMSUsecase {
 
   static buildArticleOrQuizzFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
-  ): Article | Quizz {
+  ): ArticleData | QuizzData {
     return {
       content_id: entry.id.toString(),
-      tags: [],
+      tags_utilisateur: [],
       titre: entry.attributes.titre,
       soustitre: entry.attributes.sousTitre,
       source: entry.attributes.source,
@@ -295,6 +296,7 @@ export class CMSUsecase {
             )
           : [Thematique.climat],
       score: 0,
+      tags_rubriques: [],
     };
   }
   static buildAideFromCMSPopulateData(entry: CMSWebhookPopulateAPI): Aide {

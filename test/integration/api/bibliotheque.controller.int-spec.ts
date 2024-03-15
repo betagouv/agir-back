@@ -23,7 +23,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
   it('GET /utilisateurs/id/bibliotheque - 403 if bad id', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { history: {} });
-    await TestUtil.create(DB.article);
+    await TestUtil.create_article();
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/autre-id/bibliotheque');
     // THEN
@@ -44,7 +44,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
   it('GET /utilisateurs/id/bibliotheque - ne renvoie pas un article non lu', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { history: {} });
-    await TestUtil.create(DB.article);
+    await TestUtil.create_article();
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/bibliotheque',
@@ -70,7 +70,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         ],
       },
     });
-    await TestUtil.create(DB.article);
+    await TestUtil.create_article();
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/bibliotheque',
@@ -134,15 +134,15 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         ],
       },
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
       thematiques: [Thematique.alimentation],
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '2',
       thematiques: [Thematique.alimentation, Thematique.logement],
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '3',
       thematiques: [Thematique.logement],
     });
@@ -188,13 +188,13 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         ],
       },
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '2',
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '3',
     });
     // WHEN
@@ -232,19 +232,19 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         ],
       },
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
       titre: 'hello mistere',
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '2',
       titre: 'hello mistèr',
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '3',
       titre: 'pas la même chose',
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '4',
       titre: 'Huge Mistery',
     });
@@ -286,16 +286,16 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         ],
       },
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '2',
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '3',
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '4',
     });
     // WHEN
@@ -336,16 +336,16 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         ],
       },
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '2',
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '3',
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '4',
     });
     // WHEN
@@ -380,10 +380,10 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         ],
       },
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '2',
     });
     // WHEN
@@ -420,7 +420,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         ],
       },
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
     });
     // WHEN
@@ -449,7 +449,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         ],
       },
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
     });
     // WHEN

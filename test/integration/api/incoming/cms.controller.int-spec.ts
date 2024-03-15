@@ -336,7 +336,7 @@ describe('/api/incoming/cms (API test)', () => {
   });
   it('POST /api/incoming/cms - updates existing article in article table', async () => {
     // GIVEN
-    await TestUtil.create(DB.article, { content_id: '123' });
+    await TestUtil.create_article({ content_id: '123' });
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(
@@ -366,7 +366,7 @@ describe('/api/incoming/cms (API test)', () => {
   });
   it('POST /api/incoming/cms - updates existing quizz in quizz table', async () => {
     // GIVEN
-    await TestUtil.create(DB.quizz, { content_id: '123' });
+    await TestUtil.create_quizz({ content_id: '123' });
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(
@@ -437,7 +437,7 @@ describe('/api/incoming/cms (API test)', () => {
   it('POST /api/incoming/cms - updates existing article, 1 user in db ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '123',
       soustitre: 'hahah',
     });

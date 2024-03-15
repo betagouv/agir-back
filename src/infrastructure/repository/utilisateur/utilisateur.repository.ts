@@ -247,10 +247,9 @@ export class UtilisateurRepository {
         unlocked_features: unlocked_features,
         version: user.version,
         migration_enabled: user.migration_enabled,
-        ponderationId: user.ponderationId,
         logement: logement,
         transport: transport,
-        ponderation_tags: user.ponderation_tags as any,
+        tag_ponderation_set: user.tag_ponderation_set as any,
       });
     }
     return null;
@@ -317,8 +316,7 @@ export class UtilisateurRepository {
       failed_login_count: user.failed_login_count,
       prevent_login_before: user.prevent_login_before,
       migration_enabled: user.migration_enabled,
-      ponderationId: user.ponderationId,
-      ponderation_tags: user.ponderation_tags,
+      tag_ponderation_set: user.tag_ponderation_set,
       created_at: undefined,
       updated_at: undefined,
     };

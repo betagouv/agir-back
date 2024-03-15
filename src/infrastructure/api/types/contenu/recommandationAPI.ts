@@ -13,6 +13,7 @@ export class RecommandationAPI {
   @ApiProperty() duree: string;
   @ApiProperty() image_url: string;
   @ApiProperty() points: number;
+  @ApiProperty() score: number;
   @ApiProperty() content_id: string;
 
   public static mapToAPI(recommandation: Recommandation): RecommandationAPI {
@@ -31,6 +32,7 @@ export class RecommandationAPI {
       ),
       image_url: recommandation.image_url,
       points: recommandation.points,
+      score: recommandation.score,
     };
   }
 }

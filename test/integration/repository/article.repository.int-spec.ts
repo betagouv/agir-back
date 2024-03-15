@@ -2,7 +2,7 @@ import { DB, TestUtil } from '../../TestUtil';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
-import { RubriquePonderationSetName } from '../../../src/usecase/referentiel/ponderation';
+import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
 
 describe('ArticleRepository', () => {
   const OLD_ENV = process.env;
@@ -16,7 +16,7 @@ describe('ArticleRepository', () => {
     await TestUtil.deleteAll();
     jest.resetModules();
     process.env = { ...OLD_ENV }; // Make a copy
-    process.env.PONDERATION_RUBRIQUES = RubriquePonderationSetName.neutre;
+    process.env.PONDERATION_RUBRIQUES = ApplicativePonderationSetName.neutre;
   });
 
   afterAll(async () => {
@@ -27,7 +27,7 @@ describe('ArticleRepository', () => {
   it('searchArticles : liste article par code postal parmi plusieurs', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
@@ -44,7 +44,7 @@ describe('ArticleRepository', () => {
   it('searchArticles : liste article sans code postaux', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
       codes_postaux: [],
     });
@@ -61,7 +61,7 @@ describe('ArticleRepository', () => {
   it('searchArticles : liste article filtre code postal à null', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
@@ -78,7 +78,7 @@ describe('ArticleRepository', () => {
   it('searchArticles : liste article filtre sans code postal ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
@@ -93,9 +93,9 @@ describe('ArticleRepository', () => {
   it('searchArticles : liste avec max number', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.article, { content_id: '1' });
-    await TestUtil.create(DB.article, { content_id: '2' });
-    await TestUtil.create(DB.article, { content_id: '3' });
+    await TestUtil.create_article({ content_id: '1' });
+    await TestUtil.create_article({ content_id: '2' });
+    await TestUtil.create_article({ content_id: '3' });
 
     // WHEN
     const liste = await articleRepository.searchArticles({ maxNumber: 2 });
@@ -106,15 +106,15 @@ describe('ArticleRepository', () => {
   it('searchArticles : select par difficulté', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '2',
       difficulty: DifficultyLevel.L2,
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '3',
       difficulty: DifficultyLevel.L3,
     });
@@ -131,15 +131,15 @@ describe('ArticleRepository', () => {
   it('searchArticles : select par difficulté ANY', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '2',
       difficulty: DifficultyLevel.L2,
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '3',
       difficulty: DifficultyLevel.L3,
     });
@@ -155,15 +155,15 @@ describe('ArticleRepository', () => {
   it('searchArticles : select sans filtre', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '2',
       difficulty: DifficultyLevel.L2,
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '3',
       difficulty: DifficultyLevel.L3,
     });
@@ -177,9 +177,9 @@ describe('ArticleRepository', () => {
   it('searchArticles : exlucde ids', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.article, { content_id: '1' });
-    await TestUtil.create(DB.article, { content_id: '2' });
-    await TestUtil.create(DB.article, { content_id: '3' });
+    await TestUtil.create_article({ content_id: '1' });
+    await TestUtil.create_article({ content_id: '2' });
+    await TestUtil.create_article({ content_id: '3' });
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -192,9 +192,9 @@ describe('ArticleRepository', () => {
   it('searchArticles : exlucde ids #2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.article, { content_id: '1' });
-    await TestUtil.create(DB.article, { content_id: '2' });
-    await TestUtil.create(DB.article, { content_id: '3' });
+    await TestUtil.create_article({ content_id: '1' });
+    await TestUtil.create_article({ content_id: '2' });
+    await TestUtil.create_article({ content_id: '3' });
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -208,15 +208,15 @@ describe('ArticleRepository', () => {
   it('searchArticles : filtre par thematiques ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
       thematiques: [Thematique.climat],
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '2',
       thematiques: [Thematique.logement],
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '3',
       thematiques: [Thematique.alimentation],
     });
@@ -233,15 +233,15 @@ describe('ArticleRepository', () => {
   it('searchArticles : filtre par plusieurs thematiques ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
       thematiques: [Thematique.climat],
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '2',
       thematiques: [Thematique.logement],
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '3',
       thematiques: [Thematique.alimentation],
     });
@@ -257,15 +257,15 @@ describe('ArticleRepository', () => {
   it('searchArticles : order by difficulté ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '1',
       difficulty: DifficultyLevel.L3,
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '2',
       difficulty: DifficultyLevel.L2,
     });
-    await TestUtil.create(DB.article, {
+    await TestUtil.create_article({
       content_id: '3',
       difficulty: DifficultyLevel.L1,
     });
@@ -281,263 +281,6 @@ describe('ArticleRepository', () => {
     expect(liste[1].content_id).toEqual('2');
     expect(liste[2].content_id).toEqual('1');
   });
-  it('getArticleRecommendations : order by rubrique ponderation', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.ponderationRubriques, {
-      rubriques: {
-        '1': 10,
-        '2': 20,
-        '3': 30,
-      },
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '1',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['2'],
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '2',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['1'],
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '3',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['3'],
-    });
 
-    // WHEN
-    const reco = await articleRepository.getArticleRecommandations(
-      'utilisateur-id',
-    );
-
-    // THEN
-    expect(reco.content_scores).toHaveLength(3);
-    expect(reco.content_scores[0].content_id).toEqual('3');
-    expect(reco.content_scores[1].content_id).toEqual('1');
-    expect(reco.content_scores[2].content_id).toEqual('2');
-    expect(reco.content_scores[0].score).toEqual(30);
-    expect(reco.content_scores[1].score).toEqual(20);
-    expect(reco.content_scores[2].score).toEqual(10);
-  });
-  it('getArticleRecommendations : order by rubrique ponderation', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.ponderationRubriques, {
-      rubriques: {
-        '1': 10,
-        '2': 20,
-        '3': 30,
-      },
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '1',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['2'],
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '2',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['1'],
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '3',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['3'],
-    });
-
-    // WHEN
-    const reco = await articleRepository.getArticleRecommandations(
-      'utilisateur-id',
-    );
-
-    // THEN
-    expect(reco.content_scores).toHaveLength(3);
-    expect(reco.content_scores[0].content_id).toEqual('3');
-    expect(reco.content_scores[1].content_id).toEqual('1');
-    expect(reco.content_scores[2].content_id).toEqual('2');
-    expect(reco.content_scores[0].score).toEqual(30);
-    expect(reco.content_scores[1].score).toEqual(20);
-    expect(reco.content_scores[2].score).toEqual(10);
-  });
-  it('getArticleRecommendations : integre les tags', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, {
-      ponderation_tags: { A: 10, B: 20 },
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '1',
-      difficulty: DifficultyLevel.L1,
-      tags: ['B'],
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '2',
-      difficulty: DifficultyLevel.L1,
-      tags: ['A'],
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '3',
-      difficulty: DifficultyLevel.L1,
-      tags: ['A', 'B'],
-    });
-    await TestUtil.create(DB.ponderationRubriques, {
-      rubriques: {},
-    });
-
-    // WHEN
-    const reco = await articleRepository.getArticleRecommandations(
-      'utilisateur-id',
-    );
-
-    // THEN
-    expect(reco.content_scores).toHaveLength(3);
-    expect(reco.content_scores[0].content_id).toEqual('3');
-    expect(reco.content_scores[1].content_id).toEqual('1');
-    expect(reco.content_scores[2].content_id).toEqual('2');
-    expect(reco.content_scores[0].score).toEqual(30);
-    expect(reco.content_scores[1].score).toEqual(20);
-    expect(reco.content_scores[2].score).toEqual(10);
-  });
-  it('getArticleRecommendations : ne plante pas si version manquante', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.ponderationRubriques, {
-      id: '123',
-      rubriques: {
-        '1': 10,
-        '2': 20,
-        '3': 30,
-      },
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '1',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['2'],
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '2',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['1'],
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '3',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['3'],
-    });
-
-    // WHEN
-    const reco = await articleRepository.getArticleRecommandations(
-      'utilisateur-id',
-    );
-
-    // THEN
-    expect(reco.content_scores).toHaveLength(0);
-  });
-  it('getArticleRecommendations : ne plante pas si table ponderation vide', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.article, {
-      content_id: '1',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['2'],
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '2',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['1'],
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '3',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['3'],
-    });
-
-    // WHEN
-    const reco = await articleRepository.getArticleRecommandations(
-      'utilisateur-id',
-    );
-
-    // THEN
-    expect(reco.content_scores).toHaveLength(0);
-  });
-  it('getArticleRecommendations : works OK if missing ponderation rubrique, unclassified at the end', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.ponderationRubriques, {
-      rubriques: {
-        '1': 10,
-        '3': 30,
-      },
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '1',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['2'],
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '2',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['1'],
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '3',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['3'],
-    });
-
-    // WHEN
-    const reco = await articleRepository.getArticleRecommandations(
-      'utilisateur-id',
-    );
-
-    // THEN
-    expect(reco.content_scores).toHaveLength(3);
-    expect(reco.content_scores[0].content_id).toEqual('3');
-    expect(reco.content_scores[1].content_id).toEqual('2');
-    expect(reco.content_scores[2].content_id).toEqual('1');
-    expect(reco.content_scores[0].score).toEqual(30);
-    expect(reco.content_scores[1].score).toEqual(10);
-    expect(reco.content_scores[2].score).toEqual(0);
-  });
-  it('getArticleRecommendations : works OK if unknown ponderation rubrique, counting as 0', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.ponderationRubriques, {
-      rubriques: {
-        '1': 10,
-        '2': 20,
-        '3': 30,
-      },
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '1',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['2', '4'],
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '2',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['1'],
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '3',
-      difficulty: DifficultyLevel.L1,
-      rubrique_ids: ['3'],
-    });
-
-    // WHEN
-    const reco = await articleRepository.getArticleRecommandations(
-      'utilisateur-id',
-    );
-
-    // THEN
-    expect(reco.content_scores).toHaveLength(3);
-    expect(reco.content_scores[0].content_id).toEqual('3');
-    expect(reco.content_scores[1].content_id).toEqual('1');
-    expect(reco.content_scores[2].content_id).toEqual('2');
-    expect(reco.content_scores[0].score).toEqual(30);
-    expect(reco.content_scores[1].score).toEqual(20);
-    expect(reco.content_scores[2].score).toEqual(10);
-  });
+  
 });
