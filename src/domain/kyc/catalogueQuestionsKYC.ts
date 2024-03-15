@@ -1,6 +1,6 @@
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Thematique } from '../contenu/thematique';
-import { QuestionKYC_v0 } from '../object_store/kyc/kyc_v0';
+import { QuestionKYC_v0 } from '../object_store/kyc/kycHistory_v0';
 import { Tag } from '../scoring/tag';
 import {
   CategorieQuestionKYC,

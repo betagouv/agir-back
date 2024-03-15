@@ -18,7 +18,7 @@ import {
   Upgrader,
 } from '../../../domain/object_store/upgrader';
 import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
-import { KYC } from '../../../domain/kyc/kyc';
+import { KYCHistory } from '../../../domain/kyc/kycHistory';
 import { Equipements } from '../../../../src/domain/equipements/equipements';
 import { Logement } from '../../../../src/domain/utilisateur/logement';
 import { Transport } from '../../../../src/domain/utilisateur/transport';
@@ -200,8 +200,8 @@ export class UtilisateurRepository {
           SerialisableDomain.OnboardingResult,
         ),
       );
-      const kyc = new KYC(
-        Upgrader.upgradeRaw(user.kyc, SerialisableDomain.KYC),
+      const kyc = new KYCHistory(
+        Upgrader.upgradeRaw(user.kyc, SerialisableDomain.KYCHistory),
       );
       const equipements = new Equipements(
         Upgrader.upgradeRaw(user.equipements, SerialisableDomain.Equipements),
@@ -241,7 +241,7 @@ export class UtilisateurRepository {
         parcours_todo: parcours_todo,
         gamification: gamification,
         history: history,
-        kyc: kyc,
+        kyc_history: kyc,
         equipements: equipements,
         code_departement: user.code_departement,
         unlocked_features: unlocked_features,
@@ -311,7 +311,7 @@ export class UtilisateurRepository {
         user.transport,
         SerialisableDomain.Transport,
       ),
-      kyc: Upgrader.serialiseToLastVersion(user.kyc, SerialisableDomain.KYC),
+      kyc: Upgrader.serialiseToLastVersion(user.kyc_history, SerialisableDomain.KYCHistory),
       version: user.version,
       failed_login_count: user.failed_login_count,
       prevent_login_before: user.prevent_login_before,

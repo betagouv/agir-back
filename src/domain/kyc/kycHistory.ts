@@ -1,11 +1,11 @@
-import { KYC_v0 } from '../object_store/kyc/kyc_v0';
+import { KYCHistory_v0 as KYCHistory_v0 } from '../object_store/kyc/kycHistory_v0';
 import { CatalogueQuestionsKYC } from './catalogueQuestionsKYC';
 import { CategorieQuestionKYC, QuestionKYC } from './questionQYC';
 
-export class KYC {
+export class KYCHistory {
   answered_questions: QuestionKYC[];
 
-  constructor(data?: KYC_v0) {
+  constructor(data?: KYCHistory_v0) {
     this.answered_questions = [];
     if (data && data.answered_questions) {
       data.answered_questions.forEach((element) => {

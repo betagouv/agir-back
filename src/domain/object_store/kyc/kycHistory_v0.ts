@@ -1,12 +1,12 @@
 import { Versioned } from '../versioned';
-import { KYC } from '../../kyc/kyc';
+import { KYCHistory } from '../../kyc/kycHistory';
 import {
   CategorieQuestionKYC,
   QuestionKYC,
   TypeReponseQuestionKYC,
-} from '../../../../src/domain/kyc/questionQYC';
-import { Thematique } from '../../../../src/domain/contenu/thematique';
-import { Tag } from '../../../../src/domain/scoring/tag';
+} from '../../kyc/questionQYC';
+import { Thematique } from '../../contenu/thematique';
+import { Tag } from '../../scoring/tag';
 
 export class QuestionKYC_v0 {
   id: string;
@@ -38,10 +38,10 @@ export class QuestionKYC_v0 {
   }
 }
 
-export class KYC_v0 extends Versioned {
+export class KYCHistory_v0 extends Versioned {
   answered_questions: QuestionKYC_v0[];
 
-  static serialise(domain: KYC): KYC_v0 {
+  static serialise(domain: KYCHistory): KYCHistory_v0 {
     return {
       version: 0,
       answered_questions: domain.answered_questions.map((e) =>

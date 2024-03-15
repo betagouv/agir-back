@@ -46,7 +46,7 @@ export class RecommandationUsecase {
   }
 
   private async getDefis(utilisateur: Utilisateur): Promise<Recommandation[]> {
-    const defis = utilisateur.kyc.getDefisRestants();
+    const defis = utilisateur.kyc_history.getDefisRestants();
 
     defis.forEach((defi) => {
       PonderationApplicativeManager.increaseScoreContent(

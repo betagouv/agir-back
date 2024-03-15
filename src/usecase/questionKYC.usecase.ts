@@ -9,13 +9,13 @@ export class QuestionKYCUsecase {
 
   async getALL(utilisateurId: string): Promise<QuestionKYC[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
-    return utilisateur.kyc.getAllQuestionSet();
+    return utilisateur.kyc_history.getAllQuestionSet();
   }
 
   async getQuestion(utilisateurId: string, questionId): Promise<QuestionKYC> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
-    return utilisateur.kyc.getQuestionOrException(questionId);
+    return utilisateur.kyc_history.getQuestionOrException(questionId);
   }
 
   async updateResponse(
@@ -25,15 +25,15 @@ export class QuestionKYCUsecase {
   ): Promise<void> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
-    utilisateur.kyc.checkQuestionExists(questionId);
+    utilisateur.kyc_history.checkQuestionExists(questionId);
 
     this.updateUserTodo(utilisateur, questionId);
 
-    if (!utilisateur.kyc.isQuestionAnswered(questionId)) {
-      const question = utilisateur.kyc.getQuestionOrException(questionId);
+    if (!utilisateur.kyc_history.isQuestionAnswered(questionId)) {
+      const question = utilisateur.kyc_history.getQuestionOrException(questionId);
       utilisateur.gamification.ajoutePoints(question.points);
     }
-    utilisateur.kyc.updateQuestion(questionId, reponse);
+    utilisateur.kyc_history.updateQuestion(questionId, reponse);
 
     utilisateur.recomputeRecoTags();
 

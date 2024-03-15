@@ -1,10 +1,10 @@
 import { CatalogueQuestionsKYC } from '../../../../src/domain/kyc/catalogueQuestionsKYC';
-import { KYC } from '../../../../src/domain/kyc/kyc';
+import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
 
 describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('constructeur OK', () => {
     // WHEN
-    const questionsKYC = new KYC();
+    const questionsKYC = new KYCHistory();
 
     // THEN
     expect(questionsKYC.getAllQuestionSet()).toHaveLength(
@@ -13,21 +13,21 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   });
   it('isQuestionAnswered :false si pas répondu', () => {
     // WHEN
-    const questionsKYC = new KYC();
+    const questionsKYC = new KYCHistory();
 
     // THEN
     expect(questionsKYC.isQuestionAnswered('2')).toStrictEqual(false);
   });
   it('isQuestionAnswered :true si répondu', () => {
     // WHEN
-    const questionsKYC = new KYC();
+    const questionsKYC = new KYCHistory();
     questionsKYC.updateQuestion('1', ['yo']);
     // THEN
     expect(questionsKYC.isQuestionAnswered('1')).toStrictEqual(true);
   });
   it('updateQuestion : exeption si question id inconnu', () => {
     // GIVEN
-    const questionsKYC = new KYC();
+    const questionsKYC = new KYCHistory();
 
     // WHEN
     try {

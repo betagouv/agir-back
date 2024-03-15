@@ -27,7 +27,7 @@ import { Gamification_v0 } from '../src/domain/object_store/gamification/gamific
 import { CelebrationType } from '../src/domain/gamification/celebrations/celebration';
 import { Onboarding_v0 } from '../src/domain/object_store/Onboarding/onboarding_v0';
 import { OnboardingResult_v0 } from '../src/domain/object_store/onboardingResult/onboardingResult_v0';
-import { KYC_v0 } from '../src/domain/object_store/kyc/kyc_v0';
+import { KYCHistory_v0 } from '../src/domain/object_store/kyc/kycHistory_v0';
 import { Equipements_v0 } from '../src/domain/object_store/equipement/equipement_v0';
 import {
   Consommation100km,
@@ -325,7 +325,7 @@ export class TestUtil {
       unlocked_features: [Feature.aides],
     };
 
-    const kyc: KYC_v0 = {
+    const kyc: KYCHistory_v0 = {
       version: 0,
       answered_questions: [
         {

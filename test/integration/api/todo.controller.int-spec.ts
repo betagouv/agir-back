@@ -10,7 +10,7 @@ import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
 } from '../../../src/domain/kyc/questionQYC';
-import { KYC_v0 } from '../../../src/domain/object_store/kyc/kyc_v0';
+import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
 import { ParcoursTodo_v0 } from '../../../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
 
@@ -855,7 +855,7 @@ describe('TODO list (API test)', () => {
   });
 
   it('POST KYC met à jour la todo si la question correspond', async () => {
-    const kyc: KYC_v0 = {
+    const kyc: KYCHistory_v0 = {
       version: 0,
       answered_questions: [
         {

@@ -8,7 +8,7 @@ import { ParcoursTodo } from '../todo/parcoursTodo';
 import { UnlockedFeatures } from '../gamification/unlockedFeatures';
 import { History } from '../history/history';
 import { Environment } from '../environment';
-import { KYC } from '../kyc/kyc';
+import { KYCHistory } from '../kyc/kycHistory';
 import { Equipements } from '../equipements/equipements';
 import { Logement } from './logement';
 import { UtilisateurBehavior } from './utilisateurBehavior';
@@ -49,7 +49,7 @@ export class UtilisateurData {
   unlocked_features: UnlockedFeatures;
   version: number;
   migration_enabled: boolean;
-  kyc: KYC;
+  kyc_history: KYCHistory;
   logement: Logement;
   transport: Transport;
   tag_ponderation_set: TagPonderationSet;
@@ -109,7 +109,7 @@ export class Utilisateur extends UtilisateurData {
       gamification: new Gamification(),
       unlocked_features: new UnlockedFeatures(),
       history: new History(),
-      kyc: new KYC(),
+      kyc_history: new KYCHistory(),
       equipements: new Equipements(),
       version: UtilisateurBehavior.currentUserSystemVersion(),
       logement: Logement.buildFromOnboarding(onboarding),
@@ -179,7 +179,7 @@ export class Utilisateur extends UtilisateurData {
       }
     }
 
-    const kyc_001 = this.kyc.getQuestionOrException('001');
+    const kyc_001 = this.kyc_history.getQuestionOrException('001');
     if (kyc_001.reponse && kyc_001.reponse.includes('🚗 Transports')) {
       this.setTag(Tag.interet_transports, 50);
     } else {
