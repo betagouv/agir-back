@@ -15,6 +15,7 @@ import { UtilisateurBehavior } from './utilisateurBehavior';
 import { TagPonderationSet } from '../scoring/tagPonderationSet';
 import { Transport, TransportQuotidien } from './transport';
 import { Tag } from '../scoring/tag';
+import { DefiHistory } from '../defis/defiHistory';
 
 export class UtilisateurData {
   id: string;
@@ -53,6 +54,7 @@ export class UtilisateurData {
   logement: Logement;
   transport: Transport;
   tag_ponderation_set: TagPonderationSet;
+  defi_history: DefiHistory;
 }
 
 export class Utilisateur extends UtilisateurData {
@@ -110,6 +112,7 @@ export class Utilisateur extends UtilisateurData {
       unlocked_features: new UnlockedFeatures(),
       history: new History(),
       kyc_history: new KYCHistory(),
+      defi_history: new DefiHistory(),
       equipements: new Equipements(),
       version: UtilisateurBehavior.currentUserSystemVersion(),
       logement: Logement.buildFromOnboarding(onboarding),

@@ -51,6 +51,7 @@ model Utilisateur {
   equipements              Json               @default("{}") // versioné 
   logement                 Json               @default("{}") // versioné 
   transport                Json               @default("{}") // versioné 
+  defis                    Json               @default("{}") // versioné
   empreintes               Empreinte[]
   suivis                   Suivi[]
   groupes                  GroupeAbonnement[]

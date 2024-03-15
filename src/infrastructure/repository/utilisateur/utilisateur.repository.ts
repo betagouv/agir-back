@@ -22,6 +22,7 @@ import { KYCHistory } from '../../../domain/kyc/kycHistory';
 import { Equipements } from '../../../../src/domain/equipements/equipements';
 import { Logement } from '../../../../src/domain/utilisateur/logement';
 import { Transport } from '../../../../src/domain/utilisateur/transport';
+import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -203,6 +204,9 @@ export class UtilisateurRepository {
       const kyc = new KYCHistory(
         Upgrader.upgradeRaw(user.kyc, SerialisableDomain.KYCHistory),
       );
+      const defis = new DefiHistory(
+        Upgrader.upgradeRaw(user.defis, SerialisableDomain.DefiHistory),
+      );
       const equipements = new Equipements(
         Upgrader.upgradeRaw(user.equipements, SerialisableDomain.Equipements),
       );
@@ -250,6 +254,7 @@ export class UtilisateurRepository {
         logement: logement,
         transport: transport,
         tag_ponderation_set: user.tag_ponderation_set as any,
+        defi_history: defis,
       });
     }
     return null;
@@ -311,12 +316,19 @@ export class UtilisateurRepository {
         user.transport,
         SerialisableDomain.Transport,
       ),
-      kyc: Upgrader.serialiseToLastVersion(user.kyc_history, SerialisableDomain.KYCHistory),
+      kyc: Upgrader.serialiseToLastVersion(
+        user.kyc_history,
+        SerialisableDomain.KYCHistory,
+      ),
       version: user.version,
       failed_login_count: user.failed_login_count,
       prevent_login_before: user.prevent_login_before,
       migration_enabled: user.migration_enabled,
       tag_ponderation_set: user.tag_ponderation_set,
+      defis: Upgrader.serialiseToLastVersion(
+        user.defi_history,
+        SerialisableDomain.DefiHistory,
+      ),
       created_at: undefined,
       updated_at: undefined,
     };

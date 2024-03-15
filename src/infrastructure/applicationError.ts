@@ -221,6 +221,9 @@ export class ApplicationError {
   static throwUnknownLinky404() {
     this.throwAppError('040', `Service winter down avec retour 404`);
   }
+  static throwDefiInconnue(id: string) {
+    this.throwAppError('040', `Defi d'id ${id} inconnue`, 404);
+  }
 
   private static throwAppError(
     code: string,

@@ -57,6 +57,7 @@ import {
 import { ServiceStatus } from '../src/domain/service/service';
 import { TransportQuotidien } from '../src/domain/utilisateur/transport';
 import { Transport_v0 } from 'src/domain/object_store/transport/transport_v0';
+import { DefiHistory_v0 } from 'src/domain/object_store/defi/defiHistory_v0';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -325,6 +326,19 @@ export class TestUtil {
       unlocked_features: [Feature.aides],
     };
 
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          id: '1',
+          points: 10,
+          tags: [],
+          titre: 'titre',
+          thematique: Thematique.transport,
+        },
+      ],
+    };
+
     const kyc: KYCHistory_v0 = {
       version: 0,
       answered_questions: [
@@ -471,6 +485,7 @@ export class TestUtil {
       created_at: undefined,
       updated_at: undefined,
       kyc: kyc,
+      defis: defis,
       equipements: equipements,
       logement: logement,
       transport: transport,
