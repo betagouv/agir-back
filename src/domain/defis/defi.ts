@@ -2,18 +2,48 @@ import { Thematique } from '../contenu/thematique';
 import { Defi_v0 } from '../object_store/defi/defiHistory_v0';
 import { Tag } from '../scoring/tag';
 
+const DAY_IN_MS = 1000 * 60 * 60 * 24;
+
+export enum DefiStatus {
+  todo = 'todo',
+  en_cours = 'en_cours',
+  pas_envie = 'pas_envie',
+  deja_fait = 'deja_fait',
+  abondon = 'abondon',
+  fait = 'fait',
+}
+
 export class Defi {
   id: string;
   titre: string;
+  sous_titre: string;
   points: number;
+  pourquoi: string;
+  astuces: string;
   thematique: Thematique;
   tags: Tag[];
+  status: DefiStatus;
+  date_acceptation: Date;
 
   constructor(data: Defi_v0) {
     this.id = data.id;
     this.titre = data.titre;
+    this.sous_titre = data.sous_titre;
     this.points = data.points;
     this.thematique = data.thematique;
     this.tags = data.tags;
+    this.astuces = data.astuces;
+    this.pourquoi = data.pourquoi;
+    this.date_acceptation = data.date_acceptation;
+    this.status = data.status;
+  }
+
+  public getJourRestants(): number | null {
+    if (!this.date_acceptation) {
+      return null;
+    }
+
+    let delta = this.date_acceptation.getTime() + 7 * DAY_IN_MS - Date.now();
+    return Math.round(delta / DAY_IN_MS);
   }
 }

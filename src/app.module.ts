@@ -78,6 +78,8 @@ import { EquipementsController } from './infrastructure/api/equipements.controll
 import { InscriptionUsecase } from './usecase/inscription.usecase';
 import { InscriptionController } from './infrastructure/api/inscription.controller';
 import { AideRepository } from './infrastructure/repository/aide.repository';
+import { DefisController } from './infrastructure/api/defis.controller';
+import { DefisUsecase } from './usecase/defis.usecase';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -106,6 +108,7 @@ function getControllers(): any[] {
     BibliothequeController,
     EquipementsController,
     InscriptionController,
+    DefisController,
   );
   if (!Environment.isProd()) {
     controllers.push(TestDataController);
@@ -173,6 +176,7 @@ function getControllers(): any[] {
     EquipementUsecase,
     InscriptionUsecase,
     AideRepository,
+    DefisUsecase,
   ],
 })
 export class AppModule {}

@@ -1,5 +1,5 @@
 import { Thematique } from '../../../../src/domain/contenu/thematique';
-import { Defi } from '../../../../src/domain/defis/defi';
+import { Defi, DefiStatus } from '../../../../src/domain/defis/defi';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 import { DefiHistory_v0 } from '../../../../src/domain/object_store/defi/defiHistory_v0';
 import { TagUtilisateur } from '../../../../src/domain/scoring/tagUtilisateur';
@@ -30,6 +30,11 @@ describe('DefiHistory vN ', () => {
         titre: 'yo',
         tags: [TagUtilisateur.interet_transports],
         points: 5,
+        astuces: 'a',
+        date_acceptation: null,
+        pourquoi: 'p',
+        sous_titre: 'st',
+        status: DefiStatus.todo,
       }),
     );
 
@@ -50,6 +55,11 @@ describe('DefiHistory vN ', () => {
         titre: 'yo',
         tags: [TagUtilisateur.interet_transports],
         points: 5,
+        astuces: 'a',
+        date_acceptation: null,
+        pourquoi: 'p',
+        sous_titre: 'st',
+        status: DefiStatus.todo,
       }),
     );
 

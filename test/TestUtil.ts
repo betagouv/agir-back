@@ -56,8 +56,9 @@ import {
 } from '@prisma/client';
 import { ServiceStatus } from '../src/domain/service/service';
 import { TransportQuotidien } from '../src/domain/utilisateur/transport';
-import { Transport_v0 } from 'src/domain/object_store/transport/transport_v0';
-import { DefiHistory_v0 } from 'src/domain/object_store/defi/defiHistory_v0';
+import { Transport_v0 } from '../src/domain/object_store/transport/transport_v0';
+import { DefiHistory_v0 } from '../src/domain/object_store/defi/defiHistory_v0';
+import { DefiStatus } from '../src/domain/defis/defi';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -330,11 +331,16 @@ export class TestUtil {
       version: 0,
       defis: [
         {
-          id: '1',
+          id: '001',
           points: 10,
           tags: [],
           titre: 'titre',
           thematique: Thematique.transport,
+          astuces: 'ASTUCE',
+          date_acceptation: null,
+          pourquoi: 'POURQUOI',
+          sous_titre: 'SOUS TITRE',
+          status: DefiStatus.todo,
         },
       ],
     };

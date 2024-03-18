@@ -1,15 +1,20 @@
 import { Versioned } from '../versioned';
 import { Thematique } from '../../contenu/thematique';
 import { Tag } from '../../scoring/tag';
-import { Defi } from 'src/domain/defis/defi';
+import { Defi, DefiStatus } from 'src/domain/defis/defi';
 import { DefiHistory } from 'src/domain/defis/defiHistory';
 
 export class Defi_v0 {
   id: string;
   titre: string;
+  sous_titre: string;
+  astuces: string;
+  pourquoi: string;
   points: number;
-  thematique?: Thematique;
+  thematique: Thematique;
+  status: DefiStatus;
   tags: Tag[];
+  date_acceptation: Date;
 
   static map(elem: Defi): Defi_v0 {
     return {
@@ -18,6 +23,11 @@ export class Defi_v0 {
       points: elem.points,
       thematique: elem.thematique,
       tags: elem.tags,
+      astuces: elem.astuces,
+      pourquoi: elem.pourquoi,
+      sous_titre: elem.sous_titre,
+      status: elem.status,
+      date_acceptation: elem.date_acceptation,
     };
   }
 }
