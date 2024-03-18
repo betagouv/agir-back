@@ -21,6 +21,15 @@ export class DefiHistory {
     const catalogue_defi = CatalogueDefis.getByIdOrException(id);
     return new Defi(catalogue_defi);
   }
+  public getDefiForUpdate(id: string): Defi {
+    let defi = this.getDefiNonTodo(id);
+    if (defi) return defi;
+
+    const catalogue_defi = CatalogueDefis.getByIdOrException(id);
+    defi = new Defi(catalogue_defi);
+    this.defis.push(defi);
+    return defi;
+  }
 
   public updateStatus(defiId: string, status: DefiStatus) {
     let defi = this.getDefiNonTodo(defiId);

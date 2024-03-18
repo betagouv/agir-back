@@ -38,6 +38,12 @@ export class Defi {
     this.status = data.status;
   }
 
+  public setStatus(status: DefiStatus) {
+    if (this.status === DefiStatus.todo && status === DefiStatus.en_cours) {
+      this.date_acceptation = new Date();
+    }
+    this.status = status;
+  }
   public getJourRestants(): number | null {
     if (!this.date_acceptation) {
       return null;

@@ -192,17 +192,18 @@ describe('/utilisateurs/id/defis (API test)', () => {
     const response = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/defis/1',
     ).send({
-      status: DefiStatus.fait,
+      status: DefiStatus.en_cours,
     });
 
     // THEN
     expect(response.status).toBe(200);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const defi = userDB.defi_history.getDefiOrException('1');
 
-    expect(userDB.defi_history.getDefiOrException('1').status).toBe(
-      DefiStatus.fait,
-    );
+    expect(defi.status).toBe(DefiStatus.en_cours);
+    expect(defi.date_acceptation.getTime() + 100).toBeGreaterThan(Date.now());
+    expect(defi.date_acceptation.getTime() - 100).toBeLessThan(Date.now());
     expect(userDB.defi_history.defis).toHaveLength(2);
   });
 });
