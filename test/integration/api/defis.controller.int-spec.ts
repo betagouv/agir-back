@@ -6,12 +6,28 @@ import { Tag } from '../../../src/domain/scoring/tag';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { DefiStatus } from '../../../src/domain/defis/defi';
 import { DefiAPI } from '../../../src/infrastructure/api/types/defis/DefiAPI';
-import { DefiHistory_v0 } from '../../../src/domain/object_store/defi/defiHistory_v0';
+import {
+  DefiHistory_v0,
+  Defi_v0,
+} from '../../../src/domain/object_store/defi/defiHistory_v0';
 
 describe('/utilisateurs/id/defis (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   let thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
   const DAY_IN_MS = 1000 * 60 * 60 * 24;
+
+  const DEFI_1: Defi_v0 = {
+    id: '1',
+    points: 5,
+    tags: [Tag.utilise_moto_ou_voiture],
+    titre: 'titre',
+    thematique: Thematique.alimentation,
+    astuces: 'astuce',
+    date_acceptation: new Date(Date.now() - 3 * DAY_IN_MS),
+    pourquoi: 'pourquoi',
+    sous_titre: 'sous_titre',
+    status: DefiStatus.todo,
+  };
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -37,6 +53,51 @@ describe('/utilisateurs/id/defis (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(CatalogueDefis.getTailleCatalogue());
+  });
+  it('GET /defis - liste defis de l utilisateur', async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '001',
+          status: DefiStatus.en_cours,
+        },
+        {
+          ...DEFI_1,
+          id: '002',
+          status: DefiStatus.deja_fait,
+        },
+        {
+          ...DEFI_1,
+          id: '003',
+          status: DefiStatus.abondon,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/defis');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(3);
+
+    const defi: DefiAPI = response.body[0];
+
+    expect(defi.id).toBe('001');
+    expect(defi.points).toBe(5);
+    expect(defi.thematique).toBe(Thematique.alimentation);
+    expect(defi.astuces).toBe('astuce');
+    expect(defi.pourquoi).toBe('pourquoi');
+    expect(defi.jours_restants).toBe(4);
+    expect(defi.titre).toBe('titre');
+    expect(defi.sous_titre).toBe('sous_titre');
+    expect(defi.status).toBe(DefiStatus.en_cours);
   });
   it('GET /utilisateurs/id/defis/id - correct data defis du catalogue', async () => {
     // GIVEN

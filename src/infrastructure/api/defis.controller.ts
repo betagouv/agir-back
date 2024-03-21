@@ -82,4 +82,22 @@ export class DefisController extends GenericControler {
     const result = await this.defisUsecase.getALL();
     return result.map((element) => DefiAPI.mapToAPI(element));
   }
+
+  @Get('utilisateurs/:utilisateurId/defis')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: [DefiAPI],
+  })
+  @ApiOperation({
+    summary:
+      "Retourne l'ensemble des défis de l'utilisateur (en cours, fait, abandonné, etc)",
+  })
+  async getAllUserDefi(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<DefiAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.defisUsecase.getALLUserDefi(utilisateurId);
+    return result.map((element) => DefiAPI.mapToAPI(element));
+  }
 }

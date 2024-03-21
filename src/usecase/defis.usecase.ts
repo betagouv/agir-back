@@ -10,6 +10,12 @@ export class DefisUsecase {
   async getALL(): Promise<Defi[]> {
     return CatalogueDefis.getAll();
   }
+
+  async getALLUserDefi(utilisateurId: string): Promise<Defi[]> {
+    const user = await this.utilisateurRepository.getById(utilisateurId);
+    return user.defi_history.defis;
+  }
+
   async getById(utilisateurId: string, defiId: string): Promise<Defi> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     return utilisateur.defi_history.getDefiOrException(defiId);
