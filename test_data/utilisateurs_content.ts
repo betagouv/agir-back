@@ -162,7 +162,12 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [],
+      unlocked_features: [
+        'aides',
+        'services',
+        'recommandations',
+        'bibliotheque',
+      ],
     },
     suivis: [],
     bilans: [],
