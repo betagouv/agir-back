@@ -5,7 +5,7 @@ import { Defi, DefiStatus } from './defi';
 
 const CATALOGUE: Defi_v0[] = [
   {
-    id: '001',
+    id: '101',
     points: 5,
     tags: [],
     titre:
