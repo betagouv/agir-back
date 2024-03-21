@@ -60,7 +60,8 @@ const utilisateurs = {
     commune: 'ANGERS',
     revenu_fiscal: null,
     parts: null,
-    version: 2,
+    version: 4,
+    migration_enabled: true,
     gamification: {
       version: 0,
       points: 0,
@@ -156,6 +157,7 @@ const utilisateurs = {
     revenu_fiscal: null,
     parts: null,
     version: 4,
+    migration_enabled: true,
     gamification: {
       version: 0,
       points: 0,

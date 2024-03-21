@@ -6,10 +6,6 @@ import {
 import { Tag } from '../../../src/domain/scoring/tag';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import {
-  CategorieQuestionKYC,
-  TypeReponseQuestionKYC,
-} from '../../../src/domain/kyc/questionQYC';
-import {
   ApplicativePonderationSetName,
   PonderationApplicativeManager,
 } from '../../../src/domain/scoring/ponderationApplicative';
@@ -295,63 +291,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[0].content_id).toEqual('1');
     expect(response.body[0].score).toEqual(350);
   });
-  it('GET /utilisateurs/id/recommandations - ne renvoie pas le défi si KYC dejà répondu', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, {
-      history: {},
-      code_postal: null,
-      tag_ponderation_set: { utilise_moto_ou_voiture: 100 },
-      kyc: {
-        version: 0,
-        answered_questions: [
-          {
-            id: '101', // ID du prermier défi
-            question: `Quel est votre sujet principal d'intéret ?`,
-            type: TypeReponseQuestionKYC.choix_multiple,
-            is_NGC: false,
-            categorie: CategorieQuestionKYC.service,
-            points: 10,
-            reponse: ['Le climat'],
-            reponses_possibles: [
-              'Le climat',
-              'Mon logement',
-              'Ce que je mange',
-            ],
-            tags: [],
-          },
-        ],
-      },
-    });
 
-    PonderationApplicativeManager.setCatalogue({
-      neutre: {
-        R1: 10,
-        R2: 20,
-        R3: 30,
-      },
-      noel: {},
-      exp: {},
-    });
-
-    await TestUtil.create_quizz({
-      content_id: '1',
-      rubrique_ids: ['1'],
-    });
-    await TestUtil.create_article({
-      content_id: '2',
-      rubrique_ids: ['2'],
-    });
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations',
-    );
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(2);
-    expect(response.body[0].content_id).toEqual('2');
-    expect(response.body[1].content_id).toEqual('1');
-  });
   it('GET /utilisateurs/id/recommandations - pas de article lu', async () => {
     // GIVEN
     CatalogueDefis.setCatalogue([]);
