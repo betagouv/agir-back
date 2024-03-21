@@ -165,7 +165,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
 
-    expect(userDB.defi_history.getDefiOrException('001').status).toBe(
+    expect(userDB.defi_history.getDefiOrException('001').getStatus()).toBe(
       DefiStatus.fait,
     );
   });
@@ -201,7 +201,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     const defi = userDB.defi_history.getDefiOrException('1');
 
-    expect(defi.status).toBe(DefiStatus.en_cours);
+    expect(defi.getStatus()).toBe(DefiStatus.en_cours);
     expect(defi.date_acceptation.getTime() + 100).toBeGreaterThan(Date.now());
     expect(defi.date_acceptation.getTime() - 100).toBeLessThan(Date.now());
     expect(userDB.defi_history.defis).toHaveLength(2);

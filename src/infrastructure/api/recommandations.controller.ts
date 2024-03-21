@@ -32,22 +32,14 @@ export class RecommandationsController extends GenericControler {
   @ApiOperation({
     summary: "Liste les recommendations personnalisées de l'utilisateur",
   })
-  @ApiQuery({
-    name: 'exclude_defi',
-    type: Boolean,
-    description: `boolean qui indique que l'on ne souhaite pas de défis dans les recos`,
-    required: false,
-  })
   async getUserRecommandation(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-    @Query('exclude_defi') exclude_defi: string,
   ): Promise<RecommandationAPI[]> {
     this.checkCallerId(req, utilisateurId);
 
     const list = await this.recommandationUsecase.listRecommandations(
       utilisateurId,
-      exclude_defi === 'true',
     );
     return list.map((reco) => RecommandationAPI.mapToAPI(reco));
   }

@@ -26,7 +26,7 @@ export class Defi_v0 {
       astuces: elem.astuces,
       pourquoi: elem.pourquoi,
       sous_titre: elem.sous_titre,
-      status: elem.status,
+      status: elem.getStatus(),
       date_acceptation: elem.date_acceptation,
     };
   }

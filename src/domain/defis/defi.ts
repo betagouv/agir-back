@@ -1,6 +1,7 @@
 import { Thematique } from '../contenu/thematique';
 import { Defi_v0 } from '../object_store/defi/defiHistory_v0';
 import { Tag } from '../scoring/tag';
+import { TaggedContent } from '../scoring/taggedContent';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
@@ -13,7 +14,7 @@ export enum DefiStatus {
   fait = 'fait',
 }
 
-export class Defi {
+export class Defi implements TaggedContent {
   id: string;
   titre: string;
   sous_titre: string;
@@ -22,8 +23,9 @@ export class Defi {
   astuces: string;
   thematique: Thematique;
   tags: Tag[];
-  status: DefiStatus;
+  private status: DefiStatus;
   date_acceptation: Date;
+  score: number;
 
   constructor(data: Defi_v0) {
     this.id = data.id;
@@ -36,8 +38,12 @@ export class Defi {
     this.pourquoi = data.pourquoi;
     this.date_acceptation = data.date_acceptation;
     this.status = data.status;
+    this.score = 0;
   }
 
+  public getStatus(): DefiStatus {
+    return this.status;
+  }
   public setStatus(status: DefiStatus) {
     if (this.status === DefiStatus.todo && status === DefiStatus.en_cours) {
       this.date_acceptation = new Date();
@@ -51,5 +57,9 @@ export class Defi {
 
     let delta = this.date_acceptation.getTime() + 7 * DAY_IN_MS - Date.now();
     return Math.round(delta / DAY_IN_MS);
+  }
+
+  public getTags(): Tag[] {
+    return this.tags.concat(this.thematique);
   }
 }

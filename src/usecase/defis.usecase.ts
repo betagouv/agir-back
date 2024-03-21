@@ -21,7 +21,7 @@ export class DefisUsecase {
   ): Promise<void> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
-    const defi = utilisateur.defi_history.getDefiForUpdate(defiId);
+    const defi = utilisateur.defi_history.getOrCreateDefiForUpdate(defiId);
 
     defi.setStatus(status);
 

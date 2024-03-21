@@ -6,6 +6,7 @@ import { Recommandation } from '../domain/contenu/recommandation';
 import { ContentType } from '../../src/domain/contenu/contentType';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
+import { Defi } from '../../src/domain/defis/defi';
 
 @Injectable()
 export class RecommandationUsecase {
@@ -15,46 +16,54 @@ export class RecommandationUsecase {
     private quizzRepository: QuizzRepository,
   ) {}
 
-  async listRecommandations(
-    utilisateurId: string,
-    exclude_defi: boolean,
-  ): Promise<Recommandation[]> {
-    let result: Recommandation[] = [];
-
+  async listRecommandations(utilisateurId: string): Promise<Recommandation[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
     const articles = await this.getArticles(utilisateur);
 
     const quizzes = await this.getQuizzes(utilisateur);
 
-    let defis = [];
-    if (!exclude_defi) {
-      defis = await this.getDefis(utilisateur);
-    }
+    const defis_en_cours = this.getDefisEnCours(utilisateur);
 
-    result.push(...articles);
-    result.push(...quizzes);
-    result = this.shuffle(result);
+    let defis_restants = this.getDefisRestantsAvecTri(utilisateur);
+    const nombre_defi_restant = Math.min(6 - defis_en_cours.length, 2);
+    defis_restants = defis_restants.slice(0, nombre_defi_restant);
 
-    result.push(...defis);
+    const nombre_article_quizz_restants =
+      6 - defis_en_cours.length - defis_restants.length;
 
-    result.sort((a, b) => b.score - a.score);
 
-    if (result.length > 10) result = result.slice(0, 10);
+    let content: Recommandation[] = [];
+    content.push(...articles);
+    content.push(...quizzes);
+    content = this.shuffle(content);
 
-    return result;
+    content.sort((a, b) => b.score - a.score);
+
+    content = content.slice(0, nombre_article_quizz_restants);
+
+    return defis_en_cours.concat(defis_restants, content);
   }
 
-  private async getDefis(utilisateur: Utilisateur): Promise<Recommandation[]> {
-    const defis = utilisateur.kyc_history.getDefisRestants();
+  private getDefisRestantsAvecTri(utilisateur: Utilisateur): Recommandation[] {
+    const defis = utilisateur.defi_history.getDefisRestants();
 
-    defis.forEach((defi) => {
-      PonderationApplicativeManager.increaseScoreContent(
-        defi,
-        utilisateur.tag_ponderation_set,
-      );
-    });
+    PonderationApplicativeManager.increaseScoreContentOfList(
+      defis,
+      utilisateur.tag_ponderation_set,
+    );
 
+    const result = this.mapDefiToRecommandation(defis);
+    result.sort((a, b) => b.score - a.score);
+    return result;
+  }
+  private getDefisEnCours(utilisateur: Utilisateur): Recommandation[] {
+    const defis = utilisateur.defi_history.getDefisEnCours();
+
+    return this.mapDefiToRecommandation(defis);
+  }
+
+  private mapDefiToRecommandation(defis: Defi[]): Recommandation[] {
     return defis.map((e) => ({
       content_id: e.id,
       image_url:
@@ -62,8 +71,10 @@ export class RecommandationUsecase {
       points: e.points,
       thematique_principale: e.thematique,
       score: e.score,
-      titre: e.question,
+      titre: e.titre,
       type: ContentType.defi,
+      jours_restants: e.getJourRestants(),
+      status_defi: e.getStatus(),
     }));
   }
 

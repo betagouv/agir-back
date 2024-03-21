@@ -1,3 +1,9 @@
+import { DefiStatus } from '../../../src/domain/defis/defi';
+import {
+  DefiHistory_v0,
+  Defi_v0,
+} from '../../../src/domain/object_store/defi/defiHistory_v0';
+import { Tag } from '../../../src/domain/scoring/tag';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import {
   CategorieQuestionKYC,
@@ -8,6 +14,21 @@ import {
   PonderationApplicativeManager,
 } from '../../../src/domain/scoring/ponderationApplicative';
 import { DB, TestUtil } from '../../TestUtil';
+import { CatalogueDefis } from '../../../src/domain/defis/catalogueDefis';
+const DAY_IN_MS = 1000 * 60 * 60 * 24;
+
+const DEFI_1: Defi_v0 = {
+  id: '1',
+  points: 5,
+  tags: [Tag.utilise_moto_ou_voiture],
+  titre: 'titre',
+  thematique: Thematique.alimentation,
+  astuces: 'astuce',
+  date_acceptation: new Date(Date.now() - 3 * DAY_IN_MS),
+  pourquoi: 'pourquoi',
+  sous_titre: 'sous_titre',
+  status: DefiStatus.todo,
+};
 
 describe('/utilisateurs/id/recommandations (API test)', () => {
   const OLD_ENV = process.env;
@@ -46,12 +67,13 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandation - list article recommandation', async () => {
     // GIVEN
+    CatalogueDefis.setCatalogue([]);
     await TestUtil.create(DB.utilisateur, { history: {} });
     await TestUtil.create_article();
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations?exclude_defi=true',
+      '/utilisateurs/utilisateur-id/recommandations',
     );
     // THEN
     expect(response.status).toBe(200);
@@ -65,8 +87,33 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[0].image_url).toEqual('https://');
     expect(response.body[0].points).toEqual(10);
   });
+  it('GET /utilisateurs/id/recommandation - list un defi, bonne données', async () => {
+    // GIVEN
+    CatalogueDefis.setCatalogue([{ ...DEFI_1 }]);
+    await TestUtil.create(DB.utilisateur, { history: {} });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].content_id).toEqual('1');
+    expect(response.body[0].titre).toEqual('titre');
+    expect(response.body[0].type).toEqual('defi');
+    expect(response.body[0].thematique_principale).toEqual('alimentation');
+    expect(response.body[0].image_url).toEqual(
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Logo_Relevez_le_d%C3%A9fi.png/320px-Logo_Relevez_le_d%C3%A9fi.png',
+    );
+    expect(response.body[0].points).toEqual(5);
+    expect(response.body[0].status_defi).toEqual(DefiStatus.todo);
+    expect(response.body[0].jours_restants).toEqual(4);
+  });
   it('GET /utilisateurs/id/recommandations - list all recos, filtée par code postal', async () => {
     // GIVEN
+    CatalogueDefis.setCatalogue([]);
+
     await TestUtil.create(DB.utilisateur, {
       history: {},
       logement: { version: 0, code_postal: '123' },
@@ -82,7 +129,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations?exclude_defi=true',
+      '/utilisateurs/utilisateur-id/recommandations',
     );
     // THEN
     expect(response.status).toBe(200);
@@ -91,6 +138,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations - applique les ponderations aux articles', async () => {
     // GIVEN
+    CatalogueDefis.setCatalogue([]);
+
     await TestUtil.create(DB.utilisateur, {
       history: {},
       code_postal: null,
@@ -120,7 +169,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations?exclude_defi=true',
+      '/utilisateurs/utilisateur-id/recommandations',
     );
     // THEN
     expect(response.status).toBe(200);
@@ -131,6 +180,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations - applique les ponderations aux quizz', async () => {
     // GIVEN
+    CatalogueDefis.setCatalogue([]);
+
     await TestUtil.create(DB.utilisateur, {
       history: {},
       code_postal: null,
@@ -160,7 +211,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations?exclude_defi=true',
+      '/utilisateurs/utilisateur-id/recommandations',
     );
     // THEN
     expect(response.status).toBe(200);
@@ -171,6 +222,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations - renvoie un défis en premier', async () => {
     // GIVEN
+    CatalogueDefis.setCatalogue([{ ...DEFI_1, id: '101' }]);
     await TestUtil.create(DB.utilisateur, {
       history: {},
       code_postal: null,
@@ -209,50 +261,10 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[2].content_id).toEqual('1');
     expect(response.body[2].score).toEqual(10);
   });
-  it('GET /utilisateurs/id/recommandations - renvoie un défis en premier car tag climat ++', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, {
-      history: {},
-      code_postal: null,
-      tag_ponderation_set: {},
-    });
-    PonderationApplicativeManager.setCatalogue({
-      neutre: {
-        logement: 100,
-        transport: 300,
-        dechet: 200,
-      },
-      noel: {},
-      exp: {},
-    });
 
-    await TestUtil.create_quizz({
-      content_id: '1',
-      rubrique_ids: ['1'],
-      thematiques: [Thematique.logement],
-    });
-    await TestUtil.create_article({
-      content_id: '2',
-      rubrique_ids: ['2'],
-      thematiques: [Thematique.dechet],
-    });
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations',
-    );
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(3);
-    expect(response.body[0].content_id).toEqual('101');
-    expect(response.body[0].score).toEqual(300);
-    expect(response.body[1].content_id).toEqual('2');
-    expect(response.body[1].score).toEqual(200);
-    expect(response.body[2].content_id).toEqual('1');
-    expect(response.body[2].score).toEqual(100);
-  });
   it('GET /utilisateurs/id/recommandations - tag climat 2 fois renforce le score', async () => {
     // GIVEN
+    CatalogueDefis.setCatalogue([]);
     await TestUtil.create(DB.utilisateur, {
       history: {},
       code_postal: null,
@@ -267,6 +279,11 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       noel: {},
       exp: {},
     });
+    await TestUtil.create_article({
+      content_id: '1',
+      rubrique_ids: [],
+      thematiques: [Thematique.transport],
+    });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -274,7 +291,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     );
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body[0].content_id).toEqual('101');
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].content_id).toEqual('1');
     expect(response.body[0].score).toEqual(350);
   });
   it('GET /utilisateurs/id/recommandations - ne renvoie pas le défi si KYC dejà répondu', async () => {
@@ -336,6 +354,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations - pas de article lu', async () => {
     // GIVEN
+    CatalogueDefis.setCatalogue([]);
+
     await TestUtil.create(DB.utilisateur, {
       history: {
         article_interactions: [
@@ -358,7 +378,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     });
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations?exclude_defi=true',
+      '/utilisateurs/utilisateur-id/recommandations',
     );
     // THEN
     expect(response.status).toBe(200);
@@ -368,6 +388,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations - que des quizz jamais touchés', async () => {
     // GIVEN
+    CatalogueDefis.setCatalogue([]);
     await TestUtil.create(DB.utilisateur, {
       history: {
         quizz_interactions: [
@@ -390,11 +411,180 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     });
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations?exclude_defi=true',
+      '/utilisateurs/utilisateur-id/recommandations',
     );
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0].content_id).toEqual('3');
+  });
+  it('GET /utilisateurs/id/recommandations - mix de defis en cours, restant, et articles', async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '001',
+          status: DefiStatus.en_cours,
+        },
+        {
+          ...DEFI_1,
+          id: '002',
+          status: DefiStatus.en_cours,
+        },
+        {
+          ...DEFI_1,
+          id: '003',
+          status: DefiStatus.pas_envie,
+        },
+      ],
+    };
+    CatalogueDefis.setCatalogue([
+      { ...DEFI_1, id: '1', tags: [Tag.R1] },
+      { ...DEFI_1, id: '2', tags: [Tag.R2] },
+      { ...DEFI_1, id: '3', tags: [Tag.R3] },
+      { ...DEFI_1, id: '4', tags: [Tag.R4] },
+      { ...DEFI_1, id: '5', tags: [Tag.R5] },
+    ]);
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis,
+      tag_ponderation_set: { R1: 5, R2: 4, R3: 3, R4: 2, R5: 1, R6: 6 },
+    });
+    await TestUtil.create_quizz({
+      content_id: '11',
+      codes_postaux: [],
+      rubrique_ids: ['1'],
+    });
+    await TestUtil.create_quizz({
+      content_id: '22',
+      codes_postaux: [],
+      rubrique_ids: ['2'],
+    });
+    await TestUtil.create_quizz({
+      content_id: '33',
+      codes_postaux: [],
+      rubrique_ids: ['3'],
+    });
+    await TestUtil.create_article({
+      content_id: '44',
+      codes_postaux: [],
+      rubrique_ids: ['4'],
+    });
+    await TestUtil.create_article({
+      content_id: '55',
+      codes_postaux: [],
+      rubrique_ids: ['5'],
+    });
+    await TestUtil.create_article({
+      content_id: '66',
+      codes_postaux: [],
+      rubrique_ids: ['6'],
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(6);
+    expect(response.body[0].content_id).toEqual('001');
+    expect(response.body[1].content_id).toEqual('002');
+    expect(response.body[2].content_id).toEqual('1');
+    expect(response.body[3].content_id).toEqual('2');
+    expect(response.body[4].content_id).toEqual('66');
+    expect(response.body[5].content_id).toEqual('11');
+  });
+  it('GET /utilisateurs/id/recommandations - que des defis en cours', async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '001',
+          status: DefiStatus.en_cours,
+        },
+        {
+          ...DEFI_1,
+          id: '002',
+          status: DefiStatus.en_cours,
+        },
+        {
+          ...DEFI_1,
+          id: '003',
+          status: DefiStatus.en_cours,
+        },
+        {
+          ...DEFI_1,
+          id: '004',
+          status: DefiStatus.en_cours,
+        },
+        {
+          ...DEFI_1,
+          id: '005',
+          status: DefiStatus.en_cours,
+        },
+        {
+          ...DEFI_1,
+          id: '006',
+          status: DefiStatus.en_cours,
+        },
+      ],
+    };
+    CatalogueDefis.setCatalogue([
+      { ...DEFI_1, id: '1', tags: [Tag.R1] },
+      { ...DEFI_1, id: '2', tags: [Tag.R2] },
+      { ...DEFI_1, id: '3', tags: [Tag.R3] },
+      { ...DEFI_1, id: '4', tags: [Tag.R4] },
+      { ...DEFI_1, id: '5', tags: [Tag.R5] },
+    ]);
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis,
+      tag_ponderation_set: { R1: 5, R2: 4, R3: 3, R4: 2, R5: 1, R6: 6 },
+    });
+    await TestUtil.create_quizz({
+      content_id: '11',
+      codes_postaux: [],
+      rubrique_ids: ['1'],
+    });
+    await TestUtil.create_quizz({
+      content_id: '22',
+      codes_postaux: [],
+      rubrique_ids: ['2'],
+    });
+    await TestUtil.create_quizz({
+      content_id: '33',
+      codes_postaux: [],
+      rubrique_ids: ['3'],
+    });
+    await TestUtil.create_article({
+      content_id: '44',
+      codes_postaux: [],
+      rubrique_ids: ['4'],
+    });
+    await TestUtil.create_article({
+      content_id: '55',
+      codes_postaux: [],
+      rubrique_ids: ['5'],
+    });
+    await TestUtil.create_article({
+      content_id: '66',
+      codes_postaux: [],
+      rubrique_ids: ['6'],
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(6);
+    expect(response.body[0].content_id).toEqual('001');
+    expect(response.body[1].content_id).toEqual('002');
+    expect(response.body[2].content_id).toEqual('003');
+    expect(response.body[3].content_id).toEqual('004');
+    expect(response.body[4].content_id).toEqual('005');
+    expect(response.body[5].content_id).toEqual('006');
   });
 });

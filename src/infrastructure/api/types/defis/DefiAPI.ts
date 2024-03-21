@@ -27,7 +27,7 @@ export class DefiAPI {
       points: defi.points,
       pourquoi: defi.pourquoi,
       sous_titre: defi.sous_titre,
-      status: defi.status,
+      status: defi.getStatus(),
       thematique: defi.thematique,
       thematique_label: ThematiqueRepository.getLibelleThematique(
         defi.thematique,

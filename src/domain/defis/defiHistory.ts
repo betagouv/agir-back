@@ -14,39 +14,57 @@ export class DefiHistory {
     }
   }
 
-  public getDefiOrException(id: string): Defi {
-    let defi = this.getDefiNonTodo(id);
-    if (defi) return defi;
-
-    const catalogue_defi = CatalogueDefis.getByIdOrException(id);
-    return new Defi(catalogue_defi);
+  public getDefisRestants(): Defi[] {
+    const defis_all = CatalogueDefis.getAll();
+    this.defis.forEach((defi_courant) => {
+      const index = defis_all.findIndex((d) => d.id === defi_courant.id);
+      if (index !== -1) {
+        defis_all.splice(index, 1);
+      }
+    });
+    return defis_all;
   }
-  public getDefiForUpdate(id: string): Defi {
-    let defi = this.getDefiNonTodo(id);
+
+  public getDefisEnCours(): Defi[] {
+    const result = [];
+    this.defis.forEach((defi_courant) => {
+      if (defi_courant.getStatus() === DefiStatus.en_cours) {
+        result.push(defi_courant);
+      }
+    });
+    return result;
+  }
+  public getDefiOrException(id: string): Defi {
+    let defi = this.getDefiUtilisateur(id);
+    if (defi) return defi;
+
+    return CatalogueDefis.getByIdOrException(id);
+  }
+  public getOrCreateDefiForUpdate(id: string): Defi {
+    let defi = this.getDefiUtilisateur(id);
     if (defi) return defi;
 
     const catalogue_defi = CatalogueDefis.getByIdOrException(id);
-    defi = new Defi(catalogue_defi);
-    this.defis.push(defi);
-    return defi;
+    this.defis.push(catalogue_defi);
+    return catalogue_defi;
   }
 
   public updateStatus(defiId: string, status: DefiStatus) {
-    let defi = this.getDefiNonTodo(defiId);
+    let defi = this.getDefiUtilisateur(defiId);
     if (defi) {
-      defi.status = status;
+      defi.setStatus(status);
     } else {
       let defi_catalogue = CatalogueDefis.getByIdOrException(defiId);
-      defi_catalogue.status = status;
+      defi_catalogue.setStatus(status);
       this.defis.push(defi_catalogue);
     }
   }
 
-  public checkQuestionExists(questionId: string) {
+  public checkDefiExists(questionId: string) {
     CatalogueDefis.getByIdOrException(questionId);
   }
 
-  private getDefiNonTodo(id: string): Defi {
+  private getDefiUtilisateur(id: string): Defi {
     return this.defis.find((element) => element.id === id);
   }
 }

@@ -63,22 +63,6 @@ export class CatalogueQuestionsKYC {
       ],
     },
     {
-      id: '101',
-      question:
-        'Faire un trajet du quotidien à pied ou à vélo plutôt qu’en voiture ou moto 1 fois cette semaine ?',
-      type: TypeReponseQuestionKYC.choix_unique,
-      is_NGC: false,
-      categorie: CategorieQuestionKYC.defi,
-      points: 5,
-      tags: [Tag.interet_transports, Tag.utilise_moto_ou_voiture],
-      thematique: Thematique.transport,
-      reponses_possibles: [
-        'Je relève le défis cette semaine',
-        'Je le fais déjà',
-        'Je décline le défi',
-      ],
-    },
-    {
       id: '1',
       question: 'Comment avez vous connu le service ?',
       type: TypeReponseQuestionKYC.libre,

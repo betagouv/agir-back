@@ -56,6 +56,17 @@ export class PonderationApplicativeManager {
     });
     content.score += score;
   }
+  public static increaseScoreContentOfList(
+    content_liste: TaggedContent[],
+    user_ponderation: TagPonderationSet,
+  ) {
+    content_liste.forEach((content) => {
+      PonderationApplicativeManager.increaseScoreContent(
+        content,
+        user_ponderation,
+      );
+    });
+  }
 
   private static getPonderationApplicativeCourante(): ApplicativePonderationSet {
     const set_name =
