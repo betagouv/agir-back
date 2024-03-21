@@ -7,7 +7,7 @@ export enum utilisateurs_liste {
   recette_livio = 'recette_livio',
   recette_benoit = 'recette_benoit',
   wojtek = 'wojtek',
-  DEV = 'DEV',
-  experimental = 'experimental',
+  // DEV = 'DEV',
+  // experimental = 'experimental',
   fruggr = 'fruggr',
 }
