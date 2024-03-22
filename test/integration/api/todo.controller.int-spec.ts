@@ -865,7 +865,11 @@ describe('TODO list (API test)', () => {
           is_NGC: false,
           categorie: CategorieQuestionKYC.service,
           points: 10,
-          reponses_possibles: ['Le climat', 'Mon logement', 'Ce que je mange'],
+          reponses_possibles: [
+            { label: 'Le climat', code: Thematique.climat },
+            { label: 'Mon logement', code: Thematique.logement },
+            { label: 'Ce que je mange', code: Thematique.alimentation },
+          ],
           tags: [],
         },
       ],

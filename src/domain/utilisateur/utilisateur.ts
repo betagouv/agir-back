@@ -16,6 +16,7 @@ import { TagPonderationSet } from '../scoring/tagPonderationSet';
 import { Transport, TransportQuotidien } from './transport';
 import { Tag } from '../scoring/tag';
 import { DefiHistory } from '../defis/defiHistory';
+import { Thematique } from '../contenu/thematique';
 
 export class UtilisateurData {
   id: string;
@@ -183,10 +184,44 @@ export class Utilisateur extends UtilisateurData {
     }
 
     const kyc_001 = this.kyc_history.getQuestionOrException('001');
-    if (kyc_001.reponse && kyc_001.reponse.includes('🚗 Transports')) {
-      this.setTag(Tag.interet_transports, 50);
-    } else {
-      this.setTag(Tag.interet_transports, 0);
+    if (kyc_001.reponses) {
+      if (kyc_001.includesReponseCode(Thematique.transport)) {
+        this.setTag(Tag.transport, 50);
+        this.setTag(Tag.interet_transports, 50);
+      } else {
+        this.setTag(Tag.transport, 0);
+        this.setTag(Tag.interet_transports, 0);
+      }
+      if (kyc_001.includesReponseCode(Thematique.alimentation)) {
+        this.setTag(Tag.alimentation, 50);
+      } else {
+        this.setTag(Tag.alimentation, 0);
+      }
+      if (kyc_001.includesReponseCode(Thematique.climat)) {
+        this.setTag(Tag.climat, 50);
+      } else {
+        this.setTag(Tag.climat, 0);
+      }
+      if (kyc_001.includesReponseCode(Thematique.dechet)) {
+        this.setTag(Tag.dechet, 50);
+      } else {
+        this.setTag(Tag.dechet, 0);
+      }
+      if (kyc_001.includesReponseCode(Thematique.logement)) {
+        this.setTag(Tag.logement, 50);
+      } else {
+        this.setTag(Tag.logement, 0);
+      }
+      if (kyc_001.includesReponseCode(Thematique.loisir)) {
+        this.setTag(Tag.loisir, 50);
+      } else {
+        this.setTag(Tag.loisir, 0);
+      }
+      if (kyc_001.includesReponseCode(Thematique.consommation)) {
+        this.setTag(Tag.consommation, 50);
+      } else {
+        this.setTag(Tag.consommation, 0);
+      }
     }
   }
 }

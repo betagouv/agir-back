@@ -355,8 +355,15 @@ export class TestUtil {
           is_NGC: false,
           categorie: CategorieQuestionKYC.service,
           points: 10,
-          reponse: ['Le climat', 'Mon logement'],
-          reponses_possibles: ['Le climat', 'Mon logement', 'Ce que je mange'],
+          reponses: [
+            { label: 'Le climat', code: Thematique.climat },
+            { label: 'Mon logement', code: Thematique.logement },
+          ],
+          reponses_possibles: [
+            { label: 'Le climat', code: Thematique.climat },
+            { label: 'Mon logement', code: Thematique.logement },
+            { label: 'Ce que je mange', code: Thematique.alimentation },
+          ],
           tags: [],
         },
       ],

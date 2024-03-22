@@ -2,11 +2,23 @@ import { Versioned } from '../versioned';
 import { KYCHistory } from '../../kyc/kycHistory';
 import {
   CategorieQuestionKYC,
+  KYCReponse,
   QuestionKYC,
   TypeReponseQuestionKYC,
 } from '../../kyc/questionQYC';
 import { Thematique } from '../../contenu/thematique';
 import { Tag } from '../../scoring/tag';
+
+export class KYCReponse_v0 {
+  code: string;
+  label: string;
+  static map(elem: KYCReponse): KYCReponse_v0 {
+    return {
+      code: elem.code,
+      label: elem.label,
+    };
+  }
+}
 
 export class QuestionKYC_v0 {
   id: string;
@@ -15,8 +27,8 @@ export class QuestionKYC_v0 {
   categorie: CategorieQuestionKYC;
   points: number;
   is_NGC: boolean;
-  reponse?: string[];
-  reponses_possibles?: string[];
+  reponses?: KYCReponse_v0[];
+  reponses_possibles?: KYCReponse_v0[];
   ngc_key?: string;
   thematique?: Thematique;
   tags: Tag[];
@@ -29,8 +41,12 @@ export class QuestionKYC_v0 {
       categorie: elem.categorie,
       points: elem.points,
       is_NGC: elem.is_NGC,
-      reponse: elem.reponse,
-      reponses_possibles: elem.reponses_possibles,
+      reponses: elem.reponses
+        ? elem.reponses.map((e) => KYCReponse_v0.map(e))
+        : undefined,
+      reponses_possibles: elem.reponses_possibles
+        ? elem.reponses_possibles.map((e) => KYCReponse_v0.map(e))
+        : undefined,
       ngc_key: elem.ngc_key,
       thematique: elem.thematique,
       tags: elem.tags,

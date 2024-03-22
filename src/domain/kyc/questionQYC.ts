@@ -11,9 +11,20 @@ export enum TypeReponseQuestionKYC {
   decimal = 'decimal',
 }
 
+export enum BooleanKYC {
+  oui = 'oui',
+  non = 'non',
+  peut_etre = 'peut_etre',
+}
+
 export enum CategorieQuestionKYC {
   service = 'service',
   defi = 'defi',
+}
+
+export class KYCReponse {
+  code: string;
+  label: string;
 }
 
 export class QuestionKYC implements TaggedContent {
@@ -24,8 +35,8 @@ export class QuestionKYC implements TaggedContent {
   thematique?: Thematique;
   points: number;
   is_NGC: boolean;
-  reponse?: string[];
-  reponses_possibles?: string[];
+  reponses?: KYCReponse[];
+  reponses_possibles?: KYCReponse[];
   ngc_key?: string;
   tags: Tag[];
   score: number;
@@ -37,7 +48,7 @@ export class QuestionKYC implements TaggedContent {
     this.categorie = data.categorie;
     this.points = data.points;
     this.is_NGC = data.is_NGC;
-    this.reponse = data.reponse;
+    this.reponses = data.reponses;
     this.reponses_possibles = data.reponses_possibles;
     this.ngc_key = data.ngc_key;
     this.thematique = data.thematique;
@@ -47,5 +58,46 @@ export class QuestionKYC implements TaggedContent {
 
   public getTags(): Tag[] {
     return this.tags.concat(this.thematique);
+  }
+
+  public includesReponseCode(code: string): boolean {
+    if (!this.reponses) {
+      return false;
+    }
+    const found = this.reponses.find((r) => r.code === code);
+    return !!found;
+  }
+
+  public listeReponsesLabels() {
+    if (this.reponses) {
+      return this.reponses.map((e) => e.label);
+    } else {
+      return [];
+    }
+  }
+  public listeReponsesPossiblesLabels() {
+    if (this.reponses_possibles) {
+      return this.reponses_possibles.map((e) => e.label);
+    } else {
+      return [];
+    }
+  }
+
+  public getCodeByLabel(label: string): string {
+    if (!this.reponses_possibles) {
+      return null;
+    }
+    const found = this.reponses_possibles.find((r) => r.label === label);
+    return found ? found.code : null;
+  }
+
+  public setResponses(reponses: string[]) {
+    this.reponses = [];
+    reponses.forEach((element) => {
+      this.reponses.push({
+        label: element,
+        code: this.getCodeByLabel(element),
+      });
+    });
   }
 }

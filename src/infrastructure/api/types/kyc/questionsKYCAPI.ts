@@ -31,11 +31,11 @@ export class QuestionKYCAPI {
     return {
       id: question.id,
       question: question.question,
-      reponse: question.reponse,
+      reponse: question.listeReponsesLabels(),
       categorie: question.categorie,
       points: question.points,
       type: question.type,
-      reponses_possibles: question.reponses_possibles,
+      reponses_possibles: question.listeReponsesPossiblesLabels(),
       is_NGC: question.is_NGC,
     };
   }

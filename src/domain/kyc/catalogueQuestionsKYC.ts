@@ -1,8 +1,8 @@
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Thematique } from '../contenu/thematique';
 import { QuestionKYC_v0 } from '../object_store/kyc/kycHistory_v0';
-import { Tag } from '../scoring/tag';
 import {
+  BooleanKYC,
   CategorieQuestionKYC,
   QuestionKYC,
   TypeReponseQuestionKYC,
@@ -52,14 +52,17 @@ export class CatalogueQuestionsKYC {
       points: 5,
       tags: [],
       reponses_possibles: [
-        '🥦 Alimentation',
-        '☀️ Climat et Environnement',
-        '🛒 Consommation durable',
-        '🗑️ Déchets',
-        '🏡 Logement',
-        '⚽ Loisirs (vacances, sport,...)',
-        '🚗 Transports',
-        'Aucun / Je ne sais pas',
+        { label: '🥦 Alimentation', code: Thematique.alimentation },
+        { label: '☀️ Climat et Environnement', code: Thematique.climat },
+        { label: '🛒 Consommation durable', code: Thematique.consommation },
+        { label: '🗑️ Déchets', code: Thematique.dechet },
+        { label: '🏡 Logement', code: Thematique.logement },
+        {
+          label: '⚽ Loisirs (vacances, sport,...)',
+          code: Thematique.loisir,
+        },
+        { label: '🚗 Transports', code: Thematique.transport },
+        { label: 'Aucun / Je ne sais pas', code: 'rien' },
       ],
     },
     {
@@ -78,7 +81,11 @@ export class CatalogueQuestionsKYC {
       is_NGC: false,
       categorie: CategorieQuestionKYC.service,
       points: 10,
-      reponses_possibles: ['Le climat', 'Mon logement', 'Ce que je mange'],
+      reponses_possibles: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.loisir },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
       tags: [],
     },
     {
@@ -88,7 +95,11 @@ export class CatalogueQuestionsKYC {
       is_NGC: false,
       categorie: CategorieQuestionKYC.service,
       points: 10,
-      reponses_possibles: ['Oui', 'Non', 'A voir'],
+      reponses_possibles: [
+        { label: 'Oui', code: BooleanKYC.oui },
+        { label: 'Non', code: BooleanKYC.non },
+        { label: 'A voir', code: BooleanKYC.peut_etre },
+      ],
       tags: [],
     },
     {

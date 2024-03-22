@@ -52,14 +52,14 @@ export class KYCHistory {
     return !!this.getAnsweredQuestion(id);
   }
 
-  public updateQuestion(questionId: string, reponse: string[]) {
+  public updateQuestion(questionId: string, reponses: string[]) {
     let question = this.getAnsweredQuestion(questionId);
     if (question) {
-      question.reponse = reponse;
+      question.setResponses(reponses);
     } else {
       let question_catalogue =
         CatalogueQuestionsKYC.getByIdOrException(questionId);
-      question_catalogue.reponse = reponse;
+      question_catalogue.setResponses(reponses);
       this.answered_questions.push(question_catalogue);
     }
   }

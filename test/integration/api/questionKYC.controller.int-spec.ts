@@ -5,6 +5,7 @@ import {
 } from '../../../src/domain/kyc/questionQYC';
 import { DB, TestUtil } from '../../TestUtil';
 import { CatalogueQuestionsKYC } from '../../../src/domain/kyc/catalogueQuestionsKYC';
+import { Thematique } from '../../../src/domain/contenu/thematique';
 
 describe('/utilisateurs/id/questionsKYC (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -73,7 +74,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(response.body.question).toEqual(
       `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
     );
-    expect(response.body.reponse).toEqual(undefined);
+    expect(response.body.reponse).toEqual([]);
   });
   it('GET /utilisateurs/id/questionsKYC/bad - renvoie 404', async () => {
     // GIVEN
@@ -115,7 +116,14 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     const user = await utilisateurRepository.getById('utilisateur-id');
-    expect(user.kyc_history.getQuestionOrException('1').reponse).toStrictEqual(['YO']);
+    expect(user.kyc_history.getQuestionOrException('1').reponses).toStrictEqual(
+      [
+        {
+          code: null,
+          label: 'YO',
+        },
+      ],
+    );
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.gamification.points).toEqual(20);
@@ -127,12 +135,19 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // WHEN
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC/2',
-    ).send({ reponse: ['YO'] });
+    ).send({ reponse: ['Le climat'] });
 
     // THEN
     expect(response.status).toBe(200);
     const user = await utilisateurRepository.getById('utilisateur-id');
-    expect(user.kyc_history.getQuestionOrException('2').reponse).toStrictEqual(['YO']);
+    expect(user.kyc_history.getQuestionOrException('2').reponses).toStrictEqual(
+      [
+        {
+          code: Thematique.climat,
+          label: 'Le climat',
+        },
+      ],
+    );
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.gamification.points).toEqual(10);
@@ -152,9 +167,10 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
             points: 10,
             reponse: undefined,
             reponses_possibles: [
-              'Le climat',
-              'Mon logement',
-              'Ce que je mange',
+              { label: 'Le climat', code: Thematique.climat },
+              { label: 'Mon logement', code: Thematique.logement },
+              { label: 'Ce que je mange', code: Thematique.alimentation },
+              { label: 'Comment je bouge', code: Thematique.transport },
             ],
             tags: [],
           },
@@ -165,7 +181,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // WHEN
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC/001',
-    ).send({ reponse: ['🚗 Transports'] });
+    ).send({ reponse: ['Comment je bouge'] });
 
     // THEN
     expect(response.status).toBe(200);
