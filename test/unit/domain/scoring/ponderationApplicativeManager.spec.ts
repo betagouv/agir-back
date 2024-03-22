@@ -4,6 +4,7 @@ import {
   PonderationApplicativeManager,
   ApplicativePonderationSetName,
 } from '../../../../src/domain/scoring/ponderationApplicative';
+import { Tag } from '../../../../src/domain/scoring/tag';
 
 describe('PonderationApplicativeManager', () => {
   const OLD_ENV = process.env;
@@ -44,6 +45,22 @@ describe('PonderationApplicativeManager', () => {
     // THEN
 
     expect(content.score).toEqual(20);
+  });
+  it('increaseScoreContent : sum ok, double la thematique transport', () => {
+    // GIVEN
+    process.env.PONDERATION_RUBRIQUES = 'exp';
+    const content: TaggedContent = {
+      score: 0,
+      getTags: () => [Tag.transport],
+    };
+
+    // WHEN
+    PonderationApplicativeManager.increaseScoreContent(content, {
+      transport: 50,
+    });
+    // THEN
+
+    expect(content.score).toEqual(150);
   });
   it('increaseScoreContent : sum ok when negative values', () => {
     // GIVEN

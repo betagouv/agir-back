@@ -17,7 +17,7 @@ const CATALOGUE: ApplicativePonderationCatalogue = {
     R36: 10,
   },
   neutre: {},
-  exp: { R1: -10, R2: 5 },
+  exp: { R1: -10, R2: 5, transport: 100 },
 };
 
 type ApplicativePonderationSet = { [key in TagApplicatif]?: number };
