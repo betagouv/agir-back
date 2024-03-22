@@ -2,11 +2,11 @@ import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { Defi, DefiStatus } from '../../../../src/domain/defis/defi';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 import { DefiHistory_v0 } from '../../../../src/domain/object_store/defi/defiHistory_v0';
-import { TagUtilisateur } from '../../../../src/domain/scoring/tagUtilisateur';
 import {
   SerialisableDomain,
   Upgrader,
 } from '../../../../src/domain/object_store/upgrader';
+import { Tag } from '../../../../src/domain/scoring/tag';
 
 describe('DefiHistory vN ', () => {
   it('build OK from empty', () => {
@@ -28,7 +28,7 @@ describe('DefiHistory vN ', () => {
         id: '1',
         thematique: Thematique.transport,
         titre: 'yo',
-        tags: [TagUtilisateur.interet_transports],
+        tags: [Tag.transport],
         points: 5,
         astuces: 'a',
         date_acceptation: null,
@@ -53,7 +53,7 @@ describe('DefiHistory vN ', () => {
         id: '1',
         thematique: Thematique.transport,
         titre: 'yo',
-        tags: [TagUtilisateur.interet_transports],
+        tags: [Tag.transport],
         points: 5,
         astuces: 'a',
         date_acceptation: null,

@@ -8,7 +8,7 @@ const CATALOGUE: Defi_v0[] = [
   {
     id: '101',
     points: 5,
-    tags: [Tag.interet_transports, Tag.utilise_moto_ou_voiture],
+    tags: [Tag.transport, Tag.utilise_moto_ou_voiture],
     titre:
       'Faire un trajet du quotidien à pied ou à vélo plutôt qu’en voiture ou moto 1 fois cette semaine ?',
     thematique: Thematique.transport,

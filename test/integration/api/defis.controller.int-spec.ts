@@ -49,7 +49,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       {
         id: '1',
         points: 5,
-        tags: [Tag.interet_transports],
+        tags: [Tag.transport],
         titre: 'titre',
         thematique: Thematique.alimentation,
         astuces: 'astuce',
@@ -135,7 +135,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       {
         id: '1',
         points: 5,
-        tags: [Tag.interet_transports],
+        tags: [Tag.transport],
         titre: 'titre',
         thematique: Thematique.alimentation,
         astuces: 'astuce',
@@ -259,7 +259,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       {
         id: '1',
         points: 5,
-        tags: [Tag.interet_transports],
+        tags: [Tag.transport],
         titre: 'titre',
         thematique: Thematique.alimentation,
         astuces: 'astuce',
@@ -296,7 +296,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       {
         id: '1',
         points: 5,
-        tags: [Tag.interet_transports],
+        tags: [Tag.transport],
         titre: 'titre',
         thematique: Thematique.alimentation,
         astuces: 'astuce',

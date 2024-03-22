@@ -13,10 +13,10 @@ import { Equipements } from '../equipements/equipements';
 import { Logement } from './logement';
 import { UtilisateurBehavior } from './utilisateurBehavior';
 import { TagPonderationSet } from '../scoring/tagPonderationSet';
-import { Transport, TransportQuotidien } from './transport';
+import { Transport } from './transport';
 import { Tag } from '../scoring/tag';
 import { DefiHistory } from '../defis/defiHistory';
-import { Thematique } from '../contenu/thematique';
+import { UserTagEvaluator } from '../scoring/userTagEvaluator';
 
 export class UtilisateurData {
   id: string;
@@ -168,60 +168,6 @@ export class Utilisateur extends UtilisateurData {
   }
 
   public recomputeRecoTags?() {
-    if (this.transport.transports_quotidiens) {
-      if (
-        this.transport.transports_quotidiens.includes(
-          TransportQuotidien.moto,
-        ) ||
-        this.transport.transports_quotidiens.includes(
-          TransportQuotidien.voiture,
-        )
-      ) {
-        this.setTag(Tag.utilise_moto_ou_voiture, 100);
-      } else {
-        this.setTag(Tag.utilise_moto_ou_voiture, 0);
-      }
-    }
-
-    const kyc_001 = this.kyc_history.getQuestionOrException('001');
-    if (kyc_001.reponses) {
-      if (kyc_001.includesReponseCode(Thematique.transport)) {
-        this.setTag(Tag.transport, 50);
-        this.setTag(Tag.interet_transports, 50);
-      } else {
-        this.setTag(Tag.transport, 0);
-        this.setTag(Tag.interet_transports, 0);
-      }
-      if (kyc_001.includesReponseCode(Thematique.alimentation)) {
-        this.setTag(Tag.alimentation, 50);
-      } else {
-        this.setTag(Tag.alimentation, 0);
-      }
-      if (kyc_001.includesReponseCode(Thematique.climat)) {
-        this.setTag(Tag.climat, 50);
-      } else {
-        this.setTag(Tag.climat, 0);
-      }
-      if (kyc_001.includesReponseCode(Thematique.dechet)) {
-        this.setTag(Tag.dechet, 50);
-      } else {
-        this.setTag(Tag.dechet, 0);
-      }
-      if (kyc_001.includesReponseCode(Thematique.logement)) {
-        this.setTag(Tag.logement, 50);
-      } else {
-        this.setTag(Tag.logement, 0);
-      }
-      if (kyc_001.includesReponseCode(Thematique.loisir)) {
-        this.setTag(Tag.loisir, 50);
-      } else {
-        this.setTag(Tag.loisir, 0);
-      }
-      if (kyc_001.includesReponseCode(Thematique.consommation)) {
-        this.setTag(Tag.consommation, 50);
-      } else {
-        this.setTag(Tag.consommation, 0);
-      }
-    }
+    UserTagEvaluator.recomputeRecoTags(this);
   }
 }

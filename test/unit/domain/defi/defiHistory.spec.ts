@@ -12,7 +12,7 @@ const DAY_IN_MS = 1000 * 60 * 60 * 24;
 const DEFI_1: Defi_v0 = {
   id: '1',
   points: 5,
-  tags: [Tag.interet_transports],
+  tags: [Tag.transport],
   titre: 'titre',
   thematique: Thematique.alimentation,
   astuces: 'astuce',
