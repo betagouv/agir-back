@@ -8,13 +8,27 @@ const CATALOGUE: Defi_v0[] = [
   {
     id: '101',
     points: 5,
-    tags: [Tag.transport, Tag.utilise_moto_ou_voiture],
+    tags: [Tag.utilise_moto_ou_voiture],
     titre:
       'Faire un trajet du quotidien à pied ou à vélo plutôt qu’en voiture ou moto 1 fois cette semaine ?',
     thematique: Thematique.transport,
     astuces: 'astuce',
     pourquoi: 'parce que !',
     sous_titre: 'facile',
+    status: DefiStatus.todo,
+    date_acceptation: null,
+  },
+  {
+    id: '102',
+    points: 5,
+    tags: [],
+    titre: 'Se renseigner sur les aides à l’achat d’un vélo',
+    thematique: Thematique.transport,
+    astuces: `Des aides nationales et locales existent pour vous aider à l’achat d’un vélo mécanique, éléctrique, cargo ou pliant. 
+
+    Découvrez dans l’onglet <a href = "/vos-aides">“Vos aides”</a> l’ensemble des aides dont vous pouvez bénéficier et faites une simulation.`,
+    pourquoi: `Réaliser des trajets à vélo favorise la mobilité douce et active sur votre territoire. Une activité bonne pour votre santé et l’environnement rendue accessible par une aide économique.`,
+    sous_titre: 'Faire des économies',
     status: DefiStatus.todo,
     date_acceptation: null,
   },
