@@ -16,6 +16,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
   });
 
   beforeEach(async () => {
+    CatalogueQuestionsKYC.resetCatalogue();
     await TestUtil.deleteAll();
   });
 
@@ -76,6 +77,57 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     );
     expect(response.body.reponse).toEqual([]);
   });
+  it(`GET /utilisateurs/id/questionsKYC/3 - renvoie les reponses possibles du catalogue, pas de la question historique `, async () => {
+    // GIVEN
+    CatalogueQuestionsKYC.setCatalogue([
+      {
+        id: '001',
+        question: `Quel est votre sujet principal d'intéret ?`,
+        type: TypeReponseQuestionKYC.choix_multiple,
+        is_NGC: false,
+        categorie: CategorieQuestionKYC.service,
+        points: 10,
+        reponses: [],
+        reponses_possibles: [
+          { label: 'AAA', code: Thematique.climat },
+          { label: 'BBB', code: Thematique.logement },
+        ],
+        tags: [],
+      },
+    ]);
+    await TestUtil.create(DB.utilisateur, {
+      kyc: {
+        version: 0,
+        answered_questions: [
+          {
+            id: '001',
+            question: `Quel est votre sujet principal d'intéret ?`,
+            type: TypeReponseQuestionKYC.choix_multiple,
+            is_NGC: false,
+            categorie: CategorieQuestionKYC.service,
+            points: 10,
+            reponses: [{ label: 'Le climat', code: Thematique.climat }],
+            reponses_possibles: [
+              { label: 'Le climat', code: Thematique.climat },
+              { label: 'Mon logement', code: Thematique.logement },
+              { label: 'Ce que je mange', code: Thematique.alimentation },
+              { label: 'Comment je bouge', code: Thematique.transport },
+            ],
+            tags: [],
+          },
+        ],
+      },
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/questionsKYC/001',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.reponses_possibles).toEqual(['AAA', 'BBB']);
+    expect(response.body.reponse).toEqual(['AAA']);
+  });
   it('GET /utilisateurs/id/questionsKYC/bad - renvoie 404', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -90,8 +142,47 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
   });
   it('GET /utilisateurs/id/questionsKYC/question - renvoie la quesition avec la réponse', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur);
-
+    await TestUtil.create(DB.utilisateur, {
+      kyc: {
+        version: 0,
+        answered_questions: [
+          {
+            id: '2',
+            question: `Quel est votre sujet principal d'intéret ?`,
+            type: TypeReponseQuestionKYC.choix_multiple,
+            is_NGC: false,
+            categorie: CategorieQuestionKYC.service,
+            points: 10,
+            reponses: [
+              { label: 'Le climat', code: Thematique.climat },
+              { label: 'Mon logement', code: Thematique.logement },
+            ],
+            reponses_possibles: [
+              { label: 'Le climat', code: Thematique.climat },
+              { label: 'Mon logement', code: Thematique.logement },
+              { label: 'Ce que je mange', code: Thematique.alimentation },
+            ],
+            tags: [],
+          },
+        ],
+      },
+    });
+    CatalogueQuestionsKYC.setCatalogue([
+      {
+        id: '2',
+        question: `Quel est votre sujet principal d'intéret ?`,
+        type: TypeReponseQuestionKYC.choix_multiple,
+        is_NGC: false,
+        categorie: CategorieQuestionKYC.service,
+        points: 10,
+        reponses_possibles: [
+          { label: 'Le climat', code: Thematique.climat },
+          { label: 'Mon logement', code: Thematique.logement },
+          { label: 'Ce que je mange', code: Thematique.alimentation },
+        ],
+        tags: [],
+      },
+    ]);
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/questionsKYC/2',
@@ -154,29 +245,26 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
   });
   it('PUT /utilisateurs/id/questionsKYC/001 - met à jour les tags de reco - ajout boost', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, {
-      kyc: {
-        version: 0,
-        answered_questions: [
-          {
-            id: '001',
-            question: `Quel est votre sujet principal d'intéret ?`,
-            type: TypeReponseQuestionKYC.choix_multiple,
-            is_NGC: false,
-            categorie: CategorieQuestionKYC.service,
-            points: 10,
-            reponse: undefined,
-            reponses_possibles: [
-              { label: 'Le climat', code: Thematique.climat },
-              { label: 'Mon logement', code: Thematique.logement },
-              { label: 'Ce que je mange', code: Thematique.alimentation },
-              { label: 'Comment je bouge', code: Thematique.transport },
-            ],
-            tags: [],
-          },
+    CatalogueQuestionsKYC.setCatalogue([
+      {
+        id: '001',
+        question: `Quel est votre sujet principal d'intéret ?`,
+        type: TypeReponseQuestionKYC.choix_multiple,
+        is_NGC: false,
+        categorie: CategorieQuestionKYC.service,
+        points: 10,
+        reponses: undefined,
+        reponses_possibles: [
+          { label: 'Le climat', code: Thematique.climat },
+          { label: 'Mon logement', code: Thematique.logement },
+          { label: 'Ce que je mange', code: Thematique.alimentation },
+          { label: 'Comment je bouge', code: Thematique.transport },
         ],
+        tags: [],
       },
-    });
+    ]);
+
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -190,36 +278,35 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
   });
   it('PUT /utilisateurs/id/questionsKYC/001 - met à jour les tags de reco - suppression boost', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, {
-      kyc: {
-        version: 0,
-        answered_questions: [
-          {
-            id: '001',
-            question: `Quel est votre sujet principal d'intéret ?`,
-            type: TypeReponseQuestionKYC.choix_multiple,
-            is_NGC: false,
-            categorie: CategorieQuestionKYC.service,
-            points: 10,
-            reponse: undefined,
-            reponses_possibles: [
-              'Le climat',
-              'Mon logement',
-              'Ce que je mange',
-            ],
-            tags: [],
-          },
+    CatalogueQuestionsKYC.setCatalogue([
+      {
+        id: '001',
+        question: `Quel est votre sujet principal d'intéret ?`,
+        type: TypeReponseQuestionKYC.choix_multiple,
+        is_NGC: false,
+        categorie: CategorieQuestionKYC.service,
+        points: 10,
+        reponses: undefined,
+        reponses_possibles: [
+          { label: 'Le climat', code: Thematique.climat },
+          { label: 'Mon logement', code: Thematique.logement },
+          { label: 'Ce que je mange', code: Thematique.alimentation },
+          { label: 'Comment je bouge', code: Thematique.transport },
         ],
+        tags: [],
       },
-    });
+    ]);
+
+    await TestUtil.create(DB.utilisateur);
+
     await TestUtil.PUT('/utilisateurs/utilisateur-id/questionsKYC/001').send({
-      reponse: ['🚗 Transports'],
+      reponse: ['Comment je bouge'],
     });
 
     // WHEN
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC/001',
-    ).send({ reponse: ['autre chose'] });
+    ).send({ reponse: ['Le climat'] });
 
     // THEN
     expect(response.status).toBe(200);

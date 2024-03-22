@@ -1,6 +1,6 @@
 import { KYCHistory_v0 as KYCHistory_v0 } from '../object_store/kyc/kycHistory_v0';
 import { CatalogueQuestionsKYC } from './catalogueQuestionsKYC';
-import { CategorieQuestionKYC, QuestionKYC } from './questionQYC';
+import { QuestionKYC, TypeReponseQuestionKYC } from './questionQYC';
 
 export class KYCHistory {
   answered_questions: QuestionKYC[];
@@ -27,25 +27,36 @@ export class KYCHistory {
     return result;
   }
 
-  public getDefisRestants(): QuestionKYC[] {
-    const result = [];
-    const defis = CatalogueQuestionsKYC.getByCategorie(
-      CategorieQuestionKYC.defi,
-    );
-    defis.forEach((defi) => {
-      if (!this.isQuestionAnswered(defi.id)) {
-        result.push(defi);
-      }
-    });
-    return result;
-  }
-
   public getQuestionOrException(id: string): QuestionKYC {
     let answered_question = this.getAnsweredQuestion(id);
-    if (answered_question) return answered_question;
-
+    if (answered_question) {
+      this.upgradeQuestion(answered_question);
+      return answered_question;
+    }
     const catalogue_question = CatalogueQuestionsKYC.getByIdOrException(id);
     return new QuestionKYC(catalogue_question);
+  }
+
+  private upgradeQuestion(question: QuestionKYC) {
+    const question_catalogue = CatalogueQuestionsKYC.getByIdOrException(
+      question.id,
+    );
+    if (
+      question.type === TypeReponseQuestionKYC.choix_multiple ||
+      question.type === TypeReponseQuestionKYC.choix_unique
+    ) {
+      const upgraded_set = [];
+      question.reponses.forEach((reponse) => {
+        const ref_label = question_catalogue.getLabelByCode(reponse.code);
+        if (ref_label) {
+          reponse.label = ref_label;
+          upgraded_set.push(reponse);
+        }
+      });
+      question.reponses = upgraded_set;
+    }
+    question.reponses_possibles = question_catalogue.reponses_possibles;
+    question.question = question_catalogue.question;
   }
 
   public isQuestionAnswered(id: string): boolean {

@@ -91,6 +91,14 @@ export class QuestionKYC implements TaggedContent {
     return found ? found.code : null;
   }
 
+  public getLabelByCode(code: string): string {
+    if (!this.reponses_possibles) {
+      return null;
+    }
+    const found = this.reponses_possibles.find((r) => r.code === code);
+    return found ? found.label : null;
+  }
+
   public setResponses(reponses: string[]) {
     this.reponses = [];
     reponses.forEach((element) => {
