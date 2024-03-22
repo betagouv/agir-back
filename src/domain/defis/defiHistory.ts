@@ -1,4 +1,5 @@
 import { DefiHistory_v0 } from '../object_store/defi/defiHistory_v0';
+import { Utilisateur } from '../utilisateur/utilisateur';
 import { CatalogueDefis } from './catalogueDefis';
 import { Defi, DefiStatus } from './defi';
 
@@ -34,28 +35,21 @@ export class DefiHistory {
     });
     return result;
   }
+
   public getDefiOrException(id: string): Defi {
     let defi = this.getDefiUtilisateur(id);
     if (defi) return defi;
 
     return CatalogueDefis.getByIdOrException(id);
   }
-  public getOrCreateDefiForUpdate(id: string): Defi {
-    let defi = this.getDefiUtilisateur(id);
-    if (defi) return defi;
 
-    const catalogue_defi = CatalogueDefis.getByIdOrException(id);
-    this.defis.push(catalogue_defi);
-    return catalogue_defi;
-  }
-
-  public updateStatus(defiId: string, status: DefiStatus) {
+  public updateStatus(defiId: string, status: DefiStatus, user: Utilisateur) {
     let defi = this.getDefiUtilisateur(defiId);
     if (defi) {
-      defi.setStatus(status);
+      defi.setStatus(status, user);
     } else {
       let defi_catalogue = CatalogueDefis.getByIdOrException(defiId);
-      defi_catalogue.setStatus(status);
+      defi_catalogue.setStatus(status, user);
       this.defis.push(defi_catalogue);
     }
   }

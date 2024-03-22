@@ -2,6 +2,7 @@ import { Thematique } from '../contenu/thematique';
 import { Defi_v0 } from '../object_store/defi/defiHistory_v0';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
+import { Utilisateur } from '../utilisateur/utilisateur';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
@@ -44,9 +45,12 @@ export class Defi implements TaggedContent {
   public getStatus(): DefiStatus {
     return this.status;
   }
-  public setStatus(status: DefiStatus) {
-    if (this.status === DefiStatus.todo && status === DefiStatus.en_cours) {
+  public setStatus(status: DefiStatus, utilisateur: Utilisateur) {
+    if (status === DefiStatus.en_cours) {
       this.date_acceptation = new Date();
+    }
+    if (status === DefiStatus.deja_fait || status === DefiStatus.fait) {
+      utilisateur.gamification.ajoutePoints(this.points);
     }
     this.status = status;
   }

@@ -267,4 +267,37 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi.date_acceptation.getTime() - 100).toBeLessThan(Date.now());
     expect(userDB.defi_history.defis).toHaveLength(2);
   });
+  it('PATCH /utilisateurs/id/defis/id - ajout de points', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    CatalogueDefis.setCatalogue([
+      {
+        id: '1',
+        points: 5,
+        tags: [Tag.interet_transports],
+        titre: 'titre',
+        thematique: Thematique.alimentation,
+        astuces: 'astuce',
+        date_acceptation: new Date(Date.now() - 3 * DAY_IN_MS),
+        pourquoi: 'pourquoi',
+        sous_titre: 'sous_titre',
+        status: DefiStatus.todo,
+      },
+    ]);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/defis/1',
+    ).send({
+      status: DefiStatus.fait,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+
+    expect(userDB.gamification.points).toBe(15);
+  });
 });

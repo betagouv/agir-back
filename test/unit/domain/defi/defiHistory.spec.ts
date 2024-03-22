@@ -3,7 +3,9 @@ import { DefiStatus } from '../../../../src/domain/defis/defi';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { CatalogueDefis } from '../../../../src/domain/defis/catalogueDefis';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
-import { Defi_v0 } from 'src/domain/object_store/defi/defiHistory_v0';
+import { Defi_v0 } from '../../../../src/domain/object_store/defi/defiHistory_v0';
+import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
+import { Gamification } from '../../../../src/domain/gamification/gamification';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
@@ -70,28 +72,21 @@ describe('DefiHistory', () => {
     defiHistory.getDefiOrException('123');
     // pas d'erreur
   });
-  it('getOrCreateDefiForUpdate : cree defi dans hitorique', () => {
-    // GIVEN
-    const defiHistory = new DefiHistory();
-    CatalogueDefis.setCatalogue([DEFI_1]);
-
-    // WHEN
-    defiHistory.getOrCreateDefiForUpdate('1');
-
-    // THEN
-    expect(defiHistory.defis).toHaveLength(1);
-  });
   it('updateStatus : cree defi dans hitorique pour maj status', () => {
     // GIVEN
     const defiHistory = new DefiHistory();
     CatalogueDefis.setCatalogue([DEFI_1]);
 
+    const user = new Utilisateur();
+    user.gamification = new Gamification();
+
     // WHEN
-    defiHistory.updateStatus('1', DefiStatus.fait);
+    defiHistory.updateStatus('1', DefiStatus.fait, user);
 
     // THEN
     expect(defiHistory.defis).toHaveLength(1);
     expect(defiHistory.defis[0].getStatus()).toEqual(DefiStatus.fait);
+    expect(user.gamification.points).toEqual(5);
   });
   it('updateStatus : maj status defi deja dans historique', () => {
     // GIVEN
@@ -100,11 +95,15 @@ describe('DefiHistory', () => {
       defis: [DEFI_1],
     });
 
+    const user = new Utilisateur();
+    user.gamification = new Gamification();
+
     // WHEN
-    defiHistory.updateStatus('1', DefiStatus.fait);
+    defiHistory.updateStatus('1', DefiStatus.fait, user);
 
     // THEN
     expect(defiHistory.defis[0].getStatus()).toEqual(DefiStatus.fait);
+    expect(user.gamification.points).toEqual(5);
   });
   it('getDefisEnCours : liste les défis en cours', () => {
     // GIVEN
