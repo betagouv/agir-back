@@ -175,7 +175,7 @@ const utilisateurs = {
     bilans: [],
     services: [],
     onboardingResult: ONBOARDING_RES_1234,
-    onboardingData: ONBOARD_DATA_1234,
+    onboardingData: ONBOARD_DATA_NO_CAR_MOTO,
   },
   DEV: {
     nom: 'Mr Dev',

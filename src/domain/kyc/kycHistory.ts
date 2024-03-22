@@ -33,8 +33,7 @@ export class KYCHistory {
       this.upgradeQuestion(answered_question);
       return answered_question;
     }
-    const catalogue_question = CatalogueQuestionsKYC.getByIdOrException(id);
-    return new QuestionKYC(catalogue_question);
+    return CatalogueQuestionsKYC.getByIdOrException(id);
   }
 
   private upgradeQuestion(question: QuestionKYC) {
