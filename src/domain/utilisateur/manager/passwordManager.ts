@@ -35,6 +35,12 @@ export class PasswordManager {
     if (!this.auMoinsUnChiffre(password)) {
       ApplicationError.throwPasswordOneDigit();
     }
+    if (!this.auMoinsUneMinuscule(password)) {
+      ApplicationError.throwPasswordOneLowerCase();
+    }
+    if (!this.auMoinsUneMajuscule(password)) {
+      ApplicationError.throwPasswordUpperCase();
+    }
     if (!this.auMoinsDouzeCaracteres(password)) {
       ApplicationError.throwPassword12Char();
     }
@@ -127,12 +133,19 @@ export class PasswordManager {
   }
 
   private static auMoinsDouzeCaracteres(password: string | null): boolean {
-    const regexp = new RegExp(/(?=.{12,}$)/, 'g');
-    return password ? regexp.test(password) : false;
+    return password ? password.length >= 12 : false;
   }
 
   private static auMoinsUnChiffre(password: string | null): boolean {
     const regexp = new RegExp(/([0-9])+/, 'g');
+    return password ? regexp.test(password) : false;
+  }
+  private static auMoinsUneMinuscule(password: string | null): boolean {
+    const regexp = new RegExp(/([a-z])+/, 'g');
+    return password ? regexp.test(password) : false;
+  }
+  private static auMoinsUneMajuscule(password: string | null): boolean {
+    const regexp = new RegExp(/([A-Z])+/, 'g');
     return password ? regexp.test(password) : false;
   }
 }

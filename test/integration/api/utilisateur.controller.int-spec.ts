@@ -149,7 +149,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   it('POST /utilisateurs/login - logs user and return a JWT token', async () => {
     // GIVEN
     const utilisateur = getFakeUtilisteur();
-    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHA');
+    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHAa');
 
     await TestUtil.create(DB.utilisateur, {
       passwordHash: utilisateur.passwordHash,
@@ -162,7 +162,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const response = await TestUtil.getServer()
       .post('/utilisateurs/login')
       .send({
-        mot_de_passe: '#1234567890HAHA',
+        mot_de_passe: '#1234567890HAHAa',
         email: 'yo@truc.com',
       });
     // THEN
@@ -180,7 +180,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   it('POST /utilisateurs/login - bad password', async () => {
     // GIVEN
     const utilisateur = getFakeUtilisteur();
-    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHA');
+    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHAa');
 
     await TestUtil.create(DB.utilisateur, {
       passwordHash: utilisateur.passwordHash,
@@ -208,7 +208,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     let response = await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -216,7 +216,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     // WHEN
     response = await TestUtil.getServer().post('/utilisateurs/login').send({
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
     });
     expect(response.status).toBe(400);
@@ -225,7 +225,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   it('POST /utilisateurs/login - bad password twice, failed count = 2', async () => {
     // GIVEN
     const utilisateur = getFakeUtilisteur();
-    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHA');
+    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHAa');
 
     await TestUtil.create(DB.utilisateur, {
       passwordHash: utilisateur.passwordHash,
@@ -259,7 +259,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   it('POST /utilisateurs/login - bad password twice then ok, resets login count', async () => {
     // GIVEN
     const utilisateur = getFakeUtilisteur();
-    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHA');
+    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHAa');
 
     await TestUtil.create(DB.utilisateur, {
       passwordHash: utilisateur.passwordHash,
@@ -278,7 +278,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const response = await TestUtil.getServer()
       .post('/utilisateurs/login')
       .send({
-        mot_de_passe: '#1234567890HAHA',
+        mot_de_passe: '#1234567890HAHAa',
         email: 'yo@truc.com',
       });
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
@@ -290,7 +290,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   it('POST /utilisateurs/login - bad password 4 times, blocked account', async () => {
     // GIVEN
     const utilisateur = getFakeUtilisteur();
-    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHA');
+    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHAa');
 
     await TestUtil.create(DB.utilisateur, {
       passwordHash: utilisateur.passwordHash,
@@ -336,7 +336,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   it('POST /utilisateurs/login - bad email', async () => {
     // GIVEN
     const utilisateur = getFakeUtilisteur();
-    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHA');
+    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHAa');
 
     await TestUtil.create(DB.utilisateur, {
       passwordHash: utilisateur.passwordHash,
@@ -347,7 +347,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const response = await TestUtil.getServer()
       .post('/utilisateurs/login')
       .send({
-        mot_de_passe: '#1234567890HAHA',
+        mot_de_passe: '#1234567890HAHAa',
         email: 'bademail@truc.com',
       });
     // THEN
@@ -489,7 +489,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       prenom: 'THE PRENOM',
       code_postal: '75008',
       commune: 'Versailles',
-      mot_de_passe: '123456789012#',
+      mot_de_passe: '123456789012#aA',
       revenu_fiscal: 12345,
       nombre_de_parts_fiscales: 3,
       abonnement_ter_loire: true,
@@ -512,7 +512,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.abonnement_ter_loire).toEqual(true);
     expect(dbUser.passwordHash).toEqual(
       crypto
-        .pbkdf2Sync('123456789012#', dbUser.passwordSalt, 1000, 64, `sha512`)
+        .pbkdf2Sync('123456789012#aA', dbUser.passwordSalt, 1000, 64, `sha512`)
         .toString(`hex`),
     );
   });
@@ -642,7 +642,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       .post('/utilisateurs/modifier_mot_de_passe')
       .send({
         code: 'bad_code',
-        mot_de_passe: '#1234567890HAHA',
+        mot_de_passe: '#1234567890HAHAa',
         email: 'yo@truc.com',
       });
 
@@ -651,7 +651,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       .post('/utilisateurs/modifier_mot_de_passe')
       .send({
         code: '123456',
-        mot_de_passe: '#1234567890HAHA',
+        mot_de_passe: '#1234567890HAHAa',
         email: 'yo@truc.com',
       });
 
@@ -662,7 +662,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(userDB.failed_checkcode_count).toEqual(0);
     expect(userDB.passwordHash).toEqual(
       crypto
-        .pbkdf2Sync('#1234567890HAHA', userDB.passwordSalt, 1000, 64, `sha512`)
+        .pbkdf2Sync('#1234567890HAHAa', userDB.passwordSalt, 1000, 64, `sha512`)
         .toString(`hex`),
     );
     expect(userDB.sent_email_count).toEqual(0);
@@ -684,7 +684,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       .post('/utilisateurs/modifier_mot_de_passe')
       .send({
         code: 'bad_code',
-        mot_de_passe: '#1234567890HAHA',
+        mot_de_passe: '#1234567890HAHAa',
         email: 'yo@truc.com',
       });
 
@@ -713,7 +713,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       .post('/utilisateurs/modifier_mot_de_passe')
       .send({
         code: '123456',
-        mot_de_passe: '#1234567890HAHA',
+        mot_de_passe: '#1234567890HAHAa',
         email: 'bad@truc.com',
       });
 
@@ -738,28 +738,28 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       .post('/utilisateurs/modifier_mot_de_passe')
       .send({
         code: 'bad_code',
-        mot_de_passe: '#1234567890HAHA',
+        mot_de_passe: '#1234567890HAHAa',
         email: 'yo@truc.com',
       });
     await TestUtil.getServer()
       .post('/utilisateurs/modifier_mot_de_passe')
       .send({
         code: 'bad_code',
-        mot_de_passe: '#1234567890HAHA',
+        mot_de_passe: '#1234567890HAHAa',
         email: 'yo@truc.com',
       });
     await TestUtil.getServer()
       .post('/utilisateurs/modifier_mot_de_passe')
       .send({
         code: 'bad_code',
-        mot_de_passe: '#1234567890HAHA',
+        mot_de_passe: '#1234567890HAHAa',
         email: 'yo@truc.com',
       });
     const response = await TestUtil.getServer()
       .post('/utilisateurs/modifier_mot_de_passe')
       .send({
         code: 'bad_code',
-        mot_de_passe: '#1234567890HAHA',
+        mot_de_passe: '#1234567890HAHAa',
         email: 'yo@truc.com',
       });
 

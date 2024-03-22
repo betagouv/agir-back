@@ -8,18 +8,6 @@ const fakeSecurityRepository = new UtilisateurSecurityRepository({
 
 const passwordManager = new PasswordManager(fakeSecurityRepository);
 
-const BASIC_USER_DATA = {
-  active_account: true,
-  failed_login_count: 0,
-  prevent_login_before: new Date(),
-  code: '123456',
-  code_generation_time: new Date(),
-  failed_checkcode_count: 0,
-  prevent_checkcode_before: new Date(),
-  sent_email_count: 0,
-  prevent_sendemail_before: new Date(),
-};
-
 describe('Objet PasswordManager', () => {
   it('checkPasswordFormat : au moins contenir 1 chiffre', () => {
     // WHEN
@@ -32,10 +20,34 @@ describe('Objet PasswordManager', () => {
       );
     }
   });
+  it('checkPasswordFormat : au moins contenir 1 minuscule', () => {
+    // WHEN
+    try {
+      PasswordManager.checkPasswordFormat('A123456789012#');
+      fail();
+    } catch (error) {
+      // THEN
+      expect(error.message).toEqual(
+        'Le mot de passe doit contenir au moins une minuscule',
+      );
+    }
+  });
+  it('checkPasswordFormat : au moins contenir 1 majuscule', () => {
+    // WHEN
+    try {
+      PasswordManager.checkPasswordFormat('a123456789012#');
+      fail();
+    } catch (error) {
+      // THEN
+      expect(error.message).toEqual(
+        'Le mot de passe doit contenir au moins une majuscule',
+      );
+    }
+  });
   it('checkPasswordFormat : trop court', () => {
     // WHEN
     try {
-      PasswordManager.checkPasswordFormat('tropcourt1');
+      PasswordManager.checkPasswordFormat('Tropcourt1');
     } catch (error) {
       // THEN
       expect(error.message).toEqual(
@@ -43,21 +55,14 @@ describe('Objet PasswordManager', () => {
       );
     }
   });
-  it('checkPasswordFormat : pas trop court', () => {
+  it('checkPasswordFormat : juste bien', () => {
     // WHEN
-    try {
-      PasswordManager.checkPasswordFormat('tropcourt112&');
-    } catch (error) {
-      // THEN
-      expect(error.message).toEqual(
-        'Le mot de passe doit contenir au moins 12 caractères',
-      );
-    }
+    PasswordManager.checkPasswordFormat('Pastropcourt112&');
   });
   it('checkPasswordFormat : caractères spéciaux', () => {
     // WHEN
     try {
-      PasswordManager.checkPasswordFormat('pas de caracteres speciaux1');
+      PasswordManager.checkPasswordFormat('Pas de caracteres speciaux1');
     } catch (error) {
       // THEN
       expect(error.message).toEqual(

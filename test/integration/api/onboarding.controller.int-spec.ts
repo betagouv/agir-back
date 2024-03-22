@@ -101,7 +101,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     const response = await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -151,7 +151,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     const response = await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -171,7 +171,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     const response = await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'monmail@truc.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -194,7 +194,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     const response = await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'W@W.COM',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -224,7 +224,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -255,7 +255,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -284,7 +284,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -318,7 +318,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -351,7 +351,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -384,7 +384,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -413,7 +413,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -443,7 +443,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -722,7 +722,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       .send({
         nom: 'WW',
         prenom: 'Wojtek',
-        mot_de_passe: '#1234567890HAHA',
+        mot_de_passe: '#1234567890HAHAa',
         email: 'w@w.com',
         onboardingData: { ...ONBOARDING_1_2_3_4_DATA },
       });
@@ -739,7 +739,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       .send({
         nom: 'WW',
         prenom: 'Wojtek',
-        mot_de_passe: '#1234567890HAHA',
+        mot_de_passe: '#1234567890HAHAa',
         email: 'yotruc.com',
         onboardingData: { ...ONBOARDING_1_2_3_4_DATA },
       });
