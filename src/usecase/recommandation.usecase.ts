@@ -7,6 +7,8 @@ import { ContentType } from '../../src/domain/contenu/contentType';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
 import { Defi } from '../../src/domain/defis/defi';
+import { QuestionKYC } from '../../src/domain/kyc/questionQYC';
+import { Thematique } from '../../src/domain/contenu/thematique';
 
 @Injectable()
 export class RecommandationUsecase {
@@ -23,26 +25,39 @@ export class RecommandationUsecase {
 
     const quizzes = await this.getQuizzes(utilisateur);
 
+    const kycs = await this.getKYC(utilisateur);
+
     const defis_en_cours = this.getDefisEnCours(utilisateur);
 
     let defis_restants = this.getDefisRestantsAvecTri(utilisateur);
     const nombre_defi_restant = Math.min(6 - defis_en_cours.length, 2);
     defis_restants = defis_restants.slice(0, nombre_defi_restant);
 
-    const nombre_article_quizz_restants =
+    const nombre_content_restants =
       6 - defis_en_cours.length - defis_restants.length;
-
 
     let content: Recommandation[] = [];
     content.push(...articles);
     content.push(...quizzes);
+    content.push(...kycs);
     content = this.shuffle(content);
 
     content.sort((a, b) => b.score - a.score);
 
-    content = content.slice(0, nombre_article_quizz_restants);
+    content = content.slice(0, nombre_content_restants);
 
     return defis_en_cours.concat(defis_restants, content);
+  }
+
+  private getKYC(utilisateur: Utilisateur): Recommandation[] {
+    const kycs = utilisateur.kyc_history.getKYCRestantes();
+
+    PonderationApplicativeManager.increaseScoreContentOfList(
+      kycs,
+      utilisateur.tag_ponderation_set,
+    );
+
+    return this.mapKYCToRecommandation(kycs);
   }
 
   private getDefisRestantsAvecTri(utilisateur: Utilisateur): Recommandation[] {
@@ -75,6 +90,19 @@ export class RecommandationUsecase {
       type: ContentType.defi,
       jours_restants: e.getJourRestants(),
       status_defi: e.getStatus(),
+    }));
+  }
+
+  private mapKYCToRecommandation(kycs: QuestionKYC[]): Recommandation[] {
+    return kycs.map((e) => ({
+      content_id: e.id,
+      image_url:
+        'https://www.google.com/url?sa=i&url=https%3A%2F%2Fopenclipart.org%2Fdetail%2F321572%2Fi-have-a-small-question&psig=AOvVaw1_ErxUJbZIoqQ8u-1sbgB5&ust=1711202048405000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCLijtMOCiIUDFQAAAAAdAAAAABAS',
+      points: e.points,
+      thematique_principale: e.thematique ? e.thematique : Thematique.climat,
+      score: e.score,
+      titre: e.question,
+      type: ContentType.kyc,
     }));
   }
 

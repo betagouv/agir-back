@@ -11,6 +11,11 @@ import {
 } from '../../../src/domain/scoring/ponderationApplicative';
 import { DB, TestUtil } from '../../TestUtil';
 import { CatalogueDefis } from '../../../src/domain/defis/catalogueDefis';
+import { CatalogueQuestionsKYC } from '../../../src/domain/kyc/catalogueQuestionsKYC';
+import {
+  TypeReponseQuestionKYC,
+  CategorieQuestionKYC,
+} from '../../../src/domain/kyc/questionQYC';
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
 const DEFI_1: Defi_v0 = {
@@ -64,6 +69,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   it('GET /utilisateurs/id/recommandation - list article recommandation', async () => {
     // GIVEN
     CatalogueDefis.setCatalogue([]);
+    CatalogueQuestionsKYC.setCatalogue([]);
+
     await TestUtil.create(DB.utilisateur, { history: {} });
     await TestUtil.create_article();
 
@@ -86,6 +93,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   it('GET /utilisateurs/id/recommandation - list un defi, bonne données', async () => {
     // GIVEN
     CatalogueDefis.setCatalogue([{ ...DEFI_1 }]);
+    CatalogueQuestionsKYC.setCatalogue([]);
     await TestUtil.create(DB.utilisateur, { history: {} });
 
     // WHEN
@@ -109,6 +117,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   it('GET /utilisateurs/id/recommandations - list all recos, filtée par code postal', async () => {
     // GIVEN
     CatalogueDefis.setCatalogue([]);
+    CatalogueQuestionsKYC.setCatalogue([]);
 
     await TestUtil.create(DB.utilisateur, {
       history: {},
@@ -135,6 +144,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   it('GET /utilisateurs/id/recommandations - applique les ponderations aux articles', async () => {
     // GIVEN
     CatalogueDefis.setCatalogue([]);
+    CatalogueQuestionsKYC.setCatalogue([]);
 
     await TestUtil.create(DB.utilisateur, {
       history: {},
@@ -177,6 +187,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   it('GET /utilisateurs/id/recommandations - applique les ponderations aux quizz', async () => {
     // GIVEN
     CatalogueDefis.setCatalogue([]);
+    CatalogueQuestionsKYC.setCatalogue([]);
 
     await TestUtil.create(DB.utilisateur, {
       history: {},
@@ -219,6 +230,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   it('GET /utilisateurs/id/recommandations - renvoie un défis en premier', async () => {
     // GIVEN
     CatalogueDefis.setCatalogue([{ ...DEFI_1, id: '101' }]);
+    CatalogueQuestionsKYC.setCatalogue([]);
     await TestUtil.create(DB.utilisateur, {
       history: {},
       code_postal: null,
@@ -261,6 +273,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   it('GET /utilisateurs/id/recommandations - tag climat 2 fois renforce le score', async () => {
     // GIVEN
     CatalogueDefis.setCatalogue([]);
+    CatalogueQuestionsKYC.setCatalogue([]);
     await TestUtil.create(DB.utilisateur, {
       history: {},
       code_postal: null,
@@ -295,6 +308,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   it('GET /utilisateurs/id/recommandations - pas de article lu', async () => {
     // GIVEN
     CatalogueDefis.setCatalogue([]);
+    CatalogueQuestionsKYC.setCatalogue([]);
 
     await TestUtil.create(DB.utilisateur, {
       history: {
@@ -329,6 +343,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   it('GET /utilisateurs/id/recommandations - que des quizz jamais touchés', async () => {
     // GIVEN
     CatalogueDefis.setCatalogue([]);
+    CatalogueQuestionsKYC.setCatalogue([]);
     await TestUtil.create(DB.utilisateur, {
       history: {
         quizz_interactions: [
@@ -360,17 +375,31 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations - mix de defis en cours, restant, et articles', async () => {
     // GIVEN
+    CatalogueQuestionsKYC.setCatalogue([
+      {
+        id: '111',
+        question: `Quel est votre sujet principal d'intéret ?`,
+        type: TypeReponseQuestionKYC.choix_multiple,
+        is_NGC: false,
+        categorie: CategorieQuestionKYC.service,
+        points: 10,
+        reponses: undefined,
+        thematique: Thematique.consommation,
+        reponses_possibles: [
+          { label: 'AAA', code: Thematique.climat },
+          { label: 'BBB', code: Thematique.logement },
+          { label: 'CCC', code: Thematique.alimentation },
+          { label: 'DDD', code: Thematique.transport },
+        ],
+        tags: [Tag.R6],
+      },
+    ]);
     const defis: DefiHistory_v0 = {
       version: 0,
       defis: [
         {
           ...DEFI_1,
           id: '001',
-          status: DefiStatus.en_cours,
-        },
-        {
-          ...DEFI_1,
-          id: '002',
           status: DefiStatus.en_cours,
         },
         {
@@ -419,7 +448,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     await TestUtil.create_article({
       content_id: '66',
       codes_postaux: [],
-      rubrique_ids: ['6'],
+      rubrique_ids: ['6', '5'],
     });
     // WHEN
     const response = await TestUtil.GET(
@@ -429,10 +458,10 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(6);
     expect(response.body[0].content_id).toEqual('001');
-    expect(response.body[1].content_id).toEqual('002');
-    expect(response.body[2].content_id).toEqual('1');
-    expect(response.body[3].content_id).toEqual('2');
-    expect(response.body[4].content_id).toEqual('66');
+    expect(response.body[1].content_id).toEqual('1');
+    expect(response.body[2].content_id).toEqual('2');
+    expect(response.body[3].content_id).toEqual('66');
+    expect(response.body[4].content_id).toEqual('111');
     expect(response.body[5].content_id).toEqual('11');
   });
   it('GET /utilisateurs/id/recommandations - que des defis en cours', async () => {

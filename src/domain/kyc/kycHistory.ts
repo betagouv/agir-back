@@ -27,6 +27,17 @@ export class KYCHistory {
     return result;
   }
 
+  public getKYCRestantes(): QuestionKYC[] {
+    const kycs_all = CatalogueQuestionsKYC.getAll();
+    this.answered_questions.forEach((question) => {
+      const index = kycs_all.findIndex((d) => d.id === question.id);
+      if (index !== -1) {
+        kycs_all.splice(index, 1);
+      }
+    });
+    return kycs_all;
+  }
+
   public getQuestionOrException(id: string): QuestionKYC {
     let answered_question = this.getAnsweredQuestion(id);
     if (answered_question) {

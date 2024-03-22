@@ -262,4 +262,65 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(question.reponses).toEqual([{ label: '123', code: null }]);
   });
+
+  it('getKYCRestantes : kyc non repondu', () => {
+    // GIVEN
+    const questionsKYC = new KYCHistory({
+      version: 0,
+      answered_questions: [
+        {
+          id: '001',
+          question: `Quel est votre sujet principal d'intéret ?`,
+          type: TypeReponseQuestionKYC.choix_multiple,
+          is_NGC: false,
+          categorie: CategorieQuestionKYC.service,
+          points: 10,
+          reponses: [{ label: 'Le climat', code: Thematique.climat }],
+          reponses_possibles: [
+            { label: 'Le climat', code: Thematique.climat },
+            { label: 'Mon logement', code: Thematique.logement },
+            { label: 'Ce que je mange', code: Thematique.alimentation },
+            { label: 'Comment je bouge', code: Thematique.transport },
+          ],
+          tags: [],
+        },
+      ],
+    });
+    CatalogueQuestionsKYC.setCatalogue([
+      {
+        id: '001',
+        question: `Quel est votre sujet principal d'intéret ?`,
+        type: TypeReponseQuestionKYC.choix_multiple,
+        is_NGC: false,
+        categorie: CategorieQuestionKYC.service,
+        points: 10,
+        reponses: undefined,
+        reponses_possibles: [
+          { label: 'AAA', code: Thematique.climat },
+          { label: 'BBB', code: Thematique.logement },
+          { label: 'CCC', code: Thematique.alimentation },
+          { label: 'DDD', code: Thematique.transport },
+        ],
+        tags: [],
+      },
+      {
+        id: '002',
+        question: `Quel est votre sujet principal d'intéret ?`,
+        type: TypeReponseQuestionKYC.libre,
+        is_NGC: false,
+        categorie: CategorieQuestionKYC.service,
+        points: 10,
+        reponses: undefined,
+        reponses_possibles: undefined,
+        tags: [],
+      },
+    ]);
+
+    // WHEN
+    const questions = questionsKYC.getKYCRestantes();
+
+    // THEN
+    expect(questions).toHaveLength(1);
+    expect(questions[0].id).toEqual('002');
+  });
 });
