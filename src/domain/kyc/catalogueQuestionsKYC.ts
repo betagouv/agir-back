@@ -1,6 +1,7 @@
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Thematique } from '../contenu/thematique';
 import { QuestionKYC_v0 } from '../object_store/kyc/kycHistory_v0';
+import { Tag } from '../scoring/tag';
 import {
   BooleanKYC,
   CategorieQuestionKYC,
@@ -67,7 +68,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
       { label: 'Non', code: BooleanKYC.non },
       { label: 'A voir', code: BooleanKYC.peut_etre },
     ],
-    tags: [],
+    tags: [Tag.logement, Tag.climat],
   },
   {
     id: '4',
@@ -85,7 +86,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     is_NGC: false,
     categorie: CategorieQuestionKYC.service,
     points: 10,
-    tags: [],
+    tags: [Tag.consommation, Tag.alimentation],
   },
 ];
 
