@@ -28,6 +28,7 @@ export enum DPE {
   E = 'E',
   F = 'F',
   G = 'G',
+  ne_sais_pas = 'ne_sais_pas',
 }
 
 export class Logement {
