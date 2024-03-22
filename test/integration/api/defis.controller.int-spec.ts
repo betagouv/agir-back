@@ -45,6 +45,20 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
   it('GET /defis - liste defis catalogue', async () => {
     // GIVEN
+    CatalogueDefis.setCatalogue([
+      {
+        id: '1',
+        points: 5,
+        tags: [Tag.interet_transports],
+        titre: 'titre',
+        thematique: Thematique.alimentation,
+        astuces: 'astuce',
+        date_acceptation: null,
+        pourquoi: 'pourquoi',
+        sous_titre: 'sous_titre',
+        status: DefiStatus.todo,
+      },
+    ]);
     await TestUtil.create(DB.utilisateur);
 
     // WHEN
@@ -52,7 +66,14 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(CatalogueDefis.getTailleCatalogue());
+    expect(response.body.length).toBe(1);
+    expect(response.body[0].id).toEqual('1');
+    expect(response.body[0].titre).toEqual('titre');
+    expect(response.body[0].thematique).toEqual('alimentation');
+    expect(response.body[0].thematique_label).toEqual('alimentation');
+    expect(response.body[0].points).toEqual(5);
+    expect(response.body[0].status_defi).toBeUndefined();
+    expect(response.body[0].jours_restants).toBeNull();
   });
   it('GET /defis - liste defis de l utilisateur', async () => {
     // GIVEN
