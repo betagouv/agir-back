@@ -10,6 +10,8 @@ export class UserTagEvaluator {
     UserTagEvaluator.transport_quotidiens(user);
     UserTagEvaluator.kyc_001(user);
     UserTagEvaluator.kyc_002(user);
+    UserTagEvaluator.kyc_003(user);
+    UserTagEvaluator.kyc_004(user);
     UserTagEvaluator.shopping_addict(user);
     UserTagEvaluator.viande_addict(user);
   }
@@ -43,67 +45,104 @@ export class UserTagEvaluator {
     }
   }
   private static kyc_001(user: Utilisateur) {
-    const kyc_001 = user.kyc_history.getQuestion(QuestionID.KYC001);
-    if (kyc_001 && kyc_001.hasResponses()) {
+    const kyc = user.kyc_history.getQuestion(QuestionID.KYC001);
+    if (kyc && kyc.hasResponses()) {
       user.setTagWhenOrZero(
-        kyc_001.includesReponseCode(Thematique.transport),
+        kyc.includesReponseCode(Thematique.transport),
         Tag.transport,
         50,
       );
       user.setTagWhenOrZero(
-        kyc_001.includesReponseCode(Thematique.alimentation),
+        kyc.includesReponseCode(Thematique.alimentation),
         Tag.alimentation,
         50,
       );
       user.setTagWhenOrZero(
-        kyc_001.includesReponseCode(Thematique.climat),
+        kyc.includesReponseCode(Thematique.climat),
         Tag.climat,
         50,
       );
       user.setTagWhenOrZero(
-        kyc_001.includesReponseCode(Thematique.dechet),
+        kyc.includesReponseCode(Thematique.dechet),
         Tag.dechet,
         50,
       );
       user.setTagWhenOrZero(
-        kyc_001.includesReponseCode(Thematique.logement),
+        kyc.includesReponseCode(Thematique.logement),
         Tag.logement,
         50,
       );
       user.setTagWhenOrZero(
-        kyc_001.includesReponseCode(Thematique.loisir),
+        kyc.includesReponseCode(Thematique.loisir),
         Tag.loisir,
         50,
       );
       user.setTagWhenOrZero(
-        kyc_001.includesReponseCode(Thematique.consommation),
+        kyc.includesReponseCode(Thematique.consommation),
         Tag.consommation,
         50,
       );
     }
   }
   private static kyc_002(user: Utilisateur) {
-    const kyc_002 = user.kyc_history.getQuestion(QuestionID.KYC002);
-    if (kyc_002 && kyc_002.hasResponses()) {
+    const kyc = user.kyc_history.getQuestion(QuestionID.KYC002);
+    if (kyc && kyc.hasResponses()) {
       user.setTagWhenOrZero(
-        kyc_002.includesReponseCode('co_voit'),
+        kyc.includesReponseCode('co_voit'),
         Tag.appetence_covoit,
         -100,
       );
       user.setTagWhenOrZero(
-        kyc_002.includesReponseCode('faire_velo'),
+        kyc.includesReponseCode('faire_velo'),
         Tag.appetence_velo,
         -100,
       );
       user.setTagWhenOrZero(
-        kyc_002.includesReponseCode('marcher'),
+        kyc.includesReponseCode('marcher'),
         Tag.appetence_marche,
         -100,
       );
       user.setTagWhenOrZero(
-        kyc_002.includesReponseCode('TEC'),
+        kyc.includesReponseCode('TEC'),
         Tag.appetence_tec,
         -100,
+      );
+    }
+  }
+  private static kyc_003(user: Utilisateur) {
+    const kyc = user.kyc_history.getQuestion(QuestionID.KYC003);
+    if (kyc && kyc.hasResponses()) {
+      user.setTagWhen(
+        kyc.includesReponseCode('pas_de_velo'),
+        Tag.possede_velo,
+        -100,
+        100,
+      );
+    }
+  }
+  private static kyc_004(user: Utilisateur) {
+    const kyc = user.kyc_history.getQuestion(QuestionID.KYC004);
+    if (kyc && kyc.hasResponses()) {
+      user.setTagWhenOrZero(
+        kyc.includesReponseCode('pistes_cyclables_faciles') ||
+          kyc.includesReponseCode('pistes_cyclables_dangereuses'),
+        Tag.pistes_cyclables,
+        100,
+      );
+      user.setTagWhenOrZero(
+        kyc.includesReponseCode('absence_pistes_cyclables'),
+        Tag.pistes_cyclables,
+        -100,
+      );
+      user.setTagWhenOrZero(
+        kyc.includesReponseCode('ne_sais_pas'),
+        Tag.pistes_cyclables,
+        0,
+      );
+      user.setTagWhenOrZero(
+        kyc.includesReponseCode('ne_sais_pas'),
+        Tag.pistes_cyclables,
+        0,
       );
     }
   }

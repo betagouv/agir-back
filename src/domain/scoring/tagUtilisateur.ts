@@ -7,4 +7,7 @@ export enum TagUtilisateur {
   appetence_marche = 'appetence_marche',
   appetence_tec = 'appetence_tec',
   appetence_velo = 'appetence_velo',
+  possede_velo = 'possede_velo',
+  quotidien_velo = 'quotidien_velo',
+  pistes_cyclables = 'pistes_cyclables',
 }

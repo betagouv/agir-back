@@ -6,6 +6,8 @@ import { TaggedContent } from '../scoring/taggedContent';
 export enum QuestionID {
   KYC001 = 'KYC001',
   KYC002 = 'KYC002',
+  KYC003 = 'KYC003',
+  KYC004 = 'KYC004',
   _1 = '_1',
   _2 = '_2',
   _3 = '_3',

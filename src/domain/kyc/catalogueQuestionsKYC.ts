@@ -35,7 +35,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     ],
   },
   {
-    id: QuestionID.KYC001,
+    id: QuestionID.KYC002,
     question:
       'Quel(s) moyen(s)de transport excluez-vous pour vos trajets du quotidien (travail, course…) ?',
     type: TypeReponseQuestionKYC.choix_multiple,
@@ -43,12 +43,57 @@ const CATALOGUE: QuestionKYC_v0[] = [
     categorie: CategorieQuestionKYC.mission,
     points: 5,
     tags: [],
+    thematique: Thematique.transport,
     reponses_possibles: [
       { label: 'Marcher', code: 'marcher' },
       { label: 'Faire du vélo', code: 'faire_velo' },
       { label: 'Co-voiturer', code: 'co_voit' },
       { label: 'Prendre les transports en commun', code: 'TEC' },
       { label: 'Aucun', code: 'aucun' },
+    ],
+  },
+  {
+    id: QuestionID.KYC003,
+    question: 'Etes-vous équipé d’un vélo ?',
+    type: TypeReponseQuestionKYC.choix_multiple,
+    is_NGC: false,
+    categorie: CategorieQuestionKYC.mission,
+    points: 5,
+    tags: [],
+    thematique: Thematique.transport,
+    reponses_possibles: [
+      { label: 'J’ai un vélo mécanique', code: 'velo_meca' },
+      { label: 'J’ai un vélo électrique', code: 'velo_elec' },
+      { label: 'J’ai un vélo cargo', code: 'velo_cargo' },
+      { label: 'J’ai un vélo pliable', code: 'velo_pliable' },
+      { label: 'Je loue un vélo en libre service', code: 'velo_libre_service' },
+      { label: 'Je ne possède pas de vélo', code: 'pas_de_velo' },
+    ],
+  },
+  {
+    id: QuestionID.KYC004,
+    question:
+      'Comment trouvez-vous les pistes cyclables sur vos trajets du quotidien (trajet effectué plus de 2 fois par semaine)  ?',
+    type: TypeReponseQuestionKYC.choix_unique,
+    is_NGC: false,
+    categorie: CategorieQuestionKYC.mission,
+    points: 5,
+    tags: [],
+    thematique: Thematique.transport,
+    reponses_possibles: [
+      {
+        label: 'Existantes et facilement praticables',
+        code: 'pistes_cyclables_faciles',
+      },
+      {
+        label: 'Existantes mais dangereuses',
+        code: 'pistes_cyclables_dangereuses',
+      },
+      {
+        label: 'Il n’y a pas de pistes cyclables',
+        code: 'absence_pistes_cyclables',
+      },
+      { label: 'Je ne sais pas', code: 'ne_sais_pas' },
     ],
   },
   {
