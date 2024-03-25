@@ -12,6 +12,9 @@ export class UserTagEvaluator {
     UserTagEvaluator.kyc_002(user);
     UserTagEvaluator.kyc_003(user);
     UserTagEvaluator.kyc_004(user);
+    UserTagEvaluator.kyc_005(user);
+    UserTagEvaluator.kyc_006(user);
+    UserTagEvaluator.kyc_007(user);
     UserTagEvaluator.shopping_addict(user);
     UserTagEvaluator.viande_addict(user);
   }
@@ -143,6 +146,49 @@ export class UserTagEvaluator {
         kyc.includesReponseCode('ne_sais_pas'),
         Tag.pistes_cyclables,
         0,
+      );
+    }
+  }
+  private static kyc_005(user: Utilisateur) {
+    const kyc = user.kyc_history.getQuestion(QuestionID.KYC005);
+    if (kyc && kyc.hasResponses()) {
+      user.setTagWhen(
+        kyc.includesReponseCode('emploi'),
+        Tag.possede_emploi,
+        100,
+        -100,
+      );
+      user.setTagWhen(
+        kyc.includesReponseCode('sans_emploi'),
+        Tag.possede_emploi,
+        -100,
+        100,
+      );
+      user.setTagWhenOrZero(
+        kyc.includesReponseCode('ne_sais_pas'),
+        Tag.possede_emploi,
+        0,
+      );
+    }
+  }
+  private static kyc_006(user: Utilisateur) {
+    const kyc = user.kyc_history.getQuestion(QuestionID.KYC006);
+    if (kyc && kyc.hasResponses()) {
+      user.setTagWhen(
+        kyc.includesReponseCode('plus_15'),
+        Tag.logement_plus_15_ans,
+        100,
+        -100,
+      );
+    }
+  }
+  private static kyc_007(user: Utilisateur) {
+    const kyc = user.kyc_history.getQuestion(QuestionID.KYC007);
+    if (kyc && kyc.hasResponses()) {
+      user.setTagWhenOrZero(
+        kyc.includesReponseCode('cafe'),
+        Tag.appetence_cafe,
+        100,
       );
     }
   }
