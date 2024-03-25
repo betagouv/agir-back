@@ -1,6 +1,7 @@
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import {
   CategorieQuestionKYC,
+  QuestionID,
   TypeReponseQuestionKYC,
 } from '../../../src/domain/kyc/questionQYC';
 import { DB, TestUtil } from '../../TestUtil';
@@ -53,7 +54,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(response.body.length).toBe(
       CatalogueQuestionsKYC.getTailleCatalogue(),
     );
-    const quest = response.body.find((e) => e.id === '2');
+    const quest = response.body.find((e) => e.id === '_2');
     expect(quest.reponse).toStrictEqual(['Le climat', 'Mon logement']);
   });
   it('GET /utilisateurs/id/questionsKYC/3 - renvoie la question sans réponse', async () => {
@@ -62,12 +63,12 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/questionsKYC/3',
+      '/utilisateurs/utilisateur-id/questionsKYC/_3',
     );
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.id).toEqual('3');
+    expect(response.body.id).toEqual('_3');
     expect(response.body.type).toEqual(TypeReponseQuestionKYC.choix_unique);
     expect(response.body.points).toEqual(10);
     expect(response.body.reponses_possibles).toEqual(['Oui', 'Non', 'A voir']);
@@ -81,7 +82,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     CatalogueQuestionsKYC.setCatalogue([
       {
-        id: '001',
+        id: QuestionID.KYC001,
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.choix_multiple,
         is_NGC: false,
@@ -100,7 +101,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
         version: 0,
         answered_questions: [
           {
-            id: '001',
+            id: QuestionID.KYC001,
             question: `Quel est votre sujet principal d'intéret ?`,
             type: TypeReponseQuestionKYC.choix_multiple,
             is_NGC: false,
@@ -120,7 +121,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     });
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/questionsKYC/001',
+      '/utilisateurs/utilisateur-id/questionsKYC/KYC001',
     );
 
     // THEN
@@ -147,7 +148,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
         version: 0,
         answered_questions: [
           {
-            id: '2',
+            id: QuestionID._2,
             question: `Quel est votre sujet principal d'intéret ?`,
             type: TypeReponseQuestionKYC.choix_multiple,
             is_NGC: false,
@@ -169,7 +170,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     });
     CatalogueQuestionsKYC.setCatalogue([
       {
-        id: '2',
+        id: QuestionID._2,
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.choix_multiple,
         is_NGC: false,
@@ -185,7 +186,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     ]);
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/questionsKYC/2',
+      '/utilisateurs/utilisateur-id/questionsKYC/_2',
     );
 
     // THEN
@@ -201,20 +202,20 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/1',
+      '/utilisateurs/utilisateur-id/questionsKYC/_1',
     ).send({ reponse: ['YO'] });
 
     // THEN
     expect(response.status).toBe(200);
     const user = await utilisateurRepository.getById('utilisateur-id');
-    expect(user.kyc_history.getQuestionOrException('1').reponses).toStrictEqual(
-      [
-        {
-          code: null,
-          label: 'YO',
-        },
-      ],
-    );
+    expect(
+      user.kyc_history.getQuestionOrException('_1').reponses,
+    ).toStrictEqual([
+      {
+        code: null,
+        label: 'YO',
+      },
+    ]);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.gamification.points).toEqual(20);
@@ -225,20 +226,20 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/2',
+      '/utilisateurs/utilisateur-id/questionsKYC/_2',
     ).send({ reponse: ['Le climat'] });
 
     // THEN
     expect(response.status).toBe(200);
     const user = await utilisateurRepository.getById('utilisateur-id');
-    expect(user.kyc_history.getQuestionOrException('2').reponses).toStrictEqual(
-      [
-        {
-          code: Thematique.climat,
-          label: 'Le climat',
-        },
-      ],
-    );
+    expect(
+      user.kyc_history.getQuestionOrException('_2').reponses,
+    ).toStrictEqual([
+      {
+        code: Thematique.climat,
+        label: 'Le climat',
+      },
+    ]);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.gamification.points).toEqual(10);
@@ -247,7 +248,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     CatalogueQuestionsKYC.setCatalogue([
       {
-        id: '001',
+        id: QuestionID.KYC001,
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.choix_multiple,
         is_NGC: false,
@@ -268,7 +269,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/001',
+      '/utilisateurs/utilisateur-id/questionsKYC/KYC001',
     ).send({ reponse: ['Comment je bouge'] });
 
     // THEN
@@ -280,7 +281,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     CatalogueQuestionsKYC.setCatalogue([
       {
-        id: '001',
+        id: QuestionID.KYC001,
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.choix_multiple,
         is_NGC: false,
@@ -299,13 +300,15 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     await TestUtil.create(DB.utilisateur);
 
-    await TestUtil.PUT('/utilisateurs/utilisateur-id/questionsKYC/001').send({
-      reponse: ['Comment je bouge'],
-    });
+    await TestUtil.PUT('/utilisateurs/utilisateur-id/questionsKYC/KYC001').send(
+      {
+        reponse: ['Comment je bouge'],
+      },
+    );
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/001',
+      '/utilisateurs/utilisateur-id/questionsKYC/KYC001',
     ).send({ reponse: ['Le climat'] });
 
     // THEN

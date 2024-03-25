@@ -9,6 +9,7 @@ import { EventType } from '../../../src/domain/utilisateur/appEvent';
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
+  QuestionID,
 } from '../../../src/domain/kyc/questionQYC';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
@@ -859,7 +860,7 @@ describe('TODO list (API test)', () => {
       version: 0,
       answered_questions: [
         {
-          id: '1',
+          id: QuestionID._1,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -892,7 +893,7 @@ describe('TODO list (API test)', () => {
                 sont_points_en_poche: false,
                 type: ContentType.kyc,
                 level: DifficultyLevel.ANY,
-                content_id: '1',
+                content_id: '_1',
                 points: 10,
               },
             ],
@@ -904,7 +905,7 @@ describe('TODO list (API test)', () => {
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/1',
+      '/utilisateurs/utilisateur-id/questionsKYC/_1',
     ).send({ reponse: ['YO'] });
 
     // THEN

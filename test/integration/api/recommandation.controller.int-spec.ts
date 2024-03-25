@@ -15,6 +15,7 @@ import { CatalogueQuestionsKYC } from '../../../src/domain/kyc/catalogueQuestion
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
+  QuestionID,
 } from '../../../src/domain/kyc/questionQYC';
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
@@ -377,7 +378,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     // GIVEN
     CatalogueQuestionsKYC.setCatalogue([
       {
-        id: '111',
+        id: QuestionID._1,
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.choix_multiple,
         is_NGC: false,
@@ -461,7 +462,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[1].content_id).toEqual('1');
     expect(response.body[2].content_id).toEqual('2');
     expect(response.body[3].content_id).toEqual('66');
-    expect(response.body[4].content_id).toEqual('111');
+    expect(response.body[4].content_id).toEqual('_1');
     expect(response.body[5].content_id).toEqual('11');
   });
   it('GET /utilisateurs/id/recommandations - que des defis en cours', async () => {

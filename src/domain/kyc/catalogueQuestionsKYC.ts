@@ -5,18 +5,19 @@ import { Tag } from '../scoring/tag';
 import {
   BooleanKYC,
   CategorieQuestionKYC,
+  QuestionID,
   QuestionKYC,
   TypeReponseQuestionKYC,
 } from './questionQYC';
 
 const CATALOGUE: QuestionKYC_v0[] = [
   {
-    id: '001',
+    id: QuestionID.KYC001,
     question:
       'Sur quel(s) sujet(s) souhaitez-vous en savoir plus pour réduire votre impact environnemental ?',
     type: TypeReponseQuestionKYC.choix_multiple,
     is_NGC: false,
-    categorie: CategorieQuestionKYC.service,
+    categorie: CategorieQuestionKYC.mission,
     points: 5,
     tags: [],
     reponses_possibles: [
@@ -34,7 +35,24 @@ const CATALOGUE: QuestionKYC_v0[] = [
     ],
   },
   {
-    id: '1',
+    id: QuestionID.KYC001,
+    question:
+      'Quel(s) moyen(s)de transport excluez-vous pour vos trajets du quotidien (travail, course…) ?',
+    type: TypeReponseQuestionKYC.choix_multiple,
+    is_NGC: false,
+    categorie: CategorieQuestionKYC.mission,
+    points: 5,
+    tags: [],
+    reponses_possibles: [
+      { label: 'Marcher', code: 'marcher' },
+      { label: 'Faire du vélo', code: 'faire_velo' },
+      { label: 'Co-voiturer', code: 'co_voit' },
+      { label: 'Prendre les transports en commun', code: 'TEC' },
+      { label: 'Aucun', code: 'aucun' },
+    ],
+  },
+  {
+    id: QuestionID._1,
     question: 'Comment avez vous connu le service ?',
     type: TypeReponseQuestionKYC.libre,
     is_NGC: false,
@@ -43,7 +61,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     tags: [],
   },
   {
-    id: '2',
+    id: QuestionID._2,
     question: `Quel est votre sujet principal d'intéret ?`,
     type: TypeReponseQuestionKYC.choix_multiple,
     is_NGC: false,
@@ -57,7 +75,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     tags: [],
   },
   {
-    id: '3',
+    id: QuestionID._3,
     question: `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
     type: TypeReponseQuestionKYC.choix_unique,
     is_NGC: false,
@@ -71,7 +89,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     tags: [Tag.logement, Tag.climat],
   },
   {
-    id: '4',
+    id: QuestionID._4,
     question: `Quel est ton age`,
     type: TypeReponseQuestionKYC.entier,
     is_NGC: false,
@@ -80,7 +98,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     tags: [],
   },
   {
-    id: '5',
+    id: QuestionID._5,
     question: `Combient coute un malabar`,
     type: TypeReponseQuestionKYC.decimal,
     is_NGC: false,
@@ -123,6 +141,11 @@ export class CatalogueQuestionsKYC {
       return new QuestionKYC(question);
     }
     ApplicationError.throwQuestionInconnue(id);
+  }
+  public static getById(id: QuestionID): QuestionKYC {
+    return new QuestionKYC(
+      CatalogueQuestionsKYC.kyc_catalogue.find((element) => element.id === id),
+    );
   }
 
   public static setCatalogue(catalogue: QuestionKYC_v0[]) {

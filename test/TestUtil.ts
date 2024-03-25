@@ -17,6 +17,7 @@ import { ParcoursTodo } from '../src/domain/todo/parcoursTodo';
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
+  QuestionID,
 } from '../src/domain/kyc/questionQYC';
 import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
 import { Feature } from '../src/domain/gamification/feature';
@@ -349,7 +350,7 @@ export class TestUtil {
       version: 0,
       answered_questions: [
         {
-          id: '2',
+          id: QuestionID._2,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,

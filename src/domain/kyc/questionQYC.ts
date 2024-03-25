@@ -3,6 +3,15 @@ import { QuestionKYC_v0 } from '../object_store/kyc/kycHistory_v0';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
 
+export enum QuestionID {
+  KYC001 = 'KYC001',
+  KYC002 = 'KYC002',
+  _1 = '_1',
+  _2 = '_2',
+  _3 = '_3',
+  _4 = '_4',
+  _5 = '_5',
+}
 export enum TypeReponseQuestionKYC {
   libre = 'libre',
   choix_unique = 'choix_unique',
@@ -20,6 +29,7 @@ export enum BooleanKYC {
 export enum CategorieQuestionKYC {
   service = 'service',
   defi = 'defi',
+  mission = 'mission',
 }
 
 export class KYCReponse {
@@ -28,7 +38,7 @@ export class KYCReponse {
 }
 
 export class QuestionKYC implements TaggedContent {
-  id: string;
+  id: QuestionID;
   question: string;
   type: TypeReponseQuestionKYC;
   categorie: CategorieQuestionKYC;
@@ -41,7 +51,8 @@ export class QuestionKYC implements TaggedContent {
   tags: Tag[];
   score: number;
 
-  constructor(data: QuestionKYC_v0) {
+  constructor(data?: QuestionKYC_v0) {
+    if (!data) return;
     this.id = data.id;
     this.question = data.question;
     this.type = data.type;
@@ -54,6 +65,10 @@ export class QuestionKYC implements TaggedContent {
     this.thematique = data.thematique;
     this.tags = data.tags ? data.tags : [];
     this.score = 0;
+  }
+
+  public hasResponses(): boolean {
+    return !!this.reponses && this.reponses.length > 0;
   }
 
   public getTags(): Tag[] {

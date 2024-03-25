@@ -2,6 +2,7 @@ import { Thematique } from '../../../../src/domain/contenu/thematique';
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
+  QuestionID,
 } from '../../../../src/domain/kyc/questionQYC';
 import { CatalogueQuestionsKYC } from '../../../../src/domain/kyc/catalogueQuestionsKYC';
 import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
@@ -23,12 +24,99 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(questionsKYC.isQuestionAnswered('2')).toStrictEqual(false);
   });
-  it('isQuestionAnswered :true si répondu', () => {
+  it('isQuestionAnswered :false si pas répondu', () => {
     // WHEN
     const questionsKYC = new KYCHistory();
-    questionsKYC.updateQuestion('1', ['yo']);
+
     // THEN
-    expect(questionsKYC.isQuestionAnswered('1')).toStrictEqual(true);
+    expect(questionsKYC.isQuestionAnswered('2')).toStrictEqual(false);
+  });
+  it('hasResponses :false si attribut undefined', () => {
+    // GIVEN
+    const questionsKYC = new KYCHistory({
+      version: 0,
+      answered_questions: [
+        {
+          id: QuestionID.KYC001,
+          question: `Quel est votre sujet principal d'intéret ?`,
+          type: TypeReponseQuestionKYC.choix_multiple,
+          is_NGC: false,
+          categorie: CategorieQuestionKYC.service,
+          points: 10,
+          reponses: undefined,
+          reponses_possibles: [
+            { label: 'Le climat', code: Thematique.climat },
+            { label: 'Mon logement', code: Thematique.logement },
+            { label: 'Ce que je mange', code: Thematique.alimentation },
+            { label: 'Comment je bouge', code: Thematique.transport },
+          ],
+          tags: [],
+        },
+      ],
+    });
+
+    // THEN
+    expect(
+      questionsKYC.getQuestionOrException(QuestionID.KYC001).hasResponses(),
+    ).toEqual(false);
+  });
+  it('hasResponses :false si attribut []', () => {
+    // GIVEN
+    const questionsKYC = new KYCHistory({
+      version: 0,
+      answered_questions: [
+        {
+          id: QuestionID.KYC001,
+          question: `Quel est votre sujet principal d'intéret ?`,
+          type: TypeReponseQuestionKYC.choix_multiple,
+          is_NGC: false,
+          categorie: CategorieQuestionKYC.service,
+          points: 10,
+          reponses: [],
+          reponses_possibles: [
+            { label: 'Le climat', code: Thematique.climat },
+            { label: 'Mon logement', code: Thematique.logement },
+            { label: 'Ce que je mange', code: Thematique.alimentation },
+            { label: 'Comment je bouge', code: Thematique.transport },
+          ],
+          tags: [],
+        },
+      ],
+    });
+
+    // THEN
+    expect(
+      questionsKYC.getQuestionOrException(QuestionID.KYC001).hasResponses(),
+    ).toEqual(false);
+  });
+  it('hasResponses :true si au moins un reponse valorisée', () => {
+    // GIVEN
+    const questionsKYC = new KYCHistory({
+      version: 0,
+      answered_questions: [
+        {
+          id: QuestionID.KYC001,
+          question: `Quel est votre sujet principal d'intéret ?`,
+          type: TypeReponseQuestionKYC.choix_multiple,
+          is_NGC: false,
+          categorie: CategorieQuestionKYC.service,
+          points: 10,
+          reponses: [{ label: 'Le climat', code: Thematique.climat }],
+          reponses_possibles: [
+            { label: 'Le climat', code: Thematique.climat },
+            { label: 'Mon logement', code: Thematique.logement },
+            { label: 'Ce que je mange', code: Thematique.alimentation },
+            { label: 'Comment je bouge', code: Thematique.transport },
+          ],
+          tags: [],
+        },
+      ],
+    });
+
+    // THEN
+    expect(
+      questionsKYC.getQuestionOrException(QuestionID.KYC001).hasResponses(),
+    ).toEqual(true);
   });
   it('updateQuestion : exeption si question id inconnu', () => {
     // GIVEN
@@ -49,7 +137,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       version: 0,
       answered_questions: [
         {
-          id: '001',
+          id: QuestionID.KYC001,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -68,7 +156,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     });
     CatalogueQuestionsKYC.setCatalogue([
       {
-        id: '001',
+        id: QuestionID.KYC001,
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.choix_multiple,
         is_NGC: false,
@@ -86,7 +174,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    const question = questionsKYC.getQuestionOrException('001');
+    const question = questionsKYC.getQuestionOrException(QuestionID.KYC001);
 
     // THEN
     expect(question.reponses[0].code).toEqual(Thematique.climat);
@@ -104,7 +192,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       version: 0,
       answered_questions: [
         {
-          id: '001',
+          id: QuestionID.KYC001,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -124,7 +212,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     });
     CatalogueQuestionsKYC.setCatalogue([
       {
-        id: '001',
+        id: QuestionID.KYC001,
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.choix_multiple,
         is_NGC: false,
@@ -140,7 +228,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    const question = questionsKYC.getQuestionOrException('001');
+    const question = questionsKYC.getQuestionOrException(QuestionID.KYC001);
 
     // THEN
     expect(question.reponses).toEqual([
@@ -167,7 +255,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       version: 0,
       answered_questions: [
         {
-          id: '001',
+          id: QuestionID.KYC001,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -187,7 +275,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     });
     CatalogueQuestionsKYC.setCatalogue([
       {
-        id: '001',
+        id: QuestionID.KYC001,
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.choix_multiple,
         is_NGC: false,
@@ -203,7 +291,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    const question = questionsKYC.getQuestionOrException('001');
+    const question = questionsKYC.getQuestionOrException(QuestionID.KYC001);
 
     // THEN
     expect(question.reponses).toEqual([
@@ -230,7 +318,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       version: 0,
       answered_questions: [
         {
-          id: '001',
+          id: QuestionID.KYC001,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.entier,
           is_NGC: false,
@@ -244,7 +332,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     });
     CatalogueQuestionsKYC.setCatalogue([
       {
-        id: '001',
+        id: QuestionID.KYC001,
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.entier,
         is_NGC: false,
@@ -257,7 +345,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    const question = questionsKYC.getQuestionOrException('001');
+    const question = questionsKYC.getQuestionOrException(QuestionID.KYC001);
 
     // THEN
     expect(question.reponses).toEqual([{ label: '123', code: null }]);
@@ -269,7 +357,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       version: 0,
       answered_questions: [
         {
-          id: '001',
+          id: QuestionID.KYC001,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -288,7 +376,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     });
     CatalogueQuestionsKYC.setCatalogue([
       {
-        id: '001',
+        id: QuestionID.KYC001,
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.choix_multiple,
         is_NGC: false,
@@ -304,7 +392,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         tags: [],
       },
       {
-        id: '002',
+        id: QuestionID.KYC002,
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.libre,
         is_NGC: false,
@@ -321,6 +409,6 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // THEN
     expect(questions).toHaveLength(1);
-    expect(questions[0].id).toEqual('002');
+    expect(questions[0].id).toEqual(QuestionID.KYC002);
   });
 });

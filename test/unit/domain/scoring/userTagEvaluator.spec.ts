@@ -19,6 +19,7 @@ import { OnboardingResult } from '../../../../src/domain/utilisateur/onboarding/
 import { UserTagEvaluator } from '../../../../src/domain/scoring/userTagEvaluator';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
+import { QuestionID } from '../../../../src/domain/kyc/questionQYC';
 
 const ONBOARDING_DATA = {
   version: 0,
@@ -181,7 +182,7 @@ describe('UseragEvaluator', () => {
   it('recomputeRecoTags : kyc_001 : tout à zero', () => {
     // GIVEN
     const user = initNewUser(new Onboarding({ ...ONBOARDING_DATA }));
-    user.kyc_history.updateQuestion('001', []);
+    user.kyc_history.updateQuestion(QuestionID.KYC001, []);
 
     // WHEN
     UserTagEvaluator.recomputeRecoTags(user);
@@ -198,7 +199,7 @@ describe('UseragEvaluator', () => {
   it('recomputeRecoTags : kyc_001 : tout à 50', () => {
     // GIVEN
     const user = initNewUser(new Onboarding({ ...ONBOARDING_DATA }));
-    user.kyc_history.updateQuestion('001', [
+    user.kyc_history.updateQuestion(QuestionID.KYC001, [
       '🥦 Alimentation',
       '☀️ Climat et Environnement',
       '🛒 Consommation durable',

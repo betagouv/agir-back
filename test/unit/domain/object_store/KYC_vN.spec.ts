@@ -7,6 +7,7 @@ import { KYCHistory_v0 } from '../../../../src/domain/object_store/kyc/kycHistor
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
+  QuestionID,
 } from '../../../../src/domain/kyc/questionQYC';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
 
@@ -28,7 +29,7 @@ describe('KYC vN ', () => {
       version: 0,
       answered_questions: [
         {
-          id: '001',
+          id: QuestionID.KYC001,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -58,7 +59,7 @@ describe('KYC vN ', () => {
       version: 0,
       answered_questions: [
         {
-          id: '001',
+          id: QuestionID.KYC001,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,

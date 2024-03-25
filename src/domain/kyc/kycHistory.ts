@@ -1,6 +1,6 @@
 import { KYCHistory_v0 as KYCHistory_v0 } from '../object_store/kyc/kycHistory_v0';
 import { CatalogueQuestionsKYC } from './catalogueQuestionsKYC';
-import { QuestionKYC, TypeReponseQuestionKYC } from './questionQYC';
+import { QuestionID, QuestionKYC, TypeReponseQuestionKYC } from './questionQYC';
 
 export class KYCHistory {
   answered_questions: QuestionKYC[];
@@ -46,14 +46,24 @@ export class KYCHistory {
     }
     return CatalogueQuestionsKYC.getByIdOrException(id);
   }
+  public getQuestion(id: QuestionID): QuestionKYC {
+    let answered_question = this.getAnsweredQuestion(id);
+    if (answered_question) {
+      this.upgradeQuestion(answered_question);
+      return answered_question;
+    }
+    return CatalogueQuestionsKYC.getById(id);
+  }
 
   private upgradeQuestion(question: QuestionKYC) {
+
     const question_catalogue = CatalogueQuestionsKYC.getByIdOrException(
       question.id,
     );
     if (
-      question.type === TypeReponseQuestionKYC.choix_multiple ||
-      question.type === TypeReponseQuestionKYC.choix_unique
+      (question.type === TypeReponseQuestionKYC.choix_multiple ||
+        question.type === TypeReponseQuestionKYC.choix_unique) &&
+      question.hasResponses()
     ) {
       const upgraded_set = [];
       question.reponses.forEach((reponse) => {

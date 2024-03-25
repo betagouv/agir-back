@@ -30,7 +30,8 @@ export class QuestionKYCUsecase {
     this.updateUserTodo(utilisateur, questionId);
 
     if (!utilisateur.kyc_history.isQuestionAnswered(questionId)) {
-      const question = utilisateur.kyc_history.getQuestionOrException(questionId);
+      const question =
+        utilisateur.kyc_history.getQuestionOrException(questionId);
       utilisateur.gamification.ajoutePoints(question.points);
     }
     utilisateur.kyc_history.updateQuestion(questionId, reponse);

@@ -166,6 +166,9 @@ export class Utilisateur extends UtilisateurData {
   public setTag?(tag: Tag, value: number) {
     this.tag_ponderation_set[tag] = value;
   }
+  public setTagWhenOrZero?(when: boolean, tag: Tag, value_yes: number) {
+    this.tag_ponderation_set[tag] = when ? value_yes : 0;
+  }
 
   public recomputeRecoTags?() {
     UserTagEvaluator.recomputeRecoTags(this);
