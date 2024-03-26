@@ -1,8 +1,15 @@
 import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../../../src/domain/utilisateur/logement';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import {
   Impact,
   ThematiqueOnboarding,
 } from '../../../src/domain/utilisateur/onboarding/onboarding';
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 
 const ONBOARDING_1_2_3_4_DATA = {
   transports: ['voiture', 'pied'],
@@ -47,7 +54,7 @@ const ONBOARDING_1_1_2_2_DATA = {
   consommation: 'jamais',
 };
 const ONBOARDING_RES_1234 = {
-  version: 0,
+  //version: 0,
   ventilation_par_thematiques: {
     alimentation: Impact.tres_eleve,
     transports: Impact.eleve,
@@ -64,6 +71,7 @@ const ONBOARDING_RES_1234 = {
 
 describe('/utilisateurs - Onboarding - (API test)', () => {
   const OLD_ENV = process.env;
+  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -93,14 +101,13 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     const response = await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
     // THEN
-    const user = await TestUtil.prisma.utilisateur.findFirst({
-      where: { nom: 'WW' },
-    });
+    const user = await utilisateurRepository.findByEmail('w@w.com');
+
     expect(response.status).toBe(201);
     expect(user.nom).toEqual('WW');
     expect(user.prenom).toEqual('Wojtek');
@@ -109,13 +116,11 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(user.commune).toEqual('Palaiseau');
     expect(user.passwordHash.length).toBeGreaterThan(20);
     expect(user.passwordSalt.length).toBeGreaterThan(20);
-    expect(user.onboardingData).toStrictEqual({
+    expect({ ...user.onboardingData }).toStrictEqual({
       ...ONBOARDING_1_2_3_4_DATA,
-      version: 0,
     });
-    expect(user.onboardingResult).toStrictEqual({
+    expect({ ...user.onboardingResult }).toStrictEqual({
       ...ONBOARDING_RES_1234,
-      version: 0,
     });
     expect(user.code).toEqual('123456');
     expect(user.failed_checkcode_count).toEqual(0);
@@ -127,6 +132,15 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       Date.now(),
     );
     expect(user.version).toEqual(2);
+
+    expect(user.logement.code_postal).toEqual('91120');
+    expect(user.logement.commune).toEqual('Palaiseau');
+    expect(user.logement.chauffage).toEqual(Chauffage.bois);
+    expect(user.logement.nombre_adultes).toEqual(2);
+    expect(user.logement.nombre_enfants).toEqual(1);
+    expect(user.logement.proprietaire).toEqual(true);
+    expect(user.logement.superficie).toEqual(Superficie.superficie_150);
+    expect(user.logement.type).toEqual(TypeLogement.maison);
   });
   it('POST /utilisateurs - no user version defaults to 0', async () => {
     // GIVEN
@@ -137,7 +151,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     const response = await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -157,7 +171,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     const response = await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'monmail@truc.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -180,7 +194,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     const response = await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'W@W.COM',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -210,7 +224,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -241,7 +255,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -270,7 +284,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -304,7 +318,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -337,7 +351,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -370,7 +384,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -399,7 +413,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -429,7 +443,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     await TestUtil.getServer().post('/utilisateurs').send({
       nom: 'WW',
       prenom: 'Wojtek',
-      mot_de_passe: '#1234567890HAHA',
+      mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
@@ -504,16 +518,16 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
   });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_1 v1', async () => {
     // WHEN
-    await TestUtil.create('utilisateur', { id: '1', email: '1' });
-    await TestUtil.create('utilisateur', { id: '2', email: '2' });
-    await TestUtil.create('utilisateur', { id: '3', email: '3' });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, { id: '1', email: '1' });
+    await TestUtil.create(DB.utilisateur, { id: '2', email: '2' });
+    await TestUtil.create(DB.utilisateur, { id: '3', email: '3' });
+    await TestUtil.create(DB.utilisateur, {
       // cas onboarding vide pour anciens utilisateurs, ou ceux qui on pas onboardé
       id: '4',
       email: '4',
       onboardingResult: {},
     });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '5',
       email: '5',
       onboardingResult: {
@@ -537,7 +551,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
         },
       },
     });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '6',
       email: '6',
       onboardingResult: {
@@ -569,16 +583,16 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
   });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_1 v2', async () => {
     // WHEN
-    await TestUtil.create('utilisateur', { id: '1', email: '1' });
-    await TestUtil.create('utilisateur', { id: '2', email: '2' });
-    await TestUtil.create('utilisateur', { id: '3', email: '3' });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, { id: '1', email: '1' });
+    await TestUtil.create(DB.utilisateur, { id: '2', email: '2' });
+    await TestUtil.create(DB.utilisateur, { id: '3', email: '3' });
+    await TestUtil.create(DB.utilisateur, {
       // cas onboarding vide pour anciens utilisateurs, ou ceux qui on pas onboardé
       id: '4',
       email: '4',
       onboardingResult: {},
     });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '5',
       email: '5',
       onboardingResult: {
@@ -602,7 +616,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
         },
       },
     });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '6',
       email: '6',
       onboardingResult: {
@@ -634,16 +648,16 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
   });
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data - phrase_1 v3', async () => {
     // WHEN
-    await TestUtil.create('utilisateur', { id: '1', email: '1' });
-    await TestUtil.create('utilisateur', { id: '2', email: '2' });
-    await TestUtil.create('utilisateur', { id: '3', email: '3' });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, { id: '1', email: '1' });
+    await TestUtil.create(DB.utilisateur, { id: '2', email: '2' });
+    await TestUtil.create(DB.utilisateur, { id: '3', email: '3' });
+    await TestUtil.create(DB.utilisateur, {
       // cas onboarding vide pour anciens utilisateurs, ou ceux qui on pas onboardé
       id: '4',
       email: '4',
       onboardingResult: {},
     });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '5',
       email: '5',
       onboardingResult: {
@@ -667,7 +681,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
         },
       },
     });
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       id: '6',
       email: '6',
       onboardingResult: {
@@ -700,7 +714,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
 
   it('POST /utilisateurs - erreur 400 quand email existant', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { email: 'w@w.com' });
+    await TestUtil.create(DB.utilisateur, { email: 'w@w.com' });
 
     // WHEN
     const response = await TestUtil.getServer()
@@ -708,7 +722,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       .send({
         nom: 'WW',
         prenom: 'Wojtek',
-        mot_de_passe: '#1234567890HAHA',
+        mot_de_passe: '#1234567890HAHAa',
         email: 'w@w.com',
         onboardingData: { ...ONBOARDING_1_2_3_4_DATA },
       });
@@ -725,7 +739,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       .send({
         nom: 'WW',
         prenom: 'Wojtek',
-        mot_de_passe: '#1234567890HAHA',
+        mot_de_passe: '#1234567890HAHAa',
         email: 'yotruc.com',
         onboardingData: { ...ONBOARDING_1_2_3_4_DATA },
       });

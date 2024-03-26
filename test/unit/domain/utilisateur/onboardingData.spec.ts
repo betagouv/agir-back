@@ -1,17 +1,19 @@
+import { TransportQuotidien } from '../../../../src/domain/utilisateur/transport';
 import {
   Chauffage,
+  TypeLogement,
+  Superficie,
+} from '../../../../src/domain/utilisateur/logement';
+import {
   Consommation,
   Impact,
   Onboarding,
   Repas,
-  Residence,
-  Superficie,
-  TransportOnboarding,
 } from '../../../../src/domain/utilisateur/onboarding/onboarding';
 
 const ONBOARDING_DATA = {
   version: 0,
-  transports: [TransportOnboarding.moto, TransportOnboarding.voiture],
+  transports: [TransportQuotidien.moto, TransportQuotidien.voiture],
   adultes: 1,
   avion: 0,
   chauffage: Chauffage.bois,
@@ -21,7 +23,7 @@ const ONBOARDING_DATA = {
   enfants: 1,
   consommation: Consommation.jamais,
   repas: Repas.vegan,
-  residence: Residence.appartement,
+  residence: TypeLogement.appartement,
   superficie: Superficie.superficie_150,
 };
 
@@ -41,9 +43,9 @@ describe('Objet OnboardingData', () => {
     let onboarding = new Onboarding({
       ...ONBOARDING_DATA,
       transports: [
-        TransportOnboarding.pied,
-        TransportOnboarding.velo,
-        TransportOnboarding.commun,
+        TransportQuotidien.pied,
+        TransportQuotidien.velo,
+        TransportQuotidien.commun,
       ],
     });
 
@@ -57,7 +59,7 @@ describe('Objet OnboardingData', () => {
     // GIVEN
     let onboarding = new Onboarding({
       ...ONBOARDING_DATA,
-      transports: [TransportOnboarding.moto],
+      transports: [TransportQuotidien.moto],
     });
 
     // WHEN
@@ -70,7 +72,7 @@ describe('Objet OnboardingData', () => {
     // GIVEN
     let onboarding = new Onboarding({
       ...ONBOARDING_DATA,
-      transports: [TransportOnboarding.voiture],
+      transports: [TransportQuotidien.voiture],
     });
 
     // WHEN
@@ -111,7 +113,7 @@ describe('Objet OnboardingData', () => {
     let onboarding = new Onboarding({
       ...ONBOARDING_DATA,
       avion: 1,
-      transports: [TransportOnboarding.voiture],
+      transports: [TransportQuotidien.voiture],
     });
 
     // WHEN
@@ -125,7 +127,7 @@ describe('Objet OnboardingData', () => {
     let onboarding = new Onboarding({
       ...ONBOARDING_DATA,
       avion: 2,
-      transports: [TransportOnboarding.voiture],
+      transports: [TransportQuotidien.voiture],
     });
 
     // WHEN
@@ -256,7 +258,7 @@ describe('Objet OnboardingData', () => {
     // GIVEN
     let onboarding = {
       ...ONBOARDING_DATA,
-      residence: Residence.appartement,
+      residence: TypeLogement.appartement,
       adultes: 1,
       enfants: 0,
       superficie: Superficie.superficie_35,
@@ -274,7 +276,7 @@ describe('Objet OnboardingData', () => {
     // GIVEN
     let onboarding = {
       ...ONBOARDING_DATA,
-      residence: Residence.maison,
+      residence: TypeLogement.maison,
       adultes: 2,
       enfants: 2,
       superficie: Superficie.superficie_70,
@@ -292,7 +294,7 @@ describe('Objet OnboardingData', () => {
     // GIVEN
     let onboarding = {
       ...ONBOARDING_DATA,
-      residence: Residence.appartement,
+      residence: TypeLogement.appartement,
       adultes: 2,
       enfants: 1,
       superficie: Superficie.superficie_100,
@@ -310,7 +312,7 @@ describe('Objet OnboardingData', () => {
     // GIVEN
     let onboarding = {
       ...ONBOARDING_DATA,
-      residence: Residence.maison,
+      residence: TypeLogement.maison,
       adultes: 2,
       enfants: 2,
       superficie: Superficie.superficie_150,

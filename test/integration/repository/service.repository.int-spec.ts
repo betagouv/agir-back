@@ -1,4 +1,4 @@
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 import { ServiceRepository } from '../../../src/infrastructure/repository/service.repository';
 import {
   LiveService,
@@ -8,41 +8,41 @@ import { Thematique } from '../../../src/domain/contenu/thematique';
 import { ServiceStatus } from '../../../src/domain/service/service';
 
 async function injectData() {
-  await TestUtil.create('utilisateur', { id: 'u1', email: '1' });
-  await TestUtil.create('utilisateur', { id: 'u2', email: '2' });
-  await TestUtil.create('utilisateur', { id: 'u3', email: '3' });
+  await TestUtil.create(DB.utilisateur, { id: 'u1', email: '1' });
+  await TestUtil.create(DB.utilisateur, { id: 'u2', email: '2' });
+  await TestUtil.create(DB.utilisateur, { id: 'u3', email: '3' });
 
-  await TestUtil.create('serviceDefinition', { id: 'sd1' });
-  await TestUtil.create('serviceDefinition', { id: 'sd2' });
-  await TestUtil.create('serviceDefinition', { id: 'sd3' });
-  await TestUtil.create('serviceDefinition', { id: 'sd4' });
+  await TestUtil.create(DB.serviceDefinition, { id: 'sd1' });
+  await TestUtil.create(DB.serviceDefinition, { id: 'sd2' });
+  await TestUtil.create(DB.serviceDefinition, { id: 'sd3' });
+  await TestUtil.create(DB.serviceDefinition, { id: 'sd4' });
 
-  await TestUtil.create('service', {
+  await TestUtil.create(DB.service, {
     id: 's1',
     utilisateurId: 'u1',
     serviceDefinitionId: 'sd1',
   });
-  await TestUtil.create('service', {
+  await TestUtil.create(DB.service, {
     id: 's2',
     utilisateurId: 'u1',
     serviceDefinitionId: 'sd2',
   });
-  await TestUtil.create('service', {
+  await TestUtil.create(DB.service, {
     id: 's3',
     utilisateurId: 'u2',
     serviceDefinitionId: 'sd1',
   });
-  await TestUtil.create('service', {
+  await TestUtil.create(DB.service, {
     id: 's4',
     utilisateurId: 'u3',
     serviceDefinitionId: 'sd1',
   });
-  await TestUtil.create('service', {
+  await TestUtil.create(DB.service, {
     id: 's5',
     utilisateurId: 'u3',
     serviceDefinitionId: 'sd2',
   });
-  await TestUtil.create('service', {
+  await TestUtil.create(DB.service, {
     id: 's6',
     utilisateurId: 'u2',
     serviceDefinitionId: 'sd3',
@@ -156,16 +156,16 @@ describe('ServiceRepository', () => {
   });
   it('listeServiceDefinitionsToRefresh  : list services with date less than now', async () => {
     // GIVEN
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.serviceDefinition, {
       id: 'linky',
       scheduled_refresh: null,
       minute_period: null,
     });
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.serviceDefinition, {
       id: 'ecowatt',
       scheduled_refresh: new Date(Date.now() - 1000),
     });
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.serviceDefinition, {
       id: 'recettes',
       scheduled_refresh: new Date(Date.now() + 10000),
     });
@@ -182,7 +182,7 @@ describe('ServiceRepository', () => {
   });
   it('listeServiceDefinitionsToRefresh  : list service with no date but period', async () => {
     // GIVEN
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.serviceDefinition, {
       id: 'ecowatt',
       scheduled_refresh: null,
       minute_period: 20,
@@ -200,9 +200,9 @@ describe('ServiceRepository', () => {
   });
   it('listeServicesOfUtilisateur  : get proper data', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition');
-    await TestUtil.create('service', { configuration: { prm: '12345' } });
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition);
+    await TestUtil.create(DB.service, { configuration: { prm: '12345' } });
 
     // WHEN
     const servicesDBList = await serviceRepository.listeServicesOfUtilisateur(
@@ -226,9 +226,9 @@ describe('ServiceRepository', () => {
   });
   it('updateServiceConfiguration  : saves conf ok', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition');
-    await TestUtil.create('service', { configuration: {} });
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition);
+    await TestUtil.create(DB.service, { configuration: {} });
 
     // WHEN
     await serviceRepository.updateServiceConfiguration(

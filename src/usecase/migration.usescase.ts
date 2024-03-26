@@ -21,7 +21,7 @@ export class MigrationUsecase {
   }
 
   async migrateUsers(): Promise<UserMigrationReport[]> {
-    const version_target = UtilisateurBehavior.systemVersion();
+    const version_target = UtilisateurBehavior.currentUserSystemVersion();
     const result = [];
     const userIdList = await this.utilisateurRepository.listUtilisateurIds();
     for (let index = 0; index < userIdList.length; index++) {
@@ -89,15 +89,43 @@ export class MigrationUsecase {
   private async migrate_4(
     utilisateur: Utilisateur,
   ): Promise<{ ok: boolean; info: string }> {
-    if (utilisateur.gamification.points > 600) {
+    const plus_600 = utilisateur.gamification.points > 600;
+    if (plus_600) {
       utilisateur.unlocked_features.add(Feature.bibliotheque);
     }
     return {
       ok: true,
-      info: `revealed bilbio for user ${utilisateur.id} of ${utilisateur.gamification.points} points`,
+      info: `revealed bilbio for user ${utilisateur.id} of ${utilisateur.gamification.points} points : ${plus_600}`,
     };
   }
   private async migrate_5(
+    utilisateur: Utilisateur,
+  ): Promise<{ ok: boolean; info: string }> {
+    utilisateur.logement.chauffage = utilisateur.onboardingData.chauffage;
+    utilisateur.logement.code_postal = utilisateur.code_postal;
+    utilisateur.logement.commune = utilisateur.commune;
+    utilisateur.logement.nombre_adultes = utilisateur.onboardingData.adultes;
+    utilisateur.logement.nombre_enfants = utilisateur.onboardingData.enfants;
+    utilisateur.logement.proprietaire = utilisateur.onboardingData.proprietaire;
+    utilisateur.logement.superficie = utilisateur.onboardingData.superficie;
+    utilisateur.logement.type = utilisateur.onboardingData.residence;
+    return {
+      ok: true,
+      info: `migrated logement data`,
+    };
+  }
+  private async migrate_6(
+    utilisateur: Utilisateur,
+  ): Promise<{ ok: boolean; info: string }> {
+    utilisateur.transport.avions_par_an = utilisateur.onboardingData.avion;
+    utilisateur.transport.transports_quotidiens =
+      utilisateur.onboardingData.transports;
+    return {
+      ok: true,
+      info: `migrated transport data`,
+    };
+  }
+  private async migrate_7(
     utilisateur: Utilisateur,
   ): Promise<{ ok: boolean; info: string }> {
     return { ok: false, info: 'to implement' };

@@ -1,22 +1,21 @@
-import { Onboarding } from '../../utilisateur/onboarding/onboarding';
+import { TransportQuotidien } from '../../../../src/domain/utilisateur/transport';
 import {
-  TransportOnboarding,
-  Residence,
+  TypeLogement,
   Superficie,
   Chauffage,
-  Repas,
-  Consommation,
-} from '../../utilisateur/onboarding/onboarding';
+} from '../../../../src/domain/utilisateur/logement';
+import { Onboarding } from '../../utilisateur/onboarding/onboarding';
+import { Repas, Consommation } from '../../utilisateur/onboarding/onboarding';
 import { Versioned } from '../versioned';
 
 export class Onboarding_v0 extends Versioned {
-  transports: TransportOnboarding[];
+  transports: TransportQuotidien[];
   avion: number;
   code_postal: string;
   commune: string;
   adultes: number;
   enfants: number;
-  residence: Residence;
+  residence: TypeLogement;
   proprietaire: boolean;
   superficie: Superficie;
   chauffage: Chauffage;

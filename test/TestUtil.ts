@@ -4,13 +4,9 @@ import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { Thematique } from '../src/domain/contenu/thematique';
 import {
-  Chauffage,
   Consommation,
   Repas,
-  Residence,
-  Superficie,
   ThematiqueOnboarding as ThematiqueOnboarding,
-  TransportOnboarding,
 } from '../src/domain/utilisateur/onboarding/onboarding';
 import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
@@ -21,6 +17,7 @@ import { ParcoursTodo } from '../src/domain/todo/parcoursTodo';
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
+  QuestionID,
 } from '../src/domain/kyc/questionQYC';
 import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
 import { Feature } from '../src/domain/gamification/feature';
@@ -31,7 +28,7 @@ import { Gamification_v0 } from '../src/domain/object_store/gamification/gamific
 import { CelebrationType } from '../src/domain/gamification/celebrations/celebration';
 import { Onboarding_v0 } from '../src/domain/object_store/Onboarding/onboarding_v0';
 import { OnboardingResult_v0 } from '../src/domain/object_store/onboardingResult/onboardingResult_v0';
-import { KYC_v0 } from '../src/domain/object_store/kyc/kyc_v0';
+import { KYCHistory_v0 } from '../src/domain/object_store/kyc/kycHistory_v0';
 import { Equipements_v0 } from '../src/domain/object_store/equipement/equipement_v0';
 import {
   Consommation100km,
@@ -39,8 +36,61 @@ import {
   VoitureCarburant,
   VoitureGabarit,
 } from '../src/domain/equipements/vehicule';
+import { Logement_v0 } from '../src/domain/object_store/logement/logement_v0';
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../src/domain/utilisateur/logement';
+import { Empreinte, SituationNGC, Suivi } from '.prisma/client';
+import {
+  Aide,
+  Article,
+  Groupe,
+  GroupeAbonnement,
+  Linky,
+  Quizz,
+  Service,
+  ServiceDefinition,
+  Utilisateur,
+} from '@prisma/client';
+import { ServiceStatus } from '../src/domain/service/service';
+import { TransportQuotidien } from '../src/domain/utilisateur/transport';
+import { Transport_v0 } from '../src/domain/object_store/transport/transport_v0';
+import { DefiHistory_v0 } from '../src/domain/object_store/defi/defiHistory_v0';
+import { DefiStatus } from '../src/domain/defis/defi';
 
+export enum DB {
+  CMSWebhookAPI = 'CMSWebhookAPI',
+  situationNGC = 'situationNGC',
+  suivi = 'suivi',
+  utilisateur = 'utilisateur',
+  aide = 'aide',
+  empreinte = 'empreinte',
+  service = 'service',
+  groupeAbonnement = 'groupeAbonnement',
+  groupe = 'groupe',
+  serviceDefinition = 'serviceDefinition',
+  thematique = 'thematique',
+  linky = 'linky',
+}
 export class TestUtil {
+  private static TYPE_DATA_MAP: Record<DB, Function> = {
+    CMSWebhookAPI: TestUtil.CMSWebhookAPIData,
+    situationNGC: TestUtil.situationNGCData,
+    suivi: TestUtil.suiviData,
+    utilisateur: TestUtil.utilisateurData,
+    aide: TestUtil.aideData,
+    empreinte: TestUtil.empreinteData,
+    service: TestUtil.serviceData,
+    groupeAbonnement: TestUtil.groupeAbonnementData,
+    groupe: TestUtil.groupeData,
+    serviceDefinition: TestUtil.serviceDefinitionData,
+    thematique: TestUtil.thematiqueData,
+    linky: TestUtil.linkyData,
+  };
+
   constructor() {}
   public static app: INestApplication;
   public static prisma = new PrismaService();
@@ -114,18 +164,20 @@ export class TestUtil {
     await this.prisma.linky.deleteMany();
     await this.prisma.article.deleteMany();
     await this.prisma.quizz.deleteMany();
-    await this.prisma.ponderation.deleteMany();
+    await this.prisma.aide.deleteMany();
     ThematiqueRepository.resetThematiques();
   }
 
   static getDate(date: string) {
     return new Date(Date.parse(date));
   }
-  static async create(type: string, override?) {
+
+  static async create(type: DB, override?) {
     await this.prisma[type].create({
-      data: this[type.concat('Data')](override),
+      data: TestUtil.TYPE_DATA_MAP[type](override),
     });
   }
+
   static CMSWebhookAPIData() {
     return {
       model: CMSModel.article,
@@ -163,7 +215,7 @@ export class TestUtil {
       },
     };
   }
-  static situationNGCData(override?) {
+  static situationNGCData(override?): SituationNGC {
     return {
       id: 'situationNGC-id',
       situation: {
@@ -173,7 +225,7 @@ export class TestUtil {
       ...override,
     };
   }
-  static suiviData(override?) {
+  static suiviData(override?): Suivi {
     return {
       id: 'suivi-id',
       type: 'alimentation',
@@ -186,8 +238,12 @@ export class TestUtil {
       ...override,
     };
   }
-
-  static articleData(override?) {
+  static async create_article(override?: Partial<Article>) {
+    await this.prisma.article.create({
+      data: TestUtil.getArticleData(override),
+    });
+  }
+  static getArticleData(override?: Partial<Article>): Article {
     return {
       content_id: '1',
       titre: 'titreA',
@@ -195,6 +251,7 @@ export class TestUtil {
       source: 'ADEME',
       image_url: 'https://',
       partenaire: 'Angers',
+      tags_utilisateur: [],
       rubrique_ids: ['3', '4'],
       rubrique_labels: ['r3', 'r4'],
       codes_postaux: ['91120'],
@@ -204,31 +261,49 @@ export class TestUtil {
       points: 10,
       thematique_principale: Thematique.climat,
       thematiques: [Thematique.climat, Thematique.logement],
-      ...override,
-    };
-  }
-  static quizzData(override?) {
-    return {
-      content_id: '1',
-      titre: 'titreQ',
-      soustitre: 'sousTitre',
-      source: 'ADEME',
-      image_url: 'https://',
-      partenaire: 'Angers',
-      rubrique_ids: ['3', '4'],
-      rubrique_labels: ['r3', 'r4'],
-      codes_postaux: ['91120'],
-      duree: 'pas long',
-      frequence: 'souvent',
-      difficulty: 1,
-      points: 10,
-      thematique_principale: Thematique.climat,
-      thematiques: [Thematique.climat, Thematique.logement],
+      created_at: undefined,
+      updated_at: undefined,
       ...override,
     };
   }
 
-  static empreinteData(override?) {
+  static async create_quizz(override?: Partial<Quizz>) {
+    await this.prisma.quizz.create({
+      data: {
+        content_id: '1',
+        titre: 'titreA',
+        soustitre: 'sousTitre',
+        source: 'ADEME',
+        image_url: 'https://',
+        partenaire: 'Angers',
+        tags_utilisateur: [],
+        rubrique_ids: ['3', '4'],
+        rubrique_labels: ['r3', 'r4'],
+        codes_postaux: ['91120'],
+        duree: 'pas long',
+        frequence: 'souvent',
+        difficulty: 1,
+        points: 10,
+        thematique_principale: Thematique.climat,
+        thematiques: [Thematique.climat, Thematique.logement],
+        ...override,
+      },
+    });
+  }
+  static aideData(override?): Aide {
+    return {
+      content_id: '1',
+      titre: 'titreA',
+      codes_postaux: ['91120'],
+      thematiques: [Thematique.climat, Thematique.logement],
+      contenu: "Contenu de l'aide",
+      is_simulateur: true,
+      montant_max: 999,
+      url_simulateur: '/aides/velo',
+      ...override,
+    };
+  }
+  static empreinteData(override?): Empreinte {
     return {
       id: 'empreinte-id',
       initial: false,
@@ -247,24 +322,50 @@ export class TestUtil {
       ...override,
     };
   }
-  static utilisateurData(override?) {
+  static utilisateurData(override?): Utilisateur {
     const unlocked: UnlockedFeatures_v1 = {
       version: 1,
       unlocked_features: [Feature.aides],
     };
 
-    const kyc: KYC_v0 = {
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          id: '001',
+          points: 10,
+          tags: [],
+          titre: 'titre',
+          thematique: Thematique.transport,
+          astuces: 'ASTUCE',
+          date_acceptation: null,
+          pourquoi: 'POURQUOI',
+          sous_titre: 'SOUS TITRE',
+          status: DefiStatus.todo,
+        },
+      ],
+    };
+
+    const kyc: KYCHistory_v0 = {
       version: 0,
       answered_questions: [
         {
-          id: '2',
+          id: QuestionID._2,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.service,
+          categorie: CategorieQuestionKYC.default,
           points: 10,
-          reponse: ['Le climat', 'Mon logement'],
-          reponses_possibles: ['Le climat', 'Mon logement', 'Ce que je mange'],
+          reponses: [
+            { label: 'Le climat', code: Thematique.climat },
+            { label: 'Mon logement', code: Thematique.logement },
+          ],
+          reponses_possibles: [
+            { label: 'Le climat', code: Thematique.climat },
+            { label: 'Mon logement', code: Thematique.logement },
+            { label: 'Ce que je mange', code: Thematique.alimentation },
+          ],
+          tags: [],
         },
       ],
     };
@@ -310,14 +411,37 @@ export class TestUtil {
       ],
     };
 
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+    };
+
+    const transport: Transport_v0 = {
+      version: 0,
+      avions_par_an: 2,
+      transports_quotidiens: [
+        TransportQuotidien.velo,
+        TransportQuotidien.voiture,
+      ],
+    };
+
     const onboarding: Onboarding_v0 = {
       version: 0,
-      transports: [TransportOnboarding.voiture, TransportOnboarding.pied],
+      transports: [TransportQuotidien.voiture, TransportQuotidien.pied],
       avion: 2,
       code_postal: '91120',
       adultes: 2,
       enfants: 1,
-      residence: Residence.maison,
+      residence: TypeLogement.maison,
       proprietaire: true,
       superficie: Superficie.superficie_100,
       chauffage: Chauffage.bois,
@@ -349,12 +473,11 @@ export class TestUtil {
       passwordHash: 'hash',
       passwordSalt: 'salt',
       email: 'yo@truc.com',
-      code_postal: '91120',
+      code_postal: '91121',
       commune: 'Palaiseau',
       revenu_fiscal: 10000,
       parts: 2,
       abonnement_ter_loire: false,
-      prm: null,
       code_departement: null,
       active_account: true,
       failed_login_count: 0,
@@ -366,7 +489,6 @@ export class TestUtil {
       sent_email_count: 0,
       prevent_sendemail_before: new Date(),
       version: 0,
-      version_ponderation: 0,
       migration_enabled: false,
       todo: todo,
       gamification: gamification,
@@ -377,23 +499,15 @@ export class TestUtil {
       created_at: undefined,
       updated_at: undefined,
       kyc: kyc,
+      defis: defis,
       equipements: equipements,
+      logement: logement,
+      transport: transport,
+      tag_ponderation_set: {},
       ...override,
     };
   }
-  static ponderationData(override?) {
-    return {
-      id: 'ponderation-id',
-      version: 0,
-      rubriques: {
-        '1': 10,
-        '2': 20,
-        '3': 30,
-      },
-      ...override,
-    };
-  }
-  static thematiqueData(override?) {
+  static thematiqueData(override?): Thematique {
     return {
       id: 'thematique-id',
       id_cms: 1,
@@ -401,17 +515,17 @@ export class TestUtil {
       ...override,
     };
   }
-  static serviceData(override?) {
+  static serviceData(override?): Service {
     return {
       id: 'service-id',
       utilisateurId: 'utilisateur-id',
       serviceDefinitionId: 'dummy_live',
       configuration: {},
-      status: 'CREATED',
+      status: ServiceStatus.CREATED,
       ...override,
     };
   }
-  static serviceDefinitionData(override?) {
+  static serviceDefinitionData(override?): ServiceDefinition {
     return {
       id: 'dummy_live',
       titre: 'titre',
@@ -431,7 +545,7 @@ export class TestUtil {
       ...override,
     };
   }
-  static groupeData(override?) {
+  static groupeData(override?): Groupe {
     return {
       id: 'groupe-id',
       name: 'name',
@@ -439,7 +553,7 @@ export class TestUtil {
       ...override,
     };
   }
-  static groupeAbonnementData(override?) {
+  static groupeAbonnementData(override?): GroupeAbonnement {
     return {
       groupeId: 'groupe-id',
       utilisateurId: 'utilisateur-id',
@@ -447,7 +561,7 @@ export class TestUtil {
       ...override,
     };
   }
-  static linkyData(override?) {
+  static linkyData(override?): Linky {
     return {
       prm: 'abc',
       winter_pk: '123',

@@ -221,6 +221,21 @@ export class ApplicationError {
   static throwUnknownLinky404() {
     this.throwAppError('040', `Service winter down avec retour 404`);
   }
+  static throwDefiInconnue(id: string) {
+    this.throwAppError('040', `Defi d'id ${id} inconnue`, 404);
+  }
+  static throwPasswordOneLowerCase() {
+    this.throwAppError(
+      '041',
+      'Le mot de passe doit contenir au moins une minuscule',
+    );
+  }
+  static throwPasswordUpperCase() {
+    this.throwAppError(
+      '042',
+      'Le mot de passe doit contenir au moins une majuscule',
+    );
+  }
 
   private static throwAppError(
     code: string,

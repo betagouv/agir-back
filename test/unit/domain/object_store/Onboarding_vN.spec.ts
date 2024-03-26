@@ -3,15 +3,17 @@ import {
   Upgrader,
 } from '../../../../src/domain/object_store/upgrader';
 import {
-  Chauffage,
   Consommation,
   Onboarding,
   Repas,
-  Residence,
-  Superficie,
-  TransportOnboarding,
 } from '../../../../src/domain/utilisateur/onboarding/onboarding';
 import { Onboarding_v0 } from '../../../../src/domain/object_store/Onboarding/onboarding_v0';
+import {
+  TypeLogement,
+  Superficie,
+  Chauffage,
+} from '../../../../src/domain/utilisateur/logement';
+import { TransportQuotidien } from '../../../../src/domain/utilisateur/transport';
 
 describe('Onboarding vN ', () => {
   it('build OK from empty', () => {
@@ -29,12 +31,12 @@ describe('Onboarding vN ', () => {
     // GIVEN
     let domain_start = new Onboarding({
       version: 0,
-      transports: [TransportOnboarding.voiture],
+      transports: [TransportQuotidien.voiture],
       avion: 2,
       code_postal: '91120',
       adultes: 2,
       enfants: 1,
-      residence: Residence.maison,
+      residence: TypeLogement.maison,
       proprietaire: true,
       superficie: Superficie.superficie_150,
       chauffage: Chauffage.bois,
@@ -54,12 +56,12 @@ describe('Onboarding vN ', () => {
     // GIVEN
     let domain_start = new Onboarding({
       version: 0,
-      transports: [TransportOnboarding.voiture],
+      transports: [TransportQuotidien.voiture],
       avion: 2,
       code_postal: '91120',
       adultes: 2,
       enfants: 1,
-      residence: Residence.maison,
+      residence: TypeLogement.maison,
       proprietaire: true,
       superficie: Superficie.superficie_150,
       chauffage: Chauffage.bois,

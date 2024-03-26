@@ -1,31 +1,8 @@
 import { Onboarding_v0 } from '../../../../src/domain/object_store/Onboarding/onboarding_v0';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
+import { TypeLogement, Superficie, Chauffage } from '../logement';
+import { TransportQuotidien } from '../transport';
 
-export enum TransportOnboarding {
-  voiture = 'voiture',
-  moto = 'moto',
-  pied = 'pied',
-  velo = 'velo',
-  commun = 'commun',
-}
-export enum Residence {
-  maison = 'maison',
-  appartement = 'appartement',
-}
-export enum Superficie {
-  superficie_35 = 'superficie_35',
-  superficie_70 = 'superficie_70',
-  superficie_100 = 'superficie_100',
-  superficie_150 = 'superficie_150',
-  superficie_150_et_plus = 'superficie_150_et_plus',
-}
-export enum Chauffage {
-  electricite = 'electricite',
-  bois = 'bois',
-  fioul = 'fioul',
-  gaz = 'gaz',
-  autre = 'autre',
-}
 export enum Repas {
   tout = 'tout',
   vege = 'vege',
@@ -54,20 +31,21 @@ export enum Impact {
 }
 
 export class Onboarding {
-  transports: TransportOnboarding[];
+  transports: TransportQuotidien[];
   avion: number;
   code_postal: string;
   commune: string;
   adultes: number;
   enfants: number;
-  residence: Residence;
+  residence: TypeLogement;
   proprietaire: boolean;
   superficie: Superficie;
   chauffage: Chauffage;
   repas: Repas;
   consommation: Consommation;
 
-  constructor(data: Onboarding_v0) {
+  constructor(data?: Onboarding_v0) {
+    if (!data) return;
     this.transports = data.transports;
     this.avion = data.avion;
     this.code_postal = data.code_postal;
@@ -85,8 +63,8 @@ export class Onboarding {
   getTransportLevel(): Impact {
     let avion: boolean = this.avion ? this.avion > 0 : false;
     let nbr_avion = this.avion ? this.avion : 0;
-    let voiture: boolean = this.hasTransport(TransportOnboarding.voiture);
-    let moto: boolean = this.hasTransport(TransportOnboarding.moto);
+    let voiture: boolean = this.hasTransport(TransportQuotidien.voiture);
+    let moto: boolean = this.hasTransport(TransportQuotidien.moto);
 
     if (!avion && !voiture && moto) return Impact.faible;
 
@@ -103,7 +81,7 @@ export class Onboarding {
     if (adultes >= 2) adultes = 1 + 0.66 * (adultes - 1);
     let enfants = this.enfants || 0;
     enfants = enfants * 0.33;
-    let residence = this.residence === Residence.maison ? 2 : 1;
+    let residence = this.residence === TypeLogement.maison ? 2 : 1;
     let superficie;
     let chauffage;
     switch (this.superficie) {
@@ -166,21 +144,21 @@ export class Onboarding {
     if (this.consommation === Consommation.raisonnable) return Impact.eleve;
     if (this.consommation === Consommation.shopping) return Impact.tres_eleve;
   }
-  private hasTransport(transport: TransportOnboarding) {
+  private hasTransport(transport: TransportQuotidien) {
     return this.transports ? this.transports.indexOf(transport) >= 0 : false;
   }
 
   validateData() {
     if (this.transports) {
       this.transports.forEach((value) => {
-        if (!(value in TransportOnboarding))
+        if (!(value in TransportQuotidien))
           ApplicationError.throwValeurInconnueOnboarding('transport', value);
       });
     } else {
       ApplicationError.throwDonneeObligatoireOnboarding(`transport`);
     }
     if (this.residence) {
-      if (!(this.residence in Residence))
+      if (!(this.residence in TypeLogement))
         ApplicationError.throwValeurInconnueOnboarding(
           'residence',
           this.residence,

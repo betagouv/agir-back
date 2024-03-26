@@ -1,4 +1,4 @@
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 import { ServiceRepository } from '../../../src/infrastructure/repository/service.repository';
 import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
 import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
@@ -35,7 +35,7 @@ describe('linkyUsecase', () => {
 
   it('unsubscribeOrphanPRMs : empty result when nothing in DB', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const result = await linkyUsecase.unsubscribeOrphanPRMs();
@@ -46,7 +46,7 @@ describe('linkyUsecase', () => {
   });
   it('unsubscribeOrphanPRMs : delete one OK', async () => {
     // GIVEN
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       utilisateurId: '123',
       prm: 'abc',
       winter_pk: '345',
@@ -68,12 +68,12 @@ describe('linkyUsecase', () => {
   });
   it('unsubscribeOrphanPRMs : delete 2 OK', async () => {
     // GIVEN
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       utilisateurId: '123',
       prm: '111',
       winter_pk: 'abc',
     });
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       utilisateurId: '456',
       prm: '222',
       winter_pk: 'def',
@@ -93,7 +93,7 @@ describe('linkyUsecase', () => {
   });
   it('unsubscribeOrphanPRMs : unknown error', async () => {
     // GIVEN
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       utilisateurId: '123',
       prm: '111',
       winter_pk: 'abc',
@@ -116,7 +116,7 @@ describe('linkyUsecase', () => {
   });
   it('unsubscribeOrphanPRMs : 037 error', async () => {
     // GIVEN
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       utilisateurId: '123',
       prm: '111',
       winter_pk: 'abc',

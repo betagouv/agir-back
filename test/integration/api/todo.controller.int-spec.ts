@@ -1,18 +1,19 @@
 import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { ContentType } from '../../../src/domain/contenu/contentType';
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 import { LiveService } from '../../../src/domain/service/serviceDefinition';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
-import { EventType } from '../../../src/domain/utilisateur/utilisateurEvent';
+import { EventType } from '../../../src/domain/utilisateur/appEvent';
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
+  QuestionID,
 } from '../../../src/domain/kyc/questionQYC';
-import { KYC_v0 } from '../../../src/domain/object_store/kyc/kyc_v0';
+import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
-import { ParcoursTodo_v0 } from 'src/domain/object_store/parcoursTodo/parcoursTodo_v0';
+import { ParcoursTodo_v0 } from '../../../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
 
 describe('TODO list (API test)', () => {
   const OLD_ENV = process.env;
@@ -37,7 +38,7 @@ describe('TODO list (API test)', () => {
 
   it('GET /utilisateurs/id/todo retourne la todo liste courante seule', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
@@ -63,7 +64,7 @@ describe('TODO list (API test)', () => {
   });
   it('GET /utilisateurs/id/todo retourne la todo avec le champ aide et done_at, ainsi que todo_end = false', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       todo: {
         liste_todo: [
           {
@@ -102,7 +103,7 @@ describe('TODO list (API test)', () => {
     // GIVEN
     const todo = new ParcoursTodo();
     todo.todo_active = TodoCatalogue.getNombreTodo();
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       todo: todo,
     });
 
@@ -120,7 +121,7 @@ describe('TODO list (API test)', () => {
 
   it('GET /utilisateurs/id/todo retourne la todo n°1 avec une ref de quizz qui va bien : thematique  climat', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       version: 2,
       todo: {
         liste_todo: [
@@ -144,17 +145,17 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create('quizz', {
+    await TestUtil.create_quizz({
       content_id: 'quizz-id-l1',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create('quizz', {
+    await TestUtil.create_quizz({
       content_id: 'quizz-id-l2',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L2,
     });
-    await TestUtil.create('quizz', {
+    await TestUtil.create_quizz({
       content_id: 'quizz-id-l3',
       thematiques: [Thematique.logement],
       difficulty: DifficultyLevel.L1,
@@ -171,7 +172,7 @@ describe('TODO list (API test)', () => {
   });
   it('GET /utilisateurs/id/todo retourne la todo n°1 avec une ref de quizz qui va bien : thematique  climat', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       version: 2,
       todo: {
         liste_todo: [
@@ -195,17 +196,17 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create('quizz', {
+    await TestUtil.create_quizz({
       content_id: 'quizz-id-l1',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create('quizz', {
+    await TestUtil.create_quizz({
       content_id: 'quizz-id-l2',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L2,
     });
-    await TestUtil.create('quizz', {
+    await TestUtil.create_quizz({
       content_id: 'quizz-id-l3',
       thematiques: [Thematique.logement],
       difficulty: DifficultyLevel.L1,
@@ -222,7 +223,7 @@ describe('TODO list (API test)', () => {
   });
   it('GET /utilisateurs/id/todo retourne la todo n°1 avec une ref de quizz qui va bien : thematique  climat, non 100%, sans essaies', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       version: 2,
       history: {
         quizz_interactions: [
@@ -252,17 +253,17 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create('quizz', {
+    await TestUtil.create_quizz({
       content_id: '1',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create('quizz', {
+    await TestUtil.create_quizz({
       content_id: '2',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create('quizz', {
+    await TestUtil.create_quizz({
       content_id: '3',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L1,
@@ -279,7 +280,7 @@ describe('TODO list (API test)', () => {
   });
   it('GET /utilisateurs/id/todo retourne la todo n°1 avec une ref de quizz qui va bien : thematique  climat, non 100%, avec essaies', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       version: 2,
       history: {
         quizz_interactions: [
@@ -309,12 +310,12 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create('quizz', {
+    await TestUtil.create_quizz({
       content_id: '1',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create('quizz', {
+    await TestUtil.create_quizz({
       content_id: '2',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L1,
@@ -332,7 +333,7 @@ describe('TODO list (API test)', () => {
 
   it('GET /utilisateurs/id/todo retourne la todo avec une ref d article', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       version: 2,
       todo: {
         liste_todo: [
@@ -356,7 +357,7 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '123',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L1,
@@ -375,7 +376,7 @@ describe('TODO list (API test)', () => {
 
   it('GET /utilisateurs/id/todo propose un article déjà lu', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       version: 1,
       history: {
         article_interactions: [
@@ -404,7 +405,7 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create('article', { content_id: 'article-1' });
+    await TestUtil.create_article({ content_id: 'article-1' });
 
     // WHEN
     let response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
@@ -419,7 +420,7 @@ describe('TODO list (API test)', () => {
 
   it('GET /utilisateurs/id/todo propose un article non lu en prio par rapport à un lu déjà', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       version: 1,
       history: {
         article_interactions: [
@@ -449,8 +450,8 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create('article', { content_id: 'article-1' });
-    await TestUtil.create('article', { content_id: 'article-2' });
+    await TestUtil.create_article({ content_id: 'article-1' });
+    await TestUtil.create_article({ content_id: 'article-2' });
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
@@ -464,7 +465,7 @@ describe('TODO list (API test)', () => {
   });
   it('POST /utilisateurs/id/todo/id/gagner_points encaissse les points associé à cet élément', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       todo: {
         liste_todo: [
           {
@@ -505,7 +506,7 @@ describe('TODO list (API test)', () => {
   });
   it('POST /utilisateurs/id/todo/id/gagner_points encaissse les points qu une seule fois ', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       todo: {
         liste_todo: [
           {
@@ -548,7 +549,7 @@ describe('TODO list (API test)', () => {
   });
   it('POST /utilisateurs/id/todo/gagner_points encaissse les points d une todo terminée , passe à la todo suivante, et valorise la date de fin', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       todo: {
         liste_todo: [
           {
@@ -594,7 +595,7 @@ describe('TODO list (API test)', () => {
   });
   it('POST /utilisateurs/id/todo/gagner_points 400 si todo pas faite', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       todo: {
         liste_todo: [
           {
@@ -631,7 +632,7 @@ describe('TODO list (API test)', () => {
   });
   it('POST /utilisateurs/id/todo/gagner_points 400 si todo faite mais d autres points pas encaissés', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       todo: {
         liste_todo: [
           {
@@ -668,7 +669,7 @@ describe('TODO list (API test)', () => {
   });
   it('POST /utilisateurs/id/todo/id/gagner_points encaissse pas les points d un truc pas fait ', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       todo: {
         liste_todo: [
           {
@@ -707,8 +708,8 @@ describe('TODO list (API test)', () => {
   });
   it('POST /utilisateurs/id/services ajout du service fruits sur la todo 3 réalise l objctif', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, {
       id: LiveService.fruits,
     });
 
@@ -762,7 +763,7 @@ describe('TODO list (API test)', () => {
       ],
     };
 
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       todo: todo,
     });
 
@@ -784,10 +785,10 @@ describe('TODO list (API test)', () => {
   });
   it('POST /utilisateurs/id/services ajout du service fruits sur la todo 3 ne réalise PAS l objctif', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       todo: new ParcoursTodo(),
     });
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.serviceDefinition, {
       id: LiveService.fruits,
     });
 
@@ -805,7 +806,7 @@ describe('TODO list (API test)', () => {
 
   it('POST /utilisateurs/id/event met à jour la todo si un sous thematique d un articl match v2', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       version: 2,
       todo: {
         liste_todo: [
@@ -830,7 +831,7 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '123',
       difficulty: DifficultyLevel.L1,
       thematique_principale: Thematique.climat,
@@ -855,22 +856,27 @@ describe('TODO list (API test)', () => {
   });
 
   it('POST KYC met à jour la todo si la question correspond', async () => {
-    const kyc: KYC_v0 = {
+    const kyc: KYCHistory_v0 = {
       version: 0,
       answered_questions: [
         {
-          id: '1',
+          id: QuestionID._1,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.service,
+          categorie: CategorieQuestionKYC.default,
           points: 10,
-          reponses_possibles: ['Le climat', 'Mon logement', 'Ce que je mange'],
+          reponses_possibles: [
+            { label: 'Le climat', code: Thematique.climat },
+            { label: 'Mon logement', code: Thematique.logement },
+            { label: 'Ce que je mange', code: Thematique.alimentation },
+          ],
+          tags: [],
         },
       ],
     };
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       kyc: kyc,
       todo: {
         liste_todo: [
@@ -887,7 +893,7 @@ describe('TODO list (API test)', () => {
                 sont_points_en_poche: false,
                 type: ContentType.kyc,
                 level: DifficultyLevel.ANY,
-                content_id: '1',
+                content_id: '_1',
                 points: 10,
               },
             ],
@@ -899,7 +905,7 @@ describe('TODO list (API test)', () => {
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/1',
+      '/utilisateurs/utilisateur-id/questionsKYC/_1',
     ).send({ reponse: ['YO'] });
 
     // THEN
@@ -913,7 +919,7 @@ describe('TODO list (API test)', () => {
   });
   it('POST /utilisateurs/id/event aides valide un objecif aides', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       todo: {
         liste_todo: [
           {
@@ -953,7 +959,7 @@ describe('TODO list (API test)', () => {
   });
   it('POST /utilisateurs/id/event aides valide un objecif profile', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       todo: {
         liste_todo: [
           {
@@ -993,7 +999,7 @@ describe('TODO list (API test)', () => {
   });
   it('POST /utilisateurs/id/event aides valide un objecif reco', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       todo: {
         liste_todo: [
           {
@@ -1034,7 +1040,7 @@ describe('TODO list (API test)', () => {
 
   it('GET /utilisateurs/id/todo répond OK pour todo #1', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
@@ -1048,7 +1054,7 @@ describe('TODO list (API test)', () => {
     // GIVEN
     const parcours = new ParcoursTodo();
     parcours.avanceDansParcours();
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       todo: parcours,
     });
 
@@ -1064,7 +1070,7 @@ describe('TODO list (API test)', () => {
     const parcours = new ParcoursTodo();
     parcours.avanceDansParcours();
     parcours.avanceDansParcours();
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       todo: parcours,
     });
 

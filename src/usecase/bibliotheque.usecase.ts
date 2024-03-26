@@ -4,7 +4,7 @@ import { ArticleRepository } from '../infrastructure/repository/article.reposito
 import { Bibliotheque } from '../domain/contenu/bibliotheque';
 import { ContentType } from '../../src/domain/contenu/contentType';
 import { Thematique } from '../domain/contenu/thematique';
-import { PersonalArticle } from '../domain/article/article';
+import { PersonalArticle } from '../domain/contenu/article';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 
 @Injectable()

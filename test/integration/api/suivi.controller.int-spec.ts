@@ -1,5 +1,5 @@
 import { SuiviType } from '../../../src/domain/suivi/suiviType';
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('/suivis (API test)', () => {
   beforeAll(async () => {
@@ -17,7 +17,7 @@ describe('/suivis (API test)', () => {
 
   it('GET /utilisateurs/123/suivis - 403 si pas le bon ID', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/autre-id/suivis');
@@ -27,7 +27,7 @@ describe('/suivis (API test)', () => {
   });
   it('GET /utilisateurs/123/suivis - liste vide si pas de suivi', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/suivis');
@@ -38,9 +38,9 @@ describe('/suivis (API test)', () => {
   });
   it('GET /utilisateurs/123/suivis - get all suivis', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.suivi, {
       id: '1',
       data: {
         viande_rouge: 1,
@@ -48,7 +48,7 @@ describe('/suivis (API test)', () => {
       type: 'alimentation',
       created_at: new Date(123),
     });
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.suivi, {
       id: '2',
       type: 'transport',
       data: {
@@ -66,9 +66,9 @@ describe('/suivis (API test)', () => {
   });
   it('GET /utilisateurs/123/suivis?type=alimentation - get all suivis by type', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.suivi, {
       id: '1',
       type: 'alimentation',
       data: {
@@ -76,7 +76,7 @@ describe('/suivis (API test)', () => {
       },
       created_at: new Date(123),
     });
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.suivi, {
       id: '2',
       type: 'transport',
       data: {
@@ -97,9 +97,9 @@ describe('/suivis (API test)', () => {
   });
   it('GET /utilisateurs/123/suivis/last - get last suivis', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.suivi, {
       id: '1',
       type: 'alimentation',
       data: {
@@ -107,7 +107,7 @@ describe('/suivis (API test)', () => {
       },
       created_at: new Date(123),
     });
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.suivi, {
       id: '2',
       type: 'transport',
       data: {
@@ -127,9 +127,9 @@ describe('/suivis (API test)', () => {
   });
   it('GET /utilisateurs/123/suivis/last - get last suivis by type', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.suivi, {
       id: '1',
       type: 'alimentation',
       data: {
@@ -137,7 +137,7 @@ describe('/suivis (API test)', () => {
       },
       created_at: new Date(123),
     });
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.suivi, {
       id: '2',
       type: 'transport',
       data: {
@@ -157,9 +157,9 @@ describe('/suivis (API test)', () => {
   });
   it('GET /utilisateurs/123/suivis/last - get last suivis by type', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.suivi, {
       id: '1',
       type: 'alimentation',
       data: {
@@ -167,7 +167,7 @@ describe('/suivis (API test)', () => {
       },
       created_at: new Date(123),
     });
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.suivi, {
       id: '2',
       type: 'transport',
       data: {
@@ -187,7 +187,7 @@ describe('/suivis (API test)', () => {
   });
   it('GET /utilisateurs/123/suivis/last - get empty when empty DB of suivis', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.GET(
@@ -202,7 +202,7 @@ describe('/suivis (API test)', () => {
   });
   it('POST /utilisateurs/123/suivis - creates a new suivi', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.POST(
@@ -221,7 +221,7 @@ describe('/suivis (API test)', () => {
   });
   it('POST /utilisateurs/123/suivis - creates a new suivi an read it back through API', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     let response = await TestUtil.POST(

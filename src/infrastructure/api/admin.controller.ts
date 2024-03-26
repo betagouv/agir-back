@@ -23,6 +23,7 @@ import { UserMigrationReportAPI } from './types/userMigrationReportAPI';
 import { ReferentielUsecase } from '../../../src/usecase/referentiel/referentiel.usecase';
 import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
 import { TodoUsecase } from '../../../src/usecase/todo.usecase';
+import { UtilisateurUsecase } from '../../../src/usecase/utilisateur.usecase';
 
 @Controller()
 @ApiBearerAuth()
@@ -30,6 +31,7 @@ import { TodoUsecase } from '../../../src/usecase/todo.usecase';
 export class AdminController extends GenericControler {
   constructor(
     private migrationUsecase: MigrationUsecase,
+    private utilisateurUsecase: UtilisateurUsecase,
     private serviceUsecase: ServiceUsecase,
     private linkyUsecase: LinkyUsecase,
     private cmsUsecase: CMSUsecase,
@@ -84,6 +86,16 @@ export class AdminController extends GenericControler {
     return await this.cmsUsecase.loadQuizzFromCMS();
   }
 
+  @Post('/admin/load_aides_from_cms')
+  @ApiOperation({
+    summary: 'Upsert toures les aides publiés du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async upsertAllCMSaides(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.cmsUsecase.loadAidesFromCMS();
+  }
+
   @Post('/admin/upsert_service_definitions')
   @ApiOperation({
     summary:
@@ -92,16 +104,6 @@ export class AdminController extends GenericControler {
   async upsertAllServices(@Request() req) {
     this.checkCronAPIProtectedEndpoint(req);
     await this.referentielUsecase.upsertServicesDefinitions();
-  }
-
-  @Post('/admin/upsert_ponderations')
-  @ApiOperation({
-    summary:
-      'Upsert toutes les valeurs de pondération systeme pour les recommandation (tel que les rubriques pour les aricles et quizz)',
-  })
-  async upsertAllPonderations(@Request() req) {
-    this.checkCronAPIProtectedEndpoint(req);
-    await this.referentielUsecase.upsertPonderations();
   }
 
   @Post('/admin/migrate_users')
@@ -148,5 +150,14 @@ export class AdminController extends GenericControler {
   async upgrade_user_todo(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.todoUsecase.updateAllUsersTodo();
+  }
+
+  @Post('/admin/compute_reco_tags')
+  @ApiOperation({
+    summary: `recalcule les valorisations de tags de reco pour tous les utilisateurs`,
+  })
+  async compute_reco_tags(@Request() req): Promise<void> {
+    this.checkCronAPIProtectedEndpoint(req);
+    await this.utilisateurUsecase.computeAllUsersRecoTags();
   }
 }

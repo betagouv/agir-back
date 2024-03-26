@@ -67,7 +67,6 @@ import { RecommandationsController } from './infrastructure/api/recommandations.
 import { RecommandationUsecase } from './usecase/recommandation.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
 import { ReferentielUsecase } from './usecase/referentiel/referentiel.usecase';
-import { PonderationRepository } from './infrastructure/repository/ponderation.repository';
 import { DepartementRepository } from './infrastructure/repository/departement/departement.repository';
 import { Environment } from './domain/environment';
 import { BibliothequeController } from './infrastructure/api/bibliotheque.controller';
@@ -78,6 +77,9 @@ import { EquipementUsecase } from './usecase/equipements.usecase';
 import { EquipementsController } from './infrastructure/api/equipements.controller';
 import { InscriptionUsecase } from './usecase/inscription.usecase';
 import { InscriptionController } from './infrastructure/api/inscription.controller';
+import { AideRepository } from './infrastructure/repository/aide.repository';
+import { DefisController } from './infrastructure/api/defis.controller';
+import { DefisUsecase } from './usecase/defis.usecase';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -106,6 +108,7 @@ function getControllers(): any[] {
     BibliothequeController,
     EquipementsController,
     InscriptionController,
+    DefisController,
   );
   if (!Environment.isProd()) {
     controllers.push(TestDataController);
@@ -166,13 +169,14 @@ function getControllers(): any[] {
     RecommandationUsecase,
     MigrationUsecase,
     ReferentielUsecase,
-    PonderationRepository,
     DepartementRepository,
     BibliothequeUsecase,
     LinkyAPIConnector,
     LinkyEmailer,
     EquipementUsecase,
     InscriptionUsecase,
+    AideRepository,
+    DefisUsecase,
   ],
 })
 export class AppModule {}

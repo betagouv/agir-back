@@ -1,23 +1,25 @@
+import { TransportQuotidien } from '../../../../src/domain/utilisateur/transport';
 import {
+  TypeLogement,
+  Superficie,
   Chauffage,
+} from '../../../../src/domain/utilisateur/logement';
+import {
   Consommation,
   Impact,
   Onboarding,
   Repas,
-  Residence,
-  Superficie,
   ThematiqueOnboarding,
-  TransportOnboarding,
 } from '../../../../src/domain/utilisateur/onboarding/onboarding';
 import { OnboardingResult } from '../../../../src/domain/utilisateur/onboarding/onboardingResult';
 
 const ONBOARDING_1_2_3_4 = {
   version: 0,
-  transports: [TransportOnboarding.velo, TransportOnboarding.voiture],
+  transports: [TransportQuotidien.velo, TransportQuotidien.voiture],
   avion: 2,
   adultes: 2,
   enfants: 2,
-  residence: Residence.maison,
+  residence: TypeLogement.maison,
   proprietaire: true,
   superficie: Superficie.superficie_35,
   chauffage: Chauffage.bois,
@@ -107,11 +109,11 @@ describe('Objet OnboardingData', () => {
     let onboardingResult = OnboardingResult.buildFromOnboarding(
       new Onboarding({
         version: 0,
-        transports: [TransportOnboarding.velo],
+        transports: [TransportQuotidien.velo],
         avion: 2,
         adultes: 2,
         enfants: 2,
-        residence: Residence.appartement,
+        residence: TypeLogement.appartement,
         proprietaire: true,
         superficie: Superficie.superficie_35,
         chauffage: Chauffage.bois,

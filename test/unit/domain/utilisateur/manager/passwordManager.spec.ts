@@ -1,7 +1,6 @@
 import { Utilisateur } from '../../../../../src/domain/utilisateur/utilisateur';
 import { PasswordManager } from '../../../../../src/domain/utilisateur/manager/passwordManager';
 import { UtilisateurSecurityRepository } from '../../../../../src/infrastructure/repository/utilisateur/utilisateurSecurity.repository';
-import { TestUtil } from '../../../../../test/TestUtil';
 
 const fakeSecurityRepository = new UtilisateurSecurityRepository({
   utilisateur: { update: jest.fn() },
@@ -21,10 +20,34 @@ describe('Objet PasswordManager', () => {
       );
     }
   });
+  it('checkPasswordFormat : au moins contenir 1 minuscule', () => {
+    // WHEN
+    try {
+      PasswordManager.checkPasswordFormat('A123456789012#');
+      fail();
+    } catch (error) {
+      // THEN
+      expect(error.message).toEqual(
+        'Le mot de passe doit contenir au moins une minuscule',
+      );
+    }
+  });
+  it('checkPasswordFormat : au moins contenir 1 majuscule', () => {
+    // WHEN
+    try {
+      PasswordManager.checkPasswordFormat('a123456789012#');
+      fail();
+    } catch (error) {
+      // THEN
+      expect(error.message).toEqual(
+        'Le mot de passe doit contenir au moins une majuscule',
+      );
+    }
+  });
   it('checkPasswordFormat : trop court', () => {
     // WHEN
     try {
-      PasswordManager.checkPasswordFormat('tropcourt1');
+      PasswordManager.checkPasswordFormat('Tropcourt1');
     } catch (error) {
       // THEN
       expect(error.message).toEqual(
@@ -32,21 +55,14 @@ describe('Objet PasswordManager', () => {
       );
     }
   });
-  it('checkPasswordFormat : pas trop court', () => {
+  it('checkPasswordFormat : juste bien', () => {
     // WHEN
-    try {
-      PasswordManager.checkPasswordFormat('tropcourt112&');
-    } catch (error) {
-      // THEN
-      expect(error.message).toEqual(
-        'Le mot de passe doit contenir au moins 12 caractères',
-      );
-    }
+    PasswordManager.checkPasswordFormat('Pastropcourt112&');
   });
   it('checkPasswordFormat : caractères spéciaux', () => {
     // WHEN
     try {
-      PasswordManager.checkPasswordFormat('pas de caracteres speciaux1');
+      PasswordManager.checkPasswordFormat('Pas de caracteres speciaux1');
     } catch (error) {
       // THEN
       expect(error.message).toEqual(
@@ -57,7 +73,7 @@ describe('Objet PasswordManager', () => {
 
   it('setPassword : hash and salt password', () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    let utilisateur = new Utilisateur();
     PasswordManager.setUserPassword(utilisateur, 'toto');
 
     // THEN
@@ -66,7 +82,7 @@ describe('Objet PasswordManager', () => {
   });
   it('checkPassword : OK and returns function result', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    let utilisateur = new Utilisateur();
     PasswordManager.setUserPassword(utilisateur, 'toto');
 
     // WHEN
@@ -83,7 +99,7 @@ describe('Objet PasswordManager', () => {
   });
   it('checkPassword : KO', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    let utilisateur = new Utilisateur();
     PasswordManager.setUserPassword(utilisateur, 'toto');
 
     const fonction = jest.fn();
@@ -105,7 +121,7 @@ describe('Objet PasswordManager', () => {
 
   it('isLoginLocked : not locked yet', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    let utilisateur = new Utilisateur();
     PasswordManager.setUserPassword(utilisateur, 'titi');
     utilisateur.prevent_login_before = new Date(new Date().getTime() - 10000);
 
@@ -123,7 +139,7 @@ describe('Objet PasswordManager', () => {
   });
   it('isLoginLocked : true because date in futur', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    let utilisateur = new Utilisateur();
     utilisateur.prevent_login_before = new Date(new Date().getTime() + 10000);
     const fonction = jest.fn();
 
@@ -139,7 +155,7 @@ describe('Objet PasswordManager', () => {
   });
   it('failLogin : increase counter', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    let utilisateur = new Utilisateur();
     utilisateur.setPassword('#1234567890HAHA');
     utilisateur.failed_login_count = 0;
 
@@ -153,7 +169,7 @@ describe('Objet PasswordManager', () => {
   });
   it('failedLogin : sets block date + 5 mins', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    let utilisateur = new Utilisateur();
     utilisateur.setPassword('#1234567890HAHA');
     utilisateur.failed_login_count = 3;
 

@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Utilisateur as UtilisateurDB, Prisma } from '@prisma/client';
 import { Utilisateur } from '../../../domain/utilisateur/utilisateur';
-import { Profile } from '../../../domain/utilisateur/profile';
 import {
   Impact,
   Onboarding,
@@ -19,8 +18,11 @@ import {
   Upgrader,
 } from '../../../domain/object_store/upgrader';
 import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
-import { KYC } from '../../../../src/domain/kyc/collectionQuestionsKYC';
+import { KYCHistory } from '../../../domain/kyc/kycHistory';
 import { Equipements } from '../../../../src/domain/equipements/equipements';
+import { Logement } from '../../../../src/domain/utilisateur/logement';
+import { Transport } from '../../../../src/domain/utilisateur/transport';
+import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -45,26 +47,6 @@ export class UtilisateurRepository {
       },
     });
     return this.buildUtilisateurFromDB(user);
-  }
-
-  async updateProfile(utilisateurId: string, profile: Profile) {
-    return this.prisma.utilisateur.update({
-      where: {
-        id: utilisateurId,
-      },
-      data: {
-        nom: profile.nom,
-        prenom: profile.prenom,
-        email: profile.email,
-        code_postal: profile.code_postal,
-        commune: profile.commune,
-        revenu_fiscal: profile.revenu_fiscal,
-        parts: profile.parts,
-        abonnement_ter_loire: profile.abonnement_ter_loire,
-        passwordHash: profile.passwordHash,
-        passwordSalt: profile.passwordSalt,
-      },
-    });
   }
 
   async updateVersion(utilisateurId: string, version: number): Promise<any> {
@@ -219,11 +201,20 @@ export class UtilisateurRepository {
           SerialisableDomain.OnboardingResult,
         ),
       );
-      const kyc = new KYC(
-        Upgrader.upgradeRaw(user.kyc, SerialisableDomain.KYC),
+      const kyc = new KYCHistory(
+        Upgrader.upgradeRaw(user.kyc, SerialisableDomain.KYCHistory),
+      );
+      const defis = new DefiHistory(
+        Upgrader.upgradeRaw(user.defis, SerialisableDomain.DefiHistory),
       );
       const equipements = new Equipements(
         Upgrader.upgradeRaw(user.equipements, SerialisableDomain.Equipements),
+      );
+      const logement = new Logement(
+        Upgrader.upgradeRaw(user.logement, SerialisableDomain.Logement),
+      );
+      const transport = new Transport(
+        Upgrader.upgradeRaw(user.transport, SerialisableDomain.Transport),
       );
 
       return new Utilisateur({
@@ -254,14 +245,16 @@ export class UtilisateurRepository {
         parcours_todo: parcours_todo,
         gamification: gamification,
         history: history,
-        kyc: kyc,
+        kyc_history: kyc,
         equipements: equipements,
-        prm: user.prm,
         code_departement: user.code_departement,
         unlocked_features: unlocked_features,
         version: user.version,
         migration_enabled: user.migration_enabled,
-        version_ponderation: user.version_ponderation,
+        logement: logement,
+        transport: transport,
+        tag_ponderation_set: user.tag_ponderation_set as any,
+        defi_history: defis,
       });
     }
     return null;
@@ -277,7 +270,6 @@ export class UtilisateurRepository {
       revenu_fiscal: user.revenu_fiscal,
       parts: user.parts ? new Prisma.Decimal(user.parts) : null,
       abonnement_ter_loire: user.abonnement_ter_loire,
-      prm: user.prm,
       code_departement: user.code_departement,
       commune: user.commune,
       email: user.email,
@@ -316,12 +308,27 @@ export class UtilisateurRepository {
         user.equipements,
         SerialisableDomain.Equipements,
       ),
-      kyc: Upgrader.serialiseToLastVersion(user.kyc, SerialisableDomain.KYC),
+      logement: Upgrader.serialiseToLastVersion(
+        user.logement,
+        SerialisableDomain.Logement,
+      ),
+      transport: Upgrader.serialiseToLastVersion(
+        user.transport,
+        SerialisableDomain.Transport,
+      ),
+      kyc: Upgrader.serialiseToLastVersion(
+        user.kyc_history,
+        SerialisableDomain.KYCHistory,
+      ),
       version: user.version,
       failed_login_count: user.failed_login_count,
       prevent_login_before: user.prevent_login_before,
       migration_enabled: user.migration_enabled,
-      version_ponderation: user.version_ponderation,
+      tag_ponderation_set: user.tag_ponderation_set,
+      defis: Upgrader.serialiseToLastVersion(
+        user.defi_history,
+        SerialisableDomain.DefiHistory,
+      ),
       created_at: undefined,
       updated_at: undefined,
     };

@@ -49,6 +49,9 @@ model Utilisateur {
   kyc                      Json               @default("{}") // versioné
   unlocked_features        Json               @default("{}") // versioné 
   equipements              Json               @default("{}") // versioné 
+  logement                 Json               @default("{}") // versioné 
+  transport                Json               @default("{}") // versioné 
+  defis                    Json               @default("{}") // versioné
   empreintes               Empreinte[]
   suivis                   Suivi[]
   groupes                  GroupeAbonnement[]
@@ -66,17 +69,23 @@ model Utilisateur {
   services                 Service[]
   parts                    Decimal?           @db.Decimal(4, 2)
   abonnement_ter_loire     Boolean            @default(false)
-  prm                      String?
   code_departement         String?
   version                  Int                @default(0)
   migration_enabled        Boolean            @default(false)
-  version_ponderation      Int                @default(0)
+  tag_ponderation_set      Json               @default("{}")
 }
 
-model Ponderation {
-  id        String @id
-  version   Int    @unique
-  rubriques Json   @default("{}")
+model Aide {
+  content_id     String   @id
+  titre          String
+  contenu        String
+  url_simulateur String?
+  is_simulateur  Boolean?
+  codes_postaux  String[] @default([])
+  thematiques    String[] @default([])
+  montant_max    Int?
+  created_at     DateTime @default(now()) @db.Timestamptz(3)
+  updated_at     DateTime @updatedAt @db.Timestamptz(3)
 }
 
 model Article {
@@ -86,6 +95,7 @@ model Article {
   source                String?
   image_url             String?
   partenaire            String?
+  tags_utilisateur      String[] @default([])
   rubrique_ids          String[] @default([])
   rubrique_labels       String[] @default([])
   codes_postaux         String[] @default([])
@@ -106,6 +116,7 @@ model Quizz {
   source                String?
   image_url             String?
   partenaire            String?
+  tags_utilisateur      String[] @default([])
   rubrique_ids          String[] @default([])
   rubrique_labels       String[] @default([])
   codes_postaux         String[] @default([])

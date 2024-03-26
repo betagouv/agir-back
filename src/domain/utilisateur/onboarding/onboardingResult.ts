@@ -1,4 +1,4 @@
-import { OnboardingResult_v0 } from 'src/domain/object_store/onboardingResult/onboardingResult_v0';
+import { OnboardingResult_v0 } from '../../../../src/domain/object_store/onboardingResult/onboardingResult_v0';
 import { Impact, Onboarding, ThematiqueOnboarding } from './onboarding';
 
 export class OnboardingResult {

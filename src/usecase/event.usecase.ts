@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import {
   EventType,
-  UtilisateurEvent,
-} from '../../src/domain/utilisateur/utilisateurEvent';
+  AppEvent,
+} from '../domain/utilisateur/appEvent';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { ContentType } from '../domain/contenu/contentType';
@@ -19,7 +19,7 @@ export class EventUsecase {
     private quizzRepository: QuizzRepository,
   ) {}
 
-  async processEvent(utilisateurId: string, event: UtilisateurEvent) {
+  async processEvent(utilisateurId: string, event: AppEvent) {
     switch (event.type) {
       case EventType.quizz_score:
         return await this.processQuizzScore(utilisateurId, event);
@@ -60,7 +60,7 @@ export class EventUsecase {
 
   private async processArticleNonFavoris(
     utilisateurId: string,
-    event: UtilisateurEvent,
+    event: AppEvent,
   ) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.history.defavoriserArticle(event.content_id);
@@ -69,14 +69,14 @@ export class EventUsecase {
 
   private async processArticleFavoris(
     utilisateurId: string,
-    event: UtilisateurEvent,
+    event: AppEvent,
   ) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.history.favoriserArticle(event.content_id);
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  private async processLike(utilisateurId: string, event: UtilisateurEvent) {
+  private async processLike(utilisateurId: string, event: AppEvent) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     if (event.content_type === ContentType.article) {
       utilisateur.history.likerArticle(event.content_id, event.number_value);
@@ -126,7 +126,7 @@ export class EventUsecase {
 
   private async processServiceInstalled(
     utilisateurId: string,
-    event: UtilisateurEvent,
+    event: AppEvent,
   ) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     const found = utilisateur.parcours_todo.findTodoElementByServiceId(
@@ -141,7 +141,7 @@ export class EventUsecase {
 
   private async processCelebration(
     utilisateurId: string,
-    event: UtilisateurEvent,
+    event: AppEvent,
   ) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.gamification.terminerCelebration(
@@ -153,7 +153,7 @@ export class EventUsecase {
 
   private async processLectureArticle(
     utilisateurId: string,
-    event: UtilisateurEvent,
+    event: AppEvent,
   ) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.history.lireArticle(event.content_id);
@@ -170,7 +170,7 @@ export class EventUsecase {
 
   private async processQuizzScore(
     utilisateurId: string,
-    event: UtilisateurEvent,
+    event: AppEvent,
   ) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.history.quizzAttempt(event.content_id, event.number_value);

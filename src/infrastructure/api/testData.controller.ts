@@ -14,12 +14,11 @@ const _linky_data = require('../../../test_data/PRM_thermo_sensible');
 const suivis_alimentation = require('../../../test_data/evenements/suivis_alimentation');
 const suivis_transport = require('../../../test_data/evenements/suivis_transport');
 const empreintes_utilisateur = require('../../../test_data/evenements/bilans');
-import axios from 'axios';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
-import { CMSThematiqueAPI } from './types/cms/CMSThematiqueAPI';
 import { LinkyRepository } from '../repository/linky.repository';
-import { LinkyData } from '../../../src/domain/linky/linkyData';
 import { ServiceStatus } from '../../../src/domain/service/service';
+import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
+import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 
 export enum TheBoolean {
   true = 'true',
@@ -36,6 +35,8 @@ export class TestDataController {
     private prisma: PrismaService,
     private suiviRepository: SuiviRepository,
     private linkyRepository: LinkyRepository,
+    private migrationUsecase: MigrationUsecase,
+    private utilisateurRepository: UtilisateurRepository,
   ) {}
 
   @Get('testdata/:id')
@@ -212,5 +213,13 @@ export class TestDataController {
       update: clonedData,
       create: { ...clonedData, id: utilisateurId },
     });
+
+    await this.migrationUsecase.migrateUsers();
+
+    const utilisatateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+    );
+    utilisatateur.recomputeRecoTags();
+    await this.utilisateurRepository.updateUtilisateur(utilisatateur);
   }
 }

@@ -1,12 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Onboarding_v0 } from 'src/domain/object_store/Onboarding/onboarding_v0';
+import { TransportQuotidien } from '../../../../../../src/domain/utilisateur/transport';
+import { Onboarding_v0 } from '../../../../../../src/domain/object_store/Onboarding/onboarding_v0';
 import {
+  TypeLogement,
+  Superficie,
   Chauffage,
+} from '../../../../../../src/domain/utilisateur/logement';
+import {
   Consommation,
   Repas,
-  Residence,
-  Superficie,
-  TransportOnboarding,
 } from '../../../../../domain/utilisateur/onboarding/onboarding';
 
 export class OnboardingDataAPI {
@@ -14,10 +16,10 @@ export class OnboardingDataAPI {
     type: 'array',
     items: {
       type: 'string',
-      enum: Object.keys(TransportOnboarding),
+      enum: Object.keys(TransportQuotidien),
     },
   })
-  transports: TransportOnboarding[];
+  transports: TransportQuotidien[];
   @ApiProperty({ type: 'integer' })
   avion: number;
   @ApiProperty()
@@ -28,8 +30,8 @@ export class OnboardingDataAPI {
   adultes: number;
   @ApiProperty()
   enfants: number;
-  @ApiProperty({ enum: Residence })
-  residence: Residence;
+  @ApiProperty({ enum: TypeLogement })
+  residence: TypeLogement;
   @ApiProperty()
   proprietaire: boolean;
   @ApiProperty({

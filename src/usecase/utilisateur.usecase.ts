@@ -1,6 +1,10 @@
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { UtilisateurProfileAPI } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
+import {
+  LogementAPI,
+  TransportAPI,
+  UtilisateurProfileAPI,
+} from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
 import { SuiviRepository } from '../infrastructure/repository/suivi.repository';
 import { BilanRepository } from '../infrastructure/repository/bilan.repository';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
@@ -11,11 +15,8 @@ import { ApplicationError } from '../infrastructure/applicationError';
 import { EmailSender } from '../infrastructure/email/emailSender';
 import { CodeManager } from '../../src/domain/utilisateur/manager/codeManager';
 import { SecurityEmailManager } from '../../src/domain/utilisateur/manager/securityEmailManager';
-import { PasswordAwareUtilisateur } from '../../src/domain/utilisateur/manager/passwordAwareUtilisateur';
-import { Profile } from '../../src/domain/utilisateur/profile';
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
 import { GroupeRepository } from '../../src/infrastructure/repository/groupe.repository';
-import { LinkyRepository } from '../../src/infrastructure/repository/linky.repository';
 
 export type Phrase = {
   phrase: string;
@@ -30,7 +31,6 @@ export class UtilisateurUsecase {
     private serviceRepository: ServiceRepository,
     private suiviRepository: SuiviRepository,
     private bilanRepository: BilanRepository,
-    private linkyRepository: LinkyRepository,
     private oIDCStateRepository: OIDCStateRepository,
     private oidcService: OidcService,
     private emailSender: EmailSender,
@@ -38,6 +38,16 @@ export class UtilisateurUsecase {
     private securityEmailManager: SecurityEmailManager,
     private passwordManager: PasswordManager,
   ) {}
+
+  async computeAllUsersRecoTags() {
+    const userIdList = await this.utilisateurRespository.listUtilisateurIds();
+    for (let index = 0; index < userIdList.length; index++) {
+      const user_id = userIdList[index];
+      const utilisateur = await this.utilisateurRespository.getById(user_id);
+      utilisateur.recomputeRecoTags();
+      await this.utilisateurRespository.updateUtilisateur(utilisateur);
+    }
+  }
 
   async loginUtilisateur(
     email: string,
@@ -74,38 +84,61 @@ export class UtilisateurUsecase {
     utilisateurId: string,
     profile: UtilisateurProfileAPI,
   ) {
-    const profileToUpdate = {} as Profile;
+    const utilisateur = await this.utilisateurRespository.getById(
+      utilisateurId,
+    );
 
     if (profile.mot_de_passe) {
       PasswordManager.checkPasswordFormat(profile.mot_de_passe);
-
-      // FIXME : code à refacto, pas beau + check non existance utilisateur
-      const fakeUser: PasswordAwareUtilisateur = {
-        id: null,
-        passwordHash: '',
-        passwordSalt: '',
-        failed_login_count: 0,
-        prevent_login_before: new Date(),
-      };
-      // FIXME : temporaire, faudra suivre un flow avec un code par email
-      PasswordManager.setUserPassword(fakeUser, profile.mot_de_passe);
-      profileToUpdate.passwordHash = fakeUser.passwordHash;
-      profileToUpdate.passwordSalt = fakeUser.passwordSalt;
+      PasswordManager.setUserPassword(utilisateur, profile.mot_de_passe);
     }
-    // FIXME : c'est tout moche là dessous
-    profileToUpdate.code_postal = profile.code_postal;
-    profileToUpdate.commune = profile.commune;
-    profileToUpdate.revenu_fiscal = profile.revenu_fiscal;
-    profileToUpdate.parts = profile.nombre_de_parts_fiscales;
-    profileToUpdate.abonnement_ter_loire = profile.abonnement_ter_loire;
-    profileToUpdate.email = profile.email;
-    profileToUpdate.nom = profile.nom;
-    profileToUpdate.prenom = profile.prenom;
 
-    return this.utilisateurRespository.updateProfile(
+    utilisateur.code_postal = profile.code_postal;
+    utilisateur.commune = profile.commune;
+    utilisateur.revenu_fiscal = profile.revenu_fiscal;
+    utilisateur.parts = profile.nombre_de_parts_fiscales;
+    utilisateur.abonnement_ter_loire = profile.abonnement_ter_loire;
+    utilisateur.email = profile.email;
+    utilisateur.nom = profile.nom;
+    utilisateur.prenom = profile.prenom;
+    if (utilisateur.logement) {
+      utilisateur.logement.code_postal = profile.code_postal;
+      utilisateur.logement.commune = profile.commune;
+    }
+
+    return this.utilisateurRespository.updateUtilisateur(utilisateur);
+  }
+
+  async updateUtilisateurTransport(utilisateurId: string, input: TransportAPI) {
+    const utilisateur = await this.utilisateurRespository.getById(
       utilisateurId,
-      profileToUpdate,
     );
+
+    utilisateur.transport.patch(input);
+
+    utilisateur.recomputeRecoTags();
+
+    await this.utilisateurRespository.updateUtilisateur(utilisateur);
+  }
+
+  async updateUtilisateurLogement(utilisateurId: string, input: LogementAPI) {
+    const utilisateur = await this.utilisateurRespository.getById(
+      utilisateurId,
+    );
+
+    utilisateur.logement.patch(input);
+
+    // FIXME : remove when migrated users
+    utilisateur.code_postal = this.AorB(
+      input.code_postal,
+      utilisateur.code_postal,
+    );
+
+    utilisateur.commune = this.AorB(input.commune, utilisateur.commune);
+
+    utilisateur.recomputeRecoTags();
+
+    await this.utilisateurRespository.updateUtilisateur(utilisateur);
   }
 
   async oubli_mot_de_passe(email: string) {
@@ -155,10 +188,7 @@ export class UtilisateurUsecase {
       await _this.passwordManager.initLoginState(utilisateur);
 
       utilisateur.setPassword(mot_de_passe);
-      await _this.utilisateurRespository.updateProfile(utilisateur.id, {
-        passwordSalt: utilisateur.passwordSalt,
-        passwordHash: utilisateur.passwordHash,
-      });
+      await _this.utilisateurRespository.updateUtilisateur(utilisateur);
       return;
     };
 
@@ -181,6 +211,11 @@ export class UtilisateurUsecase {
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
     await this.groupeRepository.delete(utilisateurId);
     await this.utilisateurRespository.delete(utilisateurId);
+  }
+
+  private AorB?<T>(a: T, b: T): T {
+    if (a === undefined) return b;
+    return a;
   }
 
   private async sendMotDePasseCode(utilisateur: Utilisateur) {

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { QuestionKYC } from '../domain/kyc/questionQYC';
-import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 
@@ -9,22 +8,14 @@ export class QuestionKYCUsecase {
   constructor(private utilisateurRepository: UtilisateurRepository) {}
 
   async getALL(utilisateurId: string): Promise<QuestionKYC[]> {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-    );
-    return utilisateur.kyc.getAllQuestionSet();
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    return utilisateur.kyc_history.getAllQuestionSet();
   }
 
   async getQuestion(utilisateurId: string, questionId): Promise<QuestionKYC> {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
-    const question = utilisateur.kyc.getAnyQuestion(questionId);
-    if (!question) {
-      ApplicationError.throwQuestionInconnue(questionId);
-    }
-    return question;
+    return utilisateur.kyc_history.getQuestionOrException(questionId);
   }
 
   async updateResponse(
@@ -32,19 +23,21 @@ export class QuestionKYCUsecase {
     questionId: string,
     reponse: string[],
   ): Promise<void> {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
-    utilisateur.kyc.checkQuestionExistsOrThrowException(questionId);
+    utilisateur.kyc_history.checkQuestionExists(questionId);
 
     this.updateUserTodo(utilisateur, questionId);
 
-    if (!utilisateur.kyc.isQuestionAnswered(questionId)) {
-      const question = utilisateur.kyc.getAnyQuestion(questionId);
+    if (!utilisateur.kyc_history.isQuestionAnswered(questionId)) {
+      const question =
+        utilisateur.kyc_history.getQuestionOrException(questionId);
       utilisateur.gamification.ajoutePoints(question.points);
     }
-    utilisateur.kyc.updateQuestion(questionId, reponse);
+    utilisateur.kyc_history.updateQuestion(questionId, reponse);
+
+    utilisateur.recomputeRecoTags();
+
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 

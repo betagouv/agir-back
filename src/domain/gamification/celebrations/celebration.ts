@@ -1,4 +1,4 @@
-import { Celebration_v0 } from 'src/domain/object_store/gamification/gamification_v0';
+import { Celebration_v0 } from '../../../../src/domain/object_store/gamification/gamification_v0';
 import { v4 as uuidv4 } from 'uuid';
 import { Reveal } from './reveal';
 

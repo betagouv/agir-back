@@ -1,7 +1,6 @@
 import { Utilisateur } from '../../../../../src/domain/utilisateur/utilisateur';
 import { UtilisateurSecurityRepository } from '../../../../../src/infrastructure/repository/utilisateur/utilisateurSecurity.repository';
 import { SecurityEmailManager } from '../../../../../src/domain/utilisateur/manager/securityEmailManager';
-import { TestUtil } from '../../../../../test/TestUtil';
 
 const fakeSecurityRepository = new UtilisateurSecurityRepository({
   utilisateur: { update: jest.fn() },
@@ -12,7 +11,7 @@ const securityEmailManager = new SecurityEmailManager(fakeSecurityRepository);
 describe('Objet SecurityEmailManager', () => {
   it('attemptSecurityEmailEmission : no exception when not locked', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    const utilisateur = new Utilisateur();
     utilisateur.prevent_sendemail_before = new Date(
       new Date().getTime() - 10000,
     );
@@ -28,7 +27,7 @@ describe('Objet SecurityEmailManager', () => {
   });
   it('attemptSecurityEmailEmission : si tout ok realise l action et incremente le compteur', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    const utilisateur = new Utilisateur();
     utilisateur.prevent_sendemail_before = new Date(
       new Date().getTime() - 10000,
     );
@@ -45,7 +44,7 @@ describe('Objet SecurityEmailManager', () => {
   });
   it('attemptSecurityEmailEmission : si compteur deja à 3 , erreur et pas d action realisée', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    const utilisateur = new Utilisateur();
     utilisateur.sent_email_count = 3;
     utilisateur.prevent_sendemail_before = new Date();
     const fonction = jest.fn();
@@ -71,7 +70,7 @@ describe('Objet SecurityEmailManager', () => {
   });
   it('attemptSecurityEmailEmission : si compteur deja à 4 , mais compte pas bloqué alors re init', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    const utilisateur = new Utilisateur();
     utilisateur.sent_email_count = 4;
     utilisateur.prevent_sendemail_before = new Date(
       new Date().getTime() - 10000,

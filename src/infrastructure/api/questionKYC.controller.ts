@@ -17,20 +17,15 @@ import {
   HttpStatus,
   UseFilters,
 } from '@nestjs/common';
-import { QuestionNGCUsecase_deprecated } from '../../usecase/questionNGC.deprecated.usecase';
-import { Question } from '../../domain/bilan/question';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
 import { QuestionKYCAPI } from './types/kyc/questionsKYCAPI';
-import { ApplicationError } from '../applicationError';
 import { ReponseAPI } from './types/kyc/reponseAPI';
-import { ControllerExceptionFilter } from './controllerException.filter';
 
 @Controller()
 @ApiBearerAuth()
 @ApiTags('QuestionsKYC')
-//@UseFilters(new ControllerExceptionFilter())
 export class QuestionsKYCController extends GenericControler {
   constructor(private readonly questionKYCUsecase: QuestionKYCUsecase) {
     super();
