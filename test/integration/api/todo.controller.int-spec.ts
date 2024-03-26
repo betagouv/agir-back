@@ -864,7 +864,7 @@ describe('TODO list (API test)', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.service,
+          categorie: CategorieQuestionKYC.default,
           points: 10,
           reponses_possibles: [
             { label: 'Le climat', code: Thematique.climat },

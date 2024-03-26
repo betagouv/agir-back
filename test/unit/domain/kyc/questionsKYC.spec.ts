@@ -41,7 +41,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.service,
+          categorie: CategorieQuestionKYC.default,
           points: 10,
           reponses: undefined,
           reponses_possibles: [
@@ -70,7 +70,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.service,
+          categorie: CategorieQuestionKYC.default,
           points: 10,
           reponses: [],
           reponses_possibles: [
@@ -99,7 +99,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.service,
+          categorie: CategorieQuestionKYC.default,
           points: 10,
           reponses: [{ label: 'Le climat', code: Thematique.climat }],
           reponses_possibles: [
@@ -141,7 +141,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.service,
+          categorie: CategorieQuestionKYC.default,
           points: 10,
           reponses: [{ label: 'Le climat', code: Thematique.climat }],
           reponses_possibles: [
@@ -160,7 +160,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.choix_multiple,
         is_NGC: false,
-        categorie: CategorieQuestionKYC.service,
+        categorie: CategorieQuestionKYC.default,
         points: 10,
         reponses: undefined,
         reponses_possibles: [
@@ -196,7 +196,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.service,
+          categorie: CategorieQuestionKYC.default,
           points: 10,
           reponses: [
             { label: 'Le climat', code: Thematique.climat },
@@ -216,7 +216,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.choix_multiple,
         is_NGC: false,
-        categorie: CategorieQuestionKYC.service,
+        categorie: CategorieQuestionKYC.default,
         points: 10,
         reponses: undefined,
         reponses_possibles: [
@@ -259,7 +259,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.service,
+          categorie: CategorieQuestionKYC.default,
           points: 10,
           reponses: [
             { label: 'Le climat', code: Thematique.climat },
@@ -279,7 +279,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.choix_multiple,
         is_NGC: false,
-        categorie: CategorieQuestionKYC.service,
+        categorie: CategorieQuestionKYC.default,
         points: 10,
         reponses: undefined,
         reponses_possibles: [
@@ -322,7 +322,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.entier,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.service,
+          categorie: CategorieQuestionKYC.default,
           points: 10,
           reponses: [{ label: '123', code: null }],
           reponses_possibles: [],
@@ -336,7 +336,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.entier,
         is_NGC: false,
-        categorie: CategorieQuestionKYC.service,
+        categorie: CategorieQuestionKYC.default,
         points: 10,
         reponses: undefined,
         reponses_possibles: [],
@@ -361,7 +361,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.service,
+          categorie: CategorieQuestionKYC.default,
           points: 10,
           reponses: [{ label: 'Le climat', code: Thematique.climat }],
           reponses_possibles: [
@@ -380,7 +380,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.choix_multiple,
         is_NGC: false,
-        categorie: CategorieQuestionKYC.service,
+        categorie: CategorieQuestionKYC.default,
         points: 10,
         reponses: undefined,
         reponses_possibles: [
@@ -396,7 +396,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.libre,
         is_NGC: false,
-        categorie: CategorieQuestionKYC.service,
+        categorie: CategorieQuestionKYC.default,
         points: 10,
         reponses: undefined,
         reponses_possibles: undefined,

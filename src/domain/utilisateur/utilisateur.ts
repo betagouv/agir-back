@@ -17,6 +17,7 @@ import { Transport } from './transport';
 import { Tag } from '../scoring/tag';
 import { DefiHistory } from '../defis/defiHistory';
 import { UserTagEvaluator } from '../scoring/userTagEvaluator';
+import { QuestionKYC } from '../kyc/questionQYC';
 
 export class UtilisateurData {
   id: string;
@@ -168,6 +169,21 @@ export class Utilisateur extends UtilisateurData {
   }
   public setTagWhenOrZero?(when: boolean, tag: Tag, value_yes: number) {
     this.tag_ponderation_set[tag] = when ? value_yes : 0;
+  }
+  public setTagSwitchOrZero?(
+    kyc: QuestionKYC,
+    tag: Tag,
+    map: Record<string, number>,
+  ) {
+    for (const key in map) {
+      console.log(key);
+      if (kyc.includesReponseCode(key)) {
+        this.tag_ponderation_set[tag] = map[key];
+        return;
+      } else {
+        this.tag_ponderation_set[tag] = 0;
+      }
+    }
   }
   public setTagWhen?(
     when: boolean,

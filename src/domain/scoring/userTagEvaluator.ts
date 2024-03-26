@@ -1,5 +1,5 @@
 import { Thematique } from '../contenu/thematique';
-import { QuestionID } from '../kyc/questionQYC';
+import { BooleanKYC, QuestionID } from '../kyc/questionQYC';
 import { ThematiqueOnboarding } from '../utilisateur/onboarding/onboarding';
 import { TransportQuotidien } from '../utilisateur/transport';
 import { Utilisateur } from '../utilisateur/utilisateur';
@@ -15,6 +15,12 @@ export class UserTagEvaluator {
     UserTagEvaluator.kyc_005(user);
     UserTagEvaluator.kyc_006(user);
     UserTagEvaluator.kyc_007(user);
+    UserTagEvaluator.kyc_008(user);
+    UserTagEvaluator.kyc_009(user);
+    UserTagEvaluator.kyc_010(user);
+    UserTagEvaluator.kyc_011(user);
+    UserTagEvaluator.kyc_012(user);
+    UserTagEvaluator.kyc_013(user);
     UserTagEvaluator.shopping_addict(user);
     UserTagEvaluator.viande_addict(user);
   }
@@ -126,49 +132,22 @@ export class UserTagEvaluator {
   private static kyc_004(user: Utilisateur) {
     const kyc = user.kyc_history.getQuestion(QuestionID.KYC004);
     if (kyc && kyc.hasResponses()) {
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode('pistes_cyclables_faciles') ||
-          kyc.includesReponseCode('pistes_cyclables_dangereuses'),
-        Tag.pistes_cyclables,
-        100,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode('absence_pistes_cyclables'),
-        Tag.pistes_cyclables,
-        -100,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode('ne_sais_pas'),
-        Tag.pistes_cyclables,
-        0,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode('ne_sais_pas'),
-        Tag.pistes_cyclables,
-        0,
-      );
+      user.setTagSwitchOrZero(kyc, Tag.pistes_cyclables, {
+        pistes_cyclables_faciles: 100,
+        pistes_cyclables_dangereuses: 100,
+        absence_pistes_cyclables: -100,
+        ne_sais_pas: 0,
+      });
     }
   }
   private static kyc_005(user: Utilisateur) {
     const kyc = user.kyc_history.getQuestion(QuestionID.KYC005);
     if (kyc && kyc.hasResponses()) {
-      user.setTagWhen(
-        kyc.includesReponseCode('emploi'),
-        Tag.possede_emploi,
-        100,
-        -100,
-      );
-      user.setTagWhen(
-        kyc.includesReponseCode('sans_emploi'),
-        Tag.possede_emploi,
-        -100,
-        100,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode('ne_sais_pas'),
-        Tag.possede_emploi,
-        0,
-      );
+      user.setTagSwitchOrZero(kyc, Tag.possede_emploi, {
+        emploi: 100,
+        sans_emploi: -100,
+        ne_sais_pas: 0,
+      });
     }
   }
   private static kyc_006(user: Utilisateur) {
@@ -188,6 +167,122 @@ export class UserTagEvaluator {
       user.setTagWhenOrZero(
         kyc.includesReponseCode('cafe'),
         Tag.appetence_cafe,
+        100,
+      );
+    }
+  }
+  private static kyc_008(user: Utilisateur) {
+    const kyc = user.kyc_history.getQuestion(QuestionID.KYC008);
+    if (kyc && kyc.hasResponses()) {
+      user.setTagSwitchOrZero(kyc, Tag.capacite_teletravail, {
+        max_tele: 100,
+        un_peu_tele: 50,
+        no_tele: -100,
+        ne_sais_pas: 0,
+      });
+    }
+  }
+  private static kyc_009(user: Utilisateur) {
+    const kyc = user.kyc_history.getQuestion(QuestionID.KYC009);
+    if (kyc && kyc.hasResponses()) {
+      user.setTagWhenOrZero(
+        kyc.includesReponseCode('ma_voit'),
+        Tag.possede_voiture,
+        100,
+      );
+      user.setTagWhenOrZero(
+        kyc.includesReponseCode('co_voit'),
+        Tag.appetence_covoit,
+        100,
+      );
+    }
+  }
+  private static kyc_010(user: Utilisateur) {
+    const kyc = user.kyc_history.getQuestion(QuestionID.KYC010);
+    if (kyc && kyc.hasResponses()) {
+      user.setTagWhen(
+        kyc.includesReponseCode(BooleanKYC.oui),
+        Tag.possede_jardin,
+        100,
+        -100,
+      );
+    }
+  }
+  private static kyc_011(user: Utilisateur) {
+    const kyc = user.kyc_history.getQuestion(QuestionID.KYC011);
+    if (kyc && kyc.hasResponses()) {
+      user.setTagWhen(
+        kyc.includesReponseCode('voit_therm'),
+        Tag.possede_voiture_thermique,
+        100,
+        -100,
+      );
+      user.setTagWhen(
+        kyc.includesReponseCode('voit_elec_hybride'),
+        Tag.possede_voiture_elec_hybride,
+        100,
+        -100,
+      );
+      user.setTagWhenOrZero(
+        kyc.includesReponseCode('ne_sais_pas'),
+        Tag.possede_voiture_elec_hybride,
+        0,
+      );
+      user.setTagWhenOrZero(
+        kyc.includesReponseCode('ne_sais_pas'),
+        Tag.possede_voiture_thermique,
+        0,
+      );
+    }
+  }
+  private static kyc_012(user: Utilisateur) {
+    const kyc = user.kyc_history.getQuestion(QuestionID.KYC012);
+    if (kyc && kyc.hasResponses()) {
+      user.setTagWhen(
+        kyc.includesReponseCode(BooleanKYC.oui),
+        Tag.trajet_court_voiture,
+        100,
+        -100,
+      );
+      user.setTagWhen(
+        kyc.includesReponseCode(BooleanKYC.non),
+        Tag.trajet_long_voiture,
+        100,
+        -100,
+      );
+      user.setTagWhenOrZero(
+        kyc.includesReponseCode('ne_sais_pas'),
+        Tag.trajet_court_voiture,
+        0,
+      );
+      user.setTagWhenOrZero(
+        kyc.includesReponseCode('ne_sais_pas'),
+        Tag.trajet_long_voiture,
+        0,
+      );
+    }
+  }
+  private static kyc_013(user: Utilisateur) {
+    const kyc = user.kyc_history.getQuestion(QuestionID.KYC013);
+    if (kyc && kyc.hasResponses()) {
+      user.setTagWhenOrZero(
+        kyc.includesReponseCode('limiter_impact'),
+        Tag.appetence_limiter_impact_trajets,
+        100,
+      );
+      user.setTagWhenOrZero(
+        kyc.includesReponseCode('achat_voit'),
+        Tag.appetence_changement_voit,
+        100,
+      );
+      user.setTagWhenOrZero(
+        kyc.includesReponseCode('economie'),
+        Tag.appetence_ecomomies,
+        100,
+      );
+      user.setTagWhenOrZero(
+        kyc.includesReponseCode('bouger'),
+        Tag.appetence_bouger_sante,
         100,
       );
     }

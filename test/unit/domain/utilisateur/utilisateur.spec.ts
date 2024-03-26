@@ -11,6 +11,13 @@ import {
   Superficie,
 } from '../../../../src/domain/utilisateur/logement';
 import { TransportQuotidien } from '../../../../src/domain/utilisateur/transport';
+import {
+  CategorieQuestionKYC,
+  QuestionID,
+  QuestionKYC,
+  TypeReponseQuestionKYC,
+} from '../../../../src/domain/kyc/questionQYC';
+import { Tag } from '../../../../src/domain/scoring/tag';
 
 const ONBOARDING_DATA: Onboarding_v0 = {
   version: 0,
@@ -119,5 +126,68 @@ describe('Objet Utilisateur', () => {
 
     // THEN
     expect(parts).toEqual(4);
+  });
+  it('setTagSwitchOrZero : match ok', () => {
+    // GIVEN
+    const user = new Utilisateur();
+    user.tag_ponderation_set = {};
+
+    const kyc = new QuestionKYC({
+      id: QuestionID.KYC007,
+      question: 'Quelle boisson chaude consommez-vous quotidiennement ?',
+      type: TypeReponseQuestionKYC.choix_unique,
+      is_NGC: false,
+      categorie: CategorieQuestionKYC.mission,
+      points: 5,
+      tags: [],
+      reponses: [{ label: 'Café', code: 'cafe' }],
+      reponses_possibles: [
+        { label: 'Café', code: 'cafe' },
+        { label: 'Thé ou tisane', code: 'the' },
+        { label: 'Chicoré', code: 'chicore' },
+      ],
+    });
+
+    // WHEN
+    user.setTagSwitchOrZero(kyc, Tag.climat, {
+      cafe: 100,
+      the: 50,
+      chicore: 10,
+    });
+
+    // THEN
+    expect(user.tag_ponderation_set.climat).toEqual(100);
+  });
+  it('setTagSwitchOrZero : match nothing', () => {
+    // GIVEN
+    const user = new Utilisateur();
+    user.tag_ponderation_set = {};
+
+    const kyc = new QuestionKYC({
+      id: QuestionID.KYC007,
+      question: 'Quelle boisson chaude consommez-vous quotidiennement ?',
+      type: TypeReponseQuestionKYC.choix_unique,
+      is_NGC: false,
+      categorie: CategorieQuestionKYC.mission,
+      points: 5,
+      tags: [],
+      reponses: [{ label: 'autre', code: 'autre' }],
+      reponses_possibles: [
+        { label: 'Café', code: 'cafe' },
+        { label: 'Thé ou tisane', code: 'the' },
+        { label: 'Chicoré', code: 'chicore' },
+        { label: 'autre', code: 'autre' },
+      ],
+    });
+
+    // WHEN
+    user.setTagSwitchOrZero(kyc, Tag.climat, {
+      cafe: 100,
+      the: 50,
+      chicore: 10,
+    });
+
+    // THEN
+    expect(user.tag_ponderation_set.climat).toEqual(0);
   });
 });
