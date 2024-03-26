@@ -111,7 +111,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[0].type).toEqual('defi');
     expect(response.body[0].thematique_principale).toEqual('alimentation');
     expect(response.body[0].image_url).toEqual(
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Logo_Relevez_le_d%C3%A9fi.png/320px-Logo_Relevez_le_d%C3%A9fi.png',
+      'https://res.cloudinary.com/dq023imd8/image/upload/v1711467455/Illustration_defis_63f2bfed5a.svg',
     );
     expect(response.body[0].points).toEqual(5);
     expect(response.body[0].status_defi).toEqual(DefiStatus.todo);

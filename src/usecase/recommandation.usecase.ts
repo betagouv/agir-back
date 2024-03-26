@@ -97,7 +97,7 @@ export class RecommandationUsecase {
     return defis.map((e) => ({
       content_id: e.id,
       image_url:
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Logo_Relevez_le_d%C3%A9fi.png/320px-Logo_Relevez_le_d%C3%A9fi.png',
+        'https://res.cloudinary.com/dq023imd8/image/upload/v1711467455/Illustration_defis_63f2bfed5a.svg',
       points: e.points,
       thematique_principale: e.thematique,
       score: e.score,
