@@ -1,6 +1,11 @@
 import { KYCHistory_v0 as KYCHistory_v0 } from '../object_store/kyc/kycHistory_v0';
 import { CatalogueQuestionsKYC } from './catalogueQuestionsKYC';
-import { QuestionID, QuestionKYC, TypeReponseQuestionKYC } from './questionQYC';
+import {
+  CategorieQuestionKYC,
+  QuestionID,
+  QuestionKYC,
+  TypeReponseQuestionKYC,
+} from './questionQYC';
 
 export class KYCHistory {
   answered_questions: QuestionKYC[];
@@ -27,8 +32,8 @@ export class KYCHistory {
     return result;
   }
 
-  public getKYCRestantes(): QuestionKYC[] {
-    const kycs_all = CatalogueQuestionsKYC.getAll();
+  public getKYCRestantes(categorie?: CategorieQuestionKYC): QuestionKYC[] {
+    const kycs_all = CatalogueQuestionsKYC.getAll(categorie);
     this.answered_questions.forEach((question) => {
       const index = kycs_all.findIndex((d) => d.id === question.id);
       if (index !== -1) {
@@ -56,7 +61,6 @@ export class KYCHistory {
   }
 
   private upgradeQuestion(question: QuestionKYC) {
-
     const question_catalogue = CatalogueQuestionsKYC.getByIdOrException(
       question.id,
     );

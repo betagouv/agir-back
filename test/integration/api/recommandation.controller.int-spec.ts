@@ -93,6 +93,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandation - list un defi, bonne données', async () => {
     // GIVEN
+    process.env.DEFI_ENABLED = 'true';
+    process.env.KYC_RECO_ENABLED = 'true';
     CatalogueDefis.setCatalogue([{ ...DEFI_1 }]);
     CatalogueQuestionsKYC.setCatalogue([]);
     await TestUtil.create(DB.utilisateur, { history: {} });
@@ -230,6 +232,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations - renvoie un défis en premier', async () => {
     // GIVEN
+    process.env.DEFI_ENABLED = 'true';
+    process.env.KYC_RECO_ENABLED = 'true';
     CatalogueDefis.setCatalogue([{ ...DEFI_1, id: '101' }]);
     CatalogueQuestionsKYC.setCatalogue([]);
     await TestUtil.create(DB.utilisateur, {
@@ -376,13 +380,15 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations - mix de defis en cours, restant, et articles', async () => {
     // GIVEN
+    process.env.DEFI_ENABLED = 'true';
+    process.env.KYC_RECO_ENABLED = 'true';
     CatalogueQuestionsKYC.setCatalogue([
       {
         id: QuestionID._1,
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.choix_multiple,
         is_NGC: false,
-        categorie: CategorieQuestionKYC.default,
+        categorie: CategorieQuestionKYC.recommandation,
         points: 10,
         reponses: undefined,
         thematique: Thematique.consommation,
@@ -393,6 +399,18 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
           { label: 'DDD', code: Thematique.transport },
         ],
         tags: [Tag.R6],
+      },
+      {
+        id: QuestionID._2,
+        question: `question hors recos`,
+        type: TypeReponseQuestionKYC.choix_unique,
+        is_NGC: false,
+        categorie: CategorieQuestionKYC.mission,
+        points: 10,
+        reponses: undefined,
+        thematique: Thematique.consommation,
+        reponses_possibles: [{ label: 'AAA', code: Thematique.climat }],
+        tags: [Tag.R6, Tag.R1],
       },
     ]);
     const defis: DefiHistory_v0 = {
@@ -467,6 +485,9 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations - que des defis en cours', async () => {
     // GIVEN
+    process.env.DEFI_ENABLED = 'true';
+    process.env.KYC_RECO_ENABLED = 'true';
+
     const defis: DefiHistory_v0 = {
       version: 0,
       defis: [

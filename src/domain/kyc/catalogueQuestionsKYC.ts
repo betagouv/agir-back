@@ -321,10 +321,11 @@ export class CatalogueQuestionsKYC {
     return result;
   }
 
-  public static getAll(): QuestionKYC[] {
+  public static getAll(categorie?: CategorieQuestionKYC): QuestionKYC[] {
     const result = [];
     CatalogueQuestionsKYC.kyc_catalogue.forEach((e) => {
-      result.push(new QuestionKYC(e));
+      if (!categorie || (categorie && e.categorie === categorie))
+        result.push(new QuestionKYC(e));
     });
     return result;
   }

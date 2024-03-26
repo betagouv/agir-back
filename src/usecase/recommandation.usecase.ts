@@ -7,8 +7,12 @@ import { ContentType } from '../../src/domain/contenu/contentType';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
 import { Defi } from '../../src/domain/defis/defi';
-import { QuestionKYC } from '../../src/domain/kyc/questionQYC';
+import {
+  CategorieQuestionKYC,
+  QuestionKYC,
+} from '../../src/domain/kyc/questionQYC';
 import { Thematique } from '../../src/domain/contenu/thematique';
+import { UtilisateurBehavior } from '../../src/domain/utilisateur/utilisateurBehavior';
 
 @Injectable()
 export class RecommandationUsecase {
@@ -25,16 +29,25 @@ export class RecommandationUsecase {
 
     const quizzes = await this.getQuizzes(utilisateur);
 
-    const kycs = await this.getKYC(utilisateur);
+    let defis_en_cours = [];
+    let defis_restants = [];
+    let kycs = [];
+    let nombre_content_restants = 6;
 
-    const defis_en_cours = this.getDefisEnCours(utilisateur);
+    if (UtilisateurBehavior.defiEnabled()) {
+      defis_en_cours = this.getDefisEnCours(utilisateur);
 
-    let defis_restants = this.getDefisRestantsAvecTri(utilisateur);
-    const nombre_defi_restant = Math.min(6 - defis_en_cours.length, 2);
-    defis_restants = defis_restants.slice(0, nombre_defi_restant);
+      defis_restants = this.getDefisRestantsAvecTri(utilisateur);
+      const nombre_defi_restant = Math.min(6 - defis_en_cours.length, 2);
+      defis_restants = defis_restants.slice(0, nombre_defi_restant);
 
-    const nombre_content_restants =
-      6 - defis_en_cours.length - defis_restants.length;
+      nombre_content_restants =
+        6 - defis_en_cours.length - defis_restants.length;
+    }
+
+    if (UtilisateurBehavior.kycRecoEnabled()) {
+      kycs = await this.getKYC(utilisateur);
+    }
 
     let content: Recommandation[] = [];
     content.push(...articles);
@@ -50,7 +63,9 @@ export class RecommandationUsecase {
   }
 
   private getKYC(utilisateur: Utilisateur): Recommandation[] {
-    const kycs = utilisateur.kyc_history.getKYCRestantes();
+    const kycs = utilisateur.kyc_history.getKYCRestantes(
+      CategorieQuestionKYC.recommandation,
+    );
 
     PonderationApplicativeManager.increaseScoreContentOfList(
       kycs,
