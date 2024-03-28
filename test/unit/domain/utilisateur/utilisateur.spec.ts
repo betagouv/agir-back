@@ -190,4 +190,55 @@ describe('Objet Utilisateur', () => {
     // THEN
     expect(user.tag_ponderation_set.climat).toEqual(0);
   });
+  it('resetAllHistory : reset tout sauf onboarding', () => {
+    // GIVEN
+    const user = Utilisateur.createNewUtilisateur(
+      'A',
+      'B',
+      'w@w.com',
+      new Onboarding({
+        version: 0,
+        transports: [TransportQuotidien.velo, TransportQuotidien.voiture],
+        avion: 2,
+        adultes: 2,
+        enfants: 2,
+        residence: TypeLogement.maison,
+        proprietaire: true,
+        superficie: Superficie.superficie_35,
+        chauffage: Chauffage.bois,
+        repas: Repas.vege,
+        consommation: Consommation.raisonnable,
+        code_postal: '91120',
+        commune: 'Palaiseau',
+      }),
+    );
+    user.tag_ponderation_set = {};
+
+    const kyc = new QuestionKYC({
+      id: QuestionID.KYC007,
+      question: 'Quelle boisson chaude consommez-vous quotidiennement ?',
+      type: TypeReponseQuestionKYC.choix_unique,
+      is_NGC: false,
+      categorie: CategorieQuestionKYC.mission,
+      points: 5,
+      tags: [],
+      reponses: [{ label: 'autre', code: 'autre' }],
+      reponses_possibles: [
+        { label: 'Café', code: 'cafe' },
+        { label: 'Thé ou tisane', code: 'the' },
+        { label: 'Chicoré', code: 'chicore' },
+        { label: 'autre', code: 'autre' },
+      ],
+    });
+
+    // WHEN
+    user.setTagSwitchOrZero(kyc, Tag.climat, {
+      cafe: 100,
+      the: 50,
+      chicore: 10,
+    });
+
+    // THEN
+    expect(user.tag_ponderation_set.climat).toEqual(0);
+  });
 });

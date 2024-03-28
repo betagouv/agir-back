@@ -8,8 +8,12 @@ export class UnlockedFeatures {
     if (data && data.unlocked_features) {
       this.unlocked_features = data.unlocked_features;
     } else {
-      this.unlocked_features = [];
+      this.reset();
     }
+  }
+
+  public reset() {
+    this.unlocked_features = [];
   }
 
   public add?(feature: Feature) {

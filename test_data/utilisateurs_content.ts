@@ -136,7 +136,7 @@ const utilisateurs = {
               type: ContentType.kyc,
               level: DifficultyLevel.ANY,
               points: 20,
-              content_id: '001',
+              content_id: 'KYC001',
             },
           ],
         },

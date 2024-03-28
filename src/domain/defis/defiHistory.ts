@@ -9,8 +9,8 @@ export class DefiHistory {
   private catalogue: DefiDefinition[];
 
   constructor(data?: DefiHistory_v0) {
-    this.defis = [];
-    this.catalogue = [];
+    this.reset();
+
     if (data && data.defis) {
       data.defis.forEach((element) => {
         this.defis.push(new Defi(element));
@@ -18,6 +18,10 @@ export class DefiHistory {
     }
   }
 
+  public reset() {
+    this.defis = [];
+    this.catalogue = [];
+  }
   public setCatalogue(cat: DefiDefinition[]) {
     this.catalogue = cat;
   }

@@ -20,9 +20,13 @@ export class ParcoursTodo {
         this.todo_active = 0;
       }
     } else {
-      this.liste_todo = TodoCatalogue.getAllTodos();
-      this.todo_active = 0;
+      this.reset();
     }
+  }
+
+  public reset() {
+    this.liste_todo = TodoCatalogue.getAllTodos();
+    this.todo_active = 0;
   }
 
   public getActiveTodo?(): Todo {

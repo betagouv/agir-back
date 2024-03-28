@@ -236,6 +236,12 @@ export class ApplicationError {
       'Le mot de passe doit contenir au moins une majuscule',
     );
   }
+  static throwMissingResetConfirmation() {
+    this.throwAppError(
+      '043',
+      `Taper CONFIRMATION RESET pour confirmer l'opération`,
+    );
+  }
 
   private static throwAppError(
     code: string,

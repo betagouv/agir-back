@@ -11,7 +11,8 @@ export class KYCHistory {
   answered_questions: QuestionKYC[];
 
   constructor(data?: KYCHistory_v0) {
-    this.answered_questions = [];
+    this.reset();
+
     if (data && data.answered_questions) {
       data.answered_questions.forEach((element) => {
         this.answered_questions.push(new QuestionKYC(element));
@@ -19,6 +20,9 @@ export class KYCHistory {
     }
   }
 
+  public reset() {
+    this.answered_questions = [];
+  }
   public getAllQuestionSet(): QuestionKYC[] {
     let result = [];
 

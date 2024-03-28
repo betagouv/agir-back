@@ -123,6 +123,16 @@ export class Utilisateur extends UtilisateurData {
     });
   }
 
+  public resetAllHistory?() {
+    this.tag_ponderation_set = {};
+    this.parcours_todo.reset();
+    this.gamification.reset();
+    this.unlocked_features.reset();
+    this.history.reset();
+    this.defi_history.reset();
+    this.equipements.reset();
+  }
+
   public getNombrePartsFiscalesOuEstimee?() {
     if (this.parts !== null) {
       return this.parts;

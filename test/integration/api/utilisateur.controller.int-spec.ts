@@ -769,4 +769,68 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       "Trop d'essais successifs, attendez jusqu'à ",
     );
   });
+  it(`POST /utilisateurs/id/reset reset d'un utilisateur donné`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/reset',
+    ).send({
+      confirmation: 'CONFIRMATION RESET',
+    });
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(userDB.unlocked_features.unlocked_features).toHaveLength(0);
+  });
+  it(`POST /utilisateurs/id/reset reset tous les utilisateurs`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur, { id: '1', email: '1' });
+    await TestUtil.create(DB.utilisateur, { id: '2', email: '2' });
+
+    // WHEN
+    const response = await TestUtil.POST('/utilisateurs/reset').send({
+      confirmation: 'CONFIRMATION RESET',
+    });
+
+    const userDB1 = await utilisateurRepository.getById('1');
+    const userDB2 = await utilisateurRepository.getById('2');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(userDB1.unlocked_features.unlocked_features).toHaveLength(0);
+    expect(userDB2.unlocked_features.unlocked_features).toHaveLength(0);
+  });
+  it(`POST /utilisateurs/id/reset erreur si pas la bonne phrase de confirmation`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/reset',
+    ).send({
+      confirmation: 'haha',
+    });
+
+    // THEN
+    expect(response.status).toBe(400);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.unlocked_features.unlocked_features).toHaveLength(1);
+  });
+  it(`POST /utilisateurs/id/reset erreur si pas de payload`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.POST('/utilisateurs/utilisateur-id/reset');
+
+    // THEN
+    expect(response.status).toBe(400);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.unlocked_features.unlocked_features).toHaveLength(1);
+  });
 });
