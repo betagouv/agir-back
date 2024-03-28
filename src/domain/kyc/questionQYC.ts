@@ -86,6 +86,10 @@ export class QuestionKYC implements TaggedContent {
     return this.tags.concat(this.thematique);
   }
 
+  public getDistinctText(): string {
+    return this.question;
+  }
+
   public includesReponseCode(code: string): boolean {
     if (!this.reponses) {
       return false;

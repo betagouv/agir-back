@@ -46,4 +46,8 @@ export class Quizz extends QuizzData implements TaggedContent {
       this.tags_rubriques,
     );
   }
+
+  public getDistinctText(): string {
+    return this.titre;
+  }
 }

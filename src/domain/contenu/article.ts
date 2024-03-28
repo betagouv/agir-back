@@ -47,6 +47,10 @@ export class Article extends ArticleData implements TaggedContent {
       this.tags_rubriques,
     );
   }
+
+  public getDistinctText(): string {
+    return this.titre;
+  }
 }
 
 export class PersonalArticle extends Article {
