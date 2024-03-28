@@ -206,7 +206,7 @@ export class CMSUsecase {
     const URL = process.env.CMS_URL.concat(
       '/',
       type,
-      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques',
+      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags',
     );
     response = await axios.get(URL, {
       headers: {
@@ -390,6 +390,7 @@ export class CMSUsecase {
   static buildDefiFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
   ): DefiDefinition {
+    console.log(entry.attributes.tags.data);
     return {
       content_id: entry.id.toString(),
       titre: entry.attributes.titre,
@@ -402,7 +403,9 @@ export class CMSUsecase {
             entry.attributes.thematique.data.id,
           )
         : Thematique.climat,
-      tags: entry.attributes.tags.data.map((elem) => TagUtilisateur[elem.code]),
+      tags: entry.attributes.tags.data.map(
+        (elem) => TagUtilisateur[elem.attributes.code],
+      ),
     };
   }
 
