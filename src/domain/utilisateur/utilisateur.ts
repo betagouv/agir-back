@@ -176,7 +176,6 @@ export class Utilisateur extends UtilisateurData {
     map: Record<string, number>,
   ) {
     for (const key in map) {
-      console.log(key);
       if (kyc.includesReponseCode(key)) {
         this.tag_ponderation_set[tag] = map[key];
         return;

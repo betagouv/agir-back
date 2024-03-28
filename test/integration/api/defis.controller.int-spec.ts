@@ -1,6 +1,5 @@
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
-import { CatalogueDefis } from '../../../src/domain/defis/catalogueDefis';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
@@ -10,6 +9,18 @@ import {
   DefiHistory_v0,
   Defi_v0,
 } from '../../../src/domain/object_store/defi/defiHistory_v0';
+import { DefiDefinition } from '../../../src/domain/defis/defiDefinition';
+
+const DEFI_1_DEF: DefiDefinition = {
+  content_id: '1',
+  points: 5,
+  tags: [Tag.utilise_moto_ou_voiture],
+  titre: 'titre',
+  thematique: Thematique.alimentation,
+  astuces: 'astuce',
+  pourquoi: 'pourquoi',
+  sous_titre: 'sous_titre',
+};
 
 describe('/utilisateurs/id/defis (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -40,25 +51,11 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
   afterAll(async () => {
     await TestUtil.appclose();
-    CatalogueDefis.resetCatalogue();
   });
 
   it('GET /defis - liste defis catalogue', async () => {
     // GIVEN
-    CatalogueDefis.setCatalogue([
-      {
-        id: '1',
-        points: 5,
-        tags: [Tag.transport],
-        titre: 'titre',
-        thematique: Thematique.alimentation,
-        astuces: 'astuce',
-        date_acceptation: null,
-        pourquoi: 'pourquoi',
-        sous_titre: 'sous_titre',
-        status: DefiStatus.todo,
-      },
-    ]);
+    await TestUtil.create(DB.defi, DEFI_1_DEF);
     await TestUtil.create(DB.utilisateur);
 
     // WHEN
@@ -122,7 +119,12 @@ describe('/utilisateurs/id/defis (API test)', () => {
   });
   it('GET /utilisateurs/id/defis/id - correct data defis du catalogue', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.utilisateur, {
+      history: {},
+      defis: {
+        defis: [DEFI_1],
+      },
+    });
     ThematiqueRepository.resetThematiques();
     await TestUtil.create(DB.thematique, {
       id: '1',
@@ -131,20 +133,20 @@ describe('/utilisateurs/id/defis (API test)', () => {
     });
     await thematiqueRepository.loadThematiques();
 
-    CatalogueDefis.setCatalogue([
-      {
-        id: '1',
-        points: 5,
-        tags: [Tag.transport],
-        titre: 'titre',
-        thematique: Thematique.alimentation,
-        astuces: 'astuce',
-        date_acceptation: new Date(Date.now() - 3 * DAY_IN_MS),
-        pourquoi: 'pourquoi',
-        sous_titre: 'sous_titre',
-        status: DefiStatus.todo,
-      },
-    ]);
+    /*
+    await TestUtil.create(DB.defi, {
+      content_id: '1',
+      points: 5,
+      tags: [Tag.transport],
+      titre: 'titre',
+      thematique: Thematique.alimentation,
+      astuces: 'astuce',
+      date_acceptation: new Date(Date.now() - 3 * DAY_IN_MS),
+      pourquoi: 'pourquoi',
+      sous_titre: 'sous_titre',
+      status: DefiStatus.todo,
+    });
+    */
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/defis/1');
@@ -255,20 +257,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
 
-    CatalogueDefis.setCatalogue([
-      {
-        id: '1',
-        points: 5,
-        tags: [Tag.transport],
-        titre: 'titre',
-        thematique: Thematique.alimentation,
-        astuces: 'astuce',
-        date_acceptation: new Date(Date.now() - 3 * DAY_IN_MS),
-        pourquoi: 'pourquoi',
-        sous_titre: 'sous_titre',
-        status: DefiStatus.todo,
-      },
-    ]);
+    await TestUtil.create(DB.defi, DEFI_1_DEF);
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -292,20 +281,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
 
-    CatalogueDefis.setCatalogue([
-      {
-        id: '1',
-        points: 5,
-        tags: [Tag.transport],
-        titre: 'titre',
-        thematique: Thematique.alimentation,
-        astuces: 'astuce',
-        date_acceptation: new Date(Date.now() - 3 * DAY_IN_MS),
-        pourquoi: 'pourquoi',
-        sous_titre: 'sous_titre',
-        status: DefiStatus.todo,
-      },
-    ]);
+    await TestUtil.create(DB.defi, DEFI_1_DEF);
 
     // WHEN
     const response = await TestUtil.PATCH(

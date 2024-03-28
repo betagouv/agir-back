@@ -1,11 +1,11 @@
 import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { DefiStatus } from '../../../../src/domain/defis/defi';
 import { Tag } from '../../../../src/domain/scoring/tag';
-import { CatalogueDefis } from '../../../../src/domain/defis/catalogueDefis';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 import { Defi_v0 } from '../../../../src/domain/object_store/defi/defiHistory_v0';
 import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
 import { Gamification } from '../../../../src/domain/gamification/gamification';
+import { DefiDefinition } from '../../../../src/domain/defis/defiDefinition';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
@@ -21,12 +21,22 @@ const DEFI_1: Defi_v0 = {
   sous_titre: 'sous_titre',
   status: DefiStatus.todo,
 };
+const DEFI_1_DEF: DefiDefinition = {
+  content_id: '1',
+  points: 5,
+  tags: [Tag.transport],
+  titre: 'titre',
+  thematique: Thematique.alimentation,
+  astuces: 'astuce',
+  pourquoi: 'pourquoi',
+  sous_titre: 'sous_titre',
+};
 
 describe('DefiHistory', () => {
   it('getDefisRestants : quand hisotrique vide ', () => {
     // GIVEN
     const defiHistory = new DefiHistory();
-    CatalogueDefis.setCatalogue([DEFI_1]);
+    defiHistory.setCatalogue([DEFI_1_DEF]);
 
     // THEN
     expect(defiHistory.getDefisRestants()).toHaveLength(1);
@@ -37,7 +47,7 @@ describe('DefiHistory', () => {
       version: 0,
       defis: [DEFI_1],
     });
-    CatalogueDefis.setCatalogue([DEFI_1]);
+    defiHistory.setCatalogue([DEFI_1_DEF]);
 
     // THEN
     expect(defiHistory.getDefisRestants()).toHaveLength(0);
@@ -45,7 +55,7 @@ describe('DefiHistory', () => {
   it('getDefiOrException : exception si id defi inconnu', () => {
     // GIVEN
     const defiHistory = new DefiHistory();
-    CatalogueDefis.setCatalogue([DEFI_1]);
+    defiHistory.setCatalogue([DEFI_1_DEF]);
 
     // THEN
     try {
@@ -66,7 +76,7 @@ describe('DefiHistory', () => {
         },
       ],
     });
-    CatalogueDefis.setCatalogue([DEFI_1]);
+    defiHistory.setCatalogue([DEFI_1_DEF]);
 
     // THEN
     defiHistory.getDefiOrException('123');
@@ -75,7 +85,7 @@ describe('DefiHistory', () => {
   it('updateStatus : cree defi dans hitorique pour maj status', () => {
     // GIVEN
     const defiHistory = new DefiHistory();
-    CatalogueDefis.setCatalogue([DEFI_1]);
+    defiHistory.setCatalogue([DEFI_1_DEF]);
 
     const user = new Utilisateur();
     user.gamification = new Gamification();

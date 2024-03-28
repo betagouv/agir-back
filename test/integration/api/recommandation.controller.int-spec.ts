@@ -10,13 +10,13 @@ import {
   PonderationApplicativeManager,
 } from '../../../src/domain/scoring/ponderationApplicative';
 import { DB, TestUtil } from '../../TestUtil';
-import { CatalogueDefis } from '../../../src/domain/defis/catalogueDefis';
 import { CatalogueQuestionsKYC } from '../../../src/domain/kyc/catalogueQuestionsKYC';
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
   QuestionID,
 } from '../../../src/domain/kyc/questionQYC';
+import { DefiDefinition } from 'src/domain/defis/defiDefinition';
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
 const DEFI_1: Defi_v0 = {
@@ -29,7 +29,17 @@ const DEFI_1: Defi_v0 = {
   date_acceptation: new Date(Date.now() - 3 * DAY_IN_MS),
   pourquoi: 'pourquoi',
   sous_titre: 'sous_titre',
-  status: DefiStatus.todo,
+  status: DefiStatus.en_cours,
+};
+const DEFI_1_DEF: DefiDefinition = {
+  content_id: '1',
+  points: 5,
+  tags: [Tag.utilise_moto_ou_voiture],
+  titre: 'titre',
+  thematique: Thematique.alimentation,
+  astuces: 'astuce',
+  pourquoi: 'pourquoi',
+  sous_titre: 'sous_titre',
 };
 
 describe('/utilisateurs/id/recommandations (API test)', () => {
@@ -69,7 +79,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandation - list article recommandation', async () => {
     // GIVEN
-    CatalogueDefis.setCatalogue([]);
     CatalogueQuestionsKYC.setCatalogue([]);
 
     await TestUtil.create(DB.utilisateur, { history: {} });
@@ -95,9 +104,14 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     // GIVEN
     process.env.DEFI_ENABLED = 'true';
     process.env.KYC_RECO_ENABLED = 'true';
-    CatalogueDefis.setCatalogue([{ ...DEFI_1 }]);
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF });
     CatalogueQuestionsKYC.setCatalogue([]);
-    await TestUtil.create(DB.utilisateur, { history: {} });
+    await TestUtil.create(DB.utilisateur, {
+      history: {},
+      defis: {
+        defis: [DEFI_1],
+      },
+    });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -114,12 +128,11 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       'https://res.cloudinary.com/dq023imd8/image/upload/v1711467455/Illustration_defis_63f2bfed5a.svg',
     );
     expect(response.body[0].points).toEqual(5);
-    expect(response.body[0].status_defi).toEqual(DefiStatus.todo);
+    expect(response.body[0].status_defi).toEqual(DefiStatus.en_cours);
     expect(response.body[0].jours_restants).toEqual(4);
   });
   it('GET /utilisateurs/id/recommandations - list all recos, filtée par code postal', async () => {
     // GIVEN
-    CatalogueDefis.setCatalogue([]);
     CatalogueQuestionsKYC.setCatalogue([]);
 
     await TestUtil.create(DB.utilisateur, {
@@ -146,7 +159,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations - applique les ponderations aux articles', async () => {
     // GIVEN
-    CatalogueDefis.setCatalogue([]);
     CatalogueQuestionsKYC.setCatalogue([]);
 
     await TestUtil.create(DB.utilisateur, {
@@ -189,7 +201,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations - applique les ponderations aux quizz', async () => {
     // GIVEN
-    CatalogueDefis.setCatalogue([]);
     CatalogueQuestionsKYC.setCatalogue([]);
 
     await TestUtil.create(DB.utilisateur, {
@@ -234,7 +245,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     // GIVEN
     process.env.DEFI_ENABLED = 'true';
     process.env.KYC_RECO_ENABLED = 'true';
-    CatalogueDefis.setCatalogue([{ ...DEFI_1, id: '101' }]);
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '101' });
+
     CatalogueQuestionsKYC.setCatalogue([]);
     await TestUtil.create(DB.utilisateur, {
       history: {},
@@ -277,7 +289,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
   it('GET /utilisateurs/id/recommandations - tag climat 2 fois renforce le score', async () => {
     // GIVEN
-    CatalogueDefis.setCatalogue([]);
     CatalogueQuestionsKYC.setCatalogue([]);
     await TestUtil.create(DB.utilisateur, {
       history: {},
@@ -312,7 +323,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
   it('GET /utilisateurs/id/recommandations - pas de article lu', async () => {
     // GIVEN
-    CatalogueDefis.setCatalogue([]);
     CatalogueQuestionsKYC.setCatalogue([]);
 
     await TestUtil.create(DB.utilisateur, {
@@ -347,7 +357,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations - que des quizz jamais touchés', async () => {
     // GIVEN
-    CatalogueDefis.setCatalogue([]);
     CatalogueQuestionsKYC.setCatalogue([]);
     await TestUtil.create(DB.utilisateur, {
       history: {
@@ -428,13 +437,32 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         },
       ],
     };
-    CatalogueDefis.setCatalogue([
-      { ...DEFI_1, id: '1', tags: [Tag.R1] },
-      { ...DEFI_1, id: '2', tags: [Tag.R2] },
-      { ...DEFI_1, id: '3', tags: [Tag.R3] },
-      { ...DEFI_1, id: '4', tags: [Tag.R4] },
-      { ...DEFI_1, id: '5', tags: [Tag.R5] },
-    ]);
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '1',
+      tags: [Tag.R1],
+    });
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '2',
+      tags: [Tag.R2],
+    });
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '3',
+      tags: [Tag.R3],
+    });
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '4',
+      tags: [Tag.R4],
+    });
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '5',
+      tags: [Tag.R5],
+    });
+
     await TestUtil.create(DB.utilisateur, {
       defis: defis,
       tag_ponderation_set: { R1: 5, R2: 4, R3: 3, R4: 2, R5: 1, R6: 6 },
@@ -523,13 +551,32 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         },
       ],
     };
-    CatalogueDefis.setCatalogue([
-      { ...DEFI_1, id: '1', tags: [Tag.R1] },
-      { ...DEFI_1, id: '2', tags: [Tag.R2] },
-      { ...DEFI_1, id: '3', tags: [Tag.R3] },
-      { ...DEFI_1, id: '4', tags: [Tag.R4] },
-      { ...DEFI_1, id: '5', tags: [Tag.R5] },
-    ]);
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '1',
+      tags: [Tag.R1],
+    });
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '2',
+      tags: [Tag.R2],
+    });
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '3',
+      tags: [Tag.R3],
+    });
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '4',
+      tags: [Tag.R4],
+    });
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '5',
+      tags: [Tag.R5],
+    });
+
     await TestUtil.create(DB.utilisateur, {
       defis: defis,
       tag_ponderation_set: { R1: 5, R2: 4, R3: 3, R4: 2, R5: 1, R6: 6 },

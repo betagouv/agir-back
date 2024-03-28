@@ -47,6 +47,7 @@ import { Empreinte, SituationNGC, Suivi } from '.prisma/client';
 import {
   Aide,
   Article,
+  Defi,
   Groupe,
   GroupeAbonnement,
   Linky,
@@ -60,6 +61,7 @@ import { TransportQuotidien } from '../src/domain/utilisateur/transport';
 import { Transport_v0 } from '../src/domain/object_store/transport/transport_v0';
 import { DefiHistory_v0 } from '../src/domain/object_store/defi/defiHistory_v0';
 import { DefiStatus } from '../src/domain/defis/defi';
+import { TagUtilisateur } from '../src/domain/scoring/tagUtilisateur';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -67,6 +69,7 @@ export enum DB {
   suivi = 'suivi',
   utilisateur = 'utilisateur',
   aide = 'aide',
+  defi = 'defi',
   empreinte = 'empreinte',
   service = 'service',
   groupeAbonnement = 'groupeAbonnement',
@@ -82,6 +85,7 @@ export class TestUtil {
     suivi: TestUtil.suiviData,
     utilisateur: TestUtil.utilisateurData,
     aide: TestUtil.aideData,
+    defi: TestUtil.defiData,
     empreinte: TestUtil.empreinteData,
     service: TestUtil.serviceData,
     groupeAbonnement: TestUtil.groupeAbonnementData,
@@ -165,6 +169,7 @@ export class TestUtil {
     await this.prisma.article.deleteMany();
     await this.prisma.quizz.deleteMany();
     await this.prisma.aide.deleteMany();
+    await this.prisma.defi.deleteMany();
     ThematiqueRepository.resetThematiques();
   }
 
@@ -290,7 +295,7 @@ export class TestUtil {
       },
     });
   }
-  static aideData(override?): Aide {
+  static aideData(override?: Partial<Aide>): Aide {
     return {
       content_id: '1',
       titre: 'titreA',
@@ -300,6 +305,23 @@ export class TestUtil {
       is_simulateur: true,
       montant_max: 999,
       url_simulateur: '/aides/velo',
+      created_at: undefined,
+      updated_at: undefined,
+      ...override,
+    };
+  }
+  static defiData(override?: Partial<Defi>): Defi {
+    return {
+      content_id: '123',
+      titre: 'titreA',
+      astuces: 'astucesss',
+      pourquoi: 'pfpaf',
+      points: 5,
+      sous_titre: 'ssss',
+      tags: [TagUtilisateur.appetence_cafe],
+      thematique: Thematique.consommation,
+      created_at: undefined,
+      updated_at: undefined,
       ...override,
     };
   }

@@ -80,6 +80,7 @@ import { InscriptionController } from './infrastructure/api/inscription.controll
 import { AideRepository } from './infrastructure/repository/aide.repository';
 import { DefisController } from './infrastructure/api/defis.controller';
 import { DefisUsecase } from './usecase/defis.usecase';
+import { DefiRepository } from './infrastructure/repository/defi.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -176,6 +177,7 @@ function getControllers(): any[] {
     EquipementUsecase,
     InscriptionUsecase,
     AideRepository,
+    DefiRepository,
     DefisUsecase,
   ],
 })
