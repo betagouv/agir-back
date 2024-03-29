@@ -53,13 +53,7 @@ export class UtilisateurUsecase {
     if (confirmation !== 'CONFIRMATION RESET') {
       ApplicationError.throwMissingResetConfirmation();
     }
-    const utilisateur = await this.utilisateurRespository.getById(
-      utilisateurId,
-    );
-
-    utilisateur.resetAllHistory();
-
-    await this.utilisateurRespository.updateUtilisateur(utilisateur);
+    await this.resetUser(utilisateurId);
   }
 
   async resetAllUsers(confirmation: string) {
@@ -72,6 +66,8 @@ export class UtilisateurUsecase {
       const utilisateur = await this.utilisateurRespository.getById(user_id);
 
       utilisateur.resetAllHistory();
+
+      await this.serviceRepository.deleteAllUserServices(user_id);
 
       await this.utilisateurRespository.updateUtilisateur(utilisateur);
     }
@@ -193,6 +189,18 @@ export class UtilisateurUsecase {
     );
   }
 
+  private async resetUser(utilisateurId: string) {
+    const utilisateur = await this.utilisateurRespository.getById(
+      utilisateurId,
+    );
+
+    utilisateur.resetAllHistory();
+
+    await this.serviceRepository.deleteAllUserServices(utilisateurId);
+
+    await this.utilisateurRespository.updateUtilisateur(utilisateur);
+  }
+
   async modifier_mot_de_passe(
     email: string,
     code: string,
@@ -235,7 +243,6 @@ export class UtilisateurUsecase {
     await this.suiviRepository.delete(utilisateurId);
     await this.bilanRepository.delete(utilisateurId);
     await this.oIDCStateRepository.delete(utilisateurId);
-    await this.bilanRepository.delete(utilisateurId);
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
     await this.groupeRepository.delete(utilisateurId);
     await this.utilisateurRespository.delete(utilisateurId);

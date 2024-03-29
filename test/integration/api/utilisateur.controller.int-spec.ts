@@ -9,6 +9,7 @@ import {
   TypeLogement,
 } from '../../../src/domain/utilisateur/logement';
 import { TransportQuotidien } from '../../../src/domain/utilisateur/transport';
+import { ServiceRepository } from 'src/infrastructure/repository/service.repository';
 var crypto = require('crypto');
 
 const ONBOARDING_1_2_3_4_DATA = {
@@ -772,7 +773,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   it(`POST /utilisateurs/id/reset reset d'un utilisateur donné`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-
+    await TestUtil.create(DB.serviceDefinition);
+    await TestUtil.create(DB.service);
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/reset',
@@ -781,10 +783,14 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     });
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const servicesDB = await TestUtil.prisma.service.findMany();
+    const servicesDefDB = await TestUtil.prisma.serviceDefinition.findMany();
 
     // THEN
     expect(response.status).toBe(201);
     expect(userDB.unlocked_features.unlocked_features).toHaveLength(0);
+    expect(servicesDB).toHaveLength(0);
+    expect(servicesDefDB).toHaveLength(1);
   });
   it(`POST /utilisateurs/id/reset reset tous les utilisateurs`, async () => {
     // GIVEN
