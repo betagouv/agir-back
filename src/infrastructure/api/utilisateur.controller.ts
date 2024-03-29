@@ -129,15 +129,7 @@ export class UtilisateurController extends GenericControler {
     if (utilisateur == null) {
       throw new NotFoundException(`Pas d'utilisateur d'id ${utilisateurId}`);
     }
-    // FIXME : to remove after migration
-    const result = LogementAPI.mapToAPI(utilisateur.logement);
-    if (result.code_postal === undefined) {
-      result.code_postal = utilisateur.code_postal;
-    }
-    if (result.commune === undefined) {
-      result.commune = utilisateur.commune;
-    }
-    return result;
+    return LogementAPI.mapToAPI(utilisateur.logement);
   }
 
   @ApiOkResponse({ type: TransportAPI })

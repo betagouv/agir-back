@@ -38,8 +38,6 @@ model Utilisateur {
   prenom                   String?            @default("prenom")
   passwordHash             String?            @default("hash")
   passwordSalt             String?            @default("salt")
-  code_postal              String?
-  commune                  String?
   revenu_fiscal            Int?
   onboardingData           Json               @default("{}") // versioné 
   onboardingResult         Json               @default("{}") // versioné 

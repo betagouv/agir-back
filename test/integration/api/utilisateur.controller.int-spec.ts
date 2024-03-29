@@ -382,10 +382,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('GET /utilisateurs/id/logement - read logement datas', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, {
-      code_postal: '11111',
-      commune: 'Patelin',
-    });
+    await TestUtil.create(DB.utilisateur);
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/logement',
@@ -418,22 +415,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     ]);
     expect(response.body.avions_par_an).toEqual(2);
   });
-  it('GET /utilisateurs/id/logement - read logement datas et prio sur donnee commune code postal utilisateur', async () => {
-    // GIVEN
-    const user = await TestUtil.create(DB.utilisateur, {
-      code_postal: '11111',
-      commune: 'Patelin',
-      logement: {},
-    });
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/logement',
-    );
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.code_postal).toEqual('11111');
-    expect(response.body.commune).toEqual('Patelin');
-  });
   it('GET /utilisateurs/id/profile - use onboarding data when missing parts in user account', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { parts: null });
@@ -465,8 +446,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       email: 'george@paris.com',
       nom: 'THE NOM',
       prenom: 'THE PRENOM',
-      code_postal: '75008',
-      commune: 'Versailles',
       revenu_fiscal: 12345,
       nombre_de_parts_fiscales: 3,
       abonnement_ter_loire: true,
@@ -488,8 +467,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       email: 'george@paris.com',
       nom: 'THE NOM',
       prenom: 'THE PRENOM',
-      code_postal: '75008',
-      commune: 'Versailles',
       mot_de_passe: '123456789012#aA',
       revenu_fiscal: 12345,
       nombre_de_parts_fiscales: 3,
@@ -506,8 +483,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.nom).toEqual('THE NOM');
     expect(dbUser.prenom).toEqual('THE PRENOM');
     expect(dbUser.email).toEqual('george@paris.com');
-    expect(dbUser.code_postal).toEqual('75008');
-    expect(dbUser.commune).toEqual('Versailles');
     expect(dbUser.revenu_fiscal).toEqual(12345);
     expect(dbUser.parts.toNumber()).toEqual(3);
     expect(dbUser.abonnement_ter_loire).toEqual(true);
@@ -538,8 +513,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     const dbUser = await utilisateurRepository.getById('utilisateur-id');
-    expect(dbUser.code_postal).toEqual('11111');
-    expect(dbUser.commune).toEqual('Patelin');
+
     expect(dbUser.logement.code_postal).toEqual('11111');
     expect(dbUser.logement.commune).toEqual('Patelin');
     expect(dbUser.logement.nombre_adultes).toEqual(4);

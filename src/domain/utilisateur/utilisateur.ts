@@ -26,8 +26,6 @@ export class UtilisateurData {
   prenom: string;
   onboardingData: Onboarding;
   onboardingResult: OnboardingResult;
-  code_postal: string; // FIXME to delete
-  commune: string; // FIXME to delete
   revenu_fiscal: number;
   parts: number;
   abonnement_ter_loire: boolean;
@@ -84,8 +82,6 @@ export class Utilisateur extends UtilisateurData {
   ): Utilisateur {
     return new Utilisateur({
       nom: nom,
-      code_postal: onboarding.code_postal,
-      commune: onboarding.commune,
       prenom: prenom,
       email: email,
       onboardingData: onboarding,

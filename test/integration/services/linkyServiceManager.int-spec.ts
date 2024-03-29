@@ -14,7 +14,27 @@ import {
   ServiceDefinitionData,
 } from '../../../src/domain/service/serviceDefinition';
 import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import {
+  Superficie,
+  TypeLogement,
+  Chauffage,
+  DPE,
+} from '../../../src/domain/utilisateur/logement';
 
+const logement: Logement_v0 = {
+  version: 0,
+  superficie: Superficie.superficie_150,
+  type: TypeLogement.maison,
+  code_postal: '91120',
+  chauffage: Chauffage.bois,
+  commune: 'PALAISEAU',
+  dpe: DPE.B,
+  nombre_adultes: 2,
+  nombre_enfants: 2,
+  plus_de_15_ans: true,
+  proprietaire: true,
+};
 const SERVICE_DEF_DATA: ServiceDefinitionData = {
   serviceDefinitionId: 'dummy_live',
   titre: 'titre',
@@ -231,7 +251,7 @@ describe('linkyServiceManager', () => {
   });
   it(`processConfiguration : supprime l'état en erreur d'une conf précédentee`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_postal: '75002' });
+    await TestUtil.create(DB.utilisateur);
 
     const def = { id: LiveService.linky };
     const serviceDef = {
@@ -264,7 +284,7 @@ describe('linkyServiceManager', () => {
   });
   it(`processConfiguration : lance une erreur 032 si erreur 032, mais d'email d'erreur`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_postal: '75002' });
+    await TestUtil.create(DB.utilisateur);
 
     const def = { id: LiveService.linky };
     const serviceDef = {
@@ -297,7 +317,7 @@ describe('linkyServiceManager', () => {
   });
   it(`processConfiguration : lance une erreur 039 si erreur 039, mais d'email d'erreur`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_postal: '75002' });
+    await TestUtil.create(DB.utilisateur);
 
     const def = { id: LiveService.linky };
     const serviceDef = {
@@ -330,7 +350,7 @@ describe('linkyServiceManager', () => {
   });
   it(`processConfiguration : silencieux si erreur pas 032 ou 039`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_postal: '75002' });
+    await TestUtil.create(DB.utilisateur);
 
     const def = { id: LiveService.linky };
     const serviceDef = {
@@ -417,9 +437,7 @@ describe('linkyServiceManager', () => {
     // GIVEN
     linkyAPIConnector.souscription_API.mockReturnValue('pk_123');
 
-    await TestUtil.create(DB.utilisateur, {
-      logement: { version: 0, code_postal: '75002' },
-    });
+    await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: LiveService.linky });
     await TestUtil.create(DB.service, {
       serviceDefinitionId: LiveService.linky,
@@ -453,7 +471,7 @@ describe('linkyServiceManager', () => {
 
     expect(serviceDB.configuration['winter_pk']).toEqual('pk_123');
     expect(serviceDB.configuration['live_prm']).toEqual('123');
-    expect(serviceDB.configuration['departement']).toEqual('75');
+    expect(serviceDB.configuration['departement']).toEqual('91');
 
     expect(linkyEmailer.sendConfigurationKOEmail).toBeCalledTimes(0);
     expect(linkyAPIConnector.souscription_API).toBeCalledTimes(1);
@@ -462,7 +480,7 @@ describe('linkyServiceManager', () => {
     // GIVEN
     linkyAPIConnector.souscription_API.mockReturnValue('pk_123');
 
-    await TestUtil.create(DB.utilisateur, { code_postal: '75002' });
+    await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: LiveService.linky });
     await TestUtil.create(DB.service, {
       serviceDefinitionId: LiveService.linky,
@@ -504,7 +522,7 @@ describe('linkyServiceManager', () => {
     // GIVEN
     linkyAPIConnector.souscription_API.mockReturnValue('pk_123');
 
-    await TestUtil.create(DB.utilisateur, { code_postal: '75002' });
+    await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: LiveService.linky });
     await TestUtil.create(DB.service, {
       serviceDefinitionId: LiveService.linky,
@@ -547,7 +565,7 @@ describe('linkyServiceManager', () => {
       throw { code: '11', message: 'aie' };
     });
 
-    await TestUtil.create(DB.utilisateur, { code_postal: '75002' });
+    await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: LiveService.linky });
     await TestUtil.create(DB.service, {
       serviceDefinitionId: LiveService.linky,
@@ -588,7 +606,7 @@ describe('linkyServiceManager', () => {
   });
   it('removeService : cas passant, supprime le service et les données linky', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_postal: '75002' });
+    await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: LiveService.linky });
     await TestUtil.create(DB.service, {
       serviceDefinitionId: LiveService.linky,
@@ -629,7 +647,7 @@ describe('linkyServiceManager', () => {
   });
   it(`removeService : si API répond déjà supprimé, supprime bien le serrvice et les data`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_postal: '75002' });
+    await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: LiveService.linky });
     await TestUtil.create(DB.service, {
       serviceDefinitionId: LiveService.linky,
@@ -676,7 +694,7 @@ describe('linkyServiceManager', () => {
   });
   it(`removeService : ne tente pas de supprimer via API si erreur courrante 037, en revanche supprime bien le serrvice et les data`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_postal: '75002' });
+    await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: LiveService.linky });
     await TestUtil.create(DB.service, {
       serviceDefinitionId: LiveService.linky,
@@ -725,7 +743,7 @@ describe('linkyServiceManager', () => {
       throw { code: '11', message: 'aie' };
     });
 
-    await TestUtil.create(DB.utilisateur, { code_postal: '75002' });
+    await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: LiveService.linky });
     await TestUtil.create(DB.service, {
       serviceDefinitionId: LiveService.linky,
@@ -768,7 +786,7 @@ describe('linkyServiceManager', () => {
   });
   it('runAsyncProcessing :service LIVE => rien à faire', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_postal: '75002' });
+    await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: LiveService.linky });
     await TestUtil.create(DB.service, {
       serviceDefinitionId: LiveService.linky,
@@ -795,7 +813,7 @@ describe('linkyServiceManager', () => {
   });
   it('runAsyncProcessing :service CREATED => activation', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_postal: '75002' });
+    await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: LiveService.linky });
     await TestUtil.create(DB.service, {
       serviceDefinitionId: LiveService.linky,
@@ -828,7 +846,7 @@ describe('linkyServiceManager', () => {
   });
   it('runAsyncProcessing :service CREATED => erreur 032 => envoie de mail', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_postal: '75002' });
+    await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: LiveService.linky });
     await TestUtil.create(DB.service, {
       serviceDefinitionId: LiveService.linky,
@@ -865,7 +883,7 @@ describe('linkyServiceManager', () => {
   });
   it(`runAsyncProcessing : double traitement en erreur n'envoie pas deux fois le mail`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_postal: '75002' });
+    await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: LiveService.linky });
     await TestUtil.create(DB.service, {
       serviceDefinitionId: LiveService.linky,
@@ -903,7 +921,7 @@ describe('linkyServiceManager', () => {
   });
   it('runAsyncProcessing :service TO_DELETE => suppression du service', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_postal: '75002' });
+    await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: LiveService.linky });
     await TestUtil.create(DB.service, {
       serviceDefinitionId: LiveService.linky,
@@ -941,7 +959,7 @@ describe('linkyServiceManager', () => {
   });
   it('runAsyncProcessing : présence de donnee declenche envoi mail', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_postal: '75002' });
+    await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: LiveService.linky });
     await TestUtil.create(DB.service, {
       serviceDefinitionId: LiveService.linky,
@@ -977,7 +995,7 @@ describe('linkyServiceManager', () => {
   });
   it('runAsyncProcessing : pas de doublon mail', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_postal: '75002' });
+    await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: LiveService.linky });
     await TestUtil.create(DB.service, {
       serviceDefinitionId: LiveService.linky,

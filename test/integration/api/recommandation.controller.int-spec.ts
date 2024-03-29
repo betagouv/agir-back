@@ -163,7 +163,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     await TestUtil.create(DB.utilisateur, {
       history: {},
-      code_postal: null,
     });
     PonderationApplicativeManager.setCatalogue({
       neutre: {
@@ -205,7 +204,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     await TestUtil.create(DB.utilisateur, {
       history: {},
-      code_postal: null,
     });
     PonderationApplicativeManager.setCatalogue({
       neutre: {
@@ -250,7 +248,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     CatalogueQuestionsKYC.setCatalogue([]);
     await TestUtil.create(DB.utilisateur, {
       history: {},
-      code_postal: null,
       tag_ponderation_set: { utilise_moto_ou_voiture: 100 },
     });
     PonderationApplicativeManager.setCatalogue({
@@ -292,7 +289,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     CatalogueQuestionsKYC.setCatalogue([]);
     await TestUtil.create(DB.utilisateur, {
       history: {},
-      code_postal: null,
       tag_ponderation_set: { transport: 50 },
     });
     PonderationApplicativeManager.setCatalogue({

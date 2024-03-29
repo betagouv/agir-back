@@ -117,18 +117,12 @@ export class UtilisateurUsecase {
       PasswordManager.setUserPassword(utilisateur, profile.mot_de_passe);
     }
 
-    utilisateur.code_postal = profile.code_postal;
-    utilisateur.commune = profile.commune;
     utilisateur.revenu_fiscal = profile.revenu_fiscal;
     utilisateur.parts = profile.nombre_de_parts_fiscales;
     utilisateur.abonnement_ter_loire = profile.abonnement_ter_loire;
     utilisateur.email = profile.email;
     utilisateur.nom = profile.nom;
     utilisateur.prenom = profile.prenom;
-    if (utilisateur.logement) {
-      utilisateur.logement.code_postal = profile.code_postal;
-      utilisateur.logement.commune = profile.commune;
-    }
 
     return this.utilisateurRespository.updateUtilisateur(utilisateur);
   }
@@ -151,14 +145,6 @@ export class UtilisateurUsecase {
     );
 
     utilisateur.logement.patch(input);
-
-    // FIXME : remove when migrated users
-    utilisateur.code_postal = this.AorB(
-      input.code_postal,
-      utilisateur.code_postal,
-    );
-
-    utilisateur.commune = this.AorB(input.commune, utilisateur.commune);
 
     utilisateur.recomputeRecoTags();
 
