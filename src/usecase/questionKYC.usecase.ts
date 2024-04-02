@@ -31,13 +31,14 @@ export class QuestionKYCUsecase {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
     // FIXME : until reset
+    let qid = questionId;
     if (questionId === '001') {
       questionId = QuestionID.KYC001;
     }
 
     utilisateur.kyc_history.checkQuestionExists(questionId);
 
-    this.updateUserTodo(utilisateur, questionId);
+    this.updateUserTodo(utilisateur, qid);
 
     if (!utilisateur.kyc_history.isQuestionAnswered(questionId)) {
       const question =
