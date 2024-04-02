@@ -66,4 +66,8 @@ export class Defi implements TaggedContent {
   public getTags(): Tag[] {
     return this.tags.concat(this.thematique);
   }
+
+  public getDistinctText(): string {
+    return this.titre;
+  }
 }

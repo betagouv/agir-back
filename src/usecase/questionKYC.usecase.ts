@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { QuestionKYC } from '../domain/kyc/questionQYC';
+import { QuestionID, QuestionKYC } from '../domain/kyc/questionQYC';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 
@@ -15,6 +15,11 @@ export class QuestionKYCUsecase {
   async getQuestion(utilisateurId: string, questionId): Promise<QuestionKYC> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
+    // FIXME : until reset
+    if (questionId === '001') {
+      questionId = QuestionID.KYC001;
+    }
+
     return utilisateur.kyc_history.getQuestionOrException(questionId);
   }
 
@@ -24,6 +29,11 @@ export class QuestionKYCUsecase {
     reponse: string[],
   ): Promise<void> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+
+    // FIXME : until reset
+    if (questionId === '001') {
+      questionId = QuestionID.KYC001;
+    }
 
     utilisateur.kyc_history.checkQuestionExists(questionId);
 

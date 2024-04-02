@@ -112,8 +112,6 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(user.nom).toEqual('WW');
     expect(user.prenom).toEqual('Wojtek');
     expect(user.email).toEqual('w@w.com');
-    expect(user.code_postal).toEqual('91120');
-    expect(user.commune).toEqual('Palaiseau');
     expect(user.passwordHash.length).toBeGreaterThan(20);
     expect(user.passwordSalt.length).toBeGreaterThan(20);
     expect({ ...user.onboardingData }).toStrictEqual({

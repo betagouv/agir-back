@@ -1,13 +1,16 @@
+import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { DefiHistory_v0 } from '../object_store/defi/defiHistory_v0';
 import { Utilisateur } from '../utilisateur/utilisateur';
-import { CatalogueDefis } from './catalogueDefis';
 import { Defi, DefiStatus } from './defi';
+import { DefiDefinition } from './defiDefinition';
 
 export class DefiHistory {
   defis: Defi[];
+  private catalogue: DefiDefinition[];
 
   constructor(data?: DefiHistory_v0) {
-    this.defis = [];
+    this.reset();
+
     if (data && data.defis) {
       data.defis.forEach((element) => {
         this.defis.push(new Defi(element));
@@ -15,15 +18,25 @@ export class DefiHistory {
     }
   }
 
+  public reset() {
+    this.defis = [];
+    this.catalogue = [];
+  }
+  public setCatalogue(cat: DefiDefinition[]) {
+    this.catalogue = cat;
+  }
+
   public getDefisRestants(): Defi[] {
-    const defis_all = CatalogueDefis.getAll();
+    const defis_restants = [].concat(this.catalogue);
     this.defis.forEach((defi_courant) => {
-      const index = defis_all.findIndex((d) => d.id === defi_courant.id);
+      const index = defis_restants.findIndex(
+        (d) => d.content_id === defi_courant.id,
+      );
       if (index !== -1) {
-        defis_all.splice(index, 1);
+        defis_restants.splice(index, 1);
       }
     });
-    return defis_all;
+    return defis_restants.map((d) => this.buildDefiFromDefinition(d));
   }
 
   public getDefisEnCours(): Defi[] {
@@ -40,7 +53,7 @@ export class DefiHistory {
     let defi = this.getDefiUtilisateur(id);
     if (defi) return defi;
 
-    return CatalogueDefis.getByIdOrException(id);
+    return this.getFromCatalogueOrException(id);
   }
 
   public updateStatus(defiId: string, status: DefiStatus, user: Utilisateur) {
@@ -48,17 +61,36 @@ export class DefiHistory {
     if (defi) {
       defi.setStatus(status, user);
     } else {
-      let defi_catalogue = CatalogueDefis.getByIdOrException(defiId);
+      let defi_catalogue = this.getFromCatalogueOrException(defiId);
       defi_catalogue.setStatus(status, user);
       this.defis.push(defi_catalogue);
     }
   }
 
   public checkDefiExists(questionId: string) {
-    CatalogueDefis.getByIdOrException(questionId);
+    this.getFromCatalogueOrException(questionId);
   }
 
   private getDefiUtilisateur(id: string): Defi {
     return this.defis.find((element) => element.id === id);
+  }
+
+  private getFromCatalogueOrException(id: string): Defi {
+    const definition = this.catalogue.find(
+      (element) => element.content_id === id,
+    );
+    if (definition) {
+      return this.buildDefiFromDefinition(definition);
+    }
+    ApplicationError.throwDefiInconnue(id);
+  }
+
+  private buildDefiFromDefinition(def: DefiDefinition) {
+    return new Defi({
+      ...def,
+      id: def.content_id,
+      status: DefiStatus.todo,
+      date_acceptation: null,
+    });
   }
 }

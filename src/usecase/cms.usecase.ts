@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CMSWebhookAPI } from '../infrastructure/api/types/cms/CMSWebhookAPI';
 import { Thematique } from '../domain/contenu/thematique';
-import { CMSThematiqueAPI } from '../infrastructure/api/types/cms/CMSThematiqueAPI';
 import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
 import { CMSModel } from '../infrastructure/api/types/cms/CMSModels';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
@@ -10,13 +9,16 @@ import {
   CMSWebhookPopulateAPI,
   CMSWebhookRubriqueAPI,
 } from '../../src/infrastructure/api/types/cms/CMSWebhookEntryAPI';
-import { Article, ArticleData } from '../domain/contenu/article';
+import { ArticleData } from '../domain/contenu/article';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
-import { Quizz, QuizzData } from '../domain/contenu/quizz';
+import { QuizzData } from '../domain/contenu/quizz';
 import axios from 'axios';
 import { Aide } from '../../src/domain/aides/aide';
 import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
+import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
+import { DefiDefinition } from '../../src/domain/defis/defiDefinition';
+import { TagUtilisateur } from '../../src/domain/scoring/tagUtilisateur';
 
 @Injectable()
 export class CMSUsecase {
@@ -25,6 +27,7 @@ export class CMSUsecase {
     private quizzRepository: QuizzRepository,
     private thematiqueRepository: ThematiqueRepository,
     private aideRepository: AideRepository,
+    private defiRepository: DefiRepository,
   ) {}
 
   async manageIncomingCMSData(cmsWebhookAPI: CMSWebhookAPI) {
@@ -60,10 +63,25 @@ export class CMSUsecase {
           return this.createOrUpdateAide(cmsWebhookAPI);
       }
     }
+    if (cmsWebhookAPI.model === CMSModel.defi) {
+      switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.unpublish']:
+          return this.deleteDefi(cmsWebhookAPI);
+        case CMSEvent['entry.delete']:
+          return this.deleteDefi(cmsWebhookAPI);
+        case CMSEvent['entry.publish']:
+          return this.createOrUpdateDefi(cmsWebhookAPI);
+        case CMSEvent['entry.update']:
+          return this.createOrUpdateDefi(cmsWebhookAPI);
+      }
+    }
   }
 
   async deleteAide(cmsWebhookAPI: CMSWebhookAPI) {
     await this.aideRepository.delete(cmsWebhookAPI.entry.id.toString());
+  }
+  async deleteDefi(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.defiRepository.delete(cmsWebhookAPI.entry.id.toString());
   }
 
   async createOrUpdateAide(cmsWebhookAPI: CMSWebhookAPI) {
@@ -71,6 +89,13 @@ export class CMSUsecase {
 
     await this.aideRepository.upsert(
       CMSUsecase.buildAideFromCMSData(cmsWebhookAPI.entry),
+    );
+  }
+  async createOrUpdateDefi(cmsWebhookAPI: CMSWebhookAPI) {
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
+
+    await this.defiRepository.upsert(
+      CMSUsecase.buildDefiFromCMSData(cmsWebhookAPI.entry),
     );
   }
 
@@ -95,6 +120,31 @@ export class CMSUsecase {
     }
     for (let index = 0; index < liste_articles.length; index++) {
       await this.articleRepository.upsert(liste_articles[index]);
+    }
+    return loading_result;
+  }
+
+  async loadDefisFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste_defis: DefiDefinition[] = [];
+    const CMS_DEFI_DATA = await this.loadDataFromCMS('defis');
+
+    for (let index = 0; index < CMS_DEFI_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_DEFI_DATA[index];
+      let defi: DefiDefinition;
+      try {
+        defi = CMSUsecase.buildDefiFromCMSPopulateData(element);
+        liste_defis.push(defi);
+        loading_result.push(`loaded article : ${defi.content_id}`);
+      } catch (error) {
+        loading_result.push(
+          `Could not load article ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (let index = 0; index < liste_defis.length; index++) {
+      await this.defiRepository.upsert(liste_defis[index]);
     }
     return loading_result;
   }
@@ -150,13 +200,13 @@ export class CMSUsecase {
   }
 
   private async loadDataFromCMS(
-    type: 'articles' | 'quizzes' | 'aides',
+    type: 'articles' | 'quizzes' | 'aides' | 'defis',
   ): Promise<CMSWebhookPopulateAPI[]> {
     let response = null;
     const URL = process.env.CMS_URL.concat(
       '/',
       type,
-      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques',
+      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags',
     );
     response = await axios.get(URL, {
       headers: {
@@ -254,6 +304,23 @@ export class CMSUsecase {
     };
   }
 
+  static buildDefiFromCMSData(entry: CMSWebhookEntryAPI): DefiDefinition {
+    return {
+      content_id: entry.id.toString(),
+      titre: entry.titre,
+      thematique: entry.thematique
+        ? ThematiqueRepository.getThematiqueByCmsId(entry.thematique.id)
+        : Thematique.climat,
+      astuces: entry.astuces,
+      points: entry.points,
+      pourquoi: entry.pourquoi,
+      sous_titre: entry.sousTitre,
+      tags: entry.tags
+        ? entry.tags.map((elem) => TagUtilisateur[elem.code])
+        : [],
+    };
+  }
+
   static buildArticleOrQuizzFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
   ): ArticleData | QuizzData {
@@ -318,6 +385,27 @@ export class CMSUsecase {
         ? Math.round(parseFloat(entry.attributes.montantMaximum))
         : null,
       url_simulateur: entry.attributes.url_detail_front,
+    };
+  }
+  static buildDefiFromCMSPopulateData(
+    entry: CMSWebhookPopulateAPI,
+  ): DefiDefinition {
+    console.log(entry.attributes.tags.data);
+    return {
+      content_id: entry.id.toString(),
+      titre: entry.attributes.titre,
+      sous_titre: entry.attributes.sousTitre,
+      astuces: entry.attributes.astuces,
+      pourquoi: entry.attributes.pourquoi,
+      points: entry.attributes.points,
+      thematique: entry.attributes.thematique.data
+        ? ThematiqueRepository.getThematiqueByCmsId(
+            entry.attributes.thematique.data.id,
+          )
+        : Thematique.climat,
+      tags: entry.attributes.tags.data.map(
+        (elem) => TagUtilisateur[elem.attributes.code],
+      ),
     };
   }
 

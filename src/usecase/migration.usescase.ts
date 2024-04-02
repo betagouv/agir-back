@@ -102,8 +102,8 @@ export class MigrationUsecase {
     utilisateur: Utilisateur,
   ): Promise<{ ok: boolean; info: string }> {
     utilisateur.logement.chauffage = utilisateur.onboardingData.chauffage;
-    utilisateur.logement.code_postal = utilisateur.code_postal;
-    utilisateur.logement.commune = utilisateur.commune;
+    utilisateur.logement.code_postal = utilisateur.onboardingData.code_postal;
+    utilisateur.logement.commune = utilisateur.onboardingData.commune;
     utilisateur.logement.nombre_adultes = utilisateur.onboardingData.adultes;
     utilisateur.logement.nombre_enfants = utilisateur.onboardingData.enfants;
     utilisateur.logement.proprietaire = utilisateur.onboardingData.proprietaire;

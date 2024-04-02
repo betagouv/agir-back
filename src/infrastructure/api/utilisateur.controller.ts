@@ -20,6 +20,7 @@ import {
   ApiOperation,
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiProperty,
 } from '@nestjs/swagger';
 import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
 import {
@@ -37,6 +38,11 @@ import { AuthGuard } from '../auth/guard';
 import { OubliMdpAPI } from './types/utilisateur/oubliMdpAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { ModifierMdpAPI } from './types/utilisateur/modifierMdpAPI';
+
+export class ConfirmationAPI {
+  @ApiProperty({ required: true })
+  confirmation: string;
+}
 
 @ApiExtraModels(CreateUtilisateurAPI, UtilisateurAPI)
 @Controller()
@@ -123,15 +129,7 @@ export class UtilisateurController extends GenericControler {
     if (utilisateur == null) {
       throw new NotFoundException(`Pas d'utilisateur d'id ${utilisateurId}`);
     }
-    // FIXME : to remove after migration
-    const result = LogementAPI.mapToAPI(utilisateur.logement);
-    if (result.code_postal === undefined) {
-      result.code_postal = utilisateur.code_postal;
-    }
-    if (result.commune === undefined) {
-      result.commune = utilisateur.commune;
-    }
-    return result;
+    return LogementAPI.mapToAPI(utilisateur.logement);
   }
 
   @ApiOkResponse({ type: TransportAPI })
@@ -240,6 +238,35 @@ export class UtilisateurController extends GenericControler {
       utilisateurId,
       body,
     );
+  }
+
+  @Post('utilisateurs/:utilisateurId/reset')
+  @ApiBody({
+    type: ConfirmationAPI,
+  })
+  @ApiOperation({
+    summary: `Reset l'utilisateur donné en argument, tout sauf l'onboarding`,
+  })
+  @UseGuards(AuthGuard)
+  async reset(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Body() body: ConfirmationAPI,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    await this.utilisateurUsecase.reset(body.confirmation, utilisateurId);
+  }
+
+  @Post('utilisateurs/reset')
+  @ApiBody({
+    type: ConfirmationAPI,
+  })
+  @ApiOperation({
+    summary: `Reset TOUS LES UTILISATEURS, tout sauf l'onboarding`,
+  })
+  async resetAll(@Request() req, @Body() body: ConfirmationAPI) {
+    this.checkCronAPIProtectedEndpoint(req);
+    await this.utilisateurUsecase.resetAllUsers(body.confirmation);
   }
 
   @Post('utilisateurs/oubli_mot_de_passe')

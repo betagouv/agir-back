@@ -9,6 +9,7 @@ import {
   TypeLogement,
 } from '../../../src/domain/utilisateur/logement';
 import { TransportQuotidien } from '../../../src/domain/utilisateur/transport';
+import { ServiceRepository } from 'src/infrastructure/repository/service.repository';
 var crypto = require('crypto');
 
 const ONBOARDING_1_2_3_4_DATA = {
@@ -381,10 +382,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('GET /utilisateurs/id/logement - read logement datas', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, {
-      code_postal: '11111',
-      commune: 'Patelin',
-    });
+    await TestUtil.create(DB.utilisateur);
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/logement',
@@ -417,22 +415,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     ]);
     expect(response.body.avions_par_an).toEqual(2);
   });
-  it('GET /utilisateurs/id/logement - read logement datas et prio sur donnee commune code postal utilisateur', async () => {
-    // GIVEN
-    const user = await TestUtil.create(DB.utilisateur, {
-      code_postal: '11111',
-      commune: 'Patelin',
-      logement: {},
-    });
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/logement',
-    );
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.code_postal).toEqual('11111');
-    expect(response.body.commune).toEqual('Patelin');
-  });
   it('GET /utilisateurs/id/profile - use onboarding data when missing parts in user account', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { parts: null });
@@ -464,8 +446,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       email: 'george@paris.com',
       nom: 'THE NOM',
       prenom: 'THE PRENOM',
-      code_postal: '75008',
-      commune: 'Versailles',
       revenu_fiscal: 12345,
       nombre_de_parts_fiscales: 3,
       abonnement_ter_loire: true,
@@ -487,8 +467,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       email: 'george@paris.com',
       nom: 'THE NOM',
       prenom: 'THE PRENOM',
-      code_postal: '75008',
-      commune: 'Versailles',
       mot_de_passe: '123456789012#aA',
       revenu_fiscal: 12345,
       nombre_de_parts_fiscales: 3,
@@ -505,8 +483,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.nom).toEqual('THE NOM');
     expect(dbUser.prenom).toEqual('THE PRENOM');
     expect(dbUser.email).toEqual('george@paris.com');
-    expect(dbUser.code_postal).toEqual('75008');
-    expect(dbUser.commune).toEqual('Versailles');
     expect(dbUser.revenu_fiscal).toEqual(12345);
     expect(dbUser.parts.toNumber()).toEqual(3);
     expect(dbUser.abonnement_ter_loire).toEqual(true);
@@ -537,8 +513,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     const dbUser = await utilisateurRepository.getById('utilisateur-id');
-    expect(dbUser.code_postal).toEqual('11111');
-    expect(dbUser.commune).toEqual('Patelin');
+
     expect(dbUser.logement.code_postal).toEqual('11111');
     expect(dbUser.logement.commune).toEqual('Patelin');
     expect(dbUser.logement.nombre_adultes).toEqual(4);
@@ -768,5 +743,74 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.message).toContain(
       "Trop d'essais successifs, attendez jusqu'à ",
     );
+  });
+  it(`POST /utilisateurs/id/reset reset d'un utilisateur donné`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition);
+    await TestUtil.create(DB.service);
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/reset',
+    ).send({
+      confirmation: 'CONFIRMATION RESET',
+    });
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const servicesDB = await TestUtil.prisma.service.findMany();
+    const servicesDefDB = await TestUtil.prisma.serviceDefinition.findMany();
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(userDB.unlocked_features.unlocked_features).toHaveLength(0);
+    expect(servicesDB).toHaveLength(0);
+    expect(servicesDefDB).toHaveLength(1);
+  });
+  it(`POST /utilisateurs/id/reset reset tous les utilisateurs`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur, { id: '1', email: '1' });
+    await TestUtil.create(DB.utilisateur, { id: '2', email: '2' });
+
+    // WHEN
+    const response = await TestUtil.POST('/utilisateurs/reset').send({
+      confirmation: 'CONFIRMATION RESET',
+    });
+
+    const userDB1 = await utilisateurRepository.getById('1');
+    const userDB2 = await utilisateurRepository.getById('2');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(userDB1.unlocked_features.unlocked_features).toHaveLength(0);
+    expect(userDB2.unlocked_features.unlocked_features).toHaveLength(0);
+  });
+  it(`POST /utilisateurs/id/reset erreur si pas la bonne phrase de confirmation`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/reset',
+    ).send({
+      confirmation: 'haha',
+    });
+
+    // THEN
+    expect(response.status).toBe(400);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.unlocked_features.unlocked_features).toHaveLength(1);
+  });
+  it(`POST /utilisateurs/id/reset erreur si pas de payload`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.POST('/utilisateurs/utilisateur-id/reset');
+
+    // THEN
+    expect(response.status).toBe(400);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.unlocked_features.unlocked_features).toHaveLength(1);
   });
 });

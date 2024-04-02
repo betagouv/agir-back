@@ -5,7 +5,7 @@ export class Equipements {
   vehicules: Vehicule[];
 
   constructor(data?: Equipements_v0) {
-    this.vehicules = [];
+    this.reset();
 
     if (data) {
       if (data.vehicules) {
@@ -16,6 +16,9 @@ export class Equipements {
     }
   }
 
+  public reset() {
+    this.vehicules = [];
+  }
   public getVehiculeParNom(nom: string) {
     return this.vehicules.find((e) => e.nom === nom);
   }

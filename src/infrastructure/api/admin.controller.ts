@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Post,
-  Headers,
-  ForbiddenException,
-  Res,
-  UnauthorizedException,
-  HttpStatus,
-  Request,
-} from '@nestjs/common';
+import { Controller, Post, Res, HttpStatus, Request } from '@nestjs/common';
 import { Response } from 'express';
 import {
   ApiBearerAuth,
@@ -74,6 +65,15 @@ export class AdminController extends GenericControler {
   async upsertAllCMSArticles(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.cmsUsecase.loadArticlesFromCMS();
+  }
+  @Post('/admin/load_defi_from_cms')
+  @ApiOperation({
+    summary: 'Upsert tous les défis publiés du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async upsertAllCMSDefis(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.cmsUsecase.loadDefisFromCMS();
   }
 
   @Post('/admin/load_quizzes_from_cms')

@@ -49,6 +49,30 @@ export class UtilisateurUsecase {
     }
   }
 
+  async reset(confirmation: string, utilisateurId: string) {
+    if (confirmation !== 'CONFIRMATION RESET') {
+      ApplicationError.throwMissingResetConfirmation();
+    }
+    await this.resetUser(utilisateurId);
+  }
+
+  async resetAllUsers(confirmation: string) {
+    if (confirmation !== 'CONFIRMATION RESET') {
+      ApplicationError.throwMissingResetConfirmation();
+    }
+    const userIdList = await this.utilisateurRespository.listUtilisateurIds();
+    for (let index = 0; index < userIdList.length; index++) {
+      const user_id = userIdList[index];
+      const utilisateur = await this.utilisateurRespository.getById(user_id);
+
+      utilisateur.resetAllHistory();
+
+      await this.serviceRepository.deleteAllUserServices(user_id);
+
+      await this.utilisateurRespository.updateUtilisateur(utilisateur);
+    }
+  }
+
   async loginUtilisateur(
     email: string,
     password: string,
@@ -93,18 +117,12 @@ export class UtilisateurUsecase {
       PasswordManager.setUserPassword(utilisateur, profile.mot_de_passe);
     }
 
-    utilisateur.code_postal = profile.code_postal;
-    utilisateur.commune = profile.commune;
     utilisateur.revenu_fiscal = profile.revenu_fiscal;
     utilisateur.parts = profile.nombre_de_parts_fiscales;
     utilisateur.abonnement_ter_loire = profile.abonnement_ter_loire;
     utilisateur.email = profile.email;
     utilisateur.nom = profile.nom;
     utilisateur.prenom = profile.prenom;
-    if (utilisateur.logement) {
-      utilisateur.logement.code_postal = profile.code_postal;
-      utilisateur.logement.commune = profile.commune;
-    }
 
     return this.utilisateurRespository.updateUtilisateur(utilisateur);
   }
@@ -127,14 +145,6 @@ export class UtilisateurUsecase {
     );
 
     utilisateur.logement.patch(input);
-
-    // FIXME : remove when migrated users
-    utilisateur.code_postal = this.AorB(
-      input.code_postal,
-      utilisateur.code_postal,
-    );
-
-    utilisateur.commune = this.AorB(input.commune, utilisateur.commune);
 
     utilisateur.recomputeRecoTags();
 
@@ -163,6 +173,18 @@ export class UtilisateurUsecase {
       utilisateur,
       okAction,
     );
+  }
+
+  private async resetUser(utilisateurId: string) {
+    const utilisateur = await this.utilisateurRespository.getById(
+      utilisateurId,
+    );
+
+    utilisateur.resetAllHistory();
+
+    await this.serviceRepository.deleteAllUserServices(utilisateurId);
+
+    await this.utilisateurRespository.updateUtilisateur(utilisateur);
   }
 
   async modifier_mot_de_passe(
@@ -207,7 +229,6 @@ export class UtilisateurUsecase {
     await this.suiviRepository.delete(utilisateurId);
     await this.bilanRepository.delete(utilisateurId);
     await this.oIDCStateRepository.delete(utilisateurId);
-    await this.bilanRepository.delete(utilisateurId);
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
     await this.groupeRepository.delete(utilisateurId);
     await this.utilisateurRespository.delete(utilisateurId);

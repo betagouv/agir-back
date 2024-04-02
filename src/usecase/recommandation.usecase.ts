@@ -13,6 +13,7 @@ import {
 } from '../../src/domain/kyc/questionQYC';
 import { Thematique } from '../../src/domain/contenu/thematique';
 import { UtilisateurBehavior } from '../../src/domain/utilisateur/utilisateurBehavior';
+import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 
 @Injectable()
 export class RecommandationUsecase {
@@ -20,6 +21,7 @@ export class RecommandationUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
+    private defiRepository: DefiRepository,
   ) {}
 
   async listRecommandations(utilisateurId: string): Promise<Recommandation[]> {
@@ -35,6 +37,9 @@ export class RecommandationUsecase {
     let nombre_content_restants = 6;
 
     if (UtilisateurBehavior.defiEnabled()) {
+      const defiDefinitions = await this.defiRepository.list();
+      utilisateur.defi_history.setCatalogue(defiDefinitions);
+
       defis_en_cours = this.getDefisEnCours(utilisateur);
 
       defis_restants = this.getDefisRestantsAvecTri(utilisateur);
@@ -87,6 +92,7 @@ export class RecommandationUsecase {
     result.sort((a, b) => b.score - a.score);
     return result;
   }
+
   private getDefisEnCours(utilisateur: Utilisateur): Recommandation[] {
     const defis = utilisateur.defi_history.getDefisEnCours();
 
@@ -97,7 +103,7 @@ export class RecommandationUsecase {
     return defis.map((e) => ({
       content_id: e.id,
       image_url:
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Logo_Relevez_le_d%C3%A9fi.png/320px-Logo_Relevez_le_d%C3%A9fi.png',
+        'https://res.cloudinary.com/dq023imd8/image/upload/v1711467455/Illustration_defis_63f2bfed5a.svg',
       points: e.points,
       thematique_principale: e.thematique,
       score: e.score,

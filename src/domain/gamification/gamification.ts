@@ -13,8 +13,8 @@ export class Gamification {
   celebrations: Celebration[];
 
   constructor(data?: Gamification_v0, seuils?: number[]) {
-    this.points = 0;
-    this.celebrations = [];
+    this.reset();
+
     if (data) {
       if (data.points) {
         this.points = data.points;
@@ -28,6 +28,11 @@ export class Gamification {
     if (seuils) {
       SEUILS_NIVEAUX = seuils; // for test purpose
     }
+  }
+
+  public reset() {
+    this.points = 0;
+    this.celebrations = [];
   }
 
   public terminerCelebration(id: string, utilisateur: Utilisateur) {

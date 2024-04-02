@@ -38,8 +38,6 @@ model Utilisateur {
   prenom                   String?            @default("prenom")
   passwordHash             String?            @default("hash")
   passwordSalt             String?            @default("salt")
-  code_postal              String?
-  commune                  String?
   revenu_fiscal            Int?
   onboardingData           Json               @default("{}") // versioné 
   onboardingResult         Json               @default("{}") // versioné 
@@ -86,6 +84,19 @@ model Aide {
   montant_max    Int?
   created_at     DateTime @default(now()) @db.Timestamptz(3)
   updated_at     DateTime @updatedAt @db.Timestamptz(3)
+}
+
+model Defi {
+  content_id String   @id
+  titre      String
+  sous_titre String?
+  astuces    String
+  pourquoi   String
+  points     Int
+  thematique String
+  tags       String[] @default([])
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt @db.Timestamptz(3)
 }
 
 model Article {

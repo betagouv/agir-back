@@ -13,8 +13,8 @@ export class History {
   quizz_interactions: QuizzHistory[];
 
   constructor(data?: History_v0) {
-    this.article_interactions = [];
-    this.quizz_interactions = [];
+    this.reset();
+
     if (data) {
       if (data.article_interactions) {
         data.article_interactions.forEach((articleh) =>
@@ -29,6 +29,10 @@ export class History {
     }
   }
 
+  public reset() {
+    this.article_interactions = [];
+    this.quizz_interactions = [];
+  }
   public getArticleHistoryById(content_id: string): ArticleHistory {
     return this.article_interactions.find(
       (article) => article.content_id === content_id,

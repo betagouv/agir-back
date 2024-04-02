@@ -26,8 +26,6 @@ export class UtilisateurData {
   prenom: string;
   onboardingData: Onboarding;
   onboardingResult: OnboardingResult;
-  code_postal: string; // FIXME to delete
-  commune: string; // FIXME to delete
   revenu_fiscal: number;
   parts: number;
   abonnement_ter_loire: boolean;
@@ -84,8 +82,6 @@ export class Utilisateur extends UtilisateurData {
   ): Utilisateur {
     return new Utilisateur({
       nom: nom,
-      code_postal: onboarding.code_postal,
-      commune: onboarding.commune,
       prenom: prenom,
       email: email,
       onboardingData: onboarding,
@@ -121,6 +117,16 @@ export class Utilisateur extends UtilisateurData {
       transport: Transport.buildFromOnboarding(onboarding),
       tag_ponderation_set: {},
     });
+  }
+
+  public resetAllHistory?() {
+    this.tag_ponderation_set = {};
+    this.parcours_todo.reset();
+    this.gamification.reset();
+    this.unlocked_features.reset();
+    this.history.reset();
+    this.defi_history.reset();
+    this.equipements.reset();
   }
 
   public getNombrePartsFiscalesOuEstimee?() {
@@ -176,7 +182,6 @@ export class Utilisateur extends UtilisateurData {
     map: Record<string, number>,
   ) {
     for (const key in map) {
-      console.log(key);
       if (kyc.includesReponseCode(key)) {
         this.tag_ponderation_set[tag] = map[key];
         return;

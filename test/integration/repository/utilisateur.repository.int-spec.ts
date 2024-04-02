@@ -6,15 +6,6 @@ import {
 } from '../../../src/domain/utilisateur/onboarding/onboarding';
 import { ThematiqueOnboarding as ThematiqueOnboarding } from '../../../src/domain/utilisateur/onboarding/onboarding';
 import { Utilisateur } from '../../../src/domain/utilisateur/utilisateur';
-import { OnboardingResult } from '../../../src/domain/utilisateur/onboarding/onboardingResult';
-import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
-import { Equipements } from '../../../src/domain/equipements/equipements';
-import { Gamification } from '../../../src/domain/gamification/gamification';
-import { UnlockedFeatures } from '../../../src/domain/gamification/unlockedFeatures';
-import { KYCHistory } from '../../../src/domain/kyc/kycHistory';
-import { Logement } from '../../../src/domain/utilisateur/logement';
-import { UtilisateurBehavior } from '../../../src/domain/utilisateur/utilisateurBehavior';
-import { History } from '../../../src/domain/history/history';
 
 describe('UtilisateurRepository', () => {
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);

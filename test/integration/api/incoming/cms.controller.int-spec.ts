@@ -3,6 +3,24 @@ import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent'
 import { DB, TestUtil } from '../../../TestUtil';
 
 describe('/api/incoming/cms (API test)', () => {
+  const CMS_DATA_DEFI = {
+    model: CMSModel.defi,
+    event: CMSEvent['entry.publish'],
+    entry: {
+      id: 123,
+      titre: 'titre',
+      sousTitre: 'sous titre',
+      astuces: 'facile',
+      pourquoi: 'parce que !!',
+      points: 10,
+      thematique: { id: 1, titre: 'Alimentation' },
+      tags: [
+        { id: 1, code: 'capacite_physique' },
+        { id: 2, code: 'possede_velo' },
+      ],
+      publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+    },
+  };
   const CMS_DATA_AIDE = {
     model: CMSModel.aide,
     event: CMSEvent['entry.publish'],
@@ -246,6 +264,54 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.thematiques).toStrictEqual(['alimentation', 'climat']);
     expect(aide.codes_postaux).toStrictEqual(['91120', '75002']);
     expect(aide.content_id).toEqual('123');
+  });
+  it('POST /api/incoming/cms - create a new defi', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_DEFI,
+    );
+
+    // THEN
+    const defis = await TestUtil.prisma.defi.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(defis).toHaveLength(1);
+    const defi = defis[0];
+    expect(defi.titre).toEqual('titre');
+    expect(defi.sous_titre).toEqual('sous titre');
+    expect(defi.content_id).toEqual('123');
+    expect(defi.astuces).toEqual('facile');
+    expect(defi.pourquoi).toEqual('parce que !!');
+    expect(defi.points).toEqual(10);
+    expect(defi.thematique).toEqual('alimentation');
+    expect(defi.tags).toEqual(['capacite_physique', 'possede_velo']);
+  });
+
+  it('POST /api/incoming/cms - updates a  defi', async () => {
+    // GIVEN
+    TestUtil.create(DB.defi);
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_DEFI,
+    );
+
+    // THEN
+    const defis = await TestUtil.prisma.defi.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(defis).toHaveLength(1);
+    const defi = defis[0];
+    expect(defi.titre).toEqual('titre');
+    expect(defi.sous_titre).toEqual('sous titre');
+    expect(defi.content_id).toEqual('123');
+    expect(defi.astuces).toEqual('facile');
+    expect(defi.pourquoi).toEqual('parce que !!');
+    expect(defi.points).toEqual(10);
+    expect(defi.thematique).toEqual('alimentation');
+    expect(defi.tags).toEqual(['capacite_physique', 'possede_velo']);
   });
 
   it('POST /api/incoming/cms - updates exisying aide in aide table', async () => {

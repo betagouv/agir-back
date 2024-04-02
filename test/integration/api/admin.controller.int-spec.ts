@@ -338,8 +338,6 @@ describe('Admin (API test)', () => {
       version: 4,
       migration_enabled: true,
       logement: {},
-      code_postal: '12345',
-      commune: 'YO',
     });
     process.env.USER_CURRENT_VERSION = '5';
 
@@ -364,8 +362,8 @@ describe('Admin (API test)', () => {
     expect(userDB.version).toBe(5);
     expect(userDB.logement.type).toEqual(TypeLogement.maison);
     expect(userDB.logement.chauffage).toEqual(Chauffage.bois);
-    expect(userDB.logement.code_postal).toEqual('12345');
-    expect(userDB.logement.commune).toEqual('YO');
+    expect(userDB.logement.code_postal).toEqual('91120');
+    expect(userDB.logement.commune).toEqual('PALAISEAU');
     expect(userDB.logement.dpe).toEqual(undefined);
     expect(userDB.logement.nombre_adultes).toEqual(2);
     expect(userDB.logement.nombre_enfants).toEqual(1);
@@ -380,8 +378,6 @@ describe('Admin (API test)', () => {
       version: 5,
       migration_enabled: true,
       logement: {},
-      code_postal: '12345',
-      commune: 'YO',
     });
     process.env.USER_CURRENT_VERSION = '6';
 
