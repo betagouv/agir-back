@@ -347,7 +347,7 @@ export class TestUtil {
   static utilisateurData(override?): Utilisateur {
     const unlocked: UnlockedFeatures_v1 = {
       version: 1,
-      unlocked_features: [Feature.aides],
+      unlocked_features: [Feature.aides, Feature.defis],
     };
 
     const defis: DefiHistory_v0 = {

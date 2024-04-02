@@ -71,6 +71,7 @@ const utilisateurs = {
         'services',
         'recommandations',
         'bibliotheque',
+        'defis',
       ],
     },
     todo: {
@@ -165,6 +166,7 @@ const utilisateurs = {
         'services',
         'recommandations',
         'bibliotheque',
+        'defis',
       ],
     },
     suivis: [],
@@ -193,6 +195,7 @@ const utilisateurs = {
         'services',
         'recommandations',
         'bibliotheque',
+        'defis',
       ],
     },
     linky: {
@@ -300,6 +303,7 @@ const utilisateurs = {
         'services',
         'recommandations',
         'bibliotheque',
+        'defis',
       ],
     },
     gamification: {
@@ -325,6 +329,7 @@ const utilisateurs = {
         'services',
         'recommandations',
         'bibliotheque',
+        'defis',
       ],
     },
     gamification: {

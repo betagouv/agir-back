@@ -133,7 +133,10 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.created_at).toEqual(dbUser.created_at.toISOString());
     expect(response.body.failed_login_count).toEqual(undefined); // donnée cachée
     expect(response.body.prevent_login_before).toEqual(undefined); // donnée cachée
-    expect(response.body.fonctionnalites_debloquees).toEqual(['aides']);
+    expect(response.body.fonctionnalites_debloquees).toEqual([
+      'aides',
+      'defis',
+    ]);
   });
   it('GET /utilisateurs/id - part fiscale estimée', async () => {
     // GIVEN
@@ -799,7 +802,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // THEN
     expect(response.status).toBe(400);
     const userDB = await utilisateurRepository.getById('utilisateur-id');
-    expect(userDB.unlocked_features.unlocked_features).toHaveLength(1);
+    expect(userDB.unlocked_features.unlocked_features).toHaveLength(2);
   });
   it(`POST /utilisateurs/id/reset erreur si pas de payload`, async () => {
     // GIVEN
@@ -811,6 +814,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // THEN
     expect(response.status).toBe(400);
     const userDB = await utilisateurRepository.getById('utilisateur-id');
-    expect(userDB.unlocked_features.unlocked_features).toHaveLength(1);
+    expect(userDB.unlocked_features.unlocked_features).toHaveLength(2);
   });
 });

@@ -19,6 +19,10 @@ const DATA_REVEAL: Record<Feature, { titre: string; description: string }> = {
     titre: 'Votre bibliothèque',
     description: `Retrouvez tout ce que vous avez lu et aimé comme articles`,
   },
+  defis: {
+    titre: 'Vos défis',
+    description: `Retrouvez plein d'actions concrètes pour des premiers petits pas`,
+  },
 };
 
 export class Reveal {

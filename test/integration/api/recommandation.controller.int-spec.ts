@@ -17,6 +17,8 @@ import {
   QuestionID,
 } from '../../../src/domain/kyc/questionQYC';
 import { DefiDefinition } from 'src/domain/defis/defiDefinition';
+import { Feature } from 'src/domain/gamification/feature';
+import { UnlockedFeatures_v1 } from 'src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
 const DEFI_1: Defi_v0 = {
@@ -282,6 +284,32 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(Math.round(response.body[1].score)).toEqual(20);
     expect(response.body[2].content_id).toEqual('1');
     expect(Math.round(response.body[2].score)).toEqual(10);
+  });
+
+  it('GET /utilisateurs/id/recommandations - renvoie pas de défis si feature non active', async () => {
+    // GIVEN
+    process.env.DEFI_ENABLED = 'true';
+    process.env.KYC_RECO_ENABLED = 'true';
+    const unlocked: UnlockedFeatures_v1 = {
+      version: 1,
+      unlocked_features: [],
+    };
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '101' });
+
+    CatalogueQuestionsKYC.setCatalogue([]);
+    await TestUtil.create(DB.utilisateur, {
+      history: {},
+      tag_ponderation_set: { utilise_moto_ou_voiture: 100 },
+      unlocked_features: unlocked,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(0);
   });
 
   it('GET /utilisateurs/id/recommandations - tag climat 2 fois renforce le score', async () => {

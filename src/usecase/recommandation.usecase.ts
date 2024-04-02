@@ -14,6 +14,7 @@ import {
 import { Thematique } from '../../src/domain/contenu/thematique';
 import { UtilisateurBehavior } from '../../src/domain/utilisateur/utilisateurBehavior';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
+import { Feature } from '../../src/domain/gamification/feature';
 
 @Injectable()
 export class RecommandationUsecase {
@@ -36,7 +37,10 @@ export class RecommandationUsecase {
     let kycs = [];
     let nombre_content_restants = 6;
 
-    if (UtilisateurBehavior.defiEnabled()) {
+    if (
+      UtilisateurBehavior.defiEnabled() &&
+      utilisateur.unlocked_features.isUnlocked(Feature.defis)
+    ) {
       const defiDefinitions = await this.defiRepository.list();
       utilisateur.defi_history.setCatalogue(defiDefinitions);
 
