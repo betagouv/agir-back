@@ -1,0 +1,1 @@
+loadtest http://localhost:3000/utilisateurs/wojtek/aides  -H 'accept: application/json' -H 'Authorization: Bearer XXX' -t 10 -c 10 --rps 200 -k

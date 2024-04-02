@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { Aide as AideDB } from '@prisma/client';
 import { Thematique } from '../../domain/contenu/thematique';
 import { Aide } from '../../../src/domain/aides/aide';
+import { UtilisateurBehavior } from '../../../src/domain/utilisateur/utilisateurBehavior';
 
 export type AideFilter = {
   maxNumber?: number;
@@ -12,7 +13,17 @@ export type AideFilter = {
 
 @Injectable()
 export class AideRepository {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {
+    this.last_query_time = 0;
+  }
+
+  private last_query_time: number;
+  private aides: Aide[];
+
+  private async load_aides() {
+    const all_aides = await this.prisma.aide.findMany();
+    this.aides = all_aides.map((elem) => this.buildAideFromDB(elem));
+  }
 
   async upsert(aide: Aide): Promise<void> {
     await this.prisma.aide.upsert({
@@ -42,6 +53,17 @@ export class AideRepository {
   }
 
   async search(filter: AideFilter): Promise<Aide[]> {
+    if (UtilisateurBehavior.aide_cache_enabled()) {
+      if (Date.now() - this.last_query_time > 100000) {
+        await this.load_aides();
+        this.last_query_time = Date.now();
+      }
+      return this.aides.filter(
+        (e) =>
+          e.codes_postaux.length === 0 ||
+          e.codes_postaux.includes(filter.code_postal),
+      );
+    }
     let codes_postaux_filter;
 
     if (filter.code_postal) {
