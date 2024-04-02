@@ -277,7 +277,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.tag_ponderation_set.transport).toEqual(50);
   });
-  it('PUT /utilisateurs/id/questionsKYC/001 - met à jour les tags de reco - suppression boost', async () => {
+  it('PUT /utilisateurs/id/questionsKYC/KYC001 - met à jour les tags de reco - suppression boost', async () => {
     // GIVEN
     CatalogueQuestionsKYC.setCatalogue([
       {
@@ -315,6 +315,43 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(response.status).toBe(200);
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.tag_ponderation_set.transport).toEqual(0);
+  });
+  it('PUT /utilisateurs/id/questionsKYC/001 - transpose l ancien code 001', async () => {
+    // GIVEN
+    CatalogueQuestionsKYC.setCatalogue([
+      {
+        id: QuestionID.KYC001,
+        question: `Quel est votre sujet principal d'intéret ?`,
+        type: TypeReponseQuestionKYC.choix_multiple,
+        is_NGC: false,
+        categorie: CategorieQuestionKYC.default,
+        points: 10,
+        reponses: undefined,
+        reponses_possibles: [
+          { label: 'Le climat', code: Thematique.climat },
+          { label: 'Mon logement', code: Thematique.logement },
+          { label: 'Ce que je mange', code: Thematique.alimentation },
+          { label: 'Comment je bouge', code: Thematique.transport },
+        ],
+        tags: [],
+      },
+    ]);
+
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/001',
+    ).send({ reponse: ['Le climat'] });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(
+      userDB.kyc_history
+        .getQuestion(QuestionID.KYC001)
+        .includesReponseCode(Thematique.climat),
+    ).toEqual(true);
   });
   it('PUT /utilisateurs/id/questionsKYC/bad - erreur 404 ', async () => {
     // GIVEN
