@@ -5,7 +5,7 @@ import {
 import {
   Transport,
   TransportQuotidien,
-} from '../../../../src/domain/utilisateur/transport';
+} from '../../../../src/domain/transport/transport';
 import { Transport_v0 } from '../../../../src/domain/object_store/transport/transport_v0';
 
 describe('Transport vN ', () => {

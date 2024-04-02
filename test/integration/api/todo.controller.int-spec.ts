@@ -5,7 +5,7 @@ import { DB, TestUtil } from '../../TestUtil';
 import { LiveService } from '../../../src/domain/service/serviceDefinition';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
-import { EventType } from '../../../src/domain/utilisateur/appEvent';
+import { EventType } from '../../../src/domain/appEvent';
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,

@@ -1,19 +1,18 @@
 import { CodeManager } from './manager/codeManager';
-import { Onboarding } from './onboarding/onboarding';
-import { OnboardingResult } from './onboarding/onboardingResult';
+import { Onboarding } from '../onboarding/onboarding';
+import { OnboardingResult } from '../onboarding/onboardingResult';
 import { PasswordManager } from './manager/passwordManager';
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Gamification } from '../gamification/gamification';
 import { ParcoursTodo } from '../todo/parcoursTodo';
 import { UnlockedFeatures } from '../gamification/unlockedFeatures';
 import { History } from '../history/history';
-import { Environment } from '../environment';
 import { KYCHistory } from '../kyc/kycHistory';
 import { Equipements } from '../equipements/equipements';
-import { Logement } from './logement';
-import { UtilisateurBehavior } from './utilisateurBehavior';
+import { Logement } from '../logement/logement';
+import { App } from '../app';
 import { TagPonderationSet } from '../scoring/tagPonderationSet';
-import { Transport } from './transport';
+import { Transport } from '../transport/transport';
 import { Tag } from '../scoring/tag';
 import { DefiHistory } from '../defis/defiHistory';
 import { UserTagEvaluator } from '../scoring/userTagEvaluator';
@@ -112,7 +111,7 @@ export class Utilisateur extends UtilisateurData {
       kyc_history: new KYCHistory(),
       defi_history: new DefiHistory(),
       equipements: new Equipements(),
-      version: UtilisateurBehavior.currentUserSystemVersion(),
+      version: App.currentUserSystemVersion(),
       logement: Logement.buildFromOnboarding(onboarding),
       transport: Transport.buildFromOnboarding(onboarding),
       tag_ponderation_set: {},
@@ -167,7 +166,7 @@ export class Utilisateur extends UtilisateurData {
   }
 
   public isAdmin?(): boolean {
-    return Environment.getAdminIdsStringList().includes(this.id);
+    return App.getAdminIdsStringList().includes(this.id);
   }
 
   public setTag?(tag: Tag, value: number) {

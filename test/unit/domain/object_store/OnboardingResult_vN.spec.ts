@@ -2,19 +2,19 @@ import {
   SerialisableDomain,
   Upgrader,
 } from '../../../../src/domain/object_store/upgrader';
-import { OnboardingResult } from '../../../../src/domain/utilisateur/onboarding/onboardingResult';
+import { OnboardingResult } from '../../../../src/domain/onboarding/onboardingResult';
 import { OnboardingResult_v0 } from '../../../../src/domain/object_store/onboardingResult/onboardingResult_v0';
 import {
   Consommation,
   Onboarding,
   Repas,
-} from '../../../../src/domain/utilisateur/onboarding/onboarding';
+} from '../../../../src/domain/onboarding/onboarding';
 import {
   TypeLogement,
   Superficie,
   Chauffage,
-} from '../../../../src/domain/utilisateur/logement';
-import { TransportQuotidien } from '../../../../src/domain/utilisateur/transport';
+} from '../../../../src/domain/logement/logement';
+import { TransportQuotidien } from '../../../../src/domain/transport/transport';
 
 describe('OnboardingResult vN ', () => {
   it('build OK from empty', () => {

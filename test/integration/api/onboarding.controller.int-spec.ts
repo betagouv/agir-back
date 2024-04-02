@@ -3,12 +3,12 @@ import {
   DPE,
   Superficie,
   TypeLogement,
-} from '../../../src/domain/utilisateur/logement';
+} from '../../../src/domain/logement/logement';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import {
   Impact,
   ThematiqueOnboarding,
-} from '../../../src/domain/utilisateur/onboarding/onboarding';
+} from '../../../src/domain/onboarding/onboarding';
 import { DB, TestUtil } from '../../TestUtil';
 
 const ONBOARDING_1_2_3_4_DATA = {

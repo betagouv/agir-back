@@ -2,7 +2,7 @@ import { Versioned } from '../versioned';
 import {
   Transport,
   TransportQuotidien,
-} from '../../../../src/domain/utilisateur/transport';
+} from '../../transport/transport';
 
 export class Transport_v0 extends Versioned {
   transports_quotidiens: TransportQuotidien[];

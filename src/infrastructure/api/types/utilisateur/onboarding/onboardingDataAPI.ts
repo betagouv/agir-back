@@ -1,15 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { TransportQuotidien } from '../../../../../../src/domain/utilisateur/transport';
+import { TransportQuotidien } from '../../../../../domain/transport/transport';
 import { Onboarding_v0 } from '../../../../../../src/domain/object_store/Onboarding/onboarding_v0';
 import {
   TypeLogement,
   Superficie,
   Chauffage,
-} from '../../../../../../src/domain/utilisateur/logement';
+} from '../../../../../domain/logement/logement';
 import {
   Consommation,
   Repas,
-} from '../../../../../domain/utilisateur/onboarding/onboarding';
+} from '../../../../../domain/onboarding/onboarding';
 
 export class OnboardingDataAPI {
   @ApiProperty({

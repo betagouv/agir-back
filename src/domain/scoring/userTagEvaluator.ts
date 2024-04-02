@@ -1,7 +1,7 @@
 import { Thematique } from '../contenu/thematique';
 import { BooleanKYC, QuestionID } from '../kyc/questionQYC';
-import { ThematiqueOnboarding } from '../utilisateur/onboarding/onboarding';
-import { TransportQuotidien } from '../utilisateur/transport';
+import { ThematiqueOnboarding } from '../onboarding/onboarding';
+import { TransportQuotidien } from '../transport/transport';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { Tag } from './tag';
 

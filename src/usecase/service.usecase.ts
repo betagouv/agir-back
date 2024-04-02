@@ -12,7 +12,7 @@ import { FruitsEtLegumesServiceManager } from '../infrastructure/service/fruits/
 import { ScheduledServiceManager } from '../../src/infrastructure/service/ScheduledServiceManager';
 import { LiveServiceManager } from '../../src/infrastructure/service/LiveServiceManager';
 import { EventUsecase } from '../../src/usecase/event.usecase';
-import { EventType } from '../domain/utilisateur/appEvent';
+import { EventType } from '../domain/appEvent';
 import { LinkyServiceManager } from '../../src/infrastructure/service/linky/LinkyServiceManager';
 import { LinkyConfigurationAPI } from '../../src/infrastructure/api/types/service/linkyConfigurationAPI';
 import { AsyncServiceManager } from '../../src/infrastructure/service/AsyncServiceManager';

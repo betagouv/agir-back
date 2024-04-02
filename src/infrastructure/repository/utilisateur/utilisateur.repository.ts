@@ -7,8 +7,8 @@ import {
   Impact,
   Onboarding,
   ThematiqueOnboarding,
-} from '../../../domain/utilisateur/onboarding/onboarding';
-import { OnboardingResult } from '../../../domain/utilisateur/onboarding/onboardingResult';
+} from '../../../domain/onboarding/onboarding';
+import { OnboardingResult } from '../../../domain/onboarding/onboardingResult';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { Gamification } from '../../../domain/gamification/gamification';
 import { History } from '../../../../src/domain/history/history';
@@ -20,8 +20,8 @@ import {
 import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
 import { KYCHistory } from '../../../domain/kyc/kycHistory';
 import { Equipements } from '../../../../src/domain/equipements/equipements';
-import { Logement } from '../../../../src/domain/utilisateur/logement';
-import { Transport } from '../../../../src/domain/utilisateur/transport';
+import { Logement } from '../../../domain/logement/logement';
+import { Transport } from '../../../domain/transport/transport';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 
 @Injectable()

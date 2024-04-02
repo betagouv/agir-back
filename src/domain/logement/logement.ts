@@ -1,5 +1,5 @@
 import { Logement_v0 } from '../object_store/logement/logement_v0';
-import { Onboarding } from './onboarding/onboarding';
+import { Onboarding } from '../onboarding/onboarding';
 
 export enum TypeLogement {
   maison = 'maison',

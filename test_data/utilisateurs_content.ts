@@ -4,7 +4,7 @@ import { Thematique } from '../src/domain/contenu/thematique';
 import {
   Impact,
   ThematiqueOnboarding as ThemaOnbo,
-} from '../src/domain/utilisateur/onboarding/onboarding';
+} from '../src/domain/onboarding/onboarding';
 import { v4 as uuidv4 } from 'uuid';
 import { LiveService } from '../src/domain/service/serviceDefinition';
 

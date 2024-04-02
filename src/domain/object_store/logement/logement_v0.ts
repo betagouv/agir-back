@@ -5,7 +5,7 @@ import {
   Logement,
   Superficie,
   TypeLogement,
-} from '../../../../src/domain/utilisateur/logement';
+} from '../../logement/logement';
 
 export class Logement_v0 extends Versioned {
   nombre_adultes: number;

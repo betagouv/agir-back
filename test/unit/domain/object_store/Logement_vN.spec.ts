@@ -8,7 +8,7 @@ import {
   Logement,
   Superficie,
   TypeLogement,
-} from '../../../../src/domain/utilisateur/logement';
+} from '../../../../src/domain/logement/logement';
 import { Logement_v0 } from '../../../../src/domain/object_store/logement/logement_v0';
 
 describe('Logement vN ', () => {

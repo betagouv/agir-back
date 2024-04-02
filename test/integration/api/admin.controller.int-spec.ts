@@ -12,13 +12,13 @@ import {
   Chauffage,
   Superficie,
   TypeLogement,
-} from '../../../src/domain/utilisateur/logement';
+} from '../../../src/domain/logement/logement';
 import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
 import {
   Repas,
   Consommation,
-} from '../../../src/domain/utilisateur/onboarding/onboarding';
-import { TransportQuotidien } from '../../../src/domain/utilisateur/transport';
+} from '../../../src/domain/onboarding/onboarding';
+import { TransportQuotidien } from '../../../src/domain/transport/transport';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;

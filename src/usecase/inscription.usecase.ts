@@ -2,7 +2,7 @@ import { Utilisateur } from '../domain/utilisateur/utilisateur';
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/onboarding/createUtilisateurAPI';
-import { Onboarding } from '../domain/utilisateur/onboarding/onboarding';
+import { Onboarding } from '../domain/onboarding/onboarding';
 import { OnboardingDataAPI } from '../infrastructure/api/types/utilisateur/onboarding/onboardingDataAPI';
 import { EmailSender } from '../infrastructure/email/emailSender';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';

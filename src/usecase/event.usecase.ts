@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   EventType,
   AppEvent,
-} from '../domain/utilisateur/appEvent';
+} from '../domain/appEvent';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { ContentType } from '../domain/contenu/contentType';
