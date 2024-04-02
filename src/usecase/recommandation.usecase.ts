@@ -12,7 +12,7 @@ import {
   QuestionKYC,
 } from '../../src/domain/kyc/questionQYC';
 import { Thematique } from '../../src/domain/contenu/thematique';
-import { UtilisateurBehavior } from '../../src/domain/utilisateur/utilisateurBehavior';
+import { App } from '../domain/app';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { Feature } from '../../src/domain/gamification/feature';
 
@@ -38,7 +38,7 @@ export class RecommandationUsecase {
     let nombre_content_restants = 6;
 
     if (
-      UtilisateurBehavior.defiEnabled() &&
+      App.defiEnabled() &&
       utilisateur.unlocked_features.isUnlocked(Feature.defis)
     ) {
       const defiDefinitions = await this.defiRepository.list();
@@ -54,7 +54,7 @@ export class RecommandationUsecase {
         6 - defis_en_cours.length - defis_restants.length;
     }
 
-    if (UtilisateurBehavior.kycRecoEnabled()) {
+    if (App.kycRecoEnabled()) {
       kycs = await this.getKYC(utilisateur);
     }
 

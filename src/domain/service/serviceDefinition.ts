@@ -1,5 +1,5 @@
 import { Thematique } from '../contenu/thematique';
-import { Environment } from '../environment';
+import { App } from '../app';
 
 export enum ScheduledService {
   ecowatt = 'ecowatt',
@@ -63,7 +63,7 @@ export class ServiceDefinition extends ServiceDefinitionData {
     }
   }
   public isEnConstruction?(): boolean {
-    return !Environment.getServiceActifsStringList().includes(
+    return !App.getServiceActifsStringList().includes(
       this.serviceDefinitionId,
     );
   }

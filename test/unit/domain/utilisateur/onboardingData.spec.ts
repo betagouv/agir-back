@@ -1,15 +1,15 @@
-import { TransportQuotidien } from '../../../../src/domain/utilisateur/transport';
+import { TransportQuotidien } from '../../../../src/domain/transport/transport';
 import {
   Chauffage,
   TypeLogement,
   Superficie,
-} from '../../../../src/domain/utilisateur/logement';
+} from '../../../../src/domain/logement/logement';
 import {
   Consommation,
   Impact,
   Onboarding,
   Repas,
-} from '../../../../src/domain/utilisateur/onboarding/onboarding';
+} from '../../../../src/domain/onboarding/onboarding';
 
 const ONBOARDING_DATA = {
   version: 0,

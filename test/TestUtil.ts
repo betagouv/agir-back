@@ -7,10 +7,10 @@ import {
   Consommation,
   Repas,
   ThematiqueOnboarding as ThematiqueOnboarding,
-} from '../src/domain/utilisateur/onboarding/onboarding';
+} from '../src/domain/onboarding/onboarding';
 import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
-import { Impact } from '../src/domain/utilisateur/onboarding/onboarding';
+import { Impact } from '../src/domain/onboarding/onboarding';
 const request = require('supertest');
 import { JwtService } from '@nestjs/jwt';
 import { ParcoursTodo } from '../src/domain/todo/parcoursTodo';
@@ -42,7 +42,7 @@ import {
   DPE,
   Superficie,
   TypeLogement,
-} from '../src/domain/utilisateur/logement';
+} from '../src/domain/logement/logement';
 import { Empreinte, SituationNGC, Suivi } from '.prisma/client';
 import {
   Aide,
@@ -57,7 +57,7 @@ import {
   Utilisateur,
 } from '@prisma/client';
 import { ServiceStatus } from '../src/domain/service/service';
-import { TransportQuotidien } from '../src/domain/utilisateur/transport';
+import { TransportQuotidien } from '../src/domain/transport/transport';
 import { Transport_v0 } from '../src/domain/object_store/transport/transport_v0';
 import { DefiHistory_v0 } from '../src/domain/object_store/defi/defiHistory_v0';
 import { DefiStatus } from '../src/domain/defis/defi';

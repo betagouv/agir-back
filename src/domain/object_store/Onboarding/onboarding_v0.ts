@@ -1,11 +1,11 @@
-import { TransportQuotidien } from '../../../../src/domain/utilisateur/transport';
+import { TransportQuotidien } from '../../transport/transport';
 import {
   TypeLogement,
   Superficie,
   Chauffage,
-} from '../../../../src/domain/utilisateur/logement';
-import { Onboarding } from '../../utilisateur/onboarding/onboarding';
-import { Repas, Consommation } from '../../utilisateur/onboarding/onboarding';
+} from '../../logement/logement';
+import { Onboarding } from '../../onboarding/onboarding';
+import { Repas, Consommation } from '../../onboarding/onboarding';
 import { Versioned } from '../versioned';
 
 export class Onboarding_v0 extends Versioned {

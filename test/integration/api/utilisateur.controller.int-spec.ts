@@ -1,14 +1,14 @@
 import { DB, TestUtil } from '../../TestUtil';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
-import { Impact } from '../../../src/domain/utilisateur/onboarding/onboarding';
+import { Impact } from '../../../src/domain/onboarding/onboarding';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import {
   Chauffage,
   DPE,
   Superficie,
   TypeLogement,
-} from '../../../src/domain/utilisateur/logement';
-import { TransportQuotidien } from '../../../src/domain/utilisateur/transport';
+} from '../../../src/domain/logement/logement';
+import { TransportQuotidien } from '../../../src/domain/transport/transport';
 import { ServiceRepository } from 'src/infrastructure/repository/service.repository';
 var crypto = require('crypto');
 

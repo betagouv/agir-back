@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
-import { UtilisateurBehavior } from '../../src/domain/utilisateur/utilisateurBehavior';
+import { App } from '../domain/app';
 import { Feature } from '../../src/domain/gamification/feature';
 
 export type UserMigrationReport = {
@@ -21,7 +21,7 @@ export class MigrationUsecase {
   }
 
   async migrateUsers(): Promise<UserMigrationReport[]> {
-    const version_target = UtilisateurBehavior.currentUserSystemVersion();
+    const version_target = App.currentUserSystemVersion();
     const result = [];
     const userIdList = await this.utilisateurRepository.listUtilisateurIds();
     for (let index = 0; index < userIdList.length; index++) {

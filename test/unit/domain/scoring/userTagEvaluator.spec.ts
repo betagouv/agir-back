@@ -4,18 +4,18 @@ import {
   Consommation,
   Onboarding,
   Repas,
-} from '../../../../src/domain/utilisateur/onboarding/onboarding';
+} from '../../../../src/domain/onboarding/onboarding';
 import {
   Chauffage,
   TypeLogement,
   Superficie,
   Logement,
-} from '../../../../src/domain/utilisateur/logement';
+} from '../../../../src/domain/logement/logement';
 import {
   Transport,
   TransportQuotidien,
-} from '../../../../src/domain/utilisateur/transport';
-import { OnboardingResult } from '../../../../src/domain/utilisateur/onboarding/onboardingResult';
+} from '../../../../src/domain/transport/transport';
+import { OnboardingResult } from '../../../../src/domain/onboarding/onboardingResult';
 import { UserTagEvaluator } from '../../../../src/domain/scoring/userTagEvaluator';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';

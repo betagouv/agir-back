@@ -1,5 +1,5 @@
 import { Transport_v0 } from '../object_store/transport/transport_v0';
-import { Onboarding } from './onboarding/onboarding';
+import { Onboarding } from '../onboarding/onboarding';
 
 export enum TransportQuotidien {
   voiture = 'voiture',

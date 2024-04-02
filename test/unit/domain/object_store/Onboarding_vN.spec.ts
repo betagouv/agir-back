@@ -6,14 +6,14 @@ import {
   Consommation,
   Onboarding,
   Repas,
-} from '../../../../src/domain/utilisateur/onboarding/onboarding';
+} from '../../../../src/domain/onboarding/onboarding';
 import { Onboarding_v0 } from '../../../../src/domain/object_store/Onboarding/onboarding_v0';
 import {
   TypeLogement,
   Superficie,
   Chauffage,
-} from '../../../../src/domain/utilisateur/logement';
-import { TransportQuotidien } from '../../../../src/domain/utilisateur/transport';
+} from '../../../../src/domain/logement/logement';
+import { TransportQuotidien } from '../../../../src/domain/transport/transport';
 
 describe('Onboarding vN ', () => {
   it('build OK from empty', () => {

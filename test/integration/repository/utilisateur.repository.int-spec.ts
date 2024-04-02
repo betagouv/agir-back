@@ -3,8 +3,8 @@ import { UtilisateurRepository } from '../../../src/infrastructure/repository/ut
 import {
   Impact,
   Onboarding,
-} from '../../../src/domain/utilisateur/onboarding/onboarding';
-import { ThematiqueOnboarding as ThematiqueOnboarding } from '../../../src/domain/utilisateur/onboarding/onboarding';
+} from '../../../src/domain/onboarding/onboarding';
+import { ThematiqueOnboarding as ThematiqueOnboarding } from '../../../src/domain/onboarding/onboarding';
 import { Utilisateur } from '../../../src/domain/utilisateur/utilisateur';
 
 describe('UtilisateurRepository', () => {

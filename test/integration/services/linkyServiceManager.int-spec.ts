@@ -20,7 +20,7 @@ import {
   TypeLogement,
   Chauffage,
   DPE,
-} from '../../../src/domain/utilisateur/logement';
+} from '../../../src/domain/logement/logement';
 
 const logement: Logement_v0 = {
   version: 0,

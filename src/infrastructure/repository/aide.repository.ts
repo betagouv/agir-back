@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { Aide as AideDB } from '@prisma/client';
 import { Thematique } from '../../domain/contenu/thematique';
 import { Aide } from '../../../src/domain/aides/aide';
-import { UtilisateurBehavior } from '../../../src/domain/utilisateur/utilisateurBehavior';
+import { App } from '../../domain/app';
 
 export type AideFilter = {
   maxNumber?: number;
@@ -53,7 +53,7 @@ export class AideRepository {
   }
 
   async search(filter: AideFilter): Promise<Aide[]> {
-    if (UtilisateurBehavior.aide_cache_enabled()) {
+    if (App.aide_cache_enabled()) {
       if (Date.now() - this.last_query_time > 100000) {
         await this.load_aides();
         this.last_query_time = Date.now();

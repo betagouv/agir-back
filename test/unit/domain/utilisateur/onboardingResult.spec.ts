@@ -1,17 +1,17 @@
-import { TransportQuotidien } from '../../../../src/domain/utilisateur/transport';
+import { TransportQuotidien } from '../../../../src/domain/transport/transport';
 import {
   TypeLogement,
   Superficie,
   Chauffage,
-} from '../../../../src/domain/utilisateur/logement';
+} from '../../../../src/domain/logement/logement';
 import {
   Consommation,
   Impact,
   Onboarding,
   Repas,
   ThematiqueOnboarding,
-} from '../../../../src/domain/utilisateur/onboarding/onboarding';
-import { OnboardingResult } from '../../../../src/domain/utilisateur/onboarding/onboardingResult';
+} from '../../../../src/domain/onboarding/onboarding';
+import { OnboardingResult } from '../../../../src/domain/onboarding/onboardingResult';
 
 const ONBOARDING_1_2_3_4 = {
   version: 0,

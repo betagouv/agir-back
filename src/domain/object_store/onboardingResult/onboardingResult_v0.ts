@@ -1,6 +1,6 @@
-import { ThematiqueOnboarding } from '../../../../src/domain/utilisateur/onboarding/onboarding';
-import { Impact } from '../../../../src/domain/utilisateur/onboarding/onboarding';
-import { OnboardingResult } from '../../../../src/domain/utilisateur/onboarding/onboardingResult';
+import { ThematiqueOnboarding } from '../../onboarding/onboarding';
+import { Impact } from '../../onboarding/onboarding';
+import { OnboardingResult } from '../../onboarding/onboardingResult';
 import { Versioned } from '../versioned';
 
 export class OnboardingResult_v0 extends Versioned {

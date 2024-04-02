@@ -4,10 +4,10 @@ import {
   Impact,
   Onboarding,
   ThematiqueOnboarding,
-} from '../domain/utilisateur/onboarding/onboarding';
+} from '../domain/onboarding/onboarding';
 import { OnboardingDataAPI } from '../infrastructure/api/types/utilisateur/onboarding/onboardingDataAPI';
 import { OnboardingDataImpactAPI } from '../infrastructure/api/types/utilisateur/onboarding/onboardingDataImpactAPI';
-import { OnboardingResult } from '../domain/utilisateur/onboarding/onboardingResult';
+import { OnboardingResult } from '../domain/onboarding/onboardingResult';
 
 export type Phrase = {
   phrase: string;

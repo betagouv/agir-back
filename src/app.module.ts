@@ -68,7 +68,7 @@ import { RecommandationUsecase } from './usecase/recommandation.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
 import { ReferentielUsecase } from './usecase/referentiel/referentiel.usecase';
 import { DepartementRepository } from './infrastructure/repository/departement/departement.repository';
-import { Environment } from './domain/environment';
+import { App } from './domain/app';
 import { BibliothequeController } from './infrastructure/api/bibliotheque.controller';
 import { BibliothequeUsecase } from './usecase/bibliotheque.usecase';
 import { LinkyAPIConnector } from './infrastructure/service/linky/LinkyAPIConnector';
@@ -111,7 +111,7 @@ function getControllers(): any[] {
     InscriptionController,
     DefisController,
   );
-  if (!Environment.isProd()) {
+  if (!App.isProd()) {
     controllers.push(TestDataController);
     controllers.push(AuthController);
   }

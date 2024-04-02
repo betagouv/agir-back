@@ -1,7 +1,7 @@
-import { Onboarding_v0 } from '../../../../src/domain/object_store/Onboarding/onboarding_v0';
-import { ApplicationError } from '../../../../src/infrastructure/applicationError';
-import { TypeLogement, Superficie, Chauffage } from '../logement';
-import { TransportQuotidien } from '../transport';
+import { Onboarding_v0 } from '../object_store/Onboarding/onboarding_v0';
+import { ApplicationError } from '../../infrastructure/applicationError';
+import { TypeLogement, Superficie, Chauffage } from '../logement/logement';
+import { TransportQuotidien } from '../transport/transport';
 
 export enum Repas {
   tout = 'tout',
