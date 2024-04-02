@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Post,
-  Headers,
-  ForbiddenException,
-  Res,
-  UnauthorizedException,
-  HttpStatus,
-  Request,
-} from '@nestjs/common';
+import { Controller, Post, Res, HttpStatus, Request } from '@nestjs/common';
 import { Response } from 'express';
 import {
   ApiBearerAuth,
