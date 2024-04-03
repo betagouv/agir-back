@@ -19,6 +19,8 @@ import { LinkyRepository } from '../repository/linky.repository';
 import { ServiceStatus } from '../../../src/domain/service/service';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
+import { Transport } from '../../../src/domain/transport/transport';
+import { Logement } from '../../../src/domain/logement/logement';
 
 export enum TheBoolean {
   true = 'true',
@@ -219,7 +221,13 @@ export class TestDataController {
     const utilisatateur = await this.utilisateurRepository.getById(
       utilisateurId,
     );
-    utilisatateur.recomputeRecoTags();
+    utilisatateur.logement = Logement.buildFromOnboarding(
+      utilisatateur.onboardingData,
+    );
+    (utilisatateur.transport = Transport.buildFromOnboarding(
+      utilisatateur.onboardingData,
+    )),
+      utilisatateur.recomputeRecoTags();
     await this.utilisateurRepository.updateUtilisateur(utilisatateur);
   }
 }
