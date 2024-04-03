@@ -194,7 +194,7 @@ export class TodoCatalogue {
         },
         {
           id: uuidv4(),
-          titre: 'Découvrir Linky',
+          titre: 'Découvrir votre conso elec au jour le jour',
           thematiques: [Thematique.logement],
           progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
