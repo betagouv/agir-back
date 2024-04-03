@@ -4,6 +4,9 @@ export enum utilisateurs_liste {
 
   ALL_USERS = 'ALL_USERS',
   margaux = 'margaux',
+  claire = 'claire',
+  romane = 'romane',
+  nina = 'nina',
   recette_livio = 'recette_livio',
   recette_benoit = 'recette_benoit',
   wojtek = 'wojtek',

@@ -98,24 +98,26 @@ export class TodoCatalogue {
         },
         {
           id: uuidv4(),
-          titre: 'Répondre à une question pour mieux vous connaître',
+          titre:
+            'Répondre à une question pour mieux vous connaître - transport',
           thematiques: [Thematique.transport],
           progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
           type: ContentType.kyc,
           level: DifficultyLevel.ANY,
-          points: 10,
+          points: 5,
           content_id: QuestionID.KYC004,
         },
         {
           id: uuidv4(),
-          titre: 'Répondre à une question pour mieux vous connaître',
+          titre:
+            'Répondre à une question pour mieux vous connaître - transport',
           thematiques: [Thematique.transport],
           progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
           type: ContentType.kyc,
           level: DifficultyLevel.ANY,
-          points: 10,
+          points: 5,
           content_id: QuestionID.KYC004,
         },
       ],
@@ -139,7 +141,8 @@ export class TodoCatalogue {
         },
         {
           id: uuidv4(),
-          titre: 'Répondre à une question pour mieux vous connaître',
+          titre:
+            'Répondre à une question pour mieux vous connaître - alimentation',
           thematiques: [Thematique.alimentation],
           progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
@@ -170,7 +173,7 @@ export class TodoCatalogue {
       todo: [
         {
           id: uuidv4(),
-          titre: 'Répondre à une question pour mieux vous connaître',
+          titre: 'Répondre à une question pour mieux vous connaître - logement',
           thematiques: [Thematique.logement],
           progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
@@ -221,24 +224,26 @@ export class TodoCatalogue {
         },
         {
           id: uuidv4(),
-          titre: 'Répondre à une question pour mieux vous connaître',
+          titre:
+            'Répondre à une question pour mieux vous connaître - consommation',
           thematiques: [Thematique.consommation],
           progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
           type: ContentType.kyc,
           level: DifficultyLevel.L1,
-          points: 10,
+          points: 5,
           content_id: QuestionID.KYC005,
         },
         {
           id: uuidv4(),
-          titre: 'Répondre à une question pour mieux vous connaître',
+          titre:
+            'Répondre à une question pour mieux vous connaître - consommation',
           thematiques: [Thematique.consommation],
           progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
           type: ContentType.kyc,
           level: DifficultyLevel.L1,
-          points: 10,
+          points: 5,
           content_id: QuestionID.KYC002,
         },
         {
