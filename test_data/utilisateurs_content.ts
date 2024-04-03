@@ -161,21 +161,11 @@ const utilisateurs = {
       version: 0,
       points: 0,
     },
-    unlocked_features: {
-      version: 1,
-      unlocked_features: [
-        'aides',
-        'services',
-        'recommandations',
-        'bibliotheque',
-        'defis',
-      ],
-    },
     suivis: [],
     bilans: [],
     services: [],
     onboardingResult: ONBOARDING_RES_1234,
-    onboardingData: ONBOARD_DATA_NO_CAR_MOTO,
+    onboardingData: ONBOARD_DATA_1234,
   },
   DEV: {
     nom: 'Mr Dev',
@@ -263,7 +253,7 @@ const utilisateurs = {
     prenom: 'Livio',
     email: 'livio@agir.dev',
     mot_de_passe: 'haha',
-    revenu_fiscal: 0,
+    revenu_fiscal: null,
     parts: null,
     version: 6,
     gamification: {
@@ -279,7 +269,7 @@ const utilisateurs = {
     prenom: 'Margaux',
     email: 'margaux@agir.dev',
     mot_de_passe: 'haha',
-    revenu_fiscal: 0,
+    revenu_fiscal: null,
     parts: null,
     version: 6,
     gamification: {
@@ -295,7 +285,7 @@ const utilisateurs = {
     prenom: 'Nina',
     email: 'nina@agir.dev',
     mot_de_passe: 'haha',
-    revenu_fiscal: 0,
+    revenu_fiscal: null,
     parts: null,
     version: 6,
     gamification: {
@@ -311,7 +301,7 @@ const utilisateurs = {
     prenom: 'Dorian',
     email: 'dorian@agir.dev',
     mot_de_passe: 'haha',
-    revenu_fiscal: 0,
+    revenu_fiscal: null,
     parts: null,
     version: 6,
     gamification: {
@@ -327,7 +317,7 @@ const utilisateurs = {
     prenom: 'Guillaume',
     email: 'guillaume@agir.dev',
     mot_de_passe: 'haha',
-    revenu_fiscal: 0,
+    revenu_fiscal: null,
     parts: null,
     version: 6,
     gamification: {
@@ -343,7 +333,7 @@ const utilisateurs = {
     prenom: 'Romane',
     email: 'romane@agir.dev',
     mot_de_passe: 'haha',
-    revenu_fiscal: 0,
+    revenu_fiscal: null,
     parts: null,
     version: 6,
     gamification: {
@@ -359,7 +349,7 @@ const utilisateurs = {
     prenom: 'Claire',
     email: 'claire@agir.dev',
     mot_de_passe: 'haha',
-    revenu_fiscal: 0,
+    revenu_fiscal: null,
     parts: null,
     version: 6,
     gamification: {
