@@ -214,9 +214,9 @@ export class TodoCatalogue {
       todo: [
         {
           id: uuidv4(),
-          titre: 'Réussir 3 quiz Consommation - très facile',
+          titre: 'Réussir 1 quiz Consommation - très facile',
           thematiques: [Thematique.consommation],
-          progression: { current: 0, target: 3 },
+          progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
           type: ContentType.quizz,
           level: DifficultyLevel.L1,
