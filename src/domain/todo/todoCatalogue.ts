@@ -237,7 +237,7 @@ export class TodoCatalogue {
         {
           id: uuidv4(),
           titre:
-            'Répondre à une question pour mieux vous connaître - consommation',
+            'Répondre à une question pour mieux vous connaître - transports',
           thematiques: [Thematique.consommation],
           progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
