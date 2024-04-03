@@ -5,7 +5,7 @@ import { Reveal } from './celebrations/reveal';
 import { Feature } from './feature';
 
 let SEUILS_NIVEAUX: number[] = [
-  100, 250, 400, 600, 850, 1150, 1500, 2000, 2600, 3300,
+  100, 150, 300, 400, 600, 800, 1000, 2000, 4000, 10000,
 ];
 
 export class Gamification {
@@ -98,6 +98,8 @@ export class Gamification {
         return Reveal.newRevealFromFeature(Feature.recommandations);
       case 5:
         return Reveal.newRevealFromFeature(Feature.bibliotheque);
+      case 6:
+        return Reveal.newRevealFromFeature(Feature.defis);
     }
     return null;
   }
