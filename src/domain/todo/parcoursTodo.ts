@@ -66,6 +66,7 @@ export class ParcoursTodo {
     return this.todo_active + 1;
   }
   public getTodoByNumero?(numero: number): Todo {
+    // FIXME : use last todo
     if (numero <= this.liste_todo.length) {
       return this.liste_todo[numero - 1];
     }
