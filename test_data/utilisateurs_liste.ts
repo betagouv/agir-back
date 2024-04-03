@@ -6,6 +6,8 @@ export enum utilisateurs_liste {
   margaux = 'margaux',
   claire = 'claire',
   romane = 'romane',
+  guillaume = 'guillaume',
+  dorian = 'dorian',
   nina = 'nina',
   recette_livio = 'recette_livio',
   recette_benoit = 'recette_benoit',
