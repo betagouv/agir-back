@@ -118,7 +118,7 @@ export class TodoCatalogue {
           type: ContentType.kyc,
           level: DifficultyLevel.ANY,
           points: 5,
-          content_id: QuestionID.KYC004,
+          content_id: QuestionID.KYC003,
         },
       ],
     },
