@@ -29,17 +29,39 @@ describe('ParcoursTodo', () => {
   });
   it('findTodoElementByTypeAndThematique : le bon element et la bonne todo', () => {
     // GIVEN
-    const parcours = new ParcoursTodo();
+    const parcours = new ParcoursTodo({
+      version: 2,
+      todo_active: 0,
+      liste_todo: [
+        {
+          done: [],
+          numero_todo: 1,
+          points_todo: 20,
+          done_at: null,
+          titre: 'titre',
+          todo: [
+            {
+              id: '1',
+              points: 10,
+              progression: { current: 0, target: 1 },
+              level: DifficultyLevel.L1,
+              titre: 'titre',
+              type: ContentType.article,
+              thematiques: [Thematique.transport],
+              sont_points_en_poche: false,
+            },
+          ],
+        },
+      ],
+    });
     // WHEN
     const found = parcours.findTodoElementByTypeAndThematique(
       ContentType.article,
       [Thematique.transport],
     );
     // THEN
-    expect(found.element.titre).toEqual(
-      `Lire un article Transports - très facile`,
-    );
-    expect(found.todo.numero_todo).toEqual(2);
+    expect(found.element.titre).toEqual(`titre`);
+    expect(found.todo.numero_todo).toEqual(1);
   });
   it('findTodoElementByTypeAndThematique : pas trouvé renvoi undefined', () => {
     // GIVEN
@@ -54,14 +76,37 @@ describe('ParcoursTodo', () => {
   });
   it('findTodoElementByServiceId : le bon element et la bonne todo', () => {
     // GIVEN
-    const parcours = new ParcoursTodo();
+    const parcours = new ParcoursTodo({
+      version: 2,
+      todo_active: 0,
+      liste_todo: [
+        {
+          done: [],
+          numero_todo: 1,
+          points_todo: 20,
+          done_at: null,
+          titre: 'titre',
+          todo: [
+            {
+              id: '1',
+              points: 10,
+              progression: { current: 0, target: 1 },
+              level: DifficultyLevel.L1,
+              titre: 'titre',
+              type: ContentType.service,
+              service_id: LiveService.fruits,
+              thematiques: [Thematique.transport],
+              sont_points_en_poche: false,
+            },
+          ],
+        },
+      ],
+    });
     // WHEN
     const found = parcours.findTodoElementByServiceId(LiveService.fruits);
     // THEN
-    expect(found.element.titre).toEqual(
-      `Installer "Fruits et légumes de saison"`,
-    );
-    expect(found.todo.numero_todo).toEqual(4);
+    expect(found.element.titre).toEqual(`titre`);
+    expect(found.todo.numero_todo).toEqual(1);
   });
   it('findTodoElementByServiceId : pas trouvé renvoi undefined', () => {
     // GIVEN
