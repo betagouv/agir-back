@@ -220,7 +220,7 @@ export class TodoCatalogue {
           sont_points_en_poche: false,
           type: ContentType.quizz,
           level: DifficultyLevel.L1,
-          points: 10,
+          points: 30,
         },
         {
           id: uuidv4(),
