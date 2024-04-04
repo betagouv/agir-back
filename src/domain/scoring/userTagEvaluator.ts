@@ -122,7 +122,7 @@ export class UserTagEvaluator {
     const kyc = user.kyc_history.getQuestion(QuestionID.KYC003);
     if (kyc && kyc.hasResponses()) {
       user.setTagWhen(
-        kyc.includesReponseCode('pas_de_velo'),
+        kyc.includesReponseCode(BooleanKYC.non),
         Tag.possede_velo,
         -100,
         100,
