@@ -64,7 +64,7 @@ const utilisateurs = {
     migration_enabled: true,
     gamification: {
       version: 0,
-      points: 0,
+      points: 590,
     },
     unlocked_features: {
       version: 1,
@@ -73,7 +73,6 @@ const utilisateurs = {
         'services',
         'recommandations',
         'bibliotheque',
-        'defis',
       ],
     },
     todo: {
@@ -87,36 +86,6 @@ const utilisateurs = {
           done_at: null,
           done: [],
           todo: [
-            {
-              id: uuidv4(),
-              titre: 'Lire un article Consommation - très facile',
-              thematiques: [Thematique.consommation],
-              progression: { current: 0, target: 1 },
-              sont_points_en_poche: false,
-              type: ContentType.article,
-              level: DifficultyLevel.L1,
-              points: 20,
-            },
-            {
-              id: uuidv4(),
-              titre: 'Réussir 3 quiz Consommation - très facile',
-              thematiques: [Thematique.consommation],
-              progression: { current: 0, target: 3 },
-              sont_points_en_poche: false,
-              type: ContentType.quizz,
-              level: DifficultyLevel.L1,
-              points: 20,
-            },
-            {
-              id: uuidv4(),
-              titre: 'Lire un article Déchets - très facile',
-              thematiques: [Thematique.dechet],
-              progression: { current: 0, target: 1 },
-              sont_points_en_poche: false,
-              type: ContentType.article,
-              level: DifficultyLevel.L1,
-              points: 20,
-            },
             {
               id: uuidv4(),
               titre: 'va voir Linky',
