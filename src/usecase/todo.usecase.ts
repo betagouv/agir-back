@@ -10,6 +10,7 @@ import {
   Celebration,
   CelebrationType,
 } from '../../src/domain/gamification/celebrations/celebration';
+import { Feature } from '../../src/domain/gamification/feature';
 
 @Injectable()
 export class TodoUsecase {
@@ -42,6 +43,7 @@ export class TodoUsecase {
       utilisateur.parcours_todo.avanceDansParcours();
 
       if (utilisateur.parcours_todo.isLastTodo()) {
+        utilisateur.unlocked_features.add(Feature.defis);
         utilisateur.gamification.celebrations.push(
           new Celebration({
             id: undefined,

@@ -98,8 +98,6 @@ export class Gamification {
         return Reveal.newRevealFromFeature(Feature.recommandations);
       case 5:
         return Reveal.newRevealFromFeature(Feature.bibliotheque);
-      case 6:
-        return Reveal.newRevealFromFeature(Feature.defis);
     }
     return null;
   }
