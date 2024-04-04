@@ -58,7 +58,7 @@ export class TodoCatalogue {
       todo: [
         {
           id: uuidv4(),
-          titre: 'Réussir 1 quiz Climat - très facile',
+          titre: 'Réussir 1 quiz Climat',
           thematiques: [Thematique.climat],
           progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
@@ -88,7 +88,7 @@ export class TodoCatalogue {
       todo: [
         {
           id: uuidv4(),
-          titre: 'Réussir 2 quiz Transport - très facile',
+          titre: 'Réussir 2 quiz Transport',
           thematiques: [Thematique.transport],
           progression: { current: 0, target: 2 },
           sont_points_en_poche: false,
@@ -131,7 +131,7 @@ export class TodoCatalogue {
       todo: [
         {
           id: uuidv4(),
-          titre: `Lire 2 articles Alimentation très facile`,
+          titre: `Lire 2 articles Alimentation`,
           thematiques: [Thematique.alimentation],
           progression: { current: 0, target: 2 },
           sont_points_en_poche: false,
@@ -184,7 +184,7 @@ export class TodoCatalogue {
         },
         {
           id: uuidv4(),
-          titre: 'Réussir 2 quiz Logement - très facile',
+          titre: 'Réussir 2 quiz Logement',
           thematiques: [Thematique.logement],
           progression: { current: 0, target: 2 },
           sont_points_en_poche: false,
@@ -214,7 +214,7 @@ export class TodoCatalogue {
       todo: [
         {
           id: uuidv4(),
-          titre: 'Réussir 1 quiz Consommation - très facile',
+          titre: 'Réussir 1 quiz Consommation',
           thematiques: [Thematique.consommation],
           progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
@@ -248,7 +248,7 @@ export class TodoCatalogue {
         },
         {
           id: uuidv4(),
-          titre: 'Lire 1 article Déchets - très facile',
+          titre: 'Lire 1 article Déchets',
           thematiques: [Thematique.dechet],
           progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
