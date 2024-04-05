@@ -11,6 +11,7 @@ import {
   CelebrationType,
 } from '../../src/domain/gamification/celebrations/celebration';
 import { Feature } from '../../src/domain/gamification/feature';
+import { Reveal } from '../../src/domain/gamification/celebrations/reveal';
 
 @Injectable()
 export class TodoUsecase {
@@ -49,6 +50,7 @@ export class TodoUsecase {
             id: undefined,
             titre: 'Toutes les missions sont terminées !!',
             type: CelebrationType.fin_mission,
+            reveal: Reveal.newRevealFromFeature(Feature.defis),
           }),
         );
       }
