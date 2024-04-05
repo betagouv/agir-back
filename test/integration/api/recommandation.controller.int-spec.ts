@@ -694,4 +694,35 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[4].content_id).toEqual('005');
     expect(response.body[5].content_id).toEqual('006');
   });
+  it('GET /utilisateurs/id/recommandations - pas de defi à - de -50 points', async () => {
+    // GIVEN
+    process.env.DEFI_ENABLED = 'true';
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '1',
+      tags: [Tag.climat],
+    });
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '2',
+      tags: [Tag.logement],
+    });
+    await TestUtil.create(DB.utilisateur, {
+      history: {},
+      tag_ponderation_set: { climat: 100, logement: -60 },
+      kyc: {
+        version: 0,
+        answered_questions: [],
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].content_id).toEqual('1');
+  });
 });
