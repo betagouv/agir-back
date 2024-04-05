@@ -44,13 +44,11 @@ export class TodoUsecase {
       utilisateur.parcours_todo.avanceDansParcours();
 
       if (utilisateur.parcours_todo.isLastTodo()) {
-        utilisateur.unlocked_features.add(Feature.defis);
         utilisateur.gamification.celebrations.push(
           new Celebration({
             id: undefined,
             titre: 'Toutes les missions sont terminées !!',
             type: CelebrationType.fin_mission,
-            reveal: Reveal.newRevealFromFeature(Feature.defis),
           }),
         );
       }
