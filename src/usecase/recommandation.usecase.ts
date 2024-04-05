@@ -97,8 +97,10 @@ export class RecommandationUsecase {
     );
 
     const result = this.mapDefiToRecommandation(defis);
+
     PonderationApplicativeManager.sortContent(result);
-    return result;
+
+    return result.filter((d) => d.score > -50);
   }
 
   private getDefisEnCours(utilisateur: Utilisateur): Recommandation[] {
