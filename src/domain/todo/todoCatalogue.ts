@@ -194,7 +194,8 @@ export class TodoCatalogue {
         },
         {
           id: uuidv4(),
-          titre: 'Découvrir le service "votre conso elec au jour le jour"',
+          titre:
+            'Découvrir le service "Votre consommation électrique au jour le jour"',
           thematiques: [Thematique.logement],
           progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
