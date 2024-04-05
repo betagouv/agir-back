@@ -122,16 +122,16 @@ export class UserTagEvaluator {
   private static kyc_003(user: Utilisateur, kyc: QuestionKYC) {
     user.increaseTagValueIfElse(
       Tag.possede_velo,
-      kyc.includesReponseCode(BooleanKYC.non),
-      -100,
+      kyc.includesReponseCode(BooleanKYC.oui),
       100,
+      -100,
     );
   }
 
   private static kyc_004(user: Utilisateur, kyc: QuestionKYC) {
     user.increaseTagForAnswers(Tag.pistes_cyclables, kyc, {
       pistes_cyclables_faciles: 100,
-      pistes_cyclables_dangereuses: 100,
+      pistes_cyclables_dangereuses: 50,
       absence_pistes_cyclables: -100,
       ne_sais_pas: 0,
     });
@@ -209,18 +209,6 @@ export class UserTagEvaluator {
       100,
       -100,
     );
-    user.increaseTagValueIfElse(
-      Tag.possede_voiture_elec_hybride,
-      kyc.includesReponseCode('ne_sais_pas'),
-      0,
-      0,
-    );
-    user.increaseTagValueIfElse(
-      Tag.possede_voiture_thermique,
-      kyc.includesReponseCode('ne_sais_pas'),
-      0,
-      0,
-    );
   }
 
   private static kyc_012(user: Utilisateur, kyc: QuestionKYC) {
@@ -235,18 +223,6 @@ export class UserTagEvaluator {
       kyc.includesReponseCode(BooleanKYC.non),
       100,
       -100,
-    );
-    user.increaseTagValueIfElse(
-      Tag.trajet_court_voiture,
-      kyc.includesReponseCode('ne_sais_pas'),
-      0,
-      0,
-    );
-    user.increaseTagValueIfElse(
-      Tag.trajet_long_voiture,
-      kyc.includesReponseCode('ne_sais_pas'),
-      0,
-      0,
     );
   }
 
