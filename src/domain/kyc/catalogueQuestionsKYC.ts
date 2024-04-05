@@ -123,7 +123,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
   {
     id: KYCID.KYC007,
     question: 'Quelle boisson chaude consommez-vous quotidiennement ?',
-    type: TypeReponseQuestionKYC.choix_unique,
+    type: TypeReponseQuestionKYC.choix_multiple,
     is_NGC: false,
     categorie: CategorieQuestionKYC.mission,
     points: 5,
@@ -132,7 +132,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     reponses_possibles: [
       { label: 'Café', code: 'cafe' },
       { label: 'Thé ou tisane', code: 'the' },
-      { label: 'Chicoré', code: 'chicore' },
+      { label: 'Chicorée', code: 'chicore' },
       { label: 'Autre', code: 'autre' },
       { label: 'Aucune', code: 'aucune' },
     ],
@@ -193,7 +193,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
   {
     id: KYCID.KYC011,
     question:
-      'Dans vos trajets du quotidien, quels est votre typologie de voitures ?',
+      'Dans vos trajets du quotidien, quel type de voiture utilisez-vous ?',
     type: TypeReponseQuestionKYC.choix_unique,
     is_NGC: false,
     categorie: CategorieQuestionKYC.recommandation,
