@@ -3,7 +3,7 @@ import { QuestionKYC_v0 } from '../object_store/kyc/kycHistory_v0';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
 
-export enum QuestionID {
+export enum KYCID {
   KYC001 = 'KYC001',
   KYC002 = 'KYC002',
   KYC003 = 'KYC003',
@@ -49,7 +49,7 @@ export class KYCReponse {
 }
 
 export class QuestionKYC implements TaggedContent {
-  id: QuestionID;
+  id: KYCID;
   question: string;
   type: TypeReponseQuestionKYC;
   categorie: CategorieQuestionKYC;
@@ -91,7 +91,7 @@ export class QuestionKYC implements TaggedContent {
   }
 
   public includesReponseCode(code: string): boolean {
-    if (!this.reponses) {
+    if (!this.hasResponses()) {
       return false;
     }
     const found = this.reponses.find((r) => r.code === code);

@@ -13,7 +13,7 @@ import {
 import { TransportQuotidien } from '../../../../src/domain/transport/transport';
 import {
   CategorieQuestionKYC,
-  QuestionID,
+  KYCID,
   QuestionKYC,
   TypeReponseQuestionKYC,
 } from '../../../../src/domain/kyc/questionQYC';
@@ -133,7 +133,7 @@ describe('Objet Utilisateur', () => {
     user.tag_ponderation_set = {};
 
     const kyc = new QuestionKYC({
-      id: QuestionID.KYC007,
+      id: KYCID.KYC007,
       question: 'Quelle boisson chaude consommez-vous quotidiennement ?',
       type: TypeReponseQuestionKYC.choix_unique,
       is_NGC: false,
@@ -149,7 +149,7 @@ describe('Objet Utilisateur', () => {
     });
 
     // WHEN
-    user.setTagSwitchOrZero(kyc, Tag.climat, {
+    user.increaseTagForAnswers(Tag.climat, kyc, {
       cafe: 100,
       the: 50,
       chicore: 10,
@@ -161,10 +161,10 @@ describe('Objet Utilisateur', () => {
   it('setTagSwitchOrZero : match nothing', () => {
     // GIVEN
     const user = new Utilisateur();
-    user.tag_ponderation_set = {};
+    user.tag_ponderation_set = { climat: 5 };
 
     const kyc = new QuestionKYC({
-      id: QuestionID.KYC007,
+      id: KYCID.KYC007,
       question: 'Quelle boisson chaude consommez-vous quotidiennement ?',
       type: TypeReponseQuestionKYC.choix_unique,
       is_NGC: false,
@@ -181,16 +181,16 @@ describe('Objet Utilisateur', () => {
     });
 
     // WHEN
-    user.setTagSwitchOrZero(kyc, Tag.climat, {
+    user.increaseTagForAnswers(Tag.climat, kyc, {
       cafe: 100,
       the: 50,
       chicore: 10,
     });
 
     // THEN
-    expect(user.tag_ponderation_set.climat).toEqual(0);
+    expect(user.tag_ponderation_set.climat).toEqual(5);
   });
-  it('resetAllHistory : reset tout sauf onboarding', () => {
+  it('increaseTagForAnswers : cumule', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
       'A',
@@ -215,14 +215,17 @@ describe('Objet Utilisateur', () => {
     user.tag_ponderation_set = {};
 
     const kyc = new QuestionKYC({
-      id: QuestionID.KYC007,
+      id: KYCID.KYC007,
       question: 'Quelle boisson chaude consommez-vous quotidiennement ?',
       type: TypeReponseQuestionKYC.choix_unique,
       is_NGC: false,
       categorie: CategorieQuestionKYC.mission,
       points: 5,
       tags: [],
-      reponses: [{ label: 'autre', code: 'autre' }],
+      reponses: [
+        { label: 'Thé ou tisane', code: 'the' },
+        { label: 'CHI', code: 'chicore' },
+      ],
       reponses_possibles: [
         { label: 'Café', code: 'cafe' },
         { label: 'Thé ou tisane', code: 'the' },
@@ -232,13 +235,13 @@ describe('Objet Utilisateur', () => {
     });
 
     // WHEN
-    user.setTagSwitchOrZero(kyc, Tag.climat, {
+    user.increaseTagForAnswers(Tag.climat, kyc, {
       cafe: 100,
       the: 50,
       chicore: 10,
     });
 
     // THEN
-    expect(user.tag_ponderation_set.climat).toEqual(0);
+    expect(user.tag_ponderation_set.climat).toEqual(60);
   });
 });

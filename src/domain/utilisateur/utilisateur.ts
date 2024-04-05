@@ -169,36 +169,42 @@ export class Utilisateur extends UtilisateurData {
     return App.getAdminIdsStringList().includes(this.id);
   }
 
-  public setTag?(tag: Tag, value: number) {
-    this.tag_ponderation_set[tag] = value;
+  public increaseTagValue?(tag: Tag, value: number) {
+    this.setTagValue(tag, this.getTagValue(tag) + value);
   }
-  public setTagWhenOrZero?(when: boolean, tag: Tag, value_yes: number) {
-    this.tag_ponderation_set[tag] = when ? value_yes : 0;
-  }
-  public setTagSwitchOrZero?(
-    kyc: QuestionKYC,
+  public increaseTagForAnswers?(
     tag: Tag,
+    kyc: QuestionKYC,
     map: Record<string, number>,
   ) {
-    for (const key in map) {
-      if (kyc.includesReponseCode(key)) {
-        this.tag_ponderation_set[tag] = map[key];
-        return;
-      } else {
-        this.tag_ponderation_set[tag] = 0;
+    if (kyc && kyc.hasResponses()) {
+      for (const key in map) {
+        if (kyc.includesReponseCode(key)) {
+          this.increaseTagValue(tag, map[key]);
+        }
       }
     }
   }
-  public setTagWhen?(
-    when: boolean,
+  public increaseTagValueIfElse?(
     tag: Tag,
+    when: boolean,
     value_yes: number,
     value_no: number,
   ) {
-    this.tag_ponderation_set[tag] = when ? value_yes : value_no;
+    this.setTagValue(
+      tag,
+      this.getTagValue(tag) + (when ? value_yes : value_no),
+    );
   }
 
   public recomputeRecoTags?() {
     UserTagEvaluator.recomputeRecoTags(this);
+  }
+
+  public getTagValue?(tag: Tag) {
+    return this.tag_ponderation_set[tag] ? this.tag_ponderation_set[tag] : 0;
+  }
+  public setTagValue?(tag: Tag, value: number) {
+    this.tag_ponderation_set[tag] = value;
   }
 }

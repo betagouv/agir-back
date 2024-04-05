@@ -2,7 +2,7 @@ import { KYCHistory_v0 as KYCHistory_v0 } from '../object_store/kyc/kycHistory_v
 import { CatalogueQuestionsKYC } from './catalogueQuestionsKYC';
 import {
   CategorieQuestionKYC,
-  QuestionID,
+  KYCID,
   QuestionKYC,
   TypeReponseQuestionKYC,
 } from './questionQYC';
@@ -55,7 +55,7 @@ export class KYCHistory {
     }
     return CatalogueQuestionsKYC.getByIdOrException(id);
   }
-  public getQuestion(id: QuestionID): QuestionKYC {
+  public getQuestion(id: KYCID): QuestionKYC {
     let answered_question = this.getAnsweredQuestion(id);
     if (answered_question) {
       this.upgradeQuestion(answered_question);

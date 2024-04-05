@@ -9,7 +9,7 @@ import { EventType } from '../../../src/domain/appEvent';
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
-  QuestionID,
+  KYCID,
 } from '../../../src/domain/kyc/questionQYC';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
@@ -899,7 +899,7 @@ describe('TODO list (API test)', () => {
       version: 0,
       answered_questions: [
         {
-          id: QuestionID._1,
+          id: KYCID._1,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,

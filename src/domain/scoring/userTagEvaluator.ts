@@ -1,5 +1,5 @@
 import { Thematique } from '../contenu/thematique';
-import { BooleanKYC, QuestionID } from '../kyc/questionQYC';
+import { BooleanKYC, KYCID, QuestionKYC } from '../kyc/questionQYC';
 import { ThematiqueOnboarding } from '../onboarding/onboarding';
 import { TransportQuotidien } from '../transport/transport';
 import { Utilisateur } from '../utilisateur/utilisateur';
@@ -7,21 +7,14 @@ import { Tag } from './tag';
 
 export class UserTagEvaluator {
   public static recomputeRecoTags(user: Utilisateur) {
-    UserTagEvaluator.transport_quotidiens(user);
-    UserTagEvaluator.kyc_001(user);
-    UserTagEvaluator.kyc_002(user);
-    UserTagEvaluator.kyc_003(user);
-    UserTagEvaluator.kyc_004(user);
-    UserTagEvaluator.kyc_005(user);
-    UserTagEvaluator.kyc_006(user);
-    UserTagEvaluator.kyc_007(user);
-    UserTagEvaluator.kyc_008(user);
-    UserTagEvaluator.kyc_009(user);
-    UserTagEvaluator.kyc_010(user);
-    UserTagEvaluator.kyc_011(user);
-    UserTagEvaluator.kyc_012(user);
-    UserTagEvaluator.kyc_013(user);
+    user.tag_ponderation_set = {};
+
+    for (const kyc_id in KYCID) {
+      UserTagEvaluator.processKYC(user, KYCID[kyc_id]);
+    }
+
     UserTagEvaluator.shopping_addict(user);
+    UserTagEvaluator.transport_quotidiens(user);
     UserTagEvaluator.viande_addict(user);
   }
 
@@ -29,262 +22,304 @@ export class UserTagEvaluator {
     const impact = user.onboardingResult.getImpact(
       ThematiqueOnboarding.consommation,
     );
-    user.setTag(Tag.shopping_addict, (impact - 1) * 20);
+    user.increaseTagValue(Tag.shopping_addict, (impact - 1) * 20);
   }
 
   private static viande_addict(user: Utilisateur) {
     const impact = user.onboardingResult.getImpact(
       ThematiqueOnboarding.alimentation,
     );
-    user.setTag(Tag.viande_addict, (impact - 1) * 20);
+    user.increaseTagValue(Tag.viande_addict, (impact - 1) * 20);
   }
 
   private static transport_quotidiens(user: Utilisateur) {
     if (user.transport.transports_quotidiens) {
-      user.setTagWhenOrZero(
+      user.increaseTagValueIfElse(
+        Tag.utilise_moto_ou_voiture,
         user.transport.transports_quotidiens.includes(
           TransportQuotidien.moto,
         ) ||
           user.transport.transports_quotidiens.includes(
             TransportQuotidien.voiture,
           ),
-        Tag.utilise_moto_ou_voiture,
         100,
-      );
-    }
-  }
-  private static kyc_001(user: Utilisateur) {
-    const kyc = user.kyc_history.getQuestion(QuestionID.KYC001);
-    if (kyc && kyc.hasResponses()) {
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode(Thematique.transport),
-        Tag.transport,
-        50,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode(Thematique.alimentation),
-        Tag.alimentation,
-        50,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode(Thematique.climat),
-        Tag.climat,
-        50,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode(Thematique.dechet),
-        Tag.dechet,
-        50,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode(Thematique.logement),
-        Tag.logement,
-        50,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode(Thematique.loisir),
-        Tag.loisir,
-        50,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode(Thematique.consommation),
-        Tag.consommation,
-        50,
-      );
-    }
-  }
-  private static kyc_002(user: Utilisateur) {
-    const kyc = user.kyc_history.getQuestion(QuestionID.KYC002);
-    if (kyc && kyc.hasResponses()) {
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode('co_voit'),
-        Tag.appetence_covoit,
-        -100,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode('faire_velo'),
-        Tag.appetence_velo,
-        -100,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode('marcher'),
-        Tag.appetence_marche,
-        -100,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode('TEC'),
-        Tag.appetence_tec,
-        -100,
-      );
-    }
-  }
-  private static kyc_003(user: Utilisateur) {
-    const kyc = user.kyc_history.getQuestion(QuestionID.KYC003);
-    if (kyc && kyc.hasResponses()) {
-      user.setTagWhen(
-        kyc.includesReponseCode(BooleanKYC.non),
-        Tag.possede_velo,
-        -100,
-        100,
-      );
-    }
-  }
-  private static kyc_004(user: Utilisateur) {
-    const kyc = user.kyc_history.getQuestion(QuestionID.KYC004);
-    if (kyc && kyc.hasResponses()) {
-      user.setTagSwitchOrZero(kyc, Tag.pistes_cyclables, {
-        pistes_cyclables_faciles: 100,
-        pistes_cyclables_dangereuses: 100,
-        absence_pistes_cyclables: -100,
-        ne_sais_pas: 0,
-      });
-    }
-  }
-  private static kyc_005(user: Utilisateur) {
-    const kyc = user.kyc_history.getQuestion(QuestionID.KYC005);
-    if (kyc && kyc.hasResponses()) {
-      user.setTagSwitchOrZero(kyc, Tag.possede_emploi, {
-        emploi: 100,
-        sans_emploi: -100,
-        ne_sais_pas: 0,
-      });
-    }
-  }
-  private static kyc_006(user: Utilisateur) {
-    const kyc = user.kyc_history.getQuestion(QuestionID.KYC006);
-    if (kyc && kyc.hasResponses()) {
-      user.setTagWhen(
-        kyc.includesReponseCode('plus_15'),
-        Tag.logement_plus_15_ans,
-        100,
-        -100,
-      );
-    }
-  }
-  private static kyc_007(user: Utilisateur) {
-    const kyc = user.kyc_history.getQuestion(QuestionID.KYC007);
-    if (kyc && kyc.hasResponses()) {
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode('cafe'),
-        Tag.appetence_cafe,
-        100,
-      );
-    }
-  }
-  private static kyc_008(user: Utilisateur) {
-    const kyc = user.kyc_history.getQuestion(QuestionID.KYC008);
-    if (kyc && kyc.hasResponses()) {
-      user.setTagSwitchOrZero(kyc, Tag.capacite_teletravail, {
-        max_tele: 100,
-        un_peu_tele: 50,
-        no_tele: -100,
-        ne_sais_pas: 0,
-      });
-    }
-  }
-  private static kyc_009(user: Utilisateur) {
-    const kyc = user.kyc_history.getQuestion(QuestionID.KYC009);
-    if (kyc && kyc.hasResponses()) {
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode('ma_voit'),
-        Tag.possede_voiture,
-        100,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode('co_voit'),
-        Tag.appetence_covoit,
-        100,
-      );
-    }
-  }
-  private static kyc_010(user: Utilisateur) {
-    const kyc = user.kyc_history.getQuestion(QuestionID.KYC010);
-    if (kyc && kyc.hasResponses()) {
-      user.setTagWhen(
-        kyc.includesReponseCode(BooleanKYC.oui),
-        Tag.possede_jardin,
-        100,
-        -100,
-      );
-    }
-  }
-  private static kyc_011(user: Utilisateur) {
-    const kyc = user.kyc_history.getQuestion(QuestionID.KYC011);
-    if (kyc && kyc.hasResponses()) {
-      user.setTagWhen(
-        kyc.includesReponseCode('voit_therm'),
-        Tag.possede_voiture_thermique,
-        100,
-        -100,
-      );
-      user.setTagWhen(
-        kyc.includesReponseCode('voit_elec_hybride'),
-        Tag.possede_voiture_elec_hybride,
-        100,
-        -100,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode('ne_sais_pas'),
-        Tag.possede_voiture_elec_hybride,
-        0,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode('ne_sais_pas'),
-        Tag.possede_voiture_thermique,
         0,
       );
     }
   }
-  private static kyc_012(user: Utilisateur) {
-    const kyc = user.kyc_history.getQuestion(QuestionID.KYC012);
-    if (kyc && kyc.hasResponses()) {
-      user.setTagWhen(
-        kyc.includesReponseCode(BooleanKYC.oui),
-        Tag.trajet_court_voiture,
-        100,
-        -100,
-      );
-      user.setTagWhen(
-        kyc.includesReponseCode(BooleanKYC.non),
-        Tag.trajet_long_voiture,
-        100,
-        -100,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode('ne_sais_pas'),
-        Tag.trajet_court_voiture,
-        0,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode('ne_sais_pas'),
-        Tag.trajet_long_voiture,
-        0,
-      );
-    }
+  private static kyc_001(user: Utilisateur, kyc: QuestionKYC) {
+    user.increaseTagValueIfElse(
+      Tag.transport,
+      kyc.includesReponseCode(Thematique.transport),
+      50,
+      0,
+    );
+    user.increaseTagValueIfElse(
+      Tag.alimentation,
+      kyc.includesReponseCode(Thematique.alimentation),
+      50,
+      0,
+    );
+    user.increaseTagValueIfElse(
+      Tag.climat,
+      kyc.includesReponseCode(Thematique.climat),
+      50,
+      0,
+    );
+    user.increaseTagValueIfElse(
+      Tag.dechet,
+      kyc.includesReponseCode(Thematique.dechet),
+      50,
+      0,
+    );
+    user.increaseTagValueIfElse(
+      Tag.logement,
+      kyc.includesReponseCode(Thematique.logement),
+      50,
+      0,
+    );
+    user.increaseTagValueIfElse(
+      Tag.loisir,
+      kyc.includesReponseCode(Thematique.loisir),
+      50,
+      0,
+    );
+    user.increaseTagValueIfElse(
+      Tag.consommation,
+      kyc.includesReponseCode(Thematique.consommation),
+      50,
+      0,
+    );
   }
-  private static kyc_013(user: Utilisateur) {
-    const kyc = user.kyc_history.getQuestion(QuestionID.KYC013);
-    if (kyc && kyc.hasResponses()) {
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode('limiter_impact'),
-        Tag.appetence_limiter_impact_trajets,
-        100,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode('achat_voit'),
-        Tag.appetence_changement_voit,
-        100,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode('economie'),
-        Tag.appetence_ecomomies,
-        100,
-      );
-      user.setTagWhenOrZero(
-        kyc.includesReponseCode('bouger'),
-        Tag.appetence_bouger_sante,
-        100,
-      );
+
+  private static kyc_002(user: Utilisateur, kyc: QuestionKYC) {
+    user.increaseTagValueIfElse(
+      Tag.appetence_covoit,
+      kyc.includesReponseCode('co_voit'),
+      -100,
+      0,
+    );
+    user.increaseTagValueIfElse(
+      Tag.appetence_velo,
+      kyc.includesReponseCode('faire_velo'),
+      -100,
+      0,
+    );
+    user.increaseTagValueIfElse(
+      Tag.appetence_marche,
+      kyc.includesReponseCode('marcher'),
+      -100,
+      0,
+    );
+    user.increaseTagValueIfElse(
+      Tag.appetence_tec,
+      kyc.includesReponseCode('TEC'),
+      -100,
+      0,
+    );
+  }
+
+  private static kyc_003(user: Utilisateur, kyc: QuestionKYC) {
+    user.increaseTagValueIfElse(
+      Tag.possede_velo,
+      kyc.includesReponseCode(BooleanKYC.non),
+      -100,
+      100,
+    );
+  }
+
+  private static kyc_004(user: Utilisateur, kyc: QuestionKYC) {
+    user.increaseTagForAnswers(Tag.pistes_cyclables, kyc, {
+      pistes_cyclables_faciles: 100,
+      pistes_cyclables_dangereuses: 100,
+      absence_pistes_cyclables: -100,
+      ne_sais_pas: 0,
+    });
+  }
+
+  private static kyc_005(user: Utilisateur, kyc: QuestionKYC) {
+    user.increaseTagForAnswers(Tag.possede_emploi, kyc, {
+      emploi: 100,
+      sans_emploi: -100,
+      ne_sais_pas: 0,
+    });
+  }
+
+  private static kyc_006(user: Utilisateur, kyc: QuestionKYC) {
+    user.increaseTagValueIfElse(
+      Tag.logement_plus_15_ans,
+      kyc.includesReponseCode('plus_15'),
+      100,
+      -100,
+    );
+  }
+
+  private static kyc_007(user: Utilisateur, kyc: QuestionKYC) {
+    user.increaseTagValueIfElse(
+      Tag.appetence_cafe,
+      kyc.includesReponseCode('cafe'),
+      100,
+      0,
+    );
+  }
+
+  private static kyc_008(user: Utilisateur, kyc: QuestionKYC) {
+    user.increaseTagForAnswers(Tag.capacite_teletravail, kyc, {
+      max_tele: 100,
+      un_peu_tele: 50,
+      no_tele: -100,
+      ne_sais_pas: 0,
+    });
+  }
+
+  private static kyc_009(user: Utilisateur, kyc: QuestionKYC) {
+    user.increaseTagValueIfElse(
+      Tag.possede_voiture,
+      kyc.includesReponseCode('ma_voit'),
+      100,
+      0,
+    );
+    user.increaseTagValueIfElse(
+      Tag.appetence_covoit,
+      kyc.includesReponseCode('co_voit'),
+      100,
+      0,
+    );
+  }
+
+  private static kyc_010(user: Utilisateur, kyc: QuestionKYC) {
+    user.increaseTagValueIfElse(
+      Tag.possede_jardin,
+      kyc.includesReponseCode(BooleanKYC.oui),
+      100,
+      -100,
+    );
+  }
+
+  private static kyc_011(user: Utilisateur, kyc: QuestionKYC) {
+    user.increaseTagValueIfElse(
+      Tag.possede_voiture_thermique,
+      kyc.includesReponseCode('voit_therm'),
+      100,
+      -100,
+    );
+    user.increaseTagValueIfElse(
+      Tag.possede_voiture_elec_hybride,
+      kyc.includesReponseCode('voit_elec_hybride'),
+      100,
+      -100,
+    );
+    user.increaseTagValueIfElse(
+      Tag.possede_voiture_elec_hybride,
+      kyc.includesReponseCode('ne_sais_pas'),
+      0,
+      0,
+    );
+    user.increaseTagValueIfElse(
+      Tag.possede_voiture_thermique,
+      kyc.includesReponseCode('ne_sais_pas'),
+      0,
+      0,
+    );
+  }
+
+  private static kyc_012(user: Utilisateur, kyc: QuestionKYC) {
+    user.increaseTagValueIfElse(
+      Tag.trajet_court_voiture,
+      kyc.includesReponseCode(BooleanKYC.oui),
+      100,
+      -100,
+    );
+    user.increaseTagValueIfElse(
+      Tag.trajet_long_voiture,
+      kyc.includesReponseCode(BooleanKYC.non),
+      100,
+      -100,
+    );
+    user.increaseTagValueIfElse(
+      Tag.trajet_court_voiture,
+      kyc.includesReponseCode('ne_sais_pas'),
+      0,
+      0,
+    );
+    user.increaseTagValueIfElse(
+      Tag.trajet_long_voiture,
+      kyc.includesReponseCode('ne_sais_pas'),
+      0,
+      0,
+    );
+  }
+
+  private static kyc_013(user: Utilisateur, kyc: QuestionKYC) {
+    user.increaseTagValueIfElse(
+      Tag.appetence_limiter_impact_trajets,
+      kyc.includesReponseCode('limiter_impact'),
+      100,
+      0,
+    );
+    user.increaseTagValueIfElse(
+      Tag.appetence_changement_voit,
+      kyc.includesReponseCode('achat_voit'),
+      100,
+      0,
+    );
+    user.increaseTagValueIfElse(
+      Tag.appetence_ecomomies,
+      kyc.includesReponseCode('economie'),
+      100,
+      0,
+    );
+    user.increaseTagValueIfElse(
+      Tag.appetence_bouger_sante,
+      kyc.includesReponseCode('bouger'),
+      100,
+      0,
+    );
+  }
+
+  private static processKYC(user: Utilisateur, kyc_id: KYCID) {
+    const kyc = user.kyc_history.getQuestion(kyc_id);
+    if (!(kyc && kyc.hasResponses())) return;
+    switch (kyc_id) {
+      case KYCID.KYC001:
+        UserTagEvaluator.kyc_001(user, kyc);
+        break;
+      case KYCID.KYC002:
+        UserTagEvaluator.kyc_002(user, kyc);
+        break;
+      case KYCID.KYC003:
+        UserTagEvaluator.kyc_003(user, kyc);
+        break;
+      case KYCID.KYC004:
+        UserTagEvaluator.kyc_004(user, kyc);
+        break;
+      case KYCID.KYC005:
+        UserTagEvaluator.kyc_005(user, kyc);
+        break;
+      case KYCID.KYC006:
+        UserTagEvaluator.kyc_006(user, kyc);
+        break;
+      case KYCID.KYC007:
+        UserTagEvaluator.kyc_007(user, kyc);
+        break;
+      case KYCID.KYC008:
+        UserTagEvaluator.kyc_008(user, kyc);
+        break;
+      case KYCID.KYC009:
+        UserTagEvaluator.kyc_009(user, kyc);
+        break;
+      case KYCID.KYC010:
+        UserTagEvaluator.kyc_010(user, kyc);
+        break;
+      case KYCID.KYC011:
+        UserTagEvaluator.kyc_011(user, kyc);
+        break;
+      case KYCID.KYC012:
+        UserTagEvaluator.kyc_012(user, kyc);
+        break;
+      case KYCID.KYC013:
+        UserTagEvaluator.kyc_013(user, kyc);
+        break;
     }
   }
 }

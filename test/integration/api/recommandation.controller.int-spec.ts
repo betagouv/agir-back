@@ -14,7 +14,7 @@ import { CatalogueQuestionsKYC } from '../../../src/domain/kyc/catalogueQuestion
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
-  QuestionID,
+  KYCID,
 } from '../../../src/domain/kyc/questionQYC';
 import { DefiDefinition } from 'src/domain/defis/defiDefinition';
 import { Feature } from 'src/domain/gamification/feature';
@@ -205,7 +205,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     process.env.KYC_RECO_ENABLED = 'true';
     CatalogueQuestionsKYC.setCatalogue([
       {
-        id: QuestionID._1,
+        id: KYCID._1,
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.libre,
         is_NGC: false,
@@ -215,7 +215,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         tags: [],
       },
       {
-        id: QuestionID._2,
+        id: KYCID._2,
         question: `question hors recos`,
         type: TypeReponseQuestionKYC.libre,
         is_NGC: false,
@@ -462,7 +462,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     process.env.KYC_RECO_ENABLED = 'true';
     CatalogueQuestionsKYC.setCatalogue([
       {
-        id: QuestionID._1,
+        id: KYCID._1,
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.choix_multiple,
         is_NGC: false,
@@ -479,7 +479,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         tags: [Tag.R6],
       },
       {
-        id: QuestionID._2,
+        id: KYCID._2,
         question: `question hors recos`,
         type: TypeReponseQuestionKYC.choix_unique,
         is_NGC: false,
