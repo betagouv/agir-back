@@ -7,6 +7,12 @@ import {
 import { DB, TestUtil } from '../../TestUtil';
 import { CatalogueQuestionsKYC } from '../../../src/domain/kyc/catalogueQuestionsKYC';
 import { Thematique } from '../../../src/domain/contenu/thematique';
+import {
+  Superficie,
+  TypeLogement,
+  Chauffage,
+  DPE,
+} from '../../../src/domain/logement/logement';
 
 describe('/utilisateurs/id/questionsKYC (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -352,6 +358,34 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
         .getQuestion(QuestionID.KYC001)
         .includesReponseCode(Thematique.climat),
     ).toEqual(true);
+  });
+  it('PUT /utilisateurs/id/questionsKYC/006 - transpose dans logement KYC006 plus de 15 ans', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      logement: {
+        version: 0,
+        superficie: Superficie.superficie_150,
+        type: TypeLogement.maison,
+        code_postal: '91120',
+        chauffage: Chauffage.bois,
+        commune: 'PALAISEAU',
+        dpe: DPE.B,
+        nombre_adultes: 2,
+        nombre_enfants: 2,
+        plus_de_15_ans: false,
+        proprietaire: true,
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/KYC006',
+    ).send({ reponse: ['plus_15'] });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.logement.plus_de_15_ans).toEqual(true);
   });
   it('PUT /utilisateurs/id/questionsKYC/bad - erreur 404 ', async () => {
     // GIVEN

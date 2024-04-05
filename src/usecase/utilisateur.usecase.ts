@@ -17,6 +17,7 @@ import { CodeManager } from '../../src/domain/utilisateur/manager/codeManager';
 import { SecurityEmailManager } from '../../src/domain/utilisateur/manager/securityEmailManager';
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
 import { GroupeRepository } from '../../src/infrastructure/repository/groupe.repository';
+import { QuestionID } from '../../src/domain/kyc/questionQYC';
 
 export type Phrase = {
   phrase: string;
@@ -145,6 +146,12 @@ export class UtilisateurUsecase {
     );
 
     utilisateur.logement.patch(input);
+
+    if (input.plus_de_15_ans !== undefined && input.plus_de_15_ans !== null) {
+      utilisateur.kyc_history.updateQuestion(QuestionID.KYC006, [
+        input.plus_de_15_ans ? 'plus_15' : 'moins_15',
+      ]);
+    }
 
     utilisateur.recomputeRecoTags();
 
