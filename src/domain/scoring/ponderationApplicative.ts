@@ -1,6 +1,7 @@
 import { TagPonderationSet } from './tagPonderationSet';
 import { TaggedContent } from './taggedContent';
 import { TagApplicatif } from './tagApplicatif';
+import { ScoredContent } from './scoredContent';
 
 export enum ApplicativePonderationSetName {
   neutre = 'neutre',
@@ -56,6 +57,10 @@ export class PonderationApplicativeManager {
     });
     content.score +=
       score + PonderationApplicativeManager.hash(content.getDistinctText());
+  }
+
+  public static sortContent(content_liste: ScoredContent[]) {
+    content_liste.sort((a, b) => b.score - a.score);
   }
 
   public static hash(s: string): number {
