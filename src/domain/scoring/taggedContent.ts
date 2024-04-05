@@ -1,7 +1,7 @@
+import { ScoredContent } from './scoredContent';
 import { Tag } from './tag';
 
-export interface TaggedContent {
+export interface TaggedContent extends ScoredContent {
   getTags(): Tag[];
   getDistinctText(): string;
-  score: number;
 }

@@ -56,6 +56,10 @@ export class RecommandationUsecase {
 
     if (App.kycRecoEnabled()) {
       kycs = await this.getKYC(utilisateur);
+      if (kycs.length > 0) {
+        PonderationApplicativeManager.sortContent(kycs);
+        kycs = [kycs[0]];
+      }
     }
 
     let content: Recommandation[] = [];
@@ -64,7 +68,7 @@ export class RecommandationUsecase {
     content.push(...kycs);
     content = this.shuffle(content);
 
-    content.sort((a, b) => b.score - a.score);
+    PonderationApplicativeManager.sortContent(content);
 
     content = content.slice(0, nombre_content_restants);
 
@@ -93,7 +97,7 @@ export class RecommandationUsecase {
     );
 
     const result = this.mapDefiToRecommandation(defis);
-    result.sort((a, b) => b.score - a.score);
+    PonderationApplicativeManager.sortContent(result);
     return result;
   }
 
@@ -142,12 +146,10 @@ export class RecommandationUsecase {
       exclude_ids: articles_lus,
     });
 
-    articles.forEach((article) => {
-      PonderationApplicativeManager.increaseScoreContent(
-        article,
-        utilisateur.tag_ponderation_set,
-      );
-    });
+    PonderationApplicativeManager.increaseScoreContentOfList(
+      articles,
+      utilisateur.tag_ponderation_set,
+    );
 
     return articles.map((e) => ({
       ...e,
@@ -165,12 +167,10 @@ export class RecommandationUsecase {
       exclude_ids: quizz_attempted,
     });
 
-    quizzes.forEach((quizz) => {
-      PonderationApplicativeManager.increaseScoreContent(
-        quizz,
-        utilisateur.tag_ponderation_set,
-      );
-    });
+    PonderationApplicativeManager.increaseScoreContentOfList(
+      quizzes,
+      utilisateur.tag_ponderation_set,
+    );
 
     return quizzes.map((e) => ({
       ...e,

@@ -200,6 +200,51 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[1].content_id).toEqual('3');
     expect(response.body[2].content_id).toEqual('1');
   });
+  it('GET /utilisateurs/id/recommandations - renvoie qu une KYC, la mieux notée', async () => {
+    // GIVEN
+    process.env.KYC_RECO_ENABLED = 'true';
+    CatalogueQuestionsKYC.setCatalogue([
+      {
+        id: QuestionID._1,
+        question: `Quel est votre sujet principal d'intéret ?`,
+        type: TypeReponseQuestionKYC.libre,
+        is_NGC: false,
+        categorie: CategorieQuestionKYC.recommandation,
+        points: 10,
+        thematique: Thematique.consommation,
+        tags: [],
+      },
+      {
+        id: QuestionID._2,
+        question: `question hors recos`,
+        type: TypeReponseQuestionKYC.libre,
+        is_NGC: false,
+        categorie: CategorieQuestionKYC.recommandation,
+        points: 10,
+        thematique: Thematique.climat,
+        tags: [],
+      },
+    ]);
+
+    await TestUtil.create(DB.utilisateur, {
+      history: {},
+      tag_ponderation_set: { climat: 100, consommation: 50 },
+      kyc: {
+        version: 0,
+        answered_questions: [],
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].content_id).toEqual('_2');
+    expect(response.body[0].score).toBeGreaterThan(100);
+  });
   it('GET /utilisateurs/id/recommandations - applique les ponderations aux quizz', async () => {
     // GIVEN
     CatalogueQuestionsKYC.setCatalogue([]);
