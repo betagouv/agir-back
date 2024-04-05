@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { QuestionID, QuestionKYC } from '../domain/kyc/questionQYC';
+import { KYCID, QuestionKYC } from '../domain/kyc/questionQYC';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
+import { CatalogueQuestionsKYC } from '../../src/domain/kyc/catalogueQuestionsKYC';
 
 @Injectable()
 export class QuestionKYCUsecase {
@@ -17,7 +18,7 @@ export class QuestionKYCUsecase {
 
     // FIXME : until reset
     if (questionId === '001') {
-      questionId = QuestionID.KYC001;
+      questionId = KYCID.KYC001;
     }
 
     return utilisateur.kyc_history.getQuestionOrException(questionId);
@@ -33,10 +34,10 @@ export class QuestionKYCUsecase {
     // FIXME : until reset
     let qid = questionId;
     if (questionId === '001') {
-      questionId = QuestionID.KYC001;
+      questionId = KYCID.KYC001;
     }
 
-    if (questionId === QuestionID.KYC006) {
+    if (questionId === KYCID.KYC006) {
       utilisateur.logement.plus_de_15_ans = reponse.includes('plus_15');
     }
 

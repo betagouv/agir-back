@@ -1,7 +1,7 @@
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import {
   CategorieQuestionKYC,
-  QuestionID,
+  KYCID,
   TypeReponseQuestionKYC,
 } from '../../../src/domain/kyc/questionQYC';
 import { DB, TestUtil } from '../../TestUtil';
@@ -13,6 +13,7 @@ import {
   Chauffage,
   DPE,
 } from '../../../src/domain/logement/logement';
+import { KYCHistory_v0 } from 'src/domain/object_store/kyc/kycHistory_v0';
 
 describe('/utilisateurs/id/questionsKYC (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -88,7 +89,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     CatalogueQuestionsKYC.setCatalogue([
       {
-        id: QuestionID.KYC001,
+        id: KYCID.KYC001,
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.choix_multiple,
         is_NGC: false,
@@ -107,7 +108,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
         version: 0,
         answered_questions: [
           {
-            id: QuestionID.KYC001,
+            id: KYCID.KYC001,
             question: `Quel est votre sujet principal d'intéret ?`,
             type: TypeReponseQuestionKYC.choix_multiple,
             is_NGC: false,
@@ -154,7 +155,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
         version: 0,
         answered_questions: [
           {
-            id: QuestionID._2,
+            id: KYCID._2,
             question: `Quel est votre sujet principal d'intéret ?`,
             type: TypeReponseQuestionKYC.choix_multiple,
             is_NGC: false,
@@ -176,7 +177,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     });
     CatalogueQuestionsKYC.setCatalogue([
       {
-        id: QuestionID._2,
+        id: KYCID._2,
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.choix_multiple,
         is_NGC: false,
@@ -254,7 +255,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     CatalogueQuestionsKYC.setCatalogue([
       {
-        id: QuestionID.KYC001,
+        id: KYCID.KYC001,
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.choix_multiple,
         is_NGC: false,
@@ -271,7 +272,11 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       },
     ]);
 
-    await TestUtil.create(DB.utilisateur);
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, { kyc: kyc });
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -287,7 +292,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     CatalogueQuestionsKYC.setCatalogue([
       {
-        id: QuestionID.KYC001,
+        id: KYCID.KYC001,
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.choix_multiple,
         is_NGC: false,
@@ -304,7 +309,11 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       },
     ]);
 
-    await TestUtil.create(DB.utilisateur);
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, { kyc: kyc });
 
     await TestUtil.PUT('/utilisateurs/utilisateur-id/questionsKYC/KYC001').send(
       {
@@ -326,7 +335,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     CatalogueQuestionsKYC.setCatalogue([
       {
-        id: QuestionID.KYC001,
+        id: KYCID.KYC001,
         question: `Quel est votre sujet principal d'intéret ?`,
         type: TypeReponseQuestionKYC.choix_multiple,
         is_NGC: false,
@@ -342,8 +351,12 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
         tags: [],
       },
     ]);
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [],
+    };
 
-    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.utilisateur, { kyc: kyc });
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -352,10 +365,11 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
+
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(
       userDB.kyc_history
-        .getQuestion(QuestionID.KYC001)
+        .getQuestion(KYCID.KYC001)
         .includesReponseCode(Thematique.climat),
     ).toEqual(true);
   });

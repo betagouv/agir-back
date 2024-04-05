@@ -5,14 +5,14 @@ import { Tag } from '../scoring/tag';
 import {
   BooleanKYC,
   CategorieQuestionKYC,
-  QuestionID,
+  KYCID,
   QuestionKYC,
   TypeReponseQuestionKYC,
 } from './questionQYC';
 
 const CATALOGUE: QuestionKYC_v0[] = [
   {
-    id: QuestionID.KYC001,
+    id: KYCID.KYC001,
     question:
       'Sur quel(s) sujet(s) souhaitez-vous en savoir plus pour réduire votre impact environnemental ?',
     type: TypeReponseQuestionKYC.choix_multiple,
@@ -35,7 +35,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     ],
   },
   {
-    id: QuestionID.KYC002,
+    id: KYCID.KYC002,
     question:
       'Quel(s) moyen(s)de transport excluez-vous pour vos trajets du quotidien (travail, course…) ?',
     type: TypeReponseQuestionKYC.choix_multiple,
@@ -53,7 +53,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     ],
   },
   {
-    id: QuestionID.KYC003,
+    id: KYCID.KYC003,
     question: 'Etes-vous équipé(e) d’un vélo ?',
     type: TypeReponseQuestionKYC.choix_unique,
     is_NGC: false,
@@ -67,7 +67,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     ],
   },
   {
-    id: QuestionID.KYC004,
+    id: KYCID.KYC004,
     question:
       'Comment trouvez-vous les pistes cyclables sur vos trajets du quotidien (trajet effectué plus de 2 fois par semaine)  ?',
     type: TypeReponseQuestionKYC.choix_unique,
@@ -93,7 +93,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     ],
   },
   {
-    id: QuestionID.KYC005,
+    id: KYCID.KYC005,
     question: 'Quelle est votre situation professionnelle ?',
     type: TypeReponseQuestionKYC.choix_unique,
     is_NGC: false,
@@ -107,7 +107,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     ],
   },
   {
-    id: QuestionID.KYC006,
+    id: KYCID.KYC006,
     question: 'Quel est l’âge de votre logement ?',
     type: TypeReponseQuestionKYC.choix_unique,
     is_NGC: false,
@@ -121,7 +121,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     ],
   },
   {
-    id: QuestionID.KYC007,
+    id: KYCID.KYC007,
     question: 'Quelle boisson chaude consommez-vous quotidiennement ?',
     type: TypeReponseQuestionKYC.choix_unique,
     is_NGC: false,
@@ -138,7 +138,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     ],
   },
   {
-    id: QuestionID.KYC008,
+    id: KYCID.KYC008,
     question:
       'Votre employeur vous permet-il de télétravailler situation professionnelle ?',
     type: TypeReponseQuestionKYC.choix_unique,
@@ -160,7 +160,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     ],
   },
   {
-    id: QuestionID.KYC009,
+    id: KYCID.KYC009,
     question: 'Comment réalisez-vous vos trajets en voiture ?',
     type: TypeReponseQuestionKYC.choix_unique,
     is_NGC: false,
@@ -176,7 +176,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     ],
   },
   {
-    id: QuestionID.KYC010,
+    id: KYCID.KYC010,
     question: 'Votre maison donne-t-elle accès à un jardin ?',
     type: TypeReponseQuestionKYC.choix_unique,
     is_NGC: false,
@@ -191,7 +191,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
   },
 
   {
-    id: QuestionID.KYC011,
+    id: KYCID.KYC011,
     question:
       'Dans vos trajets du quotidien, quels est votre typologie de voitures ?',
     type: TypeReponseQuestionKYC.choix_unique,
@@ -210,7 +210,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     ],
   },
   {
-    id: QuestionID.KYC012,
+    id: KYCID.KYC012,
     question:
       'Effectuez-vous quotidiennement des trajets de moins de 10 min en voiture ?',
     type: TypeReponseQuestionKYC.choix_unique,
@@ -226,7 +226,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     ],
   },
   {
-    id: QuestionID.KYC013,
+    id: KYCID.KYC013,
     question: 'Quel(s) est votre intérêt(s) sur la thématique transport ?',
     type: TypeReponseQuestionKYC.choix_multiple,
     is_NGC: false,
@@ -248,7 +248,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
   },
 
   {
-    id: QuestionID._1,
+    id: KYCID._1,
     question: 'Comment avez vous connu le service ?',
     type: TypeReponseQuestionKYC.libre,
     is_NGC: false,
@@ -257,7 +257,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     tags: [],
   },
   {
-    id: QuestionID._2,
+    id: KYCID._2,
     question: `Quel est votre sujet principal d'intéret ?`,
     type: TypeReponseQuestionKYC.choix_multiple,
     is_NGC: false,
@@ -271,7 +271,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     tags: [],
   },
   {
-    id: QuestionID._3,
+    id: KYCID._3,
     question: `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
     type: TypeReponseQuestionKYC.choix_unique,
     is_NGC: false,
@@ -285,7 +285,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     tags: [Tag.logement, Tag.climat],
   },
   {
-    id: QuestionID._4,
+    id: KYCID._4,
     question: `Quel est ton age`,
     type: TypeReponseQuestionKYC.entier,
     is_NGC: false,
@@ -294,7 +294,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     tags: [],
   },
   {
-    id: QuestionID._5,
+    id: KYCID._5,
     question: `Combient coute un malabar`,
     type: TypeReponseQuestionKYC.decimal,
     is_NGC: false,
@@ -339,7 +339,7 @@ export class CatalogueQuestionsKYC {
     }
     ApplicationError.throwQuestionInconnue(id);
   }
-  public static getById(id: QuestionID): QuestionKYC {
+  public static getById(id: KYCID): QuestionKYC {
     return new QuestionKYC(
       CatalogueQuestionsKYC.kyc_catalogue.find((element) => element.id === id),
     );

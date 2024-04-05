@@ -9,7 +9,7 @@ import {
   TypeLogement,
 } from '../../../src/domain/logement/logement';
 import { TransportQuotidien } from '../../../src/domain/transport/transport';
-import { QuestionID } from '../../../src/domain/kyc/questionQYC';
+import { KYCID } from '../../../src/domain/kyc/questionQYC';
 var crypto = require('crypto');
 
 const ONBOARDING_1_2_3_4_DATA = {
@@ -540,7 +540,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     const dbUser = await utilisateurRepository.getById('utilisateur-id');
-    const question = dbUser.kyc_history.getQuestion(QuestionID.KYC006);
+    const question = dbUser.kyc_history.getQuestion(KYCID.KYC006);
     expect(question.hasResponses());
     expect(question.includesReponseCode('plus_15'));
   });

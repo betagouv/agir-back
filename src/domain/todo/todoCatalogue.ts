@@ -5,7 +5,7 @@ import { Todo } from './todo';
 import { v4 as uuidv4 } from 'uuid';
 import { LiveService } from '../service/serviceDefinition';
 import { Todo_v0 } from '../object_store/parcoursTodo/parcoursTodo_v0';
-import { QuestionID } from '../kyc/questionQYC';
+import { KYCID } from '../kyc/questionQYC';
 
 export class TodoCatalogue {
   public static getNombreTodo(): number {
@@ -75,7 +75,7 @@ export class TodoCatalogue {
           type: ContentType.kyc,
           level: DifficultyLevel.ANY,
           points: 5,
-          content_id: QuestionID.KYC001,
+          content_id: KYCID.KYC001,
         },
       ],
     },
@@ -106,7 +106,7 @@ export class TodoCatalogue {
           type: ContentType.kyc,
           level: DifficultyLevel.ANY,
           points: 5,
-          content_id: QuestionID.KYC004,
+          content_id: KYCID.KYC004,
         },
         {
           id: uuidv4(),
@@ -118,7 +118,7 @@ export class TodoCatalogue {
           type: ContentType.kyc,
           level: DifficultyLevel.ANY,
           points: 5,
-          content_id: QuestionID.KYC003,
+          content_id: KYCID.KYC003,
         },
       ],
     },
@@ -148,7 +148,7 @@ export class TodoCatalogue {
           sont_points_en_poche: false,
           type: ContentType.kyc,
           level: DifficultyLevel.L1,
-          content_id: QuestionID.KYC007,
+          content_id: KYCID.KYC007,
           points: 5,
         },
         {
@@ -179,7 +179,7 @@ export class TodoCatalogue {
           sont_points_en_poche: false,
           type: ContentType.kyc,
           level: DifficultyLevel.L1,
-          content_id: QuestionID.KYC006,
+          content_id: KYCID.KYC006,
           points: 5,
         },
         {
@@ -233,7 +233,7 @@ export class TodoCatalogue {
           type: ContentType.kyc,
           level: DifficultyLevel.L1,
           points: 5,
-          content_id: QuestionID.KYC005,
+          content_id: KYCID.KYC005,
         },
         {
           id: uuidv4(),
@@ -245,7 +245,7 @@ export class TodoCatalogue {
           type: ContentType.kyc,
           level: DifficultyLevel.L1,
           points: 5,
-          content_id: QuestionID.KYC002,
+          content_id: KYCID.KYC002,
         },
         {
           id: uuidv4(),
