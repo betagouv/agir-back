@@ -36,6 +36,10 @@ export class QuestionKYCUsecase {
       questionId = QuestionID.KYC001;
     }
 
+    if (questionId === QuestionID.KYC006) {
+      utilisateur.logement.plus_de_15_ans = reponse.includes('plus_15');
+    }
+
     utilisateur.kyc_history.checkQuestionExists(questionId);
 
     this.updateUserTodo(utilisateur, qid);

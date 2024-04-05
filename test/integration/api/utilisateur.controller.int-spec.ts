@@ -9,7 +9,7 @@ import {
   TypeLogement,
 } from '../../../src/domain/logement/logement';
 import { TransportQuotidien } from '../../../src/domain/transport/transport';
-import { ServiceRepository } from 'src/infrastructure/repository/service.repository';
+import { QuestionID } from '../../../src/domain/kyc/questionQYC';
 var crypto = require('crypto');
 
 const ONBOARDING_1_2_3_4_DATA = {
@@ -527,6 +527,22 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.logement.plus_de_15_ans).toEqual(false);
     expect(dbUser.logement.chauffage).toEqual(Chauffage.electricite);
     expect(dbUser.logement.dpe).toEqual(DPE.E);
+  });
+  it('PATCH /utilisateurs/id/logement - update KYC006 si logement plus 15 ans', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      plus_de_15_ans: true,
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.getById('utilisateur-id');
+    const question = dbUser.kyc_history.getQuestion(QuestionID.KYC006);
+    expect(question.hasResponses());
+    expect(question.includesReponseCode('plus_15'));
   });
   it('PATCH /utilisateurs/id/transport - update transport datas and reco tags', async () => {
     // GIVEN
