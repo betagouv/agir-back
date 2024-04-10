@@ -26,6 +26,8 @@ export class QuestionKYCAPI {
   reponse: string[];
   @ApiProperty({ type: [String] })
   reponses_possibles?: string[];
+  @ApiProperty()
+  thematique?: string;
 
   public static mapToAPI(question: QuestionKYC): QuestionKYCAPI {
     return {
@@ -37,6 +39,7 @@ export class QuestionKYCAPI {
       type: question.type,
       reponses_possibles: question.listeReponsesPossiblesLabels(),
       is_NGC: question.is_NGC,
+      thematique: question.thematique,
     };
   }
 }
