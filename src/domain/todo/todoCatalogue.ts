@@ -208,7 +208,7 @@ export class TodoCatalogue {
     },
     {
       numero_todo: 5,
-      points_todo: 40,
+      points_todo: 60,
       titre: 'Mission 5',
       done_at: null,
       done: [],
