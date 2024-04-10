@@ -126,6 +126,7 @@ export class Utilisateur extends UtilisateurData {
     this.history.reset();
     this.defi_history.reset();
     this.equipements.reset();
+    this.kyc_history.reset();
   }
 
   public getNombrePartsFiscalesOuEstimee?() {
