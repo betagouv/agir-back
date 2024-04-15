@@ -14,10 +14,7 @@ import {
   TypeLogement,
 } from '../../../src/domain/logement/logement';
 import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
-import {
-  Repas,
-  Consommation,
-} from '../../../src/domain/onboarding/onboarding';
+import { Repas, Consommation } from '../../../src/domain/onboarding/onboarding';
 import { TransportQuotidien } from '../../../src/domain/transport/transport';
 
 describe('Admin (API test)', () => {
@@ -63,12 +60,12 @@ describe('Admin (API test)', () => {
       where: { id: 'ecowatt' },
     });
     expect(service.image_url).toEqual(
-      'https://agirpourlatransition.ademe.fr/particuliers/sites/default/files/styles/550x330/public/2022-03/thermostat-programmable.jpg?itok=4HIKhFAI',
+      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335965/services/thermostat-programmable.jpg',
     );
     expect(service.titre).toEqual(`⚡️ ÉcoWatt`);
     expect(service.url).toEqual('https://www.monecowatt.fr/');
     expect(service.icon_url).toEqual(
-      'https://play-lh.googleusercontent.com/wtQahY_I8TVLQJ_Rcue7aC-dJ3FfZLNQe84smsyfRa9Qbs1-TG3CJvdrmQ9VUXUVO8vh=w480-h960',
+      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335871/services/wtQahY_I8TVLQJ_Rcue7aC-dJ3FfZLNQe84smsyfRa9Qbs1-TG3CJvdrmQ9VUXUVO8vh_w480-h960.png',
     );
     expect(service.is_url_externe).toEqual(true);
     expect(service.is_local).toEqual(false);
@@ -98,12 +95,12 @@ describe('Admin (API test)', () => {
       where: { id: 'ecowatt' },
     });
     expect(service.image_url).toEqual(
-      'https://agirpourlatransition.ademe.fr/particuliers/sites/default/files/styles/550x330/public/2022-03/thermostat-programmable.jpg?itok=4HIKhFAI',
+      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335965/services/thermostat-programmable.jpg',
     );
     expect(service.titre).toEqual(`⚡️ ÉcoWatt`);
     expect(service.url).toEqual('https://www.monecowatt.fr/');
     expect(service.icon_url).toEqual(
-      'https://play-lh.googleusercontent.com/wtQahY_I8TVLQJ_Rcue7aC-dJ3FfZLNQe84smsyfRa9Qbs1-TG3CJvdrmQ9VUXUVO8vh=w480-h960',
+      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335871/services/wtQahY_I8TVLQJ_Rcue7aC-dJ3FfZLNQe84smsyfRa9Qbs1-TG3CJvdrmQ9VUXUVO8vh_w480-h960.png',
     );
     expect(service.is_url_externe).toEqual(true);
     expect(service.is_local).toEqual(false);
