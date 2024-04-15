@@ -54,7 +54,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
   },
   {
     id: KYCID.KYC003,
-    question: 'Etes-vous équipé(e) d’un vélo ?',
+    question: 'Êtes-vous équipé(e) d’un vélo ?',
     type: TypeReponseQuestionKYC.choix_unique,
     is_NGC: false,
     categorie: CategorieQuestionKYC.mission,
@@ -98,6 +98,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     type: TypeReponseQuestionKYC.choix_unique,
     is_NGC: false,
     categorie: CategorieQuestionKYC.mission,
+    thematique: Thematique.logement,
     points: 5,
     tags: [],
     reponses_possibles: [
@@ -116,13 +117,13 @@ const CATALOGUE: QuestionKYC_v0[] = [
     tags: [],
     thematique: Thematique.logement,
     reponses_possibles: [
-      { label: 'Neuf ou récent (moins de 15 ans)', code: 'moins_15' },
-      { label: 'Plus de 15 ans', code: 'plus_15' },
+      { label: 'Moins de 15 ans (neuf ou récent)', code: 'moins_15' },
+      { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
     ],
   },
   {
     id: KYCID.KYC007,
-    question: 'Quelle boisson chaude consommez-vous quotidiennement ?',
+    question: 'Quelle(s) boisson(s) chaude(s) consommez-vous quotidiennement ?',
     type: TypeReponseQuestionKYC.choix_multiple,
     is_NGC: false,
     categorie: CategorieQuestionKYC.mission,
@@ -146,8 +147,9 @@ const CATALOGUE: QuestionKYC_v0[] = [
     categorie: CategorieQuestionKYC.recommandation,
     points: 5,
     tags: [Tag.possede_emploi],
+    thematique: Thematique.transport,
     reponses_possibles: [
-      { label: 'Je peux télétravailler comme bon me semble', code: 'max_tele' },
+      { label: 'Je peux télétravailler à plein temps', code: 'max_tele' },
       {
         label: 'Je peux télétravailler avec un nombre de jours limité',
         code: 'un_peu_tele',
@@ -170,7 +172,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     thematique: Thematique.transport,
     reponses_possibles: [
       { label: 'Avec votre propre voiture', code: 'ma_voit' },
-      { label: 'En louant une voiture', code: 'loc_voit' },
+      { label: 'En louant une voiture (location courte durée)', code: 'loc_voit' },
       { label: 'En covoiturage', code: 'co_voit' },
       { label: 'Je ne réalise pas de trajet en voiture', code: 'pas_voiture' },
     ],
@@ -183,13 +185,12 @@ const CATALOGUE: QuestionKYC_v0[] = [
     categorie: CategorieQuestionKYC.recommandation,
     points: 5,
     tags: [Tag.possede_maison],
-    thematique: Thematique.logement,
+    thematique: Thematique.dechet,
     reponses_possibles: [
       { label: 'Oui', code: BooleanKYC.oui },
       { label: 'Non', code: BooleanKYC.non },
     ],
   },
-
   {
     id: KYCID.KYC011,
     question:
@@ -246,7 +247,6 @@ const CATALOGUE: QuestionKYC_v0[] = [
       { label: 'Je ne souhaite pas répondre', code: 'ne_sais_pas' },
     ],
   },
-
   {
     id: KYCID._1,
     question: 'Comment avez vous connu le service ?',

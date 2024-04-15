@@ -5,7 +5,7 @@ import { Reveal } from './celebrations/reveal';
 import { Feature } from './feature';
 
 let SEUILS_NIVEAUX: number[] = [
-  100, 150, 300, 400, 600, 800, 1000, 2000, 4000, 10000,
+  100, 150, 300, 400, 500, 800, 1000, 2000, 4000, 10000,
 ];
 
 export class Gamification {
