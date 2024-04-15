@@ -99,7 +99,7 @@ export class AdminController extends GenericControler {
   @Post('/admin/upsert_service_definitions')
   @ApiOperation({
     summary:
-      'Upsert toutes les définitions de services à partir du fichier /test_data/_services.ts',
+      'Upsert toutes les définitions de services à partir du fichier service_catalogue.ts',
   })
   async upsertAllServices(@Request() req) {
     this.checkCronAPIProtectedEndpoint(req);
