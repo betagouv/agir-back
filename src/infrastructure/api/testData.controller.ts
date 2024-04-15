@@ -9,7 +9,7 @@ import { SuiviTransport } from '../../../src/domain/suivi/suiviTransport';
 import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
-const _services = require('../../../test_data/_services');
+const service_catalogue = require('../../../src/usecase/referentiel/service_catalogue');
 const _linky_data = require('../../../test_data/PRM_thermo_sensible');
 const suivis_alimentation = require('../../../test_data/evenements/suivis_alimentation');
 const suivis_transport = require('../../../test_data/evenements/suivis_transport');
@@ -73,10 +73,10 @@ export class TestDataController {
   }
 
   async upsertServicesDefinitions() {
-    const keyList = Object.keys(_services);
+    const keyList = Object.keys(service_catalogue);
     for (let index = 0; index < keyList.length; index++) {
       const serviceId = keyList[index];
-      const service = _services[serviceId];
+      const service = service_catalogue[serviceId];
       const data = { ...service };
       data.id = serviceId;
       delete data.configuration;
@@ -145,14 +145,14 @@ export class TestDataController {
     if (!services) return;
     for (let index = 0; index < services.length; index++) {
       const serviceId = services[index];
-      if (_services[serviceId]) {
+      if (service_catalogue[serviceId]) {
         let data = {
           id: uuidv4(),
           utilisateurId: utilisateurId,
           serviceDefinitionId: serviceId,
           status: ServiceStatus.LIVE,
-          configuration: _services[serviceId].configuration
-            ? _services[serviceId].configuration
+          configuration: service_catalogue[serviceId].configuration
+            ? service_catalogue[serviceId].configuration
             : {},
         };
         await this.prisma.service.create({
