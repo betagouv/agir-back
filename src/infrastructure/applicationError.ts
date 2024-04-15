@@ -242,6 +242,9 @@ export class ApplicationError {
       `Taper CONFIRMATION RESET pour confirmer l'opération`,
     );
   }
+  static throwPleaseReconnect() {
+    this.throwAppError('044', `L'utilisateur est forcé à se reconnecter`, 401);
+  }
 
   private static throwAppError(
     code: string,

@@ -10,11 +10,14 @@ export class QuestionKYCUsecase {
 
   async getALL(utilisateurId: string): Promise<QuestionKYC[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
     return utilisateur.kyc_history.getAllQuestionSet();
   }
 
   async getQuestion(utilisateurId: string, questionId): Promise<QuestionKYC> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     // FIXME : until reset
     if (questionId === '001') {
@@ -30,6 +33,7 @@ export class QuestionKYCUsecase {
     reponse: string[],
   ): Promise<void> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     // FIXME : until reset
     let qid = questionId;

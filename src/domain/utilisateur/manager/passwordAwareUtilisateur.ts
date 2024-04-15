@@ -4,4 +4,5 @@ export type PasswordAwareUtilisateur = {
   passwordSalt: string;
   failed_login_count: number;
   prevent_login_before: Date;
+  force_connexion: boolean;
 };

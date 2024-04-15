@@ -34,6 +34,7 @@ function getFakeUtilisteur() {
     passwordSalt: '',
     failed_login_count: 0,
     prevent_login_before: new Date(),
+    force_connexion: false,
   };
 }
 
@@ -150,7 +151,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.nombre_de_parts_fiscales).toEqual(2.5);
   });
 
-  it('POST /utilisateurs/login - logs user and return a JWT token', async () => {
+  it('POST /utilisateurs/login - logs user and return a JWT token, reset force_connexion', async () => {
     // GIVEN
     const utilisateur = getFakeUtilisteur();
     PasswordManager.setUserPassword(utilisateur, '#1234567890HAHAa');
@@ -160,6 +161,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       passwordSalt: utilisateur.passwordSalt,
       active_account: true,
       parts: null,
+      force_connexion: true,
     });
 
     // WHEN
@@ -170,6 +172,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
         email: 'yo@truc.com',
       });
     // THEN
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(response.status).toBe(200);
     expect(response.body.token.length).toBeGreaterThan(20);
 
@@ -180,6 +183,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.utilisateur.commune).toEqual('PALAISEAU');
     expect(response.body.utilisateur.revenu_fiscal).toEqual(10000);
     expect(response.body.utilisateur.nombre_de_parts_fiscales).toEqual(2.5); // valeur estimée depuis l'onboarding
+    expect(userDB.force_connexion).toEqual(false);
   });
   it('POST /utilisateurs/login - bad password', async () => {
     // GIVEN
@@ -784,6 +788,35 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(userDB.unlocked_features.unlocked_features).toHaveLength(0);
     expect(servicesDB).toHaveLength(0);
     expect(servicesDefDB).toHaveLength(1);
+  });
+  it(`POST /utilisateurs/id/logout deconnect un utilisateur donné`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.POST('/utilisateurs/utilisateur-id/logout');
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(userDB.force_connexion).toEqual(true);
+  });
+  it(`POST /utilisateurs/logout deconnect tous les utilisateurs`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { id: '1', email: 'a' });
+    await TestUtil.create(DB.utilisateur, { id: '2', email: 'b' });
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    // WHEN
+    const response = await TestUtil.POST('/utilisateurs/logout');
+    const userDB_1 = await utilisateurRepository.getById('1');
+    const userDB_2 = await utilisateurRepository.getById('2');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(userDB_1.email).toEqual('a');
+    expect(userDB_1.force_connexion).toEqual(true);
+    expect(userDB_2.email).toEqual('b');
+    expect(userDB_2.force_connexion).toEqual(true);
   });
   it(`POST /utilisateurs/id/reset reset tous les utilisateurs`, async () => {
     // GIVEN

@@ -27,6 +27,7 @@ export class RecommandationUsecase {
 
   async listRecommandations(utilisateurId: string): Promise<Recommandation[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     const articles = await this.getArticles(utilisateur);
 

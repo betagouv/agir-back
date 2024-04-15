@@ -8,9 +8,9 @@ export class GamificationUsecase {
   constructor(private utilisateurRepository: UtilisateurRepository) {}
 
   async getGamificationData(utilisateurId: string): Promise<Gamification> {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
     return utilisateur.gamification;
   }
 }

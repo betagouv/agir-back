@@ -25,11 +25,14 @@ export class DefisUsecase {
 
   async getALLUserDefi(utilisateurId: string): Promise<Defi[]> {
     const user = await this.utilisateurRepository.getById(utilisateurId);
+    user.checkState();
+
     return user.defi_history.defis;
   }
 
   async getById(utilisateurId: string, defiId: string): Promise<Defi> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     const catalogue = await this.defiRepository.list();
     utilisateur.defi_history.setCatalogue(catalogue);
@@ -42,6 +45,7 @@ export class DefisUsecase {
     status: DefiStatus,
   ): Promise<void> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     const catalogue = await this.defiRepository.list();
     utilisateur.defi_history.setCatalogue(catalogue);

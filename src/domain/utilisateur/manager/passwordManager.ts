@@ -62,6 +62,7 @@ export class PasswordManager {
   public async initLoginState(utilisateur: PasswordAwareUtilisateur) {
     utilisateur.failed_login_count = 0;
     utilisateur.prevent_login_before = new Date();
+    utilisateur.force_connexion = false;
     await this.securityRepository.updateLoginAttemptData(utilisateur);
   }
 

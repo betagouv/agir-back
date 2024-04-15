@@ -14,6 +14,7 @@ export class EquipementUsecase {
 
   async ajouterVehicule(utilisateurId: string, payload: VehiculeAPI) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     const vehicule = VehiculeAPI.toDomain(payload);
 
@@ -35,6 +36,7 @@ export class EquipementUsecase {
 
   async listerVehicules(utilisateurId: string): Promise<Vehicule[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     return utilisateur.equipements.vehicules;
   }

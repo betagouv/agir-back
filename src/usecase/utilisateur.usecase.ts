@@ -57,6 +57,18 @@ export class UtilisateurUsecase {
     await this.resetUser(utilisateurId);
   }
 
+  async disconnectUser(utilisateurId: string) {
+    const utilisateur = await this.utilisateurRespository.getById(
+      utilisateurId,
+    );
+    utilisateur.force_connexion = true;
+    await this.utilisateurRespository.updateUtilisateur(utilisateur);
+  }
+
+  async disconnectAllUsers() {
+    await this.utilisateurRespository.disconnectAll();
+  }
+
   async resetAllUsers(confirmation: string) {
     if (confirmation !== 'CONFIRMATION RESET') {
       ApplicationError.throwMissingResetConfirmation();
@@ -64,13 +76,8 @@ export class UtilisateurUsecase {
     const userIdList = await this.utilisateurRespository.listUtilisateurIds();
     for (let index = 0; index < userIdList.length; index++) {
       const user_id = userIdList[index];
-      const utilisateur = await this.utilisateurRespository.getById(user_id);
 
-      utilisateur.resetAllHistory();
-
-      await this.serviceRepository.deleteAllUserServices(user_id);
-
-      await this.utilisateurRespository.updateUtilisateur(utilisateur);
+      await this.resetUser(user_id);
     }
   }
 
@@ -112,6 +119,7 @@ export class UtilisateurUsecase {
     const utilisateur = await this.utilisateurRespository.getById(
       utilisateurId,
     );
+    utilisateur.checkState();
 
     if (profile.mot_de_passe) {
       PasswordManager.checkPasswordFormat(profile.mot_de_passe);
@@ -132,6 +140,7 @@ export class UtilisateurUsecase {
     const utilisateur = await this.utilisateurRespository.getById(
       utilisateurId,
     );
+    utilisateur.checkState();
 
     utilisateur.transport.patch(input);
 
@@ -144,6 +153,7 @@ export class UtilisateurUsecase {
     const utilisateur = await this.utilisateurRespository.getById(
       utilisateurId,
     );
+    utilisateur.checkState();
 
     utilisateur.logement.patch(input);
 
@@ -229,7 +239,10 @@ export class UtilisateurUsecase {
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
-    return this.utilisateurRespository.getById(id);
+    const utilisateur = await this.utilisateurRespository.getById(id);
+    if (utilisateur) utilisateur.checkState();
+
+    return utilisateur;
   }
 
   async deleteUtilisateur(utilisateurId: string) {

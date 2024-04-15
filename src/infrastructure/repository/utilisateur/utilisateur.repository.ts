@@ -49,6 +49,14 @@ export class UtilisateurRepository {
     return this.buildUtilisateurFromDB(user);
   }
 
+  async disconnectAll(): Promise<void> {
+    await this.prisma.utilisateur.updateMany({
+      data: {
+        force_connexion: true,
+      },
+    });
+  }
+
   async updateVersion(utilisateurId: string, version: number): Promise<any> {
     return this.prisma.utilisateur.update({
       where: { id: utilisateurId },
@@ -253,6 +261,7 @@ export class UtilisateurRepository {
         transport: transport,
         tag_ponderation_set: user.tag_ponderation_set as any,
         defi_history: defis,
+        force_connexion: user.force_connexion,
       });
     }
     return null;
@@ -325,6 +334,7 @@ export class UtilisateurRepository {
         user.defi_history,
         SerialisableDomain.DefiHistory,
       ),
+      force_connexion: user.force_connexion,
       created_at: undefined,
       updated_at: undefined,
     };

@@ -23,6 +23,7 @@ export class TodoUsecase {
 
   async gagnerPointsFromTodoElement(utilisateurId: string, elementId: string) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     const todo_active = utilisateur.parcours_todo.getActiveTodo();
     const element = todo_active.findDoneElementById(elementId);
@@ -36,6 +37,7 @@ export class TodoUsecase {
 
   async gagnerPointsFromTodo(utilisateurId: string) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     const todo_active = utilisateur.parcours_todo.getActiveTodo();
     if (todo_active.isDone()) {
@@ -60,6 +62,7 @@ export class TodoUsecase {
 
   async getUtilisateurTodo(utilisateurId: string): Promise<Todo> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     const todo = utilisateur.parcours_todo.getActiveTodo();
 
