@@ -91,11 +91,13 @@ export class TodoUsecase {
           thematiques: element.thematiques,
           difficulty: element.level,
           exclude_ids: articles_lus,
+          code_postal: utilisateur.logement.code_postal,
         });
         if (articles.length === 0) {
           articles = await this.articleRepository.searchArticles({
             thematiques: element.thematiques,
             difficulty: element.level,
+            code_postal: utilisateur.logement.code_postal,
           });
         }
         if (articles.length > 0) {

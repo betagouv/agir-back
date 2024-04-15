@@ -14,6 +14,13 @@ import {
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
 import { ParcoursTodo_v0 } from '../../../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import {
+  Superficie,
+  TypeLogement,
+  Chauffage,
+  DPE,
+} from '../../../src/domain/logement/logement';
 
 describe('TODO list (API test)', () => {
   const OLD_ENV = process.env;
@@ -404,6 +411,63 @@ describe('TODO list (API test)', () => {
     expect(response.body.todo[0].type).toEqual(ContentType.article);
     expect(response.body.todo[0].content_id).toEqual('123');
     expect(response.body.todo[0].interaction_id).toEqual(undefined);
+  });
+  it('GET /utilisateurs/id/todo ne propose pas un article pas du bon code postal', async () => {
+    // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '49000',
+      chauffage: Chauffage.bois,
+      commune: 'ANGERS',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 2,
+      logement: logement,
+      todo: {
+        liste_todo: [
+          {
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                titre: 'Lire article',
+                thematiques: [Thematique.climat],
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: 'article',
+                level: DifficultyLevel.L1,
+                points: 10,
+              },
+            ],
+          },
+        ],
+        todo_active: 0,
+      },
+    });
+    await TestUtil.create_article({
+      content_id: '123',
+      thematiques: [Thematique.climat],
+      difficulty: DifficultyLevel.L1,
+      codes_postaux: ['91120'],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.numero_todo).toEqual(1);
+    expect(response.body.todo[0].type).toEqual(ContentType.article);
+    expect(response.body.todo[0].content_id).toEqual(undefined);
   });
 
   it('GET /utilisateurs/id/todo propose un article déjà lu', async () => {
