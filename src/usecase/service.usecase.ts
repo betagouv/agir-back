@@ -17,6 +17,7 @@ import { LinkyServiceManager } from '../../src/infrastructure/service/linky/Link
 import { LinkyConfigurationAPI } from '../../src/infrastructure/api/types/service/linkyConfigurationAPI';
 import { AsyncServiceManager } from '../../src/infrastructure/service/AsyncServiceManager';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
+import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 
 const dummy_live_manager = {
   computeLiveDynamicData: async (service: Service) => {
@@ -55,6 +56,7 @@ export class ServiceUsecase {
   private readonly ASYNC_SERVICES: Record<AsyncService, AsyncServiceManager>;
 
   constructor(
+    private utilisateurRepository: UtilisateurRepository,
     private serviceRepository: ServiceRepository,
     private readonly ecoWattServiceManager: EcoWattServiceManager,
     private readonly fruitsEtLegumesServiceManager: FruitsEtLegumesServiceManager,
@@ -81,6 +83,8 @@ export class ServiceUsecase {
     serviceDefinitionId: string,
     payload: LinkyConfigurationAPI,
   ) {
+    await this.utilisateurRepository.checkState(utilisateurId);
+
     const service = await this.serviceRepository.getServiceOfUtilisateur(
       utilisateurId,
       serviceDefinitionId,
@@ -146,6 +150,10 @@ export class ServiceUsecase {
   async listServicesDefinitions(
     utilisateurId: string,
   ): Promise<ServiceDefinition[]> {
+    if (utilisateurId) {
+      await this.utilisateurRepository.checkState(utilisateurId);
+    }
+
     return this.serviceRepository.listeServiceDefinitionsAndUserRelatedServices(
       utilisateurId,
     );
@@ -155,6 +163,8 @@ export class ServiceUsecase {
     utilisateurId: string,
     serviceDefinitionId: string,
   ) {
+    await this.utilisateurRepository.checkState(utilisateurId);
+
     const existing_service =
       await this.serviceRepository.getServiceOfUtilisateur(
         utilisateurId,
@@ -184,6 +194,8 @@ export class ServiceUsecase {
     utilisateurId: string,
     serviceDefinitionId: string,
   ) {
+    await this.utilisateurRepository.checkState(utilisateurId);
+
     const existing_service =
       await this.serviceRepository.getServiceOfUtilisateur(
         utilisateurId,
@@ -211,6 +223,8 @@ export class ServiceUsecase {
     }
   }
   async listeServicesOfUtilisateur(utilisateurId: string): Promise<Service[]> {
+    await this.utilisateurRepository.checkState(utilisateurId);
+
     const userServiceList =
       await this.serviceRepository.listeServicesOfUtilisateur(utilisateurId);
     for (let index = 0; index < userServiceList.length; index++) {
@@ -227,6 +241,8 @@ export class ServiceUsecase {
     utilisateurId: string,
     serviceDefinitionId: string,
   ): Promise<Service> {
+    await this.utilisateurRepository.checkState(utilisateurId);
+
     const service = await this.serviceRepository.getServiceOfUtilisateur(
       utilisateurId,
       serviceDefinitionId,

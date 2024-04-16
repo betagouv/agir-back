@@ -56,6 +56,15 @@ export class UtilisateurRepository {
       },
     });
   }
+  async checkState(utilisateurId: string) {
+    const result = await this.prisma.utilisateur.findUnique({
+      where: { id: utilisateurId },
+      select: { force_connexion: true },
+    });
+    if (result['force_connexion']) {
+      ApplicationError.throwPleaseReconnect();
+    }
+  }
 
   async updateVersion(utilisateurId: string, version: number): Promise<any> {
     return this.prisma.utilisateur.update({

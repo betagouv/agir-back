@@ -7,11 +7,13 @@ import { ServiceRepository } from '../../src/infrastructure/repository/service.r
 import { AsyncService } from '../../src/domain/service/serviceDefinition';
 import { LinkyDataDetailAPI } from '../../src/infrastructure/api/types/service/linkyDataAPI';
 import { LinkyAPIConnector } from '../../src/infrastructure/service/linky/LinkyAPIConnector';
+import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 
 @Injectable()
 export class LinkyUsecase {
   constructor(
     private linkyRepository: LinkyRepository,
+    private utilisateurRepository: UtilisateurRepository,
     private serviceRepository: ServiceRepository,
     private linkyAPIConnector: LinkyAPIConnector,
   ) {}
@@ -66,6 +68,8 @@ export class LinkyUsecase {
     compare_annees: boolean,
     derniers_14_jours: boolean,
   ): Promise<{ data: LinkyData; commentaires?: string[] }> {
+    await this.utilisateurRepository.checkState(utilisateurId);
+
     const serviceLinky = await this.serviceRepository.getServiceOfUtilisateur(
       utilisateurId,
       AsyncService.linky,

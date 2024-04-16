@@ -10,8 +10,6 @@ import {
   Celebration,
   CelebrationType,
 } from '../../src/domain/gamification/celebrations/celebration';
-import { Feature } from '../../src/domain/gamification/feature';
-import { Reveal } from '../../src/domain/gamification/celebrations/reveal';
 
 @Injectable()
 export class TodoUsecase {
