@@ -524,6 +524,7 @@ export class TestUtil {
       logement: logement,
       transport: transport,
       tag_ponderation_set: {},
+      force_connexion: false,
       ...override,
     };
   }

@@ -22,9 +22,8 @@ export class BibliothequeUsecase {
   ): Promise<Bibliotheque> {
     let result = new Bibliotheque();
 
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     const articles_lus = utilisateur.history.searchArticlesIds({
       est_lu: true,
@@ -58,7 +57,7 @@ export class BibliothequeUsecase {
     return result;
   }
 
-  public async geArticle(
+  public async getArticle(
     utilisateurId: string,
     content_id: string,
   ): Promise<PersonalArticle> {
@@ -70,9 +69,8 @@ export class BibliothequeUsecase {
       ApplicationError.throwArticleNotFound(content_id);
     }
 
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     return utilisateur.history.personnaliserArticle(article);
   }

@@ -29,6 +29,8 @@ export class AidesUsecase {
 
   async getCatalogueAides(utilisateurId: string): Promise<Aide[]> {
     const user = await this.utilisateurRepository.getById(utilisateurId);
+    user.checkState();
+
     return this.aideRepository.search({
       code_postal: user.logement.code_postal,
     });
@@ -39,6 +41,8 @@ export class AidesUsecase {
     prix_velo: number,
   ): Promise<AidesVeloParType> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
     const RFR =
       utilisateur.revenu_fiscal === null ? 0 : utilisateur.revenu_fiscal + 1;
     const PARTS = utilisateur.getNombrePartsFiscalesOuEstimee();

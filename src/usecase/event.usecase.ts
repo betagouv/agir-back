@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  EventType,
-  AppEvent,
-} from '../domain/appEvent';
+import { EventType, AppEvent } from '../domain/appEvent';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { ContentType } from '../domain/contenu/contentType';
@@ -67,10 +64,7 @@ export class EventUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  private async processArticleFavoris(
-    utilisateurId: string,
-    event: AppEvent,
-  ) {
+  private async processArticleFavoris(utilisateurId: string, event: AppEvent) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.history.favoriserArticle(event.content_id);
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
@@ -139,10 +133,7 @@ export class EventUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  private async processCelebration(
-    utilisateurId: string,
-    event: AppEvent,
-  ) {
+  private async processCelebration(utilisateurId: string, event: AppEvent) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.gamification.terminerCelebration(
       event.celebration_id,
@@ -151,10 +142,7 @@ export class EventUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  private async processLectureArticle(
-    utilisateurId: string,
-    event: AppEvent,
-  ) {
+  private async processLectureArticle(utilisateurId: string, event: AppEvent) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.history.lireArticle(event.content_id);
     const article = await this.articleRepository.getArticleByContentId(
@@ -168,10 +156,7 @@ export class EventUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  private async processQuizzScore(
-    utilisateurId: string,
-    event: AppEvent,
-  ) {
+  private async processQuizzScore(utilisateurId: string, event: AppEvent) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.history.quizzAttempt(event.content_id, event.number_value);
 

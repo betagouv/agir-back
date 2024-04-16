@@ -257,6 +257,19 @@ export class UtilisateurController extends GenericControler {
     await this.utilisateurUsecase.reset(body.confirmation, utilisateurId);
   }
 
+  @Post('utilisateurs/:utilisateurId/logout')
+  @ApiOperation({
+    summary: `déconnecte un utilisateur donné`,
+  })
+  @UseGuards(AuthGuard)
+  async disconnec(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    await this.utilisateurUsecase.disconnectUser(utilisateurId);
+  }
+
   @Post('utilisateurs/reset')
   @ApiBody({
     type: ConfirmationAPI,
@@ -267,6 +280,15 @@ export class UtilisateurController extends GenericControler {
   async resetAll(@Request() req, @Body() body: ConfirmationAPI) {
     this.checkCronAPIProtectedEndpoint(req);
     await this.utilisateurUsecase.resetAllUsers(body.confirmation);
+  }
+
+  @Post('utilisateurs/logout')
+  @ApiOperation({
+    summary: `Déconnecte TOUS LES UTILISATEURS`,
+  })
+  async disconnectAll(@Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
+    await this.utilisateurUsecase.disconnectAllUsers();
   }
 
   @Post('utilisateurs/oubli_mot_de_passe')

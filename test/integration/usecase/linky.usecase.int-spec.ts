@@ -2,9 +2,11 @@ import { DB, TestUtil } from '../../TestUtil';
 import { ServiceRepository } from '../../../src/infrastructure/repository/service.repository';
 import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
 import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 
 describe('linkyUsecase', () => {
   let serviceRepository = new ServiceRepository(TestUtil.prisma);
+  let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   let linkyRepository = new LinkyRepository(TestUtil.prisma);
   let linkyAPIConnector = {
     souscription_API: jest.fn(),
@@ -13,6 +15,7 @@ describe('linkyUsecase', () => {
 
   let linkyUsecase = new LinkyUsecase(
     linkyRepository,
+    utilisateurRepository,
     serviceRepository,
     linkyAPIConnector,
   );

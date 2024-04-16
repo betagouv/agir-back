@@ -79,6 +79,23 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     // THEN
     expect(response.status).toBe(403);
   });
+  it('GET /utilisateurs/id/recommandation - 401 si force reconnexion', async () => {
+    // GIVEN
+    CatalogueQuestionsKYC.setCatalogue([]);
+
+    await TestUtil.create(DB.utilisateur, {
+      history: {},
+      force_connexion: true,
+    });
+    await TestUtil.create_article();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations',
+    );
+    // THEN
+    expect(response.status).toBe(401);
+  });
   it('GET /utilisateurs/id/recommandation - list article recommandation', async () => {
     // GIVEN
     CatalogueQuestionsKYC.setCatalogue([]);

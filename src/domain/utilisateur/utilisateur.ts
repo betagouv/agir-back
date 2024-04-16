@@ -54,6 +54,7 @@ export class UtilisateurData {
   transport: Transport;
   tag_ponderation_set: TagPonderationSet;
   defi_history: DefiHistory;
+  force_connexion: boolean;
 }
 
 export class Utilisateur extends UtilisateurData {
@@ -115,6 +116,7 @@ export class Utilisateur extends UtilisateurData {
       logement: Logement.buildFromOnboarding(onboarding),
       transport: Transport.buildFromOnboarding(onboarding),
       tag_ponderation_set: {},
+      force_connexion: false,
     });
   }
 
@@ -127,6 +129,12 @@ export class Utilisateur extends UtilisateurData {
     this.defi_history.reset();
     this.equipements.reset();
     this.kyc_history.reset();
+  }
+
+  public checkState?() {
+    if (this.force_connexion) {
+      ApplicationError.throwPleaseReconnect();
+    }
   }
 
   public getNombrePartsFiscalesOuEstimee?() {

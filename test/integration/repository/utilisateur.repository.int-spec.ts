@@ -1,9 +1,6 @@
 import { DB, TestUtil } from '../../TestUtil';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import {
-  Impact,
-  Onboarding,
-} from '../../../src/domain/onboarding/onboarding';
+import { Impact, Onboarding } from '../../../src/domain/onboarding/onboarding';
 import { ThematiqueOnboarding as ThematiqueOnboarding } from '../../../src/domain/onboarding/onboarding';
 import { Utilisateur } from '../../../src/domain/utilisateur/utilisateur';
 
@@ -421,5 +418,28 @@ describe('UtilisateurRepository', () => {
     });
     // THEN
     expect(userDB.unlocked_features['version']).toEqual(1);
+  });
+  it('checkState throws error', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { force_connexion: true });
+
+    // WHEN
+    try {
+      await utilisateurRepository.checkState('utilisateur-id');
+      fail();
+    } catch (error) {
+      // THEN
+      // OK
+    }
+  });
+  it('checkState throws no error', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { force_connexion: false });
+
+    // WHEN
+    await utilisateurRepository.checkState('utilisateur-id');
+
+    // THEN
+    // no error
   });
 });
