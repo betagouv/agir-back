@@ -38,7 +38,7 @@ export class Gamification {
   public terminerCelebration(id: string, utilisateur: Utilisateur) {
     const index = this.celebrations.findIndex((element) => element.id === id);
     const celebration = this.celebrations[index];
-    if (celebration.hasReveal()) {
+    if (celebration && celebration.hasReveal()) {
       utilisateur.unlocked_features.add(celebration.getReveal().feature);
     }
     this.celebrations.splice(index, 1);
