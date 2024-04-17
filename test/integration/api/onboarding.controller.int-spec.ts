@@ -199,6 +199,23 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
   });
+  it('POST /utilisateurs - white liste dijon OK aussi', async () => {
+    // GIVEN
+    process.env.WHITE_LIST_ENABLED = 'true';
+    process.env.WHITE_LIST = 'yo.com';
+    process.env.WHITE_LIST_DIJON = 'w@w.com';
+
+    // WHEN
+    const response = await TestUtil.getServer().post('/utilisateurs').send({
+      nom: 'WW',
+      prenom: 'Wojtek',
+      mot_de_passe: '#1234567890HAHAa',
+      email: 'W@W.COM',
+      onboardingData: ONBOARDING_1_2_3_4_DATA,
+    });
+    // THEN
+    expect(response.status).toBe(201);
+  });
   it('POST /utilisateurs - bad password', async () => {
     // GIVEN
     process.env.WHITE_LIST_ENABLED = 'false';
