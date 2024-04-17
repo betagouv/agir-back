@@ -33,10 +33,12 @@ export class ContactUsecase {
   }
 
   async delete(email: string): Promise<boolean> {
-    return await this.contactSynchro.deleteContact(email);
+    // return await this.contactSynchro.deleteContact(email);
+    return true;
   }
 
   async create(utilisateur: Utilisateur): Promise<boolean> {
-    return await this.contactSynchro.createContact(utilisateur);
+    //return await this.contactSynchro.createContact(utilisateur);
+    return true;
   }
 }
