@@ -140,8 +140,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
   },
   {
     id: KYCID.KYC008,
-    question:
-      'Votre employeur vous permet-il de télétravailler situation professionnelle ?',
+    question: 'Votre employeur vous permet-il de télétravailler ?',
     type: TypeReponseQuestionKYC.choix_unique,
     is_NGC: false,
     categorie: CategorieQuestionKYC.recommandation,
@@ -172,7 +171,10 @@ const CATALOGUE: QuestionKYC_v0[] = [
     thematique: Thematique.transport,
     reponses_possibles: [
       { label: 'Avec votre propre voiture', code: 'ma_voit' },
-      { label: 'En louant une voiture (location courte durée)', code: 'loc_voit' },
+      {
+        label: 'En louant une voiture (location courte durée)',
+        code: 'loc_voit',
+      },
       { label: 'En covoiturage', code: 'co_voit' },
       { label: 'Je ne réalise pas de trajet en voiture', code: 'pas_voiture' },
     ],
