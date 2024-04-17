@@ -1,7 +1,6 @@
-import { UtilisateurData } from '../utilisateur/utilisateur';
+import { UtilisateurData } from '../../domain/utilisateur/utilisateur';
 
-// TODO : pas un objet du domain, c'est une interface d'API Brevo
-export class ContactData {
+export class Contact {
   attributes: {
     POINTS: number;
     EMAIL: string;
@@ -13,12 +12,8 @@ export class ContactData {
   smsBlacklisted?: boolean;
   listIds?: number[];
   unlinkListIds?: number[];
-}
 
-// construct contact from utilisateur
-export class Contact extends ContactData {
   constructor(data: UtilisateurData) {
-    super();
     this.attributes = {
       POINTS: data.gamification.points,
       EMAIL: data.email,

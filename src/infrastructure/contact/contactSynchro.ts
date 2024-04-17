@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { Contact } from 'src/domain/contact/contact';
+import { Contact } from '../../../src/infrastructure/contact/contact';
 import Brevo from '@getbrevo/brevo';
+import { Utilisateur } from '../../../src/domain/utilisateur/utilisateur';
 
 @Injectable()
 export class ContactSynchro {
@@ -17,10 +18,14 @@ export class ContactSynchro {
     this.apiInstance = new Brevo.ContactsApi();
   }
 
-  public async BatchUpdateContacts(contacts: Contact[]) {
+  public async BatchUpdateContacts(utilisateurs: Utilisateur[]) {
     if (process.env.EMAIL_ENABLED === 'true') {
+      const contacts = utilisateurs.map(
+        (utilisateur) => new Contact(utilisateur),
+      );
+
       const data = {
-        contacts,
+        contacts: contacts,
       };
 
       axios
@@ -40,11 +45,19 @@ export class ContactSynchro {
     }
   }
 
-  public async createContact(contact: Contact): Promise<boolean> {
+  public async createContact(utilisateur: Utilisateur): Promise<boolean> {
     if (process.env.EMAIL_ENABLED !== 'true') return true;
+
+    const contact = new Contact(utilisateur);
+
+    // on ajoute l'utilisateur dans la liste "bienvenue"
+    contact.listIds = [parseInt(process.env.BREVO_BREVO_WELCOME_LIST_ID)];
+
     return await this.apiInstance.createContact(contact).then(
       function (data) {
-        console.log('BREVO contact created called successfully ');
+        console.log(
+          `BREVO contact ${utilisateur.email} created and added to list ${contact.listIds}`,
+        );
         return true;
       },
       function (error) {
@@ -58,7 +71,7 @@ export class ContactSynchro {
     if (process.env.EMAIL_ENABLED !== 'true') return true;
     return this.apiInstance.addContactToList(listId, emails).then(
       function (data) {
-        console.log('BREVO contact add to list');
+        console.log(`BREVO contacts added to list ${listId} : ${emails}`);
         return true;
       },
       function (error) {
@@ -69,10 +82,9 @@ export class ContactSynchro {
 
   public async deleteContact(email: string): Promise<boolean> {
     if (process.env.EMAIL_ENABLED !== 'true') return true;
-    const identifier = email; // can be email or id
-    return await this.apiInstance.deleteContact(identifier).then(
+    return await this.apiInstance.deleteContact(email).then(
       function () {
-        console.log('BREVO contact deleted');
+        console.log(`BREVO contact deleted : ${email}`);
         return true;
       },
       function (error) {

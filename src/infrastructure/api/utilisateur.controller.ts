@@ -50,10 +50,7 @@ export class ConfirmationAPI {
 @ApiBearerAuth()
 @ApiTags('Utilisateur')
 export class UtilisateurController extends GenericControler {
-  constructor(
-    private readonly utilisateurUsecase: UtilisateurUsecase,
-    private readonly contactUsecase: ContactUsecase,
-  ) {
+  constructor(private readonly utilisateurUsecase: UtilisateurUsecase) {
     super();
   }
 
@@ -67,8 +64,6 @@ export class UtilisateurController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
   ) {
     this.checkCallerId(req, utilisateurId);
-    // TODO : gérer le cas d'erreur de la suppression du contact, sinon risque d'orphelins ?
-    this.contactUsecase.delete(utilisateurId);
     await this.utilisateurUsecase.deleteUtilisateur(utilisateurId);
   }
 
