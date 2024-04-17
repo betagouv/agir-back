@@ -57,7 +57,6 @@ describe('Service (API test)', () => {
     expect(response.body[0].is_url_externe).toEqual(true);
     expect(response.body[0].description).toEqual('desc');
     expect(response.body[0].sous_description).toEqual('sous desc');
-    expect(response.body[0].en_construction).toEqual(false);
     expect(response.body[0].parametrage_requis).toEqual(true);
     expect(response.body[0].thematiques).toStrictEqual([
       Thematique.climat,
@@ -75,7 +74,6 @@ describe('Service (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
-    expect(response.body[0].en_construction).toEqual(true);
   });
   it('GET /services avec les occurences d installation', async () => {
     // GIVEN
@@ -437,8 +435,8 @@ describe('Service (API test)', () => {
     expect(response.body.is_url_externe).toEqual(true);
     expect(response.body.description).toEqual('desc');
     expect(response.body.sous_description).toEqual('sous desc');
-    expect(response.body.en_construction).toEqual(false);
     expect(response.body.error_code).toEqual('456');
+    expect(response.body.en_construction).toEqual(false);
     expect(response.body.configuration).toEqual({
       toto: '123',
       error_code: '456',

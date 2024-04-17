@@ -1,4 +1,4 @@
-import { Controller, Post, Request } from '@nestjs/common';
+import { Controller, Param, Post, Request } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
 import { CMSUsecase } from '../../../src/usecase/cms.usecase';
@@ -8,6 +8,7 @@ import { UserMigrationReportAPI } from './types/userMigrationReportAPI';
 import { ReferentielUsecase } from '../../../src/usecase/referentiel/referentiel.usecase';
 import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
 import { TodoUsecase } from '../../../src/usecase/todo.usecase';
+import { ContactUsecase } from '../../usecase/contact.usecase';
 import { UtilisateurUsecase } from '../../../src/usecase/utilisateur.usecase';
 
 @Controller()
@@ -21,6 +22,7 @@ export class AdminController extends GenericControler {
     private cmsUsecase: CMSUsecase,
     private referentielUsecase: ReferentielUsecase,
     private todoUsecase: TodoUsecase,
+    private contactUsecase: ContactUsecase,
   ) {
     super();
   }
@@ -141,6 +143,27 @@ export class AdminController extends GenericControler {
   async upgrade_user_todo(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.todoUsecase.updateAllUsersTodo();
+  }
+
+  @Post('admin/contacts/synchronize')
+  @ApiOperation({
+    summary: "Synchronise les contacts de l'application avec ceux de Brevo ",
+  })
+  async SynchronizeContacts(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.contactUsecase.batchUpdate();
+  }
+
+  @Post('admin/contacts/:utilisateurId/synchronize')
+  @ApiOperation({
+    summary: 'Synchronise un utilisateur unique',
+  })
+  async SynchronizeUser(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ) {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.contactUsecase.update(utilisateurId);
   }
 
   @Post('/admin/compute_reco_tags')

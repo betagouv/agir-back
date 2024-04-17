@@ -17,6 +17,7 @@ import { CodeManager } from '../../src/domain/utilisateur/manager/codeManager';
 import { SecurityEmailManager } from '../../src/domain/utilisateur/manager/securityEmailManager';
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
 import { GroupeRepository } from '../../src/infrastructure/repository/groupe.repository';
+import { ContactUsecase } from './contact.usecase';
 import { KYCID } from '../../src/domain/kyc/questionQYC';
 
 export type Phrase = {
@@ -27,7 +28,7 @@ export type Phrase = {
 @Injectable()
 export class UtilisateurUsecase {
   constructor(
-    private utilisateurRespository: UtilisateurRepository,
+    private utilisateurRepository: UtilisateurRepository,
     private groupeRepository: GroupeRepository,
     private serviceRepository: ServiceRepository,
     private suiviRepository: SuiviRepository,
@@ -38,15 +39,16 @@ export class UtilisateurUsecase {
     private codeManager: CodeManager,
     private securityEmailManager: SecurityEmailManager,
     private passwordManager: PasswordManager,
+    private contactUsecase: ContactUsecase,
   ) {}
 
   async computeAllUsersRecoTags() {
-    const userIdList = await this.utilisateurRespository.listUtilisateurIds();
+    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
     for (let index = 0; index < userIdList.length; index++) {
       const user_id = userIdList[index];
-      const utilisateur = await this.utilisateurRespository.getById(user_id);
+      const utilisateur = await this.utilisateurRepository.getById(user_id);
       utilisateur.recomputeRecoTags();
-      await this.utilisateurRespository.updateUtilisateur(utilisateur);
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
     }
   }
 
@@ -58,22 +60,20 @@ export class UtilisateurUsecase {
   }
 
   async disconnectUser(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRespository.getById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.force_connexion = true;
-    await this.utilisateurRespository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   async disconnectAllUsers() {
-    await this.utilisateurRespository.disconnectAll();
+    await this.utilisateurRepository.disconnectAll();
   }
 
   async resetAllUsers(confirmation: string) {
     if (confirmation !== 'CONFIRMATION RESET') {
       ApplicationError.throwMissingResetConfirmation();
     }
-    const userIdList = await this.utilisateurRespository.listUtilisateurIds();
+    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
     for (let index = 0; index < userIdList.length; index++) {
       const user_id = userIdList[index];
 
@@ -85,7 +85,7 @@ export class UtilisateurUsecase {
     email: string,
     password: string,
   ): Promise<{ token: string; utilisateur: Utilisateur }> {
-    const utilisateur = await this.utilisateurRespository.findByEmail(email);
+    const utilisateur = await this.utilisateurRepository.findByEmail(email);
     if (!utilisateur) {
       ApplicationError.throwBadPasswordOrEmailError();
     }
@@ -109,16 +109,14 @@ export class UtilisateurUsecase {
   }
 
   async findUtilisateurByEmail(email: string): Promise<Utilisateur> {
-    return this.utilisateurRespository.findByEmail(email);
+    return this.utilisateurRepository.findByEmail(email);
   }
 
   async updateUtilisateurProfile(
     utilisateurId: string,
     profile: UtilisateurProfileAPI,
   ) {
-    const utilisateur = await this.utilisateurRespository.getById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
     if (profile.mot_de_passe) {
@@ -133,26 +131,22 @@ export class UtilisateurUsecase {
     utilisateur.nom = profile.nom;
     utilisateur.prenom = profile.prenom;
 
-    return this.utilisateurRespository.updateUtilisateur(utilisateur);
+    return this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   async updateUtilisateurTransport(utilisateurId: string, input: TransportAPI) {
-    const utilisateur = await this.utilisateurRespository.getById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
     utilisateur.transport.patch(input);
 
     utilisateur.recomputeRecoTags();
 
-    await this.utilisateurRespository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   async updateUtilisateurLogement(utilisateurId: string, input: LogementAPI) {
-    const utilisateur = await this.utilisateurRespository.getById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
     utilisateur.logement.patch(input);
@@ -165,11 +159,11 @@ export class UtilisateurUsecase {
 
     utilisateur.recomputeRecoTags();
 
-    await this.utilisateurRespository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   async oubli_mot_de_passe(email: string) {
-    const utilisateur = await this.utilisateurRespository.findByEmail(email);
+    const utilisateur = await this.utilisateurRepository.findByEmail(email);
 
     if (!utilisateur) return; // pas d'erreur, silence ^^
 
@@ -178,7 +172,7 @@ export class UtilisateurUsecase {
     const _this = this;
     const okAction = async function () {
       utilisateur.setNew6DigitCode();
-      await _this.utilisateurRespository.updateCode(
+      await _this.utilisateurRepository.updateCode(
         utilisateur.id,
         utilisateur.code,
         utilisateur.code_generation_time,
@@ -193,15 +187,13 @@ export class UtilisateurUsecase {
   }
 
   private async resetUser(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRespository.getById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
     utilisateur.resetAllHistory();
 
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
 
-    await this.utilisateurRespository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   async modifier_mot_de_passe(
@@ -209,7 +201,7 @@ export class UtilisateurUsecase {
     code: string,
     mot_de_passe: string,
   ) {
-    const utilisateur = await this.utilisateurRespository.findByEmail(email);
+    const utilisateur = await this.utilisateurRepository.findByEmail(email);
 
     if (!utilisateur) {
       ApplicationError.throwBadCodeOrEmailError();
@@ -227,7 +219,7 @@ export class UtilisateurUsecase {
       await _this.passwordManager.initLoginState(utilisateur);
 
       utilisateur.setPassword(mot_de_passe);
-      await _this.utilisateurRespository.updateUtilisateur(utilisateur);
+      await _this.utilisateurRepository.updateUtilisateur(utilisateur);
       return;
     };
 
@@ -239,19 +231,23 @@ export class UtilisateurUsecase {
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
-    const utilisateur = await this.utilisateurRespository.getById(id);
+    const utilisateur = await this.utilisateurRepository.getById(id);
     if (utilisateur) utilisateur.checkState();
 
     return utilisateur;
   }
 
   async deleteUtilisateur(utilisateurId: string) {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+
     await this.suiviRepository.delete(utilisateurId);
     await this.bilanRepository.delete(utilisateurId);
     await this.oIDCStateRepository.delete(utilisateurId);
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
     await this.groupeRepository.delete(utilisateurId);
-    await this.utilisateurRespository.delete(utilisateurId);
+    await this.utilisateurRepository.delete(utilisateurId);
+
+    await this.contactUsecase.delete(utilisateur.email);
   }
 
   private AorB?<T>(a: T, b: T): T {

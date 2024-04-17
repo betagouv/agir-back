@@ -275,6 +275,7 @@ export class UtilisateurRepository {
     }
     return null;
   }
+
   private buildDBFromUtilisateur(user: Utilisateur): UtilisateurDB {
     return {
       id: user.id ? user.id : uuidv4(),
@@ -347,5 +348,34 @@ export class UtilisateurRepository {
       created_at: undefined,
       updated_at: undefined,
     };
+  }
+
+  async findLastActiveUtilisateurs(
+    limit: number,
+    offset: number,
+    date: Date,
+  ): Promise<Utilisateur[]> {
+    const utilisateurs = await this.prisma.utilisateur.findMany({
+      take: limit | 1,
+      skip: offset | 0,
+      where: {
+        active_account: true,
+        updated_at: { gte: date },
+      },
+      orderBy: {
+        updated_at: 'desc',
+      },
+    });
+    return utilisateurs.map((elem) => this.buildUtilisateurFromDB(elem));
+  }
+
+  async countActiveUsersWithRecentActivity(date: Date): Promise<number> {
+    const count = await this.prisma.utilisateur.count({
+      where: {
+        active_account: true,
+        updated_at: { gte: date },
+      },
+    });
+    return Number(count);
   }
 }

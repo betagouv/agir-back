@@ -63,6 +63,8 @@ import { QuestionsKYCController } from './infrastructure/api/questionKYC.control
 import { QuestionKYCUsecase } from './usecase/questionKYC.usecase';
 import { ArticleRepository } from './infrastructure/repository/article.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
+import { ContactUsecase } from './usecase/contact.usecase';
+import { ContactSynchro } from './infrastructure/contact/contactSynchro';
 import { RecommandationsController } from './infrastructure/api/recommandations.controller';
 import { RecommandationUsecase } from './usecase/recommandation.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
@@ -169,6 +171,8 @@ function getControllers(): any[] {
     ArticleRepository,
     QuizzRepository,
     RecommandationUsecase,
+    ContactUsecase,
+    ContactSynchro,
     MigrationUsecase,
     ReferentielUsecase,
     DepartementRepository,
