@@ -442,4 +442,85 @@ describe('UtilisateurRepository', () => {
     // THEN
     // no error
   });
+  it('findLastActiveUtilisateurs : no inactive accounts', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { active_account: false });
+
+    // WHEN
+    const liste = await utilisateurRepository.findLastActiveUtilisateurs(
+      10,
+      0,
+      new Date(0),
+    );
+
+    // THEN
+    expect(liste).toHaveLength(0);
+  });
+  it('findLastActiveUtilisateurs : active account OK', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { active_account: true });
+
+    // WHEN
+    const liste = await utilisateurRepository.findLastActiveUtilisateurs(
+      10,
+      0,
+      new Date(0),
+    );
+
+    // THEN
+    expect(liste).toHaveLength(1);
+  });
+  it('findLastActiveUtilisateurs : date après => pas de compte', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { active_account: true });
+
+    // WHEN
+    const liste = await utilisateurRepository.findLastActiveUtilisateurs(
+      10,
+      0,
+      new Date(Date.now() + 100),
+    );
+
+    // THEN
+    expect(liste).toHaveLength(0);
+  });
+  it('countActiveUsersWithRecentActivity : date après => 0', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { active_account: true });
+
+    // WHEN
+    const count =
+      await utilisateurRepository.countActiveUsersWithRecentActivity(
+        new Date(Date.now() + 100),
+      );
+
+    // THEN
+    expect(count).toEqual(0);
+  });
+  it('countActiveUsersWithRecentActivity : 1 si date avant', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { active_account: true });
+
+    // WHEN
+    const count =
+      await utilisateurRepository.countActiveUsersWithRecentActivity(
+        new Date(0),
+      );
+
+    // THEN
+    expect(count).toEqual(1);
+  });
+  it('countActiveUsersWithRecentActivity : 0 si inactif', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { active_account: false });
+
+    // WHEN
+    const count =
+      await utilisateurRepository.countActiveUsersWithRecentActivity(
+        new Date(0),
+      );
+
+    // THEN
+    expect(count).toEqual(0);
+  });
 });

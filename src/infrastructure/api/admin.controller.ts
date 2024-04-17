@@ -1,4 +1,4 @@
-import { Controller, Post, Request } from '@nestjs/common';
+import { Controller, Param, Post, Request } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
 import { CMSUsecase } from '../../../src/usecase/cms.usecase';
@@ -149,10 +149,21 @@ export class AdminController extends GenericControler {
   @ApiOperation({
     summary: "Synchronise les contacts de l'application avec ceux de Brevo ",
   })
-  // TODO : ajouter des tests de l'API ?
-  async SynchronizeContacts(@Request() req): Promise<void> {
+  async SynchronizeContacts(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
-    await this.contactUsecase.batchUpdate();
+    return await this.contactUsecase.batchUpdate();
+  }
+
+  @Post('admin/contacts/:utilisateurId/synchronize')
+  @ApiOperation({
+    summary: 'Synchronise un utilisateur unique',
+  })
+  async SynchronizeUser(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ) {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.contactUsecase.update(utilisateurId);
   }
 
   @Post('/admin/compute_reco_tags')

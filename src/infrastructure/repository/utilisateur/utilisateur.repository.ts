@@ -350,7 +350,6 @@ export class UtilisateurRepository {
     };
   }
 
-  // TODO : ajouter un peu de tests ?
   async findLastActiveUtilisateurs(
     limit: number,
     offset: number,

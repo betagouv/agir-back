@@ -10,8 +10,9 @@ export class ContactUsecase {
     public contactSynchro: ContactSynchro,
   ) {}
 
-  async batchUpdate() {
-    const date = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  async batchUpdate(): Promise<string[]> {
+    let result = [];
+    const date = new Date(Date.now() - 24 * 60 * 60 * 1000); // -24 heures
     const nombreTotalUtilisateurs =
       await this.utilisateurRepository.countActiveUsersWithRecentActivity(date);
     for (let index = 0; index < nombreTotalUtilisateurs; index += 100) {
@@ -22,7 +23,13 @@ export class ContactUsecase {
           date,
         );
       this.contactSynchro.BatchUpdateContacts(utilisateurs);
+      result = result.concat(utilisateurs.map((u) => u.id));
     }
+    return result;
+  }
+  async update(utilisateurId: string) {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    this.contactSynchro.BatchUpdateContacts([utilisateur]);
   }
 
   async delete(email: string): Promise<boolean> {
