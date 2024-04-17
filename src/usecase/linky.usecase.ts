@@ -6,24 +6,56 @@ import { LinkyData } from '../../src/domain/linky/linkyData';
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
 import { AsyncService } from '../../src/domain/service/serviceDefinition';
 import { LinkyDataDetailAPI } from '../../src/infrastructure/api/types/service/linkyDataAPI';
+import { LinkyAPIConnector } from '../../src/infrastructure/service/linky/LinkyAPIConnector';
+import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 
 @Injectable()
 export class LinkyUsecase {
   constructor(
     private linkyRepository: LinkyRepository,
+    private utilisateurRepository: UtilisateurRepository,
     private serviceRepository: ServiceRepository,
+    private linkyAPIConnector: LinkyAPIConnector,
   ) {}
+
+  async unsubscribeOrphanPRMs(): Promise<string[]> {
+    const result = [];
+    const orphans = await this.linkyRepository.findWinterPKsOrphanEntries();
+
+    for (let index = 0; index < orphans.length; index++) {
+      const orphan = orphans[index];
+      try {
+        await this.linkyAPIConnector.deleteSouscription(orphan.winter_pk);
+        await this.linkyRepository.delete(orphan.prm);
+        result.push(
+          `DELETED orphan winter_pk:${orphan.winter_pk} / prm:${orphan.prm} / user:${orphan.utilisateurId}`,
+        );
+      } catch (error) {
+        if (error.code === '037') {
+          await this.linkyRepository.delete(orphan.prm);
+          result.push(
+            `ALREADY unsubscribed winter_pk:${orphan.winter_pk} / prm:${orphan.prm} / user:${orphan.utilisateurId}`,
+          );
+        } else {
+          result.push(
+            `ERROR unsubscribing winter_pk:${orphan.winter_pk} / prm:${orphan.prm} / user:${orphan.utilisateurId} => ${error.code}/${error.message}`,
+          );
+        }
+      }
+    }
+    return result;
+  }
 
   async cleanLinkyData(): Promise<number> {
     const prm_list = await this.linkyRepository.getAllPRMs();
     for (let index = 0; index < prm_list.length; index++) {
       const prm = prm_list[index];
 
-      const linky_data = await this.linkyRepository.getLinky(prm);
+      const linky_data = await this.linkyRepository.getByPRM(prm);
 
       linky_data.cleanData();
 
-      await this.linkyRepository.upsertData(linky_data);
+      await this.linkyRepository.upsertDataForPRM(prm, linky_data.serie);
     }
     return prm_list.length;
   }
@@ -34,44 +66,48 @@ export class LinkyUsecase {
     nombre: number,
     end_date: string,
     compare_annees: boolean,
-    compare_mois_sem_jour: boolean,
-  ): Promise<LinkyData> {
+    derniers_14_jours: boolean,
+  ): Promise<{ data: LinkyData; commentaires?: string[] }> {
+    await this.utilisateurRepository.checkState(utilisateurId);
+
     const serviceLinky = await this.serviceRepository.getServiceOfUtilisateur(
       utilisateurId,
       AsyncService.linky,
     );
-    if (!serviceLinky) return new LinkyData();
+    if (!serviceLinky) return { data: new LinkyData() };
 
-    const linkyData = await this.linkyRepository.getLinky(
+    const linkyData = await this.linkyRepository.getByPRM(
       serviceLinky.configuration['prm'],
     );
-    if (!linkyData) return new LinkyData();
+    if (!linkyData) return { data: new LinkyData() };
 
     if (compare_annees) {
-      linkyData.serie = linkyData.compare2AnsParMois();
-      return linkyData;
+      const result = linkyData.compare2AnsParMois();
+      linkyData.serie = result.data;
+      return { data: linkyData, commentaires: result.commentaires };
     }
-    if (compare_mois_sem_jour) {
-      linkyData.serie = linkyData.dynamicCompareTwoYears();
-      return linkyData;
+    if (derniers_14_jours) {
+      const result = linkyData.compare14joursEntre2ans();
+      linkyData.serie = result.data;
+      return { data: linkyData, commentaires: result.commentaires };
     }
 
     if (detail === LinkyDataDetailAPI.jour && nombre) {
       linkyData.serie = linkyData.extractLastNDays(nombre);
-      return linkyData;
+      return { data: linkyData };
     }
     if (detail === LinkyDataDetailAPI.semaine && nombre) {
       linkyData.serie = linkyData.extractLastNWeeks(nombre);
-      return linkyData;
+      return { data: linkyData };
     }
     if (detail === LinkyDataDetailAPI.mois && nombre) {
       linkyData.serie = linkyData.extractLastNMonths(
         nombre,
         end_date ? new Date(end_date) : new Date(),
       );
-      return linkyData;
+      return { data: linkyData };
     }
-    return linkyData;
+    return { data: linkyData };
   }
 
   async process_incoming_data(incoming: WinterDataSentAPI): Promise<any> {
@@ -89,7 +125,7 @@ export class LinkyUsecase {
     }
     const prm = incoming.info.prm;
 
-    let current_data = await this.linkyRepository.getLinky(prm);
+    let current_data = await this.linkyRepository.getByPRM(prm);
     if (!current_data) {
       current_data = new LinkyData({ prm: prm, serie: [] });
     }
@@ -103,6 +139,6 @@ export class LinkyUsecase {
       });
     }
 
-    await this.linkyRepository.upsertData(current_data);
+    await this.linkyRepository.upsertDataForPRM(prm, current_data.serie);
   }
 }

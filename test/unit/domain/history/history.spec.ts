@@ -1,6 +1,16 @@
 import { TestUtil } from '../../../../test/TestUtil';
-import { Article } from '../../../../src/domain/article/article';
+import { Article } from '../../../../src/domain/contenu/article';
 import { History } from '../../../../src/domain/history/history';
+import { Thematique } from '../../../../src/domain/contenu/thematique';
+
+const BASIC_ARTICLE: Article = new Article({
+  ...TestUtil.getArticleData(),
+  thematique_principale: Thematique.alimentation,
+  thematiques: [Thematique.alimentation, Thematique.climat],
+  score: 0,
+  tags_rubriques: [],
+  tags_utilisateur: [],
+});
 
 describe('History', () => {
   it('WHEN un vie historique ok', () => {
@@ -304,9 +314,9 @@ describe('History', () => {
     });
 
     const liste_articles: Article[] = [];
-    liste_articles.push(TestUtil.articleData({ content_id: '1' }));
-    liste_articles.push(TestUtil.articleData({ content_id: '3' }));
-    liste_articles.push(TestUtil.articleData({ content_id: '5' }));
+    liste_articles.push(new Article({ ...BASIC_ARTICLE, content_id: '1' }));
+    liste_articles.push(new Article({ ...BASIC_ARTICLE, content_id: '3' }));
+    liste_articles.push(new Article({ ...BASIC_ARTICLE, content_id: '5' }));
 
     // WHEN
     const result = history.orderArticlesByReadDateAndFavoris(liste_articles);
@@ -351,10 +361,10 @@ describe('History', () => {
     });
 
     const liste_articles: Article[] = [];
-    liste_articles.push(TestUtil.articleData({ content_id: '1' }));
-    liste_articles.push(TestUtil.articleData({ content_id: '2' }));
-    liste_articles.push(TestUtil.articleData({ content_id: '3' }));
-    liste_articles.push(TestUtil.articleData({ content_id: '4' }));
+    liste_articles.push(new Article({ ...BASIC_ARTICLE, content_id: '1' }));
+    liste_articles.push(new Article({ ...BASIC_ARTICLE, content_id: '2' }));
+    liste_articles.push(new Article({ ...BASIC_ARTICLE, content_id: '3' }));
+    liste_articles.push(new Article({ ...BASIC_ARTICLE, content_id: '4' }));
 
     // WHEN
     const result = history.orderArticlesByReadDateAndFavoris(liste_articles);
@@ -390,8 +400,8 @@ describe('History', () => {
     });
 
     const liste_articles: Article[] = [];
-    liste_articles.push(TestUtil.articleData({ content_id: '1' }));
-    liste_articles.push(TestUtil.articleData({ content_id: '2' }));
+    liste_articles.push(new Article({ ...BASIC_ARTICLE, content_id: '1' }));
+    liste_articles.push(new Article({ ...BASIC_ARTICLE, content_id: '2' }));
 
     // WHEN
     const result = history.orderArticlesByReadDateAndFavoris(liste_articles);

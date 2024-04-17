@@ -7,6 +7,6 @@ describe('TodoCatalogue', () => {
     const result = TodoCatalogue.getAllTodos();
 
     // THEN
-    expect(result).toHaveLength(5);
+    expect(result).toHaveLength(TodoCatalogue.getNombreTodo());
   });
 });

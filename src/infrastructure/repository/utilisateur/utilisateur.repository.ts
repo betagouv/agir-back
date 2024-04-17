@@ -3,13 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Utilisateur as UtilisateurDB, Prisma } from '@prisma/client';
 import { Utilisateur } from '../../../domain/utilisateur/utilisateur';
-import { Profile } from '../../../domain/utilisateur/profile';
 import {
   Impact,
   Onboarding,
-  Thematique,
-} from '../../../domain/utilisateur/onboarding/onboarding';
-import { OnboardingResult } from '../../../domain/utilisateur/onboarding/onboardingResult';
+  ThematiqueOnboarding,
+} from '../../../domain/onboarding/onboarding';
+import { OnboardingResult } from '../../../domain/onboarding/onboardingResult';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { Gamification } from '../../../domain/gamification/gamification';
 import { History } from '../../../../src/domain/history/history';
@@ -19,6 +18,11 @@ import {
   Upgrader,
 } from '../../../domain/object_store/upgrader';
 import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
+import { KYCHistory } from '../../../domain/kyc/kycHistory';
+import { Equipements } from '../../../../src/domain/equipements/equipements';
+import { Logement } from '../../../domain/logement/logement';
+import { Transport } from '../../../domain/transport/transport';
+import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -28,7 +32,7 @@ export class UtilisateurRepository {
     await this.prisma.utilisateur.delete({ where: { id: utilisateurId } });
   }
 
-  async findUtilisateurById(id: string): Promise<Utilisateur | null> {
+  async getById(id: string): Promise<Utilisateur | null> {
     const user = await this.prisma.utilisateur.findUnique({
       where: {
         id,
@@ -36,7 +40,7 @@ export class UtilisateurRepository {
     });
     return this.buildUtilisateurFromDB(user);
   }
-  async findUtilisateurByEmail(email: string): Promise<Utilisateur | null> {
+  async findByEmail(email: string): Promise<Utilisateur | null> {
     const user = await this.prisma.utilisateur.findUnique({
       where: {
         email,
@@ -45,24 +49,21 @@ export class UtilisateurRepository {
     return this.buildUtilisateurFromDB(user);
   }
 
-  async updateProfile(utilisateurId: string, profile: Profile) {
-    return this.prisma.utilisateur.update({
-      where: {
-        id: utilisateurId,
-      },
+  async disconnectAll(): Promise<void> {
+    await this.prisma.utilisateur.updateMany({
       data: {
-        nom: profile.nom,
-        prenom: profile.prenom,
-        email: profile.email,
-        code_postal: profile.code_postal,
-        commune: profile.commune,
-        revenu_fiscal: profile.revenu_fiscal,
-        parts: profile.parts,
-        abonnement_ter_loire: profile.abonnement_ter_loire,
-        passwordHash: profile.passwordHash,
-        passwordSalt: profile.passwordSalt,
+        force_connexion: true,
       },
     });
+  }
+  async checkState(utilisateurId: string) {
+    const result = await this.prisma.utilisateur.findUnique({
+      where: { id: utilisateurId },
+      select: { force_connexion: true },
+    });
+    if (result['force_connexion']) {
+      ApplicationError.throwPleaseReconnect();
+    }
   }
 
   async updateVersion(utilisateurId: string, version: number): Promise<any> {
@@ -159,7 +160,7 @@ export class UtilisateurRepository {
 
   async countUsersWithLessImpactOnThematique(
     maxImpact: Impact,
-    targetThematique: Thematique,
+    targetThematique: ThematiqueOnboarding,
   ): Promise<number> {
     let query = `
     SELECT count(1)
@@ -171,7 +172,7 @@ export class UtilisateurRepository {
 
   async countUsersWithMoreImpactOnThematiques(
     minImpacts: Impact[],
-    targetThematiques: Thematique[],
+    targetThematiques: ThematiqueOnboarding[],
   ): Promise<number> {
     let query = `
     SELECT count(1)
@@ -193,10 +194,6 @@ export class UtilisateurRepository {
 
   private buildUtilisateurFromDB(user: UtilisateurDB): Utilisateur {
     if (user) {
-      const onboardingData = new Onboarding(user.onboardingData as any);
-      const onboardingResult = new OnboardingResult();
-      onboardingResult.setOnboardingResultData(user.onboardingResult as any);
-
       const unlocked_features = new UnlockedFeatures(
         Upgrader.upgradeRaw(
           user.unlocked_features,
@@ -209,20 +206,45 @@ export class UtilisateurRepository {
       const history = new History(
         Upgrader.upgradeRaw(user.history, SerialisableDomain.History),
       );
+      const gamification = new Gamification(
+        Upgrader.upgradeRaw(user.gamification, SerialisableDomain.Gamification),
+      );
+      const onboarding = new Onboarding(
+        Upgrader.upgradeRaw(user.onboardingData, SerialisableDomain.Onboarding),
+      );
+      const onboardingResult = new OnboardingResult(
+        Upgrader.upgradeRaw(
+          user.onboardingResult,
+          SerialisableDomain.OnboardingResult,
+        ),
+      );
+      const kyc = new KYCHistory(
+        Upgrader.upgradeRaw(user.kyc, SerialisableDomain.KYCHistory),
+      );
+      const defis = new DefiHistory(
+        Upgrader.upgradeRaw(user.defis, SerialisableDomain.DefiHistory),
+      );
+      const equipements = new Equipements(
+        Upgrader.upgradeRaw(user.equipements, SerialisableDomain.Equipements),
+      );
+      const logement = new Logement(
+        Upgrader.upgradeRaw(user.logement, SerialisableDomain.Logement),
+      );
+      const transport = new Transport(
+        Upgrader.upgradeRaw(user.transport, SerialisableDomain.Transport),
+      );
 
       return new Utilisateur({
         id: user.id,
         nom: user.nom,
         prenom: user.prenom,
         email: user.email,
-        code_postal: user.code_postal,
-        commune: user.commune,
         revenu_fiscal: user.revenu_fiscal,
         parts: user.parts ? user.parts.toNumber() : null,
         abonnement_ter_loire: user.abonnement_ter_loire,
         passwordHash: user.passwordHash,
         passwordSalt: user.passwordSalt,
-        onboardingData: onboardingData,
+        onboardingData: onboarding,
         onboardingResult: onboardingResult,
         failed_login_count: user.failed_login_count,
         prevent_login_before: user.prevent_login_before,
@@ -236,14 +258,19 @@ export class UtilisateurRepository {
         created_at: user.created_at,
         updated_at: user.updated_at,
         parcours_todo: parcours_todo,
-        gamification: new Gamification(user.gamification as any),
+        gamification: gamification,
         history: history,
-        prm: user.prm,
+        kyc_history: kyc,
+        equipements: equipements,
         code_departement: user.code_departement,
         unlocked_features: unlocked_features,
         version: user.version,
         migration_enabled: user.migration_enabled,
-        version_ponderation: user.version_ponderation,
+        logement: logement,
+        transport: transport,
+        tag_ponderation_set: user.tag_ponderation_set as any,
+        defi_history: defis,
+        force_connexion: user.force_connexion,
       });
     }
     return null;
@@ -256,13 +283,10 @@ export class UtilisateurRepository {
       prenom: user.prenom,
       passwordHash: user.passwordHash,
       passwordSalt: user.passwordSalt,
-      code_postal: user.code_postal,
       revenu_fiscal: user.revenu_fiscal,
       parts: user.parts ? new Prisma.Decimal(user.parts) : null,
       abonnement_ter_loire: user.abonnement_ter_loire,
-      prm: user.prm,
       code_departement: user.code_departement,
-      commune: user.commune,
       email: user.email,
       code: user.code,
       code_generation_time: user.code_generation_time,
@@ -271,13 +295,22 @@ export class UtilisateurRepository {
       prevent_checkcode_before: user.prevent_checkcode_before,
       sent_email_count: user.sent_email_count,
       prevent_sendemail_before: user.prevent_sendemail_before,
-      onboardingData: { ...user.onboardingData },
-      onboardingResult: { ...user.onboardingResult },
+      onboardingData: Upgrader.serialiseToLastVersion(
+        user.onboardingData,
+        SerialisableDomain.Onboarding,
+      ),
+      onboardingResult: Upgrader.serialiseToLastVersion(
+        user.onboardingResult,
+        SerialisableDomain.OnboardingResult,
+      ),
       todo: Upgrader.serialiseToLastVersion(
         user.parcours_todo,
         SerialisableDomain.ParcoursTodo,
       ),
-      gamification: user.gamification as any,
+      gamification: Upgrader.serialiseToLastVersion(
+        user.gamification,
+        SerialisableDomain.Gamification,
+      ),
       unlocked_features: Upgrader.serialiseToLastVersion(
         user.unlocked_features,
         SerialisableDomain.UnlockedFeatures,
@@ -286,11 +319,32 @@ export class UtilisateurRepository {
         user.history,
         SerialisableDomain.History,
       ),
+      equipements: Upgrader.serialiseToLastVersion(
+        user.equipements,
+        SerialisableDomain.Equipements,
+      ),
+      logement: Upgrader.serialiseToLastVersion(
+        user.logement,
+        SerialisableDomain.Logement,
+      ),
+      transport: Upgrader.serialiseToLastVersion(
+        user.transport,
+        SerialisableDomain.Transport,
+      ),
+      kyc: Upgrader.serialiseToLastVersion(
+        user.kyc_history,
+        SerialisableDomain.KYCHistory,
+      ),
       version: user.version,
       failed_login_count: user.failed_login_count,
       prevent_login_before: user.prevent_login_before,
       migration_enabled: user.migration_enabled,
-      version_ponderation: user.version_ponderation,
+      tag_ponderation_set: user.tag_ponderation_set,
+      defis: Upgrader.serialiseToLastVersion(
+        user.defi_history,
+        SerialisableDomain.DefiHistory,
+      ),
+      force_connexion: user.force_connexion,
       created_at: undefined,
       updated_at: undefined,
     };

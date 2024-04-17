@@ -1,4 +1,4 @@
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 import { SuiviRepository } from '../../../src/infrastructure/repository/suivi.repository';
 import { SuiviAlimentation } from '../../../src/domain/suivi/suiviAlimentation';
 import { SuiviType } from '../../../src/domain/suivi/suiviType';
@@ -105,16 +105,16 @@ describe('SuiviRepository', () => {
 
   it('liste et ventile par type', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.suivi, {
       id: '1',
       type: 'alimentation',
     });
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.suivi, {
       id: '2',
       type: 'transport',
     });
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.suivi, {
       id: '3',
       type: 'transport',
     });
@@ -129,16 +129,16 @@ describe('SuiviRepository', () => {
 
   it('liste et filtre par type', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.suivi, {
       id: '1',
       type: 'alimentation',
     });
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.suivi, {
       id: '2',
       type: 'transport',
     });
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.suivi, {
       id: '3',
       type: 'transport',
     });
@@ -156,11 +156,11 @@ describe('SuiviRepository', () => {
 
   it('liste les X derniers suivis', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('suivi', { id: '1' });
-    await TestUtil.create('suivi', { id: '2' });
-    await TestUtil.create('suivi', { id: '3' });
-    await TestUtil.create('suivi', { id: '4' });
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.suivi, { id: '1' });
+    await TestUtil.create(DB.suivi, { id: '2' });
+    await TestUtil.create(DB.suivi, { id: '3' });
+    await TestUtil.create(DB.suivi, { id: '4' });
 
     // WHEN
     const suivis = await suiviRepository.listAllSuivi(

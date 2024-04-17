@@ -38,14 +38,18 @@ model Utilisateur {
   prenom                   String?            @default("prenom")
   passwordHash             String?            @default("hash")
   passwordSalt             String?            @default("salt")
-  code_postal              String?
-  commune                  String?
   revenu_fiscal            Int?
-  onboardingData           Json               @default("{}")
-  onboardingResult         Json               @default("{}")
-  todo                     Json               @default("{}")
-  gamification             Json               @default("{}")
-  history                  Json               @default("{}")
+  onboardingData           Json               @default("{}") // versioné 
+  onboardingResult         Json               @default("{}") // versioné 
+  todo                     Json               @default("{}") // versioné 
+  gamification             Json               @default("{}") // versioné 
+  history                  Json               @default("{}") // versioné 
+  kyc                      Json               @default("{}") // versioné
+  unlocked_features        Json               @default("{}") // versioné 
+  equipements              Json               @default("{}") // versioné 
+  logement                 Json               @default("{}") // versioné 
+  transport                Json               @default("{}") // versioné 
+  defis                    Json               @default("{}") // versioné
   empreintes               Empreinte[]
   suivis                   Suivi[]
   groupes                  GroupeAbonnement[]
@@ -55,7 +59,6 @@ model Utilisateur {
   prevent_login_before     DateTime           @default(now())
   code                     String?
   code_generation_time     DateTime?
-  unlocked_features        Json               @default("{}")
   active_account           Boolean            @default(true)
   failed_checkcode_count   Int                @default(0)
   prevent_checkcode_before DateTime           @default(now())
@@ -64,18 +67,53 @@ model Utilisateur {
   services                 Service[]
   parts                    Decimal?           @db.Decimal(4, 2)
   abonnement_ter_loire     Boolean            @default(false)
-  prm                      String?
   code_departement         String?
-  questionsKYC             QuestionsKYC[]
   version                  Int                @default(0)
   migration_enabled        Boolean            @default(false)
-  version_ponderation      Int                @default(0)
+  tag_ponderation_set      Json               @default("{}")
+  force_connexion          Boolean            @default(false)
 }
 
-model Ponderation {
-  id        String @id
-  version   Int    @unique
-  rubriques Json   @default("{}")
+model LinkyConsentement {
+  id                    String   @id
+  utilisateurId         String
+  date_consentement     DateTime
+  date_fin_consentement DateTime
+  mention_usage_donnees String
+  type_donnees          String
+  texte_signature       String
+  nom                   String
+  prenom                String
+  email                 String
+  prm                   String
+  created_at            DateTime @default(now()) @db.Timestamptz(3)
+  updated_at            DateTime @updatedAt @db.Timestamptz(3)
+}
+
+model Aide {
+  content_id     String   @id
+  titre          String
+  contenu        String
+  url_simulateur String?
+  is_simulateur  Boolean?
+  codes_postaux  String[] @default([])
+  thematiques    String[] @default([])
+  montant_max    Int?
+  created_at     DateTime @default(now()) @db.Timestamptz(3)
+  updated_at     DateTime @updatedAt @db.Timestamptz(3)
+}
+
+model Defi {
+  content_id String   @id
+  titre      String
+  sous_titre String?
+  astuces    String
+  pourquoi   String
+  points     Int
+  thematique String
+  tags       String[] @default([])
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt @db.Timestamptz(3)
 }
 
 model Article {
@@ -85,6 +123,7 @@ model Article {
   source                String?
   image_url             String?
   partenaire            String?
+  tags_utilisateur      String[] @default([])
   rubrique_ids          String[] @default([])
   rubrique_labels       String[] @default([])
   codes_postaux         String[] @default([])
@@ -105,6 +144,7 @@ model Quizz {
   source                String?
   image_url             String?
   partenaire            String?
+  tags_utilisateur      String[] @default([])
   rubrique_ids          String[] @default([])
   rubrique_labels       String[] @default([])
   codes_postaux         String[] @default([])
@@ -128,14 +168,6 @@ model Empreinte {
   utilisateurId String
   situationId   String       @unique
   situation     SituationNGC @relation(fields: [situationId], references: [id])
-}
-
-model QuestionsKYC {
-  utilisateurId String      @id
-  data          Json        @default("{}")
-  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
-  created_at    DateTime    @default(now()) @db.Timestamptz(3)
-  updated_at    DateTime    @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model Thematique {
@@ -210,8 +242,10 @@ model GroupeAbonnement {
 }
 
 model Linky {
-  prm        String   @id
-  data       Json     @default("{}")
-  created_at DateTime @default(now()) @db.Timestamptz(3)
-  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  utilisateurId String?  @unique
+  winter_pk     String?  @unique
+  prm           String   @id
+  data          Json     @default("{}")
+  created_at    DateTime @default(now()) @db.Timestamptz(3)
+  updated_at    DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }

@@ -3,8 +3,8 @@ const Brevo = require('@getbrevo/brevo');
 
 @Injectable()
 export class EmailSender {
-  private client;
-  private apiInstance;
+  private client?;
+  private apiInstance?;
 
   constructor() {
     this.client = Brevo.ApiClient.instance;
@@ -25,6 +25,7 @@ export class EmailSender {
     smtpEmail.subject = subject;
     //smtpEmail.textContent = text_content;
     smtpEmail.htmlContent = text_content;
+    smtpEmail.replyTo = { email: process.env.EMAIL_REPLY_TO, name: 'Contact' };
 
     if (process.env.EMAIL_ENABLED === 'true') {
       console.log(`Sending email to ${email_to}`);

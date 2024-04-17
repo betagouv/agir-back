@@ -39,8 +39,9 @@ export class UtilisateurAPI {
       nom: user.nom,
       prenom: user.prenom,
       email: user.email,
-      code_postal: user.code_postal,
-      commune: user.commune,
+      // FIXME : supprimer infos pas nécessaires
+      code_postal: user.logement.code_postal,
+      commune: user.logement.commune,
       revenu_fiscal: user.revenu_fiscal,
       nombre_de_parts_fiscales: user.getNombrePartsFiscalesOuEstimee(),
       created_at: user.created_at,

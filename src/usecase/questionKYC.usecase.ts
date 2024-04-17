@@ -1,54 +1,64 @@
 import { Injectable } from '@nestjs/common';
-import { QuestionKYCRepository } from '../../src/infrastructure/repository/questionKYC.repository';
-import { QuestionKYC } from '../domain/kyc/questionQYC';
-import { ApplicationError } from '../../src/infrastructure/applicationError';
+import { KYCID, QuestionKYC } from '../domain/kyc/questionQYC';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
+import { CatalogueQuestionsKYC } from '../../src/domain/kyc/catalogueQuestionsKYC';
 
 @Injectable()
 export class QuestionKYCUsecase {
-  constructor(
-    private questionKYCRepository: QuestionKYCRepository,
-    private utilisateurRepository: UtilisateurRepository,
-  ) {}
+  constructor(private utilisateurRepository: UtilisateurRepository) {}
 
   async getALL(utilisateurId: string): Promise<QuestionKYC[]> {
-    const collection = await this.questionKYCRepository.getAll(utilisateurId);
-    return collection.getAllQuestionSet();
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
+    return utilisateur.kyc_history.getAllQuestionSet();
   }
 
   async getQuestion(utilisateurId: string, questionId): Promise<QuestionKYC> {
-    const collection = await this.questionKYCRepository.getAll(utilisateurId);
-    const question = collection.getAnyQuestion(questionId);
-    if (!question) {
-      ApplicationError.throwQuestionInconnue(questionId);
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
+    // FIXME : until reset
+    if (questionId === '001') {
+      questionId = KYCID.KYC001;
     }
-    return question;
+
+    return utilisateur.kyc_history.getQuestionOrException(questionId);
   }
+
   async updateResponse(
     utilisateurId: string,
     questionId: string,
     reponse: string[],
   ): Promise<void> {
-    const collection = await this.questionKYCRepository.getAll(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
-    collection.checkQuestionExistsOrThrowException(questionId);
-
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
-      utilisateurId,
-    );
-
-    this.updateUserTodo(utilisateur, questionId);
-
-    if (!collection.isQuestionAnswered(questionId)) {
-      const question = collection.getAnyQuestion(questionId);
-      utilisateur.gamification.ajoutePoints(question.points);
+    // FIXME : until reset
+    let qid = questionId;
+    if (questionId === '001') {
+      questionId = KYCID.KYC001;
     }
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    if (questionId === KYCID.KYC006) {
+      utilisateur.logement.plus_de_15_ans = reponse.includes('plus_15');
+    }
 
-    collection.updateQuestion(questionId, reponse);
-    await this.questionKYCRepository.update(utilisateurId, collection);
+    utilisateur.kyc_history.checkQuestionExists(questionId);
+
+    this.updateUserTodo(utilisateur, qid);
+
+    if (!utilisateur.kyc_history.isQuestionAnswered(questionId)) {
+      const question =
+        utilisateur.kyc_history.getQuestionOrException(questionId);
+      utilisateur.gamification.ajoutePoints(question.points);
+    }
+    utilisateur.kyc_history.updateQuestion(questionId, reponse);
+
+    utilisateur.recomputeRecoTags();
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private updateUserTodo(utilisateur: Utilisateur, questionId: string) {

@@ -28,6 +28,7 @@ export class UtilisateurSecurityRepository {
       data: {
         failed_login_count: utilisateur.failed_login_count,
         prevent_login_before: utilisateur.prevent_login_before,
+        force_connexion: utilisateur.force_connexion,
       },
     });
   }

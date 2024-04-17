@@ -20,9 +20,14 @@ import {
   ApiOperation,
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiProperty,
 } from '@nestjs/swagger';
 import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
-import { UtilisateurProfileAPI } from './types/utilisateur/utilisateurProfileAPI';
+import {
+  LogementAPI,
+  TransportAPI,
+  UtilisateurProfileAPI,
+} from './types/utilisateur/utilisateurProfileAPI';
 import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
 import { LoginUtilisateurAPI } from './types/utilisateur/loginUtilisateurAPI';
 import { HttpStatus } from '@nestjs/common';
@@ -34,6 +39,11 @@ import { OubliMdpAPI } from './types/utilisateur/oubliMdpAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { ModifierMdpAPI } from './types/utilisateur/modifierMdpAPI';
 import { ContactUsecase } from '../../usecase/contact.usecase';
+
+export class ConfirmationAPI {
+  @ApiProperty({ required: true })
+  confirmation: string;
+}
 
 @ApiExtraModels(CreateUtilisateurAPI, UtilisateurAPI)
 @Controller()
@@ -91,7 +101,7 @@ export class UtilisateurController extends GenericControler {
       "Infromation de profile d'un utilisateur d'id donné (nom, prenom, code postal, ...)",
   })
   @UseGuards(AuthGuard)
-  async getUtilisateurProfileById(
+  async getUtilisateurProfile(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<UtilisateurProfileAPI> {
@@ -104,6 +114,51 @@ export class UtilisateurController extends GenericControler {
       throw new NotFoundException(`Pas d'utilisateur d'id ${utilisateurId}`);
     }
     return UtilisateurProfileAPI.mapToAPI(utilisateur);
+  }
+
+  @ApiOkResponse({ type: LogementAPI })
+  @Get('utilisateurs/:utilisateurId/logement')
+  @ApiOperation({
+    summary:
+      "Infromation de logement d'un utilisateur d'id donné (code postal, supericie, etc)",
+  })
+  @UseGuards(AuthGuard)
+  async getUtilisateurLogement(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<LogementAPI> {
+    this.checkCallerId(req, utilisateurId);
+
+    let utilisateur = await this.utilisateurUsecase.findUtilisateurById(
+      utilisateurId,
+    );
+    if (utilisateur == null) {
+      throw new NotFoundException(`Pas d'utilisateur d'id ${utilisateurId}`);
+    }
+    return LogementAPI.mapToAPI(utilisateur.logement);
+  }
+
+  @ApiOkResponse({ type: TransportAPI })
+  @Get('utilisateurs/:utilisateurId/transport')
+  @ApiOperation({
+    summary:
+      "Information de transport d'un utilisateur d'id donné (frequence avions, transports du quotidien)",
+  })
+  @UseGuards(AuthGuard)
+  async getUtilisateurTransport(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<TransportAPI> {
+    this.checkCallerId(req, utilisateurId);
+
+    let utilisateur = await this.utilisateurUsecase.findUtilisateurById(
+      utilisateurId,
+    );
+    if (utilisateur == null) {
+      throw new NotFoundException(`Pas d'utilisateur d'id ${utilisateurId}`);
+    }
+
+    return TransportAPI.mapToAPI(utilisateur.transport);
   }
 
   @Post('utilisateurs/login')
@@ -132,6 +187,9 @@ export class UtilisateurController extends GenericControler {
   }
 
   @Patch('utilisateurs/:utilisateurId/profile')
+  @ApiBody({
+    type: UtilisateurProfileAPI,
+  })
   @ApiOperation({
     summary:
       "Mise à jour des infos de profile (nom, prenom, code postal, ...) d'un utilisateur d'id donné",
@@ -144,6 +202,99 @@ export class UtilisateurController extends GenericControler {
   ) {
     this.checkCallerId(req, utilisateurId);
     await this.utilisateurUsecase.updateUtilisateurProfile(utilisateurId, body);
+  }
+
+  @Patch('utilisateurs/:utilisateurId/logement')
+  @ApiBody({
+    type: LogementAPI,
+  })
+  @ApiOperation({
+    summary:
+      "Mise à jour des infos de logement (code postal, superficie, etc) d'un utilisateur d'id donné",
+  })
+  @UseGuards(AuthGuard)
+  async updateLogement(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Body() body: LogementAPI,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    await this.utilisateurUsecase.updateUtilisateurLogement(
+      utilisateurId,
+      body,
+    );
+  }
+
+  @Patch('utilisateurs/:utilisateurId/transport')
+  @ApiBody({
+    type: TransportAPI,
+  })
+  @ApiOperation({
+    summary:
+      'Mise à jour des infos de transport (frequence avion, transports du quotidien, etc)',
+  })
+  @UseGuards(AuthGuard)
+  async updateTransport(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Body() body: TransportAPI,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    await this.utilisateurUsecase.updateUtilisateurTransport(
+      utilisateurId,
+      body,
+    );
+  }
+
+  @Post('utilisateurs/:utilisateurId/reset')
+  @ApiBody({
+    type: ConfirmationAPI,
+  })
+  @ApiOperation({
+    summary: `Reset l'utilisateur donné en argument, tout sauf l'onboarding`,
+  })
+  @UseGuards(AuthGuard)
+  async reset(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Body() body: ConfirmationAPI,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    await this.utilisateurUsecase.reset(body.confirmation, utilisateurId);
+  }
+
+  @Post('utilisateurs/:utilisateurId/logout')
+  @ApiOperation({
+    summary: `déconnecte un utilisateur donné`,
+  })
+  @UseGuards(AuthGuard)
+  async disconnec(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    await this.utilisateurUsecase.disconnectUser(utilisateurId);
+  }
+
+  @Post('utilisateurs/reset')
+  @ApiBody({
+    type: ConfirmationAPI,
+  })
+  @ApiOperation({
+    summary: `Reset TOUS LES UTILISATEURS, tout sauf l'onboarding`,
+  })
+  async resetAll(@Request() req, @Body() body: ConfirmationAPI) {
+    this.checkCronAPIProtectedEndpoint(req);
+    await this.utilisateurUsecase.resetAllUsers(body.confirmation);
+  }
+
+  @Post('utilisateurs/logout')
+  @ApiOperation({
+    summary: `Déconnecte TOUS LES UTILISATEURS`,
+  })
+  async disconnectAll(@Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
+    await this.utilisateurUsecase.disconnectAllUsers();
   }
 
   @Post('utilisateurs/oubli_mot_de_passe')

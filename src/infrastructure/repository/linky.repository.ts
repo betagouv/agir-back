@@ -1,22 +1,47 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { LinkyData } from '../../../src/domain/linky/linkyData';
+import {
+  LinkyData,
+  LinkyDataElement,
+} from '../../../src/domain/linky/linkyData';
 
 @Injectable()
 export class LinkyRepository {
   constructor(private prisma: PrismaService) {}
 
-  async upsertData(linky_data: LinkyData): Promise<void> {
+  async upsertDataForPRM(prm: string, data: LinkyDataElement[]): Promise<void> {
     await this.prisma.linky.upsert({
       where: {
-        prm: linky_data.prm,
+        prm: prm,
       },
       create: {
-        prm: linky_data.prm,
-        data: linky_data.serie as any,
+        prm: prm,
+        data: data as any,
       },
       update: {
-        data: linky_data.serie as any,
+        data: data as any,
+      },
+    });
+  }
+
+  async upsertLinkyEntry(
+    prm: string,
+    winter_pk: string,
+    utilisateurId: string,
+  ): Promise<void> {
+    await this.prisma.linky.upsert({
+      where: {
+        prm: prm,
+      },
+      create: {
+        prm: prm,
+        winter_pk: winter_pk,
+        data: [],
+        utilisateurId: utilisateurId,
+      },
+      update: {
+        winter_pk: winter_pk,
+        utilisateurId: utilisateurId,
       },
     });
   }
@@ -29,7 +54,7 @@ export class LinkyRepository {
     return result.map((entry) => entry['prm']);
   }
 
-  async getLinky(prm: string): Promise<LinkyData> {
+  async getByPRM(prm: string): Promise<LinkyData> {
     const result = await this.prisma.linky.findUnique({
       where: {
         prm: prm,
@@ -41,13 +66,72 @@ export class LinkyRepository {
     return new LinkyData({
       prm: result.prm,
       serie: result.data as any,
+      utilisateurId: result.utilisateurId,
     });
   }
-  async deleteLinky(prm: string): Promise<void> {
-    await this.prisma.linky.delete({
+  async isPRMDataEmptyOrMissing(prm: string): Promise<boolean> {
+    if (!prm) return true;
+
+    const prm_count = await this.prisma.linky.count({
       where: {
         prm: prm,
       },
     });
+    if (prm_count === 1) {
+      const prm_empty = await this.prisma.linky.count({
+        where: {
+          prm: prm,
+          data: {
+            equals: [],
+          },
+        },
+      });
+      return prm_empty === 1;
+    } else {
+      return true;
+    }
+  }
+
+  async delete(prm: string): Promise<void> {
+    await this.prisma.linky.deleteMany({
+      where: {
+        prm: prm,
+      },
+    });
+  }
+  async deleteOfUtilisateur(utilisateurId: string): Promise<void> {
+    await this.prisma.linky.deleteMany({
+      where: {
+        utilisateurId: utilisateurId,
+      },
+    });
+  }
+
+  async findWinterPKsOrphanEntries(): Promise<
+    { utilisateurId: string; winter_pk: string; prm: string }[]
+  > {
+    const query = `
+    SELECT
+      "utilisateurId",
+      "winter_pk",
+      "prm"
+    FROM
+      "Linky" l
+    WHERE NOT EXISTS (
+      SELECT "id"
+      FROM
+        "Utilisateur"
+      WHERE
+        "id" = l."utilisateurId"
+    )
+    AND
+      "utilisateurId" IS NOT NULL
+    AND
+      "winter_pk" IS NOT NULL
+    ;
+    `;
+    const result: { utilisateurId: string; winter_pk: string; prm: string }[] =
+      await this.prisma.$queryRawUnsafe(query);
+    return result;
   }
 }

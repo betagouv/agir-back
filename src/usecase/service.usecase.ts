@@ -12,10 +12,12 @@ import { FruitsEtLegumesServiceManager } from '../infrastructure/service/fruits/
 import { ScheduledServiceManager } from '../../src/infrastructure/service/ScheduledServiceManager';
 import { LiveServiceManager } from '../../src/infrastructure/service/LiveServiceManager';
 import { EventUsecase } from '../../src/usecase/event.usecase';
-import { EventType } from '../../src/domain/utilisateur/utilisateurEvent';
+import { EventType } from '../domain/appEvent';
 import { LinkyServiceManager } from '../../src/infrastructure/service/linky/LinkyServiceManager';
 import { LinkyConfigurationAPI } from '../../src/infrastructure/api/types/service/linkyConfigurationAPI';
 import { AsyncServiceManager } from '../../src/infrastructure/service/AsyncServiceManager';
+import { ApplicationError } from '../../src/infrastructure/applicationError';
+import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 
 const dummy_live_manager = {
   computeLiveDynamicData: async (service: Service) => {
@@ -27,16 +29,16 @@ const dummy_async_manager = {
     return service.serviceId;
   },
   checkConfiguration(conf: Object) {},
-  isActivated(service: Service) {
+  async isActivated(service: Service) {
     return true;
   },
-  isConfigured(service: Service) {
+  async isConfigured(service: Service) {
     return true;
   },
-  isFullyRunning(service: Service) {
+  async isFullyRunning(service: Service) {
     return true;
   },
-  processConfiguration(conf: Object) {},
+  async processAndUpdateConfiguration(service: Service) {},
 };
 const dummy_scheduled_manager = {
   computeScheduledDynamicData: async (serviceDefinition: ServiceDefinition) => {
@@ -54,6 +56,7 @@ export class ServiceUsecase {
   private readonly ASYNC_SERVICES: Record<AsyncService, AsyncServiceManager>;
 
   constructor(
+    private utilisateurRepository: UtilisateurRepository,
     private serviceRepository: ServiceRepository,
     private readonly ecoWattServiceManager: EcoWattServiceManager,
     private readonly fruitsEtLegumesServiceManager: FruitsEtLegumesServiceManager,
@@ -80,17 +83,20 @@ export class ServiceUsecase {
     serviceDefinitionId: string,
     payload: LinkyConfigurationAPI,
   ) {
+    await this.utilisateurRepository.checkState(utilisateurId);
+
+    const service = await this.serviceRepository.getServiceOfUtilisateur(
+      utilisateurId,
+      serviceDefinitionId,
+    );
+
     const manager = this.getAsyncServiceManager(serviceDefinitionId);
 
     manager.checkConfiguration(payload);
 
-    manager.processConfiguration(payload);
+    service.configuration = { ...service.configuration, ...payload };
 
-    await this.serviceRepository.updateServiceConfiguration(
-      utilisateurId,
-      serviceDefinitionId,
-      payload,
-    );
+    await manager.processAndUpdateConfiguration(service);
   }
 
   async refreshScheduledServices(): Promise<string[]> {
@@ -144,6 +150,10 @@ export class ServiceUsecase {
   async listServicesDefinitions(
     utilisateurId: string,
   ): Promise<ServiceDefinition[]> {
+    if (utilisateurId) {
+      await this.utilisateurRepository.checkState(utilisateurId);
+    }
+
     return this.serviceRepository.listeServiceDefinitionsAndUserRelatedServices(
       utilisateurId,
     );
@@ -153,6 +163,8 @@ export class ServiceUsecase {
     utilisateurId: string,
     serviceDefinitionId: string,
   ) {
+    await this.utilisateurRepository.checkState(utilisateurId);
+
     const existing_service =
       await this.serviceRepository.getServiceOfUtilisateur(
         utilisateurId,
@@ -182,11 +194,16 @@ export class ServiceUsecase {
     utilisateurId: string,
     serviceDefinitionId: string,
   ) {
+    await this.utilisateurRepository.checkState(utilisateurId);
+
     const existing_service =
       await this.serviceRepository.getServiceOfUtilisateur(
         utilisateurId,
         serviceDefinitionId,
       );
+    if (existing_service === null) {
+      ApplicationError.throwServiceNotFound(serviceDefinitionId, utilisateurId);
+    }
 
     if (
       existing_service.isAsyncServiceType() &&
@@ -206,6 +223,8 @@ export class ServiceUsecase {
     }
   }
   async listeServicesOfUtilisateur(utilisateurId: string): Promise<Service[]> {
+    await this.utilisateurRepository.checkState(utilisateurId);
+
     const userServiceList =
       await this.serviceRepository.listeServicesOfUtilisateur(utilisateurId);
     for (let index = 0; index < userServiceList.length; index++) {
@@ -213,7 +232,7 @@ export class ServiceUsecase {
       if (service.isLiveServiceType()) {
         await this.refreshLiveService(service);
       }
-      this.setAsyncServiceStateIfNeeded(service);
+      await this.setAsyncServiceStateIfNeeded(service);
     }
     return userServiceList;
   }
@@ -222,14 +241,18 @@ export class ServiceUsecase {
     utilisateurId: string,
     serviceDefinitionId: string,
   ): Promise<Service> {
+    await this.utilisateurRepository.checkState(utilisateurId);
+
     const service = await this.serviceRepository.getServiceOfUtilisateur(
       utilisateurId,
       serviceDefinitionId,
     );
+    if (service === null) return null;
+
     if (service.isLiveServiceType()) {
       await this.refreshLiveService(service);
     }
-    this.setAsyncServiceStateIfNeeded(service);
+    await this.setAsyncServiceStateIfNeeded(service);
 
     return service;
   }
@@ -270,12 +293,12 @@ export class ServiceUsecase {
     return this.ASYNC_SERVICES[serviceDefinitionId];
   }
 
-  private setAsyncServiceStateIfNeeded(service: Service) {
+  private async setAsyncServiceStateIfNeeded(service: Service) {
     if (service.isAsyncServiceType()) {
       const manager = this.getAsyncServiceManager(service.serviceDefinitionId);
-      service.is_configured = manager.isConfigured(service);
-      service.is_activated = manager.isActivated(service);
-      service.is_fully_running = manager.isFullyRunning(service);
+      service.is_configured = await manager.isConfigured(service);
+      service.is_activated = await manager.isActivated(service);
+      service.is_fully_running = await manager.isFullyRunning(service);
     }
   }
 }

@@ -1,4 +1,8 @@
-import { ForbiddenException, UseFilters } from '@nestjs/common';
+import {
+  ForbiddenException,
+  UnauthorizedException,
+  UseFilters,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { ControllerExceptionFilter } from './controllerException.filter';
 
@@ -22,5 +26,15 @@ export class GenericControler {
   }
   isCallerAdmin(req: Request) {
     return process.env.ADMIN_IDS.includes(req['tokenUtilisateurId']);
+  }
+
+  checkCronAPIProtectedEndpoint(request: Request) {
+    const authorization = request.headers['authorization'] as string;
+    if (!authorization) {
+      throw new UnauthorizedException('CRON API KEY manquante');
+    }
+    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
+      throw new ForbiddenException('CRON API KEY incorrecte');
+    }
   }
 }

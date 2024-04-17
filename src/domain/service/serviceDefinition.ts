@@ -1,5 +1,5 @@
 import { Thematique } from '../contenu/thematique';
-import { Environment } from '../environment';
+import { App } from '../app';
 
 export enum ScheduledService {
   ecowatt = 'ecowatt',
@@ -46,29 +46,29 @@ export class ServiceDefinition extends ServiceDefinitionData {
     Object.assign(this, data);
   }
 
-  public isScheduledServiceType(): boolean {
+  public isScheduledServiceType?(): boolean {
     return ScheduledService[this.serviceDefinitionId] != undefined;
   }
-  public isLiveServiceType(): boolean {
+  public isLiveServiceType?(): boolean {
     return LiveService[this.serviceDefinitionId] != undefined;
   }
-  public isAsyncServiceType(): boolean {
+  public isAsyncServiceType?(): boolean {
     return AsyncService[this.serviceDefinitionId] != undefined;
   }
-  public setNextRefreshDate() {
+  public setNextRefreshDate?() {
     if (this.minute_period) {
       this.scheduled_refresh = new Date(
         Date.now() + 1000 * 60 * this.minute_period,
       );
     }
   }
-  public isEnConstruction(): boolean {
-    return !Environment.getServiceActifsStringList().includes(
+  public isEnConstruction?(): boolean {
+    return !App.getServiceActifsStringList().includes(
       this.serviceDefinitionId,
     );
   }
 
-  public isReadyForRefresh(): boolean {
+  public isReadyForRefresh?(): boolean {
     return (
       this.minute_period != null &&
       (this.scheduled_refresh == null ||

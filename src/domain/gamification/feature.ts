@@ -3,4 +3,5 @@ export enum Feature {
   services = 'services',
   recommandations = 'recommandations',
   bibliotheque = 'bibliotheque',
+  defis = 'defis',
 }

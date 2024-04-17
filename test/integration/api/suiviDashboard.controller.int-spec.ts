@@ -1,5 +1,5 @@
 import { SuiviType } from '../../../src/domain/suivi/suiviType';
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
   beforeAll(async () => {
@@ -17,7 +17,7 @@ describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
 
   it('GET /utilisateurs/id/suivi_dashboard - get empty dashboard when nothing in DB', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/suivi_dashboard',
@@ -27,7 +27,7 @@ describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
   });
   it('GET /utilisateurs/id/suivi_dashboard - 403 when other one dashboard', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/123/suivi_dashboard');
     // THEN
@@ -35,22 +35,22 @@ describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
   });
   it('GET /utilisateurs/id/suivi_dashboard - get dashboard with proper last suivi date', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.suivi, {
       id: '1',
       data: {
         total_impact: 10,
       },
       created_at: TestUtil.getDate('2023-01-01'),
     });
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.suivi, {
       id: '2',
       data: {
         total_impact: 20,
       },
       created_at: TestUtil.getDate('2023-01-01'),
     });
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.suivi, {
       id: '3',
       created_at: TestUtil.getDate('2023-01-15'),
       data: {
@@ -70,8 +70,8 @@ describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
   });
   it('GET /utilisateurs/id/suivi_dashboard - get dashboard with proper merged last suivi date', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.suivi, {
       id: '1',
       created_at: TestUtil.getDate('2023-01-15'),
       type: SuiviType.alimentation,
@@ -80,7 +80,7 @@ describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
         viande_rouge: 12,
       },
     });
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.suivi, {
       id: '2',
       created_at: TestUtil.getDate('2023-01-30'),
       type: SuiviType.transport,
@@ -89,7 +89,7 @@ describe('/utilisateurs/id/suivi_dashboard (API test)', () => {
         km_voiture: 10,
       },
     });
-    await TestUtil.create('suivi', {
+    await TestUtil.create(DB.suivi, {
       id: '3',
       created_at: TestUtil.getDate('2023-01-30'),
       type: SuiviType.alimentation,

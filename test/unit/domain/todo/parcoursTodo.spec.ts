@@ -17,7 +17,7 @@ describe('ParcoursTodo', () => {
 
     // THEN
     expect(result.todo_active).toEqual(0);
-    expect(result.liste_todo).toHaveLength(5);
+    expect(result.liste_todo).toHaveLength(TodoCatalogue.getNombreTodo());
   });
   it('getActiveTodo : renvoie la bonne todo', () => {
     // GIVEN
@@ -29,17 +29,39 @@ describe('ParcoursTodo', () => {
   });
   it('findTodoElementByTypeAndThematique : le bon element et la bonne todo', () => {
     // GIVEN
-    const parcours = new ParcoursTodo();
+    const parcours = new ParcoursTodo({
+      version: 2,
+      todo_active: 0,
+      liste_todo: [
+        {
+          done: [],
+          numero_todo: 1,
+          points_todo: 20,
+          done_at: null,
+          titre: 'titre',
+          todo: [
+            {
+              id: '1',
+              points: 10,
+              progression: { current: 0, target: 1 },
+              level: DifficultyLevel.L1,
+              titre: 'titre',
+              type: ContentType.article,
+              thematiques: [Thematique.transport],
+              sont_points_en_poche: false,
+            },
+          ],
+        },
+      ],
+    });
     // WHEN
     const found = parcours.findTodoElementByTypeAndThematique(
       ContentType.article,
       [Thematique.transport],
     );
     // THEN
-    expect(found.element.titre).toEqual(
-      `Lire un article Transports - très facile`,
-    );
-    expect(found.todo.numero_todo).toEqual(2);
+    expect(found.element.titre).toEqual(`titre`);
+    expect(found.todo.numero_todo).toEqual(1);
   });
   it('findTodoElementByTypeAndThematique : pas trouvé renvoi undefined', () => {
     // GIVEN
@@ -54,14 +76,37 @@ describe('ParcoursTodo', () => {
   });
   it('findTodoElementByServiceId : le bon element et la bonne todo', () => {
     // GIVEN
-    const parcours = new ParcoursTodo();
+    const parcours = new ParcoursTodo({
+      version: 2,
+      todo_active: 0,
+      liste_todo: [
+        {
+          done: [],
+          numero_todo: 1,
+          points_todo: 20,
+          done_at: null,
+          titre: 'titre',
+          todo: [
+            {
+              id: '1',
+              points: 10,
+              progression: { current: 0, target: 1 },
+              level: DifficultyLevel.L1,
+              titre: 'titre',
+              type: ContentType.service,
+              service_id: LiveService.fruits,
+              thematiques: [Thematique.transport],
+              sont_points_en_poche: false,
+            },
+          ],
+        },
+      ],
+    });
     // WHEN
     const found = parcours.findTodoElementByServiceId(LiveService.fruits);
     // THEN
-    expect(found.element.titre).toEqual(
-      `Installer "Fruits et légumes de saison"`,
-    );
-    expect(found.todo.numero_todo).toEqual(4);
+    expect(found.element.titre).toEqual(`titre`);
+    expect(found.todo.numero_todo).toEqual(1);
   });
   it('findTodoElementByServiceId : pas trouvé renvoi undefined', () => {
     // GIVEN
@@ -76,32 +121,21 @@ describe('ParcoursTodo', () => {
   it('avanceDansParcours : avance, puis se bloque à la dernière', () => {
     // GIVEN
     const parcours = new ParcoursTodo();
+
     // THEN
-    expect(parcours.getCurrentTodoNumero()).toEqual(1);
-    // WHEN
+    let index = 1;
+    while (index <= TodoCatalogue.getNombreTodo()) {
+      expect(parcours.getCurrentTodoNumero()).toEqual(index);
+      parcours.avanceDansParcours();
+      index++;
+    }
+    expect(parcours.getCurrentTodoNumero()).toEqual(
+      TodoCatalogue.getNombreTodo() + 1,
+    );
     parcours.avanceDansParcours();
-    // THEN
-    expect(parcours.getCurrentTodoNumero()).toEqual(2);
-    // WHEN
-    parcours.avanceDansParcours();
-    // THEN
-    expect(parcours.getCurrentTodoNumero()).toEqual(3);
-    // WHEN
-    parcours.avanceDansParcours();
-    // THEN
-    expect(parcours.getCurrentTodoNumero()).toEqual(4);
-    // WHEN
-    parcours.avanceDansParcours();
-    // THEN
-    expect(parcours.getCurrentTodoNumero()).toEqual(5);
-    // WHEN
-    parcours.avanceDansParcours();
-    // THEN
-    expect(parcours.getCurrentTodoNumero()).toEqual(6);
-    // WHEN
-    parcours.avanceDansParcours();
-    // THEN
-    expect(parcours.getCurrentTodoNumero()).toEqual(6);
+    expect(parcours.getCurrentTodoNumero()).toEqual(
+      TodoCatalogue.getNombreTodo() + 1,
+    );
   });
   it('appendNewFromCatalogue : ajoute une todo depuis le catalogue', () => {
     // GIVEN
@@ -169,75 +203,5 @@ describe('ParcoursTodo', () => {
     parcours.avanceDansParcours();
     expect(parcours.isLastTodo()).toEqual(true);
     expect(parcours.getCurrentTodoNumero()).toEqual(2);
-  });
-  it('upgradeParcoursIfNeeded : supprime elment end et fusionne', () => {
-    // GIVEN
-    const parcours = new ParcoursTodo({
-      version: 2,
-      todo_active: 0,
-      liste_todo: [
-        {
-          done: [],
-          numero_todo: 1,
-          points_todo: 20,
-          done_at: null,
-          titre: 'titre',
-          todo: [
-            {
-              id: '1',
-              points: 10,
-              progression: { current: 0, target: 1 },
-              level: DifficultyLevel.L1,
-              titre: 'titre',
-              type: ContentType.aides,
-              sont_points_en_poche: false,
-            },
-          ],
-        },
-        {
-          numero_todo: null,
-          points_todo: 0,
-          titre: 'Plus de mission, pour le moment...',
-          done_at: null,
-          done: [],
-          todo: [],
-        },
-      ],
-    });
-    // WHEN
-    parcours.upgradeParcoursIfNeeded();
-    // THEN
-    expect(parcours.liste_todo).toHaveLength(1);
-  });
-  it('upgradeParcoursIfNeeded : supprime rien si pas d element final', () => {
-    // GIVEN
-    const parcours = new ParcoursTodo({
-      version: 2,
-      todo_active: 0,
-      liste_todo: [
-        {
-          done: [],
-          numero_todo: 1,
-          points_todo: 20,
-          done_at: null,
-          titre: 'titre',
-          todo: [
-            {
-              id: '1',
-              points: 10,
-              progression: { current: 0, target: 1 },
-              level: DifficultyLevel.L1,
-              titre: 'titre',
-              type: ContentType.aides,
-              sont_points_en_poche: false,
-            },
-          ],
-        },
-      ],
-    });
-    // WHEN
-    parcours.upgradeParcoursIfNeeded();
-    // THEN
-    expect(parcours.liste_todo).toHaveLength(1);
   });
 });

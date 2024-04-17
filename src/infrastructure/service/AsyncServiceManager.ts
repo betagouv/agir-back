@@ -3,9 +3,9 @@ import { Service } from '../../../src/domain/service/service';
 export interface AsyncServiceManager {
   runAsyncProcessing(service: Service): Promise<string>;
 
-  isActivated(service: Service);
-  isConfigured(service: Service);
-  isFullyRunning(service: Service);
+  isActivated(service: Service): Promise<boolean>;
+  isConfigured(service: Service): Promise<boolean>;
+  isFullyRunning(service: Service): Promise<boolean>;
   checkConfiguration(configuration: Object);
-  processConfiguration(configuration: Object);
+  processAndUpdateConfiguration(service: Service): Promise<void>;
 }

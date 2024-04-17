@@ -5,10 +5,10 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
+  Request,
   Post,
   Query,
   Res,
-  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import { AidesUsecase } from '../../usecase/aides.usecase';
@@ -16,21 +16,15 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiOkResponse,
-  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import {
-  AideAPI,
-  nbPartsDTO,
-  prixVeloDTO,
-  revenuFiscalDeReferenceDTO,
-} from './types/aide/AideAPI';
+import { AideVeloAPI as AideVeloAPI } from './types/aide/AideVeloAPI';
 import { AidesVeloParTypeAPI } from './types/aide/AidesVeloParTypeAPI';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
 import { InputAideVeloAPI } from './types/aide/inputAideVeloAPI';
 import { Response } from 'express';
-import { ControllerExceptionFilter } from './controllerException.filter';
+import { AideAPI } from './types/aide/AideAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -40,13 +34,13 @@ export class AidesController extends GenericControler {
     super();
   }
 
-  @ApiOkResponse({ type: AideAPI })
+  @ApiOkResponse({ type: AideVeloAPI })
   @Get('aides/retrofit')
   @UseGuards(AuthGuard)
   async getRetrofit(
     @Query('codePostal') codePostal: string,
     @Query('revenuFiscalDeReference') revenuFiscalDeReference: string,
-  ): Promise<AideAPI[]> {
+  ): Promise<AideVeloAPI[]> {
     const aides = await this.aidesUsecase.getRetrofit(
       codePostal,
       revenuFiscalDeReference,
@@ -56,6 +50,18 @@ export class AidesController extends GenericControler {
       throw new NotFoundException(`Pas d'aides pour le retrofit`);
     }
     return aides;
+  }
+
+  @ApiOkResponse({ type: [AideAPI] })
+  @Get('utilisateurs/:utilisateurId/aides')
+  @UseGuards(AuthGuard)
+  async getCatalogueAides(
+    @Param('utilisateurId') utilisateurId: string,
+    @Request() req,
+  ): Promise<AideAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const aides = await this.aidesUsecase.getCatalogueAides(utilisateurId);
+    return aides.map((elem) => AideAPI.mapToAPI(elem));
   }
 
   @ApiOkResponse({ type: AidesVeloParTypeAPI })

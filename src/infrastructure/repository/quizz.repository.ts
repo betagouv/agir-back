@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Quizz } from '../../../src/domain/quizz/quizz';
+import { Quizz, QuizzData } from '../../domain/contenu/quizz';
 import { Quizz as QuizzDB } from '@prisma/client';
 import { DifficultyLevel } from '../../domain/contenu/difficultyLevel';
 import { Thematique } from '../../domain/contenu/thematique';
-import { ContentRecommandation } from '../../domain/contenu/contentRecommandation';
+import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 
 export type QuizzFilter = {
   maxNumber?: number;
@@ -19,16 +19,19 @@ export type QuizzFilter = {
 export class QuizzRepository {
   constructor(private prisma: PrismaService) {}
 
-  async upsert(quizz: Quizz): Promise<void> {
+  async upsert(quizz: QuizzData): Promise<void> {
+    const quizz_to_save = { ...quizz };
+    delete quizz_to_save.score;
+    delete quizz_to_save.tags_rubriques;
     await this.prisma.quizz.upsert({
       where: { content_id: quizz.content_id },
       create: {
-        ...quizz,
+        ...quizz_to_save,
         created_at: undefined,
         updated_at: undefined,
       },
       update: {
-        ...quizz,
+        ...quizz_to_save,
         updated_at: undefined,
       },
     });
@@ -91,44 +94,9 @@ export class QuizzRepository {
     return result.map((elem) => this.buildQuizzFromDB(elem));
   }
 
-  public async getQuizzRecommandations(
-    version: number,
-  ): Promise<ContentRecommandation> {
-    const result = new ContentRecommandation();
-    const query = `
-    SELECT
-      coalesce(SUM(CAST(poids_rubrique->rubrique_quizz as INTEGER)),0) as score, content_id, difficulty
-    FROM
-      (
-        SELECT
-          "Ponderation".rubriques AS poids_rubrique,
-          unnest("Quizz".rubrique_ids) as rubrique_quizz,
-          "Quizz".content_id as content_id,
-          "Quizz".difficulty as difficulty
-        FROM
-          "Ponderation",
-          "Quizz"
-        WHERE
-          "Ponderation".version = ${version}
-      ) as SUBQUERY
-    GROUP BY
-      content_id, difficulty
-    ORDER BY
-      difficulty ASC,
-      score DESC
-    ;
-    `;
-    const recos: { score: BigInt; content_id: string }[] =
-      await this.prisma.$queryRawUnsafe(query);
-    recos.forEach((element) => {
-      result.append(Number(element.score), element.content_id);
-    });
-    return result;
-  }
-
   private buildQuizzFromDB(quizzDB: QuizzDB): Quizz {
     if (quizzDB === null) return null;
-    return {
+    return new Quizz({
       content_id: quizzDB.content_id,
       titre: quizzDB.titre,
       soustitre: quizzDB.soustitre,
@@ -144,6 +112,9 @@ export class QuizzRepository {
       points: quizzDB.points,
       thematique_principale: Thematique[quizzDB.thematique_principale],
       thematiques: quizzDB.thematiques.map((th) => Thematique[th]),
-    };
+      tags_utilisateur: quizzDB.tags_utilisateur.map((t) => TagUtilisateur[t]),
+      tags_rubriques: [],
+      score: 0,
+    });
   }
 }

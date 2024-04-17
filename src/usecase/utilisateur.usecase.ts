@@ -1,6 +1,10 @@
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { UtilisateurProfileAPI } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
+import {
+  LogementAPI,
+  TransportAPI,
+  UtilisateurProfileAPI,
+} from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
 import { SuiviRepository } from '../infrastructure/repository/suivi.repository';
 import { BilanRepository } from '../infrastructure/repository/bilan.repository';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
@@ -11,12 +15,10 @@ import { ApplicationError } from '../infrastructure/applicationError';
 import { EmailSender } from '../infrastructure/email/emailSender';
 import { CodeManager } from '../../src/domain/utilisateur/manager/codeManager';
 import { SecurityEmailManager } from '../../src/domain/utilisateur/manager/securityEmailManager';
-import { PasswordAwareUtilisateur } from '../../src/domain/utilisateur/manager/passwordAwareUtilisateur';
-import { Profile } from '../../src/domain/utilisateur/profile';
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
 import { GroupeRepository } from '../../src/infrastructure/repository/groupe.repository';
-import { QuestionKYCRepository } from '../../src/infrastructure/repository/questionKYC.repository';
 import { ContactUsecase } from './contact.usecase';
+import { KYCID } from '../../src/domain/kyc/questionQYC';
 
 export type Phrase = {
   phrase: string;
@@ -31,7 +33,6 @@ export class UtilisateurUsecase {
     private serviceRepository: ServiceRepository,
     private suiviRepository: SuiviRepository,
     private bilanRepository: BilanRepository,
-    private questionKYCRepository: QuestionKYCRepository,
     private oIDCStateRepository: OIDCStateRepository,
     private oidcService: OidcService,
     private emailSender: EmailSender,
@@ -41,13 +42,50 @@ export class UtilisateurUsecase {
     private contactUsecase: ContactUsecase,
   ) {}
 
+  async computeAllUsersRecoTags() {
+    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
+    for (let index = 0; index < userIdList.length; index++) {
+      const user_id = userIdList[index];
+      const utilisateur = await this.utilisateurRepository.getById(user_id);
+      utilisateur.recomputeRecoTags();
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    }
+  }
+
+  async reset(confirmation: string, utilisateurId: string) {
+    if (confirmation !== 'CONFIRMATION RESET') {
+      ApplicationError.throwMissingResetConfirmation();
+    }
+    await this.resetUser(utilisateurId);
+  }
+
+  async disconnectUser(utilisateurId: string) {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.force_connexion = true;
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
+  async disconnectAllUsers() {
+    await this.utilisateurRepository.disconnectAll();
+  }
+
+  async resetAllUsers(confirmation: string) {
+    if (confirmation !== 'CONFIRMATION RESET') {
+      ApplicationError.throwMissingResetConfirmation();
+    }
+    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
+    for (let index = 0; index < userIdList.length; index++) {
+      const user_id = userIdList[index];
+
+      await this.resetUser(user_id);
+    }
+  }
+
   async loginUtilisateur(
     email: string,
     password: string,
   ): Promise<{ token: string; utilisateur: Utilisateur }> {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurByEmail(
-      email,
-    );
+    const utilisateur = await this.utilisateurRepository.findByEmail(email);
     if (!utilisateur) {
       ApplicationError.throwBadPasswordOrEmailError();
     }
@@ -71,51 +109,61 @@ export class UtilisateurUsecase {
   }
 
   async findUtilisateurByEmail(email: string): Promise<Utilisateur> {
-    return this.utilisateurRepository.findUtilisateurByEmail(email);
+    return this.utilisateurRepository.findByEmail(email);
   }
 
   async updateUtilisateurProfile(
     utilisateurId: string,
     profile: UtilisateurProfileAPI,
   ) {
-    const profileToUpdate = {} as Profile;
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     if (profile.mot_de_passe) {
       PasswordManager.checkPasswordFormat(profile.mot_de_passe);
-
-      // FIXME : code à refacto, pas beau + check non existance utilisateur
-      const fakeUser: PasswordAwareUtilisateur = {
-        id: null,
-        passwordHash: '',
-        passwordSalt: '',
-        failed_login_count: 0,
-        prevent_login_before: new Date(),
-      };
-      // FIXME : temporaire, faudra suivre un flow avec un code par email
-      PasswordManager.setUserPassword(fakeUser, profile.mot_de_passe);
-      profileToUpdate.passwordHash = fakeUser.passwordHash;
-      profileToUpdate.passwordSalt = fakeUser.passwordSalt;
+      PasswordManager.setUserPassword(utilisateur, profile.mot_de_passe);
     }
-    // FIXME : c'est tout moche là dessous
-    profileToUpdate.code_postal = profile.code_postal;
-    profileToUpdate.commune = profile.commune;
-    profileToUpdate.revenu_fiscal = profile.revenu_fiscal;
-    profileToUpdate.parts = profile.nombre_de_parts_fiscales;
-    profileToUpdate.abonnement_ter_loire = profile.abonnement_ter_loire;
-    profileToUpdate.email = profile.email;
-    profileToUpdate.nom = profile.nom;
-    profileToUpdate.prenom = profile.prenom;
 
-    return this.utilisateurRepository.updateProfile(
-      utilisateurId,
-      profileToUpdate,
-    );
+    utilisateur.revenu_fiscal = profile.revenu_fiscal;
+    utilisateur.parts = profile.nombre_de_parts_fiscales;
+    utilisateur.abonnement_ter_loire = profile.abonnement_ter_loire;
+    utilisateur.email = profile.email;
+    utilisateur.nom = profile.nom;
+    utilisateur.prenom = profile.prenom;
+
+    return this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
+  async updateUtilisateurTransport(utilisateurId: string, input: TransportAPI) {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
+    utilisateur.transport.patch(input);
+
+    utilisateur.recomputeRecoTags();
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
+  async updateUtilisateurLogement(utilisateurId: string, input: LogementAPI) {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
+    utilisateur.logement.patch(input);
+
+    if (input.plus_de_15_ans !== undefined && input.plus_de_15_ans !== null) {
+      utilisateur.kyc_history.updateQuestion(KYCID.KYC006, [
+        input.plus_de_15_ans ? 'plus_15' : 'moins_15',
+      ]);
+    }
+
+    utilisateur.recomputeRecoTags();
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   async oubli_mot_de_passe(email: string) {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurByEmail(
-      email,
-    );
+    const utilisateur = await this.utilisateurRepository.findByEmail(email);
 
     if (!utilisateur) return; // pas d'erreur, silence ^^
 
@@ -138,14 +186,22 @@ export class UtilisateurUsecase {
     );
   }
 
+  private async resetUser(utilisateurId: string) {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+
+    utilisateur.resetAllHistory();
+
+    await this.serviceRepository.deleteAllUserServices(utilisateurId);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
   async modifier_mot_de_passe(
     email: string,
     code: string,
     mot_de_passe: string,
   ) {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurByEmail(
-      email,
-    );
+    const utilisateur = await this.utilisateurRepository.findByEmail(email);
 
     if (!utilisateur) {
       ApplicationError.throwBadCodeOrEmailError();
@@ -163,10 +219,7 @@ export class UtilisateurUsecase {
       await _this.passwordManager.initLoginState(utilisateur);
 
       utilisateur.setPassword(mot_de_passe);
-      await _this.utilisateurRepository.updateProfile(utilisateur.id, {
-        passwordSalt: utilisateur.passwordSalt,
-        passwordHash: utilisateur.passwordHash,
-      });
+      await _this.utilisateurRepository.updateUtilisateur(utilisateur);
       return;
     };
 
@@ -178,20 +231,26 @@ export class UtilisateurUsecase {
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
-    return this.utilisateurRepository.findUtilisateurById(id);
+    const utilisateur = await this.utilisateurRepository.getById(id);
+    if (utilisateur) utilisateur.checkState();
+
+    return utilisateur;
   }
 
   async deleteUtilisateur(utilisateurId: string) {
     await this.suiviRepository.delete(utilisateurId);
-    await this.questionKYCRepository.delete(utilisateurId);
     await this.bilanRepository.delete(utilisateurId);
     await this.oIDCStateRepository.delete(utilisateurId);
-    await this.bilanRepository.delete(utilisateurId);
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
     await this.groupeRepository.delete(utilisateurId);
     await this.utilisateurRepository.delete(utilisateurId);
     // TODO : gérer le cas d'erreur de la suppression du contact, sinon risque d'orphelins ?
     await this.contactUsecase.delete(utilisateurId);
+  }
+
+  private AorB?<T>(a: T, b: T): T {
+    if (a === undefined) return b;
+    return a;
   }
 
   private async sendMotDePasseCode(utilisateur: Utilisateur) {

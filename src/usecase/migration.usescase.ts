@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
-import { UtilisateurBehavior } from '../../src/domain/utilisateur/utilisateurBehavior';
+import { App } from '../domain/app';
+import { Feature } from '../../src/domain/gamification/feature';
 
 export type UserMigrationReport = {
   user_id: string;
@@ -20,15 +21,13 @@ export class MigrationUsecase {
   }
 
   async migrateUsers(): Promise<UserMigrationReport[]> {
-    const version_target = UtilisateurBehavior.systemVersion();
+    const version_target = App.currentUserSystemVersion();
     const result = [];
     const userIdList = await this.utilisateurRepository.listUtilisateurIds();
     for (let index = 0; index < userIdList.length; index++) {
       const user_id = userIdList[index];
       const log = { user_id: user_id, migrations: [] };
-      const utilisateur = await this.utilisateurRepository.findUtilisateurById(
-        user_id,
-      );
+      const utilisateur = await this.utilisateurRepository.getById(user_id);
       for (
         let current_version = utilisateur.version + 1;
         current_version <= version_target;
@@ -80,20 +79,53 @@ export class MigrationUsecase {
     utilisateur: Utilisateur,
     _this: MigrationUsecase,
   ): Promise<{ ok: boolean; info: string }> {
-    return { ok: true, info: 'Migration obsolete' };
+    return { ok: true, info: 'Migration already done' };
   }
   private async migrate_3(
     utilisateur: Utilisateur,
   ): Promise<{ ok: boolean; info: string }> {
-    utilisateur.parcours_todo.upgradeParcoursIfNeeded();
-    return { ok: true, info: `migrated todo for ${utilisateur.id}` };
+    return { ok: true, info: 'Migration already done' };
   }
   private async migrate_4(
     utilisateur: Utilisateur,
   ): Promise<{ ok: boolean; info: string }> {
-    return { ok: false, info: 'to implement' };
+    const plus_600 = utilisateur.gamification.points > 600;
+    if (plus_600) {
+      utilisateur.unlocked_features.add(Feature.bibliotheque);
+    }
+    return {
+      ok: true,
+      info: `revealed bilbio for user ${utilisateur.id} of ${utilisateur.gamification.points} points : ${plus_600}`,
+    };
   }
   private async migrate_5(
+    utilisateur: Utilisateur,
+  ): Promise<{ ok: boolean; info: string }> {
+    utilisateur.logement.chauffage = utilisateur.onboardingData.chauffage;
+    utilisateur.logement.code_postal = utilisateur.onboardingData.code_postal;
+    utilisateur.logement.commune = utilisateur.onboardingData.commune;
+    utilisateur.logement.nombre_adultes = utilisateur.onboardingData.adultes;
+    utilisateur.logement.nombre_enfants = utilisateur.onboardingData.enfants;
+    utilisateur.logement.proprietaire = utilisateur.onboardingData.proprietaire;
+    utilisateur.logement.superficie = utilisateur.onboardingData.superficie;
+    utilisateur.logement.type = utilisateur.onboardingData.residence;
+    return {
+      ok: true,
+      info: `migrated logement data`,
+    };
+  }
+  private async migrate_6(
+    utilisateur: Utilisateur,
+  ): Promise<{ ok: boolean; info: string }> {
+    utilisateur.transport.avions_par_an = utilisateur.onboardingData.avion;
+    utilisateur.transport.transports_quotidiens =
+      utilisateur.onboardingData.transports;
+    return {
+      ok: true,
+      info: `migrated transport data`,
+    };
+  }
+  private async migrate_7(
     utilisateur: Utilisateur,
   ): Promise<{ ok: boolean; info: string }> {
     return { ok: false, info: 'to implement' };

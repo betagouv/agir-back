@@ -60,7 +60,6 @@ import { LinkyServiceManager } from './infrastructure/service/linky/LinkyService
 import { LinkyRepository } from './infrastructure/repository/linky.repository';
 import { AdminController } from './infrastructure/api/admin.controller';
 import { QuestionsKYCController } from './infrastructure/api/questionKYC.controller';
-import { QuestionKYCRepository } from './infrastructure/repository/questionKYC.repository';
 import { QuestionKYCUsecase } from './usecase/questionKYC.usecase';
 import { ArticleRepository } from './infrastructure/repository/article.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
@@ -70,11 +69,21 @@ import { RecommandationsController } from './infrastructure/api/recommandations.
 import { RecommandationUsecase } from './usecase/recommandation.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
 import { ReferentielUsecase } from './usecase/referentiel/referentiel.usecase';
-import { PonderationRepository } from './infrastructure/repository/ponderation.repository';
 import { DepartementRepository } from './infrastructure/repository/departement/departement.repository';
-import { Environment } from './domain/environment';
+import { App } from './domain/app';
 import { BibliothequeController } from './infrastructure/api/bibliotheque.controller';
 import { BibliothequeUsecase } from './usecase/bibliotheque.usecase';
+import { LinkyAPIConnector } from './infrastructure/service/linky/LinkyAPIConnector';
+import { LinkyEmailer } from './infrastructure/service/linky/LinkyEmailer';
+import { EquipementUsecase } from './usecase/equipements.usecase';
+import { EquipementsController } from './infrastructure/api/equipements.controller';
+import { InscriptionUsecase } from './usecase/inscription.usecase';
+import { InscriptionController } from './infrastructure/api/inscription.controller';
+import { AideRepository } from './infrastructure/repository/aide.repository';
+import { DefisController } from './infrastructure/api/defis.controller';
+import { DefisUsecase } from './usecase/defis.usecase';
+import { DefiRepository } from './infrastructure/repository/defi.repository';
+import { LinkyConsentRepository } from './infrastructure/repository/linkyConsent.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -101,8 +110,11 @@ function getControllers(): any[] {
     QuestionsKYCController,
     RecommandationsController,
     BibliothequeController,
+    EquipementsController,
+    InscriptionController,
+    DefisController,
   );
-  if (!Environment.isProd()) {
+  if (!App.isProd()) {
     controllers.push(TestDataController);
     controllers.push(AuthController);
   }
@@ -155,7 +167,6 @@ function getControllers(): any[] {
     LinkyUsecase,
     LinkyServiceManager,
     LinkyRepository,
-    QuestionKYCRepository,
     QuestionKYCUsecase,
     ArticleRepository,
     QuizzRepository,
@@ -164,9 +175,16 @@ function getControllers(): any[] {
     ContactSynchro,
     MigrationUsecase,
     ReferentielUsecase,
-    PonderationRepository,
     DepartementRepository,
     BibliothequeUsecase,
+    LinkyAPIConnector,
+    LinkyEmailer,
+    EquipementUsecase,
+    InscriptionUsecase,
+    AideRepository,
+    DefiRepository,
+    DefisUsecase,
+    LinkyConsentRepository,
   ],
 })
 export class AppModule {}

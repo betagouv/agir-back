@@ -8,19 +8,19 @@ import { Suivi } from '../../../src/domain/suivi/suivi';
 import { SuiviTransport } from '../../../src/domain/suivi/suiviTransport';
 import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
-import { OnboardingUsecase } from '../../../src/usecase/onboarding.usecase';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
-const _services = require('../../../test_data/_services');
+const service_catalogue = require('../../../src/usecase/referentiel/service_catalogue');
 const _linky_data = require('../../../test_data/PRM_thermo_sensible');
 const suivis_alimentation = require('../../../test_data/evenements/suivis_alimentation');
 const suivis_transport = require('../../../test_data/evenements/suivis_transport');
 const empreintes_utilisateur = require('../../../test_data/evenements/bilans');
-import axios from 'axios';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
-import { CMSThematiqueAPI } from './types/cms/CMSThematiqueAPI';
 import { LinkyRepository } from '../repository/linky.repository';
-import { LinkyData } from '../../../src/domain/linky/linkyData';
 import { ServiceStatus } from '../../../src/domain/service/service';
+import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
+import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
+import { Transport } from '../../../src/domain/transport/transport';
+import { Logement } from '../../../src/domain/logement/logement';
 
 export enum TheBoolean {
   true = 'true',
@@ -37,6 +37,8 @@ export class TestDataController {
     private prisma: PrismaService,
     private suiviRepository: SuiviRepository,
     private linkyRepository: LinkyRepository,
+    private migrationUsecase: MigrationUsecase,
+    private utilisateurRepository: UtilisateurRepository,
   ) {}
 
   @Get('testdata/:id')
@@ -70,46 +72,11 @@ export class TestDataController {
     return utilisateurs_content[utilisateurId];
   }
 
-  private async callCMSForType(
-    type: string,
-  ): Promise<{ id: string; difficulty: number; thematiques: string[] }[]> {
-    let response = null;
-    const URL = process.env.CMS_URL.concat(
-      '/',
-      type,
-      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques',
-    );
-    console.log(URL);
-    try {
-      response = await axios.get(URL, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.CMS_API_KEY}`,
-        },
-      });
-    } catch (error) {
-      if (error.response.status != 401) {
-        console.log(error.message);
-      }
-      throw new Error(error.response.status);
-    }
-    console.log(response.data.data[0]);
-    return response.data.data.map((element) => {
-      return {
-        id: element.id.toString(),
-        difficulty: element.attributes.difficulty,
-        thematiques: CMSThematiqueAPI.getThematiqueList(
-          element.attributes.thematiques.data,
-        ),
-      };
-    });
-  }
-
   async upsertServicesDefinitions() {
-    const keyList = Object.keys(_services);
+    const keyList = Object.keys(service_catalogue);
     for (let index = 0; index < keyList.length; index++) {
       const serviceId = keyList[index];
-      const service = _services[serviceId];
+      const service = service_catalogue[serviceId];
       const data = { ...service };
       data.id = serviceId;
       delete data.configuration;
@@ -178,14 +145,14 @@ export class TestDataController {
     if (!services) return;
     for (let index = 0; index < services.length; index++) {
       const serviceId = services[index];
-      if (_services[serviceId]) {
+      if (service_catalogue[serviceId]) {
         let data = {
           id: uuidv4(),
           utilisateurId: utilisateurId,
           serviceDefinitionId: serviceId,
           status: ServiceStatus.LIVE,
-          configuration: _services[serviceId].configuration
-            ? _services[serviceId].configuration
+          configuration: service_catalogue[serviceId].configuration
+            ? service_catalogue[serviceId].configuration
             : {},
         };
         await this.prisma.service.create({
@@ -197,11 +164,12 @@ export class TestDataController {
   async insertLinkyDataForUtilisateur(utilisateurId: string) {
     const linky = utilisateurs_content[utilisateurId].linky;
     if (!linky) return;
-    const linkyData = new LinkyData({
-      prm: linky.prm,
-      serie: _linky_data,
-    });
-    this.linkyRepository.upsertData(linkyData);
+    await this.linkyRepository.upsertLinkyEntry(
+      linky.prm,
+      '12345',
+      utilisateurId,
+    );
+    await this.linkyRepository.upsertDataForPRM(linky.prm, _linky_data);
   }
 
   async deleteUtilisateur(utilisateurId: string) {
@@ -216,11 +184,6 @@ export class TestDataController {
       },
     });
     await this.prisma.empreinte.deleteMany({
-      where: {
-        utilisateurId,
-      },
-    });
-    await this.prisma.questionsKYC.deleteMany({
       where: {
         utilisateurId,
       },
@@ -252,5 +215,19 @@ export class TestDataController {
       update: clonedData,
       create: { ...clonedData, id: utilisateurId },
     });
+
+    await this.migrationUsecase.migrateUsers();
+
+    const utilisatateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+    );
+    utilisatateur.logement = Logement.buildFromOnboarding(
+      utilisatateur.onboardingData,
+    );
+    (utilisatateur.transport = Transport.buildFromOnboarding(
+      utilisatateur.onboardingData,
+    )),
+      utilisatateur.recomputeRecoTags();
+    await this.utilisateurRepository.updateUtilisateur(utilisatateur);
   }
 }

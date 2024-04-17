@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { ContentType } from '../domain/contenu/contentType';
 import { Todo } from '../../src/domain/todo/todo';
-import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
+import {
+  Celebration,
+  CelebrationType,
+} from '../../src/domain/gamification/celebrations/celebration';
 
 @Injectable()
 export class TodoUsecase {
@@ -17,11 +20,8 @@ export class TodoUsecase {
   ) {}
 
   async gagnerPointsFromTodoElement(utilisateurId: string, elementId: string) {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
-      utilisateurId,
-    );
-
-    await this.upgradeTodoIfNeeded(utilisateur); // FIXME : to remove
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     const todo_active = utilisateur.parcours_todo.getActiveTodo();
     const element = todo_active.findDoneElementById(elementId);
@@ -34,17 +34,24 @@ export class TodoUsecase {
   }
 
   async gagnerPointsFromTodo(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
-      utilisateurId,
-    );
-
-    await this.upgradeTodoIfNeeded(utilisateur); // FIXME : to remove
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     const todo_active = utilisateur.parcours_todo.getActiveTodo();
     if (todo_active.isDone()) {
       utilisateur.gamification.ajoutePoints(todo_active.points_todo);
       todo_active.done_at = new Date();
       utilisateur.parcours_todo.avanceDansParcours();
+
+      if (utilisateur.parcours_todo.isLastTodo()) {
+        utilisateur.gamification.celebrations.push(
+          new Celebration({
+            id: undefined,
+            titre: 'Toutes les missions sont terminées !!',
+            type: CelebrationType.fin_mission,
+          }),
+        );
+      }
     } else {
       ApplicationError.throwUnfinishedTodoError();
     }
@@ -52,11 +59,8 @@ export class TodoUsecase {
   }
 
   async getUtilisateurTodo(utilisateurId: string): Promise<Todo> {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
-      utilisateurId,
-    );
-
-    await this.upgradeTodoIfNeeded(utilisateur); // FIXME : to remove
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     const todo = utilisateur.parcours_todo.getActiveTodo();
 
@@ -88,11 +92,13 @@ export class TodoUsecase {
           thematiques: element.thematiques,
           difficulty: element.level,
           exclude_ids: articles_lus,
+          code_postal: utilisateur.logement.code_postal,
         });
         if (articles.length === 0) {
           articles = await this.articleRepository.searchArticles({
             thematiques: element.thematiques,
             difficulty: element.level,
+            code_postal: utilisateur.logement.code_postal,
           });
         }
         if (articles.length > 0) {
@@ -110,9 +116,7 @@ export class TodoUsecase {
     for (let index = 0; index < userIdList.length; index++) {
       const user_id = userIdList[index];
 
-      const utilisateur = await this.utilisateurRepository.findUtilisateurById(
-        user_id,
-      );
+      const utilisateur = await this.utilisateurRepository.getById(user_id);
 
       const evolved = utilisateur.parcours_todo.appendNewFromCatalogue();
 
@@ -121,12 +125,6 @@ export class TodoUsecase {
       await this.utilisateurRepository.updateUtilisateur(utilisateur);
     }
     return log;
-  }
-
-  // FIXME : to remove
-  private async upgradeTodoIfNeeded(utilisateur: Utilisateur) {
-    utilisateur.parcours_todo.upgradeParcoursIfNeeded();
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private randomFromArray(array: any[]): any {

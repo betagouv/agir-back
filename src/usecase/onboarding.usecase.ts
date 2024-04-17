@@ -1,27 +1,20 @@
-import { Utilisateur } from '../domain/utilisateur/utilisateur';
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/onboarding/createUtilisateurAPI';
 import {
   Impact,
   Onboarding,
-  Thematique,
-} from '../domain/utilisateur/onboarding/onboarding';
+  ThematiqueOnboarding,
+} from '../domain/onboarding/onboarding';
 import { OnboardingDataAPI } from '../infrastructure/api/types/utilisateur/onboarding/onboardingDataAPI';
 import { OnboardingDataImpactAPI } from '../infrastructure/api/types/utilisateur/onboarding/onboardingDataImpactAPI';
-import { OnboardingResult } from '../domain/utilisateur/onboarding/onboardingResult';
+import { OnboardingResult } from '../domain/onboarding/onboardingResult';
 import { EmailSender } from '../infrastructure/email/emailSender';
-import { PasswordManager } from '../../src/domain/utilisateur/manager/passwordManager';
 import { CodeManager } from '../../src/domain/utilisateur/manager/codeManager';
 import { OidcService } from '../../src/infrastructure/auth/oidc.service';
 import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
-import { Gamification } from '../domain/gamification/gamification';
-import { ParcoursTodo } from '../../src/domain/todo/parcoursTodo';
-import { UnlockedFeatures } from '../../src/domain/gamification/unlockedFeatures';
-import { History } from '../../src/domain/history/history';
-import { UtilisateurBehavior } from '../../src/domain/utilisateur/utilisateurBehavior';
 import { ContactUsecase } from './contact.usecase';
+import { Utilisateur } from 'src/domain/utilisateur/utilisateur';
 
 export type Phrase = {
   phrase: string;
@@ -43,8 +36,7 @@ export class OnboardingUsecase {
     email: string,
     code: string,
   ): Promise<{ token: string; utilisateur: Utilisateur }> {
-    const utilisateur =
-      await this.utilisateurRespository.findUtilisateurByEmail(email);
+    const utilisateur = await this.utilisateurRespository.findByEmail(email);
     if (!utilisateur) {
       ApplicationError.throwBadCodeOrEmailError();
     }
@@ -73,10 +65,11 @@ export class OnboardingUsecase {
   async evaluateOnboardingData(
     input: OnboardingDataAPI,
   ): Promise<OnboardingDataImpactAPI> {
-    const onboardingData = new Onboarding(input);
-    onboardingData.validateData();
+    const onboarding = new Onboarding(OnboardingDataAPI.convertToDomain(input));
 
-    const onboardingResult = new OnboardingResult(onboardingData);
+    onboarding.validateData();
+
+    const onboardingResult = OnboardingResult.buildFromOnboarding(onboarding);
 
     let final_result: OnboardingDataImpactAPI = {
       ...onboardingResult.ventilation_par_thematiques,
@@ -103,12 +96,12 @@ export class OnboardingUsecase {
     if (final_result.transports >= 3) {
       final_result.phrase_2 = {
         icon: '🚌',
-        phrase: `Regarder les offres de <strong>transports dans la zone de ${onboardingData.commune}</strong> en fonction de vos besoins et usages`,
+        phrase: `Regarder les offres de <strong>transports dans la zone de ${onboarding.commune}</strong> en fonction de vos besoins et usages`,
       };
     } else {
       final_result.phrase_2 = {
         icon: '🛒',
-        phrase: `Comment et où <strong>consommer de manière plus durable</strong> quand on <strong>habite ${onboardingData.commune}</strong>`,
+        phrase: `Comment et où <strong>consommer de manière plus durable</strong> quand on <strong>habite ${onboarding.commune}</strong>`,
       };
     }
     if (final_result.alimentation == 4) {
@@ -123,12 +116,10 @@ export class OnboardingUsecase {
       };
     }
 
-    if (onboardingData.adultes + onboardingData.enfants >= 3) {
+    if (onboarding.adultes + onboarding.enfants >= 3) {
       final_result.phrase_4 = {
         icon: '👪',
-        phrase: `${
-          onboardingData.adultes + onboardingData.enfants
-        } sous le même toit ?
+        phrase: `${onboarding.adultes + onboarding.enfants} sous le même toit ?
 <strong>Comprendre ses impacts à l'échelle de votre famille</strong> ou de votre colocation`,
       };
     } else {
@@ -138,116 +129,6 @@ export class OnboardingUsecase {
       };
     }
     return final_result;
-  }
-
-  async createUtilisateur(utilisateurInput: CreateUtilisateurAPI) {
-    this.checkInputToCreateUtilisateur(utilisateurInput);
-
-    if (process.env.WHITE_LIST_ENABLED === 'true') {
-      if (
-        !process.env.WHITE_LIST.toLowerCase().includes(
-          utilisateurInput.email.toLowerCase(),
-        )
-      ) {
-        ApplicationError.throwNotAuthorizedEmailError();
-      }
-    }
-
-    const onboardingData = new Onboarding(utilisateurInput.onboardingData);
-
-    const utilisateurToCreate = new Utilisateur({
-      id: undefined,
-      code_postal: onboardingData.code_postal,
-      commune: onboardingData.commune,
-      created_at: undefined,
-      nom: utilisateurInput.nom,
-      prenom: utilisateurInput.prenom,
-      email: utilisateurInput.email,
-      onboardingData: onboardingData,
-      onboardingResult: new OnboardingResult(onboardingData),
-      revenu_fiscal: null,
-      parts: null,
-      abonnement_ter_loire: false,
-      passwordHash: null,
-      passwordSalt: null,
-      active_account: false,
-      code: null,
-      code_generation_time: null,
-      failed_checkcode_count: 0,
-      failed_login_count: 0,
-      prevent_login_before: new Date(),
-      prevent_checkcode_before: new Date(),
-      sent_email_count: 1,
-      prevent_sendemail_before: new Date(),
-      parcours_todo: new ParcoursTodo(),
-      gamification: Gamification.newDefaultGamification(),
-      unlocked_features: new UnlockedFeatures(),
-      history: new History(),
-      code_departement: null,
-      prm: null,
-      version: UtilisateurBehavior.systemVersion(),
-      migration_enabled: false,
-      version_ponderation: UtilisateurBehavior.ponderationSystemVersion(),
-    });
-
-    utilisateurToCreate.setNew6DigitCode();
-
-    utilisateurToCreate.setPassword(utilisateurInput.mot_de_passe);
-
-    await this.utilisateurRespository.createUtilisateur(utilisateurToCreate);
-
-    this.sendValidationCode(utilisateurToCreate);
-  }
-
-  async renvoyerCode(email: string) {
-    const utilisateur =
-      await this.utilisateurRespository.findUtilisateurByEmail(email);
-    if (!utilisateur) {
-      ApplicationError.throwBadCodeOrEmailError();
-    }
-    if (utilisateur.active_account) {
-      ApplicationError.throwCompteDejaActifError();
-    }
-
-    utilisateur.setNew6DigitCode();
-    await this.utilisateurRespository.updateCode(
-      utilisateur.id,
-      utilisateur.code,
-      utilisateur.code_generation_time,
-    );
-
-    const _this = this;
-    const okAction = async function () {
-      _this.sendValidationCode(utilisateur);
-    };
-
-    await this.securityEmailManager.attemptSecurityEmailEmission(
-      utilisateur,
-      okAction,
-    );
-  }
-
-  private checkInputToCreateUtilisateur(
-    utilisateurInput: CreateUtilisateurAPI,
-  ) {
-    new Onboarding(utilisateurInput.onboardingData).validateData();
-
-    if (!utilisateurInput.nom) {
-      ApplicationError.throwNomObligatoireError();
-    }
-    if (!utilisateurInput.prenom) {
-      ApplicationError.throwPrenomObligatoireError();
-    }
-    if (!utilisateurInput.email) {
-      ApplicationError.throwEmailObligatoireError();
-    }
-
-    PasswordManager.checkPasswordFormat(utilisateurInput.mot_de_passe);
-    Utilisateur.checkEmailFormat(utilisateurInput.email);
-  }
-
-  async findUtilisateurById(id: string): Promise<Utilisateur> {
-    return this.utilisateurRespository.findUtilisateurById(id);
   }
 
   private async fabriquePhrase(
@@ -342,23 +223,7 @@ export class OnboardingUsecase {
     }
   }
 
-  private async sendValidationCode(utilisateur: Utilisateur) {
-    this.emailSender.sendEmail(
-      utilisateur.email,
-      utilisateur.prenom,
-      `Bonjour ${utilisateur.prenom},<br>
-Voici votre code pour valider votre inscription à l'application Agir !<br><br>
-    
-code : ${utilisateur.code}<br><br>
-
-Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="${process.env.BASE_URL_FRONT}/validation-compte?email=${utilisateur.email}">Page pour rentrer le code</a><br><br>
-    
-À très vite !`,
-      `Votre code d'inscription Agir`,
-    );
-  }
-
-  private listeThematiquesToText(list: Thematique[]) {
+  private listeThematiquesToText(list: ThematiqueOnboarding[]) {
     switch (list.length) {
       case 1:
         return `${list[0]}`;

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import Publicodes from 'publicodes';
+import Engine from 'publicodes';
 import { formatValue } from 'publicodes';
 import rulesVelo from '../data/aidesVelo.json';
 import localisations from '../data/communes.json';
@@ -12,7 +12,7 @@ import {
   AidesVelo,
   Localisation,
   Collectivite,
-} from '../../../src/domain/aides/aide';
+} from '../../domain/aides/aideVelo';
 
 @Injectable()
 export class AidesVeloRepository {
@@ -42,7 +42,15 @@ async function summaryVelo(
   delete rules['aides . prime à la conversion'];
   delete rules['aides . prime à la conversion . surprime ZFE'];
 
-  const engine = new Publicodes(rules);
+  const engine = new Engine(rules, {
+    logger: {
+      log(message: string) {},
+      warn(message: string) {},
+      error(message: string) {
+        console.log(message);
+      },
+    },
+  });
   const situationBase: InputParameters = {
     'localisation . epci': `${lieu?.epci}`,
     'localisation . région': `${lieu?.region}`,

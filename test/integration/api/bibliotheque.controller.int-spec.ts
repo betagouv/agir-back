@@ -1,6 +1,6 @@
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('/utilisateurs/id/bibliotheque (API test)', () => {
   let thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -22,8 +22,8 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
 
   it('GET /utilisateurs/id/bibliotheque - 403 if bad id', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { history: {} });
-    await TestUtil.create('article');
+    await TestUtil.create(DB.utilisateur, { history: {} });
+    await TestUtil.create_article();
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/autre-id/bibliotheque');
     // THEN
@@ -31,7 +31,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
   });
   it('GET /utilisateurs/id/bibliotheque - 200 et liste vide', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { history: {} });
+    await TestUtil.create(DB.utilisateur, { history: {} });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -43,8 +43,8 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
   });
   it('GET /utilisateurs/id/bibliotheque - ne renvoie pas un article non lu', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { history: {} });
-    await TestUtil.create('article');
+    await TestUtil.create(DB.utilisateur, { history: {} });
+    await TestUtil.create_article();
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/bibliotheque',
@@ -58,7 +58,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     await thematiqueRepository.upsertThematique(1, 'Alimentation !!');
     await thematiqueRepository.upsertThematique(2, 'Climat !!');
     await thematiqueRepository.loadThematiques();
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       history: {
         article_interactions: [
           {
@@ -70,7 +70,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         ],
       },
     });
-    await TestUtil.create('article');
+    await TestUtil.create_article();
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/bibliotheque',
@@ -110,7 +110,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     await thematiqueRepository.upsertThematique(2, 'Climat !!');
     await thematiqueRepository.upsertThematique(5, 'Logement !!');
     await thematiqueRepository.loadThematiques();
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       history: {
         article_interactions: [
           {
@@ -134,15 +134,15 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         ],
       },
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '1',
       thematiques: [Thematique.alimentation],
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '2',
       thematiques: [Thematique.alimentation, Thematique.logement],
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '3',
       thematiques: [Thematique.logement],
     });
@@ -164,7 +164,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
   });
   it('GET /utilisateurs/id/bibliotheque - renvoie les articles par ordre chronologique', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       history: {
         article_interactions: [
           {
@@ -188,13 +188,13 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         ],
       },
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '1',
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '2',
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '3',
     });
     // WHEN
@@ -210,7 +210,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
   });
   it('GET /utilisateurs/id/bibliotheque - recherche par fragment de titre, case insensitive', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       history: {
         article_interactions: [
           {
@@ -232,19 +232,19 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         ],
       },
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '1',
       titre: 'hello mistere',
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '2',
       titre: 'hello mistèr',
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '3',
       titre: 'pas la même chose',
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '4',
       titre: 'Huge Mistery',
     });
@@ -260,7 +260,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
   });
   it('GET /utilisateurs/id/bibliotheque - recherche articles favoris', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       history: {
         article_interactions: [
           {
@@ -286,16 +286,16 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         ],
       },
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '1',
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '2',
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '3',
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '4',
     });
     // WHEN
@@ -310,7 +310,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
   });
   it('GET /utilisateurs/id/bibliotheque - favoris en premier, puis tri par date', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       history: {
         article_interactions: [
           {
@@ -336,16 +336,16 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         ],
       },
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '1',
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '2',
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '3',
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '4',
     });
     // WHEN
@@ -362,7 +362,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
   });
   it('GET /utilisateurs/id/bibliotheque - flag favoris, likes, read_date', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       history: {
         article_interactions: [
           {
@@ -380,10 +380,10 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         ],
       },
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '1',
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '2',
     });
     // WHEN
@@ -408,7 +408,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
   });
   it('GET /utilisateurs/id/bibliotheque/article/123 - renvoi un article unique avec ses meta données', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       history: {
         article_interactions: [
           {
@@ -420,7 +420,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         ],
       },
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '1',
     });
     // WHEN
@@ -437,7 +437,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
   });
   it('GET /utilisateurs/id/bibliotheque/article/bad - 404 si article pas connu', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', {
+    await TestUtil.create(DB.utilisateur, {
       history: {
         article_interactions: [
           {
@@ -449,7 +449,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         ],
       },
     });
-    await TestUtil.create('article', {
+    await TestUtil.create_article({
       content_id: '1',
     });
     // WHEN

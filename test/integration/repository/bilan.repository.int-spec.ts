@@ -1,4 +1,4 @@
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 import { BilanRepository } from '../../../src/infrastructure/repository/bilan.repository';
 
 describe('BilanRepository', () => {
@@ -18,7 +18,7 @@ describe('BilanRepository', () => {
 
   it('Get null situation when a new utilisateur', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const lastSituation = await bilanRepository.getLastSituationbyUtilisateurId(

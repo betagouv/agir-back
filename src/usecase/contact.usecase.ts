@@ -30,9 +30,7 @@ export class ContactUsecase {
   }
 
   async delete(utilisateurId: string): Promise<boolean> {
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
-      utilisateurId,
-    );
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     if (!utilisateur || !utilisateur.email) return false;
     return await this.contactSynchro.deleteContact(utilisateur.email);
   }

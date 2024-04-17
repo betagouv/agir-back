@@ -1,3 +1,4 @@
+import { VoitureGabarit } from '../../../../src/domain/equipements/vehicule';
 import { NGCCalculator } from '../../../../src/infrastructure/ngc/NGCCalculator';
 
 describe('NGCCalculator', () => {
@@ -7,29 +8,54 @@ describe('NGCCalculator', () => {
     //THEN
     expect(calculator).toBeDefined();
   });
-  it('computeSingleEntry : compute ok single entry, minimal situation', () => {
+  it('computeSingleEntry : compute ok single entry, empty situation', () => {
     //GIVEN
     let calculator = new NGCCalculator();
-    const situation = {
-      'transport . voiture . km': { valeur: 12000, unité: 'km / an' },
-    };
-    const entry = 'transport . empreinte';
+    const situation = {};
+    const entry = 'transport . voiture . empreinte moyenne';
 
     //WHEN
     const response = calculator.computeSingleEntryValue(situation, entry);
 
     //THEN
-    expect(response).toEqual(2533.9706912924553);
+    expect(response).toEqual(2588.342745335035);
+  });
+  it('computeSingleEntry : compute ok single entry, minimal situation', () => {
+    //GIVEN
+    let calculator = new NGCCalculator();
+    const situation = {
+      'transport . voiture . km': { valeur: 11000, unité: 'km/an' },
+    };
+    const entry = 'transport . voiture . empreinte moyenne';
+
+    //WHEN
+    const response = calculator.computeSingleEntryValue(situation, entry);
+
+    //THEN
+    expect(response).toEqual(2396.046737597163);
+  });
+  it('computeSingleEntry : compute ok vehicule type info ', () => {
+    //GIVEN
+    let calculator = new NGCCalculator();
+    const situation = {
+      'transport . voiture . gabarit': { valeur: VoitureGabarit.petite },
+    };
+    const entry = 'transport . voiture . empreinte calculée';
+
+    //WHEN
+    const response = calculator.computeSingleEntryValue(situation, entry);
+
+    //THEN
+    expect(Math.round(response.valueOf() as number)).toEqual(32);
   });
   it('computeSingleEntry : compute ok single entry, complexe situation', () => {
     //GIVEN
     let calculator = new NGCCalculator();
     const situation = {
-      'transport . voiture . km': { valeur: 12000, unité: 'km / an' },
-      'transport . voiture . propriétaire': 'non',
+      'transport . voiture . km': { valeur: 12000, unité: 'km/an' },
       'transport . voiture . gabarit': "'VUL'",
       'transport . voiture . motorisation': "'électrique'",
-      'transport . voiture . saisie voyageurs': {
+      'transport . voiture . voyageurs': {
         valeur: 2,
         unité: 'voyageurs',
       },
@@ -42,17 +68,16 @@ describe('NGCCalculator', () => {
     const response = calculator.computeSingleEntryValue(situation, entry);
 
     //THEN
-    expect(response).toEqual(6770.336671393776);
+    expect(response).toEqual(7936.708445430233);
   });
   it('computeEntryList : compute ok multiple entries', () => {
     //GIVEN
     let calculator = new NGCCalculator();
     const situation = {
       'transport . voiture . km': 12000,
-      'transport . voiture . propriétaire': 'non',
       'transport . voiture . gabarit': "'VUL'",
       'transport . voiture . motorisation': "'électrique'",
-      'transport . voiture . saisie voyageurs': 2,
+      'transport . voiture . voyageurs': 2,
       'transport . deux roues . usager': 'non',
       'transport . avion . usager': 'non',
     };
@@ -60,7 +85,7 @@ describe('NGCCalculator', () => {
       'bilan',
       'divers',
       'logement',
-      'transport . empreinte',
+      'transport . voiture . empreinte moyenne',
       'alimentation',
       'services sociétaux',
     ];
@@ -70,11 +95,13 @@ describe('NGCCalculator', () => {
 
     //THEN
     expect(response.size).toEqual(6);
-    expect(response.get('bilan')).toEqual(6770.336671393776);
-    expect(response.get('divers')).toEqual(852.8584599753638);
-    expect(response.get('logement')).toEqual(1424.3853917865213);
-    expect(response.get('transport . empreinte')).toEqual(905.7128413055185);
-    expect(response.get('alimentation')).toEqual(2033.7441687666667);
-    expect(response.get('services sociétaux')).toEqual(1553.6358095597056);
+    expect(response.get('bilan')).toEqual(7936.708445430233);
+    expect(response.get('divers')).toEqual(1086.544660199586);
+    expect(response.get('logement')).toEqual(1481.2354772117592);
+    expect(response.get('transport . voiture . empreinte moyenne')).toEqual(
+      1533.776046427234,
+    );
+    expect(response.get('alimentation')).toEqual(2099.9159821);
+    expect(response.get('services sociétaux')).toEqual(1474.0267696872584);
   });
 });

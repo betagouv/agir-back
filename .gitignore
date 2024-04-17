@@ -38,3 +38,4 @@ lerna-debug.log*
 # other
 .env
 .env.test
+.env.run

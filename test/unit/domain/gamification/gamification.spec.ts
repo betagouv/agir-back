@@ -1,16 +1,16 @@
 import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
 import { TestUtil } from '../../../../test/TestUtil';
 import { Gamification } from '../../../../src/domain/gamification/gamification';
-import { CelebrationDeNiveau } from '../../../../src/domain/gamification/celebrations/celebrationDeNiveau';
 import { UnlockedFeatures } from '../../../../src/domain/gamification/unlockedFeatures';
+import {
+  Celebration,
+  CelebrationType,
+} from '../../../../src/domain/gamification/celebrations/celebration';
 
 describe('Gamification', () => {
   it('ajoutePoints : ajoute bien les points ', () => {
     // GIVEN
-    const gamification = new Gamification({
-      points: 0,
-      celebrations: [],
-    });
+    const gamification = new Gamification();
     // WHEN
     gamification.ajoutePoints(5);
 
@@ -21,6 +21,7 @@ describe('Gamification', () => {
     // GIVEN
     const gamification = new Gamification(
       {
+        version: 0,
         points: 0,
         celebrations: [],
       },
@@ -37,6 +38,7 @@ describe('Gamification', () => {
     // GIVEN
     const gamification = new Gamification(
       {
+        version: 0,
         points: 5,
         celebrations: [],
       },
@@ -53,6 +55,7 @@ describe('Gamification', () => {
     // GIVEN
     const gamification = new Gamification(
       {
+        version: 0,
         points: 50,
         celebrations: [],
       },
@@ -69,6 +72,7 @@ describe('Gamification', () => {
     // GIVEN
     const gamification = new Gamification(
       {
+        version: 0,
         points: 50,
         celebrations: [],
       },
@@ -85,6 +89,7 @@ describe('Gamification', () => {
     // GIVEN
     const gamification = new Gamification(
       {
+        version: 0,
         points: 7,
         celebrations: [],
       },
@@ -101,6 +106,7 @@ describe('Gamification', () => {
     // GIVEN
     const gamification = new Gamification(
       {
+        version: 0,
         points: 10,
         celebrations: [],
       },
@@ -117,6 +123,7 @@ describe('Gamification', () => {
     // GIVEN
     const gamification = new Gamification(
       {
+        version: 0,
         points: 5,
         celebrations: [],
       },
@@ -133,6 +140,7 @@ describe('Gamification', () => {
     // GIVEN
     const gamification = new Gamification(
       {
+        version: 0,
         points: 7,
         celebrations: [],
       },
@@ -149,6 +157,7 @@ describe('Gamification', () => {
     // GIVEN
     const gamification = new Gamification(
       {
+        version: 0,
         points: 7,
         celebrations: [],
       },
@@ -165,6 +174,7 @@ describe('Gamification', () => {
     // GIVEN
     const gamification = new Gamification(
       {
+        version: 0,
         points: 3,
         celebrations: [],
       },
@@ -181,6 +191,7 @@ describe('Gamification', () => {
     // GIVEN
     const gamification = new Gamification(
       {
+        version: 0,
         points: 20,
         celebrations: [],
       },
@@ -195,17 +206,36 @@ describe('Gamification', () => {
   });
   it('terminerCelebration : supprime correctement la bonne occurence', () => {
     // GIVEN
-    const celeb_1 = new CelebrationDeNiveau(2);
-    const celeb_2 = new CelebrationDeNiveau(2);
-    const celeb_3 = new CelebrationDeNiveau(2);
+    const celeb_1 = new Celebration({
+      id: undefined,
+      titre: 'yo',
+      type: CelebrationType.niveau,
+      new_niveau: 2,
+      reveal: Gamification.getRevealByNiveau(2),
+    });
+    const celeb_2 = new Celebration({
+      id: undefined,
+      titre: 'yo',
+      type: CelebrationType.niveau,
+      new_niveau: 2,
+      reveal: Gamification.getRevealByNiveau(2),
+    });
+    const celeb_3 = new Celebration({
+      id: undefined,
+      titre: 'yo',
+      type: CelebrationType.niveau,
+      new_niveau: 2,
+      reveal: Gamification.getRevealByNiveau(2),
+    });
     const gamification = new Gamification(
       {
+        version: 0,
         points: 20,
         celebrations: [celeb_1, celeb_2, celeb_3],
       },
       [5, 15],
     );
-    let utilisateur = new Utilisateur(TestUtil.utilisateurData());
+    let utilisateur = new Utilisateur();
     utilisateur.unlocked_features = new UnlockedFeatures();
 
     // WHEN
@@ -218,16 +248,24 @@ describe('Gamification', () => {
   });
   it('terminerCelebration : debloque un fonctionnalité si la celebration contient un Reveal', () => {
     // GIVEN
-    const celeb = new CelebrationDeNiveau(2);
+    const celeb = new Celebration({
+      id: undefined,
+      titre: 'yo',
+      type: CelebrationType.niveau,
+      new_niveau: 2,
+      reveal: Gamification.getRevealByNiveau(2),
+    });
     const gamification = new Gamification(
       {
+        version: 0,
         points: 20,
         celebrations: [celeb],
       },
       [5, 15],
     );
-    let utilisateur = new Utilisateur(TestUtil.utilisateurData());
+    let utilisateur = new Utilisateur();
     utilisateur.unlocked_features = new UnlockedFeatures();
+
     // WHEN
     gamification.terminerCelebration(celeb.id, utilisateur);
 

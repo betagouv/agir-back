@@ -1,6 +1,6 @@
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { Thematique } from '../../../src/domain/contenu/thematique';
-import { TestUtil } from '../../TestUtil';
+import { DB, TestUtil } from '../../TestUtil';
 import { ServiceStatus } from '../../../src/domain/service/service';
 
 describe('Service (API test)', () => {
@@ -16,6 +16,7 @@ describe('Service (API test)', () => {
     process.env = { ...OLD_ENV }; // Make a copy
     await TestUtil.deleteAll();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
+    process.env.ADMIN_IDS = '';
   });
 
   afterAll(async () => {
@@ -25,8 +26,8 @@ describe('Service (API test)', () => {
 
   it('GET /services listes 2 def', async () => {
     // GIVEN
-    await TestUtil.create('serviceDefinition', { id: 'dummy_live' });
-    await TestUtil.create('serviceDefinition', { id: 'dummy_scheduled' });
+    await TestUtil.create(DB.serviceDefinition, { id: 'dummy_live' });
+    await TestUtil.create(DB.serviceDefinition, { id: 'dummy_scheduled' });
 
     // WHEN
     const response = await TestUtil.GET('/services');
@@ -38,7 +39,7 @@ describe('Service (API test)', () => {
   it('GET /services listes 1 def with correct date', async () => {
     // GIVEN
     process.env.SERVICES_ACTIFS = 'dummy_live';
-    await TestUtil.create('serviceDefinition', { is_local: false });
+    await TestUtil.create(DB.serviceDefinition, { is_local: false });
 
     // WHEN
     const response = await TestUtil.GET('/services');
@@ -65,7 +66,7 @@ describe('Service (API test)', () => {
   it('GET /services listes 1 def en construction', async () => {
     // GIVEN
     process.env.SERVICES_ACTIFS = '';
-    await TestUtil.create('serviceDefinition', { is_local: false });
+    await TestUtil.create(DB.serviceDefinition, { is_local: false });
 
     // WHEN
     const response = await TestUtil.GET('/services');
@@ -76,17 +77,17 @@ describe('Service (API test)', () => {
   });
   it('GET /services avec les occurences d installation', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { id: '1', email: '1' });
-    await TestUtil.create('utilisateur', { id: '2', email: '2' });
+    await TestUtil.create(DB.utilisateur, { id: '1', email: '1' });
+    await TestUtil.create(DB.utilisateur, { id: '2', email: '2' });
 
-    await TestUtil.create('serviceDefinition');
+    await TestUtil.create(DB.serviceDefinition);
 
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.service, {
       id: '1',
       utilisateurId: '1',
       serviceDefinitionId: 'dummy_live',
     });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.service, {
       id: '2',
       utilisateurId: '2',
       serviceDefinitionId: 'dummy_live',
@@ -100,18 +101,18 @@ describe('Service (API test)', () => {
   });
   it('GET /services?utilisateurId=XXX avec le flag d installation propre à l utilisateur ', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur', { email: '1' });
-    await TestUtil.create('utilisateur', { id: '2', email: '2' });
+    await TestUtil.create(DB.utilisateur, { email: '1' });
+    await TestUtil.create(DB.utilisateur, { id: '2', email: '2' });
 
-    await TestUtil.create('serviceDefinition', { id: 'dummy_live' });
-    await TestUtil.create('serviceDefinition', { id: 'dummy_scheduled' });
+    await TestUtil.create(DB.serviceDefinition, { id: 'dummy_live' });
+    await TestUtil.create(DB.serviceDefinition, { id: 'dummy_scheduled' });
 
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.service, {
       id: '1',
       utilisateurId: 'utilisateur-id',
       serviceDefinitionId: 'dummy_live',
     });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.service, {
       id: '2',
       utilisateurId: '2',
       serviceDefinitionId: 'dummy_scheduled',
@@ -128,7 +129,7 @@ describe('Service (API test)', () => {
   });
   it('GET /services?utilisateurId=XXX erreur 403 si pas le bon user', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.GET('/services?utilisateurId=BAD');
@@ -138,8 +139,8 @@ describe('Service (API test)', () => {
   });
   it('POST /utilisateurs/id/services ajout un nouveau service à l utilisateur', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition');
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition);
 
     // WHEN
     const response = await TestUtil.POST(
@@ -160,9 +161,9 @@ describe('Service (API test)', () => {
   });
   it('POST /utilisateurs/id/services ajoute un nouveau service async alors que le precedent est en cours de suppression', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       status: ServiceStatus.TO_DELETE,
       configuration: { prm: '123', winter_pk: 'abc' },
@@ -181,12 +182,15 @@ describe('Service (API test)', () => {
       where: { id: 'service-id' },
     });
     expect(serviceDB.status).toEqual(ServiceStatus.CREATED);
-    expect(serviceDB.configuration).toEqual({ prm: '123', winter_pk: 'abc' });
+    expect(serviceDB.configuration).toEqual({
+      prm: '123',
+      winter_pk: 'abc',
+    });
   });
   it('POST /utilisateurs/id/services erreur si service definition non connue', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition');
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition);
 
     // WHEN
     const response = await TestUtil.POST(
@@ -203,9 +207,9 @@ describe('Service (API test)', () => {
   });
   it('POST /utilisateurs/id/services erreur si service dejà associé', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition');
-    await TestUtil.create('service');
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition);
+    await TestUtil.create(DB.service);
 
     // WHEN
     const response = await TestUtil.POST(
@@ -222,9 +226,9 @@ describe('Service (API test)', () => {
   });
   it('DELETE /utilisateurs/id/services/id supprime un service associé à l utilisateur', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition');
-    await TestUtil.create('service');
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition);
+    await TestUtil.create(DB.service);
 
     // WHEN
     const response = await TestUtil.DELETE(
@@ -236,11 +240,23 @@ describe('Service (API test)', () => {
     const dbServices = await TestUtil.prisma.service.findMany();
     expect(dbServices).toHaveLength(0);
   });
+  it('DELETE /utilisateurs/id/services/id 404 si le service existe pas', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.DELETE(
+      '/utilisateurs/utilisateur-id/services/dummy_live',
+    );
+
+    // THEN
+    expect(response.status).toBe(404);
+  });
   it('DELETE /utilisateurs/id/services/id supprime logiquement un service LIVE async ', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       status: ServiceStatus.LIVE,
       configuration: { prm: '123', winter_pk: 'abc' },
@@ -260,9 +276,9 @@ describe('Service (API test)', () => {
   });
   it('DELETE /utilisateurs/id/services/id supprime réellement un service CREATED async ', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       status: ServiceStatus.CREATED,
       configuration: { prm: '123', winter_pk: 'abc' },
@@ -282,14 +298,14 @@ describe('Service (API test)', () => {
   });
   it('GET /utilisateurs/id/services liste les services associés à l utilisateur, ne liste pas les service TO_DELETE', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'dummy_live' });
-    await TestUtil.create('serviceDefinition', { id: 'dummy_scheduled' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'dummy_live' });
+    await TestUtil.create(DB.serviceDefinition, { id: 'dummy_scheduled' });
+    await TestUtil.create(DB.service, {
       id: '1',
       serviceDefinitionId: 'dummy_live',
     });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.service, {
       id: '2',
       serviceDefinitionId: 'dummy_scheduled',
     });
@@ -305,9 +321,9 @@ describe('Service (API test)', () => {
   });
   it('GET /utilisateurs/id/services liste les services associés à l utilisateur, ne liste pas les service TO_DELETE', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'dummy_live' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'dummy_live' });
+    await TestUtil.create(DB.service, {
       status: ServiceStatus.TO_DELETE,
       id: '1',
       serviceDefinitionId: 'dummy_live',
@@ -325,9 +341,9 @@ describe('Service (API test)', () => {
   it('GET /utilisateurs/id/services liste 1 services associés à l utilisateur, check data', async () => {
     // GIVEN
     process.env.SERVICES_ACTIFS = '';
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition');
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition);
+    await TestUtil.create(DB.service, {
       configuration: { toto: '123', error_code: '456' },
     });
 
@@ -363,9 +379,9 @@ describe('Service (API test)', () => {
   it('GET /utilisateurs/id/services liste 1 services associés à l utilisateur, check data, actif', async () => {
     // GIVEN
     process.env.SERVICES_ACTIFS = 'dummy_live';
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition');
-    await TestUtil.create('service', { configuration: { toto: '123' } });
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition);
+    await TestUtil.create(DB.service, { configuration: { toto: '123' } });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -380,9 +396,9 @@ describe('Service (API test)', () => {
     // GIVEN
     process.env.SERVICES_ACTIFS = '';
     process.env.ADMIN_IDS = 'utilisateur-id';
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition');
-    await TestUtil.create('service', { configuration: { toto: '123' } });
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition);
+    await TestUtil.create(DB.service, { configuration: { toto: '123' } });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -397,9 +413,9 @@ describe('Service (API test)', () => {
     // GIVEN
     process.env.SERVICES_ACTIFS = 'dummy_live';
 
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition');
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition);
+    await TestUtil.create(DB.service, {
       configuration: { toto: '123', error_code: '456' },
     });
 
@@ -432,20 +448,42 @@ describe('Service (API test)', () => {
       Thematique.logement,
     ]);
   });
+  it('GET /utilisateurs/id/services/bad-id renvoie 404 si service pas install pour utilsateur', async () => {
+    // GIVEN
+
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition);
+    await TestUtil.create(DB.service, {
+      configuration: { toto: '123', error_code: '456' },
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/services/linky',
+    );
+
+    // THEN
+    expect(response.status).toBe(404);
+    expect(response.body.code).toEqual('038');
+    expect(response.body.message).toEqual(
+      `le service [linky] n'est pas installé pour l'utilisateur`,
+    );
+  });
   it('GET /utilisateurs/id/services/serviceID lit 1 unique services flag de conf OK', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
-      status: ServiceStatus.CREATED,
+      status: ServiceStatus.LIVE,
       configuration: {
         prm: '123',
         winter_pk: 'abc',
         live_prm: '123',
-        sent_data_email: true,
       },
     });
+
+    await TestUtil.create(DB.linky, { prm: '123' });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -460,9 +498,9 @@ describe('Service (API test)', () => {
   });
   it('GET /utilisateurs/id/services , label a pour valeur label des données dynamic live', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition');
-    await TestUtil.create('service');
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition);
+    await TestUtil.create(DB.service);
 
     // WHEN
     const response = await TestUtil.GET(
@@ -475,9 +513,9 @@ describe('Service (API test)', () => {
   });
   it('GET /utilisateurs/id/services , label a pour valeur titre pour les service non dynamic live', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'inconnu' });
-    await TestUtil.create('service', { serviceDefinitionId: 'inconnu' });
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'inconnu' });
+    await TestUtil.create(DB.service, { serviceDefinitionId: 'inconnu' });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -491,9 +529,9 @@ describe('Service (API test)', () => {
   });
   it('GET /utilisateurs/id/services , renvoie les flags d activation pour les service async #1', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       status: ServiceStatus.CREATED,
       configuration: {},
@@ -513,9 +551,9 @@ describe('Service (API test)', () => {
   });
   it('GET /utilisateurs/id/services , renvoie les flags d activation pour les service async #2', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       status: ServiceStatus.CREATED,
       configuration: { prm: '123', winter_pk: 'abc' },
@@ -535,9 +573,9 @@ describe('Service (API test)', () => {
   });
   it('GET /utilisateurs/id/services , renvoie les flags d activation pour les service async #3', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       status: ServiceStatus.CREATED,
       configuration: { prm: '123', winter_pk: 'abc', live_prm: '123' },
@@ -557,18 +595,18 @@ describe('Service (API test)', () => {
   });
   it('GET /utilisateurs/id/services , renvoie les flags d activation pour les service async #4', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       status: ServiceStatus.CREATED,
       configuration: {
         prm: '123',
         winter_pk: 'abc',
         live_prm: '123',
-        sent_data_email: true,
       },
     });
+    await TestUtil.create(DB.linky, { prm: '123' });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -584,12 +622,12 @@ describe('Service (API test)', () => {
   });
   it('GET /utilisateurs/id/services renvoi le libellé de la thématique en base si existe', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, {
       thematiques: ['alimentation'],
     });
-    await TestUtil.create('service');
-    await TestUtil.create('thematique', {
+    await TestUtil.create(DB.service);
+    await TestUtil.create(DB.thematique, {
       id_cms: 1,
       titre: 'THE ALIMENTATION',
     });
@@ -606,11 +644,11 @@ describe('Service (API test)', () => {
   });
   it('GET /services renvoi le libellé de la thématique en base si existe', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, {
       thematiques: ['alimentation'],
     });
-    await TestUtil.create('thematique', {
+    await TestUtil.create(DB.thematique, {
       id_cms: 1,
       titre: 'THE ALIMENTATION',
     });
@@ -626,11 +664,11 @@ describe('Service (API test)', () => {
 
   it('GET /utilisateurs/id/services pas d erreur si service non dynamic (comme le suivi transport)', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, {
       id: 'inconnu',
     });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'inconnu',
     });
 
@@ -643,39 +681,11 @@ describe('Service (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
   });
-  it('PUT /utilisateurs/id/services/serviceid/configuration OK', async () => {
-    // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'dummy_async' });
-    await TestUtil.create('service', { serviceDefinitionId: 'dummy_async' });
-
-    // WHEN
-    const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/services/dummy_async/configuration',
-    ).send({
-      a: '123',
-      b: 456,
-      c: true,
-    });
-
-    // THEN
-    expect(response.status).toBe(200);
-
-    const serviceDB = await TestUtil.prisma.service.findUnique({
-      where: { id: 'service-id' },
-    });
-
-    expect(serviceDB.configuration).toEqual({
-      a: '123',
-      b: 456,
-      c: true,
-    });
-  });
   it('PUT /utilisateurs/id/services/serviceid/configuration KO pour linky, prm manquant', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', { serviceDefinitionId: 'linky' });
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, { serviceDefinitionId: 'linky' });
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -688,9 +698,9 @@ describe('Service (API test)', () => {
   });
   it('PUT /utilisateurs/id/services/serviceid/configuration KO pour linky, prm au mauvais format', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', { serviceDefinitionId: 'linky' });
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, { serviceDefinitionId: 'linky' });
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -705,14 +715,17 @@ describe('Service (API test)', () => {
   });
   it('PUT /utilisateurs/id/services/serviceid/configuration OK pour linky', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', { serviceDefinitionId: 'linky' });
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
+      serviceDefinitionId: 'linky',
+      configuration: { titi: 'yo' },
+    });
 
     // WHEN
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/services/linky/configuration',
-    ).send({ prm: '22293632381261' });
+    ).send({ prm: '22293632381261', toto: 'haha' });
 
     // THEN
     const service = await TestUtil.prisma.service.findFirst({
@@ -720,6 +733,8 @@ describe('Service (API test)', () => {
     });
     expect(response.status).toBe(200);
     expect(service.configuration['prm']).toEqual('22293632381261');
+    expect(service.configuration['toto']).toEqual('haha');
+    expect(service.configuration['titi']).toEqual('yo');
     expect(
       new Date(service.configuration['date_consent']).getTime(),
     ).toBeGreaterThan(Date.now() - 100);

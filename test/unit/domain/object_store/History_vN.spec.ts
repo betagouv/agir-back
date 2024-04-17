@@ -14,35 +14,34 @@ describe('History vN ', () => {
 
     const domain = new History(raw);
     // THEN
-
     expect(domain.nombreArticles()).toEqual(0);
     expect(domain.nombreQuizz()).toEqual(0);
   });
   it('serialise <=> deserialise v0 OK', () => {
     // GIVEN
-    const history = new History();
-    history.lireArticle('1');
-    history.quizzAttempt('2', 25);
+    const domain_start = new History();
+    domain_start.lireArticle('1');
+    domain_start.quizzAttempt('2', 25);
 
     // WHEN
-    const raw = History_v0.serialise(history);
-    const domain = new History(raw);
+    const raw = History_v0.serialise(domain_start);
+    const domain_end = new History(raw);
 
     // THEN
-    expect(history).toStrictEqual(domain);
+    expect(domain_end).toStrictEqual(domain_start);
   });
   it('serialise <=> upgade <=> deserialise v0 OK', () => {
     // GIVEN
-    const history = new History();
-    history.lireArticle('1');
-    history.quizzAttempt('2', 25);
+    const domain_start = new History();
+    domain_start.lireArticle('1');
+    domain_start.quizzAttempt('2', 25);
 
     // WHEN
-    const raw = History_v0.serialise(history);
+    const raw = History_v0.serialise(domain_start);
     const upgrade = Upgrader.upgradeRaw(raw, SerialisableDomain.History);
-    const domain = new History(upgrade);
+    const domain_end = new History(upgrade);
 
     // THEN
-    expect(history).toStrictEqual(domain);
+    expect(domain_end).toStrictEqual(domain_start);
   });
 });

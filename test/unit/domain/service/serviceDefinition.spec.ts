@@ -1,11 +1,34 @@
-import { ServiceDefinition } from '../../../../src/domain/service/serviceDefinition';
-import { TestUtil } from '../../../TestUtil';
+import { Thematique } from '../../../../src/domain/contenu/thematique';
+import {
+  ServiceDefinition,
+  ServiceDefinitionData,
+} from '../../../../src/domain/service/serviceDefinition';
 
+const SERVICE_DEF_DATA: ServiceDefinitionData = {
+  serviceDefinitionId: 'dummy_live',
+  titre: 'titre',
+  url: 'url',
+  icon_url: 'icon_url',
+  image_url: 'image_url',
+  is_local: true,
+  is_url_externe: true,
+  minute_period: 20,
+  scheduled_refresh: null,
+  dynamic_data: null,
+  last_refresh: null,
+  description: 'desc',
+  sous_description: 'sous desc',
+  parametrage_requis: true,
+  thematiques: [Thematique.climat, Thematique.logement],
+  nombre_installation: 0,
+  is_installed: true,
+};
 describe('ServiceDefinition', () => {
   it('setNextRefreshDate : set proper next refresh time ', () => {
     // GIVEN
+
     const serviceDefinition = new ServiceDefinition({
-      ...TestUtil.serviceDefinitionData(),
+      ...SERVICE_DEF_DATA,
       minute_period: 10,
     });
 
@@ -20,7 +43,7 @@ describe('ServiceDefinition', () => {
   it('isReadyForRefresh : true if period and null date', () => {
     // GIVEN
     const serviceDefinition = new ServiceDefinition({
-      ...TestUtil.serviceDefinitionData(),
+      ...SERVICE_DEF_DATA,
       minute_period: 10,
       scheduled_refresh: null,
     });
@@ -34,7 +57,7 @@ describe('ServiceDefinition', () => {
   it('isReadyForRefresh : true if period and date before now', () => {
     // GIVEN
     const serviceDefinition = new ServiceDefinition({
-      ...TestUtil.serviceDefinitionData(),
+      ...SERVICE_DEF_DATA,
       minute_period: 10,
       scheduled_refresh: new Date(1000),
     });
@@ -48,7 +71,7 @@ describe('ServiceDefinition', () => {
   it('isReadyForRefresh : false if period and date after now', () => {
     // GIVEN
     const serviceDefinition = new ServiceDefinition({
-      ...TestUtil.serviceDefinitionData(),
+      ...SERVICE_DEF_DATA,
       minute_period: 10,
       scheduled_refresh: new Date(Date.now() + 10000),
     });
@@ -62,7 +85,7 @@ describe('ServiceDefinition', () => {
   it('isLiveServiceType : true si l id fait partie de l enum des srvices lives', () => {
     // GIVEN
     const serviceDefinition = new ServiceDefinition({
-      ...TestUtil.serviceDefinitionData(),
+      ...SERVICE_DEF_DATA,
       serviceDefinitionId: 'dummy_live',
     });
 
@@ -75,7 +98,7 @@ describe('ServiceDefinition', () => {
   it('isLiveServiceType : false si l id ne fait pas partie de l enum des srvices lives', () => {
     // GIVEN
     const serviceDefinition = new ServiceDefinition({
-      ...TestUtil.serviceDefinitionData(),
+      ...SERVICE_DEF_DATA,
       serviceDefinitionId: 'other',
     });
 
@@ -88,7 +111,7 @@ describe('ServiceDefinition', () => {
   it('isScheduledServiceType : true si l id fait partie de l enum des srvices scheduled', () => {
     // GIVEN
     const serviceDefinition = new ServiceDefinition({
-      ...TestUtil.serviceDefinitionData(),
+      ...SERVICE_DEF_DATA,
       serviceDefinitionId: 'dummy_scheduled',
     });
 
@@ -101,7 +124,7 @@ describe('ServiceDefinition', () => {
   it('isScheduledServiceType : false si l id fait partie de l enum des srvices scheduled', () => {
     // GIVEN
     const serviceDefinition = new ServiceDefinition({
-      ...TestUtil.serviceDefinitionData(),
+      ...SERVICE_DEF_DATA,
       serviceDefinitionId: 'other',
     });
 

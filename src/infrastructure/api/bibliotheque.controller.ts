@@ -103,7 +103,7 @@ export class BibliothequeController extends GenericControler {
   ): Promise<ContenuBibliothequeAPI> {
     this.checkCallerId(req, utilisateurId);
 
-    const article = await this.bibliothequeUsecase.geArticle(
+    const article = await this.bibliothequeUsecase.getArticle(
       utilisateurId,
       content_id,
     );

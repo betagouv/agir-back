@@ -1,4 +1,4 @@
-import { TestUtil } from '../../../TestUtil';
+import { DB, TestUtil } from '../../../TestUtil';
 
 const INCOMMING_DATA = {
   ok: true,
@@ -39,6 +39,7 @@ const INCOMMING_DATA = {
   ],
 };
 describe('/api/incoming/winter-energies (API test)', () => {
+  const OLD_ENV = process.env;
   beforeAll(async () => {
     await TestUtil.appinit();
   });
@@ -46,15 +47,19 @@ describe('/api/incoming/winter-energies (API test)', () => {
   beforeEach(async () => {
     await TestUtil.deleteAll();
     TestUtil.token = process.env.CMS_WEBHOOK_API_KEY;
+    jest.resetModules();
+    process.env = { ...OLD_ENV }; // Make a copy
+    process.env.WINTER_API_KEY = '123456789';
   });
 
   afterAll(async () => {
     await TestUtil.appclose();
+    process.env = OLD_ENV;
   });
 
-  it('POST /api/incoming/winter-energies - 200 par défaut', async () => {
+  it('POST /api/incoming/winter-energies - 200 par défaut append des valeurs', async () => {
     // GIVEN
-    await TestUtil.create('linky');
+    await TestUtil.create(DB.linky);
     // WHEN
     const response = await TestUtil.getServer()
       .post('/api/incoming/winter-energies')
@@ -67,7 +72,7 @@ describe('/api/incoming/winter-energies (API test)', () => {
     const dbData = await TestUtil.prisma.linky.findUnique({
       where: { prm: 'abc' },
     });
-    expect(dbData.data).toHaveLength(6);
+    expect(dbData.data).toHaveLength(7);
   });
   it('POST /api/incoming/winter-energies - creation entree si pas de prm deja connu', async () => {
     // GIVEN
@@ -85,26 +90,9 @@ describe('/api/incoming/winter-energies (API test)', () => {
     });
     expect(dbData.data).toHaveLength(5);
   });
-  it('POST /api/incoming/winter-energies - 200 par défaut', async () => {
-    // GIVEN
-    await TestUtil.create('linky');
-    // WHEN
-    const response = await TestUtil.getServer()
-      .post('/api/incoming/winter-energies')
-      .set('key', process.env.WINTER_API_KEY)
-      .send(INCOMMING_DATA);
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.message).toBe('Received OK !');
-    const dbData = await TestUtil.prisma.linky.findUnique({
-      where: { prm: 'abc' },
-    });
-    expect(dbData.data).toHaveLength(6);
-  });
   it('POST /api/incoming/winter-energies - erreur 401 si mauvaise clé API', async () => {
     // GIVEN
-    await TestUtil.create('linky');
+    await TestUtil.create(DB.linky);
     // WHEN
     const response = await TestUtil.getServer()
       .post('/api/incoming/winter-energies')

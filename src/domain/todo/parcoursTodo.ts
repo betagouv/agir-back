@@ -20,16 +20,13 @@ export class ParcoursTodo {
         this.todo_active = 0;
       }
     } else {
-      this.liste_todo = TodoCatalogue.getAllTodos();
-      this.todo_active = 0;
+      this.reset();
     }
   }
 
-  public upgradeParcoursIfNeeded?() {
-    const last_element = this.liste_todo[this.liste_todo.length - 1];
-    if (last_element.titre === 'Plus de mission, pour le moment...') {
-      this.liste_todo.pop();
-    }
+  public reset() {
+    this.liste_todo = TodoCatalogue.getAllTodos();
+    this.todo_active = 0;
   }
 
   public getActiveTodo?(): Todo {
@@ -69,6 +66,7 @@ export class ParcoursTodo {
     return this.todo_active + 1;
   }
   public getTodoByNumero?(numero: number): Todo {
+    // FIXME : use last todo
     if (numero <= this.liste_todo.length) {
       return this.liste_todo[numero - 1];
     }

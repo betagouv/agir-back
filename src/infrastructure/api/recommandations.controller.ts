@@ -1,9 +1,17 @@
-import { Controller, Get, Param, Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOkResponse,
   ApiBearerAuth,
   ApiOperation,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
@@ -25,26 +33,6 @@ export class RecommandationsController extends GenericControler {
     summary: "Liste les recommendations personnalisées de l'utilisateur",
   })
   async getUserRecommandation(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-  ): Promise<RecommandationAPI[]> {
-    this.checkCallerId(req, utilisateurId);
-
-    const list = await this.recommandationUsecase.listRecommandations(
-      utilisateurId,
-    );
-    return list.map((reco) => RecommandationAPI.mapToAPI(reco));
-  }
-
-  // FIXME : to remove
-  @Get('utilisateurs/:utilisateurId/interactions')
-  @ApiOkResponse({ type: [RecommandationAPI] })
-  @ApiOperation({
-    summary:
-      "DEPRECATED : Liste les interactions personnalisées de l'utilisateur",
-  })
-  @UseGuards(AuthGuard)
-  async getUserInteractions(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<RecommandationAPI[]> {

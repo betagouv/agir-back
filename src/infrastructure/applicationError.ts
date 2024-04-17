@@ -165,7 +165,10 @@ export class ApplicationError {
     );
   }
   static throwUnknownPRM(prm: string) {
-    this.throwAppError('032', `PRM inconnu d'Enedis : ${prm}`);
+    this.throwAppError(
+      '032',
+      `PRM ${prm} inconnu sur réseau le électrique, merci de corriger votre saisie.`,
+    );
   }
   static throwUnknownLinkyError(prm: string, error: string) {
     this.throwAppError(
@@ -191,6 +194,56 @@ export class ApplicationError {
       '036',
       `PRM ${prm}, code : ${code}, message : ${message}`,
     );
+  }
+  static throwAlreadyDeletedLinkyError(winter_pk: string) {
+    this.throwAppError(
+      '037',
+      `Le PRM lié à la clé ${winter_pk} n'existe déjà plus`,
+    );
+  }
+
+  static throwServiceNotFound(
+    service_definition_id: string,
+    utilisateurId: string,
+  ) {
+    this.throwAppError(
+      '038',
+      `le service [${service_definition_id}] n'est pas installé pour l'utilisateur`,
+      404,
+    );
+  }
+  static throwUnknownPRM_2(prm: string) {
+    this.throwAppError(
+      '039',
+      `PRM ${prm} inconnu sur réseau le électrique, merci de corriger votre saisie.`,
+    );
+  }
+  static throwUnknownLinky404() {
+    this.throwAppError('040', `Service winter down avec retour 404`);
+  }
+  static throwDefiInconnue(id: string) {
+    this.throwAppError('040', `Defi d'id ${id} inconnue`, 404);
+  }
+  static throwPasswordOneLowerCase() {
+    this.throwAppError(
+      '041',
+      'Le mot de passe doit contenir au moins une minuscule',
+    );
+  }
+  static throwPasswordUpperCase() {
+    this.throwAppError(
+      '042',
+      'Le mot de passe doit contenir au moins une majuscule',
+    );
+  }
+  static throwMissingResetConfirmation() {
+    this.throwAppError(
+      '043',
+      `Taper CONFIRMATION RESET pour confirmer l'opération`,
+    );
+  }
+  static throwPleaseReconnect() {
+    this.throwAppError('044', `L'utilisateur est forcé à se reconnecter`, 401);
   }
 
   private static throwAppError(

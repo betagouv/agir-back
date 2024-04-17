@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import rules from './NGC_rules.json';
-import Publicodes from 'publicodes';
 import { Bilan } from '../../domain/bilan/bilan';
+import rules from '@incubateur-ademe/nosgestesclimat/public/co2-model.FR-lang.fr.json';
+import Engine from 'publicodes';
 
 @Injectable()
 export class NGCCalculator {
-  private engine: Publicodes;
+  private engine: Engine;
 
   constructor() {
-    this.engine = new Publicodes(rules as Record<string, any>, {
+    this.engine = new Engine(rules, {
       logger: {
         log(message: string) {},
         warn(message: string) {},
@@ -44,7 +44,7 @@ export class NGCCalculator {
   computeBilanFromSituation(situation: object): Bilan {
     const entryList = [
       'bilan',
-      'transport . empreinte',
+      'transport',
       'logement',
       'divers',
       'alimentation',
@@ -56,7 +56,7 @@ export class NGCCalculator {
     return {
       bilan_carbone_annuel: resultMap.get('bilan'),
       details: {
-        transport: resultMap.get('transport . empreinte'),
+        transport: resultMap.get('transport'),
         logement: resultMap.get('logement'),
         divers: resultMap.get('divers'),
         alimentation: resultMap.get('alimentation'),

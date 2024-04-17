@@ -1,4 +1,4 @@
-import { TestUtil } from '../../../TestUtil';
+import { DB, TestUtil } from '../../../TestUtil';
 
 const _linky_data = require('../../../../test_data/PRM_thermo_sensible');
 
@@ -25,19 +25,19 @@ describe('Linky (API test)', () => {
 
   it('GET /utilisateurs/id/linky renvoie tableau vide si pas de service', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
+    await TestUtil.create(DB.utilisateur);
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/linky');
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(0);
+    expect(response.body.data).toHaveLength(0);
   });
   it('GET /utilisateurs/id/linky renvoie tableau vide si pas data linky', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
@@ -47,54 +47,54 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(0);
+    expect(response.body.data).toHaveLength(0);
   });
   it('GET /utilisateurs/id/linky renvoie les data linky', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
-    await TestUtil.create('linky');
+    await TestUtil.create(DB.linky);
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/linky');
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0].date).toEqual(new Date(123).toISOString());
-    expect(response.body[0].valeur).toEqual(100);
-    expect(response.body[0].valeur_corrigee).toEqual(110);
+    expect(response.body.data).toHaveLength(2);
+    expect(response.body.data[0].date).toEqual(new Date(123).toISOString());
+    expect(response.body.data[0].valeur).toEqual(100);
+    expect(response.body.data[0].valeur_corrigee).toEqual(110);
   });
   it('GET /utilisateurs/id/linky renvoie les data linky full', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
-    await TestUtil.create('linky', { data: _linky_data });
+    await TestUtil.create(DB.linky, { data: _linky_data });
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/linky');
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(724);
+    expect(response.body.data).toHaveLength(724);
   });
   it('GET /utilisateurs/id/linky renvoie data full si on demande plus que existant', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
-    await TestUtil.create('linky', { data: _linky_data });
+    await TestUtil.create(DB.linky, { data: _linky_data });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -103,17 +103,17 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(724);
+    expect(response.body.data).toHaveLength(724);
   });
   it('GET /utilisateurs/id/linky renvoie les 13 derniers jours', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
-    await TestUtil.create('linky', { data: _linky_data });
+    await TestUtil.create(DB.linky, { data: _linky_data });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -122,18 +122,18 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(13);
-    expect(response.body[0].jour).toEqual('vendredi');
+    expect(response.body.data).toHaveLength(13);
+    expect(response.body.data[0].jour).toEqual('vendredi');
   });
   it('GET /utilisateurs/id/linky renvoie les 2 dernière sem', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       data: [
         {
           time: '2021-11-30T12:00:00.000Z',
@@ -220,21 +220,21 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(2);
-    expect(response.body[0].valeur).toEqual(7);
-    expect(response.body[0].valeur_corrigee).toEqual(14);
-    expect(response.body[1].valeur).toEqual(14);
-    expect(response.body[1].valeur_corrigee).toEqual(28);
+    expect(response.body.data).toHaveLength(2);
+    expect(response.body.data[0].valeur).toEqual(7);
+    expect(response.body.data[0].valeur_corrigee).toEqual(14);
+    expect(response.body.data[1].valeur).toEqual(14);
+    expect(response.body.data[1].valeur_corrigee).toEqual(28);
   });
   it('GET /utilisateurs/id/linky renvoie les 3 derniers mois', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       data: _linky_data,
     });
 
@@ -245,23 +245,23 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(3);
-    expect(response.body[0].mois).toEqual('octobre');
-    expect(Math.floor(response.body[0].valeur)).toEqual(213);
-    expect(response.body[1].mois).toEqual('novembre');
-    expect(Math.floor(response.body[1].valeur)).toEqual(435);
-    expect(response.body[2].mois).toEqual('décembre');
-    expect(Math.floor(response.body[2].valeur)).toEqual(289);
+    expect(response.body.data).toHaveLength(3);
+    expect(response.body.data[0].mois).toEqual('octobre');
+    expect(Math.floor(response.body.data[0].valeur)).toEqual(213);
+    expect(response.body.data[1].mois).toEqual('novembre');
+    expect(Math.floor(response.body.data[1].valeur)).toEqual(435);
+    expect(response.body.data[2].mois).toEqual('décembre');
+    expect(Math.floor(response.body.data[2].valeur)).toEqual(289);
   });
   it('GET /utilisateurs/id/linky comparaison 2 dernieres annéee', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       data: _linky_data,
     });
 
@@ -272,25 +272,25 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(24);
-    expect(response.body[0].mois).toEqual('janvier');
-    expect(response.body[0].annee).toEqual('2022');
-    expect(response.body[1].mois).toEqual('janvier');
-    expect(response.body[1].annee).toEqual('2023');
-    expect(response.body[2].mois).toEqual('février');
-    expect(response.body[2].annee).toEqual('2022');
-    expect(response.body[3].mois).toEqual('février');
-    expect(response.body[3].annee).toEqual('2023');
+    expect(response.body.data).toHaveLength(24);
+    expect(response.body.data[0].mois).toEqual('janvier');
+    expect(response.body.data[0].annee).toEqual('2022');
+    expect(response.body.data[1].mois).toEqual('janvier');
+    expect(response.body.data[1].annee).toEqual('2023');
+    expect(response.body.data[2].mois).toEqual('février');
+    expect(response.body.data[2].annee).toEqual('2022');
+    expect(response.body.data[3].mois).toEqual('février');
+    expect(response.body.data[3].annee).toEqual('2023');
   });
   it('GET /utilisateurs/id/linky compare_annees=false', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       data: _linky_data,
     });
 
@@ -301,44 +301,17 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(724);
-  });
-  it('GET /utilisateurs/id/linky comparaison dynamic dernieres annéee', async () => {
-    // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
-      serviceDefinitionId: 'linky',
-      configuration: { prm: 'abc' },
-    });
-    await TestUtil.create('linky', {
-      data: _linky_data,
-    });
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/linky?compare_mois_sem_jour=true',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(6);
-    expect(Math.floor(response.body[0].valeur)).toEqual(288);
-    expect(Math.floor(response.body[1].valeur)).toEqual(435);
-    expect(Math.floor(response.body[2].valeur)).toEqual(137);
-    expect(Math.floor(response.body[3].valeur)).toEqual(157);
-    expect(Math.floor(response.body[4].valeur)).toEqual(29);
-    expect(Math.floor(response.body[5].valeur)).toEqual(18);
+    expect(response.body.data).toHaveLength(724);
   });
   it('GET /utilisateurs/id/linky comparaison 2 dernieres annéee - pas d erreurs si pas de donnees', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
-    await TestUtil.create('linky', {
+    await TestUtil.create(DB.linky, {
       data: [],
     });
 
@@ -349,27 +322,34 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(0);
+    expect(response.body.data).toHaveLength(0);
   });
-  it('GET /utilisateurs/id/linky comparaison annees dynamiques - pas d erreurs si pas de donnees', async () => {
+  it('GET /utilisateurs/id/linky comparaison 15 derniers jours', async () => {
     // GIVEN
-    await TestUtil.create('utilisateur');
-    await TestUtil.create('serviceDefinition', { id: 'linky' });
-    await TestUtil.create('service', {
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
       serviceDefinitionId: 'linky',
       configuration: { prm: 'abc' },
     });
-    await TestUtil.create('linky', {
-      data: [],
+    await TestUtil.create(DB.linky, {
+      data: _linky_data,
     });
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/linky?compare_mois_sem_jour=true',
+      '/utilisateurs/utilisateur-id/linky?derniers_14_jours=true',
     );
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(0);
+    expect(response.body.data).toHaveLength(28);
+    expect(response.body.commentaires).toHaveLength(2);
+    expect(response.body.commentaires[0]).toEqual(
+      `Votre consommation a <strong>augmenté de +34.21%</strong> entre mardi et mercredi dernier`,
+    );
+    expect(response.body.commentaires[1]).toEqual(
+      `Au cours des 2 dernières semaines, votre consommation éléctrique a <strong>augmenté de +15%</strong> par rapport à la même période l'année dernière`,
+    );
   });
 });

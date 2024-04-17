@@ -1,58 +1,72 @@
 import { Injectable } from '@nestjs/common';
-import axios from 'axios';
 import { ServiceDynamicData } from '../../../domain/service/serviceDefinition';
 import { LiveServiceManager } from '../LiveServiceManager';
 import { ServiceRepository } from '../../../../src/infrastructure/repository/service.repository';
 import { AsyncServiceManager } from '../AsyncServiceManager';
-import { Service, ServiceStatus } from '../../../../src/domain/service/service';
+import {
+  Service,
+  ServiceErrorKey,
+  ServiceStatus,
+} from '../../../../src/domain/service/service';
 import { UtilisateurRepository } from '../../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DepartementRepository } from '../../../../src/infrastructure/repository/departement/departement.repository';
 import { LinkyRepository } from '../../../../src/infrastructure/repository/linky.repository';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
+import { LinkyAPIConnector } from './LinkyAPIConnector';
+import { LinkyEmailer } from './LinkyEmailer';
 import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
-import { EmailSender } from '../../../../src/infrastructure/email/emailSender';
-
-const SENT_DATA_EMAIL_CONF_KEY = 'sent_data_email';
-const PRM_CONF_KEY = 'prm';
-const LIVE_PRM_CONF_KEY = 'live_prm';
-const WINTER_PK_KEY = 'winter_pk';
-const DATE_CONSENT_KEY = 'date_consent';
-const DATE_FIN_CONSENT_KEY = 'date_fin_consent';
+import { LinkyConsent } from '../../../../src/domain/linky/linkyConsent';
+import { LinkyConsentRepository } from '../../../../src/infrastructure/repository/linkyConsent.repository';
 
 const DUREE_CONSENT_ANNEES = 3;
+
+export enum LINKY_CONF_KEY {
+  sent_data_email = 'sent_data_email',
+  prm = 'prm',
+  live_prm = 'live_prm',
+  winter_pk = 'winter_pk',
+  departement = 'departement',
+  date_consent = 'date_consent',
+  date_fin_consent = 'date_fin_consent',
+}
 
 @Injectable()
 export class LinkyServiceManager
   implements LiveServiceManager, AsyncServiceManager
 {
   constructor(
+    private readonly linkyConsentRepository: LinkyConsentRepository,
     private readonly serviceRepository: ServiceRepository,
     private readonly utilisateurRepository: UtilisateurRepository,
     private readonly departementRepository: DepartementRepository,
-    private readonly emailSender: EmailSender,
+    private readonly linkyEmailer: LinkyEmailer,
     private readonly linkyRepository: LinkyRepository,
+    private readonly linkyAPIConnector: LinkyAPIConnector,
   ) {}
   async computeLiveDynamicData(service: Service): Promise<ServiceDynamicData> {
-    const prm = service.configuration[PRM_CONF_KEY];
-    if (!this.isConfigured(service)) {
+    const prm = service.configuration[LINKY_CONF_KEY.prm];
+    if (this.isBadPRM(service)) {
+      return {
+        label: '⚠️ PRM incorrect, mettez le à jour !',
+        isInError: true,
+      };
+    }
+    if (!(await this.isConfigured(service))) {
       return {
         label: '🔌 configurez Linky',
         isInError: false,
       };
     }
-    if (this.isConfigured(service) && !this.isActivated(service)) {
-      return {
-        label: `🔌 Linky en cours d'activation...`,
-        isInError: false,
-      };
-    }
-    if (this.isActivated(service) && !this.isFullyRunning(service)) {
+    if (
+      (await this.isConfigured(service)) &&
+      !(await this.isActivated(service))
+    ) {
       return {
         label: '🔌 Vos données sont en chemin !',
         isInError: false,
       };
     }
-    const linky_data = await this.linkyRepository.getLinky(prm);
+    const linky_data = await this.linkyRepository.getByPRM(prm);
 
     if (!linky_data || linky_data.serie.length === 0) {
       return {
@@ -61,38 +75,76 @@ export class LinkyServiceManager
       };
     }
 
-    const last_value = linky_data.getLastRoundedValue();
-    const pourcent = linky_data.getLastVariation();
-    let couleur = pourcent <= 0 ? '🟢' : '🔴';
-    let plus = pourcent > 0 ? '+' : '';
+    const last_variation = linky_data.getLastVariation();
+    let couleur = last_variation.pourcent <= 0 ? `🟢` : '🔴';
+    let plus = last_variation.pourcent > 0 ? '+' : '';
     return {
-      label: `🔌 ${last_value} kWh ${couleur} ${plus}${pourcent}%`,
+      label: `${couleur} ${last_variation.day} ${plus}${last_variation.pourcent}%`,
       isInError: false,
     };
   }
 
-  isConfigured(service: Service) {
-    return !!service.configuration[PRM_CONF_KEY];
-  }
-  isActivated(service: Service) {
-    return !!service.configuration[LIVE_PRM_CONF_KEY];
-  }
-  isFullyRunning(service: Service) {
-    return !!service.configuration[SENT_DATA_EMAIL_CONF_KEY];
+  private isBadPRM(service: Service) {
+    return (
+      service.configuration[ServiceErrorKey.error_code] === '032' ||
+      service.configuration[ServiceErrorKey.error_code] === '039'
+    );
   }
 
-  processConfiguration(configuration: Object) {
-    configuration[DATE_CONSENT_KEY] = new Date();
+  async isConfigured(service: Service) {
+    return !!service.configuration[LINKY_CONF_KEY.prm];
+  }
+  async isActivated(service: Service) {
+    return !!service.configuration[LINKY_CONF_KEY.live_prm];
+  }
+  async isFullyRunning(service: Service) {
+    const empty = await this.linkyRepository.isPRMDataEmptyOrMissing(
+      service.configuration[LINKY_CONF_KEY.prm],
+    );
+    return !empty;
+  }
 
-    const current_year = new Date().getFullYear();
-    const end_date = new Date();
-    end_date.setFullYear(current_year + DUREE_CONSENT_ANNEES);
+  async processAndUpdateConfiguration(service: Service): Promise<void> {
+    Service.resetErrorState(service.configuration);
 
-    configuration[DATE_FIN_CONSENT_KEY] = end_date;
+    const utilisateur = await this.utilisateurRepository.getById(
+      service.utilisateurId,
+    );
+    const consent = this.createConsent(
+      utilisateur,
+      service.configuration[LINKY_CONF_KEY.prm],
+    );
+
+    service.configuration[LINKY_CONF_KEY.date_consent] =
+      consent.date_consentement;
+
+    service.configuration[LINKY_CONF_KEY.date_fin_consent] =
+      consent.date_fin_consentement;
+
+    await this.linkyConsentRepository.insert(consent);
+
+    await this.serviceRepository.updateServiceConfiguration(
+      service.utilisateurId,
+      service.serviceDefinitionId,
+      service.configuration,
+    );
+
+    const result = await this.runAsyncProcessing(service, true);
+
+    if (result.includes('error_code:032')) {
+      ApplicationError.throwUnknownPRM(
+        service.configuration[LINKY_CONF_KEY.prm],
+      );
+    }
+    if (result.includes('error_code:039')) {
+      ApplicationError.throwUnknownPRM_2(
+        service.configuration[LINKY_CONF_KEY.prm],
+      );
+    }
   }
 
   checkConfiguration(configuration: Object) {
-    const prm = configuration[PRM_CONF_KEY];
+    const prm = configuration[LINKY_CONF_KEY.prm];
     if (!prm) {
       ApplicationError.throwMissingPRM();
     }
@@ -102,75 +154,120 @@ export class LinkyServiceManager
     }
   }
 
-  async runAsyncProcessing(service: Service): Promise<string> {
-    const email_sent = await this.sendDataEmailIfNeeded(service);
+  async runAsyncProcessing(
+    service: Service,
+    disable_error_email?: boolean,
+  ): Promise<string> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      service.utilisateurId,
+    );
+
+    const email_sent = await this.sendDataEmailIfNeeded(service, utilisateur);
 
     try {
       switch (service.status) {
         case ServiceStatus.LIVE:
           return `ALREADY LIVE : ${service.serviceDefinitionId} - ${service.serviceId} | data_email:${email_sent}`;
         case ServiceStatus.CREATED:
-          return (await this.activateService(service)).concat(
+          return (await this.activateService(service, utilisateur)).concat(
             ` | data_email:${email_sent}`,
           );
         case ServiceStatus.TO_DELETE:
-          return (await this.removeService(service)).concat(
+          return (await this.removeService(service, utilisateur)).concat(
             ` | data_email:${email_sent}`,
           );
         default:
           return `UNKNOWN STATUS : ${service.serviceDefinitionId} - ${service.serviceId} - ${service.status} | data_email:${email_sent}`;
       }
     } catch (error) {
+      console.log(error);
+      if (error.code === '032' && !disable_error_email) {
+        await this.linkyEmailer.sendConfigurationKOEmail(utilisateur);
+      }
       return `ERROR ${
         service.status === ServiceStatus.CREATED ? 'CREATING' : 'DELETING'
-      }: ${service.serviceDefinitionId} - ${service.serviceId} : ${
+      }: ${service.serviceDefinitionId} - ${service.serviceId} : error_code:${
         error.code
       }/${error.message} | data_email:${email_sent}`;
     }
   }
 
-  private async removeService(service: Service): Promise<string> {
-    const winter_pk = service.configuration[WINTER_PK_KEY];
-    const prm = service.configuration[PRM_CONF_KEY];
+  async removeService(
+    service: Service,
+    utilisateur: Utilisateur,
+  ): Promise<string> {
+    const winter_pk = service.configuration[LINKY_CONF_KEY.winter_pk];
+    const prm = service.configuration[LINKY_CONF_KEY.prm];
+    const error_code = service.configuration[ServiceErrorKey.error_code];
 
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
-      service.utilisateurId,
-    );
+    if (error_code === '037') {
+      await this.linkyRepository.delete(prm);
+      await this.serviceRepository.removeServiceFromUtilisateurByServiceDefinitionId(
+        utilisateur.id,
+        service.serviceDefinitionId,
+      );
+      await this.deletePRM(prm, utilisateur.id, service.serviceDefinitionId);
+      return `ALREADY DELETED : ${service.serviceDefinitionId} - ${service.serviceId} prm = ${prm} winter_pk=${winter_pk}`;
+    } else {
+      try {
+        await this.linkyAPIConnector.deleteSouscription(winter_pk);
+        service.resetErrorState();
+      } catch (error) {
+        if (error.code === '037') {
+          await this.deletePRM(
+            prm,
+            utilisateur.id,
+            service.serviceDefinitionId,
+          );
+          return `ALREADY DELETED : ${service.serviceDefinitionId} - ${service.serviceId} prm = ${prm} winter_pk=${winter_pk}`;
+        } else {
+          service.addErrorCodeToConfiguration(error.code);
+          service.addErrorMessageToConfiguration(error.message);
+          await this.serviceRepository.updateServiceConfiguration(
+            utilisateur.id,
+            service.serviceDefinitionId,
+            service.configuration,
+          );
+          throw error;
+        }
+      }
+      await this.deletePRM(prm, utilisateur.id, service.serviceDefinitionId);
 
-    try {
-      await this.deleteSouscription(winter_pk);
-      service.resetErrorState();
-    } catch (error) {
-      service.addErrorCodeToConfiguration(error.code);
-      service.addErrorMessageToConfiguration(error.message);
-      throw error;
+      return `DELETED : ${service.serviceDefinitionId} - ${service.serviceId} - prm:${prm}`;
     }
-
-    await this.linkyRepository.deleteLinky(prm);
-
-    await this.serviceRepository.removeServiceFromUtilisateurByServiceDefinitionId(
-      utilisateur.id,
-      service.serviceDefinitionId,
-    );
-
-    return `DELETED : ${service.serviceDefinitionId} - ${service.serviceId} - prm:${prm}`;
   }
 
-  private async activateService(service: Service): Promise<string> {
-    const prm = service.configuration[PRM_CONF_KEY];
+  private async deletePRM(
+    prm: string,
+    utilisateurId: string,
+    serviceDefinitionId: string,
+  ): Promise<void> {
+    await this.linkyRepository.delete(prm);
+
+    await this.serviceRepository.removeServiceFromUtilisateurByServiceDefinitionId(
+      utilisateurId,
+      serviceDefinitionId,
+    );
+  }
+
+  async activateService(
+    service: Service,
+    utilisateur: Utilisateur,
+  ): Promise<string> {
+    const prm = service.configuration[LINKY_CONF_KEY.prm];
+    const error_code = service.configuration[ServiceErrorKey.error_code];
 
     if (!prm) {
       return `ERROR : ${service.serviceDefinitionId} - ${service.serviceId} : missing prm data`;
     }
+    if (error_code === '032') {
+      return `SKIP : ${service.serviceDefinitionId} - ${service.serviceId} prm = ${prm} : unkonwn prm`;
+    }
 
-    const utilisateur = await this.utilisateurRepository.findUtilisateurById(
-      service.utilisateurId,
-    );
-
-    if (service.configuration[LIVE_PRM_CONF_KEY]) {
+    if (service.configuration[LINKY_CONF_KEY.live_prm]) {
       if (
-        service.configuration[LIVE_PRM_CONF_KEY] ===
-        service.configuration[PRM_CONF_KEY]
+        service.configuration[LINKY_CONF_KEY.live_prm] ===
+        service.configuration[LINKY_CONF_KEY.prm]
       ) {
         await this.serviceRepository.updateServiceConfiguration(
           utilisateur.id,
@@ -185,21 +282,30 @@ export class LinkyServiceManager
 
     const code_departement =
       this.departementRepository.findDepartementByCodePostal(
-        utilisateur.code_postal,
+        utilisateur.logement.code_postal,
       );
 
     let winter_pk;
     try {
-      winter_pk = await this.souscription_API(prm, code_departement);
+      winter_pk = await this.linkyAPIConnector.souscription_API(
+        prm,
+        code_departement,
+      );
       service.resetErrorState();
     } catch (error) {
       service.addErrorCodeToConfiguration(error.code);
       service.addErrorMessageToConfiguration(error.message);
+      await this.serviceRepository.updateServiceConfiguration(
+        utilisateur.id,
+        service.serviceDefinitionId,
+        service.configuration,
+      );
       throw error;
     }
 
-    service.configuration[WINTER_PK_KEY] = winter_pk;
-    service.configuration[LIVE_PRM_CONF_KEY] = prm;
+    service.configuration[LINKY_CONF_KEY.winter_pk] = winter_pk;
+    service.configuration[LINKY_CONF_KEY.live_prm] = prm;
+    service.configuration[LINKY_CONF_KEY.departement] = code_departement;
 
     await this.serviceRepository.updateServiceConfiguration(
       utilisateur.id,
@@ -208,113 +314,45 @@ export class LinkyServiceManager
       ServiceStatus.LIVE,
     );
 
-    await this.sendConfigurationOKEmail(utilisateur);
+    await this.linkyRepository.upsertLinkyEntry(prm, winter_pk, utilisateur.id);
 
     return `INITIALISED : ${service.serviceDefinitionId} - ${service.serviceId} - prm:${prm}`;
   }
 
-  async souscription_API(
-    prm: string,
-    code_departement: string,
-  ): Promise<string> {
-    if (process.env.WINTER_API_ENABLED !== 'true') {
-      return 'fake_winter_pk';
-    }
-    let response;
-    const data = `{
-      "enedis_prm": "${prm}",
-      "department_number": "${code_departement}"
-    }`;
-    try {
-      response = await axios.post(process.env.WINTER_URL, data, {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-API-KEY': process.env.WINTER_API_KEY,
-        },
-      });
-    } catch (error) {
-      if (error.response) {
-        if (response.data) {
-          if (
-            response.data.enedis_prm &&
-            response.data.enedis_prm[0] === 'Invalid Enedis PRM'
-          ) {
-            // erreur fonctionnelle pas sensé se produire (pre contrôle du PRM à la conf)
-            ApplicationError.throwBadPRM(prm);
-          }
-          if (
-            response.data.error &&
-            response.data.error.message &&
-            response.data.error.message.includes('SGT401')
-          ) {
-            // PRM inconnu, saisie utilisateur sans doute avec une coquille
-            ApplicationError.throwUnknownPRM(prm);
-          }
-          if (response.data.error) {
-            // Erreur Enedis
-            ApplicationError.throwUnknownEnedisError(
-              prm,
-              response.data.error.code,
-              response.data.error.message,
-            );
-          }
-        }
-        ApplicationError.throwUnknownLinkyError(
-          prm,
-          JSON.stringify(error.response),
-        );
-      } else if (error.request) {
-        // erreur technique
-        ApplicationError.throwUnknownLinkyError(
-          prm,
-          JSON.stringify(error.request),
-        );
-      }
-      ApplicationError.throwUnknownLinkyError(prm, JSON.stringify(error));
-    }
-    return response.data.pk;
-  }
-  async deleteSouscription(winter_pk: string): Promise<void> {
-    if (process.env.WINTER_API_ENABLED !== 'true') {
-      return;
-    }
+  private createConsent(utilisateur: Utilisateur, prm: string): LinkyConsent {
+    const current_year = new Date().getFullYear();
+    const end_date = new Date();
+    end_date.setFullYear(current_year + DUREE_CONSENT_ANNEES);
 
-    try {
-      await axios.delete(process.env.WINTER_URL.concat(winter_pk, '/'), {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-API-KEY': process.env.WINTER_API_KEY,
-        },
-      });
-    } catch (error) {
-      if (error.response) {
-        ApplicationError.throwUnknownLinkyErrorWhenDelete(
-          winter_pk,
-          JSON.stringify(error.response.data),
-        );
-      } else if (error.request) {
-        ApplicationError.throwUnknownLinkyErrorWhenDelete(
-          winter_pk,
-          JSON.stringify(error.request),
-        );
-      }
-      ApplicationError.throwUnknownLinkyError(winter_pk, JSON.stringify(error));
-    }
+    return {
+      utilisateurId: utilisateur.id,
+      date_consentement: new Date(),
+      date_fin_consentement: end_date,
+      type_donnees: 'index quotidien, index corrigé météo',
+      mention_usage_donnees:
+        'Proposer aux utilisateurs un suivi quotidien de leur consommation électrique ainsi que des comparaisons de consommation sur des périodes de 2 ans et plus',
+      texte_signature: `Je déclare sur l'honneur être titulaire du point ou être mandaté par celui-ci et j'accepte que le service 'Agir' ait accès à mes données des 2 ans passés et pour les 3 ans à venir. Je peux changer d'avis à tout moment sur mon compte Enedis.`,
+      nom: utilisateur.nom,
+      prenom: utilisateur.prenom,
+      email: utilisateur.email,
+      prm: prm,
+    };
   }
 
-  private async sendDataEmailIfNeeded(service: Service): Promise<boolean> {
-    const sentDataEmail = service.configuration[SENT_DATA_EMAIL_CONF_KEY];
+  private async sendDataEmailIfNeeded(
+    service: Service,
+    utilisateur: Utilisateur,
+  ): Promise<boolean> {
+    const sentDataEmail = service.configuration[LINKY_CONF_KEY.sent_data_email];
     if (!sentDataEmail) {
-      const live_prm = service.configuration[LIVE_PRM_CONF_KEY];
+      const live_prm = service.configuration[LINKY_CONF_KEY.live_prm];
       if (live_prm) {
-        const utilisateur =
-          await this.utilisateurRepository.findUtilisateurById(
-            service.utilisateurId,
-          );
-        const linky_data = await this.linkyRepository.getLinky(live_prm);
-        if (linky_data && linky_data.serie.length > 0) {
-          await this.sendAvailableDataEmail(utilisateur);
-          service.configuration[SENT_DATA_EMAIL_CONF_KEY] = true;
+        const empty = await this.linkyRepository.isPRMDataEmptyOrMissing(
+          live_prm,
+        );
+        if (!empty) {
+          await this.linkyEmailer.sendAvailableDataEmail(utilisateur);
+          service.configuration[LINKY_CONF_KEY.sent_data_email] = true;
           await this.serviceRepository.updateServiceConfiguration(
             utilisateur.id,
             service.serviceDefinitionId,
@@ -325,36 +363,5 @@ export class LinkyServiceManager
       }
     }
     return false;
-  }
-
-  private async sendConfigurationOKEmail(utilisateur: Utilisateur) {
-    this.emailSender.sendEmail(
-      utilisateur.email,
-      utilisateur.prenom,
-      `Bonjour ${utilisateur.prenom},<br>
-Votre service linky est bien configuré !<br> 
-Encore un peu de patience et vos données de consommation seront disponibles.<br>
-Généralement dans les 24h qui viennent.<br><br>
-
-À très vite !`,
-      `Bravo, vous avez bien configuré le service Linky`,
-    );
-  }
-
-  private async sendAvailableDataEmail(utilisateur: Utilisateur) {
-    this.emailSender.sendEmail(
-      utilisateur.email,
-      utilisateur.prenom,
-      `Bonjour ${utilisateur.prenom},<br>
-Vous pouvez dès à présent :<br>
-- voir votre consommation électrique quotidienne<br>
-- consulter votre historique jusqu'à deux ans dès maintenant<br>
-- comparer d'une année à l'autre l'évolution de votre consommation<br><br>
-
-<a href="${process.env.BASE_URL_FRONT}/agir/service/linky">Votre tableau de bord personnel</a><br><br>
-
-À très vite !`,
-      `Votre suivi de consommation électrique est disponible !`,
-    );
   }
 }

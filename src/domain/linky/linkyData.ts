@@ -2,7 +2,8 @@ export class LinkyDataElement {
   time: Date;
   value: number;
   value_at_normal_temperature: number;
-  jour?: string;
+  jour_text?: string;
+  jour_val?: number;
   semaine?: string;
   mois?: string;
   annee?: string;
@@ -34,6 +35,8 @@ export class LinkyData {
   constructor(data?: LinkyData) {
     if (data) {
       this.prm = data.prm;
+      this.utilisateurId = data.utilisateurId;
+      this.winter_pk = data.winter_pk;
       this.serie = data.serie;
       this.serie.forEach((element) => {
         element.time = new Date(element.time);
@@ -44,14 +47,94 @@ export class LinkyData {
   }
   serie: LinkyDataElement[];
   prm: string;
+  utilisateurId?: string;
+  winter_pk?: string;
 
   public addDataElement?(element: LinkyDataElement) {
     this.serie.push(element);
   }
 
-  public compare2AnsParMois?(): LinkyDataElement[] {
+  public compare14joursEntre2ans?(): {
+    data: LinkyDataElement[];
+    commentaires: string[];
+  } {
+    if (this.serie.length === 0) {
+      return { data: [], commentaires: [] };
+    }
+    const last_element = this.getLastDataNotNull();
+    const last_element_date = new Date(last_element.time);
+    const last_element_date_minus14 = new Date(last_element_date);
+    last_element_date_minus14.setDate(last_element_date.getDate() - 13);
+
+    const last_element_date_minus_one_year = new Date(last_element_date);
+    last_element_date_minus_one_year.setFullYear(
+      last_element_date.getFullYear() - 1,
+    );
+
+    const last_element_date_minus14_minus_one_year = new Date(
+      last_element_date_minus14,
+    );
+    last_element_date_minus14_minus_one_year.setFullYear(
+      last_element_date.getFullYear() - 1,
+    );
+
+    let block = this.searchDays(last_element_date_minus14, last_element_date);
+
+    const block_last_year = this.searchDays(
+      last_element_date_minus14_minus_one_year,
+      last_element_date_minus_one_year,
+    );
+
+    // Re alignement des blocks
+    block = block.slice(block.length - block_last_year.length);
+
+    const result: LinkyDataElement[] = [];
+
+    // Entrelassage
+    block.forEach((elem, index) => {
+      result.push(block_last_year[index]);
+      result.push(elem);
+    });
+
+    result.forEach((elem) => {
+      elem.jour_text = LinkyData.formatJour(elem.time);
+      elem.mois = LinkyData.formatMois(elem.time);
+      elem.annee = LinkyData.formatAnnee(elem.time);
+      elem.jour_val = elem.time.getDate();
+    });
+
+    const somme_block = this.sommeElements(block);
+    const somme_block_last_year = this.sommeElements(block_last_year);
+
+    const variation = Math.round(
+      ((somme_block - somme_block_last_year) / somme_block_last_year) * 100,
+    );
+
+    const last_variation = this.getLastVariation();
+
+    return {
+      data: result,
+      commentaires: [
+        `Votre consommation a ${
+          last_variation.pourcent > 0
+            ? '<strong>augmenté de +'
+            : '<strong>diminué de '
+        }${last_variation.pourcent}%</strong> entre ${
+          last_variation.previous_day
+        } et ${last_variation.day} dernier`,
+        `Au cours des 2 dernières semaines, votre consommation éléctrique a <strong>${
+          variation > 0 ? 'augmenté de +' : 'diminué de '
+        }${variation}%</strong> par rapport à la même période l'année dernière`,
+      ],
+    };
+  }
+
+  public compare2AnsParMois?(): {
+    data: LinkyDataElement[];
+    commentaires: string[];
+  } {
     if (this.serie.length < 2) {
-      return [];
+      return { data: [], commentaires: [] };
     }
 
     const result = [];
@@ -60,24 +143,92 @@ export class LinkyData {
 
     const extract = this.extractLastNMonths(24, last_value.time);
 
+    let total_last_year = 0;
+    let total_this_year = 0;
+    let mois_frugal: string;
+    let annee_frugal: number;
+    let mois_frugal_val = 0;
+    let mois_frugal_val_percent = 0;
+    let mois_max: string;
+    let annee_max: number;
+    let mois_max_val = 0;
+    let mois_max_val_percent = 0;
+
     for (let index = 0; index < 12; index++) {
       const mois = extract[index];
+      total_last_year += mois.value;
+
       const mois_annee_suivante = extract[index + 12];
+      total_this_year += mois_annee_suivante.value;
+
+      if (
+        mois_annee_suivante.value - mois.value < mois_frugal_val &&
+        index < 11
+      ) {
+        mois_frugal_val = mois_annee_suivante.value - mois.value;
+        mois_frugal = LinkyData.formatMois(mois.time);
+        annee_frugal = mois_annee_suivante.time.getFullYear();
+        mois_frugal_val_percent = Math.round(
+          (Math.abs(mois_frugal_val) /
+            Math.max(mois_annee_suivante.value, mois.value)) *
+            100,
+        );
+      }
+      if (mois_annee_suivante.value - mois.value > mois_max_val && index < 11) {
+        mois_max_val = mois_annee_suivante.value - mois.value;
+        mois_max = LinkyData.formatMois(mois.time);
+        annee_max = mois_annee_suivante.time.getFullYear();
+        mois_max_val_percent = Math.round(
+          (Math.abs(mois_max_val) /
+            Math.min(mois_annee_suivante.value, mois.value)) *
+            100,
+        );
+      }
       result.push(mois);
       result.push(mois_annee_suivante);
     }
-    return result;
+
+    const variation = Math.round(
+      ((total_this_year - total_last_year) / total_last_year) * 100,
+    );
+
+    return {
+      data: result,
+      commentaires: [
+        `Au cours des 12 derniers mois, votre consommation éléctrique a <strong>${
+          variation > 0 ? 'augmenté de +' : 'diminué de -'
+        }${Math.abs(variation)}%</strong> par rapport aux 12 mois précédents`,
+        `C'est au mois de <strong>${mois_frugal} ${annee_frugal}</strong> que vous avez fait le <strong>plus d'économie d’électricité</strong> (<strong>-${mois_frugal_val_percent}%</strong> par rapport à ${mois_frugal} ${
+          annee_frugal - 1
+        })`,
+        `C'est au mois de <strong>${mois_max} ${annee_max}</strong> que votre consommation d’électricité a le plus augmenté (<strong>+${mois_max_val_percent}%</strong> par rapport à ${mois_max} ${
+          annee_max - 1
+        })</strong>`,
+      ],
+    };
   }
 
   public getLastRoundedValue?(): number {
     if (this.serie.length === 0) return null;
     return Math.round(this.serie[this.serie.length - 1].value * 1000) / 1000;
   }
-  public getLastVariation?(): number {
+
+  public getLastVariation?(): {
+    pourcent: number;
+    day: string;
+    previous_day: string;
+  } {
     if (this.serie.length < 2) return null;
-    const valN_2 = this.serie[this.serie.length - 2].value;
-    const valN_1 = this.serie[this.serie.length - 1].value;
-    return Math.floor(((valN_1 - valN_2) / valN_2) * 10000) / 100;
+
+    const last_day = this.serie[this.serie.length - 1];
+    const previous_day = this.serie[this.serie.length - 2];
+    const valN_2 = previous_day.value;
+    const valN_1 = last_day.value;
+    return {
+      pourcent: Math.floor(((valN_1 - valN_2) / valN_2) * 10000) / 100,
+      day: LinkyData.formatJour(last_day.time),
+      previous_day: LinkyData.formatJour(previous_day.time),
+    };
   }
 
   public extractLastNDays?(nombre: number): LinkyDataElement[] {
@@ -87,7 +238,7 @@ export class LinkyData {
         time: elem.time,
         value: elem.value,
         value_at_normal_temperature: elem.value_at_normal_temperature,
-        jour: LinkyData.formatJour(elem.time),
+        jour_text: LinkyData.formatJour(elem.time),
       };
       return new_data;
     });
@@ -145,7 +296,7 @@ export class LinkyData {
     start_date: Date,
   ): YearMonthLinkyData {
     const result = new YearMonthLinkyData();
-    let current_date = start_date;
+    let current_date = new Date(start_date);
 
     for (let index = 0; index < nombre; index++) {
       const current_year = current_date.getFullYear();
@@ -156,6 +307,14 @@ export class LinkyData {
       result.years.get(current_year).months.set(current_month, []);
       current_date.setDate(0);
     }
+    return result;
+  }
+
+  sommeElements?(list: LinkyDataElement[]): number {
+    let result = 0;
+    list.forEach((elem) => {
+      result += elem.value;
+    });
     return result;
   }
 
@@ -195,108 +354,6 @@ export class LinkyData {
         }
       }
     });
-  }
-
-  public dynamicCompareTwoYears?(): LinkyDataElement[] {
-    const last_date = this.getLastDataNotNull();
-    if (!last_date) return [];
-    const month = this.compareMonthDataTwoYears(last_date.time);
-    const week = this.compareWeekDataTwoYears(last_date.time);
-    const day = this.compareDayDataTwoYears();
-    return [].concat(month, week, day);
-  }
-
-  compareDayDataTwoYears?(): LinkyDataElement[] {
-    if (this.serie.length < 366) return [];
-
-    const last_element = this.getLastDataNotNull();
-    const last_day = new Date(last_element.time);
-    const last_day_previous_year = new Date(last_day);
-    last_day_previous_year.setFullYear(
-      last_day_previous_year.getFullYear() - 1,
-    );
-
-    const last_day_last_year_element = this.searchDays(
-      last_day_previous_year,
-      last_day_previous_year,
-    )[0];
-
-    last_element.jour = LinkyData.formatJour(last_element.time);
-    last_element.annee = LinkyData.formatAnnee(last_element.time);
-    last_day_last_year_element.jour = LinkyData.formatJour(
-      last_day_last_year_element.time,
-    );
-    last_day_last_year_element.annee = LinkyData.formatAnnee(
-      last_day_last_year_element.time,
-    );
-    return [last_day_last_year_element, last_element];
-  }
-  compareMonthDataTwoYears?(current_date: Date): LinkyDataElement[] {
-    if (this.serie.length < 425) return [];
-    const previous_month = new Date(current_date);
-    previous_month.setMonth(previous_month.getMonth() - 1);
-
-    const previous_month_previous_year = new Date(previous_month);
-    previous_month_previous_year.setFullYear(previous_month.getFullYear() - 1);
-
-    const last_month_data = this.extractLastNMonths(1, previous_month);
-    const last_year_month_data = this.extractLastNMonths(
-      1,
-      previous_month_previous_year,
-    );
-    return last_year_month_data.concat(last_month_data);
-  }
-
-  compareWeekDataTwoYears?(current_date: Date): LinkyDataElement[] {
-    if (this.serie.length < 380) return [];
-    const start_date = LinkyData.getPreviousWeekFirstDay(current_date);
-    const end_date = LinkyData.getPreviousWeekLastDay(current_date);
-    const currentYearDaysToCumulate = this.searchDays(start_date, end_date);
-
-    const current_year = current_date.getFullYear();
-
-    const previous_year_start_date = new Date(start_date);
-    previous_year_start_date.setFullYear(current_year - 1);
-
-    const previous_year_end_date = new Date(end_date);
-    previous_year_end_date.setFullYear(current_year - 1);
-
-    const previousYearDaysToCumulate = this.searchDays(
-      previous_year_start_date,
-      previous_year_end_date,
-    );
-
-    let previous_year_cumul = 0;
-    let previous_year_cumul_norm = 0;
-    let current_year_cumul = 0;
-    let current_year_cumul_norm = 0;
-
-    previousYearDaysToCumulate.forEach((element) => {
-      previous_year_cumul += element.value;
-      previous_year_cumul_norm += element.value_at_normal_temperature;
-    });
-    currentYearDaysToCumulate.forEach((element) => {
-      current_year_cumul += element.value;
-      current_year_cumul_norm += element.value_at_normal_temperature;
-    });
-
-    const week = LinkyData.getWeek(start_date).toString();
-    return [
-      {
-        time: previous_year_start_date,
-        value: previous_year_cumul,
-        value_at_normal_temperature: previous_year_cumul_norm,
-        semaine: week,
-        annee: previous_year_start_date.getFullYear().toString(),
-      },
-      {
-        time: start_date,
-        value: current_year_cumul,
-        value_at_normal_temperature: current_year_cumul_norm,
-        semaine: week,
-        annee: start_date.getFullYear().toString(),
-      },
-    ];
   }
 
   searchDays?(startDate: Date, endDate: Date): LinkyDataElement[] {
@@ -361,13 +418,14 @@ export class LinkyData {
     );
   }
 
-  private getLastDataNotNull?(): LinkyDataElement {
+  private getLastDataNotNull?(): LinkyDataElement | null {
     for (let index = this.serie.length - 1; index >= 0; index--) {
       const element = this.serie[index];
       if (element.value !== null) {
         return element;
       }
     }
+    return null;
   }
   private static formatJour?(date: Date): string {
     return new Intl.DateTimeFormat('fr-FR', { weekday: 'long' }).format(date);

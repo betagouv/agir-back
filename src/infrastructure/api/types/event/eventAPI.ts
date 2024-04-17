@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { EventType } from '../../../../../src/domain/utilisateur/utilisateurEvent';
+import { EventType } from '../../../../domain/appEvent';
 
 export class EventAPI {
   @ApiProperty({ required: true, enum: EventType }) type: EventType;

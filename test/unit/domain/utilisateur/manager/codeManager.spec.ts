@@ -1,8 +1,18 @@
 import { Utilisateur } from '../../../../../src/domain/utilisateur/utilisateur';
 import { CodeManager } from '../../../../../src/domain/utilisateur/manager/codeManager';
 import { UtilisateurSecurityRepository } from '../../../../../src/infrastructure/repository/utilisateur/utilisateurSecurity.repository';
-import { TestUtil } from '../../../../../test/TestUtil';
 
+const BASIC_USER_DATA = {
+  active_account: true,
+  failed_login_count: 0,
+  prevent_login_before: new Date(),
+  code: '123456',
+  code_generation_time: new Date(),
+  failed_checkcode_count: 0,
+  prevent_checkcode_before: new Date(),
+  sent_email_count: 0,
+  prevent_sendemail_before: new Date(),
+};
 const fakeSecurityRepository = new UtilisateurSecurityRepository({
   utilisateur: { update: jest.fn() },
 } as any);
@@ -12,7 +22,8 @@ const codeManager = new CodeManager(fakeSecurityRepository);
 describe('Objet CodeManager', () => {
   it('processInputCodeAndDoActionIfOK : no exception when not locked', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    let utilisateur = new Utilisateur();
+    utilisateur = { ...utilisateur, ...BASIC_USER_DATA };
     utilisateur.prevent_checkcode_before = new Date(
       new Date().getTime() - 10000,
     );
@@ -29,7 +40,8 @@ describe('Objet CodeManager', () => {
   });
   it('processInputCodeAndDoActionIfOK : appel l action si code OK', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    let utilisateur = new Utilisateur();
+    utilisateur = { ...utilisateur, ...BASIC_USER_DATA };
     utilisateur.prevent_checkcode_before = new Date(
       new Date().getTime() - 10000,
     );
@@ -47,7 +59,8 @@ describe('Objet CodeManager', () => {
   });
   it('processInputCodeAndDoActionIfOK : erreur car date de rejeu dans le futur', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    let utilisateur = new Utilisateur();
+    utilisateur = { ...utilisateur, ...BASIC_USER_DATA };
     utilisateur.prevent_checkcode_before = new Date(
       new Date().getTime() + 10000,
     );
@@ -70,7 +83,8 @@ describe('Objet CodeManager', () => {
 
   it('processInputCodeAndDoActionIfOK : code KO increase counter, does not call function', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    let utilisateur = new Utilisateur();
+    utilisateur = { ...utilisateur, ...BASIC_USER_DATA };
     utilisateur.code = '#1234567890HAHA';
     utilisateur.failed_checkcode_count = 0;
     const fonction = jest.fn();
@@ -90,7 +104,9 @@ describe('Objet CodeManager', () => {
   });
   it('processInputCodeAndDoActionIfOK : code expiré increase counter, does not call function', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    let utilisateur = new Utilisateur();
+    utilisateur = { ...utilisateur, ...BASIC_USER_DATA };
+
     utilisateur.code = '#1234567890HAHA';
     utilisateur.failed_checkcode_count = 0;
     utilisateur.code_generation_time = new Date(Date.now() - 11 * 60 * 1000);
@@ -111,7 +127,9 @@ describe('Objet CodeManager', () => {
   });
   it('processInputCodeAndDoActionIfOK : sets block date + 5 mins', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur({ ...TestUtil.utilisateurData() });
+    let utilisateur = new Utilisateur();
+    utilisateur = { ...utilisateur, ...BASIC_USER_DATA };
+
     utilisateur.code = '#1234567890HAHA';
     utilisateur.failed_checkcode_count = 3;
 
