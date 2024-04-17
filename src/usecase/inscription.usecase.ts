@@ -60,11 +60,20 @@ export class InscriptionUsecase {
     this.checkInputToCreateUtilisateur(utilisateurInput);
 
     if (process.env.WHITE_LIST_ENABLED === 'true') {
-      if (
-        !process.env.WHITE_LIST.toLowerCase().includes(
-          utilisateurInput.email.toLowerCase(),
-        )
-      ) {
+      let found = false;
+      found =
+        found ||
+        (process.env.WHITE_LIST &&
+          process.env.WHITE_LIST.toLowerCase().includes(
+            utilisateurInput.email.toLowerCase(),
+          ));
+      found =
+        found ||
+        (process.env.WHITE_LIST_DIJON &&
+          process.env.WHITE_LIST_DIJON.toLowerCase().includes(
+            utilisateurInput.email.toLowerCase(),
+          ));
+      if (!found) {
         ApplicationError.throwNotAuthorizedEmailError();
       }
     }
