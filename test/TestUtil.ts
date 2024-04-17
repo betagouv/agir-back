@@ -170,6 +170,7 @@ export class TestUtil {
     await this.prisma.quizz.deleteMany();
     await this.prisma.aide.deleteMany();
     await this.prisma.defi.deleteMany();
+    await this.prisma.linkyConsentement.deleteMany();
     ThematiqueRepository.resetThematiques();
   }
 

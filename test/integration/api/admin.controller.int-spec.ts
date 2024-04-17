@@ -480,7 +480,7 @@ describe('Admin (API test)', () => {
     const response = await TestUtil.POST('/services/refresh_dynamic_data');
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body).toHaveLength(0);
   });
   it('POST /services/clean_linky_data appel ok si aucune donnee linky', async () => {
@@ -491,8 +491,8 @@ describe('Admin (API test)', () => {
     const response = await TestUtil.POST('/services/clean_linky_data');
 
     // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual('Cleaned 0 PRMs');
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual({ result: 'Cleaned 0 PRMs' });
   });
   it('POST /services/clean_linky_data clean ok', async () => {
     // GIVEN
@@ -535,8 +535,8 @@ describe('Admin (API test)', () => {
     const response = await TestUtil.POST('/services/clean_linky_data');
 
     // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual('Cleaned 2 PRMs');
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual({ result: 'Cleaned 2 PRMs' });
     const linky_abc = await TestUtil.prisma.linky.findUnique({
       where: { prm: 'abc' },
     });
@@ -565,7 +565,7 @@ describe('Admin (API test)', () => {
     const response = await TestUtil.POST('/services/process_async_service');
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual('service-id');
   });
@@ -585,7 +585,7 @@ describe('Admin (API test)', () => {
     const response = await TestUtil.POST('/services/process_async_service');
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual(
       'ALREADY LIVE : linky - service-id | data_email:false',
@@ -616,7 +616,7 @@ describe('Admin (API test)', () => {
     const response = await TestUtil.POST('/services/process_async_service');
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body).toHaveLength(2);
   });
   it('POST /services/process_async_service appel ok, status inconnu', async () => {
@@ -635,7 +635,7 @@ describe('Admin (API test)', () => {
     const response = await TestUtil.POST('/services/process_async_service');
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual(
       'UNKNOWN STATUS : linky - service-id - blurp | data_email:false',
@@ -659,7 +659,7 @@ describe('Admin (API test)', () => {
     const response = await TestUtil.POST('/services/process_async_service');
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual(
       'ERROR : linky - service-id : missing prm data | data_email:false',
@@ -687,7 +687,7 @@ describe('Admin (API test)', () => {
     const serviceDB = await TestUtil.prisma.service.findUnique({
       where: { id: 'service-id' },
     });
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual(
       'INITIALISED : linky - service-id - prm:123 | data_email:false',
@@ -719,7 +719,7 @@ describe('Admin (API test)', () => {
     let serviceDB = await TestUtil.prisma.service.findUnique({
       where: { id: 'service-id' },
     });
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual(
       'INITIALISED : linky - service-id - prm:123 | data_email:false',
@@ -733,7 +733,7 @@ describe('Admin (API test)', () => {
     serviceDB = await TestUtil.prisma.service.findUnique({
       where: { id: 'service-id' },
     });
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual(
       'ALREADY LIVE : linky - service-id | data_email:false',
@@ -756,7 +756,7 @@ describe('Admin (API test)', () => {
     serviceDB = await TestUtil.prisma.service.findUnique({
       where: { id: 'service-id' },
     });
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual(
       'ALREADY LIVE : linky - service-id | data_email:true',
@@ -770,7 +770,7 @@ describe('Admin (API test)', () => {
     serviceDB = await TestUtil.prisma.service.findUnique({
       where: { id: 'service-id' },
     });
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual(
       'ALREADY LIVE : linky - service-id | data_email:false',
@@ -802,7 +802,7 @@ describe('Admin (API test)', () => {
     const linkyDB = await TestUtil.prisma.linky.findUnique({
       where: { prm: '123' },
     });
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual(
       'PREVIOUSLY LIVE : linky - service-id - prm:123 | data_email:false',
@@ -838,7 +838,7 @@ describe('Admin (API test)', () => {
     const linkyDB = await TestUtil.prisma.linky.findUnique({
       where: { prm: '123' },
     });
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual(
       'DELETED : linky - service-id - prm:123 | data_email:false',
@@ -861,7 +861,7 @@ describe('Admin (API test)', () => {
     // THEN
     const serviceDefDB = await TestUtil.prisma.serviceDefinition.findFirst();
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual('REFRESHED OK : dummy_scheduled');
     expect(serviceDefDB.dynamic_data['label']).toEqual('En construction 🚧');
@@ -886,7 +886,7 @@ describe('Admin (API test)', () => {
     // THEN
     const serviceDefDB = await TestUtil.prisma.serviceDefinition.findFirst();
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual('REFRESHED OK : dummy_scheduled');
     expect(serviceDefDB.dynamic_data['label']).toEqual('En construction 🚧');

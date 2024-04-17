@@ -86,6 +86,6 @@ export class LinkyController extends GenericControler {
     );
     const result = LinkyDataAPI.map(data.data.serie, data.commentaires);
 
-    res.status(HttpStatus.OK).json(result).send();
+    res.json(result).send();
   }
 }

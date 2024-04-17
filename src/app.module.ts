@@ -81,6 +81,7 @@ import { AideRepository } from './infrastructure/repository/aide.repository';
 import { DefisController } from './infrastructure/api/defis.controller';
 import { DefisUsecase } from './usecase/defis.usecase';
 import { DefiRepository } from './infrastructure/repository/defi.repository';
+import { LinkyConsentRepository } from './infrastructure/repository/linkyConsent.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -179,6 +180,7 @@ function getControllers(): any[] {
     AideRepository,
     DefiRepository,
     DefisUsecase,
+    LinkyConsentRepository,
   ],
 })
 export class AppModule {}

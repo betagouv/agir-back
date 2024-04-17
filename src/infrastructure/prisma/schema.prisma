@@ -74,6 +74,22 @@ model Utilisateur {
   force_connexion          Boolean            @default(false)
 }
 
+model LinkyConsentement {
+  id                    String   @id
+  utilisateurId         String
+  date_consentement     DateTime
+  date_fin_consentement DateTime
+  mention_usage_donnees String
+  type_donnees          String
+  texte_signature       String
+  nom                   String
+  prenom                String
+  email                 String
+  prm                   String
+  created_at            DateTime @default(now()) @db.Timestamptz(3)
+  updated_at            DateTime @updatedAt @db.Timestamptz(3)
+}
+
 model Aide {
   content_id     String   @id
   titre          String

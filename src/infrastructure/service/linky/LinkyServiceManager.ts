@@ -15,6 +15,8 @@ import { ApplicationError } from '../../../../src/infrastructure/applicationErro
 import { LinkyAPIConnector } from './LinkyAPIConnector';
 import { LinkyEmailer } from './LinkyEmailer';
 import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
+import { LinkyConsent } from '../../../../src/domain/linky/linkyConsent';
+import { LinkyConsentRepository } from '../../../../src/infrastructure/repository/linkyConsent.repository';
 
 const DUREE_CONSENT_ANNEES = 3;
 
@@ -33,6 +35,7 @@ export class LinkyServiceManager
   implements LiveServiceManager, AsyncServiceManager
 {
   constructor(
+    private readonly linkyConsentRepository: LinkyConsentRepository,
     private readonly serviceRepository: ServiceRepository,
     private readonly utilisateurRepository: UtilisateurRepository,
     private readonly departementRepository: DepartementRepository,
@@ -102,15 +105,23 @@ export class LinkyServiceManager
   }
 
   async processAndUpdateConfiguration(service: Service): Promise<void> {
-    service.configuration[LINKY_CONF_KEY.date_consent] = new Date();
-
-    const current_year = new Date().getFullYear();
-    const end_date = new Date();
-    end_date.setFullYear(current_year + DUREE_CONSENT_ANNEES);
-
-    service.configuration[LINKY_CONF_KEY.date_fin_consent] = end_date;
-
     Service.resetErrorState(service.configuration);
+
+    const utilisateur = await this.utilisateurRepository.getById(
+      service.utilisateurId,
+    );
+    const consent = this.createConsent(
+      utilisateur,
+      service.configuration[LINKY_CONF_KEY.prm],
+    );
+
+    service.configuration[LINKY_CONF_KEY.date_consent] =
+      consent.date_consentement;
+
+    service.configuration[LINKY_CONF_KEY.date_fin_consent] =
+      consent.date_fin_consentement;
+
+    await this.linkyConsentRepository.insert(consent);
 
     await this.serviceRepository.updateServiceConfiguration(
       service.utilisateurId,
@@ -306,6 +317,26 @@ export class LinkyServiceManager
     await this.linkyRepository.upsertLinkyEntry(prm, winter_pk, utilisateur.id);
 
     return `INITIALISED : ${service.serviceDefinitionId} - ${service.serviceId} - prm:${prm}`;
+  }
+
+  private createConsent(utilisateur: Utilisateur, prm: string): LinkyConsent {
+    const current_year = new Date().getFullYear();
+    const end_date = new Date();
+    end_date.setFullYear(current_year + DUREE_CONSENT_ANNEES);
+
+    return {
+      utilisateurId: utilisateur.id,
+      date_consentement: new Date(),
+      date_fin_consentement: end_date,
+      type_donnees: 'index quotidien, index corrigé météo',
+      mention_usage_donnees:
+        'Proposer aux utilisateurs un suivi quotidien de leur consommation électrique ainsi que des comparaisons de consommation sur des périodes de 2 ans et plus',
+      texte_signature: `Je déclare sur l'honneur être titulaire du point ou être mandaté par celui-ci et j'accepte que le service 'Agir' ait accès à mes données des 2 ans passés et pour les 3 ans à venir. Je peux changer d'avis à tout moment sur mon compte Enedis.`,
+      nom: utilisateur.nom,
+      prenom: utilisateur.prenom,
+      email: utilisateur.email,
+      prm: prm,
+    };
   }
 
   private async sendDataEmailIfNeeded(
