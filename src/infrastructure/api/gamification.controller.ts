@@ -17,11 +17,8 @@ import {
 } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
-import { Response } from 'express';
-import { ApplicationError } from '../applicationError';
 import { GamificationUsecase } from '../../../src/usecase/gamification.usecase';
 import { GamificationAPI } from './types/gamification/gamificationAPI';
-import { ControllerExceptionFilter } from './controllerException.filter';
 
 @Controller()
 @ApiBearerAuth()

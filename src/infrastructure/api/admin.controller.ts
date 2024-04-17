@@ -1,11 +1,5 @@
-import { Controller, Post, Res, HttpStatus, Request } from '@nestjs/common';
-import { Response } from 'express';
-import {
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Controller, Post, Request } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
 import { CMSUsecase } from '../../../src/usecase/cms.usecase';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
@@ -17,7 +11,6 @@ import { TodoUsecase } from '../../../src/usecase/todo.usecase';
 import { UtilisateurUsecase } from '../../../src/usecase/utilisateur.usecase';
 
 @Controller()
-@ApiBearerAuth()
 @ApiTags('Admin')
 export class AdminController extends GenericControler {
   constructor(
@@ -34,27 +27,25 @@ export class AdminController extends GenericControler {
 
   @Post('services/refresh_dynamic_data')
   @ApiOkResponse({ type: [String] })
-  async refreshServiceDynamicData(@Res() res: Response, @Request() req) {
+  async refreshServiceDynamicData(@Request() req) {
     this.checkCronAPIProtectedEndpoint(req);
-    const result = await this.serviceUsecase.refreshScheduledServices();
-    res.status(HttpStatus.OK).json(result).send();
+    return await this.serviceUsecase.refreshScheduledServices();
   }
 
   @Post('services/process_async_service')
   @ApiOkResponse({ type: [String] })
-  async processAsyncService(@Res() res: Response, @Request() req) {
+  async processAsyncService(@Request() req) {
     this.checkCronAPIProtectedEndpoint(req);
-    const result = await this.serviceUsecase.processAsyncServices();
-    res.status(HttpStatus.OK).json(result).send();
+    return await this.serviceUsecase.processAsyncServices();
   }
 
   @Post('services/clean_linky_data')
-  @ApiOkResponse({ type: [String] })
-  async cleanLinkyData(@Res() res: Response, @Request() req) {
+  @ApiOkResponse({ type: Object })
+  async cleanLinkyData(@Request() req): Promise<object> {
     this.checkCronAPIProtectedEndpoint(req);
     const result = await this.linkyUsecase.cleanLinkyData();
 
-    res.status(HttpStatus.OK).json(`Cleaned ${result} PRMs`).send();
+    return { result: `Cleaned ${result} PRMs` };
   }
 
   @Post('/admin/load_articles_from_cms')
