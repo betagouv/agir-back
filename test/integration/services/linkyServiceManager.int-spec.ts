@@ -21,6 +21,7 @@ import {
   Chauffage,
   DPE,
 } from '../../../src/domain/logement/logement';
+import { LinkyConsentRepository } from '../../../src/infrastructure/repository/linkyConsent.repository';
 
 const logement: Logement_v0 = {
   version: 0,
@@ -64,6 +65,7 @@ const SERVICE_DATA = {
 };
 
 describe('linkyServiceManager', () => {
+  let linkyConsentRepository = new LinkyConsentRepository(TestUtil.prisma);
   let serviceRepository = new ServiceRepository(TestUtil.prisma);
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   let departementRepository = new DepartementRepository();
@@ -79,6 +81,7 @@ describe('linkyServiceManager', () => {
   let linkyRepository = new LinkyRepository(TestUtil.prisma);
 
   let linkyServiceManager = new LinkyServiceManager(
+    linkyConsentRepository,
     serviceRepository,
     utilisateurRepository,
     departementRepository,
@@ -124,8 +127,6 @@ describe('linkyServiceManager', () => {
   });
   it('computeLiveDynamicData : PRM invalide 039', async () => {
     // GIVEN
-    const serviceDefData = TestUtil.serviceDefinitionData();
-    const serviceData = TestUtil.serviceData();
 
     const service = new Service({
       ...SERVICE_DEF_DATA,
@@ -142,8 +143,6 @@ describe('linkyServiceManager', () => {
   });
   it('computeLiveDynamicData : prm manquant', async () => {
     // GIVEN
-    const serviceDefData = TestUtil.serviceDefinitionData();
-    const serviceData = TestUtil.serviceData();
 
     const service = new Service({
       ...SERVICE_DEF_DATA,
@@ -159,8 +158,6 @@ describe('linkyServiceManager', () => {
   });
   it('computeLiveDynamicData : prm présent mais pas live', async () => {
     // GIVEN
-    const serviceDefData = TestUtil.serviceDefinitionData();
-    const serviceData = TestUtil.serviceData();
 
     const service = new Service({
       ...SERVICE_DEF_DATA,
@@ -176,8 +173,6 @@ describe('linkyServiceManager', () => {
   });
   it('computeLiveDynamicData : prm présent et live', async () => {
     // GIVEN
-    const serviceDefData = TestUtil.serviceDefinitionData();
-    const serviceData = TestUtil.serviceData();
 
     const service = new Service({
       ...SERVICE_DEF_DATA,
@@ -193,8 +188,6 @@ describe('linkyServiceManager', () => {
   });
   it('computeLiveDynamicData : prm présent, live, et premieres données dispo', async () => {
     // GIVEN
-    const serviceDefData = TestUtil.serviceDefinitionData();
-    const serviceData = TestUtil.serviceData();
 
     await TestUtil.create(DB.linky, { prm: '12345678901234' });
 
@@ -217,7 +210,7 @@ describe('linkyServiceManager', () => {
     const def = { id: LiveService.linky };
     const serviceDef = {
       serviceDefinitionId: LiveService.linky,
-      configuration: {},
+      configuration: { prm: '123' },
       status: ServiceStatus.CREATED,
     };
     await TestUtil.create(DB.serviceDefinition, def);
@@ -236,6 +229,8 @@ describe('linkyServiceManager', () => {
       'linky',
     );
 
+    const consentDB = await TestUtil.prisma.linkyConsentement.findMany();
+
     expect(
       new Date(service.configuration['date_consent']).getTime(),
     ).toBeGreaterThan(Date.now() - 100);
@@ -248,6 +243,28 @@ describe('linkyServiceManager', () => {
     expect(
       new Date(service.configuration['date_fin_consent']).getTime(),
     ).toBeLessThan(Date.now() + 1000 * 60 * 60 * 24 * 1100);
+
+    expect(consentDB).toHaveLength(1);
+    expect(consentDB[0].date_consentement).toEqual(
+      new Date(service.configuration['date_consent']),
+    );
+    expect(consentDB[0].date_fin_consentement).toEqual(
+      new Date(service.configuration['date_fin_consent']),
+    );
+    expect(consentDB[0].email).toEqual('yo@truc.com');
+    expect(consentDB[0].nom).toEqual('nom');
+    expect(consentDB[0].prenom).toEqual('prenom');
+    expect(consentDB[0].utilisateurId).toEqual('utilisateur-id');
+    expect(consentDB[0].prm).toEqual('123');
+    expect(consentDB[0].mention_usage_donnees).toEqual(
+      'Proposer aux utilisateurs un suivi quotidien de leur consommation électrique ainsi que des comparaisons de consommation sur des périodes de 2 ans et plus',
+    );
+    expect(consentDB[0].texte_signature).toEqual(
+      `Je déclare sur l'honneur être titulaire du point ou être mandaté par celui-ci et j'accepte que le service 'Agir' ait accès à mes données des 2 ans passés et pour les 3 ans à venir. Je peux changer d'avis à tout moment sur mon compte Enedis.`,
+    );
+    expect(consentDB[0].type_donnees).toEqual(
+      'index quotidien, index corrigé météo',
+    );
   });
   it(`processConfiguration : supprime l'état en erreur d'une conf précédentee`, async () => {
     // GIVEN
