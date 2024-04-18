@@ -71,6 +71,11 @@ export class DefiHistory {
     this.getFromCatalogueOrException(questionId);
   }
 
+  public getNombreDefisRealises() {
+    return this.defis.filter((defi) => defi.getStatus() === DefiStatus.fait)
+      .length;
+  }
+
   private getDefiUtilisateur(id: string): Defi {
     return this.defis.find((element) => element.id === id);
   }

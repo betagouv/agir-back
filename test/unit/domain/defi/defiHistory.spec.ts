@@ -145,4 +145,38 @@ describe('DefiHistory', () => {
     expect(en_cours).toHaveLength(1);
     expect(en_cours[0].id).toEqual('2');
   });
+
+  it('getNombreDefisRealises', () => {
+    // GIVEN
+    const defiHistory = new DefiHistory({
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '1',
+          status: DefiStatus.fait,
+        },
+        {
+          ...DEFI_1,
+          id: '2',
+          status: DefiStatus.en_cours,
+        },
+        {
+          ...DEFI_1,
+          id: '3',
+          status: DefiStatus.deja_fait,
+        },
+        {
+          ...DEFI_1,
+          id: '4',
+          status: DefiStatus.fait,
+        },
+      ],
+    });
+
+    // WHEN
+    const nombreDefisRealises = defiHistory.getNombreDefisRealises();
+    // THEN
+    expect(nombreDefisRealises).toStrictEqual(2);
+  });
 });

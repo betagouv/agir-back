@@ -84,6 +84,8 @@ import { DefisController } from './infrastructure/api/defis.controller';
 import { DefisUsecase } from './usecase/defis.usecase';
 import { DefiRepository } from './infrastructure/repository/defi.repository';
 import { LinkyConsentRepository } from './infrastructure/repository/linkyConsent.repository';
+import { StatistiqueUsecase } from './usecase/statistique.usecase';
+import { StatistiqueRepository } from './infrastructure/repository/statitstique.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -185,6 +187,8 @@ function getControllers(): any[] {
     DefiRepository,
     DefisUsecase,
     LinkyConsentRepository,
+    StatistiqueUsecase,
+    StatistiqueRepository,
   ],
 })
 export class AppModule {}

@@ -1038,4 +1038,26 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
   });
+
+  it("POST /admin/statistique - calcul des statistiques de l'ensemble des utilisateurs", async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur, { id: 'test-id-1' });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-2',
+      email: 'user-email@toto.fr',
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/statistique');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(2);
+    expect(response.body).toEqual(['test-id-1', 'test-id-2']);
+
+    const nombreDeLignesTableStatistique =
+      await TestUtil.prisma.statistique.findMany();
+    expect(nombreDeLignesTableStatistique).toHaveLength(2);
+  });
 });

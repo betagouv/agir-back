@@ -10,6 +10,7 @@ import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
 import { TodoUsecase } from '../../../src/usecase/todo.usecase';
 import { ContactUsecase } from '../../usecase/contact.usecase';
 import { UtilisateurUsecase } from '../../../src/usecase/utilisateur.usecase';
+import { StatistiqueUsecase } from '../../../src/usecase/statistique.usecase';
 
 @Controller()
 @ApiTags('Admin')
@@ -23,6 +24,7 @@ export class AdminController extends GenericControler {
     private referentielUsecase: ReferentielUsecase,
     private todoUsecase: TodoUsecase,
     private contactUsecase: ContactUsecase,
+    private statistiqueUsecase: StatistiqueUsecase,
   ) {
     super();
   }
@@ -173,5 +175,14 @@ export class AdminController extends GenericControler {
   async compute_reco_tags(@Request() req): Promise<void> {
     this.checkCronAPIProtectedEndpoint(req);
     await this.utilisateurUsecase.computeAllUsersRecoTags();
+  }
+
+  @Post('/admin/statistique')
+  @ApiOperation({
+    summary: `Calcul des statistiques de l'ensemble des utilisateurs`,
+  })
+  async calcul_statistique(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.statistiqueUsecase.calculStatistique();
   }
 }
