@@ -527,6 +527,7 @@ export class TestUtil {
       transport: transport,
       tag_ponderation_set: {},
       force_connexion: false,
+      derniere_activite: null,
       ...override,
     };
   }

@@ -72,6 +72,7 @@ model Utilisateur {
   migration_enabled        Boolean            @default(false)
   tag_ponderation_set      Json               @default("{}")
   force_connexion          Boolean            @default(false)
+  derniere_activite        DateTime?
 }
 
 model Statistique {

@@ -41,6 +41,25 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.contenu).toHaveLength(0);
   });
+  it('GET /utilisateurs/id/bibliotheque - touche la stat de derniere activité', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { history: {} });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque',
+    );
+    // THEN
+    await new Promise((f) => setTimeout(f, 100));
+    const userDB = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(response.status).toBe(200);
+    expect(response.body.contenu).toHaveLength(0);
+    expect(userDB.derniere_activite.getTime()).toBeGreaterThan(
+      Date.now() - 200,
+    );
+  });
   it('GET /utilisateurs/id/bibliotheque - ne renvoie pas un article non lu', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { history: {} });

@@ -7,7 +7,7 @@ export class StatistiqueRepository {
 
   async upsertStatistiquesDUnUtilisateur(
     utilisateurId: string,
-    nombreDefisRealises: number,
+    nombreDefisRealises?: number,
   ) {
     await this.prisma.statistique.upsert({
       where: { utilisateurId },

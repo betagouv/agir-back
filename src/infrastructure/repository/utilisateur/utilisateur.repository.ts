@@ -192,6 +192,44 @@ export class UtilisateurRepository {
     return Number(count);
   }
 
+  async update_last_activite(utilisateurId: string) {
+    return this.prisma.utilisateur.updateMany({
+      where: { id: utilisateurId },
+      data: {
+        derniere_activite: new Date(),
+      },
+    });
+  }
+
+  async findLastActiveUtilisateurs(
+    limit: number,
+    offset: number,
+    date: Date,
+  ): Promise<Utilisateur[]> {
+    const utilisateurs = await this.prisma.utilisateur.findMany({
+      take: limit | 1,
+      skip: offset | 0,
+      where: {
+        active_account: true,
+        updated_at: { gte: date },
+      },
+      orderBy: {
+        updated_at: 'desc',
+      },
+    });
+    return utilisateurs.map((elem) => this.buildUtilisateurFromDB(elem));
+  }
+
+  async countActiveUsersWithRecentActivity(date: Date): Promise<number> {
+    const count = await this.prisma.utilisateur.count({
+      where: {
+        active_account: true,
+        updated_at: { gte: date },
+      },
+    });
+    return Number(count);
+  }
+
   private buildUtilisateurFromDB(user: UtilisateurDB): Utilisateur {
     if (user) {
       const unlocked_features = new UnlockedFeatures(
@@ -271,6 +309,7 @@ export class UtilisateurRepository {
         tag_ponderation_set: user.tag_ponderation_set as any,
         defi_history: defis,
         force_connexion: user.force_connexion,
+        derniere_activite: user.derniere_activite,
       });
     }
     return null;
@@ -345,37 +384,9 @@ export class UtilisateurRepository {
         SerialisableDomain.DefiHistory,
       ),
       force_connexion: user.force_connexion,
+      derniere_activite: user.derniere_activite,
       created_at: undefined,
       updated_at: undefined,
     };
-  }
-
-  async findLastActiveUtilisateurs(
-    limit: number,
-    offset: number,
-    date: Date,
-  ): Promise<Utilisateur[]> {
-    const utilisateurs = await this.prisma.utilisateur.findMany({
-      take: limit | 1,
-      skip: offset | 0,
-      where: {
-        active_account: true,
-        updated_at: { gte: date },
-      },
-      orderBy: {
-        updated_at: 'desc',
-      },
-    });
-    return utilisateurs.map((elem) => this.buildUtilisateurFromDB(elem));
-  }
-
-  async countActiveUsersWithRecentActivity(date: Date): Promise<number> {
-    const count = await this.prisma.utilisateur.count({
-      where: {
-        active_account: true,
-        updated_at: { gte: date },
-      },
-    });
-    return Number(count);
   }
 }
