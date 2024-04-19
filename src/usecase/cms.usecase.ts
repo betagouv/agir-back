@@ -388,10 +388,10 @@ export class CMSUsecase {
         ? Math.round(parseFloat(entry.attributes.montantMaximum))
         : null,
       url_simulateur: entry.attributes.url_detail_front,
-      besoin: entry.attributes.besoin.data
+      besoin: entry.attributes.besoin
         ? Besoin[entry.attributes.besoin.data.attributes.code]
         : null,
-      besoin_desc: entry.attributes.besoin.data
+      besoin_desc: entry.attributes.besoin
         ? entry.attributes.besoin.data.attributes.description
         : null,
     };
