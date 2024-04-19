@@ -207,7 +207,7 @@ export class CMSUsecase {
     const URL = process.env.CMS_URL.concat(
       '/',
       type,
-      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags',
+      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin',
     );
     response = await axios.get(URL, {
       headers: {
@@ -370,6 +370,7 @@ export class CMSUsecase {
     };
   }
   static buildAideFromCMSPopulateData(entry: CMSWebhookPopulateAPI): Aide {
+    console.log(entry);
     return {
       content_id: entry.id.toString(),
       titre: entry.attributes.titre,
@@ -388,10 +389,10 @@ export class CMSUsecase {
         ? Math.round(parseFloat(entry.attributes.montantMaximum))
         : null,
       url_simulateur: entry.attributes.url_detail_front,
-      besoin: entry.attributes.besoin
+      besoin: entry.attributes.besoin.data
         ? Besoin[entry.attributes.besoin.data.attributes.code]
         : null,
-      besoin_desc: entry.attributes.besoin
+      besoin_desc: entry.attributes.besoin.data
         ? entry.attributes.besoin.data.attributes.description
         : null,
     };
