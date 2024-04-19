@@ -9,7 +9,6 @@ export class StatistiqueUsecase {
     private statistiqueRepository: StatistiqueRepository,
   ) {}
 
-  async trace_date_action() {}
   async calculStatistique(): Promise<string[]> {
     const listeUtilisateursIds =
       await this.utilisateurRepository.listUtilisateurIds();

@@ -84,6 +84,13 @@ model Statistique {
   updated_at              DateTime @updatedAt @db.Timestamptz(3)
 }
 
+model ArticleStatistique {
+  articleId  String   @id
+  rating     Decimal?
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt @db.Timestamptz(3)
+}
+
 model LinkyConsentement {
   id                    String   @id
   utilisateurId         String

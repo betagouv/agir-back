@@ -1048,4 +1048,84 @@ describe('Admin (API test)', () => {
       await TestUtil.prisma.statistique.findMany();
     expect(nombreDeLignesTableStatistique).toHaveLength(2);
   });
+
+  it("POST /admin/article-statistique - calcul des statistiques de l'ensemble des articles", async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-1',
+      history: {
+        version: 0,
+        article_interactions: [
+          {
+            content_id: 'article-id-1',
+            read_date: new Date(),
+            like_level: 3,
+            points_en_poche: false,
+            favoris: false,
+          },
+        ],
+      },
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-2',
+      email: 'user-email@toto.fr',
+      history: {
+        version: 0,
+        article_interactions: [
+          {
+            content_id: 'article-id-1',
+            read_date: new Date(),
+            like_level: 4,
+            points_en_poche: false,
+            favoris: false,
+          },
+          {
+            content_id: 'article-id-2',
+            read_date: new Date(),
+            like_level: 2,
+            points_en_poche: false,
+            favoris: false,
+          },
+          {
+            content_id: 'article-id-3',
+            read_date: new Date(),
+            like_level: undefined,
+            points_en_poche: false,
+            favoris: false,
+          },
+        ],
+        quizz_interactions: [],
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/article-statistique');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(3);
+    expect(response.body).toEqual([
+      'article-id-1',
+      'article-id-2',
+      'article-id-3',
+    ]);
+
+    const nombreDeLignesTableStatistique =
+      await TestUtil.prisma.articleStatistique.findMany();
+    const ratingArticle1 = await TestUtil.prisma.articleStatistique.findUnique({
+      where: { articleId: 'article-id-1' },
+    });
+    const ratingArticle2 = await TestUtil.prisma.articleStatistique.findUnique({
+      where: { articleId: 'article-id-2' },
+    });
+    const ratingArticle3 = await TestUtil.prisma.articleStatistique.findUnique({
+      where: { articleId: 'article-id-3' },
+    });
+
+    expect(nombreDeLignesTableStatistique).toHaveLength(3);
+    expect(ratingArticle1.rating.toString()).toBe('3.5');
+    expect(ratingArticle2.rating.toString()).toBe('2');
+    expect(ratingArticle3.rating).toBeNull();
+  });
 });
