@@ -1,4 +1,5 @@
 import { Thematique } from '../contenu/thematique';
+import { Besoin } from './besoin';
 
 export class Aide {
   constructor(data: Aide) {
@@ -12,4 +13,6 @@ export class Aide {
   codes_postaux: string[];
   thematiques: Thematique[];
   montant_max: number;
+  besoin: Besoin;
+  besoin_desc: string;
 }

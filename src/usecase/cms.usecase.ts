@@ -19,6 +19,7 @@ import { AideRepository } from '../../src/infrastructure/repository/aide.reposit
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { DefiDefinition } from '../../src/domain/defis/defiDefinition';
 import { TagUtilisateur } from '../../src/domain/scoring/tagUtilisateur';
+import { Besoin } from '../../src/domain/aides/besoin';
 
 @Injectable()
 export class CMSUsecase {
@@ -301,6 +302,8 @@ export class CMSUsecase {
         ? Math.round(parseFloat(entry.montantMaximum))
         : null,
       url_simulateur: entry.url_detail_front,
+      besoin: entry.besoin ? Besoin[entry.besoin.code] : null,
+      besoin_desc: entry.besoin ? entry.besoin.description : null,
     };
   }
 
@@ -385,6 +388,12 @@ export class CMSUsecase {
         ? Math.round(parseFloat(entry.attributes.montantMaximum))
         : null,
       url_simulateur: entry.attributes.url_detail_front,
+      besoin: entry.attributes.besoin.data
+        ? Besoin[entry.attributes.besoin.data.attributes.code]
+        : null,
+      besoin_desc: entry.attributes.besoin.data
+        ? entry.attributes.besoin.data.attributes.description
+        : null,
     };
   }
   static buildDefiFromCMSPopulateData(

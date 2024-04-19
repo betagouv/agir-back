@@ -62,6 +62,7 @@ import { Transport_v0 } from '../src/domain/object_store/transport/transport_v0'
 import { DefiHistory_v0 } from '../src/domain/object_store/defi/defiHistory_v0';
 import { DefiStatus } from '../src/domain/defis/defi';
 import { TagUtilisateur } from '../src/domain/scoring/tagUtilisateur';
+import { Besoin } from '../src/domain/aides/besoin';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -309,6 +310,8 @@ export class TestUtil {
       url_simulateur: '/aides/velo',
       created_at: undefined,
       updated_at: undefined,
+      besoin: Besoin.acheter_velo,
+      besoin_desc: 'Acheter un vélo',
       ...override,
     };
   }

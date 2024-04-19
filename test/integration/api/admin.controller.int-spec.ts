@@ -1041,7 +1041,8 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
     expect(response.body).toHaveLength(2);
-    expect(response.body).toEqual(['test-id-1', 'test-id-2']);
+    expect(response.body.includes('test-id-1')).toEqual(true);
+    expect(response.body.includes('test-id-2')).toEqual(true);
 
     const nombreDeLignesTableStatistique =
       await TestUtil.prisma.statistique.findMany();

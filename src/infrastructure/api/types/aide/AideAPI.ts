@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
 import { Aide } from '../../../../../src/domain/aides/aide';
 import { Thematique } from '../../../../../src/domain/contenu/thematique';
+import { Besoin } from '../../../../../src/domain/aides/besoin';
 
 export class AideAPI {
   @ApiProperty() content_id: string;
@@ -15,6 +16,8 @@ export class AideAPI {
   @ApiProperty({ type: [String] })
   thematiques_label: string[];
   @ApiProperty() montant_max: number;
+  @ApiProperty() besoin: Besoin;
+  @ApiProperty() besoin_desc: string;
 
   public static mapToAPI(aide: Aide): AideAPI {
     return {
@@ -29,6 +32,8 @@ export class AideAPI {
         ThematiqueRepository.getLibelleThematique(elem),
       ),
       montant_max: aide.montant_max,
+      besoin_desc: aide.besoin_desc,
+      besoin: aide.besoin,
     };
   }
 }
