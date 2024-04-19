@@ -213,4 +213,38 @@ describe('DefiHistory', () => {
     // THEN
     expect(nombreDefisRealises).toStrictEqual(2);
   });
+
+  it('getNombreDefisDejaFait : donne le nombre de défis déjà fait', () => {
+    // GIVEN
+    const defiHistory = new DefiHistory({
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '1',
+          status: DefiStatus.abondon,
+        },
+        {
+          ...DEFI_1,
+          id: '2',
+          status: DefiStatus.en_cours,
+        },
+        {
+          ...DEFI_1,
+          id: '3',
+          status: DefiStatus.deja_fait,
+        },
+        {
+          ...DEFI_1,
+          id: '4',
+          status: DefiStatus.abondon,
+        },
+      ],
+    });
+
+    // WHEN
+    const nombreDefisRealises = defiHistory.getNombreDefisDejaFait();
+    // THEN
+    expect(nombreDefisRealises).toStrictEqual(1);
+  });
 });

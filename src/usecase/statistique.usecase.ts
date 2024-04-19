@@ -9,9 +9,7 @@ export class StatistiqueUsecase {
     private statistiqueRepository: StatistiqueRepository,
   ) {}
 
-  async trace_date_action() {
-    
-  }
+  async trace_date_action() {}
   async calculStatistique(): Promise<string[]> {
     const listeUtilisateursIds =
       await this.utilisateurRepository.listUtilisateurIds();
@@ -28,10 +26,14 @@ export class StatistiqueUsecase {
       const nombreDefisAbandonnesParUtilisateur =
         user.defi_history.getNombreDefisAbandonnes();
 
+      const nombreDefisDejaFaitParUtilisateur =
+        user.defi_history.getNombreDefisDejaFait();
+
       await this.statistiqueRepository.upsertStatistiquesDUnUtilisateur(
         user.id,
         nombreDefisRealisesParUtilisateur,
         nombreDefisAbandonnesParUtilisateur,
+        nombreDefisDejaFaitParUtilisateur,
       );
       resultat.push(user.id);
     }

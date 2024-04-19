@@ -27,6 +27,7 @@ describe('StatistiqueRepository', () => {
       'idUtilisateur',
       3,
       2,
+      1,
     );
 
     // THEN
@@ -35,5 +36,6 @@ describe('StatistiqueRepository', () => {
     });
     expect(statistique.nombre_defis_realises).toEqual(3);
     expect(statistique.nombre_defis_abandonnes).toEqual(2);
+    expect(statistique.nombre_defis_deja_fait).toEqual(1);
   });
 });
