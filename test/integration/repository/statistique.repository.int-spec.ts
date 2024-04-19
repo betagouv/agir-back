@@ -26,6 +26,7 @@ describe('StatistiqueRepository', () => {
     await statistiqueRepository.upsertStatistiquesDUnUtilisateur(
       'idUtilisateur',
       3,
+      2,
     );
 
     // THEN
@@ -33,5 +34,6 @@ describe('StatistiqueRepository', () => {
       where: { utilisateurId: 'idUtilisateur' },
     });
     expect(statistique.nombre_defis_realises).toEqual(3);
+    expect(statistique.nombre_defis_abandonnes).toEqual(2);
   });
 });

@@ -24,9 +24,14 @@ export class StatistiqueUsecase {
       );
       const nombreDefisRealisesParUtilisateur =
         user.defi_history.getNombreDefisRealises();
+
+      const nombreDefisAbandonnesParUtilisateur =
+        user.defi_history.getNombreDefisAbandonnes();
+
       await this.statistiqueRepository.upsertStatistiquesDUnUtilisateur(
         user.id,
         nombreDefisRealisesParUtilisateur,
+        nombreDefisAbandonnesParUtilisateur,
       );
       resultat.push(user.id);
     }

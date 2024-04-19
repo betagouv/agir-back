@@ -7,16 +7,19 @@ export class StatistiqueRepository {
 
   async upsertStatistiquesDUnUtilisateur(
     utilisateurId: string,
-    nombreDefisRealises?: number,
+    nombreDefisRealises: number,
+    nombreDefisAbandonnes: number,
   ) {
     await this.prisma.statistique.upsert({
       where: { utilisateurId },
       create: {
         utilisateurId,
         nombre_defis_realises: nombreDefisRealises,
+        nombre_defis_abandonnes: nombreDefisAbandonnes,
       },
       update: {
         nombre_defis_realises: nombreDefisRealises,
+        nombre_defis_abandonnes: nombreDefisAbandonnes,
       },
     });
   }

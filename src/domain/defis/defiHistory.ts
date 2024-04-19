@@ -76,6 +76,11 @@ export class DefiHistory {
       .length;
   }
 
+  public getNombreDefisAbandonnes() {
+    return this.defis.filter((defi) => defi.getStatus() === DefiStatus.abondon)
+      .length;
+  }
+
   private getDefiUtilisateur(id: string): Defi {
     return this.defis.find((element) => element.id === id);
   }
