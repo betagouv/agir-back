@@ -40,7 +40,11 @@ export class ContactSynchro {
       });
       console.log(response.data);
     } catch (error) {
-      console.error(error);
+      if (error.response) {
+        console.log(error.response.data);
+      } else {
+        console.error(error);
+      }
     }
   }
 

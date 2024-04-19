@@ -162,42 +162,6 @@ export class AdminController extends GenericControler {
     return await this.contactUsecase.batchUpdate();
   }
 
-  // TEMP : to delete
-  @Post('admin/contacts/:utilisateurId/update')
-  @ApiOperation({
-    summary: 'Update un utilisateur unique',
-  })
-  async SynchronizeUser(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-  ) {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.contactUsecase.update(utilisateurId);
-  }
-
-  // TEMP : to delete
-  @Post('admin/contacts/:utilisateurId/create')
-  @ApiOperation({
-    summary: 'Crée utilisateur',
-  })
-  async createUser(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-  ) {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.contactUsecase.createById(utilisateurId);
-  }
-
-  // TEMP : to delete
-  @Post('admin/contacts/:email/delete')
-  @ApiOperation({
-    summary: 'Supprime utilisateur',
-  })
-  async deleteUser(@Request() req, @Param('email') email: string) {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.contactUsecase.delete(email);
-  }
-
   @Post('/admin/compute_reco_tags')
   @ApiOperation({
     summary: `recalcule les valorisations de tags de reco pour tous les utilisateurs`,

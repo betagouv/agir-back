@@ -31,20 +31,12 @@ export class ContactUsecase {
     }
     return result;
   }
-  async update(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
-    this.contactSynchro.BatchUpdateContacts([utilisateur]);
-  }
 
   async delete(email: string): Promise<boolean> {
     return await this.contactSynchro.deleteContact(email);
   }
 
   async create(utilisateur: Utilisateur): Promise<boolean> {
-    return await this.contactSynchro.createContact(utilisateur);
-  }
-  async createById(utilisateurId: string): Promise<boolean> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     return await this.contactSynchro.createContact(utilisateur);
   }
 }
