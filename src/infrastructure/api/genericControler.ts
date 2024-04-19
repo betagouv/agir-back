@@ -24,7 +24,9 @@ export class GenericControler {
       });
     }
     // Asynchronous
-    this.utilisateurRepository.update_last_activite(utilisateurId);
+    this.utilisateurRepository
+      .update_last_activite(utilisateurId)
+      .catch(() => {});
   }
 
   checkCallerIsAdmin(req: Request) {

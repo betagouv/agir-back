@@ -193,7 +193,7 @@ export class UtilisateurRepository {
   }
 
   async update_last_activite(utilisateurId: string) {
-    return this.prisma.utilisateur.updateMany({
+    return this.prisma.utilisateur.update({
       where: { id: utilisateurId },
       data: {
         derniere_activite: new Date(),
