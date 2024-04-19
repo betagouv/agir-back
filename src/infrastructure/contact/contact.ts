@@ -8,7 +8,7 @@ export class Contact {
   email: string;
   ext_id?: string;
   emailBlacklisted?: boolean;
-  smtpBlacklistSender?: boolean;
+  smtpBlacklistSender?: [];
   smsBlacklisted?: boolean;
   listIds?: number[];
   unlinkListIds?: number[];
@@ -21,7 +21,7 @@ export class Contact {
     this.email = data.email;
     this.ext_id = data.id;
     this.emailBlacklisted = false;
-    this.smtpBlacklistSender = false;
+    this.smtpBlacklistSender = [];
     this.smsBlacklisted = false;
   }
 }

@@ -25,4 +25,7 @@ export class App {
   public static getAdminIdsStringList() {
     return process.env.ADMIN_IDS || '';
   }
+  public static isMailEnabled() {
+    return process.env.EMAIL_ENABLED === 'true';
+  }
 }

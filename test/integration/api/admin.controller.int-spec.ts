@@ -1025,14 +1025,14 @@ describe('Admin (API test)', () => {
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual('utilisateur-id');
   });
-  it('POST /admin/contacts/id/synchronize - synchro user unique', async () => {
+  it('POST /admin/contacts/id/update - synchro user unique', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.POST(
-      '/admin/contacts/utilisateur-id/synchronize',
+      '/admin/contacts/utilisateur-id/update',
     );
 
     // THEN

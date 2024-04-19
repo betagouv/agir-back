@@ -1,5 +1,10 @@
 import { Controller, Param, Post, Request } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
 import { CMSUsecase } from '../../../src/usecase/cms.usecase';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
@@ -14,6 +19,7 @@ import { StatistiqueUsecase } from '../../../src/usecase/statistique.usecase';
 
 @Controller()
 @ApiTags('Admin')
+@ApiBearerAuth()
 export class AdminController extends GenericControler {
   constructor(
     private migrationUsecase: MigrationUsecase,
@@ -156,9 +162,10 @@ export class AdminController extends GenericControler {
     return await this.contactUsecase.batchUpdate();
   }
 
-  @Post('admin/contacts/:utilisateurId/synchronize')
+  // TEMP : to delete
+  @Post('admin/contacts/:utilisateurId/update')
   @ApiOperation({
-    summary: 'Synchronise un utilisateur unique',
+    summary: 'Update un utilisateur unique',
   })
   async SynchronizeUser(
     @Request() req,
@@ -166,6 +173,29 @@ export class AdminController extends GenericControler {
   ) {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.contactUsecase.update(utilisateurId);
+  }
+
+  // TEMP : to delete
+  @Post('admin/contacts/:utilisateurId/create')
+  @ApiOperation({
+    summary: 'Crée utilisateur',
+  })
+  async createUser(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ) {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.contactUsecase.createById(utilisateurId);
+  }
+
+  // TEMP : to delete
+  @Post('admin/contacts/:email/delete')
+  @ApiOperation({
+    summary: 'Supprime utilisateur',
+  })
+  async deleteUser(@Request() req, @Param('email') email: string) {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.contactUsecase.delete(email);
   }
 
   @Post('/admin/compute_reco_tags')
