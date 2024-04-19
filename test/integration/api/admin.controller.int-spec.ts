@@ -1062,7 +1062,7 @@ describe('Admin (API test)', () => {
             read_date: new Date(),
             like_level: 3,
             points_en_poche: false,
-            favoris: false,
+            favoris: true,
           },
         ],
       },
@@ -1078,14 +1078,14 @@ describe('Admin (API test)', () => {
             read_date: new Date(),
             like_level: 4,
             points_en_poche: false,
-            favoris: false,
+            favoris: true,
           },
           {
             content_id: 'article-id-2',
             read_date: new Date(),
             like_level: 2,
             points_en_poche: false,
-            favoris: false,
+            favoris: true,
           },
           {
             content_id: 'article-id-3',
@@ -1124,8 +1124,13 @@ describe('Admin (API test)', () => {
     });
 
     expect(nombreDeLignesTableStatistique).toHaveLength(3);
+
     expect(ratingArticle1.rating.toString()).toBe('3.5');
     expect(ratingArticle2.rating.toString()).toBe('2');
     expect(ratingArticle3.rating).toBeNull();
+
+    expect(ratingArticle1.nombre_de_mise_en_favoris).toBe(2);
+    expect(ratingArticle2.nombre_de_mise_en_favoris).toBe(1);
+    expect(ratingArticle3.nombre_de_mise_en_favoris).toBe(0);
   });
 });

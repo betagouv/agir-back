@@ -28,10 +28,12 @@ describe('ArticleStatistiqueRepository', () => {
     await articlestatistiqueRepository.upsertStatistiquesDUnArticle(
       'idArticle',
       3.7,
+      2,
     );
     await articlestatistiqueRepository.upsertStatistiquesDUnArticle(
       'idArticle2',
       null,
+      0,
     );
 
     // THEN
@@ -46,5 +48,7 @@ describe('ArticleStatistiqueRepository', () => {
 
     expect(statistiqueArticleAvecRating.rating.toString()).toEqual('3.7');
     expect(statistiqueArticleSansRating.rating).toBeNull();
+    expect(statistiqueArticleAvecRating.nombre_de_mise_en_favoris).toEqual(2);
+    expect(statistiqueArticleSansRating.nombre_de_mise_en_favoris).toEqual(0);
   });
 });

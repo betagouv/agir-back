@@ -29,6 +29,7 @@ export class ArticleStatistiqueUsecase {
       await this.articleStatistiqueRepository.upsertStatistiquesDUnArticle(
         key,
         value.count ? value.sum / value.count : null,
+        value.nombreMiseEnFavoris,
       );
     }
 
@@ -41,6 +42,7 @@ export class ArticleStatistiqueUsecase {
     {
       id: string;
       rating: number;
+      favoris: boolean;
     }[]
   > {
     const tousLesArticlesConsultesParUtilisateur = [];
@@ -53,6 +55,7 @@ export class ArticleStatistiqueUsecase {
         tousLesArticlesConsultesParUtilisateur.push({
           id: article.content_id,
           rating: article.like_level,
+          favoris: article.favoris,
         });
       });
     }
@@ -60,8 +63,11 @@ export class ArticleStatistiqueUsecase {
   }
 
   private calculListeDArticleRegroupeParId(
-    articles: { id: string; rating: number }[],
-  ): Record<string, { sum: number; count: number }> {
+    articles: { id: string; rating: number; favoris: boolean }[],
+  ): Record<
+    string,
+    { sum: number; count: number; nombreMiseEnFavoris: number }
+  > {
     const articlesCacluclesEtRegroupes = {};
 
     articles.forEach((article) => {
@@ -72,12 +78,23 @@ export class ArticleStatistiqueUsecase {
               Number(articlesCacluclesEtRegroupes[article.id].sum) +
               article.rating,
             count: articlesCacluclesEtRegroupes[article.id].count + 1,
+            nombreMiseEnFavoris:
+              articlesCacluclesEtRegroupes[article.id].nombreMiseEnFavoris,
+          };
+        }
+        if (article.favoris) {
+          articlesCacluclesEtRegroupes[article.id] = {
+            sum: articlesCacluclesEtRegroupes[article.id].sum,
+            count: articlesCacluclesEtRegroupes[article.id].count,
+            nombreMiseEnFavoris:
+              articlesCacluclesEtRegroupes[article.id].nombreMiseEnFavoris + 1,
           };
         }
       } else {
         articlesCacluclesEtRegroupes[article.id] = {
           sum: article.rating ? article.rating : null,
           count: article.rating ? 1 : null,
+          nombreMiseEnFavoris: article.favoris ? 1 : 0,
         };
       }
     });
