@@ -7,6 +7,7 @@ export class ArticleStatistiqueRepository {
 
   async upsertStatistiquesDUnArticle(
     articleId: string,
+    titre: string,
     rating: number,
     nombreDeMiseEnFavoris: number,
   ) {
@@ -14,6 +15,7 @@ export class ArticleStatistiqueRepository {
       where: { articleId },
       create: {
         articleId,
+        titre,
         rating,
         nombre_de_mise_en_favoris: nombreDeMiseEnFavoris,
       },

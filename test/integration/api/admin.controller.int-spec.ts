@@ -1052,6 +1052,18 @@ describe('Admin (API test)', () => {
   it("POST /admin/article-statistique - calcul des statistiques de l'ensemble des articles", async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.article, {
+      content_id: 'article-id-1',
+      titre: 'Titre de mon article 1',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: 'article-id-2',
+      titre: 'Titre de mon article 2',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: 'article-id-3',
+      titre: 'Titre de mon article 3',
+    });
     await TestUtil.create(DB.utilisateur, {
       id: 'test-id-1',
       history: {
@@ -1113,24 +1125,28 @@ describe('Admin (API test)', () => {
 
     const nombreDeLignesTableStatistique =
       await TestUtil.prisma.articleStatistique.findMany();
-    const ratingArticle1 = await TestUtil.prisma.articleStatistique.findUnique({
+    const article1 = await TestUtil.prisma.articleStatistique.findUnique({
       where: { articleId: 'article-id-1' },
     });
-    const ratingArticle2 = await TestUtil.prisma.articleStatistique.findUnique({
+    const article2 = await TestUtil.prisma.articleStatistique.findUnique({
       where: { articleId: 'article-id-2' },
     });
-    const ratingArticle3 = await TestUtil.prisma.articleStatistique.findUnique({
+    const article3 = await TestUtil.prisma.articleStatistique.findUnique({
       where: { articleId: 'article-id-3' },
     });
 
     expect(nombreDeLignesTableStatistique).toHaveLength(3);
 
-    expect(ratingArticle1.rating.toString()).toBe('3.5');
-    expect(ratingArticle2.rating.toString()).toBe('2');
-    expect(ratingArticle3.rating).toBeNull();
+    expect(article1.rating.toString()).toBe('3.5');
+    expect(article2.rating.toString()).toBe('2');
+    expect(article3.rating).toBeNull();
 
-    expect(ratingArticle1.nombre_de_mise_en_favoris).toBe(2);
-    expect(ratingArticle2.nombre_de_mise_en_favoris).toBe(1);
-    expect(ratingArticle3.nombre_de_mise_en_favoris).toBe(0);
+    expect(article1.nombre_de_mise_en_favoris).toBe(2);
+    expect(article2.nombre_de_mise_en_favoris).toBe(1);
+    expect(article3.nombre_de_mise_en_favoris).toBe(0);
+
+    expect(article1.titre).toBe('Titre de mon article 1');
+    expect(article2.titre).toBe('Titre de mon article 2');
+    expect(article3.titre).toBe('Titre de mon article 3');
   });
 });

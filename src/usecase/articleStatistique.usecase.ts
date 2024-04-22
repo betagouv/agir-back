@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ArticleStatistiqueRepository } from '../../src/infrastructure/repository/articleStatistique.repository';
 
 @Injectable()
 export class ArticleStatistiqueUsecase {
   constructor(
+    private articleRepository: ArticleRepository,
     private utilisateurRepository: UtilisateurRepository,
     private articleStatistiqueRepository: ArticleStatistiqueRepository,
   ) {}
@@ -26,8 +28,12 @@ export class ArticleStatistiqueUsecase {
     for (const [key, value] of Object.entries(
       listeDArticlesCalculesEtRegroupesParId,
     )) {
+      const titreDeLArticle =
+        await this.articleRepository.getArticleByContentId(key);
+
       await this.articleStatistiqueRepository.upsertStatistiquesDUnArticle(
         key,
+        titreDeLArticle.titre,
         value.count ? value.sum / value.count : null,
         value.nombreMiseEnFavoris,
       );

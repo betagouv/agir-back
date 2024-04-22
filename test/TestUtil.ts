@@ -78,6 +78,7 @@ export enum DB {
   serviceDefinition = 'serviceDefinition',
   thematique = 'thematique',
   linky = 'linky',
+  article = 'article',
 }
 export class TestUtil {
   private static TYPE_DATA_MAP: Record<DB, Function> = {
@@ -94,6 +95,7 @@ export class TestUtil {
     serviceDefinition: TestUtil.serviceDefinitionData,
     thematique: TestUtil.thematiqueData,
     linky: TestUtil.linkyData,
+    article: TestUtil.articleData,
   };
 
   constructor() {}
@@ -606,6 +608,30 @@ export class TestUtil {
           value_at_normal_temperature: 120,
         },
       ],
+      ...override,
+    };
+  }
+
+  static articleData(override?): Article {
+    return {
+      content_id: 'contentId',
+      titre: 'Titre de mon article',
+      soustitre: 'Sous titre de mon article',
+      source: undefined,
+      image_url: undefined,
+      partenaire: undefined,
+      tags_utilisateur: [],
+      rubrique_ids: [],
+      rubrique_labels: [],
+      codes_postaux: [],
+      duree: undefined,
+      frequence: undefined,
+      difficulty: 1,
+      points: 10,
+      thematiques: ['logement'],
+      thematique_principale: 'logement',
+      created_at: new Date(),
+      updated_at: new Date(),
       ...override,
     };
   }
