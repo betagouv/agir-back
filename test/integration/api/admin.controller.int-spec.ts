@@ -1157,6 +1157,10 @@ describe('Admin (API test)', () => {
     expect(article2.rating.toString()).toBe('2');
     expect(article3.rating).toBeNull();
 
+    expect(article1.nombre_de_rating).toBe(3);
+    expect(article2.nombre_de_rating).toBe(1);
+    expect(article3.rating).toBeNull();
+
     expect(article1.nombre_de_mise_en_favoris).toBe(2);
     expect(article2.nombre_de_mise_en_favoris).toBe(1);
     expect(article3.nombre_de_mise_en_favoris).toBe(0);

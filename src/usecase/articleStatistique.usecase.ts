@@ -29,6 +29,7 @@ export class ArticleStatistiqueUsecase {
         value.compteurDesNotes
           ? value.totalDesNotes / value.compteurDesNotes
           : null,
+        value.compteurDesNotes,
         value.nombreMiseEnFavoris,
       );
     }

@@ -9,6 +9,7 @@ export class ArticleStatistiqueRepository {
     articleId: string,
     titre: string,
     rating: number,
+    nombreDeRating: number,
     nombreDeMiseEnFavoris: number,
   ) {
     await this.prisma.articleStatistique.upsert({
@@ -17,10 +18,12 @@ export class ArticleStatistiqueRepository {
         articleId,
         titre,
         rating,
+        nombre_de_rating: nombreDeRating,
         nombre_de_mise_en_favoris: nombreDeMiseEnFavoris,
       },
       update: {
         rating,
+        nombre_de_rating: nombreDeRating,
         nombre_de_mise_en_favoris: nombreDeMiseEnFavoris,
       },
     });
