@@ -249,6 +249,7 @@ export class TestUtil {
       ...override,
     };
   }
+  // FIX: HARMONISER AVEC ARTICLE DATA
   static async create_article(override?: Partial<Article>) {
     await this.prisma.article.create({
       data: TestUtil.getArticleData(override),
