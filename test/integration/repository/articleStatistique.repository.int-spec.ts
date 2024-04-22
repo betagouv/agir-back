@@ -28,7 +28,7 @@ describe('ArticleStatistiqueRepository', () => {
     await articlestatistiqueRepository.upsertStatistiquesDUnArticle(
       'idArticle',
       'Titre article 1',
-      3.7,
+      3.777,
       2,
     );
     await articlestatistiqueRepository.upsertStatistiquesDUnArticle(
@@ -48,7 +48,7 @@ describe('ArticleStatistiqueRepository', () => {
         where: { articleId: 'idArticle2' },
       });
 
-    expect(statistiqueArticleAvecRating.rating.toString()).toEqual('3.7');
+    expect(statistiqueArticleAvecRating.rating.toString()).toEqual('3.8');
     expect(statistiqueArticleSansRating.rating).toBeNull();
     expect(statistiqueArticleAvecRating.titre).toEqual('Titre article 1');
     expect(statistiqueArticleSansRating.titre).toEqual('Titre article 2');

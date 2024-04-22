@@ -87,7 +87,7 @@ model Statistique {
 model ArticleStatistique {
   articleId                 String   @id
   titre                     String
-  rating                    Decimal?
+  rating                    Decimal? @db.Decimal(2, 1)
   nombre_de_mise_en_favoris Int?
   created_at                DateTime @default(now()) @db.Timestamptz(3)
   updated_at                DateTime @updatedAt @db.Timestamptz(3)

@@ -1110,6 +1110,22 @@ describe('Admin (API test)', () => {
         quizz_interactions: [],
       },
     });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-3',
+      email: 'user-email@titi.fr',
+      history: {
+        version: 0,
+        article_interactions: [
+          {
+            content_id: 'article-id-1',
+            read_date: new Date(),
+            like_level: 3,
+            points_en_poche: false,
+            favoris: false,
+          },
+        ],
+      },
+    });
 
     // WHEN
     const response = await TestUtil.POST('/admin/article-statistique');
@@ -1137,7 +1153,7 @@ describe('Admin (API test)', () => {
 
     expect(nombreDeLignesTableStatistique).toHaveLength(3);
 
-    expect(article1.rating.toString()).toBe('3.5');
+    expect(article1.rating.toString()).toBe('3.3');
     expect(article2.rating.toString()).toBe('2');
     expect(article3.rating).toBeNull();
 
