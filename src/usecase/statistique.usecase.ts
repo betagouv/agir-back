@@ -19,6 +19,9 @@ export class StatistiqueUsecase {
       const user = await this.utilisateurRepository.getById(
         listeUtilisateursIds[index],
       );
+
+      const nombreDefisEnCours = user.defi_history.getNombreDefisEnCours();
+
       const nombreDefisRealisesParUtilisateur =
         user.defi_history.getNombreDefisRealises();
 
@@ -30,6 +33,7 @@ export class StatistiqueUsecase {
 
       await this.statistiqueRepository.upsertStatistiquesDUnUtilisateur(
         user.id,
+        nombreDefisEnCours,
         nombreDefisRealisesParUtilisateur,
         nombreDefisAbandonnesParUtilisateur,
         nombreDefisDejaFaitParUtilisateur,

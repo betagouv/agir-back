@@ -7,6 +7,7 @@ export class StatistiqueRepository {
 
   async upsertStatistiquesDUnUtilisateur(
     utilisateurId: string,
+    nombreDefisEnCours: number,
     nombreDefisRealises: number,
     nombreDefisAbandonnes: number,
     nombreDefisDejaFaitParUtilisateur: number,
@@ -15,11 +16,13 @@ export class StatistiqueRepository {
       where: { utilisateurId },
       create: {
         utilisateurId,
+        nombre_defis_en_cours: nombreDefisEnCours,
         nombre_defis_realises: nombreDefisRealises,
         nombre_defis_abandonnes: nombreDefisAbandonnes,
         nombre_defis_deja_fait: nombreDefisDejaFaitParUtilisateur,
       },
       update: {
+        nombre_defis_en_cours: nombreDefisEnCours,
         nombre_defis_realises: nombreDefisRealises,
         nombre_defis_abandonnes: nombreDefisAbandonnes,
         nombre_defis_deja_fait: nombreDefisDejaFaitParUtilisateur,

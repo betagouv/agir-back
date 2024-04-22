@@ -87,6 +87,11 @@ export class DefiHistory {
     ).length;
   }
 
+  public getNombreDefisEnCours() {
+    return this.defis.filter((defi) => defi.getStatus() === DefiStatus.en_cours)
+      .length;
+  }
+
   private getDefiUtilisateur(id: string): Defi {
     return this.defis.find((element) => element.id === id);
   }

@@ -25,6 +25,7 @@ describe('StatistiqueRepository', () => {
     // WHEN
     await statistiqueRepository.upsertStatistiquesDUnUtilisateur(
       'idUtilisateur',
+      2,
       3,
       2,
       1,
@@ -34,6 +35,7 @@ describe('StatistiqueRepository', () => {
     const statistique = await TestUtil.prisma.statistique.findUnique({
       where: { utilisateurId: 'idUtilisateur' },
     });
+    expect(statistique.nombre_defis_en_cours).toEqual(2);
     expect(statistique.nombre_defis_realises).toEqual(3);
     expect(statistique.nombre_defis_abandonnes).toEqual(2);
     expect(statistique.nombre_defis_deja_fait).toEqual(1);
