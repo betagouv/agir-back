@@ -10,6 +10,8 @@ import { CodeManager } from '../domain/utilisateur/manager/codeManager';
 import { OidcService } from '../infrastructure/auth/oidc.service';
 import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
 import { ApplicationError } from '../infrastructure/applicationError';
+import { ContactUsecase } from './contact.usecase';
+import { App } from '../../src/domain/app';
 
 export type Phrase = {
   phrase: string;
@@ -22,6 +24,7 @@ export class InscriptionUsecase {
     private utilisateurRespository: UtilisateurRepository,
     private emailSender: EmailSender,
     private codeManager: CodeManager,
+    private contactUsecase: ContactUsecase,
     private oidcService: OidcService,
     private securityEmailManager: SecurityEmailManager,
   ) {}
@@ -37,11 +40,12 @@ export class InscriptionUsecase {
     if (utilisateur.active_account) {
       ApplicationError.throwCompteDejaActifError();
     }
-
     const _this = this;
-    const codeOkAction = async function () {
+
+    const codeOkAction = async () => {
       await _this.securityEmailManager.resetEmailSendingState(utilisateur);
       await _this.utilisateurRespository.activateAccount(utilisateur.id);
+      await _this.contactUsecase.create(utilisateur);
 
       const token = await _this.oidcService.createNewInnerAppToken(
         utilisateur.id,
@@ -59,20 +63,10 @@ export class InscriptionUsecase {
   async createUtilisateur(utilisateurInput: CreateUtilisateurAPI) {
     this.checkInputToCreateUtilisateur(utilisateurInput);
 
-    if (process.env.WHITE_LIST_ENABLED === 'true') {
+    if (App.isWhiteListeEnabled()) {
       let found = false;
-      found =
-        found ||
-        (process.env.WHITE_LIST &&
-          process.env.WHITE_LIST.toLowerCase().includes(
-            utilisateurInput.email.toLowerCase(),
-          ));
-      found =
-        found ||
-        (process.env.WHITE_LIST_DIJON &&
-          process.env.WHITE_LIST_DIJON.toLowerCase().includes(
-            utilisateurInput.email.toLowerCase(),
-          ));
+      found = found || App.doesWhiteListIncludes(utilisateurInput.email);
+      found = found || App.doesWhiteListDijonIncludes(utilisateurInput.email);
       if (!found) {
         ApplicationError.throwNotAuthorizedEmailError();
       }
@@ -113,8 +107,8 @@ export class InscriptionUsecase {
       utilisateur.code,
       utilisateur.code_generation_time,
     );
-
     const _this = this;
+
     const okAction = async function () {
       _this.sendValidationCode(utilisateur);
     };
@@ -155,7 +149,9 @@ Voici votre code pour valider votre inscription à l'application Agir !<br><br>
     
 code : ${utilisateur.code}<br><br>
 
-Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="${process.env.BASE_URL_FRONT}/validation-compte?email=${utilisateur.email}">Page pour rentrer le code</a><br><br>
+Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="${App.getBaseURLFront()}/validation-compte?email=${
+        utilisateur.email
+      }">Page pour rentrer le code</a><br><br>
     
 À très vite !`,
       `Votre code d'inscription Agir`,

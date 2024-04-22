@@ -177,7 +177,7 @@ export class Utilisateur extends UtilisateurData {
   }
 
   public isAdmin?(): boolean {
-    return App.getAdminIdsStringList().includes(this.id);
+    return App.isAdmin(this.id);
   }
 
   public increaseTagValue?(tag: Tag, value: number) {

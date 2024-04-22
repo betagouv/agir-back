@@ -7,15 +7,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { App } from '../../../../src/domain/app';
 import { CMSUsecase } from '../../../usecase/cms.usecase';
 import { CMSWebhookAPI } from '../types/cms/CMSWebhookAPI';
 
 @Controller()
 @ApiTags('Incoming Data')
 export class CMSController {
-  constructor(
-    private readonly interactionsDefinitionUsecase: CMSUsecase,
-  ) {}
+  constructor(private readonly interactionsDefinitionUsecase: CMSUsecase) {}
   @ApiBody({
     schema: {
       type: 'object',
@@ -30,7 +29,7 @@ export class CMSController {
     if (!authorization) {
       throw new UnauthorizedException('API KEY webhook CMS manquante');
     }
-    if (!authorization.endsWith(process.env.CMS_WEBHOOK_API_KEY)) {
+    if (!authorization.endsWith(App.getCMSWebhookAPIKey())) {
       throw new ForbiddenException('API KEY webhook CMS incorrecte');
     }
     console.log(JSON.stringify(body));

@@ -19,6 +19,7 @@ import { ServiceRepository } from '../../src/infrastructure/repository/service.r
 import { GroupeRepository } from '../../src/infrastructure/repository/groupe.repository';
 import { ContactUsecase } from './contact.usecase';
 import { KYCID } from '../../src/domain/kyc/questionQYC';
+import { App } from '../../src/domain/app';
 
 export type Phrase = {
   phrase: string;
@@ -264,7 +265,9 @@ Voici votre code pour pouvoir modifier votre mot de passe de l'application Agir 
     
 code : ${utilisateur.code}<br><br>
 
-Si vous n'avez plus la page ouverte pour saisir le code et modifier le mot de passe, ici le lien : <a href="${process.env.BASE_URL_FRONT}/mot-de-passe-oublie/redefinir-mot-de-passe?email=${utilisateur.email}">Page pour modifier votre mot de passe</a><br><br>
+Si vous n'avez plus la page ouverte pour saisir le code et modifier le mot de passe, ici le lien : <a href="${App.getBaseURLFront()}/mot-de-passe-oublie/redefinir-mot-de-passe?email=${
+        utilisateur.email
+      }">Page pour modifier votre mot de passe</a><br><br>
     
 À très vite !`,
       `Modification de mot de passe Agir`,

@@ -20,6 +20,7 @@ import { DefiRepository } from '../../src/infrastructure/repository/defi.reposit
 import { DefiDefinition } from '../../src/domain/defis/defiDefinition';
 import { TagUtilisateur } from '../../src/domain/scoring/tagUtilisateur';
 import { Besoin } from '../../src/domain/aides/besoin';
+import { App } from '../../src/domain/app';
 
 @Injectable()
 export class CMSUsecase {
@@ -204,7 +205,7 @@ export class CMSUsecase {
     type: 'articles' | 'quizzes' | 'aides' | 'defis',
   ): Promise<CMSWebhookPopulateAPI[]> {
     let response = null;
-    const URL = process.env.CMS_URL.concat(
+    const URL = App.getCmsURL().concat(
       '/',
       type,
       '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin',
@@ -212,7 +213,7 @@ export class CMSUsecase {
     response = await axios.get(URL, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.CMS_API_KEY}`,
+        Authorization: `Bearer ${App.getCmsApiKey()}`,
       },
     });
     return response.data.data;

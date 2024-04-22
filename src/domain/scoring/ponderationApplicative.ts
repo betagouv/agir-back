@@ -2,6 +2,7 @@ import { TagPonderationSet } from './tagPonderationSet';
 import { TaggedContent } from './taggedContent';
 import { TagApplicatif } from './tagApplicatif';
 import { ScoredContent } from './scoredContent';
+import { App } from '../app';
 
 export enum ApplicativePonderationSetName {
   neutre = 'neutre',
@@ -84,7 +85,8 @@ export class PonderationApplicativeManager {
 
   private static getPonderationApplicativeCourante(): ApplicativePonderationSet {
     const set_name =
-      process.env.PONDERATION_RUBRIQUES || ApplicativePonderationSetName.neutre;
+      App.getCurrentPonderationRubriqueSetName() ||
+      ApplicativePonderationSetName.neutre;
     return PonderationApplicativeManager.ponderation_catalogue[set_name];
   }
 }

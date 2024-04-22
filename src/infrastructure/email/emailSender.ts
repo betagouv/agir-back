@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { App } from '../../../src/domain/app';
 const Brevo = require('@getbrevo/brevo');
 
 @Injectable()
@@ -9,7 +10,7 @@ export class EmailSender {
   constructor() {
     this.client = Brevo.ApiClient.instance;
     const apiKey = this.client.authentications['api-key'];
-    apiKey.apiKey = process.env.EMAIL_API_TOKEN;
+    apiKey.apiKey = App.getBrevoApiToken();
     this.apiInstance = new Brevo.TransactionalEmailsApi();
   }
 
@@ -25,9 +26,9 @@ export class EmailSender {
     smtpEmail.subject = subject;
     //smtpEmail.textContent = text_content;
     smtpEmail.htmlContent = text_content;
-    smtpEmail.replyTo = { email: process.env.EMAIL_REPLY_TO, name: 'Contact' };
+    smtpEmail.replyTo = { email: App.getEmailReplyTo(), name: 'Contact' };
 
-    if (process.env.EMAIL_ENABLED === 'true') {
+    if (App.isMailEnabled()) {
       console.log(`Sending email to ${email_to}`);
       this.apiInstance.sendTransacEmail(smtpEmail);
     } else {

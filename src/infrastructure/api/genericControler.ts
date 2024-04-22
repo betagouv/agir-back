@@ -6,6 +6,7 @@ import {
   UseFilters,
 } from '@nestjs/common';
 import { Request } from 'express';
+import { App } from '../../../src/domain/app';
 import { AuthGuard } from '../auth/guard';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 import { ControllerExceptionFilter } from './controllerException.filter';
@@ -39,9 +40,7 @@ export class GenericControler {
   }
 
   isCallerAdmin(req: Request) {
-    return process.env.ADMIN_IDS.includes(
-      AuthGuard.getUtilisateurIdFromTokenInRequest(req),
-    );
+    return App.isAdmin(AuthGuard.getUtilisateurIdFromTokenInRequest(req));
   }
 
   checkCronAPIProtectedEndpoint(request: Request) {
@@ -49,7 +48,7 @@ export class GenericControler {
     if (!authorization) {
       throw new UnauthorizedException('CRON API KEY manquante');
     }
-    if (!authorization.endsWith(process.env.CRON_API_KEY)) {
+    if (!authorization.endsWith(App.getCronAPIKey())) {
       throw new ForbiddenException('CRON API KEY incorrecte');
     }
   }

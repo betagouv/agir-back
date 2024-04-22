@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { App } from '../../../../src/domain/app';
 import { ApplicationError } from '../../applicationError';
 
 @Injectable()
@@ -32,7 +33,7 @@ export class LinkyAPIConnector {
       );
     }
 
-    if (process.env.WINTER_API_ENABLED !== 'true') {
+    if (!App.isWinterAPIEnabled()) {
       return 'fake_winter_pk';
     }
     let response;
@@ -41,10 +42,10 @@ export class LinkyAPIConnector {
       "department_number": "${code_departement}"
     }`;
     try {
-      response = await axios.post(process.env.WINTER_URL, data, {
+      response = await axios.post(App.getWinterApiURL(), data, {
         headers: {
           'Content-Type': 'application/json',
-          'X-API-KEY': process.env.WINTER_API_KEY,
+          'X-API-KEY': App.getWinterAPIKey(),
         },
       });
     } catch (error) {
@@ -117,15 +118,15 @@ export class LinkyAPIConnector {
     if (winter_pk === 'ok_winter_pk_4') {
       ApplicationError.throwUnknownLinkyErrorWhenDelete(winter_pk, 'blurp');
     }
-    if (process.env.WINTER_API_ENABLED !== 'true') {
+    if (!App.isWinterAPIEnabled()) {
       return;
     }
 
     try {
-      await axios.delete(process.env.WINTER_URL.concat(winter_pk, '/'), {
+      await axios.delete(App.getWinterApiURL().concat(winter_pk, '/'), {
         headers: {
           'Content-Type': 'application/json',
-          'X-API-KEY': process.env.WINTER_API_KEY,
+          'X-API-KEY': App.getWinterAPIKey(),
         },
       });
     } catch (error) {

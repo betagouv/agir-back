@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { Thematique } from '../../domain/contenu/thematique';
+import { App } from '../../../src/domain/app';
 
 @Injectable()
 export class ThematiqueRepository {
@@ -12,7 +13,7 @@ export class ThematiqueRepository {
   }
 
   async onApplicationBootstrap(): Promise<void> {
-    if (process.env.FIRST_START !== 'true') {
+    if (!App.isFirstStart()) {
       await this.loadThematiques();
     }
   }

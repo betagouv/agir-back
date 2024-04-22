@@ -10,17 +10,17 @@ export class ContactSynchro {
   private client;
   private apiInstance;
   private batchApiUrl = 'https://api.brevo.com/v3/contacts/batch';
-  private apiKey = process.env.EMAIL_API_TOKEN;
+  private apiKey = App.getBrevoApiToken();
 
   constructor() {
     this.client = Brevo.ApiClient.instance;
     const apiKey = this.client.authentications['api-key'];
-    apiKey.apiKey = process.env.EMAIL_API_TOKEN;
+    apiKey.apiKey = App.getBrevoApiToken();
     this.apiInstance = new Brevo.ContactsApi();
   }
 
   public async BatchUpdateContacts(utilisateurs: Utilisateur[]) {
-    if (!App.isMailEnabled()) return;
+    if (this.is_synchro_disabled()) return;
 
     const contacts = utilisateurs.map(
       (utilisateur) => new Contact(utilisateur),
@@ -49,11 +49,11 @@ export class ContactSynchro {
   }
 
   public async createContact(utilisateur: Utilisateur): Promise<boolean> {
-    if (!App.isMailEnabled()) return true;
+    if (this.is_synchro_disabled()) return true;
 
     const contact = new Contact(utilisateur);
 
-    contact.listIds = [parseInt(process.env.BREVO_BREVO_WELCOME_LIST_ID)];
+    contact.listIds = [App.getWelcomeListId()];
     try {
       await this.apiInstance.createContact(contact);
       console.log(
@@ -67,7 +67,7 @@ export class ContactSynchro {
   }
 
   public async addContactsToList(emails: string[], listId: number) {
-    if (!App.isMailEnabled()) return true;
+    if (this.is_synchro_disabled()) return true;
     try {
       await this.apiInstance.addContactToList(listId, emails);
       console.log(`BREVO contacts added to list ${listId} : ${emails}`);
@@ -79,7 +79,7 @@ export class ContactSynchro {
   }
 
   public async deleteContact(email: string): Promise<boolean> {
-    if (!App.isMailEnabled()) return true;
+    if (this.is_synchro_disabled()) return true;
     try {
       await this.apiInstance.deleteContact(email);
       console.log(`BREVO contact deleted : ${email}`);
@@ -88,5 +88,9 @@ export class ContactSynchro {
       console.error(error);
       return false;
     }
+  }
+
+  private is_synchro_disabled(): boolean {
+    return !App.isMailEnabled() || !App.isProd();
   }
 }
