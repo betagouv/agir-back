@@ -91,6 +91,6 @@ export class ContactSynchro {
   }
 
   private is_synchro_disabled(): boolean {
-    return !App.isMailEnabled() || !App.isProd();
+    return !App.isMailEnabled();
   }
 }
