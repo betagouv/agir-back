@@ -3,6 +3,7 @@ import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import { OidcService } from '../auth/oidc.service';
 import { UtilisateurUsecase } from '../../usecase/utilisateur.usecase';
 import { InscriptionUsecase } from '../../../src/usecase/inscription.usecase';
+import { App } from '../../../src/domain/app';
 
 @Controller()
 export class AuthController {
@@ -59,7 +60,7 @@ export class AuthController {
     // CREATING INNER APP TOKEN
     const token = await this.oidcService.createNewInnerAppToken(utilisateurId);
     return {
-      url: process.env.BASE_URL_FRONT.concat(
+      url: App.getBaseURLFront().concat(
         process.env.FINAL_LOGIN_REDIRECT,
         `?utilisateurId=${utilisateurId}&token=${token}`,
       ),

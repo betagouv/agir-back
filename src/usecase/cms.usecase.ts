@@ -19,6 +19,8 @@ import { AideRepository } from '../../src/infrastructure/repository/aide.reposit
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { DefiDefinition } from '../../src/domain/defis/defiDefinition';
 import { TagUtilisateur } from '../../src/domain/scoring/tagUtilisateur';
+import { Besoin } from '../../src/domain/aides/besoin';
+import { App } from '../../src/domain/app';
 
 @Injectable()
 export class CMSUsecase {
@@ -203,15 +205,15 @@ export class CMSUsecase {
     type: 'articles' | 'quizzes' | 'aides' | 'defis',
   ): Promise<CMSWebhookPopulateAPI[]> {
     let response = null;
-    const URL = process.env.CMS_URL.concat(
+    const URL = App.getCmsURL().concat(
       '/',
       type,
-      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags',
+      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin',
     );
     response = await axios.get(URL, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.CMS_API_KEY}`,
+        Authorization: `Bearer ${App.getCmsApiKey()}`,
       },
     });
     return response.data.data;
@@ -301,6 +303,8 @@ export class CMSUsecase {
         ? Math.round(parseFloat(entry.montantMaximum))
         : null,
       url_simulateur: entry.url_detail_front,
+      besoin: entry.besoin ? Besoin[entry.besoin.code] : null,
+      besoin_desc: entry.besoin ? entry.besoin.description : null,
     };
   }
 
@@ -367,6 +371,7 @@ export class CMSUsecase {
     };
   }
   static buildAideFromCMSPopulateData(entry: CMSWebhookPopulateAPI): Aide {
+    console.log(entry);
     return {
       content_id: entry.id.toString(),
       titre: entry.attributes.titre,
@@ -385,6 +390,12 @@ export class CMSUsecase {
         ? Math.round(parseFloat(entry.attributes.montantMaximum))
         : null,
       url_simulateur: entry.attributes.url_detail_front,
+      besoin: entry.attributes.besoin.data
+        ? Besoin[entry.attributes.besoin.data.attributes.code]
+        : null,
+      besoin_desc: entry.attributes.besoin.data
+        ? entry.attributes.besoin.data.attributes.description
+        : null,
     };
   }
   static buildDefiFromCMSPopulateData(

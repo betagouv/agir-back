@@ -1,13 +1,8 @@
 import {
   Controller,
   Get,
-  Headers,
-  Res,
-  HttpStatus,
   Request,
   Query,
-  ForbiddenException,
-  UnauthorizedException,
   UseGuards,
   Param,
 } from '@nestjs/common';
@@ -20,9 +15,7 @@ import {
 } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
-import { Response } from 'express';
 import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
-import { WinterListeSubAPI } from './types/winter/WinterListeSubAPI';
 import { LinkyDataAPI, LinkyDataDetailAPI } from './types/service/linkyDataAPI';
 
 @Controller()
@@ -62,18 +55,17 @@ export class LinkyController extends GenericControler {
     type: Date,
     required: false,
   })
-  @ApiOkResponse({ type: [LinkyDataAPI] })
+  @ApiOkResponse({ type: LinkyDataAPI })
   @UseGuards(AuthGuard)
   async getData(
     @Request() req,
-    @Res() res: Response,
     @Param('utilisateurId') utilisateurId: string,
     @Query('detail') detail?: LinkyDataDetailAPI,
     @Query('nombre') nombre?: number,
     @Query('compare_annees') compare_annees?: string,
     @Query('end_date') end_date?: string,
     @Query('derniers_14_jours') derniers_14_jours?: string,
-  ) {
+  ): Promise<LinkyDataAPI> {
     this.checkCallerId(req, utilisateurId);
 
     const data = await this.linkyUsecase.getUserData(
@@ -84,8 +76,6 @@ export class LinkyController extends GenericControler {
       compare_annees === 'true',
       derniers_14_jours === 'true',
     );
-    const result = LinkyDataAPI.map(data.data.serie, data.commentaires);
-
-    res.json(result).send();
+    return LinkyDataAPI.map(data.data.serie, data.commentaires);
   }
 }

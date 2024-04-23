@@ -3,6 +3,11 @@ import { CMSTagAPI } from './CMSTagAPI';
 import { CMSThematiqueAPI } from './CMSThematiqueAPI';
 import { CMSWebhookImageURLAPI } from './CMSWebhookImageURLAPI';
 
+export class CMSWebhookBesoinAPI {
+  @ApiProperty() id: number;
+  @ApiProperty() code: string;
+  @ApiProperty() description: string;
+}
 export class CMSWebhookRubriqueAPI {
   @ApiProperty() id: number;
   @ApiProperty() titre: string;
@@ -28,6 +33,8 @@ export class CMSWebhookEntryAPI {
   rubriques: CMSWebhookRubriqueAPI[];
   @ApiProperty({ type: CMSWebhookPartenaireAPI })
   partenaire: CMSWebhookPartenaireAPI;
+  @ApiProperty({ type: CMSWebhookBesoinAPI })
+  besoin: CMSWebhookBesoinAPI;
   @ApiProperty() duree: string;
   @ApiProperty() astuces: string;
   @ApiProperty() pourquoi: string;
@@ -102,6 +109,14 @@ export type CMSWebhookPopulateAPI = {
       data: {
         attributes: {
           nom: string;
+        };
+      };
+    };
+    besoin: {
+      data: {
+        attributes: {
+          code: string;
+          description: string;
         };
       };
     };

@@ -523,4 +523,20 @@ describe('UtilisateurRepository', () => {
     // THEN
     expect(count).toEqual(0);
   });
+  it('update_last_activite  : set la date courante', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { derniere_activite: null });
+
+    // WHEN
+    await utilisateurRepository.update_last_activite('utilisateur-id');
+
+    // THEN
+    const userDB = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(userDB.derniere_activite.getTime()).toBeGreaterThan(
+      Date.now() - 100,
+    );
+    expect(userDB.derniere_activite.getTime()).toBeLessThan(Date.now());
+  });
 });

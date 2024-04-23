@@ -1,5 +1,10 @@
 import { Controller, Param, Post, Request } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
 import { CMSUsecase } from '../../../src/usecase/cms.usecase';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
@@ -10,9 +15,12 @@ import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
 import { TodoUsecase } from '../../../src/usecase/todo.usecase';
 import { ContactUsecase } from '../../usecase/contact.usecase';
 import { UtilisateurUsecase } from '../../../src/usecase/utilisateur.usecase';
+import { StatistiqueUsecase } from '../../../src/usecase/statistique.usecase';
+import { ArticleStatistiqueUsecase } from '../../../src/usecase/articleStatistique.usecase';
 
 @Controller()
 @ApiTags('Admin')
+@ApiBearerAuth()
 export class AdminController extends GenericControler {
   constructor(
     private migrationUsecase: MigrationUsecase,
@@ -23,6 +31,8 @@ export class AdminController extends GenericControler {
     private referentielUsecase: ReferentielUsecase,
     private todoUsecase: TodoUsecase,
     private contactUsecase: ContactUsecase,
+    private statistiqueUsecase: StatistiqueUsecase,
+    private articleStatistiqueUsecase: ArticleStatistiqueUsecase,
   ) {
     super();
   }
@@ -154,18 +164,6 @@ export class AdminController extends GenericControler {
     return await this.contactUsecase.batchUpdate();
   }
 
-  @Post('admin/contacts/:utilisateurId/synchronize')
-  @ApiOperation({
-    summary: 'Synchronise un utilisateur unique',
-  })
-  async SynchronizeUser(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-  ) {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.contactUsecase.update(utilisateurId);
-  }
-
   @Post('/admin/compute_reco_tags')
   @ApiOperation({
     summary: `recalcule les valorisations de tags de reco pour tous les utilisateurs`,
@@ -173,5 +171,23 @@ export class AdminController extends GenericControler {
   async compute_reco_tags(@Request() req): Promise<void> {
     this.checkCronAPIProtectedEndpoint(req);
     await this.utilisateurUsecase.computeAllUsersRecoTags();
+  }
+
+  @Post('/admin/statistique')
+  @ApiOperation({
+    summary: `Calcul des statistiques de l'ensemble des utilisateurs`,
+  })
+  async calcul_statistique(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.statistiqueUsecase.calculStatistique();
+  }
+
+  @Post('/admin/article-statistique')
+  @ApiOperation({
+    summary: `Calcul des statistiques de l'ensemble des articles`,
+  })
+  async calcul_article_statistique(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.articleStatistiqueUsecase.calculStatistique();
   }
 }

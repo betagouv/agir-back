@@ -13,6 +13,7 @@ import {
   Localisation,
   Collectivite,
 } from '../../domain/aides/aideVelo';
+import { App } from '../../../src/domain/app';
 
 @Injectable()
 export class AidesVeloRepository {
@@ -108,7 +109,7 @@ function getAidesVeloParType(
           collectivite: collectivity as Collectivite,
           montant: null,
           plafond: null,
-          logo: process.env.MINIATURES_URL + miniatures[ruleName],
+          logo: App.getAideVeloMiniaturesURL() + miniatures[ruleName],
         };
         if (!situation['vélo . type']) {
           return [metaData];

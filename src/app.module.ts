@@ -18,7 +18,6 @@ import { BilanRepository } from './infrastructure/repository/bilan.repository';
 import { PrismaService } from './infrastructure/prisma/prisma.service';
 import { SuiviRepository } from './infrastructure/repository/suivi.repository';
 import { SuiviUsecase } from './usecase/suivi.usecase';
-import { SuiviController } from './infrastructure/api/suivi.controller';
 import { AidesVeloRepository } from './infrastructure/repository/aidesVelo.repository';
 import { AidesRetrofitRepository } from './infrastructure/repository/aidesRetrofit.repository';
 import { SuiviDashboardController } from './infrastructure/api/suiviDashboard.controller';
@@ -84,6 +83,10 @@ import { DefisController } from './infrastructure/api/defis.controller';
 import { DefisUsecase } from './usecase/defis.usecase';
 import { DefiRepository } from './infrastructure/repository/defi.repository';
 import { LinkyConsentRepository } from './infrastructure/repository/linkyConsent.repository';
+import { StatistiqueUsecase } from './usecase/statistique.usecase';
+import { StatistiqueRepository } from './infrastructure/repository/statitstique.repository';
+import { ArticleStatistiqueUsecase } from './usecase/articleStatistique.usecase';
+import { ArticleStatistiqueRepository } from './infrastructure/repository/articleStatistique.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -94,7 +97,6 @@ function getControllers(): any[] {
     UtilisateurController,
     BilanController,
     AidesController,
-    SuiviController,
     SuiviDashboardController,
     //QuestionsNGCController,
     CMSController,
@@ -185,6 +187,10 @@ function getControllers(): any[] {
     DefiRepository,
     DefisUsecase,
     LinkyConsentRepository,
+    StatistiqueUsecase,
+    StatistiqueRepository,
+    ArticleStatistiqueUsecase,
+    ArticleStatistiqueRepository,
   ],
 })
 export class AppModule {}

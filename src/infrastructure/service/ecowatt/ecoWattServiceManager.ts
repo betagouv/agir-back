@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { App } from '../../../../src/domain/app';
 import { ScheduledServiceManager } from '../ScheduledServiceManager';
 
 const ACCESS_TOKEN_URL = 'https://digital.iservices.rte-france.com/token/oauth';
@@ -24,7 +25,7 @@ export class EcoWattServiceManager implements ScheduledServiceManager {
   private access_token: string;
 
   async computeScheduledDynamicData(): Promise<SignalEcoWatt> {
-    if (process.env.SERVICE_APIS_ENABLED == 'true') {
+    if (App.areServiceAPIEnabled()) {
       return await this.getEcoWattSignal();
     }
     return {
@@ -74,7 +75,7 @@ export class EcoWattServiceManager implements ScheduledServiceManager {
       response = await axios.post(ACCESS_TOKEN_URL, '', {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          Authorization: `Basic ${process.env.ECOWATT_CLIENT_ID_SECRET}`,
+          Authorization: `Basic ${App.getEcoWattApiSecret()}`,
         },
       });
     } catch (error) {

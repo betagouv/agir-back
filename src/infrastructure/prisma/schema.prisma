@@ -72,6 +72,27 @@ model Utilisateur {
   migration_enabled        Boolean            @default(false)
   tag_ponderation_set      Json               @default("{}")
   force_connexion          Boolean            @default(false)
+  derniere_activite        DateTime?
+}
+
+model Statistique {
+  utilisateurId           String   @id
+  nombre_defis_realises   Int?
+  nombre_defis_abandonnes Int?
+  nombre_defis_deja_fait  Int?
+  nombre_defis_en_cours   Int?
+  created_at              DateTime @default(now()) @db.Timestamptz(3)
+  updated_at              DateTime @updatedAt @db.Timestamptz(3)
+}
+
+model ArticleStatistique {
+  articleId                 String   @id
+  titre                     String
+  rating                    Decimal? @db.Decimal(2, 1)
+  nombre_de_rating          Int?
+  nombre_de_mise_en_favoris Int?
+  created_at                DateTime @default(now()) @db.Timestamptz(3)
+  updated_at                DateTime @updatedAt @db.Timestamptz(3)
 }
 
 model LinkyConsentement {
@@ -99,6 +120,8 @@ model Aide {
   codes_postaux  String[] @default([])
   thematiques    String[] @default([])
   montant_max    Int?
+  besoin         String?
+  besoin_desc    String?
   created_at     DateTime @default(now()) @db.Timestamptz(3)
   updated_at     DateTime @updatedAt @db.Timestamptz(3)
 }

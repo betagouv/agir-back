@@ -71,6 +71,27 @@ export class DefiHistory {
     this.getFromCatalogueOrException(questionId);
   }
 
+  public getNombreDefisRealises() {
+    return this.defis.filter((defi) => defi.getStatus() === DefiStatus.fait)
+      .length;
+  }
+
+  public getNombreDefisAbandonnes() {
+    return this.defis.filter((defi) => defi.getStatus() === DefiStatus.abondon)
+      .length;
+  }
+
+  public getNombreDefisDejaFait() {
+    return this.defis.filter(
+      (defi) => defi.getStatus() === DefiStatus.deja_fait,
+    ).length;
+  }
+
+  public getNombreDefisEnCours() {
+    return this.defis.filter((defi) => defi.getStatus() === DefiStatus.en_cours)
+      .length;
+  }
+
   private getDefiUtilisateur(id: string): Defi {
     return this.defis.find((element) => element.id === id);
   }

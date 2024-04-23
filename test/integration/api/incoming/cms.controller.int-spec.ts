@@ -1,6 +1,7 @@
 import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels';
 import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
 import { DB, TestUtil } from '../../../TestUtil';
+import { Besoin } from '../../../../src/domain/aides/besoin';
 
 describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA_DEFI = {
@@ -37,6 +38,11 @@ describe('/api/incoming/cms (API test)', () => {
       ],
       codes_postaux: '91120,75002',
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+      besoin: {
+        id: 7,
+        code: 'broyer_vege',
+        description: 'Broyer ses végétaux',
+      },
     },
   };
   const CMS_DATA_ARTICLE = {
@@ -66,41 +72,6 @@ describe('/api/incoming/cms (API test)', () => {
       imageUrl: {
         formats: {
           thumbnail: { url: 'https://haha' },
-        },
-      },
-      difficulty: 3,
-      points: 20,
-      codes_postaux: '91120,75002',
-      publishedAt: new Date('2023-09-20T14:42:12.941Z'),
-    },
-  };
-  const CMS_DATA_ARTICLE_NOEL = {
-    model: CMSModel.article,
-    event: CMSEvent['entry.publish'],
-    entry: {
-      id: 123,
-      titre: 'titre',
-      sousTitre: 'soustitre 222',
-      thematique_gamification: { id: 1, titre: 'Alimentation' },
-      thematiques: [
-        { id: 1, titre: 'Alimentation' },
-        { id: 2, titre: 'Climat' },
-      ],
-      rubriques: [
-        { id: 1, titre: 'A' },
-        { id: 2, titre: 'Ceci est Noël' },
-      ],
-      partenaire: {
-        id: 1,
-        nom: 'Angers Loire Métropole',
-        lien: 'https://www.angersloiremetropole.fr/',
-      },
-      source: 'La source',
-      duree: 'pas trop long',
-      frequence: 'souvent',
-      imageUrl: {
-        formats: {
-          thumbnail: { url: 'https://' },
         },
       },
       difficulty: 3,
@@ -264,6 +235,8 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.thematiques).toStrictEqual(['alimentation', 'climat']);
     expect(aide.codes_postaux).toStrictEqual(['91120', '75002']);
     expect(aide.content_id).toEqual('123');
+    expect(aide.besoin).toEqual(Besoin.broyer_vege);
+    expect(aide.besoin_desc).toEqual('Broyer ses végétaux');
   });
   it('POST /api/incoming/cms - create a new defi', async () => {
     // GIVEN
@@ -337,6 +310,8 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.thematiques).toStrictEqual(['alimentation', 'climat']);
     expect(aide.codes_postaux).toStrictEqual(['91120', '75002']);
     expect(aide.content_id).toEqual('123');
+    expect(aide.besoin).toEqual(Besoin.broyer_vege);
+    expect(aide.besoin_desc).toEqual('Broyer ses végétaux');
   });
 
   it('POST /api/incoming/cms - removes existing aide when unpublish', async () => {

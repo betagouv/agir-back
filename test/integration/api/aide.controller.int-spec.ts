@@ -2,6 +2,7 @@ import { ThematiqueRepository } from '../../../src/infrastructure/repository/the
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { AideAPI } from '../../../src/infrastructure/api/types/aide/AideAPI';
 import { DB, TestUtil } from '../../TestUtil';
+import { Besoin } from '../../../src/domain/aides/besoin';
 
 describe('Aide (API test)', () => {
   let thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -61,6 +62,8 @@ describe('Aide (API test)', () => {
     expect(aideBody.thematiques_label).toEqual(['Climat !!', 'Logement !!']);
     expect(aideBody.titre).toEqual('titreA');
     expect(aideBody.url_simulateur).toEqual('/aides/velo');
+    expect(aideBody.besoin).toEqual(Besoin.acheter_velo);
+    expect(aideBody.besoin_desc).toEqual('Acheter un vélo');
   });
   it('GET /utilisateurs/:utilisateurId/aides filtre par code postal', async () => {
     // GIVEN

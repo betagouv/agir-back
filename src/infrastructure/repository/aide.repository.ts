@@ -4,6 +4,7 @@ import { Aide as AideDB } from '@prisma/client';
 import { Thematique } from '../../domain/contenu/thematique';
 import { Aide } from '../../../src/domain/aides/aide';
 import { App } from '../../domain/app';
+import { Besoin } from '../../../src/domain/aides/besoin';
 
 export type AideFilter = {
   maxNumber?: number;
@@ -104,6 +105,8 @@ export class AideRepository {
       is_simulateur: aideDB.is_simulateur,
       montant_max: aideDB.montant_max,
       url_simulateur: aideDB.url_simulateur,
+      besoin: Besoin[aideDB.besoin],
+      besoin_desc: aideDB.besoin_desc,
     };
   }
 }

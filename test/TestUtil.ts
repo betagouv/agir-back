@@ -62,6 +62,7 @@ import { Transport_v0 } from '../src/domain/object_store/transport/transport_v0'
 import { DefiHistory_v0 } from '../src/domain/object_store/defi/defiHistory_v0';
 import { DefiStatus } from '../src/domain/defis/defi';
 import { TagUtilisateur } from '../src/domain/scoring/tagUtilisateur';
+import { Besoin } from '../src/domain/aides/besoin';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -77,6 +78,7 @@ export enum DB {
   serviceDefinition = 'serviceDefinition',
   thematique = 'thematique',
   linky = 'linky',
+  article = 'article',
 }
 export class TestUtil {
   private static TYPE_DATA_MAP: Record<DB, Function> = {
@@ -93,6 +95,7 @@ export class TestUtil {
     serviceDefinition: TestUtil.serviceDefinitionData,
     thematique: TestUtil.thematiqueData,
     linky: TestUtil.linkyData,
+    article: TestUtil.articleData,
   };
 
   constructor() {}
@@ -171,6 +174,8 @@ export class TestUtil {
     await this.prisma.aide.deleteMany();
     await this.prisma.defi.deleteMany();
     await this.prisma.linkyConsentement.deleteMany();
+    await this.prisma.statistique.deleteMany();
+    await this.prisma.articleStatistique.deleteMany();
     ThematiqueRepository.resetThematiques();
   }
 
@@ -244,6 +249,7 @@ export class TestUtil {
       ...override,
     };
   }
+  // FIX: HARMONISER AVEC ARTICLE DATA
   static async create_article(override?: Partial<Article>) {
     await this.prisma.article.create({
       data: TestUtil.getArticleData(override),
@@ -308,6 +314,8 @@ export class TestUtil {
       url_simulateur: '/aides/velo',
       created_at: undefined,
       updated_at: undefined,
+      besoin: Besoin.acheter_velo,
+      besoin_desc: 'Acheter un vélo',
       ...override,
     };
   }
@@ -526,6 +534,7 @@ export class TestUtil {
       transport: transport,
       tag_ponderation_set: {},
       force_connexion: false,
+      derniere_activite: null,
       ...override,
     };
   }
@@ -600,6 +609,30 @@ export class TestUtil {
           value_at_normal_temperature: 120,
         },
       ],
+      ...override,
+    };
+  }
+
+  static articleData(override?): Article {
+    return {
+      content_id: 'contentId',
+      titre: 'Titre de mon article',
+      soustitre: 'Sous titre de mon article',
+      source: undefined,
+      image_url: undefined,
+      partenaire: undefined,
+      tags_utilisateur: [],
+      rubrique_ids: [],
+      rubrique_labels: [],
+      codes_postaux: [],
+      duree: undefined,
+      frequence: undefined,
+      difficulty: 1,
+      points: 10,
+      thematiques: ['logement'],
+      thematique_principale: 'logement',
+      created_at: new Date(),
+      updated_at: new Date(),
       ...override,
     };
   }

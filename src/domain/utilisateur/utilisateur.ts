@@ -55,6 +55,7 @@ export class UtilisateurData {
   tag_ponderation_set: TagPonderationSet;
   defi_history: DefiHistory;
   force_connexion: boolean;
+  derniere_activite: Date;
 }
 
 export class Utilisateur extends UtilisateurData {
@@ -117,6 +118,7 @@ export class Utilisateur extends UtilisateurData {
       transport: Transport.buildFromOnboarding(onboarding),
       tag_ponderation_set: {},
       force_connexion: false,
+      derniere_activite: new Date(),
     });
   }
 
@@ -175,7 +177,7 @@ export class Utilisateur extends UtilisateurData {
   }
 
   public isAdmin?(): boolean {
-    return App.getAdminIdsStringList().includes(this.id);
+    return App.isAdmin(this.id);
   }
 
   public increaseTagValue?(tag: Tag, value: number) {

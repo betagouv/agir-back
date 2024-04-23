@@ -3,94 +3,94 @@ import axios from 'axios';
 import { Contact } from '../../../src/infrastructure/contact/contact';
 import Brevo from '@getbrevo/brevo';
 import { Utilisateur } from '../../../src/domain/utilisateur/utilisateur';
+import { App } from '../../../src/domain/app';
 
 @Injectable()
 export class ContactSynchro {
   private client;
   private apiInstance;
   private batchApiUrl = 'https://api.brevo.com/v3/contacts/batch';
-  private apiKey = process.env.EMAIL_API_TOKEN;
+  private apiKey = App.getBrevoApiToken();
 
   constructor() {
     this.client = Brevo.ApiClient.instance;
     const apiKey = this.client.authentications['api-key'];
-    apiKey.apiKey = process.env.EMAIL_API_TOKEN;
+    apiKey.apiKey = App.getBrevoApiToken();
     this.apiInstance = new Brevo.ContactsApi();
   }
 
   public async BatchUpdateContacts(utilisateurs: Utilisateur[]) {
-    if (process.env.EMAIL_ENABLED === 'true') {
-      const contacts = utilisateurs.map(
-        (utilisateur) => new Contact(utilisateur),
-      );
+    if (this.is_synchro_disabled()) return;
 
-      const data = {
-        contacts: contacts,
-      };
+    const contacts = utilisateurs.map(
+      (utilisateur) => new Contact(utilisateur),
+    );
 
-      axios
-        .post(this.batchApiUrl, data, {
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            'api-key': this.apiKey,
-          },
-        })
-        .then((response) => {
-          console.log(response.data);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+    const data = {
+      contacts: contacts,
+    };
+
+    try {
+      const response = await axios.post(this.batchApiUrl, data, {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'api-key': this.apiKey,
+        },
+      });
+      console.log(response.data);
+    } catch (error) {
+      if (error.response) {
+        console.log(error.response.data);
+      } else {
+        console.error(error);
+      }
     }
   }
 
   public async createContact(utilisateur: Utilisateur): Promise<boolean> {
-    if (process.env.EMAIL_ENABLED !== 'true') return true;
+    if (this.is_synchro_disabled()) return true;
 
     const contact = new Contact(utilisateur);
 
-    // on ajoute l'utilisateur dans la liste "bienvenue"
-    contact.listIds = [parseInt(process.env.BREVO_BREVO_WELCOME_LIST_ID)];
-
-    return await this.apiInstance.createContact(contact).then(
-      function (data) {
-        console.log(
-          `BREVO contact ${utilisateur.email} created and added to list ${contact.listIds}`,
-        );
-        return true;
-      },
-      function (error) {
-        console.error(error);
-        return false;
-      },
-    );
+    contact.listIds = [App.getWelcomeListId()];
+    try {
+      await this.apiInstance.createContact(contact);
+      console.log(
+        `BREVO contact ${utilisateur.email} created and added to list ${contact.listIds}`,
+      );
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
   }
 
   public async addContactsToList(emails: string[], listId: number) {
-    if (process.env.EMAIL_ENABLED !== 'true') return true;
-    return this.apiInstance.addContactToList(listId, emails).then(
-      function (data) {
-        console.log(`BREVO contacts added to list ${listId} : ${emails}`);
-        return true;
-      },
-      function (error) {
-        return false;
-      },
-    );
+    if (this.is_synchro_disabled()) return true;
+    try {
+      await this.apiInstance.addContactToList(listId, emails);
+      console.log(`BREVO contacts added to list ${listId} : ${emails}`);
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
   }
 
   public async deleteContact(email: string): Promise<boolean> {
-    if (process.env.EMAIL_ENABLED !== 'true') return true;
-    return await this.apiInstance.deleteContact(email).then(
-      function () {
-        console.log(`BREVO contact deleted : ${email}`);
-        return true;
-      },
-      function (error) {
-        console.error(error);
-        return false;
-      },
-    );
+    if (this.is_synchro_disabled()) return true;
+    try {
+      await this.apiInstance.deleteContact(email);
+      console.log(`BREVO contact deleted : ${email}`);
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+
+  private is_synchro_disabled(): boolean {
+    return !App.isMailEnabled();
   }
 }

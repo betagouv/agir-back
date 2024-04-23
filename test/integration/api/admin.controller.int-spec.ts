@@ -1025,17 +1025,148 @@ describe('Admin (API test)', () => {
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual('utilisateur-id');
   });
-  it('POST /admin/contacts/id/synchronize - synchro user unique', async () => {
+
+  it("POST /admin/statistique - calcul des statistiques de l'ensemble des utilisateurs", async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.utilisateur, { id: 'test-id-1' });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-2',
+      email: 'user-email@toto.fr',
+    });
 
     // WHEN
-    const response = await TestUtil.POST(
-      '/admin/contacts/utilisateur-id/synchronize',
-    );
+    const response = await TestUtil.POST('/admin/statistique');
 
     // THEN
     expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(2);
+    expect(response.body.includes('test-id-1')).toEqual(true);
+    expect(response.body.includes('test-id-2')).toEqual(true);
+
+    const nombreDeLignesTableStatistique =
+      await TestUtil.prisma.statistique.findMany();
+    expect(nombreDeLignesTableStatistique).toHaveLength(2);
+  });
+
+  it("POST /admin/article-statistique - calcul des statistiques de l'ensemble des articles", async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.article, {
+      content_id: 'article-id-1',
+      titre: 'Titre de mon article 1',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: 'article-id-2',
+      titre: 'Titre de mon article 2',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: 'article-id-3',
+      titre: 'Titre de mon article 3',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-1',
+      history: {
+        version: 0,
+        article_interactions: [
+          {
+            content_id: 'article-id-1',
+            read_date: new Date(),
+            like_level: 3,
+            points_en_poche: false,
+            favoris: true,
+          },
+        ],
+      },
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-2',
+      email: 'user-email@toto.fr',
+      history: {
+        version: 0,
+        article_interactions: [
+          {
+            content_id: 'article-id-1',
+            read_date: new Date(),
+            like_level: 4,
+            points_en_poche: false,
+            favoris: true,
+          },
+          {
+            content_id: 'article-id-2',
+            read_date: new Date(),
+            like_level: 2,
+            points_en_poche: false,
+            favoris: true,
+          },
+          {
+            content_id: 'article-id-3',
+            read_date: new Date(),
+            like_level: undefined,
+            points_en_poche: false,
+            favoris: false,
+          },
+        ],
+        quizz_interactions: [],
+      },
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-3',
+      email: 'user-email@titi.fr',
+      history: {
+        version: 0,
+        article_interactions: [
+          {
+            content_id: 'article-id-1',
+            read_date: new Date(),
+            like_level: 3,
+            points_en_poche: false,
+            favoris: false,
+          },
+        ],
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/article-statistique');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(3);
+    expect(response.body).toEqual([
+      'article-id-1',
+      'article-id-2',
+      'article-id-3',
+    ]);
+
+    const nombreDeLignesTableStatistique =
+      await TestUtil.prisma.articleStatistique.findMany();
+    const article1 = await TestUtil.prisma.articleStatistique.findUnique({
+      where: { articleId: 'article-id-1' },
+    });
+    const article2 = await TestUtil.prisma.articleStatistique.findUnique({
+      where: { articleId: 'article-id-2' },
+    });
+    const article3 = await TestUtil.prisma.articleStatistique.findUnique({
+      where: { articleId: 'article-id-3' },
+    });
+
+    expect(nombreDeLignesTableStatistique).toHaveLength(3);
+
+    expect(article1.rating.toString()).toBe('3.3');
+    expect(article2.rating.toString()).toBe('2');
+    expect(article3.rating).toBeNull();
+
+    expect(article1.nombre_de_rating).toBe(3);
+    expect(article2.nombre_de_rating).toBe(1);
+    expect(article3.rating).toBeNull();
+
+    expect(article1.nombre_de_mise_en_favoris).toBe(2);
+    expect(article2.nombre_de_mise_en_favoris).toBe(1);
+    expect(article3.nombre_de_mise_en_favoris).toBe(0);
+
+    expect(article1.titre).toBe('Titre de mon article 1');
+    expect(article2.titre).toBe('Titre de mon article 2');
+    expect(article3.titre).toBe('Titre de mon article 3');
   });
 });

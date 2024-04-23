@@ -13,8 +13,11 @@ export class App {
   public static aide_cache_enabled(): boolean {
     return process.env.AIDE_CACHE_ENABLED === 'true';
   }
-  public static isProd() {
+  public static isProd(): boolean {
     return process.env.IS_PROD === 'true';
+  }
+  public static isFirstStart(): boolean {
+    return process.env.FIRST_START === 'true';
   }
   public static getFixedOTP_DEVCode(): string {
     return process.env.OTP_DEV;
@@ -22,7 +25,81 @@ export class App {
   public static getServiceActifsStringList() {
     return process.env.SERVICES_ACTIFS || '';
   }
-  public static getAdminIdsStringList() {
-    return process.env.ADMIN_IDS || '';
+  public static isAdmin(userId: string): boolean {
+    return process.env.ADMIN_IDS.includes(userId);
+  }
+  public static isMailEnabled(): boolean {
+    return process.env.EMAIL_ENABLED === 'true';
+  }
+  public static isWinterAPIEnabled(): boolean {
+    return process.env.WINTER_API_ENABLED === 'true';
+  }
+  public static getWinterAPIKey(): string {
+    return process.env.WINTER_API_KEY;
+  }
+  public static getWinterApiURL(): string {
+    return process.env.WINTER_URL;
+  }
+  public static areServiceAPIEnabled(): boolean {
+    return process.env.SERVICE_APIS_ENABLED === 'true';
+  }
+  public static getEcoWattApiSecret(): string {
+    return process.env.ECOWATT_CLIENT_ID_SECRET;
+  }
+
+  public static getBaseURLFront(): string {
+    return process.env.BASE_URL_FRONT;
+  }
+
+  public static isWhiteListeEnabled(): boolean {
+    return process.env.WHITE_LIST_ENABLED === 'true';
+  }
+  public static doesWhiteListIncludes(email: string): boolean {
+    return (
+      process.env.WHITE_LIST &&
+      process.env.WHITE_LIST.toLowerCase().includes(email.toLocaleLowerCase())
+    );
+  }
+  public static doesWhiteListDijonIncludes(email: string): boolean {
+    return (
+      process.env.WHITE_LIST_DIJON &&
+      process.env.WHITE_LIST_DIJON.toLowerCase().includes(
+        email.toLocaleLowerCase(),
+      )
+    );
+  }
+  public static getCmsApiKey(): string {
+    return process.env.CMS_API_KEY;
+  }
+
+  public static getCmsURL(): string {
+    return process.env.CMS_URL;
+  }
+
+  public static getAideVeloMiniaturesURL(): string {
+    return process.env.MINIATURES_URL;
+  }
+
+  public static getBrevoApiToken(): string {
+    return process.env.EMAIL_API_TOKEN;
+  }
+  public static getWelcomeListId(): number {
+    return parseInt(process.env.BREVO_BREVO_WELCOME_LIST_ID);
+  }
+
+  public static getJWTSecret(): string {
+    return process.env.INTERNAL_TOKEN_SECRET;
+  }
+  public static getCMSWebhookAPIKey(): string {
+    return process.env.CMS_WEBHOOK_API_KEY;
+  }
+  public static getCronAPIKey(): string {
+    return process.env.CRON_API_KEY;
+  }
+  public static getEmailReplyTo(): string {
+    return process.env.EMAIL_REPLY_TO;
+  }
+  public static getCurrentPonderationRubriqueSetName(): string {
+    return process.env.PONDERATION_RUBRIQUES;
   }
 }

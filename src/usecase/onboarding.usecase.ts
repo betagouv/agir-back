@@ -8,13 +8,6 @@ import {
 import { OnboardingDataAPI } from '../infrastructure/api/types/utilisateur/onboarding/onboardingDataAPI';
 import { OnboardingDataImpactAPI } from '../infrastructure/api/types/utilisateur/onboarding/onboardingDataImpactAPI';
 import { OnboardingResult } from '../domain/onboarding/onboardingResult';
-import { EmailSender } from '../infrastructure/email/emailSender';
-import { CodeManager } from '../../src/domain/utilisateur/manager/codeManager';
-import { OidcService } from '../../src/infrastructure/auth/oidc.service';
-import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
-import { ApplicationError } from '../../src/infrastructure/applicationError';
-import { ContactUsecase } from './contact.usecase';
-import { Utilisateur } from 'src/domain/utilisateur/utilisateur';
 
 export type Phrase = {
   phrase: string;
@@ -23,44 +16,7 @@ export type Phrase = {
 
 @Injectable()
 export class OnboardingUsecase {
-  constructor(
-    private utilisateurRespository: UtilisateurRepository,
-    private emailSender: EmailSender,
-    private codeManager: CodeManager,
-    private oidcService: OidcService,
-    private contactUsecase: ContactUsecase,
-    private securityEmailManager: SecurityEmailManager,
-  ) {}
-
-  async validateCode(
-    email: string,
-    code: string,
-  ): Promise<{ token: string; utilisateur: Utilisateur }> {
-    const utilisateur = await this.utilisateurRespository.findByEmail(email);
-    if (!utilisateur) {
-      ApplicationError.throwBadCodeOrEmailError();
-    }
-    if (utilisateur.active_account) {
-      ApplicationError.throwCompteDejaActifError();
-    }
-
-    const codeOkAction = async () => {
-      await this.securityEmailManager.resetEmailSendingState(utilisateur);
-      await this.utilisateurRespository.activateAccount(utilisateur.id);
-      await this.contactUsecase.create(utilisateur);
-
-      const token = await this.oidcService.createNewInnerAppToken(
-        utilisateur.id,
-      );
-      return { token };
-    };
-
-    return this.codeManager.processInputCodeAndDoActionIfOK(
-      code,
-      utilisateur,
-      codeOkAction,
-    );
-  }
+  constructor(private utilisateurRespository: UtilisateurRepository) {}
 
   async evaluateOnboardingData(
     input: OnboardingDataAPI,
