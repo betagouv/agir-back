@@ -36,15 +36,11 @@ export class ContactSynchro {
           Accept: 'application/json',
           'Content-Type': 'application/json',
           'api-key': this.apiKey,
-        },
+        },  
       });
       console.log(response.data);
     } catch (error) {
-      if (error.response) {
-        console.log(error.response.data);
-      } else {
-        console.error(error);
-      }
+      console.warn(JSON.stringify(error));
     }
   }
 
@@ -61,7 +57,7 @@ export class ContactSynchro {
       );
       return true;
     } catch (error) {
-      console.error(error);
+      console.warn(error.response.text);
       return false;
     }
   }
@@ -73,7 +69,7 @@ export class ContactSynchro {
       console.log(`BREVO contacts added to list ${listId} : ${emails}`);
       return true;
     } catch (error) {
-      console.error(error);
+      console.warn(error.response.text);
       return false;
     }
   }
@@ -85,7 +81,7 @@ export class ContactSynchro {
       console.log(`BREVO contact deleted : ${email}`);
       return true;
     } catch (error) {
-      console.error(error);
+      console.warn(error.response.text);
       return false;
     }
   }
