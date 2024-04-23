@@ -481,6 +481,25 @@
     "plafond": "100€",
     "lien": "https://www.ville-sur-jarnioux.fr/aide-velo/"
   },
+  "aides . sainte-foy-lès-lyon": {
+    "remplace": "commune",
+    "titre": "Ville de Sainte-Foy-lès-Lyon",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . code insee = '69202'",
+        {
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . motorisation",
+            "vélo . pliant",
+            "vélo . cargo"
+          ]
+        }
+      ]
+    },
+    "valeur": "100€",
+    "lien": "https://www.saintefoyleslyon.fr/demarches-services/mobilites/velo/"
+  },
   "aides . pays mornantais": {
     "remplace": "intercommunalité",
     "titre": "Pays Mornantais",
@@ -1226,51 +1245,6 @@
       ]
     },
     "lien": "https://www.toulouse-metropole.fr/missions/environnement/qualite-de-l-air/prime-velo"
-  },
-  "aides . perpignan métropole": {
-    "remplace": "intercommunalité",
-    "titre": "Perpignan Méditerranée Métropole",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . epci = 'CU Perpignan Méditerranée Métropole'",
-        {
-          "une de ces conditions": [
-            "vélo . cargo",
-            {
-              "toutes ces conditions": [
-                "vélo . électrique",
-                {
-                  "variations": [
-                    {
-                      "si": "vélo . neuf",
-                      "alors": "vélo . prix <= 2500€"
-                    },
-                    {
-                      "sinon": "vélo . prix <= 1500€"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "toutes ces conditions": [
-                "vélo . mécanique",
-                "vélo . prix >= 600€",
-                "vélo . prix <= 1500€"
-              ]
-            },
-            {
-              "toutes ces conditions": [
-                "vélo . motorisation",
-                "vélo . prix <= 1500€"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    "valeur": "250€",
-    "lien": "https://aide-velo.perpignan-mediterranee.org/"
   },
   "aides . grenoble": {
     "remplace": "intercommunalité",
@@ -3108,18 +3082,6 @@
       }
     }
   },
-  "aides . vauvert": {
-    "remplace": "commune",
-    "titre": "Ville de Vauvert",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . code insee = '30341'",
-        "vélo . électrique"
-      ]
-    },
-    "valeur": "200€",
-    "lien": "https://www.vauvert.com/aide-2021-achat-velo-assistance-electrique/"
-  },
   "aides . cébazat": {
     "remplace": "commune",
     "titre": "Ville de Cébazat",
@@ -3287,21 +3249,6 @@
       ]
     },
     "lien": "https://www.luberonmontsdevaucluse.fr/agglomeration/subvention-velo"
-  },
-  "aides . charenton": {
-    "remplace": "commune",
-    "titre": "Ville de Charenton",
-    "description": "Le Pass' Vélo est a demander auprès du CCAS avant l’achat du vélo\n",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . code insee = '94018'",
-        "revenu fiscal de référence <= 15000 €/an",
-        "vélo . électrique ou mécanique"
-      ]
-    },
-    "valeur": "50% * vélo . prix",
-    "plafond": "200€",
-    "lien": "https://www.charenton.fr/velo/velo_pass-velo.php"
   },
   "aides . kremlin-bicetre": {
     "remplace": "commune",
@@ -3928,6 +3875,18 @@
     "type": "booléen",
     "par défaut": "non"
   },
+  "aides . boé": {
+    "remplace": "commune",
+    "titre": "Ville de Boé",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . code insee = '47031'",
+        "vélo . électrique"
+      ]
+    },
+    "valeur": "100 €",
+    "lien": "https://www.ville-boe.fr/decouvrir-boe/presentation/dernieres-actualites/2101-aide-achat-vae-2024"
+  },
   "aides . sophia antipolis": {
     "remplace": "intercommunalité",
     "titre": "Communauté d’Agglomération Sophia Antipolis",
@@ -4327,6 +4286,43 @@
     "plafond": "250€",
     "lien": "http://www.terredes2caps.fr/"
   },
+  "aides . saint-omer": {
+    "remplace": "commune",
+    "titre": "Ville de Saint-Omer",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . code insee = '62765'",
+        "vélo . électrique ou mécanique"
+      ]
+    },
+    "variations": [
+      {
+        "si": "vélo . électrique",
+        "alors": {
+          "variations": [
+            {
+              "si": "étudiant ou jeune en recherche d'emploi",
+              "alors": "350 €"
+            },
+            {
+              "sinon": "250 €"
+            }
+          ]
+        }
+      },
+      {
+        "sinon": "100 €"
+      }
+    ],
+    "lien": "https://www.ville-saint-omer.fr/aides-lacquisition-de-velo",
+    "avec": {
+      "étudiant ou jeune en recherche d'emploi": {
+        "type": "booléen",
+        "par défaut": "non",
+        "question": "Êtes-vous étudiant ou jeune de moins de 25 ans en recherche d'emploi ?"
+      }
+    }
+  },
   "aides . carvin": {
     "remplace": "commune",
     "titre": "Ville de Carvin",
@@ -4381,31 +4377,6 @@
     "valeur": "vélo . prix",
     "plafond": "200 €",
     "lien": "https://www.ville-frejus.fr/ma-ville/valorisation-et-preservation/dossier-de-demande-daide-a-lachat-dun-vae/"
-  },
-  "aides . gien": {
-    "remplace": "intercommunalité",
-    "titre": "Communauté des Communes Giennoises",
-    "applicable si": "localisation . epci = 'CC Giennoises'",
-    "variations": [
-      {
-        "si": "vélo . électrique",
-        "alors": {
-          "valeur": "25% * vélo . prix",
-          "plafond": "300€"
-        }
-      },
-      {
-        "si": "vélo . électrique",
-        "alors": {
-          "valeur": "50% * vélo . prix",
-          "plafond": "100€"
-        }
-      },
-      {
-        "sinon": "0€"
-      }
-    ],
-    "lien": "https://www.legiennois.fr/legiennois-actualites/2148-aide-a-l-acquisition-de-velo"
   },
   "aides . ferte saint aubin": {
     "remplace": "commune",
@@ -4717,7 +4688,7 @@
       }
     ],
     "plafond": "80% * vélo . prix",
-    "lien": "https://www.arve-saleve.fr/primo-velo-2023-laide-a-lachat-de-velo-darve-saleve/"
+    "lien": "https://www.arve-saleve.fr/primo-velo-2024-laide-a-lachat-de-velo-darve-saleve/"
   },
   "aides . cluses arve et montagnes": {
     "remplace": "intercommunalité",
@@ -5258,48 +5229,6 @@
     "valeur": "200€",
     "lien": "https://saintpairsurmer.fr/prime-a-lacquisition-dun-velo-a-assistance-electrique-2024/"
   },
-  "aides . la rochelle": {
-    "remplace": "intercommunalité",
-    "titre": "Communauté d'Agglomération de La Rochelle - Yélo",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . epci = 'CA de La Rochelle'",
-        {
-          "une de ces conditions": [
-            "vélo . électrique",
-            "vélo . cargo"
-          ]
-        }
-      ]
-    },
-    "variations": [
-      {
-        "si": "revenu fiscal de référence <= 450 €/mois",
-        "alors": {
-          "valeur": "50% * vélo . prix",
-          "plafond": "400€"
-        }
-      },
-      {
-        "si": "revenu fiscal de référence <= 650 €/mois",
-        "alors": {
-          "valeur": "40% * vélo . prix",
-          "plafond": "300€"
-        }
-      },
-      {
-        "si": "revenu fiscal de référence <= 750 €/mois",
-        "alors": {
-          "valeur": "30% * vélo . prix",
-          "plafond": "200€"
-        }
-      },
-      {
-        "sinon": "0€"
-      }
-    ],
-    "lien": "https://yelo.agglo-larochelle.fr/aide-a-lachat-dun-vae/"
-  },
   "aides . aunis atlantique": {
     "remplace": "intercommunalité",
     "titre": "Communauté de Communes Aunis Atlantique",
@@ -5371,36 +5300,34 @@
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CA Rochefort Océan'",
-        {
-          "une de ces conditions": [
-            "vélo . électrique",
-            "vélo . cargo",
-            "vélo . pliant"
-          ]
-        }
+        "revenu fiscal de référence <= 15400 €/an"
       ]
     },
-    "valeur": "vélo . prix",
+    "valeur": "40% * vélo . prix",
     "plafond": {
       "variations": [
         {
-          "si": "revenu fiscal de référence > 760€/mois",
-          "alors": "50€"
+          "si": "vélo . cargo électrique",
+          "alors": "325€"
         },
         {
-          "si": "revenu fiscal de référence > 500€/mois",
-          "alors": "100€"
+          "si": "vélo . électrique",
+          "alors": "225€"
         },
         {
-          "si": "revenu fiscal de référence > 380€/mois",
+          "si": "vélo . motorisation",
           "alors": "150€"
         },
         {
-          "sinon": "200€"
+          "si": "vélo . mécanique",
+          "alors": "100€"
+        },
+        {
+          "sinon": "0€"
         }
       ]
     },
-    "lien": "https://www.agglo-rochefortocean.fr/velo-et-kit-delectrification-aide-lacquisition"
+    "lien": "https://www.agglo-rochefortocean.fr/velo-tricycle-et-kit-delectrification-aide-lacquisition"
   },
   "aides . saintes": {
     "remplace": "intercommunalité",
@@ -5413,53 +5340,6 @@
     },
     "valeur": "200€",
     "lien": "https://www.agglo-saintes.fr/l-agglo-au-quotidien/transports-et-mobilites/530-aide-a-l-achat-d-un-velo-a-assistance-electrique.html"
-  },
-  "aides . seine-maritime": {
-    "remplace": "département",
-    "titre": "Département de Seine-Maritime",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . département = '76'",
-        "vélo . électrique"
-      ]
-    },
-    "variations": [
-      {
-        "si": {
-          "variations": [
-            {
-              "si": "personnes dans le foyer fiscal = 1",
-              "alors": "revenu fiscal de référence <= 20805€/an"
-            },
-            {
-              "si": "personnes dans le foyer fiscal = 2",
-              "alors": "revenu fiscal de référence <= 30427€/an"
-            },
-            {
-              "si": "personnes dans le foyer fiscal = 3",
-              "alors": "revenu fiscal de référence <= 36591€/an"
-            },
-            {
-              "si": "personnes dans le foyer fiscal = 4",
-              "alors": "revenu fiscal de référence <= 42748€/an"
-            },
-            {
-              "si": "personnes dans le foyer fiscal = 5",
-              "alors": "revenu fiscal de référence <= 48930€/an"
-            },
-            {
-              "si": "personnes dans le foyer fiscal > 5",
-              "alors": "revenu fiscal de référence <= 48930€/an + (personnes dans le foyer fiscal - 5) * 6165€/an"
-            }
-          ]
-        },
-        "alors": "400€"
-      },
-      {
-        "sinon": "200€"
-      }
-    ],
-    "lien": "https://www.seinemaritime.fr/mon-cadre-de-vie/routes-bacs/ma-prime-velo-76.html"
   },
   "aides . dieppe": {
     "remplace": "commune",
@@ -5519,25 +5399,6 @@
     "valeur": "30% * vélo . prix",
     "plafond": "200€",
     "lien": "https://cote-albatre.fr/aide-velo"
-  },
-  "aides . caux austreberthe": {
-    "remplace": "intercommunalité",
-    "titre": "Caux-Austreberthe communauté de communes",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . epci = 'CC Caux - Austreberthe'",
-        {
-          "une de ces conditions": [
-            "vélo . électrique",
-            "vélo . cargo",
-            "vélo . pliant"
-          ]
-        }
-      ]
-    },
-    "valeur": "30% * vélo . prix",
-    "plafond": "300€",
-    "lien": "https://www.cccauxaustreberthe.fr/media/images/upload/R%C3%A8glement_Velo_2022.pdf"
   },
   "aides . pavilly": {
     "remplace": "commune",
@@ -5730,18 +5591,6 @@
       ]
     },
     "lien": "https://www.agglo-bourgesplus.fr/site/aide-achat-velo"
-  },
-  "aides . corrèze": {
-    "remplace": "commune",
-    "titre": "Ville de Corrèze",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . code insee = '19062'",
-        "vélo . électrique"
-      ]
-    },
-    "valeur": "100€",
-    "lien": "https://www.mairie-de-correze.fr/app/download/16358677024/Bulletin+Municipal+Janvier+2022.pdf?t=1641302365#page=19"
   },
   "aides . montauban": {
     "remplace": "intercommunalité",
@@ -6115,18 +5964,6 @@
     },
     "valeur": "300€",
     "lien": "https://www.agglo-laval.fr/utile-au-quotidien/transports-et-mobilites/lagglo-a-velo/prime-a-lachat-dun-velo-cargo"
-  },
-  "aides . bocage mayennais": {
-    "remplace": "intercommunalité",
-    "titre": "Bocage Mayennais Communauté de communes",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . epci = 'CC du Bocage Mayennais'",
-        "vélo . électrique"
-      ]
-    },
-    "valeur": "100€",
-    "lien": "https://www.bocage-mayennais.fr/bocage-mayennais_au-quotidien_transport-et-mobilite_aide-a-l-achat-de-velo-a-assistance-electrique-vae.phtml"
   },
   "aides . brive": {
     "remplace": "intercommunalité",
@@ -6591,8 +6428,18 @@
       ]
     },
     "valeur": "vélo . prix",
-    "plafond": "80€",
-    "lien": "https://www.communaute-urbaine-dunkerque.fr/fileadmin/Cud/documents/Subvention/habitat/aide/AideAchatVelo_flyer_A4_Ro.pdf"
+    "plafond": {
+      "variations": [
+        {
+          "si": "demandeur . bénéficiaire de minima sociaux",
+          "alors": "150€"
+        },
+        {
+          "sinon": "80€"
+        }
+      ]
+    },
+    "lien": "https://www.communaute-urbaine-dunkerque.fr/aide-a-lacquisition-dun-velo"
   },
   "aides . flandre intérieure": {
     "remplace": "intercommunalité",
@@ -6646,11 +6493,11 @@
     "variations": [
       {
         "si": "vélo . électrique",
-        "alors": "50% * vélo . prix"
+        "alors": "20% * vélo . prix"
       },
       {
         "si": "vélo . mécanique",
-        "alors": "20% * vélo . prix"
+        "alors": "50% * vélo . prix"
       },
       {
         "sinon": "0€"
@@ -6942,7 +6789,7 @@
         }
       ]
     },
-    "lien": "https://www.rivesdemoselle.fr/aide-a-lachat-pour-un-velo-avec-ou-sans-assistance-electrique/"
+    "lien": "https://www.rivesdemoselle.fr/mobilites/#tousavelo"
   },
   "aides . saint-avold": {
     "remplace": "intercommunalité",
@@ -6956,7 +6803,7 @@
     "variations": [
       {
         "si": "vélo acheté localement",
-        "alors": "100€"
+        "alors": "150€"
       },
       {
         "sinon": "50€"
@@ -7557,6 +7404,32 @@
     },
     "lien": "https://www.sainghin-en-melantois.fr/aide-lachat-dun-velo"
   },
+  "aides . pays de mormal": {
+    "remplace": "intercommunalité",
+    "titre": "Pays de Mormal",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . epci = 'CC du Pays de Mormal'",
+        "vélo . électrique"
+      ]
+    },
+    "variations": [
+      {
+        "si": "demandeur . bénéficiaire de minima sociaux",
+        "alors": {
+          "valeur": "50% * vélo . prix",
+          "plafond": "600€"
+        }
+      },
+      {
+        "sinon": {
+          "valeur": "30% * vélo . prix",
+          "plafond": "360€"
+        }
+      }
+    ],
+    "lien": "https://www.cc-paysdemormal.fr/environnement-amenagement-html/aide-velo-trottinette-electrique/documents-velo-electrique/"
+  },
   "aides . grand calais": {
     "remplace": "intercommunalité",
     "titre": "Grand Calais Terres et Mers - SITAC",
@@ -7882,6 +7755,40 @@
       }
     ],
     "lien": "https://www.grandangouleme.fr/tous-a-velo/"
+  },
+  "aides . massif du vercors": {
+    "remplace": "intercommunalité",
+    "titre": "Massif du Vercors communauté de communes",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . epci = 'CC du Massif du Vercors'",
+        "revenu fiscal de référence <= 21805 €/an"
+      ]
+    },
+    "variations": [
+      {
+        "si": "vélo . cargo",
+        "alors": "400 €"
+      },
+      {
+        "si": "vélo . électrique",
+        "alors": {
+          "variations": [
+            {
+              "si": "vélo . neuf",
+              "alors": "200 €"
+            },
+            {
+              "sinon": "300 €"
+            }
+          ]
+        }
+      },
+      {
+        "sinon": "0 €"
+      }
+    ],
+    "lien": "https://www.vercors.org/fr/vie-quotidienne/se-deplacer/a-velo/"
   },
   "aides . carmausin-ségala": {
     "remplace": "intercommunalité",
@@ -8666,7 +8573,7 @@
     },
     "valeur": "50% * vélo . prix . HT",
     "plafond": "600€",
-    "lien": "https://guichet.public.lu/fr/citoyens/transports-mobilite/transports-individuels/aides-financieres-acquisition-detention-vehicule/deduction-mobilite-durable-velo.html"
+    "lien": "https://guichet.public.lu/fr/citoyens/transport/transports-individuels/aides-financieres/deduction-mobilite-durable-velo.html"
   },
   "vélo": "oui",
   "vélo . type": {
@@ -8810,7 +8717,6 @@
             "localisation . epci = 'CA Luberon Monts de Vaucluse'",
             "localisation . epci = 'CA Tarbes-Lourdes-Pyrénées'",
             "localisation . epci = 'CC Saint-Marcellin Vercors Isère Communauté'",
-            "localisation . epci = 'CU Perpignan Méditerranée Métropole'",
             "localisation . epci = 'CC Le Grésivaudan'"
           ]
         },
@@ -8913,7 +8819,6 @@
         "aides . béthune bruay",
         "aides . haut val de sèvre",
         "aides . grand périgueux",
-        "aides . charenton",
         "aides . divonne-les-bains",
         "aides . illkirch",
         "aides . valenciennes",
@@ -8938,8 +8843,7 @@
         "aides . feignies",
         "aides . moselle et madon",
         "aides . canélan",
-        "aides . kremlin-bicetre",
-        "aides . perpignan métropole"
+        "aides . kremlin-bicetre"
       ]
     }
   },
