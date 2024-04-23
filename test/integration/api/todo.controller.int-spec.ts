@@ -24,7 +24,7 @@ import {
 
 describe('TODO list (API test)', () => {
   const OLD_ENV = process.env;
-  let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -396,7 +396,7 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '123',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L1,
@@ -453,7 +453,8 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create_article({
+
+    await TestUtil.create(DB.article, {
       content_id: '123',
       thematiques: [Thematique.climat],
       difficulty: DifficultyLevel.L1,
@@ -501,10 +502,13 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create_article({ content_id: 'article-1' });
+    await TestUtil.create(DB.article, {
+      content_id: 'article-1',
+      thematiques: [Thematique.climat],
+    });
 
     // WHEN
-    let response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
 
     // THEN
     expect(response.status).toBe(200);
@@ -546,8 +550,11 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create_article({ content_id: 'article-1' });
-    await TestUtil.create_article({ content_id: 'article-2' });
+    await TestUtil.create(DB.article, { content_id: 'article-1' });
+    await TestUtil.create(DB.article, {
+      content_id: 'article-2',
+      thematiques: [Thematique.climat],
+    });
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
@@ -677,7 +684,7 @@ describe('TODO list (API test)', () => {
     });
 
     // WHEN
-    let response = await TestUtil.POST(
+    const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/todo/gagner_points',
     );
     expect(response.status).toBe(200);
@@ -717,7 +724,7 @@ describe('TODO list (API test)', () => {
     });
 
     // WHEN
-    let response = await TestUtil.POST(
+    const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/todo/gagner_points',
     );
     expect(response.status).toBe(400);
@@ -754,7 +761,7 @@ describe('TODO list (API test)', () => {
     });
 
     // WHEN
-    let response = await TestUtil.POST(
+    const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/todo/gagner_points',
     );
     expect(response.status).toBe(400);
@@ -791,7 +798,7 @@ describe('TODO list (API test)', () => {
     });
 
     // WHEN
-    let response = await TestUtil.POST(
+    const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/todo/123/gagner_points',
     );
     expect(response.status).toBe(200);
@@ -934,7 +941,7 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '123',
       difficulty: DifficultyLevel.L1,
       thematique_principale: Thematique.climat,

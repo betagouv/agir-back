@@ -249,36 +249,6 @@ export class TestUtil {
       ...override,
     };
   }
-  // FIX: HARMONISER AVEC ARTICLE DATA
-  static async create_article(override?: Partial<Article>) {
-    await this.prisma.article.create({
-      data: TestUtil.getArticleData(override),
-    });
-  }
-  static getArticleData(override?: Partial<Article>): Article {
-    return {
-      content_id: '1',
-      titre: 'titreA',
-      soustitre: 'sousTitre',
-      source: 'ADEME',
-      image_url: 'https://',
-      partenaire: 'Angers',
-      tags_utilisateur: [],
-      rubrique_ids: ['3', '4'],
-      rubrique_labels: ['r3', 'r4'],
-      codes_postaux: ['91120'],
-      duree: 'pas long',
-      frequence: 'souvent',
-      difficulty: 1,
-      points: 10,
-      thematique_principale: Thematique.climat,
-      thematiques: [Thematique.climat, Thematique.logement],
-      created_at: undefined,
-      updated_at: undefined,
-      ...override,
-    };
-  }
-
   static async create_quizz(override?: Partial<Quizz>) {
     await this.prisma.quizz.create({
       data: {
@@ -612,8 +582,7 @@ export class TestUtil {
       ...override,
     };
   }
-
-  static articleData(override?): Article {
+  static articleData(override?: Partial<Article>): Article {
     return {
       content_id: 'contentId',
       titre: 'Titre de mon article',

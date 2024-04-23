@@ -10,7 +10,7 @@ import {
 import { Gamification } from '../../../src/domain/gamification/gamification';
 
 describe('EVENT (API test)', () => {
-  let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -256,7 +256,7 @@ describe('EVENT (API test)', () => {
   it('POST /utilisateurs/id/events - ajoute points pour article lu v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '123',
       points: 20,
     });
@@ -283,8 +283,10 @@ describe('EVENT (API test)', () => {
   it('POST /utilisateurs/id/events - ajoute points pour article lu par content_id, user v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
-    await TestUtil.create_article({ content_id: '123', points: 20 });
-
+    await TestUtil.create(DB.article, {
+      content_id: '123',
+      points: 20,
+    });
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/events',
@@ -308,7 +310,7 @@ describe('EVENT (API test)', () => {
   it('POST /utilisateurs/id/events - ajoute pas deux fois points pour article lu v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '123',
       points: 20,
     });
@@ -386,7 +388,7 @@ describe('EVENT (API test)', () => {
   it('POST /utilisateurs/id/events - like event set la valeur du like sur une interaction v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
-    await TestUtil.create_article({ content_id: '123' });
+    await TestUtil.create(DB.article, { content_id: '123' });
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/events',
@@ -448,9 +450,7 @@ describe('EVENT (API test)', () => {
   it('POST /utilisateurs/id/events - favoris event set un favoris sur un article', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_article({
-      content_id: '123',
-    });
+    await TestUtil.create(DB.article, { content_id: '123' });
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/events',

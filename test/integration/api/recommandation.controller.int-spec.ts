@@ -17,7 +17,6 @@ import {
   KYCID,
 } from '../../../src/domain/kyc/questionQYC';
 import { DefiDefinition } from 'src/domain/defis/defiDefinition';
-import { Feature } from 'src/domain/gamification/feature';
 import { UnlockedFeatures_v1 } from 'src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
@@ -71,7 +70,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   it('GET /utilisateurs/id/recommandation - 403 if bad id', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { history: {} });
-    await TestUtil.create_article();
+    await TestUtil.create(DB.article);
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/autre-id/recommandations',
@@ -87,7 +86,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       history: {},
       force_connexion: true,
     });
-    await TestUtil.create_article();
+    await TestUtil.create(DB.article);
 
     // WHEN
     const response = await TestUtil.GET(
@@ -101,7 +100,15 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     CatalogueQuestionsKYC.setCatalogue([]);
 
     await TestUtil.create(DB.utilisateur, { history: {} });
-    await TestUtil.create_article();
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      titre: 'titreA',
+      soustitre: 'sousTitre',
+      thematique_principale: Thematique.climat,
+      duree: 'pas long',
+      image_url: 'https://',
+      points: 10,
+    });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -158,11 +165,11 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       history: {},
       logement: { version: 0, code_postal: '123' },
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '1',
       codes_postaux: ['123'],
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '2',
       codes_postaux: ['456'],
     });
@@ -193,15 +200,15 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       exp: {},
     });
 
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '1',
       rubrique_ids: ['1'],
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '2',
       rubrique_ids: ['3'],
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '3',
       rubrique_ids: ['2'],
     });
@@ -328,7 +335,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       content_id: '1',
       rubrique_ids: ['1'],
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '2',
       rubrique_ids: ['2'],
     });
@@ -347,7 +354,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[2].content_id).toEqual('1');
     expect(Math.round(response.body[2].score)).toEqual(10);
   });
-
   it('GET /utilisateurs/id/recommandations - renvoie pas de défis si feature non active', async () => {
     // GIVEN
     process.env.DEFI_ENABLED = 'true';
@@ -373,7 +379,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(0);
   });
-
   it('GET /utilisateurs/id/recommandations - tag climat 2 fois renforce le score', async () => {
     // GIVEN
     CatalogueQuestionsKYC.setCatalogue([]);
@@ -390,7 +395,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       noel: {},
       exp: {},
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '1',
       rubrique_ids: [],
       thematiques: [Thematique.transport],
@@ -406,7 +411,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[0].content_id).toEqual('1');
     expect(Math.round(response.body[0].score)).toEqual(350);
   });
-
   it('GET /utilisateurs/id/recommandations - pas de article lu', async () => {
     // GIVEN
     CatalogueQuestionsKYC.setCatalogue([]);
@@ -423,11 +427,11 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         ],
       },
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '1',
       codes_postaux: [],
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '2',
       codes_postaux: [],
     });
@@ -568,17 +572,17 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       codes_postaux: [],
       rubrique_ids: ['3'],
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '44',
       codes_postaux: [],
       rubrique_ids: ['4'],
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '55',
       codes_postaux: [],
       rubrique_ids: ['5'],
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '66',
       codes_postaux: [],
       rubrique_ids: ['6', '5'],
@@ -682,17 +686,17 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       codes_postaux: [],
       rubrique_ids: ['3'],
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '44',
       codes_postaux: [],
       rubrique_ids: ['4'],
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '55',
       codes_postaux: [],
       rubrique_ids: ['5'],
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '66',
       codes_postaux: [],
       rubrique_ids: ['6'],
