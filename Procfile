@@ -1,1 +1,1 @@
-postdeploy: /scripts/postdeploy.sh
+postdeploy: /app/scripts/postdeploy.sh
