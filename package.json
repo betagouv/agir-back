@@ -16,7 +16,7 @@
     "db:status": "dotenv -e .env.test -- npx prisma migrate status",
     "db:up": "docker-compose up -d",
     "db:destroy": "docker-compose down",
-    "build": "nest build",
+    "build": "npx prisma generate --schema ./src/infrastructure/prisma/stats/schema.prisma && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "node dist/src/main.js",
     "start:dev": "dotenv -e .env.run -- nest start --watch",
