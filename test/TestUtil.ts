@@ -2,6 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
+import { PrismaService as PrismaService_STATS } from '../src/infrastructure/prisma/stats/prisma.service.stats';
 import { Thematique } from '../src/domain/contenu/thematique';
 import {
   Consommation,
@@ -101,6 +102,7 @@ export class TestUtil {
   constructor() {}
   public static app: INestApplication;
   public static prisma = new PrismaService();
+  public static prisma_stats = new PrismaService_STATS();
   public static utilisateur = 'utilisateur';
   public static suivi = 'suivi';
   public static SECRET = '123456789012345678901234567890';

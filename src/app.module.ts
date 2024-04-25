@@ -16,6 +16,7 @@ import { UtilisateurRepository } from './infrastructure/repository/utilisateur/u
 import { BilanRepository } from './infrastructure/repository/bilan.repository';
 
 import { PrismaService } from './infrastructure/prisma/prisma.service';
+import { PrismaService as PrismaService_STATS } from './infrastructure/prisma/stats/prisma.service.stats';
 import { SuiviRepository } from './infrastructure/repository/suivi.repository';
 import { SuiviUsecase } from './usecase/suivi.usecase';
 import { AidesVeloRepository } from './infrastructure/repository/aidesVelo.repository';
@@ -133,6 +134,7 @@ function getControllers(): any[] {
   controllers: getControllers(),
   providers: [
     PrismaService,
+    PrismaService_STATS,
     UtilisateurRepository,
     BilanRepository,
     SuiviRepository,
