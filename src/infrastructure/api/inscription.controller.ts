@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Response } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import {
   ApiTags,
   ApiBody,
@@ -7,13 +7,13 @@ import {
   ApiOperation,
 } from '@nestjs/swagger';
 import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
-import { HttpStatus } from '@nestjs/common';
-import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
 import { ProspectSubmitAPI } from './types/utilisateur/onboarding/prospectSubmitAPI';
 import { ValidateCodeAPI } from './types/utilisateur/onboarding/validateCodeAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { GenericControler } from './genericControler';
 import { InscriptionUsecase } from '../../../src/usecase/inscription.usecase';
+import { TokenAPI } from './types/utilisateur/TokenAPI';
+import { EmailAPI } from './types/utilisateur/EmailAPI';
 
 @ApiExtraModels(CreateUtilisateurAPI)
 @Controller()
@@ -34,11 +34,9 @@ export class InscriptionController extends GenericControler {
   @ApiOkResponse({
     type: ProspectSubmitAPI,
   })
-  async createUtilisateur(@Body() body: CreateUtilisateurAPI, @Response() res) {
+  async createUtilisateur(@Body() body: CreateUtilisateurAPI) {
     await this.inscriptionUsecase.createUtilisateur(body);
-    return res.json({
-      email: body.email,
-    });
+    return EmailAPI.mapToAPI(body.email);
   }
 
   @Post('utilisateurs/valider')
@@ -50,15 +48,14 @@ export class InscriptionController extends GenericControler {
     type: ValidateCodeAPI,
   })
   @ApiOkResponse({
-    type: LoggedUtilisateurAPI,
+    type: TokenAPI,
   })
-  async validerCode(@Body() body: ValidateCodeAPI, @Response() res) {
+  async validerCode(@Body() body: ValidateCodeAPI) {
     const loggedUser = await this.inscriptionUsecase.validateCode(
       body.email,
       body.code,
     );
-    const response = LoggedUtilisateurAPI.mapToAPI(loggedUser.token);
-    return res.status(HttpStatus.OK).json(response);
+    return TokenAPI.mapToAPI(loggedUser.token);
   }
 
   @Post('utilisateurs/renvoyer_code')
@@ -69,8 +66,8 @@ export class InscriptionController extends GenericControler {
   @ApiBody({
     type: RenvoyerCodeAPI,
   })
-  async renvoyerCode(@Body() body: RenvoyerCodeAPI, @Response() res) {
+  async renvoyerCode(@Body() body: RenvoyerCodeAPI) {
     await this.inscriptionUsecase.renvoyerCode(body.email);
-    return res.status(HttpStatus.OK).json('code renvoyé');
+    return 'code renvoyé';
   }
 }

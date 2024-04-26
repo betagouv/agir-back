@@ -7,18 +7,15 @@ export class LoggedUtilisateurAPI {
   token: string;
 
   @ApiProperty({ type: UtilisateurAPI })
-  utilisateur?: UtilisateurAPI;
+  utilisateur: UtilisateurAPI;
 
   public static mapToAPI(
     token: string,
-    user?: Utilisateur,
+    user: Utilisateur,
   ): LoggedUtilisateurAPI {
-    const result = {
+    return {
       token: token,
+      utilisateur: UtilisateurAPI.mapToAPI(user),
     };
-    if (user) {
-      result['utilisateur'] = UtilisateurAPI.mapToAPI(user);
-    }
-    return result;
   }
 }
