@@ -39,7 +39,7 @@ export class UniversController extends GenericControler {
     type: [UniversAPI],
   })
   @ApiOperation({
-    summary: `Retourne les univers auquels peut accéder l'uilisateur`,
+    summary: `Retourne les univers auquels peut accéder l'utilisateur`,
   })
   async getUnivers(
     @Request() req,
@@ -56,7 +56,7 @@ export class UniversController extends GenericControler {
     type: [ThematiqueUniversAPI],
   })
   @ApiOperation({
-    summary: `Retourne les univers auquels peut accéder l'uilisateur`,
+    summary: `Retourne les thematiques de d'un univers particulier d'un utilisateur donné`,
   })
   async getUniversThematiques(
     @Request() req,
