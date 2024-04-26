@@ -22,6 +22,8 @@ import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { UniversAPI } from './types/univers/UniversAPI';
 import { UniversUsecase } from '../../../src/usecase/univers.usecase';
+import { UniversType } from '../../../src/domain/univers/universType';
+import { ThematiqueUniversAPI } from './types/univers/ThematiqueUniversAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -37,7 +39,7 @@ export class UniversController extends GenericControler {
     type: [UniversAPI],
   })
   @ApiOperation({
-    summary: `Retourn les univers auquels peut accéder l'uilisateur`,
+    summary: `Retourne les univers auquels peut accéder l'uilisateur`,
   })
   async getUnivers(
     @Request() req,
@@ -46,5 +48,26 @@ export class UniversController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
     const result = await this.universUsecase.getALLOfUser(utilisateurId);
     return result.map((e) => UniversAPI.mapToAPI(e));
+  }
+
+  @Get('utilisateurs/:utilisateurId/univers/:universType/thematiques')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: [ThematiqueUniversAPI],
+  })
+  @ApiOperation({
+    summary: `Retourne les univers auquels peut accéder l'uilisateur`,
+  })
+  async getUniversThematiques(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('universType') universType: UniversType,
+  ): Promise<ThematiqueUniversAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.universUsecase.getThematiquesOfUnivers(
+      utilisateurId,
+      universType,
+    );
+    return result.map((e) => ThematiqueUniversAPI.mapToAPI(e));
   }
 }
