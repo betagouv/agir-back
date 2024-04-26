@@ -1,1 +1,1 @@
-postdeploy: /app/scripts/postdeploy.sh
+postdeploy: npx prisma migrate deploy

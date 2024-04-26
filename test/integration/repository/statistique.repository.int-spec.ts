@@ -5,7 +5,7 @@ describe('StatistiqueRepository', () => {
   const OLD_ENV = process.env;
   const statistiqueRepository = new StatistiqueRepository(
     TestUtil.prisma,
-    TestUtil.prisma_stats,
+    //TestUtil.prisma_stats,
   );
 
   beforeAll(async () => {
@@ -62,6 +62,7 @@ describe('StatistiqueRepository', () => {
     expect(statistique.nombre_defis_abandonnes).toEqual(2);
     expect(statistique.nombre_defis_deja_fait).toEqual(1);
   });
+  /*
   it('test  : table stats', async () => {
     // WHEN
     await statistiqueRepository.upsertTestTable('1', '111');
@@ -71,4 +72,5 @@ describe('StatistiqueRepository', () => {
     const statistique = await TestUtil.prisma_stats.testTable.findMany();
     expect(statistique).toHaveLength(2);
   });
+  */
 });

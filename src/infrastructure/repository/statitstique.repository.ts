@@ -1,14 +1,14 @@
 import { PrismaService } from '../prisma/prisma.service';
-import { PrismaService as PrismaService_STATS } from '../prisma/stats/prisma.service.stats';
+//import { PrismaService as PrismaService_STATS } from '../prisma/stats/prisma.service.stats';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class StatistiqueRepository {
   constructor(
-    private prisma: PrismaService,
-    private prisma_stats: PrismaService_STATS,
+    private prisma: PrismaService, //private prisma_stats: PrismaService_STATS,
   ) {}
 
+  /*
   async upsertTestTable(id: string, value: string) {
     await this.prisma_stats.testTable.upsert({
       where: {
@@ -23,6 +23,7 @@ export class StatistiqueRepository {
       },
     });
   }
+  */
   async upsertStatistiquesDUnUtilisateur(
     utilisateurId: string,
     nombreDefisEnCours: number,
