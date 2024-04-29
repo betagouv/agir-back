@@ -328,8 +328,8 @@ export class CMSUsecase {
       universes: entry.univers
         ? entry.univers.map((u) => UniversType[u.code])
         : [],
-      thematiques_univers: entry.thematiqueUnivers
-        ? entry.thematiqueUnivers.map((t) => ThematiqueUniversType[t.code])
+      thematiques_univers: entry.thematique_univers
+        ? entry.thematique_univers.map((t) => ThematiqueUniversType[t.code])
         : [],
     };
   }

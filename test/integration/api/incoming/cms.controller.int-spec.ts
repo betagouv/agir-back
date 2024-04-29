@@ -28,7 +28,7 @@ describe('/api/incoming/cms (API test)', () => {
           code: UniversType.climat,
         },
       ],
-      thematiqueUnivers: [
+      thematique_univers: [
         {
           id: 1,
           code: ThematiqueUniversType.dechets_compost,

@@ -36,7 +36,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty({ type: [CMSWebhookUniversAPI] })
   univers: CMSWebhookUniversAPI[];
   @ApiProperty({ type: [CMSWebhookThematiqueUniversAPI] })
-  thematiqueUnivers: CMSWebhookThematiqueUniversAPI[];
+  thematique_univers: CMSWebhookThematiqueUniversAPI[];
   @ApiProperty({ type: CMSThematiqueAPI })
   thematique: CMSThematiqueAPI;
   @ApiProperty({ type: [CMSTagAPI] })
