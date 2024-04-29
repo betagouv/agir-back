@@ -1175,7 +1175,7 @@ describe('Admin (API test)', () => {
     expect(article3.titre).toBe('Titre de mon article 3');
   });
 
-  it.only("POST /admin/article-statistique - calcul des statistiques de l'ensemble des défis", async () => {
+  it("POST /admin/article-statistique - calcul des statistiques de l'ensemble des défis", async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
 
