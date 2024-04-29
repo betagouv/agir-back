@@ -40,7 +40,7 @@ describe('Univers (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/univers/climat/thematiques',
+      '/utilisateurs/utilisateur-id/univers/cuisine/thematiques',
     );
 
     // THEN
