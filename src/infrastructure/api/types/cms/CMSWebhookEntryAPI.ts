@@ -152,7 +152,7 @@ export type CMSWebhookPopulateAPI = {
         },
       ];
     };
-    thematiqueUnivers: {
+    thematique_univers: {
       data: [
         {
           id: string;

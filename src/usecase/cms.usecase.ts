@@ -132,6 +132,7 @@ export class CMSUsecase {
     const loading_result: string[] = [];
     const liste_defis: DefiDefinition[] = [];
     const CMS_DEFI_DATA = await this.loadDataFromCMS('defis');
+    console.log(CMS_DEFI_DATA);
 
     for (let index = 0; index < CMS_DEFI_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_DEFI_DATA[index];
@@ -210,7 +211,7 @@ export class CMSUsecase {
     const URL = App.getCmsURL().concat(
       '/',
       type,
-      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin',
+      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers',
     );
     response = await axios.get(URL, {
       headers: {
@@ -432,8 +433,8 @@ export class CMSUsecase {
             )
           : [],
       thematiques_univers:
-        entry.attributes.thematiqueUnivers.data.length > 0
-          ? entry.attributes.thematiqueUnivers.data.map(
+        entry.attributes.thematique_univers.data.length > 0
+          ? entry.attributes.thematique_univers.data.map(
               (t) => ThematiqueUniversType[t.attributes.code],
             )
           : [],
