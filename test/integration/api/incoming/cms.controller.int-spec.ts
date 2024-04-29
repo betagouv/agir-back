@@ -2,6 +2,8 @@ import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels
 import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
 import { DB, TestUtil } from '../../../TestUtil';
 import { Besoin } from '../../../../src/domain/aides/besoin';
+import { UniversType } from '../../../../src/domain/univers/universType';
+import { ThematiqueUniversType } from '../../../../src/domain/univers/thematiqueUniversType';
 
 describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA_DEFI = {
@@ -20,6 +22,18 @@ describe('/api/incoming/cms (API test)', () => {
         { id: 2, code: 'possede_velo' },
       ],
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+      univers: [
+        {
+          id: 1,
+          code: UniversType.climat,
+        },
+      ],
+      thematiqueUnivers: [
+        {
+          id: 1,
+          code: ThematiqueUniversType.dechets_compost,
+        },
+      ],
     },
   };
   const CMS_DATA_AIDE = {
@@ -260,6 +274,10 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.points).toEqual(10);
     expect(defi.thematique).toEqual('alimentation');
     expect(defi.tags).toEqual(['capacite_physique', 'possede_velo']);
+    expect(defi.universes).toEqual([UniversType.climat]);
+    expect(defi.thematiquesUnivers).toEqual([
+      ThematiqueUniversType.dechets_compost,
+    ]);
   });
 
   it('POST /api/incoming/cms - updates a  defi', async () => {
@@ -285,6 +303,10 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.points).toEqual(10);
     expect(defi.thematique).toEqual('alimentation');
     expect(defi.tags).toEqual(['capacite_physique', 'possede_velo']);
+    expect(defi.universes).toEqual([UniversType.climat]);
+    expect(defi.thematiquesUnivers).toEqual([
+      ThematiqueUniversType.dechets_compost,
+    ]);
   });
 
   it('POST /api/incoming/cms - updates exisying aide in aide table', async () => {
@@ -407,7 +429,7 @@ describe('/api/incoming/cms (API test)', () => {
   });
   it('POST /api/incoming/cms - updates existing quizz in quizz table', async () => {
     // GIVEN
-    await TestUtil.create_quizz({ content_id: '123' });
+    await TestUtil.create(DB.quizz, { content_id: '123' });
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(

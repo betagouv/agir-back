@@ -64,6 +64,8 @@ import { DefiHistory_v0 } from '../src/domain/object_store/defi/defiHistory_v0';
 import { DefiStatus } from '../src/domain/defis/defi';
 import { TagUtilisateur } from '../src/domain/scoring/tagUtilisateur';
 import { Besoin } from '../src/domain/aides/besoin';
+import { UniversType } from '../src/domain/univers/universType';
+import { ThematiqueUniversType } from '../src/domain/univers/thematiqueUniversType';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -80,6 +82,7 @@ export enum DB {
   thematique = 'thematique',
   linky = 'linky',
   article = 'article',
+  quizz = 'quizz',
 }
 export class TestUtil {
   private static TYPE_DATA_MAP: Record<DB, Function> = {
@@ -97,6 +100,7 @@ export class TestUtil {
     thematique: TestUtil.thematiqueData,
     linky: TestUtil.linkyData,
     article: TestUtil.articleData,
+    quizz: TestUtil.quizzData,
   };
 
   constructor() {}
@@ -274,6 +278,31 @@ export class TestUtil {
       },
     });
   }
+
+  static quizzData(override?: Partial<Quizz>): Quizz {
+    return {
+      content_id: '1',
+      titre: 'titreA',
+      soustitre: 'sousTitre',
+      source: 'ADEME',
+      image_url: 'https://',
+      partenaire: 'Angers',
+      tags_utilisateur: [],
+      rubrique_ids: ['3', '4'],
+      rubrique_labels: ['r3', 'r4'],
+      codes_postaux: ['91120'],
+      duree: 'pas long',
+      frequence: 'souvent',
+      difficulty: 1,
+      points: 10,
+      thematique_principale: Thematique.climat,
+      thematiques: [Thematique.climat, Thematique.logement],
+      created_at: undefined,
+      updated_at: undefined,
+      ...override,
+    };
+  }
+
   static aideData(override?: Partial<Aide>): Aide {
     return {
       content_id: '1',
@@ -301,6 +330,8 @@ export class TestUtil {
       sous_titre: 'ssss',
       tags: [TagUtilisateur.appetence_cafe],
       thematique: Thematique.consommation,
+      universes: [UniversType.cuisine],
+      thematiquesUnivers: [ThematiqueUniversType.manger_local],
       created_at: undefined,
       updated_at: undefined,
       ...override,

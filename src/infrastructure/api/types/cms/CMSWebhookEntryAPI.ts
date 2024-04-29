@@ -8,6 +8,14 @@ export class CMSWebhookBesoinAPI {
   @ApiProperty() code: string;
   @ApiProperty() description: string;
 }
+export class CMSWebhookUniversAPI {
+  @ApiProperty() id: number;
+  @ApiProperty() code: string;
+}
+export class CMSWebhookThematiqueUniversAPI {
+  @ApiProperty() id: number;
+  @ApiProperty() code: string;
+}
 export class CMSWebhookRubriqueAPI {
   @ApiProperty() id: number;
   @ApiProperty() titre: string;
@@ -25,6 +33,10 @@ export class CMSWebhookEntryAPI {
   thematique_gamification: CMSThematiqueAPI;
   @ApiProperty({ type: [CMSThematiqueAPI] })
   thematiques: CMSThematiqueAPI[];
+  @ApiProperty({ type: [CMSWebhookUniversAPI] })
+  univers: CMSWebhookUniversAPI[];
+  @ApiProperty({ type: [CMSWebhookThematiqueUniversAPI] })
+  thematiqueUnivers: CMSWebhookThematiqueUniversAPI[];
   @ApiProperty({ type: CMSThematiqueAPI })
   thematique: CMSThematiqueAPI;
   @ApiProperty({ type: [CMSTagAPI] })
@@ -126,6 +138,26 @@ export type CMSWebhookPopulateAPI = {
           id: string;
           attributes: {
             titre: string;
+          };
+        },
+      ];
+    };
+    univers: {
+      data: [
+        {
+          id: string;
+          attributes: {
+            code: string;
+          };
+        },
+      ];
+    };
+    thematiqueUnivers: {
+      data: [
+        {
+          id: string;
+          attributes: {
+            code: string;
           };
         },
       ];

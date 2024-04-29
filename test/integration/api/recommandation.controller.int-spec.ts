@@ -16,8 +16,10 @@ import {
   CategorieQuestionKYC,
   KYCID,
 } from '../../../src/domain/kyc/questionQYC';
-import { DefiDefinition } from 'src/domain/defis/defiDefinition';
-import { UnlockedFeatures_v1 } from 'src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
+import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
+import { ThematiqueUniversType } from '../../../src/domain/univers/thematiqueUniversType';
+import { UniversType } from '../../../src/domain/univers/universType';
+import { Defi } from '.prisma/client';
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
 const DEFI_1: Defi_v0 = {
@@ -32,7 +34,7 @@ const DEFI_1: Defi_v0 = {
   sous_titre: 'sous_titre',
   status: DefiStatus.en_cours,
 };
-const DEFI_1_DEF: DefiDefinition = {
+const DEFI_1_DEF: Defi = {
   content_id: '1',
   points: 5,
   tags: [Tag.utilise_moto_ou_voiture],
@@ -41,6 +43,10 @@ const DEFI_1_DEF: DefiDefinition = {
   astuces: 'astuce',
   pourquoi: 'pourquoi',
   sous_titre: 'sous_titre',
+  universes: [UniversType.climat],
+  thematiquesUnivers: [ThematiqueUniversType.dechets_compost],
+  created_at: undefined,
+  updated_at: undefined,
 };
 
 describe('/utilisateurs/id/recommandations (API test)', () => {
@@ -286,15 +292,15 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       exp: {},
     });
 
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '1',
       rubrique_ids: ['1'],
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '2',
       rubrique_ids: ['2'],
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '3',
       rubrique_ids: ['3'],
     });
@@ -331,7 +337,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       exp: {},
     });
 
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '1',
       rubrique_ids: ['1'],
     });
@@ -456,15 +462,15 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         ],
       },
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '1',
       codes_postaux: [],
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '2',
       codes_postaux: [],
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '3',
       codes_postaux: [],
     });
@@ -557,17 +563,17 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       defis: defis,
       tag_ponderation_set: { R1: 5, R2: 4, R3: 3, R4: 2, R5: 1, R6: 6 },
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '11',
       codes_postaux: [],
       rubrique_ids: ['1'],
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '22',
       codes_postaux: [],
       rubrique_ids: ['2'],
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '33',
       codes_postaux: [],
       rubrique_ids: ['3'],
@@ -671,17 +677,17 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       defis: defis,
       tag_ponderation_set: { R1: 5, R2: 4, R3: 3, R4: 2, R5: 1, R6: 6 },
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '11',
       codes_postaux: [],
       rubrique_ids: ['1'],
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '22',
       codes_postaux: [],
       rubrique_ids: ['2'],
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '33',
       codes_postaux: [],
       rubrique_ids: ['3'],
