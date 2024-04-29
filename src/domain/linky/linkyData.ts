@@ -41,6 +41,7 @@ export class LinkyData {
       this.serie.forEach((element) => {
         element.time = new Date(element.time);
       });
+      this.created_at = data.created_at;
     } else {
       this.serie = [];
     }
@@ -49,6 +50,7 @@ export class LinkyData {
   prm: string;
   utilisateurId?: string;
   winter_pk?: string;
+  created_at?: Date;
 
   public addDataElement?(element: LinkyDataElement) {
     this.serie.push(element);
@@ -364,6 +366,16 @@ export class LinkyData {
       }
     });
     return Array.from(dayLinkyData.days.values());
+  }
+
+  searchSingleDay?(day: Date): LinkyDataElement {
+    for (let index = 0; index < this.serie.length; index++) {
+      const element = this.serie[index];
+      if (LinkyData.isBetween(element.time, day, day)) {
+        return element;
+      }
+    }
+    return null;
   }
 
   static isBetween(day: Date, startDate: Date, endDate: Date): boolean {

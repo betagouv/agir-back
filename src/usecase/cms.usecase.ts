@@ -132,7 +132,6 @@ export class CMSUsecase {
     const loading_result: string[] = [];
     const liste_defis: DefiDefinition[] = [];
     const CMS_DEFI_DATA = await this.loadDataFromCMS('defis');
-    console.log(CMS_DEFI_DATA);
 
     for (let index = 0; index < CMS_DEFI_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_DEFI_DATA[index];
@@ -380,7 +379,6 @@ export class CMSUsecase {
     };
   }
   static buildAideFromCMSPopulateData(entry: CMSWebhookPopulateAPI): Aide {
-    console.log(entry);
     return {
       content_id: entry.id.toString(),
       titre: entry.attributes.titre,
@@ -410,7 +408,6 @@ export class CMSUsecase {
   static buildDefiFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
   ): DefiDefinition {
-    console.log(entry.attributes.tags.data);
     return {
       content_id: entry.id.toString(),
       titre: entry.attributes.titre,

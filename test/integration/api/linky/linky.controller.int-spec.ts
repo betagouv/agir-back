@@ -352,4 +352,56 @@ describe('Linky (API test)', () => {
       `Au cours des 2 dernières semaines, votre consommation éléctrique a <strong>augmenté de +15%</strong> par rapport à la même période l'année dernière`,
     );
   });
+
+  it('POST /admin/linky_stats la qualité de réception pour le dernier mois', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await TestUtil.create(DB.linky, {
+      prm: '1',
+      utilisateurId: undefined,
+      winter_pk: undefined,
+      data: [
+        {
+          time: new Date(),
+          value: 1000,
+          value_at_normal_temperature: 2000,
+        },
+      ],
+    });
+    const hier = new Date();
+    const ajd_minus_10 = new Date();
+    hier.setDate(hier.getDate() - 1);
+    ajd_minus_10.setDate(ajd_minus_10.getDate() - 10);
+    await TestUtil.create(DB.linky, {
+      prm: '2',
+      utilisateurId: undefined,
+      winter_pk: undefined,
+      created_at: ajd_minus_10,
+      data: [
+        {
+          time: hier,
+          value: 1000,
+          value_at_normal_temperature: 2000,
+        },
+      ],
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/linky_stats');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(3);
+    expect(response.body[0][0]).toEqual('PRM');
+    expect(response.body[1]).toHaveLength(32);
+
+    expect(response.body[1][0]).toEqual('1');
+    expect(response.body[1][31]).toEqual('O');
+    expect(response.body[1][30]).toEqual('-');
+
+    expect(response.body[2][0]).toEqual('2');
+    expect(response.body[2][31]).toEqual('X');
+    expect(response.body[2][30]).toEqual('O');
+  });
 });

@@ -86,7 +86,7 @@ model Statistique {
 }
 
 model DefiStatistique {
-  content_id              String   @id
+  content_i               String   @id
   titre                   String?
   nombre_defis_realises   Int?
   nombre_defis_abandonnes Int?
