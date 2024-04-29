@@ -182,6 +182,7 @@ export class TestUtil {
     await this.prisma.linkyConsentement.deleteMany();
     await this.prisma.statistique.deleteMany();
     await this.prisma.articleStatistique.deleteMany();
+    await this.prisma.defiStatistique.deleteMany();
     ThematiqueRepository.resetThematiques();
   }
 

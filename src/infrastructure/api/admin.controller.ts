@@ -17,6 +17,7 @@ import { ContactUsecase } from '../../usecase/contact.usecase';
 import { UtilisateurUsecase } from '../../../src/usecase/utilisateur.usecase';
 import { StatistiqueUsecase } from '../../../src/usecase/statistique.usecase';
 import { ArticleStatistiqueUsecase } from '../../../src/usecase/articleStatistique.usecase';
+import { DefiStatistiqueUsecase } from '../../../src/usecase/defiStatistique.usecase';
 
 @Controller()
 @ApiTags('Admin')
@@ -33,6 +34,7 @@ export class AdminController extends GenericControler {
     private contactUsecase: ContactUsecase,
     private statistiqueUsecase: StatistiqueUsecase,
     private articleStatistiqueUsecase: ArticleStatistiqueUsecase,
+    private defiStatistiqueUsecase: DefiStatistiqueUsecase,
   ) {
     super();
   }
@@ -189,5 +191,14 @@ export class AdminController extends GenericControler {
   async calcul_article_statistique(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.articleStatistiqueUsecase.calculStatistique();
+  }
+
+  @Post('/admin/defi-statistique')
+  @ApiOperation({
+    summary: `Calcul des statistiques de l'ensemble des défis`,
+  })
+  async calcul_defi_statistique(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.defiStatistiqueUsecase.calculStatistique();
   }
 }
