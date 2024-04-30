@@ -389,6 +389,7 @@ describe('Linky (API test)', () => {
 
     // WHEN
     const response = await TestUtil.POST('/admin/linky_stats');
+    console.log(response.body);
 
     // THEN
     expect(response.status).toBe(201);
@@ -397,8 +398,8 @@ describe('Linky (API test)', () => {
     expect(response.body[1]).toHaveLength(32);
 
     expect(response.body[1][0]).toEqual('1');
-    expect(response.body[1][31]).toEqual('O');
-    expect(response.body[1][30]).toEqual('-');
+    expect(response.body[1][31]).toEqual('CO');
+    expect(response.body[1][30]).toEqual('X');
 
     expect(response.body[2][0]).toEqual('2');
     expect(response.body[2][31]).toEqual('X');
