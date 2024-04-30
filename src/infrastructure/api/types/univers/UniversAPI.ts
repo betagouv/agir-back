@@ -8,6 +8,7 @@ export class UniversAPI {
   @ApiProperty() etoiles: number;
   @ApiProperty() is_locked: boolean;
   @ApiProperty() reason_locked: string;
+  @ApiProperty() image_url: string;
 
   public static mapToAPI(uni: Univers): UniversAPI {
     return {
@@ -16,6 +17,7 @@ export class UniversAPI {
       type: uni.type,
       is_locked: uni.is_locked,
       reason_locked: uni.reason_locked,
+      image_url: uni.image_url,
     };
   }
 }

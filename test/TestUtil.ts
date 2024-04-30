@@ -44,7 +44,7 @@ import {
   Superficie,
   TypeLogement,
 } from '../src/domain/logement/logement';
-import { Empreinte, SituationNGC, Suivi } from '.prisma/client';
+import { Empreinte, SituationNGC, Suivi, Univers } from '.prisma/client';
 import {
   Aide,
   Article,
@@ -80,6 +80,7 @@ export enum DB {
   groupe = 'groupe',
   serviceDefinition = 'serviceDefinition',
   thematique = 'thematique',
+  univers = 'univers',
   linky = 'linky',
   article = 'article',
   quizz = 'quizz',
@@ -101,6 +102,7 @@ export class TestUtil {
     linky: TestUtil.linkyData,
     article: TestUtil.articleData,
     quizz: TestUtil.quizzData,
+    univers: TestUtil.universData,
   };
 
   constructor() {}
@@ -183,7 +185,8 @@ export class TestUtil {
     await this.prisma.statistique.deleteMany();
     await this.prisma.articleStatistique.deleteMany();
     await this.prisma.defiStatistique.deleteMany();
-    ThematiqueRepository.resetThematiques();
+    await this.prisma.univers.deleteMany();
+    ThematiqueRepository.resetThematiquesUnivers();
   }
 
   static getDate(date: string) {
@@ -547,6 +550,17 @@ export class TestUtil {
       id: 'thematique-id',
       id_cms: 1,
       titre: 'titre',
+      ...override,
+    };
+  }
+  static universData(override?: Partial<Univers>): Univers {
+    return {
+      id_cms: 1,
+      label: 'Le Climat !',
+      code: UniversType.climat,
+      image_url: 'https://',
+      created_at: undefined,
+      updated_at: undefined,
       ...override,
     };
   }

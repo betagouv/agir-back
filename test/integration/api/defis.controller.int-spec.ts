@@ -131,7 +131,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         defis: [DEFI_1],
       },
     });
-    ThematiqueRepository.resetThematiques();
+    ThematiqueRepository.resetThematiquesUnivers();
     await TestUtil.create(DB.thematique, {
       id: '1',
       id_cms: 1,
@@ -193,7 +193,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       ],
     };
     await TestUtil.create(DB.utilisateur, { defis: defis });
-    ThematiqueRepository.resetThematiques();
+    ThematiqueRepository.resetThematiquesUnivers();
     await TestUtil.create(DB.thematique, {
       id: '1',
       id_cms: 1,

@@ -43,6 +43,14 @@ export class CMSUsecase {
           return this.createOrUpdateThematique(cmsWebhookAPI);
       }
     }
+    if (cmsWebhookAPI.model === CMSModel.univers) {
+      switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.publish']:
+          return this.createOrUpdateUnivers(cmsWebhookAPI);
+        case CMSEvent['entry.update']:
+          return this.createOrUpdateUnivers(cmsWebhookAPI);
+      }
+    }
     if ([CMSModel.article, CMSModel.quizz].includes(cmsWebhookAPI.model)) {
       switch (cmsWebhookAPI.event) {
         case CMSEvent['entry.unpublish']:
@@ -225,6 +233,17 @@ export class CMSUsecase {
     await this.thematiqueRepository.upsertThematique(
       cmsWebhookAPI.entry.id,
       cmsWebhookAPI.entry.titre,
+    );
+  }
+
+  async createOrUpdateUnivers(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.thematiqueRepository.upsertUnivers(
+      cmsWebhookAPI.entry.id,
+      cmsWebhookAPI.entry.code,
+      cmsWebhookAPI.entry.label,
+      cmsWebhookAPI.entry.imageUrl
+        ? cmsWebhookAPI.entry.imageUrl.formats.thumbnail.url
+        : null,
     );
   }
 

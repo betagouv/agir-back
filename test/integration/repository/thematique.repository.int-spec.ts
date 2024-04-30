@@ -1,6 +1,7 @@
 import { DB, TestUtil } from '../../TestUtil';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { Thematique } from '../../../src/domain/contenu/thematique';
+import { UniversType } from '../../../src/domain/univers/universType';
 
 describe('ThematiqueRepository', () => {
   let thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -19,7 +20,7 @@ describe('ThematiqueRepository', () => {
 
   it('loadThematiques : charge 2 thematiques OK', async () => {
     // GIVEN
-    ThematiqueRepository.resetThematiques();
+    ThematiqueRepository.resetThematiquesUnivers();
     await TestUtil.create(DB.thematique, {
       id: '1',
       id_cms: 1,
@@ -41,6 +42,31 @@ describe('ThematiqueRepository', () => {
     expect(
       ThematiqueRepository.getLibelleThematique(Thematique.climat),
     ).toEqual('t2');
+  });
+  it('loadUnivers : charge 2 univers OK', async () => {
+    // GIVEN
+    ThematiqueRepository.resetThematiquesUnivers();
+    await TestUtil.create(DB.univers, {
+      id_cms: 1,
+      code: UniversType.climat,
+      label: 'haha',
+    });
+    await TestUtil.create(DB.univers, {
+      id_cms: 2,
+      code: UniversType.cuisine,
+      label: 'hoho',
+    });
+
+    // WHEN
+    await thematiqueRepository.loadUnivers();
+
+    // THEN
+    expect(ThematiqueRepository.getUnivers(UniversType.climat).titre).toEqual(
+      'haha',
+    );
+    expect(ThematiqueRepository.getUnivers(UniversType.cuisine).titre).toEqual(
+      'hoho',
+    );
   });
   it('upsertThematique : met a jour correctement une thematique', async () => {
     // GIVEN

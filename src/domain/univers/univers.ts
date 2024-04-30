@@ -6,4 +6,9 @@ export class Univers {
   etoiles: number;
   is_locked: boolean;
   reason_locked: string;
+  image_url: string;
+
+  constructor(data: Univers) {
+    Object.assign(this, data);
+  }
 }

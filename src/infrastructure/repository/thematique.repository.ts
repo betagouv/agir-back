@@ -3,18 +3,23 @@ import { PrismaService } from '../prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { Thematique } from '../../domain/contenu/thematique';
 import { App } from '../../../src/domain/app';
+import { UniversType } from '../../../src/domain/univers/universType';
+import { Univers } from '../../../src/domain/univers/univers';
 
 @Injectable()
 export class ThematiqueRepository {
   static titres_thematiques: Map<Thematique, string>;
+  static univers: Map<UniversType, Univers>;
 
   constructor(private prisma: PrismaService) {
     ThematiqueRepository.titres_thematiques = new Map();
+    ThematiqueRepository.univers = new Map();
   }
 
   async onApplicationBootstrap(): Promise<void> {
     if (!App.isFirstStart()) {
       await this.loadThematiques();
+      await this.loadUnivers();
     }
   }
 
@@ -23,15 +28,40 @@ export class ThematiqueRepository {
     return libelle || thematique.toString();
   }
 
-  public static resetThematiques() {
+  public static getUnivers(type: UniversType): Univers {
+    return ThematiqueRepository.univers.get(type);
+  }
+
+  public static getAllUnivers(): Univers[] {
+    return Array.from(ThematiqueRepository.univers.values());
+  }
+  public static resetThematiquesUnivers() {
     // FOR TEST ONLY
     ThematiqueRepository.titres_thematiques = new Map();
+    ThematiqueRepository.univers = new Map();
   }
 
   public async loadThematiques() {
     const listeThematiques = await this.prisma.thematique.findMany();
     listeThematiques.forEach((them) => {
       this.setTitreOfThematiqueByCmsId(them.id_cms, them.titre);
+    });
+  }
+
+  public async loadUnivers() {
+    const listeUnivers = await this.prisma.univers.findMany();
+    listeUnivers.forEach((u) => {
+      ThematiqueRepository.univers.set(
+        UniversType[u.code],
+        new Univers({
+          image_url: u.image_url,
+          titre: u.label,
+          type: UniversType[u.code],
+          etoiles: 0,
+          is_locked: false,
+          reason_locked: null,
+        }),
+      );
     });
   }
 
@@ -47,6 +77,30 @@ export class ThematiqueRepository {
       },
       update: {
         titre: titre,
+      },
+    });
+  }
+
+  public async upsertUnivers(
+    id_cms: number,
+    code: string,
+    label: string,
+    image_url: string,
+  ) {
+    await this.prisma.univers.upsert({
+      where: {
+        id_cms: id_cms,
+      },
+      create: {
+        id_cms: id_cms,
+        code: code,
+        label: label,
+        image_url: image_url,
+      },
+      update: {
+        code: code,
+        label: label,
+        image_url: image_url,
       },
     });
   }

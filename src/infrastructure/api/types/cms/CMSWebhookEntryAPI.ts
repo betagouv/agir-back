@@ -27,6 +27,8 @@ export class CMSWebhookPartenaireAPI {
 export class CMSWebhookEntryAPI {
   @ApiProperty() id: number;
   @ApiProperty() titre: string;
+  @ApiProperty() code: string;
+  @ApiProperty() label: string;
   @ApiProperty() sousTitre: string;
   @ApiProperty() description: string;
   @ApiProperty({ type: CMSThematiqueAPI })
