@@ -7,7 +7,6 @@ import {
   Param,
   Patch,
   Post,
-  Response,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -30,7 +29,6 @@ import {
 } from './types/utilisateur/utilisateurProfileAPI';
 import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
 import { LoginUtilisateurAPI } from './types/utilisateur/loginUtilisateurAPI';
-import { HttpStatus } from '@nestjs/common';
 import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
 import { ApplicationError } from '../applicationError';
 import { GenericControler } from './genericControler';
@@ -38,7 +36,7 @@ import { AuthGuard } from '../auth/guard';
 import { OubliMdpAPI } from './types/utilisateur/oubliMdpAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { ModifierMdpAPI } from './types/utilisateur/modifierMdpAPI';
-import { ContactUsecase } from '../../usecase/contact.usecase';
+import { EmailAPI } from './types/utilisateur/EmailAPI';
 
 export class ConfirmationAPI {
   @ApiProperty({ required: true })
@@ -168,17 +166,15 @@ export class UtilisateurController extends GenericControler {
   @ApiBadRequestResponse({ type: ApplicationError })
   async loginUtilisateur(
     @Body() body: LoginUtilisateurAPI,
-    @Response() res,
   ): Promise<LoggedUtilisateurAPI> {
     const loggedUser = await this.utilisateurUsecase.loginUtilisateur(
       body.email,
       body.mot_de_passe,
     );
-    const response = LoggedUtilisateurAPI.mapToAPI(
+    return LoggedUtilisateurAPI.mapToAPI(
       loggedUser.token,
       loggedUser.utilisateur,
     );
-    return res.status(HttpStatus.OK).json(response);
   }
 
   @Patch('utilisateurs/:utilisateurId/profile')
@@ -302,12 +298,9 @@ export class UtilisateurController extends GenericControler {
   })
   @ApiOkResponse({ type: RenvoyerCodeAPI })
   @ApiBadRequestResponse({ type: ApplicationError })
-  async oubli_mdp(
-    @Body() body: OubliMdpAPI,
-    @Response() res,
-  ): Promise<RenvoyerCodeAPI> {
+  async oubli_mdp(@Body() body: OubliMdpAPI): Promise<RenvoyerCodeAPI> {
     await this.utilisateurUsecase.oubli_mot_de_passe(body.email);
-    return res.status(HttpStatus.OK).json({ email: body.email });
+    return EmailAPI.mapToAPI(body.email);
   }
 
   @Post('utilisateurs/modifier_mot_de_passe')
@@ -319,12 +312,12 @@ export class UtilisateurController extends GenericControler {
     type: ModifierMdpAPI,
   })
   @ApiBadRequestResponse({ type: ApplicationError })
-  async modifier_mdp(@Body() body: ModifierMdpAPI, @Response() res) {
+  async modifier_mdp(@Body() body: ModifierMdpAPI) {
     await this.utilisateurUsecase.modifier_mot_de_passe(
       body.email,
       body.code,
       body.mot_de_passe,
     );
-    return res.status(HttpStatus.OK).json('OK');
+    return 'OK';
   }
 }

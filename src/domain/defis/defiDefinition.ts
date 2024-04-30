@@ -1,5 +1,7 @@
 import { Thematique } from '../contenu/thematique';
 import { Tag } from '../scoring/tag';
+import { ThematiqueUniversType } from '../univers/thematiqueUniversType';
+import { UniversType } from '../univers/universType';
 
 export class DefiDefinition {
   content_id: string;
@@ -10,6 +12,8 @@ export class DefiDefinition {
   astuces: string;
   thematique: Thematique;
   tags: Tag[];
+  universes: UniversType[];
+  thematiques_univers: ThematiqueUniversType[];
 
   constructor(data: DefiDefinition) {
     this.content_id = data.content_id;
@@ -20,5 +24,7 @@ export class DefiDefinition {
     this.tags = data.tags;
     this.astuces = data.astuces;
     this.pourquoi = data.pourquoi;
+    this.thematiques_univers = data.thematiques_univers;
+    this.universes = data.universes;
   }
 }

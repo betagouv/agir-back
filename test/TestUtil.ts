@@ -2,6 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
+//import { PrismaService as PrismaService_STATS } from '../src/infrastructure/prisma/stats/prisma.service.stats';
 import { Thematique } from '../src/domain/contenu/thematique';
 import {
   Consommation,
@@ -63,6 +64,8 @@ import { DefiHistory_v0 } from '../src/domain/object_store/defi/defiHistory_v0';
 import { DefiStatus } from '../src/domain/defis/defi';
 import { TagUtilisateur } from '../src/domain/scoring/tagUtilisateur';
 import { Besoin } from '../src/domain/aides/besoin';
+import { UniversType } from '../src/domain/univers/universType';
+import { ThematiqueUniversType } from '../src/domain/univers/thematiqueUniversType';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -79,6 +82,7 @@ export enum DB {
   thematique = 'thematique',
   linky = 'linky',
   article = 'article',
+  quizz = 'quizz',
 }
 export class TestUtil {
   private static TYPE_DATA_MAP: Record<DB, Function> = {
@@ -96,11 +100,13 @@ export class TestUtil {
     thematique: TestUtil.thematiqueData,
     linky: TestUtil.linkyData,
     article: TestUtil.articleData,
+    quizz: TestUtil.quizzData,
   };
 
   constructor() {}
   public static app: INestApplication;
   public static prisma = new PrismaService();
+  //  public static prisma_stats = new PrismaService_STATS();
   public static utilisateur = 'utilisateur';
   public static suivi = 'suivi';
   public static SECRET = '123456789012345678901234567890';
@@ -176,6 +182,7 @@ export class TestUtil {
     await this.prisma.linkyConsentement.deleteMany();
     await this.prisma.statistique.deleteMany();
     await this.prisma.articleStatistique.deleteMany();
+    await this.prisma.defiStatistique.deleteMany();
     ThematiqueRepository.resetThematiques();
   }
 
@@ -249,36 +256,6 @@ export class TestUtil {
       ...override,
     };
   }
-  // FIX: HARMONISER AVEC ARTICLE DATA
-  static async create_article(override?: Partial<Article>) {
-    await this.prisma.article.create({
-      data: TestUtil.getArticleData(override),
-    });
-  }
-  static getArticleData(override?: Partial<Article>): Article {
-    return {
-      content_id: '1',
-      titre: 'titreA',
-      soustitre: 'sousTitre',
-      source: 'ADEME',
-      image_url: 'https://',
-      partenaire: 'Angers',
-      tags_utilisateur: [],
-      rubrique_ids: ['3', '4'],
-      rubrique_labels: ['r3', 'r4'],
-      codes_postaux: ['91120'],
-      duree: 'pas long',
-      frequence: 'souvent',
-      difficulty: 1,
-      points: 10,
-      thematique_principale: Thematique.climat,
-      thematiques: [Thematique.climat, Thematique.logement],
-      created_at: undefined,
-      updated_at: undefined,
-      ...override,
-    };
-  }
-
   static async create_quizz(override?: Partial<Quizz>) {
     await this.prisma.quizz.create({
       data: {
@@ -302,6 +279,31 @@ export class TestUtil {
       },
     });
   }
+
+  static quizzData(override?: Partial<Quizz>): Quizz {
+    return {
+      content_id: '1',
+      titre: 'titreA',
+      soustitre: 'sousTitre',
+      source: 'ADEME',
+      image_url: 'https://',
+      partenaire: 'Angers',
+      tags_utilisateur: [],
+      rubrique_ids: ['3', '4'],
+      rubrique_labels: ['r3', 'r4'],
+      codes_postaux: ['91120'],
+      duree: 'pas long',
+      frequence: 'souvent',
+      difficulty: 1,
+      points: 10,
+      thematique_principale: Thematique.climat,
+      thematiques: [Thematique.climat, Thematique.logement],
+      created_at: undefined,
+      updated_at: undefined,
+      ...override,
+    };
+  }
+
   static aideData(override?: Partial<Aide>): Aide {
     return {
       content_id: '1',
@@ -329,6 +331,8 @@ export class TestUtil {
       sous_titre: 'ssss',
       tags: [TagUtilisateur.appetence_cafe],
       thematique: Thematique.consommation,
+      universes: [UniversType.cuisine],
+      thematiquesUnivers: [ThematiqueUniversType.manger_local],
       created_at: undefined,
       updated_at: undefined,
       ...override,
@@ -612,8 +616,7 @@ export class TestUtil {
       ...override,
     };
   }
-
-  static articleData(override?): Article {
+  static articleData(override?: Partial<Article>): Article {
     return {
       content_id: 'contentId',
       titre: 'Titre de mon article',

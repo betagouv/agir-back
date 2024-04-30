@@ -5,5 +5,6 @@ curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/admin/upsert_s
 #curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/admin/unsubscribe_oprhan_prms
 curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/admin/statistique
 curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/admin/article-statistique
+curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/admin/defi-statistique
 
 

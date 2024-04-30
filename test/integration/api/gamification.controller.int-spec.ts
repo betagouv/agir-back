@@ -77,10 +77,8 @@ describe('Gamification  (API test)', () => {
       points: 95,
       celebrations: [],
     };
-    await TestUtil.create(DB.utilisateur, {
-      gamification: gamification,
-    });
-    await TestUtil.create_article({ content_id: '123' });
+    await TestUtil.create(DB.utilisateur, { gamification });
+    await TestUtil.create(DB.article, { content_id: '123' });
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/events',

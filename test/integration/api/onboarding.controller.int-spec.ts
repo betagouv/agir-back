@@ -253,7 +253,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       .send({ email: 'w@w.com' });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
 
     const userDB = await TestUtil.prisma.utilisateur.findFirst({
       where: { nom: 'WW' },
@@ -284,7 +284,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       .send({ email: 'w@w.com' });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
 
     const userDB = await TestUtil.prisma.utilisateur.findFirst({
       where: { nom: 'WW' },
@@ -350,7 +350,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body.token.length).toBeGreaterThan(20);
 
     userDB = await TestUtil.prisma.utilisateur.findFirst({

@@ -16,6 +16,11 @@ import {
 import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
 import { Repas, Consommation } from '../../../src/domain/onboarding/onboarding';
 import { TransportQuotidien } from '../../../src/domain/transport/transport';
+import { DefiStatus } from '../../../src/domain/defis/defi';
+import {
+  DefiHistory_v0,
+  Defi_v0,
+} from '../../../src/domain/object_store/defi/defiHistory_v0';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
@@ -1168,5 +1173,111 @@ describe('Admin (API test)', () => {
     expect(article1.titre).toBe('Titre de mon article 1');
     expect(article2.titre).toBe('Titre de mon article 2');
     expect(article3.titre).toBe('Titre de mon article 3');
+  });
+
+  it("POST /admin/article-statistique - calcul des statistiques de l'ensemble des défis", async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    const DEFI: Defi_v0 = {
+      id: '1',
+      points: 10,
+      tags: [],
+      titre: 'titre',
+      thematique: Thematique.transport,
+      astuces: 'ASTUCE',
+      date_acceptation: null,
+      pourquoi: 'POURQUOI',
+      sous_titre: 'SOUS TITRE',
+      status: DefiStatus.todo,
+    };
+    const defis_1: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        { ...DEFI, id: '1', status: DefiStatus.deja_fait, titre: 'A' },
+        { ...DEFI, id: '2', status: DefiStatus.deja_fait, titre: 'B' },
+        { ...DEFI, id: '3', status: DefiStatus.deja_fait, titre: 'C' },
+      ],
+    };
+    const defis_2: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        { ...DEFI, id: '1', status: DefiStatus.en_cours, titre: 'A' },
+        { ...DEFI, id: '2', status: DefiStatus.abondon, titre: 'B' },
+        { ...DEFI, id: '3', status: DefiStatus.fait, titre: 'C' },
+      ],
+    };
+    const defis_3: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        { ...DEFI, id: '1', status: DefiStatus.fait, titre: 'A' },
+        { ...DEFI, id: '2', status: DefiStatus.fait, titre: 'B' },
+        { ...DEFI, id: '3', status: DefiStatus.fait, titre: 'C' },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      email: '1',
+      defis: defis_1,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      email: '2',
+      defis: defis_2,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '3',
+      email: '3',
+      defis: defis_3,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/defi-statistique');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(3);
+
+    const defi_1_stat = await TestUtil.prisma.defiStatistique.findUnique({
+      where: { content_id: '1' },
+    });
+    const defi_2_stat = await TestUtil.prisma.defiStatistique.findUnique({
+      where: { content_id: '2' },
+    });
+    const defi_3_stat = await TestUtil.prisma.defiStatistique.findUnique({
+      where: { content_id: '3' },
+    });
+    delete defi_1_stat.created_at;
+    delete defi_1_stat.updated_at;
+    delete defi_2_stat.created_at;
+    delete defi_2_stat.updated_at;
+    delete defi_3_stat.created_at;
+    delete defi_3_stat.updated_at;
+
+    expect(defi_1_stat).toEqual({
+      content_id: '1',
+      titre: 'A',
+      nombre_defis_deja_fait: 1,
+      nombre_defis_abandonnes: 0,
+      nombre_defis_en_cours: 1,
+      nombre_defis_realises: 1,
+    });
+    expect(defi_2_stat).toEqual({
+      content_id: '2',
+      titre: 'B',
+      nombre_defis_deja_fait: 1,
+      nombre_defis_abandonnes: 1,
+      nombre_defis_en_cours: 0,
+      nombre_defis_realises: 1,
+    });
+    expect(defi_3_stat).toEqual({
+      content_id: '3',
+      titre: 'C',
+      nombre_defis_deja_fait: 1,
+      nombre_defis_abandonnes: 0,
+      nombre_defis_en_cours: 0,
+      nombre_defis_realises: 2,
+    });
   });
 });

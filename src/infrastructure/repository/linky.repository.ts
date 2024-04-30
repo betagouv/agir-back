@@ -67,6 +67,8 @@ export class LinkyRepository {
       prm: result.prm,
       serie: result.data as any,
       utilisateurId: result.utilisateurId,
+      winter_pk: result.winter_pk,
+      created_at: result.created_at,
     });
   }
   async isPRMDataEmptyOrMissing(prm: string): Promise<boolean> {

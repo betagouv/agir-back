@@ -10,7 +10,7 @@ import {
 import { Gamification } from '../../../src/domain/gamification/gamification';
 
 describe('EVENT (API test)', () => {
-  let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -43,7 +43,7 @@ describe('EVENT (API test)', () => {
   it('POST /utilisateurs/id/event - ajoute un historique de quizz v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
-    await TestUtil.create_quizz({ content_id: '123' });
+    await TestUtil.create(DB.quizz, { content_id: '123' });
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/events',
@@ -71,7 +71,7 @@ describe('EVENT (API test)', () => {
   it('POST /utilisateurs/id/event - valide un quizz par content_id v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '123',
     });
     // WHEN
@@ -102,7 +102,7 @@ describe('EVENT (API test)', () => {
   it('POST /utilisateurs/id/events - increase todo element progression and moves to done v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: 'quizz-id',
       points: 20,
       thematique_principale: Thematique.climat,
@@ -125,7 +125,7 @@ describe('EVENT (API test)', () => {
   it('POST /utilisateurs/id/events - NOT increase todo element progression when not 100% v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: 'quizz-id',
       points: 20,
       thematique_principale: Thematique.climat,
@@ -160,7 +160,7 @@ describe('EVENT (API test)', () => {
         ],
       },
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '123',
       points: 20,
     });
@@ -184,7 +184,7 @@ describe('EVENT (API test)', () => {
   it('POST /utilisateurs/id/events - does not add points twice on quizz v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
-    await TestUtil.create_quizz({ content_id: 'quizz-id', points: 5 });
+    await TestUtil.create(DB.quizz, { content_id: 'quizz-id', points: 5 });
     // WHEN
     await TestUtil.POST('/utilisateurs/utilisateur-id/events').send({
       type: EventType.quizz_score,
@@ -211,7 +211,7 @@ describe('EVENT (API test)', () => {
   it('POST /utilisateurs/id/events - does not add points when not 100% quizz v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
-    await TestUtil.create_quizz({ content_id: '123' });
+    await TestUtil.create(DB.quizz, { content_id: '123' });
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/events',
@@ -232,7 +232,7 @@ describe('EVENT (API test)', () => {
   it('POST /utilisateurs/id/events - saves score at 0 properly, v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: 'quizz-id',
       thematique_principale: Thematique.climat,
     });
@@ -256,7 +256,7 @@ describe('EVENT (API test)', () => {
   it('POST /utilisateurs/id/events - ajoute points pour article lu v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '123',
       points: 20,
     });
@@ -283,8 +283,10 @@ describe('EVENT (API test)', () => {
   it('POST /utilisateurs/id/events - ajoute points pour article lu par content_id, user v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
-    await TestUtil.create_article({ content_id: '123', points: 20 });
-
+    await TestUtil.create(DB.article, {
+      content_id: '123',
+      points: 20,
+    });
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/events',
@@ -308,7 +310,7 @@ describe('EVENT (API test)', () => {
   it('POST /utilisateurs/id/events - ajoute pas deux fois points pour article lu v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '123',
       points: 20,
     });
@@ -386,7 +388,7 @@ describe('EVENT (API test)', () => {
   it('POST /utilisateurs/id/events - like event set la valeur du like sur une interaction v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
-    await TestUtil.create_article({ content_id: '123' });
+    await TestUtil.create(DB.article, { content_id: '123' });
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/events',
@@ -406,7 +408,7 @@ describe('EVENT (API test)', () => {
   it('POST /utilisateurs/id/events - like event set la valeur du like sur une interaction par type et content_id && history sur article v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '123',
     });
     // WHEN
@@ -427,7 +429,7 @@ describe('EVENT (API test)', () => {
   it('POST /utilisateurs/id/events - like event set la valeur du like sur une interaction par type et content_id && history sur article v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '123',
     });
     // WHEN
@@ -448,9 +450,7 @@ describe('EVENT (API test)', () => {
   it('POST /utilisateurs/id/events - favoris event set un favoris sur un article', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_article({
-      content_id: '123',
-    });
+    await TestUtil.create(DB.article, { content_id: '123' });
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/events',

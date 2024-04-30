@@ -5,6 +5,7 @@ import {
   Query,
   UseGuards,
   Param,
+  Post,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -77,5 +78,15 @@ export class LinkyController extends GenericControler {
       derniers_14_jours === 'true',
     );
     return LinkyDataAPI.map(data.data.serie, data.commentaires);
+  }
+
+  @ApiTags('Admin')
+  @Post('/admin/linky_stats')
+  @ApiOperation({
+    summary: `Calcul les stats de reception linky sur le dernier mois, utiliser ensuite par exemple https://konklone.io/json/ pour convertir en CSV si besoin`,
+  })
+  async linky_stats(@Request() req): Promise<string[][]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.linkyUsecase.computeLastMonthDataQualiy();
   }
 }

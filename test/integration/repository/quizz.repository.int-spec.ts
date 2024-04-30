@@ -30,7 +30,7 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : liste quizz par code postal parmi plusieurs', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
@@ -47,7 +47,7 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : liste quizz sans code postaux', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '1',
       codes_postaux: [],
     });
@@ -64,7 +64,7 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : liste quizz filtre code postal à null', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
@@ -81,7 +81,7 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : liste quizz filtre sans code postal ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
@@ -96,9 +96,9 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : liste avec max number', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_quizz({ content_id: '1' });
-    await TestUtil.create_quizz({ content_id: '2' });
-    await TestUtil.create_quizz({ content_id: '3' });
+    await TestUtil.create(DB.quizz, { content_id: '1' });
+    await TestUtil.create(DB.quizz, { content_id: '2' });
+    await TestUtil.create(DB.quizz, { content_id: '3' });
 
     // WHEN
     const liste = await quizzRepository.searchQuizzes({ maxNumber: 2 });
@@ -109,15 +109,15 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : select par difficulté', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '1',
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '2',
       difficulty: DifficultyLevel.L2,
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '3',
       difficulty: DifficultyLevel.L3,
     });
@@ -134,15 +134,15 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : select par difficulté ANY', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '1',
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '2',
       difficulty: DifficultyLevel.L2,
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '3',
       difficulty: DifficultyLevel.L3,
     });
@@ -158,15 +158,15 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : select sans filtre', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '1',
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '2',
       difficulty: DifficultyLevel.L2,
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '3',
       difficulty: DifficultyLevel.L3,
     });
@@ -180,9 +180,9 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : exlucde ids', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_quizz({ content_id: '1' });
-    await TestUtil.create_quizz({ content_id: '2' });
-    await TestUtil.create_quizz({ content_id: '3' });
+    await TestUtil.create(DB.quizz, { content_id: '1' });
+    await TestUtil.create(DB.quizz, { content_id: '2' });
+    await TestUtil.create(DB.quizz, { content_id: '3' });
 
     // WHEN
     const liste = await quizzRepository.searchQuizzes({
@@ -195,9 +195,9 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : exlucde ids #2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_quizz({ content_id: '1' });
-    await TestUtil.create_quizz({ content_id: '2' });
-    await TestUtil.create_quizz({ content_id: '3' });
+    await TestUtil.create(DB.quizz, { content_id: '1' });
+    await TestUtil.create(DB.quizz, { content_id: '2' });
+    await TestUtil.create(DB.quizz, { content_id: '3' });
 
     // WHEN
     const liste = await quizzRepository.searchQuizzes({
@@ -211,15 +211,15 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : filtre par thematiques ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '1',
       thematiques: [Thematique.climat],
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '2',
       thematiques: [Thematique.logement],
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '3',
       thematiques: [Thematique.alimentation],
     });
@@ -236,15 +236,15 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : filtre par plusieurs thematiques ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '1',
       thematiques: [Thematique.climat],
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '2',
       thematiques: [Thematique.logement],
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '3',
       thematiques: [Thematique.alimentation],
     });
@@ -260,15 +260,15 @@ describe('QuizzRepository', () => {
   it('searchQuizzes : order by difficulté ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '1',
       difficulty: DifficultyLevel.L3,
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '2',
       difficulty: DifficultyLevel.L2,
     });
-    await TestUtil.create_quizz({
+    await TestUtil.create(DB.quizz, {
       content_id: '3',
       difficulty: DifficultyLevel.L1,
     });

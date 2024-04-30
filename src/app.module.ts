@@ -16,6 +16,7 @@ import { UtilisateurRepository } from './infrastructure/repository/utilisateur/u
 import { BilanRepository } from './infrastructure/repository/bilan.repository';
 
 import { PrismaService } from './infrastructure/prisma/prisma.service';
+//import { PrismaService as PrismaService_STATS } from './infrastructure/prisma/stats/prisma.service.stats';
 import { SuiviRepository } from './infrastructure/repository/suivi.repository';
 import { SuiviUsecase } from './usecase/suivi.usecase';
 import { AidesVeloRepository } from './infrastructure/repository/aidesVelo.repository';
@@ -87,6 +88,10 @@ import { StatistiqueUsecase } from './usecase/statistique.usecase';
 import { StatistiqueRepository } from './infrastructure/repository/statitstique.repository';
 import { ArticleStatistiqueUsecase } from './usecase/articleStatistique.usecase';
 import { ArticleStatistiqueRepository } from './infrastructure/repository/articleStatistique.repository';
+import { UniversController } from './infrastructure/api/univers.controller';
+import { UniversUsecase } from './usecase/univers.usecase';
+import { DefiStatistiqueUsecase } from './usecase/defiStatistique.usecase';
+import { DefiStatistiqueRepository } from './infrastructure/repository/defiStatistique.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -115,6 +120,7 @@ function getControllers(): any[] {
     EquipementsController,
     InscriptionController,
     DefisController,
+    UniversController,
   );
   if (!App.isProd()) {
     controllers.push(TestDataController);
@@ -133,6 +139,7 @@ function getControllers(): any[] {
   controllers: getControllers(),
   providers: [
     PrismaService,
+    //PrismaService_STATS,
     UtilisateurRepository,
     BilanRepository,
     SuiviRepository,
@@ -191,6 +198,9 @@ function getControllers(): any[] {
     StatistiqueRepository,
     ArticleStatistiqueUsecase,
     ArticleStatistiqueRepository,
+    UniversUsecase,
+    DefiStatistiqueUsecase,
+    DefiStatistiqueRepository,
   ],
 })
 export class AppModule {}

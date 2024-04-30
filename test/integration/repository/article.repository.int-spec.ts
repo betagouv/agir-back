@@ -6,7 +6,7 @@ import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponde
 
 describe('ArticleRepository', () => {
   const OLD_ENV = process.env;
-  let articleRepository = new ArticleRepository(TestUtil.prisma);
+  const articleRepository = new ArticleRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -27,7 +27,7 @@ describe('ArticleRepository', () => {
   it('searchArticles : liste article par code postal parmi plusieurs', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
@@ -44,7 +44,7 @@ describe('ArticleRepository', () => {
   it('searchArticles : liste article sans code postaux', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '1',
       codes_postaux: [],
     });
@@ -61,7 +61,7 @@ describe('ArticleRepository', () => {
   it('searchArticles : liste article filtre code postal à null', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
@@ -78,7 +78,7 @@ describe('ArticleRepository', () => {
   it('searchArticles : liste article filtre sans code postal ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
@@ -93,9 +93,9 @@ describe('ArticleRepository', () => {
   it('searchArticles : liste avec max number', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_article({ content_id: '1' });
-    await TestUtil.create_article({ content_id: '2' });
-    await TestUtil.create_article({ content_id: '3' });
+    await TestUtil.create(DB.article, { content_id: '1' });
+    await TestUtil.create(DB.article, { content_id: '2' });
+    await TestUtil.create(DB.article, { content_id: '3' });
 
     // WHEN
     const liste = await articleRepository.searchArticles({ maxNumber: 2 });
@@ -106,15 +106,16 @@ describe('ArticleRepository', () => {
   it('searchArticles : select par difficulté', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_article({
+
+    await TestUtil.create(DB.article, {
       content_id: '1',
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '2',
       difficulty: DifficultyLevel.L2,
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '3',
       difficulty: DifficultyLevel.L3,
     });
@@ -131,15 +132,15 @@ describe('ArticleRepository', () => {
   it('searchArticles : select par difficulté ANY', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '1',
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '2',
       difficulty: DifficultyLevel.L2,
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '3',
       difficulty: DifficultyLevel.L3,
     });
@@ -155,15 +156,16 @@ describe('ArticleRepository', () => {
   it('searchArticles : select sans filtre', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_article({
+
+    await TestUtil.create(DB.article, {
       content_id: '1',
       difficulty: DifficultyLevel.L1,
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '2',
       difficulty: DifficultyLevel.L2,
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '3',
       difficulty: DifficultyLevel.L3,
     });
@@ -177,9 +179,9 @@ describe('ArticleRepository', () => {
   it('searchArticles : exlucde ids', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_article({ content_id: '1' });
-    await TestUtil.create_article({ content_id: '2' });
-    await TestUtil.create_article({ content_id: '3' });
+    await TestUtil.create(DB.article, { content_id: '1' });
+    await TestUtil.create(DB.article, { content_id: '2' });
+    await TestUtil.create(DB.article, { content_id: '3' });
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -192,9 +194,9 @@ describe('ArticleRepository', () => {
   it('searchArticles : exlucde ids #2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_article({ content_id: '1' });
-    await TestUtil.create_article({ content_id: '2' });
-    await TestUtil.create_article({ content_id: '3' });
+    await TestUtil.create(DB.article, { content_id: '1' });
+    await TestUtil.create(DB.article, { content_id: '2' });
+    await TestUtil.create(DB.article, { content_id: '3' });
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -208,15 +210,15 @@ describe('ArticleRepository', () => {
   it('searchArticles : filtre par thematiques ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '1',
       thematiques: [Thematique.climat],
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '2',
       thematiques: [Thematique.logement],
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '3',
       thematiques: [Thematique.alimentation],
     });
@@ -233,15 +235,15 @@ describe('ArticleRepository', () => {
   it('searchArticles : filtre par plusieurs thematiques ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '1',
       thematiques: [Thematique.climat],
     });
-    await TestUtil.create_article({
-      content_id: '2',
+    await TestUtil.create(DB.article, {
+      content_id: '',
       thematiques: [Thematique.logement],
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '3',
       thematiques: [Thematique.alimentation],
     });
@@ -257,15 +259,15 @@ describe('ArticleRepository', () => {
   it('searchArticles : order by difficulté ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '1',
       difficulty: DifficultyLevel.L3,
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '2',
       difficulty: DifficultyLevel.L2,
     });
-    await TestUtil.create_article({
+    await TestUtil.create(DB.article, {
       content_id: '3',
       difficulty: DifficultyLevel.L1,
     });
@@ -281,6 +283,4 @@ describe('ArticleRepository', () => {
     expect(liste[1].content_id).toEqual('2');
     expect(liste[2].content_id).toEqual('1');
   });
-
-  
 });

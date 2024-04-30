@@ -127,26 +127,19 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.id).toEqual('utilisateur-id');
     expect(response.body.nom).toEqual('nom');
     expect(response.body.prenom).toEqual('prenom');
-    expect(response.body.code_postal).toEqual('91120');
-    expect(response.body.commune).toEqual('PALAISEAU');
-    expect(response.body.revenu_fiscal).toEqual(10000);
-    expect(response.body.nombre_de_parts_fiscales).toEqual(2);
-    expect(response.body.created_at).toEqual(dbUser.created_at.toISOString());
-    expect(response.body.failed_login_count).toEqual(undefined); // donnée cachée
-    expect(response.body.prevent_login_before).toEqual(undefined); // donnée cachée
     expect(response.body.fonctionnalites_debloquees).toEqual([
       'aides',
       'defis',
     ]);
   });
-  it('GET /utilisateurs/id - part fiscale estimée', async () => {
+  it('GET /utilisateurs/id/profile - part fiscale estimée', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       failed_login_count: 2,
       parts: null,
     });
     // WHEN
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id');
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/profile');
     // THEN
     expect(response.body.nombre_de_parts_fiscales).toEqual(2.5);
   });
@@ -173,16 +166,12 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       });
     // THEN
     const userDB = await utilisateurRepository.getById('utilisateur-id');
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body.token.length).toBeGreaterThan(20);
 
     expect(response.body.utilisateur.id).toEqual('utilisateur-id');
     expect(response.body.utilisateur.nom).toEqual('nom');
     expect(response.body.utilisateur.prenom).toEqual('prenom');
-    expect(response.body.utilisateur.code_postal).toEqual('91120');
-    expect(response.body.utilisateur.commune).toEqual('PALAISEAU');
-    expect(response.body.utilisateur.revenu_fiscal).toEqual(10000);
-    expect(response.body.utilisateur.nombre_de_parts_fiscales).toEqual(2.5); // valeur estimée depuis l'onboarding
     expect(userDB.force_connexion).toEqual(false);
   });
   it('POST /utilisateurs/login - bad password', async () => {
@@ -292,7 +281,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
     }); // THEN
-    expect(response.status).toEqual(200);
+    expect(response.status).toEqual(201);
     expect(dbUser.failed_login_count).toEqual(0);
   });
   it('POST /utilisateurs/login - bad password 4 times, blocked account', async () => {
@@ -603,7 +592,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       email: 'mailpas@connu.com',
     });
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
   });
   it('POST /utilisateurs/oubli_mot_de_passe - renvoi KO si 4 demandes de suite', async () => {
     // GIVEN
@@ -654,7 +643,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.failed_checkcode_count).toEqual(0);

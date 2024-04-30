@@ -880,6 +880,31 @@ describe('LinkyData', () => {
     expect(elems[2].value).toEqual(5);
   });
 
+  it('searchSingleDay : renvoie les bon enregirtrement', () => {
+    // GIVEN
+    const linkyData = new LinkyData({
+      prm: 'abc',
+      serie: [
+        {
+          time: new Date('2000-01-01T12:00:00.000Z'),
+          value: 1,
+          value_at_normal_temperature: 10,
+        },
+        {
+          time: new Date('2000-01-02T12:00:00.000Z'),
+          value: 2,
+          value_at_normal_temperature: 20,
+        },
+      ],
+    });
+    // WHEN
+    const elem = linkyData.searchSingleDay(
+      new Date('2000-01-02T12:00:00.000Z'),
+    );
+
+    // THEN
+    expect(elem.value).toEqual(2);
+  });
   it('compare15jousEntre2ans : [] si pas de données du tout', () => {
     // GIVEN
     const linky_data = new LinkyData({

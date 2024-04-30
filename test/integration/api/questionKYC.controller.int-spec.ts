@@ -13,7 +13,7 @@ import {
   Chauffage,
   DPE,
 } from '../../../src/domain/logement/logement';
-import { KYCHistory_v0 } from 'src/domain/object_store/kyc/kycHistory_v0';
+import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 
 describe('/utilisateurs/id/questionsKYC (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);

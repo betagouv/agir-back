@@ -4,7 +4,7 @@ import { History } from '../../../../src/domain/history/history';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
 
 const BASIC_ARTICLE: Article = new Article({
-  ...TestUtil.getArticleData(),
+  ...TestUtil.articleData(),
   thematique_principale: Thematique.alimentation,
   thematiques: [Thematique.alimentation, Thematique.climat],
   score: 0,

@@ -9,9 +9,11 @@ import {
   DefiHistory_v0,
   Defi_v0,
 } from '../../../src/domain/object_store/defi/defiHistory_v0';
-import { DefiDefinition } from '../../../src/domain/defis/defiDefinition';
+import { ThematiqueUniversType } from '../../../src/domain/univers/thematiqueUniversType';
+import { UniversType } from '../../../src/domain/univers/universType';
+import { Defi } from '.prisma/client';
 
-const DEFI_1_DEF: DefiDefinition = {
+const DEFI_1_DEF: Defi = {
   content_id: '1',
   points: 5,
   tags: [Tag.utilise_moto_ou_voiture],
@@ -20,6 +22,10 @@ const DEFI_1_DEF: DefiDefinition = {
   astuces: 'astuce',
   pourquoi: 'pourquoi',
   sous_titre: 'sous_titre',
+  universes: [UniversType.climat],
+  thematiquesUnivers: [ThematiqueUniversType.dechets_compost],
+  created_at: undefined,
+  updated_at: undefined,
 };
 
 describe('/utilisateurs/id/defis (API test)', () => {

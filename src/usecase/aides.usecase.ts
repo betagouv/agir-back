@@ -7,7 +7,7 @@ import { AidesRetrofitRepository } from '../infrastructure/repository/aidesRetro
 import { AidesVeloParType, AideVelo } from '../domain/aides/aideVelo';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
-import { Aide } from 'src/domain/aides/aide';
+import { Aide } from '../../src/domain/aides/aide';
 
 @Injectable()
 export class AidesUsecase {

@@ -1,8 +1,8 @@
 import { Versioned } from '../versioned';
 import { Thematique } from '../../contenu/thematique';
 import { Tag } from '../../scoring/tag';
-import { Defi, DefiStatus } from 'src/domain/defis/defi';
-import { DefiHistory } from 'src/domain/defis/defiHistory';
+import { Defi, DefiStatus } from '../../../../src/domain/defis/defi';
+import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 
 export class Defi_v0 {
   id: string;

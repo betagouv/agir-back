@@ -46,6 +46,46 @@ export class LinkyUsecase {
     return result;
   }
 
+  async computeLastMonthDataQualiy(): Promise<string[][]> {
+    const prm_liste = await this.linkyRepository.getAllPRMs();
+    const result = [];
+
+    const headers = ['PRM'];
+    for (let jour = 30; jour >= 0; jour--) {
+      const date = new Date();
+      date.setDate(date.getDate() - jour);
+      headers.push(`${date.getDate()}/${date.getMonth() + 1}`);
+    }
+
+    result.push(headers);
+
+    for (let index = 0; index < prm_liste.length; index++) {
+      const prm = prm_liste[index];
+
+      const linky_data = await this.linkyRepository.getByPRM(prm);
+      const created_at = linky_data.created_at.getTime();
+
+      const serie = [prm];
+      for (let jour = 30; jour >= 0; jour--) {
+        const date = new Date();
+        date.setDate(date.getDate() - jour);
+        if (date.getTime() < created_at) {
+          serie.push('-');
+        } else {
+          const element = linky_data.searchSingleDay(date);
+          if (element === null || element.value === null) {
+            serie.push('X');
+          } else {
+            serie.push('O');
+          }
+        }
+      }
+      result.push(serie);
+    }
+
+    return result;
+  }
+
   async cleanLinkyData(): Promise<number> {
     const prm_list = await this.linkyRepository.getAllPRMs();
     for (let index = 0; index < prm_list.length; index++) {

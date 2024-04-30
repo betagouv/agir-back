@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Defi as DefiDB } from '@prisma/client';
+import { Defi, Defi as DefiDB } from '@prisma/client';
 import { Thematique } from '../../domain/contenu/thematique';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { DefiDefinition } from '../../../src/domain/defis/defiDefinition';
+import { Univers } from '../../../src/domain/univers/univers';
+import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
 
 @Injectable()
 export class DefiRepository {
   constructor(private prisma: PrismaService) {}
 
   async upsert(defi: DefiDefinition): Promise<void> {
-    const defi_db = {
+    const defi_db: Defi = {
       content_id: defi.content_id,
       astuces: defi.astuces,
       pourquoi: defi.pourquoi,
@@ -19,17 +21,18 @@ export class DefiRepository {
       sous_titre: defi.sous_titre,
       tags: defi.tags,
       thematique: defi.thematique,
+      universes: defi.universes,
+      thematiquesUnivers: defi.thematiques_univers,
+      created_at: undefined,
+      updated_at: undefined,
     };
     await this.prisma.defi.upsert({
       where: { content_id: defi.content_id },
       create: {
         ...defi_db,
-        created_at: undefined,
-        updated_at: undefined,
       },
       update: {
         ...defi_db,
-        updated_at: undefined,
       },
     });
   }
@@ -62,6 +65,10 @@ export class DefiRepository {
       thematique: Thematique[defiDB.thematique],
       astuces: defiDB.astuces,
       pourquoi: defiDB.pourquoi,
+      universes: defiDB.universes.map((u) => Univers[u]),
+      thematiques_univers: defiDB.thematiquesUnivers.map(
+        (t) => ThematiqueUnivers[t],
+      ),
     });
   }
 }
