@@ -63,18 +63,22 @@ export class LinkyUsecase {
       const prm = prm_liste[index];
 
       const linky_data = await this.linkyRepository.getByPRM(prm);
-      const created_at = linky_data.created_at.getTime();
+      const created_at = linky_data.created_at;
 
       const serie = [prm];
       for (let jour = 30; jour >= 0; jour--) {
         const date = new Date();
         date.setDate(date.getDate() - jour);
-        if (date.getTime() < created_at) {
-          serie.push('-');
-        } else {
-          const element = linky_data.searchSingleDay(date);
-          if (element === null || element.value === null) {
+        const element = linky_data.searchSingleDay(date);
+        if (element === null || element.value === null) {
+          if (LinkyData.isBetween(date, created_at, created_at)) {
+            serie.push('CX');
+          } else {
             serie.push('X');
+          }
+        } else {
+          if (LinkyData.isBetween(date, created_at, created_at)) {
+            serie.push('CO');
           } else {
             serie.push('O');
           }
