@@ -71,16 +71,24 @@ export class LinkyUsecase {
         date.setDate(date.getDate() - jour);
         const element = linky_data.searchSingleDay(date);
         if (element === null || element.value === null) {
-          if (LinkyData.isBetween(date, created_at, created_at)) {
-            serie.push('CX');
+          if (LinkyData.isLessThan(date, created_at)) {
+            serie.push('HX');
           } else {
-            serie.push('X');
+            if (LinkyData.isBetween(date, created_at, created_at)) {
+              serie.push('CX');
+            } else {
+              serie.push('X');
+            }
           }
         } else {
-          if (LinkyData.isBetween(date, created_at, created_at)) {
-            serie.push('CO');
+          if (LinkyData.isLessThan(date, created_at)) {
+            serie.push('HO');
           } else {
-            serie.push('O');
+            if (LinkyData.isBetween(date, created_at, created_at)) {
+              serie.push('CO');
+            } else {
+              serie.push('O');
+            }
           }
         }
       }
