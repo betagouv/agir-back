@@ -39,10 +39,13 @@ export class DefiHistory {
     return defis_restants.map((d) => this.buildDefiFromDefinition(d));
   }
 
-  public getDefisEnCours(): Defi[] {
+  public getDefisOfStatus(status_list: DefiStatus[]): Defi[] {
+    if (status_list.length === 0) {
+      return this.defis;
+    }
     const result = [];
     this.defis.forEach((defi_courant) => {
-      if (defi_courant.getStatus() === DefiStatus.en_cours) {
+      if (status_list.includes(defi_courant.getStatus())) {
         result.push(defi_courant);
       }
     });

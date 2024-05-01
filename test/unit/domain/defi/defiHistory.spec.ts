@@ -119,7 +119,7 @@ describe('DefiHistory', () => {
     expect(defiHistory.defis[0].getStatus()).toEqual(DefiStatus.fait);
     expect(user.gamification.points).toEqual(5);
   });
-  it('getDefisEnCours : liste les défis en cours', () => {
+  it('getDefisOfStatus : liste les défis avec status', () => {
     // GIVEN
     const defiHistory = new DefiHistory({
       version: 0,
@@ -143,7 +143,7 @@ describe('DefiHistory', () => {
     });
 
     // WHEN
-    const en_cours = defiHistory.getDefisEnCours();
+    const en_cours = defiHistory.getDefisOfStatus([DefiStatus.en_cours]);
 
     // THEN
     expect(en_cours).toHaveLength(1);

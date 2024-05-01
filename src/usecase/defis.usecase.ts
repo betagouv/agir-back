@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { Defi, DefiStatus } from '../../src/domain/defis/defi';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
+import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
 
 @Injectable()
 export class DefisUsecase {
@@ -23,11 +24,33 @@ export class DefisUsecase {
     );
   }
 
-  async getALLUserDefi(utilisateurId: string): Promise<Defi[]> {
-    const user = await this.utilisateurRepository.getById(utilisateurId);
-    user.checkState();
+  async getALLUserDefi(
+    utilisateurId: string,
+    filtre_status: DefiStatus[],
+  ): Promise<Defi[]> {
+    let result = [];
 
-    return user.defi_history.defis;
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+    const defiDefinitions = await this.defiRepository.list();
+    utilisateur.defi_history.setCatalogue(defiDefinitions);
+
+    if (filtre_status.includes(DefiStatus.todo) || filtre_status.length === 0) {
+      result = result.concat(utilisateur.defi_history.getDefisRestants());
+
+      PonderationApplicativeManager.increaseScoreContentOfList(
+        result,
+        utilisateur.tag_ponderation_set,
+      );
+
+      PonderationApplicativeManager.sortContent(result);
+
+      result = result.filter((d) => d.score > -50);
+    }
+    result = result.concat(
+      utilisateur.defi_history.getDefisOfStatus(filtre_status),
+    );
+    return result;
   }
 
   async getById(utilisateurId: string, defiId: string): Promise<Defi> {

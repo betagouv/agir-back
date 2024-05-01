@@ -6,7 +6,7 @@ import { Recommandation } from '../domain/contenu/recommandation';
 import { ContentType } from '../../src/domain/contenu/contentType';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
-import { Defi } from '../../src/domain/defis/defi';
+import { Defi, DefiStatus } from '../../src/domain/defis/defi';
 import {
   CategorieQuestionKYC,
   QuestionKYC,
@@ -105,7 +105,9 @@ export class RecommandationUsecase {
   }
 
   private getDefisEnCours(utilisateur: Utilisateur): Recommandation[] {
-    const defis = utilisateur.defi_history.getDefisEnCours();
+    const defis = utilisateur.defi_history.getDefisOfStatus([
+      DefiStatus.en_cours,
+    ]);
 
     return this.mapDefiToRecommandation(defis);
   }

@@ -3,6 +3,7 @@ import {
   ApiBody,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import {
@@ -17,11 +18,13 @@ import {
   HttpStatus,
   UseFilters,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { DefisUsecase } from '../../../src/usecase/defis.usecase';
 import { DefiAPI, PatchDefiStatusAPI } from './types/defis/DefiAPI';
+import { DefiStatus } from '../../../src/domain/defis/defi';
 
 @Controller()
 @ApiBearerAuth()
@@ -84,6 +87,12 @@ export class DefisController extends GenericControler {
   }
 
   @Get('utilisateurs/:utilisateurId/defis')
+  @ApiQuery({
+    name: 'status',
+    type: String,
+    required: false,
+    description: `Une liste de statuts de défis séparés par une virgules`,
+  })
   @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: [DefiAPI],
@@ -95,9 +104,13 @@ export class DefisController extends GenericControler {
   async getAllUserDefi(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
+    @Query('status') status: string,
   ): Promise<DefiAPI[]> {
     this.checkCallerId(req, utilisateurId);
-    const result = await this.defisUsecase.getALLUserDefi(utilisateurId);
+    const result = await this.defisUsecase.getALLUserDefi(
+      utilisateurId,
+      !!status ? status.split(',').map((s) => DefiStatus[s]) : [],
+    );
     return result.map((element) => DefiAPI.mapToAPI(element));
   }
 }
