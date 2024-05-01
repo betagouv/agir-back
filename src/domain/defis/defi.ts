@@ -2,6 +2,7 @@ import { Thematique } from '../contenu/thematique';
 import { Defi_v0 } from '../object_store/defi/defiHistory_v0';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
+import { Univers } from '../univers/univers';
 import { Utilisateur } from '../utilisateur/utilisateur';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
@@ -27,6 +28,7 @@ export class Defi implements TaggedContent {
   private status: DefiStatus;
   date_acceptation: Date;
   score: number;
+  universes: Univers[];
 
   constructor(data: Defi_v0) {
     this.id = data.id;
@@ -40,6 +42,7 @@ export class Defi implements TaggedContent {
     this.date_acceptation = data.date_acceptation;
     this.status = data.status;
     this.score = 0;
+    this.universes = data.universes;
   }
 
   public getStatus(): DefiStatus {

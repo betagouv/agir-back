@@ -3,6 +3,7 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { Defi, DefiStatus } from '../../src/domain/defis/defi';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
+import { Univers } from '../../src/domain/univers/univers';
 
 @Injectable()
 export class DefisUsecase {
@@ -27,6 +28,7 @@ export class DefisUsecase {
   async getALLUserDefi(
     utilisateurId: string,
     filtre_status: DefiStatus[],
+    univers: Univers,
   ): Promise<Defi[]> {
     let result = [];
 
@@ -36,7 +38,9 @@ export class DefisUsecase {
     utilisateur.defi_history.setCatalogue(defiDefinitions);
 
     if (filtre_status.includes(DefiStatus.todo) || filtre_status.length === 0) {
-      result = result.concat(utilisateur.defi_history.getDefisRestants());
+      result = result.concat(
+        utilisateur.defi_history.getDefisRestants(univers),
+      );
 
       PonderationApplicativeManager.increaseScoreContentOfList(
         result,

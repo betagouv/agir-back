@@ -24,7 +24,9 @@ export class DefiDefinition {
     this.tags = data.tags;
     this.astuces = data.astuces;
     this.pourquoi = data.pourquoi;
-    this.thematiques_univers = data.thematiques_univers;
-    this.universes = data.universes;
+    this.thematiques_univers = data.thematiques_univers
+      ? data.thematiques_univers
+      : [];
+    this.universes = data.universes ? data.universes : [];
   }
 }

@@ -33,6 +33,7 @@ const DEFI_1: Defi_v0 = {
   pourquoi: 'pourquoi',
   sous_titre: 'sous_titre',
   status: DefiStatus.en_cours,
+  universes: [Univers.climat],
 };
 const DEFI_1_DEF: Defi = {
   content_id: '1',

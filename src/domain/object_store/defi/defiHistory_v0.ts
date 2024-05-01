@@ -3,6 +3,7 @@ import { Thematique } from '../../contenu/thematique';
 import { Tag } from '../../scoring/tag';
 import { Defi, DefiStatus } from '../../../../src/domain/defis/defi';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
+import { Univers } from '../../../../src/domain/univers/univers';
 
 export class Defi_v0 {
   id: string;
@@ -15,6 +16,7 @@ export class Defi_v0 {
   status: DefiStatus;
   tags: Tag[];
   date_acceptation: Date;
+  universes: Univers[];
 
   static map(elem: Defi): Defi_v0 {
     return {
@@ -28,6 +30,7 @@ export class Defi_v0 {
       sous_titre: elem.sous_titre,
       status: elem.getStatus(),
       date_acceptation: elem.date_acceptation,
+      universes: elem.universes,
     };
   }
 }

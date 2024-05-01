@@ -389,6 +389,7 @@ export class TestUtil {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.todo,
+          universes: [Univers.climat],
         },
       ],
     };

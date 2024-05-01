@@ -21,6 +21,7 @@ import {
   DefiHistory_v0,
   Defi_v0,
 } from '../../../src/domain/object_store/defi/defiHistory_v0';
+import { Univers } from '../../../src/domain/univers/univers';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
@@ -1190,6 +1191,7 @@ describe('Admin (API test)', () => {
       pourquoi: 'POURQUOI',
       sous_titre: 'SOUS TITRE',
       status: DefiStatus.todo,
+      universes: [Univers.climat],
     };
     const defis_1: DefiHistory_v0 = {
       version: 0,

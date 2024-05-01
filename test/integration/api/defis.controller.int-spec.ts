@@ -46,6 +46,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     pourquoi: 'pourquoi',
     sous_titre: 'sous_titre',
     status: DefiStatus.todo,
+    universes: [Univers.climat],
   };
 
   beforeAll(async () => {
@@ -79,6 +80,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(response.body[0].points).toEqual(5);
     expect(response.body[0].status_defi).toBeUndefined();
     expect(response.body[0].jours_restants).toBeNull();
+    expect(response.body[0].universes).toEqual([Univers.climat]);
   });
   it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur', async () => {
     // GIVEN
@@ -124,6 +126,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi.titre).toBe('titre');
     expect(defi.sous_titre).toBe('sous_titre');
     expect(defi.status).toBe(DefiStatus.en_cours);
+    expect(defi.universes[0]).toBe(Univers.climat);
   });
   it('GET /utilisateurs/utilisateur-id/defis - filtre status encours', async () => {
     // GIVEN
@@ -200,6 +203,45 @@ describe('/utilisateurs/id/defis (API test)', () => {
     const defi: DefiAPI = response.body[0];
 
     expect(defi.id).toBe('3');
+  });
+  it('GET /utilisateurs/utilisateur-id/defis - filtre status todo et univers', async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis,
+    });
+
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '1',
+      universes: [Univers.alimentation],
+    });
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '2',
+      universes: [Univers.climat],
+    });
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '3',
+      universes: [Univers.logement],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/defis?status=todo&univers=climat',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(1);
+
+    const defi: DefiAPI = response.body[0];
+
+    expect(defi.id).toBe('2');
   });
 
   it('GET /utilisateurs/id/defis?status=todo - liste des défis à a faire par ordre de reco', async () => {
@@ -298,6 +340,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.en_cours,
+          universes: [],
         },
       ],
     };
@@ -347,6 +390,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.en_cours,
+          universes: [],
         },
       ],
     };

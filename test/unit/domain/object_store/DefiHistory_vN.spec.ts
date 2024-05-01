@@ -1,3 +1,4 @@
+import { Univers } from '../../../../src/domain/univers/univers';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { Defi, DefiStatus } from '../../../../src/domain/defis/defi';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
@@ -35,6 +36,7 @@ describe('DefiHistory vN ', () => {
         pourquoi: 'p',
         sous_titre: 'st',
         status: DefiStatus.todo,
+        universes: [Univers.climat],
       }),
     );
 
@@ -60,6 +62,7 @@ describe('DefiHistory vN ', () => {
         pourquoi: 'p',
         sous_titre: 'st',
         status: DefiStatus.todo,
+        universes: [Univers.climat],
       }),
     );
 
