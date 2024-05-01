@@ -4,4 +4,5 @@ export enum Feature {
   recommandations = 'recommandations',
   bibliotheque = 'bibliotheque',
   defis = 'defis',
+  univers = 'univers',
 }

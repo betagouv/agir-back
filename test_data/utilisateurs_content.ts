@@ -157,6 +157,7 @@ const utilisateurs = {
         'recommandations',
         'bibliotheque',
         'defis',
+        'univers',
       ],
     },
     linky: {

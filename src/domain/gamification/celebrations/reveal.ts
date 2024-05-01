@@ -23,6 +23,10 @@ const DATA_REVEAL: Record<Feature, { titre: string; description: string }> = {
     titre: 'Vos défis',
     description: `Retrouvez plein d'actions concrètes pour des premiers petits pas`,
   },
+  univers: {
+    titre: 'Vos univers à explorer',
+    description: `Retrouvez de programmes d'accompagnement sur les thématiques de la transition écologique`,
+  },
 };
 
 export class Reveal {
