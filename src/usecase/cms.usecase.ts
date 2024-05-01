@@ -51,6 +51,14 @@ export class CMSUsecase {
           return this.createOrUpdateUnivers(cmsWebhookAPI);
       }
     }
+    if (cmsWebhookAPI.model === CMSModel['thematique-univers']) {
+      switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.publish']:
+          return this.createOrUpdateThematiqueUnivers(cmsWebhookAPI);
+        case CMSEvent['entry.update']:
+          return this.createOrUpdateThematiqueUnivers(cmsWebhookAPI);
+      }
+    }
     if ([CMSModel.article, CMSModel.quizz].includes(cmsWebhookAPI.model)) {
       switch (cmsWebhookAPI.event) {
         case CMSEvent['entry.unpublish']:
@@ -247,6 +255,17 @@ export class CMSUsecase {
     );
   }
 
+  async createOrUpdateThematiqueUnivers(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.thematiqueRepository.upsertThematiqueUnivers(
+      cmsWebhookAPI.entry.id,
+      cmsWebhookAPI.entry.code,
+      cmsWebhookAPI.entry.label,
+      cmsWebhookAPI.entry.imageUrl
+        ? cmsWebhookAPI.entry.imageUrl.formats.thumbnail.url
+        : null,
+    );
+  }
+
   async deleteArticleOrQuizz(cmsWebhookAPI: CMSWebhookAPI) {
     if (cmsWebhookAPI.model === CMSModel.article) {
       await this.articleRepository.delete(cmsWebhookAPI.entry.id.toString());
@@ -343,9 +362,7 @@ export class CMSUsecase {
       tags: entry.tags
         ? entry.tags.map((elem) => TagUtilisateur[elem.code])
         : [],
-      universes: entry.univers
-        ? entry.univers.map((u) => Univers[u.code])
-        : [],
+      universes: entry.univers ? entry.univers.map((u) => Univers[u.code]) : [],
       thematiques_univers: entry.thematique_univers
         ? entry.thematique_univers.map((t) => ThematiqueUnivers[t.code])
         : [],
@@ -444,9 +461,7 @@ export class CMSUsecase {
       ),
       universes:
         entry.attributes.univers.data.length > 0
-          ? entry.attributes.univers.data.map(
-              (u) => Univers[u.attributes.code],
-            )
+          ? entry.attributes.univers.data.map((u) => Univers[u.attributes.code])
           : [],
       thematiques_univers:
         entry.attributes.thematique_univers.data.length > 0

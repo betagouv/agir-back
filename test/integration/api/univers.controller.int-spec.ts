@@ -30,7 +30,7 @@ describe('Univers (API test)', () => {
     });
     await TestUtil.create(DB.univers, {
       id_cms: 2,
-      code: Univers.cuisine,
+      code: Univers.alimentation,
       label: 'ya',
       image_url: 'bbbb',
     });
@@ -54,24 +54,49 @@ describe('Univers (API test)', () => {
   it(`GET /utilisateurs/id/univers/id/thematiques - liste les thematiques d'un univers`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.mobilite_quotidien,
+      label: 'Bouger au quotidien',
+      image_url: 'aaaa',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 2,
+      code: ThematiqueUnivers.partir_vacances,
+      label: 'Partir en vacances',
+      image_url: 'bbbb',
+    });
+    await thematiqueRepository.loadThematiqueUnivers();
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/univers/cuisine/thematiques',
+      '/utilisateurs/utilisateur-id/univers/transport/thematiques',
     );
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(5);
+    expect(response.body.length).toBe(2);
     expect(response.body[0]).toEqual({
-      titre: 'Manger de saison',
-      type: ThematiqueUnivers.manger_saison,
+      titre: 'Bouger au quotidien',
+      type: ThematiqueUnivers.mobilite_quotidien,
       progression: 0,
       cible_progression: 5,
       is_locked: false,
       reason_locked: null,
       is_new: true,
       niveau: 1,
+      image_url: 'aaaa',
+    });
+    expect(response.body[1]).toEqual({
+      titre: 'Partir en vacances',
+      type: ThematiqueUnivers.partir_vacances,
+      progression: 2,
+      cible_progression: 5,
+      is_locked: false,
+      reason_locked: null,
+      is_new: false,
+      niveau: 2,
+      image_url: 'bbbb',
     });
   });
 });

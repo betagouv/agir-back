@@ -20,7 +20,7 @@ describe('ThematiqueRepository', () => {
 
   it('loadThematiques : charge 2 thematiques OK', async () => {
     // GIVEN
-    ThematiqueRepository.resetThematiquesUnivers();
+    ThematiqueRepository.resetAllRefs();
     await TestUtil.create(DB.thematique, {
       id: '1',
       id_cms: 1,
@@ -45,7 +45,7 @@ describe('ThematiqueRepository', () => {
   });
   it('loadUnivers : charge 2 univers OK', async () => {
     // GIVEN
-    ThematiqueRepository.resetThematiquesUnivers();
+    ThematiqueRepository.resetAllRefs();
     await TestUtil.create(DB.univers, {
       id_cms: 1,
       code: Univers.climat,
@@ -53,7 +53,7 @@ describe('ThematiqueRepository', () => {
     });
     await TestUtil.create(DB.univers, {
       id_cms: 2,
-      code: Univers.cuisine,
+      code: Univers.alimentation,
       label: 'hoho',
     });
 
@@ -61,12 +61,12 @@ describe('ThematiqueRepository', () => {
     await thematiqueRepository.loadUnivers();
 
     // THEN
-    expect(ThematiqueRepository.getUnivers(Univers.climat).titre).toEqual(
+    expect(ThematiqueRepository.getTuileUnivers(Univers.climat).titre).toEqual(
       'haha',
     );
-    expect(ThematiqueRepository.getUnivers(Univers.cuisine).titre).toEqual(
-      'hoho',
-    );
+    expect(
+      ThematiqueRepository.getTuileUnivers(Univers.alimentation).titre,
+    ).toEqual('hoho');
   });
   it('upsertThematique : met a jour correctement une thematique', async () => {
     // GIVEN

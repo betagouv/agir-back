@@ -11,6 +11,7 @@ export class ThematiqueUniversAPI {
   @ApiProperty() reason_locked: string;
   @ApiProperty() is_new: boolean;
   @ApiProperty() niveau: number;
+  @ApiProperty() image_url: string;
 
   public static mapToAPI(thematique: TuileThematique): ThematiqueUniversAPI {
     return {
@@ -22,6 +23,7 @@ export class ThematiqueUniversAPI {
       reason_locked: thematique.reason_locked,
       is_new: thematique.is_new,
       niveau: thematique.niveau,
+      image_url: thematique.image_url,
     };
   }
 }

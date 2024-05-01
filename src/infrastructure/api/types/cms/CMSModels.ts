@@ -4,6 +4,7 @@ export enum CMSModel {
   aide = 'aide',
   thematique = 'thematique',
   univers = 'univers',
+  'thematique-univers' = 'thematique-univers',
   defi = 'defi',
   unkown = 'unkown',
 }

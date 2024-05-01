@@ -9,4 +9,9 @@ export class TuileThematique {
   reason_locked: string;
   is_new: boolean;
   niveau: number;
+  image_url: string;
+
+  constructor(data: TuileThematique) {
+    Object.assign(this, data);
+  }
 }

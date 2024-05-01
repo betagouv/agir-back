@@ -49,6 +49,7 @@ import {
   SituationNGC,
   Suivi,
   Univers as UniversDB,
+  ThematiqueUnivers as ThematiqueUniversDB,
 } from '.prisma/client';
 import {
   Aide,
@@ -86,6 +87,7 @@ export enum DB {
   serviceDefinition = 'serviceDefinition',
   thematique = 'thematique',
   univers = 'univers',
+  thematiqueUnivers = 'thematiqueUnivers',
   linky = 'linky',
   article = 'article',
   quizz = 'quizz',
@@ -108,6 +110,7 @@ export class TestUtil {
     article: TestUtil.articleData,
     quizz: TestUtil.quizzData,
     univers: TestUtil.universData,
+    thematiqueUnivers: TestUtil.thematiqueUniversData,
   };
 
   constructor() {}
@@ -191,7 +194,8 @@ export class TestUtil {
     await this.prisma.articleStatistique.deleteMany();
     await this.prisma.defiStatistique.deleteMany();
     await this.prisma.univers.deleteMany();
-    ThematiqueRepository.resetThematiquesUnivers();
+    await this.prisma.thematiqueUnivers.deleteMany();
+    ThematiqueRepository.resetAllRefs();
   }
 
   static getDate(date: string) {
@@ -339,7 +343,7 @@ export class TestUtil {
       sous_titre: 'ssss',
       tags: [TagUtilisateur.appetence_cafe],
       thematique: Thematique.consommation,
-      universes: [Univers.cuisine],
+      universes: [Univers.alimentation],
       thematiquesUnivers: [ThematiqueUnivers.manger_local],
       created_at: undefined,
       updated_at: undefined,
@@ -563,6 +567,19 @@ export class TestUtil {
       id_cms: 1,
       label: 'Le Climat !',
       code: Univers.climat,
+      image_url: 'https://',
+      created_at: undefined,
+      updated_at: undefined,
+      ...override,
+    };
+  }
+  static thematiqueUniversData(
+    override?: Partial<ThematiqueUniversDB>,
+  ): ThematiqueUniversDB {
+    return {
+      id_cms: 1,
+      label: `C'est bon les céréales`,
+      code: ThematiqueUnivers.cereales,
       image_url: 'https://',
       created_at: undefined,
       updated_at: undefined,

@@ -1,8 +1,5 @@
-export enum Univers {
-  climat = 'climat',
-  cuisine = 'cuisine',
-  transports = 'transports',
-  maison = 'maison',
-  shopping = 'shopping',
-  vacances = 'vacances',
-}
+import { Thematique } from '../contenu/thematique';
+import { ExtraUnivers } from './extraUnivers';
+
+export const Univers = { ...ExtraUnivers, ...Thematique };
+export type Univers = ExtraUnivers | Thematique;

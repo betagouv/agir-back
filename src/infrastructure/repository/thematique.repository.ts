@@ -5,21 +5,26 @@ import { Thematique } from '../../domain/contenu/thematique';
 import { App } from '../../../src/domain/app';
 import { Univers } from '../../domain/univers/univers';
 import { TuileUnivers } from '../../domain/univers/tuileUnivers';
+import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
+import { TuileThematique } from '../../../src/domain/univers/tuileThematique';
 
 @Injectable()
 export class ThematiqueRepository {
   static titres_thematiques: Map<Thematique, string>;
   static univers: Map<Univers, TuileUnivers>;
+  static thematiquesUnivers: Map<ThematiqueUnivers, TuileThematique>;
 
   constructor(private prisma: PrismaService) {
     ThematiqueRepository.titres_thematiques = new Map();
     ThematiqueRepository.univers = new Map();
+    ThematiqueRepository.thematiquesUnivers = new Map();
   }
 
   async onApplicationBootstrap(): Promise<void> {
     if (!App.isFirstStart()) {
       await this.loadThematiques();
       await this.loadUnivers();
+      await this.loadThematiqueUnivers();
     }
   }
 
@@ -28,17 +33,25 @@ export class ThematiqueRepository {
     return libelle || thematique.toString();
   }
 
-  public static getUnivers(type: Univers): TuileUnivers {
+  public static getTuileUnivers(type: Univers): TuileUnivers {
     return ThematiqueRepository.univers.get(type);
   }
+  public static getTuileThematique(type: ThematiqueUnivers): TuileThematique {
+    return ThematiqueRepository.thematiquesUnivers.get(type);
+  }
 
-  public static getAllUnivers(): TuileUnivers[] {
+  public static getAllTuileUnivers(): TuileUnivers[] {
     return Array.from(ThematiqueRepository.univers.values());
   }
-  public static resetThematiquesUnivers() {
+  public static getAllTuileThematique(): TuileThematique[] {
+    return Array.from(ThematiqueRepository.thematiquesUnivers.values());
+  }
+
+  public static resetAllRefs() {
     // FOR TEST ONLY
     ThematiqueRepository.titres_thematiques = new Map();
     ThematiqueRepository.univers = new Map();
+    ThematiqueRepository.thematiquesUnivers = new Map();
   }
 
   public async loadThematiques() {
@@ -60,6 +73,26 @@ export class ThematiqueRepository {
           etoiles: 0,
           is_locked: false,
           reason_locked: null,
+        }),
+      );
+    });
+  }
+  public async loadThematiqueUnivers() {
+    const listeThematiqueUnivers =
+      await this.prisma.thematiqueUnivers.findMany();
+    listeThematiqueUnivers.forEach((t) => {
+      ThematiqueRepository.thematiquesUnivers.set(
+        ThematiqueUnivers[t.code],
+        new TuileThematique({
+          titre: t.label,
+          type: Univers[t.code],
+          is_locked: false,
+          reason_locked: null,
+          progression: null,
+          cible_progression: null,
+          is_new: false,
+          niveau: 0,
+          image_url: t.image_url,
         }),
       );
     });
@@ -88,6 +121,29 @@ export class ThematiqueRepository {
     image_url: string,
   ) {
     await this.prisma.univers.upsert({
+      where: {
+        id_cms: id_cms,
+      },
+      create: {
+        id_cms: id_cms,
+        code: code,
+        label: label,
+        image_url: image_url,
+      },
+      update: {
+        code: code,
+        label: label,
+        image_url: image_url,
+      },
+    });
+  }
+  public async upsertThematiqueUnivers(
+    id_cms: number,
+    code: string,
+    label: string,
+    image_url: string,
+  ) {
+    await this.prisma.thematiqueUnivers.upsert({
       where: {
         id_cms: id_cms,
       },
