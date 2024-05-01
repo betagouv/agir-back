@@ -1,16 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Univers } from '../../../../../src/domain/univers/univers';
-import { UniversType } from '../../../../../src/domain/univers/universType';
+import { TuileUnivers } from '../../../../domain/univers/tuileUnivers';
+import { Univers } from '../../../../domain/univers/univers';
 
 export class UniversAPI {
   @ApiProperty() titre: string;
-  @ApiProperty({ enum: UniversType }) type: UniversType;
+  @ApiProperty({ enum: Univers }) type: Univers;
   @ApiProperty() etoiles: number;
   @ApiProperty() is_locked: boolean;
   @ApiProperty() reason_locked: string;
   @ApiProperty() image_url: string;
 
-  public static mapToAPI(uni: Univers): UniversAPI {
+  public static mapToAPI(uni: TuileUnivers): UniversAPI {
     return {
       titre: uni.titre,
       etoiles: uni.etoiles,

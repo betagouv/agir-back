@@ -22,7 +22,7 @@ import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { UniversAPI } from './types/univers/UniversAPI';
 import { UniversUsecase } from '../../../src/usecase/univers.usecase';
-import { UniversType } from '../../../src/domain/univers/universType';
+import { Univers } from '../../domain/univers/univers';
 import { ThematiqueUniversAPI } from './types/univers/ThematiqueUniversAPI';
 
 @Controller()
@@ -61,7 +61,7 @@ export class UniversController extends GenericControler {
   async getUniversThematiques(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-    @Param('universType') universType: UniversType,
+    @Param('universType') universType: Univers,
   ): Promise<ThematiqueUniversAPI[]> {
     this.checkCallerId(req, utilisateurId);
     const result = await this.universUsecase.getThematiquesOfUnivers(

@@ -1,7 +1,7 @@
 import { DB, TestUtil } from '../../TestUtil';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { Thematique } from '../../../src/domain/contenu/thematique';
-import { UniversType } from '../../../src/domain/univers/universType';
+import { Univers } from '../../../src/domain/univers/univers';
 
 describe('ThematiqueRepository', () => {
   let thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -48,12 +48,12 @@ describe('ThematiqueRepository', () => {
     ThematiqueRepository.resetThematiquesUnivers();
     await TestUtil.create(DB.univers, {
       id_cms: 1,
-      code: UniversType.climat,
+      code: Univers.climat,
       label: 'haha',
     });
     await TestUtil.create(DB.univers, {
       id_cms: 2,
-      code: UniversType.cuisine,
+      code: Univers.cuisine,
       label: 'hoho',
     });
 
@@ -61,10 +61,10 @@ describe('ThematiqueRepository', () => {
     await thematiqueRepository.loadUnivers();
 
     // THEN
-    expect(ThematiqueRepository.getUnivers(UniversType.climat).titre).toEqual(
+    expect(ThematiqueRepository.getUnivers(Univers.climat).titre).toEqual(
       'haha',
     );
-    expect(ThematiqueRepository.getUnivers(UniversType.cuisine).titre).toEqual(
+    expect(ThematiqueRepository.getUnivers(Univers.cuisine).titre).toEqual(
       'hoho',
     );
   });

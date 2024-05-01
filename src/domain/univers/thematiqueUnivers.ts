@@ -1,12 +1,11 @@
-import { ThematiqueUniversType } from './thematiqueUniversType';
+export enum ThematiqueUnivers {
+  manger_saison = 'manger_saison',
+  manger_local = 'manger_local',
+  gaspillage_alimentaire = 'gaspillage_alimentaire',
+  dechets_compost = 'dechets_compost',
+  cereales = 'cereales',
 
-export class ThematiqueUnivers {
-  titre: string;
-  type: ThematiqueUniversType;
-  progression: number;
-  cible_progression: number;
-  is_locked: boolean;
-  reason_locked: string;
-  is_new: boolean;
-  niveau: number;
+  mobilite_quotidien = 'mobilite_quotidien',
+  partir_vacances = 'partir_vacances',
+  coming_soon = 'coming_soon',
 }

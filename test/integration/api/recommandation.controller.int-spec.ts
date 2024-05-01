@@ -17,8 +17,8 @@ import {
   KYCID,
 } from '../../../src/domain/kyc/questionQYC';
 import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
-import { ThematiqueUniversType } from '../../../src/domain/univers/thematiqueUniversType';
-import { UniversType } from '../../../src/domain/univers/universType';
+import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
+import { Univers } from '../../../src/domain/univers/univers';
 import { Defi } from '.prisma/client';
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
@@ -43,8 +43,8 @@ const DEFI_1_DEF: Defi = {
   astuces: 'astuce',
   pourquoi: 'pourquoi',
   sous_titre: 'sous_titre',
-  universes: [UniversType.climat],
-  thematiquesUnivers: [ThematiqueUniversType.dechets_compost],
+  universes: [Univers.climat],
+  thematiquesUnivers: [ThematiqueUnivers.dechets_compost],
   created_at: undefined,
   updated_at: undefined,
 };

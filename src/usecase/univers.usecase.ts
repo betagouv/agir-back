@@ -1,27 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
-import { ThematiqueUnivers } from '../../src/domain/univers/thematiqueUnivers';
-import { ThematiqueUniversType } from '../../src/domain/univers/thematiqueUniversType';
-import { Univers } from '../../src/domain/univers/univers';
-import { UniversType } from '../../src/domain/univers/universType';
+import { TuileThematique } from '../domain/univers/tuileThematique';
+import { ThematiqueUnivers } from '../domain/univers/thematiqueUnivers';
+import { TuileUnivers } from '../domain/univers/tuileUnivers';
+import { Univers } from '../domain/univers/univers';
 
 @Injectable()
 export class UniversUsecase {
   constructor(private thematiqueRepository: ThematiqueRepository) {}
 
-  async getALLOfUser(utilisateurId: string): Promise<Univers[]> {
+  async getALLOfUser(utilisateurId: string): Promise<TuileUnivers[]> {
     return ThematiqueRepository.getAllUnivers();
   }
 
   async getThematiquesOfUnivers(
     utilisateurId: string,
-    universType: UniversType,
-  ): Promise<ThematiqueUnivers[]> {
-    if (universType === UniversType.cuisine)
+    univers: Univers,
+  ): Promise<TuileThematique[]> {
+    if (univers === Univers.cuisine)
       return [
         {
           titre: 'Manger de saison',
-          type: ThematiqueUniversType.manger_saison,
+          type: ThematiqueUnivers.manger_saison,
           progression: 0,
           cible_progression: 5,
           is_locked: false,
@@ -31,7 +31,7 @@ export class UniversUsecase {
         },
         {
           titre: 'Manger local',
-          type: ThematiqueUniversType.manger_local,
+          type: ThematiqueUnivers.manger_local,
           progression: 0,
           cible_progression: 5,
           is_locked: false,
@@ -41,7 +41,7 @@ export class UniversUsecase {
         },
         {
           titre: 'Le gaspillage alimentaire',
-          type: ThematiqueUniversType.gaspillage_alimentaire,
+          type: ThematiqueUnivers.gaspillage_alimentaire,
           progression: 2,
           cible_progression: 7,
           is_locked: false,
@@ -51,7 +51,7 @@ export class UniversUsecase {
         },
         {
           titre: 'Déchets et compost',
-          type: ThematiqueUniversType.dechets_compost,
+          type: ThematiqueUnivers.dechets_compost,
           progression: 5,
           cible_progression: 7,
           is_locked: false,
@@ -61,7 +61,7 @@ export class UniversUsecase {
         },
         {
           titre: 'La force des céréales',
-          type: ThematiqueUniversType.cereales,
+          type: ThematiqueUnivers.cereales,
           progression: 0,
           cible_progression: 10,
           is_locked: true,
@@ -70,11 +70,11 @@ export class UniversUsecase {
           niveau: 3,
         },
       ];
-    if (universType === UniversType.transports)
+    if (univers === Univers.transports)
       return [
         {
           titre: 'La mobilité du quotidien',
-          type: ThematiqueUniversType.mobilite_quotidien,
+          type: ThematiqueUnivers.mobilite_quotidien,
           progression: 0,
           cible_progression: 5,
           is_locked: false,
@@ -84,7 +84,7 @@ export class UniversUsecase {
         },
         {
           titre: 'Partir en vacances',
-          type: ThematiqueUniversType.partir_vacances,
+          type: ThematiqueUnivers.partir_vacances,
           progression: 2,
           cible_progression: 5,
           is_locked: false,
@@ -96,7 +96,7 @@ export class UniversUsecase {
     return [
       {
         titre: 'Coming soon !',
-        type: ThematiqueUniversType.coming_soon,
+        type: ThematiqueUnivers.coming_soon,
         progression: 0,
         cible_progression: 5,
         is_locked: true,
@@ -106,7 +106,7 @@ export class UniversUsecase {
       },
       {
         titre: 'Coming soon !',
-        type: ThematiqueUniversType.coming_soon,
+        type: ThematiqueUnivers.coming_soon,
         progression: 0,
         cible_progression: 5,
         is_locked: true,
@@ -116,7 +116,7 @@ export class UniversUsecase {
       },
       {
         titre: 'Coming soon !',
-        type: ThematiqueUniversType.coming_soon,
+        type: ThematiqueUnivers.coming_soon,
         progression: 0,
         cible_progression: 5,
         is_locked: true,

@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ThematiqueUnivers } from '../../../../../src/domain/univers/thematiqueUnivers';
-import { ThematiqueUniversType } from '../../../../../src/domain/univers/thematiqueUniversType';
+import { TuileThematique } from '../../../../domain/univers/tuileThematique';
+import { ThematiqueUnivers } from '../../../../domain/univers/thematiqueUnivers';
 
 export class ThematiqueUniversAPI {
   @ApiProperty() titre: string;
-  @ApiProperty({ enum: ThematiqueUniversType }) type: ThematiqueUniversType;
+  @ApiProperty({ enum: ThematiqueUnivers }) type: ThematiqueUnivers;
   @ApiProperty() progression: number;
   @ApiProperty() cible_progression: number;
   @ApiProperty() is_locked: boolean;
@@ -12,7 +12,7 @@ export class ThematiqueUniversAPI {
   @ApiProperty() is_new: boolean;
   @ApiProperty() niveau: number;
 
-  public static mapToAPI(thematique: ThematiqueUnivers): ThematiqueUniversAPI {
+  public static mapToAPI(thematique: TuileThematique): ThematiqueUniversAPI {
     return {
       titre: thematique.titre,
       progression: thematique.progression,

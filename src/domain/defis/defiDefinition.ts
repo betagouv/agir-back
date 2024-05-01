@@ -1,7 +1,7 @@
 import { Thematique } from '../contenu/thematique';
 import { Tag } from '../scoring/tag';
-import { ThematiqueUniversType } from '../univers/thematiqueUniversType';
-import { UniversType } from '../univers/universType';
+import { ThematiqueUnivers } from '../univers/thematiqueUnivers';
+import { Univers } from '../univers/univers';
 
 export class DefiDefinition {
   content_id: string;
@@ -12,8 +12,8 @@ export class DefiDefinition {
   astuces: string;
   thematique: Thematique;
   tags: Tag[];
-  universes: UniversType[];
-  thematiques_univers: ThematiqueUniversType[];
+  universes: Univers[];
+  thematiques_univers: ThematiqueUnivers[];
 
   constructor(data: DefiDefinition) {
     this.content_id = data.content_id;

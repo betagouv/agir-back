@@ -1,6 +1,6 @@
 import { DB, TestUtil } from '../../TestUtil';
-import { UniversType } from '../../../src/domain/univers/universType';
-import { ThematiqueUniversType } from '../../../src/domain/univers/thematiqueUniversType';
+import { Univers } from '../../../src/domain/univers/univers';
+import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 
 describe('Univers (API test)', () => {
@@ -24,13 +24,13 @@ describe('Univers (API test)', () => {
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.univers, {
       id_cms: 1,
-      code: UniversType.climat,
+      code: Univers.climat,
       label: 'yo',
       image_url: 'aaaa',
     });
     await TestUtil.create(DB.univers, {
       id_cms: 2,
-      code: UniversType.cuisine,
+      code: Univers.cuisine,
       label: 'ya',
       image_url: 'bbbb',
     });
@@ -47,7 +47,7 @@ describe('Univers (API test)', () => {
       is_locked: false,
       reason_locked: null,
       titre: 'yo',
-      type: UniversType.climat,
+      type: Univers.climat,
       image_url: 'aaaa',
     });
   });
@@ -65,7 +65,7 @@ describe('Univers (API test)', () => {
     expect(response.body.length).toBe(5);
     expect(response.body[0]).toEqual({
       titre: 'Manger de saison',
-      type: ThematiqueUniversType.manger_saison,
+      type: ThematiqueUnivers.manger_saison,
       progression: 0,
       cible_progression: 5,
       is_locked: false,

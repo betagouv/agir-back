@@ -9,8 +9,8 @@ import {
   DefiHistory_v0,
   Defi_v0,
 } from '../../../src/domain/object_store/defi/defiHistory_v0';
-import { ThematiqueUniversType } from '../../../src/domain/univers/thematiqueUniversType';
-import { UniversType } from '../../../src/domain/univers/universType';
+import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
+import { Univers } from '../../../src/domain/univers/univers';
 import { Defi } from '.prisma/client';
 
 const DEFI_1_DEF: Defi = {
@@ -22,8 +22,8 @@ const DEFI_1_DEF: Defi = {
   astuces: 'astuce',
   pourquoi: 'pourquoi',
   sous_titre: 'sous_titre',
-  universes: [UniversType.climat],
-  thematiquesUnivers: [ThematiqueUniversType.dechets_compost],
+  universes: [Univers.climat],
+  thematiquesUnivers: [ThematiqueUnivers.dechets_compost],
   created_at: undefined,
   updated_at: undefined,
 };

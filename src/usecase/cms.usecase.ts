@@ -21,8 +21,8 @@ import { DefiDefinition } from '../../src/domain/defis/defiDefinition';
 import { TagUtilisateur } from '../../src/domain/scoring/tagUtilisateur';
 import { Besoin } from '../../src/domain/aides/besoin';
 import { App } from '../../src/domain/app';
-import { ThematiqueUniversType } from '../../src/domain/univers/thematiqueUniversType';
-import { UniversType } from '../../src/domain/univers/universType';
+import { ThematiqueUnivers } from '../domain/univers/thematiqueUnivers';
+import { Univers } from '../domain/univers/univers';
 
 @Injectable()
 export class CMSUsecase {
@@ -344,10 +344,10 @@ export class CMSUsecase {
         ? entry.tags.map((elem) => TagUtilisateur[elem.code])
         : [],
       universes: entry.univers
-        ? entry.univers.map((u) => UniversType[u.code])
+        ? entry.univers.map((u) => Univers[u.code])
         : [],
       thematiques_univers: entry.thematique_univers
-        ? entry.thematique_univers.map((t) => ThematiqueUniversType[t.code])
+        ? entry.thematique_univers.map((t) => ThematiqueUnivers[t.code])
         : [],
     };
   }
@@ -445,13 +445,13 @@ export class CMSUsecase {
       universes:
         entry.attributes.univers.data.length > 0
           ? entry.attributes.univers.data.map(
-              (u) => UniversType[u.attributes.code],
+              (u) => Univers[u.attributes.code],
             )
           : [],
       thematiques_univers:
         entry.attributes.thematique_univers.data.length > 0
           ? entry.attributes.thematique_univers.data.map(
-              (t) => ThematiqueUniversType[t.attributes.code],
+              (t) => ThematiqueUnivers[t.attributes.code],
             )
           : [],
     };

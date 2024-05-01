@@ -44,7 +44,12 @@ import {
   Superficie,
   TypeLogement,
 } from '../src/domain/logement/logement';
-import { Empreinte, SituationNGC, Suivi, Univers } from '.prisma/client';
+import {
+  Empreinte,
+  SituationNGC,
+  Suivi,
+  Univers as UniversDB,
+} from '.prisma/client';
 import {
   Aide,
   Article,
@@ -64,8 +69,8 @@ import { DefiHistory_v0 } from '../src/domain/object_store/defi/defiHistory_v0';
 import { DefiStatus } from '../src/domain/defis/defi';
 import { TagUtilisateur } from '../src/domain/scoring/tagUtilisateur';
 import { Besoin } from '../src/domain/aides/besoin';
-import { UniversType } from '../src/domain/univers/universType';
-import { ThematiqueUniversType } from '../src/domain/univers/thematiqueUniversType';
+import { Univers } from '../src/domain/univers/univers';
+import { ThematiqueUnivers } from '../src/domain/univers/thematiqueUnivers';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -334,8 +339,8 @@ export class TestUtil {
       sous_titre: 'ssss',
       tags: [TagUtilisateur.appetence_cafe],
       thematique: Thematique.consommation,
-      universes: [UniversType.cuisine],
-      thematiquesUnivers: [ThematiqueUniversType.manger_local],
+      universes: [Univers.cuisine],
+      thematiquesUnivers: [ThematiqueUnivers.manger_local],
       created_at: undefined,
       updated_at: undefined,
       ...override,
@@ -553,11 +558,11 @@ export class TestUtil {
       ...override,
     };
   }
-  static universData(override?: Partial<Univers>): Univers {
+  static universData(override?: Partial<UniversDB>): UniversDB {
     return {
       id_cms: 1,
       label: 'Le Climat !',
-      code: UniversType.climat,
+      code: Univers.climat,
       image_url: 'https://',
       created_at: undefined,
       updated_at: undefined,

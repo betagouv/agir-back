@@ -3,13 +3,13 @@ import { PrismaService } from '../prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { Thematique } from '../../domain/contenu/thematique';
 import { App } from '../../../src/domain/app';
-import { UniversType } from '../../../src/domain/univers/universType';
-import { Univers } from '../../../src/domain/univers/univers';
+import { Univers } from '../../domain/univers/univers';
+import { TuileUnivers } from '../../domain/univers/tuileUnivers';
 
 @Injectable()
 export class ThematiqueRepository {
   static titres_thematiques: Map<Thematique, string>;
-  static univers: Map<UniversType, Univers>;
+  static univers: Map<Univers, TuileUnivers>;
 
   constructor(private prisma: PrismaService) {
     ThematiqueRepository.titres_thematiques = new Map();
@@ -28,11 +28,11 @@ export class ThematiqueRepository {
     return libelle || thematique.toString();
   }
 
-  public static getUnivers(type: UniversType): Univers {
+  public static getUnivers(type: Univers): TuileUnivers {
     return ThematiqueRepository.univers.get(type);
   }
 
-  public static getAllUnivers(): Univers[] {
+  public static getAllUnivers(): TuileUnivers[] {
     return Array.from(ThematiqueRepository.univers.values());
   }
   public static resetThematiquesUnivers() {
@@ -52,11 +52,11 @@ export class ThematiqueRepository {
     const listeUnivers = await this.prisma.univers.findMany();
     listeUnivers.forEach((u) => {
       ThematiqueRepository.univers.set(
-        UniversType[u.code],
-        new Univers({
+        Univers[u.code],
+        new TuileUnivers({
           image_url: u.image_url,
           titre: u.label,
-          type: UniversType[u.code],
+          type: Univers[u.code],
           etoiles: 0,
           is_locked: false,
           reason_locked: null,
