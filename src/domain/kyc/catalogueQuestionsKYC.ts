@@ -2,6 +2,7 @@ import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Thematique } from '../contenu/thematique';
 import { QuestionKYC_v0 } from '../object_store/kyc/kycHistory_v0';
 import { Tag } from '../scoring/tag';
+import { Univers } from '../univers/univers';
 import {
   BooleanKYC,
   CategorieQuestionKYC,
@@ -33,6 +34,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
       { label: '🚗 Transports', code: Thematique.transport },
       { label: 'Aucun / Je ne sais pas', code: 'rien' },
     ],
+    universes: [],
   },
   {
     id: KYCID.KYC002,
@@ -51,6 +53,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
       { label: 'Prendre les transports en commun', code: 'TEC' },
       { label: 'Aucun', code: 'aucun' },
     ],
+    universes: [Univers.transport],
   },
   {
     id: KYCID.KYC003,
@@ -65,6 +68,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
       { label: 'Oui', code: BooleanKYC.oui },
       { label: 'Non', code: BooleanKYC.non },
     ],
+    universes: [Univers.transport],
   },
   {
     id: KYCID.KYC004,
@@ -91,6 +95,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
       },
       { label: 'Je ne sais pas', code: 'ne_sais_pas' },
     ],
+    universes: [Univers.transport],
   },
   {
     id: KYCID.KYC005,
@@ -106,6 +111,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
       { label: 'Je suis sans emploi', code: 'sans_emploi' },
       { label: 'Je ne souhaite pas répondre', code: 'ne_sais_pas' },
     ],
+    universes: [],
   },
   {
     id: KYCID.KYC006,
@@ -120,6 +126,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
       { label: 'Moins de 15 ans (neuf ou récent)', code: 'moins_15' },
       { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
     ],
+    universes: [Univers.logement],
   },
   {
     id: KYCID.KYC007,
@@ -137,6 +144,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
       { label: 'Autre', code: 'autre' },
       { label: 'Aucune', code: 'aucune' },
     ],
+    universes: [Univers.alimentation],
   },
   {
     id: KYCID.KYC008,
@@ -159,6 +167,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
       },
       { label: 'Je ne souhaite pas répondre', code: 'ne_sais_pas' },
     ],
+    universes: [],
   },
   {
     id: KYCID.KYC009,
@@ -178,6 +187,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
       { label: 'En covoiturage', code: 'co_voit' },
       { label: 'Je ne réalise pas de trajet en voiture', code: 'pas_voiture' },
     ],
+    universes: [Univers.transport],
   },
   {
     id: KYCID.KYC010,
@@ -192,6 +202,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
       { label: 'Oui', code: BooleanKYC.oui },
       { label: 'Non', code: BooleanKYC.non },
     ],
+    universes: [Univers.logement],
   },
   {
     id: KYCID.KYC011,
@@ -211,6 +222,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
       { label: 'Voiture électrique ou hybride', code: 'voit_elec_hybride' },
       { label: 'Je ne souhaite pas répondre', code: 'ne_sais_pas' },
     ],
+    universes: [Univers.transport],
   },
   {
     id: KYCID.KYC012,
@@ -227,6 +239,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
       { label: 'Non', code: BooleanKYC.non },
       { label: 'Je ne souhaite pas répondre', code: 'ne_sais_pas' },
     ],
+    universes: [Univers.transport],
   },
   {
     id: KYCID.KYC013,
@@ -248,6 +261,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
       { label: 'Autree', code: 'autre' },
       { label: 'Je ne souhaite pas répondre', code: 'ne_sais_pas' },
     ],
+    universes: [Univers.transport],
   },
   {
     id: KYCID._1,
@@ -257,6 +271,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     categorie: CategorieQuestionKYC.default,
     points: 10,
     tags: [],
+    universes: [],
   },
   {
     id: KYCID._2,
@@ -271,6 +286,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
       { label: 'Ce que je mange', code: Thematique.alimentation },
     ],
     tags: [],
+    universes: [],
   },
   {
     id: KYCID._3,
@@ -285,6 +301,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
       { label: 'A voir', code: BooleanKYC.peut_etre },
     ],
     tags: [Tag.logement, Tag.climat],
+    universes: [],
   },
   {
     id: KYCID._4,
@@ -294,6 +311,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     categorie: CategorieQuestionKYC.default,
     points: 10,
     tags: [],
+    universes: [],
   },
   {
     id: KYCID._5,
@@ -303,6 +321,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
     categorie: CategorieQuestionKYC.default,
     points: 10,
     tags: [Tag.consommation, Tag.alimentation],
+    universes: [],
   },
 ];
 

@@ -2,6 +2,7 @@ import { Thematique } from '../contenu/thematique';
 import { QuestionKYC_v0 } from '../object_store/kyc/kycHistory_v0';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
+import { Univers } from '../univers/univers';
 
 export enum KYCID {
   KYC001 = 'KYC001',
@@ -61,6 +62,7 @@ export class QuestionKYC implements TaggedContent {
   ngc_key?: string;
   tags: Tag[];
   score: number;
+  universes: Univers[];
 
   constructor(data?: QuestionKYC_v0) {
     if (!data) return;
@@ -76,6 +78,7 @@ export class QuestionKYC implements TaggedContent {
     this.thematique = data.thematique;
     this.tags = data.tags ? data.tags : [];
     this.score = 0;
+    this.universes = data.universes ? data.universes : [];
   }
 
   public hasResponses(): boolean {

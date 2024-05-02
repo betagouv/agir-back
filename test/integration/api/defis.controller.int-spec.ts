@@ -166,6 +166,51 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
     expect(defi.id).toBe('1');
   });
+  it('GET /utilisateurs/utilisateur-id/defis - filtre status encours et deja fait', async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '1',
+          status: DefiStatus.pas_envie,
+        },
+        {
+          ...DEFI_1,
+          id: '2',
+          status: DefiStatus.deja_fait,
+        },
+        {
+          ...DEFI_1,
+          id: '3',
+          status: DefiStatus.en_cours,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis,
+    });
+
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '1' });
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '2' });
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '3' });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/defis?status=en_cours&status=deja_fait',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(2);
+
+    const defi_1: DefiAPI = response.body[0];
+    const defi_2: DefiAPI = response.body[1];
+
+    expect(defi_1.id).toBe('2');
+    expect(defi_2.id).toBe('3');
+  });
   it('GET /utilisateurs/utilisateur-id/defis - filtre status todo', async () => {
     // GIVEN
     const defis: DefiHistory_v0 = {

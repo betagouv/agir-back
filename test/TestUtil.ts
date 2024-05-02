@@ -414,6 +414,7 @@ export class TestUtil {
             { label: 'Ce que je mange', code: Thematique.alimentation },
           ],
           tags: [],
+          universes: [Univers.climat],
         },
       ],
     };

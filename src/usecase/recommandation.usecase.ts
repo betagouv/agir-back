@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { ArticleRepository } from '../infrastructure/repository/article.repository';
-import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
+import {
+  ArticleFilter,
+  ArticleRepository,
+} from '../infrastructure/repository/article.repository';
+import {
+  QuizzFilter,
+  QuizzRepository,
+} from '../infrastructure/repository/quizz.repository';
 import { Recommandation } from '../domain/contenu/recommandation';
 import { ContentType } from '../../src/domain/contenu/contentType';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
@@ -15,6 +21,7 @@ import { Thematique } from '../../src/domain/contenu/thematique';
 import { App } from '../domain/app';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { Feature } from '../../src/domain/gamification/feature';
+import { Univers } from '../../src/domain/univers/univers';
 
 @Injectable()
 export class RecommandationUsecase {
@@ -24,6 +31,35 @@ export class RecommandationUsecase {
     private quizzRepository: QuizzRepository,
     private defiRepository: DefiRepository,
   ) {}
+
+  async listRecommandationsV2(
+    utilisateurId: string,
+    univers?: Univers,
+  ): Promise<Recommandation[]> {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
+    const articles = await this.getArticles(utilisateur, univers);
+
+    const quizzes = await this.getQuizzes(utilisateur, univers);
+
+    let kycs = await this.getKYC(utilisateur, univers);
+
+    if (kycs.length > 0) {
+      PonderationApplicativeManager.sortContent(kycs);
+      kycs = [kycs[0]];
+    }
+
+    let content: Recommandation[] = [];
+    content.push(...articles);
+    content.push(...quizzes);
+    content.push(...kycs);
+
+    PonderationApplicativeManager.sortContent(content);
+
+    content = content.slice(0, 6);
+    return content;
+  }
 
   async listRecommandations(utilisateurId: string): Promise<Recommandation[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
@@ -76,9 +112,13 @@ export class RecommandationUsecase {
     return defis_en_cours.concat(defis_restants, content);
   }
 
-  private getKYC(utilisateur: Utilisateur): Recommandation[] {
+  private getKYC(
+    utilisateur: Utilisateur,
+    univers?: Univers,
+  ): Recommandation[] {
     const kycs = utilisateur.kyc_history.getKYCRestantes(
       CategorieQuestionKYC.recommandation,
+      univers,
     );
 
     PonderationApplicativeManager.increaseScoreContentOfList(
@@ -142,14 +182,19 @@ export class RecommandationUsecase {
 
   private async getArticles(
     utilisateur: Utilisateur,
+    univers?: Univers,
   ): Promise<Recommandation[]> {
     const articles_lus = utilisateur.history.searchArticlesIds({
       est_lu: true,
     });
-    let articles = await this.articleRepository.searchArticles({
+    const filtre: ArticleFilter = {
       code_postal: utilisateur.logement.code_postal,
       exclude_ids: articles_lus,
-    });
+    };
+    if (univers) {
+      filtre.thematiques = [Thematique[univers]];
+    }
+    let articles = await this.articleRepository.searchArticles(filtre);
 
     PonderationApplicativeManager.increaseScoreContentOfList(
       articles,
@@ -164,13 +209,19 @@ export class RecommandationUsecase {
 
   private async getQuizzes(
     utilisateur: Utilisateur,
+    univers?: Univers,
   ): Promise<Recommandation[]> {
     const quizz_attempted = utilisateur.history.listeIdsQuizzAttempted();
 
-    let quizzes = await this.quizzRepository.searchQuizzes({
+    const filtre: QuizzFilter = {
       code_postal: utilisateur.logement.code_postal,
       exclude_ids: quizz_attempted,
-    });
+    };
+    if (univers) {
+      filtre.thematiques = [Thematique[univers]];
+    }
+
+    let quizzes = await this.quizzRepository.searchQuizzes(filtre);
 
     PonderationApplicativeManager.increaseScoreContentOfList(
       quizzes,

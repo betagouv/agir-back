@@ -17,6 +17,7 @@ import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { RecommandationAPI } from './types/contenu/recommandationAPI';
 import { RecommandationUsecase } from '../../../src/usecase/recommandation.usecase';
+import { Univers } from '../../../src/domain/univers/univers';
 
 @Controller()
 @ApiBearerAuth()
@@ -40,6 +41,34 @@ export class RecommandationsController extends GenericControler {
 
     const list = await this.recommandationUsecase.listRecommandations(
       utilisateurId,
+    );
+    return list.map((reco) => RecommandationAPI.mapToAPI(reco));
+  }
+
+  @Get('utilisateurs/:utilisateurId/recommandations_v2')
+  @ApiOkResponse({ type: [RecommandationAPI] })
+  @UseGuards(AuthGuard)
+  @ApiQuery({
+    name: 'univers',
+    enum: Univers,
+    enumName: 'univers',
+    required: false,
+    description: `filtrage par univers, un id d'univers, eg : 'climat'`,
+  })
+  @ApiOperation({
+    summary:
+      "Liste les recommendations personnalisées de l'utilisateur, sans défis",
+  })
+  async getUserRecommandationV2(
+    @Request() req,
+    @Query('univers') univers: Univers,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<RecommandationAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+
+    const list = await this.recommandationUsecase.listRecommandationsV2(
+      utilisateurId,
+      univers,
     );
     return list.map((reco) => RecommandationAPI.mapToAPI(reco));
   }

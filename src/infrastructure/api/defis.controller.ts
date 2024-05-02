@@ -90,13 +90,15 @@ export class DefisController extends GenericControler {
   @Get('utilisateurs/:utilisateurId/defis')
   @ApiQuery({
     name: 'status',
-    type: String,
+    enum: DefiStatus,
+    enumName: 'status',
+    isArray: true,
     required: false,
     description: `Une liste de statuts de défis séparés par une virgules`,
   })
   @ApiQuery({
     name: 'univers',
-    type: String,
+    enum: Univers,
     required: false,
     description: `filtrage par univers, un id d'univers, eg : 'climat'`,
   })
@@ -111,13 +113,13 @@ export class DefisController extends GenericControler {
   async getAllUserDefi(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-    @Query('status') status: string,
+    @Query('status') status: DefiStatus[],
     @Query('univers') univers: string,
   ): Promise<DefiAPI[]> {
     this.checkCallerId(req, utilisateurId);
     const result = await this.defisUsecase.getALLUserDefi(
       utilisateurId,
-      !!status ? status.split(',').map((s) => DefiStatus[s]) : [],
+      status ? status : [], //!!status ? status.split(',').map((s) => DefiStatus[s]) : [],
       univers ? Univers[univers] : undefined,
     );
     return result.map((element) => DefiAPI.mapToAPI(element));

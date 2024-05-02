@@ -101,6 +101,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           { label: 'BBB', code: Thematique.logement },
         ],
         tags: [],
+        universes: [],
       },
     ]);
     await TestUtil.create(DB.utilisateur, {
@@ -189,6 +190,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           { label: 'Ce que je mange', code: Thematique.alimentation },
         ],
         tags: [],
+        universes: [],
       },
     ]);
     // WHEN
@@ -269,6 +271,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           { label: 'Comment je bouge', code: Thematique.transport },
         ],
         tags: [],
+        universes: [],
       },
     ]);
 
@@ -306,6 +309,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           { label: 'Comment je bouge', code: Thematique.transport },
         ],
         tags: [],
+        universes: [],
       },
     ]);
 
@@ -349,6 +353,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           { label: 'Comment je bouge', code: Thematique.transport },
         ],
         tags: [],
+        universes: [],
       },
     ]);
     const kyc: KYCHistory_v0 = {

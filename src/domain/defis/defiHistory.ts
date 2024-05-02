@@ -28,21 +28,22 @@ export class DefiHistory {
   }
 
   public getDefisRestants(univers?: Univers): Defi[] {
-    let defis_restants = [].concat(this.catalogue);
+    let defis_def_restants: DefiDefinition[] = [].concat(this.catalogue);
     this.defis.forEach((defi_courant) => {
-      const index = defis_restants.findIndex(
+      const index = defis_def_restants.findIndex(
         (d) => d.content_id === defi_courant.id,
       );
       if (index !== -1) {
-        defis_restants.splice(index, 1);
+        defis_def_restants.splice(index, 1);
       }
     });
     if (univers) {
-      defis_restants = defis_restants.filter((defi) =>
-        defi.universes.includes(univers),
+      defis_def_restants = defis_def_restants.filter(
+        (defi) =>
+          defi.universes.includes(univers) || defi.universes.length === 0,
       );
     }
-    return defis_restants.map((d) => this.buildDefiFromDefinition(d));
+    return defis_def_restants.map((d) => this.buildDefiFromDefinition(d));
   }
 
   public getDefisOfStatus(status_list: DefiStatus[]): Defi[] {

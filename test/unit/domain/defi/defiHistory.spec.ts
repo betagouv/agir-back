@@ -38,6 +38,31 @@ const DEFI_1_DEF: DefiDefinition = {
 };
 
 describe('DefiHistory', () => {
+  it('getDefisRestants :filtrage sur univers ', () => {
+    // GIVEN
+    const defiHistory = new DefiHistory();
+    defiHistory.setCatalogue([
+      { ...DEFI_1_DEF, content_id: '1', universes: [Univers.climat] },
+      { ...DEFI_1_DEF, content_id: '2', universes: [Univers.consommation] },
+    ]);
+
+    // THEN
+    expect(defiHistory.getDefisRestants(Univers.consommation)).toHaveLength(1);
+    expect(defiHistory.getDefisRestants(Univers.consommation)[0].id).toEqual(
+      '2',
+    );
+  });
+  it('getDefisRestants : select si pas d univers setté ', () => {
+    // GIVEN
+    const defiHistory = new DefiHistory();
+    defiHistory.setCatalogue([
+      { ...DEFI_1_DEF, content_id: '1', universes: [] },
+      { ...DEFI_1_DEF, content_id: '2', universes: [Univers.consommation] },
+    ]);
+
+    // THEN
+    expect(defiHistory.getDefisRestants(Univers.consommation)).toHaveLength(2);
+  });
   it('getDefisRestants : quand hisotrique vide ', () => {
     // GIVEN
     const defiHistory = new DefiHistory();

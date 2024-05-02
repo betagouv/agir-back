@@ -1,4 +1,5 @@
 import { KYCHistory_v0 as KYCHistory_v0 } from '../object_store/kyc/kycHistory_v0';
+import { Univers } from '../univers/univers';
 import { CatalogueQuestionsKYC } from './catalogueQuestionsKYC';
 import {
   CategorieQuestionKYC,
@@ -36,14 +37,24 @@ export class KYCHistory {
     return result;
   }
 
-  public getKYCRestantes(categorie?: CategorieQuestionKYC): QuestionKYC[] {
-    const kycs_all = CatalogueQuestionsKYC.getAll(categorie);
+  public getKYCRestantes(
+    categorie?: CategorieQuestionKYC,
+    univers?: Univers,
+  ): QuestionKYC[] {
+    let kycs_all = CatalogueQuestionsKYC.getAll(categorie);
     this.answered_questions.forEach((question) => {
       const index = kycs_all.findIndex((d) => d.id === question.id);
       if (index !== -1) {
         kycs_all.splice(index, 1);
       }
     });
+
+    if (univers) {
+      kycs_all = kycs_all.filter(
+        (k) => k.universes.includes(univers) || k.universes.length === 0,
+      );
+    }
+
     return kycs_all;
   }
 

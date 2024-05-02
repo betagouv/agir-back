@@ -146,6 +146,7 @@ describe('Objet Utilisateur', () => {
         { label: 'Thé ou tisane', code: 'the' },
         { label: 'Chicoré', code: 'chicore' },
       ],
+      universes: [],
     });
 
     // WHEN
@@ -178,6 +179,7 @@ describe('Objet Utilisateur', () => {
         { label: 'Chicoré', code: 'chicore' },
         { label: 'autre', code: 'autre' },
       ],
+      universes: [],
     });
 
     // WHEN
@@ -232,6 +234,7 @@ describe('Objet Utilisateur', () => {
         { label: 'Chicoré', code: 'chicore' },
         { label: 'autre', code: 'autre' },
       ],
+      universes: [],
     });
 
     // WHEN
