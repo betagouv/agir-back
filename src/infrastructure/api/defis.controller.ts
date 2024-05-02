@@ -97,10 +97,10 @@ export class DefisController extends GenericControler {
   @ApiQuery({
     name: 'status',
     enum: DefiStatus,
-    enumName: 'DefiStatus',
+    enumName: 'status',
     isArray: true,
     required: false,
-    description: `Une liste de statuts pour filtrage`,
+    description: `filtrage par status, plusieur status possible avec la notation ?status=XXX&status=YYY`,
   })
   @UseGuards(AuthGuard)
   @ApiOkResponse({
@@ -113,7 +113,7 @@ export class DefisController extends GenericControler {
   async getAllUserDefi(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-    @Query('status') status: DefiStatus[],
+    @Query('status') status,
     @Query('univers') univers: Univers,
   ): Promise<DefiAPI[]> {
     this.checkCallerId(req, utilisateurId);
