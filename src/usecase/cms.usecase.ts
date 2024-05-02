@@ -249,9 +249,7 @@ export class CMSUsecase {
       cmsWebhookAPI.entry.id,
       cmsWebhookAPI.entry.code,
       cmsWebhookAPI.entry.label,
-      cmsWebhookAPI.entry.imageUrl
-        ? cmsWebhookAPI.entry.imageUrl.formats.thumbnail.url
-        : null,
+      this.getImageUrl(cmsWebhookAPI),
     );
   }
 
@@ -260,12 +258,21 @@ export class CMSUsecase {
       cmsWebhookAPI.entry.id,
       cmsWebhookAPI.entry.code,
       cmsWebhookAPI.entry.label,
-      cmsWebhookAPI.entry.imageUrl
-        ? cmsWebhookAPI.entry.imageUrl.formats.thumbnail.url
-        : null,
+      this.getImageUrl(cmsWebhookAPI),
     );
   }
 
+  private getImageUrl(cmsWebhookAPI: CMSWebhookAPI) {
+    let url = null;
+    if (cmsWebhookAPI.entry.imageUrl) {
+      if (cmsWebhookAPI.entry.imageUrl.formats.thumbnail) {
+        url = cmsWebhookAPI.entry.imageUrl.formats.thumbnail.url;
+      } else {
+        url = cmsWebhookAPI.entry.imageUrl.url;
+      }
+    }
+    return url;
+  }
   async deleteArticleOrQuizz(cmsWebhookAPI: CMSWebhookAPI) {
     if (cmsWebhookAPI.model === CMSModel.article) {
       await this.articleRepository.delete(cmsWebhookAPI.entry.id.toString());
