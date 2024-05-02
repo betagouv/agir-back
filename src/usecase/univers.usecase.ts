@@ -20,9 +20,7 @@ export class UniversUsecase {
     if (univers === Univers.alimentation)
       return [
         {
-          titre: ThematiqueRepository.getTuileThematique(
-            ThematiqueUnivers.manger_saison,
-          ).titre,
+          titre: this.getTitre(ThematiqueUnivers.manger_saison),
           type: ThematiqueUnivers.manger_saison,
           progression: 0,
           cible_progression: 5,
@@ -30,14 +28,10 @@ export class UniversUsecase {
           reason_locked: null,
           is_new: true,
           niveau: 1,
-          image_url: ThematiqueRepository.getTuileThematique(
-            ThematiqueUnivers.manger_saison,
-          ).image_url,
+          image_url: this.getImageUrl(ThematiqueUnivers.manger_saison),
         },
         {
-          titre: ThematiqueRepository.getTuileThematique(
-            ThematiqueUnivers.manger_local,
-          ).titre,
+          titre: this.getTitre(ThematiqueUnivers.manger_local),
           type: ThematiqueUnivers.manger_local,
           progression: 0,
           cible_progression: 5,
@@ -45,14 +39,10 @@ export class UniversUsecase {
           reason_locked: null,
           is_new: true,
           niveau: 2,
-          image_url: ThematiqueRepository.getTuileThematique(
-            ThematiqueUnivers.manger_local,
-          ).image_url,
+          image_url: this.getImageUrl(ThematiqueUnivers.manger_local),
         },
         {
-          titre: ThematiqueRepository.getTuileThematique(
-            ThematiqueUnivers.gaspillage_alimentaire,
-          ).titre,
+          titre: this.getTitre(ThematiqueUnivers.gaspillage_alimentaire),
           type: ThematiqueUnivers.gaspillage_alimentaire,
           progression: 2,
           cible_progression: 7,
@@ -60,14 +50,10 @@ export class UniversUsecase {
           reason_locked: null,
           is_new: false,
           niveau: 1,
-          image_url: ThematiqueRepository.getTuileThematique(
-            ThematiqueUnivers.gaspillage_alimentaire,
-          ).image_url,
+          image_url: this.getImageUrl(ThematiqueUnivers.gaspillage_alimentaire),
         },
         {
-          titre: ThematiqueRepository.getTuileThematique(
-            ThematiqueUnivers.dechets_compost,
-          ).titre,
+          titre: this.getTitre(ThematiqueUnivers.dechets_compost),
           type: ThematiqueUnivers.dechets_compost,
           progression: 5,
           cible_progression: 7,
@@ -75,14 +61,10 @@ export class UniversUsecase {
           reason_locked: null,
           is_new: false,
           niveau: 1,
-          image_url: ThematiqueRepository.getTuileThematique(
-            ThematiqueUnivers.dechets_compost,
-          ).image_url,
+          image_url: this.getImageUrl(ThematiqueUnivers.dechets_compost),
         },
         {
-          titre: ThematiqueRepository.getTuileThematique(
-            ThematiqueUnivers.cereales,
-          ).titre,
+          titre: this.getTitre(ThematiqueUnivers.cereales),
           type: ThematiqueUnivers.cereales,
           progression: 0,
           cible_progression: 10,
@@ -90,17 +72,13 @@ export class UniversUsecase {
           reason_locked: 'Pas prêt à manger de la céréale !',
           is_new: false,
           niveau: 3,
-          image_url: ThematiqueRepository.getTuileThematique(
-            ThematiqueUnivers.cereales,
-          ).image_url,
+          image_url: this.getImageUrl(ThematiqueUnivers.cereales),
         },
       ];
     if (univers === Univers.transport)
       return [
         {
-          titre: ThematiqueRepository.getTuileThematique(
-            ThematiqueUnivers.mobilite_quotidien,
-          ).titre,
+          titre: this.getTitre(ThematiqueUnivers.mobilite_quotidien),
           type: ThematiqueUnivers.mobilite_quotidien,
           progression: 0,
           cible_progression: 5,
@@ -108,14 +86,10 @@ export class UniversUsecase {
           reason_locked: null,
           is_new: true,
           niveau: 1,
-          image_url: ThematiqueRepository.getTuileThematique(
-            ThematiqueUnivers.mobilite_quotidien,
-          ).image_url,
+          image_url: this.getImageUrl(ThematiqueUnivers.mobilite_quotidien),
         },
         {
-          titre: ThematiqueRepository.getTuileThematique(
-            ThematiqueUnivers.partir_vacances,
-          ).titre,
+          titre: this.getTitre(ThematiqueUnivers.partir_vacances),
           type: ThematiqueUnivers.partir_vacances,
           progression: 2,
           cible_progression: 5,
@@ -123,16 +97,12 @@ export class UniversUsecase {
           reason_locked: null,
           is_new: false,
           niveau: 2,
-          image_url: ThematiqueRepository.getTuileThematique(
-            ThematiqueUnivers.partir_vacances,
-          ).image_url,
+          image_url: this.getImageUrl(ThematiqueUnivers.partir_vacances),
         },
       ];
     return [
       {
-        titre: ThematiqueRepository.getTuileThematique(
-          ThematiqueUnivers.coming_soon,
-        ).titre,
+        titre: this.getTitre(ThematiqueUnivers.coming_soon),
         type: ThematiqueUnivers.coming_soon,
         progression: 0,
         cible_progression: 5,
@@ -140,14 +110,10 @@ export class UniversUsecase {
         reason_locked: 'Bientôt dans les bacs',
         is_new: true,
         niveau: 1,
-        image_url: ThematiqueRepository.getTuileThematique(
-          ThematiqueUnivers.coming_soon,
-        ).image_url,
+        image_url: this.getImageUrl(ThematiqueUnivers.coming_soon),
       },
       {
-        titre: ThematiqueRepository.getTuileThematique(
-          ThematiqueUnivers.coming_soon,
-        ).titre,
+        titre: this.getTitre(ThematiqueUnivers.coming_soon),
         type: ThematiqueUnivers.coming_soon,
         progression: 0,
         cible_progression: 5,
@@ -155,14 +121,10 @@ export class UniversUsecase {
         reason_locked: 'Bientôt dans les bacs',
         is_new: true,
         niveau: 1,
-        image_url: ThematiqueRepository.getTuileThematique(
-          ThematiqueUnivers.coming_soon,
-        ).image_url,
+        image_url: this.getImageUrl(ThematiqueUnivers.coming_soon),
       },
       {
-        titre: ThematiqueRepository.getTuileThematique(
-          ThematiqueUnivers.coming_soon,
-        ).titre,
+        titre: this.getTitre(ThematiqueUnivers.coming_soon),
         type: ThematiqueUnivers.coming_soon,
         progression: 0,
         cible_progression: 5,
@@ -170,10 +132,19 @@ export class UniversUsecase {
         reason_locked: 'Bientôt dans les bacs',
         is_new: true,
         niveau: 1,
-        image_url: ThematiqueRepository.getTuileThematique(
-          ThematiqueUnivers.coming_soon,
-        ).image_url,
+        image_url: this.getImageUrl(ThematiqueUnivers.coming_soon),
       },
     ];
+  }
+
+  private getTitre(th: ThematiqueUnivers) {
+    const tuile = ThematiqueRepository.getTuileThematique(th);
+    return tuile ? tuile.titre : 'Titre manquant';
+  }
+  private getImageUrl(th: ThematiqueUnivers) {
+    const tuile = ThematiqueRepository.getTuileThematique(th);
+    return tuile
+      ? tuile.image_url
+      : 'https://res.cloudinary.com/dq023imd8/image/upload/v1714635448/univers_climat_a7bedede79.jpg';
   }
 }
