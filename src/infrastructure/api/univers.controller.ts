@@ -3,6 +3,7 @@ import {
   ApiBody,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
 import {
@@ -50,10 +51,17 @@ export class UniversController extends GenericControler {
     return result.map((e) => UniversAPI.mapToAPI(e));
   }
 
-  @Get('utilisateurs/:utilisateurId/univers/:universType/thematiques')
+  @Get('utilisateurs/:utilisateurId/univers/:univers/thematiques')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: [ThematiqueUniversAPI],
+  })
+  @ApiParam({
+    name: 'univers',
+    enum: Univers,
+    enumName: 'univers',
+    required: true,
+    description: `l'univers demandé`,
   })
   @ApiOperation({
     summary: `Retourne les thematiques de d'un univers particulier d'un utilisateur donné`,
@@ -61,12 +69,12 @@ export class UniversController extends GenericControler {
   async getUniversThematiques(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-    @Param('universType') universType: Univers,
+    @Param('univers') univers: Univers,
   ): Promise<ThematiqueUniversAPI[]> {
     this.checkCallerId(req, utilisateurId);
     const result = await this.universUsecase.getThematiquesOfUnivers(
       utilisateurId,
-      universType,
+      univers,
     );
     return result.map((e) => ThematiqueUniversAPI.mapToAPI(e));
   }
