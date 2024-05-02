@@ -24,8 +24,8 @@ import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { DefisUsecase } from '../../../src/usecase/defis.usecase';
 import { DefiAPI, PatchDefiStatusAPI } from './types/defis/DefiAPI';
-import { DefiStatus } from '../../../src/domain/defis/defi';
 import { Univers } from '../../../src/domain/univers/univers';
+import { DefiStatus } from '../../../src/domain/defis/defi';
 
 @Controller()
 @ApiBearerAuth()
@@ -89,18 +89,18 @@ export class DefisController extends GenericControler {
 
   @Get('utilisateurs/:utilisateurId/defis')
   @ApiQuery({
-    name: 'status',
-    enum: DefiStatus,
-    enumName: 'status',
-    isArray: true,
-    required: false,
-    description: `Une liste de statuts de défis séparés par une virgules`,
-  })
-  @ApiQuery({
     name: 'univers',
     enum: Univers,
     required: false,
     description: `filtrage par univers, un id d'univers, eg : 'climat'`,
+  })
+  @ApiQuery({
+    name: 'status',
+    enum: DefiStatus,
+    enumName: 'DefiStatus',
+    isArray: true,
+    required: false,
+    description: `Une liste de statuts pour filtrage`,
   })
   @UseGuards(AuthGuard)
   @ApiOkResponse({
@@ -114,12 +114,12 @@ export class DefisController extends GenericControler {
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
     @Query('status') status: DefiStatus[],
-    @Query('univers') univers: string,
+    @Query('univers') univers: Univers,
   ): Promise<DefiAPI[]> {
     this.checkCallerId(req, utilisateurId);
     const result = await this.defisUsecase.getALLUserDefi(
       utilisateurId,
-      status ? status : [], //!!status ? status.split(',').map((s) => DefiStatus[s]) : [],
+      status ? status : [],
       univers ? Univers[univers] : undefined,
     );
     return result.map((element) => DefiAPI.mapToAPI(element));
