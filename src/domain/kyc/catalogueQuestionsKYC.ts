@@ -167,7 +167,7 @@ const CATALOGUE: QuestionKYC_v0[] = [
       },
       { label: 'Je ne souhaite pas répondre', code: 'ne_sais_pas' },
     ],
-    universes: [],
+    universes: [Univers.transport],
   },
   {
     id: KYCID.KYC009,
