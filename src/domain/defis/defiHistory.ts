@@ -37,22 +37,30 @@ export class DefiHistory {
         defis_def_restants.splice(index, 1);
       }
     });
+
     if (univers) {
       defis_def_restants = defis_def_restants.filter(
         (defi) =>
           defi.universes.includes(univers) || defi.universes.length === 0,
       );
     }
+
     return defis_def_restants.map((d) => this.buildDefiFromDefinition(d));
   }
 
   public getDefisOfStatus(status_list: DefiStatus[]): Defi[] {
     if (status_list.length === 0) {
-      return this.defis;
+      return this.defis.filter(
+        (e) => e.accessible || e.getStatus() !== DefiStatus.todo,
+      );
     }
     const result = [];
     this.defis.forEach((defi_courant) => {
-      if (status_list.includes(defi_courant.getStatus())) {
+      if (
+        status_list.includes(defi_courant.getStatus()) &&
+        (defi_courant.accessible ||
+          defi_courant.getStatus() !== DefiStatus.todo)
+      ) {
         result.push(defi_courant);
       }
     });
@@ -122,6 +130,7 @@ export class DefiHistory {
       id: def.content_id,
       status: DefiStatus.todo,
       date_acceptation: null,
+      accessible: false,
     });
   }
 }

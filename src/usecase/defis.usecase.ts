@@ -18,9 +18,10 @@ export class DefisUsecase {
       (e) =>
         new Defi({
           ...e,
-          status: DefiStatus.todo,
-          date_acceptation: null,
+          status: undefined,
+          date_acceptation: undefined,
           id: e.content_id,
+          accessible: undefined,
         }),
     );
   }
@@ -29,6 +30,7 @@ export class DefisUsecase {
     utilisateurId: string,
     filtre_status: DefiStatus[],
     univers: Univers,
+    accessible: boolean,
   ): Promise<Defi[]> {
     let result = [];
 
@@ -37,7 +39,10 @@ export class DefisUsecase {
     const defiDefinitions = await this.defiRepository.list();
     utilisateur.defi_history.setCatalogue(defiDefinitions);
 
-    if (filtre_status.includes(DefiStatus.todo) || filtre_status.length === 0) {
+    if (
+      (filtre_status.includes(DefiStatus.todo) || filtre_status.length === 0) &&
+      !accessible
+    ) {
       result = result.concat(
         utilisateur.defi_history.getDefisRestants(univers),
       );

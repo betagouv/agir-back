@@ -95,6 +95,12 @@ export class DefisController extends GenericControler {
     description: `filtrage par univers, un id d'univers, eg : 'climat'`,
   })
   @ApiQuery({
+    name: 'accessible',
+    type: Boolean,
+    required: false,
+    description: `'true' indique que l'on ne souhaite que les défis dis "accessibles", c'est a dire débloqués`,
+  })
+  @ApiQuery({
     name: 'status',
     enum: DefiStatus,
     enumName: 'status',
@@ -115,12 +121,14 @@ export class DefisController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
     @Query('status') status,
     @Query('univers') univers: Univers,
+    @Query('accessible') accessible: string,
   ): Promise<DefiAPI[]> {
     this.checkCallerId(req, utilisateurId);
     const result = await this.defisUsecase.getALLUserDefi(
       utilisateurId,
       status ? status : [],
       univers ? Univers[univers] : undefined,
+      accessible === 'true',
     );
     return result.map((element) => DefiAPI.mapToAPI(element));
   }

@@ -23,6 +23,7 @@ const DEFI_1: Defi_v0 = {
   sous_titre: 'sous_titre',
   status: DefiStatus.todo,
   universes: [Univers.climat],
+  accessible: true,
 };
 const DEFI_1_DEF: DefiDefinition = {
   content_id: '1',
@@ -174,6 +175,114 @@ describe('DefiHistory', () => {
     // THEN
     expect(en_cours).toHaveLength(1);
     expect(en_cours[0].id).toEqual('2');
+  });
+  it('getDefisOfStatus : liste les défis avec status, seul les accessibles, filtre satut vide', () => {
+    // GIVEN
+    const defiHistory = new DefiHistory({
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '1',
+          status: DefiStatus.todo,
+          accessible: true,
+        },
+        {
+          ...DEFI_1,
+          id: '2',
+          status: DefiStatus.todo,
+          accessible: false,
+        },
+        {
+          ...DEFI_1,
+          id: '3',
+          status: DefiStatus.todo,
+          accessible: false,
+        },
+      ],
+    });
+
+    // WHEN
+    const en_cours = defiHistory.getDefisOfStatus([]);
+
+    // THEN
+    expect(en_cours).toHaveLength(1);
+    expect(en_cours[0].id).toEqual('1');
+  });
+  it('getDefisOfStatus : liste les défis avec status, seul les accessibles, filtre satut non vide', () => {
+    // GIVEN
+    const defiHistory = new DefiHistory({
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '1',
+          status: DefiStatus.todo,
+          accessible: true,
+        },
+        {
+          ...DEFI_1,
+          id: '2',
+          status: DefiStatus.todo,
+          accessible: false,
+        },
+        {
+          ...DEFI_1,
+          id: '3',
+          status: DefiStatus.en_cours,
+          accessible: true,
+        },
+      ],
+    });
+
+    // WHEN
+    const en_cours = defiHistory.getDefisOfStatus([DefiStatus.todo]);
+
+    // THEN
+    expect(en_cours).toHaveLength(1);
+    expect(en_cours[0].id).toEqual('1');
+  });
+  it('getDefisOfStatus : liste non todo et non accessible', () => {
+    // GIVEN
+    const defiHistory = new DefiHistory({
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '1',
+          status: DefiStatus.en_cours,
+          accessible: false,
+        },
+      ],
+    });
+
+    // WHEN
+    const en_cours = defiHistory.getDefisOfStatus([DefiStatus.en_cours]);
+
+    // THEN
+    expect(en_cours).toHaveLength(1);
+    expect(en_cours[0].id).toEqual('1');
+  });
+  it('getDefisOfStatus : liste non todo et non accessible, sans statut en filtre', () => {
+    // GIVEN
+    const defiHistory = new DefiHistory({
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '1',
+          status: DefiStatus.en_cours,
+          accessible: false,
+        },
+      ],
+    });
+
+    // WHEN
+    const en_cours = defiHistory.getDefisOfStatus([]);
+
+    // THEN
+    expect(en_cours).toHaveLength(1);
+    expect(en_cours[0].id).toEqual('1');
   });
 
   it('getNombreDefisRealises : donne le nombre de défis réalisés', () => {

@@ -47,6 +47,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     sous_titre: 'sous_titre',
     status: DefiStatus.todo,
     universes: [Univers.climat],
+    accessible: true,
   };
 
   beforeAll(async () => {
@@ -249,6 +250,46 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
     expect(defi.id).toBe('3');
   });
+  it('GET /utilisateurs/utilisateur-id/defis - filtre accessible', async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '1',
+          status: DefiStatus.todo,
+          accessible: false,
+        },
+        {
+          ...DEFI_1,
+          id: '2',
+          status: DefiStatus.todo,
+          accessible: true,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis,
+    });
+
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '1' });
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '2' });
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '3' });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/defis?status=todo&accessible=true',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(1);
+
+    const defi: DefiAPI = response.body[0];
+
+    expect(defi.id).toBe('2');
+  });
   it('GET /utilisateurs/utilisateur-id/defis - filtre status todo et univers', async () => {
     // GIVEN
     const defis: DefiHistory_v0 = {
@@ -386,6 +427,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.en_cours,
           universes: [],
+          accessible: true,
         },
       ],
     };
@@ -436,6 +478,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.en_cours,
           universes: [],
+          accessible: true,
         },
       ],
     };

@@ -1192,6 +1192,7 @@ describe('Admin (API test)', () => {
       sous_titre: 'SOUS TITRE',
       status: DefiStatus.todo,
       universes: [Univers.climat],
+      accessible: true,
     };
     const defis_1: DefiHistory_v0 = {
       version: 0,

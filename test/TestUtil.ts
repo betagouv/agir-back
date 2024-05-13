@@ -390,6 +390,7 @@ export class TestUtil {
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.todo,
           universes: [Univers.climat],
+          accessible: false,
         },
       ],
     };
