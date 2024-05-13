@@ -584,6 +584,7 @@ export class TestUtil {
       label: `C'est bon les céréales`,
       code: ThematiqueUnivers.cereales,
       image_url: 'https://',
+      univers_parent: Univers.climat,
       created_at: undefined,
       updated_at: undefined,
       ...override,

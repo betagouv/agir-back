@@ -564,6 +564,7 @@ describe('/api/incoming/cms (API test)', () => {
         id: 1,
         label: 'yo',
         code: ThematiqueUnivers.cereales,
+        univers_parent: { id: 1, code: 'climat' },
         imageUrl: {
           formats: {
             thumbnail: { url: 'https://haha' },
@@ -580,6 +581,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(universDB[0].label).toEqual('yo');
     expect(universDB[0].code).toEqual(ThematiqueUnivers.cereales);
     expect(universDB[0].image_url).toEqual('https://haha');
+    expect(universDB[0].univers_parent).toEqual(Univers.climat);
   });
   it('POST /api/incoming/cms - updates existing article, 1 user in db ', async () => {
     // GIVEN

@@ -29,6 +29,8 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() titre: string;
   @ApiProperty() code: string;
   @ApiProperty() label: string;
+  @ApiProperty({ type: CMSWebhookUniversAPI })
+  univers_parent: CMSWebhookUniversAPI;
   @ApiProperty() sousTitre: string;
   @ApiProperty() description: string;
   @ApiProperty({ type: CMSThematiqueAPI })

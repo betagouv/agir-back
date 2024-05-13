@@ -259,6 +259,9 @@ export class CMSUsecase {
       cmsWebhookAPI.entry.code,
       cmsWebhookAPI.entry.label,
       this.getImageUrl(cmsWebhookAPI),
+      cmsWebhookAPI.entry.univers_parent
+        ? Univers[cmsWebhookAPI.entry.univers_parent.code]
+        : undefined,
     );
   }
 

@@ -1,4 +1,5 @@
 import { ThematiqueUnivers } from './thematiqueUnivers';
+import { Univers } from './univers';
 
 export class TuileThematique {
   titre: string;
@@ -10,6 +11,8 @@ export class TuileThematique {
   is_new: boolean;
   niveau: number;
   image_url: string;
+  univers_parent: Univers;
+  univers_parent_label: string;
 
   constructor(data: TuileThematique) {
     Object.assign(this, data);

@@ -54,6 +54,7 @@ describe('Univers (API test)', () => {
   it(`GET /utilisateurs/id/univers/id/thematiques - liste les thematiques d'un univers`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.univers);
     await TestUtil.create(DB.thematiqueUnivers, {
       id_cms: 1,
       code: ThematiqueUnivers.mobilite_quotidien,
@@ -66,11 +67,11 @@ describe('Univers (API test)', () => {
       label: 'Partir en vacances',
       image_url: 'bbbb',
     });
-    await thematiqueRepository.loadThematiqueUnivers();
+    await thematiqueRepository.onApplicationBootstrap();
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/univers/transport/thematiques',
+      '/utilisateurs/utilisateur-id/univers/climat/thematiques',
     );
 
     // THEN
@@ -86,17 +87,21 @@ describe('Univers (API test)', () => {
       is_new: true,
       niveau: 1,
       image_url: 'aaaa',
+      univers_parent: 'climat',
+      univers_parent_label: 'Le Climat !',
     });
     expect(response.body[1]).toEqual({
       titre: 'Partir en vacances',
       type: ThematiqueUnivers.partir_vacances,
-      progression: 2,
+      progression: 0,
       cible_progression: 5,
       is_locked: false,
       reason_locked: null,
-      is_new: false,
-      niveau: 2,
+      is_new: true,
+      niveau: 1,
       image_url: 'bbbb',
+      univers_parent: 'climat',
+      univers_parent_label: 'Le Climat !',
     });
   });
 });

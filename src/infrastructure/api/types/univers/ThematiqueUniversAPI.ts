@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { TuileThematique } from '../../../../domain/univers/tuileThematique';
 import { ThematiqueUnivers } from '../../../../domain/univers/thematiqueUnivers';
+import { Univers } from '../../../../../src/domain/univers/univers';
 
 export class ThematiqueUniversAPI {
   @ApiProperty() titre: string;
@@ -12,6 +13,8 @@ export class ThematiqueUniversAPI {
   @ApiProperty() is_new: boolean;
   @ApiProperty() niveau: number;
   @ApiProperty() image_url: string;
+  @ApiProperty({ enum: Univers }) univers_parent: Univers;
+  @ApiProperty() univers_parent_label: string;
 
   public static mapToAPI(thematique: TuileThematique): ThematiqueUniversAPI {
     return {
@@ -24,6 +27,8 @@ export class ThematiqueUniversAPI {
       is_new: thematique.is_new,
       niveau: thematique.niveau,
       image_url: thematique.image_url,
+      univers_parent: thematique.univers_parent,
+      univers_parent_label: thematique.univers_parent_label,
     };
   }
 }
