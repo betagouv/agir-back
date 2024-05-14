@@ -36,6 +36,7 @@ const DEFI_1: Defi_v0 = {
   status: DefiStatus.en_cours,
   universes: [Univers.climat],
   accessible: true,
+  motif: 'truc',
 };
 const DEFI_1_DEF: Defi = {
   content_id: '1',

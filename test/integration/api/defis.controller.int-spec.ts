@@ -48,6 +48,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     status: DefiStatus.todo,
     universes: [Univers.climat],
     accessible: true,
+    motif: 'truc',
   };
 
   beforeAll(async () => {
@@ -125,6 +126,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi.pourquoi).toBe('pourquoi');
     expect(defi.jours_restants).toBe(4);
     expect(defi.titre).toBe('titre');
+    expect(defi.motif).toBe('truc');
     expect(defi.sous_titre).toBe('sous_titre');
     expect(defi.status).toBe(DefiStatus.en_cours);
     expect(defi.universes[0]).toBe(Univers.climat);
@@ -428,6 +430,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           status: DefiStatus.en_cours,
           universes: [],
           accessible: true,
+          motif: null,
         },
       ],
     };
@@ -479,6 +482,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           status: DefiStatus.en_cours,
           universes: [],
           accessible: true,
+          motif: null,
         },
       ],
     };
@@ -489,6 +493,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       '/utilisateurs/utilisateur-id/defis/001',
     ).send({
       status: DefiStatus.fait,
+      motif: 'null ce défi',
     });
 
     // THEN
@@ -496,9 +501,9 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
 
-    expect(userDB.defi_history.getDefiOrException('001').getStatus()).toBe(
-      DefiStatus.fait,
-    );
+    const defi_user = userDB.defi_history.getDefiOrException('001');
+    expect(defi_user.getStatus()).toBe(DefiStatus.fait);
+    expect(defi_user.motif).toBe('null ce défi');
   });
   it('PATCH /utilisateurs/id/defis/id - patch le status d un defi du catalogue', async () => {
     // GIVEN

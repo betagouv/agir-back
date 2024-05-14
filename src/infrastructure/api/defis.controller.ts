@@ -71,7 +71,12 @@ export class DefisController extends GenericControler {
     @Body() body: PatchDefiStatusAPI,
   ): Promise<void> {
     this.checkCallerId(req, utilisateurId);
-    await this.defisUsecase.updateStatus(utilisateurId, defiId, body.status);
+    await this.defisUsecase.updateStatus(
+      utilisateurId,
+      defiId,
+      body.status,
+      body.motif,
+    );
   }
 
   @Get('defis')

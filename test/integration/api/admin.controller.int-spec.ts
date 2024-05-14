@@ -1193,6 +1193,7 @@ describe('Admin (API test)', () => {
       status: DefiStatus.todo,
       universes: [Univers.climat],
       accessible: true,
+      motif: 'truc',
     };
     const defis_1: DefiHistory_v0 = {
       version: 0,

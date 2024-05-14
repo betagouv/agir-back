@@ -18,6 +18,7 @@ export class Defi_v0 {
   date_acceptation: Date;
   universes: Univers[];
   accessible: boolean;
+  motif: string;
 
   static map(elem: Defi): Defi_v0 {
     return {
@@ -33,6 +34,7 @@ export class Defi_v0 {
       date_acceptation: elem.date_acceptation,
       universes: elem.universes,
       accessible: elem.accessible,
+      motif: elem.motif,
     };
   }
 }

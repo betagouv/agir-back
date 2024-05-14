@@ -6,12 +6,14 @@ import { ThematiqueRepository } from '../../../../../src/infrastructure/reposito
 
 export class PatchDefiStatusAPI {
   @ApiProperty({ enum: DefiStatus }) status: DefiStatus;
+  @ApiProperty() motif: string;
 }
 
 export class DefiAPI {
   @ApiProperty() id: string;
   @ApiProperty() points: number;
   @ApiProperty() titre: string;
+  @ApiProperty() motif: string;
   @ApiProperty() sous_titre: string;
   @ApiProperty() pourquoi: string;
   @ApiProperty() astuces: string;
@@ -37,6 +39,7 @@ export class DefiAPI {
       ),
       titre: defi.titre,
       universes: defi.universes,
+      motif: defi.motif,
     };
   }
 }

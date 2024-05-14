@@ -22,6 +22,7 @@ export class DefisUsecase {
           date_acceptation: undefined,
           id: e.content_id,
           accessible: undefined,
+          motif: undefined,
         }),
     );
   }
@@ -75,6 +76,7 @@ export class DefisUsecase {
     utilisateurId: string,
     defiId: string,
     status: DefiStatus,
+    motif: string,
   ): Promise<void> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
@@ -82,7 +84,7 @@ export class DefisUsecase {
     const catalogue = await this.defiRepository.list();
     utilisateur.defi_history.setCatalogue(catalogue);
 
-    utilisateur.defi_history.updateStatus(defiId, status, utilisateur);
+    utilisateur.defi_history.updateStatus(defiId, status, utilisateur, motif);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }

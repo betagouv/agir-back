@@ -41,6 +41,7 @@ describe('DefiHistory vN ', () => {
         status: DefiStatus.todo,
         universes: [Univers.climat],
         accessible: true,
+        motif: 'truc',
       }),
     );
 
@@ -68,6 +69,7 @@ describe('DefiHistory vN ', () => {
         status: DefiStatus.todo,
         universes: [Univers.climat],
         accessible: true,
+        motif: 'truc',
       }),
     );
 
@@ -94,6 +96,7 @@ describe('DefiHistory vN ', () => {
       status: DefiStatus.todo,
       universes: [Univers.climat],
       accessible: true,
+      motif: 'truc',
     };
 
     delete defi_sans_accessibilite.accessible;

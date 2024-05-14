@@ -30,6 +30,7 @@ export class Defi implements TaggedContent {
   score: number;
   universes: Univers[];
   accessible: boolean;
+  motif: string;
 
   constructor(data: Defi_v0) {
     this.id = data.id;
@@ -45,6 +46,7 @@ export class Defi implements TaggedContent {
     this.score = 0;
     this.universes = data.universes;
     this.accessible = !!data.accessible;
+    this.motif = data.motif;
   }
 
   public getStatus(): DefiStatus {

@@ -74,13 +74,20 @@ export class DefiHistory {
     return this.getFromCatalogueOrException(id);
   }
 
-  public updateStatus(defiId: string, status: DefiStatus, user: Utilisateur) {
+  public updateStatus(
+    defiId: string,
+    status: DefiStatus,
+    user: Utilisateur,
+    motif: string,
+  ) {
     let defi = this.getDefiUtilisateur(defiId);
     if (defi) {
       defi.setStatus(status, user);
+      defi.motif = motif;
     } else {
       let defi_catalogue = this.getFromCatalogueOrException(defiId);
       defi_catalogue.setStatus(status, user);
+      defi_catalogue.motif = motif;
       this.defis.push(defi_catalogue);
     }
   }
@@ -131,6 +138,7 @@ export class DefiHistory {
       status: DefiStatus.todo,
       date_acceptation: null,
       accessible: false,
+      motif: null,
     });
   }
 }

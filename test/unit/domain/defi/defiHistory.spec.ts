@@ -24,6 +24,7 @@ const DEFI_1: Defi_v0 = {
   status: DefiStatus.todo,
   universes: [Univers.climat],
   accessible: true,
+  motif: 'truc',
 };
 const DEFI_1_DEF: DefiDefinition = {
   content_id: '1',
@@ -122,11 +123,12 @@ describe('DefiHistory', () => {
     user.gamification = new Gamification();
 
     // WHEN
-    defiHistory.updateStatus('1', DefiStatus.fait, user);
+    defiHistory.updateStatus('1', DefiStatus.fait, user, 'toto');
 
     // THEN
     expect(defiHistory.defis).toHaveLength(1);
     expect(defiHistory.defis[0].getStatus()).toEqual(DefiStatus.fait);
+    expect(defiHistory.defis[0].motif).toEqual('toto');
     expect(user.gamification.points).toEqual(5);
   });
   it('updateStatus : maj status defi deja dans historique', () => {
@@ -140,10 +142,11 @@ describe('DefiHistory', () => {
     user.gamification = new Gamification();
 
     // WHEN
-    defiHistory.updateStatus('1', DefiStatus.fait, user);
+    defiHistory.updateStatus('1', DefiStatus.fait, user, 'toto');
 
     // THEN
     expect(defiHistory.defis[0].getStatus()).toEqual(DefiStatus.fait);
+    expect(defiHistory.defis[0].motif).toEqual('toto');
     expect(user.gamification.points).toEqual(5);
   });
   it('getDefisOfStatus : liste les défis avec status', () => {

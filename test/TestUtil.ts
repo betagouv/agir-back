@@ -391,6 +391,7 @@ export class TestUtil {
           status: DefiStatus.todo,
           universes: [Univers.climat],
           accessible: false,
+          motif: 'bidon',
         },
       ],
     };
