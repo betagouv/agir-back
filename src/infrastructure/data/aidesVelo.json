@@ -49,23 +49,27 @@
           }
         },
         {
-          "sinon": {
+          "si": "revenu fiscal de référence <= 15400 €/an",
+          "alors": {
             "variations": [
               {
                 "si": {
                   "une de ces conditions": ["vélo . cargo", "vélo . pliant"]
                 },
-                "alors": "1000€"
+                "alors": "1000"
               },
               {
                 "si": "vélo . électrique",
-                "alors": "300€"
+                "alors": "300"
               },
               {
                 "sinon": "0€"
               }
             ]
           }
+        },
+        {
+          "sinon": "0€"
         }
       ]
     },

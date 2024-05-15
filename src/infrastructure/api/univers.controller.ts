@@ -1,24 +1,11 @@
 import {
   ApiBearerAuth,
-  ApiBody,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import {
-  Controller,
-  Put,
-  Param,
-  Body,
-  UseGuards,
-  Response,
-  Request,
-  Get,
-  HttpStatus,
-  UseFilters,
-  Patch,
-} from '@nestjs/common';
+import { Controller, Param, UseGuards, Request, Get } from '@nestjs/common';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { UniversAPI } from './types/univers/UniversAPI';

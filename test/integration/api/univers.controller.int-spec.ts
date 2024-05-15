@@ -104,4 +104,30 @@ describe('Univers (API test)', () => {
       univers_parent_label: 'Le Climat !',
     });
   });
+  it(`GET /utilisateurs/id/univers/id/thematiques/climat/mission - renvoie la mission de la thématique en argument`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.univers);
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.mobilite_quotidien,
+      label: 'Bouger au quotidien',
+      image_url: 'aaaa',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 2,
+      code: ThematiqueUnivers.partir_vacances,
+      label: 'Partir en vacances',
+      image_url: 'bbbb',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/climat/mission',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+  });
 });
