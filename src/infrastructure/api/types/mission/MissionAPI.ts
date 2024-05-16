@@ -40,7 +40,7 @@ export class MissionAPI {
   @ApiProperty() thematique_univers_label: string;
   @ApiProperty() univers: Univers;
   @ApiProperty() univers_label: string;
-  @ApiProperty() objectifs: ObjectifAPI[];
+  @ApiProperty({ type: [ObjectifAPI] }) objectifs: ObjectifAPI[];
 
   public static mapToAPI(mission: any): MissionAPI {
     return {
