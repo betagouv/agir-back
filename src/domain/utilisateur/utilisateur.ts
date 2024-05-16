@@ -17,6 +17,7 @@ import { Tag } from '../scoring/tag';
 import { DefiHistory } from '../defis/defiHistory';
 import { UserTagEvaluator } from '../scoring/userTagEvaluator';
 import { QuestionKYC } from '../kyc/questionQYC';
+import { MissionsUtilisateur } from '../mission/missionsUtilisateur';
 
 export class UtilisateurData {
   id: string;
@@ -44,6 +45,7 @@ export class UtilisateurData {
   prevent_sendemail_before: Date;
   parcours_todo: ParcoursTodo;
   gamification: Gamification;
+  missions: MissionsUtilisateur;
   history: History;
   equipements: Equipements;
   unlocked_features: UnlockedFeatures;
@@ -119,6 +121,7 @@ export class Utilisateur extends UtilisateurData {
       tag_ponderation_set: {},
       force_connexion: false,
       derniere_activite: new Date(),
+      missions: new MissionsUtilisateur(),
     });
   }
 

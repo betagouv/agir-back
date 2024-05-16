@@ -202,9 +202,16 @@ export class ThematiqueRepository {
     }
   }
 
-  private static getTitreUnivers(univers: Univers): string {
+  public static getTitreUnivers(univers: Univers): string {
     if (!univers) return 'Titre manquant';
-    const tuile_uni = ThematiqueRepository.getTuileUnivers(univers);
-    return tuile_uni ? tuile_uni.titre : 'Titre manquant';
+    const tuile = ThematiqueRepository.getTuileUnivers(univers);
+    return tuile ? tuile.titre : 'Titre manquant';
+  }
+  public static getTitreThematiqueUnivers(
+    thematiqueUnivers: ThematiqueUnivers,
+  ): string {
+    if (!thematiqueUnivers) return 'Titre manquant';
+    const tuile = ThematiqueRepository.getTuileThematique(thematiqueUnivers);
+    return tuile ? tuile.titre : 'Titre manquant';
   }
 }

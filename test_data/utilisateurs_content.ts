@@ -7,6 +7,66 @@ import {
 } from '../src/domain/onboarding/onboarding';
 import { v4 as uuidv4 } from 'uuid';
 import { LiveService } from '../src/domain/service/serviceDefinition';
+import { ThematiqueUnivers } from '../src/domain/univers/thematiqueUnivers';
+import { Univers } from '../src/domain/univers/univers';
+import { MissionsUtilisateur_v0 } from '../src/domain/object_store/mission/MissionsUtilisateur_v0';
+
+const missions: MissionsUtilisateur_v0 = {
+  version: 0,
+  missions: [
+    {
+      id: '1',
+      titre: 'test mission',
+      done_at: null,
+      thematique_univers: ThematiqueUnivers.cereales,
+      univers: Univers.alimentation,
+      objectifs: [
+        {
+          id: '1',
+          content_id: '13',
+          type: ContentType.article,
+          titre: 'Super article',
+          sont_points_en_poche: false,
+          progression: {
+            current: 0,
+            target: 1,
+          },
+          points: 10,
+          is_locked: false,
+          done_at: null,
+        },
+        {
+          id: '2',
+          content_id: '14',
+          type: ContentType.quizz,
+          titre: 'Super quizz',
+          sont_points_en_poche: false,
+          progression: {
+            current: 0,
+            target: 1,
+          },
+          points: 10,
+          is_locked: false,
+          done_at: null,
+        },
+        {
+          id: '3',
+          content_id: '2',
+          type: ContentType.defi,
+          titre: 'Action à faire',
+          sont_points_en_poche: false,
+          progression: {
+            current: 0,
+            target: 1,
+          },
+          points: 10,
+          is_locked: true,
+          done_at: null,
+        },
+      ],
+    },
+  ],
+};
 
 const ONBOARD_DATA_1234 = {
   transports: ['voiture', 'pied'],
@@ -135,6 +195,7 @@ const utilisateurs = {
     services: [],
     onboardingResult: ONBOARDING_RES_1234,
     onboardingData: ONBOARD_DATA_1234,
+    missions: missions,
   },
   DEV: {
     nom: 'Mr Dev',

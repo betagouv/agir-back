@@ -50,6 +50,7 @@ model Utilisateur {
   logement                 Json               @default("{}") // versioné 
   transport                Json               @default("{}") // versioné 
   defis                    Json               @default("{}") // versioné
+  missions                 Json               @default("{}") // versioné
   empreintes               Empreinte[]
   suivis                   Suivi[]
   groupes                  GroupeAbonnement[]

@@ -23,6 +23,7 @@ import { Equipements } from '../../../../src/domain/equipements/equipements';
 import { Logement } from '../../../domain/logement/logement';
 import { Transport } from '../../../domain/transport/transport';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
+import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -271,6 +272,12 @@ export class UtilisateurRepository {
       const transport = new Transport(
         Upgrader.upgradeRaw(user.transport, SerialisableDomain.Transport),
       );
+      const missions = new MissionsUtilisateur(
+        Upgrader.upgradeRaw(
+          user.missions,
+          SerialisableDomain.MissionsUtilisateur,
+        ),
+      );
 
       return new Utilisateur({
         id: user.id,
@@ -310,6 +317,7 @@ export class UtilisateurRepository {
         defi_history: defis,
         force_connexion: user.force_connexion,
         derniere_activite: user.derniere_activite,
+        missions: missions,
       });
     }
     return null;
@@ -373,6 +381,10 @@ export class UtilisateurRepository {
       kyc: Upgrader.serialiseToLastVersion(
         user.kyc_history,
         SerialisableDomain.KYCHistory,
+      ),
+      missions: Upgrader.serialiseToLastVersion(
+        user.missions,
+        SerialisableDomain.MissionsUtilisateur,
       ),
       version: user.version,
       failed_login_count: user.failed_login_count,

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ThematiqueUnivers } from '../../src/domain/univers/thematiqueUnivers';
 
 export class ApplicationError {
   @ApiProperty()
@@ -244,6 +245,14 @@ export class ApplicationError {
   }
   static throwPleaseReconnect() {
     this.throwAppError('044', `L'utilisateur est forcé à se reconnecter`, 401);
+  }
+
+  static throwMissionNotFound(them: ThematiqueUnivers) {
+    this.throwAppError(
+      '045',
+      `Mission de thematique [${them}] non trouvée`,
+      404,
+    );
   }
 
   private static throwAppError(
