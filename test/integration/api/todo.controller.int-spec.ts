@@ -982,6 +982,7 @@ describe('TODO list (API test)', () => {
             { label: 'Ce que je mange', code: Thematique.alimentation },
           ],
           tags: [],
+          universes: [],
         },
       ],
     };

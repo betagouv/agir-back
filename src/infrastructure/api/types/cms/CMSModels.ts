@@ -3,6 +3,8 @@ export enum CMSModel {
   article = 'article',
   aide = 'aide',
   thematique = 'thematique',
+  univers = 'univers',
+  'thematique-univers' = 'thematique-univers',
   defi = 'defi',
   unkown = 'unkown',
 }

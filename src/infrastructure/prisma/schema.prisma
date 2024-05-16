@@ -213,6 +213,25 @@ model Thematique {
   created_at DateTime @default(now()) @db.Timestamptz(3)
 }
 
+model Univers {
+  id_cms     Int      @unique
+  code       String
+  label      String?
+  image_url  String?
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+}
+
+model ThematiqueUnivers {
+  id_cms         Int      @unique
+  code           String
+  label          String?
+  image_url      String?
+  univers_parent String?
+  created_at     DateTime @default(now()) @db.Timestamptz(3)
+  updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+}
+
 model SituationNGC {
   id         String     @id
   situation  Json?

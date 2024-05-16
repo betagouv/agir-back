@@ -1,9 +1,5 @@
-import { UniversType } from './universType';
+import { Thematique } from '../contenu/thematique';
+import { ExtraUnivers } from './extraUnivers';
 
-export class Univers {
-  titre: string;
-  type: UniversType;
-  etoiles: number;
-  is_locked: boolean;
-  reason_locked: string;
-}
+export const Univers = { ...ExtraUnivers, ...Thematique };
+export type Univers = ExtraUnivers | Thematique;

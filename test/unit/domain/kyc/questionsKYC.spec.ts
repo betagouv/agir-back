@@ -6,6 +6,7 @@ import {
 } from '../../../../src/domain/kyc/questionQYC';
 import { CatalogueQuestionsKYC } from '../../../../src/domain/kyc/catalogueQuestionsKYC';
 import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
+import { Univers } from '../../../../src/domain/univers/univers';
 
 describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('constructeur OK', () => {
@@ -51,6 +52,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
             { label: 'Comment je bouge', code: Thematique.transport },
           ],
           tags: [],
+          universes: [],
         },
       ],
     });
@@ -80,6 +82,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
             { label: 'Comment je bouge', code: Thematique.transport },
           ],
           tags: [],
+          universes: [],
         },
       ],
     });
@@ -109,6 +112,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
             { label: 'Comment je bouge', code: Thematique.transport },
           ],
           tags: [],
+          universes: [],
         },
       ],
     });
@@ -151,6 +155,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
             { label: 'Comment je bouge', code: Thematique.transport },
           ],
           tags: [],
+          universes: [],
         },
       ],
     });
@@ -170,6 +175,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'DDD', code: Thematique.transport },
         ],
         tags: [],
+        universes: [],
       },
     ]);
 
@@ -207,6 +213,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
             { label: 'Mon logement', code: Thematique.logement },
           ],
           tags: [],
+          universes: [],
         },
       ],
     });
@@ -224,6 +231,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'CCC', code: Thematique.alimentation },
         ],
         tags: [],
+        universes: [],
       },
     ]);
 
@@ -270,6 +278,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
             { label: 'Mon logement', code: Thematique.logement },
           ],
           tags: [],
+          universes: [],
         },
       ],
     });
@@ -287,6 +296,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'CCC', code: Thematique.alimentation },
         ],
         tags: [],
+        universes: [],
       },
     ]);
 
@@ -327,6 +337,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           reponses: [{ label: '123', code: null }],
           reponses_possibles: [],
           tags: [],
+          universes: [],
         },
       ],
     });
@@ -341,6 +352,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         reponses: undefined,
         reponses_possibles: [],
         tags: [],
+        universes: [],
       },
     ]);
 
@@ -371,6 +383,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
             { label: 'Comment je bouge', code: Thematique.transport },
           ],
           tags: [],
+          universes: [],
         },
       ],
     });
@@ -390,6 +403,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'DDD', code: Thematique.transport },
         ],
         tags: [],
+        universes: [],
       },
       {
         id: KYCID.KYC002,
@@ -401,14 +415,82 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         reponses: undefined,
         reponses_possibles: undefined,
         tags: [],
+        universes: [],
       },
     ]);
 
     // WHEN
-    const questions = questionsKYC.getKYCRestantes();
+    const questions = questionsKYC.getKYCRestantes(
+      CategorieQuestionKYC.default,
+    );
 
     // THEN
     expect(questions).toHaveLength(1);
     expect(questions[0].id).toEqual(KYCID.KYC002);
+  });
+  it('getKYCRestantes : filtrage univers', () => {
+    // GIVEN
+    const questionsKYC = new KYCHistory({
+      version: 0,
+      answered_questions: [
+        {
+          id: KYCID.KYC001,
+          question: `Quel est votre sujet principal d'intéret ?`,
+          type: TypeReponseQuestionKYC.choix_multiple,
+          is_NGC: false,
+          categorie: CategorieQuestionKYC.default,
+          points: 10,
+          reponses: [{ label: 'Le climat', code: Thematique.climat }],
+          reponses_possibles: [
+            { label: 'Le climat', code: Thematique.climat },
+            { label: 'Mon logement', code: Thematique.logement },
+            { label: 'Ce que je mange', code: Thematique.alimentation },
+            { label: 'Comment je bouge', code: Thematique.transport },
+          ],
+          tags: [],
+          universes: [],
+        },
+      ],
+    });
+    CatalogueQuestionsKYC.setCatalogue([
+      {
+        id: KYCID.KYC001,
+        question: `Quel est votre sujet principal d'intéret ?`,
+        type: TypeReponseQuestionKYC.choix_multiple,
+        is_NGC: false,
+        categorie: CategorieQuestionKYC.default,
+        points: 10,
+        reponses: undefined,
+        reponses_possibles: [
+          { label: 'AAA', code: Thematique.climat },
+          { label: 'BBB', code: Thematique.logement },
+          { label: 'CCC', code: Thematique.alimentation },
+          { label: 'DDD', code: Thematique.transport },
+        ],
+        tags: [],
+        universes: [],
+      },
+      {
+        id: KYCID.KYC002,
+        question: `Quel est votre sujet principal d'intéret ?`,
+        type: TypeReponseQuestionKYC.libre,
+        is_NGC: false,
+        categorie: CategorieQuestionKYC.default,
+        points: 10,
+        reponses: undefined,
+        reponses_possibles: undefined,
+        tags: [],
+        universes: [Univers.climat],
+      },
+    ]);
+
+    // WHEN
+    const questions = questionsKYC.getKYCRestantes(
+      CategorieQuestionKYC.default,
+      Univers.consommation,
+    );
+
+    // THEN
+    expect(questions).toHaveLength(0);
   });
 });

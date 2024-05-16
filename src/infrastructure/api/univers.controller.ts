@@ -1,28 +1,16 @@
 import {
   ApiBearerAuth,
-  ApiBody,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import {
-  Controller,
-  Put,
-  Param,
-  Body,
-  UseGuards,
-  Response,
-  Request,
-  Get,
-  HttpStatus,
-  UseFilters,
-  Patch,
-} from '@nestjs/common';
+import { Controller, Param, UseGuards, Request, Get } from '@nestjs/common';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { UniversAPI } from './types/univers/UniversAPI';
 import { UniversUsecase } from '../../../src/usecase/univers.usecase';
-import { UniversType } from '../../../src/domain/univers/universType';
+import { Univers } from '../../domain/univers/univers';
 import { ThematiqueUniversAPI } from './types/univers/ThematiqueUniversAPI';
 
 @Controller()
@@ -50,10 +38,17 @@ export class UniversController extends GenericControler {
     return result.map((e) => UniversAPI.mapToAPI(e));
   }
 
-  @Get('utilisateurs/:utilisateurId/univers/:universType/thematiques')
+  @Get('utilisateurs/:utilisateurId/univers/:univers/thematiques')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: [ThematiqueUniversAPI],
+  })
+  @ApiParam({
+    name: 'univers',
+    enum: Univers,
+    enumName: 'univers',
+    required: true,
+    description: `l'univers demandé`,
   })
   @ApiOperation({
     summary: `Retourne les thematiques de d'un univers particulier d'un utilisateur donné`,
@@ -61,12 +56,12 @@ export class UniversController extends GenericControler {
   async getUniversThematiques(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-    @Param('universType') universType: UniversType,
+    @Param('univers') univers: Univers,
   ): Promise<ThematiqueUniversAPI[]> {
     this.checkCallerId(req, utilisateurId);
     const result = await this.universUsecase.getThematiquesOfUnivers(
       utilisateurId,
-      universType,
+      univers,
     );
     return result.map((e) => ThematiqueUniversAPI.mapToAPI(e));
   }

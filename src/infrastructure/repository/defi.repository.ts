@@ -4,8 +4,8 @@ import { Defi, Defi as DefiDB } from '@prisma/client';
 import { Thematique } from '../../domain/contenu/thematique';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { DefiDefinition } from '../../../src/domain/defis/defiDefinition';
+import { TuileThematique } from '../../domain/univers/tuileThematique';
 import { Univers } from '../../../src/domain/univers/univers';
-import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
 
 @Injectable()
 export class DefiRepository {
@@ -67,7 +67,7 @@ export class DefiRepository {
       pourquoi: defiDB.pourquoi,
       universes: defiDB.universes.map((u) => Univers[u]),
       thematiques_univers: defiDB.thematiquesUnivers.map(
-        (t) => ThematiqueUnivers[t],
+        (t) => TuileThematique[t],
       ),
     });
   }

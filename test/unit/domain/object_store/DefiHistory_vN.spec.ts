@@ -1,7 +1,11 @@
+import { Univers } from '../../../../src/domain/univers/univers';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { Defi, DefiStatus } from '../../../../src/domain/defis/defi';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
-import { DefiHistory_v0 } from '../../../../src/domain/object_store/defi/defiHistory_v0';
+import {
+  DefiHistory_v0,
+  Defi_v0,
+} from '../../../../src/domain/object_store/defi/defiHistory_v0';
 import {
   SerialisableDomain,
   Upgrader,
@@ -35,6 +39,9 @@ describe('DefiHistory vN ', () => {
         pourquoi: 'p',
         sous_titre: 'st',
         status: DefiStatus.todo,
+        universes: [Univers.climat],
+        accessible: true,
+        motif: 'truc',
       }),
     );
 
@@ -60,6 +67,9 @@ describe('DefiHistory vN ', () => {
         pourquoi: 'p',
         sous_titre: 'st',
         status: DefiStatus.todo,
+        universes: [Univers.climat],
+        accessible: true,
+        motif: 'truc',
       }),
     );
 
@@ -70,5 +80,40 @@ describe('DefiHistory vN ', () => {
 
     // THEN
     expect(domain_end).toStrictEqual(domain_start);
+  });
+  it('sdesrialise ok missin accessibilite boolean', () => {
+    // GIVEN
+    const defi_sans_accessibilite: Defi_v0 = {
+      id: '1',
+      thematique: Thematique.transport,
+      titre: 'yo',
+      tags: [Tag.transport],
+      points: 5,
+      astuces: 'a',
+      date_acceptation: null,
+      pourquoi: 'p',
+      sous_titre: 'st',
+      status: DefiStatus.todo,
+      universes: [Univers.climat],
+      accessible: true,
+      motif: 'truc',
+    };
+
+    delete defi_sans_accessibilite.accessible;
+
+    const history: DefiHistory_v0 = {
+      version: 0,
+      defis: [defi_sans_accessibilite],
+    };
+
+    // WHEN
+    const upgrade = Upgrader.upgradeRaw(
+      history,
+      SerialisableDomain.DefiHistory,
+    );
+    const domain_end = new DefiHistory(upgrade);
+
+    // THEN
+    expect(domain_end.defis[0].accessible).toStrictEqual(false);
   });
 });

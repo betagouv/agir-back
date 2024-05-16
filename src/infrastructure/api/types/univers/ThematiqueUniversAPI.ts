@@ -1,18 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ThematiqueUnivers } from '../../../../../src/domain/univers/thematiqueUnivers';
-import { ThematiqueUniversType } from '../../../../../src/domain/univers/thematiqueUniversType';
+import { TuileThematique } from '../../../../domain/univers/tuileThematique';
+import { ThematiqueUnivers } from '../../../../domain/univers/thematiqueUnivers';
+import { Univers } from '../../../../../src/domain/univers/univers';
 
 export class ThematiqueUniversAPI {
   @ApiProperty() titre: string;
-  @ApiProperty({ enum: ThematiqueUniversType }) type: ThematiqueUniversType;
+  @ApiProperty({ enum: ThematiqueUnivers }) type: ThematiqueUnivers;
   @ApiProperty() progression: number;
   @ApiProperty() cible_progression: number;
   @ApiProperty() is_locked: boolean;
   @ApiProperty() reason_locked: string;
   @ApiProperty() is_new: boolean;
   @ApiProperty() niveau: number;
+  @ApiProperty() image_url: string;
+  @ApiProperty({ enum: Univers }) univers_parent: Univers;
+  @ApiProperty() univers_parent_label: string;
 
-  public static mapToAPI(thematique: ThematiqueUnivers): ThematiqueUniversAPI {
+  public static mapToAPI(thematique: TuileThematique): ThematiqueUniversAPI {
     return {
       titre: thematique.titre,
       progression: thematique.progression,
@@ -22,6 +26,9 @@ export class ThematiqueUniversAPI {
       reason_locked: thematique.reason_locked,
       is_new: thematique.is_new,
       niveau: thematique.niveau,
+      image_url: thematique.image_url,
+      univers_parent: thematique.univers_parent,
+      univers_parent_label: thematique.univers_parent_label,
     };
   }
 }

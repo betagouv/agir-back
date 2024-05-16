@@ -44,7 +44,13 @@ import {
   Superficie,
   TypeLogement,
 } from '../src/domain/logement/logement';
-import { Empreinte, SituationNGC, Suivi } from '.prisma/client';
+import {
+  Empreinte,
+  SituationNGC,
+  Suivi,
+  Univers as UniversDB,
+  ThematiqueUnivers as ThematiqueUniversDB,
+} from '.prisma/client';
 import {
   Aide,
   Article,
@@ -64,8 +70,8 @@ import { DefiHistory_v0 } from '../src/domain/object_store/defi/defiHistory_v0';
 import { DefiStatus } from '../src/domain/defis/defi';
 import { TagUtilisateur } from '../src/domain/scoring/tagUtilisateur';
 import { Besoin } from '../src/domain/aides/besoin';
-import { UniversType } from '../src/domain/univers/universType';
-import { ThematiqueUniversType } from '../src/domain/univers/thematiqueUniversType';
+import { Univers } from '../src/domain/univers/univers';
+import { ThematiqueUnivers } from '../src/domain/univers/thematiqueUnivers';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -80,6 +86,8 @@ export enum DB {
   groupe = 'groupe',
   serviceDefinition = 'serviceDefinition',
   thematique = 'thematique',
+  univers = 'univers',
+  thematiqueUnivers = 'thematiqueUnivers',
   linky = 'linky',
   article = 'article',
   quizz = 'quizz',
@@ -101,6 +109,8 @@ export class TestUtil {
     linky: TestUtil.linkyData,
     article: TestUtil.articleData,
     quizz: TestUtil.quizzData,
+    univers: TestUtil.universData,
+    thematiqueUnivers: TestUtil.thematiqueUniversData,
   };
 
   constructor() {}
@@ -183,7 +193,9 @@ export class TestUtil {
     await this.prisma.statistique.deleteMany();
     await this.prisma.articleStatistique.deleteMany();
     await this.prisma.defiStatistique.deleteMany();
-    ThematiqueRepository.resetThematiques();
+    await this.prisma.univers.deleteMany();
+    await this.prisma.thematiqueUnivers.deleteMany();
+    ThematiqueRepository.resetAllRefs();
   }
 
   static getDate(date: string) {
@@ -331,8 +343,8 @@ export class TestUtil {
       sous_titre: 'ssss',
       tags: [TagUtilisateur.appetence_cafe],
       thematique: Thematique.consommation,
-      universes: [UniversType.cuisine],
-      thematiquesUnivers: [ThematiqueUniversType.manger_local],
+      universes: [Univers.alimentation],
+      thematiquesUnivers: [ThematiqueUnivers.manger_local],
       created_at: undefined,
       updated_at: undefined,
       ...override,
@@ -377,6 +389,9 @@ export class TestUtil {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.todo,
+          universes: [Univers.climat],
+          accessible: false,
+          motif: 'bidon',
         },
       ],
     };
@@ -401,6 +416,7 @@ export class TestUtil {
             { label: 'Ce que je mange', code: Thematique.alimentation },
           ],
           tags: [],
+          universes: [Univers.climat],
         },
       ],
     };
@@ -547,6 +563,31 @@ export class TestUtil {
       id: 'thematique-id',
       id_cms: 1,
       titre: 'titre',
+      ...override,
+    };
+  }
+  static universData(override?: Partial<UniversDB>): UniversDB {
+    return {
+      id_cms: 1,
+      label: 'Le Climat !',
+      code: Univers.climat,
+      image_url: 'https://',
+      created_at: undefined,
+      updated_at: undefined,
+      ...override,
+    };
+  }
+  static thematiqueUniversData(
+    override?: Partial<ThematiqueUniversDB>,
+  ): ThematiqueUniversDB {
+    return {
+      id_cms: 1,
+      label: `C'est bon les céréales`,
+      code: ThematiqueUnivers.cereales,
+      image_url: 'https://',
+      univers_parent: Univers.climat,
+      created_at: undefined,
+      updated_at: undefined,
       ...override,
     };
   }

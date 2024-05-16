@@ -19,20 +19,73 @@ describe('Aide (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('POST /utilisateurs/:utilisateurId/simulerAideVelo ok', async () => {
+  it('POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sous plafond OK, tranche 1', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.utilisateur, { revenu_fiscal: 5000, parts: 1 });
 
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/simulerAideVelo',
     ).send({
-      prix_du_velo: 1000,
+      prix_du_velo: 100,
     });
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.cargo[0].libelle).toEqual('Bonus vélo');
+    expect(response.body['électrique'][0].libelle).toEqual('Bonus vélo');
+    expect(response.body['électrique'][0].description).toEqual(
+      'Nouveau bonus vélo électrique applicable à partir du 14 février 2024.\n',
+    );
+    expect(response.body['électrique'][0].montant).toEqual(40);
+  });
+  it('POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sur plafond OK, tranche 1', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { revenu_fiscal: 5000, parts: 1 });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/simulerAideVelo',
+    ).send({
+      prix_du_velo: 100000,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body['électrique'][0].libelle).toEqual('Bonus vélo');
+    expect(response.body['électrique'][0].montant).toEqual(400);
+  });
+  it('POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sur plafond OK, tranche 2', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { revenu_fiscal: 10000, parts: 1 });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/simulerAideVelo',
+    ).send({
+      prix_du_velo: 100000,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body['électrique'][0].libelle).toEqual('Bonus vélo');
+    expect(response.body['électrique'][0].montant).toEqual(300);
+  });
+  it(`POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sur plafond OK, au dela tranche 2, pas d'aide`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { revenu_fiscal: 20000, parts: 1 });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/simulerAideVelo',
+    ).send({
+      prix_du_velo: 100000,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body['électrique'][0].libelle).toEqual(
+      'Île-de-France Mobilités',
+    );
   });
   it('GET /utilisateurs/:utilisateurId/aides', async () => {
     // GIVEN

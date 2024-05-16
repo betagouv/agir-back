@@ -1,5 +1,6 @@
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { DefiHistory_v0 } from '../object_store/defi/defiHistory_v0';
+import { Univers } from '../univers/univers';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { Defi, DefiStatus } from './defi';
 import { DefiDefinition } from './defiDefinition';
@@ -26,23 +27,40 @@ export class DefiHistory {
     this.catalogue = cat;
   }
 
-  public getDefisRestants(): Defi[] {
-    const defis_restants = [].concat(this.catalogue);
+  public getDefisRestants(univers?: Univers): Defi[] {
+    let defis_def_restants: DefiDefinition[] = [].concat(this.catalogue);
     this.defis.forEach((defi_courant) => {
-      const index = defis_restants.findIndex(
+      const index = defis_def_restants.findIndex(
         (d) => d.content_id === defi_courant.id,
       );
       if (index !== -1) {
-        defis_restants.splice(index, 1);
+        defis_def_restants.splice(index, 1);
       }
     });
-    return defis_restants.map((d) => this.buildDefiFromDefinition(d));
+
+    if (univers) {
+      defis_def_restants = defis_def_restants.filter(
+        (defi) =>
+          defi.universes.includes(univers) || defi.universes.length === 0,
+      );
+    }
+
+    return defis_def_restants.map((d) => this.buildDefiFromDefinition(d));
   }
 
-  public getDefisEnCours(): Defi[] {
+  public getDefisOfStatus(status_list: DefiStatus[]): Defi[] {
+    if (status_list.length === 0) {
+      return this.defis.filter(
+        (e) => e.accessible || e.getStatus() !== DefiStatus.todo,
+      );
+    }
     const result = [];
     this.defis.forEach((defi_courant) => {
-      if (defi_courant.getStatus() === DefiStatus.en_cours) {
+      if (
+        status_list.includes(defi_courant.getStatus()) &&
+        (defi_courant.accessible ||
+          defi_courant.getStatus() !== DefiStatus.todo)
+      ) {
         result.push(defi_courant);
       }
     });
@@ -56,13 +74,20 @@ export class DefiHistory {
     return this.getFromCatalogueOrException(id);
   }
 
-  public updateStatus(defiId: string, status: DefiStatus, user: Utilisateur) {
+  public updateStatus(
+    defiId: string,
+    status: DefiStatus,
+    user: Utilisateur,
+    motif: string,
+  ) {
     let defi = this.getDefiUtilisateur(defiId);
     if (defi) {
       defi.setStatus(status, user);
+      defi.motif = motif;
     } else {
       let defi_catalogue = this.getFromCatalogueOrException(defiId);
       defi_catalogue.setStatus(status, user);
+      defi_catalogue.motif = motif;
       this.defis.push(defi_catalogue);
     }
   }
@@ -112,6 +137,8 @@ export class DefiHistory {
       id: def.content_id,
       status: DefiStatus.todo,
       date_acceptation: null,
+      accessible: false,
+      motif: null,
     });
   }
 }

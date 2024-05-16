@@ -3,6 +3,7 @@ import {
   ApiBody,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import {
@@ -17,11 +18,14 @@ import {
   HttpStatus,
   UseFilters,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { DefisUsecase } from '../../../src/usecase/defis.usecase';
 import { DefiAPI, PatchDefiStatusAPI } from './types/defis/DefiAPI';
+import { Univers } from '../../../src/domain/univers/univers';
+import { DefiStatus } from '../../../src/domain/defis/defi';
 
 @Controller()
 @ApiBearerAuth()
@@ -67,7 +71,12 @@ export class DefisController extends GenericControler {
     @Body() body: PatchDefiStatusAPI,
   ): Promise<void> {
     this.checkCallerId(req, utilisateurId);
-    await this.defisUsecase.updateStatus(utilisateurId, defiId, body.status);
+    await this.defisUsecase.updateStatus(
+      utilisateurId,
+      defiId,
+      body.status,
+      body.motif,
+    );
   }
 
   @Get('defis')
@@ -84,6 +93,26 @@ export class DefisController extends GenericControler {
   }
 
   @Get('utilisateurs/:utilisateurId/defis')
+  @ApiQuery({
+    name: 'univers',
+    enum: Univers,
+    required: false,
+    description: `filtrage par univers, un id d'univers, eg : 'climat'`,
+  })
+  @ApiQuery({
+    name: 'accessible',
+    type: Boolean,
+    required: false,
+    description: `'true' indique que l'on ne souhaite que les défis dis "accessibles", c'est a dire débloqués`,
+  })
+  @ApiQuery({
+    name: 'status',
+    enum: DefiStatus,
+    enumName: 'status',
+    isArray: true,
+    required: false,
+    description: `filtrage par status, plusieur status possible avec la notation ?status=XXX&status=YYY`,
+  })
   @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: [DefiAPI],
@@ -95,9 +124,17 @@ export class DefisController extends GenericControler {
   async getAllUserDefi(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
+    @Query('status') status,
+    @Query('univers') univers: Univers,
+    @Query('accessible') accessible: string,
   ): Promise<DefiAPI[]> {
     this.checkCallerId(req, utilisateurId);
-    const result = await this.defisUsecase.getALLUserDefi(utilisateurId);
+    const result = await this.defisUsecase.getALLUserDefi(
+      utilisateurId,
+      status ? status : [],
+      univers ? Univers[univers] : undefined,
+      accessible === 'true',
+    );
     return result.map((element) => DefiAPI.mapToAPI(element));
   }
 }

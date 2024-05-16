@@ -9,9 +9,11 @@ import {
   DefiHistory_v0,
   Defi_v0,
 } from '../../../src/domain/object_store/defi/defiHistory_v0';
-import { ThematiqueUniversType } from '../../../src/domain/univers/thematiqueUniversType';
-import { UniversType } from '../../../src/domain/univers/universType';
+import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
+import { Univers } from '../../../src/domain/univers/univers';
 import { Defi } from '.prisma/client';
+import { PonderationApplicativeManager } from '../../../src/domain/scoring/ponderationApplicative';
+import { TagRubrique } from '../../../src/domain/scoring/tagRubrique';
 
 const DEFI_1_DEF: Defi = {
   content_id: '1',
@@ -22,8 +24,8 @@ const DEFI_1_DEF: Defi = {
   astuces: 'astuce',
   pourquoi: 'pourquoi',
   sous_titre: 'sous_titre',
-  universes: [UniversType.climat],
-  thematiquesUnivers: [ThematiqueUniversType.dechets_compost],
+  universes: [Univers.climat],
+  thematiquesUnivers: [ThematiqueUnivers.dechets_compost],
   created_at: undefined,
   updated_at: undefined,
 };
@@ -44,6 +46,9 @@ describe('/utilisateurs/id/defis (API test)', () => {
     pourquoi: 'pourquoi',
     sous_titre: 'sous_titre',
     status: DefiStatus.todo,
+    universes: [Univers.climat],
+    accessible: true,
+    motif: 'truc',
   };
 
   beforeAll(async () => {
@@ -77,8 +82,9 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(response.body[0].points).toEqual(5);
     expect(response.body[0].status_defi).toBeUndefined();
     expect(response.body[0].jours_restants).toBeNull();
+    expect(response.body[0].universes).toEqual([Univers.climat]);
   });
-  it('GET /defis - liste defis de l utilisateur', async () => {
+  it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur', async () => {
     // GIVEN
     const defis: DefiHistory_v0 = {
       version: 0,
@@ -120,8 +126,256 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi.pourquoi).toBe('pourquoi');
     expect(defi.jours_restants).toBe(4);
     expect(defi.titre).toBe('titre');
+    expect(defi.motif).toBe('truc');
     expect(defi.sous_titre).toBe('sous_titre');
     expect(defi.status).toBe(DefiStatus.en_cours);
+    expect(defi.universes[0]).toBe(Univers.climat);
+  });
+  it('GET /utilisateurs/utilisateur-id/defis - filtre status encours', async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '1',
+          status: DefiStatus.en_cours,
+        },
+        {
+          ...DEFI_1,
+          id: '2',
+          status: DefiStatus.deja_fait,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis,
+    });
+
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '1' });
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '2' });
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '3' });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/defis?status=en_cours',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(1);
+
+    const defi: DefiAPI = response.body[0];
+
+    expect(defi.id).toBe('1');
+  });
+  it('GET /utilisateurs/utilisateur-id/defis - filtre status encours et deja fait', async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '1',
+          status: DefiStatus.pas_envie,
+        },
+        {
+          ...DEFI_1,
+          id: '2',
+          status: DefiStatus.deja_fait,
+        },
+        {
+          ...DEFI_1,
+          id: '3',
+          status: DefiStatus.en_cours,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis,
+    });
+
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '1' });
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '2' });
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '3' });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/defis?status=en_cours&status=deja_fait',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(2);
+
+    const defi_1: DefiAPI = response.body[0];
+    const defi_2: DefiAPI = response.body[1];
+
+    expect(defi_1.id).toBe('2');
+    expect(defi_2.id).toBe('3');
+  });
+  it('GET /utilisateurs/utilisateur-id/defis - filtre status todo', async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '1',
+          status: DefiStatus.en_cours,
+        },
+        {
+          ...DEFI_1,
+          id: '2',
+          status: DefiStatus.deja_fait,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis,
+    });
+
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '1' });
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '2' });
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '3' });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/defis?status=todo',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(1);
+
+    const defi: DefiAPI = response.body[0];
+
+    expect(defi.id).toBe('3');
+  });
+  it('GET /utilisateurs/utilisateur-id/defis - filtre accessible', async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '1',
+          status: DefiStatus.todo,
+          accessible: false,
+        },
+        {
+          ...DEFI_1,
+          id: '2',
+          status: DefiStatus.todo,
+          accessible: true,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis,
+    });
+
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '1' });
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '2' });
+    await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '3' });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/defis?status=todo&accessible=true',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(1);
+
+    const defi: DefiAPI = response.body[0];
+
+    expect(defi.id).toBe('2');
+  });
+  it('GET /utilisateurs/utilisateur-id/defis - filtre status todo et univers', async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis,
+    });
+
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '1',
+      universes: [Univers.alimentation],
+    });
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '2',
+      universes: [Univers.climat],
+    });
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '3',
+      universes: [Univers.logement],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/defis?status=todo&univers=climat',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(1);
+
+    const defi: DefiAPI = response.body[0];
+
+    expect(defi.id).toBe('2');
+  });
+
+  it('GET /utilisateurs/id/defis?status=todo - liste des défis à a faire par ordre de reco', async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis,
+    });
+    PonderationApplicativeManager.setCatalogue({
+      neutre: {
+        R1: 10,
+        R2: 20,
+        R3: 30,
+      },
+      noel: {},
+      exp: {},
+    });
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '1',
+      tags: [TagRubrique.R3],
+    });
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '2',
+      tags: [TagRubrique.R1],
+    });
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '3',
+      tags: [TagRubrique.R2],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/defis?status=todo',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(3);
+    expect(response.body[0].id).toEqual('1');
+    expect(response.body[1].id).toEqual('3');
+    expect(response.body[2].id).toEqual('2');
   });
   it('GET /utilisateurs/id/defis/id - correct data defis du catalogue', async () => {
     // GIVEN
@@ -131,28 +385,13 @@ describe('/utilisateurs/id/defis (API test)', () => {
         defis: [DEFI_1],
       },
     });
-    ThematiqueRepository.resetThematiques();
+    ThematiqueRepository.resetAllRefs();
     await TestUtil.create(DB.thematique, {
       id: '1',
       id_cms: 1,
       titre: 't1',
     });
     await thematiqueRepository.loadThematiques();
-
-    /*
-    await TestUtil.create(DB.defi, {
-      content_id: '1',
-      points: 5,
-      tags: [Tag.transport],
-      titre: 'titre',
-      thematique: Thematique.alimentation,
-      astuces: 'astuce',
-      date_acceptation: new Date(Date.now() - 3 * DAY_IN_MS),
-      pourquoi: 'pourquoi',
-      sous_titre: 'sous_titre',
-      status: DefiStatus.todo,
-    });
-    */
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/defis/1');
@@ -189,11 +428,14 @@ describe('/utilisateurs/id/defis (API test)', () => {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.en_cours,
+          universes: [],
+          accessible: true,
+          motif: null,
         },
       ],
     };
     await TestUtil.create(DB.utilisateur, { defis: defis });
-    ThematiqueRepository.resetThematiques();
+    ThematiqueRepository.resetAllRefs();
     await TestUtil.create(DB.thematique, {
       id: '1',
       id_cms: 1,
@@ -238,6 +480,9 @@ describe('/utilisateurs/id/defis (API test)', () => {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.en_cours,
+          universes: [],
+          accessible: true,
+          motif: null,
         },
       ],
     };
@@ -248,6 +493,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       '/utilisateurs/utilisateur-id/defis/001',
     ).send({
       status: DefiStatus.fait,
+      motif: 'null ce défi',
     });
 
     // THEN
@@ -255,9 +501,9 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
 
-    expect(userDB.defi_history.getDefiOrException('001').getStatus()).toBe(
-      DefiStatus.fait,
-    );
+    const defi_user = userDB.defi_history.getDefiOrException('001');
+    expect(defi_user.getStatus()).toBe(DefiStatus.fait);
+    expect(defi_user.motif).toBe('null ce défi');
   });
   it('PATCH /utilisateurs/id/defis/id - patch le status d un defi du catalogue', async () => {
     // GIVEN

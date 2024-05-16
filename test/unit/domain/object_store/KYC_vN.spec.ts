@@ -10,6 +10,8 @@ import {
   KYCID,
 } from '../../../../src/domain/kyc/questionQYC';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
+import { Univers } from '../../../../src/domain/univers/univers';
+import { Tag } from '../../../../src/domain/scoring/tag';
 
 describe('KYC vN ', () => {
   it('build OK from empty', () => {
@@ -41,7 +43,8 @@ describe('KYC vN ', () => {
             { label: 'Mon logement', code: Thematique.logement },
             { label: 'Ce que je mange', code: Thematique.alimentation },
           ],
-          tags: [],
+          tags: [Tag.consommation],
+          universes: [Univers.climat],
         },
       ],
     });
@@ -71,7 +74,8 @@ describe('KYC vN ', () => {
             { label: 'Mon logement', code: Thematique.logement },
             { label: 'Ce que je mange', code: Thematique.alimentation },
           ],
-          tags: [],
+          tags: [Tag.consommation],
+          universes: [Univers.climat],
         },
       ],
     });

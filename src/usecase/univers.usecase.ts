@@ -1,171 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { ThematiqueUnivers } from '../../src/domain/univers/thematiqueUnivers';
-import { ThematiqueUniversType } from '../../src/domain/univers/thematiqueUniversType';
-import { Univers } from '../../src/domain/univers/univers';
-import { UniversType } from '../../src/domain/univers/universType';
+import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
+import { TuileThematique } from '../domain/univers/tuileThematique';
+import { TuileUnivers } from '../domain/univers/tuileUnivers';
+import { Univers } from '../domain/univers/univers';
 
 @Injectable()
 export class UniversUsecase {
-  constructor() {}
+  constructor(private thematiqueRepository: ThematiqueRepository) {}
 
-  async getALLOfUser(utilisateurId: string): Promise<Univers[]> {
-    return [
-      {
-        etoiles: 5,
-        is_locked: false,
-        reason_locked: null,
-        titre: 'Le climat',
-        type: UniversType.climat,
-      },
-      {
-        etoiles: 0,
-        is_locked: false,
-        reason_locked: null,
-        titre: 'En cuisine',
-        type: UniversType.cuisine,
-      },
-      {
-        etoiles: 8,
-        is_locked: false,
-        reason_locked: null,
-        titre: 'Les transports',
-        type: UniversType.transports,
-      },
-      {
-        etoiles: 9,
-        is_locked: false,
-        reason_locked: null,
-        titre: 'À la maison',
-        type: UniversType.maison,
-      },
-      {
-        etoiles: 8,
-        is_locked: false,
-        reason_locked: null,
-        titre: 'Shopping',
-        type: UniversType.shopping,
-      },
-      {
-        etoiles: 12,
-        is_locked: true,
-        reason_locked: 'Pour quand tu seras fort !',
-        titre: 'Les vacances',
-        type: UniversType.vacances,
-      },
-    ];
+  async getALLOfUser(utilisateurId: string): Promise<TuileUnivers[]> {
+    return ThematiqueRepository.getAllTuileUnivers();
   }
 
   async getThematiquesOfUnivers(
     utilisateurId: string,
-    universType: UniversType,
-  ): Promise<ThematiqueUnivers[]> {
-    if (universType === UniversType.cuisine)
-      return [
-        {
-          titre: 'Manger de saison',
-          type: ThematiqueUniversType.manger_saison,
-          progression: 0,
-          cible_progression: 5,
-          is_locked: false,
-          reason_locked: null,
-          is_new: true,
-          niveau: 1,
-        },
-        {
-          titre: 'Manger local',
-          type: ThematiqueUniversType.manger_local,
-          progression: 0,
-          cible_progression: 5,
-          is_locked: false,
-          reason_locked: null,
-          is_new: true,
-          niveau: 2,
-        },
-        {
-          titre: 'Le gaspillage alimentaire',
-          type: ThematiqueUniversType.gaspillage_alimentaire,
-          progression: 2,
-          cible_progression: 7,
-          is_locked: false,
-          reason_locked: null,
-          is_new: false,
-          niveau: 1,
-        },
-        {
-          titre: 'Déchets et compost',
-          type: ThematiqueUniversType.dechets_compost,
-          progression: 5,
-          cible_progression: 7,
-          is_locked: false,
-          reason_locked: null,
-          is_new: false,
-          niveau: 1,
-        },
-        {
-          titre: 'La force des céréales',
-          type: ThematiqueUniversType.cereales,
-          progression: 0,
-          cible_progression: 10,
-          is_locked: true,
-          reason_locked: 'Pas prêt à manger de la céréale !',
-          is_new: false,
-          niveau: 3,
-        },
-      ];
-    if (universType === UniversType.transports)
-      return [
-        {
-          titre: 'La mobilité du quotidien',
-          type: ThematiqueUniversType.mobilite_quotidien,
-          progression: 0,
-          cible_progression: 5,
-          is_locked: false,
-          reason_locked: null,
-          is_new: true,
-          niveau: 1,
-        },
-        {
-          titre: 'Partir en vacances',
-          type: ThematiqueUniversType.partir_vacances,
-          progression: 2,
-          cible_progression: 5,
-          is_locked: false,
-          reason_locked: null,
-          is_new: false,
-          niveau: 1,
-        },
-      ];
-    return [
-      {
-        titre: 'Coming soon !',
-        type: ThematiqueUniversType.coming_soon,
-        progression: 0,
-        cible_progression: 5,
-        is_locked: true,
-        reason_locked: 'Bientôt dans les bacs',
-        is_new: true,
-        niveau: 1,
-      },
-      {
-        titre: 'Coming soon !',
-        type: ThematiqueUniversType.coming_soon,
-        progression: 0,
-        cible_progression: 5,
-        is_locked: true,
-        reason_locked: 'Bientôt dans les bacs',
-        is_new: true,
-        niveau: 1,
-      },
-      {
-        titre: 'Coming soon !',
-        type: ThematiqueUniversType.coming_soon,
-        progression: 0,
-        cible_progression: 5,
-        is_locked: true,
-        reason_locked: 'Bientôt dans les bacs',
-        is_new: true,
-        niveau: 1,
-      },
-    ];
+    univers: Univers,
+  ): Promise<TuileThematique[]> {
+    const list = ThematiqueRepository.getTuileThematiques(univers);
+    list.forEach((element) => {
+      element.cible_progression = 5;
+      element.is_locked = false;
+      element.is_new = true;
+      element.niveau = 1;
+      element.progression = 0;
+    });
+    return list;
   }
 }

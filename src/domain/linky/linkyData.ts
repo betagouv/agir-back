@@ -384,6 +384,11 @@ export class LinkyData {
     const dayTime = day.getTime();
     return start_time <= dayTime && dayTime <= end_time;
   }
+  static isLessThan(day: Date, pivotDay: Date): boolean {
+    const pivot_time = new Date(pivotDay).setHours(0, 0, 0, 0);
+    const dayTime = day.getTime();
+    return dayTime < pivot_time;
+  }
   static getPreviousWeekFirstDay(now: Date): Date {
     const day_in_week = now.getDay() === 0 ? 6 : now.getDay() - 1;
     const day = now.getDate() - day_in_week - 7;

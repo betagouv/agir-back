@@ -92,6 +92,8 @@ import { UniversController } from './infrastructure/api/univers.controller';
 import { UniversUsecase } from './usecase/univers.usecase';
 import { DefiStatistiqueUsecase } from './usecase/defiStatistique.usecase';
 import { DefiStatistiqueRepository } from './infrastructure/repository/defiStatistique.repository';
+import { MissionUsecase } from './usecase/mission.usecase';
+import { MissionController } from './infrastructure/api/mission.controller';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -121,6 +123,7 @@ function getControllers(): any[] {
     InscriptionController,
     DefisController,
     UniversController,
+    MissionController,
   );
   if (!App.isProd()) {
     controllers.push(TestDataController);
@@ -201,6 +204,7 @@ function getControllers(): any[] {
     UniversUsecase,
     DefiStatistiqueUsecase,
     DefiStatistiqueRepository,
+    MissionUsecase,
   ],
 })
 export class AppModule {}

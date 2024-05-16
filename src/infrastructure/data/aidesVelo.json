@@ -9,18 +9,12 @@
     }
   },
   "aides . montant": {
-    "somme": [
-      "commune",
-      "intercommunalité",
-      "département",
-      "région",
-      "état"
-    ]
+    "somme": ["commune", "intercommunalité", "département", "région", "état"]
   },
   "aides . bonus vélo": {
     "remplace": "état",
     "titre": "Bonus vélo",
-    "description": "Nouveau bonus $vélo applicable du 15 août 2022 au 31 décembre 2023.\n",
+    "description": "Nouveau bonus $vélo applicable à partir du 14 février 2024.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . pays = 'France'",
@@ -36,10 +30,7 @@
             "variations": [
               {
                 "si": {
-                  "une de ces conditions": [
-                    "vélo . cargo",
-                    "vélo . pliant"
-                  ]
+                  "une de ces conditions": ["vélo . cargo", "vélo . pliant"]
                 },
                 "alors": "2000€"
               },
@@ -58,26 +49,27 @@
           }
         },
         {
-          "sinon": {
+          "si": "revenu fiscal de référence <= 15400 €/an",
+          "alors": {
             "variations": [
               {
                 "si": {
-                  "une de ces conditions": [
-                    "vélo . cargo",
-                    "vélo . pliant"
-                  ]
+                  "une de ces conditions": ["vélo . cargo", "vélo . pliant"]
                 },
-                "alors": "1000€"
+                "alors": "1000"
               },
               {
                 "si": "vélo . électrique",
-                "alors": "300€"
+                "alors": "300"
               },
               {
                 "sinon": "0€"
               }
             ]
           }
+        },
+        {
+          "sinon": "0€"
         }
       ]
     },
@@ -116,12 +108,7 @@
     },
     "titre": "Surprime Zone à Faibles Émissions (ZFE)",
     "description": "Vous pouvez bénéficier d’une surprime car $ville est une zone à faible\némission mobilité (ZFE). Cette surprime est conditionnée à l'octroi d’une\naide par la collectivité locale et son montant est identique à l'aide versée\npar la collectivité locale, dans la limite de 1 000 €.\n",
-    "somme": [
-      "commune",
-      "intercommunalité",
-      "département",
-      "région"
-    ],
+    "somme": ["commune", "intercommunalité", "département", "région"],
     "plafond": "1000€",
     "lien": "https://www.service-public.fr/particuliers/vosdroits/F36827"
   },
@@ -322,10 +309,7 @@
       },
       {
         "si": {
-          "toutes ces conditions": [
-            "vélo . neuf",
-            "vélo . cargo électrique"
-          ]
+          "toutes ces conditions": ["vélo . neuf", "vélo . cargo électrique"]
         },
         "alors": {
           "valeur": "50% * vélo . prix",
@@ -344,10 +328,7 @@
       },
       {
         "si": {
-          "toutes ces conditions": [
-            "vélo . neuf",
-            "vélo . cargo"
-          ]
+          "toutes ces conditions": ["vélo . neuf", "vélo . cargo"]
         },
         "alors": {
           "valeur": "50% * vélo . prix",
@@ -507,10 +488,7 @@
       "toutes ces conditions": [
         "localisation . epci = 'CC du Pays Mornantais (COPAMO)'",
         {
-          "une de ces conditions": [
-            "vélo . électrique",
-            "vélo . motorisation"
-          ]
+          "une de ces conditions": ["vélo . électrique", "vélo . motorisation"]
         }
       ]
     },
@@ -565,10 +543,7 @@
       "toutes ces conditions": [
         "localisation . code insee = '69081'",
         {
-          "une de ces conditions": [
-            "vélo . électrique",
-            "vélo . motorisation"
-          ]
+          "une de ces conditions": ["vélo . électrique", "vélo . motorisation"]
         }
       ]
     },
@@ -608,10 +583,7 @@
       "toutes ces conditions": [
         "localisation . code insee = '91312'",
         {
-          "une de ces conditions": [
-            "vélo . électrique",
-            "vélo . motorisation"
-          ]
+          "une de ces conditions": ["vélo . électrique", "vélo . motorisation"]
         }
       ]
     },
@@ -667,10 +639,7 @@
     "variations": [
       {
         "si": {
-          "une de ces conditions": [
-            "vélo . électrique",
-            "vélo . motorisation"
-          ]
+          "une de ces conditions": ["vélo . électrique", "vélo . motorisation"]
         },
         "alors": "100 €"
       },
@@ -728,10 +697,7 @@
       "toutes ces conditions": [
         "localisation . code insee = \"42316\"",
         {
-          "une de ces conditions": [
-            "vélo . électrique",
-            "vélo . motorisation"
-          ]
+          "une de ces conditions": ["vélo . électrique", "vélo . motorisation"]
         }
       ]
     },
@@ -943,19 +909,13 @@
     "variations": [
       {
         "si": {
-          "toutes ces conditions": [
-            "vélo . électrique",
-            "vélo . prix >= 1000€"
-          ]
+          "toutes ces conditions": ["vélo . électrique", "vélo . prix >= 1000€"]
         },
         "alors": "100€"
       },
       {
         "si": {
-          "toutes ces conditions": [
-            "vélo . mécanique",
-            "vélo . prix >= 500€"
-          ]
+          "toutes ces conditions": ["vélo . mécanique", "vélo . prix >= 500€"]
         },
         "alors": "50€"
       },
@@ -985,10 +945,7 @@
       "toutes ces conditions": [
         "localisation . région = '52'",
         {
-          "une de ces conditions": [
-            "vélo . pliant",
-            "vélo . électrique"
-          ]
+          "une de ces conditions": ["vélo . pliant", "vélo . électrique"]
         },
         "abonné TER"
       ]
@@ -2537,10 +2494,7 @@
       },
       {
         "si": {
-          "toutes ces conditions": [
-            "vélo . occasion",
-            "vélo . mécanique"
-          ]
+          "toutes ces conditions": ["vélo . occasion", "vélo . mécanique"]
         },
         "alors": {
           "valeur": "50€",
@@ -3027,19 +2981,13 @@
       "variations": [
         {
           "si": {
-            "toutes ces conditions": [
-              "vélo . électrique",
-              "vélo . neuf"
-            ]
+            "toutes ces conditions": ["vélo . électrique", "vélo . neuf"]
           },
           "alors": "500€"
         },
         {
           "si": {
-            "toutes ces conditions": [
-              "vélo . électrique",
-              "vélo . occasion"
-            ]
+            "toutes ces conditions": ["vélo . électrique", "vélo . occasion"]
           },
           "alors": "200€"
         },
@@ -3257,10 +3205,7 @@
     "variations": [
       {
         "si": {
-          "toutes ces conditions": [
-            "vélo . mécanique",
-            "vélo . occasion"
-          ]
+          "toutes ces conditions": ["vélo . mécanique", "vélo . occasion"]
         },
         "alors": {
           "valeur": "200€",
@@ -3269,10 +3214,7 @@
       },
       {
         "si": {
-          "toutes ces conditions": [
-            "vélo . électrique",
-            "vélo . occasion"
-          ]
+          "toutes ces conditions": ["vélo . électrique", "vélo . occasion"]
         },
         "alors": {
           "valeur": "150€",
@@ -3361,10 +3303,7 @@
       },
       {
         "si": {
-          "une de ces conditions": [
-            "vélo . électrique",
-            "vélo . pliant"
-          ]
+          "une de ces conditions": ["vélo . électrique", "vélo . pliant"]
         },
         "alors": {
           "variations": [
@@ -3616,10 +3555,7 @@
       "toutes ces conditions": [
         "localisation . code insee = '73179'",
         {
-          "une de ces conditions": [
-            "vélo . électrique",
-            "vélo . pliant"
-          ]
+          "une de ces conditions": ["vélo . électrique", "vélo . pliant"]
         }
       ]
     },
@@ -3749,10 +3685,7 @@
       "toutes ces conditions": [
         "localisation . epci = 'CC Sèvre et Loire'",
         {
-          "une de ces conditions": [
-            "vélo . cargo",
-            "vélo . électrique"
-          ]
+          "une de ces conditions": ["vélo . cargo", "vélo . électrique"]
         }
       ]
     },
@@ -4051,10 +3984,7 @@
       "toutes ces conditions": [
         "localisation . code insee = '92026'",
         {
-          "une de ces conditions": [
-            "vélo . électrique",
-            "vélo . motorisation"
-          ]
+          "une de ces conditions": ["vélo . électrique", "vélo . motorisation"]
         }
       ]
     },
@@ -4208,10 +4138,7 @@
       "toutes ces conditions": [
         "localisation . epci = 'CC de Puisaye-Forterre'",
         {
-          "une de ces conditions": [
-            "vélo . électrique",
-            "vélo . cargo"
-          ]
+          "une de ces conditions": ["vélo . électrique", "vélo . cargo"]
         }
       ]
     },
@@ -4394,19 +4321,13 @@
       },
       {
         "si": {
-          "toutes ces conditions": [
-            "vélo . mécanique",
-            "vélo . occasion"
-          ]
+          "toutes ces conditions": ["vélo . mécanique", "vélo . occasion"]
         },
         "alors": "30 €"
       },
       {
         "si": {
-          "toutes ces conditions": [
-            "vélo . mécanique",
-            "vélo . neuf"
-          ]
+          "toutes ces conditions": ["vélo . mécanique", "vélo . neuf"]
         },
         "alors": "20 €"
       },
@@ -4768,10 +4689,7 @@
       "toutes ces conditions": [
         "localisation . code insee = '74164'",
         {
-          "une de ces conditions": [
-            "vélo . électrique",
-            "vélo . pliant"
-          ]
+          "une de ces conditions": ["vélo . électrique", "vélo . pliant"]
         }
       ]
     },
@@ -5438,10 +5356,7 @@
       },
       {
         "si": {
-          "toutes ces conditions": [
-            "vélo . électrique",
-            "vélo . prix <= 4000€"
-          ]
+          "toutes ces conditions": ["vélo . électrique", "vélo . prix <= 4000€"]
         },
         "alors": "100€"
       },
@@ -5628,10 +5543,7 @@
       },
       {
         "si": {
-          "toutes ces conditions": [
-            "vélo . électrique",
-            "vélo . prix <= 2000€"
-          ]
+          "toutes ces conditions": ["vélo . électrique", "vélo . prix <= 2000€"]
         },
         "alors": "200€"
       },
@@ -5683,28 +5595,19 @@
       },
       {
         "si": {
-          "toutes ces conditions": [
-            "vélo . cargo",
-            "vélo . prix <= 4000€"
-          ]
+          "toutes ces conditions": ["vélo . cargo", "vélo . prix <= 4000€"]
         },
         "alors": "50€"
       },
       {
         "si": {
-          "toutes ces conditions": [
-            "vélo . mécanique",
-            "vélo . prix <= 3000€"
-          ]
+          "toutes ces conditions": ["vélo . mécanique", "vélo . prix <= 3000€"]
         },
         "alors": "50€"
       },
       {
         "si": {
-          "toutes ces conditions": [
-            "vélo . électrique",
-            "vélo . prix <= 3000€"
-          ]
+          "toutes ces conditions": ["vélo . électrique", "vélo . prix <= 3000€"]
         },
         "alors": "100€"
       },
@@ -5769,10 +5672,7 @@
       "toutes ces conditions": [
         "localisation . epci = 'CC du Bassin d'Aubenas'",
         {
-          "une de ces conditions": [
-            "vélo . électrique",
-            "vélo . cargo"
-          ]
+          "une de ces conditions": ["vélo . électrique", "vélo . cargo"]
         }
       ]
     },
@@ -5936,10 +5836,7 @@
     "variations": [
       {
         "si": {
-          "une de ces conditions": [
-            "vélo . électrique",
-            "vélo . motorisation"
-          ]
+          "une de ces conditions": ["vélo . électrique", "vélo . motorisation"]
         },
         "alors": "200€"
       },
@@ -6006,10 +5903,7 @@
       },
       {
         "si": {
-          "une de ces conditions": [
-            "vélo . électrique",
-            "vélo . motorisation"
-          ]
+          "une de ces conditions": ["vélo . électrique", "vélo . motorisation"]
         },
         "alors": {
           "valeur": "25% * vélo . prix",
@@ -7091,10 +6985,7 @@
         "localisation . epci = 'CC du Pays de Dol et de la Baie du Mont Saint-Michel'",
         "revenu fiscal de référence <= première tranche IR",
         {
-          "une de ces conditions": [
-            "vélo . électrique",
-            "vélo . motorisation"
-          ]
+          "une de ces conditions": ["vélo . électrique", "vélo . motorisation"]
         }
       ]
     },
@@ -7123,10 +7014,7 @@
       },
       {
         "si": {
-          "toutes ces conditions": [
-            "vélo . électrique",
-            "vélo . neuf"
-          ]
+          "toutes ces conditions": ["vélo . électrique", "vélo . neuf"]
         },
         "alors": "100 €"
       },
@@ -7224,10 +7112,7 @@
       "toutes ces conditions": [
         "localisation . epci = 'CA Saint-Brieuc Armor Agglomération'",
         {
-          "une de ces conditions": [
-            "vélo . électrique",
-            "vélo . cargo"
-          ]
+          "une de ces conditions": ["vélo . électrique", "vélo . cargo"]
         }
       ]
     },
@@ -7322,10 +7207,7 @@
       },
       {
         "si": {
-          "une de ces conditions": [
-            "vélo . cargo",
-            "vélo . mécanique"
-          ]
+          "une de ces conditions": ["vélo . cargo", "vélo . mécanique"]
         },
         "alors": "50% * vélo . prix"
       },
@@ -8367,10 +8249,7 @@
       "toutes ces conditions": [
         "localisation . epci = 'CC de la Côtière à Montluel'",
         {
-          "une de ces conditions": [
-            "travailler à moins de 20km",
-            "abonné TER"
-          ]
+          "une de ces conditions": ["travailler à moins de 20km", "abonné TER"]
         }
       ]
     },
@@ -8615,10 +8494,7 @@
   "vélo . électrique ou mécanique": {
     "valeur": "oui",
     "applicable si": {
-      "une de ces conditions": [
-        "vélo . électrique",
-        "vélo . mécanique"
-      ]
+      "une de ces conditions": ["vélo . électrique", "vélo . mécanique"]
     }
   },
   "vélo . cargo": {
@@ -8792,10 +8668,7 @@
   "vélo . neuf ou occasion": {
     "question": "S’agit-t-il d’un vélo neuf ou d’occasion ?",
     "par défaut": "'neuf'",
-    "possibilités": [
-      "neuf",
-      "occasion"
-    ]
+    "possibilités": ["neuf", "occasion"]
   },
   "vélo . neuf": {
     "titre": "Vélo neuf",

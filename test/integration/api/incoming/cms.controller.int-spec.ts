@@ -2,8 +2,8 @@ import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels
 import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
 import { DB, TestUtil } from '../../../TestUtil';
 import { Besoin } from '../../../../src/domain/aides/besoin';
-import { UniversType } from '../../../../src/domain/univers/universType';
-import { ThematiqueUniversType } from '../../../../src/domain/univers/thematiqueUniversType';
+import { Univers } from '../../../../src/domain/univers/univers';
+import { ThematiqueUnivers } from '../../../../src/domain/univers/thematiqueUnivers';
 
 describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA_DEFI = {
@@ -25,13 +25,13 @@ describe('/api/incoming/cms (API test)', () => {
       univers: [
         {
           id: 1,
-          code: UniversType.climat,
+          code: Univers.climat,
         },
       ],
       thematique_univers: [
         {
           id: 1,
-          code: ThematiqueUniversType.dechets_compost,
+          code: ThematiqueUnivers.dechets_compost,
         },
       ],
     },
@@ -274,9 +274,9 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.points).toEqual(10);
     expect(defi.thematique).toEqual('alimentation');
     expect(defi.tags).toEqual(['capacite_physique', 'possede_velo']);
-    expect(defi.universes).toEqual([UniversType.climat]);
+    expect(defi.universes).toEqual([Univers.climat]);
     expect(defi.thematiquesUnivers).toEqual([
-      ThematiqueUniversType.dechets_compost,
+      ThematiqueUnivers.dechets_compost,
     ]);
   });
 
@@ -303,9 +303,9 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.points).toEqual(10);
     expect(defi.thematique).toEqual('alimentation');
     expect(defi.tags).toEqual(['capacite_physique', 'possede_velo']);
-    expect(defi.universes).toEqual([UniversType.climat]);
+    expect(defi.universes).toEqual([Univers.climat]);
     expect(defi.thematiquesUnivers).toEqual([
-      ThematiqueUniversType.dechets_compost,
+      ThematiqueUnivers.dechets_compost,
     ]);
   });
 
@@ -496,6 +496,92 @@ describe('/api/incoming/cms (API test)', () => {
     expect(thematiqueDB).toHaveLength(1);
     expect(thematiqueDB[0].id_cms).toEqual(1);
     expect(thematiqueDB[0].titre).toEqual('yo');
+  });
+  it('POST /api/incoming/cms - create 1 univers', async () => {
+    // GIVEN
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send({
+      ...CMS_DATA_ARTICLE,
+      model: CMSModel.univers,
+      event: CMSEvent['entry.publish'],
+      entry: {
+        id: 1,
+        label: 'yo',
+        code: Univers.climat,
+        imageUrl: {
+          formats: {
+            thumbnail: { url: 'https://haha' },
+          },
+        },
+      },
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    const universDB = await TestUtil.prisma.univers.findMany({});
+    expect(universDB).toHaveLength(1);
+    expect(universDB[0].id_cms).toEqual(1);
+    expect(universDB[0].label).toEqual('yo');
+    expect(universDB[0].code).toEqual(Univers.climat);
+    expect(universDB[0].image_url).toEqual('https://haha');
+  });
+  it('POST /api/incoming/cms - create 1 univers', async () => {
+    // GIVEN
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send({
+      ...CMS_DATA_ARTICLE,
+      model: CMSModel.univers,
+      event: CMSEvent['entry.publish'],
+      entry: {
+        id: 1,
+        label: 'yo',
+        code: Univers.climat,
+        imageUrl: {
+          formats: {
+            thumbnail: { url: 'https://haha' },
+          },
+        },
+      },
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    const universDB = await TestUtil.prisma.univers.findMany({});
+    expect(universDB).toHaveLength(1);
+    expect(universDB[0].id_cms).toEqual(1);
+    expect(universDB[0].label).toEqual('yo');
+    expect(universDB[0].code).toEqual(Univers.climat);
+    expect(universDB[0].image_url).toEqual('https://haha');
+  });
+  it('POST /api/incoming/cms - create 1 thematiqueUnivers', async () => {
+    // GIVEN
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send({
+      ...CMS_DATA_ARTICLE,
+      model: CMSModel['thematique-univers'],
+      event: CMSEvent['entry.publish'],
+      entry: {
+        id: 1,
+        label: 'yo',
+        code: ThematiqueUnivers.cereales,
+        univers_parent: { id: 1, code: 'climat' },
+        imageUrl: {
+          formats: {
+            thumbnail: { url: 'https://haha' },
+          },
+        },
+      },
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    const universDB = await TestUtil.prisma.thematiqueUnivers.findMany({});
+    expect(universDB).toHaveLength(1);
+    expect(universDB[0].id_cms).toEqual(1);
+    expect(universDB[0].label).toEqual('yo');
+    expect(universDB[0].code).toEqual(ThematiqueUnivers.cereales);
+    expect(universDB[0].image_url).toEqual('https://haha');
+    expect(universDB[0].univers_parent).toEqual(Univers.climat);
   });
   it('POST /api/incoming/cms - updates existing article, 1 user in db ', async () => {
     // GIVEN

@@ -21,8 +21,8 @@ import { DefiDefinition } from '../../src/domain/defis/defiDefinition';
 import { TagUtilisateur } from '../../src/domain/scoring/tagUtilisateur';
 import { Besoin } from '../../src/domain/aides/besoin';
 import { App } from '../../src/domain/app';
-import { ThematiqueUniversType } from '../../src/domain/univers/thematiqueUniversType';
-import { UniversType } from '../../src/domain/univers/universType';
+import { ThematiqueUnivers } from '../domain/univers/thematiqueUnivers';
+import { Univers } from '../domain/univers/univers';
 
 @Injectable()
 export class CMSUsecase {
@@ -41,6 +41,22 @@ export class CMSUsecase {
           return this.createOrUpdateThematique(cmsWebhookAPI);
         case CMSEvent['entry.update']:
           return this.createOrUpdateThematique(cmsWebhookAPI);
+      }
+    }
+    if (cmsWebhookAPI.model === CMSModel.univers) {
+      switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.publish']:
+          return this.createOrUpdateUnivers(cmsWebhookAPI);
+        case CMSEvent['entry.update']:
+          return this.createOrUpdateUnivers(cmsWebhookAPI);
+      }
+    }
+    if (cmsWebhookAPI.model === CMSModel['thematique-univers']) {
+      switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.publish']:
+          return this.createOrUpdateThematiqueUnivers(cmsWebhookAPI);
+        case CMSEvent['entry.update']:
+          return this.createOrUpdateThematiqueUnivers(cmsWebhookAPI);
       }
     }
     if ([CMSModel.article, CMSModel.quizz].includes(cmsWebhookAPI.model)) {
@@ -228,6 +244,38 @@ export class CMSUsecase {
     );
   }
 
+  async createOrUpdateUnivers(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.thematiqueRepository.upsertUnivers(
+      cmsWebhookAPI.entry.id,
+      cmsWebhookAPI.entry.code,
+      cmsWebhookAPI.entry.label,
+      this.getImageUrl(cmsWebhookAPI),
+    );
+  }
+
+  async createOrUpdateThematiqueUnivers(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.thematiqueRepository.upsertThematiqueUnivers(
+      cmsWebhookAPI.entry.id,
+      cmsWebhookAPI.entry.code,
+      cmsWebhookAPI.entry.label,
+      this.getImageUrl(cmsWebhookAPI),
+      cmsWebhookAPI.entry.univers_parent
+        ? Univers[cmsWebhookAPI.entry.univers_parent.code]
+        : undefined,
+    );
+  }
+
+  private getImageUrl(cmsWebhookAPI: CMSWebhookAPI) {
+    let url = null;
+    if (cmsWebhookAPI.entry.imageUrl) {
+      if (cmsWebhookAPI.entry.imageUrl.formats.thumbnail) {
+        url = cmsWebhookAPI.entry.imageUrl.formats.thumbnail.url;
+      } else {
+        url = cmsWebhookAPI.entry.imageUrl.url;
+      }
+    }
+    return url;
+  }
   async deleteArticleOrQuizz(cmsWebhookAPI: CMSWebhookAPI) {
     if (cmsWebhookAPI.model === CMSModel.article) {
       await this.articleRepository.delete(cmsWebhookAPI.entry.id.toString());
@@ -324,11 +372,9 @@ export class CMSUsecase {
       tags: entry.tags
         ? entry.tags.map((elem) => TagUtilisateur[elem.code])
         : [],
-      universes: entry.univers
-        ? entry.univers.map((u) => UniversType[u.code])
-        : [],
+      universes: entry.univers ? entry.univers.map((u) => Univers[u.code]) : [],
       thematiques_univers: entry.thematique_univers
-        ? entry.thematique_univers.map((t) => ThematiqueUniversType[t.code])
+        ? entry.thematique_univers.map((t) => ThematiqueUnivers[t.code])
         : [],
     };
   }
@@ -425,14 +471,12 @@ export class CMSUsecase {
       ),
       universes:
         entry.attributes.univers.data.length > 0
-          ? entry.attributes.univers.data.map(
-              (u) => UniversType[u.attributes.code],
-            )
+          ? entry.attributes.univers.data.map((u) => Univers[u.attributes.code])
           : [],
       thematiques_univers:
         entry.attributes.thematique_univers.data.length > 0
           ? entry.attributes.thematique_univers.data.map(
-              (t) => ThematiqueUniversType[t.attributes.code],
+              (t) => ThematiqueUnivers[t.attributes.code],
             )
           : [],
     };
