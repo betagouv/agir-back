@@ -1,6 +1,6 @@
 import { MissionsUtilisateur_v0 } from '../object_store/mission/MissionsUtilisateur_v0';
 import { ThematiqueUnivers } from '../univers/thematiqueUnivers';
-import { Mission } from './mission';
+import { Mission, Objectif } from './mission';
 
 export class MissionsUtilisateur {
   missions: Mission[];
@@ -14,7 +14,16 @@ export class MissionsUtilisateur {
     }
   }
 
-  public getMission(them: ThematiqueUnivers): Mission {
+  public getMissionByThematiqueUnivers(them: ThematiqueUnivers): Mission {
     return this.missions.find((m) => m.thematique_univers === them);
+  }
+  public getMissionById(missionId: string): Mission {
+    return this.missions.find((m) => m.id === missionId);
+  }
+
+  public answerKyc(kycID: string) {
+    this.missions.forEach((mission) => {
+      mission.answerKyc(kycID);
+    });
   }
 }

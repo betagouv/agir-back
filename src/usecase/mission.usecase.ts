@@ -17,12 +17,32 @@ export class MissionUsecase {
   ): Promise<any> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
-    const mission = utilisateur.missions.getMission(thematique);
+    const mission =
+      utilisateur.missions.getMissionByThematiqueUnivers(thematique);
 
     if (!mission) {
       throw ApplicationError.throwMissionNotFound(thematique);
     }
 
     return mission;
+  }
+  async getMissionNextKycID(
+    utilisateurId: string,
+    missionId: string,
+  ): Promise<any> {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+
+    const mission = utilisateur.missions.getMissionById(missionId);
+
+    if (!mission) {
+      throw ApplicationError.throwMissionNotFoundOfId(missionId);
+    }
+
+    const next_kyc_id = mission.getNextKycId();
+
+    if (!next_kyc_id) {
+      throw ApplicationError.throwNoMoreKYCForMission(missionId);
+    }
+    return next_kyc_id;
   }
 }

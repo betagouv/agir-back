@@ -14,9 +14,38 @@ import {
   DPE,
 } from '../../../src/domain/logement/logement';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
+import { ContentType } from '../../../src/domain/contenu/contentType';
+import { MissionsUtilisateur_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
+import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
+import { Univers } from '../../../src/domain/univers/univers';
 
 describe('/utilisateurs/id/questionsKYC (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+
+  const missions_with_kyc: MissionsUtilisateur_v0 = {
+    version: 0,
+    missions: [
+      {
+        id: '1',
+        titre: 'test mission',
+        done_at: new Date(1),
+        thematique_univers: ThematiqueUnivers.cereales,
+        univers: Univers.alimentation,
+        objectifs: [
+          {
+            id: '0',
+            content_id: '_1',
+            type: ContentType.kyc,
+            titre: '1 question pour vous',
+            sont_points_en_poche: false,
+            points: 10,
+            is_locked: false,
+            done_at: null,
+          },
+        ],
+      },
+    ],
+  };
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -207,7 +236,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
   });
   it('PUT /utilisateurs/id/questionsKYC/1 - crée la reponse à la question 1, empoche les points', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.utilisateur, { missions: missions_with_kyc });
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -228,6 +257,12 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.gamification.points).toEqual(20);
+    expect(
+      userDB.missions.missions[0].objectifs[0].done_at.getTime(),
+    ).toBeLessThan(Date.now());
+    expect(
+      userDB.missions.missions[0].objectifs[0].done_at.getTime(),
+    ).toBeGreaterThan(Date.now() - 100);
   });
   it('PUT /utilisateurs/id/questionsKYC/1 - met à jour la reponse à la question 1', async () => {
     // GIVEN

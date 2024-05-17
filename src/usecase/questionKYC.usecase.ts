@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { KYCID, QuestionKYC } from '../domain/kyc/questionQYC';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
-import { CatalogueQuestionsKYC } from '../../src/domain/kyc/catalogueQuestionsKYC';
 
 @Injectable()
 export class QuestionKYCUsecase {
@@ -55,6 +54,8 @@ export class QuestionKYCUsecase {
       utilisateur.gamification.ajoutePoints(question.points);
     }
     utilisateur.kyc_history.updateQuestion(questionId, reponse);
+
+    utilisateur.missions.answerKyc(questionId);
 
     utilisateur.recomputeRecoTags();
 

@@ -10,7 +10,6 @@ export class Objectif {
   id: string;
   titre: string;
   content_id: string;
-  progression: { current: number; target: number };
   is_locked: boolean;
   done_at: Date;
   type: ContentType;
@@ -24,12 +23,11 @@ export class Objectif {
     this.content_id = data.content_id;
     this.points = data.points;
     this.sont_points_en_poche = !!data.sont_points_en_poche;
-    this.progression = data.progression;
     this.is_locked = !!data.is_locked;
     this.done_at = data.done_at;
   }
   public isDone?() {
-    return this.progression.current === this.progression.target;
+    return !!this.done_at;
   }
 }
 
@@ -67,5 +65,27 @@ export class Mission {
   public empocherPoints?(element: Objectif): number {
     element.sont_points_en_poche = true;
     return element.points;
+  }
+
+  public findObjectifKYCByQuestionID?(kycID: string): Objectif {
+    return this.objectifs.find(
+      (element) =>
+        element.type === ContentType.kyc && element.content_id === kycID,
+    );
+  }
+
+  public getNextKycId(): string {
+    const objectif_kyc = this.objectifs.find(
+      (o) => o.type === ContentType.kyc && !o.isDone(),
+    );
+    return objectif_kyc ? objectif_kyc.content_id : null;
+  }
+
+  public answerKyc(kycID: string) {
+    const objectif = this.findObjectifKYCByQuestionID(kycID);
+
+    if (objectif) {
+      objectif.done_at = new Date();
+    }
   }
 }

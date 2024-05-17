@@ -14,7 +14,6 @@ export class ObjectifAPI {
   @ApiProperty() id: string;
   @ApiProperty() titre: string;
   @ApiProperty() content_id: string;
-  @ApiProperty({ type: ProgressionAPI }) progression: ProgressionAPI;
   @ApiProperty() is_locked: boolean;
   @ApiProperty() points: number;
   @ApiProperty() sont_points_en_poche: boolean;
@@ -27,7 +26,6 @@ export class ObjectifAPI {
       id: objectif.id,
       titre: objectif.titre,
       content_id: objectif.content_id,
-      progression: objectif.progression,
       is_locked: objectif.is_locked,
       done: objectif.isDone(),
       done_at: objectif.done_at,

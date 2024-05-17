@@ -10,6 +10,7 @@ import { LiveService } from '../src/domain/service/serviceDefinition';
 import { ThematiqueUnivers } from '../src/domain/univers/thematiqueUnivers';
 import { Univers } from '../src/domain/univers/univers';
 import { MissionsUtilisateur_v0 } from '../src/domain/object_store/mission/MissionsUtilisateur_v0';
+import { KYCID } from '../src/domain/kyc/questionQYC';
 
 const missions: MissionsUtilisateur_v0 = {
   version: 0,
@@ -22,17 +23,33 @@ const missions: MissionsUtilisateur_v0 = {
       univers: Univers.alimentation,
       objectifs: [
         {
+          id: '001',
+          content_id: KYCID.KYC001,
+          type: ContentType.kyc,
+          titre: 'Question 1',
+          sont_points_en_poche: false,
+          points: 10,
+          is_locked: false,
+          done_at: null,
+        },
+        {
+          id: '002',
+          content_id: KYCID.KYC002,
+          type: ContentType.kyc,
+          titre: 'Question 2',
+          sont_points_en_poche: false,
+          points: 10,
+          is_locked: false,
+          done_at: null,
+        },
+        {
           id: '1',
           content_id: '13',
           type: ContentType.article,
           titre: 'Super article',
           sont_points_en_poche: false,
-          progression: {
-            current: 0,
-            target: 1,
-          },
           points: 10,
-          is_locked: false,
+          is_locked: true,
           done_at: null,
         },
         {
@@ -41,12 +58,8 @@ const missions: MissionsUtilisateur_v0 = {
           type: ContentType.quizz,
           titre: 'Super quizz',
           sont_points_en_poche: false,
-          progression: {
-            current: 0,
-            target: 1,
-          },
           points: 10,
-          is_locked: false,
+          is_locked: true,
           done_at: null,
         },
         {
@@ -55,10 +68,6 @@ const missions: MissionsUtilisateur_v0 = {
           type: ContentType.defi,
           titre: 'Action à faire',
           sont_points_en_poche: false,
-          progression: {
-            current: 0,
-            target: 1,
-          },
           points: 10,
           is_locked: true,
           done_at: null,

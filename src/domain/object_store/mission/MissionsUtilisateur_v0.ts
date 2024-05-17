@@ -9,7 +9,6 @@ export class Objectif_v0 {
   id: string;
   titre: string;
   content_id: string;
-  progression: { current: number; target: number };
   is_locked: boolean;
   done_at: Date;
   type: ContentType;
@@ -21,7 +20,6 @@ export class Objectif_v0 {
       id: objectif.id,
       titre: objectif.titre,
       content_id: objectif.content_id,
-      progression: objectif.progression,
       is_locked: objectif.is_locked,
       done_at: objectif.done_at,
       type: objectif.type,

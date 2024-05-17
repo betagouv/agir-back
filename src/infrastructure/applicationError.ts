@@ -254,6 +254,16 @@ export class ApplicationError {
       404,
     );
   }
+  static throwMissionNotFoundOfId(id: string) {
+    this.throwAppError('046', `Mission d'id [${id}] non trouvée`, 404);
+  }
+  static throwNoMoreKYCForMission(missionId: string) {
+    this.throwAppError(
+      '047',
+      `Plus de question KYC pour la Mission d'id [${missionId}]`,
+      404,
+    );
+  }
 
   private static throwAppError(
     code: string,
