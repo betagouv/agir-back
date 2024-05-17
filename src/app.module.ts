@@ -94,6 +94,8 @@ import { DefiStatistiqueUsecase } from './usecase/defiStatistique.usecase';
 import { DefiStatistiqueRepository } from './infrastructure/repository/defiStatistique.repository';
 import { MissionUsecase } from './usecase/mission.usecase';
 import { MissionController } from './infrastructure/api/mission.controller';
+import { QuizStatistiqueUsecase } from './usecase/quizStatistique.usecase';
+import { QuizStatistiqueRepository } from './infrastructure/repository/quizStatistique.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -205,6 +207,8 @@ function getControllers(): any[] {
     DefiStatistiqueUsecase,
     DefiStatistiqueRepository,
     MissionUsecase,
+    QuizStatistiqueUsecase,
+    QuizStatistiqueRepository,
   ],
 })
 export class AppModule {}

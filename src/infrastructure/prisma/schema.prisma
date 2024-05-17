@@ -107,6 +107,15 @@ model ArticleStatistique {
   updated_at                DateTime @updatedAt @db.Timestamptz(3)
 }
 
+model QuizStatistique {
+  quizId                     String   @id
+  titre                      String
+  nombre_de_bonne_reponse    Int
+  nombre_de_mauvaise_reponse Int
+  created_at                 DateTime @default(now()) @db.Timestamptz(3)
+  updated_at                 DateTime @updatedAt @db.Timestamptz(3)
+}
+
 model LinkyConsentement {
   id                    String   @id
   utilisateurId         String

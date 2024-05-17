@@ -1176,7 +1176,7 @@ describe('Admin (API test)', () => {
     expect(article3.titre).toBe('Titre de mon article 3');
   });
 
-  it("POST /admin/article-statistique - calcul des statistiques de l'ensemble des défis", async () => {
+  it("POST /admin/defi-statistique - calcul des statistiques de l'ensemble des défis", async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
 
@@ -1283,5 +1283,82 @@ describe('Admin (API test)', () => {
       nombre_defis_en_cours: 0,
       nombre_defis_realises: 2,
     });
+  });
+
+  it("POST /admin/quiz-statistique - calcul des statistiques de l'ensemble des quiz", async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-1',
+      email: 'john-doe@dev.com',
+      history: {
+        version: 0,
+        quizz_interactions: [
+          {
+            content_id: 'id-quiz-1',
+            points_en_poche: false,
+            attempts: [{ score: 0, date: new Date() }],
+          },
+          {
+            content_id: 'id-quiz-2',
+            points_en_poche: true,
+            attempts: [{ score: 100, date: new Date() }],
+          },
+        ],
+      },
+    });
+
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-2',
+      email: 'john-doedoe@dev.com',
+      history: {
+        version: 0,
+        quizz_interactions: [
+          {
+            content_id: 'id-quiz-1',
+            points_en_poche: true,
+            attempts: [{ score: 100, date: new Date() }],
+          },
+          {
+            content_id: 'id-quiz-2',
+            points_en_poche: true,
+            attempts: [{ score: 100, date: new Date() }],
+          },
+        ],
+      },
+    });
+
+    await TestUtil.create(DB.quizz, {
+      content_id: 'id-quiz-1',
+      titre: 'Question quiz 1',
+    });
+
+    await TestUtil.create(DB.quizz, {
+      content_id: 'id-quiz-2',
+      titre: 'Question quiz 2',
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/quiz-statistique');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(2);
+    expect(response.body).toEqual(['id-quiz-1', 'id-quiz-2']);
+
+    const quiz1 = await TestUtil.prisma.quizStatistique.findUnique({
+      where: { quizId: 'id-quiz-1' },
+    });
+    const quiz2 = await TestUtil.prisma.quizStatistique.findUnique({
+      where: { quizId: 'id-quiz-2' },
+    });
+
+    expect(quiz1.nombre_de_bonne_reponse).toEqual(1);
+    expect(quiz1.nombre_de_mauvaise_reponse).toEqual(1);
+    expect(quiz1.titre).toEqual('Question quiz 1');
+    expect(quiz2.nombre_de_bonne_reponse).toEqual(2);
+    expect(quiz2.nombre_de_mauvaise_reponse).toEqual(0);
+    expect(quiz2.titre).toEqual('Question quiz 2');
   });
 });
