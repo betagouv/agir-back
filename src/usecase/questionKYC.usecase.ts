@@ -18,11 +18,6 @@ export class QuestionKYCUsecase {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
-    // FIXME : until reset
-    if (questionId === '001') {
-      questionId = KYCID.KYC001;
-    }
-
     return utilisateur.kyc_history.getQuestionOrException(questionId);
   }
 
@@ -34,19 +29,13 @@ export class QuestionKYCUsecase {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
-    // FIXME : until reset
-    let qid = questionId;
-    if (questionId === '001') {
-      questionId = KYCID.KYC001;
-    }
-
     if (questionId === KYCID.KYC006) {
       utilisateur.logement.plus_de_15_ans = reponse.includes('plus_15');
     }
 
     utilisateur.kyc_history.checkQuestionExists(questionId);
 
-    this.updateUserTodo(utilisateur, qid);
+    this.updateUserTodo(utilisateur, questionId);
 
     if (!utilisateur.kyc_history.isQuestionAnswered(questionId)) {
       const question =

@@ -370,49 +370,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.tag_ponderation_set.transport).toEqual(0);
   });
-  it('PUT /utilisateurs/id/questionsKYC/001 - transpose l ancien code 001', async () => {
-    // GIVEN
-    CatalogueQuestionsKYC.setCatalogue([
-      {
-        id: KYCID.KYC001,
-        question: `Quel est votre sujet principal d'intéret ?`,
-        type: TypeReponseQuestionKYC.choix_multiple,
-        is_NGC: false,
-        categorie: CategorieQuestionKYC.default,
-        points: 10,
-        reponses: undefined,
-        reponses_possibles: [
-          { label: 'Le climat', code: Thematique.climat },
-          { label: 'Mon logement', code: Thematique.logement },
-          { label: 'Ce que je mange', code: Thematique.alimentation },
-          { label: 'Comment je bouge', code: Thematique.transport },
-        ],
-        tags: [],
-        universes: [],
-      },
-    ]);
-    const kyc: KYCHistory_v0 = {
-      version: 0,
-      answered_questions: [],
-    };
 
-    await TestUtil.create(DB.utilisateur, { kyc: kyc });
-
-    // WHEN
-    const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/001',
-    ).send({ reponse: ['Le climat'] });
-
-    // THEN
-    expect(response.status).toBe(200);
-
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
-    expect(
-      userDB.kyc_history
-        .getQuestion(KYCID.KYC001)
-        .includesReponseCode(Thematique.climat),
-    ).toEqual(true);
-  });
   it('PUT /utilisateurs/id/questionsKYC/006 - transpose dans logement KYC006 plus de 15 ans', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
