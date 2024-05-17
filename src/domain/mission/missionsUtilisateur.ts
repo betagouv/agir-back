@@ -1,5 +1,7 @@
+import { ContentType } from '../contenu/contentType';
 import { MissionsUtilisateur_v0 } from '../object_store/mission/MissionsUtilisateur_v0';
 import { ThematiqueUnivers } from '../univers/thematiqueUnivers';
+import { Utilisateur } from '../utilisateur/utilisateur';
 import { Mission, Objectif } from './mission';
 
 export class MissionsUtilisateur {
@@ -21,9 +23,37 @@ export class MissionsUtilisateur {
     return this.missions.find((m) => m.id === missionId);
   }
 
-  public answerKyc(kycID: string) {
+  public validateContentDone(
+    content_id: string,
+    type: ContentType,
+    utilisateur: Utilisateur,
+  ) {
+    const objectif = this.getObjectifByContentId(content_id, type);
+
+    if (objectif && !objectif.isDone()) {
+      objectif.done_at = new Date();
+      utilisateur.gamification.ajoutePoints(objectif.points);
+    }
+  }
+
+  public getObjectifByContentId(
+    content_id: string,
+    type: ContentType,
+  ): Objectif {
+    for (let index = 0; index < this.missions.length; index++) {
+      const mission = this.missions[index];
+
+      const objectif = mission.objectifs.find(
+        (o) => o.content_id === content_id && o.type === type,
+      );
+      if (objectif) return objectif;
+    }
+    return null;
+  }
+
+  public answerKyc(kycID: string, utilisateur: Utilisateur) {
     this.missions.forEach((mission) => {
-      mission.answerKyc(kycID);
+      mission.answerKyc(kycID, utilisateur);
     });
   }
 }

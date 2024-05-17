@@ -27,7 +27,6 @@ describe('Mission (API test)', () => {
             content_id: '_3',
             type: ContentType.kyc,
             titre: '1 question pour vous',
-            sont_points_en_poche: false,
             points: 10,
             is_locked: false,
             done_at: null,
@@ -37,7 +36,6 @@ describe('Mission (API test)', () => {
             content_id: '13',
             type: ContentType.article,
             titre: 'Super article',
-            sont_points_en_poche: false,
             points: 10,
             is_locked: true,
             done_at: new Date(0),
@@ -47,7 +45,6 @@ describe('Mission (API test)', () => {
             content_id: '14',
             type: ContentType.quizz,
             titre: 'Super quizz',
-            sont_points_en_poche: false,
             points: 10,
             is_locked: false,
             done_at: null,
@@ -57,7 +54,6 @@ describe('Mission (API test)', () => {
             content_id: '2',
             type: ContentType.defi,
             titre: 'Action à faire',
-            sont_points_en_poche: false,
             points: 10,
             is_locked: true,
             done_at: null,
@@ -81,7 +77,6 @@ describe('Mission (API test)', () => {
             content_id: '_3',
             type: ContentType.kyc,
             titre: '1 question pour vous',
-            sont_points_en_poche: false,
             points: 10,
             is_locked: false,
             done_at: new Date(),
@@ -141,7 +136,6 @@ describe('Mission (API test)', () => {
     expect(item_2.content_id).toEqual('13');
     expect(item_2.type).toEqual(ContentType.article);
     expect(item_2.titre).toEqual('Super article');
-    expect(item_2.sont_points_en_poche).toEqual(false);
     expect(item_2.points).toEqual(10);
     expect(item_2.is_locked).toEqual(true);
     expect(item_2.done_at).toEqual(new Date(0).toISOString());

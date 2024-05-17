@@ -37,7 +37,6 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
             content_id: '_1',
             type: ContentType.kyc,
             titre: '1 question pour vous',
-            sont_points_en_poche: false,
             points: 10,
             is_locked: false,
             done_at: null,
@@ -256,7 +255,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     ]);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
-    expect(userDB.gamification.points).toEqual(20);
+    expect(userDB.gamification.points).toEqual(30);
     expect(
       userDB.missions.missions[0].objectifs[0].done_at.getTime(),
     ).toBeLessThan(Date.now());

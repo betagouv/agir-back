@@ -44,7 +44,7 @@ export class QuestionKYCUsecase {
     }
     utilisateur.kyc_history.updateQuestion(questionId, reponse);
 
-    utilisateur.missions.answerKyc(questionId);
+    utilisateur.missions.answerKyc(questionId, utilisateur);
 
     utilisateur.recomputeRecoTags();
 

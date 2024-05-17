@@ -5,6 +5,7 @@ import {
 } from '../object_store/mission/MissionsUtilisateur_v0';
 import { ThematiqueUnivers } from '../univers/thematiqueUnivers';
 import { Univers } from '../univers/univers';
+import { Utilisateur } from '../utilisateur/utilisateur';
 
 export class Objectif {
   id: string;
@@ -14,7 +15,6 @@ export class Objectif {
   done_at: Date;
   type: ContentType;
   points: number;
-  sont_points_en_poche: boolean;
 
   constructor(data: Objectif_v0) {
     this.id = data.id;
@@ -22,7 +22,6 @@ export class Objectif {
     this.type = data.type;
     this.content_id = data.content_id;
     this.points = data.points;
-    this.sont_points_en_poche = !!data.sont_points_en_poche;
     this.is_locked = !!data.is_locked;
     this.done_at = data.done_at;
   }
@@ -62,11 +61,6 @@ export class Mission {
     return !!this.done_at;
   }
 
-  public empocherPoints?(element: Objectif): number {
-    element.sont_points_en_poche = true;
-    return element.points;
-  }
-
   public findObjectifKYCByQuestionID?(kycID: string): Objectif {
     return this.objectifs.find(
       (element) =>
@@ -81,11 +75,12 @@ export class Mission {
     return objectif_kyc ? objectif_kyc.content_id : null;
   }
 
-  public answerKyc(kycID: string) {
+  public answerKyc(kycID: string, utilisateur: Utilisateur) {
     const objectif = this.findObjectifKYCByQuestionID(kycID);
 
-    if (objectif) {
+    if (objectif && !objectif.isDone()) {
       objectif.done_at = new Date();
+      utilisateur.gamification.ajoutePoints(objectif.points);
     }
   }
 }

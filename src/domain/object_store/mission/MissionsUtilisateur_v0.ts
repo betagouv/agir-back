@@ -13,7 +13,6 @@ export class Objectif_v0 {
   done_at: Date;
   type: ContentType;
   points: number;
-  sont_points_en_poche: boolean;
 
   static map(objectif: Objectif): Objectif_v0 {
     return {
@@ -24,7 +23,6 @@ export class Objectif_v0 {
       done_at: objectif.done_at,
       type: objectif.type,
       points: objectif.points,
-      sont_points_en_poche: objectif.sont_points_en_poche,
     };
   }
 }
