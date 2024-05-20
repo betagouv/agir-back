@@ -38,10 +38,12 @@ export class MissionAPI {
   @ApiProperty() id: string;
   @ApiProperty() titre: string;
   @ApiProperty() done_at: Date;
+  @ApiProperty() is_new: boolean;
   @ApiProperty() thematique_univers: ThematiqueUnivers;
   @ApiProperty() thematique_univers_label: string;
   @ApiProperty() univers: Univers;
   @ApiProperty() univers_label: string;
+  @ApiProperty({ type: ProgressionAPI }) progression: ProgressionAPI;
   @ApiProperty({ type: [ObjectifAPI] }) objectifs: ObjectifAPI[];
 
   public static mapToAPI(mission: Mission): MissionAPI {
@@ -56,6 +58,8 @@ export class MissionAPI {
       ),
       univers_label: ThematiqueRepository.getTitreUnivers(mission.univers),
       univers: mission.univers,
+      progression: mission.getProgression(),
+      is_new: mission.isNew(),
     };
   }
 }

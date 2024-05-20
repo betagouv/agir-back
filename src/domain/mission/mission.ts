@@ -57,7 +57,7 @@ export class Mission {
     }
   }
 
-  public isDone?(): boolean {
+  public isDone(): boolean {
     return !!this.done_at;
   }
 
@@ -118,7 +118,15 @@ export class Mission {
       });
     }
   }
-
+  public getProgression(): { current: number; target: number } {
+    return {
+      current: this.objectifs.filter((objectif) => objectif.isDone()).length,
+      target: this.objectifs.length,
+    };
+  }
+  public isNew(): boolean {
+    return this.objectifs.filter((objectif) => objectif.isDone()).length === 0;
+  }
   public findObjectifByTypeAndContentId(
     type: ContentType,
     content_id: string,

@@ -191,6 +191,8 @@ describe('Mission (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.id).toEqual('1');
     expect(response.body.titre).toEqual('test mission');
+    expect(response.body.is_new).toEqual(false);
+    expect(response.body.progression).toEqual({ current: 1, target: 4 });
     expect(response.body.thematique_univers).toEqual('cereales');
     expect(response.body.univers).toEqual('alimentation');
     expect(response.body.thematique_univers_label).toEqual(
@@ -308,6 +310,23 @@ describe('Mission (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
     expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
+  });
+  it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - is_new true si rien fait`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_article_plus_defi,
+    });
+    await TestUtil.create(DB.article, { content_id: '1' });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/cereales/mission',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.is_new).toEqual(true);
+    expect(response.body.progression).toEqual({ current: 0, target: 2 });
   });
   it(`GET /utilisateurs/id/missions/:missionId/next_kyc - renvoie 404 si plus de kyc à faire`, async () => {
     // GIVEN
