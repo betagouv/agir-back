@@ -28,27 +28,28 @@ export class MissionsUtilisateur {
     type: ContentType,
     utilisateur: Utilisateur,
   ) {
-    const objectif = this.getObjectifByContentId(content_id, type);
+    const { mission, objectif } = this.getObjectifByContentId(content_id, type);
 
     if (objectif && !objectif.isDone()) {
       objectif.done_at = new Date();
       utilisateur.gamification.ajoutePoints(objectif.points);
+      mission.unlockDefiIfAllContentDone();
     }
   }
 
   public getObjectifByContentId(
     content_id: string,
     type: ContentType,
-  ): Objectif {
+  ): { mission: Mission; objectif: Objectif } {
     for (let index = 0; index < this.missions.length; index++) {
       const mission = this.missions[index];
 
       const objectif = mission.objectifs.find(
         (o) => o.content_id === content_id && o.type === type,
       );
-      if (objectif) return objectif;
+      if (objectif) return { mission: mission, objectif: objectif };
     }
-    return null;
+    return { mission: null, objectif: null };
   }
 
   public answerKyc(kycID: string, utilisateur: Utilisateur) {

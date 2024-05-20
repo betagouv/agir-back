@@ -81,6 +81,50 @@ export class Mission {
     if (objectif && !objectif.isDone()) {
       objectif.done_at = new Date();
       utilisateur.gamification.ajoutePoints(objectif.points);
+      this.unlockContentIfAllKYCsDone();
     }
+  }
+
+  public unlockContentIfAllKYCsDone() {
+    let ready = true;
+    this.objectifs.forEach((objectif) => {
+      ready = ready && (objectif.type !== ContentType.kyc || objectif.isDone());
+    });
+    if (ready) {
+      this.objectifs.forEach((objectif) => {
+        if (
+          objectif.type === ContentType.article ||
+          objectif.type === ContentType.quizz
+        ) {
+          objectif.is_locked = false;
+        }
+      });
+    }
+  }
+  public unlockDefiIfAllContentDone() {
+    let ready = true;
+    this.objectifs.forEach((objectif) => {
+      ready =
+        ready &&
+        ((objectif.type !== ContentType.article &&
+          objectif.type !== ContentType.quizz) ||
+          objectif.isDone());
+    });
+    if (ready) {
+      this.objectifs.forEach((objectif) => {
+        if (objectif.type === ContentType.defi) {
+          objectif.is_locked = false;
+        }
+      });
+    }
+  }
+
+  public findObjectifByTypeAndContentId(
+    type: ContentType,
+    content_id: string,
+  ): Objectif {
+    return this.objectifs.find(
+      (element) => element.type === type && element.content_id === content_id,
+    );
   }
 }
