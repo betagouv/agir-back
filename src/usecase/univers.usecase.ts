@@ -26,7 +26,7 @@ export class UniversUsecase {
 
     const listTuilesThem = ThematiqueRepository.getTuileThematiques(univers);
 
-    const listMissionDefs = await this.missionRepository.list(univers);
+    const listMissionDefs = await this.missionRepository.list();
 
     const result: TuileThematique[] = [];
 
@@ -35,7 +35,6 @@ export class UniversUsecase {
         utilisateur.missions.getMissionByThematiqueUnivers(tuile.type);
 
       if (existing_mission && existing_mission.est_visible) {
-        console.log(existing_mission);
         result.push({
           image_url: tuile.image_url,
           is_locked: false,
@@ -55,9 +54,11 @@ export class UniversUsecase {
         listMissionDefs.forEach((mission_def) => {
           if (
             mission_def.est_visible &&
-            mission_def.thematique_univers === tuile.type
+            mission_def.thematique_univers === tuile.type &&
+            ThematiqueRepository.getUniversParent(
+              mission_def.thematique_univers,
+            ) === univers
           ) {
-            console.log(mission_def);
             result.push({
               image_url: tuile.image_url,
               is_locked: false,

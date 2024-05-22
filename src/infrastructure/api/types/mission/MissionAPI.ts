@@ -58,8 +58,12 @@ export class MissionAPI {
       thematique_univers_label: ThematiqueRepository.getTitreThematiqueUnivers(
         mission.thematique_univers,
       ),
-      univers_label: ThematiqueRepository.getTitreUnivers(mission.univers),
-      univers: mission.univers,
+      univers_label: ThematiqueRepository.getTitreUnivers(
+        ThematiqueRepository.getUniversParent(mission.thematique_univers),
+      ),
+      univers: ThematiqueRepository.getUniversParent(
+        mission.thematique_univers,
+      ),
       progression: mission.getProgression(),
       is_new: mission.isNew(),
     };

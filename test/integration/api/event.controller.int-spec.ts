@@ -23,7 +23,6 @@ describe('EVENT (API test)', () => {
         id: '1',
         done_at: new Date(1),
         thematique_univers: ThematiqueUnivers.cereales,
-        univers: Univers.alimentation,
         objectifs: [
           {
             id: '0',
@@ -47,7 +46,6 @@ describe('EVENT (API test)', () => {
         id: '1',
         done_at: new Date(1),
         thematique_univers: ThematiqueUnivers.cereales,
-        univers: Univers.alimentation,
         objectifs: [
           {
             id: '0',

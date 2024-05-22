@@ -19,7 +19,6 @@ const missions: MissionsUtilisateur_v0 = {
       id: '1',
       done_at: null,
       thematique_univers: ThematiqueUnivers.cereales,
-      univers: Univers.alimentation,
       objectifs: [
         {
           id: '001',

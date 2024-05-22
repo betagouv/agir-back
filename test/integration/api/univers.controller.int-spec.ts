@@ -15,7 +15,6 @@ describe('Univers (API test)', () => {
         id: '1',
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
-        univers: Univers.alimentation,
         objectifs: [
           {
             id: '0',
@@ -40,7 +39,6 @@ describe('Univers (API test)', () => {
         id: '1',
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
-        univers: Univers.alimentation,
         objectifs: [
           {
             id: '0',
@@ -59,7 +57,6 @@ describe('Univers (API test)', () => {
         id: '2',
         done_at: null,
         thematique_univers: ThematiqueUnivers.dechets_compost,
-        univers: Univers.alimentation,
         objectifs: [
           {
             id: '0',

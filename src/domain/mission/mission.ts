@@ -4,7 +4,6 @@ import {
   Mission_v0,
 } from '../object_store/mission/MissionsUtilisateur_v0';
 import { ThematiqueUnivers } from '../univers/thematiqueUnivers';
-import { Univers } from '../univers/univers';
 import { Utilisateur } from '../utilisateur/utilisateur';
 
 export class Objectif {
@@ -34,7 +33,6 @@ export class Mission {
   id: string;
   done_at: Date;
   thematique_univers: ThematiqueUnivers;
-  univers: Univers;
   objectifs: Objectif[];
   prochaines_thematiques: ThematiqueUnivers[];
   est_visible: boolean;
@@ -42,7 +40,6 @@ export class Mission {
   constructor(data: Mission_v0) {
     this.id = data.id;
     this.done_at = data.done_at;
-    this.univers = data.univers;
     this.thematique_univers = data.thematique_univers;
     this.est_visible = data.est_visible;
 

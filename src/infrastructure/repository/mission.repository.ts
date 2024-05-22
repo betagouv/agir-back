@@ -13,7 +13,6 @@ export class MissionRepository {
     const mission_db: Mission = {
       id_cms: missionDef.id_cms,
       thematique_univers: missionDef.thematique_univers,
-      univers_parent: missionDef.univers,
       prochaines_thematiques: missionDef.prochaines_thematiques,
       est_visible: missionDef.est_visible,
       objectifs: missionDef.objectifs as any,
@@ -43,12 +42,8 @@ export class MissionRepository {
     return this.buildMissionDefFromDB(result);
   }
 
-  async list(univers: Univers): Promise<MissionDefinition[]> {
-    const result = await this.prisma.mission.findMany({
-      where: {
-        univers_parent: univers,
-      },
-    });
+  async list(): Promise<MissionDefinition[]> {
+    const result = await this.prisma.mission.findMany();
     return result.map((elem) => this.buildMissionDefFromDB(elem));
   }
 
@@ -61,7 +56,6 @@ export class MissionRepository {
         (t) => ThematiqueUnivers[t],
       ),
       thematique_univers: ThematiqueUnivers[missionDB.thematique_univers],
-      univers: Univers[missionDB.univers_parent],
       objectifs: missionDB.objectifs as any,
     });
   }

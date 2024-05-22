@@ -1,6 +1,5 @@
 import { ContentType } from '../contenu/contentType';
 import { ThematiqueUnivers } from '../univers/thematiqueUnivers';
-import { Univers } from '../univers/univers';
 
 export class ObjectifDefinition {
   titre: string;
@@ -19,13 +18,11 @@ export class ObjectifDefinition {
 export class MissionDefinition {
   id_cms: number;
   thematique_univers: ThematiqueUnivers;
-  univers: Univers;
   objectifs: ObjectifDefinition[];
   prochaines_thematiques: ThematiqueUnivers[];
   est_visible: boolean;
 
   constructor(data: MissionDefinition) {
-    this.univers = data.univers;
     this.thematique_univers = data.thematique_univers;
     this.est_visible = data.est_visible;
 

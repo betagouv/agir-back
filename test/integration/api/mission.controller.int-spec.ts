@@ -21,7 +21,6 @@ describe('Mission (API test)', () => {
         id: '1',
         done_at: new Date(1),
         thematique_univers: ThematiqueUnivers.cereales,
-        univers: Univers.alimentation,
         objectifs: [
           {
             id: '0',
@@ -72,7 +71,6 @@ describe('Mission (API test)', () => {
         id: '1',
         done_at: new Date(1),
         thematique_univers: ThematiqueUnivers.cereales,
-        univers: Univers.alimentation,
         objectifs: [
           {
             id: '0',
@@ -96,7 +94,6 @@ describe('Mission (API test)', () => {
         id: '1',
         done_at: new Date(1),
         thematique_univers: ThematiqueUnivers.cereales,
-        univers: Univers.alimentation,
         objectifs: [
           {
             id: '0',
@@ -129,7 +126,6 @@ describe('Mission (API test)', () => {
         id: '1',
         done_at: new Date(1),
         thematique_univers: ThematiqueUnivers.cereales,
-        univers: Univers.alimentation,
         objectifs: [
           {
             id: '0',
@@ -162,7 +158,6 @@ describe('Mission (API test)', () => {
         id: '1',
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
-        univers: Univers.alimentation,
         objectifs: [
           {
             id: '0',
@@ -181,7 +176,6 @@ describe('Mission (API test)', () => {
         id: '2',
         done_at: null,
         thematique_univers: ThematiqueUnivers.dechets_compost,
-        univers: Univers.alimentation,
         objectifs: [
           {
             id: '0',
@@ -224,6 +218,7 @@ describe('Mission (API test)', () => {
     await TestUtil.create(DB.thematiqueUnivers, {
       id_cms: 1,
       code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
       label: 'Mange de la graine',
       image_url: 'aaaa',
     });
@@ -240,7 +235,6 @@ describe('Mission (API test)', () => {
     expect(response.body.is_new).toEqual(false);
     expect(response.body.progression).toEqual({ current: 1, target: 4 });
     expect(response.body.thematique_univers).toEqual('cereales');
-    expect(response.body.univers).toEqual('alimentation');
     expect(response.body.thematique_univers_label).toEqual(
       'Mange de la graine',
     );
@@ -363,6 +357,19 @@ describe('Mission (API test)', () => {
       missions: missions_article_plus_defi,
     });
     await TestUtil.create(DB.article, { content_id: '1' });
+
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Mange de la graine',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
 
     // WHEN
     const response = await TestUtil.GET(

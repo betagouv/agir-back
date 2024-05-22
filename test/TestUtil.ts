@@ -365,7 +365,6 @@ export class TestUtil {
     return {
       id_cms: 1,
       thematique_univers: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
       est_visible: true,
       objectifs: [
         {

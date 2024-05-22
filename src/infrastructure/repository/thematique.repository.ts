@@ -39,6 +39,10 @@ export class ThematiqueRepository {
   public static getTuileThematique(type: ThematiqueUnivers): TuileThematique {
     return ThematiqueRepository.thematiquesUnivers.get(type);
   }
+  public static getUniversParent(thematiqueUnivers: ThematiqueUnivers) {
+    return ThematiqueRepository.getTuileThematique(thematiqueUnivers)
+      .univers_parent;
+  }
 
   public static getTuileThematiques(univers: Univers): TuileThematique[] {
     return ThematiqueRepository.getAllTuileThematique().filter(

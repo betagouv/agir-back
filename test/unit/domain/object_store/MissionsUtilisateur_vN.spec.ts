@@ -5,7 +5,6 @@ import {
 import { MissionsUtilisateur_v0 } from '../../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
 import { ThematiqueUnivers } from '../../../../src/domain/univers/thematiqueUnivers';
-import { Univers } from '../../../../src/domain/univers/univers';
 import { ContentType } from '../../../../src/domain/contenu/contentType';
 
 describe('MissionsUilisateur vN ', () => {
@@ -29,7 +28,6 @@ describe('MissionsUilisateur vN ', () => {
           id: '1',
           done_at: new Date(1),
           thematique_univers: ThematiqueUnivers.cereales,
-          univers: Univers.alimentation,
 
           objectifs: [
             {
@@ -64,7 +62,6 @@ describe('MissionsUilisateur vN ', () => {
           id: '1',
           done_at: new Date(1),
           thematique_univers: ThematiqueUnivers.cereales,
-          univers: Univers.alimentation,
 
           objectifs: [
             {

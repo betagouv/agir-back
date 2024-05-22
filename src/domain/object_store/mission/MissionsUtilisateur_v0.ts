@@ -31,7 +31,6 @@ export class Mission_v0 {
   id: string;
   done_at: Date;
   thematique_univers: ThematiqueUnivers;
-  univers: Univers;
   objectifs: Objectif[];
   prochaines_thematiques: ThematiqueUnivers[];
   est_visible: boolean;
@@ -41,7 +40,6 @@ export class Mission_v0 {
       id: mission.id,
       done_at: mission.done_at,
       thematique_univers: mission.thematique_univers,
-      univers: mission.univers,
       objectifs: mission.objectifs
         ? mission.objectifs.map((m) => Objectif_v0.map(m))
         : [],
