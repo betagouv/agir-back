@@ -1362,7 +1362,7 @@ describe('Admin (API test)', () => {
     expect(quiz2.titre).toEqual('Question quiz 2');
   });
 
-  it.only("POST /admin/kyc-statistique - calcul des statistiques de l'ensemble des kyc", async () => {
+  it("POST /admin/kyc-statistique - calcul des statistiques de l'ensemble des kyc", async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
 

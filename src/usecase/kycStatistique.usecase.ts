@@ -14,23 +14,17 @@ export class KycStatistiqueUsecase {
     const listeUtilisateursIds =
       await this.utilisateurRepository.listUtilisateurIds();
 
-    for (let index = 0; index < listeUtilisateursIds.length; index++) {
-      const user_id = listeUtilisateursIds[index];
+    for (const utilisateurId of listeUtilisateursIds) {
+      const utilisateur = await this.utilisateurRepository.getById(
+        utilisateurId,
+      );
 
-      const utilisateur = await this.utilisateurRepository.getById(user_id);
-
-      for (
-        let index = 0;
-        index < utilisateur.kyc_history.answered_questions.length;
-        index++
-      ) {
+      for (const question of utilisateur.kyc_history.answered_questions) {
         await this.kycStatistiqueRepository.upsertStatistiquesDUneKyc(
-          user_id,
-          utilisateur.kyc_history.answered_questions[index].id,
-          utilisateur.kyc_history.answered_questions[index].question,
-          this.ordonneReponse(
-            utilisateur.kyc_history.answered_questions[index].reponses,
-          ),
+          utilisateurId,
+          question.id,
+          question.question,
+          this.ordonneReponse(question.reponses),
         );
       }
     }

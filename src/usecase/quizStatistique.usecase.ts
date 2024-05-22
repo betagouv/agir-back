@@ -20,12 +20,12 @@ export class QuizStatistiqueUsecase {
     const listeUtilisateursIds =
       await this.utilisateurRepository.listUtilisateurIds();
 
-    for (let index = 0; index < listeUtilisateursIds.length; index++) {
-      const user = await this.utilisateurRepository.getById(
-        listeUtilisateursIds[index],
+    for (const utilisateurId of listeUtilisateursIds) {
+      const utilisateur = await this.utilisateurRepository.getById(
+        utilisateurId,
       );
 
-      user.history.quizz_interactions.forEach((quiz) => {
+      utilisateur.history.quizz_interactions.forEach((quiz) => {
         if (!quizRecord[quiz.content_id]) {
           quizRecord[quiz.content_id] = {
             nombreDeBonneReponse: 0,
