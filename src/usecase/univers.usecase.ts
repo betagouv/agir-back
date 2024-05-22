@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
 import { TuileThematique } from '../domain/univers/tuileThematique';
 import { TuileUnivers } from '../domain/univers/tuileUnivers';
 import { Univers } from '../domain/univers/univers';
+import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
 
 @Injectable()
 export class UniversUsecase {
-  constructor(private thematiqueRepository: ThematiqueRepository) {}
+  constructor(
+    private utilisateurRepository: UtilisateurRepository,
+    private missionRepository: MissionRepository,
+  ) {}
 
   async getALLOfUser(utilisateurId: string): Promise<TuileUnivers[]> {
     return ThematiqueRepository.getAllTuileUnivers();
@@ -16,14 +21,60 @@ export class UniversUsecase {
     utilisateurId: string,
     univers: Univers,
   ): Promise<TuileThematique[]> {
-    const list = ThematiqueRepository.getTuileThematiques(univers);
-    list.forEach((element) => {
-      element.cible_progression = 5;
-      element.is_locked = false;
-      element.is_new = true;
-      element.niveau = 1;
-      element.progression = 0;
+    // FIXME : refacto , code tout moche en dessous
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+
+    const listTuilesThem = ThematiqueRepository.getTuileThematiques(univers);
+
+    const listMissionDefs = await this.missionRepository.list(univers);
+
+    const result: TuileThematique[] = [];
+
+    listTuilesThem.forEach((tuile) => {
+      const existing_mission =
+        utilisateur.missions.getMissionByThematiqueUnivers(tuile.type);
+
+      if (existing_mission && existing_mission.est_visible) {
+        console.log(existing_mission);
+        result.push({
+          image_url: tuile.image_url,
+          is_locked: false,
+          is_new: existing_mission.isNew(),
+          niveau: null,
+          reason_locked: null,
+          type: tuile.type,
+          titre: ThematiqueRepository.getTitreThematiqueUnivers(
+            existing_mission.thematique_univers,
+          ),
+          progression: existing_mission.getProgression().current,
+          cible_progression: existing_mission.getProgression().target,
+          univers_parent: tuile.univers_parent,
+          univers_parent_label: tuile.univers_parent_label,
+        });
+      } else {
+        listMissionDefs.forEach((mission_def) => {
+          if (
+            mission_def.est_visible &&
+            mission_def.thematique_univers === tuile.type
+          ) {
+            console.log(mission_def);
+            result.push({
+              image_url: tuile.image_url,
+              is_locked: false,
+              is_new: true,
+              niveau: null,
+              reason_locked: null,
+              type: tuile.type,
+              titre: tuile.titre,
+              progression: 0,
+              cible_progression: mission_def.objectifs.length,
+              univers_parent: tuile.univers_parent,
+              univers_parent_label: tuile.univers_parent_label,
+            });
+          }
+        });
+      }
     });
-    return list;
+    return result;
   }
 }

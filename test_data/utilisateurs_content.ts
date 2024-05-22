@@ -17,7 +17,6 @@ const missions: MissionsUtilisateur_v0 = {
   missions: [
     {
       id: '1',
-      titre: 'test mission',
       done_at: null,
       thematique_univers: ThematiqueUnivers.cereales,
       univers: Univers.alimentation,
@@ -68,6 +67,8 @@ const missions: MissionsUtilisateur_v0 = {
           done_at: null,
         },
       ],
+      est_visible: true,
+      prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
     },
   ],
 };

@@ -29,22 +29,26 @@ export class Objectif_v0 {
 
 export class Mission_v0 {
   id: string;
-  titre: string;
   done_at: Date;
   thematique_univers: ThematiqueUnivers;
   univers: Univers;
   objectifs: Objectif[];
+  prochaines_thematiques: ThematiqueUnivers[];
+  est_visible: boolean;
 
   static map(mission: Mission): Mission_v0 {
     return {
       id: mission.id,
-      titre: mission.titre,
       done_at: mission.done_at,
       thematique_univers: mission.thematique_univers,
       univers: mission.univers,
       objectifs: mission.objectifs
         ? mission.objectifs.map((m) => Objectif_v0.map(m))
         : [],
+      prochaines_thematiques: mission.prochaines_thematiques
+        ? mission.prochaines_thematiques.map((m) => ThematiqueUnivers[m])
+        : [],
+      est_visible: !!mission.est_visible,
     };
   }
 }

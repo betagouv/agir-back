@@ -98,6 +98,7 @@ import { QuizStatistiqueUsecase } from './usecase/quizStatistique.usecase';
 import { QuizStatistiqueRepository } from './infrastructure/repository/quizStatistique.repository';
 import { KycStatistiqueUsecase } from './usecase/kycStatistique.usecase';
 import { KycStatistiqueRepository } from './infrastructure/repository/kycStatistique.repository';
+import { MissionRepository } from './infrastructure/repository/mission.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -213,6 +214,7 @@ function getControllers(): any[] {
     QuizStatistiqueRepository,
     KycStatistiqueUsecase,
     KycStatistiqueRepository,
+    MissionRepository,
   ],
 })
 export class AppModule {}

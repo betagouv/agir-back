@@ -50,6 +50,7 @@ import {
   Suivi,
   Univers as UniversDB,
   ThematiqueUnivers as ThematiqueUniversDB,
+  Mission,
 } from '.prisma/client';
 import {
   Aide,
@@ -73,6 +74,7 @@ import { TagUtilisateur } from '../src/domain/scoring/tagUtilisateur';
 import { Besoin } from '../src/domain/aides/besoin';
 import { Univers } from '../src/domain/univers/univers';
 import { ThematiqueUnivers } from '../src/domain/univers/thematiqueUnivers';
+import { ContentType } from '../src/domain/contenu/contentType';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -93,6 +95,7 @@ export enum DB {
   article = 'article',
   quizz = 'quizz',
   defiStatistique = 'defiStatistique',
+  mission = 'mission',
 }
 export class TestUtil {
   private static TYPE_DATA_MAP: Record<DB, Function> = {
@@ -114,6 +117,7 @@ export class TestUtil {
     univers: TestUtil.universData,
     thematiqueUnivers: TestUtil.thematiqueUniversData,
     defiStatistique: TestUtil.defiStatistiqueData,
+    mission: TestUtil.missionData,
   };
 
   constructor() {}
@@ -200,7 +204,7 @@ export class TestUtil {
     await this.prisma.thematiqueUnivers.deleteMany();
     await this.prisma.quizStatistique.deleteMany();
     await this.prisma.kycStatistique.deleteMany();
-
+    await this.prisma.mission.deleteMany();
     ThematiqueRepository.resetAllRefs();
   }
 
@@ -356,6 +360,31 @@ export class TestUtil {
       ...override,
     };
   }
+
+  static missionData(override?: Partial<Mission>): Mission {
+    return {
+      id_cms: 1,
+      thematique_univers: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      est_visible: true,
+      objectifs: [
+        {
+          titre: 'obj 1',
+          content_id: '1',
+          type: ContentType.article,
+          points: 25,
+        },
+      ],
+      prochaines_thematiques: [
+        ThematiqueUnivers.manger_local,
+        ThematiqueUnivers.dechets_compost,
+      ],
+      created_at: undefined,
+      updated_at: undefined,
+      ...override,
+    };
+  }
+
   static empreinteData(override?): Empreinte {
     return {
       id: 'empreinte-id',

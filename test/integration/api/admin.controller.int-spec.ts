@@ -1285,7 +1285,7 @@ describe('Admin (API test)', () => {
     });
   });
 
-  it.skip("POST /admin/quiz-statistique - calcul des statistiques de l'ensemble des quiz", async () => {
+  it("POST /admin/quiz-statistique - calcul des statistiques de l'ensemble des quiz", async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
 

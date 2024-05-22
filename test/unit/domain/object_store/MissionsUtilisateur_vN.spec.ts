@@ -30,7 +30,6 @@ describe('MissionsUilisateur vN ', () => {
           done_at: new Date(1),
           thematique_univers: ThematiqueUnivers.cereales,
           univers: Univers.alimentation,
-          titre: 'simple',
 
           objectifs: [
             {
@@ -43,6 +42,8 @@ describe('MissionsUilisateur vN ', () => {
               points: 10,
             },
           ],
+          prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
+          est_visible: true,
         },
       ],
     });
@@ -64,7 +65,6 @@ describe('MissionsUilisateur vN ', () => {
           done_at: new Date(1),
           thematique_univers: ThematiqueUnivers.cereales,
           univers: Univers.alimentation,
-          titre: 'simple',
 
           objectifs: [
             {
@@ -77,6 +77,8 @@ describe('MissionsUilisateur vN ', () => {
               points: 10,
             },
           ],
+          prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
+          est_visible: true,
         },
       ],
     });

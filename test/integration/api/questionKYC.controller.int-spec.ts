@@ -27,7 +27,6 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     missions: [
       {
         id: '1',
-        titre: 'test mission',
         done_at: new Date(1),
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
@@ -42,6 +41,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
             done_at: null,
           },
         ],
+        est_visible: true,
+        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
       },
     ],
   };

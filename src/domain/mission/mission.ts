@@ -32,18 +32,24 @@ export class Objectif {
 
 export class Mission {
   id: string;
-  titre: string;
   done_at: Date;
   thematique_univers: ThematiqueUnivers;
   univers: Univers;
   objectifs: Objectif[];
+  prochaines_thematiques: ThematiqueUnivers[];
+  est_visible: boolean;
 
   constructor(data: Mission_v0) {
     this.id = data.id;
-    this.titre = data.titre;
     this.done_at = data.done_at;
     this.univers = data.univers;
     this.thematique_univers = data.thematique_univers;
+    this.est_visible = data.est_visible;
+
+    this.prochaines_thematiques = [];
+    if (data.prochaines_thematiques) {
+      this.prochaines_thematiques = data.prochaines_thematiques;
+    }
 
     if (data.done_at) {
       this.done_at = new Date(data.done_at);

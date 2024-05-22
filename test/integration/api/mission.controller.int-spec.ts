@@ -19,7 +19,6 @@ describe('Mission (API test)', () => {
     missions: [
       {
         id: '1',
-        titre: 'test mission',
         done_at: new Date(1),
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
@@ -61,6 +60,8 @@ describe('Mission (API test)', () => {
             done_at: null,
           },
         ],
+        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
+        est_visible: true,
       },
     ],
   };
@@ -69,7 +70,6 @@ describe('Mission (API test)', () => {
     missions: [
       {
         id: '1',
-        titre: 'test mission',
         done_at: new Date(1),
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
@@ -84,6 +84,8 @@ describe('Mission (API test)', () => {
             done_at: new Date(),
           },
         ],
+        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
+        est_visible: true,
       },
     ],
   };
@@ -92,7 +94,6 @@ describe('Mission (API test)', () => {
     missions: [
       {
         id: '1',
-        titre: 'test mission',
         done_at: new Date(1),
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
@@ -116,6 +117,8 @@ describe('Mission (API test)', () => {
             done_at: null,
           },
         ],
+        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
+        est_visible: true,
       },
     ],
   };
@@ -124,7 +127,6 @@ describe('Mission (API test)', () => {
     missions: [
       {
         id: '1',
-        titre: 'test mission',
         done_at: new Date(1),
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
@@ -148,6 +150,51 @@ describe('Mission (API test)', () => {
             done_at: null,
           },
         ],
+        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
+        est_visible: true,
+      },
+    ],
+  };
+  const missions_visible_pas_visible: MissionsUtilisateur_v0 = {
+    version: 0,
+    missions: [
+      {
+        id: '1',
+        done_at: null,
+        thematique_univers: ThematiqueUnivers.cereales,
+        univers: Univers.alimentation,
+        objectifs: [
+          {
+            id: '0',
+            content_id: '1',
+            type: ContentType.article,
+            titre: '1 article',
+            points: 10,
+            is_locked: false,
+            done_at: null,
+          },
+        ],
+        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
+        est_visible: true,
+      },
+      {
+        id: '2',
+        done_at: null,
+        thematique_univers: ThematiqueUnivers.dechets_compost,
+        univers: Univers.alimentation,
+        objectifs: [
+          {
+            id: '0',
+            content_id: '2',
+            type: ContentType.article,
+            titre: '2 article',
+            points: 10,
+            is_locked: false,
+            done_at: null,
+          },
+        ],
+        prochaines_thematiques: [],
+        est_visible: false,
       },
     ],
   };
@@ -190,7 +237,6 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.id).toEqual('1');
-    expect(response.body.titre).toEqual('test mission');
     expect(response.body.is_new).toEqual(false);
     expect(response.body.progression).toEqual({ current: 1, target: 4 });
     expect(response.body.thematique_univers).toEqual('cereales');

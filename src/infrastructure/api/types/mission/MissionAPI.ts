@@ -49,7 +49,9 @@ export class MissionAPI {
   public static mapToAPI(mission: Mission): MissionAPI {
     return {
       id: mission.id,
-      titre: mission.titre,
+      titre: ThematiqueRepository.getTitreThematiqueUnivers(
+        mission.thematique_univers,
+      ),
       done_at: mission.done_at,
       objectifs: mission.objectifs.map((o) => ObjectifAPI.mapToAPI(o)),
       thematique_univers: mission.thematique_univers,
