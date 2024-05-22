@@ -1361,4 +1361,87 @@ describe('Admin (API test)', () => {
     expect(quiz2.nombre_de_mauvaise_reponse).toEqual(0);
     expect(quiz2.titre).toEqual('Question quiz 2');
   });
+
+  it.only("POST /admin/kyc-statistique - calcul des statistiques de l'ensemble des kyc", async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-1',
+      email: 'john-doe@dev.com',
+      kyc: {
+        answered_questions: [
+          {
+            id: 'id-kyc-1',
+            question: `Question kyc 1`,
+            reponses: [
+              { label: 'Le climat', code: Thematique.climat },
+              { label: 'Mon logement', code: Thematique.logement },
+            ],
+          },
+          {
+            id: 'id-kyc-2',
+            question: `Question kyc 2`,
+            reponses: [{ label: 'Une réponse', code: Thematique.climat }],
+          },
+        ],
+      },
+    });
+
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-2',
+      email: 'john-doedoe@dev.com',
+      kyc: {
+        answered_questions: [
+          {
+            id: 'id-kyc-1',
+            question: `Question kyc 1`,
+            reponses: [
+              { label: 'Le climat', code: Thematique.climat },
+              { label: 'Mon logement', code: Thematique.logement },
+              { label: 'Appartement', code: Thematique.logement },
+            ],
+          },
+        ],
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/kyc-statistique');
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const kyc1 = await TestUtil.prisma.kycStatistique.findUnique({
+      where: {
+        utilisateurId_kycId: {
+          utilisateurId: 'test-id-1',
+          kycId: 'id-kyc-1',
+        },
+      },
+    });
+    const kyc2 = await TestUtil.prisma.kycStatistique.findUnique({
+      where: {
+        utilisateurId_kycId: {
+          utilisateurId: 'test-id-1',
+          kycId: 'id-kyc-2',
+        },
+      },
+    });
+    const kyc3 = await TestUtil.prisma.kycStatistique.findUnique({
+      where: {
+        utilisateurId_kycId: {
+          utilisateurId: 'test-id-2',
+          kycId: 'id-kyc-1',
+        },
+      },
+    });
+
+    expect(kyc1.titre).toEqual('Question kyc 1');
+    expect(kyc1.reponse).toEqual('Le climat, Mon logement');
+    expect(kyc2.titre).toEqual('Question kyc 2');
+    expect(kyc2.reponse).toEqual('Une réponse');
+    expect(kyc3.titre).toEqual('Question kyc 1');
+    expect(kyc3.reponse).toEqual('Appartement, Le climat, Mon logement');
+  });
 });

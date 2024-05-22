@@ -116,6 +116,15 @@ model QuizStatistique {
   updated_at                 DateTime @updatedAt @db.Timestamptz(3)
 }
 
+model KycStatistique {
+  kycId         String
+  utilisateurId String
+  titre         String
+  reponse       String
+
+  @@id([utilisateurId, kycId])
+}
+
 model LinkyConsentement {
   id                    String   @id
   utilisateurId         String

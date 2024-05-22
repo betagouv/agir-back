@@ -195,7 +195,9 @@ export class TestUtil {
     await this.prisma.defiStatistique.deleteMany();
     await this.prisma.univers.deleteMany();
     await this.prisma.thematiqueUnivers.deleteMany();
-    // await this.prisma.quizStatistique.deleteMany();
+    await this.prisma.quizStatistique.deleteMany();
+    await this.prisma.kycStatistique.deleteMany();
+
     ThematiqueRepository.resetAllRefs();
   }
 

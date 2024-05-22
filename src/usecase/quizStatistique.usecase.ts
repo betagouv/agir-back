@@ -40,7 +40,10 @@ export class QuizStatistiqueUsecase {
       });
     }
 
-    Object.entries(quizRecord).forEach(async ([key, value]) => {
+    const quizRecordEntries = Object.entries(quizRecord);
+
+    for (let i = 0; i < quizRecordEntries.length; i++) {
+      const [key, value] = quizRecordEntries[i];
       const titreDuQuiz = await this.quizRepository.getQuizzByContentId(key);
 
       await this.quizStatistiqueRepository.upsertStatistiquesDUnQuiz(
@@ -49,7 +52,7 @@ export class QuizStatistiqueUsecase {
         value.nombreDeBonneReponse,
         value.nombreDeMauvaiseReponse,
       );
-    });
+    }
 
     const listeDesQuizId = Object.keys(quizRecord);
 
