@@ -81,7 +81,7 @@ describe('Admin (API test)', () => {
       'Ecowatt aide les Français à mieux consommer l’électricité.',
     );
     expect(service.sous_description).toEqual(
-      'Véritable météo de l’électricité, Ecowatt qualifie en temps réel le niveau de consommation des Français.',
+      'Véritable météo de l’électricité, Ecowatt mesure le niveau de consommation des Français au jour le jour et vous propose des conseils pour réduire votre impact et optimiser votre utilisation.',
     );
   });
   it('POST /admin/upsert_service_definitions integre correctement les services', async () => {
@@ -116,7 +116,7 @@ describe('Admin (API test)', () => {
       'Ecowatt aide les Français à mieux consommer l’électricité.',
     );
     expect(service.sous_description).toEqual(
-      'Véritable météo de l’électricité, Ecowatt qualifie en temps réel le niveau de consommation des Français.',
+      'Véritable météo de l’électricité, Ecowatt mesure le niveau de consommation des Français au jour le jour et vous propose des conseils pour réduire votre impact et optimiser votre utilisation.',
     );
   });
   it('POST /admin/unsubscribe_oprhan_prms retourne liste des suppressions', async () => {
