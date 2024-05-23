@@ -261,6 +261,22 @@ model Mission {
   updated_at             DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
+model KYC {
+  id_cms     Int      @unique
+  code       String   @unique
+  type       String
+  categorie  String
+  points     Int
+  is_ngc     Boolean
+  question   String
+  reponses   Json     @default("{}")
+  thematique String
+  tags       String[] @default([])
+  universes  String[] @default([])
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+}
+
 model SituationNGC {
   id         String     @id
   situation  Json?

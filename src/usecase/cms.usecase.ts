@@ -29,6 +29,12 @@ import {
 } from '../../src/domain/mission/missionDefinition';
 import { ContentType } from '../../src/domain/contenu/contentType';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
+import { KycDefinition } from '../../src/domain/kyc/kycDefinition';
+import {
+  TypeReponseQuestionKYC,
+  CategorieQuestionKYC,
+} from '../../src/domain/kyc/questionQYC';
+import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 
 @Injectable()
 export class CMSUsecase {
@@ -39,6 +45,7 @@ export class CMSUsecase {
     private aideRepository: AideRepository,
     private defiRepository: DefiRepository,
     private missionRepository: MissionRepository,
+    private kycRepository: KycRepository,
   ) {}
 
   async manageIncomingCMSData(cmsWebhookAPI: CMSWebhookAPI) {
@@ -176,6 +183,31 @@ export class CMSUsecase {
     return loading_result;
   }
 
+  async loadKYCFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste_kyc: KycDefinition[] = [];
+    const CMS_KYC_DATA = await this.loadDataFromCMS('kycs');
+
+    for (let index = 0; index < CMS_KYC_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_KYC_DATA[index];
+      let kyc: KycDefinition;
+      try {
+        kyc = CMSUsecase.buildKYCFromCMSPopulateData(element);
+        liste_kyc.push(kyc);
+        loading_result.push(`loaded kyc : ${kyc.id_cms}`);
+      } catch (error) {
+        loading_result.push(
+          `Could not load kyc ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (let index = 0; index < liste_kyc.length; index++) {
+      await this.kycRepository.upsert(liste_kyc[index]);
+    }
+    return loading_result;
+  }
+
   async loadMissionsFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste_missionsDef: MissionDefinition[] = [];
@@ -258,7 +290,7 @@ export class CMSUsecase {
     const URL = App.getCmsURL().concat(
       '/',
       type,
-      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[10]=prochaines_thematiques&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc',
+      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[10]=prochaines_thematiques&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses',
     );
     response = await axios.get(URL, {
       headers: {
@@ -511,6 +543,38 @@ export class CMSUsecase {
           ? entry.attributes.thematique_univers.data.map(
               (t) => ThematiqueUnivers[t.attributes.code],
             )
+          : [],
+    };
+  }
+
+  static buildKYCFromCMSPopulateData(
+    entry: CMSWebhookPopulateAPI,
+  ): KycDefinition {
+    return {
+      id_cms: entry.id,
+      code: entry.attributes.code,
+      type: TypeReponseQuestionKYC[entry.attributes.type],
+      categorie: CategorieQuestionKYC[entry.attributes.categorie],
+      points: entry.attributes.points,
+      is_ngc: entry.attributes.is_ngc,
+      question: entry.attributes.question,
+      reponses: entry.attributes.reponses
+        ? entry.attributes.reponses.map((r) => ({
+            reponse: r.reponse,
+            code: r.reponse,
+          }))
+        : [],
+      thematique: entry.attributes.thematique.data
+        ? ThematiqueRepository.getThematiqueByCmsId(
+            entry.attributes.thematique.data.id,
+          )
+        : Thematique.climat,
+      tags: entry.attributes.tags.data.map(
+        (elem) => TagUtilisateur[elem.attributes.code],
+      ),
+      universes:
+        entry.attributes.univers.data.length > 0
+          ? entry.attributes.univers.data.map((u) => Univers[u.attributes.code])
           : [],
     };
   }

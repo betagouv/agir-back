@@ -84,6 +84,15 @@ export class AdminController extends GenericControler {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.cmsUsecase.loadMissionsFromCMS();
   }
+  @Post('/admin/load_kycs_from_cms')
+  @ApiOperation({
+    summary: 'Upsert toutes les KYCs publiées du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async upsertAllKYCMissions(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.cmsUsecase.loadKYCFromCMS();
+  }
   @Post('/admin/load_defi_from_cms')
   @ApiOperation({
     summary: 'Upsert tous les défis publiés du CMS',

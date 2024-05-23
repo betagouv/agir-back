@@ -71,6 +71,11 @@ export type CMSWebhookPopulateAPI = {
     titre: string;
     sousTitre: string;
     astuces: string;
+    type: string;
+    categorie: string;
+    is_ngc: boolean;
+    code: string;
+    question: string;
     pourquoi: string;
     description: string;
     source: string;
@@ -186,6 +191,12 @@ export type CMSWebhookPopulateAPI = {
         },
       ];
     };
+    reponses: [
+      {
+        reponse: string;
+        code: string;
+      },
+    ];
     objectifs: [
       {
         id: number;
