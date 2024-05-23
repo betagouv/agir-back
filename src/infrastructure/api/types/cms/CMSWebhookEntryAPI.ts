@@ -82,7 +82,27 @@ export type CMSWebhookPopulateAPI = {
     publishedAt: string;
     is_simulation: boolean;
     montantMaximum: string;
+    est_visible: boolean;
     url_detail_front: string;
+    thematique_univers_unique: {
+      data: {
+        id: number;
+        attributes: {
+          code: string;
+        };
+      };
+    };
+
+    prochaines_thematiques: {
+      data: [
+        {
+          id: number;
+          attributes: {
+            code: string;
+          };
+        },
+      ];
+    };
     thematiques: {
       data: [
         {
@@ -166,5 +186,35 @@ export type CMSWebhookPopulateAPI = {
         },
       ];
     };
+    objectifs: [
+      {
+        id: number;
+        titre: string;
+        points: number;
+        article: {
+          data: {
+            id: number;
+          };
+        };
+        quizz: {
+          data: {
+            id: number;
+          };
+        };
+        defi: {
+          data: {
+            id: number;
+          };
+        };
+        kyc: {
+          data: {
+            id: number;
+            attributes: {
+              code: string;
+            };
+          };
+        };
+      },
+    ];
   };
 };

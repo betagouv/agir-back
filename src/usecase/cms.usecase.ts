@@ -23,6 +23,12 @@ import { Besoin } from '../../src/domain/aides/besoin';
 import { App } from '../../src/domain/app';
 import { ThematiqueUnivers } from '../domain/univers/thematiqueUnivers';
 import { Univers } from '../domain/univers/univers';
+import {
+  MissionDefinition,
+  ObjectifDefinition,
+} from '../../src/domain/mission/missionDefinition';
+import { ContentType } from '../../src/domain/contenu/contentType';
+import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
 
 @Injectable()
 export class CMSUsecase {
@@ -32,6 +38,7 @@ export class CMSUsecase {
     private thematiqueRepository: ThematiqueRepository,
     private aideRepository: AideRepository,
     private defiRepository: DefiRepository,
+    private missionRepository: MissionRepository,
   ) {}
 
   async manageIncomingCMSData(cmsWebhookAPI: CMSWebhookAPI) {
@@ -169,6 +176,31 @@ export class CMSUsecase {
     return loading_result;
   }
 
+  async loadMissionsFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste_missionsDef: MissionDefinition[] = [];
+    const CMS_MISSION_DATA = await this.loadDataFromCMS('missions');
+
+    for (let index = 0; index < CMS_MISSION_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_MISSION_DATA[index];
+      let mission_def: MissionDefinition;
+      try {
+        mission_def = CMSUsecase.buildMissionFromCMSPopulateData(element);
+        liste_missionsDef.push(mission_def);
+        loading_result.push(`loaded missions : ${mission_def.id_cms}`);
+      } catch (error) {
+        loading_result.push(
+          `Could not load mission ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (let index = 0; index < liste_missionsDef.length; index++) {
+      await this.missionRepository.upsert(liste_missionsDef[index]);
+    }
+    return loading_result;
+  }
+
   async loadAidesFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste_aides: Aide[] = [];
@@ -220,13 +252,13 @@ export class CMSUsecase {
   }
 
   private async loadDataFromCMS(
-    type: 'articles' | 'quizzes' | 'aides' | 'defis',
+    type: 'articles' | 'quizzes' | 'aides' | 'defis' | 'kycs' | 'missions',
   ): Promise<CMSWebhookPopulateAPI[]> {
     let response = null;
     const URL = App.getCmsURL().concat(
       '/',
       type,
-      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers',
+      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[10]=prochaines_thematiques&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc',
     );
     response = await axios.get(URL, {
       headers: {
@@ -234,6 +266,7 @@ export class CMSUsecase {
         Authorization: `Bearer ${App.getCmsApiKey()}`,
       },
     });
+    console.log(JSON.stringify(response.data.data));
     return response.data.data;
   }
 
@@ -482,6 +515,53 @@ export class CMSUsecase {
     };
   }
 
+  static buildMissionFromCMSPopulateData(
+    entry: CMSWebhookPopulateAPI,
+  ): MissionDefinition {
+    return {
+      id_cms: entry.id,
+      est_visible: entry.attributes.est_visible,
+      prochaines_thematiques:
+        entry.attributes.prochaines_thematiques.data.length > 0
+          ? entry.attributes.prochaines_thematiques.data.map(
+              (t) => ThematiqueUnivers[t.attributes.code],
+            )
+          : [],
+      thematique_univers: entry.attributes.thematique_univers_unique.data
+        ? ThematiqueUnivers[
+            entry.attributes.thematique_univers_unique.data.attributes.code
+          ]
+        : null,
+      objectifs:
+        entry.attributes.objectifs.length > 0
+          ? entry.attributes.objectifs.map((obj) => {
+              const result = new ObjectifDefinition({
+                titre: obj.titre,
+                content_id: null,
+                points: obj.points,
+                type: null,
+              });
+              if (obj.article.data) {
+                result.type = ContentType.article;
+                result.content_id = obj.article.data.id.toString();
+              }
+              if (obj.defi.data) {
+                result.type = ContentType.defi;
+                result.content_id = obj.defi.data.id.toString();
+              }
+              if (obj.quizz.data) {
+                result.type = ContentType.quizz;
+                result.content_id = obj.quizz.data.id.toString();
+              }
+              if (obj.kyc.data) {
+                result.type = ContentType.kyc;
+                result.content_id = obj.kyc.data.attributes.code;
+              }
+              return result;
+            })
+          : [],
+    };
+  }
   private static getTitresFromRubriques(
     rubriques: CMSWebhookRubriqueAPI[],
   ): string[] {
