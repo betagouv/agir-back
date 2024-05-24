@@ -33,6 +33,7 @@ import { KycDefinition } from '../../src/domain/kyc/kycDefinition';
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
+  KYCID,
 } from '../../src/domain/kyc/questionQYC';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 
@@ -492,7 +493,7 @@ export class CMSUsecase {
   static buildKycFromCMSData(entry: CMSWebhookEntryAPI): KycDefinition {
     return {
       id_cms: entry.id,
-      code: entry.code,
+      code: KYCID[entry.code],
       categorie: CategorieQuestionKYC[entry.categorie],
       type: TypeReponseQuestionKYC[entry.type],
       is_ngc: entry.is_ngc,
@@ -503,7 +504,7 @@ export class CMSUsecase {
         : Thematique.climat,
       reponses: entry.reponses
         ? entry.reponses.map((r) => ({
-            reponse: r.reponse,
+            label: r.reponse,
             code: r.code,
           }))
         : [],
@@ -663,7 +664,7 @@ export class CMSUsecase {
   ): KycDefinition {
     return {
       id_cms: entry.id,
-      code: entry.attributes.code,
+      code: KYCID[entry.attributes.code],
       type: TypeReponseQuestionKYC[entry.attributes.type],
       categorie: CategorieQuestionKYC[entry.attributes.categorie],
       points: entry.attributes.points,
@@ -671,7 +672,7 @@ export class CMSUsecase {
       question: entry.attributes.question,
       reponses: entry.attributes.reponses
         ? entry.attributes.reponses.map((r) => ({
-            reponse: r.reponse,
+            label: r.reponse,
             code: r.reponse,
           }))
         : [],

@@ -3,6 +3,7 @@ import { QuestionKYC_v0 } from '../object_store/kyc/kycHistory_v0';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
 import { Univers } from '../univers/univers';
+import { KycDefinition } from './kycDefinition';
 
 export enum KYCID {
   KYC001 = 'KYC001',
@@ -79,6 +80,22 @@ export class QuestionKYC implements TaggedContent {
     this.tags = data.tags ? data.tags : [];
     this.score = 0;
     this.universes = data.universes ? data.universes : [];
+  }
+
+  public static buildFromDef(def: KycDefinition): QuestionKYC {
+    return new QuestionKYC({
+      categorie: def.categorie,
+      id: def.code,
+      is_NGC: def.is_ngc,
+      points: def.points,
+      tags: def.tags,
+      type: def.type,
+      ngc_key: null,
+      thematique: def.thematique,
+      universes: def.universes,
+      question: def.question,
+      reponses_possibles: def.reponses ? def.reponses : [],
+    });
   }
 
   public hasResponses(): boolean {

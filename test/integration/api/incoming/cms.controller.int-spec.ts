@@ -348,11 +348,11 @@ describe('/api/incoming/cms (API test)', () => {
     expect(item.is_ngc).toEqual(false);
     expect(item.reponses).toEqual([
       {
-        reponse: 'haha',
+        label: 'haha',
         code: 'haha_code',
       },
       {
-        reponse: 'hihi',
+        label: 'hihi',
         code: 'hihi_code',
       },
     ]);

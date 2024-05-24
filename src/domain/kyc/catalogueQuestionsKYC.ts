@@ -7,7 +7,6 @@ import {
   BooleanKYC,
   CategorieQuestionKYC,
   KYCID,
-  QuestionKYC,
   TypeReponseQuestionKYC,
 } from './questionQYC';
 
@@ -326,8 +325,8 @@ const CATALOGUE: QuestionKYC_v0[] = [
 ];
 
 export class CatalogueQuestionsKYC {
-  private static kyc_catalogue: QuestionKYC_v0[] = CATALOGUE;
-
+  //private static kyc_catalogue: QuestionKYC_v0[] = CATALOGUE;
+  /*
   public static getByCategorie(cat: CategorieQuestionKYC): QuestionKYC[] {
     const result = [];
     CatalogueQuestionsKYC.kyc_catalogue.forEach((e) => {
@@ -372,4 +371,5 @@ export class CatalogueQuestionsKYC {
   public static resetCatalogue() {
     CatalogueQuestionsKYC.kyc_catalogue = CATALOGUE;
   }
+  */
 }

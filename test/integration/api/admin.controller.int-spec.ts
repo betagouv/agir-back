@@ -22,6 +22,11 @@ import {
   Defi_v0,
 } from '../../../src/domain/object_store/defi/defiHistory_v0';
 import { Univers } from '../../../src/domain/univers/univers';
+import {
+  CategorieQuestionKYC,
+  KYCID,
+  TypeReponseQuestionKYC,
+} from '../../../src/domain/kyc/questionQYC';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
@@ -1001,6 +1006,19 @@ describe('Admin (API test)', () => {
         consommation: Consommation.raisonnable,
         commune: 'PALAISEAU',
       },
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      categorie: CategorieQuestionKYC.default,
+      points: 10,
+      question: 'Comment avez vous connu le service ?',
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
     });
 
     const userDB_before = await utilisateurRepository.getById('utilisateur-id');

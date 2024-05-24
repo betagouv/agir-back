@@ -1013,6 +1013,19 @@ describe('TODO list (API test)', () => {
         todo_active: 0,
       },
     });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._1,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      categorie: CategorieQuestionKYC.default,
+      points: 10,
+      question: 'Comment avez vous connu le service ?',
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
+    });
 
     // WHEN
     const response = await TestUtil.PUT(

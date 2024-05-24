@@ -7,6 +7,8 @@ import { Univers } from '../../../src/domain/univers/univers';
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
+  KYCID,
+  BooleanKYC,
 } from '../../../src/domain/kyc/questionQYC';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { EventType } from '../../../src/domain/appEvent';
@@ -251,25 +253,7 @@ describe('Mission (API test)', () => {
     expect(item_2.is_locked).toEqual(true);
     expect(item_2.done_at).toEqual(new Date(0).toISOString());
   });
-  it(`GET /utilisateurs/id/missions/:missionId/next_kyc - renvoie la prochaine question à poser`, async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, { missions: missions });
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/missions/1/next_kyc',
-    );
 
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.id).toEqual('_3');
-    expect(response.body.type).toEqual(TypeReponseQuestionKYC.choix_unique);
-    expect(response.body.points).toEqual(10);
-    expect(response.body.reponses_possibles).toEqual(['Oui', 'Non', 'A voir']);
-    expect(response.body.categorie).toEqual(CategorieQuestionKYC.default);
-    expect(response.body.question).toEqual(
-      `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
-    );
-  });
   it(`GET /utilisateurs/id/missions/:missionId/next_kyc - renvoie 404 si plus de kyc à faire`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: missions_kyc_done });
@@ -284,6 +268,31 @@ describe('Mission (API test)', () => {
   it(`GET /utilisateurs/id/missions/:missionId/next_kyc - renvoie la prochaine question à poser`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: missions });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: CategorieQuestionKYC.default,
+      points: 10,
+      question: 'Comment avez vous connu le service ?',
+      reponses: [
+        { label: 'Moins de 15 ans (neuf ou récent)', code: 'moins_15' },
+        { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
+      ],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID._3,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: CategorieQuestionKYC.default,
+      points: 10,
+      question: `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
+      reponses: [
+        { label: 'Oui', code: BooleanKYC.oui },
+        { label: 'Non', code: BooleanKYC.non },
+        { label: 'A voir', code: BooleanKYC.peut_etre },
+      ],
+    });
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/missions/1/next_kyc',
@@ -315,6 +324,31 @@ describe('Mission (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       missions: missions_kyc_plus_article,
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: CategorieQuestionKYC.default,
+      points: 10,
+      question: 'Comment avez vous connu le service ?',
+      reponses: [
+        { label: 'Moins de 15 ans (neuf ou récent)', code: 'moins_15' },
+        { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
+      ],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID._3,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: CategorieQuestionKYC.default,
+      points: 10,
+      question: 'Comment avez vous connu le service ?',
+      reponses: [
+        { label: 'Oui', code: BooleanKYC.oui },
+        { label: 'Non', code: BooleanKYC.non },
+        { label: 'A voir', code: BooleanKYC.peut_etre },
+      ],
     });
 
     // WHEN

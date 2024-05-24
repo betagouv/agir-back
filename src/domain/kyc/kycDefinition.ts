@@ -1,17 +1,21 @@
 import { Thematique } from '../contenu/thematique';
 import { Tag } from '../scoring/tag';
 import { Univers } from '../univers/univers';
-import { CategorieQuestionKYC, TypeReponseQuestionKYC } from './questionQYC';
+import {
+  CategorieQuestionKYC,
+  KYCID,
+  TypeReponseQuestionKYC,
+} from './questionQYC';
 
 export class KycDefinition {
   id_cms: number;
-  code: string;
+  code: KYCID;
   type: TypeReponseQuestionKYC;
   categorie: CategorieQuestionKYC;
   points: number;
   is_ngc: boolean;
   question: string;
-  reponses?: { reponse: string; code: string }[];
+  reponses?: { label: string; code: string }[];
   thematique: Thematique;
   tags: Tag[];
   universes: Univers[];
@@ -20,6 +24,7 @@ export class KycDefinition {
     this.id_cms = data.id_cms;
     this.code = data.code;
     this.type = data.type;
+    this.points = data.points;
     this.categorie = data.categorie;
     this.is_ngc = data.is_ngc;
     this.question = data.question;

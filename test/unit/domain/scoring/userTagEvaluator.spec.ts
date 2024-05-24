@@ -19,7 +19,13 @@ import { OnboardingResult } from '../../../../src/domain/onboarding/onboardingRe
 import { UserTagEvaluator } from '../../../../src/domain/scoring/userTagEvaluator';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
-import { KYCID } from '../../../../src/domain/kyc/questionQYC';
+import {
+  CategorieQuestionKYC,
+  KYCID,
+  TypeReponseQuestionKYC,
+} from '../../../../src/domain/kyc/questionQYC';
+import { Thematique } from '../../../../src/domain/contenu/thematique';
+import { Univers } from '../../../../src/domain/univers/univers';
 
 const ONBOARDING_DATA = {
   version: 0,
@@ -67,6 +73,7 @@ describe('UseragEvaluator', () => {
     const user = initNewUser(
       new Onboarding({ ...ONBOARDING_DATA, consommation: Consommation.jamais }),
     );
+    user.kyc_history.setCatalogue([]);
 
     // WHEN
     UserTagEvaluator.recomputeRecoTags(user);
@@ -82,6 +89,7 @@ describe('UseragEvaluator', () => {
         consommation: Consommation.shopping,
       }),
     );
+    user.kyc_history.setCatalogue([]);
 
     // WHEN
     UserTagEvaluator.recomputeRecoTags(user);
@@ -97,6 +105,7 @@ describe('UseragEvaluator', () => {
         repas: Repas.vegan,
       }),
     );
+    user.kyc_history.setCatalogue([]);
 
     // WHEN
     UserTagEvaluator.recomputeRecoTags(user);
@@ -112,6 +121,7 @@ describe('UseragEvaluator', () => {
         repas: Repas.viande,
       }),
     );
+    user.kyc_history.setCatalogue([]);
 
     // WHEN
     UserTagEvaluator.recomputeRecoTags(user);
@@ -127,6 +137,7 @@ describe('UseragEvaluator', () => {
         repas: Repas.viande,
       }),
     );
+    user.kyc_history.setCatalogue([]);
 
     // WHEN
     UserTagEvaluator.recomputeRecoTags(user);
@@ -142,6 +153,7 @@ describe('UseragEvaluator', () => {
         transports: [TransportQuotidien.moto],
       }),
     );
+    user.kyc_history.setCatalogue([]);
 
     // WHEN
     UserTagEvaluator.recomputeRecoTags(user);
@@ -157,6 +169,7 @@ describe('UseragEvaluator', () => {
         transports: [TransportQuotidien.voiture],
       }),
     );
+    user.kyc_history.setCatalogue([]);
 
     // WHEN
     UserTagEvaluator.recomputeRecoTags(user);
@@ -172,6 +185,7 @@ describe('UseragEvaluator', () => {
         transports: [TransportQuotidien.pied],
       }),
     );
+    user.kyc_history.setCatalogue([]);
 
     // WHEN
     UserTagEvaluator.recomputeRecoTags(user);
@@ -182,6 +196,33 @@ describe('UseragEvaluator', () => {
   it('recomputeRecoTags : kyc_001 : tout à zero', () => {
     // GIVEN
     const user = initNewUser(new Onboarding({ ...ONBOARDING_DATA }));
+    user.kyc_history.setCatalogue([
+      {
+        id_cms: 1,
+        categorie: CategorieQuestionKYC.recommandation,
+        code: KYCID.KYC001,
+        is_ngc: false,
+        points: 10,
+        question: 'The question !',
+        tags: [Tag.possede_voiture],
+        universes: [Univers.alimentation],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_multiple,
+        reponses: [
+          { label: '🥦 Alimentation', code: Thematique.alimentation },
+          { label: '☀️ Climat et Environnement', code: Thematique.climat },
+          { label: '🛒 Consommation durable', code: Thematique.consommation },
+          { label: '🗑️ Déchets', code: Thematique.dechet },
+          { label: '🏡 Logement', code: Thematique.logement },
+          {
+            label: '⚽ Loisirs (vacances, sport,...)',
+            code: Thematique.loisir,
+          },
+          { label: '🚗 Transports', code: Thematique.transport },
+          { label: 'Aucun / Je ne sais pas', code: 'rien' },
+        ],
+      },
+    ]);
     user.kyc_history.updateQuestion(KYCID.KYC001, []);
 
     // WHEN
@@ -199,6 +240,33 @@ describe('UseragEvaluator', () => {
   it('recomputeRecoTags : kyc_001 : tout à 50', () => {
     // GIVEN
     const user = initNewUser(new Onboarding({ ...ONBOARDING_DATA }));
+    user.kyc_history.setCatalogue([
+      {
+        id_cms: 1,
+        categorie: CategorieQuestionKYC.recommandation,
+        code: KYCID.KYC001,
+        is_ngc: false,
+        points: 10,
+        question: 'The question !',
+        tags: [Tag.possede_voiture],
+        universes: [Univers.alimentation],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_multiple,
+        reponses: [
+          { label: '🥦 Alimentation', code: Thematique.alimentation },
+          { label: '☀️ Climat et Environnement', code: Thematique.climat },
+          { label: '🛒 Consommation durable', code: Thematique.consommation },
+          { label: '🗑️ Déchets', code: Thematique.dechet },
+          { label: '🏡 Logement', code: Thematique.logement },
+          {
+            label: '⚽ Loisirs (vacances, sport,...)',
+            code: Thematique.loisir,
+          },
+          { label: '🚗 Transports', code: Thematique.transport },
+          { label: 'Aucun / Je ne sais pas', code: 'rien' },
+        ],
+      },
+    ]);
     user.kyc_history.updateQuestion(KYCID.KYC001, [
       '🥦 Alimentation',
       '☀️ Climat et Environnement',

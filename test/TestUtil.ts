@@ -51,6 +51,7 @@ import {
   Univers as UniversDB,
   ThematiqueUnivers as ThematiqueUniversDB,
   Mission,
+  KYC,
 } from '.prisma/client';
 import {
   Aide,
@@ -75,6 +76,7 @@ import { Besoin } from '../src/domain/aides/besoin';
 import { Univers } from '../src/domain/univers/univers';
 import { ThematiqueUnivers } from '../src/domain/univers/thematiqueUnivers';
 import { ContentType } from '../src/domain/contenu/contentType';
+import { Tag } from '../src/domain/scoring/tag';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -96,6 +98,7 @@ export enum DB {
   quizz = 'quizz',
   defiStatistique = 'defiStatistique',
   mission = 'mission',
+  kYC = 'kYC',
 }
 export class TestUtil {
   private static TYPE_DATA_MAP: Record<DB, Function> = {
@@ -118,6 +121,7 @@ export class TestUtil {
     thematiqueUnivers: TestUtil.thematiqueUniversData,
     defiStatistique: TestUtil.defiStatistiqueData,
     mission: TestUtil.missionData,
+    kYC: TestUtil.kycData,
   };
 
   constructor() {}
@@ -378,6 +382,30 @@ export class TestUtil {
       prochaines_thematiques: [
         ThematiqueUnivers.manger_local,
         ThematiqueUnivers.dechets_compost,
+      ],
+      created_at: undefined,
+      updated_at: undefined,
+      ...override,
+    };
+  }
+
+  static kycData(override?: Partial<KYC>): KYC {
+    return {
+      id_cms: 1,
+      categorie: CategorieQuestionKYC.recommandation,
+      code: KYCID.KYC001,
+      is_ngc: false,
+      points: 10,
+      question: 'The question !',
+      tags: [Tag.possede_voiture],
+      universes: [Univers.alimentation],
+      thematique: Thematique.climat,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      reponses: [
+        {
+          code: 'c123',
+          reponse: 'la reponse D',
+        },
       ],
       created_at: undefined,
       updated_at: undefined,

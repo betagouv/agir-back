@@ -9,7 +9,13 @@ import {
   TypeLogement,
 } from '../../../src/domain/logement/logement';
 import { TransportQuotidien } from '../../../src/domain/transport/transport';
-import { KYCID } from '../../../src/domain/kyc/questionQYC';
+import {
+  CategorieQuestionKYC,
+  KYCID,
+  TypeReponseQuestionKYC,
+} from '../../../src/domain/kyc/questionQYC';
+import { Thematique } from '../../../src/domain/contenu/thematique';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 var crypto = require('crypto');
 
 const ONBOARDING_1_2_3_4_DATA = {
@@ -41,6 +47,7 @@ function getFakeUtilisteur() {
 describe('/utilisateurs - Compte utilisateur (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const kycRepository = new KycRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -491,6 +498,32 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   it('PATCH /utilisateurs/id/logement - update logement datas', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      categorie: CategorieQuestionKYC.default,
+      points: 10,
+      question: 'Comment avez vous connu le service ?',
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID.KYC006,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: CategorieQuestionKYC.default,
+      points: 10,
+      question: 'Comment avez vous connu le service ?',
+      reponses: [
+        { label: 'Moins de 15 ans (neuf ou récent)', code: 'moins_15' },
+        { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
+      ],
+    });
+
     // WHEN
     const response = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/logement',
@@ -524,6 +557,32 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   it('PATCH /utilisateurs/id/logement - update KYC006 si logement plus 15 ans', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      categorie: CategorieQuestionKYC.default,
+      points: 10,
+      question: 'Comment avez vous connu le service ?',
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID.KYC006,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: CategorieQuestionKYC.default,
+      points: 10,
+      question: 'Comment avez vous connu le service ?',
+      reponses: [
+        { label: 'Moins de 15 ans (neuf ou récent)', code: 'moins_15' },
+        { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
+      ],
+    });
+
     // WHEN
     const response = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/logement',
@@ -533,6 +592,9 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     const dbUser = await utilisateurRepository.getById('utilisateur-id');
+    const catalogue = await kycRepository.getAllDefs();
+    dbUser.kyc_history.setCatalogue(catalogue);
+
     const question = dbUser.kyc_history.getQuestion(KYCID.KYC006);
     expect(question.hasResponses());
     expect(question.includesReponseCode('plus_15'));
@@ -540,6 +602,19 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   it('PATCH /utilisateurs/id/transport - update transport datas and reco tags', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      categorie: CategorieQuestionKYC.default,
+      points: 10,
+      question: 'Comment avez vous connu le service ?',
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
+    });
     // WHEN
     let response = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/transport',
