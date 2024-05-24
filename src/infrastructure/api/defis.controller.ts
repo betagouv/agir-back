@@ -8,15 +8,11 @@ import {
 } from '@nestjs/swagger';
 import {
   Controller,
-  Put,
   Param,
   Body,
   UseGuards,
-  Response,
   Request,
   Get,
-  HttpStatus,
-  UseFilters,
   Patch,
   Query,
 } from '@nestjs/common';
@@ -26,12 +22,16 @@ import { DefisUsecase } from '../../../src/usecase/defis.usecase';
 import { DefiAPI, PatchDefiStatusAPI } from './types/defis/DefiAPI';
 import { Univers } from '../../../src/domain/univers/univers';
 import { DefiStatus } from '../../../src/domain/defis/defi';
+import { DefiStatistiqueUsecase } from '../../../src/usecase/defiStatistique.usecase';
 
 @Controller()
 @ApiBearerAuth()
 @ApiTags('Defis')
 export class DefisController extends GenericControler {
-  constructor(private readonly defisUsecase: DefisUsecase) {
+  constructor(
+    private readonly defisUsecase: DefisUsecase,
+    private readonly defiStatistiqueUsecase: DefiStatistiqueUsecase,
+  ) {
     super();
   }
 
@@ -50,7 +50,10 @@ export class DefisController extends GenericControler {
   ): Promise<DefiAPI> {
     this.checkCallerId(req, utilisateurId);
     const result = await this.defisUsecase.getById(utilisateurId, defiId);
-    return DefiAPI.mapToAPI(result);
+    const resultDefiStatistique = await this.defiStatistiqueUsecase.getById(
+      defiId,
+    );
+    return DefiAPI.mapToAPI(result, resultDefiStatistique);
   }
 
   @Patch('utilisateurs/:utilisateurId/defis/:defiId')

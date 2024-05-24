@@ -32,7 +32,7 @@ const DEFI_1_DEF: Defi = {
 
 describe('/utilisateurs/id/defis (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
-  let thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
+  const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
   const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
   const DEFI_1: Defi_v0 = {
@@ -331,7 +331,6 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
     expect(defi.id).toBe('2');
   });
-
   it('GET /utilisateurs/id/defis?status=todo - liste des défis à a faire par ordre de reco', async () => {
     // GIVEN
     const defis: DefiHistory_v0 = {
@@ -411,6 +410,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi.sous_titre).toBe('sous_titre');
     expect(defi.thematique_label).toBe('t1');
     expect(defi.status).toBe(DefiStatus.todo);
+    expect(defi.nombre_de_fois_realise).toEqual(0);
   });
   it('GET /utilisateurs/id/defis/id - correct data defis utlisateur', async () => {
     // GIVEN
@@ -441,6 +441,10 @@ describe('/utilisateurs/id/defis (API test)', () => {
       id_cms: 1,
       titre: 't1',
     });
+    await TestUtil.create(DB.defiStatistique, {
+      content_id: '001',
+      nombre_defis_realises: 123,
+    });
     await thematiqueRepository.loadThematiques();
 
     // WHEN
@@ -463,6 +467,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi.sous_titre).toBe('SOUS TITRE');
     expect(defi.thematique_label).toBe('t1');
     expect(defi.status).toBe(DefiStatus.en_cours);
+    expect(defi.nombre_de_fois_realise).toEqual(123);
   });
   it('PATCH /utilisateurs/id/defis/id - patch le status d un defi en cours', async () => {
     // GIVEN

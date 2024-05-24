@@ -1198,9 +1198,9 @@ describe('Admin (API test)', () => {
     const defis_1: DefiHistory_v0 = {
       version: 0,
       defis: [
-        { ...DEFI, id: '1', status: DefiStatus.deja_fait, titre: 'A' },
-        { ...DEFI, id: '2', status: DefiStatus.deja_fait, titre: 'B' },
-        { ...DEFI, id: '3', status: DefiStatus.deja_fait, titre: 'C' },
+        { ...DEFI, id: '1', status: DefiStatus.pas_envie, titre: 'A' },
+        { ...DEFI, id: '2', status: DefiStatus.pas_envie, titre: 'B' },
+        { ...DEFI, id: '3', status: DefiStatus.pas_envie, titre: 'C' },
       ],
     };
     const defis_2: DefiHistory_v0 = {
@@ -1262,7 +1262,7 @@ describe('Admin (API test)', () => {
     expect(defi_1_stat).toEqual({
       content_id: '1',
       titre: 'A',
-      nombre_defis_deja_fait: 1,
+      nombre_defis_pas_envie: 1,
       nombre_defis_abandonnes: 0,
       nombre_defis_en_cours: 1,
       nombre_defis_realises: 1,
@@ -1270,7 +1270,7 @@ describe('Admin (API test)', () => {
     expect(defi_2_stat).toEqual({
       content_id: '2',
       titre: 'B',
-      nombre_defis_deja_fait: 1,
+      nombre_defis_pas_envie: 1,
       nombre_defis_abandonnes: 1,
       nombre_defis_en_cours: 0,
       nombre_defis_realises: 1,
@@ -1278,7 +1278,7 @@ describe('Admin (API test)', () => {
     expect(defi_3_stat).toEqual({
       content_id: '3',
       titre: 'C',
-      nombre_defis_deja_fait: 1,
+      nombre_defis_pas_envie: 1,
       nombre_defis_abandonnes: 0,
       nombre_defis_en_cours: 0,
       nombre_defis_realises: 2,

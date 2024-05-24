@@ -55,6 +55,7 @@ import {
   Aide,
   Article,
   Defi,
+  DefiStatistique,
   Groupe,
   GroupeAbonnement,
   Linky,
@@ -91,6 +92,7 @@ export enum DB {
   linky = 'linky',
   article = 'article',
   quizz = 'quizz',
+  defiStatistique = 'defiStatistique',
 }
 export class TestUtil {
   private static TYPE_DATA_MAP: Record<DB, Function> = {
@@ -111,6 +113,7 @@ export class TestUtil {
     quizz: TestUtil.quizzData,
     univers: TestUtil.universData,
     thematiqueUnivers: TestUtil.thematiqueUniversData,
+    defiStatistique: TestUtil.defiStatistiqueData,
   };
 
   constructor() {}
@@ -679,6 +682,21 @@ export class TestUtil {
       points: 10,
       thematiques: ['logement'],
       thematique_principale: 'logement',
+      created_at: new Date(),
+      updated_at: new Date(),
+      ...override,
+    };
+  }
+  static defiStatistiqueData(
+    override?: Partial<DefiStatistique>,
+  ): DefiStatistique {
+    return {
+      content_id: 'contentId',
+      titre: 'Titre de mon article',
+      nombre_defis_abandonnes: 0,
+      nombre_defis_en_cours: 0,
+      nombre_defis_pas_envie: 0,
+      nombre_defis_realises: 0,
       created_at: new Date(),
       updated_at: new Date(),
       ...override,

@@ -66,7 +66,7 @@ export class Defi implements TaggedContent {
       return null;
     }
 
-    let delta = this.date_acceptation.getTime() + 7 * DAY_IN_MS - Date.now();
+    const delta = this.date_acceptation.getTime() + 7 * DAY_IN_MS - Date.now();
     return Math.round(delta / DAY_IN_MS);
   }
 

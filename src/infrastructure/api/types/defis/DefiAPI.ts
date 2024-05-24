@@ -3,6 +3,7 @@ import { Univers } from '../../../../../src/domain/univers/univers';
 import { Thematique } from '../../../../../src/domain/contenu/thematique';
 import { Defi, DefiStatus } from '../../../../../src/domain/defis/defi';
 import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
+import { DefiStatistique } from '../../../../../src/domain/defis/defiStatistique';
 
 export class PatchDefiStatusAPI {
   @ApiProperty({ enum: DefiStatus }) status: DefiStatus;
@@ -23,8 +24,12 @@ export class DefiAPI {
   @ApiProperty() jours_restants: number;
   @ApiProperty({ enum: Univers, enumName: 'Univers', isArray: true })
   universes: Univers[];
+  @ApiProperty() nombre_de_fois_realise: number;
 
-  public static mapToAPI(defi: Defi): DefiAPI {
+  public static mapToAPI(
+    defi: Defi,
+    defiStatistique?: DefiStatistique,
+  ): DefiAPI {
     return {
       id: defi.id,
       astuces: defi.astuces,
@@ -40,6 +45,9 @@ export class DefiAPI {
       titre: defi.titre,
       universes: defi.universes,
       motif: defi.motif,
+      nombre_de_fois_realise: defiStatistique
+        ? defiStatistique.nbr_realise
+        : undefined,
     };
   }
 }
