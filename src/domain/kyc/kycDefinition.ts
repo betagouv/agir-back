@@ -12,7 +12,7 @@ export class KycDefinition {
   is_ngc: boolean;
   question: string;
   reponses?: { reponse: string; code: string }[];
-  thematique?: Thematique;
+  thematique: Thematique;
   tags: Tag[];
   universes: Univers[];
 

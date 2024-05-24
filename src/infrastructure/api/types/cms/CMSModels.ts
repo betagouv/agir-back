@@ -6,5 +6,7 @@ export enum CMSModel {
   univers = 'univers',
   'thematique-univers' = 'thematique-univers',
   defi = 'defi',
+  kyc = 'kyc',
+  mission = 'mission',
   unkown = 'unkown',
 }

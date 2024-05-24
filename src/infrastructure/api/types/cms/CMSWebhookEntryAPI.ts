@@ -3,10 +3,31 @@ import { CMSTagAPI } from './CMSTagAPI';
 import { CMSThematiqueAPI } from './CMSThematiqueAPI';
 import { CMSWebhookImageURLAPI } from './CMSWebhookImageURLAPI';
 
+export class IDAPI {
+  @ApiProperty() id: number;
+}
+export class CodeAPI {
+  @ApiProperty() code: string;
+}
+
 export class CMSWebhookBesoinAPI {
   @ApiProperty() id: number;
   @ApiProperty() code: string;
   @ApiProperty() description: string;
+}
+export class CMSWebhookObjectifAPI {
+  @ApiProperty() id: number;
+  @ApiProperty() titre: string;
+  @ApiProperty() points: number;
+  @ApiProperty({ type: IDAPI }) article: IDAPI;
+  @ApiProperty({ type: IDAPI }) defi: IDAPI;
+  @ApiProperty({ type: IDAPI }) quizz: IDAPI;
+  @ApiProperty({ type: CodeAPI }) kyc: CodeAPI;
+}
+export class CMSWebhookReponseKYCAPI {
+  @ApiProperty() id: number;
+  @ApiProperty() code: string;
+  @ApiProperty() reponse: string;
 }
 export class CMSWebhookUniversAPI {
   @ApiProperty() id: number;
@@ -28,7 +49,13 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() id: number;
   @ApiProperty() titre: string;
   @ApiProperty() code: string;
+  @ApiProperty() est_visible: boolean;
+  @ApiProperty() categorie: string;
+  @ApiProperty() type: string;
   @ApiProperty() label: string;
+  @ApiProperty() question: string;
+  @ApiProperty({ type: [CMSWebhookReponseKYCAPI] })
+  reponses: CMSWebhookReponseKYCAPI[];
   @ApiProperty({ type: CMSWebhookUniversAPI })
   univers_parent: CMSWebhookUniversAPI;
   @ApiProperty() sousTitre: string;
@@ -41,6 +68,14 @@ export class CMSWebhookEntryAPI {
   univers: CMSWebhookUniversAPI[];
   @ApiProperty({ type: [CMSWebhookThematiqueUniversAPI] })
   thematique_univers: CMSWebhookThematiqueUniversAPI[];
+  @ApiProperty({ type: CMSWebhookThematiqueUniversAPI })
+  thematique_univers_unique: CMSWebhookThematiqueUniversAPI;
+
+  @ApiProperty({ type: [CMSWebhookObjectifAPI] })
+  objectifs: CMSWebhookObjectifAPI[];
+
+  @ApiProperty({ type: [CMSWebhookThematiqueUniversAPI] })
+  prochaines_thematiques: CMSWebhookThematiqueUniversAPI[];
   @ApiProperty({ type: CMSThematiqueAPI })
   thematique: CMSThematiqueAPI;
   @ApiProperty({ type: [CMSTagAPI] })
@@ -63,6 +98,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() publishedAt: Date;
   @ApiProperty() url_detail_front: string;
   @ApiProperty() is_simulation: boolean;
+  @ApiProperty() is_ngc: boolean;
   @ApiProperty() montantMaximum: string;
 }
 export type CMSWebhookPopulateAPI = {

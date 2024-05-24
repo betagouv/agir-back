@@ -205,6 +205,7 @@ export class TestUtil {
     await this.prisma.quizStatistique.deleteMany();
     await this.prisma.kycStatistique.deleteMany();
     await this.prisma.mission.deleteMany();
+    await this.prisma.kYC.deleteMany();
     ThematiqueRepository.resetAllRefs();
   }
 
