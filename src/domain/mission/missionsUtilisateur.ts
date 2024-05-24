@@ -3,6 +3,7 @@ import { MissionsUtilisateur_v0 } from '../object_store/mission/MissionsUtilisat
 import { ThematiqueUnivers } from '../univers/thematiqueUnivers';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { Mission, Objectif } from './mission';
+import { MissionDefinition } from './missionDefinition';
 
 export class MissionsUtilisateur {
   missions: Mission[];
@@ -21,6 +22,12 @@ export class MissionsUtilisateur {
   }
   public getMissionById(missionId: string): Mission {
     return this.missions.find((m) => m.id === missionId);
+  }
+
+  public addMission(mission_def: MissionDefinition): Mission {
+    const new_mission = Mission.buildFromDef(mission_def);
+    this.missions.push(new_mission);
+    return new_mission;
   }
 
   public validateContentDone(

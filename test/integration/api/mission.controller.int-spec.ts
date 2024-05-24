@@ -210,7 +210,7 @@ describe('Mission (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it(`GET /utilisateurs/id/thematiques/climat/mission - renvoie la mission de la thématique`, async () => {
+  it(`GET /utilisateurs/id/thematiques/climat/mission - renvoie la mission de la thématique - à partir du compte utilisateur`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: missions });
     await TestUtil.create(DB.univers, {
@@ -244,16 +244,63 @@ describe('Mission (API test)', () => {
     expect(response.body.done_at).toEqual(new Date(1).toISOString());
     expect(response.body.objectifs).toHaveLength(4);
 
-    const item_2 = response.body.objectifs[1];
-    expect(item_2.id).toEqual('1');
-    expect(item_2.content_id).toEqual('13');
-    expect(item_2.type).toEqual(ContentType.article);
-    expect(item_2.titre).toEqual('Super article');
-    expect(item_2.points).toEqual(10);
-    expect(item_2.is_locked).toEqual(true);
-    expect(item_2.done_at).toEqual(new Date(0).toISOString());
+    const objectif = response.body.objectifs[1];
+    expect(objectif.id).toEqual('1');
+    expect(objectif.content_id).toEqual('13');
+    expect(objectif.type).toEqual(ContentType.article);
+    expect(objectif.titre).toEqual('Super article');
+    expect(objectif.points).toEqual(10);
+    expect(objectif.is_locked).toEqual(true);
+    expect(objectif.done_at).toEqual(new Date(0).toISOString());
   });
 
+  it(`GET /utilisateurs/id/thematiques/climat/mission - renvoie la mission de la thématique - à partir du catalgue de mission`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { missions: {} });
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Mange de la graine',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+    await TestUtil.create(DB.mission);
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/cereales/mission',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.id).toEqual('1');
+    expect(response.body.is_new).toEqual(true);
+    expect(response.body.progression).toEqual({ current: 0, target: 1 });
+    expect(response.body.thematique_univers).toEqual('cereales');
+    expect(response.body.thematique_univers_label).toEqual(
+      'Mange de la graine',
+    );
+    expect(response.body.univers_label).toEqual('Faut manger !');
+    expect(response.body.done_at).toEqual(null);
+    expect(response.body.objectifs).toHaveLength(1);
+
+    const objctif = response.body.objectifs[0];
+    expect(objctif.id.length).toBeGreaterThan(10);
+    expect(objctif.content_id).toEqual('1');
+    expect(objctif.type).toEqual(ContentType.article);
+    expect(objctif.titre).toEqual('obj 1');
+    expect(objctif.points).toEqual(25);
+    expect(objctif.is_locked).toEqual(false);
+    expect(objctif.done_at).toEqual(null);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.missions.missions).toHaveLength(1);
+  });
   it(`GET /utilisateurs/id/missions/:missionId/next_kyc - renvoie 404 si plus de kyc à faire`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: missions_kyc_done });

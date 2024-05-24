@@ -5,6 +5,8 @@ import {
 } from '../object_store/mission/MissionsUtilisateur_v0';
 import { ThematiqueUnivers } from '../univers/thematiqueUnivers';
 import { Utilisateur } from '../utilisateur/utilisateur';
+import { MissionDefinition } from './missionDefinition';
+import { v4 as uuidv4 } from 'uuid';
 
 export class Objectif {
   id: string;
@@ -60,6 +62,27 @@ export class Mission {
     }
   }
 
+  public static buildFromDef(def: MissionDefinition): Mission {
+    return new Mission({
+      done_at: null,
+      id: def.id_cms.toString(),
+      est_visible: def.est_visible,
+      thematique_univers: def.thematique_univers,
+      prochaines_thematiques: def.prochaines_thematiques,
+      objectifs: def.objectifs.map(
+        (o) =>
+          new Objectif({
+            content_id: o.content_id,
+            done_at: null,
+            id: uuidv4(),
+            is_locked: false,
+            points: o.points,
+            titre: o.titre,
+            type: o.type,
+          }),
+      ),
+    });
+  }
   public isDone(): boolean {
     return !!this.done_at;
   }

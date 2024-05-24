@@ -25,6 +25,7 @@ export class MissionDefinition {
   constructor(data: MissionDefinition) {
     this.thematique_univers = data.thematique_univers;
     this.est_visible = data.est_visible;
+    this.id_cms = data.id_cms;
 
     this.prochaines_thematiques = [];
     if (data.prochaines_thematiques) {

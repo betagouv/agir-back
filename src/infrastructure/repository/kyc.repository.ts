@@ -55,35 +55,9 @@ export class KycRepository {
     return this.buildKYCDefFromDB(result);
   }
 
-  async getAll(): Promise<QuestionKYC[]> {
-    const result = await this.prisma.kYC.findMany();
-    return result.map((elem) => this.buildKYCFromDB(elem));
-  }
   async getAllDefs(): Promise<KycDefinition[]> {
     const result = await this.prisma.kYC.findMany();
     return result.map((elem) => this.buildKYCDefFromDB(elem));
-  }
-
-  private buildKYCFromDB(kycDB: KYC): QuestionKYC {
-    if (kycDB === null) return null;
-    return new QuestionKYC({
-      categorie: CategorieQuestionKYC[kycDB.categorie],
-      id: KYCID[kycDB.code],
-      is_NGC: kycDB.is_ngc,
-      points: kycDB.points,
-      tags: kycDB.tags ? kycDB.tags.map((t) => Tag[t]) : [],
-      type: TypeReponseQuestionKYC[kycDB.type],
-      ngc_key: null,
-      thematique: Thematique[kycDB.thematique],
-      universes: kycDB.universes ? kycDB.universes.map((u) => Univers[u]) : [],
-      question: kycDB.question,
-      reponses_possibles: kycDB.reponses
-        ? (kycDB.reponses as { label: string; code: string }[]).map((r) => ({
-            code: r.code,
-            label: r.label,
-          }))
-        : [],
-    });
   }
 
   private buildKYCDefFromDB(kycDB: KYC): KycDefinition {

@@ -3,29 +3,39 @@ import { ThematiqueRepository } from '../infrastructure/repository/thematique.re
 import { ThematiqueUnivers } from '../../src/domain/univers/thematiqueUnivers';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
+import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
+import { Mission } from 'src/domain/mission/mission';
 
 @Injectable()
 export class MissionUsecase {
   constructor(
-    private thematiqueRepository: ThematiqueRepository,
     private utilisateurRepository: UtilisateurRepository,
+    private missionRepository: MissionRepository,
   ) {}
 
   async getMissionOfThematique(
     utilisateurId: string,
     thematique: ThematiqueUnivers,
-  ): Promise<any> {
+  ): Promise<Mission> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
-    const mission =
+    const mission_courante =
       utilisateur.missions.getMissionByThematiqueUnivers(thematique);
 
-    if (!mission) {
-      throw ApplicationError.throwMissionNotFound(thematique);
+    if (mission_courante) {
+      return mission_courante;
     }
 
-    return mission;
+    const mission_def = await this.missionRepository.getByThematique(
+      thematique,
+    );
+    const new_mission = utilisateur.missions.addMission(mission_def);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
+    return new_mission;
   }
+
   async getMissionNextKycID(
     utilisateurId: string,
     missionId: string,

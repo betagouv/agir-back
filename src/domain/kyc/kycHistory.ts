@@ -138,7 +138,6 @@ export class KYCHistory {
   private getKYCByIdOrException(id: string): QuestionKYC {
     const question_def = this.catalogue.find((element) => element.code === id);
     if (question_def) {
-      console.log(question_def);
       return QuestionKYC.buildFromDef(question_def);
     }
     ApplicationError.throwQuestionInconnue(id);
