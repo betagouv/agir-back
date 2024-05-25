@@ -30,7 +30,7 @@ export class MissionsUtilisateur {
     return new_mission;
   }
 
-  public validateContentDone(
+  public validateAricleOrQuizzDone(
     content_id: string,
     type: ContentType,
     utilisateur: Utilisateur,
@@ -42,6 +42,24 @@ export class MissionsUtilisateur {
       utilisateur.gamification.ajoutePoints(objectif.points);
       mission.unlockDefiIfAllContentDone();
     }
+  }
+
+  public answerKyc(kycID: string, utilisateur: Utilisateur) {
+    this.missions.forEach((mission) => {
+      mission.answerKyc(kycID, utilisateur);
+    });
+  }
+
+  public validateDefi(
+    defi_id: string,
+    utilisateur: Utilisateur,
+  ): ThematiqueUnivers[] {
+    let unlocked_thematiques = [];
+    this.missions.forEach((mission) => {
+      const thematiqueU = mission.validateDefi(defi_id, utilisateur);
+      unlocked_thematiques = unlocked_thematiques.concat(thematiqueU);
+    });
+    return unlocked_thematiques;
   }
 
   public getObjectifByContentId(
@@ -59,9 +77,15 @@ export class MissionsUtilisateur {
     return { mission: null, objectif: null };
   }
 
-  public answerKyc(kycID: string, utilisateur: Utilisateur) {
-    this.missions.forEach((mission) => {
-      mission.answerKyc(kycID, utilisateur);
-    });
+  public addNewVisibleMission(middion_def: MissionDefinition) {
+    if (!this.doesContainMissionOfId(middion_def.id_cms)) {
+      const new_mission = Mission.buildFromDef(middion_def);
+      new_mission.est_visible = true;
+      this.missions.push(new_mission);
+    }
+  }
+
+  private doesContainMissionOfId(mission_id: number) {
+    return this.missions.findIndex((m) => m.id === mission_id.toString()) > -1;
   }
 }

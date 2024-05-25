@@ -154,7 +154,7 @@ export class EventUsecase {
     }
     this.updateUserTodo(utilisateur, ContentType.article, article.thematiques);
 
-    utilisateur.missions.validateContentDone(
+    utilisateur.missions.validateAricleOrQuizzDone(
       event.content_id,
       ContentType.article,
       utilisateur,
@@ -179,7 +179,7 @@ export class EventUsecase {
       this.updateUserTodo(utilisateur, ContentType.quizz, quizz.thematiques);
     }
 
-    utilisateur.missions.validateContentDone(
+    utilisateur.missions.validateAricleOrQuizzDone(
       event.content_id,
       ContentType.quizz,
       utilisateur,

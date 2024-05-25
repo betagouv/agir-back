@@ -93,6 +93,12 @@ export class Mission {
         element.type === ContentType.kyc && element.content_id === kycID,
     );
   }
+  public findObjectifDefiByID?(defi_id: string): Objectif {
+    return this.objectifs.find(
+      (element) =>
+        element.type === ContentType.defi && element.content_id === defi_id,
+    );
+  }
 
   public getNextKycId(): string {
     const objectif_kyc = this.objectifs.find(
@@ -108,6 +114,38 @@ export class Mission {
       objectif.done_at = new Date();
       utilisateur.gamification.ajoutePoints(objectif.points);
       this.unlockContentIfAllKYCsDone();
+    }
+  }
+  public validateDefi(
+    defi_id: string,
+    utilisateur: Utilisateur,
+  ): ThematiqueUnivers[] {
+    const objectif = this.findObjectifDefiByID(defi_id);
+
+    if (objectif && !objectif.isDone()) {
+      objectif.done_at = new Date();
+      utilisateur.gamification.ajoutePoints(objectif.points);
+      return this.terminerMissionIfAllDone();
+    }
+    return [];
+  }
+
+  public terminerMissionIfAllDone(): ThematiqueUnivers[] {
+    let ready_to_end = true;
+    this.objectifs.forEach((objectif) => {
+      ready_to_end =
+        ready_to_end &&
+        (objectif.type !== ContentType.defi || objectif.isDone());
+    });
+    if (ready_to_end) {
+      this.done_at = new Date();
+      return this.prochaines_thematiques;
+    }
+    return [];
+  }
+
+  public unlockNextMissions(utilisateur: Utilisateur) {
+    for (const thematiqueUnivers of this.prochaines_thematiques) {
     }
   }
 

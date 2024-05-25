@@ -12,6 +12,7 @@ import {
 } from '../../../src/domain/kyc/questionQYC';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { EventType } from '../../../src/domain/appEvent';
+import { DefiStatus } from '../../../src/domain/defis/defi';
 
 describe('Mission (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -191,6 +192,39 @@ describe('Mission (API test)', () => {
         ],
         prochaines_thematiques: [],
         est_visible: false,
+      },
+    ],
+  };
+
+  const missions_defi_seul: MissionsUtilisateur_v0 = {
+    version: 0,
+    missions: [
+      {
+        id: '1',
+        done_at: null,
+        thematique_univers: ThematiqueUnivers.cereales,
+        objectifs: [
+          {
+            id: '0',
+            content_id: '0',
+            type: ContentType.defi,
+            titre: '1 defi',
+            points: 10,
+            is_locked: false,
+            done_at: new Date(),
+          },
+          {
+            id: '1',
+            content_id: '1',
+            type: ContentType.defi,
+            titre: '1 defi',
+            points: 10,
+            is_locked: false,
+            done_at: null,
+          },
+        ],
+        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
+        est_visible: true,
       },
     ],
   };
@@ -431,6 +465,44 @@ describe('Mission (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
     expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
+  });
+  it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - ajout mission si dernier defi réalisé`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_defi_seul,
+    });
+    await TestUtil.create(DB.defi, { content_id: '1' });
+    await TestUtil.create(DB.article, { content_id: '1' });
+    await TestUtil.create(DB.mission, {
+      id_cms: 2,
+      est_visible: false,
+      thematique_univers: ThematiqueUnivers.dechets_compost,
+    });
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/defis/1',
+    ).send({
+      status: DefiStatus.fait,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+
+    expect(userDB.missions.missions).toHaveLength(2);
+
+    const old_mission = userDB.missions.getMissionById('1');
+    const new_mission = userDB.missions.getMissionById('2');
+
+    expect(old_mission.isDone()).toEqual(true);
+    expect(old_mission.done_at.getTime()).toBeGreaterThan(Date.now() - 100);
+
+    expect(new_mission.est_visible).toEqual(true);
+    expect(new_mission.thematique_univers).toEqual(
+      ThematiqueUnivers.dechets_compost,
+    );
   });
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - is_new true si rien fait`, async () => {
     // GIVEN

@@ -4,12 +4,17 @@ import { Defi, DefiStatus } from '../../src/domain/defis/defi';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
 import { Univers } from '../../src/domain/univers/univers';
+import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
+import { ThematiqueUnivers } from '../../src/domain/univers/thematiqueUnivers';
+import { Utilisateur } from 'src/domain/utilisateur/utilisateur';
+import { timeStamp } from 'console';
 
 @Injectable()
 export class DefisUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private defiRepository: DefiRepository,
+    private missionRepository: MissionRepository,
   ) {}
 
   async getALL(): Promise<Defi[]> {
@@ -86,6 +91,25 @@ export class DefisUsecase {
 
     utilisateur.defi_history.updateStatus(defiId, status, utilisateur, motif);
 
+    const unlocked_thematiques = utilisateur.missions.validateDefi(
+      defiId,
+      utilisateur,
+    );
+
+    await this.unlockThematiques(unlocked_thematiques, utilisateur);
+
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
+  private async unlockThematiques(
+    unlocked_thematiques: ThematiqueUnivers[],
+    utilisateur: Utilisateur,
+  ) {
+    for (const thematiqueU of unlocked_thematiques) {
+      const mission_def = await this.missionRepository.getByThematique(
+        thematiqueU,
+      );
+      utilisateur.missions.addNewVisibleMission(mission_def);
+    }
   }
 }
