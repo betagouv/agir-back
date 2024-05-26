@@ -41,6 +41,7 @@ export enum BooleanKYC {
 
 export enum CategorieQuestionKYC {
   default = 'default',
+  test = 'test',
   mission = 'mission',
   recommandation = 'recommandation',
 }
