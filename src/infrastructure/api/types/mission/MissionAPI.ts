@@ -44,6 +44,7 @@ export class MissionAPI {
   @ApiProperty() univers: Univers;
   @ApiProperty() univers_label: string;
   @ApiProperty({ type: ProgressionAPI }) progression: ProgressionAPI;
+  @ApiProperty({ type: ProgressionAPI }) progression_kyc: ProgressionAPI;
   @ApiProperty({ type: [ObjectifAPI] }) objectifs: ObjectifAPI[];
 
   public static mapToAPI(mission: Mission): MissionAPI {
@@ -66,6 +67,7 @@ export class MissionAPI {
       ),
       progression: mission.getProgression(),
       is_new: mission.isNew(),
+      progression_kyc: mission.getProgressionKYC(),
     };
   }
 }

@@ -144,11 +144,6 @@ export class Mission {
     return [];
   }
 
-  public unlockNextMissions(utilisateur: Utilisateur) {
-    for (const thematiqueUnivers of this.prochaines_thematiques) {
-    }
-  }
-
   public unlockContentIfAllKYCsDone() {
     let ready = true;
     this.objectifs.forEach((objectif) => {
@@ -198,5 +193,19 @@ export class Mission {
     return this.objectifs.find(
       (element) => element.type === type && element.content_id === content_id,
     );
+  }
+
+  public getProgressionKYC(): { current: number; target: number } {
+    let current = 0;
+    let target = 0;
+    for (const objctif of this.objectifs) {
+      if (objctif.type === ContentType.kyc) {
+        target++;
+        if (objctif.isDone()) {
+          current++;
+        }
+      }
+    }
+    return { current, target };
   }
 }

@@ -277,6 +277,7 @@ describe('Mission (API test)', () => {
     expect(response.body.univers_label).toEqual('Faut manger !');
     expect(response.body.done_at).toEqual(new Date(1).toISOString());
     expect(response.body.objectifs).toHaveLength(4);
+    expect(response.body.progression_kyc).toEqual({ current: 0, target: 1 });
 
     const objectif = response.body.objectifs[1];
     expect(objectif.id).toEqual('1');
