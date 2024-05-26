@@ -100,6 +100,12 @@ export class Mission {
     );
   }
 
+  public findAllDefis?(): Objectif[] {
+    return this.objectifs.filter(
+      (element) => element.type === ContentType.defi,
+    );
+  }
+
   public getNextKycId(): string {
     const objectif_kyc = this.objectifs.find(
       (o) => o.type === ContentType.kyc && !o.isDone(),
@@ -161,6 +167,15 @@ export class Mission {
     }
   }
   public unlockDefiIfAllContentDone() {
+    if (this.isAllContentDone()) {
+      this.objectifs.forEach((objectif) => {
+        if (objectif.type === ContentType.defi) {
+          objectif.is_locked = false;
+        }
+      });
+    }
+  }
+  public isAllContentDone(): boolean {
     let ready = true;
     this.objectifs.forEach((objectif) => {
       ready =
@@ -169,14 +184,9 @@ export class Mission {
           objectif.type !== ContentType.quizz) ||
           objectif.isDone());
     });
-    if (ready) {
-      this.objectifs.forEach((objectif) => {
-        if (objectif.type === ContentType.defi) {
-          objectif.is_locked = false;
-        }
-      });
-    }
+    return ready;
   }
+
   public getProgression(): { current: number; target: number } {
     return {
       current: this.objectifs.filter((objectif) => objectif.isDone()).length,
@@ -193,6 +203,14 @@ export class Mission {
     return this.objectifs.find(
       (element) => element.type === type && element.content_id === content_id,
     );
+  }
+
+  public getUnlockedDefisIds(): string[] {
+    if (this.isAllContentDone()) {
+      const defi_objectifs = this.findAllDefis();
+      return defi_objectifs.map((d) => d.content_id);
+    }
+    return [];
   }
 
   public getProgressionKYC(): { current: number; target: number } {

@@ -95,6 +95,24 @@ export class DefisController extends GenericControler {
     return result.map((element) => DefiAPI.mapToAPI(element));
   }
 
+  @Get('utilisateurs/:utilisateurId/defis_v2')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: [DefiAPI],
+  })
+  @ApiOperation({
+    summary:
+      "Retourne l'ensemble des défis de l'utilisateur (en cours, fait, abandonné, etc)",
+  })
+  async getAllUserDefi_2(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<DefiAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.defisUsecase.getAllDefis_v2(utilisateurId);
+    return result.map((element) => DefiAPI.mapToAPI(element));
+  }
+
   @Get('utilisateurs/:utilisateurId/defis')
   @ApiQuery({
     name: 'univers',
@@ -137,6 +155,28 @@ export class DefisController extends GenericControler {
       status ? status : [],
       univers ? Univers[univers] : undefined,
       accessible === 'true',
+    );
+    return result.map((element) => DefiAPI.mapToAPI(element));
+  }
+
+  @Get('utilisateurs/:utilisateurId/univers/:universId/defis')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: [DefiAPI],
+  })
+  @ApiOperation({
+    summary:
+      "Retourne l'ensemble des défis de l'utilisateur visible dans l'univers argument",
+  })
+  async getAllUserDefiInUnivers(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('universId') universId: string,
+  ): Promise<DefiAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.defisUsecase.getDefisOfUnivers(
+      utilisateurId,
+      Univers[universId],
     );
     return result.map((element) => DefiAPI.mapToAPI(element));
   }

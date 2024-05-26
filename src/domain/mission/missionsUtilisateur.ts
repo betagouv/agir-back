@@ -1,6 +1,8 @@
+import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { ContentType } from '../contenu/contentType';
 import { MissionsUtilisateur_v0 } from '../object_store/mission/MissionsUtilisateur_v0';
 import { ThematiqueUnivers } from '../univers/thematiqueUnivers';
+import { Univers } from '../univers/univers';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { Mission, Objectif } from './mission';
 import { MissionDefinition } from './missionDefinition';
@@ -83,6 +85,19 @@ export class MissionsUtilisateur {
       new_mission.est_visible = true;
       this.missions.push(new_mission);
     }
+  }
+
+  public getAllUnlockedDefisIdsByUnivers(univers: Univers): string[] {
+    let result: string[] = [];
+    for (const mission of this.missions) {
+      const univers_mission = ThematiqueRepository.getUniversParent(
+        mission.thematique_univers,
+      );
+      if (univers_mission === univers) {
+        result = result.concat(mission.getUnlockedDefisIds());
+      }
+    }
+    return result;
   }
 
   private doesContainMissionOfId(mission_id: number) {

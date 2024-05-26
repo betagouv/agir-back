@@ -24,7 +24,7 @@ export class UniversUsecase {
     // FIXME : refacto , code tout moche en dessous
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
-    const listTuilesThem = ThematiqueRepository.getTuileThematiques(univers);
+    const listTuilesThem = ThematiqueRepository.getAllTuilesThematique(univers);
 
     const listMissionDefs = await this.missionRepository.list();
 

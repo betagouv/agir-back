@@ -44,7 +44,7 @@ export class ThematiqueRepository {
       .univers_parent;
   }
 
-  public static getTuileThematiques(univers: Univers): TuileThematique[] {
+  public static getAllTuilesThematique(univers: Univers): TuileThematique[] {
     return ThematiqueRepository.getAllTuileThematique().filter(
       (t) => t.univers_parent === univers,
     );

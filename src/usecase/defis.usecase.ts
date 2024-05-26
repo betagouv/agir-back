@@ -6,8 +6,7 @@ import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderat
 import { Univers } from '../../src/domain/univers/univers';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
 import { ThematiqueUnivers } from '../../src/domain/univers/thematiqueUnivers';
-import { Utilisateur } from 'src/domain/utilisateur/utilisateur';
-import { timeStamp } from 'console';
+import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 
 @Injectable()
 export class DefisUsecase {
@@ -30,6 +29,50 @@ export class DefisUsecase {
           motif: undefined,
         }),
     );
+  }
+  async getDefisOfUnivers(
+    utilisateurId: string,
+    univers: Univers,
+  ): Promise<Defi[]> {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+    const defiDefinitions = await this.defiRepository.list();
+    utilisateur.defi_history.setCatalogue(defiDefinitions);
+
+    return this.getDefisOfUniversAndUtilisateur(utilisateur, univers);
+  }
+
+  private async getDefisOfUniversAndUtilisateur(
+    utilisateur: Utilisateur,
+    univers: Univers,
+  ): Promise<Defi[]> {
+    const list_defi_ids =
+      utilisateur.missions.getAllUnlockedDefisIdsByUnivers(univers);
+
+    const result: Defi[] = [];
+
+    for (const id_defi of list_defi_ids) {
+      result.push(utilisateur.defi_history.getDefiOrException(id_defi));
+    }
+    return result;
+  }
+
+  async getAllDefis_v2(utilisateurId: string): Promise<Defi[]> {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+    const defiDefinitions = await this.defiRepository.list();
+    utilisateur.defi_history.setCatalogue(defiDefinitions);
+
+    let result: Defi[] = [];
+
+    for (const univers of Object.values(Univers)) {
+      const defis_univers = await this.getDefisOfUniversAndUtilisateur(
+        utilisateur,
+        univers,
+      );
+      result = result.concat(defis_univers);
+    }
+    return result;
   }
 
   async getALLUserDefi(
