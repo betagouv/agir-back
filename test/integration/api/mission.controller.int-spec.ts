@@ -405,6 +405,44 @@ describe('Mission (API test)', () => {
       `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
     );
   });
+  it(`GET /utilisateurs/id/thematiques/cereales/next_kyc - renvoie la liste des questions à poser`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { missions: missions });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: CategorieQuestionKYC.default,
+      points: 10,
+      question: 'Comment avez vous connu le service ?',
+      reponses: [
+        { label: 'Moins de 15 ans (neuf ou récent)', code: 'moins_15' },
+        { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
+      ],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID._3,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: CategorieQuestionKYC.default,
+      points: 10,
+      question: `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
+      reponses: [
+        { label: 'Oui', code: BooleanKYC.oui },
+        { label: 'Non', code: BooleanKYC.non },
+        { label: 'A voir', code: BooleanKYC.peut_etre },
+      ],
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/cereales/kycs',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].content_id).toEqual('_3');
+  });
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un article débloqué suite à la réalisation de la KYC`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {

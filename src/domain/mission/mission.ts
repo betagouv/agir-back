@@ -213,6 +213,16 @@ export class Mission {
     return [];
   }
 
+  public getAllKYCs() {
+    const result: Objectif[] = [];
+    for (const obj of this.objectifs) {
+      if (obj.type === ContentType.kyc) {
+        result.push(obj);
+      }
+    }
+    return result;
+  }
+
   public getProgressionKYC(): { current: number; target: number } {
     let current = 0;
     let target = 0;

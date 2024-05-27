@@ -4,7 +4,7 @@ import { ThematiqueUnivers } from '../../src/domain/univers/thematiqueUnivers';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
-import { Mission } from 'src/domain/mission/mission';
+import { Mission, Objectif } from 'src/domain/mission/mission';
 
 @Injectable()
 export class MissionUsecase {
@@ -39,7 +39,7 @@ export class MissionUsecase {
   async getMissionNextKycID(
     utilisateurId: string,
     thematique: ThematiqueUnivers,
-  ): Promise<any> {
+  ): Promise<string> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
     const mission =
@@ -55,5 +55,21 @@ export class MissionUsecase {
       throw ApplicationError.throwNoMoreKYCForThematique(thematique);
     }
     return next_kyc_id;
+  }
+
+  async getMissionKYCs(
+    utilisateurId: string,
+    thematique: ThematiqueUnivers,
+  ): Promise<Objectif[]> {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+
+    const mission =
+      utilisateur.missions.getMissionByThematiqueUnivers(thematique);
+
+    if (!mission) {
+      throw ApplicationError.throwMissionNotFoundOfThematique(thematique);
+    }
+
+    return mission.getAllKYCs();
   }
 }
