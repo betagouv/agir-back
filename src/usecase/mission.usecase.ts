@@ -38,20 +38,21 @@ export class MissionUsecase {
 
   async getMissionNextKycID(
     utilisateurId: string,
-    missionId: string,
+    thematique: ThematiqueUnivers,
   ): Promise<any> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
-    const mission = utilisateur.missions.getMissionById(missionId);
+    const mission =
+      utilisateur.missions.getMissionByThematiqueUnivers(thematique);
 
     if (!mission) {
-      throw ApplicationError.throwMissionNotFoundOfId(missionId);
+      throw ApplicationError.throwMissionNotFoundOfThematique(thematique);
     }
 
     const next_kyc_id = mission.getNextKycId();
 
     if (!next_kyc_id) {
-      throw ApplicationError.throwNoMoreKYCForMission(missionId);
+      throw ApplicationError.throwNoMoreKYCForThematique(thematique);
     }
     return next_kyc_id;
   }

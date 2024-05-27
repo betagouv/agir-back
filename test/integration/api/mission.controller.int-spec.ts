@@ -336,18 +336,18 @@ describe('Mission (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.missions.missions).toHaveLength(1);
   });
-  it(`GET /utilisateurs/id/missions/:missionId/next_kyc - renvoie 404 si plus de kyc à faire`, async () => {
+  it(`GET /utilisateurs/id/thematiques/cereales/next_kyc - renvoie 404 si plus de kyc à faire`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: missions_kyc_done });
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/missions/1/next_kyc',
+      '/utilisateurs/utilisateur-id/thematiques/cereales/next_kyc',
     );
 
     // THEN
     expect(response.status).toBe(404);
   });
-  it(`GET /utilisateurs/id/missions/:missionId/next_kyc - renvoie la prochaine question à poser`, async () => {
+  it(`GET /utilisateurs/id/thematiques/cereales/next_kyc - renvoie la prochaine question à poser`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: missions });
     await TestUtil.create(DB.kYC, {
@@ -377,7 +377,7 @@ describe('Mission (API test)', () => {
     });
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/missions/1/next_kyc',
+      '/utilisateurs/utilisateur-id/thematiques/cereales/next_kyc',
     );
 
     // THEN
@@ -390,17 +390,6 @@ describe('Mission (API test)', () => {
     expect(response.body.question).toEqual(
       `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
     );
-  });
-  it(`GET /utilisateurs/id/missions/:missionId/next_kyc - renvoie 404 si plus de kyc à faire`, async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, { missions: missions_kyc_done });
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/missions/1/next_kyc',
-    );
-
-    // THEN
-    expect(response.status).toBe(404);
   });
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un article débloqué suite à la réalisation de la KYC`, async () => {
     // GIVEN
@@ -540,7 +529,7 @@ describe('Mission (API test)', () => {
     await TestUtil.create(DB.utilisateur, { missions: missions_kyc_done });
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/missions/1/next_kyc',
+      '/utilisateurs/utilisateur-id/thematiques/cereales/next_kyc',
     );
 
     // THEN

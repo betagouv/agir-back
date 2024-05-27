@@ -102,7 +102,7 @@ export class DefisController extends GenericControler {
   })
   @ApiOperation({
     summary:
-      "Retourne l'ensemble des défis de l'utilisateur (en cours, fait, abandonné, etc)",
+      "Retourne l'ensemble des défis de l'utilisateur, aggrégation des défis dispo via les différents univers / thémtiques",
   })
   async getAllUserDefi_2(
     @Request() req,
@@ -166,7 +166,7 @@ export class DefisController extends GenericControler {
   })
   @ApiOperation({
     summary:
-      "Retourne l'ensemble des défis de l'utilisateur visible dans l'univers argument",
+      "Retourne l'ensemble des défis de l'utilisateur visible dans l'univers argument, agrégation des défis visibles des thémtiques de cet univers",
   })
   async getAllUserDefiInUnivers(
     @Request() req,

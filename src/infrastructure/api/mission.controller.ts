@@ -72,7 +72,7 @@ export class MissionController extends GenericControler {
     return MissionAPI.mapToAPI(result);
   }
 
-  @Get('utilisateurs/:utilisateurId/missions/:missionId/next_kyc')
+  @Get('utilisateurs/:utilisateurId/thematiques/:thematique/next_kyc')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: QuestionKYCAPI,
@@ -84,24 +84,24 @@ export class MissionController extends GenericControler {
     description: `id de l'utilisateur`,
   })
   @ApiParam({
-    name: 'missionId',
-    type: String,
+    name: 'thematique',
+    enum: ThematiqueUnivers,
     required: true,
-    description: `id le mission`,
+    description: `Thematique de la mission`,
   })
   @ApiOperation({
-    summary: `Retourne la prochaine question si elle existe pour le question missionId, 404 sinon`,
+    summary: `Retourne la prochaine question de la mission de thématique argumnt si elle existe, 404 sinon`,
   })
   async getMissionNexKYC(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-    @Param('missionId') missionId: string,
+    @Param('thematique') thematique: string,
   ): Promise<QuestionKYCAPI> {
     this.checkCallerId(req, utilisateurId);
 
     const next_kyc_id = await this.missionUsecase.getMissionNextKycID(
       utilisateurId,
-      missionId,
+      ThematiqueUnivers[thematique],
     );
 
     const kyc = await this.questionKYCUsecase.getQuestion(
