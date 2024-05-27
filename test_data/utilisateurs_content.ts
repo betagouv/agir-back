@@ -199,7 +199,7 @@ const utilisateurs = {
     services: [],
     onboardingResult: ONBOARDING_RES_1234,
     onboardingData: ONBOARD_DATA_1234,
-    missions: missions,
+    //missions: missions,
   },
   DEV: {
     nom: 'Mr Dev',

@@ -10,7 +10,6 @@ import {
   PonderationApplicativeManager,
 } from '../../../src/domain/scoring/ponderationApplicative';
 import { DB, TestUtil } from '../../TestUtil';
-import { CatalogueQuestionsKYC } from '../../../src/domain/kyc/catalogueQuestionsKYC';
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
