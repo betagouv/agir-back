@@ -3,6 +3,7 @@ import { UtilisateurRepository } from '../../src/infrastructure/repository/utili
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { App } from '../domain/app';
 import { Feature } from '../../src/domain/gamification/feature';
+import { DefiStatus } from '../../src/domain/defis/defi';
 
 export type UserMigrationReport = {
   user_id: string;
@@ -126,6 +127,21 @@ export class MigrationUsecase {
     };
   }
   private async migrate_7(
+    utilisateur: Utilisateur,
+  ): Promise<{ ok: boolean; info: string }> {
+    let count = 0;
+    for (const defi of utilisateur.defi_history.defis) {
+      if (defi.getStatus() === DefiStatus.deja_fait) {
+        defi.setRawStatus(DefiStatus.fait);
+        count++;
+      }
+    }
+    return {
+      ok: true,
+      info: `user : ${utilisateur.id} switched ${count} status deja_fait => fait`,
+    };
+  }
+  private async migrate_8(
     utilisateur: Utilisateur,
   ): Promise<{ ok: boolean; info: string }> {
     return { ok: false, info: 'to implement' };

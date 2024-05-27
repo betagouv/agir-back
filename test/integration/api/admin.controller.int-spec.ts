@@ -414,6 +414,57 @@ describe('Admin (API test)', () => {
       TransportQuotidien.pied,
     ]);
   });
+  it('POST /admin/migrate_users migration V7 OK', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          points: 5,
+          tags: [],
+          titre: 'titre',
+          thematique: Thematique.alimentation,
+          astuces: 'astuce',
+          date_acceptation: new Date(),
+          pourquoi: 'pourquoi',
+          sous_titre: 'sous_titre',
+          universes: [Univers.climat],
+          accessible: true,
+          motif: 'truc',
+          id: '001',
+          status: DefiStatus.deja_fait,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      version: 6,
+      migration_enabled: true,
+      logement: {},
+      defis: defis,
+    });
+    process.env.USER_CURRENT_VERSION = '7';
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 7,
+            ok: true,
+            info: `user : utilisateur-id switched 1 status deja_fait => fait`,
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.defi_history.defis[0].getStatus()).toEqual(DefiStatus.fait);
+  });
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;

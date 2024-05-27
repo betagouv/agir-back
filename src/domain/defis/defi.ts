@@ -11,6 +11,7 @@ export enum DefiStatus {
   todo = 'todo',
   en_cours = 'en_cours',
   pas_envie = 'pas_envie',
+  // FIXME : status a supprimer pour utilisateurs version >= 7
   deja_fait = 'deja_fait',
   abondon = 'abondon',
   fait = 'fait',
@@ -51,6 +52,9 @@ export class Defi implements TaggedContent {
 
   public getStatus(): DefiStatus {
     return this.status;
+  }
+  public setRawStatus(status: DefiStatus) {
+    this.status = status;
   }
   public setStatus(status: DefiStatus, utilisateur: Utilisateur) {
     if (status === DefiStatus.en_cours) {
