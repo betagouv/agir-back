@@ -17,6 +17,7 @@ export class ObjectifAPI {
   @ApiProperty() is_locked: boolean;
   @ApiProperty() points: number;
   @ApiProperty() done: boolean;
+  @ApiProperty() sont_points_en_poche: boolean;
   @ApiProperty() done_at: Date;
   @ApiProperty({ enum: ContentType }) type: ContentType;
 
@@ -30,6 +31,7 @@ export class ObjectifAPI {
       done_at: objectif.done_at,
       type: objectif.type,
       points: objectif.points,
+      sont_points_en_poche: objectif.sont_points_en_poche,
     };
   }
 }
