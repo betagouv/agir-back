@@ -374,6 +374,12 @@ export class TestUtil {
       objectifs: [
         {
           titre: 'obj 1',
+          content_id: '_1',
+          type: ContentType.kyc,
+          points: 10,
+        },
+        {
+          titre: 'obj 2',
           content_id: '1',
           type: ContentType.article,
           points: 25,

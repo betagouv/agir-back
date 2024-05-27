@@ -304,7 +304,17 @@ describe('Mission (API test)', () => {
       image_url: 'aaaa',
     });
     await thematiqueRepository.onApplicationBootstrap();
+
     await TestUtil.create(DB.mission);
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._1,
+      type: TypeReponseQuestionKYC.libre,
+      categorie: CategorieQuestionKYC.mission,
+      points: 10,
+      question: 'Comment avez vous connu le service ?',
+      reponses: [],
+    });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -315,23 +325,26 @@ describe('Mission (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.id).toEqual('1');
     expect(response.body.is_new).toEqual(true);
-    expect(response.body.progression).toEqual({ current: 0, target: 1 });
+    expect(response.body.progression).toEqual({ current: 0, target: 2 });
     expect(response.body.thematique_univers).toEqual('cereales');
     expect(response.body.thematique_univers_label).toEqual(
       'Mange de la graine',
     );
     expect(response.body.univers_label).toEqual('Faut manger !');
     expect(response.body.done_at).toEqual(null);
-    expect(response.body.objectifs).toHaveLength(1);
+    expect(response.body.objectifs).toHaveLength(2);
 
-    const objctif = response.body.objectifs[0];
-    expect(objctif.id.length).toBeGreaterThan(10);
-    expect(objctif.content_id).toEqual('1');
-    expect(objctif.type).toEqual(ContentType.article);
-    expect(objctif.titre).toEqual('obj 1');
-    expect(objctif.points).toEqual(25);
-    expect(objctif.is_locked).toEqual(false);
-    expect(objctif.done_at).toEqual(null);
+    const objctif_kyc = response.body.objectifs[0];
+    expect(objctif_kyc.is_locked).toEqual(false);
+
+    const objectif_article = response.body.objectifs[1];
+    expect(objectif_article.id.length).toBeGreaterThan(10);
+    expect(objectif_article.content_id).toEqual('1');
+    expect(objectif_article.type).toEqual(ContentType.article);
+    expect(objectif_article.titre).toEqual('obj 2');
+    expect(objectif_article.points).toEqual(25);
+    expect(objectif_article.is_locked).toEqual(true);
+    expect(objectif_article.done_at).toEqual(null);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.missions.missions).toHaveLength(1);

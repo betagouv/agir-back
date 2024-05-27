@@ -75,7 +75,7 @@ export class Mission {
             content_id: o.content_id,
             done_at: null,
             id: uuidv4(),
-            is_locked: false,
+            is_locked: o.type !== ContentType.kyc,
             points: o.points,
             titre: o.titre,
             type: o.type,
