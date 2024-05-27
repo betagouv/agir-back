@@ -225,15 +225,20 @@ const utilisateurs = {
         'univers',
       ],
     },
+    /*
     linky: {
       prm: '12345678912345',
     },
+    */
     suivis: [],
     bilans: [],
     services: [],
+    /*
     questionsNGC: {
       'transport . voiture . km': 30000,
     },
+    */
+    /*
     todo: {
       version: 0,
       todo_active: 0,
@@ -280,8 +285,9 @@ const utilisateurs = {
         },
       ],
     },
+    */
     onboardingResult: ONBOARDING_RES_1234,
-    onboardingData: ONBOARD_DATA_NO_CAR_MOTO,
+    onboardingData: ONBOARD_DATA_1234,
   },
   recette_livio: {
     nom: 'RECETTEUR',

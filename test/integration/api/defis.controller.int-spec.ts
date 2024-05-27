@@ -300,7 +300,84 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
     expect(defi.id).toBe('001');
   });
-  it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur tout confondu', async () => {
+  it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur par univers, sauf si fait', async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '001',
+          status: DefiStatus.fait,
+        },
+        {
+          ...DEFI_1,
+          id: '002',
+          status: DefiStatus.todo,
+        },
+        {
+          ...DEFI_1,
+          id: '003',
+          status: DefiStatus.todo,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.univers, {
+      id_cms: 1,
+      code: Univers.climat,
+      label: 'Climat',
+    });
+    await TestUtil.create(DB.univers, {
+      id_cms: 2,
+      code: Univers.alimentation,
+      label: 'Alimentation',
+    });
+    await TestUtil.create(DB.univers, {
+      id_cms: 3,
+      code: Univers.transport,
+      label: 'Transport',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Cereales',
+      image_url: 'aaaa',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 2,
+      code: ThematiqueUnivers.mobilite_quotidien,
+      univers_parent: Univers.transport,
+      label: 'dechets compost',
+      image_url: 'aaaa',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 3,
+      code: ThematiqueUnivers.gaspillage_alimentaire,
+      univers_parent: Univers.alimentation,
+      label: 'gaspillage alimentaire',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis,
+      missions: missions,
+    });
+    await TestUtil.create(DB.article, { content_id: '12' });
+    await TestUtil.create(DB.article, { content_id: '13' });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/univers/alimentation/defis',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(0);
+  });
+  it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur tout confondu (v2)', async () => {
     // GIVEN
     const defis: DefiHistory_v0 = {
       version: 0,
@@ -380,6 +457,84 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
     expect(response.body[0].id).toEqual('001');
     expect(response.body[1].id).toEqual('003');
+  });
+  it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur tout confondu en cours ou todo, donc pas le reste (v2)', async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '001',
+          status: DefiStatus.fait,
+        },
+        {
+          ...DEFI_1,
+          id: '002',
+          status: DefiStatus.abondon,
+        },
+        {
+          ...DEFI_1,
+          id: '003',
+          status: DefiStatus.pas_envie,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.univers, {
+      id_cms: 1,
+      code: Univers.climat,
+      label: 'Climat',
+    });
+    await TestUtil.create(DB.univers, {
+      id_cms: 2,
+      code: Univers.transport,
+      label: 'Transport',
+    });
+    await TestUtil.create(DB.univers, {
+      id_cms: 3,
+      code: Univers.alimentation,
+      label: 'Alimentation',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Cereales',
+      image_url: 'aaaa',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 2,
+      code: ThematiqueUnivers.gaspillage_alimentaire,
+      univers_parent: Univers.alimentation,
+      label: 'dechets compost',
+      image_url: 'aaaa',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 3,
+      code: ThematiqueUnivers.mobilite_quotidien,
+      univers_parent: Univers.transport,
+      label: 'mobilite quotidien',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis,
+      missions: missions,
+    });
+    await TestUtil.create(DB.article, { content_id: '12' });
+    await TestUtil.create(DB.article, { content_id: '13' });
+    await TestUtil.create(DB.article, { content_id: '14' });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/defis_v2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(0);
   });
   it('GET /utilisateurs/utilisateur-id/defis - filtre status encours', async () => {
     // GIVEN

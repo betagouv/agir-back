@@ -39,7 +39,16 @@ export class DefisUsecase {
     const defiDefinitions = await this.defiRepository.list();
     utilisateur.defi_history.setCatalogue(defiDefinitions);
 
-    return this.getDefisOfUniversAndUtilisateur(utilisateur, univers);
+    const result = await this.getDefisOfUniversAndUtilisateur(
+      utilisateur,
+      univers,
+    );
+
+    return result.filter(
+      (d) =>
+        d.getStatus() === DefiStatus.todo ||
+        d.getStatus() === DefiStatus.en_cours,
+    );
   }
 
   private async getDefisOfUniversAndUtilisateur(
@@ -70,7 +79,13 @@ export class DefisUsecase {
         utilisateur,
         univers,
       );
-      result = result.concat(defis_univers);
+      result = result.concat(
+        defis_univers.filter(
+          (d) =>
+            d.getStatus() === DefiStatus.todo ||
+            d.getStatus() === DefiStatus.en_cours,
+        ),
+      );
     }
     return result;
   }
