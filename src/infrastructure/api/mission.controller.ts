@@ -18,6 +18,7 @@ import {
   HttpStatus,
   UseFilters,
   Patch,
+  Post,
 } from '@nestjs/common';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
@@ -144,5 +145,21 @@ export class MissionController extends GenericControler {
     );
 
     return all_obj_kyc.map((o) => ObjectifAPI.mapToAPI(o));
+  }
+
+  @ApiOperation({
+    summary:
+      "Empoche les points d'un objectif de mission terminé pour l'utilisateur",
+  })
+  @Post('utilisateurs/:utilisateurId/objectifs/:objectifId/gagner_points')
+  @UseGuards(AuthGuard)
+  async gagnerPoints(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('objectifId') objectifId: string,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+
+    await this.missionUsecase.gagnerPointsDeObjectif(utilisateurId, objectifId);
   }
 }

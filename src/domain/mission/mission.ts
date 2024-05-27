@@ -16,6 +16,7 @@ export class Objectif {
   done_at: Date;
   type: ContentType;
   points: number;
+  sont_points_en_poche: boolean;
 
   constructor(data: Objectif_v0) {
     this.id = data.id;
@@ -25,7 +26,9 @@ export class Objectif {
     this.points = data.points;
     this.is_locked = !!data.is_locked;
     this.done_at = data.done_at;
+    this.sont_points_en_poche = !!data.sont_points_en_poche;
   }
+
   public isDone?() {
     return !!this.done_at;
   }
@@ -79,12 +82,16 @@ export class Mission {
             points: o.points,
             titre: o.titre,
             type: o.type,
+            sont_points_en_poche: false,
           }),
       ),
     });
   }
   public isDone(): boolean {
     return !!this.done_at;
+  }
+  public findObjectifByTechId(objectifId: string): Objectif {
+    return this.objectifs.find((element) => element.id === objectifId);
   }
 
   public findObjectifKYCByQuestionID?(kycID: string): Objectif {

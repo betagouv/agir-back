@@ -3,7 +3,6 @@ import { ContentType } from '../../contenu/contentType';
 import { Mission, Objectif } from '../../../../src/domain/mission/mission';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
 import { ThematiqueUnivers } from '../../../../src/domain/univers/thematiqueUnivers';
-import { Univers } from '../../../../src/domain/univers/univers';
 
 export class Objectif_v0 {
   id: string;
@@ -13,6 +12,7 @@ export class Objectif_v0 {
   done_at: Date;
   type: ContentType;
   points: number;
+  sont_points_en_poche: boolean;
 
   static map(objectif: Objectif): Objectif_v0 {
     return {
@@ -23,6 +23,7 @@ export class Objectif_v0 {
       done_at: objectif.done_at,
       type: objectif.type,
       points: objectif.points,
+      sont_points_en_poche: !!objectif.sont_points_en_poche,
     };
   }
 }

@@ -599,7 +599,7 @@ describe('TODO list (API test)', () => {
     );
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     const userDB = await utilisateurRepository.getById('utilisateur-id');
 
     expect(
@@ -638,11 +638,11 @@ describe('TODO list (API test)', () => {
     let response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/todo/123/gagner_points',
     );
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/todo/123/gagner_points',
     );
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
 
     // THEN
     const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
@@ -687,7 +687,7 @@ describe('TODO list (API test)', () => {
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/todo/gagner_points',
     );
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     // THEN
     const dbUtilisateur = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUtilisateur.gamification['points']).toEqual(35);
@@ -801,7 +801,7 @@ describe('TODO list (API test)', () => {
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/todo/123/gagner_points',
     );
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
 
     // THEN
     const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({

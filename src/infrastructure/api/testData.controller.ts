@@ -21,7 +21,6 @@ import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 import { Transport } from '../../../src/domain/transport/transport';
 import { Logement } from '../../../src/domain/logement/logement';
-import { MissionsUtilisateur_v0 } from 'src/domain/object_store/mission/MissionsUtilisateur_v0';
 
 export enum TheBoolean {
   true = 'true',

@@ -11,7 +11,6 @@ import { Gamification } from '../../../src/domain/gamification/gamification';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import { MissionsUtilisateur_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
 import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
-import { Univers } from '../../../src/domain/univers/univers';
 
 describe('EVENT (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -32,6 +31,7 @@ describe('EVENT (API test)', () => {
             points: 20,
             is_locked: false,
             done_at: null,
+            sont_points_en_poche: false,
           },
         ],
         est_visible: true,
@@ -55,6 +55,7 @@ describe('EVENT (API test)', () => {
             points: 25,
             is_locked: false,
             done_at: null,
+            sont_points_en_poche: false,
           },
         ],
         est_visible: true,

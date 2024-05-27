@@ -28,6 +28,7 @@ const missions: MissionsUtilisateur_v0 = {
           points: 10,
           is_locked: false,
           done_at: null,
+          sont_points_en_poche: false
         },
         {
           id: '002',
@@ -37,6 +38,7 @@ const missions: MissionsUtilisateur_v0 = {
           points: 10,
           is_locked: false,
           done_at: null,
+          sont_points_en_poche: false
         },
         {
           id: '1',
@@ -46,6 +48,7 @@ const missions: MissionsUtilisateur_v0 = {
           points: 10,
           is_locked: true,
           done_at: null,
+          sont_points_en_poche: false
         },
         {
           id: '2',
@@ -55,6 +58,7 @@ const missions: MissionsUtilisateur_v0 = {
           points: 10,
           is_locked: true,
           done_at: null,
+          sont_points_en_poche: false
         },
         {
           id: '3',
@@ -64,6 +68,7 @@ const missions: MissionsUtilisateur_v0 = {
           points: 10,
           is_locked: true,
           done_at: null,
+          sont_points_en_poche: false
         },
       ],
       est_visible: true,

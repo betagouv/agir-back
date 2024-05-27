@@ -53,6 +53,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
             points: 10,
             is_locked: false,
             done_at: new Date(0),
+            sont_points_en_poche: false,
           },
           {
             id: '3',
@@ -62,6 +63,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
             points: 10,
             is_locked: true,
             done_at: null,
+            sont_points_en_poche: false,
           },
         ],
         prochaines_thematiques: [],
@@ -80,6 +82,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
             points: 10,
             is_locked: false,
             done_at: null,
+            sont_points_en_poche: false,
           },
           {
             id: '3',
@@ -89,6 +92,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
             points: 10,
             is_locked: true,
             done_at: null,
+            sont_points_en_poche: false,
           },
         ],
         prochaines_thematiques: [],
@@ -107,6 +111,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
             points: 10,
             is_locked: false,
             done_at: new Date(),
+            sont_points_en_poche: false,
           },
           {
             id: '3',
@@ -116,6 +121,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
             points: 10,
             is_locked: true,
             done_at: null,
+            sont_points_en_poche: false,
           },
         ],
         prochaines_thematiques: [],

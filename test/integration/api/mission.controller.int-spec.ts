@@ -33,6 +33,7 @@ describe('Mission (API test)', () => {
             points: 10,
             is_locked: false,
             done_at: null,
+            sont_points_en_poche: false,
           },
           {
             id: '1',
@@ -42,6 +43,7 @@ describe('Mission (API test)', () => {
             points: 10,
             is_locked: true,
             done_at: new Date(0),
+            sont_points_en_poche: false,
           },
           {
             id: '2',
@@ -51,6 +53,7 @@ describe('Mission (API test)', () => {
             points: 10,
             is_locked: false,
             done_at: null,
+            sont_points_en_poche: false,
           },
           {
             id: '3',
@@ -60,6 +63,7 @@ describe('Mission (API test)', () => {
             points: 10,
             is_locked: true,
             done_at: null,
+            sont_points_en_poche: false,
           },
         ],
         prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
@@ -83,6 +87,7 @@ describe('Mission (API test)', () => {
             points: 10,
             is_locked: false,
             done_at: new Date(),
+            sont_points_en_poche: false,
           },
         ],
         prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
@@ -106,6 +111,7 @@ describe('Mission (API test)', () => {
             points: 10,
             is_locked: false,
             done_at: null,
+            sont_points_en_poche: false,
           },
           {
             id: '1',
@@ -115,6 +121,7 @@ describe('Mission (API test)', () => {
             points: 10,
             is_locked: true,
             done_at: null,
+            sont_points_en_poche: false,
           },
         ],
         prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
@@ -138,6 +145,7 @@ describe('Mission (API test)', () => {
             points: 10,
             is_locked: false,
             done_at: null,
+            sont_points_en_poche: false,
           },
           {
             id: '1',
@@ -147,6 +155,7 @@ describe('Mission (API test)', () => {
             points: 10,
             is_locked: true,
             done_at: null,
+            sont_points_en_poche: false,
           },
         ],
         prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
@@ -154,7 +163,7 @@ describe('Mission (API test)', () => {
       },
     ],
   };
-  const missions_visible_pas_visible: MissionsUtilisateur_v0 = {
+  const missions_article_seul: MissionsUtilisateur_v0 = {
     version: 0,
     missions: [
       {
@@ -163,35 +172,52 @@ describe('Mission (API test)', () => {
         thematique_univers: ThematiqueUnivers.cereales,
         objectifs: [
           {
-            id: '0',
+            id: '000',
             content_id: '1',
             type: ContentType.article,
             titre: '1 article',
             points: 10,
             is_locked: false,
-            done_at: null,
-          },
-        ],
-        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
-        est_visible: true,
-      },
-      {
-        id: '2',
-        done_at: null,
-        thematique_univers: ThematiqueUnivers.dechets_compost,
-        objectifs: [
-          {
-            id: '0',
-            content_id: '2',
-            type: ContentType.article,
-            titre: '2 article',
-            points: 10,
-            is_locked: false,
-            done_at: null,
+            done_at: new Date(),
+            sont_points_en_poche: false,
           },
         ],
         prochaines_thematiques: [],
-        est_visible: false,
+        est_visible: true,
+      },
+    ],
+  };
+  const missions_2_KYC: MissionsUtilisateur_v0 = {
+    version: 0,
+    missions: [
+      {
+        id: '1',
+        done_at: null,
+        thematique_univers: ThematiqueUnivers.cereales,
+        objectifs: [
+          {
+            id: '000',
+            content_id: '_1',
+            type: ContentType.kyc,
+            titre: '1 kyc',
+            points: 10,
+            is_locked: false,
+            done_at: new Date(),
+            sont_points_en_poche: false,
+          },
+          {
+            id: '111',
+            content_id: '_2',
+            type: ContentType.kyc,
+            titre: '1 kyc',
+            points: 20,
+            is_locked: false,
+            done_at: new Date(),
+            sont_points_en_poche: false,
+          },
+        ],
+        prochaines_thematiques: [],
+        est_visible: true,
       },
     ],
   };
@@ -212,6 +238,7 @@ describe('Mission (API test)', () => {
             points: 10,
             is_locked: false,
             done_at: new Date(),
+            sont_points_en_poche: false,
           },
           {
             id: '1',
@@ -221,6 +248,7 @@ describe('Mission (API test)', () => {
             points: 10,
             is_locked: false,
             done_at: null,
+            sont_points_en_poche: false,
           },
         ],
         prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
@@ -349,6 +377,87 @@ describe('Mission (API test)', () => {
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.missions.missions).toHaveLength(1);
+  });
+  it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour l'objecif donné`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { missions: missions_article_seul });
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Mange de la graine',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/objectifs/000/gagner_points',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(
+      userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
+    ).toEqual(true);
+    expect(userDB.gamification.points).toEqual(20);
+  });
+  it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour deux KYC`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { missions: missions_2_KYC });
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Mange de la graine',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._1,
+      type: TypeReponseQuestionKYC.libre,
+      categorie: CategorieQuestionKYC.default,
+      points: 0,
+      question: `HAHA`,
+      reponses: [],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.libre,
+      categorie: CategorieQuestionKYC.default,
+      points: 0,
+      question: `HIHI`,
+      reponses: [],
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/objectifs/111/gagner_points',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(
+      userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
+    ).toEqual(true);
+    expect(
+      userDB.missions.missions[0].objectifs[1].sont_points_en_poche,
+    ).toEqual(true);
+    expect(userDB.gamification.points).toEqual(40);
   });
   it(`GET /utilisateurs/id/thematiques/cereales/next_kyc - renvoie 404 si plus de kyc à faire`, async () => {
     // GIVEN

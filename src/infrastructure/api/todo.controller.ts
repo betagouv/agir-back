@@ -54,7 +54,6 @@ export class TodoController extends GenericControler {
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
     @Param('elementId') elementId: string,
-    @Res() res: Response,
   ) {
     this.checkCallerId(req, utilisateurId);
 
@@ -62,8 +61,6 @@ export class TodoController extends GenericControler {
       utilisateurId,
       elementId,
     );
-
-    res.status(HttpStatus.OK).json('ok').send();
   }
 
   @ApiOperation({
@@ -74,11 +71,9 @@ export class TodoController extends GenericControler {
   async gagnerPointsTodo(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-    @Res() res: Response,
   ) {
     this.checkCallerId(req, utilisateurId);
 
     await this.todoUsecase.gagnerPointsFromTodo(utilisateurId);
-    res.status(HttpStatus.OK).json('ok').send();
   }
 }
