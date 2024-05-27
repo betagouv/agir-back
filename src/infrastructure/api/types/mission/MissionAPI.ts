@@ -39,6 +39,7 @@ export class MissionAPI {
   @ApiProperty() titre: string;
   @ApiProperty() done_at: Date;
   @ApiProperty() is_new: boolean;
+  @ApiProperty() image_url: string;
   @ApiProperty() thematique_univers: ThematiqueUnivers;
   @ApiProperty() thematique_univers_label: string;
   @ApiProperty() univers: Univers;
@@ -68,6 +69,9 @@ export class MissionAPI {
       progression: mission.getProgression(),
       is_new: mission.isNew(),
       progression_kyc: mission.getProgressionKYC(),
+      image_url: ThematiqueRepository.getTuileThematique(
+        mission.thematique_univers,
+      ).image_url,
     };
   }
 }

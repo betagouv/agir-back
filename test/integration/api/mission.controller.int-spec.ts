@@ -269,6 +269,7 @@ describe('Mission (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.id).toEqual('1');
     expect(response.body.is_new).toEqual(false);
+    expect(response.body.image_url).toEqual('aaaa');
     expect(response.body.progression).toEqual({ current: 1, target: 4 });
     expect(response.body.thematique_univers).toEqual('cereales');
     expect(response.body.thematique_univers_label).toEqual(
