@@ -827,7 +827,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     const response = await TestUtil.getServer()
       .post('/utilisateurs/file_attente')
       .send({
-        email: 'haha',
+        email: 'hahahas',
         code_postal: '21000',
         code_profil: Profil.citoyen,
       });
@@ -835,7 +835,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(response.status).toBe(201);
 
     const attenteDB = await TestUtil.prisma.fileAttente.findUnique({
-      where: { email: 'haha' },
+      where: { email: 'hahahas' },
     });
 
     expect(attenteDB.code_postal).toEqual('21000');
@@ -846,7 +846,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     process.env.MAX_ATTENTE_JOUR = '10';
     await TestUtil.prisma.fileAttente.create({
       data: {
-        email: 'haha',
+        email: 'hahahas',
         code_profil: Profil.entreprise,
         code_postal: '91120',
       },
@@ -856,7 +856,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     const response = await TestUtil.getServer()
       .post('/utilisateurs/file_attente')
       .send({
-        email: 'haha',
+        email: 'hahahas',
         code_postal: '21000',
         code_profil: Profil.citoyen,
       });
@@ -864,7 +864,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(response.status).toBe(201);
 
     const attenteDB = await TestUtil.prisma.fileAttente.findUnique({
-      where: { email: 'haha' },
+      where: { email: 'hahahas' },
     });
 
     expect(attenteDB.code_postal).toEqual('21000');
@@ -874,14 +874,14 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     // GIVEN
     await TestUtil.prisma.fileAttente.create({
       data: {
-        email: 'haha',
+        email: 'hahahas',
         code_profil: Profil.entreprise,
         code_postal: '91120',
       },
     });
     await TestUtil.prisma.fileAttente.create({
       data: {
-        email: 'hihi',
+        email: 'hihihis',
         code_profil: Profil.citoyen,
         code_postal: '21000',
       },
@@ -892,7 +892,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     const response = await TestUtil.getServer()
       .post('/utilisateurs/file_attente')
       .send({
-        email: 'hoho',
+        email: 'hohohos',
         code_postal: '75000',
         code_profil: Profil.citoyen,
       });
@@ -900,6 +900,78 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(response.status).toBe(400);
     expect(response.body.message).toEqual(
       "Liste d'attente complète pour aujourd'hui !",
+    );
+  });
+  it(`POST /utilisateurs/file_attente - 400 si mail manquant`, async () => {
+    // GIVEN
+    process.env.MAX_ATTENTE_JOUR = '2';
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/file_attente')
+      .send({
+        code_postal: '75000',
+        code_profil: Profil.citoyen,
+      });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      "Mauvais inputs pour la mise en file d'attente",
+    );
+  });
+  it(`POST /utilisateurs/file_attente - 400 si mail trop long`, async () => {
+    // GIVEN
+    process.env.MAX_ATTENTE_JOUR = '2';
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/file_attente')
+      .send({
+        email:
+          '12345678901234567890123456789012345678901234567890123456789001234567890123456789012345678901234567890',
+        code_postal: '75000',
+        code_profil: Profil.citoyen,
+      });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      "Mauvais inputs pour la mise en file d'attente",
+    );
+  });
+  it(`POST /utilisateurs/file_attente - 400 si code profil KO`, async () => {
+    // GIVEN
+    process.env.MAX_ATTENTE_JOUR = '2';
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/file_attente')
+      .send({
+        email: 'haha',
+        code_postal: '75000',
+        code_profil: 'bad',
+      });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      "Mauvais inputs pour la mise en file d'attente",
+    );
+  });
+  it(`POST /utilisateurs/file_attente - 400 si code postal par sur 5 char`, async () => {
+    // GIVEN
+    process.env.MAX_ATTENTE_JOUR = '2';
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/file_attente')
+      .send({
+        email: 'haha',
+        code_postal: '75000qq',
+        code_profil: Profil.entreprise,
+      });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      "Mauvais inputs pour la mise en file d'attente",
     );
   });
 });

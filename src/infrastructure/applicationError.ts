@@ -271,6 +271,9 @@ export class ApplicationError {
   static throwToManyAttenteForToday() {
     this.throwAppError('048', `Liste d'attente complète pour aujourd'hui !`);
   }
+  static throwBadInputsForFileAttente() {
+    this.throwAppError('049', `Mauvais inputs pour la mise en file d'attente`);
+  }
 
   private static throwAppError(
     code: string,
