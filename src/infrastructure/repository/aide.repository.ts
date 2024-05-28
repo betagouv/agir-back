@@ -107,6 +107,10 @@ export class AideRepository {
       url_simulateur: aideDB.url_simulateur,
       besoin: Besoin[aideDB.besoin],
       besoin_desc: aideDB.besoin_desc,
+      codes_departement: aideDB.codes_departement,
+      codes_region: aideDB.codes_region,
+      exclude_codes_commune: aideDB.exclude_codes_commune,
+      include_codes_commune: aideDB.include_codes_commune,
     };
   }
 }

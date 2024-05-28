@@ -50,6 +50,10 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() titre: string;
   @ApiProperty() code: string;
   @ApiProperty() est_visible: boolean;
+  @ApiProperty() include_codes_commune: string;
+  @ApiProperty() exclude_codes_commune: string;
+  @ApiProperty() codes_departement: string;
+  @ApiProperty() codes_region: string;
   @ApiProperty() categorie: string;
   @ApiProperty() type: string;
   @ApiProperty() label: string;
@@ -116,6 +120,10 @@ export type CMSWebhookPopulateAPI = {
     description: string;
     source: string;
     codes_postaux: string;
+    include_codes_commune: string;
+    exclude_codes_commune: string;
+    codes_departement: string;
+    codes_region: string;
     duree: string;
     frequence: string;
     points: number;

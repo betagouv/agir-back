@@ -467,6 +467,10 @@ export class CMSUsecase {
       url_simulateur: entry.url_detail_front,
       besoin: entry.besoin ? Besoin[entry.besoin.code] : null,
       besoin_desc: entry.besoin ? entry.besoin.description : null,
+      include_codes_commune: entry.include_codes_commune,
+      exclude_codes_commune: entry.exclude_codes_commune,
+      codes_departement: entry.codes_departement,
+      codes_region: entry.codes_region,
     };
   }
 
@@ -626,6 +630,10 @@ export class CMSUsecase {
       besoin_desc: entry.attributes.besoin.data
         ? entry.attributes.besoin.data.attributes.description
         : null,
+      include_codes_commune: entry.attributes.include_codes_commune,
+      exclude_codes_commune: entry.attributes.exclude_codes_commune,
+      codes_departement: entry.attributes.codes_departement,
+      codes_region: entry.attributes.codes_region,
     };
   }
   static buildDefiFromCMSPopulateData(
