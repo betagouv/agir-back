@@ -45,6 +45,7 @@
     "@nestjs/jwt": "^10.1.0",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^6.3.0",
+    "@nestjs/throttler": "^5.1.2",
     "@prisma/client": "^5.1.1",
     "@sentry/node": "^7.85.0",
     "@sentry/tracing": "^7.85.0",

@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { OnboardingUsecase } from '../../usecase/onboarding.usecase';
 import {
   ApiTags,
@@ -17,6 +17,7 @@ import {
   ReponseCheckWhitelisteAPI,
 } from './types/utilisateur/onboarding/checkWhitelisteAPI';
 import { FileAttenteUsecase } from '../../../src/usecase/fileAttente.usecase';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 @ApiExtraModels(CreateUtilisateurAPI)
 @Controller()
@@ -57,6 +58,7 @@ export class OnboardingController extends GenericControler {
   @ApiOkResponse({
     type: ReponseCheckWhitelisteAPI,
   })
+  @UseGuards(ThrottlerGuard)
   async checkWhiteListe(
     @Body() body: CheckWhitelisteAPI,
   ): Promise<ReponseCheckWhitelisteAPI> {
@@ -73,6 +75,7 @@ export class OnboardingController extends GenericControler {
   @ApiOperation({
     summary: "ajoute l'email à la liste d'attente pour participer à la Beta",
   })
+  @UseGuards(ThrottlerGuard)
   async addToFileAttente(@Body() body: UtilisateurAttenteAPI) {
     await this.fileAttenteUsecase.add({
       email: body.email,

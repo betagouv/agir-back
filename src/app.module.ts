@@ -102,6 +102,7 @@ import { MissionRepository } from './infrastructure/repository/mission.repositor
 import { KycRepository } from './infrastructure/repository/kyc.repository';
 import { FileAttenteUsecase } from './usecase/fileAttente.usecase';
 import { FileAttenteRepository } from './infrastructure/repository/fileAttente.repository';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -141,6 +142,12 @@ function getControllers(): any[] {
 }
 @Module({
   imports: [
+    ThrottlerModule.forRoot([
+      {
+        ttl: 10000,
+        limit: 10,
+      },
+    ]),
     JwtModule.register({
       global: true,
       secret: process.env.INTERNAL_TOKEN_SECRET,
