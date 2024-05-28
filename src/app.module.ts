@@ -100,6 +100,8 @@ import { KycStatistiqueUsecase } from './usecase/kycStatistique.usecase';
 import { KycStatistiqueRepository } from './infrastructure/repository/kycStatistique.repository';
 import { MissionRepository } from './infrastructure/repository/mission.repository';
 import { KycRepository } from './infrastructure/repository/kyc.repository';
+import { FileAttenteUsecase } from './usecase/fileAttente.usecase';
+import { FileAttenteRepository } from './infrastructure/repository/fileAttente.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -217,6 +219,8 @@ function getControllers(): any[] {
     KycStatistiqueRepository,
     MissionRepository,
     KycRepository,
+    FileAttenteUsecase,
+    FileAttenteRepository,
   ],
 })
 export class AppModule {}

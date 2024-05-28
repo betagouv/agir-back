@@ -268,6 +268,9 @@ export class ApplicationError {
       404,
     );
   }
+  static throwToManyAttenteForToday() {
+    this.throwAppError('048', `Liste d'attente complète pour aujourd'hui !`);
+  }
 
   private static throwAppError(
     code: string,

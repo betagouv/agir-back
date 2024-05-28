@@ -1,11 +1,12 @@
 import { Controller, Get, Param, Query, Redirect } from '@nestjs/common';
-import { ApiExcludeEndpoint } from '@nestjs/swagger';
+import { ApiExcludeController, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { OidcService } from '../auth/oidc.service';
 import { UtilisateurUsecase } from '../../usecase/utilisateur.usecase';
 import { InscriptionUsecase } from '../../../src/usecase/inscription.usecase';
 import { App } from '../../../src/domain/app';
 
 @Controller()
+@ApiExcludeController()
 export class AuthController {
   constructor(
     private inscriptionUsecase: InscriptionUsecase,

@@ -10,6 +10,7 @@ import {
   ThematiqueOnboarding,
 } from '../../../src/domain/onboarding/onboarding';
 import { DB, TestUtil } from '../../TestUtil';
+import { Profil } from '../../../src/domain/utilisateur/utilisateurAttente';
 
 const ONBOARDING_1_2_3_4_DATA = {
   transports: ['voiture', 'pied'],
@@ -782,6 +783,123 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(response.status).toBe(400);
     expect(response.body.message).toEqual(
       'Valeur residence [mauvaise valeur] inconnue',
+    );
+  });
+  it('POST /utilisateurs/check_whiteliste - true si white listé', async () => {
+    // GIVEN
+    process.env.WHITE_LIST_ENABLED = 'true';
+    process.env.WHITE_LIST = 'mon mail';
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/check_whiteliste')
+      .send({
+        email: 'mon mail',
+      });
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual({
+      is_whitelisted: true,
+    });
+  });
+  it('POST /utilisateurs/check_whiteliste - false si white listé', async () => {
+    // GIVEN
+    process.env.WHITE_LIST_ENABLED = 'true';
+    process.env.WHITE_LIST = 'mon mail';
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/check_whiteliste')
+      .send({
+        email: 'bad',
+      });
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual({
+      is_whitelisted: false,
+    });
+  });
+  it(`POST /utilisateurs/file_attente - ajout l'email à la file d'attente`, async () => {
+    // GIVEN
+    process.env.MAX_ATTENTE_JOUR = '10';
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/file_attente')
+      .send({
+        email: 'haha',
+        code_postal: '21000',
+        code_profil: Profil.citoyen,
+      });
+    // THEN
+    expect(response.status).toBe(201);
+
+    const attenteDB = await TestUtil.prisma.fileAttente.findUnique({
+      where: { email: 'haha' },
+    });
+
+    expect(attenteDB.code_postal).toEqual('21000');
+    expect(attenteDB.code_profil).toEqual(Profil.citoyen);
+  });
+  it(`POST /utilisateurs/file_attente - maj l'email en d'attente`, async () => {
+    // GIVEN
+    process.env.MAX_ATTENTE_JOUR = '10';
+    await TestUtil.prisma.fileAttente.create({
+      data: {
+        email: 'haha',
+        code_profil: Profil.entreprise,
+        code_postal: '91120',
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/file_attente')
+      .send({
+        email: 'haha',
+        code_postal: '21000',
+        code_profil: Profil.citoyen,
+      });
+    // THEN
+    expect(response.status).toBe(201);
+
+    const attenteDB = await TestUtil.prisma.fileAttente.findUnique({
+      where: { email: 'haha' },
+    });
+
+    expect(attenteDB.code_postal).toEqual('21000');
+    expect(attenteDB.code_profil).toEqual(Profil.citoyen);
+  });
+  it(`POST /utilisateurs/file_attente - si max user / jour => erreur 400`, async () => {
+    // GIVEN
+    await TestUtil.prisma.fileAttente.create({
+      data: {
+        email: 'haha',
+        code_profil: Profil.entreprise,
+        code_postal: '91120',
+      },
+    });
+    await TestUtil.prisma.fileAttente.create({
+      data: {
+        email: 'hihi',
+        code_profil: Profil.citoyen,
+        code_postal: '21000',
+      },
+    });
+    process.env.MAX_ATTENTE_JOUR = '2';
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/file_attente')
+      .send({
+        email: 'hoho',
+        code_postal: '75000',
+        code_profil: Profil.citoyen,
+      });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      "Liste d'attente complète pour aujourd'hui !",
     );
   });
 });
