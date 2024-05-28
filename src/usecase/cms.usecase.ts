@@ -425,9 +425,7 @@ export class CMSUsecase {
       partenaire: entry.partenaire ? entry.partenaire.nom : null,
       rubrique_ids: this.getIdsFromRubriques(entry.rubriques),
       rubrique_labels: this.getTitresFromRubriques(entry.rubriques),
-      codes_postaux: entry.codes_postaux
-        ? entry.codes_postaux.split(',')
-        : undefined,
+      codes_postaux: entry.codes_postaux ? entry.codes_postaux.split(',') : [],
       duree: entry.duree,
       frequence: entry.frequence,
       difficulty: entry.difficulty ? entry.difficulty : 1,
@@ -451,9 +449,7 @@ export class CMSUsecase {
     return {
       content_id: entry.id.toString(),
       titre: entry.titre,
-      codes_postaux: entry.codes_postaux
-        ? entry.codes_postaux.split(',')
-        : undefined,
+      codes_postaux: CMSUsecase.split(entry.codes_postaux),
       thematiques: entry.thematiques
         ? entry.thematiques.map((elem) =>
             ThematiqueRepository.getThematiqueByCmsId(elem.id),
@@ -467,10 +463,10 @@ export class CMSUsecase {
       url_simulateur: entry.url_detail_front,
       besoin: entry.besoin ? Besoin[entry.besoin.code] : null,
       besoin_desc: entry.besoin ? entry.besoin.description : null,
-      include_codes_commune: entry.include_codes_commune,
-      exclude_codes_commune: entry.exclude_codes_commune,
-      codes_departement: entry.codes_departement,
-      codes_region: entry.codes_region,
+      include_codes_commune: CMSUsecase.split(entry.include_codes_commune),
+      exclude_codes_commune: CMSUsecase.split(entry.exclude_codes_commune),
+      codes_departement: CMSUsecase.split(entry.codes_departement),
+      codes_region: CMSUsecase.split(entry.codes_region),
     };
   }
 
@@ -583,9 +579,7 @@ export class CMSUsecase {
         entry.attributes.rubriques.data.length > 0
           ? entry.attributes.rubriques.data.map((elem) => elem.attributes.titre)
           : [],
-      codes_postaux: entry.attributes.codes_postaux
-        ? entry.attributes.codes_postaux.split(',')
-        : [],
+      codes_postaux: CMSUsecase.split(entry.attributes.codes_postaux),
       duree: entry.attributes.duree,
       frequence: entry.attributes.frequence,
       difficulty: entry.attributes.difficulty ? entry.attributes.difficulty : 1,
@@ -609,9 +603,7 @@ export class CMSUsecase {
     return {
       content_id: entry.id.toString(),
       titre: entry.attributes.titre,
-      codes_postaux: entry.attributes.codes_postaux
-        ? entry.attributes.codes_postaux.split(',')
-        : [],
+      codes_postaux: CMSUsecase.split(entry.attributes.codes_postaux),
       contenu: entry.attributes.description,
       thematiques:
         entry.attributes.thematiques.data.length > 0
@@ -630,10 +622,14 @@ export class CMSUsecase {
       besoin_desc: entry.attributes.besoin.data
         ? entry.attributes.besoin.data.attributes.description
         : null,
-      include_codes_commune: entry.attributes.include_codes_commune,
-      exclude_codes_commune: entry.attributes.exclude_codes_commune,
-      codes_departement: entry.attributes.codes_departement,
-      codes_region: entry.attributes.codes_region,
+      include_codes_commune: CMSUsecase.split(
+        entry.attributes.include_codes_commune,
+      ),
+      exclude_codes_commune: CMSUsecase.split(
+        entry.attributes.exclude_codes_commune,
+      ),
+      codes_departement: CMSUsecase.split(entry.attributes.codes_departement),
+      codes_region: CMSUsecase.split(entry.attributes.codes_region),
     };
   }
   static buildDefiFromCMSPopulateData(
@@ -761,5 +757,9 @@ export class CMSUsecase {
       return rubriques.map((rubrique) => rubrique.id.toString());
     }
     return [];
+  }
+
+  private static split(list: string) {
+    return list ? list.split(',') : [];
   }
 }

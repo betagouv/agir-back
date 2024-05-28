@@ -10,6 +10,7 @@ export type AideFilter = {
   maxNumber?: number;
   thematiques?: Thematique[];
   code_postal?: string;
+  code_region?: string;
 };
 
 @Injectable()

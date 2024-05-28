@@ -327,10 +327,10 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.besoin).toEqual(Besoin.broyer_vege);
     expect(aide.besoin_desc).toEqual('Broyer ses végétaux');
 
-    expect(aide.include_codes_commune).toEqual('01,02');
-    expect(aide.exclude_codes_commune).toEqual('03,04');
-    expect(aide.codes_departement).toEqual('78');
-    expect(aide.codes_region).toEqual('25');
+    expect(aide.include_codes_commune).toEqual(['01', '02']);
+    expect(aide.exclude_codes_commune).toEqual(['03', '04']);
+    expect(aide.codes_departement).toEqual(['78']);
+    expect(aide.codes_region).toEqual(['25']);
   });
   it('POST /api/incoming/cms - create a new kyc', async () => {
     // GIVEN
@@ -500,10 +500,10 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.content_id).toEqual('123');
     expect(aide.besoin).toEqual(Besoin.broyer_vege);
     expect(aide.besoin_desc).toEqual('Broyer ses végétaux');
-    expect(aide.include_codes_commune).toEqual('01,02');
-    expect(aide.exclude_codes_commune).toEqual('03,04');
-    expect(aide.codes_departement).toEqual('78');
-    expect(aide.codes_region).toEqual('25');
+    expect(aide.include_codes_commune).toEqual(['01', '02']);
+    expect(aide.exclude_codes_commune).toEqual(['03', '04']);
+    expect(aide.codes_departement).toEqual(['78']);
+    expect(aide.codes_region).toEqual(['25']);
   });
 
   it('POST /api/incoming/cms - removes existing aide when unpublish', async () => {

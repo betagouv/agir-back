@@ -15,8 +15,8 @@ export class Aide {
   montant_max: number;
   besoin: Besoin;
   besoin_desc: string;
-  include_codes_commune: string;
-  exclude_codes_commune: string;
-  codes_departement: string;
-  codes_region: string;
+  include_codes_commune: string[];
+  exclude_codes_commune: string[];
+  codes_departement: string[];
+  codes_region: string[];
 }
