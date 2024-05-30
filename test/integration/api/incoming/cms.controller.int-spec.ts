@@ -4,6 +4,15 @@ import { DB, TestUtil } from '../../../TestUtil';
 import { Besoin } from '../../../../src/domain/aides/besoin';
 import { Univers } from '../../../../src/domain/univers/univers';
 import { ThematiqueUnivers } from '../../../../src/domain/univers/thematiqueUnivers';
+import {
+  CategorieQuestionKYC,
+  KYCID,
+  TypeReponseQuestionKYC,
+} from '../../../../src/domain/kyc/questionQYC';
+import { KYC, Mission } from '.prisma/client';
+import { Thematique } from '../../../../src/domain/contenu/thematique';
+import { Tag } from '../../../../src/domain/scoring/tag';
+import { ContentType } from '../../../../src/domain/contenu/contentType';
 
 describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA_DEFI = {
@@ -36,6 +45,68 @@ describe('/api/incoming/cms (API test)', () => {
       ],
     },
   };
+  const CMS_DATA_KYC = {
+    model: CMSModel.kyc,
+    event: CMSEvent['entry.publish'],
+    entry: {
+      id: 123,
+      question: 'question',
+      code: KYCID.KYC001,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      categorie: CategorieQuestionKYC.mission,
+      points: 5,
+      is_ngc: false,
+      reponses: [
+        {
+          id: 1,
+          reponse: 'haha',
+          code: 'haha_code',
+        },
+        {
+          id: 2,
+          reponse: 'hihi',
+          code: 'hihi_code',
+        },
+      ],
+      thematique: { id: 1 },
+      tags: [
+        { id: 1, code: 'capacite_physique' },
+        { id: 2, code: 'possede_velo' },
+      ],
+      publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+      univers: [
+        {
+          id: 1,
+          code: Univers.climat,
+        },
+      ],
+    },
+  };
+  const CMS_DATA_MISSION = {
+    model: CMSModel.mission,
+    event: CMSEvent['entry.publish'],
+    entry: {
+      id: 123,
+      publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+      est_visible: true,
+      thematique_univers_unique: {
+        id: 1,
+        code: ThematiqueUnivers.cereales,
+      },
+      prochaines_thematiques: [
+        {
+          id: 1,
+          code: ThematiqueUnivers.dechets_compost,
+        },
+      ],
+      objectifs: [
+        { id: 1, titre: 'do it article', points: 5, article: { id: 11 } },
+        { id: 2, titre: 'do it defi', points: 10, defi: { id: 12 } },
+        { id: 3, titre: 'do it kyc', points: 15, kyc: { code: KYCID.KYC001 } },
+        { id: 4, titre: 'do it quizz', points: 20, quizz: { id: 13 } },
+      ],
+    },
+  };
   const CMS_DATA_AIDE = {
     model: CMSModel.aide,
     event: CMSEvent['entry.publish'],
@@ -57,6 +128,10 @@ describe('/api/incoming/cms (API test)', () => {
         code: 'broyer_vege',
         description: 'Broyer ses végétaux',
       },
+      include_codes_commune: '01,02',
+      exclude_codes_commune: '03,04',
+      codes_departement: '78',
+      codes_region: '25',
     },
   };
   const CMS_DATA_ARTICLE = {
@@ -251,6 +326,97 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.content_id).toEqual('123');
     expect(aide.besoin).toEqual(Besoin.broyer_vege);
     expect(aide.besoin_desc).toEqual('Broyer ses végétaux');
+
+    expect(aide.include_codes_commune).toEqual(['01', '02']);
+    expect(aide.exclude_codes_commune).toEqual(['03', '04']);
+    expect(aide.codes_departement).toEqual(['78']);
+    expect(aide.codes_region).toEqual(['25']);
+  });
+  it('POST /api/incoming/cms - create a new kyc', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_KYC,
+    );
+
+    // THEN
+    const kycs = await TestUtil.prisma.kYC.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(kycs).toHaveLength(1);
+
+    const item: KYC = kycs[0];
+
+    expect(item.code).toEqual('KYC001');
+    expect(item.question).toEqual('question');
+    expect(item.id_cms).toEqual(123);
+    expect(item.type).toEqual(TypeReponseQuestionKYC.choix_multiple);
+    expect(item.categorie).toEqual(CategorieQuestionKYC.mission);
+    expect(item.points).toEqual(5);
+    expect(item.is_ngc).toEqual(false);
+    expect(item.reponses).toEqual([
+      {
+        label: 'haha',
+        code: 'haha_code',
+      },
+      {
+        label: 'hihi',
+        code: 'hihi_code',
+      },
+    ]);
+    expect(item.thematique).toEqual(Thematique.alimentation);
+    expect(item.tags).toEqual([Tag.capacite_physique, Tag.possede_velo]);
+    expect(item.universes).toEqual([Univers.climat]);
+  });
+  it('POST /api/incoming/cms - create a new mission', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_MISSION,
+    );
+
+    // THEN
+    const missions = await TestUtil.prisma.mission.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(missions).toHaveLength(1);
+
+    const item: Mission = missions[0];
+
+    expect(item.est_visible).toEqual(true);
+    expect(item.id_cms).toEqual(123);
+    expect(item.prochaines_thematiques).toEqual([
+      ThematiqueUnivers.dechets_compost,
+    ]);
+    expect(item.thematique_univers).toEqual(ThematiqueUnivers.cereales);
+    expect(item.objectifs).toEqual([
+      {
+        titre: 'do it article',
+        content_id: '11',
+        type: ContentType.article,
+        points: 5,
+      },
+      {
+        titre: 'do it defi',
+        content_id: '12',
+        type: ContentType.defi,
+        points: 10,
+      },
+      {
+        titre: 'do it kyc',
+        content_id: KYCID.KYC001,
+        type: ContentType.kyc,
+        points: 15,
+      },
+      {
+        titre: 'do it quizz',
+        content_id: '13',
+        type: ContentType.quizz,
+        points: 20,
+      },
+    ]);
   });
   it('POST /api/incoming/cms - create a new defi', async () => {
     // GIVEN
@@ -334,6 +500,10 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.content_id).toEqual('123');
     expect(aide.besoin).toEqual(Besoin.broyer_vege);
     expect(aide.besoin_desc).toEqual('Broyer ses végétaux');
+    expect(aide.include_codes_commune).toEqual(['01', '02']);
+    expect(aide.exclude_codes_commune).toEqual(['03', '04']);
+    expect(aide.codes_departement).toEqual(['78']);
+    expect(aide.codes_region).toEqual(['25']);
   });
 
   it('POST /api/incoming/cms - removes existing aide when unpublish', async () => {

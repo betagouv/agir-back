@@ -168,4 +168,158 @@ describe('AideRepository', () => {
     // THEN
     expect(liste).toHaveLength(2);
   });
+  it('search : le filtre region no match ', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_region: ['45', '46'],
+      codes_postaux: [],
+    });
+
+    // WHEN
+    const liste = await aideRepository.search({
+      code_postal: '21000',
+      code_region: '47',
+    });
+
+    // THEN
+    expect(liste).toHaveLength(0);
+  });
+  it('search : le filtre region match', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_region: ['45', '46'],
+      codes_postaux: [],
+    });
+
+    // WHEN
+    const liste = await aideRepository.search({
+      code_postal: '21000',
+      code_region: '46',
+    });
+
+    // THEN
+    expect(liste).toHaveLength(1);
+  });
+  it('search : le filtre region et code qui exluent', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_region: ['45', '46'],
+      codes_postaux: ['91120'],
+    });
+
+    // WHEN
+    const liste = await aideRepository.search({
+      code_postal: '21000',
+      code_region: '46',
+    });
+
+    // THEN
+    expect(liste).toHaveLength(0);
+  });
+  it('search : le filtre departement no match ', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_departement: ['45', '46'],
+    });
+
+    // WHEN
+    const liste = await aideRepository.search({
+      code_departement: '47',
+    });
+
+    // THEN
+    expect(liste).toHaveLength(0);
+  });
+  it('search : le filtre departement match', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_departement: ['45', '46'],
+    });
+
+    // WHEN
+    const liste = await aideRepository.search({
+      code_departement: '46',
+    });
+
+    // THEN
+    expect(liste).toHaveLength(1);
+  });
+  it('search : le filtre code commune no match ', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      include_codes_commune: ['45', '46'],
+      exclude_codes_commune: [],
+    });
+
+    // WHEN
+    const liste = await aideRepository.search({
+      code_commune: '47',
+    });
+
+    // THEN
+    expect(liste).toHaveLength(0);
+  });
+  it('search : le filtre code commune match', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      include_codes_commune: ['45', '46'],
+      exclude_codes_commune: [],
+    });
+
+    // WHEN
+    const liste = await aideRepository.search({
+      code_commune: '46',
+    });
+
+    // THEN
+    expect(liste).toHaveLength(1);
+  });
+  it('search : le filtre code commune exlusion no match ', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      exclude_codes_commune: ['45', '46'],
+      include_codes_commune: [],
+    });
+
+    // WHEN
+    const liste = await aideRepository.search({
+      code_commune: '47',
+    });
+
+    // THEN
+    expect(liste).toHaveLength(1);
+  });
+  it('search : le filtre code commune exclusion match', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      exclude_codes_commune: ['45', '46'],
+      include_codes_commune: [],
+    });
+
+    // WHEN
+    const liste = await aideRepository.search({
+      code_commune: '46',
+    });
+
+    // THEN
+    expect(liste).toHaveLength(0);
+  });
 });

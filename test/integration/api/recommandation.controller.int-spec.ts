@@ -10,7 +10,6 @@ import {
   PonderationApplicativeManager,
 } from '../../../src/domain/scoring/ponderationApplicative';
 import { DB, TestUtil } from '../../TestUtil';
-import { CatalogueQuestionsKYC } from '../../../src/domain/kyc/catalogueQuestionsKYC';
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
@@ -90,7 +89,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandation - 401 si force reconnexion', async () => {
     // GIVEN
-    CatalogueQuestionsKYC.setCatalogue([]);
+    //CatalogueQuestionsKYC.setCatalogue([]);
 
     await TestUtil.create(DB.utilisateur, {
       history: {},
@@ -107,7 +106,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandation - list article recommandation', async () => {
     // GIVEN
-    CatalogueQuestionsKYC.setCatalogue([]);
+    //CatalogueQuestionsKYC.setCatalogue([]);
 
     await TestUtil.create(DB.utilisateur, { history: {} });
     await TestUtil.create(DB.article, {
@@ -141,7 +140,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     process.env.DEFI_ENABLED = 'true';
     process.env.KYC_RECO_ENABLED = 'true';
     await TestUtil.create(DB.defi, { ...DEFI_1_DEF });
-    CatalogueQuestionsKYC.setCatalogue([]);
+    //CatalogueQuestionsKYC.setCatalogue([]);
     await TestUtil.create(DB.utilisateur, {
       history: {},
       defis: {
@@ -169,7 +168,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations - list all recos, filtée par code postal', async () => {
     // GIVEN
-    CatalogueQuestionsKYC.setCatalogue([]);
+    //CatalogueQuestionsKYC.setCatalogue([]);
 
     await TestUtil.create(DB.utilisateur, {
       history: {},
@@ -195,7 +194,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations - applique les ponderations aux articles', async () => {
     // GIVEN
-    CatalogueQuestionsKYC.setCatalogue([]);
+    //CatalogueQuestionsKYC.setCatalogue([]);
 
     await TestUtil.create(DB.utilisateur, {
       history: {},
@@ -237,31 +236,37 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   it('GET /utilisateurs/id/recommandations - renvoie qu une KYC, la mieux notée', async () => {
     // GIVEN
     process.env.KYC_RECO_ENABLED = 'true';
-    CatalogueQuestionsKYC.setCatalogue([
-      {
-        id: KYCID._1,
-        question: `Quel est votre sujet principal d'intéret ?`,
-        type: TypeReponseQuestionKYC.libre,
-        is_NGC: false,
-        categorie: CategorieQuestionKYC.recommandation,
-        points: 10,
-        thematique: Thematique.consommation,
-        tags: [],
-        universes: [],
-      },
-      {
-        id: KYCID._2,
-        question: `question hors recos`,
-        type: TypeReponseQuestionKYC.libre,
-        is_NGC: false,
-        categorie: CategorieQuestionKYC.recommandation,
-        points: 10,
-        thematique: Thematique.climat,
-        tags: [],
-        universes: [],
-      },
-    ]);
 
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._1,
+      type: TypeReponseQuestionKYC.libre,
+      categorie: CategorieQuestionKYC.recommandation,
+      points: 10,
+      question: `Quel est votre sujet principal d'intéret ?`,
+      thematique: Thematique.consommation,
+      reponses: [],
+      tags: [],
+      universes: [],
+    });
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.libre,
+      categorie: CategorieQuestionKYC.recommandation,
+      points: 10,
+      question: `question hors recos`,
+      thematique: Thematique.climat,
+      reponses: [
+        { label: 'AAA', code: Thematique.climat },
+        { label: 'BBB', code: Thematique.logement },
+        { label: 'CCC', code: Thematique.alimentation },
+        { label: 'DDD', code: Thematique.transport },
+      ],
+      tags: [],
+      universes: [],
+    });
     await TestUtil.create(DB.utilisateur, {
       history: {},
       tag_ponderation_set: { climat: 100, consommation: 50 },
@@ -283,7 +288,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations - applique les ponderations aux quizz', async () => {
     // GIVEN
-    CatalogueQuestionsKYC.setCatalogue([]);
+    //CatalogueQuestionsKYC.setCatalogue([]);
 
     await TestUtil.create(DB.utilisateur, {
       history: {},
@@ -328,7 +333,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     process.env.KYC_RECO_ENABLED = 'true';
     await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '101' });
 
-    CatalogueQuestionsKYC.setCatalogue([]);
+    //CatalogueQuestionsKYC.setCatalogue([]);
     await TestUtil.create(DB.utilisateur, {
       history: {},
       tag_ponderation_set: { utilise_moto_ou_voiture: 100 },
@@ -376,7 +381,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     };
     await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '101' });
 
-    CatalogueQuestionsKYC.setCatalogue([]);
+    //CatalogueQuestionsKYC.setCatalogue([]);
     await TestUtil.create(DB.utilisateur, {
       history: {},
       tag_ponderation_set: { utilise_moto_ou_voiture: 100 },
@@ -393,7 +398,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations - tag climat 2 fois renforce le score', async () => {
     // GIVEN
-    CatalogueQuestionsKYC.setCatalogue([]);
+    //CatalogueQuestionsKYC.setCatalogue([]);
     await TestUtil.create(DB.utilisateur, {
       history: {},
       tag_ponderation_set: { transport: 50 },
@@ -425,7 +430,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations - pas de article lu', async () => {
     // GIVEN
-    CatalogueQuestionsKYC.setCatalogue([]);
+    //CatalogueQuestionsKYC.setCatalogue([]);
 
     await TestUtil.create(DB.utilisateur, {
       history: {
@@ -459,7 +464,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations - que des quizz jamais touchés', async () => {
     // GIVEN
-    CatalogueQuestionsKYC.setCatalogue([]);
+    //CatalogueQuestionsKYC.setCatalogue([]);
     await TestUtil.create(DB.utilisateur, {
       history: {
         quizz_interactions: [
@@ -493,39 +498,36 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     // GIVEN
     process.env.DEFI_ENABLED = 'true';
     process.env.KYC_RECO_ENABLED = 'true';
-    CatalogueQuestionsKYC.setCatalogue([
-      {
-        id: KYCID._1,
-        question: `Quel est votre sujet principal d'intéret ?`,
-        type: TypeReponseQuestionKYC.choix_multiple,
-        is_NGC: false,
-        categorie: CategorieQuestionKYC.recommandation,
-        points: 10,
-        reponses: undefined,
-        thematique: Thematique.consommation,
-        reponses_possibles: [
-          { label: 'AAA', code: Thematique.climat },
-          { label: 'BBB', code: Thematique.logement },
-          { label: 'CCC', code: Thematique.alimentation },
-          { label: 'DDD', code: Thematique.transport },
-        ],
-        tags: [Tag.R6],
-        universes: [],
-      },
-      {
-        id: KYCID._2,
-        question: `question hors recos`,
-        type: TypeReponseQuestionKYC.choix_unique,
-        is_NGC: false,
-        categorie: CategorieQuestionKYC.mission,
-        points: 10,
-        reponses: undefined,
-        thematique: Thematique.consommation,
-        reponses_possibles: [{ label: 'AAA', code: Thematique.climat }],
-        tags: [Tag.R6, Tag.R1],
-        universes: [],
-      },
-    ]);
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._1,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      categorie: CategorieQuestionKYC.recommandation,
+      points: 10,
+      question: `Quel est votre sujet principal d'intéret ?`,
+      thematique: Thematique.consommation,
+      reponses: [
+        { label: 'AAA', code: Thematique.climat },
+        { label: 'BBB', code: Thematique.logement },
+        { label: 'CCC', code: Thematique.alimentation },
+        { label: 'DDD', code: Thematique.transport },
+      ],
+      tags: [Tag.R6],
+      universes: [],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: CategorieQuestionKYC.mission,
+      points: 10,
+      question: `question hors recos`,
+      thematique: Thematique.consommation,
+      reponses: [{ label: 'AAA', code: Thematique.climat }],
+      tags: [Tag.R6, Tag.R1],
+      universes: [],
+    });
+
     const defis: DefiHistory_v0 = {
       version: 0,
       defis: [
@@ -619,39 +621,37 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     // GIVEN
     process.env.DEFI_ENABLED = 'true';
     process.env.KYC_RECO_ENABLED = 'true';
-    CatalogueQuestionsKYC.setCatalogue([
-      {
-        id: KYCID._1,
-        question: `Quel est votre sujet principal d'intéret ?`,
-        type: TypeReponseQuestionKYC.choix_multiple,
-        is_NGC: false,
-        categorie: CategorieQuestionKYC.recommandation,
-        points: 10,
-        reponses: undefined,
-        thematique: Thematique.consommation,
-        reponses_possibles: [
-          { label: 'AAA', code: Thematique.climat },
-          { label: 'BBB', code: Thematique.logement },
-          { label: 'CCC', code: Thematique.alimentation },
-          { label: 'DDD', code: Thematique.transport },
-        ],
-        tags: [Tag.R6],
-        universes: [],
-      },
-      {
-        id: KYCID._2,
-        question: `question hors recos`,
-        type: TypeReponseQuestionKYC.choix_unique,
-        is_NGC: false,
-        categorie: CategorieQuestionKYC.mission,
-        points: 10,
-        reponses: undefined,
-        thematique: Thematique.consommation,
-        reponses_possibles: [{ label: 'AAA', code: Thematique.climat }],
-        tags: [Tag.R6, Tag.R1],
-        universes: [],
-      },
-    ]);
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._1,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      categorie: CategorieQuestionKYC.recommandation,
+      points: 10,
+      question: `Quel est votre sujet principal d'intéret ?`,
+      thematique: Thematique.consommation,
+      reponses: [
+        { label: 'AAA', code: Thematique.climat },
+        { label: 'BBB', code: Thematique.logement },
+        { label: 'CCC', code: Thematique.alimentation },
+        { label: 'DDD', code: Thematique.transport },
+      ],
+      tags: [Tag.R6],
+      universes: [],
+    });
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: CategorieQuestionKYC.mission,
+      points: 10,
+      question: `question hors recos`,
+      thematique: Thematique.consommation,
+      reponses: [{ label: 'AAA', code: Thematique.climat }],
+      tags: [Tag.R6, Tag.R1],
+      universes: [],
+    });
+
     const defis: DefiHistory_v0 = {
       version: 0,
       defis: [
@@ -745,39 +745,37 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     // GIVEN
     process.env.DEFI_ENABLED = 'true';
     process.env.KYC_RECO_ENABLED = 'true';
-    CatalogueQuestionsKYC.setCatalogue([
-      {
-        id: KYCID._1,
-        question: `Quel est votre sujet principal d'intéret ?`,
-        type: TypeReponseQuestionKYC.choix_multiple,
-        is_NGC: false,
-        categorie: CategorieQuestionKYC.recommandation,
-        points: 10,
-        reponses: undefined,
-        thematique: Thematique.consommation,
-        reponses_possibles: [
-          { label: 'AAA', code: Thematique.climat },
-          { label: 'BBB', code: Thematique.logement },
-          { label: 'CCC', code: Thematique.alimentation },
-          { label: 'DDD', code: Thematique.transport },
-        ],
-        tags: [Tag.R6],
-        universes: [Univers.climat],
-      },
-      {
-        id: KYCID._2,
-        question: `question auutre`,
-        type: TypeReponseQuestionKYC.choix_unique,
-        is_NGC: false,
-        categorie: CategorieQuestionKYC.recommandation,
-        points: 10,
-        reponses: undefined,
-        thematique: Thematique.consommation,
-        reponses_possibles: [{ label: 'AAA', code: Thematique.climat }],
-        tags: [Tag.R6, Tag.R1],
-        universes: [Univers.logement],
-      },
-    ]);
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._1,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      categorie: CategorieQuestionKYC.recommandation,
+      points: 10,
+      question: `Quel est votre sujet principal d'intéret ?`,
+      thematique: Thematique.consommation,
+      reponses: [
+        { label: 'AAA', code: Thematique.climat },
+        { label: 'BBB', code: Thematique.logement },
+        { label: 'CCC', code: Thematique.alimentation },
+        { label: 'DDD', code: Thematique.transport },
+      ],
+      tags: [Tag.R6],
+      universes: [Univers.climat],
+    });
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: CategorieQuestionKYC.recommandation,
+      points: 10,
+      question: `question hors recos`,
+      thematique: Thematique.consommation,
+      reponses: [{ label: 'AAA', code: Thematique.climat }],
+      tags: [Tag.R6, Tag.R1],
+      universes: [Univers.logement],
+    });
 
     const kyc: KYCHistory_v0 = {
       version: 0,

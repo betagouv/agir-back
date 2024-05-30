@@ -54,15 +54,20 @@ export class App {
   public static isWhiteListeEnabled(): boolean {
     return process.env.WHITE_LIST_ENABLED === 'true';
   }
+  public static doesAnyWhiteListIncludes(email: string): boolean {
+    const access_1 = App.doesWhiteListIncludes(email);
+    const access_2 = App.doesWhiteListDijonIncludes(email);
+    return access_1 || access_2;
+  }
   public static doesWhiteListIncludes(email: string): boolean {
     return (
-      process.env.WHITE_LIST &&
+      !!process.env.WHITE_LIST &&
       process.env.WHITE_LIST.toLowerCase().includes(email.toLocaleLowerCase())
     );
   }
   public static doesWhiteListDijonIncludes(email: string): boolean {
     return (
-      process.env.WHITE_LIST_DIJON &&
+      !!process.env.WHITE_LIST_DIJON &&
       process.env.WHITE_LIST_DIJON.toLowerCase().includes(
         email.toLocaleLowerCase(),
       )
@@ -101,5 +106,8 @@ export class App {
   }
   public static getCurrentPonderationRubriqueSetName(): string {
     return process.env.PONDERATION_RUBRIQUES;
+  }
+  public static getMaxFileAttenteJour(): number {
+    return Number.parseInt(process.env.MAX_ATTENTE_JOUR) || 0;
   }
 }

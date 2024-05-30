@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ThematiqueUnivers } from '../../src/domain/univers/thematiqueUnivers';
 
 export class ApplicationError {
   @ApiProperty()
@@ -244,6 +245,34 @@ export class ApplicationError {
   }
   static throwPleaseReconnect() {
     this.throwAppError('044', `L'utilisateur est forcé à se reconnecter`, 401);
+  }
+
+  static throwMissionNotFound(them: ThematiqueUnivers) {
+    this.throwAppError(
+      '045',
+      `Mission de thematique [${them}] non trouvée`,
+      404,
+    );
+  }
+  static throwMissionNotFoundOfThematique(them: string) {
+    this.throwAppError(
+      '046',
+      `Mission de thématique [${them}] non trouvée`,
+      404,
+    );
+  }
+  static throwNoMoreKYCForThematique(them: string) {
+    this.throwAppError(
+      '047',
+      `Plus de question KYC pour la Mission de thematique [${them}]`,
+      404,
+    );
+  }
+  static throwToManyAttenteForToday() {
+    this.throwAppError('048', `Liste d'attente complète pour aujourd'hui !`);
+  }
+  static throwBadInputsForFileAttente() {
+    this.throwAppError('049', `Mauvais inputs pour la mise en file d'attente`);
   }
 
   private static throwAppError(

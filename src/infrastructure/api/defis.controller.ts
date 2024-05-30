@@ -8,15 +8,11 @@ import {
 } from '@nestjs/swagger';
 import {
   Controller,
-  Put,
   Param,
   Body,
   UseGuards,
-  Response,
   Request,
   Get,
-  HttpStatus,
-  UseFilters,
   Patch,
   Query,
 } from '@nestjs/common';
@@ -26,12 +22,16 @@ import { DefisUsecase } from '../../../src/usecase/defis.usecase';
 import { DefiAPI, PatchDefiStatusAPI } from './types/defis/DefiAPI';
 import { Univers } from '../../../src/domain/univers/univers';
 import { DefiStatus } from '../../../src/domain/defis/defi';
+import { DefiStatistiqueUsecase } from '../../../src/usecase/defiStatistique.usecase';
 
 @Controller()
 @ApiBearerAuth()
 @ApiTags('Defis')
 export class DefisController extends GenericControler {
-  constructor(private readonly defisUsecase: DefisUsecase) {
+  constructor(
+    private readonly defisUsecase: DefisUsecase,
+    private readonly defiStatistiqueUsecase: DefiStatistiqueUsecase,
+  ) {
     super();
   }
 
@@ -50,7 +50,10 @@ export class DefisController extends GenericControler {
   ): Promise<DefiAPI> {
     this.checkCallerId(req, utilisateurId);
     const result = await this.defisUsecase.getById(utilisateurId, defiId);
-    return DefiAPI.mapToAPI(result);
+    const resultDefiStatistique = await this.defiStatistiqueUsecase.getById(
+      defiId,
+    );
+    return DefiAPI.mapToAPI(result, resultDefiStatistique);
   }
 
   @Patch('utilisateurs/:utilisateurId/defis/:defiId')
@@ -89,6 +92,24 @@ export class DefisController extends GenericControler {
   })
   async getAll(@Request() req): Promise<DefiAPI[]> {
     const result = await this.defisUsecase.getALL();
+    return result.map((element) => DefiAPI.mapToAPI(element));
+  }
+
+  @Get('utilisateurs/:utilisateurId/defis_v2')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: [DefiAPI],
+  })
+  @ApiOperation({
+    summary:
+      "Retourne l'ensemble des défis de l'utilisateur, aggrégation des défis dispo via les différents univers / thémtiques",
+  })
+  async getAllUserDefi_2(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<DefiAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.defisUsecase.getAllDefis_v2(utilisateurId);
     return result.map((element) => DefiAPI.mapToAPI(element));
   }
 
@@ -134,6 +155,28 @@ export class DefisController extends GenericControler {
       status ? status : [],
       univers ? Univers[univers] : undefined,
       accessible === 'true',
+    );
+    return result.map((element) => DefiAPI.mapToAPI(element));
+  }
+
+  @Get('utilisateurs/:utilisateurId/univers/:universId/defis')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: [DefiAPI],
+  })
+  @ApiOperation({
+    summary:
+      "Retourne l'ensemble des défis de l'utilisateur visible dans l'univers argument, agrégation des défis visibles des thémtiques de cet univers",
+  })
+  async getAllUserDefiInUnivers(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('universId') universId: string,
+  ): Promise<DefiAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.defisUsecase.getDefisOfUnivers(
+      utilisateurId,
+      Univers[universId],
     );
     return result.map((element) => DefiAPI.mapToAPI(element));
   }

@@ -4,20 +4,11 @@ import {
   CategorieQuestionKYC,
   KYCID,
 } from '../../../../src/domain/kyc/questionQYC';
-import { CatalogueQuestionsKYC } from '../../../../src/domain/kyc/catalogueQuestionsKYC';
 import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
 import { Univers } from '../../../../src/domain/univers/univers';
+import { Tag } from '../../../../src/domain/scoring/tag';
 
 describe('QuestionsQYC && CollectionQuestionsKYC', () => {
-  it('constructeur OK', () => {
-    // WHEN
-    const questionsKYC = new KYCHistory();
-
-    // THEN
-    expect(questionsKYC.getAllQuestionSet()).toHaveLength(
-      CatalogueQuestionsKYC.getTailleCatalogue(),
-    );
-  });
   it('isQuestionAnswered :false si pas répondu', () => {
     // WHEN
     const questionsKYC = new KYCHistory();
@@ -34,7 +25,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   });
   it('hasResponses :false si attribut undefined', () => {
     // GIVEN
-    const questionsKYC = new KYCHistory({
+    const history = new KYCHistory({
       version: 0,
       answered_questions: [
         {
@@ -56,15 +47,33 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         },
       ],
     });
+    history.setCatalogue([
+      {
+        id_cms: 1,
+        categorie: CategorieQuestionKYC.recommandation,
+        code: KYCID.KYC001,
+        is_ngc: false,
+        points: 10,
+        question: 'The question !',
+        tags: [Tag.possede_voiture],
+        universes: [Univers.alimentation],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_multiple,
+        reponses: [
+          { label: 'BBB', code: Thematique.logement },
+          { label: 'CCC', code: Thematique.alimentation },
+        ],
+      },
+    ]);
 
     // THEN
-    expect(
-      questionsKYC.getQuestionOrException(KYCID.KYC001).hasResponses(),
-    ).toEqual(false);
+    expect(history.getQuestionOrException(KYCID.KYC001).hasResponses()).toEqual(
+      false,
+    );
   });
   it('hasResponses :false si attribut []', () => {
     // GIVEN
-    const questionsKYC = new KYCHistory({
+    const history = new KYCHistory({
       version: 0,
       answered_questions: [
         {
@@ -86,15 +95,32 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         },
       ],
     });
-
+    history.setCatalogue([
+      {
+        id_cms: 1,
+        categorie: CategorieQuestionKYC.recommandation,
+        code: KYCID.KYC001,
+        is_ngc: false,
+        points: 10,
+        question: 'The question !',
+        tags: [Tag.possede_voiture],
+        universes: [Univers.alimentation],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_multiple,
+        reponses: [
+          { label: 'BBB', code: Thematique.logement },
+          { label: 'CCC', code: Thematique.alimentation },
+        ],
+      },
+    ]);
     // THEN
-    expect(
-      questionsKYC.getQuestionOrException(KYCID.KYC001).hasResponses(),
-    ).toEqual(false);
+    expect(history.getQuestionOrException(KYCID.KYC001).hasResponses()).toEqual(
+      false,
+    );
   });
   it('hasResponses :true si au moins un reponse valorisée', () => {
     // GIVEN
-    const questionsKYC = new KYCHistory({
+    const history = new KYCHistory({
       version: 0,
       answered_questions: [
         {
@@ -116,11 +142,29 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         },
       ],
     });
-
+    history.setCatalogue([
+      {
+        id_cms: 1,
+        categorie: CategorieQuestionKYC.recommandation,
+        code: KYCID.KYC001,
+        is_ngc: false,
+        points: 10,
+        question: 'The question !',
+        tags: [Tag.possede_voiture],
+        universes: [Univers.alimentation],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_multiple,
+        reponses: [
+          { label: 'BBB', code: Thematique.logement },
+          { label: 'CCC', code: Thematique.alimentation },
+          { label: 'Le climat', code: Thematique.climat },
+        ],
+      },
+    ]);
     // THEN
-    expect(
-      questionsKYC.getQuestionOrException(KYCID.KYC001).hasResponses(),
-    ).toEqual(true);
+    expect(history.getQuestionOrException(KYCID.KYC001).hasResponses()).toEqual(
+      true,
+    );
   });
   it('updateQuestion : exeption si question id inconnu', () => {
     // GIVEN
@@ -137,7 +181,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   });
   it('getQuestionOrException : rematch la reponse via code sur catalogue', () => {
     // GIVEN
-    const questionsKYC = new KYCHistory({
+    const history = new KYCHistory({
       version: 0,
       answered_questions: [
         {
@@ -159,42 +203,57 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         },
       ],
     });
-    CatalogueQuestionsKYC.setCatalogue([
+    history.setCatalogue([
       {
-        id: KYCID.KYC001,
-        question: `Quel est votre sujet principal d'intéret ?`,
-        type: TypeReponseQuestionKYC.choix_multiple,
-        is_NGC: false,
-        categorie: CategorieQuestionKYC.default,
+        id_cms: 1,
+        categorie: CategorieQuestionKYC.recommandation,
+        code: KYCID.KYC001,
+        is_ngc: false,
         points: 10,
-        reponses: undefined,
-        reponses_possibles: [
-          { label: 'AAA', code: Thematique.climat },
-          { label: 'BBB', code: Thematique.logement },
-          { label: 'CCC', code: Thematique.alimentation },
-          { label: 'DDD', code: Thematique.transport },
+        question: 'The question !',
+        tags: [Tag.possede_voiture],
+        universes: [Univers.alimentation],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_multiple,
+        reponses: [
+          { label: '🥦 Alimentation', code: Thematique.alimentation },
+          { label: '☀️ Climat et Environnement', code: Thematique.climat },
+          { label: '🛒 Consommation durable', code: Thematique.consommation },
+          { label: '🗑️ Déchets', code: Thematique.dechet },
+          { label: '🏡 Logement', code: Thematique.logement },
+          {
+            label: '⚽ Loisirs (vacances, sport,...)',
+            code: Thematique.loisir,
+          },
+          { label: '🚗 Transports', code: Thematique.transport },
+          { label: 'Aucun / Je ne sais pas', code: 'rien' },
         ],
-        tags: [],
-        universes: [],
       },
     ]);
 
     // WHEN
-    const question = questionsKYC.getQuestionOrException(KYCID.KYC001);
+    const question = history.getQuestionOrException(KYCID.KYC001);
 
     // THEN
     expect(question.reponses[0].code).toEqual(Thematique.climat);
-    expect(question.reponses[0].label).toEqual('AAA');
+    expect(question.reponses[0].label).toEqual('☀️ Climat et Environnement');
     expect(question.reponses_possibles).toEqual([
-      { label: 'AAA', code: Thematique.climat },
-      { label: 'BBB', code: Thematique.logement },
-      { label: 'CCC', code: Thematique.alimentation },
-      { label: 'DDD', code: Thematique.transport },
+      { label: '🥦 Alimentation', code: Thematique.alimentation },
+      { label: '☀️ Climat et Environnement', code: Thematique.climat },
+      { label: '🛒 Consommation durable', code: Thematique.consommation },
+      { label: '🗑️ Déchets', code: Thematique.dechet },
+      { label: '🏡 Logement', code: Thematique.logement },
+      {
+        label: '⚽ Loisirs (vacances, sport,...)',
+        code: Thematique.loisir,
+      },
+      { label: '🚗 Transports', code: Thematique.transport },
+      { label: 'Aucun / Je ne sais pas', code: 'rien' },
     ]);
   });
   it('getQuestionOrException : si code manquant dans catalogue, reponse disparait', () => {
     // GIVEN
-    const questionsKYC = new KYCHistory({
+    const history = new KYCHistory({
       version: 0,
       answered_questions: [
         {
@@ -217,26 +276,27 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         },
       ],
     });
-    CatalogueQuestionsKYC.setCatalogue([
+    history.setCatalogue([
       {
-        id: KYCID.KYC001,
-        question: `Quel est votre sujet principal d'intéret ?`,
-        type: TypeReponseQuestionKYC.choix_multiple,
-        is_NGC: false,
-        categorie: CategorieQuestionKYC.default,
+        id_cms: 1,
+        categorie: CategorieQuestionKYC.recommandation,
+        code: KYCID.KYC001,
+        is_ngc: false,
         points: 10,
-        reponses: undefined,
-        reponses_possibles: [
+        question: 'The question !',
+        tags: [Tag.possede_voiture],
+        universes: [Univers.alimentation],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_multiple,
+        reponses: [
           { label: 'BBB', code: Thematique.logement },
           { label: 'CCC', code: Thematique.alimentation },
         ],
-        tags: [],
-        universes: [],
       },
     ]);
 
     // WHEN
-    const question = questionsKYC.getQuestionOrException(KYCID.KYC001);
+    const question = history.getQuestionOrException(KYCID.KYC001);
 
     // THEN
     expect(question.reponses).toEqual([
@@ -250,7 +310,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       { label: 'CCC', code: Thematique.alimentation },
     ]);
 
-    expect(questionsKYC.answered_questions[0].reponses).toEqual([
+    expect(history.answered_questions[0].reponses).toEqual([
       {
         label: 'BBB',
         code: Thematique.logement,
@@ -259,7 +319,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   });
   it('getQuestionOrException : si code manquant dans catalogue, reponse disparait', () => {
     // GIVEN
-    const questionsKYC = new KYCHistory({
+    const history = new KYCHistory({
       version: 0,
       answered_questions: [
         {
@@ -282,26 +342,27 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         },
       ],
     });
-    CatalogueQuestionsKYC.setCatalogue([
+    history.setCatalogue([
       {
-        id: KYCID.KYC001,
-        question: `Quel est votre sujet principal d'intéret ?`,
-        type: TypeReponseQuestionKYC.choix_multiple,
-        is_NGC: false,
-        categorie: CategorieQuestionKYC.default,
+        id_cms: 1,
+        categorie: CategorieQuestionKYC.recommandation,
+        code: KYCID.KYC001,
+        is_ngc: false,
         points: 10,
-        reponses: undefined,
-        reponses_possibles: [
+        question: 'The question !',
+        tags: [Tag.possede_voiture],
+        universes: [Univers.alimentation],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_multiple,
+        reponses: [
           { label: 'BBB', code: Thematique.logement },
           { label: 'CCC', code: Thematique.alimentation },
         ],
-        tags: [],
-        universes: [],
       },
     ]);
 
     // WHEN
-    const question = questionsKYC.getQuestionOrException(KYCID.KYC001);
+    const question = history.getQuestionOrException(KYCID.KYC001);
 
     // THEN
     expect(question.reponses).toEqual([
@@ -315,7 +376,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       { label: 'CCC', code: Thematique.alimentation },
     ]);
 
-    expect(questionsKYC.answered_questions[0].reponses).toEqual([
+    expect(history.answered_questions[0].reponses).toEqual([
       {
         label: 'BBB',
         code: Thematique.logement,
@@ -324,7 +385,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   });
   it('getQuestionOrException : si code manquant pas grave si question pas de type choix', () => {
     // GIVEN
-    const questionsKYC = new KYCHistory({
+    const history = new KYCHistory({
       version: 0,
       answered_questions: [
         {
@@ -341,23 +402,24 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         },
       ],
     });
-    CatalogueQuestionsKYC.setCatalogue([
+    history.setCatalogue([
       {
-        id: KYCID.KYC001,
-        question: `Quel est votre sujet principal d'intéret ?`,
-        type: TypeReponseQuestionKYC.entier,
-        is_NGC: false,
-        categorie: CategorieQuestionKYC.default,
+        id_cms: 1,
+        categorie: CategorieQuestionKYC.recommandation,
+        code: KYCID.KYC001,
+        is_ngc: false,
         points: 10,
-        reponses: undefined,
-        reponses_possibles: [],
-        tags: [],
-        universes: [],
+        question: 'The question !',
+        tags: [Tag.possede_voiture],
+        universes: [Univers.alimentation],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.entier,
+        reponses: [],
       },
     ]);
 
     // WHEN
-    const question = questionsKYC.getQuestionOrException(KYCID.KYC001);
+    const question = history.getQuestionOrException(KYCID.KYC001);
 
     // THEN
     expect(question.reponses).toEqual([{ label: '123', code: null }]);
@@ -365,7 +427,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
   it('getKYCRestantes : kyc non repondu', () => {
     // GIVEN
-    const questionsKYC = new KYCHistory({
+    const history = new KYCHistory({
       version: 0,
       answered_questions: [
         {
@@ -387,42 +449,42 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         },
       ],
     });
-    CatalogueQuestionsKYC.setCatalogue([
+    history.setCatalogue([
       {
-        id: KYCID.KYC001,
-        question: `Quel est votre sujet principal d'intéret ?`,
-        type: TypeReponseQuestionKYC.choix_multiple,
-        is_NGC: false,
+        id_cms: 1,
         categorie: CategorieQuestionKYC.default,
+        code: KYCID.KYC001,
+        is_ngc: false,
         points: 10,
-        reponses: undefined,
-        reponses_possibles: [
+        question: 'The question !',
+        tags: [Tag.possede_voiture],
+        universes: [Univers.alimentation],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_multiple,
+        reponses: [
           { label: 'AAA', code: Thematique.climat },
           { label: 'BBB', code: Thematique.logement },
           { label: 'CCC', code: Thematique.alimentation },
           { label: 'DDD', code: Thematique.transport },
         ],
-        tags: [],
-        universes: [],
       },
       {
-        id: KYCID.KYC002,
-        question: `Quel est votre sujet principal d'intéret ?`,
-        type: TypeReponseQuestionKYC.libre,
-        is_NGC: false,
+        id_cms: 2,
         categorie: CategorieQuestionKYC.default,
+        code: KYCID.KYC002,
+        is_ngc: false,
         points: 10,
-        reponses: undefined,
-        reponses_possibles: undefined,
-        tags: [],
-        universes: [],
+        question: 'The question !',
+        tags: [Tag.possede_voiture],
+        universes: [Univers.alimentation],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.libre,
+        reponses: [],
       },
     ]);
 
     // WHEN
-    const questions = questionsKYC.getKYCRestantes(
-      CategorieQuestionKYC.default,
-    );
+    const questions = history.getKYCRestantes(CategorieQuestionKYC.default);
 
     // THEN
     expect(questions).toHaveLength(1);
@@ -430,7 +492,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   });
   it('getKYCRestantes : filtrage univers', () => {
     // GIVEN
-    const questionsKYC = new KYCHistory({
+    const history = new KYCHistory({
       version: 0,
       answered_questions: [
         {
@@ -452,40 +514,47 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         },
       ],
     });
-    CatalogueQuestionsKYC.setCatalogue([
+    history.setCatalogue([
       {
-        id: KYCID.KYC001,
-        question: `Quel est votre sujet principal d'intéret ?`,
-        type: TypeReponseQuestionKYC.choix_multiple,
-        is_NGC: false,
-        categorie: CategorieQuestionKYC.default,
+        id_cms: 1,
+        categorie: CategorieQuestionKYC.recommandation,
+        code: KYCID.KYC001,
+        is_ngc: false,
         points: 10,
-        reponses: undefined,
-        reponses_possibles: [
+        question: 'The question !',
+        tags: [Tag.possede_voiture],
+        universes: [],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_multiple,
+        reponses: [
           { label: 'AAA', code: Thematique.climat },
           { label: 'BBB', code: Thematique.logement },
           { label: 'CCC', code: Thematique.alimentation },
           { label: 'DDD', code: Thematique.transport },
         ],
-        tags: [],
-        universes: [],
       },
       {
-        id: KYCID.KYC002,
-        question: `Quel est votre sujet principal d'intéret ?`,
-        type: TypeReponseQuestionKYC.libre,
-        is_NGC: false,
-        categorie: CategorieQuestionKYC.default,
+        id_cms: 2,
+        categorie: CategorieQuestionKYC.recommandation,
+        code: KYCID.KYC002,
+        is_ngc: false,
         points: 10,
-        reponses: undefined,
-        reponses_possibles: undefined,
-        tags: [],
+        question: 'The question !',
+        tags: [Tag.possede_voiture],
         universes: [Univers.climat],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.libre,
+        reponses: [
+          { label: 'AAA', code: Thematique.climat },
+          { label: 'BBB', code: Thematique.logement },
+          { label: 'CCC', code: Thematique.alimentation },
+          { label: 'DDD', code: Thematique.transport },
+        ],
       },
     ]);
 
     // WHEN
-    const questions = questionsKYC.getKYCRestantes(
+    const questions = history.getKYCRestantes(
       CategorieQuestionKYC.default,
       Univers.consommation,
     );

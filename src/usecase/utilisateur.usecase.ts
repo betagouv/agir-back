@@ -20,6 +20,7 @@ import { GroupeRepository } from '../../src/infrastructure/repository/groupe.rep
 import { ContactUsecase } from './contact.usecase';
 import { KYCID } from '../../src/domain/kyc/questionQYC';
 import { App } from '../../src/domain/app';
+import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 
 export type Phrase = {
   phrase: string;
@@ -41,6 +42,7 @@ export class UtilisateurUsecase {
     private securityEmailManager: SecurityEmailManager,
     private passwordManager: PasswordManager,
     private contactUsecase: ContactUsecase,
+    private kycRepository: KycRepository,
   ) {}
 
   async computeAllUsersRecoTags() {
@@ -48,6 +50,10 @@ export class UtilisateurUsecase {
     for (let index = 0; index < userIdList.length; index++) {
       const user_id = userIdList[index];
       const utilisateur = await this.utilisateurRepository.getById(user_id);
+
+      const catalogue = await this.kycRepository.getAllDefs();
+      utilisateur.kyc_history.setCatalogue(catalogue);
+
       utilisateur.recomputeRecoTags();
       await this.utilisateurRepository.updateUtilisateur(utilisateur);
     }
@@ -139,6 +145,9 @@ export class UtilisateurUsecase {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
+    const kyc_catalogue = await this.kycRepository.getAllDefs();
+    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
+
     utilisateur.transport.patch(input);
 
     utilisateur.recomputeRecoTags();
@@ -149,6 +158,9 @@ export class UtilisateurUsecase {
   async updateUtilisateurLogement(utilisateurId: string, input: LogementAPI) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
+
+    const kyc_catalogue = await this.kycRepository.getAllDefs();
+    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
     utilisateur.logement.patch(input);
 

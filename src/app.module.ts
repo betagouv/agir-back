@@ -94,6 +94,15 @@ import { DefiStatistiqueUsecase } from './usecase/defiStatistique.usecase';
 import { DefiStatistiqueRepository } from './infrastructure/repository/defiStatistique.repository';
 import { MissionUsecase } from './usecase/mission.usecase';
 import { MissionController } from './infrastructure/api/mission.controller';
+import { QuizStatistiqueUsecase } from './usecase/quizStatistique.usecase';
+import { QuizStatistiqueRepository } from './infrastructure/repository/quizStatistique.repository';
+import { KycStatistiqueUsecase } from './usecase/kycStatistique.usecase';
+import { KycStatistiqueRepository } from './infrastructure/repository/kycStatistique.repository';
+import { MissionRepository } from './infrastructure/repository/mission.repository';
+import { KycRepository } from './infrastructure/repository/kyc.repository';
+import { FileAttenteUsecase } from './usecase/fileAttente.usecase';
+import { FileAttenteRepository } from './infrastructure/repository/fileAttente.repository';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -133,6 +142,12 @@ function getControllers(): any[] {
 }
 @Module({
   imports: [
+    ThrottlerModule.forRoot([
+      {
+        ttl: 1000 * 60 * 60 * 24,
+        limit: 10000,
+      },
+    ]),
     JwtModule.register({
       global: true,
       secret: process.env.INTERNAL_TOKEN_SECRET,
@@ -205,6 +220,14 @@ function getControllers(): any[] {
     DefiStatistiqueUsecase,
     DefiStatistiqueRepository,
     MissionUsecase,
+    QuizStatistiqueUsecase,
+    QuizStatistiqueRepository,
+    KycStatistiqueUsecase,
+    KycStatistiqueRepository,
+    MissionRepository,
+    KycRepository,
+    FileAttenteUsecase,
+    FileAttenteRepository,
   ],
 })
 export class AppModule {}

@@ -22,6 +22,7 @@ import { App } from '../domain/app';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { Feature } from '../../src/domain/gamification/feature';
 import { Univers } from '../../src/domain/univers/univers';
+import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 
 @Injectable()
 export class RecommandationUsecase {
@@ -30,6 +31,7 @@ export class RecommandationUsecase {
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
     private defiRepository: DefiRepository,
+    private kycRepository: KycRepository,
   ) {}
 
   async listRecommandationsV2(
@@ -38,6 +40,9 @@ export class RecommandationUsecase {
   ): Promise<Recommandation[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
+
+    const catalogue = await this.kycRepository.getAllDefs();
+    utilisateur.kyc_history.setCatalogue(catalogue);
 
     const articles = await this.getArticles(utilisateur, univers);
 
@@ -64,6 +69,9 @@ export class RecommandationUsecase {
   async listRecommandations(utilisateurId: string): Promise<Recommandation[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
+
+    const kyc_catalogue = await this.kycRepository.getAllDefs();
+    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
     const articles = await this.getArticles(utilisateur);
 

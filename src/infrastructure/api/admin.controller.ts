@@ -1,4 +1,4 @@
-import { Controller, Param, Post, Request } from '@nestjs/common';
+import { Controller, Post, Request } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -18,6 +18,8 @@ import { UtilisateurUsecase } from '../../../src/usecase/utilisateur.usecase';
 import { StatistiqueUsecase } from '../../../src/usecase/statistique.usecase';
 import { ArticleStatistiqueUsecase } from '../../../src/usecase/articleStatistique.usecase';
 import { DefiStatistiqueUsecase } from '../../../src/usecase/defiStatistique.usecase';
+import { QuizStatistiqueUsecase } from '../../../src/usecase/quizStatistique.usecase';
+import { KycStatistiqueUsecase } from '../../../src/usecase/kycStatistique.usecase';
 
 @Controller()
 @ApiTags('Admin')
@@ -35,6 +37,8 @@ export class AdminController extends GenericControler {
     private statistiqueUsecase: StatistiqueUsecase,
     private articleStatistiqueUsecase: ArticleStatistiqueUsecase,
     private defiStatistiqueUsecase: DefiStatistiqueUsecase,
+    private quizStatistiqueUsecase: QuizStatistiqueUsecase,
+    private kycStatistiqueUsecase: KycStatistiqueUsecase,
   ) {
     super();
   }
@@ -70,6 +74,24 @@ export class AdminController extends GenericControler {
   async upsertAllCMSArticles(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.cmsUsecase.loadArticlesFromCMS();
+  }
+  @Post('/admin/load_missions_from_cms')
+  @ApiOperation({
+    summary: 'Upsert toutes les missions publiées du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async upsertAllCMSMissions(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.cmsUsecase.loadMissionsFromCMS();
+  }
+  @Post('/admin/load_kycs_from_cms')
+  @ApiOperation({
+    summary: 'Upsert toutes les KYCs publiées du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async upsertAllKYCMissions(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.cmsUsecase.loadKYCFromCMS();
   }
   @Post('/admin/load_defi_from_cms')
   @ApiOperation({
@@ -200,5 +222,23 @@ export class AdminController extends GenericControler {
   async calcul_defi_statistique(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.defiStatistiqueUsecase.calculStatistique();
+  }
+
+  @Post('/admin/quiz-statistique')
+  @ApiOperation({
+    summary: `Calcul des statistiques de l'ensemble des quiz`,
+  })
+  async calcul_quiz_statistique(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.quizStatistiqueUsecase.calculStatistique();
+  }
+
+  @Post('/admin/kyc-statistique')
+  @ApiOperation({
+    summary: `Calcul des statistiques de l'ensemble des kyc`,
+  })
+  async calcul_kyc_statistique(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.kycStatistiqueUsecase.calculStatistique();
   }
 }

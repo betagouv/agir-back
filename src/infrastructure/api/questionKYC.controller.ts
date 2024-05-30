@@ -83,14 +83,13 @@ export class QuestionsKYCController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
     @Param('questionId') questionId: string,
     @Body() body: ReponseAPI,
-    @Response() res,
-  ): Promise<QuestionKYCAPI> {
+  ): Promise<string> {
     this.checkCallerId(req, utilisateurId);
     await this.questionKYCUsecase.updateResponse(
       utilisateurId,
       questionId,
       body.reponse,
     );
-    return res.status(HttpStatus.OK).json('OK').send();
+    return 'OK';
   }
 }

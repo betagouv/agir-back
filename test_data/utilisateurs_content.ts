@@ -7,6 +7,75 @@ import {
 } from '../src/domain/onboarding/onboarding';
 import { v4 as uuidv4 } from 'uuid';
 import { LiveService } from '../src/domain/service/serviceDefinition';
+import { ThematiqueUnivers } from '../src/domain/univers/thematiqueUnivers';
+import { Univers } from '../src/domain/univers/univers';
+import { MissionsUtilisateur_v0 } from '../src/domain/object_store/mission/MissionsUtilisateur_v0';
+import { KYCID } from '../src/domain/kyc/questionQYC';
+
+const missions: MissionsUtilisateur_v0 = {
+  version: 0,
+  missions: [
+    {
+      id: '1',
+      done_at: null,
+      thematique_univers: ThematiqueUnivers.cereales,
+      objectifs: [
+        {
+          id: '001',
+          content_id: KYCID.KYC001,
+          type: ContentType.kyc,
+          titre: 'Question 1',
+          points: 10,
+          is_locked: false,
+          done_at: null,
+          sont_points_en_poche: false
+        },
+        {
+          id: '002',
+          content_id: KYCID.KYC002,
+          type: ContentType.kyc,
+          titre: 'Question 2',
+          points: 10,
+          is_locked: false,
+          done_at: null,
+          sont_points_en_poche: false
+        },
+        {
+          id: '1',
+          content_id: '13',
+          type: ContentType.article,
+          titre: 'Super article',
+          points: 10,
+          is_locked: true,
+          done_at: null,
+          sont_points_en_poche: false
+        },
+        {
+          id: '2',
+          content_id: '14',
+          type: ContentType.quizz,
+          titre: 'Super quizz',
+          points: 10,
+          is_locked: true,
+          done_at: null,
+          sont_points_en_poche: false
+        },
+        {
+          id: '3',
+          content_id: '2',
+          type: ContentType.defi,
+          titre: 'Action à faire',
+          points: 10,
+          is_locked: true,
+          done_at: null,
+          sont_points_en_poche: false
+        },
+      ],
+      est_visible: true,
+      prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
+    },
+  ],
+};
 
 const ONBOARD_DATA_1234 = {
   transports: ['voiture', 'pied'],
@@ -135,6 +204,7 @@ const utilisateurs = {
     services: [],
     onboardingResult: ONBOARDING_RES_1234,
     onboardingData: ONBOARD_DATA_1234,
+    //missions: missions,
   },
   DEV: {
     nom: 'Mr Dev',
@@ -160,15 +230,20 @@ const utilisateurs = {
         'univers',
       ],
     },
+    /*
     linky: {
       prm: '12345678912345',
     },
+    */
     suivis: [],
     bilans: [],
     services: [],
+    /*
     questionsNGC: {
       'transport . voiture . km': 30000,
     },
+    */
+    /*
     todo: {
       version: 0,
       todo_active: 0,
@@ -215,8 +290,9 @@ const utilisateurs = {
         },
       ],
     },
+    */
     onboardingResult: ONBOARDING_RES_1234,
-    onboardingData: ONBOARD_DATA_NO_CAR_MOTO,
+    onboardingData: ONBOARD_DATA_1234,
   },
   recette_livio: {
     nom: 'RECETTEUR',

@@ -153,6 +153,13 @@ export class EventUsecase {
       utilisateur.history.declarePointsArticleEnPoche(event.content_id);
     }
     this.updateUserTodo(utilisateur, ContentType.article, article.thematiques);
+
+    utilisateur.missions.validateAricleOrQuizzDone(
+      event.content_id,
+      ContentType.article,
+      utilisateur,
+    );
+
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
@@ -171,6 +178,13 @@ export class EventUsecase {
       utilisateur.history.declarePointsQuizzEnPoche(event.content_id);
       this.updateUserTodo(utilisateur, ContentType.quizz, quizz.thematiques);
     }
+
+    utilisateur.missions.validateAricleOrQuizzDone(
+      event.content_id,
+      ContentType.quizz,
+      utilisateur,
+    );
+
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 

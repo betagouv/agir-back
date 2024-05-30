@@ -39,8 +39,12 @@ export class ThematiqueRepository {
   public static getTuileThematique(type: ThematiqueUnivers): TuileThematique {
     return ThematiqueRepository.thematiquesUnivers.get(type);
   }
+  public static getUniversParent(thematiqueUnivers: ThematiqueUnivers) {
+    return ThematiqueRepository.getTuileThematique(thematiqueUnivers)
+      .univers_parent;
+  }
 
-  public static getTuileThematiques(univers: Univers): TuileThematique[] {
+  public static getAllTuilesThematique(univers: Univers): TuileThematique[] {
     return ThematiqueRepository.getAllTuileThematique().filter(
       (t) => t.univers_parent === univers,
     );
@@ -202,9 +206,16 @@ export class ThematiqueRepository {
     }
   }
 
-  private static getTitreUnivers(univers: Univers): string {
+  public static getTitreUnivers(univers: Univers): string {
     if (!univers) return 'Titre manquant';
-    const tuile_uni = ThematiqueRepository.getTuileUnivers(univers);
-    return tuile_uni ? tuile_uni.titre : 'Titre manquant';
+    const tuile = ThematiqueRepository.getTuileUnivers(univers);
+    return tuile ? tuile.titre : 'Titre manquant';
+  }
+  public static getTitreThematiqueUnivers(
+    thematiqueUnivers: ThematiqueUnivers,
+  ): string {
+    if (!thematiqueUnivers) return 'Titre manquant';
+    const tuile = ThematiqueRepository.getTuileThematique(thematiqueUnivers);
+    return tuile ? tuile.titre : 'Titre manquant';
   }
 }

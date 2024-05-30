@@ -9,13 +9,12 @@ const service_catalogue = {
     is_url_externe: true,
     is_local: true,
     thematiques: ['alimentation'],
-    description:
-      'Découvrez notre service quotidien de recettes 100% légumes, une expérience culinaire délicieuse et saine.',
-    sous_description: `Chaque jour, nous vous livrons une nouvelle recette végétarienne savoureuse, mettant en avant la fraîcheur des légumes de saison.`,
+    description: 'Des recettes variées et équilibrées.',
+    sous_description: `Découvrez nos recettes 100% végétales pour varier les saveurs dans votre assiette et découvrir de nouveaux ingrédients au fil des saisons tout en conservant une alimentation équilibrée.`,
     parametrage_requis: false,
   },
   linky: {
-    titre: `Votre conso élec au jour le jour`,
+    titre: `Votre consommation électrique au jour le jour`,
     url: 'https://www.enedis.fr/le-compteur-linky-un-outil-pour-la-transition-ecologique',
     icon_url:
       'https://res.cloudinary.com/dq023imd8/image/upload/v1708335751/services/compteur-linky.jpg',
@@ -24,12 +23,12 @@ const service_catalogue = {
     is_url_externe: true,
     is_local: false,
     thematiques: ['logement'],
-    description: 'Votre suivi consommation, sans rien faire',
-    sous_description: `Surveillez en un click l'évolution quotidienne de votre consommation électrique, comprenez vos habitudes, chassez toutes les pertes inutiles !!`,
+    description: 'Conseils et suivi de consommation, en un seul endroit',
+    sous_description: `Suivez votre consommation électrique au quotidien en un clic : analysez vos habitudes, identifiez et éliminez les gaspillages pour une efficacité énergétique optimale !`,
     parametrage_requis: true,
   },
   suivi_transport: {
-    titre: `Suivez l'impact de vos trajets quotidiens`,
+    titre: `L’impact des trajets quotidiens`,
     url: 'coach/suivi-du-jour',
     icon_url:
       'https://res.cloudinary.com/dq023imd8/image/upload/v1708335811/services/664535.png', // https://cdn-icons-png.flaticon.com/512/4684/4684011.png', // https://cdn-icons-png.flaticon.com/512/4684/4684011.png
@@ -38,9 +37,9 @@ const service_catalogue = {
     is_url_externe: false,
     is_local: false,
     thematiques: ['transport'],
-    description: `Suivez dans le temps l'impact de vos déplacements`,
+    description: `Suivez l'impact de vos déplacements dans le temps.`,
     sous_description:
-      'Voiture, avions, train... tout comprendre de vos habitudes et de leur impacts : les suivre dans le temps, se fixer des objectifs concrets et voir vos progrès',
+      'Voiture, avion, train... Tout comprendre de vos habitudes et de leur impacts : suivez-les dans le temps, fixez-vous des objectifs concrets et mesurer votre évolution.',
     parametrage_requis: false,
   },
   ecowatt: {
@@ -56,11 +55,11 @@ const service_catalogue = {
     minute_period: 30,
     description: 'Ecowatt aide les Français à mieux consommer l’électricité.',
     sous_description:
-      'Véritable météo de l’électricité, Ecowatt qualifie en temps réel le niveau de consommation des Français.',
+      'Véritable météo de l’électricité, Ecowatt mesure le niveau de consommation des Français au jour le jour et vous propose des conseils pour réduire votre impact et optimiser votre utilisation.',
     parametrage_requis: false,
   },
   fruits: {
-    titre: `🗓️ Fruits et légumes de saison`,
+    titre: `🗓️ Le calendrier de saison`,
     url: 'https://impactco2.fr/fruitsetlegumes',
     icon_url:
       'https://res.cloudinary.com/dq023imd8/image/upload/v1708335996/services/3179773-fruits-et-legumes-icon-set-vector-design-gratuit-vectoriel.jpg',
@@ -69,8 +68,8 @@ const service_catalogue = {
     is_url_externe: true,
     is_local: true,
     thematiques: ['alimentation'],
-    description: 'Découvrez les fruits et légumes du mois',
-    sous_description: `Manger local et de saison est un changement d'habitude à impact fort sur votre bilan carbone, alors GO GO GO  !!!`,
+    description: 'Découvrez les fruits et légumes du mois.',
+    sous_description: `Quels fruits et légumes sont de saison ce mois-ci ? Ne doutez plus avec ce service pratique pour choisir des produits frais et locaux, tout en comparant leur empreinte carbone !`,
     parametrage_requis: false,
   },
 };

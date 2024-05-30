@@ -50,11 +50,14 @@ import {
   Suivi,
   Univers as UniversDB,
   ThematiqueUnivers as ThematiqueUniversDB,
+  Mission,
+  KYC,
 } from '.prisma/client';
 import {
   Aide,
   Article,
   Defi,
+  DefiStatistique,
   Groupe,
   GroupeAbonnement,
   Linky,
@@ -72,6 +75,8 @@ import { TagUtilisateur } from '../src/domain/scoring/tagUtilisateur';
 import { Besoin } from '../src/domain/aides/besoin';
 import { Univers } from '../src/domain/univers/univers';
 import { ThematiqueUnivers } from '../src/domain/univers/thematiqueUnivers';
+import { ContentType } from '../src/domain/contenu/contentType';
+import { Tag } from '../src/domain/scoring/tag';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -91,6 +96,9 @@ export enum DB {
   linky = 'linky',
   article = 'article',
   quizz = 'quizz',
+  defiStatistique = 'defiStatistique',
+  mission = 'mission',
+  kYC = 'kYC',
 }
 export class TestUtil {
   private static TYPE_DATA_MAP: Record<DB, Function> = {
@@ -111,6 +119,9 @@ export class TestUtil {
     quizz: TestUtil.quizzData,
     univers: TestUtil.universData,
     thematiqueUnivers: TestUtil.thematiqueUniversData,
+    defiStatistique: TestUtil.defiStatistiqueData,
+    mission: TestUtil.missionData,
+    kYC: TestUtil.kycData,
   };
 
   constructor() {}
@@ -195,6 +206,11 @@ export class TestUtil {
     await this.prisma.defiStatistique.deleteMany();
     await this.prisma.univers.deleteMany();
     await this.prisma.thematiqueUnivers.deleteMany();
+    await this.prisma.quizStatistique.deleteMany();
+    await this.prisma.kycStatistique.deleteMany();
+    await this.prisma.mission.deleteMany();
+    await this.prisma.kYC.deleteMany();
+    await this.prisma.fileAttente.deleteMany();
     ThematiqueRepository.resetAllRefs();
   }
 
@@ -330,6 +346,10 @@ export class TestUtil {
       updated_at: undefined,
       besoin: Besoin.acheter_velo,
       besoin_desc: 'Acheter un vélo',
+      include_codes_commune: [],
+      exclude_codes_commune: [],
+      codes_departement: [],
+      codes_region: [],
       ...override,
     };
   }
@@ -350,6 +370,60 @@ export class TestUtil {
       ...override,
     };
   }
+
+  static missionData(override?: Partial<Mission>): Mission {
+    return {
+      id_cms: 1,
+      thematique_univers: ThematiqueUnivers.cereales,
+      est_visible: true,
+      objectifs: [
+        {
+          titre: 'obj 1',
+          content_id: '_1',
+          type: ContentType.kyc,
+          points: 10,
+        },
+        {
+          titre: 'obj 2',
+          content_id: '1',
+          type: ContentType.article,
+          points: 25,
+        },
+      ],
+      prochaines_thematiques: [
+        ThematiqueUnivers.manger_local,
+        ThematiqueUnivers.dechets_compost,
+      ],
+      created_at: undefined,
+      updated_at: undefined,
+      ...override,
+    };
+  }
+
+  static kycData(override?: Partial<KYC>): KYC {
+    return {
+      id_cms: 1,
+      categorie: CategorieQuestionKYC.recommandation,
+      code: KYCID.KYC001,
+      is_ngc: false,
+      points: 10,
+      question: 'The question !',
+      tags: [Tag.possede_voiture],
+      universes: [Univers.alimentation],
+      thematique: Thematique.climat,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      reponses: [
+        {
+          code: 'c123',
+          reponse: 'la reponse D',
+        },
+      ],
+      created_at: undefined,
+      updated_at: undefined,
+      ...override,
+    };
+  }
+
   static empreinteData(override?): Empreinte {
     return {
       id: 'empreinte-id',
@@ -555,6 +629,7 @@ export class TestUtil {
       tag_ponderation_set: {},
       force_connexion: false,
       derniere_activite: null,
+      missions: {},
       ...override,
     };
   }
@@ -675,6 +750,21 @@ export class TestUtil {
       points: 10,
       thematiques: ['logement'],
       thematique_principale: 'logement',
+      created_at: new Date(),
+      updated_at: new Date(),
+      ...override,
+    };
+  }
+  static defiStatistiqueData(
+    override?: Partial<DefiStatistique>,
+  ): DefiStatistique {
+    return {
+      content_id: 'contentId',
+      titre: 'Titre de mon article',
+      nombre_defis_abandonnes: 0,
+      nombre_defis_en_cours: 0,
+      nombre_defis_pas_envie: 0,
+      nombre_defis_realises: 0,
       created_at: new Date(),
       updated_at: new Date(),
       ...override,

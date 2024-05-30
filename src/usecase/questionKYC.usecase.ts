@@ -2,15 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { KYCID, QuestionKYC } from '../domain/kyc/questionQYC';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
-import { CatalogueQuestionsKYC } from '../../src/domain/kyc/catalogueQuestionsKYC';
+import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 
 @Injectable()
 export class QuestionKYCUsecase {
-  constructor(private utilisateurRepository: UtilisateurRepository) {}
+  constructor(
+    private utilisateurRepository: UtilisateurRepository,
+    private kycRepository: KycRepository,
+  ) {}
 
   async getALL(utilisateurId: string): Promise<QuestionKYC[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
+
+    const kyc_catalogue = await this.kycRepository.getAllDefs();
+    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
     return utilisateur.kyc_history.getAllQuestionSet();
   }
@@ -19,10 +25,8 @@ export class QuestionKYCUsecase {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
-    // FIXME : until reset
-    if (questionId === '001') {
-      questionId = KYCID.KYC001;
-    }
+    const kyc_catalogue = await this.kycRepository.getAllDefs();
+    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
     return utilisateur.kyc_history.getQuestionOrException(questionId);
   }
@@ -35,19 +39,15 @@ export class QuestionKYCUsecase {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
-    // FIXME : until reset
-    let qid = questionId;
-    if (questionId === '001') {
-      questionId = KYCID.KYC001;
-    }
+    const kyc_catalogue = await this.kycRepository.getAllDefs();
+    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
     if (questionId === KYCID.KYC006) {
       utilisateur.logement.plus_de_15_ans = reponse.includes('plus_15');
     }
 
     utilisateur.kyc_history.checkQuestionExists(questionId);
-
-    this.updateUserTodo(utilisateur, qid);
+    this.updateUserTodo(utilisateur, questionId);
 
     if (!utilisateur.kyc_history.isQuestionAnswered(questionId)) {
       const question =
@@ -55,6 +55,8 @@ export class QuestionKYCUsecase {
       utilisateur.gamification.ajoutePoints(question.points);
     }
     utilisateur.kyc_history.updateQuestion(questionId, reponse);
+
+    utilisateur.missions.answerKyc(questionId, utilisateur);
 
     utilisateur.recomputeRecoTags();
 

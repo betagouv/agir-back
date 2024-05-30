@@ -22,6 +22,11 @@ import {
   Defi_v0,
 } from '../../../src/domain/object_store/defi/defiHistory_v0';
 import { Univers } from '../../../src/domain/univers/univers';
+import {
+  CategorieQuestionKYC,
+  KYCID,
+  TypeReponseQuestionKYC,
+} from '../../../src/domain/kyc/questionQYC';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
@@ -81,7 +86,7 @@ describe('Admin (API test)', () => {
       'Ecowatt aide les Français à mieux consommer l’électricité.',
     );
     expect(service.sous_description).toEqual(
-      'Véritable météo de l’électricité, Ecowatt qualifie en temps réel le niveau de consommation des Français.',
+      'Véritable météo de l’électricité, Ecowatt mesure le niveau de consommation des Français au jour le jour et vous propose des conseils pour réduire votre impact et optimiser votre utilisation.',
     );
   });
   it('POST /admin/upsert_service_definitions integre correctement les services', async () => {
@@ -116,7 +121,7 @@ describe('Admin (API test)', () => {
       'Ecowatt aide les Français à mieux consommer l’électricité.',
     );
     expect(service.sous_description).toEqual(
-      'Véritable météo de l’électricité, Ecowatt qualifie en temps réel le niveau de consommation des Français.',
+      'Véritable météo de l’électricité, Ecowatt mesure le niveau de consommation des Français au jour le jour et vous propose des conseils pour réduire votre impact et optimiser votre utilisation.',
     );
   });
   it('POST /admin/unsubscribe_oprhan_prms retourne liste des suppressions', async () => {
@@ -408,6 +413,57 @@ describe('Admin (API test)', () => {
       TransportQuotidien.voiture,
       TransportQuotidien.pied,
     ]);
+  });
+  it('POST /admin/migrate_users migration V7 OK', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          points: 5,
+          tags: [],
+          titre: 'titre',
+          thematique: Thematique.alimentation,
+          astuces: 'astuce',
+          date_acceptation: new Date(),
+          pourquoi: 'pourquoi',
+          sous_titre: 'sous_titre',
+          universes: [Univers.climat],
+          accessible: true,
+          motif: 'truc',
+          id: '001',
+          status: DefiStatus.deja_fait,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      version: 6,
+      migration_enabled: true,
+      logement: {},
+      defis: defis,
+    });
+    process.env.USER_CURRENT_VERSION = '7';
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 7,
+            ok: true,
+            info: `user : utilisateur-id switched 1 status deja_fait => fait`,
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.defi_history.defis[0].getStatus()).toEqual(DefiStatus.fait);
   });
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
@@ -1002,6 +1058,19 @@ describe('Admin (API test)', () => {
         commune: 'PALAISEAU',
       },
     });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      categorie: CategorieQuestionKYC.default,
+      points: 10,
+      question: 'Comment avez vous connu le service ?',
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
+    });
 
     const userDB_before = await utilisateurRepository.getById('utilisateur-id');
 
@@ -1176,7 +1245,7 @@ describe('Admin (API test)', () => {
     expect(article3.titre).toBe('Titre de mon article 3');
   });
 
-  it("POST /admin/article-statistique - calcul des statistiques de l'ensemble des défis", async () => {
+  it("POST /admin/defi-statistique - calcul des statistiques de l'ensemble des défis", async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
 
@@ -1198,9 +1267,9 @@ describe('Admin (API test)', () => {
     const defis_1: DefiHistory_v0 = {
       version: 0,
       defis: [
-        { ...DEFI, id: '1', status: DefiStatus.deja_fait, titre: 'A' },
-        { ...DEFI, id: '2', status: DefiStatus.deja_fait, titre: 'B' },
-        { ...DEFI, id: '3', status: DefiStatus.deja_fait, titre: 'C' },
+        { ...DEFI, id: '1', status: DefiStatus.pas_envie, titre: 'A' },
+        { ...DEFI, id: '2', status: DefiStatus.pas_envie, titre: 'B' },
+        { ...DEFI, id: '3', status: DefiStatus.pas_envie, titre: 'C' },
       ],
     };
     const defis_2: DefiHistory_v0 = {
@@ -1262,7 +1331,7 @@ describe('Admin (API test)', () => {
     expect(defi_1_stat).toEqual({
       content_id: '1',
       titre: 'A',
-      nombre_defis_deja_fait: 1,
+      nombre_defis_pas_envie: 1,
       nombre_defis_abandonnes: 0,
       nombre_defis_en_cours: 1,
       nombre_defis_realises: 1,
@@ -1270,7 +1339,7 @@ describe('Admin (API test)', () => {
     expect(defi_2_stat).toEqual({
       content_id: '2',
       titre: 'B',
-      nombre_defis_deja_fait: 1,
+      nombre_defis_pas_envie: 1,
       nombre_defis_abandonnes: 1,
       nombre_defis_en_cours: 0,
       nombre_defis_realises: 1,
@@ -1278,10 +1347,170 @@ describe('Admin (API test)', () => {
     expect(defi_3_stat).toEqual({
       content_id: '3',
       titre: 'C',
-      nombre_defis_deja_fait: 1,
+      nombre_defis_pas_envie: 1,
       nombre_defis_abandonnes: 0,
       nombre_defis_en_cours: 0,
       nombre_defis_realises: 2,
     });
+  });
+
+  it("POST /admin/quiz-statistique - calcul des statistiques de l'ensemble des quiz", async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-1',
+      email: 'john-doe@dev.com',
+      history: {
+        version: 0,
+        quizz_interactions: [
+          {
+            content_id: 'id-quiz-1',
+            points_en_poche: false,
+            attempts: [{ score: 0, date: new Date() }],
+          },
+          {
+            content_id: 'id-quiz-2',
+            points_en_poche: true,
+            attempts: [{ score: 100, date: new Date() }],
+          },
+        ],
+      },
+    });
+
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-2',
+      email: 'john-doedoe@dev.com',
+      history: {
+        version: 0,
+        quizz_interactions: [
+          {
+            content_id: 'id-quiz-1',
+            points_en_poche: true,
+            attempts: [{ score: 100, date: new Date() }],
+          },
+          {
+            content_id: 'id-quiz-2',
+            points_en_poche: true,
+            attempts: [{ score: 100, date: new Date() }],
+          },
+        ],
+      },
+    });
+
+    await TestUtil.create(DB.quizz, {
+      content_id: 'id-quiz-1',
+      titre: 'Question quiz 1',
+    });
+
+    await TestUtil.create(DB.quizz, {
+      content_id: 'id-quiz-2',
+      titre: 'Question quiz 2',
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/quiz-statistique');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(2);
+    expect(response.body).toEqual(['id-quiz-1', 'id-quiz-2']);
+
+    const quiz1 = await TestUtil.prisma.quizStatistique.findUnique({
+      where: { quizId: 'id-quiz-1' },
+    });
+    const quiz2 = await TestUtil.prisma.quizStatistique.findUnique({
+      where: { quizId: 'id-quiz-2' },
+    });
+
+    expect(quiz1.nombre_de_bonne_reponse).toEqual(1);
+    expect(quiz1.nombre_de_mauvaise_reponse).toEqual(1);
+    expect(quiz1.titre).toEqual('Question quiz 1');
+    expect(quiz2.nombre_de_bonne_reponse).toEqual(2);
+    expect(quiz2.nombre_de_mauvaise_reponse).toEqual(0);
+    expect(quiz2.titre).toEqual('Question quiz 2');
+  });
+
+  it("POST /admin/kyc-statistique - calcul des statistiques de l'ensemble des kyc", async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-1',
+      email: 'john-doe@dev.com',
+      kyc: {
+        answered_questions: [
+          {
+            id: 'id-kyc-1',
+            question: `Question kyc 1`,
+            reponses: [
+              { label: 'Le climat', code: Thematique.climat },
+              { label: 'Mon logement', code: Thematique.logement },
+            ],
+          },
+          {
+            id: 'id-kyc-2',
+            question: `Question kyc 2`,
+            reponses: [{ label: 'Une réponse', code: Thematique.climat }],
+          },
+        ],
+      },
+    });
+
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-2',
+      email: 'john-doedoe@dev.com',
+      kyc: {
+        answered_questions: [
+          {
+            id: 'id-kyc-1',
+            question: `Question kyc 1`,
+            reponses: [
+              { label: 'Le climat', code: Thematique.climat },
+              { label: 'Mon logement', code: Thematique.logement },
+              { label: 'Appartement', code: Thematique.logement },
+            ],
+          },
+        ],
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/kyc-statistique');
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const kyc1 = await TestUtil.prisma.kycStatistique.findUnique({
+      where: {
+        utilisateurId_kycId: {
+          utilisateurId: 'test-id-1',
+          kycId: 'id-kyc-1',
+        },
+      },
+    });
+    const kyc2 = await TestUtil.prisma.kycStatistique.findUnique({
+      where: {
+        utilisateurId_kycId: {
+          utilisateurId: 'test-id-1',
+          kycId: 'id-kyc-2',
+        },
+      },
+    });
+    const kyc3 = await TestUtil.prisma.kycStatistique.findUnique({
+      where: {
+        utilisateurId_kycId: {
+          utilisateurId: 'test-id-2',
+          kycId: 'id-kyc-1',
+        },
+      },
+    });
+
+    expect(kyc1.titre).toEqual('Question kyc 1');
+    expect(kyc1.reponse).toEqual('Le climat, Mon logement');
+    expect(kyc2.titre).toEqual('Question kyc 2');
+    expect(kyc2.reponse).toEqual('Une réponse');
+    expect(kyc3.titre).toEqual('Question kyc 1');
+    expect(kyc3.reponse).toEqual('Appartement, Le climat, Mon logement');
   });
 });

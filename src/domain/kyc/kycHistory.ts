@@ -1,6 +1,7 @@
+import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { KYCHistory_v0 as KYCHistory_v0 } from '../object_store/kyc/kycHistory_v0';
 import { Univers } from '../univers/univers';
-import { CatalogueQuestionsKYC } from './catalogueQuestionsKYC';
+import { KycDefinition } from './kycDefinition';
 import {
   CategorieQuestionKYC,
   KYCID,
@@ -10,6 +11,7 @@ import {
 
 export class KYCHistory {
   answered_questions: QuestionKYC[];
+  catalogue: KycDefinition[];
 
   constructor(data?: KYCHistory_v0) {
     this.reset();
@@ -21,17 +23,20 @@ export class KYCHistory {
     }
   }
 
+  public setCatalogue(cat: KycDefinition[]) {
+    this.catalogue = cat;
+  }
+
   public reset() {
     this.answered_questions = [];
+    this.catalogue = [];
   }
   public getAllQuestionSet(): QuestionKYC[] {
     let result = [];
 
-    const all = CatalogueQuestionsKYC.getAll();
-
-    all.forEach((question) => {
-      let answered_question = this.getAnsweredQuestion(question.id);
-      result.push(answered_question || question);
+    this.catalogue.forEach((question) => {
+      let answered_question = this.getAnsweredQuestion(question.code);
+      result.push(answered_question || QuestionKYC.buildFromDef(question));
     });
 
     return result;
@@ -41,7 +46,7 @@ export class KYCHistory {
     categorie?: CategorieQuestionKYC,
     univers?: Univers,
   ): QuestionKYC[] {
-    let kycs_all = CatalogueQuestionsKYC.getAll(categorie);
+    let kycs_all = this.getAllKYCByCategorie(categorie);
     this.answered_questions.forEach((question) => {
       const index = kycs_all.findIndex((d) => d.id === question.id);
       if (index !== -1) {
@@ -58,13 +63,24 @@ export class KYCHistory {
     return kycs_all;
   }
 
+  private getAllKYCByCategorie(
+    categorie?: CategorieQuestionKYC,
+  ): QuestionKYC[] {
+    if (!categorie) {
+      return this.catalogue.map((c) => QuestionKYC.buildFromDef(c));
+    }
+    return this.catalogue
+      .filter((c) => c.categorie === categorie)
+      .map((c) => QuestionKYC.buildFromDef(c));
+  }
+
   public getQuestionOrException(id: string): QuestionKYC {
     let answered_question = this.getAnsweredQuestion(id);
     if (answered_question) {
       this.upgradeQuestion(answered_question);
       return answered_question;
     }
-    return CatalogueQuestionsKYC.getByIdOrException(id);
+    return this.getKYCByIdOrException(id);
   }
   public getQuestion(id: KYCID): QuestionKYC {
     let answered_question = this.getAnsweredQuestion(id);
@@ -72,13 +88,11 @@ export class KYCHistory {
       this.upgradeQuestion(answered_question);
       return answered_question;
     }
-    return CatalogueQuestionsKYC.getById(id);
+    return this.getKYCById(id);
   }
 
   private upgradeQuestion(question: QuestionKYC) {
-    const question_catalogue = CatalogueQuestionsKYC.getByIdOrException(
-      question.id,
-    );
+    const question_catalogue = this.getKYCByIdOrException(question.id);
     if (
       (question.type === TypeReponseQuestionKYC.choix_multiple ||
         question.type === TypeReponseQuestionKYC.choix_unique) &&
@@ -107,18 +121,30 @@ export class KYCHistory {
     if (question) {
       question.setResponses(reponses);
     } else {
-      let question_catalogue =
-        CatalogueQuestionsKYC.getByIdOrException(questionId);
+      let question_catalogue = this.getKYCByIdOrException(questionId);
       question_catalogue.setResponses(reponses);
       this.answered_questions.push(question_catalogue);
     }
   }
 
   public checkQuestionExists(questionId: string) {
-    CatalogueQuestionsKYC.getByIdOrException(questionId);
+    this.getKYCByIdOrException(questionId);
   }
 
   private getAnsweredQuestion(id: string): QuestionKYC {
     return this.answered_questions.find((element) => element.id === id);
+  }
+
+  private getKYCByIdOrException(id: string): QuestionKYC {
+    const question_def = this.catalogue.find((element) => element.code === id);
+    if (question_def) {
+      return QuestionKYC.buildFromDef(question_def);
+    }
+    ApplicationError.throwQuestionInconnue(id);
+  }
+
+  private getKYCById(id: KYCID): QuestionKYC {
+    const def = this.catalogue.find((element) => element.code === id);
+    return def ? QuestionKYC.buildFromDef(def) : null;
   }
 }

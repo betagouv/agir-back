@@ -8,6 +8,8 @@ import { AidesVeloParType, AideVelo } from '../domain/aides/aideVelo';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
 import { Aide } from '../../src/domain/aides/aide';
+import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
+import { DepartementRepository } from '../../src/infrastructure/repository/departement/departement.repository';
 
 @Injectable()
 export class AidesUsecase {
@@ -16,6 +18,8 @@ export class AidesUsecase {
     private aidesRetrofitRepository: AidesRetrofitRepository,
     private aideRepository: AideRepository,
     private utilisateurRepository: UtilisateurRepository,
+    private communeRepository: CommuneRepository,
+    private departementRepository: DepartementRepository,
   ) {}
   async getRetrofit(
     codePostal: string,
@@ -31,8 +35,21 @@ export class AidesUsecase {
     const user = await this.utilisateurRepository.getById(utilisateurId);
     user.checkState();
 
+    const code_commune = await this.communeRepository.getCodeCommune(
+      user.logement.code_postal,
+      user.logement.commune,
+    );
+
+    const dept_region =
+      await this.departementRepository.findDepartementRegionByCodePostal(
+        user.logement.code_postal,
+      );
+
     return this.aideRepository.search({
       code_postal: user.logement.code_postal,
+      code_commune: code_commune ? code_commune : undefined,
+      code_departement: dept_region ? dept_region.code_departement : undefined,
+      code_region: dept_region ? dept_region.code_region : undefined,
     });
   }
 
