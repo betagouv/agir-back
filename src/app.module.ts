@@ -144,8 +144,8 @@ function getControllers(): any[] {
   imports: [
     ThrottlerModule.forRoot([
       {
-        ttl: 10000,
-        limit: 10,
+        ttl: 1000 * 60 * 60 * 24,
+        limit: 10000,
       },
     ]),
     JwtModule.register({
