@@ -11,6 +11,8 @@ export type AideFilter = {
   thematiques?: Thematique[];
   code_postal?: string;
   code_region?: string;
+  code_departement?: string;
+  code_commune?: string;
 };
 
 @Injectable()
@@ -66,27 +68,61 @@ export class AideRepository {
           e.codes_postaux.includes(filter.code_postal),
       );
     }
-    let codes_postaux_filter;
+    const main_filter = [];
 
     if (filter.code_postal) {
-      codes_postaux_filter = [
-        { codes_postaux: { has: filter.code_postal } },
-        { codes_postaux: { isEmpty: true } },
-      ];
+      main_filter.push({
+        OR: [
+          { codes_postaux: { has: filter.code_postal } },
+          { codes_postaux: { isEmpty: true } },
+        ],
+      });
     }
 
-    const main_filter = {};
+    if (filter.code_region) {
+      main_filter.push({
+        OR: [
+          { codes_region: { has: filter.code_region } },
+          { codes_region: { isEmpty: true } },
+        ],
+      });
+    }
+
+    if (filter.code_departement) {
+      main_filter.push({
+        OR: [
+          { codes_departement: { has: filter.code_departement } },
+          { codes_departement: { isEmpty: true } },
+        ],
+      });
+    }
+
+    if (filter.code_commune) {
+      main_filter.push({
+        OR: [
+          { include_codes_commune: { has: filter.code_commune } },
+          { include_codes_commune: { isEmpty: true } },
+        ],
+      });
+      main_filter.push({
+        OR: [
+          { NOT: { exclude_codes_commune: { has: filter.code_commune } } },
+          { exclude_codes_commune: { isEmpty: true } },
+        ],
+      });
+    }
 
     if (filter.thematiques) {
-      main_filter['thematiques'] = {
-        hasSome: filter.thematiques,
-      };
+      main_filter.push({
+        thematiques: {
+          hasSome: filter.thematiques,
+        },
+      });
     }
 
     const finalQuery = {
       take: filter.maxNumber,
       where: {
-        OR: codes_postaux_filter,
         AND: main_filter,
       },
     };

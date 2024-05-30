@@ -34,4 +34,17 @@ export class CommuneRepository {
     if (liste === undefined) return [];
     return liste.map((a) => a.commune);
   }
+
+  getCodeCommune(code_postal: string, nom_commune: string): string {
+    const liste: Commune[] = codes_postaux[code_postal];
+    if (!liste) {
+      return null;
+    }
+    for (const commune of liste) {
+      if (commune.commune === nom_commune) {
+        return commune.INSEE;
+      }
+    }
+    return null;
+  }
 }

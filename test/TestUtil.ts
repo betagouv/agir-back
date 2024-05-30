@@ -346,10 +346,10 @@ export class TestUtil {
       updated_at: undefined,
       besoin: Besoin.acheter_velo,
       besoin_desc: 'Acheter un vélo',
-      include_codes_commune: ['11111'],
-      exclude_codes_commune: ['22222'],
-      codes_departement: ['12'],
-      codes_region: ['45'],
+      include_codes_commune: [],
+      exclude_codes_commune: [],
+      codes_departement: [],
+      codes_region: [],
       ...override,
     };
   }

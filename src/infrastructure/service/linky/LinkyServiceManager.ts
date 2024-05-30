@@ -280,8 +280,8 @@ export class LinkyServiceManager
       }
     }
 
-    const code_departement =
-      this.departementRepository.findDepartementByCodePostal(
+    const localisation_commune =
+      this.departementRepository.findDepartementRegionByCodePostal(
         utilisateur.logement.code_postal,
       );
 
@@ -289,7 +289,7 @@ export class LinkyServiceManager
     try {
       winter_pk = await this.linkyAPIConnector.souscription_API(
         prm,
-        code_departement,
+        localisation_commune.code_departement,
       );
       service.resetErrorState();
     } catch (error) {
@@ -305,7 +305,8 @@ export class LinkyServiceManager
 
     service.configuration[LINKY_CONF_KEY.winter_pk] = winter_pk;
     service.configuration[LINKY_CONF_KEY.live_prm] = prm;
-    service.configuration[LINKY_CONF_KEY.departement] = code_departement;
+    service.configuration[LINKY_CONF_KEY.departement] =
+      localisation_commune.code_departement;
 
     await this.serviceRepository.updateServiceConfiguration(
       utilisateur.id,

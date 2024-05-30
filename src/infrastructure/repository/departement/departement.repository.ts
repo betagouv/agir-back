@@ -10,7 +10,10 @@ export type InseeEntry = {
 export class DepartementRepository {
   constructor() {}
 
-  findDepartementByCodePostal(code_postal: string): string {
+  findDepartementRegionByCodePostal(code_postal: string): {
+    code_departement: string;
+    code_region: string;
+  } {
     const code_postal_court = code_postal.startsWith('0')
       ? code_postal.substr(1, 4)
       : code_postal;
@@ -21,7 +24,10 @@ export class DepartementRepository {
         entry['Code Postal'] === code_postal_court,
     );
     if (found) {
-      return found['Code Département'];
+      return {
+        code_departement: found['Code Département'],
+        code_region: found['Code Région'],
+      };
     } else {
       return undefined;
     }

@@ -16,40 +16,39 @@ describe('DepartementRepository', () => {
     await TestUtil.appclose();
   });
 
-  it('findDepartementByCodePostal : renvoie 91 pour 91120', async () => {
+  it('findDepartementRegionByCodePostal : renvoie 91 pour 91120', async () => {
     // WHEN
-    const result = await departementRepository.findDepartementByCodePostal(
-      '91120',
-    );
+    const result =
+      await departementRepository.findDepartementRegionByCodePostal('91120');
 
     // THEN
-    expect(result).toEqual('91');
+    expect(result).toEqual({ code_departement: '91', code_region: '11' });
   });
-  it('findDepartementByCodePostal : renvoie 1 pour 01500', async () => {
+  it('findDepartementRegionByCodePostal : renvoie 1 pour 01500', async () => {
     // WHEN
-    const result = await departementRepository.findDepartementByCodePostal(
-      '01500',
-    );
+    const result =
+      await departementRepository.findDepartementRegionByCodePostal('01500');
 
     // THEN
-    expect(result).toEqual('1');
+    expect(result).toEqual({ code_departement: '1', code_region: '82' });
   });
-  it('findDepartementByCodePostal : renvoie 2A pour 20000 (Ajaccio)', async () => {
+  it('findDepartementRegionByCodePostal : renvoie 2A pour 20000 (Ajaccio)', async () => {
     // WHEN
-    const result = await departementRepository.findDepartementByCodePostal(
-      '20000',
-    );
+    const result =
+      await departementRepository.findDepartementRegionByCodePostal('20000');
 
     // THEN
-    expect(result).toEqual('2A');
+    expect(result).toEqual({ code_departement: '2A', code_region: '94' });
   });
-  it('findDepartementByCodePostal : renvoie 2B pour 20287 (Meria)', async () => {
+  it('findDepartementRegionByCodePostal : renvoie 2B pour 20287 (Meria)', async () => {
     // WHEN
-    const result = await departementRepository.findDepartementByCodePostal(
-      '20287',
-    );
+    const result =
+      await departementRepository.findDepartementRegionByCodePostal('20287');
 
     // THEN
-    expect(result).toEqual('2B');
+    expect(result).toEqual({
+      code_departement: '2B',
+      code_region: '94',
+    });
   });
 });
