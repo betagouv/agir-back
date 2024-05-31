@@ -548,9 +548,21 @@ describe('Mission (API test)', () => {
     );
 
     // THEN
+    console.log(response.body);
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
-    expect(response.body[0].content_id).toEqual('_3');
+    expect(response.body[0]).toEqual({
+      id: '_3',
+      question:
+        "Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?",
+      reponse: [],
+      categorie: 'default',
+      points: 10,
+      type: 'choix_unique',
+      reponses_possibles: ['Oui', 'Non', 'A voir'],
+      is_NGC: false,
+      thematique: 'climat',
+    });
   });
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un article débloqué suite à la réalisation de la KYC`, async () => {
     // GIVEN

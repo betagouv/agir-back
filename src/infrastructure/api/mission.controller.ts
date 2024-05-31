@@ -115,7 +115,7 @@ export class MissionController extends GenericControler {
   @Get('utilisateurs/:utilisateurId/thematiques/:thematique/kycs')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
-    type: [ObjectifAPI],
+    type: [QuestionKYCAPI],
   })
   @ApiParam({
     name: 'utilisateurId',
@@ -136,15 +136,15 @@ export class MissionController extends GenericControler {
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
     @Param('thematique') thematique: string,
-  ): Promise<ObjectifAPI[]> {
+  ): Promise<QuestionKYCAPI[]> {
     this.checkCallerId(req, utilisateurId);
 
-    const all_obj_kyc = await this.missionUsecase.getMissionKYCs(
+    const all_kyc = await this.missionUsecase.getMissionKYCs(
       utilisateurId,
       ThematiqueUnivers[thematique],
     );
 
-    return all_obj_kyc.map((o) => ObjectifAPI.mapToAPI(o));
+    return all_kyc.map((k) => QuestionKYCAPI.mapToAPI(k));
   }
 
   @ApiOperation({
