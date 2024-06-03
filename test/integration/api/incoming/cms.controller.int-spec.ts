@@ -6,13 +6,13 @@ import { Univers } from '../../../../src/domain/univers/univers';
 import { ThematiqueUnivers } from '../../../../src/domain/univers/thematiqueUnivers';
 import {
   CategorieQuestionKYC,
-  KYCID,
   TypeReponseQuestionKYC,
 } from '../../../../src/domain/kyc/questionQYC';
 import { KYC, Mission } from '.prisma/client';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { ContentType } from '../../../../src/domain/contenu/contentType';
+import { KYCID } from '../../../../src/domain/kyc/KYCID';
 
 describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA_DEFI = {

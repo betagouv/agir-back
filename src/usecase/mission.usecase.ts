@@ -5,7 +5,7 @@ import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
 import { Mission, Objectif } from '../../src/domain/mission/mission';
 import { ContentType } from '../../src/domain/contenu/contentType';
-import { KYCID, QuestionKYC } from '../../src/domain/kyc/questionQYC';
+import { QuestionKYC } from '../../src/domain/kyc/questionQYC';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 
 @Injectable()
@@ -106,9 +106,7 @@ export class MissionUsecase {
     const liste_objectifs_kyc = mission.getAllKYCs();
 
     for (const objectif_kyc of liste_objectifs_kyc) {
-      result.push(
-        utilisateur.kyc_history.getQuestion(KYCID[objectif_kyc.content_id]),
-      );
+      result.push(utilisateur.kyc_history.getQuestion(objectif_kyc.content_id));
     }
 
     return result;

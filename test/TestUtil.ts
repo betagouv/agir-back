@@ -18,7 +18,6 @@ import { ParcoursTodo } from '../src/domain/todo/parcoursTodo';
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
-  KYCID,
 } from '../src/domain/kyc/questionQYC';
 import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
 import { Feature } from '../src/domain/gamification/feature';
@@ -77,6 +76,7 @@ import { Univers } from '../src/domain/univers/univers';
 import { ThematiqueUnivers } from '../src/domain/univers/thematiqueUnivers';
 import { ContentType } from '../src/domain/contenu/contentType';
 import { Tag } from '../src/domain/scoring/tag';
+import { KYCID } from '../src/domain/kyc/KYCID';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',

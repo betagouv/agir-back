@@ -7,11 +7,11 @@ import { KYCHistory_v0 } from '../../../../src/domain/object_store/kyc/kycHistor
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
-  KYCID,
 } from '../../../../src/domain/kyc/questionQYC';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { Univers } from '../../../../src/domain/univers/univers';
 import { Tag } from '../../../../src/domain/scoring/tag';
+import { KYCID } from '../../../../src/domain/kyc/KYCID';
 
 describe('KYC vN ', () => {
   it('build OK from empty', () => {

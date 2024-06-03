@@ -1,5 +1,6 @@
 import { Thematique } from '../contenu/thematique';
-import { BooleanKYC, KYCID, QuestionKYC } from '../kyc/questionQYC';
+import { KYCID } from '../kyc/KYCID';
+import { BooleanKYC, QuestionKYC } from '../kyc/questionQYC';
 import { ThematiqueOnboarding } from '../onboarding/onboarding';
 import { TransportQuotidien } from '../transport/transport';
 import { Utilisateur } from '../utilisateur/utilisateur';

@@ -33,7 +33,6 @@ import { KycDefinition } from '../../src/domain/kyc/kycDefinition';
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
-  KYCID,
 } from '../../src/domain/kyc/questionQYC';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 
@@ -493,7 +492,7 @@ export class CMSUsecase {
   static buildKycFromCMSData(entry: CMSWebhookEntryAPI): KycDefinition {
     return {
       id_cms: entry.id,
-      code: KYCID[entry.code],
+      code: entry.code,
       categorie: CategorieQuestionKYC[entry.categorie],
       type: TypeReponseQuestionKYC[entry.type],
       is_ngc: entry.is_ngc,
@@ -668,7 +667,7 @@ export class CMSUsecase {
   ): KycDefinition {
     return {
       id_cms: entry.id,
-      code: KYCID[entry.attributes.code],
+      code: entry.attributes.code,
       type: TypeReponseQuestionKYC[entry.attributes.type],
       categorie: CategorieQuestionKYC[entry.attributes.categorie],
       points: entry.attributes.points,

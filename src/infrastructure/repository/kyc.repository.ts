@@ -5,8 +5,6 @@ import { Univers } from '../../domain/univers/univers';
 import { KycDefinition } from '../../../src/domain/kyc/kycDefinition';
 import {
   CategorieQuestionKYC,
-  KYCID,
-  QuestionKYC,
   TypeReponseQuestionKYC,
 } from '../../../src/domain/kyc/questionQYC';
 import { Thematique } from '../../../src/domain/contenu/thematique';
@@ -48,7 +46,7 @@ export class KycRepository {
     });
   }
 
-  async getByCode(code: KYCID): Promise<KycDefinition> {
+  async getByCode(code: string): Promise<KycDefinition> {
     const result = await this.prisma.kYC.findUnique({
       where: { code: code.toString() },
     });
@@ -64,7 +62,7 @@ export class KycRepository {
     if (kycDB === null) return null;
     return new KycDefinition({
       id_cms: kycDB.id_cms,
-      code: KYCID[kycDB.code],
+      code: kycDB.code,
       type: TypeReponseQuestionKYC[kycDB.type],
       categorie: CategorieQuestionKYC[kycDB.categorie],
       points: kycDB.points,

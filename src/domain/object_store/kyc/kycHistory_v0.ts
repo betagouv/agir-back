@@ -3,7 +3,6 @@ import { KYCHistory } from '../../kyc/kycHistory';
 import {
   CategorieQuestionKYC,
   KYCReponse,
-  KYCID,
   QuestionKYC,
   TypeReponseQuestionKYC,
 } from '../../kyc/questionQYC';
@@ -23,7 +22,7 @@ export class KYCReponse_v0 {
 }
 
 export class QuestionKYC_v0 {
-  id: KYCID;
+  id: string;
   question: string;
   type: TypeReponseQuestionKYC;
   categorie: CategorieQuestionKYC;

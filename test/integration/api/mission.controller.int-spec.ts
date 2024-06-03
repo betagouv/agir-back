@@ -7,12 +7,12 @@ import { Univers } from '../../../src/domain/univers/univers';
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
-  KYCID,
   BooleanKYC,
 } from '../../../src/domain/kyc/questionQYC';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { EventType } from '../../../src/domain/appEvent';
 import { DefiStatus } from '../../../src/domain/defis/defi';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
 
 describe('Mission (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -548,7 +548,6 @@ describe('Mission (API test)', () => {
     );
 
     // THEN
-    console.log(response.body);
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual({

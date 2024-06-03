@@ -24,9 +24,9 @@ import {
 import { Univers } from '../../../src/domain/univers/univers';
 import {
   CategorieQuestionKYC,
-  KYCID,
   TypeReponseQuestionKYC,
 } from '../../../src/domain/kyc/questionQYC';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;

@@ -9,7 +9,6 @@ import { EventType } from '../../../src/domain/appEvent';
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
-  KYCID,
 } from '../../../src/domain/kyc/questionQYC';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
@@ -21,6 +20,7 @@ import {
   Chauffage,
   DPE,
 } from '../../../src/domain/logement/logement';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
 
 describe('TODO list (API test)', () => {
   const OLD_ENV = process.env;

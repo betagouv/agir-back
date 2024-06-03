@@ -4,7 +4,6 @@ import { Univers } from '../univers/univers';
 import { KycDefinition } from './kycDefinition';
 import {
   CategorieQuestionKYC,
-  KYCID,
   QuestionKYC,
   TypeReponseQuestionKYC,
 } from './questionQYC';
@@ -82,7 +81,8 @@ export class KYCHistory {
     }
     return this.getKYCByIdOrException(id);
   }
-  public getQuestion(id: KYCID): QuestionKYC {
+
+  public getQuestion(id: string): QuestionKYC {
     let answered_question = this.getAnsweredQuestion(id);
     if (answered_question) {
       this.upgradeQuestion(answered_question);
@@ -143,7 +143,7 @@ export class KYCHistory {
     ApplicationError.throwQuestionInconnue(id);
   }
 
-  private getKYCById(id: KYCID): QuestionKYC {
+  private getKYCById(id: string): QuestionKYC {
     const def = this.catalogue.find((element) => element.code === id);
     return def ? QuestionKYC.buildFromDef(def) : null;
   }

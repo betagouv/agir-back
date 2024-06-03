@@ -5,7 +5,7 @@ import { Todo } from './todo';
 import { v4 as uuidv4 } from 'uuid';
 import { LiveService } from '../service/serviceDefinition';
 import { Todo_v0 } from '../object_store/parcoursTodo/parcoursTodo_v0';
-import { KYCID } from '../kyc/questionQYC';
+import { KYCID } from '../kyc/KYCID';
 
 export class TodoCatalogue {
   public static getNombreTodo(): number {

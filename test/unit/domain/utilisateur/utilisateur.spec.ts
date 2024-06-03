@@ -13,11 +13,11 @@ import {
 import { TransportQuotidien } from '../../../../src/domain/transport/transport';
 import {
   CategorieQuestionKYC,
-  KYCID,
   QuestionKYC,
   TypeReponseQuestionKYC,
 } from '../../../../src/domain/kyc/questionQYC';
 import { Tag } from '../../../../src/domain/scoring/tag';
+import { KYCID } from '../../../../src/domain/kyc/KYCID';
 
 const ONBOARDING_DATA: Onboarding_v0 = {
   version: 0,

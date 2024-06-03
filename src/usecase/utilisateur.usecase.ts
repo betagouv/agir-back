@@ -18,9 +18,9 @@ import { SecurityEmailManager } from '../../src/domain/utilisateur/manager/secur
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
 import { GroupeRepository } from '../../src/infrastructure/repository/groupe.repository';
 import { ContactUsecase } from './contact.usecase';
-import { KYCID } from '../../src/domain/kyc/questionQYC';
 import { App } from '../../src/domain/app';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
+import { KYCID } from '../../src/domain/kyc/KYCID';
 
 export type Phrase = {
   phrase: string;

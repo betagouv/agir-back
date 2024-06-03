@@ -2,7 +2,6 @@ import { UtilisateurRepository } from '../../../src/infrastructure/repository/ut
 import {
   BooleanKYC,
   CategorieQuestionKYC,
-  KYCID,
   TypeReponseQuestionKYC,
 } from '../../../src/domain/kyc/questionQYC';
 import { DB, TestUtil } from '../../TestUtil';
@@ -18,6 +17,7 @@ import { ContentType } from '../../../src/domain/contenu/contentType';
 import { MissionsUtilisateur_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
 import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
 
 describe('/utilisateurs/id/questionsKYC (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);

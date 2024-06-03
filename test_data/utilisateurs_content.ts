@@ -10,7 +10,7 @@ import { LiveService } from '../src/domain/service/serviceDefinition';
 import { ThematiqueUnivers } from '../src/domain/univers/thematiqueUnivers';
 import { Univers } from '../src/domain/univers/univers';
 import { MissionsUtilisateur_v0 } from '../src/domain/object_store/mission/MissionsUtilisateur_v0';
-import { KYCID } from '../src/domain/kyc/questionQYC';
+import { KYCID } from '../src/domain/kyc/KYCID';
 
 const missions: MissionsUtilisateur_v0 = {
   version: 0,

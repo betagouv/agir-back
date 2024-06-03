@@ -11,11 +11,11 @@ import {
 import { TransportQuotidien } from '../../../src/domain/transport/transport';
 import {
   CategorieQuestionKYC,
-  KYCID,
   TypeReponseQuestionKYC,
 } from '../../../src/domain/kyc/questionQYC';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
 var crypto = require('crypto');
 
 const ONBOARDING_1_2_3_4_DATA = {

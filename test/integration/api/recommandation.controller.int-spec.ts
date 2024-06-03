@@ -13,13 +13,13 @@ import { DB, TestUtil } from '../../TestUtil';
 import {
   TypeReponseQuestionKYC,
   CategorieQuestionKYC,
-  KYCID,
 } from '../../../src/domain/kyc/questionQYC';
 import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
 import { Univers } from '../../../src/domain/univers/univers';
 import { Defi } from '.prisma/client';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
 const DEFI_1: Defi_v0 = {
