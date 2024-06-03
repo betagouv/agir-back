@@ -36,6 +36,7 @@ export class MissionsUtilisateur {
     content_id: string,
     type: ContentType,
     utilisateur: Utilisateur,
+    score?: number,
   ) {
     const { mission, objectif } = this.getObjectifByContentId(content_id, type);
 
@@ -43,6 +44,10 @@ export class MissionsUtilisateur {
       objectif.done_at = new Date();
       utilisateur.gamification.ajoutePoints(objectif.points);
       mission.unlockDefiIfAllContentDone();
+      // Pour éviter de récolter les points d'un quizz raté ^^
+      if (type === ContentType.quizz && score !== 100) {
+        objectif.sont_points_en_poche = true;
+      }
     }
   }
 

@@ -165,6 +165,40 @@ describe('Mission (API test)', () => {
       },
     ],
   };
+  const missions_quizz_plus_defi: MissionsUtilisateur_v0 = {
+    version: 0,
+    missions: [
+      {
+        id: '1',
+        done_at: new Date(1),
+        thematique_univers: ThematiqueUnivers.cereales,
+        objectifs: [
+          {
+            id: '0',
+            content_id: '1',
+            type: ContentType.quizz,
+            titre: '1 quizz',
+            points: 10,
+            is_locked: false,
+            done_at: null,
+            sont_points_en_poche: false,
+          },
+          {
+            id: '1',
+            content_id: '2',
+            type: ContentType.defi,
+            titre: '1 défi',
+            points: 10,
+            is_locked: true,
+            done_at: null,
+            sont_points_en_poche: false,
+          },
+        ],
+        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
+        est_visible: true,
+      },
+    ],
+  };
   const missions_article_seul: MissionsUtilisateur_v0 = {
     version: 0,
     missions: [
@@ -629,6 +663,58 @@ describe('Mission (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
     expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
+  });
+  it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un defi débloqué suite dernier quizz`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_quizz_plus_defi,
+    });
+    await TestUtil.create(DB.quizz, { content_id: '1' });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.quizz_score,
+      content_id: '1',
+      number_value: 100,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
+    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('2');
+    expect(
+      userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
+    ).toEqual(false);
+  });
+  it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un defi débloqué suite dernier quizz, même si raté, et points déjà en poche`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_quizz_plus_defi,
+    });
+    await TestUtil.create(DB.quizz, { content_id: '1' });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.quizz_score,
+      content_id: '1',
+      number_value: 0,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
+    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('2');
+    expect(
+      userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
+    ).toEqual(true);
   });
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - ajout mission si dernier defi réalisé`, async () => {
     // GIVEN

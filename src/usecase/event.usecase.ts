@@ -183,6 +183,7 @@ export class EventUsecase {
       event.content_id,
       ContentType.quizz,
       utilisateur,
+      event.number_value,
     );
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
