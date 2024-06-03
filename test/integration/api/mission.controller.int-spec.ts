@@ -666,6 +666,38 @@ describe('Mission (API test)', () => {
       ThematiqueUnivers.dechets_compost,
     );
   });
+  it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - NON ajout mission si dernier defi abondonné`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_defi_seul,
+    });
+    await TestUtil.create(DB.defi, { content_id: '1' });
+    await TestUtil.create(DB.article, { content_id: '1' });
+    await TestUtil.create(DB.mission, {
+      id_cms: 2,
+      est_visible: false,
+      thematique_univers: ThematiqueUnivers.dechets_compost,
+    });
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/defis/1',
+    ).send({
+      status: DefiStatus.abondon,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+
+    expect(userDB.missions.missions).toHaveLength(1);
+
+    const old_mission = userDB.missions.getMissionById('1');
+
+    expect(old_mission.isDone()).toEqual(false);
+    expect(old_mission.done_at).toEqual(null);
+  });
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - is_new true si rien fait`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {

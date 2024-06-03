@@ -149,12 +149,13 @@ export class DefisUsecase {
 
     utilisateur.defi_history.updateStatus(defiId, status, utilisateur, motif);
 
-    const unlocked_thematiques = utilisateur.missions.validateDefi(
-      defiId,
-      utilisateur,
-    );
-
-    await this.unlockThematiques(unlocked_thematiques, utilisateur);
+    if (status === DefiStatus.fait) {
+      const unlocked_thematiques = utilisateur.missions.validateDefi(
+        defiId,
+        utilisateur,
+      );
+      await this.unlockThematiques(unlocked_thematiques, utilisateur);
+    }
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
