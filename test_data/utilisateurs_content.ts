@@ -202,6 +202,17 @@ const utilisateurs = {
     suivis: [],
     bilans: [],
     services: [],
+    unlocked_features: {
+      version: 1,
+      unlocked_features: [
+        'aides',
+        'services',
+        'recommandations',
+        'bibliotheque',
+        'defis',
+        'univers',
+      ],
+    },
     onboardingResult: ONBOARDING_RES_1234,
     onboardingData: ONBOARD_DATA_1234,
     //missions: missions,
