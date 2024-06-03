@@ -13,6 +13,8 @@ import { EventType } from '../../../src/domain/appEvent';
 import { DefiStatus } from '../../../src/domain/defis/defi';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
+import { Gamification_v0 } from 'src/domain/object_store/gamification/gamification_v0';
 
 describe('Mission (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -630,8 +632,14 @@ describe('Mission (API test)', () => {
   });
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - ajout mission si dernier defi réalisé`, async () => {
     // GIVEN
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 10,
+      celebrations: [],
+    };
     await TestUtil.create(DB.utilisateur, {
       missions: missions_defi_seul,
+      gamification: gamification,
     });
     await TestUtil.create(DB.defi, { content_id: '1' });
     await TestUtil.create(DB.article, { content_id: '1' });
@@ -664,6 +672,16 @@ describe('Mission (API test)', () => {
     expect(new_mission.est_visible).toEqual(true);
     expect(new_mission.thematique_univers).toEqual(
       ThematiqueUnivers.dechets_compost,
+    );
+    expect(userDB.gamification.celebrations).toHaveLength(1);
+    expect(userDB.gamification.celebrations[0].new_thematiques).toEqual([
+      ThematiqueUnivers.dechets_compost,
+    ]);
+    expect(userDB.gamification.celebrations[0].type).toEqual(
+      CelebrationType.fin_thematique,
+    );
+    expect(userDB.gamification.celebrations[0].thematique_univers).toEqual(
+      ThematiqueUnivers.cereales,
     );
   });
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - NON ajout mission si dernier defi abondonné`, async () => {

@@ -138,20 +138,24 @@ export class Mission {
     if (objectif && !objectif.isDone()) {
       objectif.done_at = new Date();
       utilisateur.gamification.ajoutePoints(objectif.points);
-      return this.terminerMissionIfAllDone();
+      return this.terminerMissionIfAllDone(utilisateur);
     }
     return [];
   }
 
-  public terminerMissionIfAllDone(): ThematiqueUnivers[] {
+  public terminerMissionIfAllDone(
+    utilisateur: Utilisateur,
+  ): ThematiqueUnivers[] {
     let ready_to_end = true;
     this.objectifs.forEach((objectif) => {
-      ready_to_end =
-        ready_to_end &&
-        (objectif.type !== ContentType.defi || objectif.isDone());
+      ready_to_end = ready_to_end && objectif.isDone();
     });
     if (ready_to_end) {
       this.done_at = new Date();
+      utilisateur.gamification.celebrerFinMission(
+        this.thematique_univers,
+        this.prochaines_thematiques,
+      );
       return this.prochaines_thematiques;
     }
     return [];

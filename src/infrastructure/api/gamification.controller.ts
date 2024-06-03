@@ -45,6 +45,6 @@ export class GamificationController extends GenericControler {
       utilisateurId,
     );
 
-    return GamificationAPI.mapToStatsAPI(result);
+    return GamificationAPI.mapToAPI(result);
   }
 }
