@@ -1,3 +1,4 @@
+import { Categorie } from '../contenu/categorie';
 import { Thematique } from '../contenu/thematique';
 import { QuestionKYC_v0 } from '../object_store/kyc/kycHistory_v0';
 import { Tag } from '../scoring/tag';
@@ -19,13 +20,6 @@ export enum BooleanKYC {
   peut_etre = 'peut_etre',
 }
 
-export enum CategorieQuestionKYC {
-  default = 'default',
-  test = 'test',
-  mission = 'mission',
-  recommandation = 'recommandation',
-}
-
 export class KYCReponse {
   code: string;
   label: string;
@@ -35,7 +29,7 @@ export class QuestionKYC implements TaggedContent {
   id: string;
   question: string;
   type: TypeReponseQuestionKYC;
-  categorie: CategorieQuestionKYC;
+  categorie: Categorie;
   thematique?: Thematique;
   points: number;
   is_NGC: boolean;

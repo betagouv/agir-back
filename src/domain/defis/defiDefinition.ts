@@ -1,3 +1,4 @@
+import { Categorie } from '../contenu/categorie';
 import { Thematique } from '../contenu/thematique';
 import { Tag } from '../scoring/tag';
 import { ThematiqueUnivers } from '../univers/thematiqueUnivers';
@@ -14,6 +15,7 @@ export class DefiDefinition {
   tags: Tag[];
   universes: Univers[];
   thematiques_univers: ThematiqueUnivers[];
+  categorie: Categorie;
 
   constructor(data: DefiDefinition) {
     this.content_id = data.content_id;
@@ -28,5 +30,6 @@ export class DefiDefinition {
       ? data.thematiques_univers
       : [];
     this.universes = data.universes ? data.universes : [];
+    this.categorie = data.categorie;
   }
 }

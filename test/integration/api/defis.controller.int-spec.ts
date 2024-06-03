@@ -16,6 +16,7 @@ import { PonderationApplicativeManager } from '../../../src/domain/scoring/ponde
 import { TagRubrique } from '../../../src/domain/scoring/tagRubrique';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import { MissionsUtilisateur_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
+import { Categorie } from '../../../src/domain/contenu/categorie';
 
 const DEFI_1_DEF: Defi = {
   content_id: '1',
@@ -30,6 +31,7 @@ const DEFI_1_DEF: Defi = {
   thematiquesUnivers: [ThematiqueUnivers.dechets_compost],
   created_at: undefined,
   updated_at: undefined,
+  categorie: Categorie.recommandation,
 };
 
 describe('/utilisateurs/id/defis (API test)', () => {
@@ -143,6 +145,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     universes: [Univers.climat],
     accessible: true,
     motif: 'truc',
+    categorie: Categorie.recommandation,
   };
 
   beforeAll(async () => {
@@ -842,6 +845,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           universes: [],
           accessible: true,
           motif: null,
+          categorie: Categorie.recommandation,
         },
       ],
     };
@@ -899,6 +903,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           universes: [],
           accessible: true,
           motif: null,
+          categorie: Categorie.recommandation,
         },
       ],
     };

@@ -11,6 +11,7 @@ import {
   Upgrader,
 } from '../../../../src/domain/object_store/upgrader';
 import { Tag } from '../../../../src/domain/scoring/tag';
+import { Categorie } from '../../../../src/domain/contenu/categorie';
 
 describe('DefiHistory vN ', () => {
   it('build OK from empty', () => {
@@ -42,6 +43,7 @@ describe('DefiHistory vN ', () => {
         universes: [Univers.climat],
         accessible: true,
         motif: 'truc',
+        categorie: Categorie.recommandation,
       }),
     );
 
@@ -70,6 +72,7 @@ describe('DefiHistory vN ', () => {
         universes: [Univers.climat],
         accessible: true,
         motif: 'truc',
+        categorie: Categorie.recommandation,
       }),
     );
 
@@ -97,6 +100,7 @@ describe('DefiHistory vN ', () => {
       universes: [Univers.climat],
       accessible: true,
       motif: 'truc',
+      categorie: Categorie.recommandation,
     };
 
     delete defi_sans_accessibilite.accessible;

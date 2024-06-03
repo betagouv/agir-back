@@ -3,12 +3,10 @@ import { PrismaService } from '../prisma/prisma.service';
 import { KYC } from '@prisma/client';
 import { Univers } from '../../domain/univers/univers';
 import { KycDefinition } from '../../../src/domain/kyc/kycDefinition';
-import {
-  CategorieQuestionKYC,
-  TypeReponseQuestionKYC,
-} from '../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionQYC';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { Tag } from '../../../src/domain/scoring/tag';
+import { Categorie } from '../../../src/domain/contenu/categorie';
 
 @Injectable()
 export class KycRepository {
@@ -64,7 +62,7 @@ export class KycRepository {
       id_cms: kycDB.id_cms,
       code: kycDB.code,
       type: TypeReponseQuestionKYC[kycDB.type],
-      categorie: CategorieQuestionKYC[kycDB.categorie],
+      categorie: Categorie[kycDB.categorie],
       points: kycDB.points,
       is_ngc: kycDB.is_ngc,
       question: kycDB.question,

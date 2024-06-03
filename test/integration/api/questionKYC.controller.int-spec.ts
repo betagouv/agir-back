@@ -1,7 +1,6 @@
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import {
   BooleanKYC,
-  CategorieQuestionKYC,
   TypeReponseQuestionKYC,
 } from '../../../src/domain/kyc/questionQYC';
 import { DB, TestUtil } from '../../TestUtil';
@@ -18,6 +17,7 @@ import { MissionsUtilisateur_v0 } from '../../../src/domain/object_store/mission
 import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
+import { Categorie } from '../../../src/domain/contenu/categorie';
 
 describe('/utilisateurs/id/questionsKYC (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -109,7 +109,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       type: TypeReponseQuestionKYC.choix_unique,
       question: `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
       points: 10,
-      categorie: CategorieQuestionKYC.default,
+      categorie: Categorie.test,
       reponses: [
         { label: 'Oui', code: BooleanKYC.oui },
         { label: 'Non', code: BooleanKYC.non },
@@ -127,7 +127,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(response.body.type).toEqual(TypeReponseQuestionKYC.choix_unique);
     expect(response.body.points).toEqual(10);
     expect(response.body.reponses_possibles).toEqual(['Oui', 'Non', 'A voir']);
-    expect(response.body.categorie).toEqual(CategorieQuestionKYC.default);
+    expect(response.body.categorie).toEqual(Categorie.test);
     expect(response.body.question).toEqual(
       `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
     );
@@ -153,7 +153,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
             question: `Quel est votre sujet principal d'intéret ?`,
             type: TypeReponseQuestionKYC.choix_multiple,
             is_NGC: false,
-            categorie: CategorieQuestionKYC.default,
+            categorie: Categorie.test,
             points: 10,
             reponses: [{ label: 'Le climat', code: Thematique.climat }],
             reponses_possibles: [
@@ -200,7 +200,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
             question: `Quel est votre sujet principal d'intéret ?`,
             type: TypeReponseQuestionKYC.choix_multiple,
             is_NGC: false,
-            categorie: CategorieQuestionKYC.default,
+            categorie: Categorie.test,
             points: 10,
             reponses: [
               { label: 'Le climat', code: Thematique.climat },

@@ -2,6 +2,7 @@ import { TestUtil } from '../../../../test/TestUtil';
 import { Article } from '../../../../src/domain/contenu/article';
 import { History } from '../../../../src/domain/history/history';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
+import { Categorie } from '../../../../src/domain/contenu/categorie';
 
 const BASIC_ARTICLE: Article = new Article({
   ...TestUtil.articleData(),
@@ -10,6 +11,7 @@ const BASIC_ARTICLE: Article = new Article({
   score: 0,
   tags_rubriques: [],
   tags_utilisateur: [],
+  categorie: Categorie.recommandation,
 });
 
 describe('History', () => {

@@ -6,13 +6,13 @@ import { MissionsUtilisateur_v0 } from '../../../src/domain/object_store/mission
 import { Univers } from '../../../src/domain/univers/univers';
 import {
   TypeReponseQuestionKYC,
-  CategorieQuestionKYC,
   BooleanKYC,
 } from '../../../src/domain/kyc/questionQYC';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { EventType } from '../../../src/domain/appEvent';
 import { DefiStatus } from '../../../src/domain/defis/defi';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
+import { Categorie } from '../../../src/domain/contenu/categorie';
 
 describe('Mission (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -339,7 +339,7 @@ describe('Mission (API test)', () => {
       id_cms: 1,
       code: KYCID._1,
       type: TypeReponseQuestionKYC.libre,
-      categorie: CategorieQuestionKYC.mission,
+      categorie: Categorie.mission,
       points: 10,
       question: 'Comment avez vous connu le service ?',
       reponses: [],
@@ -427,7 +427,7 @@ describe('Mission (API test)', () => {
       id_cms: 1,
       code: KYCID._1,
       type: TypeReponseQuestionKYC.libre,
-      categorie: CategorieQuestionKYC.default,
+      categorie: Categorie.test,
       points: 0,
       question: `HAHA`,
       reponses: [],
@@ -436,7 +436,7 @@ describe('Mission (API test)', () => {
       id_cms: 2,
       code: KYCID._2,
       type: TypeReponseQuestionKYC.libre,
-      categorie: CategorieQuestionKYC.default,
+      categorie: Categorie.test,
       points: 0,
       question: `HIHI`,
       reponses: [],
@@ -477,7 +477,7 @@ describe('Mission (API test)', () => {
       id_cms: 1,
       code: KYCID._2,
       type: TypeReponseQuestionKYC.choix_unique,
-      categorie: CategorieQuestionKYC.default,
+      categorie: Categorie.test,
       points: 10,
       question: 'Comment avez vous connu le service ?',
       reponses: [
@@ -489,7 +489,7 @@ describe('Mission (API test)', () => {
       id_cms: 2,
       code: KYCID._3,
       type: TypeReponseQuestionKYC.choix_unique,
-      categorie: CategorieQuestionKYC.default,
+      categorie: Categorie.test,
       points: 10,
       question: `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
       reponses: [
@@ -509,7 +509,7 @@ describe('Mission (API test)', () => {
     expect(response.body.type).toEqual(TypeReponseQuestionKYC.choix_unique);
     expect(response.body.points).toEqual(10);
     expect(response.body.reponses_possibles).toEqual(['Oui', 'Non', 'A voir']);
-    expect(response.body.categorie).toEqual(CategorieQuestionKYC.default);
+    expect(response.body.categorie).toEqual(Categorie.test);
     expect(response.body.question).toEqual(
       `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
     );
@@ -521,7 +521,7 @@ describe('Mission (API test)', () => {
       id_cms: 1,
       code: KYCID._2,
       type: TypeReponseQuestionKYC.choix_unique,
-      categorie: CategorieQuestionKYC.default,
+      categorie: Categorie.test,
       points: 10,
       question: 'Comment avez vous connu le service ?',
       reponses: [
@@ -533,7 +533,7 @@ describe('Mission (API test)', () => {
       id_cms: 2,
       code: KYCID._3,
       type: TypeReponseQuestionKYC.choix_unique,
-      categorie: CategorieQuestionKYC.default,
+      categorie: Categorie.test,
       points: 10,
       question: `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
       reponses: [
@@ -555,7 +555,7 @@ describe('Mission (API test)', () => {
       question:
         "Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?",
       reponse: [],
-      categorie: 'default',
+      categorie: 'test',
       points: 10,
       type: 'choix_unique',
       reponses_possibles: ['Oui', 'Non', 'A voir'],
@@ -572,7 +572,7 @@ describe('Mission (API test)', () => {
       id_cms: 1,
       code: KYCID._2,
       type: TypeReponseQuestionKYC.choix_unique,
-      categorie: CategorieQuestionKYC.default,
+      categorie: Categorie.test,
       points: 10,
       question: 'Comment avez vous connu le service ?',
       reponses: [
@@ -584,7 +584,7 @@ describe('Mission (API test)', () => {
       id_cms: 2,
       code: KYCID._3,
       type: TypeReponseQuestionKYC.choix_unique,
-      categorie: CategorieQuestionKYC.default,
+      categorie: Categorie.test,
       points: 10,
       question: 'Comment avez vous connu le service ?',
       reponses: [

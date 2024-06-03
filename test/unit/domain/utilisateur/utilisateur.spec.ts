@@ -12,12 +12,12 @@ import {
 } from '../../../../src/domain/logement/logement';
 import { TransportQuotidien } from '../../../../src/domain/transport/transport';
 import {
-  CategorieQuestionKYC,
   QuestionKYC,
   TypeReponseQuestionKYC,
 } from '../../../../src/domain/kyc/questionQYC';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
+import { Categorie } from '../../../../src/domain/contenu/categorie';
 
 const ONBOARDING_DATA: Onboarding_v0 = {
   version: 0,
@@ -137,7 +137,7 @@ describe('Objet Utilisateur', () => {
       question: 'Quelle boisson chaude consommez-vous quotidiennement ?',
       type: TypeReponseQuestionKYC.choix_unique,
       is_NGC: false,
-      categorie: CategorieQuestionKYC.mission,
+      categorie: Categorie.mission,
       points: 5,
       tags: [],
       reponses: [{ label: 'Café', code: 'cafe' }],
@@ -169,7 +169,7 @@ describe('Objet Utilisateur', () => {
       question: 'Quelle boisson chaude consommez-vous quotidiennement ?',
       type: TypeReponseQuestionKYC.choix_unique,
       is_NGC: false,
-      categorie: CategorieQuestionKYC.mission,
+      categorie: Categorie.mission,
       points: 5,
       tags: [],
       reponses: [{ label: 'autre', code: 'autre' }],
@@ -221,7 +221,7 @@ describe('Objet Utilisateur', () => {
       question: 'Quelle boisson chaude consommez-vous quotidiennement ?',
       type: TypeReponseQuestionKYC.choix_unique,
       is_NGC: false,
-      categorie: CategorieQuestionKYC.mission,
+      categorie: Categorie.mission,
       points: 5,
       tags: [],
       reponses: [

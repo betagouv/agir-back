@@ -2,6 +2,7 @@ import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
 import { TagRubrique } from '../scoring/tagRubrique';
 import { TagUtilisateur } from '../scoring/tagUtilisateur';
+import { Categorie } from './categorie';
 import { Thematique } from './thematique';
 
 export class QuizzData {
@@ -23,6 +24,7 @@ export class QuizzData {
   tags_utilisateur: TagUtilisateur[];
   tags_rubriques: TagRubrique[];
   score: number;
+  categorie: Categorie;
 }
 
 export class Quizz extends QuizzData implements TaggedContent {

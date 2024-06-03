@@ -10,16 +10,14 @@ import {
   PonderationApplicativeManager,
 } from '../../../src/domain/scoring/ponderationApplicative';
 import { DB, TestUtil } from '../../TestUtil';
-import {
-  TypeReponseQuestionKYC,
-  CategorieQuestionKYC,
-} from '../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionQYC';
 import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
 import { Univers } from '../../../src/domain/univers/univers';
 import { Defi } from '.prisma/client';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
+import { Categorie } from '../../../src/domain/contenu/categorie';
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
 const DEFI_1: Defi_v0 = {
@@ -36,6 +34,7 @@ const DEFI_1: Defi_v0 = {
   universes: [Univers.climat],
   accessible: true,
   motif: 'truc',
+  categorie: Categorie.recommandation,
 };
 const DEFI_1_DEF: Defi = {
   content_id: '1',
@@ -50,6 +49,7 @@ const DEFI_1_DEF: Defi = {
   thematiquesUnivers: [ThematiqueUnivers.dechets_compost],
   created_at: undefined,
   updated_at: undefined,
+  categorie: Categorie.recommandation,
 };
 
 describe('/utilisateurs/id/recommandations (API test)', () => {
@@ -241,7 +241,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       id_cms: 1,
       code: KYCID._1,
       type: TypeReponseQuestionKYC.libre,
-      categorie: CategorieQuestionKYC.recommandation,
+      categorie: Categorie.recommandation,
       points: 10,
       question: `Quel est votre sujet principal d'intéret ?`,
       thematique: Thematique.consommation,
@@ -254,7 +254,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       id_cms: 2,
       code: KYCID._2,
       type: TypeReponseQuestionKYC.libre,
-      categorie: CategorieQuestionKYC.recommandation,
+      categorie: Categorie.recommandation,
       points: 10,
       question: `question hors recos`,
       thematique: Thematique.climat,
@@ -502,7 +502,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       id_cms: 1,
       code: KYCID._1,
       type: TypeReponseQuestionKYC.choix_multiple,
-      categorie: CategorieQuestionKYC.recommandation,
+      categorie: Categorie.recommandation,
       points: 10,
       question: `Quel est votre sujet principal d'intéret ?`,
       thematique: Thematique.consommation,
@@ -519,7 +519,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       id_cms: 2,
       code: KYCID._2,
       type: TypeReponseQuestionKYC.choix_unique,
-      categorie: CategorieQuestionKYC.mission,
+      categorie: Categorie.mission,
       points: 10,
       question: `question hors recos`,
       thematique: Thematique.consommation,
@@ -617,6 +617,134 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[4].content_id).toEqual('_1');
     expect(response.body[5].content_id).toEqual('11');
   });
+  it('GET /utilisateurs/id/recommandations - rien hors categorie recommandation', async () => {
+    // GIVEN
+    process.env.DEFI_ENABLED = 'true';
+    process.env.KYC_RECO_ENABLED = 'true';
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._1,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      categorie: Categorie.mission,
+      points: 10,
+      question: `Quel est votre sujet principal d'intéret ?`,
+      thematique: Thematique.consommation,
+      reponses: [
+        { label: 'AAA', code: Thematique.climat },
+        { label: 'BBB', code: Thematique.logement },
+        { label: 'CCC', code: Thematique.alimentation },
+        { label: 'DDD', code: Thematique.transport },
+      ],
+      tags: [Tag.R6],
+      universes: [],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.mission,
+      points: 10,
+      question: `question hors recos`,
+      thematique: Thematique.consommation,
+      reponses: [{ label: 'AAA', code: Thematique.climat }],
+      tags: [Tag.R6, Tag.R1],
+      universes: [],
+    });
+
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '001',
+          status: DefiStatus.en_cours,
+        },
+        {
+          ...DEFI_1,
+          id: '003',
+          status: DefiStatus.pas_envie,
+        },
+      ],
+    };
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '1',
+      tags: [Tag.R1],
+      categorie: Categorie.mission,
+    });
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '2',
+      tags: [Tag.R2],
+      categorie: Categorie.mission,
+    });
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '3',
+      tags: [Tag.R3],
+      categorie: Categorie.mission,
+    });
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '4',
+      tags: [Tag.R4],
+      categorie: Categorie.mission,
+    });
+    await TestUtil.create(DB.defi, {
+      ...DEFI_1_DEF,
+      content_id: '5',
+      tags: [Tag.R5],
+      categorie: Categorie.mission,
+    });
+
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis,
+      tag_ponderation_set: { R1: 5, R2: 4, R3: 3, R4: 2, R5: 1, R6: 6 },
+    });
+    await TestUtil.create(DB.quizz, {
+      content_id: '11',
+      codes_postaux: [],
+      rubrique_ids: ['1'],
+      categorie: Categorie.mission,
+    });
+    await TestUtil.create(DB.quizz, {
+      content_id: '22',
+      codes_postaux: [],
+      rubrique_ids: ['2'],
+      categorie: Categorie.mission,
+    });
+    await TestUtil.create(DB.quizz, {
+      content_id: '33',
+      codes_postaux: [],
+      rubrique_ids: ['3'],
+      categorie: Categorie.mission,
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '44',
+      codes_postaux: [],
+      rubrique_ids: ['4'],
+      categorie: Categorie.mission,
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '55',
+      codes_postaux: [],
+      rubrique_ids: ['5'],
+      categorie: Categorie.mission,
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '66',
+      codes_postaux: [],
+      rubrique_ids: ['6', '5'],
+      categorie: Categorie.mission,
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+  });
   it('GET /utilisateurs/id/recommandations v2 - mix KYC ARTICLE ET QUIZZ sans défis', async () => {
     // GIVEN
     process.env.DEFI_ENABLED = 'true';
@@ -625,7 +753,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       id_cms: 1,
       code: KYCID._1,
       type: TypeReponseQuestionKYC.choix_multiple,
-      categorie: CategorieQuestionKYC.recommandation,
+      categorie: Categorie.recommandation,
       points: 10,
       question: `Quel est votre sujet principal d'intéret ?`,
       thematique: Thematique.consommation,
@@ -643,7 +771,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       id_cms: 2,
       code: KYCID._2,
       type: TypeReponseQuestionKYC.choix_unique,
-      categorie: CategorieQuestionKYC.mission,
+      categorie: Categorie.mission,
       points: 10,
       question: `question hors recos`,
       thematique: Thematique.consommation,
@@ -750,7 +878,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       id_cms: 1,
       code: KYCID._1,
       type: TypeReponseQuestionKYC.choix_multiple,
-      categorie: CategorieQuestionKYC.recommandation,
+      categorie: Categorie.recommandation,
       points: 10,
       question: `Quel est votre sujet principal d'intéret ?`,
       thematique: Thematique.consommation,
@@ -768,7 +896,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       id_cms: 2,
       code: KYCID._2,
       type: TypeReponseQuestionKYC.choix_unique,
-      categorie: CategorieQuestionKYC.recommandation,
+      categorie: Categorie.recommandation,
       points: 10,
       question: `question hors recos`,
       thematique: Thematique.consommation,
@@ -816,6 +944,83 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[0].content_id).toEqual('_2');
     expect(response.body[1].content_id).toEqual('55');
     expect(response.body[2].content_id).toEqual('22');
+  });
+  it('GET /utilisateurs/id/recommandations v2 - pas de contenu de categorie non recommandation', async () => {
+    // GIVEN
+    process.env.DEFI_ENABLED = 'true';
+    process.env.KYC_RECO_ENABLED = 'true';
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._1,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      categorie: Categorie.mission,
+      points: 10,
+      question: `Quel est votre sujet principal d'intéret ?`,
+      thematique: Thematique.consommation,
+      reponses: [
+        { label: 'AAA', code: Thematique.climat },
+        { label: 'BBB', code: Thematique.logement },
+        { label: 'CCC', code: Thematique.alimentation },
+        { label: 'DDD', code: Thematique.transport },
+      ],
+      tags: [Tag.R6],
+      universes: [Univers.climat],
+    });
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.mission,
+      points: 10,
+      question: `question hors recos`,
+      thematique: Thematique.consommation,
+      reponses: [{ label: 'AAA', code: Thematique.climat }],
+      tags: [Tag.R6, Tag.R1],
+      universes: [Univers.logement],
+    });
+
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc,
+    });
+    await TestUtil.create(DB.quizz, {
+      content_id: '11',
+      codes_postaux: [],
+      thematiques: [Thematique.climat],
+      categorie: Categorie.mission,
+    });
+    await TestUtil.create(DB.quizz, {
+      content_id: '22',
+      codes_postaux: [],
+      thematiques: [Thematique.logement],
+      categorie: Categorie.mission,
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '44',
+      codes_postaux: [],
+      thematiques: [Thematique.climat],
+      categorie: Categorie.mission,
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '55',
+      codes_postaux: [],
+      thematiques: [Thematique.logement],
+      categorie: Categorie.mission,
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations_v2?univers=logement',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+
+    expect(response.body).toHaveLength(0);
   });
   it('GET /utilisateurs/id/recommandations - que des defis en cours', async () => {
     // GIVEN

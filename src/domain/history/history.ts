@@ -1,4 +1,5 @@
 import { Article, PersonalArticle } from '../contenu/article';
+import { Categorie } from '../contenu/categorie';
 import { History_v0 } from '../object_store/history/history_v0';
 import { ArticleHistory } from './articleHistory';
 import { QuizzHistory } from './quizzHistory';
@@ -6,6 +7,7 @@ import { QuizzHistory } from './quizzHistory';
 export type SearchArticleFilter = {
   est_lu?: boolean;
   est_favoris?: boolean;
+  categorie?: Categorie;
 };
 
 export class History {

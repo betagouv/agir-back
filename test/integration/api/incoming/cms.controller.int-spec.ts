@@ -4,15 +4,13 @@ import { DB, TestUtil } from '../../../TestUtil';
 import { Besoin } from '../../../../src/domain/aides/besoin';
 import { Univers } from '../../../../src/domain/univers/univers';
 import { ThematiqueUnivers } from '../../../../src/domain/univers/thematiqueUnivers';
-import {
-  CategorieQuestionKYC,
-  TypeReponseQuestionKYC,
-} from '../../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionQYC';
 import { KYC, Mission } from '.prisma/client';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
+import { Categorie } from '../../../../src/domain/contenu/categorie';
 
 describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA_DEFI = {
@@ -53,7 +51,7 @@ describe('/api/incoming/cms (API test)', () => {
       question: 'question',
       code: KYCID.KYC001,
       type: TypeReponseQuestionKYC.choix_multiple,
-      categorie: CategorieQuestionKYC.mission,
+      categorie: Categorie.mission,
       points: 5,
       is_ngc: false,
       reponses: [
@@ -352,7 +350,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(item.question).toEqual('question');
     expect(item.id_cms).toEqual(123);
     expect(item.type).toEqual(TypeReponseQuestionKYC.choix_multiple);
-    expect(item.categorie).toEqual(CategorieQuestionKYC.mission);
+    expect(item.categorie).toEqual(Categorie.mission);
     expect(item.points).toEqual(5);
     expect(item.is_ngc).toEqual(false);
     expect(item.reponses).toEqual([

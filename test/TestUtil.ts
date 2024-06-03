@@ -15,10 +15,7 @@ import { Impact } from '../src/domain/onboarding/onboarding';
 const request = require('supertest');
 import { JwtService } from '@nestjs/jwt';
 import { ParcoursTodo } from '../src/domain/todo/parcoursTodo';
-import {
-  TypeReponseQuestionKYC,
-  CategorieQuestionKYC,
-} from '../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../src/domain/kyc/questionQYC';
 import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
 import { Feature } from '../src/domain/gamification/feature';
 import { UnlockedFeatures_v1 } from '../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
@@ -77,6 +74,7 @@ import { ThematiqueUnivers } from '../src/domain/univers/thematiqueUnivers';
 import { ContentType } from '../src/domain/contenu/contentType';
 import { Tag } from '../src/domain/scoring/tag';
 import { KYCID } from '../src/domain/kyc/KYCID';
+import { Categorie } from '../src/domain/contenu/categorie';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -328,6 +326,7 @@ export class TestUtil {
       thematiques: [Thematique.climat, Thematique.logement],
       created_at: undefined,
       updated_at: undefined,
+      categorie: Categorie.recommandation,
       ...override,
     };
   }
@@ -367,6 +366,7 @@ export class TestUtil {
       thematiquesUnivers: [ThematiqueUnivers.manger_local],
       created_at: undefined,
       updated_at: undefined,
+      categorie: Categorie.recommandation,
       ...override,
     };
   }
@@ -403,7 +403,7 @@ export class TestUtil {
   static kycData(override?: Partial<KYC>): KYC {
     return {
       id_cms: 1,
-      categorie: CategorieQuestionKYC.recommandation,
+      categorie: Categorie.recommandation,
       code: KYCID.KYC001,
       is_ngc: false,
       points: 10,
@@ -466,6 +466,7 @@ export class TestUtil {
           universes: [Univers.climat],
           accessible: false,
           motif: 'bidon',
+          categorie: Categorie.recommandation,
         },
       ],
     };
@@ -478,7 +479,7 @@ export class TestUtil {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.default,
+          categorie: Categorie.test,
           points: 10,
           reponses: [
             { label: 'Le climat', code: Thematique.climat },
@@ -752,6 +753,7 @@ export class TestUtil {
       thematique_principale: 'logement',
       created_at: new Date(),
       updated_at: new Date(),
+      categorie: Categorie.recommandation,
       ...override,
     };
   }

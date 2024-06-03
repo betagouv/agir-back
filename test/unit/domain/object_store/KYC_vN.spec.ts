@@ -4,14 +4,12 @@ import {
 } from '../../../../src/domain/object_store/upgrader';
 import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
 import { KYCHistory_v0 } from '../../../../src/domain/object_store/kyc/kycHistory_v0';
-import {
-  TypeReponseQuestionKYC,
-  CategorieQuestionKYC,
-} from '../../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionQYC';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { Univers } from '../../../../src/domain/univers/univers';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
+import { Categorie } from '../../../../src/domain/contenu/categorie';
 
 describe('KYC vN ', () => {
   it('build OK from empty', () => {
@@ -35,7 +33,7 @@ describe('KYC vN ', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.default,
+          categorie: Categorie.test,
           points: 10,
           reponses: [{ label: 'Le climat', code: Thematique.climat }],
           reponses_possibles: [
@@ -66,7 +64,7 @@ describe('KYC vN ', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.default,
+          categorie: Categorie.test,
           points: 10,
           reponses: [{ label: 'Le climat', code: Thematique.climat }],
           reponses_possibles: [

@@ -30,11 +30,9 @@ import {
 import { ContentType } from '../../src/domain/contenu/contentType';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
 import { KycDefinition } from '../../src/domain/kyc/kycDefinition';
-import {
-  TypeReponseQuestionKYC,
-  CategorieQuestionKYC,
-} from '../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../src/domain/kyc/questionQYC';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
+import { Categorie } from '../../src/domain/contenu/categorie';
 
 @Injectable()
 export class CMSUsecase {
@@ -441,6 +439,7 @@ export class CMSUsecase {
         : [],
       score: 0,
       tags_rubriques: [],
+      categorie: Categorie[entry.categorie],
     };
   }
 
@@ -487,13 +486,14 @@ export class CMSUsecase {
       thematiques_univers: entry.thematique_univers
         ? entry.thematique_univers.map((t) => ThematiqueUnivers[t.code])
         : [],
+      categorie: Categorie[entry.categorie],
     };
   }
   static buildKycFromCMSData(entry: CMSWebhookEntryAPI): KycDefinition {
     return {
       id_cms: entry.id,
       code: entry.code,
-      categorie: CategorieQuestionKYC[entry.categorie],
+      categorie: Categorie[entry.categorie],
       type: TypeReponseQuestionKYC[entry.type],
       is_ngc: entry.is_ngc,
       points: entry.points,
@@ -596,6 +596,7 @@ export class CMSUsecase {
           : [Thematique.climat],
       score: 0,
       tags_rubriques: [],
+      categorie: Categorie[entry.attributes.categorie],
     };
   }
   static buildAideFromCMSPopulateData(entry: CMSWebhookPopulateAPI): Aide {
@@ -659,6 +660,7 @@ export class CMSUsecase {
               (t) => ThematiqueUnivers[t.attributes.code],
             )
           : [],
+      categorie: Categorie[entry.attributes.categorie],
     };
   }
 
@@ -669,7 +671,7 @@ export class CMSUsecase {
       id_cms: entry.id,
       code: entry.attributes.code,
       type: TypeReponseQuestionKYC[entry.attributes.type],
-      categorie: CategorieQuestionKYC[entry.attributes.categorie],
+      categorie: Categorie[entry.attributes.categorie],
       points: entry.attributes.points,
       is_ngc: entry.attributes.is_ngc,
       question: entry.attributes.question,

@@ -8,6 +8,7 @@ import { Gamification } from '../../../../src/domain/gamification/gamification';
 import { DefiDefinition } from '../../../../src/domain/defis/defiDefinition';
 import { Univers } from '../../../../src/domain/univers/univers';
 import { ThematiqueUnivers } from '../../../../src/domain/univers/thematiqueUnivers';
+import { Categorie } from '../../../../src/domain/contenu/categorie';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
@@ -25,6 +26,7 @@ const DEFI_1: Defi_v0 = {
   universes: [Univers.climat],
   accessible: true,
   motif: 'truc',
+  categorie: Categorie.recommandation,
 };
 const DEFI_1_DEF: DefiDefinition = {
   content_id: '1',
@@ -37,9 +39,32 @@ const DEFI_1_DEF: DefiDefinition = {
   sous_titre: 'sous_titre',
   universes: [Univers.climat],
   thematiques_univers: [ThematiqueUnivers.dechets_compost],
+  categorie: Categorie.recommandation,
 };
 
 describe('DefiHistory', () => {
+  it('getDefisRestants :filtrage sur categorie ', () => {
+    // GIVEN
+    const defiHistory = new DefiHistory();
+    defiHistory.setCatalogue([
+      {
+        ...DEFI_1_DEF,
+        content_id: '1',
+        universes: [Univers.climat],
+        categorie: Categorie.mission,
+      },
+      {
+        ...DEFI_1_DEF,
+        content_id: '2',
+        universes: [Univers.climat],
+        categorie: Categorie.recommandation,
+      },
+    ]);
+
+    // THEN
+    expect(defiHistory.getDefisRestants(Categorie.mission)).toHaveLength(1);
+    expect(defiHistory.getDefisRestants(Categorie.mission)[0].id).toEqual('1');
+  });
   it('getDefisRestants :filtrage sur univers ', () => {
     // GIVEN
     const defiHistory = new DefiHistory();
@@ -49,10 +74,12 @@ describe('DefiHistory', () => {
     ]);
 
     // THEN
-    expect(defiHistory.getDefisRestants(Univers.consommation)).toHaveLength(1);
-    expect(defiHistory.getDefisRestants(Univers.consommation)[0].id).toEqual(
-      '2',
-    );
+    expect(
+      defiHistory.getDefisRestants(undefined, Univers.consommation),
+    ).toHaveLength(1);
+    expect(
+      defiHistory.getDefisRestants(undefined, Univers.consommation)[0].id,
+    ).toEqual('2');
   });
   it('getDefisRestants : select si pas d univers setté ', () => {
     // GIVEN
@@ -63,7 +90,9 @@ describe('DefiHistory', () => {
     ]);
 
     // THEN
-    expect(defiHistory.getDefisRestants(Univers.consommation)).toHaveLength(2);
+    expect(
+      defiHistory.getDefisRestants(undefined, Univers.consommation),
+    ).toHaveLength(2);
   });
   it('getDefisRestants : quand hisotrique vide ', () => {
     // GIVEN
