@@ -22,11 +22,9 @@ import {
   Defi_v0,
 } from '../../../src/domain/object_store/defi/defiHistory_v0';
 import { Univers } from '../../../src/domain/univers/univers';
-import {
-  CategorieQuestionKYC,
-  KYCID,
-  TypeReponseQuestionKYC,
-} from '../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionQYC';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
+import { Categorie } from '../../../src/domain/contenu/categorie';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
@@ -434,6 +432,7 @@ describe('Admin (API test)', () => {
           motif: 'truc',
           id: '001',
           status: DefiStatus.deja_fait,
+          categorie: Categorie.recommandation,
         },
       ],
     };
@@ -1062,7 +1061,7 @@ describe('Admin (API test)', () => {
       id_cms: 1,
       code: KYCID._2,
       type: TypeReponseQuestionKYC.choix_multiple,
-      categorie: CategorieQuestionKYC.default,
+      categorie: Categorie.test,
       points: 10,
       question: 'Comment avez vous connu le service ?',
       reponses: [
@@ -1263,6 +1262,7 @@ describe('Admin (API test)', () => {
       universes: [Univers.climat],
       accessible: true,
       motif: 'truc',
+      categorie: Categorie.recommandation,
     };
     const defis_1: DefiHistory_v0 = {
       version: 0,

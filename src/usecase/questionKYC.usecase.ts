@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { KYCID, QuestionKYC } from '../domain/kyc/questionQYC';
+import { QuestionKYC } from '../domain/kyc/questionQYC';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
+import { KYCID } from '../../src/domain/kyc/KYCID';
 
 @Injectable()
 export class QuestionKYCUsecase {

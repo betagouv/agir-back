@@ -1,4 +1,5 @@
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
+import { Categorie } from '../contenu/categorie';
 import { DefiHistory_v0 } from '../object_store/defi/defiHistory_v0';
 import { Univers } from '../univers/univers';
 import { Utilisateur } from '../utilisateur/utilisateur';
@@ -27,7 +28,7 @@ export class DefiHistory {
     this.catalogue = cat;
   }
 
-  public getDefisRestants(univers?: Univers): Defi[] {
+  public getDefisRestants(categorie?: Categorie, univers?: Univers): Defi[] {
     let defis_def_restants: DefiDefinition[] = [].concat(this.catalogue);
     this.defis.forEach((defi_courant) => {
       const index = defis_def_restants.findIndex(
@@ -42,6 +43,11 @@ export class DefiHistory {
       defis_def_restants = defis_def_restants.filter(
         (defi) =>
           defi.universes.includes(univers) || defi.universes.length === 0,
+      );
+    }
+    if (categorie) {
+      defis_def_restants = defis_def_restants.filter(
+        (defi) => defi.categorie === categorie,
       );
     }
 

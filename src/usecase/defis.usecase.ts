@@ -108,7 +108,7 @@ export class DefisUsecase {
       !accessible
     ) {
       result = result.concat(
-        utilisateur.defi_history.getDefisRestants(univers),
+        utilisateur.defi_history.getDefisRestants(undefined, univers),
       );
 
       PonderationApplicativeManager.increaseScoreContentOfList(

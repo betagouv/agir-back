@@ -1,3 +1,4 @@
+import { Categorie } from '../contenu/categorie';
 import { Thematique } from '../contenu/thematique';
 import { QuestionKYC_v0 } from '../object_store/kyc/kycHistory_v0';
 import { Tag } from '../scoring/tag';
@@ -5,26 +6,6 @@ import { TaggedContent } from '../scoring/taggedContent';
 import { Univers } from '../univers/univers';
 import { KycDefinition } from './kycDefinition';
 
-export enum KYCID {
-  KYC001 = 'KYC001',
-  KYC002 = 'KYC002',
-  KYC003 = 'KYC003',
-  KYC004 = 'KYC004',
-  KYC005 = 'KYC005',
-  KYC006 = 'KYC006',
-  KYC007 = 'KYC007',
-  KYC008 = 'KYC008',
-  KYC009 = 'KYC009',
-  KYC010 = 'KYC010',
-  KYC011 = 'KYC011',
-  KYC012 = 'KYC012',
-  KYC013 = 'KYC013',
-  _1 = '_1',
-  _2 = '_2',
-  _3 = '_3',
-  _4 = '_4',
-  _5 = '_5',
-}
 export enum TypeReponseQuestionKYC {
   libre = 'libre',
   choix_unique = 'choix_unique',
@@ -39,23 +20,16 @@ export enum BooleanKYC {
   peut_etre = 'peut_etre',
 }
 
-export enum CategorieQuestionKYC {
-  default = 'default',
-  test = 'test',
-  mission = 'mission',
-  recommandation = 'recommandation',
-}
-
 export class KYCReponse {
   code: string;
   label: string;
 }
 
 export class QuestionKYC implements TaggedContent {
-  id: KYCID;
+  id: string;
   question: string;
   type: TypeReponseQuestionKYC;
-  categorie: CategorieQuestionKYC;
+  categorie: Categorie;
   thematique?: Thematique;
   points: number;
   is_NGC: boolean;

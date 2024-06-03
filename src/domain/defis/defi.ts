@@ -1,3 +1,4 @@
+import { Categorie } from '../contenu/categorie';
 import { Thematique } from '../contenu/thematique';
 import { Defi_v0 } from '../object_store/defi/defiHistory_v0';
 import { Tag } from '../scoring/tag';
@@ -32,6 +33,7 @@ export class Defi implements TaggedContent {
   universes: Univers[];
   accessible: boolean;
   motif: string;
+  categorie: Categorie;
 
   constructor(data: Defi_v0) {
     this.id = data.id;
@@ -48,6 +50,7 @@ export class Defi implements TaggedContent {
     this.universes = data.universes;
     this.accessible = !!data.accessible;
     this.motif = data.motif;
+    this.categorie = data.categorie;
   }
 
   public getStatus(): DefiStatus {

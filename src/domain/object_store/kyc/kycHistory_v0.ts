@@ -1,15 +1,14 @@
 import { Versioned } from '../versioned';
 import { KYCHistory } from '../../kyc/kycHistory';
 import {
-  CategorieQuestionKYC,
   KYCReponse,
-  KYCID,
   QuestionKYC,
   TypeReponseQuestionKYC,
 } from '../../kyc/questionQYC';
 import { Thematique } from '../../contenu/thematique';
 import { Tag } from '../../scoring/tag';
 import { Univers } from '../../../../src/domain/univers/univers';
+import { Categorie } from '../../../../src/domain/contenu/categorie';
 
 export class KYCReponse_v0 {
   code: string;
@@ -23,10 +22,10 @@ export class KYCReponse_v0 {
 }
 
 export class QuestionKYC_v0 {
-  id: KYCID;
+  id: string;
   question: string;
   type: TypeReponseQuestionKYC;
-  categorie: CategorieQuestionKYC;
+  categorie: Categorie;
   points: number;
   is_NGC: boolean;
   reponses?: KYCReponse_v0[];

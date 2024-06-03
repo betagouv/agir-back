@@ -4,6 +4,7 @@ import { Tag } from '../../scoring/tag';
 import { Defi, DefiStatus } from '../../../../src/domain/defis/defi';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 import { Univers } from '../../../../src/domain/univers/univers';
+import { Categorie } from '../../../../src/domain/contenu/categorie';
 
 export class Defi_v0 {
   id: string;
@@ -19,6 +20,7 @@ export class Defi_v0 {
   universes: Univers[];
   accessible: boolean;
   motif: string;
+  categorie: Categorie;
 
   static map(elem: Defi): Defi_v0 {
     return {
@@ -35,6 +37,7 @@ export class Defi_v0 {
       universes: elem.universes,
       accessible: elem.accessible,
       motif: elem.motif,
+      categorie: elem.categorie,
     };
   }
 }

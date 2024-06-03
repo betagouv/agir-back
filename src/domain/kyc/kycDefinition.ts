@@ -1,17 +1,14 @@
+import { Categorie } from '../contenu/categorie';
 import { Thematique } from '../contenu/thematique';
 import { Tag } from '../scoring/tag';
 import { Univers } from '../univers/univers';
-import {
-  CategorieQuestionKYC,
-  KYCID,
-  TypeReponseQuestionKYC,
-} from './questionQYC';
+import { TypeReponseQuestionKYC } from './questionQYC';
 
 export class KycDefinition {
   id_cms: number;
-  code: KYCID;
+  code: string;
   type: TypeReponseQuestionKYC;
-  categorie: CategorieQuestionKYC;
+  categorie: Categorie;
   points: number;
   is_ngc: boolean;
   question: string;

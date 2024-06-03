@@ -5,6 +5,7 @@ import { Article as ArticleDB } from '@prisma/client';
 import { Thematique } from '../../domain/contenu/thematique';
 import { DifficultyLevel } from '../../domain/contenu/difficultyLevel';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
+import { Categorie } from '../../../src/domain/contenu/categorie';
 
 export type ArticleFilter = {
   maxNumber?: number;
@@ -15,6 +16,7 @@ export type ArticleFilter = {
   include_ids?: string[];
   asc_difficulty?: boolean;
   titre_fragment?: string;
+  categorie?: Categorie;
 };
 
 @Injectable()
@@ -84,6 +86,10 @@ export class ArticleRepository {
       };
     }
 
+    if (filter.categorie) {
+      main_filter['categorie'] = filter.categorie;
+    }
+
     if (filter.thematiques) {
       main_filter['thematiques'] = {
         hasSome: filter.thematiques,
@@ -109,6 +115,7 @@ export class ArticleRepository {
     if (articleDB === null) return null;
     return new Article({
       content_id: articleDB.content_id,
+      categorie: Categorie[articleDB.categorie],
       titre: articleDB.titre,
       soustitre: articleDB.soustitre,
       source: articleDB.source,

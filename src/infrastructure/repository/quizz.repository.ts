@@ -5,6 +5,7 @@ import { Quizz as QuizzDB } from '@prisma/client';
 import { DifficultyLevel } from '../../domain/contenu/difficultyLevel';
 import { Thematique } from '../../domain/contenu/thematique';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
+import { Categorie } from '../../../src/domain/contenu/categorie';
 
 export type QuizzFilter = {
   maxNumber?: number;
@@ -13,6 +14,7 @@ export type QuizzFilter = {
   difficulty?: DifficultyLevel;
   exclude_ids?: string[];
   asc_difficulty?: boolean;
+  categorie?: Categorie;
 };
 
 @Injectable()
@@ -71,6 +73,9 @@ export class QuizzRepository {
     if (filter.exclude_ids) {
       main_filter['content_id'] = { not: { in: filter.exclude_ids } };
     }
+    if (filter.categorie) {
+      main_filter['categorie'] = filter.categorie;
+    }
 
     if (filter.thematiques) {
       main_filter['thematiques'] = {
@@ -115,6 +120,7 @@ export class QuizzRepository {
       tags_utilisateur: quizzDB.tags_utilisateur.map((t) => TagUtilisateur[t]),
       tags_rubriques: [],
       score: 0,
+      categorie: Categorie[quizzDB.categorie],
     });
   }
 }

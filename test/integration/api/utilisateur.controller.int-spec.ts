@@ -9,13 +9,11 @@ import {
   TypeLogement,
 } from '../../../src/domain/logement/logement';
 import { TransportQuotidien } from '../../../src/domain/transport/transport';
-import {
-  CategorieQuestionKYC,
-  KYCID,
-  TypeReponseQuestionKYC,
-} from '../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionQYC';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
+import { Categorie } from '../../../src/domain/contenu/categorie';
 var crypto = require('crypto');
 
 const ONBOARDING_1_2_3_4_DATA = {
@@ -502,7 +500,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       id_cms: 1,
       code: KYCID._2,
       type: TypeReponseQuestionKYC.choix_multiple,
-      categorie: CategorieQuestionKYC.default,
+      categorie: Categorie.test,
       points: 10,
       question: 'Comment avez vous connu le service ?',
       reponses: [
@@ -515,7 +513,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       id_cms: 2,
       code: KYCID.KYC006,
       type: TypeReponseQuestionKYC.choix_unique,
-      categorie: CategorieQuestionKYC.default,
+      categorie: Categorie.test,
       points: 10,
       question: 'Comment avez vous connu le service ?',
       reponses: [
@@ -561,7 +559,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       id_cms: 1,
       code: KYCID._2,
       type: TypeReponseQuestionKYC.choix_multiple,
-      categorie: CategorieQuestionKYC.default,
+      categorie: Categorie.test,
       points: 10,
       question: 'Comment avez vous connu le service ?',
       reponses: [
@@ -574,7 +572,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       id_cms: 2,
       code: KYCID.KYC006,
       type: TypeReponseQuestionKYC.choix_unique,
-      categorie: CategorieQuestionKYC.default,
+      categorie: Categorie.test,
       points: 10,
       question: 'Comment avez vous connu le service ?',
       reponses: [
@@ -606,7 +604,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       id_cms: 1,
       code: KYCID._2,
       type: TypeReponseQuestionKYC.choix_multiple,
-      categorie: CategorieQuestionKYC.default,
+      categorie: Categorie.test,
       points: 10,
       question: 'Comment avez vous connu le service ?',
       reponses: [

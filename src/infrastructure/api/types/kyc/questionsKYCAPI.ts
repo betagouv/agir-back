@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Categorie } from '../../../../../src/domain/contenu/categorie';
 import {
-  CategorieQuestionKYC,
   QuestionKYC,
   TypeReponseQuestionKYC,
 } from '../../../../domain/kyc/questionQYC';
@@ -11,8 +11,8 @@ export class QuestionKYCAPI {
 
   @ApiProperty({ enum: TypeReponseQuestionKYC })
   type: TypeReponseQuestionKYC;
-  @ApiProperty({ enum: CategorieQuestionKYC })
-  categorie: CategorieQuestionKYC;
+  @ApiProperty({ enum: Categorie })
+  categorie: Categorie;
 
   @ApiProperty()
   points: number;

@@ -10,6 +10,7 @@ import {
   Celebration,
   CelebrationType,
 } from '../../src/domain/gamification/celebrations/celebration';
+import { Categorie } from '../../src/domain/contenu/categorie';
 
 @Injectable()
 export class TodoUsecase {
@@ -71,12 +72,14 @@ export class TodoUsecase {
           thematiques: element.thematiques,
           difficulty: element.level,
           exclude_ids: utilisateur.history.listeIdsQuizzAttempted(),
+          categorie: Categorie.recommandation,
         });
         if (quizzes.length === 0) {
           quizzes = await this.quizzRepository.searchQuizzes({
             thematiques: element.thematiques,
             difficulty: element.level,
             exclude_ids: utilisateur.history.listeIdsQuizz100Pour100(),
+            categorie: Categorie.recommandation,
           });
         }
         if (quizzes.length > 0) {
@@ -93,12 +96,14 @@ export class TodoUsecase {
           difficulty: element.level,
           exclude_ids: articles_lus,
           code_postal: utilisateur.logement.code_postal,
+          categorie: Categorie.recommandation,
         });
         if (articles.length === 0) {
           articles = await this.articleRepository.searchArticles({
             thematiques: element.thematiques,
             difficulty: element.level,
             code_postal: utilisateur.logement.code_postal,
+            categorie: Categorie.recommandation,
           });
         }
         if (articles.length > 0) {

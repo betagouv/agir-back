@@ -1,12 +1,10 @@
 import { Thematique } from '../../../../src/domain/contenu/thematique';
-import {
-  TypeReponseQuestionKYC,
-  CategorieQuestionKYC,
-  KYCID,
-} from '../../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionQYC';
 import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
 import { Univers } from '../../../../src/domain/univers/univers';
 import { Tag } from '../../../../src/domain/scoring/tag';
+import { KYCID } from '../../../../src/domain/kyc/KYCID';
+import { Categorie } from '../../../../src/domain/contenu/categorie';
 
 describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('isQuestionAnswered :false si pas répondu', () => {
@@ -33,7 +31,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.default,
+          categorie: Categorie.test,
           points: 10,
           reponses: undefined,
           reponses_possibles: [
@@ -50,7 +48,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     history.setCatalogue([
       {
         id_cms: 1,
-        categorie: CategorieQuestionKYC.recommandation,
+        categorie: Categorie.recommandation,
         code: KYCID.KYC001,
         is_ngc: false,
         points: 10,
@@ -81,7 +79,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.default,
+          categorie: Categorie.test,
           points: 10,
           reponses: [],
           reponses_possibles: [
@@ -98,7 +96,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     history.setCatalogue([
       {
         id_cms: 1,
-        categorie: CategorieQuestionKYC.recommandation,
+        categorie: Categorie.recommandation,
         code: KYCID.KYC001,
         is_ngc: false,
         points: 10,
@@ -128,7 +126,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.default,
+          categorie: Categorie.test,
           points: 10,
           reponses: [{ label: 'Le climat', code: Thematique.climat }],
           reponses_possibles: [
@@ -145,7 +143,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     history.setCatalogue([
       {
         id_cms: 1,
-        categorie: CategorieQuestionKYC.recommandation,
+        categorie: Categorie.recommandation,
         code: KYCID.KYC001,
         is_ngc: false,
         points: 10,
@@ -189,7 +187,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.default,
+          categorie: Categorie.test,
           points: 10,
           reponses: [{ label: 'Le climat', code: Thematique.climat }],
           reponses_possibles: [
@@ -206,7 +204,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     history.setCatalogue([
       {
         id_cms: 1,
-        categorie: CategorieQuestionKYC.recommandation,
+        categorie: Categorie.recommandation,
         code: KYCID.KYC001,
         is_ngc: false,
         points: 10,
@@ -261,7 +259,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.default,
+          categorie: Categorie.test,
           points: 10,
           reponses: [
             { label: 'Le climat', code: Thematique.climat },
@@ -279,7 +277,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     history.setCatalogue([
       {
         id_cms: 1,
-        categorie: CategorieQuestionKYC.recommandation,
+        categorie: Categorie.recommandation,
         code: KYCID.KYC001,
         is_ngc: false,
         points: 10,
@@ -327,7 +325,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.default,
+          categorie: Categorie.test,
           points: 10,
           reponses: [
             { label: 'Le climat', code: Thematique.climat },
@@ -345,7 +343,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     history.setCatalogue([
       {
         id_cms: 1,
-        categorie: CategorieQuestionKYC.recommandation,
+        categorie: Categorie.recommandation,
         code: KYCID.KYC001,
         is_ngc: false,
         points: 10,
@@ -393,7 +391,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.entier,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.default,
+          categorie: Categorie.test,
           points: 10,
           reponses: [{ label: '123', code: null }],
           reponses_possibles: [],
@@ -405,7 +403,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     history.setCatalogue([
       {
         id_cms: 1,
-        categorie: CategorieQuestionKYC.recommandation,
+        categorie: Categorie.recommandation,
         code: KYCID.KYC001,
         is_ngc: false,
         points: 10,
@@ -435,7 +433,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.default,
+          categorie: Categorie.test,
           points: 10,
           reponses: [{ label: 'Le climat', code: Thematique.climat }],
           reponses_possibles: [
@@ -452,7 +450,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     history.setCatalogue([
       {
         id_cms: 1,
-        categorie: CategorieQuestionKYC.default,
+        categorie: Categorie.test,
         code: KYCID.KYC001,
         is_ngc: false,
         points: 10,
@@ -470,7 +468,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       },
       {
         id_cms: 2,
-        categorie: CategorieQuestionKYC.default,
+        categorie: Categorie.test,
         code: KYCID.KYC002,
         is_ngc: false,
         points: 10,
@@ -484,7 +482,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    const questions = history.getKYCRestantes(CategorieQuestionKYC.default);
+    const questions = history.getKYCRestantes(Categorie.test);
 
     // THEN
     expect(questions).toHaveLength(1);
@@ -500,7 +498,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.default,
+          categorie: Categorie.test,
           points: 10,
           reponses: [{ label: 'Le climat', code: Thematique.climat }],
           reponses_possibles: [
@@ -517,7 +515,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     history.setCatalogue([
       {
         id_cms: 1,
-        categorie: CategorieQuestionKYC.recommandation,
+        categorie: Categorie.recommandation,
         code: KYCID.KYC001,
         is_ngc: false,
         points: 10,
@@ -535,7 +533,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       },
       {
         id_cms: 2,
-        categorie: CategorieQuestionKYC.recommandation,
+        categorie: Categorie.recommandation,
         code: KYCID.KYC002,
         is_ngc: false,
         points: 10,
@@ -555,7 +553,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // WHEN
     const questions = history.getKYCRestantes(
-      CategorieQuestionKYC.default,
+      Categorie.test,
       Univers.consommation,
     );
 

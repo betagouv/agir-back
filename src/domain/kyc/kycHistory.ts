@@ -1,13 +1,9 @@
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
+import { Categorie } from '../contenu/categorie';
 import { KYCHistory_v0 as KYCHistory_v0 } from '../object_store/kyc/kycHistory_v0';
 import { Univers } from '../univers/univers';
 import { KycDefinition } from './kycDefinition';
-import {
-  CategorieQuestionKYC,
-  KYCID,
-  QuestionKYC,
-  TypeReponseQuestionKYC,
-} from './questionQYC';
+import { QuestionKYC, TypeReponseQuestionKYC } from './questionQYC';
 
 export class KYCHistory {
   answered_questions: QuestionKYC[];
@@ -43,7 +39,7 @@ export class KYCHistory {
   }
 
   public getKYCRestantes(
-    categorie?: CategorieQuestionKYC,
+    categorie?: Categorie,
     univers?: Univers,
   ): QuestionKYC[] {
     let kycs_all = this.getAllKYCByCategorie(categorie);
@@ -63,9 +59,7 @@ export class KYCHistory {
     return kycs_all;
   }
 
-  private getAllKYCByCategorie(
-    categorie?: CategorieQuestionKYC,
-  ): QuestionKYC[] {
+  private getAllKYCByCategorie(categorie?: Categorie): QuestionKYC[] {
     if (!categorie) {
       return this.catalogue.map((c) => QuestionKYC.buildFromDef(c));
     }
@@ -82,7 +76,8 @@ export class KYCHistory {
     }
     return this.getKYCByIdOrException(id);
   }
-  public getQuestion(id: KYCID): QuestionKYC {
+
+  public getQuestion(id: string): QuestionKYC {
     let answered_question = this.getAnsweredQuestion(id);
     if (answered_question) {
       this.upgradeQuestion(answered_question);
@@ -143,7 +138,7 @@ export class KYCHistory {
     ApplicationError.throwQuestionInconnue(id);
   }
 
-  private getKYCById(id: KYCID): QuestionKYC {
+  private getKYCById(id: string): QuestionKYC {
     const def = this.catalogue.find((element) => element.code === id);
     return def ? QuestionKYC.buildFromDef(def) : null;
   }

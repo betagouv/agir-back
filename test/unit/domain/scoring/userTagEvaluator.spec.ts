@@ -19,13 +19,11 @@ import { OnboardingResult } from '../../../../src/domain/onboarding/onboardingRe
 import { UserTagEvaluator } from '../../../../src/domain/scoring/userTagEvaluator';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
-import {
-  CategorieQuestionKYC,
-  KYCID,
-  TypeReponseQuestionKYC,
-} from '../../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionQYC';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { Univers } from '../../../../src/domain/univers/univers';
+import { KYCID } from '../../../../src/domain/kyc/KYCID';
+import { Categorie } from '../../../../src/domain/contenu/categorie';
 
 const ONBOARDING_DATA = {
   version: 0,
@@ -199,7 +197,7 @@ describe('UseragEvaluator', () => {
     user.kyc_history.setCatalogue([
       {
         id_cms: 1,
-        categorie: CategorieQuestionKYC.recommandation,
+        categorie: Categorie.recommandation,
         code: KYCID.KYC001,
         is_ngc: false,
         points: 10,
@@ -243,7 +241,7 @@ describe('UseragEvaluator', () => {
     user.kyc_history.setCatalogue([
       {
         id_cms: 1,
-        categorie: CategorieQuestionKYC.recommandation,
+        categorie: Categorie.recommandation,
         code: KYCID.KYC001,
         is_ngc: false,
         points: 10,

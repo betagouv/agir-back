@@ -5,12 +5,15 @@ import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
 import { Mission, Objectif } from '../../src/domain/mission/mission';
 import { ContentType } from '../../src/domain/contenu/contentType';
+import { QuestionKYC } from '../../src/domain/kyc/questionQYC';
+import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 
 @Injectable()
 export class MissionUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private missionRepository: MissionRepository,
+    private kycRepository: KycRepository,
   ) {}
 
   async getMissionOfThematique(
@@ -85,8 +88,11 @@ export class MissionUsecase {
   async getMissionKYCs(
     utilisateurId: string,
     thematique: ThematiqueUnivers,
-  ): Promise<Objectif[]> {
+  ): Promise<QuestionKYC[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+
+    const catalogue = await this.kycRepository.getAllDefs();
+    utilisateur.kyc_history.setCatalogue(catalogue);
 
     const mission =
       utilisateur.missions.getMissionByThematiqueUnivers(thematique);
@@ -95,6 +101,14 @@ export class MissionUsecase {
       throw ApplicationError.throwMissionNotFoundOfThematique(thematique);
     }
 
-    return mission.getAllKYCs();
+    const result: QuestionKYC[] = [];
+
+    const liste_objectifs_kyc = mission.getAllKYCs();
+
+    for (const objectif_kyc of liste_objectifs_kyc) {
+      result.push(utilisateur.kyc_history.getQuestion(objectif_kyc.content_id));
+    }
+
+    return result;
   }
 }

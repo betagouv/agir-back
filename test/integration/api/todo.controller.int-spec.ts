@@ -6,11 +6,7 @@ import { LiveService } from '../../../src/domain/service/serviceDefinition';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { EventType } from '../../../src/domain/appEvent';
-import {
-  TypeReponseQuestionKYC,
-  CategorieQuestionKYC,
-  KYCID,
-} from '../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionQYC';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
 import { ParcoursTodo_v0 } from '../../../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
@@ -21,6 +17,8 @@ import {
   Chauffage,
   DPE,
 } from '../../../src/domain/logement/logement';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
+import { Categorie } from '../../../src/domain/contenu/categorie';
 
 describe('TODO list (API test)', () => {
   const OLD_ENV = process.env;
@@ -208,6 +206,46 @@ describe('TODO list (API test)', () => {
     expect(response.body.todo[0].type).toEqual(ContentType.quizz);
     expect(response.body.todo[0].content_id).toEqual('quizz-id-l1');
     expect(response.body.todo[0].interaction_id).toBeUndefined();
+  });
+  it('GET /utilisateurs/id/todo retourne la todo n°1 pas de quizz hors reco', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      version: 2,
+      todo: {
+        liste_todo: [
+          {
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                titre: 'faire quizz climat',
+                thematiques: [Thematique.climat],
+                progression: { current: 0, target: 1 },
+                sont_points_en_poche: false,
+                type: 'quizz',
+                level: DifficultyLevel.L1,
+                points: 10,
+              },
+            ],
+          },
+        ],
+        todo_active: 0,
+      },
+    });
+    await TestUtil.create(DB.quizz, {
+      content_id: 'quizz-id-l1',
+      thematiques: [Thematique.climat],
+      difficulty: DifficultyLevel.L1,
+      categorie: Categorie.mission,
+    });
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.numero_todo).toEqual(1);
+    expect(response.body.todo[0].content_id).toEqual(undefined);
   });
   it('GET /utilisateurs/id/todo retourne la todo n°1 avec une ref de quizz qui va bien : thematique  climat', async () => {
     // GIVEN
@@ -974,7 +1012,7 @@ describe('TODO list (API test)', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
-          categorie: CategorieQuestionKYC.default,
+          categorie: Categorie.recommandation,
           points: 10,
           reponses_possibles: [
             { label: 'Le climat', code: Thematique.climat },
@@ -1017,7 +1055,7 @@ describe('TODO list (API test)', () => {
       id_cms: 1,
       code: KYCID._1,
       type: TypeReponseQuestionKYC.choix_multiple,
-      categorie: CategorieQuestionKYC.default,
+      categorie: Categorie.recommandation,
       points: 10,
       question: 'Comment avez vous connu le service ?',
       reponses: [

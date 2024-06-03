@@ -5,6 +5,7 @@ import { TagUtilisateur } from '../scoring/tagUtilisateur';
 import { TagRubrique } from '../scoring/tagRubrique';
 import { TaggedContent } from '../scoring/taggedContent';
 import { Tag } from '../scoring/tag';
+import { Categorie } from './categorie';
 
 export class ArticleData {
   content_id: string;
@@ -25,6 +26,7 @@ export class ArticleData {
   tags_utilisateur: TagUtilisateur[];
   tags_rubriques: TagRubrique[];
   score: number;
+  categorie: Categorie;
 }
 
 export class Article extends ArticleData implements TaggedContent {

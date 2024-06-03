@@ -13,16 +13,14 @@ import { ContentType } from '../../src/domain/contenu/contentType';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
 import { Defi, DefiStatus } from '../../src/domain/defis/defi';
-import {
-  CategorieQuestionKYC,
-  QuestionKYC,
-} from '../../src/domain/kyc/questionQYC';
+import { QuestionKYC } from '../../src/domain/kyc/questionQYC';
 import { Thematique } from '../../src/domain/contenu/thematique';
 import { App } from '../domain/app';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { Feature } from '../../src/domain/gamification/feature';
 import { Univers } from '../../src/domain/univers/univers';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
+import { Categorie } from '../../src/domain/contenu/categorie';
 
 @Injectable()
 export class RecommandationUsecase {
@@ -125,7 +123,7 @@ export class RecommandationUsecase {
     univers?: Univers,
   ): Recommandation[] {
     const kycs = utilisateur.kyc_history.getKYCRestantes(
-      CategorieQuestionKYC.recommandation,
+      Categorie.recommandation,
       univers,
     );
 
@@ -138,7 +136,9 @@ export class RecommandationUsecase {
   }
 
   private getDefisRestantsAvecTri(utilisateur: Utilisateur): Recommandation[] {
-    const defis = utilisateur.defi_history.getDefisRestants();
+    const defis = utilisateur.defi_history.getDefisRestants(
+      Categorie.recommandation,
+    );
 
     PonderationApplicativeManager.increaseScoreContentOfList(
       defis,
@@ -198,6 +198,7 @@ export class RecommandationUsecase {
     const filtre: ArticleFilter = {
       code_postal: utilisateur.logement.code_postal,
       exclude_ids: articles_lus,
+      categorie: Categorie.recommandation,
     };
     if (univers) {
       filtre.thematiques = [Thematique[univers]];
@@ -224,7 +225,9 @@ export class RecommandationUsecase {
     const filtre: QuizzFilter = {
       code_postal: utilisateur.logement.code_postal,
       exclude_ids: quizz_attempted,
+      categorie: Categorie.recommandation,
     };
+
     if (univers) {
       filtre.thematiques = [Thematique[univers]];
     }

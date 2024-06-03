@@ -6,6 +6,7 @@ import { Tag } from '../../../src/domain/scoring/tag';
 import { DefiDefinition } from '../../../src/domain/defis/defiDefinition';
 import { TuileThematique } from '../../domain/univers/tuileThematique';
 import { Univers } from '../../../src/domain/univers/univers';
+import { Categorie } from '../../../src/domain/contenu/categorie';
 
 @Injectable()
 export class DefiRepository {
@@ -23,6 +24,7 @@ export class DefiRepository {
       thematique: defi.thematique,
       universes: defi.universes,
       thematiquesUnivers: defi.thematiques_univers,
+      categorie: defi.categorie,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -69,6 +71,7 @@ export class DefiRepository {
       thematiques_univers: defiDB.thematiquesUnivers.map(
         (t) => TuileThematique[t],
       ),
+      categorie: Categorie[defiDB.categorie],
     });
   }
 }
