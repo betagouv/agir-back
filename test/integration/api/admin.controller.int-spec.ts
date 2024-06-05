@@ -1103,10 +1103,47 @@ describe('Admin (API test)', () => {
   it("POST /admin/statistique - calcul des statistiques de l'ensemble des utilisateurs", async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.utilisateur, { id: 'test-id-1' });
+    const DEFI: Defi_v0 = {
+      id: '1',
+      points: 10,
+      tags: [],
+      titre: 'titre',
+      thematique: Thematique.transport,
+      astuces: 'ASTUCE',
+      date_acceptation: null,
+      pourquoi: 'POURQUOI',
+      sous_titre: 'SOUS TITRE',
+      status: DefiStatus.todo,
+      universes: [Univers.climat],
+      accessible: true,
+      motif: 'truc',
+      categorie: Categorie.recommandation,
+    };
+    const defis_1: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        { ...DEFI, id: '1', status: DefiStatus.pas_envie, titre: 'A' },
+        { ...DEFI, id: '2', status: DefiStatus.abondon, titre: 'B' },
+        { ...DEFI, id: '3', status: DefiStatus.fait, titre: 'C' },
+        { ...DEFI, id: '1', status: DefiStatus.pas_envie, titre: 'E' },
+        { ...DEFI, id: '2', status: DefiStatus.abondon, titre: 'F' },
+        { ...DEFI, id: '3', status: DefiStatus.en_cours, titre: 'G' },
+      ],
+    };
+    const defis_2: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        { ...DEFI, id: '1', status: DefiStatus.pas_envie, titre: 'A' },
+        { ...DEFI, id: '2', status: DefiStatus.abondon, titre: 'B' },
+        { ...DEFI, id: '3', status: DefiStatus.fait, titre: 'C' },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, { id: 'test-id-1', defis: defis_1 });
     await TestUtil.create(DB.utilisateur, {
       id: 'test-id-2',
       email: 'user-email@toto.fr',
+      defis: defis_2,
     });
 
     // WHEN
@@ -1120,7 +1157,33 @@ describe('Admin (API test)', () => {
 
     const nombreDeLignesTableStatistique =
       await TestUtil.prisma.statistique.findMany();
+    const userStatistique1 = await TestUtil.prisma.statistique.findUnique({
+      where: { utilisateurId: 'test-id-1' },
+    });
+    const userStatistique2 = await TestUtil.prisma.statistique.findUnique({
+      where: { utilisateurId: 'test-id-2' },
+    });
+
+    delete userStatistique1.created_at;
+    delete userStatistique1.updated_at;
+    delete userStatistique2.created_at;
+    delete userStatistique2.updated_at;
+
     expect(nombreDeLignesTableStatistique).toHaveLength(2);
+    expect(userStatistique1).toEqual({
+      utilisateurId: 'test-id-1',
+      nombre_defis_pas_envie: 2,
+      nombre_defis_abandonnes: 2,
+      nombre_defis_en_cours: 1,
+      nombre_defis_realises: 1,
+    });
+    expect(userStatistique2).toEqual({
+      utilisateurId: 'test-id-2',
+      nombre_defis_pas_envie: 1,
+      nombre_defis_abandonnes: 1,
+      nombre_defis_en_cours: 0,
+      nombre_defis_realises: 1,
+    });
   });
 
   it("POST /admin/article-statistique - calcul des statistiques de l'ensemble des articles", async () => {

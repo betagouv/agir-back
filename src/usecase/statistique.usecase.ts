@@ -28,15 +28,15 @@ export class StatistiqueUsecase {
       const nombreDefisAbandonnesParUtilisateur =
         user.defi_history.getNombreDefisAbandonnes();
 
-      const nombreDefisDejaFaitParUtilisateur =
-        user.defi_history.getNombreDefisDejaFait();
+      const nombreDefisPasEnvieParUtilisateur =
+        user.defi_history.getNombreDefisPasEnvie();
 
       await this.statistiqueRepository.upsertStatistiquesDUnUtilisateur(
         user.id,
         nombreDefisEnCours,
         nombreDefisRealisesParUtilisateur,
         nombreDefisAbandonnesParUtilisateur,
-        nombreDefisDejaFaitParUtilisateur,
+        nombreDefisPasEnvieParUtilisateur,
       );
       resultat.push(user.id);
     }

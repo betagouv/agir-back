@@ -80,7 +80,7 @@ model Statistique {
   utilisateurId           String   @id
   nombre_defis_realises   Int?
   nombre_defis_abandonnes Int?
-  nombre_defis_deja_fait  Int?
+  nombre_defis_pas_envie  Int?
   nombre_defis_en_cours   Int?
   created_at              DateTime @default(now()) @db.Timestamptz(3)
   updated_at              DateTime @updatedAt @db.Timestamptz(3)

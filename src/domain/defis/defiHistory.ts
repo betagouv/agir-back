@@ -112,9 +112,9 @@ export class DefiHistory {
       .length;
   }
 
-  public getNombreDefisDejaFait() {
+  public getNombreDefisPasEnvie() {
     return this.defis.filter(
-      (defi) => defi.getStatus() === DefiStatus.deja_fait,
+      (defi) => defi.getStatus() === DefiStatus.pas_envie,
     ).length;
   }
 
