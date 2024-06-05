@@ -747,6 +747,7 @@ export class TestUtil {
       nombre_defis_en_cours: 0,
       nombre_defis_pas_envie: 0,
       nombre_defis_realises: 0,
+      raisons_defi_pas_envie: [],
       created_at: new Date(),
       updated_at: new Date(),
       ...override,

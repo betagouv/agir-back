@@ -1324,7 +1324,7 @@ describe('Admin (API test)', () => {
       status: DefiStatus.todo,
       universes: [Univers.climat],
       accessible: true,
-      motif: 'truc',
+      motif: '',
       categorie: Categorie.recommandation,
     };
     const defis_1: DefiHistory_v0 = {
@@ -1333,13 +1333,26 @@ describe('Admin (API test)', () => {
         { ...DEFI, id: '1', status: DefiStatus.pas_envie, titre: 'A' },
         { ...DEFI, id: '2', status: DefiStatus.pas_envie, titre: 'B' },
         { ...DEFI, id: '3', status: DefiStatus.pas_envie, titre: 'C' },
+        {
+          ...DEFI,
+          id: '4',
+          status: DefiStatus.pas_envie,
+          titre: 'D',
+          motif: 'pas envie user1',
+        },
       ],
     };
     const defis_2: DefiHistory_v0 = {
       version: 0,
       defis: [
         { ...DEFI, id: '1', status: DefiStatus.en_cours, titre: 'A' },
-        { ...DEFI, id: '2', status: DefiStatus.abondon, titre: 'B' },
+        {
+          ...DEFI,
+          id: '2',
+          status: DefiStatus.abondon,
+          titre: 'B',
+          motif: 'Top dur à mettre en place',
+        },
         { ...DEFI, id: '3', status: DefiStatus.fait, titre: 'C' },
       ],
     };
@@ -1349,6 +1362,13 @@ describe('Admin (API test)', () => {
         { ...DEFI, id: '1', status: DefiStatus.fait, titre: 'A' },
         { ...DEFI, id: '2', status: DefiStatus.fait, titre: 'B' },
         { ...DEFI, id: '3', status: DefiStatus.fait, titre: 'C' },
+        {
+          ...DEFI,
+          id: '4',
+          status: DefiStatus.pas_envie,
+          titre: 'D',
+          motif: 'pas envie user3',
+        },
       ],
     };
 
@@ -1373,7 +1393,7 @@ describe('Admin (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(3);
+    expect(response.body).toHaveLength(4);
 
     const defi_1_stat = await TestUtil.prisma.defiStatistique.findUnique({
       where: { content_id: '1' },
@@ -1384,12 +1404,18 @@ describe('Admin (API test)', () => {
     const defi_3_stat = await TestUtil.prisma.defiStatistique.findUnique({
       where: { content_id: '3' },
     });
+    const defi_4_stat = await TestUtil.prisma.defiStatistique.findUnique({
+      where: { content_id: '4' },
+    });
+
     delete defi_1_stat.created_at;
     delete defi_1_stat.updated_at;
     delete defi_2_stat.created_at;
     delete defi_2_stat.updated_at;
     delete defi_3_stat.created_at;
     delete defi_3_stat.updated_at;
+    delete defi_4_stat.created_at;
+    delete defi_4_stat.updated_at;
 
     expect(defi_1_stat).toEqual({
       content_id: '1',
@@ -1398,6 +1424,7 @@ describe('Admin (API test)', () => {
       nombre_defis_abandonnes: 0,
       nombre_defis_en_cours: 1,
       nombre_defis_realises: 1,
+      raisons_defi_pas_envie: [],
     });
     expect(defi_2_stat).toEqual({
       content_id: '2',
@@ -1406,6 +1433,7 @@ describe('Admin (API test)', () => {
       nombre_defis_abandonnes: 1,
       nombre_defis_en_cours: 0,
       nombre_defis_realises: 1,
+      raisons_defi_pas_envie: ['Top dur à mettre en place'],
     });
     expect(defi_3_stat).toEqual({
       content_id: '3',
@@ -1414,6 +1442,16 @@ describe('Admin (API test)', () => {
       nombre_defis_abandonnes: 0,
       nombre_defis_en_cours: 0,
       nombre_defis_realises: 2,
+      raisons_defi_pas_envie: [],
+    });
+    expect(defi_4_stat).toEqual({
+      content_id: '4',
+      titre: 'D',
+      nombre_defis_pas_envie: 2,
+      nombre_defis_abandonnes: 0,
+      nombre_defis_en_cours: 0,
+      nombre_defis_realises: 0,
+      raisons_defi_pas_envie: ['pas envie user1', 'pas envie user3'],
     });
   });
 

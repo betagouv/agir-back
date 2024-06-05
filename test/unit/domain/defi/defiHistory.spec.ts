@@ -386,7 +386,7 @@ describe('DefiHistory', () => {
     expect(nombreDefisRealises).toStrictEqual(2);
   });
 
-  it('getNombreDefisDejaFait : donne le nombre de défis déjà fait', () => {
+  it('getNombreDefisDejaFait : donne le nombre de défis pas envie', () => {
     // GIVEN
     const defiHistory = new DefiHistory({
       version: 0,
@@ -404,7 +404,7 @@ describe('DefiHistory', () => {
         {
           ...DEFI_1,
           id: '3',
-          status: DefiStatus.deja_fait,
+          status: DefiStatus.pas_envie,
         },
         {
           ...DEFI_1,
@@ -415,8 +415,8 @@ describe('DefiHistory', () => {
     });
 
     // WHEN
-    const nombreDefisRealises = defiHistory.getNombreDefisDejaFait();
+    const nombreDefisPasEnvie = defiHistory.getNombreDefisPasEnvie();
     // THEN
-    expect(nombreDefisRealises).toStrictEqual(1);
+    expect(nombreDefisPasEnvie).toStrictEqual(1);
   });
 });

@@ -41,6 +41,7 @@ export class DefiStatistiqueUsecase {
             break;
         }
         defi_agrega.titre = defi.titre;
+        if (defi.motif) defi_agrega.raisons_pas_envie.push(defi.motif);
       });
     }
 
@@ -56,6 +57,7 @@ export class DefiStatistiqueUsecase {
         value.nbr_pas_envie,
         value.nbr_en_cours,
         value.nbr_realise,
+        value.raisons_pas_envie,
       );
       result.push(key);
     }
@@ -77,6 +79,7 @@ export class DefiStatistiqueUsecase {
           nbr_en_cours: 0,
           nbr_realise: 0,
           titre: '',
+          raisons_pas_envie: [],
         };
     defi_map.set(id, defi_agrega);
     return defi_agrega;
