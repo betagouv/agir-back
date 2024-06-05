@@ -1327,47 +1327,86 @@ describe('Admin (API test)', () => {
       motif: '',
       categorie: Categorie.recommandation,
     };
-    const defis_1: DefiHistory_v0 = {
+
+    const defi1 = {
+      ...DEFI,
+      id: '1',
+      titre: 'A',
+    };
+    const defi2 = {
+      ...DEFI,
+      id: '2',
+      titre: 'B',
+    };
+    const defi3 = {
+      ...DEFI,
+      id: '3',
+      titre: 'C',
+    };
+    const defi4 = {
+      ...DEFI,
+      id: '4',
+      titre: 'D',
+    };
+
+    const defis_user_1: DefiHistory_v0 = {
       version: 0,
       defis: [
-        { ...DEFI, id: '1', status: DefiStatus.pas_envie, titre: 'A' },
-        { ...DEFI, id: '2', status: DefiStatus.pas_envie, titre: 'B' },
-        { ...DEFI, id: '3', status: DefiStatus.pas_envie, titre: 'C' },
-        {
-          ...DEFI,
-          id: '4',
-          status: DefiStatus.pas_envie,
-          titre: 'D',
-          motif: 'pas envie user1',
-        },
+        { ...defi1, status: DefiStatus.pas_envie },
+        { ...defi2, status: DefiStatus.pas_envie },
+        { ...defi3, status: DefiStatus.pas_envie },
+        { ...defi4, status: DefiStatus.pas_envie, motif: 'pas envie user1' },
       ],
     };
-    const defis_2: DefiHistory_v0 = {
+    const defis_user_2: DefiHistory_v0 = {
       version: 0,
       defis: [
-        { ...DEFI, id: '1', status: DefiStatus.en_cours, titre: 'A' },
+        { ...defi1, status: DefiStatus.en_cours },
         {
-          ...DEFI,
-          id: '2',
+          ...defi2,
           status: DefiStatus.abondon,
-          titre: 'B',
           motif: 'Top dur à mettre en place',
         },
-        { ...DEFI, id: '3', status: DefiStatus.fait, titre: 'C' },
+        { ...defi3, status: DefiStatus.fait },
+        { ...defi4, status: DefiStatus.pas_envie },
       ],
     };
-    const defis_3: DefiHistory_v0 = {
+
+    const defis_user_3: DefiHistory_v0 = {
       version: 0,
       defis: [
-        { ...DEFI, id: '1', status: DefiStatus.fait, titre: 'A' },
-        { ...DEFI, id: '2', status: DefiStatus.fait, titre: 'B' },
-        { ...DEFI, id: '3', status: DefiStatus.fait, titre: 'C' },
+        { ...defi1, status: DefiStatus.fait },
         {
-          ...DEFI,
-          id: '4',
+          ...defi2,
           status: DefiStatus.pas_envie,
-          titre: 'D',
-          motif: 'pas envie user3',
+          motif: 'pas envie defi2 user3',
+        },
+        { ...defi3, status: DefiStatus.fait },
+        {
+          ...defi4,
+          status: DefiStatus.pas_envie,
+          motif: 'pas envie defi4 user3',
+        },
+      ],
+    };
+
+    const defis_user_4: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          ...defi1,
+          status: DefiStatus.abondon,
+          motif: 'motif abandon defi1 user4',
+        },
+        {
+          ...defi2,
+          status: DefiStatus.abondon,
+          motif: 'motif abandon defi2 user4',
+        },
+        {
+          ...defi3,
+          status: DefiStatus.pas_envie,
+          motif: 'motif pas envie defi3 user4',
         },
       ],
     };
@@ -1375,17 +1414,22 @@ describe('Admin (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       id: '1',
       email: '1',
-      defis: defis_1,
+      defis: defis_user_1,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '2',
       email: '2',
-      defis: defis_2,
+      defis: defis_user_2,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '3',
       email: '3',
-      defis: defis_3,
+      defis: defis_user_3,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '4',
+      email: '4',
+      defis: defis_user_4,
     });
 
     // WHEN
@@ -1421,37 +1465,44 @@ describe('Admin (API test)', () => {
       content_id: '1',
       titre: 'A',
       nombre_defis_pas_envie: 1,
-      nombre_defis_abandonnes: 0,
+      nombre_defis_abandonnes: 1,
       nombre_defis_en_cours: 1,
       nombre_defis_realises: 1,
       raisons_defi_pas_envie: [],
+      raisons_defi_abandonne: ['motif abandon defi1 user4'],
     });
     expect(defi_2_stat).toEqual({
       content_id: '2',
       titre: 'B',
-      nombre_defis_pas_envie: 1,
-      nombre_defis_abandonnes: 1,
+      nombre_defis_pas_envie: 2,
+      nombre_defis_abandonnes: 2,
       nombre_defis_en_cours: 0,
-      nombre_defis_realises: 1,
-      raisons_defi_pas_envie: ['Top dur à mettre en place'],
+      nombre_defis_realises: 0,
+      raisons_defi_pas_envie: ['pas envie defi2 user3'],
+      raisons_defi_abandonne: [
+        'Top dur à mettre en place',
+        'motif abandon defi2 user4',
+      ],
     });
     expect(defi_3_stat).toEqual({
       content_id: '3',
       titre: 'C',
-      nombre_defis_pas_envie: 1,
+      nombre_defis_pas_envie: 2,
       nombre_defis_abandonnes: 0,
       nombre_defis_en_cours: 0,
       nombre_defis_realises: 2,
-      raisons_defi_pas_envie: [],
+      raisons_defi_pas_envie: ['motif pas envie defi3 user4'],
+      raisons_defi_abandonne: [],
     });
     expect(defi_4_stat).toEqual({
       content_id: '4',
       titre: 'D',
-      nombre_defis_pas_envie: 2,
+      nombre_defis_pas_envie: 3,
       nombre_defis_abandonnes: 0,
       nombre_defis_en_cours: 0,
       nombre_defis_realises: 0,
-      raisons_defi_pas_envie: ['pas envie user1', 'pas envie user3'],
+      raisons_defi_pas_envie: ['pas envie user1', 'pas envie defi4 user3'],
+      raisons_defi_abandonne: [],
     });
   });
 

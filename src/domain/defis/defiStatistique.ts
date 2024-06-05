@@ -5,4 +5,5 @@ export type DefiStatistique = {
   nbr_en_cours: number;
   nbr_realise: number;
   raisons_pas_envie: string[];
+  raisons_abandonne: string[];
 };

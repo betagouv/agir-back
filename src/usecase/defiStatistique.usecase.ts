@@ -29,9 +29,11 @@ export class DefiStatistiqueUsecase {
         switch (defi.getStatus()) {
           case DefiStatus.abondon:
             defi_agrega.nbr_abandon++;
+            if (defi.motif) defi_agrega.raisons_abandonne.push(defi.motif);
             break;
           case DefiStatus.pas_envie:
             defi_agrega.nbr_pas_envie++;
+            if (defi.motif) defi_agrega.raisons_pas_envie.push(defi.motif);
             break;
           case DefiStatus.en_cours:
             defi_agrega.nbr_en_cours++;
@@ -41,7 +43,6 @@ export class DefiStatistiqueUsecase {
             break;
         }
         defi_agrega.titre = defi.titre;
-        if (defi.motif) defi_agrega.raisons_pas_envie.push(defi.motif);
       });
     }
 
@@ -58,6 +59,7 @@ export class DefiStatistiqueUsecase {
         value.nbr_en_cours,
         value.nbr_realise,
         value.raisons_pas_envie,
+        value.raisons_abandonne,
       );
       result.push(key);
     }
@@ -80,6 +82,7 @@ export class DefiStatistiqueUsecase {
           nbr_realise: 0,
           titre: '',
           raisons_pas_envie: [],
+          raisons_abandonne: [],
         };
     defi_map.set(id, defi_agrega);
     return defi_agrega;

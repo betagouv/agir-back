@@ -94,6 +94,7 @@ model DefiStatistique {
   nombre_defis_en_cours   Int?
   nombre_defis_pas_envie  Int?
   raisons_defi_pas_envie  String[] @default([])
+  raisons_defi_abandonne  String[] @default([])
   created_at              DateTime @default(now()) @db.Timestamptz(3)
   updated_at              DateTime @updatedAt @db.Timestamptz(3)
 }
