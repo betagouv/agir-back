@@ -121,6 +121,7 @@ export class QuizzRepository {
       tags_rubriques: [],
       score: 0,
       categorie: Categorie[quizzDB.categorie],
+      mois: quizzDB.mois,
     });
   }
 }

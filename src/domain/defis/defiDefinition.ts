@@ -16,6 +16,7 @@ export class DefiDefinition {
   universes: Univers[];
   thematiques_univers: ThematiqueUnivers[];
   categorie: Categorie;
+  mois: number[];
 
   constructor(data: DefiDefinition) {
     this.content_id = data.content_id;
@@ -30,6 +31,7 @@ export class DefiDefinition {
       ? data.thematiques_univers
       : [];
     this.universes = data.universes ? data.universes : [];
+    this.mois = data.mois ? data.mois : [];
     this.categorie = data.categorie;
   }
 }

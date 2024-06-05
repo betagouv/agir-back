@@ -99,6 +99,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() difficulty: number;
   @ApiProperty() points?: number;
   @ApiProperty() codes_postaux?: string;
+  @ApiProperty() mois?: string;
   @ApiProperty() publishedAt: Date;
   @ApiProperty() url_detail_front: string;
   @ApiProperty() is_simulation: boolean;
@@ -120,6 +121,7 @@ export type CMSWebhookPopulateAPI = {
     description: string;
     source: string;
     codes_postaux: string;
+    mois: string;
     include_codes_commune: string;
     exclude_codes_commune: string;
     codes_departement: string;

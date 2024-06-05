@@ -282,29 +282,6 @@ export class TestUtil {
       ...override,
     };
   }
-  static async create_quizz(override?: Partial<Quizz>) {
-    await this.prisma.quizz.create({
-      data: {
-        content_id: '1',
-        titre: 'titreA',
-        soustitre: 'sousTitre',
-        source: 'ADEME',
-        image_url: 'https://',
-        partenaire: 'Angers',
-        tags_utilisateur: [],
-        rubrique_ids: ['3', '4'],
-        rubrique_labels: ['r3', 'r4'],
-        codes_postaux: ['91120'],
-        duree: 'pas long',
-        frequence: 'souvent',
-        difficulty: 1,
-        points: 10,
-        thematique_principale: Thematique.climat,
-        thematiques: [Thematique.climat, Thematique.logement],
-        ...override,
-      },
-    });
-  }
 
   static quizzData(override?: Partial<Quizz>): Quizz {
     return {
@@ -327,6 +304,7 @@ export class TestUtil {
       created_at: undefined,
       updated_at: undefined,
       categorie: Categorie.recommandation,
+      mois: [],
       ...override,
     };
   }
@@ -367,6 +345,7 @@ export class TestUtil {
       created_at: undefined,
       updated_at: undefined,
       categorie: Categorie.recommandation,
+      mois: [],
       ...override,
     };
   }
@@ -754,6 +733,7 @@ export class TestUtil {
       created_at: new Date(),
       updated_at: new Date(),
       categorie: Categorie.recommandation,
+      mois: [],
       ...override,
     };
   }

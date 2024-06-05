@@ -41,6 +41,7 @@ describe('/api/incoming/cms (API test)', () => {
           code: ThematiqueUnivers.dechets_compost,
         },
       ],
+      mois: '0,1',
     },
   };
   const CMS_DATA_KYC = {
@@ -165,6 +166,7 @@ describe('/api/incoming/cms (API test)', () => {
       points: 20,
       codes_postaux: '91120,75002',
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+      mois: '0,1',
     },
   };
   const CMS_DATA_QUIZZ = {
@@ -199,6 +201,7 @@ describe('/api/incoming/cms (API test)', () => {
       points: 20,
       codes_postaux: '91120,75002',
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+      mois: '0,1',
     },
   };
   const CMS_DATA_QUIZZ_UNPUBLISH = {
@@ -233,6 +236,7 @@ describe('/api/incoming/cms (API test)', () => {
       points: 20,
       codes_postaux: '91120,75002',
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+      mois: '0,1',
     },
   };
   beforeAll(async () => {
@@ -294,6 +298,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles[0].points).toEqual(20);
     expect(articles[0].source).toEqual('La source');
     expect(articles[0].codes_postaux).toStrictEqual(['91120', '75002']);
+    expect(articles[0].mois).toStrictEqual([0, 1]);
     expect(articles[0].content_id).toEqual('123');
     expect(articles[0].partenaire).toEqual('Angers Loire Métropole');
     expect(articles[0].rubrique_ids).toEqual(['1', '2']);
@@ -442,6 +447,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.thematiquesUnivers).toEqual([
       ThematiqueUnivers.dechets_compost,
     ]);
+    expect(defi.mois).toStrictEqual([0, 1]);
   });
 
   it('POST /api/incoming/cms - updates a  defi', async () => {
@@ -471,6 +477,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.thematiquesUnivers).toEqual([
       ThematiqueUnivers.dechets_compost,
     ]);
+    expect(defi.mois).toStrictEqual([0, 1]);
   });
 
   it('POST /api/incoming/cms - updates exisying aide in aide table', async () => {
@@ -564,6 +571,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(quizzes[0].partenaire).toEqual('Angers Loire Métropole');
     expect(quizzes[0].rubrique_ids).toEqual(['1', '2']);
     expect(quizzes[0].rubrique_labels).toEqual(['A', 'B']);
+    expect(quizzes[0].mois).toStrictEqual([0, 1]);
   });
   it('POST /api/incoming/cms - updates existing article in article table', async () => {
     // GIVEN
@@ -590,6 +598,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles[0].points).toEqual(20);
     expect(articles[0].source).toEqual('La source');
     expect(articles[0].codes_postaux).toStrictEqual(['91120', '75002']);
+    expect(articles[0].mois).toStrictEqual([0, 1]);
     expect(articles[0].content_id).toEqual('123');
     expect(articles[0].partenaire).toEqual('Angers Loire Métropole');
     expect(articles[0].rubrique_ids).toEqual(['1', '2']);
@@ -619,6 +628,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(quizzes[0].difficulty).toEqual(3);
     expect(quizzes[0].points).toEqual(20);
     expect(quizzes[0].codes_postaux).toStrictEqual(['91120', '75002']);
+    expect(quizzes[0].mois).toStrictEqual([0, 1]);
     expect(quizzes[0].content_id).toEqual('123');
     expect(quizzes[0].partenaire).toEqual('Angers Loire Métropole');
     expect(quizzes[0].rubrique_ids).toEqual(['1', '2']);

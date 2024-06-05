@@ -440,6 +440,7 @@ export class CMSUsecase {
       score: 0,
       tags_rubriques: [],
       categorie: Categorie[entry.categorie],
+      mois: entry.mois ? entry.mois.split(',').map((m) => parseInt(m)) : [],
     };
   }
 
@@ -487,6 +488,7 @@ export class CMSUsecase {
         ? entry.thematique_univers.map((t) => ThematiqueUnivers[t.code])
         : [],
       categorie: Categorie[entry.categorie],
+      mois: entry.mois ? entry.mois.split(',').map((m) => parseInt(m)) : [],
     };
   }
   static buildKycFromCMSData(entry: CMSWebhookEntryAPI): KycDefinition {
@@ -597,6 +599,9 @@ export class CMSUsecase {
       score: 0,
       tags_rubriques: [],
       categorie: Categorie[entry.attributes.categorie],
+      mois: entry.attributes.mois
+        ? entry.attributes.mois.split(',').map((m) => parseInt(m))
+        : [],
     };
   }
   static buildAideFromCMSPopulateData(entry: CMSWebhookPopulateAPI): Aide {
@@ -661,6 +666,9 @@ export class CMSUsecase {
             )
           : [],
       categorie: Categorie[entry.attributes.categorie],
+      mois: entry.attributes.mois
+        ? entry.attributes.mois.split(',').map((m) => parseInt(m))
+        : [],
     };
   }
 

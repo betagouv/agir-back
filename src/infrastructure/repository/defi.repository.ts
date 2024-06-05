@@ -27,6 +27,7 @@ export class DefiRepository {
       categorie: defi.categorie,
       created_at: undefined,
       updated_at: undefined,
+      mois: defi.mois,
     };
     await this.prisma.defi.upsert({
       where: { content_id: defi.content_id },
@@ -72,6 +73,7 @@ export class DefiRepository {
         (t) => TuileThematique[t],
       ),
       categorie: Categorie[defiDB.categorie],
+      mois: defiDB.mois,
     });
   }
 }

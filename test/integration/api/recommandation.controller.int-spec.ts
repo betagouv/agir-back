@@ -50,6 +50,7 @@ const DEFI_1_DEF: Defi = {
   created_at: undefined,
   updated_at: undefined,
   categorie: Categorie.recommandation,
+  mois: [0],
 };
 
 describe('/utilisateurs/id/recommandations (API test)', () => {

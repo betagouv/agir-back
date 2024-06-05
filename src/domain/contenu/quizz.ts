@@ -25,6 +25,7 @@ export class QuizzData {
   tags_rubriques: TagRubrique[];
   score: number;
   categorie: Categorie;
+  mois: number[];
 }
 
 export class Quizz extends QuizzData implements TaggedContent {
@@ -33,6 +34,9 @@ export class Quizz extends QuizzData implements TaggedContent {
     Object.assign(this, data);
     if (!this.score) {
       this.score = 0;
+    }
+    if (!this.mois) {
+      this.mois = [];
     }
     if (this.rubrique_ids) {
       this.tags_rubriques = this.rubrique_ids.map((r) => TagRubrique[`R${r}`]);

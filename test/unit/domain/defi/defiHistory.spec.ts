@@ -40,6 +40,7 @@ const DEFI_1_DEF: DefiDefinition = {
   universes: [Univers.climat],
   thematiques_univers: [ThematiqueUnivers.dechets_compost],
   categorie: Categorie.recommandation,
+  mois: [0],
 };
 
 describe('DefiHistory', () => {

@@ -135,6 +135,7 @@ export class ArticleRepository {
       ),
       tags_rubriques: [],
       score: 0,
+      mois: articleDB.mois,
     });
   }
 }

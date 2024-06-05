@@ -172,6 +172,7 @@ model Defi {
   universes          String[] @default([])
   thematiquesUnivers String[] @default([])
   categorie          String   @default("recommandation")
+  mois               Int[]    @default([])
   created_at         DateTime @default(now()) @db.Timestamptz(3)
   updated_at         DateTime @updatedAt @db.Timestamptz(3)
 }
@@ -194,6 +195,7 @@ model Article {
   thematique_principale String?
   thematiques           String[] @default([])
   categorie             String   @default("recommandation")
+  mois                  Int[]    @default([])
   created_at            DateTime @default(now()) @db.Timestamptz(3)
   updated_at            DateTime @updatedAt @db.Timestamptz(3)
 }
@@ -216,6 +218,7 @@ model Quizz {
   thematique_principale String?
   thematiques           String[] @default([])
   categorie             String   @default("recommandation")
+  mois                  Int[]    @default([])
   created_at            DateTime @default(now()) @db.Timestamptz(3)
   updated_at            DateTime @updatedAt @db.Timestamptz(3)
 }
