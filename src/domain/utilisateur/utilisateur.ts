@@ -18,6 +18,7 @@ import { DefiHistory } from '../defis/defiHistory';
 import { UserTagEvaluator } from '../scoring/userTagEvaluator';
 import { QuestionKYC } from '../kyc/questionQYC';
 import { MissionsUtilisateur } from '../mission/missionsUtilisateur';
+import { Personnalisation } from '../contenu/personnalisation';
 
 export class UtilisateurData {
   id: string;
@@ -75,6 +76,10 @@ export class Utilisateur extends UtilisateurData {
       this.prevent_checkcode_before = new Date();
     if (!this.prevent_sendemail_before)
       this.prevent_sendemail_before = new Date();
+  }
+
+  public getPersonnalisation?(): Personnalisation {
+    return new Personnalisation(this);
   }
 
   public static createNewUtilisateur(

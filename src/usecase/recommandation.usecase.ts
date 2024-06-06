@@ -21,6 +21,7 @@ import { Feature } from '../../src/domain/gamification/feature';
 import { Univers } from '../../src/domain/univers/univers';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { Categorie } from '../../src/domain/contenu/categorie';
+import { Personnalisation } from 'src/domain/contenu/personnalisation';
 
 @Injectable()
 export class RecommandationUsecase {
@@ -148,7 +149,10 @@ export class RecommandationUsecase {
       utilisateur.tag_ponderation_set,
     );
 
-    const result = this.mapDefiToRecommandation(defis);
+    const result = this.mapDefiToRecommandation(
+      defis,
+      utilisateur.getPersonnalisation(),
+    );
 
     PonderationApplicativeManager.sortContent(result);
 
@@ -160,10 +164,16 @@ export class RecommandationUsecase {
       DefiStatus.en_cours,
     ]);
 
-    return this.mapDefiToRecommandation(defis);
+    return this.mapDefiToRecommandation(
+      defis,
+      utilisateur.getPersonnalisation(),
+    );
   }
 
-  private mapDefiToRecommandation(defis: Defi[]): Recommandation[] {
+  private mapDefiToRecommandation(
+    defis: Defi[],
+    personnalisation: Personnalisation,
+  ): Recommandation[] {
     return defis.map((e) => ({
       content_id: e.id,
       image_url:
@@ -171,7 +181,7 @@ export class RecommandationUsecase {
       points: e.points,
       thematique_principale: e.thematique,
       score: e.score,
-      titre: e.titre,
+      titre: e.getTitre(personnalisation),
       type: ContentType.defi,
       jours_restants: e.getJourRestants(),
       status_defi: e.getStatus(),

@@ -1,11 +1,12 @@
 import { Categorie } from '../contenu/categorie';
+import { CLE_PERSO, Personnalisation } from '../contenu/personnalisation';
 import { Thematique } from '../contenu/thematique';
 import { Defi_v0 } from '../object_store/defi/defiHistory_v0';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
 import { Univers } from '../univers/univers';
 import { Utilisateur } from '../utilisateur/utilisateur';
-import { Condition } from './defiDefinition';
+import { ConditionDefi } from './defiDefinition';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
@@ -21,7 +22,7 @@ export enum DefiStatus {
 
 export class Defi implements TaggedContent {
   id: string;
-  titre: string;
+  private titre: string;
   sous_titre: string;
   points: number;
   pourquoi: string;
@@ -36,9 +37,10 @@ export class Defi implements TaggedContent {
   motif: string;
   categorie: Categorie;
   mois: number[];
-  conditions: Condition[][];
+  conditions: ConditionDefi[][];
+  personnalisation?: Personnalisation;
 
-  constructor(data: Defi_v0) {
+  constructor(data: Defi_v0, utilisateur?: Utilisateur) {
     this.id = data.id;
     this.titre = data.titre;
     this.sous_titre = data.sous_titre;
@@ -56,8 +58,18 @@ export class Defi implements TaggedContent {
     this.categorie = data.categorie;
     this.mois = data.mois ? data.mois : [];
     this.conditions = data.conditions ? data.conditions : [];
+    this.personnalisation = new Personnalisation(utilisateur);
   }
 
+  public setPersonnalisation(utilisateur: Utilisateur): Defi {
+    this.personnalisation = utilisateur.getPersonnalisation();
+    return this;
+  }
+
+  public getTitre(personnalisation?: Personnalisation): string {
+    const perso = personnalisation || this.personnalisation;
+    return perso.personnaliser(this.titre);
+  }
   public getStatus(): DefiStatus {
     return this.status;
   }

@@ -16,20 +16,6 @@ export class DefisUsecase {
     private missionRepository: MissionRepository,
   ) {}
 
-  async getALL(): Promise<Defi[]> {
-    const all = await this.defiRepository.list({});
-    return all.map(
-      (e) =>
-        new Defi({
-          ...e,
-          status: undefined,
-          date_acceptation: undefined,
-          id: e.content_id,
-          accessible: undefined,
-          motif: undefined,
-        }),
-    );
-  }
   async getDefisOfUnivers(
     utilisateurId: string,
     univers: Univers,
@@ -39,16 +25,18 @@ export class DefisUsecase {
     const defiDefinitions = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(defiDefinitions);
 
-    const result = await this.getDefisOfUniversAndUtilisateur(
+    let result = await this.getDefisOfUniversAndUtilisateur(
       utilisateur,
       univers,
     );
 
-    return result.filter(
+    result = result.filter(
       (d) =>
         d.getStatus() === DefiStatus.todo ||
         d.getStatus() === DefiStatus.en_cours,
     );
+
+    return result.map((d) => d.setPersonnalisation(utilisateur));
   }
 
   private async getDefisOfUniversAndUtilisateur(
@@ -80,11 +68,13 @@ export class DefisUsecase {
         univers,
       );
       result = result.concat(
-        defis_univers.filter(
-          (d) =>
-            d.getStatus() === DefiStatus.todo ||
-            d.getStatus() === DefiStatus.en_cours,
-        ),
+        defis_univers
+          .filter(
+            (d) =>
+              d.getStatus() === DefiStatus.todo ||
+              d.getStatus() === DefiStatus.en_cours,
+          )
+          .map((d) => d.setPersonnalisation(utilisateur)),
       );
     }
     return result;
@@ -96,7 +86,7 @@ export class DefisUsecase {
     univers: Univers,
     accessible: boolean,
   ): Promise<Defi[]> {
-    let result = [];
+    let result: Defi[] = [];
 
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
@@ -119,9 +109,12 @@ export class DefisUsecase {
       PonderationApplicativeManager.sortContent(result);
 
       result = result.filter((d) => d.score > -50);
+      result = result.map((d) => d.setPersonnalisation(utilisateur));
     }
     result = result.concat(
-      utilisateur.defi_history.getDefisOfStatus(filtre_status),
+      utilisateur.defi_history
+        .getDefisOfStatus(filtre_status)
+        .map((d) => d.setPersonnalisation(utilisateur)),
     );
     return result;
   }
@@ -133,7 +126,10 @@ export class DefisUsecase {
     const catalogue = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(catalogue);
 
-    return utilisateur.defi_history.getDefiOrException(defiId);
+    const defi = utilisateur.defi_history.getDefiOrException(defiId);
+    defi.setPersonnalisation(utilisateur);
+
+    return defi;
   }
   async updateStatus(
     utilisateurId: string,

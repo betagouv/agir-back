@@ -4,7 +4,7 @@ import { Tag } from '../scoring/tag';
 import { ThematiqueUnivers } from '../univers/thematiqueUnivers';
 import { Univers } from '../univers/univers';
 
-export class Condition {
+export class ConditionDefi {
   code_kyc: string;
   code_reponse: string;
 }
@@ -22,7 +22,7 @@ export class DefiDefinition {
   thematiques_univers: ThematiqueUnivers[];
   categorie: Categorie;
   mois: number[];
-  conditions: Condition[][];
+  conditions: ConditionDefi[][];
 
   constructor(data: DefiDefinition) {
     this.content_id = data.content_id;

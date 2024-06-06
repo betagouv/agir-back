@@ -17,6 +17,13 @@ import { TagRubrique } from '../../../src/domain/scoring/tagRubrique';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import { MissionsUtilisateur_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import {
+  Superficie,
+  TypeLogement,
+  Chauffage,
+  DPE,
+} from '../../../src/domain/logement/logement';
 
 const DEFI_1_DEF: Defi = {
   content_id: '1',
@@ -143,7 +150,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     id: '1',
     points: 5,
     tags: [Tag.utilise_moto_ou_voiture],
-    titre: 'titre',
+    titre: 'Défi à {COMMUNE}',
     thematique: Thematique.alimentation,
     astuces: 'astuce',
     date_acceptation: new Date(Date.now() - 3 * DAY_IN_MS),
@@ -171,26 +178,6 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('GET /defis - liste defis catalogue', async () => {
-    // GIVEN
-    await TestUtil.create(DB.defi, DEFI_1_DEF);
-    await TestUtil.create(DB.utilisateur);
-
-    // WHEN
-    const response = await TestUtil.GET('/defis');
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.length).toBe(1);
-    expect(response.body[0].id).toEqual('1');
-    expect(response.body[0].titre).toEqual('titre');
-    expect(response.body[0].thematique).toEqual('alimentation');
-    expect(response.body[0].thematique_label).toEqual('alimentation');
-    expect(response.body[0].points).toEqual(5);
-    expect(response.body[0].status_defi).toBeUndefined();
-    expect(response.body[0].jours_restants).toBeNull();
-    expect(response.body[0].universes).toEqual([Univers.climat]);
-  });
   it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur', async () => {
     // GIVEN
     const defis: DefiHistory_v0 = {
@@ -213,8 +200,23 @@ describe('/utilisateurs/id/defis (API test)', () => {
         },
       ],
     };
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       defis: defis,
+      logement,
     });
 
     // WHEN
@@ -232,7 +234,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi.astuces).toBe('astuce');
     expect(defi.pourquoi).toBe('pourquoi');
     expect(defi.jours_restants).toBe(4);
-    expect(defi.titre).toBe('titre');
+    expect(defi.titre).toBe('Défi à Palaiseau');
     expect(defi.motif).toBe('truc');
     expect(defi.sous_titre).toBe('sous_titre');
     expect(defi.status).toBe(DefiStatus.en_cours);
@@ -802,11 +804,26 @@ describe('/utilisateurs/id/defis (API test)', () => {
   });
   it('GET /utilisateurs/id/defis/id - correct data defis du catalogue', async () => {
     // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       history: {},
       defis: {
         defis: [DEFI_1],
       },
+      logement,
     });
     ThematiqueRepository.resetAllRefs();
     await TestUtil.create(DB.thematique, {
@@ -830,7 +847,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi.astuces).toBe('astuce');
     expect(defi.pourquoi).toBe('pourquoi');
     expect(defi.jours_restants).toBe(4);
-    expect(defi.titre).toBe('titre');
+    expect(defi.titre).toBe('Défi à Palaiseau');
     expect(defi.sous_titre).toBe('sous_titre');
     expect(defi.thematique_label).toBe('t1');
     expect(defi.status).toBe(DefiStatus.todo);
@@ -845,7 +862,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           id: '001',
           points: 10,
           tags: [Tag.R10],
-          titre: 'titre',
+          titre: 'Défi à {COMMUNE}',
           thematique: Thematique.alimentation,
           astuces: 'ASTUCE',
           date_acceptation: new Date(Date.now() - 2 * DAY_IN_MS),
@@ -861,7 +878,22 @@ describe('/utilisateurs/id/defis (API test)', () => {
         },
       ],
     };
-    await TestUtil.create(DB.utilisateur, { defis: defis });
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+    };
+
+    await TestUtil.create(DB.utilisateur, { defis: defis, logement });
+
     ThematiqueRepository.resetAllRefs();
     await TestUtil.create(DB.thematique, {
       id: '1',
@@ -890,7 +922,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi.astuces).toBe('ASTUCE');
     expect(defi.pourquoi).toBe('POURQUOI');
     expect(defi.jours_restants).toBe(5);
-    expect(defi.titre).toBe('titre');
+    expect(defi.titre).toBe('Défi à Palaiseau');
     expect(defi.sous_titre).toBe('SOUS TITRE');
     expect(defi.thematique_label).toBe('t1');
     expect(defi.status).toBe(DefiStatus.en_cours);

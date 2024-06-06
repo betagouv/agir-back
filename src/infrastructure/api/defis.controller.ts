@@ -82,19 +82,6 @@ export class DefisController extends GenericControler {
     );
   }
 
-  @Get('defis')
-  @UseGuards(AuthGuard)
-  @ApiOkResponse({
-    type: [DefiAPI],
-  })
-  @ApiOperation({
-    summary: "Retourne l'ensemble des défis du catalogue",
-  })
-  async getAll(@Request() req): Promise<DefiAPI[]> {
-    const result = await this.defisUsecase.getALL();
-    return result.map((element) => DefiAPI.mapToAPI(element));
-  }
-
   @Get('utilisateurs/:utilisateurId/defis_v2')
   @UseGuards(AuthGuard)
   @ApiOkResponse({

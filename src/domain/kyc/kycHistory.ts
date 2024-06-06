@@ -1,6 +1,6 @@
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Categorie } from '../contenu/categorie';
-import { Condition } from '../defis/defiDefinition';
+import { ConditionDefi } from '../defis/defiDefinition';
 import { KYCHistory_v0 as KYCHistory_v0 } from '../object_store/kyc/kycHistory_v0';
 import { Univers } from '../univers/univers';
 import { KycDefinition } from './kycDefinition';
@@ -108,7 +108,7 @@ export class KYCHistory {
     question.question = question_catalogue.question;
   }
 
-  public areConditionsMatched(conditions: Condition[][]): boolean {
+  public areConditionsMatched(conditions: ConditionDefi[][]): boolean {
     if (conditions.length === 0) {
       return true;
     }

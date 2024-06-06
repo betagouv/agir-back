@@ -4,6 +4,7 @@ import { Thematique } from '../../../../../src/domain/contenu/thematique';
 import { Defi, DefiStatus } from '../../../../../src/domain/defis/defi';
 import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
 import { DefiStatistique } from '../../../../../src/domain/defis/defiStatistique';
+import { Personnalisation } from 'src/domain/contenu/personnalisation';
 
 export class PatchDefiStatusAPI {
   @ApiProperty({ enum: DefiStatus }) status: DefiStatus;
@@ -42,7 +43,7 @@ export class DefiAPI {
       thematique_label: ThematiqueRepository.getLibelleThematique(
         defi.thematique,
       ),
-      titre: defi.titre,
+      titre: defi.getTitre(),
       universes: defi.universes,
       motif: defi.motif,
       nombre_de_fois_realise: defiStatistique
