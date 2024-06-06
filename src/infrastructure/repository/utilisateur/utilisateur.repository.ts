@@ -41,6 +41,14 @@ export class UtilisateurRepository {
     });
     return this.buildUtilisateurFromDB(user);
   }
+  async checkEmailExists(email: string): Promise<boolean> {
+    const count = await this.prisma.utilisateur.count({
+      where: {
+        email,
+      },
+    });
+    return count !== 0;
+  }
   async findByEmail(email: string): Promise<Utilisateur | null> {
     const user = await this.prisma.utilisateur.findUnique({
       where: {

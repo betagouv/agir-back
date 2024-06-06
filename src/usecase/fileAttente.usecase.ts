@@ -6,13 +6,27 @@ import {
 } from '../../src/domain/utilisateur/utilisateurAttente';
 import { App } from '../../src/domain/app';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
+import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 
 @Injectable()
 export class FileAttenteUsecase {
-  constructor(private fileAttenteRepository: FileAttenteRepository) {}
+  constructor(
+    private fileAttenteRepository: FileAttenteRepository,
+    private utilisateurRepository: UtilisateurRepository,
+  ) {}
 
-  hasAccess(email: string): boolean {
-    return App.doesAnyWhiteListIncludes(email ? email : '2345678765489765');
+  async hasAccess(email: string): Promise<{
+    white_listed: boolean;
+    registered: boolean;
+  }> {
+    if (!email) {
+      return { white_listed: false, registered: false };
+    }
+    const registered = await this.utilisateurRepository.checkEmailExists(email);
+    return {
+      white_listed: App.doesAnyWhiteListIncludes(email),
+      registered: registered,
+    };
   }
 
   async add(user: UtilisateurAttente): Promise<void> {

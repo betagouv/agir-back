@@ -62,9 +62,10 @@ export class OnboardingController extends GenericControler {
   async checkWhiteListe(
     @Body() body: CheckWhitelisteAPI,
   ): Promise<ReponseCheckWhitelisteAPI> {
-    const has_access = this.fileAttenteUsecase.hasAccess(body.email);
+    const access = await this.fileAttenteUsecase.hasAccess(body.email);
     return {
-      is_whitelisted: has_access,
+      is_whitelisted: access.white_listed,
+      is_registered: access.registered,
     };
   }
 

@@ -800,9 +800,10 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(response.status).toBe(201);
     expect(response.body).toEqual({
       is_whitelisted: true,
+      is_registered: false,
     });
   });
-  it('POST /utilisateurs/check_whiteliste - false si white listé', async () => {
+  it('POST /utilisateurs/check_whiteliste - false si pas white listé', async () => {
     // GIVEN
     process.env.WHITE_LIST_ENABLED = 'true';
     process.env.WHITE_LIST = 'mon mail';
@@ -817,6 +818,27 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(response.status).toBe(201);
     expect(response.body).toEqual({
       is_whitelisted: false,
+      is_registered: false,
+    });
+  });
+  it('POST /utilisateurs/check_whiteliste - true si le useer eexiste en base', async () => {
+    // GIVEN
+    process.env.WHITE_LIST_ENABLED = 'true';
+    process.env.WHITE_LIST = 'mon mail';
+
+    await TestUtil.create(DB.utilisateur, { email: 'email' });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/check_whiteliste')
+      .send({
+        email: 'email',
+      });
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual({
+      is_whitelisted: false,
+      is_registered: true,
     });
   });
   it(`POST /utilisateurs/file_attente - ajout l'email à la file d'attente`, async () => {
