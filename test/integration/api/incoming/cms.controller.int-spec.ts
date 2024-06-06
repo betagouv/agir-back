@@ -463,6 +463,9 @@ describe('/api/incoming/cms (API test)', () => {
       ThematiqueUnivers.dechets_compost,
     ]);
     expect(defi.mois).toStrictEqual([0, 1]);
+    expect(defi.conditions).toStrictEqual([
+      [{ code_kyc: '123', code_reponse: 'oui' }],
+    ]);
   });
 
   it('POST /api/incoming/cms - updates a  defi', async () => {
@@ -493,6 +496,9 @@ describe('/api/incoming/cms (API test)', () => {
       ThematiqueUnivers.dechets_compost,
     ]);
     expect(defi.mois).toStrictEqual([0, 1]);
+    expect(defi.conditions).toStrictEqual([
+      [{ code_kyc: '123', code_reponse: 'oui' }],
+    ]);
   });
 
   it('POST /api/incoming/cms - updates exisying aide in aide table', async () => {

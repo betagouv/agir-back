@@ -12,8 +12,9 @@ export class ReferentielUsecase {
     for (let index = 0; index < keyList.length; index++) {
       const serviceId = keyList[index];
       const service = service_catalogue[serviceId];
-      service['serviceDefinitionId'] = serviceId;
-      await this.serviceRepository.upsert(service);
+      const data = { ...service };
+      data['serviceDefinitionId'] = serviceId;
+      await this.serviceRepository.upsert(data);
     }
   }
 }
