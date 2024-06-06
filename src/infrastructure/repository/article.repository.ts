@@ -17,6 +17,7 @@ export type ArticleFilter = {
   asc_difficulty?: boolean;
   titre_fragment?: string;
   categorie?: Categorie;
+  date?: Date;
 };
 
 @Injectable()
@@ -55,11 +56,18 @@ export class ArticleRepository {
 
   async searchArticles(filter: ArticleFilter): Promise<Article[]> {
     let codes_postaux_filter;
+    let mois_filter;
 
     if (filter.code_postal) {
       codes_postaux_filter = [
         { codes_postaux: { has: filter.code_postal } },
         { codes_postaux: { isEmpty: true } },
+      ];
+    }
+    if (filter.date) {
+      mois_filter = [
+        { mois: { has: filter.date.getMonth() + 1 } },
+        { mois: { isEmpty: true } },
       ];
     }
 
@@ -99,8 +107,7 @@ export class ArticleRepository {
     const finalQuery = {
       take: filter.maxNumber,
       where: {
-        OR: codes_postaux_filter,
-        AND: main_filter,
+        AND: [main_filter, { OR: mois_filter }, { OR: codes_postaux_filter }],
       },
     };
 

@@ -24,6 +24,55 @@ describe('ArticleRepository', () => {
     await TestUtil.appclose();
   });
 
+  it('searchArticles : liste articles du mois courant si pas de condition sur mois', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+    });
+
+    // WHEN
+    const liste = await articleRepository.searchArticles({
+      date: new Date(),
+    });
+
+    // THEN
+    expect(liste).toHaveLength(1);
+    expect(liste[0].content_id).toEqual('1');
+  });
+  it('searchArticles : inclue article du mois qui match', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      mois: [1, 2],
+    });
+
+    // WHEN
+    const liste = await articleRepository.searchArticles({
+      date: new Date('2024-01-20'),
+    });
+
+    // THEN
+    expect(liste).toHaveLength(1);
+    expect(liste[0].content_id).toEqual('1');
+  });
+  it('searchArticles : inclue pas article du mois qui match pas', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      mois: [1, 2],
+    });
+
+    // WHEN
+    const liste = await articleRepository.searchArticles({
+      date: new Date('2024-03-20'),
+    });
+
+    // THEN
+    expect(liste).toHaveLength(0);
+  });
   it('searchArticles : liste article par code postal parmi plusieurs', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);

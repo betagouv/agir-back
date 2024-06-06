@@ -156,7 +156,7 @@ export class EventUsecase {
     }
     this.updateUserTodo(utilisateur, ContentType.article, article.thematiques);
 
-    const catalogue_defis = await this.defiRepository.list();
+    const catalogue_defis = await this.defiRepository.list({});
 
     utilisateur.missions.validateAricleOrQuizzDone(
       event.content_id,
@@ -184,7 +184,7 @@ export class EventUsecase {
       this.updateUserTodo(utilisateur, ContentType.quizz, quizz.thematiques);
     }
 
-    const catalogue_defis = await this.defiRepository.list();
+    const catalogue_defis = await this.defiRepository.list({});
 
     utilisateur.missions.validateAricleOrQuizzDone(
       event.content_id,

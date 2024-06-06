@@ -17,7 +17,7 @@ export class DefisUsecase {
   ) {}
 
   async getALL(): Promise<Defi[]> {
-    const all = await this.defiRepository.list();
+    const all = await this.defiRepository.list({});
     return all.map(
       (e) =>
         new Defi({
@@ -36,7 +36,7 @@ export class DefisUsecase {
   ): Promise<Defi[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
-    const defiDefinitions = await this.defiRepository.list();
+    const defiDefinitions = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(defiDefinitions);
 
     const result = await this.getDefisOfUniversAndUtilisateur(
@@ -69,7 +69,7 @@ export class DefisUsecase {
   async getAllDefis_v2(utilisateurId: string): Promise<Defi[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
-    const defiDefinitions = await this.defiRepository.list();
+    const defiDefinitions = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(defiDefinitions);
 
     let result: Defi[] = [];
@@ -100,7 +100,7 @@ export class DefisUsecase {
 
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
-    const defiDefinitions = await this.defiRepository.list();
+    const defiDefinitions = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(defiDefinitions);
 
     if (
@@ -130,7 +130,7 @@ export class DefisUsecase {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
-    const catalogue = await this.defiRepository.list();
+    const catalogue = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(catalogue);
 
     return utilisateur.defi_history.getDefiOrException(defiId);
@@ -144,7 +144,7 @@ export class DefisUsecase {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
-    const catalogue = await this.defiRepository.list();
+    const catalogue = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(catalogue);
 
     utilisateur.defi_history.updateStatus(defiId, status, utilisateur, motif);

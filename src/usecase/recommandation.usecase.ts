@@ -84,7 +84,10 @@ export class RecommandationUsecase {
       App.defiEnabled() &&
       utilisateur.unlocked_features.isUnlocked(Feature.defis)
     ) {
-      const defiDefinitions = await this.defiRepository.list();
+      const defiDefinitions = await this.defiRepository.list({
+        categorie: Categorie.recommandation,
+        date: new Date(),
+      });
       utilisateur.defi_history.setCatalogue(defiDefinitions);
 
       defis_en_cours = this.getDefisEnCours(utilisateur);
@@ -199,6 +202,7 @@ export class RecommandationUsecase {
       code_postal: utilisateur.logement.code_postal,
       exclude_ids: articles_lus,
       categorie: Categorie.recommandation,
+      date: new Date(),
     };
     if (univers) {
       filtre.thematiques = [Thematique[univers]];
@@ -226,6 +230,7 @@ export class RecommandationUsecase {
       code_postal: utilisateur.logement.code_postal,
       exclude_ids: quizz_attempted,
       categorie: Categorie.recommandation,
+      date: new Date(),
     };
 
     if (univers) {

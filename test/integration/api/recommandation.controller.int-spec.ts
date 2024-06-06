@@ -52,7 +52,7 @@ const DEFI_1_DEF: Defi = {
   created_at: undefined,
   updated_at: undefined,
   categorie: Categorie.recommandation,
-  mois: [0],
+  mois: [],
   conditions: [[{ code_kyc: '123', code_reponse: 'oui' }]],
 };
 

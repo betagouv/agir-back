@@ -8,6 +8,11 @@ import { TuileThematique } from '../../domain/univers/tuileThematique';
 import { Univers } from '../../../src/domain/univers/univers';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 
+export type DefiFilter = {
+  date?: Date;
+  categorie?: Categorie;
+};
+
 @Injectable()
 export class DefiRepository {
   constructor(private prisma: PrismaService) {}
@@ -53,8 +58,27 @@ export class DefiRepository {
     return this.buildDefiFromDB(result);
   }
 
-  async list(): Promise<DefiDefinition[]> {
-    const result = await this.prisma.defi.findMany();
+  async list(filter: DefiFilter): Promise<DefiDefinition[]> {
+    const main_filter = {};
+
+    let mois_filter;
+    if (filter.date) {
+      mois_filter = [
+        { mois: { has: filter.date.getMonth() + 1 } },
+        { mois: { isEmpty: true } },
+      ];
+    }
+
+    if (filter.categorie) {
+      main_filter['categorie'] = filter.categorie;
+    }
+
+    const result = await this.prisma.defi.findMany({
+      where: {
+        OR: mois_filter,
+        AND: main_filter,
+      },
+    });
     return result.map((elem) => this.buildDefiFromDB(elem));
   }
 

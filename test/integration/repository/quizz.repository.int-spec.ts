@@ -27,6 +27,55 @@ describe('QuizzRepository', () => {
     await TestUtil.appclose();
     PonderationApplicativeManager.resetCatalogue();
   });
+  it('searchQuizzes : liste quizz du mois courant si pas de condition sur mois', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.quizz, {
+      content_id: '1',
+    });
+
+    // WHEN
+    const liste = await quizzRepository.searchQuizzes({
+      date: new Date(),
+    });
+
+    // THEN
+    expect(liste).toHaveLength(1);
+    expect(liste[0].content_id).toEqual('1');
+  });
+  it('searchQuizzes : inclue article du mois qui match', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.quizz, {
+      content_id: '1',
+      mois: [1, 2],
+    });
+
+    // WHEN
+    const liste = await quizzRepository.searchQuizzes({
+      date: new Date('2024-01-20'),
+    });
+
+    // THEN
+    expect(liste).toHaveLength(1);
+    expect(liste[0].content_id).toEqual('1');
+  });
+  it('searchQuizzes : inclue pas article du mois qui match pas', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.quizz, {
+      content_id: '1',
+      mois: [1, 2],
+    });
+
+    // WHEN
+    const liste = await quizzRepository.searchQuizzes({
+      date: new Date('2024-03-20'),
+    });
+
+    // THEN
+    expect(liste).toHaveLength(0);
+  });
   it('searchQuizzes : liste quizz par code postal parmi plusieurs', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);

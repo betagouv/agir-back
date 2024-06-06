@@ -73,6 +73,7 @@ export class TodoUsecase {
           difficulty: element.level,
           exclude_ids: utilisateur.history.listeIdsQuizzAttempted(),
           categorie: Categorie.recommandation,
+          date: new Date(),
         });
         if (quizzes.length === 0) {
           quizzes = await this.quizzRepository.searchQuizzes({
@@ -80,6 +81,7 @@ export class TodoUsecase {
             difficulty: element.level,
             exclude_ids: utilisateur.history.listeIdsQuizz100Pour100(),
             categorie: Categorie.recommandation,
+            date: new Date(),
           });
         }
         if (quizzes.length > 0) {
@@ -97,6 +99,7 @@ export class TodoUsecase {
           exclude_ids: articles_lus,
           code_postal: utilisateur.logement.code_postal,
           categorie: Categorie.recommandation,
+          date: new Date(),
         });
         if (articles.length === 0) {
           articles = await this.articleRepository.searchArticles({
@@ -104,6 +107,7 @@ export class TodoUsecase {
             difficulty: element.level,
             code_postal: utilisateur.logement.code_postal,
             categorie: Categorie.recommandation,
+            date: new Date(),
           });
         }
         if (articles.length > 0) {
