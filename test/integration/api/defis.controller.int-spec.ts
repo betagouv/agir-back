@@ -33,6 +33,7 @@ const DEFI_1_DEF: Defi = {
   updated_at: undefined,
   categorie: Categorie.recommandation,
   mois: [0],
+  conditions: [[{ code_kyc: '123', code_reponse: 'oui' }]],
 };
 
 describe('/utilisateurs/id/defis (API test)', () => {
@@ -147,6 +148,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
     accessible: true,
     motif: 'truc',
     categorie: Categorie.recommandation,
+    conditions: [[{ code_kyc: '123', code_reponse: 'oui' }]],
+    mois: [1],
   };
 
   beforeAll(async () => {
@@ -847,6 +850,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
           accessible: true,
           motif: null,
           categorie: Categorie.recommandation,
+          mois: [1],
+          conditions: [[{ code_kyc: '123', code_reponse: 'oui' }]],
         },
       ],
     };
@@ -905,6 +910,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
           accessible: true,
           motif: null,
           categorie: Categorie.recommandation,
+          mois: [1],
+          conditions: [[{ code_kyc: '123', code_reponse: 'oui' }]],
         },
       ],
     };

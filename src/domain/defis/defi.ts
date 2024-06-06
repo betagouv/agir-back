@@ -5,6 +5,7 @@ import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
 import { Univers } from '../univers/univers';
 import { Utilisateur } from '../utilisateur/utilisateur';
+import { Condition } from './defiDefinition';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
@@ -34,6 +35,8 @@ export class Defi implements TaggedContent {
   accessible: boolean;
   motif: string;
   categorie: Categorie;
+  mois: number[];
+  conditions: Condition[][];
 
   constructor(data: Defi_v0) {
     this.id = data.id;
@@ -51,6 +54,8 @@ export class Defi implements TaggedContent {
     this.accessible = !!data.accessible;
     this.motif = data.motif;
     this.categorie = data.categorie;
+    this.mois = data.mois ? data.mois : [];
+    this.conditions = data.conditions ? data.conditions : [];
   }
 
   public getStatus(): DefiStatus {

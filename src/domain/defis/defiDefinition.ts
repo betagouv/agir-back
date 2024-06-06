@@ -4,6 +4,11 @@ import { Tag } from '../scoring/tag';
 import { ThematiqueUnivers } from '../univers/thematiqueUnivers';
 import { Univers } from '../univers/univers';
 
+export class Condition {
+  code_kyc: string;
+  code_reponse: string;
+}
+
 export class DefiDefinition {
   content_id: string;
   titre: string;
@@ -17,6 +22,7 @@ export class DefiDefinition {
   thematiques_univers: ThematiqueUnivers[];
   categorie: Categorie;
   mois: number[];
+  conditions: Condition[][];
 
   constructor(data: DefiDefinition) {
     this.content_id = data.content_id;
@@ -33,5 +39,7 @@ export class DefiDefinition {
     this.universes = data.universes ? data.universes : [];
     this.mois = data.mois ? data.mois : [];
     this.categorie = data.categorie;
+    this.mois = data.mois ? data.mois : [];
+    this.conditions = data.conditions ? data.conditions : [];
   }
 }

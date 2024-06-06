@@ -11,6 +11,7 @@ import { Tag } from '../../../../src/domain/scoring/tag';
 import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
+import { CMSWebhookAPI } from '../../../../src/infrastructure/api/types/cms/CMSWebhookAPI';
 
 describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA_DEFI = {
@@ -42,6 +43,20 @@ describe('/api/incoming/cms (API test)', () => {
         },
       ],
       mois: '0,1',
+      OR_Conditions: [
+        {
+          AND_Conditions: [
+            {
+              code_reponse: 'oui',
+              kyc: {
+                code: '123',
+                id: 1,
+                reponse: '12',
+              },
+            },
+          ],
+        },
+      ],
     },
   };
   const CMS_DATA_KYC = {

@@ -29,6 +29,13 @@ export class CMSWebhookReponseKYCAPI {
   @ApiProperty() code: string;
   @ApiProperty() reponse: string;
 }
+export class AndConditionAPI {
+  @ApiProperty() code_reponse: string;
+  @ApiProperty({ type: CMSWebhookReponseKYCAPI }) kyc: CMSWebhookReponseKYCAPI;
+}
+export class OrConditionAPI {
+  @ApiProperty({ type: [AndConditionAPI] }) AND_Conditions: AndConditionAPI[];
+}
 export class CMSWebhookUniversAPI {
   @ApiProperty() id: number;
   @ApiProperty() code: string;
@@ -58,6 +65,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() type: string;
   @ApiProperty() label: string;
   @ApiProperty() question: string;
+  @ApiProperty({ type: [OrConditionAPI] }) OR_Conditions: OrConditionAPI[];
   @ApiProperty({ type: [CMSWebhookReponseKYCAPI] })
   reponses: CMSWebhookReponseKYCAPI[];
   @ApiProperty({ type: CMSWebhookUniversAPI })
@@ -241,6 +249,22 @@ export type CMSWebhookPopulateAPI = {
       {
         reponse: string;
         code: string;
+      },
+    ];
+    OR_Conditions: [
+      {
+        AND_Conditions: [
+          {
+            code_reponse: string;
+            kyc: {
+              data: {
+                attributes: {
+                  code: string;
+                };
+              };
+            };
+          },
+        ];
       },
     ];
     objectifs: [

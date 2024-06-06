@@ -346,6 +346,7 @@ export class TestUtil {
       updated_at: undefined,
       categorie: Categorie.recommandation,
       mois: [],
+      conditions: [],
       ...override,
     };
   }
@@ -446,6 +447,8 @@ export class TestUtil {
           accessible: false,
           motif: 'bidon',
           categorie: Categorie.recommandation,
+          mois: [],
+          conditions: [],
         },
       ],
     };

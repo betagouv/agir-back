@@ -5,6 +5,7 @@ import { Defi, DefiStatus } from '../../../../src/domain/defis/defi';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 import { Univers } from '../../../../src/domain/univers/univers';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
+import { Condition } from 'src/domain/defis/defiDefinition';
 
 export class Defi_v0 {
   id: string;
@@ -21,6 +22,8 @@ export class Defi_v0 {
   accessible: boolean;
   motif: string;
   categorie: Categorie;
+  mois: number[];
+  conditions: Condition[][];
 
   static map(elem: Defi): Defi_v0 {
     return {
@@ -38,6 +41,8 @@ export class Defi_v0 {
       accessible: elem.accessible,
       motif: elem.motif,
       categorie: elem.categorie,
+      mois: elem.mois ? elem.mois : [],
+      conditions: elem.conditions ? elem.conditions : [],
     };
   }
 }
