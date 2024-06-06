@@ -73,7 +73,7 @@ export class QuestionKYC implements TaggedContent {
     });
   }
 
-  public hasResponses(): boolean {
+  public hasAnyResponses(): boolean {
     return !!this.reponses && this.reponses.length > 0;
   }
 
@@ -86,7 +86,7 @@ export class QuestionKYC implements TaggedContent {
   }
 
   public includesReponseCode(code: string): boolean {
-    if (!this.hasResponses()) {
+    if (!this.hasAnyResponses()) {
       return false;
     }
     const found = this.reponses.find((r) => r.code === code);

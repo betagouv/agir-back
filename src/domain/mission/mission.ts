@@ -7,6 +7,7 @@ import { ThematiqueUnivers } from '../univers/thematiqueUnivers';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { MissionDefinition } from './missionDefinition';
 import { v4 as uuidv4 } from 'uuid';
+import { DefiDefinition } from '../defis/defiDefinition';
 
 export class Objectif {
   id: string;
@@ -17,6 +18,7 @@ export class Objectif {
   type: ContentType;
   points: number;
   sont_points_en_poche: boolean;
+  est_visible: boolean;
 
   constructor(data: Objectif_v0) {
     this.id = data.id;
@@ -27,6 +29,7 @@ export class Objectif {
     this.is_locked = !!data.is_locked;
     this.done_at = data.done_at;
     this.sont_points_en_poche = !!data.sont_points_en_poche;
+    this.est_visible = !!data.est_visible;
   }
 
   public isDone?() {
@@ -83,6 +86,7 @@ export class Mission {
             titre: o.titre,
             type: o.type,
             sont_points_en_poche: false,
+            est_visible: true,
           }),
       ),
     });
@@ -177,11 +181,26 @@ export class Mission {
       });
     }
   }
-  public unlockDefiIfAllContentDone() {
+  public unlockDefiIfAllContentDone(
+    utilisateur: Utilisateur,
+    defisDefinitionListe: DefiDefinition[],
+  ) {
     if (this.isAllContentDone()) {
       this.objectifs.forEach((objectif) => {
         if (objectif.type === ContentType.defi) {
           objectif.is_locked = false;
+
+          const defi = defisDefinitionListe.find(
+            (defi) => defi.content_id === objectif.content_id,
+          );
+
+          if (!defi) {
+            objectif.est_visible = false;
+          } else {
+            objectif.est_visible = utilisateur.kyc_history.areConditionsMatched(
+              defi.conditions,
+            );
+          }
         }
       });
     }

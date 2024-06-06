@@ -1,5 +1,6 @@
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Categorie } from '../contenu/categorie';
+import { Condition } from '../defis/defiDefinition';
 import { KYCHistory_v0 as KYCHistory_v0 } from '../object_store/kyc/kycHistory_v0';
 import { Univers } from '../univers/univers';
 import { KycDefinition } from './kycDefinition';
@@ -91,7 +92,7 @@ export class KYCHistory {
     if (
       (question.type === TypeReponseQuestionKYC.choix_multiple ||
         question.type === TypeReponseQuestionKYC.choix_unique) &&
-      question.hasResponses()
+      question.hasAnyResponses()
     ) {
       const upgraded_set = [];
       question.reponses.forEach((reponse) => {
@@ -105,6 +106,24 @@ export class KYCHistory {
     }
     question.reponses_possibles = question_catalogue.reponses_possibles;
     question.question = question_catalogue.question;
+  }
+
+  public areConditionsMatched(conditions: Condition[][]): boolean {
+    if (conditions.length === 0) {
+      return true;
+    }
+    let result = false;
+    for (const OU of conditions) {
+      let union = true;
+      for (const cond of OU) {
+        const kyc = this.getAnsweredQuestion(cond.code_kyc);
+        if (!(kyc && kyc.includesReponseCode(cond.code_reponse))) {
+          union = false;
+        }
+      }
+      result = result || union;
+    }
+    return result;
   }
 
   public isQuestionAnswered(id: string): boolean {

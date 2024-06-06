@@ -40,6 +40,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
             is_locked: false,
             done_at: null,
             sont_points_en_poche: false,
+            est_visible: true,
           },
         ],
         est_visible: true,

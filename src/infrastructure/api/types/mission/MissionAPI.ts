@@ -57,7 +57,9 @@ export class MissionAPI {
         mission.thematique_univers,
       ),
       done_at: mission.done_at,
-      objectifs: mission.objectifs.map((o) => ObjectifAPI.mapToAPI(o)),
+      objectifs: mission.objectifs
+        .filter((o) => o.est_visible)
+        .map((o) => ObjectifAPI.mapToAPI(o)),
       thematique_univers: mission.thematique_univers,
       thematique_univers_label: ThematiqueRepository.getTitreThematiqueUnivers(
         mission.thematique_univers,

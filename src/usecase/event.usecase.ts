@@ -7,6 +7,7 @@ import { ArticleRepository } from '../../src/infrastructure/repository/article.r
 import { Thematique } from '../domain/contenu/thematique';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
 import { LiveService } from '../../src/domain/service/serviceDefinition';
+import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 
 @Injectable()
 export class EventUsecase {
@@ -14,6 +15,7 @@ export class EventUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
+    private defiRepository: DefiRepository,
   ) {}
 
   async processEvent(utilisateurId: string, event: AppEvent) {
@@ -154,10 +156,13 @@ export class EventUsecase {
     }
     this.updateUserTodo(utilisateur, ContentType.article, article.thematiques);
 
+    const catalogue_defis = await this.defiRepository.list();
+
     utilisateur.missions.validateAricleOrQuizzDone(
       event.content_id,
       ContentType.article,
       utilisateur,
+      catalogue_defis,
     );
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
@@ -179,10 +184,13 @@ export class EventUsecase {
       this.updateUserTodo(utilisateur, ContentType.quizz, quizz.thematiques);
     }
 
+    const catalogue_defis = await this.defiRepository.list();
+
     utilisateur.missions.validateAricleOrQuizzDone(
       event.content_id,
       ContentType.quizz,
       utilisateur,
+      catalogue_defis,
       event.number_value,
     );
 

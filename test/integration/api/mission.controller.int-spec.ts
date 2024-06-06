@@ -15,6 +15,7 @@ import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
 import { Gamification_v0 } from 'src/domain/object_store/gamification/gamification_v0';
+import { KYCHistory_v0 } from 'src/domain/object_store/kyc/kycHistory_v0';
 
 describe('Mission (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -36,6 +37,7 @@ describe('Mission (API test)', () => {
             is_locked: false,
             done_at: null,
             sont_points_en_poche: false,
+            est_visible: true,
           },
           {
             id: '1',
@@ -46,6 +48,7 @@ describe('Mission (API test)', () => {
             is_locked: true,
             done_at: new Date(0),
             sont_points_en_poche: false,
+            est_visible: true,
           },
           {
             id: '2',
@@ -56,6 +59,7 @@ describe('Mission (API test)', () => {
             is_locked: false,
             done_at: null,
             sont_points_en_poche: false,
+            est_visible: true,
           },
           {
             id: '3',
@@ -66,6 +70,7 @@ describe('Mission (API test)', () => {
             is_locked: true,
             done_at: null,
             sont_points_en_poche: false,
+            est_visible: true,
           },
         ],
         prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
@@ -90,6 +95,7 @@ describe('Mission (API test)', () => {
             is_locked: false,
             done_at: new Date(),
             sont_points_en_poche: false,
+            est_visible: true,
           },
         ],
         prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
@@ -114,6 +120,7 @@ describe('Mission (API test)', () => {
             is_locked: false,
             done_at: null,
             sont_points_en_poche: false,
+            est_visible: true,
           },
           {
             id: '1',
@@ -124,6 +131,7 @@ describe('Mission (API test)', () => {
             is_locked: true,
             done_at: null,
             sont_points_en_poche: false,
+            est_visible: true,
           },
         ],
         prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
@@ -148,6 +156,7 @@ describe('Mission (API test)', () => {
             is_locked: false,
             done_at: null,
             sont_points_en_poche: false,
+            est_visible: true,
           },
           {
             id: '1',
@@ -158,6 +167,7 @@ describe('Mission (API test)', () => {
             is_locked: true,
             done_at: null,
             sont_points_en_poche: false,
+            est_visible: true,
           },
         ],
         prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
@@ -182,6 +192,7 @@ describe('Mission (API test)', () => {
             is_locked: false,
             done_at: null,
             sont_points_en_poche: false,
+            est_visible: true,
           },
           {
             id: '1',
@@ -192,6 +203,7 @@ describe('Mission (API test)', () => {
             is_locked: true,
             done_at: null,
             sont_points_en_poche: false,
+            est_visible: true,
           },
         ],
         prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
@@ -216,6 +228,7 @@ describe('Mission (API test)', () => {
             is_locked: false,
             done_at: new Date(),
             sont_points_en_poche: false,
+            est_visible: true,
           },
         ],
         prochaines_thematiques: [],
@@ -240,6 +253,7 @@ describe('Mission (API test)', () => {
             is_locked: false,
             done_at: new Date(),
             sont_points_en_poche: false,
+            est_visible: true,
           },
           {
             id: '111',
@@ -250,6 +264,7 @@ describe('Mission (API test)', () => {
             is_locked: false,
             done_at: new Date(),
             sont_points_en_poche: false,
+            est_visible: true,
           },
         ],
         prochaines_thematiques: [],
@@ -275,6 +290,7 @@ describe('Mission (API test)', () => {
             is_locked: false,
             done_at: new Date(),
             sont_points_en_poche: false,
+            est_visible: true,
           },
           {
             id: '1',
@@ -285,6 +301,7 @@ describe('Mission (API test)', () => {
             is_locked: false,
             done_at: null,
             sont_points_en_poche: false,
+            est_visible: true,
           },
         ],
         prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
@@ -648,6 +665,7 @@ describe('Mission (API test)', () => {
       missions: missions_article_plus_defi,
     });
     await TestUtil.create(DB.article, { content_id: '1' });
+    await TestUtil.create(DB.defi, { content_id: '1' });
 
     // WHEN
     const response = await TestUtil.POST(
@@ -663,6 +681,86 @@ describe('Mission (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
     expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
+    expect(userDB.missions.missions[0].objectifs[1].est_visible).toEqual(true);
+  });
+  it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un defi débloqué lecture du dernier article, mais non visible car condition par remplie`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_article_plus_defi,
+    });
+    await TestUtil.create(DB.article, { content_id: '1' });
+    await TestUtil.create(DB.defi, {
+      content_id: '1',
+      conditions: [[{ code_kyc: '1', code_reponse: 'yi' }]],
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.article_lu,
+      content_id: '1',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
+    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
+    expect(userDB.missions.missions[0].objectifs[1].est_visible).toEqual(false);
+  });
+  it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un defi débloqué lecture du dernier article,  visible car condition remplie`, async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [
+        {
+          id: '1',
+          question: `Question`,
+          type: TypeReponseQuestionKYC.choix_multiple,
+          is_NGC: false,
+          categorie: Categorie.test,
+          points: 10,
+          reponses: [
+            { label: 'YO', code: 'yo' },
+            { label: 'YI', code: 'yi' },
+          ],
+          reponses_possibles: [
+            { label: 'YO', code: 'yo' },
+            { label: 'YI', code: 'yi' },
+            { label: 'YA', code: 'ya' },
+          ],
+          tags: [],
+          universes: [],
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_article_plus_defi,
+      kyc: kyc,
+    });
+    await TestUtil.create(DB.article, { content_id: '1' });
+    await TestUtil.create(DB.defi, {
+      content_id: '1',
+      conditions: [[{ code_kyc: '1', code_reponse: 'yi' }]],
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.article_lu,
+      content_id: '1',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
+    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
+    expect(userDB.missions.missions[0].objectifs[1].est_visible).toEqual(true);
   });
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un defi débloqué suite dernier quizz`, async () => {
     // GIVEN
@@ -670,6 +768,7 @@ describe('Mission (API test)', () => {
       missions: missions_quizz_plus_defi,
     });
     await TestUtil.create(DB.quizz, { content_id: '1' });
+    await TestUtil.create(DB.defi, { content_id: '2' });
 
     // WHEN
     const response = await TestUtil.POST(
@@ -696,6 +795,7 @@ describe('Mission (API test)', () => {
       missions: missions_quizz_plus_defi,
     });
     await TestUtil.create(DB.quizz, { content_id: '1' });
+    await TestUtil.create(DB.defi, { content_id: '2' });
 
     // WHEN
     const response = await TestUtil.POST(

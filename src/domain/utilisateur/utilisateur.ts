@@ -191,7 +191,7 @@ export class Utilisateur extends UtilisateurData {
     kyc: QuestionKYC,
     map: Record<string, number>,
   ) {
-    if (kyc && kyc.hasResponses()) {
+    if (kyc && kyc.hasAnyResponses()) {
       for (const key in map) {
         if (kyc.includesReponseCode(key)) {
           this.increaseTagValue(tag, map[key]);

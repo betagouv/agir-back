@@ -1,5 +1,6 @@
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { ContentType } from '../contenu/contentType';
+import { DefiDefinition } from '../defis/defiDefinition';
 import { MissionsUtilisateur_v0 } from '../object_store/mission/MissionsUtilisateur_v0';
 import { ThematiqueUnivers } from '../univers/thematiqueUnivers';
 import { Univers } from '../univers/univers';
@@ -36,6 +37,7 @@ export class MissionsUtilisateur {
     content_id: string,
     type: ContentType,
     utilisateur: Utilisateur,
+    listeDefiDefinition: DefiDefinition[],
     score?: number,
   ) {
     const { mission, objectif } = this.getObjectifByContentId(content_id, type);
@@ -43,7 +45,7 @@ export class MissionsUtilisateur {
     if (objectif && !objectif.isDone()) {
       objectif.done_at = new Date();
       utilisateur.gamification.ajoutePoints(objectif.points);
-      mission.unlockDefiIfAllContentDone();
+      mission.unlockDefiIfAllContentDone(utilisateur, listeDefiDefinition);
       // Pour éviter de récolter les points d'un quizz raté ^^
       if (type === ContentType.quizz && score !== 100) {
         objectif.sont_points_en_poche = true;

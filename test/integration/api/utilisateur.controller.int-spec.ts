@@ -594,7 +594,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     dbUser.kyc_history.setCatalogue(catalogue);
 
     const question = dbUser.kyc_history.getQuestion(KYCID.KYC006);
-    expect(question.hasResponses());
+    expect(question.hasAnyResponses());
     expect(question.includesReponseCode('plus_15'));
   });
   it('PATCH /utilisateurs/id/transport - update transport datas and reco tags', async () => {
