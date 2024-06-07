@@ -20,6 +20,7 @@ import { ArticleStatistiqueUsecase } from '../../../src/usecase/articleStatistiq
 import { DefiStatistiqueUsecase } from '../../../src/usecase/defiStatistique.usecase';
 import { QuizStatistiqueUsecase } from '../../../src/usecase/quizStatistique.usecase';
 import { KycStatistiqueUsecase } from '../../../src/usecase/kycStatistique.usecase';
+import { ThematiqueStatistiqueUsecase } from '../../../src/usecase/thematiqueStatistique.usecase';
 
 @Controller()
 @ApiTags('Admin')
@@ -39,6 +40,7 @@ export class AdminController extends GenericControler {
     private defiStatistiqueUsecase: DefiStatistiqueUsecase,
     private quizStatistiqueUsecase: QuizStatistiqueUsecase,
     private kycStatistiqueUsecase: KycStatistiqueUsecase,
+    private thematiqueStatistiqueUsecase: ThematiqueStatistiqueUsecase,
   ) {
     super();
   }
@@ -240,5 +242,14 @@ export class AdminController extends GenericControler {
   async calcul_kyc_statistique(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.kycStatistiqueUsecase.calculStatistique();
+  }
+
+  @Post('/admin/thematique-statistique')
+  @ApiOperation({
+    summary: `Calcul des statistiques de l'ensemble des thématiques`,
+  })
+  async calcul_thematique_statistique(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.thematiqueStatistiqueUsecase.calculStatistique();
   }
 }

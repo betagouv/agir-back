@@ -209,6 +209,7 @@ export class TestUtil {
     await this.prisma.mission.deleteMany();
     await this.prisma.kYC.deleteMany();
     await this.prisma.fileAttente.deleteMany();
+    await this.prisma.thematiqueStatistique.deleteMany();
     ThematiqueRepository.resetAllRefs();
   }
 

@@ -25,6 +25,9 @@ import { Univers } from '../../../src/domain/univers/univers';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionQYC';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
+import { ContentType } from '../../../src/domain/contenu/contentType';
+import { MissionsUtilisateur_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
@@ -1670,5 +1673,251 @@ describe('Admin (API test)', () => {
     expect(kyc2.reponse).toEqual('Une réponse');
     expect(kyc3.titre).toEqual('Question kyc 1');
     expect(kyc3.reponse).toEqual('Appartement, Le climat, Mon logement');
+  });
+
+  it("POST /admin/thematique-statistique - calcul des statistiques de l'ensemble des thématiques", async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await TestUtil.create(DB.univers, {
+      id_cms: 1,
+      code: Univers.climat,
+      label: 'Climat',
+    });
+    await TestUtil.create(DB.univers, {
+      id_cms: 2,
+      code: Univers.alimentation,
+      label: 'Alimentation',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Cereales',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 2,
+      code: ThematiqueUnivers.mobilite_quotidien,
+      univers_parent: Univers.transport,
+      label: 'Mobilité du quotidien',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 3,
+      code: ThematiqueUnivers.gaspillage_alimentaire,
+      univers_parent: Univers.alimentation,
+      label: 'Gaspillage alimentaire',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 4,
+      code: ThematiqueUnivers.manger_local,
+      univers_parent: Univers.alimentation,
+      label: 'Manger local',
+    });
+    const missionsUtilisateur1: MissionsUtilisateur_v0 = {
+      version: 0,
+      missions: [
+        {
+          id: '1',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.cereales,
+          objectifs: [
+            {
+              id: '1',
+              content_id: '12',
+              type: ContentType.article,
+              titre: 'Super article',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+            },
+            {
+              id: '3',
+              content_id: '001',
+              type: ContentType.defi,
+              titre: 'Action à faire',
+              points: 10,
+              is_locked: true,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+            },
+          ],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '3',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.mobilite_quotidien,
+          objectifs: [
+            {
+              id: '1',
+              content_id: '14',
+              type: ContentType.article,
+              titre: 'Super article',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+            },
+            {
+              id: '3',
+              content_id: '003',
+              type: ContentType.defi,
+              titre: 'Action à faire',
+              points: 10,
+              is_locked: true,
+              done_at: null,
+              sont_points_en_poche: false,
+            },
+          ],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+      ],
+    };
+    const missionsUtilisateur2: MissionsUtilisateur_v0 = {
+      version: 0,
+      missions: [
+        {
+          id: '1',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.cereales,
+          objectifs: [
+            {
+              id: '1',
+              content_id: '12',
+              type: ContentType.article,
+              titre: 'Super article',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(0),
+              sont_points_en_poche: false,
+            },
+            {
+              id: '3',
+              content_id: '001',
+              type: ContentType.defi,
+              titre: 'Action à faire',
+              points: 10,
+              is_locked: true,
+              done_at: null,
+              sont_points_en_poche: false,
+            },
+          ],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '2',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
+          objectifs: [
+            {
+              id: '1',
+              content_id: '13',
+              type: ContentType.article,
+              titre: 'Super article',
+              points: 10,
+              is_locked: false,
+              done_at: null,
+              sont_points_en_poche: false,
+            },
+            {
+              id: '3',
+              content_id: '002',
+              type: ContentType.defi,
+              titre: 'Action à faire',
+              points: 10,
+              is_locked: true,
+              done_at: null,
+              sont_points_en_poche: false,
+            },
+          ],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '3',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.mobilite_quotidien,
+          objectifs: [
+            {
+              id: '1',
+              content_id: '14',
+              type: ContentType.article,
+              titre: 'Super article',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+            },
+            {
+              id: '3',
+              content_id: '003',
+              type: ContentType.defi,
+              titre: 'Action à faire',
+              points: 10,
+              is_locked: true,
+              done_at: null,
+              sont_points_en_poche: false,
+            },
+          ],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      id: 'idUtilisateur1',
+      missions: missionsUtilisateur1,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'idUtilisateur2',
+      email: 'user2@test.com',
+      missions: missionsUtilisateur2,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/thematique-statistique');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(3);
+    expect(response.body).toEqual(['1', '2', '3']);
+
+    const thematique1 = await TestUtil.prisma.thematiqueStatistique.findUnique({
+      where: { thematiqueId: '1' },
+    });
+    const thematique2 = await TestUtil.prisma.thematiqueStatistique.findUnique({
+      where: { thematiqueId: '2' },
+    });
+    const thematique3 = await TestUtil.prisma.thematiqueStatistique.findUnique({
+      where: { thematiqueId: '3' },
+    });
+
+    expect(thematique1.titre).toEqual(ThematiqueUnivers.cereales);
+    expect(thematique1.completion_pourcentage_1_20).toEqual(0);
+    expect(thematique1.completion_pourcentage_21_40).toEqual(0);
+    expect(thematique1.completion_pourcentage_41_60).toEqual(1);
+    expect(thematique1.completion_pourcentage_61_80).toEqual(0);
+    expect(thematique1.completion_pourcentage_81_99).toEqual(0);
+    expect(thematique1.completion_pourcentage_100).toEqual(1);
+
+    expect(thematique2.titre).toEqual(ThematiqueUnivers.gaspillage_alimentaire);
+    expect(thematique2.completion_pourcentage_1_20).toEqual(0);
+    expect(thematique2.completion_pourcentage_21_40).toEqual(0);
+    expect(thematique2.completion_pourcentage_41_60).toEqual(0);
+    expect(thematique2.completion_pourcentage_61_80).toEqual(0);
+    expect(thematique2.completion_pourcentage_81_99).toEqual(0);
+    expect(thematique2.completion_pourcentage_100).toEqual(0);
+
+    expect(thematique3.titre).toEqual(ThematiqueUnivers.mobilite_quotidien);
+    expect(thematique3.completion_pourcentage_1_20).toEqual(0);
+    expect(thematique3.completion_pourcentage_21_40).toEqual(0);
+    expect(thematique3.completion_pourcentage_41_60).toEqual(2);
+    expect(thematique3.completion_pourcentage_61_80).toEqual(0);
+    expect(thematique3.completion_pourcentage_81_99).toEqual(0);
+    expect(thematique3.completion_pourcentage_100).toEqual(0);
   });
 });

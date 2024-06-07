@@ -103,6 +103,8 @@ import { KycRepository } from './infrastructure/repository/kyc.repository';
 import { FileAttenteUsecase } from './usecase/fileAttente.usecase';
 import { FileAttenteRepository } from './infrastructure/repository/fileAttente.repository';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { ThematiqueStatistiqueUsecase } from './usecase/thematiqueStatistique.usecase';
+import { ThematiqueStatistiqueRepository } from './infrastructure/repository/thematiqueStatistique.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -228,6 +230,8 @@ function getControllers(): any[] {
     KycRepository,
     FileAttenteUsecase,
     FileAttenteRepository,
+    ThematiqueStatistiqueUsecase,
+    ThematiqueStatistiqueRepository,
   ],
 })
 export class AppModule {}
