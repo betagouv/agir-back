@@ -11,6 +11,8 @@ export class StatistiqueRepository {
     nombreDefisRealises: number,
     nombreDefisAbandonnes: number,
     nombreDefisPasEnvieParUtilisateur: number,
+    thematiquesTerminees: string,
+    thematiquesEnCours: string,
   ) {
     await this.prisma.statistique.upsert({
       where: { utilisateurId },
@@ -20,12 +22,15 @@ export class StatistiqueRepository {
         nombre_defis_realises: nombreDefisRealises,
         nombre_defis_abandonnes: nombreDefisAbandonnes,
         nombre_defis_pas_envie: nombreDefisPasEnvieParUtilisateur,
+        thematiques_terminees: thematiquesTerminees,
+        thematiques_en_cours: thematiquesEnCours,
       },
       update: {
         nombre_defis_en_cours: nombreDefisEnCours,
         nombre_defis_realises: nombreDefisRealises,
         nombre_defis_abandonnes: nombreDefisAbandonnes,
         nombre_defis_pas_envie: nombreDefisPasEnvieParUtilisateur,
+        thematiques_terminees: thematiquesTerminees,
       },
     });
   }

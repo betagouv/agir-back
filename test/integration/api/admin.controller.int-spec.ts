@@ -1145,12 +1145,206 @@ describe('Admin (API test)', () => {
         { ...DEFI, id: '3', status: DefiStatus.fait, titre: 'C' },
       ],
     };
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Cereales',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 2,
+      code: ThematiqueUnivers.mobilite_quotidien,
+      univers_parent: Univers.transport,
+      label: 'Mobilité du quotidien',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 3,
+      code: ThematiqueUnivers.gaspillage_alimentaire,
+      univers_parent: Univers.alimentation,
+      label: 'Gaspillage alimentaire',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 4,
+      code: ThematiqueUnivers.manger_local,
+      univers_parent: Univers.alimentation,
+      label: 'Manger local',
+    });
+    const missionsUtilisateur1: MissionsUtilisateur_v0 = {
+      version: 0,
+      missions: [
+        {
+          id: '1',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.cereales,
+          objectifs: [
+            {
+              id: '1',
+              content_id: '12',
+              type: ContentType.article,
+              titre: 'Super article',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+              est_visible: false,
+            },
+            {
+              id: '3',
+              content_id: '001',
+              type: ContentType.defi,
+              titre: 'Action à faire',
+              points: 10,
+              is_locked: true,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+              est_visible: false,
+            },
+          ],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '3',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.mobilite_quotidien,
+          objectifs: [
+            {
+              id: '1',
+              content_id: '14',
+              type: ContentType.article,
+              titre: 'Super article',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+              est_visible: false,
+            },
+            {
+              id: '3',
+              content_id: '003',
+              type: ContentType.defi,
+              titre: 'Action à faire',
+              points: 10,
+              is_locked: true,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+              est_visible: false,
+            },
+          ],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+      ],
+    };
+    const missionsUtilisateur2: MissionsUtilisateur_v0 = {
+      version: 0,
+      missions: [
+        {
+          id: '1',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.cereales,
+          objectifs: [
+            {
+              id: '1',
+              content_id: '12',
+              type: ContentType.article,
+              titre: 'Super article',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(0),
+              sont_points_en_poche: false,
+              est_visible: false,
+            },
+            {
+              id: '3',
+              content_id: '001',
+              type: ContentType.defi,
+              titre: 'Action à faire',
+              points: 10,
+              is_locked: true,
+              done_at: null,
+              sont_points_en_poche: false,
+              est_visible: false,
+            },
+          ],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '2',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
+          objectifs: [
+            {
+              id: '1',
+              content_id: '13',
+              type: ContentType.article,
+              titre: 'Super article',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(0),
+              sont_points_en_poche: false,
+              est_visible: false,
+            },
+            {
+              id: '3',
+              content_id: '002',
+              type: ContentType.defi,
+              titre: 'Action à faire',
+              points: 10,
+              is_locked: true,
+              done_at: new Date(0),
+              sont_points_en_poche: false,
+              est_visible: false,
+            },
+          ],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '3',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.mobilite_quotidien,
+          objectifs: [
+            {
+              id: '1',
+              content_id: '14',
+              type: ContentType.article,
+              titre: 'Super article',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+              est_visible: false,
+            },
+            {
+              id: '3',
+              content_id: '003',
+              type: ContentType.defi,
+              titre: 'Action à faire',
+              points: 10,
+              is_locked: true,
+              done_at: null,
+              sont_points_en_poche: false,
+              est_visible: false,
+            },
+          ],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+      ],
+    };
 
-    await TestUtil.create(DB.utilisateur, { id: 'test-id-1', defis: defis_1 });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-1',
+      defis: defis_1,
+      missions: missionsUtilisateur1,
+    });
     await TestUtil.create(DB.utilisateur, {
       id: 'test-id-2',
       email: 'user-email@toto.fr',
       defis: defis_2,
+      missions: missionsUtilisateur2,
     });
 
     // WHEN
@@ -1183,6 +1377,8 @@ describe('Admin (API test)', () => {
       nombre_defis_abandonnes: 2,
       nombre_defis_en_cours: 1,
       nombre_defis_realises: 1,
+      thematiques_en_cours: null,
+      thematiques_terminees: `${ThematiqueUnivers.cereales}, ${ThematiqueUnivers.mobilite_quotidien}`,
     });
     expect(userStatistique2).toEqual({
       utilisateurId: 'test-id-2',
@@ -1190,6 +1386,8 @@ describe('Admin (API test)', () => {
       nombre_defis_abandonnes: 1,
       nombre_defis_en_cours: 0,
       nombre_defis_realises: 1,
+      thematiques_en_cours: `${ThematiqueUnivers.cereales}, ${ThematiqueUnivers.mobilite_quotidien}`,
+      thematiques_terminees: ThematiqueUnivers.gaspillage_alimentaire,
     });
   });
 
@@ -1859,7 +2057,7 @@ describe('Admin (API test)', () => {
               is_locked: false,
               done_at: new Date(),
               sont_points_en_poche: false,
-              est_visible: true
+              est_visible: true,
             },
             {
               id: '3',
@@ -1870,7 +2068,7 @@ describe('Admin (API test)', () => {
               is_locked: true,
               done_at: null,
               sont_points_en_poche: false,
-              est_visible: true
+              est_visible: true,
             },
           ],
           prochaines_thematiques: [],

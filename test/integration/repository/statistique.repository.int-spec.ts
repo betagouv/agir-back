@@ -1,5 +1,6 @@
 import { TestUtil } from '../../TestUtil';
 import { StatistiqueRepository } from '../../../src/infrastructure/repository/statitstique.repository';
+import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
 
 describe('StatistiqueRepository', () => {
   const OLD_ENV = process.env;
@@ -29,6 +30,8 @@ describe('StatistiqueRepository', () => {
       3,
       2,
       1,
+      ThematiqueUnivers.cereales,
+      null,
     );
 
     // THEN
@@ -39,5 +42,9 @@ describe('StatistiqueRepository', () => {
     expect(statistique.nombre_defis_realises).toEqual(3);
     expect(statistique.nombre_defis_abandonnes).toEqual(2);
     expect(statistique.nombre_defis_pas_envie).toEqual(1);
+    expect(statistique.thematiques_en_cours).toBeNull();
+    expect(statistique.thematiques_terminees).toEqual(
+      ThematiqueUnivers.cereales,
+    );
   });
 });
