@@ -15,6 +15,7 @@ export class ObjectifAPI {
   @ApiProperty() titre: string;
   @ApiProperty() content_id: string;
   @ApiProperty() is_locked: boolean;
+  @ApiProperty() is_reco: boolean;
   @ApiProperty() points: number;
   @ApiProperty() done: boolean;
   @ApiProperty() sont_points_en_poche: boolean;
@@ -32,6 +33,7 @@ export class ObjectifAPI {
       type: objectif.type,
       points: objectif.points,
       sont_points_en_poche: objectif.sont_points_en_poche,
+      is_reco: objectif.est_reco,
     };
   }
 }

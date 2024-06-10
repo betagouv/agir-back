@@ -18,7 +18,7 @@ export class Objectif {
   type: ContentType;
   points: number;
   sont_points_en_poche: boolean;
-  est_visible: boolean;
+  est_reco: boolean;
 
   constructor(data: Objectif_v0) {
     this.id = data.id;
@@ -29,7 +29,7 @@ export class Objectif {
     this.is_locked = !!data.is_locked;
     this.done_at = data.done_at;
     this.sont_points_en_poche = !!data.sont_points_en_poche;
-    this.est_visible = !!data.est_visible;
+    this.est_reco = !!data.est_reco;
   }
 
   public isDone?() {
@@ -86,14 +86,14 @@ export class Mission {
             titre: o.titre,
             type: o.type,
             sont_points_en_poche: false,
-            est_visible: true,
+            est_reco: true,
           }),
       ),
     });
   }
 
   public exfiltreObjectifsNonVisibles() {
-    this.objectifs = this.objectifs.filter((o) => o.est_visible);
+    this.objectifs = this.objectifs.filter((o) => o.est_reco);
   }
   public isDone(): boolean {
     return !!this.done_at;
@@ -185,30 +185,36 @@ export class Mission {
       });
     }
   }
-  public unlockDefiIfAllContentDone(
-    utilisateur: Utilisateur,
-    defisDefinitionListe: DefiDefinition[],
-  ) {
+
+  public unlockDefiIfAllContentDone() {
     if (this.isAllContentDone()) {
       this.objectifs.forEach((objectif) => {
         if (objectif.type === ContentType.defi) {
           objectif.is_locked = false;
-
-          const defi = defisDefinitionListe.find(
-            (defi) => defi.content_id === objectif.content_id,
-          );
-
-          if (!defi) {
-            objectif.est_visible = false;
-          } else {
-            objectif.est_visible = utilisateur.kyc_history.areConditionsMatched(
-              defi.conditions,
-            );
-          }
         }
       });
     }
   }
+
+  public recomputeRecoDefi(
+    utilisateur: Utilisateur,
+    defisDefinitionListe: DefiDefinition[],
+  ) {
+    this.objectifs.forEach((objectif) => {
+      const defi = defisDefinitionListe.find(
+        (defi) => defi.content_id === objectif.content_id,
+      );
+
+      if (!defi) {
+        objectif.est_reco = false;
+      } else {
+        objectif.est_reco = utilisateur.kyc_history.areConditionsMatched(
+          defi.conditions,
+        );
+      }
+    });
+  }
+
   public isAllContentDone(): boolean {
     let ready = true;
     this.objectifs.forEach((objectif) => {

@@ -7,6 +7,7 @@ import { Mission, Objectif } from '../../src/domain/mission/mission';
 import { ContentType } from '../../src/domain/contenu/contentType';
 import { QuestionKYC } from '../../src/domain/kyc/questionQYC';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
+import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 
 @Injectable()
 export class MissionUsecase {
@@ -14,6 +15,7 @@ export class MissionUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private missionRepository: MissionRepository,
     private kycRepository: KycRepository,
+    private defiRepository: DefiRepository,
   ) {}
 
   async getMissionOfThematique(
@@ -33,8 +35,6 @@ export class MissionUsecase {
     }
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
-
-    mission_resultat.exfiltreObjectifsNonVisibles();
 
     return mission_resultat;
   }

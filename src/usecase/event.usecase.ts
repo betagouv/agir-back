@@ -156,14 +156,14 @@ export class EventUsecase {
     }
     this.updateUserTodo(utilisateur, ContentType.article, article.thematiques);
 
-    const catalogue_defis = await this.defiRepository.list({});
-
     utilisateur.missions.validateAricleOrQuizzDone(
       event.content_id,
       ContentType.article,
       utilisateur,
-      catalogue_defis,
     );
+
+    const catalogue_defis = await this.defiRepository.list({});
+    utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -184,15 +184,15 @@ export class EventUsecase {
       this.updateUserTodo(utilisateur, ContentType.quizz, quizz.thematiques);
     }
 
-    const catalogue_defis = await this.defiRepository.list({});
-
     utilisateur.missions.validateAricleOrQuizzDone(
       event.content_id,
       ContentType.quizz,
       utilisateur,
-      catalogue_defis,
       event.number_value,
     );
+
+    const catalogue_defis = await this.defiRepository.list({});
+    utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }

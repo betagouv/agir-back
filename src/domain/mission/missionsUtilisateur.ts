@@ -37,7 +37,6 @@ export class MissionsUtilisateur {
     content_id: string,
     type: ContentType,
     utilisateur: Utilisateur,
-    listeDefiDefinition: DefiDefinition[],
     score?: number,
   ) {
     const { mission, objectif } = this.getObjectifByContentId(content_id, type);
@@ -45,12 +44,22 @@ export class MissionsUtilisateur {
     if (objectif && !objectif.isDone()) {
       objectif.done_at = new Date();
       utilisateur.gamification.ajoutePoints(objectif.points);
-      mission.unlockDefiIfAllContentDone(utilisateur, listeDefiDefinition);
+      mission.unlockDefiIfAllContentDone();
+
       // Pour éviter de récolter les points d'un quizz raté ^^
       if (type === ContentType.quizz && score !== 100) {
         objectif.sont_points_en_poche = true;
       }
     }
+  }
+
+  public recomputeRecoDefi(
+    utilisateur: Utilisateur,
+    defisDefinitionListe: DefiDefinition[],
+  ) {
+    this.missions.forEach((mission) => {
+      mission.recomputeRecoDefi(utilisateur, defisDefinitionListe);
+    });
   }
 
   public answerKyc(kycID: string, utilisateur: Utilisateur) {

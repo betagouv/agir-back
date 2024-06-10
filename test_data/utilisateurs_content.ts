@@ -28,7 +28,7 @@ const missions: MissionsUtilisateur_v0 = {
           is_locked: false,
           done_at: null,
           sont_points_en_poche: false,
-          est_visible: true,
+          est_reco: true,
         },
         {
           id: '002',
@@ -39,7 +39,7 @@ const missions: MissionsUtilisateur_v0 = {
           is_locked: false,
           done_at: null,
           sont_points_en_poche: false,
-          est_visible: true,
+          est_reco: true,
         },
         {
           id: '1',
@@ -50,7 +50,7 @@ const missions: MissionsUtilisateur_v0 = {
           is_locked: true,
           done_at: null,
           sont_points_en_poche: false,
-          est_visible: true,
+          est_reco: true,
         },
         {
           id: '2',
@@ -61,7 +61,7 @@ const missions: MissionsUtilisateur_v0 = {
           is_locked: true,
           done_at: null,
           sont_points_en_poche: false,
-          est_visible: true,
+          est_reco: true,
         },
         {
           id: '3',
@@ -72,7 +72,7 @@ const missions: MissionsUtilisateur_v0 = {
           is_locked: true,
           done_at: null,
           sont_points_en_poche: false,
-          est_visible: true,
+          est_reco: true,
         },
       ],
       est_visible: true,

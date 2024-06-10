@@ -13,7 +13,7 @@ export class Objectif_v0 {
   type: ContentType;
   points: number;
   sont_points_en_poche: boolean;
-  est_visible: boolean;
+  est_reco: boolean;
 
   static map(objectif: Objectif): Objectif_v0 {
     return {
@@ -25,7 +25,7 @@ export class Objectif_v0 {
       type: objectif.type,
       points: objectif.points,
       sont_points_en_poche: !!objectif.sont_points_en_poche,
-      est_visible: !!objectif.est_visible,
+      est_reco: !!objectif.est_reco,
     };
   }
 }
