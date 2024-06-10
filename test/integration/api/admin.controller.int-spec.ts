@@ -1730,6 +1730,7 @@ describe('Admin (API test)', () => {
               is_locked: false,
               done_at: new Date(),
               sont_points_en_poche: false,
+              est_visible: true,
             },
             {
               id: '3',
@@ -1740,6 +1741,7 @@ describe('Admin (API test)', () => {
               is_locked: true,
               done_at: new Date(),
               sont_points_en_poche: false,
+              est_visible: true,
             },
           ],
           prochaines_thematiques: [],
@@ -1759,6 +1761,7 @@ describe('Admin (API test)', () => {
               is_locked: false,
               done_at: new Date(),
               sont_points_en_poche: false,
+              est_visible: true,
             },
             {
               id: '3',
@@ -1769,6 +1772,7 @@ describe('Admin (API test)', () => {
               is_locked: true,
               done_at: null,
               sont_points_en_poche: false,
+              est_visible: true,
             },
           ],
           prochaines_thematiques: [],
@@ -1793,6 +1797,7 @@ describe('Admin (API test)', () => {
               is_locked: false,
               done_at: new Date(0),
               sont_points_en_poche: false,
+              est_visible: true,
             },
             {
               id: '3',
@@ -1803,6 +1808,7 @@ describe('Admin (API test)', () => {
               is_locked: true,
               done_at: null,
               sont_points_en_poche: false,
+              est_visible: true,
             },
           ],
           prochaines_thematiques: [],
@@ -1822,6 +1828,7 @@ describe('Admin (API test)', () => {
               is_locked: false,
               done_at: null,
               sont_points_en_poche: false,
+              est_visible: true,
             },
             {
               id: '3',
@@ -1832,6 +1839,7 @@ describe('Admin (API test)', () => {
               is_locked: true,
               done_at: null,
               sont_points_en_poche: false,
+              est_visible: true,
             },
           ],
           prochaines_thematiques: [],
@@ -1851,6 +1859,7 @@ describe('Admin (API test)', () => {
               is_locked: false,
               done_at: new Date(),
               sont_points_en_poche: false,
+              est_visible: true
             },
             {
               id: '3',
@@ -1861,6 +1870,7 @@ describe('Admin (API test)', () => {
               is_locked: true,
               done_at: null,
               sont_points_en_poche: false,
+              est_visible: true
             },
           ],
           prochaines_thematiques: [],

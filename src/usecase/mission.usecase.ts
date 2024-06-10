@@ -22,21 +22,21 @@ export class MissionUsecase {
   ): Promise<Mission> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
-    const mission_courante =
+    let mission_resultat =
       utilisateur.missions.getMissionByThematiqueUnivers(thematique);
 
-    if (mission_courante) {
-      return mission_courante;
+    if (!mission_resultat) {
+      const mission_def = await this.missionRepository.getByThematique(
+        thematique,
+      );
+      mission_resultat = utilisateur.missions.addMission(mission_def);
     }
-
-    const mission_def = await this.missionRepository.getByThematique(
-      thematique,
-    );
-    const new_mission = utilisateur.missions.addMission(mission_def);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    return new_mission;
+    mission_resultat.exfiltreObjectifsNonVisibles();
+
+    return mission_resultat;
   }
 
   async getMissionNextKycID(

@@ -91,6 +91,10 @@ export class Mission {
       ),
     });
   }
+
+  public exfiltreObjectifsNonVisibles() {
+    this.objectifs = this.objectifs.filter((o) => o.est_visible);
+  }
   public isDone(): boolean {
     return !!this.done_at;
   }
