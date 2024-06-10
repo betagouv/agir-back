@@ -3,7 +3,6 @@ import {
   Objectif_v0,
   Mission_v0,
 } from '../object_store/mission/MissionsUtilisateur_v0';
-import { ThematiqueUnivers } from '../univers/thematiqueUnivers';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { MissionDefinition } from './missionDefinition';
 import { v4 as uuidv4 } from 'uuid';
@@ -40,9 +39,9 @@ export class Objectif {
 export class Mission {
   id: string;
   done_at: Date;
-  thematique_univers: ThematiqueUnivers;
+  thematique_univers: string;
   objectifs: Objectif[];
-  prochaines_thematiques: ThematiqueUnivers[];
+  prochaines_thematiques: string[];
   est_visible: boolean;
 
   constructor(data: Mission_v0) {
@@ -137,10 +136,7 @@ export class Mission {
       this.unlockContentIfAllKYCsDone();
     }
   }
-  public validateDefi(
-    defi_id: string,
-    utilisateur: Utilisateur,
-  ): ThematiqueUnivers[] {
+  public validateDefi(defi_id: string, utilisateur: Utilisateur): string[] {
     const objectif = this.findObjectifDefiByID(defi_id);
 
     if (objectif && !objectif.isDone()) {
@@ -151,9 +147,7 @@ export class Mission {
     return [];
   }
 
-  public terminerMissionIfAllDone(
-    utilisateur: Utilisateur,
-  ): ThematiqueUnivers[] {
+  public terminerMissionIfAllDone(utilisateur: Utilisateur): string[] {
     let ready_to_end = true;
     this.objectifs.forEach((objectif) => {
       ready_to_end = ready_to_end && objectif.isDone();

@@ -1,9 +1,6 @@
-import { ThematiqueUnivers } from './thematiqueUnivers';
-import { Univers } from './univers';
-
 export class TuileThematique {
   titre: string;
-  type: ThematiqueUnivers;
+  type: string;
   progression: number;
   cible_progression: number;
   is_locked: boolean;
@@ -11,7 +8,7 @@ export class TuileThematique {
   is_new: boolean;
   niveau: number;
   image_url: string;
-  univers_parent: Univers;
+  univers_parent: string;
   univers_parent_label: string;
 
   constructor(data: TuileThematique) {

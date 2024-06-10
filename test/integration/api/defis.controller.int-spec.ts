@@ -476,8 +476,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(2);
 
-    expect(response.body[0].id).toEqual('001');
-    expect(response.body[1].id).toEqual('003');
+    expect(response.body[0].id).toEqual('003');
+    expect(response.body[1].id).toEqual('001');
   });
   it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur tout confondu en cours ou todo, donc pas le reste (v2)', async () => {
     // GIVEN

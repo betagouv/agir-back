@@ -18,7 +18,6 @@ import { Thematique } from '../../src/domain/contenu/thematique';
 import { App } from '../domain/app';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { Feature } from '../../src/domain/gamification/feature';
-import { Univers } from '../../src/domain/univers/univers';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { Categorie } from '../../src/domain/contenu/categorie';
 import { Personnalisation } from 'src/domain/contenu/personnalisation';
@@ -35,7 +34,7 @@ export class RecommandationUsecase {
 
   async listRecommandationsV2(
     utilisateurId: string,
-    univers?: Univers,
+    univers?: string,
   ): Promise<Recommandation[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
@@ -122,10 +121,7 @@ export class RecommandationUsecase {
     return defis_en_cours.concat(defis_restants, content);
   }
 
-  private getKYC(
-    utilisateur: Utilisateur,
-    univers?: Univers,
-  ): Recommandation[] {
+  private getKYC(utilisateur: Utilisateur, univers?: string): Recommandation[] {
     const kycs = utilisateur.kyc_history.getKYCRestantes(
       Categorie.recommandation,
       univers,
@@ -203,7 +199,7 @@ export class RecommandationUsecase {
 
   private async getArticles(
     utilisateur: Utilisateur,
-    univers?: Univers,
+    univers?: string,
   ): Promise<Recommandation[]> {
     const articles_lus = utilisateur.history.searchArticlesIds({
       est_lu: true,
@@ -232,7 +228,7 @@ export class RecommandationUsecase {
 
   private async getQuizzes(
     utilisateur: Utilisateur,
-    univers?: Univers,
+    univers?: string,
   ): Promise<Recommandation[]> {
     const quizz_attempted = utilisateur.history.listeIdsQuizzAttempted();
 

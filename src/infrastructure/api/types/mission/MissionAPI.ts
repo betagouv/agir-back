@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Mission, Objectif } from '../../../../../src/domain/mission/mission';
 import { ContentType } from '../../../../../src/domain/contenu/contentType';
-import { ThematiqueUnivers } from '../../../../../src/domain/univers/thematiqueUnivers';
-import { Univers } from '../../../../../src/domain/univers/univers';
 import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
 
 export class ProgressionAPI {
@@ -44,9 +42,9 @@ export class MissionAPI {
   @ApiProperty() done_at: Date;
   @ApiProperty() is_new: boolean;
   @ApiProperty() image_url: string;
-  @ApiProperty() thematique_univers: ThematiqueUnivers;
+  @ApiProperty() thematique_univers: string;
   @ApiProperty() thematique_univers_label: string;
-  @ApiProperty() univers: Univers;
+  @ApiProperty() univers: string;
   @ApiProperty() univers_label: string;
   @ApiProperty({ type: ProgressionAPI }) progression: ProgressionAPI;
   @ApiProperty({ type: ProgressionAPI }) progression_kyc: ProgressionAPI;

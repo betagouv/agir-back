@@ -21,8 +21,6 @@ import { DefiDefinition } from '../../src/domain/defis/defiDefinition';
 import { TagUtilisateur } from '../../src/domain/scoring/tagUtilisateur';
 import { Besoin } from '../../src/domain/aides/besoin';
 import { App } from '../../src/domain/app';
-import { ThematiqueUnivers } from '../domain/univers/thematiqueUnivers';
-import { Univers } from '../domain/univers/univers';
 import {
   MissionDefinition,
   ObjectifDefinition,
@@ -369,7 +367,7 @@ export class CMSUsecase {
       cmsWebhookAPI.entry.label,
       this.getImageUrl(cmsWebhookAPI),
       cmsWebhookAPI.entry.univers_parent
-        ? Univers[cmsWebhookAPI.entry.univers_parent.code]
+        ? cmsWebhookAPI.entry.univers_parent.code
         : undefined,
     );
   }
@@ -483,9 +481,9 @@ export class CMSUsecase {
       tags: entry.tags
         ? entry.tags.map((elem) => TagUtilisateur[elem.code])
         : [],
-      universes: entry.univers ? entry.univers.map((u) => Univers[u.code]) : [],
+      universes: entry.univers ? entry.univers.map((u) => u.code) : [],
       thematiques_univers: entry.thematique_univers
-        ? entry.thematique_univers.map((t) => ThematiqueUnivers[t.code])
+        ? entry.thematique_univers.map((u) => u.code)
         : [],
       categorie: Categorie[entry.categorie],
       mois: entry.mois ? entry.mois.split(',').map((m) => parseInt(m)) : [],
@@ -518,7 +516,7 @@ export class CMSUsecase {
       tags: entry.tags
         ? entry.tags.map((elem) => TagUtilisateur[elem.code])
         : [],
-      universes: entry.univers ? entry.univers.map((u) => Univers[u.code]) : [],
+      universes: entry.univers ? entry.univers.map((u) => u.code) : [],
     };
   }
 
@@ -528,10 +526,9 @@ export class CMSUsecase {
       est_visible: entry.est_visible,
       prochaines_thematiques:
         entry.prochaines_thematiques.length > 0
-          ? entry.prochaines_thematiques.map((t) => ThematiqueUnivers[t.code])
+          ? entry.prochaines_thematiques.map((t) => t.code)
           : [],
-      thematique_univers:
-        ThematiqueUnivers[entry.thematique_univers_unique.code],
+      thematique_univers: entry.thematique_univers_unique.code,
       objectifs:
         entry.objectifs.length > 0
           ? entry.objectifs.map((obj) => {
@@ -663,12 +660,12 @@ export class CMSUsecase {
       ),
       universes:
         entry.attributes.univers.data.length > 0
-          ? entry.attributes.univers.data.map((u) => Univers[u.attributes.code])
+          ? entry.attributes.univers.data.map((u) => u.attributes.code)
           : [],
       thematiques_univers:
         entry.attributes.thematique_univers.data.length > 0
           ? entry.attributes.thematique_univers.data.map(
-              (t) => ThematiqueUnivers[t.attributes.code],
+              (t) => t.attributes.code,
             )
           : [],
       categorie: Categorie[entry.attributes.categorie],
@@ -711,7 +708,7 @@ export class CMSUsecase {
       ),
       universes:
         entry.attributes.univers.data.length > 0
-          ? entry.attributes.univers.data.map((u) => Univers[u.attributes.code])
+          ? entry.attributes.univers.data.map((u) => u.attributes.code)
           : [],
     };
   }
@@ -725,13 +722,11 @@ export class CMSUsecase {
       prochaines_thematiques:
         entry.attributes.prochaines_thematiques.data.length > 0
           ? entry.attributes.prochaines_thematiques.data.map(
-              (t) => ThematiqueUnivers[t.attributes.code],
+              (t) => t.attributes.code,
             )
           : [],
       thematique_univers: entry.attributes.thematique_univers_unique.data
-        ? ThematiqueUnivers[
-            entry.attributes.thematique_univers_unique.data.attributes.code
-          ]
+        ? entry.attributes.thematique_univers_unique.data.attributes.code
         : null,
       objectifs:
         entry.attributes.objectifs.length > 0

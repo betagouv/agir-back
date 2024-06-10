@@ -2,8 +2,6 @@ import { ThematiqueRepository } from '../../../src/infrastructure/repository/the
 import { ContentType } from '../contenu/contentType';
 import { DefiDefinition } from '../defis/defiDefinition';
 import { MissionsUtilisateur_v0 } from '../object_store/mission/MissionsUtilisateur_v0';
-import { ThematiqueUnivers } from '../univers/thematiqueUnivers';
-import { Univers } from '../univers/univers';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { Mission, Objectif } from './mission';
 import { MissionDefinition } from './missionDefinition';
@@ -20,7 +18,7 @@ export class MissionsUtilisateur {
     }
   }
 
-  public getMissionByThematiqueUnivers(them: ThematiqueUnivers): Mission {
+  public getMissionByThematiqueUnivers(them: string): Mission {
     return this.missions.find((m) => m.thematique_univers === them);
   }
   public getMissionById(missionId: string): Mission {
@@ -68,10 +66,7 @@ export class MissionsUtilisateur {
     });
   }
 
-  public validateDefi(
-    defi_id: string,
-    utilisateur: Utilisateur,
-  ): ThematiqueUnivers[] {
+  public validateDefi(defi_id: string, utilisateur: Utilisateur): string[] {
     let unlocked_thematiques = [];
     this.missions.forEach((mission) => {
       const thematiqueU = mission.validateDefi(defi_id, utilisateur);
@@ -103,7 +98,7 @@ export class MissionsUtilisateur {
     }
   }
 
-  public getAllUnlockedDefisIdsByUnivers(univers: Univers): string[] {
+  public getAllUnlockedDefisIdsByUnivers(univers: string): string[] {
     let result: string[] = [];
     for (const mission of this.missions) {
       const univers_mission = ThematiqueRepository.getUniversParent(

@@ -6,7 +6,6 @@ import {
   CelebrationType,
 } from '../../../../src/domain/gamification/celebrations/celebration';
 import { Reveal } from '../../../../src/domain/gamification/celebrations/reveal';
-import { ThematiqueUnivers } from '../../../../src/domain/univers/thematiqueUnivers';
 
 export class Reveal_v0 {
   id: string;
@@ -30,8 +29,8 @@ export class Celebration_v0 {
   titre: string;
   reveal?: Reveal_v0;
   new_niveau?: number;
-  new_thematiques?: ThematiqueUnivers[];
-  thematique_univers?: ThematiqueUnivers;
+  new_thematiques?: string[];
+  thematique_univers?: string;
 
   static map(elem: Celebration): Celebration_v0 {
     return {

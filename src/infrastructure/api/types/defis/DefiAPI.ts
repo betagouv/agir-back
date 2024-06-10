@@ -1,10 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Univers } from '../../../../../src/domain/univers/univers';
 import { Thematique } from '../../../../../src/domain/contenu/thematique';
 import { Defi, DefiStatus } from '../../../../../src/domain/defis/defi';
 import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
 import { DefiStatistique } from '../../../../../src/domain/defis/defiStatistique';
-import { Personnalisation } from 'src/domain/contenu/personnalisation';
 
 export class PatchDefiStatusAPI {
   @ApiProperty({ enum: DefiStatus }) status: DefiStatus;
@@ -23,8 +21,7 @@ export class DefiAPI {
   @ApiProperty() thematique_label: string;
   @ApiProperty({ enum: DefiStatus }) status: DefiStatus;
   @ApiProperty() jours_restants: number;
-  @ApiProperty({ enum: Univers, enumName: 'Univers', isArray: true })
-  universes: Univers[];
+  @ApiProperty() universes: string[];
   @ApiProperty() nombre_de_fois_realise: number;
 
   public static mapToAPI(

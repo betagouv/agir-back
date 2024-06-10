@@ -2,7 +2,6 @@ import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Categorie } from '../contenu/categorie';
 import { ConditionDefi } from '../defis/defiDefinition';
 import { KYCHistory_v0 as KYCHistory_v0 } from '../object_store/kyc/kycHistory_v0';
-import { Univers } from '../univers/univers';
 import { KycDefinition } from './kycDefinition';
 import { QuestionKYC, TypeReponseQuestionKYC } from './questionQYC';
 
@@ -41,7 +40,7 @@ export class KYCHistory {
 
   public getKYCRestantes(
     categorie?: Categorie,
-    univers?: Univers,
+    univers?: string,
   ): QuestionKYC[] {
     let kycs_all = this.getAllKYCByCategorie(categorie);
     this.answered_questions.forEach((question) => {

@@ -16,6 +16,7 @@ export type QuizzFilter = {
   asc_difficulty?: boolean;
   categorie?: Categorie;
   date?: Date;
+  // FIXME : add univers filter
 };
 
 @Injectable()

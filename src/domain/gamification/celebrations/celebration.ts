@@ -1,7 +1,6 @@
 import { Celebration_v0 } from '../../../../src/domain/object_store/gamification/gamification_v0';
 import { v4 as uuidv4 } from 'uuid';
 import { Reveal } from './reveal';
-import { ThematiqueUnivers } from '../../../../src/domain/univers/thematiqueUnivers';
 
 export enum CelebrationType {
   niveau = 'niveau',
@@ -15,8 +14,8 @@ export class Celebration {
   titre: string;
   reveal?: Reveal;
   new_niveau?: number;
-  new_thematiques?: ThematiqueUnivers[];
-  thematique_univers?: ThematiqueUnivers;
+  new_thematiques?: string[];
+  thematique_univers?: string;
 
   constructor(data: Celebration_v0) {
     this.id = data.id ? data.id : uuidv4();

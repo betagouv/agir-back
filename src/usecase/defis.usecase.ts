@@ -3,10 +3,9 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { Defi, DefiStatus } from '../../src/domain/defis/defi';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
-import { Univers } from '../../src/domain/univers/univers';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
-import { ThematiqueUnivers } from '../../src/domain/univers/thematiqueUnivers';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
+import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
 
 @Injectable()
 export class DefisUsecase {
@@ -18,7 +17,7 @@ export class DefisUsecase {
 
   async getDefisOfUnivers(
     utilisateurId: string,
-    univers: Univers,
+    univers: string,
   ): Promise<Defi[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
@@ -41,7 +40,7 @@ export class DefisUsecase {
 
   private async getDefisOfUniversAndUtilisateur(
     utilisateur: Utilisateur,
-    univers: Univers,
+    univers: string,
   ): Promise<Defi[]> {
     const list_defi_ids =
       utilisateur.missions.getAllUnlockedDefisIdsByUnivers(univers);
@@ -62,7 +61,9 @@ export class DefisUsecase {
 
     let result: Defi[] = [];
 
-    for (const univers of Object.values(Univers)) {
+    const univers_liste = ThematiqueRepository.getAllUnivers();
+
+    for (const univers of univers_liste) {
       const defis_univers = await this.getDefisOfUniversAndUtilisateur(
         utilisateur,
         univers,
@@ -83,7 +84,7 @@ export class DefisUsecase {
   async getALLUserDefi(
     utilisateurId: string,
     filtre_status: DefiStatus[],
-    univers: Univers,
+    univers: string,
     accessible: boolean,
   ): Promise<Defi[]> {
     let result: Defi[] = [];
@@ -157,7 +158,7 @@ export class DefisUsecase {
   }
 
   private async unlockThematiques(
-    unlocked_thematiques: ThematiqueUnivers[],
+    unlocked_thematiques: string[],
     utilisateur: Utilisateur,
   ) {
     for (const thematiqueU of unlocked_thematiques) {

@@ -4,8 +4,6 @@ import { Defi, Defi as DefiDB } from '@prisma/client';
 import { Thematique } from '../../domain/contenu/thematique';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { DefiDefinition } from '../../../src/domain/defis/defiDefinition';
-import { TuileThematique } from '../../domain/univers/tuileThematique';
-import { Univers } from '../../../src/domain/univers/univers';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 
 export type DefiFilter = {
@@ -93,10 +91,8 @@ export class DefiRepository {
       thematique: Thematique[defiDB.thematique],
       astuces: defiDB.astuces,
       pourquoi: defiDB.pourquoi,
-      universes: defiDB.universes.map((u) => Univers[u]),
-      thematiques_univers: defiDB.thematiquesUnivers.map(
-        (t) => TuileThematique[t],
-      ),
+      universes: defiDB.universes,
+      thematiques_univers: defiDB.thematiquesUnivers,
       categorie: Categorie[defiDB.categorie],
       mois: defiDB.mois,
       conditions: defiDB.conditions as any,

@@ -2,7 +2,6 @@ import { Versioned } from '../versioned';
 import { ContentType } from '../../contenu/contentType';
 import { Mission, Objectif } from '../../../../src/domain/mission/mission';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
-import { ThematiqueUnivers } from '../../../../src/domain/univers/thematiqueUnivers';
 
 export class Objectif_v0 {
   id: string;
@@ -33,9 +32,9 @@ export class Objectif_v0 {
 export class Mission_v0 {
   id: string;
   done_at: Date;
-  thematique_univers: ThematiqueUnivers;
+  thematique_univers: string;
   objectifs: Objectif[];
-  prochaines_thematiques: ThematiqueUnivers[];
+  prochaines_thematiques: string[];
   est_visible: boolean;
 
   static map(mission: Mission): Mission_v0 {
@@ -47,7 +46,7 @@ export class Mission_v0 {
         ? mission.objectifs.map((m) => Objectif_v0.map(m))
         : [],
       prochaines_thematiques: mission.prochaines_thematiques
-        ? mission.prochaines_thematiques.map((m) => ThematiqueUnivers[m])
+        ? mission.prochaines_thematiques
         : [],
       est_visible: !!mission.est_visible,
     };

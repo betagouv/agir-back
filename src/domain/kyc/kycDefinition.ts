@@ -1,7 +1,6 @@
 import { Categorie } from '../contenu/categorie';
 import { Thematique } from '../contenu/thematique';
 import { Tag } from '../scoring/tag';
-import { Univers } from '../univers/univers';
 import { TypeReponseQuestionKYC } from './questionQYC';
 
 export class KycDefinition {
@@ -15,7 +14,7 @@ export class KycDefinition {
   reponses?: { label: string; code: string }[];
   thematique: Thematique;
   tags: Tag[];
-  universes: Univers[];
+  universes: string[];
 
   constructor(data: KycDefinition) {
     this.id_cms = data.id_cms;

@@ -3,7 +3,6 @@ import { Thematique } from '../../contenu/thematique';
 import { Tag } from '../../scoring/tag';
 import { Defi, DefiStatus } from '../../../../src/domain/defis/defi';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
-import { Univers } from '../../../../src/domain/univers/univers';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { ConditionDefi } from '../../../../src/domain/defis/defiDefinition';
 
@@ -18,7 +17,7 @@ export class Defi_v0 {
   status: DefiStatus;
   tags: Tag[];
   date_acceptation: Date;
-  universes: Univers[];
+  universes: string[];
   accessible: boolean;
   motif: string;
   categorie: Categorie;

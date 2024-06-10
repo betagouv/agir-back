@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Mission } from '@prisma/client';
 import { MissionDefinition } from '../../../src/domain/mission/missionDefinition';
-import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
 
 @Injectable()
 export class MissionRepository {
@@ -34,9 +33,7 @@ export class MissionRepository {
     });
   }
 
-  async getByThematique(
-    thematiqueUnivers: ThematiqueUnivers,
-  ): Promise<MissionDefinition> {
+  async getByThematique(thematiqueUnivers: string): Promise<MissionDefinition> {
     const result = await this.prisma.mission.findUnique({
       where: { thematique_univers: thematiqueUnivers },
     });
@@ -53,10 +50,8 @@ export class MissionRepository {
     return new MissionDefinition({
       id_cms: missionDB.id_cms,
       est_visible: missionDB.est_visible,
-      prochaines_thematiques: missionDB.prochaines_thematiques.map(
-        (t) => ThematiqueUnivers[t],
-      ),
-      thematique_univers: ThematiqueUnivers[missionDB.thematique_univers],
+      prochaines_thematiques: missionDB.prochaines_thematiques,
+      thematique_univers: missionDB.thematique_univers,
       objectifs: missionDB.objectifs as any,
     });
   }

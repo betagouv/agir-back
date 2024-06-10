@@ -3,7 +3,6 @@ import { UtilisateurRepository } from '../../src/infrastructure/repository/utili
 import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
 import { TuileThematique } from '../domain/univers/tuileThematique';
 import { TuileUnivers } from '../domain/univers/tuileUnivers';
-import { Univers } from '../domain/univers/univers';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
 
 @Injectable()
@@ -13,13 +12,13 @@ export class UniversUsecase {
     private missionRepository: MissionRepository,
   ) {}
 
-  async getALLOfUser(utilisateurId: string): Promise<TuileUnivers[]> {
+  async getALL(): Promise<TuileUnivers[]> {
     return ThematiqueRepository.getAllTuileUnivers();
   }
 
   async getThematiquesOfUnivers(
     utilisateurId: string,
-    univers: Univers,
+    univers: string,
   ): Promise<TuileThematique[]> {
     // FIXME : refacto , code tout moche en dessous
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ThematiqueUnivers } from '../../src/domain/univers/thematiqueUnivers';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
@@ -7,7 +6,6 @@ import { Mission, Objectif } from '../../src/domain/mission/mission';
 import { ContentType } from '../../src/domain/contenu/contentType';
 import { QuestionKYC } from '../../src/domain/kyc/questionQYC';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
-import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 
 @Injectable()
 export class MissionUsecase {
@@ -15,12 +13,11 @@ export class MissionUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private missionRepository: MissionRepository,
     private kycRepository: KycRepository,
-    private defiRepository: DefiRepository,
   ) {}
 
   async getMissionOfThematique(
     utilisateurId: string,
-    thematique: ThematiqueUnivers,
+    thematique: string,
   ): Promise<Mission> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
@@ -41,7 +38,7 @@ export class MissionUsecase {
 
   async getMissionNextKycID(
     utilisateurId: string,
-    thematique: ThematiqueUnivers,
+    thematique: string,
   ): Promise<string> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
@@ -87,7 +84,7 @@ export class MissionUsecase {
 
   async getMissionKYCs(
     utilisateurId: string,
-    thematique: ThematiqueUnivers,
+    thematique: string,
   ): Promise<QuestionKYC[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 

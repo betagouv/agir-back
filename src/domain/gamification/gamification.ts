@@ -1,5 +1,4 @@
 import { Gamification_v0 } from '../object_store/gamification/gamification_v0';
-import { ThematiqueUnivers } from '../univers/thematiqueUnivers';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { Celebration, CelebrationType } from './celebrations/celebration';
 import { Reveal } from './celebrations/reveal';
@@ -64,8 +63,8 @@ export class Gamification {
   }
 
   public celebrerFinMission(
-    mission: ThematiqueUnivers,
-    new_thematiques: ThematiqueUnivers[],
+    thematique_univers: string,
+    new_thematiques: string[],
   ) {
     this.celebrations.push(
       new Celebration({
@@ -73,7 +72,7 @@ export class Gamification {
         titre: `FIN DE MISSION !`,
         type: CelebrationType.fin_thematique,
         new_thematiques: new_thematiques,
-        thematique_univers: mission,
+        thematique_univers: thematique_univers,
       }),
     );
   }

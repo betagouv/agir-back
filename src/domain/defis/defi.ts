@@ -1,10 +1,9 @@
 import { Categorie } from '../contenu/categorie';
-import { CLE_PERSO, Personnalisation } from '../contenu/personnalisation';
+import { Personnalisation } from '../contenu/personnalisation';
 import { Thematique } from '../contenu/thematique';
 import { Defi_v0 } from '../object_store/defi/defiHistory_v0';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
-import { Univers } from '../univers/univers';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { ConditionDefi } from './defiDefinition';
 
@@ -32,7 +31,7 @@ export class Defi implements TaggedContent {
   private status: DefiStatus;
   date_acceptation: Date;
   score: number;
-  universes: Univers[];
+  universes: string[];
   accessible: boolean;
   motif: string;
   categorie: Categorie;

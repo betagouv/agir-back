@@ -1,8 +1,6 @@
 import { Categorie } from '../contenu/categorie';
 import { Thematique } from '../contenu/thematique';
 import { Tag } from '../scoring/tag';
-import { ThematiqueUnivers } from '../univers/thematiqueUnivers';
-import { Univers } from '../univers/univers';
 
 export class ConditionDefi {
   code_kyc: string;
@@ -18,8 +16,8 @@ export class DefiDefinition {
   astuces: string;
   thematique: Thematique;
   tags: Tag[];
-  universes: Univers[];
-  thematiques_univers: ThematiqueUnivers[];
+  universes: string[];
+  thematiques_univers: string[];
   categorie: Categorie;
   mois: number[];
   conditions: ConditionDefi[][];

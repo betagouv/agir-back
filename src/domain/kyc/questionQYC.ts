@@ -3,7 +3,6 @@ import { Thematique } from '../contenu/thematique';
 import { QuestionKYC_v0 } from '../object_store/kyc/kycHistory_v0';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
-import { Univers } from '../univers/univers';
 import { KycDefinition } from './kycDefinition';
 
 export enum TypeReponseQuestionKYC {
@@ -38,7 +37,7 @@ export class QuestionKYC implements TaggedContent {
   ngc_key?: string;
   tags: Tag[];
   score: number;
-  universes: Univers[];
+  universes: string[];
 
   constructor(data?: QuestionKYC_v0) {
     if (!data) return;
