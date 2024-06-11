@@ -368,6 +368,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.nom).toEqual('nom');
     expect(response.body.prenom).toEqual('prenom');
+    expect(response.body.annee_naissance).toEqual(1979);
     expect(response.body.email).toEqual('yo@truc.com');
     expect(response.body.code_postal).toEqual('91120');
     expect(response.body.commune).toEqual('PALAISEAU');
@@ -468,6 +469,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       email: 'george@paris.com',
       nom: 'THE NOM',
       prenom: 'THE PRENOM',
+      annee_naissance: 1234,
       mot_de_passe: '123456789012#aA',
       revenu_fiscal: 12345,
       nombre_de_parts_fiscales: 3,
@@ -483,6 +485,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.status).toBe(200);
     expect(dbUser.nom).toEqual('THE NOM');
     expect(dbUser.prenom).toEqual('THE PRENOM');
+    expect(dbUser.annee_naissance).toEqual(1234);
     expect(dbUser.email).toEqual('george@paris.com');
     expect(dbUser.revenu_fiscal).toEqual(12345);
     expect(dbUser.parts.toNumber()).toEqual(3);

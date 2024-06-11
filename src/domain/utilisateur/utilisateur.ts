@@ -25,6 +25,7 @@ export class UtilisateurData {
   email: string;
   nom: string;
   prenom: string;
+  annee_naissance: number;
   onboardingData: Onboarding;
   onboardingResult: OnboardingResult;
   revenu_fiscal: number;
@@ -86,6 +87,7 @@ export class Utilisateur extends UtilisateurData {
     nom: string,
     prenom: string,
     email: string,
+    annee_naissance: number,
     onboarding: Onboarding,
   ): Utilisateur {
     return new Utilisateur({
@@ -127,6 +129,7 @@ export class Utilisateur extends UtilisateurData {
       force_connexion: false,
       derniere_activite: new Date(),
       missions: new MissionsUtilisateur(),
+      annee_naissance: annee_naissance,
     });
   }
 

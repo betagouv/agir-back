@@ -137,6 +137,7 @@ export class UtilisateurUsecase {
     utilisateur.email = profile.email;
     utilisateur.nom = profile.nom;
     utilisateur.prenom = profile.prenom;
+    utilisateur.annee_naissance = profile.annee_naissance;
 
     return this.utilisateurRepository.updateUtilisateur(utilisateur);
   }

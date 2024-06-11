@@ -198,6 +198,7 @@ describe('Objet Utilisateur', () => {
       'A',
       'B',
       'w@w.com',
+      1234,
       new Onboarding({
         version: 0,
         transports: [TransportQuotidien.velo, TransportQuotidien.voiture],

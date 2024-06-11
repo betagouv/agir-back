@@ -8,6 +8,8 @@ export class CreateUtilisateurAPI {
   prenom?: string;
   @ApiProperty()
   email: string;
+  @ApiProperty()
+  annee_naissance: number;
   @ApiProperty({ required: false })
   mot_de_passe?: string;
   @ApiProperty({ type: OnboardingDataAPI })

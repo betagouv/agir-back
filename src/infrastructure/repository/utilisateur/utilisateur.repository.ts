@@ -326,6 +326,7 @@ export class UtilisateurRepository {
         force_connexion: user.force_connexion,
         derniere_activite: user.derniere_activite,
         missions: missions,
+        annee_naissance: user.annee_naissance,
       });
     }
     return null;
@@ -405,6 +406,7 @@ export class UtilisateurRepository {
       ),
       force_connexion: user.force_connexion,
       derniere_activite: user.derniere_activite,
+      annee_naissance: user.annee_naissance,
       created_at: undefined,
       updated_at: undefined,
     };

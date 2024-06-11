@@ -104,6 +104,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
+      annee_naissance: 1979,
       onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
     // THEN
@@ -112,6 +113,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(response.status).toBe(201);
     expect(user.nom).toEqual('WW');
     expect(user.prenom).toEqual('Wojtek');
+    expect(user.annee_naissance).toEqual(1979);
     expect(user.email).toEqual('w@w.com');
     expect(user.passwordHash.length).toBeGreaterThan(20);
     expect(user.passwordSalt.length).toBeGreaterThan(20);

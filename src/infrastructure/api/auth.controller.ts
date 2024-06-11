@@ -51,6 +51,7 @@ export class AuthController {
         nom: user_data.family_name,
         prenom: 'UNDEFINED',
         email: user_data.email,
+        annee_naissance: 1900,
         onboardingData: {} as any,
       });
     }

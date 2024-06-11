@@ -579,6 +579,7 @@ export class TestUtil {
       id: 'utilisateur-id',
       nom: 'nom',
       prenom: 'prenom',
+      annee_naissance: 1979,
       passwordHash: 'hash',
       passwordSalt: 'salt',
       email: 'yo@truc.com',

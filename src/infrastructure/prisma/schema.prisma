@@ -36,6 +36,7 @@ model Utilisateur {
   email                    String?            @unique
   nom                      String             @default("nom")
   prenom                   String?            @default("prenom")
+  annee_naissance          Int?
   passwordHash             String?            @default("hash")
   passwordSalt             String?            @default("salt")
   revenu_fiscal            Int?
@@ -141,7 +142,6 @@ model ThematiqueStatistique {
   created_at                   DateTime @default(now()) @db.Timestamptz(3)
   updated_at                   DateTime @updatedAt @db.Timestamptz(3)
 }
-
 
 model LinkyConsentement {
   id                    String   @id
