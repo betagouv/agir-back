@@ -4,8 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { Thematique } from '../../domain/contenu/thematique';
 import { App } from '../../../src/domain/app';
 import { TuileUnivers } from '../../domain/univers/tuileUnivers';
-import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
 import { TuileThematique } from '../../../src/domain/univers/tuileThematique';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class ThematiqueRepository {
@@ -18,12 +18,18 @@ export class ThematiqueRepository {
     ThematiqueRepository.univers = new Map();
     ThematiqueRepository.thematiquesUnivers = new Map();
   }
-
   async onApplicationBootstrap(): Promise<void> {
     if (!App.isFirstStart()) {
       await this.loadThematiques();
       await this.loadUnivers();
       await this.loadThematiqueUnivers();
+    }
+  }
+
+  @Cron('* * * * *')
+  async loadCachedData(): Promise<void> {
+    if (!App.areCachedUnivers()) {
+      await this.onApplicationBootstrap();
     }
   }
 

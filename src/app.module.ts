@@ -105,6 +105,7 @@ import { FileAttenteRepository } from './infrastructure/repository/fileAttente.r
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ThematiqueStatistiqueUsecase } from './usecase/thematiqueStatistique.usecase';
 import { ThematiqueStatistiqueRepository } from './infrastructure/repository/thematiqueStatistique.repository';
+import { ScheduleModule } from '@nestjs/schedule';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -144,6 +145,7 @@ function getControllers(): any[] {
 }
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ThrottlerModule.forRoot([
       {
         ttl: 1000 * 60 * 60 * 24,
