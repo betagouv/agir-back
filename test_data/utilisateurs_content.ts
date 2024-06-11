@@ -318,7 +318,7 @@ const utilisateurs = {
     parts: null,
     version: 6,
     gamification: {
-      points: 10,
+      points: 0,
     },
     suivis: [],
     services: [],
@@ -361,7 +361,7 @@ const utilisateurs = {
     parts: null,
     version: 6,
     gamification: {
-      points: 10,
+      points: 0,
     },
     suivis: [],
     services: [],
@@ -377,7 +377,7 @@ const utilisateurs = {
     parts: null,
     version: 6,
     gamification: {
-      points: 10,
+      points: 0,
     },
     suivis: [],
     services: [],
@@ -393,7 +393,7 @@ const utilisateurs = {
     parts: null,
     version: 6,
     gamification: {
-      points: 10,
+      points: 0,
     },
     suivis: [],
     services: [],
@@ -409,7 +409,7 @@ const utilisateurs = {
     parts: null,
     version: 6,
     gamification: {
-      points: 10,
+      points: 0,
     },
     suivis: [],
     services: [],
@@ -425,7 +425,7 @@ const utilisateurs = {
     parts: null,
     version: 6,
     gamification: {
-      points: 10,
+      points: 0,
     },
     suivis: [],
     services: [],
@@ -441,7 +441,7 @@ const utilisateurs = {
     parts: null,
     version: 6,
     gamification: {
-      points: 10,
+      points: 0,
     },
     suivis: [],
     services: [],
@@ -457,7 +457,7 @@ const utilisateurs = {
     parts: null,
     version: 6,
     gamification: {
-      points: 10,
+      points: 0,
     },
     suivis: [],
     services: [],
