@@ -18,10 +18,13 @@ import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import { Univers } from '../../../src/domain/univers/univers';
+import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 
 describe('/utilisateurs/id/questionsKYC (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
+  const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
 
   const missions_with_kyc: MissionsUtilisateur_v0 = {
     version: 0,
@@ -298,6 +301,122 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(
       userDB.missions.missions[0].objectifs[0].done_at.getTime(),
     ).toBeGreaterThan(Date.now() - 100);
+  });
+
+  it(`PUT /utilisateurs/id/questionsKYC/1 - un defi deviens non recommandé suite à maj de KYC`, async () => {
+    // GIVEN
+    const missions_article_plus_defi: MissionsUtilisateur_v0 = {
+      version: 0,
+      missions: [
+        {
+          id: '1',
+          done_at: new Date(1),
+          thematique_univers: ThematiqueUnivers.cereales,
+          objectifs: [
+            {
+              id: '0',
+              content_id: '1',
+              type: ContentType.article,
+              titre: '1 article',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+            {
+              id: '1',
+              content_id: '1',
+              type: ContentType.defi,
+              titre: '1 défi',
+              points: 10,
+              is_locked: false,
+              done_at: null,
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+          ],
+          prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
+          est_visible: true,
+        },
+      ],
+    };
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [
+        {
+          id: '1',
+          question: `question`,
+          type: TypeReponseQuestionKYC.choix_unique,
+          is_NGC: false,
+          categorie: Categorie.mission,
+          points: 10,
+          universes: [],
+          thematique: Thematique.climat,
+          reponses: [{ label: 'YI', code: 'yi' }],
+          reponses_possibles: [
+            { label: 'YI', code: 'yi' },
+            { label: 'YO', code: 'yos' },
+          ],
+          tags: [],
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_article_plus_defi,
+      kyc: kyc,
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: '1',
+      question: `question`,
+      reponses: [
+        { label: 'YI', code: 'yi' },
+        { label: 'YO', code: 'yos' },
+      ],
+    });
+
+    await TestUtil.create(DB.article, { content_id: '1' });
+    await TestUtil.create(DB.defi, {
+      content_id: '1',
+      conditions: [[{ code_kyc: '1', code_reponse: 'yi' }]],
+    });
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Mange de la graine',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+
+    // WHEN
+    let response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/1',
+    ).send({ reponse: ['YO'] });
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    let userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
+    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
+    expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(false);
+    // WHEN
+    response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/1',
+    ).send({ reponse: ['YI'] });
+
+    // THEN
+    expect(response.status).toBe(200);
+    userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
+    expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(true);
   });
   it('PUT /utilisateurs/id/questionsKYC/1 - met à jour la reponse à la question 1', async () => {
     // GIVEN
