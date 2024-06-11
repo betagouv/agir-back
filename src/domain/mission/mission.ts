@@ -240,11 +240,8 @@ export class Mission {
   }
 
   public getUnlockedDefisIds(): string[] {
-    if (this.isAllContentDone()) {
-      const defi_objectifs = this.findAllDefis();
-      return defi_objectifs.map((d) => d.content_id);
-    }
-    return [];
+    const defi_objectifs = this.findAllDefis();
+    return defi_objectifs.filter((d) => !d.is_locked).map((d) => d.content_id);
   }
 
   public getAllKYCs() {

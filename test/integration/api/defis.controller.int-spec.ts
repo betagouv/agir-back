@@ -73,7 +73,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
             type: ContentType.defi,
             titre: 'Action à faire',
             points: 10,
-            is_locked: true,
+            is_locked: false,
             done_at: null,
             sont_points_en_poche: false,
             est_reco: true,
@@ -135,7 +135,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
             type: ContentType.defi,
             titre: 'Action à faire',
             points: 10,
-            is_locked: true,
+            is_locked: false,
             done_at: null,
             sont_points_en_poche: false,
             est_reco: true,
@@ -263,20 +263,58 @@ describe('/utilisateurs/id/defis (API test)', () => {
       ],
     };
 
-    await TestUtil.create(DB.univers, {
-      id_cms: 1,
-      code: Univers.climat,
-      label: 'Climat',
-    });
+    const missions_defi_seul: MissionsUtilisateur_v0 = {
+      version: 0,
+      missions: [
+        {
+          id: '1',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.cereales,
+          objectifs: [
+            {
+              id: '0',
+              content_id: '001',
+              type: ContentType.defi,
+              titre: '1 defi',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+            {
+              id: '1',
+              content_id: '002',
+              type: ContentType.defi,
+              titre: '1 defi',
+              points: 10,
+              is_locked: false,
+              done_at: null,
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+            {
+              id: '2',
+              content_id: '003',
+              type: ContentType.defi,
+              titre: '1 defi',
+              points: 10,
+              is_locked: true,
+              done_at: null,
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+          ],
+          prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
+          est_visible: true,
+        },
+      ],
+    };
+
     await TestUtil.create(DB.univers, {
       id_cms: 2,
       code: Univers.alimentation,
       label: 'Alimentation',
-    });
-    await TestUtil.create(DB.univers, {
-      id_cms: 3,
-      code: Univers.transport,
-      label: 'Transport',
     });
     await TestUtil.create(DB.thematiqueUnivers, {
       id_cms: 1,
@@ -285,28 +323,12 @@ describe('/utilisateurs/id/defis (API test)', () => {
       label: 'Cereales',
       image_url: 'aaaa',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 2,
-      code: ThematiqueUnivers.mobilite_quotidien,
-      univers_parent: Univers.transport,
-      label: 'dechets compost',
-      image_url: 'aaaa',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 3,
-      code: ThematiqueUnivers.gaspillage_alimentaire,
-      univers_parent: Univers.alimentation,
-      label: 'gaspillage alimentaire',
-      image_url: 'aaaa',
-    });
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.utilisateur, {
       defis: defis,
-      missions: missions,
+      missions: missions_defi_seul,
     });
-    await TestUtil.create(DB.article, { content_id: '12' });
-    await TestUtil.create(DB.article, { content_id: '13' });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -315,7 +337,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(1);
+    expect(response.body.length).toBe(2);
 
     const defi: DefiAPI = response.body[0];
 
@@ -323,6 +345,53 @@ describe('/utilisateurs/id/defis (API test)', () => {
   });
   it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur par univers, sauf si fait', async () => {
     // GIVEN
+    const missions_defi_seul: MissionsUtilisateur_v0 = {
+      version: 0,
+      missions: [
+        {
+          id: '1',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.cereales,
+          objectifs: [
+            {
+              id: '0',
+              content_id: '001',
+              type: ContentType.defi,
+              titre: '1 defi',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+            {
+              id: '1',
+              content_id: '002',
+              type: ContentType.defi,
+              titre: '1 defi',
+              points: 10,
+              is_locked: false,
+              done_at: null,
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+            {
+              id: '2',
+              content_id: '003',
+              type: ContentType.defi,
+              titre: '1 defi',
+              points: 10,
+              is_locked: false,
+              done_at: null,
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+          ],
+          prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
+          est_visible: true,
+        },
+      ],
+    };
     const defis: DefiHistory_v0 = {
       version: 0,
       defis: [
@@ -398,7 +467,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(0);
   });
-  it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur tout confondu (v2)', async () => {
+  it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur tout confondu (v2), pas les défis locked', async () => {
     // GIVEN
     const defis: DefiHistory_v0 = {
       version: 0,
