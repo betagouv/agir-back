@@ -43,7 +43,7 @@ describe('Mission (API test)', () => {
             id: '1',
             content_id: '13',
             type: ContentType.article,
-            titre: 'Super article',
+            titre: 'Super article {COMMUNE}',
             points: 10,
             is_locked: true,
             done_at: new Date(0),
@@ -365,7 +365,7 @@ describe('Mission (API test)', () => {
     expect(objectif.id).toEqual('1');
     expect(objectif.content_id).toEqual('13');
     expect(objectif.type).toEqual(ContentType.article);
-    expect(objectif.titre).toEqual('Super article');
+    expect(objectif.titre).toEqual('Super article Palaiseau');
     expect(objectif.points).toEqual(10);
     expect(objectif.is_locked).toEqual(true);
     expect(objectif.done_at).toEqual(new Date(0).toISOString());

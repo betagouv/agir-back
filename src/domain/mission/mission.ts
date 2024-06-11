@@ -7,10 +7,11 @@ import { Utilisateur } from '../utilisateur/utilisateur';
 import { MissionDefinition } from './missionDefinition';
 import { v4 as uuidv4 } from 'uuid';
 import { DefiDefinition } from '../defis/defiDefinition';
+import { Personnalisation } from '../contenu/personnalisation';
 
 export class Objectif {
   id: string;
-  titre: string;
+  private titre: string;
   content_id: string;
   is_locked: boolean;
   done_at: Date;
@@ -18,6 +19,7 @@ export class Objectif {
   points: number;
   sont_points_en_poche: boolean;
   est_reco: boolean;
+  personnalisation?: Personnalisation;
 
   constructor(data: Objectif_v0) {
     this.id = data.id;
@@ -34,6 +36,18 @@ export class Objectif {
   public isDone?() {
     return !!this.done_at;
   }
+
+  public getTitre(personnalisation?: Personnalisation): string {
+    const perso = personnalisation || this.personnalisation;
+    if (perso) {
+      return perso.personnaliser(this.titre);
+    } else {
+      return this.titre;
+    }
+  }
+  public setPersonnalisation?(utilisateur: Utilisateur) {
+    this.personnalisation = utilisateur.getPersonnalisation();
+  }
 }
 
 export class Mission {
@@ -43,6 +57,7 @@ export class Mission {
   objectifs: Objectif[];
   prochaines_thematiques: string[];
   est_visible: boolean;
+  personnalisation?: Personnalisation;
 
   constructor(data: Mission_v0) {
     this.id = data.id;
@@ -67,6 +82,14 @@ export class Mission {
     }
   }
 
+  public setPersonnalisation?(utilisateur: Utilisateur): Mission {
+    this.personnalisation = utilisateur.getPersonnalisation();
+    for (const obj of this.objectifs) {
+      obj.setPersonnalisation(utilisateur);
+    }
+    return this;
+  }
+
   public static buildFromDef(def: MissionDefinition): Mission {
     return new Mission({
       done_at: null,
@@ -74,20 +97,17 @@ export class Mission {
       est_visible: def.est_visible,
       thematique_univers: def.thematique_univers,
       prochaines_thematiques: def.prochaines_thematiques,
-      objectifs: def.objectifs.map(
-        (o) =>
-          new Objectif({
-            content_id: o.content_id,
-            done_at: null,
-            id: uuidv4(),
-            is_locked: o.type !== ContentType.kyc,
-            points: o.points,
-            titre: o.titre,
-            type: o.type,
-            sont_points_en_poche: false,
-            est_reco: true,
-          }),
-      ),
+      objectifs: def.objectifs.map((o) => ({
+        content_id: o.content_id,
+        done_at: null,
+        id: uuidv4(),
+        is_locked: o.type !== ContentType.kyc,
+        points: o.points,
+        titre: o.titre,
+        type: o.type,
+        sont_points_en_poche: false,
+        est_reco: true,
+      })),
     });
   }
 

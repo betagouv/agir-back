@@ -67,7 +67,11 @@ export class Defi implements TaggedContent {
 
   public getTitre(personnalisation?: Personnalisation): string {
     const perso = personnalisation || this.personnalisation;
-    return perso.personnaliser(this.titre);
+    if (perso) {
+      return perso.personnaliser(this.titre);
+    } else {
+      return this.titre;
+    }
   }
   public getStatus(): DefiStatus {
     return this.status;

@@ -17,7 +17,7 @@ export class Objectif_v0 {
   static map(objectif: Objectif): Objectif_v0 {
     return {
       id: objectif.id,
-      titre: objectif.titre,
+      titre: objectif.getTitre(),
       content_id: objectif.content_id,
       is_locked: objectif.is_locked,
       done_at: objectif.done_at,
@@ -33,7 +33,7 @@ export class Mission_v0 {
   id: string;
   done_at: Date;
   thematique_univers: string;
-  objectifs: Objectif[];
+  objectifs: Objectif_v0[];
   prochaines_thematiques: string[];
   est_visible: boolean;
 

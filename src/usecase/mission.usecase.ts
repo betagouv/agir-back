@@ -33,6 +33,8 @@ export class MissionUsecase {
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
+    mission_resultat.setPersonnalisation(utilisateur);
+
     return mission_resultat;
   }
 
