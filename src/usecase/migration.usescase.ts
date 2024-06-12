@@ -4,6 +4,7 @@ import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { App } from '../domain/app';
 import { Feature } from '../../src/domain/gamification/feature';
 import { DefiStatus } from '../../src/domain/defis/defi';
+import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 
 export type UserMigrationReport = {
   user_id: string;
@@ -12,7 +13,10 @@ export type UserMigrationReport = {
 
 @Injectable()
 export class MigrationUsecase {
-  constructor(public utilisateurRepository: UtilisateurRepository) {}
+  constructor(
+    public utilisateurRepository: UtilisateurRepository,
+    public kycRepository: KycRepository,
+  ) {}
 
   async lockUserMigration(): Promise<any> {
     return this.utilisateurRepository.lockUserMigration();
@@ -142,6 +146,24 @@ export class MigrationUsecase {
     };
   }
   private async migrate_8(
+    utilisateur: Utilisateur,
+    _this: MigrationUsecase,
+  ): Promise<{ ok: boolean; info: string }> {
+    const kyc_def_liste = await _this.kycRepository.getAllDefs();
+    const result = [];
+    for (const question of utilisateur.kyc_history.answered_questions) {
+      const kyc_def = kyc_def_liste.find((k) => k.code === question.id);
+      if (kyc_def) {
+        question.id_cms = kyc_def.id_cms;
+        result.push(kyc_def.id_cms);
+      }
+    }
+    return {
+      ok: true,
+      info: `CMS IDS injected ${JSON.stringify(result)}`,
+    };
+  }
+  private async migrate_9(
     utilisateur: Utilisateur,
   ): Promise<{ ok: boolean; info: string }> {
     return { ok: false, info: 'to implement' };

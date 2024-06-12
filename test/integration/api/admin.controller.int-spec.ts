@@ -469,6 +469,65 @@ describe('Admin (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.defi_history.defis[0].getStatus()).toEqual(DefiStatus.fait);
   });
+  it('POST /admin/migrate_users migration V8 OK', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const kyc = {
+      version: 0,
+      answered_questions: [
+        {
+          id: KYCID._2,
+          question: `Quel est votre sujet principal d'intéret ?`,
+          type: TypeReponseQuestionKYC.choix_multiple,
+          is_NGC: false,
+          categorie: Categorie.test,
+          points: 10,
+          reponses: [
+            { label: 'Le climat', code: Thematique.climat },
+            { label: 'Mon logement', code: Thematique.logement },
+          ],
+          reponses_possibles: [
+            { label: 'Le climat', code: Thematique.climat },
+            { label: 'Mon logement', code: Thematique.logement },
+            { label: 'Ce que je mange', code: Thematique.alimentation },
+          ],
+          tags: [],
+          universes: [Univers.climat],
+        },
+      ],
+    };
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+    });
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 7,
+      migration_enabled: true,
+      kyc: kyc,
+    });
+    process.env.USER_CURRENT_VERSION = '8';
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 8,
+            ok: true,
+            info: `CMS IDS injected [1]`,
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.kyc_history.answered_questions[0].id_cms).toEqual(1);
+  });
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
