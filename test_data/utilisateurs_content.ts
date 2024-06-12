@@ -201,7 +201,7 @@ const utilisateurs = {
     migration_enabled: true,
     gamification: {
       version: 0,
-      points: 0,
+      points: 99,
     },
     suivis: [],
     bilans: [],
