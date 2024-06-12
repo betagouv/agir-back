@@ -248,17 +248,17 @@ describe('/utilisateurs/id/defis (API test)', () => {
         {
           ...DEFI_1,
           id: '001',
-          status: DefiStatus.todo,
+          status: DefiStatus.en_cours,
         },
         {
           ...DEFI_1,
           id: '002',
-          status: DefiStatus.todo,
+          status: DefiStatus.en_cours,
         },
         {
           ...DEFI_1,
           id: '003',
-          status: DefiStatus.todo,
+          status: DefiStatus.en_cours,
         },
       ],
     };
@@ -475,17 +475,17 @@ describe('/utilisateurs/id/defis (API test)', () => {
         {
           ...DEFI_1,
           id: '001',
-          status: DefiStatus.todo,
+          status: DefiStatus.en_cours,
         },
         {
           ...DEFI_1,
           id: '002',
-          status: DefiStatus.todo,
+          status: DefiStatus.en_cours,
         },
         {
           ...DEFI_1,
           id: '003',
-          status: DefiStatus.todo,
+          status: DefiStatus.en_cours,
         },
       ],
     };

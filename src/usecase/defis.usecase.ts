@@ -29,11 +29,7 @@ export class DefisUsecase {
       univers,
     );
 
-    result = result.filter(
-      (d) =>
-        d.getStatus() === DefiStatus.todo ||
-        d.getStatus() === DefiStatus.en_cours,
-    );
+    result = result.filter((d) => d.getStatus() === DefiStatus.en_cours);
 
     return result.map((d) => d.setPersonnalisation(utilisateur));
   }
@@ -70,11 +66,7 @@ export class DefisUsecase {
       );
       result = result.concat(
         defis_univers
-          .filter(
-            (d) =>
-              d.getStatus() === DefiStatus.todo ||
-              d.getStatus() === DefiStatus.en_cours,
-          )
+          .filter((d) => d.getStatus() === DefiStatus.en_cours)
           .map((d) => d.setPersonnalisation(utilisateur)),
       );
     }
