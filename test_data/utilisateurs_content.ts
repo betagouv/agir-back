@@ -320,6 +320,17 @@ const utilisateurs = {
     gamification: {
       points: 0,
     },
+    unlocked_features: {
+      version: 1,
+      unlocked_features: [
+        'aides',
+        'services',
+        'recommandations',
+        'bibliotheque',
+        'defis',
+        'univers',
+      ],
+    },
     suivis: [],
     services: [],
     onboardingResult: ONBOARDING_RES_1234,
@@ -363,6 +374,17 @@ const utilisateurs = {
     gamification: {
       points: 0,
     },
+    unlocked_features: {
+      version: 1,
+      unlocked_features: [
+        'aides',
+        'services',
+        'recommandations',
+        'bibliotheque',
+        'defis',
+        'univers',
+      ],
+    },
     suivis: [],
     services: [],
     onboardingResult: ONBOARDING_RES_1234,
@@ -378,6 +400,17 @@ const utilisateurs = {
     version: 6,
     gamification: {
       points: 0,
+    },
+    unlocked_features: {
+      version: 1,
+      unlocked_features: [
+        'aides',
+        'services',
+        'recommandations',
+        'bibliotheque',
+        'defis',
+        'univers',
+      ],
     },
     suivis: [],
     services: [],
@@ -395,6 +428,17 @@ const utilisateurs = {
     gamification: {
       points: 0,
     },
+    unlocked_features: {
+      version: 1,
+      unlocked_features: [
+        'aides',
+        'services',
+        'recommandations',
+        'bibliotheque',
+        'defis',
+        'univers',
+      ],
+    },
     suivis: [],
     services: [],
     onboardingResult: ONBOARDING_RES_1234,
@@ -410,6 +454,17 @@ const utilisateurs = {
     version: 6,
     gamification: {
       points: 0,
+    },
+    unlocked_features: {
+      version: 1,
+      unlocked_features: [
+        'aides',
+        'services',
+        'recommandations',
+        'bibliotheque',
+        'defis',
+        'univers',
+      ],
     },
     suivis: [],
     services: [],
@@ -427,6 +482,17 @@ const utilisateurs = {
     gamification: {
       points: 0,
     },
+    unlocked_features: {
+      version: 1,
+      unlocked_features: [
+        'aides',
+        'services',
+        'recommandations',
+        'bibliotheque',
+        'defis',
+        'univers',
+      ],
+    },
     suivis: [],
     services: [],
     onboardingResult: ONBOARDING_RES_1234,
@@ -443,6 +509,17 @@ const utilisateurs = {
     gamification: {
       points: 0,
     },
+    unlocked_features: {
+      version: 1,
+      unlocked_features: [
+        'aides',
+        'services',
+        'recommandations',
+        'bibliotheque',
+        'defis',
+        'univers',
+      ],
+    },
     suivis: [],
     services: [],
     onboardingResult: ONBOARDING_RES_1234,
@@ -458,6 +535,17 @@ const utilisateurs = {
     version: 6,
     gamification: {
       points: 0,
+    },
+    unlocked_features: {
+      version: 1,
+      unlocked_features: [
+        'aides',
+        'services',
+        'recommandations',
+        'bibliotheque',
+        'defis',
+        'univers',
+      ],
     },
     suivis: [],
     services: [],
