@@ -135,7 +135,7 @@ describe('/api/incoming/cms (API test)', () => {
         { id: 1, titre: 'Alimentation' },
         { id: 2, titre: 'Climat' },
       ],
-      codes_postaux: '91120,75002',
+      codes_postaux: '91120 , 75002',
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       besoin: {
         id: 7,

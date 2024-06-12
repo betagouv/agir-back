@@ -420,7 +420,7 @@ export class CMSUsecase {
       partenaire: entry.partenaire ? entry.partenaire.nom : null,
       rubrique_ids: this.getIdsFromRubriques(entry.rubriques),
       rubrique_labels: this.getTitresFromRubriques(entry.rubriques),
-      codes_postaux: entry.codes_postaux ? entry.codes_postaux.split(',') : [],
+      codes_postaux: CMSUsecase.split(entry.codes_postaux),
       duree: entry.duree,
       frequence: entry.frequence,
       difficulty: entry.difficulty ? entry.difficulty : 1,
@@ -776,6 +776,6 @@ export class CMSUsecase {
   }
 
   private static split(list: string) {
-    return list ? list.split(',') : [];
+    return list ? list.split(',').map((c) => c.trim()) : [];
   }
 }
