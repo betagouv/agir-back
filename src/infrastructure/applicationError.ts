@@ -273,6 +273,12 @@ export class ApplicationError {
   static throwBadInputsForFileAttente() {
     this.throwAppError('049', `Mauvais inputs pour la mise en file d'attente`);
   }
+  static throwConcurrentUpdate() {
+    this.throwAppError(
+      '050',
+      `l'utilisateur a été mis à jour pendant votre requête, veuillez retenter l'opération`,
+    );
+  }
 
   private static throwAppError(
     code: string,

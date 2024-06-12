@@ -208,7 +208,7 @@ const utilisateurs = {
     services: [],
     unlocked_features: {
       version: 1,
-      unlocked_features: ['univers'],
+      unlocked_features: ['aides', 'univers'],
     },
     onboardingResult: ONBOARDING_RES_1234,
     onboardingData: ONBOARD_DATA_1234,

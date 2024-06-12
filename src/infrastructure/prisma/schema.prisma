@@ -75,6 +75,7 @@ model Utilisateur {
   tag_ponderation_set      Json               @default("{}")
   force_connexion          Boolean            @default(false)
   derniere_activite        DateTime?
+  db_version               Int                @default(0)
 }
 
 model Statistique {

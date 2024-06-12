@@ -21,6 +21,7 @@ import { ContactUsecase } from './contact.usecase';
 import { App } from '../../src/domain/app';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { KYCID } from '../../src/domain/kyc/KYCID';
+import { Retryable } from 'typescript-retry-decorator';
 
 export type Phrase = {
   phrase: string;
@@ -119,6 +120,12 @@ export class UtilisateurUsecase {
     return this.utilisateurRepository.findByEmail(email);
   }
 
+  @Retryable({
+    maxAttempts: 1,
+    doRetry: (e: any) => {
+      return e.code === '050';
+    },
+  })
   async updateUtilisateurProfile(
     utilisateurId: string,
     profile: UtilisateurProfileAPI,
@@ -139,9 +146,15 @@ export class UtilisateurUsecase {
     utilisateur.prenom = profile.prenom;
     utilisateur.annee_naissance = profile.annee_naissance;
 
-    return this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
+  @Retryable({
+    maxAttempts: 1,
+    doRetry: (e: any) => {
+      return e.code === '050';
+    },
+  })
   async updateUtilisateurTransport(utilisateurId: string, input: TransportAPI) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
@@ -156,6 +169,12 @@ export class UtilisateurUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
+  @Retryable({
+    maxAttempts: 1,
+    doRetry: (e: any) => {
+      return e.code === '050';
+    },
+  })
   async updateUtilisateurLogement(utilisateurId: string, input: LogementAPI) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();

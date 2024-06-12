@@ -60,6 +60,7 @@ export class UtilisateurData {
   defi_history: DefiHistory;
   force_connexion: boolean;
   derniere_activite: Date;
+  db_version: number;
 }
 
 export class Utilisateur extends UtilisateurData {
@@ -130,6 +131,7 @@ export class Utilisateur extends UtilisateurData {
       derniere_activite: new Date(),
       missions: new MissionsUtilisateur(),
       annee_naissance: annee_naissance,
+      db_version: 0,
     });
   }
 

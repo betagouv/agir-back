@@ -616,6 +616,7 @@ export class TestUtil {
       force_connexion: false,
       derniere_activite: null,
       missions: {},
+      db_version: 0,
       ...override,
     };
   }
