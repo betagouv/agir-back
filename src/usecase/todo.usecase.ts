@@ -29,7 +29,10 @@ export class TodoUsecase {
 
     if (element && !element.sontPointsEnPoche()) {
       const points = todo_active.empochePoints(element);
-      utilisateur.gamification.ajoutePoints(points);
+      utilisateur.gamification.ajoutePoints(
+        points,
+        utilisateur.unlocked_features,
+      );
     }
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -40,7 +43,10 @@ export class TodoUsecase {
 
     const todo_active = utilisateur.parcours_todo.getActiveTodo();
     if (todo_active.isDone()) {
-      utilisateur.gamification.ajoutePoints(todo_active.points_todo);
+      utilisateur.gamification.ajoutePoints(
+        todo_active.points_todo,
+        utilisateur.unlocked_features,
+      );
       todo_active.done_at = new Date();
       utilisateur.parcours_todo.avanceDansParcours();
 

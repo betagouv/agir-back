@@ -2,8 +2,13 @@ import { Gamification_v0 } from '../../../src/domain/object_store/gamification/g
 import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
 import { EventType } from '../../../src/domain/appEvent';
 import { DB, TestUtil } from '../../TestUtil';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { Feature } from '../../../src/domain/gamification/feature';
+import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 
 describe('Gamification  (API test)', () => {
+  const utilisateurRepo = new UtilisateurRepository(TestUtil.prisma);
+
   beforeAll(async () => {
     await TestUtil.appinit();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
@@ -99,6 +104,70 @@ describe('Gamification  (API test)', () => {
     //expect(dbUtilisateur.gamification['celebrations'][0].new_niveau).toEqual(2);
     expect(dbUtilisateur.gamification['celebrations'][0].reveal.titre).toEqual(
       'Vos aides',
+    );
+  });
+  it('Le passage du reveal des défis est inihiber si les défis sont déjà débloqués ', async () => {
+    // GIVEN
+    const unlocked: UnlockedFeatures_v1 = {
+      version: 1,
+      unlocked_features: [Feature.defis],
+    };
+
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 499,
+      celebrations: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      gamification,
+      unlocked_features: unlocked,
+    });
+    await TestUtil.create(DB.article, { content_id: '123' });
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.article_lu,
+      content_id: '123',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepo.getById('utilisateur-id');
+    expect(userDB.gamification.celebrations[0].new_niveau).toEqual(6);
+    expect(userDB.gamification.celebrations[0].reveal).toEqual(undefined);
+  });
+  it('Le passage du reveal des défis reveal bien defis si pas encore activé ', async () => {
+    // GIVEN
+    const unlocked: UnlockedFeatures_v1 = {
+      version: 1,
+      unlocked_features: [],
+    };
+
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 499,
+      celebrations: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      gamification,
+      unlocked_features: unlocked,
+    });
+    await TestUtil.create(DB.article, { content_id: '123' });
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.article_lu,
+      content_id: '123',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepo.getById('utilisateur-id');
+    expect(userDB.gamification.celebrations[0].new_niveau).toEqual(6);
+    expect(userDB.gamification.celebrations[0].reveal.feature).toEqual(
+      Feature.defis,
     );
   });
 });

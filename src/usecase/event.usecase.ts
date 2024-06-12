@@ -151,7 +151,10 @@ export class EventUsecase {
       event.content_id,
     );
     if (!utilisateur.history.sontPointsArticleEnPoche(event.content_id)) {
-      utilisateur.gamification.ajoutePoints(article.points);
+      utilisateur.gamification.ajoutePoints(
+        article.points,
+        utilisateur.unlocked_features,
+      );
       utilisateur.history.declarePointsArticleEnPoche(event.content_id);
     }
     this.updateUserTodo(utilisateur, ContentType.article, article.thematiques);
@@ -179,7 +182,10 @@ export class EventUsecase {
       !utilisateur.history.sontPointsQuizzEnPoche(event.content_id) &&
       event.number_value === 100
     ) {
-      utilisateur.gamification.ajoutePoints(quizz.points);
+      utilisateur.gamification.ajoutePoints(
+        quizz.points,
+        utilisateur.unlocked_features,
+      );
       utilisateur.history.declarePointsQuizzEnPoche(event.content_id);
       this.updateUserTodo(utilisateur, ContentType.quizz, quizz.thematiques);
     }

@@ -12,7 +12,7 @@ describe('Gamification', () => {
     // GIVEN
     const gamification = new Gamification();
     // WHEN
-    gamification.ajoutePoints(5);
+    gamification.ajoutePoints(5, new UnlockedFeatures());
 
     // THEN
     expect(gamification.points).toEqual(5);

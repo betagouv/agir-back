@@ -3,6 +3,7 @@ import { Utilisateur } from '../utilisateur/utilisateur';
 import { Celebration, CelebrationType } from './celebrations/celebration';
 import { Reveal } from './celebrations/reveal';
 import { Feature } from './feature';
+import { UnlockedFeatures } from './unlockedFeatures';
 
 let SEUILS_NIVEAUX: number[] = [
   100, 150, 300, 400, 500, 800, 1000, 2000, 4000, 10000,
@@ -44,21 +45,27 @@ export class Gamification {
     this.celebrations.splice(index, 1);
   }
 
-  public ajoutePoints(new_points: number) {
+  public ajoutePoints(new_points: number, features: UnlockedFeatures) {
     const current_niveau = this.getNiveau();
     this.points += new_points;
     const new_niveau = this.getNiveau();
 
     if (current_niveau != new_niveau) {
-      this.celebrations.push(
-        new Celebration({
-          id: undefined,
-          titre: 'NOUVEAU NIVEAU',
-          type: CelebrationType.niveau,
-          new_niveau: new_niveau,
-          reveal: Gamification.getRevealByNiveau(new_niveau),
-        }),
-      );
+      const celeb = new Celebration({
+        id: undefined,
+        titre: 'NOUVEAU NIVEAU',
+        type: CelebrationType.niveau,
+        new_niveau: new_niveau,
+        reveal: Gamification.getRevealByNiveau(new_niveau),
+      });
+      if (
+        features.isUnlocked(Feature.defis) &&
+        celeb.reveal &&
+        celeb.reveal.feature === Feature.defis
+      ) {
+        delete celeb.reveal;
+      }
+      this.celebrations.push(celeb);
     }
   }
 

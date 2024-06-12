@@ -41,7 +41,10 @@ export class MissionsUtilisateur {
 
     if (objectif && !objectif.isDone()) {
       objectif.done_at = new Date();
-      utilisateur.gamification.ajoutePoints(objectif.points);
+      utilisateur.gamification.ajoutePoints(
+        objectif.points,
+        utilisateur.unlocked_features,
+      );
       mission.unlockDefiIfAllContentDone();
 
       // Pour éviter de récolter les points d'un quizz raté ^^
