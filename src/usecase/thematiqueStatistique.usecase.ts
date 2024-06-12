@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { Objectif } from '../../src/domain/mission/mission';
+import { Mission } from '../../src/domain/mission/mission';
 import { ThematiqueStatistiqueRepository } from '../../src/infrastructure/repository/thematiqueStatistique.repository';
 
 type ThematiqueRecord = {
@@ -30,9 +30,8 @@ export class ThematiqueStatistiqueUsecase {
       const user = await this.utilisateurRepository.getById(userId);
 
       user.missions.missions.forEach((mission) => {
-        const pourcentageCompletionMission = this.calculPourcentageDeCompletion(
-          mission.objectifs,
-        );
+        const pourcentageCompletionMission =
+          this.calculPourcentageDeCompletion(mission);
 
         if (!thematiqueRecord[mission.id]) {
           thematiqueRecord[mission.id] = {
@@ -73,16 +72,9 @@ export class ThematiqueStatistiqueUsecase {
     return thematiqueListeId;
   }
 
-  private calculPourcentageDeCompletion(objectifs: Objectif[]): number {
-    const objectifsCompletes = objectifs.filter(
-      (objectif) => objectif.done_at !== null,
-    );
-    const totalObjectifs = objectifs.length;
-    const totalObjectifsCompletes = objectifsCompletes.length;
-    const pourcentageCompletion =
-      (totalObjectifsCompletes / totalObjectifs) * 100;
-
-    return pourcentageCompletion;
+  private calculPourcentageDeCompletion(mission: Mission): number {
+    const { current, target } = mission.getProgression();
+    return (current / target) * 100;
   }
 
   private incrementeRange(record: ThematiqueRecord, pourcentage: number) {

@@ -59,23 +59,32 @@ describe('ThematiqueStatistiqueRepository', () => {
         where: { thematiqueId: 'idThematique2' },
       });
 
+    delete thematiqueStatistique1.created_at;
+    delete thematiqueStatistique1.updated_at;
+    delete thematiqueStatistique2.created_at;
+    delete thematiqueStatistique2.updated_at;
+
     expect(thematiquesStatistique).toHaveLength(2);
-    expect(thematiqueStatistique1.titre).toEqual(ThematiqueUnivers.cereales);
-    expect(thematiqueStatistique1.completion_pourcentage_1_20).toEqual(0);
-    expect(thematiqueStatistique1.completion_pourcentage_21_40).toEqual(3);
-    expect(thematiqueStatistique1.completion_pourcentage_41_60).toEqual(2);
-    expect(thematiqueStatistique1.completion_pourcentage_61_80).toEqual(4);
-    expect(thematiqueStatistique1.completion_pourcentage_81_99).toEqual(0);
-    expect(thematiqueStatistique1.completion_pourcentage_100).toEqual(6);
-    expect(thematiqueStatistique2.titre).toEqual(
-      ThematiqueUnivers.dechets_compost,
-    );
-    expect(thematiqueStatistique2.completion_pourcentage_1_20).toEqual(1);
-    expect(thematiqueStatistique2.completion_pourcentage_21_40).toEqual(0);
-    expect(thematiqueStatistique2.completion_pourcentage_41_60).toEqual(2);
-    expect(thematiqueStatistique2.completion_pourcentage_61_80).toEqual(4);
-    expect(thematiqueStatistique2.completion_pourcentage_81_99).toEqual(5);
-    expect(thematiqueStatistique2.completion_pourcentage_100).toEqual(6);
+    expect(thematiqueStatistique1).toStrictEqual({
+      thematiqueId: 'idThematique1',
+      titre: ThematiqueUnivers.cereales,
+      completion_pourcentage_1_20: 0,
+      completion_pourcentage_21_40: 3,
+      completion_pourcentage_41_60: 2,
+      completion_pourcentage_61_80: 4,
+      completion_pourcentage_81_99: 0,
+      completion_pourcentage_100: 6,
+    });
+    expect(thematiqueStatistique2).toStrictEqual({
+      thematiqueId: 'idThematique2',
+      titre: ThematiqueUnivers.dechets_compost,
+      completion_pourcentage_1_20: 1,
+      completion_pourcentage_21_40: 0,
+      completion_pourcentage_41_60: 2,
+      completion_pourcentage_61_80: 4,
+      completion_pourcentage_81_99: 5,
+      completion_pourcentage_100: 6,
+    });
 
     await thematiqueStatistiqueRepository.upsertThematiqueStatistiques(
       'idThematique1',
@@ -95,27 +104,19 @@ describe('ThematiqueStatistiqueRepository', () => {
         where: { thematiqueId: 'idThematique1' },
       });
 
+    delete thematiqueStatistique1ApresUpsert.updated_at;
+    delete thematiqueStatistique1ApresUpsert.created_at;
+
     expect(thematiquesStatistiqueApresUpsert).toHaveLength(2);
-    expect(thematiqueStatistique1ApresUpsert.titre).toEqual(
-      ThematiqueUnivers.cereales,
-    );
-    expect(
-      thematiqueStatistique1ApresUpsert.completion_pourcentage_1_20,
-    ).toEqual(1);
-    expect(
-      thematiqueStatistique1ApresUpsert.completion_pourcentage_21_40,
-    ).toEqual(4);
-    expect(
-      thematiqueStatistique1ApresUpsert.completion_pourcentage_41_60,
-    ).toEqual(2);
-    expect(
-      thematiqueStatistique1ApresUpsert.completion_pourcentage_61_80,
-    ).toEqual(4);
-    expect(
-      thematiqueStatistique1ApresUpsert.completion_pourcentage_81_99,
-    ).toEqual(6);
-    expect(
-      thematiqueStatistique1ApresUpsert.completion_pourcentage_100,
-    ).toEqual(6);
+    expect(thematiqueStatistique1ApresUpsert).toStrictEqual({
+      thematiqueId: 'idThematique1',
+      titre: ThematiqueUnivers.cereales,
+      completion_pourcentage_1_20: 1,
+      completion_pourcentage_21_40: 4,
+      completion_pourcentage_41_60: 2,
+      completion_pourcentage_61_80: 4,
+      completion_pourcentage_81_99: 6,
+      completion_pourcentage_100: 6,
+    });
   });
 });

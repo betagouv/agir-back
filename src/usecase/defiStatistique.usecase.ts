@@ -19,10 +19,8 @@ export class DefiStatistiqueUsecase {
     const listeUtilisateursIds =
       await this.utilisateurRepository.listUtilisateurIds();
 
-    for (let index = 0; index < listeUtilisateursIds.length; index++) {
-      const user_id = listeUtilisateursIds[index];
-
-      const utilisateur = await this.utilisateurRepository.getById(user_id);
+    for (const userId of listeUtilisateursIds) {
+      const utilisateur = await this.utilisateurRepository.getById(userId);
 
       utilisateur.defi_history.defis.forEach((defi) => {
         const defi_agrega = this.getDefiAgregationRefById(defi.id, defi_map);

@@ -2163,28 +2163,42 @@ describe('Admin (API test)', () => {
       where: { thematiqueId: '3' },
     });
 
-    expect(thematique1.titre).toEqual(ThematiqueUnivers.cereales);
-    expect(thematique1.completion_pourcentage_1_20).toEqual(0);
-    expect(thematique1.completion_pourcentage_21_40).toEqual(0);
-    expect(thematique1.completion_pourcentage_41_60).toEqual(1);
-    expect(thematique1.completion_pourcentage_61_80).toEqual(0);
-    expect(thematique1.completion_pourcentage_81_99).toEqual(0);
-    expect(thematique1.completion_pourcentage_100).toEqual(1);
+    delete thematique1.updated_at;
+    delete thematique1.created_at;
+    delete thematique2.updated_at;
+    delete thematique2.created_at;
+    delete thematique3.updated_at;
+    delete thematique3.created_at;
 
-    expect(thematique2.titre).toEqual(ThematiqueUnivers.gaspillage_alimentaire);
-    expect(thematique2.completion_pourcentage_1_20).toEqual(0);
-    expect(thematique2.completion_pourcentage_21_40).toEqual(0);
-    expect(thematique2.completion_pourcentage_41_60).toEqual(0);
-    expect(thematique2.completion_pourcentage_61_80).toEqual(0);
-    expect(thematique2.completion_pourcentage_81_99).toEqual(0);
-    expect(thematique2.completion_pourcentage_100).toEqual(0);
-
-    expect(thematique3.titre).toEqual(ThematiqueUnivers.mobilite_quotidien);
-    expect(thematique3.completion_pourcentage_1_20).toEqual(0);
-    expect(thematique3.completion_pourcentage_21_40).toEqual(0);
-    expect(thematique3.completion_pourcentage_41_60).toEqual(2);
-    expect(thematique3.completion_pourcentage_61_80).toEqual(0);
-    expect(thematique3.completion_pourcentage_81_99).toEqual(0);
-    expect(thematique3.completion_pourcentage_100).toEqual(0);
+    expect(thematique1).toStrictEqual({
+      thematiqueId: '1',
+      titre: ThematiqueUnivers.cereales,
+      completion_pourcentage_1_20: 0,
+      completion_pourcentage_21_40: 0,
+      completion_pourcentage_41_60: 1,
+      completion_pourcentage_61_80: 0,
+      completion_pourcentage_81_99: 0,
+      completion_pourcentage_100: 1,
+    });
+    expect(thematique2).toStrictEqual({
+      thematiqueId: '2',
+      titre: ThematiqueUnivers.gaspillage_alimentaire,
+      completion_pourcentage_1_20: 0,
+      completion_pourcentage_21_40: 0,
+      completion_pourcentage_41_60: 0,
+      completion_pourcentage_61_80: 0,
+      completion_pourcentage_81_99: 0,
+      completion_pourcentage_100: 0,
+    });
+    expect(thematique3).toStrictEqual({
+      thematiqueId: '3',
+      titre: ThematiqueUnivers.mobilite_quotidien,
+      completion_pourcentage_1_20: 0,
+      completion_pourcentage_21_40: 0,
+      completion_pourcentage_41_60: 2,
+      completion_pourcentage_61_80: 0,
+      completion_pourcentage_81_99: 0,
+      completion_pourcentage_100: 0,
+    });
   });
 });
