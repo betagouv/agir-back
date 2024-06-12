@@ -759,6 +759,7 @@ describe('Mission (API test)', () => {
       answered_questions: [
         {
           id: '1',
+          id_cms: 1,
           question: `Question`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,

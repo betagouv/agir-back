@@ -28,7 +28,7 @@ const DEFI_1: Defi_v0 = {
   motif: 'truc',
   categorie: Categorie.recommandation,
   mois: [1],
-  conditions: [[{ code_kyc: '123', code_reponse: 'oui' }]],
+  conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
 };
 const DEFI_1_DEF: DefiDefinition = {
   content_id: '1',
@@ -43,7 +43,7 @@ const DEFI_1_DEF: DefiDefinition = {
   thematiques_univers: [ThematiqueUnivers.dechets_compost],
   categorie: Categorie.recommandation,
   mois: [0],
-  conditions: [[{ code_kyc: '123', code_reponse: 'oui' }]],
+  conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
 };
 
 describe('DefiHistory', () => {

@@ -490,6 +490,7 @@ export class CMSUsecase {
       conditions: entry.OR_Conditions.map((or) =>
         or.AND_Conditions.map((and) => ({
           code_kyc: and.kyc.code,
+          id_kyc: and.kyc.id.toString(),
           code_reponse: and.code_reponse,
         })),
       ),
@@ -674,6 +675,7 @@ export class CMSUsecase {
         : [],
       conditions: entry.attributes.OR_Conditions.map((or) =>
         or.AND_Conditions.map((and) => ({
+          id_kyc: and.kyc.data.attributes.id,
           code_kyc: and.kyc.data.attributes.code,
           code_reponse: and.code_reponse,
         })),

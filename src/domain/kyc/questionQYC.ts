@@ -26,6 +26,7 @@ export class KYCReponse {
 
 export class QuestionKYC implements TaggedContent {
   id: string;
+  id_cms: number;
   question: string;
   type: TypeReponseQuestionKYC;
   categorie: Categorie;
@@ -54,12 +55,14 @@ export class QuestionKYC implements TaggedContent {
     this.tags = data.tags ? data.tags : [];
     this.score = 0;
     this.universes = data.universes ? data.universes : [];
+    this.id_cms = data.id_cms;
   }
 
   public static buildFromDef(def: KycDefinition): QuestionKYC {
     return new QuestionKYC({
       categorie: def.categorie,
       id: def.code,
+      id_cms: def.id_cms,
       is_NGC: def.is_ngc,
       points: def.points,
       tags: def.tags,

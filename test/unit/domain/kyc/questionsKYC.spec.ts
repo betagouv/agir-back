@@ -26,6 +26,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
           tags: [],
           universes: [],
+          id_cms: 1,
         },
       ],
     });
@@ -43,6 +44,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_questions: [
         {
           id: KYCID.KYC001,
+          id_cms: 1,
           question: `question`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -61,7 +63,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // WHEN
     const result = history.areConditionsMatched([
-      [{ code_kyc: '123', code_reponse: 'oui' }],
+      [{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }],
     ]);
 
     // THEN
@@ -74,6 +76,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_questions: [
         {
           id: KYCID.KYC001,
+          id_cms: 1,
           question: `question 1`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -92,7 +95,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // WHEN
     const result = history.areConditionsMatched([
-      [{ code_kyc: 'KYC001', code_reponse: 'climat' }],
+      [{ id_kyc: '1', code_kyc: 'KYC001', code_reponse: 'climat' }],
     ]);
 
     // THEN
@@ -105,6 +108,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_questions: [
         {
           id: KYCID.KYC001,
+          id_cms: 1,
           question: `question 1`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -123,7 +127,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // WHEN
     const result = history.areConditionsMatched([
-      [{ code_kyc: 'KYC001', code_reponse: 'logement' }],
+      [{ id_kyc: '1', code_kyc: 'KYC001', code_reponse: 'logement' }],
     ]);
 
     // THEN
@@ -136,6 +140,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_questions: [
         {
           id: KYCID.KYC001,
+          id_cms: 1,
           question: `question 1`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -151,6 +156,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         },
         {
           id: KYCID.KYC002,
+          id_cms: 2,
           question: `question 2`,
           type: TypeReponseQuestionKYC.choix_unique,
           is_NGC: false,
@@ -170,8 +176,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // WHEN
     const result = history.areConditionsMatched([
       [
-        { code_kyc: 'KYC001', code_reponse: 'climat' },
-        { code_kyc: 'KYC002', code_reponse: 'yo' },
+        { id_kyc: '1', code_kyc: 'KYC001', code_reponse: 'climat' },
+        { id_kyc: '2', code_kyc: 'KYC002', code_reponse: 'yo' },
       ],
     ]);
 
@@ -185,6 +191,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_questions: [
         {
           id: KYCID.KYC001,
+          id_cms: 1,
           question: `question 1`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -200,6 +207,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         },
         {
           id: KYCID.KYC002,
+          id_cms: 2,
           question: `question 2`,
           type: TypeReponseQuestionKYC.choix_unique,
           is_NGC: false,
@@ -219,8 +227,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // WHEN
     const result = history.areConditionsMatched([
       [
-        { code_kyc: 'KYC001', code_reponse: 'logement' },
-        { code_kyc: 'KYC002', code_reponse: 'ya' },
+        { id_kyc: '1', code_kyc: 'KYC001', code_reponse: 'logement' },
+        { id_kyc: '2', code_kyc: 'KYC002', code_reponse: 'ya' },
       ],
     ]);
 
@@ -234,6 +242,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_questions: [
         {
           id: KYCID.KYC001,
+          id_cms: 1,
           question: `question 1`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -249,6 +258,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         },
         {
           id: KYCID.KYC002,
+          id_cms: 2,
           question: `question 2`,
           type: TypeReponseQuestionKYC.choix_unique,
           is_NGC: false,
@@ -267,8 +277,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // WHEN
     const result = history.areConditionsMatched([
-      [{ code_kyc: 'KYC001', code_reponse: 'logement' }],
-      [{ code_kyc: 'KYC002', code_reponse: 'yo' }],
+      [{ id_kyc: '1', code_kyc: 'KYC001', code_reponse: 'logement' }],
+      [{ id_kyc: '2', code_kyc: 'KYC002', code_reponse: 'yo' }],
     ]);
 
     // THEN
@@ -303,6 +313,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_questions: [
         {
           id: KYCID.KYC001,
+          id_cms: 1,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -351,6 +362,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_questions: [
         {
           id: KYCID.KYC001,
+          id_cms: 1,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -398,6 +410,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_questions: [
         {
           id: KYCID.KYC001,
+          id_cms: 1,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -459,6 +472,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_questions: [
         {
           id: KYCID.KYC001,
+          id_cms: 1,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -531,6 +545,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_questions: [
         {
           id: KYCID.KYC001,
+          id_cms: 1,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -597,6 +612,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_questions: [
         {
           id: KYCID.KYC001,
+          id_cms: 1,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -663,6 +679,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_questions: [
         {
           id: KYCID.KYC001,
+          id_cms: 1,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.entier,
           is_NGC: false,
@@ -705,6 +722,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_questions: [
         {
           id: KYCID.KYC001,
+          id_cms: 1,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -770,6 +788,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_questions: [
         {
           id: KYCID.KYC001,
+          id_cms: 1,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,

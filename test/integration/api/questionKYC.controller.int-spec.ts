@@ -346,6 +346,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       answered_questions: [
         {
           id: '1',
+          id_cms: 1,
           question: `question`,
           type: TypeReponseQuestionKYC.choix_unique,
           is_NGC: false,

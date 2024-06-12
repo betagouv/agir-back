@@ -36,7 +36,7 @@ const DEFI_1: Defi_v0 = {
   motif: 'truc',
   categorie: Categorie.recommandation,
   mois: [],
-  conditions: [[{ code_kyc: '123', code_reponse: 'oui' }]],
+  conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
 };
 const DEFI_1_DEF: Defi = {
   content_id: '1',
@@ -53,7 +53,7 @@ const DEFI_1_DEF: Defi = {
   updated_at: undefined,
   categorie: Categorie.recommandation,
   mois: [],
-  conditions: [[{ code_kyc: '123', code_reponse: 'oui' }]],
+  conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
 };
 
 describe('/utilisateurs/id/recommandations (API test)', () => {

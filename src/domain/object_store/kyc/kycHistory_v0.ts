@@ -22,6 +22,7 @@ export class KYCReponse_v0 {
 
 export class QuestionKYC_v0 {
   id: string;
+  id_cms: number;
   question: string;
   type: TypeReponseQuestionKYC;
   categorie: Categorie;
@@ -52,6 +53,7 @@ export class QuestionKYC_v0 {
       thematique: elem.thematique,
       tags: elem.tags,
       universes: elem.universes ? elem.universes : [],
+      id_cms: elem.id_cms,
     };
   }
 }

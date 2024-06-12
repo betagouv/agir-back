@@ -259,6 +259,7 @@ export type CMSWebhookPopulateAPI = {
             kyc: {
               data: {
                 attributes: {
+                  id: string;
                   code: string;
                 };
               };

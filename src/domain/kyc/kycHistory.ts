@@ -31,7 +31,7 @@ export class KYCHistory {
     let result = [];
 
     this.catalogue.forEach((question) => {
-      let answered_question = this.getAnsweredQuestion(question.code);
+      let answered_question = this.getAnsweredQuestionByCode(question.code);
       result.push(answered_question || QuestionKYC.buildFromDef(question));
     });
 
@@ -69,7 +69,7 @@ export class KYCHistory {
   }
 
   public getQuestionOrException(id: string): QuestionKYC {
-    let answered_question = this.getAnsweredQuestion(id);
+    let answered_question = this.getAnsweredQuestionByCode(id);
     if (answered_question) {
       this.upgradeQuestion(answered_question);
       return answered_question;
@@ -78,7 +78,7 @@ export class KYCHistory {
   }
 
   public getQuestion(id: string): QuestionKYC {
-    let answered_question = this.getAnsweredQuestion(id);
+    let answered_question = this.getAnsweredQuestionByCode(id);
     if (answered_question) {
       this.upgradeQuestion(answered_question);
       return answered_question;
@@ -115,7 +115,7 @@ export class KYCHistory {
     for (const OU of conditions) {
       let union = true;
       for (const cond of OU) {
-        const kyc = this.getAnsweredQuestion(cond.code_kyc);
+        const kyc = this.getAnsweredQuestionByCode(cond.code_kyc);
         if (!(kyc && kyc.includesReponseCode(cond.code_reponse))) {
           union = false;
         }
@@ -126,11 +126,11 @@ export class KYCHistory {
   }
 
   public isQuestionAnswered(id: string): boolean {
-    return !!this.getAnsweredQuestion(id);
+    return !!this.getAnsweredQuestionByCode(id);
   }
 
   public updateQuestion(questionId: string, reponses: string[]) {
-    let question = this.getAnsweredQuestion(questionId);
+    let question = this.getAnsweredQuestionByCode(questionId);
     if (question) {
       question.setResponses(reponses);
     } else {
@@ -144,7 +144,7 @@ export class KYCHistory {
     this.getKYCByIdOrException(questionId);
   }
 
-  private getAnsweredQuestion(id: string): QuestionKYC {
+  private getAnsweredQuestionByCode(id: string): QuestionKYC {
     return this.answered_questions.find((element) => element.id === id);
   }
 
