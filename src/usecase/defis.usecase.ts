@@ -6,6 +6,7 @@ import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderat
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
+import { Feature } from '../../src/domain/gamification/feature';
 
 @Injectable()
 export class DefisUsecase {
@@ -137,6 +138,10 @@ export class DefisUsecase {
     utilisateur.defi_history.setCatalogue(catalogue);
 
     utilisateur.defi_history.updateStatus(defiId, status, utilisateur, motif);
+
+    if (status === DefiStatus.en_cours) {
+      utilisateur.unlocked_features.add(Feature.defis);
+    }
 
     if (status === DefiStatus.fait) {
       const unlocked_thematiques = utilisateur.missions.validateDefi(

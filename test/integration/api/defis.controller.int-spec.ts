@@ -24,6 +24,8 @@ import {
   Chauffage,
   DPE,
 } from '../../../src/domain/logement/logement';
+import { Feature } from '../../../src/domain/gamification/feature';
+import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 
 const DEFI_1_DEF: Defi = {
   content_id: '1',
@@ -1041,10 +1043,13 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi_user.getStatus()).toBe(DefiStatus.fait);
     expect(defi_user.motif).toBe('null ce défi');
   });
-  it('PATCH /utilisateurs/id/defis/id - patch le status d un defi du catalogue', async () => {
+  it('PATCH /utilisateurs/id/defis/id - patch le status d un defi du catalogue, débloques la feature defi', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur);
-
+    const unlocked: UnlockedFeatures_v1 = {
+      version: 1,
+      unlocked_features: [],
+    };
+    await TestUtil.create(DB.utilisateur, { unlocked_features: unlocked });
     await TestUtil.create(DB.defi, DEFI_1_DEF);
 
     // WHEN
@@ -1064,6 +1069,10 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi.date_acceptation.getTime() + 100).toBeGreaterThan(Date.now());
     expect(defi.date_acceptation.getTime() - 100).toBeLessThan(Date.now());
     expect(userDB.defi_history.defis).toHaveLength(2);
+    expect(userDB.unlocked_features.unlocked_features).toHaveLength(1);
+    expect(userDB.unlocked_features.unlocked_features[0]).toEqual(
+      Feature.defis,
+    );
   });
   it('PATCH /utilisateurs/id/defis/id - ajout de points', async () => {
     // GIVEN
