@@ -14,4 +14,11 @@ export class TuileThematique {
   constructor(data: TuileThematique) {
     Object.assign(this, data);
   }
+
+  public isDone?(): boolean {
+    return this.progression === this.cible_progression;
+  }
+  public isInProgress?(): boolean {
+    return !this.isDone() && !this.is_new;
+  }
 }

@@ -34,21 +34,23 @@ export class UniversUsecase {
         utilisateur.missions.getMissionByThematiqueUnivers(tuile.type);
 
       if (existing_mission && existing_mission.est_visible) {
-        result.push({
-          image_url: tuile.image_url,
-          is_locked: false,
-          is_new: existing_mission.isNew(),
-          niveau: tuile.niveau,
-          reason_locked: null,
-          type: tuile.type,
-          titre: ThematiqueRepository.getTitreThematiqueUnivers(
-            existing_mission.thematique_univers,
-          ),
-          progression: existing_mission.getProgression().current,
-          cible_progression: existing_mission.getProgression().target,
-          univers_parent: tuile.univers_parent,
-          univers_parent_label: tuile.univers_parent_label,
-        });
+        result.push(
+          new TuileThematique({
+            image_url: tuile.image_url,
+            is_locked: false,
+            is_new: existing_mission.isNew(),
+            niveau: tuile.niveau,
+            reason_locked: null,
+            type: tuile.type,
+            titre: ThematiqueRepository.getTitreThematiqueUnivers(
+              existing_mission.thematique_univers,
+            ),
+            progression: existing_mission.getProgression().current,
+            cible_progression: existing_mission.getProgression().target,
+            univers_parent: tuile.univers_parent,
+            univers_parent_label: tuile.univers_parent_label,
+          }),
+        );
       } else {
         listMissionDefs.forEach((mission_def) => {
           if (
@@ -58,23 +60,31 @@ export class UniversUsecase {
               mission_def.thematique_univers,
             ) === univers
           ) {
-            result.push({
-              image_url: tuile.image_url,
-              is_locked: false,
-              is_new: true,
-              niveau: tuile.niveau,
-              reason_locked: null,
-              type: tuile.type,
-              titre: tuile.titre,
-              progression: 0,
-              cible_progression: mission_def.objectifs.length,
-              univers_parent: tuile.univers_parent,
-              univers_parent_label: tuile.univers_parent_label,
-            });
+            result.push(
+              new TuileThematique({
+                image_url: tuile.image_url,
+                is_locked: false,
+                is_new: true,
+                niveau: tuile.niveau,
+                reason_locked: null,
+                type: tuile.type,
+                titre: tuile.titre,
+                progression: 0,
+                cible_progression: mission_def.objectifs.length,
+                univers_parent: tuile.univers_parent,
+                univers_parent_label: tuile.univers_parent_label,
+              }),
+            );
           }
         });
       }
     });
-    return result;
+
+    let final_result: TuileThematique[] = [];
+    final_result = final_result.concat(result.filter((t) => t.isInProgress()));
+    final_result = final_result.concat(result.filter((t) => t.is_new));
+    final_result = final_result.concat(result.filter((t) => t.isDone()));
+
+    return final_result;
   }
 }
