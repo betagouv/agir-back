@@ -27,7 +27,7 @@ export class Defi_v0 {
   static map(elem: Defi): Defi_v0 {
     return {
       id: elem.id,
-      titre: elem.getTitre(),
+      titre: elem.titre,
       points: elem.points,
       thematique: elem.thematique,
       tags: elem.tags,

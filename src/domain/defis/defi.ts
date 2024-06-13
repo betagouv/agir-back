@@ -1,5 +1,4 @@
 import { Categorie } from '../contenu/categorie';
-import { Personnalisation } from '../contenu/personnalisation';
 import { Thematique } from '../contenu/thematique';
 import { Defi_v0 } from '../object_store/defi/defiHistory_v0';
 import { Tag } from '../scoring/tag';
@@ -21,7 +20,7 @@ export enum DefiStatus {
 
 export class Defi implements TaggedContent {
   id: string;
-  private titre: string;
+  titre: string;
   sous_titre: string;
   points: number;
   pourquoi: string;
@@ -37,7 +36,6 @@ export class Defi implements TaggedContent {
   categorie: Categorie;
   mois: number[];
   conditions: ConditionDefi[][];
-  personnalisation?: Personnalisation;
 
   constructor(data: Defi_v0, utilisateur?: Utilisateur) {
     this.id = data.id;
@@ -57,22 +55,8 @@ export class Defi implements TaggedContent {
     this.categorie = data.categorie;
     this.mois = data.mois ? data.mois : [];
     this.conditions = data.conditions ? data.conditions : [];
-    this.personnalisation = new Personnalisation(utilisateur);
   }
 
-  public setPersonnalisation(utilisateur: Utilisateur): Defi {
-    this.personnalisation = utilisateur.getPersonnalisation();
-    return this;
-  }
-
-  public getTitre(personnalisation?: Personnalisation): string {
-    const perso = personnalisation || this.personnalisation;
-    if (perso) {
-      return perso.personnaliser(this.titre);
-    } else {
-      return this.titre;
-    }
-  }
   public getStatus(): DefiStatus {
     return this.status;
   }

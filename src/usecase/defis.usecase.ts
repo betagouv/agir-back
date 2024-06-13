@@ -7,6 +7,7 @@ import { MissionRepository } from '../../src/infrastructure/repository/mission.r
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
 import { Feature } from '../../src/domain/gamification/feature';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 
 @Injectable()
 export class DefisUsecase {
@@ -14,6 +15,7 @@ export class DefisUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private defiRepository: DefiRepository,
     private missionRepository: MissionRepository,
+    private personnalisator: Personnalisator,
   ) {}
 
   async getDefisOfUnivers(
@@ -32,7 +34,9 @@ export class DefisUsecase {
 
     result = result.filter((d) => d.getStatus() === DefiStatus.en_cours);
 
-    return result.map((d) => d.setPersonnalisation(utilisateur));
+    this.personnalisator.personnaliser(result, utilisateur);
+
+    return result;
   }
 
   private async getDefisOfUniversAndUtilisateur(
@@ -66,11 +70,11 @@ export class DefisUsecase {
         univers,
       );
       result = result.concat(
-        defis_univers
-          .filter((d) => d.getStatus() === DefiStatus.en_cours)
-          .map((d) => d.setPersonnalisation(utilisateur)),
+        defis_univers.filter((d) => d.getStatus() === DefiStatus.en_cours),
       );
     }
+    this.personnalisator.personnaliser(result, utilisateur);
+
     return result;
   }
 
@@ -103,13 +107,14 @@ export class DefisUsecase {
       PonderationApplicativeManager.sortContent(result);
 
       result = result.filter((d) => d.score > -50);
-      result = result.map((d) => d.setPersonnalisation(utilisateur));
+      this.personnalisator.personnaliser(result, utilisateur);
     }
     result = result.concat(
-      utilisateur.defi_history
-        .getDefisOfStatus(filtre_status)
-        .map((d) => d.setPersonnalisation(utilisateur)),
+      utilisateur.defi_history.getDefisOfStatus(filtre_status),
     );
+
+    this.personnalisator.personnaliser(result, utilisateur);
+
     return result;
   }
 
@@ -121,7 +126,8 @@ export class DefisUsecase {
     utilisateur.defi_history.setCatalogue(catalogue);
 
     const defi = utilisateur.defi_history.getDefiOrException(defiId);
-    defi.setPersonnalisation(utilisateur);
+
+    this.personnalisator.personnaliser(defi, utilisateur);
 
     return defi;
   }

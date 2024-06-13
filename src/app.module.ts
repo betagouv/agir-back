@@ -106,6 +106,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { ThematiqueStatistiqueUsecase } from './usecase/thematiqueStatistique.usecase';
 import { ThematiqueStatistiqueRepository } from './infrastructure/repository/thematiqueStatistique.repository';
 import { ScheduleModule } from '@nestjs/schedule';
+import { Personnalisator } from './infrastructure/personnalisation/personnalisator';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -234,6 +235,7 @@ function getControllers(): any[] {
     FileAttenteRepository,
     ThematiqueStatistiqueUsecase,
     ThematiqueStatistiqueRepository,
+    Personnalisator,
   ],
 })
 export class AppModule {}

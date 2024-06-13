@@ -7,11 +7,10 @@ import { Utilisateur } from '../utilisateur/utilisateur';
 import { MissionDefinition } from './missionDefinition';
 import { v4 as uuidv4 } from 'uuid';
 import { DefiDefinition } from '../defis/defiDefinition';
-import { Personnalisation } from '../contenu/personnalisation';
 
 export class Objectif {
   id: string;
-  private titre: string;
+  titre: string;
   content_id: string;
   is_locked: boolean;
   done_at: Date;
@@ -19,7 +18,6 @@ export class Objectif {
   points: number;
   sont_points_en_poche: boolean;
   est_reco: boolean;
-  personnalisation?: Personnalisation;
 
   constructor(data: Objectif_v0) {
     this.id = data.id;
@@ -36,18 +34,6 @@ export class Objectif {
   public isDone?() {
     return !!this.done_at;
   }
-
-  public getTitre(personnalisation?: Personnalisation): string {
-    const perso = personnalisation || this.personnalisation;
-    if (perso) {
-      return perso.personnaliser(this.titre);
-    } else {
-      return this.titre;
-    }
-  }
-  public setPersonnalisation?(utilisateur: Utilisateur) {
-    this.personnalisation = utilisateur.getPersonnalisation();
-  }
 }
 
 export class Mission {
@@ -57,7 +43,6 @@ export class Mission {
   objectifs: Objectif[];
   prochaines_thematiques: string[];
   est_visible: boolean;
-  personnalisation?: Personnalisation;
 
   constructor(data: Mission_v0) {
     this.id = data.id;
@@ -80,14 +65,6 @@ export class Mission {
         this.objectifs.push(new Objectif(element));
       });
     }
-  }
-
-  public setPersonnalisation?(utilisateur: Utilisateur): Mission {
-    this.personnalisation = utilisateur.getPersonnalisation();
-    for (const obj of this.objectifs) {
-      obj.setPersonnalisation(utilisateur);
-    }
-    return this;
   }
 
   public static buildFromDef(def: MissionDefinition): Mission {

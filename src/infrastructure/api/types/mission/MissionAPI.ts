@@ -23,7 +23,7 @@ export class ObjectifAPI {
   public static mapToAPI(objectif: Objectif): ObjectifAPI {
     return {
       id: objectif.id,
-      titre: objectif.getTitre(),
+      titre: objectif.titre,
       content_id: objectif.content_id,
       is_locked: objectif.is_locked,
       done: objectif.isDone(),

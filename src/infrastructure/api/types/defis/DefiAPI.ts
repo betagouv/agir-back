@@ -40,7 +40,7 @@ export class DefiAPI {
       thematique_label: ThematiqueRepository.getLibelleThematique(
         defi.thematique,
       ),
-      titre: defi.getTitre(),
+      titre: defi.titre,
       universes: defi.universes,
       motif: defi.motif,
       nombre_de_fois_realise: defiStatistique

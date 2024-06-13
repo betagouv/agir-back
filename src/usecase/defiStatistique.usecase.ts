@@ -40,7 +40,7 @@ export class DefiStatistiqueUsecase {
             defi_agrega.nbr_realise++;
             break;
         }
-        defi_agrega.titre = defi.getTitre();
+        defi_agrega.titre = defi.titre;
       });
     }
 

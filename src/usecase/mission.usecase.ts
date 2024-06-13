@@ -6,6 +6,7 @@ import { Mission, Objectif } from '../../src/domain/mission/mission';
 import { ContentType } from '../../src/domain/contenu/contentType';
 import { QuestionKYC } from '../../src/domain/kyc/questionQYC';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 
 @Injectable()
 export class MissionUsecase {
@@ -13,6 +14,7 @@ export class MissionUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private missionRepository: MissionRepository,
     private kycRepository: KycRepository,
+    private personnalisator: Personnalisator,
   ) {}
 
   async getMissionOfThematique(
@@ -33,7 +35,7 @@ export class MissionUsecase {
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    mission_resultat.setPersonnalisation(utilisateur);
+    this.personnalisator.personnaliser(mission_resultat, utilisateur);
 
     return mission_resultat;
   }

@@ -17,7 +17,7 @@ export class Objectif_v0 {
   static map(objectif: Objectif): Objectif_v0 {
     return {
       id: objectif.id,
-      titre: objectif.getTitre(),
+      titre: objectif.titre,
       content_id: objectif.content_id,
       is_locked: objectif.is_locked,
       done_at: objectif.done_at,
