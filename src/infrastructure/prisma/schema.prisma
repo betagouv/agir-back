@@ -131,6 +131,19 @@ model KycStatistique {
   @@id([utilisateurId, kycId])
 }
 
+model UniversStatistique {
+  universId                    String   @id
+  titre                        String
+  completion_pourcentage_1_20  Int      @default(0)
+  completion_pourcentage_21_40 Int      @default(0)
+  completion_pourcentage_41_60 Int      @default(0)
+  completion_pourcentage_61_80 Int      @default(0)
+  completion_pourcentage_81_99 Int      @default(0)
+  completion_pourcentage_100   Int      @default(0)
+  created_at                   DateTime @default(now()) @db.Timestamptz(3)
+  updated_at                   DateTime @updatedAt @db.Timestamptz(3)
+}
+
 model ThematiqueStatistique {
   thematiqueId                 String   @id
   titre                        String

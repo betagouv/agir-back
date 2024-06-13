@@ -9,3 +9,4 @@ curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/admin/defi-sta
 curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/admin/quiz-statistique
 curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/admin/kyc-statistique
 curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/admin/thematique-statistique
+curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/admin/univers-statistique

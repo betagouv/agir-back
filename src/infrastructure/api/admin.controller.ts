@@ -21,6 +21,7 @@ import { DefiStatistiqueUsecase } from '../../../src/usecase/defiStatistique.use
 import { QuizStatistiqueUsecase } from '../../../src/usecase/quizStatistique.usecase';
 import { KycStatistiqueUsecase } from '../../../src/usecase/kycStatistique.usecase';
 import { ThematiqueStatistiqueUsecase } from '../../../src/usecase/thematiqueStatistique.usecase';
+import { UniversStatistiqueUsecase } from '../../../src/usecase/universStatistique.usecase';
 
 @Controller()
 @ApiTags('Admin')
@@ -41,6 +42,7 @@ export class AdminController extends GenericControler {
     private quizStatistiqueUsecase: QuizStatistiqueUsecase,
     private kycStatistiqueUsecase: KycStatistiqueUsecase,
     private thematiqueStatistiqueUsecase: ThematiqueStatistiqueUsecase,
+    private universStatistiqueUsecase: UniversStatistiqueUsecase,
   ) {
     super();
   }
@@ -251,5 +253,14 @@ export class AdminController extends GenericControler {
   async calcul_thematique_statistique(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.thematiqueStatistiqueUsecase.calculStatistique();
+  }
+
+  @Post('/admin/univers-statistique')
+  @ApiOperation({
+    summary: `Calcul des statistiques de l'ensemble des univers`,
+  })
+  async calcul_univers_statistique(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.universStatistiqueUsecase.calculStatistique();
   }
 }

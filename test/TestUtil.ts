@@ -60,6 +60,7 @@ import {
   Quizz,
   Service,
   ServiceDefinition,
+  UniversStatistique,
   Utilisateur,
 } from '@prisma/client';
 import { ServiceStatus } from '../src/domain/service/service';
@@ -97,6 +98,7 @@ export enum DB {
   defiStatistique = 'defiStatistique',
   mission = 'mission',
   kYC = 'kYC',
+  universStatistique = 'universStatistique',
 }
 export class TestUtil {
   private static TYPE_DATA_MAP: Record<DB, Function> = {
@@ -120,6 +122,7 @@ export class TestUtil {
     defiStatistique: TestUtil.defiStatistiqueData,
     mission: TestUtil.missionData,
     kYC: TestUtil.kycData,
+    universStatistique: TestUtil.universStatistiqueData,
   };
 
   constructor() {}
@@ -210,6 +213,7 @@ export class TestUtil {
     await this.prisma.kYC.deleteMany();
     await this.prisma.fileAttente.deleteMany();
     await this.prisma.thematiqueStatistique.deleteMany();
+    await this.prisma.universStatistique.deleteMany();
     ThematiqueRepository.resetAllRefs();
   }
 
@@ -757,6 +761,23 @@ export class TestUtil {
       nombre_defis_realises: 0,
       raisons_defi_pas_envie: [],
       raisons_defi_abandonne: [],
+      created_at: new Date(),
+      updated_at: new Date(),
+      ...override,
+    };
+  }
+  static universStatistiqueData(
+    override?: Partial<UniversStatistique>,
+  ): UniversStatistique {
+    return {
+      universId: 'universId',
+      titre: 'Titre de mon article',
+      completion_pourcentage_1_20: 0,
+      completion_pourcentage_21_40: 0,
+      completion_pourcentage_41_60: 0,
+      completion_pourcentage_61_80: 0,
+      completion_pourcentage_81_99: 0,
+      completion_pourcentage_100: 0,
       created_at: new Date(),
       updated_at: new Date(),
       ...override,

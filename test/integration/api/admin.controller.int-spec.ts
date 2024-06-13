@@ -27,12 +27,17 @@ import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
 import { ContentType } from '../../../src/domain/contenu/contentType';
-import { MissionsUtilisateur_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
+import {
+  MissionsUtilisateur_v0,
+  Objectif_v0,
+} from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
+import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const linkyRepository = new LinkyRepository(TestUtil.prisma);
+  const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -2199,6 +2204,202 @@ describe('Admin (API test)', () => {
       completion_pourcentage_61_80: 0,
       completion_pourcentage_81_99: 0,
       completion_pourcentage_100: 0,
+    });
+  });
+
+  it("POST /admin/univers-statistique - calcul des statistiques de l'ensemble des univers", async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Cereales',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 2,
+      code: ThematiqueUnivers.mobilite_quotidien,
+      univers_parent: Univers.transport,
+      label: 'Mobilité du quotidien',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 3,
+      code: ThematiqueUnivers.gaspillage_alimentaire,
+      univers_parent: Univers.alimentation,
+      label: 'Gaspillage alimentaire',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 4,
+      code: ThematiqueUnivers.partir_vacances,
+      univers_parent: Univers.climat,
+      label: 'Manger local',
+    });
+
+    await thematiqueRepository.onApplicationBootstrap();
+
+    const objectifComplete: Objectif_v0 = {
+      id: '1',
+      content_id: '12',
+      type: ContentType.article,
+      titre: 'Super article',
+      points: 10,
+      is_locked: false,
+      done_at: new Date(),
+      sont_points_en_poche: false,
+      est_reco: false,
+    };
+
+    const objectifNonComplete: Objectif_v0 = {
+      ...objectifComplete,
+      done_at: null,
+    };
+
+    const missionsUtilisateur1: MissionsUtilisateur_v0 = {
+      version: 0,
+      missions: [
+        {
+          id: '1',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.cereales,
+          objectifs: [objectifComplete, objectifComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '2',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
+          objectifs: [objectifComplete, objectifComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '3',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.mobilite_quotidien,
+          objectifs: [objectifComplete, objectifNonComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '4',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.partir_vacances,
+          objectifs: [objectifComplete, objectifNonComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+      ],
+    };
+    const missionsUtilisateur2: MissionsUtilisateur_v0 = {
+      version: 0,
+      missions: [
+        {
+          id: '1',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.cereales,
+          objectifs: [objectifComplete, objectifComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '2',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
+          objectifs: [objectifComplete, objectifComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '3',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.mobilite_quotidien,
+          objectifs: [objectifNonComplete, objectifNonComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '4',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.partir_vacances,
+          objectifs: [objectifComplete, objectifComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      id: 'idUtilisateur1',
+      missions: missionsUtilisateur1,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'idUtilisateur2',
+      email: 'user2@test.com',
+      missions: missionsUtilisateur2,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/univers-statistique');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(3);
+    expect(response.body).toEqual([
+      Univers.alimentation,
+      Univers.transport,
+      Univers.climat,
+    ]);
+
+    const univers1 = await TestUtil.prisma.universStatistique.findUnique({
+      where: { universId: Univers.alimentation },
+    });
+    const univers2 = await TestUtil.prisma.universStatistique.findUnique({
+      where: { universId: Univers.transport },
+    });
+    const univers3 = await TestUtil.prisma.universStatistique.findUnique({
+      where: { universId: Univers.climat },
+    });
+
+    delete univers1.created_at;
+    delete univers1.updated_at;
+    delete univers2.created_at;
+    delete univers2.updated_at;
+    delete univers3.created_at;
+    delete univers3.updated_at;
+
+    expect(univers1).toStrictEqual({
+      universId: 'alimentation',
+      titre: Univers.alimentation,
+      completion_pourcentage_1_20: 0,
+      completion_pourcentage_21_40: 0,
+      completion_pourcentage_41_60: 0,
+      completion_pourcentage_61_80: 0,
+      completion_pourcentage_81_99: 0,
+      completion_pourcentage_100: 2,
+    });
+
+    expect(univers2).toStrictEqual({
+      universId: 'transport',
+      titre: Univers.transport,
+      completion_pourcentage_1_20: 0,
+      completion_pourcentage_21_40: 0,
+      completion_pourcentage_41_60: 1,
+      completion_pourcentage_61_80: 0,
+      completion_pourcentage_81_99: 0,
+      completion_pourcentage_100: 0,
+    });
+
+    expect(univers3).toStrictEqual({
+      universId: 'climat',
+      titre: Univers.climat,
+      completion_pourcentage_1_20: 0,
+      completion_pourcentage_21_40: 0,
+      completion_pourcentage_41_60: 1,
+      completion_pourcentage_61_80: 0,
+      completion_pourcentage_81_99: 0,
+      completion_pourcentage_100: 1,
     });
   });
 });

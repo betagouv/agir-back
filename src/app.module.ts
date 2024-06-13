@@ -105,6 +105,8 @@ import { FileAttenteRepository } from './infrastructure/repository/fileAttente.r
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ThematiqueStatistiqueUsecase } from './usecase/thematiqueStatistique.usecase';
 import { ThematiqueStatistiqueRepository } from './infrastructure/repository/thematiqueStatistique.repository';
+import { UniversStatistiqueUsecase } from './usecase/universStatistique.usecase';
+import { UniversStatistiqueRepository } from './infrastructure/repository/universStatistique.repository';
 import { ScheduleModule } from '@nestjs/schedule';
 import { Personnalisator } from './infrastructure/personnalisation/personnalisator';
 
@@ -235,7 +237,8 @@ function getControllers(): any[] {
     FileAttenteRepository,
     ThematiqueStatistiqueUsecase,
     ThematiqueStatistiqueRepository,
-    Personnalisator,
+    UniversStatistiqueUsecase,
+    UniversStatistiqueRepository,
   ],
 })
 export class AppModule {}

@@ -44,7 +44,7 @@ export class ThematiqueRepository {
   public static getTuileThematique(type: string): TuileThematique {
     return ThematiqueRepository.thematiquesUnivers.get(type);
   }
-  public static getUniversParent(thematiqueUnivers: string) {
+  public static getUniversParent(thematiqueUnivers: string): string {
     return ThematiqueRepository.getTuileThematique(thematiqueUnivers)
       .univers_parent;
   }
