@@ -13,6 +13,23 @@ export class OnboardingResult {
   }
 
   public static buildFromOnboarding(data: Onboarding) {
+    if (!data) {
+      return new OnboardingResult({
+        version: 0,
+        ventilation_par_thematiques: {
+          alimentation: Impact.tres_faible,
+          transports: Impact.tres_faible,
+          logement: Impact.tres_faible,
+          consommation: Impact.tres_faible,
+        },
+        ventilation_par_impacts: {
+          '1': [ThematiqueOnboarding.alimentation],
+          '2': [ThematiqueOnboarding.alimentation],
+          '3': [ThematiqueOnboarding.alimentation],
+          '4': [ThematiqueOnboarding.alimentation],
+        },
+      });
+    }
     const ventilation_par_them = {
       alimentation: data.getAlimentationLevel(),
       transports: data.getTransportLevel(),

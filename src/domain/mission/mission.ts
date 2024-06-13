@@ -168,25 +168,18 @@ export class Mission {
         objectif.points,
         utilisateur.unlocked_features,
       );
-      return this.terminerMissionIfAllDone(utilisateur);
+      return this.terminerMission(utilisateur);
     }
     return [];
   }
 
-  public terminerMissionIfAllDone(utilisateur: Utilisateur): string[] {
-    let ready_to_end = true;
-    this.objectifs.forEach((objectif) => {
-      ready_to_end = ready_to_end && objectif.isDone();
-    });
-    if (ready_to_end) {
-      this.done_at = new Date();
-      utilisateur.gamification.celebrerFinMission(
-        this.thematique_univers,
-        this.prochaines_thematiques,
-      );
-      return this.prochaines_thematiques;
-    }
-    return [];
+  public terminerMission(utilisateur: Utilisateur): string[] {
+    this.done_at = new Date();
+    utilisateur.gamification.celebrerFinMission(
+      this.thematique_univers,
+      this.prochaines_thematiques,
+    );
+    return this.prochaines_thematiques;
   }
 
   public unlockContentIfAllKYCsDone() {
@@ -247,10 +240,40 @@ export class Mission {
     return ready;
   }
 
+  public getNombreDefisDansMission(): number {
+    let result = 0;
+    for (const obj of this.objectifs) {
+      result += obj.type === ContentType.defi ? 1 : 0;
+    }
+    return result;
+  }
+  public getNombreObjectifsDone(): number {
+    let result = 0;
+    for (const obj of this.objectifs) {
+      result += obj.isDone() ? 1 : 0;
+    }
+    return result;
+  }
   public getProgression(): { current: number; target: number } {
+    if (this.objectifs.length === 0) {
+      return { current: 0, target: 0 };
+    }
+    const objectifs_done = this.getNombreObjectifsDone();
+    const nbr_defis = this.getNombreDefisDansMission();
+
+    if (nbr_defis === 0) {
+      return { current: objectifs_done, target: this.objectifs.length };
+    }
+    const nbr_defis_minus_one = nbr_defis - 1;
+
+    const target_progression_reelle =
+      this.objectifs.length - nbr_defis_minus_one;
     return {
-      current: this.objectifs.filter((objectif) => objectif.isDone()).length,
-      target: this.objectifs.length,
+      current: Math.min(
+        this.objectifs.filter((objectif) => objectif.isDone()).length,
+        target_progression_reelle,
+      ),
+      target: target_progression_reelle,
     };
   }
   public isNew(): boolean {

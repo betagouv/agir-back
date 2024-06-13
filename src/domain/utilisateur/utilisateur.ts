@@ -124,8 +124,12 @@ export class Utilisateur extends UtilisateurData {
       defi_history: new DefiHistory(),
       equipements: new Equipements(),
       version: App.currentUserSystemVersion(),
-      logement: Logement.buildFromOnboarding(onboarding),
-      transport: Transport.buildFromOnboarding(onboarding),
+      logement: onboarding
+        ? Logement.buildFromOnboarding(onboarding)
+        : new Logement(),
+      transport: onboarding
+        ? Transport.buildFromOnboarding(onboarding)
+        : new Transport(),
       tag_ponderation_set: {},
       force_connexion: false,
       derniere_activite: new Date(),
