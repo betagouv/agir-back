@@ -38,7 +38,7 @@ export class UniversUsecase {
           image_url: tuile.image_url,
           is_locked: false,
           is_new: existing_mission.isNew(),
-          niveau: null,
+          niveau: tuile.niveau,
           reason_locked: null,
           type: tuile.type,
           titre: ThematiqueRepository.getTitreThematiqueUnivers(
@@ -62,7 +62,7 @@ export class UniversUsecase {
               image_url: tuile.image_url,
               is_locked: false,
               is_new: true,
-              niveau: null,
+              niveau: tuile.niveau,
               reason_locked: null,
               type: tuile.type,
               titre: tuile.titre,

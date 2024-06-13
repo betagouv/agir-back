@@ -369,6 +369,7 @@ export class CMSUsecase {
       cmsWebhookAPI.entry.univers_parent
         ? cmsWebhookAPI.entry.univers_parent.code
         : undefined,
+      cmsWebhookAPI.entry.niveau,
     );
   }
 

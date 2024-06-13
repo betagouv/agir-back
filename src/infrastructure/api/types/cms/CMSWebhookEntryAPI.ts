@@ -65,6 +65,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() type: string;
   @ApiProperty() label: string;
   @ApiProperty() question: string;
+  @ApiProperty() niveau: number;
   @ApiProperty({ type: [OrConditionAPI] }) OR_Conditions: OrConditionAPI[];
   @ApiProperty({ type: [CMSWebhookReponseKYCAPI] })
   reponses: CMSWebhookReponseKYCAPI[];
@@ -124,6 +125,7 @@ export type CMSWebhookPopulateAPI = {
     categorie: string;
     is_ngc: boolean;
     code: string;
+    niveau: number;
     question: string;
     pourquoi: string;
     description: string;

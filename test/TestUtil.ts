@@ -650,6 +650,7 @@ export class TestUtil {
       univers_parent: Univers.climat,
       created_at: undefined,
       updated_at: undefined,
+      niveau: 0,
       ...override,
     };
   }

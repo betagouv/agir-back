@@ -139,6 +139,7 @@ describe('Univers (API test)', () => {
       code: ThematiqueUnivers.cereales,
       label: `Les céréales c'est bon`,
       image_url: 'aaaa',
+      niveau: 2,
       univers_parent: Univers.alimentation,
     });
     await thematiqueRepository.onApplicationBootstrap();
@@ -159,7 +160,7 @@ describe('Univers (API test)', () => {
       is_locked: false,
       reason_locked: null,
       is_new: false,
-      niveau: null,
+      niveau: 2,
       image_url: 'aaaa',
       univers_parent: Univers.alimentation,
       univers_parent_label: 'Manger !',

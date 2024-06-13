@@ -114,7 +114,7 @@ export class ThematiqueRepository {
           progression: null,
           cible_progression: null,
           is_new: false,
-          niveau: 0,
+          niveau: t.niveau,
           image_url: t.image_url
             ? t.image_url
             : 'https://res.cloudinary.com/dq023imd8/image/upload/v1714635448/univers_climat_a7bedede79.jpg',
@@ -172,6 +172,7 @@ export class ThematiqueRepository {
     label: string,
     image_url: string,
     univers_parent: string,
+    niveau: number,
   ) {
     await this.prisma.thematiqueUnivers.upsert({
       where: {
@@ -183,12 +184,14 @@ export class ThematiqueRepository {
         label: label,
         image_url: image_url,
         univers_parent: univers_parent,
+        niveau: niveau,
       },
       update: {
         code: code,
         label: label,
         image_url: image_url,
         univers_parent: univers_parent,
+        niveau: niveau,
       },
     });
   }
