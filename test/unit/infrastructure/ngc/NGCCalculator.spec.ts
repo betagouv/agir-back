@@ -105,7 +105,7 @@ describe('NGCCalculator', () => {
     expect(response.get('services sociétaux')).toEqual(1474.0267696872584);
   });
 
-  it.only(`est applicable : indique que la question n'est pas applicable`, () => {
+  it(`est applicable : indique que la question n'est pas applicable`, () => {
     //GIVEN
     let calculator = new NGCCalculator();
     const situation = { 'transport . voiture . km': 0 };
@@ -121,16 +121,24 @@ describe('NGCCalculator', () => {
 
     console.log(reponse);
   });
-  it('est applicable : ...', () => {
+  it.only('listerToutesLesClésDeQuestions : liste toutes les clés', () => {
     //GIVEN
     let calculator = new NGCCalculator();
-    const situation = {};
-    const entry = 'transport . voiture . km';
 
     //WHEN
-    const reponse = calculator.estQuestionApplicable(situation, entry);
+    const result = calculator.listerToutesLesClésDeQuestions();
+    console.log(result.length);
+    //THEN
+    console.log(result);
+  });
+  it(' listeQuestionsAvecConditionApplicabilité : liste toutes les clés de questions avec conditions', () => {
+    //GIVEN
+    let calculator = new NGCCalculator();
+
+    //WHEN
+    const result = calculator.listeQuestionsAvecConditionApplicabilité();
 
     //THEN
-    console.log(reponse);
+    console.log(result);
   });
 });

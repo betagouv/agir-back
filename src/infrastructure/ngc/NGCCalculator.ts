@@ -19,12 +19,34 @@ export class NGCCalculator {
     });
   }
 
-  public listerQuestionsApplicables(situation: object, question: string) {
+  public listerToutesLesClésDeQuestions(prefix?: string): string[] {
+    const result = [];
+
     const local_engine = this.engine.shallowCopy();
-    local_engine.setSituation(situation);
 
     const parsedRules = local_engine.getParsedRules();
-    console.log(Object.keys(parsedRules));
+
+    for (const key of Object.keys(parsedRules)) {
+      if (
+        parsedRules[key].rawNode.question !== undefined &&
+        key.startsWith(prefix ? prefix : '')
+      ) {
+        result.push(key);
+      }
+    }
+    return result;
+  }
+
+  public listeQuestionsAvecConditionApplicabilité() {
+    const ressult = [];
+    for (const key of Object.keys(rules)) {
+      if (rules[key] && rules[key].question !== undefined) {
+        if (rules[key]['non applicable si'] !== undefined) {
+          ressult.push(key);
+        }
+      }
+    }
+    return ressult;
   }
 
   public estQuestionApplicable(situation: object, entry: string) {
