@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Bilan } from '../../domain/bilan/bilan';
 import rules from '@incubateur-ademe/nosgestesclimat/public/co2-model.FR-lang.fr.json';
-import Engine from 'publicodes';
+import Engine, { ParsedRules, PublicodesError } from 'publicodes';
 
 @Injectable()
 export class NGCCalculator {
@@ -17,6 +17,25 @@ export class NGCCalculator {
         },
       },
     });
+  }
+
+  public listerQuestionsApplicables(situation: object, question: string) {
+    const local_engine = this.engine.shallowCopy();
+    local_engine.setSituation(situation);
+
+    const parsedRules = local_engine.getParsedRules();
+    console.log(Object.keys(parsedRules));
+  }
+
+  public estQuestionApplicable(situation: object, entry: string) {
+    const local_engine = this.engine.shallowCopy();
+    local_engine.setSituation(situation);
+
+    const result = local_engine.evaluate({
+      'est applicable': entry,
+    });
+    console.log(result);
+    return result.nodeValue === true;
   }
 
   computeSingleEntryValue(situation: object, entry: string) {

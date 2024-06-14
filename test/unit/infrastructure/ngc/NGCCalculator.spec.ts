@@ -104,4 +104,33 @@ describe('NGCCalculator', () => {
     expect(response.get('alimentation')).toEqual(2099.9159821);
     expect(response.get('services sociétaux')).toEqual(1474.0267696872584);
   });
+
+  it.only(`est applicable : indique que la question n'est pas applicable`, () => {
+    //GIVEN
+    let calculator = new NGCCalculator();
+    const situation = { 'transport . voiture . km': 0 };
+    const entry = 'transport . voiture . motorisation';
+
+    //WHEN
+    const reponse = calculator.estQuestionApplicable(
+      {
+        //'transport . voiture . km': 100,
+      },
+      'transport . voiture . motorisation',
+    );
+
+    console.log(reponse);
+  });
+  it('est applicable : ...', () => {
+    //GIVEN
+    let calculator = new NGCCalculator();
+    const situation = {};
+    const entry = 'transport . voiture . km';
+
+    //WHEN
+    const reponse = calculator.estQuestionApplicable(situation, entry);
+
+    //THEN
+    console.log(reponse);
+  });
 });
