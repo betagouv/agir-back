@@ -431,6 +431,30 @@ describe('Mission (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.missions.missions).toHaveLength(1);
   });
+  it(`GET /utilisateurs/id/thematiques/climat/mission - 404 si pas de mission pour cette thematique`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { missions: {} });
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Mange de la graine',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/cereales/mission',
+    );
+
+    // THEN
+    expect(response.status).toBe(404);
+  });
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour l'objecif donné`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: missions_article_seul });

@@ -30,14 +30,18 @@ export class MissionUsecase {
       const mission_def = await this.missionRepository.getByThematique(
         thematique,
       );
-      mission_resultat = utilisateur.missions.addMission(mission_def);
+      if (mission_def) {
+        mission_resultat = utilisateur.missions.addMission(mission_def);
+        await this.utilisateurRepository.updateUtilisateur(utilisateur);
+      }
     }
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
-
-    this.personnalisator.personnaliser(mission_resultat, utilisateur);
-
-    return mission_resultat;
+    if (mission_resultat) {
+      this.personnalisator.personnaliser(mission_resultat, utilisateur);
+      return mission_resultat;
+    } else {
+      throw ApplicationError.throwMissionNotFoundOfThematique(thematique);
+    }
   }
 
   async getMissionNextKycID(
