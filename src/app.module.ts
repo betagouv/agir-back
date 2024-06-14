@@ -239,6 +239,7 @@ function getControllers(): any[] {
     ThematiqueStatistiqueRepository,
     UniversStatistiqueUsecase,
     UniversStatistiqueRepository,
+    Personnalisator,
   ],
 })
 export class AppModule {}
