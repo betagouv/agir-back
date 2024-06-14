@@ -1,6 +1,7 @@
 import { TestUtil } from '../../TestUtil';
 import { StatistiqueRepository } from '../../../src/infrastructure/repository/statitstique.repository';
 import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
+import { Univers } from '../../../src/domain/univers/univers';
 
 describe('StatistiqueRepository', () => {
   const OLD_ENV = process.env;
@@ -32,19 +33,28 @@ describe('StatistiqueRepository', () => {
       1,
       ThematiqueUnivers.cereales,
       null,
+      `${Univers.alimentation}, ${Univers.consommation}`,
+      null,
     );
 
     // THEN
     const statistique = await TestUtil.prisma.statistique.findUnique({
       where: { utilisateurId: 'idUtilisateur' },
     });
-    expect(statistique.nombre_defis_en_cours).toEqual(2);
-    expect(statistique.nombre_defis_realises).toEqual(3);
-    expect(statistique.nombre_defis_abandonnes).toEqual(2);
-    expect(statistique.nombre_defis_pas_envie).toEqual(1);
-    expect(statistique.thematiques_en_cours).toBeNull();
-    expect(statistique.thematiques_terminees).toEqual(
-      ThematiqueUnivers.cereales,
-    );
+
+    delete statistique.created_at;
+    delete statistique.updated_at;
+
+    expect(statistique).toStrictEqual({
+      utilisateurId: 'idUtilisateur',
+      nombre_defis_en_cours: 2,
+      nombre_defis_realises: 3,
+      nombre_defis_abandonnes: 2,
+      nombre_defis_pas_envie: 1,
+      thematiques_en_cours: null,
+      thematiques_terminees: ThematiqueUnivers.cereales,
+      univers_en_cours: null,
+      univers_termines: `${Univers.alimentation}, ${Univers.consommation}`,
+    });
   });
 });

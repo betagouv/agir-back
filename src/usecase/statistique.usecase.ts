@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { StatistiqueRepository } from '../../src/infrastructure/repository/statitstique.repository';
-import { Objectif } from '../../src/domain/mission/mission';
+import { Mission, Objectif } from '../../src/domain/mission/mission';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
+import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
 
 @Injectable()
 export class StatistiqueUsecase {
@@ -19,8 +20,12 @@ export class StatistiqueUsecase {
     for (const userId of utilisateurIds) {
       const user = await this.utilisateurRepository.getById(userId);
 
-      const { thematiquesTermineesAsc, thematiquesEnCoursAsc } =
-        this.calculerThematiques(user);
+      const {
+        thematiquesTermineesAsc,
+        thematiquesEnCoursAsc,
+        universTerminesAsc,
+        universEncoursAsc,
+      } = this.calculerThematiques(user);
 
       const nombreDefisEnCours = user.defi_history.getNombreDefisEnCours();
       const nombreDefisRealises = user.defi_history.getNombreDefisRealises();
@@ -36,6 +41,8 @@ export class StatistiqueUsecase {
         nombreDefisPasEnvie,
         thematiquesTermineesAsc,
         thematiquesEnCoursAsc,
+        universTerminesAsc,
+        universEncoursAsc,
       );
 
       reponse.push(user.id);
@@ -45,20 +52,51 @@ export class StatistiqueUsecase {
   }
 
   private calculerThematiques(user: Utilisateur) {
+    const universCompletions: Record<
+      string,
+      { termines: boolean; enCours: boolean }
+    > = {};
+
     const thematiquesTerminees: string[] = [];
     const thematiquesEnCours: string[] = [];
 
     user.missions.missions.forEach((mission) => {
-      const pourcentageCompletion = this.calculerPourcentageDeCompletion(
-        mission.objectifs,
+      const pourcentageCompletion = this.calculPourcentageDeCompletion(mission);
+
+      const universParent = ThematiqueRepository.getUniversParent(
+        mission.thematique_univers,
       );
+
+      if (!universCompletions[universParent]) {
+        universCompletions[universParent] = {
+          termines: false,
+          enCours: false,
+        };
+      }
 
       if (pourcentageCompletion === 100) {
         thematiquesTerminees.push(mission.thematique_univers);
+
+        if (!universCompletions[universParent].enCours) {
+          universCompletions[universParent].termines = true;
+        }
       } else if (pourcentageCompletion > 0) {
         thematiquesEnCours.push(mission.thematique_univers);
+        universCompletions[universParent].enCours = true;
+
+        if (!universCompletions[universParent].enCours) {
+          universCompletions[universParent].termines = false;
+        }
       }
     });
+
+    const universTermines = Object.entries(universCompletions)
+      .filter(([key, value]) => value.termines)
+      .map(([key]) => key);
+
+    const universEncours = Object.entries(universCompletions)
+      .filter(([key, value]) => value.enCours)
+      .map(([key]) => key);
 
     const thematiquesTermineesAsc = thematiquesTerminees.length
       ? this.ordonnerEtStringifier(thematiquesTerminees)
@@ -66,17 +104,24 @@ export class StatistiqueUsecase {
     const thematiquesEnCoursAsc = thematiquesEnCours.length
       ? this.ordonnerEtStringifier(thematiquesEnCours)
       : null;
+    const universTerminesAsc = universTermines.length
+      ? this.ordonnerEtStringifier(universTermines)
+      : null;
+    const universEncoursAsc = universEncours.length
+      ? this.ordonnerEtStringifier(universEncours)
+      : null;
 
-    return { thematiquesTermineesAsc, thematiquesEnCoursAsc };
+    return {
+      thematiquesTermineesAsc,
+      thematiquesEnCoursAsc,
+      universTerminesAsc,
+      universEncoursAsc,
+    };
   }
 
-  private calculerPourcentageDeCompletion(objectifs: Objectif[]): number {
-    const totalObjectifs = objectifs.length;
-    const totalObjectifsCompletes = objectifs.filter(
-      (objectif) => objectif.done_at !== null,
-    ).length;
-
-    return (totalObjectifsCompletes / totalObjectifs) * 100;
+  private calculPourcentageDeCompletion(mission: Mission): number {
+    const { current, target } = mission.getProgression();
+    return (current / target) * 100;
   }
 
   private ordonnerEtStringifier(array: string[]): string {
