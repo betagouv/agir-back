@@ -57,6 +57,7 @@ export class AideRepository {
   }
 
   async search(filter: AideFilter): Promise<Aide[]> {
+    console.log(filter);
     if (App.aide_cache_enabled()) {
       if (Date.now() - this.last_query_time > 100000) {
         await this.load_aides();

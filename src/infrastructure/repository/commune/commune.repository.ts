@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import codes_postaux from './codes_postaux.json';
-import communes from '../../data/communes.json';
+import communes from './communes.json';
 
 export type CommuneParCodePostal = {
   INSEE: string;
@@ -50,7 +50,7 @@ export class CommuneRepository {
   }
 
   getLibelleCommuneLowerCase(code_insee: string) {
-    const commune = (communes as Commune[]).find((c) => c.code === code_insee);
+    const commune = this.getCommuneByCodeINSEE(code_insee);
     if (commune) {
       return commune.nom;
     }
@@ -68,5 +68,41 @@ export class CommuneRepository {
       }
     }
     return null;
+  }
+
+  findDepartementRegionByCodePostal(code_postal: string): {
+    code_departement: string;
+    code_region: string;
+  } {
+    const liste = this.getCommunesForCodePostal(code_postal);
+    if (liste.length === 0) {
+      return {
+        code_departement: undefined,
+        code_region: undefined,
+      };
+    }
+
+    const commune = this.getCommuneByCodeINSEE(liste[0].INSEE);
+
+    if (commune) {
+      return {
+        code_departement: commune.departement,
+        code_region: commune.region,
+      };
+    } else {
+      return {
+        code_departement: undefined,
+        code_region: undefined,
+      };
+    }
+  }
+
+  private getCommunesForCodePostal(code_postal: string) {
+    const liste: CommuneParCodePostal[] = codes_postaux[code_postal];
+    return liste ? liste : [];
+  }
+
+  private getCommuneByCodeINSEE(code_insee: string): Commune {
+    return (communes as Commune[]).find((c) => c.code === code_insee);
   }
 }

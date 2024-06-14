@@ -9,7 +9,6 @@ import { UtilisateurRepository } from '../../src/infrastructure/repository/utili
 import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
 import { Aide } from '../../src/domain/aides/aide';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
-import { DepartementRepository } from '../../src/infrastructure/repository/departement/departement.repository';
 
 @Injectable()
 export class AidesUsecase {
@@ -19,7 +18,6 @@ export class AidesUsecase {
     private aideRepository: AideRepository,
     private utilisateurRepository: UtilisateurRepository,
     private communeRepository: CommuneRepository,
-    private departementRepository: DepartementRepository,
   ) {}
   async getRetrofit(
     codePostal: string,
@@ -41,7 +39,7 @@ export class AidesUsecase {
     );
 
     const dept_region =
-      await this.departementRepository.findDepartementRegionByCodePostal(
+      await this.communeRepository.findDepartementRegionByCodePostal(
         user.logement.code_postal,
       );
 

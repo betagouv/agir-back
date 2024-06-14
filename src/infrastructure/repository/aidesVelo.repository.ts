@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import Engine from 'publicodes';
 import { formatValue } from 'publicodes';
 import rulesVelo from '../data/aidesVelo.json';
-import localisations from '../data/communes.json';
+import localisations from '../repository/commune/communes.json';
 import miniatures from '../data/miniatures.json';
 import aidesAndCollectivities from '../data/aides-collectivities.json';
 import {
