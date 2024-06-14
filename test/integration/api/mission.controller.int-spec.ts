@@ -810,7 +810,7 @@ describe('Mission (API test)', () => {
     await TestUtil.create(DB.article, { content_id: '1' });
     await TestUtil.create(DB.defi, {
       content_id: '1',
-      conditions: [[{ code_kyc: '1', code_reponse: 'yi' }]],
+      conditions: [[{ id_kyc: '1', code_kyc: '1', code_reponse: 'yi' }]],
     });
 
     // WHEN

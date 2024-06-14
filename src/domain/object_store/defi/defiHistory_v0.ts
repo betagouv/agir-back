@@ -4,7 +4,7 @@ import { Tag } from '../../scoring/tag';
 import { Defi, DefiStatus } from '../../../../src/domain/defis/defi';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
-import { ConditionDefi } from '../../../../src/domain/defis/defiDefinition';
+import { ConditionDefi } from 'src/domain/defis/conditionDefi';
 
 export class Defi_v0 {
   id: string;

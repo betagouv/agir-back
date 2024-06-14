@@ -260,8 +260,8 @@ export type CMSWebhookPopulateAPI = {
             code_reponse: string;
             kyc: {
               data: {
+                id: string;
                 attributes: {
-                  id: string;
                   code: string;
                 };
               };

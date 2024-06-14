@@ -1,6 +1,6 @@
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Categorie } from '../contenu/categorie';
-import { ConditionDefi } from '../defis/defiDefinition';
+import { ConditionDefi } from '../defis/conditionDefi';
 import { KYCHistory_v0 as KYCHistory_v0 } from '../object_store/kyc/kycHistory_v0';
 import { KycDefinition } from './kycDefinition';
 import { QuestionKYC, TypeReponseQuestionKYC } from './questionQYC';
@@ -115,7 +115,7 @@ export class KYCHistory {
     for (const OU of conditions) {
       let union = true;
       for (const cond of OU) {
-        const kyc = this.getAnsweredQuestionByCode(cond.code_kyc);
+        const kyc = this.getAnsweredQuestionByCMS_ID(cond.id_kyc);
         if (!(kyc && kyc.includesReponseCode(cond.code_reponse))) {
           union = false;
         }
@@ -146,6 +146,11 @@ export class KYCHistory {
 
   private getAnsweredQuestionByCode(id: string): QuestionKYC {
     return this.answered_questions.find((element) => element.id === id);
+  }
+  private getAnsweredQuestionByCMS_ID(id: string): QuestionKYC {
+    return this.answered_questions.find(
+      (element) => element.id_cms.toString() === id,
+    );
   }
 
   private getKYCByIdOrException(id: string): QuestionKYC {

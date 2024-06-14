@@ -1,12 +1,7 @@
 import { Categorie } from '../contenu/categorie';
 import { Thematique } from '../contenu/thematique';
 import { Tag } from '../scoring/tag';
-
-export class ConditionDefi {
-  id_kyc: string;
-  code_kyc: string;
-  code_reponse: string;
-}
+import { ConditionDefi } from './conditionDefi';
 
 export class DefiDefinition {
   content_id: string;

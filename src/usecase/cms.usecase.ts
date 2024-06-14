@@ -187,6 +187,7 @@ export class CMSUsecase {
       const element: CMSWebhookPopulateAPI = CMS_DEFI_DATA[index];
       let defi: DefiDefinition;
       try {
+        console.log(JSON.stringify(element));
         defi = CMSUsecase.buildDefiFromCMSPopulateData(element);
         liste_defis.push(defi);
         loading_result.push(`loaded article : ${defi.content_id}`);
@@ -676,7 +677,7 @@ export class CMSUsecase {
         : [],
       conditions: entry.attributes.OR_Conditions.map((or) =>
         or.AND_Conditions.map((and) => ({
-          id_kyc: and.kyc.data.attributes.id,
+          id_kyc: and.kyc.data.id,
           code_kyc: and.kyc.data.attributes.code,
           code_reponse: and.code_reponse,
         })),

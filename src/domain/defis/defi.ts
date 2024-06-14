@@ -4,7 +4,7 @@ import { Defi_v0 } from '../object_store/defi/defiHistory_v0';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
 import { Utilisateur } from '../utilisateur/utilisateur';
-import { ConditionDefi } from './defiDefinition';
+import { ConditionDefi } from './conditionDefi';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
