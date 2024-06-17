@@ -13,7 +13,11 @@ export class UniversUsecase {
   ) {}
 
   async getALL(): Promise<TuileUnivers[]> {
-    return ThematiqueRepository.getAllTuileUnivers();
+    let result = [];
+    const tuiles = ThematiqueRepository.getAllTuileUnivers();
+    result = result.concat(tuiles.filter((t) => !t.is_locked));
+    result = result.concat(tuiles.filter((t) => t.is_locked));
+    return result;
   }
 
   async getThematiquesOfUnivers(
