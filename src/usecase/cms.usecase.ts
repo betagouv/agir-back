@@ -434,8 +434,12 @@ export class CMSUsecase {
       label: cmsWebhookAPI.entry.label,
       niveau: cmsWebhookAPI.entry.niveau,
       image_url: this.getImageUrl(cmsWebhookAPI),
-      famille_ordre: cmsWebhookAPI.entry.famille.ordre,
-      famille_id_cms: cmsWebhookAPI.entry.famille.id,
+      famille_ordre: cmsWebhookAPI.entry.famille
+        ? cmsWebhookAPI.entry.famille.ordre
+        : 999,
+      famille_id_cms: cmsWebhookAPI.entry.famille
+        ? cmsWebhookAPI.entry.famille.id
+        : -1,
     });
   }
 
@@ -750,7 +754,7 @@ export class CMSUsecase {
       univers_parent: entry.attributes.univers_parent.data.attributes.code,
       famille_ordre: entry.attributes.famille.data
         ? entry.attributes.famille.data.attributes.ordre
-        : -1,
+        : 999,
       famille_id_cms: entry.attributes.famille.data
         ? entry.attributes.famille.data.id
         : -1,
