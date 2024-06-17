@@ -168,7 +168,9 @@ export class DefisUsecase {
       const mission_def = await this.missionRepository.getByThematique(
         thematiqueU,
       );
-      utilisateur.missions.addNewVisibleMission(mission_def);
+      if (mission_def) {
+        utilisateur.missions.addNewVisibleMission(mission_def);
+      }
     }
   }
 }

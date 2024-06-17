@@ -302,7 +302,7 @@ model ThematiqueUnivers {
 
 model Mission {
   id_cms                 Int      @unique
-  thematique_univers     String   @unique
+  thematique_univers     String?  @unique
   objectifs              Json     @default("{}")
   prochaines_thematiques String[] @default([])
   est_visible            Boolean
