@@ -707,6 +707,7 @@ describe('/api/incoming/cms (API test)', () => {
         id: 1,
         label: 'yo',
         code: Univers.climat,
+        is_locked: false,
         imageUrl: {
           formats: {
             thumbnail: { url: 'https://haha' },
@@ -721,34 +722,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(universDB).toHaveLength(1);
     expect(universDB[0].id_cms).toEqual(1);
     expect(universDB[0].label).toEqual('yo');
-    expect(universDB[0].code).toEqual(Univers.climat);
-    expect(universDB[0].image_url).toEqual('https://haha');
-  });
-  it('POST /api/incoming/cms - create 1 univers', async () => {
-    // GIVEN
-    // WHEN
-    const response = await TestUtil.POST('/api/incoming/cms').send({
-      ...CMS_DATA_ARTICLE,
-      model: CMSModel.univers,
-      event: CMSEvent['entry.publish'],
-      entry: {
-        id: 1,
-        label: 'yo',
-        code: Univers.climat,
-        imageUrl: {
-          formats: {
-            thumbnail: { url: 'https://haha' },
-          },
-        },
-      },
-    });
-
-    // THEN
-    expect(response.status).toBe(201);
-    const universDB = await TestUtil.prisma.univers.findMany({});
-    expect(universDB).toHaveLength(1);
-    expect(universDB[0].id_cms).toEqual(1);
-    expect(universDB[0].label).toEqual('yo');
+    expect(universDB[0].is_locked).toEqual(false);
     expect(universDB[0].code).toEqual(Univers.climat);
     expect(universDB[0].image_url).toEqual('https://haha');
   });

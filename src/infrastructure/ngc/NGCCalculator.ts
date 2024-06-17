@@ -56,7 +56,6 @@ export class NGCCalculator {
     const result = local_engine.evaluate({
       'est applicable': entry,
     });
-    console.log(result);
     return result.nodeValue === true;
   }
 

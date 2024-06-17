@@ -94,7 +94,7 @@ export class ThematiqueRepository {
           titre: u.label,
           type: u.code,
           etoiles: 0,
-          is_locked: false,
+          is_locked: u.is_locked,
           reason_locked: null,
         }),
       );
@@ -148,6 +148,7 @@ export class ThematiqueRepository {
     code: string,
     label: string,
     image_url: string,
+    is_locked: boolean,
   ) {
     await this.prisma.univers.upsert({
       where: {
@@ -158,11 +159,13 @@ export class ThematiqueRepository {
         code: code,
         label: label,
         image_url: image_url,
+        is_locked: is_locked,
       },
       update: {
         code: code,
         label: label,
         image_url: image_url,
+        is_locked: is_locked,
       },
     });
   }

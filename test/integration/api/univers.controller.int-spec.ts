@@ -177,6 +177,7 @@ describe('Univers (API test)', () => {
       code: Univers.climat,
       label: 'yo',
       image_url: 'aaaa',
+      is_locked: true,
     });
     await TestUtil.create(DB.univers, {
       id_cms: 2,
@@ -194,7 +195,7 @@ describe('Univers (API test)', () => {
     expect(response.body.length).toBe(2);
     expect(response.body[0]).toEqual({
       etoiles: 0,
-      is_locked: false,
+      is_locked: true,
       reason_locked: null,
       titre: 'yo',
       type: Univers.climat,

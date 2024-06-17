@@ -118,8 +118,6 @@ describe('NGCCalculator', () => {
       },
       'transport . voiture . motorisation',
     );
-
-    console.log(reponse);
   });
   it('listerToutesLesClésDeQuestions : liste toutes les clés', () => {
     //GIVEN
@@ -127,9 +125,7 @@ describe('NGCCalculator', () => {
 
     //WHEN
     const result = calculator.listerToutesLesClésDeQuestions();
-    console.log(result.length);
     //THEN
-    console.log(result);
   });
   it(' listeQuestionsAvecConditionApplicabilité : liste toutes les clés de questions avec conditions', () => {
     //GIVEN
@@ -139,6 +135,5 @@ describe('NGCCalculator', () => {
     const result = calculator.listeQuestionsAvecConditionApplicabilité();
 
     //THEN
-    console.log(result);
   });
 });

@@ -335,6 +335,7 @@ export class CMSUsecase {
       cmsWebhookAPI.entry.code,
       cmsWebhookAPI.entry.label,
       this.getImageUrl(cmsWebhookAPI),
+      cmsWebhookAPI.entry.is_locked,
     );
   }
 
