@@ -726,6 +726,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(universDB[0].code).toEqual(Univers.climat);
     expect(universDB[0].image_url).toEqual('https://haha');
   });
+
   it('POST /api/incoming/cms - create 1 thematiqueUnivers', async () => {
     // GIVEN
     // WHEN
@@ -758,6 +759,35 @@ describe('/api/incoming/cms (API test)', () => {
     expect(universDB[0].univers_parent).toEqual(Univers.climat);
     expect(universDB[0].famille_id_cms).toEqual(5);
     expect(universDB[0].famille_ordre).toEqual(3);
+  });
+  it('POST /api/incoming/cms - create 1 thematiqueUnivers sans parent OK', async () => {
+    // GIVEN
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send({
+      ...CMS_DATA_ARTICLE,
+      model: CMSModel['thematique-univers'],
+      event: CMSEvent['entry.publish'],
+      entry: {
+        id: 1,
+        label: 'yo',
+        code: ThematiqueUnivers.cereales,
+        univers_parent: null,
+        imageUrl: {
+          formats: {
+            thumbnail: { url: 'https://haha' },
+          },
+        },
+        famille: { id: 5, nom: 'yop', ordre: 3 },
+      },
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    const universDB = await TestUtil.prisma.thematiqueUnivers.findMany({});
+    expect(universDB).toHaveLength(1);
+    expect(universDB[0].id_cms).toEqual(1);
+    expect(universDB[0].label).toEqual('yo');
+    expect(universDB[0].univers_parent).toEqual(null);
   });
   it('POST /api/incoming/cms - create 1 thematiqueUnivers sans famille', async () => {
     // GIVEN

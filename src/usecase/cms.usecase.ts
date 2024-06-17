@@ -617,7 +617,9 @@ export class CMSUsecase {
         entry.prochaines_thematiques.length > 0
           ? entry.prochaines_thematiques.map((t) => t.code)
           : [],
-      thematique_univers: entry.thematique_univers_unique.code,
+      thematique_univers: entry.thematique_univers_unique
+        ? entry.thematique_univers_unique.code
+        : null,
       objectifs:
         entry.objectifs.length > 0
           ? entry.objectifs.map((obj) => {

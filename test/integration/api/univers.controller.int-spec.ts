@@ -8,7 +8,7 @@ import { MissionsUtilisateur_v0 } from '../../../src/domain/object_store/mission
 describe('Univers (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
 
-  const cinq_missions: MissionsUtilisateur_v0 = {
+  const sept_missions: MissionsUtilisateur_v0 = {
     version: 0,
     missions: [
       {
@@ -106,6 +106,46 @@ describe('Univers (API test)', () => {
         id: '5',
         done_at: null,
         thematique_univers: 'E',
+        objectifs: [
+          {
+            id: '1',
+            content_id: '1',
+            type: ContentType.article,
+            titre: '1 article',
+            points: 10,
+            is_locked: false,
+            done_at: null,
+            sont_points_en_poche: false,
+            est_reco: true,
+          },
+        ],
+        prochaines_thematiques: [],
+        est_visible: true,
+      },
+      {
+        id: '6',
+        done_at: null,
+        thematique_univers: 'F',
+        objectifs: [
+          {
+            id: '1',
+            content_id: '1',
+            type: ContentType.article,
+            titre: '1 article',
+            points: 10,
+            is_locked: false,
+            done_at: null,
+            sont_points_en_poche: false,
+            est_reco: true,
+          },
+        ],
+        prochaines_thematiques: [],
+        est_visible: true,
+      },
+      {
+        id: '7',
+        done_at: null,
+        thematique_univers: 'G',
         objectifs: [
           {
             id: '1',
@@ -323,7 +363,7 @@ describe('Univers (API test)', () => {
   it(`GET /utilisateurs/id/univers/id/thematiques - liste les thematiques dans le bon ordre`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
-      missions: cinq_missions,
+      missions: sept_missions,
     });
     await TestUtil.create(DB.univers, {
       code: Univers.alimentation,
@@ -369,6 +409,22 @@ describe('Univers (API test)', () => {
       famille_ordre: 1,
       niveau: 1,
     });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 6,
+      code: 'F',
+      univers_parent: Univers.alimentation,
+      famille_id_cms: -1,
+      famille_ordre: 999,
+      niveau: null,
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 7,
+      code: 'G',
+      univers_parent: Univers.alimentation,
+      famille_id_cms: -1,
+      famille_ordre: 999,
+      niveau: null,
+    });
     await thematiqueRepository.onApplicationBootstrap();
 
     // WHEN
@@ -378,7 +434,7 @@ describe('Univers (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(5);
+    expect(response.body.length).toBe(7);
     expect(response.body[0].type).toBe('D');
     expect(response.body[1].type).toBe('E');
     expect(response.body[2].type).toBe('A');
