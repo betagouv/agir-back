@@ -120,11 +120,13 @@ export type CMSWebhookPopulateAPI = {
   id: number;
   attributes: {
     titre: string;
+    label: string;
     sousTitre: string;
     astuces: string;
     type: string;
     categorie: string;
     is_ngc: boolean;
+    is_locked: boolean;
     code: string;
     niveau: number;
     question: string;
@@ -195,6 +197,7 @@ export type CMSWebhookPopulateAPI = {
     imageUrl: {
       data: {
         attributes: {
+          url: string;
           formats: {
             thumbnail: {
               url: string;

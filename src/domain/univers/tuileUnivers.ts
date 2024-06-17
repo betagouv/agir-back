@@ -1,4 +1,5 @@
 export class TuileUnivers {
+  id_cms: number;
   titre: string;
   type: string;
   etoiles: number;

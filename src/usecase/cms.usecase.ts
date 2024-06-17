@@ -31,6 +31,8 @@ import { KycDefinition } from '../../src/domain/kyc/kycDefinition';
 import { TypeReponseQuestionKYC } from '../../src/domain/kyc/questionQYC';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { Categorie } from '../../src/domain/contenu/categorie';
+import { TuileUnivers } from 'src/domain/univers/tuileUnivers';
+import { UniversDefinition } from 'src/domain/univers/universDefinition';
 
 @Injectable()
 export class CMSUsecase {
@@ -151,6 +153,31 @@ export class CMSUsecase {
     await this.defiRepository.upsert(
       CMSUsecase.buildDefiFromCMSData(cmsWebhookAPI.entry),
     );
+  }
+
+  async loadUniversFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste_univers: UniversDefinition[] = [];
+    const CMS_UNIVERS_DATA = await this.loadDataFromCMS('universes');
+
+    for (let index = 0; index < CMS_UNIVERS_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_UNIVERS_DATA[index];
+      let univers: UniversDefinition;
+      try {
+        univers = CMSUsecase.buildUniversFromCMSPopulateData(element);
+        liste_univers.push(univers);
+        loading_result.push(`loaded univers : ${univers.code}`);
+      } catch (error) {
+        loading_result.push(
+          `Could not load univers ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (const univers_to_upsert of liste_univers) {
+      await this.thematiqueRepository.upsertUnivers(univers_to_upsert);
+    }
+    return loading_result;
   }
 
   async loadArticlesFromCMS(): Promise<string[]> {
@@ -305,7 +332,14 @@ export class CMSUsecase {
   }
 
   private async loadDataFromCMS(
-    type: 'articles' | 'quizzes' | 'aides' | 'defis' | 'kycs' | 'missions',
+    type:
+      | 'articles'
+      | 'quizzes'
+      | 'aides'
+      | 'defis'
+      | 'kycs'
+      | 'missions'
+      | 'universes',
   ): Promise<CMSWebhookPopulateAPI[]> {
     let response = null;
     const URL = App.getCmsURL().concat(
@@ -330,13 +364,13 @@ export class CMSUsecase {
   }
 
   async createOrUpdateUnivers(cmsWebhookAPI: CMSWebhookAPI) {
-    await this.thematiqueRepository.upsertUnivers(
-      cmsWebhookAPI.entry.id,
-      cmsWebhookAPI.entry.code,
-      cmsWebhookAPI.entry.label,
-      this.getImageUrl(cmsWebhookAPI),
-      cmsWebhookAPI.entry.is_locked,
-    );
+    await this.thematiqueRepository.upsertUnivers({
+      code: cmsWebhookAPI.entry.code,
+      label: cmsWebhookAPI.entry.label,
+      id_cms: cmsWebhookAPI.entry.id,
+      image_url: this.getImageUrl(cmsWebhookAPI),
+      is_locked: cmsWebhookAPI.entry.is_locked,
+    });
   }
 
   async createOrUpdateKyc(cmsWebhookAPI: CMSWebhookAPI) {
@@ -375,6 +409,23 @@ export class CMSUsecase {
     );
   }
 
+  private static getImageUrlFromPopulate(
+    cmsPopulateAPI: CMSWebhookPopulateAPI,
+  ) {
+    let url = null;
+    if (cmsPopulateAPI.attributes.imageUrl) {
+      if (
+        cmsPopulateAPI.attributes.imageUrl.data.attributes.formats.thumbnail
+      ) {
+        url =
+          cmsPopulateAPI.attributes.imageUrl.data.attributes.formats.thumbnail
+            .url;
+      } else {
+        url = cmsPopulateAPI.attributes.imageUrl.data.attributes.url;
+      }
+    }
+    return url;
+  }
   private getImageUrl(cmsWebhookAPI: CMSWebhookAPI) {
     let url = null;
     if (cmsWebhookAPI.entry.imageUrl) {
@@ -644,6 +695,19 @@ export class CMSUsecase {
       codes_region: CMSUsecase.split(entry.attributes.codes_region),
     };
   }
+
+  static buildUniversFromCMSPopulateData(
+    entry: CMSWebhookPopulateAPI,
+  ): UniversDefinition {
+    return {
+      id_cms: entry.id,
+      label: entry.attributes.label,
+      image_url: this.getImageUrlFromPopulate(entry),
+      is_locked: entry.attributes.is_locked,
+      code: entry.attributes.code,
+    };
+  }
+
   static buildDefiFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
   ): DefiDefinition {

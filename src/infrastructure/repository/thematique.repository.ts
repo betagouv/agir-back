@@ -6,6 +6,7 @@ import { App } from '../../../src/domain/app';
 import { TuileUnivers } from '../../domain/univers/tuileUnivers';
 import { TuileThematique } from '../../../src/domain/univers/tuileThematique';
 import { Cron } from '@nestjs/schedule';
+import { UniversDefinition } from 'src/domain/univers/universDefinition';
 
 @Injectable()
 export class ThematiqueRepository {
@@ -96,6 +97,7 @@ export class ThematiqueRepository {
           etoiles: 0,
           is_locked: u.is_locked,
           reason_locked: null,
+          id_cms: u.id_cms,
         }),
       );
     });
@@ -143,29 +145,23 @@ export class ThematiqueRepository {
     });
   }
 
-  public async upsertUnivers(
-    id_cms: number,
-    code: string,
-    label: string,
-    image_url: string,
-    is_locked: boolean,
-  ) {
+  public async upsertUnivers(univers: UniversDefinition) {
     await this.prisma.univers.upsert({
       where: {
-        id_cms: id_cms,
+        id_cms: univers.id_cms,
       },
       create: {
-        id_cms: id_cms,
-        code: code,
-        label: label,
-        image_url: image_url,
-        is_locked: is_locked,
+        id_cms: univers.id_cms,
+        code: univers.code,
+        label: univers.label,
+        image_url: univers.image_url,
+        is_locked: univers.is_locked,
       },
       update: {
-        code: code,
-        label: label,
-        image_url: image_url,
-        is_locked: is_locked,
+        code: univers.code,
+        label: univers.label,
+        image_url: univers.image_url,
+        is_locked: univers.is_locked,
       },
     });
   }
