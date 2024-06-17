@@ -8,6 +8,7 @@ import { MissionsUtilisateur_v0 } from './mission/MissionsUtilisateur_v0';
 import { Onboarding_v0 } from './Onboarding/onboarding_v0';
 import { OnboardingResult_v0 } from './onboardingResult/onboardingResult_v0';
 import { ParcoursTodo_v0 } from './parcoursTodo/parcoursTodo_v0';
+import { BibliothequeServices_v0 } from './service/BibliothequeService_v0';
 import { Transport_v0 } from './transport/transport_v0';
 import { UnlockedFeatures_v0 } from './unlockedFeatures/unlockedFeatures_v0';
 import { UnlockedFeatures_v1 } from './unlockedFeatures/unlockedFeatures_v1';
@@ -25,6 +26,7 @@ export enum SerialisableDomain {
   Logement = 'Logement',
   Transport = 'Transport',
   MissionsUtilisateur = 'MissionsUtilisateur',
+  BibliothequeServices = 'BibliothequeServices',
   Object = 'Object',
 }
 const CLASS_DICTIONNARY = {
@@ -41,6 +43,7 @@ const CLASS_DICTIONNARY = {
   Transport_v0: Transport_v0,
   DefiHistory_v0: DefiHistory_v0,
   MissionsUtilisateur_v0: MissionsUtilisateur_v0,
+  BibliothequeServices_v0: BibliothequeServices_v0,
 };
 
 const DATE_REGEXP =
