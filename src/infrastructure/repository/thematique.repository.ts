@@ -6,7 +6,8 @@ import { App } from '../../../src/domain/app';
 import { TuileUnivers } from '../../domain/univers/tuileUnivers';
 import { TuileThematique } from '../../../src/domain/univers/tuileThematique';
 import { Cron } from '@nestjs/schedule';
-import { UniversDefinition } from 'src/domain/univers/universDefinition';
+import { UniversDefinition } from '../../../src/domain/univers/universDefinition';
+import { ThematiqueDefinition } from '../../../src/domain/univers/thematiqueDefinition';
 
 @Injectable()
 export class ThematiqueRepository {
@@ -165,32 +166,29 @@ export class ThematiqueRepository {
       },
     });
   }
-  public async upsertThematiqueUnivers(
-    id_cms: number,
-    code: string,
-    label: string,
-    image_url: string,
-    univers_parent: string,
-    niveau: number,
-  ) {
+  public async upsertThematiqueUnivers(them: ThematiqueDefinition) {
     await this.prisma.thematiqueUnivers.upsert({
       where: {
-        id_cms: id_cms,
+        id_cms: them.id_cms,
       },
       create: {
-        id_cms: id_cms,
-        code: code,
-        label: label,
-        image_url: image_url,
-        univers_parent: univers_parent,
-        niveau: niveau,
+        id_cms: them.id_cms,
+        code: them.code,
+        label: them.label,
+        image_url: them.image_url,
+        univers_parent: them.univers_parent,
+        niveau: them.niveau,
+        famille_id_cms: them.famille_id_cms,
+        famille_ordre: them.famille_ordre,
       },
       update: {
-        code: code,
-        label: label,
-        image_url: image_url,
-        univers_parent: univers_parent,
-        niveau: niveau,
+        code: them.code,
+        label: them.label,
+        image_url: them.image_url,
+        univers_parent: them.univers_parent,
+        niveau: them.niveau,
+        famille_id_cms: them.famille_id_cms,
+        famille_ordre: them.famille_ordre,
       },
     });
   }

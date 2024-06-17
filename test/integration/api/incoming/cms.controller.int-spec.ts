@@ -743,6 +743,7 @@ describe('/api/incoming/cms (API test)', () => {
             thumbnail: { url: 'https://haha' },
           },
         },
+        famille: { id: 5, nom: 'yop', ordre: 3 },
       },
     });
 
@@ -755,6 +756,8 @@ describe('/api/incoming/cms (API test)', () => {
     expect(universDB[0].code).toEqual(ThematiqueUnivers.cereales);
     expect(universDB[0].image_url).toEqual('https://haha');
     expect(universDB[0].univers_parent).toEqual(Univers.climat);
+    expect(universDB[0].famille_id_cms).toEqual(5);
+    expect(universDB[0].famille_ordre).toEqual(3);
   });
   it('POST /api/incoming/cms - updates existing article, 1 user in db ', async () => {
     // GIVEN

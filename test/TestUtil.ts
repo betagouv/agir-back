@@ -656,6 +656,8 @@ export class TestUtil {
       created_at: undefined,
       updated_at: undefined,
       niveau: 0,
+      famille_id_cms: 1,
+      famille_ordre: 0,
       ...override,
     };
   }

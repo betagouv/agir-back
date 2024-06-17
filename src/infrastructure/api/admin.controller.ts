@@ -79,6 +79,7 @@ export class AdminController extends GenericControler {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.cmsUsecase.loadArticlesFromCMS();
   }
+
   @Post('/admin/load_univers_from_cms')
   @ApiOperation({
     summary: 'Upsert tous les univers publiés du CMS',
@@ -87,6 +88,16 @@ export class AdminController extends GenericControler {
   async upsertAllCMSUnivers(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.cmsUsecase.loadUniversFromCMS();
+  }
+
+  @Post('/admin/load_thematiqueUnivers_from_cms')
+  @ApiOperation({
+    summary: 'Upsert tous les thematiques_univers publiés du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async upsertAllCMSThematiqueUnivers(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.cmsUsecase.loadThematiquesUniversFromCMS();
   }
 
   @Post('/admin/load_missions_from_cms')

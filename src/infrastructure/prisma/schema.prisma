@@ -294,6 +294,8 @@ model ThematiqueUnivers {
   image_url      String?
   niveau         Int?     @default(0)
   univers_parent String?
+  famille_id_cms Int      @default(0)
+  famille_ordre  Int      @default(0)
   created_at     DateTime @default(now()) @db.Timestamptz(3)
   updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }

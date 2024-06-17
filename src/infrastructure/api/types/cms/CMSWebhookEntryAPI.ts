@@ -15,6 +15,11 @@ export class CMSWebhookBesoinAPI {
   @ApiProperty() code: string;
   @ApiProperty() description: string;
 }
+export class CMSWebhookFamilleAPI {
+  @ApiProperty() id: number;
+  @ApiProperty() nom: string;
+  @ApiProperty() ordre: number;
+}
 export class CMSWebhookObjectifAPI {
   @ApiProperty() id: number;
   @ApiProperty() titre: string;
@@ -67,6 +72,8 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() label: string;
   @ApiProperty() question: string;
   @ApiProperty() niveau: number;
+  @ApiProperty({ type: CMSWebhookFamilleAPI })
+  famille: CMSWebhookFamilleAPI;
   @ApiProperty({ type: [OrConditionAPI] }) OR_Conditions: OrConditionAPI[];
   @ApiProperty({ type: [CMSWebhookReponseKYCAPI] })
   reponses: CMSWebhookReponseKYCAPI[];
@@ -191,6 +198,22 @@ export type CMSWebhookPopulateAPI = {
     thematique: {
       data: {
         id: number;
+      };
+    };
+    famille: {
+      data: {
+        id: number;
+        attributes: {
+          ordre: number;
+        };
+      };
+    };
+    univers_parent: {
+      data: {
+        id: number;
+        attributes: {
+          code: string;
+        };
       };
     };
 
