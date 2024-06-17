@@ -125,6 +125,8 @@ export class ThematiqueRepository {
           univers_parent_label: ThematiqueRepository.getTitreUnivers(
             t.univers_parent,
           ),
+          famille_id_cms: t.famille_id_cms,
+          famille_ordre: t.famille_ordre,
         }),
       );
     });

@@ -8,13 +8,13 @@ import { MissionsUtilisateur_v0 } from '../../../src/domain/object_store/mission
 describe('Univers (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
 
-  const trois_missions: MissionsUtilisateur_v0 = {
+  const cinq_missions: MissionsUtilisateur_v0 = {
     version: 0,
     missions: [
       {
         id: '1',
         done_at: null,
-        thematique_univers: ThematiqueUnivers.cereales,
+        thematique_univers: 'A',
         objectifs: [
           {
             id: '0',
@@ -34,7 +34,7 @@ describe('Univers (API test)', () => {
       {
         id: '2',
         done_at: null,
-        thematique_univers: ThematiqueUnivers.dechets_compost,
+        thematique_univers: 'B',
         objectifs: [
           {
             id: '0',
@@ -65,7 +65,7 @@ describe('Univers (API test)', () => {
       {
         id: '3',
         done_at: new Date(),
-        thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
+        thematique_univers: 'C',
         objectifs: [
           {
             id: '1',
@@ -75,6 +75,46 @@ describe('Univers (API test)', () => {
             points: 10,
             is_locked: false,
             done_at: new Date(),
+            sont_points_en_poche: false,
+            est_reco: true,
+          },
+        ],
+        prochaines_thematiques: [],
+        est_visible: true,
+      },
+      {
+        id: '4',
+        done_at: null,
+        thematique_univers: 'D',
+        objectifs: [
+          {
+            id: '1',
+            content_id: '1',
+            type: ContentType.article,
+            titre: '1 article',
+            points: 10,
+            is_locked: false,
+            done_at: null,
+            sont_points_en_poche: false,
+            est_reco: true,
+          },
+        ],
+        prochaines_thematiques: [],
+        est_visible: true,
+      },
+      {
+        id: '5',
+        done_at: null,
+        thematique_univers: 'E',
+        objectifs: [
+          {
+            id: '1',
+            content_id: '1',
+            type: ContentType.article,
+            titre: '1 article',
+            points: 10,
+            is_locked: false,
+            done_at: null,
             sont_points_en_poche: false,
             est_reco: true,
           },
@@ -283,7 +323,7 @@ describe('Univers (API test)', () => {
   it(`GET /utilisateurs/id/univers/id/thematiques - liste les thematiques dans le bon ordre`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
-      missions: trois_missions,
+      missions: cinq_missions,
     });
     await TestUtil.create(DB.univers, {
       code: Univers.alimentation,
@@ -291,18 +331,43 @@ describe('Univers (API test)', () => {
     });
     await TestUtil.create(DB.thematiqueUnivers, {
       id_cms: 1,
-      code: ThematiqueUnivers.cereales,
+      code: 'A',
       univers_parent: Univers.alimentation,
+      famille_id_cms: 1,
+      famille_ordre: 2,
+      niveau: 1,
     });
     await TestUtil.create(DB.thematiqueUnivers, {
       id_cms: 2,
-      code: ThematiqueUnivers.gaspillage_alimentaire,
+      code: 'B',
       univers_parent: Univers.alimentation,
+      famille_id_cms: 1,
+      famille_ordre: 2,
+      niveau: 3,
     });
     await TestUtil.create(DB.thematiqueUnivers, {
       id_cms: 3,
-      code: ThematiqueUnivers.dechets_compost,
+      code: 'C',
       univers_parent: Univers.alimentation,
+      famille_id_cms: 1,
+      famille_ordre: 2,
+      niveau: 2,
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 5,
+      code: 'E',
+      univers_parent: Univers.alimentation,
+      famille_id_cms: 2,
+      famille_ordre: 1,
+      niveau: 2,
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 4,
+      code: 'D',
+      univers_parent: Univers.alimentation,
+      famille_id_cms: 2,
+      famille_ordre: 1,
+      niveau: 1,
     });
     await thematiqueRepository.onApplicationBootstrap();
 
@@ -313,12 +378,12 @@ describe('Univers (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(3);
-    expect(response.body[0].type).toBe(ThematiqueUnivers.dechets_compost);
-    expect(response.body[1].type).toBe(ThematiqueUnivers.cereales);
-    expect(response.body[2].type).toBe(
-      ThematiqueUnivers.gaspillage_alimentaire,
-    );
+    expect(response.body.length).toBe(5);
+    expect(response.body[0].type).toBe('D');
+    expect(response.body[1].type).toBe('E');
+    expect(response.body[2].type).toBe('A');
+    expect(response.body[3].type).toBe('C');
+    expect(response.body[4].type).toBe('B');
   });
 
   it(`GET /utilisateurs/id/univers/id/thematiques - ne liste pas une mission non visible, source histo`, async () => {

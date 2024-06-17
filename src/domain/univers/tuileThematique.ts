@@ -10,6 +10,8 @@ export class TuileThematique {
   image_url: string;
   univers_parent: string;
   univers_parent_label: string;
+  famille_id_cms: number;
+  famille_ordre: number;
 
   constructor(data: TuileThematique) {
     Object.assign(this, data);

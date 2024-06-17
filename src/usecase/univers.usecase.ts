@@ -53,6 +53,8 @@ export class UniversUsecase {
             cible_progression: existing_mission.getProgression().target,
             univers_parent: tuile.univers_parent,
             univers_parent_label: tuile.univers_parent_label,
+            famille_id_cms: tuile.famille_id_cms,
+            famille_ordre: tuile.famille_ordre,
           }),
         );
       } else {
@@ -77,6 +79,8 @@ export class UniversUsecase {
                 cible_progression: mission_def.objectifs.length,
                 univers_parent: tuile.univers_parent,
                 univers_parent_label: tuile.univers_parent_label,
+                famille_id_cms: tuile.famille_id_cms,
+                famille_ordre: tuile.famille_ordre,
               }),
             );
           }
@@ -84,11 +88,31 @@ export class UniversUsecase {
       }
     });
 
-    let final_result: TuileThematique[] = [];
-    final_result = final_result.concat(result.filter((t) => t.isInProgress()));
-    final_result = final_result.concat(result.filter((t) => t.is_new));
-    final_result = final_result.concat(result.filter((t) => t.isDone()));
+    return this.ordonneTuilesThematiques(result);
+  }
 
-    return final_result;
+  private ordonneTuilesThematiques(
+    liste: TuileThematique[],
+  ): TuileThematique[] {
+    liste.sort((a, b) => a.famille_ordre - b.famille_ordre);
+
+    let famille_map: Map<Number, TuileThematique[]> = new Map();
+
+    for (const tuile of liste) {
+      const famille = famille_map.get(tuile.famille_ordre);
+      if (famille) {
+        famille.push(tuile);
+      } else {
+        famille_map.set(tuile.famille_ordre, [tuile]);
+      }
+    }
+
+    let result = [];
+
+    for (const [key] of famille_map) {
+      famille_map.get(key).sort((a, b) => a.niveau - b.niveau);
+      result = result.concat(famille_map.get(key));
+    }
+    return result;
   }
 }
