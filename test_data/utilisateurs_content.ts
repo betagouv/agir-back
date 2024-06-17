@@ -505,7 +505,7 @@ const utilisateurs = {
   test2: {
     nom: 'RECETTEUR',
     prenom: 'Super stagiaire 2',
-    email: 'test1@agir.dev',
+    email: 'test2@agir.dev',
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
