@@ -182,6 +182,10 @@ describe('/api/incoming/cms (API test)', () => {
       codes_postaux: '91120,75002',
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       mois: '0,1',
+      include_codes_commune: '01,02',
+      exclude_codes_commune: '03,04',
+      codes_departement: '78',
+      codes_region: '25',
     },
   };
   const CMS_DATA_QUIZZ = {
@@ -318,6 +322,10 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles[0].partenaire).toEqual('Angers Loire Métropole');
     expect(articles[0].rubrique_ids).toEqual(['1', '2']);
     expect(articles[0].rubrique_labels).toEqual(['A', 'B']);
+    expect(articles[0].include_codes_commune).toEqual(['01', '02']);
+    expect(articles[0].exclude_codes_commune).toEqual(['03', '04']);
+    expect(articles[0].codes_departement).toEqual(['78']);
+    expect(articles[0].codes_region).toEqual(['25']);
   });
 
   it('POST /api/incoming/cms - create a new aide in aide table', async () => {

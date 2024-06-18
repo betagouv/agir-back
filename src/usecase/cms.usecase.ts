@@ -489,20 +489,25 @@ export class CMSUsecase {
       await this.articleRepository.upsert(
         CMSUsecase.buildArticleOrQuizzFromCMSData(
           cmsWebhookAPI.entry,
+          CMSModel.article,
         ) as ArticleData,
       );
     }
     if (cmsWebhookAPI.model === CMSModel.quizz) {
       await this.quizzRepository.upsert(
-        CMSUsecase.buildArticleOrQuizzFromCMSData(cmsWebhookAPI.entry),
+        CMSUsecase.buildArticleOrQuizzFromCMSData(
+          cmsWebhookAPI.entry,
+          CMSModel.quizz,
+        ),
       );
     }
   }
 
   static buildArticleOrQuizzFromCMSData(
     entry: CMSWebhookEntryAPI,
+    type: CMSModel,
   ): ArticleData | QuizzData {
-    return {
+    const result = {
       content_id: entry.id.toString(),
       tags_utilisateur: [],
       titre: entry.titre,
@@ -532,6 +537,15 @@ export class CMSUsecase {
       categorie: Categorie[entry.categorie],
       mois: entry.mois ? entry.mois.split(',').map((m) => parseInt(m)) : [],
     };
+    if (type === CMSModel.article) {
+      Object.assign(result, {
+        include_codes_commune: CMSUsecase.split(entry.include_codes_commune),
+        exclude_codes_commune: CMSUsecase.split(entry.exclude_codes_commune),
+        codes_departement: CMSUsecase.split(entry.codes_departement),
+        codes_region: CMSUsecase.split(entry.codes_region),
+      });
+    }
+    return result;
   }
 
   static buildAideFromCMSData(entry: CMSWebhookEntryAPI): Aide {
@@ -700,6 +714,14 @@ export class CMSUsecase {
       mois: entry.attributes.mois
         ? entry.attributes.mois.split(',').map((m) => parseInt(m))
         : [],
+      include_codes_commune: CMSUsecase.split(
+        entry.attributes.include_codes_commune,
+      ),
+      exclude_codes_commune: CMSUsecase.split(
+        entry.attributes.exclude_codes_commune,
+      ),
+      codes_departement: CMSUsecase.split(entry.attributes.codes_departement),
+      codes_region: CMSUsecase.split(entry.attributes.codes_region),
     };
   }
   static buildAideFromCMSPopulateData(entry: CMSWebhookPopulateAPI): Aide {
