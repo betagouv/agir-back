@@ -10,9 +10,6 @@ export class App {
   public static kycRecoEnabled(): boolean {
     return process.env.KYC_RECO_ENABLED === 'true';
   }
-  public static aide_cache_enabled(): boolean {
-    return process.env.AIDE_CACHE_ENABLED === 'true';
-  }
   public static isProd(): boolean {
     return process.env.IS_PROD === 'true';
   }

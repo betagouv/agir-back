@@ -217,7 +217,9 @@ export class CMSUsecase {
       const element: CMSWebhookPopulateAPI = CMS_ARTICLE_DATA[index];
       let article: ArticleData;
       try {
-        article = CMSUsecase.buildArticleOrQuizzFromCMSPopulateData(element);
+        article = CMSUsecase.buildArticleOrQuizzFromCMSPopulateData(
+          element,
+        ) as ArticleData;
         liste_articles.push(article);
         loading_result.push(`loaded article : ${article.content_id}`);
       } catch (error) {
@@ -485,7 +487,9 @@ export class CMSUsecase {
 
     if (cmsWebhookAPI.model === CMSModel.article) {
       await this.articleRepository.upsert(
-        CMSUsecase.buildArticleOrQuizzFromCMSData(cmsWebhookAPI.entry),
+        CMSUsecase.buildArticleOrQuizzFromCMSData(
+          cmsWebhookAPI.entry,
+        ) as ArticleData,
       );
     }
     if (cmsWebhookAPI.model === CMSModel.quizz) {

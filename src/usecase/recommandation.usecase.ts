@@ -20,11 +20,13 @@ import { DefiRepository } from '../../src/infrastructure/repository/defi.reposit
 import { Feature } from '../../src/domain/gamification/feature';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { Categorie } from '../../src/domain/contenu/categorie';
+import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 
 @Injectable()
 export class RecommandationUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
+    private communeRepository: CommuneRepository,
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
     private defiRepository: DefiRepository,
@@ -194,11 +196,25 @@ export class RecommandationUsecase {
     const articles_lus = utilisateur.history.searchArticlesIds({
       est_lu: true,
     });
+
+    const code_commune = await this.communeRepository.getCodeCommune(
+      utilisateur.logement.code_postal,
+      utilisateur.logement.commune,
+    );
+
+    const dept_region =
+      await this.communeRepository.findDepartementRegionByCodePostal(
+        utilisateur.logement.code_postal,
+      );
+
     const filtre: ArticleFilter = {
       code_postal: utilisateur.logement.code_postal,
       exclude_ids: articles_lus,
       categorie: Categorie.recommandation,
       date: new Date(),
+      code_commune: code_commune ? code_commune : undefined,
+      code_departement: dept_region ? dept_region.code_departement : undefined,
+      code_region: dept_region ? dept_region.code_region : undefined,
     };
     if (univers) {
       filtre.thematiques = [Thematique[univers]];

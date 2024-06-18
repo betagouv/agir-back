@@ -28,6 +28,10 @@ export class ArticleData {
   score: number;
   categorie: Categorie;
   mois: number[];
+  include_codes_commune: string[];
+  exclude_codes_commune: string[];
+  codes_departement: string[];
+  codes_region: string[];
 }
 
 export class Article extends ArticleData implements TaggedContent {

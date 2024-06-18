@@ -18,6 +18,9 @@ export type ArticleFilter = {
   titre_fragment?: string;
   categorie?: Categorie;
   date?: Date;
+  code_region?: string;
+  code_departement?: string;
+  code_commune?: string;
 };
 
 @Injectable()
@@ -58,56 +61,107 @@ export class ArticleRepository {
     let codes_postaux_filter;
     let mois_filter;
 
-    if (filter.code_postal) {
-      codes_postaux_filter = [
-        { codes_postaux: { has: filter.code_postal } },
-        { codes_postaux: { isEmpty: true } },
-      ];
-    }
+    const main_filter = [];
+
     if (filter.date) {
-      mois_filter = [
-        { mois: { has: filter.date.getMonth() + 1 } },
-        { mois: { isEmpty: true } },
-      ];
+      main_filter.push({
+        OR: [
+          { mois: { has: filter.date.getMonth() + 1 } },
+          { mois: { isEmpty: true } },
+        ],
+      });
     }
 
-    const main_filter = {};
+    if (filter.code_postal) {
+      main_filter.push({
+        OR: [
+          { codes_postaux: { has: filter.code_postal } },
+          { codes_postaux: { isEmpty: true } },
+        ],
+      });
+    }
+
+    if (filter.code_region) {
+      main_filter.push({
+        OR: [
+          { codes_region: { has: filter.code_region } },
+          { codes_region: { isEmpty: true } },
+        ],
+      });
+    }
+
+    if (filter.code_departement) {
+      main_filter.push({
+        OR: [
+          { codes_departement: { has: filter.code_departement } },
+          { codes_departement: { isEmpty: true } },
+        ],
+      });
+    }
+
+    if (filter.code_commune) {
+      main_filter.push({
+        OR: [
+          { include_codes_commune: { has: filter.code_commune } },
+          { include_codes_commune: { isEmpty: true } },
+        ],
+      });
+      main_filter.push({
+        OR: [
+          { NOT: { exclude_codes_commune: { has: filter.code_commune } } },
+          { exclude_codes_commune: { isEmpty: true } },
+        ],
+      });
+    }
 
     if (filter.difficulty !== undefined && filter.difficulty !== null) {
-      main_filter['difficulty'] =
-        filter.difficulty === DifficultyLevel.ANY
-          ? undefined
-          : filter.difficulty;
+      main_filter.push({
+        difficulty:
+          filter.difficulty === DifficultyLevel.ANY
+            ? undefined
+            : filter.difficulty,
+      });
     }
 
     if (filter.exclude_ids) {
-      main_filter['content_id'] = { not: { in: filter.exclude_ids } };
+      main_filter.push({
+        content_id: { not: { in: filter.exclude_ids } },
+      });
     }
+
     if (filter.include_ids) {
-      main_filter['content_id'] = { in: filter.include_ids };
+      main_filter.push({
+        content_id: { in: filter.include_ids },
+      });
     }
 
     if (filter.titre_fragment) {
-      main_filter['titre'] = {
-        contains: filter.titre_fragment,
-        mode: 'insensitive',
-      };
+      main_filter.push({
+        titre: {
+          contains: filter.titre_fragment,
+          mode: 'insensitive',
+        },
+      });
     }
 
     if (filter.categorie) {
-      main_filter['categorie'] = filter.categorie;
+      main_filter.push({
+        categorie: filter.categorie,
+      });
     }
 
     if (filter.thematiques) {
-      main_filter['thematiques'] = {
-        hasSome: filter.thematiques,
-      };
+      main_filter.push({
+        thematiques: {
+          hasSome: filter.thematiques,
+        },
+      });
     }
 
     const finalQuery = {
       take: filter.maxNumber,
       where: {
-        AND: [main_filter, { OR: mois_filter }, { OR: codes_postaux_filter }],
+        AND: main_filter,
       },
     };
 
@@ -143,6 +197,10 @@ export class ArticleRepository {
       tags_rubriques: [],
       score: 0,
       mois: articleDB.mois,
+      codes_departement: articleDB.codes_departement,
+      codes_region: articleDB.codes_region,
+      exclude_codes_commune: articleDB.exclude_codes_commune,
+      include_codes_commune: articleDB.include_codes_commune,
     });
   }
 }

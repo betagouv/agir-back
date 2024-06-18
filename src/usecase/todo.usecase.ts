@@ -11,10 +11,12 @@ import {
   CelebrationType,
 } from '../../src/domain/gamification/celebrations/celebration';
 import { Categorie } from '../../src/domain/contenu/categorie';
+import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 
 @Injectable()
 export class TodoUsecase {
   constructor(
+    private communeRepository: CommuneRepository,
     private utilisateurRepository: UtilisateurRepository,
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
@@ -99,6 +101,17 @@ export class TodoUsecase {
         const articles_lus = utilisateur.history.searchArticlesIds({
           est_lu: true,
         });
+        const code_commune = await this.communeRepository.getCodeCommune(
+          utilisateur.logement.code_postal,
+          utilisateur.logement.commune,
+        );
+
+        const dept_region =
+          await this.communeRepository.findDepartementRegionByCodePostal(
+            utilisateur.logement.code_postal,
+          );
+
+        // FIXME : centraliser la recherche articles
         let articles = await this.articleRepository.searchArticles({
           thematiques: element.thematiques,
           difficulty: element.level,
@@ -106,6 +119,11 @@ export class TodoUsecase {
           code_postal: utilisateur.logement.code_postal,
           categorie: Categorie.recommandation,
           date: new Date(),
+          code_commune: code_commune ? code_commune : undefined,
+          code_departement: dept_region
+            ? dept_region.code_departement
+            : undefined,
+          code_region: dept_region ? dept_region.code_region : undefined,
         });
         if (articles.length === 0) {
           articles = await this.articleRepository.searchArticles({
@@ -114,6 +132,11 @@ export class TodoUsecase {
             code_postal: utilisateur.logement.code_postal,
             categorie: Categorie.recommandation,
             date: new Date(),
+            code_commune: code_commune ? code_commune : undefined,
+            code_departement: dept_region
+              ? dept_region.code_departement
+              : undefined,
+            code_region: dept_region ? dept_region.code_region : undefined,
           });
         }
         if (articles.length > 0) {

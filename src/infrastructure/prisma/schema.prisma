@@ -231,6 +231,10 @@ model Article {
   thematiques           String[] @default([])
   categorie             String   @default("recommandation")
   mois                  Int[]    @default([])
+  include_codes_commune String[] @default([])
+  exclude_codes_commune String[] @default([])
+  codes_departement     String[] @default([])
+  codes_region          String[] @default([])
   created_at            DateTime @default(now()) @db.Timestamptz(3)
   updated_at            DateTime @updatedAt @db.Timestamptz(3)
 }

@@ -57,17 +57,6 @@ export class AideRepository {
   }
 
   async search(filter: AideFilter): Promise<Aide[]> {
-    if (App.aide_cache_enabled()) {
-      if (Date.now() - this.last_query_time > 100000) {
-        await this.load_aides();
-        this.last_query_time = Date.now();
-      }
-      return this.aides.filter(
-        (e) =>
-          e.codes_postaux.length === 0 ||
-          e.codes_postaux.includes(filter.code_postal),
-      );
-    }
     const main_filter = [];
 
     if (filter.code_postal) {

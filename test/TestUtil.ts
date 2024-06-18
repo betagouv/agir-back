@@ -749,6 +749,10 @@ export class TestUtil {
       updated_at: new Date(),
       categorie: Categorie.recommandation,
       mois: [],
+      include_codes_commune: [],
+      exclude_codes_commune: [],
+      codes_departement: [],
+      codes_region: [],
       ...override,
     };
   }
