@@ -32,12 +32,13 @@ export class MigrationUsecase {
     for (let index = 0; index < userIdList.length; index++) {
       const user_id = userIdList[index];
       const log = { user_id: user_id, migrations: [] };
-      const utilisateur = await this.utilisateurRepository.getById(user_id);
+      let utilisateur = await this.utilisateurRepository.getById(user_id);
       for (
         let current_version = utilisateur.version + 1;
         current_version <= version_target;
         current_version++
       ) {
+        let utilisateur = await this.utilisateurRepository.getById(user_id);
         if (!utilisateur.migration_enabled) {
           log.migrations.push({
             version: current_version,
