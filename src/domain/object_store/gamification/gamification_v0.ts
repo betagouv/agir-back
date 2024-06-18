@@ -29,6 +29,8 @@ export class Celebration_v0 {
   titre: string;
   reveal?: Reveal_v0;
   new_niveau?: number;
+  new_thematiques?: string[];
+  thematique_univers?: string;
 
   static map(elem: Celebration): Celebration_v0 {
     return {
@@ -37,6 +39,8 @@ export class Celebration_v0 {
       titre: elem.titre,
       reveal: elem.reveal ? Reveal_v0.map(elem.reveal) : undefined,
       new_niveau: elem.new_niveau,
+      new_thematiques: elem.new_thematiques,
+      thematique_univers: elem.thematique_univers,
     };
   }
 }

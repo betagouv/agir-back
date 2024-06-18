@@ -44,6 +44,8 @@ describe('DefiHistory vN ', () => {
         accessible: true,
         motif: 'truc',
         categorie: Categorie.recommandation,
+        mois: [1],
+        conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
       }),
     );
 
@@ -73,6 +75,8 @@ describe('DefiHistory vN ', () => {
         accessible: true,
         motif: 'truc',
         categorie: Categorie.recommandation,
+        mois: [1],
+        conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
       }),
     );
 
@@ -101,6 +105,8 @@ describe('DefiHistory vN ', () => {
       accessible: true,
       motif: 'truc',
       categorie: Categorie.recommandation,
+      mois: [1],
+      conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
     };
 
     delete defi_sans_accessibilite.accessible;

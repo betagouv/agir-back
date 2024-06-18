@@ -17,6 +17,17 @@ import { TagRubrique } from '../../../src/domain/scoring/tagRubrique';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import { MissionsUtilisateur_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import {
+  Superficie,
+  TypeLogement,
+  Chauffage,
+  DPE,
+} from '../../../src/domain/logement/logement';
+import { Feature } from '../../../src/domain/gamification/feature';
+import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
+import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
+import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 
 const DEFI_1_DEF: Defi = {
   content_id: '1',
@@ -32,6 +43,8 @@ const DEFI_1_DEF: Defi = {
   created_at: undefined,
   updated_at: undefined,
   categorie: Categorie.recommandation,
+  mois: [0],
+  conditions: [[{ code_kyc: '123', code_reponse: 'oui' }]],
 };
 
 describe('/utilisateurs/id/defis (API test)', () => {
@@ -56,6 +69,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
             is_locked: false,
             done_at: new Date(0),
             sont_points_en_poche: false,
+            est_reco: true,
           },
           {
             id: '3',
@@ -63,9 +77,10 @@ describe('/utilisateurs/id/defis (API test)', () => {
             type: ContentType.defi,
             titre: 'Action à faire',
             points: 10,
-            is_locked: true,
+            is_locked: false,
             done_at: null,
             sont_points_en_poche: false,
+            est_reco: true,
           },
         ],
         prochaines_thematiques: [],
@@ -85,6 +100,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
             is_locked: false,
             done_at: null,
             sont_points_en_poche: false,
+            est_reco: true,
           },
           {
             id: '3',
@@ -95,6 +111,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
             is_locked: true,
             done_at: null,
             sont_points_en_poche: false,
+            est_reco: true,
           },
         ],
         prochaines_thematiques: [],
@@ -114,6 +131,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
             is_locked: false,
             done_at: new Date(),
             sont_points_en_poche: false,
+            est_reco: true,
           },
           {
             id: '3',
@@ -121,9 +139,10 @@ describe('/utilisateurs/id/defis (API test)', () => {
             type: ContentType.defi,
             titre: 'Action à faire',
             points: 10,
-            is_locked: true,
+            is_locked: false,
             done_at: null,
             sont_points_en_poche: false,
+            est_reco: true,
           },
         ],
         prochaines_thematiques: [],
@@ -135,7 +154,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     id: '1',
     points: 5,
     tags: [Tag.utilise_moto_ou_voiture],
-    titre: 'titre',
+    titre: 'Défi à {COMMUNE}',
     thematique: Thematique.alimentation,
     astuces: 'astuce',
     date_acceptation: new Date(Date.now() - 3 * DAY_IN_MS),
@@ -146,6 +165,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
     accessible: true,
     motif: 'truc',
     categorie: Categorie.recommandation,
+    conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
+    mois: [1],
   };
 
   beforeAll(async () => {
@@ -161,26 +182,6 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('GET /defis - liste defis catalogue', async () => {
-    // GIVEN
-    await TestUtil.create(DB.defi, DEFI_1_DEF);
-    await TestUtil.create(DB.utilisateur);
-
-    // WHEN
-    const response = await TestUtil.GET('/defis');
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.length).toBe(1);
-    expect(response.body[0].id).toEqual('1');
-    expect(response.body[0].titre).toEqual('titre');
-    expect(response.body[0].thematique).toEqual('alimentation');
-    expect(response.body[0].thematique_label).toEqual('alimentation');
-    expect(response.body[0].points).toEqual(5);
-    expect(response.body[0].status_defi).toBeUndefined();
-    expect(response.body[0].jours_restants).toBeNull();
-    expect(response.body[0].universes).toEqual([Univers.climat]);
-  });
   it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur', async () => {
     // GIVEN
     const defis: DefiHistory_v0 = {
@@ -203,8 +204,23 @@ describe('/utilisateurs/id/defis (API test)', () => {
         },
       ],
     };
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       defis: defis,
+      logement,
     });
 
     // WHEN
@@ -222,7 +238,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi.astuces).toBe('astuce');
     expect(defi.pourquoi).toBe('pourquoi');
     expect(defi.jours_restants).toBe(4);
-    expect(defi.titre).toBe('titre');
+    expect(defi.titre).toBe('Défi à Palaiseau');
     expect(defi.motif).toBe('truc');
     expect(defi.sous_titre).toBe('sous_titre');
     expect(defi.status).toBe(DefiStatus.en_cours);
@@ -236,35 +252,73 @@ describe('/utilisateurs/id/defis (API test)', () => {
         {
           ...DEFI_1,
           id: '001',
-          status: DefiStatus.todo,
+          status: DefiStatus.en_cours,
         },
         {
           ...DEFI_1,
           id: '002',
-          status: DefiStatus.todo,
+          status: DefiStatus.en_cours,
         },
         {
           ...DEFI_1,
           id: '003',
-          status: DefiStatus.todo,
+          status: DefiStatus.en_cours,
+        },
+      ],
+    };
+
+    const missions_defi_seul: MissionsUtilisateur_v0 = {
+      version: 0,
+      missions: [
+        {
+          id: '1',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.cereales,
+          objectifs: [
+            {
+              id: '0',
+              content_id: '001',
+              type: ContentType.defi,
+              titre: '1 defi',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+            {
+              id: '1',
+              content_id: '002',
+              type: ContentType.defi,
+              titre: '1 defi',
+              points: 10,
+              is_locked: false,
+              done_at: null,
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+            {
+              id: '2',
+              content_id: '003',
+              type: ContentType.defi,
+              titre: '1 defi',
+              points: 10,
+              is_locked: true,
+              done_at: null,
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+          ],
+          prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
+          est_visible: true,
         },
       ],
     };
 
     await TestUtil.create(DB.univers, {
-      id_cms: 1,
-      code: Univers.climat,
-      label: 'Climat',
-    });
-    await TestUtil.create(DB.univers, {
       id_cms: 2,
       code: Univers.alimentation,
       label: 'Alimentation',
-    });
-    await TestUtil.create(DB.univers, {
-      id_cms: 3,
-      code: Univers.transport,
-      label: 'Transport',
     });
     await TestUtil.create(DB.thematiqueUnivers, {
       id_cms: 1,
@@ -273,28 +327,12 @@ describe('/utilisateurs/id/defis (API test)', () => {
       label: 'Cereales',
       image_url: 'aaaa',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 2,
-      code: ThematiqueUnivers.mobilite_quotidien,
-      univers_parent: Univers.transport,
-      label: 'dechets compost',
-      image_url: 'aaaa',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 3,
-      code: ThematiqueUnivers.gaspillage_alimentaire,
-      univers_parent: Univers.alimentation,
-      label: 'gaspillage alimentaire',
-      image_url: 'aaaa',
-    });
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.utilisateur, {
       defis: defis,
-      missions: missions,
+      missions: missions_defi_seul,
     });
-    await TestUtil.create(DB.article, { content_id: '12' });
-    await TestUtil.create(DB.article, { content_id: '13' });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -303,7 +341,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(1);
+    expect(response.body.length).toBe(2);
 
     const defi: DefiAPI = response.body[0];
 
@@ -311,6 +349,53 @@ describe('/utilisateurs/id/defis (API test)', () => {
   });
   it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur par univers, sauf si fait', async () => {
     // GIVEN
+    const missions_defi_seul: MissionsUtilisateur_v0 = {
+      version: 0,
+      missions: [
+        {
+          id: '1',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.cereales,
+          objectifs: [
+            {
+              id: '0',
+              content_id: '001',
+              type: ContentType.defi,
+              titre: '1 defi',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+            {
+              id: '1',
+              content_id: '002',
+              type: ContentType.defi,
+              titre: '1 defi',
+              points: 10,
+              is_locked: false,
+              done_at: null,
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+            {
+              id: '2',
+              content_id: '003',
+              type: ContentType.defi,
+              titre: '1 defi',
+              points: 10,
+              is_locked: false,
+              done_at: null,
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+          ],
+          prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
+          est_visible: true,
+        },
+      ],
+    };
     const defis: DefiHistory_v0 = {
       version: 0,
       defis: [
@@ -386,7 +471,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(0);
   });
-  it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur tout confondu (v2)', async () => {
+  it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur tout confondu (v2), pas les défis locked', async () => {
     // GIVEN
     const defis: DefiHistory_v0 = {
       version: 0,
@@ -394,17 +479,17 @@ describe('/utilisateurs/id/defis (API test)', () => {
         {
           ...DEFI_1,
           id: '001',
-          status: DefiStatus.todo,
+          status: DefiStatus.en_cours,
         },
         {
           ...DEFI_1,
           id: '002',
-          status: DefiStatus.todo,
+          status: DefiStatus.en_cours,
         },
         {
           ...DEFI_1,
           id: '003',
-          status: DefiStatus.todo,
+          status: DefiStatus.en_cours,
         },
       ],
     };
@@ -464,8 +549,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(2);
 
-    expect(response.body[0].id).toEqual('001');
-    expect(response.body[1].id).toEqual('003');
+    expect(response.body[0].id).toEqual('003');
+    expect(response.body[1].id).toEqual('001');
   });
   it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur tout confondu en cours ou todo, donc pas le reste (v2)', async () => {
     // GIVEN
@@ -792,11 +877,26 @@ describe('/utilisateurs/id/defis (API test)', () => {
   });
   it('GET /utilisateurs/id/defis/id - correct data defis du catalogue', async () => {
     // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       history: {},
       defis: {
         defis: [DEFI_1],
       },
+      logement,
     });
     ThematiqueRepository.resetAllRefs();
     await TestUtil.create(DB.thematique, {
@@ -820,7 +920,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi.astuces).toBe('astuce');
     expect(defi.pourquoi).toBe('pourquoi');
     expect(defi.jours_restants).toBe(4);
-    expect(defi.titre).toBe('titre');
+    expect(defi.titre).toBe('Défi à Palaiseau');
     expect(defi.sous_titre).toBe('sous_titre');
     expect(defi.thematique_label).toBe('t1');
     expect(defi.status).toBe(DefiStatus.todo);
@@ -835,7 +935,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           id: '001',
           points: 10,
           tags: [Tag.R10],
-          titre: 'titre',
+          titre: 'Défi à {COMMUNE}',
           thematique: Thematique.alimentation,
           astuces: 'ASTUCE',
           date_acceptation: new Date(Date.now() - 2 * DAY_IN_MS),
@@ -846,10 +946,27 @@ describe('/utilisateurs/id/defis (API test)', () => {
           accessible: true,
           motif: null,
           categorie: Categorie.recommandation,
+          mois: [1],
+          conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
         },
       ],
     };
-    await TestUtil.create(DB.utilisateur, { defis: defis });
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+    };
+
+    await TestUtil.create(DB.utilisateur, { defis: defis, logement });
+
     ThematiqueRepository.resetAllRefs();
     await TestUtil.create(DB.thematique, {
       id: '1',
@@ -878,7 +995,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi.astuces).toBe('ASTUCE');
     expect(defi.pourquoi).toBe('POURQUOI');
     expect(defi.jours_restants).toBe(5);
-    expect(defi.titre).toBe('titre');
+    expect(defi.titre).toBe('Défi à Palaiseau');
     expect(defi.sous_titre).toBe('SOUS TITRE');
     expect(defi.thematique_label).toBe('t1');
     expect(defi.status).toBe(DefiStatus.en_cours);
@@ -904,6 +1021,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
           accessible: true,
           motif: null,
           categorie: Categorie.recommandation,
+          mois: [1],
+          conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
         },
       ],
     };
@@ -926,10 +1045,22 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi_user.getStatus()).toBe(DefiStatus.fait);
     expect(defi_user.motif).toBe('null ce défi');
   });
-  it('PATCH /utilisateurs/id/defis/id - patch le status d un defi du catalogue', async () => {
+  it('PATCH /utilisateurs/id/defis/id - patch le status d un defi du catalogue, débloques la feature defi et active le reveal defi', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur);
+    const unlocked: UnlockedFeatures_v1 = {
+      version: 1,
+      unlocked_features: [],
+    };
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 0,
+      celebrations: [],
+    };
 
+    await TestUtil.create(DB.utilisateur, {
+      unlocked_features: unlocked,
+      gamification: gamification,
+    });
     await TestUtil.create(DB.defi, DEFI_1_DEF);
 
     // WHEN
@@ -949,6 +1080,22 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi.date_acceptation.getTime() + 100).toBeGreaterThan(Date.now());
     expect(defi.date_acceptation.getTime() - 100).toBeLessThan(Date.now());
     expect(userDB.defi_history.defis).toHaveLength(2);
+    expect(userDB.unlocked_features.unlocked_features).toHaveLength(1);
+    expect(userDB.unlocked_features.unlocked_features[0]).toEqual(
+      Feature.defis,
+    );
+    expect(userDB.gamification.celebrations).toHaveLength(1);
+    expect(userDB.gamification.celebrations[0].type).toEqual(
+      CelebrationType.reveal,
+    );
+    expect(userDB.gamification.celebrations[0].reveal.feature).toEqual(
+      Feature.defis,
+    );
+
+    const test = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/gamification',
+    );
+    console.log(JSON.stringify(test.body));
   });
   it('PATCH /utilisateurs/id/defis/id - ajout de points', async () => {
     // GIVEN

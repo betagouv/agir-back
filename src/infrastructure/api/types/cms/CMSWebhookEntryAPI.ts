@@ -15,6 +15,11 @@ export class CMSWebhookBesoinAPI {
   @ApiProperty() code: string;
   @ApiProperty() description: string;
 }
+export class CMSWebhookFamilleAPI {
+  @ApiProperty() id: number;
+  @ApiProperty() nom: string;
+  @ApiProperty() ordre: number;
+}
 export class CMSWebhookObjectifAPI {
   @ApiProperty() id: number;
   @ApiProperty() titre: string;
@@ -28,6 +33,13 @@ export class CMSWebhookReponseKYCAPI {
   @ApiProperty() id: number;
   @ApiProperty() code: string;
   @ApiProperty() reponse: string;
+}
+export class AndConditionAPI {
+  @ApiProperty() code_reponse: string;
+  @ApiProperty({ type: CMSWebhookReponseKYCAPI }) kyc: CMSWebhookReponseKYCAPI;
+}
+export class OrConditionAPI {
+  @ApiProperty({ type: [AndConditionAPI] }) AND_Conditions: AndConditionAPI[];
 }
 export class CMSWebhookUniversAPI {
   @ApiProperty() id: number;
@@ -50,6 +62,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() titre: string;
   @ApiProperty() code: string;
   @ApiProperty() est_visible: boolean;
+  @ApiProperty() is_locked: boolean;
   @ApiProperty() include_codes_commune: string;
   @ApiProperty() exclude_codes_commune: string;
   @ApiProperty() codes_departement: string;
@@ -58,6 +71,10 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() type: string;
   @ApiProperty() label: string;
   @ApiProperty() question: string;
+  @ApiProperty() niveau: number;
+  @ApiProperty({ type: CMSWebhookFamilleAPI })
+  famille: CMSWebhookFamilleAPI;
+  @ApiProperty({ type: [OrConditionAPI] }) OR_Conditions: OrConditionAPI[];
   @ApiProperty({ type: [CMSWebhookReponseKYCAPI] })
   reponses: CMSWebhookReponseKYCAPI[];
   @ApiProperty({ type: CMSWebhookUniversAPI })
@@ -99,6 +116,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() difficulty: number;
   @ApiProperty() points?: number;
   @ApiProperty() codes_postaux?: string;
+  @ApiProperty() mois?: string;
   @ApiProperty() publishedAt: Date;
   @ApiProperty() url_detail_front: string;
   @ApiProperty() is_simulation: boolean;
@@ -109,17 +127,21 @@ export type CMSWebhookPopulateAPI = {
   id: number;
   attributes: {
     titre: string;
+    label: string;
     sousTitre: string;
     astuces: string;
     type: string;
     categorie: string;
     is_ngc: boolean;
+    is_locked: boolean;
     code: string;
+    niveau: number;
     question: string;
     pourquoi: string;
     description: string;
     source: string;
     codes_postaux: string;
+    mois: string;
     include_codes_commune: string;
     exclude_codes_commune: string;
     codes_departement: string;
@@ -178,10 +200,27 @@ export type CMSWebhookPopulateAPI = {
         id: number;
       };
     };
+    famille: {
+      data: {
+        id: number;
+        attributes: {
+          ordre: number;
+        };
+      };
+    };
+    univers_parent: {
+      data: {
+        id: number;
+        attributes: {
+          code: string;
+        };
+      };
+    };
 
     imageUrl: {
       data: {
         attributes: {
+          url: string;
           formats: {
             thumbnail: {
               url: string;
@@ -239,6 +278,23 @@ export type CMSWebhookPopulateAPI = {
       {
         reponse: string;
         code: string;
+      },
+    ];
+    OR_Conditions: [
+      {
+        AND_Conditions: [
+          {
+            code_reponse: string;
+            kyc: {
+              data: {
+                id: string;
+                attributes: {
+                  code: string;
+                };
+              };
+            };
+          },
+        ];
       },
     ];
     objectifs: [

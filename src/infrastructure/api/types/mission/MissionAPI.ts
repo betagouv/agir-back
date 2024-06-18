@@ -1,9 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Mission, Objectif } from '../../../../../src/domain/mission/mission';
 import { ContentType } from '../../../../../src/domain/contenu/contentType';
-import { ThematiqueUnivers } from '../../../../../src/domain/univers/thematiqueUnivers';
-import { Univers } from '../../../../../src/domain/univers/univers';
 import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
+import { DefiStatus } from '../../../../../src/domain/defis/defi';
 
 export class ProgressionAPI {
   @ApiProperty() current: number;
@@ -15,8 +14,10 @@ export class ObjectifAPI {
   @ApiProperty() titre: string;
   @ApiProperty() content_id: string;
   @ApiProperty() is_locked: boolean;
+  @ApiProperty() is_reco: boolean;
   @ApiProperty() points: number;
   @ApiProperty() done: boolean;
+  @ApiProperty({ enum: DefiStatus }) defi_status: DefiStatus;
   @ApiProperty() sont_points_en_poche: boolean;
   @ApiProperty() done_at: Date;
   @ApiProperty({ enum: ContentType }) type: ContentType;
@@ -32,6 +33,8 @@ export class ObjectifAPI {
       type: objectif.type,
       points: objectif.points,
       sont_points_en_poche: objectif.sont_points_en_poche,
+      is_reco: objectif.est_reco,
+      defi_status: objectif.defi_status,
     };
   }
 }
@@ -42,9 +45,9 @@ export class MissionAPI {
   @ApiProperty() done_at: Date;
   @ApiProperty() is_new: boolean;
   @ApiProperty() image_url: string;
-  @ApiProperty() thematique_univers: ThematiqueUnivers;
+  @ApiProperty() thematique_univers: string;
   @ApiProperty() thematique_univers_label: string;
-  @ApiProperty() univers: Univers;
+  @ApiProperty() univers: string;
   @ApiProperty() univers_label: string;
   @ApiProperty({ type: ProgressionAPI }) progression: ProgressionAPI;
   @ApiProperty({ type: ProgressionAPI }) progression_kyc: ProgressionAPI;

@@ -12,7 +12,7 @@ export class UnlockedFeatures {
     }
   }
 
-  public reset() {
+  public reset?() {
     this.unlocked_features = [];
   }
 

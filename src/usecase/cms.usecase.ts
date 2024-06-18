@@ -21,8 +21,6 @@ import { DefiDefinition } from '../../src/domain/defis/defiDefinition';
 import { TagUtilisateur } from '../../src/domain/scoring/tagUtilisateur';
 import { Besoin } from '../../src/domain/aides/besoin';
 import { App } from '../../src/domain/app';
-import { ThematiqueUnivers } from '../domain/univers/thematiqueUnivers';
-import { Univers } from '../domain/univers/univers';
 import {
   MissionDefinition,
   ObjectifDefinition,
@@ -33,6 +31,9 @@ import { KycDefinition } from '../../src/domain/kyc/kycDefinition';
 import { TypeReponseQuestionKYC } from '../../src/domain/kyc/questionQYC';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { Categorie } from '../../src/domain/contenu/categorie';
+import { TuileUnivers } from 'src/domain/univers/tuileUnivers';
+import { UniversDefinition } from 'src/domain/univers/universDefinition';
+import { ThematiqueDefinition } from 'src/domain/univers/thematiqueDefinition';
 
 @Injectable()
 export class CMSUsecase {
@@ -155,6 +156,58 @@ export class CMSUsecase {
     );
   }
 
+  async loadUniversFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste_univers: UniversDefinition[] = [];
+    const CMS_UNIVERS_DATA = await this.loadDataFromCMS('universes');
+
+    for (let index = 0; index < CMS_UNIVERS_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_UNIVERS_DATA[index];
+      let univers: UniversDefinition;
+      try {
+        univers = CMSUsecase.buildUniversFromCMSPopulateData(element);
+        liste_univers.push(univers);
+        loading_result.push(`loaded univers : ${univers.code}`);
+      } catch (error) {
+        loading_result.push(
+          `Could not load univers ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (const univers_to_upsert of liste_univers) {
+      await this.thematiqueRepository.upsertUnivers(univers_to_upsert);
+    }
+    return loading_result;
+  }
+
+  async loadThematiquesUniversFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste_them: ThematiqueDefinition[] = [];
+    const CMS_THEMATIQUE_DATA = await this.loadDataFromCMS(
+      'thematiques-univers',
+    );
+
+    for (const element of CMS_THEMATIQUE_DATA) {
+      let thematique: ThematiqueDefinition;
+      try {
+        thematique =
+          CMSUsecase.buildThematiqueUniversFromCMSPopulateData(element);
+        liste_them.push(thematique);
+        loading_result.push(`loaded thematiqueUnivers : ${thematique.code}`);
+      } catch (error) {
+        loading_result.push(
+          `Could not load thematiqueUnivers ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (const them_to_upsert of liste_them) {
+      await this.thematiqueRepository.upsertThematiqueUnivers(them_to_upsert);
+    }
+    return loading_result;
+  }
+
   async loadArticlesFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste_articles: ArticleData[] = [];
@@ -164,7 +217,9 @@ export class CMSUsecase {
       const element: CMSWebhookPopulateAPI = CMS_ARTICLE_DATA[index];
       let article: ArticleData;
       try {
-        article = CMSUsecase.buildArticleOrQuizzFromCMSPopulateData(element);
+        article = CMSUsecase.buildArticleOrQuizzFromCMSPopulateData(
+          element,
+        ) as ArticleData;
         liste_articles.push(article);
         loading_result.push(`loaded article : ${article.content_id}`);
       } catch (error) {
@@ -306,13 +361,21 @@ export class CMSUsecase {
   }
 
   private async loadDataFromCMS(
-    type: 'articles' | 'quizzes' | 'aides' | 'defis' | 'kycs' | 'missions',
+    type:
+      | 'articles'
+      | 'quizzes'
+      | 'aides'
+      | 'defis'
+      | 'kycs'
+      | 'missions'
+      | 'universes'
+      | 'thematiques-univers',
   ): Promise<CMSWebhookPopulateAPI[]> {
     let response = null;
     const URL = App.getCmsURL().concat(
       '/',
       type,
-      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[10]=prochaines_thematiques&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses',
+      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[10]=prochaines_thematiques&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent',
     );
     response = await axios.get(URL, {
       headers: {
@@ -331,12 +394,13 @@ export class CMSUsecase {
   }
 
   async createOrUpdateUnivers(cmsWebhookAPI: CMSWebhookAPI) {
-    await this.thematiqueRepository.upsertUnivers(
-      cmsWebhookAPI.entry.id,
-      cmsWebhookAPI.entry.code,
-      cmsWebhookAPI.entry.label,
-      this.getImageUrl(cmsWebhookAPI),
-    );
+    await this.thematiqueRepository.upsertUnivers({
+      code: cmsWebhookAPI.entry.code,
+      label: cmsWebhookAPI.entry.label,
+      id_cms: cmsWebhookAPI.entry.id,
+      image_url: this.getImageUrl(cmsWebhookAPI),
+      is_locked: cmsWebhookAPI.entry.is_locked,
+    });
   }
 
   async createOrUpdateKyc(cmsWebhookAPI: CMSWebhookAPI) {
@@ -363,17 +427,41 @@ export class CMSUsecase {
   }
 
   async createOrUpdateThematiqueUnivers(cmsWebhookAPI: CMSWebhookAPI) {
-    await this.thematiqueRepository.upsertThematiqueUnivers(
-      cmsWebhookAPI.entry.id,
-      cmsWebhookAPI.entry.code,
-      cmsWebhookAPI.entry.label,
-      this.getImageUrl(cmsWebhookAPI),
-      cmsWebhookAPI.entry.univers_parent
-        ? Univers[cmsWebhookAPI.entry.univers_parent.code]
+    await this.thematiqueRepository.upsertThematiqueUnivers({
+      code: cmsWebhookAPI.entry.code,
+      univers_parent: cmsWebhookAPI.entry.univers_parent
+        ? cmsWebhookAPI.entry.univers_parent.code
         : undefined,
-    );
+      id_cms: cmsWebhookAPI.entry.id,
+      label: cmsWebhookAPI.entry.label,
+      niveau: cmsWebhookAPI.entry.niveau,
+      image_url: this.getImageUrl(cmsWebhookAPI),
+      famille_ordre: cmsWebhookAPI.entry.famille
+        ? cmsWebhookAPI.entry.famille.ordre
+        : 999,
+      famille_id_cms: cmsWebhookAPI.entry.famille
+        ? cmsWebhookAPI.entry.famille.id
+        : -1,
+    });
   }
 
+  private static getImageUrlFromPopulate(
+    cmsPopulateAPI: CMSWebhookPopulateAPI,
+  ) {
+    let url = null;
+    if (cmsPopulateAPI.attributes.imageUrl) {
+      if (
+        cmsPopulateAPI.attributes.imageUrl.data.attributes.formats.thumbnail
+      ) {
+        url =
+          cmsPopulateAPI.attributes.imageUrl.data.attributes.formats.thumbnail
+            .url;
+      } else {
+        url = cmsPopulateAPI.attributes.imageUrl.data.attributes.url;
+      }
+    }
+    return url;
+  }
   private getImageUrl(cmsWebhookAPI: CMSWebhookAPI) {
     let url = null;
     if (cmsWebhookAPI.entry.imageUrl) {
@@ -399,20 +487,27 @@ export class CMSUsecase {
 
     if (cmsWebhookAPI.model === CMSModel.article) {
       await this.articleRepository.upsert(
-        CMSUsecase.buildArticleOrQuizzFromCMSData(cmsWebhookAPI.entry),
+        CMSUsecase.buildArticleOrQuizzFromCMSData(
+          cmsWebhookAPI.entry,
+          CMSModel.article,
+        ) as ArticleData,
       );
     }
     if (cmsWebhookAPI.model === CMSModel.quizz) {
       await this.quizzRepository.upsert(
-        CMSUsecase.buildArticleOrQuizzFromCMSData(cmsWebhookAPI.entry),
+        CMSUsecase.buildArticleOrQuizzFromCMSData(
+          cmsWebhookAPI.entry,
+          CMSModel.quizz,
+        ),
       );
     }
   }
 
   static buildArticleOrQuizzFromCMSData(
     entry: CMSWebhookEntryAPI,
+    type: CMSModel,
   ): ArticleData | QuizzData {
-    return {
+    const result = {
       content_id: entry.id.toString(),
       tags_utilisateur: [],
       titre: entry.titre,
@@ -422,7 +517,7 @@ export class CMSUsecase {
       partenaire: entry.partenaire ? entry.partenaire.nom : null,
       rubrique_ids: this.getIdsFromRubriques(entry.rubriques),
       rubrique_labels: this.getTitresFromRubriques(entry.rubriques),
-      codes_postaux: entry.codes_postaux ? entry.codes_postaux.split(',') : [],
+      codes_postaux: CMSUsecase.split(entry.codes_postaux),
       duree: entry.duree,
       frequence: entry.frequence,
       difficulty: entry.difficulty ? entry.difficulty : 1,
@@ -440,7 +535,17 @@ export class CMSUsecase {
       score: 0,
       tags_rubriques: [],
       categorie: Categorie[entry.categorie],
+      mois: entry.mois ? entry.mois.split(',').map((m) => parseInt(m)) : [],
     };
+    if (type === CMSModel.article) {
+      Object.assign(result, {
+        include_codes_commune: CMSUsecase.split(entry.include_codes_commune),
+        exclude_codes_commune: CMSUsecase.split(entry.exclude_codes_commune),
+        codes_departement: CMSUsecase.split(entry.codes_departement),
+        codes_region: CMSUsecase.split(entry.codes_region),
+      });
+    }
+    return result;
   }
 
   static buildAideFromCMSData(entry: CMSWebhookEntryAPI): Aide {
@@ -482,11 +587,19 @@ export class CMSUsecase {
       tags: entry.tags
         ? entry.tags.map((elem) => TagUtilisateur[elem.code])
         : [],
-      universes: entry.univers ? entry.univers.map((u) => Univers[u.code]) : [],
+      universes: entry.univers ? entry.univers.map((u) => u.code) : [],
       thematiques_univers: entry.thematique_univers
-        ? entry.thematique_univers.map((t) => ThematiqueUnivers[t.code])
+        ? entry.thematique_univers.map((u) => u.code)
         : [],
       categorie: Categorie[entry.categorie],
+      mois: entry.mois ? entry.mois.split(',').map((m) => parseInt(m)) : [],
+      conditions: entry.OR_Conditions.map((or) =>
+        or.AND_Conditions.map((and) => ({
+          code_kyc: and.kyc.code,
+          id_kyc: and.kyc.id.toString(),
+          code_reponse: and.code_reponse,
+        })),
+      ),
     };
   }
   static buildKycFromCMSData(entry: CMSWebhookEntryAPI): KycDefinition {
@@ -510,7 +623,7 @@ export class CMSUsecase {
       tags: entry.tags
         ? entry.tags.map((elem) => TagUtilisateur[elem.code])
         : [],
-      universes: entry.univers ? entry.univers.map((u) => Univers[u.code]) : [],
+      universes: entry.univers ? entry.univers.map((u) => u.code) : [],
     };
   }
 
@@ -520,10 +633,11 @@ export class CMSUsecase {
       est_visible: entry.est_visible,
       prochaines_thematiques:
         entry.prochaines_thematiques.length > 0
-          ? entry.prochaines_thematiques.map((t) => ThematiqueUnivers[t.code])
+          ? entry.prochaines_thematiques.map((t) => t.code)
           : [],
-      thematique_univers:
-        ThematiqueUnivers[entry.thematique_univers_unique.code],
+      thematique_univers: entry.thematique_univers_unique
+        ? entry.thematique_univers_unique.code
+        : null,
       objectifs:
         entry.objectifs.length > 0
           ? entry.objectifs.map((obj) => {
@@ -597,6 +711,17 @@ export class CMSUsecase {
       score: 0,
       tags_rubriques: [],
       categorie: Categorie[entry.attributes.categorie],
+      mois: entry.attributes.mois
+        ? entry.attributes.mois.split(',').map((m) => parseInt(m))
+        : [],
+      include_codes_commune: CMSUsecase.split(
+        entry.attributes.include_codes_commune,
+      ),
+      exclude_codes_commune: CMSUsecase.split(
+        entry.attributes.exclude_codes_commune,
+      ),
+      codes_departement: CMSUsecase.split(entry.attributes.codes_departement),
+      codes_region: CMSUsecase.split(entry.attributes.codes_region),
     };
   }
   static buildAideFromCMSPopulateData(entry: CMSWebhookPopulateAPI): Aide {
@@ -632,6 +757,38 @@ export class CMSUsecase {
       codes_region: CMSUsecase.split(entry.attributes.codes_region),
     };
   }
+
+  static buildUniversFromCMSPopulateData(
+    entry: CMSWebhookPopulateAPI,
+  ): UniversDefinition {
+    return {
+      id_cms: entry.id,
+      label: entry.attributes.label,
+      image_url: this.getImageUrlFromPopulate(entry),
+      is_locked: entry.attributes.is_locked,
+      code: entry.attributes.code,
+    };
+  }
+
+  static buildThematiqueUniversFromCMSPopulateData(
+    entry: CMSWebhookPopulateAPI,
+  ): ThematiqueDefinition {
+    return {
+      id_cms: entry.id,
+      label: entry.attributes.label,
+      image_url: this.getImageUrlFromPopulate(entry),
+      code: entry.attributes.code,
+      niveau: entry.attributes.niveau,
+      univers_parent: entry.attributes.univers_parent.data.attributes.code,
+      famille_ordre: entry.attributes.famille.data
+        ? entry.attributes.famille.data.attributes.ordre
+        : 999,
+      famille_id_cms: entry.attributes.famille.data
+        ? entry.attributes.famille.data.id
+        : -1,
+    };
+  }
+
   static buildDefiFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
   ): DefiDefinition {
@@ -652,15 +809,25 @@ export class CMSUsecase {
       ),
       universes:
         entry.attributes.univers.data.length > 0
-          ? entry.attributes.univers.data.map((u) => Univers[u.attributes.code])
+          ? entry.attributes.univers.data.map((u) => u.attributes.code)
           : [],
       thematiques_univers:
         entry.attributes.thematique_univers.data.length > 0
           ? entry.attributes.thematique_univers.data.map(
-              (t) => ThematiqueUnivers[t.attributes.code],
+              (t) => t.attributes.code,
             )
           : [],
       categorie: Categorie[entry.attributes.categorie],
+      mois: entry.attributes.mois
+        ? entry.attributes.mois.split(',').map((m) => parseInt(m))
+        : [],
+      conditions: entry.attributes.OR_Conditions.map((or) =>
+        or.AND_Conditions.map((and) => ({
+          id_kyc: and.kyc.data.id,
+          code_kyc: and.kyc.data.attributes.code,
+          code_reponse: and.code_reponse,
+        })),
+      ),
     };
   }
 
@@ -691,7 +858,7 @@ export class CMSUsecase {
       ),
       universes:
         entry.attributes.univers.data.length > 0
-          ? entry.attributes.univers.data.map((u) => Univers[u.attributes.code])
+          ? entry.attributes.univers.data.map((u) => u.attributes.code)
           : [],
     };
   }
@@ -705,13 +872,11 @@ export class CMSUsecase {
       prochaines_thematiques:
         entry.attributes.prochaines_thematiques.data.length > 0
           ? entry.attributes.prochaines_thematiques.data.map(
-              (t) => ThematiqueUnivers[t.attributes.code],
+              (t) => t.attributes.code,
             )
           : [],
       thematique_univers: entry.attributes.thematique_univers_unique.data
-        ? ThematiqueUnivers[
-            entry.attributes.thematique_univers_unique.data.attributes.code
-          ]
+        ? entry.attributes.thematique_univers_unique.data.attributes.code
         : null,
       objectifs:
         entry.attributes.objectifs.length > 0
@@ -761,6 +926,6 @@ export class CMSUsecase {
   }
 
   private static split(list: string) {
-    return list ? list.split(',') : [];
+    return list ? list.split(',').map((c) => c.trim()) : [];
   }
 }

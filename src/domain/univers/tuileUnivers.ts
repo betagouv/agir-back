@@ -1,8 +1,7 @@
-import { Univers } from './univers';
-
 export class TuileUnivers {
+  id_cms: number;
   titre: string;
-  type: Univers;
+  type: string;
   etoiles: number;
   is_locked: boolean;
   reason_locked: string;

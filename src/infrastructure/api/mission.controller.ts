@@ -22,8 +22,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
-import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
-import { MissionAPI, ObjectifAPI } from './types/mission/MissionAPI';
+import { MissionAPI } from './types/mission/MissionAPI';
 import { MissionUsecase } from '../../../src/usecase/mission.usecase';
 import { QuestionKYCAPI } from './types/kyc/questionsKYCAPI';
 import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
@@ -46,7 +45,7 @@ export class MissionController extends GenericControler {
   })
   @ApiParam({
     name: 'thematique',
-    enum: ThematiqueUnivers,
+    type: String,
     enumName: 'thematique',
     required: true,
     description: `la thématique`,
@@ -63,7 +62,7 @@ export class MissionController extends GenericControler {
   async getMission(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-    @Param('thematique') thematique: ThematiqueUnivers,
+    @Param('thematique') thematique: string,
   ): Promise<MissionAPI> {
     this.checkCallerId(req, utilisateurId);
     const result = await this.missionUsecase.getMissionOfThematique(
@@ -86,7 +85,7 @@ export class MissionController extends GenericControler {
   })
   @ApiParam({
     name: 'thematique',
-    enum: ThematiqueUnivers,
+    type: String,
     required: true,
     description: `Thematique de la mission`,
   })
@@ -102,7 +101,7 @@ export class MissionController extends GenericControler {
 
     const next_kyc_id = await this.missionUsecase.getMissionNextKycID(
       utilisateurId,
-      ThematiqueUnivers[thematique],
+      thematique,
     );
 
     const kyc = await this.questionKYCUsecase.getQuestion(
@@ -125,7 +124,7 @@ export class MissionController extends GenericControler {
   })
   @ApiParam({
     name: 'thematique',
-    enum: ThematiqueUnivers,
+    type: String,
     required: true,
     description: `Thematique de la mission`,
   })
@@ -141,7 +140,7 @@ export class MissionController extends GenericControler {
 
     const all_kyc = await this.missionUsecase.getMissionKYCs(
       utilisateurId,
-      ThematiqueUnivers[thematique],
+      thematique,
     );
 
     return all_kyc.map((k) => QuestionKYCAPI.mapToAPI(k));

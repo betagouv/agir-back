@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { KYC } from '@prisma/client';
-import { Univers } from '../../domain/univers/univers';
 import { KycDefinition } from '../../../src/domain/kyc/kycDefinition';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionQYC';
 import { Thematique } from '../../../src/domain/contenu/thematique';
@@ -69,7 +68,7 @@ export class KycRepository {
       reponses: kycDB.reponses as any,
       thematique: Thematique[kycDB.thematique],
       tags: kycDB.tags ? kycDB.tags.map((t) => Tag[t]) : [],
-      universes: kycDB.universes ? kycDB.universes.map((u) => Univers[u]) : [],
+      universes: kycDB.universes ? kycDB.universes : [],
     });
   }
 }

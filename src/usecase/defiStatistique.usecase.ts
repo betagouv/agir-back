@@ -19,19 +19,19 @@ export class DefiStatistiqueUsecase {
     const listeUtilisateursIds =
       await this.utilisateurRepository.listUtilisateurIds();
 
-    for (let index = 0; index < listeUtilisateursIds.length; index++) {
-      const user_id = listeUtilisateursIds[index];
-
-      const utilisateur = await this.utilisateurRepository.getById(user_id);
+    for (const userId of listeUtilisateursIds) {
+      const utilisateur = await this.utilisateurRepository.getById(userId);
 
       utilisateur.defi_history.defis.forEach((defi) => {
         const defi_agrega = this.getDefiAgregationRefById(defi.id, defi_map);
         switch (defi.getStatus()) {
           case DefiStatus.abondon:
             defi_agrega.nbr_abandon++;
+            if (defi.motif) defi_agrega.raisons_abandonne.push(defi.motif);
             break;
           case DefiStatus.pas_envie:
             defi_agrega.nbr_pas_envie++;
+            if (defi.motif) defi_agrega.raisons_pas_envie.push(defi.motif);
             break;
           case DefiStatus.en_cours:
             defi_agrega.nbr_en_cours++;
@@ -56,6 +56,8 @@ export class DefiStatistiqueUsecase {
         value.nbr_pas_envie,
         value.nbr_en_cours,
         value.nbr_realise,
+        value.raisons_pas_envie,
+        value.raisons_abandonne,
       );
       result.push(key);
     }
@@ -77,6 +79,8 @@ export class DefiStatistiqueUsecase {
           nbr_en_cours: 0,
           nbr_realise: 0,
           titre: '',
+          raisons_pas_envie: [],
+          raisons_abandonne: [],
         };
     defi_map.set(id, defi_agrega);
     return defi_agrega;

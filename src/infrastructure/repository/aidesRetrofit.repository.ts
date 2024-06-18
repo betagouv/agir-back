@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import Publicodes from 'publicodes';
 import rulesRetrofit from '../data/aidesRetrofit.json';
-import localisations from '../data/communes.json';
+import localisations from '../../infrastructure/repository/commune/communes.json';
 
 import { AideVelo, Localisation } from '../../domain/aides/aideVelo';
 

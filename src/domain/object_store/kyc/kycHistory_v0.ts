@@ -7,7 +7,6 @@ import {
 } from '../../kyc/questionQYC';
 import { Thematique } from '../../contenu/thematique';
 import { Tag } from '../../scoring/tag';
-import { Univers } from '../../../../src/domain/univers/univers';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 
 export class KYCReponse_v0 {
@@ -23,6 +22,7 @@ export class KYCReponse_v0 {
 
 export class QuestionKYC_v0 {
   id: string;
+  id_cms: number;
   question: string;
   type: TypeReponseQuestionKYC;
   categorie: Categorie;
@@ -33,7 +33,7 @@ export class QuestionKYC_v0 {
   ngc_key?: string;
   thematique?: Thematique;
   tags: Tag[];
-  universes: Univers[];
+  universes: string[];
 
   static map(elem: QuestionKYC): QuestionKYC_v0 {
     return {
@@ -53,6 +53,7 @@ export class QuestionKYC_v0 {
       thematique: elem.thematique,
       tags: elem.tags,
       universes: elem.universes ? elem.universes : [],
+      id_cms: elem.id_cms,
     };
   }
 }

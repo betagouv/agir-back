@@ -3,10 +3,11 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { Defi, DefiStatus } from '../../src/domain/defis/defi';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
-import { Univers } from '../../src/domain/univers/univers';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
-import { ThematiqueUnivers } from '../../src/domain/univers/thematiqueUnivers';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
+import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
+import { Feature } from '../../src/domain/gamification/feature';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 
 @Injectable()
 export class DefisUsecase {
@@ -14,46 +15,33 @@ export class DefisUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private defiRepository: DefiRepository,
     private missionRepository: MissionRepository,
+    private personnalisator: Personnalisator,
   ) {}
 
-  async getALL(): Promise<Defi[]> {
-    const all = await this.defiRepository.list();
-    return all.map(
-      (e) =>
-        new Defi({
-          ...e,
-          status: undefined,
-          date_acceptation: undefined,
-          id: e.content_id,
-          accessible: undefined,
-          motif: undefined,
-        }),
-    );
-  }
   async getDefisOfUnivers(
     utilisateurId: string,
-    univers: Univers,
+    univers: string,
   ): Promise<Defi[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
-    const defiDefinitions = await this.defiRepository.list();
+    const defiDefinitions = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(defiDefinitions);
 
-    const result = await this.getDefisOfUniversAndUtilisateur(
+    let result = await this.getDefisOfUniversAndUtilisateur(
       utilisateur,
       univers,
     );
 
-    return result.filter(
-      (d) =>
-        d.getStatus() === DefiStatus.todo ||
-        d.getStatus() === DefiStatus.en_cours,
-    );
+    result = result.filter((d) => d.getStatus() === DefiStatus.en_cours);
+
+    this.personnalisator.personnaliser(result, utilisateur);
+
+    return result;
   }
 
   private async getDefisOfUniversAndUtilisateur(
     utilisateur: Utilisateur,
-    univers: Univers,
+    univers: string,
   ): Promise<Defi[]> {
     const list_defi_ids =
       utilisateur.missions.getAllUnlockedDefisIdsByUnivers(univers);
@@ -69,38 +57,38 @@ export class DefisUsecase {
   async getAllDefis_v2(utilisateurId: string): Promise<Defi[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
-    const defiDefinitions = await this.defiRepository.list();
+    const defiDefinitions = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(defiDefinitions);
 
     let result: Defi[] = [];
 
-    for (const univers of Object.values(Univers)) {
+    const univers_liste = ThematiqueRepository.getAllUnivers();
+
+    for (const univers of univers_liste) {
       const defis_univers = await this.getDefisOfUniversAndUtilisateur(
         utilisateur,
         univers,
       );
       result = result.concat(
-        defis_univers.filter(
-          (d) =>
-            d.getStatus() === DefiStatus.todo ||
-            d.getStatus() === DefiStatus.en_cours,
-        ),
+        defis_univers.filter((d) => d.getStatus() === DefiStatus.en_cours),
       );
     }
+    this.personnalisator.personnaliser(result, utilisateur);
+
     return result;
   }
 
   async getALLUserDefi(
     utilisateurId: string,
     filtre_status: DefiStatus[],
-    univers: Univers,
+    univers: string,
     accessible: boolean,
   ): Promise<Defi[]> {
-    let result = [];
+    let result: Defi[] = [];
 
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
-    const defiDefinitions = await this.defiRepository.list();
+    const defiDefinitions = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(defiDefinitions);
 
     if (
@@ -119,10 +107,14 @@ export class DefisUsecase {
       PonderationApplicativeManager.sortContent(result);
 
       result = result.filter((d) => d.score > -50);
+      this.personnalisator.personnaliser(result, utilisateur);
     }
     result = result.concat(
       utilisateur.defi_history.getDefisOfStatus(filtre_status),
     );
+
+    this.personnalisator.personnaliser(result, utilisateur);
+
     return result;
   }
 
@@ -130,10 +122,14 @@ export class DefisUsecase {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
-    const catalogue = await this.defiRepository.list();
+    const catalogue = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(catalogue);
 
-    return utilisateur.defi_history.getDefiOrException(defiId);
+    const defi = utilisateur.defi_history.getDefiOrException(defiId);
+
+    this.personnalisator.personnaliser(defi, utilisateur);
+
+    return defi;
   }
   async updateStatus(
     utilisateurId: string,
@@ -144,30 +140,40 @@ export class DefisUsecase {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
-    const catalogue = await this.defiRepository.list();
+    const catalogue = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(catalogue);
 
     utilisateur.defi_history.updateStatus(defiId, status, utilisateur, motif);
 
-    const unlocked_thematiques = utilisateur.missions.validateDefi(
-      defiId,
-      utilisateur,
-    );
+    if (status === DefiStatus.en_cours) {
+      if (!utilisateur.unlocked_features.isUnlocked(Feature.defis)) {
+        utilisateur.unlocked_features.add(Feature.defis);
+        utilisateur.gamification.revealDefis();
+      }
+    }
 
-    await this.unlockThematiques(unlocked_thematiques, utilisateur);
+    if (status === DefiStatus.fait) {
+      const unlocked_thematiques = utilisateur.missions.validateDefi(
+        defiId,
+        utilisateur,
+      );
+      await this.unlockThematiques(unlocked_thematiques, utilisateur);
+    }
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private async unlockThematiques(
-    unlocked_thematiques: ThematiqueUnivers[],
+    unlocked_thematiques: string[],
     utilisateur: Utilisateur,
   ) {
     for (const thematiqueU of unlocked_thematiques) {
       const mission_def = await this.missionRepository.getByThematique(
         thematiqueU,
       );
-      utilisateur.missions.addNewVisibleMission(mission_def);
+      if (mission_def) {
+        utilisateur.missions.addNewVisibleMission(mission_def);
+      }
     }
   }
 }

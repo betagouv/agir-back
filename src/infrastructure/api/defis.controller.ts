@@ -20,7 +20,6 @@ import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { DefisUsecase } from '../../../src/usecase/defis.usecase';
 import { DefiAPI, PatchDefiStatusAPI } from './types/defis/DefiAPI';
-import { Univers } from '../../../src/domain/univers/univers';
 import { DefiStatus } from '../../../src/domain/defis/defi';
 import { DefiStatistiqueUsecase } from '../../../src/usecase/defiStatistique.usecase';
 
@@ -82,19 +81,6 @@ export class DefisController extends GenericControler {
     );
   }
 
-  @Get('defis')
-  @UseGuards(AuthGuard)
-  @ApiOkResponse({
-    type: [DefiAPI],
-  })
-  @ApiOperation({
-    summary: "Retourne l'ensemble des défis du catalogue",
-  })
-  async getAll(@Request() req): Promise<DefiAPI[]> {
-    const result = await this.defisUsecase.getALL();
-    return result.map((element) => DefiAPI.mapToAPI(element));
-  }
-
   @Get('utilisateurs/:utilisateurId/defis_v2')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
@@ -116,7 +102,7 @@ export class DefisController extends GenericControler {
   @Get('utilisateurs/:utilisateurId/defis')
   @ApiQuery({
     name: 'univers',
-    enum: Univers,
+    type: String,
     required: false,
     description: `filtrage par univers, un id d'univers, eg : 'climat'`,
   })
@@ -146,14 +132,14 @@ export class DefisController extends GenericControler {
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
     @Query('status') status,
-    @Query('univers') univers: Univers,
+    @Query('univers') univers: string,
     @Query('accessible') accessible: string,
   ): Promise<DefiAPI[]> {
     this.checkCallerId(req, utilisateurId);
     const result = await this.defisUsecase.getALLUserDefi(
       utilisateurId,
       status ? status : [],
-      univers ? Univers[univers] : undefined,
+      univers ? univers : undefined,
       accessible === 'true',
     );
     return result.map((element) => DefiAPI.mapToAPI(element));
@@ -176,7 +162,7 @@ export class DefisController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
     const result = await this.defisUsecase.getDefisOfUnivers(
       utilisateurId,
-      Univers[universId],
+      universId,
     );
     return result.map((element) => DefiAPI.mapToAPI(element));
   }

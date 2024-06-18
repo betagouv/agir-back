@@ -4,12 +4,14 @@ import { UtilisateurRepository } from '../../src/infrastructure/repository/utili
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { KYCID } from '../../src/domain/kyc/KYCID';
+import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 
 @Injectable()
 export class QuestionKYCUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private kycRepository: KycRepository,
+    private defiRepository: DefiRepository,
   ) {}
 
   async getALL(utilisateurId: string): Promise<QuestionKYC[]> {
@@ -53,13 +55,19 @@ export class QuestionKYCUsecase {
     if (!utilisateur.kyc_history.isQuestionAnswered(questionId)) {
       const question =
         utilisateur.kyc_history.getQuestionOrException(questionId);
-      utilisateur.gamification.ajoutePoints(question.points);
+      utilisateur.gamification.ajoutePoints(
+        question.points,
+        utilisateur.unlocked_features,
+      );
     }
     utilisateur.kyc_history.updateQuestion(questionId, reponse);
 
     utilisateur.missions.answerKyc(questionId, utilisateur);
 
     utilisateur.recomputeRecoTags();
+
+    const catalogue_defis = await this.defiRepository.list({});
+    utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }

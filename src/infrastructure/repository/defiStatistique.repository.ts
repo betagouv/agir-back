@@ -13,6 +13,8 @@ export class DefiStatistiqueRepository {
     nombre_defis_pas_envie: number,
     nombre_defis_en_cours: number,
     nombre_defis_realises: number,
+    raisonsPasEnvie: string[],
+    raisonsAbandonne: string[],
   ) {
     const data = {
       content_id: content_id,
@@ -21,7 +23,10 @@ export class DefiStatistiqueRepository {
       nombre_defis_pas_envie: nombre_defis_pas_envie,
       nombre_defis_en_cours: nombre_defis_en_cours,
       nombre_defis_realises: nombre_defis_realises,
+      raisons_defi_pas_envie: raisonsPasEnvie,
+      raisons_defi_abandonne: raisonsAbandonne,
     };
+
     await this.prisma.defiStatistique.upsert({
       where: { content_id: content_id },
       create: data,
@@ -43,6 +48,8 @@ export class DefiStatistiqueRepository {
         nbr_pas_envie: defiStatistiqueReponse.nombre_defis_pas_envie,
         nbr_en_cours: defiStatistiqueReponse.nombre_defis_en_cours,
         nbr_realise: defiStatistiqueReponse.nombre_defis_realises,
+        raisons_pas_envie: defiStatistiqueReponse.raisons_defi_pas_envie,
+        raisons_abandonne: defiStatistiqueReponse.raisons_defi_abandonne,
       };
     }
 
@@ -52,6 +59,8 @@ export class DefiStatistiqueRepository {
       nbr_pas_envie: 0,
       nbr_en_cours: 0,
       nbr_realise: 0,
+      raisons_pas_envie: [],
+      raisons_abandonne: [],
     };
   }
 }

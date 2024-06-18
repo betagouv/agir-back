@@ -9,7 +9,6 @@ import {
   ServiceStatus,
 } from '../../../../src/domain/service/service';
 import { UtilisateurRepository } from '../../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { DepartementRepository } from '../../../../src/infrastructure/repository/departement/departement.repository';
 import { LinkyRepository } from '../../../../src/infrastructure/repository/linky.repository';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { LinkyAPIConnector } from './LinkyAPIConnector';
@@ -17,6 +16,7 @@ import { LinkyEmailer } from './LinkyEmailer';
 import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
 import { LinkyConsent } from '../../../../src/domain/linky/linkyConsent';
 import { LinkyConsentRepository } from '../../../../src/infrastructure/repository/linkyConsent.repository';
+import { CommuneRepository } from '../../../../src/infrastructure/repository/commune/commune.repository';
 
 const DUREE_CONSENT_ANNEES = 3;
 
@@ -38,7 +38,7 @@ export class LinkyServiceManager
     private readonly linkyConsentRepository: LinkyConsentRepository,
     private readonly serviceRepository: ServiceRepository,
     private readonly utilisateurRepository: UtilisateurRepository,
-    private readonly departementRepository: DepartementRepository,
+    private readonly communeRepository: CommuneRepository,
     private readonly linkyEmailer: LinkyEmailer,
     private readonly linkyRepository: LinkyRepository,
     private readonly linkyAPIConnector: LinkyAPIConnector,
@@ -281,7 +281,7 @@ export class LinkyServiceManager
     }
 
     const localisation_commune =
-      this.departementRepository.findDepartementRegionByCodePostal(
+      this.communeRepository.findDepartementRegionByCodePostal(
         utilisateur.logement.code_postal,
       );
 

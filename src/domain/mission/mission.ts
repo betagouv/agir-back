@@ -3,10 +3,11 @@ import {
   Objectif_v0,
   Mission_v0,
 } from '../object_store/mission/MissionsUtilisateur_v0';
-import { ThematiqueUnivers } from '../univers/thematiqueUnivers';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { MissionDefinition } from './missionDefinition';
 import { v4 as uuidv4 } from 'uuid';
+import { DefiDefinition } from '../defis/defiDefinition';
+import { DefiStatus } from '../defis/defi';
 
 export class Objectif {
   id: string;
@@ -17,6 +18,8 @@ export class Objectif {
   type: ContentType;
   points: number;
   sont_points_en_poche: boolean;
+  est_reco: boolean;
+  defi_status?: DefiStatus;
 
   constructor(data: Objectif_v0) {
     this.id = data.id;
@@ -27,6 +30,7 @@ export class Objectif {
     this.is_locked = !!data.is_locked;
     this.done_at = data.done_at;
     this.sont_points_en_poche = !!data.sont_points_en_poche;
+    this.est_reco = !!data.est_reco;
   }
 
   public isDone?() {
@@ -37,9 +41,9 @@ export class Objectif {
 export class Mission {
   id: string;
   done_at: Date;
-  thematique_univers: ThematiqueUnivers;
+  thematique_univers: string;
   objectifs: Objectif[];
-  prochaines_thematiques: ThematiqueUnivers[];
+  prochaines_thematiques: string[];
   est_visible: boolean;
 
   constructor(data: Mission_v0) {
@@ -72,20 +76,22 @@ export class Mission {
       est_visible: def.est_visible,
       thematique_univers: def.thematique_univers,
       prochaines_thematiques: def.prochaines_thematiques,
-      objectifs: def.objectifs.map(
-        (o) =>
-          new Objectif({
-            content_id: o.content_id,
-            done_at: null,
-            id: uuidv4(),
-            is_locked: o.type !== ContentType.kyc,
-            points: o.points,
-            titre: o.titre,
-            type: o.type,
-            sont_points_en_poche: false,
-          }),
-      ),
+      objectifs: def.objectifs.map((o) => ({
+        content_id: o.content_id,
+        done_at: null,
+        id: uuidv4(),
+        is_locked: o.type !== ContentType.kyc,
+        points: o.points,
+        titre: o.titre,
+        type: o.type,
+        sont_points_en_poche: false,
+        est_reco: true,
+      })),
     });
+  }
+
+  public exfiltreObjectifsNonVisibles() {
+    this.objectifs = this.objectifs.filter((o) => o.est_reco);
   }
   public isDone(): boolean {
     return !!this.done_at;
@@ -125,36 +131,34 @@ export class Mission {
 
     if (objectif && !objectif.isDone()) {
       objectif.done_at = new Date();
-      utilisateur.gamification.ajoutePoints(objectif.points);
+      utilisateur.gamification.ajoutePoints(
+        objectif.points,
+        utilisateur.unlocked_features,
+      );
       this.unlockContentIfAllKYCsDone();
     }
   }
-  public validateDefi(
-    defi_id: string,
-    utilisateur: Utilisateur,
-  ): ThematiqueUnivers[] {
+  public validateDefi(defi_id: string, utilisateur: Utilisateur): string[] {
     const objectif = this.findObjectifDefiByID(defi_id);
 
     if (objectif && !objectif.isDone()) {
       objectif.done_at = new Date();
-      utilisateur.gamification.ajoutePoints(objectif.points);
-      return this.terminerMissionIfAllDone();
+      utilisateur.gamification.ajoutePoints(
+        objectif.points,
+        utilisateur.unlocked_features,
+      );
+      return this.terminerMission(utilisateur);
     }
     return [];
   }
 
-  public terminerMissionIfAllDone(): ThematiqueUnivers[] {
-    let ready_to_end = true;
-    this.objectifs.forEach((objectif) => {
-      ready_to_end =
-        ready_to_end &&
-        (objectif.type !== ContentType.defi || objectif.isDone());
-    });
-    if (ready_to_end) {
-      this.done_at = new Date();
-      return this.prochaines_thematiques;
-    }
-    return [];
+  public terminerMission(utilisateur: Utilisateur): string[] {
+    this.done_at = new Date();
+    utilisateur.gamification.celebrerFinMission(
+      this.thematique_univers,
+      this.prochaines_thematiques,
+    );
+    return this.prochaines_thematiques;
   }
 
   public unlockContentIfAllKYCsDone() {
@@ -173,6 +177,7 @@ export class Mission {
       });
     }
   }
+
   public unlockDefiIfAllContentDone() {
     if (this.isAllContentDone()) {
       this.objectifs.forEach((objectif) => {
@@ -182,6 +187,26 @@ export class Mission {
       });
     }
   }
+
+  public recomputeRecoDefi(
+    utilisateur: Utilisateur,
+    defisDefinitionListe: DefiDefinition[],
+  ) {
+    this.objectifs.forEach((objectif) => {
+      const defi = defisDefinitionListe.find(
+        (defi) => defi.content_id === objectif.content_id,
+      );
+
+      if (!defi) {
+        objectif.est_reco = false;
+      } else {
+        objectif.est_reco = utilisateur.kyc_history.areConditionsMatched(
+          defi.conditions,
+        );
+      }
+    });
+  }
+
   public isAllContentDone(): boolean {
     let ready = true;
     this.objectifs.forEach((objectif) => {
@@ -194,10 +219,40 @@ export class Mission {
     return ready;
   }
 
+  public getNombreDefisDansMission(): number {
+    let result = 0;
+    for (const obj of this.objectifs) {
+      result += obj.type === ContentType.defi ? 1 : 0;
+    }
+    return result;
+  }
+  public getNombreObjectifsDone(): number {
+    let result = 0;
+    for (const obj of this.objectifs) {
+      result += obj.isDone() ? 1 : 0;
+    }
+    return result;
+  }
   public getProgression(): { current: number; target: number } {
+    if (this.objectifs.length === 0) {
+      return { current: 0, target: 0 };
+    }
+    const objectifs_done = this.getNombreObjectifsDone();
+    const nbr_defis = this.getNombreDefisDansMission();
+
+    if (nbr_defis === 0) {
+      return { current: objectifs_done, target: this.objectifs.length };
+    }
+    const nbr_defis_minus_one = nbr_defis - 1;
+
+    const target_progression_reelle =
+      this.objectifs.length - nbr_defis_minus_one;
     return {
-      current: this.objectifs.filter((objectif) => objectif.isDone()).length,
-      target: this.objectifs.length,
+      current: Math.min(
+        this.objectifs.filter((objectif) => objectif.isDone()).length,
+        target_progression_reelle,
+      ),
+      target: target_progression_reelle,
     };
   }
   public isNew(): boolean {
@@ -213,11 +268,8 @@ export class Mission {
   }
 
   public getUnlockedDefisIds(): string[] {
-    if (this.isAllContentDone()) {
-      const defi_objectifs = this.findAllDefis();
-      return defi_objectifs.map((d) => d.content_id);
-    }
-    return [];
+    const defi_objectifs = this.findAllDefis();
+    return defi_objectifs.filter((d) => !d.is_locked).map((d) => d.content_id);
   }
 
   public getAllKYCs() {

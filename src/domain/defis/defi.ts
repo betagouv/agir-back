@@ -3,8 +3,8 @@ import { Thematique } from '../contenu/thematique';
 import { Defi_v0 } from '../object_store/defi/defiHistory_v0';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
-import { Univers } from '../univers/univers';
 import { Utilisateur } from '../utilisateur/utilisateur';
+import { ConditionDefi } from './conditionDefi';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
@@ -30,12 +30,14 @@ export class Defi implements TaggedContent {
   private status: DefiStatus;
   date_acceptation: Date;
   score: number;
-  universes: Univers[];
+  universes: string[];
   accessible: boolean;
   motif: string;
   categorie: Categorie;
+  mois: number[];
+  conditions: ConditionDefi[][];
 
-  constructor(data: Defi_v0) {
+  constructor(data: Defi_v0, utilisateur?: Utilisateur) {
     this.id = data.id;
     this.titre = data.titre;
     this.sous_titre = data.sous_titre;
@@ -51,6 +53,8 @@ export class Defi implements TaggedContent {
     this.accessible = !!data.accessible;
     this.motif = data.motif;
     this.categorie = data.categorie;
+    this.mois = data.mois ? data.mois : [];
+    this.conditions = data.conditions ? data.conditions : [];
   }
 
   public getStatus(): DefiStatus {
@@ -64,7 +68,10 @@ export class Defi implements TaggedContent {
       this.date_acceptation = new Date();
     }
     if (status === DefiStatus.deja_fait || status === DefiStatus.fait) {
-      utilisateur.gamification.ajoutePoints(this.points);
+      utilisateur.gamification.ajoutePoints(
+        this.points,
+        utilisateur.unlocked_features,
+      );
     }
     this.status = status;
   }

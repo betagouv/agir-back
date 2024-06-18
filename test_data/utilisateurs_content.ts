@@ -8,7 +8,6 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { LiveService } from '../src/domain/service/serviceDefinition';
 import { ThematiqueUnivers } from '../src/domain/univers/thematiqueUnivers';
-import { Univers } from '../src/domain/univers/univers';
 import { MissionsUtilisateur_v0 } from '../src/domain/object_store/mission/MissionsUtilisateur_v0';
 import { KYCID } from '../src/domain/kyc/KYCID';
 
@@ -29,6 +28,7 @@ const missions: MissionsUtilisateur_v0 = {
           is_locked: false,
           done_at: null,
           sont_points_en_poche: false,
+          est_reco: true,
         },
         {
           id: '002',
@@ -39,6 +39,7 @@ const missions: MissionsUtilisateur_v0 = {
           is_locked: false,
           done_at: null,
           sont_points_en_poche: false,
+          est_reco: true,
         },
         {
           id: '1',
@@ -49,6 +50,7 @@ const missions: MissionsUtilisateur_v0 = {
           is_locked: true,
           done_at: null,
           sont_points_en_poche: false,
+          est_reco: true,
         },
         {
           id: '2',
@@ -59,6 +61,7 @@ const missions: MissionsUtilisateur_v0 = {
           is_locked: true,
           done_at: null,
           sont_points_en_poche: false,
+          est_reco: true,
         },
         {
           id: '3',
@@ -69,6 +72,7 @@ const missions: MissionsUtilisateur_v0 = {
           is_locked: true,
           done_at: null,
           sont_points_en_poche: false,
+          est_reco: true,
         },
       ],
       est_visible: true,
@@ -197,21 +201,14 @@ const utilisateurs = {
     migration_enabled: true,
     gamification: {
       version: 0,
-      points: 0,
+      points: 99,
     },
     suivis: [],
     bilans: [],
     services: [],
     unlocked_features: {
       version: 1,
-      unlocked_features: [
-        'aides',
-        'services',
-        'recommandations',
-        'bibliotheque',
-        'defis',
-        'univers',
-      ],
+      unlocked_features: ['aides', 'univers'],
     },
     onboardingResult: ONBOARDING_RES_1234,
     onboardingData: ONBOARD_DATA_1234,
@@ -314,7 +311,11 @@ const utilisateurs = {
     parts: null,
     version: 6,
     gamification: {
-      points: 10,
+      points: 0,
+    },
+    unlocked_features: {
+      version: 1,
+      unlocked_features: ['univers'],
     },
     suivis: [],
     services: [],
@@ -334,14 +335,7 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [
-        'aides',
-        'services',
-        'recommandations',
-        'bibliotheque',
-        'defis',
-        'univers',
-      ],
+      unlocked_features: ['univers'],
     },
     suivis: [],
     services: [],
@@ -357,7 +351,51 @@ const utilisateurs = {
     parts: null,
     version: 6,
     gamification: {
-      points: 10,
+      points: 0,
+    },
+    unlocked_features: {
+      version: 1,
+      unlocked_features: ['univers'],
+    },
+    suivis: [],
+    services: [],
+    onboardingResult: ONBOARDING_RES_1234,
+    onboardingData: ONBOARD_DATA_1234,
+  },
+  lucas: {
+    nom: 'RECETTEUR',
+    prenom: 'Lucas',
+    email: 'lucas@agir.dev',
+    mot_de_passe: 'haha',
+    revenu_fiscal: null,
+    parts: null,
+    version: 6,
+    gamification: {
+      points: 0,
+    },
+    unlocked_features: {
+      version: 1,
+      unlocked_features: ['univers', 'aides'],
+    },
+    suivis: [],
+    services: [],
+    onboardingResult: ONBOARDING_RES_1234,
+    onboardingData: ONBOARD_DATA_1234,
+  },
+  jeremie: {
+    nom: 'RECETTEUR',
+    prenom: 'Jeremie',
+    email: 'jeremie@agir.dev',
+    mot_de_passe: 'haha',
+    revenu_fiscal: null,
+    parts: null,
+    version: 6,
+    gamification: {
+      points: 0,
+    },
+    unlocked_features: {
+      version: 1,
+      unlocked_features: ['univers'],
     },
     suivis: [],
     services: [],
@@ -373,7 +411,11 @@ const utilisateurs = {
     parts: null,
     version: 6,
     gamification: {
-      points: 10,
+      points: 0,
+    },
+    unlocked_features: {
+      version: 1,
+      unlocked_features: ['univers'],
     },
     suivis: [],
     services: [],
@@ -389,7 +431,11 @@ const utilisateurs = {
     parts: null,
     version: 6,
     gamification: {
-      points: 10,
+      points: 0,
+    },
+    unlocked_features: {
+      version: 1,
+      unlocked_features: ['univers'],
     },
     suivis: [],
     services: [],
@@ -405,7 +451,11 @@ const utilisateurs = {
     parts: null,
     version: 6,
     gamification: {
-      points: 10,
+      points: 0,
+    },
+    unlocked_features: {
+      version: 1,
+      unlocked_features: ['univers'],
     },
     suivis: [],
     services: [],
@@ -421,7 +471,11 @@ const utilisateurs = {
     parts: null,
     version: 6,
     gamification: {
-      points: 10,
+      points: 0,
+    },
+    unlocked_features: {
+      version: 1,
+      unlocked_features: ['univers'],
     },
     suivis: [],
     services: [],

@@ -15,6 +15,8 @@ export type QuizzFilter = {
   exclude_ids?: string[];
   asc_difficulty?: boolean;
   categorie?: Categorie;
+  date?: Date;
+  // FIXME : add univers filter
 };
 
 @Injectable()
@@ -53,11 +55,18 @@ export class QuizzRepository {
 
   async searchQuizzes(filter: QuizzFilter): Promise<Quizz[]> {
     let codes_postaux_filter;
+    let mois_filter;
 
     if (filter.code_postal) {
       codes_postaux_filter = [
         { codes_postaux: { has: filter.code_postal } },
         { codes_postaux: { isEmpty: true } },
+      ];
+    }
+    if (filter.date) {
+      mois_filter = [
+        { mois: { has: filter.date.getMonth() + 1 } },
+        { mois: { isEmpty: true } },
       ];
     }
 
@@ -86,8 +95,7 @@ export class QuizzRepository {
     const finalQuery = {
       take: filter.maxNumber,
       where: {
-        OR: codes_postaux_filter,
-        AND: main_filter,
+        AND: [main_filter, { OR: mois_filter }, { OR: codes_postaux_filter }],
       },
     };
 
@@ -121,6 +129,7 @@ export class QuizzRepository {
       tags_rubriques: [],
       score: 0,
       categorie: Categorie[quizzDB.categorie],
+      mois: quizzDB.mois,
     });
   }
 }

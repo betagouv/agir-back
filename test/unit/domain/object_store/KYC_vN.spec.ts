@@ -30,6 +30,7 @@ describe('KYC vN ', () => {
       answered_questions: [
         {
           id: KYCID.KYC001,
+          id_cms: 1,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -61,6 +62,7 @@ describe('KYC vN ', () => {
       answered_questions: [
         {
           id: KYCID.KYC001,
+          id_cms: 1,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,

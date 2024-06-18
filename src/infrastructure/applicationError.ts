@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ThematiqueUnivers } from '../../src/domain/univers/thematiqueUnivers';
 
 export class ApplicationError {
   @ApiProperty()
@@ -247,7 +246,7 @@ export class ApplicationError {
     this.throwAppError('044', `L'utilisateur est forcé à se reconnecter`, 401);
   }
 
-  static throwMissionNotFound(them: ThematiqueUnivers) {
+  static throwMissionNotFound(them: string) {
     this.throwAppError(
       '045',
       `Mission de thematique [${them}] non trouvée`,
@@ -273,6 +272,12 @@ export class ApplicationError {
   }
   static throwBadInputsForFileAttente() {
     this.throwAppError('049', `Mauvais inputs pour la mise en file d'attente`);
+  }
+  static throwConcurrentUpdate() {
+    this.throwAppError(
+      '050',
+      `l'utilisateur a été mis à jour pendant votre requête, veuillez retenter l'opération`,
+    );
   }
 
   private static throwAppError(

@@ -18,14 +18,15 @@ import { Thematique } from '../../src/domain/contenu/thematique';
 import { App } from '../domain/app';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { Feature } from '../../src/domain/gamification/feature';
-import { Univers } from '../../src/domain/univers/univers';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { Categorie } from '../../src/domain/contenu/categorie';
+import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 
 @Injectable()
 export class RecommandationUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
+    private communeRepository: CommuneRepository,
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
     private defiRepository: DefiRepository,
@@ -34,7 +35,7 @@ export class RecommandationUsecase {
 
   async listRecommandationsV2(
     utilisateurId: string,
-    univers?: Univers,
+    univers?: string,
   ): Promise<Recommandation[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
@@ -84,7 +85,10 @@ export class RecommandationUsecase {
       App.defiEnabled() &&
       utilisateur.unlocked_features.isUnlocked(Feature.defis)
     ) {
-      const defiDefinitions = await this.defiRepository.list();
+      const defiDefinitions = await this.defiRepository.list({
+        categorie: Categorie.recommandation,
+        date: new Date(),
+      });
       utilisateur.defi_history.setCatalogue(defiDefinitions);
 
       defis_en_cours = this.getDefisEnCours(utilisateur);
@@ -118,10 +122,7 @@ export class RecommandationUsecase {
     return defis_en_cours.concat(defis_restants, content);
   }
 
-  private getKYC(
-    utilisateur: Utilisateur,
-    univers?: Univers,
-  ): Recommandation[] {
+  private getKYC(utilisateur: Utilisateur, univers?: string): Recommandation[] {
     const kycs = utilisateur.kyc_history.getKYCRestantes(
       Categorie.recommandation,
       univers,
@@ -190,15 +191,30 @@ export class RecommandationUsecase {
 
   private async getArticles(
     utilisateur: Utilisateur,
-    univers?: Univers,
+    univers?: string,
   ): Promise<Recommandation[]> {
     const articles_lus = utilisateur.history.searchArticlesIds({
       est_lu: true,
     });
+
+    const code_commune = await this.communeRepository.getCodeCommune(
+      utilisateur.logement.code_postal,
+      utilisateur.logement.commune,
+    );
+
+    const dept_region =
+      await this.communeRepository.findDepartementRegionByCodePostal(
+        utilisateur.logement.code_postal,
+      );
+
     const filtre: ArticleFilter = {
       code_postal: utilisateur.logement.code_postal,
       exclude_ids: articles_lus,
       categorie: Categorie.recommandation,
+      date: new Date(),
+      code_commune: code_commune ? code_commune : undefined,
+      code_departement: dept_region ? dept_region.code_departement : undefined,
+      code_region: dept_region ? dept_region.code_region : undefined,
     };
     if (univers) {
       filtre.thematiques = [Thematique[univers]];
@@ -218,7 +234,7 @@ export class RecommandationUsecase {
 
   private async getQuizzes(
     utilisateur: Utilisateur,
-    univers?: Univers,
+    univers?: string,
   ): Promise<Recommandation[]> {
     const quizz_attempted = utilisateur.history.listeIdsQuizzAttempted();
 
@@ -226,6 +242,7 @@ export class RecommandationUsecase {
       code_postal: utilisateur.logement.code_postal,
       exclude_ids: quizz_attempted,
       categorie: Categorie.recommandation,
+      date: new Date(),
     };
 
     if (univers) {

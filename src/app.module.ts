@@ -69,7 +69,6 @@ import { RecommandationsController } from './infrastructure/api/recommandations.
 import { RecommandationUsecase } from './usecase/recommandation.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
 import { ReferentielUsecase } from './usecase/referentiel/referentiel.usecase';
-import { DepartementRepository } from './infrastructure/repository/departement/departement.repository';
 import { App } from './domain/app';
 import { BibliothequeController } from './infrastructure/api/bibliotheque.controller';
 import { BibliothequeUsecase } from './usecase/bibliotheque.usecase';
@@ -103,6 +102,12 @@ import { KycRepository } from './infrastructure/repository/kyc.repository';
 import { FileAttenteUsecase } from './usecase/fileAttente.usecase';
 import { FileAttenteRepository } from './infrastructure/repository/fileAttente.repository';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { ThematiqueStatistiqueUsecase } from './usecase/thematiqueStatistique.usecase';
+import { ThematiqueStatistiqueRepository } from './infrastructure/repository/thematiqueStatistique.repository';
+import { UniversStatistiqueUsecase } from './usecase/universStatistique.usecase';
+import { UniversStatistiqueRepository } from './infrastructure/repository/universStatistique.repository';
+import { ScheduleModule } from '@nestjs/schedule';
+import { Personnalisator } from './infrastructure/personnalisation/personnalisator';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -142,6 +147,7 @@ function getControllers(): any[] {
 }
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ThrottlerModule.forRoot([
       {
         ttl: 1000 * 60 * 60 * 24,
@@ -202,7 +208,6 @@ function getControllers(): any[] {
     ContactSynchro,
     MigrationUsecase,
     ReferentielUsecase,
-    DepartementRepository,
     BibliothequeUsecase,
     LinkyAPIConnector,
     LinkyEmailer,
@@ -228,6 +233,11 @@ function getControllers(): any[] {
     KycRepository,
     FileAttenteUsecase,
     FileAttenteRepository,
+    ThematiqueStatistiqueUsecase,
+    ThematiqueStatistiqueRepository,
+    UniversStatistiqueUsecase,
+    UniversStatistiqueRepository,
+    Personnalisator,
   ],
 })
 export class AppModule {}

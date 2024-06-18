@@ -7,6 +7,7 @@ import { ArticleRepository } from '../../src/infrastructure/repository/article.r
 import { Thematique } from '../domain/contenu/thematique';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
 import { LiveService } from '../../src/domain/service/serviceDefinition';
+import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 
 @Injectable()
 export class EventUsecase {
@@ -14,6 +15,7 @@ export class EventUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
+    private defiRepository: DefiRepository,
   ) {}
 
   async processEvent(utilisateurId: string, event: AppEvent) {
@@ -149,7 +151,10 @@ export class EventUsecase {
       event.content_id,
     );
     if (!utilisateur.history.sontPointsArticleEnPoche(event.content_id)) {
-      utilisateur.gamification.ajoutePoints(article.points);
+      utilisateur.gamification.ajoutePoints(
+        article.points,
+        utilisateur.unlocked_features,
+      );
       utilisateur.history.declarePointsArticleEnPoche(event.content_id);
     }
     this.updateUserTodo(utilisateur, ContentType.article, article.thematiques);
@@ -159,6 +164,9 @@ export class EventUsecase {
       ContentType.article,
       utilisateur,
     );
+
+    const catalogue_defis = await this.defiRepository.list({});
+    utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -174,7 +182,10 @@ export class EventUsecase {
       !utilisateur.history.sontPointsQuizzEnPoche(event.content_id) &&
       event.number_value === 100
     ) {
-      utilisateur.gamification.ajoutePoints(quizz.points);
+      utilisateur.gamification.ajoutePoints(
+        quizz.points,
+        utilisateur.unlocked_features,
+      );
       utilisateur.history.declarePointsQuizzEnPoche(event.content_id);
       this.updateUserTodo(utilisateur, ContentType.quizz, quizz.thematiques);
     }
@@ -183,7 +194,11 @@ export class EventUsecase {
       event.content_id,
       ContentType.quizz,
       utilisateur,
+      event.number_value,
     );
+
+    const catalogue_defis = await this.defiRepository.list({});
+    utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }

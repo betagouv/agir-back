@@ -1,6 +1,5 @@
 import { DB, TestUtil } from '../../TestUtil';
 import { ServiceRepository } from '../../../src/infrastructure/repository/service.repository';
-import { DepartementRepository } from '../../../src/infrastructure/repository/departement/departement.repository';
 import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { LinkyServiceManager } from '../../../src/infrastructure/service/linky/LinkyServiceManager';
@@ -22,6 +21,7 @@ import {
   DPE,
 } from '../../../src/domain/logement/logement';
 import { LinkyConsentRepository } from '../../../src/infrastructure/repository/linkyConsent.repository';
+import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
 
 const logement: Logement_v0 = {
   version: 0,
@@ -68,7 +68,7 @@ describe('linkyServiceManager', () => {
   let linkyConsentRepository = new LinkyConsentRepository(TestUtil.prisma);
   let serviceRepository = new ServiceRepository(TestUtil.prisma);
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
-  let departementRepository = new DepartementRepository();
+  let communeRepository = new CommuneRepository();
   let linkyEmailer = {
     sendConfigurationKOEmail: jest.fn(),
     sendAvailableDataEmail: jest.fn(),
@@ -84,7 +84,7 @@ describe('linkyServiceManager', () => {
     linkyConsentRepository,
     serviceRepository,
     utilisateurRepository,
-    departementRepository,
+    communeRepository,
     linkyEmailer,
     linkyRepository,
     linkyAPIConnector,

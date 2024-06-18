@@ -6,6 +6,7 @@ export class CheckWhitelisteAPI {
 }
 export class ReponseCheckWhitelisteAPI {
   @ApiProperty() is_whitelisted: boolean;
+  @ApiProperty() is_registered: boolean;
 }
 export class UtilisateurAttenteAPI {
   @ApiProperty() email: string;

@@ -83,6 +83,8 @@ export class UtilisateurProfileAPI {
   nom: string;
   @ApiProperty({ required: true })
   prenom: string;
+  @ApiProperty({ required: false })
+  annee_naissance: number;
   @ApiProperty({ required: true })
   email: string;
   @ApiProperty({ required: false })
@@ -116,6 +118,7 @@ export class UtilisateurProfileAPI {
       abonnement_ter_loire: user.abonnement_ter_loire,
       onboarding_result: user.onboardingResult.ventilation_par_thematiques,
       logement: LogementAPI.mapToAPI(user.logement),
+      annee_naissance: user.annee_naissance,
     };
   }
 }

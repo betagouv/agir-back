@@ -10,9 +10,6 @@ export class App {
   public static kycRecoEnabled(): boolean {
     return process.env.KYC_RECO_ENABLED === 'true';
   }
-  public static aide_cache_enabled(): boolean {
-    return process.env.AIDE_CACHE_ENABLED === 'true';
-  }
   public static isProd(): boolean {
     return process.env.IS_PROD === 'true';
   }
@@ -42,6 +39,9 @@ export class App {
   }
   public static areServiceAPIEnabled(): boolean {
     return process.env.SERVICE_APIS_ENABLED === 'true';
+  }
+  public static areCachedUnivers(): boolean {
+    return process.env.UNIVERS_CACHE_ENABLED === 'true';
   }
   public static getEcoWattApiSecret(): string {
     return process.env.ECOWATT_CLIENT_ID_SECRET;

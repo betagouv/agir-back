@@ -41,6 +41,14 @@ export class UtilisateurRepository {
     });
     return this.buildUtilisateurFromDB(user);
   }
+  async checkEmailExists(email: string): Promise<boolean> {
+    const count = await this.prisma.utilisateur.count({
+      where: {
+        email,
+      },
+    });
+    return count !== 0;
+  }
   async findByEmail(email: string): Promise<Utilisateur | null> {
     const user = await this.prisma.utilisateur.findUnique({
       where: {
@@ -106,11 +114,21 @@ export class UtilisateurRepository {
       },
     });
   }
-  async updateUtilisateur(utilisateur: Utilisateur): Promise<any> {
-    return this.prisma.utilisateur.update({
-      where: { id: utilisateur.id },
-      data: this.buildDBFromUtilisateur(utilisateur),
-    });
+  async updateUtilisateur(utilisateur: Utilisateur): Promise<void> {
+    try {
+      await this.prisma.utilisateur.update({
+        where: { id: utilisateur.id, db_version: utilisateur.db_version },
+        data: {
+          ...this.buildDBFromUtilisateur(utilisateur),
+          db_version: { increment: 1 },
+        },
+      });
+    } catch (error) {
+      if (error.code === 'P2025') {
+        ApplicationError.throwConcurrentUpdate();
+      }
+      throw error;
+    }
   }
 
   async listUtilisateurIds(): Promise<string[]> {
@@ -318,6 +336,8 @@ export class UtilisateurRepository {
         force_connexion: user.force_connexion,
         derniere_activite: user.derniere_activite,
         missions: missions,
+        annee_naissance: user.annee_naissance,
+        db_version: user.db_version,
       });
     }
     return null;
@@ -397,8 +417,10 @@ export class UtilisateurRepository {
       ),
       force_connexion: user.force_connexion,
       derniere_activite: user.derniere_activite,
+      annee_naissance: user.annee_naissance,
       created_at: undefined,
       updated_at: undefined,
+      db_version: user.db_version,
     };
   }
 }

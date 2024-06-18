@@ -4,7 +4,9 @@ import { Reveal } from './reveal';
 
 export enum CelebrationType {
   niveau = 'niveau',
+  reveal = 'reveal',
   fin_mission = 'fin_mission',
+  fin_thematique = 'fin_thematique',
 }
 
 export class Celebration {
@@ -13,6 +15,8 @@ export class Celebration {
   titre: string;
   reveal?: Reveal;
   new_niveau?: number;
+  new_thematiques?: string[];
+  thematique_univers?: string;
 
   constructor(data: Celebration_v0) {
     this.id = data.id ? data.id : uuidv4();
@@ -20,6 +24,8 @@ export class Celebration {
     this.titre = data.titre;
     this.new_niveau = data.new_niveau;
     this.reveal = data.reveal ? new Reveal(data.reveal) : undefined;
+    this.new_thematiques = data.new_thematiques;
+    this.thematique_univers = data.thematique_univers;
   }
 
   public hasReveal?(): boolean {

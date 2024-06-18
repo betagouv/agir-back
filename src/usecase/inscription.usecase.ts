@@ -80,6 +80,7 @@ export class InscriptionUsecase {
       utilisateurInput.nom,
       utilisateurInput.prenom,
       utilisateurInput.email,
+      utilisateurInput.annee_naissance,
       onboarding,
     );
 

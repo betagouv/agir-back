@@ -25,11 +25,19 @@ import { Univers } from '../../../src/domain/univers/univers';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionQYC';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
+import { ContentType } from '../../../src/domain/contenu/contentType';
+import {
+  MissionsUtilisateur_v0,
+  Objectif_v0,
+} from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
+import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const linkyRepository = new LinkyRepository(TestUtil.prisma);
+  const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -433,6 +441,8 @@ describe('Admin (API test)', () => {
           id: '001',
           status: DefiStatus.deja_fait,
           categorie: Categorie.recommandation,
+          mois: [],
+          conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
         },
       ],
     };
@@ -463,6 +473,65 @@ describe('Admin (API test)', () => {
     ]);
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.defi_history.defis[0].getStatus()).toEqual(DefiStatus.fait);
+  });
+  it('POST /admin/migrate_users migration V8 OK', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const kyc = {
+      version: 0,
+      answered_questions: [
+        {
+          id: KYCID._2,
+          question: `Quel est votre sujet principal d'intéret ?`,
+          type: TypeReponseQuestionKYC.choix_multiple,
+          is_NGC: false,
+          categorie: Categorie.test,
+          points: 10,
+          reponses: [
+            { label: 'Le climat', code: Thematique.climat },
+            { label: 'Mon logement', code: Thematique.logement },
+          ],
+          reponses_possibles: [
+            { label: 'Le climat', code: Thematique.climat },
+            { label: 'Mon logement', code: Thematique.logement },
+            { label: 'Ce que je mange', code: Thematique.alimentation },
+          ],
+          tags: [],
+          universes: [Univers.climat],
+        },
+      ],
+    };
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+    });
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 7,
+      migration_enabled: true,
+      kyc: kyc,
+    });
+    process.env.USER_CURRENT_VERSION = '8';
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 8,
+            ok: true,
+            info: `CMS IDS injected [1]`,
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.kyc_history.answered_questions[0].id_cms).toEqual(1);
   });
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
@@ -1103,10 +1172,152 @@ describe('Admin (API test)', () => {
   it("POST /admin/statistique - calcul des statistiques de l'ensemble des utilisateurs", async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.utilisateur, { id: 'test-id-1' });
+    const DEFI: Defi_v0 = {
+      id: '1',
+      points: 10,
+      tags: [],
+      titre: 'titre',
+      thematique: Thematique.transport,
+      astuces: 'ASTUCE',
+      date_acceptation: null,
+      pourquoi: 'POURQUOI',
+      sous_titre: 'SOUS TITRE',
+      status: DefiStatus.todo,
+      universes: [Univers.climat],
+      accessible: true,
+      motif: 'truc',
+      categorie: Categorie.recommandation,
+      mois: [],
+      conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
+    };
+    const defis_1: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        { ...DEFI, id: '1', status: DefiStatus.pas_envie, titre: 'A' },
+        { ...DEFI, id: '2', status: DefiStatus.abondon, titre: 'B' },
+        { ...DEFI, id: '3', status: DefiStatus.fait, titre: 'C' },
+        { ...DEFI, id: '1', status: DefiStatus.pas_envie, titre: 'E' },
+        { ...DEFI, id: '2', status: DefiStatus.abondon, titre: 'F' },
+        { ...DEFI, id: '3', status: DefiStatus.en_cours, titre: 'G' },
+      ],
+    };
+    const defis_2: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        { ...DEFI, id: '1', status: DefiStatus.pas_envie, titre: 'A' },
+        { ...DEFI, id: '2', status: DefiStatus.abondon, titre: 'B' },
+        { ...DEFI, id: '3', status: DefiStatus.fait, titre: 'C' },
+      ],
+    };
+    const objectifComplete: Objectif_v0 = {
+      id: '1',
+      content_id: '12',
+      type: ContentType.article,
+      titre: 'Super article',
+      points: 10,
+      is_locked: false,
+      done_at: new Date(),
+      sont_points_en_poche: false,
+      est_reco: false,
+    };
+
+    const objectifNonComplete: Objectif_v0 = {
+      ...objectifComplete,
+      done_at: null,
+    };
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Cereales',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 2,
+      code: ThematiqueUnivers.mobilite_quotidien,
+      univers_parent: Univers.transport,
+      label: 'Mobilité du quotidien',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 3,
+      code: ThematiqueUnivers.gaspillage_alimentaire,
+      univers_parent: Univers.alimentation,
+      label: 'Gaspillage alimentaire',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 4,
+      code: ThematiqueUnivers.manger_local,
+      univers_parent: Univers.alimentation,
+      label: 'Manger local',
+    });
+    const missionsUtilisateur1: MissionsUtilisateur_v0 = {
+      version: 0,
+      missions: [
+        {
+          id: '1',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.cereales,
+          objectifs: [objectifComplete, objectifComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '2',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
+          objectifs: [objectifNonComplete, objectifNonComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '3',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.mobilite_quotidien,
+          objectifs: [objectifComplete, objectifComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+      ],
+    };
+    const missionsUtilisateur2: MissionsUtilisateur_v0 = {
+      version: 0,
+      missions: [
+        {
+          id: '1',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.cereales,
+          objectifs: [objectifComplete, objectifNonComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '2',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
+          objectifs: [objectifComplete, objectifComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '3',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.mobilite_quotidien,
+          objectifs: [objectifComplete, objectifComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+      ],
+    };
+    await thematiqueRepository.onApplicationBootstrap();
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-1',
+      defis: defis_1,
+      missions: missionsUtilisateur1,
+    });
     await TestUtil.create(DB.utilisateur, {
       id: 'test-id-2',
       email: 'user-email@toto.fr',
+      defis: defis_2,
+      missions: missionsUtilisateur2,
     });
 
     // WHEN
@@ -1120,7 +1331,41 @@ describe('Admin (API test)', () => {
 
     const nombreDeLignesTableStatistique =
       await TestUtil.prisma.statistique.findMany();
+    const userStatistique1 = await TestUtil.prisma.statistique.findUnique({
+      where: { utilisateurId: 'test-id-1' },
+    });
+    const userStatistique2 = await TestUtil.prisma.statistique.findUnique({
+      where: { utilisateurId: 'test-id-2' },
+    });
+
+    delete userStatistique1.created_at;
+    delete userStatistique1.updated_at;
+    delete userStatistique2.created_at;
+    delete userStatistique2.updated_at;
+
     expect(nombreDeLignesTableStatistique).toHaveLength(2);
+    expect(userStatistique1).toEqual({
+      utilisateurId: 'test-id-1',
+      nombre_defis_pas_envie: 2,
+      nombre_defis_abandonnes: 2,
+      nombre_defis_en_cours: 1,
+      nombre_defis_realises: 1,
+      thematiques_en_cours: null,
+      thematiques_terminees: `${ThematiqueUnivers.cereales}, ${ThematiqueUnivers.mobilite_quotidien}`,
+      univers_en_cours: null,
+      univers_termines: `${Univers.alimentation}, ${Univers.transport}`,
+    });
+    expect(userStatistique2).toEqual({
+      utilisateurId: 'test-id-2',
+      nombre_defis_pas_envie: 1,
+      nombre_defis_abandonnes: 1,
+      nombre_defis_en_cours: 0,
+      nombre_defis_realises: 1,
+      thematiques_en_cours: ThematiqueUnivers.cereales,
+      thematiques_terminees: `${ThematiqueUnivers.gaspillage_alimentaire}, ${ThematiqueUnivers.mobilite_quotidien}`,
+      univers_en_cours: Univers.alimentation,
+      univers_termines: Univers.transport,
+    });
   });
 
   it("POST /admin/article-statistique - calcul des statistiques de l'ensemble des articles", async () => {
@@ -1261,48 +1506,114 @@ describe('Admin (API test)', () => {
       status: DefiStatus.todo,
       universes: [Univers.climat],
       accessible: true,
-      motif: 'truc',
+      motif: '',
       categorie: Categorie.recommandation,
+      mois: [],
+      conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
     };
-    const defis_1: DefiHistory_v0 = {
+
+    const defi1 = {
+      ...DEFI,
+      id: '1',
+      titre: 'A',
+    };
+    const defi2 = {
+      ...DEFI,
+      id: '2',
+      titre: 'B',
+    };
+    const defi3 = {
+      ...DEFI,
+      id: '3',
+      titre: 'C',
+    };
+    const defi4 = {
+      ...DEFI,
+      id: '4',
+      titre: 'D',
+    };
+
+    const defis_user_1: DefiHistory_v0 = {
       version: 0,
       defis: [
-        { ...DEFI, id: '1', status: DefiStatus.pas_envie, titre: 'A' },
-        { ...DEFI, id: '2', status: DefiStatus.pas_envie, titre: 'B' },
-        { ...DEFI, id: '3', status: DefiStatus.pas_envie, titre: 'C' },
+        { ...defi1, status: DefiStatus.pas_envie },
+        { ...defi2, status: DefiStatus.pas_envie },
+        { ...defi3, status: DefiStatus.pas_envie },
+        { ...defi4, status: DefiStatus.pas_envie, motif: 'pas envie user1' },
       ],
     };
-    const defis_2: DefiHistory_v0 = {
+    const defis_user_2: DefiHistory_v0 = {
       version: 0,
       defis: [
-        { ...DEFI, id: '1', status: DefiStatus.en_cours, titre: 'A' },
-        { ...DEFI, id: '2', status: DefiStatus.abondon, titre: 'B' },
-        { ...DEFI, id: '3', status: DefiStatus.fait, titre: 'C' },
+        { ...defi1, status: DefiStatus.en_cours },
+        {
+          ...defi2,
+          status: DefiStatus.abondon,
+          motif: 'Top dur à mettre en place',
+        },
+        { ...defi3, status: DefiStatus.fait },
+        { ...defi4, status: DefiStatus.pas_envie },
       ],
     };
-    const defis_3: DefiHistory_v0 = {
+
+    const defis_user_3: DefiHistory_v0 = {
       version: 0,
       defis: [
-        { ...DEFI, id: '1', status: DefiStatus.fait, titre: 'A' },
-        { ...DEFI, id: '2', status: DefiStatus.fait, titre: 'B' },
-        { ...DEFI, id: '3', status: DefiStatus.fait, titre: 'C' },
+        { ...defi1, status: DefiStatus.fait },
+        {
+          ...defi2,
+          status: DefiStatus.pas_envie,
+          motif: 'pas envie defi2 user3',
+        },
+        { ...defi3, status: DefiStatus.fait },
+        {
+          ...defi4,
+          status: DefiStatus.pas_envie,
+          motif: 'pas envie defi4 user3',
+        },
+      ],
+    };
+
+    const defis_user_4: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          ...defi1,
+          status: DefiStatus.abondon,
+          motif: 'motif abandon defi1 user4',
+        },
+        {
+          ...defi2,
+          status: DefiStatus.abondon,
+          motif: 'motif abandon defi2 user4',
+        },
+        {
+          ...defi3,
+          status: DefiStatus.pas_envie,
+          motif: 'motif pas envie defi3 user4',
+        },
       ],
     };
 
     await TestUtil.create(DB.utilisateur, {
       id: '1',
       email: '1',
-      defis: defis_1,
+      defis: defis_user_1,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '2',
       email: '2',
-      defis: defis_2,
+      defis: defis_user_2,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '3',
       email: '3',
-      defis: defis_3,
+      defis: defis_user_3,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '4',
+      email: '4',
+      defis: defis_user_4,
     });
 
     // WHEN
@@ -1310,7 +1621,7 @@ describe('Admin (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(3);
+    expect(response.body).toHaveLength(4);
 
     const defi_1_stat = await TestUtil.prisma.defiStatistique.findUnique({
       where: { content_id: '1' },
@@ -1321,36 +1632,61 @@ describe('Admin (API test)', () => {
     const defi_3_stat = await TestUtil.prisma.defiStatistique.findUnique({
       where: { content_id: '3' },
     });
+    const defi_4_stat = await TestUtil.prisma.defiStatistique.findUnique({
+      where: { content_id: '4' },
+    });
+
     delete defi_1_stat.created_at;
     delete defi_1_stat.updated_at;
     delete defi_2_stat.created_at;
     delete defi_2_stat.updated_at;
     delete defi_3_stat.created_at;
     delete defi_3_stat.updated_at;
+    delete defi_4_stat.created_at;
+    delete defi_4_stat.updated_at;
 
     expect(defi_1_stat).toEqual({
       content_id: '1',
       titre: 'A',
       nombre_defis_pas_envie: 1,
-      nombre_defis_abandonnes: 0,
+      nombre_defis_abandonnes: 1,
       nombre_defis_en_cours: 1,
       nombre_defis_realises: 1,
+      raisons_defi_pas_envie: [],
+      raisons_defi_abandonne: ['motif abandon defi1 user4'],
     });
     expect(defi_2_stat).toEqual({
       content_id: '2',
       titre: 'B',
-      nombre_defis_pas_envie: 1,
-      nombre_defis_abandonnes: 1,
+      nombre_defis_pas_envie: 2,
+      nombre_defis_abandonnes: 2,
       nombre_defis_en_cours: 0,
-      nombre_defis_realises: 1,
+      nombre_defis_realises: 0,
+      raisons_defi_pas_envie: ['pas envie defi2 user3'],
+      raisons_defi_abandonne: [
+        'Top dur à mettre en place',
+        'motif abandon defi2 user4',
+      ],
     });
     expect(defi_3_stat).toEqual({
       content_id: '3',
       titre: 'C',
-      nombre_defis_pas_envie: 1,
+      nombre_defis_pas_envie: 2,
       nombre_defis_abandonnes: 0,
       nombre_defis_en_cours: 0,
       nombre_defis_realises: 2,
+      raisons_defi_pas_envie: ['motif pas envie defi3 user4'],
+      raisons_defi_abandonne: [],
+    });
+    expect(defi_4_stat).toEqual({
+      content_id: '4',
+      titre: 'D',
+      nombre_defis_pas_envie: 3,
+      nombre_defis_abandonnes: 0,
+      nombre_defis_en_cours: 0,
+      nombre_defis_realises: 0,
+      raisons_defi_pas_envie: ['pas envie user1', 'pas envie defi4 user3'],
+      raisons_defi_abandonne: [],
     });
   });
 
@@ -1512,5 +1848,471 @@ describe('Admin (API test)', () => {
     expect(kyc2.reponse).toEqual('Une réponse');
     expect(kyc3.titre).toEqual('Question kyc 1');
     expect(kyc3.reponse).toEqual('Appartement, Le climat, Mon logement');
+  });
+
+  it("POST /admin/thematique-statistique - calcul des statistiques de l'ensemble des thématiques", async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await TestUtil.create(DB.univers, {
+      id_cms: 1,
+      code: Univers.climat,
+      label: 'Climat',
+    });
+    await TestUtil.create(DB.univers, {
+      id_cms: 2,
+      code: Univers.alimentation,
+      label: 'Alimentation',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Cereales',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 2,
+      code: ThematiqueUnivers.mobilite_quotidien,
+      univers_parent: Univers.transport,
+      label: 'Mobilité du quotidien',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 3,
+      code: ThematiqueUnivers.gaspillage_alimentaire,
+      univers_parent: Univers.alimentation,
+      label: 'Gaspillage alimentaire',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 4,
+      code: ThematiqueUnivers.manger_local,
+      univers_parent: Univers.alimentation,
+      label: 'Manger local',
+    });
+    const missionsUtilisateur1: MissionsUtilisateur_v0 = {
+      version: 0,
+      missions: [
+        {
+          id: '1',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.cereales,
+          objectifs: [
+            {
+              id: '1',
+              content_id: '12',
+              type: ContentType.article,
+              titre: 'Super article',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+            {
+              id: '3',
+              content_id: '001',
+              type: ContentType.defi,
+              titre: 'Action à faire',
+              points: 10,
+              is_locked: true,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+          ],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '3',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.mobilite_quotidien,
+          objectifs: [
+            {
+              id: '1',
+              content_id: '14',
+              type: ContentType.article,
+              titre: 'Super article',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+            {
+              id: '3',
+              content_id: '003',
+              type: ContentType.defi,
+              titre: 'Action à faire',
+              points: 10,
+              is_locked: true,
+              done_at: null,
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+          ],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+      ],
+    };
+    const missionsUtilisateur2: MissionsUtilisateur_v0 = {
+      version: 0,
+      missions: [
+        {
+          id: '1',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.cereales,
+          objectifs: [
+            {
+              id: '1',
+              content_id: '12',
+              type: ContentType.article,
+              titre: 'Super article',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(0),
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+            {
+              id: '3',
+              content_id: '001',
+              type: ContentType.defi,
+              titre: 'Action à faire',
+              points: 10,
+              is_locked: true,
+              done_at: null,
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+          ],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '2',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
+          objectifs: [
+            {
+              id: '1',
+              content_id: '13',
+              type: ContentType.article,
+              titre: 'Super article',
+              points: 10,
+              is_locked: false,
+              done_at: null,
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+            {
+              id: '3',
+              content_id: '002',
+              type: ContentType.defi,
+              titre: 'Action à faire',
+              points: 10,
+              is_locked: true,
+              done_at: null,
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+          ],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '3',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.mobilite_quotidien,
+          objectifs: [
+            {
+              id: '1',
+              content_id: '14',
+              type: ContentType.article,
+              titre: 'Super article',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+            {
+              id: '3',
+              content_id: '003',
+              type: ContentType.defi,
+              titre: 'Action à faire',
+              points: 10,
+              is_locked: true,
+              done_at: null,
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+          ],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      id: 'idUtilisateur1',
+      missions: missionsUtilisateur1,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'idUtilisateur2',
+      email: 'user2@test.com',
+      missions: missionsUtilisateur2,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/thematique-statistique');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(3);
+    expect(response.body).toEqual(['1', '2', '3']);
+
+    const thematique1 = await TestUtil.prisma.thematiqueStatistique.findUnique({
+      where: { thematiqueId: '1' },
+    });
+    const thematique2 = await TestUtil.prisma.thematiqueStatistique.findUnique({
+      where: { thematiqueId: '2' },
+    });
+    const thematique3 = await TestUtil.prisma.thematiqueStatistique.findUnique({
+      where: { thematiqueId: '3' },
+    });
+
+    delete thematique1.updated_at;
+    delete thematique1.created_at;
+    delete thematique2.updated_at;
+    delete thematique2.created_at;
+    delete thematique3.updated_at;
+    delete thematique3.created_at;
+
+    expect(thematique1).toStrictEqual({
+      thematiqueId: '1',
+      titre: ThematiqueUnivers.cereales,
+      completion_pourcentage_1_20: 0,
+      completion_pourcentage_21_40: 0,
+      completion_pourcentage_41_60: 1,
+      completion_pourcentage_61_80: 0,
+      completion_pourcentage_81_99: 0,
+      completion_pourcentage_100: 1,
+    });
+    expect(thematique2).toStrictEqual({
+      thematiqueId: '2',
+      titre: ThematiqueUnivers.gaspillage_alimentaire,
+      completion_pourcentage_1_20: 0,
+      completion_pourcentage_21_40: 0,
+      completion_pourcentage_41_60: 0,
+      completion_pourcentage_61_80: 0,
+      completion_pourcentage_81_99: 0,
+      completion_pourcentage_100: 0,
+    });
+    expect(thematique3).toStrictEqual({
+      thematiqueId: '3',
+      titre: ThematiqueUnivers.mobilite_quotidien,
+      completion_pourcentage_1_20: 0,
+      completion_pourcentage_21_40: 0,
+      completion_pourcentage_41_60: 2,
+      completion_pourcentage_61_80: 0,
+      completion_pourcentage_81_99: 0,
+      completion_pourcentage_100: 0,
+    });
+  });
+
+  it("POST /admin/univers-statistique - calcul des statistiques de l'ensemble des univers", async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Cereales',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 2,
+      code: ThematiqueUnivers.mobilite_quotidien,
+      univers_parent: Univers.transport,
+      label: 'Mobilité du quotidien',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 3,
+      code: ThematiqueUnivers.gaspillage_alimentaire,
+      univers_parent: Univers.alimentation,
+      label: 'Gaspillage alimentaire',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 4,
+      code: ThematiqueUnivers.partir_vacances,
+      univers_parent: Univers.climat,
+      label: 'Manger local',
+    });
+
+    await thematiqueRepository.onApplicationBootstrap();
+
+    const objectifComplete: Objectif_v0 = {
+      id: '1',
+      content_id: '12',
+      type: ContentType.article,
+      titre: 'Super article',
+      points: 10,
+      is_locked: false,
+      done_at: new Date(),
+      sont_points_en_poche: false,
+      est_reco: false,
+    };
+
+    const objectifNonComplete: Objectif_v0 = {
+      ...objectifComplete,
+      done_at: null,
+    };
+
+    const missionsUtilisateur1: MissionsUtilisateur_v0 = {
+      version: 0,
+      missions: [
+        {
+          id: '1',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.cereales,
+          objectifs: [objectifComplete, objectifComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '2',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
+          objectifs: [objectifComplete, objectifComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '3',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.mobilite_quotidien,
+          objectifs: [objectifComplete, objectifNonComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '4',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.partir_vacances,
+          objectifs: [objectifComplete, objectifNonComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+      ],
+    };
+    const missionsUtilisateur2: MissionsUtilisateur_v0 = {
+      version: 0,
+      missions: [
+        {
+          id: '1',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.cereales,
+          objectifs: [objectifComplete, objectifComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '2',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
+          objectifs: [objectifComplete, objectifComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '3',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.mobilite_quotidien,
+          objectifs: [objectifNonComplete, objectifNonComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+        {
+          id: '4',
+          done_at: null,
+          thematique_univers: ThematiqueUnivers.partir_vacances,
+          objectifs: [objectifComplete, objectifComplete],
+          prochaines_thematiques: [],
+          est_visible: true,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      id: 'idUtilisateur1',
+      missions: missionsUtilisateur1,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'idUtilisateur2',
+      email: 'user2@test.com',
+      missions: missionsUtilisateur2,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/univers-statistique');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(3);
+    expect(response.body).toEqual([
+      Univers.alimentation,
+      Univers.transport,
+      Univers.climat,
+    ]);
+
+    const univers1 = await TestUtil.prisma.universStatistique.findUnique({
+      where: { universId: Univers.alimentation },
+    });
+    const univers2 = await TestUtil.prisma.universStatistique.findUnique({
+      where: { universId: Univers.transport },
+    });
+    const univers3 = await TestUtil.prisma.universStatistique.findUnique({
+      where: { universId: Univers.climat },
+    });
+
+    delete univers1.created_at;
+    delete univers1.updated_at;
+    delete univers2.created_at;
+    delete univers2.updated_at;
+    delete univers3.created_at;
+    delete univers3.updated_at;
+
+    expect(univers1).toStrictEqual({
+      universId: 'alimentation',
+      titre: Univers.alimentation,
+      completion_pourcentage_1_20: 0,
+      completion_pourcentage_21_40: 0,
+      completion_pourcentage_41_60: 0,
+      completion_pourcentage_61_80: 0,
+      completion_pourcentage_81_99: 0,
+      completion_pourcentage_100: 2,
+    });
+
+    expect(univers2).toStrictEqual({
+      universId: 'transport',
+      titre: Univers.transport,
+      completion_pourcentage_1_20: 0,
+      completion_pourcentage_21_40: 0,
+      completion_pourcentage_41_60: 1,
+      completion_pourcentage_61_80: 0,
+      completion_pourcentage_81_99: 0,
+      completion_pourcentage_100: 0,
+    });
+
+    expect(univers3).toStrictEqual({
+      universId: 'climat',
+      titre: Univers.climat,
+      completion_pourcentage_1_20: 0,
+      completion_pourcentage_21_40: 0,
+      completion_pourcentage_41_60: 1,
+      completion_pourcentage_61_80: 0,
+      completion_pourcentage_81_99: 0,
+      completion_pourcentage_100: 1,
+    });
   });
 });

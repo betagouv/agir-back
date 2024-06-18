@@ -35,6 +35,8 @@ const DEFI_1: Defi_v0 = {
   accessible: true,
   motif: 'truc',
   categorie: Categorie.recommandation,
+  mois: [],
+  conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
 };
 const DEFI_1_DEF: Defi = {
   content_id: '1',
@@ -50,6 +52,8 @@ const DEFI_1_DEF: Defi = {
   created_at: undefined,
   updated_at: undefined,
   categorie: Categorie.recommandation,
+  mois: [],
+  conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
 };
 
 describe('/utilisateurs/id/recommandations (API test)', () => {
@@ -192,6 +196,32 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body).toHaveLength(1);
     expect(response.body[0].content_id).toEqual('1');
   });
+
+  it('GET /utilisateurs/id/recommandations - liste articles filtrés par departement', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      history: {},
+      logement: { version: 0, code_postal: '21000', commune: 'DIJON' },
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      codes_departement: ['21'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+      codes_departement: ['22'],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].content_id).toEqual('1');
+  });
+
   it('GET /utilisateurs/id/recommandations - applique les ponderations aux articles', async () => {
     // GIVEN
     //CatalogueQuestionsKYC.setCatalogue([]);

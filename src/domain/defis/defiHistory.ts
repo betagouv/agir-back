@@ -1,7 +1,6 @@
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Categorie } from '../contenu/categorie';
 import { DefiHistory_v0 } from '../object_store/defi/defiHistory_v0';
-import { Univers } from '../univers/univers';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { Defi, DefiStatus } from './defi';
 import { DefiDefinition } from './defiDefinition';
@@ -28,7 +27,7 @@ export class DefiHistory {
     this.catalogue = cat;
   }
 
-  public getDefisRestants(categorie?: Categorie, univers?: Univers): Defi[] {
+  public getDefisRestants(categorie?: Categorie, univers?: string): Defi[] {
     let defis_def_restants: DefiDefinition[] = [].concat(this.catalogue);
     this.defis.forEach((defi_courant) => {
       const index = defis_def_restants.findIndex(
@@ -74,7 +73,7 @@ export class DefiHistory {
   }
 
   public getDefiOrException(id: string): Defi {
-    let defi = this.getDefiUtilisateur(id);
+    let defi = this.getDefiFromHistory(id);
     if (defi) return defi;
 
     return this.getFromCatalogueOrException(id);
@@ -86,7 +85,7 @@ export class DefiHistory {
     user: Utilisateur,
     motif: string,
   ) {
-    let defi = this.getDefiUtilisateur(defiId);
+    let defi = this.getDefiFromHistory(defiId);
     if (defi) {
       defi.setStatus(status, user);
       defi.motif = motif;
@@ -112,9 +111,9 @@ export class DefiHistory {
       .length;
   }
 
-  public getNombreDefisDejaFait() {
+  public getNombreDefisPasEnvie() {
     return this.defis.filter(
-      (defi) => defi.getStatus() === DefiStatus.deja_fait,
+      (defi) => defi.getStatus() === DefiStatus.pas_envie,
     ).length;
   }
 
@@ -123,7 +122,7 @@ export class DefiHistory {
       .length;
   }
 
-  private getDefiUtilisateur(id: string): Defi {
+  public getDefiFromHistory(id: string): Defi {
     return this.defis.find((element) => element.id === id);
   }
 

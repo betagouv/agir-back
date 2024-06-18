@@ -3,7 +3,6 @@ import { Thematique } from '../contenu/thematique';
 import { QuestionKYC_v0 } from '../object_store/kyc/kycHistory_v0';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
-import { Univers } from '../univers/univers';
 import { KycDefinition } from './kycDefinition';
 
 export enum TypeReponseQuestionKYC {
@@ -27,6 +26,7 @@ export class KYCReponse {
 
 export class QuestionKYC implements TaggedContent {
   id: string;
+  id_cms: number;
   question: string;
   type: TypeReponseQuestionKYC;
   categorie: Categorie;
@@ -38,7 +38,7 @@ export class QuestionKYC implements TaggedContent {
   ngc_key?: string;
   tags: Tag[];
   score: number;
-  universes: Univers[];
+  universes: string[];
 
   constructor(data?: QuestionKYC_v0) {
     if (!data) return;
@@ -55,12 +55,14 @@ export class QuestionKYC implements TaggedContent {
     this.tags = data.tags ? data.tags : [];
     this.score = 0;
     this.universes = data.universes ? data.universes : [];
+    this.id_cms = data.id_cms;
   }
 
   public static buildFromDef(def: KycDefinition): QuestionKYC {
     return new QuestionKYC({
       categorie: def.categorie,
       id: def.code,
+      id_cms: def.id_cms,
       is_NGC: def.is_ngc,
       points: def.points,
       tags: def.tags,
@@ -73,7 +75,7 @@ export class QuestionKYC implements TaggedContent {
     });
   }
 
-  public hasResponses(): boolean {
+  public hasAnyResponses(): boolean {
     return !!this.reponses && this.reponses.length > 0;
   }
 
@@ -86,7 +88,7 @@ export class QuestionKYC implements TaggedContent {
   }
 
   public includesReponseCode(code: string): boolean {
-    if (!this.hasResponses()) {
+    if (!this.hasAnyResponses()) {
       return false;
     }
     const found = this.reponses.find((r) => r.code === code);

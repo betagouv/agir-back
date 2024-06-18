@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Bilan } from '../../domain/bilan/bilan';
 import rules from '@incubateur-ademe/nosgestesclimat/public/co2-model.FR-lang.fr.json';
-import Engine from 'publicodes';
+import Engine, { ParsedRules, PublicodesError } from 'publicodes';
 
 @Injectable()
 export class NGCCalculator {
@@ -17,6 +17,46 @@ export class NGCCalculator {
         },
       },
     });
+  }
+
+  public listerToutesLesClésDeQuestions(prefix?: string): string[] {
+    const result = [];
+
+    const local_engine = this.engine.shallowCopy();
+
+    const parsedRules = local_engine.getParsedRules();
+
+    for (const key of Object.keys(parsedRules)) {
+      if (
+        parsedRules[key].rawNode.question !== undefined &&
+        key.startsWith(prefix ? prefix : '')
+      ) {
+        result.push(key);
+      }
+    }
+    return result;
+  }
+
+  public listeQuestionsAvecConditionApplicabilité() {
+    const ressult = [];
+    for (const key of Object.keys(rules)) {
+      if (rules[key] && rules[key].question !== undefined) {
+        if (rules[key]['non applicable si'] !== undefined) {
+          ressult.push(key);
+        }
+      }
+    }
+    return ressult;
+  }
+
+  public estQuestionApplicable(situation: object, entry: string) {
+    const local_engine = this.engine.shallowCopy();
+    local_engine.setSituation(situation);
+
+    const result = local_engine.evaluate({
+      'est applicable': entry,
+    });
+    return result.nodeValue === true;
   }
 
   computeSingleEntryValue(situation: object, entry: string) {

@@ -20,6 +20,8 @@ import { ArticleStatistiqueUsecase } from '../../../src/usecase/articleStatistiq
 import { DefiStatistiqueUsecase } from '../../../src/usecase/defiStatistique.usecase';
 import { QuizStatistiqueUsecase } from '../../../src/usecase/quizStatistique.usecase';
 import { KycStatistiqueUsecase } from '../../../src/usecase/kycStatistique.usecase';
+import { ThematiqueStatistiqueUsecase } from '../../../src/usecase/thematiqueStatistique.usecase';
+import { UniversStatistiqueUsecase } from '../../../src/usecase/universStatistique.usecase';
 
 @Controller()
 @ApiTags('Admin')
@@ -39,6 +41,8 @@ export class AdminController extends GenericControler {
     private defiStatistiqueUsecase: DefiStatistiqueUsecase,
     private quizStatistiqueUsecase: QuizStatistiqueUsecase,
     private kycStatistiqueUsecase: KycStatistiqueUsecase,
+    private thematiqueStatistiqueUsecase: ThematiqueStatistiqueUsecase,
+    private universStatistiqueUsecase: UniversStatistiqueUsecase,
   ) {
     super();
   }
@@ -75,6 +79,27 @@ export class AdminController extends GenericControler {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.cmsUsecase.loadArticlesFromCMS();
   }
+
+  @Post('/admin/load_univers_from_cms')
+  @ApiOperation({
+    summary: 'Upsert tous les univers publiés du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async upsertAllCMSUnivers(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.cmsUsecase.loadUniversFromCMS();
+  }
+
+  @Post('/admin/load_thematiqueUnivers_from_cms')
+  @ApiOperation({
+    summary: 'Upsert tous les thematiques_univers publiés du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async upsertAllCMSThematiqueUnivers(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.cmsUsecase.loadThematiquesUniversFromCMS();
+  }
+
   @Post('/admin/load_missions_from_cms')
   @ApiOperation({
     summary: 'Upsert toutes les missions publiées du CMS',
@@ -240,5 +265,23 @@ export class AdminController extends GenericControler {
   async calcul_kyc_statistique(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.kycStatistiqueUsecase.calculStatistique();
+  }
+
+  @Post('/admin/thematique-statistique')
+  @ApiOperation({
+    summary: `Calcul des statistiques de l'ensemble des thématiques`,
+  })
+  async calcul_thematique_statistique(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.thematiqueStatistiqueUsecase.calculStatistique();
+  }
+
+  @Post('/admin/univers-statistique')
+  @ApiOperation({
+    summary: `Calcul des statistiques de l'ensemble des univers`,
+  })
+  async calcul_univers_statistique(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.universStatistiqueUsecase.calculStatistique();
   }
 }

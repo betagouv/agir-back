@@ -3,8 +3,8 @@ import { Thematique } from '../../contenu/thematique';
 import { Tag } from '../../scoring/tag';
 import { Defi, DefiStatus } from '../../../../src/domain/defis/defi';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
-import { Univers } from '../../../../src/domain/univers/univers';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
+import { ConditionDefi } from 'src/domain/defis/conditionDefi';
 
 export class Defi_v0 {
   id: string;
@@ -17,10 +17,12 @@ export class Defi_v0 {
   status: DefiStatus;
   tags: Tag[];
   date_acceptation: Date;
-  universes: Univers[];
+  universes: string[];
   accessible: boolean;
   motif: string;
   categorie: Categorie;
+  mois: number[];
+  conditions: ConditionDefi[][];
 
   static map(elem: Defi): Defi_v0 {
     return {
@@ -38,6 +40,8 @@ export class Defi_v0 {
       accessible: elem.accessible,
       motif: elem.motif,
       categorie: elem.categorie,
+      mois: elem.mois ? elem.mois : [],
+      conditions: elem.conditions ? elem.conditions : [],
     };
   }
 }

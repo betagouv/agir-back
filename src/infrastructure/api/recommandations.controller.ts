@@ -17,7 +17,6 @@ import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { RecommandationAPI } from './types/contenu/recommandationAPI';
 import { RecommandationUsecase } from '../../../src/usecase/recommandation.usecase';
-import { Univers } from '../../../src/domain/univers/univers';
 
 @Controller()
 @ApiBearerAuth()
@@ -50,8 +49,7 @@ export class RecommandationsController extends GenericControler {
   @UseGuards(AuthGuard)
   @ApiQuery({
     name: 'univers',
-    enum: Univers,
-    enumName: 'univers',
+    type: String,
     required: false,
     description: `filtrage par univers, un id d'univers, eg : 'climat'`,
   })
@@ -61,7 +59,7 @@ export class RecommandationsController extends GenericControler {
   })
   async getUserRecommandationV2(
     @Request() req,
-    @Query('univers') univers: Univers,
+    @Query('univers') univers: string,
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<RecommandationAPI[]> {
     this.checkCallerId(req, utilisateurId);

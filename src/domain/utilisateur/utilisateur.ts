@@ -24,6 +24,7 @@ export class UtilisateurData {
   email: string;
   nom: string;
   prenom: string;
+  annee_naissance: number;
   onboardingData: Onboarding;
   onboardingResult: OnboardingResult;
   revenu_fiscal: number;
@@ -58,6 +59,7 @@ export class UtilisateurData {
   defi_history: DefiHistory;
   force_connexion: boolean;
   derniere_activite: Date;
+  db_version: number;
 }
 
 export class Utilisateur extends UtilisateurData {
@@ -81,6 +83,7 @@ export class Utilisateur extends UtilisateurData {
     nom: string,
     prenom: string,
     email: string,
+    annee_naissance: number,
     onboarding: Onboarding,
   ): Utilisateur {
     return new Utilisateur({
@@ -116,12 +119,18 @@ export class Utilisateur extends UtilisateurData {
       defi_history: new DefiHistory(),
       equipements: new Equipements(),
       version: App.currentUserSystemVersion(),
-      logement: Logement.buildFromOnboarding(onboarding),
-      transport: Transport.buildFromOnboarding(onboarding),
+      logement: onboarding
+        ? Logement.buildFromOnboarding(onboarding)
+        : new Logement(),
+      transport: onboarding
+        ? Transport.buildFromOnboarding(onboarding)
+        : new Transport(),
       tag_ponderation_set: {},
       force_connexion: false,
       derniere_activite: new Date(),
       missions: new MissionsUtilisateur(),
+      annee_naissance: annee_naissance,
+      db_version: 0,
     });
   }
 
@@ -191,7 +200,7 @@ export class Utilisateur extends UtilisateurData {
     kyc: QuestionKYC,
     map: Record<string, number>,
   ) {
-    if (kyc && kyc.hasResponses()) {
+    if (kyc && kyc.hasAnyResponses()) {
       for (const key in map) {
         if (kyc.includesReponseCode(key)) {
           this.increaseTagValue(tag, map[key]);

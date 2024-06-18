@@ -1,0 +1,8 @@
+-- AlterTable
+ALTER TABLE "Article" ADD COLUMN     "mois" INTEGER[] DEFAULT ARRAY[]::INTEGER[];
+
+-- AlterTable
+ALTER TABLE "Defi" ADD COLUMN     "mois" INTEGER[] DEFAULT ARRAY[]::INTEGER[];
+
+-- AlterTable
+ALTER TABLE "Quizz" ADD COLUMN     "mois" INTEGER[] DEFAULT ARRAY[]::INTEGER[];

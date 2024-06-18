@@ -1009,6 +1009,7 @@ describe('TODO list (API test)', () => {
       answered_questions: [
         {
           id: KYCID._1,
+          id_cms: 1,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,

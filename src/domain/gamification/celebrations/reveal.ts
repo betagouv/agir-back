@@ -5,7 +5,7 @@ import { Feature } from '../feature';
 const DATA_REVEAL: Record<Feature, { titre: string; description: string }> = {
   aides: {
     titre: 'Vos aides',
-    description: `En fonction de votre situation et de où vous êtes !`,
+    description: `En fonction de votre situation et de votre lieu de vie !`,
   },
   services: {
     titre: 'Vos services',

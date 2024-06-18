@@ -1,7 +1,7 @@
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Categorie } from '../contenu/categorie';
+import { ConditionDefi } from '../defis/conditionDefi';
 import { KYCHistory_v0 as KYCHistory_v0 } from '../object_store/kyc/kycHistory_v0';
-import { Univers } from '../univers/univers';
 import { KycDefinition } from './kycDefinition';
 import { QuestionKYC, TypeReponseQuestionKYC } from './questionQYC';
 
@@ -31,7 +31,7 @@ export class KYCHistory {
     let result = [];
 
     this.catalogue.forEach((question) => {
-      let answered_question = this.getAnsweredQuestion(question.code);
+      let answered_question = this.getAnsweredQuestionByCode(question.code);
       result.push(answered_question || QuestionKYC.buildFromDef(question));
     });
 
@@ -40,7 +40,7 @@ export class KYCHistory {
 
   public getKYCRestantes(
     categorie?: Categorie,
-    univers?: Univers,
+    univers?: string,
   ): QuestionKYC[] {
     let kycs_all = this.getAllKYCByCategorie(categorie);
     this.answered_questions.forEach((question) => {
@@ -69,7 +69,7 @@ export class KYCHistory {
   }
 
   public getQuestionOrException(id: string): QuestionKYC {
-    let answered_question = this.getAnsweredQuestion(id);
+    let answered_question = this.getAnsweredQuestionByCode(id);
     if (answered_question) {
       this.upgradeQuestion(answered_question);
       return answered_question;
@@ -78,7 +78,7 @@ export class KYCHistory {
   }
 
   public getQuestion(id: string): QuestionKYC {
-    let answered_question = this.getAnsweredQuestion(id);
+    let answered_question = this.getAnsweredQuestionByCode(id);
     if (answered_question) {
       this.upgradeQuestion(answered_question);
       return answered_question;
@@ -91,7 +91,7 @@ export class KYCHistory {
     if (
       (question.type === TypeReponseQuestionKYC.choix_multiple ||
         question.type === TypeReponseQuestionKYC.choix_unique) &&
-      question.hasResponses()
+      question.hasAnyResponses()
     ) {
       const upgraded_set = [];
       question.reponses.forEach((reponse) => {
@@ -107,12 +107,30 @@ export class KYCHistory {
     question.question = question_catalogue.question;
   }
 
+  public areConditionsMatched(conditions: ConditionDefi[][]): boolean {
+    if (conditions.length === 0) {
+      return true;
+    }
+    let result = false;
+    for (const OU of conditions) {
+      let union = true;
+      for (const cond of OU) {
+        const kyc = this.getAnsweredQuestionByCMS_ID(cond.id_kyc);
+        if (!(kyc && kyc.includesReponseCode(cond.code_reponse))) {
+          union = false;
+        }
+      }
+      result = result || union;
+    }
+    return result;
+  }
+
   public isQuestionAnswered(id: string): boolean {
-    return !!this.getAnsweredQuestion(id);
+    return !!this.getAnsweredQuestionByCode(id);
   }
 
   public updateQuestion(questionId: string, reponses: string[]) {
-    let question = this.getAnsweredQuestion(questionId);
+    let question = this.getAnsweredQuestionByCode(questionId);
     if (question) {
       question.setResponses(reponses);
     } else {
@@ -126,8 +144,13 @@ export class KYCHistory {
     this.getKYCByIdOrException(questionId);
   }
 
-  private getAnsweredQuestion(id: string): QuestionKYC {
+  private getAnsweredQuestionByCode(id: string): QuestionKYC {
     return this.answered_questions.find((element) => element.id === id);
+  }
+  private getAnsweredQuestionByCMS_ID(id: string): QuestionKYC {
+    return this.answered_questions.find(
+      (element) => element.id_cms.toString() === id,
+    );
   }
 
   private getKYCByIdOrException(id: string): QuestionKYC {

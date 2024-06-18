@@ -27,6 +27,11 @@ export class ArticleData {
   tags_rubriques: TagRubrique[];
   score: number;
   categorie: Categorie;
+  mois: number[];
+  include_codes_commune: string[];
+  exclude_codes_commune: string[];
+  codes_departement: string[];
+  codes_region: string[];
 }
 
 export class Article extends ArticleData implements TaggedContent {
@@ -35,6 +40,9 @@ export class Article extends ArticleData implements TaggedContent {
     Object.assign(this, data);
     if (!this.score) {
       this.score = 0;
+    }
+    if (!this.mois) {
+      this.mois = [];
     }
     if (this.rubrique_ids) {
       this.tags_rubriques = this.rubrique_ids.map((r) => TagRubrique[`R${r}`]);

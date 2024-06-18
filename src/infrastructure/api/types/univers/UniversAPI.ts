@@ -1,10 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { TuileUnivers } from '../../../../domain/univers/tuileUnivers';
-import { Univers } from '../../../../domain/univers/univers';
 
 export class UniversAPI {
   @ApiProperty() titre: string;
-  @ApiProperty({ enum: Univers }) type: Univers;
+  @ApiProperty() type: string;
   @ApiProperty() etoiles: number;
   @ApiProperty() is_locked: boolean;
   @ApiProperty() reason_locked: string;

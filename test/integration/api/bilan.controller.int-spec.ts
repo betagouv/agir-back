@@ -119,19 +119,19 @@ describe('/bilan (API test)', () => {
     expect(bilanDB[0]['situation'].situation).toStrictEqual({
       'transport . voiture . km': 12000,
     });
-    expect(Math.floor(bilanDB[0].bilan['details'].divers)).toStrictEqual(1086);
+    expect(Math.floor(bilanDB[0].bilan['details'].divers)).toStrictEqual(1079);
     expect(Math.floor(bilanDB[0].bilan['details'].logement)).toStrictEqual(
-      1481,
+      1477,
     );
     expect(Math.floor(bilanDB[0].bilan['details'].transport)).toStrictEqual(
-      3155,
+      2760,
     );
     expect(Math.floor(bilanDB[0].bilan['details'].alimentation)).toStrictEqual(
-      2099,
+      2094,
     );
     expect(
       Math.floor(bilanDB[0].bilan['details'].services_societaux),
-    ).toStrictEqual(1474);
+    ).toStrictEqual(1450);
   });
   it('POST /bilan/importFromNGC - creates new situation', async () => {
     // WHEN

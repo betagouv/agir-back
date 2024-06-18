@@ -11,6 +11,7 @@ import { Tag } from '../../../../src/domain/scoring/tag';
 import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
+import { CMSWebhookAPI } from '../../../../src/infrastructure/api/types/cms/CMSWebhookAPI';
 
 describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA_DEFI = {
@@ -39,6 +40,21 @@ describe('/api/incoming/cms (API test)', () => {
         {
           id: 1,
           code: ThematiqueUnivers.dechets_compost,
+        },
+      ],
+      mois: '0,1',
+      OR_Conditions: [
+        {
+          AND_Conditions: [
+            {
+              code_reponse: 'oui',
+              kyc: {
+                code: '123',
+                id: 1,
+                reponse: '12',
+              },
+            },
+          ],
         },
       ],
     },
@@ -119,7 +135,7 @@ describe('/api/incoming/cms (API test)', () => {
         { id: 1, titre: 'Alimentation' },
         { id: 2, titre: 'Climat' },
       ],
-      codes_postaux: '91120,75002',
+      codes_postaux: '91120 , 75002',
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       besoin: {
         id: 7,
@@ -165,6 +181,11 @@ describe('/api/incoming/cms (API test)', () => {
       points: 20,
       codes_postaux: '91120,75002',
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+      mois: '0,1',
+      include_codes_commune: '01,02',
+      exclude_codes_commune: '03,04',
+      codes_departement: '78',
+      codes_region: '25',
     },
   };
   const CMS_DATA_QUIZZ = {
@@ -199,6 +220,7 @@ describe('/api/incoming/cms (API test)', () => {
       points: 20,
       codes_postaux: '91120,75002',
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+      mois: '0,1',
     },
   };
   const CMS_DATA_QUIZZ_UNPUBLISH = {
@@ -233,6 +255,7 @@ describe('/api/incoming/cms (API test)', () => {
       points: 20,
       codes_postaux: '91120,75002',
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+      mois: '0,1',
     },
   };
   beforeAll(async () => {
@@ -294,10 +317,15 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles[0].points).toEqual(20);
     expect(articles[0].source).toEqual('La source');
     expect(articles[0].codes_postaux).toStrictEqual(['91120', '75002']);
+    expect(articles[0].mois).toStrictEqual([0, 1]);
     expect(articles[0].content_id).toEqual('123');
     expect(articles[0].partenaire).toEqual('Angers Loire Métropole');
     expect(articles[0].rubrique_ids).toEqual(['1', '2']);
     expect(articles[0].rubrique_labels).toEqual(['A', 'B']);
+    expect(articles[0].include_codes_commune).toEqual(['01', '02']);
+    expect(articles[0].exclude_codes_commune).toEqual(['03', '04']);
+    expect(articles[0].codes_departement).toEqual(['78']);
+    expect(articles[0].codes_region).toEqual(['25']);
   });
 
   it('POST /api/incoming/cms - create a new aide in aide table', async () => {
@@ -442,6 +470,10 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.thematiquesUnivers).toEqual([
       ThematiqueUnivers.dechets_compost,
     ]);
+    expect(defi.mois).toStrictEqual([0, 1]);
+    expect(defi.conditions).toStrictEqual([
+      [{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }],
+    ]);
   });
 
   it('POST /api/incoming/cms - updates a  defi', async () => {
@@ -470,6 +502,10 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.universes).toEqual([Univers.climat]);
     expect(defi.thematiquesUnivers).toEqual([
       ThematiqueUnivers.dechets_compost,
+    ]);
+    expect(defi.mois).toStrictEqual([0, 1]);
+    expect(defi.conditions).toStrictEqual([
+      [{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }],
     ]);
   });
 
@@ -564,6 +600,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(quizzes[0].partenaire).toEqual('Angers Loire Métropole');
     expect(quizzes[0].rubrique_ids).toEqual(['1', '2']);
     expect(quizzes[0].rubrique_labels).toEqual(['A', 'B']);
+    expect(quizzes[0].mois).toStrictEqual([0, 1]);
   });
   it('POST /api/incoming/cms - updates existing article in article table', async () => {
     // GIVEN
@@ -590,6 +627,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles[0].points).toEqual(20);
     expect(articles[0].source).toEqual('La source');
     expect(articles[0].codes_postaux).toStrictEqual(['91120', '75002']);
+    expect(articles[0].mois).toStrictEqual([0, 1]);
     expect(articles[0].content_id).toEqual('123');
     expect(articles[0].partenaire).toEqual('Angers Loire Métropole');
     expect(articles[0].rubrique_ids).toEqual(['1', '2']);
@@ -619,6 +657,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(quizzes[0].difficulty).toEqual(3);
     expect(quizzes[0].points).toEqual(20);
     expect(quizzes[0].codes_postaux).toStrictEqual(['91120', '75002']);
+    expect(quizzes[0].mois).toStrictEqual([0, 1]);
     expect(quizzes[0].content_id).toEqual('123');
     expect(quizzes[0].partenaire).toEqual('Angers Loire Métropole');
     expect(quizzes[0].rubrique_ids).toEqual(['1', '2']);
@@ -676,6 +715,7 @@ describe('/api/incoming/cms (API test)', () => {
         id: 1,
         label: 'yo',
         code: Univers.climat,
+        is_locked: false,
         imageUrl: {
           formats: {
             thumbnail: { url: 'https://haha' },
@@ -690,37 +730,11 @@ describe('/api/incoming/cms (API test)', () => {
     expect(universDB).toHaveLength(1);
     expect(universDB[0].id_cms).toEqual(1);
     expect(universDB[0].label).toEqual('yo');
+    expect(universDB[0].is_locked).toEqual(false);
     expect(universDB[0].code).toEqual(Univers.climat);
     expect(universDB[0].image_url).toEqual('https://haha');
   });
-  it('POST /api/incoming/cms - create 1 univers', async () => {
-    // GIVEN
-    // WHEN
-    const response = await TestUtil.POST('/api/incoming/cms').send({
-      ...CMS_DATA_ARTICLE,
-      model: CMSModel.univers,
-      event: CMSEvent['entry.publish'],
-      entry: {
-        id: 1,
-        label: 'yo',
-        code: Univers.climat,
-        imageUrl: {
-          formats: {
-            thumbnail: { url: 'https://haha' },
-          },
-        },
-      },
-    });
 
-    // THEN
-    expect(response.status).toBe(201);
-    const universDB = await TestUtil.prisma.univers.findMany({});
-    expect(universDB).toHaveLength(1);
-    expect(universDB[0].id_cms).toEqual(1);
-    expect(universDB[0].label).toEqual('yo');
-    expect(universDB[0].code).toEqual(Univers.climat);
-    expect(universDB[0].image_url).toEqual('https://haha');
-  });
   it('POST /api/incoming/cms - create 1 thematiqueUnivers', async () => {
     // GIVEN
     // WHEN
@@ -738,6 +752,7 @@ describe('/api/incoming/cms (API test)', () => {
             thumbnail: { url: 'https://haha' },
           },
         },
+        famille: { id: 5, nom: 'yop', ordre: 3 },
       },
     });
 
@@ -750,6 +765,70 @@ describe('/api/incoming/cms (API test)', () => {
     expect(universDB[0].code).toEqual(ThematiqueUnivers.cereales);
     expect(universDB[0].image_url).toEqual('https://haha');
     expect(universDB[0].univers_parent).toEqual(Univers.climat);
+    expect(universDB[0].famille_id_cms).toEqual(5);
+    expect(universDB[0].famille_ordre).toEqual(3);
+  });
+  it('POST /api/incoming/cms - create 1 thematiqueUnivers sans parent OK', async () => {
+    // GIVEN
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send({
+      ...CMS_DATA_ARTICLE,
+      model: CMSModel['thematique-univers'],
+      event: CMSEvent['entry.publish'],
+      entry: {
+        id: 1,
+        label: 'yo',
+        code: ThematiqueUnivers.cereales,
+        univers_parent: null,
+        imageUrl: {
+          formats: {
+            thumbnail: { url: 'https://haha' },
+          },
+        },
+        famille: { id: 5, nom: 'yop', ordre: 3 },
+      },
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    const universDB = await TestUtil.prisma.thematiqueUnivers.findMany({});
+    expect(universDB).toHaveLength(1);
+    expect(universDB[0].id_cms).toEqual(1);
+    expect(universDB[0].label).toEqual('yo');
+    expect(universDB[0].univers_parent).toEqual(null);
+  });
+  it('POST /api/incoming/cms - create 1 thematiqueUnivers sans famille', async () => {
+    // GIVEN
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send({
+      ...CMS_DATA_ARTICLE,
+      model: CMSModel['thematique-univers'],
+      event: CMSEvent['entry.publish'],
+      entry: {
+        id: 1,
+        label: 'yo',
+        code: ThematiqueUnivers.cereales,
+        univers_parent: { id: 1, code: 'climat' },
+        imageUrl: {
+          formats: {
+            thumbnail: { url: 'https://haha' },
+          },
+        },
+        famille: null,
+      },
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    const universDB = await TestUtil.prisma.thematiqueUnivers.findMany({});
+    expect(universDB).toHaveLength(1);
+    expect(universDB[0].id_cms).toEqual(1);
+    expect(universDB[0].label).toEqual('yo');
+    expect(universDB[0].code).toEqual(ThematiqueUnivers.cereales);
+    expect(universDB[0].image_url).toEqual('https://haha');
+    expect(universDB[0].univers_parent).toEqual(Univers.climat);
+    expect(universDB[0].famille_id_cms).toEqual(-1);
+    expect(universDB[0].famille_ordre).toEqual(999);
   });
   it('POST /api/incoming/cms - updates existing article, 1 user in db ', async () => {
     // GIVEN

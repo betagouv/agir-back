@@ -27,6 +27,8 @@ const DEFI_1: Defi_v0 = {
   accessible: true,
   motif: 'truc',
   categorie: Categorie.recommandation,
+  mois: [1],
+  conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
 };
 const DEFI_1_DEF: DefiDefinition = {
   content_id: '1',
@@ -40,6 +42,8 @@ const DEFI_1_DEF: DefiDefinition = {
   universes: [Univers.climat],
   thematiques_univers: [ThematiqueUnivers.dechets_compost],
   categorie: Categorie.recommandation,
+  mois: [0],
+  conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
 };
 
 describe('DefiHistory', () => {
@@ -385,7 +389,7 @@ describe('DefiHistory', () => {
     expect(nombreDefisRealises).toStrictEqual(2);
   });
 
-  it('getNombreDefisDejaFait : donne le nombre de défis déjà fait', () => {
+  it('getNombreDefisDejaFait : donne le nombre de défis pas envie', () => {
     // GIVEN
     const defiHistory = new DefiHistory({
       version: 0,
@@ -403,7 +407,7 @@ describe('DefiHistory', () => {
         {
           ...DEFI_1,
           id: '3',
-          status: DefiStatus.deja_fait,
+          status: DefiStatus.pas_envie,
         },
         {
           ...DEFI_1,
@@ -414,8 +418,8 @@ describe('DefiHistory', () => {
     });
 
     // WHEN
-    const nombreDefisRealises = defiHistory.getNombreDefisDejaFait();
+    const nombreDefisPasEnvie = defiHistory.getNombreDefisPasEnvie();
     // THEN
-    expect(nombreDefisRealises).toStrictEqual(1);
+    expect(nombreDefisPasEnvie).toStrictEqual(1);
   });
 });

@@ -24,6 +24,55 @@ describe('ArticleRepository', () => {
     await TestUtil.appclose();
   });
 
+  it('searchArticles : liste articles du mois courant si pas de condition sur mois', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+    });
+
+    // WHEN
+    const liste = await articleRepository.searchArticles({
+      date: new Date(),
+    });
+
+    // THEN
+    expect(liste).toHaveLength(1);
+    expect(liste[0].content_id).toEqual('1');
+  });
+  it('searchArticles : inclue article du mois qui match', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      mois: [1, 2],
+    });
+
+    // WHEN
+    const liste = await articleRepository.searchArticles({
+      date: new Date('2024-01-20'),
+    });
+
+    // THEN
+    expect(liste).toHaveLength(1);
+    expect(liste[0].content_id).toEqual('1');
+  });
+  it('searchArticles : inclue pas article du mois qui match pas', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      mois: [1, 2],
+    });
+
+    // WHEN
+    const liste = await articleRepository.searchArticles({
+      date: new Date('2024-03-20'),
+    });
+
+    // THEN
+    expect(liste).toHaveLength(0);
+  });
   it('searchArticles : liste article par code postal parmi plusieurs', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -282,5 +331,160 @@ describe('ArticleRepository', () => {
     expect(liste[0].content_id).toEqual('3');
     expect(liste[1].content_id).toEqual('2');
     expect(liste[2].content_id).toEqual('1');
+  });
+
+  it('search : le filtre region no match ', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      codes_region: ['45', '46'],
+      codes_postaux: [],
+    });
+
+    // WHEN
+    const liste = await articleRepository.searchArticles({
+      code_postal: '21000',
+      code_region: '47',
+    });
+
+    // THEN
+    expect(liste).toHaveLength(0);
+  });
+  it('search : le filtre region match', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      codes_region: ['45', '46'],
+      codes_postaux: [],
+    });
+
+    // WHEN
+    const liste = await articleRepository.searchArticles({
+      code_postal: '21000',
+      code_region: '46',
+    });
+
+    // THEN
+    expect(liste).toHaveLength(1);
+  });
+  it('search : le filtre region et code qui exluent', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      codes_region: ['45', '46'],
+      codes_postaux: ['91120'],
+    });
+
+    // WHEN
+    const liste = await articleRepository.searchArticles({
+      code_postal: '21000',
+      code_region: '46',
+    });
+
+    // THEN
+    expect(liste).toHaveLength(0);
+  });
+  it('search : le filtre departement no match ', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      codes_departement: ['45', '46'],
+    });
+
+    // WHEN
+    const liste = await articleRepository.searchArticles({
+      code_departement: '47',
+    });
+
+    // THEN
+    expect(liste).toHaveLength(0);
+  });
+  it('search : le filtre departement match', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      codes_departement: ['45', '46'],
+    });
+
+    // WHEN
+    const liste = await articleRepository.searchArticles({
+      code_departement: '46',
+    });
+
+    // THEN
+    expect(liste).toHaveLength(1);
+  });
+  it('search : le filtre code commune no match ', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      include_codes_commune: ['45', '46'],
+      exclude_codes_commune: [],
+    });
+
+    // WHEN
+    const liste = await articleRepository.searchArticles({
+      code_commune: '47',
+    });
+
+    // THEN
+    expect(liste).toHaveLength(0);
+  });
+  it('search : le filtre code commune match', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      include_codes_commune: ['45', '46'],
+      exclude_codes_commune: [],
+    });
+
+    // WHEN
+    const liste = await articleRepository.searchArticles({
+      code_commune: '46',
+    });
+
+    // THEN
+    expect(liste).toHaveLength(1);
+  });
+  it('search : le filtre code commune exlusion no match ', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      exclude_codes_commune: ['45', '46'],
+      include_codes_commune: [],
+    });
+
+    // WHEN
+    const liste = await articleRepository.searchArticles({
+      code_commune: '47',
+    });
+
+    // THEN
+    expect(liste).toHaveLength(1);
+  });
+  it('search : le filtre code commune exclusion match', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      exclude_codes_commune: ['45', '46'],
+      include_codes_commune: [],
+    });
+
+    // WHEN
+    const liste = await articleRepository.searchArticles({
+      code_commune: '46',
+    });
+
+    // THEN
+    expect(liste).toHaveLength(0);
   });
 });

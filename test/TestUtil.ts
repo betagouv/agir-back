@@ -60,6 +60,7 @@ import {
   Quizz,
   Service,
   ServiceDefinition,
+  UniversStatistique,
   Utilisateur,
 } from '@prisma/client';
 import { ServiceStatus } from '../src/domain/service/service';
@@ -97,6 +98,7 @@ export enum DB {
   defiStatistique = 'defiStatistique',
   mission = 'mission',
   kYC = 'kYC',
+  universStatistique = 'universStatistique',
 }
 export class TestUtil {
   private static TYPE_DATA_MAP: Record<DB, Function> = {
@@ -120,6 +122,7 @@ export class TestUtil {
     defiStatistique: TestUtil.defiStatistiqueData,
     mission: TestUtil.missionData,
     kYC: TestUtil.kycData,
+    universStatistique: TestUtil.universStatistiqueData,
   };
 
   constructor() {}
@@ -209,6 +212,8 @@ export class TestUtil {
     await this.prisma.mission.deleteMany();
     await this.prisma.kYC.deleteMany();
     await this.prisma.fileAttente.deleteMany();
+    await this.prisma.thematiqueStatistique.deleteMany();
+    await this.prisma.universStatistique.deleteMany();
     ThematiqueRepository.resetAllRefs();
   }
 
@@ -282,29 +287,6 @@ export class TestUtil {
       ...override,
     };
   }
-  static async create_quizz(override?: Partial<Quizz>) {
-    await this.prisma.quizz.create({
-      data: {
-        content_id: '1',
-        titre: 'titreA',
-        soustitre: 'sousTitre',
-        source: 'ADEME',
-        image_url: 'https://',
-        partenaire: 'Angers',
-        tags_utilisateur: [],
-        rubrique_ids: ['3', '4'],
-        rubrique_labels: ['r3', 'r4'],
-        codes_postaux: ['91120'],
-        duree: 'pas long',
-        frequence: 'souvent',
-        difficulty: 1,
-        points: 10,
-        thematique_principale: Thematique.climat,
-        thematiques: [Thematique.climat, Thematique.logement],
-        ...override,
-      },
-    });
-  }
 
   static quizzData(override?: Partial<Quizz>): Quizz {
     return {
@@ -327,6 +309,7 @@ export class TestUtil {
       created_at: undefined,
       updated_at: undefined,
       categorie: Categorie.recommandation,
+      mois: [],
       ...override,
     };
   }
@@ -367,6 +350,8 @@ export class TestUtil {
       created_at: undefined,
       updated_at: undefined,
       categorie: Categorie.recommandation,
+      mois: [],
+      conditions: [],
       ...override,
     };
   }
@@ -467,6 +452,8 @@ export class TestUtil {
           accessible: false,
           motif: 'bidon',
           categorie: Categorie.recommandation,
+          mois: [],
+          conditions: [],
         },
       ],
     };
@@ -476,6 +463,7 @@ export class TestUtil {
       answered_questions: [
         {
           id: KYCID._2,
+          id_cms: 2,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -596,6 +584,7 @@ export class TestUtil {
       id: 'utilisateur-id',
       nom: 'nom',
       prenom: 'prenom',
+      annee_naissance: 1979,
       passwordHash: 'hash',
       passwordSalt: 'salt',
       email: 'yo@truc.com',
@@ -631,6 +620,7 @@ export class TestUtil {
       force_connexion: false,
       derniere_activite: null,
       missions: {},
+      db_version: 0,
       ...override,
     };
   }
@@ -648,6 +638,7 @@ export class TestUtil {
       label: 'Le Climat !',
       code: Univers.climat,
       image_url: 'https://',
+      is_locked: false,
       created_at: undefined,
       updated_at: undefined,
       ...override,
@@ -664,6 +655,9 @@ export class TestUtil {
       univers_parent: Univers.climat,
       created_at: undefined,
       updated_at: undefined,
+      niveau: 0,
+      famille_id_cms: 1,
+      famille_ordre: 0,
       ...override,
     };
   }
@@ -754,6 +748,11 @@ export class TestUtil {
       created_at: new Date(),
       updated_at: new Date(),
       categorie: Categorie.recommandation,
+      mois: [],
+      include_codes_commune: [],
+      exclude_codes_commune: [],
+      codes_departement: [],
+      codes_region: [],
       ...override,
     };
   }
@@ -767,6 +766,25 @@ export class TestUtil {
       nombre_defis_en_cours: 0,
       nombre_defis_pas_envie: 0,
       nombre_defis_realises: 0,
+      raisons_defi_pas_envie: [],
+      raisons_defi_abandonne: [],
+      created_at: new Date(),
+      updated_at: new Date(),
+      ...override,
+    };
+  }
+  static universStatistiqueData(
+    override?: Partial<UniversStatistique>,
+  ): UniversStatistique {
+    return {
+      universId: 'universId',
+      titre: 'Titre de mon article',
+      completion_pourcentage_1_20: 0,
+      completion_pourcentage_21_40: 0,
+      completion_pourcentage_41_60: 0,
+      completion_pourcentage_61_80: 0,
+      completion_pourcentage_81_99: 0,
+      completion_pourcentage_100: 0,
       created_at: new Date(),
       updated_at: new Date(),
       ...override,

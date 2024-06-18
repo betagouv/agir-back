@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ThematiqueUnivers } from '../../src/domain/univers/thematiqueUnivers';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
@@ -7,6 +6,8 @@ import { Mission, Objectif } from '../../src/domain/mission/mission';
 import { ContentType } from '../../src/domain/contenu/contentType';
 import { QuestionKYC } from '../../src/domain/kyc/questionQYC';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { DefiStatus } from '../../src/domain/defis/defi';
 
 @Injectable()
 export class MissionUsecase {
@@ -14,34 +15,51 @@ export class MissionUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private missionRepository: MissionRepository,
     private kycRepository: KycRepository,
+    private personnalisator: Personnalisator,
   ) {}
 
   async getMissionOfThematique(
     utilisateurId: string,
-    thematique: ThematiqueUnivers,
+    thematique: string,
   ): Promise<Mission> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
-    const mission_courante =
+    let mission_resultat =
       utilisateur.missions.getMissionByThematiqueUnivers(thematique);
 
-    if (mission_courante) {
-      return mission_courante;
+    if (!mission_resultat) {
+      const mission_def = await this.missionRepository.getByThematique(
+        thematique,
+      );
+      if (mission_def) {
+        mission_resultat = utilisateur.missions.addMission(mission_def);
+        await this.utilisateurRepository.updateUtilisateur(utilisateur);
+      }
     }
 
-    const mission_def = await this.missionRepository.getByThematique(
-      thematique,
-    );
-    const new_mission = utilisateur.missions.addMission(mission_def);
-
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
-
-    return new_mission;
+    if (mission_resultat) {
+      for (const objectif of mission_resultat.objectifs) {
+        if (objectif.type === ContentType.defi) {
+          const defi = utilisateur.defi_history.getDefiFromHistory(
+            objectif.content_id,
+          );
+          if (defi) {
+            objectif.defi_status = defi.getStatus();
+          } else {
+            objectif.defi_status = DefiStatus.todo;
+          }
+        }
+      }
+      this.personnalisator.personnaliser(mission_resultat, utilisateur);
+      return mission_resultat;
+    } else {
+      throw ApplicationError.throwMissionNotFoundOfThematique(thematique);
+    }
   }
 
   async getMissionNextKycID(
     utilisateurId: string,
-    thematique: ThematiqueUnivers,
+    thematique: string,
   ): Promise<string> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
@@ -78,7 +96,10 @@ export class MissionUsecase {
     for (const objectif of objectifs_target) {
       if (objectif && !objectif.sont_points_en_poche) {
         objectif.sont_points_en_poche = true;
-        utilisateur.gamification.ajoutePoints(objectif.points);
+        utilisateur.gamification.ajoutePoints(
+          objectif.points,
+          utilisateur.unlocked_features,
+        );
       }
     }
 
@@ -87,7 +108,7 @@ export class MissionUsecase {
 
   async getMissionKYCs(
     utilisateurId: string,
-    thematique: ThematiqueUnivers,
+    thematique: string,
   ): Promise<QuestionKYC[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 

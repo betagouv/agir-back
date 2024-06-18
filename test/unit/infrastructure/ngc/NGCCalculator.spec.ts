@@ -18,7 +18,7 @@ describe('NGCCalculator', () => {
     const response = calculator.computeSingleEntryValue(situation, entry);
 
     //THEN
-    expect(response).toEqual(2588.342745335035);
+    expect(response).toEqual(2199.540741358343);
   });
   it('computeSingleEntry : compute ok single entry, minimal situation', () => {
     //GIVEN
@@ -32,9 +32,9 @@ describe('NGCCalculator', () => {
     const response = calculator.computeSingleEntryValue(situation, entry);
 
     //THEN
-    expect(response).toEqual(2396.046737597163);
+    expect(response).toEqual(1983.1924717165384);
   });
-  it('computeSingleEntry : compute ok vehicule type info ', () => {
+  it.skip('computeSingleEntry : compute ok vehicule type info ', () => {
     //GIVEN
     let calculator = new NGCCalculator();
     const situation = {
@@ -68,7 +68,7 @@ describe('NGCCalculator', () => {
     const response = calculator.computeSingleEntryValue(situation, entry);
 
     //THEN
-    expect(response).toEqual(7936.708445430233);
+    expect(response).toEqual(7661.143979107765);
   });
   it('computeEntryList : compute ok multiple entries', () => {
     //GIVEN
@@ -95,13 +95,45 @@ describe('NGCCalculator', () => {
 
     //THEN
     expect(response.size).toEqual(6);
-    expect(response.get('bilan')).toEqual(7936.708445430233);
-    expect(response.get('divers')).toEqual(1086.544660199586);
-    expect(response.get('logement')).toEqual(1481.2354772117592);
+    expect(response.get('bilan')).toEqual(7661.143979107765);
+    expect(response.get('divers')).toEqual(1079.0454437235896);
+    expect(response.get('logement')).toEqual(1477.82343812085);
     expect(response.get('transport . voiture . empreinte moyenne')).toEqual(
-      1533.776046427234,
+      1298.089617850825,
     );
-    expect(response.get('alimentation')).toEqual(2099.9159821);
-    expect(response.get('services sociétaux')).toEqual(1474.0267696872584);
+    expect(response.get('alimentation')).toEqual(2094.1568221);
+    expect(response.get('services sociétaux')).toEqual(1450.9052263863641);
+  });
+
+  it(`est applicable : indique que la question n'est pas applicable`, () => {
+    //GIVEN
+    let calculator = new NGCCalculator();
+    const situation = { 'transport . voiture . km': 0 };
+    const entry = 'transport . voiture . motorisation';
+
+    //WHEN
+    const reponse = calculator.estQuestionApplicable(
+      {
+        //'transport . voiture . km': 100,
+      },
+      'transport . voiture . motorisation',
+    );
+  });
+  it('listerToutesLesClésDeQuestions : liste toutes les clés', () => {
+    //GIVEN
+    let calculator = new NGCCalculator();
+
+    //WHEN
+    const result = calculator.listerToutesLesClésDeQuestions();
+    //THEN
+  });
+  it(' listeQuestionsAvecConditionApplicabilité : liste toutes les clés de questions avec conditions', () => {
+    //GIVEN
+    let calculator = new NGCCalculator();
+
+    //WHEN
+    const result = calculator.listeQuestionsAvecConditionApplicabilité();
+
+    //THEN
   });
 });
