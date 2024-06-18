@@ -69,6 +69,18 @@ export class Gamification {
     }
   }
 
+  public revealDefis() {
+    this.celebrations.push(
+      new Celebration({
+        id: undefined,
+        titre: 'NOUVELLE FONCTIONNALITÉ',
+        type: CelebrationType.reveal,
+        new_niveau: undefined,
+        reveal: Reveal.newRevealFromFeature(Feature.defis),
+      }),
+    );
+  }
+
   public celebrerFinMission(
     thematique_univers: string,
     new_thematiques: string[],

@@ -4,6 +4,7 @@ import { Reveal } from './reveal';
 
 export enum CelebrationType {
   niveau = 'niveau',
+  reveal = 'reveal',
   fin_mission = 'fin_mission',
   fin_thematique = 'fin_thematique',
 }

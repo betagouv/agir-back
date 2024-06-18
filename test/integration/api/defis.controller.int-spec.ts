@@ -26,6 +26,8 @@ import {
 } from '../../../src/domain/logement/logement';
 import { Feature } from '../../../src/domain/gamification/feature';
 import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
+import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
+import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 
 const DEFI_1_DEF: Defi = {
   content_id: '1',
@@ -1043,13 +1045,22 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi_user.getStatus()).toBe(DefiStatus.fait);
     expect(defi_user.motif).toBe('null ce défi');
   });
-  it('PATCH /utilisateurs/id/defis/id - patch le status d un defi du catalogue, débloques la feature defi', async () => {
+  it('PATCH /utilisateurs/id/defis/id - patch le status d un defi du catalogue, débloques la feature defi et active le reveal defi', async () => {
     // GIVEN
     const unlocked: UnlockedFeatures_v1 = {
       version: 1,
       unlocked_features: [],
     };
-    await TestUtil.create(DB.utilisateur, { unlocked_features: unlocked });
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 0,
+      celebrations: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      unlocked_features: unlocked,
+      gamification: gamification,
+    });
     await TestUtil.create(DB.defi, DEFI_1_DEF);
 
     // WHEN
@@ -1073,6 +1084,18 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(userDB.unlocked_features.unlocked_features[0]).toEqual(
       Feature.defis,
     );
+    expect(userDB.gamification.celebrations).toHaveLength(1);
+    expect(userDB.gamification.celebrations[0].type).toEqual(
+      CelebrationType.reveal,
+    );
+    expect(userDB.gamification.celebrations[0].reveal.feature).toEqual(
+      Feature.defis,
+    );
+
+    const test = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/gamification',
+    );
+    console.log(JSON.stringify(test.body));
   });
   it('PATCH /utilisateurs/id/defis/id - ajout de points', async () => {
     // GIVEN

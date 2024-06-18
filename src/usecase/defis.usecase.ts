@@ -146,7 +146,10 @@ export class DefisUsecase {
     utilisateur.defi_history.updateStatus(defiId, status, utilisateur, motif);
 
     if (status === DefiStatus.en_cours) {
-      utilisateur.unlocked_features.add(Feature.defis);
+      if (!utilisateur.unlocked_features.isUnlocked(Feature.defis)) {
+        utilisateur.unlocked_features.add(Feature.defis);
+        utilisateur.gamification.revealDefis();
+      }
     }
 
     if (status === DefiStatus.fait) {
