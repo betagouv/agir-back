@@ -375,7 +375,7 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: ['univers'],
+      unlocked_features: ['univers', 'aides'],
     },
     suivis: [],
     services: [],
