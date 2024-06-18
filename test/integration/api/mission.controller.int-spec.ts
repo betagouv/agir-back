@@ -14,8 +14,10 @@ import { DefiStatus } from '../../../src/domain/defis/defi';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
-import { Gamification_v0 } from 'src/domain/object_store/gamification/gamification_v0';
-import { KYCHistory_v0 } from 'src/domain/object_store/kyc/kycHistory_v0';
+import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
+import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
+import { DefiHistory_v0 } from '../../../src/domain/object_store/defi/defiHistory_v0';
+import { Thematique } from '../../../src/domain/contenu/thematique';
 
 describe('Mission (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -327,7 +329,30 @@ describe('Mission (API test)', () => {
 
   it(`GET /utilisateurs/id/thematiques/climat/mission - renvoie la mission de la thématique - à partir du compte utilisateur`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { missions: missions });
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          id: '2',
+          points: 10,
+          tags: [],
+          titre: 'titre',
+          thematique: Thematique.transport,
+          astuces: 'ASTUCE',
+          date_acceptation: null,
+          pourquoi: 'POURQUOI',
+          sous_titre: 'SOUS TITRE',
+          status: DefiStatus.en_cours,
+          universes: [Univers.climat],
+          accessible: false,
+          motif: 'bidon',
+          categorie: Categorie.recommandation,
+          mois: [],
+          conditions: [],
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, { missions: missions, defis: defis });
     await TestUtil.create(DB.univers, {
       code: Univers.alimentation,
       label: 'Faut manger !',
@@ -340,6 +365,7 @@ describe('Mission (API test)', () => {
       image_url: 'aaaa',
     });
     await thematiqueRepository.onApplicationBootstrap();
+    await TestUtil.create(DB.defi, { content_id: '2' });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -369,6 +395,9 @@ describe('Mission (API test)', () => {
     expect(objectif.points).toEqual(10);
     expect(objectif.is_locked).toEqual(true);
     expect(objectif.done_at).toEqual(new Date(0).toISOString());
+
+    const objectif_defi = response.body.objectifs[3];
+    expect(objectif_defi.defi_status).toEqual(DefiStatus.en_cours);
   });
 
   it(`GET /utilisateurs/id/thematiques/climat/mission - renvoie la mission de la thématique - à partir du catalgue de mission`, async () => {

@@ -7,6 +7,7 @@ import { Utilisateur } from '../utilisateur/utilisateur';
 import { MissionDefinition } from './missionDefinition';
 import { v4 as uuidv4 } from 'uuid';
 import { DefiDefinition } from '../defis/defiDefinition';
+import { DefiStatus } from '../defis/defi';
 
 export class Objectif {
   id: string;
@@ -18,6 +19,7 @@ export class Objectif {
   points: number;
   sont_points_en_poche: boolean;
   est_reco: boolean;
+  defi_status?: DefiStatus;
 
   constructor(data: Objectif_v0) {
     this.id = data.id;

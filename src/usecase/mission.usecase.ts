@@ -7,6 +7,7 @@ import { ContentType } from '../../src/domain/contenu/contentType';
 import { QuestionKYC } from '../../src/domain/kyc/questionQYC';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { DefiStatus } from '../../src/domain/defis/defi';
 
 @Injectable()
 export class MissionUsecase {
@@ -37,6 +38,18 @@ export class MissionUsecase {
     }
 
     if (mission_resultat) {
+      for (const objectif of mission_resultat.objectifs) {
+        if (objectif.type === ContentType.defi) {
+          const defi = utilisateur.defi_history.getDefiFromHistory(
+            objectif.content_id,
+          );
+          if (defi) {
+            objectif.defi_status = defi.getStatus();
+          } else {
+            objectif.defi_status = DefiStatus.todo;
+          }
+        }
+      }
       this.personnalisator.personnaliser(mission_resultat, utilisateur);
       return mission_resultat;
     } else {

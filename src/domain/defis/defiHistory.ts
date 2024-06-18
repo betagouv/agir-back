@@ -73,7 +73,7 @@ export class DefiHistory {
   }
 
   public getDefiOrException(id: string): Defi {
-    let defi = this.getDefiUtilisateur(id);
+    let defi = this.getDefiFromHistory(id);
     if (defi) return defi;
 
     return this.getFromCatalogueOrException(id);
@@ -85,7 +85,7 @@ export class DefiHistory {
     user: Utilisateur,
     motif: string,
   ) {
-    let defi = this.getDefiUtilisateur(defiId);
+    let defi = this.getDefiFromHistory(defiId);
     if (defi) {
       defi.setStatus(status, user);
       defi.motif = motif;
@@ -122,7 +122,7 @@ export class DefiHistory {
       .length;
   }
 
-  private getDefiUtilisateur(id: string): Defi {
+  public getDefiFromHistory(id: string): Defi {
     return this.defis.find((element) => element.id === id);
   }
 
