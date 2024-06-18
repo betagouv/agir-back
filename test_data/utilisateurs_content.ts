@@ -582,6 +582,26 @@ const utilisateurs = {
     onboardingResult: ONBOARDING_RES_1234,
     onboardingData: ONBOARD_DATA_1234,
   },
+  test6: {
+    nom: 'RECETTEUR',
+    prenom: 'test6',
+    email: 'test6@agir.dev',
+    mot_de_passe: 'haha',
+    revenu_fiscal: null,
+    parts: null,
+    version: 6,
+    gamification: {
+      points: 0,
+    },
+    unlocked_features: {
+      version: 1,
+      unlocked_features: ['univers'],
+    },
+    suivis: [],
+    services: [],
+    onboardingResult: ONBOARDING_RES_1234,
+    onboardingData: ONBOARD_DATA_1234,
+  },
   fruggr: {
     nom: 'D4B',
     prenom: 'fruggr',
