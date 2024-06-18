@@ -18,6 +18,20 @@ export class MissionsUtilisateur {
     }
   }
 
+  public isUniversDone(univers: string): boolean {
+    let done = 0;
+    let of_univers = 0;
+    for (const mission of this.missions) {
+      if (mission.univers === univers) {
+        of_univers++;
+        if (mission.isDone()) {
+          done++;
+        }
+      }
+    }
+    return done === of_univers && done !== 0;
+  }
+
   public getMissionByThematiqueUnivers(them: string): Mission {
     return this.missions.find((m) => m.thematique_univers === them);
   }

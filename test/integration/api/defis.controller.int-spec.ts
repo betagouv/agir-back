@@ -59,6 +59,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         id: '1',
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
+        univers: 'alimentation',
         objectifs: [
           {
             id: '1',
@@ -90,6 +91,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         id: '2',
         done_at: null,
         thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
+        univers: 'alimentation',
         objectifs: [
           {
             id: '1',
@@ -121,6 +123,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         id: '3',
         done_at: null,
         thematique_univers: ThematiqueUnivers.mobilite_quotidien,
+        univers: 'alimentation',
         objectifs: [
           {
             id: '1',
@@ -274,6 +277,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           id: '1',
           done_at: null,
           thematique_univers: ThematiqueUnivers.cereales,
+          univers: 'alimentation',
           objectifs: [
             {
               id: '0',
@@ -356,6 +360,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           id: '1',
           done_at: null,
           thematique_univers: ThematiqueUnivers.cereales,
+          univers: 'alimentation',
           objectifs: [
             {
               id: '0',
@@ -1091,11 +1096,6 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(userDB.gamification.celebrations[0].reveal.feature).toEqual(
       Feature.defis,
     );
-
-    const test = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/gamification',
-    );
-    console.log(JSON.stringify(test.body));
   });
   it('PATCH /utilisateurs/id/defis/id - ajout de points', async () => {
     // GIVEN

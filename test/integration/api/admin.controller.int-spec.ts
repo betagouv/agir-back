@@ -1259,6 +1259,7 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifComplete],
           prochaines_thematiques: [],
           est_visible: true,
+          univers: 'alimentation',
         },
         {
           id: '2',
@@ -1267,6 +1268,7 @@ describe('Admin (API test)', () => {
           objectifs: [objectifNonComplete, objectifNonComplete],
           prochaines_thematiques: [],
           est_visible: true,
+          univers: 'alimentation',
         },
         {
           id: '3',
@@ -1275,6 +1277,7 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifComplete],
           prochaines_thematiques: [],
           est_visible: true,
+          univers: 'alimentation',
         },
       ],
     };
@@ -1288,6 +1291,7 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifNonComplete],
           prochaines_thematiques: [],
           est_visible: true,
+          univers: 'alimentation',
         },
         {
           id: '2',
@@ -1296,6 +1300,7 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifComplete],
           prochaines_thematiques: [],
           est_visible: true,
+          univers: 'alimentation',
         },
         {
           id: '3',
@@ -1304,6 +1309,7 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifComplete],
           prochaines_thematiques: [],
           est_visible: true,
+          univers: 'alimentation',
         },
       ],
     };
@@ -1895,6 +1901,7 @@ describe('Admin (API test)', () => {
           id: '1',
           done_at: null,
           thematique_univers: ThematiqueUnivers.cereales,
+          univers: 'alimentation',
           objectifs: [
             {
               id: '1',
@@ -1926,6 +1933,7 @@ describe('Admin (API test)', () => {
           id: '3',
           done_at: null,
           thematique_univers: ThematiqueUnivers.mobilite_quotidien,
+          univers: Univers.transport,
           objectifs: [
             {
               id: '1',
@@ -1962,6 +1970,7 @@ describe('Admin (API test)', () => {
           id: '1',
           done_at: null,
           thematique_univers: ThematiqueUnivers.cereales,
+          univers: Univers.alimentation,
           objectifs: [
             {
               id: '1',
@@ -1993,6 +2002,7 @@ describe('Admin (API test)', () => {
           id: '2',
           done_at: null,
           thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
+          univers: Univers.alimentation,
           objectifs: [
             {
               id: '1',
@@ -2024,6 +2034,7 @@ describe('Admin (API test)', () => {
           id: '3',
           done_at: null,
           thematique_univers: ThematiqueUnivers.mobilite_quotidien,
+          univers: Univers.transport,
           objectifs: [
             {
               id: '1',
@@ -2178,6 +2189,7 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifComplete],
           prochaines_thematiques: [],
           est_visible: true,
+          univers: Univers.alimentation,
         },
         {
           id: '2',
@@ -2186,6 +2198,7 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifComplete],
           prochaines_thematiques: [],
           est_visible: true,
+          univers: Univers.alimentation,
         },
         {
           id: '3',
@@ -2194,6 +2207,7 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifNonComplete],
           prochaines_thematiques: [],
           est_visible: true,
+          univers: Univers.transport,
         },
         {
           id: '4',
@@ -2202,6 +2216,7 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifNonComplete],
           prochaines_thematiques: [],
           est_visible: true,
+          univers: Univers.transport,
         },
       ],
     };
@@ -2215,6 +2230,7 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifComplete],
           prochaines_thematiques: [],
           est_visible: true,
+          univers: Univers.alimentation,
         },
         {
           id: '2',
@@ -2223,6 +2239,7 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifComplete],
           prochaines_thematiques: [],
           est_visible: true,
+          univers: Univers.alimentation,
         },
         {
           id: '3',
@@ -2231,6 +2248,7 @@ describe('Admin (API test)', () => {
           objectifs: [objectifNonComplete, objectifNonComplete],
           prochaines_thematiques: [],
           est_visible: true,
+          univers: Univers.transport,
         },
         {
           id: '4',
@@ -2239,6 +2257,7 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifComplete],
           prochaines_thematiques: [],
           est_visible: true,
+          univers: Univers.transport,
         },
       ],
     };

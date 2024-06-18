@@ -11,6 +11,7 @@ import { Gamification } from '../../../src/domain/gamification/gamification';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import { MissionsUtilisateur_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
 import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
+import { Univers } from '../../../src/domain/univers/univers';
 
 describe('EVENT (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -22,6 +23,7 @@ describe('EVENT (API test)', () => {
         id: '1',
         done_at: new Date(1),
         thematique_univers: ThematiqueUnivers.cereales,
+        univers: Univers.alimentation,
         objectifs: [
           {
             id: '0',
@@ -47,6 +49,7 @@ describe('EVENT (API test)', () => {
         id: '1',
         done_at: new Date(1),
         thematique_univers: ThematiqueUnivers.cereales,
+        univers: Univers.alimentation,
         objectifs: [
           {
             id: '0',

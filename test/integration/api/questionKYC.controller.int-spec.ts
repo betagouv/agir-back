@@ -33,6 +33,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
         id: '1',
         done_at: new Date(1),
         thematique_univers: ThematiqueUnivers.cereales,
+        univers: Univers.alimentation,
         objectifs: [
           {
             id: '0',
@@ -312,6 +313,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           id: '1',
           done_at: new Date(1),
           thematique_univers: ThematiqueUnivers.cereales,
+          univers: Univers.alimentation,
           objectifs: [
             {
               id: '0',

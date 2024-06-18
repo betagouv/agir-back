@@ -638,6 +638,7 @@ export class CMSUsecase {
       thematique_univers: entry.thematique_univers_unique
         ? entry.thematique_univers_unique.code
         : null,
+      univers: undefined,
       objectifs:
         entry.objectifs.length > 0
           ? entry.objectifs.map((obj) => {
@@ -878,6 +879,7 @@ export class CMSUsecase {
       thematique_univers: entry.attributes.thematique_univers_unique.data
         ? entry.attributes.thematique_univers_unique.data.attributes.code
         : null,
+      univers: undefined,
       objectifs:
         entry.attributes.objectifs.length > 0
           ? entry.attributes.objectifs.map((obj) => {

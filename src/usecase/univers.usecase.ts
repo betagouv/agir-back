@@ -12,11 +12,16 @@ export class UniversUsecase {
     private missionRepository: MissionRepository,
   ) {}
 
-  async getALL(): Promise<TuileUnivers[]> {
-    let result = [];
+  async getALL(utilisateurId: string): Promise<TuileUnivers[]> {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+
+    let result: TuileUnivers[] = [];
     const tuiles = ThematiqueRepository.getAllTuileUnivers();
     result = result.concat(tuiles.filter((t) => !t.is_locked));
     result = result.concat(tuiles.filter((t) => t.is_locked));
+    for (const univers of result) {
+      univers.is_done = utilisateur.missions.isUniversDone(univers.type);
+    }
     return result;
   }
 

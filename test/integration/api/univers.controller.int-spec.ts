@@ -15,6 +15,7 @@ describe('Univers (API test)', () => {
         id: '1',
         done_at: null,
         thematique_univers: 'A',
+        univers: 'alimentation',
         objectifs: [
           {
             id: '0',
@@ -35,6 +36,7 @@ describe('Univers (API test)', () => {
         id: '2',
         done_at: null,
         thematique_univers: 'B',
+        univers: 'alimentation',
         objectifs: [
           {
             id: '0',
@@ -66,6 +68,7 @@ describe('Univers (API test)', () => {
         id: '3',
         done_at: new Date(),
         thematique_univers: 'C',
+        univers: 'alimentation',
         objectifs: [
           {
             id: '1',
@@ -86,6 +89,7 @@ describe('Univers (API test)', () => {
         id: '4',
         done_at: null,
         thematique_univers: 'D',
+        univers: 'alimentation',
         objectifs: [
           {
             id: '1',
@@ -106,6 +110,7 @@ describe('Univers (API test)', () => {
         id: '5',
         done_at: null,
         thematique_univers: 'E',
+        univers: 'alimentation',
         objectifs: [
           {
             id: '1',
@@ -126,6 +131,7 @@ describe('Univers (API test)', () => {
         id: '6',
         done_at: null,
         thematique_univers: 'F',
+        univers: 'alimentation',
         objectifs: [
           {
             id: '1',
@@ -146,6 +152,7 @@ describe('Univers (API test)', () => {
         id: '7',
         done_at: null,
         thematique_univers: 'G',
+        univers: 'alimentation',
         objectifs: [
           {
             id: '1',
@@ -171,6 +178,33 @@ describe('Univers (API test)', () => {
         id: '1',
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
+        univers: 'alimentation',
+        objectifs: [
+          {
+            id: '0',
+            content_id: '1',
+            type: ContentType.article,
+            titre: '1 article',
+            points: 10,
+            is_locked: false,
+            done_at: new Date(),
+            sont_points_en_poche: false,
+            est_reco: true,
+          },
+        ],
+        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
+        est_visible: true,
+      },
+    ],
+  };
+  const mission_unique_done: MissionsUtilisateur_v0 = {
+    version: 0,
+    missions: [
+      {
+        id: '1',
+        done_at: new Date(),
+        thematique_univers: ThematiqueUnivers.cereales,
+        univers: 'alimentation',
         objectifs: [
           {
             id: '0',
@@ -197,6 +231,7 @@ describe('Univers (API test)', () => {
         id: '1',
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
+        univers: 'alimentation',
         objectifs: [
           {
             id: '0',
@@ -217,6 +252,7 @@ describe('Univers (API test)', () => {
         id: '2',
         done_at: null,
         thematique_univers: ThematiqueUnivers.dechets_compost,
+        univers: 'alimentation',
         objectifs: [
           {
             id: '0',
@@ -280,7 +316,27 @@ describe('Univers (API test)', () => {
       titre: 'yo',
       type: Univers.climat,
       image_url: 'aaaa',
+      is_done: false,
     });
+  });
+  it(`GET /utilisateurs/id/univers - liste les univers de l'utilisateur, is_done à true`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { missions: mission_unique_done });
+    await TestUtil.create(DB.univers, {
+      id_cms: 1,
+      code: Univers.alimentation,
+      label: 'ya',
+      image_url: 'bbbb',
+    });
+    await thematiqueRepository.loadUnivers();
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/univers');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(1);
+    expect(response.body[0].is_done).toEqual(true);
   });
   it(`GET /utilisateurs/id/univers - univers bloqué en dernier`, async () => {
     // GIVEN

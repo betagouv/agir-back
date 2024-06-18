@@ -20,11 +20,13 @@ export class MissionDefinition {
   objectifs: ObjectifDefinition[];
   prochaines_thematiques: string[];
   est_visible: boolean;
+  univers: string;
 
   constructor(data: MissionDefinition) {
     this.thematique_univers = data.thematique_univers;
     this.est_visible = data.est_visible;
     this.id_cms = data.id_cms;
+    this.univers = data.univers;
 
     this.prochaines_thematiques = [];
     if (data.prochaines_thematiques) {
