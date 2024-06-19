@@ -46,10 +46,11 @@ export class Gamification {
   }
 
   public ajoutePoints(new_points: number, features: UnlockedFeatures) {
-    const current_niveau = this.getNiveau();
+    // const current_niveau = this.getNiveau();
     this.points += new_points;
-    const new_niveau = this.getNiveau();
+    // const new_niveau = this.getNiveau();
 
+    /*
     if (current_niveau != new_niveau) {
       const celeb = new Celebration({
         id: undefined,
@@ -67,6 +68,7 @@ export class Gamification {
       }
       this.celebrations.push(celeb);
     }
+    */
   }
 
   public revealDefis() {
