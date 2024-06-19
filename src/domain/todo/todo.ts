@@ -5,6 +5,7 @@ import {
   TodoElement_v0,
   Todo_v0,
 } from '../object_store/parcoursTodo/parcoursTodo_v0';
+import { Celebration } from '../gamification/celebrations/celebration';
 
 export class TodoElement {
   id: string;
@@ -51,11 +52,15 @@ export class Todo {
 
   done: TodoElement[];
   todo: TodoElement[];
+  celebration: Celebration;
 
   constructor(data: Todo_v0) {
     this.numero_todo = data.numero_todo;
     this.points_todo = data.points_todo;
     this.titre = data.titre;
+    if (data.celebration) {
+      this.celebration = new Celebration(data.celebration);
+    }
     if (data.done_at) {
       this.done_at = new Date(data.done_at);
     }

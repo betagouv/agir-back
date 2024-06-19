@@ -12,6 +12,7 @@ describe('Todo', () => {
       points_todo: 20,
       done_at: null,
       titre: 'titre',
+      celebration: null,
       todo: [
         {
           id: '1',
@@ -36,10 +37,9 @@ describe('Todo', () => {
       ],
     });
     // WHEN
-    const result = todo.findTodoElementByTypeAndThematique(
-      ContentType.quizz,
-      [Thematique.logement],
-    );
+    const result = todo.findTodoElementByTypeAndThematique(ContentType.quizz, [
+      Thematique.logement,
+    ]);
 
     // THEN
     expect(result.id).toEqual('2');
@@ -51,6 +51,7 @@ describe('Todo', () => {
       numero_todo: 1,
       points_todo: 20,
       done_at: null,
+      celebration: null,
       titre: 'titre',
       todo: [
         {
@@ -65,9 +66,7 @@ describe('Todo', () => {
       ],
     });
     // WHEN
-    const result = todo.findTodoElementByTypeAndThematique(
-      ContentType.aides,
-    );
+    const result = todo.findTodoElementByTypeAndThematique(ContentType.aides);
 
     // THEN
     expect(result.id).toEqual('1');
@@ -79,6 +78,7 @@ describe('Todo', () => {
       numero_todo: 1,
       points_todo: 20,
       done_at: null,
+      celebration: null,
       titre: 'titre',
       todo: [
         {
@@ -94,9 +94,7 @@ describe('Todo', () => {
       ],
     });
     // WHEN
-    const result = todo.findTodoElementByTypeAndThematique(
-      ContentType.aides,
-    );
+    const result = todo.findTodoElementByTypeAndThematique(ContentType.aides);
 
     // THEN
     expect(result.id).toEqual('1');
@@ -108,6 +106,7 @@ describe('Todo', () => {
       numero_todo: 1,
       points_todo: 20,
       titre: 'titre',
+      celebration: null,
       done_at: null,
       todo: [
         {
@@ -132,10 +131,9 @@ describe('Todo', () => {
         },
       ],
     });
-    const element = todo.findTodoElementByTypeAndThematique(
-      ContentType.quizz,
-      [Thematique.logement],
-    );
+    const element = todo.findTodoElementByTypeAndThematique(ContentType.quizz, [
+      Thematique.logement,
+    ]);
     // WHEN
     todo.moveElementToDone(element);
 
@@ -150,6 +148,7 @@ describe('Todo', () => {
       numero_todo: 1,
       points_todo: 20,
       titre: 'titre',
+      celebration: null,
       done_at: null,
       todo: [
         {
@@ -174,10 +173,9 @@ describe('Todo', () => {
         },
       ],
     });
-    const element = todo.findTodoElementByTypeAndThematique(
-      ContentType.quizz,
-      [Thematique.logement],
-    );
+    const element = todo.findTodoElementByTypeAndThematique(ContentType.quizz, [
+      Thematique.logement,
+    ]);
     // WHEN
     todo.makeProgress(element);
 
@@ -197,6 +195,7 @@ describe('Todo', () => {
       numero_todo: 1,
       points_todo: 20,
       titre: 'titre',
+      celebration: null,
       done_at: null,
       done: [
         {
@@ -234,6 +233,7 @@ describe('Todo', () => {
       numero_todo: 1,
       points_todo: 20,
       titre: 'titre',
+      celebration: null,
       done_at: null,
       done: [
         {

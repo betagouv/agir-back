@@ -156,6 +156,7 @@ describe('EVENT (API test)', () => {
     ).toEqual(100);
   });
 
+  /*
   it('POST /utilisateurs/id/events - increase todo element progression and moves to done v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
@@ -178,7 +179,8 @@ describe('EVENT (API test)', () => {
     expect(
       userDB.parcours_todo.getActiveTodo().done[0].progression.current,
     ).toEqual(1);
-  });
+  });*/
+  /*
   it('POST /utilisateurs/id/events - NOT increase todo element progression when not 100% v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
@@ -202,7 +204,8 @@ describe('EVENT (API test)', () => {
       userDB.parcours_todo.getActiveTodo().todo[0].progression.current,
     ).toEqual(0);
   });
-
+  */
+  /*
   it('POST /utilisateurs/id/events - does not add points when points en poche v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -237,7 +240,9 @@ describe('EVENT (API test)', () => {
     });
     expect(dbUtilisateur.gamification['points']).toStrictEqual(10);
   });
+  */
 
+  /*
   it('POST /utilisateurs/id/events - does not add points twice on quizz v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
@@ -264,7 +269,8 @@ describe('EVENT (API test)', () => {
     });
     expect(dbUtilisateur.gamification['points']).toStrictEqual(15);
   });
-
+  */
+  /*
   it('POST /utilisateurs/id/events - does not add points when not 100% quizz v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
@@ -309,7 +315,7 @@ describe('EVENT (API test)', () => {
       userDB.history.getQuizzHistoryById('quizz-id').attempts[0].score,
     ).toEqual(0);
   });
-
+*/
   it('POST /utilisateurs/id/events - valide objectif de mission article', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {

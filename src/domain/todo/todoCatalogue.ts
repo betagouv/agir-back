@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { LiveService } from '../service/serviceDefinition';
 import { Todo_v0 } from '../object_store/parcoursTodo/parcoursTodo_v0';
 import { KYCID } from '../kyc/KYCID';
+import { CelebrationType } from '../gamification/celebrations/celebration';
+import { Feature } from '../gamification/feature';
 
 export class TodoCatalogue {
   public static getNombreTodo(): number {
@@ -32,6 +34,7 @@ export class TodoCatalogue {
       done_at: null,
       done: [],
       todo: [],
+      celebration: null,
     });
     result.is_last = true;
     return result;
@@ -41,8 +44,92 @@ export class TodoCatalogue {
     {
       numero_todo: 1,
       points_todo: 50,
+      titre: 'Mission 1 - Faisons connaissance',
+      done_at: null,
+      celebration: {
+        id: uuidv4(),
+        titre: 'Nouvelle Fonctionnalité',
+        type: CelebrationType.reveal,
+        reveal: {
+          id: uuidv4(),
+          titre: 'Vos recommandations',
+          description: `Toujours plus de contenu, et en fonction de vos centres d'intérêt`,
+          feature: Feature.recommandations,
+        },
+      },
+      done: [],
+      todo: [
+        {
+          id: uuidv4(),
+          titre: 'article',
+          thematiques: [Thematique.climat],
+          progression: { current: 0, target: 1 },
+          sont_points_en_poche: false,
+          type: ContentType.article,
+          level: DifficultyLevel.ANY,
+          points: 10,
+        },
+      ],
+    },
+    {
+      numero_todo: 2,
+      points_todo: 50,
+      titre: 'Mission 2 - Motivation et freins',
+      done_at: null,
+      celebration: {
+        id: uuidv4(),
+        titre: 'Nouvelle Fonctionnalité',
+        type: CelebrationType.reveal,
+        reveal: {
+          id: uuidv4(),
+          titre: 'Vos aides',
+          description: `En fonction de votre situation et de votre lieu de vie !`,
+          feature: Feature.aides,
+        },
+      },
+      done: [],
+      todo: [
+        {
+          id: uuidv4(),
+          titre: 'article',
+          thematiques: [Thematique.climat],
+          progression: { current: 0, target: 1 },
+          sont_points_en_poche: false,
+          type: ContentType.article,
+          level: DifficultyLevel.ANY,
+          points: 10,
+        },
+      ],
+    },
+    {
+      numero_todo: 3,
+      points_todo: 60,
+      titre: 'Mission 3 - Connaître son impact',
+      done_at: null,
+      celebration: null,
+      done: [],
+      todo: [
+        {
+          id: uuidv4(),
+          titre: 'article',
+          thematiques: [Thematique.climat],
+          progression: { current: 0, target: 1 },
+          sont_points_en_poche: false,
+          type: ContentType.article,
+          level: DifficultyLevel.ANY,
+          points: 10,
+        },
+      ],
+    },
+  ];
+  /**
+  private static catalogue: Todo_v0[] = [
+    {
+      numero_todo: 1,
+      points_todo: 50,
       titre: 'Votre 1ère mission',
       done_at: null,
+      celebration: null,
       done: [
         {
           id: uuidv4(),
@@ -84,6 +171,7 @@ export class TodoCatalogue {
       points_todo: 40,
       titre: 'Mission 2',
       done_at: null,
+      celebration: null,
       done: [],
       todo: [
         {
@@ -127,6 +215,7 @@ export class TodoCatalogue {
       points_todo: 60,
       titre: 'Mission 3',
       done_at: null,
+      celebration: null,
       done: [],
       todo: [
         {
@@ -169,6 +258,7 @@ export class TodoCatalogue {
       points_todo: 80,
       titre: 'Mission 4',
       done_at: null,
+      celebration: null,
       done: [],
       todo: [
         {
@@ -211,6 +301,7 @@ export class TodoCatalogue {
       points_todo: 60,
       titre: 'Mission 5',
       done_at: null,
+      celebration: null,
       done: [],
       todo: [
         {
@@ -260,4 +351,5 @@ export class TodoCatalogue {
       ],
     },
   ];
+  */
 }

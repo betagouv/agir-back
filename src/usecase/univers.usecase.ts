@@ -15,12 +15,13 @@ export class UniversUsecase {
   async getALL(utilisateurId: string): Promise<TuileUnivers[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
-    const tuiles = ThematiqueRepository.getAllTuileUnivers();
+    let tuiles = ThematiqueRepository.getAllTuileUnivers();
+    tuiles = tuiles.map((t) => new TuileUnivers(t));
 
     if (!utilisateur.parcours_todo.isLastTodo()) {
-      tuiles.forEach((t) => {
+      for (const t of tuiles) {
         t.is_locked = true;
-      });
+      }
       return tuiles;
     }
 

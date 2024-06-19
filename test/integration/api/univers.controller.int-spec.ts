@@ -326,7 +326,7 @@ describe('Univers (API test)', () => {
   it(`GET /utilisateurs/id/univers - liste les univers de l'utilisateur, todo terminée => unlock, sauf les locked dans le CMS`, async () => {
     // GIVEN
     const todo: ParcoursTodo_v0 = ParcoursTodo_v0.serialise(new ParcoursTodo());
-    todo.todo_active = 5;
+    todo.todo_active = 3;
 
     await TestUtil.create(DB.utilisateur, { todo: todo });
     await TestUtil.create(DB.univers, {
@@ -359,7 +359,7 @@ describe('Univers (API test)', () => {
   it(`GET /utilisateurs/id/univers - liste les univers de l'utilisateur, is_done à true`, async () => {
     // GIVEN
     const todo: ParcoursTodo_v0 = ParcoursTodo_v0.serialise(new ParcoursTodo());
-    todo.todo_active = 5;
+    todo.todo_active = 3;
 
     await TestUtil.create(DB.utilisateur, {
       missions: mission_unique_done,
@@ -384,7 +384,7 @@ describe('Univers (API test)', () => {
   it(`GET /utilisateurs/id/univers - univers bloqué en dernier`, async () => {
     // GIVEN
     const todo: ParcoursTodo_v0 = ParcoursTodo_v0.serialise(new ParcoursTodo());
-    todo.todo_active = 5;
+    todo.todo_active = 3;
 
     await TestUtil.create(DB.utilisateur, { todo: todo });
     await TestUtil.create(DB.univers, {
@@ -416,10 +416,12 @@ describe('Univers (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(3);
+    expect(response.body[0].titre).toEqual('yo');
     expect(response.body[0].is_locked).toEqual(false);
+    expect(response.body[1].titre).toEqual('yi');
     expect(response.body[1].is_locked).toEqual(false);
-    expect(response.body[2].is_locked).toEqual(true);
     expect(response.body[2].titre).toEqual('ya');
+    expect(response.body[2].is_locked).toEqual(true);
   });
   it(`GET /utilisateurs/id/univers/id/thematiques - liste une thematique, donnée correctes`, async () => {
     // GIVEN

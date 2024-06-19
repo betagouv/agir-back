@@ -128,17 +128,17 @@ const utilisateurs = {
     migration_enabled: true,
     gamification: {
       version: 0,
-      points: 99,
+      points: 0,
     },
     suivis: [],
     bilans: [],
     services: [],
     unlocked_features: {
       version: 1,
-      unlocked_features: ['aides', 'univers'],
+      unlocked_features: ['univers', 'bibliotheque'],
     },
-    onboardingResult: ONBOARDING_RES_1234,
-    onboardingData: ONBOARD_DATA_1234,
+    onboardingResult: {},
+    onboardingData: {},
     //missions: missions,
   },
   DEV: {
