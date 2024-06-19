@@ -99,7 +99,7 @@ export class ThematiqueRepository {
           is_locked: u.is_locked,
           reason_locked: null,
           id_cms: u.id_cms,
-          is_done: undefined,
+          is_done: false,
         }),
       );
     });
