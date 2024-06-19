@@ -11,6 +11,7 @@ import {
 } from '../../../src/domain/onboarding/onboarding';
 import { DB, TestUtil } from '../../TestUtil';
 import { Profil } from '../../../src/domain/utilisateur/utilisateurAttente';
+import { Feature } from '../../../src/domain/gamification/feature';
 
 const ONBOARDING_1_2_3_4_DATA = {
   transports: ['voiture', 'pied'],
@@ -148,6 +149,11 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     //expect(user.logement.proprietaire).toEqual(true);
     //expect(user.logement.superficie).toEqual(Superficie.superficie_150);
     //expect(user.logement.type).toEqual(TypeLogement.maison);
+
+    expect(user.unlocked_features.isUnlocked(Feature.bibliotheque)).toEqual(
+      true,
+    );
+    expect(user.unlocked_features.isUnlocked(Feature.univers)).toEqual(true);
   });
   it('POST /utilisateurs - no user version defaults to 0', async () => {
     // GIVEN

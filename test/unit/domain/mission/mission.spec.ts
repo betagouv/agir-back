@@ -12,6 +12,8 @@ describe('Missions', () => {
       'George',
       'mail@www.com',
       12345,
+      '91120',
+      'PALAISEAU',
     );
     const mission = new Mission({
       done_at: null,

@@ -201,6 +201,8 @@ describe('Objet Utilisateur', () => {
       'B',
       'w@w.com',
       1234,
+      '91120',
+      'PALAISEAU',
       /*
       new Onboarding({
         version: 0,
