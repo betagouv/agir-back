@@ -167,6 +167,12 @@ export class MigrationUsecase {
   private async migrate_9(
     utilisateur: Utilisateur,
   ): Promise<{ ok: boolean; info: string }> {
+    utilisateur.revenu_fiscal = null;
+    return { ok: true, info: 'set revenu_fiscal = null' };
+  }
+  private async migrate_10(
+    utilisateur: Utilisateur,
+  ): Promise<{ ok: boolean; info: string }> {
     return { ok: false, info: 'to implement' };
   }
 }
