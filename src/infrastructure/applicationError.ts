@@ -279,6 +279,12 @@ export class ApplicationError {
       `l'utilisateur a été mis à jour pendant votre requête, veuillez retenter l'opération`,
     );
   }
+  static throwCodePostalObligatoireError() {
+    this.throwAppError(
+      '051',
+      'Code postal et commune obligatoires pour inscription',
+    );
+  }
 
   private static throwAppError(
     code: string,

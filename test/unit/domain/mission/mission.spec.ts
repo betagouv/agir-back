@@ -12,7 +12,6 @@ describe('Missions', () => {
       'George',
       'mail@www.com',
       12345,
-      null,
     );
     const mission = new Mission({
       done_at: null,

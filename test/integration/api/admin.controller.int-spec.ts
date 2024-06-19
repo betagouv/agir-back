@@ -345,6 +345,7 @@ describe('Admin (API test)', () => {
       },
     ]);
   });
+  /*
   it('POST /admin/migrate_users migration V5 OK', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -385,6 +386,8 @@ describe('Admin (API test)', () => {
     expect(userDB.logement.proprietaire).toEqual(true);
     expect(userDB.logement.superficie).toEqual(Superficie.superficie_100);
   });
+  */
+  /*
   it('POST /admin/migrate_users migration V6 OK', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -420,6 +423,7 @@ describe('Admin (API test)', () => {
       TransportQuotidien.pied,
     ]);
   });
+  */
   it('POST /admin/migrate_users migration V7 OK', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;

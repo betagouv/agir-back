@@ -201,6 +201,7 @@ describe('Objet Utilisateur', () => {
       'B',
       'w@w.com',
       1234,
+      /*
       new Onboarding({
         version: 0,
         transports: [TransportQuotidien.velo, TransportQuotidien.voiture],
@@ -216,6 +217,7 @@ describe('Objet Utilisateur', () => {
         code_postal: '91120',
         commune: 'Palaiseau',
       }),
+      */
     );
     user.tag_ponderation_set = {};
 

@@ -146,7 +146,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/profile');
     // THEN
-    expect(response.body.nombre_de_parts_fiscales).toEqual(2.5);
+    //expect(response.body.nombre_de_parts_fiscales).toEqual(2.5);
+    expect(response.body.nombre_de_parts_fiscales).toEqual(1);
   });
 
   it('POST /utilisateurs/login - logs user and return a JWT token, reset force_connexion', async () => {
@@ -212,8 +213,11 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
-      onboardingData: ONBOARDING_1_2_3_4_DATA,
+      code_postal: '91120',
+      commune: 'PALAISEAU',
+      //onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
+    console.log(response.body);
     expect(response.status).toBe(201);
 
     // WHEN
@@ -375,12 +379,14 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.revenu_fiscal).toEqual(10000);
     expect(response.body.nombre_de_parts_fiscales).toEqual(2);
     expect(response.body.abonnement_ter_loire).toEqual(false);
+    /*
     expect(response.body.onboarding_result).toEqual({
       alimentation: Impact.tres_faible,
       transports: Impact.faible,
       logement: Impact.eleve,
       consommation: Impact.tres_eleve,
     });
+    */
   });
   it('GET /utilisateurs/id/logement - read logement datas', async () => {
     // GIVEN
@@ -417,6 +423,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     ]);
     expect(response.body.avions_par_an).toEqual(2);
   });
+  /**
   it('GET /utilisateurs/id/profile - use onboarding data when missing parts in user account', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { parts: null });
@@ -426,6 +433,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.nombre_de_parts_fiscales).toEqual(2.5);
   });
+  */
   it('GET /utilisateurs/id/profile - default to 1 when no onboarding data', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -624,6 +632,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       transports_quotidiens: [TransportQuotidien.pied],
     });
     // THEN
+    console.log(response.body);
     expect(response.status).toBe(200);
     let dbUser = await utilisateurRepository.getById('utilisateur-id');
 

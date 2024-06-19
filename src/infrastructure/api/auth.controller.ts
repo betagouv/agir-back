@@ -52,7 +52,9 @@ export class AuthController {
         prenom: 'UNDEFINED',
         email: user_data.email,
         annee_naissance: 1900,
-        onboardingData: {} as any,
+        code_postal: '91120',
+        commune: 'PALAISEAU',
+        //onboardingData: {} as any,
       });
     }
     const utilisateurId = utilisateur.id; // FIXME : broken for now

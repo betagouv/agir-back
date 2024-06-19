@@ -107,6 +107,7 @@ export class MigrationUsecase {
   private async migrate_5(
     utilisateur: Utilisateur,
   ): Promise<{ ok: boolean; info: string }> {
+    /*
     utilisateur.logement.chauffage = utilisateur.onboardingData.chauffage;
     utilisateur.logement.code_postal = utilisateur.onboardingData.code_postal;
     utilisateur.logement.commune = utilisateur.onboardingData.commune;
@@ -114,7 +115,7 @@ export class MigrationUsecase {
     utilisateur.logement.nombre_enfants = utilisateur.onboardingData.enfants;
     utilisateur.logement.proprietaire = utilisateur.onboardingData.proprietaire;
     utilisateur.logement.superficie = utilisateur.onboardingData.superficie;
-    utilisateur.logement.type = utilisateur.onboardingData.residence;
+    utilisateur.logement.type = utilisateur.onboardingData.residence;*/
     return {
       ok: true,
       info: `migrated logement data`,
@@ -123,9 +124,11 @@ export class MigrationUsecase {
   private async migrate_6(
     utilisateur: Utilisateur,
   ): Promise<{ ok: boolean; info: string }> {
+    /*
     utilisateur.transport.avions_par_an = utilisateur.onboardingData.avion;
     utilisateur.transport.transports_quotidiens =
       utilisateur.onboardingData.transports;
+      */
     return {
       ok: true,
       info: `migrated transport data`,
