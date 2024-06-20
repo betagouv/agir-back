@@ -48,6 +48,7 @@ export class Todo {
   points_todo: number;
   done_at: Date;
   titre: string;
+  imageUrl: string;
   is_last?: boolean; // sans persistence
 
   done: TodoElement[];
@@ -58,6 +59,8 @@ export class Todo {
     this.numero_todo = data.numero_todo;
     this.points_todo = data.points_todo;
     this.titre = data.titre;
+    this.imageUrl = data.imageUrl;
+
     if (data.celebration) {
       this.celebration = new Celebration(data.celebration);
     }

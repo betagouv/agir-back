@@ -43,6 +43,7 @@ export class Todo_v0 {
   points_todo: number;
   done_at: Date;
   titre: string;
+  imageUrl: string;
 
   done: TodoElement_v0[];
   todo: TodoElement_v0[];
@@ -59,6 +60,7 @@ export class Todo_v0 {
       celebration: todo.celebration
         ? Celebration_v0.map(todo.celebration)
         : undefined,
+      imageUrl: todo.imageUrl,
     };
   }
 }

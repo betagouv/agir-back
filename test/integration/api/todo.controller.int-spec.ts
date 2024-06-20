@@ -56,6 +56,7 @@ describe('TODO list (API test)', () => {
           numero_todo: 1,
           points_todo: 25,
           done_at: null,
+          imageUrl: 'https://',
           done: [],
           celebration: {
             id: '123',
@@ -97,6 +98,7 @@ describe('TODO list (API test)', () => {
     expect(response.body.numero_todo).toEqual(1);
     expect(response.body.points_todo).toEqual(25);
     expect(response.body.titre).toEqual(`Mission`);
+    expect(response.body.imageUrl).toEqual('https://');
     expect(response.body.celebration).toStrictEqual({
       id: '123',
       titre: 'Nouvelle Fonctionnalité',
@@ -891,6 +893,7 @@ describe('TODO list (API test)', () => {
             points_todo: 20,
             done_at: null,
             celebration: null,
+            imageUrl: 'https://',
             titre: 'titre',
             todo: [
               {
@@ -945,6 +948,7 @@ describe('TODO list (API test)', () => {
           points_todo: 25,
           done_at: null,
           celebration: null,
+          imageUrl: 'https://',
           titre: 'mission 1',
           todo: [
             {

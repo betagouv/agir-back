@@ -31,6 +31,7 @@ export class TodoCatalogue {
       numero_todo: null,
       points_todo: 0,
       titre: 'Plus de mission, pour le moment...',
+      imageUrl: 'https://',
       done_at: null,
       done: [],
       todo: [],
@@ -45,6 +46,8 @@ export class TodoCatalogue {
       numero_todo: 1,
       points_todo: 50,
       titre: 'Mission 1 - Faisons connaissance',
+      imageUrl:
+        'https://res.cloudinary.com/dq023imd8/image/upload/v1718867240/mission1_a602fa6dcc.png',
       done_at: null,
       celebration: {
         id: uuidv4(),
@@ -75,6 +78,8 @@ export class TodoCatalogue {
       numero_todo: 2,
       points_todo: 50,
       titre: 'Mission 2 - Motivation et freins',
+      imageUrl:
+        'https://res.cloudinary.com/dq023imd8/image/upload/v1718867240/mission2_32516abaf0.png',
       done_at: null,
       celebration: {
         id: uuidv4(),
@@ -105,6 +110,8 @@ export class TodoCatalogue {
       numero_todo: 3,
       points_todo: 60,
       titre: 'Mission 3 - Connaître son impact',
+      imageUrl:
+        'https://res.cloudinary.com/dq023imd8/image/upload/v1718867240/mission3_1eec643aa8.png',
       done_at: null,
       celebration: null,
       done: [],

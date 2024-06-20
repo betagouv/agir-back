@@ -12,6 +12,7 @@ describe('Todo', () => {
       points_todo: 20,
       done_at: null,
       titre: 'titre',
+      imageUrl: 'http',
       celebration: null,
       todo: [
         {
@@ -53,6 +54,7 @@ describe('Todo', () => {
       done_at: null,
       celebration: null,
       titre: 'titre',
+      imageUrl: 'http',
       todo: [
         {
           id: '1',
@@ -80,6 +82,7 @@ describe('Todo', () => {
       done_at: null,
       celebration: null,
       titre: 'titre',
+      imageUrl: 'http',
       todo: [
         {
           id: '1',
@@ -108,6 +111,7 @@ describe('Todo', () => {
       titre: 'titre',
       celebration: null,
       done_at: null,
+      imageUrl: 'http',
       todo: [
         {
           id: '1',
@@ -150,6 +154,7 @@ describe('Todo', () => {
       titre: 'titre',
       celebration: null,
       done_at: null,
+      imageUrl: 'http',
       todo: [
         {
           id: '1',
@@ -197,6 +202,7 @@ describe('Todo', () => {
       titre: 'titre',
       celebration: null,
       done_at: null,
+      imageUrl: 'http',
       done: [
         {
           id: '1',
@@ -233,6 +239,7 @@ describe('Todo', () => {
       numero_todo: 1,
       points_todo: 20,
       titre: 'titre',
+      imageUrl: 'http',
       celebration: null,
       done_at: null,
       done: [

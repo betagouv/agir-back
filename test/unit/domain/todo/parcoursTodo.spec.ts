@@ -39,6 +39,7 @@ describe('ParcoursTodo', () => {
           points_todo: 20,
           done_at: null,
           titre: 'titre',
+          imageUrl : 'http',
           celebration: null,
           todo: [
             {
@@ -88,6 +89,7 @@ describe('ParcoursTodo', () => {
           done_at: null,
           celebration: null,
           titre: 'titre',
+          imageUrl : 'http',
           todo: [
             {
               id: '1',
@@ -152,6 +154,7 @@ describe('ParcoursTodo', () => {
           done_at: null,
           celebration: null,
           titre: 'titre',
+          imageUrl : 'http',
           todo: [
             {
               id: '1',
@@ -185,6 +188,7 @@ describe('ParcoursTodo', () => {
           done_at: null,
           celebration: null,
           titre: 'titre',
+          imageUrl : 'http',
           todo: [
             {
               id: '1',
