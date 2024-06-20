@@ -113,7 +113,17 @@ export class TodoCatalogue {
       imageUrl:
         'https://res.cloudinary.com/dq023imd8/image/upload/v1718867240/mission3_1eec643aa8.png',
       done_at: null,
-      celebration: null,
+      celebration: {
+        id: uuidv4(),
+        titre: 'Nouvelle Fonctionnalité',
+        type: CelebrationType.reveal,
+        reveal: {
+          id: uuidv4(),
+          titre: 'Vos services',
+          description: `Un service permet d'avoir toujours sous les yeux vos fonctionnalités clés`,
+          feature: Feature.services,
+        },
+      },
       done: [],
       todo: [
         {
