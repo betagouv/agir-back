@@ -14,6 +14,7 @@ export class UniversUsecase {
 
   async getALL(utilisateurId: string): Promise<TuileUnivers[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     let tuiles = ThematiqueRepository.getAllTuileUnivers();
     tuiles = tuiles.map((t) => new TuileUnivers(t));
@@ -43,6 +44,7 @@ export class UniversUsecase {
   ): Promise<TuileThematique[]> {
     // FIXME : refacto , code tout moche en dessous
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     const listTuilesThem = ThematiqueRepository.getAllTuilesThematique(univers);
 

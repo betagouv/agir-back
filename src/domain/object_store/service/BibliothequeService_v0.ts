@@ -1,22 +1,45 @@
 import { Versioned } from '../versioned';
-import {
-  FavorisRecherche,
-  ServiceRecherche,
-  ServiceRechercheID,
-} from '../../bibliotheque_services/serviceRecherche';
+import { ServiceRecherche } from '../../bibliotheque_services/serviceRecherche';
 import { BibliothequeServices } from '../../bibliotheque_services/bibliothequeServices';
+import { ServiceRechercheID } from '../../../../src/domain/bibliotheque_services/serviceRechercheID';
+import { ResultatRecherche } from '../../../../src/domain/bibliotheque_services/resultatRecherche';
+import { FavorisRecherche } from 'src/domain/bibliotheque_services/favorisRecherche';
+
+export class ResultatRecherche_v0 {
+  id: string;
+  titre: string;
+
+  adresse_rue: string;
+  adresse_nom_ville: string;
+  adresse_code_postal: string;
+
+  site_web: string;
+  static map(res: ResultatRecherche): ResultatRecherche_v0 {
+    return {
+      titre: res.titre,
+      id: res.id,
+      adresse_code_postal: res.adresse_code_postal,
+      adresse_nom_ville: res.adresse_nom_ville,
+      adresse_rue: res.adresse_rue,
+      site_web: res.site_web,
+    };
+  }
+}
 
 export class FavorisRecherche_v0 {
   id: string;
-  date: Date;
+  date_ajout: Date;
+  resulat_recherche: ResultatRecherche_v0;
 
   static map(fav: FavorisRecherche): FavorisRecherche_v0 {
     return {
       id: fav.id,
-      date: fav.date,
+      date_ajout: fav.date_ajout,
+      resulat_recherche: ResultatRecherche_v0.map(fav.resulat_recherche),
     };
   }
 }
+
 export class ServiceRecherche_v0 {
   id: ServiceRechercheID;
   favoris: FavorisRecherche_v0[];
