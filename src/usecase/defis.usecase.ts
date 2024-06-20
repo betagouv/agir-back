@@ -148,7 +148,7 @@ export class DefisUsecase {
     if (status === DefiStatus.en_cours) {
       if (!utilisateur.unlocked_features.isUnlocked(Feature.defis)) {
         utilisateur.unlocked_features.add(Feature.defis);
-        utilisateur.gamification.revealDefis();
+        //utilisateur.gamification.revealDefis();
       }
     }
 

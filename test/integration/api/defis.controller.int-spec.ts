@@ -1089,13 +1089,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(userDB.unlocked_features.unlocked_features[0]).toEqual(
       Feature.defis,
     );
-    expect(userDB.gamification.celebrations).toHaveLength(1);
-    expect(userDB.gamification.celebrations[0].type).toEqual(
-      CelebrationType.reveal,
-    );
-    expect(userDB.gamification.celebrations[0].reveal.feature).toEqual(
-      Feature.defis,
-    );
+    expect(userDB.gamification.celebrations).toHaveLength(0);
   });
   it('PATCH /utilisateurs/id/defis/id - ajout de points', async () => {
     // GIVEN
