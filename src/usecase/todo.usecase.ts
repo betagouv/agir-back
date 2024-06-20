@@ -97,7 +97,7 @@ export class TodoUsecase {
           element.content_id = randomQuizz.content_id;
         }
       }
-      if (element.type === ContentType.article) {
+      if (element.type === ContentType.article && !element.content_id) {
         const articles_lus = utilisateur.history.searchArticlesIds({
           est_lu: true,
         });
