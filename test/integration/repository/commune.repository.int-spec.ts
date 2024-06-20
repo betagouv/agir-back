@@ -112,6 +112,24 @@ describe('CommuneRepository', () => {
     // THEN
     expect(result).toEqual({ code_departement: '2A', code_region: '94' });
   });
+  it('findDepartementRegionByCodePostal : renvoie ok pour le premier arrondissement de Lyon', async () => {
+    // WHEN
+    const result = await communeRepository.findDepartementRegionByCodePostal(
+      '69001',
+    );
+
+    // THEN
+    expect(result).toEqual({ code_departement: '69', code_region: '84' });
+  });
+  it('findDepartementRegionByCodePostal : renvoie ok pour le premier arrondissement de Paris', async () => {
+    // WHEN
+    const result = await communeRepository.findDepartementRegionByCodePostal(
+      '75002',
+    );
+
+    // THEN
+    expect(result).toEqual({ code_departement: '75', code_region: '11' });
+  });
   it('findDepartementRegionByCodePostal : renvoie 2B pour 20287 (Meria)', async () => {
     // WHEN
     const result = await communeRepository.findDepartementRegionByCodePostal(

@@ -43,6 +43,7 @@ export class AidesUsecase {
         user.logement.code_postal,
       );
 
+
     return this.aideRepository.search({
       code_postal: user.logement.code_postal,
       code_commune: code_commune ? code_commune : undefined,

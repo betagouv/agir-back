@@ -219,6 +219,7 @@ export class CMSUsecase {
       try {
         article = CMSUsecase.buildArticleOrQuizzFromCMSPopulateData(
           element,
+          CMSModel.article,
         ) as ArticleData;
         liste_articles.push(article);
         loading_result.push(`loaded article : ${article.content_id}`);
@@ -344,7 +345,10 @@ export class CMSUsecase {
       const element: CMSWebhookPopulateAPI = CMS_QUIZZ_DATA[index];
       let quizz: QuizzData;
       try {
-        quizz = CMSUsecase.buildArticleOrQuizzFromCMSPopulateData(element);
+        quizz = CMSUsecase.buildArticleOrQuizzFromCMSPopulateData(
+          element,
+          CMSModel.quizz,
+        );
         liste_quizzes.push(quizz);
         loading_result.push(`loaded quizz : ${quizz.content_id}`);
       } catch (error) {
@@ -672,8 +676,9 @@ export class CMSUsecase {
 
   static buildArticleOrQuizzFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
+    type: CMSModel,
   ): ArticleData | QuizzData {
-    return {
+    const result = {
       content_id: entry.id.toString(),
       tags_utilisateur: [],
       titre: entry.attributes.titre,
@@ -715,15 +720,20 @@ export class CMSUsecase {
       mois: entry.attributes.mois
         ? entry.attributes.mois.split(',').map((m) => parseInt(m))
         : [],
-      include_codes_commune: CMSUsecase.split(
-        entry.attributes.include_codes_commune,
-      ),
-      exclude_codes_commune: CMSUsecase.split(
-        entry.attributes.exclude_codes_commune,
-      ),
-      codes_departement: CMSUsecase.split(entry.attributes.codes_departement),
-      codes_region: CMSUsecase.split(entry.attributes.codes_region),
     };
+    if (type === CMSModel.article) {
+      Object.assign(result, {
+        include_codes_commune: CMSUsecase.split(
+          entry.attributes.include_codes_commune,
+        ),
+        exclude_codes_commune: CMSUsecase.split(
+          entry.attributes.exclude_codes_commune,
+        ),
+        codes_departement: CMSUsecase.split(entry.attributes.codes_departement),
+        codes_region: CMSUsecase.split(entry.attributes.codes_region),
+      });
+    }
+    return result;
   }
   static buildAideFromCMSPopulateData(entry: CMSWebhookPopulateAPI): Aide {
     return {

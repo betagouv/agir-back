@@ -82,7 +82,15 @@ export class CommuneRepository {
       };
     }
 
-    const commune = this.getCommuneByCodeINSEE(liste[0].INSEE);
+    let commune = this.getCommuneByCodeINSEE(liste[0].INSEE);
+    if (!commune) {
+      for (const commune_insee of communes as Commune[]) {
+        if (commune_insee.codesPostaux.includes(code_postal)) {
+          commune = commune_insee;
+          break;
+        }
+      }
+    }
 
     if (commune) {
       return {
