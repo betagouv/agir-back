@@ -846,7 +846,7 @@ export class CMSUsecase {
       reponses: entry.attributes.reponses
         ? entry.attributes.reponses.map((r) => ({
             label: r.reponse,
-            code: r.reponse,
+            code: r.code,
           }))
         : [],
       thematique: entry.attributes.thematique.data
