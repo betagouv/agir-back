@@ -7,6 +7,7 @@ import {
 } from '../src/domain/onboarding/onboarding';
 import { v4 as uuidv4 } from 'uuid';
 import { LiveService } from '../src/domain/service/serviceDefinition';
+import { Feature } from '../src/domain/gamification/feature';
 
 const ONBOARD_DATA_1234 = {
   transports: ['voiture', 'pied'],
@@ -124,22 +125,16 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 6,
-    migration_enabled: true,
+    version: 8,
     gamification: {
-      version: 0,
       points: 0,
     },
-    suivis: [],
-    bilans: [],
-    services: [],
     unlocked_features: {
       version: 1,
-      unlocked_features: ['univers', 'bibliotheque'],
+      unlocked_features: [Feature.univers, Feature.bibliotheque],
     },
-    onboardingResult: {},
-    onboardingData: {},
-    //missions: missions,
+    suivis: [],
+    services: [],
   },
   DEV: {
     nom: 'Mr Dev',
@@ -236,18 +231,16 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 6,
+    version: 8,
     gamification: {
       points: 0,
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: ['univers'],
+      unlocked_features: [Feature.univers, Feature.bibliotheque],
     },
     suivis: [],
     services: [],
-    onboardingResult: ONBOARDING_RES_1234,
-    onboardingData: ONBOARD_DATA_1234,
   },
   margaux: {
     nom: 'RECETTEUR',
@@ -256,18 +249,16 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 6,
+    version: 8,
     gamification: {
       points: 0,
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: ['univers'],
+      unlocked_features: [Feature.univers, Feature.bibliotheque],
     },
     suivis: [],
     services: [],
-    onboardingResult: ONBOARDING_RES_1234,
-    onboardingData: ONBOARD_DATA_1234,
   },
   nina: {
     nom: 'RECETTEUR',
@@ -276,18 +267,16 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 6,
+    version: 8,
     gamification: {
       points: 0,
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: ['univers'],
+      unlocked_features: [Feature.univers, Feature.bibliotheque],
     },
     suivis: [],
     services: [],
-    onboardingResult: ONBOARDING_RES_1234,
-    onboardingData: ONBOARD_DATA_1234,
   },
   lucas: {
     nom: 'RECETTEUR',
@@ -296,18 +285,16 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 6,
+    version: 8,
     gamification: {
       points: 0,
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: ['univers', 'aides'],
+      unlocked_features: [Feature.univers, Feature.bibliotheque],
     },
     suivis: [],
     services: [],
-    onboardingResult: ONBOARDING_RES_1234,
-    onboardingData: ONBOARD_DATA_1234,
   },
   jeremie: {
     nom: 'RECETTEUR',
@@ -316,18 +303,16 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 6,
+    version: 8,
     gamification: {
       points: 0,
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: ['univers'],
+      unlocked_features: [Feature.univers, Feature.bibliotheque],
     },
     suivis: [],
     services: [],
-    onboardingResult: ONBOARDING_RES_1234,
-    onboardingData: ONBOARD_DATA_1234,
   },
   dorian: {
     nom: 'RECETTEUR',
@@ -336,18 +321,16 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 6,
+    version: 8,
     gamification: {
       points: 0,
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: ['univers'],
+      unlocked_features: [Feature.univers, Feature.bibliotheque],
     },
     suivis: [],
     services: [],
-    onboardingResult: ONBOARDING_RES_1234,
-    onboardingData: ONBOARD_DATA_1234,
   },
   guillaume: {
     nom: 'RECETTEUR',
@@ -356,18 +339,16 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 6,
+    version: 8,
     gamification: {
       points: 0,
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: ['univers'],
+      unlocked_features: [Feature.univers, Feature.bibliotheque],
     },
     suivis: [],
     services: [],
-    onboardingResult: ONBOARDING_RES_1234,
-    onboardingData: ONBOARD_DATA_1234,
   },
   romane: {
     nom: 'RECETTEUR',
@@ -376,18 +357,16 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 6,
+    version: 8,
     gamification: {
       points: 0,
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: ['univers'],
+      unlocked_features: [Feature.univers, Feature.bibliotheque],
     },
     suivis: [],
     services: [],
-    onboardingResult: ONBOARDING_RES_1234,
-    onboardingData: ONBOARD_DATA_1234,
   },
   claire: {
     nom: 'RECETTEUR',
@@ -396,18 +375,16 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 6,
+    version: 8,
     gamification: {
       points: 0,
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: ['univers'],
+      unlocked_features: [Feature.univers, Feature.bibliotheque],
     },
     suivis: [],
     services: [],
-    onboardingResult: ONBOARDING_RES_1234,
-    onboardingData: ONBOARD_DATA_1234,
   },
   fruggr: {
     nom: 'D4B',
