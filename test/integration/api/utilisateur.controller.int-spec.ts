@@ -217,7 +217,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       commune: 'PALAISEAU',
       //onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
-    console.log(response.body);
     expect(response.status).toBe(201);
 
     // WHEN
@@ -632,7 +631,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       transports_quotidiens: [TransportQuotidien.pied],
     });
     // THEN
-    console.log(response.body);
     expect(response.status).toBe(200);
     let dbUser = await utilisateurRepository.getById('utilisateur-id');
 

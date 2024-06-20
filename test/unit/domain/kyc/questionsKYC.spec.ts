@@ -715,6 +715,34 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     expect(question.reponses).toEqual([{ label: '123', code: null }]);
   });
 
+  it.only('getQuestionOrException : trouve une question répondu par id KYC CMS', () => {
+    // GIVEN
+    const history = new KYCHistory({
+      version: 0,
+      answered_questions: [
+        {
+          id: KYCID.KYC001,
+          id_cms: 1,
+          question: `Quel est votre sujet principal d'intéret ?`,
+          type: TypeReponseQuestionKYC.entier,
+          is_NGC: false,
+          categorie: Categorie.test,
+          points: 10,
+          reponses: [{ label: '123', code: null }],
+          reponses_possibles: [],
+          tags: [],
+          universes: [],
+        },
+      ],
+    });
+
+    // WHEN
+    const question = history.getAnsweredQuestionByCMS_ID('1');
+
+    // THEN
+    expect(question.id).toEqual(KYCID.KYC001);
+  });
+
   it('getKYCRestantes : kyc non repondu', () => {
     // GIVEN
     const history = new KYCHistory({

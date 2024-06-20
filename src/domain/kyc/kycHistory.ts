@@ -147,9 +147,9 @@ export class KYCHistory {
   private getAnsweredQuestionByCode(id: string): QuestionKYC {
     return this.answered_questions.find((element) => element.id === id);
   }
-  private getAnsweredQuestionByCMS_ID(id: string): QuestionKYC {
+  public getAnsweredQuestionByCMS_ID(id: string): QuestionKYC {
     return this.answered_questions.find(
-      (element) => element.id_cms.toString() === id,
+      (element) => element.id_cms.toString() == id,
     );
   }
 
