@@ -55,6 +55,24 @@ const utilisateurs = {
     suivis: [],
     services: [],
   },
+  wojtek2: {
+    nom: 'RECETTEUR',
+    prenom: 'Wojtek2',
+    email: 'ww2@w.com',
+    mot_de_passe: 'haha',
+    revenu_fiscal: null,
+    parts: null,
+    version: 8,
+    gamification: {
+      points: 0,
+    },
+    unlocked_features: {
+      version: 1,
+      unlocked_features: [Feature.univers, Feature.bibliotheque],
+    },
+    suivis: [],
+    services: [],
+  },
   nina: {
     nom: 'RECETTEUR',
     prenom: 'Nina',

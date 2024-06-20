@@ -13,4 +13,5 @@ export enum utilisateurs_liste {
   nina = 'nina',
   recette_livio = 'recette_livio',
   wojtek = 'wojtek',
+  wojtek2 = 'wojtek2',
 }
