@@ -74,6 +74,6 @@ export class TodoController extends GenericControler {
   ) {
     this.checkCallerId(req, utilisateurId);
 
-    await this.todoUsecase.gagnerPointsFromTodo(utilisateurId);
+    await this.todoUsecase.gagnerPointsFromTodoTerminee(utilisateurId);
   }
 }

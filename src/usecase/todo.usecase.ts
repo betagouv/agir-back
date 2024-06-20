@@ -39,7 +39,7 @@ export class TodoUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  async gagnerPointsFromTodo(utilisateurId: string) {
+  async gagnerPointsFromTodoTerminee(utilisateurId: string) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
@@ -49,6 +49,12 @@ export class TodoUsecase {
         todo_active.points_todo,
         utilisateur.unlocked_features,
       );
+
+      if (todo_active.celebration && todo_active.celebration.reveal) {
+        const feature_to_reveal = todo_active.celebration.reveal.feature;
+        utilisateur.unlocked_features.add(feature_to_reveal);
+      }
+
       todo_active.done_at = new Date();
       utilisateur.parcours_todo.avanceDansParcours();
 

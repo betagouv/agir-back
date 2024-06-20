@@ -134,29 +134,33 @@ describe('TODO list (API test)', () => {
   });
   it('GET /utilisateurs/id/todo retourne la todo avec le champ aide et done_at, ainsi que todo_end = false', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, {
-      todo: {
-        liste_todo: [
-          {
-            numero_todo: 1,
-            points_todo: 25,
-            done_at: new Date(),
-            done: [],
-            todo: [
-              {
-                titre: 'faire quizz climat',
-                progression: { current: 0, target: 1 },
-                sont_points_en_poche: false,
-                type: 'aide',
-                url: '/aides',
-                points: 10,
-              },
-            ],
-          },
-        ],
-        todo_active: 0,
-      },
-    });
+    const todo: ParcoursTodo_v0 = {
+      version: 0,
+      liste_todo: [
+        {
+          numero_todo: 1,
+          points_todo: 25,
+          done_at: new Date(),
+          titre: 'uo',
+          imageUrl: 'http',
+          celebration: null,
+          done: [],
+          todo: [
+            {
+              id: '123',
+              titre: 'faire quizz climat',
+              progression: { current: 0, target: 1 },
+              sont_points_en_poche: false,
+              type: ContentType.aide,
+              url: '/aides',
+              points: 10,
+            },
+          ],
+        },
+      ],
+      todo_active: 0,
+    };
+    await TestUtil.create(DB.utilisateur, { todo: todo });
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
@@ -191,29 +195,36 @@ describe('TODO list (API test)', () => {
 
   it('GET /utilisateurs/id/todo retourne la todo n°1 avec une ref de quizz qui va bien : thematique  climat', async () => {
     // GIVEN
+    const todo: ParcoursTodo_v0 = {
+      version: 0,
+      liste_todo: [
+        {
+          numero_todo: 1,
+          points_todo: 25,
+          titre: 'uo',
+          imageUrl: 'http',
+          celebration: null,
+          done_at: null,
+          done: [],
+          todo: [
+            {
+              titre: 'faire quizz climat',
+              thematiques: [Thematique.climat],
+              progression: { current: 0, target: 1 },
+              sont_points_en_poche: false,
+              type: ContentType.quizz,
+              level: DifficultyLevel.L1,
+              points: 10,
+              id: '123',
+            },
+          ],
+        },
+      ],
+      todo_active: 0,
+    };
     await TestUtil.create(DB.utilisateur, {
       version: 2,
-      todo: {
-        liste_todo: [
-          {
-            numero_todo: 1,
-            points_todo: 25,
-            done: [],
-            todo: [
-              {
-                titre: 'faire quizz climat',
-                thematiques: [Thematique.climat],
-                progression: { current: 0, target: 1 },
-                sont_points_en_poche: false,
-                type: 'quizz',
-                level: DifficultyLevel.L1,
-                points: 10,
-              },
-            ],
-          },
-        ],
-        todo_active: 0,
-      },
+      todo: todo,
     });
     await TestUtil.create(DB.quizz, {
       content_id: 'quizz-id-l1',
@@ -242,29 +253,36 @@ describe('TODO list (API test)', () => {
   });
   it('GET /utilisateurs/id/todo retourne la todo n°1 pas de quizz hors reco', async () => {
     // GIVEN
+    const todo: ParcoursTodo_v0 = {
+      version: 0,
+      liste_todo: [
+        {
+          numero_todo: 1,
+          points_todo: 25,
+          done: [],
+          celebration: null,
+          done_at: null,
+          imageUrl: 'hhtp',
+          titre: 'DFGHJ',
+          todo: [
+            {
+              titre: 'faire quizz climat',
+              thematiques: [Thematique.climat],
+              progression: { current: 0, target: 1 },
+              sont_points_en_poche: false,
+              type: ContentType.quizz,
+              level: DifficultyLevel.L1,
+              points: 10,
+              id: '123',
+            },
+          ],
+        },
+      ],
+      todo_active: 0,
+    };
     await TestUtil.create(DB.utilisateur, {
       version: 2,
-      todo: {
-        liste_todo: [
-          {
-            numero_todo: 1,
-            points_todo: 25,
-            done: [],
-            todo: [
-              {
-                titre: 'faire quizz climat',
-                thematiques: [Thematique.climat],
-                progression: { current: 0, target: 1 },
-                sont_points_en_poche: false,
-                type: 'quizz',
-                level: DifficultyLevel.L1,
-                points: 10,
-              },
-            ],
-          },
-        ],
-        todo_active: 0,
-      },
+      todo: todo,
     });
     await TestUtil.create(DB.quizz, {
       content_id: 'quizz-id-l1',
@@ -282,29 +300,36 @@ describe('TODO list (API test)', () => {
   });
   it('GET /utilisateurs/id/todo retourne la todo n°1 avec une ref de quizz qui va bien : thematique  climat', async () => {
     // GIVEN
+    const todo: ParcoursTodo_v0 = {
+      version: 0,
+      liste_todo: [
+        {
+          numero_todo: 1,
+          points_todo: 25,
+          done: [],
+          done_at: null,
+          celebration: null,
+          imageUrl: 'http',
+          titre: 'FGHJK',
+          todo: [
+            {
+              titre: 'faire quizz climat',
+              thematiques: [Thematique.climat],
+              progression: { current: 0, target: 1 },
+              sont_points_en_poche: false,
+              type: ContentType.quizz,
+              level: DifficultyLevel.L1,
+              points: 10,
+              id: '123',
+            },
+          ],
+        },
+      ],
+      todo_active: 0,
+    };
     await TestUtil.create(DB.utilisateur, {
       version: 2,
-      todo: {
-        liste_todo: [
-          {
-            numero_todo: 1,
-            points_todo: 25,
-            done: [],
-            todo: [
-              {
-                titre: 'faire quizz climat',
-                thematiques: [Thematique.climat],
-                progression: { current: 0, target: 1 },
-                sont_points_en_poche: false,
-                type: 'quizz',
-                level: DifficultyLevel.L1,
-                points: 10,
-              },
-            ],
-          },
-        ],
-        todo_active: 0,
-      },
+      todo: todo,
     });
     await TestUtil.create(DB.quizz, {
       content_id: 'quizz-id-l1',
@@ -766,35 +791,55 @@ describe('TODO list (API test)', () => {
   });
   it('POST /utilisateurs/id/todo/gagner_points encaissse les points d une todo terminée , passe à la todo suivante, et valorise la date de fin', async () => {
     // GIVEN
+    const todo: ParcoursTodo_v0 = {
+      version: 0,
+      liste_todo: [
+        {
+          numero_todo: 1,
+          points_todo: 25,
+          done_at: null,
+          celebration: {
+            id: '123',
+            titre: 'Nouvelle Fonctionnalité',
+            type: CelebrationType.reveal,
+            reveal: {
+              id: '456',
+              titre: 'Vos recommandations',
+              description: `Toujours plus de contenu, et en fonction de vos centres d'intérêt`,
+              feature: Feature.recommandations,
+            },
+          },
+          imageUrl: 'http',
+          titre: 'YU',
+          todo: [],
+          done: [
+            {
+              id: '123',
+              titre: 'Faire un premier quizz climat - facile',
+              thematiques: [Thematique.climat],
+              progression: { current: 1, target: 1 },
+              sont_points_en_poche: true,
+              type: ContentType.quizz,
+              level: DifficultyLevel.L1,
+              points: 10,
+            },
+          ],
+        },
+        {
+          numero_todo: 2,
+          points_todo: 25,
+          todo: [],
+          done: [],
+          celebration: null,
+          done_at: null,
+          imageUrl: 'hhttp',
+          titre: 'fin',
+        },
+      ],
+      todo_active: 0,
+    };
     await TestUtil.create(DB.utilisateur, {
-      todo: {
-        liste_todo: [
-          {
-            numero_todo: 1,
-            points_todo: 25,
-            todo: [],
-            done: [
-              {
-                id: '123',
-                titre: 'Faire un premier quizz climat - facile',
-                thematiques: [Thematique.climat],
-                progression: { current: 1, target: 1 },
-                sont_points_en_poche: true,
-                type: ContentType.quizz,
-                level: DifficultyLevel.L1,
-                points: 10,
-              },
-            ],
-          },
-          {
-            numero_todo: 2,
-            points_todo: 25,
-            todo: [],
-            done: [],
-          },
-        ],
-        todo_active: 0,
-      },
+      todo: todo,
     });
 
     // WHEN
@@ -809,6 +854,9 @@ describe('TODO list (API test)', () => {
     expect(
       dbUtilisateur.parcours_todo.liste_todo[0].done_at.getTime(),
     ).toBeGreaterThan(Date.now() - 1000);
+    expect(
+      dbUtilisateur.unlocked_features.isUnlocked(Feature.recommandations),
+    ).toEqual(true);
   });
   it('POST /utilisateurs/id/todo/gagner_points 400 si todo pas faite', async () => {
     // GIVEN
