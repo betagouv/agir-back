@@ -47,7 +47,7 @@ export class TodoCatalogue {
       points_todo: 50,
       titre: 'Mission 1 - Faisons connaissance',
       imageUrl:
-        'https://res.cloudinary.com/dq023imd8/image/upload/v1718867240/mission1_a602fa6dcc.png',
+        'https://res.cloudinary.com/dq023imd8/image/upload/v1718959272/Mission_1_2076902965.png',
       done_at: null,
       celebration: {
         id: uuidv4(),
@@ -79,7 +79,7 @@ export class TodoCatalogue {
       points_todo: 50,
       titre: 'Mission 2 - Motivation et freins',
       imageUrl:
-        'https://res.cloudinary.com/dq023imd8/image/upload/v1718867240/mission2_32516abaf0.png',
+        'https://res.cloudinary.com/dq023imd8/image/upload/v1718959271/Mission_3_e87ba4bebb.png',
       done_at: null,
       celebration: {
         id: uuidv4(),
@@ -108,10 +108,10 @@ export class TodoCatalogue {
     },
     {
       numero_todo: 3,
-      points_todo: 60,
+      points_todo: 50,
       titre: 'Mission 3 - Connaître son impact',
       imageUrl:
-        'https://res.cloudinary.com/dq023imd8/image/upload/v1718867240/mission3_1eec643aa8.png',
+        'https://res.cloudinary.com/dq023imd8/image/upload/v1718959271/Mission_2_bb3aa4b43d.png',
       done_at: null,
       celebration: {
         id: uuidv4(),
@@ -119,9 +119,9 @@ export class TodoCatalogue {
         type: CelebrationType.reveal,
         reveal: {
           id: uuidv4(),
-          titre: 'Vos services',
-          description: `Un service permet d'avoir toujours sous les yeux vos fonctionnalités clés`,
-          feature: Feature.services,
+          titre: 'Vos univers à explorer',
+          description: `Retrouvez de programmes d'accompagnement sur les thématiques de la transition écologique`,
+          feature: Feature.univers,
         },
       },
       done: [],
