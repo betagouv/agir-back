@@ -217,7 +217,7 @@ export class TodoCatalogue {
         },
         {
           id: uuidv4(),
-          titre: `Installer "Fruits et légumes de saison"`,
+          titre: `Ajouter "Fruits et légumes de saison"`,
           thematiques: [Thematique.alimentation],
           progression: { current: 0, target: 1 },
           service_id: LiveService.fruits,
