@@ -14,7 +14,11 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.bibliotheque],
+      unlocked_features: [
+        Feature.univers,
+        Feature.bibliotheque,
+        Feature.services,
+      ],
     },
     suivis: [],
     services: [],
@@ -32,7 +36,11 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.bibliotheque],
+      unlocked_features: [
+        Feature.univers,
+        Feature.bibliotheque,
+        Feature.services,
+      ],
     },
     suivis: [],
     services: [],
@@ -50,7 +58,11 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.bibliotheque],
+      unlocked_features: [
+        Feature.univers,
+        Feature.bibliotheque,
+        Feature.services,
+      ],
     },
     suivis: [],
     services: [],
@@ -68,7 +80,11 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.bibliotheque],
+      unlocked_features: [
+        Feature.univers,
+        Feature.bibliotheque,
+        Feature.services,
+      ],
     },
     suivis: [],
     services: [],
@@ -86,7 +102,11 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.bibliotheque],
+      unlocked_features: [
+        Feature.univers,
+        Feature.bibliotheque,
+        Feature.services,
+      ],
     },
     suivis: [],
     services: [],
@@ -104,7 +124,11 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.bibliotheque],
+      unlocked_features: [
+        Feature.univers,
+        Feature.bibliotheque,
+        Feature.services,
+      ],
     },
     suivis: [],
     services: [],
@@ -122,7 +146,11 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.bibliotheque],
+      unlocked_features: [
+        Feature.univers,
+        Feature.bibliotheque,
+        Feature.services,
+      ],
     },
     suivis: [],
     services: [],
@@ -140,7 +168,11 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.bibliotheque],
+      unlocked_features: [
+        Feature.univers,
+        Feature.bibliotheque,
+        Feature.services,
+      ],
     },
     suivis: [],
     services: [],
@@ -158,7 +190,11 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.bibliotheque],
+      unlocked_features: [
+        Feature.univers,
+        Feature.bibliotheque,
+        Feature.services,
+      ],
     },
     suivis: [],
     services: [],
@@ -176,7 +212,11 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.bibliotheque],
+      unlocked_features: [
+        Feature.univers,
+        Feature.bibliotheque,
+        Feature.services,
+      ],
     },
     suivis: [],
     services: [],
@@ -194,7 +234,11 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.bibliotheque],
+      unlocked_features: [
+        Feature.univers,
+        Feature.bibliotheque,
+        Feature.services,
+      ],
     },
     suivis: [],
     services: [],
