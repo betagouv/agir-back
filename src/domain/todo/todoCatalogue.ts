@@ -217,6 +217,17 @@ export class TodoCatalogue {
         },
         {
           id: uuidv4(),
+          titre: 'Quizz (ID2)',
+          content_id: '2',
+          thematiques: [Thematique.climat],
+          progression: { current: 0, target: 1 },
+          sont_points_en_poche: false,
+          type: ContentType.quizz,
+          level: DifficultyLevel.ANY,
+          points: 5,
+        },
+        {
+          id: uuidv4(),
           titre: `Ajouter "Fruits et légumes de saison"`,
           thematiques: [Thematique.alimentation],
           progression: { current: 0, target: 1 },
