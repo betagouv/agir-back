@@ -147,10 +147,11 @@ export class KYCHistory {
   private getAnsweredQuestionByCode(id: string): QuestionKYC {
     return this.answered_questions.find((element) => element.id === id);
   }
-  public getAnsweredQuestionByCMS_ID(id: string): QuestionKYC {
-    return this.answered_questions.find(
-      (element) => element.id_cms.toString() == id,
+  public getAnsweredQuestionByCMS_ID(id: number): QuestionKYC {
+    const found = this.answered_questions.find(
+      (element) => element.id_cms === id,
     );
+    return found;
   }
 
   private getKYCByIdOrException(id: string): QuestionKYC {

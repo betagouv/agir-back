@@ -168,7 +168,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     accessible: true,
     motif: 'truc',
     categorie: Categorie.recommandation,
-    conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
+    conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
     mois: [1],
   };
 
@@ -952,7 +952,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           motif: null,
           categorie: Categorie.recommandation,
           mois: [1],
-          conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
+          conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
         },
       ],
     };
@@ -1027,7 +1027,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           motif: null,
           categorie: Categorie.recommandation,
           mois: [1],
-          conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
+          conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
         },
       ],
     };

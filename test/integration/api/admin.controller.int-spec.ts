@@ -446,7 +446,7 @@ describe('Admin (API test)', () => {
           status: DefiStatus.deja_fait,
           categorie: Categorie.recommandation,
           mois: [],
-          conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
+          conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
         },
       ],
     };
@@ -1192,7 +1192,7 @@ describe('Admin (API test)', () => {
       motif: 'truc',
       categorie: Categorie.recommandation,
       mois: [],
-      conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
+      conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
     };
     const defis_1: DefiHistory_v0 = {
       version: 0,
@@ -1519,7 +1519,7 @@ describe('Admin (API test)', () => {
       motif: '',
       categorie: Categorie.recommandation,
       mois: [],
-      conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
+      conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
     };
 
     const defi1 = {

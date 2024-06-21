@@ -472,7 +472,7 @@ describe('/api/incoming/cms (API test)', () => {
     ]);
     expect(defi.mois).toStrictEqual([0, 1]);
     expect(defi.conditions).toStrictEqual([
-      [{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }],
+      [{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }],
     ]);
   });
 
@@ -505,7 +505,7 @@ describe('/api/incoming/cms (API test)', () => {
     ]);
     expect(defi.mois).toStrictEqual([0, 1]);
     expect(defi.conditions).toStrictEqual([
-      [{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }],
+      [{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }],
     ]);
   });
 

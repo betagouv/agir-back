@@ -63,7 +63,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // WHEN
     const result = history.areConditionsMatched([
-      [{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }],
+      [{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }],
     ]);
 
     // THEN
@@ -95,7 +95,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // WHEN
     const result = history.areConditionsMatched([
-      [{ id_kyc: '1', code_kyc: 'KYC001', code_reponse: 'climat' }],
+      [{ id_kyc: 1, code_kyc: 'KYC001', code_reponse: 'climat' }],
     ]);
 
     // THEN
@@ -127,7 +127,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // WHEN
     const result = history.areConditionsMatched([
-      [{ id_kyc: '1', code_kyc: 'KYC001', code_reponse: 'logement' }],
+      [{ id_kyc: 1, code_kyc: 'KYC001', code_reponse: 'logement' }],
     ]);
 
     // THEN
@@ -176,8 +176,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // WHEN
     const result = history.areConditionsMatched([
       [
-        { id_kyc: '1', code_kyc: 'KYC001', code_reponse: 'climat' },
-        { id_kyc: '2', code_kyc: 'KYC002', code_reponse: 'yo' },
+        { id_kyc: 1, code_kyc: 'KYC001', code_reponse: 'climat' },
+        { id_kyc: 2, code_kyc: 'KYC002', code_reponse: 'yo' },
       ],
     ]);
 
@@ -227,8 +227,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // WHEN
     const result = history.areConditionsMatched([
       [
-        { id_kyc: '1', code_kyc: 'KYC001', code_reponse: 'logement' },
-        { id_kyc: '2', code_kyc: 'KYC002', code_reponse: 'ya' },
+        { id_kyc: 1, code_kyc: 'KYC001', code_reponse: 'logement' },
+        { id_kyc: 2, code_kyc: 'KYC002', code_reponse: 'ya' },
       ],
     ]);
 
@@ -277,8 +277,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // WHEN
     const result = history.areConditionsMatched([
-      [{ id_kyc: '1', code_kyc: 'KYC001', code_reponse: 'logement' }],
-      [{ id_kyc: '2', code_kyc: 'KYC002', code_reponse: 'yo' }],
+      [{ id_kyc: 1, code_kyc: 'KYC001', code_reponse: 'logement' }],
+      [{ id_kyc: 2, code_kyc: 'KYC002', code_reponse: 'yo' }],
     ]);
 
     // THEN
@@ -737,7 +737,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     });
 
     // WHEN
-    const question = history.getAnsweredQuestionByCMS_ID('1');
+    const question = history.getAnsweredQuestionByCMS_ID(1);
 
     // THEN
     expect(question.id).toEqual(KYCID.KYC001);

@@ -600,7 +600,7 @@ export class CMSUsecase {
       conditions: entry.OR_Conditions.map((or) =>
         or.AND_Conditions.map((and) => ({
           code_kyc: and.kyc.code,
-          id_kyc: and.kyc.id.toString(),
+          id_kyc: and.kyc.id,
           code_reponse: and.code_reponse,
         })),
       ),
