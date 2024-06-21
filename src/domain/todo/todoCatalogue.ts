@@ -63,7 +63,7 @@ export class TodoCatalogue {
       todo: [
         {
           id: uuidv4(),
-          titre: 'KYC (ID13)',
+          titre: 'Mieux vous connaître',
           content_id: '_1',
           thematiques: [Thematique.climat],
           progression: { current: 0, target: 1 },
@@ -74,7 +74,7 @@ export class TodoCatalogue {
         },
         {
           id: uuidv4(),
-          titre: 'KYC (ID5)',
+          titre: 'Mieux vous connaître',
           content_id: 'KYC005',
           thematiques: [Thematique.climat],
           progression: { current: 0, target: 1 },
@@ -129,7 +129,7 @@ export class TodoCatalogue {
       todo: [
         {
           id: uuidv4(),
-          titre: 'KYC (ID1)',
+          titre: 'Mieux vous connaître',
           content_id: 'KYC001',
           thematiques: [Thematique.climat],
           progression: { current: 0, target: 1 },
@@ -140,7 +140,7 @@ export class TodoCatalogue {
         },
         {
           id: uuidv4(),
-          titre: 'KYC (ID49)',
+          titre: 'Mieux vous connaître',
           content_id: 'KYC_motivation',
           thematiques: [Thematique.climat],
           progression: { current: 0, target: 1 },
@@ -151,7 +151,7 @@ export class TodoCatalogue {
         },
         {
           id: uuidv4(),
-          titre: 'KYC (ID53)',
+          titre: 'Mieux vous connaître',
           content_id: 'KYC_contrainte',
           thematiques: [Thematique.climat],
           progression: { current: 0, target: 1 },
@@ -195,7 +195,7 @@ export class TodoCatalogue {
       todo: [
         {
           id: uuidv4(),
-          titre: 'KYC (ID51)',
+          titre: 'Mieux vous connaître',
           content_id: 'KYC_habitude',
           thematiques: [Thematique.climat],
           progression: { current: 0, target: 1 },
@@ -206,7 +206,7 @@ export class TodoCatalogue {
         },
         {
           id: uuidv4(),
-          titre: 'KYC (ID52)',
+          titre: 'Mieux vous connaître',
           content_id: 'KYC_bilan',
           thematiques: [Thematique.climat],
           progression: { current: 0, target: 1 },
@@ -236,17 +236,6 @@ export class TodoCatalogue {
           type: ContentType.service,
           points: 20,
           level: DifficultyLevel.ANY,
-        },
-        {
-          id: uuidv4(),
-          titre: 'article 171',
-          content_id: '171',
-          thematiques: [Thematique.climat],
-          progression: { current: 0, target: 1 },
-          sont_points_en_poche: false,
-          type: ContentType.article,
-          level: DifficultyLevel.ANY,
-          points: 5,
         },
       ],
     },
