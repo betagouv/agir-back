@@ -134,10 +134,6 @@ export class Mission {
 
     if (objectif && !objectif.isDone()) {
       objectif.done_at = new Date();
-      utilisateur.gamification.ajoutePoints(
-        objectif.points,
-        utilisateur.unlocked_features,
-      );
       this.unlockContentIfAllKYCsDone();
     }
   }

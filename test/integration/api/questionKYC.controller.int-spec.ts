@@ -295,7 +295,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     ]);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
-    expect(userDB.gamification.points).toEqual(30);
+    expect(userDB.gamification.points).toEqual(20);
     expect(
       userDB.missions.missions[0].objectifs[0].done_at.getTime(),
     ).toBeLessThan(Date.now());
