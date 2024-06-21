@@ -224,6 +224,7 @@ export class CMSUsecase {
         liste_articles.push(article);
         loading_result.push(`loaded article : ${article.content_id}`);
       } catch (error) {
+        console.log(error);
         loading_result.push(
           `Could not load article ${element.id} : ${error.message}`,
         );
@@ -420,7 +421,7 @@ export class CMSUsecase {
       code: cmsWebhookAPI.entry.code,
       label: cmsWebhookAPI.entry.label,
       id_cms: cmsWebhookAPI.entry.id,
-      image_url: this.getImageUrl(cmsWebhookAPI),
+      image_url: CMSUsecase.getImageUrl(cmsWebhookAPI),
       is_locked: cmsWebhookAPI.entry.is_locked,
     });
   }
@@ -457,7 +458,7 @@ export class CMSUsecase {
       id_cms: cmsWebhookAPI.entry.id,
       label: cmsWebhookAPI.entry.label,
       niveau: cmsWebhookAPI.entry.niveau,
-      image_url: this.getImageUrl(cmsWebhookAPI),
+      image_url: CMSUsecase.getImageUrl(cmsWebhookAPI),
       famille_ordre: cmsWebhookAPI.entry.famille
         ? cmsWebhookAPI.entry.famille.ordre
         : 999,
@@ -472,19 +473,21 @@ export class CMSUsecase {
   ) {
     let url = null;
     if (cmsPopulateAPI.attributes.imageUrl) {
-      if (
-        cmsPopulateAPI.attributes.imageUrl.data.attributes.formats.thumbnail
-      ) {
-        url =
+      if (cmsPopulateAPI.attributes.imageUrl.data) {
+        if (
           cmsPopulateAPI.attributes.imageUrl.data.attributes.formats.thumbnail
-            .url;
-      } else {
-        url = cmsPopulateAPI.attributes.imageUrl.data.attributes.url;
+        ) {
+          url =
+            cmsPopulateAPI.attributes.imageUrl.data.attributes.formats.thumbnail
+              .url;
+        } else {
+          url = cmsPopulateAPI.attributes.imageUrl.data.attributes.url;
+        }
       }
     }
     return url;
   }
-  private getImageUrl(cmsWebhookAPI: CMSWebhookAPI) {
+  private static getImageUrl(cmsWebhookAPI: CMSWebhookAPI) {
     let url = null;
     if (cmsWebhookAPI.entry.imageUrl) {
       if (cmsWebhookAPI.entry.imageUrl.formats.thumbnail) {
@@ -509,62 +512,65 @@ export class CMSUsecase {
 
     if (cmsWebhookAPI.model === CMSModel.article) {
       await this.articleRepository.upsert(
-        CMSUsecase.buildArticleOrQuizzFromCMSData(
-          cmsWebhookAPI.entry,
+        this.buildArticleOrQuizzFromCMSData(
+          cmsWebhookAPI,
           CMSModel.article,
         ) as ArticleData,
       );
     }
     if (cmsWebhookAPI.model === CMSModel.quizz) {
       await this.quizzRepository.upsert(
-        CMSUsecase.buildArticleOrQuizzFromCMSData(
-          cmsWebhookAPI.entry,
-          CMSModel.quizz,
-        ),
+        this.buildArticleOrQuizzFromCMSData(cmsWebhookAPI, CMSModel.quizz),
       );
     }
   }
 
-  static buildArticleOrQuizzFromCMSData(
-    entry: CMSWebhookEntryAPI,
+  private buildArticleOrQuizzFromCMSData(
+    hook: CMSWebhookAPI,
     type: CMSModel,
   ): ArticleData | QuizzData {
     const result = {
-      content_id: entry.id.toString(),
+      content_id: hook.entry.id.toString(),
       tags_utilisateur: [],
-      titre: entry.titre,
-      soustitre: entry.sousTitre,
-      source: entry.source,
-      image_url: entry.imageUrl ? entry.imageUrl.formats.thumbnail.url : null,
-      partenaire: entry.partenaire ? entry.partenaire.nom : null,
-      rubrique_ids: this.getIdsFromRubriques(entry.rubriques),
-      rubrique_labels: this.getTitresFromRubriques(entry.rubriques),
-      codes_postaux: CMSUsecase.split(entry.codes_postaux),
-      duree: entry.duree,
-      frequence: entry.frequence,
-      difficulty: entry.difficulty ? entry.difficulty : 1,
-      points: entry.points ? entry.points : 0,
-      thematique_principale: entry.thematique_gamification
+      titre: hook.entry.titre,
+      soustitre: hook.entry.sousTitre,
+      source: hook.entry.source,
+      image_url: CMSUsecase.getImageUrl(hook),
+      partenaire: hook.entry.partenaire ? hook.entry.partenaire.nom : null,
+      rubrique_ids: CMSUsecase.getIdsFromRubriques(hook.entry.rubriques),
+      rubrique_labels: CMSUsecase.getTitresFromRubriques(hook.entry.rubriques),
+      codes_postaux: CMSUsecase.split(hook.entry.codes_postaux),
+      duree: hook.entry.duree,
+      frequence: hook.entry.frequence,
+      difficulty: hook.entry.difficulty ? hook.entry.difficulty : 1,
+      points: hook.entry.points ? hook.entry.points : 0,
+      thematique_principale: hook.entry.thematique_gamification
         ? ThematiqueRepository.getThematiqueByCmsId(
-            entry.thematique_gamification.id,
+            hook.entry.thematique_gamification.id,
           )
         : Thematique.climat,
-      thematiques: entry.thematiques
-        ? entry.thematiques.map((elem) =>
+      thematiques: hook.entry.thematiques
+        ? hook.entry.thematiques.map((elem) =>
             ThematiqueRepository.getThematiqueByCmsId(elem.id),
           )
         : [],
       score: 0,
       tags_rubriques: [],
-      categorie: Categorie[entry.categorie],
-      mois: entry.mois ? entry.mois.split(',').map((m) => parseInt(m)) : [],
+      categorie: Categorie[hook.entry.categorie],
+      mois: hook.entry.mois
+        ? hook.entry.mois.split(',').map((m) => parseInt(m))
+        : [],
     };
     if (type === CMSModel.article) {
       Object.assign(result, {
-        include_codes_commune: CMSUsecase.split(entry.include_codes_commune),
-        exclude_codes_commune: CMSUsecase.split(entry.exclude_codes_commune),
-        codes_departement: CMSUsecase.split(entry.codes_departement),
-        codes_region: CMSUsecase.split(entry.codes_region),
+        include_codes_commune: CMSUsecase.split(
+          hook.entry.include_codes_commune,
+        ),
+        exclude_codes_commune: CMSUsecase.split(
+          hook.entry.exclude_codes_commune,
+        ),
+        codes_departement: CMSUsecase.split(hook.entry.codes_departement),
+        codes_region: CMSUsecase.split(hook.entry.codes_region),
       });
     }
     return result;
@@ -702,9 +708,7 @@ export class CMSUsecase {
       titre: entry.attributes.titre,
       soustitre: entry.attributes.sousTitre,
       source: entry.attributes.source,
-      image_url: entry.attributes.imageUrl
-        ? entry.attributes.imageUrl.data.attributes.formats.thumbnail.url
-        : null,
+      image_url: CMSUsecase.getImageUrlFromPopulate(entry),
       partenaire: entry.attributes.partenaire.data
         ? entry.attributes.partenaire.data.attributes.nom
         : null,
