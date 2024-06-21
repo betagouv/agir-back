@@ -81,7 +81,7 @@ export class TodoUsecase {
 
     for (let index = 0; index < todo.todo.length; index++) {
       const element = todo.todo[index];
-      if (element.type === ContentType.quizz) {
+      if (element.type === ContentType.quizz && !element.content_id) {
         let quizzes = await this.quizzRepository.searchQuizzes({
           thematiques: element.thematiques,
           difficulty: element.level,
