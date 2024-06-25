@@ -715,7 +715,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     expect(question.reponses).toEqual([{ label: '123', code: null }]);
   });
 
-  it.only('getQuestionOrException : trouve une question répondu par id KYC CMS', () => {
+  it('getQuestionOrException : trouve une question répondu par id KYC CMS', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,

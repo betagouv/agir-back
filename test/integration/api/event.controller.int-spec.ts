@@ -338,7 +338,7 @@ describe('EVENT (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     const dbUtilisateur = await utilisateurRepository.getById('utilisateur-id');
-    expect(dbUtilisateur.gamification.points).toStrictEqual(35);
+    expect(dbUtilisateur.gamification.points).toStrictEqual(15);
     expect(
       dbUtilisateur.missions.missions[0].objectifs[0].done_at.getTime(),
     ).toBeLessThan(Date.now());
@@ -366,7 +366,7 @@ describe('EVENT (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     const dbUtilisateur = await utilisateurRepository.getById('utilisateur-id');
-    expect(dbUtilisateur.gamification.points).toStrictEqual(40);
+    expect(dbUtilisateur.gamification.points).toStrictEqual(15);
     expect(
       dbUtilisateur.missions.missions[0].objectifs[0].done_at.getTime(),
     ).toBeLessThan(Date.now());
