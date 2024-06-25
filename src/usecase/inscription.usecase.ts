@@ -64,10 +64,7 @@ export class InscriptionUsecase {
     this.checkInputToCreateUtilisateur(utilisateurInput);
 
     if (App.isWhiteListeEnabled()) {
-      let found = false;
-      found = found || App.doesWhiteListIncludes(utilisateurInput.email);
-      found = found || App.doesWhiteListDijonIncludes(utilisateurInput.email);
-      if (!found) {
+      if (!App.doesAnyWhiteListIncludes(utilisateurInput.email)) {
         ApplicationError.throwNotAuthorizedEmailError();
       }
     }
