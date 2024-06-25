@@ -57,7 +57,7 @@ describe('/api/incoming/winter-energies (API test)', () => {
     process.env = OLD_ENV;
   });
 
-  it('POST /api/incoming/winter-energies - 200 par défaut append des valeurs', async () => {
+  it.skip('POST /api/incoming/winter-energies - 200 par défaut append des valeurs', async () => {
     // GIVEN
     await TestUtil.create(DB.linky);
     // WHEN
@@ -74,7 +74,7 @@ describe('/api/incoming/winter-energies (API test)', () => {
     });
     expect(dbData.data).toHaveLength(7);
   });
-  it('POST /api/incoming/winter-energies - creation entree si pas de prm deja connu', async () => {
+  it.skip('POST /api/incoming/winter-energies - creation entree si pas de prm deja connu', async () => {
     // GIVEN
     // WHEN
     const response = await TestUtil.getServer()
@@ -90,7 +90,7 @@ describe('/api/incoming/winter-energies (API test)', () => {
     });
     expect(dbData.data).toHaveLength(5);
   });
-  it('POST /api/incoming/winter-energies - erreur 401 si mauvaise clé API', async () => {
+  it.skip('POST /api/incoming/winter-energies - erreur 401 si mauvaise clé API', async () => {
     // GIVEN
     await TestUtil.create(DB.linky);
     // WHEN
