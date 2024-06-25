@@ -57,7 +57,8 @@ export class App {
   public static doesAnyWhiteListIncludes(email: string): boolean {
     const access_1 = App.doesWhiteListIncludes(email);
     const access_2 = App.doesWhiteListDijonIncludes(email);
-    return access_1 || access_2;
+    const access_3 = App.doesWhiteListBesIncludes(email);
+    return access_1 || access_2 || access_3;
   }
   public static doesWhiteListIncludes(email: string): boolean {
     return (
@@ -69,6 +70,14 @@ export class App {
     return (
       !!process.env.WHITE_LIST_DIJON &&
       process.env.WHITE_LIST_DIJON.toLowerCase().includes(
+        email.toLocaleLowerCase(),
+      )
+    );
+  }
+  public static doesWhiteListBesIncludes(email: string): boolean {
+    return (
+      !!process.env.WHITE_LIST_BES &&
+      process.env.WHITE_LIST_BES.toLowerCase().includes(
         email.toLocaleLowerCase(),
       )
     );
