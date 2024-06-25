@@ -85,7 +85,7 @@ export class TodoCatalogue {
         },
         {
           id: uuidv4(),
-          titre: 'Quelle est votre situation profesionnelle ?',
+          titre: 'Quelle est votre situation professionnelle ?',
           content_id: 'KYC005',
           thematiques: [Thematique.climat],
           progression: { current: 0, target: 1 },
