@@ -6,9 +6,11 @@ import { ContentType } from '../../../src/domain/contenu/contentType';
 import { MissionsUtilisateur_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
 import { ParcoursTodo_v0 } from '../../../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 
 describe('Univers (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
+  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
   const sept_missions: MissionsUtilisateur_v0 = {
     version: 0,
@@ -423,7 +425,7 @@ describe('Univers (API test)', () => {
     expect(response.body[2].titre).toEqual('ya');
     expect(response.body[2].is_locked).toEqual(true);
   });
-  it(`GET /utilisateurs/id/univers/id/thematiques - liste une thematique, donnée correctes`, async () => {
+  it(`GET /utilisateurs/id/univers/id/thematiques - liste une thematique, donnée correctes, ajout mission à utilisateur si visible`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       missions: mission_unique,
@@ -432,11 +434,30 @@ describe('Univers (API test)', () => {
       code: Univers.alimentation,
       label: 'Manger !',
     });
+    await TestUtil.create(DB.mission, {
+      id_cms: 1,
+      est_visible: true,
+      thematique_univers: ThematiqueUnivers.cereales,
+    });
+    await TestUtil.create(DB.mission, {
+      id_cms: 2,
+      est_visible: true,
+      thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
+    });
+
     await TestUtil.create(DB.thematiqueUnivers, {
       id_cms: 1,
       code: ThematiqueUnivers.cereales,
       label: `Les céréales c'est bon`,
       image_url: 'aaaa',
+      niveau: 2,
+      univers_parent: Univers.alimentation,
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 2,
+      code: ThematiqueUnivers.gaspillage_alimentaire,
+      label: `jette pas !!`,
+      image_url: 'bbb',
       niveau: 2,
       univers_parent: Univers.alimentation,
     });
@@ -449,7 +470,7 @@ describe('Univers (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(1);
+    expect(response.body.length).toBe(2);
     expect(response.body[0]).toEqual({
       titre: `Les céréales c'est bon`,
       type: ThematiqueUnivers.cereales,
@@ -463,6 +484,59 @@ describe('Univers (API test)', () => {
       univers_parent: Univers.alimentation,
       univers_parent_label: 'Manger !',
     });
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.missions.missions).toHaveLength(2);
+  });
+  it(`GET /utilisateurs/id/univers/id/thematiques - liste une thematique, donnée correctes, ajout mission à utilisateur si visible`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      missions: mission_unique,
+    });
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Manger !',
+    });
+    await TestUtil.create(DB.mission, {
+      id_cms: 1,
+      est_visible: true,
+      thematique_univers: ThematiqueUnivers.cereales,
+    });
+    await TestUtil.create(DB.mission, {
+      id_cms: 2,
+      est_visible: false,
+      thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
+    });
+
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      label: `Les céréales c'est bon`,
+      image_url: 'aaaa',
+      niveau: 2,
+      univers_parent: Univers.alimentation,
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 2,
+      code: ThematiqueUnivers.gaspillage_alimentaire,
+      label: `jette pas !!`,
+      image_url: 'bbb',
+      niveau: 2,
+      univers_parent: Univers.alimentation,
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/univers/alimentation/thematiques',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(1);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.missions.missions).toHaveLength(1);
   });
   it(`GET /utilisateurs/id/univers/id/thematiques - liste les thematiques dans le bon ordre`, async () => {
     // GIVEN

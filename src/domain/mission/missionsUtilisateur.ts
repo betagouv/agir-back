@@ -40,9 +40,11 @@ export class MissionsUtilisateur {
   }
 
   public addMission(mission_def: MissionDefinition): Mission {
-    const new_mission = Mission.buildFromDef(mission_def);
-    this.missions.push(new_mission);
-    return new_mission;
+    if (!this.doesContainMissionOfId(mission_def.id_cms)) {
+      const new_mission = Mission.buildFromDef(mission_def);
+      this.missions.push(new_mission);
+      return new_mission;
+    }
   }
 
   public validateAricleOrQuizzDone(

@@ -4,6 +4,7 @@ import { ThematiqueRepository } from '../../src/infrastructure/repository/themat
 import { TuileThematique } from '../domain/univers/tuileThematique';
 import { TuileUnivers } from '../domain/univers/tuileUnivers';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
+import { Mission } from '../../src/domain/mission/mission';
 
 @Injectable()
 export class UniversUsecase {
@@ -57,25 +58,7 @@ export class UniversUsecase {
         utilisateur.missions.getMissionByThematiqueUnivers(tuile.type);
 
       if (existing_mission && existing_mission.est_visible) {
-        result.push(
-          new TuileThematique({
-            image_url: tuile.image_url,
-            is_locked: false,
-            is_new: existing_mission.isNew(),
-            niveau: tuile.niveau,
-            reason_locked: null,
-            type: tuile.type,
-            titre: ThematiqueRepository.getTitreThematiqueUnivers(
-              existing_mission.thematique_univers,
-            ),
-            progression: existing_mission.getProgression().current,
-            cible_progression: existing_mission.getProgression().target,
-            univers_parent: tuile.univers_parent,
-            univers_parent_label: tuile.univers_parent_label,
-            famille_id_cms: tuile.famille_id_cms,
-            famille_ordre: tuile.famille_ordre,
-          }),
-        );
+        result.push(this.completeTuileWithMission(existing_mission, tuile));
       } else {
         listMissionDefs.forEach((mission_def) => {
           if (
@@ -85,6 +68,9 @@ export class UniversUsecase {
               mission_def.thematique_univers,
             ) === univers
           ) {
+            const new_mission = utilisateur.missions.addMission(mission_def);
+            result.push(this.completeTuileWithMission(new_mission, tuile));
+            /**
             result.push(
               new TuileThematique({
                 image_url: tuile.image_url,
@@ -102,12 +88,37 @@ export class UniversUsecase {
                 famille_ordre: tuile.famille_ordre,
               }),
             );
+            */
           }
         });
       }
     });
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
     return this.ordonneTuilesThematiques(result);
+  }
+
+  private completeTuileWithMission(
+    mission: Mission,
+    tuile: TuileThematique,
+  ): TuileThematique {
+    return new TuileThematique({
+      image_url: tuile.image_url,
+      is_locked: false,
+      is_new: mission.isNew(),
+      niveau: tuile.niveau,
+      reason_locked: null,
+      type: tuile.type,
+      titre: ThematiqueRepository.getTitreThematiqueUnivers(
+        mission.thematique_univers,
+      ),
+      progression: mission.getProgression().current,
+      cible_progression: mission.getProgression().target,
+      univers_parent: tuile.univers_parent,
+      univers_parent_label: tuile.univers_parent_label,
+      famille_id_cms: tuile.famille_id_cms,
+      famille_ordre: tuile.famille_ordre,
+    });
   }
 
   private ordonneTuilesThematiques(
