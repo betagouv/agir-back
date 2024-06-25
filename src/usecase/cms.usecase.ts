@@ -219,10 +219,12 @@ export class CMSUsecase {
       try {
         article = CMSUsecase.buildArticleOrQuizzFromCMSPopulateData(
           element,
+          CMSModel.article,
         ) as ArticleData;
         liste_articles.push(article);
         loading_result.push(`loaded article : ${article.content_id}`);
       } catch (error) {
+        console.log(error);
         loading_result.push(
           `Could not load article ${element.id} : ${error.message}`,
         );
@@ -344,7 +346,10 @@ export class CMSUsecase {
       const element: CMSWebhookPopulateAPI = CMS_QUIZZ_DATA[index];
       let quizz: QuizzData;
       try {
-        quizz = CMSUsecase.buildArticleOrQuizzFromCMSPopulateData(element);
+        quizz = CMSUsecase.buildArticleOrQuizzFromCMSPopulateData(
+          element,
+          CMSModel.quizz,
+        );
         liste_quizzes.push(quizz);
         loading_result.push(`loaded quizz : ${quizz.content_id}`);
       } catch (error) {
@@ -371,21 +376,39 @@ export class CMSUsecase {
       | 'universes'
       | 'thematiques-univers',
   ): Promise<CMSWebhookPopulateAPI[]> {
+    let result = [];
+    const page_1 = '&pagination[start]=0&pagination[limit]=100';
+    const page_2 = '&pagination[start]=100&pagination[limit]=100';
+    const page_3 = '&pagination[start]=200&pagination[limit]=100';
     let response = null;
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${App.getCmsApiKey()}`,
+    };
+
+    let URL = this.buildPopulateURL(page_1, type);
+    response = await axios.get(URL, { headers: headers });
+    result = result.concat(response.data.data);
+
+    URL = this.buildPopulateURL(page_2, type);
+    response = await axios.get(URL, { headers: headers });
+    result = result.concat(response.data.data);
+
+    URL = this.buildPopulateURL(page_3, type);
+    response = await axios.get(URL, { headers: headers });
+    result = result.concat(response.data.data);
+
+    return result;
+  }
+
+  private buildPopulateURL(page: string, type: string) {
     const URL = App.getCmsURL().concat(
       '/',
       type,
-      '?pagination[start]=0&pagination[limit]=100&populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[10]=prochaines_thematiques&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent',
+      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[10]=prochaines_thematiques&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent',
     );
-    response = await axios.get(URL, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${App.getCmsApiKey()}`,
-      },
-    });
-    return response.data.data;
+    return URL.concat(page);
   }
-
   async createOrUpdateThematique(cmsWebhookAPI: CMSWebhookAPI) {
     await this.thematiqueRepository.upsertThematique(
       cmsWebhookAPI.entry.id,
@@ -398,7 +421,7 @@ export class CMSUsecase {
       code: cmsWebhookAPI.entry.code,
       label: cmsWebhookAPI.entry.label,
       id_cms: cmsWebhookAPI.entry.id,
-      image_url: this.getImageUrl(cmsWebhookAPI),
+      image_url: CMSUsecase.getImageUrl(cmsWebhookAPI),
       is_locked: cmsWebhookAPI.entry.is_locked,
     });
   }
@@ -435,7 +458,7 @@ export class CMSUsecase {
       id_cms: cmsWebhookAPI.entry.id,
       label: cmsWebhookAPI.entry.label,
       niveau: cmsWebhookAPI.entry.niveau,
-      image_url: this.getImageUrl(cmsWebhookAPI),
+      image_url: CMSUsecase.getImageUrl(cmsWebhookAPI),
       famille_ordre: cmsWebhookAPI.entry.famille
         ? cmsWebhookAPI.entry.famille.ordre
         : 999,
@@ -450,19 +473,21 @@ export class CMSUsecase {
   ) {
     let url = null;
     if (cmsPopulateAPI.attributes.imageUrl) {
-      if (
-        cmsPopulateAPI.attributes.imageUrl.data.attributes.formats.thumbnail
-      ) {
-        url =
+      if (cmsPopulateAPI.attributes.imageUrl.data) {
+        if (
           cmsPopulateAPI.attributes.imageUrl.data.attributes.formats.thumbnail
-            .url;
-      } else {
-        url = cmsPopulateAPI.attributes.imageUrl.data.attributes.url;
+        ) {
+          url =
+            cmsPopulateAPI.attributes.imageUrl.data.attributes.formats.thumbnail
+              .url;
+        } else {
+          url = cmsPopulateAPI.attributes.imageUrl.data.attributes.url;
+        }
       }
     }
     return url;
   }
-  private getImageUrl(cmsWebhookAPI: CMSWebhookAPI) {
+  private static getImageUrl(cmsWebhookAPI: CMSWebhookAPI) {
     let url = null;
     if (cmsWebhookAPI.entry.imageUrl) {
       if (cmsWebhookAPI.entry.imageUrl.formats.thumbnail) {
@@ -487,62 +512,65 @@ export class CMSUsecase {
 
     if (cmsWebhookAPI.model === CMSModel.article) {
       await this.articleRepository.upsert(
-        CMSUsecase.buildArticleOrQuizzFromCMSData(
-          cmsWebhookAPI.entry,
+        this.buildArticleOrQuizzFromCMSData(
+          cmsWebhookAPI,
           CMSModel.article,
         ) as ArticleData,
       );
     }
     if (cmsWebhookAPI.model === CMSModel.quizz) {
       await this.quizzRepository.upsert(
-        CMSUsecase.buildArticleOrQuizzFromCMSData(
-          cmsWebhookAPI.entry,
-          CMSModel.quizz,
-        ),
+        this.buildArticleOrQuizzFromCMSData(cmsWebhookAPI, CMSModel.quizz),
       );
     }
   }
 
-  static buildArticleOrQuizzFromCMSData(
-    entry: CMSWebhookEntryAPI,
+  private buildArticleOrQuizzFromCMSData(
+    hook: CMSWebhookAPI,
     type: CMSModel,
   ): ArticleData | QuizzData {
     const result = {
-      content_id: entry.id.toString(),
+      content_id: hook.entry.id.toString(),
       tags_utilisateur: [],
-      titre: entry.titre,
-      soustitre: entry.sousTitre,
-      source: entry.source,
-      image_url: entry.imageUrl ? entry.imageUrl.formats.thumbnail.url : null,
-      partenaire: entry.partenaire ? entry.partenaire.nom : null,
-      rubrique_ids: this.getIdsFromRubriques(entry.rubriques),
-      rubrique_labels: this.getTitresFromRubriques(entry.rubriques),
-      codes_postaux: CMSUsecase.split(entry.codes_postaux),
-      duree: entry.duree,
-      frequence: entry.frequence,
-      difficulty: entry.difficulty ? entry.difficulty : 1,
-      points: entry.points ? entry.points : 0,
-      thematique_principale: entry.thematique_gamification
+      titre: hook.entry.titre,
+      soustitre: hook.entry.sousTitre,
+      source: hook.entry.source,
+      image_url: CMSUsecase.getImageUrl(hook),
+      partenaire: hook.entry.partenaire ? hook.entry.partenaire.nom : null,
+      rubrique_ids: CMSUsecase.getIdsFromRubriques(hook.entry.rubriques),
+      rubrique_labels: CMSUsecase.getTitresFromRubriques(hook.entry.rubriques),
+      codes_postaux: CMSUsecase.split(hook.entry.codes_postaux),
+      duree: hook.entry.duree,
+      frequence: hook.entry.frequence,
+      difficulty: hook.entry.difficulty ? hook.entry.difficulty : 1,
+      points: hook.entry.points ? hook.entry.points : 0,
+      thematique_principale: hook.entry.thematique_gamification
         ? ThematiqueRepository.getThematiqueByCmsId(
-            entry.thematique_gamification.id,
+            hook.entry.thematique_gamification.id,
           )
         : Thematique.climat,
-      thematiques: entry.thematiques
-        ? entry.thematiques.map((elem) =>
+      thematiques: hook.entry.thematiques
+        ? hook.entry.thematiques.map((elem) =>
             ThematiqueRepository.getThematiqueByCmsId(elem.id),
           )
         : [],
       score: 0,
       tags_rubriques: [],
-      categorie: Categorie[entry.categorie],
-      mois: entry.mois ? entry.mois.split(',').map((m) => parseInt(m)) : [],
+      categorie: Categorie[hook.entry.categorie],
+      mois: hook.entry.mois
+        ? hook.entry.mois.split(',').map((m) => parseInt(m))
+        : [],
     };
     if (type === CMSModel.article) {
       Object.assign(result, {
-        include_codes_commune: CMSUsecase.split(entry.include_codes_commune),
-        exclude_codes_commune: CMSUsecase.split(entry.exclude_codes_commune),
-        codes_departement: CMSUsecase.split(entry.codes_departement),
-        codes_region: CMSUsecase.split(entry.codes_region),
+        include_codes_commune: CMSUsecase.split(
+          hook.entry.include_codes_commune,
+        ),
+        exclude_codes_commune: CMSUsecase.split(
+          hook.entry.exclude_codes_commune,
+        ),
+        codes_departement: CMSUsecase.split(hook.entry.codes_departement),
+        codes_region: CMSUsecase.split(hook.entry.codes_region),
       });
     }
     return result;
@@ -596,7 +624,7 @@ export class CMSUsecase {
       conditions: entry.OR_Conditions.map((or) =>
         or.AND_Conditions.map((and) => ({
           code_kyc: and.kyc.code,
-          id_kyc: and.kyc.id.toString(),
+          id_kyc: and.kyc.id,
           code_reponse: and.code_reponse,
         })),
       ),
@@ -638,6 +666,7 @@ export class CMSUsecase {
       thematique_univers: entry.thematique_univers_unique
         ? entry.thematique_univers_unique.code
         : null,
+      univers: undefined,
       objectifs:
         entry.objectifs.length > 0
           ? entry.objectifs.map((obj) => {
@@ -671,16 +700,15 @@ export class CMSUsecase {
 
   static buildArticleOrQuizzFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
+    type: CMSModel,
   ): ArticleData | QuizzData {
-    return {
+    const result = {
       content_id: entry.id.toString(),
       tags_utilisateur: [],
       titre: entry.attributes.titre,
       soustitre: entry.attributes.sousTitre,
       source: entry.attributes.source,
-      image_url: entry.attributes.imageUrl
-        ? entry.attributes.imageUrl.data.attributes.formats.thumbnail.url
-        : null,
+      image_url: CMSUsecase.getImageUrlFromPopulate(entry),
       partenaire: entry.attributes.partenaire.data
         ? entry.attributes.partenaire.data.attributes.nom
         : null,
@@ -714,15 +742,20 @@ export class CMSUsecase {
       mois: entry.attributes.mois
         ? entry.attributes.mois.split(',').map((m) => parseInt(m))
         : [],
-      include_codes_commune: CMSUsecase.split(
-        entry.attributes.include_codes_commune,
-      ),
-      exclude_codes_commune: CMSUsecase.split(
-        entry.attributes.exclude_codes_commune,
-      ),
-      codes_departement: CMSUsecase.split(entry.attributes.codes_departement),
-      codes_region: CMSUsecase.split(entry.attributes.codes_region),
     };
+    if (type === CMSModel.article) {
+      Object.assign(result, {
+        include_codes_commune: CMSUsecase.split(
+          entry.attributes.include_codes_commune,
+        ),
+        exclude_codes_commune: CMSUsecase.split(
+          entry.attributes.exclude_codes_commune,
+        ),
+        codes_departement: CMSUsecase.split(entry.attributes.codes_departement),
+        codes_region: CMSUsecase.split(entry.attributes.codes_region),
+      });
+    }
+    return result;
   }
   static buildAideFromCMSPopulateData(entry: CMSWebhookPopulateAPI): Aide {
     return {
@@ -845,7 +878,7 @@ export class CMSUsecase {
       reponses: entry.attributes.reponses
         ? entry.attributes.reponses.map((r) => ({
             label: r.reponse,
-            code: r.reponse,
+            code: r.code,
           }))
         : [],
       thematique: entry.attributes.thematique.data
@@ -878,6 +911,7 @@ export class CMSUsecase {
       thematique_univers: entry.attributes.thematique_univers_unique.data
         ? entry.attributes.thematique_univers_unique.data.attributes.code
         : null,
+      univers: undefined,
       objectifs:
         entry.attributes.objectifs.length > 0
           ? entry.attributes.objectifs.map((obj) => {

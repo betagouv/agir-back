@@ -26,7 +26,8 @@ describe('Personalisation', () => {
       'George',
       'g@www.com',
       1234,
-      null,
+      '91120',
+      'PALAISEAU',
     );
 
     const test_data = { yo: '123' };
@@ -44,7 +45,8 @@ describe('Personalisation', () => {
       'George',
       'g@www.com',
       1234,
-      null,
+      '91120',
+      'PALAISEAU',
     );
 
     const test_data = { yo: undefined, yi: null, ya: true };
@@ -62,7 +64,8 @@ describe('Personalisation', () => {
       'George',
       'g@www.com',
       1234,
-      null,
+      '91120',
+      'PALAISEAU',
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';
@@ -85,7 +88,8 @@ describe('Personalisation', () => {
       'George',
       'g@www.com',
       1234,
-      null,
+      '91120',
+      'PALAISEAU',
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';
@@ -107,7 +111,8 @@ describe('Personalisation', () => {
       'George',
       'g@www.com',
       1234,
-      null,
+      '91120',
+      'PALAISEAU',
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';

@@ -72,16 +72,20 @@ export class InscriptionUsecase {
       }
     }
 
+    /*
     const onboarding = new Onboarding(
       OnboardingDataAPI.convertToDomain(utilisateurInput.onboardingData),
     );
+    */
 
     const utilisateurToCreate = Utilisateur.createNewUtilisateur(
       utilisateurInput.nom,
       utilisateurInput.prenom,
       utilisateurInput.email,
       utilisateurInput.annee_naissance,
-      onboarding,
+      utilisateurInput.code_postal,
+      utilisateurInput.commune,
+      //onboarding,
     );
 
     utilisateurToCreate.setNew6DigitCode();
@@ -123,9 +127,11 @@ export class InscriptionUsecase {
   private checkInputToCreateUtilisateur(
     utilisateurInput: CreateUtilisateurAPI,
   ) {
+    /*
     new Onboarding(
       OnboardingDataAPI.convertToDomain(utilisateurInput.onboardingData),
     ).validateData();
+    */
 
     if (!utilisateurInput.nom) {
       ApplicationError.throwNomObligatoireError();
@@ -135,6 +141,9 @@ export class InscriptionUsecase {
     }
     if (!utilisateurInput.email) {
       ApplicationError.throwEmailObligatoireError();
+    }
+    if (!utilisateurInput.code_postal || !utilisateurInput.commune) {
+      ApplicationError.throwCodePostalObligatoireError();
     }
 
     PasswordManager.checkPasswordFormat(utilisateurInput.mot_de_passe);

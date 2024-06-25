@@ -59,6 +59,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         id: '1',
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
+        univers: 'alimentation',
         objectifs: [
           {
             id: '1',
@@ -90,6 +91,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         id: '2',
         done_at: null,
         thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
+        univers: 'alimentation',
         objectifs: [
           {
             id: '1',
@@ -121,6 +123,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         id: '3',
         done_at: null,
         thematique_univers: ThematiqueUnivers.mobilite_quotidien,
+        univers: 'alimentation',
         objectifs: [
           {
             id: '1',
@@ -165,7 +168,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     accessible: true,
     motif: 'truc',
     categorie: Categorie.recommandation,
-    conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
+    conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
     mois: [1],
   };
 
@@ -274,6 +277,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           id: '1',
           done_at: null,
           thematique_univers: ThematiqueUnivers.cereales,
+          univers: 'alimentation',
           objectifs: [
             {
               id: '0',
@@ -356,6 +360,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           id: '1',
           done_at: null,
           thematique_univers: ThematiqueUnivers.cereales,
+          univers: 'alimentation',
           objectifs: [
             {
               id: '0',
@@ -947,7 +952,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           motif: null,
           categorie: Categorie.recommandation,
           mois: [1],
-          conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
+          conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
         },
       ],
     };
@@ -1022,7 +1027,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           motif: null,
           categorie: Categorie.recommandation,
           mois: [1],
-          conditions: [[{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }]],
+          conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
         },
       ],
     };
@@ -1084,18 +1089,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(userDB.unlocked_features.unlocked_features[0]).toEqual(
       Feature.defis,
     );
-    expect(userDB.gamification.celebrations).toHaveLength(1);
-    expect(userDB.gamification.celebrations[0].type).toEqual(
-      CelebrationType.reveal,
-    );
-    expect(userDB.gamification.celebrations[0].reveal.feature).toEqual(
-      Feature.defis,
-    );
-
-    const test = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/gamification',
-    );
-    console.log(JSON.stringify(test.body));
+    expect(userDB.gamification.celebrations).toHaveLength(0);
   });
   it('PATCH /utilisateurs/id/defis/id - ajout de points', async () => {
     // GIVEN

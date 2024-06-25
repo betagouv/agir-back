@@ -8,6 +8,7 @@ export class UniversAPI {
   @ApiProperty() is_locked: boolean;
   @ApiProperty() reason_locked: string;
   @ApiProperty() image_url: string;
+  @ApiProperty() is_done: boolean;
 
   public static mapToAPI(uni: TuileUnivers): UniversAPI {
     return {
@@ -17,6 +18,7 @@ export class UniversAPI {
       is_locked: uni.is_locked,
       reason_locked: uni.reason_locked,
       image_url: uni.image_url,
+      is_done: uni.is_done,
     };
   }
 }

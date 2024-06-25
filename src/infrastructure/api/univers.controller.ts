@@ -33,7 +33,7 @@ export class UniversController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<UniversAPI[]> {
     this.checkCallerId(req, utilisateurId);
-    const result = await this.universUsecase.getALL();
+    const result = await this.universUsecase.getALL(utilisateurId);
     return result.map((e) => UniversAPI.mapToAPI(e));
   }
 

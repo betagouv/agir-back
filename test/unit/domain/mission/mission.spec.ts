@@ -2,6 +2,7 @@ import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
 import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { Mission } from '../../../../src/domain/mission/mission';
 import { CelebrationType } from '../../../../src/domain/gamification/celebrations/celebration';
+import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
 
 describe('Missions', () => {
   it('validateDefi : valider un seul défi termine la mission', () => {
@@ -11,12 +12,14 @@ describe('Missions', () => {
       'George',
       'mail@www.com',
       12345,
-      null,
+      '91120',
+      'PALAISEAU',
     );
     const mission = new Mission({
       done_at: null,
       est_visible: true,
       id: '123',
+      univers: 'alimentation',
       objectifs: [
         {
           content_id: '1',
@@ -77,6 +80,7 @@ describe('Missions', () => {
       objectifs: [],
       prochaines_thematiques: [],
       thematique_univers: 'cereales',
+      univers: 'alimentation',
     });
 
     // WHEN
@@ -94,6 +98,7 @@ describe('Missions', () => {
       done_at: null,
       est_visible: true,
       id: '123',
+      univers: 'alimentation',
       objectifs: [
         {
           content_id: '1',
@@ -148,6 +153,7 @@ describe('Missions', () => {
       done_at: null,
       est_visible: true,
       id: '123',
+      univers: 'alimentation',
       objectifs: [
         {
           content_id: '1',
@@ -202,6 +208,7 @@ describe('Missions', () => {
       done_at: null,
       est_visible: true,
       id: '123',
+      univers: 'alimentation',
       objectifs: [
         {
           content_id: '1',
@@ -267,6 +274,7 @@ describe('Missions', () => {
       done_at: null,
       est_visible: true,
       id: '123',
+      univers: 'alimentation',
       objectifs: [
         {
           content_id: '1',
@@ -332,6 +340,7 @@ describe('Missions', () => {
       done_at: null,
       est_visible: true,
       id: '123',
+      univers: 'alimentation',
       objectifs: [
         {
           content_id: '1',
@@ -397,6 +406,7 @@ describe('Missions', () => {
       done_at: null,
       est_visible: true,
       id: '123',
+      univers: 'alimentation',
       objectifs: [
         {
           content_id: '1',
@@ -444,5 +454,53 @@ describe('Missions', () => {
       current: 2,
       target: 3,
     });
+  });
+  it('isUniversDone : ok si tout done', () => {
+    // GIVEN
+    const m1 = new Mission({
+      done_at: new Date(),
+      est_visible: true,
+      id: '123',
+      univers: 'alimentation',
+      objectifs: [],
+      prochaines_thematiques: [],
+      thematique_univers: 'cereales',
+    });
+    const m2 = new Mission({
+      done_at: new Date(),
+      est_visible: true,
+      id: '456',
+      univers: 'alimentation',
+      objectifs: [],
+      prochaines_thematiques: [],
+      thematique_univers: 'cereales',
+    });
+    const m3 = new Mission({
+      done_at: new Date(),
+      est_visible: true,
+      id: '1',
+      univers: 'climat',
+      objectifs: [],
+      prochaines_thematiques: [],
+      thematique_univers: 'cereales',
+    });
+    const m4 = new Mission({
+      done_at: null,
+      est_visible: true,
+      id: '2',
+      univers: 'climat',
+      objectifs: [],
+      prochaines_thematiques: [],
+      thematique_univers: 'cereales',
+    });
+
+    const missionsUtilisateur = new MissionsUtilisateur({
+      version: 0,
+      missions: [m1, m2, m3, m4],
+    });
+    // THEN
+    expect(missionsUtilisateur.isUniversDone('alimentation')).toEqual(true);
+    expect(missionsUtilisateur.isUniversDone('climat')).toEqual(false);
+    expect(missionsUtilisateur.isUniversDone('anything')).toEqual(false);
   });
 });

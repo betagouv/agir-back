@@ -23,6 +23,7 @@ export class MissionUsecase {
     thematique: string,
   ): Promise<Mission> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     let mission_resultat =
       utilisateur.missions.getMissionByThematiqueUnivers(thematique);
@@ -62,6 +63,7 @@ export class MissionUsecase {
     thematique: string,
   ): Promise<string> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     const mission =
       utilisateur.missions.getMissionByThematiqueUnivers(thematique);
@@ -111,6 +113,7 @@ export class MissionUsecase {
     thematique: string,
   ): Promise<QuestionKYC[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
 
     const catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(catalogue);

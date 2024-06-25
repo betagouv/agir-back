@@ -3,6 +3,7 @@ import { ContentType } from '../../../../domain/contenu/contentType';
 import { DifficultyLevel } from '../../../../domain/contenu/difficultyLevel';
 import { Thematique } from '../../../../domain/contenu/thematique';
 import { Todo } from '../../../../../src/domain/todo/todo';
+import { CelebrationAPI } from '../gamification/gamificationAPI';
 
 export class ProgressionAPI {
   @ApiProperty() current: number;
@@ -29,7 +30,9 @@ export class TodoAPI {
   @ApiProperty() points_todo: number;
   @ApiProperty() done_at: Date;
   @ApiProperty() titre: string;
+  @ApiProperty() imageUrl: string;
   @ApiProperty() is_last: boolean;
+  @ApiProperty({ type: CelebrationAPI }) celebration: CelebrationAPI;
   @ApiProperty({ type: [TodoElementAPI] }) todo: TodoElementAPI[];
   @ApiProperty({ type: [TodoElementAPI] }) done: TodoElementAPI[];
 
@@ -38,10 +41,14 @@ export class TodoAPI {
       numero_todo: todo.numero_todo,
       points_todo: todo.points_todo,
       titre: todo.titre,
+      imageUrl: todo.imageUrl,
       todo: todo.todo,
       done: todo.done,
       done_at: todo.done_at,
       is_last: todo.is_last ? todo.is_last : false,
+      celebration: todo.celebration
+        ? CelebrationAPI.mapToAPI(todo.celebration)
+        : undefined,
     };
   }
 }

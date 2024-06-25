@@ -36,6 +36,7 @@ export class Mission_v0 {
   objectifs: Objectif_v0[];
   prochaines_thematiques: string[];
   est_visible: boolean;
+  univers: string;
 
   static map(mission: Mission): Mission_v0 {
     return {
@@ -49,6 +50,7 @@ export class Mission_v0 {
         ? mission.prochaines_thematiques
         : [],
       est_visible: !!mission.est_visible,
+      univers: mission.univers,
     };
   }
 }

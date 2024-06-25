@@ -20,6 +20,7 @@ export class UserTagEvaluator {
   }
 
   private static shopping_addict(user: Utilisateur) {
+    if (!user.onboardingResult.isAvailable()) return;
     const impact = user.onboardingResult.getImpact(
       ThematiqueOnboarding.consommation,
     );
@@ -27,6 +28,7 @@ export class UserTagEvaluator {
   }
 
   private static viande_addict(user: Utilisateur) {
+    if (!user.onboardingResult.isAvailable()) return;
     const impact = user.onboardingResult.getImpact(
       ThematiqueOnboarding.alimentation,
     );

@@ -547,7 +547,7 @@ export class TestUtil {
         TransportQuotidien.voiture,
       ],
     };
-
+    /*
     const onboarding: Onboarding_v0 = {
       version: 0,
       transports: [TransportQuotidien.voiture, TransportQuotidien.pied],
@@ -579,6 +579,7 @@ export class TestUtil {
         '4': [ThematiqueOnboarding.consommation],
       },
     };
+    */
 
     return {
       id: 'utilisateur-id',
@@ -607,8 +608,12 @@ export class TestUtil {
       gamification: gamification,
       unlocked_features: unlocked,
       history: history,
+      /*
       onboardingData: onboarding,
       onboardingResult: onboardingRes,
+      */
+      onboardingData: {} as any,
+      onboardingResult: {} as any,
       created_at: undefined,
       updated_at: undefined,
       kyc: kyc,

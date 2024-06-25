@@ -100,9 +100,10 @@ export class UtilisateurProfileAPI {
   @ApiProperty({ required: false })
   abonnement_ter_loire: boolean;
 
+  /**
   @ApiProperty({ type: OnboardingResultAPI })
   onboarding_result: OnboardingResultAPI;
-
+ */
   @ApiProperty({ type: LogementAPI })
   logement: LogementAPI;
 
@@ -116,7 +117,7 @@ export class UtilisateurProfileAPI {
       revenu_fiscal: user.revenu_fiscal,
       nombre_de_parts_fiscales: user.getNombrePartsFiscalesOuEstimee(),
       abonnement_ter_loire: user.abonnement_ter_loire,
-      onboarding_result: user.onboardingResult.ventilation_par_thematiques,
+      //onboarding_result: user.onboardingResult.ventilation_par_thematiques,
       logement: LogementAPI.mapToAPI(user.logement),
       annee_naissance: user.annee_naissance,
     };

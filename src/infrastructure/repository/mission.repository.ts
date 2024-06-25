@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Mission } from '@prisma/client';
 import { MissionDefinition } from '../../../src/domain/mission/missionDefinition';
+import { ThematiqueRepository } from './thematique.repository';
 
 @Injectable()
 export class MissionRepository {
@@ -53,6 +54,9 @@ export class MissionRepository {
       prochaines_thematiques: missionDB.prochaines_thematiques,
       thematique_univers: missionDB.thematique_univers,
       objectifs: missionDB.objectifs as any,
+      univers: ThematiqueRepository.getUniversParent(
+        missionDB.thematique_univers,
+      ),
     });
   }
 }

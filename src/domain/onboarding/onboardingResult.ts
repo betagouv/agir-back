@@ -12,6 +12,9 @@ export class OnboardingResult {
     }
   }
 
+  public isAvailable(): boolean {
+    return !!this.ventilation_par_impacts;
+  }
   public static buildFromOnboarding(data: Onboarding) {
     if (!data) {
       return new OnboardingResult({

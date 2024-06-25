@@ -4,7 +4,7 @@ import {
 } from '../../../../src/domain/object_store/upgrader';
 import { BibliothequeServices } from '../../../../src/domain/bibliotheque_services/bibliothequeServices';
 import { BibliothequeServices_v0 } from '../../../../src/domain/object_store/service/BibliothequeService_v0';
-import { ServiceRechercheID } from '../../../../src/domain/bibliotheque_services/serviceRecherche';
+import { ServiceRechercheID } from '../../../../src/domain/bibliotheque_services/serviceRechercheID';
 
 describe('BibliothequeService vN ', () => {
   it('build OK from empty', () => {
@@ -30,8 +30,16 @@ describe('BibliothequeService vN ', () => {
           id: ServiceRechercheID.proximite,
           favoris: [
             {
-              date: new Date(),
+              date_ajout: new Date(),
               id: '123',
+              resulat_recherche: {
+                id: '1',
+                adresse_code_postal: '123',
+                adresse_nom_ville: 'oàçè§',
+                adresse_rue: 'sqfuqffq',
+                site_web: 'sdggdg',
+                titre: 'liuqsf',
+              },
             },
           ],
         },
@@ -54,8 +62,16 @@ describe('BibliothequeService vN ', () => {
           id: ServiceRechercheID.proximite,
           favoris: [
             {
-              date: new Date(),
+              date_ajout: new Date(),
               id: '123',
+              resulat_recherche: {
+                id: '1',
+                adresse_code_postal: '123',
+                adresse_nom_ville: 'oàçè§',
+                adresse_rue: 'sqfuqffq',
+                site_web: 'sdggdg',
+                titre: 'liuqsf',
+              },
             },
           ],
         },

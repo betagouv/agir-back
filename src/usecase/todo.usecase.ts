@@ -39,7 +39,7 @@ export class TodoUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  async gagnerPointsFromTodo(utilisateurId: string) {
+  async gagnerPointsFromTodoTerminee(utilisateurId: string) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
@@ -49,6 +49,12 @@ export class TodoUsecase {
         todo_active.points_todo,
         utilisateur.unlocked_features,
       );
+
+      if (todo_active.celebration && todo_active.celebration.reveal) {
+        const feature_to_reveal = todo_active.celebration.reveal.feature;
+        utilisateur.unlocked_features.add(feature_to_reveal);
+      }
+
       todo_active.done_at = new Date();
       utilisateur.parcours_todo.avanceDansParcours();
 
@@ -75,7 +81,7 @@ export class TodoUsecase {
 
     for (let index = 0; index < todo.todo.length; index++) {
       const element = todo.todo[index];
-      if (element.type === ContentType.quizz) {
+      if (element.type === ContentType.quizz && !element.content_id) {
         let quizzes = await this.quizzRepository.searchQuizzes({
           thematiques: element.thematiques,
           difficulty: element.level,
@@ -97,7 +103,7 @@ export class TodoUsecase {
           element.content_id = randomQuizz.content_id;
         }
       }
-      if (element.type === ContentType.article) {
+      if (element.type === ContentType.article && !element.content_id) {
         const articles_lus = utilisateur.history.searchArticlesIds({
           est_lu: true,
         });

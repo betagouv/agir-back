@@ -18,6 +18,7 @@ import { DefiHistory } from '../defis/defiHistory';
 import { UserTagEvaluator } from '../scoring/userTagEvaluator';
 import { QuestionKYC } from '../kyc/questionQYC';
 import { MissionsUtilisateur } from '../mission/missionsUtilisateur';
+import { Feature } from '../gamification/feature';
 
 export class UtilisateurData {
   id: string;
@@ -84,14 +85,20 @@ export class Utilisateur extends UtilisateurData {
     prenom: string,
     email: string,
     annee_naissance: number,
-    onboarding: Onboarding,
+    code_postal: string,
+    commune: string,
+    //onboarding: Onboarding,
   ): Utilisateur {
     return new Utilisateur({
       nom: nom,
       prenom: prenom,
       email: email,
+      /*
       onboardingData: onboarding,
       onboardingResult: OnboardingResult.buildFromOnboarding(onboarding),
+      */
+      onboardingData: {} as any,
+      onboardingResult: {} as any,
 
       id: undefined,
       code_departement: null,
@@ -113,18 +120,41 @@ export class Utilisateur extends UtilisateurData {
       prevent_sendemail_before: new Date(),
       parcours_todo: new ParcoursTodo(),
       gamification: new Gamification(),
-      unlocked_features: new UnlockedFeatures(),
+      unlocked_features: new UnlockedFeatures({
+        version: 1,
+        unlocked_features: [
+          Feature.bibliotheque,
+          Feature.univers,
+          Feature.services,
+        ],
+      }),
       history: new History(),
       kyc_history: new KYCHistory(),
       defi_history: new DefiHistory(),
       equipements: new Equipements(),
       version: App.currentUserSystemVersion(),
+      /*
       logement: onboarding
         ? Logement.buildFromOnboarding(onboarding)
         : new Logement(),
       transport: onboarding
         ? Transport.buildFromOnboarding(onboarding)
         : new Transport(),
+        */
+      logement: new Logement({
+        version: 0,
+        dpe: null,
+        plus_de_15_ans: null,
+        chauffage: null,
+        code_postal: code_postal,
+        commune: commune,
+        nombre_adultes: null,
+        nombre_enfants: null,
+        proprietaire: null,
+        superficie: null,
+        type: null,
+      }),
+      transport: {} as any,
       tag_ponderation_set: {},
       force_connexion: false,
       derniere_activite: new Date(),

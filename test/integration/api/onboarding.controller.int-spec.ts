@@ -11,6 +11,7 @@ import {
 } from '../../../src/domain/onboarding/onboarding';
 import { DB, TestUtil } from '../../TestUtil';
 import { Profil } from '../../../src/domain/utilisateur/utilisateurAttente';
+import { Feature } from '../../../src/domain/gamification/feature';
 
 const ONBOARDING_1_2_3_4_DATA = {
   transports: ['voiture', 'pied'],
@@ -105,7 +106,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
       annee_naissance: 1979,
-      onboardingData: ONBOARDING_1_2_3_4_DATA,
+      code_postal: '91120',
+      commune: 'PALAISEAU',
+      //onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
     // THEN
     const user = await utilisateurRepository.findByEmail('w@w.com');
@@ -117,12 +120,16 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(user.email).toEqual('w@w.com');
     expect(user.passwordHash.length).toBeGreaterThan(20);
     expect(user.passwordSalt.length).toBeGreaterThan(20);
+    /*
     expect({ ...user.onboardingData }).toStrictEqual({
       ...ONBOARDING_1_2_3_4_DATA,
     });
     expect({ ...user.onboardingResult }).toStrictEqual({
       ...ONBOARDING_RES_1234,
     });
+    */
+    expect(user.onboardingData).toEqual({});
+    expect(user.onboardingResult).toEqual({});
     expect(user.code).toEqual('123456');
     expect(user.failed_checkcode_count).toEqual(0);
     expect(user.prevent_checkcode_before.getTime()).toBeLessThanOrEqual(
@@ -135,13 +142,18 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
     expect(user.version).toEqual(2);
 
     expect(user.logement.code_postal).toEqual('91120');
-    expect(user.logement.commune).toEqual('Palaiseau');
-    expect(user.logement.chauffage).toEqual(Chauffage.bois);
-    expect(user.logement.nombre_adultes).toEqual(2);
-    expect(user.logement.nombre_enfants).toEqual(1);
-    expect(user.logement.proprietaire).toEqual(true);
-    expect(user.logement.superficie).toEqual(Superficie.superficie_150);
-    expect(user.logement.type).toEqual(TypeLogement.maison);
+    expect(user.logement.commune).toEqual('PALAISEAU');
+    //expect(user.logement.chauffage).toEqual(Chauffage.bois);
+    //expect(user.logement.nombre_adultes).toEqual(2);
+    //expect(user.logement.nombre_enfants).toEqual(1);
+    //expect(user.logement.proprietaire).toEqual(true);
+    //expect(user.logement.superficie).toEqual(Superficie.superficie_150);
+    //expect(user.logement.type).toEqual(TypeLogement.maison);
+
+    expect(user.unlocked_features.isUnlocked(Feature.bibliotheque)).toEqual(
+      true,
+    );
+    expect(user.unlocked_features.isUnlocked(Feature.univers)).toEqual(true);
   });
   it('POST /utilisateurs - no user version defaults to 0', async () => {
     // GIVEN
@@ -154,7 +166,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
-      onboardingData: ONBOARDING_1_2_3_4_DATA,
+      code_postal: '91120',
+      commune: 'PALAISEAU',
+      //    onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
     // THEN
     const user = await TestUtil.prisma.utilisateur.findFirst({
@@ -174,7 +188,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHAa',
       email: 'monmail@truc.com',
-      onboardingData: ONBOARDING_1_2_3_4_DATA,
+      code_postal: '91120',
+      commune: 'PALAISEAU',
+      //    onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
     // THEN
     expect(response.status).toBe(400);
@@ -197,7 +213,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHAa',
       email: 'W@W.COM',
-      onboardingData: ONBOARDING_1_2_3_4_DATA,
+      code_postal: '91120',
+      commune: 'PALAISEAU',
+      //    onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
     // THEN
     expect(response.status).toBe(201);
@@ -214,7 +232,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHAa',
       email: 'W@W.COM',
-      onboardingData: ONBOARDING_1_2_3_4_DATA,
+      code_postal: '91120',
+      commune: 'PALAISEAU',
+      //      onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
     // THEN
     expect(response.status).toBe(201);
@@ -228,7 +248,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       prenom: 'Wojtek',
       mot_de_passe: 'to use',
       email: 'monmail@truc.com',
-      onboardingData: ONBOARDING_1_2_3_4_DATA,
+      code_postal: '91120',
+      commune: 'PALAISEAU',
+      //    onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
     // THEN
     expect(response.status).toBe(400);
@@ -244,7 +266,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
-      onboardingData: ONBOARDING_1_2_3_4_DATA,
+      code_postal: '91120',
+      commune: 'PALAISEAU',
+      //    onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
     const userDB_before = await TestUtil.prisma.utilisateur.findFirst({
       where: { nom: 'WW' },
@@ -275,7 +299,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
-      onboardingData: ONBOARDING_1_2_3_4_DATA,
+      code_postal: '91120',
+      commune: 'PALAISEAU',
+      //    onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
     const userDB_before = await TestUtil.prisma.utilisateur.findFirst({
       where: { nom: 'WW' },
@@ -304,7 +330,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
-      onboardingData: ONBOARDING_1_2_3_4_DATA,
+      code_postal: '91120',
+      commune: 'PALAISEAU',
+      //    onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
 
     // WHEN
@@ -338,7 +366,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
-      onboardingData: ONBOARDING_1_2_3_4_DATA,
+      code_postal: '91120',
+      commune: 'PALAISEAU',
+      //    onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
     let userDB = await TestUtil.prisma.utilisateur.findFirst({
       where: { nom: 'WW' },
@@ -371,7 +401,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
-      onboardingData: ONBOARDING_1_2_3_4_DATA,
+      code_postal: '91120',
+      commune: 'PALAISEAU',
+      //    onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
     await TestUtil.prisma.utilisateur.update({
       where: { email: 'w@w.com' },
@@ -404,7 +436,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
-      onboardingData: ONBOARDING_1_2_3_4_DATA,
+      code_postal: '91120',
+      commune: 'PALAISEAU',
+      //    onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
     let userDB = await TestUtil.prisma.utilisateur.findFirst({
       where: { nom: 'WW' },
@@ -433,7 +467,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
-      onboardingData: ONBOARDING_1_2_3_4_DATA,
+      code_postal: '91120',
+      commune: 'PALAISEAU',
+      //    onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
 
     // WHEN
@@ -463,7 +499,9 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       prenom: 'Wojtek',
       mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
-      onboardingData: ONBOARDING_1_2_3_4_DATA,
+      code_postal: '91120',
+      commune: 'PALAISEAU',
+      //    onboardingData: ONBOARDING_1_2_3_4_DATA,
     });
 
     // WHEN
@@ -499,6 +537,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       new Date().getTime(),
     );
   });
+  /*
   it('POST /utilisateurs/evaluate-onboarding - evaluates onboarding data to compute impact', async () => {
     // WHEN
     const response = await TestUtil.getServer()
@@ -729,21 +768,22 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       `<strong>Comme 1 utilisateur sur 3, vos impacts sont faibles ou très faibles dans l'ensemble des thématiques</strong>. Vous faîtes partie des utilisateurs les plus sobres, bravo !`,
     );
   });
+  */
 
   it('POST /utilisateurs - erreur 400 quand email existant', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { email: 'w@w.com' });
 
     // WHEN
-    const response = await TestUtil.getServer()
-      .post('/utilisateurs')
-      .send({
-        nom: 'WW',
-        prenom: 'Wojtek',
-        mot_de_passe: '#1234567890HAHAa',
-        email: 'w@w.com',
-        onboardingData: { ...ONBOARDING_1_2_3_4_DATA },
-      });
+    const response = await TestUtil.getServer().post('/utilisateurs').send({
+      nom: 'WW',
+      prenom: 'Wojtek',
+      mot_de_passe: '#1234567890HAHAa',
+      email: 'w@w.com',
+      code_postal: '91120',
+      commune: 'PALAISEAU',
+      //onboardingData: { ...ONBOARDING_1_2_3_4_DATA },
+    });
     // THEN
     expect(response.status).toBe(400);
     expect(response.body.message).toEqual(
@@ -752,21 +792,23 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
   });
   it('POST /utilisateurs - email au mauvais format', async () => {
     // WHEN
-    const response = await TestUtil.getServer()
-      .post('/utilisateurs')
-      .send({
-        nom: 'WW',
-        prenom: 'Wojtek',
-        mot_de_passe: '#1234567890HAHAa',
-        email: 'yotruc.com',
-        onboardingData: { ...ONBOARDING_1_2_3_4_DATA },
-      });
+    const response = await TestUtil.getServer().post('/utilisateurs').send({
+      nom: 'WW',
+      prenom: 'Wojtek',
+      mot_de_passe: '#1234567890HAHAa',
+      email: 'yotruc.com',
+      code_postal: '91120',
+      commune: 'PALAISEAU',
+
+      //onboardingData: { ...ONBOARDING_1_2_3_4_DATA },
+    });
     // THEN
     expect(response.status).toBe(400);
     expect(response.body.message).toEqual(
       `Format de l'adresse électronique yotruc.com incorrect`,
     );
   });
+  /**
   it('POST /utilisateurs - error when bad value in onboarding data', async () => {
     // WHEN
     const response = await TestUtil.getServer()
@@ -787,6 +829,7 @@ describe('/utilisateurs - Onboarding - (API test)', () => {
       'Valeur residence [mauvaise valeur] inconnue',
     );
   });
+   */
   it('POST /utilisateurs/check_whiteliste - true si white listé', async () => {
     // GIVEN
     process.env.WHITE_LIST_ENABLED = 'true';

@@ -47,8 +47,8 @@ export class ThematiqueRepository {
     return ThematiqueRepository.thematiquesUnivers.get(type);
   }
   public static getUniversParent(thematiqueUnivers: string): string {
-    return ThematiqueRepository.getTuileThematique(thematiqueUnivers)
-      .univers_parent;
+    const tuile = ThematiqueRepository.getTuileThematique(thematiqueUnivers);
+    return tuile ? tuile.univers_parent : undefined;
   }
 
   public static getAllTuilesThematique(univers: string): TuileThematique[] {
@@ -99,6 +99,7 @@ export class ThematiqueRepository {
           is_locked: u.is_locked,
           reason_locked: null,
           id_cms: u.id_cms,
+          is_done: false,
         }),
       );
     });

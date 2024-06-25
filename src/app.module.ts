@@ -108,6 +108,11 @@ import { UniversStatistiqueUsecase } from './usecase/universStatistique.usecase'
 import { UniversStatistiqueRepository } from './infrastructure/repository/universStatistique.repository';
 import { ScheduleModule } from '@nestjs/schedule';
 import { Personnalisator } from './infrastructure/personnalisation/personnalisator';
+import { RechecheServicesController } from './infrastructure/api/rechercheServices.controller';
+import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
+import { RechercheServiceManager } from './domain/bibliotheque_services/serviceManager';
+import { RecherchePresDeChezNous } from './domain/bibliotheque_services/implementations/recherche_presDeChezNous';
+import { PresDeChezNous } from './infrastructure/repository/services_recherche/presDeChezNous';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -138,6 +143,7 @@ function getControllers(): any[] {
     DefisController,
     UniversController,
     MissionController,
+    RechecheServicesController,
   );
   if (!App.isProd()) {
     controllers.push(TestDataController);
@@ -238,6 +244,9 @@ function getControllers(): any[] {
     UniversStatistiqueUsecase,
     UniversStatistiqueRepository,
     Personnalisator,
+    RechercheServicesUsecase,
+    RechercheServiceManager,
+    PresDeChezNous,
   ],
 })
 export class AppModule {}

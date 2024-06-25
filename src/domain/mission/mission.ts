@@ -45,12 +45,14 @@ export class Mission {
   objectifs: Objectif[];
   prochaines_thematiques: string[];
   est_visible: boolean;
+  univers: string;
 
   constructor(data: Mission_v0) {
     this.id = data.id;
     this.done_at = data.done_at;
     this.thematique_univers = data.thematique_univers;
     this.est_visible = data.est_visible;
+    this.univers = data.univers;
 
     this.prochaines_thematiques = [];
     if (data.prochaines_thematiques) {
@@ -76,6 +78,7 @@ export class Mission {
       est_visible: def.est_visible,
       thematique_univers: def.thematique_univers,
       prochaines_thematiques: def.prochaines_thematiques,
+      univers: def.univers,
       objectifs: def.objectifs.map((o) => ({
         content_id: o.content_id,
         done_at: null,
@@ -131,10 +134,6 @@ export class Mission {
 
     if (objectif && !objectif.isDone()) {
       objectif.done_at = new Date();
-      utilisateur.gamification.ajoutePoints(
-        objectif.points,
-        utilisateur.unlocked_features,
-      );
       this.unlockContentIfAllKYCsDone();
     }
   }

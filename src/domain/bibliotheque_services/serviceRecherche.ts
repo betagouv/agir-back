@@ -1,20 +1,6 @@
-import {
-  FavorisRecherche_v0,
-  ServiceRecherche_v0,
-} from '../object_store/service/BibliothequeService_v0';
-
-export enum ServiceRechercheID {
-  proximite = 'proximite',
-}
-
-export class FavorisRecherche {
-  id: string;
-  date: Date;
-
-  constructor(fav: FavorisRecherche_v0) {
-    Object.assign(this, fav);
-  }
-}
+import { ServiceRecherche_v0 } from '../object_store/service/BibliothequeService_v0';
+import { FavorisRecherche } from './favorisRecherche';
+import { ServiceRechercheID } from './serviceRechercheID';
 
 export class ServiceRecherche {
   id: ServiceRechercheID;
@@ -26,5 +12,5 @@ export class ServiceRecherche {
     if (service.favoris) {
       this.favoris = service.favoris.map((fav) => new FavorisRecherche(fav));
     }
-  }
+  }x
 }

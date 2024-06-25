@@ -247,7 +247,7 @@ export type CMSWebhookPopulateAPI = {
     rubriques: {
       data: [
         {
-          id: string;
+          id: number;
           attributes: {
             titre: string;
           };
@@ -257,7 +257,7 @@ export type CMSWebhookPopulateAPI = {
     univers: {
       data: [
         {
-          id: string;
+          id: number;
           attributes: {
             code: string;
           };
@@ -267,7 +267,7 @@ export type CMSWebhookPopulateAPI = {
     thematique_univers: {
       data: [
         {
-          id: string;
+          id: number;
           attributes: {
             code: string;
           };
@@ -287,7 +287,7 @@ export type CMSWebhookPopulateAPI = {
             code_reponse: string;
             kyc: {
               data: {
-                id: string;
+                id: number;
                 attributes: {
                   code: string;
                 };

@@ -63,7 +63,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // WHEN
     const result = history.areConditionsMatched([
-      [{ id_kyc: '1', code_kyc: '123', code_reponse: 'oui' }],
+      [{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }],
     ]);
 
     // THEN
@@ -95,7 +95,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // WHEN
     const result = history.areConditionsMatched([
-      [{ id_kyc: '1', code_kyc: 'KYC001', code_reponse: 'climat' }],
+      [{ id_kyc: 1, code_kyc: 'KYC001', code_reponse: 'climat' }],
     ]);
 
     // THEN
@@ -127,7 +127,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // WHEN
     const result = history.areConditionsMatched([
-      [{ id_kyc: '1', code_kyc: 'KYC001', code_reponse: 'logement' }],
+      [{ id_kyc: 1, code_kyc: 'KYC001', code_reponse: 'logement' }],
     ]);
 
     // THEN
@@ -176,8 +176,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // WHEN
     const result = history.areConditionsMatched([
       [
-        { id_kyc: '1', code_kyc: 'KYC001', code_reponse: 'climat' },
-        { id_kyc: '2', code_kyc: 'KYC002', code_reponse: 'yo' },
+        { id_kyc: 1, code_kyc: 'KYC001', code_reponse: 'climat' },
+        { id_kyc: 2, code_kyc: 'KYC002', code_reponse: 'yo' },
       ],
     ]);
 
@@ -227,8 +227,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // WHEN
     const result = history.areConditionsMatched([
       [
-        { id_kyc: '1', code_kyc: 'KYC001', code_reponse: 'logement' },
-        { id_kyc: '2', code_kyc: 'KYC002', code_reponse: 'ya' },
+        { id_kyc: 1, code_kyc: 'KYC001', code_reponse: 'logement' },
+        { id_kyc: 2, code_kyc: 'KYC002', code_reponse: 'ya' },
       ],
     ]);
 
@@ -277,8 +277,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // WHEN
     const result = history.areConditionsMatched([
-      [{ id_kyc: '1', code_kyc: 'KYC001', code_reponse: 'logement' }],
-      [{ id_kyc: '2', code_kyc: 'KYC002', code_reponse: 'yo' }],
+      [{ id_kyc: 1, code_kyc: 'KYC001', code_reponse: 'logement' }],
+      [{ id_kyc: 2, code_kyc: 'KYC002', code_reponse: 'yo' }],
     ]);
 
     // THEN
@@ -713,6 +713,34 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // THEN
     expect(question.reponses).toEqual([{ label: '123', code: null }]);
+  });
+
+  it('getQuestionOrException : trouve une question répondu par id KYC CMS', () => {
+    // GIVEN
+    const history = new KYCHistory({
+      version: 0,
+      answered_questions: [
+        {
+          id: KYCID.KYC001,
+          id_cms: 1,
+          question: `Quel est votre sujet principal d'intéret ?`,
+          type: TypeReponseQuestionKYC.entier,
+          is_NGC: false,
+          categorie: Categorie.test,
+          points: 10,
+          reponses: [{ label: '123', code: null }],
+          reponses_possibles: [],
+          tags: [],
+          universes: [],
+        },
+      ],
+    });
+
+    // WHEN
+    const question = history.getAnsweredQuestionByCMS_ID(1);
+
+    // THEN
+    expect(question.id).toEqual(KYCID.KYC001);
   });
 
   it('getKYCRestantes : kyc non repondu', () => {

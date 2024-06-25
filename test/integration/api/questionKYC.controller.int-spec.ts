@@ -33,6 +33,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
         id: '1',
         done_at: new Date(1),
         thematique_univers: ThematiqueUnivers.cereales,
+        univers: Univers.alimentation,
         objectifs: [
           {
             id: '0',
@@ -294,7 +295,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     ]);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
-    expect(userDB.gamification.points).toEqual(30);
+    expect(userDB.gamification.points).toEqual(20);
     expect(
       userDB.missions.missions[0].objectifs[0].done_at.getTime(),
     ).toBeLessThan(Date.now());
@@ -312,6 +313,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           id: '1',
           done_at: new Date(1),
           thematique_univers: ThematiqueUnivers.cereales,
+          univers: Univers.alimentation,
           objectifs: [
             {
               id: '0',
@@ -381,7 +383,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     await TestUtil.create(DB.article, { content_id: '1' });
     await TestUtil.create(DB.defi, {
       content_id: '1',
-      conditions: [[{ id_kyc: '1', code_kyc: '1', code_reponse: 'yi' }]],
+      conditions: [[{ id_kyc: 1, code_kyc: '1', code_reponse: 'yi' }]],
     });
     await TestUtil.create(DB.univers, {
       code: Univers.alimentation,

@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { OnboardingDataAPI } from './onboardingDataAPI';
 
 export class CreateUtilisateurAPI {
   @ApiProperty()
@@ -9,9 +8,15 @@ export class CreateUtilisateurAPI {
   @ApiProperty()
   email: string;
   @ApiProperty()
+  code_postal: string;
+  @ApiProperty()
+  commune: string;
+  @ApiProperty()
   annee_naissance: number;
   @ApiProperty({ required: false })
   mot_de_passe?: string;
+  /*
   @ApiProperty({ type: OnboardingDataAPI })
   onboardingData: OnboardingDataAPI;
+  */
 }

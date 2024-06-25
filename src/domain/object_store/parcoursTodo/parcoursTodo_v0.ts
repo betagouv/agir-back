@@ -4,6 +4,7 @@ import { Thematique } from '../../contenu/thematique';
 import { ContentType } from '../../contenu/contentType';
 import { DifficultyLevel } from '../../contenu/difficultyLevel';
 import { Todo, TodoElement } from '../../todo/todo';
+import { Celebration_v0 } from '../gamification/gamification_v0';
 
 export class TodoElement_v0 {
   id: string;
@@ -42,9 +43,11 @@ export class Todo_v0 {
   points_todo: number;
   done_at: Date;
   titre: string;
+  imageUrl: string;
 
   done: TodoElement_v0[];
   todo: TodoElement_v0[];
+  celebration: Celebration_v0;
 
   static map(todo: Todo): Todo_v0 {
     return {
@@ -54,6 +57,10 @@ export class Todo_v0 {
       titre: todo.titre,
       done: todo.done.map((elem) => TodoElement_v0.map(elem)),
       todo: todo.todo.map((elem) => TodoElement_v0.map(elem)),
+      celebration: todo.celebration
+        ? Celebration_v0.map(todo.celebration)
+        : undefined,
+      imageUrl: todo.imageUrl,
     };
   }
 }

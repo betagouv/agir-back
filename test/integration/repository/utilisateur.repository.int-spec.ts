@@ -407,7 +407,8 @@ describe('UtilisateurRepository', () => {
       'paul',
       'w@w.com',
       1234,
-      new Onboarding(),
+      '91120',
+      'PALAISEAU',
     );
     user.id = 'utilisateur-id';
 
