@@ -110,7 +110,7 @@ export class TodoCatalogue {
     {
       numero_todo: 2,
       points_todo: 50,
-      titre: 'Mission 2 - Motivation et freins',
+      titre: 'Mission 2 - Motivations et freins',
       imageUrl:
         'https://res.cloudinary.com/dq023imd8/image/upload/v1718959271/Mission_3_e87ba4bebb.png',
       done_at: null,
