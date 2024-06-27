@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { PresDeChezNous } from '../../../src/infrastructure/repository/services_recherche/presDeChezNous';
+import { PresDeChezNousRepository } from '../../infrastructure/repository/services_recherche/presDeChezNous.repository';
 import { FinderInterface } from './finderInterface';
 import { ServiceRechercheID } from './serviceRechercheID';
 
 @Injectable()
 export class RechercheServiceManager {
-  constructor(private presDeChezNous: PresDeChezNous) {}
+  constructor(private presDeChezNousRepository: PresDeChezNousRepository) {}
 
   public getFinderById(serviceId: ServiceRechercheID): FinderInterface {
     switch (serviceId) {
       case ServiceRechercheID.proximite:
-        return this.presDeChezNous;
+        return this.presDeChezNousRepository;
       default:
         return null;
     }

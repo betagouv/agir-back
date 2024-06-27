@@ -14,6 +14,10 @@ export class ResultatRecherche_v0 {
   adresse_code_postal: string;
 
   site_web: string;
+
+  longitude: number;
+  latitude: number;
+
   static map(res: ResultatRecherche): ResultatRecherche_v0 {
     return {
       titre: res.titre,
@@ -22,6 +26,8 @@ export class ResultatRecherche_v0 {
       adresse_nom_ville: res.adresse_nom_ville,
       adresse_rue: res.adresse_rue,
       site_web: res.site_web,
+      longitude: res.longitude,
+      latitude: res.latitude,
     };
   }
 }

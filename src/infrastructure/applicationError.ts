@@ -285,6 +285,15 @@ export class ApplicationError {
       'Code postal et commune obligatoires pour inscription',
     );
   }
+  static throwUnkonwnSearchService(id: string) {
+    this.throwAppError('052', `Service de recherche inconnu : ${id}`, 404);
+  }
+  static throwUnkonwnUserLocation() {
+    this.throwAppError(
+      '053',
+      `L'utilisateur doit renseigner son code postal dans son profil pour faire une recherche de proximité`,
+    );
+  }
 
   private static throwAppError(
     code: string,

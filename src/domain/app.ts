@@ -60,13 +60,13 @@ export class App {
     const access_3 = App.doesWhiteListBesIncludes(email);
     return access_1 || access_2 || access_3;
   }
-  public static doesWhiteListIncludes(email: string): boolean {
+  private static doesWhiteListIncludes(email: string): boolean {
     return (
       !!process.env.WHITE_LIST &&
       process.env.WHITE_LIST.toLowerCase().includes(email.toLocaleLowerCase())
     );
   }
-  public static doesWhiteListDijonIncludes(email: string): boolean {
+  private static doesWhiteListDijonIncludes(email: string): boolean {
     return (
       !!process.env.WHITE_LIST_DIJON &&
       process.env.WHITE_LIST_DIJON.toLowerCase().includes(
@@ -74,7 +74,7 @@ export class App {
       )
     );
   }
-  public static doesWhiteListBesIncludes(email: string): boolean {
+  private static doesWhiteListBesIncludes(email: string): boolean {
     return (
       !!process.env.WHITE_LIST_BES &&
       process.env.WHITE_LIST_BES.toLowerCase().includes(

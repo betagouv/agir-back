@@ -10,6 +10,9 @@ export class ResultatRecherche {
 
   site_web: string;
 
+  longitude?: number;
+  latitude?: number;
+
   constructor(res: ResultatRecherche_v0) {
     this.id = res.id;
     this.titre = res.titre;
@@ -17,5 +20,7 @@ export class ResultatRecherche {
     this.adresse_nom_ville = res.adresse_nom_ville;
     this.adresse_code_postal = res.adresse_code_postal;
     this.site_web = res.site_web;
+    this.latitude = res.latitude;
+    this.longitude = res.longitude;
   }
 }

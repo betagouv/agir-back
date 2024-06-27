@@ -1,0 +1,116 @@
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
+import { FiltreRecherche } from '../../../domain/bibliotheque_services/filtreRecherche';
+import { FinderInterface } from '../../../domain/bibliotheque_services/finderInterface';
+import { ResultatRecherche } from '../../../domain/bibliotheque_services/resultatRecherche';
+import { AddressesRepository } from './addresses.repository';
+import { CategoriesPresDeChezNous } from './categoriesPresDeChezNous';
+
+const API_URL = 'https://presdecheznous.gogocarto.fr/api/elements.json';
+
+export type PresDeChezVousResponse = {
+  licence: string; //"https://opendatacommons.org/licenses/odbl/summary/",
+  ontology: string; //"gogofull",
+  data: {
+    id: string; //"AEW"
+    name: string; // "DotSoley : Amap, Gwada Fungi, Jardins partagés, Jardins pédagogiques",
+    geo: {
+      latitude: number;
+      longitude: number;
+    };
+    sourceKey: string; //"Colibris"
+    address: {
+      streetAddress: string; //"centre equestre martingale",
+      addressLocality: string; //"Baie mahault",
+      postalCode: string; //"97122",
+      addressCountry: string; //"FR"
+    };
+    createdAt: string; //"2017-08-01T14:15:08+02:00",
+    updatedAt: string; //"2018-01-16T16:50:03+01:00",
+    status: number; //4,
+    categories: string[]; //[      "Alimentation et Agriculture",      "Circuits courts",      "AMAP / Paniers",      "Autre produit"    ],
+    categoriesFull: {
+      id: number;
+      name: string;
+      description: string;
+      index: number;
+    }[];
+    website: string; //"http://www.dotsoley.asso.gp",
+    commitment: string; //"Promotion de l'agriculture locale",
+    description: string; //"Panier et fruits et légumes",
+    openhours_more_infos: string; //"Lundi à partir de 18h00",
+    telephone: string; //"0590262839",
+    email: string; //"private",
+    subscriberEmails: [];
+  }[];
+};
+
+@Injectable()
+export class PresDeChezNousRepository implements FinderInterface {
+  constructor(private addressesRepository: AddressesRepository) {}
+
+  public async find(
+    text: string,
+    filtre: FiltreRecherche,
+  ): Promise<ResultatRecherche[]> {
+    const adresse = await this.addressesRepository.find(
+      filtre.code_postal.concat(' ', filtre.commune),
+    );
+
+    if (adresse.length === 0) {
+      return [];
+    }
+
+    const the_adresse = adresse[0];
+
+    filtre.point = {
+      latitude: the_adresse.latitude,
+      longitude: the_adresse.longitude,
+    };
+
+    filtre.computeBox(1000);
+
+    const result = await this.callServiceAPI(filtre);
+
+    return result.data.map(
+      (r) =>
+        new ResultatRecherche({
+          id: r.id,
+          longitude: r.geo.longitude,
+          latitude: r.geo.latitude,
+          site_web: r.website,
+          titre: r.name,
+          adresse_rue: r.address.streetAddress,
+          adresse_code_postal: r.address.postalCode,
+          adresse_nom_ville: r.address.addressLocality,
+        }),
+    );
+  }
+
+  private async callServiceAPI(
+    filtre: FiltreRecherche,
+    categories?: CategoriesPresDeChezNous[],
+  ): Promise<PresDeChezVousResponse> {
+    let response;
+    try {
+      response = await axios.get(API_URL, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        params: {
+          categories: '',
+          limit: 3,
+          bounds: `${filtre.rect_A.longitude},${filtre.rect_A.latitude},${filtre.rect_B.longitude},${filtre.rect_B.latitude}`,
+        },
+      });
+    } catch (error) {
+      if (error.response) {
+        // haha
+      } else if (error.request) {
+        // hihi
+      }
+      return null;
+    }
+    return response.data;
+  }
+}

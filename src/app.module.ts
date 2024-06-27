@@ -111,8 +111,8 @@ import { Personnalisator } from './infrastructure/personnalisation/personnalisat
 import { RechecheServicesController } from './infrastructure/api/rechercheServices.controller';
 import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
 import { RechercheServiceManager } from './domain/bibliotheque_services/serviceManager';
-import { RecherchePresDeChezNous } from './domain/bibliotheque_services/implementations/recherche_presDeChezNous';
-import { PresDeChezNous } from './infrastructure/repository/services_recherche/presDeChezNous';
+import { PresDeChezNousRepository } from './infrastructure/repository/services_recherche/presDeChezNous.repository';
+import { AddressesRepository } from './infrastructure/repository/services_recherche/addresses.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -246,7 +246,8 @@ function getControllers(): any[] {
     Personnalisator,
     RechercheServicesUsecase,
     RechercheServiceManager,
-    PresDeChezNous,
+    PresDeChezNousRepository,
+    AddressesRepository,
   ],
 })
 export class AppModule {}
