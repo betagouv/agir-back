@@ -28,10 +28,21 @@ describe('BibliothequeService vN ', () => {
       liste_services: [
         {
           id: ServiceRechercheID.proximite,
+          derniere_recherche: [
+            {
+              id: '1',
+              adresse_code_postal: '123',
+              adresse_nom_ville: 'oàçè§',
+              adresse_rue: 'sqfuqffq',
+              site_web: 'sdggdg',
+              titre: 'liuqsf',
+              latitude: 1,
+              longitude: 2,
+            },
+          ],
           favoris: [
             {
               date_ajout: new Date(),
-              id: '123',
               resulat_recherche: {
                 id: '1',
                 adresse_code_postal: '123',
@@ -62,10 +73,21 @@ describe('BibliothequeService vN ', () => {
       liste_services: [
         {
           id: ServiceRechercheID.proximite,
+          derniere_recherche: [
+            {
+              id: '1',
+              adresse_code_postal: '123',
+              adresse_nom_ville: 'oàçè§',
+              adresse_rue: 'sqfuqffq',
+              site_web: 'sdggdg',
+              titre: 'liuqsf',
+              latitude: 1,
+              longitude: 2,
+            },
+          ],
           favoris: [
             {
               date_ajout: new Date(),
-              id: '123',
               resulat_recherche: {
                 id: '1',
                 adresse_code_postal: '123',

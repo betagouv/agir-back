@@ -19,6 +19,7 @@ import { UserTagEvaluator } from '../scoring/userTagEvaluator';
 import { QuestionKYC } from '../kyc/questionQYC';
 import { MissionsUtilisateur } from '../mission/missionsUtilisateur';
 import { Feature } from '../gamification/feature';
+import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServices';
 
 export class UtilisateurData {
   id: string;
@@ -61,6 +62,7 @@ export class UtilisateurData {
   force_connexion: boolean;
   derniere_activite: Date;
   db_version: number;
+  bilbiotheque_services: BibliothequeServices;
 }
 
 export class Utilisateur extends UtilisateurData {
@@ -161,6 +163,7 @@ export class Utilisateur extends UtilisateurData {
       missions: new MissionsUtilisateur(),
       annee_naissance: annee_naissance,
       db_version: 0,
+      bilbiotheque_services: new BibliothequeServices(),
     });
   }
 

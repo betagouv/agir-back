@@ -294,6 +294,13 @@ export class ApplicationError {
       `L'utilisateur doit renseigner son code postal dans son profil pour faire une recherche de proximité`,
     );
   }
+  static throwUnkonwnSearchResult(servicId: string, favId: string) {
+    this.throwAppError(
+      '054',
+      `Pas de resultat de recherche du service [${servicId}] d'id ${favId} à mettre dans les favoris`,
+      404,
+    );
+  }
 
   private static throwAppError(
     code: string,

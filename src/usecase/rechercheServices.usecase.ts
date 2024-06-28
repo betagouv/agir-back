@@ -38,8 +38,51 @@ export class RechercheServicesUsecase {
       }),
     );
 
+    utilisateur.bilbiotheque_services.setDerniereRecherche(serviceId, result);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
     return result;
   }
+
+  async ajouterFavoris(
+    utilisateurId: string,
+    serviceId: ServiceRechercheID,
+    favId: string,
+  ) {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
+    const service = utilisateur.bilbiotheque_services.getServiceById(serviceId);
+
+    if (!service || service.derniere_recherche.length === 0) {
+      ApplicationError.throwUnkonwnSearchResult(serviceId, favId);
+    }
+
+    service.ajouterFavoris(favId);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
+  async supprimerFavoris(
+    utilisateurId: string,
+    serviceId: ServiceRechercheID,
+    favId: string,
+  ) {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
+    const service = utilisateur.bilbiotheque_services.getServiceById(serviceId);
+
+    if (!service) {
+      return;
+    }
+
+    service.supprimerFavoris(favId);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
   async getFavoris(
     utilisateurId: string,
     serviceId: ServiceRechercheID,
@@ -47,31 +90,11 @@ export class RechercheServicesUsecase {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
-    return [
-      {
-        id: 'DwG',
-        titre: "Mon Epice'Rit",
-        adresse_code_postal: '91120',
-        adresse_nom_ville: 'Palaiseau',
-        adresse_rue: '4 Rue des Écoles',
-        site_web: 'https://www.monepi.fr/monepicerit',
-      },
-      {
-        id: 'NTw',
-        titre: "L'ébullition",
-        adresse_code_postal: '91120',
-        adresse_nom_ville: 'Palaiseau',
-        adresse_rue: '2 Avenue de la République',
-        site_web: 'http://www.palaiseautierslieu.fr',
-      },
-      {
-        id: 'D3U',
-        titre: 'L’Auvergnat Bio',
-        adresse_code_postal: '91120',
-        adresse_nom_ville: 'Palaiseau',
-        adresse_rue: '150 Rue de Paris',
-        site_web: 'https://www.auvergnat-bio.com/',
-      },
-    ];
+    const service = utilisateur.bilbiotheque_services.getServiceById(serviceId);
+    if (!service) {
+      return [];
+    }
+
+    return service.favoris.map((f) => f.resulat_recherche);
   }
 }

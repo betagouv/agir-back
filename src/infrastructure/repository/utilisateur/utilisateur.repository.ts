@@ -24,6 +24,7 @@ import { Logement } from '../../../domain/logement/logement';
 import { Transport } from '../../../domain/transport/transport';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
+import { BibliothequeServices } from '../../../domain/bibliotheque_services/bibliothequeServices';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -257,6 +258,12 @@ export class UtilisateurRepository {
           SerialisableDomain.UnlockedFeatures,
         ),
       );
+      const bibliotheque_services = new BibliothequeServices(
+        Upgrader.upgradeRaw(
+          user.bilbiotheque_services,
+          SerialisableDomain.BibliothequeServices,
+        ),
+      );
       const parcours_todo = new ParcoursTodo(
         Upgrader.upgradeRaw(user.todo, SerialisableDomain.ParcoursTodo),
       );
@@ -338,6 +345,7 @@ export class UtilisateurRepository {
         missions: missions,
         annee_naissance: user.annee_naissance,
         db_version: user.db_version,
+        bilbiotheque_services: bibliotheque_services,
       });
     }
     return null;
@@ -405,6 +413,10 @@ export class UtilisateurRepository {
       missions: Upgrader.serialiseToLastVersion(
         user.missions,
         SerialisableDomain.MissionsUtilisateur,
+      ),
+      bilbiotheque_services: Upgrader.serialiseToLastVersion(
+        user.bilbiotheque_services,
+        SerialisableDomain.BibliothequeServices,
       ),
       version: user.version,
       failed_login_count: user.failed_login_count,

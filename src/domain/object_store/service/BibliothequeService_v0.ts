@@ -33,13 +33,11 @@ export class ResultatRecherche_v0 {
 }
 
 export class FavorisRecherche_v0 {
-  id: string;
   date_ajout: Date;
   resulat_recherche: ResultatRecherche_v0;
 
   static map(fav: FavorisRecherche): FavorisRecherche_v0 {
     return {
-      id: fav.id,
       date_ajout: fav.date_ajout,
       resulat_recherche: ResultatRecherche_v0.map(fav.resulat_recherche),
     };
@@ -49,12 +47,16 @@ export class FavorisRecherche_v0 {
 export class ServiceRecherche_v0 {
   id: ServiceRechercheID;
   favoris: FavorisRecherche_v0[];
+  derniere_recherche: ResultatRecherche_v0[];
 
   static map(service: ServiceRecherche): ServiceRecherche_v0 {
     return {
       id: service.id,
       favoris: service.favoris
         ? service.favoris.map((f) => FavorisRecherche_v0.map(f))
+        : [],
+      derniere_recherche: service.derniere_recherche
+        ? service.derniere_recherche.map((f) => ResultatRecherche_v0.map(f))
         : [],
     };
   }

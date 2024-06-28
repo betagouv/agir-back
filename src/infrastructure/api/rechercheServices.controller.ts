@@ -13,6 +13,8 @@ import {
   Post,
   Body,
   Get,
+  Put,
+  Delete,
 } from '@nestjs/common';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
@@ -70,5 +72,49 @@ export class RechecheServicesController extends GenericControler {
       ServiceRechercheID[serviceId],
     );
     return result.map((r) => ResultatRechercheAPI.mapToAPI(r));
+  }
+
+  @Post(
+    'utilisateurs/:utilisateurId/recherche_services/:serviceId/last_results/:resultId/add_to_favoris',
+  )
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Ajoute aux favoris le resultat d'id donné`,
+  })
+  @ApiParam({ name: 'serviceId', enum: ServiceRechercheID })
+  async postFavoris(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('serviceId') serviceId: string,
+    @Param('resultId') resultId: string,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    await this.rechercheServicesUsecase.ajouterFavoris(
+      utilisateurId,
+      ServiceRechercheID[serviceId],
+      resultId,
+    );
+  }
+
+  @Delete(
+    'utilisateurs/:utilisateurId/recherche_services/:serviceId/favoris/:favId',
+  )
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Supprime un favoris d'un service donné`,
+  })
+  @ApiParam({ name: 'serviceId', enum: ServiceRechercheID })
+  async deleteFavoris(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('serviceId') serviceId: string,
+    @Param('favId') favId: string,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    await this.rechercheServicesUsecase.supprimerFavoris(
+      utilisateurId,
+      ServiceRechercheID[serviceId],
+      favId,
+    );
   }
 }

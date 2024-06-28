@@ -625,6 +625,7 @@ export class TestUtil {
       force_connexion: false,
       derniere_activite: null,
       missions: {},
+      bilbiotheque_services: {},
       db_version: 0,
       ...override,
     };
