@@ -40,11 +40,8 @@ export type AddresseResponse = {
 
 @Injectable()
 export class AddressesRepository implements FinderInterface {
-  public async find(
-    text: string,
-    filtre?: FiltreRecherche,
-  ): Promise<ResultatRecherche[]> {
-    const result = await this.callAddresseAPI(text);
+  public async find(filtre: FiltreRecherche): Promise<ResultatRecherche[]> {
+    const result = await this.callAddresseAPI(filtre.text);
 
     if (result.features.length === 0) {
       return null;

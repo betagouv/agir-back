@@ -1,3 +1,4 @@
+import { FiltreRecherche } from '../../../../src/domain/bibliotheque_services/filtreRecherche';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { AddressesRepository } from '../../../../src/infrastructure/repository/services_recherche/addresses.repository';
 import { TestUtil, DB } from '../../../TestUtil';
@@ -25,7 +26,9 @@ describe('AddressesRepository', () => {
     // GIVEN
 
     // WHEN
-    const liste = await addressesRepository.find('91120 PALAISEAU');
+    const liste = await addressesRepository.find(
+      new FiltreRecherche({ text: '91120 PALAISEAU' }),
+    );
 
     // THEN
     expect(liste).toHaveLength(1);

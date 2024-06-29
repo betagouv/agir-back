@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { CategorieRecherche } from '../../../domain/bibliotheque_services/categorieRecherche';
 import { FiltreRecherche } from '../../../domain/bibliotheque_services/filtreRecherche';
 import { FinderInterface } from '../../../domain/bibliotheque_services/finderInterface';
 import { ResultatRecherche } from '../../../domain/bibliotheque_services/resultatRecherche';
 import { AddressesRepository } from './addresses.repository';
-import { CategoriesPresDeChezNous } from './categoriesPresDeChezNous';
+import { PresDeChezNousCategorieMapping } from './presDeChezNousMetaCategorie';
 
 const API_URL = 'https://presdecheznous.gogocarto.fr/api/elements.json';
 
@@ -49,12 +50,11 @@ export type PresDeChezVousResponse = {
 export class PresDeChezNousRepository implements FinderInterface {
   constructor(private addressesRepository: AddressesRepository) {}
 
-  public async find(
-    text: string,
-    filtre: FiltreRecherche,
-  ): Promise<ResultatRecherche[]> {
+  public async find(filtre: FiltreRecherche): Promise<ResultatRecherche[]> {
     const adresse = await this.addressesRepository.find(
-      filtre.code_postal.concat(' ', filtre.commune),
+      new FiltreRecherche({
+        text: filtre.code_postal.concat(' ', filtre.commune),
+      }),
     );
 
     if (adresse.length === 0) {
@@ -70,7 +70,12 @@ export class PresDeChezNousRepository implements FinderInterface {
 
     filtre.computeBox(1000);
 
-    const result = await this.callServiceAPI(filtre);
+    const liste_categories =
+      PresDeChezNousCategorieMapping.getFiltreFromCategorie(
+        CategorieRecherche[filtre.categorie],
+      );
+
+    const result = await this.callServiceAPI(filtre, liste_categories);
 
     return result.data.map(
       (r) =>
@@ -89,7 +94,7 @@ export class PresDeChezNousRepository implements FinderInterface {
 
   private async callServiceAPI(
     filtre: FiltreRecherche,
-    categories?: CategoriesPresDeChezNous[],
+    categories: string,
   ): Promise<PresDeChezVousResponse> {
     let response;
     try {
@@ -98,7 +103,7 @@ export class PresDeChezNousRepository implements FinderInterface {
           'Content-Type': 'application/json',
         },
         params: {
-          categories: '',
+          categories: categories,
           limit: 3,
           bounds: `${filtre.rect_A.longitude},${filtre.rect_A.latitude},${filtre.rect_B.longitude},${filtre.rect_B.latitude}`,
         },

@@ -1,12 +1,13 @@
-import { CategoriesPresDeChezNous } from '../../infrastructure/repository/services_recherche/categoriesPresDeChezNous';
+import { CategorieRecherche } from './categorieRecherche';
 
 export class FiltreRecherche {
+  text?: string;
+  categorie?: CategorieRecherche;
   point?: { latitude: number; longitude: number };
   rect_A?: { latitude: number; longitude: number };
   rect_B?: { latitude: number; longitude: number };
   code_postal?: string;
   commune?: string;
-  categories_pres_de_chez_nous?: CategoriesPresDeChezNous[];
 
   constructor(filtre: FiltreRecherche) {
     Object.assign(this, filtre);

@@ -71,6 +71,23 @@ describe('RechercheServices (API test)', () => {
     ).toHaveLength(3);
   });
 
+  it(`POST /utlilisateur/id/recherche_services/proximite/search renvoie une liste de résultats avec filtre de categorie`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
+    ).send({
+      categorie: 'lieux_collaboratifs',
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].titre).toEqual(`L'ébullition`);
+  });
+
   it(`POST /utlilisateur/id/recherche_services/proximite/search 404 si service de recherche pas connu`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);

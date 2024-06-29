@@ -5,6 +5,7 @@ import { ResultatRecherche } from '../../src/domain/bibliotheque_services/result
 import { RechercheServiceManager } from '../../src/domain/bibliotheque_services/serviceManager';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { FiltreRecherche } from '../domain/bibliotheque_services/filtreRecherche';
+import { CategorieRecherche } from '../domain/bibliotheque_services/categorieRecherche';
 
 @Injectable()
 export class RechercheServicesUsecase {
@@ -31,8 +32,8 @@ export class RechercheServicesUsecase {
     }
 
     const result = await finder.find(
-      categorie,
       new FiltreRecherche({
+        categorie: CategorieRecherche[categorie],
         code_postal: utilisateur.logement.code_postal,
         commune: utilisateur.logement.commune,
       }),
