@@ -51,6 +51,8 @@ export class RechecheServicesController extends GenericControler {
       utilisateurId,
       ServiceRechercheID[serviceId],
       body.categorie,
+      body.rayon_metres,
+      body.nombre_max_resultats,
     );
     return result.map((r) => ResultatRechercheAPI.mapToAPI(r));
   }

@@ -18,6 +18,8 @@ export class RechercheServicesUsecase {
     utilisateurId: string,
     serviceId: ServiceRechercheID,
     categorie: string,
+    rayon_metres: number,
+    nombre_max_resultats: number,
   ): Promise<ResultatRecherche[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
@@ -36,6 +38,8 @@ export class RechercheServicesUsecase {
         categorie: CategorieRecherche[categorie],
         code_postal: utilisateur.logement.code_postal,
         commune: utilisateur.logement.commune,
+        rayon_metres: rayon_metres,
+        nombre_max_resultats: nombre_max_resultats,
       }),
     );
 

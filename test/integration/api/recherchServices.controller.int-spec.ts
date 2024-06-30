@@ -70,6 +70,37 @@ describe('RechercheServices (API test)', () => {
       userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
     ).toHaveLength(3);
   });
+  it(`POST /utlilisateur/id/recherche_services/proximite/search petit rayon => moins de résultats`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
+    ).send({
+      rayon_metres: 400,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(2);
+  });
+  it(`POST /utlilisateur/id/recherche_services/proximite/search limite du nombre de résultats`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
+    ).send({
+      rayon_metres: 1000,
+      nombre_max_resultats: 1,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(1);
+  });
 
   it(`POST /utlilisateur/id/recherche_services/proximite/search renvoie une liste de résultats avec filtre de categorie`, async () => {
     // GIVEN

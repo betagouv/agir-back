@@ -1,5 +1,4 @@
 import { FiltreRecherche } from '../../../../src/domain/bibliotheque_services/filtreRecherche';
-import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { AddressesRepository } from '../../../../src/infrastructure/repository/services_recherche/addresses.repository';
 import { TestUtil, DB } from '../../../TestUtil';
 

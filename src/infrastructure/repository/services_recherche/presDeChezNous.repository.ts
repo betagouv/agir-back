@@ -68,7 +68,11 @@ export class PresDeChezNousRepository implements FinderInterface {
       longitude: the_adresse.longitude,
     };
 
-    filtre.computeBox(1000);
+    if (filtre.rayon_metres) {
+      filtre.computeBox(filtre.rayon_metres * 2);
+    } else {
+      filtre.computeBox(1000);
+    }
 
     const liste_categories =
       PresDeChezNousCategorieMapping.getFiltreFromCategorie(
@@ -104,7 +108,7 @@ export class PresDeChezNousRepository implements FinderInterface {
         },
         params: {
           categories: categories,
-          limit: 3,
+          limit: filtre.nombre_max_resultats ? filtre.nombre_max_resultats : 10,
           bounds: `${filtre.rect_A.longitude},${filtre.rect_A.latitude},${filtre.rect_B.longitude},${filtre.rect_B.latitude}`,
         },
       });

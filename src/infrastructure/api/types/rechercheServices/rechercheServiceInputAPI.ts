@@ -4,6 +4,6 @@ import { CategorieRecherche } from '../../../../domain/bibliotheque_services/cat
 export class RechercheServiceInputAPI {
   @ApiProperty({ required: false, enum: CategorieRecherche })
   categorie: CategorieRecherche;
-  @ApiProperty({ required: false }) nombre_resultats: number;
-  @ApiProperty({ required: false }) rayon: number;
+  @ApiProperty({ required: false }) nombre_max_resultats: number;
+  @ApiProperty({ required: false }) rayon_metres: number;
 }

@@ -8,6 +8,8 @@ export class FiltreRecherche {
   rect_B?: { latitude: number; longitude: number };
   code_postal?: string;
   commune?: string;
+  rayon_metres?: number;
+  nombre_max_resultats?: number;
 
   constructor(filtre: FiltreRecherche) {
     Object.assign(this, filtre);
