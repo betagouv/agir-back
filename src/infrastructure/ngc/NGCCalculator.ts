@@ -74,9 +74,9 @@ export class NGCCalculator {
 
     let result_map = new Map();
 
-    entryList.forEach((entry) => {
+    for (const entry of entryList) {
       result_map.set(entry, local_engine.evaluate(entry).nodeValue);
-    });
+    }
 
     return result_map;
   }

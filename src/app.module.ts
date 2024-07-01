@@ -116,6 +116,9 @@ import { AddressesRepository } from './infrastructure/repository/services_recher
 import { ServiceFavorisStatistiqueRepository } from './infrastructure/repository/serviceFavorisStatistique.repository';
 import { FruitsLegumesRepository } from './infrastructure/repository/services_recherche/fruitsLegumes.repository';
 import { RecettesRepository } from './infrastructure/repository/services_recherche/recettes/recettes.repository';
+import { BilanCarboneStatistiqueRepository } from './infrastructure/repository/bilanCarboneStatistique.repository';
+import { BilanCarboneController } from './infrastructure/api/bilanCarbone.controller';
+import { BilanCarboneUsecase } from './usecase/bilanCarbone.usecase';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -147,6 +150,7 @@ function getControllers(): any[] {
     UniversController,
     MissionController,
     RechecheServicesController,
+    BilanCarboneController,
   );
   if (!App.isProd()) {
     controllers.push(TestDataController);
@@ -254,6 +258,8 @@ function getControllers(): any[] {
     ServiceFavorisStatistiqueRepository,
     FruitsLegumesRepository,
     RecettesRepository,
+    BilanCarboneStatistiqueRepository,
+    BilanCarboneUsecase,
   ],
 })
 export class AppModule {}
