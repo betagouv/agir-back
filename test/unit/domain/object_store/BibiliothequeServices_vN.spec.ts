@@ -38,6 +38,7 @@ describe('BibliothequeService vN ', () => {
               titre: 'liuqsf',
               latitude: 1,
               longitude: 2,
+              impact_carbone_kg: 1,
             },
           ],
           favoris: [
@@ -52,6 +53,7 @@ describe('BibliothequeService vN ', () => {
                 titre: 'liuqsf',
                 latitude: 1,
                 longitude: 2,
+                impact_carbone_kg: 1,
               },
             },
           ],
@@ -83,6 +85,7 @@ describe('BibliothequeService vN ', () => {
               titre: 'liuqsf',
               latitude: 1,
               longitude: 2,
+              impact_carbone_kg: 1,
             },
           ],
           favoris: [
@@ -97,6 +100,7 @@ describe('BibliothequeService vN ', () => {
                 titre: 'liuqsf',
                 latitude: 1,
                 longitude: 2,
+                impact_carbone_kg: 1,
               },
             },
           ],

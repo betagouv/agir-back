@@ -6,6 +6,18 @@ export enum CategorieRecherche {
   epicerie_superette = 'epicerie_superette',
   circuit_court = 'circuit_court',
   zero_dechet = 'zero_dechet',
+  janvier = 'janvier',
+  fevrier = 'fevrier',
+  mars = 'mars',
+  avril = 'avril',
+  mai = 'mai',
+  juin = 'juin',
+  juillet = 'juillet',
+  aout = 'aout',
+  septembre = 'septembre',
+  octobre = 'octobre',
+  novembre = 'novembre',
+  decembre = 'decembre',
 }
 
 export class CategorieRechercheLabels {
@@ -15,6 +27,18 @@ export class CategorieRechercheLabels {
     circuit_court: 'Circuits courts',
     epicerie_superette: 'Epiceries et supérettes',
     zero_dechet: 'Zéro déchet',
+    janvier: 'janvier',
+    fevrier: 'février',
+    mars: 'mars',
+    avril: 'avril',
+    mai: 'mai',
+    juin: 'juin',
+    juillet: 'juillet',
+    aout: 'août',
+    septembre: 'septembre',
+    octobre: 'octobre',
+    novembre: 'novembre',
+    decembre: 'décembre',
   };
 
   public static getLabel(cat: CategorieRecherche) {

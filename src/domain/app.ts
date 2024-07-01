@@ -46,6 +46,9 @@ export class App {
   public static getEcoWattApiSecret(): string {
     return process.env.ECOWATT_CLIENT_ID_SECRET;
   }
+  public static getFruitsLegumesAPIKEY(): string {
+    return process.env.FRUITS_LEGUMES_API_KEY;
+  }
 
   public static getBaseURLFront(): string {
     return process.env.BASE_URL_FRONT;

@@ -62,6 +62,7 @@ export class AddressesRepository implements FinderInterface {
         adresse_code_postal: feature.properties.postcode,
         longitude: feature.geometry.coordinates[0],
         latitude: feature.geometry.coordinates[1],
+        impact_carbone_kg: null,
       }),
     ];
   }

@@ -114,6 +114,7 @@ import { RechercheServiceManager } from './domain/bibliotheque_services/serviceM
 import { PresDeChezNousRepository } from './infrastructure/repository/services_recherche/presDeChezNous.repository';
 import { AddressesRepository } from './infrastructure/repository/services_recherche/addresses.repository';
 import { ServiceFavorisStatistiqueRepository } from './infrastructure/repository/serviceFavorisStatistique.repository';
+import { FruitsLegumesRepository } from './infrastructure/repository/services_recherche/fruitsLegumes.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -250,6 +251,7 @@ function getControllers(): any[] {
     PresDeChezNousRepository,
     AddressesRepository,
     ServiceFavorisStatistiqueRepository,
+    FruitsLegumesRepository,
   ],
 })
 export class AppModule {}

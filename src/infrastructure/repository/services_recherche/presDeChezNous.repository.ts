@@ -102,6 +102,7 @@ export class PresDeChezNousRepository implements FinderInterface {
           adresse_rue: r.address.streetAddress,
           adresse_code_postal: r.address.postalCode,
           adresse_nom_ville: r.address.addressLocality,
+          impact_carbone_kg: null,
         }),
     );
   }

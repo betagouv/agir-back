@@ -185,6 +185,7 @@ describe('RechercheServices (API test)', () => {
                 longitude: 2,
                 site_web: 'e',
                 titre: 'haha',
+                impact_carbone_kg: 1,
               },
             },
           ],
@@ -220,6 +221,7 @@ describe('RechercheServices (API test)', () => {
       site_web: 'e',
       est_favoris: true,
       nombre_favoris: 1,
+      impact_carbone_kg: 1,
     });
   });
 
@@ -292,6 +294,7 @@ describe('RechercheServices (API test)', () => {
                 longitude: 2,
                 site_web: 'e',
                 titre: 'haha',
+                impact_carbone_kg: 1,
               },
             },
           ],
@@ -409,6 +412,7 @@ describe('RechercheServices (API test)', () => {
                 longitude: 2,
                 site_web: 'e',
                 titre: 'haha',
+                impact_carbone_kg: 1,
               },
             },
             {
@@ -422,6 +426,7 @@ describe('RechercheServices (API test)', () => {
                 longitude: 2,
                 site_web: 'e',
                 titre: 'hoho',
+                impact_carbone_kg: 1,
               },
             },
           ],
@@ -446,6 +451,7 @@ describe('RechercheServices (API test)', () => {
                 longitude: 2,
                 site_web: 'e',
                 titre: 'haha',
+                impact_carbone_kg: 1,
               },
             },
           ],
@@ -512,6 +518,7 @@ describe('RechercheServices (API test)', () => {
                 longitude: 2,
                 site_web: 'e',
                 titre: 'haha',
+                impact_carbone_kg: 1,
               },
             },
             {
@@ -525,6 +532,7 @@ describe('RechercheServices (API test)', () => {
                 longitude: 2,
                 site_web: 'e',
                 titre: 'hoho',
+                impact_carbone_kg: 1,
               },
             },
           ],
@@ -549,6 +557,7 @@ describe('RechercheServices (API test)', () => {
                 longitude: 2,
                 site_web: 'e',
                 titre: 'haha',
+                impact_carbone_kg: 1,
               },
             },
           ],
@@ -590,5 +599,36 @@ describe('RechercheServices (API test)', () => {
     expect(response.body[2].id).toEqual('D3U');
     expect(response.body[2].est_favoris).toEqual(false);
     expect(response.body[2].nombre_favoris).toEqual(0);
+  });
+
+  it(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/fruits_legumes/search',
+    ).send({ categorie: 'janvier' });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(36);
+    expect(response.body[0]).toStrictEqual({
+      est_favoris: false,
+      id: 'poire',
+      impact_carbone_kg: 0.36428259399999996,
+      nombre_favoris: 0,
+      titre: 'Poire',
+    });
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+
+    expect(userDB.bilbiotheque_services.liste_services).toHaveLength(1);
+    expect(userDB.bilbiotheque_services.liste_services[0].id).toEqual(
+      ServiceRechercheID.fruits_legumes,
+    );
+    expect(
+      userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
+    ).toHaveLength(36);
   });
 });

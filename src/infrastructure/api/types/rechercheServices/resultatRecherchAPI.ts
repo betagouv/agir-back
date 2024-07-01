@@ -10,6 +10,7 @@ export class ResultatRechercheAPI {
   @ApiProperty() site_web: string;
   @ApiProperty() est_favoris: boolean;
   @ApiProperty() nombre_favoris: number;
+  @ApiProperty() impact_carbone_kg: number;
 
   public static mapToAPI(res: ResultatRecherche): ResultatRechercheAPI {
     return {
@@ -21,6 +22,7 @@ export class ResultatRechercheAPI {
       site_web: res.site_web,
       est_favoris: res.est_favoris,
       nombre_favoris: res.nombre_favoris,
+      impact_carbone_kg: res.impact_carbone_kg,
     };
   }
 }

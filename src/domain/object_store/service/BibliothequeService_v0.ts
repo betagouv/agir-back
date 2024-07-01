@@ -18,6 +18,8 @@ export class ResultatRecherche_v0 {
   longitude: number;
   latitude: number;
 
+  impact_carbone_kg: number;
+
   static map(res: ResultatRecherche): ResultatRecherche_v0 {
     return {
       titre: res.titre,
@@ -28,6 +30,7 @@ export class ResultatRecherche_v0 {
       site_web: res.site_web,
       longitude: res.longitude,
       latitude: res.latitude,
+      impact_carbone_kg: res.impact_carbone_kg,
     };
   }
 }

@@ -13,6 +13,8 @@ export class ResultatRecherche {
   longitude?: number;
   latitude?: number;
 
+  impact_carbone_kg: number;
+
   est_favoris?: boolean;
   nombre_favoris?: number;
 
@@ -25,6 +27,7 @@ export class ResultatRecherche {
     this.site_web = res.site_web;
     this.latitude = res.latitude;
     this.longitude = res.longitude;
+    this.impact_carbone_kg = res.impact_carbone_kg;
 
     this.est_favoris = false;
     this.nombre_favoris = 0;
