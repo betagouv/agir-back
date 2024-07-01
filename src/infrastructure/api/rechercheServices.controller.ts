@@ -24,6 +24,7 @@ import { RechercheServiceInputAPI } from './types/rechercheServices/rechercheSer
 import { ServiceRechercheID } from '../../../src/domain/bibliotheque_services/serviceRechercheID';
 import { ResultatRechercheAPI } from './types/rechercheServices/resultatRecherchAPI';
 import { CategoriesRechercheAPI } from './types/rechercheServices/categoriesRechercheAPI';
+import { CategorieRecherche } from '../../domain/bibliotheque_services/categorieRecherche';
 
 @Controller()
 @ApiBearerAuth()
@@ -36,7 +37,7 @@ export class RechecheServicesController extends GenericControler {
   @Post('utilisateurs/:utilisateurId/recherche_services/:serviceId/search')
   @UseGuards(AuthGuard)
   @ApiOperation({
-    summary: 'recherche un text donné sur un service donné',
+    summary: `recherche une categorie au sein d'un service de recherche donné`,
   })
   @ApiBody({
     type: RechercheServiceInputAPI,

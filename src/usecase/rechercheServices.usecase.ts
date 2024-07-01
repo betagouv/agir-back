@@ -32,8 +32,25 @@ export class RechercheServicesUsecase {
     if (!finder) {
       ApplicationError.throwUnkonwnSearchService(serviceId);
     }
-    if (!utilisateur.logement.code_postal) {
+    if (
+      serviceId === ServiceRechercheID.proximite &&
+      !utilisateur.logement.code_postal
+    ) {
       ApplicationError.throwUnkonwnUserLocation();
+    }
+
+    if (categorie && !CategorieRecherche[categorie]) {
+      ApplicationError.throwUnkonwnCategorie(categorie);
+    }
+
+    if (
+      categorie &&
+      !finder.getManagedCategories().includes(CategorieRecherche[categorie])
+    ) {
+      ApplicationError.throwUnkonwnCategorieForSearchService(
+        serviceId,
+        categorie,
+      );
     }
 
     const result = await finder.find(

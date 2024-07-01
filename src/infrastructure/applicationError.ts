@@ -301,6 +301,18 @@ export class ApplicationError {
       404,
     );
   }
+  static throwUnkonwnCategorieForSearchService(
+    servicId: string,
+    categorie: string,
+  ) {
+    this.throwAppError(
+      '055',
+      `Categorie de recherche [${categorie}] non disponible pour le service [${servicId}]`,
+    );
+  }
+  static throwUnkonwnCategorie(categorie: string) {
+    this.throwAppError('056', `Categorie de recherche [${categorie}] inconnue`);
+  }
 
   private static throwAppError(
     code: string,

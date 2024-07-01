@@ -238,6 +238,32 @@ describe('RechercheServices (API test)', () => {
     expect(response.status).toBe(404);
     expect(response.body.code).toEqual('054');
   });
+  it(`POST /utlilisateur/id/recherche_services/proximite/search categorie inconnue`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
+    ).send({ categorie: 'bad' });
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('056');
+  });
+  it(`POST /utlilisateur/id/recherche_services/proximite/search categorie inconnue pour un service donné`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/fruits_legumes/search',
+    ).send({ categorie: CategorieRecherche.vegan });
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('055');
+  });
 
   it(`POST /utlilisateur/id/recherche_services/proximite/last_results/id/add_to_favoris  ajoute au favoris suite à la dernière recherche`, async () => {
     // GIVEN
@@ -630,6 +656,36 @@ describe('RechercheServices (API test)', () => {
     expect(
       userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
     ).toHaveLength(36);
+  });
+  it(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats si pas de categorie`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/fruits_legumes/search',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(32);
+    expect(response.body[0]).toStrictEqual({
+      est_favoris: false,
+      id: 'ail',
+      impact_carbone_kg: 0.358042894,
+      nombre_favoris: 0,
+      titre: 'Ail',
+    });
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+
+    expect(userDB.bilbiotheque_services.liste_services).toHaveLength(1);
+    expect(userDB.bilbiotheque_services.liste_services[0].id).toEqual(
+      ServiceRechercheID.fruits_legumes,
+    );
+    expect(
+      userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
+    ).toHaveLength(32);
   });
   it(`POST /utlilisateur/id/recherche_services/recettes/search renvoie une liste de résultats`, async () => {
     // GIVEN

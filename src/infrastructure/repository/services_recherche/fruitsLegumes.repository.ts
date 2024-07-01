@@ -61,15 +61,21 @@ export class FruitsLegumesRepository implements FinderInterface {
     filtre: FiltreRecherche,
   ): Promise<FruitsLegumesResponse> {
     let response;
+    let params;
+    if (filtre.categorie) {
+      params = {
+        month: this.getManagedCategories().indexOf(filtre.categorie) + 1,
+      };
+    } else {
+      params = {};
+    }
     try {
       response = await axios.get(API_URL, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${App.getFruitsLegumesAPIKEY()}`,
         },
-        params: {
-          month: this.getManagedCategories().indexOf(filtre.categorie) + 1,
-        },
+        params: params,
       });
     } catch (error) {
       if (error.response) {
