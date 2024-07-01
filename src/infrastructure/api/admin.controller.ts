@@ -22,6 +22,7 @@ import { QuizStatistiqueUsecase } from '../../../src/usecase/quizStatistique.use
 import { KycStatistiqueUsecase } from '../../../src/usecase/kycStatistique.usecase';
 import { ThematiqueStatistiqueUsecase } from '../../../src/usecase/thematiqueStatistique.usecase';
 import { UniversStatistiqueUsecase } from '../../../src/usecase/universStatistique.usecase';
+import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
 
 @Controller()
 @ApiTags('Admin')
@@ -29,6 +30,7 @@ import { UniversStatistiqueUsecase } from '../../../src/usecase/universStatistiq
 export class AdminController extends GenericControler {
   constructor(
     private migrationUsecase: MigrationUsecase,
+    private rechercheServicesUsecase: RechercheServicesUsecase,
     private utilisateurUsecase: UtilisateurUsecase,
     private serviceUsecase: ServiceUsecase,
     private linkyUsecase: LinkyUsecase,
@@ -52,6 +54,13 @@ export class AdminController extends GenericControler {
   async refreshServiceDynamicData(@Request() req) {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.serviceUsecase.refreshScheduledServices();
+  }
+
+  @Post('services/compute_stats')
+  @ApiOkResponse({ type: [String] })
+  async compute_stats(@Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.rechercheServicesUsecase.computeStatsFavoris();
   }
 
   @Post('services/process_async_service')

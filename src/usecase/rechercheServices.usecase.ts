@@ -6,12 +6,15 @@ import { RechercheServiceManager } from '../../src/domain/bibliotheque_services/
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { FiltreRecherche } from '../domain/bibliotheque_services/filtreRecherche';
 import { CategorieRecherche } from '../domain/bibliotheque_services/categorieRecherche';
+import { ServiceFavorisStatistiqueRepository } from '../infrastructure/repository/serviceFavorisStatistique.repository';
+import { Utilisateur } from '../domain/utilisateur/utilisateur';
 
 @Injectable()
 export class RechercheServicesUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private rechercheServiceManager: RechercheServiceManager,
+    private serviceFavorisStatistiqueRepository: ServiceFavorisStatistiqueRepository,
   ) {}
 
   async search(
@@ -46,6 +49,8 @@ export class RechercheServicesUsecase {
     utilisateur.bilbiotheque_services.setDerniereRecherche(serviceId, result);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
+    this.completeFavorisDataToResult(serviceId, result, utilisateur);
 
     return result;
   }
@@ -100,7 +105,11 @@ export class RechercheServicesUsecase {
       return [];
     }
 
-    return service.favoris.map((f) => f.resulat_recherche);
+    const result = service.favoris.map((f) => f.resulat_recherche);
+
+    this.completeFavorisDataToResult(serviceId, result, utilisateur);
+
+    return result;
   }
 
   async getCategories(
@@ -110,5 +119,72 @@ export class RechercheServicesUsecase {
     const finder = this.rechercheServiceManager.getFinderById(serviceId);
 
     return finder.getManagedCategories();
+  }
+
+  public async computeStatsFavoris(): Promise<string[]> {
+    const user_id_liste = await this.utilisateurRepository.listUtilisateurIds();
+
+    const service_favoris_map: Map<
+      string,
+      Map<string, { count: number; titre: string }>
+    > = new Map();
+
+    for (const user_id of user_id_liste) {
+      const user = await this.utilisateurRepository.getById(user_id);
+
+      for (const service of user.bilbiotheque_services.liste_services) {
+        for (const favoris of service.favoris) {
+          if (!service_favoris_map.get(service.id)) {
+            service_favoris_map.set(service.id, new Map());
+          }
+
+          const service_map = service_favoris_map.get(service.id);
+
+          if (!service_map.get(favoris.resulat_recherche.id)) {
+            service_map.set(favoris.resulat_recherche.id, {
+              count: 1,
+              titre: favoris.resulat_recherche.titre,
+            });
+          } else {
+            const fav = service_map.get(favoris.resulat_recherche.id);
+            fav.count++;
+          }
+        }
+      }
+    }
+
+    const result = [];
+
+    for (const [service_id, favoris_map] of service_favoris_map) {
+      result.push(service_id);
+
+      for (const [favoris_id, favoris] of favoris_map) {
+        await this.serviceFavorisStatistiqueRepository.upsertStatistiques(
+          service_id,
+          favoris_id,
+          favoris.titre,
+          favoris.count,
+        );
+      }
+    }
+
+    return result;
+  }
+
+  private completeFavorisDataToResult(
+    service_id: ServiceRechercheID,
+    result: ResultatRecherche[],
+    utilisateur: Utilisateur,
+  ) {
+    const service =
+      utilisateur.bilbiotheque_services.getServiceById(service_id);
+
+    for (const item of result) {
+      item.est_favoris = service.estFavoris(item.id);
+      item.nombre_favoris = ServiceFavorisStatistiqueRepository.getFavorisCount(
+        service_id,
+        item.id,
+      );
+    }
   }
 }

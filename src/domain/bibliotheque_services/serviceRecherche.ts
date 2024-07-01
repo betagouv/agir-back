@@ -56,6 +56,10 @@ export class ServiceRecherche {
     }
   }
 
+  public estFavoris(fav_id: string): boolean {
+    return !!this.favoris.find((f) => f.resulat_recherche.id === fav_id);
+  }
+
   public static new(serviceId: ServiceRechercheID): ServiceRecherche {
     return new ServiceRecherche({
       id: serviceId,

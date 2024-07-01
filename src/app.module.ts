@@ -113,6 +113,7 @@ import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
 import { RechercheServiceManager } from './domain/bibliotheque_services/serviceManager';
 import { PresDeChezNousRepository } from './infrastructure/repository/services_recherche/presDeChezNous.repository';
 import { AddressesRepository } from './infrastructure/repository/services_recherche/addresses.repository';
+import { ServiceFavorisStatistiqueRepository } from './infrastructure/repository/serviceFavorisStatistique.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -248,6 +249,7 @@ function getControllers(): any[] {
     RechercheServiceManager,
     PresDeChezNousRepository,
     AddressesRepository,
+    ServiceFavorisStatistiqueRepository,
   ],
 })
 export class AppModule {}

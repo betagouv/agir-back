@@ -13,6 +13,9 @@ export class ResultatRecherche {
   longitude?: number;
   latitude?: number;
 
+  est_favoris?: boolean;
+  nombre_favoris?: number;
+
   constructor(res: ResultatRecherche_v0) {
     this.id = res.id;
     this.titre = res.titre;
@@ -22,5 +25,8 @@ export class ResultatRecherche {
     this.site_web = res.site_web;
     this.latitude = res.latitude;
     this.longitude = res.longitude;
+
+    this.est_favoris = false;
+    this.nombre_favoris = 0;
   }
 }

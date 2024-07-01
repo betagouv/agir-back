@@ -7,6 +7,7 @@ import {
 } from '../../../src/domain/logement/logement';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { BibliothequeServices_v0 } from '../../../src/domain/object_store/service/BibliothequeService_v0';
+import { ServiceFavorisStatistiqueRepository } from '../../../src/infrastructure/repository/serviceFavorisStatistique.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
@@ -26,6 +27,8 @@ const logement_palaiseau: Logement_v0 = {
 
 describe('RechercheServices (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const serviceFavorisStatistiqueRepository =
+    new ServiceFavorisStatistiqueRepository(TestUtil.prisma);
   const OLD_ENV = process.env;
 
   beforeAll(async () => {
@@ -164,13 +167,41 @@ describe('RechercheServices (API test)', () => {
 
   it(`GET /utlilisateur/id/recherche_services/proximite/favoris  liste les favoris de ce service de l'utilisateur`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
-    );
-    await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/recherche_services/proximite/last_results/DwG/add_to_favoris',
-    );
+    const biblio: BibliothequeServices_v0 = {
+      version: 0,
+      liste_services: [
+        {
+          id: ServiceRechercheID.proximite,
+          derniere_recherche: [],
+          favoris: [
+            {
+              date_ajout: new Date(),
+              resulat_recherche: {
+                id: '123',
+                adresse_code_postal: 'a',
+                adresse_nom_ville: 'b',
+                adresse_rue: 'c',
+                latitude: 1,
+                longitude: 2,
+                site_web: 'e',
+                titre: 'haha',
+              },
+            },
+          ],
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau,
+      bilbiotheque_services: biblio,
+    });
+
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.POST('/services/compute_stats');
+
+    await serviceFavorisStatistiqueRepository.loadCachedData();
+
+    await TestUtil.generateAuthorizationToken('utilisateur-id');
 
     // WHEN
     const response = await TestUtil.GET(
@@ -181,12 +212,14 @@ describe('RechercheServices (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toStrictEqual({
-      id: 'DwG',
-      titre: "Mon Epice'Rit",
-      adresse_code_postal: '91120',
-      adresse_nom_ville: 'Palaiseau',
-      adresse_rue: '4 Rue des Écoles',
-      site_web: 'https://www.monepi.fr/monepicerit',
+      id: '123',
+      titre: 'haha',
+      adresse_code_postal: 'a',
+      adresse_nom_ville: 'b',
+      adresse_rue: 'c',
+      site_web: 'e',
+      est_favoris: true,
+      nombre_favoris: 1,
     });
   });
 
@@ -344,5 +377,221 @@ describe('RechercheServices (API test)', () => {
         label: 'Nourriture',
       },
     ]);
+  });
+
+  it(`POST /services/compute_stats  calcul les stats de favoris pour les services, aucun usage`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.POST('/services/compute_stats');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toStrictEqual([]);
+  });
+  it(`POST /services/compute_stats  calcul les stats d'uun utilisateur avec 2 favoris`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const biblio1: BibliothequeServices_v0 = {
+      version: 0,
+      liste_services: [
+        {
+          id: ServiceRechercheID.proximite,
+          derniere_recherche: [],
+          favoris: [
+            {
+              date_ajout: new Date(),
+              resulat_recherche: {
+                id: '123',
+                adresse_code_postal: 'a',
+                adresse_nom_ville: 'b',
+                adresse_rue: 'c',
+                latitude: 1,
+                longitude: 2,
+                site_web: 'e',
+                titre: 'haha',
+              },
+            },
+            {
+              date_ajout: new Date(),
+              resulat_recherche: {
+                id: '456',
+                adresse_code_postal: 'a',
+                adresse_nom_ville: 'b',
+                adresse_rue: 'c',
+                latitude: 1,
+                longitude: 2,
+                site_web: 'e',
+                titre: 'hoho',
+              },
+            },
+          ],
+        },
+      ],
+    };
+    const biblio2: BibliothequeServices_v0 = {
+      version: 0,
+      liste_services: [
+        {
+          id: ServiceRechercheID.proximite,
+          derniere_recherche: [],
+          favoris: [
+            {
+              date_ajout: new Date(),
+              resulat_recherche: {
+                id: '123',
+                adresse_code_postal: 'a',
+                adresse_nom_ville: 'b',
+                adresse_rue: 'c',
+                latitude: 1,
+                longitude: 2,
+                site_web: 'e',
+                titre: 'haha',
+              },
+            },
+          ],
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      id: 'user1',
+      email: 'email1',
+      logement: logement_palaiseau,
+      bilbiotheque_services: biblio1,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'user2',
+      email: 'email2',
+      logement: logement_palaiseau,
+      bilbiotheque_services: biblio2,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/services/compute_stats');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toStrictEqual([ServiceRechercheID.proximite]);
+
+    const stats = await TestUtil.prisma.servicesFavorisStatistique.findMany();
+    delete stats[0].created_at;
+    delete stats[0].updated_at;
+    delete stats[1].created_at;
+    delete stats[1].updated_at;
+    expect(stats).toStrictEqual([
+      {
+        count_favoris: 2,
+        favoris_id: '123',
+        service_id: 'proximite',
+        titre_favoris: 'haha',
+      },
+      {
+        count_favoris: 1,
+        favoris_id: '456',
+        service_id: 'proximite',
+        titre_favoris: 'hoho',
+      },
+    ]);
+  });
+  it(`POST /utlilisateur/id/recherche_services/proximite/search  tags les favoris dans le recherche`, async () => {
+    // GIVEN
+    const biblio1: BibliothequeServices_v0 = {
+      version: 0,
+      liste_services: [
+        {
+          id: ServiceRechercheID.proximite,
+          derniere_recherche: [],
+          favoris: [
+            {
+              date_ajout: new Date(),
+              resulat_recherche: {
+                id: 'DwG',
+                adresse_code_postal: 'a',
+                adresse_nom_ville: 'b',
+                adresse_rue: 'c',
+                latitude: 1,
+                longitude: 2,
+                site_web: 'e',
+                titre: 'haha',
+              },
+            },
+            {
+              date_ajout: new Date(),
+              resulat_recherche: {
+                id: 'NTw',
+                adresse_code_postal: 'a',
+                adresse_nom_ville: 'b',
+                adresse_rue: 'c',
+                latitude: 1,
+                longitude: 2,
+                site_web: 'e',
+                titre: 'hoho',
+              },
+            },
+          ],
+        },
+      ],
+    };
+    const biblio2: BibliothequeServices_v0 = {
+      version: 0,
+      liste_services: [
+        {
+          id: ServiceRechercheID.proximite,
+          derniere_recherche: [],
+          favoris: [
+            {
+              date_ajout: new Date(),
+              resulat_recherche: {
+                id: 'DwG',
+                adresse_code_postal: 'a',
+                adresse_nom_ville: 'b',
+                adresse_rue: 'c',
+                latitude: 1,
+                longitude: 2,
+                site_web: 'e',
+                titre: 'haha',
+              },
+            },
+          ],
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau,
+      bilbiotheque_services: biblio1,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'user2',
+      email: 'email2',
+      logement: logement_palaiseau,
+      bilbiotheque_services: biblio2,
+    });
+
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.POST('/services/compute_stats');
+
+    await serviceFavorisStatistiqueRepository.loadCachedData();
+
+    await TestUtil.generateAuthorizationToken('utilisateur-id');
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    expect(response.body[0].id).toEqual('DwG');
+    expect(response.body[0].est_favoris).toEqual(true);
+    expect(response.body[0].nombre_favoris).toEqual(2);
+    expect(response.body[1].id).toEqual('NTw');
+    expect(response.body[1].est_favoris).toEqual(true);
+    expect(response.body[1].nombre_favoris).toEqual(1);
+    expect(response.body[2].id).toEqual('D3U');
+    expect(response.body[2].est_favoris).toEqual(false);
+    expect(response.body[2].nombre_favoris).toEqual(0);
   });
 });
