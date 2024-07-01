@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { CategorieRecherche } from '../../../domain/bibliotheque_services/categorieRecherche';
-import { FiltreRecherche } from '../../../domain/bibliotheque_services/filtreRecherche';
-import { FinderInterface } from '../../../domain/bibliotheque_services/finderInterface';
-import { ResultatRecherche } from '../../../domain/bibliotheque_services/resultatRecherche';
-import { AddressesRepository } from './addresses.repository';
+import { CategorieRecherche } from '../../../../domain/bibliotheque_services/categorieRecherche';
+import { FiltreRecherche } from '../../../../domain/bibliotheque_services/filtreRecherche';
+import { FinderInterface } from '../../../../domain/bibliotheque_services/finderInterface';
+import { ResultatRecherche } from '../../../../domain/bibliotheque_services/resultatRecherche';
+import { AddressesRepository } from '../addresses.repository';
 import { PresDeChezNousCategorieMapping } from './presDeChezNousMetaCategorie';
 
 const API_URL = 'https://presdecheznous.gogocarto.fr/api/elements.json';
@@ -102,7 +102,6 @@ export class PresDeChezNousRepository implements FinderInterface {
           adresse_rue: r.address.streetAddress,
           adresse_code_postal: r.address.postalCode,
           adresse_nom_ville: r.address.addressLocality,
-          impact_carbone_kg: null,
         }),
     );
   }
@@ -125,9 +124,9 @@ export class PresDeChezNousRepository implements FinderInterface {
       });
     } catch (error) {
       if (error.response) {
-        // haha
+        console.log(error.response);
       } else if (error.request) {
-        // hihi
+        console.log(error.request);
       }
       return null;
     }

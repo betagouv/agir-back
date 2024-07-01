@@ -4,16 +4,20 @@ export class ResultatRecherche {
   id: string;
   titre: string;
 
-  adresse_rue: string;
-  adresse_nom_ville: string;
-  adresse_code_postal: string;
+  adresse_rue?: string;
+  adresse_nom_ville?: string;
+  adresse_code_postal?: string;
 
-  site_web: string;
+  site_web?: string;
 
   longitude?: number;
   latitude?: number;
 
-  impact_carbone_kg: number;
+  impact_carbone_kg?: number;
+
+  type_plat?: string;
+  difficulty_plat?: string;
+  temps_prepa_min?: number;
 
   est_favoris?: boolean;
   nombre_favoris?: number;
@@ -27,6 +31,9 @@ export class ResultatRecherche {
     this.site_web = res.site_web;
     this.latitude = res.latitude;
     this.longitude = res.longitude;
+    this.type_plat = res.type_plat;
+    this.difficulty_plat = res.difficulty_plat;
+    this.temps_prepa_min = res.temps_prepa_min;
     this.impact_carbone_kg = res.impact_carbone_kg;
 
     this.est_favoris = false;

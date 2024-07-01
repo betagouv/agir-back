@@ -111,10 +111,11 @@ import { Personnalisator } from './infrastructure/personnalisation/personnalisat
 import { RechecheServicesController } from './infrastructure/api/rechercheServices.controller';
 import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
 import { RechercheServiceManager } from './domain/bibliotheque_services/serviceManager';
-import { PresDeChezNousRepository } from './infrastructure/repository/services_recherche/presDeChezNous.repository';
+import { PresDeChezNousRepository } from './infrastructure/repository/services_recherche/pres_de_chez_nous/presDeChezNous.repository';
 import { AddressesRepository } from './infrastructure/repository/services_recherche/addresses.repository';
 import { ServiceFavorisStatistiqueRepository } from './infrastructure/repository/serviceFavorisStatistique.repository';
 import { FruitsLegumesRepository } from './infrastructure/repository/services_recherche/fruitsLegumes.repository';
+import { RecettesRepository } from './infrastructure/repository/services_recherche/recettes/recettes.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -252,6 +253,7 @@ function getControllers(): any[] {
     AddressesRepository,
     ServiceFavorisStatistiqueRepository,
     FruitsLegumesRepository,
+    RecettesRepository,
   ],
 })
 export class AppModule {}

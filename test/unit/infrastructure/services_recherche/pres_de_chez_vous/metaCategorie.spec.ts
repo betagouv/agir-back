@@ -1,5 +1,5 @@
 import { CategorieRecherche } from '../../../../../src/domain/bibliotheque_services/categorieRecherche';
-import { PresDeChezNousCategorieMapping } from '../../../../../src/infrastructure/repository/services_recherche/presDeChezNousMetaCategorie';
+import { PresDeChezNousCategorieMapping } from '../../../../../src/infrastructure/repository/services_recherche/pres_de_chez_nous/presDeChezNousMetaCategorie';
 
 describe('Prez de chez vous - MetaCategorie', () => {
   it('getFiltreFromCategorie : categorie iconnue', () => {

@@ -47,13 +47,7 @@ export class FruitsLegumesRepository implements FinderInterface {
       (r) =>
         new ResultatRecherche({
           id: r.slug,
-          longitude: undefined,
-          latitude: undefined,
-          site_web: undefined,
           titre: r.name,
-          adresse_rue: undefined,
-          adresse_code_postal: undefined,
-          adresse_nom_ville: undefined,
           impact_carbone_kg: r.ecv,
         }),
     );
@@ -79,9 +73,9 @@ export class FruitsLegumesRepository implements FinderInterface {
       });
     } catch (error) {
       if (error.response) {
-        // haha
+        console.log(error.response);
       } else if (error.request) {
-        // hihi
+        console.log(error.request);
       }
       return null;
     }

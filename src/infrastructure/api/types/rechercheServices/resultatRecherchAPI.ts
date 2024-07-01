@@ -11,6 +11,9 @@ export class ResultatRechercheAPI {
   @ApiProperty() est_favoris: boolean;
   @ApiProperty() nombre_favoris: number;
   @ApiProperty() impact_carbone_kg: number;
+  @ApiProperty() type_plat: string;
+  @ApiProperty() difficulty_plat: string;
+  @ApiProperty() temps_prepa_min: number;
 
   public static mapToAPI(res: ResultatRecherche): ResultatRechercheAPI {
     return {
@@ -23,6 +26,9 @@ export class ResultatRechercheAPI {
       est_favoris: res.est_favoris,
       nombre_favoris: res.nombre_favoris,
       impact_carbone_kg: res.impact_carbone_kg,
+      type_plat: res.type_plat,
+      difficulty_plat: res.difficulty_plat,
+      temps_prepa_min: res.temps_prepa_min,
     };
   }
 }

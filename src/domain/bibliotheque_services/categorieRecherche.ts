@@ -18,6 +18,10 @@ export enum CategorieRecherche {
   octobre = 'octobre',
   novembre = 'novembre',
   decembre = 'decembre',
+  vege = 'vege',
+  vegan = 'vegan',
+  dinde_volaille = 'dinde_volaille',
+  saison = 'saison',
 }
 
 export class CategorieRechercheLabels {
@@ -39,6 +43,10 @@ export class CategorieRechercheLabels {
     octobre: 'octobre',
     novembre: 'novembre',
     decembre: 'décembre',
+    dinde_volaille: 'dinde et volaille',
+    saison: 'saison',
+    vegan: 'vegan',
+    vege: 'végé',
   };
 
   public static getLabel(cat: CategorieRecherche) {

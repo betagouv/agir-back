@@ -1,4 +1,4 @@
-import { CategorieRecherche } from '../../../domain/bibliotheque_services/categorieRecherche';
+import { CategorieRecherche } from '../../../../domain/bibliotheque_services/categorieRecherche';
 import { CategoriesPresDeChezNous } from './categoriesPresDeChezNous';
 
 export class Mapping {

@@ -9,16 +9,20 @@ export class ResultatRecherche_v0 {
   id: string;
   titre: string;
 
-  adresse_rue: string;
-  adresse_nom_ville: string;
-  adresse_code_postal: string;
+  adresse_rue?: string;
+  adresse_nom_ville?: string;
+  adresse_code_postal?: string;
 
-  site_web: string;
+  site_web?: string;
 
-  longitude: number;
-  latitude: number;
+  longitude?: number;
+  latitude?: number;
 
-  impact_carbone_kg: number;
+  type_plat?: string;
+  difficulty_plat?: string;
+  temps_prepa_min?: number;
+
+  impact_carbone_kg?: number;
 
   static map(res: ResultatRecherche): ResultatRecherche_v0 {
     return {
@@ -31,6 +35,9 @@ export class ResultatRecherche_v0 {
       longitude: res.longitude,
       latitude: res.latitude,
       impact_carbone_kg: res.impact_carbone_kg,
+      difficulty_plat: res.difficulty_plat,
+      temps_prepa_min: res.temps_prepa_min,
+      type_plat: res.type_plat,
     };
   }
 }
