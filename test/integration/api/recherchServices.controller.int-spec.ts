@@ -1,3 +1,4 @@
+import { CategorieRecherche } from '../../../src/domain/bibliotheque_services/categorieRecherche';
 import { ServiceRechercheID } from '../../../src/domain/bibliotheque_services/serviceRechercheID';
 import {
   Superficie,
@@ -113,13 +114,12 @@ describe('RechercheServices (API test)', () => {
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
     ).send({
-      categorie: 'lieux_collaboratifs',
+      categorie: CategorieRecherche.epicerie_superette,
     });
 
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0].titre).toEqual(`L'ébullition`);
+    expect(response.body).toHaveLength(2);
   });
 
   it(`POST /utlilisateur/id/recherche_services/proximite/search 404 si service de recherche pas connu`, async () => {
@@ -368,14 +368,11 @@ describe('RechercheServices (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toStrictEqual([
-      {
-        code: 'lieux_collaboratifs',
-        label: 'Lieux collaboratifs',
-      },
-      {
-        code: 'nourriture',
-        label: 'Nourriture',
-      },
+      { code: 'circuit_court', label: 'Circuits courts' },
+      { code: 'nourriture', label: 'Nourriture' },
+      { code: 'epicerie_superette', label: 'Epiceries et supérettes' },
+      { code: 'marche_local', label: 'Marchés locaux' },
+      { code: 'zero_dechet', label: 'Zéro déchet' },
     ]);
   });
 

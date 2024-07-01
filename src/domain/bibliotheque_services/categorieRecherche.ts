@@ -1,16 +1,20 @@
 import { ServiceRechercheID } from './serviceRechercheID';
 
 export enum CategorieRecherche {
-  lieux_collaboratifs = 'lieux_collaboratifs',
   nourriture = 'nourriture',
-  default = 'default',
+  marche_local = 'marche_local',
+  epicerie_superette = 'epicerie_superette',
+  circuit_court = 'circuit_court',
+  zero_dechet = 'zero_dechet',
 }
 
 export class CategorieRechercheLabels {
   private static labels: Record<CategorieRecherche, string> = {
-    default: 'tout',
-    lieux_collaboratifs: 'Lieux collaboratifs',
     nourriture: 'Nourriture',
+    marche_local: 'Marchés locaux',
+    circuit_court: 'Circuits courts',
+    epicerie_superette: 'Epiceries et supérettes',
+    zero_dechet: 'Zéro déchet',
   };
 
   public static getLabel(cat: CategorieRecherche) {
