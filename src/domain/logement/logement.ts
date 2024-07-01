@@ -45,16 +45,16 @@ export class Logement {
 
   constructor(log?: Logement_v0) {
     if (!log) return;
-    this.nombre_adultes = log.nombre_adultes;
-    this.nombre_enfants = log.nombre_enfants;
-    this.code_postal = log.code_postal;
-    this.commune = log.commune;
-    this.type = log.type;
-    this.superficie = log.superficie;
-    this.proprietaire = log.proprietaire;
-    this.chauffage = log.chauffage;
-    this.plus_de_15_ans = log.plus_de_15_ans;
-    this.dpe = log.dpe;
+    this.nombre_adultes = this.undefinedToNull(log.nombre_adultes);
+    this.nombre_enfants = this.undefinedToNull(log.nombre_enfants);
+    this.code_postal = this.undefinedToNull(log.code_postal);
+    this.commune = this.undefinedToNull(log.commune);
+    this.type = this.undefinedToNull(log.type);
+    this.superficie = this.undefinedToNull(log.superficie);
+    this.proprietaire = this.undefinedToNull(log.proprietaire);
+    this.chauffage = this.undefinedToNull(log.chauffage);
+    this.plus_de_15_ans = this.undefinedToNull(log.plus_de_15_ans);
+    this.dpe = this.undefinedToNull(log.dpe);
   }
 
   patch?(input: Logement) {
@@ -84,6 +84,10 @@ export class Logement {
       superficie: data.superficie,
       type: data.residence,
     });
+  }
+
+  private undefinedToNull?(val): any {
+    return val === undefined ? null : val;
   }
 
   private AorB?<T>(a: T, b: T): T {
