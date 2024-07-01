@@ -102,4 +102,13 @@ export class RechercheServicesUsecase {
 
     return service.favoris.map((f) => f.resulat_recherche);
   }
+
+  async getCategories(
+    utilisateurId: string,
+    serviceId: ServiceRechercheID,
+  ): Promise<CategorieRecherche[]> {
+    const finder = this.rechercheServiceManager.getFinderById(serviceId);
+
+    return finder.getManagedCategories();
+  }
 }

@@ -322,4 +322,27 @@ describe('RechercheServices (API test)', () => {
       userDB.bilbiotheque_services.liste_services[0].favoris[0].date_ajout.getTime(),
     ).toBeGreaterThan(Date.now() - 200);
   });
+
+  it(`GET /utlilisateur/id/recherche_services/proximite/categories  listes les categories du service proximité`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recherche_services/proximite/categories',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toStrictEqual([
+      {
+        code: 'lieux_collaboratifs',
+        label: 'Lieux collaboratifs',
+      },
+      {
+        code: 'nourriture',
+        label: 'Nourriture',
+      },
+    ]);
+  });
 });

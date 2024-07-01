@@ -50,6 +50,13 @@ export type PresDeChezVousResponse = {
 export class PresDeChezNousRepository implements FinderInterface {
   constructor(private addressesRepository: AddressesRepository) {}
 
+  public getManagedCategories(): CategorieRecherche[] {
+    return [
+      CategorieRecherche.lieux_collaboratifs,
+      CategorieRecherche.nourriture,
+    ];
+  }
+
   public async find(filtre: FiltreRecherche): Promise<ResultatRecherche[]> {
     const adresse = await this.addressesRepository.find(
       new FiltreRecherche({

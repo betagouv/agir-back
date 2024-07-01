@@ -1,6 +1,7 @@
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
@@ -22,6 +23,7 @@ import { RechercheServicesUsecase } from '../../../src/usecase/rechercheServices
 import { RechercheServiceInputAPI } from './types/rechercheServices/rechercheServiceInputAPI';
 import { ServiceRechercheID } from '../../../src/domain/bibliotheque_services/serviceRechercheID';
 import { ResultatRechercheAPI } from './types/rechercheServices/resultatRecherchAPI';
+import { CategoriesRechercheAPI } from './types/rechercheServices/categoriesRechercheAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -38,6 +40,9 @@ export class RechecheServicesController extends GenericControler {
   })
   @ApiBody({
     type: RechercheServiceInputAPI,
+  })
+  @ApiOkResponse({
+    type: [ResultatRechercheAPI],
   })
   @ApiParam({ name: 'serviceId', enum: ServiceRechercheID })
   async recherche(
@@ -62,6 +67,9 @@ export class RechecheServicesController extends GenericControler {
   @ApiOperation({
     summary: `Récupère les favoris de l'utilisateur`,
   })
+  @ApiOkResponse({
+    type: [ResultatRechercheAPI],
+  })
   @ApiParam({ name: 'serviceId', enum: ServiceRechercheID })
   async getFavoris(
     @Request() req,
@@ -74,6 +82,28 @@ export class RechecheServicesController extends GenericControler {
       ServiceRechercheID[serviceId],
     );
     return result.map((r) => ResultatRechercheAPI.mapToAPI(r));
+  }
+
+  @Get('utilisateurs/:utilisateurId/recherche_services/:serviceId/categories')
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Récupère les categories disponibles sur un service donné`,
+  })
+  @ApiParam({ name: 'serviceId', enum: ServiceRechercheID })
+  @ApiOkResponse({
+    type: [CategoriesRechercheAPI],
+  })
+  async getCategories(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('serviceId') serviceId: string,
+  ): Promise<CategoriesRechercheAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.rechercheServicesUsecase.getCategories(
+      utilisateurId,
+      ServiceRechercheID[serviceId],
+    );
+    return result.map((r) => CategoriesRechercheAPI.mapToAPI(r));
   }
 
   @Post(

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { CategorieRecherche } from '../../../domain/bibliotheque_services/categorieRecherche';
 import { FiltreRecherche } from '../../../domain/bibliotheque_services/filtreRecherche';
 import { FinderInterface } from '../../../domain/bibliotheque_services/finderInterface';
 import { ResultatRecherche } from '../../../domain/bibliotheque_services/resultatRecherche';
@@ -40,6 +41,10 @@ export type AddresseResponse = {
 
 @Injectable()
 export class AddressesRepository implements FinderInterface {
+  public getManagedCategories(): CategorieRecherche[] {
+    return [];
+  }
+
   public async find(filtre: FiltreRecherche): Promise<ResultatRecherche[]> {
     const result = await this.callAddresseAPI(filtre.text);
 
