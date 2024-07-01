@@ -1,5 +1,5 @@
 import { Thematique } from '../../../../src/domain/contenu/thematique';
-import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
 import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
 import { Univers } from '../../../../src/domain/univers/univers';
 import { Tag } from '../../../../src/domain/scoring/tag';

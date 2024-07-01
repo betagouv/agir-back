@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { QuestionKYC } from '../domain/kyc/questionQYC';
+import { QuestionKYC } from '../domain/kyc/questionKYC';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';

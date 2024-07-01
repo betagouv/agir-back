@@ -4,7 +4,7 @@ import {
 } from '../../../../src/domain/object_store/upgrader';
 import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
 import { KYCHistory_v0 } from '../../../../src/domain/object_store/kyc/kycHistory_v0';
-import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { Univers } from '../../../../src/domain/univers/univers';
 import { Tag } from '../../../../src/domain/scoring/tag';

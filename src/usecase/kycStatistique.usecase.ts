@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { KycStatistiqueRepository } from '../../src/infrastructure/repository/kycStatistique.repository';
-import { KYCReponse } from 'src/domain/kyc/questionQYC';
+import { KYCReponse } from 'src/domain/kyc/questionKYC';
 
 @Injectable()
 export class KycStatistiqueUsecase {

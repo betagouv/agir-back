@@ -13,7 +13,7 @@ import { ContentType } from '../../src/domain/contenu/contentType';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
 import { Defi, DefiStatus } from '../../src/domain/defis/defi';
-import { QuestionKYC } from '../../src/domain/kyc/questionQYC';
+import { QuestionKYC } from '../domain/kyc/questionKYC';
 import { Thematique } from '../../src/domain/contenu/thematique';
 import { App } from '../domain/app';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';

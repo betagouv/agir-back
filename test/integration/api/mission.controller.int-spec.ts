@@ -7,7 +7,7 @@ import { Univers } from '../../../src/domain/univers/univers';
 import {
   TypeReponseQuestionKYC,
   BooleanKYC,
-} from '../../../src/domain/kyc/questionQYC';
+} from '../../../src/domain/kyc/questionKYC';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { EventType } from '../../../src/domain/appEvent';
 import { DefiStatus } from '../../../src/domain/defis/defi';

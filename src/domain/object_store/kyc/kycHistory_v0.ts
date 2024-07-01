@@ -4,7 +4,7 @@ import {
   KYCReponse,
   QuestionKYC,
   TypeReponseQuestionKYC,
-} from '../../kyc/questionQYC';
+} from '../../kyc/questionKYC';
 import { Thematique } from '../../contenu/thematique';
 import { Tag } from '../../scoring/tag';
 import { Categorie } from '../../../../src/domain/contenu/categorie';

@@ -15,7 +15,7 @@ import { Impact } from '../src/domain/onboarding/onboarding';
 const request = require('supertest');
 import { JwtService } from '@nestjs/jwt';
 import { ParcoursTodo } from '../src/domain/todo/parcoursTodo';
-import { TypeReponseQuestionKYC } from '../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../src/domain/kyc/questionKYC';
 import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
 import { Feature } from '../src/domain/gamification/feature';
 import { UnlockedFeatures_v1 } from '../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';

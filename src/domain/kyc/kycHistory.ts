@@ -3,7 +3,7 @@ import { Categorie } from '../contenu/categorie';
 import { ConditionDefi } from '../defis/conditionDefi';
 import { KYCHistory_v0 as KYCHistory_v0 } from '../object_store/kyc/kycHistory_v0';
 import { KycDefinition } from './kycDefinition';
-import { QuestionKYC, TypeReponseQuestionKYC } from './questionQYC';
+import { QuestionKYC, TypeReponseQuestionKYC } from './questionKYC';
 
 export class KYCHistory {
   answered_questions: QuestionKYC[];

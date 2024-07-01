@@ -22,7 +22,7 @@ import {
   Defi_v0,
 } from '../../../src/domain/object_store/defi/defiHistory_v0';
 import { Univers } from '../../../src/domain/univers/univers';
-import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { KYC } from '@prisma/client';
 import { KycDefinition } from '../../../src/domain/kyc/kycDefinition';
-import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../domain/kyc/questionKYC';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { Categorie } from '../../../src/domain/contenu/categorie';

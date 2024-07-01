@@ -1,7 +1,7 @@
 import { Categorie } from '../contenu/categorie';
 import { Thematique } from '../contenu/thematique';
 import { Tag } from '../scoring/tag';
-import { TypeReponseQuestionKYC } from './questionQYC';
+import { TypeReponseQuestionKYC } from './questionKYC';
 
 export class KycDefinition {
   id_cms: number;

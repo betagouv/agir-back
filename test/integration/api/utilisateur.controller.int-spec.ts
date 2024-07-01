@@ -9,7 +9,7 @@ import {
   TypeLogement,
 } from '../../../src/domain/logement/logement';
 import { TransportQuotidien } from '../../../src/domain/transport/transport';
-import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { KYCID } from '../../../src/domain/kyc/KYCID';

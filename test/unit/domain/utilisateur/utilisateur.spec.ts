@@ -14,7 +14,7 @@ import { TransportQuotidien } from '../../../../src/domain/transport/transport';
 import {
   QuestionKYC,
   TypeReponseQuestionKYC,
-} from '../../../../src/domain/kyc/questionQYC';
+} from '../../../../src/domain/kyc/questionKYC';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../../src/domain/contenu/categorie';

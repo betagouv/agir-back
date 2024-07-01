@@ -4,7 +4,7 @@ import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
 import { Mission, Objectif } from '../../src/domain/mission/mission';
 import { ContentType } from '../../src/domain/contenu/contentType';
-import { QuestionKYC } from '../../src/domain/kyc/questionQYC';
+import { QuestionKYC } from '../domain/kyc/questionKYC';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { DefiStatus } from '../../src/domain/defis/defi';

@@ -19,7 +19,7 @@ import { OnboardingResult } from '../../../../src/domain/onboarding/onboardingRe
 import { UserTagEvaluator } from '../../../../src/domain/scoring/userTagEvaluator';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
-import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { Univers } from '../../../../src/domain/univers/univers';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';

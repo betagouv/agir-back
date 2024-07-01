@@ -2,7 +2,7 @@ import { UtilisateurRepository } from '../../../src/infrastructure/repository/ut
 import {
   BooleanKYC,
   TypeReponseQuestionKYC,
-} from '../../../src/domain/kyc/questionQYC';
+} from '../../../src/domain/kyc/questionKYC';
 import { DB, TestUtil } from '../../TestUtil';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import {
