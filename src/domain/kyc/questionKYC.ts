@@ -68,7 +68,7 @@ export class QuestionKYC implements TaggedContent {
       points: def.points,
       tags: def.tags,
       type: def.type,
-      ngc_key: null,
+      ngc_key: def.ngc_key,
       thematique: def.thematique,
       universes: def.universes,
       question: def.question,
