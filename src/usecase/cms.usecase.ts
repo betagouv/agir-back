@@ -646,6 +646,7 @@ export class CMSUsecase {
         ? entry.reponses.map((r) => ({
             label: r.reponse,
             code: r.code,
+            ngc_code: r.ngc_code,
           }))
         : [],
       tags: entry.tags
@@ -879,6 +880,7 @@ export class CMSUsecase {
         ? entry.attributes.reponses.map((r) => ({
             label: r.reponse,
             code: r.code,
+            ngc_code: r.ngc_code,
           }))
         : [],
       thematique: entry.attributes.thematique.data

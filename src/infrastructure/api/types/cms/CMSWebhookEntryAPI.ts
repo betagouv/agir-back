@@ -32,6 +32,7 @@ export class CMSWebhookObjectifAPI {
 export class CMSWebhookReponseKYCAPI {
   @ApiProperty() id: number;
   @ApiProperty() code: string;
+  @ApiProperty() ngc_code: string;
   @ApiProperty() reponse: string;
 }
 export class AndConditionAPI {
@@ -278,6 +279,7 @@ export type CMSWebhookPopulateAPI = {
       {
         reponse: string;
         code: string;
+        ngc_code: string;
       },
     ];
     OR_Conditions: [

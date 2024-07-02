@@ -75,11 +75,13 @@ describe('/api/incoming/cms (API test)', () => {
           id: 1,
           reponse: 'haha',
           code: 'haha_code',
+          ngc_code: '123',
         },
         {
           id: 2,
           reponse: 'hihi',
           code: 'hihi_code',
+          ngc_code: '456',
         },
       ],
       thematique: { id: 1 },
@@ -385,10 +387,12 @@ describe('/api/incoming/cms (API test)', () => {
       {
         label: 'haha',
         code: 'haha_code',
+        ngc_code: '123',
       },
       {
         label: 'hihi',
         code: 'hihi_code',
+        ngc_code: '456',
       },
     ]);
     expect(item.thematique).toEqual(Thematique.alimentation);
