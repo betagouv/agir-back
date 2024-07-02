@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
-import { BilanExtra } from '../domain/bilan/bilanExtra';
-import { BilanRepository } from '../infrastructure/repository/bilan.repository';
-import { SituationNGC } from '@prisma/client';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { BilanCarboneStatistiqueRepository } from '../infrastructure/repository/bilanCarboneStatistique.repository';
 
@@ -25,8 +22,7 @@ export class BilanCarboneUsecase {
       for (const kyc of utilisateur.kyc_history.answered_questions) {
         if (kyc.is_NGC) {
           if (kyc.ngc_key) {
-            // FIXME => ajouter attribut dédié
-            situation[kyc.ngc_key] = kyc.reponses[0].code;
+            situation[kyc.ngc_key] = kyc.reponses[0].ngc_code;
           } else {
             console.log(`Missing ngc key for KYC [${kyc.id_cms}/${kyc.id}]`);
           }

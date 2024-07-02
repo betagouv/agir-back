@@ -11,7 +11,7 @@ export class KycDefinition {
   points: number;
   is_ngc: boolean;
   question: string;
-  reponses?: { label: string; code: string }[];
+  reponses?: { label: string; code: string; ngc_code?: string }[];
   thematique: Thematique;
   tags: Tag[];
   universes: string[];

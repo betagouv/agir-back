@@ -22,6 +22,7 @@ export enum BooleanKYC {
 export class KYCReponse {
   code: string;
   label: string;
+  ngc_code?: string;
 }
 
 export class QuestionKYC implements TaggedContent {
@@ -110,14 +111,6 @@ export class QuestionKYC implements TaggedContent {
     }
   }
 
-  public getCodeByLabel(label: string): string {
-    if (!this.reponses_possibles) {
-      return null;
-    }
-    const found = this.reponses_possibles.find((r) => r.label === label);
-    return found ? found.code : null;
-  }
-
   public getLabelByCode(code: string): string {
     if (!this.reponses_possibles) {
       return null;
@@ -132,7 +125,22 @@ export class QuestionKYC implements TaggedContent {
       this.reponses.push({
         label: element,
         code: this.getCodeByLabel(element),
+        ngc_code: this.getNGCCodeByLabel(element),
       });
     });
+  }
+  private getCodeByLabel(label: string): string {
+    if (!this.reponses_possibles) {
+      return null;
+    }
+    const found = this.reponses_possibles.find((r) => r.label === label);
+    return found ? found.code : null;
+  }
+  private getNGCCodeByLabel(label: string): string {
+    if (!this.reponses_possibles) {
+      return null;
+    }
+    const found = this.reponses_possibles.find((r) => r.label === label);
+    return found ? found.ngc_code : null;
   }
 }

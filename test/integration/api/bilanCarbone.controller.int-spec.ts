@@ -64,7 +64,9 @@ describe('BilanCarbone (API test)', () => {
           is_NGC: true,
           categorie: Categorie.mission,
           points: 10,
-          reponses: [{ label: 'Souvent', code: '"souvent"' }],
+          reponses: [
+            { label: 'Souvent', code: 'souvent', ngc_code: '"souvent"' },
+          ],
           reponses_possibles: [
             { label: 'Souvent', code: 'souvent' },
             { label: 'Jamais', code: 'jamais' },

@@ -291,6 +291,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       {
         code: null,
         label: 'YO',
+        ngc_code : null
       },
     ]);
 

@@ -12,10 +12,12 @@ import { Categorie } from '../../../../src/domain/contenu/categorie';
 export class KYCReponse_v0 {
   code: string;
   label: string;
+  ngc_code?: string;
   static map(elem: KYCReponse): KYCReponse_v0 {
     return {
       code: elem.code,
       label: elem.label,
+      ngc_code: elem.ngc_code,
     };
   }
 }
