@@ -22,7 +22,25 @@ export enum CategorieRecherche {
   saison = 'saison',
 }
 
-export class CategorieRechercheLabels {
+export class CategorieRechercheManager {
+  private static MOIS_ANNEE = [
+    CategorieRecherche.janvier,
+    CategorieRecherche.fevrier,
+    CategorieRecherche.mars,
+    CategorieRecherche.avril,
+    CategorieRecherche.mai,
+    CategorieRecherche.juin,
+    CategorieRecherche.juillet,
+    CategorieRecherche.aout,
+    CategorieRecherche.septembre,
+    CategorieRecherche.octobre,
+    CategorieRecherche.novembre,
+    CategorieRecherche.decembre,
+  ];
+  private static DEFAULT_CATEGORIES = [
+    CategorieRecherche.nourriture,
+    CategorieRecherche.saison,
+  ];
   private static labels: Record<CategorieRecherche, string> = {
     nourriture: 'Nourriture',
     marche_local: 'Marchés locaux',
@@ -47,7 +65,16 @@ export class CategorieRechercheLabels {
     vege: 'végé',
   };
 
-  public static getLabel(cat: CategorieRecherche) {
-    return CategorieRechercheLabels.labels[cat];
+  public static getLabel(cat: CategorieRecherche): string {
+    return CategorieRechercheManager.labels[cat];
+  }
+
+  public static isDefault(cat: CategorieRecherche): boolean {
+    if (CategorieRechercheManager.MOIS_ANNEE.includes(cat)) {
+      const mois_courant =
+        CategorieRechercheManager.MOIS_ANNEE[new Date().getMonth()];
+      return mois_courant === cat;
+    }
+    return CategorieRechercheManager.DEFAULT_CATEGORIES.includes(cat);
   }
 }

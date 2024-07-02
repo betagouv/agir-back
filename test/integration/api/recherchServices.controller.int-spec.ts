@@ -397,11 +397,15 @@ describe('RechercheServices (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toStrictEqual([
-      { code: 'circuit_court', label: 'Circuits courts' },
-      { code: 'nourriture', label: 'Nourriture' },
-      { code: 'epicerie_superette', label: 'Epiceries et supérettes' },
-      { code: 'marche_local', label: 'Marchés locaux' },
-      { code: 'zero_dechet', label: 'Zéro déchet' },
+      { code: 'circuit_court', label: 'Circuits courts', is_default: false },
+      { code: 'nourriture', label: 'Nourriture', is_default: true },
+      {
+        code: 'epicerie_superette',
+        label: 'Epiceries et supérettes',
+        is_default: false,
+      },
+      { code: 'marche_local', label: 'Marchés locaux', is_default: false },
+      { code: 'zero_dechet', label: 'Zéro déchet', is_default: false },
     ]);
   });
 
