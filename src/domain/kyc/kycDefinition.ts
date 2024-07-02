@@ -24,6 +24,7 @@ export class KycDefinition {
     this.points = data.points;
     this.categorie = data.categorie;
     this.is_ngc = data.is_ngc;
+    this.ngc_key = data.ngc_key;
     this.question = data.question;
     this.reponses = data.reponses ? data.reponses : [];
     this.thematique = data.thematique;

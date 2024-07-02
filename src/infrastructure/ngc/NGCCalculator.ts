@@ -85,10 +85,10 @@ export class NGCCalculator {
     const entryList = [
       'bilan',
       'transport',
-      'logement',
-      'divers',
+      //      'logement',
+      //      'divers',
       'alimentation',
-      'services sociétaux',
+      //      'services sociétaux',
     ];
 
     const resultMap = this.computeEntryListValues(situation, entryList);
