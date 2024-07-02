@@ -1,5 +1,3 @@
-import { ServiceRechercheID } from './serviceRechercheID';
-
 export enum CategorieRecherche {
   nourriture = 'nourriture',
   marche_local = 'marche_local',

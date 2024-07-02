@@ -351,6 +351,7 @@ model KYC {
   categorie  String
   points     Int
   is_ngc     Boolean
+  ngc_key    String?
   question   String
   reponses   Json     @default("{}")
   thematique String

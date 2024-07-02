@@ -343,6 +343,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         universes: [Univers.alimentation],
         thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.choix_multiple,
+        ngc_key: 'a . b . c',
         reponses: [
           { label: 'BBB', code: Thematique.logement },
           { label: 'CCC', code: Thematique.alimentation },
@@ -391,6 +392,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         tags: [Tag.possede_voiture],
         universes: [Univers.alimentation],
         thematique: Thematique.climat,
+        ngc_key: 'a . b . c',
         type: TypeReponseQuestionKYC.choix_multiple,
         reponses: [
           { label: 'BBB', code: Thematique.logement },
@@ -439,6 +441,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         tags: [Tag.possede_voiture],
         universes: [Univers.alimentation],
         thematique: Thematique.climat,
+        ngc_key: 'a . b . c',
         type: TypeReponseQuestionKYC.choix_multiple,
         reponses: [
           { label: 'BBB', code: Thematique.logement },
@@ -501,6 +504,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         tags: [Tag.possede_voiture],
         universes: [Univers.alimentation],
         thematique: Thematique.climat,
+        ngc_key: 'a . b . c',
         type: TypeReponseQuestionKYC.choix_multiple,
         reponses: [
           { label: '🥦 Alimentation', code: Thematique.alimentation },
@@ -575,6 +579,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         tags: [Tag.possede_voiture],
         universes: [Univers.alimentation],
         thematique: Thematique.climat,
+        ngc_key: 'a . b . c',
         type: TypeReponseQuestionKYC.choix_multiple,
         reponses: [
           { label: 'BBB', code: Thematique.logement },
@@ -642,6 +647,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         tags: [Tag.possede_voiture],
         universes: [Univers.alimentation],
         thematique: Thematique.climat,
+        ngc_key: 'a . b . c',
         type: TypeReponseQuestionKYC.choix_multiple,
         reponses: [
           { label: 'BBB', code: Thematique.logement },
@@ -701,6 +707,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         points: 10,
         question: 'The question !',
         tags: [Tag.possede_voiture],
+        ngc_key: 'a . b . c',
         universes: [Univers.alimentation],
         thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.entier,
@@ -777,6 +784,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         points: 10,
         question: 'The question !',
         tags: [Tag.possede_voiture],
+        ngc_key: 'a . b . c',
         universes: [Univers.alimentation],
         thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.choix_multiple,
@@ -795,6 +803,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         points: 10,
         question: 'The question !',
         tags: [Tag.possede_voiture],
+        ngc_key: 'a . b . c',
         universes: [Univers.alimentation],
         thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.libre,
@@ -845,6 +854,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         tags: [Tag.possede_voiture],
         universes: [],
         thematique: Thematique.climat,
+        ngc_key: 'a . b . c',
         type: TypeReponseQuestionKYC.choix_multiple,
         reponses: [
           { label: 'AAA', code: Thematique.climat },
@@ -863,6 +873,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         tags: [Tag.possede_voiture],
         universes: [Univers.climat],
         thematique: Thematique.climat,
+        ngc_key: 'a . b . c',
         type: TypeReponseQuestionKYC.libre,
         reponses: [
           { label: 'AAA', code: Thematique.climat },

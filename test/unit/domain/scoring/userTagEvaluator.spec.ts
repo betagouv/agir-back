@@ -206,6 +206,7 @@ describe('UseragEvaluator', () => {
         universes: [Univers.alimentation],
         thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.choix_multiple,
+        ngc_key: 'a . b . c',
         reponses: [
           { label: '🥦 Alimentation', code: Thematique.alimentation },
           { label: '☀️ Climat et Environnement', code: Thematique.climat },
@@ -249,6 +250,7 @@ describe('UseragEvaluator', () => {
         tags: [Tag.possede_voiture],
         universes: [Univers.alimentation],
         thematique: Thematique.climat,
+        ngc_key: 'a . b . c',
         type: TypeReponseQuestionKYC.choix_multiple,
         reponses: [
           { label: '🥦 Alimentation', code: Thematique.alimentation },

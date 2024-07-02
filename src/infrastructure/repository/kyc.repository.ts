@@ -19,6 +19,7 @@ export class KycRepository {
       categorie: kycDef.categorie,
       points: kycDef.points,
       is_ngc: kycDef.is_ngc,
+      ngc_key: kycDef.ngc_key,
       question: kycDef.question,
       reponses: kycDef.reponses,
       thematique: kycDef.thematique ? kycDef.thematique.toString() : null,
@@ -69,6 +70,7 @@ export class KycRepository {
       thematique: Thematique[kycDB.thematique],
       tags: kycDB.tags ? kycDB.tags.map((t) => Tag[t]) : [],
       universes: kycDB.universes ? kycDB.universes : [],
+      ngc_key: kycDB.ngc_key,
     });
   }
 }

@@ -10,6 +10,7 @@ export class KycDefinition {
   categorie: Categorie;
   points: number;
   is_ngc: boolean;
+  ngc_key: string;
   question: string;
   reponses?: { label: string; code: string; ngc_code?: string }[];
   thematique: Thematique;

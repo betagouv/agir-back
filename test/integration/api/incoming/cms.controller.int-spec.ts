@@ -70,6 +70,7 @@ describe('/api/incoming/cms (API test)', () => {
       categorie: Categorie.mission,
       points: 5,
       is_ngc: false,
+      ngc_key: 'a . b . c',
       reponses: [
         {
           id: 1,
@@ -383,6 +384,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(item.categorie).toEqual(Categorie.mission);
     expect(item.points).toEqual(5);
     expect(item.is_ngc).toEqual(false);
+    expect(item.ngc_key).toEqual('a . b . c');
     expect(item.reponses).toEqual([
       {
         label: 'haha',

@@ -400,6 +400,7 @@ export class TestUtil {
       universes: [Univers.alimentation],
       thematique: Thematique.climat,
       type: TypeReponseQuestionKYC.choix_multiple,
+      ngc_key: 'a . b . c',
       reponses: [
         {
           code: 'c123',

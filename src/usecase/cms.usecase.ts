@@ -637,6 +637,7 @@ export class CMSUsecase {
       categorie: Categorie[entry.categorie],
       type: TypeReponseQuestionKYC[entry.type],
       is_ngc: entry.is_ngc,
+      ngc_key: entry.ngc_key,
       points: entry.points,
       question: entry.question,
       thematique: entry.thematique
@@ -875,6 +876,7 @@ export class CMSUsecase {
       categorie: Categorie[entry.attributes.categorie],
       points: entry.attributes.points,
       is_ngc: entry.attributes.is_ngc,
+      ngc_key: entry.attributes.ngc_key,
       question: entry.attributes.question,
       reponses: entry.attributes.reponses
         ? entry.attributes.reponses.map((r) => ({
