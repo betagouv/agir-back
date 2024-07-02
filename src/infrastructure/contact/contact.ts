@@ -7,6 +7,8 @@ export class Contact {
     NIVEAU: number;
     CODE_POSTAL: string;
     DERNIERE_ACTIVITE: Date;
+    FIRSTNAME: string;
+    LASTNAME: string;
   };
   email: string;
   ext_id?: string;
@@ -23,6 +25,8 @@ export class Contact {
       CODE_POSTAL: user.logement.code_postal,
       DERNIERE_ACTIVITE: user.derniere_activite,
       NIVEAU: user.gamification.getNiveau(),
+      FIRSTNAME: user.prenom,
+      LASTNAME: user.nom,
     };
     this.email = user.email;
     this.ext_id = user.id;

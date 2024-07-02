@@ -36,13 +36,31 @@ export class ContactSynchro {
           Accept: 'application/json',
           'Content-Type': 'application/json',
           'api-key': this.apiKey,
-        },  
+        },
       });
       console.log(response.data);
     } catch (error) {
       console.warn(JSON.stringify(error));
     }
   }
+  /*
+  public async updateContacts(utilisateur: Utilisateur) {
+    if (this.is_synchro_disabled()) return;
+
+    const contact = new Contact(utilisateur);
+
+    try {
+      await this.apiInstance.updateContact(utilisateur.email, updateContact);
+      console.log(
+        `BREVO contact ${utilisateur.email} created and added to list ${contact.listIds}`,
+      );
+      return true;
+    } catch (error) {
+      console.warn(error.response.text);
+      return false;
+    }
+  }
+  */
 
   public async createContact(utilisateur: Utilisateur): Promise<boolean> {
     if (this.is_synchro_disabled()) return true;
