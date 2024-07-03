@@ -134,6 +134,9 @@ export class RechercheServicesUsecase {
     serviceId: ServiceRechercheID,
   ): Promise<CategorieRecherche[]> {
     const finder = this.rechercheServiceManager.getFinderById(serviceId);
+    if (!finder) {
+      ApplicationError.throwUnkonwnSearchService(serviceId);
+    }
 
     return finder.getManagedCategories();
   }
