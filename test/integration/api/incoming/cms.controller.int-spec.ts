@@ -159,6 +159,7 @@ describe('/api/incoming/cms (API test)', () => {
       titre: 'titre',
       sousTitre: 'soustitre 222',
       thematique_gamification: { id: 1, titre: 'Alimentation' },
+      tag_article: { code: 'composter' },
       thematiques: [
         { id: 1, titre: 'Alimentation' },
         { id: 2, titre: 'Climat' },
@@ -312,6 +313,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles[0].titre).toEqual('titre');
     expect(articles[0].soustitre).toEqual('soustitre 222');
     expect(articles[0].thematique_principale).toEqual('alimentation');
+    expect(articles[0].tag_article).toEqual('composter');
     expect(articles[0].thematiques).toStrictEqual(['alimentation', 'climat']);
     expect(articles[0].duree).toEqual('pas trop long');
     expect(articles[0].frequence).toEqual('souvent');

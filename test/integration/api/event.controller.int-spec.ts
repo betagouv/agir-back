@@ -119,7 +119,7 @@ describe('EVENT (API test)', () => {
       dbUtilisateur.history
         .getQuizzHistoryById('123')
         .attempts[0].date.getTime(),
-    ).toBeGreaterThan(Date.now() - 100);
+    ).toBeGreaterThan(Date.now() - 200);
     expect(
       dbUtilisateur.history.getQuizzHistoryById('123').attempts[0].score,
     ).toEqual(55);

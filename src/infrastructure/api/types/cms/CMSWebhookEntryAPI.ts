@@ -46,6 +46,11 @@ export class CMSWebhookUniversAPI {
   @ApiProperty() id: number;
   @ApiProperty() code: string;
 }
+
+export class CMSTagArticleAPI {
+  @ApiProperty() code: string;
+}
+
 export class CMSWebhookThematiqueUniversAPI {
   @ApiProperty() id: number;
   @ApiProperty() code: string;
@@ -84,6 +89,10 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() description: string;
   @ApiProperty({ type: CMSThematiqueAPI })
   thematique_gamification: CMSThematiqueAPI;
+
+  @ApiProperty({ type: CMSTagArticleAPI })
+  tag_article: CMSTagArticleAPI;
+
   @ApiProperty({ type: [CMSThematiqueAPI] })
   thematiques: CMSThematiqueAPI[];
   @ApiProperty({ type: [CMSWebhookUniversAPI] })
@@ -196,6 +205,13 @@ export type CMSWebhookPopulateAPI = {
     thematique_gamification: {
       data: {
         id: number;
+      };
+    };
+    tag_article: {
+      data: {
+        attributes: {
+          code: string;
+        };
       };
     };
     thematique: {

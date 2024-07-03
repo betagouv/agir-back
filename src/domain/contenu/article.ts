@@ -32,6 +32,7 @@ export class ArticleData {
   exclude_codes_commune: string[];
   codes_departement: string[];
   codes_region: string[];
+  tag_article: string;
 }
 
 export class Article extends ArticleData implements TaggedContent {
