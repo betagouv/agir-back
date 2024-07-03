@@ -28,6 +28,7 @@ export class CMSWebhookObjectifAPI {
   @ApiProperty({ type: IDAPI }) defi: IDAPI;
   @ApiProperty({ type: IDAPI }) quizz: IDAPI;
   @ApiProperty({ type: CodeAPI }) kyc: CodeAPI;
+  @ApiProperty({ type: CodeAPI }) tag_article: CodeAPI;
 }
 export class CMSWebhookReponseKYCAPI {
   @ApiProperty() id: number;
@@ -340,6 +341,13 @@ export type CMSWebhookPopulateAPI = {
         kyc: {
           data: {
             id: number;
+            attributes: {
+              code: string;
+            };
+          };
+        };
+        tag_article: {
+          data: {
             attributes: {
               code: string;
             };

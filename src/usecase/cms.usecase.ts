@@ -405,7 +405,7 @@ export class CMSUsecase {
     const URL = App.getCmsURL().concat(
       '/',
       type,
-      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[10]=prochaines_thematiques&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article',
+      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[10]=prochaines_thematiques&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article',
     );
     return URL.concat(page);
   }
@@ -678,10 +678,15 @@ export class CMSUsecase {
                 content_id: null,
                 points: obj.points,
                 type: null,
+                tag_article: null,
               });
               if (obj.article) {
                 result.type = ContentType.article;
                 result.content_id = obj.article.id.toString();
+              }
+              if (obj.tag_article) {
+                result.type = ContentType.article;
+                result.tag_article = obj.tag_article.code;
               }
               if (obj.defi) {
                 result.type = ContentType.defi;
@@ -928,10 +933,15 @@ export class CMSUsecase {
                 content_id: null,
                 points: obj.points,
                 type: null,
+                tag_article: null,
               });
               if (obj.article.data) {
                 result.type = ContentType.article;
                 result.content_id = obj.article.data.id.toString();
+              }
+              if (obj.tag_article.data) {
+                result.type = ContentType.article;
+                result.tag_article = obj.tag_article.data.attributes.code;
               }
               if (obj.defi.data) {
                 result.type = ContentType.defi;

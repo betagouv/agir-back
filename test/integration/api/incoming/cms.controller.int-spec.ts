@@ -121,6 +121,12 @@ describe('/api/incoming/cms (API test)', () => {
         { id: 2, titre: 'do it defi', points: 10, defi: { id: 12 } },
         { id: 3, titre: 'do it kyc', points: 15, kyc: { code: KYCID.KYC001 } },
         { id: 4, titre: 'do it quizz', points: 20, quizz: { id: 13 } },
+        {
+          id: 5,
+          titre: 'do it article generique',
+          points: 5,
+          tag_article: { code: '111' },
+        },
       ],
     },
   };
@@ -431,24 +437,35 @@ describe('/api/incoming/cms (API test)', () => {
         content_id: '11',
         type: ContentType.article,
         points: 5,
+        tag_article: null,
       },
       {
         titre: 'do it defi',
         content_id: '12',
         type: ContentType.defi,
         points: 10,
+        tag_article: null,
       },
       {
         titre: 'do it kyc',
         content_id: KYCID.KYC001,
         type: ContentType.kyc,
         points: 15,
+        tag_article: null,
       },
       {
         titre: 'do it quizz',
         content_id: '13',
         type: ContentType.quizz,
         points: 20,
+        tag_article: null,
+      },
+      {
+        titre: 'do it article generique',
+        content_id: null,
+        type: ContentType.article,
+        points: 5,
+        tag_article: '111',
       },
     ]);
   });

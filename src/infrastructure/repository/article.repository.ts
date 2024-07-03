@@ -148,6 +148,12 @@ export class ArticleRepository {
       });
     }
 
+    if (filter.tag_article) {
+      main_filter.push({
+        tag_article: filter.tag_article,
+      });
+    }
+
     if (filter.thematiques) {
       main_filter.push({
         thematiques: {

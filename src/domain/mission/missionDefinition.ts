@@ -5,12 +5,14 @@ export class ObjectifDefinition {
   content_id: string;
   type: ContentType;
   points: number;
+  tag_article: string;
 
   constructor(data: ObjectifDefinition) {
     this.titre = data.titre;
     this.type = data.type;
     this.content_id = data.content_id;
     this.points = data.points;
+    this.tag_article = data.tag_article;
   }
 }
 

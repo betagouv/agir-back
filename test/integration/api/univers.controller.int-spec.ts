@@ -3,10 +3,25 @@ import { Univers } from '../../../src/domain/univers/univers';
 import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { ContentType } from '../../../src/domain/contenu/contentType';
-import { MissionsUtilisateur_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
+import {
+  MissionsUtilisateur_v0,
+  Mission_v0,
+  Objectif_v0,
+} from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
 import { ParcoursTodo_v0 } from '../../../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { Mission } from '.prisma/client';
+import { ObjectifDefinition } from '../../../src/domain/mission/missionDefinition';
+import { Categorie } from '../../../src/domain/contenu/categorie';
+import {
+  Superficie,
+  TypeLogement,
+  Chauffage,
+  DPE,
+} from '../../../src/domain/logement/logement';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 
 describe('Univers (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -488,7 +503,7 @@ describe('Univers (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.missions.missions).toHaveLength(2);
   });
-  it(`GET /utilisateurs/id/univers/id/thematiques - liste une thematique, donnée correctes, ajout mission à utilisateur si visible`, async () => {
+  it(`GET /utilisateurs/id/univers/id/thematiques - liste une thematique, donnée correctes, NON ajout mission à utilisateur si PAS visible`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       missions: mission_unique,
@@ -537,6 +552,335 @@ describe('Univers (API test)', () => {
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.missions.missions).toHaveLength(1);
+  });
+  it(`GET /utilisateurs/id/univers/id/thematiques - ajout mission correcte avec articles taggué`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.article, {
+      content_id: '0',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+      titre: 'haha',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+      titre: 'hoho',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+      tag_article: 'autre',
+      categorie: Categorie.mission,
+    });
+
+    const objectifs: ObjectifDefinition[] = [
+      {
+        content_id: '1',
+        points: 5,
+        titre: 'yop',
+        type: ContentType.kyc,
+        tag_article: null,
+      },
+      {
+        content_id: '222',
+        points: 5,
+        titre: 'haha',
+        type: ContentType.article,
+        tag_article: null,
+      },
+      {
+        content_id: null,
+        points: 5,
+        titre: 'TTT',
+        type: ContentType.article,
+        tag_article: 'composter',
+      },
+    ];
+    const mission_articles_tag: Mission = {
+      id_cms: 1,
+      thematique_univers: ThematiqueUnivers.cereales,
+      est_visible: true,
+      objectifs: objectifs as any,
+      prochaines_thematiques: [],
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.utilisateur, { missions: {} });
+
+    await TestUtil.create(DB.mission, mission_articles_tag);
+
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      label: `Les céréales c'est bon`,
+      image_url: 'aaaa',
+      niveau: 2,
+      univers_parent: Univers.alimentation,
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/univers/alimentation/thematiques',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(1);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.missions.missions).toHaveLength(1);
+    expect(userDB.missions.missions[0].objectifs).toHaveLength(4);
+    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('222');
+    expect(userDB.missions.missions[0].objectifs[1].type).toEqual(
+      ContentType.article,
+    );
+    expect(userDB.missions.missions[0].objectifs[2].content_id).toEqual('1');
+    expect(userDB.missions.missions[0].objectifs[2].type).toEqual(
+      ContentType.article,
+    );
+    expect(userDB.missions.missions[0].objectifs[2].titre).toEqual('hoho');
+    expect(userDB.missions.missions[0].objectifs[3].content_id).toEqual('0');
+    expect(userDB.missions.missions[0].objectifs[3].type).toEqual(
+      ContentType.article,
+    );
+    expect(userDB.missions.missions[0].objectifs[3].titre).toEqual('haha');
+  });
+  it(`GET /utilisateurs/id/univers/id/thematiques - ajout Zero article tagué si aucun trouvé`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.article, {
+      content_id: '0',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+    });
+
+    const objectifs: ObjectifDefinition[] = [
+      {
+        content_id: null,
+        points: 5,
+        titre: 'TTT',
+        type: ContentType.article,
+        tag_article: 'truc',
+      },
+    ];
+    const mission_articles_tag: Mission = {
+      id_cms: 1,
+      thematique_univers: ThematiqueUnivers.cereales,
+      est_visible: true,
+      objectifs: objectifs as any,
+      prochaines_thematiques: [],
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.utilisateur, { missions: {} });
+
+    await TestUtil.create(DB.mission, mission_articles_tag);
+
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      label: `Les céréales c'est bon`,
+      image_url: 'aaaa',
+      niveau: 2,
+      univers_parent: Univers.alimentation,
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/univers/alimentation/thematiques',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(1);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.missions.missions).toHaveLength(1);
+    expect(userDB.missions.missions[0].objectifs).toHaveLength(0);
+  });
+
+  it(`GET /utilisateurs/id/univers/id/thematiques - ajout  article tagué exclu pour cause de code postal`, async () => {
+    // GIVEN
+    const logement_palaiseau: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+    };
+    await TestUtil.create(DB.article, {
+      content_id: '0',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+      codes_postaux: ['91120'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+      codes_postaux: ['75002'],
+    });
+
+    const objectifs: ObjectifDefinition[] = [
+      {
+        content_id: null,
+        points: 5,
+        titre: 'TTT',
+        type: ContentType.article,
+        tag_article: 'composter',
+      },
+    ];
+    const mission_articles_tag: Mission = {
+      id_cms: 1,
+      thematique_univers: ThematiqueUnivers.cereales,
+      est_visible: true,
+      objectifs: objectifs as any,
+      prochaines_thematiques: [],
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.utilisateur, {
+      missions: {},
+      logement: logement_palaiseau,
+    });
+
+    await TestUtil.create(DB.mission, mission_articles_tag);
+
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      label: `Les céréales c'est bon`,
+      image_url: 'aaaa',
+      niveau: 2,
+      univers_parent: Univers.alimentation,
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/univers/alimentation/thematiques',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(1);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.missions.missions).toHaveLength(1);
+    expect(userDB.missions.missions[0].objectifs).toHaveLength(1);
+    expect(userDB.missions.missions[0].objectifs[0].content_id).toEqual('0');
+  });
+  it(`GET /utilisateurs/id/univers/id/thematiques - ajout article par ordre de reco`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.article, {
+      content_id: '0',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+      tags_utilisateur: [TagUtilisateur.viande_addict],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+      tags_utilisateur: [TagUtilisateur.capacite_physique],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+      tags_utilisateur: [TagUtilisateur.possede_voiture],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '3',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+      tags_utilisateur: [TagUtilisateur.possede_maison],
+    });
+
+    const objectifs: ObjectifDefinition[] = [
+      {
+        content_id: null,
+        points: 5,
+        titre: 'TTT',
+        type: ContentType.article,
+        tag_article: 'composter',
+      },
+    ];
+    const mission_articles_tag: Mission = {
+      id_cms: 1,
+      thematique_univers: ThematiqueUnivers.cereales,
+      est_visible: true,
+      objectifs: objectifs as any,
+      prochaines_thematiques: [],
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.utilisateur, {
+      missions: {},
+      tag_ponderation_set: {
+        capacite_physique: 10,
+        possede_voiture: 20,
+        viande_addict: 30,
+        possede_maison: 0,
+      },
+    });
+
+    await TestUtil.create(DB.mission, mission_articles_tag);
+
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      label: `Les céréales c'est bon`,
+      image_url: 'aaaa',
+      niveau: 2,
+      univers_parent: Univers.alimentation,
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/univers/alimentation/thematiques',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(1);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.missions.missions).toHaveLength(1);
+    expect(userDB.missions.missions[0].objectifs).toHaveLength(4);
+    expect(userDB.missions.missions[0].objectifs[0].content_id).toEqual('0');
+    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('2');
+    expect(userDB.missions.missions[0].objectifs[2].content_id).toEqual('1');
+    expect(userDB.missions.missions[0].objectifs[3].content_id).toEqual('3');
   });
   it(`GET /utilisateurs/id/univers/id/thematiques - liste les thematiques dans le bon ordre`, async () => {
     // GIVEN
