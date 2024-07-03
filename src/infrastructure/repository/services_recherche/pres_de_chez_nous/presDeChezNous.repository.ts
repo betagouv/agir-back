@@ -79,9 +79,9 @@ export class PresDeChezNousRepository implements FinderInterface {
     };
 
     if (filtre.rayon_metres) {
-      filtre.computeBox(filtre.rayon_metres * 2);
+      filtre.computeBox(filtre.rayon_metres);
     } else {
-      filtre.computeBox(1000);
+      filtre.computeBox(10000);
     }
 
     const liste_categories =
@@ -91,7 +91,7 @@ export class PresDeChezNousRepository implements FinderInterface {
 
     const result = await this.callServiceAPI(filtre, liste_categories);
 
-    return result.data.map(
+    const final_result: ResultatRecherche[] = result.data.map(
       (r) =>
         new ResultatRecherche({
           id: r.id,
@@ -104,6 +104,16 @@ export class PresDeChezNousRepository implements FinderInterface {
           adresse_nom_ville: r.address.addressLocality,
         }),
     );
+
+    for (const resultat of final_result) {
+      resultat.distance_metres = filtre.getDistanceMetresFromSearchPoint(
+        resultat.latitude,
+        resultat.longitude,
+      );
+    }
+    final_result.sort((a, b) => a.distance_metres - b.distance_metres);
+
+    return final_result;
   }
 
   private async callServiceAPI(

@@ -22,6 +22,7 @@ export class ResultatRecherche_v0 {
   difficulty_plat?: string;
   temps_prepa_min?: number;
 
+  distance_metres?: number;
   impact_carbone_kg?: number;
 
   static map(res: ResultatRecherche): ResultatRecherche_v0 {
@@ -38,6 +39,7 @@ export class ResultatRecherche_v0 {
       difficulty_plat: res.difficulty_plat,
       temps_prepa_min: res.temps_prepa_min,
       type_plat: res.type_plat,
+      distance_metres: res.distance_metres,
     };
   }
 }

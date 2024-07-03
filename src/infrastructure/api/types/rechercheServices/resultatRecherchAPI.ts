@@ -14,6 +14,7 @@ export class ResultatRechercheAPI {
   @ApiProperty() type_plat: string;
   @ApiProperty() difficulty_plat: string;
   @ApiProperty() temps_prepa_min: number;
+  @ApiProperty() distance_metres: number;
 
   public static mapToAPI(res: ResultatRecherche): ResultatRechercheAPI {
     return {
@@ -29,6 +30,7 @@ export class ResultatRechercheAPI {
       type_plat: res.type_plat,
       difficulty_plat: res.difficulty_plat,
       temps_prepa_min: res.temps_prepa_min,
+      distance_metres: res.distance_metres,
     };
   }
 }

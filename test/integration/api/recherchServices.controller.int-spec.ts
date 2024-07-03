@@ -48,14 +48,38 @@ describe('RechercheServices (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it(`POST /utlilisateur/id/recherche_services/proximite/search renvoie une liste de résultats`, async () => {
+  it(`POST /utlilisateur/id/recherche_services/proximite/search renvoie les bonnes données`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
 
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
-    );
+    ).send({ rayon_metres: 1000, nombre_max_resultats: 1 });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toStrictEqual({
+      adresse_code_postal: '91120',
+      adresse_nom_ville: 'Palaiseau',
+      adresse_rue: '4 Rue des Écoles',
+      distance_metres: 814,
+      est_favoris: false,
+      id: 'DwG',
+      nombre_favoris: 0,
+      site_web: 'https://www.monepi.fr/monepicerit',
+      titre: "Mon Epice'Rit",
+    });
+  });
+  it(`POST /utlilisateur/id/recherche_services/proximite/search renvoie une liste de résultats par distance croissante`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
+    ).send({ rayon_metres: 1000 });
 
     // THEN
     expect(response.status).toBe(201);
@@ -63,6 +87,9 @@ describe('RechercheServices (API test)', () => {
     expect(response.body[0].titre).toEqual(`Mon Epice'Rit`);
     expect(response.body[1].titre).toEqual(`L'ébullition`);
     expect(response.body[2].titre).toEqual(`L’Auvergnat Bio`);
+    expect(response.body[0].distance_metres).toEqual(814);
+    expect(response.body[1].distance_metres).toEqual(829);
+    expect(response.body[2].distance_metres).toEqual(922);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
 
@@ -74,6 +101,19 @@ describe('RechercheServices (API test)', () => {
       userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
     ).toHaveLength(3);
   });
+  it(`POST /utlilisateur/id/recherche_services/proximite/search rayon de 10km par défaut`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
+    ).send({ nombre_max_resultats: 1000 });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(275);
+  });
   it(`POST /utlilisateur/id/recherche_services/proximite/search petit rayon => moins de résultats`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
@@ -82,7 +122,7 @@ describe('RechercheServices (API test)', () => {
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
     ).send({
-      rayon_metres: 400,
+      rayon_metres: 800,
     });
 
     // THEN
@@ -115,6 +155,7 @@ describe('RechercheServices (API test)', () => {
       '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
     ).send({
       categorie: CategorieRecherche.epicerie_superette,
+      rayon_metres: 1000,
     });
 
     // THEN
@@ -272,7 +313,7 @@ describe('RechercheServices (API test)', () => {
     // WHEN
     let response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
-    );
+    ).send({ rayon_metres: 1000 });
 
     // THEN
     expect(response.status).toBe(201);
@@ -354,7 +395,7 @@ describe('RechercheServices (API test)', () => {
     // WHEN
     let response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
-    );
+    ).send({ rayon_metres: 1000 });
 
     // THEN
     expect(response.status).toBe(201);
@@ -615,7 +656,7 @@ describe('RechercheServices (API test)', () => {
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
-    );
+    ).send({ rayon_metres: 1000 });
 
     // THEN
     expect(response.status).toBe(201);

@@ -19,6 +19,8 @@ export class ResultatRecherche {
   difficulty_plat?: string;
   temps_prepa_min?: number;
 
+  distance_metres?: number;
+
   est_favoris?: boolean;
   nombre_favoris?: number;
 
@@ -34,6 +36,7 @@ export class ResultatRecherche {
     this.type_plat = res.type_plat;
     this.difficulty_plat = res.difficulty_plat;
     this.temps_prepa_min = res.temps_prepa_min;
+    this.distance_metres = res.distance_metres;
     this.impact_carbone_kg = res.impact_carbone_kg;
 
     this.est_favoris = false;
