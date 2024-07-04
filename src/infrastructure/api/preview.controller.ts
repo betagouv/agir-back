@@ -406,7 +406,7 @@ export class PreviewController extends GenericControler {
         );
       } else {
         result.push(
-          `#### Thematique sans mission [${tuile_thema.type}] - ${tuile_thema.titre}`,
+          `🔥🔥🔥 Thematique sans mission [${tuile_thema.type}] - ${tuile_thema.titre}`,
         );
         result.push('');
       }
