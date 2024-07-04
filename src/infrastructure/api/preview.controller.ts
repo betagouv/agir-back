@@ -44,15 +44,15 @@ export class PreviewController extends GenericControler {
         situation[kyc_def.ngc_key] = 2;
         const value_2 = this.nGCCalculator.computeBilanFromSituation(situation);
 
-        result.with_kyc_reponse_equal_1 = value_1;
-        result.with_kyc_reponse_equal_2 = value_2;
+        result.with_kyc_reponse_equal_1 = value_1.bilan_carbone_annuel;
+        result.with_kyc_reponse_equal_2 = value_2.bilan_carbone_annuel;
       }
 
       if (kyc_def.type === TypeReponseQuestionKYC.choix_unique) {
         for (const reponse of kyc_def.reponses) {
           situation[kyc_def.ngc_key] = reponse.ngc_code;
           const value = this.nGCCalculator.computeBilanFromSituation(situation);
-          result[`value_when_${reponse.code}`] = value;
+          result[`value_when_${reponse.code}`] = value.bilan_carbone_annuel;
         }
       }
     } catch (error) {
