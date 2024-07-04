@@ -353,11 +353,11 @@ export class PreviewController extends GenericControler {
     for (const univers of all_univers) {
       if (univers.id_cms.toString() === id) {
         result.push(
-          `</pre><a href="/mission_preview/${univers.id_cms}"><pre>####> Univers [${univers.id_cms}] - ${univers.titre}</pre></a><pre>`,
+          `</pre><a href="/univers_preview/${univers.id_cms}"><pre>####> Univers [${univers.id_cms}] - ${univers.titre}</pre></a><pre>`,
         );
       } else {
         result.push(
-          `</pre><a href="/mission_preview/${univers.id_cms}"><pre>      Univers [${univers.id_cms}] - ${univers.titre}</pre></a><pre>`,
+          `</pre><a href="/univers_preview/${univers.id_cms}"><pre>      Univers [${univers.id_cms}] - ${univers.titre}</pre></a><pre>`,
         );
       }
     }
@@ -387,22 +387,29 @@ export class PreviewController extends GenericControler {
       const mission = await this.missionRepository.getByThematique(
         tuile_thema.type,
       );
-      result.push('');
-      result.push(
-        `#### MISSION Famille_${tuile_thema.famille_id_cms} [${mission.id_cms}] - ${tuile_thema.titre}`,
-      );
-      result.push(`Est visible : ${mission.est_visible}`);
+      if (mission) {
+        result.push('');
+        result.push(
+          `#### MISSION Famille_${tuile_thema.famille_id_cms} [${mission.id_cms}] - ${tuile_thema.titre}`,
+        );
+        result.push(`Est visible : ${mission.est_visible}`);
 
-      const result2 = [];
-      await this.dump_defis_of_mission(mission, result2);
+        const result2 = [];
+        await this.dump_defis_of_mission(mission, result2);
 
-      const ouput = result2.join('');
-      result.push(
-        `Paramétrage défis : ${ouput.includes('🔥') ? 'KO 🔥🔥🔥' : 'OK 👍'}`,
-      );
-      result.push(
-        `</pre><a href="/mission_preview/${mission.id_cms}">Detail mission</a><pre>`,
-      );
+        const ouput = result2.join('');
+        result.push(
+          `Paramétrage défis : ${ouput.includes('🔥') ? 'KO 🔥🔥🔥' : 'OK 👍'}`,
+        );
+        result.push(
+          `</pre><a href="/mission_preview/${mission.id_cms}">Detail mission</a><pre>`,
+        );
+      } else {
+        result.push(
+          `#### Thematique sans mission [${tuile_thema.type}] - ${tuile_thema.titre}`,
+        );
+        result.push('');
+      }
     }
     return `<pre>${result.join('\n')}</pre>`;
   }
