@@ -418,6 +418,8 @@ export class CMSUsecase {
     return URL.concat(page);
   }
   async createOrUpdateThematique(cmsWebhookAPI: CMSWebhookAPI) {
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
+
     await this.thematiqueRepository.upsertThematique(
       cmsWebhookAPI.entry.id,
       cmsWebhookAPI.entry.titre,
@@ -425,6 +427,8 @@ export class CMSUsecase {
   }
 
   async createOrUpdateUnivers(cmsWebhookAPI: CMSWebhookAPI) {
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
+
     await this.thematiqueRepository.upsertUnivers({
       code: cmsWebhookAPI.entry.code,
       label: cmsWebhookAPI.entry.label,
@@ -466,6 +470,8 @@ export class CMSUsecase {
   }
 
   async createOrUpdateThematiqueUnivers(cmsWebhookAPI: CMSWebhookAPI) {
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
+
     await this.thematiqueRepository.upsertThematiqueUnivers({
       code: cmsWebhookAPI.entry.code,
       univers_parent: cmsWebhookAPI.entry.univers_parent
