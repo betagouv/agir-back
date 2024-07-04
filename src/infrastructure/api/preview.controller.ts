@@ -68,9 +68,9 @@ export class PreviewController extends GenericControler {
 
     DATA.code_fonctionnel = kyc_def.code;
     DATA.catgorie = kyc_def.categorie;
-    DATA.tags = kyc_def.tags.join('|');
+    DATA.tags = kyc_def.tags;
     DATA.thematique = kyc_def.thematique;
-    DATA.universes = kyc_def.universes.join('|');
+    DATA.universes = kyc_def.universes;
     DATA.type = kyc_def.type;
     DATA.IS_NGC = kyc_def.is_ngc;
     if (kyc_def.is_ngc) {
@@ -469,12 +469,12 @@ export class PreviewController extends GenericControler {
 
     const DATA: any = {};
     DATA.defi_points = defi_def.points;
-    DATA.mois = defi_def.mois.join('|');
-    DATA.tags = defi_def.tags.join('|');
+    DATA.mois = defi_def.mois;
+    DATA.tags = defi_def.tags;
     DATA.thematique = defi_def.thematique;
     DATA.categorie = defi_def.categorie;
-    DATA.thematiques_univers = defi_def.thematiques_univers.join('|');
-    DATA.universes = defi_def.universes.join('|');
+    DATA.thematiques_univers = defi_def.thematiques_univers;
+    DATA.universes = defi_def.universes;
     result.push(JSON.stringify(DATA, null, 2));
     result.push('');
     result.push(`## Conditions`);
