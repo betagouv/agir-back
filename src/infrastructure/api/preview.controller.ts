@@ -328,6 +328,9 @@ export class PreviewController extends GenericControler {
           }
         }
         result.push('|-------------');
+        result.push(
+          `</pre><a href="/defi_preview/${defi.content_id}">Detail défi</a><pre>`,
+        );
       }
     }
   }
