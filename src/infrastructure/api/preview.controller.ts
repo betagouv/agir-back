@@ -404,6 +404,64 @@ export class PreviewController extends GenericControler {
     return `<pre>${result.join('\n')}</pre>`;
   }
 
+  @Get('defi_preview/:id')
+  async defi_preview(@Param('id') id: string): Promise<string> {
+    let result = [];
+
+    const defi_def = await this.defiRepository.getByContentId(id);
+    if (!defi_def) {
+      return `<pre>Publiez le defi [${id}] avant de faire la preview !!! </pre>`;
+    }
+
+    result.push(
+      `################################################################################################`,
+    );
+    result.push(`### DEFI ID_CMS [${id}] - ${defi_def.titre}`);
+    result.push(``);
+
+    const DATA: any = {};
+    DATA.defi_points = defi_def.points;
+    DATA.mois = defi_def.mois;
+    DATA.tags = defi_def.tags;
+    DATA.thematique = defi_def.thematique;
+    result.push(JSON.stringify(DATA, null, 2));
+    result.push('');
+    result.push(`## Conditions`);
+    result.push('##############');
+    result.push('');
+    for (const OU_C of defi_def.conditions) {
+      result.push('|---- OU -----');
+      for (const ET_C of OU_C) {
+        const target_kyc = await this.kycRepository.getByCode(ET_C.code_kyc);
+        let qualif;
+        if (target_kyc) {
+          const reponse = target_kyc.reponses.find(
+            (r) => r.code === ET_C.code_reponse,
+          );
+          if (reponse) {
+            qualif = ' 👍';
+          } else {
+            qualif = `  🔥🔥🔥 MISSING REPONSE of code [${ET_C.code_reponse}]`;
+          }
+        } else {
+          qualif = ` 🔥🔥🔥 MISSING KYC of code [${ET_C.code_kyc}]`;
+        }
+        result.push(
+          '| [KYC ' +
+            ET_C.id_kyc +
+            '] ' +
+            ET_C.code_kyc +
+            ' -> ' +
+            ET_C.code_reponse +
+            qualif,
+        );
+      }
+    }
+    result.push('|-------------');
+
+    return `<pre>${result.join('\n')}</pre>`;
+  }
+
   private compareBilan(value: number, bilan: number): string {
     if (value === bilan) {
       return ' 🔥🔥🔥 égale à la valeur DEFAULT !!';
