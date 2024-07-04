@@ -23,7 +23,7 @@ export class App {
     return process.env.SERVICES_ACTIFS || '';
   }
   public static isAdmin(userId: string): boolean {
-    return process.env.ADMIN_IDS.includes(userId);
+    return !!process.env.ADMIN_IDS && process.env.ADMIN_IDS.includes(userId);
   }
   public static isMailEnabled(): boolean {
     return process.env.EMAIL_ENABLED === 'true';

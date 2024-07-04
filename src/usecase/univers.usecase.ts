@@ -77,7 +77,7 @@ export class UniversUsecase {
       } else {
         for (const mission_def of listMissionDefs) {
           if (
-            mission_def.est_visible &&
+            (mission_def.est_visible || utilisateur.isAdmin()) &&
             mission_def.thematique_univers === tuile.type &&
             ThematiqueRepository.getUniversParent(
               mission_def.thematique_univers,
