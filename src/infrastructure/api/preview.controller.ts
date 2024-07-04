@@ -37,6 +37,16 @@ export class PreviewController extends GenericControler {
     let result = [];
     const kyc_def = await this.kycRepository.getByCMS_ID(parseInt(id));
 
+    result.push(`
+
+██╗░░██╗██╗░░░██╗░█████╗░
+██║░██╔╝╚██╗░██╔╝██╔══██╗
+█████═╝░░╚████╔╝░██║░░╚═╝
+██╔═██╗░░░╚██╔╝░░██║░░██╗
+██║░╚██╗░░░██║░░░╚█████╔╝
+╚═╝░░╚═╝░░░╚═╝░░░░╚════╝░
+
+`);
     result.push('## KYC CMS ID : ' + id);
     result.push('######################');
 
@@ -136,7 +146,17 @@ export class PreviewController extends GenericControler {
     }
     let result = [];
 
-    result.push(`########################`);
+    result.push(`
+
+███╗░░░███╗██╗░██████╗░██████╗██╗░█████╗░███╗░░██╗
+████╗░████║██║██╔════╝██╔════╝██║██╔══██╗████╗░██║
+██╔████╔██║██║╚█████╗░╚█████╗░██║██║░░██║██╔██╗██║
+██║╚██╔╝██║██║░╚═══██╗░╚═══██╗██║██║░░██║██║╚████║
+██║░╚═╝░██║██║██████╔╝██████╔╝██║╚█████╔╝██║░╚███║
+╚═╝░░░░░╚═╝╚═╝╚═════╝░╚═════╝░╚═╝░╚════╝░╚═╝░░╚══╝
+
+`);
+
     result.push(`### MISSION ID_CMS : ${mission_def.id_cms}`);
     result.push(`########################`);
     result.push(``);
@@ -344,9 +364,16 @@ export class PreviewController extends GenericControler {
     const tuile_univers = ThematiqueRepository.getTuileUniversByCMS_ID(
       parseInt(id),
     );
-    result.push(`########################`);
-    result.push(`### TOUS LES UNIVERS`);
-    result.push(`########################`);
+    result.push(`
+
+██╗░░░██╗███╗░░██╗██╗██╗░░░██╗███████╗██████╗░░██████╗
+██║░░░██║████╗░██║██║██║░░░██║██╔════╝██╔══██╗██╔════╝
+██║░░░██║██╔██╗██║██║╚██╗░██╔╝█████╗░░██████╔╝╚█████╗░
+██║░░░██║██║╚████║██║░╚████╔╝░██╔══╝░░██╔══██╗░╚═══██╗
+╚██████╔╝██║░╚███║██║░░╚██╔╝░░███████╗██║░░██║██████╔╝
+░╚═════╝░╚═╝░░╚══╝╚═╝░░░╚═╝░░░╚══════╝╚═╝░░╚═╝╚═════╝░
+
+`);
 
     const all_univers = ThematiqueRepository.getAllTuileUnivers();
     all_univers.sort((a, b) => a.id_cms - b.id_cms);
@@ -423,11 +450,18 @@ export class PreviewController extends GenericControler {
       return `<pre>Publiez le defi [${id}] avant de faire la preview !!! </pre>`;
     }
 
-    result.push(
-      `################################################################################################`,
-    );
+    result.push(`
+
+██████╗░███████╗███████╗██╗
+██╔══██╗██╔════╝██╔════╝██║
+██║░░██║█████╗░░█████╗░░██║
+██║░░██║██╔══╝░░██╔══╝░░██║
+██████╔╝███████╗██║░░░░░██║
+╚═════╝░╚══════╝╚═╝░░░░░╚═╝
+
+`);
     result.push(`### DEFI ID_CMS [${id}] - ${defi_def.titre}`);
-    result.push(``);
+    result.push(`#######################`);
 
     const DATA: any = {};
     DATA.defi_points = defi_def.points;
