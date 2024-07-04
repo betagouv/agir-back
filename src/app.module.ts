@@ -119,6 +119,7 @@ import { RecettesRepository } from './infrastructure/repository/services_recherc
 import { BilanCarboneStatistiqueRepository } from './infrastructure/repository/bilanCarboneStatistique.repository';
 import { BilanCarboneController } from './infrastructure/api/bilanCarbone.controller';
 import { BilanCarboneUsecase } from './usecase/bilanCarbone.usecase';
+import { PreviewController } from './infrastructure/api/preview.controller';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -155,6 +156,7 @@ function getControllers(): any[] {
   if (!App.isProd()) {
     controllers.push(TestDataController);
     controllers.push(AuthController);
+    controllers.push(PreviewController);
   }
   return controllers;
 }

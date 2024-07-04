@@ -51,6 +51,13 @@ export class KycRepository {
     return this.buildKYCDefFromDB(result);
   }
 
+  async getByCMS_ID(cms_id: number): Promise<KycDefinition> {
+    const result = await this.prisma.kYC.findUnique({
+      where: { id_cms: cms_id },
+    });
+    return this.buildKYCDefFromDB(result);
+  }
+
   async getAllDefs(): Promise<KycDefinition[]> {
     const result = await this.prisma.kYC.findMany();
     return result.map((elem) => this.buildKYCDefFromDB(elem));
