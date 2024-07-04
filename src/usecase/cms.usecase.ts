@@ -58,6 +58,10 @@ export class CMSUsecase {
     }
     if (cmsWebhookAPI.model === CMSModel.univers) {
       switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.unpublish']:
+          return this.deleteUnivers(cmsWebhookAPI);
+        case CMSEvent['entry.delete']:
+          return this.deleteUnivers(cmsWebhookAPI);
         case CMSEvent['entry.publish']:
           return this.createOrUpdateUnivers(cmsWebhookAPI);
         case CMSEvent['entry.update']:
@@ -90,6 +94,10 @@ export class CMSUsecase {
     }
     if (cmsWebhookAPI.model === CMSModel['thematique-univers']) {
       switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.unpublish']:
+          return this.deleteThematiqueUnivers(cmsWebhookAPI);
+        case CMSEvent['entry.delete']:
+          return this.deleteThematiqueUnivers(cmsWebhookAPI);
         case CMSEvent['entry.publish']:
           return this.createOrUpdateThematiqueUnivers(cmsWebhookAPI);
         case CMSEvent['entry.update']:
@@ -447,6 +455,14 @@ export class CMSUsecase {
   }
   async deleteMission(cmsWebhookAPI: CMSWebhookAPI) {
     await this.missionRepository.delete(cmsWebhookAPI.entry.id);
+  }
+  async deleteThematiqueUnivers(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.thematiqueRepository.deleteThematiqueUnivers(
+      cmsWebhookAPI.entry.id,
+    );
+  }
+  async deleteUnivers(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.thematiqueRepository.deleteUnivers(cmsWebhookAPI.entry.id);
   }
 
   async createOrUpdateThematiqueUnivers(cmsWebhookAPI: CMSWebhookAPI) {

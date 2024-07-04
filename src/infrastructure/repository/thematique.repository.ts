@@ -169,6 +169,17 @@ export class ThematiqueRepository {
       },
     });
   }
+
+  public async deleteThematiqueUnivers(id_cms: number) {
+    await this.prisma.thematiqueUnivers.delete({
+      where: { id_cms: id_cms },
+    });
+  }
+  public async deleteUnivers(id_cms: number) {
+    await this.prisma.univers.delete({
+      where: { id_cms: id_cms },
+    });
+  }
   public async upsertThematiqueUnivers(them: ThematiqueDefinition) {
     await this.prisma.thematiqueUnivers.upsert({
       where: {
