@@ -498,13 +498,12 @@ export class PreviewController extends GenericControler {
           qualif = ` 🔥🔥🔥 MISSING KYC of code [${ET_C.code_kyc}]`;
         }
         result.push(
-          '| [KYC ' +
+          `| [<a href="/kyc_preview/${target_kyc.id_cms}">KYC</a> ` +
             ET_C.id_kyc +
-            '] ' +
-            ET_C.code_kyc +
-            ' -> ' +
+            '] -> ' +
             ET_C.code_reponse +
-            qualif,
+            qualif +
+            ` (${target_kyc.question})`,
         );
       }
     }
