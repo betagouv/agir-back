@@ -183,6 +183,19 @@ export class PreviewController extends GenericControler {
       }`,
     );
 
+    await this.dump_mission(result, mission_def);
+
+    result.push('');
+    result.push('##################################################');
+    result.push('# Liste Défis');
+    result.push('##################################################');
+
+    await this.dump_defis_of_mission(mission_def, result);
+
+    return `<pre>${result.join('\n')}</pre>`;
+  }
+
+  private async dump_mission(result: any[], mission_def: MissionDefinition) {
     try {
       result.push('');
       result.push('##################################################');
@@ -194,6 +207,15 @@ export class PreviewController extends GenericControler {
           const kyc_def = await this.kycRepository.getByCode(
             objectif.content_id,
           );
+          if (!kyc_def) {
+            result.push(``);
+            result.push(
+              `🔥🔥🔥 KYC [${objectif.content_id}] manquante en base, sans doute pas publié ?`,
+            );
+            result.push(``);
+            continue;
+          }
+
           result.push(``);
           result.push(
             `## <a href="/kyc_preview/${kyc_def.id_cms}">KYC</a> [${kyc_def.id_cms}]`,
@@ -267,6 +289,15 @@ export class PreviewController extends GenericControler {
             const article = await this.articleRepository.getArticleByContentId(
               objectif.content_id,
             );
+            if (!article) {
+              result.push(``);
+              result.push(
+                `🔥🔥🔥 ARTICLE FIXE [${objectif.content_id}] MANQUANT en base, sans doute pas publié ?`,
+              );
+              result.push(``);
+              continue;
+            }
+
             const DATA: any = {};
             result.push(`## ARTICLE FIXE [${objectif.content_id}]`);
             DATA.objectif_titre = objectif.titre;
@@ -282,6 +313,15 @@ export class PreviewController extends GenericControler {
           const quizz = await this.quizzRepository.getQuizzByContentId(
             objectif.content_id,
           );
+          if (!quizz) {
+            result.push(``);
+            result.push(
+              `🔥🔥🔥 QUIZZ  [${objectif.content_id}] MANQUANT en base, sans doute pas publié ?`,
+            );
+            result.push(``);
+            continue;
+          }
+
           const DATA: any = {};
           DATA.objectif_titre = objectif.titre;
           DATA.objectif_points = objectif.points;
@@ -291,18 +331,9 @@ export class PreviewController extends GenericControler {
         }
       }
     } catch (error) {
-      result.push('');
+      result.push('🔥🔥🔥 UNKNOWN ERROR');
       result.push(error.message);
     }
-
-    result.push('');
-    result.push('##################################################');
-    result.push('# Liste Défis');
-    result.push('##################################################');
-
-    await this.dump_defis_of_mission(mission_def, result);
-
-    return `<pre>${result.join('\n')}</pre>`;
   }
 
   private async dump_defis_of_mission(
@@ -318,6 +349,14 @@ export class PreviewController extends GenericControler {
         const defi = await this.defiRepository.getByContentId(
           objectif.content_id,
         );
+        if (!defi) {
+          result.push(``);
+          result.push(
+            `🔥🔥🔥 DEFI  [${objectif.content_id}] MANQUANT en base, sans doute pas publié ?`,
+          );
+          result.push(``);
+          continue;
+        }
         const DATA: any = {};
         DATA.objectif_titre = objectif.titre;
         DATA.objectif_points = objectif.points;
@@ -430,10 +469,25 @@ export class PreviewController extends GenericControler {
         const result2 = [];
         await this.dump_defis_of_mission(mission, result2);
 
-        const ouput = result2.join('');
+        const result3 = [];
+        await this.dump_mission(result3, mission);
+
+        const ouput2 = result2.join('');
+        const ouput3 = result3.join('');
         result.push(
-          `Paramétrage défis : ${ouput.includes('🔥') ? 'KO 🔥🔥🔥' : 'OK 👍'}`,
+          `Paramétrage défis : ${
+            ouput2.includes('🔥') ? 'KO 🔥🔥🔥' : 'OK 👍'
+          }`,
         );
+        result.push(
+          `Contenu disponible : ${
+            ouput3.includes('] MANQUANT') ? 'KO 🔥🔥🔥' : 'OK 👍'
+          }`,
+        );
+        if (ouput3.includes('UNKNOWN ERROR'))
+          result.push(
+            `🔥🔥🔥 ERREUR Inconnue, allez voir le détail de la mission`,
+          );
       } else {
         result.push('');
         result.push(
