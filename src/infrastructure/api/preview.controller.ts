@@ -353,11 +353,11 @@ export class PreviewController extends GenericControler {
     for (const univers of all_univers) {
       if (univers.id_cms.toString() === id) {
         result.push(
-          `</pre><a href="/mission_preview/${univers.id_cms}"><pre>####> Univers [${univers.id_cms}]</pre></a><pre>`,
+          `</pre><a href="/mission_preview/${univers.id_cms}"><pre>####> Univers [${univers.id_cms}] - ${univers.titre}</pre></a><pre>`,
         );
       } else {
         result.push(
-          `</pre><a href="/mission_preview/${univers.id_cms}"><pre>      Univers [${univers.id_cms}]</pre></a><pre>`,
+          `</pre><a href="/mission_preview/${univers.id_cms}"><pre>      Univers [${univers.id_cms}] - ${univers.titre}</pre></a><pre>`,
         );
       }
     }
