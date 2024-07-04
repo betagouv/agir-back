@@ -19,6 +19,10 @@ export class PreviewController extends GenericControler {
   async refreshServiceDynamicData(@Param('id') id: string): Promise<string> {
     const kyc_def = await this.kycRepository.getByCMS_ID(parseInt(id));
 
+    if (!kyc_def) {
+      return 'Publiez la question avant de faire le preview ! o/s';
+    }
+
     const result: any = {};
 
     result.IS_NGC = kyc_def.is_ngc;
