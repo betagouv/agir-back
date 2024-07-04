@@ -429,6 +429,7 @@ export class PreviewController extends GenericControler {
           `Paramétrage défis : ${ouput.includes('🔥') ? 'KO 🔥🔥🔥' : 'OK 👍'}`,
         );
       } else {
+        result.push('');
         result.push(
           `🔥🔥🔥 Thematique sans mission [${tuile_thema.type}] - ${tuile_thema.titre}`,
         );
