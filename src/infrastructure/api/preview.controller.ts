@@ -16,7 +16,7 @@ export class PreviewController extends GenericControler {
   }
 
   @Get('kyc_preview/:id')
-  async refreshServiceDynamicData(@Param('id') id: string) {
+  async refreshServiceDynamicData(@Param('id') id: string): Promise<string> {
     const kyc_def = await this.kycRepository.getByCMS_ID(parseInt(id));
 
     const result: any = {};
@@ -25,7 +25,7 @@ export class PreviewController extends GenericControler {
     result.NGC_QUESTION_KEY = kyc_def.ngc_key;
 
     if (!kyc_def.is_ngc) {
-      return result;
+      return `<pre>${JSON.stringify(result, null, 2)}</pre>`;
     }
 
     try {
@@ -55,6 +55,6 @@ export class PreviewController extends GenericControler {
       result.error = error.message;
     }
 
-    return result;
+    return `<pre>${JSON.stringify(result, null, 2)}</pre>`;
   }
 }
