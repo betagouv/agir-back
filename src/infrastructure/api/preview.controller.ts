@@ -372,7 +372,6 @@ export class PreviewController extends GenericControler {
 ██║░░░██║██║╚████║██║░╚████╔╝░██╔══╝░░██╔══██╗░╚═══██╗
 ╚██████╔╝██║░╚███║██║░░╚██╔╝░░███████╗██║░░██║██████╔╝
 ░╚═════╝░╚═╝░░╚══╝╚═╝░░░╚═╝░░░╚══════╝╚═╝░░╚═╝╚═════╝░
-
 `);
 
     const all_univers = ThematiqueRepository.getAllTuileUnivers();
