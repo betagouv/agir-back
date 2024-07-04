@@ -76,9 +76,9 @@ export class PreviewController extends GenericControler {
       return ' /!\\ UNCHANGED';
     }
     if (value > bilan) {
-      ' > DEFAULT de ' + Math.round(value - bilan) + ' kg';
+      return ' > DEFAULT de ' + Math.round(value - bilan) + ' kg';
     } else {
-      ' < DEFAULT de ' + Math.round(bilan - value) + ' kg';
+      return ' < DEFAULT de ' + Math.round(bilan - value) + ' kg';
     }
   }
 }
