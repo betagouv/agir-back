@@ -14,6 +14,8 @@ import {
 import { Categorie } from '../../domain/contenu/categorie';
 import { QuizzRepository } from '../repository/quizz.repository';
 import { DefiRepository } from '../repository/defi.repository';
+import { MissionDefinition } from '../../domain/mission/missionDefinition';
+import { UniversUsecase } from '../../usecase/univers.usecase';
 
 @Controller()
 @ApiExcludeController()
@@ -23,6 +25,7 @@ export class PreviewController extends GenericControler {
     private nGCCalculator: NGCCalculator,
     private missionRepository: MissionRepository,
     private articleRepository: ArticleRepository,
+    private universUsecase: UniversUsecase,
     private quizzRepository: QuizzRepository,
     private defiRepository: DefiRepository,
   ) {
@@ -32,66 +35,93 @@ export class PreviewController extends GenericControler {
   @Get('kyc_preview/:id')
   async kyc_preview(@Param('id') id: string): Promise<string> {
     let result = [];
+    const kyc_def = await this.kycRepository.getByCMS_ID(parseInt(id));
+
     result.push('## KYC CMS ID : ' + id);
     result.push('######################');
-    result.push('');
-
-    const kyc_def = await this.kycRepository.getByCMS_ID(parseInt(id));
 
     if (!kyc_def) {
       result.push('Publiez la question avant de faire le preview !!!');
       return `<pre>${result.join('\n')}</pre>`;
     }
+    result.push(`## ${kyc_def.question}`);
+    result.push(
+      '#####################################################################',
+    );
+    result.push('');
 
     let DATA: any = {};
 
-    DATA.IS_NGC = kyc_def.is_ngc;
-    DATA.NGC_QUESTION_KEY = kyc_def.ngc_key;
+    if (kyc_def.is_ngc && !kyc_def.ngc_key) {
+      result.push(`🔥🔥🔥 Clé de question NGC manquante ! 🔥🔥🔥`);
+    }
 
-    result.push(JSON.stringify(DATA, null, 2));
+    DATA.type = kyc_def.type;
+    DATA.IS_NGC = kyc_def.is_ngc;
+    if (kyc_def.is_ngc) {
+      DATA.NGC_QUESTION_KEY = kyc_def.ngc_key;
+    }
 
     if (!kyc_def.is_ngc) {
+      DATA.reponses = kyc_def.reponses;
+      result.push(JSON.stringify(DATA, null, 2));
       return `<pre>${result.join('\n')}</pre>`;
     }
 
+    result.push(JSON.stringify(DATA, null, 2));
     result.push('');
 
     DATA = {};
     try {
       const situation: any = {};
-      const base_line =
-        this.nGCCalculator.computeBilanFromSituation(
-          situation,
-        ).bilan_carbone_annuel;
+      const base_line = Math.round(
+        this.nGCCalculator.computeBilanFromSituation(situation)
+          .bilan_carbone_annuel,
+      );
 
-      DATA.bilan_carbone_default = base_line;
+      DATA.bilan_carbone_DEFAULT = base_line;
+
+      if (!kyc_def.ngc_key) {
+        result.push(`🔥🔥🔥 Clé de question NGC manquante ! 🔥🔥🔥`);
+        DATA.question = kyc_def.reponses;
+        result.push(JSON.stringify(DATA, null, 2));
+
+        return `<pre>${result.join('\n')}</pre>`;
+      }
 
       if (kyc_def.type === TypeReponseQuestionKYC.entier) {
         situation[kyc_def.ngc_key] = 1;
-        const value_1 = this.nGCCalculator.computeBilanFromSituation(situation);
+        const value_1 = Math.round(
+          this.nGCCalculator.computeBilanFromSituation(situation)
+            .bilan_carbone_annuel,
+        );
         situation[kyc_def.ngc_key] = 2;
-        const value_2 = this.nGCCalculator.computeBilanFromSituation(situation);
+        const value_2 = Math.round(
+          this.nGCCalculator.computeBilanFromSituation(situation)
+            .bilan_carbone_annuel,
+        );
 
         DATA.with_kyc_reponse_equal_1 =
-          value_1.bilan_carbone_annuel +
-          this.compareBilan(value_1.bilan_carbone_annuel, base_line);
+          value_1 + this.compareBilan(value_1, base_line);
         DATA.with_kyc_reponse_equal_2 =
-          value_2.bilan_carbone_annuel +
-          this.compareBilan(value_2.bilan_carbone_annuel, base_line);
+          value_2 + this.compareBilan(value_2, base_line);
       }
 
       if (kyc_def.type === TypeReponseQuestionKYC.choix_unique) {
         for (const reponse of kyc_def.reponses) {
           situation[kyc_def.ngc_key] = reponse.ngc_code;
-          const value = this.nGCCalculator.computeBilanFromSituation(situation);
+          const value = Math.round(
+            this.nGCCalculator.computeBilanFromSituation(situation)
+              .bilan_carbone_annuel,
+          );
           DATA[`value_when_${reponse.code}`] =
-            value.bilan_carbone_annuel +
-            this.compareBilan(value.bilan_carbone_annuel, base_line);
+            value + this.compareBilan(value, base_line);
         }
       }
     } catch (error) {
       DATA.error = error.message;
     }
+    DATA.question = kyc_def.reponses;
     result.push(JSON.stringify(DATA, null, 2));
 
     return `<pre>${result.join('\n')}</pre>`;
@@ -106,6 +136,7 @@ export class PreviewController extends GenericControler {
     }
     let result = [];
 
+    result.push(`########################`);
     result.push(`### MISSION ID_CMS : ${mission_def.id_cms}`);
     result.push(`########################`);
     result.push(``);
@@ -128,6 +159,7 @@ export class PreviewController extends GenericControler {
 
     try {
       result.push('');
+      result.push('#################');
       result.push('# Liste KYCs');
       result.push('#################');
 
@@ -136,6 +168,9 @@ export class PreviewController extends GenericControler {
           const kyc_def = await this.kycRepository.getByCode(
             objectif.content_id,
           );
+          result.push(``);
+          result.push(`## KYC [${kyc_def.id_cms}]`);
+
           const DATA: any = {};
           DATA.CODE = objectif.content_id;
           DATA.objectif_titre = objectif.titre;
@@ -147,10 +182,14 @@ export class PreviewController extends GenericControler {
             DATA.reponses = kyc_def.reponses.map((k) => k.code);
           }
           result.push(JSON.stringify(DATA, null, 2));
+          result.push(
+            `</pre><a href="/kyc_preview/${kyc_def.id_cms}">Detail kyc</a><pre>`,
+          );
         }
       }
 
       result.push('');
+      result.push('#########################');
       result.push('# Liste Articles et Quizz');
       result.push('#########################');
       result.push('');
@@ -159,7 +198,7 @@ export class PreviewController extends GenericControler {
         if (objectif.type === ContentType.article) {
           result.push('');
           if (objectif.tag_article) {
-            result.push('## ARTICLES DYNAMIQUES');
+            result.push(`## ARTICLES DYNAMIQUES TAG [${objectif.tag_article}]`);
             const DATA: any = {};
             DATA.objectif_titre = objectif.titre;
             DATA.objectif_points = objectif.points;
@@ -204,8 +243,7 @@ export class PreviewController extends GenericControler {
               objectif.content_id,
             );
             const DATA: any = {};
-            result.push('## ARTICLE FIXE');
-            DATA.ARTICLE_ID = objectif.content_id;
+            result.push(`## ARTICLE FIXE [${objectif.content_id}]`);
             DATA.objectif_titre = objectif.titre;
             DATA.objectif_points = objectif.points;
             DATA.article_titre = article.titre;
@@ -214,13 +252,12 @@ export class PreviewController extends GenericControler {
           }
         } else if (objectif.type === ContentType.quizz) {
           result.push('');
-          result.push('## QUIZZ');
+          result.push(`## QUIZZ [${objectif.content_id}]`);
 
           const quizz = await this.quizzRepository.getQuizzByContentId(
             objectif.content_id,
           );
           const DATA: any = {};
-          DATA.QUIZZ_ID = objectif.content_id;
           DATA.objectif_titre = objectif.titre;
           DATA.objectif_points = objectif.points;
           DATA.quizz_titre = quizz.titre;
@@ -234,15 +271,23 @@ export class PreviewController extends GenericControler {
     }
 
     result.push('');
+    result.push('#########################');
     result.push('# Liste Défis');
     result.push('#########################');
-    result.push('');
 
+    await this.dump_defis_of_mission(mission_def, result);
+
+    return `<pre>${result.join('\n')}</pre>`;
+  }
+
+  private async dump_defis_of_mission(
+    mission_def: MissionDefinition,
+    result: any[],
+  ) {
     for (const objectif of mission_def.objectifs) {
       if (objectif.type === ContentType.defi) {
         result.push('');
-        result.push('');
-        result.push('#### DEFI ID ' + objectif.content_id);
+        result.push('#### DEFI [' + objectif.content_id + ']');
         const defi = await this.defiRepository.getByContentId(
           objectif.content_id,
         );
@@ -266,25 +311,102 @@ export class PreviewController extends GenericControler {
               if (reponse) {
                 qualif = ' 👍';
               } else {
-                qualif = `  🔥 MISSING REPONSE of code ${ET_C.code_reponse}`;
+                qualif = `  🔥🔥🔥 MISSING REPONSE of code [${ET_C.code_reponse}]`;
               }
             } else {
-              qualif = ` 🔥 MISSING KYC of code ${ET_C.code_kyc}`;
+              qualif = ` 🔥🔥🔥 MISSING KYC of code [${ET_C.code_kyc}]`;
             }
             result.push(
-              '| ' + ET_C.code_kyc + ' -> ' + ET_C.code_reponse + qualif,
+              '| [KYC ' +
+                ET_C.id_kyc +
+                '] ' +
+                ET_C.code_kyc +
+                ' -> ' +
+                ET_C.code_reponse +
+                qualif,
             );
           }
         }
+        result.push('|-------------');
+      }
+    }
+  }
+
+  @Get('univers_preview/:id')
+  async univers_preview(@Param('id') id: string): Promise<string> {
+    let result = [];
+
+    let DATA: any = {};
+
+    const tuile_univers = ThematiqueRepository.getTuileUniversByCMS_ID(
+      parseInt(id),
+    );
+    result.push(`########################`);
+    result.push(`### TOUS LES UNIVERS`);
+    result.push(`########################`);
+
+    const all_univers = ThematiqueRepository.getAllTuileUnivers();
+    all_univers.sort((a, b) => a.id_cms - b.id_cms);
+    for (const univers of all_univers) {
+      if (univers.id_cms.toString() === id) {
+        result.push(
+          `</pre><a href="/mission_preview/${univers.id_cms}"><pre>####> Univers [${univers.id_cms}]</pre></a><pre>`,
+        );
+      } else {
+        result.push(
+          `</pre><a href="/mission_preview/${univers.id_cms}"><pre>      Univers [${univers.id_cms}]</pre></a><pre>`,
+        );
       }
     }
 
+    result.push(`########################`);
+    result.push(`### UNIVERS ID_CMS : ${tuile_univers.id_cms}`);
+    result.push(`########################`);
+    result.push(``);
+    DATA.titre = tuile_univers.titre;
+    DATA.code = tuile_univers.type;
+    result.push(JSON.stringify(DATA, null, 2));
+    result.push(``);
+
+    result.push('###############################');
+    result.push(`# Liste Missions UNIVERS [${id}]`);
+    result.push('###############################');
+
+    let tuiles_thema = ThematiqueRepository.getAllTuilesThematique(
+      tuile_univers.type,
+    );
+
+    tuiles_thema = await this.universUsecase.ordonneTuilesThematiques(
+      tuiles_thema,
+    );
+
+    for (const tuile_thema of tuiles_thema) {
+      const mission = await this.missionRepository.getByThematique(
+        tuile_thema.type,
+      );
+      result.push('');
+      result.push(
+        `#### MISSION Famille_${tuile_thema.famille_id_cms} [${mission.id_cms}] - ${tuile_thema.titre}`,
+      );
+      result.push(`Est visible : ${mission.est_visible}`);
+
+      const result2 = [];
+      await this.dump_defis_of_mission(mission, result2);
+
+      const ouput = result2.join('');
+      result.push(
+        `Paramétrage défis : ${ouput.includes('🔥') ? 'KO 🔥🔥🔥' : 'OK 👍'}`,
+      );
+      result.push(
+        `</pre><a href="/mission_preview/${mission.id_cms}">Detail mission</a><pre>`,
+      );
+    }
     return `<pre>${result.join('\n')}</pre>`;
   }
 
   private compareBilan(value: number, bilan: number): string {
     if (value === bilan) {
-      return ' /!\\ UNCHANGED';
+      return ' 🔥🔥🔥 égale à la valeur DEFAULT !!';
     }
     if (value > bilan) {
       return ' > DEFAULT de ' + Math.round(value - bilan) + ' kg';

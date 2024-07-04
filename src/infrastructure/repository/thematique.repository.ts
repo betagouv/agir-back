@@ -220,6 +220,12 @@ export class ThematiqueRepository {
     }
   }
 
+  public static getTuileUniversByCMS_ID(id_cms: number): TuileUnivers {
+    const tuile_u = ThematiqueRepository.getAllTuileUnivers().find(
+      (t) => t.id_cms === id_cms,
+    );
+    return tuile_u;
+  }
   public static getTitreUnivers(univers: string): string {
     if (!univers) return 'Titre manquant';
     const tuile = ThematiqueRepository.getTuileUnivers(univers);

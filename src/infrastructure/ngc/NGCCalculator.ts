@@ -11,9 +11,7 @@ export class NGCCalculator {
     this.engine = new Engine(rules, {
       logger: {
         log(message: string) {},
-        warn(message: string) {
-          console.warn(message);
-        },
+        warn(message: string) {},
         error(message: string) {
           console.error(message);
         },

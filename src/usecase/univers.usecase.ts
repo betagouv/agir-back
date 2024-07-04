@@ -179,9 +179,7 @@ export class UniversUsecase {
     return mission_def;
   }
 
-  private ordonneTuilesThematiques(
-    liste: TuileThematique[],
-  ): TuileThematique[] {
+  public ordonneTuilesThematiques(liste: TuileThematique[]): TuileThematique[] {
     liste.sort((a, b) => a.famille_ordre - b.famille_ordre);
 
     let famille_map: Map<Number, TuileThematique[]> = new Map();
