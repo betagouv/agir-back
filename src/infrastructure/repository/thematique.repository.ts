@@ -78,16 +78,24 @@ export class ThematiqueRepository {
   }
 
   public async loadThematiques() {
+    const new_map = new Map();
     const listeThematiques = await this.prisma.thematique.findMany();
     listeThematiques.forEach((them) => {
-      this.setTitreOfThematiqueByCmsId(them.id_cms, them.titre);
+      new_map.set(
+        ThematiqueRepository.getThematiqueByCmsId(them.id_cms),
+        them.titre,
+      );
     });
+    ThematiqueRepository.titres_thematiques = new_map;
   }
 
   public async loadUnivers() {
     const listeUnivers = await this.prisma.univers.findMany();
+
+    const new_map = new Map();
+
     listeUnivers.forEach((u) => {
-      ThematiqueRepository.univers.set(
+      new_map.set(
         u.code,
         new TuileUnivers({
           image_url: u.image_url
@@ -103,12 +111,16 @@ export class ThematiqueRepository {
         }),
       );
     });
+    ThematiqueRepository.univers = new_map;
   }
   public async loadThematiqueUnivers() {
     const listeThematiqueUnivers =
       await this.prisma.thematiqueUnivers.findMany();
+
+    const new_map = new Map();
+
     listeThematiqueUnivers.forEach((t) => {
-      ThematiqueRepository.thematiquesUnivers.set(
+      new_map.set(
         t.code,
         new TuileThematique({
           titre: t.label,
@@ -131,6 +143,8 @@ export class ThematiqueRepository {
         }),
       );
     });
+
+    ThematiqueRepository.thematiquesUnivers = new_map;
   }
 
   public async upsertThematique(id_cms: number, titre: string) {
@@ -205,13 +219,6 @@ export class ThematiqueRepository {
         famille_ordre: them.famille_ordre,
       },
     });
-  }
-
-  private setTitreOfThematiqueByCmsId(cms_id: number, titre: string) {
-    ThematiqueRepository.titres_thematiques.set(
-      ThematiqueRepository.getThematiqueByCmsId(cms_id),
-      titre,
-    );
   }
 
   // FIXME : basculer sur une gestion de code et pas d'id tech CMS
