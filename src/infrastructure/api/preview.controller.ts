@@ -189,7 +189,9 @@ export class PreviewController extends GenericControler {
             objectif.content_id,
           );
           result.push(``);
-          result.push(`## KYC [${kyc_def.id_cms}]`);
+          result.push(
+            `## <a href="/kyc_preview/${kyc_def.id_cms}">KYC</a> [${kyc_def.id_cms}]`,
+          );
 
           const DATA: any = {};
           DATA.CODE = objectif.content_id;
@@ -202,9 +204,6 @@ export class PreviewController extends GenericControler {
             DATA.reponses = kyc_def.reponses.map((k) => k.code);
           }
           result.push(JSON.stringify(DATA, null, 2));
-          result.push(
-            `</pre><a href="/kyc_preview/${kyc_def.id_cms}">Detail kyc</a><pre>`,
-          );
         }
       }
 
@@ -307,7 +306,9 @@ export class PreviewController extends GenericControler {
     for (const objectif of mission_def.objectifs) {
       if (objectif.type === ContentType.defi) {
         result.push('');
-        result.push('#### DEFI [' + objectif.content_id + ']');
+        result.push(
+          `######## <a href="/defi_preview/${objectif.content_id}">DEFI</a> [${objectif.content_id}] ########`,
+        );
         const defi = await this.defiRepository.getByContentId(
           objectif.content_id,
         );
@@ -317,6 +318,9 @@ export class PreviewController extends GenericControler {
         DATA.defi_titre = defi.titre;
         DATA.defi_points = defi.points;
         result.push(JSON.stringify(DATA, null, 2));
+        result.push('');
+        result.push(`## Conditions`);
+        result.push('');
         for (const OU_C of defi.conditions) {
           result.push('|---- OU -----');
           for (const ET_C of OU_C) {
@@ -337,20 +341,16 @@ export class PreviewController extends GenericControler {
               qualif = ` 🔥🔥🔥 MISSING KYC of code [${ET_C.code_kyc}]`;
             }
             result.push(
-              '| [KYC ' +
+              `| [<a href="/kyc_preview/${target_kyc.id_cms}">KYC</a> ` +
                 ET_C.id_kyc +
-                '] ' +
-                ET_C.code_kyc +
-                ' -> ' +
+                '] -> ' +
                 ET_C.code_reponse +
-                qualif,
+                qualif +
+                ` (${target_kyc.question})`,
             );
           }
         }
         result.push('|-------------');
-        result.push(
-          `</pre><a href="/defi_preview/${defi.content_id}">Detail défi</a><pre>`,
-        );
       }
     }
   }
@@ -379,13 +379,14 @@ export class PreviewController extends GenericControler {
     for (const univers of all_univers) {
       if (univers.id_cms.toString() === id) {
         result.push(
-          `</pre><a href="/univers_preview/${univers.id_cms}"><pre>####> Univers [${univers.id_cms}] - ${univers.titre}</pre></a><pre>`,
+          `<a href="/univers_preview/${univers.id_cms}">####> Univers [${univers.id_cms}] - ${univers.titre}</a>`,
         );
       } else {
         result.push(
-          `</pre><a href="/univers_preview/${univers.id_cms}"><pre>      Univers [${univers.id_cms}] - ${univers.titre}</pre></a><pre>`,
+          `<a href="/univers_preview/${univers.id_cms}">      Univers [${univers.id_cms}] - ${univers.titre}</a>`,
         );
       }
+      result.push(``);
     }
 
     result.push(`########################`);
@@ -416,7 +417,7 @@ export class PreviewController extends GenericControler {
       if (mission) {
         result.push('');
         result.push(
-          `#### MISSION Famille_${tuile_thema.famille_id_cms} [${mission.id_cms}] - ${tuile_thema.titre}`,
+          `#### <a href="/mission_preview/${mission.id_cms}">MISSION</a> Famille_${tuile_thema.famille_id_cms} [${mission.id_cms}] - ${tuile_thema.titre}`,
         );
         result.push(`Est visible : ${mission.est_visible}`);
 
@@ -426,9 +427,6 @@ export class PreviewController extends GenericControler {
         const ouput = result2.join('');
         result.push(
           `Paramétrage défis : ${ouput.includes('🔥') ? 'KO 🔥🔥🔥' : 'OK 👍'}`,
-        );
-        result.push(
-          `</pre><a href="/mission_preview/${mission.id_cms}">Detail mission</a><pre>`,
         );
       } else {
         result.push(
