@@ -98,7 +98,8 @@ export class PreviewController extends GenericControler {
 
       if (!kyc_def.ngc_key) {
         result.push(`🔥🔥🔥 Clé de question NGC manquante ! 🔥🔥🔥`);
-        DATA.question = kyc_def.reponses;
+        delete DATA.bilan_carbone_DEFAULT;
+        DATA.reponses = kyc_def.reponses;
         result.push(JSON.stringify(DATA, null, 2));
 
         return `<pre>${result.join('\n')}</pre>`;
@@ -468,9 +469,12 @@ export class PreviewController extends GenericControler {
 
     const DATA: any = {};
     DATA.defi_points = defi_def.points;
-    DATA.mois = defi_def.mois;
-    DATA.tags = defi_def.tags;
+    DATA.mois = defi_def.mois.join('|');
+    DATA.tags = defi_def.tags.join('|');
     DATA.thematique = defi_def.thematique;
+    DATA.categorie = defi_def.categorie;
+    DATA.thematiques_univers = defi_def.thematiques_univers.join('|');
+    DATA.universes = defi_def.universes.join('|');
     result.push(JSON.stringify(DATA, null, 2));
     result.push('');
     result.push(`## Conditions`);
