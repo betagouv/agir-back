@@ -66,6 +66,11 @@ export class PreviewController extends GenericControler {
       result.push(`🔥🔥🔥 Clé de question NGC manquante ! 🔥🔥🔥`);
     }
 
+    DATA.code_fonctionnel = kyc_def.code;
+    DATA.catgorie = kyc_def.categorie;
+    DATA.tags = kyc_def.tags.join('|');
+    DATA.thematique = kyc_def.thematique;
+    DATA.universes = kyc_def.universes.join('|');
     DATA.type = kyc_def.type;
     DATA.IS_NGC = kyc_def.is_ngc;
     if (kyc_def.is_ngc) {
