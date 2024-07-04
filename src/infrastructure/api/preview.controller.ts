@@ -158,7 +158,7 @@ export class PreviewController extends GenericControler {
 `);
 
     result.push(`### MISSION ID_CMS : ${mission_def.id_cms}`);
-    result.push(`########################`);
+    result.push('##################################################');
     result.push(``);
     result.push(
       `Titre : ${ThematiqueRepository.getTitreThematiqueUnivers(
@@ -179,9 +179,9 @@ export class PreviewController extends GenericControler {
 
     try {
       result.push('');
-      result.push('#################');
+      result.push('##################################################');
       result.push('# Liste KYCs');
-      result.push('#################');
+      result.push('##################################################');
 
       for (const objectif of mission_def.objectifs) {
         if (objectif.type === ContentType.kyc) {
@@ -209,9 +209,9 @@ export class PreviewController extends GenericControler {
       }
 
       result.push('');
-      result.push('#########################');
+      result.push('##################################################');
       result.push('# Liste Articles et Quizz');
-      result.push('#########################');
+      result.push('##################################################');
       result.push('');
 
       for (const objectif of mission_def.objectifs) {
@@ -291,9 +291,9 @@ export class PreviewController extends GenericControler {
     }
 
     result.push('');
-    result.push('#########################');
+    result.push('##################################################');
     result.push('# Liste Défis');
-    result.push('#########################');
+    result.push('##################################################');
 
     await this.dump_defis_of_mission(mission_def, result);
 
