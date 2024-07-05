@@ -534,10 +534,11 @@ export class PreviewController extends GenericControler {
           result.push(
             `| [<a href="/kyc_preview/${ET_C.id_kyc}">KYC</a> ` +
               ET_C.id_kyc +
-              '] -> ' +
+              '] -> [' +
               ET_C.code_reponse +
+              '] ' +
               qualif +
-              ` (${target_kyc.question})`,
+              `  (${target_kyc.question})`,
           );
         }
       }
