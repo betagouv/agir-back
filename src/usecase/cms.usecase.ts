@@ -593,7 +593,9 @@ export class CMSUsecase {
         ),
         codes_departement: CMSUsecase.split(hook.entry.codes_departement),
         codes_region: CMSUsecase.split(hook.entry.codes_region),
-        tag_article: hook.entry.tag_article.code,
+        tag_article: hook.entry.tag_article
+          ? hook.entry.tag_article.code
+          : null,
       });
     }
     return result;
