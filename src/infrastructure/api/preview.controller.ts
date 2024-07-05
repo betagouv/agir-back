@@ -538,7 +538,7 @@ export class PreviewController extends GenericControler {
               ET_C.code_reponse +
               '] ' +
               qualif +
-              `  (${target_kyc.question})`,
+              `  (${target_kyc ? target_kyc.question : ''})`,
           );
         }
       }
