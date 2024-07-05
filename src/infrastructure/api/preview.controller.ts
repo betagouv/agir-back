@@ -213,7 +213,7 @@ export class PreviewController extends GenericControler {
           if (!kyc_def) {
             result.push(``);
             result.push(
-              `🔥🔥🔥 KYC [${objectif.content_id}] manquante en base, sans doute pas publié ?`,
+              `🔥🔥🔥 KYC [${objectif.content_id}] MANQUANTE en base, sans doute pas publié ?`,
             );
             result.push(``);
           } else {
@@ -447,12 +447,14 @@ export class PreviewController extends GenericControler {
         const ouput3 = result3.join('');
         result.push(
           `Paramétrage défis : ${
-            ouput2.includes('🔥') ? 'KO 🔥🔥🔥' : 'OK 👍'
+            ouput2.includes('🔥🔥🔥 MISSING') ? 'KO 🔥🔥🔥' : 'OK 👍'
           }`,
         );
         result.push(
           `Contenu disponible : ${
-            ouput3.includes('] MANQUANT') ? 'KO 🔥🔥🔥' : 'OK 👍'
+            ouput3.includes('MANQUANT') || ouput3.includes('MISSING KYC')
+              ? 'KO 🔥🔥🔥'
+              : 'OK 👍'
           }`,
         );
         if (ouput3.includes('UNKNOWN ERROR'))
