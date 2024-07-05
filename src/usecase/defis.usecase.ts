@@ -172,7 +172,7 @@ export class DefisUsecase {
         thematiqueU,
       );
       if (mission_def) {
-        utilisateur.missions.addNewVisibleMission(mission_def);
+        utilisateur.missions.upsertNewMission(mission_def, true);
       }
     }
   }

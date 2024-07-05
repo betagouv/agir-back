@@ -367,15 +367,17 @@ export class TestUtil {
       objectifs: [
         {
           titre: 'obj 1',
-          content_id: '_1',
+          content_id: '1',
           type: ContentType.kyc,
           points: 10,
+          id_cms: 1,
         },
         {
           titre: 'obj 2',
-          content_id: '1',
+          content_id: '2',
           type: ContentType.article,
           points: 25,
+          id_cms: 2,
         },
       ],
       prochaines_thematiques: [

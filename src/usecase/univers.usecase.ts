@@ -18,14 +18,14 @@ import { Utilisateur } from '../domain/utilisateur/utilisateur';
 import { Categorie } from '../domain/contenu/categorie';
 import { ContentType } from '../domain/contenu/contentType';
 import { PonderationApplicativeManager } from '../domain/scoring/ponderationApplicative';
+import { MissionUsecase } from './mission.usecase';
 
 @Injectable()
 export class UniversUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private missionRepository: MissionRepository,
-    private articleRepository: ArticleRepository,
-    private communeRepository: CommuneRepository,
+    private missionUsecase: MissionUsecase,
   ) {}
 
   async getALL(utilisateurId: string): Promise<TuileUnivers[]> {
@@ -83,13 +83,14 @@ export class UniversUsecase {
               mission_def.thematique_univers,
             ) === univers
           ) {
-            const ready_mission_def = await this.completeMissionDef(
-              mission_def,
-              utilisateur,
-            );
+            const ready_mission_def =
+              await this.missionUsecase.completeMissionDef(
+                mission_def,
+                utilisateur,
+              );
 
             const new_mission =
-              utilisateur.missions.addMission(ready_mission_def);
+              utilisateur.missions.upsertNewMission(ready_mission_def);
 
             result.push(this.completeTuileWithMission(new_mission, tuile));
           }
@@ -122,62 +123,6 @@ export class UniversUsecase {
       famille_id_cms: tuile.famille_id_cms,
       famille_ordre: tuile.famille_ordre,
     });
-  }
-
-  private async completeMissionDef(
-    mission_def: MissionDefinition,
-    utilisateur: Utilisateur,
-  ): Promise<MissionDefinition> {
-    const code_commune = await this.communeRepository.getCodeCommune(
-      utilisateur.logement.code_postal,
-      utilisateur.logement.commune,
-    );
-    const dept_region =
-      await this.communeRepository.findDepartementRegionByCodePostal(
-        utilisateur.logement.code_postal,
-      );
-
-    const filtre: ArticleFilter = {
-      code_postal: utilisateur.logement.code_postal,
-      categorie: Categorie.mission,
-      code_commune: code_commune ? code_commune : undefined,
-      code_departement: dept_region ? dept_region.code_departement : undefined,
-      code_region: dept_region ? dept_region.code_region : undefined,
-    };
-
-    const objectifs = mission_def.objectifs;
-
-    mission_def.objectifs = [];
-
-    for (const objectif of objectifs) {
-      if (objectif.tag_article) {
-        filtre.tag_article = objectif.tag_article;
-        const article_candidat_liste =
-          await this.articleRepository.searchArticles(filtre);
-
-        PonderationApplicativeManager.increaseScoreContentOfList(
-          article_candidat_liste,
-          utilisateur.tag_ponderation_set,
-        );
-
-        PonderationApplicativeManager.sortContent(article_candidat_liste);
-
-        for (const article of article_candidat_liste) {
-          const new_objectif = new ObjectifDefinition({
-            content_id: article.content_id,
-            titre: article.titre,
-            points: objectif.points,
-            tag_article: objectif.tag_article,
-            type: ContentType.article,
-            id_cms: objectif.id_cms,
-          });
-          mission_def.objectifs.push(new_objectif);
-        }
-      } else {
-        mission_def.objectifs.push(objectif);
-      }
-    }
-    return mission_def;
   }
 
   public ordonneTuilesThematiques(liste: TuileThematique[]): TuileThematique[] {

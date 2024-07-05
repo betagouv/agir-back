@@ -39,14 +39,6 @@ export class MissionsUtilisateur {
     return this.missions.find((m) => m.id === missionId);
   }
 
-  public addMission(mission_def: MissionDefinition): Mission {
-    if (!this.doesContainMissionOfId(mission_def.id_cms)) {
-      const new_mission = Mission.buildFromDef(mission_def);
-      this.missions.push(new_mission);
-      return new_mission;
-    }
-  }
-
   public validateAricleOrQuizzDone(
     content_id: string,
     type: ContentType,
@@ -105,12 +97,23 @@ export class MissionsUtilisateur {
     return { mission: null, objectif: null };
   }
 
-  public addNewVisibleMission(middion_def: MissionDefinition) {
-    if (!this.doesContainMissionOfId(middion_def.id_cms)) {
-      const new_mission = Mission.buildFromDef(middion_def);
-      new_mission.est_visible = true;
-      this.missions.push(new_mission);
+  public upsertNewMission(
+    middion_def: MissionDefinition,
+    visible?: boolean,
+  ): Mission {
+    const new_mission = Mission.buildFromDef(middion_def);
+    if (visible !== undefined) {
+      new_mission.est_visible = visible;
     }
+
+    const existing_mission = this.getMissionById(middion_def.id_cms.toString());
+
+    if (existing_mission) {
+      this.missions.splice(this.missions.indexOf(existing_mission), 1);
+    }
+    this.missions.push(new_mission);
+
+    return new_mission;
   }
 
   public getAllUnlockedDefisIdsByUnivers(univers: string): string[] {
@@ -124,9 +127,5 @@ export class MissionsUtilisateur {
       }
     }
     return result;
-  }
-
-  private doesContainMissionOfId(mission_id: number) {
-    return this.missions.findIndex((m) => m.id === mission_id.toString()) > -1;
   }
 }
