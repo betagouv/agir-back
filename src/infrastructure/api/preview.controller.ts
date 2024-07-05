@@ -16,6 +16,7 @@ import { QuizzRepository } from '../repository/quizz.repository';
 import { DefiRepository } from '../repository/defi.repository';
 import { MissionDefinition } from '../../domain/mission/missionDefinition';
 import { UniversUsecase } from '../../usecase/univers.usecase';
+import { DefiDefinition } from '../../domain/defis/defiDefinition';
 
 @Controller()
 @ApiExcludeController()
@@ -364,41 +365,8 @@ export class PreviewController extends GenericControler {
         DATA.defi_titre = defi.titre;
         DATA.defi_points = defi.points;
         result.push(JSON.stringify(DATA, null, 2));
-        if (defi.conditions.length > 0) {
-          result.push('');
-          result.push(`## Conditions`);
-          result.push('');
-          for (const OU_C of defi.conditions) {
-            result.push('|---- OU -----');
-            for (const ET_C of OU_C) {
-              const target_kyc = await this.kycRepository.getByCode(
-                ET_C.code_kyc,
-              );
-              let qualif;
-              if (target_kyc) {
-                const reponse = target_kyc.reponses.find(
-                  (r) => r.code === ET_C.code_reponse,
-                );
-                if (reponse) {
-                  qualif = ' 👍';
-                } else {
-                  qualif = `  🔥🔥🔥 MISSING REPONSE of code [${ET_C.code_reponse}]`;
-                }
-              } else {
-                qualif = ` 🔥🔥🔥 MISSING KYC of code [${ET_C.code_kyc}]`;
-              }
-              result.push(
-                `| [<a href="/kyc_preview/${target_kyc.id_cms}">KYC</a> ` +
-                  ET_C.id_kyc +
-                  '] -> ' +
-                  ET_C.code_reponse +
-                  qualif +
-                  ` (${target_kyc.question})`,
-              );
-            }
-          }
-          result.push('|-------------');
-        }
+
+        await this.dump_defi_conditions(result, defi);
       }
     }
   }
@@ -533,15 +501,21 @@ export class PreviewController extends GenericControler {
     DATA.thematiques_univers = defi_def.thematiques_univers;
     DATA.universes = defi_def.universes;
     result.push(JSON.stringify(DATA, null, 2));
-    if (defi_def.conditions.length > 0) {
+
+    await this.dump_defi_conditions(result, defi_def);
+
+    return `<pre>${result.join('\n')}</pre>`;
+  }
+
+  private async dump_defi_conditions(result: any[], defi: DefiDefinition) {
+    if (defi.conditions.length > 0) {
       result.push('');
       result.push(`## Conditions`);
-      result.push('##############');
       result.push('');
-      for (const OU_C of defi_def.conditions) {
+      for (const OU_C of defi.conditions) {
         result.push('|---- OU -----');
         for (const ET_C of OU_C) {
-          const target_kyc = await this.kycRepository.getByCode(ET_C.code_kyc);
+          const target_kyc = await this.kycRepository.getByCMS_ID(ET_C.id_kyc);
           let qualif;
           if (target_kyc) {
             const reponse = target_kyc.reponses.find(
@@ -556,7 +530,7 @@ export class PreviewController extends GenericControler {
             qualif = ` 🔥🔥🔥 MISSING KYC of code [${ET_C.code_kyc}]`;
           }
           result.push(
-            `| [<a href="/kyc_preview/${target_kyc.id_cms}">KYC</a> ` +
+            `| [<a href="/kyc_preview/${ET_C.id_kyc}">KYC</a> ` +
               ET_C.id_kyc +
               '] -> ' +
               ET_C.code_reponse +
@@ -567,7 +541,6 @@ export class PreviewController extends GenericControler {
       }
       result.push('|-------------');
     }
-    return `<pre>${result.join('\n')}</pre>`;
   }
 
   private compareBilan(value: number, bilan: number): string {
