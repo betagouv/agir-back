@@ -580,6 +580,7 @@ describe('Univers (API test)', () => {
         titre: 'yop',
         type: ContentType.kyc,
         tag_article: null,
+        id_cms: 11,
       },
       {
         content_id: '222',
@@ -587,6 +588,7 @@ describe('Univers (API test)', () => {
         titre: 'haha',
         type: ContentType.article,
         tag_article: null,
+        id_cms: 222,
       },
       {
         content_id: null,
@@ -594,6 +596,7 @@ describe('Univers (API test)', () => {
         titre: 'TTT',
         type: ContentType.article,
         tag_article: 'composter',
+        id_cms: null,
       },
     ];
     const mission_articles_tag: Mission = {
@@ -670,6 +673,7 @@ describe('Univers (API test)', () => {
         titre: 'TTT',
         type: ContentType.article,
         tag_article: 'truc',
+        id_cms: null,
       },
     ];
     const mission_articles_tag: Mission = {
@@ -748,6 +752,7 @@ describe('Univers (API test)', () => {
         titre: 'TTT',
         type: ContentType.article,
         tag_article: 'composter',
+        id_cms: null,
       },
     ];
     const mission_articles_tag: Mission = {
@@ -828,6 +833,7 @@ describe('Univers (API test)', () => {
         titre: 'TTT',
         type: ContentType.article,
         tag_article: 'composter',
+        id_cms: null,
       },
     ];
     const mission_articles_tag: Mission = {

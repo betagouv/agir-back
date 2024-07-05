@@ -211,7 +211,7 @@ export class PreviewController extends GenericControler {
           if (!kyc_def) {
             result.push(``);
             result.push(
-              `🔥🔥🔥 KYC [${objectif.content_id}] MANQUANTE en base, sans doute pas publié ?`,
+              `🔥🔥🔥 KYC [${objectif.id_cms}] MANQUANTE en base, sans doute pas publié ?`,
             );
             result.push(``);
           } else {
