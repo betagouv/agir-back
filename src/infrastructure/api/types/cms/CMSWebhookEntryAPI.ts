@@ -7,6 +7,7 @@ export class IDAPI {
   @ApiProperty() id: number;
 }
 export class CodeAPI {
+  @ApiProperty() id: number;
   @ApiProperty() code: string;
 }
 

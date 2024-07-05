@@ -119,7 +119,12 @@ describe('/api/incoming/cms (API test)', () => {
       objectifs: [
         { id: 1, titre: 'do it article', points: 5, article: { id: 11 } },
         { id: 2, titre: 'do it defi', points: 10, defi: { id: 12 } },
-        { id: 3, titre: 'do it kyc', points: 15, kyc: { code: KYCID.KYC001 } },
+        {
+          id: 3,
+          titre: 'do it kyc',
+          points: 15,
+          kyc: { code: KYCID.KYC001, id: 100 },
+        },
         { id: 4, titre: 'do it quizz', points: 20, quizz: { id: 13 } },
         {
           id: 5,
@@ -438,6 +443,7 @@ describe('/api/incoming/cms (API test)', () => {
         type: ContentType.article,
         points: 5,
         tag_article: null,
+        id_cms: 11,
       },
       {
         titre: 'do it defi',
@@ -445,6 +451,7 @@ describe('/api/incoming/cms (API test)', () => {
         type: ContentType.defi,
         points: 10,
         tag_article: null,
+        id_cms: 12,
       },
       {
         titre: 'do it kyc',
@@ -452,6 +459,7 @@ describe('/api/incoming/cms (API test)', () => {
         type: ContentType.kyc,
         points: 15,
         tag_article: null,
+        id_cms: 100,
       },
       {
         titre: 'do it quizz',
@@ -459,6 +467,7 @@ describe('/api/incoming/cms (API test)', () => {
         type: ContentType.quizz,
         points: 20,
         tag_article: null,
+        id_cms: 13,
       },
       {
         titre: 'do it article generique',
@@ -466,6 +475,7 @@ describe('/api/incoming/cms (API test)', () => {
         type: ContentType.article,
         points: 5,
         tag_article: '111',
+        id_cms: null,
       },
     ]);
   });

@@ -207,9 +207,7 @@ export class PreviewController extends GenericControler {
 
       for (const objectif of mission_def.objectifs) {
         if (objectif.type === ContentType.kyc) {
-          const kyc_def = await this.kycRepository.getByCode(
-            objectif.content_id,
-          );
+          const kyc_def = await this.kycRepository.getByCMS_ID(objectif.id_cms);
           if (!kyc_def) {
             result.push(``);
             result.push(
@@ -452,7 +450,7 @@ export class PreviewController extends GenericControler {
         );
         result.push(
           `Contenu disponible : ${
-            ouput3.includes('MANQUANT') || ouput3.includes('MISSING KYC')
+            ouput3.includes('MANQUANT') || ouput2.includes('MISSING KYC')
               ? 'KO 🔥🔥🔥'
               : 'OK 👍'
           }`,
@@ -529,7 +527,7 @@ export class PreviewController extends GenericControler {
               qualif = `  🔥🔥🔥 MISSING REPONSE of code [${ET_C.code_reponse}]`;
             }
           } else {
-            qualif = ` 🔥🔥🔥 MISSING KYC of code [${ET_C.code_kyc}]`;
+            qualif = ` 🔥🔥🔥 MISSING KYC of id [${ET_C.id_kyc}]`;
           }
           result.push(
             `| [<a href="/kyc_preview/${ET_C.id_kyc}">KYC</a> ` +

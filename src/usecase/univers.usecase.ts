@@ -169,6 +169,7 @@ export class UniversUsecase {
             points: objectif.points,
             tag_article: objectif.tag_article,
             type: ContentType.article,
+            id_cms: objectif.id_cms,
           });
           mission_def.objectifs.push(new_objectif);
         }

@@ -3,6 +3,7 @@ import { ContentType } from '../contenu/contentType';
 export class ObjectifDefinition {
   titre: string;
   content_id: string;
+  id_cms: number;
   type: ContentType;
   points: number;
   tag_article: string;
@@ -13,6 +14,7 @@ export class ObjectifDefinition {
     this.content_id = data.content_id;
     this.points = data.points;
     this.tag_article = data.tag_article;
+    this.id_cms = data.id_cms;
   }
 }
 

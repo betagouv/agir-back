@@ -703,10 +703,12 @@ export class CMSUsecase {
                 points: obj.points,
                 type: null,
                 tag_article: null,
+                id_cms: null,
               });
               if (obj.article) {
                 result.type = ContentType.article;
                 result.content_id = obj.article.id.toString();
+                result.id_cms = obj.article.id;
               }
               if (obj.tag_article) {
                 result.type = ContentType.article;
@@ -715,14 +717,17 @@ export class CMSUsecase {
               if (obj.defi) {
                 result.type = ContentType.defi;
                 result.content_id = obj.defi.id.toString();
+                result.id_cms = obj.defi.id;
               }
               if (obj.quizz) {
                 result.type = ContentType.quizz;
                 result.content_id = obj.quizz.id.toString();
+                result.id_cms = obj.quizz.id;
               }
               if (obj.kyc) {
                 result.type = ContentType.kyc;
                 result.content_id = obj.kyc.code;
+                result.id_cms = obj.kyc.id;
               }
               return result;
             })
@@ -958,10 +963,12 @@ export class CMSUsecase {
                 points: obj.points,
                 type: null,
                 tag_article: null,
+                id_cms: null,
               });
               if (obj.article.data) {
                 result.type = ContentType.article;
                 result.content_id = obj.article.data.id.toString();
+                result.id_cms = obj.article.data.id;
               }
               if (obj.tag_article.data) {
                 result.type = ContentType.article;
@@ -970,14 +977,17 @@ export class CMSUsecase {
               if (obj.defi.data) {
                 result.type = ContentType.defi;
                 result.content_id = obj.defi.data.id.toString();
+                result.id_cms = obj.defi.data.id;
               }
               if (obj.quizz.data) {
                 result.type = ContentType.quizz;
                 result.content_id = obj.quizz.data.id.toString();
+                result.id_cms = obj.quizz.data.id;
               }
               if (obj.kyc.data) {
                 result.type = ContentType.kyc;
                 result.content_id = obj.kyc.data.attributes.code;
+                result.id_cms = obj.kyc.data.id;
               }
               return result;
             })
