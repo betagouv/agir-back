@@ -215,25 +215,24 @@ export class PreviewController extends GenericControler {
               `🔥🔥🔥 KYC [${objectif.content_id}] manquante en base, sans doute pas publié ?`,
             );
             result.push(``);
-            continue;
-          }
+          } else {
+            result.push(``);
+            result.push(
+              `## <a href="/kyc_preview/${kyc_def.id_cms}">KYC</a> [${kyc_def.id_cms}]`,
+            );
 
-          result.push(``);
-          result.push(
-            `## <a href="/kyc_preview/${kyc_def.id_cms}">KYC</a> [${kyc_def.id_cms}]`,
-          );
-
-          const DATA: any = {};
-          DATA.CODE = objectif.content_id;
-          DATA.objectif_titre = objectif.titre;
-          DATA.objectif_points = objectif.points;
-          DATA.kyc_type = kyc_def.type;
-          DATA.kyc_question = kyc_def.question;
-          DATA.kyc_points = kyc_def.points;
-          if (kyc_def.reponses) {
-            DATA.reponses = kyc_def.reponses.map((k) => k.code);
+            const DATA: any = {};
+            DATA.CODE = objectif.content_id;
+            DATA.objectif_titre = objectif.titre;
+            DATA.objectif_points = objectif.points;
+            DATA.kyc_type = kyc_def.type;
+            DATA.kyc_question = kyc_def.question;
+            DATA.kyc_points = kyc_def.points;
+            if (kyc_def.reponses) {
+              DATA.reponses = kyc_def.reponses.map((k) => k.code);
+            }
+            result.push(JSON.stringify(DATA, null, 2));
           }
-          result.push(JSON.stringify(DATA, null, 2));
         }
       }
 
