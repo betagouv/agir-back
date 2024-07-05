@@ -12,6 +12,8 @@ import { DefiStatus } from '../defis/defi';
 export class Objectif {
   id: string;
   titre: string;
+  // FIXME pas un content id pour KYC
+  // uniformiser le nommage id_cms ??
   content_id: string;
   is_locked: boolean;
   done_at: Date;

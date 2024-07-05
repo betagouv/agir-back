@@ -369,6 +369,44 @@ export class PreviewController extends GenericControler {
     }
   }
 
+  @Get('all_preview')
+  async all_preview(): Promise<string> {
+    let result = [];
+
+    let DATA: any = {};
+
+    const tuiles_univers = ThematiqueRepository.getAllTuileUnivers();
+    tuiles_univers.sort((a, b) => a.id_cms - b.id_cms);
+
+    result.push(`
+
+
+██╗░░░░░███████╗  ░██████╗░██████╗░░█████╗░███╗░░██╗██████╗░  ████████╗░█████╗░██╗░░░██╗████████╗
+██║░░░░░██╔════╝  ██╔════╝░██╔══██╗██╔══██╗████╗░██║██╔══██╗  ╚══██╔══╝██╔══██╗██║░░░██║╚══██╔══╝
+██║░░░░░█████╗░░  ██║░░██╗░██████╔╝███████║██╔██╗██║██║░░██║  ░░░██║░░░██║░░██║██║░░░██║░░░██║░░░
+██║░░░░░██╔══╝░░  ██║░░╚██╗██╔══██╗██╔══██║██║╚████║██║░░██║  ░░░██║░░░██║░░██║██║░░░██║░░░██║░░░
+███████╗███████╗  ╚██████╔╝██║░░██║██║░░██║██║░╚███║██████╔╝  ░░░██║░░░╚█████╔╝╚██████╔╝░░░██║░░░
+╚══════╝╚══════╝  ░╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚══╝╚═════╝░  ░░░╚═╝░░░░╚════╝░░╚═════╝░░░░╚═╝░░░
+
+`);
+
+    for (const univers of tuiles_univers) {
+      const preview_univers = await this.univers_preview(
+        univers.id_cms.toString(),
+      );
+      if (preview_univers.includes('🔥🔥🔥')) {
+        result.push(
+          ` Univers [${univers.id_cms}] - <a href="/univers_preview/${univers.id_cms}">${univers.titre}</a> HAS SOME 🔥🔥🔥`,
+        );
+      } else {
+        result.push(
+          ` Univers [${univers.id_cms}] - <a href="/univers_preview/${univers.id_cms}">${univers.titre}</a> LOOKS GOOD`,
+        );
+      }
+    }
+
+    return `<pre>${result.join('\n')}</pre>`;
+  }
   @Get('univers_preview/:id')
   async univers_preview(@Param('id') id: string): Promise<string> {
     let result = [];
@@ -390,18 +428,24 @@ export class PreviewController extends GenericControler {
 
     const all_univers = ThematiqueRepository.getAllTuileUnivers();
     all_univers.sort((a, b) => a.id_cms - b.id_cms);
+    result.push(`################################`);
+    result.push(``);
     for (const univers of all_univers) {
       if (univers.id_cms.toString() === id) {
         result.push(
-          `<a href="/univers_preview/${univers.id_cms}">####> Univers [${univers.id_cms}] - ${univers.titre}</a>`,
+          `>> Univers [${univers.id_cms}] - <a href="/univers_preview/${univers.id_cms}">${univers.titre}</a>`,
         );
       } else {
         result.push(
-          `<a href="/univers_preview/${univers.id_cms}">      Univers [${univers.id_cms}] - ${univers.titre}</a>`,
+          `   Univers [${univers.id_cms}] - <a href="/univers_preview/${univers.id_cms}">${univers.titre}</a>`,
         );
       }
-      result.push(``);
     }
+    result.push(``);
+    result.push(`################################`);
+    result.push(``);
+    result.push(`<a href="/all_preview">SYNTHESE GLOBALE</a>`);
+    result.push(``);
 
     result.push(`########################`);
     result.push(`### UNIVERS ID_CMS : ${tuile_univers.id_cms}`);
