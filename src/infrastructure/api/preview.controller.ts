@@ -394,13 +394,17 @@ export class PreviewController extends GenericControler {
       const preview_univers = await this.univers_preview(
         univers.id_cms.toString(),
       );
+      const prefix = ` Univers [${univers.id_cms}] - <a href="/univers_preview/${univers.id_cms}">${univers.titre}</a>`;
       if (preview_univers.includes('🔥🔥🔥')) {
         result.push(
-          ` Univers [${univers.id_cms}] - <a href="/univers_preview/${univers.id_cms}">${univers.titre}</a> HAS SOME 🔥🔥🔥`,
+          ` ${prefix} ${this.getSpaceString(
+            65,
+            prefix.length,
+          )}> HAS SOME 🔥🔥🔥`,
         );
       } else {
         result.push(
-          ` Univers [${univers.id_cms}] - <a href="/univers_preview/${univers.id_cms}">${univers.titre}</a> LOOKS GOOD`,
+          ` ${prefix} ${this.getSpaceString(65, prefix.length)}> LOOKS GOOD`,
         );
       }
     }
@@ -474,8 +478,11 @@ export class PreviewController extends GenericControler {
       );
       if (mission) {
         result.push('');
+        const prefix = `#### <a href="/mission_preview/${mission.id_cms}">MISSION [${mission.id_cms}]</a> [GROUPE_${tuile_thema.famille_id_cms}]`;
         result.push(
-          `#### <a href="/mission_preview/${mission.id_cms}">MISSION</a> Famille_${tuile_thema.famille_id_cms} [${mission.id_cms}] - ${tuile_thema.titre}`,
+          `${prefix} ${this.getSpaceString(65, prefix.length)}> ${
+            tuile_thema.titre
+          }`,
         );
         result.push(`Est visible : ${mission.est_visible}`);
 
@@ -588,6 +595,13 @@ export class PreviewController extends GenericControler {
     }
   }
 
+  private getSpaceString(length: number, prefix_length: number) {
+    if (prefix_length > length) return '';
+    return '-----------------------------------------------------------------------------------------'.substr(
+      0,
+      length - prefix_length,
+    );
+  }
   private compareBilan(value: number, bilan: number): string {
     if (value === bilan) {
       return ' 🔥🔥🔥 égale à la valeur DEFAULT !!';
