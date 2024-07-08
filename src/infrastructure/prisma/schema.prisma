@@ -79,6 +79,18 @@ model Utilisateur {
   db_version               Int                @default(0)
 }
 
+model UtilisateurBoard {
+  utilisateurId String   @id
+  points        Int
+  code_postal   String?
+  commune       String?
+  prenom        String?
+  rank          Int?
+  rank_commune  Int?
+  created_at    DateTime @default(now()) @db.Timestamptz(3)
+  updated_at    DateTime @updatedAt @db.Timestamptz(3)
+}
+
 model Statistique {
   utilisateurId           String   @id
   nombre_defis_realises   Int?

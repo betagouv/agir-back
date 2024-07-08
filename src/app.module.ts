@@ -120,6 +120,7 @@ import { BilanCarboneStatistiqueRepository } from './infrastructure/repository/b
 import { BilanCarboneController } from './infrastructure/api/bilanCarbone.controller';
 import { BilanCarboneUsecase } from './usecase/bilanCarbone.usecase';
 import { PreviewController } from './infrastructure/api/preview.controller';
+import { UtilisateurBoardRepository } from './infrastructure/repository/utilisateurBoard.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -262,6 +263,7 @@ function getControllers(): any[] {
     RecettesRepository,
     BilanCarboneStatistiqueRepository,
     BilanCarboneUsecase,
+    UtilisateurBoardRepository,
   ],
 })
 export class AppModule {}

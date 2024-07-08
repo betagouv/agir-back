@@ -37,13 +37,9 @@ export class Personnalisator {
   }
 
   private formatCommune(utilisateur: Utilisateur): string {
-    const code_insee = this.communeRepository.getCodeCommune(
+    return this.communeRepository.formatCommune(
       utilisateur.logement.code_postal,
       utilisateur.logement.commune,
     );
-    const libelle =
-      this.communeRepository.getLibelleCommuneLowerCase(code_insee);
-
-    return libelle || utilisateur.logement.commune;
   }
 }
