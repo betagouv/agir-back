@@ -604,12 +604,12 @@ export class PreviewController extends GenericControler {
   }
   private compareBilan(value: number, bilan: number): string {
     if (value === bilan) {
-      return ' 🔥🔥🔥 égale à la valeur DEFAULT !!';
+      return ' = Bilan DEFAULT 🤔❓';
     }
     if (value > bilan) {
-      return ' > DEFAULT de ' + Math.round(value - bilan) + ' kg';
+      return ' > Bilan DEFAULT de ' + Math.round(value - bilan) + ' kg';
     } else {
-      return ' < DEFAULT de ' + Math.round(bilan - value) + ' kg';
+      return ' < Bilan DEFAULT de ' + Math.round(bilan - value) + ' kg';
     }
   }
 }
