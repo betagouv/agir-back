@@ -409,6 +409,46 @@ export class PreviewController extends GenericControler {
       }
     }
 
+    result.push(``);
+    result.push(``);
+    result.push('<h2>Fonctionalités clés</h2>');
+    result.push(
+      `<strong>[1] Détecter un contenu manquant mais référencé par une mission</strong>`,
+    );
+    result.push(` > Article`);
+    result.push(` > KYC`);
+    result.push(` > Quizz`);
+    result.push(` > Defi`);
+    result.push(``);
+    result.push(
+      `<strong>[2] Détecter un défi aux conditionalités mal paramétrées</strong>`,
+    );
+    result.push(` > Typo dans le code réponse `);
+    result.push(` > KYC manquante`);
+    result.push(``);
+    result.push(
+      `<strong>[3] Valider le bon fonctionnement d'une KYC NGC</strong>`,
+    );
+    result.push(` > Clé de la question connue par NGC `);
+    result.push(` > Influence des codes réponse sur le bilan carbone`);
+    result.push(``);
+    result.push(
+      `<strong>[4] Prévisualiser les articles locaux candidats dans une mission</strong>`,
+    );
+    result.push(` > Tag et liste candidats`);
+    result.push(` > Codes de localisation (commune, département, région) `);
+    result.push(``);
+    result.push(
+      `<strong>[5] Contrôler la visibilité des univers et missions</strong>`,
+    );
+    result.push(` > Regroupement des missions par famille`);
+    result.push(` > Ordre des missions `);
+    result.push(` > Visibilité des missions `);
+    result.push(``);
+    result.push(`<strong>[6] Vue agrégée des problèmes</strong>`);
+    result.push(` > Sur l'ensemble des univers`);
+    result.push(` > Sur l'ensemble d'une mission`);
+
     return `<pre>${result.join('\n')}</pre>`;
   }
   @Get('univers_preview/:id')
