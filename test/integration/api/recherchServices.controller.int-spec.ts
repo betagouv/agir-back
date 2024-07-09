@@ -70,7 +70,37 @@ describe('RechercheServices (API test)', () => {
       nombre_favoris: 0,
       site_web: 'https://www.monepi.fr/monepicerit',
       titre: "Mon Epice'Rit",
+      image_url: null,
     });
+  });
+  it.only(`POST /utlilisateur/id/recherche_services/proximite/search renvoie les images`, async () => {
+    // GIVEN
+    const logement_dijon: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91400',
+      chauffage: Chauffage.bois,
+      commune: 'ORSAY',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement_dijon });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
+    ).send({ rayon_metres: 2000, nombre_max_resultats: 10 });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body[0].image_url).toEqual(
+      'https://presdecheznous.fr/uploads/images/elements/printemps/2017/06/11717_Ecole-innovante-Saclay-1.jpg',
+    );
   });
   it(`POST /utlilisateur/id/recherche_services/proximite/search renvoie une liste de résultats par distance croissante`, async () => {
     // GIVEN
@@ -84,6 +114,7 @@ describe('RechercheServices (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
     expect(response.body).toHaveLength(3);
+
     expect(response.body[0].titre).toEqual(`Mon Epice'Rit`);
     expect(response.body[1].titre).toEqual(`L'ébullition`);
     expect(response.body[2].titre).toEqual(`L’Auvergnat Bio`);
@@ -227,6 +258,7 @@ describe('RechercheServices (API test)', () => {
                 site_web: 'e',
                 titre: 'haha',
                 impact_carbone_kg: 1,
+                image_url: 'https://',
               },
             },
           ],
@@ -263,6 +295,7 @@ describe('RechercheServices (API test)', () => {
       est_favoris: true,
       nombre_favoris: 1,
       impact_carbone_kg: 1,
+      image_url: 'https://',
     });
   });
 
@@ -362,6 +395,7 @@ describe('RechercheServices (API test)', () => {
                 site_web: 'e',
                 titre: 'haha',
                 impact_carbone_kg: 1,
+                image_url: 'https://',
               },
             },
           ],
@@ -484,6 +518,7 @@ describe('RechercheServices (API test)', () => {
                 site_web: 'e',
                 titre: 'haha',
                 impact_carbone_kg: 1,
+                image_url: 'https://',
               },
             },
             {
@@ -498,6 +533,7 @@ describe('RechercheServices (API test)', () => {
                 site_web: 'e',
                 titre: 'hoho',
                 impact_carbone_kg: 1,
+                image_url: 'https://',
               },
             },
           ],
@@ -523,6 +559,7 @@ describe('RechercheServices (API test)', () => {
                 site_web: 'e',
                 titre: 'haha',
                 impact_carbone_kg: 1,
+                image_url: 'https://',
               },
             },
           ],
@@ -590,6 +627,7 @@ describe('RechercheServices (API test)', () => {
                 site_web: 'e',
                 titre: 'haha',
                 impact_carbone_kg: 1,
+                image_url: 'https://',
               },
             },
             {
@@ -604,6 +642,7 @@ describe('RechercheServices (API test)', () => {
                 site_web: 'e',
                 titre: 'hoho',
                 impact_carbone_kg: 1,
+                image_url: 'https://',
               },
             },
           ],
@@ -629,6 +668,7 @@ describe('RechercheServices (API test)', () => {
                 site_web: 'e',
                 titre: 'haha',
                 impact_carbone_kg: 1,
+                image_url: 'https://',
               },
             },
           ],

@@ -43,6 +43,7 @@ export type PresDeChezVousResponse = {
     telephone: string; //"0590262839",
     email: string; //"private",
     subscriberEmails: [];
+    images: string[]; //['https://presdecheznous.gogocarto.fr/uploads/presdecheznous/images/elements/CapOuPasCap/2018/09/logo_amap_arbre_v1.3a.png']
   }[];
 };
 
@@ -102,6 +103,7 @@ export class PresDeChezNousRepository implements FinderInterface {
           adresse_rue: r.address.streetAddress,
           adresse_code_postal: r.address.postalCode,
           adresse_nom_ville: r.address.addressLocality,
+          image_url: r.images && r.images.length ? r.images[0] : null,
         }),
     );
 

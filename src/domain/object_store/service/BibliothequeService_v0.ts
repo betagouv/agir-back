@@ -8,6 +8,7 @@ import { FavorisRecherche } from 'src/domain/bibliotheque_services/favorisRecher
 export class ResultatRecherche_v0 {
   id: string;
   titre: string;
+  image_url?: string;
 
   adresse_rue?: string;
   adresse_nom_ville?: string;
@@ -40,6 +41,7 @@ export class ResultatRecherche_v0 {
       temps_prepa_min: res.temps_prepa_min,
       type_plat: res.type_plat,
       distance_metres: res.distance_metres,
+      image_url: res.image_url,
     };
   }
 }
