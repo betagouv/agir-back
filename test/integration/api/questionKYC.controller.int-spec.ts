@@ -20,6 +20,9 @@ import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Univers } from '../../../src/domain/univers/univers';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
+import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
+import { KYC } from '.prisma/client';
+import { Tag } from '../../../src/domain/scoring/tag';
 
 describe('/utilisateurs/id/questionsKYC (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -66,6 +69,84 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     await TestUtil.appclose();
   });
 
+  it('GET /utilisateurs/id/questionsKYC - 1 question répondue, avec attributs à jour depuis le catalogue', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [
+        {
+          id: '1',
+          id_cms: 11,
+          question: `question`,
+          type: TypeReponseQuestionKYC.choix_unique,
+          is_NGC: false,
+          categorie: Categorie.test,
+          points: 10,
+          reponses: [{ label: 'Le climat', code: Thematique.climat }],
+          reponses_possibles: [
+            { label: 'Le climat', code: Thematique.climat },
+            { label: 'Mon logement', code: Thematique.logement },
+          ],
+          tags: [TagUtilisateur.appetence_bouger_sante],
+          universes: [Univers.consommation],
+          thematique: Thematique.consommation,
+          ngc_key: '123',
+        },
+      ],
+    };
+
+    const dbKYC: KYC = {
+      id_cms: 22,
+      categorie: Categorie.recommandation,
+      code: '1',
+      is_ngc: true,
+      points: 20,
+      question: 'The question !',
+      tags: [Tag.possede_voiture],
+      universes: [Univers.alimentation],
+      thematique: Thematique.alimentation,
+      type: TypeReponseQuestionKYC.choix_unique,
+      ngc_key: 'a . b . c',
+      reponses: [
+        { label: 'Le climat !!!', code: Thematique.climat },
+        { label: 'Mon logement !!!', code: Thematique.logement },
+      ],
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.kYC, dbKYC);
+    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/questionsKYC',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toEqual(1);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+
+    const new_kyc = userDB.kyc_history.answered_questions[0];
+
+    expect(new_kyc.question).toEqual('The question !');
+    expect(new_kyc.points).toEqual(20);
+    expect(new_kyc.is_NGC).toEqual(true);
+    expect(new_kyc.id_cms).toEqual(22);
+    expect(new_kyc.categorie).toEqual(Categorie.recommandation);
+    expect(new_kyc.tags).toEqual([Tag.possede_voiture]);
+    expect(new_kyc.universes).toEqual([Univers.alimentation]);
+    expect(new_kyc.thematique).toEqual(Thematique.alimentation);
+    expect(new_kyc.ngc_key).toEqual('a . b . c');
+    expect(new_kyc.reponses).toEqual([
+      { label: 'Le climat !!!', code: Thematique.climat },
+    ]);
+    expect(new_kyc.reponses_possibles).toEqual([
+      { label: 'Le climat !!!', code: Thematique.climat },
+      { label: 'Mon logement !!!', code: Thematique.logement },
+    ]);
+  });
   it('GET /utilisateurs/id/questionsKYC - liste N questions', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -286,12 +367,12 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     user.kyc_history.setCatalogue(catalogue);
 
     expect(
-      user.kyc_history.getQuestionOrException('_1').reponses,
+      user.kyc_history.getUpToDateQuestionOrException('_1').reponses,
     ).toStrictEqual([
       {
         code: null,
         label: 'YO',
-        ngc_code : null
+        ngc_code: null,
       },
     ]);
 
@@ -447,11 +528,12 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     const catalogue = await kycRepository.getAllDefs();
     user.kyc_history.setCatalogue(catalogue);
     expect(
-      user.kyc_history.getQuestionOrException('_2').reponses,
+      user.kyc_history.getUpToDateQuestionOrException('_2').reponses,
     ).toStrictEqual([
       {
         code: Thematique.climat,
         label: 'Le climat',
+        ngc_code: undefined,
       },
     ]);
 

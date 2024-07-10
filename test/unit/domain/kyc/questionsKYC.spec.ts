@@ -5,6 +5,7 @@ import { Univers } from '../../../../src/domain/univers/univers';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
+import { KycDefinition } from '../../../../src/domain/kyc/kycDefinition';
 
 describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('areConditionsMatched : true si pas de condition', () => {
@@ -332,7 +333,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       ],
     });
     history.setCatalogue([
-      {
+      new KycDefinition({
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC001,
@@ -348,12 +349,12 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'BBB', code: Thematique.logement },
           { label: 'CCC', code: Thematique.alimentation },
         ],
-      },
+      }),
     ]);
 
     // THEN
     expect(
-      history.getQuestionOrException(KYCID.KYC001).hasAnyResponses(),
+      history.getUpToDateQuestionOrException(KYCID.KYC001).hasAnyResponses(),
     ).toEqual(false);
   });
   it('hasResponses :false si attribut []', () => {
@@ -382,7 +383,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       ],
     });
     history.setCatalogue([
-      {
+      new KycDefinition({
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC001,
@@ -398,11 +399,11 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'BBB', code: Thematique.logement },
           { label: 'CCC', code: Thematique.alimentation },
         ],
-      },
+      }),
     ]);
     // THEN
     expect(
-      history.getQuestionOrException(KYCID.KYC001).hasAnyResponses(),
+      history.getUpToDateQuestionOrException(KYCID.KYC001).hasAnyResponses(),
     ).toEqual(false);
   });
   it('hasResponses :true si au moins un reponse valorisée', () => {
@@ -431,7 +432,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       ],
     });
     history.setCatalogue([
-      {
+      new KycDefinition({
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC001,
@@ -448,11 +449,11 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'CCC', code: Thematique.alimentation },
           { label: 'Le climat', code: Thematique.climat },
         ],
-      },
+      }),
     ]);
     // THEN
     expect(
-      history.getQuestionOrException(KYCID.KYC001).hasAnyResponses(),
+      history.getUpToDateQuestionOrException(KYCID.KYC001).hasAnyResponses(),
     ).toEqual(true);
   });
   it('updateQuestion : exeption si question id inconnu', () => {
@@ -494,7 +495,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       ],
     });
     history.setCatalogue([
-      {
+      new KycDefinition({
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC001,
@@ -519,11 +520,11 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: '🚗 Transports', code: Thematique.transport },
           { label: 'Aucun / Je ne sais pas', code: 'rien' },
         ],
-      },
+      }),
     ]);
 
     // WHEN
-    const question = history.getQuestionOrException(KYCID.KYC001);
+    const question = history.getUpToDateQuestionOrException(KYCID.KYC001);
 
     // THEN
     expect(question.reponses[0].code).toEqual(Thematique.climat);
@@ -569,7 +570,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       ],
     });
     history.setCatalogue([
-      {
+      new KycDefinition({
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC001,
@@ -585,11 +586,11 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'BBB', code: Thematique.logement },
           { label: 'CCC', code: Thematique.alimentation },
         ],
-      },
+      }),
     ]);
 
     // WHEN
-    const question = history.getQuestionOrException(KYCID.KYC001);
+    const question = history.getUpToDateQuestionOrException(KYCID.KYC001);
 
     // THEN
     expect(question.reponses).toEqual([
@@ -637,7 +638,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       ],
     });
     history.setCatalogue([
-      {
+      new KycDefinition({
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC001,
@@ -653,11 +654,11 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'BBB', code: Thematique.logement },
           { label: 'CCC', code: Thematique.alimentation },
         ],
-      },
+      }),
     ]);
 
     // WHEN
-    const question = history.getQuestionOrException(KYCID.KYC001);
+    const question = history.getUpToDateQuestionOrException(KYCID.KYC001);
 
     // THEN
     expect(question.reponses).toEqual([
@@ -699,7 +700,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       ],
     });
     history.setCatalogue([
-      {
+      new KycDefinition({
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC001,
@@ -712,11 +713,11 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.entier,
         reponses: [],
-      },
+      }),
     ]);
 
     // WHEN
-    const question = history.getQuestionOrException(KYCID.KYC001);
+    const question = history.getUpToDateQuestionOrException(KYCID.KYC001);
 
     // THEN
     expect(question.reponses).toEqual([{ label: '123', code: null }]);
@@ -776,7 +777,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       ],
     });
     history.setCatalogue([
-      {
+      new KycDefinition({
         id_cms: 1,
         categorie: Categorie.test,
         code: KYCID.KYC001,
@@ -794,8 +795,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'CCC', code: Thematique.alimentation },
           { label: 'DDD', code: Thematique.transport },
         ],
-      },
-      {
+      }),
+      new KycDefinition({
         id_cms: 2,
         categorie: Categorie.test,
         code: KYCID.KYC002,
@@ -808,7 +809,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.libre,
         reponses: [],
-      },
+      }),
     ]);
 
     // WHEN
@@ -844,7 +845,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       ],
     });
     history.setCatalogue([
-      {
+      new KycDefinition({
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC001,
@@ -862,8 +863,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'CCC', code: Thematique.alimentation },
           { label: 'DDD', code: Thematique.transport },
         ],
-      },
-      {
+      }),
+      new KycDefinition({
         id_cms: 2,
         categorie: Categorie.recommandation,
         code: KYCID.KYC002,
@@ -881,7 +882,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'CCC', code: Thematique.alimentation },
           { label: 'DDD', code: Thematique.transport },
         ],
-      },
+      }),
     ]);
 
     // WHEN

@@ -99,7 +99,6 @@ export class UtilisateurController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<UtilisateurProfileAPI> {
     this.checkCallerId(req, utilisateurId);
-    console.log('YOOOO');
 
     let utilisateur = await this.utilisateurUsecase.findUtilisateurById(
       utilisateurId,

@@ -24,6 +24,7 @@ import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { Univers } from '../../../../src/domain/univers/univers';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
+import { KycDefinition } from '../../../../src/domain/kyc/kycDefinition';
 
 const ONBOARDING_DATA = {
   version: 0,
@@ -195,7 +196,7 @@ describe('UseragEvaluator', () => {
     // GIVEN
     const user = initNewUser(new Onboarding({ ...ONBOARDING_DATA }));
     user.kyc_history.setCatalogue([
-      {
+      new KycDefinition({
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC001,
@@ -220,7 +221,7 @@ describe('UseragEvaluator', () => {
           { label: '🚗 Transports', code: Thematique.transport },
           { label: 'Aucun / Je ne sais pas', code: 'rien' },
         ],
-      },
+      }),
     ]);
     user.kyc_history.updateQuestion(KYCID.KYC001, []);
 
@@ -240,7 +241,7 @@ describe('UseragEvaluator', () => {
     // GIVEN
     const user = initNewUser(new Onboarding({ ...ONBOARDING_DATA }));
     user.kyc_history.setCatalogue([
-      {
+      new KycDefinition({
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC001,
@@ -265,7 +266,7 @@ describe('UseragEvaluator', () => {
           { label: '🚗 Transports', code: Thematique.transport },
           { label: 'Aucun / Je ne sais pas', code: 'rien' },
         ],
-      },
+      }),
     ]);
     user.kyc_history.updateQuestion(KYCID.KYC001, [
       '🥦 Alimentation',

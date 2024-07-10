@@ -603,7 +603,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const catalogue = await kycRepository.getAllDefs();
     dbUser.kyc_history.setCatalogue(catalogue);
 
-    const question = dbUser.kyc_history.getQuestion(KYCID.KYC006);
+    const question = dbUser.kyc_history.getUpToDateQuestionByCodeOrNull(KYCID.KYC006);
     expect(question.hasAnyResponses());
     expect(question.includesReponseCode('plus_15'));
   });

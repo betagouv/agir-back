@@ -76,6 +76,36 @@ export class QuestionKYC implements TaggedContent {
     });
   }
 
+  public refreshFromDef(def: KycDefinition) {
+    this.question = def.question;
+    this.type = def.type;
+    this.categorie = def.categorie;
+    this.points = def.points;
+    this.is_NGC = def.is_ngc;
+    this.reponses_possibles = def.reponses ? def.reponses : [];
+    this.ngc_key = def.ngc_key;
+    this.thematique = def.thematique;
+    this.tags = def.tags ? def.tags : [];
+    this.universes = def.universes ? def.universes : [];
+    this.id_cms = def.id_cms;
+    if (
+      (this.type === TypeReponseQuestionKYC.choix_multiple ||
+        this.type === TypeReponseQuestionKYC.choix_unique) &&
+      this.hasAnyResponses()
+    ) {
+      const upgraded_set = [];
+      for (const response of this.reponses) {
+        const def_reponse = def.getReponseByCode(response.code);
+        if (def_reponse) {
+          response.label = def_reponse.label;
+          response.ngc_code = def_reponse.ngc_code;
+          upgraded_set.push(response);
+        }
+      }
+      this.reponses = upgraded_set;
+    }
+  }
+
   public hasAnyResponses(): boolean {
     return !!this.reponses && this.reponses.length > 0;
   }

@@ -152,7 +152,7 @@ export class MissionUsecase {
     const liste_objectifs_kyc = mission.getAllKYCs();
 
     for (const objectif_kyc of liste_objectifs_kyc) {
-      result.push(utilisateur.kyc_history.getQuestion(objectif_kyc.content_id));
+      result.push(utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(objectif_kyc.content_id));
     }
 
     return result;

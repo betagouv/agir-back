@@ -21,7 +21,10 @@ export class QuestionKYCUsecase {
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
-    return utilisateur.kyc_history.getAllQuestionSet();
+    const result = utilisateur.kyc_history.getAllUpToDateQuestionSet();
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
+    return result;
   }
 
   async getQuestion(utilisateurId: string, questionId): Promise<QuestionKYC> {
@@ -31,7 +34,12 @@ export class QuestionKYCUsecase {
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
-    return utilisateur.kyc_history.getQuestionOrException(questionId);
+    const result =
+      utilisateur.kyc_history.getUpToDateQuestionOrException(questionId);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
+    return result;
   }
 
   async updateResponse(
@@ -54,7 +62,7 @@ export class QuestionKYCUsecase {
 
     if (!utilisateur.kyc_history.isQuestionAnswered(questionId)) {
       const question =
-        utilisateur.kyc_history.getQuestionOrException(questionId);
+        utilisateur.kyc_history.getUpToDateQuestionOrException(questionId);
       utilisateur.gamification.ajoutePoints(
         question.points,
         utilisateur.unlocked_features,

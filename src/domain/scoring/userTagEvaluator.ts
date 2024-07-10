@@ -257,7 +257,7 @@ export class UserTagEvaluator {
   }
 
   private static processKYC(user: Utilisateur, kyc_id: KYCID) {
-    const kyc = user.kyc_history.getQuestion(kyc_id);
+    const kyc = user.kyc_history.getUpToDateQuestionByCodeOrNull(kyc_id);
     if (!(kyc && kyc.hasAnyResponses())) return;
     switch (kyc_id) {
       case KYCID.KYC001:

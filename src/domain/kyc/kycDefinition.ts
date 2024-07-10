@@ -31,4 +31,22 @@ export class KycDefinition {
     this.tags = data.tags ? data.tags : [];
     this.universes = data.universes ? data.universes : [];
   }
+
+  public getReponseByCode?(code: string): {
+    label: string;
+    code: string;
+    ngc_code?: string;
+  } {
+    if (!this.reponses) {
+      return null;
+    }
+    const found = this.reponses.find((r) => r.code === code);
+    return found
+      ? {
+          label: found.label,
+          code: found.code,
+          ngc_code: found.ngc_code,
+        }
+      : null;
+  }
 }
