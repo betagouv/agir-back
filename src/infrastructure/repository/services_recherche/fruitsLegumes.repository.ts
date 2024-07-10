@@ -5,6 +5,7 @@ import { CategorieRecherche } from '../../../domain/bibliotheque_services/catego
 import { FiltreRecherche } from '../../../domain/bibliotheque_services/filtreRecherche';
 import { FinderInterface } from '../../../domain/bibliotheque_services/finderInterface';
 import { ResultatRecherche } from '../../../domain/bibliotheque_services/resultatRecherche';
+import { FruitsEtLegumesServiceManager } from '../../service/fruits/fruitEtLegumesServiceManager';
 
 const API_URL = 'https://impactco2.fr/api/v1/fruitsetlegumes';
 
@@ -21,7 +22,9 @@ export type FruitsLegumesResponse = {
 
 @Injectable()
 export class FruitsLegumesRepository implements FinderInterface {
-  constructor() {}
+  constructor(
+    private fruitsEtLegumesServiceManager: FruitsEtLegumesServiceManager,
+  ) {}
 
   public getManagedCategories(): CategorieRecherche[] {
     return [
@@ -49,6 +52,8 @@ export class FruitsLegumesRepository implements FinderInterface {
           id: r.slug,
           titre: r.name,
           impact_carbone_kg: r.ecv,
+          emoji: this.fruitsEtLegumesServiceManager.getEmoji(r.name),
+          type_fruit_legume: this.fruitsEtLegumesServiceManager.getType(r.name),
         }),
     );
 

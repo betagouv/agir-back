@@ -4,6 +4,7 @@ import { BibliothequeServices } from '../../bibliotheque_services/bibliothequeSe
 import { ServiceRechercheID } from '../../../../src/domain/bibliotheque_services/serviceRechercheID';
 import { ResultatRecherche } from '../../../../src/domain/bibliotheque_services/resultatRecherche';
 import { FavorisRecherche } from 'src/domain/bibliotheque_services/favorisRecherche';
+import { FruitLegume } from '../../../infrastructure/service/fruits/fruitEtLegumesServiceManager';
 
 export class ResultatRecherche_v0 {
   id: string;
@@ -26,6 +27,9 @@ export class ResultatRecherche_v0 {
   distance_metres?: number;
   impact_carbone_kg?: number;
 
+  emoji?: string;
+  type_fruit_legume?: FruitLegume;
+
   static map(res: ResultatRecherche): ResultatRecherche_v0 {
     return {
       titre: res.titre,
@@ -42,6 +46,8 @@ export class ResultatRecherche_v0 {
       type_plat: res.type_plat,
       distance_metres: res.distance_metres,
       image_url: res.image_url,
+      emoji: res.emoji,
+      type_fruit_legume: res.type_fruit_legume,
     };
   }
 }

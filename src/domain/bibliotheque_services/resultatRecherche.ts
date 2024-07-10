@@ -1,3 +1,4 @@
+import { FruitLegume } from '../../infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { ResultatRecherche_v0 } from '../object_store/service/BibliothequeService_v0';
 
 export class ResultatRecherche {
@@ -25,6 +26,9 @@ export class ResultatRecherche {
   est_favoris?: boolean;
   nombre_favoris?: number;
 
+  emoji?: string;
+  type_fruit_legume: FruitLegume;
+
   constructor(res: ResultatRecherche_v0) {
     this.id = res.id;
     this.titre = res.titre;
@@ -43,5 +47,7 @@ export class ResultatRecherche {
 
     this.est_favoris = false;
     this.nombre_favoris = 0;
+    this.emoji = res.emoji;
+    this.type_fruit_legume = res.type_fruit_legume;
   }
 }

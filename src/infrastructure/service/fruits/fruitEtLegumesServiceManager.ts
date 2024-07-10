@@ -3,6 +3,11 @@ import { ServiceDynamicData } from '../../../../src/domain/service/serviceDefini
 import { LiveServiceManager } from '../LiveServiceManager';
 import fruits_legumes from './fruits_legumes.json';
 
+export enum FruitLegume {
+  fruit = 'fruit',
+  legume = 'legume',
+}
+
 export type rawEntry = {
   label: Record<'fr', string>;
   months: number[];
@@ -11,11 +16,13 @@ export type rawEntry = {
   pef: number;
   CO2: number;
   suggestions?: boolean;
+  type?: FruitLegume;
 };
 
 @Injectable()
 export class FruitsEtLegumesServiceManager implements LiveServiceManager {
   private entriesByMonthMap: Map<number, { label: string; co2: number }[]>;
+  private entriesByNameMap: Map<string, rawEntry>;
 
   constructor() {
     this.loadFruitsData(fruits_legumes as rawEntry[]);
@@ -24,9 +31,12 @@ export class FruitsEtLegumesServiceManager implements LiveServiceManager {
 
   loadFruitsData(fruits: rawEntry[]) {
     this.entriesByMonthMap = new Map();
+    this.entriesByNameMap = new Map();
+
     for (let month = 0; month < 12; month++) {
       this.entriesByMonthMap.set(month, []);
       fruits.forEach((entry) => {
+        this.entriesByNameMap.set(entry.label.fr, entry);
         if (entry.months.includes(month)) {
           this.getMonthEntries(month).push({
             label: entry.emoji.concat(' ', entry.label.fr),
@@ -35,6 +45,16 @@ export class FruitsEtLegumesServiceManager implements LiveServiceManager {
         }
       });
     }
+  }
+
+  public getEmoji(nom: string): string {
+    const entry = this.entriesByNameMap.get(nom);
+    return entry ? entry.emoji : null;
+  }
+
+  public getType(nom: string): FruitLegume {
+    const entry = this.entriesByNameMap.get(nom);
+    return entry ? entry.type : null;
   }
 
   public getMonthEntries(month: number) {

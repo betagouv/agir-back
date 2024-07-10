@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ResultatRecherche } from '../../../../../src/domain/bibliotheque_services/resultatRecherche';
+import { FruitLegume } from '../../../service/fruits/fruitEtLegumesServiceManager';
 
 export class ResultatRechercheAPI {
   @ApiProperty() id: string;
@@ -16,6 +17,8 @@ export class ResultatRechercheAPI {
   @ApiProperty() temps_prepa_min: number;
   @ApiProperty() distance_metres: number;
   @ApiProperty() image_url: string;
+  @ApiProperty() emoji: string;
+  @ApiProperty({ enum: FruitLegume }) type_fruit_legume: FruitLegume;
 
   public static mapToAPI(res: ResultatRecherche): ResultatRechercheAPI {
     return {
@@ -33,6 +36,8 @@ export class ResultatRechercheAPI {
       temps_prepa_min: res.temps_prepa_min,
       distance_metres: res.distance_metres,
       image_url: res.image_url,
+      emoji: res.emoji,
+      type_fruit_legume: res.type_fruit_legume,
     };
   }
 }

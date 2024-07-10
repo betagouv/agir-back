@@ -1,4 +1,7 @@
-import { FruitsEtLegumesServiceManager } from '../../../../src/infrastructure/service/fruits/fruitEtLegumesServiceManager';
+import {
+  FruitLegume,
+  FruitsEtLegumesServiceManager,
+} from '../../../../src/infrastructure/service/fruits/fruitEtLegumesServiceManager';
 
 describe('FruitsEtLegumesServiceManager', () => {
   it('constructor : load file with no exception', () => {
@@ -32,6 +35,50 @@ describe('FruitsEtLegumesServiceManager', () => {
     expect(manager.getMonthEntries(0)).toHaveLength(1);
     expect(manager.getMonthEntries(2)).toHaveLength(2);
     expect(manager.getMonthEntries(10)).toHaveLength(1);
+  });
+  it('loadFruitsData : load given input', () => {
+    //WHEN
+    const manager = new FruitsEtLegumesServiceManager();
+    manager.loadFruitsData([
+      {
+        label: { fr: 'Orange' },
+        months: [0, 1, 2],
+        emoji: '🍊',
+        local: false,
+        pef: 0.2,
+        CO2: 0.97,
+      },
+      {
+        label: { fr: 'Ail' },
+        months: [2, 6, 7, 8, 9, 10, 11],
+        emoji: '🌱',
+        local: true,
+        pef: 0.07,
+        CO2: 0.37,
+      },
+    ]);
+    //THEN
+    expect(manager.getMonthEntries(0)).toHaveLength(1);
+    expect(manager.getMonthEntries(2)).toHaveLength(2);
+    expect(manager.getMonthEntries(10)).toHaveLength(1);
+  });
+  it('loadFruitsData : getByName emoji & type', () => {
+    //WHEN
+    const manager = new FruitsEtLegumesServiceManager();
+    manager.loadFruitsData([
+      {
+        label: { fr: 'Orange' },
+        months: [0, 1, 2],
+        emoji: '🍊',
+        local: false,
+        pef: 0.2,
+        CO2: 0.97,
+        type: FruitLegume.fruit,
+      },
+    ]);
+    //THEN
+    expect(manager.getEmoji('Orange')).toEqual('🍊');
+    expect(manager.getType('Orange')).toEqual(FruitLegume.fruit);
   });
   it('computeLiveDynamicData : select proper data', async () => {
     // GIVEN

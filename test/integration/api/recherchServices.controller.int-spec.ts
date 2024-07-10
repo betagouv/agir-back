@@ -10,6 +10,7 @@ import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_
 import { BibliothequeServices_v0 } from '../../../src/domain/object_store/service/BibliothequeService_v0';
 import { ServiceFavorisStatistiqueRepository } from '../../../src/infrastructure/repository/serviceFavorisStatistique.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { FruitLegume } from '../../../src/infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { DB, TestUtil } from '../../TestUtil';
 
 const logement_palaiseau: Logement_v0 = {
@@ -730,6 +731,8 @@ describe('RechercheServices (API test)', () => {
       impact_carbone_kg: 0.36428259399999996,
       nombre_favoris: 0,
       titre: 'Poire',
+      emoji: '🍐',
+      type_fruit_legume: FruitLegume.fruit,
     });
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
@@ -760,6 +763,8 @@ describe('RechercheServices (API test)', () => {
       impact_carbone_kg: 0.358042894,
       nombre_favoris: 0,
       titre: 'Ail',
+      emoji: '🌱',
+      type_fruit_legume: 'legume',
     });
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
