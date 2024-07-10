@@ -24,7 +24,7 @@ describe('UtilisateurBoardRepository', () => {
     const liste = await repo.utilisateur_classement_proximite(
       100,
       10,
-      'avant',
+      'rank_avant_strict',
       'national',
       undefined,
       undefined,
@@ -50,7 +50,7 @@ describe('UtilisateurBoardRepository', () => {
     const liste = await repo.utilisateur_classement_proximite(
       10,
       10,
-      'avant',
+      'rank_avant_strict',
       'national',
       undefined,
       undefined,
@@ -95,7 +95,7 @@ describe('UtilisateurBoardRepository', () => {
     const liste = await repo.utilisateur_classement_proximite(
       3,
       2,
-      'apres',
+      'rank_apres_ou_egal',
       'national',
       undefined,
       undefined,
@@ -140,7 +140,7 @@ describe('UtilisateurBoardRepository', () => {
     const liste = await repo.utilisateur_classement_proximite(
       3,
       2,
-      'avant',
+      'rank_avant_strict',
       'national',
       undefined,
       undefined,
@@ -153,6 +153,95 @@ describe('UtilisateurBoardRepository', () => {
     expect(liste[0].rank).toEqual(1);
     expect(liste[1].utilisateurId).toEqual('6');
     expect(liste[1].rank).toEqual(2);
+  });
+  it('utilisateur_classement_proximite : extract correct pour avant => liste vide si premier', async () => {
+    // GIVEN
+    await TestUtil.prisma.utilisateurBoard.create({
+      data: { points: 10, utilisateurId: '1' },
+    });
+    await TestUtil.prisma.utilisateurBoard.create({
+      data: { points: 20, utilisateurId: '2' },
+    });
+    await TestUtil.prisma.utilisateurBoard.create({
+      data: { points: 30, utilisateurId: '3' },
+    });
+
+    await repo.update_rank_france();
+
+    // THEN
+    expect(
+      await repo.utilisateur_classement_proximite(
+        1,
+        2,
+        'rank_avant_strict',
+        'national',
+        undefined,
+        undefined,
+        '3',
+      ),
+    ).toHaveLength(0);
+
+    // THEN
+    expect(
+      await repo.utilisateur_classement_proximite(
+        1,
+        2,
+        'rank_avant_strict',
+        'national',
+        undefined,
+        undefined,
+      ),
+    ).toHaveLength(0);
+  });
+  it('utilisateur_classement_proximite : extract correct pour apres => liste vide si dernier', async () => {
+    // GIVEN
+    await TestUtil.prisma.utilisateurBoard.create({
+      data: { points: 10, utilisateurId: '1' },
+    });
+    await TestUtil.prisma.utilisateurBoard.create({
+      data: { points: 20, utilisateurId: '2' },
+    });
+    await TestUtil.prisma.utilisateurBoard.create({
+      data: { points: 30, utilisateurId: '3' },
+    });
+
+    await repo.update_rank_france();
+
+    // THEN
+    expect(
+      await repo.utilisateur_classement_proximite(
+        3,
+        2,
+        'rank_apres_ou_egal',
+        'national',
+        undefined,
+        undefined,
+      ),
+    ).toHaveLength(1);
+
+    // THEN
+    expect(
+      await repo.utilisateur_classement_proximite(
+        3,
+        2,
+        'rank_apres_ou_egal',
+        'national',
+        undefined,
+        undefined,
+        '1',
+      ),
+    ).toHaveLength(0);
+    // THEN
+    expect(
+      await repo.utilisateur_classement_proximite(
+        4,
+        2,
+        'rank_apres_ou_egal',
+        'national',
+        undefined,
+        undefined,
+      ),
+    ).toHaveLength(0);
   });
   it('utilisateur_classement_proximite : extract correct pour avant LOCAL', async () => {
     // GIVEN
@@ -220,7 +309,7 @@ describe('UtilisateurBoardRepository', () => {
     const liste = await repo.utilisateur_classement_proximite(
       2,
       2,
-      'apres',
+      'rank_apres_ou_egal',
       'local',
       '21000',
       'DIJON',
@@ -398,7 +487,7 @@ describe('UtilisateurBoardRepository', () => {
     const liste = await repo.utilisateur_classement_proximite(
       3,
       2,
-      'apres',
+      'rank_apres_ou_egal',
       'national',
       undefined,
       undefined,

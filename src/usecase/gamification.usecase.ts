@@ -25,8 +25,6 @@ export class GamificationUsecase {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
-    let result = [];
-
     const top_trois = await this.utilisateurBoardRepository.top_trois();
 
     let top_trois_commune = null;
@@ -69,7 +67,7 @@ export class GamificationUsecase {
       await this.utilisateurBoardRepository.utilisateur_classement_proximite(
         classement_utilisateur.rank,
         4,
-        'avant',
+        'rank_avant_strict',
         'national',
         undefined,
         undefined,
@@ -79,7 +77,7 @@ export class GamificationUsecase {
       await this.utilisateurBoardRepository.utilisateur_classement_proximite(
         classement_utilisateur.rank,
         4,
-        'apres',
+        'rank_apres_ou_egal',
         'national',
         undefined,
         undefined,
@@ -90,7 +88,7 @@ export class GamificationUsecase {
       await this.utilisateurBoardRepository.utilisateur_classement_proximite(
         classement_utilisateur.rank,
         4,
-        'avant',
+        'rank_avant_strict',
         'local',
         utilisateur.logement.code_postal,
         utilisateur.logement.commune,
@@ -100,7 +98,7 @@ export class GamificationUsecase {
       await this.utilisateurBoardRepository.utilisateur_classement_proximite(
         classement_utilisateur.rank,
         4,
-        'apres',
+        'rank_apres_ou_egal',
         'local',
         utilisateur.logement.code_postal,
         utilisateur.logement.commune,

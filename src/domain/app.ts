@@ -53,6 +53,9 @@ export class App {
   public static getBaseURLFront(): string {
     return process.env.BASE_URL_FRONT;
   }
+  public static getBaseURLBack(): string {
+    return process.env.BASE_URL;
+  }
 
   public static isWhiteListeEnabled(): boolean {
     return process.env.WHITE_LIST_ENABLED === 'true';

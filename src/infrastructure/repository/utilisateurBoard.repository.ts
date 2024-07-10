@@ -168,14 +168,14 @@ export class UtilisateurBoardRepository {
   async utilisateur_classement_proximite(
     rank: number,
     nombre: number,
-    position: 'avant' | 'apres',
+    position: 'rank_avant_strict' | 'rank_apres_ou_egal',
     scope: 'national' | 'local',
     code_postal: string,
     commune: string,
     exclude_user_id?: string,
   ): Promise<Classement[]> {
     let rank_cond;
-    if (position === 'apres') {
+    if (position === 'rank_apres_ou_egal') {
       if (scope === 'national') {
         rank_cond = { rank: { gte: rank } };
       } else {
