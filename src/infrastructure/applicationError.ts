@@ -313,6 +313,24 @@ export class ApplicationError {
   static throwUnkonwnCategorie(categorie: string) {
     this.throwAppError('056', `Categorie de recherche [${categorie}] inconnue`);
   }
+  static throwEmailObligatoireMagicLinkError() {
+    this.throwAppError('057', 'Email obligatoire');
+  }
+  static throwCodeObligatoireMagicLinkError() {
+    this.throwAppError('058', 'Code obligatoire');
+  }
+  static throwMagicLinkUsedError() {
+    this.throwAppError(
+      '059',
+      `Lien de connexion déjà utilisé ou trop d'essais`,
+    );
+  }
+  static throwMagicLinkExpiredError() {
+    this.throwAppError('060', 'Lien de connexion expiré');
+  }
+  static throwBadCodError() {
+    this.throwAppError('061', `Mauvais code`);
+  }
 
   private static throwAppError(
     code: string,

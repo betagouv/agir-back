@@ -203,23 +203,7 @@ describe('Objet Utilisateur', () => {
       1234,
       '91120',
       'PALAISEAU',
-      /*
-      new Onboarding({
-        version: 0,
-        transports: [TransportQuotidien.velo, TransportQuotidien.voiture],
-        avion: 2,
-        adultes: 2,
-        enfants: 2,
-        residence: TypeLogement.maison,
-        proprietaire: true,
-        superficie: Superficie.superficie_35,
-        chauffage: Chauffage.bois,
-        repas: Repas.vege,
-        consommation: Consommation.raisonnable,
-        code_postal: '91120',
-        commune: 'Palaiseau',
-      }),
-      */
+      false,
     );
     user.tag_ponderation_set = {};
 

@@ -14,6 +14,7 @@ describe('Missions', () => {
       12345,
       '91120',
       'PALAISEAU',
+      false,
     );
     const mission = new Mission({
       done_at: null,

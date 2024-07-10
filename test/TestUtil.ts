@@ -634,6 +634,7 @@ export class TestUtil {
       missions: {},
       bilbiotheque_services: {},
       db_version: 0,
+      is_magic_link_user: false,
       ...override,
     };
   }

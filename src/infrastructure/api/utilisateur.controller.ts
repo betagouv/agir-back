@@ -99,6 +99,7 @@ export class UtilisateurController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<UtilisateurProfileAPI> {
     this.checkCallerId(req, utilisateurId);
+    console.log('YOOOO');
 
     let utilisateur = await this.utilisateurUsecase.findUtilisateurById(
       utilisateurId,
@@ -162,7 +163,7 @@ export class UtilisateurController extends GenericControler {
   @ApiBody({
     type: LoginUtilisateurAPI,
   })
-  @ApiOkResponse({ type: String })
+  @ApiOkResponse({ type: LoggedUtilisateurAPI })
   @ApiBadRequestResponse({ type: ApplicationError })
   async loginUtilisateur(
     @Body() body: LoginUtilisateurAPI,

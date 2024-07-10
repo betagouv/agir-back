@@ -28,6 +28,7 @@ describe('Personalisation', () => {
       1234,
       '91120',
       'PALAISEAU',
+      false,
     );
 
     const test_data = { yo: '123' };
@@ -47,6 +48,7 @@ describe('Personalisation', () => {
       1234,
       '91120',
       'PALAISEAU',
+      false,
     );
 
     const test_data = { yo: undefined, yi: null, ya: true };
@@ -66,6 +68,7 @@ describe('Personalisation', () => {
       1234,
       '91120',
       'PALAISEAU',
+      false,
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';
@@ -90,6 +93,7 @@ describe('Personalisation', () => {
       1234,
       '91120',
       'PALAISEAU',
+      false,
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';
@@ -113,6 +117,7 @@ describe('Personalisation', () => {
       1234,
       '91120',
       'PALAISEAU',
+      false,
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';

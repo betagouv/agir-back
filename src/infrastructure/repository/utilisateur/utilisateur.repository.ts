@@ -346,6 +346,7 @@ export class UtilisateurRepository {
         annee_naissance: user.annee_naissance,
         db_version: user.db_version,
         bilbiotheque_services: bibliotheque_services,
+        is_magic_link_user: user.is_magic_link_user,
       });
     }
     return null;
@@ -433,6 +434,7 @@ export class UtilisateurRepository {
       created_at: undefined,
       updated_at: undefined,
       db_version: user.db_version,
+      is_magic_link_user: user.is_magic_link_user,
     };
   }
 }

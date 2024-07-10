@@ -121,6 +121,8 @@ import { BilanCarboneController } from './infrastructure/api/bilanCarbone.contro
 import { BilanCarboneUsecase } from './usecase/bilanCarbone.usecase';
 import { PreviewController } from './infrastructure/api/preview.controller';
 import { UtilisateurBoardRepository } from './infrastructure/repository/utilisateurBoard.repository';
+import { MagicLinkUsecase } from './usecase/magicLink.usecase';
+import { MagicLinkController } from './infrastructure/api/magicLink.controller';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -153,6 +155,7 @@ function getControllers(): any[] {
     MissionController,
     RechecheServicesController,
     BilanCarboneController,
+    MagicLinkController,
   );
   if (!App.isProd()) {
     controllers.push(TestDataController);
@@ -264,6 +267,7 @@ function getControllers(): any[] {
     BilanCarboneStatistiqueRepository,
     BilanCarboneUsecase,
     UtilisateurBoardRepository,
+    MagicLinkUsecase,
   ],
 })
 export class AppModule {}

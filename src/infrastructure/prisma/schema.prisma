@@ -77,6 +77,7 @@ model Utilisateur {
   force_connexion          Boolean            @default(false)
   derniere_activite        DateTime?
   db_version               Int                @default(0)
+  is_magic_link_user       Boolean            @default(false)
 }
 
 model UtilisateurBoard {

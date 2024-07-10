@@ -29,10 +29,7 @@ export class InscriptionUsecase {
     private securityEmailManager: SecurityEmailManager,
   ) {}
 
-  async validateCode(
-    email: string,
-    code: string,
-  ): Promise<{ token: string; utilisateur: Utilisateur }> {
+  async validateCode(email: string, code: string): Promise<{ token: string }> {
     const utilisateur = await this.utilisateurRespository.findByEmail(email);
     if (!utilisateur) {
       ApplicationError.throwBadCodeOrEmailError();
@@ -82,7 +79,7 @@ export class InscriptionUsecase {
       utilisateurInput.annee_naissance,
       utilisateurInput.code_postal,
       utilisateurInput.commune,
-      //onboarding,
+      false,
     );
 
     utilisateurToCreate.setNew6DigitCode();

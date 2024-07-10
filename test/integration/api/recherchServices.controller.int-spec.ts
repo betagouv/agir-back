@@ -73,7 +73,7 @@ describe('RechercheServices (API test)', () => {
       image_url: null,
     });
   });
-  it.only(`POST /utlilisateur/id/recherche_services/proximite/search renvoie les images`, async () => {
+  it(`POST /utlilisateur/id/recherche_services/proximite/search renvoie les images`, async () => {
     // GIVEN
     const logement_dijon: Logement_v0 = {
       version: 0,
