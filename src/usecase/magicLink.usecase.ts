@@ -67,6 +67,7 @@ export class MagicLinkUsecase {
     }
 
     utilisateur.code = null;
+    utilisateur.active_account = true;
     await this.utilisateurRespository.updateUtilisateur(utilisateur);
 
     const token = await this.oidcService.createNewInnerAppToken(utilisateur.id);

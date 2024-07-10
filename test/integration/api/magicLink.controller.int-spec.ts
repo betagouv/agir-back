@@ -65,6 +65,7 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     });
 
     expect(userDB.is_magic_link_user).toEqual(true);
+    expect(userDB.active_account).toEqual(false);
     expect(userDB.code.length).toEqual(6);
   });
   it(`POST /utilisateurs/send_magic_link - 2 génération de magic link successive conserve le meme code`, async () => {
@@ -211,6 +212,12 @@ describe('/utilisateurs - Magic link - (API test)', () => {
 
     expect(response.body.token.length).toBeGreaterThan(20);
     expect(response.body.utilisateur.id).toEqual('utilisateur-id');
+
+    const userDB = await TestUtil.prisma.utilisateur.findFirst({
+      where: { email: 'email@www.com' },
+    });
+
+    expect(userDB.active_account).toEqual(true);
   });
   it(`GET /utilisateurs/:email/login - un magic link ne peut pas servir 2 fois après un premier succès`, async () => {
     // GIVEN
@@ -312,6 +319,12 @@ describe('/utilisateurs - Magic link - (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
+
+    const userDB = await TestUtil.prisma.utilisateur.findFirst({
+      where: { email: 'ww@w.com' },
+    });
+
+    expect(userDB.active_account).toEqual(true);
 
     expect(response.body.token.length).toBeGreaterThan(20);
 
