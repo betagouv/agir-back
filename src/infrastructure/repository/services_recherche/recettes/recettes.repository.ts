@@ -16,6 +16,7 @@ export type RecettesResponse = {
   vegan: boolean;
   volaille: boolean;
   saison: boolean;
+  image_url: string;
 }[];
 
 @Injectable()
@@ -42,6 +43,7 @@ export class RecettesRepository implements FinderInterface {
           difficulty_plat: r.difficulty,
           type_plat: r.type,
           temps_prepa_min: r.temps_prepa_min,
+          image_url: r.image_url,
         }),
     );
 
@@ -53,7 +55,7 @@ export class RecettesRepository implements FinderInterface {
   private async callServiceAPI(
     filtre: FiltreRecherche,
   ): Promise<RecettesResponse> {
-    const result = [
+    const result: RecettesResponse = [
       {
         id: '1',
         titre: 'Tian de sardines',
@@ -64,6 +66,8 @@ export class RecettesRepository implements FinderInterface {
         vegan: false,
         vege: false,
         volaille: false,
+        image_url:
+          'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Ftian-de-sardines.jpg&w=3840&q=75',
       },
       {
         id: '2',
@@ -75,6 +79,8 @@ export class RecettesRepository implements FinderInterface {
         vegan: false,
         vege: false,
         volaille: true,
+        image_url:
+          'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Fshutterstock_1938638506-dinde-provencale.jpg&w=3840&q=75',
       },
       {
         id: '3',
@@ -86,6 +92,8 @@ export class RecettesRepository implements FinderInterface {
         vegan: false,
         vege: false,
         volaille: false,
+        image_url:
+          'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Fshutterstock_1169506885-salade-crevettes-curry.jpg&w=3840&q=75',
       },
       {
         id: '4',
@@ -97,6 +105,8 @@ export class RecettesRepository implements FinderInterface {
         vegan: false,
         vege: false,
         volaille: false,
+        image_url:
+          'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Fquiche-chou-saumon-et-salade.jpg&w=3840&q=75',
       },
       {
         id: '5',
@@ -108,6 +118,8 @@ export class RecettesRepository implements FinderInterface {
         vegan: false,
         vege: true,
         volaille: false,
+        image_url:
+          'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Ftiramisu-aux-fruits-rouges.jpg&w=3840&q=75',
       },
     ];
     switch (filtre.categorie) {
