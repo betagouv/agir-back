@@ -5,6 +5,8 @@ import { ServiceRechercheID } from '../../../../src/domain/bibliotheque_services
 import { ResultatRecherche } from '../../../../src/domain/bibliotheque_services/resultatRecherche';
 import { FavorisRecherche } from 'src/domain/bibliotheque_services/favorisRecherche';
 import { FruitLegume } from '../../../infrastructure/service/fruits/fruitEtLegumesServiceManager';
+import { Day } from '../../bibliotheque_services/days';
+import { OpenHour } from '../../bibliotheque_services/openHour';
 
 export class ResultatRecherche_v0 {
   id: string;
@@ -30,6 +32,14 @@ export class ResultatRecherche_v0 {
   emoji?: string;
   type_fruit_legume?: FruitLegume;
 
+  commitment?: string;
+  description?: string;
+  description_more?: string;
+  phone?: string;
+  categories?: string[];
+  openhours_more_infos?: string;
+  open_hours?: OpenHour[];
+
   static map(res: ResultatRecherche): ResultatRecherche_v0 {
     return {
       titre: res.titre,
@@ -48,6 +58,13 @@ export class ResultatRecherche_v0 {
       image_url: res.image_url,
       emoji: res.emoji,
       type_fruit_legume: res.type_fruit_legume,
+      commitment: res.commitment,
+      description: res.description,
+      description_more: res.description_more,
+      phone: res.phone,
+      categories: res.categories,
+      openhours_more_infos: res.openhours_more_infos,
+      open_hours: res.open_hours,
     };
   }
 }

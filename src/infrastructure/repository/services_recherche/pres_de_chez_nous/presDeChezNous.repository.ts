@@ -1,13 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { CategorieRecherche } from '../../../../domain/bibliotheque_services/categorieRecherche';
+import { Day } from '../../../../domain/bibliotheque_services/days';
 import { FiltreRecherche } from '../../../../domain/bibliotheque_services/filtreRecherche';
 import { FinderInterface } from '../../../../domain/bibliotheque_services/finderInterface';
+import { OpenHour } from '../../../../domain/bibliotheque_services/openHour';
 import { ResultatRecherche } from '../../../../domain/bibliotheque_services/resultatRecherche';
 import { AddressesRepository } from '../addresses.repository';
 import { PresDeChezNousCategorieMapping } from './presDeChezNousMetaCategorie';
 
 const API_URL = 'https://presdecheznous.gogocarto.fr/api/elements.json';
+
+export enum DaysPresDeChezNous {
+  Mo = 'Mo',
+  Tu = 'Tu',
+  We = 'We',
+  Th = 'Th',
+  Fr = 'Fr',
+  Sa = 'Sa',
+  Su = 'Su',
+}
 
 export type PresDeChezVousResponse = {
   licence: string; //"https://opendatacommons.org/licenses/odbl/summary/",
@@ -39,6 +51,8 @@ export type PresDeChezVousResponse = {
     website: string; //"http://www.dotsoley.asso.gp",
     commitment: string; //"Promotion de l'agriculture locale",
     description: string; //"Panier et fruits et légumes",
+    description_more: string; //"Panier et fruits et légumes",
+    openhours: Record<DaysPresDeChezNous, string>;
     openhours_more_infos: string; //"Lundi à partir de 18h00",
     telephone: string; //"0590262839",
     email: string; //"private",
@@ -104,6 +118,13 @@ export class PresDeChezNousRepository implements FinderInterface {
           adresse_code_postal: r.address.postalCode,
           adresse_nom_ville: r.address.addressLocality,
           image_url: r.images && r.images.length ? r.images[0] : null,
+          categories: r.categories,
+          commitment: r.commitment,
+          description: r.description,
+          description_more: r.description_more,
+          open_hours: this.mapOpenHours(r.openhours),
+          openhours_more_infos: r.openhours_more_infos,
+          phone: r.telephone,
         }),
     );
 
@@ -116,6 +137,25 @@ export class PresDeChezNousRepository implements FinderInterface {
     final_result.sort((a, b) => a.distance_metres - b.distance_metres);
 
     return final_result;
+  }
+
+  public mapOpenHours(hours: Record<DaysPresDeChezNous, string>): OpenHour[] {
+    if (!hours) return [];
+
+    const DAY_MAP = {
+      Mo: Day.lundi,
+      Tu: Day.mardi,
+      We: Day.mercredi,
+      Th: Day.jeudi,
+      Fr: Day.vendredi,
+      Sa: Day.samedi,
+      Su: Day.dimanche,
+    };
+    const result: OpenHour[] = [];
+    for (const [key, value] of Object.entries(hours)) {
+      result.push({ jour: DAY_MAP[key], heures: value });
+    }
+    return result;
   }
 
   private async callServiceAPI(

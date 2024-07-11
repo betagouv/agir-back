@@ -1,5 +1,7 @@
 import { FruitLegume } from '../../infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { ResultatRecherche_v0 } from '../object_store/service/BibliothequeService_v0';
+import { Day } from './days';
+import { OpenHour } from './openHour';
 
 export class ResultatRecherche {
   id: string;
@@ -27,7 +29,15 @@ export class ResultatRecherche {
   nombre_favoris?: number;
 
   emoji?: string;
-  type_fruit_legume: FruitLegume;
+  type_fruit_legume?: FruitLegume;
+
+  commitment?: string;
+  description?: string;
+  description_more?: string;
+  phone?: string;
+  categories?: string[];
+  openhours_more_infos?: string;
+  open_hours?: OpenHour[];
 
   constructor(res: ResultatRecherche_v0) {
     this.id = res.id;
@@ -49,5 +59,13 @@ export class ResultatRecherche {
     this.nombre_favoris = 0;
     this.emoji = res.emoji;
     this.type_fruit_legume = res.type_fruit_legume;
+
+    this.commitment = res.commitment;
+    this.description = res.description;
+    this.description_more = res.description_more;
+    this.phone = res.phone;
+    this.categories = res.categories;
+    this.openhours_more_infos = res.openhours_more_infos;
+    this.open_hours = res.open_hours;
   }
 }

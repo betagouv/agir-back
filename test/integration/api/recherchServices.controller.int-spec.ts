@@ -1,4 +1,5 @@
 import { CategorieRecherche } from '../../../src/domain/bibliotheque_services/categorieRecherche';
+import { Day } from '../../../src/domain/bibliotheque_services/days';
 import { ServiceRechercheID } from '../../../src/domain/bibliotheque_services/serviceRechercheID';
 import {
   Superficie,
@@ -72,6 +73,24 @@ describe('RechercheServices (API test)', () => {
       site_web: 'https://www.monepi.fr/monepicerit',
       titre: "Mon Epice'Rit",
       image_url: null,
+      categories: [
+        'Alimentation et Agriculture',
+        'Association',
+        'Éducation et Formation',
+        'Épicerie & Supérette',
+        'Sensibilisation grand public',
+        'Point de Distribution',
+        'Ateliers',
+        'Autre réseau',
+        'Adulte',
+        'Adolescence',
+        'Enfance',
+        'Nature / Environnement',
+      ],
+      commitment:
+        "Gouvernance participative, Produits respectueux de l'environnement, Prix justes",
+      description: 'Epicerie Participative, Ecologique et Solidaire',
+      open_hours: [],
     });
   });
   it(`POST /utlilisateur/id/recherche_services/proximite/search renvoie les images`, async () => {
@@ -99,6 +118,7 @@ describe('RechercheServices (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
+
     expect(response.body[0].image_url).toEqual(
       'https://presdecheznous.fr/uploads/images/elements/printemps/2017/06/11717_Ecole-innovante-Saclay-1.jpg',
     );
@@ -260,6 +280,13 @@ describe('RechercheServices (API test)', () => {
                 titre: 'haha',
                 impact_carbone_kg: 1,
                 image_url: 'https://',
+                categories: ['a'],
+                commitment: 'hahaha',
+                description: 'description',
+                description_more: 'description more',
+                open_hours: [{ jour: Day.lundi, heures: 'toute la journée' }],
+                openhours_more_infos: 'toute la journée',
+                phone: '01234967937',
               },
             },
           ],
@@ -297,6 +324,18 @@ describe('RechercheServices (API test)', () => {
       nombre_favoris: 1,
       impact_carbone_kg: 1,
       image_url: 'https://',
+      categories: ['a'],
+      commitment: 'hahaha',
+      description: 'description',
+      description_more: 'description more',
+      open_hours: [
+        {
+          heures: 'toute la journée',
+          jour: 'lundi',
+        },
+      ],
+      openhours_more_infos: 'toute la journée',
+      phone: '01234967937',
     });
   });
 
@@ -397,6 +436,13 @@ describe('RechercheServices (API test)', () => {
                 titre: 'haha',
                 impact_carbone_kg: 1,
                 image_url: 'https://',
+                categories: ['a'],
+                commitment: 'hahaha',
+                description: 'description',
+                description_more: 'description more',
+                open_hours: [{ jour: Day.lundi, heures: 'toute la journée' }],
+                openhours_more_infos: 'toute la journée',
+                phone: '01234967937',
               },
             },
           ],
@@ -520,6 +566,13 @@ describe('RechercheServices (API test)', () => {
                 titre: 'haha',
                 impact_carbone_kg: 1,
                 image_url: 'https://',
+                categories: ['a'],
+                commitment: 'hahaha',
+                description: 'description',
+                description_more: 'description more',
+                open_hours: [{ jour: Day.lundi, heures: 'toute la journée' }],
+                openhours_more_infos: 'toute la journée',
+                phone: '01234967937',
               },
             },
             {
@@ -535,6 +588,13 @@ describe('RechercheServices (API test)', () => {
                 titre: 'hoho',
                 impact_carbone_kg: 1,
                 image_url: 'https://',
+                categories: ['a'],
+                commitment: 'hahaha',
+                description: 'description',
+                description_more: 'description more',
+                open_hours: [{ jour: Day.lundi, heures: 'toute la journée' }],
+                openhours_more_infos: 'toute la journée',
+                phone: '01234967937',
               },
             },
           ],

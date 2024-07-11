@@ -1,7 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ResultatRecherche } from '../../../../../src/domain/bibliotheque_services/resultatRecherche';
+import { Day } from '../../../../domain/bibliotheque_services/days';
 import { FruitLegume } from '../../../service/fruits/fruitEtLegumesServiceManager';
 
+export class OpenHourAPI {
+  @ApiProperty({ enum: Day }) jour: Day;
+  @ApiProperty() heures: string;
+}
 export class ResultatRechercheAPI {
   @ApiProperty() id: string;
   @ApiProperty() titre: string;
@@ -19,6 +24,14 @@ export class ResultatRechercheAPI {
   @ApiProperty() image_url: string;
   @ApiProperty() emoji: string;
   @ApiProperty({ enum: FruitLegume }) type_fruit_legume: FruitLegume;
+
+  @ApiProperty() commitment: string;
+  @ApiProperty() description: string;
+  @ApiProperty() description_more: string;
+  @ApiProperty() phone: string;
+  @ApiProperty() categories: string[];
+  @ApiProperty() openhours_more_infos: string;
+  @ApiProperty({ type: [OpenHourAPI] }) open_hours: OpenHourAPI[];
 
   public static mapToAPI(res: ResultatRecherche): ResultatRechercheAPI {
     return {
@@ -38,6 +51,13 @@ export class ResultatRechercheAPI {
       image_url: res.image_url,
       emoji: res.emoji,
       type_fruit_legume: res.type_fruit_legume,
+      commitment: res.commitment,
+      description: res.description,
+      description_more: res.description_more,
+      phone: res.phone,
+      categories: res.categories,
+      openhours_more_infos: res.openhours_more_infos,
+      open_hours: res.open_hours,
     };
   }
 }
