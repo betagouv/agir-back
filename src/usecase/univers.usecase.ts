@@ -4,21 +4,9 @@ import { ThematiqueRepository } from '../../src/infrastructure/repository/themat
 import { TuileThematique } from '../domain/univers/tuileThematique';
 import { TuileUnivers } from '../domain/univers/tuileUnivers';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
-import { Mission, Objectif } from '../../src/domain/mission/mission';
-import {
-  MissionDefinition,
-  ObjectifDefinition,
-} from '../domain/mission/missionDefinition';
-import {
-  ArticleFilter,
-  ArticleRepository,
-} from '../infrastructure/repository/article.repository';
-import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
-import { Utilisateur } from '../domain/utilisateur/utilisateur';
-import { Categorie } from '../domain/contenu/categorie';
-import { ContentType } from '../domain/contenu/contentType';
-import { PonderationApplicativeManager } from '../domain/scoring/ponderationApplicative';
+import { Mission } from '../../src/domain/mission/mission';
 import { MissionUsecase } from './mission.usecase';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 
 @Injectable()
 export class UniversUsecase {
@@ -26,6 +14,7 @@ export class UniversUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private missionRepository: MissionRepository,
     private missionUsecase: MissionUsecase,
+    private personnalisator: Personnalisator,
   ) {}
 
   async getALL(utilisateurId: string): Promise<TuileUnivers[]> {
@@ -51,7 +40,7 @@ export class UniversUsecase {
       univers.is_done = utilisateur.missions.isUniversDone(univers.type);
     }
 
-    return result;
+    return this.personnalisator.personnaliser(result, utilisateur);
   }
 
   async getThematiquesOfUnivers(
@@ -99,7 +88,9 @@ export class UniversUsecase {
     }
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    return this.ordonneTuilesThematiques(result);
+    const final_result = this.ordonneTuilesThematiques(result);
+
+    return this.personnalisator.personnaliser(final_result, utilisateur);
   }
 
   private completeTuileWithMission(

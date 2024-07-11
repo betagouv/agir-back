@@ -215,7 +215,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(response.body.reponses_possibles).toEqual(['Oui', 'Non', 'A voir']);
     expect(response.body.categorie).toEqual(Categorie.test);
     expect(response.body.question).toEqual(
-      `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
+      `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
     );
     expect(response.body.reponse).toEqual([]);
   });
@@ -321,7 +321,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.question).toEqual(
-      `Quel est votre sujet principal d'intéret ?`,
+      `Quel est votre sujet principal d'intéret ?`,
     );
     expect(response.body.reponse).toEqual(['Le climat', 'Mon logement']);
   });

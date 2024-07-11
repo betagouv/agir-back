@@ -99,6 +99,7 @@ export class DefisController extends GenericControler {
     return result.map((element) => DefiAPI.mapToAPI(element));
   }
 
+  
   @Get('utilisateurs/:utilisateurId/defis')
   @ApiQuery({
     name: 'univers',

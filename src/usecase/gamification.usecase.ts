@@ -5,6 +5,7 @@ import { Gamification } from '../domain/gamification/gamification';
 import { UtilisateurBoardRepository } from '../infrastructure/repository/utilisateurBoard.repository';
 import { Board } from '../domain/gamification/board';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 
 @Injectable()
 export class GamificationUsecase {
@@ -12,6 +13,7 @@ export class GamificationUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private utilisateurBoardRepository: UtilisateurBoardRepository,
     private communeRepository: CommuneRepository,
+    private personnalisator: Personnalisator,
   ) {}
 
   async getGamificationData(utilisateurId: string): Promise<Gamification> {

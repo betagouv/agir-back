@@ -252,6 +252,7 @@ export class Mission {
       target: target_progression_reelle,
     };
   }
+
   public isNew(): boolean {
     return this.objectifs.filter((objectif) => objectif.isDone()).length === 0;
   }

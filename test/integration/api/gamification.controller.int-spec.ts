@@ -1,10 +1,6 @@
 import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
-import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
-import { EventType } from '../../../src/domain/appEvent';
 import { DB, TestUtil } from '../../TestUtil';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { Feature } from '../../../src/domain/gamification/feature';
-import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { UtilisateurBoardRepository } from '../../../src/infrastructure/repository/utilisateurBoard.repository';
 import { GamificationUsecase } from '../../../src/usecase/gamification.usecase';
 import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
@@ -15,6 +11,7 @@ import {
   DPE,
 } from '../../../src/domain/logement/logement';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import { Personnalisator } from '../../../src/infrastructure/personnalisation/personnalisator';
 
 describe('Gamification  (API test)', () => {
   const utilisateurRepo = new UtilisateurRepository(TestUtil.prisma);
@@ -22,11 +19,13 @@ describe('Gamification  (API test)', () => {
     TestUtil.prisma,
   );
   const communeRepository = new CommuneRepository();
+  const prsonalisator = new Personnalisator(communeRepository);
 
   const gamificationUsecase = new GamificationUsecase(
     utilisateurRepo,
     utilisateurBoardRepository,
     communeRepository,
+    prsonalisator,
   );
 
   beforeAll(async () => {
@@ -246,7 +245,7 @@ describe('Gamification  (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.classement_national.utilisateur.rank).toEqual(2);
     expect(response.body.classement_local.utilisateur.rank).toEqual(1);
-    expect(response.body).toStrictEqual({
+    expect(response.body).toEqual({
       classement_local: {
         classement_utilisateur: [
           {

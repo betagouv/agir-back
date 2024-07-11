@@ -497,7 +497,7 @@ describe('Univers (API test)', () => {
       niveau: 2,
       image_url: 'aaaa',
       univers_parent: Univers.alimentation,
-      univers_parent_label: 'Manger !',
+      univers_parent_label: 'Manger !',
     });
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
@@ -1008,7 +1008,7 @@ describe('Univers (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
-    expect(response.body[0].titre).toEqual('cereales !');
+    expect(response.body[0].titre).toEqual('cereales !');
   });
   it(`GET /utilisateurs/id/univers/id/thematiques - liste les missions visibles dans le catalogue`, async () => {
     // GIVEN

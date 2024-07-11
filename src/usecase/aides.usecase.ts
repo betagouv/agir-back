@@ -9,6 +9,7 @@ import { UtilisateurRepository } from '../../src/infrastructure/repository/utili
 import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
 import { Aide } from '../../src/domain/aides/aide';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 
 @Injectable()
 export class AidesUsecase {
@@ -18,6 +19,7 @@ export class AidesUsecase {
     private aideRepository: AideRepository,
     private utilisateurRepository: UtilisateurRepository,
     private communeRepository: CommuneRepository,
+    private personnalisator: Personnalisator,
   ) {}
   async getRetrofit(
     codePostal: string,
@@ -43,13 +45,14 @@ export class AidesUsecase {
         user.logement.code_postal,
       );
 
-
-    return this.aideRepository.search({
+    const result = await this.aideRepository.search({
       code_postal: user.logement.code_postal,
       code_commune: code_commune ? code_commune : undefined,
       code_departement: dept_region ? dept_region.code_departement : undefined,
       code_region: dept_region ? dept_region.code_region : undefined,
     });
+
+    return this.personnalisator.personnaliser(result, user);
   }
 
   async simulerAideVelo(

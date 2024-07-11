@@ -73,8 +73,7 @@ export class MissionUsecase {
           }
         }
       }
-      this.personnalisator.personnaliser(mission_resultat, utilisateur);
-      return mission_resultat;
+      return this.personnalisator.personnaliser(mission_resultat, utilisateur);
     } else {
       throw ApplicationError.throwMissionNotFoundOfThematique(thematique);
     }
@@ -152,10 +151,14 @@ export class MissionUsecase {
     const liste_objectifs_kyc = mission.getAllKYCs();
 
     for (const objectif_kyc of liste_objectifs_kyc) {
-      result.push(utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(objectif_kyc.content_id));
+      result.push(
+        utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+          objectif_kyc.content_id,
+        ),
+      );
     }
 
-    return result;
+    return this.personnalisator.personnaliser(result, utilisateur);
   }
 
   async completeMissionDef(

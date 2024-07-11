@@ -12,6 +12,7 @@ import {
 } from '../../src/domain/gamification/celebrations/celebration';
 import { Categorie } from '../../src/domain/contenu/categorie';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 
 @Injectable()
 export class TodoUsecase {
@@ -20,6 +21,7 @@ export class TodoUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
+    private personnalisator: Personnalisator,
   ) {}
 
   async gagnerPointsFromTodoElement(utilisateurId: string, elementId: string) {
@@ -151,7 +153,8 @@ export class TodoUsecase {
         }
       }
     }
-    return todo;
+    //return todo;
+    return this.personnalisator.personnaliser(todo, utilisateur);
   }
 
   public async updateAllUsersTodo(): Promise<string[]> {

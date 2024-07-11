@@ -6,12 +6,14 @@ import { ContentType } from '../../src/domain/contenu/contentType';
 import { Thematique } from '../domain/contenu/thematique';
 import { PersonalArticle } from '../domain/contenu/article';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 
 @Injectable()
 export class BibliothequeUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private articleRepository: ArticleRepository,
+    private personnalisator: Personnalisator,
   ) {}
 
   async rechercheBiblio(
@@ -54,7 +56,7 @@ export class BibliothequeUsecase {
       );
     }
 
-    return result;
+    return this.personnalisator.personnaliser(result, utilisateur);
   }
 
   public async getArticle(
@@ -72,6 +74,8 @@ export class BibliothequeUsecase {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
-    return utilisateur.history.personnaliserArticle(article);
+    const result = utilisateur.history.personnaliserArticle(article);
+
+    return this.personnalisator.personnaliser(result, utilisateur);
   }
 }

@@ -21,6 +21,7 @@ import { Feature } from '../../src/domain/gamification/feature';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { Categorie } from '../../src/domain/contenu/categorie';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 
 @Injectable()
 export class RecommandationUsecase {
@@ -31,6 +32,7 @@ export class RecommandationUsecase {
     private quizzRepository: QuizzRepository,
     private defiRepository: DefiRepository,
     private kycRepository: KycRepository,
+    private personnalisator: Personnalisator,
   ) {}
 
   async listRecommandationsV2(
@@ -62,7 +64,8 @@ export class RecommandationUsecase {
     PonderationApplicativeManager.sortContent(content);
 
     content = content.slice(0, 6);
-    return content;
+
+    return this.personnalisator.personnaliser(content, utilisateur);
   }
 
   async listRecommandations(utilisateurId: string): Promise<Recommandation[]> {
@@ -119,7 +122,9 @@ export class RecommandationUsecase {
 
     content = content.slice(0, nombre_content_restants);
 
-    return defis_en_cours.concat(defis_restants, content);
+    const result = defis_en_cours.concat(defis_restants, content);
+
+    return this.personnalisator.personnaliser(result, utilisateur);
   }
 
   private getKYC(utilisateur: Utilisateur, univers?: string): Recommandation[] {
@@ -150,7 +155,9 @@ export class RecommandationUsecase {
 
     PonderationApplicativeManager.sortContent(result);
 
-    return result.filter((d) => d.score > -50);
+    const final_result = result.filter((d) => d.score > -50);
+
+    return this.personnalisator.personnaliser(final_result, utilisateur);
   }
 
   private getDefisEnCours(utilisateur: Utilisateur): Recommandation[] {
@@ -180,7 +187,7 @@ export class RecommandationUsecase {
     return kycs.map((e) => ({
       content_id: e.id,
       image_url:
-        'https://www.google.com/url?sa=i&url=https%3A%2F%2Fopenclipart.org%2Fdetail%2F321572%2Fi-have-a-small-question&psig=AOvVaw1_ErxUJbZIoqQ8u-1sbgB5&ust=1711202048405000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCLijtMOCiIUDFQAAAAAdAAAAABAS',
+        'https://res.cloudinary.com/dq023imd8/image/upload/v1720704333/Screenshot_2024_07_11_at_15_24_52_f5226c666e.png',
       points: e.points,
       thematique_principale: e.thematique ? e.thematique : Thematique.climat,
       score: e.score,

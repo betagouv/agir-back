@@ -5,6 +5,7 @@ import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { KYCID } from '../../src/domain/kyc/KYCID';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 
 @Injectable()
 export class QuestionKYCUsecase {
@@ -12,6 +13,7 @@ export class QuestionKYCUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private kycRepository: KycRepository,
     private defiRepository: DefiRepository,
+    private personnalisator: Personnalisator,
   ) {}
 
   async getALL(utilisateurId: string): Promise<QuestionKYC[]> {
@@ -24,7 +26,7 @@ export class QuestionKYCUsecase {
     const result = utilisateur.kyc_history.getAllUpToDateQuestionSet();
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    return result;
+    return this.personnalisator.personnaliser(result, utilisateur);
   }
 
   async getQuestion(utilisateurId: string, questionId): Promise<QuestionKYC> {
@@ -39,7 +41,7 @@ export class QuestionKYCUsecase {
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    return result;
+    return this.personnalisator.personnaliser(result, utilisateur);
   }
 
   async updateResponse(

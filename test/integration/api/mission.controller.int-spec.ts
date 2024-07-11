@@ -462,7 +462,7 @@ describe('Mission (API test)', () => {
     expect(objectif_article.id.length).toBeGreaterThan(10);
     expect(objectif_article.content_id).toEqual('2');
     expect(objectif_article.type).toEqual(ContentType.article);
-    expect(objectif_article.titre).toEqual('obj 2');
+    expect(objectif_article.titre).toEqual('obj 2');
     expect(objectif_article.points).toEqual(25);
     expect(objectif_article.is_locked).toEqual(true);
     expect(objectif_article.done_at).toEqual(null);
@@ -817,7 +817,7 @@ describe('Mission (API test)', () => {
     expect(response.body.reponses_possibles).toEqual(['Oui', 'Non', 'A voir']);
     expect(response.body.categorie).toEqual(Categorie.test);
     expect(response.body.question).toEqual(
-      `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
+      `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
     );
   });
   it(`GET /utilisateurs/id/thematiques/cereales/next_kyc - renvoie la liste des questions à poser`, async () => {
@@ -859,7 +859,7 @@ describe('Mission (API test)', () => {
     expect(response.body[0]).toEqual({
       id: '_3',
       question:
-        "Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?",
+        "Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?",
       reponse: [],
       categorie: 'test',
       points: 10,

@@ -857,6 +857,8 @@ describe('RechercheServices (API test)', () => {
       temps_prepa_min: 20,
       titre: 'Tiramissu',
       type_plat: 'Déssert',
+      image_url:
+        'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Ftiramisu-aux-fruits-rouges.jpg&w=3840&q=75',
     });
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
