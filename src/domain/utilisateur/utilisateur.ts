@@ -64,6 +64,11 @@ export class UtilisateurData {
   db_version: number;
   bilbiotheque_services: BibliothequeServices;
   is_magic_link_user: boolean;
+  points_classement: number;
+  code_postal_classement: string;
+  commune_classement: string;
+  rank: number;
+  rank_commune: number;
 }
 
 export class Utilisateur extends UtilisateurData {
@@ -166,6 +171,11 @@ export class Utilisateur extends UtilisateurData {
       db_version: 0,
       bilbiotheque_services: new BibliothequeServices(),
       is_magic_link_user: is_magic_link,
+      rank: null,
+      rank_commune: null,
+      code_postal_classement: code_postal,
+      commune_classement: commune,
+      points_classement: 0,
     });
   }
 

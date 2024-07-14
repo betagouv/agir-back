@@ -1,107 +1,73 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Classement } from '../../domain/gamification/classement';
-import { UtilisateurBoard } from '@prisma/client';
-import { Pourcetile } from '../api/types/gamification/boardAPI';
+import { Utilisateur } from '@prisma/client';
+import { Pourcentile } from '../../domain/gamification/board';
 
 @Injectable()
 export class UtilisateurBoardRepository {
   constructor(private prisma: PrismaService) {}
 
-  async upsert(classement: Classement): Promise<void> {
-    await this.prisma.utilisateurBoard.upsert({
-      where: { utilisateurId: classement.utilisateurId },
-      create: {
-        points: classement.points,
-        code_postal: classement.code_postal,
-        commune: classement.commune,
-        prenom: classement.prenom,
-        utilisateurId: classement.utilisateurId,
-        created_at: undefined,
-        updated_at: undefined,
-      },
-      update: {
-        points: classement.points,
-        code_postal: classement.code_postal,
-        commune: classement.commune,
-        prenom: classement.prenom,
-        updated_at: undefined,
-      },
-    });
-  }
-
-  async top_trois(): Promise<Classement[]> {
-    const top = await this.prisma.utilisateurBoard.findMany({
+  async top_trois_user(): Promise<Classement[]> {
+    const top = await this.prisma.utilisateur.findMany({
       take: 3,
-      orderBy: { points: 'desc' },
+      orderBy: { points_classement: 'desc' },
     });
-    return top.map((t) => this.mapDbToDomain(t));
+    return top.map((t) => this.mapUserDbToDomain(t));
   }
 
-  async top_trois_commune(
+  async top_trois_commune_user(
     code_postal: string,
     commune: string,
   ): Promise<Classement[]> {
-    const top = await this.prisma.utilisateurBoard.findMany({
+    const top = await this.prisma.utilisateur.findMany({
       take: 3,
       where: {
-        code_postal: code_postal,
-        commune: commune,
+        code_postal_classement: code_postal,
+        commune_classement: commune,
       },
-      orderBy: { points: 'desc' },
+      orderBy: { points_classement: 'desc' },
     });
-    return top.map((t) => this.mapDbToDomain(t));
+    return top.map((t) => this.mapUserDbToDomain(t));
   }
 
-  async classement_utilisateur(utilisateurId: string): Promise<Classement> {
-    const result = await this.prisma.utilisateurBoard.findUnique({
-      where: {
-        utilisateurId: utilisateurId,
-      },
-    });
-    if (result) {
-      return this.mapDbToDomain(result);
-    }
-    return null;
-  }
-
-  async update_rank_france() {
+  async update_rank_user_france() {
     const query = `
     WITH tmp as (
       SELECT
-        "utilisateurId",  
-        DENSE_RANK() OVER ( ORDER BY points DESC) AS rnk
+        "id",  
+        DENSE_RANK() OVER ( ORDER BY points_classement DESC) AS rnk
       FROM
-        "UtilisateurBoard"
+        "Utilisateur"
     )
     UPDATE
-      "UtilisateurBoard"
+      "Utilisateur"
     SET
       rank = tmp.rnk
     FROM
       tmp
     WHERE
-    "UtilisateurBoard"."utilisateurId" = tmp."utilisateurId";`;
+    "Utilisateur"."id" = tmp."id";`;
     await this.prisma.$queryRawUnsafe(query);
   }
 
-  async update_rank_commune() {
+  async update_rank_user_commune() {
     const query = `
     WITH tmp as (
       SELECT
-        "utilisateurId",  
-        DENSE_RANK() OVER ( PARTITION BY "code_postal", "commune" ORDER BY points DESC) AS rnk
+        "id",  
+        DENSE_RANK() OVER ( PARTITION BY "code_postal_classement", "commune_classement" ORDER BY points_classement DESC) AS rnk
       FROM
-        "UtilisateurBoard"
+        "Utilisateur"
     )
     UPDATE
-      "UtilisateurBoard"
+      "Utilisateur"
     SET
       rank_commune = tmp.rnk
     FROM
       tmp
     WHERE
-    "UtilisateurBoard"."utilisateurId" = tmp."utilisateurId";`;
+    "Utilisateur"."id" = tmp."id";`;
     await this.prisma.$queryRawUnsafe(query);
   }
 
@@ -214,71 +180,71 @@ export class UtilisateurBoardRepository {
     let filtre_commune = {};
     if (scope === 'local') {
       filtre_commune = {
-        code_postal: code_postal,
-        commune: commune,
+        code_postal_classement: code_postal,
+        commune_classement: commune,
       };
     }
 
-    const result = await this.prisma.utilisateurBoard.findMany({
+    const result = await this.prisma.utilisateur.findMany({
       take: nombre,
       ...orderBy,
       where: {
         ...rank_cond,
-        utilisateurId: user_cond,
+        id: user_cond,
         ...filtre_commune,
       },
     });
 
-    return result.map((t) => this.mapDbToDomain(t));
+    return result.map((t) => this.mapUserDbToDomain(t));
   }
   async getPourcentile(
     points: number,
     code_postal?: string,
     commune?: string,
-  ): Promise<Pourcetile> {
+  ): Promise<Pourcentile> {
     let count_total;
     let count_better_than_user;
     if (code_postal) {
-      count_total = await this.prisma.utilisateurBoard.count({
+      count_total = await this.prisma.utilisateur.count({
         where: {
-          code_postal: code_postal,
-          commune: commune,
+          code_postal_classement: code_postal,
+          commune_classement: commune,
         },
       });
-      count_better_than_user = await this.prisma.utilisateurBoard.count({
+      count_better_than_user = await this.prisma.utilisateur.count({
         where: {
-          code_postal: code_postal,
-          commune: commune,
-          points: {
+          code_postal_classement: code_postal,
+          commune_classement: commune,
+          points_classement: {
             gt: points,
           },
         },
       });
     } else {
-      count_total = await this.prisma.utilisateurBoard.count();
-      count_better_than_user = await this.prisma.utilisateurBoard.count({
+      count_total = await this.prisma.utilisateur.count();
+      count_better_than_user = await this.prisma.utilisateur.count({
         where: {
-          points: {
+          points_classement: {
             gt: points,
           },
         },
       });
     }
     const ratio = Math.round((count_better_than_user / count_total) * 100);
-    if (ratio <= 5) return Pourcetile.pourcent_5;
-    if (ratio <= 10) return Pourcetile.pourcent_10;
-    if (ratio <= 25) return Pourcetile.pourcent_25;
-    if (ratio <= 50) return Pourcetile.pourcent_50;
+    if (ratio <= 5) return Pourcentile.pourcent_5;
+    if (ratio <= 10) return Pourcentile.pourcent_10;
+    if (ratio <= 25) return Pourcentile.pourcent_25;
+    if (ratio <= 50) return Pourcentile.pourcent_50;
     return null;
   }
 
-  private mapDbToDomain(ub: UtilisateurBoard): Classement {
+  private mapUserDbToDomain(ub: Utilisateur): Classement {
     return new Classement({
-      code_postal: ub.code_postal,
-      commune: ub.commune,
-      points: ub.points,
+      code_postal: ub.code_postal_classement,
+      commune: ub.commune_classement,
+      points: ub.points_classement,
       prenom: ub.prenom,
-      utilisateurId: ub.utilisateurId,
+      utilisateurId: ub.id,
       rank: ub.rank,
       rank_commune: ub.rank_commune,
     });

@@ -347,6 +347,11 @@ export class UtilisateurRepository {
         db_version: user.db_version,
         bilbiotheque_services: bibliotheque_services,
         is_magic_link_user: user.is_magic_link_user,
+        code_postal_classement: user.code_postal_classement,
+        commune_classement: user.commune_classement,
+        points_classement: user.points_classement,
+        rank: user.rank,
+        rank_commune: user.rank_commune,
       });
     }
     return null;
@@ -435,6 +440,11 @@ export class UtilisateurRepository {
       updated_at: undefined,
       db_version: user.db_version,
       is_magic_link_user: user.is_magic_link_user,
+      code_postal_classement: user.code_postal_classement,
+      commune_classement: user.commune_classement,
+      points_classement: user.points_classement,
+      rank: user.rank,
+      rank_commune: user.rank_commune,
     };
   }
 }

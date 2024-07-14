@@ -49,26 +49,39 @@ export class GamificationController extends GenericControler {
     return GamificationAPI.mapToAPI(result);
   }
 
-  @Get('utilisateurs/:utilisateurId/classement')
+  @Get('utilisateurs/:utilisateurId/classement/national')
   @ApiOkResponse({
     type: BoardAPI,
   })
   @ApiOperation({
-    summary: `Retourne le classement de l'utilisateur ainsi que le top 3`,
+    summary: `Retourne le classement de l'utilisateur ainsi que le top 3 à l'échelle nationale`,
   })
   @UseGuards(AuthGuard)
-  async classement(
+  async classementNational(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<any> {
     this.checkCallerId(req, utilisateurId);
-    const board = await this.gamificationUsecase.classement(utilisateurId);
-    return BoardAPI.mapToAPI(board);
+    const board = await this.gamificationUsecase.classementNational(
+      utilisateurId,
+    );
+    return BoardAPI.mapToAPI(board, false);
   }
 
-  @Post('utilisateurs/compute_classement')
-  async computeBilanTousUtilisateurs(@Request() req): Promise<any> {
-    this.checkCronAPIProtectedEndpoint(req);
-    await this.gamificationUsecase.compute_classement();
+  @Get('utilisateurs/:utilisateurId/classement/local')
+  @ApiOkResponse({
+    type: BoardAPI,
+  })
+  @ApiOperation({
+    summary: `Retourne le classement de l'utilisateur ainsi que le top 3 dans sa commune`,
+  })
+  @UseGuards(AuthGuard)
+  async classementLocal(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<any> {
+    this.checkCallerId(req, utilisateurId);
+    const board = await this.gamificationUsecase.classementLocal(utilisateurId);
+    return BoardAPI.mapToAPI(board, true);
   }
 }

@@ -6,6 +6,8 @@ import { UtilisateurBoardRepository } from '../infrastructure/repository/utilisa
 import { Board } from '../domain/gamification/board';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { Classement } from '../domain/gamification/classement';
+import { Utilisateur } from '../domain/utilisateur/utilisateur';
 
 @Injectable()
 export class GamificationUsecase {
@@ -23,51 +25,106 @@ export class GamificationUsecase {
     return utilisateur.gamification;
   }
 
-  async classement(utilisateurId: string): Promise<Board> {
+  async classementLocal(utilisateurId: string): Promise<Board> {
+    await this.utilisateurBoardRepository.update_rank_user_commune();
+
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
-    const top_trois = await this.utilisateurBoardRepository.top_trois();
-
     let top_trois_commune = null;
-    if (utilisateur.logement.code_postal) {
+    if (utilisateur.code_postal_classement) {
       top_trois_commune =
-        await this.utilisateurBoardRepository.top_trois_commune(
-          utilisateur.logement.code_postal,
-          utilisateur.logement.commune,
+        await this.utilisateurBoardRepository.top_trois_commune_user(
+          utilisateur.code_postal_classement,
+          utilisateur.commune_classement,
         );
     }
 
-    const classement_utilisateur =
-      await this.utilisateurBoardRepository.classement_utilisateur(
-        utilisateurId,
+    if (utilisateur.rank_commune === null) {
+      return {
+        pourcentile: null,
+        top_trois: top_trois_commune,
+        utilisateur: null,
+        classement_utilisateur: null,
+        code_postal: utilisateur.code_postal_classement,
+        commune_label: this.communeRepository.formatCommune(
+          utilisateur.code_postal_classement,
+          utilisateur.commune_classement,
+        ),
+      };
+    }
+
+    const users_avant_local =
+      await this.utilisateurBoardRepository.utilisateur_classement_proximite(
+        utilisateur.rank_commune,
+        4,
+        'rank_avant_strict',
+        'local',
+        utilisateur.code_postal_classement,
+        utilisateur.commune_classement,
+        utilisateur.id,
+      );
+    const users_apres_local =
+      await this.utilisateurBoardRepository.utilisateur_classement_proximite(
+        utilisateur.rank_commune,
+        4,
+        'rank_apres_ou_egal',
+        'local',
+        utilisateur.code_postal_classement,
+        utilisateur.commune_classement,
+        utilisateur.id,
       );
 
-    if (!classement_utilisateur || classement_utilisateur.rank === null) {
+    const pourcentile_local = utilisateur.code_postal_classement
+      ? await this.utilisateurBoardRepository.getPourcentile(
+          utilisateur.points_classement,
+          utilisateur.code_postal_classement,
+          utilisateur.commune_classement,
+        )
+      : null;
+
+    const classement_utilisateur =
+      this.buildClassementFromUtilisateur(utilisateur);
+
+    return {
+      pourcentile: pourcentile_local,
+      top_trois: top_trois_commune,
+      utilisateur: classement_utilisateur,
+      classement_utilisateur: [].concat(
+        users_avant_local,
+        [classement_utilisateur],
+        users_apres_local,
+      ),
+      code_postal: utilisateur.code_postal_classement,
+      commune_label: this.communeRepository.formatCommune(
+        utilisateur.code_postal_classement,
+        utilisateur.commune_classement,
+      ),
+    };
+  }
+
+  async classementNational(utilisateurId: string): Promise<Board> {
+    await this.utilisateurBoardRepository.update_rank_user_france();
+
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
+    const top_trois = await this.utilisateurBoardRepository.top_trois_user();
+
+    if (utilisateur.rank === null) {
       return {
-        classement_local: {
-          pourcentile: null,
-          top_trois: top_trois_commune,
-          utilisateur: null,
-          classement_utilisateur: null,
-          code_postal: utilisateur.logement.code_postal,
-          commune_label: this.communeRepository.formatCommune(
-            utilisateur.logement.code_postal,
-            utilisateur.logement.commune,
-          ),
-        },
-        classement_national: {
-          pourcentile: null,
-          top_trois: top_trois,
-          utilisateur: null,
-          classement_utilisateur: null,
-        },
+        pourcentile: null,
+        top_trois: top_trois,
+        utilisateur: null,
+        classement_utilisateur: null,
+        code_postal: null,
+        commune_label: null,
       };
     }
 
     const users_avant_national =
       await this.utilisateurBoardRepository.utilisateur_classement_proximite(
-        classement_utilisateur.rank,
+        utilisateur.rank,
         4,
         'rank_avant_strict',
         'national',
@@ -77,7 +134,7 @@ export class GamificationUsecase {
       );
     const users_apres_national =
       await this.utilisateurBoardRepository.utilisateur_classement_proximite(
-        classement_utilisateur.rank,
+        utilisateur.rank,
         4,
         'rank_apres_ou_egal',
         'national',
@@ -86,83 +143,37 @@ export class GamificationUsecase {
         utilisateur.id,
       );
 
-    const users_avant_local =
-      await this.utilisateurBoardRepository.utilisateur_classement_proximite(
-        classement_utilisateur.rank,
-        4,
-        'rank_avant_strict',
-        'local',
-        utilisateur.logement.code_postal,
-        utilisateur.logement.commune,
-        utilisateur.id,
-      );
-    const users_apres_local =
-      await this.utilisateurBoardRepository.utilisateur_classement_proximite(
-        classement_utilisateur.rank,
-        4,
-        'rank_apres_ou_egal',
-        'local',
-        utilisateur.logement.code_postal,
-        utilisateur.logement.commune,
-        utilisateur.id,
-      );
-
     const pourcentile_national =
       await this.utilisateurBoardRepository.getPourcentile(
-        utilisateur.gamification.points,
+        utilisateur.points_classement,
       );
-    const pourcentile_local = utilisateur.logement.code_postal
-      ? await this.utilisateurBoardRepository.getPourcentile(
-          utilisateur.gamification.points,
-          utilisateur.logement.code_postal,
-          utilisateur.logement.commune,
-        )
-      : null;
+
+    const classement_utilisateur =
+      this.buildClassementFromUtilisateur(utilisateur);
 
     return {
-      classement_national: {
-        pourcentile: pourcentile_national,
-        top_trois: top_trois,
-        utilisateur: classement_utilisateur,
-        classement_utilisateur: [].concat(
-          users_avant_national,
-          [classement_utilisateur],
-          users_apres_national,
-        ),
-      },
-      classement_local: {
-        pourcentile: pourcentile_local,
-        top_trois: top_trois_commune,
-        utilisateur: classement_utilisateur,
-        classement_utilisateur: [].concat(
-          users_avant_local,
-          [classement_utilisateur],
-          users_apres_local,
-        ),
-        code_postal: utilisateur.logement.code_postal,
-        commune_label: this.communeRepository.formatCommune(
-          utilisateur.logement.code_postal,
-          utilisateur.logement.commune,
-        ),
-      },
+      pourcentile: pourcentile_national,
+      top_trois: top_trois,
+      utilisateur: classement_utilisateur,
+      classement_utilisateur: [].concat(
+        users_avant_national,
+        [classement_utilisateur],
+        users_apres_national,
+      ),
+      code_postal: null,
+      commune_label: null,
     };
   }
 
-  async compute_classement(): Promise<void> {
-    const user_id_liste = await this.utilisateurRepository.listUtilisateurIds();
-
-    for (const user_id of user_id_liste) {
-      const utilisateur = await this.utilisateurRepository.getById(user_id);
-      await this.utilisateurBoardRepository.upsert({
-        code_postal: utilisateur.logement.code_postal,
-        commune: utilisateur.logement.commune,
-        points: utilisateur.gamification.points,
-        prenom: utilisateur.prenom,
-        utilisateurId: user_id,
-      });
-    }
-
-    await this.utilisateurBoardRepository.update_rank_france();
-    await this.utilisateurBoardRepository.update_rank_commune();
+  private buildClassementFromUtilisateur(utilisateur: Utilisateur): Classement {
+    return new Classement({
+      code_postal: utilisateur.code_postal_classement,
+      commune: utilisateur.commune_classement,
+      points: utilisateur.points_classement,
+      prenom: utilisateur.prenom,
+      utilisateurId: utilisateur.id,
+      rank: utilisateur.rank,
+      rank_commune: utilisateur.rank_commune,
+    });
   }
 }

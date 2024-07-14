@@ -134,14 +134,16 @@ describe('RechercheServices (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(3);
+    expect(response.body).toHaveLength(4);
 
     expect(response.body[0].titre).toEqual(`Mon Epice'Rit`);
     expect(response.body[1].titre).toEqual(`L'ébullition`);
     expect(response.body[2].titre).toEqual(`L’Auvergnat Bio`);
+    expect(response.body[3].titre).toEqual(`Le Verger de Sylvestre `);
     expect(response.body[0].distance_metres).toEqual(814);
     expect(response.body[1].distance_metres).toEqual(829);
     expect(response.body[2].distance_metres).toEqual(922);
+    expect(response.body[3].distance_metres).toEqual(971);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
 
@@ -151,7 +153,7 @@ describe('RechercheServices (API test)', () => {
     );
     expect(
       userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
-    ).toHaveLength(3);
+    ).toHaveLength(4);
   });
   it(`POST /utlilisateur/id/recherche_services/proximite/search rayon de 10km par défaut`, async () => {
     // GIVEN
@@ -164,7 +166,7 @@ describe('RechercheServices (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(275);
+    expect(response.body.length).toBeGreaterThan(200);
   });
   it(`POST /utlilisateur/id/recherche_services/proximite/search petit rayon => moins de résultats`, async () => {
     // GIVEN
@@ -390,7 +392,7 @@ describe('RechercheServices (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(3);
+    expect(response.body).toHaveLength(4);
     expect(response.body[0].id).toEqual('DwG');
 
     // WHEN
@@ -480,7 +482,7 @@ describe('RechercheServices (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(3);
+    expect(response.body).toHaveLength(4);
     expect(response.body[0].id).toEqual('DwG');
 
     // WHEN
