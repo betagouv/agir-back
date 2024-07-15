@@ -59,18 +59,32 @@ export class RechecheServicesController extends GenericControler {
     if (body.categorie && !CategorieRecherche[body.categorie]) {
       ApplicationError.throwUnkonwnCategorie(body.categorie);
     }
+    const filtre = {
+      categorie: CategorieRecherche[body.categorie],
+      point: body.longitude
+        ? { latitude: body.latitude, longitude: body.longitude }
+        : undefined,
+      nombre_max_resultats: body.nombre_max_resultats,
+      rayon_metres: body.rayon_metres,
+    };
+
+    if (body.latitude_depart) {
+      filtre['rect_A'] = {
+        latitude: body.latitude_depart,
+        longitude: body.longitude_depart,
+      };
+    }
+    if (body.latitude_arrivee) {
+      filtre['rect_B'] = {
+        latitude: body.latitude_arrivee,
+        longitude: body.longitude_arrivee,
+      };
+    }
 
     const result = await this.rechercheServicesUsecase.search(
       utilisateurId,
       ServiceRechercheID[serviceId],
-      new FiltreRecherche({
-        categorie: CategorieRecherche[body.categorie],
-        point: body.longitude
-          ? { latitude: body.latitude, longitude: body.longitude }
-          : undefined,
-        nombre_max_resultats: body.nombre_max_resultats,
-        rayon_metres: body.rayon_metres,
-      }),
+      new FiltreRecherche(filtre),
     );
     return result.map((r) => ResultatRechercheAPI.mapToAPI(r));
   }

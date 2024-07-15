@@ -49,6 +49,9 @@ export class App {
   public static getFruitsLegumesAPIKEY(): string {
     return process.env.FRUITS_LEGUMES_API_KEY;
   }
+  public static getOpenRouteAPIKEY(): string {
+    return process.env.OPEN_ROUTE_API_KEY;
+  }
 
   public static getBaseURLFront(): string {
     return process.env.BASE_URL_FRONT;

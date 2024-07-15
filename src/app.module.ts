@@ -123,6 +123,8 @@ import { PreviewController } from './infrastructure/api/preview.controller';
 import { UtilisateurBoardRepository } from './infrastructure/repository/utilisateurBoard.repository';
 import { MagicLinkUsecase } from './usecase/magicLink.usecase';
 import { MagicLinkController } from './infrastructure/api/magicLink.controller';
+import { ImpactTransportsRepository } from './infrastructure/repository/services_recherche/impactTransport.repository';
+import { DistancesRepository } from './infrastructure/repository/services_recherche/distances.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -268,6 +270,8 @@ function getControllers(): any[] {
     BilanCarboneUsecase,
     UtilisateurBoardRepository,
     MagicLinkUsecase,
+    ImpactTransportsRepository,
+    DistancesRepository,
   ],
 })
 export class AppModule {}

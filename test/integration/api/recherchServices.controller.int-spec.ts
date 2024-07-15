@@ -839,6 +839,32 @@ describe('RechercheServices (API test)', () => {
     expect(response.body[2].nombre_favoris).toEqual(0);
   });
 
+  it(`POST /utlilisateur/id/recherche_services/impact_transports/search renvoie une liste de résultats`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/impact_transports/search',
+    ).send({
+      latitude_depart: 48.70367966010218,
+      longitude_depart: 2.2070299356648193,
+      latitude_arrivee: 48.70982333858675,
+      longitude_arrivee: 2.2109083863527776,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(11);
+    expect(response.body[10]).toStrictEqual({
+      est_favoris: false,
+      id: '4',
+      impact_carbone_kg: 0.533568,
+      nombre_favoris: 0,
+      titre: 'Voiture thermique',
+    });
+  });
+
   it(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });

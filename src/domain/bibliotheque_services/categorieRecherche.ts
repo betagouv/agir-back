@@ -20,6 +20,7 @@ export enum CategorieRecherche {
   vegan = 'vegan',
   dinde_volaille = 'dinde_volaille',
   saison = 'saison',
+  any_transport = 'any_transport',
 }
 
 export class CategorieRechercheManager {
@@ -40,6 +41,7 @@ export class CategorieRechercheManager {
   private static DEFAULT_CATEGORIES = [
     CategorieRecherche.nourriture,
     CategorieRecherche.saison,
+    CategorieRecherche.any_transport,
   ];
   private static labels: Record<CategorieRecherche, string> = {
     nourriture: 'Tous les commerces',
@@ -63,6 +65,7 @@ export class CategorieRechercheManager {
     saison: 'de saison',
     vegan: 'vegans',
     vege: 'végétariennes',
+    any_transport: 'Tout mode de déplacement',
   };
 
   public static getLabel(cat: CategorieRecherche): string {

@@ -1,4 +1,5 @@
 import { CategorieRecherche } from './categorieRecherche';
+import { ModeDeplacement } from './modeDeplacement';
 
 export class FiltreRecherche {
   text?: string;
@@ -10,6 +11,8 @@ export class FiltreRecherche {
   commune?: string;
   rayon_metres?: number;
   nombre_max_resultats?: number;
+  mode_deplacement?: ModeDeplacement;
+  distance_metres?: number;
 
   constructor(filtre: FiltreRecherche) {
     Object.assign(this, filtre);

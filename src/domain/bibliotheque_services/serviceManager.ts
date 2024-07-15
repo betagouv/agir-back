@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FruitsLegumesRepository } from '../../infrastructure/repository/services_recherche/fruitsLegumes.repository';
+import { ImpactTransportsRepository } from '../../infrastructure/repository/services_recherche/impactTransport.repository';
 import { PresDeChezNousRepository } from '../../infrastructure/repository/services_recherche/pres_de_chez_nous/presDeChezNous.repository';
 import { RecettesRepository } from '../../infrastructure/repository/services_recherche/recettes/recettes.repository';
 import { FinderInterface } from './finderInterface';
@@ -11,6 +12,7 @@ export class RechercheServiceManager {
     private presDeChezNousRepository: PresDeChezNousRepository,
     private fruitsLegumesRepository: FruitsLegumesRepository,
     private recettesRepository: RecettesRepository,
+    private impactTransportsRepository: ImpactTransportsRepository,
   ) {}
 
   public getFinderById(serviceId: ServiceRechercheID): FinderInterface {
@@ -21,6 +23,8 @@ export class RechercheServiceManager {
         return this.fruitsLegumesRepository;
       case ServiceRechercheID.recettes:
         return this.recettesRepository;
+      case ServiceRechercheID.impact_transports:
+        return this.impactTransportsRepository;
       default:
         return null;
     }

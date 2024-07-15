@@ -8,4 +8,8 @@ export class RechercheServiceInputAPI {
   @ApiProperty({ required: false }) rayon_metres: number;
   @ApiProperty({ required: false }) latitude: number;
   @ApiProperty({ required: false }) longitude: number;
+  @ApiProperty({ required: false }) latitude_depart: number;
+  @ApiProperty({ required: false }) longitude_depart: number;
+  @ApiProperty({ required: false }) latitude_arrivee: number;
+  @ApiProperty({ required: false }) longitude_arrivee: number;
 }
