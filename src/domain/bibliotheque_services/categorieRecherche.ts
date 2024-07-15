@@ -42,10 +42,10 @@ export class CategorieRechercheManager {
     CategorieRecherche.saison,
   ];
   private static labels: Record<CategorieRecherche, string> = {
-    nourriture: 'Nourriture',
-    marche_local: 'Marchés locaux',
-    circuit_court: 'Circuits courts',
-    epicerie_superette: 'Epiceries et supérettes',
+    nourriture: 'Tous les commerces',
+    marche_local: 'Les marchés locaux',
+    circuit_court: 'Les producteurs locaux',
+    epicerie_superette: 'Les épiceries et supérettes',
     zero_dechet: 'Zéro déchet',
     janvier: 'janvier',
     fevrier: 'février',
@@ -59,10 +59,10 @@ export class CategorieRechercheManager {
     octobre: 'octobre',
     novembre: 'novembre',
     decembre: 'décembre',
-    dinde_volaille: 'dinde et volaille',
-    saison: 'saison',
-    vegan: 'vegan',
-    vege: 'végé',
+    dinde_volaille: 'avec volailles',
+    saison: 'de saison',
+    vegan: 'vegans',
+    vege: 'végétariennes',
   };
 
   public static getLabel(cat: CategorieRecherche): string {

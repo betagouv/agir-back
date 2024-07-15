@@ -7,7 +7,7 @@ import { FinderInterface } from '../../../../domain/bibliotheque_services/finder
 import { OpenHour } from '../../../../domain/bibliotheque_services/openHour';
 import { ResultatRecherche } from '../../../../domain/bibliotheque_services/resultatRecherche';
 import { AddressesRepository } from '../addresses.repository';
-import { PresDeChezNousCategorieMapping } from './presDeChezNousMetaCategorie';
+import { PresDeChezNousCategorieMapping } from './presDeChezNousCategorieMapping';
 
 const API_URL = 'https://presdecheznous.gogocarto.fr/api/elements.json';
 
