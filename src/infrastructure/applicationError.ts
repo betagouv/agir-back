@@ -291,7 +291,7 @@ export class ApplicationError {
   static throwUnkonwnUserLocation() {
     this.throwAppError(
       '053',
-      `L'utilisateur doit renseigner son code postal dans son profil pour faire une recherche de proximité`,
+      `L'utilisateur doit renseigner son code postal dans son profil pour faire une recherche de proximité, ou fournir directement des coordonnées au service`,
     );
   }
   static throwUnkonwnSearchResult(servicId: string, favId: string) {

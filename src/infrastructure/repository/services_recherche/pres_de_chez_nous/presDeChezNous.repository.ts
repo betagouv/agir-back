@@ -76,22 +76,24 @@ export class PresDeChezNousRepository implements FinderInterface {
   }
 
   public async find(filtre: FiltreRecherche): Promise<ResultatRecherche[]> {
-    const adresse = await this.addressesRepository.find(
-      new FiltreRecherche({
-        text: filtre.code_postal.concat(' ', filtre.commune),
-      }),
-    );
+    if (!filtre.hasPoint()) {
+      const adresse = await this.addressesRepository.find(
+        new FiltreRecherche({
+          text: filtre.code_postal.concat(' ', filtre.commune),
+        }),
+      );
 
-    if (adresse.length === 0) {
-      return [];
+      if (adresse.length === 0) {
+        return [];
+      }
+
+      const the_adresse = adresse[0];
+
+      filtre.point = {
+        latitude: the_adresse.latitude,
+        longitude: the_adresse.longitude,
+      };
     }
-
-    const the_adresse = adresse[0];
-
-    filtre.point = {
-      latitude: the_adresse.latitude,
-      longitude: the_adresse.longitude,
-    };
 
     if (filtre.rayon_metres) {
       filtre.computeBox(filtre.rayon_metres);

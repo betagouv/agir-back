@@ -155,6 +155,27 @@ describe('RechercheServices (API test)', () => {
       userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
     ).toHaveLength(4);
   });
+  it(`POST /utlilisateur/id/recherche_services/proximite/search prend en compte un point GPS argument`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
+    ).send({
+      rayon_metres: 1000,
+      longitude: 2.20697928187562,
+      latitude: 48.70358115101862,
+      nombre_max_resultats: 1,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(1);
+
+    expect(response.body[0].titre).toEqual(`Epigénie`);
+    expect(response.body[0].distance_metres).toEqual(827);
+  });
   it(`POST /utlilisateur/id/recherche_services/proximite/search rayon de 10km par défaut`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });

@@ -15,6 +15,10 @@ export class FiltreRecherche {
     Object.assign(this, filtre);
   }
 
+  public hasPoint?() {
+    return !!this.point && this.point.latitude && this.point.longitude;
+  }
+
   public getDistanceMetresFromSearchPoint?(
     latitude: number,
     longitude: number,

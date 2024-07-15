@@ -357,7 +357,7 @@
     "local": true,
     "pef": 0.45,
     "CO2": 1.63,
-    "type": "legume"
+    "type": "fruit"
   },
   {
     "label": { "fr": "Clémentine" },
@@ -607,7 +607,7 @@
     "pef": 0.1,
     "CO2": 0.62,
     "suggestions": true,
-    "type": "legume"
+    "type": "fruit_et_legume"
   },
   {
     "label": { "fr": "Ananas" },

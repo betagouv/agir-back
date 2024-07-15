@@ -20,9 +20,7 @@ export class RechercheServicesUsecase {
   async search(
     utilisateurId: string,
     serviceId: ServiceRechercheID,
-    categorie: string,
-    rayon_metres: number,
-    nombre_max_resultats: number,
+    filtre: FiltreRecherche,
   ): Promise<ResultatRecherche[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
@@ -32,36 +30,29 @@ export class RechercheServicesUsecase {
     if (!finder) {
       ApplicationError.throwUnkonwnSearchService(serviceId);
     }
-    if (
-      serviceId === ServiceRechercheID.proximite &&
-      !utilisateur.logement.code_postal
-    ) {
-      ApplicationError.throwUnkonwnUserLocation();
-    }
-
-    if (categorie && !CategorieRecherche[categorie]) {
-      ApplicationError.throwUnkonwnCategorie(categorie);
-    }
 
     if (
-      categorie &&
-      !finder.getManagedCategories().includes(CategorieRecherche[categorie])
+      filtre.categorie &&
+      !finder.getManagedCategories().includes(filtre.categorie)
     ) {
       ApplicationError.throwUnkonwnCategorieForSearchService(
         serviceId,
-        categorie,
+        filtre.categorie,
       );
     }
 
-    const result = await finder.find(
-      new FiltreRecherche({
-        categorie: CategorieRecherche[categorie],
-        code_postal: utilisateur.logement.code_postal,
-        commune: utilisateur.logement.commune,
-        rayon_metres: rayon_metres,
-        nombre_max_resultats: nombre_max_resultats,
-      }),
-    );
+    if (serviceId === ServiceRechercheID.proximite) {
+      if (!filtre.hasPoint()) {
+        if (!utilisateur.logement.code_postal) {
+          ApplicationError.throwUnkonwnUserLocation();
+        } else {
+          filtre.code_postal = utilisateur.logement.code_postal;
+          filtre.commune = utilisateur.logement.commune;
+        }
+      }
+    }
+
+    const result = await finder.find(filtre);
 
     utilisateur.bilbiotheque_services.setDerniereRecherche(serviceId, result);
 

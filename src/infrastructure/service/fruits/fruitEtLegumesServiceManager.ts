@@ -6,6 +6,7 @@ import fruits_legumes from './fruits_legumes.json';
 export enum FruitLegume {
   fruit = 'fruit',
   legume = 'legume',
+  fruit_et_legume = 'fruit_et_legume',
 }
 
 export type rawEntry = {

@@ -25,6 +25,8 @@ import { ServiceRechercheID } from '../../../src/domain/bibliotheque_services/se
 import { ResultatRechercheAPI } from './types/rechercheServices/resultatRecherchAPI';
 import { CategoriesRechercheAPI } from './types/rechercheServices/categoriesRechercheAPI';
 import { CategorieRecherche } from '../../domain/bibliotheque_services/categorieRecherche';
+import { FiltreRecherche } from '../../domain/bibliotheque_services/filtreRecherche';
+import { ApplicationError } from '../applicationError';
 
 @Controller()
 @ApiBearerAuth()
@@ -53,12 +55,22 @@ export class RechecheServicesController extends GenericControler {
     @Body() body: RechercheServiceInputAPI,
   ): Promise<ResultatRechercheAPI[]> {
     this.checkCallerId(req, utilisateurId);
+
+    if (body.categorie && !CategorieRecherche[body.categorie]) {
+      ApplicationError.throwUnkonwnCategorie(body.categorie);
+    }
+
     const result = await this.rechercheServicesUsecase.search(
       utilisateurId,
       ServiceRechercheID[serviceId],
-      body.categorie,
-      body.rayon_metres,
-      body.nombre_max_resultats,
+      new FiltreRecherche({
+        categorie: CategorieRecherche[body.categorie],
+        point: body.longitude
+          ? { latitude: body.latitude, longitude: body.longitude }
+          : undefined,
+        nombre_max_resultats: body.nombre_max_resultats,
+        rayon_metres: body.rayon_metres,
+      }),
     );
     return result.map((r) => ResultatRechercheAPI.mapToAPI(r));
   }
