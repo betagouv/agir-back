@@ -59,7 +59,7 @@ export class CategorieRechercheManager {
     octobre: 'octobre',
     novembre: 'novembre',
     decembre: 'décembre',
-    dinde_volaille: 'avec volailles',
+    dinde_volaille: 'avec volaille',
     saison: 'de saison',
     vegan: 'vegans',
     vege: 'végétariennes',
