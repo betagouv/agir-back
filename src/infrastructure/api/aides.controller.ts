@@ -72,14 +72,12 @@ export class AidesController extends GenericControler {
   @UseGuards(AuthGuard)
   async getAllVelosByUtilisateur(
     @Param('utilisateurId') utilisateurId: string,
-    @Res() res: Response,
-
     @Body() body: InputAideVeloAPI,
   ) {
     const result = await this.aidesUsecase.simulerAideVelo(
       utilisateurId,
       body.prix_du_velo,
     );
-    return res.status(HttpStatus.OK).json(result).send();
+    return result;
   }
 }

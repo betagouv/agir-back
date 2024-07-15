@@ -11,11 +11,8 @@ import {
   Param,
   Body,
   UseGuards,
-  Response,
   Request,
   Get,
-  HttpStatus,
-  UseFilters,
 } from '@nestjs/common';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';

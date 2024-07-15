@@ -31,7 +31,7 @@ describe('Aide (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body['électrique'][0].libelle).toEqual('Bonus vélo');
     expect(response.body['électrique'][0].description).toEqual(
       'Nouveau bonus vélo électrique applicable à partir du 14 février 2024.\n',
@@ -50,7 +50,7 @@ describe('Aide (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body['électrique'][0].libelle).toEqual('Bonus vélo');
     expect(response.body['électrique'][0].montant).toEqual(400);
   });
@@ -66,7 +66,7 @@ describe('Aide (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body['électrique'][0].libelle).toEqual('Bonus vélo');
     expect(response.body['électrique'][0].montant).toEqual(300);
   });
@@ -82,7 +82,7 @@ describe('Aide (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body['électrique'][0].libelle).toEqual(
       'Île-de-France Mobilités',
     );

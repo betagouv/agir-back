@@ -1,7 +1,6 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
-import { AuthGuard } from '../auth/guard';
 import { CommunesUsecase } from '../../../src/usecase/communes.usecase';
 
 @Controller()

@@ -14,7 +14,6 @@ import {
   Post,
   Body,
   Get,
-  Put,
   Delete,
 } from '@nestjs/common';
 import { AuthGuard } from '../auth/guard';

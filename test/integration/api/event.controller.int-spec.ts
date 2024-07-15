@@ -94,7 +94,7 @@ describe('EVENT (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
   });
 
   it('POST /utilisateurs/id/event - ajoute un historique de quizz v2', async () => {
@@ -110,7 +110,7 @@ describe('EVENT (API test)', () => {
       number_value: 55,
     });
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     const dbUtilisateur = await utilisateurRepository.getById('utilisateur-id');
     expect(
       dbUtilisateur.history.getQuizzHistoryById('123').attempts,
@@ -140,7 +140,7 @@ describe('EVENT (API test)', () => {
       number_value: 100,
     });
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
 
     const dbUtilisateur = await utilisateurRepository.getById('utilisateur-id');
     expect(
@@ -336,7 +336,7 @@ describe('EVENT (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     const dbUtilisateur = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUtilisateur.gamification.points).toStrictEqual(15);
     expect(
@@ -364,7 +364,7 @@ describe('EVENT (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     const dbUtilisateur = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUtilisateur.gamification.points).toStrictEqual(15);
     expect(
@@ -388,7 +388,7 @@ describe('EVENT (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     const dbUtilisateur = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUtilisateur.gamification.points).toStrictEqual(30);
     expect(
@@ -415,7 +415,7 @@ describe('EVENT (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     const dbUtilisateur = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUtilisateur.gamification.points).toStrictEqual(30);
     expect(
@@ -446,7 +446,7 @@ describe('EVENT (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     const dbUtilisateur = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUtilisateur.gamification.points).toStrictEqual(30);
   });
@@ -461,7 +461,7 @@ describe('EVENT (API test)', () => {
       celebration_id: 'celebration-id',
     });
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
     });
@@ -493,7 +493,7 @@ describe('EVENT (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     const dbUtilisateur = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUtilisateur.gamification.celebrations).toHaveLength(0);
     expect(dbUtilisateur.unlocked_features.getUnlockedFeatures()).toHaveLength(
@@ -519,7 +519,7 @@ describe('EVENT (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.history.getArticleHistoryById('123').like_level).toEqual(3);
   });
@@ -541,7 +541,7 @@ describe('EVENT (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.history.getQuizzHistoryById('123').like_level).toEqual(3);
   });
@@ -562,7 +562,7 @@ describe('EVENT (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.history.getQuizzHistoryById('123').like_level).toEqual(3);
   });
@@ -579,7 +579,7 @@ describe('EVENT (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.history.getArticleHistoryById('123').favoris).toEqual(true);
   });
@@ -608,7 +608,7 @@ describe('EVENT (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.history.getArticleHistoryById('123').favoris).toEqual(false);
   });

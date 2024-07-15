@@ -1,6 +1,5 @@
 import {
   ApiBearerAuth,
-  ApiBody,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -8,16 +7,10 @@ import {
 } from '@nestjs/swagger';
 import {
   Controller,
-  Put,
   Param,
-  Body,
   UseGuards,
-  Response,
   Request,
   Get,
-  HttpStatus,
-  UseFilters,
-  Patch,
   Post,
 } from '@nestjs/common';
 import { AuthGuard } from '../auth/guard';
