@@ -5,9 +5,15 @@ import { ResultatRecherche } from '../../src/domain/bibliotheque_services/result
 import { RechercheServiceManager } from '../../src/domain/bibliotheque_services/serviceManager';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { FiltreRecherche } from '../domain/bibliotheque_services/filtreRecherche';
-import { CategorieRecherche } from '../domain/bibliotheque_services/categorieRecherche';
+import {
+  CategorieRecherche,
+  CategorieRechercheManager,
+} from '../domain/bibliotheque_services/categorieRecherche';
 import { ServiceFavorisStatistiqueRepository } from '../infrastructure/repository/serviceFavorisStatistique.repository';
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
+import { ServiceRechercheDefinition } from '../domain/bibliotheque_services/serviceRechercheDefinition';
+import { Univers } from '../domain/univers/univers';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 
 @Injectable()
 export class RechercheServicesUsecase {
@@ -15,6 +21,7 @@ export class RechercheServicesUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private rechercheServiceManager: RechercheServiceManager,
     private serviceFavorisStatistiqueRepository: ServiceFavorisStatistiqueRepository,
+    private personnalisator: Personnalisator,
   ) {}
 
   async search(
@@ -118,6 +125,46 @@ export class RechercheServicesUsecase {
     this.completeFavorisDataToResult(serviceId, result, utilisateur);
 
     return result;
+  }
+
+  async getListServiceDef(
+    utilisateurId: string,
+    univers: string,
+  ): Promise<ServiceRechercheDefinition[]> {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
+    const catalogue = [
+      {
+        id: ServiceRechercheID.fruits_legumes,
+        external_url: undefined,
+        icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/cerise.png',
+        titre: 'Fruits et légumes de saison',
+        sous_titre: CategorieRechercheManager.getMoisCourant(),
+        univers: Univers.alimentation,
+      },
+      {
+        id: ServiceRechercheID.proximite,
+        external_url: undefined,
+        icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/commerce.png',
+        titre: 'Mes commerces de proximité',
+        sous_titre: 'À {COMMUNE}',
+        univers: Univers.alimentation,
+      },
+      {
+        id: ServiceRechercheID.recettes,
+        external_url: undefined,
+        icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/omelette.png',
+        titre: 'Recettes saines et équilibrées',
+        sous_titre: 'Bas carbone',
+        univers: Univers.alimentation,
+      },
+    ];
+
+    let result = catalogue.map((c) => new ServiceRechercheDefinition(c));
+    result = result.filter((r) => r.univers === univers);
+
+    return this.personnalisator.personnaliser(result, utilisateur);
   }
 
   async getCategories(

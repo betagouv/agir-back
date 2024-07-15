@@ -26,6 +26,7 @@ import { CategoriesRechercheAPI } from './types/rechercheServices/categoriesRech
 import { CategorieRecherche } from '../../domain/bibliotheque_services/categorieRecherche';
 import { FiltreRecherche } from '../../domain/bibliotheque_services/filtreRecherche';
 import { ApplicationError } from '../applicationError';
+import { ServiceRechercheAPI } from './types/rechercheServices/serviceRechercheAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -116,6 +117,27 @@ export class RechecheServicesController extends GenericControler {
       ServiceRechercheID[serviceId],
     );
     return result.map((r) => CategoriesRechercheAPI.mapToAPI(r));
+  }
+
+  @Get('utilisateurs/:utilisateurId/recherche_services/:universId')
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Liste des service disponible dans un univers donné`,
+  })
+  @ApiOkResponse({
+    type: [ServiceRechercheAPI],
+  })
+  async getListeServices(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('universId') universId: string,
+  ): Promise<ServiceRechercheAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.rechercheServicesUsecase.getListServiceDef(
+      utilisateurId,
+      universId,
+    );
+    return result.map((r) => ServiceRechercheAPI.mapToAPI(r));
   }
 
   @Post(

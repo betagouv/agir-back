@@ -71,10 +71,13 @@ export class CategorieRechercheManager {
 
   public static isDefault(cat: CategorieRecherche): boolean {
     if (CategorieRechercheManager.MOIS_ANNEE.includes(cat)) {
-      const mois_courant =
-        CategorieRechercheManager.MOIS_ANNEE[new Date().getMonth()];
+      const mois_courant = this.getMoisCourant();
       return mois_courant === cat;
     }
     return CategorieRechercheManager.DEFAULT_CATEGORIES.includes(cat);
+  }
+
+  public static getMoisCourant(): CategorieRecherche {
+    return CategorieRechercheManager.MOIS_ANNEE[new Date().getMonth()];
   }
 }
