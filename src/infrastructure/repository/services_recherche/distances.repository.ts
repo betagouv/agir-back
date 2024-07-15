@@ -28,8 +28,6 @@ export class DistancesRepository implements FinderInterface {
   public async find(filtre: FiltreRecherche): Promise<ResultatRecherche[]> {
     const mode = this.mapMode(filtre.mode_deplacement);
 
-    console.log(filtre);
-    console.log(mode);
     const result = await this.callMatrixAPI(filtre, mode);
 
     return [

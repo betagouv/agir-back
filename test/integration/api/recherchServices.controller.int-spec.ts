@@ -839,6 +839,38 @@ describe('RechercheServices (API test)', () => {
     expect(response.body[2].nombre_favoris).toEqual(0);
   });
 
+  it(`POST /utlilisateur/id/recherche_services/impact_transports/search renvoie une liste de résultats pour recherche par distance`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/impact_transports/search',
+    ).send({
+      distance_metres: 10000,
+    });
+
+    // THENs
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(11);
+    expect(response.body[0]).toStrictEqual({
+      est_favoris: false,
+      id: '7',
+      impact_carbone_kg: 0,
+      nombre_favoris: 0,
+      titre: 'Vélo ou marche',
+      distance_metres: 10000,
+    });
+    expect(response.body[10]).toStrictEqual({
+      est_favoris: false,
+      id: '4',
+      impact_carbone_kg: 1.92,
+      nombre_favoris: 0,
+      titre: 'Voiture thermique',
+      distance_metres: 10000,
+    });
+  });
+
   it(`POST /utlilisateur/id/recherche_services/impact_transports/search renvoie une liste de résultats`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -855,13 +887,22 @@ describe('RechercheServices (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(11);
-    expect(response.body[10]).toStrictEqual({
+    expect(response.body).toHaveLength(16);
+    expect(response.body[0]).toStrictEqual({
+      est_favoris: false,
+      id: '7',
+      impact_carbone_kg: 0,
+      nombre_favoris: 0,
+      titre: 'Vélo ou marche',
+      distance_metres: 1141,
+    });
+    expect(response.body[15]).toStrictEqual({
       est_favoris: false,
       id: '4',
       impact_carbone_kg: 0.533568,
       nombre_favoris: 0,
       titre: 'Voiture thermique',
+      distance_metres: 2779,
     });
   });
 

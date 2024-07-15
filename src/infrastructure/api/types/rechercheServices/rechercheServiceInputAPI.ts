@@ -12,4 +12,5 @@ export class RechercheServiceInputAPI {
   @ApiProperty({ required: false }) longitude_depart: number;
   @ApiProperty({ required: false }) latitude_arrivee: number;
   @ApiProperty({ required: false }) longitude_arrivee: number;
+  @ApiProperty({ required: false }) distance_metres: number;
 }
