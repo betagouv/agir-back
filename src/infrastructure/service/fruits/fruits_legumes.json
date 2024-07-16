@@ -7,7 +7,8 @@
     "pef": 0.42,
     "CO2": 0.53,
     "suggestions": true,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "fraise.svg"
   },
   {
     "label": { "fr": "Pomme" },
@@ -17,7 +18,8 @@
     "pef": 0.06,
     "CO2": 0.28,
     "suggestions": true,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "pomme.svg"
   },
   {
     "label": { "fr": "Orange" },
@@ -26,7 +28,8 @@
     "local": false,
     "pef": 0.2,
     "CO2": 0.97,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "orange.svg"
   },
   {
     "label": { "fr": "Citron" },
@@ -35,7 +38,8 @@
     "local": false,
     "pef": 0.21,
     "CO2": 0.91,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "citron.svg"
   },
   {
     "label": { "fr": "Ail" },
@@ -44,7 +48,8 @@
     "local": true,
     "pef": 0.07,
     "CO2": 0.37,
-    "type": "legume"
+    "type": "legume",
+    "img": "ail.svg"
   },
   {
     "label": { "fr": "Artichaut" },
@@ -53,7 +58,8 @@
     "local": true,
     "pef": 0.4,
     "CO2": 3.97,
-    "type": "legume"
+    "type": "legume",
+    "img": "artichaut.svg"
   },
   {
     "label": { "fr": "Asperge" },
@@ -62,7 +68,8 @@
     "local": true,
     "pef": 0.28,
     "CO2": 1.39,
-    "type": "legume"
+    "type": "legume",
+    "img": "asperge.svg"
   },
   {
     "label": { "fr": "Betterave" },
@@ -72,7 +79,8 @@
     "pef": 0.06,
     "CO2": 0.25,
     "suggestions": true,
-    "type": "legume"
+    "type": "legume",
+    "img": "betterave.svg"
   },
   {
     "label": { "fr": "Blette" },
@@ -81,7 +89,8 @@
     "local": true,
     "pef": 0.06,
     "CO2": 0.48,
-    "type": "legume"
+    "type": "legume",
+    "img": "blette.svg"
   },
   {
     "label": { "fr": "Carotte" },
@@ -91,7 +100,8 @@
     "pef": 0.07,
     "CO2": 0.39,
     "suggestions": true,
-    "type": "legume"
+    "type": "legume",
+    "img": "carotte.svg"
   },
   {
     "label": { "fr": "Céleri" },
@@ -101,7 +111,8 @@
     "pef": 0.08,
     "CO2": 0.39,
     "suggestions": true,
-    "type": "legume"
+    "type": "legume",
+    "img": "celeri.svg"
   },
   {
     "label": { "fr": "Champignon de Paris" },
@@ -111,7 +122,8 @@
     "pef": 0.08,
     "CO2": 0.4,
     "suggestions": true,
-    "type": "legume"
+    "type": "legume",
+    "img": "champignonmorille.svg"
   },
   {
     "label": { "fr": "Chou" },
@@ -120,7 +132,8 @@
     "local": true,
     "pef": 0.12,
     "CO2": 1.06,
-    "type": "legume"
+    "type": "legume",
+    "img": "chou.svg"
   },
   {
     "label": { "fr": "Chou de Bruxelles" },
@@ -129,7 +142,8 @@
     "local": true,
     "pef": 0.07,
     "CO2": 0.5,
-    "type": "legume"
+    "type": "legume",
+    "img": "choudebruxelles.svg"
   },
   {
     "label": { "fr": "Chou-fleur" },
@@ -138,7 +152,8 @@
     "local": true,
     "pef": 0.07,
     "CO2": 0.51,
-    "type": "legume"
+    "type": "legume",
+    "img": "choufleur.svg"
   },
   {
     "label": { "fr": "Concombre" },
@@ -147,7 +162,8 @@
     "local": true,
     "pef": 0.43,
     "CO2": 4.86,
-    "type": "legume"
+    "type": "legume",
+    "img": "concombre.svg"
   },
   {
     "label": { "fr": "Courge" },
@@ -156,7 +172,8 @@
     "local": true,
     "pef": 0.1,
     "CO2": 0.55,
-    "type": "legume"
+    "type": "legume",
+    "img": "courge.svg"
   },
   {
     "label": { "fr": "Courgette" },
@@ -165,7 +182,8 @@
     "local": true,
     "pef": 0.05,
     "CO2": 0.41,
-    "type": "legume"
+    "type": "legume",
+    "img": "courgette.svg"
   },
   {
     "label": { "fr": "Cresson" },
@@ -174,7 +192,8 @@
     "local": true,
     "pef": 0.13,
     "CO2": 0.88,
-    "type": "legume"
+    "type": "legume",
+    "img": "cresson.svg"
   },
   {
     "label": { "fr": "Echalote" },
@@ -183,7 +202,8 @@
     "local": true,
     "pef": 0.07,
     "CO2": 0.37,
-    "type": "legume"
+    "type": "legume",
+    "img": "echalote.svg"
   },
   {
     "label": { "fr": "Endive" },
@@ -192,7 +212,8 @@
     "local": true,
     "pef": 0.12,
     "CO2": 0.79,
-    "type": "legume"
+    "type": "legume",
+    "img": "endive.svg"
   },
   {
     "label": { "fr": "Epinard" },
@@ -202,7 +223,8 @@
     "pef": 0.05,
     "CO2": 0.33,
     "suggestions": true,
-    "type": "legume"
+    "type": "legume",
+    "img": "epinard.svg"
   },
   {
     "label": { "fr": "Fenouil" },
@@ -211,7 +233,8 @@
     "local": true,
     "pef": 0.13,
     "CO2": 0.97,
-    "type": "legume"
+    "type": "legume",
+    "img": "fenouil.svg"
   },
   {
     "label": { "fr": "Haricot vert" },
@@ -220,7 +243,8 @@
     "local": true,
     "pef": 0.14,
     "CO2": 0.48,
-    "type": "legume"
+    "type": "legume",
+    "img": "haricotvert.svg"
   },
   {
     "label": { "fr": "Laitue" },
@@ -229,7 +253,8 @@
     "local": true,
     "pef": 0.13,
     "CO2": 0.88,
-    "type": "legume"
+    "type": "legume",
+    "img": "laitue.svg"
   },
   {
     "label": { "fr": "Mâche" },
@@ -239,7 +264,8 @@
     "pef": 0.13,
     "CO2": 0.88,
     "suggestions": true,
-    "type": "legume"
+    "type": "legume",
+    "img": "mache.svg"
   },
   {
     "label": { "fr": "Navet" },
@@ -248,7 +274,8 @@
     "local": true,
     "pef": 0.07,
     "CO2": 0.39,
-    "type": "legume"
+    "type": "legume",
+    "img": "navet.svg"
   },
   {
     "label": { "fr": "Maïs" },
@@ -258,7 +285,8 @@
     "pef": 0.14,
     "CO2": 0.63,
     "suggestions": true,
-    "type": "legume"
+    "type": "legume",
+    "img": "Maïs"
   },
   {
     "label": { "fr": "Oignon" },
@@ -267,7 +295,8 @@
     "local": true,
     "pef": 0.7,
     "CO2": 0.42,
-    "type": "legume"
+    "type": "legume",
+    "img": "Oignon"
   },
   {
     "label": { "fr": "Panais" },
@@ -276,7 +305,8 @@
     "local": true,
     "pef": 0.07,
     "CO2": 0.39,
-    "type": "legume"
+    "type": "legume",
+    "img": "panais.svg"
   },
   {
     "label": { "fr": "Petit pois" },
@@ -285,7 +315,8 @@
     "local": true,
     "pef": 0.09,
     "CO2": 0.39,
-    "type": "legume"
+    "type": "legume",
+    "img": "petitpois.svg"
   },
   {
     "label": { "fr": "Poireau" },
@@ -294,7 +325,8 @@
     "local": true,
     "pef": 0.11,
     "CO2": 0.71,
-    "type": "legume"
+    "type": "legume",
+    "img": "poireau.svg"
   },
   {
     "label": { "fr": "Poivron" },
@@ -303,7 +335,8 @@
     "local": true,
     "pef": 0.13,
     "CO2": 0.92,
-    "type": "legume"
+    "type": "legume",
+    "img": "poivron.svg"
   },
   {
     "label": { "fr": "Potiron" },
@@ -312,7 +345,8 @@
     "local": true,
     "pef": 0.1,
     "CO2": 0.55,
-    "type": "legume"
+    "type": "legume",
+    "img": "potiron.svg"
   },
   {
     "label": { "fr": "Radis" },
@@ -321,7 +355,8 @@
     "local": true,
     "pef": 0.06,
     "CO2": 0.25,
-    "type": "legume"
+    "type": "legume",
+    "img": "radis.svg"
   },
   {
     "label": { "fr": "Salsifis" },
@@ -330,7 +365,8 @@
     "local": true,
     "pef": 0.07,
     "CO2": 0.39,
-    "type": "legume"
+    "type": "legume",
+    "img": "salsifis.svg"
   },
   {
     "label": { "fr": "Topinambour" },
@@ -339,7 +375,8 @@
     "local": true,
     "pef": 0.11,
     "CO2": 0.86,
-    "type": "legume"
+    "type": "legume",
+    "img": "topinambour.svg"
   },
   {
     "label": { "fr": "Cassis" },
@@ -348,7 +385,8 @@
     "local": true,
     "pef": 0.27,
     "CO2": 1.76,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "cassis.svg"
   },
   {
     "label": { "fr": "Châtaigne" },
@@ -357,7 +395,8 @@
     "local": true,
     "pef": 0.45,
     "CO2": 1.63,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "chataigne.svg"
   },
   {
     "label": { "fr": "Clémentine" },
@@ -366,7 +405,8 @@
     "local": false,
     "pef": 0.21,
     "CO2": 0.71,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "clementine.svg"
   },
   {
     "label": { "fr": "Pamplemousse" },
@@ -375,7 +415,8 @@
     "local": false,
     "pef": 0.12,
     "CO2": 0.63,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "pamplemousse.svg"
   },
   {
     "label": { "fr": "Coing" },
@@ -384,7 +425,8 @@
     "local": true,
     "pef": 0.08,
     "CO2": 0.49,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "coing.svg"
   },
   {
     "label": { "fr": "Figue" },
@@ -393,7 +435,8 @@
     "local": true,
     "pef": 0.23,
     "CO2": 0.58,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "figue.svg"
   },
   {
     "label": { "fr": "Groseille" },
@@ -402,7 +445,8 @@
     "local": true,
     "pef": 0.27,
     "CO2": 1.76,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "groseille.svg"
   },
   {
     "label": { "fr": "Kiwi" },
@@ -412,7 +456,8 @@
     "pef": 0.13,
     "CO2": 0.92,
     "suggestions": true,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "kiwi.svg"
   },
   {
     "label": { "fr": "Mandarine" },
@@ -421,7 +466,8 @@
     "local": false,
     "pef": 0.21,
     "CO2": 0.71,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "mandarine.svg"
   },
   {
     "label": { "fr": "Melon" },
@@ -430,7 +476,8 @@
     "local": true,
     "pef": 0.16,
     "CO2": 0.87,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "melon.svg"
   },
   {
     "label": { "fr": "Mirabelle" },
@@ -439,7 +486,8 @@
     "local": true,
     "pef": 0.4,
     "CO2": 0.91,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "prune.svg"
   },
   {
     "label": { "fr": "Mûre" },
@@ -448,7 +496,8 @@
     "local": true,
     "pef": 0.86,
     "CO2": 0.63,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "mure.svg"
   },
   {
     "label": { "fr": "Nectarine" },
@@ -457,7 +506,8 @@
     "local": true,
     "pef": 0.22,
     "CO2": 0.57,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "nectarine.svg"
   },
   {
     "label": { "fr": "Myrtille" },
@@ -466,7 +516,8 @@
     "local": true,
     "pef": 0.22,
     "CO2": 1.38,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "myrtille.svg"
   },
   {
     "label": { "fr": "Noisette" },
@@ -475,7 +526,8 @@
     "local": true,
     "pef": 0.62,
     "CO2": 4.51,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "noisette.svg"
   },
   {
     "label": { "fr": "Noix" },
@@ -484,7 +536,8 @@
     "local": true,
     "pef": 0.86,
     "CO2": 3.79,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "noix.svg"
   },
   {
     "label": { "fr": "Prune" },
@@ -493,7 +546,8 @@
     "local": true,
     "pef": 0.4,
     "CO2": 0.91,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "c"
   },
   {
     "label": { "fr": "Quetsche" },
@@ -502,7 +556,8 @@
     "local": true,
     "pef": 0.4,
     "CO2": 0.91,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "Quetsche"
   },
   {
     "label": { "fr": "Reine Claude" },
@@ -511,7 +566,8 @@
     "local": true,
     "pef": 0.4,
     "CO2": 0.91,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "reineclaude.svg"
   },
   {
     "label": { "fr": "Rhubarbe" },
@@ -520,7 +576,8 @@
     "local": true,
     "pef": 0.8,
     "CO2": 0.69,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "rhubarbe.svg"
   },
   {
     "label": { "fr": "Pêche" },
@@ -530,7 +587,8 @@
     "pef": 0.38,
     "CO2": 1.14,
     "suggestions": true,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "peche.svg"
   },
   {
     "label": { "fr": "Cerise" },
@@ -540,7 +598,8 @@
     "pef": 0.43,
     "CO2": 1.27,
     "suggestions": true,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "cerise.svg"
   },
   {
     "label": { "fr": "Abricot" },
@@ -549,7 +608,8 @@
     "local": true,
     "pef": 0.12,
     "CO2": 0.86,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "abricot.svg"
   },
   {
     "label": { "fr": "Framboise" },
@@ -558,7 +618,8 @@
     "local": true,
     "pef": 0.42,
     "CO2": 0.91,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "framboise.svg"
   },
   {
     "label": { "fr": "Poire" },
@@ -567,7 +628,8 @@
     "local": true,
     "pef": 0.09,
     "CO2": 0.25,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "poire.svg"
   },
   {
     "label": { "fr": "Raisin" },
@@ -577,7 +639,8 @@
     "pef": 0.11,
     "CO2": 0.63,
     "suggestions": true,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "raisin.svg"
   },
   {
     "label": { "fr": "Aubergine" },
@@ -587,7 +650,8 @@
     "pef": 0.49,
     "CO2": 5.31,
     "suggestions": true,
-    "type": "legume"
+    "type": "legume",
+    "img": "aubergine.svg"
   },
   {
     "label": { "fr": "Brocoli" },
@@ -597,7 +661,8 @@
     "pef": 0.08,
     "CO2": 0.68,
     "suggestions": true,
-    "type": "legume"
+    "type": "legume",
+    "img": "brocoli.svg"
   },
   {
     "label": { "fr": "Tomate" },
@@ -607,7 +672,8 @@
     "pef": 0.1,
     "CO2": 0.62,
     "suggestions": true,
-    "type": "fruit_et_legume"
+    "type": "fruit_et_legume",
+    "img": "tomate.svg"
   },
   {
     "label": { "fr": "Ananas" },
@@ -616,7 +682,8 @@
     "local": false,
     "pef": 0.13,
     "CO2": 1.15,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "ananas.svg"
   },
   {
     "label": { "fr": "Banane" },
@@ -625,7 +692,8 @@
     "local": false,
     "pef": 0.26,
     "CO2": 1.87,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "banane.svg"
   },
   {
     "label": { "fr": "Mangue" },
@@ -634,7 +702,8 @@
     "local": false,
     "pef": 1.24,
     "CO2": 14.9,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "mangue.svg"
   },
   {
     "label": { "fr": "Avocat" },
@@ -643,7 +712,8 @@
     "local": false,
     "pef": 0.55,
     "CO2": 2.75,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "avocat.svg"
   },
   {
     "label": { "fr": "Carambole" },
@@ -652,7 +722,8 @@
     "local": false,
     "pef": 0.22,
     "CO2": 0.48,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "carambole.svg"
   },
   {
     "label": { "fr": "Datte" },
@@ -661,7 +732,8 @@
     "local": false,
     "pef": 0.45,
     "CO2": 3.94,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "datte.svg"
   },
   {
     "label": { "fr": "Fruit de la passion" },
@@ -670,7 +742,8 @@
     "local": false,
     "pef": 0.12,
     "CO2": 0.91,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "fruitdelapassion.svg"
   },
   {
     "label": { "fr": "Grenade" },
@@ -679,7 +752,8 @@
     "local": false,
     "pef": 0.07,
     "CO2": 0.43,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "grenade.svg"
   },
   {
     "label": { "fr": "Kaki" },
@@ -688,7 +762,8 @@
     "local": false,
     "pef": 0.12,
     "CO2": 0.91,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "kaki.svg"
   },
   {
     "label": { "fr": "Noix de coco" },
@@ -697,7 +772,8 @@
     "local": false,
     "pef": 0.5,
     "CO2": 2.94,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "noixdecoco.svg"
   },
   {
     "label": { "fr": "Pastèque" },
@@ -706,6 +782,7 @@
     "local": false,
     "pef": 0.12,
     "CO2": 0.59,
-    "type": "fruit"
+    "type": "fruit",
+    "img": "pasteque.svg"
   }
 ]

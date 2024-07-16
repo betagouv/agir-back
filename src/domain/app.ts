@@ -54,7 +54,7 @@ export class App {
   }
 
   public static getBaseURLFront(): string {
-    return process.env.BASE_URL_FRONT;
+    return process.env.BASE_URL_FRONT ? process.env.BASE_URL_FRONT : '';
   }
   public static getBaseURLBack(): string {
     return process.env.BASE_URL;

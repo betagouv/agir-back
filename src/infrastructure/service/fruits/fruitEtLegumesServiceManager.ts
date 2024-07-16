@@ -18,6 +18,7 @@ export type rawEntry = {
   CO2: number;
   suggestions?: boolean;
   type?: FruitLegume;
+  img?: string;
 };
 
 @Injectable()
@@ -56,6 +57,10 @@ export class FruitsEtLegumesServiceManager implements LiveServiceManager {
   public getType(nom: string): FruitLegume {
     const entry = this.entriesByNameMap.get(nom);
     return entry ? entry.type : null;
+  }
+  public getImageFileName(nom: string): string {
+    const entry = this.entriesByNameMap.get(nom);
+    return entry ? entry.img : null;
   }
 
   public getMonthEntries(month: number) {

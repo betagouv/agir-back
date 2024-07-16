@@ -842,6 +842,7 @@ describe('RechercheServices (API test)', () => {
   it(`POST /utlilisateur/id/recherche_services/impact_transports/search renvoie une liste de résultats pour recherche par distance`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
+    process.env.BASE_URL_FRONT = 'https://site';
 
     // WHEN
     const response = await TestUtil.POST(
@@ -860,6 +861,7 @@ describe('RechercheServices (API test)', () => {
       nombre_favoris: 0,
       titre: 'Vélo ou marche',
       distance_metres: 10000,
+      image_url: 'https://site/impact_co2_img_transports/velo.svg',
     });
     expect(response.body[10]).toStrictEqual({
       est_favoris: false,
@@ -868,12 +870,14 @@ describe('RechercheServices (API test)', () => {
       nombre_favoris: 0,
       titre: 'Voiture thermique',
       distance_metres: 10000,
+      image_url: 'https://site/impact_co2_img_transports/voiturethermique.svg',
     });
   });
 
   it(`POST /utlilisateur/id/recherche_services/impact_transports/search renvoie une liste de résultats`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
+    process.env.BASE_URL_FRONT = 'https://site';
 
     // WHEN
     const response = await TestUtil.POST(
@@ -895,6 +899,7 @@ describe('RechercheServices (API test)', () => {
       nombre_favoris: 0,
       titre: 'Vélo ou marche',
       distance_metres: 1141,
+      image_url: 'https://site/impact_co2_img_transports/velo.svg',
     });
     expect(response.body[15]).toStrictEqual({
       est_favoris: false,
@@ -903,12 +908,14 @@ describe('RechercheServices (API test)', () => {
       nombre_favoris: 0,
       titre: 'Voiture thermique',
       distance_metres: 2779,
+      image_url: 'https://site/impact_co2_img_transports/voiturethermique.svg',
     });
   });
 
   it(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    process.env.BASE_URL_FRONT = 'https://site';
 
     // WHEN
     const response = await TestUtil.POST(
@@ -926,6 +933,7 @@ describe('RechercheServices (API test)', () => {
       titre: 'Poire',
       emoji: '🍐',
       type_fruit_legume: FruitLegume.fruit,
+      image_url: 'https://site/impact_co2_img_fruits_legumes/poire.svg',
     });
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
@@ -958,6 +966,7 @@ describe('RechercheServices (API test)', () => {
       titre: 'Ail',
       emoji: '🌱',
       type_fruit_legume: 'legume',
+      image_url: '/impact_co2_img_fruits_legumes/ail.svg',
     });
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');

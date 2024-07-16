@@ -36,6 +36,26 @@ class Mode {
   static class_rail = '2,3,10,11,14,15';
 }
 
+class ImageMap {
+  static '1' = 'avion.svg';
+  static '2' = 'tgv.svg';
+  static '3' = 'intercites.svg';
+  static '4' = 'voiturethermique.svg';
+  static '5' = 'voitureelectrique.svg';
+  static '6' = 'autocar.svg';
+  static '7' = 'velo.svg';
+  static '8' = 'veloelectrique.svg';
+  static '9' = 'busthermique.svg';
+  static '10' = 'tramway.svg';
+  static '11' = 'metro.svg';
+  static '12' = 'scooter.svg';
+  static '13' = 'moto.svg';
+  static '14' = 'rer.svg';
+  static '15' = 'ter.svg';
+  static '16' = 'buselectrique.svg';
+  static '21' = 'busgnv.svg';
+}
+
 export type ImpactResponse = {
   data: [
     {
@@ -122,6 +142,10 @@ export class ImpactTransportsRepository implements FinderInterface {
           titre: d.name,
           impact_carbone_kg: d.value,
           distance_metres: distance_metres,
+          image_url:
+            App.getBaseURLFront() +
+            '/impact_co2_img_transports/' +
+            ImageMap[d.id.toString()],
         }),
     );
   }

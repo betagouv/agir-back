@@ -54,6 +54,10 @@ export class FruitsLegumesRepository implements FinderInterface {
           impact_carbone_kg: r.ecv,
           emoji: this.fruitsEtLegumesServiceManager.getEmoji(r.name),
           type_fruit_legume: this.fruitsEtLegumesServiceManager.getType(r.name),
+          image_url:
+            App.getBaseURLFront() +
+            '/impact_co2_img_fruits_legumes/' +
+            this.fruitsEtLegumesServiceManager.getImageFileName(r.name),
         }),
     );
 
