@@ -117,6 +117,9 @@ export class QuestionKYC implements TaggedContent {
   public getDistinctText(): string {
     return this.question;
   }
+  public isLocal(): boolean {
+    return false;
+  }
 
   public includesReponseCode(code: string): boolean {
     if (!this.hasAnyResponses()) {

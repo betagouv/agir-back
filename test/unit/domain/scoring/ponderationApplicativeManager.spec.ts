@@ -25,6 +25,7 @@ describe('PonderationApplicativeManager', () => {
       score: 0,
       getTags: () => [TagRubrique.R32, TagRubrique.R33, TagRubrique.R1],
       getDistinctText: () => 'abc',
+      isLocal: () => false,
     };
 
     // WHEN
@@ -33,6 +34,21 @@ describe('PonderationApplicativeManager', () => {
 
     expect(Math.round(content.score)).toEqual(0);
   });
+  it('increaseScoreContent : ajout 10 pour contenu local', () => {
+    // GIVEN
+    const content: TaggedContent = {
+      score: 0,
+      getTags: () => [TagRubrique.R32, TagRubrique.R33, TagRubrique.R1],
+      getDistinctText: () => 'abc',
+      isLocal: () => true,
+    };
+
+    // WHEN
+    PonderationApplicativeManager.increaseScoreContent(content, {});
+    // THEN
+
+    expect(Math.round(content.score)).toEqual(10);
+  });
   it('increaseScoreContent : sum ok, noel ponderation', () => {
     // GIVEN
     process.env.PONDERATION_RUBRIQUES = 'noel';
@@ -40,6 +56,7 @@ describe('PonderationApplicativeManager', () => {
       score: 0,
       getTags: () => [TagRubrique.R32, TagRubrique.R33, TagRubrique.R1],
       getDistinctText: () => 'abc',
+      isLocal: () => false,
     };
 
     // WHEN
@@ -55,6 +72,7 @@ describe('PonderationApplicativeManager', () => {
       score: 0,
       getTags: () => [Tag.transport],
       getDistinctText: () => 'abc',
+      isLocal: () => false,
     };
 
     // WHEN
@@ -72,6 +90,7 @@ describe('PonderationApplicativeManager', () => {
       score: 0,
       getTags: () => [TagRubrique.R1, TagRubrique.R2],
       getDistinctText: () => 'abc',
+      isLocal: () => false,
     };
 
     // WHEN

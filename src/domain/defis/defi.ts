@@ -91,4 +91,7 @@ export class Defi implements TaggedContent {
   public getDistinctText(): string {
     return this.titre;
   }
+  public isLocal(): boolean {
+    return false;
+  }
 }

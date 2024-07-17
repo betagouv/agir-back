@@ -302,7 +302,7 @@ export class TestUtil {
       tags_utilisateur: [],
       rubrique_ids: ['3', '4'],
       rubrique_labels: ['r3', 'r4'],
-      codes_postaux: ['91120'],
+      codes_postaux: [],
       duree: 'pas long',
       frequence: 'souvent',
       difficulty: 1,

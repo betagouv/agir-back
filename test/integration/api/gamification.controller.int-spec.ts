@@ -238,7 +238,7 @@ describe('Gamification  (API test)', () => {
       id: '4',
       prenom: 'dijon_1',
       email: '4',
-      points_classement: 10,
+      points_classement: 11,
       code_postal_classement: '21000',
       commune_classement: 'DIJON',
     });
@@ -246,7 +246,7 @@ describe('Gamification  (API test)', () => {
       id: 'utilisateur-id',
       prenom: 'dijon_2',
       email: '5',
-      points_classement: 20,
+      points_classement: 21,
       code_postal_classement: '21000',
       commune_classement: 'DIJON',
     });
@@ -261,14 +261,16 @@ describe('Gamification  (API test)', () => {
     expect(response.body.utilisateur.rank).toEqual(2);
     expect(response.body.top_trois[0].prenom).toEqual('palaiseau_3');
     expect(response.body.utilisateur).toEqual({
-      points: 20,
+      points: 21,
       rank: 2,
       prenom: 'dijon_2',
     });
     expect(response.body.classement_utilisateur[0].prenom).toEqual(
       'palaiseau_3',
     );
-    expect(response.body.classement_utilisateur[4].prenom).toEqual('dijon_1');
+    expect(response.body.classement_utilisateur[4].prenom).toEqual(
+      'palaiseau_1',
+    );
     expect(response.body.pourcentile).toEqual(Pourcentile.pourcent_25);
     expect(response.body.code_postal).toEqual(null);
     expect(response.body.commune_label).toEqual(null);

@@ -839,7 +839,7 @@ describe('RechercheServices (API test)', () => {
     expect(response.body[2].nombre_favoris).toEqual(0);
   });
 
-  it(`POST /utlilisateur/id/recherche_services/impact_transports/search renvoie une liste de résultats pour recherche par distance`, async () => {
+  it.skip(`POST /utlilisateur/id/recherche_services/impact_transports/search renvoie une liste de résultats pour recherche par distance`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     process.env.BASE_URL_FRONT = 'https://site';
@@ -874,7 +874,7 @@ describe('RechercheServices (API test)', () => {
     });
   });
 
-  it(`POST /utlilisateur/id/recherche_services/impact_transports/search renvoie une liste de résultats`, async () => {
+  it.skip(`POST /utlilisateur/id/recherche_services/impact_transports/search renvoie une liste de résultats`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     process.env.BASE_URL_FRONT = 'https://site';

@@ -56,6 +56,9 @@ export class PonderationApplicativeManager {
         score += tag_value;
       }
     });
+    if (content.isLocal()) {
+      score += 10;
+    }
     content.score +=
       score + PonderationApplicativeManager.hash(content.getDistinctText());
   }
