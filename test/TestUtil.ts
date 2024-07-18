@@ -730,14 +730,14 @@ export class TestUtil {
       utilisateurId: 'utilisateur-id',
       data: [
         {
-          time: new Date(123),
-          value: 100,
-          value_at_normal_temperature: 110,
+          date: new Date(123),
+          day_value: 100,
+          value_cumulee: null,
         },
         {
-          time: new Date(456),
-          value: 110,
-          value_at_normal_temperature: 120,
+          date: new Date(456),
+          day_value: 110,
+          value_cumulee: null,
         },
       ],
       ...override,

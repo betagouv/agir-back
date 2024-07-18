@@ -637,14 +637,12 @@ describe('Admin (API test)', () => {
       utilisateurId: '1',
       data: [
         {
-          time: new Date(123),
+          date: new Date(123),
           value: 100,
-          value_at_normal_temperature: 0,
         },
         {
-          time: new Date(123),
+          date: new Date(123),
           value: 110,
-          value_at_normal_temperature: 0,
         },
       ],
     });
@@ -654,14 +652,12 @@ describe('Admin (API test)', () => {
       winter_pk: '222',
       data: [
         {
-          time: new Date(456),
+          date: new Date(456),
           value: 210,
-          value_at_normal_temperature: 0,
         },
         {
-          time: new Date(123),
+          date: new Date(123),
           value: 200,
-          value_at_normal_temperature: 0,
         },
       ],
     });
@@ -877,9 +873,9 @@ describe('Admin (API test)', () => {
     // WHEN
     await linkyRepository.upsertDataForPRM('123', [
       {
-        time: new Date(),
-        value: 12,
-        value_at_normal_temperature: 14,
+        date: new Date(),
+        day_value: 12,
+        value_cumulee: null,
       },
     ]);
 

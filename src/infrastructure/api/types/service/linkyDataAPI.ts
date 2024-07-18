@@ -11,7 +11,6 @@ export enum LinkyDataDetailAPI {
 export class LinkyRawDataAPI {
   @ApiProperty() date: Date;
   @ApiProperty() valeur: number;
-  @ApiProperty() valeur_corrigee: number;
   @ApiProperty() jour?: string;
   @ApiProperty() jour_val?: number;
   @ApiProperty() semaine?: string;
@@ -20,9 +19,8 @@ export class LinkyRawDataAPI {
 
   public static map(elem: LinkyDataElement): LinkyRawDataAPI {
     return {
-      date: elem.time,
-      valeur: elem.value,
-      valeur_corrigee: elem.value_at_normal_temperature,
+      date: elem.date,
+      valeur: elem.day_value,
       jour: elem.jour_text,
       jour_val: elem.jour_val,
       semaine: elem.semaine,

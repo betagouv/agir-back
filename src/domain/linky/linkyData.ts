@@ -1,7 +1,7 @@
 export class LinkyDataElement {
-  time: Date;
-  value: number;
-  value_at_normal_temperature: number;
+  date: Date;
+  day_value: number;
+  value_cumulee: number;
   jour_text?: string;
   jour_val?: number;
   semaine?: string;
@@ -39,7 +39,7 @@ export class LinkyData {
       this.winter_pk = data.winter_pk;
       this.serie = data.serie;
       this.serie.forEach((element) => {
-        element.time = new Date(element.time);
+        element.date = new Date(element.date);
       });
       this.created_at = data.created_at;
     } else {
@@ -56,6 +56,20 @@ export class LinkyData {
     this.serie.push(element);
   }
 
+  public computeDayValueFromCumulee?() {
+    if (!this.serie || this.serie.length < 2) {
+      return;
+    }
+
+    for (let index = 1; index < this.serie.length; index++) {
+      const element_day_before = this.serie[index - 1];
+      const element = this.serie[index];
+      element.day_value =
+        element.value_cumulee - element_day_before.value_cumulee;
+    }
+    this.serie[0].day_value = this.serie[1].day_value;
+  }
+
   public compare14joursEntre2ans?(): {
     data: LinkyDataElement[];
     commentaires: string[];
@@ -64,7 +78,7 @@ export class LinkyData {
       return { data: [], commentaires: [] };
     }
     const last_element = this.getLastDataNotNull();
-    const last_element_date = new Date(last_element.time);
+    const last_element_date = new Date(last_element.date);
     const last_element_date_minus14 = new Date(last_element_date);
     last_element_date_minus14.setDate(last_element_date.getDate() - 13);
 
@@ -99,10 +113,10 @@ export class LinkyData {
     });
 
     result.forEach((elem) => {
-      elem.jour_text = LinkyData.formatJour(elem.time);
-      elem.mois = LinkyData.formatMois(elem.time);
-      elem.annee = LinkyData.formatAnnee(elem.time);
-      elem.jour_val = elem.time.getDate();
+      elem.jour_text = LinkyData.formatJour(elem.date);
+      elem.mois = LinkyData.formatMois(elem.date);
+      elem.annee = LinkyData.formatAnnee(elem.date);
+      elem.jour_val = elem.date.getDate();
     });
 
     const somme_block = this.sommeElements(block);
@@ -143,7 +157,7 @@ export class LinkyData {
 
     const last_value = this.getLastDataNotNull();
 
-    const extract = this.extractLastNMonths(24, last_value.time);
+    const extract = this.extractLastNMonths(24, last_value.date);
 
     let total_last_year = 0;
     let total_this_year = 0;
@@ -158,31 +172,34 @@ export class LinkyData {
 
     for (let index = 0; index < 12; index++) {
       const mois = extract[index];
-      total_last_year += mois.value;
+      total_last_year += mois.day_value;
 
       const mois_annee_suivante = extract[index + 12];
-      total_this_year += mois_annee_suivante.value;
+      total_this_year += mois_annee_suivante.day_value;
 
       if (
-        mois_annee_suivante.value - mois.value < mois_frugal_val &&
+        mois_annee_suivante.day_value - mois.day_value < mois_frugal_val &&
         index < 11
       ) {
-        mois_frugal_val = mois_annee_suivante.value - mois.value;
-        mois_frugal = LinkyData.formatMois(mois.time);
-        annee_frugal = mois_annee_suivante.time.getFullYear();
+        mois_frugal_val = mois_annee_suivante.day_value - mois.day_value;
+        mois_frugal = LinkyData.formatMois(mois.date);
+        annee_frugal = mois_annee_suivante.date.getFullYear();
         mois_frugal_val_percent = Math.round(
           (Math.abs(mois_frugal_val) /
-            Math.max(mois_annee_suivante.value, mois.value)) *
+            Math.max(mois_annee_suivante.day_value, mois.day_value)) *
             100,
         );
       }
-      if (mois_annee_suivante.value - mois.value > mois_max_val && index < 11) {
-        mois_max_val = mois_annee_suivante.value - mois.value;
-        mois_max = LinkyData.formatMois(mois.time);
-        annee_max = mois_annee_suivante.time.getFullYear();
+      if (
+        mois_annee_suivante.day_value - mois.day_value > mois_max_val &&
+        index < 11
+      ) {
+        mois_max_val = mois_annee_suivante.day_value - mois.day_value;
+        mois_max = LinkyData.formatMois(mois.date);
+        annee_max = mois_annee_suivante.date.getFullYear();
         mois_max_val_percent = Math.round(
           (Math.abs(mois_max_val) /
-            Math.min(mois_annee_suivante.value, mois.value)) *
+            Math.min(mois_annee_suivante.day_value, mois.day_value)) *
             100,
         );
       }
@@ -212,7 +229,9 @@ export class LinkyData {
 
   public getLastRoundedValue?(): number {
     if (this.serie.length === 0) return null;
-    return Math.round(this.serie[this.serie.length - 1].value * 1000) / 1000;
+    return (
+      Math.round(this.serie[this.serie.length - 1].day_value * 1000) / 1000
+    );
   }
 
   public getLastVariation?(): {
@@ -224,12 +243,12 @@ export class LinkyData {
 
     const last_day = this.serie[this.serie.length - 1];
     const previous_day = this.serie[this.serie.length - 2];
-    const valN_2 = previous_day.value;
-    const valN_1 = last_day.value;
+    const valN_2 = previous_day.day_value;
+    const valN_1 = last_day.day_value;
     return {
       pourcent: Math.floor(((valN_1 - valN_2) / valN_2) * 10000) / 100,
-      day: LinkyData.formatJour(last_day.time),
-      previous_day: LinkyData.formatJour(previous_day.time),
+      day: LinkyData.formatJour(last_day.date),
+      previous_day: LinkyData.formatJour(previous_day.date),
     };
   }
 
@@ -237,10 +256,10 @@ export class LinkyData {
     let result = this.serie.slice(-nombre);
     result = result.map((elem) => {
       const new_data: LinkyDataElement = {
-        time: elem.time,
-        value: elem.value,
-        value_at_normal_temperature: elem.value_at_normal_temperature,
-        jour_text: LinkyData.formatJour(elem.time),
+        date: elem.date,
+        day_value: elem.day_value,
+        jour_text: LinkyData.formatJour(elem.date),
+        value_cumulee: elem.value_cumulee,
       };
       return new_data;
     });
@@ -255,16 +274,14 @@ export class LinkyData {
       index_sem = index_sem + 7
     ) {
       let cumul = 0;
-      let cumul_corrigee = 0;
       for (let index = index_sem; index < index_sem + 7; index++) {
         const element = extract[index];
-        cumul += element.value;
-        cumul_corrigee += element.value_at_normal_temperature;
+        cumul += element.day_value;
       }
       result.push({
-        time: this.serie[index_sem].time,
-        value: cumul,
-        value_at_normal_temperature: cumul_corrigee,
+        date: this.serie[index_sem].date,
+        day_value: cumul,
+        value_cumulee: null,
       });
     }
     return result;
@@ -315,7 +332,7 @@ export class LinkyData {
   sommeElements?(list: LinkyDataElement[]): number {
     let result = 0;
     list.forEach((elem) => {
-      result += elem.value;
+      result += elem.day_value;
     });
     return result;
   }
@@ -324,19 +341,17 @@ export class LinkyData {
     year_month_data.years.forEach((year, key_year) => {
       year.months.forEach((month, key_month) => {
         let cumul = 0;
-        let cumul_corrigee = 0;
         month.forEach((element) => {
-          cumul += element.value;
-          cumul_corrigee += element.value_at_normal_temperature;
+          cumul += element.day_value;
         });
         const date_to_set = new Date(key_year, key_month);
         year.months.set(key_month, [
           {
-            time: date_to_set,
-            value: cumul,
-            value_at_normal_temperature: cumul_corrigee,
+            date: date_to_set,
+            day_value: cumul,
             mois: LinkyData.formatMois(date_to_set),
             annee: LinkyData.formatAnnee(date_to_set),
+            value_cumulee: null,
           },
         ]);
       });
@@ -345,8 +360,8 @@ export class LinkyData {
 
   fillRequiredYearMonthsData?(year_month_data: YearMonthLinkyData) {
     this.serie.forEach((element) => {
-      const current_year = element.time.getFullYear();
-      const current_month = element.time.getMonth();
+      const current_year = element.date.getFullYear();
+      const current_month = element.date.getMonth();
       if (year_month_data.years.get(current_year)) {
         const month_entry = year_month_data.years
           .get(current_year)
@@ -361,8 +376,8 @@ export class LinkyData {
   searchDays?(startDate: Date, endDate: Date): LinkyDataElement[] {
     const dayLinkyData = new DayLinkyData(startDate, endDate);
     this.serie.forEach((element) => {
-      if (LinkyData.isBetween(element.time, startDate, endDate)) {
-        dayLinkyData.days.set(element.time.getTime(), element);
+      if (LinkyData.isBetween(element.date, startDate, endDate)) {
+        dayLinkyData.days.set(element.date.getTime(), element);
       }
     });
     return Array.from(dayLinkyData.days.values());
@@ -371,7 +386,7 @@ export class LinkyData {
   searchSingleDay?(day: Date): LinkyDataElement {
     for (let index = 0; index < this.serie.length; index++) {
       const element = this.serie[index];
-      if (LinkyData.isBetween(element.time, day, day)) {
+      if (LinkyData.isBetween(element.date, day, day)) {
         return element;
       }
     }
@@ -403,13 +418,13 @@ export class LinkyData {
     return result;
   }
   private orderDataSerie?() {
-    this.serie.sort((a, b) => a.time.getTime() - b.time.getTime());
+    this.serie.sort((a, b) => a.date.getTime() - b.date.getTime());
   }
   private unduplicateDataSerie?() {
     const time_map: Map<string, LinkyDataElement> = new Map();
 
     this.serie.forEach((element) => {
-      time_map.set(element.time.toISOString(), element);
+      time_map.set(element.date.toISOString(), element);
     });
 
     this.serie = Array.from(time_map.values());
@@ -438,7 +453,7 @@ export class LinkyData {
   private getLastDataNotNull?(): LinkyDataElement | null {
     for (let index = this.serie.length - 1; index >= 0; index--) {
       const element = this.serie[index];
-      if (element.value !== null) {
+      if (element.day_value !== null) {
         return element;
       }
     }

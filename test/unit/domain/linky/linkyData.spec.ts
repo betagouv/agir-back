@@ -25,14 +25,14 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2021-12-21T12:00:00.000Z'),
-          value: 0,
-          value_at_normal_temperature: 1,
+          date: new Date('2021-12-21T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 0,
         },
         {
-          time: new Date('2021-12-22T12:00:00.000Z'),
-          value: 2,
-          value_at_normal_temperature: 3,
+          date: new Date('2021-12-22T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 2,
         },
       ],
     });
@@ -49,9 +49,9 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2021-12-21T12:00:00.000Z'),
-          value: 12.123456876,
-          value_at_normal_temperature: 1,
+          date: new Date('2021-12-21T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 12.123456876,
         },
       ],
     });
@@ -81,9 +81,9 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2021-12-21T12:00:00.000Z'),
-          value: 0,
-          value_at_normal_temperature: 1,
+          date: new Date('2021-12-21T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 0,
         },
       ],
     });
@@ -100,14 +100,14 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2021-12-21T12:00:00.000Z'),
-          value: 10,
-          value_at_normal_temperature: 1,
+          date: new Date('2021-12-21T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 10,
         },
         {
-          time: new Date('2021-12-22T12:00:00.000Z'),
-          value: 12,
-          value_at_normal_temperature: 1,
+          date: new Date('2021-12-22T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 12,
         },
       ],
     });
@@ -125,14 +125,14 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2021-12-21T12:00:00.000Z'),
-          value: 10,
-          value_at_normal_temperature: 1,
+          date: new Date('2021-12-21T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 10,
         },
         {
-          time: new Date('2021-12-22T12:00:00.000Z'),
-          value: 8,
-          value_at_normal_temperature: 1,
+          date: new Date('2021-12-22T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 8,
         },
       ],
     });
@@ -149,14 +149,14 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2021-12-21T12:00:00.000Z'),
-          value: 14,
-          value_at_normal_temperature: 1,
+          date: new Date('2021-12-21T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 14,
         },
         {
-          time: new Date('2021-12-22T12:00:00.000Z'),
-          value: 15,
-          value_at_normal_temperature: 1,
+          date: new Date('2021-12-22T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 15,
         },
       ],
     });
@@ -173,24 +173,24 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2021-12-21T12:00:00.000Z'),
-          value: 0,
-          value_at_normal_temperature: 1,
+          date: new Date('2021-12-21T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 0,
         },
         {
-          time: new Date('2021-12-22T12:00:00.000Z'),
-          value: 0,
-          value_at_normal_temperature: 1,
+          date: new Date('2021-12-22T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 0,
         },
         {
-          time: new Date('2021-12-23T12:00:00.000Z'),
-          value: 0,
-          value_at_normal_temperature: 1,
+          date: new Date('2021-12-23T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 0,
         },
         {
-          time: new Date('2021-12-24T12:00:00.000Z'),
-          value: 0,
-          value_at_normal_temperature: 1,
+          date: new Date('2021-12-24T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 0,
         },
       ],
     });
@@ -213,9 +213,9 @@ describe('LinkyData', () => {
     for (let index = 1; index < 31; index++) {
       current_date.setDate(index);
       linkyData.serie.push({
-        time: new Date(current_date.getTime()),
-        value: index,
-        value_at_normal_temperature: index * 10,
+        date: new Date(current_date.getTime()),
+        day_value: index,
+        value_cumulee: null,
       });
     }
 
@@ -224,10 +224,8 @@ describe('LinkyData', () => {
 
     // THEN
     expect(result).toHaveLength(2);
-    expect(result[0].value).toEqual(140);
-    expect(result[0].value_at_normal_temperature).toEqual(1400);
-    expect(result[1].value).toEqual(189);
-    expect(result[1].value_at_normal_temperature).toEqual(1890);
+    expect(result[0].day_value).toEqual(140);
+    expect(result[1].day_value).toEqual(189);
   });
   it('fillRequiredYearMonthsData : extract nothing if no data ', () => {
     // GIVEN
@@ -252,34 +250,34 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2021-12-21T12:00:00.000Z'),
-          value: 11,
-          value_at_normal_temperature: 1,
+          date: new Date('2021-12-21T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 11,
         },
         {
-          time: new Date('2021-11-05T12:00:00.000Z'),
-          value: 22,
-          value_at_normal_temperature: 1,
+          date: new Date('2021-11-05T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 22,
         },
         {
-          time: new Date('2022-01-10T12:00:00.000Z'),
-          value: 33,
-          value_at_normal_temperature: 1,
+          date: new Date('2022-01-10T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 33,
         },
         {
-          time: new Date('2022-02-23T12:00:00.000Z'),
-          value: 44,
-          value_at_normal_temperature: 1,
+          date: new Date('2022-02-23T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 44,
         },
         {
-          time: new Date('2022-03-24T12:00:00.000Z'),
-          value: 55,
-          value_at_normal_temperature: 1,
+          date: new Date('2022-03-24T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 55,
         },
         {
-          time: new Date('2022-03-25T12:00:00.000Z'),
-          value: 66,
-          value_at_normal_temperature: 1,
+          date: new Date('2022-03-25T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 66,
         },
       ],
     });
@@ -299,14 +297,14 @@ describe('LinkyData', () => {
     // THEN
     expect(input.years.size).toEqual(2);
     expect(input.years.get(2021).months.get(10)).toHaveLength(1);
-    expect(input.years.get(2021).months.get(10)[0].value).toEqual(22);
+    expect(input.years.get(2021).months.get(10)[0].day_value).toEqual(22);
 
     expect(input.years.get(2022).months.get(0)).toHaveLength(1);
-    expect(input.years.get(2022).months.get(0)[0].value).toEqual(33);
+    expect(input.years.get(2022).months.get(0)[0].day_value).toEqual(33);
 
     expect(input.years.get(2022).months.get(2)).toHaveLength(2);
-    expect(input.years.get(2022).months.get(2)[0].value).toEqual(55);
-    expect(input.years.get(2022).months.get(2)[1].value).toEqual(66);
+    expect(input.years.get(2022).months.get(2)[0].day_value).toEqual(55);
+    expect(input.years.get(2022).months.get(2)[1].day_value).toEqual(66);
   });
   it('extractLastNMonths : extract proper data for 3 last months ', () => {
     // GIVEN
@@ -314,34 +312,34 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2021-12-21T12:00:00.000Z'),
-          value: 11,
-          value_at_normal_temperature: 1,
+          date: new Date('2021-12-21T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 11,
         },
         {
-          time: new Date('2021-11-05T12:00:00.000Z'),
-          value: 22,
-          value_at_normal_temperature: 1,
+          date: new Date('2021-11-05T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 22,
         },
         {
-          time: new Date('2022-01-10T12:00:00.000Z'),
-          value: 33,
-          value_at_normal_temperature: 1,
+          date: new Date('2022-01-10T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 33,
         },
         {
-          time: new Date('2022-02-23T12:00:00.000Z'),
-          value: 44,
-          value_at_normal_temperature: 1,
+          date: new Date('2022-02-23T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 44,
         },
         {
-          time: new Date('2022-03-24T12:00:00.000Z'),
-          value: 55,
-          value_at_normal_temperature: 1,
+          date: new Date('2022-03-24T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 55,
         },
         {
-          time: new Date('2022-03-25T12:00:00.000Z'),
-          value: 66,
-          value_at_normal_temperature: 1,
+          date: new Date('2022-03-25T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 66,
         },
       ],
     });
@@ -365,11 +363,10 @@ describe('LinkyData', () => {
     expect(result[2].annee).toEqual('2022');
     expect(result[3].annee).toEqual('2022');
 
-    expect(result[0].value).toEqual(11);
-    expect(result[1].value).toEqual(33);
-    expect(result[2].value).toEqual(44);
-    expect(result[3].value).toEqual(121);
-    expect(result[3].value_at_normal_temperature).toEqual(2);
+    expect(result[0].day_value).toEqual(11);
+    expect(result[1].day_value).toEqual(33);
+    expect(result[2].day_value).toEqual(44);
+    expect(result[3].day_value).toEqual(121);
   });
   it('extractLastNMonths : handles ok empty months ', () => {
     // GIVEN
@@ -377,29 +374,29 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2021-12-21T12:00:00.000Z'),
-          value: 11,
-          value_at_normal_temperature: 1,
+          date: new Date('2021-12-21T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 11,
         },
         {
-          time: new Date('2021-11-05T12:00:00.000Z'),
-          value: 22,
-          value_at_normal_temperature: 1,
+          date: new Date('2021-11-05T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 22,
         },
         {
-          time: new Date('2022-01-10T12:00:00.000Z'),
-          value: 33,
-          value_at_normal_temperature: 1,
+          date: new Date('2022-01-10T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 33,
         },
         {
-          time: new Date('2022-03-24T12:00:00.000Z'),
-          value: 55,
-          value_at_normal_temperature: 1,
+          date: new Date('2022-03-24T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 55,
         },
         {
-          time: new Date('2022-03-25T12:00:00.000Z'),
-          value: 66,
-          value_at_normal_temperature: 1,
+          date: new Date('2022-03-25T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 66,
         },
       ],
     });
@@ -423,10 +420,10 @@ describe('LinkyData', () => {
     expect(result[2].annee).toEqual('2022');
     expect(result[3].annee).toEqual('2022');
 
-    expect(result[0].value).toEqual(33);
-    expect(result[1].value).toEqual(0);
-    expect(result[2].value).toEqual(121);
-    expect(result[3].value).toEqual(0);
+    expect(result[0].day_value).toEqual(33);
+    expect(result[1].day_value).toEqual(0);
+    expect(result[2].day_value).toEqual(121);
+    expect(result[3].day_value).toEqual(0);
   });
   it('extractLastNMonths : handles ok le premier janvier ', () => {
     // GIVEN
@@ -434,14 +431,14 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2000-01-01T12:00:00.000Z'),
-          value: 100,
-          value_at_normal_temperature: 100,
+          date: new Date('2000-01-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 100,
         },
         {
-          time: new Date('2001-01-01T12:00:00.000Z'),
-          value: 110,
-          value_at_normal_temperature: 110,
+          date: new Date('2001-01-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 110,
         },
       ],
     });
@@ -456,16 +453,16 @@ describe('LinkyData', () => {
     expect(result).toHaveLength(24);
 
     expect(result[23].annee).toEqual('2001');
-    expect(result[23].value).toEqual(110);
+    expect(result[23].day_value).toEqual(110);
     expect(result[23].mois).toEqual('janvier');
 
     expect(result[11].annee).toEqual('2000');
-    expect(result[11].value).toEqual(100);
+    expect(result[11].day_value).toEqual(100);
     expect(result[11].mois).toEqual('janvier');
 
-    expect(result[22].value).toEqual(0);
-    expect(result[13].value).toEqual(0);
-    expect(result[10].value).toEqual(0);
+    expect(result[22].day_value).toEqual(0);
+    expect(result[13].day_value).toEqual(0);
+    expect(result[10].day_value).toEqual(0);
   });
 
   it('listMonthsFromDate : list months backward from date ', () => {
@@ -492,19 +489,19 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2022-03-24T12:00:00.000Z'),
-          value: 33,
-          value_at_normal_temperature: 1,
+          date: new Date('2022-03-24T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 33,
         },
         {
-          time: new Date('2022-01-10T12:00:00.000Z'),
-          value: 11,
-          value_at_normal_temperature: 1,
+          date: new Date('2022-01-10T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 11,
         },
         {
-          time: new Date('2022-02-25T12:00:00.000Z'),
-          value: 22,
-          value_at_normal_temperature: 1,
+          date: new Date('2022-02-25T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 22,
         },
       ],
     });
@@ -513,9 +510,9 @@ describe('LinkyData', () => {
     linkyData.cleanData();
 
     // THEN
-    expect(linkyData.serie[0].value).toEqual(11);
-    expect(linkyData.serie[1].value).toEqual(22);
-    expect(linkyData.serie[2].value).toEqual(33);
+    expect(linkyData.serie[0].day_value).toEqual(11);
+    expect(linkyData.serie[1].day_value).toEqual(22);
+    expect(linkyData.serie[2].day_value).toEqual(33);
   });
   it('cleanData : supprime les doublons de date par un parcours gauche droite ddes série (réception ancienne vers nouvelles)', () => {
     // GIVEN
@@ -523,24 +520,24 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2022-01-10T12:00:00.000Z'),
-          value: 11,
-          value_at_normal_temperature: 1,
+          date: new Date('2022-01-10T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 11,
         },
         {
-          time: new Date('2022-03-24T12:00:00.000Z'),
-          value: 33,
-          value_at_normal_temperature: 1,
+          date: new Date('2022-03-24T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 33,
         },
         {
-          time: new Date('2022-01-10T12:00:00.000Z'),
-          value: 12,
-          value_at_normal_temperature: 1,
+          date: new Date('2022-01-10T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 12,
         },
         {
-          time: new Date('2022-03-24T12:00:00.000Z'),
-          value: 34,
-          value_at_normal_temperature: 1,
+          date: new Date('2022-03-24T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 34,
         },
       ],
     });
@@ -550,8 +547,8 @@ describe('LinkyData', () => {
 
     // THEN
     expect(linkyData.serie).toHaveLength(2);
-    expect(linkyData.serie[0].value).toEqual(12);
-    expect(linkyData.serie[1].value).toEqual(34);
+    expect(linkyData.serie[0].day_value).toEqual(12);
+    expect(linkyData.serie[1].day_value).toEqual(34);
   });
   it('compare2AnsParMois : extait correctement 24 mois', () => {
     // GIVEN
@@ -559,135 +556,135 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2000-01-01T12:00:00.000Z'),
-          value: 1,
-          value_at_normal_temperature: 10,
+          date: new Date('2000-01-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 1,
         },
         {
-          time: new Date('2000-02-01T12:00:00.000Z'),
-          value: 2,
-          value_at_normal_temperature: 20,
+          date: new Date('2000-02-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 2,
         },
         {
-          time: new Date('2000-03-01T12:00:00.000Z'),
-          value: 3,
-          value_at_normal_temperature: 30,
+          date: new Date('2000-03-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 3,
         },
         {
-          time: new Date('2000-04-01T12:00:00.000Z'),
-          value: 4,
-          value_at_normal_temperature: 40,
+          date: new Date('2000-04-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 4,
         },
         {
-          time: new Date('2000-05-01T12:00:00.000Z'),
-          value: 5,
-          value_at_normal_temperature: 50,
+          date: new Date('2000-05-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 5,
         },
         {
-          time: new Date('2000-06-01T12:00:00.000Z'),
-          value: 6,
-          value_at_normal_temperature: 60,
+          date: new Date('2000-06-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 6,
         },
         {
-          time: new Date('2000-07-01T12:00:00.000Z'),
-          value: 7,
-          value_at_normal_temperature: 70,
+          date: new Date('2000-07-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 7,
         },
         {
-          time: new Date('2000-08-01T12:00:00.000Z'),
-          value: 8,
-          value_at_normal_temperature: 80,
+          date: new Date('2000-08-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 8,
         },
         {
-          time: new Date('2000-09-01T12:00:00.000Z'),
-          value: 9,
-          value_at_normal_temperature: 90,
+          date: new Date('2000-09-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 9,
         },
         {
-          time: new Date('2000-10-01T12:00:00.000Z'),
-          value: 10,
-          value_at_normal_temperature: 100,
+          date: new Date('2000-10-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 10,
         },
         {
-          time: new Date('2000-11-01T12:00:00.000Z'),
-          value: 11,
-          value_at_normal_temperature: 110,
+          date: new Date('2000-11-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 11,
         },
         {
-          time: new Date('2000-12-01T12:00:00.000Z'),
-          value: 12,
-          value_at_normal_temperature: 120,
+          date: new Date('2000-12-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 12,
         },
         {
-          time: new Date('2000-12-02T12:00:00.000Z'),
-          value: 13,
-          value_at_normal_temperature: 130,
+          date: new Date('2000-12-02T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 13,
         },
         //############################################
         {
-          time: new Date('2001-01-01T12:00:00.000Z'),
-          value: 10,
-          value_at_normal_temperature: 100,
+          date: new Date('2001-01-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 10,
         },
         {
-          time: new Date('2001-02-01T12:00:00.000Z'),
-          value: 20,
-          value_at_normal_temperature: 200,
+          date: new Date('2001-02-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 20,
         },
         {
-          time: new Date('2001-03-01T12:00:00.000Z'),
-          value: 30,
-          value_at_normal_temperature: 300,
+          date: new Date('2001-03-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 30,
         },
         {
-          time: new Date('2001-04-01T12:00:00.000Z'),
-          value: 40,
-          value_at_normal_temperature: 400,
+          date: new Date('2001-04-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 40,
         },
         {
-          time: new Date('2001-05-01T12:00:00.000Z'),
-          value: 50,
-          value_at_normal_temperature: 500,
+          date: new Date('2001-05-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 50,
         },
         {
-          time: new Date('2001-06-01T12:00:00.000Z'),
-          value: 60,
-          value_at_normal_temperature: 600,
+          date: new Date('2001-06-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 60,
         },
         {
-          time: new Date('2001-07-01T12:00:00.000Z'),
-          value: 70,
-          value_at_normal_temperature: 700,
+          date: new Date('2001-07-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 70,
         },
         {
-          time: new Date('2001-08-01T12:00:00.000Z'),
-          value: 80,
-          value_at_normal_temperature: 800,
+          date: new Date('2001-08-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 80,
         },
         {
-          time: new Date('2001-09-01T12:00:00.000Z'),
-          value: 90,
-          value_at_normal_temperature: 900,
+          date: new Date('2001-09-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 90,
         },
         {
-          time: new Date('2001-10-01T12:00:00.000Z'),
-          value: 100,
-          value_at_normal_temperature: 1000,
+          date: new Date('2001-10-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 100,
         },
         {
-          time: new Date('2001-11-01T12:00:00.000Z'),
-          value: 110,
-          value_at_normal_temperature: 1100,
+          date: new Date('2001-11-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 110,
         },
         {
-          time: new Date('2001-12-01T12:00:00.000Z'),
-          value: 120,
-          value_at_normal_temperature: 1200,
+          date: new Date('2001-12-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 120,
         },
         {
-          time: new Date('2001-12-02T12:00:00.000Z'),
-          value: 130,
-          value_at_normal_temperature: 1300,
+          date: new Date('2001-12-02T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 130,
         },
       ],
     });
@@ -697,12 +694,12 @@ describe('LinkyData', () => {
 
     // THEN
     expect(result).toHaveLength(24);
-    expect(result[0].value).toEqual(1);
-    expect(result[1].value).toEqual(10);
-    expect(result[2].value).toEqual(2);
-    expect(result[3].value).toEqual(20);
-    expect(result[4].value).toEqual(3);
-    expect(result[5].value).toEqual(30);
+    expect(result[0].day_value).toEqual(1);
+    expect(result[1].day_value).toEqual(10);
+    expect(result[2].day_value).toEqual(2);
+    expect(result[3].day_value).toEqual(20);
+    expect(result[4].day_value).toEqual(3);
+    expect(result[5].day_value).toEqual(30);
   });
   it('compare2AnsParMois : commentaire sur set complet', () => {
     // GIVEN
@@ -732,44 +729,44 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2000-01-01T12:00:00.000Z'),
-          value: 100,
-          value_at_normal_temperature: 100,
+          date: new Date('2000-01-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 100,
         },
         {
-          time: new Date('2000-02-01T12:00:00.000Z'),
-          value: 100,
-          value_at_normal_temperature: 100,
+          date: new Date('2000-02-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 100,
         },
         {
-          time: new Date('2000-03-01T12:00:00.000Z'),
-          value: 100,
-          value_at_normal_temperature: 100,
+          date: new Date('2000-03-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 100,
         },
         {
-          time: new Date('2000-04-01T12:00:00.000Z'),
-          value: 100,
-          value_at_normal_temperature: 100,
+          date: new Date('2000-04-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 100,
         },
         {
-          time: new Date('2001-01-01T12:00:00.000Z'),
-          value: 110,
-          value_at_normal_temperature: 110,
+          date: new Date('2001-01-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 110,
         },
         {
-          time: new Date('2001-02-01T12:00:00.000Z'),
-          value: 120,
-          value_at_normal_temperature: 120,
+          date: new Date('2001-02-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 120,
         },
         {
-          time: new Date('2001-03-01T12:00:00.000Z'),
-          value: 80,
-          value_at_normal_temperature: 80,
+          date: new Date('2001-03-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 80,
         },
         {
-          time: new Date('2001-04-01T12:00:00.000Z'),
-          value: 50,
-          value_at_normal_temperature: 50,
+          date: new Date('2001-04-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 50,
         },
       ],
     });
@@ -836,34 +833,34 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2000-01-01T12:00:00.000Z'),
-          value: 1,
-          value_at_normal_temperature: 10,
+          date: new Date('2000-01-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 1,
         },
         {
-          time: new Date('2000-01-02T12:00:00.000Z'),
-          value: 2,
-          value_at_normal_temperature: 20,
+          date: new Date('2000-01-02T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 2,
         },
         {
-          time: new Date('2000-01-03T12:00:00.000Z'),
-          value: 3,
-          value_at_normal_temperature: 30,
+          date: new Date('2000-01-03T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 3,
         },
         {
-          time: new Date('2000-01-04T12:00:00.000Z'),
-          value: 4,
-          value_at_normal_temperature: 40,
+          date: new Date('2000-01-04T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 4,
         },
         {
-          time: new Date('2000-01-05T12:00:00.000Z'),
-          value: 5,
-          value_at_normal_temperature: 50,
+          date: new Date('2000-01-05T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 5,
         },
         {
-          time: new Date('2000-01-06T12:00:00.000Z'),
-          value: 6,
-          value_at_normal_temperature: 60,
+          date: new Date('2000-01-06T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 6,
         },
       ],
     });
@@ -875,9 +872,9 @@ describe('LinkyData', () => {
 
     // THEN
     expect(elems).toHaveLength(3);
-    expect(elems[0].value).toEqual(3);
-    expect(elems[1].value).toEqual(4);
-    expect(elems[2].value).toEqual(5);
+    expect(elems[0].day_value).toEqual(3);
+    expect(elems[1].day_value).toEqual(4);
+    expect(elems[2].day_value).toEqual(5);
   });
 
   it('searchSingleDay : renvoie les bon enregirtrement', () => {
@@ -886,14 +883,14 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2000-01-01T12:00:00.000Z'),
-          value: 1,
-          value_at_normal_temperature: 10,
+          date: new Date('2000-01-01T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 1,
         },
         {
-          time: new Date('2000-01-02T12:00:00.000Z'),
-          value: 2,
-          value_at_normal_temperature: 20,
+          date: new Date('2000-01-02T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 2,
         },
       ],
     });
@@ -903,7 +900,7 @@ describe('LinkyData', () => {
     );
 
     // THEN
-    expect(elem.value).toEqual(2);
+    expect(elem.day_value).toEqual(2);
   });
   it('compare15jousEntre2ans : [] si pas de données du tout', () => {
     // GIVEN
@@ -925,14 +922,14 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2021-12-21T12:00:00.000Z'),
-          value: 0,
-          value_at_normal_temperature: 1,
+          date: new Date('2021-12-21T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 0,
         },
         {
-          time: new Date('2021-12-22T12:00:00.000Z'),
-          value: 2,
-          value_at_normal_temperature: 3,
+          date: new Date('2021-12-22T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 2,
         },
       ],
     });
@@ -1002,74 +999,74 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2022-12-07T12:00:00.000Z'),
-          value: 19.684,
-          value_at_normal_temperature: 16.79139716249968,
+          date: new Date('2022-12-07T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 19.684,
         },
         {
-          time: new Date('2022-12-08T12:00:00.000Z'),
-          value: 17.606,
-          value_at_normal_temperature: 13.95703802438703,
+          date: new Date('2022-12-08T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 17.606,
         },
         {
-          time: new Date('2022-12-09T12:00:00.000Z'),
-          value: 25.669,
-          value_at_normal_temperature: 21.55115483653999,
+          date: new Date('2022-12-09T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 25.669,
         },
         {
-          time: new Date('2022-12-10T12:00:00.000Z'),
-          value: 27.912,
-          value_at_normal_temperature: 21.35866354237153,
+          date: new Date('2022-12-10T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 27.912,
         },
         {
-          time: new Date('2022-12-11T12:00:00.000Z'),
-          value: 31.666,
-          value_at_normal_temperature: 24.88540884720465,
+          date: new Date('2022-12-11T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 31.666,
         },
         {
-          time: new Date('2022-12-12T12:00:00.000Z'),
-          value: 20.935,
-          value_at_normal_temperature: 14.6325854386163,
+          date: new Date('2022-12-12T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 20.935,
         },
         {
-          time: new Date('2022-12-13T12:00:00.000Z'),
-          value: 29.003,
-          value_at_normal_temperature: 24.96383898672045,
+          date: new Date('2022-12-13T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 29.003,
         },
         {
-          time: new Date('2023-12-07T12:00:00.000Z'),
-          value: 29.613,
-          value_at_normal_temperature: 32.67808840765969,
+          date: new Date('2023-12-07T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 29.613,
         },
         {
-          time: new Date('2023-12-08T12:00:00.000Z'),
-          value: 20.153,
-          value_at_normal_temperature: 26.20635134585184,
+          date: new Date('2023-12-08T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 20.153,
         },
         {
-          time: new Date('2023-12-09T12:00:00.000Z'),
-          value: 19.462,
-          value_at_normal_temperature: 26.85310581096721,
+          date: new Date('2023-12-09T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 19.462,
         },
         {
-          time: new Date('2023-12-10T12:00:00.000Z'),
-          value: 21.578,
-          value_at_normal_temperature: 29.73550182492967,
+          date: new Date('2023-12-10T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 21.578,
         },
         {
-          time: new Date('2023-12-11T12:00:00.000Z'),
-          value: 15.265,
-          value_at_normal_temperature: 23.95111061968533,
+          date: new Date('2023-12-11T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 15.265,
         },
         {
-          time: new Date('2023-12-12T12:00:00.000Z'),
-          value: 13.681,
-          value_at_normal_temperature: 18.93957947300541,
+          date: new Date('2023-12-12T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 13.681,
         },
         {
-          time: new Date('2023-12-13T12:00:00.000Z'),
-          value: 18.362,
-          value_at_normal_temperature: 22.77116238719901,
+          date: new Date('2023-12-13T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 18.362,
         },
       ],
     });
@@ -1103,60 +1100,60 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2022-12-10T12:00:00.000Z'),
-          value: 27.912,
-          value_at_normal_temperature: 21.35866354237153,
+          date: new Date('2022-12-10T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 27.912,
         },
         {
-          time: new Date('2022-12-11T12:00:00.000Z'),
-          value: 31.666,
-          value_at_normal_temperature: 24.88540884720465,
+          date: new Date('2022-12-11T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 31.666,
         },
         {
-          time: new Date('2022-12-12T12:00:00.000Z'),
-          value: 20.935,
-          value_at_normal_temperature: 14.6325854386163,
+          date: new Date('2022-12-12T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 20.935,
         },
         {
-          time: new Date('2022-12-13T12:00:00.000Z'),
-          value: 29.003,
-          value_at_normal_temperature: 24.96383898672045,
+          date: new Date('2022-12-13T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 29.003,
         },
 
         {
-          time: new Date('2023-12-07T12:00:00.000Z'),
-          value: 29.613,
-          value_at_normal_temperature: 32.67808840765969,
+          date: new Date('2023-12-07T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 29.613,
         },
         {
-          time: new Date('2023-12-08T12:00:00.000Z'),
-          value: 20.153,
-          value_at_normal_temperature: 26.20635134585184,
+          date: new Date('2023-12-08T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 20.153,
         },
         {
-          time: new Date('2023-12-09T12:00:00.000Z'),
-          value: 19.462,
-          value_at_normal_temperature: 26.85310581096721,
+          date: new Date('2023-12-09T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 19.462,
         },
         {
-          time: new Date('2023-12-10T12:00:00.000Z'),
-          value: 21.578,
-          value_at_normal_temperature: 29.73550182492967,
+          date: new Date('2023-12-10T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 21.578,
         },
         {
-          time: new Date('2023-12-11T12:00:00.000Z'),
-          value: 15.265,
-          value_at_normal_temperature: 23.95111061968533,
+          date: new Date('2023-12-11T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 15.265,
         },
         {
-          time: new Date('2023-12-12T12:00:00.000Z'),
-          value: 13.681,
-          value_at_normal_temperature: 18.93957947300541,
+          date: new Date('2023-12-12T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 13.681,
         },
         {
-          time: new Date('2023-12-13T12:00:00.000Z'),
-          value: 18.362,
-          value_at_normal_temperature: 22.77116238719901,
+          date: new Date('2023-12-13T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 18.362,
         },
       ],
     });
@@ -1190,39 +1187,39 @@ describe('LinkyData', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date('2023-12-07T12:00:00.000Z'),
-          value: 29.613,
-          value_at_normal_temperature: 32.67808840765969,
+          date: new Date('2023-12-07T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 29.613,
         },
         {
-          time: new Date('2023-12-08T12:00:00.000Z'),
-          value: 20.153,
-          value_at_normal_temperature: 26.20635134585184,
+          date: new Date('2023-12-08T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 20.153,
         },
         {
-          time: new Date('2023-12-09T12:00:00.000Z'),
-          value: 19.462,
-          value_at_normal_temperature: 26.85310581096721,
+          date: new Date('2023-12-09T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 19.462,
         },
         {
-          time: new Date('2023-12-10T12:00:00.000Z'),
-          value: 21.578,
-          value_at_normal_temperature: 29.73550182492967,
+          date: new Date('2023-12-10T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 21.578,
         },
         {
-          time: new Date('2023-12-11T12:00:00.000Z'),
-          value: 15.265,
-          value_at_normal_temperature: 23.95111061968533,
+          date: new Date('2023-12-11T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 15.265,
         },
         {
-          time: new Date('2023-12-12T12:00:00.000Z'),
-          value: 13.681,
-          value_at_normal_temperature: 18.93957947300541,
+          date: new Date('2023-12-12T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 13.681,
         },
         {
-          time: new Date('2023-12-13T12:00:00.000Z'),
-          value: 18.362,
-          value_at_normal_temperature: 22.77116238719901,
+          date: new Date('2023-12-13T12:00:00.000Z'),
+          value_cumulee: null,
+          day_value: 18.362,
         },
       ],
     });
@@ -1232,5 +1229,106 @@ describe('LinkyData', () => {
 
     // THEN
     expect(res.data).toHaveLength(0);
+  });
+  it('computeDayValueFromCumulee : calcul valeurs jours à partir des cumulés journaliers', () => {
+    // GIVEN
+    const linky_data = new LinkyData({
+      prm: 'abc',
+      serie: [
+        {
+          date: new Date('2023-12-07'),
+          value_cumulee: 4,
+          day_value: null,
+        },
+        {
+          date: new Date('2023-12-08'),
+          value_cumulee: 10,
+          day_value: null,
+        },
+        {
+          date: new Date('2023-12-09'),
+          value_cumulee: 20,
+          day_value: null,
+        },
+        {
+          date: new Date('2023-12-10'),
+          value_cumulee: 25,
+          day_value: null,
+        },
+      ],
+    });
+
+    // WHEN
+    linky_data.computeDayValueFromCumulee();
+
+    // THEN
+    expect(linky_data.serie).toStrictEqual([
+      {
+        date: new Date('2023-12-07'),
+        value_cumulee: 4,
+        day_value: 6,
+      },
+      {
+        date: new Date('2023-12-08'),
+        value_cumulee: 10,
+        day_value: 6,
+      },
+      {
+        date: new Date('2023-12-09'),
+        value_cumulee: 20,
+        day_value: 10,
+      },
+      {
+        date: new Date('2023-12-10'),
+        value_cumulee: 25,
+        day_value: 5,
+      },
+    ]);
+  });
+
+  it('computeDayValueFromCumulee : calcul valeurs jours à partir des cumulés journaliers - cas valeur manquante', () => {
+    // GIVEN
+    const linky_data = new LinkyData({
+      prm: 'abc',
+      serie: [
+        {
+          date: new Date('2023-12-07'),
+          value_cumulee: 10,
+          day_value: null,
+        },
+        {
+          date: new Date('2023-12-09'),
+          value_cumulee: 20,
+          day_value: null,
+        },
+        {
+          date: new Date('2023-12-10'),
+          value_cumulee: 25,
+          day_value: null,
+        },
+      ],
+    });
+
+    // WHEN
+    linky_data.computeDayValueFromCumulee();
+
+    // THEN
+    expect(linky_data.serie).toStrictEqual([
+      {
+        date: new Date('2023-12-07'),
+        value_cumulee: 10,
+        day_value: 10,
+      },
+      {
+        date: new Date('2023-12-09'),
+        value_cumulee: 20,
+        day_value: 10,
+      },
+      {
+        date: new Date('2023-12-10'),
+        value_cumulee: 25,
+        day_value: 5,
+      },
+    ]);
   });
 });

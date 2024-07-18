@@ -12,29 +12,24 @@ const INCOMMING_DATA = {
   },
   data: [
     {
-      utc_timestamp: '2023-12-04T00:00:00+00:00',
-      value: 0.33951590073077637,
-      value_at_normal_temperature: 0.22355511897321267,
+      date: '2023-12-16',
+      value_cumulee: null,
     },
     {
-      utc_timestamp: '2023-12-04T01:00:00+00:00',
-      value: 0.4583726714829544,
-      value_at_normal_temperature: 0.30040729005714384,
+      date: '2023-12-17',
+      value_cumulee: null,
     },
     {
-      utc_timestamp: '2023-12-04T02:00:00+00:00',
-      value: 0.22902165458585222,
-      value_at_normal_temperature: 0.21865304225683613,
+      date: '2023-12-18',
+      value_cumulee: null,
     },
     {
-      utc_timestamp: '2023-12-04T03:00:00+00:00',
-      value: 0.0697905506736527,
-      value_at_normal_temperature: 0.16460693380557062,
+      date: '2023-12-19',
+      value_cumulee: null,
     },
     {
-      utc_timestamp: '2023-12-04T04:00:00+00:00',
-      value: 0.4950439046116773,
-      value_at_normal_temperature: 0.37340895862808376,
+      date: '2023-12-20',
+      value_cumulee: null,
     },
   ],
 };
@@ -57,7 +52,7 @@ describe('/api/incoming/winter-energies (API test)', () => {
     process.env = OLD_ENV;
   });
 
-  it.skip('POST /api/incoming/winter-energies - 200 par défaut append des valeurs', async () => {
+  it('POST /api/incoming/winter-energies - 200 par défaut append des valeurs', async () => {
     // GIVEN
     await TestUtil.create(DB.linky);
     // WHEN
@@ -67,14 +62,13 @@ describe('/api/incoming/winter-energies (API test)', () => {
       .send(INCOMMING_DATA);
 
     // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.message).toBe('Received OK !');
+    expect(response.status).toBe(201);
     const dbData = await TestUtil.prisma.linky.findUnique({
       where: { prm: 'abc' },
     });
     expect(dbData.data).toHaveLength(7);
   });
-  it.skip('POST /api/incoming/winter-energies - creation entree si pas de prm deja connu', async () => {
+  it('POST /api/incoming/winter-energies - creation entree si pas de prm deja connu', async () => {
     // GIVEN
     // WHEN
     const response = await TestUtil.getServer()
@@ -83,14 +77,13 @@ describe('/api/incoming/winter-energies (API test)', () => {
       .send(INCOMMING_DATA);
 
     // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.message).toBe('Received OK !');
+    expect(response.status).toBe(201);
     const dbData = await TestUtil.prisma.linky.findUnique({
       where: { prm: 'abc' },
     });
     expect(dbData.data).toHaveLength(5);
   });
-  it.skip('POST /api/incoming/winter-energies - erreur 401 si mauvaise clé API', async () => {
+  it('POST /api/incoming/winter-energies - erreur 401 si mauvaise clé API', async () => {
     // GIVEN
     await TestUtil.create(DB.linky);
     // WHEN

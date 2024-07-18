@@ -23,9 +23,8 @@ describe('LinkyRepository', () => {
     // WHEN
     const result = await linkyRepository.getByPRM('abc');
     // THEN
-    expect(result.serie[0].time.getTime()).toBeLessThan(Date.now());
-    expect(result.serie[0].value).toEqual(100);
-    expect(result.serie[0].value_at_normal_temperature).toEqual(110);
+    expect(result.serie[0].date.getTime()).toBeLessThan(Date.now());
+    expect(result.serie[0].day_value).toEqual(100);
   });
   it('create data', async () => {
     // GIVEN
@@ -33,9 +32,9 @@ describe('LinkyRepository', () => {
       prm: 'abc',
       serie: [
         {
-          time: new Date(1000),
-          value: 50,
-          value_at_normal_temperature: 55,
+          date: new Date(1000),
+          day_value: 50,
+          value_cumulee: null,
         },
       ],
       utilisateurId: '123',
@@ -44,9 +43,9 @@ describe('LinkyRepository', () => {
     // WHEN
     await linkyRepository.upsertDataForPRM('abc', [
       {
-        time: new Date(1000),
-        value: 50,
-        value_at_normal_temperature: 55,
+        date: new Date(1000),
+        day_value: 50,
+        value_cumulee: null,
       },
     ]);
 
@@ -55,9 +54,8 @@ describe('LinkyRepository', () => {
       where: { prm: 'abc' },
     });
     expect(prm.data).toHaveLength(1);
-    expect(prm.data[0].time).toEqual(new Date(1000).toISOString());
-    expect(prm.data[0].value).toEqual(50);
-    expect(prm.data[0].value_at_normal_temperature).toEqual(55);
+    expect(prm.data[0].date).toEqual(new Date(1000).toISOString());
+    expect(prm.data[0].day_value).toEqual(50);
   });
   it('upsertLinkyEntry create', async () => {
     // WHEN
@@ -93,9 +91,9 @@ describe('LinkyRepository', () => {
     // WHEN
     await linkyRepository.upsertDataForPRM('abc', [
       {
-        time: new Date(1000),
-        value: 50,
-        value_at_normal_temperature: 55,
+        date: new Date(1000),
+        day_value: 50,
+        value_cumulee: null,
       },
     ]);
     // THEN
@@ -105,9 +103,8 @@ describe('LinkyRepository', () => {
     expect(prm.data).toHaveLength(1);
     expect(prm.utilisateurId).toEqual('utilisateur-id'); // pas de maj de user ID !
     expect(prm.winter_pk).toEqual('123'); // pas de maj de user ID !
-    expect(prm.data[0].time).toEqual(new Date(1000).toISOString());
-    expect(prm.data[0].value).toEqual(50);
-    expect(prm.data[0].value_at_normal_temperature).toEqual(55);
+    expect(prm.data[0].date).toEqual(new Date(1000).toISOString());
+    expect(prm.data[0].day_value).toEqual(50);
   });
   it('delete all', async () => {
     // GIVEN
