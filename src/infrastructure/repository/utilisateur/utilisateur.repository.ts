@@ -51,12 +51,18 @@ export class UtilisateurRepository {
     return count !== 0;
   }
   async findByEmail(email: string): Promise<Utilisateur | null> {
-    const user = await this.prisma.utilisateur.findUnique({
+    const users = await this.prisma.utilisateur.findMany({
       where: {
-        email,
+        email: {
+          equals: email,
+          mode: 'insensitive',
+        },
       },
     });
-    return this.buildUtilisateurFromDB(user);
+    if (users.length !== 1) {
+      return null;
+    }
+    return this.buildUtilisateurFromDB(users[0]);
   }
 
   async disconnectAll(): Promise<void> {

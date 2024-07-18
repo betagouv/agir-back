@@ -180,6 +180,31 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.utilisateur.prenom).toEqual('prenom');
     expect(userDB.force_connexion).toEqual(false);
   });
+  it('POST /utilisateurs/login - login ok même si pas la même casse', async () => {
+    // GIVEN
+    const utilisateur = getFakeUtilisteur();
+    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHAa');
+
+    await TestUtil.create(DB.utilisateur, {
+      passwordHash: utilisateur.passwordHash,
+      passwordSalt: utilisateur.passwordSalt,
+      active_account: true,
+      parts: null,
+      force_connexion: true,
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/login')
+      .send({
+        mot_de_passe: '#1234567890HAHAa',
+        email: 'YO@truc.COM',
+      });
+    // THEN
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(response.status).toBe(201);
+    expect(response.body.utilisateur.id).toEqual('utilisateur-id');
+  });
   it('POST /utilisateurs/login - bad password', async () => {
     // GIVEN
     const utilisateur = getFakeUtilisteur();
@@ -603,7 +628,9 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const catalogue = await kycRepository.getAllDefs();
     dbUser.kyc_history.setCatalogue(catalogue);
 
-    const question = dbUser.kyc_history.getUpToDateQuestionByCodeOrNull(KYCID.KYC006);
+    const question = dbUser.kyc_history.getUpToDateQuestionByCodeOrNull(
+      KYCID.KYC006,
+    );
     expect(question.hasAnyResponses());
     expect(question.includesReponseCode('plus_15'));
   });
