@@ -46,7 +46,11 @@ export class MissionDefinition {
   }
 
   public addIfNotContainsAlready?(objectif: ObjectifDefinition) {
-    if (this.objectifs.findIndex((o) => o.id_cms === objectif.id_cms) === -1) {
+    if (
+      this.objectifs.findIndex(
+        (o) => o.id_cms === objectif.id_cms && o.type === objectif.type,
+      ) === -1
+    ) {
       this.objectifs.push(objectif);
     }
   }
