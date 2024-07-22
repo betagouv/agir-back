@@ -11,11 +11,21 @@ describe('Gamification', () => {
   it('ajoutePoints : ajoute bien les points ', () => {
     // GIVEN
     const gamification = new Gamification();
+    const user = Utilisateur.createNewUtilisateur(
+      'a',
+      'b',
+      'c',
+      1234,
+      '91120',
+      'PALAISEAU',
+      false,
+    );
     // WHEN
-    gamification.ajoutePoints(5, new UnlockedFeatures());
+    gamification.ajoutePoints(5, user);
 
     // THEN
     expect(gamification.points).toEqual(5);
+    expect(user.points_classement).toEqual(5);
   });
   it('getNiveau : retourne niveau 1 OK', () => {
     // GIVEN

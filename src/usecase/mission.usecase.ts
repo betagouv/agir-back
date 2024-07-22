@@ -119,10 +119,7 @@ export class MissionUsecase {
     for (const objectif of objectifs_target) {
       if (objectif && !objectif.sont_points_en_poche) {
         objectif.sont_points_en_poche = true;
-        utilisateur.gamification.ajoutePoints(
-          objectif.points,
-          utilisateur.unlocked_features,
-        );
+        utilisateur.gamification.ajoutePoints(objectif.points, utilisateur);
       }
     }
 

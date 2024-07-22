@@ -391,6 +391,7 @@ describe('EVENT (API test)', () => {
     expect(response.status).toBe(201);
     const dbUtilisateur = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUtilisateur.gamification.points).toStrictEqual(30);
+    expect(dbUtilisateur.points_classement).toStrictEqual(30);
     expect(
       dbUtilisateur.history.getArticleHistoryById('123').points_en_poche,
     ).toStrictEqual(true);

@@ -637,6 +637,11 @@ export class TestUtil {
       bilbiotheque_services: {},
       db_version: 0,
       is_magic_link_user: false,
+      points_classement: 0,
+      code_postal_classement: null,
+      commune_classement: null,
+      rank: null,
+      rank_commune: null,
       ...override,
     };
   }

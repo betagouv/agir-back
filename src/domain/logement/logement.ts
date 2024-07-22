@@ -1,5 +1,6 @@
 import { Logement_v0 } from '../object_store/logement/logement_v0';
 import { Onboarding } from '../onboarding/onboarding';
+import { Utilisateur } from '../utilisateur/utilisateur';
 
 export enum TypeLogement {
   maison = 'maison',
@@ -57,11 +58,16 @@ export class Logement {
     this.dpe = this.undefinedToNull(log.dpe);
   }
 
-  patch?(input: Logement) {
+  patch?(input: Logement, utilisateur: Utilisateur) {
     this.nombre_adultes = this.AorB(input.nombre_adultes, this.nombre_adultes);
     this.nombre_enfants = this.AorB(input.nombre_enfants, this.nombre_enfants);
+
     this.code_postal = this.AorB(input.code_postal, this.code_postal);
+    utilisateur.code_postal_classement = this.code_postal;
+
     this.commune = this.AorB(input.commune, this.commune);
+    utilisateur.commune_classement = this.commune;
+
     this.type = this.AorB(input.type, this.type);
     this.superficie = this.AorB(input.superficie, this.superficie);
     this.proprietaire = this.AorB(input.proprietaire, this.proprietaire);

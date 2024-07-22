@@ -176,6 +176,22 @@ export class MigrationUsecase {
   private async migrate_10(
     utilisateur: Utilisateur,
   ): Promise<{ ok: boolean; info: string }> {
+    utilisateur.points_classement = utilisateur.gamification.points;
+    utilisateur.commune_classement = utilisateur.logement
+      ? utilisateur.logement.commune
+      : null;
+    utilisateur.code_postal_classement = utilisateur.logement
+      ? utilisateur.logement.code_postal
+      : null;
+
+    return {
+      ok: true,
+      info: 'migrated points/code_postal/commune pour classement',
+    };
+  }
+  private async migrate_11(
+    utilisateur: Utilisateur,
+  ): Promise<{ ok: boolean; info: string }> {
     return { ok: false, info: 'to implement' };
   }
 }

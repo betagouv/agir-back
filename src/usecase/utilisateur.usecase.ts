@@ -182,7 +182,7 @@ export class UtilisateurUsecase {
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
-    utilisateur.logement.patch(input);
+    utilisateur.logement.patch(input, utilisateur);
 
     if (input.plus_de_15_ans !== undefined && input.plus_de_15_ans !== null) {
       utilisateur.kyc_history.updateQuestion(KYCID.KYC006, [

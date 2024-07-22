@@ -537,6 +537,38 @@ describe('Admin (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.kyc_history.answered_questions[0].id_cms).toEqual(1);
   });
+  it('POST /admin/migrate_users migration V10 OK', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 9,
+      migration_enabled: true,
+    });
+    process.env.USER_CURRENT_VERSION = '10';
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 10,
+            ok: true,
+            info: 'migrated points/code_postal/commune pour classement',
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.code_postal_classement).toEqual('91120');
+    expect(userDB.commune_classement).toEqual('PALAISEAU');
+    expect(userDB.points_classement).toEqual(10);
+  });
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;

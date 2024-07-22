@@ -4,7 +4,7 @@ import {
 } from '../../../../src/domain/object_store/upgrader';
 import { Gamification } from '../../../../src/domain/gamification/gamification';
 import { Gamification_v0 } from '../../../../src/domain/object_store/gamification/gamification_v0';
-import { UnlockedFeatures } from '../../../../src/domain/gamification/unlockedFeatures';
+import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
 
 describe('Gamification vN ', () => {
   it('build OK from empty', () => {
@@ -21,8 +21,17 @@ describe('Gamification vN ', () => {
   });
   it('serialise <=> deserialise v0 OK', () => {
     // GIVEN
+    const user = Utilisateur.createNewUtilisateur(
+      'a',
+      'b',
+      'c',
+      1234,
+      '91120',
+      'PALAISEAU',
+      false,
+    );
     let domain_start = new Gamification();
-    domain_start.ajoutePoints(150, new UnlockedFeatures());
+    domain_start.ajoutePoints(150, user);
 
     // WHEN
     const raw = Gamification_v0.serialise(domain_start);
@@ -33,8 +42,17 @@ describe('Gamification vN ', () => {
   });
   it('serialise <=> upgade <=> deserialise v0 OK', () => {
     // GIVEN
+    const user = Utilisateur.createNewUtilisateur(
+      'a',
+      'b',
+      'c',
+      1234,
+      '91120',
+      'PALAISEAU',
+      false,
+    );
     const domain_start = new Gamification();
-    domain_start.ajoutePoints(150, new UnlockedFeatures());
+    domain_start.ajoutePoints(150, user);
 
     // WHEN
     const raw = Gamification_v0.serialise(domain_start);

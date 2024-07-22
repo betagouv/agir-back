@@ -65,10 +65,7 @@ export class QuestionKYCUsecase {
     if (!utilisateur.kyc_history.isQuestionAnswered(questionId)) {
       const question =
         utilisateur.kyc_history.getUpToDateQuestionOrException(questionId);
-      utilisateur.gamification.ajoutePoints(
-        question.points,
-        utilisateur.unlocked_features,
-      );
+      utilisateur.gamification.ajoutePoints(question.points, utilisateur);
     }
     utilisateur.kyc_history.updateQuestion(questionId, reponse);
 

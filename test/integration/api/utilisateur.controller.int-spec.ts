@@ -586,6 +586,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.logement.plus_de_15_ans).toEqual(false);
     expect(dbUser.logement.chauffage).toEqual(Chauffage.electricite);
     expect(dbUser.logement.dpe).toEqual(DPE.E);
+    expect(dbUser.commune_classement).toEqual('Patelin');
+    expect(dbUser.code_postal_classement).toEqual('11111');
   });
   it('PATCH /utilisateurs/id/logement - update KYC006 si logement plus 15 ans', async () => {
     // GIVEN
