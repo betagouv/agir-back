@@ -1,9 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ServiceExterneID } from '../../../../domain/bibliotheque_services/serviceExterneID';
 import { ServiceRechercheDefinition } from '../../../../domain/bibliotheque_services/serviceRechercheDefinition';
 import { ServiceRechercheID } from '../../../../domain/bibliotheque_services/serviceRechercheID';
 
 export class ServiceRechercheAPI {
-  @ApiProperty({ enum: ServiceRechercheID }) id_service: ServiceRechercheID;
+  @ApiProperty({ enum: ServiceRechercheID }) id_service:
+    | ServiceRechercheID
+    | ServiceExterneID;
   @ApiProperty() titre: string;
   @ApiProperty() sous_titre: string;
   @ApiProperty() icon_url: string;

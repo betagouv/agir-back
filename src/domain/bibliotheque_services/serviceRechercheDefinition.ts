@@ -1,7 +1,8 @@
+import { ServiceExterneID } from './serviceExterneID';
 import { ServiceRechercheID } from './serviceRechercheID';
 
 export class ServiceRechercheDefinition {
-  id: ServiceRechercheID;
+  id: ServiceRechercheID | ServiceExterneID;
   titre: string;
   sous_titre: string;
   icon_url: string;

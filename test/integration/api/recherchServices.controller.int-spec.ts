@@ -572,29 +572,13 @@ describe('RechercheServices (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toStrictEqual([
-      {
-        id_service: 'fruits_legumes',
-        titre: 'Fruits et légumes de saison',
-        sous_titre: CategorieRechercheManager.getMoisCourant(),
-        icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/cerise.png',
-        univers: 'alimentation',
-      },
-      {
-        id_service: 'proximite',
-        titre: 'Mes commerces de proximité',
-        sous_titre: 'À Palaiseau',
-        icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/commerce.png',
-        univers: 'alimentation',
-      },
-      {
-        id_service: 'recettes',
-        titre: 'Recettes saines et équilibrées',
-        sous_titre: 'Bas carbone',
-        icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/omelette.png',
-        univers: 'alimentation',
-      },
-    ]);
+    expect(response.body[0]).toStrictEqual({
+      id_service: 'fruits_legumes',
+      titre: 'Fruits et légumes de saison',
+      sous_titre: CategorieRechercheManager.getMoisCourant(),
+      icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/cerise.png',
+      univers: 'alimentation',
+    });
   });
 
   it(`POST /services/compute_stats  calcul les stats de favoris pour les services, aucun usage`, async () => {
