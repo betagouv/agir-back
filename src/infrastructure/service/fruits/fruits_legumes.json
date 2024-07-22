@@ -286,7 +286,7 @@
     "CO2": 0.63,
     "suggestions": true,
     "type": "legume",
-    "img": "Maïs"
+    "img": "mais.svg"
   },
   {
     "label": { "fr": "Oignon" },
@@ -547,7 +547,7 @@
     "pef": 0.4,
     "CO2": 0.91,
     "type": "fruit",
-    "img": "c"
+    "img": "prune.svg"
   },
   {
     "label": { "fr": "Quetsche" },
