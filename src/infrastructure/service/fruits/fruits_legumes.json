@@ -296,7 +296,7 @@
     "pef": 0.7,
     "CO2": 0.42,
     "type": "legume",
-    "img": "Oignon"
+    "img": "oignon.svg"
   },
   {
     "label": { "fr": "Panais" },
