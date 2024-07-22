@@ -164,21 +164,21 @@ describe('UtilisateurBoardRepository', () => {
 
     // WHEN
     const liste = await repo.utilisateur_classement_proximite(
-      3,
+      6,
       2,
       'rank_avant_strict',
       'national',
       undefined,
       undefined,
-      '5',
+      '2',
     );
 
     // THEN
     expect(liste).toHaveLength(2);
-    expect(liste[0].utilisateurId).toEqual('7');
-    expect(liste[0].rank).toEqual(1);
-    expect(liste[1].utilisateurId).toEqual('6');
-    expect(liste[1].rank).toEqual(2);
+    expect(liste[0].utilisateurId).toEqual('4');
+    expect(liste[0].rank).toEqual(4);
+    expect(liste[1].utilisateurId).toEqual('3');
+    expect(liste[1].rank).toEqual(5);
   });
   it('utilisateur_classement_proximite : extract correct pour avant => liste vide si premier', async () => {
     // GIVEN

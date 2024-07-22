@@ -166,13 +166,13 @@ export class UtilisateurBoardRepository {
     if (scope === 'national') {
       orderBy = {
         orderBy: {
-          rank: 'asc',
+          rank: position === 'rank_apres_ou_egal' ? 'asc' : 'desc',
         },
       };
     } else {
       orderBy = {
         orderBy: {
-          rank_commune: 'asc',
+          rank_commune: position === 'rank_apres_ou_egal' ? 'asc' : 'desc',
         },
       };
     }
@@ -195,6 +195,12 @@ export class UtilisateurBoardRepository {
       },
     });
 
+    if (scope === 'national') {
+      result.sort((a, b) => a.rank - b.rank);
+    } else {
+      result.sort((a, b) => a.rank_commune - b.rank_commune);
+    }
+    
     return result.map((t) => this.mapUserDbToDomain(t));
   }
   async getPourcentile(
