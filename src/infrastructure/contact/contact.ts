@@ -18,8 +18,15 @@ export class Contact {
   listIds?: number[];
   unlinkListIds?: number[];
 
-  constructor(user: Utilisateur) {
-    this.attributes = {
+  constructor(contact?: Contact) {
+    if (contact) {
+      Object.assign(this, contact);
+    }
+  }
+
+  public static newContactFromUser(user: Utilisateur): Contact {
+    const result = new Contact();
+    result.attributes = {
       POINTS: user.gamification.points,
       EMAIL: user.email,
       CODE_POSTAL: user.logement.code_postal,
@@ -28,10 +35,12 @@ export class Contact {
       FIRSTNAME: user.prenom,
       LASTNAME: user.nom,
     };
-    this.email = user.email;
-    this.ext_id = user.id;
-    this.emailBlacklisted = false;
-    this.smtpBlacklistSender = [];
-    this.smsBlacklisted = false;
+    result.email = user.email;
+    result.ext_id = user.id;
+    result.emailBlacklisted = false;
+    result.smtpBlacklistSender = [];
+    result.smsBlacklisted = false;
+
+    return result;
   }
 }
