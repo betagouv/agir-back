@@ -57,6 +57,40 @@ export class InscriptionUsecase {
     );
   }
 
+  async createUtilisateur_v2(utilisateurInput: CreateUtilisateurAPI) {
+    this.checkInputToCreateUtilisateur(utilisateurInput);
+
+    if (App.isWhiteListeEnabled()) {
+      if (!App.doesAnyWhiteListIncludes(utilisateurInput.email)) {
+        ApplicationError.throwNotAuthorizedEmailError();
+      }
+    }
+
+    /*
+    const onboarding = new Onboarding(
+      OnboardingDataAPI.convertToDomain(utilisateurInput.onboardingData),
+    );
+    */
+
+    const utilisateurToCreate = Utilisateur.createNewUtilisateur(
+      utilisateurInput.nom,
+      utilisateurInput.prenom,
+      utilisateurInput.email,
+      utilisateurInput.annee_naissance,
+      utilisateurInput.code_postal,
+      utilisateurInput.commune,
+      false,
+    );
+
+    utilisateurToCreate.setNew6DigitCode();
+
+    utilisateurToCreate.setPassword(utilisateurInput.mot_de_passe);
+
+    await this.utilisateurRespository.createUtilisateur(utilisateurToCreate);
+
+    this.sendValidationCode(utilisateurToCreate);
+  }
+
   async createUtilisateur(utilisateurInput: CreateUtilisateurAPI) {
     this.checkInputToCreateUtilisateur(utilisateurInput);
 

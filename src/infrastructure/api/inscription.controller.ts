@@ -39,6 +39,21 @@ export class InscriptionController extends GenericControler {
     return EmailAPI.mapToAPI(body.email);
   }
 
+  @Post('utilisateurs_v2')
+  @ApiOperation({
+    summary: "création d'un compte, seul email et mot de passe obligatoire",
+  })
+  @ApiBody({
+    type: CreateUtilisateurAPI,
+  })
+  @ApiOkResponse({
+    type: ProspectSubmitAPI,
+  })
+  async createUtilisateur_v2(@Body() body: CreateUtilisateurAPI) {
+    await this.inscriptionUsecase.createUtilisateur(body);
+    return EmailAPI.mapToAPI(body.email);
+  }
+
   @Post('utilisateurs/valider')
   @ApiOperation({
     summary:

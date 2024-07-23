@@ -6,6 +6,7 @@ import {
   Celebration,
   CelebrationType,
 } from '../../../../src/domain/gamification/celebrations/celebration';
+import { Feature } from '../../../../src/domain/gamification/feature';
 
 describe('Gamification', () => {
   it('ajoutePoints : ajoute bien les points ', () => {
@@ -281,9 +282,11 @@ describe('Gamification', () => {
 
     // THEN
     expect(gamification.celebrations).toHaveLength(0);
-    expect(utilisateur.unlocked_features.getUnlockedFeatures()).toHaveLength(1);
-    expect(utilisateur.unlocked_features.getUnlockedFeatures()[0]).toEqual(
-      'aides',
-    );
+    expect(utilisateur.unlocked_features.getUnlockedFeatures()).toHaveLength(4);
+    expect(
+      utilisateur.unlocked_features
+        .getUnlockedFeatures()
+        .includes(Feature.aides),
+    ).toEqual(true);
   });
 });
