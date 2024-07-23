@@ -58,19 +58,12 @@ export class InscriptionUsecase {
   }
 
   async createUtilisateur_v2(utilisateurInput: CreateUtilisateurAPI) {
-    this.checkInputToCreateUtilisateur(utilisateurInput);
-
-    if (App.isWhiteListeEnabled()) {
-      if (!App.doesAnyWhiteListIncludes(utilisateurInput.email)) {
-        ApplicationError.throwNotAuthorizedEmailError();
-      }
+    if (!utilisateurInput.email) {
+      ApplicationError.throwEmailObligatoireError();
     }
 
-    /*
-    const onboarding = new Onboarding(
-      OnboardingDataAPI.convertToDomain(utilisateurInput.onboardingData),
-    );
-    */
+    PasswordManager.checkPasswordFormat(utilisateurInput.mot_de_passe);
+    Utilisateur.checkEmailFormat(utilisateurInput.email);
 
     const utilisateurToCreate = Utilisateur.createNewUtilisateur(
       utilisateurInput.nom,
