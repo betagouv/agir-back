@@ -3,6 +3,7 @@ export enum utilisateurs_liste {
   // ce sont les clés dans le fichier utilisateurs_contents
 
   ALL_USERS = 'ALL_USERS',
+  dunia = 'dunia',
   margaux = 'margaux',
   claire = 'claire',
   romane = 'romane',
