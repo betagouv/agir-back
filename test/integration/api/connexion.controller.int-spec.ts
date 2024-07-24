@@ -2,6 +2,12 @@ import { DB, TestUtil } from '../../TestUtil';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { Categorie } from '../../../src/domain/contenu/categorie';
+import { Thematique } from '../../../src/domain/contenu/thematique';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
+import { Univers } from '../../../src/domain/univers/univers';
 var crypto = require('crypto');
 
 function getFakeUtilisteur() {
@@ -41,6 +47,64 @@ describe('/utilisateurs - Connexion Compte utilisateur (API test)', () => {
     const utilisateur = getFakeUtilisteur();
     PasswordManager.setUserPassword(utilisateur, '#1234567890HAHAa');
 
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [
+        {
+          id: KYCID.KYC001,
+          id_cms: 2,
+          question: `Quel est votre sujet principal d'intéret ?`,
+          type: TypeReponseQuestionKYC.choix_multiple,
+          is_NGC: false,
+          categorie: Categorie.test,
+          points: 10,
+          reponses: [
+            { label: 'Le climat', code: Thematique.climat },
+            { label: 'Mon logement', code: Thematique.logement },
+          ],
+          reponses_possibles: [
+            { label: 'Le climat', code: Thematique.climat },
+            { label: 'Mon logement', code: Thematique.logement },
+            { label: 'Ce que je mange', code: Thematique.alimentation },
+          ],
+          tags: [],
+          universes: [Univers.climat],
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      passwordHash: utilisateur.passwordHash,
+      passwordSalt: utilisateur.passwordSalt,
+      active_account: true,
+      parts: null,
+      force_connexion: true,
+      kyc: kyc,
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/login')
+      .send({
+        mot_de_passe: '#1234567890HAHAa',
+        email: 'yo@truc.com',
+      });
+    // THEN
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(response.status).toBe(201);
+    expect(response.body.token.length).toBeGreaterThan(20);
+
+    expect(response.body.utilisateur.id).toEqual('utilisateur-id');
+    expect(response.body.utilisateur.nom).toEqual('nom');
+    expect(response.body.utilisateur.prenom).toEqual('prenom');
+    expect(response.body.utilisateur.is_onboarding_done).toEqual(true);
+    expect(userDB.force_connexion).toEqual(false);
+  });
+  it('POST /utilisateurs/login - logs user , onboarding pas done', async () => {
+    // GIVEN
+    const utilisateur = getFakeUtilisteur();
+    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHAa');
+
     await TestUtil.create(DB.utilisateur, {
       passwordHash: utilisateur.passwordHash,
       passwordSalt: utilisateur.passwordSalt,
@@ -59,12 +123,7 @@ describe('/utilisateurs - Connexion Compte utilisateur (API test)', () => {
     // THEN
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(response.status).toBe(201);
-    expect(response.body.token.length).toBeGreaterThan(20);
-
-    expect(response.body.utilisateur.id).toEqual('utilisateur-id');
-    expect(response.body.utilisateur.nom).toEqual('nom');
-    expect(response.body.utilisateur.prenom).toEqual('prenom');
-    expect(userDB.force_connexion).toEqual(false);
+    expect(response.body.utilisateur.is_onboarding_done).toEqual(false);
   });
   it('POST /utilisateurs/login - login ok même si pas la même casse', async () => {
     // GIVEN

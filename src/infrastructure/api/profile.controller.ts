@@ -29,7 +29,6 @@ import {
 import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
-import { OnboardingAPI } from './types/utilisateur/onboardingAPI';
 
 export class ConfirmationAPI {
   @ApiProperty({ required: true })
@@ -79,28 +78,6 @@ export class ProfileController extends GenericControler {
 
     return UtilisateurAPI.mapToAPI(utilisateur);
   }
-  @Get('utilisateurs/:utilisateurId/onboarding_status')
-  @ApiOperation({
-    summary: "statut de l'onboarding",
-  })
-  @ApiOkResponse({ type: OnboardingAPI })
-  @UseGuards(AuthGuard)
-  async getUtilisateurdOnboarding(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-  ): Promise<OnboardingAPI> {
-    this.checkCallerId(req, utilisateurId);
-
-    const result = await this.profileUsecase.getOnboardingStatus(utilisateurId);
-
-    return OnboardingAPI.mapToAPI(
-      result.current,
-      result.target,
-      result.current_label,
-      result.is_done,
-    );
-  }
-
   @ApiOkResponse({ type: UtilisateurProfileAPI })
   @Get('utilisateurs/:utilisateurId/profile')
   @ApiOperation({
