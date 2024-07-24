@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
 
-import { UtilisateurController } from './infrastructure/api/utilisateur.controller';
 import { AuthController } from './infrastructure/api/auth.controller';
 import { BilanController } from './infrastructure/api/bilan.controller';
 import { AidesController } from './infrastructure/api/aides.controller';
 import { TestDataController } from './infrastructure/api/testData.controller';
 import { CMSController } from './infrastructure/api/incoming/cms.controller';
 
-import { UtilisateurUsecase } from './usecase/utilisateur.usecase';
+import { ProfileUsecase } from './usecase/profile.usecase';
 import { BilanUsecase } from './usecase/bilan.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
 import { CMSUsecase } from './usecase/cms.usecase';
@@ -76,7 +75,7 @@ import { LinkyAPIConnector } from './infrastructure/service/linky/LinkyAPIConnec
 import { LinkyEmailer } from './infrastructure/service/linky/LinkyEmailer';
 import { EquipementUsecase } from './usecase/equipements.usecase';
 import { EquipementsController } from './infrastructure/api/equipements.controller';
-import { InscriptionUsecase } from './usecase/inscription.usecase';
+import { Inscription_v1_Usecase } from './usecase/inscription_v1.usecase';
 import { InscriptionController } from './infrastructure/api/inscription.controller';
 import { AideRepository } from './infrastructure/repository/aide.repository';
 import { DefisController } from './infrastructure/api/defis.controller';
@@ -125,6 +124,10 @@ import { MagicLinkUsecase } from './usecase/magicLink.usecase';
 import { MagicLinkController } from './infrastructure/api/magicLink.controller';
 import { ImpactTransportsRepository } from './infrastructure/repository/services_recherche/impactTransport.repository';
 import { DistancesRepository } from './infrastructure/repository/services_recherche/distances.repository';
+import { Connexion_v1_Usecase } from './usecase/connexion_v1.usecase';
+import { ConnexionController } from './infrastructure/api/connexion.controller';
+import { ProfileController } from './infrastructure/api/profile.controller';
+import { Inscription_v2_Usecase } from './usecase/inscription_v2.usecase';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -132,7 +135,8 @@ function getControllers(): any[] {
   const controllers = [];
   controllers.push(
     OnboardingController,
-    UtilisateurController,
+    ProfileController,
+    ConnexionController,
     BilanController,
     AidesController,
     SuiviDashboardController,
@@ -195,7 +199,7 @@ function getControllers(): any[] {
     NGCCalculator,
     AidesRetrofitRepository,
     AidesVeloRepository,
-    UtilisateurUsecase,
+    ProfileUsecase,
     BilanUsecase,
     AidesUsecase,
     SuiviUsecase,
@@ -233,7 +237,8 @@ function getControllers(): any[] {
     LinkyAPIConnector,
     LinkyEmailer,
     EquipementUsecase,
-    InscriptionUsecase,
+    Inscription_v1_Usecase,
+    Inscription_v2_Usecase,
     AideRepository,
     DefiRepository,
     DefisUsecase,
@@ -272,6 +277,7 @@ function getControllers(): any[] {
     MagicLinkUsecase,
     ImpactTransportsRepository,
     DistancesRepository,
+    Connexion_v1_Usecase,
   ],
 })
 export class AppModule {}

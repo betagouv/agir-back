@@ -14,7 +14,7 @@ import { ReferentielUsecase } from '../../../src/usecase/referentiel/referentiel
 import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
 import { TodoUsecase } from '../../../src/usecase/todo.usecase';
 import { ContactUsecase } from '../../usecase/contact.usecase';
-import { UtilisateurUsecase } from '../../../src/usecase/utilisateur.usecase';
+import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { StatistiqueUsecase } from '../../../src/usecase/statistique.usecase';
 import { ArticleStatistiqueUsecase } from '../../../src/usecase/articleStatistique.usecase';
 import { DefiStatistiqueUsecase } from '../../../src/usecase/defiStatistique.usecase';
@@ -31,7 +31,7 @@ export class AdminController extends GenericControler {
   constructor(
     private migrationUsecase: MigrationUsecase,
     private rechercheServicesUsecase: RechercheServicesUsecase,
-    private utilisateurUsecase: UtilisateurUsecase,
+    private profileUsecase: ProfileUsecase,
     private serviceUsecase: ServiceUsecase,
     private linkyUsecase: LinkyUsecase,
     private cmsUsecase: CMSUsecase,
@@ -228,7 +228,7 @@ export class AdminController extends GenericControler {
   })
   async compute_reco_tags(@Request() req): Promise<void> {
     this.checkCronAPIProtectedEndpoint(req);
-    await this.utilisateurUsecase.computeAllUsersRecoTags();
+    await this.profileUsecase.computeAllUsersRecoTags();
   }
 
   @Post('/admin/statistique')

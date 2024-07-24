@@ -11,15 +11,19 @@ import { ProspectSubmitAPI } from './types/utilisateur/onboarding/prospectSubmit
 import { ValidateCodeAPI } from './types/utilisateur/onboarding/validateCodeAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { GenericControler } from './genericControler';
-import { InscriptionUsecase } from '../../../src/usecase/inscription.usecase';
+import { Inscription_v1_Usecase } from '../../usecase/inscription_v1.usecase';
 import { TokenAPI } from './types/utilisateur/TokenAPI';
 import { EmailAPI } from './types/utilisateur/EmailAPI';
+import { Inscription_v2_Usecase } from '../../usecase/inscription_v2.usecase';
 
 @ApiExtraModels(CreateUtilisateurAPI)
 @Controller()
-@ApiTags('Onboarding Utilisateur')
+@ApiTags('Utilisateur - Inscription')
 export class InscriptionController extends GenericControler {
-  constructor(private readonly inscriptionUsecase: InscriptionUsecase) {
+  constructor(
+    private readonly inscription_v1_Usecase: Inscription_v1_Usecase,
+    private readonly inscription_v2_Usecase: Inscription_v2_Usecase,
+  ) {
     super();
   }
 
@@ -35,7 +39,7 @@ export class InscriptionController extends GenericControler {
     type: ProspectSubmitAPI,
   })
   async createUtilisateur(@Body() body: CreateUtilisateurAPI) {
-    await this.inscriptionUsecase.createUtilisateur(body);
+    await this.inscription_v1_Usecase.createUtilisateur(body);
     return EmailAPI.mapToAPI(body.email);
   }
 
@@ -50,7 +54,7 @@ export class InscriptionController extends GenericControler {
     type: ProspectSubmitAPI,
   })
   async createUtilisateur_v2(@Body() body: CreateUtilisateurAPI) {
-    await this.inscriptionUsecase.createUtilisateur(body);
+    await this.inscription_v2_Usecase.createUtilisateur(body);
     return EmailAPI.mapToAPI(body.email);
   }
 
@@ -66,7 +70,7 @@ export class InscriptionController extends GenericControler {
     type: TokenAPI,
   })
   async validerCode(@Body() body: ValidateCodeAPI) {
-    const loggedUser = await this.inscriptionUsecase.validateCode(
+    const loggedUser = await this.inscription_v1_Usecase.validateCode(
       body.email,
       body.code,
     );
@@ -82,7 +86,7 @@ export class InscriptionController extends GenericControler {
     type: RenvoyerCodeAPI,
   })
   async renvoyerCode(@Body() body: RenvoyerCodeAPI) {
-    await this.inscriptionUsecase.renvoyerCode(body.email);
+    await this.inscription_v1_Usecase.renvoyerCode(body.email);
     return 'code renvoyé';
   }
 }

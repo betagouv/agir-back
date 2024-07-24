@@ -15,8 +15,4 @@ export class CreateUtilisateurAPI {
   annee_naissance: number;
   @ApiProperty({ required: false })
   mot_de_passe?: string;
-  /*
-  @ApiProperty({ type: OnboardingDataAPI })
-  onboardingData: OnboardingDataAPI;
-  */
 }

@@ -71,7 +71,7 @@ const ONBOARDING_RES_1234 = {
   },
 };
 
-describe('/utilisateurs - Onboarding - (API test)', () => {
+describe('/utilisateurs - Inscription - (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 

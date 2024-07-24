@@ -11,7 +11,7 @@ import { OidcService } from '../infrastructure/auth/oidc.service';
 import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { ContactUsecase } from './contact.usecase';
-import { App } from '../../src/domain/app';
+import { App } from '../domain/app';
 
 export type Phrase = {
   phrase: string;
@@ -19,7 +19,7 @@ export type Phrase = {
 };
 
 @Injectable()
-export class InscriptionUsecase {
+export class Inscription_v1_Usecase {
   constructor(
     private utilisateurRespository: UtilisateurRepository,
     private emailSender: EmailSender,

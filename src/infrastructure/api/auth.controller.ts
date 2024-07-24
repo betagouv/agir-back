@@ -1,16 +1,16 @@
 import { Controller, Get, Param, Query, Redirect } from '@nestjs/common';
 import { ApiExcludeController, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { OidcService } from '../auth/oidc.service';
-import { UtilisateurUsecase } from '../../usecase/utilisateur.usecase';
-import { InscriptionUsecase } from '../../../src/usecase/inscription.usecase';
+import { ProfileUsecase } from '../../usecase/profile.usecase';
+import { Inscription_v1_Usecase } from '../../usecase/inscription_v1.usecase';
 import { App } from '../../../src/domain/app';
 
 @Controller()
 @ApiExcludeController()
 export class AuthController {
   constructor(
-    private inscriptionUsecase: InscriptionUsecase,
-    private utilisateurUsecase: UtilisateurUsecase,
+    private inscriptionUsecase: Inscription_v1_Usecase,
+    private profileUsecase: ProfileUsecase,
     private oidcService: OidcService,
   ) {}
 
@@ -42,7 +42,7 @@ export class AuthController {
     );
 
     // FINDING USER
-    let utilisateur = await this.utilisateurUsecase.findUtilisateurByEmail(
+    let utilisateur = await this.profileUsecase.findUtilisateurByEmail(
       user_data.email,
     );
     if (!utilisateur) {
@@ -77,7 +77,7 @@ export class AuthController {
     @Query('token') token: string,
     @Query('utilisateurId') utilisateurId: string,
   ) {
-    let utilisateur = await this.utilisateurUsecase.findUtilisateurById(
+    let utilisateur = await this.profileUsecase.findUtilisateurById(
       utilisateurId,
     );
     return `<br>Bonjour ${utilisateur.nom}
