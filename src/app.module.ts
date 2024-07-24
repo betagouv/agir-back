@@ -6,7 +6,6 @@ import { AidesController } from './infrastructure/api/aides.controller';
 import { TestDataController } from './infrastructure/api/testData.controller';
 import { CMSController } from './infrastructure/api/incoming/cms.controller';
 
-import { ProfileUsecase } from './usecase/profile.usecase';
 import { BilanUsecase } from './usecase/bilan.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
 import { CMSUsecase } from './usecase/cms.usecase';
@@ -126,8 +125,9 @@ import { ImpactTransportsRepository } from './infrastructure/repository/services
 import { DistancesRepository } from './infrastructure/repository/services_recherche/distances.repository';
 import { Connexion_v1_Usecase } from './usecase/connexion_v1.usecase';
 import { ConnexionController } from './infrastructure/api/connexion.controller';
-import { ProfileController } from './infrastructure/api/profile.controller';
 import { Inscription_v2_Usecase } from './usecase/inscription_v2.usecase';
+import { ProfileUsecase } from './usecase/profile.usecase';
+import { ProfileController } from './infrastructure/api/profile.controller';
 
 const SESSION_LIFETIME = '30 days';
 

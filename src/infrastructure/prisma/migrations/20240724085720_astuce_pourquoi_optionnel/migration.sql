@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Defi" ALTER COLUMN "astuces" DROP NOT NULL,
+ALTER COLUMN "pourquoi" DROP NOT NULL;

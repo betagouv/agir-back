@@ -216,8 +216,8 @@ model Defi {
   content_id         String   @id
   titre              String
   sous_titre         String?
-  astuces            String
-  pourquoi           String
+  astuces            String?
+  pourquoi           String?
   points             Int
   thematique         String
   tags               String[] @default([])
