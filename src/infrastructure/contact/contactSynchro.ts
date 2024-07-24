@@ -22,8 +22,8 @@ export class ContactSynchro {
   public async BatchUpdateContacts(utilisateurs: Utilisateur[]) {
     if (this.is_synchro_disabled()) return;
 
-    const contacts = utilisateurs.map(
-      (utilisateur) => new Contact(utilisateur),
+    const contacts = utilisateurs.map((utilisateur) =>
+      Contact.newContactFromUser(utilisateur),
     );
 
     const data = {
@@ -36,24 +36,55 @@ export class ContactSynchro {
           Accept: 'application/json',
           'Content-Type': 'application/json',
           'api-key': this.apiKey,
-        },  
+        },
       });
       console.log(response.data);
     } catch (error) {
       console.warn(JSON.stringify(error));
     }
   }
+  /*
+  public async updateContacts(utilisateur: Utilisateur) {
+    if (this.is_synchro_disabled()) return;
+
+    const contact = new Contact(utilisateur);
+
+    try {
+      await this.apiInstance.updateContact(utilisateur.email, updateContact);
+      console.log(
+        `BREVO contact ${utilisateur.email} created and added to list ${contact.listIds}`,
+      );
+      return true;
+    } catch (error) {
+      console.warn(error.response.text);
+      return false;
+    }
+  }
+  */
 
   public async createContact(utilisateur: Utilisateur): Promise<boolean> {
     if (this.is_synchro_disabled()) return true;
 
-    const contact = new Contact(utilisateur);
+    const contact = Contact.newContactFromUser(utilisateur);
 
     contact.listIds = [App.getWelcomeListId()];
     try {
       await this.apiInstance.createContact(contact);
       console.log(
         `BREVO contact ${utilisateur.email} created and added to list ${contact.listIds}`,
+      );
+      return true;
+    } catch (error) {
+      console.warn(error.response.text);
+      return false;
+    }
+  }
+  public async createContactFromContact(contact: Contact): Promise<boolean> {
+    contact.listIds = [App.getWelcomeListId()];
+    try {
+      await this.apiInstance.createContact(contact);
+      console.log(
+        `BREVO contact ${contact.email} created and added to list ${contact.listIds}`,
       );
       return true;
     } catch (error) {

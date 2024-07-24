@@ -12,6 +12,8 @@ import { DefiStatus } from '../defis/defi';
 export class Objectif {
   id: string;
   titre: string;
+  // FIXME pas un content id pour KYC
+  // uniformiser le nommage id_cms ??
   content_id: string;
   is_locked: boolean;
   done_at: Date;
@@ -142,10 +144,6 @@ export class Mission {
 
     if (objectif && !objectif.isDone()) {
       objectif.done_at = new Date();
-      utilisateur.gamification.ajoutePoints(
-        objectif.points,
-        utilisateur.unlocked_features,
-      );
       return this.terminerMission(utilisateur);
     }
     return [];
@@ -254,6 +252,7 @@ export class Mission {
       target: target_progression_reelle,
     };
   }
+
   public isNew(): boolean {
     return this.objectifs.filter((objectif) => objectif.isDone()).length === 0;
   }

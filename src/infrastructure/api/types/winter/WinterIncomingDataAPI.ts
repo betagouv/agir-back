@@ -12,9 +12,8 @@ export class WinterErrorAPI {
   @ApiProperty() message: string;
 }
 export class WinterDataAPI {
-  @ApiProperty({ type: Date }) utc_timestamp: Date;
-  @ApiProperty() value: number;
-  @ApiProperty() value_at_normal_temperature: number;
+  @ApiProperty({ type: String }) date: string;
+  @ApiProperty() value_cumulee: number;
 }
 export class WinterDataSentAPI {
   @ApiProperty() ok: boolean;

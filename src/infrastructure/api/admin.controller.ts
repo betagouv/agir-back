@@ -14,7 +14,7 @@ import { ReferentielUsecase } from '../../../src/usecase/referentiel/referentiel
 import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
 import { TodoUsecase } from '../../../src/usecase/todo.usecase';
 import { ContactUsecase } from '../../usecase/contact.usecase';
-import { UtilisateurUsecase } from '../../../src/usecase/utilisateur.usecase';
+import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { StatistiqueUsecase } from '../../../src/usecase/statistique.usecase';
 import { ArticleStatistiqueUsecase } from '../../../src/usecase/articleStatistique.usecase';
 import { DefiStatistiqueUsecase } from '../../../src/usecase/defiStatistique.usecase';
@@ -22,14 +22,16 @@ import { QuizStatistiqueUsecase } from '../../../src/usecase/quizStatistique.use
 import { KycStatistiqueUsecase } from '../../../src/usecase/kycStatistique.usecase';
 import { ThematiqueStatistiqueUsecase } from '../../../src/usecase/thematiqueStatistique.usecase';
 import { UniversStatistiqueUsecase } from '../../../src/usecase/universStatistique.usecase';
+import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
 
 @Controller()
-@ApiTags('Admin')
+@ApiTags('Z - Admin')
 @ApiBearerAuth()
 export class AdminController extends GenericControler {
   constructor(
     private migrationUsecase: MigrationUsecase,
-    private utilisateurUsecase: UtilisateurUsecase,
+    private rechercheServicesUsecase: RechercheServicesUsecase,
+    private profileUsecase: ProfileUsecase,
     private serviceUsecase: ServiceUsecase,
     private linkyUsecase: LinkyUsecase,
     private cmsUsecase: CMSUsecase,
@@ -52,6 +54,13 @@ export class AdminController extends GenericControler {
   async refreshServiceDynamicData(@Request() req) {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.serviceUsecase.refreshScheduledServices();
+  }
+
+  @Post('services/compute_stats')
+  @ApiOkResponse({ type: [String] })
+  async compute_stats(@Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.rechercheServicesUsecase.computeStatsFavoris();
   }
 
   @Post('services/process_async_service')
@@ -219,7 +228,7 @@ export class AdminController extends GenericControler {
   })
   async compute_reco_tags(@Request() req): Promise<void> {
     this.checkCronAPIProtectedEndpoint(req);
-    await this.utilisateurUsecase.computeAllUsersRecoTags();
+    await this.profileUsecase.computeAllUsersRecoTags();
   }
 
   @Post('/admin/statistique')

@@ -16,9 +16,10 @@ import { Transport } from '../transport/transport';
 import { Tag } from '../scoring/tag';
 import { DefiHistory } from '../defis/defiHistory';
 import { UserTagEvaluator } from '../scoring/userTagEvaluator';
-import { QuestionKYC } from '../kyc/questionQYC';
+import { QuestionKYC } from '../kyc/questionKYC';
 import { MissionsUtilisateur } from '../mission/missionsUtilisateur';
 import { Feature } from '../gamification/feature';
+import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServices';
 
 export class UtilisateurData {
   id: string;
@@ -61,6 +62,13 @@ export class UtilisateurData {
   force_connexion: boolean;
   derniere_activite: Date;
   db_version: number;
+  bilbiotheque_services: BibliothequeServices;
+  is_magic_link_user: boolean;
+  points_classement: number;
+  code_postal_classement: string;
+  commune_classement: string;
+  rank: number;
+  rank_commune: number;
 }
 
 export class Utilisateur extends UtilisateurData {
@@ -87,7 +95,7 @@ export class Utilisateur extends UtilisateurData {
     annee_naissance: number,
     code_postal: string,
     commune: string,
-    //onboarding: Onboarding,
+    is_magic_link: boolean,
   ): Utilisateur {
     return new Utilisateur({
       nom: nom,
@@ -161,6 +169,13 @@ export class Utilisateur extends UtilisateurData {
       missions: new MissionsUtilisateur(),
       annee_naissance: annee_naissance,
       db_version: 0,
+      bilbiotheque_services: new BibliothequeServices(),
+      is_magic_link_user: is_magic_link,
+      rank: null,
+      rank_commune: null,
+      code_postal_classement: code_postal,
+      commune_classement: commune,
+      points_classement: 0,
     });
   }
 
@@ -175,6 +190,12 @@ export class Utilisateur extends UtilisateurData {
     this.kyc_history.reset();
   }
 
+  public isMagicLinkCodeExpired?(): boolean {
+    return (
+      this.code === null ||
+      this.code_generation_time.getTime() < Date.now() - 1000 * 60 * 60
+    );
+  }
   public checkState?() {
     if (this.force_connexion) {
       ApplicationError.throwPleaseReconnect();

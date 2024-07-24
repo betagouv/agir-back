@@ -23,7 +23,7 @@ export class App {
     return process.env.SERVICES_ACTIFS || '';
   }
   public static isAdmin(userId: string): boolean {
-    return process.env.ADMIN_IDS.includes(userId);
+    return !!process.env.ADMIN_IDS && process.env.ADMIN_IDS.includes(userId);
   }
   public static isMailEnabled(): boolean {
     return process.env.EMAIL_ENABLED === 'true';
@@ -46,9 +46,18 @@ export class App {
   public static getEcoWattApiSecret(): string {
     return process.env.ECOWATT_CLIENT_ID_SECRET;
   }
+  public static getFruitsLegumesAPIKEY(): string {
+    return process.env.FRUITS_LEGUMES_API_KEY;
+  }
+  public static getOpenRouteAPIKEY(): string {
+    return process.env.OPEN_ROUTE_API_KEY;
+  }
 
   public static getBaseURLFront(): string {
-    return process.env.BASE_URL_FRONT;
+    return process.env.BASE_URL_FRONT ? process.env.BASE_URL_FRONT : '';
+  }
+  public static getBaseURLBack(): string {
+    return process.env.BASE_URL;
   }
 
   public static isWhiteListeEnabled(): boolean {
@@ -60,13 +69,13 @@ export class App {
     const access_3 = App.doesWhiteListBesIncludes(email);
     return access_1 || access_2 || access_3;
   }
-  public static doesWhiteListIncludes(email: string): boolean {
+  private static doesWhiteListIncludes(email: string): boolean {
     return (
       !!process.env.WHITE_LIST &&
       process.env.WHITE_LIST.toLowerCase().includes(email.toLocaleLowerCase())
     );
   }
-  public static doesWhiteListDijonIncludes(email: string): boolean {
+  private static doesWhiteListDijonIncludes(email: string): boolean {
     return (
       !!process.env.WHITE_LIST_DIJON &&
       process.env.WHITE_LIST_DIJON.toLowerCase().includes(
@@ -74,7 +83,7 @@ export class App {
       )
     );
   }
-  public static doesWhiteListBesIncludes(email: string): boolean {
+  private static doesWhiteListBesIncludes(email: string): boolean {
     return (
       !!process.env.WHITE_LIST_BES &&
       process.env.WHITE_LIST_BES.toLowerCase().includes(

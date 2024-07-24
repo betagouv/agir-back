@@ -32,6 +32,7 @@ export class ArticleData {
   exclude_codes_commune: string[];
   codes_departement: string[];
   codes_region: string[];
+  tag_article: string;
 }
 
 export class Article extends ArticleData implements TaggedContent {
@@ -60,6 +61,15 @@ export class Article extends ArticleData implements TaggedContent {
 
   public getDistinctText(): string {
     return this.titre;
+  }
+
+  public isLocal(): boolean {
+    return (
+      (this.codes_postaux && this.codes_postaux.length > 0) ||
+      (this.include_codes_commune && this.include_codes_commune.length > 0) ||
+      (this.codes_departement && this.codes_departement.length > 0) ||
+      (this.codes_region && this.codes_region.length > 0)
+    );
   }
 }
 

@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { QuestionKYC } from '../domain/kyc/questionQYC';
+import { QuestionKYC } from '../domain/kyc/questionKYC';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { KYCID } from '../../src/domain/kyc/KYCID';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 
 @Injectable()
 export class QuestionKYCUsecase {
@@ -12,6 +13,7 @@ export class QuestionKYCUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private kycRepository: KycRepository,
     private defiRepository: DefiRepository,
+    private personnalisator: Personnalisator,
   ) {}
 
   async getALL(utilisateurId: string): Promise<QuestionKYC[]> {
@@ -21,7 +23,10 @@ export class QuestionKYCUsecase {
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
-    return utilisateur.kyc_history.getAllQuestionSet();
+    const result = utilisateur.kyc_history.getAllUpToDateQuestionSet();
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
+    return this.personnalisator.personnaliser(result, utilisateur);
   }
 
   async getQuestion(utilisateurId: string, questionId): Promise<QuestionKYC> {
@@ -31,7 +36,12 @@ export class QuestionKYCUsecase {
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
-    return utilisateur.kyc_history.getQuestionOrException(questionId);
+    const result =
+      utilisateur.kyc_history.getUpToDateQuestionOrException(questionId);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
+    return this.personnalisator.personnaliser(result, utilisateur);
   }
 
   async updateResponse(
@@ -54,11 +64,8 @@ export class QuestionKYCUsecase {
 
     if (!utilisateur.kyc_history.isQuestionAnswered(questionId)) {
       const question =
-        utilisateur.kyc_history.getQuestionOrException(questionId);
-      utilisateur.gamification.ajoutePoints(
-        question.points,
-        utilisateur.unlocked_features,
-      );
+        utilisateur.kyc_history.getUpToDateQuestionOrException(questionId);
+      utilisateur.gamification.ajoutePoints(question.points, utilisateur);
     }
     utilisateur.kyc_history.updateQuestion(questionId, reponse);
 

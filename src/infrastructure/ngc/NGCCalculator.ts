@@ -13,7 +13,7 @@ export class NGCCalculator {
         log(message: string) {},
         warn(message: string) {},
         error(message: string) {
-          console.log(message);
+          console.error(message);
         },
       },
     });
@@ -74,9 +74,9 @@ export class NGCCalculator {
 
     let result_map = new Map();
 
-    entryList.forEach((entry) => {
+    for (const entry of entryList) {
       result_map.set(entry, local_engine.evaluate(entry).nodeValue);
-    });
+    }
 
     return result_map;
   }
@@ -85,10 +85,10 @@ export class NGCCalculator {
     const entryList = [
       'bilan',
       'transport',
-      'logement',
-      'divers',
+      //      'logement',
+      //      'divers',
       'alimentation',
-      'services sociétaux',
+      //      'services sociétaux',
     ];
 
     const resultMap = this.computeEntryListValues(situation, entryList);

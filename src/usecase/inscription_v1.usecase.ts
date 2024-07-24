@@ -11,7 +11,7 @@ import { OidcService } from '../infrastructure/auth/oidc.service';
 import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { ContactUsecase } from './contact.usecase';
-import { App } from '../../src/domain/app';
+import { App } from '../domain/app';
 
 export type Phrase = {
   phrase: string;
@@ -19,7 +19,7 @@ export type Phrase = {
 };
 
 @Injectable()
-export class InscriptionUsecase {
+export class Inscription_v1_Usecase {
   constructor(
     private utilisateurRespository: UtilisateurRepository,
     private emailSender: EmailSender,
@@ -29,10 +29,7 @@ export class InscriptionUsecase {
     private securityEmailManager: SecurityEmailManager,
   ) {}
 
-  async validateCode(
-    email: string,
-    code: string,
-  ): Promise<{ token: string; utilisateur: Utilisateur }> {
+  async validateCode(email: string, code: string): Promise<{ token: string }> {
     const utilisateur = await this.utilisateurRespository.findByEmail(email);
     if (!utilisateur) {
       ApplicationError.throwBadCodeOrEmailError();
@@ -60,6 +57,33 @@ export class InscriptionUsecase {
     );
   }
 
+  async createUtilisateur_v2(utilisateurInput: CreateUtilisateurAPI) {
+    if (!utilisateurInput.email) {
+      ApplicationError.throwEmailObligatoireError();
+    }
+
+    PasswordManager.checkPasswordFormat(utilisateurInput.mot_de_passe);
+    Utilisateur.checkEmailFormat(utilisateurInput.email);
+
+    const utilisateurToCreate = Utilisateur.createNewUtilisateur(
+      utilisateurInput.nom,
+      utilisateurInput.prenom,
+      utilisateurInput.email,
+      utilisateurInput.annee_naissance,
+      utilisateurInput.code_postal,
+      utilisateurInput.commune,
+      false,
+    );
+
+    utilisateurToCreate.setNew6DigitCode();
+
+    utilisateurToCreate.setPassword(utilisateurInput.mot_de_passe);
+
+    await this.utilisateurRespository.createUtilisateur(utilisateurToCreate);
+
+    this.sendValidationCode(utilisateurToCreate);
+  }
+
   async createUtilisateur(utilisateurInput: CreateUtilisateurAPI) {
     this.checkInputToCreateUtilisateur(utilisateurInput);
 
@@ -82,7 +106,7 @@ export class InscriptionUsecase {
       utilisateurInput.annee_naissance,
       utilisateurInput.code_postal,
       utilisateurInput.commune,
-      //onboarding,
+      false,
     );
 
     utilisateurToCreate.setNew6DigitCode();

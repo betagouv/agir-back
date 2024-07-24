@@ -34,7 +34,7 @@ model OIDC_STATE {
 model Utilisateur {
   id                       String             @id
   email                    String?            @unique
-  nom                      String             @default("nom")
+  nom                      String?            @default("nom")
   prenom                   String?            @default("prenom")
   annee_naissance          Int?
   passwordHash             String?            @default("hash")
@@ -52,6 +52,7 @@ model Utilisateur {
   transport                Json               @default("{}") // versioné 
   defis                    Json               @default("{}") // versioné
   missions                 Json               @default("{}") // versioné
+  bilbiotheque_services    Json               @default("{}") // versioné
   empreintes               Empreinte[]
   suivis                   Suivi[]
   groupes                  GroupeAbonnement[]
@@ -76,6 +77,12 @@ model Utilisateur {
   force_connexion          Boolean            @default(false)
   derniere_activite        DateTime?
   db_version               Int                @default(0)
+  is_magic_link_user       Boolean            @default(false)
+  points_classement        Int                @default(0)
+  code_postal_classement   String?
+  commune_classement       String?
+  rank                     Int?
+  rank_commune             Int?
 }
 
 model Statistique {
@@ -103,6 +110,17 @@ model DefiStatistique {
   raisons_defi_abandonne  String[] @default([])
   created_at              DateTime @default(now()) @db.Timestamptz(3)
   updated_at              DateTime @updatedAt @db.Timestamptz(3)
+}
+
+model ServicesFavorisStatistique {
+  service_id    String
+  favoris_id    String
+  titre_favoris String
+  count_favoris Int      @default(0)
+  created_at    DateTime @default(now()) @db.Timestamptz(3)
+  updated_at    DateTime @updatedAt @db.Timestamptz(3)
+
+  @@unique([service_id, favoris_id])
 }
 
 model ArticleStatistique {
@@ -235,6 +253,7 @@ model Article {
   exclude_codes_commune String[] @default([])
   codes_departement     String[] @default([])
   codes_region          String[] @default([])
+  tag_article           String?
   created_at            DateTime @default(now()) @db.Timestamptz(3)
   updated_at            DateTime @updatedAt @db.Timestamptz(3)
 }
@@ -260,6 +279,16 @@ model Quizz {
   mois                  Int[]    @default([])
   created_at            DateTime @default(now()) @db.Timestamptz(3)
   updated_at            DateTime @updatedAt @db.Timestamptz(3)
+}
+
+model BilanCarboneStatistique {
+  utilisateurId String   @id
+  situation     Json
+  total_g       Int
+  transport_g   Int
+  alimenation_g Int
+  created_at    DateTime @default(now()) @db.Timestamptz(3)
+  updated_at    DateTime @updatedAt @db.Timestamptz(3)
 }
 
 model Empreinte {
@@ -329,6 +358,7 @@ model KYC {
   categorie  String
   points     Int
   is_ngc     Boolean
+  ngc_key    String?
   question   String
   reponses   Json     @default("{}")
   thematique String

@@ -1,6 +1,6 @@
 import { Thematique } from '../contenu/thematique';
 import { KYCID } from '../kyc/KYCID';
-import { BooleanKYC, QuestionKYC } from '../kyc/questionQYC';
+import { BooleanKYC, QuestionKYC } from '../kyc/questionKYC';
 import { ThematiqueOnboarding } from '../onboarding/onboarding';
 import { TransportQuotidien } from '../transport/transport';
 import { Utilisateur } from '../utilisateur/utilisateur';
@@ -257,7 +257,7 @@ export class UserTagEvaluator {
   }
 
   private static processKYC(user: Utilisateur, kyc_id: KYCID) {
-    const kyc = user.kyc_history.getQuestion(kyc_id);
+    const kyc = user.kyc_history.getUpToDateQuestionByCodeOrNull(kyc_id);
     if (!(kyc && kyc.hasAnyResponses())) return;
     switch (kyc_id) {
       case KYCID.KYC001:

@@ -5,12 +5,16 @@ import { TuileThematique } from '../domain/univers/tuileThematique';
 import { TuileUnivers } from '../domain/univers/tuileUnivers';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
 import { Mission } from '../../src/domain/mission/mission';
+import { MissionUsecase } from './mission.usecase';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 
 @Injectable()
 export class UniversUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private missionRepository: MissionRepository,
+    private missionUsecase: MissionUsecase,
+    private personnalisator: Personnalisator,
   ) {}
 
   async getALL(utilisateurId: string): Promise<TuileUnivers[]> {
@@ -36,7 +40,7 @@ export class UniversUsecase {
       univers.is_done = utilisateur.missions.isUniversDone(univers.type);
     }
 
-    return result;
+    return this.personnalisator.personnaliser(result, utilisateur);
   }
 
   async getThematiquesOfUnivers(
@@ -53,49 +57,40 @@ export class UniversUsecase {
 
     const result: TuileThematique[] = [];
 
-    listTuilesThem.forEach((tuile) => {
+    for (const tuile of listTuilesThem) {
       const existing_mission =
         utilisateur.missions.getMissionByThematiqueUnivers(tuile.type);
 
       if (existing_mission && existing_mission.est_visible) {
         result.push(this.completeTuileWithMission(existing_mission, tuile));
       } else {
-        listMissionDefs.forEach((mission_def) => {
+        for (const mission_def of listMissionDefs) {
           if (
-            mission_def.est_visible &&
+            (mission_def.est_visible || utilisateur.isAdmin()) &&
             mission_def.thematique_univers === tuile.type &&
             ThematiqueRepository.getUniversParent(
               mission_def.thematique_univers,
             ) === univers
           ) {
-            const new_mission = utilisateur.missions.addMission(mission_def);
+            const ready_mission_def =
+              await this.missionUsecase.completeMissionDef(
+                mission_def,
+                utilisateur,
+              );
+
+            const new_mission =
+              utilisateur.missions.upsertNewMission(ready_mission_def);
+
             result.push(this.completeTuileWithMission(new_mission, tuile));
-            /**
-            result.push(
-              new TuileThematique({
-                image_url: tuile.image_url,
-                is_locked: false,
-                is_new: true,
-                niveau: tuile.niveau,
-                reason_locked: null,
-                type: tuile.type,
-                titre: tuile.titre,
-                progression: 0,
-                cible_progression: mission_def.objectifs.length,
-                univers_parent: tuile.univers_parent,
-                univers_parent_label: tuile.univers_parent_label,
-                famille_id_cms: tuile.famille_id_cms,
-                famille_ordre: tuile.famille_ordre,
-              }),
-            );
-            */
           }
-        });
+        }
       }
-    });
+    }
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    return this.ordonneTuilesThematiques(result);
+    const final_result = this.ordonneTuilesThematiques(result);
+
+    return this.personnalisator.personnaliser(final_result, utilisateur);
   }
 
   private completeTuileWithMission(
@@ -121,9 +116,7 @@ export class UniversUsecase {
     });
   }
 
-  private ordonneTuilesThematiques(
-    liste: TuileThematique[],
-  ): TuileThematique[] {
+  public ordonneTuilesThematiques(liste: TuileThematique[]): TuileThematique[] {
     liste.sort((a, b) => a.famille_ordre - b.famille_ordre);
 
     let famille_map: Map<Number, TuileThematique[]> = new Map();

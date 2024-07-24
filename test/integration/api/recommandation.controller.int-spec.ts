@@ -10,7 +10,7 @@ import {
   PonderationApplicativeManager,
 } from '../../../src/domain/scoring/ponderationApplicative';
 import { DB, TestUtil } from '../../TestUtil';
-import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
 import { Univers } from '../../../src/domain/univers/univers';
@@ -263,6 +263,49 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[1].content_id).toEqual('3');
     expect(response.body[2].content_id).toEqual('1');
   });
+  it('GET /utilisateurs/id/recommandations - ponderations des articles ET prio aux contenus locaux', async () => {
+    // GIVEN
+    //CatalogueQuestionsKYC.setCatalogue([]);
+
+    await TestUtil.create(DB.utilisateur, {
+      history: {},
+    });
+    PonderationApplicativeManager.setCatalogue({
+      neutre: {
+        R1: 5,
+        R2: 10,
+        R3: 15,
+      },
+      noel: {},
+      exp: {},
+    });
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      rubrique_ids: ['1'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+      rubrique_ids: ['2'],
+      codes_postaux: ['91120'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '3',
+      rubrique_ids: ['3'],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(3);
+    expect(response.body[0].content_id).toEqual('2');
+    expect(response.body[1].content_id).toEqual('3');
+    expect(response.body[2].content_id).toEqual('1');
+  });
+
   it('GET /utilisateurs/id/recommandations - renvoie qu une KYC, la mieux notée', async () => {
     // GIVEN
     process.env.KYC_RECO_ENABLED = 'true';

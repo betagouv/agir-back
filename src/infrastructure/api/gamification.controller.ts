@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  UseGuards,
-  Request,
-  Post,
-  Res,
-  HttpStatus,
-  UseFilters,
-} from '@nestjs/common';
+import { Controller, Get, Param, UseGuards, Request } from '@nestjs/common';
 import {
   ApiTags,
   ApiOkResponse,
@@ -19,6 +9,7 @@ import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
 import { GamificationUsecase } from '../../../src/usecase/gamification.usecase';
 import { GamificationAPI } from './types/gamification/gamificationAPI';
+import { BoardAPI } from './types/gamification/boardAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -46,5 +37,41 @@ export class GamificationController extends GenericControler {
     );
 
     return GamificationAPI.mapToAPI(result);
+  }
+
+  @Get('utilisateurs/:utilisateurId/classement/national')
+  @ApiOkResponse({
+    type: BoardAPI,
+  })
+  @ApiOperation({
+    summary: `Retourne le classement de l'utilisateur ainsi que le top 3 à l'échelle nationale`,
+  })
+  @UseGuards(AuthGuard)
+  async classementNational(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<any> {
+    this.checkCallerId(req, utilisateurId);
+    const board = await this.gamificationUsecase.classementNational(
+      utilisateurId,
+    );
+    return BoardAPI.mapToAPI(board, false);
+  }
+
+  @Get('utilisateurs/:utilisateurId/classement/local')
+  @ApiOkResponse({
+    type: BoardAPI,
+  })
+  @ApiOperation({
+    summary: `Retourne le classement de l'utilisateur ainsi que le top 3 dans sa commune`,
+  })
+  @UseGuards(AuthGuard)
+  async classementLocal(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<any> {
+    this.checkCallerId(req, utilisateurId);
+    const board = await this.gamificationUsecase.classementLocal(utilisateurId);
+    return BoardAPI.mapToAPI(board, true);
   }
 }

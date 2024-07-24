@@ -45,30 +45,9 @@ export class Gamification {
     this.celebrations.splice(index, 1);
   }
 
-  public ajoutePoints(new_points: number, features: UnlockedFeatures) {
-    // const current_niveau = this.getNiveau();
+  public ajoutePoints(new_points: number, utilisateur: Utilisateur) {
     this.points += new_points;
-    // const new_niveau = this.getNiveau();
-
-    /*
-    if (current_niveau != new_niveau) {
-      const celeb = new Celebration({
-        id: undefined,
-        titre: 'NOUVEAU NIVEAU',
-        type: CelebrationType.niveau,
-        new_niveau: new_niveau,
-        reveal: Gamification.getRevealByNiveau(new_niveau),
-      });
-      if (
-        features.isUnlocked(Feature.defis) &&
-        celeb.reveal &&
-        celeb.reveal.feature === Feature.defis
-      ) {
-        delete celeb.reveal;
-      }
-      this.celebrations.push(celeb);
-    }
-    */
+    utilisateur.points_classement = this.points;
   }
 
   public revealDefis() {

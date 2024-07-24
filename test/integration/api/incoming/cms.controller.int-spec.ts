@@ -4,7 +4,7 @@ import { DB, TestUtil } from '../../../TestUtil';
 import { Besoin } from '../../../../src/domain/aides/besoin';
 import { Univers } from '../../../../src/domain/univers/univers';
 import { ThematiqueUnivers } from '../../../../src/domain/univers/thematiqueUnivers';
-import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
 import { KYC, Mission } from '.prisma/client';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { Tag } from '../../../../src/domain/scoring/tag';
@@ -70,16 +70,19 @@ describe('/api/incoming/cms (API test)', () => {
       categorie: Categorie.mission,
       points: 5,
       is_ngc: false,
+      ngc_key: 'a . b . c',
       reponses: [
         {
           id: 1,
           reponse: 'haha',
           code: 'haha_code',
+          ngc_code: '123',
         },
         {
           id: 2,
           reponse: 'hihi',
           code: 'hihi_code',
+          ngc_code: '456',
         },
       ],
       thematique: { id: 1 },
@@ -116,8 +119,19 @@ describe('/api/incoming/cms (API test)', () => {
       objectifs: [
         { id: 1, titre: 'do it article', points: 5, article: { id: 11 } },
         { id: 2, titre: 'do it defi', points: 10, defi: { id: 12 } },
-        { id: 3, titre: 'do it kyc', points: 15, kyc: { code: KYCID.KYC001 } },
+        {
+          id: 3,
+          titre: 'do it kyc',
+          points: 15,
+          kyc: { code: KYCID.KYC001, id: 100 },
+        },
         { id: 4, titre: 'do it quizz', points: 20, quizz: { id: 13 } },
+        {
+          id: 5,
+          titre: 'do it article generique',
+          points: 5,
+          tag_article: { code: '111' },
+        },
       ],
     },
   };
@@ -156,6 +170,7 @@ describe('/api/incoming/cms (API test)', () => {
       titre: 'titre',
       sousTitre: 'soustitre 222',
       thematique_gamification: { id: 1, titre: 'Alimentation' },
+      tag_article: { code: 'composter' },
       thematiques: [
         { id: 1, titre: 'Alimentation' },
         { id: 2, titre: 'Climat' },
@@ -309,6 +324,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles[0].titre).toEqual('titre');
     expect(articles[0].soustitre).toEqual('soustitre 222');
     expect(articles[0].thematique_principale).toEqual('alimentation');
+    expect(articles[0].tag_article).toEqual('composter');
     expect(articles[0].thematiques).toStrictEqual(['alimentation', 'climat']);
     expect(articles[0].duree).toEqual('pas trop long');
     expect(articles[0].frequence).toEqual('souvent');
@@ -381,14 +397,17 @@ describe('/api/incoming/cms (API test)', () => {
     expect(item.categorie).toEqual(Categorie.mission);
     expect(item.points).toEqual(5);
     expect(item.is_ngc).toEqual(false);
+    expect(item.ngc_key).toEqual('a . b . c');
     expect(item.reponses).toEqual([
       {
         label: 'haha',
         code: 'haha_code',
+        ngc_code: '123',
       },
       {
         label: 'hihi',
         code: 'hihi_code',
+        ngc_code: '456',
       },
     ]);
     expect(item.thematique).toEqual(Thematique.alimentation);
@@ -423,24 +442,40 @@ describe('/api/incoming/cms (API test)', () => {
         content_id: '11',
         type: ContentType.article,
         points: 5,
+        tag_article: null,
+        id_cms: 11,
       },
       {
         titre: 'do it defi',
         content_id: '12',
         type: ContentType.defi,
         points: 10,
+        tag_article: null,
+        id_cms: 12,
       },
       {
         titre: 'do it kyc',
         content_id: KYCID.KYC001,
         type: ContentType.kyc,
         points: 15,
+        tag_article: null,
+        id_cms: 100,
       },
       {
         titre: 'do it quizz',
         content_id: '13',
         type: ContentType.quizz,
         points: 20,
+        tag_article: null,
+        id_cms: 13,
+      },
+      {
+        titre: 'do it article generique',
+        content_id: null,
+        type: ContentType.article,
+        points: 5,
+        tag_article: '111',
+        id_cms: null,
       },
     ]);
   });

@@ -3,26 +3,257 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { ServiceRechercheID } from '../../src/domain/bibliotheque_services/serviceRechercheID';
 import { ResultatRecherche } from '../../src/domain/bibliotheque_services/resultatRecherche';
 import { RechercheServiceManager } from '../../src/domain/bibliotheque_services/serviceManager';
+import { ApplicationError } from '../../src/infrastructure/applicationError';
+import { FiltreRecherche } from '../domain/bibliotheque_services/filtreRecherche';
+import {
+  CategorieRecherche,
+  CategorieRechercheManager,
+} from '../domain/bibliotheque_services/categorieRecherche';
+import { ServiceFavorisStatistiqueRepository } from '../infrastructure/repository/serviceFavorisStatistique.repository';
+import { Utilisateur } from '../domain/utilisateur/utilisateur';
+import { ServiceRechercheDefinition } from '../domain/bibliotheque_services/serviceRechercheDefinition';
+import { Univers } from '../domain/univers/univers';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { ServiceExterneID } from '../domain/bibliotheque_services/serviceExterneID';
 
 @Injectable()
 export class RechercheServicesUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private rechercheServiceManager: RechercheServiceManager,
+    private serviceFavorisStatistiqueRepository: ServiceFavorisStatistiqueRepository,
+    private personnalisator: Personnalisator,
   ) {}
 
   async search(
     utilisateurId: string,
     serviceId: ServiceRechercheID,
-    text: string,
+    filtre: FiltreRecherche,
   ): Promise<ResultatRecherche[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
     const finder = this.rechercheServiceManager.getFinderById(serviceId);
 
-    const result = await finder.find(text);
+    if (!finder) {
+      ApplicationError.throwUnkonwnSearchService(serviceId);
+    }
+
+    if (
+      filtre.categorie &&
+      !finder.getManagedCategories().includes(filtre.categorie)
+    ) {
+      ApplicationError.throwUnkonwnCategorieForSearchService(
+        serviceId,
+        filtre.categorie,
+      );
+    }
+
+    if (serviceId === ServiceRechercheID.proximite) {
+      if (!filtre.hasPoint()) {
+        if (!utilisateur.logement.code_postal) {
+          ApplicationError.throwUnkonwnUserLocation();
+        } else {
+          filtre.code_postal = utilisateur.logement.code_postal;
+          filtre.commune = utilisateur.logement.commune;
+        }
+      }
+    }
+
+    const result = await finder.find(filtre);
+
+    utilisateur.bilbiotheque_services.setDerniereRecherche(serviceId, result);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
+    this.completeFavorisDataToResult(serviceId, result, utilisateur);
 
     return result;
+  }
+
+  async ajouterFavoris(
+    utilisateurId: string,
+    serviceId: ServiceRechercheID,
+    favId: string,
+  ) {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
+    const service = utilisateur.bilbiotheque_services.getServiceById(serviceId);
+
+    if (!service || service.derniere_recherche.length === 0) {
+      ApplicationError.throwUnkonwnSearchResult(serviceId, favId);
+    }
+
+    service.ajouterFavoris(favId);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
+  async supprimerFavoris(
+    utilisateurId: string,
+    serviceId: ServiceRechercheID,
+    favId: string,
+  ) {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
+    const service = utilisateur.bilbiotheque_services.getServiceById(serviceId);
+
+    if (!service) {
+      return;
+    }
+
+    service.supprimerFavoris(favId);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
+  async getFavoris(
+    utilisateurId: string,
+    serviceId: ServiceRechercheID,
+  ): Promise<ResultatRecherche[]> {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
+    const service = utilisateur.bilbiotheque_services.getServiceById(serviceId);
+    if (!service) {
+      return [];
+    }
+
+    const result = service.favoris.map((f) => f.resulat_recherche);
+
+    this.completeFavorisDataToResult(serviceId, result, utilisateur);
+
+    return result;
+  }
+
+  async getListServiceDef(
+    utilisateurId: string,
+    univers: string,
+  ): Promise<ServiceRechercheDefinition[]> {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
+    const catalogue = [
+      {
+        id: ServiceRechercheID.fruits_legumes,
+        external_url: undefined,
+        icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/cerise.png',
+        titre: 'Fruits et légumes de saison',
+        sous_titre: CategorieRechercheManager.getMoisCourant(),
+        univers: Univers.alimentation,
+      },
+      {
+        id: ServiceRechercheID.proximite,
+        external_url: undefined,
+        icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/commerce.png',
+        titre: 'Mes commerces de proximité',
+        sous_titre: 'À {COMMUNE}',
+        univers: Univers.alimentation,
+      },
+      {
+        id: ServiceRechercheID.recettes,
+        external_url: undefined,
+        icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/omelette.png',
+        titre: 'Recettes saines et équilibrées',
+        sous_titre: 'Bas carbone',
+        univers: Univers.alimentation,
+      },
+      {
+        id: ServiceExterneID.poisson_de_saison,
+        external_url:
+          'https://www.mangerbouger.fr/manger-mieux/bien-manger-sans-se-ruiner/calendrier-de-saison/les-poissons-et-fruits-de-mer-de-juillet',
+        icon_url:
+          'https://www.mangerbouger.fr/var/mb/storage/images/_aliases/reference/9/9/9/1/11999-1-eng-GB/Poissons@3x.png',
+        titre: 'Poissons de saison',
+        sous_titre: 'Manger Bouger',
+        univers: Univers.alimentation,
+      },
+    ];
+
+    let result = catalogue.map((c) => new ServiceRechercheDefinition(c));
+    result = result.filter((r) => r.univers === univers);
+
+    return this.personnalisator.personnaliser(result, utilisateur);
+  }
+
+  async getCategories(
+    utilisateurId: string,
+    serviceId: ServiceRechercheID,
+  ): Promise<CategorieRecherche[]> {
+    const finder = this.rechercheServiceManager.getFinderById(serviceId);
+    if (!finder) {
+      ApplicationError.throwUnkonwnSearchService(serviceId);
+    }
+
+    return finder.getManagedCategories();
+  }
+
+  public async computeStatsFavoris(): Promise<string[]> {
+    const user_id_liste = await this.utilisateurRepository.listUtilisateurIds();
+
+    const service_favoris_map: Map<
+      string,
+      Map<string, { count: number; titre: string }>
+    > = new Map();
+
+    for (const user_id of user_id_liste) {
+      const user = await this.utilisateurRepository.getById(user_id);
+
+      for (const service of user.bilbiotheque_services.liste_services) {
+        for (const favoris of service.favoris) {
+          if (!service_favoris_map.get(service.id)) {
+            service_favoris_map.set(service.id, new Map());
+          }
+
+          const service_map = service_favoris_map.get(service.id);
+
+          if (!service_map.get(favoris.resulat_recherche.id)) {
+            service_map.set(favoris.resulat_recherche.id, {
+              count: 1,
+              titre: favoris.resulat_recherche.titre,
+            });
+          } else {
+            const fav = service_map.get(favoris.resulat_recherche.id);
+            fav.count++;
+          }
+        }
+      }
+    }
+
+    const result = [];
+
+    for (const [service_id, favoris_map] of service_favoris_map) {
+      result.push(service_id);
+
+      for (const [favoris_id, favoris] of favoris_map) {
+        await this.serviceFavorisStatistiqueRepository.upsertStatistiques(
+          service_id,
+          favoris_id,
+          favoris.titre,
+          favoris.count,
+        );
+      }
+    }
+
+    return result;
+  }
+
+  private completeFavorisDataToResult(
+    service_id: ServiceRechercheID,
+    result: ResultatRecherche[],
+    utilisateur: Utilisateur,
+  ) {
+    const service =
+      utilisateur.bilbiotheque_services.getServiceById(service_id);
+
+    for (const item of result) {
+      item.est_favoris = service.estFavoris(item.id);
+      item.nombre_favoris = ServiceFavorisStatistiqueRepository.getFavorisCount(
+        service_id,
+        item.id,
+      );
+    }
   }
 }

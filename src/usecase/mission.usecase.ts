@@ -4,10 +4,22 @@ import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
 import { Mission, Objectif } from '../../src/domain/mission/mission';
 import { ContentType } from '../../src/domain/contenu/contentType';
-import { QuestionKYC } from '../../src/domain/kyc/questionQYC';
+import { QuestionKYC } from '../domain/kyc/questionKYC';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { DefiStatus } from '../../src/domain/defis/defi';
+import {
+  MissionDefinition,
+  ObjectifDefinition,
+} from '../domain/mission/missionDefinition';
+import { Utilisateur } from '../domain/utilisateur/utilisateur';
+import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
+import {
+  ArticleFilter,
+  ArticleRepository,
+} from '../infrastructure/repository/article.repository';
+import { Categorie } from '../domain/contenu/categorie';
+import { PonderationApplicativeManager } from '../domain/scoring/ponderationApplicative';
 
 @Injectable()
 export class MissionUsecase {
@@ -16,6 +28,8 @@ export class MissionUsecase {
     private missionRepository: MissionRepository,
     private kycRepository: KycRepository,
     private personnalisator: Personnalisator,
+    private articleRepository: ArticleRepository,
+    private communeRepository: CommuneRepository,
   ) {}
 
   async getMissionOfThematique(
@@ -28,12 +42,20 @@ export class MissionUsecase {
     let mission_resultat =
       utilisateur.missions.getMissionByThematiqueUnivers(thematique);
 
-    if (!mission_resultat) {
+    if (!mission_resultat || mission_resultat.isNew()) {
       const mission_def = await this.missionRepository.getByThematique(
         thematique,
       );
       if (mission_def) {
-        mission_resultat = utilisateur.missions.addMission(mission_def);
+        const completed_mission = await this.completeMissionDef(
+          mission_def,
+          utilisateur,
+        );
+        mission_resultat = utilisateur.missions.upsertNewMission(
+          completed_mission,
+          true,
+        );
+
         await this.utilisateurRepository.updateUtilisateur(utilisateur);
       }
     }
@@ -51,8 +73,7 @@ export class MissionUsecase {
           }
         }
       }
-      this.personnalisator.personnaliser(mission_resultat, utilisateur);
-      return mission_resultat;
+      return this.personnalisator.personnaliser(mission_resultat, utilisateur);
     } else {
       throw ApplicationError.throwMissionNotFoundOfThematique(thematique);
     }
@@ -98,10 +119,7 @@ export class MissionUsecase {
     for (const objectif of objectifs_target) {
       if (objectif && !objectif.sont_points_en_poche) {
         objectif.sont_points_en_poche = true;
-        utilisateur.gamification.ajoutePoints(
-          objectif.points,
-          utilisateur.unlocked_features,
-        );
+        utilisateur.gamification.ajoutePoints(objectif.points, utilisateur);
       }
     }
 
@@ -130,9 +148,69 @@ export class MissionUsecase {
     const liste_objectifs_kyc = mission.getAllKYCs();
 
     for (const objectif_kyc of liste_objectifs_kyc) {
-      result.push(utilisateur.kyc_history.getQuestion(objectif_kyc.content_id));
+      result.push(
+        utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+          objectif_kyc.content_id,
+        ),
+      );
     }
 
-    return result;
+    return this.personnalisator.personnaliser(result, utilisateur);
+  }
+
+  async completeMissionDef(
+    mission_def: MissionDefinition,
+    utilisateur: Utilisateur,
+  ): Promise<MissionDefinition> {
+    const code_commune = await this.communeRepository.getCodeCommune(
+      utilisateur.logement.code_postal,
+      utilisateur.logement.commune,
+    );
+    const dept_region =
+      await this.communeRepository.findDepartementRegionByCodePostal(
+        utilisateur.logement.code_postal,
+      );
+
+    const filtre: ArticleFilter = {
+      code_postal: utilisateur.logement.code_postal,
+      categorie: Categorie.mission,
+      code_commune: code_commune ? code_commune : undefined,
+      code_departement: dept_region ? dept_region.code_departement : undefined,
+      code_region: dept_region ? dept_region.code_region : undefined,
+    };
+
+    const objectifs = mission_def.objectifs;
+
+    mission_def.objectifs = [];
+
+    for (const objectif of objectifs) {
+      if (objectif.tag_article) {
+        filtre.tag_article = objectif.tag_article;
+        const article_candidat_liste =
+          await this.articleRepository.searchArticles(filtre);
+
+        PonderationApplicativeManager.increaseScoreContentOfList(
+          article_candidat_liste,
+          utilisateur.tag_ponderation_set,
+        );
+
+        PonderationApplicativeManager.sortContent(article_candidat_liste);
+
+        for (const article of article_candidat_liste) {
+          const new_objectif = new ObjectifDefinition({
+            content_id: article.content_id,
+            titre: article.titre,
+            points: objectif.points,
+            tag_article: objectif.tag_article,
+            type: ContentType.article,
+            id_cms: parseInt(article.content_id),
+          });
+          mission_def.addIfNotContainsAlready(new_objectif);
+        }
+      } else {
+        mission_def.addIfNotContainsAlready(objectif);
+      }
+    }
+    return mission_def;
   }
 }

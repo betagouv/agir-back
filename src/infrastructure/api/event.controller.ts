@@ -3,11 +3,9 @@ import {
   Param,
   UseGuards,
   Request,
-  HttpStatus,
   Res,
   Body,
   Post,
-  UseFilters,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
@@ -15,11 +13,10 @@ import { AuthGuard } from '../auth/guard';
 import { EventUsecase } from '../../../src/usecase/event.usecase';
 import { Response } from 'express';
 import { EventAPI } from './types/event/eventAPI';
-import { ControllerExceptionFilter } from './controllerException.filter';
 
 @Controller()
 @ApiBearerAuth()
-@ApiTags('Utilisateur')
+@ApiTags('Events')
 export class EventController extends GenericControler {
   constructor(private readonly eventUsecase: EventUsecase) {
     super();
@@ -36,13 +33,10 @@ export class EventController extends GenericControler {
   async getUtilisateurTodo(
     @Param('utilisateurId') utilisateurId: string,
     @Request() req,
-    @Res() res: Response,
     @Body() body: EventAPI,
   ) {
     this.checkCallerId(req, utilisateurId);
 
     await this.eventUsecase.processEvent(utilisateurId, body);
-
-    res.status(HttpStatus.OK).json('ok').send();
   }
 }

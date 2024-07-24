@@ -41,6 +41,13 @@ export class MissionRepository {
     return this.buildMissionDefFromDB(result);
   }
 
+  async getByCMS_ID(cms_id: number): Promise<MissionDefinition> {
+    const result = await this.prisma.mission.findUnique({
+      where: { id_cms: cms_id },
+    });
+    return this.buildMissionDefFromDB(result);
+  }
+
   async list(): Promise<MissionDefinition[]> {
     const result = await this.prisma.mission.findMany();
     return result.map((elem) => this.buildMissionDefFromDB(elem));

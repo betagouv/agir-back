@@ -28,10 +28,9 @@ import {
 import { ContentType } from '../../src/domain/contenu/contentType';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
 import { KycDefinition } from '../../src/domain/kyc/kycDefinition';
-import { TypeReponseQuestionKYC } from '../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { Categorie } from '../../src/domain/contenu/categorie';
-import { TuileUnivers } from 'src/domain/univers/tuileUnivers';
 import { UniversDefinition } from 'src/domain/univers/universDefinition';
 import { ThematiqueDefinition } from 'src/domain/univers/thematiqueDefinition';
 
@@ -58,6 +57,10 @@ export class CMSUsecase {
     }
     if (cmsWebhookAPI.model === CMSModel.univers) {
       switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.unpublish']:
+          return this.deleteUnivers(cmsWebhookAPI);
+        case CMSEvent['entry.delete']:
+          return this.deleteUnivers(cmsWebhookAPI);
         case CMSEvent['entry.publish']:
           return this.createOrUpdateUnivers(cmsWebhookAPI);
         case CMSEvent['entry.update']:
@@ -90,6 +93,10 @@ export class CMSUsecase {
     }
     if (cmsWebhookAPI.model === CMSModel['thematique-univers']) {
       switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.unpublish']:
+          return this.deleteThematiqueUnivers(cmsWebhookAPI);
+        case CMSEvent['entry.delete']:
+          return this.deleteThematiqueUnivers(cmsWebhookAPI);
         case CMSEvent['entry.publish']:
           return this.createOrUpdateThematiqueUnivers(cmsWebhookAPI);
         case CMSEvent['entry.update']:
@@ -405,11 +412,13 @@ export class CMSUsecase {
     const URL = App.getCmsURL().concat(
       '/',
       type,
-      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[10]=prochaines_thematiques&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent',
+      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[10]=prochaines_thematiques&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article',
     );
     return URL.concat(page);
   }
   async createOrUpdateThematique(cmsWebhookAPI: CMSWebhookAPI) {
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
+
     await this.thematiqueRepository.upsertThematique(
       cmsWebhookAPI.entry.id,
       cmsWebhookAPI.entry.titre,
@@ -417,6 +426,8 @@ export class CMSUsecase {
   }
 
   async createOrUpdateUnivers(cmsWebhookAPI: CMSWebhookAPI) {
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
+
     await this.thematiqueRepository.upsertUnivers({
       code: cmsWebhookAPI.entry.code,
       label: cmsWebhookAPI.entry.label,
@@ -448,8 +459,18 @@ export class CMSUsecase {
   async deleteMission(cmsWebhookAPI: CMSWebhookAPI) {
     await this.missionRepository.delete(cmsWebhookAPI.entry.id);
   }
+  async deleteThematiqueUnivers(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.thematiqueRepository.deleteThematiqueUnivers(
+      cmsWebhookAPI.entry.id,
+    );
+  }
+  async deleteUnivers(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.thematiqueRepository.deleteUnivers(cmsWebhookAPI.entry.id);
+  }
 
   async createOrUpdateThematiqueUnivers(cmsWebhookAPI: CMSWebhookAPI) {
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
+
     await this.thematiqueRepository.upsertThematiqueUnivers({
       code: cmsWebhookAPI.entry.code,
       univers_parent: cmsWebhookAPI.entry.univers_parent
@@ -571,6 +592,9 @@ export class CMSUsecase {
         ),
         codes_departement: CMSUsecase.split(hook.entry.codes_departement),
         codes_region: CMSUsecase.split(hook.entry.codes_region),
+        tag_article: hook.entry.tag_article
+          ? hook.entry.tag_article.code
+          : null,
       });
     }
     return result;
@@ -637,6 +661,7 @@ export class CMSUsecase {
       categorie: Categorie[entry.categorie],
       type: TypeReponseQuestionKYC[entry.type],
       is_ngc: entry.is_ngc,
+      ngc_key: entry.ngc_key,
       points: entry.points,
       question: entry.question,
       thematique: entry.thematique
@@ -646,6 +671,7 @@ export class CMSUsecase {
         ? entry.reponses.map((r) => ({
             label: r.reponse,
             code: r.code,
+            ngc_code: r.ngc_code,
           }))
         : [],
       tags: entry.tags
@@ -675,22 +701,32 @@ export class CMSUsecase {
                 content_id: null,
                 points: obj.points,
                 type: null,
+                tag_article: null,
+                id_cms: null,
               });
               if (obj.article) {
                 result.type = ContentType.article;
                 result.content_id = obj.article.id.toString();
+                result.id_cms = obj.article.id;
+              }
+              if (obj.tag_article) {
+                result.type = ContentType.article;
+                result.tag_article = obj.tag_article.code;
               }
               if (obj.defi) {
                 result.type = ContentType.defi;
                 result.content_id = obj.defi.id.toString();
+                result.id_cms = obj.defi.id;
               }
               if (obj.quizz) {
                 result.type = ContentType.quizz;
                 result.content_id = obj.quizz.id.toString();
+                result.id_cms = obj.quizz.id;
               }
               if (obj.kyc) {
                 result.type = ContentType.kyc;
                 result.content_id = obj.kyc.code;
+                result.id_cms = obj.kyc.id;
               }
               return result;
             })
@@ -753,6 +789,9 @@ export class CMSUsecase {
         ),
         codes_departement: CMSUsecase.split(entry.attributes.codes_departement),
         codes_region: CMSUsecase.split(entry.attributes.codes_region),
+        tag_article: entry.attributes.tag_article.data
+          ? entry.attributes.tag_article.data.attributes.code
+          : undefined,
       });
     }
     return result;
@@ -874,11 +913,13 @@ export class CMSUsecase {
       categorie: Categorie[entry.attributes.categorie],
       points: entry.attributes.points,
       is_ngc: entry.attributes.is_ngc,
+      ngc_key: entry.attributes.ngc_key,
       question: entry.attributes.question,
       reponses: entry.attributes.reponses
         ? entry.attributes.reponses.map((r) => ({
             label: r.reponse,
             code: r.code,
+            ngc_code: r.ngc_code,
           }))
         : [],
       thematique: entry.attributes.thematique.data
@@ -920,22 +961,32 @@ export class CMSUsecase {
                 content_id: null,
                 points: obj.points,
                 type: null,
+                tag_article: null,
+                id_cms: null,
               });
               if (obj.article.data) {
                 result.type = ContentType.article;
                 result.content_id = obj.article.data.id.toString();
+                result.id_cms = obj.article.data.id;
+              }
+              if (obj.tag_article.data) {
+                result.type = ContentType.article;
+                result.tag_article = obj.tag_article.data.attributes.code;
               }
               if (obj.defi.data) {
                 result.type = ContentType.defi;
                 result.content_id = obj.defi.data.id.toString();
+                result.id_cms = obj.defi.data.id;
               }
               if (obj.quizz.data) {
                 result.type = ContentType.quizz;
                 result.content_id = obj.quizz.data.id.toString();
+                result.id_cms = obj.quizz.data.id;
               }
               if (obj.kyc.data) {
                 result.type = ContentType.kyc;
                 result.content_id = obj.kyc.data.attributes.code;
+                result.id_cms = obj.kyc.data.id;
               }
               return result;
             })

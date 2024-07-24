@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { KYC } from '@prisma/client';
 import { KycDefinition } from '../../../src/domain/kyc/kycDefinition';
-import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../domain/kyc/questionKYC';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { Categorie } from '../../../src/domain/contenu/categorie';
@@ -19,6 +19,7 @@ export class KycRepository {
       categorie: kycDef.categorie,
       points: kycDef.points,
       is_ngc: kycDef.is_ngc,
+      ngc_key: kycDef.ngc_key,
       question: kycDef.question,
       reponses: kycDef.reponses,
       thematique: kycDef.thematique ? kycDef.thematique.toString() : null,
@@ -50,6 +51,13 @@ export class KycRepository {
     return this.buildKYCDefFromDB(result);
   }
 
+  async getByCMS_ID(cms_id: number): Promise<KycDefinition> {
+    const result = await this.prisma.kYC.findUnique({
+      where: { id_cms: cms_id },
+    });
+    return this.buildKYCDefFromDB(result);
+  }
+
   async getAllDefs(): Promise<KycDefinition[]> {
     const result = await this.prisma.kYC.findMany();
     return result.map((elem) => this.buildKYCDefFromDB(elem));
@@ -69,6 +77,7 @@ export class KycRepository {
       thematique: Thematique[kycDB.thematique],
       tags: kycDB.tags ? kycDB.tags.map((t) => Tag[t]) : [],
       universes: kycDB.universes ? kycDB.universes : [],
+      ngc_key: kycDB.ngc_key,
     });
   }
 }

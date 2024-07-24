@@ -18,7 +18,7 @@ describe('UnlockedFeatures_vN ', () => {
     domain.add(Feature.aides);
     // THEN
 
-    expect(domain.unlocked_features).toEqual([Feature.aides]);
+    expect(domain.unlocked_features.includes(Feature.aides)).toEqual(true);
   });
   it('serialise <=> deSerialise v1 OK', async () => {
     // GIVEN

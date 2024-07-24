@@ -7,7 +7,7 @@ import { Univers } from '../../../src/domain/univers/univers';
 import {
   TypeReponseQuestionKYC,
   BooleanKYC,
-} from '../../../src/domain/kyc/questionQYC';
+} from '../../../src/domain/kyc/questionKYC';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { EventType } from '../../../src/domain/appEvent';
 import { DefiStatus } from '../../../src/domain/defis/defi';
@@ -18,6 +18,8 @@ import { Gamification_v0 } from '../../../src/domain/object_store/gamification/g
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { DefiHistory_v0 } from '../../../src/domain/object_store/defi/defiHistory_v0';
 import { Thematique } from '../../../src/domain/contenu/thematique';
+import { ObjectifDefinition } from '../../../src/domain/mission/missionDefinition';
+import { Mission } from '@prisma/client';
 
 describe('Mission (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -458,15 +460,205 @@ describe('Mission (API test)', () => {
 
     const objectif_article = response.body.objectifs[1];
     expect(objectif_article.id.length).toBeGreaterThan(10);
-    expect(objectif_article.content_id).toEqual('1');
+    expect(objectif_article.content_id).toEqual('2');
     expect(objectif_article.type).toEqual(ContentType.article);
-    expect(objectif_article.titre).toEqual('obj 2');
+    expect(objectif_article.titre).toEqual('obj 2');
     expect(objectif_article.points).toEqual(25);
     expect(objectif_article.is_locked).toEqual(true);
     expect(objectif_article.done_at).toEqual(null);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.missions.missions).toHaveLength(1);
+  });
+
+  it(`GET /utilisateurs/utilisateur-id/thematiques/cereales/mission - recalcul une mission avec des articles dynamiques`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.article, {
+      content_id: '0',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+      titre: 'hihi',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+      titre: 'hoho',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+      tag_article: 'autre',
+      categorie: Categorie.mission,
+    });
+
+    const objectifs: ObjectifDefinition[] = [
+      {
+        content_id: '11',
+        points: 5,
+        titre: 'yop',
+        type: ContentType.kyc,
+        tag_article: null,
+        id_cms: 11,
+      },
+      {
+        content_id: '222',
+        points: 5,
+        titre: 'haha',
+        type: ContentType.article,
+        tag_article: null,
+        id_cms: 222,
+      },
+      {
+        content_id: null,
+        points: 5,
+        titre: 'TTT',
+        type: ContentType.article,
+        tag_article: 'composter',
+        id_cms: null,
+      },
+    ];
+    const mission_articles_tag: Mission = {
+      id_cms: 1,
+      thematique_univers: ThematiqueUnivers.cereales,
+      est_visible: true,
+      objectifs: objectifs as any,
+      prochaines_thematiques: [],
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.utilisateur, { missions: {} });
+
+    await TestUtil.create(DB.mission, mission_articles_tag);
+
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      label: `Les céréales c'est bon`,
+      image_url: 'aaaa',
+      niveau: 2,
+      univers_parent: Univers.alimentation,
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/cereales/mission',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.objectifs).toHaveLength(4);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.missions.missions).toHaveLength(1);
+    expect(userDB.missions.missions[0].objectifs).toHaveLength(4);
+    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('222');
+    expect(userDB.missions.missions[0].objectifs[1].type).toEqual(
+      ContentType.article,
+    );
+    expect(userDB.missions.missions[0].objectifs[2].content_id).toEqual('0');
+    expect(userDB.missions.missions[0].objectifs[2].type).toEqual(
+      ContentType.article,
+    );
+    expect(userDB.missions.missions[0].objectifs[2].titre).toEqual('hihi');
+    expect(userDB.missions.missions[0].objectifs[3].content_id).toEqual('1');
+    expect(userDB.missions.missions[0].objectifs[3].type).toEqual(
+      ContentType.article,
+    );
+    expect(userDB.missions.missions[0].objectifs[3].titre).toEqual('hoho');
+  });
+
+  it(`GET /utilisateurs/utilisateur-id/thematiques/cereales/mission - pas de recalcul articles dynamiques si mission plus nouvelle`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.article, {
+      content_id: '0',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+      titre: 'hihi',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+      titre: 'hoho',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+      tag_article: 'autre',
+      categorie: Categorie.mission,
+    });
+
+    const objectifs: ObjectifDefinition[] = [
+      {
+        content_id: '11',
+        points: 5,
+        titre: 'yop',
+        type: ContentType.kyc,
+        tag_article: null,
+        id_cms: 11,
+      },
+      {
+        content_id: '222',
+        points: 5,
+        titre: 'haha',
+        type: ContentType.article,
+        tag_article: null,
+        id_cms: 222,
+      },
+      {
+        content_id: null,
+        points: 5,
+        titre: 'TTT',
+        type: ContentType.article,
+        tag_article: 'composter',
+        id_cms: null,
+      },
+    ];
+    const mission_articles_tag: Mission = {
+      id_cms: 1,
+      thematique_univers: ThematiqueUnivers.cereales,
+      est_visible: true,
+      objectifs: objectifs as any,
+      prochaines_thematiques: [],
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.utilisateur, { missions: missions_2_KYC });
+
+    await TestUtil.create(DB.mission, mission_articles_tag);
+
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      label: `Les céréales c'est bon`,
+      image_url: 'aaaa',
+      niveau: 2,
+      univers_parent: Univers.alimentation,
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/cereales/mission',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.objectifs).toHaveLength(2);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.missions.missions).toHaveLength(1);
+    expect(userDB.missions.missions[0].objectifs).toHaveLength(2);
+    expect(userDB.missions.missions[0].objectifs[0].content_id).toEqual('_1');
+    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('_2');
   });
   it(`GET /utilisateurs/id/thematiques/climat/mission - 404 si pas de mission pour cette thematique`, async () => {
     // GIVEN
@@ -625,7 +817,7 @@ describe('Mission (API test)', () => {
     expect(response.body.reponses_possibles).toEqual(['Oui', 'Non', 'A voir']);
     expect(response.body.categorie).toEqual(Categorie.test);
     expect(response.body.question).toEqual(
-      `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
+      `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
     );
   });
   it(`GET /utilisateurs/id/thematiques/cereales/next_kyc - renvoie la liste des questions à poser`, async () => {
@@ -667,7 +859,7 @@ describe('Mission (API test)', () => {
     expect(response.body[0]).toEqual({
       id: '_3',
       question:
-        "Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?",
+        "Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?",
       reponse: [],
       categorie: 'test',
       points: 10,
@@ -749,7 +941,7 @@ describe('Mission (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
@@ -797,7 +989,7 @@ describe('Mission (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
@@ -859,7 +1051,7 @@ describe('Mission (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
@@ -884,7 +1076,7 @@ describe('Mission (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
@@ -911,7 +1103,7 @@ describe('Mission (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);

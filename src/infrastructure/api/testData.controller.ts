@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Param, Post, Request } from '@nestjs/common';
+import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
 import { SuiviAlimentation } from '../../../src/domain/suivi/suiviAlimentation';
 import { SuiviRepository } from '../../../src/infrastructure/repository/suivi.repository';
@@ -21,6 +21,10 @@ import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 import { Transport } from '../../../src/domain/transport/transport';
 import { Logement } from '../../../src/domain/logement/logement';
+import { ContactUsecase } from '../../usecase/contact.usecase';
+import { Contact } from '../contact/contact';
+import { ContactSynchro } from '../contact/contactSynchro';
+import { GenericControler } from './genericControler';
 
 export enum TheBoolean {
   true = 'true',
@@ -32,14 +36,41 @@ export enum TheTypes {
 
 @Controller()
 @ApiTags('TestData')
-export class TestDataController {
+@ApiBearerAuth()
+export class TestDataController extends GenericControler {
   constructor(
     private prisma: PrismaService,
     private suiviRepository: SuiviRepository,
     private linkyRepository: LinkyRepository,
     private migrationUsecase: MigrationUsecase,
-    private utilisateurRepository: UtilisateurRepository,
-  ) {}
+    public contactSynchro: ContactSynchro,
+    private utilisateurRepository2: UtilisateurRepository,
+  ) {
+    super();
+  }
+
+  @Post('creer_contact_brevo/:email')
+  @ApiParam({ name: 'email' })
+  async creerContact(@Param('email') email: string, @Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
+    const contact = new Contact({
+      email: email,
+      ext_id: uuidv4(),
+      smsBlacklisted: false,
+      smtpBlacklistSender: [],
+      emailBlacklisted: false,
+      attributes: {
+        POINTS: 15,
+        EMAIL: email,
+        CODE_POSTAL: '91120',
+        DERNIERE_ACTIVITE: new Date(),
+        NIVEAU: 2,
+        FIRSTNAME: 'toto',
+        LASTNAME: 'titi',
+      },
+    });
+    await this.contactSynchro.createContactFromContact(contact);
+  }
 
   @Get('testdata/:id')
   @ApiParam({ name: 'id', enum: utilisateurs_liste })
@@ -218,7 +249,7 @@ export class TestDataController {
 
     await this.migrationUsecase.migrateUsers();
 
-    const utilisatateur = await this.utilisateurRepository.getById(
+    const utilisatateur = await this.utilisateurRepository2.getById(
       utilisateurId,
     );
     utilisatateur.logement = Logement.buildFromOnboarding(
@@ -228,6 +259,6 @@ export class TestDataController {
       utilisatateur.onboardingData,
     )),
       utilisatateur.recomputeRecoTags();
-    await this.utilisateurRepository.updateUtilisateur(utilisatateur);
+    await this.utilisateurRepository2.updateUtilisateur(utilisatateur);
   }
 }

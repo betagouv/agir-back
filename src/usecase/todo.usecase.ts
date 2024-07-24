@@ -12,6 +12,7 @@ import {
 } from '../../src/domain/gamification/celebrations/celebration';
 import { Categorie } from '../../src/domain/contenu/categorie';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 
 @Injectable()
 export class TodoUsecase {
@@ -20,6 +21,7 @@ export class TodoUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
+    private personnalisator: Personnalisator,
   ) {}
 
   async gagnerPointsFromTodoElement(utilisateurId: string, elementId: string) {
@@ -31,10 +33,7 @@ export class TodoUsecase {
 
     if (element && !element.sontPointsEnPoche()) {
       const points = todo_active.empochePoints(element);
-      utilisateur.gamification.ajoutePoints(
-        points,
-        utilisateur.unlocked_features,
-      );
+      utilisateur.gamification.ajoutePoints(points, utilisateur);
     }
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -47,7 +46,7 @@ export class TodoUsecase {
     if (todo_active.isDone()) {
       utilisateur.gamification.ajoutePoints(
         todo_active.points_todo,
-        utilisateur.unlocked_features,
+        utilisateur,
       );
 
       if (todo_active.celebration && todo_active.celebration.reveal) {
@@ -151,7 +150,8 @@ export class TodoUsecase {
         }
       }
     }
-    return todo;
+    //return todo;
+    return this.personnalisator.personnaliser(todo, utilisateur);
   }
 
   public async updateAllUsersTodo(): Promise<string[]> {

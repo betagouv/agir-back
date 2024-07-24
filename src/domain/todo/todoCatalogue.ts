@@ -204,6 +204,7 @@ export class TodoCatalogue {
           level: DifficultyLevel.ANY,
           points: 5,
         },
+        /*
         {
           id: uuidv4(),
           titre: `Ajouter "Fruits et légumes de saison"`,
@@ -215,6 +216,7 @@ export class TodoCatalogue {
           points: 20,
           level: DifficultyLevel.ANY,
         },
+        */
         {
           id: uuidv4(),
           titre: `L’empreinte des Français`,

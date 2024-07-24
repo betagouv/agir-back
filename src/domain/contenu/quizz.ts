@@ -56,4 +56,8 @@ export class Quizz extends QuizzData implements TaggedContent {
   public getDistinctText(): string {
     return this.titre;
   }
+
+  public isLocal(): boolean {
+    return this.codes_postaux && this.codes_postaux.length > 0;
+  }
 }

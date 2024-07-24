@@ -409,6 +409,7 @@ describe('UtilisateurRepository', () => {
       1234,
       '91120',
       'PALAISEAU',
+      false,
     );
     user.id = 'utilisateur-id';
 

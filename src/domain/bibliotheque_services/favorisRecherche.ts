@@ -2,13 +2,22 @@ import { FavorisRecherche_v0 } from '../object_store/service/BibliothequeService
 import { ResultatRecherche } from './resultatRecherche';
 
 export class FavorisRecherche {
-  id: string;
   date_ajout: Date;
   resulat_recherche: ResultatRecherche;
 
   constructor(fav: FavorisRecherche_v0) {
-    this.id = fav.id;
     this.date_ajout = fav.date_ajout;
-    this.resulat_recherche = new ResultatRecherche(fav.resulat_recherche);
+    if (fav.resulat_recherche) {
+      this.resulat_recherche = new ResultatRecherche(fav.resulat_recherche);
+    }
+  }
+
+  public static new(id: string, resultat: ResultatRecherche) {
+    const fav = new FavorisRecherche({
+      date_ajout: new Date(),
+      resulat_recherche: null,
+    });
+    fav.resulat_recherche = resultat;
+    return fav;
   }
 }

@@ -68,10 +68,7 @@ export class Defi implements TaggedContent {
       this.date_acceptation = new Date();
     }
     if (status === DefiStatus.deja_fait || status === DefiStatus.fait) {
-      utilisateur.gamification.ajoutePoints(
-        this.points,
-        utilisateur.unlocked_features,
-      );
+      utilisateur.gamification.ajoutePoints(this.points, utilisateur);
     }
     this.status = status;
   }
@@ -90,5 +87,8 @@ export class Defi implements TaggedContent {
 
   public getDistinctText(): string {
     return this.titre;
+  }
+  public isLocal(): boolean {
+    return false;
   }
 }

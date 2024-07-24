@@ -68,7 +68,9 @@ describe('Upgrader ', () => {
     );
 
     // THEN
-    expect(result['unlocked_features']).toEqual([Feature.bibliotheque]);
+    expect(result['unlocked_features'].includes(Feature.bibliotheque)).toEqual(
+      true,
+    );
     expect(result['version']).toEqual(1);
   });
   it('convertAllDateAttributes converts date OK', () => {

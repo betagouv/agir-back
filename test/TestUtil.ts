@@ -15,7 +15,7 @@ import { Impact } from '../src/domain/onboarding/onboarding';
 const request = require('supertest');
 import { JwtService } from '@nestjs/jwt';
 import { ParcoursTodo } from '../src/domain/todo/parcoursTodo';
-import { TypeReponseQuestionKYC } from '../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../src/domain/kyc/questionKYC';
 import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
 import { Feature } from '../src/domain/gamification/feature';
 import { UnlockedFeatures_v1 } from '../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
@@ -214,6 +214,9 @@ export class TestUtil {
     await this.prisma.fileAttente.deleteMany();
     await this.prisma.thematiqueStatistique.deleteMany();
     await this.prisma.universStatistique.deleteMany();
+    await this.prisma.servicesFavorisStatistique.deleteMany();
+    await this.prisma.bilanCarboneStatistique.deleteMany();
+
     ThematiqueRepository.resetAllRefs();
   }
 
@@ -299,7 +302,7 @@ export class TestUtil {
       tags_utilisateur: [],
       rubrique_ids: ['3', '4'],
       rubrique_labels: ['r3', 'r4'],
-      codes_postaux: ['91120'],
+      codes_postaux: [],
       duree: 'pas long',
       frequence: 'souvent',
       difficulty: 1,
@@ -364,15 +367,17 @@ export class TestUtil {
       objectifs: [
         {
           titre: 'obj 1',
-          content_id: '_1',
+          content_id: '1',
           type: ContentType.kyc,
           points: 10,
+          id_cms: 1,
         },
         {
           titre: 'obj 2',
-          content_id: '1',
+          content_id: '2',
           type: ContentType.article,
           points: 25,
+          id_cms: 2,
         },
       ],
       prochaines_thematiques: [
@@ -397,11 +402,15 @@ export class TestUtil {
       universes: [Univers.alimentation],
       thematique: Thematique.climat,
       type: TypeReponseQuestionKYC.choix_multiple,
+      ngc_key: 'a . b . c',
       reponses: [
         {
           code: 'c123',
           reponse: 'la reponse D',
         },
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
       ],
       created_at: undefined,
       updated_at: undefined,
@@ -625,7 +634,14 @@ export class TestUtil {
       force_connexion: false,
       derniere_activite: null,
       missions: {},
+      bilbiotheque_services: {},
       db_version: 0,
+      is_magic_link_user: false,
+      points_classement: 0,
+      code_postal_classement: null,
+      commune_classement: null,
+      rank: null,
+      rank_commune: null,
       ...override,
     };
   }
@@ -719,14 +735,14 @@ export class TestUtil {
       utilisateurId: 'utilisateur-id',
       data: [
         {
-          time: new Date(123),
-          value: 100,
-          value_at_normal_temperature: 110,
+          date: new Date(123),
+          day_value: 100,
+          value_cumulee: null,
         },
         {
-          time: new Date(456),
-          value: 110,
-          value_at_normal_temperature: 120,
+          date: new Date(456),
+          day_value: 110,
+          value_cumulee: null,
         },
       ],
       ...override,
@@ -758,6 +774,7 @@ export class TestUtil {
       exclude_codes_commune: [],
       codes_departement: [],
       codes_region: [],
+      tag_article: 'composter',
       ...override,
     };
   }

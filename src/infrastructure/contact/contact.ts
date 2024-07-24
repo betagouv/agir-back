@@ -7,6 +7,8 @@ export class Contact {
     NIVEAU: number;
     CODE_POSTAL: string;
     DERNIERE_ACTIVITE: Date;
+    FIRSTNAME: string;
+    LASTNAME: string;
   };
   email: string;
   ext_id?: string;
@@ -16,18 +18,29 @@ export class Contact {
   listIds?: number[];
   unlinkListIds?: number[];
 
-  constructor(user: Utilisateur) {
-    this.attributes = {
+  constructor(contact?: Contact) {
+    if (contact) {
+      Object.assign(this, contact);
+    }
+  }
+
+  public static newContactFromUser(user: Utilisateur): Contact {
+    const result = new Contact();
+    result.attributes = {
       POINTS: user.gamification.points,
       EMAIL: user.email,
       CODE_POSTAL: user.logement.code_postal,
       DERNIERE_ACTIVITE: user.derniere_activite,
       NIVEAU: user.gamification.getNiveau(),
+      FIRSTNAME: user.prenom,
+      LASTNAME: user.nom,
     };
-    this.email = user.email;
-    this.ext_id = user.id;
-    this.emailBlacklisted = false;
-    this.smtpBlacklistSender = [];
-    this.smsBlacklisted = false;
+    result.email = user.email;
+    result.ext_id = user.id;
+    result.emailBlacklisted = false;
+    result.smtpBlacklistSender = [];
+    result.smsBlacklisted = false;
+
+    return result;
   }
 }

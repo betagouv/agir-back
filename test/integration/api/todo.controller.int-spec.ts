@@ -6,7 +6,7 @@ import { LiveService } from '../../../src/domain/service/serviceDefinition';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { EventType } from '../../../src/domain/appEvent';
-import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
 import {
@@ -1071,7 +1071,7 @@ describe('TODO list (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     const dbUser = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUser.parcours_todo.liste_todo[0].done).toHaveLength(1);
     expect(dbUser.parcours_todo.liste_todo[0].done[0].isDone()).toEqual(true);
@@ -1123,7 +1123,7 @@ describe('TODO list (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     const dbUser = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUser.parcours_todo.getActiveTodo().todo).toHaveLength(1);
     expect(
@@ -1240,7 +1240,7 @@ describe('TODO list (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     const dbUser = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
     expect(
@@ -1280,7 +1280,7 @@ describe('TODO list (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     const dbUser = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
     expect(
@@ -1320,7 +1320,7 @@ describe('TODO list (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     const dbUser = await utilisateurRepository.getById('utilisateur-id');
     expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
     expect(
@@ -1329,20 +1329,6 @@ describe('TODO list (API test)', () => {
     expect(dbUser.parcours_todo.getActiveTodo().done[0].id).toEqual('1234');
   });
 
-  /*
-  it('GET /utilisateurs/id/todo répond OK pour todo #1', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-
-    // WHEN
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.todo).toHaveLength(2);
-    expect(response.body.numero_todo).toEqual(1);
-  });
-  */
   it('GET /utilisateurs/id/todo répond OK pour todo #2', async () => {
     // GIVEN
     const parcours = new ParcoursTodo();

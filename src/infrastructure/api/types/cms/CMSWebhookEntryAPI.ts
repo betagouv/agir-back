@@ -7,6 +7,7 @@ export class IDAPI {
   @ApiProperty() id: number;
 }
 export class CodeAPI {
+  @ApiProperty() id: number;
   @ApiProperty() code: string;
 }
 
@@ -28,10 +29,12 @@ export class CMSWebhookObjectifAPI {
   @ApiProperty({ type: IDAPI }) defi: IDAPI;
   @ApiProperty({ type: IDAPI }) quizz: IDAPI;
   @ApiProperty({ type: CodeAPI }) kyc: CodeAPI;
+  @ApiProperty({ type: CodeAPI }) tag_article: CodeAPI;
 }
 export class CMSWebhookReponseKYCAPI {
   @ApiProperty() id: number;
   @ApiProperty() code: string;
+  @ApiProperty() ngc_code: string;
   @ApiProperty() reponse: string;
 }
 export class AndConditionAPI {
@@ -45,6 +48,11 @@ export class CMSWebhookUniversAPI {
   @ApiProperty() id: number;
   @ApiProperty() code: string;
 }
+
+export class CMSTagArticleAPI {
+  @ApiProperty() code: string;
+}
+
 export class CMSWebhookThematiqueUniversAPI {
   @ApiProperty() id: number;
   @ApiProperty() code: string;
@@ -83,6 +91,10 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() description: string;
   @ApiProperty({ type: CMSThematiqueAPI })
   thematique_gamification: CMSThematiqueAPI;
+
+  @ApiProperty({ type: CMSTagArticleAPI })
+  tag_article: CMSTagArticleAPI;
+
   @ApiProperty({ type: [CMSThematiqueAPI] })
   thematiques: CMSThematiqueAPI[];
   @ApiProperty({ type: [CMSWebhookUniversAPI] })
@@ -121,6 +133,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() url_detail_front: string;
   @ApiProperty() is_simulation: boolean;
   @ApiProperty() is_ngc: boolean;
+  @ApiProperty() ngc_key: string;
   @ApiProperty() montantMaximum: string;
 }
 export type CMSWebhookPopulateAPI = {
@@ -133,6 +146,7 @@ export type CMSWebhookPopulateAPI = {
     type: string;
     categorie: string;
     is_ngc: boolean;
+    ngc_key: string;
     is_locked: boolean;
     code: string;
     niveau: number;
@@ -193,6 +207,13 @@ export type CMSWebhookPopulateAPI = {
     thematique_gamification: {
       data: {
         id: number;
+      };
+    };
+    tag_article: {
+      data: {
+        attributes: {
+          code: string;
+        };
       };
     };
     thematique: {
@@ -278,6 +299,7 @@ export type CMSWebhookPopulateAPI = {
       {
         reponse: string;
         code: string;
+        ngc_code: string;
       },
     ];
     OR_Conditions: [
@@ -320,6 +342,13 @@ export type CMSWebhookPopulateAPI = {
         kyc: {
           data: {
             id: number;
+            attributes: {
+              code: string;
+            };
+          };
+        };
+        tag_article: {
+          data: {
             attributes: {
               code: string;
             };

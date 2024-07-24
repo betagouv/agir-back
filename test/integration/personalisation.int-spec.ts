@@ -28,15 +28,16 @@ describe('Personalisation', () => {
       1234,
       '91120',
       'PALAISEAU',
+      false,
     );
 
     const test_data = { yo: '123' };
 
     // WHEN
-    personnalisation.personnaliser(test_data, user);
+    const result = personnalisation.personnaliser(test_data, user);
 
     // THEN
-    expect(test_data).toStrictEqual({ yo: '123' });
+    expect(result).toStrictEqual({ yo: '123' });
   });
   it('perso : ne bug pas sur undefined , null, et autres types', async () => {
     // GIVEN
@@ -47,15 +48,16 @@ describe('Personalisation', () => {
       1234,
       '91120',
       'PALAISEAU',
+      false,
     );
 
     const test_data = { yo: undefined, yi: null, ya: true };
 
     // WHEN
-    personnalisation.personnaliser(test_data, user);
+    const result = personnalisation.personnaliser(test_data, user);
 
     // THEN
-    expect(test_data).toStrictEqual({ yo: undefined, yi: null, ya: true });
+    expect(result).toStrictEqual({ yo: undefined, yi: null, ya: true });
   });
   it('perso : remplace COMMUNE OK', async () => {
     // GIVEN
@@ -66,6 +68,7 @@ describe('Personalisation', () => {
       1234,
       '91120',
       'PALAISEAU',
+      false,
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';
@@ -73,10 +76,10 @@ describe('Personalisation', () => {
     const test_data = { a: '{COMMUNE}', b: 'The {COMMUNE}' };
 
     // WHEN
-    personnalisation.personnaliser(test_data, user);
+    const result = personnalisation.personnaliser(test_data, user);
 
     // THEN
-    expect(test_data).toStrictEqual({
+    expect(result).toStrictEqual({
       a: 'Sennecey-lès-Dijon',
       b: 'The Sennecey-lès-Dijon',
     });
@@ -90,6 +93,7 @@ describe('Personalisation', () => {
       1234,
       '91120',
       'PALAISEAU',
+      false,
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';
@@ -97,10 +101,10 @@ describe('Personalisation', () => {
     const test_data = { a: { the_commune: '{COMMUNE}' } };
 
     // WHEN
-    personnalisation.personnaliser(test_data, user);
+    const result = personnalisation.personnaliser(test_data, user);
 
     // THEN
-    expect(test_data).toStrictEqual({
+    expect(result).toStrictEqual({
       a: { the_commune: 'Sennecey-lès-Dijon' },
     });
   });
@@ -113,6 +117,7 @@ describe('Personalisation', () => {
       1234,
       '91120',
       'PALAISEAU',
+      false,
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';
@@ -123,12 +128,56 @@ describe('Personalisation', () => {
     ];
 
     // WHEN
-    personnalisation.personnaliser(test_data, user);
+    const result = personnalisation.personnaliser(test_data, user);
 
     // THEN
-    expect(test_data).toStrictEqual([
+    expect(result).toStrictEqual([
       { the_commune: 'Sennecey-lès-Dijon' },
       { the_commune: 'haha Sennecey-lès-Dijon' },
     ]);
+  });
+  it('perso : remplace COMMUNE dans une liste de strings', async () => {
+    // GIVEN
+    const user = Utilisateur.createNewUtilisateur(
+      'W',
+      'George',
+      'g@www.com',
+      1234,
+      '91120',
+      'PALAISEAU',
+      false,
+    );
+    user.logement.code_postal = '21800';
+    user.logement.commune = 'SENNECEY LES DIJON';
+
+    const test_data = [`toto {COMMUNE}`, '91120'];
+
+    // WHEN
+    const result = personnalisation.personnaliser(test_data, user);
+
+    // THEN
+    expect(result).toStrictEqual([`toto Sennecey-lès-Dijon`, '91120']);
+  });
+  it('perso : préserve les dates', async () => {
+    // GIVEN
+    const user = Utilisateur.createNewUtilisateur(
+      'W',
+      'George',
+      'g@www.com',
+      1234,
+      '91120',
+      'PALAISEAU',
+      false,
+    );
+    user.logement.code_postal = '21800';
+    user.logement.commune = 'SENNECEY LES DIJON';
+
+    const test_data = { done_at: new Date(1) };
+
+    // WHEN
+    const result = personnalisation.personnaliser(test_data, user);
+
+    // THEN
+    expect(result).toStrictEqual({ done_at: new Date(1) });
   });
 });

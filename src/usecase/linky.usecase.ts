@@ -5,7 +5,6 @@ import { LinkyRepository } from '../../src/infrastructure/repository/linky.repos
 import { LinkyData } from '../../src/domain/linky/linkyData';
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
 import { AsyncService } from '../../src/domain/service/serviceDefinition';
-import { LinkyDataDetailAPI } from '../../src/infrastructure/api/types/service/linkyDataAPI';
 import { LinkyAPIConnector } from '../../src/infrastructure/service/linky/LinkyAPIConnector';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 
@@ -70,7 +69,7 @@ export class LinkyUsecase {
         const date = new Date();
         date.setDate(date.getDate() - jour);
         const element = linky_data.searchSingleDay(date);
-        if (element === null || element.value === null) {
+        if (element === null || element.day_value === null) {
           if (LinkyData.isLessThan(date, created_at)) {
             serie.push('HX');
           } else {
@@ -100,12 +99,11 @@ export class LinkyUsecase {
 
   async cleanLinkyData(): Promise<number> {
     const prm_list = await this.linkyRepository.getAllPRMs();
-    for (let index = 0; index < prm_list.length; index++) {
-      const prm = prm_list[index];
-
+    for (const prm of prm_list) {
       const linky_data = await this.linkyRepository.getByPRM(prm);
 
       linky_data.cleanData();
+      linky_data.computeDayValueFromCumulee();
 
       await this.linkyRepository.upsertDataForPRM(prm, linky_data.serie);
     }
@@ -114,9 +112,6 @@ export class LinkyUsecase {
 
   async getUserData(
     utilisateurId: string,
-    detail: LinkyDataDetailAPI,
-    nombre: number,
-    end_date: string,
     compare_annees: boolean,
     derniers_14_jours: boolean,
   ): Promise<{ data: LinkyData; commentaires?: string[] }> {
@@ -144,27 +139,11 @@ export class LinkyUsecase {
       return { data: linkyData, commentaires: result.commentaires };
     }
 
-    if (detail === LinkyDataDetailAPI.jour && nombre) {
-      linkyData.serie = linkyData.extractLastNDays(nombre);
-      return { data: linkyData };
-    }
-    if (detail === LinkyDataDetailAPI.semaine && nombre) {
-      linkyData.serie = linkyData.extractLastNWeeks(nombre);
-      return { data: linkyData };
-    }
-    if (detail === LinkyDataDetailAPI.mois && nombre) {
-      linkyData.serie = linkyData.extractLastNMonths(
-        nombre,
-        end_date ? new Date(end_date) : new Date(),
-      );
-      return { data: linkyData };
-    }
     return { data: linkyData };
   }
 
   async process_incoming_data(incoming: WinterDataSentAPI): Promise<any> {
     console.log(JSON.stringify(incoming));
-    /*
     if (
       incoming.error &&
       incoming.error.code !== null &&
@@ -185,13 +164,12 @@ export class LinkyUsecase {
     for (let index = 0; index < incoming.data.length; index++) {
       const element = incoming.data[index];
       current_data.addDataElement({
-        time: new Date(element.utc_timestamp),
-        value: element.value,
-        value_at_normal_temperature: element.value_at_normal_temperature,
+        date: new Date(element.date),
+        value_cumulee: element.value_cumulee,
+        day_value: null,
       });
     }
 
     await this.linkyRepository.upsertDataForPRM(prm, current_data.serie);
-    */
   }
 }

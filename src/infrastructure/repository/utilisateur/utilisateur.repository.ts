@@ -24,6 +24,7 @@ import { Logement } from '../../../domain/logement/logement';
 import { Transport } from '../../../domain/transport/transport';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
+import { BibliothequeServices } from '../../../domain/bibliotheque_services/bibliothequeServices';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -50,12 +51,18 @@ export class UtilisateurRepository {
     return count !== 0;
   }
   async findByEmail(email: string): Promise<Utilisateur | null> {
-    const user = await this.prisma.utilisateur.findUnique({
+    const users = await this.prisma.utilisateur.findMany({
       where: {
-        email,
+        email: {
+          equals: email,
+          mode: 'insensitive',
+        },
       },
     });
-    return this.buildUtilisateurFromDB(user);
+    if (users.length !== 1) {
+      return null;
+    }
+    return this.buildUtilisateurFromDB(users[0]);
   }
 
   async disconnectAll(): Promise<void> {
@@ -257,6 +264,12 @@ export class UtilisateurRepository {
           SerialisableDomain.UnlockedFeatures,
         ),
       );
+      const bibliotheque_services = new BibliothequeServices(
+        Upgrader.upgradeRaw(
+          user.bilbiotheque_services,
+          SerialisableDomain.BibliothequeServices,
+        ),
+      );
       const parcours_todo = new ParcoursTodo(
         Upgrader.upgradeRaw(user.todo, SerialisableDomain.ParcoursTodo),
       );
@@ -338,6 +351,13 @@ export class UtilisateurRepository {
         missions: missions,
         annee_naissance: user.annee_naissance,
         db_version: user.db_version,
+        bilbiotheque_services: bibliotheque_services,
+        is_magic_link_user: user.is_magic_link_user,
+        code_postal_classement: user.code_postal_classement,
+        commune_classement: user.commune_classement,
+        points_classement: user.points_classement,
+        rank: user.rank,
+        rank_commune: user.rank_commune,
       });
     }
     return null;
@@ -406,6 +426,10 @@ export class UtilisateurRepository {
         user.missions,
         SerialisableDomain.MissionsUtilisateur,
       ),
+      bilbiotheque_services: Upgrader.serialiseToLastVersion(
+        user.bilbiotheque_services,
+        SerialisableDomain.BibliothequeServices,
+      ),
       version: user.version,
       failed_login_count: user.failed_login_count,
       prevent_login_before: user.prevent_login_before,
@@ -421,6 +445,12 @@ export class UtilisateurRepository {
       created_at: undefined,
       updated_at: undefined,
       db_version: user.db_version,
+      is_magic_link_user: user.is_magic_link_user,
+      code_postal_classement: user.code_postal_classement,
+      commune_classement: user.commune_classement,
+      points_classement: user.points_classement,
+      rank: user.rank,
+      rank_commune: user.rank_commune,
     };
   }
 }

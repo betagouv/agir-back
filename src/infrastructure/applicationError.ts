@@ -285,6 +285,52 @@ export class ApplicationError {
       'Code postal et commune obligatoires pour inscription',
     );
   }
+  static throwUnkonwnSearchService(id: string) {
+    this.throwAppError('052', `Service de recherche inconnu : ${id}`, 404);
+  }
+  static throwUnkonwnUserLocation() {
+    this.throwAppError(
+      '053',
+      `L'utilisateur doit renseigner son code postal dans son profil pour faire une recherche de proximité, ou fournir directement des coordonnées au service`,
+    );
+  }
+  static throwUnkonwnSearchResult(servicId: string, favId: string) {
+    this.throwAppError(
+      '054',
+      `Pas de resultat de recherche du service [${servicId}] d'id ${favId} à mettre dans les favoris`,
+      404,
+    );
+  }
+  static throwUnkonwnCategorieForSearchService(
+    servicId: string,
+    categorie: string,
+  ) {
+    this.throwAppError(
+      '055',
+      `Categorie de recherche [${categorie}] non disponible pour le service [${servicId}]`,
+    );
+  }
+  static throwUnkonwnCategorie(categorie: string) {
+    this.throwAppError('056', `Categorie de recherche [${categorie}] inconnue`);
+  }
+  static throwEmailObligatoireMagicLinkError() {
+    this.throwAppError('057', 'Email obligatoire');
+  }
+  static throwCodeObligatoireMagicLinkError() {
+    this.throwAppError('058', 'Code obligatoire');
+  }
+  static throwMagicLinkUsedError() {
+    this.throwAppError(
+      '059',
+      `Lien de connexion déjà utilisé ou trop d'essais`,
+    );
+  }
+  static throwMagicLinkExpiredError() {
+    this.throwAppError('060', 'Lien de connexion expiré');
+  }
+  static throwBadCodError() {
+    this.throwAppError('061', `Mauvais code`);
+  }
 
   private static throwAppError(
     code: string,

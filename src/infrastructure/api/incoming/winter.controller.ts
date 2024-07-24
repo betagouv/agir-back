@@ -1,14 +1,11 @@
 import {
   Body,
   Controller,
-  HttpStatus,
   Post,
-  Res,
   Headers,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
 import { App } from '../../../../src/domain/app';
 import { LinkyUsecase } from '../../../../src/usecase/linky.usecase';
 import { GenericControler } from '../genericControler';
@@ -22,16 +19,11 @@ export class WinterController extends GenericControler {
   }
   @ApiBody({ type: WinterDataSentAPI })
   @Post('api/incoming/winter-energies')
-  async income(
-    @Body() body: WinterDataSentAPI,
-    @Res() res: Response,
-    @Headers() headers,
-  ) {
+  async income(@Body() body: WinterDataSentAPI, @Headers() headers) {
     console.log(JSON.stringify(headers));
     if (headers['key'] !== App.getWinterAPIKey()) {
       throw new UnauthorizedException('clé API manquante ou incorrecte');
     }
     await this.linkyUsecase.process_incoming_data(body);
-    res.status(HttpStatus.OK).json({ message: 'Received OK !' }).send();
   }
 }

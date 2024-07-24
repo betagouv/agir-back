@@ -22,6 +22,7 @@ export enum BooleanKYC {
 export class KYCReponse {
   code: string;
   label: string;
+  ngc_code?: string;
 }
 
 export class QuestionKYC implements TaggedContent {
@@ -67,12 +68,42 @@ export class QuestionKYC implements TaggedContent {
       points: def.points,
       tags: def.tags,
       type: def.type,
-      ngc_key: null,
+      ngc_key: def.ngc_key,
       thematique: def.thematique,
       universes: def.universes,
       question: def.question,
       reponses_possibles: def.reponses ? def.reponses : [],
     });
+  }
+
+  public refreshFromDef(def: KycDefinition) {
+    this.question = def.question;
+    this.type = def.type;
+    this.categorie = def.categorie;
+    this.points = def.points;
+    this.is_NGC = def.is_ngc;
+    this.reponses_possibles = def.reponses ? def.reponses : [];
+    this.ngc_key = def.ngc_key;
+    this.thematique = def.thematique;
+    this.tags = def.tags ? def.tags : [];
+    this.universes = def.universes ? def.universes : [];
+    this.id_cms = def.id_cms;
+    if (
+      (this.type === TypeReponseQuestionKYC.choix_multiple ||
+        this.type === TypeReponseQuestionKYC.choix_unique) &&
+      this.hasAnyResponses()
+    ) {
+      const upgraded_set = [];
+      for (const response of this.reponses) {
+        const def_reponse = def.getReponseByCode(response.code);
+        if (def_reponse) {
+          response.label = def_reponse.label;
+          response.ngc_code = def_reponse.ngc_code;
+          upgraded_set.push(response);
+        }
+      }
+      this.reponses = upgraded_set;
+    }
   }
 
   public hasAnyResponses(): boolean {
@@ -85,6 +116,9 @@ export class QuestionKYC implements TaggedContent {
 
   public getDistinctText(): string {
     return this.question;
+  }
+  public isLocal(): boolean {
+    return false;
   }
 
   public includesReponseCode(code: string): boolean {
@@ -110,14 +144,6 @@ export class QuestionKYC implements TaggedContent {
     }
   }
 
-  public getCodeByLabel(label: string): string {
-    if (!this.reponses_possibles) {
-      return null;
-    }
-    const found = this.reponses_possibles.find((r) => r.label === label);
-    return found ? found.code : null;
-  }
-
   public getLabelByCode(code: string): string {
     if (!this.reponses_possibles) {
       return null;
@@ -132,7 +158,22 @@ export class QuestionKYC implements TaggedContent {
       this.reponses.push({
         label: element,
         code: this.getCodeByLabel(element),
+        ngc_code: this.getNGCCodeByLabel(element),
       });
     });
+  }
+  private getCodeByLabel(label: string): string {
+    if (!this.reponses_possibles) {
+      return null;
+    }
+    const found = this.reponses_possibles.find((r) => r.label === label);
+    return found ? found.code : null;
+  }
+  private getNGCCodeByLabel(label: string): string {
+    if (!this.reponses_possibles) {
+      return null;
+    }
+    const found = this.reponses_possibles.find((r) => r.label === label);
+    return found ? found.ngc_code : null;
   }
 }

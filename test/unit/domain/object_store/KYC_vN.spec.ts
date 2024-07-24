@@ -4,7 +4,7 @@ import {
 } from '../../../../src/domain/object_store/upgrader';
 import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
 import { KYCHistory_v0 } from '../../../../src/domain/object_store/kyc/kycHistory_v0';
-import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { Univers } from '../../../../src/domain/univers/univers';
 import { Tag } from '../../../../src/domain/scoring/tag';
@@ -36,11 +36,21 @@ describe('KYC vN ', () => {
           is_NGC: false,
           categorie: Categorie.test,
           points: 10,
-          reponses: [{ label: 'Le climat', code: Thematique.climat }],
+          reponses: [
+            { label: 'Le climat', code: Thematique.climat, ngc_code: '123' },
+          ],
           reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-            { label: 'Ce que je mange', code: Thematique.alimentation },
+            { label: 'Le climat', code: Thematique.climat, ngc_code: '123' },
+            {
+              label: 'Mon logement',
+              code: Thematique.logement,
+              ngc_code: '456',
+            },
+            {
+              label: 'Ce que je mange',
+              code: Thematique.alimentation,
+              ngc_code: '789',
+            },
           ],
           tags: [Tag.consommation],
           universes: [Univers.climat],
@@ -68,11 +78,21 @@ describe('KYC vN ', () => {
           is_NGC: false,
           categorie: Categorie.test,
           points: 10,
-          reponses: [{ label: 'Le climat', code: Thematique.climat }],
+          reponses: [
+            { label: 'Le climat', code: Thematique.climat, ngc_code: '123' },
+          ],
           reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-            { label: 'Ce que je mange', code: Thematique.alimentation },
+            { label: 'Le climat', code: Thematique.climat, ngc_code: '123' },
+            {
+              label: 'Mon logement',
+              code: Thematique.logement,
+              ngc_code: '456',
+            },
+            {
+              label: 'Ce que je mange',
+              code: Thematique.alimentation,
+              ngc_code: '789',
+            },
           ],
           tags: [Tag.consommation],
           universes: [Univers.climat],

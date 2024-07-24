@@ -70,6 +70,14 @@ export class CommuneRepository {
     return null;
   }
 
+  formatCommune(code_postal: string, commune: string): string {
+    if (code_postal === null) return null;
+
+    const code_insee = this.getCodeCommune(code_postal, commune);
+    const libelle = this.getLibelleCommuneLowerCase(code_insee);
+    return libelle || commune;
+  }
+
   findDepartementRegionByCodePostal(code_postal: string): {
     code_departement: string;
     code_region: string;

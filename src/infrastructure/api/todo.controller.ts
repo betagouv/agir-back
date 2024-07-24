@@ -5,8 +5,6 @@ import {
   UseGuards,
   Request,
   Post,
-  Res,
-  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -18,7 +16,6 @@ import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
 import { TodoAPI } from './types/todo/todoAPI';
 import { TodoUsecase } from '../../../src/usecase/todo.usecase';
-import { Response } from 'express';
 
 @Controller()
 @ApiBearerAuth()

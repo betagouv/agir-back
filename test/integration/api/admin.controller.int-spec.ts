@@ -22,7 +22,7 @@ import {
   Defi_v0,
 } from '../../../src/domain/object_store/defi/defiHistory_v0';
 import { Univers } from '../../../src/domain/univers/univers';
-import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionQYC';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
@@ -32,6 +32,8 @@ import {
   Objectif_v0,
 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
+import { ParcoursTodo_v0 } from '../../../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
+import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
@@ -537,6 +539,109 @@ describe('Admin (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.kyc_history.answered_questions[0].id_cms).toEqual(1);
   });
+  it('POST /admin/migrate_users migration V10 OK', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 9,
+      migration_enabled: true,
+    });
+    process.env.USER_CURRENT_VERSION = '10';
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 10,
+            ok: true,
+            info: 'migrated points/code_postal/commune pour classement',
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.code_postal_classement).toEqual('91120');
+    expect(userDB.commune_classement).toEqual('PALAISEAU');
+    expect(userDB.points_classement).toEqual(10);
+  });
+  it('POST /admin/migrate_users migration V11 OK - user ayant pas fini les mission onboarding', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const todo: ParcoursTodo_v0 = ParcoursTodo_v0.serialise(new ParcoursTodo());
+    todo.todo_active = 1;
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 10,
+      migration_enabled: true,
+      todo: todo,
+    });
+    process.env.USER_CURRENT_VERSION = '11';
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 11,
+            ok: true,
+            info: 'reset user car todo pas terminée',
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.parcours_todo.todo_active).toEqual(0);
+    expect(userDB.unlocked_features.unlocked_features).toEqual([
+      Feature.bibliotheque,
+      Feature.univers,
+      Feature.services,
+    ]);
+  });
+  it('POST /admin/migrate_users migration V11 OK - user ayant fini les mission onboarding', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const todo: ParcoursTodo_v0 = ParcoursTodo_v0.serialise(new ParcoursTodo());
+    todo.todo_active = 3;
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 10,
+      migration_enabled: true,
+      todo: todo,
+    });
+    process.env.USER_CURRENT_VERSION = '11';
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 11,
+            ok: true,
+            info: 'no reset, todo terminée',
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.parcours_todo.todo_active).toEqual(3);
+  });
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -637,14 +742,12 @@ describe('Admin (API test)', () => {
       utilisateurId: '1',
       data: [
         {
-          time: new Date(123),
+          date: new Date(123),
           value: 100,
-          value_at_normal_temperature: 0,
         },
         {
-          time: new Date(123),
+          date: new Date(123),
           value: 110,
-          value_at_normal_temperature: 0,
         },
       ],
     });
@@ -654,14 +757,12 @@ describe('Admin (API test)', () => {
       winter_pk: '222',
       data: [
         {
-          time: new Date(456),
+          date: new Date(456),
           value: 210,
-          value_at_normal_temperature: 0,
         },
         {
-          time: new Date(123),
+          date: new Date(123),
           value: 200,
-          value_at_normal_temperature: 0,
         },
       ],
     });
@@ -877,9 +978,9 @@ describe('Admin (API test)', () => {
     // WHEN
     await linkyRepository.upsertDataForPRM('123', [
       {
-        time: new Date(),
-        value: 12,
-        value_at_normal_temperature: 14,
+        date: new Date(),
+        day_value: 12,
+        value_cumulee: null,
       },
     ]);
 

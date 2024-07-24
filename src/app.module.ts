@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
 
-import { UtilisateurController } from './infrastructure/api/utilisateur.controller';
 import { AuthController } from './infrastructure/api/auth.controller';
 import { BilanController } from './infrastructure/api/bilan.controller';
 import { AidesController } from './infrastructure/api/aides.controller';
 import { TestDataController } from './infrastructure/api/testData.controller';
 import { CMSController } from './infrastructure/api/incoming/cms.controller';
 
-import { UtilisateurUsecase } from './usecase/utilisateur.usecase';
+import { ProfileUsecase } from './usecase/profile.usecase';
 import { BilanUsecase } from './usecase/bilan.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
 import { CMSUsecase } from './usecase/cms.usecase';
@@ -76,7 +75,7 @@ import { LinkyAPIConnector } from './infrastructure/service/linky/LinkyAPIConnec
 import { LinkyEmailer } from './infrastructure/service/linky/LinkyEmailer';
 import { EquipementUsecase } from './usecase/equipements.usecase';
 import { EquipementsController } from './infrastructure/api/equipements.controller';
-import { InscriptionUsecase } from './usecase/inscription.usecase';
+import { Inscription_v1_Usecase } from './usecase/inscription_v1.usecase';
 import { InscriptionController } from './infrastructure/api/inscription.controller';
 import { AideRepository } from './infrastructure/repository/aide.repository';
 import { DefisController } from './infrastructure/api/defis.controller';
@@ -111,8 +110,24 @@ import { Personnalisator } from './infrastructure/personnalisation/personnalisat
 import { RechecheServicesController } from './infrastructure/api/rechercheServices.controller';
 import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
 import { RechercheServiceManager } from './domain/bibliotheque_services/serviceManager';
-import { RecherchePresDeChezNous } from './domain/bibliotheque_services/implementations/recherche_presDeChezNous';
-import { PresDeChezNous } from './infrastructure/repository/services_recherche/presDeChezNous';
+import { PresDeChezNousRepository } from './infrastructure/repository/services_recherche/pres_de_chez_nous/presDeChezNous.repository';
+import { AddressesRepository } from './infrastructure/repository/services_recherche/addresses.repository';
+import { ServiceFavorisStatistiqueRepository } from './infrastructure/repository/serviceFavorisStatistique.repository';
+import { FruitsLegumesRepository } from './infrastructure/repository/services_recherche/fruitsLegumes.repository';
+import { RecettesRepository } from './infrastructure/repository/services_recherche/recettes/recettes.repository';
+import { BilanCarboneStatistiqueRepository } from './infrastructure/repository/bilanCarboneStatistique.repository';
+import { BilanCarboneController } from './infrastructure/api/bilanCarbone.controller';
+import { BilanCarboneUsecase } from './usecase/bilanCarbone.usecase';
+import { PreviewController } from './infrastructure/api/preview.controller';
+import { UtilisateurBoardRepository } from './infrastructure/repository/utilisateurBoard.repository';
+import { MagicLinkUsecase } from './usecase/magicLink.usecase';
+import { MagicLinkController } from './infrastructure/api/magicLink.controller';
+import { ImpactTransportsRepository } from './infrastructure/repository/services_recherche/impactTransport.repository';
+import { DistancesRepository } from './infrastructure/repository/services_recherche/distances.repository';
+import { Connexion_v1_Usecase } from './usecase/connexion_v1.usecase';
+import { ConnexionController } from './infrastructure/api/connexion.controller';
+import { ProfileController } from './infrastructure/api/profile.controller';
+import { Inscription_v2_Usecase } from './usecase/inscription_v2.usecase';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -120,7 +135,8 @@ function getControllers(): any[] {
   const controllers = [];
   controllers.push(
     OnboardingController,
-    UtilisateurController,
+    ProfileController,
+    ConnexionController,
     BilanController,
     AidesController,
     SuiviDashboardController,
@@ -144,10 +160,13 @@ function getControllers(): any[] {
     UniversController,
     MissionController,
     RechecheServicesController,
+    BilanCarboneController,
+    MagicLinkController,
   );
   if (!App.isProd()) {
     controllers.push(TestDataController);
     controllers.push(AuthController);
+    controllers.push(PreviewController);
   }
   return controllers;
 }
@@ -180,7 +199,7 @@ function getControllers(): any[] {
     NGCCalculator,
     AidesRetrofitRepository,
     AidesVeloRepository,
-    UtilisateurUsecase,
+    ProfileUsecase,
     BilanUsecase,
     AidesUsecase,
     SuiviUsecase,
@@ -218,7 +237,8 @@ function getControllers(): any[] {
     LinkyAPIConnector,
     LinkyEmailer,
     EquipementUsecase,
-    InscriptionUsecase,
+    Inscription_v1_Usecase,
+    Inscription_v2_Usecase,
     AideRepository,
     DefiRepository,
     DefisUsecase,
@@ -246,7 +266,18 @@ function getControllers(): any[] {
     Personnalisator,
     RechercheServicesUsecase,
     RechercheServiceManager,
-    PresDeChezNous,
+    PresDeChezNousRepository,
+    AddressesRepository,
+    ServiceFavorisStatistiqueRepository,
+    FruitsLegumesRepository,
+    RecettesRepository,
+    BilanCarboneStatistiqueRepository,
+    BilanCarboneUsecase,
+    UtilisateurBoardRepository,
+    MagicLinkUsecase,
+    ImpactTransportsRepository,
+    DistancesRepository,
+    Connexion_v1_Usecase,
   ],
 })
 export class AppModule {}

@@ -6,16 +6,27 @@ import {
   Celebration,
   CelebrationType,
 } from '../../../../src/domain/gamification/celebrations/celebration';
+import { Feature } from '../../../../src/domain/gamification/feature';
 
 describe('Gamification', () => {
   it('ajoutePoints : ajoute bien les points ', () => {
     // GIVEN
     const gamification = new Gamification();
+    const user = Utilisateur.createNewUtilisateur(
+      'a',
+      'b',
+      'c',
+      1234,
+      '91120',
+      'PALAISEAU',
+      false,
+    );
     // WHEN
-    gamification.ajoutePoints(5, new UnlockedFeatures());
+    gamification.ajoutePoints(5, user);
 
     // THEN
     expect(gamification.points).toEqual(5);
+    expect(user.points_classement).toEqual(5);
   });
   it('getNiveau : retourne niveau 1 OK', () => {
     // GIVEN
@@ -271,9 +282,11 @@ describe('Gamification', () => {
 
     // THEN
     expect(gamification.celebrations).toHaveLength(0);
-    expect(utilisateur.unlocked_features.getUnlockedFeatures()).toHaveLength(1);
-    expect(utilisateur.unlocked_features.getUnlockedFeatures()[0]).toEqual(
-      'aides',
-    );
+    expect(utilisateur.unlocked_features.getUnlockedFeatures()).toHaveLength(4);
+    expect(
+      utilisateur.unlocked_features
+        .getUnlockedFeatures()
+        .includes(Feature.aides),
+    ).toEqual(true);
   });
 });

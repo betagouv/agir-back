@@ -4,7 +4,7 @@ import {
   KYCReponse,
   QuestionKYC,
   TypeReponseQuestionKYC,
-} from '../../kyc/questionQYC';
+} from '../../kyc/questionKYC';
 import { Thematique } from '../../contenu/thematique';
 import { Tag } from '../../scoring/tag';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
@@ -12,10 +12,12 @@ import { Categorie } from '../../../../src/domain/contenu/categorie';
 export class KYCReponse_v0 {
   code: string;
   label: string;
+  ngc_code?: string;
   static map(elem: KYCReponse): KYCReponse_v0 {
     return {
       code: elem.code,
       label: elem.label,
+      ngc_code: elem.ngc_code,
     };
   }
 }

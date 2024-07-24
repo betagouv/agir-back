@@ -3,7 +3,7 @@ import { Categorie } from '../contenu/categorie';
 import { ConditionDefi } from '../defis/conditionDefi';
 import { KYCHistory_v0 as KYCHistory_v0 } from '../object_store/kyc/kycHistory_v0';
 import { KycDefinition } from './kycDefinition';
-import { QuestionKYC, TypeReponseQuestionKYC } from './questionQYC';
+import { QuestionKYC, TypeReponseQuestionKYC } from './questionKYC';
 
 export class KYCHistory {
   answered_questions: QuestionKYC[];
@@ -27,11 +27,14 @@ export class KYCHistory {
     this.answered_questions = [];
     this.catalogue = [];
   }
-  public getAllQuestionSet(): QuestionKYC[] {
+  public getAllUpToDateQuestionSet(): QuestionKYC[] {
     let result = [];
 
     this.catalogue.forEach((question) => {
-      let answered_question = this.getAnsweredQuestionByCode(question.code);
+      const answered_question = this.getAnsweredQuestionByCode(question.code);
+      if (answered_question) {
+        answered_question.refreshFromDef(question);
+      }
       result.push(answered_question || QuestionKYC.buildFromDef(question));
     });
 
@@ -68,43 +71,28 @@ export class KYCHistory {
       .map((c) => QuestionKYC.buildFromDef(c));
   }
 
-  public getQuestionOrException(id: string): QuestionKYC {
-    let answered_question = this.getAnsweredQuestionByCode(id);
+  public getUpToDateQuestionOrException(code: string): QuestionKYC {
+    const question_catalogue = this.getKYCDefinitionByCodeOrException(code);
+    let answered_question = this.getAnsweredQuestionByCode(code);
     if (answered_question) {
-      this.upgradeQuestion(answered_question);
+      answered_question.refreshFromDef(question_catalogue);
       return answered_question;
     }
-    return this.getKYCByIdOrException(id);
+    return QuestionKYC.buildFromDef(question_catalogue);
   }
 
-  public getQuestion(id: string): QuestionKYC {
-    let answered_question = this.getAnsweredQuestionByCode(id);
+  public getUpToDateQuestionByCodeOrNull(code: string): QuestionKYC {
+    const question_catalogue = this.getKYCDefinitionByCodeOrNull(code);
+    if (!question_catalogue) {
+      return null;
+    }
+
+    let answered_question = this.getAnsweredQuestionByCode(code);
     if (answered_question) {
-      this.upgradeQuestion(answered_question);
+      answered_question.refreshFromDef(question_catalogue);
       return answered_question;
     }
-    return this.getKYCById(id);
-  }
-
-  private upgradeQuestion(question: QuestionKYC) {
-    const question_catalogue = this.getKYCByIdOrException(question.id);
-    if (
-      (question.type === TypeReponseQuestionKYC.choix_multiple ||
-        question.type === TypeReponseQuestionKYC.choix_unique) &&
-      question.hasAnyResponses()
-    ) {
-      const upgraded_set = [];
-      question.reponses.forEach((reponse) => {
-        const ref_label = question_catalogue.getLabelByCode(reponse.code);
-        if (ref_label) {
-          reponse.label = ref_label;
-          upgraded_set.push(reponse);
-        }
-      });
-      question.reponses = upgraded_set;
-    }
-    question.reponses_possibles = question_catalogue.reponses_possibles;
-    question.question = question_catalogue.question;
+    return QuestionKYC.buildFromDef(question_catalogue);
   }
 
   public areConditionsMatched(conditions: ConditionDefi[][]): boolean {
@@ -134,32 +122,47 @@ export class KYCHistory {
     if (question) {
       question.setResponses(reponses);
     } else {
-      let question_catalogue = this.getKYCByIdOrException(questionId);
+      let question_catalogue =
+        this.getKYCByCodeFromCatalogueOrException(questionId);
       question_catalogue.setResponses(reponses);
       this.answered_questions.push(question_catalogue);
     }
   }
 
   public checkQuestionExists(questionId: string) {
-    this.getKYCByIdOrException(questionId);
+    this.getKYCDefinitionByCodeOrException(questionId);
   }
 
   private getAnsweredQuestionByCode(id: string): QuestionKYC {
     return this.answered_questions.find((element) => element.id === id);
   }
-  public getAnsweredQuestionByCMS_ID(id: number): QuestionKYC {
+  public getAnsweredQuestionByCMS_ID(cms_id: number): QuestionKYC {
     const found = this.answered_questions.find(
-      (element) => element.id_cms === id,
+      (element) => element.id_cms === cms_id,
     );
     return found;
   }
 
-  private getKYCByIdOrException(id: string): QuestionKYC {
-    const question_def = this.catalogue.find((element) => element.code === id);
-    if (question_def) {
-      return QuestionKYC.buildFromDef(question_def);
+  private getKYCByCodeFromCatalogueOrException(code: string): QuestionKYC {
+    const question_def = this.catalogue.find(
+      (element) => element.code === code,
+    );
+    if (!question_def) {
+      ApplicationError.throwQuestionInconnue(code);
     }
-    ApplicationError.throwQuestionInconnue(id);
+    return QuestionKYC.buildFromDef(question_def);
+  }
+
+  private getKYCDefinitionByCodeOrException(code: string): KycDefinition {
+    const question_def = this.getKYCDefinitionByCodeOrNull(code);
+    if (!question_def) {
+      ApplicationError.throwQuestionInconnue(code);
+    }
+    return question_def;
+  }
+
+  private getKYCDefinitionByCodeOrNull(code: string): KycDefinition {
+    return this.catalogue.find((element) => element.code === code);
   }
 
   private getKYCById(id: string): QuestionKYC {

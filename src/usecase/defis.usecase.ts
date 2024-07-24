@@ -34,9 +34,7 @@ export class DefisUsecase {
 
     result = result.filter((d) => d.getStatus() === DefiStatus.en_cours);
 
-    this.personnalisator.personnaliser(result, utilisateur);
-
-    return result;
+    return this.personnalisator.personnaliser(result, utilisateur);
   }
 
   private async getDefisOfUniversAndUtilisateur(
@@ -51,7 +49,7 @@ export class DefisUsecase {
     for (const id_defi of list_defi_ids) {
       result.push(utilisateur.defi_history.getDefiOrException(id_defi));
     }
-    return result;
+    return this.personnalisator.personnaliser(result, utilisateur);
   }
 
   async getAllDefis_v2(utilisateurId: string): Promise<Defi[]> {
@@ -73,9 +71,7 @@ export class DefisUsecase {
         defis_univers.filter((d) => d.getStatus() === DefiStatus.en_cours),
       );
     }
-    this.personnalisator.personnaliser(result, utilisateur);
-
-    return result;
+    return this.personnalisator.personnaliser(result, utilisateur);
   }
 
   async getALLUserDefi(
@@ -107,15 +103,12 @@ export class DefisUsecase {
       PonderationApplicativeManager.sortContent(result);
 
       result = result.filter((d) => d.score > -50);
-      this.personnalisator.personnaliser(result, utilisateur);
     }
     result = result.concat(
       utilisateur.defi_history.getDefisOfStatus(filtre_status),
     );
 
-    this.personnalisator.personnaliser(result, utilisateur);
-
-    return result;
+    return this.personnalisator.personnaliser(result, utilisateur);
   }
 
   async getById(utilisateurId: string, defiId: string): Promise<Defi> {
@@ -127,9 +120,7 @@ export class DefisUsecase {
 
     const defi = utilisateur.defi_history.getDefiOrException(defiId);
 
-    this.personnalisator.personnaliser(defi, utilisateur);
-
-    return defi;
+    return this.personnalisator.personnaliser(defi, utilisateur);
   }
   async updateStatus(
     utilisateurId: string,
@@ -172,7 +163,7 @@ export class DefisUsecase {
         thematiqueU,
       );
       if (mission_def) {
-        utilisateur.missions.addNewVisibleMission(mission_def);
+        utilisateur.missions.upsertNewMission(mission_def, true);
       }
     }
   }

@@ -21,6 +21,7 @@ export type ArticleFilter = {
   code_region?: string;
   code_departement?: string;
   code_commune?: string;
+  tag_article?: string;
 };
 
 @Injectable()
@@ -58,9 +59,6 @@ export class ArticleRepository {
   }
 
   async searchArticles(filter: ArticleFilter): Promise<Article[]> {
-    let codes_postaux_filter;
-    let mois_filter;
-
     const main_filter = [];
 
     if (filter.date) {
@@ -150,6 +148,12 @@ export class ArticleRepository {
       });
     }
 
+    if (filter.tag_article) {
+      main_filter.push({
+        tag_article: filter.tag_article,
+      });
+    }
+
     if (filter.thematiques) {
       main_filter.push({
         thematiques: {
@@ -201,6 +205,7 @@ export class ArticleRepository {
       codes_region: articleDB.codes_region,
       exclude_codes_commune: articleDB.exclude_codes_commune,
       include_codes_commune: articleDB.include_codes_commune,
+      tag_article: articleDB.tag_article,
     });
   }
 }
