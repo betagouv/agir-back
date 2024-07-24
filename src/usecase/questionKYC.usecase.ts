@@ -55,10 +55,6 @@ export class QuestionKYCUsecase {
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
-    if (questionId === KYCID.KYC006) {
-      utilisateur.logement.plus_de_15_ans = reponse.includes('plus_15');
-    }
-
     utilisateur.kyc_history.checkQuestionExists(questionId);
     this.updateUserTodo(utilisateur, questionId);
 
@@ -68,6 +64,13 @@ export class QuestionKYCUsecase {
       utilisateur.gamification.ajoutePoints(question.points, utilisateur);
     }
     utilisateur.kyc_history.updateQuestion(questionId, reponse);
+
+    if (questionId === KYCID.KYC006) {
+      const kyc = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+        KYCID.KYC006,
+      );
+      utilisateur.logement.plus_de_15_ans = kyc.includesReponseCode('plus_15');
+    }
 
     utilisateur.missions.answerKyc(questionId, utilisateur);
 

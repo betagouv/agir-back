@@ -903,7 +903,7 @@ describe('Mission (API test)', () => {
     // WHEN
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC/_3',
-    ).send({ reponse: ['YO'] });
+    ).send({ reponse: ['Oui'] });
 
     // THEN
     expect(response.status).toBe(200);

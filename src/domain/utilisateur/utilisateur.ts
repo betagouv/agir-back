@@ -192,11 +192,7 @@ export class Utilisateur extends UtilisateurData {
   }
 
   public isOnboardingDone?(): boolean {
-    return (
-      this.prenom &&
-      this.logement.code_postal &&
-      this.kyc_history.isQuestionAnswered(KYCID.KYC001)
-    );
+    return !!this.prenom && !!this.logement.code_postal;
   }
 
   public isMagicLinkCodeExpired?(): boolean {

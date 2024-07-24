@@ -540,6 +540,31 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.gamification.points).toEqual(10);
   });
+  it('PUT /utilisateurs/id/questionsKYC/1 - erreur si réponse inconnue', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      question: `Quel est votre sujet principal d'intéret ?`,
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
+    });
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/_2',
+    ).send({ reponse: ['Le climat haha'] });
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      'Reponse [Le climat haha] inconnue pour la KYC [_2]',
+    );
+  });
   it('PUT /utilisateurs/id/questionsKYC/001 - met à jour les tags de reco - ajout boost', async () => {
     // GIVEN
     await TestUtil.create(DB.kYC, {
@@ -642,7 +667,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // WHEN
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC/KYC006',
-    ).send({ reponse: ['plus_15'] });
+    ).send({ reponse: ['Plus de 15 ans (ancien)'] });
 
     // THEN
     expect(response.status).toBe(200);

@@ -1,3 +1,4 @@
+import { ApplicationError } from '../../infrastructure/applicationError';
 import { Categorie } from '../contenu/categorie';
 import { Thematique } from '../contenu/thematique';
 import { QuestionKYC_v0 } from '../object_store/kyc/kycHistory_v0';
@@ -153,15 +154,32 @@ export class QuestionKYC implements TaggedContent {
   }
 
   public setResponses(reponses: string[]) {
+    this.checkReponseExists(reponses);
     this.reponses = [];
-    reponses.forEach((element) => {
+    reponses.forEach((label) => {
       this.reponses.push({
-        label: element,
-        code: this.getCodeByLabel(element),
-        ngc_code: this.getNGCCodeByLabel(element),
+        label: label,
+        code: this.getCodeByLabel(label),
+        ngc_code: this.getNGCCodeByLabel(label),
       });
     });
   }
+
+  private checkReponseExists(reponses: string[]) {
+    if (
+      this.type !== TypeReponseQuestionKYC.choix_multiple &&
+      this.type !== TypeReponseQuestionKYC.choix_unique
+    ) {
+      return;
+    }
+    for (const reponse_label of reponses) {
+      const code = this.getCodeByLabel(reponse_label);
+      if (!code) {
+        ApplicationError.throwBadResponseValue(reponse_label, this.id);
+      }
+    }
+  }
+
   private getCodeByLabel(label: string): string {
     if (!this.reponses_possibles) {
       return null;

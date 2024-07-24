@@ -321,6 +321,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       dpe: DPE.E,
     });
     // THEN
+    console.log(response.body);
     expect(response.status).toBe(200);
     const dbUser = await utilisateurRepository.getById('utilisateur-id');
 

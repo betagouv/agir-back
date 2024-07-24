@@ -47,39 +47,12 @@ describe('/utilisateurs - Connexion Compte utilisateur (API test)', () => {
     const utilisateur = getFakeUtilisteur();
     PasswordManager.setUserPassword(utilisateur, '#1234567890HAHAa');
 
-    const kyc: KYCHistory_v0 = {
-      version: 0,
-      answered_questions: [
-        {
-          id: KYCID.KYC001,
-          id_cms: 2,
-          question: `Quel est votre sujet principal d'intéret ?`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-          ],
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-            { label: 'Ce que je mange', code: Thematique.alimentation },
-          ],
-          tags: [],
-          universes: [Univers.climat],
-        },
-      ],
-    };
-
     await TestUtil.create(DB.utilisateur, {
       passwordHash: utilisateur.passwordHash,
       passwordSalt: utilisateur.passwordSalt,
       active_account: true,
       parts: null,
       force_connexion: true,
-      kyc: kyc,
     });
 
     // WHEN
@@ -111,6 +84,7 @@ describe('/utilisateurs - Connexion Compte utilisateur (API test)', () => {
       active_account: true,
       parts: null,
       force_connexion: true,
+      prenom: null,
     });
 
     // WHEN
@@ -121,7 +95,6 @@ describe('/utilisateurs - Connexion Compte utilisateur (API test)', () => {
         email: 'yo@truc.com',
       });
     // THEN
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(response.status).toBe(201);
     expect(response.body.utilisateur.is_onboarding_done).toEqual(false);
   });

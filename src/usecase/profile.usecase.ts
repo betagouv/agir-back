@@ -138,8 +138,13 @@ export class ProfileUsecase {
     utilisateur.logement.patch(input, utilisateur);
 
     if (input.plus_de_15_ans !== undefined && input.plus_de_15_ans !== null) {
+      const kyc = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+        KYCID.KYC006,
+      );
       utilisateur.kyc_history.updateQuestion(KYCID.KYC006, [
-        input.plus_de_15_ans ? 'plus_15' : 'moins_15',
+        input.plus_de_15_ans
+          ? kyc.getLabelByCode('plus_15')
+          : kyc.getLabelByCode('moins_15'),
       ]);
     }
 
