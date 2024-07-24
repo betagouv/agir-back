@@ -1,3 +1,17 @@
 export enum ServiceExterneID {
   poisson_de_saison = 'poisson_de_saison',
+  compost_local = 'compost_local',
+  changer_voiture = 'changer_voiture',
+  velo_tourisme = 'velo_tourisme',
+  bornes_elec = 'bornes_elec',
+  impact_co2 = 'impact_co2',
+  je_veux_aider = 'je_veux_aider',
+  aide_reno = 'aide_reno',
+  conso_eau = 'conso_eau',
+  pacoupas = 'pacoupas',
+  chronotrains = 'chronotrains',
+  reparerabilite = 'reparerabilite',
+  labels = 'labels',
+  diagnostiquer = 'diagnostiquer',
+  reparer = 'reparer',
 }
