@@ -258,7 +258,7 @@ export class CMSUsecase {
         loading_result.push(`loaded article : ${defi.content_id}`);
       } catch (error) {
         loading_result.push(
-          `Could not load article ${element.id} : ${error.message}`,
+          `Could not load defi ${element.id} : ${error.message}`,
         );
         loading_result.push(JSON.stringify(element));
       }
