@@ -25,7 +25,7 @@ const DATA_REVEAL: Record<Feature, { titre: string; description: string }> = {
   },
   univers: {
     titre: 'Vos univers à explorer',
-    description: `Retrouvez de programmes d'accompagnement sur les thématiques de la transition écologique`,
+    description: `Retrouvez des programmes d'accompagnement sur les thématiques de la transition écologique`,
   },
 };
 

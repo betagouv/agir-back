@@ -176,7 +176,7 @@ export class TodoCatalogue {
         reveal: {
           id: uuidv4(),
           titre: 'Vos univers à explorer',
-          description: `Retrouvez de programmes d'accompagnement sur les thématiques de la transition écologique`,
+          description: `Retrouvez des programmes d'accompagnement sur les thématiques de la transition écologique`,
           feature: Feature.univers,
         },
       },
