@@ -18,7 +18,7 @@ import { Inscription_v2_Usecase } from '../../usecase/inscription_v2.usecase';
 
 @ApiExtraModels(CreateUtilisateurAPI)
 @Controller()
-@ApiTags('Utilisateur - Inscription')
+@ApiTags('1 - Utilisateur - Inscription')
 export class InscriptionController extends GenericControler {
   constructor(
     private readonly inscription_v1_Usecase: Inscription_v1_Usecase,

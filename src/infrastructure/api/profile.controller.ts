@@ -38,7 +38,7 @@ export class ConfirmationAPI {
 @ApiExtraModels(CreateUtilisateurAPI, UtilisateurAPI)
 @Controller()
 @ApiBearerAuth()
-@ApiTags('Utilisateur - Profile')
+@ApiTags('1 - Utilisateur - Profile')
 export class ProfileController extends GenericControler {
   constructor(private readonly utilisateurUsecase: ProfileUsecase) {
     super();

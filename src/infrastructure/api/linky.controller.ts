@@ -59,7 +59,7 @@ export class LinkyController extends GenericControler {
     return LinkyDataAPI.map(data.data.serie, data.commentaires);
   }
 
-  @ApiTags('Admin')
+  @ApiTags('Z - Admin')
   @Post('/admin/linky_stats')
   @ApiOperation({
     summary: `Calcul les stats de reception linky sur le dernier mois, utiliser ensuite par exemple https://konklone.io/json/ pour convertir en CSV si besoin`,

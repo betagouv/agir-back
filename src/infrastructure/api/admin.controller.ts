@@ -25,7 +25,7 @@ import { UniversStatistiqueUsecase } from '../../../src/usecase/universStatistiq
 import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
 
 @Controller()
-@ApiTags('Admin')
+@ApiTags('Z - Admin')
 @ApiBearerAuth()
 export class AdminController extends GenericControler {
   constructor(

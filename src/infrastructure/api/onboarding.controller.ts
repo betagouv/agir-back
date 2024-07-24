@@ -21,7 +21,7 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 
 @ApiExtraModels(CreateUtilisateurAPI)
 @Controller()
-@ApiTags('Onboarding Utilisateur')
+@ApiTags('1 - Utilisateur - Onboarding')
 export class OnboardingController extends GenericControler {
   constructor(
     private readonly onboardingUsecase: OnboardingUsecase,

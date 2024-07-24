@@ -37,7 +37,7 @@ export class ConfirmationAPI {
 @ApiExtraModels(CreateUtilisateurAPI, UtilisateurAPI)
 @Controller()
 @ApiBearerAuth()
-@ApiTags('Utilisateur - Connexion')
+@ApiTags('1 - Utilisateur - Connexion')
 export class ConnexionController extends GenericControler {
   constructor(private readonly connexion_v1_Usecase: Connexion_v1_Usecase) {
     super();

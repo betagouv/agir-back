@@ -16,7 +16,7 @@ import { EventAPI } from './types/event/eventAPI';
 
 @Controller()
 @ApiBearerAuth()
-@ApiTags('Utilisateur')
+@ApiTags('Events')
 export class EventController extends GenericControler {
   constructor(private readonly eventUsecase: EventUsecase) {
     super();
