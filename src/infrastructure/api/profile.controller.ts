@@ -29,6 +29,7 @@ import {
 import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
+import { OnboardingAPI } from './types/utilisateur/onboardingAPI';
 
 export class ConfirmationAPI {
   @ApiProperty({ required: true })
@@ -40,7 +41,7 @@ export class ConfirmationAPI {
 @ApiBearerAuth()
 @ApiTags('1 - Utilisateur - Profile')
 export class ProfileController extends GenericControler {
-  constructor(private readonly utilisateurUsecase: ProfileUsecase) {
+  constructor(private readonly profileUsecase: ProfileUsecase) {
     super();
   }
 
@@ -54,7 +55,7 @@ export class ProfileController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
   ) {
     this.checkCallerId(req, utilisateurId);
-    await this.utilisateurUsecase.deleteUtilisateur(utilisateurId);
+    await this.profileUsecase.deleteUtilisateur(utilisateurId);
   }
 
   @Get('utilisateurs/:utilisateurId')
@@ -69,7 +70,7 @@ export class ProfileController extends GenericControler {
   ): Promise<UtilisateurAPI> {
     this.checkCallerId(req, utilisateurId);
 
-    let utilisateur = await this.utilisateurUsecase.findUtilisateurById(
+    let utilisateur = await this.profileUsecase.findUtilisateurById(
       utilisateurId,
     );
     if (utilisateur == null) {
@@ -77,6 +78,27 @@ export class ProfileController extends GenericControler {
     }
 
     return UtilisateurAPI.mapToAPI(utilisateur);
+  }
+  @Get('utilisateurs/:utilisateurId/onboarding_status')
+  @ApiOperation({
+    summary: "statut de l'onboarding",
+  })
+  @ApiOkResponse({ type: OnboardingAPI })
+  @UseGuards(AuthGuard)
+  async getUtilisateurdOnboarding(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<OnboardingAPI> {
+    this.checkCallerId(req, utilisateurId);
+
+    const result = await this.profileUsecase.getOnboardingStatus(utilisateurId);
+
+    return OnboardingAPI.mapToAPI(
+      result.current,
+      result.target,
+      result.current_label,
+      result.is_done,
+    );
   }
 
   @ApiOkResponse({ type: UtilisateurProfileAPI })
@@ -92,7 +114,7 @@ export class ProfileController extends GenericControler {
   ): Promise<UtilisateurProfileAPI> {
     this.checkCallerId(req, utilisateurId);
 
-    let utilisateur = await this.utilisateurUsecase.findUtilisateurById(
+    let utilisateur = await this.profileUsecase.findUtilisateurById(
       utilisateurId,
     );
     if (utilisateur == null) {
@@ -114,7 +136,7 @@ export class ProfileController extends GenericControler {
   ): Promise<LogementAPI> {
     this.checkCallerId(req, utilisateurId);
 
-    let utilisateur = await this.utilisateurUsecase.findUtilisateurById(
+    let utilisateur = await this.profileUsecase.findUtilisateurById(
       utilisateurId,
     );
     if (utilisateur == null) {
@@ -136,7 +158,7 @@ export class ProfileController extends GenericControler {
   ): Promise<TransportAPI> {
     this.checkCallerId(req, utilisateurId);
 
-    let utilisateur = await this.utilisateurUsecase.findUtilisateurById(
+    let utilisateur = await this.profileUsecase.findUtilisateurById(
       utilisateurId,
     );
     if (utilisateur == null) {
@@ -161,7 +183,7 @@ export class ProfileController extends GenericControler {
     @Body() body: UtilisateurProfileAPI,
   ) {
     this.checkCallerId(req, utilisateurId);
-    await this.utilisateurUsecase.updateUtilisateurProfile(utilisateurId, body);
+    await this.profileUsecase.updateUtilisateurProfile(utilisateurId, body);
   }
 
   @Patch('utilisateurs/:utilisateurId/logement')
@@ -179,10 +201,7 @@ export class ProfileController extends GenericControler {
     @Body() body: LogementAPI,
   ) {
     this.checkCallerId(req, utilisateurId);
-    await this.utilisateurUsecase.updateUtilisateurLogement(
-      utilisateurId,
-      body,
-    );
+    await this.profileUsecase.updateUtilisateurLogement(utilisateurId, body);
   }
 
   @Patch('utilisateurs/:utilisateurId/transport')
@@ -200,10 +219,7 @@ export class ProfileController extends GenericControler {
     @Body() body: TransportAPI,
   ) {
     this.checkCallerId(req, utilisateurId);
-    await this.utilisateurUsecase.updateUtilisateurTransport(
-      utilisateurId,
-      body,
-    );
+    await this.profileUsecase.updateUtilisateurTransport(utilisateurId, body);
   }
 
   @Post('utilisateurs/:utilisateurId/reset')
@@ -220,7 +236,7 @@ export class ProfileController extends GenericControler {
     @Body() body: ConfirmationAPI,
   ) {
     this.checkCallerId(req, utilisateurId);
-    await this.utilisateurUsecase.reset(body.confirmation, utilisateurId);
+    await this.profileUsecase.reset(body.confirmation, utilisateurId);
   }
 
   @Post('utilisateurs/reset')
@@ -232,6 +248,6 @@ export class ProfileController extends GenericControler {
   })
   async resetAll(@Request() req, @Body() body: ConfirmationAPI) {
     this.checkCronAPIProtectedEndpoint(req);
-    await this.utilisateurUsecase.resetAllUsers(body.confirmation);
+    await this.profileUsecase.resetAllUsers(body.confirmation);
   }
 }

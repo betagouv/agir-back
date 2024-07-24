@@ -165,6 +165,32 @@ export class ProfileUsecase {
     return utilisateur;
   }
 
+  async getOnboardingStatus(id: string): Promise<{
+    current: number;
+    target: number;
+    current_label: string;
+    is_done: boolean;
+  }> {
+    const utilisateur = await this.utilisateurRepository.getById(id);
+    if (utilisateur) utilisateur.checkState();
+
+    let step = 1;
+    if (utilisateur.prenom) step++;
+    if (utilisateur.logement.code_postal) step++;
+    if (utilisateur.kyc_history.isQuestionAnswered(KYCID.KYC001)) step++;
+    return {
+      current: Math.min(step, 3),
+      target: 3,
+      current_label: [
+        'prenom',
+        'code postal',
+        'interêts',
+        'onboarding terminé',
+      ][step - 1],
+      is_done: step === 4,
+    };
+  }
+
   async deleteUtilisateur(utilisateurId: string) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
