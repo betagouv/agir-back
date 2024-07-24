@@ -162,11 +162,11 @@ function getControllers(): any[] {
     RechecheServicesController,
     BilanCarboneController,
     MagicLinkController,
+    PreviewController,
   );
   if (!App.isProd()) {
     controllers.push(TestDataController);
     controllers.push(AuthController);
-    controllers.push(PreviewController);
   }
   return controllers;
 }
