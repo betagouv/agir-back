@@ -5,7 +5,10 @@ import { CategorieRecherche } from '../../../domain/bibliotheque_services/catego
 import { FiltreRecherche } from '../../../domain/bibliotheque_services/filtreRecherche';
 import { FinderInterface } from '../../../domain/bibliotheque_services/finderInterface';
 import { ResultatRecherche } from '../../../domain/bibliotheque_services/resultatRecherche';
-import { FruitsEtLegumesServiceManager } from '../../service/fruits/fruitEtLegumesServiceManager';
+import {
+  FruitLegume,
+  FruitsEtLegumesServiceManager,
+} from '../../service/fruits/fruitEtLegumesServiceManager';
 
 const API_URL = 'https://impactco2.fr/api/v1/fruitsetlegumes';
 
@@ -46,6 +49,17 @@ export class FruitsLegumesRepository implements FinderInterface {
   public async find(filtre: FiltreRecherche): Promise<ResultatRecherche[]> {
     const result = await this.callServiceAPI(filtre);
 
+    if (!result) {
+      return [
+        new ResultatRecherche({
+          id: '9999',
+          titre: 'Service temporairement indisponible 😅',
+          impact_carbone_kg: 0,
+          emoji: '🚫',
+          type_fruit_legume: FruitLegume.fruit_et_legume,
+        }),
+      ];
+    }
     const mapped_result = result.data.map(
       (r) =>
         new ResultatRecherche({

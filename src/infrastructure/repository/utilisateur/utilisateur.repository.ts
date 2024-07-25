@@ -2,7 +2,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Utilisateur as UtilisateurDB, Prisma } from '@prisma/client';
-import { Utilisateur } from '../../../domain/utilisateur/utilisateur';
+import {
+  Utilisateur,
+  UtilisateurStatus,
+} from '../../../domain/utilisateur/utilisateur';
 import {
   Impact,
   Onboarding,
@@ -358,6 +361,7 @@ export class UtilisateurRepository {
         points_classement: user.points_classement,
         rank: user.rank,
         rank_commune: user.rank_commune,
+        status: UtilisateurStatus[user.status],
       });
     }
     return null;
@@ -451,6 +455,7 @@ export class UtilisateurRepository {
       points_classement: user.points_classement,
       rank: user.rank,
       rank_commune: user.rank_commune,
+      status: user.status,
     };
   }
 }

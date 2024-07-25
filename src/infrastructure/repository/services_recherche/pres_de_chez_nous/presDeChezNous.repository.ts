@@ -83,7 +83,7 @@ export class PresDeChezNousRepository implements FinderInterface {
         }),
       );
 
-      if (adresse.length === 0) {
+      if (!adresse || adresse.length === 0) {
         return [];
       }
 

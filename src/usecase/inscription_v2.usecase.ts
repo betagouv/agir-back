@@ -1,4 +1,7 @@
-import { Utilisateur } from '../domain/utilisateur/utilisateur';
+import {
+  Utilisateur,
+  UtilisateurStatus,
+} from '../domain/utilisateur/utilisateur';
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { EmailSender } from '../infrastructure/email/emailSender';
@@ -41,6 +44,7 @@ export class Inscription_v2_Usecase {
     utilisateurToCreate.setNew6DigitCode();
 
     utilisateurToCreate.setPassword(utilisateurInput.mot_de_passe);
+    utilisateurToCreate.status = UtilisateurStatus.creation_compte_etape_1;
 
     await this.utilisateurRespository.createUtilisateur(utilisateurToCreate);
 

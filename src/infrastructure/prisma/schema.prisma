@@ -83,6 +83,7 @@ model Utilisateur {
   commune_classement       String?
   rank                     Int?
   rank_commune             Int?
+  status                   String?
 }
 
 model Statistique {

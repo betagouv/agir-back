@@ -48,6 +48,9 @@ export class AddressesRepository implements FinderInterface {
   public async find(filtre: FiltreRecherche): Promise<ResultatRecherche[]> {
     const result = await this.callAddresseAPI(filtre.text);
 
+    if (!result) {
+      return null;
+    }
     if (result.features.length === 0) {
       return null;
     }

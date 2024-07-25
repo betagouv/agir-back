@@ -20,7 +20,13 @@ import { QuestionKYC } from '../kyc/questionKYC';
 import { MissionsUtilisateur } from '../mission/missionsUtilisateur';
 import { Feature } from '../gamification/feature';
 import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServices';
-import { KYCID } from '../kyc/KYCID';
+
+export enum UtilisateurStatus {
+  default = 'default',
+  creation_compte_etape_1 = 'creation_compte_etape_1',
+  connexion_etape_1 = 'connexion_etape_1',
+  mot_de_passe_oublie_etape_1 = 'mot_de_passe_oublie_etape_1',
+}
 
 export class UtilisateurData {
   id: string;
@@ -70,6 +76,7 @@ export class UtilisateurData {
   commune_classement: string;
   rank: number;
   rank_commune: number;
+  status: UtilisateurStatus;
 }
 
 export class Utilisateur extends UtilisateurData {
@@ -177,6 +184,7 @@ export class Utilisateur extends UtilisateurData {
       code_postal_classement: code_postal,
       commune_classement: commune,
       points_classement: 0,
+      status: UtilisateurStatus.default,
     });
   }
 

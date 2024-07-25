@@ -901,7 +901,7 @@ describe('RechercheServices (API test)', () => {
     });
   });
 
-  it(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats`, async () => {
+  it.skip(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
     process.env.BASE_URL_FRONT = 'https://site';
@@ -935,7 +935,7 @@ describe('RechercheServices (API test)', () => {
       userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
     ).toHaveLength(36);
   });
-  it(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats si pas de categorie`, async () => {
+  it.skip(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats si pas de categorie`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
 

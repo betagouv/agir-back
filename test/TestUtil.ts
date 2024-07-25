@@ -605,7 +605,7 @@ export class TestUtil {
       active_account: true,
       failed_login_count: 0,
       prevent_login_before: new Date(),
-      code: '123456',
+      code: null,
       code_generation_time: new Date(),
       failed_checkcode_count: 0,
       prevent_checkcode_before: new Date(),

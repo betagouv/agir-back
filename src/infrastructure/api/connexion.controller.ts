@@ -28,6 +28,8 @@ import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { ModifierMdpAPI } from './types/utilisateur/modifierMdpAPI';
 import { EmailAPI } from './types/utilisateur/EmailAPI';
 import { Connexion_v1_Usecase } from '../../usecase/connexion_v1.usecase';
+import { Connexion_v2_Usecase } from '../../usecase/connexion_v2.usecase';
+import { Valider2FAAPI } from './types/utilisateur/valider2FAAPI';
 
 export class ConfirmationAPI {
   @ApiProperty({ required: true })
@@ -39,7 +41,10 @@ export class ConfirmationAPI {
 @ApiBearerAuth()
 @ApiTags('1 - Utilisateur - Connexion')
 export class ConnexionController extends GenericControler {
-  constructor(private readonly connexion_v1_Usecase: Connexion_v1_Usecase) {
+  constructor(
+    private readonly connexion_v1_Usecase: Connexion_v1_Usecase,
+    private readonly connexion_v2_Usecase: Connexion_v2_Usecase,
+  ) {
     super();
   }
 
@@ -59,6 +64,41 @@ export class ConnexionController extends GenericControler {
     const loggedUser = await this.connexion_v1_Usecase.loginUtilisateur(
       body.email,
       body.mot_de_passe,
+    );
+    return LoggedUtilisateurAPI.mapToAPI(
+      loggedUser.token,
+      loggedUser.utilisateur,
+    );
+  }
+
+  @Post('utilisateurs/login_v2')
+  @ApiOperation({
+    summary:
+      "Opération de login V2 d'un utilisateur existant et actif, envoi un code de validation",
+  })
+  @ApiBody({
+    type: LoginUtilisateurAPI,
+  })
+  @ApiBadRequestResponse({ type: ApplicationError })
+  async loginUtilisateur_v2(@Body() body: LoginUtilisateurAPI) {
+    await this.connexion_v2_Usecase.loginUtilisateur(
+      body.email,
+      body.mot_de_passe,
+    );
+  }
+
+  @Post('utilisateurs/login_v2_code')
+  @ApiOperation({
+    summary: `Valide le second facteur de login (code reçu par email, renvoie les infos utilisateur ainsi qu'un token JWT si tout est OK`,
+  })
+  @ApiBody({
+    type: Valider2FAAPI,
+  })
+  @ApiBadRequestResponse({ type: ApplicationError })
+  async validateCodePourLogin(@Body() body: Valider2FAAPI) {
+    const loggedUser = await this.connexion_v2_Usecase.validateCodePourLogin(
+      body.email,
+      body.code,
     );
     return LoggedUtilisateurAPI.mapToAPI(
       loggedUser.token,
