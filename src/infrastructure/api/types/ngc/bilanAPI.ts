@@ -4,13 +4,13 @@ import { Univers } from '../../../../domain/univers/univers';
 import { ThematiqueRepository } from '../../../repository/thematique.repository';
 
 export class PourcentageImpactAPI {
-  univers: Univers;
-  univers_label: string;
-  pourcentage: number;
-  impact_kg_annee: number;
+  @ApiProperty() univers: Univers;
+  @ApiProperty() univers_label: string;
+  @ApiProperty() pourcentage: number;
+  @ApiProperty() impact_kg_annee: number;
 }
 export class BilanCarboneAPI {
-  @ApiProperty() detail: PourcentageImpactAPI[];
+  @ApiProperty({ type: [PourcentageImpactAPI] }) detail: PourcentageImpactAPI[];
   @ApiProperty() impact_kg_annee: number;
 
   public static mapToAPI(bilan: BilanCarbone): BilanCarboneAPI {
