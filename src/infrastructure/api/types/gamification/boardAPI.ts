@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Board, Pourcentile } from '../../../../domain/gamification/board';
 import { Classement } from '../../../../domain/gamification/classement';
-
+var crypto = require('crypto');
 
 export class ClassementAPI {
+  @ApiProperty() id: string;
   @ApiProperty() points: number;
   @ApiProperty() prenom: string;
   @ApiProperty() rank: number;
@@ -16,6 +17,10 @@ export class ClassementAPI {
       points: classement.points,
       rank: local ? classement.rank_commune : classement.rank,
       prenom: classement.prenom,
+      id: crypto
+        .createHash('md5')
+        .update(classement.utilisateurId)
+        .digest('hex'),
     };
   }
 }
