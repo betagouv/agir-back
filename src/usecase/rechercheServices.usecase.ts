@@ -138,27 +138,31 @@ export class RechercheServicesUsecase {
     const catalogue = [
       {
         id: ServiceRechercheID.fruits_legumes,
-        external_url: undefined,
+        external_url: 'https://impactco2.fr/outils/fruitsetlegumes',
         icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/cerise.png',
         titre: 'Fruits et légumes de saison',
         sous_titre: CategorieRechercheManager.getMoisCourant(),
         univers: Univers.alimentation,
+        is_available_inhouse: true,
       },
       {
         id: ServiceRechercheID.proximite,
-        external_url: undefined,
+        external_url: 'https://presdecheznous.fr/map#/carte/{CODE_POSTAL}',
         icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/commerce.png',
         titre: 'Mes commerces de proximité',
         sous_titre: 'À {COMMUNE}',
         univers: Univers.alimentation,
+        is_available_inhouse: true,
       },
       {
         id: ServiceRechercheID.recettes,
-        external_url: undefined,
+        external_url:
+          'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/recettes',
         icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/omelette.png',
         titre: 'Recettes saines et équilibrées',
         sous_titre: 'Bas carbone',
         univers: Univers.alimentation,
+        is_available_inhouse: true,
       },
       {
         id: ServiceExterneID.poisson_de_saison,
@@ -169,6 +173,7 @@ export class RechercheServicesUsecase {
         titre: 'Poissons de saison',
         sous_titre: 'Manger Bouger',
         univers: Univers.alimentation,
+        is_available_inhouse: false,
       },
       {
         id: ServiceExterneID.compost_local,
@@ -177,6 +182,7 @@ export class RechercheServicesUsecase {
         titre: 'Où composter proche de chez moi ?',
         sous_titre: 'Réseau Compost Citoyen',
         univers: Univers.alimentation,
+        is_available_inhouse: false,
       },
       {
         id: ServiceExterneID.changer_voiture,
@@ -187,6 +193,7 @@ export class RechercheServicesUsecase {
         titre: 'Quel véhicule pour remplacer le mien ?',
         sous_titre: 'Je change ma voiture',
         univers: Univers.transport,
+        is_available_inhouse: false,
       },
       {
         id: ServiceExterneID.velo_tourisme,
@@ -196,6 +203,7 @@ export class RechercheServicesUsecase {
         titre: 'Voyager à vélo en France',
         sous_titre: 'France vélo tourisme',
         univers: Univers.transport,
+        is_available_inhouse: false,
       },
       {
         id: ServiceExterneID.bornes_elec,
@@ -205,6 +213,7 @@ export class RechercheServicesUsecase {
         titre: 'Où trouver des bornes électriques sur mes trajets ?',
         sous_titre: 'A better route planner',
         univers: Univers.transport,
+        is_available_inhouse: false,
       },
       {
         id: ServiceExterneID.impact_co2,
@@ -214,6 +223,7 @@ export class RechercheServicesUsecase {
         titre: 'Comparateur carbone',
         sous_titre: 'Impact CO2',
         univers: Univers.climat,
+        is_available_inhouse: false,
       },
       {
         id: ServiceExterneID.je_veux_aider,
@@ -223,6 +233,7 @@ export class RechercheServicesUsecase {
         titre: 'Devenir bénévole',
         sous_titre: 'Je veux aider',
         univers: Univers.climat,
+        is_available_inhouse: false,
       },
       {
         id: ServiceExterneID.aide_reno,
@@ -232,6 +243,7 @@ export class RechercheServicesUsecase {
         titre: 'Estimer mes aides à la rénovation',
         sous_titre: 'Mes Aides Reno',
         univers: Univers.logement,
+        is_available_inhouse: false,
       },
       {
         id: ServiceExterneID.conso_eau,
@@ -242,6 +254,7 @@ export class RechercheServicesUsecase {
         titre: `Estimer ma conso d'eau`,
         sous_titre: 'Cieau',
         univers: Univers.logement,
+        is_available_inhouse: false,
       },
       {
         id: ServiceExterneID.pacoupas,
@@ -251,6 +264,7 @@ export class RechercheServicesUsecase {
         titre: `Changer son chauffage`,
         sous_titre: 'Pacoupa',
         univers: Univers.logement,
+        is_available_inhouse: false,
       },
       {
         id: ServiceExterneID.chronotrains,
@@ -260,6 +274,7 @@ export class RechercheServicesUsecase {
         titre: `Où partir en train pour les vacances ?`,
         sous_titre: 'Chronotrains',
         univers: Univers.transport,
+        is_available_inhouse: false,
       },
       {
         id: ServiceExterneID.reparerabilite,
@@ -270,6 +285,7 @@ export class RechercheServicesUsecase {
         titre: `Mon appareil se répare-t-il facilement ?`,
         sous_titre: 'Epargnons nos ressources',
         univers: Univers.consommation,
+        is_available_inhouse: false,
       },
       {
         id: ServiceExterneID.labels,
@@ -280,6 +296,7 @@ export class RechercheServicesUsecase {
         titre: `Se repérer dans les labels`,
         sous_titre: 'Epargnons nos ressources',
         univers: Univers.consommation,
+        is_available_inhouse: false,
       },
       {
         id: ServiceExterneID.diagnostiquer,
@@ -290,6 +307,7 @@ export class RechercheServicesUsecase {
         titre: `Diagnostiquer une panne`,
         sous_titre: 'Epargnons nos ressources',
         univers: Univers.consommation,
+        is_available_inhouse: false,
       },
       {
         id: ServiceExterneID.reparer,
@@ -300,6 +318,7 @@ export class RechercheServicesUsecase {
         titre: `Tutos pour réparer mes objets`,
         sous_titre: 'Epargnons nos ressources',
         univers: Univers.consommation,
+        is_available_inhouse: false,
       },
     ];
 

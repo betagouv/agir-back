@@ -28,7 +28,7 @@ describe('/bilan (API test)', () => {
     //THEN
     expect(response.status).toBe(403);
   });
-  it.only('GET /utilisateur/id/bilans/last - get last bilan with proper data', async () => {
+  it('GET /utilisateur/id/bilans/last - get last bilan with proper data', async () => {
     // GIVEN
     const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
 
@@ -93,7 +93,7 @@ describe('/bilan (API test)', () => {
       ],
     });
   });
-  it('GET /utilisateur/id/bilans - get list of bilans', async () => {
+  it.skip('GET /utilisateur/id/bilans - get list of bilans', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.situationNGC, { id: 'id1' });

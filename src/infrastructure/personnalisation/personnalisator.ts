@@ -4,6 +4,7 @@ import { CommuneRepository } from '../repository/commune/commune.repository';
 
 export enum CLE_PERSO {
   commune = '{COMMUNE}',
+  code_postal = '{CODE_POSTAL}',
 }
 
 @Injectable()
@@ -69,6 +70,8 @@ export class Personnalisator {
     switch (cle) {
       case CLE_PERSO.commune:
         return this.formatCommune(utilisateur);
+      case CLE_PERSO.code_postal:
+        return utilisateur.logement.code_postal;
       default:
         return cle;
     }

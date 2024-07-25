@@ -578,7 +578,12 @@ describe('RechercheServices (API test)', () => {
       sous_titre: CategorieRechercheManager.getMoisCourant(),
       icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/cerise.png',
       univers: 'alimentation',
+      external_url: 'https://impactco2.fr/outils/fruitsetlegumes',
+      is_available_inhouse: true,
     });
+    expect(response.body[1].external_url).toEqual(
+      'https://presdecheznous.fr/map#/carte/91120',
+    );
   });
 
   it(`POST /services/compute_stats  calcul les stats de favoris pour les services, aucun usage`, async () => {
