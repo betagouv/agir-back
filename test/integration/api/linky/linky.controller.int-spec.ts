@@ -85,6 +85,52 @@ describe('Linky (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.data).toHaveLength(724);
   });
+  it('GET /utilisateurs/id/linky renvoie les data linky full avec correction à la volée', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
+      serviceDefinitionId: 'linky',
+      configuration: { prm: 'abc' },
+    });
+    await TestUtil.create(DB.linky, {
+      data: [
+        {
+          date: '2021-12-20T12:00:00.000Z',
+          day_value: null,
+          value_cumulee: 10,
+        },
+        {
+          date: '2021-12-21T12:00:00.000Z',
+          day_value: null,
+          value_cumulee: 20,
+        },
+        {
+          date: '2021-12-22T12:00:00.000Z',
+          day_value: null,
+          value_cumulee: 40,
+        },
+        {
+          date: '2021-12-23T12:00:00.000Z',
+          day_value: null,
+          value_cumulee: 70,
+        },
+      ],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/linky');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.data).toHaveLength(4);
+    expect(response.body.data[0].valeur).toEqual(10);
+    expect(response.body.data[3].valeur).toEqual(30);
+
+    const linkyDB = (await TestUtil.prisma.linky.findMany())[0];
+
+    expect(linkyDB.data[3].day_value).toEqual(30);
+  });
   it('GET /utilisateurs/id/linky renvoie data full si on demande plus que existant', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
