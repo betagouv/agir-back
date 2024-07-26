@@ -77,6 +77,7 @@ export class UtilisateurData {
   rank: number;
   rank_commune: number;
   status: UtilisateurStatus;
+  couverture_aides_ok: boolean;
 }
 
 export class Utilisateur extends UtilisateurData {
@@ -185,6 +186,7 @@ export class Utilisateur extends UtilisateurData {
       commune_classement: commune,
       points_classement: 0,
       status: UtilisateurStatus.default,
+      couverture_aides_ok: false,
     });
   }
 

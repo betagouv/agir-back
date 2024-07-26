@@ -12,8 +12,7 @@ import { Thematique } from '../../../src/domain/contenu/thematique';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
-import { Univers } from '../../../src/domain/univers/univers';
-import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 var crypto = require('crypto');
 
 function getFakeUtilisteur() {
@@ -337,6 +336,26 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.commune_classement).toEqual('Patelin');
     expect(dbUser.code_postal_classement).toEqual('11111');
   });
+  it('PATCH /utilisateurs/id/logement - maj code postal recalcul le flag de couverture d aides', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { couverture_aides_ok: false });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: ['21000'],
+    });
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_postal: '21000',
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.getById('utilisateur-id');
+
+    expect(dbUser.couverture_aides_ok).toEqual(true);
+  });
   it('PATCH /utilisateurs/id/logement - update KYC006 si logement plus 15 ans', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -512,5 +531,76 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.status).toBe(400);
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.unlocked_features.unlocked_features).toHaveLength(2);
+  });
+  it(`POST /utilisateurs/update_user_couverture`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const logement_91120: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+    };
+    const logement_21000: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '21000',
+      chauffage: Chauffage.bois,
+      commune: 'DIJON',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      email: '1',
+      couverture_aides_ok: false,
+      logement: logement_91120,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      email: '2',
+      couverture_aides_ok: false,
+      logement: logement_91120,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '3',
+      email: '3',
+      couverture_aides_ok: false,
+      logement: logement_21000,
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: ['91120'],
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/update_user_couverture',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual({
+      couvert: 2,
+      pas_couvert: 1,
+    });
+
+    let userDB = await utilisateurRepository.getById('1');
+    expect(userDB.couverture_aides_ok).toEqual(true);
+
+    userDB = await utilisateurRepository.getById('3');
+    expect(userDB.couverture_aides_ok).toEqual(false);
   });
 });

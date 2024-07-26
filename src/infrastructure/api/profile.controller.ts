@@ -59,7 +59,7 @@ export class ProfileController extends GenericControler {
 
   @Get('utilisateurs/:utilisateurId')
   @ApiOperation({
-    summary: "Infromation complètes concernant l'utilisateur d'id donné",
+    summary: "Informations principales concernant l'utilisateur d'id donné",
   })
   @ApiOkResponse({ type: UtilisateurAPI })
   @UseGuards(AuthGuard)
@@ -226,5 +226,15 @@ export class ProfileController extends GenericControler {
   async resetAll(@Request() req, @Body() body: ConfirmationAPI) {
     this.checkCronAPIProtectedEndpoint(req);
     await this.profileUsecase.resetAllUsers(body.confirmation);
+  }
+
+  @ApiTags('Z - Admin')
+  @Post('utilisateurs/update_user_couverture')
+  @ApiOperation({
+    summary: `Met à jour le flag de couverture pour les aides pour l'ensemble des utilisateurs`,
+  })
+  async updateAllUserCouvertureAides(@Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.profileUsecase.updateAllUserCouvertureAides();
   }
 }

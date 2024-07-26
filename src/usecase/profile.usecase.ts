@@ -17,6 +17,7 @@ import { ContactUsecase } from './contact.usecase';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { KYCID } from '../domain/kyc/KYCID';
 import { Retryable } from 'typescript-retry-decorator';
+import { AideRepository } from '../infrastructure/repository/aide.repository';
 
 export type Phrase = {
   phrase: string;
@@ -34,6 +35,7 @@ export class ProfileUsecase {
     private oIDCStateRepository: OIDCStateRepository,
     private contactUsecase: ContactUsecase,
     private kycRepository: KycRepository,
+    private aideRepository: AideRepository,
   ) {}
 
   async computeAllUsersRecoTags() {
@@ -150,6 +152,12 @@ export class ProfileUsecase {
 
     utilisateur.recomputeRecoTags();
 
+    const couverture_code_postal =
+      await this.aideRepository.isCodePostalCouvert(
+        utilisateur.logement.code_postal,
+      );
+    utilisateur.couverture_aides_ok = couverture_code_postal;
+
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
@@ -168,6 +176,26 @@ export class ProfileUsecase {
     if (utilisateur) utilisateur.checkState();
 
     return utilisateur;
+  }
+
+  async updateAllUserCouvertureAides(): Promise<{
+    couvert: number;
+    pas_couvert: number;
+  }> {
+    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
+    let couvert = 0;
+    let pas_couvert = 0;
+    for (const id of userIdList) {
+      const utilisateur = await this.utilisateurRepository.getById(id);
+      utilisateur.couverture_aides_ok =
+        await this.aideRepository.isCodePostalCouvert(
+          utilisateur.logement.code_postal,
+        );
+      couvert += utilisateur.couverture_aides_ok ? 1 : 0;
+      pas_couvert += !utilisateur.couverture_aides_ok ? 1 : 0;
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    }
+    return { couvert, pas_couvert };
   }
 
   async deleteUtilisateur(utilisateurId: string) {

@@ -56,6 +56,13 @@ export class AideRepository {
     return this.buildAideFromDB(result);
   }
 
+  async isCodePostalCouvert(code_postal: string): Promise<boolean> {
+    const count = await this.prisma.aide.count({
+      where: { codes_postaux: { has: code_postal } },
+    });
+    return count > 0;
+  }
+
   async search(filter: AideFilter): Promise<Aide[]> {
     const main_filter = [];
 

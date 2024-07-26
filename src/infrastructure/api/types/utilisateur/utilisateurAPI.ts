@@ -18,6 +18,9 @@ export class UtilisateurAPI {
   @ApiProperty()
   is_onboarding_done?: boolean;
 
+  @ApiProperty()
+  couverture_aides_ok: boolean;
+
   @ApiProperty({ enum: Feature, enumName: 'Feature', isArray: true })
   fonctionnalites_debloquees: Feature[];
 
@@ -29,6 +32,7 @@ export class UtilisateurAPI {
       email: user.email,
       fonctionnalites_debloquees: user.unlocked_features.getUnlockedFeatures(),
       is_onboarding_done: user.isOnboardingDone(),
+      couverture_aides_ok: user.couverture_aides_ok,
     };
   }
 }

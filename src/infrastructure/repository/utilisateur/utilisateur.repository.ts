@@ -362,6 +362,7 @@ export class UtilisateurRepository {
         rank: user.rank,
         rank_commune: user.rank_commune,
         status: UtilisateurStatus[user.status],
+        couverture_aides_ok: user.couverture_aides_ok,
       });
     }
     return null;
@@ -456,6 +457,7 @@ export class UtilisateurRepository {
       rank: user.rank,
       rank_commune: user.rank_commune,
       status: user.status,
+      couverture_aides_ok: user.couverture_aides_ok,
     };
   }
 }

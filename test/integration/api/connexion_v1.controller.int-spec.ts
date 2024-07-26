@@ -64,6 +64,7 @@ describe('/utilisateurs - Connexion Compte utilisateur (API test)', () => {
     expect(response.body.utilisateur.nom).toEqual('nom');
     expect(response.body.utilisateur.prenom).toEqual('prenom');
     expect(response.body.utilisateur.is_onboarding_done).toEqual(true);
+    expect(response.body.utilisateur.couverture_aides_ok).toEqual(false);
     expect(userDB.force_connexion).toEqual(false);
   });
   it('POST /utilisateurs/login - logs user , onboarding pas done', async () => {
