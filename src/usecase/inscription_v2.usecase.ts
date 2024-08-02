@@ -55,7 +55,7 @@ export class Inscription_v2_Usecase {
     this.emailSender.sendEmail(
       utilisateur.email,
       utilisateur.prenom,
-      `Bonjour ${utilisateur.prenom},<br>
+      `Bonjour,<br>
 Voici votre code pour valider votre inscription à l'application Agir !<br><br>
     
 code : ${utilisateur.code}<br><br>
