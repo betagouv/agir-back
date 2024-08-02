@@ -128,6 +128,7 @@ import { ConnexionController } from './infrastructure/api/connexion.controller';
 import { Inscription_v2_Usecase } from './usecase/inscription_v2.usecase';
 import { ProfileUsecase } from './usecase/profile.usecase';
 import { ProfileController } from './infrastructure/api/profile.controller';
+import { Connexion_v2_Usecase } from './usecase/connexion_v2.usecase';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -278,6 +279,7 @@ function getControllers(): any[] {
     ImpactTransportsRepository,
     DistancesRepository,
     Connexion_v1_Usecase,
+    Connexion_v2_Usecase,
   ],
 })
 export class AppModule {}

@@ -17,6 +17,7 @@ import { ContactUsecase } from './contact.usecase';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { KYCID } from '../domain/kyc/KYCID';
 import { Retryable } from 'typescript-retry-decorator';
+import { AideRepository } from '../infrastructure/repository/aide.repository';
 
 export type Phrase = {
   phrase: string;
@@ -34,6 +35,7 @@ export class ProfileUsecase {
     private oIDCStateRepository: OIDCStateRepository,
     private contactUsecase: ContactUsecase,
     private kycRepository: KycRepository,
+    private aideRepository: AideRepository,
   ) {}
 
   async computeAllUsersRecoTags() {
@@ -138,12 +140,23 @@ export class ProfileUsecase {
     utilisateur.logement.patch(input, utilisateur);
 
     if (input.plus_de_15_ans !== undefined && input.plus_de_15_ans !== null) {
+      const kyc = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+        KYCID.KYC006,
+      );
       utilisateur.kyc_history.updateQuestion(KYCID.KYC006, [
-        input.plus_de_15_ans ? 'plus_15' : 'moins_15',
+        input.plus_de_15_ans
+          ? kyc.getLabelByCode('plus_15')
+          : kyc.getLabelByCode('moins_15'),
       ]);
     }
 
     utilisateur.recomputeRecoTags();
+
+    const couverture_code_postal =
+      await this.aideRepository.isCodePostalCouvert(
+        utilisateur.logement.code_postal,
+      );
+    utilisateur.couverture_aides_ok = couverture_code_postal;
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -165,30 +178,24 @@ export class ProfileUsecase {
     return utilisateur;
   }
 
-  async getOnboardingStatus(id: string): Promise<{
-    current: number;
-    target: number;
-    current_label: string;
-    is_done: boolean;
+  async updateAllUserCouvertureAides(): Promise<{
+    couvert: number;
+    pas_couvert: number;
   }> {
-    const utilisateur = await this.utilisateurRepository.getById(id);
-    if (utilisateur) utilisateur.checkState();
-
-    let step = 1;
-    if (utilisateur.prenom) step++;
-    if (utilisateur.logement.code_postal) step++;
-    if (utilisateur.kyc_history.isQuestionAnswered(KYCID.KYC001)) step++;
-    return {
-      current: Math.min(step, 3),
-      target: 3,
-      current_label: [
-        'prenom',
-        'code postal',
-        'interêts',
-        'onboarding terminé',
-      ][step - 1],
-      is_done: step === 4,
-    };
+    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
+    let couvert = 0;
+    let pas_couvert = 0;
+    for (const id of userIdList) {
+      const utilisateur = await this.utilisateurRepository.getById(id);
+      utilisateur.couverture_aides_ok =
+        await this.aideRepository.isCodePostalCouvert(
+          utilisateur.logement.code_postal,
+        );
+      couvert += utilisateur.couverture_aides_ok ? 1 : 0;
+      pas_couvert += !utilisateur.couverture_aides_ok ? 1 : 0;
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    }
+    return { couvert, pas_couvert };
   }
 
   async deleteUtilisateur(utilisateurId: string) {

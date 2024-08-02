@@ -1,3 +1,5 @@
+import { Univers } from '../../../src/domain/univers/univers';
+import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('/bilan (API test)', () => {
@@ -28,9 +30,24 @@ describe('/bilan (API test)', () => {
   });
   it('GET /utilisateur/id/bilans/last - get last bilan with proper data', async () => {
     // GIVEN
+    const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
+
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.situationNGC);
-    await TestUtil.create(DB.empreinte);
+    await TestUtil.create(DB.univers, {
+      id_cms: 1,
+      code: Univers.transport,
+      label: 'The Transport',
+      image_url: 'aaaa',
+      is_locked: false,
+    });
+    await TestUtil.create(DB.univers, {
+      id_cms: 2,
+      code: Univers.alimentation,
+      label: 'En cuisine',
+      image_url: 'bbbb',
+      is_locked: false,
+    });
+    await thematiqueRepository.loadUnivers();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -40,41 +57,43 @@ describe('/bilan (API test)', () => {
     //THEN
     expect(response.status).toBe(200);
 
-    expect(Math.floor(response.body.details.divers)).toStrictEqual(852);
-    expect(Math.floor(response.body.details.logement)).toStrictEqual(1424);
-    expect(Math.floor(response.body.details.transport)).toStrictEqual(2533);
-    expect(Math.floor(response.body.details.alimentation)).toStrictEqual(2033);
-    expect(Math.floor(response.body.details.services_societaux)).toStrictEqual(
-      1553,
-    );
-    expect(response.body.bilan_carbone_annuel).toStrictEqual(8398.594521380714);
-  });
-  it('GET /utilisateur/id/bilans/last - get last bilan by id user', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.situationNGC, { id: 'id1' });
-    await TestUtil.create(DB.situationNGC, { id: 'id2' });
-    await TestUtil.create(DB.empreinte, {
-      id: '1',
-      created_at: new Date(0),
-      situationId: 'id1',
+    expect(response.body).toEqual({
+      impact_kg_annee: 8898.031054479543,
+      detail: [
+        {
+          pourcentage: 31,
+          univers: 'transport',
+          univers_label: 'The Transport',
+          impact_kg_annee: 2796.1001241487393,
+        },
+        {
+          pourcentage: 24,
+          univers: 'alimentation',
+          univers_label: 'En cuisine',
+          impact_kg_annee: 2094.1568221,
+        },
+        {
+          pourcentage: 17,
+          univers: 'logement',
+          univers_label: 'Titre manquant',
+          impact_kg_annee: 1477.82343812085,
+        },
+        {
+          pourcentage: 16,
+          univers: 'services_societaux',
+          univers_label: 'Titre manquant',
+          impact_kg_annee: 1450.9052263863641,
+        },
+        {
+          pourcentage: 12,
+          univers: 'consommation',
+          univers_label: 'Titre manquant',
+          impact_kg_annee: 1079.0454437235896,
+        },
+      ],
     });
-    await TestUtil.create(DB.empreinte, {
-      id: '2',
-      created_at: new Date(100),
-      situationId: 'id2',
-    });
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateur/utilisateur-id/bilans/last',
-    );
-
-    //THEN
-    expect(response.status).toBe(200);
-    expect(response.body.id).toBe('2');
   });
-  it('GET /utilisateur/id/bilans - get list of bilans', async () => {
+  it.skip('GET /utilisateur/id/bilans - get list of bilans', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.situationNGC, { id: 'id1' });

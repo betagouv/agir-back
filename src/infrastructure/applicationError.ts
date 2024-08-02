@@ -331,6 +331,12 @@ export class ApplicationError {
   static throwBadCodError() {
     this.throwAppError('061', `Mauvais code`);
   }
+  static throwBadResponseValue(reponse: string, kyc_code: string) {
+    this.throwAppError(
+      '062',
+      `Reponse [${reponse}] inconnue pour la KYC [${kyc_code}]`,
+    );
+  }
 
   private static throwAppError(
     code: string,

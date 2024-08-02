@@ -12,6 +12,7 @@ export class ServiceRechercheAPI {
   @ApiProperty() icon_url: string;
   @ApiProperty() univers: string;
   @ApiProperty() external_url: string;
+  @ApiProperty() is_available_inhouse: boolean;
 
   public static mapToAPI(
     service: ServiceRechercheDefinition,
@@ -23,6 +24,7 @@ export class ServiceRechercheAPI {
       external_url: service.external_url,
       icon_url: service.icon_url,
       univers: service.univers,
+      is_available_inhouse: service.is_available_inhouse,
     };
   }
 }

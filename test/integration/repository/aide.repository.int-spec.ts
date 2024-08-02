@@ -21,6 +21,30 @@ describe('AideRepository', () => {
     await TestUtil.appclose();
   });
 
+  it('isCodePostalCouvert : indique si un code postal est couvert par au moins une aide', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: ['A', 'B'],
+    });
+
+    // WHEN
+    let result = await aideRepository.isCodePostalCouvert('A');
+    // THEN
+    expect(result).toEqual(true);
+
+    // WHEN
+    result = await aideRepository.isCodePostalCouvert('B');
+    // THEN
+    expect(result).toEqual(true);
+
+    // WHEN
+    result = await aideRepository.isCodePostalCouvert('C');
+    // THEN
+    expect(result).toEqual(false);
+  });
+
   it('searchsearch : liste aide par code postal parmi plusieurs', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);

@@ -29,7 +29,6 @@ import {
 import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
-import { OnboardingAPI } from './types/utilisateur/onboardingAPI';
 
 export class ConfirmationAPI {
   @ApiProperty({ required: true })
@@ -60,7 +59,7 @@ export class ProfileController extends GenericControler {
 
   @Get('utilisateurs/:utilisateurId')
   @ApiOperation({
-    summary: "Infromation complètes concernant l'utilisateur d'id donné",
+    summary: "Informations principales concernant l'utilisateur d'id donné",
   })
   @ApiOkResponse({ type: UtilisateurAPI })
   @UseGuards(AuthGuard)
@@ -79,28 +78,6 @@ export class ProfileController extends GenericControler {
 
     return UtilisateurAPI.mapToAPI(utilisateur);
   }
-  @Get('utilisateurs/:utilisateurId/onboarding_status')
-  @ApiOperation({
-    summary: "statut de l'onboarding",
-  })
-  @ApiOkResponse({ type: OnboardingAPI })
-  @UseGuards(AuthGuard)
-  async getUtilisateurdOnboarding(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-  ): Promise<OnboardingAPI> {
-    this.checkCallerId(req, utilisateurId);
-
-    const result = await this.profileUsecase.getOnboardingStatus(utilisateurId);
-
-    return OnboardingAPI.mapToAPI(
-      result.current,
-      result.target,
-      result.current_label,
-      result.is_done,
-    );
-  }
-
   @ApiOkResponse({ type: UtilisateurProfileAPI })
   @Get('utilisateurs/:utilisateurId/profile')
   @ApiOperation({
@@ -249,5 +226,15 @@ export class ProfileController extends GenericControler {
   async resetAll(@Request() req, @Body() body: ConfirmationAPI) {
     this.checkCronAPIProtectedEndpoint(req);
     await this.profileUsecase.resetAllUsers(body.confirmation);
+  }
+
+  @ApiTags('Z - Admin')
+  @Post('utilisateurs/update_user_couverture')
+  @ApiOperation({
+    summary: `Met à jour le flag de couverture pour les aides pour l'ensemble des utilisateurs`,
+  })
+  async updateAllUserCouvertureAides(@Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.profileUsecase.updateAllUserCouvertureAides();
   }
 }

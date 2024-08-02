@@ -121,13 +121,13 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.filtres).toHaveLength(7);
     expect(response.body.filtres[0].code).toEqual('alimentation');
     expect(response.body.filtres[0].label).toEqual('Alimentation !!');
-    expect(response.body.filtres[0].selected).toEqual(true);
-    expect(response.body.filtres[1].selected).toEqual(true);
-    expect(response.body.filtres[2].selected).toEqual(true);
-    expect(response.body.filtres[3].selected).toEqual(true);
-    expect(response.body.filtres[4].selected).toEqual(true);
-    expect(response.body.filtres[5].selected).toEqual(true);
-    expect(response.body.filtres[6].selected).toEqual(true);
+    expect(response.body.filtres[0].selected).toEqual(false);
+    expect(response.body.filtres[1].selected).toEqual(false);
+    expect(response.body.filtres[2].selected).toEqual(false);
+    expect(response.body.filtres[3].selected).toEqual(false);
+    expect(response.body.filtres[4].selected).toEqual(false);
+    expect(response.body.filtres[5].selected).toEqual(false);
+    expect(response.body.filtres[6].selected).toEqual(false);
   });
   it('GET /utilisateurs/id/bibliotheque - renvoie les articles de bonne thematique', async () => {
     // GIVEN

@@ -123,10 +123,17 @@ export class LinkyUsecase {
     );
     if (!serviceLinky) return { data: new LinkyData() };
 
-    const linkyData = await this.linkyRepository.getByPRM(
-      serviceLinky.configuration['prm'],
-    );
+    const PRM = serviceLinky.configuration['prm'];
+
+    const linkyData = await this.linkyRepository.getByPRM(PRM);
     if (!linkyData) return { data: new LinkyData() };
+
+    if (!linkyData.isProcessed()) {
+      linkyData.cleanData();
+      linkyData.computeDayValueFromCumulee();
+
+      await this.linkyRepository.upsertDataForPRM(PRM, linkyData.serie);
+    }
 
     if (compare_annees) {
       const result = linkyData.compare2AnsParMois();

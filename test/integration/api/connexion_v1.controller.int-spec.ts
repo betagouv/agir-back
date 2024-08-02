@@ -1,7 +1,6 @@
 import { DB, TestUtil } from '../../TestUtil';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 var crypto = require('crypto');
 
 function getFakeUtilisteur() {
@@ -64,7 +63,34 @@ describe('/utilisateurs - Connexion Compte utilisateur (API test)', () => {
     expect(response.body.utilisateur.id).toEqual('utilisateur-id');
     expect(response.body.utilisateur.nom).toEqual('nom');
     expect(response.body.utilisateur.prenom).toEqual('prenom');
+    expect(response.body.utilisateur.is_onboarding_done).toEqual(true);
+    expect(response.body.utilisateur.couverture_aides_ok).toEqual(false);
     expect(userDB.force_connexion).toEqual(false);
+  });
+  it('POST /utilisateurs/login - logs user , onboarding pas done', async () => {
+    // GIVEN
+    const utilisateur = getFakeUtilisteur();
+    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHAa');
+
+    await TestUtil.create(DB.utilisateur, {
+      passwordHash: utilisateur.passwordHash,
+      passwordSalt: utilisateur.passwordSalt,
+      active_account: true,
+      parts: null,
+      force_connexion: true,
+      prenom: null,
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/login')
+      .send({
+        mot_de_passe: '#1234567890HAHAa',
+        email: 'yo@truc.com',
+      });
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body.utilisateur.is_onboarding_done).toEqual(false);
   });
   it('POST /utilisateurs/login - login ok même si pas la même casse', async () => {
     // GIVEN
@@ -276,31 +302,31 @@ describe('/utilisateurs - Connexion Compte utilisateur (API test)', () => {
   it('POST /utilisateurs/oubli_mot_de_passe - renvoi OK si mail existe pas', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    const response = await TestUtil.POST(
-      '/utilisateurs/oubli_mot_de_passe',
-    ).send({
-      email: 'mailpas@connu.com',
-    });
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/oubli_mot_de_passe')
+      .send({
+        email: 'mailpas@connu.com',
+      });
     // THEN
     expect(response.status).toBe(201);
   });
   it('POST /utilisateurs/oubli_mot_de_passe - renvoi KO si 4 demandes de suite', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.POST('/utilisateurs/oubli_mot_de_passe').send({
+    await TestUtil.getServer().post('/utilisateurs/oubli_mot_de_passe').send({
       email: 'yo@truc.com',
     });
-    await TestUtil.POST('/utilisateurs/oubli_mot_de_passe').send({
+    await TestUtil.getServer().post('/utilisateurs/oubli_mot_de_passe').send({
       email: 'yo@truc.com',
     });
-    await TestUtil.POST('/utilisateurs/oubli_mot_de_passe').send({
+    await TestUtil.getServer().post('/utilisateurs/oubli_mot_de_passe').send({
       email: 'yo@truc.com',
     });
-    const response = await TestUtil.POST(
-      '/utilisateurs/oubli_mot_de_passe',
-    ).send({
-      email: 'yo@truc.com',
-    });
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/oubli_mot_de_passe')
+      .send({
+        email: 'yo@truc.com',
+      });
     // THEN
     expect(response.status).toBe(400);
     expect(response.body.message).toContain(
@@ -310,6 +336,8 @@ describe('/utilisateurs - Connexion Compte utilisateur (API test)', () => {
 
   it('POST /utilisateurs/modifier_mot_de_passe - si code ok le mot de passe est modifié, compteurs à zero', async () => {
     // GIVEN
+    process.env.OTP_DEV = '123456';
+
     await TestUtil.create(DB.utilisateur);
     await TestUtil.getServer().post('/utilisateurs/login').send({
       mot_de_passe: '#bad password',
@@ -322,6 +350,9 @@ describe('/utilisateurs - Connexion Compte utilisateur (API test)', () => {
         mot_de_passe: '#1234567890HAHAa',
         email: 'yo@truc.com',
       });
+    await TestUtil.getServer().post('/utilisateurs/oubli_mot_de_passe').send({
+      email: 'yo@truc.com',
+    });
 
     // WHEN
     const response = await TestUtil.getServer()

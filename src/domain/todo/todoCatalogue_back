@@ -134,17 +134,6 @@ export class TodoCatalogue {
       todo: [
         {
           id: uuidv4(),
-          titre: `Installer "Fruits et légumes de saison"`,
-          thematiques: [Thematique.alimentation],
-          progression: { current: 0, target: 1 },
-          service_id: LiveService.fruits,
-          sont_points_en_poche: false,
-          type: ContentType.service,
-          points: 20,
-          level: DifficultyLevel.ANY,
-        },
-        {
-          id: uuidv4(),
           titre: `Réussir 3 quiz Logement - très facile`,
           thematiques: [Thematique.logement],
           progression: { current: 0, target: 3 },

@@ -83,6 +83,8 @@ model Utilisateur {
   commune_classement       String?
   rank                     Int?
   rank_commune             Int?
+  status                   String?
+  couverture_aides_ok      Boolean            @default(false)
 }
 
 model Statistique {

@@ -1197,7 +1197,7 @@ describe('TODO list (API test)', () => {
     // WHEN
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC/_1',
-    ).send({ reponse: ['YO'] });
+    ).send({ reponse: ['Le climat'] });
 
     // THEN
     expect(response.status).toBe(200);

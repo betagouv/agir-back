@@ -14,29 +14,37 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { BilanUsecase } from '../../usecase/bilan.usecase';
-import { BilanAPI } from './types/ngc/bilanAPI';
+import { BilanCarboneAPI } from './types/ngc/bilanAPI';
 import { SituationNGCAPI } from './types/ngc/situationNGCAPI';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
+import { BilanCarboneUsecase } from '../../usecase/bilanCarbone.usecase';
 
 @Controller()
 @ApiBearerAuth()
 @ApiTags('Bilan')
 export class BilanController extends GenericControler {
-  constructor(private readonly bilanUsecase: BilanUsecase) {
+  constructor(
+    private readonly bilanUsecase: BilanUsecase,
+    private readonly bilanCarboneUsecase: BilanCarboneUsecase,
+  ) {
     super();
   }
-  @ApiOkResponse({ type: BilanAPI })
+  @ApiOkResponse({ type: BilanCarboneAPI })
   @Get('utilisateur/:utilisateurId/bilans/last')
   @UseGuards(AuthGuard)
   async getBilan(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-  ): Promise<BilanAPI> {
+  ): Promise<BilanCarboneAPI> {
     this.checkCallerId(req, utilisateurId);
-    return this.bilanUsecase.getLastBilanByUtilisateurId(utilisateurId);
+    const bilan = await this.bilanCarboneUsecase.getCurrentBilanByUtilisateurId(
+      utilisateurId,
+    );
+    return BilanCarboneAPI.mapToAPI(bilan);
   }
 
+  /*
   @Get('utilisateur/:utilisateurId/bilans')
   @ApiOkResponse({ type: BilanAPI })
   @UseGuards(AuthGuard)
@@ -47,6 +55,7 @@ export class BilanController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
     return this.bilanUsecase.getAllBilansByUtilisateurId(utilisateurId);
   }
+  */
 
   @Post('utilisateurs/:utilisateurId/bilans/:situationId')
   @UseGuards(AuthGuard)
@@ -76,8 +85,3 @@ export class BilanController extends GenericControler {
     return result as SituationNGCAPI;
   }
 }
-
-/*
-string de test pour le swagger:
-{ "transport . voiture . propriétaire": "'false'","transport . voiture . gabarit": "'SUV'","transport . voiture . motorisation": "'thermique'",   "alimentation . boisson . chaude . café . nombre": 4,   "transport . voiture . thermique . carburant": "'essence E85'" }
-*/

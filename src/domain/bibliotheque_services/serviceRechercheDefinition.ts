@@ -8,6 +8,7 @@ export class ServiceRechercheDefinition {
   icon_url: string;
   univers: string;
   external_url?: string;
+  is_available_inhouse: boolean;
 
   constructor(serviceDef?: ServiceRechercheDefinition) {
     Object.assign(this, serviceDef);

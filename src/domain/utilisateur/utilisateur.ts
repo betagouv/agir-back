@@ -21,6 +21,13 @@ import { MissionsUtilisateur } from '../mission/missionsUtilisateur';
 import { Feature } from '../gamification/feature';
 import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServices';
 
+export enum UtilisateurStatus {
+  default = 'default',
+  creation_compte_etape_1 = 'creation_compte_etape_1',
+  connexion_etape_1 = 'connexion_etape_1',
+  mot_de_passe_oublie_etape_1 = 'mot_de_passe_oublie_etape_1',
+}
+
 export class UtilisateurData {
   id: string;
   email: string;
@@ -69,6 +76,8 @@ export class UtilisateurData {
   commune_classement: string;
   rank: number;
   rank_commune: number;
+  status: UtilisateurStatus;
+  couverture_aides_ok: boolean;
 }
 
 export class Utilisateur extends UtilisateurData {
@@ -176,6 +185,8 @@ export class Utilisateur extends UtilisateurData {
       code_postal_classement: code_postal,
       commune_classement: commune,
       points_classement: 0,
+      status: UtilisateurStatus.default,
+      couverture_aides_ok: false,
     });
   }
 
@@ -188,6 +199,10 @@ export class Utilisateur extends UtilisateurData {
     this.defi_history.reset();
     this.equipements.reset();
     this.kyc_history.reset();
+  }
+
+  public isOnboardingDone?(): boolean {
+    return !!this.prenom && !!this.logement.code_postal;
   }
 
   public isMagicLinkCodeExpired?(): boolean {

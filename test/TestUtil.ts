@@ -76,6 +76,7 @@ import { ContentType } from '../src/domain/contenu/contentType';
 import { Tag } from '../src/domain/scoring/tag';
 import { KYCID } from '../src/domain/kyc/KYCID';
 import { Categorie } from '../src/domain/contenu/categorie';
+import { UtilisateurStatus } from '../src/domain/utilisateur/utilisateur';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -605,7 +606,7 @@ export class TestUtil {
       active_account: true,
       failed_login_count: 0,
       prevent_login_before: new Date(),
-      code: '123456',
+      code: null,
       code_generation_time: new Date(),
       failed_checkcode_count: 0,
       prevent_checkcode_before: new Date(),
@@ -642,6 +643,8 @@ export class TestUtil {
       commune_classement: null,
       rank: null,
       rank_commune: null,
+      status: UtilisateurStatus.default,
+      couverture_aides_ok: false,
       ...override,
     };
   }

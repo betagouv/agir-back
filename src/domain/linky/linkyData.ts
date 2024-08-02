@@ -234,6 +234,10 @@ export class LinkyData {
     );
   }
 
+  public isProcessed?(): boolean {
+    return !this.serie.find((a) => a.day_value === null);
+  }
+
   public getLastVariation?(): {
     pourcent: number;
     day: string;

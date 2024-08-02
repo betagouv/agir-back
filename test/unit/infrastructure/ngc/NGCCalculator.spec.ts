@@ -34,20 +34,6 @@ describe('NGCCalculator', () => {
     //THEN
     expect(response).toEqual(1983.1924717165384);
   });
-  it.skip('computeSingleEntry : compute ok vehicule type info ', () => {
-    //GIVEN
-    let calculator = new NGCCalculator();
-    const situation = {
-      'transport . voiture . gabarit': { valeur: VoitureGabarit.petite },
-    };
-    const entry = 'transport . voiture . empreinte calculée';
-
-    //WHEN
-    const response = calculator.computeSingleEntryValue(situation, entry);
-
-    //THEN
-    expect(Math.round(response.valueOf() as number)).toEqual(32);
-  });
   it('computeSingleEntry : compute ok single entry, complexe situation', () => {
     //GIVEN
     let calculator = new NGCCalculator();

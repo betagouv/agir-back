@@ -12,8 +12,7 @@ import { Thematique } from '../../../src/domain/contenu/thematique';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
-import { Univers } from '../../../src/domain/univers/univers';
-import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 var crypto = require('crypto');
 
 function getFakeUtilisteur() {
@@ -337,6 +336,26 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.commune_classement).toEqual('Patelin');
     expect(dbUser.code_postal_classement).toEqual('11111');
   });
+  it('PATCH /utilisateurs/id/logement - maj code postal recalcul le flag de couverture d aides', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { couverture_aides_ok: false });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: ['21000'],
+    });
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_postal: '21000',
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.getById('utilisateur-id');
+
+    expect(dbUser.couverture_aides_ok).toEqual(true);
+  });
   it('PATCH /utilisateurs/id/logement - update KYC006 si logement plus 15 ans', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -513,110 +532,75 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.unlocked_features.unlocked_features).toHaveLength(2);
   });
-
-  it(`GET /utilisateurs/id/onboarding_status renvoie le status OK quand aucune réponse`, async () => {
+  it(`POST /utilisateurs/update_user_couverture`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, {
-      nom: null,
-      prenom: null,
-      logement: {},
-    });
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/onboarding_status',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.current).toEqual(1);
-    expect(response.body.target).toEqual(3);
-    expect(response.body.current_label).toEqual('prenom');
-    expect(response.body.is_done).toEqual(false);
-  });
-  it(`GET /utilisateurs/id/onboarding_status prenom OK`, async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, {
-      nom: null,
-      prenom: 'George',
-      logement: {},
-    });
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/onboarding_status',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.current).toEqual(2);
-    expect(response.body.target).toEqual(3);
-    expect(response.body.current_label).toEqual('code postal');
-    expect(response.body.is_done).toEqual(false);
-  });
-  it(`GET /utilisateurs/id/onboarding_status code postal OK`, async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, {
-      nom: null,
-      prenom: 'George',
-    });
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/onboarding_status',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.current).toEqual(3);
-    expect(response.body.target).toEqual(3);
-    expect(response.body.current_label).toEqual('interêts');
-    expect(response.body.is_done).toEqual(false);
-  });
-  it(`GET /utilisateurs/id/onboarding_status terminé`, async () => {
-    // GIVEN
-    const kyc: KYCHistory_v0 = {
+    TestUtil.token = process.env.CRON_API_KEY;
+    const logement_91120: Logement_v0 = {
       version: 0,
-      answered_questions: [
-        {
-          id: KYCID.KYC001,
-          id_cms: 2,
-          question: `Quel est votre sujet principal d'intéret ?`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-          ],
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-            { label: 'Ce que je mange', code: Thematique.alimentation },
-          ],
-          tags: [],
-          universes: [Univers.climat],
-        },
-      ],
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+    };
+    const logement_21000: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '21000',
+      chauffage: Chauffage.bois,
+      commune: 'DIJON',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
     };
 
     await TestUtil.create(DB.utilisateur, {
-      nom: null,
-      prenom: 'George',
-      kyc: kyc,
+      id: '1',
+      email: '1',
+      couverture_aides_ok: false,
+      logement: logement_91120,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      email: '2',
+      couverture_aides_ok: false,
+      logement: logement_91120,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '3',
+      email: '3',
+      couverture_aides_ok: false,
+      logement: logement_21000,
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: ['91120'],
     });
 
     // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/onboarding_status',
+    const response = await TestUtil.POST(
+      '/utilisateurs/update_user_couverture',
     );
 
     // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.current).toEqual(3);
-    expect(response.body.target).toEqual(3);
-    expect(response.body.current_label).toEqual('onboarding terminé');
-    expect(response.body.is_done).toEqual(true);
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual({
+      couvert: 2,
+      pas_couvert: 1,
+    });
+
+    let userDB = await utilisateurRepository.getById('1');
+    expect(userDB.couverture_aides_ok).toEqual(true);
+
+    userDB = await utilisateurRepository.getById('3');
+    expect(userDB.couverture_aides_ok).toEqual(false);
   });
 });

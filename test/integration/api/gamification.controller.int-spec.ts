@@ -1,16 +1,8 @@
-import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import { DB, TestUtil } from '../../TestUtil';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { UtilisateurBoardRepository } from '../../../src/infrastructure/repository/utilisateurBoard.repository';
 import { GamificationUsecase } from '../../../src/usecase/gamification.usecase';
 import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
-import {
-  Superficie,
-  TypeLogement,
-  Chauffage,
-  DPE,
-} from '../../../src/domain/logement/logement';
-import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { Personnalisator } from '../../../src/infrastructure/personnalisation/personnalisator';
 import { Pourcentile } from '../../../src/domain/gamification/board';
 
@@ -21,13 +13,6 @@ describe('Gamification  (API test)', () => {
   );
   const communeRepository = new CommuneRepository();
   const prsonalisator = new Personnalisator(communeRepository);
-
-  const gamificationUsecase = new GamificationUsecase(
-    utilisateurRepo,
-    utilisateurBoardRepository,
-    communeRepository,
-    prsonalisator,
-  );
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -129,11 +114,13 @@ describe('Gamification  (API test)', () => {
       points: 30,
       rank: 1,
       prenom: 'ya',
+      id: 'ceddc0d114c8db1dc4bde88f1e29231f',
     });
     expect(response.body.top_trois[2]).toStrictEqual({
       points: 10,
       rank: 3,
       prenom: 'yo',
+      id: 'c4ca4238a0b923820dcc509a6f75849b',
     });
   });
 
@@ -190,19 +177,45 @@ describe('Gamification  (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.utilisateur.rank).toEqual(1);
+
     expect(response.body).toEqual({
       classement_utilisateur: [
-        { points: 20, prenom: 'dijon_2', rank: 1 },
-        { points: 10, prenom: 'dijon_1', rank: 2 },
+        {
+          points: 20,
+          prenom: 'dijon_2',
+          rank: 1,
+          id: 'ceddc0d114c8db1dc4bde88f1e29231f',
+        },
+        {
+          points: 10,
+          prenom: 'dijon_1',
+          rank: 2,
+          id: 'a87ff679a2f3e71d9181a67b7542122c',
+        },
       ],
       code_postal: '21000',
       commune_label: 'Dijon',
       pourcentile: 'pourcent_5',
       top_trois: [
-        { points: 20, prenom: 'dijon_2', rank: 1 },
-        { points: 10, prenom: 'dijon_1', rank: 2 },
+        {
+          points: 20,
+          prenom: 'dijon_2',
+          rank: 1,
+          id: 'ceddc0d114c8db1dc4bde88f1e29231f',
+        },
+        {
+          points: 10,
+          prenom: 'dijon_1',
+          rank: 2,
+          id: 'a87ff679a2f3e71d9181a67b7542122c',
+        },
       ],
-      utilisateur: { points: 20, prenom: 'dijon_2', rank: 1 },
+      utilisateur: {
+        points: 20,
+        prenom: 'dijon_2',
+        rank: 1,
+        id: 'ceddc0d114c8db1dc4bde88f1e29231f',
+      },
     });
   });
 
@@ -264,6 +277,7 @@ describe('Gamification  (API test)', () => {
       points: 21,
       rank: 2,
       prenom: 'dijon_2',
+      id: 'ceddc0d114c8db1dc4bde88f1e29231f',
     });
     expect(response.body.classement_utilisateur[0].prenom).toEqual(
       'palaiseau_3',
