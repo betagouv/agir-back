@@ -6,7 +6,7 @@ import { CommunesUsecase } from '../../../src/usecase/communes.usecase';
 @Controller()
 @ApiTags('Referentiels')
 export class CommunesController extends GenericControler {
-  constructor(private readonly communeUscase: CommunesUsecase) {
+  constructor(private readonly communeUsecase: CommunesUsecase) {
     super();
   }
 
@@ -15,6 +15,6 @@ export class CommunesController extends GenericControler {
   async getListeCommunes(
     @Query('code_postal') codePostal: string,
   ): Promise<string[]> {
-    return this.communeUscase.geteListeCommunes(codePostal);
+    return this.communeUsecase.getListeCommunes(codePostal);
   }
 }
