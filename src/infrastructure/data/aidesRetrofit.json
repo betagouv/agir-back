@@ -35,7 +35,7 @@
     "applicable si": "localisation . région = '11'",
     "valeur": "2500€",
     "plafond": "50% * prix d'achat - aides . état",
-    "lien": "https://www.iledefrance.fr/transformation-de-vehicules-thermiques-en-vehicules-propres"
+    "lien": "https://www.iledefrance.fr/aides-et-appels-a-projets/acquisition-de-vehicules-propres-par-les-particuliers"
   },
   "aides . grand est": {
     "titre": "Région Grand Est",
@@ -52,7 +52,7 @@
         }
       ]
     },
-    "lien": "https://www.iledefrance.fr/transformation-de-vehicules-thermiques-en-vehicules-propres"
+    "lien": "https://www.grandest.fr/vos-aides-regionales/soutien-conversion-retrofit/"
   },
   "aides . grenoble": {
     "titre": "Grenoble Alpes Métropole",
@@ -78,8 +78,8 @@
   "aides . lyon": {
     "titre": "Métropole Grand Lyon",
     "applicable si": "localisation . epci = 'Métropole de Lyon'",
-    "valeur": "2000€",
-    "lien": "https://www.grandlyon.com/fileadmin/user_upload/media/pdf/deplacements/zfe/20220624_zfe_aides-particuliers_reglement.pdf"
+    "valeur": "3000€",
+    "lien": "https://zfe.grandlyon.com/particulier/"
   },
   "aides . rouen normandie": {
     "titre": "Métropole Rouen Normandie",
@@ -147,7 +147,7 @@
         "sinon": "0€"
       }
     ],
-    "lien": "https://www.strasbourg.eu/zfe-aides"
+    "lien": "https://www.strasbourg.eu/documents/976405/285093958/Reglement_Aide_Particuliers-ZFE.pdf/49309804-bebc-4cb2-f135-34b9b2944df4?version=6.0&t=1717771266703"
   },
   "prix d'achat": "20000 €",
   "revenu fiscal de référence": "500 €/an",
