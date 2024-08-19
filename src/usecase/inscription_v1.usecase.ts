@@ -123,9 +123,6 @@ export class Inscription_v1_Usecase {
     if (!utilisateur) {
       ApplicationError.throwBadCodeOrEmailError();
     }
-    if (utilisateur.active_account) {
-      ApplicationError.throwCompteDejaActifError();
-    }
 
     utilisateur.setNew6DigitCode();
     await this.utilisateurRespository.updateCode(
