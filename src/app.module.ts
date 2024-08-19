@@ -25,7 +25,6 @@ import { OIDCStateRepository } from '../src/infrastructure/repository/oidcState.
 import { JwtModule } from '@nestjs/jwt';
 import { OidcService } from '../src/infrastructure/auth/oidc.service';
 import { NGCCalculator } from './infrastructure/ngc/NGCCalculator';
-import { QuestionNGCUsecase_deprecated } from './usecase/questionNGC.deprecated.usecase';
 import { EmailSender } from './infrastructure/email/emailSender';
 import { OnboardingUsecase } from './usecase/onboarding.usecase';
 import { OnboardingController } from './infrastructure/api/onboarding.controller';
@@ -204,7 +203,6 @@ function getControllers(): any[] {
     BilanUsecase,
     AidesUsecase,
     SuiviUsecase,
-    QuestionNGCUsecase_deprecated,
     CMSUsecase,
     EmailSender,
     OnboardingUsecase,
