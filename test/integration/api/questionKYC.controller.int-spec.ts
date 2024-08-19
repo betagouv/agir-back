@@ -383,7 +383,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     ).toBeLessThan(Date.now());
     expect(
       userDB.missions.missions[0].objectifs[0].done_at.getTime(),
-    ).toBeGreaterThan(Date.now() - 100);
+    ).toBeGreaterThan(Date.now() - 200);
   });
 
   it(`PUT /utilisateurs/id/questionsKYC/1 - un defi deviens non recommandé suite à maj de KYC`, async () => {

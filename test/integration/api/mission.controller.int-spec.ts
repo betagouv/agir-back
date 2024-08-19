@@ -29,7 +29,7 @@ describe('Mission (API test)', () => {
     missions: [
       {
         id: '1',
-        done_at: new Date(1),
+        done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
         objectifs: [
@@ -151,7 +151,7 @@ describe('Mission (API test)', () => {
     missions: [
       {
         id: '1',
-        done_at: new Date(1),
+        done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
         objectifs: [
@@ -321,6 +321,43 @@ describe('Mission (API test)', () => {
       },
     ],
   };
+  const missions_defi_seul_done: MissionsUtilisateur_v0 = {
+    version: 0,
+    missions: [
+      {
+        id: '1',
+        done_at: null,
+        thematique_univers: ThematiqueUnivers.cereales,
+        univers: Univers.alimentation,
+        objectifs: [
+          {
+            id: '0',
+            content_id: '0',
+            type: ContentType.defi,
+            titre: '1 defi',
+            points: 10,
+            is_locked: false,
+            done_at: new Date(),
+            sont_points_en_poche: false,
+            est_reco: true,
+          },
+          {
+            id: '1',
+            content_id: '1',
+            type: ContentType.defi,
+            titre: '1 defi',
+            points: 10,
+            is_locked: false,
+            done_at: new Date(),
+            sont_points_en_poche: false,
+            est_reco: true,
+          },
+        ],
+        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
+        est_visible: true,
+      },
+    ],
+  };
 
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
@@ -387,13 +424,13 @@ describe('Mission (API test)', () => {
     expect(response.body.id).toEqual('1');
     expect(response.body.is_new).toEqual(false);
     expect(response.body.image_url).toEqual('aaaa');
-    expect(response.body.progression).toEqual({ current: 1, target: 4 });
+    expect(response.body.progression).toEqual({ current: 1, target: 5 });
     expect(response.body.thematique_univers).toEqual('cereales');
     expect(response.body.thematique_univers_label).toEqual(
       'Mange de la graine',
     );
     expect(response.body.univers_label).toEqual('Faut manger !');
-    expect(response.body.done_at).toEqual(new Date(1).toISOString());
+    expect(response.body.done_at).toEqual(null);
     expect(response.body.objectifs).toHaveLength(4);
     expect(response.body.progression_kyc).toEqual({ current: 0, target: 1 });
 
@@ -446,7 +483,7 @@ describe('Mission (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.id).toEqual('1');
     expect(response.body.is_new).toEqual(true);
-    expect(response.body.progression).toEqual({ current: 0, target: 2 });
+    expect(response.body.progression).toEqual({ current: 0, target: 3 });
     expect(response.body.thematique_univers).toEqual('cereales');
     expect(response.body.thematique_univers_label).toEqual(
       'Mange de la graine',
@@ -1112,7 +1149,7 @@ describe('Mission (API test)', () => {
       userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
     ).toEqual(true);
   });
-  it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - ajout mission si dernier defi réalisé`, async () => {
+  it(`POST /utilisateurs/utilisateur-id/thematiques/cereales/mission/terminer - ajout mission si mission passée au statut terminées`, async () => {
     // GIVEN
     const gamification: Gamification_v0 = {
       version: 0,
@@ -1120,7 +1157,7 @@ describe('Mission (API test)', () => {
       celebrations: [],
     };
     await TestUtil.create(DB.utilisateur, {
-      missions: missions_defi_seul,
+      missions: missions_defi_seul_done,
       gamification: gamification,
     });
     await TestUtil.create(DB.defi, { content_id: '1' });
@@ -1132,14 +1169,12 @@ describe('Mission (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.PATCH(
-      '/utilisateurs/utilisateur-id/defis/1',
-    ).send({
-      status: DefiStatus.fait,
-    });
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/thematiques/cereales/mission/terminer',
+    );
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
 
@@ -1226,7 +1261,7 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.is_new).toEqual(true);
-    expect(response.body.progression).toEqual({ current: 0, target: 2 });
+    expect(response.body.progression).toEqual({ current: 0, target: 3 });
   });
   it(`GET /utilisateurs/id/missions/:missionId/next_kyc - renvoie 404 si plus de kyc à faire`, async () => {
     // GIVEN

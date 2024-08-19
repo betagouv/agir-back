@@ -159,7 +159,6 @@ export class EventUsecase {
     utilisateur.missions.validateAricleOrQuizzDone(
       event.content_id,
       ContentType.article,
-      utilisateur,
     );
 
     const catalogue_defis = await this.defiRepository.list({});
@@ -187,7 +186,6 @@ export class EventUsecase {
     utilisateur.missions.validateAricleOrQuizzDone(
       event.content_id,
       ContentType.quizz,
-      utilisateur,
       event.number_value,
     );
 

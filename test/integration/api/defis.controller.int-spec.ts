@@ -26,7 +26,6 @@ import {
 } from '../../../src/domain/logement/logement';
 import { Feature } from '../../../src/domain/gamification/feature';
 import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
-import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
 import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 
 const DEFI_1_DEF: Defi = {

@@ -1359,7 +1359,7 @@ describe('Admin (API test)', () => {
       missions: [
         {
           id: '1',
-          done_at: null,
+          done_at: new Date(),
           thematique_univers: ThematiqueUnivers.cereales,
           objectifs: [objectifComplete, objectifComplete],
           prochaines_thematiques: [],
@@ -1377,7 +1377,7 @@ describe('Admin (API test)', () => {
         },
         {
           id: '3',
-          done_at: null,
+          done_at: new Date(),
           thematique_univers: ThematiqueUnivers.mobilite_quotidien,
           objectifs: [objectifComplete, objectifComplete],
           prochaines_thematiques: [],
@@ -1400,7 +1400,7 @@ describe('Admin (API test)', () => {
         },
         {
           id: '2',
-          done_at: null,
+          done_at: new Date(),
           thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
           objectifs: [objectifComplete, objectifComplete],
           prochaines_thematiques: [],
@@ -1409,7 +1409,7 @@ describe('Admin (API test)', () => {
         },
         {
           id: '3',
-          done_at: null,
+          done_at: new Date(),
           thematique_univers: ThematiqueUnivers.mobilite_quotidien,
           objectifs: [objectifComplete, objectifComplete],
           prochaines_thematiques: [],
@@ -2004,7 +2004,7 @@ describe('Admin (API test)', () => {
       missions: [
         {
           id: '1',
-          done_at: null,
+          done_at: new Date(),
           thematique_univers: ThematiqueUnivers.cereales,
           univers: 'alimentation',
           objectifs: [
@@ -2208,8 +2208,8 @@ describe('Admin (API test)', () => {
       thematiqueId: '1',
       titre: ThematiqueUnivers.cereales,
       completion_pourcentage_1_20: 0,
-      completion_pourcentage_21_40: 0,
-      completion_pourcentage_41_60: 1,
+      completion_pourcentage_21_40: 1,
+      completion_pourcentage_41_60: 0,
       completion_pourcentage_61_80: 0,
       completion_pourcentage_81_99: 0,
       completion_pourcentage_100: 1,
@@ -2228,8 +2228,8 @@ describe('Admin (API test)', () => {
       thematiqueId: '3',
       titre: ThematiqueUnivers.mobilite_quotidien,
       completion_pourcentage_1_20: 0,
-      completion_pourcentage_21_40: 0,
-      completion_pourcentage_41_60: 2,
+      completion_pourcentage_21_40: 2,
+      completion_pourcentage_41_60: 0,
       completion_pourcentage_61_80: 0,
       completion_pourcentage_81_99: 0,
       completion_pourcentage_100: 0,
@@ -2289,7 +2289,7 @@ describe('Admin (API test)', () => {
       missions: [
         {
           id: '1',
-          done_at: null,
+          done_at: new Date(),
           thematique_univers: ThematiqueUnivers.cereales,
           objectifs: [objectifComplete, objectifComplete],
           prochaines_thematiques: [],
@@ -2298,7 +2298,7 @@ describe('Admin (API test)', () => {
         },
         {
           id: '2',
-          done_at: null,
+          done_at: new Date(),
           thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
           objectifs: [objectifComplete, objectifComplete],
           prochaines_thematiques: [],
@@ -2330,7 +2330,7 @@ describe('Admin (API test)', () => {
       missions: [
         {
           id: '1',
-          done_at: null,
+          done_at: new Date(),
           thematique_univers: ThematiqueUnivers.cereales,
           objectifs: [objectifComplete, objectifComplete],
           prochaines_thematiques: [],
@@ -2339,7 +2339,7 @@ describe('Admin (API test)', () => {
         },
         {
           id: '2',
-          done_at: null,
+          done_at: new Date(),
           thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
           objectifs: [objectifComplete, objectifComplete],
           prochaines_thematiques: [],
@@ -2357,7 +2357,7 @@ describe('Admin (API test)', () => {
         },
         {
           id: '4',
-          done_at: null,
+          done_at: new Date(),
           thematique_univers: ThematiqueUnivers.partir_vacances,
           objectifs: [objectifComplete, objectifComplete],
           prochaines_thematiques: [],
@@ -2421,8 +2421,8 @@ describe('Admin (API test)', () => {
       universId: 'transport',
       titre: Univers.transport,
       completion_pourcentage_1_20: 0,
-      completion_pourcentage_21_40: 0,
-      completion_pourcentage_41_60: 1,
+      completion_pourcentage_21_40: 1,
+      completion_pourcentage_41_60: 0,
       completion_pourcentage_61_80: 0,
       completion_pourcentage_81_99: 0,
       completion_pourcentage_100: 0,
@@ -2432,8 +2432,8 @@ describe('Admin (API test)', () => {
       universId: 'climat',
       titre: Univers.climat,
       completion_pourcentage_1_20: 0,
-      completion_pourcentage_21_40: 0,
-      completion_pourcentage_41_60: 1,
+      completion_pourcentage_21_40: 1,
+      completion_pourcentage_41_60: 0,
       completion_pourcentage_61_80: 0,
       completion_pourcentage_81_99: 0,
       completion_pourcentage_100: 1,

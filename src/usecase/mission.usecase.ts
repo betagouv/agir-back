@@ -32,6 +32,27 @@ export class MissionUsecase {
     private communeRepository: CommuneRepository,
   ) {}
 
+  async terminerMission(
+    utilisateurId: string,
+    thematique: string,
+  ): Promise<void> {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
+    let mission =
+      utilisateur.missions.getMissionByThematiqueUnivers(thematique);
+
+    if (!mission) {
+      ApplicationError.throwMissionNotFound(thematique);
+    }
+    if (mission.estTerminable()) {
+      const unlocked_thematiques = mission.terminer(utilisateur);
+
+      await this.unlockThematiques(unlocked_thematiques, utilisateur);
+
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    }
+  }
   async getMissionOfThematique(
     utilisateurId: string,
     thematique: string,
@@ -212,5 +233,19 @@ export class MissionUsecase {
       }
     }
     return mission_def;
+  }
+
+  private async unlockThematiques(
+    unlocked_thematiques: string[],
+    utilisateur: Utilisateur,
+  ) {
+    for (const thematiqueU of unlocked_thematiques) {
+      const mission_def = await this.missionRepository.getByThematique(
+        thematiqueU,
+      );
+      if (mission_def) {
+        utilisateur.missions.upsertNewMission(mission_def, true);
+      }
+    }
   }
 }
