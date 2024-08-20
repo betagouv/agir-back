@@ -93,8 +93,8 @@ export class PreviewController extends GenericControler {
       const base_line =
         Math.round(
           this.nGCCalculator.computeBilanFromSituation(situation)
-            .bilan_carbone_annuel * 100,
-        ) / 100;
+            .bilan_carbone_annuel * 1000,
+        ) / 1000;
 
       DATA.bilan_carbone_DEFAULT = base_line;
 
@@ -112,14 +112,14 @@ export class PreviewController extends GenericControler {
         const value_1 =
           Math.round(
             this.nGCCalculator.computeBilanFromSituation(situation)
-              .bilan_carbone_annuel * 100,
-          ) / 100;
+              .bilan_carbone_annuel * 1000,
+          ) / 1000;
         situation[kyc_def.ngc_key] = 2;
         const value_2 =
           Math.round(
             this.nGCCalculator.computeBilanFromSituation(situation)
-              .bilan_carbone_annuel * 100,
-          ) / 100;
+              .bilan_carbone_annuel * 1000,
+          ) / 1000;
 
         DATA.with_kyc_reponse_equal_1 =
           value_1 + this.compareBilan(value_1, base_line);
@@ -133,8 +133,8 @@ export class PreviewController extends GenericControler {
           const value =
             Math.round(
               this.nGCCalculator.computeBilanFromSituation(situation)
-                .bilan_carbone_annuel * 100,
-            ) / 100;
+                .bilan_carbone_annuel * 1000,
+            ) / 1000;
           DATA[`value_when_${reponse.code}`] =
             value + this.compareBilan(value, base_line);
         }
@@ -652,11 +652,15 @@ export class PreviewController extends GenericControler {
     }
     if (value > bilan) {
       return (
-        ' > Bilan DEFAULT de ' + Math.round((value - bilan) * 100) / 100 + ' kg'
+        ' > Bilan DEFAULT de ' +
+        Math.round((value - bilan) * 1000) / 1000 +
+        ' kg'
       );
     } else {
       return (
-        ' < Bilan DEFAULT de ' + Math.round((bilan - value) * 100) / 100 + ' kg'
+        ' < Bilan DEFAULT de ' +
+        Math.round((bilan - value) * 1000) / 1000 +
+        ' kg'
       );
     }
   }
