@@ -649,9 +649,17 @@ export class PreviewController extends GenericControler {
       return ' = Bilan DEFAULT 🤔❓';
     }
     if (value > bilan) {
-      return ' > Bilan DEFAULT de ' + (rounded_value - bilan) + ' kg';
+      return (
+        ' > Bilan DEFAULT de ' +
+        Math.round((rounded_value - bilan) * 100) / 100 +
+        ' kg'
+      );
     } else {
-      return ' < Bilan DEFAULT de ' + (bilan - rounded_value) + ' kg';
+      return (
+        ' < Bilan DEFAULT de ' +
+        Math.round((bilan - rounded_value) * 100) / 100 +
+        ' kg'
+      );
     }
   }
 }
