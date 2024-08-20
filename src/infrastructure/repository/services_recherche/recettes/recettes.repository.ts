@@ -3,8 +3,68 @@ import { CategorieRecherche } from '../../../../domain/bibliotheque_services/cat
 import { FiltreRecherche } from '../../../../domain/bibliotheque_services/filtreRecherche';
 import { FinderInterface } from '../../../../domain/bibliotheque_services/finderInterface';
 import { ResultatRecherche } from '../../../../domain/bibliotheque_services/resultatRecherche';
+import _recettes from './data/dump-recipes.2024-08-09.17-38-20.json';
 
 const API_URL = 'https://';
+
+export type Recette = {
+  id: number; // 11386,
+  name: string; //'Pizza jambon et champignons, salade';
+  slug: string; //string; //'pizza-jambon-et-champignons-salade';
+  preparation_time: number; // 10;
+  baking_time: number; // 30;
+  rest_time: number; // 0;
+  benefits: string; //'[{"type":"paragraph","children":[{"text":""}]}]';
+  unbreakable: number; // 2;
+  regime: number; // 4;
+  recipe_category: string; //'PLC';
+  months: string; // '[]';
+  ingredient_months: string; // '[1,2,3,4,5,6,7,8,9,10,11,12]';
+  ingredient_months_with_frozen: string; // '[1,2,3,4,5,6,7,8,9,10,11,12]';
+  ingredient_food_practice: string; // '["contains_meat"]';
+  express: number; // 0;
+  express_15: number; // 1;
+  nutriscore: string; //'B';
+  ranking: string; //'PLC_HVOP/LEG/FEC-NON-COMPL';
+  net_weight: number; // 1161.5;
+  gross_weight: number; // 1320.5;
+  kcal: number; // 1946.65;
+  kj: number; // 8158.45;
+  lipids: number; // 100.55;
+  saturated_fatty_acids: number; // 30.13;
+  carbohydrates: number; // 175.3;
+  simple_sugars: number; // 22.05;
+  fibres: number; // 19.83;
+  proteins: number; // 78.79;
+  salt: number; // 12.11;
+  oils: number; // 40;
+  water: number; //  770.66;
+  pnns_animal_fat: number; // 0;
+  pnns_carbohydrate: number; // 280;
+  pnns_cheese: number; // 100;
+  pnns_complete_carbohydrate: number; // 0;
+  pnns_dairy_product: number; // 100;
+  pnns_delicatessen: number; // 90;
+  pnns_dried_vegetable: number; // 0;
+  pnns_drink: number; // 0;
+  pnns_egg: number; // 0;
+  pnns_fatty_fish: number; // 0;
+  pnns_fruit: number; // 0;
+  pnns_fruit_and_vegetable: number; // 631;
+  pnns_meat: number; // 0;
+  pnns_milk: number; // 0;
+  pnns_non_complete_carbohydrate: number; // 280;
+  pnns_non_fatty_fish: number; // 0;
+  pnns_non_poultry_meat: number; // 0;
+  pnns_nuts: number; // 0;
+  pnns_other: number; // 19;
+  pnns_poultry: number; // 0;
+  pnns_salt: number; // 1.5;
+  pnns_sugar_product: number; // 0;
+  pnns_vegetable: number; // 631;
+  pnns_vegetable_fat: number; // 40;
+  pnns_yoghurt: number; // 0;
+};
 
 export type RecettesResponse = {
   id: string;
@@ -33,17 +93,46 @@ export class RecettesRepository implements FinderInterface {
   }
 
   public async find(filtre: FiltreRecherche): Promise<ResultatRecherche[]> {
-    const result = await this.callServiceAPI(filtre);
+    let recherche: Recette[] = _recettes;
 
-    const mapped_result = result.map(
+    const current_month = new Date().getMonth() + 1;
+
+    if (filtre.categorie === CategorieRecherche.saison) {
+      recherche = recherche.filter((a) => {
+        const month_array = JSON.parse(a.ingredient_months) as number[];
+        return month_array.includes(current_month);
+      });
+    }
+
+    if (filtre.categorie === CategorieRecherche.dinde_volaille) {
+      recherche = recherche.filter((a) => a.ranking.includes('VOL'));
+    }
+
+    if (filtre.categorie === CategorieRecherche.vegan) {
+      recherche = recherche.filter((a) => a.ingredient_food_practice === '[]');
+    }
+
+    if (filtre.categorie === CategorieRecherche.vege) {
+      recherche = recherche.filter(
+        (a) =>
+          !a.ingredient_food_practice.includes('meat') &&
+          !a.ingredient_food_practice.includes('fish') &&
+          !a.ingredient_food_practice.includes('pork'),
+      );
+    }
+
+    recherche = recherche.slice(0, 20);
+
+    const mapped_result = recherche.map(
       (r) =>
         new ResultatRecherche({
-          id: r.id,
-          titre: r.titre,
-          difficulty_plat: r.difficulty,
-          type_plat: r.type,
-          temps_prepa_min: r.temps_prepa_min,
-          image_url: r.image_url,
+          id: '' + r.id,
+          titre: r.name,
+          difficulty_plat: r.express === 1 ? 'Facile' : 'Intérmédiaire',
+          type_plat: r.ranking,
+          temps_prepa_min: r.preparation_time,
+          image_url:
+            'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Ftian-de-sardines.jpg&w=3840&q=75',
         }),
     );
 

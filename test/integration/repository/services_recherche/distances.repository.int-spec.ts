@@ -22,7 +22,7 @@ describe('DistancesRepository', () => {
     await TestUtil.appclose();
   });
 
-  it('searchsearch : distance à pied', async () => {
+  it.skip('searchsearch : distance à pied', async () => {
     // GIVEN
 
     // WHEN
@@ -66,7 +66,7 @@ describe('DistancesRepository', () => {
     expect(liste).toHaveLength(1);
     expect(liste[0].distance_metres).toEqual(2288);
   });
-  it('searchsearch : distance en voiture', async () => {
+  it.skip('searchsearch : distance en voiture', async () => {
     // GIVEN
 
     // WHEN

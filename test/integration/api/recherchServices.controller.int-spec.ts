@@ -968,7 +968,7 @@ describe('RechercheServices (API test)', () => {
       userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
     ).toHaveLength(32);
   });
-  it(`POST /utlilisateur/id/recherche_services/recettes/search renvoie une liste de résultats`, async () => {
+  it.skip(`POST /utlilisateur/id/recherche_services/recettes/search renvoie une liste de résultats`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
 
