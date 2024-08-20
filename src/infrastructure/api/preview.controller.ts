@@ -90,10 +90,11 @@ export class PreviewController extends GenericControler {
     DATA = {};
     try {
       const situation: any = {};
-      const base_line = Math.round(
-        this.nGCCalculator.computeBilanFromSituation(situation)
-          .bilan_carbone_annuel,
-      );
+      const base_line =
+        Math.round(
+          this.nGCCalculator.computeBilanFromSituation(situation)
+            .bilan_carbone_annuel * 100,
+        ) / 100;
 
       DATA.bilan_carbone_DEFAULT = base_line;
 
@@ -643,13 +644,14 @@ export class PreviewController extends GenericControler {
     );
   }
   private compareBilan(value: number, bilan: number): string {
+    const rounded_value = Math.round(value * 100) / 100;
     if (value === bilan) {
       return ' = Bilan DEFAULT 🤔❓';
     }
     if (value > bilan) {
-      return ' > Bilan DEFAULT de ' + Math.round(value - bilan) + ' kg';
+      return ' > Bilan DEFAULT de ' + (rounded_value - bilan) + ' kg';
     } else {
-      return ' < Bilan DEFAULT de ' + Math.round(bilan - value) + ' kg';
+      return ' < Bilan DEFAULT de ' + (bilan - rounded_value) + ' kg';
     }
   }
 }
