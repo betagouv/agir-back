@@ -17,4 +17,5 @@ export enum KYCID {
   _3 = '_3',
   _4 = '_4',
   _5 = '_5',
+  KYC_preference = 'KYC_preference',
 }

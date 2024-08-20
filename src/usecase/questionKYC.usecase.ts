@@ -55,15 +55,15 @@ export class QuestionKYCUsecase {
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
-    utilisateur.kyc_history.checkQuestionExists(questionId);
+    utilisateur.kyc_history.checkQuestionExistsByCode(questionId);
     this.updateUserTodo(utilisateur, questionId);
 
-    if (!utilisateur.kyc_history.isQuestionAnswered(questionId)) {
+    if (!utilisateur.kyc_history.isQuestionAnsweredByCode(questionId)) {
       const question =
         utilisateur.kyc_history.getUpToDateQuestionOrException(questionId);
       utilisateur.gamification.ajoutePoints(question.points, utilisateur);
     }
-    utilisateur.kyc_history.updateQuestion(questionId, reponse);
+    utilisateur.kyc_history.updateQuestionyCode(questionId, reponse);
 
     if (questionId === KYCID.KYC006) {
       const kyc = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(

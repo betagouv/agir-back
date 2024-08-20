@@ -113,11 +113,11 @@ export class KYCHistory {
     return result;
   }
 
-  public isQuestionAnswered(id: string): boolean {
-    return !!this.getAnsweredQuestionByCode(id);
+  public isQuestionAnsweredByCode(code: string): boolean {
+    return !!this.getAnsweredQuestionByCode(code);
   }
 
-  public updateQuestion(questionId: string, reponses: string[]) {
+  public updateQuestionyCode(questionId: string, reponses: string[]) {
     let question = this.getAnsweredQuestionByCode(questionId);
     if (question) {
       question.setResponses(reponses);
@@ -129,7 +129,7 @@ export class KYCHistory {
     }
   }
 
-  public checkQuestionExists(questionId: string) {
+  public checkQuestionExistsByCode(questionId: string) {
     this.getKYCDefinitionByCodeOrException(questionId);
   }
 
@@ -163,10 +163,5 @@ export class KYCHistory {
 
   private getKYCDefinitionByCodeOrNull(code: string): KycDefinition {
     return this.catalogue.find((element) => element.code === code);
-  }
-
-  private getKYCById(id: string): QuestionKYC {
-    const def = this.catalogue.find((element) => element.code === id);
-    return def ? QuestionKYC.buildFromDef(def) : null;
   }
 }

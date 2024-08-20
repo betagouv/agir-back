@@ -20,6 +20,7 @@ import { QuestionKYC } from '../kyc/questionKYC';
 import { MissionsUtilisateur } from '../mission/missionsUtilisateur';
 import { Feature } from '../gamification/feature';
 import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServices';
+import { KYCID } from '../kyc/KYCID';
 
 export enum UtilisateurStatus {
   default = 'default',
@@ -202,7 +203,12 @@ export class Utilisateur extends UtilisateurData {
   }
 
   public isOnboardingDone?(): boolean {
-    return !!this.prenom && !!this.logement.code_postal;
+    const KYC_preference_answered = this.kyc_history.isQuestionAnsweredByCode(
+      KYCID.KYC_preference,
+    );
+    return (
+      !!this.prenom && !!this.logement.code_postal && KYC_preference_answered
+    );
   }
 
   public isMagicLinkCodeExpired?(): boolean {

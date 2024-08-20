@@ -290,7 +290,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     const questionsKYC = new KYCHistory();
 
     // THEN
-    expect(questionsKYC.isQuestionAnswered('2')).toStrictEqual(false);
+    expect(questionsKYC.isQuestionAnsweredByCode('2')).toStrictEqual(false);
   });
 
   it('isQuestionAnswered :false si pas répondu', () => {
@@ -298,14 +298,14 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     const questionsKYC = new KYCHistory();
 
     // THEN
-    expect(questionsKYC.isQuestionAnswered('2')).toStrictEqual(false);
+    expect(questionsKYC.isQuestionAnsweredByCode('2')).toStrictEqual(false);
   });
   it('isQuestionAnswered :false si pas répondu', () => {
     // WHEN
     const questionsKYC = new KYCHistory();
 
     // THEN
-    expect(questionsKYC.isQuestionAnswered('2')).toStrictEqual(false);
+    expect(questionsKYC.isQuestionAnsweredByCode('2')).toStrictEqual(false);
   });
   it('hasResponses :false si attribut undefined', () => {
     // GIVEN
@@ -462,7 +462,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // WHEN
     try {
-      questionsKYC.updateQuestion('1234', ['yo']);
+      questionsKYC.updateQuestionyCode('1234', ['yo']);
       fail();
     } catch (error) {
       // THEN
