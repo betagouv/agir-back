@@ -79,6 +79,13 @@ export type RecettesResponse = {
   image_url: string;
 }[];
 
+const IMAGES_TMP = [
+  'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Ftian-de-sardines.jpg&w=3840&q=75',
+  'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Fshutterstock_1938638506-dinde-provencale.jpg&w=3840&q=75',
+  'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Fshutterstock_1169506885-salade-crevettes-curry.jpg&w=3840&q=75',
+  'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Fquiche-chou-saumon-et-salade.jpg&w=3840&q=75',
+  'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Ftiramisu-aux-fruits-rouges.jpg&w=3840&q=75',
+];
 @Injectable()
 export class RecettesRepository implements FinderInterface {
   constructor() {}
@@ -121,7 +128,7 @@ export class RecettesRepository implements FinderInterface {
       );
     }
 
-    recherche = recherche.slice(0, 20);
+    recherche = recherche.slice(0, 10);
 
     const mapped_result = recherche.map(
       (r) =>
@@ -131,8 +138,7 @@ export class RecettesRepository implements FinderInterface {
           difficulty_plat: r.express === 1 ? 'Facile' : 'Intérmédiaire',
           type_plat: r.ranking,
           temps_prepa_min: r.preparation_time,
-          image_url:
-            'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Ftian-de-sardines.jpg&w=3840&q=75',
+          image_url: IMAGES_TMP[Math.floor(Math.random() * 5)],
         }),
     );
 
