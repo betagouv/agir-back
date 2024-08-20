@@ -431,6 +431,7 @@ describe('Mission (API test)', () => {
     );
     expect(response.body.univers_label).toEqual('Faut manger !');
     expect(response.body.done_at).toEqual(null);
+    expect(response.body.terminable).toEqual(false);
     expect(response.body.objectifs).toHaveLength(4);
     expect(response.body.progression_kyc).toEqual({ current: 0, target: 1 });
 
@@ -447,6 +448,59 @@ describe('Mission (API test)', () => {
     expect(objectif_defi.defi_status).toEqual(DefiStatus.en_cours);
   });
 
+  it(`GET /utilisateurs/id/thematiques/climat/mission - mission terminable`, async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          id: '2',
+          points: 10,
+          tags: [],
+          titre: 'titre',
+          thematique: Thematique.transport,
+          astuces: 'ASTUCE',
+          date_acceptation: null,
+          pourquoi: 'POURQUOI',
+          sous_titre: 'SOUS TITRE',
+          status: DefiStatus.en_cours,
+          universes: [Univers.climat],
+          accessible: false,
+          motif: 'bidon',
+          categorie: Categorie.recommandation,
+          mois: [],
+          conditions: [],
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_defi_seul_done,
+      defis: defis,
+    });
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Mange de la graine',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+    await TestUtil.create(DB.defi, { content_id: '2' });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/cereales/mission',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.done_at).toEqual(null);
+    expect(response.body.terminable).toEqual(true);
+  });
   it(`GET /utilisateurs/id/thematiques/climat/mission - renvoie la mission de la thématique - à partir du catalgue de mission`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: {} });
