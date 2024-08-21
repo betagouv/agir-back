@@ -161,7 +161,7 @@ function getControllers(): any[] {
     MissionController,
     RechecheServicesController,
     BilanCarboneController,
-    MagicLinkController,
+    //MagicLinkController,
     PreviewController,
   );
   if (!App.isProd()) {
