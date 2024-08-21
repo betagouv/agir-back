@@ -3621,6 +3621,7 @@
     "description": "Dans une première approche, nous avons choisi d'estimer la part de l'empreinte des produits de saison dans l'empreinte du [repas moyen français](https://www.bilans-ges.ademe.fr/documentation/UPLOAD_DOC_FR/index.htm?repas.htm)\ncalculé à partir de l'enquête INCA 3 (2017).\n\nCes produits correspondent aux fruits et légumes susceptibles d'être achetés \"directement\" de saison, mais également d'autres produits transformés, tels que\nles jus de fruits, soupes, compotes, pouvant être achetés en connaissance de la date de production du produit.\n\nNous avons choisi d'exclure les pommes de terre du calcul étant donné que la récolte est possible presque toute l'année grâce aux nombreuses variétés de pommes de terre.\n",
     "note": "Cette méthode de calcul est imparfaite : idéalement, nous pourrions faire la différence saison / de saison sur chaque plat du régime personnalisé de l'utilisateur. Nous pourrons cependant dans une prochaine version du calcul différencier le pourcentage pour chaque élément du régime.\n\nElle a cependant le mérite de donner un premier ordre de grandeur.\n\n🧮 Le calcul détaillé est [disponible ici](https://docs.google.com/spreadsheets/d/1SVYvBaaYDOUDcg5jX0eZFEColnWWIL8PCLMGrPR000o/edit#gid=1694091424) sous forme de tableur.\n"
   },
+
   "bilan": {
     "titre": "Votre bilan climat personnel",
     "icônes": "👤",
@@ -3635,6 +3636,7 @@
       ]
     }
   },
+
   "commun . intensité électricité": {
     "titre": "Intensité carbone du mix électrique français",
     "description": "\n> ℹ️ Cette règle provient du modèle [`@incubateur-ademe/publicodes-commun`](https://github.com/incubateur-ademe/publicodes-commun).\n\n\nIntensité moyenne, tous types de consommations confondues, année 2022.",
@@ -11956,6 +11958,7 @@
     "plancher": 0,
     "par défaut": 1000
   },
+
   "transport": {
     "titre": "Transport",
     "abréviation": "transp.",

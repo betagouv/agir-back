@@ -56,39 +56,76 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
-
     expect(response.body).toEqual({
       impact_kg_annee: 8898.031054479543,
-      detail: [
+      impact_univers: [
         {
           pourcentage: 31,
           univers: 'transport',
           univers_label: 'The Transport',
           impact_kg_annee: 2796.1001241487393,
+          details: [
+            {
+              label: 'Voiture',
+              pourcentage: 79,
+              impact_kg_annee: 2199.540741358343,
+            },
+            {
+              label: 'Avion',
+              pourcentage: 11,
+              impact_kg_annee: 312.2395338291978,
+            },
+            {
+              label: 'Transports en commun',
+              pourcentage: 9,
+              impact_kg_annee: 240.41550000000004,
+            },
+            {
+              label: '2 roues',
+              pourcentage: 1,
+              impact_kg_annee: 23.196418035061875,
+            },
+            {
+              label: 'Ferry',
+              pourcentage: 0,
+              impact_kg_annee: 11.88805068661542,
+            },
+            {
+              label: 'Train',
+              pourcentage: 0,
+              impact_kg_annee: 8.8198802395209,
+            },
+            { label: 'Mobilité douce', pourcentage: 0, impact_kg_annee: 0 },
+            { label: 'Vacances', pourcentage: 0, impact_kg_annee: 0 },
+          ],
         },
         {
           pourcentage: 24,
           univers: 'alimentation',
           univers_label: 'En cuisine',
           impact_kg_annee: 2094.1568221,
+          details: [],
         },
         {
           pourcentage: 17,
           univers: 'logement',
           univers_label: 'Titre manquant',
           impact_kg_annee: 1477.82343812085,
+          details: [],
         },
         {
           pourcentage: 16,
           univers: 'services_societaux',
           univers_label: 'Titre manquant',
           impact_kg_annee: 1450.9052263863641,
+          details: [],
         },
         {
           pourcentage: 12,
           univers: 'consommation',
           univers_label: 'Titre manquant',
           impact_kg_annee: 1079.0454437235896,
+          details: [],
         },
       ],
     });

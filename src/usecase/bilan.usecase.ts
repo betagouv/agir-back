@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
-import { BilanExtra } from '../../src/domain/bilan/bilanExtra';
 import { BilanRepository } from '../infrastructure/repository/bilan.repository';
 import { SituationNGC } from '@prisma/client';
 
@@ -10,18 +9,6 @@ export class BilanUsecase {
     private bilanRepository: BilanRepository,
     private nGCCalculator: NGCCalculator,
   ) {}
-
-  async getLastBilanByUtilisateurId(
-    utilisateurId: string,
-  ): Promise<BilanExtra> {
-    return this.bilanRepository.getLastBilanByUtilisateurId(utilisateurId);
-  }
-
-  async getAllBilansByUtilisateurId(
-    utilisateurId: string,
-  ): Promise<BilanExtra[]> {
-    return this.bilanRepository.getAllBilansByUtilisateurId(utilisateurId);
-  }
 
   async addBilanToUtilisateur(
     utilisateurId: string,

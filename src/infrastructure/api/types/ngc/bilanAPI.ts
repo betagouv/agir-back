@@ -1,26 +1,46 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BilanCarbone } from '../../../../domain/bilan/bilanCarbone';
+import {
+  BilanCarbone,
+  DetailImpact,
+} from '../../../../domain/bilan/bilanCarbone';
 import { Univers } from '../../../../domain/univers/univers';
 import { ThematiqueRepository } from '../../../repository/thematique.repository';
+
+export class DetailImpactAPI {
+  @ApiProperty() label: string;
+  @ApiProperty() pourcentage: number;
+  @ApiProperty() impact_kg_annee: number;
+
+  public static mapToAPI(detail: DetailImpact): DetailImpactAPI {
+    return {
+      label: detail.label,
+      pourcentage: detail.pourcentage,
+      impact_kg_annee: detail.impact_kg_annee,
+    };
+  }
+}
 
 export class PourcentageImpactAPI {
   @ApiProperty() univers: Univers;
   @ApiProperty() univers_label: string;
   @ApiProperty() pourcentage: number;
   @ApiProperty() impact_kg_annee: number;
+  @ApiProperty({ type: [DetailImpactAPI] }) details: DetailImpactAPI[];
 }
 export class BilanCarboneAPI {
-  @ApiProperty({ type: [PourcentageImpactAPI] }) detail: PourcentageImpactAPI[];
+  @ApiProperty({ type: [PourcentageImpactAPI] })
+  impact_univers: PourcentageImpactAPI[];
   @ApiProperty() impact_kg_annee: number;
 
   public static mapToAPI(bilan: BilanCarbone): BilanCarboneAPI {
     return {
       impact_kg_annee: bilan.impact_kg_annee,
-      detail: bilan.detail.map((e) => ({
+      impact_univers: bilan.impact_univers.map((e) => ({
         pourcentage: e.pourcentage,
         univers: e.univers,
         univers_label: ThematiqueRepository.getTitreUnivers(e.univers),
         impact_kg_annee: e.impact_kg_annee,
+        details: e.details.map((d) => DetailImpactAPI.mapToAPI(d)),
       })),
     };
   }

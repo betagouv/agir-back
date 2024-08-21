@@ -44,19 +44,6 @@ export class BilanController extends GenericControler {
     return BilanCarboneAPI.mapToAPI(bilan);
   }
 
-  /*
-  @Get('utilisateur/:utilisateurId/bilans')
-  @ApiOkResponse({ type: BilanAPI })
-  @UseGuards(AuthGuard)
-  async getBilans(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-  ): Promise<BilanAPI[]> {
-    this.checkCallerId(req, utilisateurId);
-    return this.bilanUsecase.getAllBilansByUtilisateurId(utilisateurId);
-  }
-  */
-
   @Post('utilisateurs/:utilisateurId/bilans/:situationId')
   @UseGuards(AuthGuard)
   async postEmpreinte(
