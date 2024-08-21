@@ -337,6 +337,12 @@ export class ApplicationError {
       `Reponse [${reponse}] inconnue pour la KYC [${kyc_code}]`,
     );
   }
+  static throwMissinEmail() {
+    this.throwAppError('063', `Adresse électronique manquante`);
+  }
+  static throwMissinPassword() {
+    this.throwAppError('064', `Mot de passe manquant`);
+  }
 
   private static throwAppError(
     code: string,
