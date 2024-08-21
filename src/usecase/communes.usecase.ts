@@ -5,7 +5,7 @@ import { CommuneRepository } from '../../src/infrastructure/repository/commune/c
 @Injectable()
 export class CommunesUsecase {
   constructor(private communeRepository: CommuneRepository) {}
-  async geteListeCommunes(codePostal: string): Promise<string[]> {
+  async getListeCommunes(codePostal: string): Promise<string[]> {
     return this.communeRepository.getListCommunesParCodePostal(codePostal);
   }
 }
