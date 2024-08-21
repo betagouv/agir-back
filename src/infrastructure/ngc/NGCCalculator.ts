@@ -97,6 +97,13 @@ export class NGCCalculator {
       'transport . vacances',
       'transport . ferry',
       'logement',
+      'logement . construction',
+      'logement . électricité',
+      'logement . chauffage',
+      'logement . climatisation',
+      'logement . piscine',
+      'logement . extérieur',
+      'logement . vacances',
       'divers',
       'alimentation',
       'services sociétaux',
@@ -122,6 +129,14 @@ export class NGCCalculator {
     const transport_ferry = resultMap.get('transport . ferry') as number;
 
     const logement = resultMap.get('logement') as number;
+    const logement_constr = resultMap.get('logement . construction') as number;
+    const logement_elec = resultMap.get('logement . électricité') as number;
+    const logement_chauf = resultMap.get('logement . chauffage') as number;
+    const logement_clim = resultMap.get('logement . climatisation') as number;
+    const logement_piscine = resultMap.get('logement . piscine') as number;
+    const logement_ext = resultMap.get('logement . extérieur') as number;
+    const logement_vacances = resultMap.get('logement . vacances') as number;
+
     const divers = resultMap.get('divers') as number;
     const alimentation = resultMap.get('alimentation') as number;
     const services_societaux = resultMap.get('services sociétaux') as number;
@@ -180,7 +195,43 @@ export class NGCCalculator {
       pourcentage: Math.round((logement / total) * 100),
       univers: Univers.logement,
       impact_kg_annee: logement,
-      details: [],
+      details: [
+        {
+          label: 'Construction',
+          pourcentage: Math.round((logement_constr / logement) * 100),
+          impact_kg_annee: logement_constr,
+        },
+        {
+          label: 'Electricité',
+          pourcentage: Math.round((logement_elec / logement) * 100),
+          impact_kg_annee: logement_elec,
+        },
+        {
+          label: 'Chauffage',
+          pourcentage: Math.round((logement_chauf / logement) * 100),
+          impact_kg_annee: logement_chauf,
+        },
+        {
+          label: 'Climatisation',
+          pourcentage: Math.round((logement_clim / logement) * 100),
+          impact_kg_annee: logement_clim,
+        },
+        {
+          label: 'Piscine',
+          pourcentage: Math.round((logement_piscine / logement) * 100),
+          impact_kg_annee: logement_piscine,
+        },
+        {
+          label: 'Extérieur',
+          pourcentage: Math.round((logement_ext / logement) * 100),
+          impact_kg_annee: logement_ext,
+        },
+        {
+          label: 'Vacances',
+          pourcentage: Math.round((logement_vacances / logement) * 100),
+          impact_kg_annee: logement_vacances,
+        },
+      ],
     });
     impacts.push({
       pourcentage: Math.round((divers / total) * 100),

@@ -56,6 +56,7 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
+    //console.log(response.body.impact_univers[2]);
     expect(response.body).toEqual({
       impact_kg_annee: 8898.031054479543,
       impact_univers: [
@@ -111,7 +112,39 @@ describe('/bilan (API test)', () => {
           univers: 'logement',
           univers_label: 'Titre manquant',
           impact_kg_annee: 1477.82343812085,
-          details: [],
+          details: [
+            {
+              label: 'Chauffage',
+              pourcentage: 56,
+              impact_kg_annee: 822.4772605840475,
+            },
+            {
+              label: 'Construction',
+              pourcentage: 24,
+              impact_kg_annee: 350.45330368080613,
+            },
+            {
+              label: 'Electricité',
+              pourcentage: 9,
+              impact_kg_annee: 132.21789018483327,
+            },
+            {
+              label: 'Climatisation',
+              pourcentage: 5,
+              impact_kg_annee: 76.80251127272726,
+            },
+            {
+              label: 'Vacances',
+              pourcentage: 5,
+              impact_kg_annee: 74.42189444389041,
+            },
+            {
+              label: 'Extérieur',
+              pourcentage: 1,
+              impact_kg_annee: 21.45057795454545,
+            },
+            { label: 'Piscine', pourcentage: 0, impact_kg_annee: 0 },
+          ],
         },
         {
           pourcentage: 16,
