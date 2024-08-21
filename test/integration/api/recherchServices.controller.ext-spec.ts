@@ -576,7 +576,7 @@ describe('RechercheServices (API test)', () => {
     expect(response.body[0].titre).toEqual(
       'Salade de pâtes complètes et lentilles',
     );
-    expect(response.body[0].type_plat).toEqual('PLC_HVOP/FEC-COMPL/LGS');
+    expect(response.body[0].type_plat).toEqual('Plat');
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
 

@@ -136,7 +136,7 @@ export class RecettesRepository implements FinderInterface {
           id: '' + r.id,
           titre: r.name,
           difficulty_plat: r.express === 1 ? 'Facile' : 'Intérmédiaire',
-          type_plat: r.ranking,
+          type_plat: this.mapCategoryPlat(r.recipe_category),
           temps_prepa_min: r.preparation_time,
           image_url: IMAGES_TMP[Math.floor(Math.random() * 5)],
         }),
@@ -145,6 +145,14 @@ export class RecettesRepository implements FinderInterface {
     mapped_result.sort((a, b) => a.impact_carbone_kg - b.impact_carbone_kg);
 
     return mapped_result;
+  }
+
+  private mapCategoryPlat(cat: string): string {
+    if (!cat) return '-';
+    if (cat.includes('ENT')) return 'Entée';
+    if (cat.includes('DES')) return 'Déssert';
+    if (cat.includes('PL')) return 'Plat';
+    return '-';
   }
 
   private async callServiceAPI(
