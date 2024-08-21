@@ -30,6 +30,8 @@ export class LogementAPI {
   code_postal: string;
   @ApiProperty({ required: false })
   commune: string;
+  @ApiProperty({ required: false })
+  commune_label: string;
   @ApiProperty({ enum: TypeLogement })
   type: TypeLogement;
   @ApiProperty({ enum: Superficie })
@@ -55,6 +57,7 @@ export class LogementAPI {
       chauffage: log.chauffage,
       plus_de_15_ans: log.plus_de_15_ans,
       dpe: log.dpe,
+      commune_label: log.commune_label,
     };
   }
 }

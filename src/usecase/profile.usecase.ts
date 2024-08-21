@@ -18,6 +18,8 @@ import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { KYCID } from '../domain/kyc/KYCID';
 import { Retryable } from 'typescript-retry-decorator';
 import { AideRepository } from '../infrastructure/repository/aide.repository';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 
 export type Phrase = {
   phrase: string;
@@ -36,7 +38,26 @@ export class ProfileUsecase {
     private contactUsecase: ContactUsecase,
     private kycRepository: KycRepository,
     private aideRepository: AideRepository,
+    private communeRepository: CommuneRepository,
   ) {}
+
+  async findUtilisateurById(id: string): Promise<Utilisateur> {
+    const utilisateur = await this.utilisateurRepository.getById(id);
+    if (utilisateur) {
+      utilisateur.checkState();
+    } else {
+      return null;
+    }
+    utilisateur.logement.commune_label = this.communeRepository.formatCommune(
+      utilisateur.logement.code_postal,
+      utilisateur.logement.commune,
+    );
+    return utilisateur;
+  }
+
+  async findUtilisateurByEmail(email: string): Promise<Utilisateur> {
+    return this.utilisateurRepository.findByEmail(email);
+  }
 
   async computeAllUsersRecoTags() {
     const userIdList = await this.utilisateurRepository.listUtilisateurIds();
@@ -69,10 +90,6 @@ export class ProfileUsecase {
 
       await this.resetUser(user_id);
     }
-  }
-
-  async findUtilisateurByEmail(email: string): Promise<Utilisateur> {
-    return this.utilisateurRepository.findByEmail(email);
   }
 
   @Retryable({
@@ -169,13 +186,6 @@ export class ProfileUsecase {
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
-  }
-
-  async findUtilisateurById(id: string): Promise<Utilisateur> {
-    const utilisateur = await this.utilisateurRepository.getById(id);
-    if (utilisateur) utilisateur.checkState();
-
-    return utilisateur;
   }
 
   async updateAllUserCouvertureAides(): Promise<{

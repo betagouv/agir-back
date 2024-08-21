@@ -37,6 +37,7 @@ export class Logement {
   nombre_enfants: number;
   code_postal: string;
   commune: string;
+  commune_label?: string;
   type: TypeLogement;
   superficie: Superficie;
   proprietaire: boolean;

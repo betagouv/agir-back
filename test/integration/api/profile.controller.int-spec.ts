@@ -174,6 +174,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.code_postal).toEqual('91120');
     expect(response.body.chauffage).toEqual(Chauffage.bois);
     expect(response.body.commune).toEqual('PALAISEAU');
+    expect(response.body.commune_label).toEqual('Palaiseau');
     expect(response.body.nombre_adultes).toEqual(2);
     expect(response.body.nombre_enfants).toEqual(2);
     expect(response.body.plus_de_15_ans).toEqual(true);
