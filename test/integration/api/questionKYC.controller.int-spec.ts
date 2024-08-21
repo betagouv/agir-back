@@ -182,6 +182,42 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     const quest = response.body.find((e) => e.id === '_2');
     expect(quest.reponse).toStrictEqual(['Le climat', 'Mon logement']);
   });
+
+  it('GET /utilisateurs/id/questionsKYC/3 - renvoie la format spécifique de la mosaic', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._3,
+      type: TypeReponseQuestionKYC.mosaic_boolean,
+      question: `Mosaic meulble`,
+      points: 10,
+      categorie: Categorie.test,
+      reponses: [
+        { label: 'Télévision', code: 'tv', value_boolean: false },
+        { label: 'Lit', code: 'lit', value_boolean: false },
+        { label: 'Armoire', code: 'armoire', value_boolean: true },
+      ],
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/questionsKYC/_3',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.type).toEqual(TypeReponseQuestionKYC.mosaic_boolean);
+    expect(response.body.reponses_mosaic).toEqual([
+      { label: 'Télévision', code: 'tv', value_boolean: false },
+      { label: 'Lit', code: 'lit', value_boolean: false },
+      { label: 'Armoire', code: 'armoire', value_boolean: true },
+    ]);
+  });
+
   it('GET /utilisateurs/id/questionsKYC/3 - renvoie la question sans réponse', async () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {

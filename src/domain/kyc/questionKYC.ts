@@ -12,6 +12,7 @@ export enum TypeReponseQuestionKYC {
   choix_multiple = 'choix_multiple',
   entier = 'entier',
   decimal = 'decimal',
+  mosaic_boolean = 'mosaic_boolean',
 }
 
 export enum BooleanKYC {
@@ -24,6 +25,13 @@ export class KYCReponse {
   code: string;
   label: string;
   ngc_code?: string;
+  value_boolean?: boolean;
+  value_number?: number;
+}
+export class KYCMosaicReponse {
+  code: string;
+  value_boolean?: boolean;
+  value_number?: number;
 }
 
 export class QuestionKYC implements TaggedContent {
@@ -165,6 +173,19 @@ export class QuestionKYC implements TaggedContent {
     });
   }
 
+  public setMosaicResponses(reponses: KYCMosaicReponse[]) {
+    this.reponses = [];
+    reponses.forEach((mosaic_reponse) => {
+      this.reponses.push({
+        label: this.getLabelByCode(mosaic_reponse.code),
+        code: mosaic_reponse.code,
+        ngc_code: this.getNGCCodeByCode(mosaic_reponse.code),
+        value_number: mosaic_reponse.value_number,
+        value_boolean: mosaic_reponse.value_boolean,
+      });
+    });
+  }
+
   private checkReponseExists(reponses: string[]) {
     if (
       this.type !== TypeReponseQuestionKYC.choix_multiple &&
@@ -187,11 +208,19 @@ export class QuestionKYC implements TaggedContent {
     const found = this.reponses_possibles.find((r) => r.label === label);
     return found ? found.code : null;
   }
+
   private getNGCCodeByLabel(label: string): string {
     if (!this.reponses_possibles) {
       return null;
     }
     const found = this.reponses_possibles.find((r) => r.label === label);
+    return found ? found.ngc_code : null;
+  }
+  private getNGCCodeByCode(code: string): string {
+    if (!this.reponses_possibles) {
+      return null;
+    }
+    const found = this.reponses_possibles.find((r) => r.code === code);
     return found ? found.ngc_code : null;
   }
 }
