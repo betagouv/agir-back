@@ -93,31 +93,6 @@ describe('/bilan (API test)', () => {
       ],
     });
   });
-  it.skip('GET /utilisateur/id/bilans - get list of bilans', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.situationNGC, { id: 'id1' });
-    await TestUtil.create(DB.situationNGC, { id: 'id2' });
-    await TestUtil.create(DB.empreinte, {
-      id: '1',
-      created_at: new Date(0),
-      situationId: 'id1',
-    });
-    await TestUtil.create(DB.empreinte, {
-      id: '2',
-      created_at: new Date(100),
-      situationId: 'id2',
-    });
-
-    // WHEN
-    const response = await TestUtil.GET('/utilisateur/utilisateur-id/bilans');
-
-    //THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(2);
-    expect(response.body[0].id).toBe('2');
-    expect(response.body[1].id).toBe('1');
-  });
   it('POST /utilisateur/id/bilans - compute and create new Bilan', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -138,21 +113,12 @@ describe('/bilan (API test)', () => {
     expect(bilanDB[0]['situation'].situation).toStrictEqual({
       'transport . voiture . km': 12000,
     });
-    //expect(Math.floor(bilanDB[0].bilan['details'].divers)).toStrictEqual(1079);
-    /*expect(Math.floor(bilanDB[0].bilan['details'].logement)).toStrictEqual(
-      1477,
-    );*/
     expect(Math.floor(bilanDB[0].bilan['details'].transport)).toStrictEqual(
       2760,
     );
     expect(Math.floor(bilanDB[0].bilan['details'].alimentation)).toStrictEqual(
       2094,
     );
-    /*
-    expect(
-      Math.floor(bilanDB[0].bilan['details'].services_societaux),
-    ).toStrictEqual(1450);
-    */
   });
   it('POST /bilan/importFromNGC - creates new situation', async () => {
     // WHEN

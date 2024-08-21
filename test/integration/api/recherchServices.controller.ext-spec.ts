@@ -828,7 +828,7 @@ describe('RechercheServices (API test)', () => {
     expect(response.body[2].nombre_favoris).toEqual(0);
   });
 
-  it.skip(`POST /utlilisateur/id/recherche_services/impact_transports/search renvoie une liste de résultats pour recherche par distance`, async () => {
+  it(`POST /utlilisateur/id/recherche_services/impact_transports/search renvoie une liste de résultats pour recherche par distance`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     process.env.BASE_URL_FRONT = 'https://site';
@@ -840,9 +840,9 @@ describe('RechercheServices (API test)', () => {
       distance_metres: 10000,
     });
 
-    // THENs
+    // THEN
     expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(11);
+    expect(response.body).toHaveLength(20);
     expect(response.body[0]).toStrictEqual({
       est_favoris: false,
       id: '7',
@@ -852,18 +852,9 @@ describe('RechercheServices (API test)', () => {
       distance_metres: 10000,
       image_url: 'https://site/impact_co2_img_transports/velo.svg',
     });
-    expect(response.body[10]).toStrictEqual({
-      est_favoris: false,
-      id: '4',
-      impact_carbone_kg: 1.92,
-      nombre_favoris: 0,
-      titre: 'Voiture thermique',
-      distance_metres: 10000,
-      image_url: 'https://site/impact_co2_img_transports/voiturethermique.svg',
-    });
   });
 
-  it.skip(`POST /utlilisateur/id/recherche_services/impact_transports/search renvoie une liste de résultats`, async () => {
+  it(`POST /utlilisateur/id/recherche_services/impact_transports/search renvoie une liste de résultats`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     process.env.BASE_URL_FRONT = 'https://site';
@@ -901,7 +892,7 @@ describe('RechercheServices (API test)', () => {
     });
   });
 
-  it.skip(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats`, async () => {
+  it(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
     process.env.BASE_URL_FRONT = 'https://site';
@@ -935,7 +926,7 @@ describe('RechercheServices (API test)', () => {
       userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
     ).toHaveLength(36);
   });
-  it.skip(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats si pas de categorie`, async () => {
+  it(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats si pas de categorie`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
 
@@ -946,7 +937,7 @@ describe('RechercheServices (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(32);
+    expect(response.body).toHaveLength(33);
     expect(response.body[0]).toStrictEqual({
       est_favoris: false,
       id: 'ail',
@@ -966,9 +957,9 @@ describe('RechercheServices (API test)', () => {
     );
     expect(
       userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
-    ).toHaveLength(32);
+    ).toHaveLength(33);
   });
-  it.skip(`POST /utlilisateur/id/recherche_services/recettes/search renvoie une liste de résultats`, async () => {
+  it(`POST /utlilisateur/id/recherche_services/recettes/search renvoie une liste de résultats`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
 
@@ -979,18 +970,16 @@ describe('RechercheServices (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toStrictEqual({
-      difficulty_plat: 'Facile',
-      est_favoris: false,
-      id: '5',
-      nombre_favoris: 0,
-      temps_prepa_min: 20,
-      titre: 'Tiramissu',
-      type_plat: 'Déssert',
-      image_url:
-        'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Ftiramisu-aux-fruits-rouges.jpg&w=3840&q=75',
-    });
+    expect(response.body).toHaveLength(10);
+    expect(response.body[0].difficulty_plat).toEqual('Facile');
+    expect(response.body[0].est_favoris).toEqual(false);
+    expect(response.body[0].id).toEqual('10982');
+    expect(response.body[0].nombre_favoris).toEqual(0);
+    expect(response.body[0].temps_prepa_min).toEqual(5);
+    expect(response.body[0].titre).toEqual(
+      'Salade de pâtes complètes et lentilles',
+    );
+    expect(response.body[0].type_plat).toEqual('PLC_HVOP/FEC-COMPL/LGS');
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
 
@@ -1000,6 +989,6 @@ describe('RechercheServices (API test)', () => {
     );
     expect(
       userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
-    ).toHaveLength(1);
+    ).toHaveLength(10);
   });
 });

@@ -43,7 +43,7 @@ describe('ImpactTransportRepository', () => {
     expect(liste[liste.length - 1].titre).toEqual('Voiture thermique');
     expect(liste[liste.length - 1].impact_carbone_kg).toEqual(1.92);
   });
-  it.skip('searchsearch : impact avec 2 points GPS', async () => {
+  it('searchsearch : impact avec 2 points GPS', async () => {
     // GIVEN
 
     // WHEN
