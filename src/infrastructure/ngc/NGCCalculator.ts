@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { Bilan } from '../../domain/bilan/bilan';
 import rules from '@incubateur-ademe/nosgestesclimat/public/co2-model.FR-lang.fr.json';
 import Engine, { ParsedRules, PublicodesError } from 'publicodes';
-import { BilanCarbone, ImpactUnivers } from '../../domain/bilan/bilanCarbone';
+import {
+  BilanCarbone,
+  DetailImpact,
+  ImpactUnivers,
+} from '../../domain/bilan/bilanCarbone';
 import { Univers } from '../../domain/univers/univers';
 
 @Injectable()
@@ -149,44 +153,68 @@ export class NGCCalculator {
       details: [
         {
           label: 'Voiture',
-          pourcentage: Math.round((transport_voiture / transport) * 100),
+          pourcentage: Math.round((transport_voiture / total) * 100),
+          pourcentage_categorie: Math.round(
+            (transport_voiture / transport) * 100,
+          ),
           impact_kg_annee: transport_voiture,
         },
         {
           label: 'Avion',
-          pourcentage: Math.round((transport_avion / transport) * 100),
+          pourcentage: Math.round((transport_avion / total) * 100),
+          pourcentage_categorie: Math.round(
+            (transport_avion / transport) * 100,
+          ),
           impact_kg_annee: transport_avion,
         },
         {
           label: '2 roues',
-          pourcentage: Math.round((transport_2roues / transport) * 100),
+          pourcentage: Math.round((transport_2roues / total) * 100),
+          pourcentage_categorie: Math.round(
+            (transport_2roues / transport) * 100,
+          ),
           impact_kg_annee: transport_2roues,
         },
         {
           label: 'Mobilité douce',
-          pourcentage: Math.round((transport_mob_douce / transport) * 100),
+          pourcentage: Math.round((transport_mob_douce / total) * 100),
+          pourcentage_categorie: Math.round(
+            (transport_mob_douce / transport) * 100,
+          ),
           impact_kg_annee: transport_mob_douce,
         },
         {
           label: 'Transports en commun',
           pourcentage: Math.round(
+            ((transport_bus + transport_metro) / total) * 100,
+          ),
+          pourcentage_categorie: Math.round(
             ((transport_bus + transport_metro) / transport) * 100,
           ),
           impact_kg_annee: transport_bus + transport_metro,
         },
         {
           label: 'Train',
-          pourcentage: Math.round((transport_train / transport) * 100),
+          pourcentage: Math.round((transport_train / total) * 100),
+          pourcentage_categorie: Math.round(
+            (transport_train / transport) * 100,
+          ),
           impact_kg_annee: transport_train,
         },
         {
           label: 'Vacances',
-          pourcentage: Math.round((transport_vacances / transport) * 100),
+          pourcentage: Math.round((transport_vacances / total) * 100),
+          pourcentage_categorie: Math.round(
+            (transport_vacances / transport) * 100,
+          ),
           impact_kg_annee: transport_vacances,
         },
         {
           label: 'Ferry',
-          pourcentage: Math.round((transport_ferry / transport) * 100),
+          pourcentage: Math.round((transport_ferry / total) * 100),
+          pourcentage_categorie: Math.round(
+            (transport_ferry / transport) * 100,
+          ),
           impact_kg_annee: transport_ferry,
         },
       ],
@@ -198,37 +226,48 @@ export class NGCCalculator {
       details: [
         {
           label: 'Construction',
-          pourcentage: Math.round((logement_constr / logement) * 100),
+          pourcentage: Math.round((logement_constr / total) * 100),
+          pourcentage_categorie: Math.round((logement_constr / logement) * 100),
           impact_kg_annee: logement_constr,
         },
         {
           label: 'Electricité',
-          pourcentage: Math.round((logement_elec / logement) * 100),
+          pourcentage: Math.round((logement_elec / total) * 100),
+          pourcentage_categorie: Math.round((logement_elec / logement) * 100),
           impact_kg_annee: logement_elec,
         },
         {
           label: 'Chauffage',
-          pourcentage: Math.round((logement_chauf / logement) * 100),
+          pourcentage: Math.round((logement_chauf / total) * 100),
+          pourcentage_categorie: Math.round((logement_chauf / logement) * 100),
           impact_kg_annee: logement_chauf,
         },
         {
           label: 'Climatisation',
-          pourcentage: Math.round((logement_clim / logement) * 100),
+          pourcentage: Math.round((logement_clim / total) * 100),
+          pourcentage_categorie: Math.round((logement_clim / logement) * 100),
           impact_kg_annee: logement_clim,
         },
         {
           label: 'Piscine',
-          pourcentage: Math.round((logement_piscine / logement) * 100),
+          pourcentage: Math.round((logement_piscine / total) * 100),
+          pourcentage_categorie: Math.round(
+            (logement_piscine / logement) * 100,
+          ),
           impact_kg_annee: logement_piscine,
         },
         {
           label: 'Extérieur',
-          pourcentage: Math.round((logement_ext / logement) * 100),
+          pourcentage: Math.round((logement_ext / total) * 100),
+          pourcentage_categorie: Math.round((logement_ext / logement) * 100),
           impact_kg_annee: logement_ext,
         },
         {
           label: 'Vacances',
-          pourcentage: Math.round((logement_vacances / logement) * 100),
+          pourcentage: Math.round((logement_vacances / total) * 100),
+          pourcentage_categorie: Math.round(
+            (logement_vacances / logement) * 100,
+          ),
           impact_kg_annee: logement_vacances,
         },
       ],
@@ -256,9 +295,18 @@ export class NGCCalculator {
     for (const univers of impacts) {
       univers.details.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
     }
+
+    let top_3: DetailImpact[] = [];
+    for (const cat of impacts) {
+      top_3 = top_3.concat(cat.details);
+    }
+    top_3.sort((a, b) => b.pourcentage - a.pourcentage);
+    top_3 = top_3.slice(0, 3);
+
     return new BilanCarbone({
       impact_kg_annee: total,
       impact_univers: impacts,
+      top_3: top_3,
     });
   }
 

@@ -56,9 +56,28 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
-    //console.log(response.body.impact_univers[2]);
     expect(response.body).toEqual({
       impact_kg_annee: 8898.031054479543,
+      top_3: [
+        {
+          label: 'Voiture',
+          pourcentage: 25,
+          pourcentage_categorie: 79,
+          impact_kg_annee: 2199.540741358343,
+        },
+        {
+          label: 'Chauffage',
+          pourcentage: 9,
+          pourcentage_categorie: 56,
+          impact_kg_annee: 822.4772605840475,
+        },
+        {
+          label: 'Avion',
+          pourcentage: 4,
+          pourcentage_categorie: 11,
+          impact_kg_annee: 312.2395338291978,
+        },
+      ],
       impact_univers: [
         {
           pourcentage: 31,
@@ -68,36 +87,52 @@ describe('/bilan (API test)', () => {
           details: [
             {
               label: 'Voiture',
-              pourcentage: 79,
+              pourcentage: 25,
+              pourcentage_categorie: 79,
               impact_kg_annee: 2199.540741358343,
             },
             {
               label: 'Avion',
-              pourcentage: 11,
+              pourcentage: 4,
+              pourcentage_categorie: 11,
               impact_kg_annee: 312.2395338291978,
             },
             {
               label: 'Transports en commun',
-              pourcentage: 9,
+              pourcentage: 3,
+              pourcentage_categorie: 9,
               impact_kg_annee: 240.41550000000004,
             },
             {
               label: '2 roues',
-              pourcentage: 1,
+              pourcentage: 0,
+              pourcentage_categorie: 1,
               impact_kg_annee: 23.196418035061875,
             },
             {
               label: 'Ferry',
               pourcentage: 0,
+              pourcentage_categorie: 0,
               impact_kg_annee: 11.88805068661542,
             },
             {
               label: 'Train',
               pourcentage: 0,
+              pourcentage_categorie: 0,
               impact_kg_annee: 8.8198802395209,
             },
-            { label: 'Mobilité douce', pourcentage: 0, impact_kg_annee: 0 },
-            { label: 'Vacances', pourcentage: 0, impact_kg_annee: 0 },
+            {
+              label: 'Mobilité douce',
+              pourcentage: 0,
+              pourcentage_categorie: 0,
+              impact_kg_annee: 0,
+            },
+            {
+              label: 'Vacances',
+              pourcentage: 0,
+              pourcentage_categorie: 0,
+              impact_kg_annee: 0,
+            },
           ],
         },
         {
@@ -115,35 +150,46 @@ describe('/bilan (API test)', () => {
           details: [
             {
               label: 'Chauffage',
-              pourcentage: 56,
+              pourcentage: 9,
+              pourcentage_categorie: 56,
               impact_kg_annee: 822.4772605840475,
             },
             {
               label: 'Construction',
-              pourcentage: 24,
+              pourcentage: 4,
+              pourcentage_categorie: 24,
               impact_kg_annee: 350.45330368080613,
             },
             {
               label: 'Electricité',
-              pourcentage: 9,
+              pourcentage: 1,
+              pourcentage_categorie: 9,
               impact_kg_annee: 132.21789018483327,
             },
             {
               label: 'Climatisation',
-              pourcentage: 5,
+              pourcentage: 1,
+              pourcentage_categorie: 5,
               impact_kg_annee: 76.80251127272726,
             },
             {
               label: 'Vacances',
-              pourcentage: 5,
+              pourcentage: 1,
+              pourcentage_categorie: 5,
               impact_kg_annee: 74.42189444389041,
             },
             {
               label: 'Extérieur',
-              pourcentage: 1,
+              pourcentage: 0,
+              pourcentage_categorie: 1,
               impact_kg_annee: 21.45057795454545,
             },
-            { label: 'Piscine', pourcentage: 0, impact_kg_annee: 0 },
+            {
+              label: 'Piscine',
+              pourcentage: 0,
+              pourcentage_categorie: 0,
+              impact_kg_annee: 0,
+            },
           ],
         },
         {
