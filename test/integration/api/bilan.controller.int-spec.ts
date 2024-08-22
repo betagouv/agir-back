@@ -1,3 +1,7 @@
+import { Categorie } from '../../../src/domain/contenu/categorie';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import { Superficie } from '../../../src/domain/logement/logement';
 import { Univers } from '../../../src/domain/univers/univers';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { DB, TestUtil } from '../../TestUtil';
@@ -227,6 +231,40 @@ describe('/bilan (API test)', () => {
       ],
     });
   });
+
+  it('GET /utilisateur/id/bilans/last - mettre à jour le profil utilisateur change le bilan', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.kYC, {
+      id_cms: 4,
+      code: KYCID.KYC_superficie,
+      type: TypeReponseQuestionKYC.entier,
+      categorie: Categorie.test,
+      points: 10,
+      question: 'Superficie',
+      is_ngc: true,
+      ngc_key: 'logement . surface',
+      reponses: [],
+    });
+
+    // WHEN
+    const rep = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      superficie: Superficie.superficie_150_et_plus,
+    });
+    expect(rep.status).toBe(200);
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateur/utilisateur-id/bilans/last',
+    );
+
+    //THEN
+    expect(response.status).toBe(200);
+    expect(response.body.impact_kg_annee).toEqual(10470.652034983415);
+  });
+
   it('POST /utilisateur/id/bilans - compute and create new Bilan', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
