@@ -1,0 +1,170 @@
+transport
+- voiture
+- avion
+- deux roues
+- bus
+- train
+- metro ou tram
+- vacances
+- ferry
+
+logement
+- construction
+- électricité
+- chauffage
+- climatisation
+- piscine
+- extérieur
+- vacances
+
+alimentation
+- repas
+-- "petit déjeuner annuel"
+-- "déjeuner et dîner"
+--- nbr végétalien / semaine
+--- nbr végétarien / semaine
+--- nbr viande blanche / semaine
+--- nbr viande rouge / semaine
+--- nbr poisson gras / semaine
+--- nbr poisson blanc / semaine
+-- "bonus"
+--- "de saison . empreinte" (en négatif)
+--- "local . empreinte" (en négatif)
+- boisson
+-- chaude
+--- nbr café / sem
+--- nbr thé / sem
+--- nbr chocolat / sem
+--- nbr chicorée / sem
+-- froide
+--- "sucrées"
+--- "alcool"
+--- "eau en bouteille"
+- dechets
+
+divers
+- "animaux domestiques",
+-- "petit chien . nombre",
+-- "chien moyen . nombre",
+-- "gros chien . nombre",
+-- "chats . nombre"
+- "textile",
+-- "t-shirt . nombre",
+-- "pantalon . nombre",
+-- "short . nombre",
+-- "sweat . nombre",
+-- "robe . nombre",
+-- "chemise . nombre",
+-- "pull . nombre",
+-- "chaussure . nombre",
+-- "manteau . nombre",
+-- "petit article . nombre",
+-- "gros article . nombre"
+- "électroménager",
+-- "réfrigérateur . nombre",
+-- "petit réfrigérateur . nombre",
+-- "congélateur . nombre",
+-- "lave-linge . nombre",
+-- "sèche-linge . nombre",
+-- "lave-vaisselle . nombre",
+-- "four . nombre",
+-- "micro-onde . nombre",
+-- "plaques . nombre",
+-- "hotte . nombre",
+-- "bouilloire . nombre",
+-- "cafetière . nombre",
+-- "aspirateur . nombre",
+-- "robot cuisine . nombre"
+- "ameublement",
+-- "armoire . nombre",
+-- "canapé . nombre",
+-- "matelas . nombre",
+-- "lit . nombre",
+-- "table . nombre",
+-- "chaise . nombre",
+-- "petit meuble . nombre",
+-- "grand meuble . nombre""armoire . nombre",
+-- "canapé . nombre",
+-- "matelas . nombre",
+-- "lit . nombre",
+-- "table . nombre",
+-- "chaise . nombre",
+-- "petit meuble . nombre",
+-- "grand meuble . nombre"
+- "numérique",
+-- internet
+-- appareils
+--- "téléphone . nombre",
+-- "TV . nombre",
+-- "ordinateur portable . nombre",
+-- "ordinateur fixe . nombre",
+-- "tablette . nombre",
+-- "vidéoprojecteur . nombre",
+-- "appareil photo . nombre",
+-- "home cinéma . nombre",
+-- "enceinte bluetooth . nombre",
+-- "enceinte vocale . nombre",
+-- "montre connectée . nombre",
+-- "console de salon . nombre",
+-- "console portable . nombre"
+- "produits consommables",
+- "loisirs",
+-- culture
+--- "concerts et spectacles . présent",
+-- "musées et monuments . présent",
+-- "édition . présent",
+-- "pratique de la musique . présent"
+-- sport
+--- "individuel extérieur . présent",
+--- "balle ou ballon . présent",
+--- "aquatique . présent",
+--- "martial ou combat . présent",
+--- "athlétisme . présent",
+--- "salle de sport . présent",
+--- "équitation . présent",
+--- "golf . présent",
+--- "nautique . présent",
+--- "hiver montagne . présent",
+--- "sports énergivores . présent",
+--- "autres sports . présent"
+- "autres produits",
+-- "autres produits manufacturés",
+-- "horticulture",
+-- "maroquinerie",
+-- "tapis",
+-- "vaisselle",
+-- "outillage jardin",
+-- "réparations",
+-- "produits petits travaux"
+- "tabac"
+
+
+
+services sociétaux
+- "services publics"
+-- "empreinte branche . C21 par hab . services publics",
+--  "empreinte branche . E36 par hab . services publics",
+--  "empreinte branche . E37 par hab . services publics",
+--  "empreinte branche . E38 par hab . services publics",
+--  "empreinte branche . E39 par hab . services publics",
+--  "empreinte branche . F42 par hab . services publics",
+--  "empreinte branche . F43 par hab . services publics",
+--  "empreinte branche . M71 par hab . services publics",
+--  "empreinte branche . M72 par hab . services publics",
+--  "empreinte branche . N78 par hab . services publics",
+--  "empreinte branche . O84 par hab . services publics",
+--  "empreinte branche . P85 par hab . services publics",
+--  "empreinte branche . Q86 par hab . services publics",
+--  "empreinte branche . Q87 par hab . services publics",
+--  "empreinte branche . Q88 par hab . services publics"
+- "services marchands"
+-- "empreinte branche . C30 par hab . services marchands",
+--  "empreinte branche . H52 par hab . services marchands",
+--  "empreinte branche . H53 par hab . services marchands",
+--  "empreinte branche . J61 par hab . services marchands",
+--  "empreinte branche . K64 par hab . services marchands",
+--  "empreinte branche . K65 par hab . services marchands",
+--  "empreinte branche . M69 par hab . services marchands",
+--  "empreinte branche . N80 par hab . services marchands",
+--  "empreinte branche . S94 par hab . services marchands",
+--  "empreinte branche . S96 par hab . services marchands"
