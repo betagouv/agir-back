@@ -2,6 +2,7 @@ import { Univers } from '../univers/univers';
 
 export class DetailImpact {
   label: string;
+  emoji: string;
   pourcentage: number;
   pourcentage_categorie: number;
   impact_kg_annee: number;

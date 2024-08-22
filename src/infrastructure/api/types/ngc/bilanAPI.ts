@@ -8,6 +8,7 @@ import { ThematiqueRepository } from '../../../repository/thematique.repository'
 
 export class DetailImpactAPI {
   @ApiProperty() label: string;
+  @ApiProperty() emoji: string;
   @ApiProperty() pourcentage: number;
   @ApiProperty() pourcentage_categorie: number;
   @ApiProperty() impact_kg_annee: number;
@@ -18,11 +19,12 @@ export class DetailImpactAPI {
       pourcentage: detail.pourcentage,
       pourcentage_categorie: detail.pourcentage_categorie,
       impact_kg_annee: detail.impact_kg_annee,
+      emoji: detail.emoji,
     };
   }
 }
 
-export class PourcentageImpactAPI {
+export class ImpactUniversAPI {
   @ApiProperty() univers: Univers;
   @ApiProperty() univers_label: string;
   @ApiProperty() pourcentage: number;
@@ -30,8 +32,8 @@ export class PourcentageImpactAPI {
   @ApiProperty({ type: [DetailImpactAPI] }) details: DetailImpactAPI[];
 }
 export class BilanCarboneAPI {
-  @ApiProperty({ type: [PourcentageImpactAPI] })
-  impact_univers: PourcentageImpactAPI[];
+  @ApiProperty({ type: [ImpactUniversAPI] })
+  impact_univers: ImpactUniversAPI[];
   @ApiProperty() impact_kg_annee: number;
   @ApiProperty({ type: [DetailImpactAPI] }) top_3: DetailImpactAPI[];
 

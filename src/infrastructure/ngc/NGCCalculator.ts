@@ -158,6 +158,7 @@ export class NGCCalculator {
             (transport_voiture / transport) * 100,
           ),
           impact_kg_annee: transport_voiture,
+          emoji: '🚘️',
         },
         {
           label: 'Avion',
@@ -166,6 +167,7 @@ export class NGCCalculator {
             (transport_avion / transport) * 100,
           ),
           impact_kg_annee: transport_avion,
+          emoji: '✈️',
         },
         {
           label: '2 roues',
@@ -174,6 +176,7 @@ export class NGCCalculator {
             (transport_2roues / transport) * 100,
           ),
           impact_kg_annee: transport_2roues,
+          emoji: '🛵',
         },
         {
           label: 'Mobilité douce',
@@ -182,6 +185,7 @@ export class NGCCalculator {
             (transport_mob_douce / transport) * 100,
           ),
           impact_kg_annee: transport_mob_douce,
+          emoji: '🚲',
         },
         {
           label: 'Transports en commun',
@@ -192,6 +196,7 @@ export class NGCCalculator {
             ((transport_bus + transport_metro) / transport) * 100,
           ),
           impact_kg_annee: transport_bus + transport_metro,
+          emoji: '🚌',
         },
         {
           label: 'Train',
@@ -200,6 +205,7 @@ export class NGCCalculator {
             (transport_train / transport) * 100,
           ),
           impact_kg_annee: transport_train,
+          emoji: '🚋',
         },
         {
           label: 'Vacances',
@@ -208,6 +214,7 @@ export class NGCCalculator {
             (transport_vacances / transport) * 100,
           ),
           impact_kg_annee: transport_vacances,
+          emoji: '🏖️',
         },
         {
           label: 'Ferry',
@@ -216,6 +223,7 @@ export class NGCCalculator {
             (transport_ferry / transport) * 100,
           ),
           impact_kg_annee: transport_ferry,
+          emoji: '⛴',
         },
       ],
     });
@@ -229,24 +237,28 @@ export class NGCCalculator {
           pourcentage: Math.round((logement_constr / total) * 100),
           pourcentage_categorie: Math.round((logement_constr / logement) * 100),
           impact_kg_annee: logement_constr,
+          emoji: '🧱',
         },
         {
           label: 'Electricité',
           pourcentage: Math.round((logement_elec / total) * 100),
           pourcentage_categorie: Math.round((logement_elec / logement) * 100),
           impact_kg_annee: logement_elec,
+          emoji: '⚡',
         },
         {
           label: 'Chauffage',
           pourcentage: Math.round((logement_chauf / total) * 100),
           pourcentage_categorie: Math.round((logement_chauf / logement) * 100),
           impact_kg_annee: logement_chauf,
+          emoji: '🔥',
         },
         {
           label: 'Climatisation',
           pourcentage: Math.round((logement_clim / total) * 100),
           pourcentage_categorie: Math.round((logement_clim / logement) * 100),
           impact_kg_annee: logement_clim,
+          emoji: '❄️',
         },
         {
           label: 'Piscine',
@@ -255,12 +267,14 @@ export class NGCCalculator {
             (logement_piscine / logement) * 100,
           ),
           impact_kg_annee: logement_piscine,
+          emoji: '🏊',
         },
         {
           label: 'Extérieur',
           pourcentage: Math.round((logement_ext / total) * 100),
           pourcentage_categorie: Math.round((logement_ext / logement) * 100),
           impact_kg_annee: logement_ext,
+          emoji: '☘️',
         },
         {
           label: 'Vacances',
@@ -269,6 +283,7 @@ export class NGCCalculator {
             (logement_vacances / logement) * 100,
           ),
           impact_kg_annee: logement_vacances,
+          emoji: '🏖',
         },
       ],
     });
