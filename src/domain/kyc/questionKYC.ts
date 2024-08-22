@@ -173,6 +173,16 @@ export class QuestionKYC implements TaggedContent {
       });
     });
   }
+  public setResponseByCode(code: string) {
+    if (this.type !== TypeReponseQuestionKYC.choix_unique) return;
+    const reponse = this.getReponsePossibleByCodeOrException(code);
+    this.reponses = [];
+    this.reponses.push({
+      label: reponse.label,
+      code: code,
+      ngc_code: reponse.ngc_code,
+    });
+  }
 
   public setMosaicResponses(
     mosaic: {
@@ -249,6 +259,12 @@ export class QuestionKYC implements TaggedContent {
     }
     const found = this.reponses_possibles.find((r) => r.label === label);
     return found ? found.ngc_code : null;
+  }
+
+  private getReponsePossibleByCodeOrException(code: string): KYCReponse {
+    const found = this.reponses_possibles.find((q) => q.code === code);
+    if (!found) ApplicationError.throwBadResponseCode(this.question, code);
+    return found;
   }
   private getNGCCodeByCode(code: string): string {
     if (!this.reponses_possibles) {

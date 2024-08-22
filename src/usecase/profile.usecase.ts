@@ -41,57 +41,6 @@ export class ProfileUsecase {
     private communeRepository: CommuneRepository,
   ) {}
 
-  async findUtilisateurById(id: string): Promise<Utilisateur> {
-    const utilisateur = await this.utilisateurRepository.getById(id);
-    if (utilisateur) {
-      utilisateur.checkState();
-    } else {
-      return null;
-    }
-    utilisateur.logement.commune_label = this.communeRepository.formatCommune(
-      utilisateur.logement.code_postal,
-      utilisateur.logement.commune,
-    );
-    return utilisateur;
-  }
-
-  async findUtilisateurByEmail(email: string): Promise<Utilisateur> {
-    return this.utilisateurRepository.findByEmail(email);
-  }
-
-  async computeAllUsersRecoTags() {
-    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
-    for (let index = 0; index < userIdList.length; index++) {
-      const user_id = userIdList[index];
-      const utilisateur = await this.utilisateurRepository.getById(user_id);
-
-      const catalogue = await this.kycRepository.getAllDefs();
-      utilisateur.kyc_history.setCatalogue(catalogue);
-
-      utilisateur.recomputeRecoTags();
-      await this.utilisateurRepository.updateUtilisateur(utilisateur);
-    }
-  }
-
-  async reset(confirmation: string, utilisateurId: string) {
-    if (confirmation !== 'CONFIRMATION RESET') {
-      ApplicationError.throwMissingResetConfirmation();
-    }
-    await this.resetUser(utilisateurId);
-  }
-
-  async resetAllUsers(confirmation: string) {
-    if (confirmation !== 'CONFIRMATION RESET') {
-      ApplicationError.throwMissingResetConfirmation();
-    }
-    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
-    for (let index = 0; index < userIdList.length; index++) {
-      const user_id = userIdList[index];
-
-      await this.resetUser(user_id);
-    }
-  }
-
   @Retryable({
     maxAttempts: 1,
     doRetry: (e: any) => {
@@ -156,15 +105,10 @@ export class ProfileUsecase {
 
     utilisateur.logement.patch(input, utilisateur);
 
-    if (input.plus_de_15_ans !== undefined && input.plus_de_15_ans !== null) {
-      const kyc = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
-        KYCID.KYC006,
-      );
-      utilisateur.kyc_history.updateQuestionByCode(KYCID.KYC006, [
-        input.plus_de_15_ans
-          ? kyc.getLabelByCode('plus_15')
-          : kyc.getLabelByCode('moins_15'),
-      ]);
+    try {
+      utilisateur.kyc_history.patchLogement(input);
+    } catch (error) {
+      console.error(`Problème lors de la synchro de KYC : ${error.message}`);
     }
 
     utilisateur.recomputeRecoTags();
@@ -178,14 +122,55 @@ export class ProfileUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  private async resetUser(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+  async findUtilisateurById(id: string): Promise<Utilisateur> {
+    const utilisateur = await this.utilisateurRepository.getById(id);
+    if (utilisateur) {
+      utilisateur.checkState();
+    } else {
+      return null;
+    }
+    utilisateur.logement.commune_label = this.communeRepository.formatCommune(
+      utilisateur.logement.code_postal,
+      utilisateur.logement.commune,
+    );
+    return utilisateur;
+  }
 
-    utilisateur.resetAllHistory();
+  async findUtilisateurByEmail(email: string): Promise<Utilisateur> {
+    return this.utilisateurRepository.findByEmail(email);
+  }
 
-    await this.serviceRepository.deleteAllUserServices(utilisateurId);
+  async computeAllUsersRecoTags() {
+    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
+    for (let index = 0; index < userIdList.length; index++) {
+      const user_id = userIdList[index];
+      const utilisateur = await this.utilisateurRepository.getById(user_id);
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+      const catalogue = await this.kycRepository.getAllDefs();
+      utilisateur.kyc_history.setCatalogue(catalogue);
+
+      utilisateur.recomputeRecoTags();
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    }
+  }
+
+  async reset(confirmation: string, utilisateurId: string) {
+    if (confirmation !== 'CONFIRMATION RESET') {
+      ApplicationError.throwMissingResetConfirmation();
+    }
+    await this.resetUser(utilisateurId);
+  }
+
+  async resetAllUsers(confirmation: string) {
+    if (confirmation !== 'CONFIRMATION RESET') {
+      ApplicationError.throwMissingResetConfirmation();
+    }
+    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
+    for (let index = 0; index < userIdList.length; index++) {
+      const user_id = userIdList[index];
+
+      await this.resetUser(user_id);
+    }
   }
 
   async updateAllUserCouvertureAides(): Promise<{
@@ -207,7 +192,6 @@ export class ProfileUsecase {
     }
     return { couvert, pas_couvert };
   }
-
   async deleteUtilisateur(utilisateurId: string) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
@@ -219,6 +203,16 @@ export class ProfileUsecase {
     await this.utilisateurRepository.delete(utilisateurId);
 
     await this.contactUsecase.delete(utilisateur.email);
+  }
+
+  private async resetUser(utilisateurId: string) {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+
+    utilisateur.resetAllHistory();
+
+    await this.serviceRepository.deleteAllUserServices(utilisateurId);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private AorB?<T>(a: T, b: T): T {

@@ -349,6 +349,12 @@ export class ApplicationError {
       `Element de réponse de mosaic manquant : code = ${code}`,
     );
   }
+  static throwBadResponseCode(question: string, kyc_code: string) {
+    this.throwAppError(
+      '066',
+      `Pas de code ${kyc_code} disponible pour la question [${question}]`,
+    );
+  }
 
   private static throwAppError(
     code: string,
