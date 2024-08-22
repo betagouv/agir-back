@@ -117,7 +117,7 @@ export class KYCHistory {
     return !!this.getAnsweredQuestionByCode(code);
   }
 
-  public updateQuestionyCode(questionId: string, reponses: string[]) {
+  public updateQuestionByCode(questionId: string, reponses: string[]) {
     let question = this.getAnsweredQuestionByCode(questionId);
     if (question) {
       question.setResponses(reponses);
@@ -125,6 +125,25 @@ export class KYCHistory {
       let question_catalogue =
         this.getKYCByCodeFromCatalogueOrException(questionId);
       question_catalogue.setResponses(reponses);
+      this.answered_questions.push(question_catalogue);
+    }
+  }
+
+  public updateQuestionMosaicByCode(
+    questionId: string,
+    mosaic: {
+      code: string;
+      value_number: number;
+      value_boolean: boolean;
+    }[],
+  ) {
+    let question = this.getAnsweredQuestionByCode(questionId);
+    if (question) {
+      question.setMosaicResponses(mosaic);
+    } else {
+      let question_catalogue =
+        this.getKYCByCodeFromCatalogueOrException(questionId);
+      question_catalogue.setMosaicResponses(mosaic);
       this.answered_questions.push(question_catalogue);
     }
   }

@@ -105,9 +105,7 @@ export class MissionsUtilisateur {
     const existing_mission = this.getMissionById(mission_def.id_cms.toString());
 
     if (existing_mission) {
-      console.log(this.missions);
       this.missions.splice(this.missions.indexOf(existing_mission), 1);
-      console.log(this.missions);
     }
     this.missions.push(new_mission);
 

@@ -223,7 +223,7 @@ describe('UseragEvaluator', () => {
         ],
       }),
     ]);
-    user.kyc_history.updateQuestionyCode(KYCID.KYC001, []);
+    user.kyc_history.updateQuestionByCode(KYCID.KYC001, []);
 
     // WHEN
     UserTagEvaluator.recomputeRecoTags(user);
@@ -268,7 +268,7 @@ describe('UseragEvaluator', () => {
         ],
       }),
     ]);
-    user.kyc_history.updateQuestionyCode(KYCID.KYC001, [
+    user.kyc_history.updateQuestionByCode(KYCID.KYC001, [
       '🥦 Alimentation',
       '☀️ Climat et Environnement',
       '🛒 Consommation durable',

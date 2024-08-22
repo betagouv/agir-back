@@ -1,11 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Categorie } from '../../../../../src/domain/contenu/categorie';
 import {
+  KYCReponse,
   QuestionKYC,
   TypeReponseQuestionKYC,
 } from '../../../../domain/kyc/questionKYC';
 
-export class ReponseKYCMosaicAPI {
+class ReponseKYCMosaicAPI {
   @ApiProperty()
   code: string;
 
@@ -38,10 +39,12 @@ export class QuestionKYCAPI {
   question: string;
   @ApiProperty({ type: [String] })
   reponse: string[];
+  @ApiProperty({ type: [ReponseKYCMosaicAPI] })
+  reponse_mosaic: ReponseKYCMosaicAPI[];
   @ApiProperty({ type: [String] })
   reponses_possibles?: string[];
   @ApiProperty({ type: [ReponseKYCMosaicAPI] })
-  reponses_mosaic: ReponseKYCMosaicAPI[];
+  reponses_possibles_mosaic: ReponseKYCMosaicAPI[];
   @ApiProperty()
   thematique?: string;
 
@@ -49,9 +52,10 @@ export class QuestionKYCAPI {
     let result: QuestionKYCAPI = {
       id: question.id,
       question: question.question,
-      reponse: question.listeReponsesLabels(),
+      reponse: undefined,
+      reponse_mosaic: undefined,
       reponses_possibles: undefined,
-      reponses_mosaic: undefined,
+      reponses_possibles_mosaic: undefined,
       categorie: question.categorie,
       points: question.points,
       type: question.type,
@@ -60,16 +64,43 @@ export class QuestionKYCAPI {
     };
 
     if (question.type === TypeReponseQuestionKYC.mosaic_boolean) {
-      result.reponses_mosaic = question.reponses_possibles.map((r) => ({
-        code: r.code,
-        label: r.label,
-        value_boolean: r.value_boolean,
-        value_number: r.value_number,
-      }));
+      result.reponses_possibles_mosaic = this.mapBooleanMosaicReponses(
+        question.reponses_possibles,
+      );
+      result.reponse_mosaic = this.mapBooleanMosaicReponses(question.reponses);
+    } else if (question.type === TypeReponseQuestionKYC.mosaic_number) {
+      result.reponses_possibles_mosaic = this.mapNumberMosaicReponses(
+        question.reponses_possibles,
+      );
+      result.reponse_mosaic = this.mapNumberMosaicReponses(question.reponses);
     } else {
       result.reponses_possibles = question.listeReponsesPossiblesLabels();
+      result.reponse = question.listeReponsesLabels();
     }
 
     return result;
+  }
+
+  private static mapBooleanMosaicReponses(
+    rep: KYCReponse[],
+  ): ReponseKYCMosaicAPI[] {
+    if (!rep) return [];
+    return rep.map((r) => ({
+      code: r.code,
+      label: r.label,
+      value_boolean: r.value_boolean,
+      value_number: undefined,
+    }));
+  }
+  private static mapNumberMosaicReponses(
+    rep: KYCReponse[],
+  ): ReponseKYCMosaicAPI[] {
+    if (!rep) return [];
+    return rep.map((r) => ({
+      code: r.code,
+      label: r.label,
+      value_boolean: undefined,
+      value_number: r.value_number,
+    }));
   }
 }

@@ -160,7 +160,7 @@ export class ProfileUsecase {
       const kyc = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
         KYCID.KYC006,
       );
-      utilisateur.kyc_history.updateQuestionyCode(KYCID.KYC006, [
+      utilisateur.kyc_history.updateQuestionByCode(KYCID.KYC006, [
         input.plus_de_15_ans
           ? kyc.getLabelByCode('plus_15')
           : kyc.getLabelByCode('moins_15'),

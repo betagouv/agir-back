@@ -48,6 +48,11 @@ export class QuestionKYCUsecase {
     utilisateurId: string,
     questionId: string,
     reponse: string[],
+    reponse_mosaic: {
+      code: string;
+      value_number: number;
+      value_boolean: boolean;
+    }[],
   ): Promise<void> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
@@ -63,7 +68,15 @@ export class QuestionKYCUsecase {
         utilisateur.kyc_history.getUpToDateQuestionOrException(questionId);
       utilisateur.gamification.ajoutePoints(question.points, utilisateur);
     }
-    utilisateur.kyc_history.updateQuestionyCode(questionId, reponse);
+
+    if (reponse_mosaic) {
+      utilisateur.kyc_history.updateQuestionMosaicByCode(
+        questionId,
+        reponse_mosaic,
+      );
+    } else {
+      utilisateur.kyc_history.updateQuestionByCode(questionId, reponse);
+    }
 
     if (questionId === KYCID.KYC006) {
       const kyc = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
