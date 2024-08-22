@@ -108,7 +108,7 @@ export class ProfileUsecase {
     try {
       utilisateur.kyc_history.patchLogement(input);
     } catch (error) {
-      console.error(`Problème lors de la synchro de KYC : ${error.message}`);
+      console.error(`Fail synchro KYCs logement : ${error.message}`);
     }
 
     utilisateur.recomputeRecoTags();

@@ -23,6 +23,7 @@ import { ThematiqueRepository } from '../../../src/infrastructure/repository/the
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { KYC } from '.prisma/client';
 import { Tag } from '../../../src/domain/scoring/tag';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 
 describe('/utilisateurs/id/questionsKYC (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -1079,6 +1080,242 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.logement.plus_de_15_ans).toEqual(true);
   });
+
+  it('PUT /utilisateurs/id/questionsKYC/KYC_DPE - transpose dans logement', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc,
+      logement: {
+        version: 0,
+        dpe: DPE.B,
+      },
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_DPE,
+      question: `YOP`,
+      reponses: [
+        { code: 'A', label: 'A', ngc_code: null },
+        { code: 'B', label: 'B', ngc_code: null },
+        { code: 'C', label: 'C', ngc_code: null },
+        { code: 'D', label: 'D', ngc_code: null },
+        { code: 'E', label: 'E', ngc_code: null },
+        { code: 'F', label: 'F', ngc_code: null },
+        { code: 'G', label: 'G', ngc_code: null },
+        { code: 'ne_sais_pas', label: 'Je ne sais pas', ngc_code: null },
+      ],
+    });
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/KYC_DPE',
+    ).send({ reponse: ['F'] });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.logement.dpe).toEqual('F');
+  });
+
+  it('PUT /utilisateurs/id/questionsKYC/KYC_superficie - transpose dans logement', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [],
+    };
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc,
+      logement: logement,
+    });
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_superficie,
+      question: `YOP`,
+      reponses: [],
+      type: TypeReponseQuestionKYC.entier,
+    });
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/KYC_superficie',
+    ).send({ reponse: ['134'] });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.logement.superficie).toEqual(Superficie.superficie_150);
+  });
+  it('PUT /utilisateurs/id/questionsKYC/KYC_proprietaire - transpose dans logement', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [],
+    };
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: false,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc,
+      logement: logement,
+    });
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_proprietaire,
+      question: `YOP`,
+      reponses: [
+        { code: 'oui', label: 'Oui', ngc_code: null },
+        { code: 'non', label: 'Non', ngc_code: null },
+      ],
+      type: TypeReponseQuestionKYC.choix_unique,
+    });
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/KYC_proprietaire',
+    ).send({ reponse: ['Oui'] });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.logement.proprietaire).toEqual(true);
+  });
+
+  it('PUT /utilisateurs/id/questionsKYC/KYC_chauffage - transpose dans logement', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [],
+    };
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: false,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc,
+      logement: logement,
+    });
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_chauffage,
+      question: `YOP`,
+      reponses: [
+        {
+          code: 'electricite',
+          label: 'Électricité',
+          ngc_code: '"électricité . présent"',
+        },
+        { code: 'bois', label: 'Bois / Pellets', ngc_code: '"bois . présent"' },
+        { code: 'fioul', label: 'Fioul', ngc_code: '"fioul . présent"' },
+        { code: 'gaz', label: 'Gaz', ngc_code: '"gaz . présent"' },
+        {
+          code: 'ne_sais_pas',
+          label: 'Autre ou je ne sais pas',
+          ngc_code: null,
+        },
+      ],
+      type: TypeReponseQuestionKYC.choix_unique,
+    });
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/KYC_chauffage',
+    ).send({ reponse: ['Gaz'] });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.logement.chauffage).toEqual(Chauffage.gaz);
+  });
+
+  it('PUT /utilisateurs/id/questionsKYC/KYC_type_logement - transpose dans logement', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [],
+    };
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: false,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc,
+      logement: logement,
+    });
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_type_logement,
+      question: `YOP`,
+      reponses: [
+        { code: 'type_maison', label: 'Maison', ngc_code: null },
+        { code: 'type_appartement', label: 'Appartement', ngc_code: null },
+      ],
+      type: TypeReponseQuestionKYC.choix_unique,
+    });
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/KYC_type_logement',
+    ).send({ reponse: ['Appartement'] });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.logement.type).toEqual(TypeLogement.appartement);
+  });
+
   it('PUT /utilisateurs/id/questionsKYC/bad - erreur 404 ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);

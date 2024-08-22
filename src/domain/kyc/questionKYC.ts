@@ -245,7 +245,7 @@ export class QuestionKYC implements TaggedContent {
     }
   }
 
-  private getCodeByLabel(label: string): string {
+  public getCodeByLabel(label: string): string {
     if (!this.reponses_possibles) {
       return null;
     }
