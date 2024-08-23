@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { SourceInscription } from '../../../../../domain/utilisateur/utilisateur';
 
 export class CreateUtilisateurAPI {
+  @ApiProperty({ enum: SourceInscription })
+  source_inscription: SourceInscription;
   @ApiProperty()
   nom?: string;
   @ApiProperty()
@@ -14,5 +17,5 @@ export class CreateUtilisateurAPI {
   @ApiProperty()
   annee_naissance: number;
   @ApiProperty({ required: false })
-  mot_de_passe?: string;
+  mot_de_passe: string;
 }

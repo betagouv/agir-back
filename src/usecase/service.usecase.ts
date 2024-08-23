@@ -90,6 +90,10 @@ export class ServiceUsecase {
       serviceDefinitionId,
     );
 
+    if (!service) {
+      await this.addServiceToUtilisateur(utilisateurId, serviceDefinitionId);
+    }
+
     const manager = this.getAsyncServiceManager(serviceDefinitionId);
 
     manager.checkConfiguration(payload);

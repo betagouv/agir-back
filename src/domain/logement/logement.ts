@@ -37,6 +37,7 @@ export class Logement {
   nombre_enfants: number;
   code_postal: string;
   commune: string;
+  commune_label?: string;
   type: TypeLogement;
   superficie: Superficie;
   proprietaire: boolean;
@@ -73,7 +74,9 @@ export class Logement {
     this.proprietaire = this.AorB(input.proprietaire, this.proprietaire);
     this.chauffage = this.AorB(input.chauffage, this.chauffage);
     this.plus_de_15_ans = this.AorB(input.plus_de_15_ans, this.plus_de_15_ans);
+
     this.dpe = this.AorB(input.dpe, this.dpe);
+    
   }
 
   public static buildFromOnboarding(data: Onboarding): Logement {

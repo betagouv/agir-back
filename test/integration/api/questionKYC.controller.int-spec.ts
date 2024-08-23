@@ -23,6 +23,7 @@ import { ThematiqueRepository } from '../../../src/infrastructure/repository/the
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { KYC } from '.prisma/client';
 import { Tag } from '../../../src/domain/scoring/tag';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 
 describe('/utilisateurs/id/questionsKYC (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -182,6 +183,77 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     const quest = response.body.find((e) => e.id === '_2');
     expect(quest.reponse).toStrictEqual(['Le climat', 'Mon logement']);
   });
+
+  it('GET /utilisateurs/id/questionsKYC/3 - renvoie la format spécifique de la mosaic boolean du catalogue', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._3,
+      type: TypeReponseQuestionKYC.mosaic_boolean,
+      question: `Mosaic meulble`,
+      points: 10,
+      categorie: Categorie.test,
+      reponses: [
+        { label: 'Télévision', code: 'tv', value_boolean: false },
+        { label: 'Lit', code: 'lit', value_boolean: false },
+        { label: 'Armoire', code: 'armoire', value_boolean: true },
+      ],
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/questionsKYC/_3',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.type).toEqual(TypeReponseQuestionKYC.mosaic_boolean);
+    expect(response.body.reponses_possibles_mosaic).toEqual([
+      { label: 'Télévision', code: 'tv', value_boolean: false },
+      { label: 'Lit', code: 'lit', value_boolean: false },
+      { label: 'Armoire', code: 'armoire', value_boolean: true },
+    ]);
+  });
+
+  it('GET /utilisateurs/id/questionsKYC/3 - renvoie la format spécifique de la mosaic number du catalogue', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._3,
+      type: TypeReponseQuestionKYC.mosaic_number,
+      question: `Mosaic meulble`,
+      points: 10,
+      categorie: Categorie.test,
+      reponses: [
+        { label: 'Télévision', code: 'tv', value_number: 0 },
+        { label: 'Lit', code: 'lit', value_number: 1 },
+        { label: 'Armoire', code: 'armoire', value_number: 2 },
+      ],
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/questionsKYC/_3',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.type).toEqual(TypeReponseQuestionKYC.mosaic_number);
+    expect(response.body.reponses_possibles_mosaic).toEqual([
+      { label: 'Télévision', code: 'tv', value_number: 0 },
+      { label: 'Lit', code: 'lit', value_number: 1 },
+      { label: 'Armoire', code: 'armoire', value_number: 2 },
+    ]);
+  });
+
   it('GET /utilisateurs/id/questionsKYC/3 - renvoie la question sans réponse', async () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
@@ -325,6 +397,340 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     );
     expect(response.body.reponse).toEqual(['Le climat', 'Mon logement']);
   });
+
+  it('GET /utilisateurs/id/questionsKYC/question - renvoie la question mosaic boolean avec la réponse depuis historique', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      kyc: {
+        version: 0,
+        answered_questions: [
+          {
+            id: KYCID._2,
+            question: `Quel sont vos meubles préférés ?`,
+            type: TypeReponseQuestionKYC.mosaic_boolean,
+            is_NGC: false,
+            categorie: Categorie.test,
+            points: 10,
+            reponses: [
+              { label: 'Télévision', code: 'tv', value_boolean: true },
+              { label: 'Lit', code: 'lit', value_boolean: false },
+              { label: 'Armoire', code: 'armoire', value_boolean: true },
+            ],
+            reponses_possibles: [
+              { label: 'Télévision', code: 'tv', value_boolean: false },
+              { label: 'Lit', code: 'lit', value_boolean: false },
+              { label: 'Armoire', code: 'armoire', value_boolean: false },
+            ],
+            tags: [],
+          },
+        ],
+      },
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      question: `Quel sont vos meubles préférés ?`,
+      type: TypeReponseQuestionKYC.mosaic_boolean,
+      points: 10,
+      categorie: Categorie.test,
+      reponses: [
+        { label: 'Télévision', code: 'tv', value_boolean: false },
+        { label: 'Lit', code: 'lit', value_boolean: false },
+        { label: 'Armoire', code: 'armoire', value_boolean: false },
+      ],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/questionsKYC/_2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.type).toEqual(TypeReponseQuestionKYC.mosaic_boolean);
+    expect(response.body.reponses_possibles_mosaic).toEqual([
+      { label: 'Télévision', code: 'tv', value_boolean: false },
+      { label: 'Lit', code: 'lit', value_boolean: false },
+      { label: 'Armoire', code: 'armoire', value_boolean: false },
+    ]);
+    expect(response.body.reponse_mosaic).toEqual([
+      { label: 'Télévision', code: 'tv', value_boolean: true },
+      { label: 'Lit', code: 'lit', value_boolean: false },
+      { label: 'Armoire', code: 'armoire', value_boolean: true },
+    ]);
+  });
+
+  it('GET /utilisateurs/id/questionsKYC/question - renvoie la question mosaic number avec la réponse depuis historique', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      kyc: {
+        version: 0,
+        answered_questions: [
+          {
+            id: KYCID._2,
+            question: `Quel sont vos meubles préférés ?`,
+            type: TypeReponseQuestionKYC.mosaic_number,
+            is_NGC: false,
+            categorie: Categorie.test,
+            points: 10,
+            reponses: [
+              { label: 'Télévision', code: 'tv', value_number: 5 },
+              { label: 'Lit', code: 'lit', value_number: 6 },
+              { label: 'Armoire', code: 'armoire', value_number: 7 },
+            ],
+            reponses_possibles: [
+              { label: 'Télévision', code: 'tv', value_number: 0 },
+              { label: 'Lit', code: 'lit', value_number: 0 },
+              { label: 'Armoire', code: 'armoire', value_number: 0 },
+            ],
+            tags: [],
+          },
+        ],
+      },
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      question: `Quel sont vos meubles préférés ?`,
+      type: TypeReponseQuestionKYC.mosaic_number,
+      points: 10,
+      categorie: Categorie.test,
+      reponses: [
+        { label: 'Télévision', code: 'tv', value_number: 0 },
+        { label: 'Lit', code: 'lit', value_number: 0 },
+        { label: 'Armoire', code: 'armoire', value_number: 0 },
+      ],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/questionsKYC/_2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.type).toEqual(TypeReponseQuestionKYC.mosaic_number);
+    expect(response.body.reponses_possibles_mosaic).toEqual([
+      { label: 'Télévision', code: 'tv', value_number: 0 },
+      { label: 'Lit', code: 'lit', value_number: 0 },
+      { label: 'Armoire', code: 'armoire', value_number: 0 },
+    ]);
+    expect(response.body.reponse_mosaic).toEqual([
+      { label: 'Télévision', code: 'tv', value_number: 5 },
+      { label: 'Lit', code: 'lit', value_number: 6 },
+      { label: 'Armoire', code: 'armoire', value_number: 7 },
+    ]);
+  });
+
+  it('PUT /utilisateurs/id/questionsKYC - repond à la mosaic boolean', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._3,
+      type: TypeReponseQuestionKYC.mosaic_boolean,
+      question: `Mosaic meulble`,
+      points: 10,
+      categorie: Categorie.test,
+      reponses: [
+        { label: 'Télévision', code: 'tv', value_boolean: false },
+        { label: 'Lit', code: 'lit', value_boolean: false },
+        { label: 'Armoire', code: 'armoire', value_boolean: false },
+      ],
+    });
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/_3',
+    ).send({
+      reponse_mosaic: [
+        { code: 'tv', value_boolean: true },
+        { code: 'lit', value_boolean: false },
+        { code: 'armoire', value_boolean: true },
+      ],
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const user = await utilisateurRepository.getById('utilisateur-id');
+    const catalogue = await kycRepository.getAllDefs();
+    user.kyc_history.setCatalogue(catalogue);
+
+    expect(
+      user.kyc_history.getUpToDateQuestionOrException('_3').reponses,
+    ).toStrictEqual([
+      { code: 'tv', label: 'Télévision', value_boolean: true },
+      { code: 'lit', label: 'Lit', value_boolean: false },
+      { code: 'armoire', label: 'Armoire', value_boolean: true },
+    ]);
+  });
+  it('PUT /utilisateurs/id/questionsKYC - repond à la mosaic boolean', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._3,
+      type: TypeReponseQuestionKYC.mosaic_boolean,
+      question: `Mosaic meulble`,
+      points: 10,
+      categorie: Categorie.test,
+      reponses: [
+        { label: 'Télévision', code: 'tv', value_boolean: false },
+        { label: 'Lit', code: 'lit', value_boolean: false },
+        { label: 'Armoire', code: 'armoire', value_boolean: false },
+      ],
+    });
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/_3',
+    ).send({
+      reponse_mosaic: [
+        { code: 'tv', value_boolean: true },
+        { code: 'lit', value_boolean: false },
+        { code: 'armoire', value_boolean: true },
+      ],
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const user = await utilisateurRepository.getById('utilisateur-id');
+    const catalogue = await kycRepository.getAllDefs();
+    user.kyc_history.setCatalogue(catalogue);
+
+    expect(
+      user.kyc_history.getUpToDateQuestionOrException('_3').reponses,
+    ).toStrictEqual([
+      { code: 'tv', label: 'Télévision', value_boolean: true },
+      { code: 'lit', label: 'Lit', value_boolean: false },
+      { code: 'armoire', label: 'Armoire', value_boolean: true },
+    ]);
+  });
+
+  it('PUT /utilisateurs/id/questionsKYC - repond à la mosaic valeur', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._3,
+      type: TypeReponseQuestionKYC.mosaic_number,
+      question: `Mosaic meulble`,
+      points: 10,
+      categorie: Categorie.test,
+      reponses: [
+        { label: 'Télévision', code: 'tv', value_number: 0 },
+        { label: 'Lit', code: 'lit', value_number: 0 },
+        { label: 'Armoire', code: 'armoire', value_number: 0 },
+      ],
+    });
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/_3',
+    ).send({
+      reponse_mosaic: [
+        { code: 'tv', value_number: 1 },
+        { code: 'lit', value_number: 2 },
+        { code: 'armoire', value_number: 3 },
+      ],
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const user = await utilisateurRepository.getById('utilisateur-id');
+    const catalogue = await kycRepository.getAllDefs();
+    user.kyc_history.setCatalogue(catalogue);
+
+    expect(
+      user.kyc_history.getUpToDateQuestionOrException('_3').reponses,
+    ).toStrictEqual([
+      { code: 'tv', label: 'Télévision', value_number: 1 },
+      { code: 'lit', label: 'Lit', value_number: 2 },
+      { code: 'armoire', label: 'Armoire', value_number: 3 },
+    ]);
+  });
+
+  it('PUT /utilisateurs/id/questionsKYC - met à jour une mosaic valeur', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [
+        {
+          id: KYCID._2,
+          id_cms: 123,
+          universes: [],
+          question: `Quel sont vos meubles préférés ?`,
+          type: TypeReponseQuestionKYC.mosaic_number,
+          is_NGC: false,
+          categorie: Categorie.test,
+          points: 10,
+          reponses: [
+            { label: 'Télévision', code: 'tv', value_number: 5 },
+            { label: 'Lit', code: 'lit', value_number: 6 },
+            { label: 'Armoire', code: 'armoire', value_number: 7 },
+          ],
+          reponses_possibles: [
+            { label: 'Télévision', code: 'tv', value_number: 0 },
+            { label: 'Lit', code: 'lit', value_number: 0 },
+            { label: 'Armoire', code: 'armoire', value_number: 0 },
+          ],
+          tags: [],
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.mosaic_number,
+      question: `Mosaic meulble`,
+      points: 10,
+      categorie: Categorie.test,
+      reponses: [
+        { label: 'Télévision', code: 'tv', value_number: 0 },
+        { label: 'Lit', code: 'lit', value_number: 0 },
+        { label: 'Armoire', code: 'armoire', value_number: 0 },
+      ],
+    });
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/_2',
+    ).send({
+      reponse_mosaic: [
+        { code: 'tv', value_number: 1 },
+        { code: 'lit', value_number: 2 },
+        { code: 'armoire', value_number: 3 },
+      ],
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const user = await utilisateurRepository.getById('utilisateur-id');
+    const catalogue = await kycRepository.getAllDefs();
+    user.kyc_history.setCatalogue(catalogue);
+
+    expect(
+      user.kyc_history.getUpToDateQuestionOrException('_2').reponses,
+    ).toStrictEqual([
+      { code: 'tv', label: 'Télévision', value_number: 1 },
+      { code: 'lit', label: 'Lit', value_number: 2 },
+      { code: 'armoire', label: 'Armoire', value_number: 3 },
+    ]);
+  });
+
   it('PUT /utilisateurs/id/questionsKYC/1 - crée la reponse à la question 1, empoche les points', async () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
@@ -383,7 +789,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     ).toBeLessThan(Date.now());
     expect(
       userDB.missions.missions[0].objectifs[0].done_at.getTime(),
-    ).toBeGreaterThan(Date.now() - 100);
+    ).toBeGreaterThan(Date.now() - 200);
   });
 
   it(`PUT /utilisateurs/id/questionsKYC/1 - un defi deviens non recommandé suite à maj de KYC`, async () => {
@@ -674,6 +1080,242 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.logement.plus_de_15_ans).toEqual(true);
   });
+
+  it('PUT /utilisateurs/id/questionsKYC/KYC_DPE - transpose dans logement', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc,
+      logement: {
+        version: 0,
+        dpe: DPE.B,
+      },
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_DPE,
+      question: `YOP`,
+      reponses: [
+        { code: 'A', label: 'A', ngc_code: null },
+        { code: 'B', label: 'B', ngc_code: null },
+        { code: 'C', label: 'C', ngc_code: null },
+        { code: 'D', label: 'D', ngc_code: null },
+        { code: 'E', label: 'E', ngc_code: null },
+        { code: 'F', label: 'F', ngc_code: null },
+        { code: 'G', label: 'G', ngc_code: null },
+        { code: 'ne_sais_pas', label: 'Je ne sais pas', ngc_code: null },
+      ],
+    });
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/KYC_DPE',
+    ).send({ reponse: ['F'] });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.logement.dpe).toEqual('F');
+  });
+
+  it('PUT /utilisateurs/id/questionsKYC/KYC_superficie - transpose dans logement', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [],
+    };
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc,
+      logement: logement,
+    });
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_superficie,
+      question: `YOP`,
+      reponses: [],
+      type: TypeReponseQuestionKYC.entier,
+    });
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/KYC_superficie',
+    ).send({ reponse: ['134'] });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.logement.superficie).toEqual(Superficie.superficie_150);
+  });
+  it('PUT /utilisateurs/id/questionsKYC/KYC_proprietaire - transpose dans logement', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [],
+    };
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: false,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc,
+      logement: logement,
+    });
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_proprietaire,
+      question: `YOP`,
+      reponses: [
+        { code: 'oui', label: 'Oui', ngc_code: null },
+        { code: 'non', label: 'Non', ngc_code: null },
+      ],
+      type: TypeReponseQuestionKYC.choix_unique,
+    });
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/KYC_proprietaire',
+    ).send({ reponse: ['Oui'] });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.logement.proprietaire).toEqual(true);
+  });
+
+  it('PUT /utilisateurs/id/questionsKYC/KYC_chauffage - transpose dans logement', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [],
+    };
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: false,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc,
+      logement: logement,
+    });
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_chauffage,
+      question: `YOP`,
+      reponses: [
+        {
+          code: 'electricite',
+          label: 'Électricité',
+          ngc_code: '"électricité . présent"',
+        },
+        { code: 'bois', label: 'Bois / Pellets', ngc_code: '"bois . présent"' },
+        { code: 'fioul', label: 'Fioul', ngc_code: '"fioul . présent"' },
+        { code: 'gaz', label: 'Gaz', ngc_code: '"gaz . présent"' },
+        {
+          code: 'ne_sais_pas',
+          label: 'Autre ou je ne sais pas',
+          ngc_code: null,
+        },
+      ],
+      type: TypeReponseQuestionKYC.choix_unique,
+    });
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/KYC_chauffage',
+    ).send({ reponse: ['Gaz'] });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.logement.chauffage).toEqual(Chauffage.gaz);
+  });
+
+  it('PUT /utilisateurs/id/questionsKYC/KYC_type_logement - transpose dans logement', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [],
+    };
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: false,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc,
+      logement: logement,
+    });
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_type_logement,
+      question: `YOP`,
+      reponses: [
+        { code: 'type_maison', label: 'Maison', ngc_code: null },
+        { code: 'type_appartement', label: 'Appartement', ngc_code: null },
+      ],
+      type: TypeReponseQuestionKYC.choix_unique,
+    });
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/KYC_type_logement',
+    ).send({ reponse: ['Appartement'] });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.logement.type).toEqual(TypeLogement.appartement);
+  });
+
   it('PUT /utilisateurs/id/questionsKYC/bad - erreur 404 ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);

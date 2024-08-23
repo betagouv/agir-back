@@ -155,6 +155,25 @@ export class RechecheServicesController extends GenericControler {
     return result.map((r) => ServiceRechercheAPI.mapToAPI(r));
   }
 
+  @Get('utilisateurs/:utilisateurId/recherche_services')
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Liste des service disponible sur la home`,
+  })
+  @ApiOkResponse({
+    type: [ServiceRechercheAPI],
+  })
+  async getListeServicesHome(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<ServiceRechercheAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.rechercheServicesUsecase.getListServiceDefHome(
+      utilisateurId,
+    );
+    return result.map((r) => ServiceRechercheAPI.mapToAPI(r));
+  }
+
   @Post(
     'utilisateurs/:utilisateurId/recherche_services/:serviceId/last_results/:resultId/add_to_favoris',
   )

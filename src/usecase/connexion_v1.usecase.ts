@@ -42,6 +42,14 @@ export class Connexion_v1_Usecase {
     email: string,
     password: string,
   ): Promise<{ token: string; utilisateur: Utilisateur }> {
+    if (!email || email === '') {
+      ApplicationError.throwMissinEmail();
+    }
+
+    if (!password || password === '') {
+      ApplicationError.throwMissinPassword();
+    }
+
     const utilisateur = await this.utilisateurRepository.findByEmail(email);
     if (!utilisateur) {
       ApplicationError.throwBadPasswordOrEmailError();

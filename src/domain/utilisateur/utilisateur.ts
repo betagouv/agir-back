@@ -20,12 +20,19 @@ import { QuestionKYC } from '../kyc/questionKYC';
 import { MissionsUtilisateur } from '../mission/missionsUtilisateur';
 import { Feature } from '../gamification/feature';
 import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServices';
+import { KYCID } from '../kyc/KYCID';
 
 export enum UtilisateurStatus {
   default = 'default',
   creation_compte_etape_1 = 'creation_compte_etape_1',
   connexion_etape_1 = 'connexion_etape_1',
   mot_de_passe_oublie_etape_1 = 'mot_de_passe_oublie_etape_1',
+}
+
+export enum SourceInscription {
+  web = 'web',
+  mobile = 'mobile',
+  inconnue = 'inconnue',
 }
 
 export class UtilisateurData {
@@ -78,6 +85,7 @@ export class UtilisateurData {
   rank_commune: number;
   status: UtilisateurStatus;
   couverture_aides_ok: boolean;
+  source_inscription: SourceInscription;
 }
 
 export class Utilisateur extends UtilisateurData {
@@ -105,6 +113,7 @@ export class Utilisateur extends UtilisateurData {
     code_postal: string,
     commune: string,
     is_magic_link: boolean,
+    source_inscription: SourceInscription,
   ): Utilisateur {
     return new Utilisateur({
       nom: nom,
@@ -187,6 +196,7 @@ export class Utilisateur extends UtilisateurData {
       points_classement: 0,
       status: UtilisateurStatus.default,
       couverture_aides_ok: false,
+      source_inscription: source_inscription,
     });
   }
 
@@ -202,7 +212,12 @@ export class Utilisateur extends UtilisateurData {
   }
 
   public isOnboardingDone?(): boolean {
-    return !!this.prenom && !!this.logement.code_postal;
+    const KYC_preference_answered = this.kyc_history.isQuestionAnsweredByCode(
+      KYCID.KYC_preference,
+    );
+    return (
+      !!this.prenom && !!this.logement.code_postal && KYC_preference_answered
+    );
   }
 
   public isMagicLinkCodeExpired?(): boolean {

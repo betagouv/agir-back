@@ -24,6 +24,14 @@ export class Connexion_v2_Usecase {
   ) {}
 
   async loginUtilisateur(email: string, password: string) {
+    if (!email || email === '') {
+      ApplicationError.throwMissinEmail();
+    }
+
+    if (!password || password === '') {
+      ApplicationError.throwMissinPassword();
+    }
+
     const utilisateur = await this.utilisateurRepository.findByEmail(email);
     if (!utilisateur) {
       ApplicationError.throwBadPasswordOrEmailError();

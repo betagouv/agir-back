@@ -1,9 +1,27 @@
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
+import { LogementAPI } from '../../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
 import { Categorie } from '../contenu/categorie';
 import { ConditionDefi } from '../defis/conditionDefi';
+import { Chauffage, DPE, Superficie, TypeLogement } from '../logement/logement';
 import { KYCHistory_v0 as KYCHistory_v0 } from '../object_store/kyc/kycHistory_v0';
+import { Utilisateur } from '../utilisateur/utilisateur';
 import { KycDefinition } from './kycDefinition';
+import { KYCID } from './KYCID';
 import { QuestionKYC, TypeReponseQuestionKYC } from './questionKYC';
+
+type LogementInput = {
+  nombre_adultes: number;
+  nombre_enfants: number;
+  code_postal: string;
+  commune: string;
+  commune_label: string;
+  type: TypeLogement;
+  superficie: Superficie;
+  proprietaire: boolean;
+  chauffage: Chauffage;
+  plus_de_15_ans: boolean;
+  dpe: DPE;
+};
 
 export class KYCHistory {
   answered_questions: QuestionKYC[];
@@ -39,6 +57,62 @@ export class KYCHistory {
     });
 
     return result;
+  }
+
+  public patchLogement(input: LogementInput) {
+    if (input.dpe) {
+      this.updateQuestionByCode(KYCID.KYC_DPE, [input.dpe]);
+    }
+    if (input.superficie) {
+      const value: Record<Superficie, number> = {
+        superficie_35: 34,
+        superficie_70: 69,
+        superficie_100: 99,
+        superficie_150: 149,
+        superficie_150_et_plus: 200,
+      };
+      this.updateQuestionByCode(KYCID.KYC_superficie, [
+        value[input.superficie].toString(),
+      ]);
+    }
+    if (input.proprietaire !== undefined && input.proprietaire !== null) {
+      this.updateQuestionByCodeWithCode(
+        KYCID.KYC_proprietaire,
+        input.proprietaire ? 'oui' : 'non',
+      );
+    }
+    if (input.chauffage) {
+      const value: Record<Chauffage, string> = {
+        gaz: 'gaz',
+        fioul: 'fioul',
+        electricite: 'electricite',
+        bois: 'bois',
+        autre: 'ne_sais_pas',
+      };
+      this.updateQuestionByCodeWithCode(
+        KYCID.KYC_chauffage,
+        value[input.chauffage],
+      );
+    }
+    if (input.nombre_adultes && input.nombre_enfants) {
+      this.updateQuestionByCode(KYCID.KYC_menage, [
+        '' + (input.nombre_adultes + input.nombre_enfants),
+      ]);
+    }
+    if (input.type) {
+      this.updateQuestionByCodeWithCode(
+        KYCID.KYC_type_logement,
+        input.type === TypeLogement.appartement
+          ? 'type_appartement'
+          : 'type_maison',
+      );
+    }
+    if (input.plus_de_15_ans !== undefined && input.plus_de_15_ans !== null) {
+      this.updateQuestionByCodeWithCode(
+        KYCID.KYC006,
+        input.plus_de_15_ans ? 'plus_15' : 'moins_15',
+      );
+    }
   }
 
   public getKYCRestantes(
@@ -113,27 +187,60 @@ export class KYCHistory {
     return result;
   }
 
-  public isQuestionAnswered(id: string): boolean {
-    return !!this.getAnsweredQuestionByCode(id);
+  public isQuestionAnsweredByCode(code: string): boolean {
+    return !!this.getAnsweredQuestionByCode(code);
   }
 
-  public updateQuestion(questionId: string, reponses: string[]) {
-    let question = this.getAnsweredQuestionByCode(questionId);
+  public updateQuestionByCode(code: string, reponses: string[]) {
+    let question = this.getAnsweredQuestionByCode(code);
     if (question) {
       question.setResponses(reponses);
     } else {
-      let question_catalogue =
-        this.getKYCByCodeFromCatalogueOrException(questionId);
+      let question_catalogue = this.getKYCByCodeFromCatalogueOrException(code);
       question_catalogue.setResponses(reponses);
       this.answered_questions.push(question_catalogue);
     }
   }
 
-  public checkQuestionExists(questionId: string) {
+  public updateQuestionByCodeWithCode(
+    code_question: string,
+    code_reponse: string,
+  ) {
+    let question = this.getAnsweredQuestionByCode(code_question);
+    if (question) {
+      question.setResponseByCode(code_reponse);
+    } else {
+      let question_catalogue =
+        this.getKYCByCodeFromCatalogueOrException(code_question);
+      question_catalogue.setResponseByCode(code_reponse);
+      this.answered_questions.push(question_catalogue);
+    }
+  }
+
+  public updateQuestionMosaicByCode(
+    questionId: string,
+    mosaic: {
+      code: string;
+      value_number: number;
+      value_boolean: boolean;
+    }[],
+  ) {
+    let question = this.getAnsweredQuestionByCode(questionId);
+    if (question) {
+      question.setMosaicResponses(mosaic);
+    } else {
+      let question_catalogue =
+        this.getKYCByCodeFromCatalogueOrException(questionId);
+      question_catalogue.setMosaicResponses(mosaic);
+      this.answered_questions.push(question_catalogue);
+    }
+  }
+
+  public checkQuestionExistsByCode(questionId: string) {
     this.getKYCDefinitionByCodeOrException(questionId);
   }
 
-  private getAnsweredQuestionByCode(id: string): QuestionKYC {
+  public getAnsweredQuestionByCode(id: string): QuestionKYC {
     return this.answered_questions.find((element) => element.id === id);
   }
   public getAnsweredQuestionByCMS_ID(cms_id: number): QuestionKYC {
@@ -163,10 +270,5 @@ export class KYCHistory {
 
   private getKYCDefinitionByCodeOrNull(code: string): KycDefinition {
     return this.catalogue.find((element) => element.code === code);
-  }
-
-  private getKYCById(id: string): QuestionKYC {
-    const def = this.catalogue.find((element) => element.code === id);
-    return def ? QuestionKYC.buildFromDef(def) : null;
   }
 }

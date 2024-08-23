@@ -12,6 +12,8 @@ export enum TypeReponseQuestionKYC {
   choix_multiple = 'choix_multiple',
   entier = 'entier',
   decimal = 'decimal',
+  mosaic_boolean = 'mosaic_boolean',
+  mosaic_number = 'mosaic_number',
 }
 
 export enum BooleanKYC {
@@ -24,6 +26,13 @@ export class KYCReponse {
   code: string;
   label: string;
   ngc_code?: string;
+  value_boolean?: boolean;
+  value_number?: number;
+}
+export class KYCMosaicReponse {
+  code: string;
+  value_boolean?: boolean;
+  value_number?: number;
 }
 
 export class QuestionKYC implements TaggedContent {
@@ -164,6 +173,62 @@ export class QuestionKYC implements TaggedContent {
       });
     });
   }
+  public setResponseByCode(code: string) {
+    if (this.type !== TypeReponseQuestionKYC.choix_unique) return;
+    const reponse = this.getReponsePossibleByCodeOrException(code);
+    this.reponses = [];
+    this.reponses.push({
+      label: reponse.label,
+      code: code,
+      ngc_code: reponse.ngc_code,
+    });
+  }
+
+  public setMosaicResponses(
+    mosaic: {
+      code: string;
+      value_number?: number;
+      value_boolean?: boolean;
+    }[],
+  ) {
+    this.reponses = [];
+    this.reponses_possibles.forEach((r_possible) => {
+      this.reponses.push({
+        label: r_possible.label,
+        code: r_possible.code,
+        ngc_code: r_possible.ngc_code,
+        value_number: this.getFromMosaicSingleValueOrException(
+          r_possible,
+          mosaic,
+        ).value_number,
+        value_boolean: this.getFromMosaicSingleValueOrException(
+          r_possible,
+          mosaic,
+        ).value_boolean,
+      });
+    });
+  }
+
+  private getFromMosaicSingleValueOrException(
+    reponse_def: KYCReponse,
+    mosaic: {
+      code: string;
+      value_number?: number;
+      value_boolean?: boolean;
+    }[],
+  ): {
+    value_number?: number;
+    value_boolean?: boolean;
+  } {
+    const found = mosaic.find((m) => m.code === reponse_def.code);
+    if (found) {
+      return {
+        value_number: found.value_number,
+        value_boolean: found.value_boolean,
+      };
+    }
+    ApplicationError.throwMissinMosaicCode(reponse_def.code);
+  }
 
   private checkReponseExists(reponses: string[]) {
     if (
@@ -180,18 +245,32 @@ export class QuestionKYC implements TaggedContent {
     }
   }
 
-  private getCodeByLabel(label: string): string {
+  public getCodeByLabel(label: string): string {
     if (!this.reponses_possibles) {
       return null;
     }
     const found = this.reponses_possibles.find((r) => r.label === label);
     return found ? found.code : null;
   }
+
   private getNGCCodeByLabel(label: string): string {
     if (!this.reponses_possibles) {
       return null;
     }
     const found = this.reponses_possibles.find((r) => r.label === label);
+    return found ? found.ngc_code : null;
+  }
+
+  private getReponsePossibleByCodeOrException(code: string): KYCReponse {
+    const found = this.reponses_possibles.find((q) => q.code === code);
+    if (!found) ApplicationError.throwBadResponseCode(this.question, code);
+    return found;
+  }
+  private getNGCCodeByCode(code: string): string {
+    if (!this.reponses_possibles) {
+      return null;
+    }
+    const found = this.reponses_possibles.find((r) => r.code === code);
     return found ? found.ngc_code : null;
   }
 }

@@ -30,15 +30,6 @@ export class GenericControler {
       .catch(() => {});
   }
 
-  checkCallerIsAdmin(req: Request) {
-    if (!this.isCallerAdmin(req)) {
-      throw new ForbiddenException({
-        code: '002',
-        message: 'Vous ne pouvez pas accéder à cette API',
-      });
-    }
-  }
-
   isCallerAdmin(req: Request) {
     return App.isAdmin(AuthGuard.getUtilisateurIdFromTokenInRequest(req));
   }

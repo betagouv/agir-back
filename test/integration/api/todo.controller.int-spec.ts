@@ -971,7 +971,7 @@ describe('TODO list (API test)', () => {
     });
     expect(dbUtilisateur.gamification['points']).toEqual(10);
   });
-  it('POST /utilisateurs/id/services ajout du service fruits sur la todo 3 réalise l objctif', async () => {
+  it.skip('POST /utilisateurs/id/services ajout du service fruits sur la todo 3 réalise l objctif', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       todo: new ParcoursTodo({

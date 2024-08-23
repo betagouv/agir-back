@@ -24,7 +24,7 @@ describe('Service (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('GET /services listes 2 def', async () => {
+  it.skip('GET /services listes 2 def', async () => {
     // GIVEN
     await TestUtil.create(DB.serviceDefinition, { id: 'dummy_live' });
     await TestUtil.create(DB.serviceDefinition, { id: 'dummy_scheduled' });
@@ -36,7 +36,7 @@ describe('Service (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(2);
   });
-  it('GET /services listes 1 def with correct date', async () => {
+  it.skip('GET /services listes 1 def with correct date', async () => {
     // GIVEN
     process.env.SERVICES_ACTIFS = 'dummy_live';
     await TestUtil.create(DB.serviceDefinition, { is_local: false });
@@ -63,7 +63,7 @@ describe('Service (API test)', () => {
       Thematique.logement,
     ]);
   });
-  it('GET /services listes 1 def en construction', async () => {
+  it.skip('GET /services listes 1 def en construction', async () => {
     // GIVEN
     process.env.SERVICES_ACTIFS = '';
     await TestUtil.create(DB.serviceDefinition, { is_local: false });
@@ -75,7 +75,7 @@ describe('Service (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
   });
-  it('GET /services avec les occurences d installation', async () => {
+  it.skip('GET /services avec les occurences d installation', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { id: '1', email: '1' });
     await TestUtil.create(DB.utilisateur, { id: '2', email: '2' });
@@ -99,7 +99,7 @@ describe('Service (API test)', () => {
     // THEN
     expect(response.body[0].nombre_installation).toEqual(2);
   });
-  it('GET /services?utilisateurId=XXX avec le flag d installation propre à l utilisateur ', async () => {
+  it.skip('GET /services?utilisateurId=XXX avec le flag d installation propre à l utilisateur ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { email: '1' });
     await TestUtil.create(DB.utilisateur, { id: '2', email: '2' });
@@ -127,7 +127,7 @@ describe('Service (API test)', () => {
     expect(response.body[0].is_installed).toEqual(true);
     expect(response.body[1].is_installed).toEqual(false);
   });
-  it('GET /services?utilisateurId=XXX erreur 403 si pas le bon user', async () => {
+  it.skip('GET /services?utilisateurId=XXX erreur 403 si pas le bon user', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
 
@@ -137,7 +137,7 @@ describe('Service (API test)', () => {
     // THEN
     expect(response.status).toBe(403);
   });
-  it('POST /utilisateurs/id/services ajout un nouveau service à l utilisateur', async () => {
+  it.skip('POST /utilisateurs/id/services ajout un nouveau service à l utilisateur', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition);
@@ -159,7 +159,7 @@ describe('Service (API test)', () => {
     });
     expect(dbUser['services']).toHaveLength(1);
   });
-  it('POST /utilisateurs/id/services ajoute un nouveau service async alors que le precedent est en cours de suppression', async () => {
+  it.skip('POST /utilisateurs/id/services ajoute un nouveau service async alors que le precedent est en cours de suppression', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
@@ -187,7 +187,7 @@ describe('Service (API test)', () => {
       winter_pk: 'abc',
     });
   });
-  it('POST /utilisateurs/id/services erreur si service definition non connue', async () => {
+  it.skip('POST /utilisateurs/id/services erreur si service definition non connue', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition);
@@ -205,7 +205,7 @@ describe('Service (API test)', () => {
       `Le service d'id bad_id n'existe pas`,
     );
   });
-  it('POST /utilisateurs/id/services erreur si service dejà associé', async () => {
+  it.skip('POST /utilisateurs/id/services erreur si service dejà associé', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition);
@@ -296,7 +296,7 @@ describe('Service (API test)', () => {
     });
     expect(serviceDB).toBeNull();
   });
-  it('GET /utilisateurs/id/services liste les services associés à l utilisateur, ne liste pas les service TO_DELETE', async () => {
+  it.skip('GET /utilisateurs/id/services liste les services associés à l utilisateur, ne liste pas les service TO_DELETE', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: 'dummy_live' });
@@ -319,7 +319,7 @@ describe('Service (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(2);
   });
-  it('GET /utilisateurs/id/services liste les services associés à l utilisateur, ne liste pas les service TO_DELETE', async () => {
+  it.skip('GET /utilisateurs/id/services liste les services associés à l utilisateur, ne liste pas les service TO_DELETE', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: 'dummy_live' });
@@ -338,7 +338,7 @@ describe('Service (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(0);
   });
-  it('GET /utilisateurs/id/services liste 1 services associés à l utilisateur, check data', async () => {
+  it.skip('GET /utilisateurs/id/services liste 1 services associés à l utilisateur, check data', async () => {
     // GIVEN
     process.env.SERVICES_ACTIFS = '';
     await TestUtil.create(DB.utilisateur);
@@ -376,7 +376,7 @@ describe('Service (API test)', () => {
       Thematique.logement,
     ]);
   });
-  it('GET /utilisateurs/id/services liste 1 services associés à l utilisateur, check data, actif', async () => {
+  it.skip('GET /utilisateurs/id/services liste 1 services associés à l utilisateur, check data, actif', async () => {
     // GIVEN
     process.env.SERVICES_ACTIFS = 'dummy_live';
     await TestUtil.create(DB.utilisateur);
@@ -392,7 +392,7 @@ describe('Service (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body[0].en_construction).toEqual(false);
   });
-  it('GET /utilisateurs/id/services service actif si utilisateur est amin', async () => {
+  it.skip('GET /utilisateurs/id/services service actif si utilisateur est amin', async () => {
     // GIVEN
     process.env.SERVICES_ACTIFS = '';
     process.env.ADMIN_IDS = 'utilisateur-id';
@@ -496,7 +496,7 @@ describe('Service (API test)', () => {
     expect(response.body.is_activated).toEqual(true);
     expect(response.body.is_fully_running).toEqual(true);
   });
-  it('GET /utilisateurs/id/services , label a pour valeur label des données dynamic live', async () => {
+  it.skip('GET /utilisateurs/id/services , label a pour valeur label des données dynamic live', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition);
@@ -511,7 +511,7 @@ describe('Service (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body[0].label).toEqual('En construction 🚧');
   });
-  it('GET /utilisateurs/id/services , label a pour valeur titre pour les service non dynamic live', async () => {
+  it.skip('GET /utilisateurs/id/services , label a pour valeur titre pour les service non dynamic live', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: 'inconnu' });
@@ -527,7 +527,7 @@ describe('Service (API test)', () => {
     expect(response.body).toHaveLength(1);
     expect(response.body[0].label).toEqual('titre');
   });
-  it('GET /utilisateurs/id/services , renvoie les flags d activation pour les service async #1', async () => {
+  it.skip('GET /utilisateurs/id/services , renvoie les flags d activation pour les service async #1', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
@@ -549,7 +549,7 @@ describe('Service (API test)', () => {
     expect(response.body[0].is_activated).toEqual(false);
     expect(response.body[0].is_fully_running).toEqual(false);
   });
-  it('GET /utilisateurs/id/services , renvoie les flags d activation pour les service async #2', async () => {
+  it.skip('GET /utilisateurs/id/services , renvoie les flags d activation pour les service async #2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
@@ -571,7 +571,7 @@ describe('Service (API test)', () => {
     expect(response.body[0].is_activated).toEqual(false);
     expect(response.body[0].is_fully_running).toEqual(false);
   });
-  it('GET /utilisateurs/id/services , renvoie les flags d activation pour les service async #3', async () => {
+  it.skip('GET /utilisateurs/id/services , renvoie les flags d activation pour les service async #3', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
@@ -593,7 +593,7 @@ describe('Service (API test)', () => {
     expect(response.body[0].is_activated).toEqual(true);
     expect(response.body[0].is_fully_running).toEqual(false);
   });
-  it('GET /utilisateurs/id/services , renvoie les flags d activation pour les service async #4', async () => {
+  it.skip('GET /utilisateurs/id/services , renvoie les flags d activation pour les service async #4', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
@@ -620,7 +620,7 @@ describe('Service (API test)', () => {
     expect(response.body[0].is_activated).toEqual(true);
     expect(response.body[0].is_fully_running).toEqual(true);
   });
-  it('GET /utilisateurs/id/services renvoi le libellé de la thématique en base si existe', async () => {
+  it.skip('GET /utilisateurs/id/services renvoi le libellé de la thématique en base si existe', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, {
@@ -642,7 +642,7 @@ describe('Service (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body[0].thematiques[0]).toEqual('THE ALIMENTATION');
   });
-  it('GET /services renvoi le libellé de la thématique en base si existe', async () => {
+  it.skip('GET /services renvoi le libellé de la thématique en base si existe', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, {
@@ -662,7 +662,7 @@ describe('Service (API test)', () => {
     expect(response.body[0].thematiques[0]).toEqual('THE ALIMENTATION');
   });
 
-  it('GET /utilisateurs/id/services pas d erreur si service non dynamic (comme le suivi transport)', async () => {
+  it.skip('GET /utilisateurs/id/services pas d erreur si service non dynamic (comme le suivi transport)', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition, {

@@ -17,4 +17,11 @@ export enum KYCID {
   _3 = '_3',
   _4 = '_4',
   _5 = '_5',
+  KYC_preference = 'KYC_preference',
+  KYC_DPE = 'KYC_DPE',
+  KYC_superficie = 'KYC_superficie',
+  KYC_proprietaire = 'KYC_proprietaire',
+  KYC_chauffage = 'KYC_chauffage',
+  KYC_menage = 'KYC_menage',
+  KYC_type_logement = 'KYC_type_logement',
 }

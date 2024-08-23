@@ -1,0 +1,282 @@
+[
+  {
+    "id": 93,
+    "name": "Abats"
+  },
+  {
+    "id": 99,
+    "name": "Autres matières grasses animales"
+  },
+  {
+    "id": 25,
+    "name": "Beurres et matières grasses laitières"
+  },
+  {
+    "id": 78,
+    "name": "Bières et similaires"
+  },
+  {
+    "id": 17,
+    "name": "Biscottes et pains non levés"
+  },
+  {
+    "id": 80,
+    "name": "Biscuits salés apéritifs"
+  },
+  {
+    "id": 79,
+    "name": "Biscuits secs sucrés"
+  },
+  {
+    "id": 100,
+    "name": "Boissons rafraîchissantes sans alcool"
+  },
+  {
+    "id": 12,
+    "name": "Bouillons prêts à consommer"
+  },
+  {
+    "id": 87,
+    "name": "Café, thé, infusions, boissons au cacao"
+  },
+  {
+    "id": 89,
+    "name": "Céréales petit déjeuner et barres céréalières"
+  },
+  {
+    "id": 10,
+    "name": "Charcuteries et salaisons"
+  },
+  {
+    "id": 86,
+    "name": "Chocolats et produits à base de chocolat"
+  },
+  {
+    "id": 92,
+    "name": "Cidres et similaires"
+  },
+  {
+    "id": 102,
+    "name": "Cocktails"
+  },
+  {
+    "id": 98,
+    "name": "Compléments alimentaires"
+  },
+  {
+    "id": 103,
+    "name": "Confiseries non chocolatées"
+  },
+  {
+    "id": 90,
+    "name": "Confitures"
+  },
+  {
+    "id": 4,
+    "name": "Crèmes et spécialités à base de crème"
+  },
+  {
+    "id": 77,
+    "name": "Crustacés et mollusques non transformés"
+  },
+  {
+    "id": 91,
+    "name": "Desserts lactés frais ou UHT"
+  },
+  {
+    "id": 45,
+    "name": "Eaux"
+  },
+  {
+    "id": 96,
+    "name": "Entremets et glaces"
+  },
+  {
+    "id": 46,
+    "name": "Farines et amidons"
+  },
+  {
+    "id": 67,
+    "name": "Fromages"
+  },
+  {
+    "id": 94,
+    "name": "Fromages affinés à pâte ferme"
+  },
+  {
+    "id": 83,
+    "name": "Fromages affinés à pâte molle"
+  },
+  {
+    "id": 82,
+    "name": "Fromages affinés à pâte persillée"
+  },
+  {
+    "id": 18,
+    "name": "Fromages blancs ultrafrais"
+  },
+  {
+    "id": 88,
+    "name": "Fromages fondus"
+  },
+  {
+    "id": 109,
+    "name": "Fromages non affinés et spécialités fromagères"
+  },
+  {
+    "id": 1,
+    "name": "Fruits"
+  },
+  {
+    "id": 105,
+    "name": "Gâteaux et pâtisseries"
+  },
+  {
+    "id": 15,
+    "name": "Graines oléagineuses et châtaignes"
+  },
+  {
+    "id": 11,
+    "name": "Herbes, épices et assaisonnements"
+  },
+  {
+    "id": 22,
+    "name": "Huiles et graisses végétales"
+  },
+  {
+    "id": 51,
+    "name": "Jus et nectars"
+  },
+  {
+    "id": 7,
+    "name": "Laits"
+  },
+  {
+    "id": 8,
+    "name": "Légumes"
+  },
+  {
+    "id": 50,
+    "name": "Légumes secs"
+  },
+  {
+    "id": 81,
+    "name": "Liqueurs et alcools"
+  },
+  {
+    "id": 101,
+    "name": "Margarines et matières grasses composées"
+  },
+  {
+    "id": 23,
+    "name": "Oeufs et dérivés"
+  },
+  {
+    "id": 21,
+    "name": "Pains"
+  },
+  {
+    "id": 43,
+    "name": "Pâtes"
+  },
+  {
+    "id": 97,
+    "name": "Pâtes et semoules"
+  },
+  {
+    "id": 110,
+    "name": "Pizzas, crêpes et tartes salées"
+  },
+  {
+    "id": 111,
+    "name": "Plats à base de céréales ou pâtes"
+  },
+  {
+    "id": 112,
+    "name": "Plats à base de fromage"
+  },
+  {
+    "id": 106,
+    "name": "Plats à base de légumes ou légumineuses"
+  },
+  {
+    "id": 113,
+    "name": "Plats à base de poisson ou produits aquatiques"
+  },
+  {
+    "id": 107,
+    "name": "Plats à base de viande ou volaille"
+  },
+  {
+    "id": 104,
+    "name": "Plats composés"
+  },
+  {
+    "id": 6,
+    "name": "Poissons et batraciens non transformés"
+  },
+  {
+    "id": 47,
+    "name": "Pommes de terre et apparentés"
+  },
+  {
+    "id": 114,
+    "name": "Préparations pour boissons sans alcool"
+  },
+  {
+    "id": 76,
+    "name": "Préparations pour pâtisseries"
+  },
+  {
+    "id": 95,
+    "name": "Produits à base de crustacés et mollusques"
+  },
+  {
+    "id": 9,
+    "name": "Produits à base de poissons"
+  },
+  {
+    "id": 13,
+    "name": "Riz et autres graines"
+  },
+  {
+    "id": 108,
+    "name": "Sandwichs"
+  },
+  {
+    "id": 14,
+    "name": "Sauces salées et condiments"
+  },
+  {
+    "id": 74,
+    "name": "Semoules"
+  },
+  {
+    "id": 115,
+    "name": "Soupes prêtes à consommer"
+  },
+  {
+    "id": 36,
+    "name": "Sucres, miels, sirops"
+  },
+  {
+    "id": 5,
+    "name": "Viandes"
+  },
+  {
+    "id": 84,
+    "name": "Viennoiseries et brioches"
+  },
+  {
+    "id": 85,
+    "name": "Vins"
+  },
+  {
+    "id": 28,
+    "name": "Volailles"
+  },
+  {
+    "id": 61,
+    "name": "Yaourts et spécialités laitières type yaourts"
+  }
+]

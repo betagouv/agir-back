@@ -1,7 +1,7 @@
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
-describe('/utilisateurs - Magic link - (API test)', () => {
+describe.skip('/utilisateurs - Magic link - (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 

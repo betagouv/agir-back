@@ -6,6 +6,12 @@ import { KycRepository } from '../../src/infrastructure/repository/kyc.repositor
 import { KYCID } from '../../src/domain/kyc/KYCID';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../domain/logement/logement';
 
 @Injectable()
 export class QuestionKYCUsecase {
@@ -46,8 +52,13 @@ export class QuestionKYCUsecase {
 
   async updateResponse(
     utilisateurId: string,
-    questionId: string,
+    code_question: string,
     reponse: string[],
+    reponse_mosaic: {
+      code: string;
+      value_number: number;
+      value_boolean: boolean;
+    }[],
   ): Promise<void> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
@@ -55,24 +66,27 @@ export class QuestionKYCUsecase {
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
-    utilisateur.kyc_history.checkQuestionExists(questionId);
-    this.updateUserTodo(utilisateur, questionId);
+    utilisateur.kyc_history.checkQuestionExistsByCode(code_question);
+    this.updateUserTodo(utilisateur, code_question);
 
-    if (!utilisateur.kyc_history.isQuestionAnswered(questionId)) {
+    if (!utilisateur.kyc_history.isQuestionAnsweredByCode(code_question)) {
       const question =
-        utilisateur.kyc_history.getUpToDateQuestionOrException(questionId);
+        utilisateur.kyc_history.getUpToDateQuestionOrException(code_question);
       utilisateur.gamification.ajoutePoints(question.points, utilisateur);
     }
-    utilisateur.kyc_history.updateQuestion(questionId, reponse);
 
-    if (questionId === KYCID.KYC006) {
-      const kyc = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
-        KYCID.KYC006,
+    if (reponse_mosaic) {
+      utilisateur.kyc_history.updateQuestionMosaicByCode(
+        code_question,
+        reponse_mosaic,
       );
-      utilisateur.logement.plus_de_15_ans = kyc.includesReponseCode('plus_15');
+    } else {
+      utilisateur.kyc_history.updateQuestionByCode(code_question, reponse);
     }
 
-    utilisateur.missions.answerKyc(questionId, utilisateur);
+    this.synchroKYCAvecProfileUtilisateur(code_question, reponse, utilisateur);
+
+    utilisateur.missions.answerKyc(code_question, utilisateur);
 
     utilisateur.recomputeRecoTags();
 
@@ -80,6 +94,58 @@ export class QuestionKYCUsecase {
     utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
+  public synchroKYCAvecProfileUtilisateur(
+    code_question: string,
+    reponse: string[],
+    utilisateur: Utilisateur,
+  ) {
+    const kyc =
+      utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(code_question);
+
+    if (kyc) {
+      switch (kyc.id) {
+        case KYCID.KYC006:
+          const label_age = kyc.getLabelByCode('plus_15');
+          utilisateur.logement.plus_de_15_ans = reponse.includes(label_age);
+          break;
+        case KYCID.KYC_DPE:
+          const code_dpe = kyc.getCodeByLabel(reponse[0]);
+          utilisateur.logement.dpe = DPE[code_dpe];
+          break;
+        case KYCID.KYC_superficie:
+          const valeur = parseInt(reponse[0]);
+          if (valeur < 35)
+            utilisateur.logement.superficie = Superficie.superficie_35;
+          if (valeur < 70)
+            utilisateur.logement.superficie = Superficie.superficie_70;
+          if (valeur < 100)
+            utilisateur.logement.superficie = Superficie.superficie_100;
+          if (valeur < 150)
+            utilisateur.logement.superficie = Superficie.superficie_150;
+          if (valeur >= 150)
+            utilisateur.logement.superficie = Superficie.superficie_150_et_plus;
+          break;
+        case KYCID.KYC_proprietaire:
+          const code_prop = kyc.getCodeByLabel(reponse[0]);
+          utilisateur.logement.proprietaire = code_prop === 'oui';
+          break;
+        case KYCID.KYC_chauffage:
+          const code_chauff = kyc.getCodeByLabel(reponse[0]);
+          utilisateur.logement.chauffage = Chauffage[code_chauff];
+          break;
+        case KYCID.KYC_type_logement:
+          const code_log = kyc.getCodeByLabel(reponse[0]);
+          utilisateur.logement.type =
+            code_log === 'type_appartement'
+              ? TypeLogement.appartement
+              : TypeLogement.maison;
+          break;
+        default:
+          break;
+      }
+    }
   }
 
   private updateUserTodo(utilisateur: Utilisateur, questionId: string) {

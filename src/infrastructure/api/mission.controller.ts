@@ -65,6 +65,33 @@ export class MissionController extends GenericControler {
     return MissionAPI.mapToAPI(result);
   }
 
+  @Post('utilisateurs/:utilisateurId/thematiques/:thematique/mission/terminer')
+  @UseGuards(AuthGuard)
+  @ApiParam({
+    name: 'thematique',
+    type: String,
+    enumName: 'thematique',
+    required: true,
+    description: `la thématique`,
+  })
+  @ApiParam({
+    name: 'utilisateurId',
+    type: String,
+    required: true,
+    description: `id de l'utilisateur`,
+  })
+  @ApiOperation({
+    summary: `Declare la mission de cette thematique comme terminée`,
+  })
+  async terminerMission(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('thematique') thematique: string,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    await this.missionUsecase.terminerMission(utilisateurId, thematique);
+  }
+
   @Get('utilisateurs/:utilisateurId/thematiques/:thematique/next_kyc')
   @UseGuards(AuthGuard)
   @ApiOkResponse({

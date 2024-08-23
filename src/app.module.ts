@@ -25,7 +25,6 @@ import { OIDCStateRepository } from '../src/infrastructure/repository/oidcState.
 import { JwtModule } from '@nestjs/jwt';
 import { OidcService } from '../src/infrastructure/auth/oidc.service';
 import { NGCCalculator } from './infrastructure/ngc/NGCCalculator';
-import { QuestionNGCUsecase_deprecated } from './usecase/questionNGC.deprecated.usecase';
 import { EmailSender } from './infrastructure/email/emailSender';
 import { OnboardingUsecase } from './usecase/onboarding.usecase';
 import { OnboardingController } from './infrastructure/api/onboarding.controller';
@@ -135,18 +134,13 @@ const SESSION_LIFETIME = '30 days';
 function getControllers(): any[] {
   const controllers = [];
   controllers.push(
-    OnboardingController,
     ProfileController,
     ConnexionController,
-    BilanController,
     AidesController,
-    SuiviDashboardController,
-    //QuestionsNGCController,
     CMSController,
     CommunesController,
     ServiceController,
     TodoController,
-    GroupeController,
     WinterController,
     EventController,
     GamificationController,
@@ -155,19 +149,23 @@ function getControllers(): any[] {
     QuestionsKYCController,
     RecommandationsController,
     BibliothequeController,
-    EquipementsController,
     InscriptionController,
     DefisController,
     UniversController,
     MissionController,
     RechecheServicesController,
     BilanCarboneController,
-    MagicLinkController,
     PreviewController,
   );
   if (!App.isProd()) {
+    controllers.push(EquipementsController);
     controllers.push(TestDataController);
     controllers.push(AuthController);
+    controllers.push(BilanController);
+    controllers.push(GroupeController);
+    controllers.push(MagicLinkController);
+    controllers.push(OnboardingController);
+    controllers.push(SuiviDashboardController);
   }
   return controllers;
 }
@@ -204,7 +202,6 @@ function getControllers(): any[] {
     BilanUsecase,
     AidesUsecase,
     SuiviUsecase,
-    QuestionNGCUsecase_deprecated,
     CMSUsecase,
     EmailSender,
     OnboardingUsecase,

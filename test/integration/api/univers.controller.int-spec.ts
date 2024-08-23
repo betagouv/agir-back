@@ -490,7 +490,7 @@ describe('Univers (API test)', () => {
       titre: `Les céréales c'est bon`,
       type: ThematiqueUnivers.cereales,
       progression: 1,
-      cible_progression: 1,
+      cible_progression: 2,
       is_locked: false,
       reason_locked: null,
       is_new: false,

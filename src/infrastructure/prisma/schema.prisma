@@ -85,6 +85,7 @@ model Utilisateur {
   rank_commune             Int?
   status                   String?
   couverture_aides_ok      Boolean            @default(false)
+  source_inscription       String             @default("web")
 }
 
 model Statistique {

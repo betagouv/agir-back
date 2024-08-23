@@ -56,6 +56,24 @@ describe('NGCCalculator', () => {
     //THEN
     expect(response).toEqual(7661.143979107765);
   });
+  it('computeSingleEntry : Cas du photovlotaique', () => {
+    //GIVEN
+    let calculator = new NGCCalculator();
+    const situation1 = {
+      'logement . électricité . photovoltaique . présent': 'non',
+    };
+    const situation2 = {
+      'logement . électricité . photovoltaique . présent': 'oui',
+    };
+    const entry = 'bilan';
+
+    //WHEN
+    const response1 = calculator.computeSingleEntryValue(situation1, entry);
+    const response2 = calculator.computeSingleEntryValue(situation2, entry);
+
+    //THEN
+    expect(response1 as number).toBeGreaterThan(response2 as number);
+  });
   it('computeEntryList : compute ok multiple entries', () => {
     //GIVEN
     let calculator = new NGCCalculator();

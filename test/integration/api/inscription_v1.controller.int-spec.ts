@@ -12,6 +12,7 @@ import {
 import { DB, TestUtil } from '../../TestUtil';
 import { Profil } from '../../../src/domain/utilisateur/utilisateurAttente';
 import { Feature } from '../../../src/domain/gamification/feature';
+import { SourceInscription } from '../../../src/domain/utilisateur/utilisateur';
 
 const ONBOARDING_1_2_3_4_DATA = {
   transports: ['voiture', 'pied'],
@@ -118,6 +119,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(user.prenom).toEqual('Wojtek');
     expect(user.annee_naissance).toEqual(1979);
     expect(user.email).toEqual('w@w.com');
+    expect(user.source_inscription).toEqual(SourceInscription.inconnue);
     expect(user.passwordHash.length).toBeGreaterThan(20);
     expect(user.passwordSalt.length).toBeGreaterThan(20);
     /*

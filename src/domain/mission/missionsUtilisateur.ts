@@ -42,7 +42,6 @@ export class MissionsUtilisateur {
   public validateAricleOrQuizzDone(
     content_id: string,
     type: ContentType,
-    utilisateur: Utilisateur,
     score?: number,
   ) {
     const { mission, objectif } = this.getObjectifByContentId(content_id, type);
@@ -73,13 +72,10 @@ export class MissionsUtilisateur {
     });
   }
 
-  public validateDefi(defi_id: string, utilisateur: Utilisateur): string[] {
-    let unlocked_thematiques = [];
+  public validateDefiObjectif(defi_id: string) {
     this.missions.forEach((mission) => {
-      const thematiqueU = mission.validateDefi(defi_id, utilisateur);
-      unlocked_thematiques = unlocked_thematiques.concat(thematiqueU);
+      mission.validateDefiObjectif(defi_id);
     });
-    return unlocked_thematiques;
   }
 
   public getObjectifByContentId(
@@ -98,15 +94,15 @@ export class MissionsUtilisateur {
   }
 
   public upsertNewMission(
-    middion_def: MissionDefinition,
+    mission_def: MissionDefinition,
     visible?: boolean,
   ): Mission {
-    const new_mission = Mission.buildFromDef(middion_def);
+    const new_mission = Mission.buildFromDef(mission_def);
     if (visible !== undefined) {
       new_mission.est_visible = visible;
     }
 
-    const existing_mission = this.getMissionById(middion_def.id_cms.toString());
+    const existing_mission = this.getMissionById(mission_def.id_cms.toString());
 
     if (existing_mission) {
       this.missions.splice(this.missions.indexOf(existing_mission), 1);

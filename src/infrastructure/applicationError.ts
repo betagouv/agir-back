@@ -337,6 +337,24 @@ export class ApplicationError {
       `Reponse [${reponse}] inconnue pour la KYC [${kyc_code}]`,
     );
   }
+  static throwMissinEmail() {
+    this.throwAppError('063', `Adresse électronique manquante`);
+  }
+  static throwMissinPassword() {
+    this.throwAppError('064', `Mot de passe manquant`);
+  }
+  static throwMissinMosaicCode(code: string) {
+    this.throwAppError(
+      '065',
+      `Element de réponse de mosaic manquant : code = ${code}`,
+    );
+  }
+  static throwBadResponseCode(question: string, kyc_code: string) {
+    this.throwAppError(
+      '066',
+      `Pas de code ${kyc_code} disponible pour la question [${question}]`,
+    );
+  }
 
   private static throwAppError(
     code: string,

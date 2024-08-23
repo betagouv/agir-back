@@ -43,6 +43,7 @@ export class MissionAPI {
   @ApiProperty() id: string;
   @ApiProperty() titre: string;
   @ApiProperty() done_at: Date;
+  @ApiProperty() terminable: boolean;
   @ApiProperty() is_new: boolean;
   @ApiProperty() image_url: string;
   @ApiProperty() thematique_univers: string;
@@ -77,6 +78,7 @@ export class MissionAPI {
       image_url: ThematiqueRepository.getTuileThematique(
         mission.thematique_univers,
       ).image_url,
+      terminable: mission.estTerminable(),
     };
   }
 }

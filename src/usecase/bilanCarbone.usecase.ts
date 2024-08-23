@@ -4,6 +4,7 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { BilanCarboneStatistiqueRepository } from '../infrastructure/repository/bilanCarboneStatistique.repository';
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
 import { BilanCarbone } from '../domain/bilan/bilanCarbone';
+import { TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
 
 @Injectable()
 export class BilanCarboneUsecase {
@@ -53,14 +54,25 @@ export class BilanCarboneUsecase {
 
     for (const kyc of utilisateur.kyc_history.answered_questions) {
       if (kyc.is_NGC) {
-        if (kyc.ngc_key) {
-          situation[kyc.ngc_key] = kyc.reponses[0].ngc_code;
-        } else {
-          console.log(`Missing ngc key for KYC [${kyc.id_cms}/${kyc.id}]`);
+        if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
+          if (kyc.ngc_key) {
+            situation[kyc.ngc_key] = kyc.reponses[0].ngc_code;
+          } else {
+            console.error(`Missing ngc key for KYC [${kyc.id_cms}/${kyc.id}]`);
+          }
+        }
+        if (
+          kyc.type === TypeReponseQuestionKYC.entier ||
+          kyc.type === TypeReponseQuestionKYC.decimal
+        ) {
+          if (kyc.ngc_key) {
+            situation[kyc.ngc_key] = kyc.reponses[0].label;
+          } else {
+            console.error(`Missing ngc key for KYC [${kyc.id_cms}/${kyc.id}]`);
+          }
         }
       }
     }
-
     return situation;
   }
 }

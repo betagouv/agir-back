@@ -1,4 +1,5 @@
 import {
+  SourceInscription,
   Utilisateur,
   UtilisateurStatus,
 } from '../domain/utilisateur/utilisateur';
@@ -39,6 +40,7 @@ export class Inscription_v2_Usecase {
       null,
       null,
       false,
+      utilisateurInput.source_inscription || SourceInscription.inconnue,
     );
 
     utilisateurToCreate.setNew6DigitCode();

@@ -174,6 +174,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.code_postal).toEqual('91120');
     expect(response.body.chauffage).toEqual(Chauffage.bois);
     expect(response.body.commune).toEqual('PALAISEAU');
+    expect(response.body.commune_label).toEqual('Palaiseau');
     expect(response.body.nombre_adultes).toEqual(2);
     expect(response.body.nombre_enfants).toEqual(2);
     expect(response.body.plus_de_15_ans).toEqual(true);
@@ -275,7 +276,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
         .toString(`hex`),
     );
   });
-  it('PATCH /utilisateurs/id/logement - update logement datas', async () => {
+  it('PATCH /utilisateurs/id/logement - update logement datas et synchro KYCs', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.kYC, {
@@ -297,11 +298,77 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       type: TypeReponseQuestionKYC.choix_unique,
       categorie: Categorie.test,
       points: 10,
-      question: 'Comment avez vous connu le service ?',
+      question: 'Age maison',
       reponses: [
         { label: 'Moins de 15 ans (neuf ou récent)', code: 'moins_15' },
         { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
       ],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 3,
+      code: KYCID.KYC_DPE,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.test,
+      points: 10,
+      question: 'DPE',
+      reponses: [
+        { label: 'A', code: 'A' },
+        { label: 'E', code: 'E' },
+      ],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 4,
+      code: KYCID.KYC_superficie,
+      type: TypeReponseQuestionKYC.entier,
+      categorie: Categorie.test,
+      points: 10,
+      question: 'Superficie',
+      reponses: [],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 5,
+      code: KYCID.KYC_proprietaire,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.test,
+      points: 10,
+      question: 'Prop',
+      reponses: [
+        { label: 'A', code: 'oui' },
+        { label: 'B', code: 'non' },
+      ],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 6,
+      code: KYCID.KYC_chauffage,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.test,
+      points: 10,
+      question: 'Chauff',
+      reponses: [
+        { label: 'A', code: 'gaz' },
+        { label: 'B', code: 'electricite' },
+      ],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 7,
+      code: KYCID.KYC_type_logement,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.test,
+      points: 10,
+      question: 'KYC_type_logement',
+      reponses: [
+        { label: 'A', code: 'type_appartement' },
+        { label: 'B', code: 'type_maison' },
+      ],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 8,
+      code: KYCID.KYC_menage,
+      type: TypeReponseQuestionKYC.entier,
+      categorie: Categorie.test,
+      points: 10,
+      question: 'KYC_menage',
+      reponses: [],
     });
 
     // WHEN
@@ -309,7 +376,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       '/utilisateurs/utilisateur-id/logement',
     ).send({
       nombre_adultes: 4,
-      nombre_enfants: 0,
+      nombre_enfants: 1,
       code_postal: '11111',
       commune: 'Patelin',
       type: TypeLogement.appartement,
@@ -326,7 +393,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.logement.code_postal).toEqual('11111');
     expect(dbUser.logement.commune).toEqual('Patelin');
     expect(dbUser.logement.nombre_adultes).toEqual(4);
-    expect(dbUser.logement.nombre_enfants).toEqual(0);
+    expect(dbUser.logement.nombre_enfants).toEqual(1);
     expect(dbUser.logement.type).toEqual(TypeLogement.appartement);
     expect(dbUser.logement.superficie).toEqual(Superficie.superficie_35);
     expect(dbUser.logement.proprietaire).toEqual(false);
@@ -335,6 +402,46 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.logement.dpe).toEqual(DPE.E);
     expect(dbUser.commune_classement).toEqual('Patelin');
     expect(dbUser.code_postal_classement).toEqual('11111');
+
+    // KYCs
+    expect(
+      dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_DPE).reponses,
+    ).toEqual([
+      {
+        code: 'E',
+        label: 'E',
+      },
+    ]);
+    expect(
+      dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_superficie)
+        .reponses,
+    ).toEqual([
+      {
+        label: '34',
+        code: null,
+        ngc_code: null,
+      },
+    ]);
+    expect(
+      dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_proprietaire)
+        .reponses,
+    ).toEqual([
+      {
+        code: 'non',
+        label: 'B',
+      },
+    ]);
+    expect(
+      dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .reponses,
+    ).toEqual([{ code: 'electricite', label: 'B' }]);
+    expect(
+      dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_type_logement)
+        .reponses,
+    ).toEqual([{ code: 'type_appartement', label: 'A' }]);
+    expect(
+      dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_menage).reponses,
+    ).toEqual([{ code: null, label: '5', ngc_code: null }]);
   });
   it('PATCH /utilisateurs/id/logement - maj code postal recalcul le flag de couverture d aides', async () => {
     // GIVEN
@@ -356,6 +463,50 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     expect(dbUser.couverture_aides_ok).toEqual(true);
   });
+
+  it('PATCH /utilisateurs/id/logement - exception silencieuse si KYC de synchro échoue', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      nombre_adultes: 4,
+      nombre_enfants: 1,
+      code_postal: '11111',
+      commune: 'Patelin',
+      type: TypeLogement.appartement,
+      superficie: Superficie.superficie_35,
+      proprietaire: false,
+      chauffage: Chauffage.electricite,
+      plus_de_15_ans: false,
+      dpe: DPE.E,
+    });
+    // THEN
+    expect(response.status).toBe(200);
+  });
+
+  it('PATCH /utilisateurs/id/logement - maj code postal recalcul le flag de couverture d aides', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { couverture_aides_ok: false });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: ['21000'],
+    });
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_postal: '21000',
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.getById('utilisateur-id');
+
+    expect(dbUser.couverture_aides_ok).toEqual(true);
+  });
+
   it('PATCH /utilisateurs/id/logement - update KYC006 si logement plus 15 ans', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);

@@ -139,16 +139,8 @@ export class DefisUsecase {
     if (status === DefiStatus.en_cours) {
       if (!utilisateur.unlocked_features.isUnlocked(Feature.defis)) {
         utilisateur.unlocked_features.add(Feature.defis);
-        //utilisateur.gamification.revealDefis();
       }
-    }
-
-    if (status === DefiStatus.fait) {
-      const unlocked_thematiques = utilisateur.missions.validateDefi(
-        defiId,
-        utilisateur,
-      );
-      await this.unlockThematiques(unlocked_thematiques, utilisateur);
+      utilisateur.missions.validateDefiObjectif(defiId);
     }
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);

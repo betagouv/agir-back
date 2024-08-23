@@ -139,17 +139,23 @@ export class Mission {
       this.unlockContentIfAllKYCsDone();
     }
   }
-  public validateDefi(defi_id: string, utilisateur: Utilisateur): string[] {
+
+  public estTerminable(): boolean {
+    if (this.isNew()) return false;
+
+    const obj_defis = this.findAllDefis();
+    return obj_defis.findIndex((o) => o.isDone()) > -1;
+  }
+
+  public validateDefiObjectif(defi_id: string) {
     const objectif = this.findObjectifDefiByID(defi_id);
 
     if (objectif && !objectif.isDone()) {
       objectif.done_at = new Date();
-      return this.terminerMission(utilisateur);
     }
-    return [];
   }
 
-  public terminerMission(utilisateur: Utilisateur): string[] {
+  public terminer(utilisateur: Utilisateur): string[] {
     this.done_at = new Date();
     utilisateur.gamification.celebrerFinMission(
       this.thematique_univers,
@@ -237,19 +243,26 @@ export class Mission {
     const objectifs_done = this.getNombreObjectifsDone();
     const nbr_defis = this.getNombreDefisDansMission();
 
+    const is_done_plus_one = this.isDone() ? 1 : 0;
+
     if (nbr_defis === 0) {
-      return { current: objectifs_done, target: this.objectifs.length };
+      return {
+        current: objectifs_done + is_done_plus_one,
+        target: this.objectifs.length + 1,
+      };
     }
     const nbr_defis_minus_one = nbr_defis - 1;
 
     const target_progression_reelle =
       this.objectifs.length - nbr_defis_minus_one;
+
     return {
-      current: Math.min(
-        this.objectifs.filter((objectif) => objectif.isDone()).length,
-        target_progression_reelle,
-      ),
-      target: target_progression_reelle,
+      current:
+        Math.min(
+          this.objectifs.filter((objectif) => objectif.isDone()).length,
+          target_progression_reelle,
+        ) + is_done_plus_one,
+      target: target_progression_reelle + 1,
     };
   }
 
