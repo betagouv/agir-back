@@ -17,5 +17,5 @@ export class CreateUtilisateurAPI {
   @ApiProperty()
   annee_naissance: number;
   @ApiProperty({ required: false })
-  mot_de_passe?: string;
+  mot_de_passe: string;
 }

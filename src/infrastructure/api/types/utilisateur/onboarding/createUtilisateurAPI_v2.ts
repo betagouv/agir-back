@@ -8,6 +8,6 @@ export class CreateUtilisateurAPI_v2 {
   @ApiProperty({ required: false, enum: SourceInscription })
   source_inscription: SourceInscription;
 
-  @ApiProperty({ required: false })
-  mot_de_passe?: string;
+  @ApiProperty()
+  mot_de_passe: string;
 }

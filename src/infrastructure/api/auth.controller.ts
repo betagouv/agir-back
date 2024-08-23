@@ -57,6 +57,7 @@ export class AuthController {
         commune: 'PALAISEAU',
         //onboardingData: {} as any,
         source_inscription: SourceInscription.inconnue,
+        mot_de_passe: undefined,
       });
     }
     const utilisateurId = utilisateur.id; // FIXME : broken for now

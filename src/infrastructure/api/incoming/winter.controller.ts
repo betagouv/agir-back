@@ -20,6 +20,7 @@ export class WinterController extends GenericControler {
   @ApiBody({ type: WinterDataSentAPI })
   @Post('api/incoming/winter-energies')
   async income(@Body() body: WinterDataSentAPI, @Headers() headers) {
+    // FIXME : enlever log quand la confiance revient
     console.log(JSON.stringify(headers));
     if (headers['key'] !== App.getWinterAPIKey()) {
       throw new UnauthorizedException('clé API manquante ou incorrecte');

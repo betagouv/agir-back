@@ -34,6 +34,7 @@ export class AidesController extends GenericControler {
     super();
   }
 
+  /**
   @ApiOkResponse({ type: AideVeloAPI })
   @Get('aides/retrofit')
   @UseGuards(AuthGuard)
@@ -51,6 +52,7 @@ export class AidesController extends GenericControler {
     }
     return aides;
   }
+   */
 
   @ApiOkResponse({ type: [AideAPI] })
   @Get('utilisateurs/:utilisateurId/aides')
@@ -73,7 +75,9 @@ export class AidesController extends GenericControler {
   async getAllVelosByUtilisateur(
     @Param('utilisateurId') utilisateurId: string,
     @Body() body: InputAideVeloAPI,
+    @Request() req,
   ) {
+    this.checkCallerId(req, utilisateurId);
     const result = await this.aidesUsecase.simulerAideVelo(
       utilisateurId,
       body.prix_du_velo,
