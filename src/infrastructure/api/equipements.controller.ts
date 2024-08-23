@@ -14,16 +14,13 @@ import {
   ApiOperation,
   ApiBearerAuth,
   ApiBody,
-  ApiExtraModels,
 } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
-import { LinkyConfigurationAPI } from './types/service/linkyConfigurationAPI';
 import { EquipementUsecase } from '../../../src/usecase/equipements.usecase';
 import { VehiculeAPI } from './types/equipements/vehiculeAPI';
 import { ImpactAPI } from './types/equipements/impactAPI';
 
-@ApiExtraModels(LinkyConfigurationAPI)
 @Controller()
 @ApiBearerAuth()
 @ApiTags('Equipements')
@@ -42,9 +39,7 @@ export class EquipementsController extends GenericControler {
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<VehiculeAPI[]> {
-    if (utilisateurId) {
-      this.checkCallerId(req, utilisateurId);
-    }
+    this.checkCallerId(req, utilisateurId);
     const result = await this.equipementUsecase.listerVehicules(utilisateurId);
     return result.map((veh) => VehiculeAPI.toAPI(veh));
   }

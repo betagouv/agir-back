@@ -22,26 +22,10 @@ import { BilanCarboneUsecase } from '../../usecase/bilanCarbone.usecase';
 
 @Controller()
 @ApiBearerAuth()
-@ApiTags('Bilan')
+@ApiTags('Bilan --- OLD --- ')
 export class BilanController extends GenericControler {
-  constructor(
-    private readonly bilanUsecase: BilanUsecase,
-    private readonly bilanCarboneUsecase: BilanCarboneUsecase,
-  ) {
+  constructor(private readonly bilanUsecase: BilanUsecase) {
     super();
-  }
-  @ApiOkResponse({ type: BilanCarboneAPI })
-  @Get('utilisateur/:utilisateurId/bilans/last')
-  @UseGuards(AuthGuard)
-  async getBilan(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-  ): Promise<BilanCarboneAPI> {
-    this.checkCallerId(req, utilisateurId);
-    const bilan = await this.bilanCarboneUsecase.getCurrentBilanByUtilisateurId(
-      utilisateurId,
-    );
-    return BilanCarboneAPI.mapToAPI(bilan);
   }
 
   @Post('utilisateurs/:utilisateurId/bilans/:situationId')
@@ -57,7 +41,6 @@ export class BilanController extends GenericControler {
       situationId,
     );
   }
-
   @ApiBody({
     schema: {
       type: 'object',

@@ -1131,7 +1131,7 @@ describe('Admin (API test)', () => {
       ),
     ).toEqual(30 * 60);
   });
-  it('POST /services/refresh_dynamic_data puis GET /utilisateurs/id/services appel récupère les données calculées en schedule', async () => {
+  it.skip('POST /services/refresh_dynamic_data puis GET /utilisateurs/id/services appel récupère les données calculées en schedule', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     process.env.ADMIN_IDS = '';

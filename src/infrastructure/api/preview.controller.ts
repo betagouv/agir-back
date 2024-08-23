@@ -1,5 +1,12 @@
-import { Controller, Get, Param, Post, Request } from '@nestjs/common';
-import { ApiExcludeController } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiExcludeController } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
 import { KycRepository } from '../repository/kyc.repository';
 import { NGCCalculator } from '../ngc/NGCCalculator';
@@ -17,9 +24,11 @@ import { DefiRepository } from '../repository/defi.repository';
 import { MissionDefinition } from '../../domain/mission/missionDefinition';
 import { UniversUsecase } from '../../usecase/univers.usecase';
 import { DefiDefinition } from '../../domain/defis/defiDefinition';
+import { AuthGuard } from '../auth/guard';
 
 @Controller()
 @ApiExcludeController()
+@ApiBearerAuth()
 export class PreviewController extends GenericControler {
   constructor(
     private kycRepository: KycRepository,
@@ -34,6 +43,7 @@ export class PreviewController extends GenericControler {
   }
 
   @Get('kyc_preview/:id')
+  @UseGuards(AuthGuard)
   async kyc_preview(@Param('id') id: string): Promise<string> {
     let result = [];
     const kyc_def = await this.kycRepository.getByCMS_ID(parseInt(id));
@@ -149,6 +159,7 @@ export class PreviewController extends GenericControler {
   }
 
   @Get('mission_preview/:id')
+  @UseGuards(AuthGuard)
   async mission_preview(@Param('id') id: string): Promise<string> {
     const mission_def = await this.missionRepository.getByCMS_ID(parseInt(id));
 
@@ -374,6 +385,7 @@ export class PreviewController extends GenericControler {
   }
 
   @Get('all_preview')
+  @UseGuards(AuthGuard)
   async all_preview(): Promise<string> {
     let result = [];
 
@@ -456,6 +468,7 @@ export class PreviewController extends GenericControler {
     return `<pre>${result.join('\n')}</pre>`;
   }
   @Get('univers_preview/:id')
+  @UseGuards(AuthGuard)
   async univers_preview(@Param('id') id: string): Promise<string> {
     let result = [];
 
@@ -566,6 +579,7 @@ export class PreviewController extends GenericControler {
   }
 
   @Get('defi_preview/:id')
+  @UseGuards(AuthGuard)
   async defi_preview(@Param('id') id: string): Promise<string> {
     let result = [];
 

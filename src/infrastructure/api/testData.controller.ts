@@ -21,18 +21,9 @@ import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 import { Transport } from '../../../src/domain/transport/transport';
 import { Logement } from '../../../src/domain/logement/logement';
-import { ContactUsecase } from '../../usecase/contact.usecase';
 import { Contact } from '../contact/contact';
 import { ContactSynchro } from '../contact/contactSynchro';
 import { GenericControler } from './genericControler';
-
-export enum TheBoolean {
-  true = 'true',
-}
-
-export enum TheTypes {
-  utilisateur = 'utilisateur',
-}
 
 @Controller()
 @ApiTags('TestData')
@@ -255,10 +246,10 @@ export class TestDataController extends GenericControler {
     utilisatateur.logement = Logement.buildFromOnboarding(
       utilisatateur.onboardingData,
     );
-    (utilisatateur.transport = Transport.buildFromOnboarding(
+    utilisatateur.transport = Transport.buildFromOnboarding(
       utilisatateur.onboardingData,
-    )),
-      utilisatateur.recomputeRecoTags();
+    );
+    utilisatateur.recomputeRecoTags();
     await this.utilisateurRepository2.updateUtilisateur(utilisatateur);
   }
 }
