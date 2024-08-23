@@ -29,6 +29,12 @@ export enum UtilisateurStatus {
   mot_de_passe_oublie_etape_1 = 'mot_de_passe_oublie_etape_1',
 }
 
+export enum SourceInscription {
+  web = 'web',
+  mobile = 'mobile',
+  inconnue = 'inconnue',
+}
+
 export class UtilisateurData {
   id: string;
   email: string;
@@ -79,6 +85,7 @@ export class UtilisateurData {
   rank_commune: number;
   status: UtilisateurStatus;
   couverture_aides_ok: boolean;
+  source_inscription: SourceInscription;
 }
 
 export class Utilisateur extends UtilisateurData {
@@ -106,6 +113,7 @@ export class Utilisateur extends UtilisateurData {
     code_postal: string,
     commune: string,
     is_magic_link: boolean,
+    source_inscription: SourceInscription,
   ): Utilisateur {
     return new Utilisateur({
       nom: nom,
@@ -188,6 +196,7 @@ export class Utilisateur extends UtilisateurData {
       points_classement: 0,
       status: UtilisateurStatus.default,
       couverture_aides_ok: false,
+      source_inscription: source_inscription,
     });
   }
 

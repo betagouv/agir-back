@@ -35,6 +35,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
       mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',
+      source_inscription: 'mobile',
     });
     // THEN
     const user = await utilisateurRepository.findByEmail('w@w.com');
@@ -44,6 +45,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(user.prenom).toEqual(null);
     expect(user.annee_naissance).toEqual(null);
     expect(user.email).toEqual('w@w.com');
+    expect(user.source_inscription).toEqual('mobile');
     expect(user.passwordHash.length).toBeGreaterThan(20);
     expect(user.passwordSalt.length).toBeGreaterThan(20);
     expect(user.code).toEqual('112233');

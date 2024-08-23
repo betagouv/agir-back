@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Utilisateur as UtilisateurDB, Prisma } from '@prisma/client';
 import {
+  SourceInscription,
   Utilisateur,
   UtilisateurStatus,
 } from '../../../domain/utilisateur/utilisateur';
@@ -363,6 +364,7 @@ export class UtilisateurRepository {
         rank_commune: user.rank_commune,
         status: UtilisateurStatus[user.status],
         couverture_aides_ok: user.couverture_aides_ok,
+        source_inscription: SourceInscription[user.source_inscription],
       });
     }
     return null;
@@ -458,6 +460,7 @@ export class UtilisateurRepository {
       rank_commune: user.rank_commune,
       status: user.status,
       couverture_aides_ok: user.couverture_aides_ok,
+      source_inscription: user.source_inscription,
     };
   }
 }

@@ -1,4 +1,7 @@
-import { Utilisateur } from '../domain/utilisateur/utilisateur';
+import {
+  SourceInscription,
+  Utilisateur,
+} from '../domain/utilisateur/utilisateur';
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/onboarding/createUtilisateurAPI';
@@ -92,6 +95,7 @@ export class MagicLinkUsecase {
         null,
         null,
         true,
+        SourceInscription.inconnue,
       );
 
       await this.utilisateurRespository.createUtilisateur(utilisateur);

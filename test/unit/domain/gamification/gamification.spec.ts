@@ -1,4 +1,7 @@
-import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
+import {
+  SourceInscription,
+  Utilisateur,
+} from '../../../../src/domain/utilisateur/utilisateur';
 import { TestUtil } from '../../../../test/TestUtil';
 import { Gamification } from '../../../../src/domain/gamification/gamification';
 import { UnlockedFeatures } from '../../../../src/domain/gamification/unlockedFeatures';
@@ -20,6 +23,7 @@ describe('Gamification', () => {
       '91120',
       'PALAISEAU',
       false,
+      SourceInscription.inconnue,
     );
     // WHEN
     gamification.ajoutePoints(5, user);

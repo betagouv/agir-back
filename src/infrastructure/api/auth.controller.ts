@@ -4,6 +4,7 @@ import { OidcService } from '../auth/oidc.service';
 import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { Inscription_v1_Usecase } from '../../usecase/inscription_v1.usecase';
 import { App } from '../../../src/domain/app';
+import { SourceInscription } from '../../domain/utilisateur/utilisateur';
 
 @Controller()
 @ApiExcludeController()
@@ -55,6 +56,7 @@ export class AuthController {
         code_postal: '91120',
         commune: 'PALAISEAU',
         //onboardingData: {} as any,
+        source_inscription: SourceInscription.inconnue,
       });
     }
     const utilisateurId = utilisateur.id; // FIXME : broken for now

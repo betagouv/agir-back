@@ -1,7 +1,7 @@
 import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { Mission } from '../../../../src/domain/mission/mission';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
-import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
+import { SourceInscription, Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
 
 describe('Missions', () => {
   it('validateDefi : valider un seul défi NE termine PAS la mission', () => {
@@ -67,6 +67,7 @@ describe('Missions', () => {
       '91120',
       'PALAISEAU',
       false,
+      SourceInscription.inconnue,
     );
     const mission = new Mission({
       done_at: null,

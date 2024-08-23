@@ -2,7 +2,10 @@ import { DB, TestUtil } from '../../TestUtil';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Impact, Onboarding } from '../../../src/domain/onboarding/onboarding';
 import { ThematiqueOnboarding as ThematiqueOnboarding } from '../../../src/domain/onboarding/onboarding';
-import { Utilisateur } from '../../../src/domain/utilisateur/utilisateur';
+import {
+  SourceInscription,
+  Utilisateur,
+} from '../../../src/domain/utilisateur/utilisateur';
 
 describe('UtilisateurRepository', () => {
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -410,6 +413,7 @@ describe('UtilisateurRepository', () => {
       '91120',
       'PALAISEAU',
       false,
+      SourceInscription.inconnue,
     );
     user.id = 'utilisateur-id';
 

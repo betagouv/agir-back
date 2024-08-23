@@ -76,7 +76,10 @@ import { ContentType } from '../src/domain/contenu/contentType';
 import { Tag } from '../src/domain/scoring/tag';
 import { KYCID } from '../src/domain/kyc/KYCID';
 import { Categorie } from '../src/domain/contenu/categorie';
-import { UtilisateurStatus } from '../src/domain/utilisateur/utilisateur';
+import {
+  SourceInscription,
+  UtilisateurStatus,
+} from '../src/domain/utilisateur/utilisateur';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -645,6 +648,7 @@ export class TestUtil {
       rank_commune: null,
       status: UtilisateurStatus.default,
       couverture_aides_ok: false,
+      source_inscription: SourceInscription.web,
       ...override,
     };
   }

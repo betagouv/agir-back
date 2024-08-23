@@ -1,4 +1,7 @@
-import { Utilisateur } from '../domain/utilisateur/utilisateur';
+import {
+  SourceInscription,
+  Utilisateur,
+} from '../domain/utilisateur/utilisateur';
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/onboarding/createUtilisateurAPI';
@@ -73,6 +76,7 @@ export class Inscription_v1_Usecase {
       utilisateurInput.code_postal,
       utilisateurInput.commune,
       false,
+      utilisateurInput.source_inscription || SourceInscription.inconnue,
     );
 
     utilisateurToCreate.setNew6DigitCode();
@@ -107,6 +111,7 @@ export class Inscription_v1_Usecase {
       utilisateurInput.code_postal,
       utilisateurInput.commune,
       false,
+      utilisateurInput.source_inscription || SourceInscription.inconnue,
     );
 
     utilisateurToCreate.setNew6DigitCode();

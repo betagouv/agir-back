@@ -1,4 +1,7 @@
-import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
+import {
+  SourceInscription,
+  Utilisateur,
+} from '../../src/domain/utilisateur/utilisateur';
 import { Personnalisator } from '../../src/infrastructure/personnalisation/personnalisator';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 import { TestUtil } from '../../test/TestUtil';
@@ -29,6 +32,7 @@ describe('Personalisation', () => {
       '91120',
       'PALAISEAU',
       false,
+      SourceInscription.inconnue,
     );
 
     const test_data = { yo: '123' };
@@ -49,6 +53,7 @@ describe('Personalisation', () => {
       '91120',
       'PALAISEAU',
       false,
+      SourceInscription.inconnue,
     );
 
     const test_data = { yo: undefined, yi: null, ya: true };
@@ -69,6 +74,7 @@ describe('Personalisation', () => {
       '91120',
       'PALAISEAU',
       false,
+      SourceInscription.inconnue,
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';
@@ -94,6 +100,7 @@ describe('Personalisation', () => {
       '91120',
       'PALAISEAU',
       false,
+      SourceInscription.inconnue,
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';
@@ -118,6 +125,7 @@ describe('Personalisation', () => {
       '91120',
       'PALAISEAU',
       false,
+      SourceInscription.inconnue,
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';
@@ -146,6 +154,7 @@ describe('Personalisation', () => {
       '91120',
       'PALAISEAU',
       false,
+      SourceInscription.inconnue,
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';
@@ -168,6 +177,7 @@ describe('Personalisation', () => {
       '91120',
       'PALAISEAU',
       false,
+      SourceInscription.inconnue,
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';

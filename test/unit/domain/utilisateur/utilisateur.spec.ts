@@ -1,4 +1,7 @@
-import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
+import {
+  SourceInscription,
+  Utilisateur,
+} from '../../../../src/domain/utilisateur/utilisateur';
 import {
   Consommation,
   Onboarding,
@@ -204,6 +207,7 @@ describe('Objet Utilisateur', () => {
       '91120',
       'PALAISEAU',
       false,
+      SourceInscription.inconnue,
     );
     user.tag_ponderation_set = {};
 
