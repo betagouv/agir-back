@@ -63,7 +63,7 @@ export class AidesUsecase {
     utilisateur.checkState();
 
     const RFR =
-      utilisateur.revenu_fiscal === null ? 0 : utilisateur.revenu_fiscal + 1;
+      utilisateur.revenu_fiscal === null ? 0 : utilisateur.revenu_fiscal;
     const PARTS = utilisateur.getNombrePartsFiscalesOuEstimee();
     const ABONNEMENT =
       utilisateur.abonnement_ter_loire === null
