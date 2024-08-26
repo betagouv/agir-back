@@ -1,8 +1,9 @@
-import { Controller, Post, Request } from '@nestjs/common';
+import { Controller, Get, Post, Request } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
+  ApiProperty,
   ApiTags,
 } from '@nestjs/swagger';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
@@ -23,6 +24,12 @@ import { KycStatistiqueUsecase } from '../../../src/usecase/kycStatistique.useca
 import { ThematiqueStatistiqueUsecase } from '../../../src/usecase/thematiqueStatistique.usecase';
 import { UniversStatistiqueUsecase } from '../../../src/usecase/universStatistique.usecase';
 import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
+import { App } from '../../domain/app';
+
+class VersionAPI {
+  @ApiProperty()
+  version: string;
+}
 
 @Controller()
 @ApiTags('Z - Admin')
@@ -47,6 +54,12 @@ export class AdminController extends GenericControler {
     private universStatistiqueUsecase: UniversStatistiqueUsecase,
   ) {
     super();
+  }
+
+  @Get('version')
+  @ApiOkResponse({ type: VersionAPI })
+  async getVersion(): Promise<VersionAPI> {
+    return { version: App.getAppVersion() };
   }
 
   @Post('services/refresh_dynamic_data')

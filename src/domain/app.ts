@@ -1,5 +1,7 @@
 import { ApplicativePonderationSetName } from './scoring/ponderationApplicative';
 
+import metadata from './metadata.json';
+
 export class App {
   public static currentUserSystemVersion(): number {
     return Number.parseInt(process.env.USER_CURRENT_VERSION) || 0;
@@ -127,5 +129,8 @@ export class App {
   }
   public static getMaxFileAttenteJour(): number {
     return Number.parseInt(process.env.MAX_ATTENTE_JOUR) || 0;
+  }
+  public static getAppVersion(): string {
+    return metadata.version;
   }
 }
