@@ -21,6 +21,7 @@ import { MissionsUtilisateur } from '../mission/missionsUtilisateur';
 import { Feature } from '../gamification/feature';
 import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServices';
 import { KYCID } from '../kyc/KYCID';
+import validator from 'validator';
 
 export enum UtilisateurStatus {
   default = 'default',
@@ -216,7 +217,7 @@ export class Utilisateur extends UtilisateurData {
       KYCID.KYC_preference,
     );
     return (
-      !!this.prenom && !!this.logement.code_postal // && KYC_preference_answered
+      !!this.prenom && !!this.logement.code_postal && KYC_preference_answered
     );
   }
 
@@ -260,7 +261,7 @@ export class Utilisateur extends UtilisateurData {
   }
 
   public static checkEmailFormat(email: string) {
-    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+    if (!validator.isEmail(email)) {
       ApplicationError.throwBaddEmailFormatError(email);
     }
   }
