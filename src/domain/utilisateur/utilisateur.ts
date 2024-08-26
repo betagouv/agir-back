@@ -217,7 +217,7 @@ export class Utilisateur extends UtilisateurData {
       KYCID.KYC_preference,
     );
     return (
-      !!this.prenom && !!this.logement.code_postal // && KYC_preference_answered
+      !!this.prenom && !!this.logement.code_postal && KYC_preference_answered
     );
   }
 
