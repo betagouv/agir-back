@@ -24,17 +24,13 @@ export class Inscription_v2_Usecase {
   ) {}
 
   async createUtilisateur(utilisateurInput: CreateUtilisateurAPI_v2) {
-    console.log('YO');
     if (!utilisateurInput.email) {
       ApplicationError.throwEmailObligatoireError();
     }
-    console.log('YA');
 
     PasswordManager.checkPasswordFormat(utilisateurInput.mot_de_passe);
-    console.log('YU');
 
     Utilisateur.checkEmailFormat(utilisateurInput.email);
-    console.log('YAE');
 
     const utilisateurToCreate = Utilisateur.createNewUtilisateur(
       null,
@@ -46,19 +42,15 @@ export class Inscription_v2_Usecase {
       false,
       utilisateurInput.source_inscription || SourceInscription.inconnue,
     );
-    console.log('YIII');
 
     utilisateurToCreate.setNew6DigitCode();
-    console.log('YART');
 
     utilisateurToCreate.setPassword(utilisateurInput.mot_de_passe);
     utilisateurToCreate.status = UtilisateurStatus.creation_compte_etape_1;
 
     await this.utilisateurRespository.createUtilisateur(utilisateurToCreate);
-    console.log('BLOP');
 
     this.sendValidationCode(utilisateurToCreate);
-    console.log('BURRP');
   }
 
   private async sendValidationCode(utilisateur: Utilisateur) {
