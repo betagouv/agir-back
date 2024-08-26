@@ -217,25 +217,6 @@ export class KYCHistory {
     }
   }
 
-  public updateQuestionMosaicByCode(
-    questionId: string,
-    mosaic: {
-      code: string;
-      value_number: number;
-      value_boolean: boolean;
-    }[],
-  ) {
-    let question = this.getAnsweredQuestionByCode(questionId);
-    if (question) {
-      question.setMosaicResponses(mosaic);
-    } else {
-      let question_catalogue =
-        this.getKYCByCodeFromCatalogueOrException(questionId);
-      question_catalogue.setMosaicResponses(mosaic);
-      this.answered_questions.push(question_catalogue);
-    }
-  }
-
   public checkQuestionExistsByCode(questionId: string) {
     this.getKYCDefinitionByCodeOrException(questionId);
   }

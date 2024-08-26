@@ -12,8 +12,6 @@ export enum TypeReponseQuestionKYC {
   choix_multiple = 'choix_multiple',
   entier = 'entier',
   decimal = 'decimal',
-  mosaic_boolean = 'mosaic_boolean',
-  mosaic_number = 'mosaic_number',
 }
 
 export enum BooleanKYC {
@@ -26,13 +24,6 @@ export class KYCReponse {
   code: string;
   label: string;
   ngc_code?: string;
-  value_boolean?: boolean;
-  value_number?: number;
-}
-export class KYCMosaicReponse {
-  code: string;
-  value_boolean?: boolean;
-  value_number?: number;
 }
 
 export class QuestionKYC implements TaggedContent {
@@ -182,52 +173,6 @@ export class QuestionKYC implements TaggedContent {
       code: code,
       ngc_code: reponse.ngc_code,
     });
-  }
-
-  public setMosaicResponses(
-    mosaic: {
-      code: string;
-      value_number?: number;
-      value_boolean?: boolean;
-    }[],
-  ) {
-    this.reponses = [];
-    this.reponses_possibles.forEach((r_possible) => {
-      this.reponses.push({
-        label: r_possible.label,
-        code: r_possible.code,
-        ngc_code: r_possible.ngc_code,
-        value_number: this.getFromMosaicSingleValueOrException(
-          r_possible,
-          mosaic,
-        ).value_number,
-        value_boolean: this.getFromMosaicSingleValueOrException(
-          r_possible,
-          mosaic,
-        ).value_boolean,
-      });
-    });
-  }
-
-  private getFromMosaicSingleValueOrException(
-    reponse_def: KYCReponse,
-    mosaic: {
-      code: string;
-      value_number?: number;
-      value_boolean?: boolean;
-    }[],
-  ): {
-    value_number?: number;
-    value_boolean?: boolean;
-  } {
-    const found = mosaic.find((m) => m.code === reponse_def.code);
-    if (found) {
-      return {
-        value_number: found.value_number,
-        value_boolean: found.value_boolean,
-      };
-    }
-    ApplicationError.throwMissinMosaicCode(reponse_def.code);
   }
 
   private checkReponseExists(reponses: string[]) {

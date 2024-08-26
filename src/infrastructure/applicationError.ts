@@ -343,12 +343,6 @@ export class ApplicationError {
   static throwMissinPassword() {
     this.throwAppError('064', `Mot de passe manquant`);
   }
-  static throwMissinMosaicCode(code: string) {
-    this.throwAppError(
-      '065',
-      `Element de réponse de mosaic manquant : code = ${code}`,
-    );
-  }
   static throwBadResponseCode(question: string, kyc_code: string) {
     this.throwAppError(
       '066',

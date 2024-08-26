@@ -86,7 +86,6 @@ export class QuestionsKYCController extends GenericControler {
       utilisateurId,
       questionId,
       body.reponse,
-      body.reponse_mosaic,
     );
     return 'OK';
   }
