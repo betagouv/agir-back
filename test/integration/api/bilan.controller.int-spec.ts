@@ -51,6 +51,20 @@ describe('/bilan (API test)', () => {
       image_url: 'bbbb',
       is_locked: false,
     });
+    await TestUtil.create(DB.univers, {
+      id_cms: 3,
+      code: Univers.consommation,
+      label: 'Consommation',
+      image_url: 'bbbb',
+      is_locked: false,
+    });
+    await TestUtil.create(DB.univers, {
+      id_cms: 4,
+      code: Univers.alimentation,
+      label: 'Alimentation',
+      image_url: 'bbbb',
+      is_locked: false,
+    });
     await thematiqueRepository.loadUnivers();
 
     // WHEN
@@ -61,30 +75,30 @@ describe('/bilan (API test)', () => {
     //THEN
     expect(response.status).toBe(200);
     delete response.body.detail;
-
+    console.log(response.body.impact_univers[1]);
     expect(response.body).toEqual({
       impact_kg_annee: 8898.031054479543,
       top_3: [
         {
           label: 'Voiture',
-          emoji: '🚘️',
           pourcentage: 25,
           pourcentage_categorie: 79,
           impact_kg_annee: 2199.540741358343,
+          emoji: '🚘️',
+        },
+        {
+          label: 'Viandes',
+          pourcentage: 13,
+          pourcentage_categorie: 55,
+          impact_kg_annee: 1150.7600000000002,
+          emoji: '🥩',
         },
         {
           label: 'Chauffage',
-          emoji: '🔥',
           pourcentage: 9,
           pourcentage_categorie: 56,
           impact_kg_annee: 822.4772605840475,
-        },
-        {
-          label: 'Avion',
-          emoji: '✈️',
-          pourcentage: 4,
-          pourcentage_categorie: 11,
-          impact_kg_annee: 312.2395338291978,
+          emoji: '🔥',
         },
       ],
       impact_univers: [
@@ -155,9 +169,45 @@ describe('/bilan (API test)', () => {
         {
           pourcentage: 24,
           univers: 'alimentation',
-          univers_label: 'En cuisine',
+          univers_label: 'Alimentation',
           impact_kg_annee: 2094.1568221,
-          details: [],
+          details: [
+            {
+              label: 'Viandes',
+              pourcentage: 13,
+              pourcentage_categorie: 55,
+              impact_kg_annee: 1150.7600000000002,
+              emoji: '🥩',
+            },
+            {
+              label: 'Fruits & Légumes',
+              pourcentage: 3,
+              pourcentage_categorie: 14,
+              impact_kg_annee: 288.6,
+              emoji: '',
+            },
+            {
+              label: 'Boissons',
+              pourcentage: 2,
+              pourcentage_categorie: 11,
+              impact_kg_annee: 221.86744,
+              emoji: '🥤',
+            },
+            {
+              label: 'Poissons',
+              pourcentage: 2,
+              pourcentage_categorie: 7,
+              impact_kg_annee: 136.24,
+              emoji: '🐟',
+            },
+            {
+              label: 'Petit déjeuner',
+              pourcentage: 1,
+              pourcentage_categorie: 5,
+              impact_kg_annee: 102.2,
+              emoji: '🥐',
+            },
+          ],
         },
         {
           pourcentage: 17,
@@ -226,9 +276,66 @@ describe('/bilan (API test)', () => {
         {
           pourcentage: 12,
           univers: 'consommation',
-          univers_label: 'Titre manquant',
+          univers_label: 'Consommation',
           impact_kg_annee: 1079.0454437235896,
-          details: [],
+          details: [
+            {
+              label: 'Textile',
+              pourcentage: 5,
+              pourcentage_categorie: 42,
+              impact_kg_annee: 450.13999999999993,
+              emoji: '👕',
+            },
+            {
+              label: 'Numérique',
+              pourcentage: 2,
+              pourcentage_categorie: 13,
+              impact_kg_annee: 140.45302466666666,
+              emoji: '📺',
+            },
+            {
+              label: 'Autres produits',
+              pourcentage: 1,
+              pourcentage_categorie: 11,
+              impact_kg_annee: 123.01123396773932,
+              emoji: '📦',
+            },
+            {
+              label: 'Loisirs',
+              pourcentage: 1,
+              pourcentage_categorie: 11,
+              impact_kg_annee: 118.99921707433923,
+              emoji: '🎭',
+            },
+            {
+              label: 'Ameublement',
+              pourcentage: 1,
+              pourcentage_categorie: 8,
+              impact_kg_annee: 84.51757575757576,
+              emoji: '🛋️',
+            },
+            {
+              label: 'Electroménager',
+              pourcentage: 1,
+              pourcentage_categorie: 7,
+              impact_kg_annee: 75.44090909090907,
+              emoji: '🔌',
+            },
+            {
+              label: 'Animaux',
+              pourcentage: 1,
+              pourcentage_categorie: 5,
+              impact_kg_annee: 53.11748316635982,
+              emoji: '🐶',
+            },
+            {
+              label: 'Tabac',
+              pourcentage: 0,
+              pourcentage_categorie: 1,
+              impact_kg_annee: 7.28,
+              emoji: '🚬',
+            },
+          ],
         },
       ],
     });
