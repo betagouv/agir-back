@@ -28,7 +28,11 @@ import { App } from '../../domain/app';
 
 class VersionAPI {
   @ApiProperty()
-  version: string;
+  major: number;
+  @ApiProperty()
+  minor: number;
+  @ApiProperty()
+  patch: number;
 }
 
 @Controller()
@@ -59,7 +63,7 @@ export class AdminController extends GenericControler {
   @Get('version')
   @ApiOkResponse({ type: VersionAPI })
   async getVersion(): Promise<VersionAPI> {
-    return { version: App.getAppVersion() };
+    return App.getAppVersion();
   }
 
   @Post('services/refresh_dynamic_data')

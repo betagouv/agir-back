@@ -2448,6 +2448,6 @@ describe('Admin (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ version: '1.0.0' });
+    expect(response.body).toEqual({ major: 1, minor: 0, patch: 0 });
   });
 });
