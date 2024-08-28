@@ -196,6 +196,32 @@ export class RechecheServicesController extends GenericControler {
     );
   }
 
+  @Get(
+    'utilisateurs/:utilisateurId/recherche_services/:serviceId/last_results/:resultId',
+  )
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Récupère la fiche détaillée d'un résultat d'une recherche qui vient d'être effectuée`,
+  })
+  @ApiOkResponse({
+    type: ResultatRechercheAPI,
+  })
+  @ApiParam({ name: 'serviceId', enum: ServiceRechercheID })
+  async getDetailResultat(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('serviceId') serviceId: string,
+    @Param('resultId') resultId: string,
+  ): Promise<ResultatRechercheAPI> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.rechercheServicesUsecase.getResultRechercheDetail(
+      utilisateurId,
+      ServiceRechercheID[serviceId],
+      resultId,
+    );
+    return ResultatRechercheAPI.mapToAPI(result);
+  }
+
   @Delete(
     'utilisateurs/:utilisateurId/recherche_services/:serviceId/favoris/:favId',
   )

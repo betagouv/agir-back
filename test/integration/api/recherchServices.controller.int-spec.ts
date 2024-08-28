@@ -14,7 +14,6 @@ import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_
 import { BibliothequeServices_v0 } from '../../../src/domain/object_store/service/BibliothequeService_v0';
 import { ServiceFavorisStatistiqueRepository } from '../../../src/infrastructure/repository/serviceFavorisStatistique.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { FruitLegume } from '../../../src/infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { DB, TestUtil } from '../../TestUtil';
 
 const logement_palaiseau: Logement_v0 = {
@@ -189,6 +188,78 @@ describe('RechercheServices (API test)', () => {
     // THEN
     expect(response.status).toBe(404);
     expect(response.body.code).toEqual('054');
+  });
+  it.only(`GET /utlilisateur/id/recherche_services/proximite/last_results/id consultation d'un précédent résultat de recherche`, async () => {
+    // GIVEN
+    const biblio: BibliothequeServices_v0 = {
+      version: 0,
+      liste_services: [
+        {
+          id: ServiceRechercheID.proximite,
+          derniere_recherche: [
+            {
+              id: '1',
+              titre: 'yo',
+              adresse_code_postal: '91120',
+              adresse_nom_ville: 'PALAISEAU',
+              categories: [],
+              commitment: 'vraiement',
+              description: 'description',
+              description_more: 'plus de description',
+              distance_metres: 123,
+              emoji: '🟢',
+              image_url: 'https://',
+              impact_carbone_kg: 400,
+              latitude: 40,
+              longitude: 2,
+              open_hours: [
+                {
+                  jour: Day.lundi,
+                  heures: '10h-18h',
+                },
+              ],
+              openhours_more_infos: 'sauf le mardi',
+              phone: '061294875272',
+              site_web: 'https://epicerie',
+              adresse_rue: '10 rue de Paris',
+            },
+          ],
+          favoris: [],
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, { bilbiotheque_services: biblio });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recherche_services/proximite/last_results/1',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      id: '1',
+      titre: 'yo',
+      adresse_code_postal: '91120',
+      adresse_nom_ville: 'PALAISEAU',
+      adresse_rue: '10 rue de Paris',
+      site_web: 'https://epicerie',
+      est_favoris: false,
+      nombre_favoris: 0,
+      impact_carbone_kg: 400,
+      distance_metres: 123,
+      image_url: 'https://',
+      emoji: '🟢',
+      commitment: 'vraiement',
+      description: 'description',
+      description_more: 'plus de description',
+      phone: '061294875272',
+      categories: [],
+      openhours_more_infos: 'sauf le mardi',
+      open_hours: [{ jour: 'lundi', heures: '10h-18h' }],
+      latitude: 40,
+      longitude: 2,
+    });
   });
   it(`POST /utlilisateur/id/recherche_services/proximite/search categorie inconnue`, async () => {
     // GIVEN

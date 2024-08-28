@@ -32,6 +32,8 @@ export class ResultatRechercheAPI {
   @ApiProperty() categories: string[];
   @ApiProperty() openhours_more_infos: string;
   @ApiProperty({ type: [OpenHourAPI] }) open_hours: OpenHourAPI[];
+  @ApiProperty() longitude: number;
+  @ApiProperty() latitude: number;
 
   public static mapToAPI(res: ResultatRecherche): ResultatRechercheAPI {
     return {
@@ -58,6 +60,8 @@ export class ResultatRechercheAPI {
       categories: res.categories,
       openhours_more_infos: res.openhours_more_infos,
       open_hours: res.open_hours,
+      latitude: res.latitude,
+      longitude: res.longitude,
     };
   }
 }

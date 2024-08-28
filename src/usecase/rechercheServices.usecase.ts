@@ -255,6 +255,31 @@ export class RechercheServicesUsecase {
     return result;
   }
 
+  async getResultRechercheDetail(
+    utilisateurId: string,
+    serviceId: ServiceRechercheID,
+    reultatId: string,
+  ): Promise<ResultatRecherche> {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
+    const service = utilisateur.bilbiotheque_services.getServiceById(serviceId);
+
+    if (!service) {
+      ApplicationError.throwUnkonwnSearchService(serviceId);
+    }
+
+    const result = service.getLastResultatById(reultatId);
+
+    if (!result) {
+      ApplicationError.throwUnkonwnSearchResult(serviceId, reultatId);
+    }
+
+    this.completeFavorisDataToResult(serviceId, [result], utilisateur);
+
+    return result;
+  }
+
   async ajouterFavoris(
     utilisateurId: string,
     serviceId: ServiceRechercheID,
