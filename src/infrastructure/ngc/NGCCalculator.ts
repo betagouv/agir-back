@@ -127,6 +127,8 @@ export class NGCCalculator {
       'alimentation . plats . végétalien',
       'alimentation . boisson',
       'services sociétaux',
+      'services publics',
+      'services marchands',
     ];
 
     const resultMap = this.computeEntryListValues(situation, entryList);
@@ -199,12 +201,17 @@ export class NGCCalculator {
     ) as number;
 
     const services_societaux = resultMap.get('services sociétaux') as number;
+    const services_societaux_pub = resultMap.get('services publics') as number;
+    const services_societaux_march = resultMap.get(
+      'services marchands',
+    ) as number;
 
     const impacts: ImpactUnivers[] = [];
     impacts.push({
       pourcentage: Math.round((transport / total) * 100),
       univers: Univers.transport,
       impact_kg_annee: transport,
+      emoji: '🚦',
       details: [
         {
           label: 'Voiture',
@@ -286,6 +293,7 @@ export class NGCCalculator {
       pourcentage: Math.round((logement / total) * 100),
       univers: Univers.logement,
       impact_kg_annee: logement,
+      emoji: '🏠',
       details: [
         {
           label: 'Construction',
@@ -346,6 +354,7 @@ export class NGCCalculator {
       pourcentage: Math.round((divers / total) * 100),
       univers: Univers.consommation,
       impact_kg_annee: divers,
+      emoji: '📦',
       details: [
         {
           label: 'Animaux',
@@ -413,6 +422,7 @@ export class NGCCalculator {
       pourcentage: Math.round((alimentation / total) * 100),
       univers: Univers.alimentation,
       impact_kg_annee: alimentation,
+      emoji: '🍴',
       details: [
         {
           label: 'Petit déjeuner',
@@ -448,7 +458,7 @@ export class NGCCalculator {
             (alimentation_fruits_legumes / alimentation) * 100,
           ),
           impact_kg_annee: alimentation_fruits_legumes,
-          emoji: '',
+          emoji: '🥦',
         },
         {
           label: 'Boissons',
@@ -461,30 +471,60 @@ export class NGCCalculator {
         },
       ],
     });
-    impacts.push({
+
+    const services_societaux_impact = {
       pourcentage: Math.round((services_societaux / total) * 100),
       univers: Univers.services_societaux,
       impact_kg_annee: services_societaux,
-      details: [],
-    });
+      emoji: '🏛️',
+      details: [
+        {
+          label: 'Service publics',
+          pourcentage: Math.round((services_societaux_pub / total) * 100),
+          pourcentage_categorie: Math.round(
+            (services_societaux_pub / services_societaux) * 100,
+          ),
+          impact_kg_annee: services_societaux_pub,
+          emoji: '🏛',
+        },
+        {
+          label: 'Service marchands',
+          pourcentage: Math.round((services_societaux_march / total) * 100),
+          pourcentage_categorie: Math.round(
+            (services_societaux_march / services_societaux) * 100,
+          ),
+          impact_kg_annee: services_societaux_march,
+          emoji: '✉️',
+        },
+      ],
+    };
 
-    impacts.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
-    for (const univers of impacts) {
-      univers.details.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
-    }
+    const top_3 = this.computeTop3Details(impacts);
 
-    let top_3: DetailImpact[] = [];
-    for (const cat of impacts) {
-      top_3 = top_3.concat(cat.details);
-    }
-    top_3.sort((a, b) => b.pourcentage - a.pourcentage);
-    top_3 = top_3.slice(0, 3);
+    this.sortResult(impacts);
 
     return new BilanCarbone({
       impact_kg_annee: total,
       impact_univers: impacts,
       top_3: top_3,
+      services_societaux: services_societaux_impact,
     });
+  }
+
+  private sortResult(liste: ImpactUnivers[]) {
+    liste.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
+    for (const univers of liste) {
+      univers.details.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
+    }
+  }
+
+  private computeTop3Details(liste_impacts: ImpactUnivers[]): DetailImpact[] {
+    let liste_details: DetailImpact[] = [];
+    for (const cat of liste_impacts) {
+      liste_details = liste_details.concat(cat.details);
+    }
+    liste_details.sort((a, b) => b.pourcentage - a.pourcentage);
+    return liste_details.slice(0, 3);
   }
 
   computeBilanFromSituation(situation: object): Bilan {

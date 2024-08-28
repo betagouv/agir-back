@@ -46,8 +46,8 @@ describe('/bilan (API test)', () => {
     });
     await TestUtil.create(DB.univers, {
       id_cms: 2,
-      code: Univers.alimentation,
-      label: 'En cuisine',
+      code: Univers.logement,
+      label: 'Logement',
       image_url: 'bbbb',
       is_locked: false,
     });
@@ -65,6 +65,13 @@ describe('/bilan (API test)', () => {
       image_url: 'bbbb',
       is_locked: false,
     });
+    await TestUtil.create(DB.univers, {
+      id_cms: 5,
+      code: Univers.services_societaux,
+      label: 'Services sociétaux',
+      image_url: 'bbbb',
+      is_locked: false,
+    });
     await thematiqueRepository.loadUnivers();
 
     // WHEN
@@ -75,7 +82,6 @@ describe('/bilan (API test)', () => {
     //THEN
     expect(response.status).toBe(200);
     delete response.body.detail;
-
     expect(response.body).toEqual({
       impact_kg_annee: 8898.031054479543,
       top_3: [
@@ -101,12 +107,36 @@ describe('/bilan (API test)', () => {
           emoji: '🔥',
         },
       ],
+      services_societaux: {
+        pourcentage: 16,
+        univers: 'services_societaux',
+        univers_label: 'Services sociétaux',
+        impact_kg_annee: 1450.9052263863641,
+        details: [
+          {
+            label: 'Service publics',
+            pourcentage: 14,
+            pourcentage_categorie: 87,
+            impact_kg_annee: 1259.4428717769142,
+            emoji: '🏛',
+          },
+          {
+            label: 'Service marchands',
+            pourcentage: 2,
+            pourcentage_categorie: 13,
+            impact_kg_annee: 191.4623546094499,
+            emoji: '✉️',
+          },
+        ],
+        emoji: '🏛️',
+      },
       impact_univers: [
         {
           pourcentage: 31,
           univers: 'transport',
           univers_label: 'The Transport',
           impact_kg_annee: 2796.1001241487393,
+          emoji: '🚦',
           details: [
             {
               label: 'Voiture',
@@ -171,6 +201,7 @@ describe('/bilan (API test)', () => {
           univers: 'alimentation',
           univers_label: 'Alimentation',
           impact_kg_annee: 2094.1568221,
+          emoji: '🍴',
           details: [
             {
               label: 'Viandes',
@@ -184,7 +215,7 @@ describe('/bilan (API test)', () => {
               pourcentage: 3,
               pourcentage_categorie: 14,
               impact_kg_annee: 288.6,
-              emoji: '',
+              emoji: '🥦',
             },
             {
               label: 'Boissons',
@@ -212,8 +243,9 @@ describe('/bilan (API test)', () => {
         {
           pourcentage: 17,
           univers: 'logement',
-          univers_label: 'Titre manquant',
+          univers_label: 'Logement',
           impact_kg_annee: 1477.82343812085,
+          emoji: '🏠',
           details: [
             {
               label: 'Chauffage',
@@ -267,17 +299,11 @@ describe('/bilan (API test)', () => {
           ],
         },
         {
-          pourcentage: 16,
-          univers: 'services_societaux',
-          univers_label: 'Titre manquant',
-          impact_kg_annee: 1450.9052263863641,
-          details: [],
-        },
-        {
           pourcentage: 12,
           univers: 'consommation',
           univers_label: 'Consommation',
           impact_kg_annee: 1079.0454437235896,
+          emoji: '📦',
           details: [
             {
               label: 'Textile',
