@@ -95,6 +95,16 @@ describe('RechercheServices (API test)', () => {
                 open_hours: [{ jour: Day.lundi, heures: 'toute la journée' }],
                 openhours_more_infos: 'toute la journée',
                 phone: '01234967937',
+                ingredients: [
+                  {
+                    nom: 'a',
+                    ordre: 1,
+                    poids: 10,
+                    poids_net: 20,
+                    quantite: 2,
+                    unite: '-',
+                  },
+                ],
               },
             },
           ],
@@ -144,6 +154,18 @@ describe('RechercheServices (API test)', () => {
       ],
       openhours_more_infos: 'toute la journée',
       phone: '01234967937',
+      ingredients: [
+        {
+          nom: 'a',
+          ordre: 1,
+          poids: 10,
+          poids_net: 20,
+          quantite: 2,
+          unite: '-',
+        },
+      ],
+      latitude: 1,
+      longitude: 2,
     });
   });
 
@@ -189,7 +211,7 @@ describe('RechercheServices (API test)', () => {
     expect(response.status).toBe(404);
     expect(response.body.code).toEqual('054');
   });
-  it.only(`GET /utlilisateur/id/recherche_services/proximite/last_results/id consultation d'un précédent résultat de recherche`, async () => {
+  it(`GET /utlilisateur/id/recherche_services/proximite/last_results/id consultation d'un précédent résultat de recherche`, async () => {
     // GIVEN
     const biblio: BibliothequeServices_v0 = {
       version: 0,
@@ -222,6 +244,16 @@ describe('RechercheServices (API test)', () => {
               phone: '061294875272',
               site_web: 'https://epicerie',
               adresse_rue: '10 rue de Paris',
+              ingredients: [
+                {
+                  nom: 'a',
+                  ordre: 1,
+                  poids: 10,
+                  poids_net: 20,
+                  quantite: 2,
+                  unite: '-',
+                },
+              ],
             },
           ],
           favoris: [],
@@ -259,6 +291,16 @@ describe('RechercheServices (API test)', () => {
       open_hours: [{ jour: 'lundi', heures: '10h-18h' }],
       latitude: 40,
       longitude: 2,
+      ingredients: [
+        {
+          nom: 'a',
+          ordre: 1,
+          poids: 10,
+          poids_net: 20,
+          quantite: 2,
+          unite: '-',
+        },
+      ],
     });
   });
   it(`POST /utlilisateur/id/recherche_services/proximite/search categorie inconnue`, async () => {
@@ -556,6 +598,81 @@ describe('RechercheServices (API test)', () => {
         favoris_id: '456',
         service_id: 'proximite',
         titre_favoris: 'hoho',
+      },
+    ]);
+  });
+
+  it(`POST /utlilisateur/id/recherche_services/recettes/search renvoie une liste de résultats`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/recettes/search',
+    ).send({ categorie: 'vege' });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(10);
+    expect(response.body[0].difficulty_plat).toEqual('Facile');
+    expect(response.body[0].est_favoris).toEqual(false);
+    expect(response.body[0].id).toEqual('10982');
+    expect(response.body[0].nombre_favoris).toEqual(0);
+    expect(response.body[0].temps_prepa_min).toEqual(5);
+    expect(response.body[0].titre).toEqual(
+      'Salade de pâtes complètes et lentilles',
+    );
+    expect(response.body[0].type_plat).toEqual('Plat');
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+
+    expect(userDB.bilbiotheque_services.liste_services).toHaveLength(1);
+    expect(userDB.bilbiotheque_services.liste_services[0].id).toEqual(
+      ServiceRechercheID.recettes,
+    );
+    expect(
+      userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
+    ).toHaveLength(10);
+    expect(response.body[0].ingredients).toEqual([
+      {
+        nom: 'Lentilles',
+        ordre: 1,
+        poids: 200,
+        poids_net: 550,
+        quantite: 200,
+        unite: '-',
+      },
+      {
+        nom: 'Pâtes complètes',
+        ordre: 2,
+        poids: 200,
+        poids_net: 500,
+        quantite: 200,
+        unite: '-',
+      },
+      {
+        nom: 'Graines germées',
+        ordre: 3,
+        poids: 50,
+        poids_net: 50,
+        quantite: 50,
+        unite: '-',
+      },
+      {
+        nom: 'Vinaigre de framboise',
+        ordre: 4,
+        poids: 20,
+        poids_net: 20,
+        quantite: 2,
+        unite: '-',
+      },
+      {
+        nom: "Huile d'olive",
+        ordre: 5,
+        poids: 40,
+        poids_net: 40,
+        quantite: 4,
+        unite: '-',
       },
     ]);
   });

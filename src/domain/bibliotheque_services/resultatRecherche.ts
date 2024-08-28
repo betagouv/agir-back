@@ -1,7 +1,22 @@
 import { FruitLegume } from '../../infrastructure/service/fruits/fruitEtLegumesServiceManager';
-import { ResultatRecherche_v0 } from '../object_store/service/BibliothequeService_v0';
-import { Day } from './days';
+import {
+  IngredientRecette_v0,
+  ResultatRecherche_v0,
+} from '../object_store/service/BibliothequeService_v0';
 import { OpenHour } from './openHour';
+
+export class IngredientRecette {
+  ordre: number;
+  quantite: number;
+  poids: number;
+  poids_net: number;
+  unite: string;
+  nom: string;
+
+  constructor(res: IngredientRecette_v0) {
+    Object.assign(this, res);
+  }
+}
 
 export class ResultatRecherche {
   id: string;
@@ -39,6 +54,8 @@ export class ResultatRecherche {
   openhours_more_infos?: string;
   open_hours?: OpenHour[];
 
+  ingredients?: IngredientRecette[];
+
   constructor(res: ResultatRecherche_v0) {
     this.id = res.id;
     this.titre = res.titre;
@@ -67,5 +84,8 @@ export class ResultatRecherche {
     this.categories = res.categories;
     this.openhours_more_infos = res.openhours_more_infos;
     this.open_hours = res.open_hours;
+    this.ingredients = res.ingredients
+      ? res.ingredients.map((e) => new IngredientRecette(e))
+      : [];
   }
 }

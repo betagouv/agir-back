@@ -2,12 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { CategorieRecherche } from '../../../../domain/bibliotheque_services/categorieRecherche';
 import { FiltreRecherche } from '../../../../domain/bibliotheque_services/filtreRecherche';
 import { FinderInterface } from '../../../../domain/bibliotheque_services/finderInterface';
-import { ResultatRecherche } from '../../../../domain/bibliotheque_services/resultatRecherche';
+import {
+  IngredientRecette,
+  ResultatRecherche,
+} from '../../../../domain/bibliotheque_services/resultatRecherche';
 import _recettes from './data/dump-recipes.2024-08-09.17-38-20.json';
+import _ingredients_recette from './data/dump-ingredient_recipe.2024-08-09.17-29-40.json';
+import _ingredients from './data/dump-ingredients.2024-08-09.17-44-22.json';
 
-const API_URL = 'https://';
+// const API_URL = 'https://';
 
-export type Recette = {
+export type Recette_RAW = {
   id: number; // 11386,
   name: string; //'Pizza jambon et champignons, salade';
   slug: string; //string; //'pizza-jambon-et-champignons-salade';
@@ -66,18 +71,34 @@ export type Recette = {
   pnns_yoghurt: number; // 0;
 };
 
-export type RecettesResponse = {
-  id: string;
-  titre: string;
-  type: string;
-  difficulty: string;
-  temps_prepa_min: number;
-  vege: boolean;
-  vegan: boolean;
-  volaille: boolean;
-  saison: boolean;
-  image_url: string;
-}[];
+export type IngredientRecette_RAW = {
+  id: number;
+  order: number;
+  quantity: number;
+  gross_weight: number;
+  net_weight: number;
+  measurement_unit_id: number;
+  ingredient_id: number;
+  recipe_id: number;
+};
+
+export type Ingredient_RAW = {
+  id: number;
+  legacy_id: number;
+  name: string;
+  plural: string;
+  display_name: string;
+  display_plural: string;
+  months: string; //'{"1":true,"2":true,"3":true,"4":true,"5":true,"6":true,"7":true,"8":true,"9":true,"10":true,"11":true,"12":true}'
+  food_practice: string; //'[]'
+  is_oil: number; //0
+  frozen_or_canned: number; //0
+  exclude_from_distance: number; //0
+  pnns_category: string; //'animal_fat'
+  ingredient_family_id: number; //4
+  nutritional_value_id: number; //634
+  forbidden_out_of_season: number; //0
+};
 
 const IMAGES_TMP = [
   'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Ftian-de-sardines.jpg&w=3840&q=75',
@@ -100,7 +121,7 @@ export class RecettesRepository implements FinderInterface {
   }
 
   public async find(filtre: FiltreRecherche): Promise<ResultatRecherche[]> {
-    let recherche: Recette[] = _recettes;
+    let recherche: Recette_RAW[] = _recettes;
 
     const current_month = new Date().getMonth() + 1;
 
@@ -139,12 +160,41 @@ export class RecettesRepository implements FinderInterface {
           type_plat: this.mapCategoryPlat(r.recipe_category),
           temps_prepa_min: r.preparation_time,
           image_url: IMAGES_TMP[Math.floor(Math.random() * 5)],
+          ingredients: this.getIngredientsRecette(r.id),
         }),
     );
 
     mapped_result.sort((a, b) => a.impact_carbone_kg - b.impact_carbone_kg);
 
     return mapped_result;
+  }
+
+  private getIngredientsRecette(recetteId: number): IngredientRecette[] {
+    const liste_raw_ingredients = this.readIngredientsRecette(recetteId);
+
+    const result = liste_raw_ingredients.map(
+      (e) =>
+        new IngredientRecette({
+          nom: this.readIngredientsById(e.ingredient_id).name,
+          ordre: e.order,
+          poids: e.gross_weight,
+          poids_net: e.net_weight,
+          quantite: e.quantity,
+          unite: '-',
+        }),
+    );
+    return result;
+  }
+
+  private readIngredientsRecette(recetteId: number): IngredientRecette_RAW[] {
+    const result = _ingredients_recette.filter(
+      (i) => i.recipe_id === recetteId,
+    );
+    result.sort((a, b) => a.order - b.order);
+    return result;
+  }
+  private readIngredientsById(ingredientId: number): Ingredient_RAW {
+    return _ingredients.find((e) => e.id === ingredientId);
   }
 
   private mapCategoryPlat(cat: string): string {
@@ -155,6 +205,22 @@ export class RecettesRepository implements FinderInterface {
     return '-';
   }
 
+  /*
+export type RecettesResponse = {
+  id: string;
+  titre: string;
+  type: string;
+  difficulty: string;
+  temps_prepa_min: number;
+  vege: boolean;
+  vegan: boolean;
+  volaille: boolean;
+  saison: boolean;
+  image_url: string;
+}[];
+*/
+
+  /*
   private async callServiceAPI(
     filtre: FiltreRecherche,
   ): Promise<RecettesResponse> {
@@ -238,4 +304,5 @@ export class RecettesRepository implements FinderInterface {
         return result;
     }
   }
+  */
 }
