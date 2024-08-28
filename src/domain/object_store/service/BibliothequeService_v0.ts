@@ -3,6 +3,7 @@ import { ServiceRecherche } from '../../bibliotheque_services/serviceRecherche';
 import { BibliothequeServices } from '../../bibliotheque_services/bibliothequeServices';
 import { ServiceRechercheID } from '../../../../src/domain/bibliotheque_services/serviceRechercheID';
 import {
+  EtapeRecette,
   IngredientRecette,
   ResultatRecherche,
 } from '../../../../src/domain/bibliotheque_services/resultatRecherche';
@@ -10,6 +11,17 @@ import { FavorisRecherche } from 'src/domain/bibliotheque_services/favorisRecher
 import { FruitLegume } from '../../../infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { OpenHour } from '../../bibliotheque_services/openHour';
 
+export class EtapeRecette_v0 {
+  ordre: number;
+  texte: string;
+
+  static map(res: EtapeRecette): EtapeRecette_v0 {
+    return {
+      ordre: res.ordre,
+      texte: res.texte,
+    };
+  }
+}
 export class IngredientRecette_v0 {
   ordre: number;
   quantite: number;
@@ -62,6 +74,7 @@ export class ResultatRecherche_v0 {
   openhours_more_infos?: string;
   open_hours?: OpenHour[];
   ingredients?: IngredientRecette_v0[];
+  etapes_recette?: EtapeRecette_v0[];
 
   static map(res: ResultatRecherche): ResultatRecherche_v0 {
     return {
@@ -90,6 +103,9 @@ export class ResultatRecherche_v0 {
       open_hours: res.open_hours,
       ingredients: res.ingredients
         ? res.ingredients.map((e) => IngredientRecette_v0.map(e))
+        : [],
+      etapes_recette: res.etapes_recette
+        ? res.etapes_recette.map((e) => EtapeRecette_v0.map(e))
         : [],
     };
   }

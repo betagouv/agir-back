@@ -3,12 +3,14 @@ import { CategorieRecherche } from '../../../../domain/bibliotheque_services/cat
 import { FiltreRecherche } from '../../../../domain/bibliotheque_services/filtreRecherche';
 import { FinderInterface } from '../../../../domain/bibliotheque_services/finderInterface';
 import {
+  EtapeRecette,
   IngredientRecette,
   ResultatRecherche,
 } from '../../../../domain/bibliotheque_services/resultatRecherche';
 import _recettes from './data/dump-recipes.2024-08-09.17-38-20.json';
 import _ingredients_recette from './data/dump-ingredient_recipe.2024-08-09.17-29-40.json';
 import _ingredients from './data/dump-ingredients.2024-08-09.17-44-22.json';
+import _etapes from './data/dump-recipe_steps.2024-08-09.17-47-05.json';
 
 // const API_URL = 'https://';
 
@@ -71,6 +73,11 @@ export type Recette_RAW = {
   pnns_yoghurt: number; // 0;
 };
 
+export type Etapes_RAW = {
+  id: number;
+  text: string; //"[{\"children\":[{\"text\":\"Dans une casserole, mettre la crème fraîche et ajouter les lentilles cuites.\"}]}]",
+  recipe_id: number;
+};
 export type IngredientRecette_RAW = {
   id: number;
   order: number;
@@ -161,6 +168,7 @@ export class RecettesRepository implements FinderInterface {
           temps_prepa_min: r.preparation_time,
           image_url: IMAGES_TMP[Math.floor(Math.random() * 5)],
           ingredients: this.getIngredientsRecette(r.id),
+          etapes_recette: this.getEtapesRecette(r.id),
         }),
     );
 
@@ -183,6 +191,24 @@ export class RecettesRepository implements FinderInterface {
           unite: '-',
         }),
     );
+    return result;
+  }
+
+  private getEtapesRecette(recetteId: number): EtapeRecette[] {
+    const liste_raw_etapes = _etapes.filter((e) => e.recipe_id === recetteId);
+    liste_raw_etapes.sort((a, b) => a.id - b.id);
+
+    const result = [];
+    let ordre = 0;
+    for (const etape of liste_raw_etapes) {
+      ordre++;
+      result.push(
+        new EtapeRecette({
+          ordre: ordre,
+          texte: JSON.parse(etape.text)[0].children[0].text,
+        }),
+      );
+    }
     return result;
   }
 

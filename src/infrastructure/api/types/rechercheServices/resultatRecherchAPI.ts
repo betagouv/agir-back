@@ -7,6 +7,10 @@ export class OpenHourAPI {
   @ApiProperty({ enum: Day }) jour: Day;
   @ApiProperty() heures: string;
 }
+export class EtapeRecetteAPI {
+  @ApiProperty() ordre: number;
+  @ApiProperty() texte: string;
+}
 export class IngredientAPI {
   @ApiProperty() ordre: number;
   @ApiProperty() quantite: number;
@@ -43,6 +47,7 @@ export class ResultatRechercheAPI {
   @ApiProperty() longitude: number;
   @ApiProperty() latitude: number;
   @ApiProperty({ type: [IngredientAPI] }) ingredients: IngredientAPI[];
+  @ApiProperty({ type: [EtapeRecetteAPI] }) etapes_recette: EtapeRecetteAPI[];
 
   public static mapToAPI(res: ResultatRecherche): ResultatRechercheAPI {
     return {
@@ -72,6 +77,7 @@ export class ResultatRechercheAPI {
       latitude: res.latitude,
       longitude: res.longitude,
       ingredients: res.ingredients,
+      etapes_recette: res.etapes_recette,
     };
   }
 }

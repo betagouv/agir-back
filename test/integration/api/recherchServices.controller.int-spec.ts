@@ -105,6 +105,12 @@ describe('RechercheServices (API test)', () => {
                     unite: '-',
                   },
                 ],
+                etapes_recette: [
+                  {
+                    ordre: 1,
+                    texte: 'haha',
+                  },
+                ],
               },
             },
           ],
@@ -162,6 +168,12 @@ describe('RechercheServices (API test)', () => {
           poids_net: 20,
           quantite: 2,
           unite: '-',
+        },
+      ],
+      etapes_recette: [
+        {
+          ordre: 1,
+          texte: 'haha',
         },
       ],
       latitude: 1,
@@ -254,6 +266,12 @@ describe('RechercheServices (API test)', () => {
                   unite: '-',
                 },
               ],
+              etapes_recette: [
+                {
+                  ordre: 1,
+                  texte: 'haha',
+                },
+              ],
             },
           ],
           favoris: [],
@@ -299,6 +317,12 @@ describe('RechercheServices (API test)', () => {
           poids_net: 20,
           quantite: 2,
           unite: '-',
+        },
+      ],
+      etapes_recette: [
+        {
+          ordre: 1,
+          texte: 'haha',
         },
       ],
     });
@@ -633,6 +657,7 @@ describe('RechercheServices (API test)', () => {
     expect(
       userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
     ).toHaveLength(10);
+
     expect(response.body[0].ingredients).toEqual([
       {
         nom: 'Lentilles',
@@ -673,6 +698,23 @@ describe('RechercheServices (API test)', () => {
         poids_net: 40,
         quantite: 4,
         unite: '-',
+      },
+    ]);
+    expect(response.body[0].etapes_recette).toEqual([
+      {
+        ordre: 1,
+        texte:
+          "Faire cuire les lentilles dans de l'eau bouillante pendant 20 minutes. Faire cuire séparément les pâtes en suivant les indications du paquet.",
+      },
+      {
+        ordre: 2,
+        texte:
+          'Une fois les pâtes et les lentilles cuites, laisser refroidir quelques minutes. ',
+      },
+      {
+        ordre: 3,
+        texte:
+          "Mélanger les pâtes, les lentilles, les graines germées, l'huile d'olive et le vinaigre de framboise. Assaisonner, c'est prêt !",
       },
     ]);
   });
