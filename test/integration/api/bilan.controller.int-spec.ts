@@ -75,7 +75,7 @@ describe('/bilan (API test)', () => {
     //THEN
     expect(response.status).toBe(200);
     delete response.body.detail;
-    console.log(response.body.impact_univers[1]);
+
     expect(response.body).toEqual({
       impact_kg_annee: 8898.031054479543,
       top_3: [
