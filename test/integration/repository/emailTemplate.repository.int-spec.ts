@@ -1,5 +1,5 @@
 import { TestUtil } from '../../TestUtil';
-import { EmailTemplateRepository } from '../../../src/infrastructure/email/templates/emailTemplate.repository';
+import { EmailTemplateRepository } from '../../../src/infrastructure/email/emailTemplate.repository';
 
 describe('EmailTemplateRepository', () => {
   let emailTemplateRepository = new EmailTemplateRepository();

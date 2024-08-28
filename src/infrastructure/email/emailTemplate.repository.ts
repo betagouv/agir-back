@@ -10,7 +10,7 @@ export class EmailTemplateRepository {
   async onApplicationBootstrap(): Promise<void> {
     try {
       const email_inscription_code = await fs.readFile(
-        path.resolve(__dirname, './email_inscription_code.hbs'),
+        path.resolve(__dirname, './templates/email_inscription_code.hbs'),
         {
           encoding: 'utf8',
         },
