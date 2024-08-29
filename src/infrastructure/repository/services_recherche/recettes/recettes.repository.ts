@@ -107,6 +107,27 @@ export type Ingredient_RAW = {
   forbidden_out_of_season: number; //0
 };
 
+const UNITS = {
+  _1: 'g',
+  _3: '',
+  _4: 'cuillère à soupe',
+  _6: 'cuillère à café',
+  _7: 'cl',
+  _8: 'cl',
+  _13: 'gousse',
+  _14: 'pincée',
+  _19: 'brin',
+  _24: 'feuille',
+  _23: 'tranche',
+  _32: 'branche',
+  _34: 'bouquet',
+  _55: 'boule',
+  _118: 'barquette',
+  _120: 'verre',
+  _125: 'boîte',
+  _133: 'sachet',
+};
+
 const IMAGES_TMP = [
   'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Ftian-de-sardines.jpg&w=3840&q=75',
   'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Fshutterstock_1938638506-dinde-provencale.jpg&w=3840&q=75',
@@ -188,7 +209,7 @@ export class RecettesRepository implements FinderInterface {
           poids: e.gross_weight,
           poids_net: e.net_weight,
           quantite: e.quantity,
-          unite: '-',
+          unite: UNITS['_' + e.measurement_unit_id] || '-',
         }),
     );
     return result;

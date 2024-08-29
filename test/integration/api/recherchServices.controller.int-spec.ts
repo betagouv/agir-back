@@ -665,7 +665,7 @@ describe('RechercheServices (API test)', () => {
         poids: 200,
         poids_net: 550,
         quantite: 200,
-        unite: '-',
+        unite: 'g',
       },
       {
         nom: 'Pâtes complètes',
@@ -673,7 +673,7 @@ describe('RechercheServices (API test)', () => {
         poids: 200,
         poids_net: 500,
         quantite: 200,
-        unite: '-',
+        unite: 'g',
       },
       {
         nom: 'Graines germées',
@@ -681,7 +681,7 @@ describe('RechercheServices (API test)', () => {
         poids: 50,
         poids_net: 50,
         quantite: 50,
-        unite: '-',
+        unite: 'g',
       },
       {
         nom: 'Vinaigre de framboise',
@@ -689,7 +689,7 @@ describe('RechercheServices (API test)', () => {
         poids: 20,
         poids_net: 20,
         quantite: 2,
-        unite: '-',
+        unite: 'cuillère à soupe',
       },
       {
         nom: "Huile d'olive",
@@ -697,7 +697,7 @@ describe('RechercheServices (API test)', () => {
         poids: 40,
         poids_net: 40,
         quantite: 4,
-        unite: '-',
+        unite: 'cuillère à soupe',
       },
     ]);
     expect(response.body[0].etapes_recette).toEqual([

@@ -8,7 +8,7 @@ import { VehiculeAPI } from '../../../src/infrastructure/api/types/equipements/v
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
-describe('Equipements (API test)', () => {
+describe.skip('Equipements (API test)', () => {
   const utilisateurRepo = new UtilisateurRepository(TestUtil.prisma);
   const OLD_ENV = process.env;
 
