@@ -3,6 +3,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -25,6 +26,9 @@ import { MissionDefinition } from '../../domain/mission/missionDefinition';
 import { UniversUsecase } from '../../usecase/univers.usecase';
 import { DefiDefinition } from '../../domain/defis/defiDefinition';
 import { AuthGuard } from '../auth/guard';
+import { KycDefinition } from '../../domain/kyc/kycDefinition';
+
+// https://fsymbols.com/generators/carty/
 
 @Controller()
 @ApiExcludeController()
@@ -58,12 +62,21 @@ export class PreviewController extends GenericControler {
 ╚═╝░░╚═╝░░░╚═╝░░░░╚════╝░
 
 `);
-    result.push('## KYC CMS ID : ' + id);
+
+    result = this.dumpSingleKycPage(kyc_def);
+
+    return `<pre>${result.join('\n')}</pre>`;
+  }
+
+  private dumpSingleKycPage(kyc_def: KycDefinition): string[] {
+    let result = [];
+
+    result.push('## KYC CMS ID : ' + kyc_def.id_cms);
     result.push('######################');
 
     if (!kyc_def) {
       result.push('Publiez la question avant de faire le preview !!!');
-      return `<pre>${result.join('\n')}</pre>`;
+      return result;
     }
     result.push(`## ${kyc_def.question}`);
     result.push(
@@ -91,7 +104,7 @@ export class PreviewController extends GenericControler {
     if (!kyc_def.is_ngc) {
       DATA.reponses = kyc_def.reponses;
       result.push(JSON.stringify(DATA, null, 2));
-      return `<pre>${result.join('\n')}</pre>`;
+      return result;
     }
 
     result.push(JSON.stringify(DATA, null, 2));
@@ -114,7 +127,7 @@ export class PreviewController extends GenericControler {
         DATA.reponses = kyc_def.reponses;
         result.push(JSON.stringify(DATA, null, 2));
 
-        return `<pre>${result.join('\n')}</pre>`;
+        return result;
       }
 
       if (kyc_def.type === TypeReponseQuestionKYC.entier) {
@@ -150,12 +163,179 @@ export class PreviewController extends GenericControler {
         }
       }
     } catch (error) {
-      DATA.error = error.message;
+      DATA.error = '🔥 ' + error.message;
     }
     DATA.question = kyc_def.reponses;
     result.push(JSON.stringify(DATA, null, 2));
+    return result;
+  }
+
+  @Get('all_kyc_preview')
+  @UseGuards(AuthGuard)
+  async all_kyc_preview(
+    @Query('check_kyc') check_kyc: string,
+  ): Promise<string> {
+    let all_kyc_defs = await this.kycRepository.getAllDefs();
+    let all_mission_defs = await this.missionRepository.list();
+    let result = [];
+
+    const kyc_fire_map: Map<number, boolean> = new Map();
+
+    result.push(`
+
+░█████╗░██╗░░░░░██╗░░░░░  ██╗░░██╗██╗░░░██╗░█████╗░
+██╔══██╗██║░░░░░██║░░░░░  ██║░██╔╝╚██╗░██╔╝██╔══██╗
+███████║██║░░░░░██║░░░░░  █████═╝░░╚████╔╝░██║░░╚═╝
+██╔══██║██║░░░░░██║░░░░░  ██╔═██╗░░░╚██╔╝░░██║░░██╗
+██║░░██║███████╗███████╗  ██║░╚██╗░░░██║░░░╚█████╔╝
+╚═╝░░╚═╝╚══════╝╚══════╝  ╚═╝░░╚═╝░░░╚═╝░░░░╚════╝░
+    
+`);
+    all_kyc_defs.sort((a, b) => a.id_cms - b.id_cms);
+    if (check_kyc === 'true') {
+      result.push(
+        `Les flammes 🔥🔥🔥 indiquent des questions NGC qui ne semblent pas fonctionnelles`,
+      );
+      result.push(``);
+      result.push(
+        `<strong><a href="/all_kyc_preview">Retour page sans check KYC NGC</a></strong>`,
+      );
+      result.push(``);
+    } else {
+      result.push(
+        `<strong><a href="/all_kyc_preview?check_kyc=true">START CHECK</a></strong> : Vérifier toutes les KYC NGC`,
+      );
+      result.push(
+        `ATTENTION requette longue et intensive, à ne pas abuser, surtout en PROD 🔥`,
+      );
+      result.push(``);
+    }
+
+    result.push(
+      `################################################################################`,
+    );
+    result.push(`## <strong>KYC de type Nos Gestes Climat</strong>`);
+    result.push(
+      `################################################################################`,
+    );
+    result.push(``);
+
+    const all_kyc_defs_ngc = all_kyc_defs.filter((k) => k.is_ngc);
+
+    for (const kyc_def of all_kyc_defs_ngc) {
+      if (check_kyc === 'true') {
+        this.updateFireMapForNgcKYC(kyc_fire_map, kyc_def);
+      }
+      result.push(
+        this.dumpKycInfoToSingleLine(
+          kyc_def,
+          all_mission_defs,
+          false,
+          kyc_fire_map.get(kyc_def.id_cms),
+        ),
+      );
+    }
+
+    result.push(``);
+    result.push(
+      `################################################################################`,
+    );
+    result.push(`## <strong>KYCs flaguées Recommendation</strong>`);
+    result.push(
+      `################################################################################`,
+    );
+    result.push(``);
+
+    const all_kyc_defs_reco = all_kyc_defs.filter(
+      (k) => k.categorie === Categorie.recommandation,
+    );
+
+    for (const kyc_def of all_kyc_defs_reco) {
+      result.push(
+        this.dumpKycInfoToSingleLine(kyc_def, all_mission_defs, false, false),
+      );
+    }
+
+    result.push(``);
+    result.push(
+      `################################################################################`,
+    );
+    result.push(`## <strong>KYCs flaguées Mission</strong>`);
+    result.push(
+      `################################################################################`,
+    );
+    result.push(``);
+
+    const all_kyc_defs_mission = all_kyc_defs.filter(
+      (k) => k.categorie === Categorie.mission,
+    );
+
+    for (const kyc_def of all_kyc_defs_mission) {
+      result.push(
+        this.dumpKycInfoToSingleLine(kyc_def, all_mission_defs, false, false),
+      );
+    }
+
+    result.push(``);
+    result.push(
+      `################################################################################`,
+    );
+    result.push(`## <strong>KYCs flaguée TEST 🤔❓ 🤔❓ 🤔❓ </strong>`);
+    result.push(
+      `################################################################################`,
+    );
+    result.push(``);
+
+    const all_kyc_defs_test = all_kyc_defs.filter(
+      (k) => k.categorie === Categorie.test,
+    );
+
+    for (const kyc_def of all_kyc_defs_test) {
+      result.push(
+        this.dumpKycInfoToSingleLine(kyc_def, all_mission_defs, true, false),
+      );
+    }
 
     return `<pre>${result.join('\n')}</pre>`;
+  }
+
+  private updateFireMapForNgcKYC(
+    map: Map<number, boolean>,
+    kyc_def: KycDefinition,
+  ) {
+    if (kyc_def.is_ngc && map.get(kyc_def.id_cms) === undefined) {
+      map.set(
+        kyc_def.id_cms,
+        this.dumpSingleKycPage(kyc_def).join().includes('🔥'),
+      );
+    }
+  }
+
+  private dumpKycInfoToSingleLine(
+    kyc_def: KycDefinition,
+    all_mission_defs: MissionDefinition[],
+    display_NGC: boolean,
+    on_fire: boolean,
+  ): string {
+    const list_mission_with_kyc = this.getListeMissionFromKYCID(
+      kyc_def.id_cms,
+      all_mission_defs,
+    );
+    let line = `KYC ${display_NGC ? (kyc_def.is_ngc ? 'NGC ' : 'STD ') : ''}${
+      on_fire ? '🔥🔥🔥 ' : ''
+    }<a href="/kyc_preview/${kyc_def.id_cms}">[${kyc_def.id_cms}]</a> => ${
+      kyc_def.question
+    }`;
+    let index = 0;
+    const last = list_mission_with_kyc.length - 1;
+    for (const mission_def of list_mission_with_kyc) {
+      line += ` <a href="/mission_preview/${mission_def.id_cms}">${mission_def.thematique_univers}</a>`;
+      if (index !== last) {
+        line += ' |';
+      }
+      index++;
+    }
+    return line;
   }
 
   @Get('mission_preview/:id')
@@ -530,24 +710,24 @@ export class PreviewController extends GenericControler {
     );
 
     for (const tuile_thema of tuiles_thema) {
-      const mission = await this.missionRepository.getByThematique(
+      const mission_def = await this.missionRepository.getByThematique(
         tuile_thema.type,
       );
-      if (mission) {
+      if (mission_def) {
         result.push('');
-        const prefix = `#### <a href="/mission_preview/${mission.id_cms}">MISSION [${mission.id_cms}]</a> [GROUPE_${tuile_thema.famille_id_cms}]`;
+        const prefix = `#### <a href="/mission_preview/${mission_def.id_cms}">MISSION [${mission_def.id_cms}]</a> [GROUPE_${tuile_thema.famille_id_cms}]`;
         result.push(
           `${prefix} ${this.getSpaceString(65, prefix.length)}> ${
             tuile_thema.titre
           }`,
         );
-        result.push(`Est visible : ${mission.est_visible}`);
+        result.push(`Est visible : ${mission_def.est_visible}`);
 
         const result2 = [];
-        await this.dump_defis_of_mission(mission, result2);
+        await this.dump_defis_of_mission(mission_def, result2);
 
         const result3 = [];
-        await this.dump_mission(result3, mission);
+        await this.dump_mission(result3, mission_def);
 
         const ouput2 = result2.join('');
         const ouput3 = result3.join('');
@@ -660,6 +840,18 @@ export class PreviewController extends GenericControler {
       length - prefix_length,
     );
   }
+  private getListeMissionFromKYCID(
+    kyc_id: number,
+    liste_mission_defs: MissionDefinition[],
+  ): MissionDefinition[] {
+    return liste_mission_defs.filter(
+      (m) =>
+        m.objectifs.findIndex(
+          (o) => o.id_cms === kyc_id && o.type === ContentType.kyc,
+        ) > -1,
+    );
+  }
+
   private compareBilan(value: number, bilan: number): string {
     if (value === bilan) {
       return ' = Bilan DEFAULT 🤔❓';
