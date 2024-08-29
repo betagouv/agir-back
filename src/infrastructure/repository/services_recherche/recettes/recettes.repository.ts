@@ -209,7 +209,7 @@ export class RecettesRepository implements FinderInterface {
           poids: e.gross_weight,
           poids_net: e.net_weight,
           quantite: e.quantity,
-          unite: UNITS['_' + e.measurement_unit_id] || '-',
+          unite: UNITS['_' + e.measurement_unit_id] || '',
         }),
     );
     return result;
