@@ -94,9 +94,11 @@ export class KYCHistory {
         value[input.chauffage],
       );
     }
-    if (input.nombre_adultes && input.nombre_enfants) {
+    if (input.nombre_adultes || input.nombre_enfants) {
       this.updateQuestionByCode(KYCID.KYC_menage, [
-        '' + (input.nombre_adultes + input.nombre_enfants),
+        '' +
+          ((input.nombre_adultes ? input.nombre_adultes : 0) +
+            (input.nombre_enfants ? input.nombre_enfants : 0)),
       ]);
     }
     if (input.type) {
