@@ -22,6 +22,7 @@ import { Feature } from '../gamification/feature';
 import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServices';
 import { KYCID } from '../kyc/KYCID';
 import validator from 'validator';
+import { NotificationHistory } from '../notification/notificationHistory';
 
 export enum UtilisateurStatus {
   default = 'default',
@@ -87,6 +88,7 @@ export class UtilisateurData {
   status: UtilisateurStatus;
   couverture_aides_ok: boolean;
   source_inscription: SourceInscription;
+  notification_history: NotificationHistory;
 }
 
 export class Utilisateur extends UtilisateurData {
@@ -198,6 +200,7 @@ export class Utilisateur extends UtilisateurData {
       status: UtilisateurStatus.default,
       couverture_aides_ok: false,
       source_inscription: source_inscription,
+      notification_history: new NotificationHistory(),
     });
   }
 

@@ -1,13 +1,11 @@
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
-import { LogementAPI } from '../../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
 import { Categorie } from '../contenu/categorie';
 import { ConditionDefi } from '../defis/conditionDefi';
 import { Chauffage, DPE, Superficie, TypeLogement } from '../logement/logement';
 import { KYCHistory_v0 as KYCHistory_v0 } from '../object_store/kyc/kycHistory_v0';
-import { Utilisateur } from '../utilisateur/utilisateur';
 import { KycDefinition } from './kycDefinition';
 import { KYCID } from './KYCID';
-import { QuestionKYC, TypeReponseQuestionKYC } from './questionKYC';
+import { QuestionKYC } from './questionKYC';
 
 type LogementInput = {
   nombre_adultes: number;
