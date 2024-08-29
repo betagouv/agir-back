@@ -338,15 +338,75 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       ],
     });
     await TestUtil.create(DB.kYC, {
-      id_cms: 6,
-      code: KYCID.KYC_chauffage,
-      type: TypeReponseQuestionKYC.choix_unique,
-      categorie: Categorie.test,
+      id_cms: 61,
+      categorie: Categorie.recommandation,
+      code: KYCID.KYC_chauffage_fioul,
+      is_ngc: true,
       points: 10,
-      question: 'Chauff',
+      question: 'The question !',
+      tags: [],
+      universes: [],
+      thematique: Thematique.climat,
+      type: TypeReponseQuestionKYC.choix_unique,
+      ngc_key: 'a . b . c',
       reponses: [
-        { label: 'A', code: 'gaz' },
-        { label: 'B', code: 'electricite' },
+        { label: 'OUI', code: 'oui', ngc_code: '_oui' },
+        { label: 'NON', code: 'non', ngc_code: '_non' },
+        { label: 'Ne sais pas', code: 'ne_sais_pas' },
+      ],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 62,
+      categorie: Categorie.recommandation,
+      code: KYCID.KYC_chauffage_bois,
+      is_ngc: true,
+      points: 10,
+      question: 'The question !',
+      tags: [],
+      universes: [],
+      thematique: Thematique.climat,
+      type: TypeReponseQuestionKYC.choix_unique,
+      ngc_key: 'a . b . c',
+      reponses: [
+        { label: 'OUI', code: 'oui', ngc_code: '_oui' },
+        { label: 'NON', code: 'non', ngc_code: '_non' },
+        { label: 'Ne sais pas', code: 'ne_sais_pas' },
+      ],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 63,
+      categorie: Categorie.recommandation,
+      code: KYCID.KYC_chauffage_elec,
+      is_ngc: true,
+      points: 10,
+      question: 'The question !',
+      tags: [],
+      universes: [],
+      thematique: Thematique.climat,
+      type: TypeReponseQuestionKYC.choix_unique,
+      ngc_key: 'a . b . c',
+      reponses: [
+        { label: 'OUI', code: 'oui', ngc_code: '_oui' },
+        { label: 'NON', code: 'non', ngc_code: '_non' },
+        { label: 'Ne sais pas', code: 'ne_sais_pas' },
+      ],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 64,
+      categorie: Categorie.recommandation,
+      code: KYCID.KYC_chauffage_gaz,
+      is_ngc: true,
+      points: 10,
+      question: 'The question !',
+      tags: [],
+      universes: [],
+      thematique: Thematique.climat,
+      type: TypeReponseQuestionKYC.choix_unique,
+      ngc_key: 'a . b . c',
+      reponses: [
+        { label: 'OUI', code: 'oui', ngc_code: '_oui' },
+        { label: 'NON', code: 'non', ngc_code: '_non' },
+        { label: 'Ne sais pas', code: 'ne_sais_pas' },
       ],
     });
     await TestUtil.create(DB.kYC, {
@@ -389,7 +449,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     const dbUser = await utilisateurRepository.getById('utilisateur-id');
-
     expect(dbUser.logement.code_postal).toEqual('11111');
     expect(dbUser.logement.commune).toEqual('Patelin');
     expect(dbUser.logement.nombre_adultes).toEqual(4);
@@ -432,9 +491,15 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       },
     ]);
     expect(
-      dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+      dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_chauffage_elec)
         .reponses,
-    ).toEqual([{ code: 'electricite', label: 'B' }]);
+    ).toEqual([{ code: 'oui', label: 'OUI', ngc_code: '_oui' }]);
+    expect(
+      dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_chauffage_bois)
+        .reponses,
+    ).toEqual([
+      { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: undefined },
+    ]);
     expect(
       dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_type_logement)
         .reponses,

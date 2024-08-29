@@ -9,6 +9,12 @@ import { Tag } from '../../../../src/domain/scoring/tag';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { KycDefinition } from '../../../../src/domain/kyc/kycDefinition';
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../../../../src/domain/logement/logement';
 
 describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('areConditionsMatched : true si pas de condition', () => {
@@ -465,7 +471,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // WHEN
     try {
-      questionsKYC.updateQuestionByCode('1234', ['yo']);
+      questionsKYC.updateQuestionByCodeWithLabel('1234', ['yo']);
       fail();
     } catch (error) {
       // THEN
@@ -896,5 +902,164 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // THEN
     expect(questions).toHaveLength(0);
+  });
+
+  it('patchLogement : chauffage => maj KYC chauffage et vide l autre KYC reponse', () => {
+    // GIVEN
+    const history = new KYCHistory({
+      version: 0,
+      answered_questions: [
+        {
+          id_cms: 2,
+          categorie: Categorie.recommandation,
+          id: KYCID.KYC_chauffage_elec,
+          is_NGC: true,
+          points: 10,
+          question: 'The question !',
+          tags: [],
+          universes: [],
+          thematique: Thematique.climat,
+          type: TypeReponseQuestionKYC.choix_unique,
+          ngc_key: 'a . b . c',
+          reponses: [{ label: 'OUI', code: 'oui', ngc_code: '_oui' }],
+          reponses_possibles: [
+            { label: 'OUI', code: 'oui', ngc_code: '_oui' },
+            { label: 'NON', code: 'non', ngc_code: '_non' },
+            { label: 'Ne sais pas', code: 'ne_sais_pas' },
+          ],
+        },
+      ],
+    });
+    history.setCatalogue([
+      new KycDefinition({
+        id_cms: 1,
+        categorie: Categorie.recommandation,
+        code: KYCID.KYC_chauffage_bois,
+        is_ngc: true,
+        points: 10,
+        question: 'The question !',
+        tags: [],
+        universes: [],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_unique,
+        ngc_key: 'a . b . c',
+        reponses: [
+          { label: 'OUI', code: 'oui', ngc_code: '_oui' },
+          { label: 'NON', code: 'non', ngc_code: '_non' },
+          { label: 'Ne sais pas', code: 'ne_sais_pas' },
+        ],
+      }),
+      new KycDefinition({
+        id_cms: 2,
+        categorie: Categorie.recommandation,
+        code: KYCID.KYC_chauffage_elec,
+        is_ngc: true,
+        points: 10,
+        question: 'The question !',
+        tags: [],
+        universes: [],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_unique,
+        ngc_key: 'a . b . c',
+        reponses: [
+          { label: 'OUI', code: 'oui', ngc_code: '_oui' },
+          { label: 'NON', code: 'non', ngc_code: '_non' },
+          { label: 'Ne sais pas', code: 'ne_sais_pas' },
+        ],
+      }),
+      new KycDefinition({
+        id_cms: 3,
+        categorie: Categorie.recommandation,
+        code: KYCID.KYC_chauffage_gaz,
+        is_ngc: true,
+        points: 10,
+        question: 'The question !',
+        tags: [],
+        universes: [],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_unique,
+        ngc_key: 'a . b . c',
+        reponses: [
+          { label: 'OUI', code: 'oui', ngc_code: '_oui' },
+          { label: 'NON', code: 'non', ngc_code: '_non' },
+          { label: 'Ne sais pas', code: 'ne_sais_pas' },
+        ],
+      }),
+      new KycDefinition({
+        id_cms: 4,
+        categorie: Categorie.recommandation,
+        code: KYCID.KYC_chauffage_fioul,
+        is_ngc: true,
+        points: 10,
+        question: 'The question !',
+        tags: [],
+        universes: [],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_unique,
+        ngc_key: 'a . b . c',
+        reponses: [
+          { label: 'OUI', code: 'oui', ngc_code: '_oui' },
+          { label: 'NON', code: 'non', ngc_code: '_non' },
+          { label: 'Ne sais pas', code: 'ne_sais_pas' },
+        ],
+      }),
+    ]);
+
+    // WHEN
+    history.patchLogement({
+      chauffage: Chauffage.bois,
+    });
+
+    // THEN
+    expect(history.getAnsweredQuestionByCMS_ID(1).reponses[0]).toEqual({
+      code: 'oui',
+      label: 'OUI',
+      ngc_code: '_oui',
+    });
+    expect(history.getAnsweredQuestionByCMS_ID(2).reponses[0]).toEqual({
+      label: 'Ne sais pas',
+      code: 'ne_sais_pas',
+      ngc_code: undefined,
+    });
+  });
+
+  it('patchLogement :DPE', () => {
+    // GIVEN
+    const history = new KYCHistory({
+      version: 0,
+      answered_questions: [],
+    });
+    history.setCatalogue([
+      new KycDefinition({
+        id_cms: 1,
+        categorie: Categorie.recommandation,
+        code: KYCID.KYC_DPE,
+        is_ngc: true,
+        points: 10,
+        question: 'The question !',
+        tags: [],
+        universes: [],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_unique,
+        ngc_key: 'a . b . c',
+        reponses: [
+          { label: 'A', code: 'a' },
+          { label: 'B', code: 'b' },
+          { label: 'Ne sais pas', code: 'ne_sais_pas' },
+        ],
+      }),
+    ]);
+
+    // WHEN
+    history.patchLogement({
+      dpe: DPE.B,
+    });
+
+    // THEN
+    expect(history.getAnsweredQuestionByCMS_ID(1).reponses[0]).toEqual({
+      code: 'b',
+      label: 'B',
+      ngc_code: undefined,
+    });
   });
 });

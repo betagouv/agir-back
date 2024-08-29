@@ -70,7 +70,7 @@ export class QuestionKYCUsecase {
       utilisateur.gamification.ajoutePoints(question.points, utilisateur);
     }
 
-    utilisateur.kyc_history.updateQuestionByCode(code_question, reponse);
+    utilisateur.kyc_history.updateQuestionByCodeWithLabel(code_question, reponse);
 
     this.synchroKYCAvecProfileUtilisateur(code_question, reponse, utilisateur);
 

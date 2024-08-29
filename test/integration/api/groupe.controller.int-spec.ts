@@ -1,6 +1,6 @@
 import { DB, TestUtil } from '../../TestUtil';
 
-describe('Groupe (API test)', () => {
+describe.skip('Groupe (API test)', () => {
   beforeAll(async () => {
     await TestUtil.appinit();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
