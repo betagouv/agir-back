@@ -127,6 +127,26 @@ const UNITS = {
   _125: 'boîte',
   _133: 'sachet',
 };
+const UNITS_PLURIEL = {
+  _1: 'g',
+  _3: '',
+  _4: 'cuillères à soupe',
+  _6: 'cuillères à café',
+  _7: 'cl',
+  _8: 'cl',
+  _13: 'gousses',
+  _14: 'pincées',
+  _19: 'brins',
+  _24: 'feuilles',
+  _23: 'tranches',
+  _32: 'branches',
+  _34: 'bouquets',
+  _55: 'boules',
+  _118: 'barquettes',
+  _120: 'verres',
+  _125: 'boîtes',
+  _133: 'sachets',
+};
 
 const IMAGES_TMP = [
   'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Ftian-de-sardines.jpg&w=3840&q=75',
@@ -209,10 +229,18 @@ export class RecettesRepository implements FinderInterface {
           poids: e.gross_weight,
           poids_net: e.net_weight,
           quantite: e.quantity,
-          unite: UNITS['_' + e.measurement_unit_id] || '',
+          unite: this.computeUnit(e.quantity, e.measurement_unit_id),
         }),
     );
     return result;
+  }
+
+  private computeUnit(quantity: number, unit_id): string {
+    if (quantity > 1) {
+      return UNITS_PLURIEL['_' + unit_id] || '';
+    } else {
+      return UNITS['_' + unit_id] || '';
+    }
   }
 
   private getEtapesRecette(recetteId: number): EtapeRecette[] {

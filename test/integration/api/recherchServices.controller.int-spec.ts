@@ -689,7 +689,7 @@ describe('RechercheServices (API test)', () => {
         poids: 20,
         poids_net: 20,
         quantite: 2,
-        unite: 'cuillère à soupe',
+        unite: 'cuillères à soupe',
       },
       {
         nom: "Huile d'olive",
@@ -697,7 +697,7 @@ describe('RechercheServices (API test)', () => {
         poids: 40,
         poids_net: 40,
         quantite: 4,
-        unite: 'cuillère à soupe',
+        unite: 'cuillères à soupe',
       },
     ]);
     expect(response.body[0].etapes_recette).toEqual([
