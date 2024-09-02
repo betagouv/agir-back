@@ -17,7 +17,7 @@ export class EmailSender {
   public async sendEmail(
     email_to: string,
     name: string,
-    text_content: string,
+    text_content_html: string,
     subject: string,
   ) {
     const smtpEmail = new Brevo.SendSmtpEmail();
@@ -25,7 +25,7 @@ export class EmailSender {
     smtpEmail.sender = { name: 'Agir', email: 'noreply-agir@beta.gouv.fr' };
     smtpEmail.subject = subject;
     //smtpEmail.textContent = text_content;
-    smtpEmail.htmlContent = text_content;
+    smtpEmail.htmlContent = text_content_html;
     smtpEmail.replyTo = { email: App.getEmailReplyTo(), name: 'Contact' };
 
     if (App.isMailEnabled()) {
@@ -36,7 +36,7 @@ export class EmailSender {
       subject: ${subject}
       email: ${email_to}
       name: ${name}
-      text: ${text_content}`);
+      text: ${text_content_html}`);
     }
   }
 }

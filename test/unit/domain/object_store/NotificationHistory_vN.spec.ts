@@ -27,7 +27,7 @@ describe('NotificationHistory vN ', () => {
       sent_notifications: [
         new Notification({
           canal: CanalNotification.email,
-          type: TypeNotification.welcome_email,
+          type: TypeNotification.welcome,
         }),
       ],
     });
@@ -46,7 +46,7 @@ describe('NotificationHistory vN ', () => {
       sent_notifications: [
         new Notification({
           canal: CanalNotification.email,
-          type: TypeNotification.welcome_email,
+          type: TypeNotification.welcome,
         }),
       ],
     });

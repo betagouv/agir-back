@@ -2,9 +2,13 @@ import {
   NotificationHistory_v0,
   Notification_v0,
 } from '../object_store/notification/NotificationHistory_v0';
+import { Utilisateur } from '../utilisateur/utilisateur';
+
+const min_10 = 10 * 60 * 1000;
 
 export enum TypeNotification {
-  welcome_email = 'welcome_email',
+  inscription_code = 'inscription_code',
+  welcome = 'welcome',
 }
 export enum CanalNotification {
   email = 'email',
@@ -33,7 +37,25 @@ export class NotificationHistory {
     }
   }
 
-  getNouvellesNotifications(canal: CanalNotification): TypeNotification[] {
-    return [TypeNotification.welcome_email];
+  getNouvellesNotifications(
+    canal: CanalNotification,
+    utilisateur: Utilisateur,
+  ): TypeNotification[] {
+    if (canal === CanalNotification.mobile) {
+      return [];
+    }
+
+    const result = [];
+
+    if (!this.was_sent(TypeNotification.welcome)) {
+      if (Date.now() - utilisateur.created_at.getTime() > min_10)
+        result.push(TypeNotification.welcome);
+    }
+
+    return result;
+  }
+
+  private was_sent(type: TypeNotification): boolean {
+    return this.sent_notifications.findIndex((n) => n.type === type) > -1;
   }
 }
