@@ -35,6 +35,10 @@ import { ThematiqueRepository } from '../../../src/infrastructure/repository/the
 import { ParcoursTodo_v0 } from '../../../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { App } from '../../../src/domain/app';
+import {
+  NotificationHistory,
+  TypeNotification,
+} from '../../../src/domain/notification/notificationHistory';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
@@ -2451,9 +2455,10 @@ describe('Admin (API test)', () => {
     expect(response.body).toEqual({ major: 1, minor: 0, patch: 0 });
   });
 
-  it('POST /admin/send_email_notifications envoie les notifs mail nécessaires', async () => {
+  it.only('POST /admin/send_email_notifications envoie les notifs mail nécessaires', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
+    NotificationHistory.active_notification_types = [TypeNotification.welcome];
     await TestUtil.create(DB.utilisateur);
 
     await TestUtil.prisma.utilisateur.update({
@@ -2472,6 +2477,6 @@ describe('Admin (API test)', () => {
     expect(response.status).toBe(201);
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.notification_history.sent_notifications).toHaveLength(1);
-    expect(response.body).toEqual(['welcome']);
+    expect(response.body).toEqual(['Sent for utilisateur-id : welcome']);
   });
 });

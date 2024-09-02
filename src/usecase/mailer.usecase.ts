@@ -13,10 +13,9 @@ export class MailerUsecase {
   ) {}
 
   async envoyerEmailsAutomatiques(): Promise<string[]> {
+    const result: string[] = [];
     const listeUtilisateursIds =
       await this.utilisateurRepository.listUtilisateurIds();
-
-    let result: string[] = [];
 
     for (const utilisateurId of listeUtilisateursIds) {
       const utilisateur = await this.utilisateurRepository.getById(
@@ -29,14 +28,14 @@ export class MailerUsecase {
           utilisateur,
         );
 
-      console.log(notifs);
-
+      const liste_sent_notifs: string[] = [];
       for (const notif of notifs) {
         const email = this.emailTemplateRepository.generateEmailByType(
           notif,
           utilisateur,
         );
         if (email) {
+          liste_sent_notifs.push(notif);
           await this.emailSender.sendEmail(
             utilisateur.email,
             utilisateur.prenom,
@@ -53,7 +52,9 @@ export class MailerUsecase {
 
       await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-      result = result.concat(notifs);
+      result.push(
+        `Sent for ${utilisateur.id} : ${liste_sent_notifs.toString()}`,
+      );
     }
 
     return result;
