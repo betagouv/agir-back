@@ -17,6 +17,7 @@ export enum CanalNotification {
 export class Notification {
   type: TypeNotification;
   canal: CanalNotification;
+  date_envoie: Date;
 
   constructor(n: Notification_v0) {
     Object.assign(this, n);
@@ -35,6 +36,19 @@ export class NotificationHistory {
         );
       }
     }
+  }
+
+  public declareSentNotification(
+    type: TypeNotification,
+    canal: CanalNotification,
+  ) {
+    this.sent_notifications.push(
+      new Notification({
+        canal: canal,
+        type: type,
+        date_envoie: new Date(),
+      }),
+    );
   }
 
   getNouvellesNotifications(

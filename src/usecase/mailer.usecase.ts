@@ -12,7 +12,7 @@ export class MailerUsecase {
     private emailSender: EmailSender,
   ) {}
 
-  async envoyerMaisAutomatiques(): Promise<string[]> {
+  async envoyerEmailsAutomatiques(): Promise<string[]> {
     const listeUtilisateursIds =
       await this.utilisateurRepository.listUtilisateurIds();
 
@@ -34,14 +34,22 @@ export class MailerUsecase {
           utilisateur,
         );
         if (email) {
-          this.emailSender.sendEmail(
+          await this.emailSender.sendEmail(
             utilisateur.email,
             utilisateur.prenom,
             email.body,
             email.subject,
           );
+
+          utilisateur.notification_history.declareSentNotification(
+            notif,
+            CanalNotification.email,
+          );
         }
       }
+
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
       result = result.concat(notifs);
     }
 
