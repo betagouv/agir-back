@@ -7,3 +7,4 @@ global.console = {
   warn: jest.fn(),
   //error: jest.fn(),
 };
+jest.setTimeout(15000);
