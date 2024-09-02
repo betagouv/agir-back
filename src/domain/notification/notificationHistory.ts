@@ -74,7 +74,9 @@ export class NotificationHistory {
         result.push(TypeNotification.welcome);
     }
 
-    return result;
+    return result.filter((n) =>
+      NotificationHistory.active_notification_types.includes(n),
+    );
   }
 
   private was_sent(type: TypeNotification): boolean {

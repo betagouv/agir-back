@@ -66,6 +66,7 @@ describe('NotificationHistory', () => {
   });
   it(`getNouvellesNotifications : pas de mail de welcome si type pas actif`, () => {
     // GIVEN
+    NotificationHistory.active_notification_types = [];
     const utilisateur = Utilisateur.createNewUtilisateur(
       'yo',
       'prenom',
@@ -89,8 +90,7 @@ describe('NotificationHistory', () => {
     );
 
     // THEN
-    expect(result).toHaveLength(1);
-    expect(result[0]).toEqual(TypeNotification.welcome);
+    expect(result).toHaveLength(0);
   });
   it(`getNouvellesNotifications : pas de mail de welcome si rien mais que utilisateur trop vieux (plus de 2j)`, () => {
     // GIVEN
