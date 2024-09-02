@@ -129,6 +129,7 @@ import { ProfileUsecase } from './usecase/profile.usecase';
 import { ProfileController } from './infrastructure/api/profile.controller';
 import { Connexion_v2_Usecase } from './usecase/connexion_v2.usecase';
 import { EmailTemplateRepository } from './infrastructure/email/emailTemplate.repository';
+import { MailerUsecase } from './usecase/mailer.usecase';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -279,6 +280,7 @@ function getControllers(): any[] {
     Connexion_v1_Usecase,
     Connexion_v2_Usecase,
     EmailTemplateRepository,
+    MailerUsecase,
   ],
 })
 export class AppModule {}

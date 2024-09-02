@@ -25,6 +25,7 @@ import { ThematiqueStatistiqueUsecase } from '../../../src/usecase/thematiqueSta
 import { UniversStatistiqueUsecase } from '../../../src/usecase/universStatistique.usecase';
 import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
 import { App } from '../../domain/app';
+import { MailerUsecase } from '../../usecase/mailer.usecase';
 
 class VersionAPI {
   @ApiProperty()
@@ -56,6 +57,7 @@ export class AdminController extends GenericControler {
     private kycStatistiqueUsecase: KycStatistiqueUsecase,
     private thematiqueStatistiqueUsecase: ThematiqueStatistiqueUsecase,
     private universStatistiqueUsecase: UniversStatistiqueUsecase,
+    private mailerUsecase: MailerUsecase,
   ) {
     super();
   }
@@ -309,5 +311,13 @@ export class AdminController extends GenericControler {
   async calcul_univers_statistique(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.universStatistiqueUsecase.calculStatistique();
+  }
+  @Post('/admin/send_email_notifications')
+  @ApiOperation({
+    summary: `envoie toutes les notifications mails qui doivent l'être`,
+  })
+  async envoyer_notifications_email(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.mailerUsecase.envoyerEmailsAutomatiques();
   }
 }

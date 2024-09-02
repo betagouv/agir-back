@@ -5,6 +5,7 @@ import {
 import { Utilisateur } from '../utilisateur/utilisateur';
 
 const min_10 = 10 * 60 * 1000;
+const jour_2 = 24 * 60 * 60 * 1000;
 
 export enum TypeNotification {
   inscription_code = 'inscription_code',
@@ -26,6 +27,8 @@ export class Notification {
 
 export class NotificationHistory {
   sent_notifications: Notification[];
+
+  static active_notification_types: TypeNotification[] = [];
 
   constructor(m?: NotificationHistory_v0) {
     this.sent_notifications = [];
@@ -51,7 +54,7 @@ export class NotificationHistory {
     );
   }
 
-  getNouvellesNotifications(
+  getNouvellesNotificationsAPousser(
     canal: CanalNotification,
     utilisateur: Utilisateur,
   ): TypeNotification[] {
@@ -62,7 +65,12 @@ export class NotificationHistory {
     const result = [];
 
     if (!this.was_sent(TypeNotification.welcome)) {
-      if (Date.now() - utilisateur.created_at.getTime() > min_10)
+      const age_creation_utilisateur =
+        Date.now() - utilisateur.created_at.getTime();
+      if (
+        age_creation_utilisateur > min_10 &&
+        age_creation_utilisateur < jour_2
+      )
         result.push(TypeNotification.welcome);
     }
 

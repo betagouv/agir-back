@@ -23,10 +23,13 @@ export class MailerUsecase {
         utilisateurId,
       );
 
-      const notifs = utilisateur.notification_history.getNouvellesNotifications(
-        CanalNotification.email,
-        utilisateur,
-      );
+      const notifs =
+        utilisateur.notification_history.getNouvellesNotificationsAPousser(
+          CanalNotification.email,
+          utilisateur,
+        );
+
+      console.log(notifs);
 
       for (const notif of notifs) {
         const email = this.emailTemplateRepository.generateEmailByType(

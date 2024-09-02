@@ -9,6 +9,7 @@ const path = require('path');
 @Injectable()
 export class EmailTemplateRepository {
   private email_inscription_code: HandlebarsTemplateDelegate;
+  private email_welcome: HandlebarsTemplateDelegate;
 
   async onApplicationBootstrap(): Promise<void> {
     try {
@@ -18,8 +19,15 @@ export class EmailTemplateRepository {
           encoding: 'utf8',
         },
       );
+      const email_welcome = await fs.readFile(
+        path.resolve(__dirname, './templates/empty.hbs'),
+        {
+          encoding: 'utf8',
+        },
+      );
 
       this.email_inscription_code = Handlebars.compile(email_inscription_code);
+      this.email_welcome = Handlebars.compile(email_welcome);
     } catch (err) {
       console.error(err);
     }
@@ -39,6 +47,11 @@ export class EmailTemplateRepository {
               utilisateur.email
             }`,
           }),
+        };
+      case TypeNotification.welcome:
+        return {
+          subject: `Bienvenue dans Agir !`,
+          body: this.email_welcome({}),
         };
       default:
         return null;

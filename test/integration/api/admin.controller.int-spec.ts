@@ -2450,4 +2450,28 @@ describe('Admin (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ major: 1, minor: 0, patch: 0 });
   });
+
+  it('POST /admin/send_email_notifications envoie les notifs mail nécessaires', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur);
+
+    await TestUtil.prisma.utilisateur.update({
+      where: {
+        id: 'utilisateur-id',
+      },
+      data: {
+        created_at: new Date(Date.now() - 1000 * 60 * 20),
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/send_email_notifications');
+
+    // THEN
+    expect(response.status).toBe(201);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.notification_history.sent_notifications).toHaveLength(1);
+    expect(response.body).toEqual(['welcome']);
+  });
 });
