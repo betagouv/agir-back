@@ -202,10 +202,7 @@ export class ApplicationError {
     );
   }
 
-  static throwServiceNotFound(
-    service_definition_id: string,
-    utilisateurId: string,
-  ) {
+  static throwServiceNotFound(service_definition_id: string) {
     this.throwAppError(
       '038',
       `le service [${service_definition_id}] n'est pas installé pour l'utilisateur`,
