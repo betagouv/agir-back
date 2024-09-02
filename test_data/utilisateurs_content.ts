@@ -66,6 +66,10 @@ const utilisateurs = {
     },
     suivis: [],
     services: [],
+    linky: {
+      prm: '12345678903333',
+      winterpk: 'ok_winter_pk_3',
+    },
   },
   wojtek2: {
     nom: 'RECETTEUR',
