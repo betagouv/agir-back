@@ -2455,7 +2455,7 @@ describe('Admin (API test)', () => {
     expect(response.body).toEqual({ major: 1, minor: 0, patch: 0 });
   });
 
-  it.only('POST /admin/send_email_notifications envoie les notifs mail nécessaires', async () => {
+  it('POST /admin/send_email_notifications envoie les notifs mail nécessaires', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     NotificationHistory.active_notification_types = [TypeNotification.welcome];
@@ -2477,6 +2477,6 @@ describe('Admin (API test)', () => {
     expect(response.status).toBe(201);
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.notification_history.sent_notifications).toHaveLength(1);
-    expect(response.body).toEqual(['Sent for utilisateur-id : welcome']);
+    expect(response.body).toEqual(['Sent for [utilisateur-id] : [welcome]']);
   });
 });

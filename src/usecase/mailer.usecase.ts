@@ -52,9 +52,11 @@ export class MailerUsecase {
 
       await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-      result.push(
-        `Sent for ${utilisateur.id} : ${liste_sent_notifs.toString()}`,
-      );
+      if (liste_sent_notifs.length > 0) {
+        result.push(
+          `Sent for [${utilisateur.id}] : [${liste_sent_notifs.toString()}]`,
+        );
+      }
     }
 
     return result;
