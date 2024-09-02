@@ -128,7 +128,7 @@ import { Inscription_v2_Usecase } from './usecase/inscription_v2.usecase';
 import { ProfileUsecase } from './usecase/profile.usecase';
 import { ProfileController } from './infrastructure/api/profile.controller';
 import { Connexion_v2_Usecase } from './usecase/connexion_v2.usecase';
-import { EmailTemplateRepository } from './infrastructure/email/templates/emailTemplate.repository';
+import { EmailTemplateRepository } from './infrastructure/email/emailTemplate.repository';
 
 const SESSION_LIFETIME = '30 days';
 

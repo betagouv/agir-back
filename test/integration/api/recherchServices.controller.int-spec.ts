@@ -14,7 +14,6 @@ import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_
 import { BibliothequeServices_v0 } from '../../../src/domain/object_store/service/BibliothequeService_v0';
 import { ServiceFavorisStatistiqueRepository } from '../../../src/infrastructure/repository/serviceFavorisStatistique.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { FruitLegume } from '../../../src/infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { DB, TestUtil } from '../../TestUtil';
 
 const logement_palaiseau: Logement_v0 = {
@@ -96,6 +95,22 @@ describe('RechercheServices (API test)', () => {
                 open_hours: [{ jour: Day.lundi, heures: 'toute la journée' }],
                 openhours_more_infos: 'toute la journée',
                 phone: '01234967937',
+                ingredients: [
+                  {
+                    nom: 'a',
+                    ordre: 1,
+                    poids: 10,
+                    poids_net: 20,
+                    quantite: 2,
+                    unite: '-',
+                  },
+                ],
+                etapes_recette: [
+                  {
+                    ordre: 1,
+                    texte: 'haha',
+                  },
+                ],
               },
             },
           ],
@@ -145,6 +160,24 @@ describe('RechercheServices (API test)', () => {
       ],
       openhours_more_infos: 'toute la journée',
       phone: '01234967937',
+      ingredients: [
+        {
+          nom: 'a',
+          ordre: 1,
+          poids: 10,
+          poids_net: 20,
+          quantite: 2,
+          unite: '-',
+        },
+      ],
+      etapes_recette: [
+        {
+          ordre: 1,
+          texte: 'haha',
+        },
+      ],
+      latitude: 1,
+      longitude: 2,
     });
   });
 
@@ -189,6 +222,110 @@ describe('RechercheServices (API test)', () => {
     // THEN
     expect(response.status).toBe(404);
     expect(response.body.code).toEqual('054');
+  });
+  it(`GET /utlilisateur/id/recherche_services/proximite/last_results/id consultation d'un précédent résultat de recherche`, async () => {
+    // GIVEN
+    const biblio: BibliothequeServices_v0 = {
+      version: 0,
+      liste_services: [
+        {
+          id: ServiceRechercheID.proximite,
+          derniere_recherche: [
+            {
+              id: '1',
+              titre: 'yo',
+              adresse_code_postal: '91120',
+              adresse_nom_ville: 'PALAISEAU',
+              categories: [],
+              commitment: 'vraiement',
+              description: 'description',
+              description_more: 'plus de description',
+              distance_metres: 123,
+              emoji: '🟢',
+              image_url: 'https://',
+              impact_carbone_kg: 400,
+              latitude: 40,
+              longitude: 2,
+              open_hours: [
+                {
+                  jour: Day.lundi,
+                  heures: '10h-18h',
+                },
+              ],
+              openhours_more_infos: 'sauf le mardi',
+              phone: '061294875272',
+              site_web: 'https://epicerie',
+              adresse_rue: '10 rue de Paris',
+              ingredients: [
+                {
+                  nom: 'a',
+                  ordre: 1,
+                  poids: 10,
+                  poids_net: 20,
+                  quantite: 2,
+                  unite: '-',
+                },
+              ],
+              etapes_recette: [
+                {
+                  ordre: 1,
+                  texte: 'haha',
+                },
+              ],
+            },
+          ],
+          favoris: [],
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, { bilbiotheque_services: biblio });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recherche_services/proximite/last_results/1',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      id: '1',
+      titre: 'yo',
+      adresse_code_postal: '91120',
+      adresse_nom_ville: 'PALAISEAU',
+      adresse_rue: '10 rue de Paris',
+      site_web: 'https://epicerie',
+      est_favoris: false,
+      nombre_favoris: 0,
+      impact_carbone_kg: 400,
+      distance_metres: 123,
+      image_url: 'https://',
+      emoji: '🟢',
+      commitment: 'vraiement',
+      description: 'description',
+      description_more: 'plus de description',
+      phone: '061294875272',
+      categories: [],
+      openhours_more_infos: 'sauf le mardi',
+      open_hours: [{ jour: 'lundi', heures: '10h-18h' }],
+      latitude: 40,
+      longitude: 2,
+      ingredients: [
+        {
+          nom: 'a',
+          ordre: 1,
+          poids: 10,
+          poids_net: 20,
+          quantite: 2,
+          unite: '-',
+        },
+      ],
+      etapes_recette: [
+        {
+          ordre: 1,
+          texte: 'haha',
+        },
+      ],
+    });
   });
   it(`POST /utlilisateur/id/recherche_services/proximite/search categorie inconnue`, async () => {
     // GIVEN
@@ -485,6 +622,99 @@ describe('RechercheServices (API test)', () => {
         favoris_id: '456',
         service_id: 'proximite',
         titre_favoris: 'hoho',
+      },
+    ]);
+  });
+
+  it(`POST /utlilisateur/id/recherche_services/recettes/search renvoie une liste de résultats`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/recettes/search',
+    ).send({ categorie: 'vege' });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(10);
+    expect(response.body[0].difficulty_plat).toEqual('Facile');
+    expect(response.body[0].est_favoris).toEqual(false);
+    expect(response.body[0].id).toEqual('10982');
+    expect(response.body[0].nombre_favoris).toEqual(0);
+    expect(response.body[0].temps_prepa_min).toEqual(5);
+    expect(response.body[0].titre).toEqual(
+      'Salade de pâtes complètes et lentilles',
+    );
+    expect(response.body[0].type_plat).toEqual('Plat');
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+
+    expect(userDB.bilbiotheque_services.liste_services).toHaveLength(1);
+    expect(userDB.bilbiotheque_services.liste_services[0].id).toEqual(
+      ServiceRechercheID.recettes,
+    );
+    expect(
+      userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
+    ).toHaveLength(10);
+
+    expect(response.body[0].ingredients).toEqual([
+      {
+        nom: 'Lentilles',
+        ordre: 1,
+        poids: 200,
+        poids_net: 550,
+        quantite: 200,
+        unite: 'g',
+      },
+      {
+        nom: 'Pâtes complètes',
+        ordre: 2,
+        poids: 200,
+        poids_net: 500,
+        quantite: 200,
+        unite: 'g',
+      },
+      {
+        nom: 'Graines germées',
+        ordre: 3,
+        poids: 50,
+        poids_net: 50,
+        quantite: 50,
+        unite: 'g',
+      },
+      {
+        nom: 'Vinaigre de framboise',
+        ordre: 4,
+        poids: 20,
+        poids_net: 20,
+        quantite: 2,
+        unite: 'cuillères à soupe',
+      },
+      {
+        nom: "Huile d'olive",
+        ordre: 5,
+        poids: 40,
+        poids_net: 40,
+        quantite: 4,
+        unite: 'cuillères à soupe',
+      },
+    ]);
+    expect(response.body[0].etapes_recette).toEqual([
+      {
+        ordre: 1,
+        texte:
+          "Faire cuire les lentilles dans de l'eau bouillante pendant 20 minutes. Faire cuire séparément les pâtes en suivant les indications du paquet.",
+      },
+      {
+        ordre: 2,
+        texte:
+          'Une fois les pâtes et les lentilles cuites, laisser refroidir quelques minutes. ',
+      },
+      {
+        ordre: 3,
+        texte:
+          "Mélanger les pâtes, les lentilles, les graines germées, l'huile d'olive et le vinaigre de framboise. Assaisonner, c'est prêt !",
       },
     ]);
   });

@@ -3,6 +3,7 @@ import { ApplicationError } from '../../../../src/infrastructure/applicationErro
 import { UtilisateurSecurityRepository } from '../../../infrastructure/repository/utilisateur/utilisateurSecurity.repository';
 import { CodeAwareUtilisateur } from './codeAwareUtilisateur';
 import { App } from '../../app';
+var crypto = require('crypto');
 
 @Injectable()
 export class CodeManager {
@@ -85,7 +86,7 @@ export class CodeManager {
   }
 
   private static random6Digit(): string {
-    return Math.floor(100000 + Math.random() * 900000).toString();
+    return '' + crypto.randomInt(100000, 999999);
   }
 
   private static incrementNextAllowedCodeTime(

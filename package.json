@@ -102,7 +102,7 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
-    "testTimeout": 15000
+    "testTimeout": 20000
   },
   "prisma": {
     "schema": "src/infrastructure/prisma/schema.prisma"

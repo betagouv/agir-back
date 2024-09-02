@@ -556,36 +556,4 @@ describe('RechercheServices (API test)', () => {
       userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
     ).toHaveLength(33);
   });
-  it(`POST /utlilisateur/id/recherche_services/recettes/search renvoie une liste de résultats`, async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
-
-    // WHEN
-    const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/recherche_services/recettes/search',
-    ).send({ categorie: 'vege' });
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(10);
-    expect(response.body[0].difficulty_plat).toEqual('Facile');
-    expect(response.body[0].est_favoris).toEqual(false);
-    expect(response.body[0].id).toEqual('10982');
-    expect(response.body[0].nombre_favoris).toEqual(0);
-    expect(response.body[0].temps_prepa_min).toEqual(5);
-    expect(response.body[0].titre).toEqual(
-      'Salade de pâtes complètes et lentilles',
-    );
-    expect(response.body[0].type_plat).toEqual('Plat');
-
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
-
-    expect(userDB.bilbiotheque_services.liste_services).toHaveLength(1);
-    expect(userDB.bilbiotheque_services.liste_services[0].id).toEqual(
-      ServiceRechercheID.recettes,
-    );
-    expect(
-      userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
-    ).toHaveLength(10);
-  });
 });

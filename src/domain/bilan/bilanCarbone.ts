@@ -12,6 +12,7 @@ export class ImpactUnivers {
   univers: Univers;
   pourcentage: number;
   impact_kg_annee: number;
+  emoji: string;
   details: DetailImpact[];
 }
 export class BilanCarbone {
@@ -21,6 +22,7 @@ export class BilanCarbone {
   impact_kg_annee: number;
   top_3: DetailImpact[];
   impact_univers: ImpactUnivers[];
+  services_societaux: ImpactUnivers;
 
   getImpactParUnivers?(univers: Univers): ImpactUnivers {
     return this.impact_univers.find((a) => a.univers === univers);

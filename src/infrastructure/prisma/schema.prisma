@@ -53,6 +53,7 @@ model Utilisateur {
   defis                    Json               @default("{}") // versioné
   missions                 Json               @default("{}") // versioné
   bilbiotheque_services    Json               @default("{}") // versioné
+  notification_history     Json               @default("{}") // versioné
   empreintes               Empreinte[]
   suivis                   Suivi[]
   groupes                  GroupeAbonnement[]

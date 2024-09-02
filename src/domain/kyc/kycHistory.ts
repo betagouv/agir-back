@@ -1,26 +1,23 @@
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
-import { LogementAPI } from '../../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
 import { Categorie } from '../contenu/categorie';
 import { ConditionDefi } from '../defis/conditionDefi';
 import { Chauffage, DPE, Superficie, TypeLogement } from '../logement/logement';
 import { KYCHistory_v0 as KYCHistory_v0 } from '../object_store/kyc/kycHistory_v0';
-import { Utilisateur } from '../utilisateur/utilisateur';
 import { KycDefinition } from './kycDefinition';
 import { KYCID } from './KYCID';
-import { QuestionKYC, TypeReponseQuestionKYC } from './questionKYC';
+import { QuestionKYC } from './questionKYC';
 
 type LogementInput = {
-  nombre_adultes: number;
-  nombre_enfants: number;
-  code_postal: string;
-  commune: string;
-  commune_label: string;
-  type: TypeLogement;
-  superficie: Superficie;
-  proprietaire: boolean;
-  chauffage: Chauffage;
-  plus_de_15_ans: boolean;
-  dpe: DPE;
+  nombre_adultes?: number;
+  nombre_enfants?: number;
+  code_postal?: string;
+  commune?: string;
+  type?: TypeLogement;
+  superficie?: Superficie;
+  proprietaire?: boolean;
+  chauffage?: Chauffage;
+  plus_de_15_ans?: boolean;
+  dpe?: DPE;
 };
 
 export class KYCHistory {
@@ -61,7 +58,7 @@ export class KYCHistory {
 
   public patchLogement(input: LogementInput) {
     if (input.dpe) {
-      this.updateQuestionByCode(KYCID.KYC_DPE, [input.dpe]);
+      this.updateQuestionByCodeWithLabel(KYCID.KYC_DPE, [input.dpe]);
     }
     if (input.superficie) {
       const value: Record<Superficie, number> = {
@@ -71,7 +68,7 @@ export class KYCHistory {
         superficie_150: 149,
         superficie_150_et_plus: 200,
       };
-      this.updateQuestionByCode(KYCID.KYC_superficie, [
+      this.updateQuestionByCodeWithLabel(KYCID.KYC_superficie, [
         value[input.superficie].toString(),
       ]);
     }
@@ -82,21 +79,37 @@ export class KYCHistory {
       );
     }
     if (input.chauffage) {
-      const value: Record<Chauffage, string> = {
-        gaz: 'gaz',
-        fioul: 'fioul',
-        electricite: 'electricite',
-        bois: 'bois',
-        autre: 'ne_sais_pas',
+      const target_KYC: Record<Chauffage, string> = {
+        gaz: KYCID.KYC_chauffage_gaz,
+        fioul: KYCID.KYC_chauffage_fioul,
+        electricite: KYCID.KYC_chauffage_elec,
+        bois: KYCID.KYC_chauffage_bois,
+        autre: null,
       };
+
+      this.updateQuestionByCodeWithCode(KYCID.KYC_chauffage_gaz, 'ne_sais_pas');
       this.updateQuestionByCodeWithCode(
-        KYCID.KYC_chauffage,
-        value[input.chauffage],
+        KYCID.KYC_chauffage_fioul,
+        'ne_sais_pas',
       );
+      this.updateQuestionByCodeWithCode(
+        KYCID.KYC_chauffage_bois,
+        'ne_sais_pas',
+      );
+      this.updateQuestionByCodeWithCode(
+        KYCID.KYC_chauffage_elec,
+        'ne_sais_pas',
+      );
+      if (input.chauffage !== Chauffage.autre) {
+        this.updateQuestionByCodeWithCode(target_KYC[input.chauffage], 'oui');
+      }
     }
-    if (input.nombre_adultes && input.nombre_enfants) {
-      this.updateQuestionByCode(KYCID.KYC_menage, [
-        '' + (input.nombre_adultes + input.nombre_enfants),
+
+    if (input.nombre_adultes || input.nombre_enfants) {
+      this.updateQuestionByCodeWithLabel(KYCID.KYC_menage, [
+        '' +
+          ((input.nombre_adultes ? input.nombre_adultes : 0) +
+            (input.nombre_enfants ? input.nombre_enfants : 0)),
       ]);
     }
     if (input.type) {
@@ -191,7 +204,7 @@ export class KYCHistory {
     return !!this.getAnsweredQuestionByCode(code);
   }
 
-  public updateQuestionByCode(code: string, reponses: string[]) {
+  public updateQuestionByCodeWithLabel(code: string, reponses: string[]) {
     let question = this.getAnsweredQuestionByCode(code);
     if (question) {
       question.setResponses(reponses);
@@ -201,7 +214,34 @@ export class KYCHistory {
       this.answered_questions.push(question_catalogue);
     }
   }
+  public tryUpdateQuestionByCodeWithLabel(code: string, reponses: string[]) {
+    let question = this.getAnsweredQuestionByCode(code);
+    if (question) {
+      question.setResponses(reponses);
+    } else {
+      let question_catalogue = this.getKYCByCodeFromCatalogue(code);
+      if (question_catalogue) {
+        question_catalogue.setResponses(reponses);
+        this.answered_questions.push(question_catalogue);
+      }
+    }
+  }
 
+  public tryUpdateQuestionByCodeWithCode(
+    code_question: string,
+    code_reponse: string,
+  ) {
+    let question = this.getAnsweredQuestionByCode(code_question);
+    if (question) {
+      question.setResponseByCode(code_reponse);
+    } else {
+      let question_catalogue = this.getKYCByCodeFromCatalogue(code_question);
+      if (question_catalogue) {
+        question_catalogue.setResponseByCode(code_reponse);
+        this.answered_questions.push(question_catalogue);
+      }
+    }
+  }
   public updateQuestionByCodeWithCode(
     code_question: string,
     code_reponse: string,
@@ -213,25 +253,6 @@ export class KYCHistory {
       let question_catalogue =
         this.getKYCByCodeFromCatalogueOrException(code_question);
       question_catalogue.setResponseByCode(code_reponse);
-      this.answered_questions.push(question_catalogue);
-    }
-  }
-
-  public updateQuestionMosaicByCode(
-    questionId: string,
-    mosaic: {
-      code: string;
-      value_number: number;
-      value_boolean: boolean;
-    }[],
-  ) {
-    let question = this.getAnsweredQuestionByCode(questionId);
-    if (question) {
-      question.setMosaicResponses(mosaic);
-    } else {
-      let question_catalogue =
-        this.getKYCByCodeFromCatalogueOrException(questionId);
-      question_catalogue.setMosaicResponses(mosaic);
       this.answered_questions.push(question_catalogue);
     }
   }
@@ -258,6 +279,17 @@ export class KYCHistory {
       ApplicationError.throwQuestionInconnue(code);
     }
     return QuestionKYC.buildFromDef(question_def);
+  }
+
+  private getKYCByCodeFromCatalogue(code: string): QuestionKYC {
+    const question_def = this.catalogue.find(
+      (element) => element.code === code,
+    );
+
+    if (question_def) {
+      return QuestionKYC.buildFromDef(question_def);
+    }
+    return null;
   }
 
   private getKYCDefinitionByCodeOrException(code: string): KycDefinition {

@@ -34,6 +34,7 @@ import {
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { ParcoursTodo_v0 } from '../../../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
+import { App } from '../../../src/domain/app';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
@@ -2438,5 +2439,15 @@ describe('Admin (API test)', () => {
       completion_pourcentage_81_99: 0,
       completion_pourcentage_100: 1,
     });
+  });
+
+  it('GET /version', async () => {
+    // GIVEN
+    // WHEN
+    const response = await TestUtil.getServer().get('/version');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ major: 1, minor: 0, patch: 0 });
   });
 });

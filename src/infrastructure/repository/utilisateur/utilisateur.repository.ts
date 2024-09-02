@@ -29,6 +29,7 @@ import { Transport } from '../../../domain/transport/transport';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
 import { BibliothequeServices } from '../../../domain/bibliotheque_services/bibliothequeServices';
+import { NotificationHistory } from '../../../domain/notification/notificationHistory';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -313,6 +314,12 @@ export class UtilisateurRepository {
           SerialisableDomain.MissionsUtilisateur,
         ),
       );
+      const notification_history = new NotificationHistory(
+        Upgrader.upgradeRaw(
+          user.notification_history,
+          SerialisableDomain.NotificationHistory,
+        ),
+      );
 
       return new Utilisateur({
         id: user.id,
@@ -365,6 +372,7 @@ export class UtilisateurRepository {
         status: UtilisateurStatus[user.status],
         couverture_aides_ok: user.couverture_aides_ok,
         source_inscription: SourceInscription[user.source_inscription],
+        notification_history: notification_history,
       });
     }
     return null;
@@ -436,6 +444,10 @@ export class UtilisateurRepository {
       bilbiotheque_services: Upgrader.serialiseToLastVersion(
         user.bilbiotheque_services,
         SerialisableDomain.BibliothequeServices,
+      ),
+      notification_history: Upgrader.serialiseToLastVersion(
+        user.notification_history,
+        SerialisableDomain.NotificationHistory,
       ),
       version: user.version,
       failed_login_count: user.failed_login_count,

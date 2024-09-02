@@ -2,11 +2,45 @@ import { Versioned } from '../versioned';
 import { ServiceRecherche } from '../../bibliotheque_services/serviceRecherche';
 import { BibliothequeServices } from '../../bibliotheque_services/bibliothequeServices';
 import { ServiceRechercheID } from '../../../../src/domain/bibliotheque_services/serviceRechercheID';
-import { ResultatRecherche } from '../../../../src/domain/bibliotheque_services/resultatRecherche';
+import {
+  EtapeRecette,
+  IngredientRecette,
+  ResultatRecherche,
+} from '../../../../src/domain/bibliotheque_services/resultatRecherche';
 import { FavorisRecherche } from 'src/domain/bibliotheque_services/favorisRecherche';
 import { FruitLegume } from '../../../infrastructure/service/fruits/fruitEtLegumesServiceManager';
-import { Day } from '../../bibliotheque_services/days';
 import { OpenHour } from '../../bibliotheque_services/openHour';
+
+export class EtapeRecette_v0 {
+  ordre: number;
+  texte: string;
+
+  static map(res: EtapeRecette): EtapeRecette_v0 {
+    return {
+      ordre: res.ordre,
+      texte: res.texte,
+    };
+  }
+}
+export class IngredientRecette_v0 {
+  ordre: number;
+  quantite: number;
+  poids: number;
+  poids_net: number;
+  unite: string;
+  nom: string;
+
+  static map(res: IngredientRecette): IngredientRecette_v0 {
+    return {
+      ordre: res.ordre,
+      quantite: res.quantite,
+      poids: res.poids,
+      poids_net: res.poids_net,
+      unite: res.unite,
+      nom: res.nom,
+    };
+  }
+}
 
 export class ResultatRecherche_v0 {
   id: string;
@@ -39,6 +73,8 @@ export class ResultatRecherche_v0 {
   categories?: string[];
   openhours_more_infos?: string;
   open_hours?: OpenHour[];
+  ingredients?: IngredientRecette_v0[];
+  etapes_recette?: EtapeRecette_v0[];
 
   static map(res: ResultatRecherche): ResultatRecherche_v0 {
     return {
@@ -65,6 +101,12 @@ export class ResultatRecherche_v0 {
       categories: res.categories,
       openhours_more_infos: res.openhours_more_infos,
       open_hours: res.open_hours,
+      ingredients: res.ingredients
+        ? res.ingredients.map((e) => IngredientRecette_v0.map(e))
+        : [],
+      etapes_recette: res.etapes_recette
+        ? res.etapes_recette.map((e) => EtapeRecette_v0.map(e))
+        : [],
     };
   }
 }

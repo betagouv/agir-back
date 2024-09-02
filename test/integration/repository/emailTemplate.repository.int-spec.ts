@@ -1,7 +1,13 @@
 import { TestUtil } from '../../TestUtil';
-import { EmailTemplateRepository } from '../../../src/infrastructure/email/templates/emailTemplate.repository';
+import { EmailTemplateRepository } from '../../../src/infrastructure/email/emailTemplate.repository';
+import { TypeNotification } from '../../../src/domain/notification/notificationHistory';
+import {
+  SourceInscription,
+  Utilisateur,
+} from '../../../src/domain/utilisateur/utilisateur';
 
 describe('EmailTemplateRepository', () => {
+  const OLD_ENV = process.env;
   let emailTemplateRepository = new EmailTemplateRepository();
 
   beforeAll(async () => {
@@ -10,26 +16,45 @@ describe('EmailTemplateRepository', () => {
   });
 
   beforeEach(async () => {
+    jest.resetModules();
+    process.env = { ...OLD_ENV }; // Make a copy
     await TestUtil.deleteAll();
   });
 
   afterAll(async () => {
+    process.env = OLD_ENV;
     await TestUtil.appclose();
   });
 
   it('template email code inscription', async () => {
+    // GIVEN
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'Clooney',
+      'George',
+      'g@c.com',
+      1967,
+      '91120',
+      'PALAISEAU',
+      false,
+      SourceInscription.web,
+    );
+    utilisateur.code = '123456';
+    process.env.BASE_URL_FRONT = 'https://agir';
+
     // WHEN
-    const result =
-      await emailTemplateRepository.generate_email_inscription_code(
-        'CODE',
-        'LINK',
-      );
+    const result = await emailTemplateRepository.generateEmailByType(
+      TypeNotification.inscription_code,
+      utilisateur,
+    );
 
     // THEN
-    expect(result).toEqual(`Bonjour,<br>
+    expect(result).toEqual({
+      body: `Bonjour,<br>
 Voici votre code pour valider votre inscription à l'application Agir !<br><br>
-code : CODE<br><br>
-Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href=\"LINK\">Page pour rentrer le code</a><br><br>
-À très vite !`);
+code : 123456<br><br>
+Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="https://agir/validation-compte?email&#x3D;g@c.com">Page pour rentrer le code</a><br><br>
+À très vite !`,
+      subject: "Votre code d'inscription Agir",
+    });
   });
 });

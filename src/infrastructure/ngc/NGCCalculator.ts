@@ -109,8 +109,26 @@ export class NGCCalculator {
       'logement . extérieur',
       'logement . vacances',
       'divers',
+      'divers . animaux domestiques',
+      'divers . textile',
+      'divers . électroménager',
+      'divers . ameublement',
+      'divers . numérique',
+      'divers . loisirs',
+      'divers . autres produits',
+      'divers . tabac',
       'alimentation',
+      'alimentation . petit déjeuner annuel',
+      'alimentation . plats . viande rouge',
+      'alimentation . plats . viande blanche',
+      'alimentation . plats . poisson gras',
+      'alimentation . plats . poisson blanc',
+      'alimentation . plats . végétarien',
+      'alimentation . plats . végétalien',
+      'alimentation . boisson',
       'services sociétaux',
+      'services publics',
+      'services marchands',
     ];
 
     const resultMap = this.computeEntryListValues(situation, entryList);
@@ -142,14 +160,58 @@ export class NGCCalculator {
     const logement_vacances = resultMap.get('logement . vacances') as number;
 
     const divers = resultMap.get('divers') as number;
+    const divers_animaux = resultMap.get(
+      'divers . animaux domestiques',
+    ) as number;
+    const divers_textile = resultMap.get('divers . textile') as number;
+    const divers_electro = resultMap.get('divers . électroménager') as number;
+    const divers_ameublement = resultMap.get('divers . ameublement') as number;
+    const divers_numérique = resultMap.get('divers . numérique') as number;
+    const divers_loisirs = resultMap.get('divers . loisirs') as number;
+    const divers_autres_produits = resultMap.get(
+      'divers . autres produits',
+    ) as number;
+    const divers_tabac = resultMap.get('divers . tabac') as number;
+
     const alimentation = resultMap.get('alimentation') as number;
+    const alimentation_petit_dej = resultMap.get(
+      'alimentation . petit déjeuner annuel',
+    ) as number;
+
+    let alimentation_viande = ((resultMap.get(
+      'alimentation . plats . viande rouge',
+    ) as number) +
+      resultMap.get('alimentation . plats . viande blanche')) as number;
+    alimentation_viande = alimentation_viande * 52;
+
+    let alimentation_poisson = ((resultMap.get(
+      'alimentation . plats . poisson gras',
+    ) as number) +
+      resultMap.get('alimentation . plats . poisson blanc')) as number;
+    alimentation_poisson = alimentation_poisson * 52;
+
+    let alimentation_fruits_legumes = ((resultMap.get(
+      'alimentation . plats . végétarien',
+    ) as number) +
+      resultMap.get('alimentation . plats . végétalien')) as number;
+    alimentation_fruits_legumes = alimentation_fruits_legumes * 52;
+
+    const alimentation_boisson = resultMap.get(
+      'alimentation . boisson',
+    ) as number;
+
     const services_societaux = resultMap.get('services sociétaux') as number;
+    const services_societaux_pub = resultMap.get('services publics') as number;
+    const services_societaux_march = resultMap.get(
+      'services marchands',
+    ) as number;
 
     const impacts: ImpactUnivers[] = [];
     impacts.push({
       pourcentage: Math.round((transport / total) * 100),
       univers: Univers.transport,
       impact_kg_annee: transport,
+      emoji: '🚦',
       details: [
         {
           label: 'Voiture',
@@ -231,6 +293,7 @@ export class NGCCalculator {
       pourcentage: Math.round((logement / total) * 100),
       univers: Univers.logement,
       impact_kg_annee: logement,
+      emoji: '🏠',
       details: [
         {
           label: 'Construction',
@@ -291,38 +354,177 @@ export class NGCCalculator {
       pourcentage: Math.round((divers / total) * 100),
       univers: Univers.consommation,
       impact_kg_annee: divers,
-      details: [],
+      emoji: '📦',
+      details: [
+        {
+          label: 'Animaux',
+          pourcentage: Math.round((divers_animaux / total) * 100),
+          pourcentage_categorie: Math.round((divers_animaux / divers) * 100),
+          impact_kg_annee: divers_animaux,
+          emoji: '🐶',
+        },
+        {
+          label: 'Electroménager',
+          pourcentage: Math.round((divers_electro / total) * 100),
+          pourcentage_categorie: Math.round((divers_electro / divers) * 100),
+          impact_kg_annee: divers_electro,
+          emoji: '🔌',
+        },
+        {
+          label: 'Ameublement',
+          pourcentage: Math.round((divers_ameublement / total) * 100),
+          pourcentage_categorie: Math.round(
+            (divers_ameublement / divers) * 100,
+          ),
+          impact_kg_annee: divers_ameublement,
+          emoji: '🛋️',
+        },
+        {
+          label: 'Numérique',
+          pourcentage: Math.round((divers_numérique / total) * 100),
+          pourcentage_categorie: Math.round((divers_numérique / divers) * 100),
+          impact_kg_annee: divers_numérique,
+          emoji: '📺',
+        },
+        {
+          label: 'Loisirs',
+          pourcentage: Math.round((divers_loisirs / total) * 100),
+          pourcentage_categorie: Math.round((divers_loisirs / divers) * 100),
+          impact_kg_annee: divers_loisirs,
+          emoji: '🎭',
+        },
+        {
+          label: 'Autres produits',
+          pourcentage: Math.round((divers_autres_produits / total) * 100),
+          pourcentage_categorie: Math.round(
+            (divers_autres_produits / divers) * 100,
+          ),
+          impact_kg_annee: divers_autres_produits,
+          emoji: '📦',
+        },
+        {
+          label: 'Tabac',
+          pourcentage: Math.round((divers_tabac / total) * 100),
+          pourcentage_categorie: Math.round((divers_tabac / divers) * 100),
+          impact_kg_annee: divers_tabac,
+          emoji: '🚬',
+        },
+        {
+          label: 'Textile',
+          pourcentage: Math.round((divers_textile / total) * 100),
+          pourcentage_categorie: Math.round((divers_textile / divers) * 100),
+          impact_kg_annee: divers_textile,
+          emoji: '👕',
+        },
+      ],
     });
     impacts.push({
       pourcentage: Math.round((alimentation / total) * 100),
       univers: Univers.alimentation,
       impact_kg_annee: alimentation,
-      details: [],
+      emoji: '🍴',
+      details: [
+        {
+          label: 'Petit déjeuner',
+          pourcentage: Math.round((alimentation_petit_dej / total) * 100),
+          pourcentage_categorie: Math.round(
+            (alimentation_petit_dej / alimentation) * 100,
+          ),
+          impact_kg_annee: alimentation_petit_dej,
+          emoji: '🥐',
+        },
+        {
+          label: 'Viandes',
+          pourcentage: Math.round((alimentation_viande / total) * 100),
+          pourcentage_categorie: Math.round(
+            (alimentation_viande / alimentation) * 100,
+          ),
+          impact_kg_annee: alimentation_viande,
+          emoji: '🥩',
+        },
+        {
+          label: 'Poissons',
+          pourcentage: Math.round((alimentation_poisson / total) * 100),
+          pourcentage_categorie: Math.round(
+            (alimentation_poisson / alimentation) * 100,
+          ),
+          impact_kg_annee: alimentation_poisson,
+          emoji: '🐟',
+        },
+        {
+          label: 'Fruits & Légumes',
+          pourcentage: Math.round((alimentation_fruits_legumes / total) * 100),
+          pourcentage_categorie: Math.round(
+            (alimentation_fruits_legumes / alimentation) * 100,
+          ),
+          impact_kg_annee: alimentation_fruits_legumes,
+          emoji: '🥦',
+        },
+        {
+          label: 'Boissons',
+          pourcentage: Math.round((alimentation_boisson / total) * 100),
+          pourcentage_categorie: Math.round(
+            (alimentation_boisson / alimentation) * 100,
+          ),
+          impact_kg_annee: alimentation_boisson,
+          emoji: '🥤',
+        },
+      ],
     });
-    impacts.push({
+
+    const services_societaux_impact = {
       pourcentage: Math.round((services_societaux / total) * 100),
       univers: Univers.services_societaux,
       impact_kg_annee: services_societaux,
-      details: [],
-    });
+      emoji: '🏛️',
+      details: [
+        {
+          label: 'Service publics',
+          pourcentage: Math.round((services_societaux_pub / total) * 100),
+          pourcentage_categorie: Math.round(
+            (services_societaux_pub / services_societaux) * 100,
+          ),
+          impact_kg_annee: services_societaux_pub,
+          emoji: '🏛',
+        },
+        {
+          label: 'Service marchands',
+          pourcentage: Math.round((services_societaux_march / total) * 100),
+          pourcentage_categorie: Math.round(
+            (services_societaux_march / services_societaux) * 100,
+          ),
+          impact_kg_annee: services_societaux_march,
+          emoji: '✉️',
+        },
+      ],
+    };
 
-    impacts.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
-    for (const univers of impacts) {
-      univers.details.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
-    }
+    const top_3 = this.computeTop3Details(impacts);
 
-    let top_3: DetailImpact[] = [];
-    for (const cat of impacts) {
-      top_3 = top_3.concat(cat.details);
-    }
-    top_3.sort((a, b) => b.pourcentage - a.pourcentage);
-    top_3 = top_3.slice(0, 3);
+    this.sortResult(impacts);
 
     return new BilanCarbone({
       impact_kg_annee: total,
       impact_univers: impacts,
       top_3: top_3,
+      services_societaux: services_societaux_impact,
     });
+  }
+
+  private sortResult(liste: ImpactUnivers[]) {
+    liste.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
+    for (const univers of liste) {
+      univers.details.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
+    }
+  }
+
+  private computeTop3Details(liste_impacts: ImpactUnivers[]): DetailImpact[] {
+    let liste_details: DetailImpact[] = [];
+    for (const cat of liste_impacts) {
+      liste_details = liste_details.concat(cat.details);
+    }
+    liste_details.sort((a, b) => b.pourcentage - a.pourcentage);
+    return liste_details.slice(0, 3);
   }
 
   computeBilanFromSituation(situation: object): Bilan {

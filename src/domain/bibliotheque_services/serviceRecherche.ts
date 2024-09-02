@@ -24,6 +24,13 @@ export class ServiceRecherche {
     }
   }
 
+  public existeDerniereRecherche(): boolean {
+    return this.derniere_recherche.length > 0;
+  }
+
+  public getLastResultatById(resultId: string): ResultatRecherche {
+    return this.derniere_recherche.find((r) => r.id === resultId);
+  }
   public ajouterFavoris(result_id: string) {
     const resultat_a_favoriser = this.derniere_recherche.find(
       (r) => r.id === result_id,
