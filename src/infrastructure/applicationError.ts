@@ -202,10 +202,7 @@ export class ApplicationError {
     );
   }
 
-  static throwServiceNotFound(
-    service_definition_id: string,
-    utilisateurId: string,
-  ) {
+  static throwServiceNotFound(service_definition_id: string) {
     this.throwAppError(
       '038',
       `le service [${service_definition_id}] n'est pas installé pour l'utilisateur`,
@@ -348,6 +345,13 @@ export class ApplicationError {
       '066',
       `Pas de code ${kyc_code} disponible pour la question [${question}]`,
     );
+  }
+
+  static throwNotAlhpaNom() {
+    this.throwAppError('067', `Le nom ne doit contenir que des lettres`);
+  }
+  static throwNotAlhpaPrenom() {
+    this.throwAppError('068', `Le prénom ne doit contenir que des lettres`);
   }
 
   private static throwAppError(

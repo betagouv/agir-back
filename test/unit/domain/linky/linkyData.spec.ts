@@ -3,7 +3,7 @@ import {
   MonthLinkyData,
   YearMonthLinkyData,
 } from '../../../../src/domain/linky/linkyData';
-const _linky_data = require('../../../../test_data/PRM_thermo_sensible');
+const _linky_data = require('../../../../test_data/PRM_thermo_pas_sensible');
 
 describe('LinkyData', () => {
   it('getLastValue : null if no value', () => {
@@ -714,13 +714,13 @@ describe('LinkyData', () => {
     // THEN
     expect(result.data).toHaveLength(24);
     expect(result.commentaires[0]).toEqual(
-      'Au cours des 12 derniers mois, votre consommation éléctrique a <strong>augmenté de +3%</strong> par rapport aux 12 mois précédents',
+      'Au cours des 12 derniers mois, votre consommation éléctrique a <strong>augmenté de +8%</strong> par rapport aux 12 mois précédents',
     );
     expect(result.commentaires[1]).toEqual(
-      `C'est au mois de <strong>janvier 2023</strong> que vous avez fait le <strong>plus d'économie d’électricité</strong> (<strong>-10%</strong> par rapport à janvier 2022)`,
+      `C'est au mois de <strong>septembre 2023</strong> que vous avez fait le <strong>plus d'économie d’électricité</strong> (<strong>-11%</strong> par rapport à septembre 2022)`,
     );
     expect(result.commentaires[2]).toEqual(
-      `C'est au mois de <strong>novembre 2023</strong> que votre consommation d’électricité a le plus augmenté (<strong>+51%</strong> par rapport à novembre 2022)</strong>`,
+      `C'est au mois de <strong>avril 2024</strong> que votre consommation d’électricité a le plus augmenté (<strong>+26%</strong> par rapport à avril 2023)</strong>`,
     );
   });
   it('compare2AnsParMois : commentaires de bonne valeur, exclusion du dernier mois', () => {
@@ -967,30 +967,30 @@ describe('LinkyData', () => {
     // THEN
     expect(res).toHaveLength(28);
 
-    expect(res[0].annee).toEqual('2022');
-    expect(res[0].mois).toEqual('novembre');
-    expect(res[0].jour_text).toEqual('mercredi');
-    expect(res[0].jour_val).toEqual(30);
-    expect(res[1].annee).toEqual('2023');
-    expect(res[1].mois).toEqual('novembre');
-    expect(res[1].jour_text).toEqual('jeudi');
-    expect(res[1].jour_val).toEqual(30);
+    expect(res[0].annee).toEqual('2023');
+    expect(res[0].mois).toEqual('juillet');
+    expect(res[0].jour_text).toEqual('vendredi');
+    expect(res[0].jour_val).toEqual(14);
+    expect(res[1].annee).toEqual('2024');
+    expect(res[1].mois).toEqual('juillet');
+    expect(res[1].jour_text).toEqual('dimanche');
+    expect(res[1].jour_val).toEqual(14);
 
-    expect(res[26].annee).toEqual('2022');
-    expect(res[26].mois).toEqual('décembre');
-    expect(res[26].jour_text).toEqual('mardi');
-    expect(res[26].jour_val).toEqual(13);
-    expect(res[27].annee).toEqual('2023');
-    expect(res[27].mois).toEqual('décembre');
-    expect(res[27].jour_text).toEqual('mercredi');
-    expect(res[27].jour_val).toEqual(13);
+    expect(res[26].annee).toEqual('2023');
+    expect(res[26].mois).toEqual('juillet');
+    expect(res[26].jour_text).toEqual('jeudi');
+    expect(res[26].jour_val).toEqual(27);
+    expect(res[27].annee).toEqual('2024');
+    expect(res[27].mois).toEqual('juillet');
+    expect(res[27].jour_text).toEqual('samedi');
+    expect(res[27].jour_val).toEqual(27);
 
     expect(result.commentaires).toHaveLength(2);
     expect(result.commentaires[0]).toEqual(
-      `Votre consommation a <strong>augmenté de +34.21%</strong> entre mardi et mercredi dernier`,
+      `Votre consommation a <strong>augmenté de +107.84%</strong> entre vendredi et samedi dernier`,
     );
     expect(result.commentaires[1]).toEqual(
-      `Au cours des 2 dernières semaines, votre consommation éléctrique a <strong>augmenté de +15%</strong> par rapport à la même période l'année dernière`,
+      `Au cours des 2 dernières semaines, votre consommation éléctrique a <strong>augmenté de +58%</strong> par rapport à la même période l'année dernière`,
     );
   });
   it('compare15jousEntre2ans : data partielle OK 7 jours au lieu de 14', () => {

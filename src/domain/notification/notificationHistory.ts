@@ -5,6 +5,7 @@ import {
 import { Utilisateur } from '../utilisateur/utilisateur';
 
 const min_10 = 10 * 60 * 1000;
+const jour_2 = 24 * 60 * 60 * 1000;
 
 export enum TypeNotification {
   inscription_code = 'inscription_code',
@@ -17,6 +18,7 @@ export enum CanalNotification {
 export class Notification {
   type: TypeNotification;
   canal: CanalNotification;
+  date_envoie: Date;
 
   constructor(n: Notification_v0) {
     Object.assign(this, n);
@@ -25,6 +27,8 @@ export class Notification {
 
 export class NotificationHistory {
   sent_notifications: Notification[];
+
+  static active_notification_types: TypeNotification[] = [];
 
   constructor(m?: NotificationHistory_v0) {
     this.sent_notifications = [];
@@ -37,7 +41,20 @@ export class NotificationHistory {
     }
   }
 
-  getNouvellesNotifications(
+  public declareSentNotification(
+    type: TypeNotification,
+    canal: CanalNotification,
+  ) {
+    this.sent_notifications.push(
+      new Notification({
+        canal: canal,
+        type: type,
+        date_envoie: new Date(),
+      }),
+    );
+  }
+
+  getNouvellesNotificationsAPousser(
     canal: CanalNotification,
     utilisateur: Utilisateur,
   ): TypeNotification[] {
@@ -48,11 +65,18 @@ export class NotificationHistory {
     const result = [];
 
     if (!this.was_sent(TypeNotification.welcome)) {
-      if (Date.now() - utilisateur.created_at.getTime() > min_10)
+      const age_creation_utilisateur =
+        Date.now() - utilisateur.created_at.getTime();
+      if (
+        age_creation_utilisateur > min_10 &&
+        age_creation_utilisateur < jour_2
+      )
         result.push(TypeNotification.welcome);
     }
 
-    return result;
+    return result.filter((n) =>
+      NotificationHistory.active_notification_types.includes(n),
+    );
   }
 
   private was_sent(type: TypeNotification): boolean {

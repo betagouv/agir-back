@@ -206,7 +206,7 @@ export class ServiceUsecase {
         serviceDefinitionId,
       );
     if (existing_service === null) {
-      ApplicationError.throwServiceNotFound(serviceDefinitionId, utilisateurId);
+      ApplicationError.throwServiceNotFound(serviceDefinitionId);
     }
 
     if (
@@ -247,11 +247,22 @@ export class ServiceUsecase {
   ): Promise<Service> {
     await this.utilisateurRepository.checkState(utilisateurId);
 
-    const service = await this.serviceRepository.getServiceOfUtilisateur(
+    let service = await this.serviceRepository.getServiceOfUtilisateur(
       utilisateurId,
       serviceDefinitionId,
     );
-    if (service === null) return null;
+
+    if (!service) {
+      if (serviceDefinitionId === AsyncService.linky) {
+        await this.addServiceToUtilisateur(utilisateurId, serviceDefinitionId);
+        service = await this.serviceRepository.getServiceOfUtilisateur(
+          utilisateurId,
+          serviceDefinitionId,
+        );
+      } else {
+        return null;
+      }
+    }
 
     if (service.isLiveServiceType()) {
       await this.refreshLiveService(service);

@@ -8,6 +8,7 @@ import { TuileThematique } from '../../../src/domain/univers/tuileThematique';
 import { Cron } from '@nestjs/schedule';
 import { UniversDefinition } from '../../../src/domain/univers/universDefinition';
 import { ThematiqueDefinition } from '../../../src/domain/univers/thematiqueDefinition';
+import { UniversExtraLabels } from '../../domain/univers/universExtraLabels';
 
 @Injectable()
 export class ThematiqueRepository {
@@ -246,8 +247,14 @@ export class ThematiqueRepository {
   }
   public static getTitreUnivers(univers: string): string {
     if (!univers) return 'Titre manquant';
+
     const tuile = ThematiqueRepository.getTuileUnivers(univers);
-    return tuile ? tuile.titre : 'Titre manquant';
+
+    if (tuile) {
+      return tuile.titre;
+    } else {
+      return UniversExtraLabels.getLabel(univers);
+    }
   }
   public static getTitreThematiqueUnivers(thematiqueUnivers: string): string {
     if (!thematiqueUnivers) return 'Titre manquant';

@@ -25,6 +25,7 @@ import {
   LogementAPI,
   TransportAPI,
   UtilisateurProfileAPI,
+  UtilisateurUpdateProfileAPI,
 } from './types/utilisateur/utilisateurProfileAPI';
 import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
 import { GenericControler } from './genericControler';
@@ -147,7 +148,7 @@ export class ProfileController extends GenericControler {
 
   @Patch('utilisateurs/:utilisateurId/profile')
   @ApiBody({
-    type: UtilisateurProfileAPI,
+    type: UtilisateurUpdateProfileAPI,
   })
   @ApiOperation({
     summary:
@@ -157,7 +158,7 @@ export class ProfileController extends GenericControler {
   async updateProfile(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-    @Body() body: UtilisateurProfileAPI,
+    @Body() body: UtilisateurUpdateProfileAPI,
   ) {
     this.checkCallerId(req, utilisateurId);
     await this.profileUsecase.updateUtilisateurProfile(utilisateurId, body);

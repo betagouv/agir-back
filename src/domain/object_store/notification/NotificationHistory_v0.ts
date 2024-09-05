@@ -9,11 +9,13 @@ import { Notification } from '../../notification/notificationHistory';
 export class Notification_v0 {
   type: TypeNotification;
   canal: CanalNotification;
+  date_envoie: Date;
 
   static map(notif: Notification): Notification_v0 {
     return {
       canal: notif.canal,
       type: notif.type,
+      date_envoie: notif.date_envoie,
     };
   }
 }

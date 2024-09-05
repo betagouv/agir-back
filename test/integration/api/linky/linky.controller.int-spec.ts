@@ -1,6 +1,6 @@
 import { DB, TestUtil } from '../../../TestUtil';
 
-const _linky_data = require('../../../../test_data/PRM_thermo_sensible');
+const _linky_data = require('../../../../test_data/PRM_thermo_pas_sensible');
 
 describe('Linky (API test)', () => {
   const OLD_ENV = process.env;
@@ -83,7 +83,7 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.data).toHaveLength(724);
+    expect(response.body.data).toHaveLength(1097);
   });
   it('GET /utilisateurs/id/linky renvoie les data linky full avec correction à la volée', async () => {
     // GIVEN
@@ -148,7 +148,7 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.data).toHaveLength(724);
+    expect(response.body.data).toHaveLength(1097);
   });
 
   it('GET /utilisateurs/id/linky comparaison 2 dernieres annéee', async () => {
@@ -171,13 +171,13 @@ describe('Linky (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.data).toHaveLength(24);
-    expect(response.body.data[0].mois).toEqual('janvier');
+    expect(response.body.data[0].mois).toEqual('août');
     expect(response.body.data[0].annee).toEqual('2022');
-    expect(response.body.data[1].mois).toEqual('janvier');
+    expect(response.body.data[1].mois).toEqual('août');
     expect(response.body.data[1].annee).toEqual('2023');
-    expect(response.body.data[2].mois).toEqual('février');
+    expect(response.body.data[2].mois).toEqual('septembre');
     expect(response.body.data[2].annee).toEqual('2022');
-    expect(response.body.data[3].mois).toEqual('février');
+    expect(response.body.data[3].mois).toEqual('septembre');
     expect(response.body.data[3].annee).toEqual('2023');
   });
   it('GET /utilisateurs/id/linky compare_annees=false', async () => {
@@ -199,7 +199,7 @@ describe('Linky (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.data).toHaveLength(724);
+    expect(response.body.data).toHaveLength(1097);
   });
   it('GET /utilisateurs/id/linky comparaison 2 dernieres annéee - pas d erreurs si pas de donnees', async () => {
     // GIVEN
@@ -244,10 +244,10 @@ describe('Linky (API test)', () => {
     expect(response.body.data).toHaveLength(28);
     expect(response.body.commentaires).toHaveLength(2);
     expect(response.body.commentaires[0]).toEqual(
-      `Votre consommation a <strong>augmenté de +34.21%</strong> entre mardi et mercredi dernier`,
+      `Votre consommation a <strong>augmenté de +107.84%</strong> entre vendredi et samedi dernier`,
     );
     expect(response.body.commentaires[1]).toEqual(
-      `Au cours des 2 dernières semaines, votre consommation éléctrique a <strong>augmenté de +15%</strong> par rapport à la même période l'année dernière`,
+      `Au cours des 2 dernières semaines, votre consommation éléctrique a <strong>augmenté de +58%</strong> par rapport à la même période l'année dernière`,
     );
   });
 

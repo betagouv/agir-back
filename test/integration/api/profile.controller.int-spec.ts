@@ -239,6 +239,48 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.status).toBe(200);
     expect(dbUser.nom).toEqual('THE NOM');
   });
+  it('PATCH /utilisateurs/id/profile - pas possible de maj le email', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      email: 'HAHAHAHe@paris.com',
+    });
+    // THEN
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(response.status).toBe(200);
+    expect(dbUser.email).toEqual('yo@truc.com');
+  });
+  it('PATCH /utilisateurs/id/profile - que du alpha dans nom', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      nom: 'TOTO35',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('067');
+  });
+  it('PATCH /utilisateurs/id/profile - prenom pas alpha => erreur', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      prenom: 'haha45',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('068');
+  });
   it('PATCH /utilisateurs/id/profile - update basic profile datas', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -266,7 +308,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.nom).toEqual('THE NOM');
     expect(dbUser.prenom).toEqual('THE PRENOM');
     expect(dbUser.annee_naissance).toEqual(1234);
-    expect(dbUser.email).toEqual('george@paris.com');
     expect(dbUser.revenu_fiscal).toEqual(12345);
     expect(dbUser.parts.toNumber()).toEqual(3);
     expect(dbUser.abonnement_ter_loire).toEqual(true);

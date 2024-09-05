@@ -263,6 +263,9 @@ export class UserTagEvaluator {
       case KYCID.KYC001:
         UserTagEvaluator.kyc_001(user, kyc);
         break;
+      case KYCID.KYC_preference:
+        UserTagEvaluator.kyc_001(user, kyc);
+        break;
       case KYCID.KYC002:
         UserTagEvaluator.kyc_002(user, kyc);
         break;

@@ -81,6 +81,23 @@ export class TransportAPI {
   }
 }
 
+export class UtilisateurUpdateProfileAPI {
+  @ApiProperty({ required: true })
+  nom: string;
+  @ApiProperty({ required: true })
+  prenom: string;
+  @ApiProperty({ required: false })
+  annee_naissance: number;
+  @ApiProperty({ required: false })
+  revenu_fiscal?: number;
+  @ApiProperty({ required: true })
+  mot_de_passe?: string;
+  @ApiProperty({ required: false })
+  nombre_de_parts_fiscales: number;
+  @ApiProperty({ required: false })
+  abonnement_ter_loire: boolean;
+}
+
 export class UtilisateurProfileAPI {
   @ApiProperty({ required: true })
   nom: string;

@@ -12,37 +12,51 @@ export class MailerUsecase {
     private emailSender: EmailSender,
   ) {}
 
-  async envoyerMaisAutomatiques(): Promise<string[]> {
+  async envoyerEmailsAutomatiques(): Promise<string[]> {
+    const result: string[] = [];
     const listeUtilisateursIds =
       await this.utilisateurRepository.listUtilisateurIds();
-
-    let result: string[] = [];
 
     for (const utilisateurId of listeUtilisateursIds) {
       const utilisateur = await this.utilisateurRepository.getById(
         utilisateurId,
       );
 
-      const notifs = utilisateur.notification_history.getNouvellesNotifications(
-        CanalNotification.email,
-        utilisateur,
-      );
+      const notifs =
+        utilisateur.notification_history.getNouvellesNotificationsAPousser(
+          CanalNotification.email,
+          utilisateur,
+        );
 
+      const liste_sent_notifs: string[] = [];
       for (const notif of notifs) {
         const email = this.emailTemplateRepository.generateEmailByType(
           notif,
           utilisateur,
         );
         if (email) {
-          this.emailSender.sendEmail(
+          liste_sent_notifs.push(notif);
+          await this.emailSender.sendEmail(
             utilisateur.email,
             utilisateur.prenom,
             email.body,
             email.subject,
           );
+
+          utilisateur.notification_history.declareSentNotification(
+            notif,
+            CanalNotification.email,
+          );
         }
       }
-      result = result.concat(notifs);
+
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
+      if (liste_sent_notifs.length > 0) {
+        result.push(
+          `Sent for [${utilisateur.id}] : [${liste_sent_notifs.toString()}]`,
+        );
+      }
     }
 
     return result;

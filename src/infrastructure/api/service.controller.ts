@@ -83,7 +83,7 @@ export class ServiceController extends GenericControler {
     );
 
     if (result === null) {
-      ApplicationError.throwServiceNotFound(serviceDefinitionId, utilisateurId);
+      ApplicationError.throwServiceNotFound(serviceDefinitionId);
     }
 
     const mappedResult = ServiceAPI.mapServicesToServicesAPI(

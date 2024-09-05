@@ -453,9 +453,24 @@ describe('Service (API test)', () => {
 
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.serviceDefinition);
-    await TestUtil.create(DB.service, {
-      configuration: { toto: '123', error_code: '456' },
-    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/services/dummy',
+    );
+
+    // THEN
+    expect(response.status).toBe(404);
+    expect(response.body.code).toEqual('038');
+    expect(response.body.message).toEqual(
+      `le service [dummy] n'est pas installé pour l'utilisateur`,
+    );
+  });
+  it('GET /utilisateurs/id/services/bad-id renvoie 200 si service Linky pas install pour utilsateur (auto install)', async () => {
+    // GIVEN
+
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -463,11 +478,8 @@ describe('Service (API test)', () => {
     );
 
     // THEN
-    expect(response.status).toBe(404);
-    expect(response.body.code).toEqual('038');
-    expect(response.body.message).toEqual(
-      `le service [linky] n'est pas installé pour l'utilisateur`,
-    );
+    expect(response.status).toBe(200);
+    expect(response.body.id).toEqual('linky');
   });
   it('GET /utilisateurs/id/services/serviceID lit 1 unique services flag de conf OK', async () => {
     // GIVEN

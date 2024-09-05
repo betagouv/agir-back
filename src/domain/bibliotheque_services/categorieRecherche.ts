@@ -48,7 +48,7 @@ export class CategorieRechercheManager {
     marche_local: 'Les marchés locaux',
     circuit_court: 'Les producteurs locaux',
     epicerie_superette: 'Les épiceries et supérettes',
-    zero_dechet: 'Zéro déchet',
+    zero_dechet: 'Les boutiques zéro déchet',
     janvier: 'janvier',
     fevrier: 'février',
     mars: 'mars',
@@ -63,7 +63,7 @@ export class CategorieRechercheManager {
     decembre: 'décembre',
     dinde_volaille: 'avec volaille',
     saison: 'de saison',
-    vegan: 'vegans',
+    vegan: '100% végétales',
     vege: 'végétariennes',
     any_transport: 'Tout mode de déplacement',
   };

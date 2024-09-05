@@ -10,7 +10,7 @@ import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
 const service_catalogue = require('../../../src/usecase/referentiel/service_catalogue');
-const _linky_data = require('../../../test_data/PRM_thermo_sensible');
+const _linky_data = require('../../../test_data/PRM_thermo_pas_sensible');
 const suivis_alimentation = require('../../../test_data/evenements/suivis_alimentation');
 const suivis_transport = require('../../../test_data/evenements/suivis_transport');
 const empreintes_utilisateur = require('../../../test_data/evenements/bilans');
@@ -188,7 +188,7 @@ export class TestDataController extends GenericControler {
     if (!linky) return;
     await this.linkyRepository.upsertLinkyEntry(
       linky.prm,
-      '12345',
+      linky.winterpk,
       utilisateurId,
     );
     await this.linkyRepository.upsertDataForPRM(linky.prm, _linky_data);
