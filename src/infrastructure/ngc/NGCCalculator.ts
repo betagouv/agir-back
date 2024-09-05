@@ -472,7 +472,9 @@ export class NGCCalculator {
       ],
     });
 
-    const services_societaux_impact = {
+    const top_3 = this.computeTop3Details(impacts);
+
+    impacts.push({
       pourcentage: Math.round((services_societaux / total) * 100),
       univers: Univers.services_societaux,
       impact_kg_annee: services_societaux,
@@ -497,9 +499,7 @@ export class NGCCalculator {
           emoji: '✉️',
         },
       ],
-    };
-
-    const top_3 = this.computeTop3Details(impacts);
+    });
 
     this.sortResult(impacts);
 
@@ -507,7 +507,6 @@ export class NGCCalculator {
       impact_kg_annee: total,
       impact_univers: impacts,
       top_3: top_3,
-      services_societaux: services_societaux_impact,
     });
   }
 

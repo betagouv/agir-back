@@ -65,13 +65,6 @@ describe('/bilan (API test)', () => {
       image_url: 'bbbb',
       is_locked: false,
     });
-    await TestUtil.create(DB.univers, {
-      id_cms: 5,
-      code: Univers.services_societaux,
-      label: 'Services sociétaux',
-      image_url: 'bbbb',
-      is_locked: false,
-    });
     await thematiqueRepository.loadUnivers();
 
     // WHEN
@@ -107,29 +100,6 @@ describe('/bilan (API test)', () => {
           emoji: '🔥',
         },
       ],
-      services_societaux: {
-        pourcentage: 16,
-        univers: 'services_societaux',
-        univers_label: 'Services sociétaux',
-        impact_kg_annee: 1450.9052263863641,
-        details: [
-          {
-            label: 'Service publics',
-            pourcentage: 14,
-            pourcentage_categorie: 87,
-            impact_kg_annee: 1259.4428717769142,
-            emoji: '🏛',
-          },
-          {
-            label: 'Service marchands',
-            pourcentage: 2,
-            pourcentage_categorie: 13,
-            impact_kg_annee: 191.4623546094499,
-            emoji: '✉️',
-          },
-        ],
-        emoji: '🏛️',
-      },
       impact_univers: [
         {
           pourcentage: 31,
@@ -297,6 +267,29 @@ describe('/bilan (API test)', () => {
               emoji: '🏊',
             },
           ],
+        },
+        {
+          pourcentage: 16,
+          univers: 'services_societaux',
+          univers_label: 'Services sociétaux',
+          impact_kg_annee: 1450.9052263863641,
+          details: [
+            {
+              label: 'Service publics',
+              pourcentage: 14,
+              pourcentage_categorie: 87,
+              impact_kg_annee: 1259.4428717769142,
+              emoji: '🏛',
+            },
+            {
+              label: 'Service marchands',
+              pourcentage: 2,
+              pourcentage_categorie: 13,
+              impact_kg_annee: 191.4623546094499,
+              emoji: '✉️',
+            },
+          ],
+          emoji: '🏛️',
         },
         {
           pourcentage: 12,

@@ -47,8 +47,6 @@ export class ImpactUniversAPI {
 export class BilanCarboneAPI {
   @ApiProperty({ type: [ImpactUniversAPI] })
   impact_univers: ImpactUniversAPI[];
-  @ApiProperty({ type: ImpactUniversAPI })
-  services_societaux: ImpactUniversAPI;
   detail: ImpactUniversAPI[];
   @ApiProperty() impact_kg_annee: number;
   @ApiProperty({ type: [DetailImpactAPI] }) top_3: DetailImpactAPI[];
@@ -57,7 +55,6 @@ export class BilanCarboneAPI {
     const result: BilanCarboneAPI = {
       impact_kg_annee: bilan.impact_kg_annee,
       top_3: bilan.top_3,
-      services_societaux: ImpactUniversAPI.mapToAPI(bilan.services_societaux),
       impact_univers: bilan.impact_univers.map((e) =>
         ImpactUniversAPI.mapToAPI(e),
       ),

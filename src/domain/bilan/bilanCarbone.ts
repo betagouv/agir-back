@@ -22,7 +22,6 @@ export class BilanCarbone {
   impact_kg_annee: number;
   top_3: DetailImpact[];
   impact_univers: ImpactUnivers[];
-  services_societaux: ImpactUnivers;
 
   getImpactParUnivers?(univers: Univers): ImpactUnivers {
     return this.impact_univers.find((a) => a.univers === univers);
