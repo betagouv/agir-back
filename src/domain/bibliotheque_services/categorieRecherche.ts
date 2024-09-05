@@ -63,7 +63,7 @@ export class CategorieRechercheManager {
     decembre: 'décembre',
     dinde_volaille: 'avec volaille',
     saison: 'de saison',
-    vegan: 'vegans',
+    vegan: '100% végétales',
     vege: 'végétariennes',
     any_transport: 'Tout mode de déplacement',
   };
