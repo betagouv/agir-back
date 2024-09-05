@@ -4,6 +4,7 @@ import {
   LogementAPI,
   TransportAPI,
   UtilisateurProfileAPI,
+  UtilisateurUpdateProfileAPI,
 } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
 import { SuiviRepository } from '../infrastructure/repository/suivi.repository';
 import { BilanRepository } from '../infrastructure/repository/bilan.repository';
@@ -20,6 +21,7 @@ import { Retryable } from 'typescript-retry-decorator';
 import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
+import validator from 'validator';
 
 export type Phrase = {
   phrase: string;
@@ -49,7 +51,7 @@ export class ProfileUsecase {
   })
   async updateUtilisateurProfile(
     utilisateurId: string,
-    profile: UtilisateurProfileAPI,
+    profile: UtilisateurUpdateProfileAPI,
   ) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
@@ -59,10 +61,21 @@ export class ProfileUsecase {
       PasswordManager.setUserPassword(utilisateur, profile.mot_de_passe);
     }
 
+    const char_regexp = new RegExp('^[a-zA-Z ]*$');
+    if (profile.nom) {
+      if (!char_regexp.test(profile.nom)) {
+        ApplicationError.throwNotAlhpaNom();
+      }
+    }
+    if (profile.prenom) {
+      if (!char_regexp.test(profile.prenom)) {
+        ApplicationError.throwNotAlhpaPrenom();
+      }
+    }
+
     utilisateur.revenu_fiscal = profile.revenu_fiscal;
     utilisateur.parts = profile.nombre_de_parts_fiscales;
     utilisateur.abonnement_ter_loire = profile.abonnement_ter_loire;
-    utilisateur.email = profile.email;
     utilisateur.nom = profile.nom;
     utilisateur.prenom = profile.prenom;
     utilisateur.annee_naissance = profile.annee_naissance;

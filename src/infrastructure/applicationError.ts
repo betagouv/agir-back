@@ -347,6 +347,13 @@ export class ApplicationError {
     );
   }
 
+  static throwNotAlhpaNom() {
+    this.throwAppError('067', `Le nom ne doit contenir que des lettres`);
+  }
+  static throwNotAlhpaPrenom() {
+    this.throwAppError('068', `Le prénom ne doit contenir que des lettres`);
+  }
+
   private static throwAppError(
     code: string,
     message: string,
