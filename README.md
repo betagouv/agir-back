@@ -1,6 +1,12 @@
 ## Description
 
-Backend de l'application XXX
+Backend de l'application Agir
+
+Ce composant porte
+
+- la persistance des données utilisateur via la BDD postgresql
+- la majeur partie de la logique métier et data du service exposée via des APIs aux clients web et mobile (les mêmes APIs)
+- l'interfaçage avec les services externes (Nos gestes climat, impactCO2, pres de chez nous, linky, etc)
 
 ## Installation
 
