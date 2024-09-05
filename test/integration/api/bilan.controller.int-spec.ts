@@ -275,14 +275,14 @@ describe('/bilan (API test)', () => {
           impact_kg_annee: 1450.9052263863641,
           details: [
             {
-              label: 'Service publics',
+              label: 'Services publics',
               pourcentage: 14,
               pourcentage_categorie: 87,
               impact_kg_annee: 1259.4428717769142,
               emoji: '🏛',
             },
             {
-              label: 'Service marchands',
+              label: 'Services marchands',
               pourcentage: 2,
               pourcentage_categorie: 13,
               impact_kg_annee: 191.4623546094499,

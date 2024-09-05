@@ -481,7 +481,7 @@ export class NGCCalculator {
       emoji: '🏛️',
       details: [
         {
-          label: 'Service publics',
+          label: 'Services publics',
           pourcentage: Math.round((services_societaux_pub / total) * 100),
           pourcentage_categorie: Math.round(
             (services_societaux_pub / services_societaux) * 100,
@@ -490,7 +490,7 @@ export class NGCCalculator {
           emoji: '🏛',
         },
         {
-          label: 'Service marchands',
+          label: 'Services marchands',
           pourcentage: Math.round((services_societaux_march / total) * 100),
           pourcentage_categorie: Math.round(
             (services_societaux_march / services_societaux) * 100,
