@@ -433,7 +433,7 @@ describe('RechercheServices (API test)', () => {
         is_default: false,
       },
       { code: 'marche_local', label: 'Les marchés locaux', is_default: false },
-      { code: 'zero_dechet', label: 'Zéro déchet', is_default: false },
+      { code: 'zero_dechet', label: 'Les boutiques zéro déchet', is_default: false },
     ]);
   });
 

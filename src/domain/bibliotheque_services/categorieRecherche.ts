@@ -48,7 +48,7 @@ export class CategorieRechercheManager {
     marche_local: 'Les marchés locaux',
     circuit_court: 'Les producteurs locaux',
     epicerie_superette: 'Les épiceries et supérettes',
-    zero_dechet: 'Zéro déchet',
+    zero_dechet: 'Les boutiques zéro déchet',
     janvier: 'janvier',
     fevrier: 'février',
     mars: 'mars',
