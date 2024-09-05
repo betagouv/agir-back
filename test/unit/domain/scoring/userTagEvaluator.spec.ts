@@ -290,4 +290,54 @@ describe('UseragEvaluator', () => {
     user.tag_ponderation_set[Tag.consommation] = 50;
     user.tag_ponderation_set[Tag.logement] = 50;
   });
+
+  it('recomputeRecoTags : KYC_preference : tout à 50', () => {
+    // GIVEN
+    const user = initNewUser(new Onboarding({ ...ONBOARDING_DATA }));
+    user.kyc_history.setCatalogue([
+      new KycDefinition({
+        id_cms: 1,
+        categorie: Categorie.recommandation,
+        code: KYCID.KYC_preference,
+        is_ngc: false,
+        points: 10,
+        question: 'The question !',
+        tags: [Tag.possede_voiture],
+        universes: [Univers.alimentation],
+        thematique: Thematique.climat,
+        ngc_key: 'a . b . c',
+        type: TypeReponseQuestionKYC.choix_multiple,
+        reponses: [
+          {
+            code: 'alimentation',
+            label: 'La cuisine et l’alimentation',
+            ngc_code: null,
+          },
+          { code: 'transport', label: 'Mes déplacements', ngc_code: null },
+          { code: 'logement', label: 'Mon logement', ngc_code: null },
+          { code: 'consommation', label: 'Ma consommation', ngc_code: null },
+          {
+            code: 'ne_sais_pas',
+            label: 'Je ne sais pas encore',
+            ngc_code: null,
+          },
+        ],
+      }),
+    ]);
+    user.kyc_history.updateQuestionByCodeWithLabel(KYCID.KYC_preference, [
+      'La cuisine et l’alimentation',
+      'Mes déplacements',
+      'Ma consommation',
+      'Mon logement',
+    ]);
+
+    // WHEN
+    UserTagEvaluator.recomputeRecoTags(user);
+
+    // THEN
+    user.tag_ponderation_set[Tag.alimentation] = 50;
+    user.tag_ponderation_set[Tag.transport] = 50;
+    user.tag_ponderation_set[Tag.consommation] = 50;
+    user.tag_ponderation_set[Tag.logement] = 50;
+  });
 });
