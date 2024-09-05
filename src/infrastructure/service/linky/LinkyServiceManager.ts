@@ -84,6 +84,16 @@ export class LinkyServiceManager
     };
   }
 
+  async emptyConfiguration(service: Service) {
+    delete service.configuration[LINKY_CONF_KEY.live_prm];
+    delete service.configuration[LINKY_CONF_KEY.prm];
+    delete service.configuration[LINKY_CONF_KEY.date_consent];
+    delete service.configuration[LINKY_CONF_KEY.date_fin_consent];
+    delete service.configuration[LINKY_CONF_KEY.departement];
+    delete service.configuration[LINKY_CONF_KEY.sent_data_email];
+    delete service.configuration[LINKY_CONF_KEY.winter_pk];
+  }
+
   private isBadPRM(service: Service) {
     return (
       service.configuration[ServiceErrorKey.error_code] === '032' ||

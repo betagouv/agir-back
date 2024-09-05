@@ -39,6 +39,7 @@ const dummy_async_manager = {
     return true;
   },
   async processAndUpdateConfiguration(service: Service) {},
+  async emptyConfiguration(service: Service) {},
 };
 const dummy_scheduled_manager = {
   computeScheduledDynamicData: async (serviceDefinition: ServiceDefinition) => {
@@ -268,6 +269,11 @@ export class ServiceUsecase {
       await this.refreshLiveService(service);
     }
     await this.setAsyncServiceStateIfNeeded(service);
+
+    if (service.status === ServiceStatus.TO_DELETE) {
+      const manager = this.getAsyncServiceManager(serviceDefinitionId);
+      manager.emptyConfiguration(service);
+    }
 
     return service;
   }
