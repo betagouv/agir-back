@@ -2,6 +2,7 @@ import { Categorie } from '../../../src/domain/contenu/categorie';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { Superficie } from '../../../src/domain/logement/logement';
+import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { Univers } from '../../../src/domain/univers/univers';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { DB, TestUtil } from '../../TestUtil';
@@ -390,6 +391,39 @@ describe('/bilan (API test)', () => {
     //THEN
     expect(response.status).toBe(200);
     expect(response.body.impact_kg_annee).toEqual(10470.652034983415);
+  });
+
+  it('GET /utilisateur/id/bilans/last - une réponse vide ne fait pas crasher le bilan carbone', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_questions: [
+        {
+          id: KYCID.KYC006,
+          id_cms: 3,
+          question: `Quel est votre sujet principal d'intéret ?`,
+          type: TypeReponseQuestionKYC.choix_unique,
+          is_NGC: true,
+          categorie: Categorie.test,
+          points: 10,
+          reponses: [],
+          reponses_possibles: [],
+          tags: [],
+          universes: [Univers.climat],
+          ngc_key: 'logement . âge',
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateur/utilisateur-id/bilans/last',
+    );
+
+    //THEN
+    expect(response.status).toBe(200);
+    expect(response.body.impact_kg_annee).toEqual(8898.031054479543);
   });
 
   it('POST /utilisateur/id/bilans - compute and create new Bilan', async () => {
