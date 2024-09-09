@@ -17,6 +17,17 @@ import {
 } from '../../../../src/domain/utilisateur/utilisateur';
 
 describe('NotificationHistory', () => {
+  const OLD_ENV = process.env;
+
+  beforeEach(async () => {
+    jest.resetModules();
+    process.env = { ...OLD_ENV }; // Make a copy
+  });
+
+  afterAll(async () => {
+    process.env = OLD_ENV;
+  });
+
   it(`declareSentNotification : ajoute un notif dans l'historique avec la date`, () => {
     // GIVEN
     const notifications = new NotificationHistory({
@@ -44,10 +55,8 @@ describe('NotificationHistory', () => {
   });
   it(`getNouvellesNotifications : mail de welcome si rien`, () => {
     // GIVEN
-    NotificationHistory.active_notification_types = [
-      TypeNotification.welcome,
-      TypeNotification.late_onboarding,
-    ];
+    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
+
     const utilisateur = Utilisateur.createNewUtilisateur(
       'yo',
       'prenom',
@@ -76,7 +85,7 @@ describe('NotificationHistory', () => {
   });
   it(`getNouvellesNotifications : pas de mail de welcome si type pas actif`, () => {
     // GIVEN
-    NotificationHistory.active_notification_types = [];
+    process.env.NOTIFICATIONS_MAIL_ACTIVES = '';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'yo',
       'prenom',
@@ -104,10 +113,7 @@ describe('NotificationHistory', () => {
   });
   it(`getNouvellesNotifications : pas de mail de welcome si rien mais que utilisateur trop vieux (plus de 2j)`, () => {
     // GIVEN
-    NotificationHistory.active_notification_types = [
-      TypeNotification.welcome,
-      TypeNotification.late_onboarding,
-    ];
+    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'yo',
       'prenom',
@@ -137,10 +143,7 @@ describe('NotificationHistory', () => {
   });
   it(`getNouvellesNotifications : rien si notif ddeja envoyée`, () => {
     // GIVEN
-    NotificationHistory.active_notification_types = [
-      TypeNotification.welcome,
-      TypeNotification.late_onboarding,
-    ];
+    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'yo',
       'prenom',
@@ -172,14 +175,11 @@ describe('NotificationHistory', () => {
     // THEN
     expect(result).toHaveLength(0);
   });
-  NotificationHistory.active_notification_types = [TypeNotification.welcome];
+  process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome';
 
   it(`getNouvellesNotifications : pas de welcome si pas encore 10 min`, () => {
     // GIVEN
-    NotificationHistory.active_notification_types = [
-      TypeNotification.welcome,
-      TypeNotification.late_onboarding,
-    ];
+    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'yo',
       'prenom',
@@ -208,10 +208,7 @@ describe('NotificationHistory', () => {
 
   it(`getNouvellesNotifications : notif late_onboarding`, () => {
     // GIVEN
-    NotificationHistory.active_notification_types = [
-      TypeNotification.welcome,
-      TypeNotification.late_onboarding,
-    ];
+    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'yo',
       'prenom',
@@ -241,10 +238,7 @@ describe('NotificationHistory', () => {
 
   it(`getNouvellesNotifications : pas de notif late_onboarding si moins de 8 jours`, () => {
     // GIVEN
-    NotificationHistory.active_notification_types = [
-      TypeNotification.welcome,
-      TypeNotification.late_onboarding,
-    ];
+    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'yo',
       'prenom',
@@ -272,10 +266,7 @@ describe('NotificationHistory', () => {
   });
   it(`getNouvellesNotifications : pas de notif late_onboarding si dejà envoyé`, () => {
     // GIVEN
-    NotificationHistory.active_notification_types = [
-      TypeNotification.welcome,
-      TypeNotification.late_onboarding,
-    ];
+    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'yo',
       'prenom',
@@ -309,9 +300,8 @@ describe('NotificationHistory', () => {
   });
   it(`getNouvellesNotifications : vieuw defis`, () => {
     // GIVEN
-    NotificationHistory.active_notification_types = [
-      TypeNotification.waiting_action,
-    ];
+    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'waiting_action';
+
     const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
     const DEFI_1: Defi_v0 = {

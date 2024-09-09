@@ -130,6 +130,9 @@ export class App {
   public static getMaxFileAttenteJour(): number {
     return Number.parseInt(process.env.MAX_ATTENTE_JOUR) || 0;
   }
+  public static getActiveNotificationsListe(): string {
+    return process.env.NOTIFICATIONS_MAIL_ACTIVES || '';
+  }
   public static getAppVersion(): {
     major: number;
     minor: number;

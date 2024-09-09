@@ -1,3 +1,4 @@
+import { App } from '../app';
 import {
   NotificationHistory_v0,
   Notification_v0,
@@ -34,12 +35,6 @@ export class Notification {
 export class NotificationHistory {
   sent_notifications: Notification[];
 
-  static active_notification_types: TypeNotification[] = [
-    TypeNotification.welcome,
-    TypeNotification.late_onboarding,
-    TypeNotification.waiting_action,
-  ];
-
   constructor(m?: NotificationHistory_v0) {
     this.sent_notifications = [];
     if (m) {
@@ -49,6 +44,10 @@ export class NotificationHistory {
         );
       }
     }
+  }
+
+  public isNotificationActive(notif: TypeNotification) {
+    return App.getActiveNotificationsListe().includes(notif);
   }
 
   public declareSentNotification(
@@ -80,9 +79,7 @@ export class NotificationHistory {
 
     this.addWaitingActionIfEligible(result, utilisateur);
 
-    return result.filter((n) =>
-      NotificationHistory.active_notification_types.includes(n),
-    );
+    return result.filter((n) => this.isNotificationActive(n));
   }
 
   private addWelcomeIfEligible(
