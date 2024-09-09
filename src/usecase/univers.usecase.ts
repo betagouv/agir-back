@@ -24,7 +24,7 @@ export class UniversUsecase {
     let tuiles = ThematiqueRepository.getAllTuileUnivers();
     tuiles = tuiles.map((t) => new TuileUnivers(t));
 
-    if (!utilisateur.parcours_todo.isLastTodo()) {
+    if (!utilisateur.parcours_todo.isEndedTodo()) {
       for (const t of tuiles) {
         t.is_locked = true;
       }

@@ -4,12 +4,18 @@ import {
 } from '../object_store/notification/NotificationHistory_v0';
 import { Utilisateur } from '../utilisateur/utilisateur';
 
-const min_10 = 10 * 60 * 1000;
-const jour_2 = 24 * 60 * 60 * 1000;
+const minute_10 = 10 * 60 * 1000;
+const jour_1 = 24 * 60 * 60 * 1000;
+const jour_2 = jour_1 * 2;
+const jour_8 = jour_1 * 8;
+const jour_10 = jour_1 * 10;
+const jour_30 = jour_1 * 30;
 
 export enum TypeNotification {
   inscription_code = 'inscription_code',
   welcome = 'welcome',
+  late_onboarding = 'late_onboarding',
+  waiting_action = 'waiting_action',
 }
 export enum CanalNotification {
   email = 'email',
@@ -28,7 +34,11 @@ export class Notification {
 export class NotificationHistory {
   sent_notifications: Notification[];
 
-  static active_notification_types: TypeNotification[] = [];
+  static active_notification_types: TypeNotification[] = [
+    TypeNotification.welcome,
+    TypeNotification.late_onboarding,
+    TypeNotification.waiting_action,
+  ];
 
   constructor(m?: NotificationHistory_v0) {
     this.sent_notifications = [];
@@ -64,19 +74,64 @@ export class NotificationHistory {
 
     const result = [];
 
-    if (!this.was_sent(TypeNotification.welcome)) {
-      const age_creation_utilisateur =
-        Date.now() - utilisateur.created_at.getTime();
-      if (
-        age_creation_utilisateur > min_10 &&
-        age_creation_utilisateur < jour_2
-      )
-        result.push(TypeNotification.welcome);
-    }
+    this.addWelcomeIfEligible(result, utilisateur);
+
+    this.addOnboardingIfEligible(result, utilisateur);
+
+    this.addWaitingActionIfEligible(result, utilisateur);
 
     return result.filter((n) =>
       NotificationHistory.active_notification_types.includes(n),
     );
+  }
+
+  private addWelcomeIfEligible(
+    encours: TypeNotification[],
+    utilisateur: Utilisateur,
+  ) {
+    if (!this.was_sent(TypeNotification.welcome)) {
+      const age = this.getAgeCreationUtilisateur(utilisateur);
+      if (age > minute_10 && age < jour_2) {
+        encours.push(TypeNotification.welcome);
+      }
+    }
+  }
+
+  private addOnboardingIfEligible(
+    encours: TypeNotification[],
+    utilisateur: Utilisateur,
+  ) {
+    if (!this.was_sent(TypeNotification.late_onboarding)) {
+      const age = this.getAgeCreationUtilisateur(utilisateur);
+      if (
+        age < jour_30 &&
+        age > jour_8 &&
+        !utilisateur.parcours_todo.isEndedTodo()
+      )
+        encours.push(TypeNotification.late_onboarding);
+    }
+  }
+
+  private addWaitingActionIfEligible(
+    encours: TypeNotification[],
+    utilisateur: Utilisateur,
+  ) {
+    if (!this.was_sent(TypeNotification.waiting_action)) {
+      const plus_vieux_defi_encours =
+        utilisateur.defi_history.getPlusVieuxDefiEnCours();
+
+      if (
+        plus_vieux_defi_encours &&
+        Date.now() - plus_vieux_defi_encours.date_acceptation.getTime() >
+          jour_10
+      ) {
+        encours.push(TypeNotification.waiting_action);
+      }
+    }
+  }
+
+  private getAgeCreationUtilisateur(utilisateur: Utilisateur): number {
+    return Date.now() - utilisateur.created_at.getTime();
   }
 
   private was_sent(type: TypeNotification): boolean {

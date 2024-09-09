@@ -173,7 +173,7 @@ describe('ParcoursTodo', () => {
     parcours.appendNewFromCatalogue();
     // THEN
     expect(parcours.liste_todo).toHaveLength(TodoCatalogue.getNombreTodo());
-    expect(parcours.isLastTodo()).toEqual(false);
+    expect(parcours.isEndedTodo()).toEqual(false);
   });
   it('isLast : quand position un cran au dela', () => {
     // GIVEN
@@ -205,11 +205,11 @@ describe('ParcoursTodo', () => {
     });
     // WHEN
     // THEN
-    expect(parcours.isLastTodo()).toEqual(false);
+    expect(parcours.isEndedTodo()).toEqual(false);
     parcours.avanceDansParcours();
-    expect(parcours.isLastTodo()).toEqual(true);
+    expect(parcours.isEndedTodo()).toEqual(true);
     parcours.avanceDansParcours();
-    expect(parcours.isLastTodo()).toEqual(true);
+    expect(parcours.isEndedTodo()).toEqual(true);
     expect(parcours.getCurrentTodoNumero()).toEqual(2);
   });
 });

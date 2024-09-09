@@ -126,6 +126,21 @@ export class DefiHistory {
     return this.defis.find((element) => element.id === id);
   }
 
+  public getPlusVieuxDefiEnCours(): Defi {
+    const defis_encours_avec_date = this.defis.filter(
+      (d) => d.getStatus() === DefiStatus.en_cours && d.date_acceptation,
+    );
+
+    defis_encours_avec_date.sort(
+      (a, b) => a.date_acceptation.getTime() - b.date_acceptation.getTime(),
+    );
+
+    if (defis_encours_avec_date.length > 0) {
+      return defis_encours_avec_date[0];
+    }
+    return null;
+  }
+
   private getFromCatalogueOrException(id: string): Defi {
     const definition = this.catalogue.find(
       (element) => element.content_id === id,

@@ -192,7 +192,7 @@ export class MigrationUsecase {
   private async migrate_11(
     utilisateur: Utilisateur,
   ): Promise<{ ok: boolean; info: string }> {
-    if (utilisateur.parcours_todo.isLastTodo()) {
+    if (utilisateur.parcours_todo.isEndedTodo()) {
       return { ok: true, info: 'no reset, todo terminée' };
     }
     utilisateur.resetAllHistory();
