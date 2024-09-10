@@ -45,6 +45,28 @@ const utilisateurs = {
     suivis: [],
     services: [],
   },
+  abdellah: {
+    nom: 'RECETTEUR',
+    prenom: 'Abdellah',
+    email: 'abdellah@agir.dev',
+    mot_de_passe: 'haha',
+    revenu_fiscal: null,
+    parts: null,
+    version: 11,
+    gamification: {
+      points: 0,
+    },
+    unlocked_features: {
+      version: 1,
+      unlocked_features: [
+        Feature.univers,
+        Feature.bibliotheque,
+        Feature.services,
+      ],
+    },
+    suivis: [],
+    services: [],
+  },
   wojtek: {
     nom: 'RECETTEUR',
     prenom: 'Wojtek',

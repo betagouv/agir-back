@@ -15,7 +15,7 @@ describe('ParcoursTodo vN ', () => {
     const domain = new ParcoursTodo(raw);
     // THEN
 
-    expect(domain.isLastTodo()).toEqual(true);
+    expect(domain.isEndedTodo()).toEqual(true);
     expect(domain.todo_active).toEqual(0);
     expect(domain.liste_todo).toEqual([]);
     expect(domain.getActiveTodo().titre).toEqual(

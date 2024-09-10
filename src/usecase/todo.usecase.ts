@@ -57,7 +57,7 @@ export class TodoUsecase {
       todo_active.done_at = new Date();
       utilisateur.parcours_todo.avanceDansParcours();
 
-      if (utilisateur.parcours_todo.isLastTodo()) {
+      if (utilisateur.parcours_todo.isEndedTodo()) {
         utilisateur.gamification.celebrations.push(
           new Celebration({
             id: undefined,

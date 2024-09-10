@@ -140,10 +140,10 @@ export class ApplicationError {
       `Model de contenu CMS [${model}] manquant ou inconnu`,
     );
   }
-  static throwAlreadySubscribedError() {
+  static throwAlreadySubscribedError(prm: string) {
     this.throwAppError(
       '027',
-      `Il y a déjà une souscription linky pour cet utilisateur`,
+      `Il y a déjà une souscription linky pour le PRM ${prm}`,
     );
   }
   static throwMissingPRM() {

@@ -38,7 +38,7 @@ export class ParcoursTodo {
     return result;
   }
 
-  public isLastTodo?(): boolean {
+  public isEndedTodo?(): boolean {
     return this.todo_active === this.liste_todo.length;
   }
 

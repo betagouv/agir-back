@@ -528,7 +528,7 @@
                                                                                         <div>
                                                                                             <p
                                                                                                 style="margin: 0; font-size: 14px;">
-                                                                                                <a href="{{ mirror }}"
+                                                                                                <a href="{{EMAIL_URL}}"
                                                                                                     title="Afficher dans le navigateur"
                                                                                                     target="_blank"
                                                                                                     style="color: #000091; text-decoration: underline;"><span
@@ -734,8 +734,8 @@
                                                                             style="color: #474747; font-family: Inter,Arial; font-size: 14px; line-height: 1.5; word-break: break-word; padding-top: 5px; text-align: left; valign: top;">
                                                                             <div>
                                                                                 <p style="margin: 0;"><span
-                                                                                        style="color: #000000; font-family: Arial, helvetica, sans-serif;">Bonjour {{
-                                                                                        contact.FIRSTNAME }},</span></p>
+                                                                                        style="color: #000000; font-family: Arial, helvetica, sans-serif;">Bonjour {{PRENOM}},</span>
+                                                                                </p>
                                                                                 <p style="margin: 0;"> </p>
                                                                                 <p style="margin: 0;"><span
                                                                                         style="color: #000000; font-family: Arial, helvetica, sans-serif;">Nous
@@ -955,7 +955,7 @@
                                                                                                 <span
                                                                                                     style="font-family: Arial, helvetica, sans-serif;">Cet
                                                                                                     email a été envoyé
-                                                                                                    à {{contact.EMAIL}}</span>
+                                                                                                    à {{CONTACT_EMAIL}}</span>
                                                                                             </p>
                                                                                         </div>
                                                                                     </td>
@@ -1007,7 +1007,7 @@
                                                                                         <div>
                                                                                             <p
                                                                                                 style="margin: 0; font-size: 14px;">
-                                                                                                <a href="{{ unsubscribe }}"
+                                                                                                <a href="{{UNSUBSCRIBE_URL}}"
                                                                                                     title="Se désinscrire"
                                                                                                     target="_blank"
                                                                                                     style="color: #000091; text-decoration: underline;"><span

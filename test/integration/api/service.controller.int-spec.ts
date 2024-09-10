@@ -274,6 +274,33 @@ describe('Service (API test)', () => {
     });
     expect(serviceDB.status).toEqual(ServiceStatus.TO_DELETE);
   });
+  it('DELETE /utilisateurs/id/services/id renvoie une conf vide apres suppression logique de un service LIVE async ', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
+      serviceDefinitionId: 'linky',
+      status: ServiceStatus.LIVE,
+      configuration: { prm: '123', winter_pk: 'abc' },
+    });
+
+    // WHEN
+    const response = await TestUtil.DELETE(
+      '/utilisateurs/utilisateur-id/services/linky',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    // WHEN
+    const response2 = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/services/linky',
+    );
+
+    // THEN
+    expect(response2.status).toBe(200);
+    expect(response2.body.configuration).toEqual({});
+  });
   it('DELETE /utilisateurs/id/services/id supprime réellement un service CREATED async ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);

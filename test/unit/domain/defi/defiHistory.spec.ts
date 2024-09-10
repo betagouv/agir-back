@@ -422,4 +422,60 @@ describe('DefiHistory', () => {
     // THEN
     expect(nombreDefisPasEnvie).toStrictEqual(1);
   });
+
+  it('getPlusVieuxDefiEnCours : null si liste vide', () => {
+    // GIVEN
+    const defiHistory = new DefiHistory({
+      version: 0,
+      defis: [],
+    });
+
+    // WHEN
+    const defi = defiHistory.getPlusVieuxDefiEnCours();
+    // THEN
+    expect(defi).toBeNull();
+  });
+  it('getPlusVieuxDefiEnCours : null si pas de defi en cours', () => {
+    // GIVEN
+    const defiHistory = new DefiHistory({
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '1',
+          status: DefiStatus.todo,
+        },
+      ],
+    });
+
+    // WHEN
+    const defi = defiHistory.getPlusVieuxDefiEnCours();
+    // THEN
+    expect(defi).toBeNull();
+  });
+  it('getPlusVieuxDefiEnCours : plus vieux en cours ', () => {
+    // GIVEN
+    const defiHistory = new DefiHistory({
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '1',
+          status: DefiStatus.en_cours,
+          date_acceptation: new Date(100),
+        },
+        {
+          ...DEFI_1,
+          id: '2',
+          status: DefiStatus.en_cours,
+          date_acceptation: new Date(50),
+        },
+      ],
+    });
+
+    // WHEN
+    const defi = defiHistory.getPlusVieuxDefiEnCours();
+    // THEN
+    expect(defi.id).toEqual('2');
+  });
 });

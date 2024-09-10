@@ -34,11 +34,6 @@ import {
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { ParcoursTodo_v0 } from '../../../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
-import { App } from '../../../src/domain/app';
-import {
-  NotificationHistory,
-  TypeNotification,
-} from '../../../src/domain/notification/notificationHistory';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
@@ -2458,7 +2453,7 @@ describe('Admin (API test)', () => {
   it('POST /admin/send_email_notifications envoie les notifs mail nécessaires', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    NotificationHistory.active_notification_types = [TypeNotification.welcome];
+    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome';
     await TestUtil.create(DB.utilisateur);
 
     await TestUtil.prisma.utilisateur.update({
