@@ -78,6 +78,15 @@ export class LinkyAPIConnector {
             // PRM inconnu, saisie utilisateur sans doute avec une coquille
             ApplicationError.throwUnknownPRM_2(prm);
           }
+          /* Sous silence pour le moment, car des fois.... ça marche
+          if (
+            error.response.data.error &&
+            error.response.data.error.code === 'prm_already_subscribed'
+          ) {
+            // PRM déjà souscrit auprès de winter
+            ApplicationError.throwAlreadySubscribedError(prm);
+          }
+          */
           if (error.response.data.error) {
             // Erreur Enedis
             ApplicationError.throwUnknownEnedisError(
