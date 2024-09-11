@@ -450,3 +450,9 @@ view PrenomVue {
   id     String @id  @default(uuid())
   prenom String
 }
+
+view CartographieVue {
+  id                Int @id @default(autoincrement())
+  code_postal       String
+  couvert_par_aides Boolean
+}
