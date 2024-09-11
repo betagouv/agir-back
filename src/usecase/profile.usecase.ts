@@ -61,7 +61,9 @@ export class ProfileUsecase {
       PasswordManager.setUserPassword(utilisateur, profile.mot_de_passe);
     }
 
-    const char_regexp = new RegExp('^[a-zA-Z ]*$');
+    const char_regexp = new RegExp(
+      "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$",
+    );
     if (profile.nom) {
       if (!char_regexp.test(profile.nom)) {
         ApplicationError.throwNotAlhpaNom();
