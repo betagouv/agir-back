@@ -115,6 +115,20 @@ export class History {
     quizz.addAttempt(score, date);
   }
 
+  public estArticleLu(content_id: string): boolean {
+    let article = this.getArticleHistoryById(content_id);
+    if (article) {
+      return !!article.read_date;
+    }
+    return false;
+  }
+  public estQuizzReussi(content_id: string): boolean {
+    let quizz = this.getQuizzHistoryById(content_id);
+    if (quizz) {
+      return quizz.has100ScoreAmongAttempts();
+    }
+    return false;
+  }
   public sontPointsArticleEnPoche(content_id: string): boolean {
     let article = this.getArticleHistoryById(content_id);
     return article && article.points_en_poche;

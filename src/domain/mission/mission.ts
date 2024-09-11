@@ -38,6 +38,27 @@ export class Objectif {
   public isDone?() {
     return !!this.done_at;
   }
+
+  public isSubContentDone?(utilisateur: Utilisateur): boolean {
+    switch (this.type) {
+      case ContentType.kyc:
+        return utilisateur.kyc_history.isQuestionAnsweredByCode(
+          this.content_id,
+        );
+
+      case ContentType.article:
+        return utilisateur.history.estArticleLu(this.content_id);
+
+      case ContentType.quizz:
+        return utilisateur.history.estQuizzReussi(this.content_id);
+
+      case ContentType.defi:
+        return utilisateur.defi_history.estDefiEnCoursOuPlus(this.content_id);
+
+      default:
+        return false;
+    }
+  }
 }
 
 export class Mission {

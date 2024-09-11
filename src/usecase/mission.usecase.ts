@@ -129,6 +129,9 @@ export class MissionUsecase {
     let objectifs_target: Objectif[] = [];
 
     for (const mission of utilisateur.missions.missions) {
+      if (mission.isNew()) {
+        continue; // on zap, on peut pas gagner des pts sur quoi que ce soit d'une mission pas commencée
+      }
       const objectif_courant = mission.findObjectifByTechId(objectifId);
       if (objectif_courant && objectif_courant.type === ContentType.kyc) {
         objectifs_target = objectifs_target.concat(mission.getAllKYCs());
@@ -138,7 +141,11 @@ export class MissionUsecase {
     }
 
     for (const objectif of objectifs_target) {
-      if (objectif && !objectif.sont_points_en_poche) {
+      if (
+        objectif &&
+        !objectif.sont_points_en_poche &&
+        objectif.isSubContentDone(utilisateur)
+      ) {
         objectif.sont_points_en_poche = true;
         utilisateur.gamification.ajoutePoints(objectif.points, utilisateur);
       }

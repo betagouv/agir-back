@@ -126,6 +126,19 @@ export class DefiHistory {
     return this.defis.find((element) => element.id === id);
   }
 
+  public estDefiEnCoursOuPlus(id: string): boolean {
+    const defi = this.defis.find((element) => element.id === id);
+    if (defi) {
+      return [
+        DefiStatus.en_cours,
+        DefiStatus.fait,
+        DefiStatus.pas_envie,
+        DefiStatus.deja_fait,
+      ].includes(defi.getStatus());
+    }
+    return false;
+  }
+
   public getPlusVieuxDefiEnCours(): Defi {
     const defis_encours_avec_date = this.defis.filter(
       (d) => d.getStatus() === DefiStatus.en_cours && d.date_acceptation,
