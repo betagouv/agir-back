@@ -775,9 +775,180 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(404);
   });
-  it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour l'objecif donné`, async () => {
+  it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour l'objecif donné (article)`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: missions_article_seul });
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Mange de la graine',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      points: 0,
+    });
+
+    await TestUtil.POST('/utilisateurs/utilisateur-id/events').send({
+      type: EventType.article_lu,
+      content_id: '1',
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/objectifs/000/gagner_points',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(
+      userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
+    ).toEqual(true);
+    expect(userDB.gamification.points).toEqual(20);
+  });
+  it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour l'objecif donné (kyc)`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_kyc_plus_article,
+    });
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Mange de la graine',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._3,
+      type: TypeReponseQuestionKYC.libre,
+      categorie: Categorie.test,
+      points: 0,
+      question: `HAHA`,
+      reponses: [],
+    });
+
+    await TestUtil.PUT('/utilisateurs/utilisateur-id/questionsKYC/_3').send({
+      reponse: ['hoho'],
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/objectifs/0/gagner_points',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(
+      userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
+    ).toEqual(true);
+    expect(userDB.gamification.points).toEqual(20);
+  });
+  it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour l'objecif donné (quizz)`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions,
+    });
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Mange de la graine',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+    await TestUtil.create(DB.quizz, {
+      content_id: '14',
+      points: 0,
+    });
+
+    await TestUtil.POST('/utilisateurs/utilisateur-id/events').send({
+      type: 'quizz_score',
+      content_id: '14',
+      number_value: 100,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/objectifs/2/gagner_points',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+
+    expect(
+      userDB.missions.missions[0].objectifs[2].sont_points_en_poche,
+    ).toEqual(true);
+    expect(userDB.gamification.points).toEqual(20);
+  });
+
+  it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour l'objecif donné (defi)`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions,
+    });
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Mange de la graine',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+    await TestUtil.create(DB.defi, {
+      content_id: '2',
+      points: 0,
+    });
+
+    await TestUtil.PATCH('/utilisateurs/utilisateur-id/defis/2').send({
+      status: DefiStatus.fait,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/objectifs/3/gagner_points',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+
+    expect(
+      userDB.missions.missions[0].objectifs[3].sont_points_en_poche,
+    ).toEqual(true);
+    expect(userDB.gamification.points).toEqual(20);
+  });
+  it(`GET /utilisateurs/id/objectifs/id/gagner_points - n'empoche pas les points pour l'objecif alors que le sous jacent n'est pas done`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions,
+    });
     await TestUtil.create(DB.univers, {
       code: Univers.alimentation,
       label: 'Faut manger !',
@@ -793,6 +964,48 @@ describe('Mission (API test)', () => {
 
     // WHEN
     const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/objectifs/0/gagner_points',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(
+      userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
+    ).toEqual(false);
+    expect(userDB.gamification.points).toEqual(10);
+  });
+  it(`GET /utilisateurs/id/objectifs/id/gagner_points - n'empoche pas les points deux fois pour l'objecif donné`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { missions: missions_article_seul });
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Mange de la graine',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      points: 0,
+    });
+
+    await TestUtil.POST('/utilisateurs/utilisateur-id/events').send({
+      type: EventType.article_lu,
+      content_id: '1',
+    });
+
+    // WHEN
+    await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/objectifs/000/gagner_points',
+    );
+    const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/objectifs/000/gagner_points',
     );
 
@@ -804,6 +1017,81 @@ describe('Mission (API test)', () => {
       userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
     ).toEqual(true);
     expect(userDB.gamification.points).toEqual(20);
+  });
+  it(`GET /utilisateurs/id/objectifs/id/gagner_points - n'empoche pas les points d'une mission pas vraiment commencer`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.article, {
+      content_id: '0',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+      titre: 'hihi',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+      titre: 'hoho',
+    });
+
+    const objectifs: ObjectifDefinition[] = [
+      {
+        content_id: '11',
+        points: 5,
+        titre: 'yop',
+        type: ContentType.kyc,
+        tag_article: null,
+        id_cms: 11,
+      },
+      {
+        content_id: null,
+        points: 5,
+        titre: 'TTT',
+        type: ContentType.article,
+        tag_article: 'composter',
+        id_cms: null,
+      },
+    ];
+    const mission_article: Mission = {
+      id_cms: 1,
+      thematique_univers: ThematiqueUnivers.cereales,
+      est_visible: true,
+      objectifs: objectifs as any,
+      prochaines_thematiques: [],
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.utilisateur, { missions: {} });
+
+    await TestUtil.create(DB.mission, mission_article);
+
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      label: `Les céréales c'est bon`,
+      image_url: 'aaaa',
+      niveau: 2,
+      univers_parent: Univers.alimentation,
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+
+    // WHEN
+    const read_mission_1 = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/cereales/mission',
+    );
+    const id_objectif_1 = read_mission_1.body.objectifs[0].id;
+
+    const reponse_1 = await TestUtil.POST(
+      `/utilisateurs/utilisateur-id/objectifs/${id_objectif_1}/gagner_points`,
+    );
+    // THEN
+    expect(reponse_1.status).toBe(201);
+
+    let userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(userDB.gamification.points).toEqual(10);
   });
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour deux KYC`, async () => {
     // GIVEN
@@ -837,6 +1125,13 @@ describe('Mission (API test)', () => {
       points: 0,
       question: `HIHI`,
       reponses: [],
+    });
+
+    await TestUtil.PUT('/utilisateurs/utilisateur-id/questionsKYC/_1').send({
+      reponse: ['haha'],
+    });
+    await TestUtil.PUT('/utilisateurs/utilisateur-id/questionsKYC/_1').send({
+      reponse: ['hehe'],
     });
 
     // WHEN
