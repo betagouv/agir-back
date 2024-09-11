@@ -143,12 +143,21 @@ export class UtilisateurRepository {
     }
   }
 
-  async listUtilisateurIds(): Promise<string[]> {
-    const result = await this.prisma.utilisateur.findMany({
+  async listUtilisateurIds(created_after?: Date): Promise<string[]> {
+    let query = {
       select: {
         id: true,
       },
-    });
+    };
+    if (created_after) {
+      query['where'] = {
+        created_at: {
+          gte: created_after,
+        },
+      };
+    }
+    const result = await this.prisma.utilisateur.findMany(query);
+
     return result.map((elem) => elem['id']);
   }
 

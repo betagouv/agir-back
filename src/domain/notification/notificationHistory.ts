@@ -63,6 +63,18 @@ export class NotificationHistory {
     );
   }
 
+  public isWelcomeEmailToSend(utilisateur: Utilisateur): boolean {
+    if (!this.isNotificationActive(TypeNotification.welcome)) {
+      return false;
+    }
+
+    if (!this.was_sent(TypeNotification.welcome)) {
+      const age = this.getAgeCreationUtilisateur(utilisateur);
+      return age > minute_10 && age < jour_2;
+    }
+    return false;
+  }
+
   getNouvellesNotificationsAPousser(
     canal: CanalNotification,
     utilisateur: Utilisateur,
@@ -73,25 +85,11 @@ export class NotificationHistory {
 
     const result = [];
 
-    this.addWelcomeIfEligible(result, utilisateur);
-
     this.addOnboardingIfEligible(result, utilisateur);
 
     this.addWaitingActionIfEligible(result, utilisateur);
 
     return result.filter((n) => this.isNotificationActive(n));
-  }
-
-  private addWelcomeIfEligible(
-    encours: TypeNotification[],
-    utilisateur: Utilisateur,
-  ) {
-    if (!this.was_sent(TypeNotification.welcome)) {
-      const age = this.getAgeCreationUtilisateur(utilisateur);
-      if (age > minute_10 && age < jour_2) {
-        encours.push(TypeNotification.welcome);
-      }
-    }
   }
 
   private addOnboardingIfEligible(
