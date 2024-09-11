@@ -35,8 +35,7 @@ export class EmailSender {
       console.log(`Email not sent in test mode: 
       subject: ${subject}
       email: ${email_to}
-      name: ${name}
-      text: ${text_content_html}`);
+      name: ${name}`);
     }
   }
 }
