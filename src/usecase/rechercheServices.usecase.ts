@@ -15,6 +15,7 @@ import { ServiceRechercheDefinition } from '../domain/bibliotheque_services/serv
 import { Univers } from '../domain/univers/univers';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { ServiceExterneID } from '../domain/bibliotheque_services/serviceExterneID';
+import { generateFishUrlForCurrentMonth } from "../domain/bibliotheque_services/fruitsEtLegumesDeSaisonUrls";
 
 const CATALOGUE = [
   {
@@ -47,8 +48,7 @@ const CATALOGUE = [
   },
   {
     id: ServiceExterneID.poisson_de_saison,
-    external_url:
-      'https://www.mangerbouger.fr/manger-mieux/bien-manger-sans-se-ruiner/calendrier-de-saison/les-poissons-et-fruits-de-mer-de-juillet',
+    external_url: generateFishUrlForCurrentMonth(new Date().getMonth()),
     icon_url:
       'https://www.mangerbouger.fr/var/mb/storage/images/_aliases/reference/9/9/9/1/11999-1-eng-GB/Poissons@3x.png',
     titre: 'Poissons de saison',
