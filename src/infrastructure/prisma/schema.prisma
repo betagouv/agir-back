@@ -448,12 +448,12 @@ model Linky {
 }
 
 view PrenomVue {
-  id     String @id @default(uuid())
+  id     Int @id
   prenom String
 }
 
 view CartographieVue {
-  id                Int     @id @default(autoincrement())
+  id                Int     @id
   code_postal       String
   couvert_par_aides Boolean
 }
