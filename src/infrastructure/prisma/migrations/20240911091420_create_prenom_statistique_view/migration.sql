@@ -1,5 +1,5 @@
 CREATE OR REPLACE VIEW "PrenomVue" AS
   SELECT 
     prenom,
-    gen_random_uuid() AS id
+    row_number() OVER () AS id
   FROM "Utilisateur";
