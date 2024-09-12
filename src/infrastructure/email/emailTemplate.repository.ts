@@ -40,7 +40,12 @@ export class EmailTemplateRepository {
   public generateEmailByType(
     emailType: TypeNotification,
     utilisateur: Utilisateur,
+    unsubscribe_token: string,
   ): { subject: string; body: string } | null {
+    const unsubscribe_URL =
+      App.getBaseURLBack() +
+      `/notifications/email/${unsubscribe_token}/disable`;
+
     switch (emailType) {
       case TypeNotification.inscription_code:
         return {
@@ -58,7 +63,7 @@ export class EmailTemplateRepository {
           body: this.email_welcome({
             PRENOM: utilisateur.prenom,
             CONTACT_EMAIL: utilisateur.email,
-            UNSUBSCRIBE_URL: 'https://',
+            UNSUBSCRIBE_URL: unsubscribe_URL,
             EMAIL_URL: 'https://',
             SERVICE_URL: `${App.getBaseURLFront()}/agir`,
           }),
@@ -69,7 +74,7 @@ export class EmailTemplateRepository {
           body: this.email_relance_onboarding({
             PRENOM: utilisateur.prenom,
             CONTACT_EMAIL: utilisateur.email,
-            UNSUBSCRIBE_URL: 'https://',
+            UNSUBSCRIBE_URL: unsubscribe_URL,
             EMAIL_URL: 'https://',
             SERVICE_URL: `${App.getBaseURLFront()}/agir`,
           }),
@@ -82,7 +87,7 @@ export class EmailTemplateRepository {
             body: this.email_relance_action({
               PRENOM: utilisateur.prenom,
               CONTACT_EMAIL: utilisateur.email,
-              UNSUBSCRIBE_URL: 'https://',
+              UNSUBSCRIBE_URL: unsubscribe_URL,
               EMAIL_URL: 'https://',
               TITRE_ACTION: defi.titre,
               ACTIONS_URL: `${App.getBaseURLFront()}/mon-compte/vos-actions`,

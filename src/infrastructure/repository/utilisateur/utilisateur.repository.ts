@@ -47,6 +47,14 @@ export class UtilisateurRepository {
     });
     return this.buildUtilisateurFromDB(user);
   }
+  async getByEmailToken(token: string): Promise<Utilisateur | null> {
+    const user = await this.prisma.utilisateur.findUnique({
+      where: {
+        unsubscribe_mail_token: token,
+      },
+    });
+    return this.buildUtilisateurFromDB(user);
+  }
   async checkEmailExists(email: string): Promise<boolean> {
     const count = await this.prisma.utilisateur.count({
       where: {
@@ -382,6 +390,7 @@ export class UtilisateurRepository {
         couverture_aides_ok: user.couverture_aides_ok,
         source_inscription: SourceInscription[user.source_inscription],
         notification_history: notification_history,
+        unsubscribe_mail_token: user.unsubscribe_mail_token,
       });
     }
     return null;
@@ -482,6 +491,7 @@ export class UtilisateurRepository {
       status: user.status,
       couverture_aides_ok: user.couverture_aides_ok,
       source_inscription: user.source_inscription,
+      unsubscribe_mail_token: user.unsubscribe_mail_token,
     };
   }
 }

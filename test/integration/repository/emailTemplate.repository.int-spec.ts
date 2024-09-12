@@ -39,12 +39,14 @@ describe('EmailTemplateRepository', () => {
       SourceInscription.web,
     );
     utilisateur.code = '123456';
-    process.env.BASE_URL_FRONT = 'https://agir';
+    process.env.BASE_URL_FRONT = 'https://agir-front';
+    process.env.BASE_URL = 'https://agir-back';
 
     // WHEN
     const result = await emailTemplateRepository.generateEmailByType(
       TypeNotification.inscription_code,
       utilisateur,
+      'TOKEN_123',
     );
 
     // THEN
@@ -52,7 +54,7 @@ describe('EmailTemplateRepository', () => {
       body: `Bonjour,<br>
 Voici votre code pour valider votre inscription à l'application Agir !<br><br>
 code : 123456<br><br>
-Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="https://agir/validation-compte?email&#x3D;g@c.com">Page pour rentrer le code</a><br><br>
+Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="https://agir-front/validation-compte?email&#x3D;g@c.com">Page pour rentrer le code</a><br><br>
 À très vite !`,
       subject: "Votre code d'inscription Agir",
     });

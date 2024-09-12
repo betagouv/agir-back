@@ -80,6 +80,8 @@ import {
   SourceInscription,
   UtilisateurStatus,
 } from '../src/domain/utilisateur/utilisateur';
+import { NotificationHistory_v0 } from '../src/domain/object_store/notification/NotificationHistory_v0';
+import { CanalNotification } from '../src/domain/notification/notificationHistory';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -504,6 +506,12 @@ export class TestUtil {
       quizz_interactions: [],
     };
 
+    const notifications: NotificationHistory_v0 = {
+      version: 0,
+      sent_notifications: [],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
+    };
+
     const equipements: Equipements_v0 = {
       version: 0,
       vehicules: [
@@ -649,6 +657,8 @@ export class TestUtil {
       status: UtilisateurStatus.default,
       couverture_aides_ok: false,
       source_inscription: SourceInscription.web,
+      unsubscribe_mail_token: null,
+      notification_history: notifications,
       ...override,
     };
   }

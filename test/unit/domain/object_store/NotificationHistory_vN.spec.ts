@@ -31,6 +31,7 @@ describe('NotificationHistory vN ', () => {
           date_envoie: new Date(),
         }),
       ],
+      enabled_canals: [CanalNotification.email],
     });
 
     // WHEN
@@ -51,6 +52,7 @@ describe('NotificationHistory vN ', () => {
           date_envoie: new Date(),
         }),
       ],
+      enabled_canals: [CanalNotification.email],
     });
 
     // WHEN
