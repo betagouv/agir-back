@@ -22,6 +22,7 @@ export class Notification_v0 {
 
 export class NotificationHistory_v0 extends Versioned {
   sent_notifications: Notification_v0[];
+  enabled_canals: CanalNotification[];
 
   static serialise(notifH: NotificationHistory): NotificationHistory_v0 {
     return {
@@ -29,6 +30,7 @@ export class NotificationHistory_v0 extends Versioned {
       sent_notifications: notifH.sent_notifications.map((elem) =>
         Notification_v0.map(elem),
       ),
+      enabled_canals: notifH.enabled_canals,
     };
   }
 }

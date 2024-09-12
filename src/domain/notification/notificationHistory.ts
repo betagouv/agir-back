@@ -34,15 +34,31 @@ export class Notification {
 
 export class NotificationHistory {
   sent_notifications: Notification[];
+  enabled_canals: CanalNotification[];
 
   constructor(m?: NotificationHistory_v0) {
     this.sent_notifications = [];
+    this.enabled_canals = [CanalNotification.email, CanalNotification.mobile];
+
     if (m) {
       if (m.sent_notifications) {
         this.sent_notifications = m.sent_notifications.map(
           (n) => new Notification(n),
         );
       }
+      this.enabled_canals = m.enabled_canals ? m.enabled_canals : [];
+    }
+  }
+
+  public isCanalEnabled(canal: CanalNotification): boolean {
+    return this.enabled_canals.includes(canal);
+  }
+  public disableCanal(canal: CanalNotification) {
+    this.enabled_canals = this.enabled_canals.filter((n) => n != canal);
+  }
+  public enableCanal(canal: CanalNotification) {
+    if (!this.enabled_canals.includes(canal)) {
+      this.enabled_canals.push(canal);
     }
   }
 

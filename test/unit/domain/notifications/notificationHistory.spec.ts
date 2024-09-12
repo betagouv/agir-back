@@ -33,6 +33,7 @@ describe('NotificationHistory', () => {
     const notifications = new NotificationHistory({
       version: 0,
       sent_notifications: [],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
     });
 
     // WHEN
@@ -71,6 +72,7 @@ describe('NotificationHistory', () => {
     const notifications = new NotificationHistory({
       version: 0,
       sent_notifications: [],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
     });
 
     // WHEN
@@ -96,6 +98,7 @@ describe('NotificationHistory', () => {
     const notifications = new NotificationHistory({
       version: 0,
       sent_notifications: [],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
     });
 
     // WHEN
@@ -123,6 +126,7 @@ describe('NotificationHistory', () => {
     const notifications = new NotificationHistory({
       version: 0,
       sent_notifications: [],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
     });
 
     // WHEN
@@ -154,6 +158,7 @@ describe('NotificationHistory', () => {
           date_envoie: new Date(),
         }),
       ],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
     });
 
     // WHEN
@@ -181,6 +186,7 @@ describe('NotificationHistory', () => {
     const notifications = new NotificationHistory({
       version: 0,
       sent_notifications: [],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
     });
 
     // WHEN
@@ -207,6 +213,7 @@ describe('NotificationHistory', () => {
     const notifications = new NotificationHistory({
       version: 0,
       sent_notifications: [],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
     });
 
     // WHEN
@@ -237,6 +244,7 @@ describe('NotificationHistory', () => {
     const notifications = new NotificationHistory({
       version: 0,
       sent_notifications: [],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
     });
 
     // WHEN
@@ -271,6 +279,7 @@ describe('NotificationHistory', () => {
           date_envoie: new Date(),
         },
       ],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
     });
 
     // WHEN
@@ -282,7 +291,7 @@ describe('NotificationHistory', () => {
     // THEN
     expect(result).toHaveLength(0);
   });
-  it(`getNouvellesNotifications : vieuw defis`, () => {
+  it(`getNouvellesNotifications : vieux defis`, () => {
     // GIVEN
     process.env.NOTIFICATIONS_MAIL_ACTIVES = 'waiting_action';
 
@@ -335,6 +344,7 @@ describe('NotificationHistory', () => {
     const notifications = new NotificationHistory({
       version: 0,
       sent_notifications: [],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
     });
 
     // WHEN

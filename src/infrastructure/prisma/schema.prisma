@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["views"]
 }
 
@@ -88,6 +88,7 @@ model Utilisateur {
   status                   String?
   couverture_aides_ok      Boolean            @default(false)
   source_inscription       String             @default("web")
+  unsubscribe_mail_token   String?            @unique
 }
 
 model Statistique {
@@ -447,12 +448,12 @@ model Linky {
 }
 
 view PrenomVue {
-  id     String @id  @default(uuid())
+  id     String @id @default(uuid())
   prenom String
 }
 
 view CartographieVue {
-  id                Int @id @default(autoincrement())
+  id                Int     @id @default(autoincrement())
   code_postal       String
   couvert_par_aides Boolean
 }

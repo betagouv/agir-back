@@ -130,6 +130,7 @@ import { ProfileController } from './infrastructure/api/profile.controller';
 import { Connexion_v2_Usecase } from './usecase/connexion_v2.usecase';
 import { EmailTemplateRepository } from './infrastructure/email/emailTemplate.repository';
 import { MailerUsecase } from './usecase/mailer.usecase';
+import { NotificationsController } from './infrastructure/api/notifications.controller';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -158,6 +159,7 @@ function getControllers(): any[] {
     RechecheServicesController,
     BilanCarboneController,
     PreviewController,
+    NotificationsController,
   );
   if (!App.isProd()) {
     controllers.push(EquipementsController);

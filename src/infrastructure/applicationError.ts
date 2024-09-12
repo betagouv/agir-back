@@ -353,6 +353,9 @@ export class ApplicationError {
   static throwNotAlhpaPrenom() {
     this.throwAppError('068', `Le prénom ne doit contenir que des lettres`);
   }
+  static throwBadTokenError(token: string) {
+    this.throwAppError('069', `Token invalide : [${token}]`);
+  }
 
   private static throwAppError(
     code: string,

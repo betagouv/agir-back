@@ -89,6 +89,7 @@ export class UtilisateurData {
   couverture_aides_ok: boolean;
   source_inscription: SourceInscription;
   notification_history: NotificationHistory;
+  unsubscribe_mail_token: string;
 }
 
 export class Utilisateur extends UtilisateurData {
@@ -201,6 +202,7 @@ export class Utilisateur extends UtilisateurData {
       couverture_aides_ok: false,
       source_inscription: source_inscription,
       notification_history: new NotificationHistory(),
+      unsubscribe_mail_token: null,
     });
   }
 

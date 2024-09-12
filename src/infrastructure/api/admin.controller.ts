@@ -312,20 +312,4 @@ export class AdminController extends GenericControler {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.universStatistiqueUsecase.calculStatistique();
   }
-  @Post('/admin/send_email_notifications')
-  @ApiOperation({
-    summary: `envoie toutes les notifications mails qui doivent l'être`,
-  })
-  async envoyer_notifications_email(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.mailerUsecase.envoyerEmailsAutomatiques();
-  }
-  @Post('/admin/send_welcome_emails')
-  @ApiOperation({
-    summary: `Envoie tous les mails de bienvenue`,
-  })
-  async envoyer_emails_welcome(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.mailerUsecase.envoyerEmailsWelcome();
-  }
 }

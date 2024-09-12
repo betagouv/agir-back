@@ -12,4 +12,4 @@ curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/admin/thematiq
 curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/admin/univers-statistique
 curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/services/compute_stats
 curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/utilisateurs/update_user_couverture
-curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/admin/send_email_notifications
+curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/notifications/email/send_notifications
