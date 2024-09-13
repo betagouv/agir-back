@@ -356,6 +356,9 @@ export class ApplicationError {
   static throwBadTokenError(token: string) {
     this.throwAppError('069', `Token invalide : [${token}]`);
   }
+  static throwUnknownMosaicId(id: string) {
+    this.throwAppError('070', `Mosaic d'id [${id}] inconnue`, 404);
+  }
 
   private static throwAppError(
     code: string,

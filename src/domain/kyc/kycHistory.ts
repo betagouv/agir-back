@@ -158,7 +158,7 @@ export class KYCHistory {
       .map((c) => QuestionKYC.buildFromDef(c));
   }
 
-  public getUpToDateQuestionOrException(code: string): QuestionKYC {
+  public getUpToDateQuestionByCodeOrException(code: string): QuestionKYC {
     const question_catalogue = this.getKYCDefinitionByCodeOrException(code);
     let answered_question = this.getAnsweredQuestionByCode(code);
     if (answered_question) {
