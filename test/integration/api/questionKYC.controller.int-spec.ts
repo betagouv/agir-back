@@ -370,7 +370,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     user.kyc_history.setCatalogue(catalogue);
 
     expect(
-      user.kyc_history.getUpToDateQuestionOrException('_1').reponses,
+      user.kyc_history.getUpToDateQuestionByCodeOrException('_1').reponses,
     ).toStrictEqual([
       {
         code: null,
@@ -531,7 +531,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     const catalogue = await kycRepository.getAllDefs();
     user.kyc_history.setCatalogue(catalogue);
     expect(
-      user.kyc_history.getUpToDateQuestionOrException('_2').reponses,
+      user.kyc_history.getUpToDateQuestionByCodeOrException('_2').reponses,
     ).toStrictEqual([
       {
         code: Thematique.climat,

@@ -363,7 +363,9 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // THEN
     expect(
-      history.getUpToDateQuestionOrException(KYCID.KYC001).hasAnyResponses(),
+      history
+        .getUpToDateQuestionByCodeOrException(KYCID.KYC001)
+        .hasAnyResponses(),
     ).toEqual(false);
   });
   it('hasResponses :false si attribut []', () => {
@@ -412,7 +414,9 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
     // THEN
     expect(
-      history.getUpToDateQuestionOrException(KYCID.KYC001).hasAnyResponses(),
+      history
+        .getUpToDateQuestionByCodeOrException(KYCID.KYC001)
+        .hasAnyResponses(),
     ).toEqual(false);
   });
   it('hasResponses :true si au moins un reponse valorisée', () => {
@@ -462,7 +466,9 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
     // THEN
     expect(
-      history.getUpToDateQuestionOrException(KYCID.KYC001).hasAnyResponses(),
+      history
+        .getUpToDateQuestionByCodeOrException(KYCID.KYC001)
+        .hasAnyResponses(),
     ).toEqual(true);
   });
   it('updateQuestion : exeption si question id inconnu', () => {
@@ -533,7 +539,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    const question = history.getUpToDateQuestionOrException(KYCID.KYC001);
+    const question = history.getUpToDateQuestionByCodeOrException(KYCID.KYC001);
 
     // THEN
     expect(question.reponses[0].code).toEqual(Thematique.climat);
@@ -599,7 +605,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    const question = history.getUpToDateQuestionOrException(KYCID.KYC001);
+    const question = history.getUpToDateQuestionByCodeOrException(KYCID.KYC001);
 
     // THEN
     expect(question.reponses).toEqual([
@@ -667,7 +673,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    const question = history.getUpToDateQuestionOrException(KYCID.KYC001);
+    const question = history.getUpToDateQuestionByCodeOrException(KYCID.KYC001);
 
     // THEN
     expect(question.reponses).toEqual([
@@ -726,7 +732,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    const question = history.getUpToDateQuestionOrException(KYCID.KYC001);
+    const question = history.getUpToDateQuestionByCodeOrException(KYCID.KYC001);
 
     // THEN
     expect(question.reponses).toEqual([{ label: '123', code: null }]);

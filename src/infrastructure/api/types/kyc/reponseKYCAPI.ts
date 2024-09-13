@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ReponseAPI {
+export class ReponseKYCAPI {
   @ApiProperty({ type: [String] })
   reponse: string[];
 }

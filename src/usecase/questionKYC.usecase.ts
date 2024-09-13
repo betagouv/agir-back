@@ -12,9 +12,32 @@ import {
   Superficie,
   TypeLogement,
 } from '../domain/logement/logement';
+import {
+  MosaicKYC,
+  MosaicKYCDef,
+  TypeReponseMosaicKYC,
+} from '../domain/kyc/mosaicKYC';
+import { Categorie } from '../domain/contenu/categorie';
+import { ApplicationError } from '../infrastructure/applicationError';
+import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 
 @Injectable()
 export class QuestionKYCUsecase {
+  static MOSAIC_CATALOGUE: MosaicKYCDef[] = [
+    {
+      id: KYCMosaicID.TEST_MOSAIC_ID,
+      categorie: Categorie.test,
+      points: 10,
+      titre: 'Quels modes de chauffage existes chez vous ?',
+      type: TypeReponseMosaicKYC.mosaic_boolean,
+      question_kyc_codes: [
+        KYCID.KYC_chauffage_bois,
+        KYCID.KYC_chauffage_fioul,
+        KYCID.KYC_chauffage_gaz,
+      ],
+    },
+  ];
+
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private kycRepository: KycRepository,
@@ -43,11 +66,38 @@ export class QuestionKYCUsecase {
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
     const result =
-      utilisateur.kyc_history.getUpToDateQuestionOrException(questionId);
+      utilisateur.kyc_history.getUpToDateQuestionByCodeOrException(questionId);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
     return this.personnalisator.personnaliser(result, utilisateur);
+  }
+
+  async getQuestionMosaic(utilisateurId: string, mosaicId): Promise<MosaicKYC> {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
+    const mosaic = QuestionKYCUsecase.MOSAIC_CATALOGUE.find(
+      (m) => m.id === mosaicId,
+    );
+    if (!mosaic) {
+      ApplicationError.throwUnknownMosaicId(mosaicId);
+    }
+
+    const kyc_catalogue = await this.kycRepository.getAllDefs();
+    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
+
+    const target_kyc_liste: QuestionKYC[] = [];
+    for (const kyc_code of mosaic.question_kyc_codes) {
+      const kyc =
+        utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(kyc_code);
+
+      if (kyc) {
+        target_kyc_liste.push(kyc);
+      }
+    }
+
+    return new MosaicKYC(target_kyc_liste, mosaic);
   }
 
   async updateResponse(
@@ -61,18 +111,75 @@ export class QuestionKYCUsecase {
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
+    await this.updateQuestionOfCode(code_question, null, reponse, utilisateur);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
+  async updateResponseMosaic(
+    utilisateurId: string,
+    mosaicId: string,
+    reponses: { code: string; boolean_value: boolean }[],
+  ): Promise<void> {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
+    const mosaic = QuestionKYCUsecase.MOSAIC_CATALOGUE.find(
+      (m) => m.id === mosaicId,
+    );
+    if (!mosaic) {
+      ApplicationError.throwUnknownMosaicId(mosaicId);
+    }
+
+    const kyc_catalogue = await this.kycRepository.getAllDefs();
+    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
+
+    if (mosaic.type === TypeReponseMosaicKYC.mosaic_boolean) {
+      for (const reponse of reponses) {
+        await this.updateQuestionOfCode(
+          reponse.code,
+          reponse.boolean_value ? 'oui' : 'non',
+          null,
+          utilisateur,
+        );
+      }
+    }
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
+  private async updateQuestionOfCode(
+    code_question: string,
+    code_reponse: string,
+    labels_reponse: string[],
+    utilisateur: Utilisateur,
+  ) {
     utilisateur.kyc_history.checkQuestionExistsByCode(code_question);
     this.updateUserTodo(utilisateur, code_question);
 
     if (!utilisateur.kyc_history.isQuestionAnsweredByCode(code_question)) {
       const question =
-        utilisateur.kyc_history.getUpToDateQuestionOrException(code_question);
+        utilisateur.kyc_history.getUpToDateQuestionByCodeOrException(
+          code_question,
+        );
       utilisateur.gamification.ajoutePoints(question.points, utilisateur);
     }
 
-    utilisateur.kyc_history.updateQuestionByCodeWithLabel(code_question, reponse);
-
-    this.synchroKYCAvecProfileUtilisateur(code_question, reponse, utilisateur);
+    if (labels_reponse) {
+      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+        code_question,
+        labels_reponse,
+      );
+      this.synchroKYCAvecProfileUtilisateur(
+        code_question,
+        labels_reponse,
+        utilisateur,
+      );
+    } else {
+      utilisateur.kyc_history.updateQuestionByCodeWithCode(
+        code_question,
+        code_reponse,
+      );
+    }
 
     utilisateur.missions.answerKyc(code_question, utilisateur);
 
@@ -80,8 +187,6 @@ export class QuestionKYCUsecase {
 
     const catalogue_defis = await this.defiRepository.list({});
     utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
-
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   public synchroKYCAvecProfileUtilisateur(
