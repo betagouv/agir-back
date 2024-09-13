@@ -139,6 +139,7 @@ export class CMSWebhookEntryAPI {
 export type CMSWebhookPopulateAPI = {
   id: number;
   attributes: {
+    contenu: string;
     titre: string;
     label: string;
     sousTitre: string;

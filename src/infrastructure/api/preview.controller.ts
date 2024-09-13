@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Post,
-  Query,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiExcludeController } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
 import { KycRepository } from '../repository/kyc.repository';
@@ -27,6 +19,9 @@ import { UniversUsecase } from '../../usecase/univers.usecase';
 import { DefiDefinition } from '../../domain/defis/defiDefinition';
 import { AuthGuard } from '../auth/guard';
 import { KycDefinition } from '../../domain/kyc/kycDefinition';
+import { App } from '../../domain/app';
+import axios from 'axios';
+import { CMSWebhookPopulateAPI } from './types/cms/CMSWebhookEntryAPI';
 
 // https://fsymbols.com/generators/carty/
 
@@ -44,6 +39,87 @@ export class PreviewController extends GenericControler {
     private defiRepository: DefiRepository,
   ) {
     super();
+  }
+
+  @Get('cms_urls_preview')
+  @UseGuards(AuthGuard)
+  async cms_urls_preview(): Promise<string> {
+    let result = [];
+    result.push(`
+
+
+░█████╗░░█████╗░███╗░░██╗████████╗███████╗███╗░░██╗████████╗  ██╗░░░██╗██████╗░██╗░░░░░░██████╗
+██╔══██╗██╔══██╗████╗░██║╚══██╔══╝██╔════╝████╗░██║╚══██╔══╝  ██║░░░██║██╔══██╗██║░░░░░██╔════╝
+██║░░╚═╝██║░░██║██╔██╗██║░░░██║░░░█████╗░░██╔██╗██║░░░██║░░░  ██║░░░██║██████╔╝██║░░░░░╚█████╗░
+██║░░██╗██║░░██║██║╚████║░░░██║░░░██╔══╝░░██║╚████║░░░██║░░░  ██║░░░██║██╔══██╗██║░░░░░░╚═══██╗
+╚█████╔╝╚█████╔╝██║░╚███║░░░██║░░░███████╗██║░╚███║░░░██║░░░  ╚██████╔╝██║░░██║███████╗██████╔╝
+░╚════╝░░╚════╝░╚═╝░░╚══╝░░░╚═╝░░░╚══════╝╚═╝░░╚══╝░░░╚═╝░░░  ░╚═════╝░╚═╝░░╚═╝╚══════╝╚═════╝░
+
+`);
+
+    result.push(`###############################`);
+    result.push(`## Articles (champ contenu)`);
+    result.push(`###############################`);
+    result.push(``);
+    const all_articles = await this.loadDataFromCMS('articles');
+    all_articles.sort((a, b) => a.id - b.id);
+
+    for (const article of all_articles) {
+      if (article.attributes.contenu) {
+        const urls = article.attributes.contenu.match(/"https?:\/\/[^"]+"/gi);
+        if (urls && urls.length > 0) {
+          for (const url of urls) {
+            result.push(`Article [${article.id}] : ${url}`);
+          }
+        }
+      }
+    }
+    result.push(``);
+    result.push(`###############################`);
+    result.push(`## Aides (champ description)`);
+    result.push(`###############################`);
+    result.push(``);
+    const all_aides = await this.loadDataFromCMS('aides');
+    all_aides.sort((a, b) => a.id - b.id);
+
+    for (const aide of all_aides) {
+      if (aide.attributes.description) {
+        const urls = aide.attributes.description.match(/"https?:\/\/[^"]+"/gi);
+        if (urls && urls.length > 0) {
+          for (const url of urls) {
+            result.push(`Aide [${aide.id}] : ${url}`);
+          }
+        }
+      }
+    }
+    result.push(``);
+    result.push(`###############################`);
+    result.push(`## Defis (astuce / pourquoi)`);
+    result.push(`###############################`);
+    result.push(``);
+    const all_defis = await this.loadDataFromCMS('defis');
+    all_defis.sort((a, b) => a.id - b.id);
+
+    for (const defi of all_defis) {
+      if (defi.attributes.astuces) {
+        const urls = defi.attributes.astuces.match(/"https?:\/\/[^"]+"/gi);
+        if (urls && urls.length > 0) {
+          for (const url of urls) {
+            result.push(`Defi [${defi.id}] astuce   : ${url}`);
+          }
+        }
+      }
+      if (defi.attributes.pourquoi) {
+        const urls = defi.attributes.pourquoi.match(/"https?:\/\/[^"]+"/gi);
+        if (urls && urls.length > 0) {
+          for (const url of urls) {
+            result.push(`Defi [${defi.id}] pourquoi : ${url}`);
+          }
+        }
+      }
+    }
+
+    return `<pre>${result.join('\n')}</pre>`;
   }
 
   @Get('kyc_preview/:id')
@@ -869,5 +945,55 @@ export class PreviewController extends GenericControler {
         ' kg'
       );
     }
+  }
+
+  private async loadDataFromCMS(
+    type:
+      | 'articles'
+      | 'quizzes'
+      | 'aides'
+      | 'defis'
+      | 'kycs'
+      | 'missions'
+      | 'universes'
+      | 'thematiques-univers',
+  ): Promise<CMSWebhookPopulateAPI[]> {
+    let result = [];
+    const page_1 = '&pagination[start]=0&pagination[limit]=100';
+    const page_2 = '&pagination[start]=100&pagination[limit]=100';
+    const page_3 = '&pagination[start]=200&pagination[limit]=100';
+    const page_4 = '&pagination[start]=300&pagination[limit]=400';
+    let response = null;
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${App.getCmsApiKey()}`,
+    };
+
+    let URL = this.buildPopulateURL(page_1, type);
+    response = await axios.get(URL, { headers: headers });
+    result = result.concat(response.data.data);
+
+    URL = this.buildPopulateURL(page_2, type);
+    response = await axios.get(URL, { headers: headers });
+    result = result.concat(response.data.data);
+
+    URL = this.buildPopulateURL(page_3, type);
+    response = await axios.get(URL, { headers: headers });
+    result = result.concat(response.data.data);
+
+    URL = this.buildPopulateURL(page_4, type);
+    response = await axios.get(URL, { headers: headers });
+    result = result.concat(response.data.data);
+
+    return result;
+  }
+
+  private buildPopulateURL(page: string, type: string) {
+    const URL = App.getCmsURL().concat(
+      '/',
+      type,
+      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[10]=prochaines_thematiques&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article',
+    );
+    return URL.concat(page);
   }
 }
