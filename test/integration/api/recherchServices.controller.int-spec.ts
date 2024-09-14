@@ -433,7 +433,11 @@ describe('RechercheServices (API test)', () => {
         is_default: false,
       },
       { code: 'marche_local', label: 'Les marchés locaux', is_default: false },
-      { code: 'zero_dechet', label: 'Les boutiques zéro déchet', is_default: false },
+      {
+        code: 'zero_dechet',
+        label: 'Les boutiques zéro déchet',
+        is_default: false,
+      },
     ]);
   });
 
@@ -638,14 +642,12 @@ describe('RechercheServices (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
     expect(response.body).toHaveLength(10);
-    expect(response.body[0].difficulty_plat).toEqual('Facile');
+    expect(response.body[0].difficulty_plat).toEqual('Intérmédiaire');
     expect(response.body[0].est_favoris).toEqual(false);
-    expect(response.body[0].id).toEqual('10982');
+    expect(response.body[0].id).toEqual('10987');
     expect(response.body[0].nombre_favoris).toEqual(0);
-    expect(response.body[0].temps_prepa_min).toEqual(5);
-    expect(response.body[0].titre).toEqual(
-      'Salade de pâtes complètes et lentilles',
-    );
+    expect(response.body[0].temps_prepa_min).toEqual(10);
+    expect(response.body[0].titre).toEqual('Clafoutis salé au chèvre et curry');
     expect(response.body[0].type_plat).toEqual('Plat');
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
@@ -660,61 +662,111 @@ describe('RechercheServices (API test)', () => {
 
     expect(response.body[0].ingredients).toEqual([
       {
-        nom: 'Lentilles',
+        nom: 'Chèvre frais',
         ordre: 1,
-        poids: 200,
-        poids_net: 550,
-        quantite: 200,
+        poids: 150,
+        poids_net: 150,
+        quantite: 150,
         unite: 'g',
       },
       {
-        nom: 'Pâtes complètes',
+        nom: 'Farine de blé complet',
         ordre: 2,
         poids: 200,
-        poids_net: 500,
+        poids_net: 200,
         quantite: 200,
         unite: 'g',
       },
       {
-        nom: 'Graines germées',
+        nom: 'Œuf',
         ordre: 3,
-        poids: 50,
-        poids_net: 50,
-        quantite: 50,
-        unite: 'g',
+        poids: 100,
+        poids_net: 100,
+        quantite: 2,
+        unite: '',
       },
       {
-        nom: 'Vinaigre de framboise',
+        nom: 'Lait demi-écrémé',
         ordre: 4,
-        poids: 20,
-        poids_net: 20,
+        poids: 300,
+        poids_net: 300,
+        quantite: 30,
+        unite: 'cl',
+      },
+      {
+        nom: 'Oignon cuit',
+        ordre: 5,
+        poids: 200,
+        poids_net: 150,
         quantite: 2,
-        unite: 'cuillères à soupe',
+        unite: '',
+      },
+      {
+        nom: 'Ail cuit',
+        ordre: 6,
+        poids: 4,
+        poids_net: 3.08,
+        quantite: 1,
+        unite: 'gousse',
+      },
+      {
+        nom: 'Curry',
+        ordre: 7,
+        poids: 15,
+        poids_net: 15,
+        quantite: 1,
+        unite: 'cuillère à soupe',
       },
       {
         nom: "Huile d'olive",
-        ordre: 5,
-        poids: 40,
-        poids_net: 40,
-        quantite: 4,
+        ordre: 8,
+        poids: 30,
+        poids_net: 30,
+        quantite: 3,
         unite: 'cuillères à soupe',
       },
+      {
+        nom: 'Sel',
+        ordre: 9,
+        poids: 0.5,
+        poids_net: 0.5,
+        quantite: 1,
+        unite: 'pincée',
+      },
+      {
+        nom: 'Poivre',
+        ordre: 10,
+        poids: 1,
+        poids_net: 1,
+        quantite: 1,
+        unite: 'pincée',
+      },
     ]);
+
     expect(response.body[0].etapes_recette).toEqual([
       {
         ordre: 1,
         texte:
-          "Faire cuire les lentilles dans de l'eau bouillante pendant 20 minutes. Faire cuire séparément les pâtes en suivant les indications du paquet.",
+          "Émincer les oignons, couper l'ail. Les faire revenir dans deux cuillères d'huile d'olive.",
       },
-      {
-        ordre: 2,
-        texte:
-          'Une fois les pâtes et les lentilles cuites, laisser refroidir quelques minutes. ',
-      },
+      { ordre: 2, texte: 'Préchauffer le four à 200°C.' },
       {
         ordre: 3,
         texte:
-          "Mélanger les pâtes, les lentilles, les graines germées, l'huile d'olive et le vinaigre de framboise. Assaisonner, c'est prêt !",
+          'Dans un bol, mélanger la farine complète, le curry et les œufs. Ajouter petit à petit le lait en fouettant. ',
+      },
+      {
+        ordre: 4,
+        texte:
+          'Beurrer un  moule allant au four. Disposer les oignons dans le fond du plat. Émietter le fromage de chèvre par le dessus.  Puis verser la préparation au curry dans le plat. ',
+      },
+      {
+        ordre: 5,
+        texte: 'Enfourner environ 25 minutes, le clafoutis doit être doré. ',
+      },
+      {
+        ordre: 6,
+        texte: 'Déguster chaud, tiède ou froid selon vos goûts. ',
       },
     ]);
   });
