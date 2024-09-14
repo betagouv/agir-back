@@ -8,6 +8,7 @@ import { MissionDefinition } from './missionDefinition';
 import { v4 as uuidv4 } from 'uuid';
 import { DefiDefinition } from '../defis/defiDefinition';
 import { DefiStatus } from '../defis/defi';
+import { KYCMosaicID } from '../kyc/KYCMosaicID';
 
 export class Objectif {
   id: string;
@@ -132,6 +133,12 @@ export class Mission {
         element.type === ContentType.kyc && element.content_id === kycID,
     );
   }
+  public findObjectifByMosaicID?(mosaicID: KYCMosaicID): Objectif {
+    return this.objectifs.find(
+      (element) =>
+        element.type === ContentType.mosaic && element.content_id === mosaicID,
+    );
+  }
   public findObjectifDefiByID?(defi_id: string): Objectif {
     return this.objectifs.find(
       (element) =>
@@ -152,7 +159,15 @@ export class Mission {
     return objectif_kyc ? objectif_kyc.content_id : null;
   }
 
-  public answerKyc(kycID: string, utilisateur: Utilisateur) {
+  public answerMosaic(mosaicID: KYCMosaicID) {
+    const objectif = this.findObjectifByMosaicID(mosaicID);
+
+    if (objectif && !objectif.isDone()) {
+      objectif.done_at = new Date();
+      this.unlockContentIfAllKYCsDone();
+    }
+  }
+  public answerKyc(kycID: string) {
     const objectif = this.findObjectifKYCByQuestionID(kycID);
 
     if (objectif && !objectif.isDone()) {
@@ -188,7 +203,11 @@ export class Mission {
   public unlockContentIfAllKYCsDone() {
     let ready = true;
     this.objectifs.forEach((objectif) => {
-      ready = ready && (objectif.type !== ContentType.kyc || objectif.isDone());
+      ready =
+        ready &&
+        ((objectif.type !== ContentType.kyc &&
+          objectif.type !== ContentType.mosaic) ||
+          objectif.isDone());
     });
     if (ready) {
       this.objectifs.forEach((objectif) => {
@@ -304,10 +323,10 @@ export class Mission {
     return defi_objectifs.filter((d) => !d.is_locked).map((d) => d.content_id);
   }
 
-  public getAllKYCs() {
+  public getAllKYCsandMosaics() {
     const result: Objectif[] = [];
     for (const obj of this.objectifs) {
-      if (obj.type === ContentType.kyc) {
+      if (obj.type === ContentType.kyc || obj.type === ContentType.mosaic) {
         result.push(obj);
       }
     }

@@ -1,6 +1,7 @@
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { ContentType } from '../contenu/contentType';
 import { DefiDefinition } from '../defis/defiDefinition';
+import { KYCMosaicID } from '../kyc/KYCMosaicID';
 import { MissionsUtilisateur_v0 } from '../object_store/mission/MissionsUtilisateur_v0';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { Mission, Objectif } from './mission';
@@ -66,9 +67,15 @@ export class MissionsUtilisateur {
     });
   }
 
-  public answerKyc(kycID: string, utilisateur: Utilisateur) {
+  public answerKyc(kycID: string) {
     this.missions.forEach((mission) => {
-      mission.answerKyc(kycID, utilisateur);
+      mission.answerKyc(kycID);
+    });
+  }
+
+  public answerMosaic(mosaicID: KYCMosaicID) {
+    this.missions.forEach((mission) => {
+      mission.answerKyc(mosaicID);
     });
   }
 

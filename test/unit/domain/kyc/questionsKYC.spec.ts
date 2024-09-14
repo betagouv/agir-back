@@ -15,12 +15,14 @@ import {
   Superficie,
   TypeLogement,
 } from '../../../../src/domain/logement/logement';
+import { KYCMosaicID } from '../../../../src/domain/kyc/KYCMosaicID';
 
 describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('areConditionsMatched : true si pas de condition', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -51,6 +53,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -83,6 +86,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -115,6 +119,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -147,6 +152,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -198,6 +204,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -249,6 +256,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -294,32 +302,28 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(result).toEqual(true);
   });
-  it('isQuestionAnswered :false si pas répondu', () => {
+  it('isQuestionAnsweredByCode :false si pas répondu', () => {
     // WHEN
     const questionsKYC = new KYCHistory();
 
     // THEN
     expect(questionsKYC.isQuestionAnsweredByCode('2')).toStrictEqual(false);
   });
-
-  it('isQuestionAnswered :false si pas répondu', () => {
+  it('isMosaicAnswered :false si pas répondu', () => {
     // WHEN
     const questionsKYC = new KYCHistory();
 
     // THEN
-    expect(questionsKYC.isQuestionAnsweredByCode('2')).toStrictEqual(false);
+    expect(
+      questionsKYC.isMosaicAnswered(KYCMosaicID.TEST_MOSAIC_ID),
+    ).toStrictEqual(false);
   });
-  it('isQuestionAnswered :false si pas répondu', () => {
-    // WHEN
-    const questionsKYC = new KYCHistory();
 
-    // THEN
-    expect(questionsKYC.isQuestionAnsweredByCode('2')).toStrictEqual(false);
-  });
   it('hasResponses :false si attribut undefined', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -372,6 +376,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -423,6 +428,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -488,6 +494,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -562,6 +569,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -630,6 +638,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -698,6 +707,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -742,6 +752,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -770,6 +781,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -838,6 +850,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -914,6 +927,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id_cms: 2,
@@ -1033,6 +1047,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [],
     });
     history.setCatalogue([

@@ -10,6 +10,7 @@ import { Univers } from '../../../../src/domain/univers/univers';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
+import { KYCMosaicID } from '../../../../src/domain/kyc/KYCMosaicID';
 
 describe('KYC vN ', () => {
   it('build OK from empty', () => {
@@ -27,6 +28,7 @@ describe('KYC vN ', () => {
     // GIVEN
     const domain_start = new KYCHistory({
       version: 0,
+      answered_mosaics: [KYCMosaicID.TEST_MOSAIC_ID],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -77,6 +79,7 @@ describe('KYC vN ', () => {
     // GIVEN
     const domain_start = new KYCHistory({
       version: 0,
+      answered_mosaics: [KYCMosaicID.TEST_MOSAIC_ID],
       answered_questions: [
         {
           id: KYCID.KYC001,

@@ -55,6 +55,7 @@ describe('BilanCarbone (API test)', () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: 'KYC_saison_frequence',

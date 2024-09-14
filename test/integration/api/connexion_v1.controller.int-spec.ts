@@ -80,6 +80,7 @@ describe('/utilisateurs - Connexion Compte utilisateur (API test)', () => {
 
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC_preference,

@@ -10,4 +10,5 @@ export enum ContentType {
   recommandations = 'recommandations',
   kyc = 'kyc',
   defi = 'defi',
+  mosaic = 'mosaic',
 }

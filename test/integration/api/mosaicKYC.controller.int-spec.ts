@@ -11,6 +11,7 @@ import { ThematiqueRepository } from '../../../src/infrastructure/repository/the
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 import {
+  MosaicKYC,
   MosaicKYCDef,
   TypeReponseMosaicKYC,
 } from '../../../src/domain/kyc/mosaicKYC';
@@ -80,7 +81,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     });
     await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v0() });
 
-    QuestionKYCUsecase.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+    MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
     const response = await TestUtil.GET(
@@ -168,7 +169,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: '_2',
     });
     await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v0() });
-    QuestionKYCUsecase.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+    MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -228,7 +229,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     });
   });
 
-  it('PUT /utilisateurs/id/mosaicsKYC/id - lecture mosaic avec reponses précédentes', async () => {
+  it('GET /utilisateurs/id/mosaicsKYC/id - lecture mosaic avec reponses précédentes', async () => {
     // GIVEN
 
     const dbKYC: KYC = {
@@ -266,6 +267,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: '_1',
@@ -309,7 +311,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     };
     await TestUtil.create(DB.utilisateur, { kyc: kyc });
 
-    QuestionKYCUsecase.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+    MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
     const response = await TestUtil.GET(

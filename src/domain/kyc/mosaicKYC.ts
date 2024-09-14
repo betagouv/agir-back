@@ -23,6 +23,26 @@ export class MosaicKYC {
   points: number;
   reponses: KYCMosaicReponse[];
 
+  static MOSAIC_CATALOGUE: MosaicKYCDef[] = [
+    {
+      id: KYCMosaicID.TEST_MOSAIC_ID,
+      categorie: Categorie.test,
+      points: 10,
+      titre: 'Quels modes de chauffage existes chez vous ?',
+      type: TypeReponseMosaicKYC.mosaic_boolean,
+      question_kyc_codes: [
+        KYCID.KYC_chauffage_bois,
+        KYCID.KYC_chauffage_fioul,
+        KYCID.KYC_chauffage_gaz,
+      ],
+    },
+  ];
+
+  static findMosaicDefByID(mosaicID: KYCMosaicID) {
+    if (!mosaicID) return null;
+    return MosaicKYC.MOSAIC_CATALOGUE.find((m) => m.id === mosaicID);
+  }
+
   constructor(liste_kyc: QuestionKYC[], mosaic_def: MosaicKYCDef) {
     this.id = mosaic_def.id;
     this.titre = mosaic_def.titre;

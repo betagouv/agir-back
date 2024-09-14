@@ -74,6 +74,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: '1',
@@ -188,6 +189,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, { kyc: kyc });
@@ -332,6 +334,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
@@ -430,6 +433,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     };
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: '1',
@@ -584,6 +588,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, { kyc: kyc });
@@ -614,6 +619,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, { kyc: kyc });
@@ -639,6 +645,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
+
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
@@ -682,6 +690,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
+
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
@@ -722,6 +732,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
+
       answered_questions: [],
     };
     const logement: Logement_v0 = {
@@ -765,6 +777,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
+
       answered_questions: [],
     };
     const logement: Logement_v0 = {
@@ -812,6 +826,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
+
       answered_questions: [],
     };
     const logement: Logement_v0 = {
@@ -870,6 +886,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [],
     };
     const logement: Logement_v0 = {

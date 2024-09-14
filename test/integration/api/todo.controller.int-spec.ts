@@ -1134,6 +1134,7 @@ describe('TODO list (API test)', () => {
   it('POST KYC met à jour la todo si la question correspond', async () => {
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID._1,

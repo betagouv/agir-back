@@ -412,7 +412,7 @@ export class CMSUsecase {
     const URL = App.getCmsURL().concat(
       '/',
       type,
-      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[10]=prochaines_thematiques&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article',
+      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[10]=prochaines_thematiques&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic',
     );
     return URL.concat(page);
   }
@@ -728,6 +728,11 @@ export class CMSUsecase {
                 result.content_id = obj.kyc.code;
                 result.id_cms = obj.kyc.id;
               }
+              if (obj.mosaic) {
+                result.type = ContentType.mosaic;
+                result.content_id = obj.mosaic.code;
+                result.id_cms = obj.mosaic.id;
+              }
               return result;
             })
           : [],
@@ -987,6 +992,11 @@ export class CMSUsecase {
                 result.type = ContentType.kyc;
                 result.content_id = obj.kyc.data.attributes.code;
                 result.id_cms = obj.kyc.data.id;
+              }
+              if (obj.mosaic.data) {
+                result.type = ContentType.mosaic;
+                result.content_id = obj.mosaic.data.attributes.code;
+                result.id_cms = obj.mosaic.data.id;
               }
               return result;
             })

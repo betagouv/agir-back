@@ -8,6 +8,7 @@ import {
 import { Thematique } from '../../contenu/thematique';
 import { Tag } from '../../scoring/tag';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
+import { KYCMosaicID } from '../../kyc/KYCMosaicID';
 
 export class KYCReponse_v0 {
   code: string;
@@ -63,6 +64,7 @@ export class QuestionKYC_v0 {
 
 export class KYCHistory_v0 extends Versioned {
   answered_questions: QuestionKYC_v0[];
+  answered_mosaics: KYCMosaicID[];
 
   static serialise(domain: KYCHistory): KYCHistory_v0 {
     return {
@@ -70,6 +72,7 @@ export class KYCHistory_v0 extends Versioned {
       answered_questions: domain.answered_questions.map((e) =>
         QuestionKYC_v0.map(e),
       ),
+      answered_mosaics: domain.answered_mosaics,
     };
   }
 }

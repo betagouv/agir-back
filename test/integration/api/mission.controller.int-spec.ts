@@ -20,9 +20,27 @@ import { DefiHistory_v0 } from '../../../src/domain/object_store/defi/defiHistor
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { ObjectifDefinition } from '../../../src/domain/mission/missionDefinition';
 import { Mission } from '@prisma/client';
+import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
+import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
+import {
+  MosaicKYC,
+  MosaicKYCDef,
+  TypeReponseMosaicKYC,
+} from '../../../src/domain/kyc/mosaicKYC';
 
 describe('Mission (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
+
+  const MOSAIC_CATALOGUE: MosaicKYCDef[] = [
+    {
+      id: KYCMosaicID.TEST_MOSAIC_ID,
+      categorie: Categorie.test,
+      points: 10,
+      titre: 'Titre test',
+      type: TypeReponseMosaicKYC.mosaic_boolean,
+      question_kyc_codes: [KYCID._2, KYCID._3],
+    },
+  ];
 
   const missions: MissionsUtilisateur_v0 = {
     version: 0,
@@ -79,6 +97,54 @@ describe('Mission (API test)', () => {
           },
         ],
         prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
+        est_visible: true,
+      },
+    ],
+  };
+  const mission_avec_mosaic: MissionsUtilisateur_v0 = {
+    version: 0,
+    missions: [
+      {
+        id: '1',
+        done_at: null,
+        thematique_univers: ThematiqueUnivers.cereales,
+        univers: Univers.alimentation,
+        objectifs: [
+          {
+            id: '0',
+            content_id: '_1',
+            type: ContentType.kyc,
+            titre: '1 question pour vous',
+            points: 10,
+            is_locked: false,
+            done_at: null,
+            sont_points_en_poche: false,
+            est_reco: true,
+          },
+          {
+            id: '1',
+            content_id: KYCMosaicID.TEST_MOSAIC_ID,
+            type: ContentType.mosaic,
+            titre: 'Mosaic pour vous',
+            points: 10,
+            is_locked: false,
+            done_at: null,
+            sont_points_en_poche: false,
+            est_reco: true,
+          },
+          {
+            id: '2',
+            content_id: '_3',
+            type: ContentType.kyc,
+            titre: 'Dernière question',
+            points: 10,
+            is_locked: false,
+            done_at: null,
+            sont_points_en_poche: false,
+            est_reco: true,
+          },
+        ],
+        prochaines_thematiques: [],
         est_visible: true,
       },
     ],
@@ -1162,51 +1228,8 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(404);
   });
-  it(`GET /utilisateurs/id/thematiques/cereales/next_kyc - renvoie la prochaine question à poser`, async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, { missions: missions });
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID._2,
-      type: TypeReponseQuestionKYC.choix_unique,
-      categorie: Categorie.test,
-      points: 10,
-      question: 'Comment avez vous connu le service ?',
-      reponses: [
-        { label: 'Moins de 15 ans (neuf ou récent)', code: 'moins_15' },
-        { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
-      ],
-    });
-    await TestUtil.create(DB.kYC, {
-      id_cms: 2,
-      code: KYCID._3,
-      type: TypeReponseQuestionKYC.choix_unique,
-      categorie: Categorie.test,
-      points: 10,
-      question: `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
-      reponses: [
-        { label: 'Oui', code: BooleanKYC.oui },
-        { label: 'Non', code: BooleanKYC.non },
-        { label: 'A voir', code: BooleanKYC.peut_etre },
-      ],
-    });
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/thematiques/cereales/next_kyc',
-    );
 
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.id).toEqual('_3');
-    expect(response.body.type).toEqual(TypeReponseQuestionKYC.choix_unique);
-    expect(response.body.points).toEqual(10);
-    expect(response.body.reponses_possibles).toEqual(['Oui', 'Non', 'A voir']);
-    expect(response.body.categorie).toEqual(Categorie.test);
-    expect(response.body.question).toEqual(
-      `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
-    );
-  });
-  it(`GET /utilisateurs/id/thematiques/cereales/next_kyc - renvoie la liste des questions à poser`, async () => {
+  it(`GET /utilisateurs/id/thematiques/cereales/kycs - renvoie la liste des questions à poser`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: missions });
     await TestUtil.create(DB.kYC, {
@@ -1255,6 +1278,108 @@ describe('Mission (API test)', () => {
       thematique: 'climat',
     });
   });
+
+  it(`GET /utilisateurs/id/thematiques/cereales/kycs - renvoie la liste des questions à poser avec une mosaic`, async () => {
+    // GIVEN
+    MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+
+    await TestUtil.create(DB.utilisateur, { missions: mission_avec_mosaic });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._1,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.test,
+      points: 10,
+      question: 'Comment avez vous connu le service ?',
+      reponses: [
+        { label: 'Moins de 15 ans (neuf ou récent)', code: 'moins_15' },
+        { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
+      ],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.test,
+      points: 10,
+      question: `Encore une question`,
+      reponses: [
+        { label: 'Oui', code: BooleanKYC.oui },
+        { label: 'Non', code: BooleanKYC.non },
+        { label: 'A voir', code: BooleanKYC.peut_etre },
+      ],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 3,
+      code: KYCID._3,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.test,
+      points: 10,
+      question: `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
+      reponses: [
+        { label: 'Oui', code: BooleanKYC.oui },
+        { label: 'Non', code: BooleanKYC.non },
+        { label: 'A voir', code: BooleanKYC.peut_etre },
+      ],
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/cereales/kycs',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(3);
+    expect(response.body[0]).toEqual({
+      id: '_1',
+      question: 'Comment avez vous connu le service ?',
+      reponse: [],
+      reponses_possibles: [
+        'Moins de 15 ans (neuf ou récent)',
+        'Plus de 15 ans (ancien)',
+      ],
+      categorie: 'test',
+      points: 10,
+      type: 'choix_unique',
+      is_NGC: false,
+      thematique: 'climat',
+    });
+    expect(response.body[1]).toEqual({
+      id: 'TEST_MOSAIC_ID',
+      titre: 'Titre test',
+      reponses: [
+        {
+          code: '_2',
+          image_url: null,
+          label: 'Encore une question',
+          boolean_value: false,
+        },
+        {
+          code: '_3',
+          image_url: null,
+          label:
+            "Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?",
+          boolean_value: false,
+        },
+      ],
+      categorie: 'test',
+      points: 10,
+      type: 'mosaic_boolean',
+    });
+    expect(response.body[2]).toEqual({
+      id: '_3',
+      question:
+        "Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?",
+      reponse: [],
+      reponses_possibles: ['Oui', 'Non', 'A voir'],
+      categorie: 'test',
+      points: 10,
+      type: 'choix_unique',
+      is_NGC: false,
+      thematique: 'climat',
+    });
+  });
+
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un article débloqué suite à la réalisation de la KYC`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -1395,6 +1520,7 @@ describe('Mission (API test)', () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: '1',

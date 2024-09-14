@@ -20,6 +20,9 @@ import {
 } from '../infrastructure/repository/article.repository';
 import { Categorie } from '../domain/contenu/categorie';
 import { PonderationApplicativeManager } from '../domain/scoring/ponderationApplicative';
+import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
+import { QuestionGeneric } from '../domain/kyc/question';
+import { MosaicKYC } from '../domain/kyc/mosaicKYC';
 
 @Injectable()
 export class MissionUsecase {
@@ -100,28 +103,6 @@ export class MissionUsecase {
     }
   }
 
-  async getMissionNextKycID(
-    utilisateurId: string,
-    thematique: string,
-  ): Promise<string> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
-    utilisateur.checkState();
-
-    const mission =
-      utilisateur.missions.getMissionByThematiqueUnivers(thematique);
-
-    if (!mission) {
-      throw ApplicationError.throwMissionNotFoundOfThematique(thematique);
-    }
-
-    const next_kyc_id = mission.getNextKycId();
-
-    if (!next_kyc_id) {
-      throw ApplicationError.throwNoMoreKYCForThematique(thematique);
-    }
-    return next_kyc_id;
-  }
-
   async gagnerPointsDeObjectif(utilisateurId: string, objectifId: string) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
@@ -134,7 +115,9 @@ export class MissionUsecase {
       }
       const objectif_courant = mission.findObjectifByTechId(objectifId);
       if (objectif_courant && objectif_courant.type === ContentType.kyc) {
-        objectifs_target = objectifs_target.concat(mission.getAllKYCs());
+        objectifs_target = objectifs_target.concat(
+          mission.getAllKYCsandMosaics(),
+        );
       } else if (objectif_courant) {
         objectifs_target.push(objectif_courant);
       }
@@ -154,10 +137,10 @@ export class MissionUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  async getMissionKYCs(
+  async getMissionKYCsAndMosaics(
     utilisateurId: string,
     thematique: string,
-  ): Promise<QuestionKYC[]> {
+  ): Promise<QuestionGeneric[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
@@ -171,16 +154,25 @@ export class MissionUsecase {
       throw ApplicationError.throwMissionNotFoundOfThematique(thematique);
     }
 
-    const result: QuestionKYC[] = [];
+    const result: QuestionGeneric[] = [];
 
-    const liste_objectifs_kyc = mission.getAllKYCs();
+    const liste_objectifs_kyc = mission.getAllKYCsandMosaics();
 
     for (const objectif_kyc of liste_objectifs_kyc) {
-      result.push(
-        utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
-          objectif_kyc.content_id,
-        ),
-      );
+      if (objectif_kyc.type === ContentType.kyc) {
+        result.push({
+          kyc: utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+            objectif_kyc.content_id,
+          ),
+        });
+      } else {
+        const mosaic = utilisateur.kyc_history.getUpToDateMosaic(
+          MosaicKYC.findMosaicDefByID(KYCMosaicID[objectif_kyc.content_id]),
+        );
+        if (mosaic) {
+          result.push({ mosaic: mosaic });
+        }
+      }
     }
 
     return this.personnalisator.personnaliser(result, utilisateur);
