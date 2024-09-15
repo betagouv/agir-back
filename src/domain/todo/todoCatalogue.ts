@@ -7,6 +7,7 @@ import { Todo_v0 } from '../object_store/parcoursTodo/parcoursTodo_v0';
 import { CelebrationType } from '../gamification/celebrations/celebration';
 import { Feature } from '../gamification/feature';
 import { LiveService } from '../service/serviceDefinition';
+import { KYCMosaicID } from '../kyc/KYCMosaicID';
 
 export class TodoCatalogue {
   public static getNombreTodo(): number {
@@ -102,6 +103,39 @@ export class TodoCatalogue {
           progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
           type: ContentType.quizz,
+          level: DifficultyLevel.ANY,
+          points: 5,
+        },
+        {
+          id: uuidv4(),
+          titre: `Qu'est-ce que le réchauffement climatique ?`,
+          content_id: '13',
+          thematiques: [Thematique.climat],
+          progression: { current: 0, target: 1 },
+          sont_points_en_poche: false,
+          type: ContentType.quizz,
+          level: DifficultyLevel.ANY,
+          points: 5,
+        },
+        {
+          id: uuidv4(),
+          titre: `Qu'est-ce que le réchauffement climatique ?`,
+          content_id: '13',
+          thematiques: [Thematique.climat],
+          progression: { current: 0, target: 1 },
+          sont_points_en_poche: false,
+          type: ContentType.quizz,
+          level: DifficultyLevel.ANY,
+          points: 5,
+        },
+        {
+          id: uuidv4(),
+          titre: `Petite mosaic de test`,
+          content_id: KYCMosaicID.TEST_MOSAIC_ID,
+          thematiques: [Thematique.climat],
+          progression: { current: 0, target: 1 },
+          sont_points_en_poche: false,
+          type: ContentType.mosaic,
           level: DifficultyLevel.ANY,
           points: 5,
         },

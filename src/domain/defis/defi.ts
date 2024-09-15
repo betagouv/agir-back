@@ -36,6 +36,7 @@ export class Defi implements TaggedContent {
   categorie: Categorie;
   mois: number[];
   conditions: ConditionDefi[][];
+  sont_points_en_poche: boolean;
 
   constructor(data: Defi_v0, utilisateur?: Utilisateur) {
     this.id = data.id;
@@ -55,6 +56,7 @@ export class Defi implements TaggedContent {
     this.categorie = data.categorie;
     this.mois = data.mois ? data.mois : [];
     this.conditions = data.conditions ? data.conditions : [];
+    this.sont_points_en_poche = !!data.sont_points_en_poche;
   }
 
   public getStatus(): DefiStatus {
@@ -67,7 +69,11 @@ export class Defi implements TaggedContent {
     if (status === DefiStatus.en_cours) {
       this.date_acceptation = new Date();
     }
-    if (status === DefiStatus.deja_fait || status === DefiStatus.fait) {
+    if (
+      (status === DefiStatus.deja_fait || status === DefiStatus.fait) &&
+      !this.sont_points_en_poche
+    ) {
+      this.sont_points_en_poche = true;
       utilisateur.gamification.ajoutePoints(this.points, utilisateur);
     }
     this.status = status;

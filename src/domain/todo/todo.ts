@@ -117,10 +117,14 @@ export class Todo {
     );
   }
 
-  public findTodoKYCElementByQuestionID?(content_id: string): TodoElement {
+  public findTodoKYCOrMosaicElementByQuestionID?(
+    content_id: string,
+  ): TodoElement {
     return this.todo.find(
       (element) =>
-        element.type === ContentType.kyc && element.content_id === content_id,
+        (element.type === ContentType.kyc ||
+          element.type === ContentType.mosaic) &&
+        element.content_id === content_id,
     );
   }
 

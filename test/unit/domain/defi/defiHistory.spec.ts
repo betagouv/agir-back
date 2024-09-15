@@ -29,6 +29,7 @@ const DEFI_1: Defi_v0 = {
   categorie: Categorie.recommandation,
   mois: [1],
   conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+  sont_points_en_poche: false,
 };
 const DEFI_1_DEF: DefiDefinition = {
   content_id: '1',
@@ -175,6 +176,25 @@ describe('DefiHistory', () => {
     user.gamification = new Gamification();
 
     // WHEN
+    defiHistory.updateStatus('1', DefiStatus.fait, user, 'toto');
+
+    // THEN
+    expect(defiHistory.defis[0].getStatus()).toEqual(DefiStatus.fait);
+    expect(defiHistory.defis[0].motif).toEqual('toto');
+    expect(user.gamification.points).toEqual(5);
+  });
+  it('updateStatus : on ne gagne pas 2 fois les points', () => {
+    // GIVEN
+    const defiHistory = new DefiHistory({
+      version: 0,
+      defis: [DEFI_1],
+    });
+
+    const user = new Utilisateur();
+    user.gamification = new Gamification();
+
+    // WHEN
+    defiHistory.updateStatus('1', DefiStatus.fait, user, 'toto');
     defiHistory.updateStatus('1', DefiStatus.fait, user, 'toto');
 
     // THEN

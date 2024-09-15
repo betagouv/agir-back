@@ -462,6 +462,7 @@ describe('Mission (API test)', () => {
           categorie: Categorie.recommandation,
           mois: [],
           conditions: [],
+          sont_points_en_poche: false,
         },
       ],
     };
@@ -536,6 +537,7 @@ describe('Mission (API test)', () => {
           categorie: Categorie.recommandation,
           mois: [],
           conditions: [],
+          sont_points_en_poche: false,
         },
       ],
     };

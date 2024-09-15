@@ -449,6 +449,7 @@ describe('Admin (API test)', () => {
           categorie: Categorie.recommandation,
           mois: [],
           conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+          sont_points_en_poche: true,
         },
       ],
     };
@@ -1294,6 +1295,7 @@ describe('Admin (API test)', () => {
       categorie: Categorie.recommandation,
       mois: [],
       conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+      sont_points_en_poche: false,
     };
     const defis_1: DefiHistory_v0 = {
       version: 0,
@@ -1621,6 +1623,7 @@ describe('Admin (API test)', () => {
       categorie: Categorie.recommandation,
       mois: [],
       conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+      sont_points_en_poche: false,
     };
 
     const defi1 = {

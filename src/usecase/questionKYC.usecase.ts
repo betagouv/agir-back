@@ -220,7 +220,9 @@ export class QuestionKYCUsecase {
 
   private updateUserTodo(utilisateur: Utilisateur, questionId: string) {
     const matching =
-      utilisateur.parcours_todo.findTodoKYCElementByQuestionID(questionId);
+      utilisateur.parcours_todo.findTodoKYCOrMosaicElementByQuestionID(
+        questionId,
+      );
     if (matching && !matching.element.isDone()) {
       matching.todo.makeProgress(matching.element);
     }

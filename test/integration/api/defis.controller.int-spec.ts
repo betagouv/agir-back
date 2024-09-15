@@ -169,6 +169,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     categorie: Categorie.recommandation,
     conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
     mois: [1],
+    sont_points_en_poche: true,
   };
 
   beforeAll(async () => {
@@ -952,6 +953,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           categorie: Categorie.recommandation,
           mois: [1],
           conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+          sont_points_en_poche: true,
         },
       ],
     };
@@ -1027,6 +1029,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           categorie: Categorie.recommandation,
           mois: [1],
           conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+          sont_points_en_poche: true,
         },
       ],
     };

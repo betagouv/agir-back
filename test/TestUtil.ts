@@ -469,6 +469,7 @@ export class TestUtil {
           categorie: Categorie.recommandation,
           mois: [],
           conditions: [],
+          sont_points_en_poche: false,
         },
       ],
     };

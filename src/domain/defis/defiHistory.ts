@@ -172,6 +172,7 @@ export class DefiHistory {
       date_acceptation: null,
       accessible: false,
       motif: null,
+      sont_points_en_poche: false,
     });
   }
 }
