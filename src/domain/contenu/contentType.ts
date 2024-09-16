@@ -4,6 +4,7 @@ export enum ContentType {
   aides = 'aides',
   suivi_du_jour = 'suivi_du_jour',
   quizz = 'quizz',
+  enchainement = 'enchainement',
   onboarding = 'onboarding',
   service = 'service',
   profile = 'profile',
