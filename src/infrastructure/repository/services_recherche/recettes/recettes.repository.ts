@@ -251,6 +251,8 @@ export class RecettesRepository implements FinderInterface {
     if (cat.includes('ENT')) return 'Entée';
     if (cat.includes('DES')) return 'Déssert';
     if (cat.includes('PL')) return 'Plat';
+    if (cat.includes('GAR')) return 'Garniture';
+    if (cat.includes('PLC')) return 'Plat complet';
     return '-';
   }
 
