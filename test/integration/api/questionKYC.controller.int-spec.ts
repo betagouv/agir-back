@@ -93,6 +93,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           universes: [Univers.consommation],
           thematique: Thematique.consommation,
           ngc_key: '123',
+          short_question: 'short',
+          image_url: 'AAA',
         },
       ],
     };
@@ -113,6 +115,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
         { label: 'Le climat !!!', code: Thematique.climat },
         { label: 'Mon logement !!!', code: Thematique.logement },
       ],
+      short_question: 'short',
+      image_url: 'AAA',
       created_at: undefined,
       updated_at: undefined,
     };
@@ -451,6 +455,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
             { label: 'YO', code: 'yos' },
           ],
           tags: [],
+          short_question: 'short',
+          image_url: 'AAA',
         },
       ],
     };

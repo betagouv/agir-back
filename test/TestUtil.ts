@@ -418,6 +418,9 @@ export class TestUtil {
         { label: 'Mon logement', code: Thematique.logement },
         { label: 'Ce que je mange', code: Thematique.alimentation },
       ],
+      short_question: 'short',
+      image_url: 'URL',
+
       created_at: undefined,
       updated_at: undefined,
       ...override,
@@ -497,6 +500,8 @@ export class TestUtil {
           ],
           tags: [],
           universes: [Univers.climat],
+          short_question: 'short',
+          image_url: 'URL',
         },
       ],
     };

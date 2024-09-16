@@ -221,6 +221,8 @@ describe('UseragEvaluator', () => {
           { label: '🚗 Transports', code: Thematique.transport },
           { label: 'Aucun / Je ne sais pas', code: 'rien' },
         ],
+        short_question: 'short',
+        image_url: 'AAA',
       }),
     ]);
     user.kyc_history.updateQuestionByCodeWithLabel(KYCID.KYC001, []);
@@ -266,6 +268,8 @@ describe('UseragEvaluator', () => {
           { label: '🚗 Transports', code: Thematique.transport },
           { label: 'Aucun / Je ne sais pas', code: 'rien' },
         ],
+        short_question: 'short',
+        image_url: 'AAA',
       }),
     ]);
     user.kyc_history.updateQuestionByCodeWithLabel(KYCID.KYC001, [
@@ -322,6 +326,8 @@ describe('UseragEvaluator', () => {
             ngc_code: null,
           },
         ],
+        short_question: 'short',
+        image_url: 'AAA',
       }),
     ]);
     user.kyc_history.updateQuestionByCodeWithLabel(KYCID.KYC_preference, [

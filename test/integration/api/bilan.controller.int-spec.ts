@@ -412,6 +412,8 @@ describe('/bilan (API test)', () => {
           tags: [],
           universes: [Univers.climat],
           ngc_key: 'logement . âge',
+          short_question: 'short',
+          image_url: 'AAA',
         },
       ],
     };

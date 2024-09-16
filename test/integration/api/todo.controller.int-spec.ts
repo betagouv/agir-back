@@ -1151,6 +1151,8 @@ describe('TODO list (API test)', () => {
           ],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'AAA',
         },
       ],
     };

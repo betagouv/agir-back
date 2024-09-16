@@ -68,8 +68,8 @@ export class MosaicKYC {
       }
       const new_reponse: KYCMosaicReponse = {
         code: kyc.id,
-        label: kyc.question,
-        image_url: null,
+        label: kyc.short_question,
+        image_url: kyc.image_url,
         boolean_value: value === 'oui',
       };
       liste_reponses.push(new_reponse);

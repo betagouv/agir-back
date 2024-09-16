@@ -358,20 +358,22 @@ model FileAttente {
 }
 
 model KYC {
-  id_cms     Int      @unique
-  code       String   @unique
-  type       String
-  categorie  String
-  points     Int
-  is_ngc     Boolean
-  ngc_key    String?
-  question   String
-  reponses   Json     @default("{}")
-  thematique String
-  tags       String[] @default([])
-  universes  String[] @default([])
-  created_at DateTime @default(now()) @db.Timestamptz(3)
-  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  id_cms         Int      @unique
+  code           String   @unique
+  type           String
+  categorie      String
+  points         Int
+  is_ngc         Boolean
+  ngc_key        String?
+  question       String
+  short_question String?
+  reponses       Json     @default("{}")
+  thematique     String
+  tags           String[] @default([])
+  universes      String[] @default([])
+  image_url      String?
+  created_at     DateTime @default(now()) @db.Timestamptz(3)
+  updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model SituationNGC {
@@ -448,7 +450,7 @@ model Linky {
 }
 
 view PrenomVue {
-  id     Int @id
+  id     Int    @id
   prenom String
 }
 

@@ -64,6 +64,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         { label: 'Non', code: 'non' },
         { label: 'Je sais pas', code: 'sais_pas' },
       ],
+      short_question: 'short',
+      image_url: 'AAA',
       created_at: undefined,
       updated_at: undefined,
     };
@@ -71,12 +73,16 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       ...dbKYC,
       id_cms: 1,
       question: 'quest 1',
+      short_question: 'short 1',
+      image_url: 'AAA',
       code: '_1',
     });
     await TestUtil.create(DB.kYC, {
       ...dbKYC,
       id_cms: 2,
       question: 'quest 2',
+      short_question: 'short 2',
+      image_url: 'BBB',
       code: '_2',
     });
     await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v0() });
@@ -99,13 +105,13 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     expect(response.body.reponses).toHaveLength(2);
 
     expect(response.body.reponses[0].code).toEqual('_1');
-    expect(response.body.reponses[0].label).toEqual('quest 1');
-    expect(response.body.reponses[0].image_url).toEqual(null);
+    expect(response.body.reponses[0].label).toEqual('short 1');
+    expect(response.body.reponses[0].image_url).toEqual('AAA');
     expect(response.body.reponses[0].boolean_value).toEqual(false);
 
     expect(response.body.reponses[1].code).toEqual('_2');
-    expect(response.body.reponses[1].label).toEqual('quest 2');
-    expect(response.body.reponses[1].image_url).toEqual(null);
+    expect(response.body.reponses[1].label).toEqual('short 2');
+    expect(response.body.reponses[1].image_url).toEqual('BBB');
     expect(response.body.reponses[1].boolean_value).toEqual(false);
   });
   it('GET /utilisateurs/id/mosaicsKYC/bad - mosaic inconnue', async () => {
@@ -154,6 +160,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         { label: 'Non', code: 'non' },
         { label: 'Je sais pas', code: 'sais_pas' },
       ],
+      short_question: 'short',
+      image_url: 'AAA',
       created_at: undefined,
       updated_at: undefined,
     };
@@ -207,6 +215,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       score: 0,
       universes: ['alimentation'],
       id_cms: 1,
+      short_question: 'short',
+      image_url: 'AAA',
     });
     expect(dbUser.kyc_history.answered_questions[1]).toEqual({
       id: '_2',
@@ -227,6 +237,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       score: 0,
       universes: ['alimentation'],
       id_cms: 2,
+      short_question: 'short',
+      image_url: 'AAA',
     });
   });
 
@@ -250,6 +262,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         { label: 'Non', code: 'non' },
         { label: 'Je sais pas', code: 'sais_pas' },
       ],
+      short_question: 'short',
+      image_url: 'AAA',
       created_at: undefined,
       updated_at: undefined,
     };
@@ -288,6 +302,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           tags: [Tag.possede_voiture],
           universes: ['alimentation'],
           id_cms: 1,
+          short_question: 'short 1',
+          image_url: 'AAA',
         },
         {
           id: '_2',
@@ -307,6 +323,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           tags: [Tag.possede_voiture],
           universes: ['alimentation'],
           id_cms: 2,
+          short_question: 'short 2',
+          image_url: 'BBB',
         },
       ],
     };
@@ -328,15 +346,15 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       reponses: [
         {
           code: '_1',
-          image_url: null,
-          label: 'quest 1',
+          label: 'short 1',
           boolean_value: true,
+          image_url: 'AAA',
         },
         {
           code: '_2',
-          image_url: null,
-          label: 'quest 2',
+          label: 'short 2',
           boolean_value: false,
+          image_url: 'BBB',
         },
       ],
       categorie: 'test',

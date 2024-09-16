@@ -25,6 +25,8 @@ export class KycRepository {
       thematique: kycDef.thematique ? kycDef.thematique.toString() : null,
       tags: kycDef.tags.map((t) => t.toString()),
       universes: kycDef.universes.map((u) => u.toString()),
+      image_url: kycDef.image_url,
+      short_question: kycDef.short_question,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -78,6 +80,8 @@ export class KycRepository {
       tags: kycDB.tags ? kycDB.tags.map((t) => Tag[t]) : [],
       universes: kycDB.universes ? kycDB.universes : [],
       ngc_key: kycDB.ngc_key,
+      short_question: kycDB.short_question,
+      image_url: kycDB.image_url,
     });
   }
 }

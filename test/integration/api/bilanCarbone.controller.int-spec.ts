@@ -76,6 +76,8 @@ describe('BilanCarbone (API test)', () => {
           tags: [],
           universes: [],
           ngc_key: 'alimentation . de saison . consommation',
+          image_url: '111',
+          short_question: 'short',
         },
       ],
     };

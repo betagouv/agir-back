@@ -64,6 +64,8 @@ describe('KYC vN ', () => {
           ],
           tags: [Tag.consommation],
           universes: [Univers.climat],
+          short_question: 'short',
+          image_url: 'AAA',
         },
       ],
     });
@@ -115,7 +117,9 @@ describe('KYC vN ', () => {
           ],
           tags: [Tag.consommation],
           universes: [Univers.climat],
-        },
+          short_question: 'short',
+          image_url: 'AAA',
+          },
       ],
     });
 

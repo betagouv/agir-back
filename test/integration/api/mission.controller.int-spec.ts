@@ -1285,7 +1285,17 @@ describe('Mission (API test)', () => {
     // GIVEN
     MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
-    await TestUtil.create(DB.utilisateur, { missions: mission_avec_mosaic });
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_mosaics: [],
+      answered_questions: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      missions: mission_avec_mosaic,
+      kyc: kyc,
+    });
+
     await TestUtil.create(DB.kYC, {
       id_cms: 1,
       code: KYCID._1,
@@ -1297,6 +1307,8 @@ describe('Mission (API test)', () => {
         { label: 'Moins de 15 ans (neuf ou récent)', code: 'moins_15' },
         { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
       ],
+      short_question: 'short 1',
+      image_url: 'AAA',
     });
     await TestUtil.create(DB.kYC, {
       id_cms: 2,
@@ -1310,6 +1322,8 @@ describe('Mission (API test)', () => {
         { label: 'Non', code: BooleanKYC.non },
         { label: 'A voir', code: BooleanKYC.peut_etre },
       ],
+      short_question: 'short 2',
+      image_url: 'BBB',
     });
     await TestUtil.create(DB.kYC, {
       id_cms: 3,
@@ -1323,6 +1337,8 @@ describe('Mission (API test)', () => {
         { label: 'Non', code: BooleanKYC.non },
         { label: 'A voir', code: BooleanKYC.peut_etre },
       ],
+      short_question: 'short 3',
+      image_url: 'CCC',
     });
     // WHEN
     const response = await TestUtil.GET(
@@ -1353,15 +1369,14 @@ describe('Mission (API test)', () => {
       reponses: [
         {
           code: '_2',
-          image_url: null,
-          label: 'Encore une question',
+          image_url: 'BBB',
+          label: 'short 2',
           boolean_value: false,
         },
         {
           code: '_3',
-          image_url: null,
-          label:
-            "Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?",
+          image_url: 'CCC',
+          label: 'short 3',
           boolean_value: false,
         },
       ],
@@ -1544,6 +1559,8 @@ describe('Mission (API test)', () => {
           ],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'AAA',
         },
       ],
     };

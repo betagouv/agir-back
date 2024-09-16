@@ -80,6 +80,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() type: string;
   @ApiProperty() label: string;
   @ApiProperty() question: string;
+  @ApiProperty() short_question: string;
   @ApiProperty() niveau: number;
   @ApiProperty({ type: CMSWebhookFamilleAPI })
   famille: CMSWebhookFamilleAPI;
@@ -153,6 +154,7 @@ export type CMSWebhookPopulateAPI = {
     code: string;
     niveau: number;
     question: string;
+    short_question: string;
     pourquoi: string;
     description: string;
     source: string;

@@ -28,6 +28,7 @@ export class QuestionKYC_v0 {
   id: string;
   id_cms: number;
   question: string;
+  short_question: string;
   type: TypeReponseQuestionKYC;
   categorie: Categorie;
   points: number;
@@ -38,6 +39,7 @@ export class QuestionKYC_v0 {
   thematique?: Thematique;
   tags: Tag[];
   universes: string[];
+  image_url: string;
 
   static map(elem: QuestionKYC): QuestionKYC_v0 {
     return {
@@ -58,6 +60,8 @@ export class QuestionKYC_v0 {
       tags: elem.tags,
       universes: elem.universes ? elem.universes : [],
       id_cms: elem.id_cms,
+      short_question: elem.short_question,
+      image_url: elem.image_url,
     };
   }
 }

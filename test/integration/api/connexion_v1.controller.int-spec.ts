@@ -98,6 +98,8 @@ describe('/utilisateurs - Connexion Compte utilisateur (API test)', () => {
           ],
           tags: [],
           universes: [Univers.climat],
+          short_question: 'short',
+          image_url: 'AAA',
         },
       ],
     };

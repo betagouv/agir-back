@@ -432,7 +432,7 @@ export class CMSUsecase {
       code: cmsWebhookAPI.entry.code,
       label: cmsWebhookAPI.entry.label,
       id_cms: cmsWebhookAPI.entry.id,
-      image_url: CMSUsecase.getImageUrl(cmsWebhookAPI),
+      image_url: CMSUsecase.getImageUrl(cmsWebhookAPI.entry),
       is_locked: cmsWebhookAPI.entry.is_locked,
     });
   }
@@ -479,7 +479,7 @@ export class CMSUsecase {
       id_cms: cmsWebhookAPI.entry.id,
       label: cmsWebhookAPI.entry.label,
       niveau: cmsWebhookAPI.entry.niveau,
-      image_url: CMSUsecase.getImageUrl(cmsWebhookAPI),
+      image_url: CMSUsecase.getImageUrl(cmsWebhookAPI.entry),
       famille_ordre: cmsWebhookAPI.entry.famille
         ? cmsWebhookAPI.entry.famille.ordre
         : 999,
@@ -508,13 +508,13 @@ export class CMSUsecase {
     }
     return url;
   }
-  private static getImageUrl(cmsWebhookAPI: CMSWebhookAPI) {
+  private static getImageUrl(cmsWebhookEntryAPI: CMSWebhookEntryAPI) {
     let url = null;
-    if (cmsWebhookAPI.entry.imageUrl) {
-      if (cmsWebhookAPI.entry.imageUrl.formats.thumbnail) {
-        url = cmsWebhookAPI.entry.imageUrl.formats.thumbnail.url;
+    if (cmsWebhookEntryAPI.imageUrl) {
+      if (cmsWebhookEntryAPI.imageUrl.formats.thumbnail) {
+        url = cmsWebhookEntryAPI.imageUrl.formats.thumbnail.url;
       } else {
-        url = cmsWebhookAPI.entry.imageUrl.url;
+        url = cmsWebhookEntryAPI.imageUrl.url;
       }
     }
     return url;
@@ -556,7 +556,7 @@ export class CMSUsecase {
       titre: hook.entry.titre,
       soustitre: hook.entry.sousTitre,
       source: hook.entry.source,
-      image_url: CMSUsecase.getImageUrl(hook),
+      image_url: CMSUsecase.getImageUrl(hook.entry),
       partenaire: hook.entry.partenaire ? hook.entry.partenaire.nom : null,
       rubrique_ids: CMSUsecase.getIdsFromRubriques(hook.entry.rubriques),
       rubrique_labels: CMSUsecase.getTitresFromRubriques(hook.entry.rubriques),
@@ -678,6 +678,8 @@ export class CMSUsecase {
         ? entry.tags.map((elem) => TagUtilisateur[elem.code])
         : [],
       universes: entry.univers ? entry.univers.map((u) => u.code) : [],
+      image_url: CMSUsecase.getImageUrl(entry),
+      short_question: entry.short_question,
     };
   }
 
@@ -939,6 +941,8 @@ export class CMSUsecase {
         entry.attributes.univers.data.length > 0
           ? entry.attributes.univers.data.map((u) => u.attributes.code)
           : [],
+      short_question: entry.attributes.short_question,
+      image_url: CMSUsecase.getImageUrlFromPopulate(entry),
     };
   }
 
