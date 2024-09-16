@@ -22,6 +22,7 @@ export class MosaicKYC {
   categorie: Categorie;
   points: number;
   reponses: KYCMosaicReponse[];
+  is_answered?: boolean;
 
   static MOSAIC_CATALOGUE: MosaicKYCDef[] = [
     {

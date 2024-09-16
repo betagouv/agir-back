@@ -1349,6 +1349,7 @@ describe('Mission (API test)', () => {
     expect(response.body[1]).toEqual({
       id: 'TEST_MOSAIC_ID',
       titre: 'Titre test',
+      is_answered: false,
       reponses: [
         {
           code: '_2',

@@ -212,7 +212,10 @@ export class KYCHistory {
       }
     }
 
-    return new MosaicKYC(target_kyc_liste, mosaic_def);
+    const result = new MosaicKYC(target_kyc_liste, mosaic_def);
+    result.is_answered = this.isMosaicAnswered(mosaic_def.id);
+
+    return result;
   }
 
   public areConditionsMatched(conditions: ConditionDefi[][]): boolean {

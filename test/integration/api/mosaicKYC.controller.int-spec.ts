@@ -91,6 +91,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.titre).toEqual('Titre test');
+    expect(response.body.is_answered).toEqual(false);
     expect(response.body.id).toEqual('TEST_MOSAIC_ID');
     expect(response.body.categorie).toEqual(Categorie.test);
     expect(response.body.points).toEqual(10);
@@ -267,7 +268,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
     const kyc: KYCHistory_v0 = {
       version: 0,
-      answered_mosaics: [],
+      answered_mosaics: [KYCMosaicID.TEST_MOSAIC_ID],
       answered_questions: [
         {
           id: '_1',
@@ -323,6 +324,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     expect(response.body).toEqual({
       id: 'TEST_MOSAIC_ID',
       titre: 'Titre test',
+      is_answered: true,
       reponses: [
         {
           code: '_1',
