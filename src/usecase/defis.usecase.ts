@@ -145,18 +145,4 @@ export class DefisUsecase {
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
-
-  private async unlockThematiques(
-    unlocked_thematiques: string[],
-    utilisateur: Utilisateur,
-  ) {
-    for (const thematiqueU of unlocked_thematiques) {
-      const mission_def = await this.missionRepository.getByThematique(
-        thematiqueU,
-      );
-      if (mission_def) {
-        utilisateur.missions.upsertNewMission(mission_def, true);
-      }
-    }
-  }
 }
