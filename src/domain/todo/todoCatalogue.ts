@@ -48,7 +48,7 @@ export class TodoCatalogue {
     return result;
   }
 
-  private static DEV_catalogue: Todo_v0[] = [
+  private static NEW_DEV_catalogue: Todo_v0[] = [
     {
       numero_todo: 1,
       points_todo: 50,
@@ -395,4 +395,6 @@ export class TodoCatalogue {
       ],
     },
   ];
+
+  private static DEV_catalogue: Todo_v0[] = TodoCatalogue.catalogue;
 }
