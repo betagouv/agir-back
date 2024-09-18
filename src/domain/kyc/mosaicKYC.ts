@@ -1,3 +1,4 @@
+import { App } from '../app';
 import { Categorie } from '../contenu/categorie';
 import { KYCID } from './KYCID';
 import { KYCMosaicID } from './KYCMosaicID';
@@ -38,6 +39,16 @@ export class MosaicKYC {
       ],
     },
   ];
+
+  public static listMosaicIDs(): KYCMosaicID[] {
+    return MosaicKYC.MOSAIC_CATALOGUE.filter(
+      (m) => m.categorie !== Categorie.test || !App.isProd(),
+    ).map((m) => m.id);
+  }
+
+  public static isMosaicID(id: string): boolean {
+    return MosaicKYC.MOSAIC_CATALOGUE.findIndex((m) => m.id === id) > -1;
+  }
 
   static findMosaicDefByID(mosaicID: KYCMosaicID) {
     if (!mosaicID) return null;

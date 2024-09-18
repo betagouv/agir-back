@@ -7,6 +7,7 @@ import { KycDefinition } from './kycDefinition';
 import { KYCID } from './KYCID';
 import { KYCMosaicID } from './KYCMosaicID';
 import { MosaicKYC, MosaicKYCDef } from './mosaicKYC';
+import { QuestionGeneric } from './questionGeneric';
 import { QuestionKYC } from './questionKYC';
 
 type LogementInput = {
@@ -60,16 +61,25 @@ export class KYCHistory {
     return this.answered_mosaics.includes(type);
   }
 
-  public getAllUpToDateQuestionSet(): QuestionKYC[] {
-    let result = [];
+  public getAllUpToDateQuestionSet(): QuestionGeneric[] {
+    let result: QuestionGeneric[] = [];
 
     this.catalogue.forEach((question) => {
       const answered_question = this.getAnsweredQuestionByCode(question.code);
       if (answered_question) {
         answered_question.refreshFromDef(question);
       }
-      result.push(answered_question || QuestionKYC.buildFromDef(question));
+      result.push({
+        kyc: answered_question || QuestionKYC.buildFromDef(question),
+      });
     });
+
+    const liste_mosaic_ids = MosaicKYC.listMosaicIDs();
+    for (const mosaic_id of liste_mosaic_ids) {
+      result.push({
+        mosaic: this.getUpToDateMosaicById(mosaic_id),
+      });
+    }
 
     return result;
   }
@@ -198,6 +208,12 @@ export class KYCHistory {
       return answered_question;
     }
     return QuestionKYC.buildFromDef(question_catalogue);
+  }
+
+  public getUpToDateMosaicById(mosaicID: KYCMosaicID): MosaicKYC {
+    if (!mosaicID) return null;
+    const mosaic_def = MosaicKYC.findMosaicDefByID(mosaicID);
+    return this.getUpToDateMosaic(mosaic_def);
   }
 
   public getUpToDateMosaic(mosaic_def: MosaicKYCDef): MosaicKYC {

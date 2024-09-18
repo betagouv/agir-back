@@ -6,8 +6,6 @@ import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { Univers } from '../../../src/domain/univers/univers';
-import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
-import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 import {
@@ -15,7 +13,6 @@ import {
   MosaicKYCDef,
   TypeReponseMosaicKYC,
 } from '../../../src/domain/kyc/mosaicKYC';
-import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 
 const MOSAIC_CATALOGUE: MosaicKYCDef[] = [
@@ -44,7 +41,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('GET /utilisateurs/id/mosaicsKYC/id - mosaic avec de questions du catalogue', async () => {
+  it('GET /utilisateurs/id/questionsKYC/id - mosaic avec de questions du catalogue', async () => {
     // GIVEN
 
     const dbKYC: KYC = {
@@ -91,7 +88,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/mosaicsKYC/TEST_MOSAIC_ID',
+      '/utilisateurs/utilisateur-id/questionsKYC/TEST_MOSAIC_ID',
     );
 
     // THEN
@@ -105,42 +102,42 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     expect(response.body.reponses).toHaveLength(2);
 
     expect(response.body.reponses[0].code).toEqual('_1');
-    expect(response.body.reponses[0].label).toEqual('short 1');
+    expect(response.body.reponses[0].label).toEqual('short 1');
     expect(response.body.reponses[0].image_url).toEqual('AAA');
     expect(response.body.reponses[0].boolean_value).toEqual(false);
 
     expect(response.body.reponses[1].code).toEqual('_2');
-    expect(response.body.reponses[1].label).toEqual('short 2');
+    expect(response.body.reponses[1].label).toEqual('short 2');
     expect(response.body.reponses[1].image_url).toEqual('BBB');
     expect(response.body.reponses[1].boolean_value).toEqual(false);
   });
-  it('GET /utilisateurs/id/mosaicsKYC/bad - mosaic inconnue', async () => {
+  it('GET /utilisateurs/id/questionsKYC/bad - mosaic inconnue', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/mosaicsKYC/bad',
+      '/utilisateurs/utilisateur-id/questionsKYC/bad',
     );
 
     // THEN
     expect(response.status).toBe(404);
-    expect(response.body.message).toBe(`Mosaic d'id [bad] inconnue`);
+    expect(response.body.message).toBe(`Question d'id bad inconnue`);
   });
-  it('PUT /utilisateurs/id/mosaicsKYC/bad - MAJ mosaic inconnue', async () => {
+  it('PUT /utilisateurs/id/questionsKYC/bad - MAJ mosaic inconnue', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/mosaicsKYC/bad',
+      '/utilisateurs/utilisateur-id/questionsKYC/bad',
     );
 
     // THEN
     expect(response.status).toBe(404);
-    expect(response.body.message).toBe(`Mosaic d'id [bad] inconnue`);
+    expect(response.body.message).toBe(`Question d'id bad inconnue`);
   });
-  it('PUT /utilisateurs/id/mosaicsKYC/id - maj mosaic', async () => {
+  it('PUT /utilisateurs/id/questionsKYC/id - maj mosaic', async () => {
     // GIVEN
 
     const dbKYC: KYC = {
@@ -182,7 +179,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/mosaicsKYC/TEST_MOSAIC_ID',
+      '/utilisateurs/utilisateur-id/questionsKYC/TEST_MOSAIC_ID',
     ).send({
       reponse: [
         { code: '_1', boolean_value: true },
@@ -242,7 +239,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     });
   });
 
-  it('GET /utilisateurs/id/mosaicsKYC/id - lecture mosaic avec reponses précédentes', async () => {
+  it('GET /utilisateurs/id/questionsKYC/id - lecture mosaic avec reponses précédentes', async () => {
     // GIVEN
 
     const dbKYC: KYC = {
@@ -334,7 +331,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/mosaicsKYC/TEST_MOSAIC_ID',
+      '/utilisateurs/utilisateur-id/questionsKYC/TEST_MOSAIC_ID',
     );
 
     // THEN
@@ -346,13 +343,13 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       reponses: [
         {
           code: '_1',
-          label: 'short 1',
+          label: 'short 1',
           boolean_value: true,
           image_url: 'AAA',
         },
         {
           code: '_2',
-          label: 'short 2',
+          label: 'short 2',
           boolean_value: false,
           image_url: 'BBB',
         },

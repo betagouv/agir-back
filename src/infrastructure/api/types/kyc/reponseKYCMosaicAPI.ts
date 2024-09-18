@@ -7,5 +7,5 @@ export class ReponseUnitaireKYCMosaicAPI {
 
 export class ReponseKYCMosaicAPI {
   @ApiProperty({ type: [ReponseUnitaireKYCMosaicAPI] })
-  reponse: ReponseUnitaireKYCMosaicAPI[];
+  reponse_mosaic: ReponseUnitaireKYCMosaicAPI[];
 }

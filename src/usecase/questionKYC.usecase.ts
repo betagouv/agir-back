@@ -15,6 +15,8 @@ import {
 import { MosaicKYC, TypeReponseMosaicKYC } from '../domain/kyc/mosaicKYC';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
+import { QuestionGeneric } from '../domain/kyc/questionGeneric';
+import { ReponsesGeneric } from '../domain/kyc/reponseGeneric';
 
 @Injectable()
 export class QuestionKYCUsecase {
@@ -25,7 +27,7 @@ export class QuestionKYCUsecase {
     private personnalisator: Personnalisator,
   ) {}
 
-  async getALL(utilisateurId: string): Promise<QuestionKYC[]> {
+  async getALL(utilisateurId: string): Promise<QuestionGeneric[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
@@ -38,41 +40,42 @@ export class QuestionKYCUsecase {
     return this.personnalisator.personnaliser(result, utilisateur);
   }
 
-  async getQuestion(utilisateurId: string, questionId): Promise<QuestionKYC> {
+  async getQuestion(
+    utilisateurId: string,
+    questionId,
+  ): Promise<QuestionGeneric> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
-    const result =
-      utilisateur.kyc_history.getUpToDateQuestionByCodeOrException(questionId);
+    let result_kyc: QuestionKYC;
+    let result_mosaic: MosaicKYC;
+
+    if (MosaicKYC.isMosaicID(questionId)) {
+      const mosaic_def = MosaicKYC.findMosaicDefByID(KYCMosaicID[questionId]);
+
+      if (!mosaic_def) {
+        ApplicationError.throwUnknownMosaicId(questionId);
+      }
+      result_mosaic = utilisateur.kyc_history.getUpToDateMosaic(mosaic_def);
+    } else {
+      result_kyc =
+        utilisateur.kyc_history.getUpToDateQuestionByCodeOrException(
+          questionId,
+        );
+    }
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    return this.personnalisator.personnaliser(result, utilisateur);
+    return {
+      kyc: this.personnalisator.personnaliser(result_kyc, utilisateur),
+      mosaic: this.personnalisator.personnaliser(result_mosaic, utilisateur),
+    };
   }
 
-  async getQuestionMosaic(
-    utilisateurId: string,
-    mosaicId: string,
-  ): Promise<MosaicKYC> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
-    utilisateur.checkState();
-
-    const mosaic_def = MosaicKYC.findMosaicDefByID(KYCMosaicID[mosaicId]);
-
-    if (!mosaic_def) {
-      ApplicationError.throwUnknownMosaicId(mosaicId);
-    }
-
-    const kyc_catalogue = await this.kycRepository.getAllDefs();
-    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
-
-    return utilisateur.kyc_history.getUpToDateMosaic(mosaic_def);
-  }
-
-  async updateResponse(
+  async updateResponseKYC(
     utilisateurId: string,
     code_question: string,
     reponse: string[],

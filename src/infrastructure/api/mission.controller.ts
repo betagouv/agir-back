@@ -20,21 +20,13 @@ import { GenericControler } from './genericControler';
 import { MissionAPI } from './types/mission/MissionAPI';
 import { MissionUsecase } from '../../../src/usecase/mission.usecase';
 import { QuestionKYCAPI } from './types/kyc/questionsKYCAPI';
-import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
-import {
-  QuestionKYC,
-  TypeReponseQuestionKYC,
-} from '../../domain/kyc/questionKYC';
 import { MosaicKYCAPI } from './types/kyc/mosaicKYCAPI';
 @ApiExtraModels(QuestionKYCAPI, MosaicKYCAPI)
 @Controller()
 @ApiBearerAuth()
 @ApiTags('Mission')
 export class MissionController extends GenericControler {
-  constructor(
-    private missionUsecase: MissionUsecase,
-    private questionKYCUsecase: QuestionKYCUsecase,
-  ) {
+  constructor(private missionUsecase: MissionUsecase) {
     super();
   }
 

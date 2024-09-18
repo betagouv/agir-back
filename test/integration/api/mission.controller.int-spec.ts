@@ -21,7 +21,6 @@ import { Thematique } from '../../../src/domain/contenu/thematique';
 import { ObjectifDefinition } from '../../../src/domain/mission/missionDefinition';
 import { Mission } from '@prisma/client';
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
-import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
 import {
   MosaicKYC,
   MosaicKYCDef,

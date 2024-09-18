@@ -21,7 +21,7 @@ import {
 import { Categorie } from '../domain/contenu/categorie';
 import { PonderationApplicativeManager } from '../domain/scoring/ponderationApplicative';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
-import { QuestionGeneric } from '../domain/kyc/question';
+import { QuestionGeneric } from '../domain/kyc/questionGeneric';
 import { MosaicKYC } from '../domain/kyc/mosaicKYC';
 
 @Injectable()
@@ -166,14 +166,16 @@ export class MissionUsecase {
           ),
         });
       } else {
-        const mosaic = utilisateur.kyc_history.getUpToDateMosaic(
-          MosaicKYC.findMosaicDefByID(KYCMosaicID[objectif_kyc.content_id]),
+        const mosaic = utilisateur.kyc_history.getUpToDateMosaicById(
+          KYCMosaicID[objectif_kyc.content_id],
         );
         if (mosaic) {
           result.push({ mosaic: mosaic });
         }
       }
     }
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
     return this.personnalisator.personnaliser(result, utilisateur);
   }
