@@ -69,11 +69,20 @@ export class PreviewController extends GenericControler {
         const urls = article.attributes.contenu.match(/"https?:\/\/[^"]+"/gi);
         if (urls && urls.length > 0) {
           for (const url of urls) {
-            result.push(`Article [${article.id}] : ${url}`);
+            if (url && url.length > 2) {
+              const real_url = url.substring(1, url.length - 1);
+              const ok = await this.checkURLOK(real_url);
+              result.push(
+                `Article [${article.id}] ${
+                  ok ? '' : '[🔥🔥🔥 TO CHECK]'
+                } : ${url}`,
+              );
+            }
           }
         }
       }
     }
+
     result.push(``);
     result.push(`###############################`);
     result.push(`## Aides (champ description)`);
@@ -87,11 +96,16 @@ export class PreviewController extends GenericControler {
         const urls = aide.attributes.description.match(/"https?:\/\/[^"]+"/gi);
         if (urls && urls.length > 0) {
           for (const url of urls) {
-            result.push(`Aide [${aide.id}] : ${url}`);
+            const real_url = url.substring(1, url.length - 1);
+            const ok = await this.checkURLOK(real_url);
+            result.push(
+              `Aide [${aide.id}] ${ok ? '' : '[🔥🔥🔥 TO CHECK]'} : ${url}`,
+            );
           }
         }
       }
     }
+
     result.push(``);
     result.push(`###############################`);
     result.push(`## Defis (astuce / pourquoi)`);
@@ -105,7 +119,13 @@ export class PreviewController extends GenericControler {
         const urls = defi.attributes.astuces.match(/"https?:\/\/[^"]+"/gi);
         if (urls && urls.length > 0) {
           for (const url of urls) {
-            result.push(`Defi [${defi.id}] astuce   : ${url}`);
+            const real_url = url.substring(1, url.length - 1);
+            const ok = await this.checkURLOK(real_url);
+            result.push(
+              `Defi [${defi.id}] ${
+                ok ? '' : '[🔥🔥🔥 TO CHECK]'
+              } astuce   : ${url}`,
+            );
           }
         }
       }
@@ -113,13 +133,28 @@ export class PreviewController extends GenericControler {
         const urls = defi.attributes.pourquoi.match(/"https?:\/\/[^"]+"/gi);
         if (urls && urls.length > 0) {
           for (const url of urls) {
-            result.push(`Defi [${defi.id}] pourquoi : ${url}`);
+            const real_url = url.substring(1, url.length - 1);
+            const ok = await this.checkURLOK(real_url);
+            result.push(
+              `Defi [${defi.id}] ${
+                ok ? '' : '[🔥🔥🔥 TO CHECK]'
+              } pourquoi : ${url}`,
+            );
           }
         }
       }
     }
-
     return `<pre>${result.join('\n')}</pre>`;
+  }
+
+  private async checkURLOK(url: string): Promise<boolean> {
+    let head;
+    try {
+      head = await axios.head(url);
+    } catch (error) {
+      return false;
+    }
+    return head.status === 200;
   }
 
   @Get('kyc_preview/:id')

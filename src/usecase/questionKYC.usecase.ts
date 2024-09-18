@@ -12,11 +12,7 @@ import {
   Superficie,
   TypeLogement,
 } from '../domain/logement/logement';
-import {
-  MosaicKYC,
-  MosaicKYCDef,
-  TypeReponseMosaicKYC,
-} from '../domain/kyc/mosaicKYC';
+import { MosaicKYC, TypeReponseMosaicKYC } from '../domain/kyc/mosaicKYC';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 
