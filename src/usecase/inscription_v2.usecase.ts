@@ -92,7 +92,7 @@ export class Inscription_v2_Usecase {
   async renvoyerCodeInscription(email: string) {
     const utilisateur = await this.utilisateurRespository.findByEmail(email);
     if (!utilisateur) {
-      ApplicationError.throwBadCodeOrEmailError();
+      return;
     }
 
     utilisateur.setNew6DigitCode();

@@ -133,6 +133,28 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(userDB.code).not.toEqual(userDB_before.code);
   });
 
+  it('POST /utilisateurs/renvoyer_code - pas derreur di mauvais email', async () => {
+    // GIVEN
+    await TestUtil.getServer().post('/utilisateurs_v2').send({
+      mot_de_passe: '#1234567890HAHAa',
+      email: 'w@w.com',
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/renvoyer_code')
+      .send({ email: 'wGAHAHA@w.com' });
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await TestUtil.prisma.utilisateur.findFirst({
+      where: { email: 'w@w.com' },
+    });
+
+    expect(userDB.sent_email_count).toEqual(1);
+  });
+
   it('POST /utilisateurs/renvoyer_code - PROD false - resend code ok for first time, counter + 1, same code generated', async () => {
     // GIVEN
     process.env.IS_PROD = 'false';
