@@ -75,6 +75,30 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     });
     expect(dbUser).toBeNull();
   });
+  it.only('DELETE /admin/utilisateurs/id en mode admin', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.suivi);
+    await TestUtil.create(DB.situationNGC);
+    await TestUtil.create(DB.empreinte);
+    await TestUtil.create(DB.serviceDefinition);
+    await TestUtil.create(DB.groupe);
+    await TestUtil.create(DB.groupeAbonnement);
+    await TestUtil.create(DB.thematique);
+
+    // WHEN
+    const response = await TestUtil.DELETE(
+      '/admin/utilisateurs/utilisateur-id',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(dbUser).toBeNull();
+  });
   it('GET /utilisateurs/id - 401 si pas de token', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
