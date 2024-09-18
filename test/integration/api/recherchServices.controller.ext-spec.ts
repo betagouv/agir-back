@@ -13,6 +13,8 @@ import {
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { BibliothequeServices_v0 } from '../../../src/domain/object_store/service/BibliothequeService_v0';
 import { ServiceFavorisStatistiqueRepository } from '../../../src/infrastructure/repository/serviceFavorisStatistique.repository';
+import { FruitsLegumesRepository } from '../../../src/infrastructure/repository/services_recherche/fruitsLegumes.repository';
+import { PresDeChezNousRepository } from '../../../src/infrastructure/repository/services_recherche/pres_de_chez_nous/presDeChezNous.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { FruitLegume } from '../../../src/infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { DB, TestUtil } from '../../TestUtil';
@@ -99,6 +101,7 @@ describe('RechercheServices (API test)', () => {
 
   it(`POST /utlilisateur/id/recherche_services/proximite/search renvoie les images`, async () => {
     // GIVEN
+    PresDeChezNousRepository.API_TIMEOUT = 5000;
     const logement_dijon: Logement_v0 = {
       version: 0,
       superficie: Superficie.superficie_150,
@@ -126,6 +129,35 @@ describe('RechercheServices (API test)', () => {
     expect(response.body[0].image_url).toEqual(
       'https://presdecheznous.fr/uploads/images/elements/printemps/2017/06/11717_Ecole-innovante-Saclay-1.jpg',
     );
+  });
+  it(`POST /utlilisateur/id/recherche_services/proximite/search erreur 500 si timeout service`, async () => {
+    // GIVEN
+    PresDeChezNousRepository.API_TIMEOUT = 20;
+
+    const logement_dijon: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91400',
+      chauffage: Chauffage.bois,
+      commune: 'ORSAY',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement_dijon });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
+    ).send({ rayon_metres: 2000, nombre_max_resultats: 10 });
+
+    // THEN
+    expect(response.status).toBe(500);
+    expect(response.body.code).toBe('071');
   });
 
   it(`POST /utlilisateur/id/recherche_services/proximite/search renvoie une liste de résultats par distance croissante`, async () => {
@@ -442,6 +474,8 @@ describe('RechercheServices (API test)', () => {
     expect(response.body).toHaveLength(20);
     expect(response.body[0]).toStrictEqual({
       est_favoris: false,
+      etapes_recette: [],
+      ingredients: [],
       id: '7',
       impact_carbone_kg: 0,
       nombre_favoris: 0,
@@ -477,6 +511,8 @@ describe('RechercheServices (API test)', () => {
       titre: 'Vélo ou marche',
       distance_metres: 1141,
       image_url: 'https://site/impact_co2_img_transports/velo.svg',
+      etapes_recette: [],
+      ingredients: [],
     });
     expect(response.body[15]).toStrictEqual({
       est_favoris: false,
@@ -486,10 +522,12 @@ describe('RechercheServices (API test)', () => {
       titre: 'Voiture thermique',
       distance_metres: 2779,
       image_url: 'https://site/impact_co2_img_transports/voiturethermique.svg',
+      etapes_recette: [],
+      ingredients: [],
     });
   });
 
-  it(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats`, async () => {
+  it.only(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
     process.env.BASE_URL_FRONT = 'https://site';
@@ -503,6 +541,8 @@ describe('RechercheServices (API test)', () => {
     expect(response.status).toBe(201);
     expect(response.body).toHaveLength(36);
     expect(response.body[0]).toStrictEqual({
+      etapes_recette: [],
+      ingredients: [],
       est_favoris: false,
       id: 'poire',
       impact_carbone_kg: 0.36428259399999996,
@@ -523,8 +563,61 @@ describe('RechercheServices (API test)', () => {
       userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
     ).toHaveLength(36);
   });
+  it(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats`, async () => {
+    // GIVEN
+    FruitsLegumesRepository.API_TIMEOUT = 4000;
+    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    process.env.BASE_URL_FRONT = 'https://site';
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/fruits_legumes/search',
+    ).send({ categorie: 'janvier' });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(36);
+    expect(response.body[0]).toStrictEqual({
+      etapes_recette: [],
+      ingredients: [],
+      est_favoris: false,
+      id: 'poire',
+      impact_carbone_kg: 0.36428259399999996,
+      nombre_favoris: 0,
+      titre: 'Poire',
+      emoji: '🍐',
+      type_fruit_legume: FruitLegume.fruit,
+      image_url: 'https://site/impact_co2_img_fruits_legumes/poire.svg',
+    });
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+
+    expect(userDB.bilbiotheque_services.liste_services).toHaveLength(1);
+    expect(userDB.bilbiotheque_services.liste_services[0].id).toEqual(
+      ServiceRechercheID.fruits_legumes,
+    );
+    expect(
+      userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
+    ).toHaveLength(36);
+  });
+  it(`POST /utlilisateur/id/recherche_services/fruits_legumes/search erreur 500 si timeout`, async () => {
+    // GIVEN
+    FruitsLegumesRepository.API_TIMEOUT = 5;
+    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    process.env.BASE_URL_FRONT = 'https://site';
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/fruits_legumes/search',
+    ).send({ categorie: 'janvier' });
+
+    // THEN
+    expect(response.status).toBe(500);
+    expect(response.body.code).toBe('071');
+  });
   it(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats si pas de categorie`, async () => {
     // GIVEN
+    FruitsLegumesRepository.API_TIMEOUT = 4000;
     await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
 
     // WHEN
@@ -544,6 +637,8 @@ describe('RechercheServices (API test)', () => {
       emoji: '🌱',
       type_fruit_legume: 'legume',
       image_url: '/impact_co2_img_fruits_legumes/ail.svg',
+      etapes_recette: [],
+      ingredients: [],
     });
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');

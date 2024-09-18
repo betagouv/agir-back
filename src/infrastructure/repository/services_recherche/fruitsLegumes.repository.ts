@@ -9,6 +9,7 @@ import {
   FruitLegume,
   FruitsEtLegumesServiceManager,
 } from '../../service/fruits/fruitEtLegumesServiceManager';
+import { ApplicationError } from '../../applicationError';
 
 const API_URL = 'https://impactco2.fr/api/v1/fruitsetlegumes';
 
@@ -25,6 +26,8 @@ export type FruitsLegumesResponse = {
 
 @Injectable()
 export class FruitsLegumesRepository implements FinderInterface {
+  static API_TIMEOUT = 4000;
+
   constructor(
     private fruitsEtLegumesServiceManager: FruitsEtLegumesServiceManager,
   ) {}
@@ -50,6 +53,8 @@ export class FruitsLegumesRepository implements FinderInterface {
     const result = await this.callServiceAPI(filtre);
 
     if (!result) {
+      ApplicationError.throwExternalServiceError('Fruits et légumes de saison');
+      /*
       return [
         new ResultatRecherche({
           id: '9999',
@@ -59,6 +64,7 @@ export class FruitsLegumesRepository implements FinderInterface {
           type_fruit_legume: FruitLegume.fruit_et_legume,
         }),
       ];
+      */
     }
     const mapped_result = result.data.map(
       (r) =>
@@ -94,6 +100,7 @@ export class FruitsLegumesRepository implements FinderInterface {
     }
     try {
       response = await axios.get(API_URL, {
+        timeout: FruitsLegumesRepository.API_TIMEOUT,
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${App.getFruitsLegumesAPIKEY()}`,
@@ -102,9 +109,9 @@ export class FruitsLegumesRepository implements FinderInterface {
       });
     } catch (error) {
       if (error.response) {
-        console.log(error.response);
+        console.error(error.response);
       } else if (error.request) {
-        console.log(error.request);
+        console.error(error.request);
       }
       return null;
     }

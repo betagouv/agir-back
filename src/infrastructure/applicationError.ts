@@ -359,6 +359,13 @@ export class ApplicationError {
   static throwUnknownMosaicId(id: string) {
     this.throwAppError('070', `Mosaic d'id [${id}] inconnue`, 404);
   }
+  static throwExternalServiceError(service_name) {
+    this.throwAppError(
+      '071',
+      `Le service externe '${service_name}' semble rencontrer un problème, nous vous proposons sde re-essayer plus tard`,
+      500,
+    );
+  }
 
   private static throwAppError(
     code: string,

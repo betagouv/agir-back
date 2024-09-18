@@ -8,6 +8,7 @@ import { OpenHour } from '../../../../domain/bibliotheque_services/openHour';
 import { ResultatRecherche } from '../../../../domain/bibliotheque_services/resultatRecherche';
 import { AddressesRepository } from '../addresses.repository';
 import { PresDeChezNousCategorieMapping } from './presDeChezNousCategorieMapping';
+import { ApplicationError } from '../../../applicationError';
 
 const API_URL = 'https://presdecheznous.gogocarto.fr/api/elements.json';
 
@@ -63,6 +64,8 @@ export type PresDeChezVousResponse = {
 
 @Injectable()
 export class PresDeChezNousRepository implements FinderInterface {
+  static API_TIMEOUT = 4000;
+
   constructor(private addressesRepository: AddressesRepository) {}
 
   public getManagedCategories(): CategorieRecherche[] {
@@ -108,6 +111,9 @@ export class PresDeChezNousRepository implements FinderInterface {
 
     const result = await this.callServiceAPI(filtre, liste_categories);
 
+    if (!result) {
+      ApplicationError.throwExternalServiceError('Près de chez nous');
+    }
     const final_result: ResultatRecherche[] = result.data.map(
       (r) =>
         new ResultatRecherche({
@@ -167,6 +173,7 @@ export class PresDeChezNousRepository implements FinderInterface {
     let response;
     try {
       response = await axios.get(API_URL, {
+        timeout: PresDeChezNousRepository.API_TIMEOUT,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -178,9 +185,9 @@ export class PresDeChezNousRepository implements FinderInterface {
       });
     } catch (error) {
       if (error.response) {
-        console.log(error.response);
+        console.error(error.response);
       } else if (error.request) {
-        console.log(error.request);
+        console.error(error.request);
       }
       return null;
     }
