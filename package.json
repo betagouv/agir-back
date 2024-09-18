@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@getbrevo/brevo": "^1.0.1",
-    "@incubateur-ademe/nosgestesclimat": "^2.5.2",
+    "@incubateur-ademe/nosgestesclimat": "^3.1.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/jwt": "^10.1.0",

@@ -1,9 +1,6 @@
 import { Categorie } from '../../../src/domain/contenu/categorie';
-import { Thematique } from '../../../src/domain/contenu/thematique';
-import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
-import { Univers } from '../../../src/domain/univers/univers';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
@@ -47,9 +44,9 @@ describe('BilanCarbone (API test)', () => {
     });
 
     expect(stats.situation).toEqual({});
-    expect(stats.total_g).toEqual(8898031);
-    expect(stats.transport_g).toEqual(2796100);
-    expect(stats.alimenation_g).toEqual(2094156);
+    expect(stats.total_g).toEqual(9048184);
+    expect(stats.transport_g).toEqual(1958482);
+    expect(stats.alimenation_g).toEqual(2328700);
   });
   it(`POST /utlilisateurs/compute_bilan_carbone bilan carbon utilisteur avec une reponse alimentationNGC`, async () => {
     // GIVEN
@@ -102,8 +99,8 @@ describe('BilanCarbone (API test)', () => {
     expect(stats.situation).toEqual({
       'alimentation . de saison . consommation': '"souvent"',
     });
-    expect(stats.total_g).toEqual(8861937);
-    expect(stats.transport_g).toEqual(2796100);
-    expect(stats.alimenation_g).toEqual(2058063);
+    expect(stats.total_g).toEqual(9011638);
+    expect(stats.transport_g).toEqual(1958482);
+    expect(stats.alimenation_g).toEqual(2292154);
   });
 });

@@ -95,9 +95,8 @@ export class NGCCalculator {
       'transport . avion',
       'transport . deux roues',
       'transport . mobilité douce',
-      'transport . bus',
+      'transport . transports commun',
       'transport . train',
-      'transport . métro ou tram',
       'transport . vacances',
       'transport . ferry',
       'logement',
@@ -127,84 +126,150 @@ export class NGCCalculator {
       'alimentation . plats . végétalien',
       'alimentation . boisson',
       'services sociétaux',
-      'services publics',
-      'services marchands',
+      'services sociétaux . services publics',
+      'services sociétaux . services marchands',
     ];
 
     const resultMap = this.computeEntryListValues(situation, entryList);
 
-    const total = resultMap.get('bilan') as number;
+    const total = this.getValueFromMap(resultMap, 'bilan');
 
-    const transport = resultMap.get('transport') as number;
-    const transport_voiture = resultMap.get('transport . voiture') as number;
-    const transport_avion = resultMap.get('transport . avion') as number;
-    const transport_2roues = resultMap.get('transport . deux roues') as number;
-    const transport_mob_douce = resultMap.get(
+    const transport = this.getValueFromMap(resultMap, 'transport');
+    const transport_voiture = this.getValueFromMap(
+      resultMap,
+      'transport . voiture',
+    );
+    const transport_avion = this.getValueFromMap(
+      resultMap,
+      'transport . avion',
+    );
+    const transport_2roues = this.getValueFromMap(
+      resultMap,
+      'transport . deux roues',
+    );
+    const transport_mob_douce = this.getValueFromMap(
+      resultMap,
       'transport . mobilité douce',
-    ) as number;
-    const transport_bus = resultMap.get('transport . bus') as number;
-    const transport_train = resultMap.get('transport . train') as number;
-    const transport_metro = resultMap.get(
-      'transport . métro ou tram',
-    ) as number;
-    const transport_vacances = resultMap.get('transport . vacances') as number;
-    const transport_ferry = resultMap.get('transport . ferry') as number;
+    );
+    const transport_commun = this.getValueFromMap(
+      resultMap,
+      'transport . transports commun',
+    );
+    const transport_train = this.getValueFromMap(
+      resultMap,
+      'transport . train',
+    );
+    const transport_vacances = this.getValueFromMap(
+      resultMap,
+      'transport . vacances',
+    );
+    const transport_ferry = this.getValueFromMap(
+      resultMap,
+      'transport . ferry',
+    );
 
-    const logement = resultMap.get('logement') as number;
-    const logement_constr = resultMap.get('logement . construction') as number;
-    const logement_elec = resultMap.get('logement . électricité') as number;
-    const logement_chauf = resultMap.get('logement . chauffage') as number;
-    const logement_clim = resultMap.get('logement . climatisation') as number;
-    const logement_piscine = resultMap.get('logement . piscine') as number;
-    const logement_ext = resultMap.get('logement . extérieur') as number;
-    const logement_vacances = resultMap.get('logement . vacances') as number;
+    const logement = this.getValueFromMap(resultMap, 'logement');
+    const logement_constr = this.getValueFromMap(
+      resultMap,
+      'logement . construction',
+    );
+    const logement_elec = this.getValueFromMap(
+      resultMap,
+      'logement . électricité',
+    );
+    const logement_chauf = this.getValueFromMap(
+      resultMap,
+      'logement . chauffage',
+    );
+    const logement_clim = this.getValueFromMap(
+      resultMap,
+      'logement . climatisation',
+    );
+    const logement_piscine = this.getValueFromMap(
+      resultMap,
+      'logement . piscine',
+    );
+    const logement_ext = this.getValueFromMap(
+      resultMap,
+      'logement . extérieur',
+    );
+    const logement_vacances = this.getValueFromMap(
+      resultMap,
+      'logement . vacances',
+    );
 
-    const divers = resultMap.get('divers') as number;
-    const divers_animaux = resultMap.get(
+    const divers = this.getValueFromMap(resultMap, 'divers');
+    const divers_animaux = this.getValueFromMap(
+      resultMap,
       'divers . animaux domestiques',
-    ) as number;
-    const divers_textile = resultMap.get('divers . textile') as number;
-    const divers_electro = resultMap.get('divers . électroménager') as number;
-    const divers_ameublement = resultMap.get('divers . ameublement') as number;
-    const divers_numérique = resultMap.get('divers . numérique') as number;
-    const divers_loisirs = resultMap.get('divers . loisirs') as number;
-    const divers_autres_produits = resultMap.get(
+    );
+    const divers_textile = this.getValueFromMap(resultMap, 'divers . textile');
+    const divers_electro = this.getValueFromMap(
+      resultMap,
+      'divers . électroménager',
+    );
+    const divers_ameublement = this.getValueFromMap(
+      resultMap,
+      'divers . ameublement',
+    );
+    const divers_numérique = this.getValueFromMap(
+      resultMap,
+      'divers . numérique',
+    );
+    const divers_loisirs = this.getValueFromMap(resultMap, 'divers . loisirs');
+    const divers_autres_produits = this.getValueFromMap(
+      resultMap,
       'divers . autres produits',
-    ) as number;
-    const divers_tabac = resultMap.get('divers . tabac') as number;
+    );
+    const divers_tabac = this.getValueFromMap(resultMap, 'divers . tabac');
 
-    const alimentation = resultMap.get('alimentation') as number;
-    const alimentation_petit_dej = resultMap.get(
+    const alimentation = this.getValueFromMap(resultMap, 'alimentation');
+    const alimentation_petit_dej = this.getValueFromMap(
+      resultMap,
       'alimentation . petit déjeuner annuel',
-    ) as number;
+    );
 
-    let alimentation_viande = ((resultMap.get(
-      'alimentation . plats . viande rouge',
-    ) as number) +
-      resultMap.get('alimentation . plats . viande blanche')) as number;
+    let alimentation_viande =
+      (this.getValueFromMap(
+        resultMap,
+        'alimentation . plats . viande rouge',
+      ) as number) +
+      this.getValueFromMap(resultMap, 'alimentation . plats . viande blanche');
     alimentation_viande = alimentation_viande * 52;
 
-    let alimentation_poisson = ((resultMap.get(
-      'alimentation . plats . poisson gras',
-    ) as number) +
-      resultMap.get('alimentation . plats . poisson blanc')) as number;
+    let alimentation_poisson =
+      (this.getValueFromMap(
+        resultMap,
+        'alimentation . plats . poisson gras',
+      ) as number) +
+      this.getValueFromMap(resultMap, 'alimentation . plats . poisson blanc');
     alimentation_poisson = alimentation_poisson * 52;
 
-    let alimentation_fruits_legumes = ((resultMap.get(
-      'alimentation . plats . végétarien',
-    ) as number) +
-      resultMap.get('alimentation . plats . végétalien')) as number;
+    let alimentation_fruits_legumes =
+      (this.getValueFromMap(
+        resultMap,
+        'alimentation . plats . végétarien',
+      ) as number) +
+      this.getValueFromMap(resultMap, 'alimentation . plats . végétalien');
     alimentation_fruits_legumes = alimentation_fruits_legumes * 52;
 
-    const alimentation_boisson = resultMap.get(
+    const alimentation_boisson = this.getValueFromMap(
+      resultMap,
       'alimentation . boisson',
-    ) as number;
+    );
 
-    const services_societaux = resultMap.get('services sociétaux') as number;
-    const services_societaux_pub = resultMap.get('services publics') as number;
-    const services_societaux_march = resultMap.get(
-      'services marchands',
-    ) as number;
+    const services_societaux = this.getValueFromMap(
+      resultMap,
+      'services sociétaux',
+    );
+    const services_societaux_pub = this.getValueFromMap(
+      resultMap,
+      'services sociétaux . services publics',
+    );
+    const services_societaux_march = this.getValueFromMap(
+      resultMap,
+      'services sociétaux . services marchands',
+    );
 
     const impacts: ImpactUnivers[] = [];
     impacts.push({
@@ -251,13 +316,11 @@ export class NGCCalculator {
         },
         {
           label: 'Transports en commun',
-          pourcentage: Math.round(
-            ((transport_bus + transport_metro) / total) * 100,
-          ),
+          pourcentage: Math.round((transport_commun / total) * 100),
           pourcentage_categorie: Math.round(
-            ((transport_bus + transport_metro) / transport) * 100,
+            (transport_commun / transport) * 100,
           ),
-          impact_kg_annee: transport_bus + transport_metro,
+          impact_kg_annee: transport_commun,
           emoji: '🚌',
         },
         {
@@ -510,6 +573,11 @@ export class NGCCalculator {
     });
   }
 
+  private getValueFromMap(map: Map<string, any>, key: string): number {
+    const result = map.get(key) as number;
+    return result ? result : 0;
+  }
+
   private sortResult(liste: ImpactUnivers[]) {
     liste.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
     for (const univers of liste) {
@@ -539,13 +607,16 @@ export class NGCCalculator {
     const resultMap = this.computeEntryListValues(situation, entryList);
 
     return {
-      bilan_carbone_annuel: resultMap.get('bilan'),
+      bilan_carbone_annuel: this.getValueFromMap(resultMap, 'bilan'),
       details: {
-        transport: resultMap.get('transport'),
-        logement: resultMap.get('logement'),
-        divers: resultMap.get('divers'),
-        alimentation: resultMap.get('alimentation'),
-        services_societaux: resultMap.get('services sociétaux'),
+        transport: this.getValueFromMap(resultMap, 'transport'),
+        logement: this.getValueFromMap(resultMap, 'logement'),
+        divers: this.getValueFromMap(resultMap, 'divers'),
+        alimentation: this.getValueFromMap(resultMap, 'alimentation'),
+        services_societaux: this.getValueFromMap(
+          resultMap,
+          'services sociétaux',
+        ),
       },
     };
   }
