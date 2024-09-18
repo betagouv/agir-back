@@ -75,7 +75,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     });
     expect(dbUser).toBeNull();
   });
-  it.only('DELETE /admin/utilisateurs/id en mode admin', async () => {
+  it('DELETE /admin/utilisateurs/id en mode admin', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.create(DB.utilisateur);

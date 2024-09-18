@@ -527,7 +527,7 @@ describe('RechercheServices (API test)', () => {
     });
   });
 
-  it.only(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats`, async () => {
+  it(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
     process.env.BASE_URL_FRONT = 'https://site';
