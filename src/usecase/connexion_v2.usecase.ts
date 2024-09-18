@@ -95,6 +95,79 @@ export class Connexion_v2_Usecase {
     );
   }
 
+  async oubli_mot_de_passe(email: string) {
+    const utilisateur = await this.utilisateurRepository.findByEmail(email);
+
+    if (!utilisateur) return; // pas d'erreur, silence ^^
+
+    if (!utilisateur.active_account) return; // pas d'erreur, silence ^^
+
+    const _this = this;
+    const okAction = async function () {
+      const user = await _this.utilisateurRepository.findByEmail(email);
+
+      user.setNew6DigitCode();
+      user.status = UtilisateurStatus.mot_de_passe_oublie_etape_1;
+
+      await _this.utilisateurRepository.updateUtilisateur(user);
+
+      _this.sendMotDePasseCode(user);
+    };
+
+    await this.securityEmailManager.attemptSecurityEmailEmission(
+      utilisateur,
+      okAction,
+    );
+  }
+
+  async modifier_mot_de_passe(
+    email: string,
+    code: string,
+    mot_de_passe: string,
+  ) {
+    const utilisateur = await this.utilisateurRepository.findByEmail(email);
+
+    if (!utilisateur) {
+      ApplicationError.throwBadCodeOrEmailError();
+    }
+
+    if (!utilisateur.active_account) {
+      ApplicationError.throwBadCodeOrEmailError();
+    }
+
+    PasswordManager.checkPasswordFormat(mot_de_passe);
+
+    const _this = this;
+    const codeOkAction = async function () {
+      const user = await _this.utilisateurRepository.findByEmail(email);
+
+      await _this.securityEmailManager.resetEmailSendingState(user);
+      await _this.passwordManager.initLoginState(user);
+
+      user.setPassword(mot_de_passe);
+      user.status = UtilisateurStatus.default;
+
+      await _this.utilisateurRepository.updateUtilisateur(user);
+      return;
+    };
+
+    return this.codeManager.processInputCodeAndDoActionIfOK(
+      code,
+      utilisateur,
+      codeOkAction,
+    );
+  }
+
+  async disconnectUser(utilisateurId: string) {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.force_connexion = true;
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
+  async disconnectAllUsers() {
+    await this.utilisateurRepository.disconnectAll();
+  }
+
   private async sendCodeForConnexion(utilisateur: Utilisateur) {
     this.emailSender.sendEmail(
       utilisateur.email,
@@ -108,6 +181,24 @@ Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="
     
 À très vite !`,
       `${utilisateur.code} - Votre code connexion à Agir`,
+    );
+  }
+
+  private async sendMotDePasseCode(utilisateur: Utilisateur) {
+    this.emailSender.sendEmail(
+      utilisateur.email,
+      utilisateur.prenom,
+      `Bonjour ${utilisateur.prenom},<br>
+Voici votre code pour pouvoir modifier votre mot de passe de l'application Agir !<br><br>
+    
+code : ${utilisateur.code}<br><br>
+
+Si vous n'avez plus la page ouverte pour saisir le code et modifier le mot de passe, ici le lien : <a href="${App.getBaseURLFront()}/mot-de-passe-oublie/redefinir-mot-de-passe?email=${
+        utilisateur.email
+      }">Page pour modifier votre mot de passe</a><br><br>
+    
+À très vite !`,
+      `Modification de mot de passe Agir`,
     );
   }
 }

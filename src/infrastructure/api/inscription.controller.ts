@@ -11,7 +11,6 @@ import { ProspectSubmitAPI } from './types/utilisateur/onboarding/prospectSubmit
 import { ValidateCodeAPI } from './types/utilisateur/onboarding/validateCodeAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { GenericControler } from './genericControler';
-import { Inscription_v1_Usecase } from '../../usecase/inscription_v1.usecase';
 import { TokenAPI } from './types/utilisateur/TokenAPI';
 import { EmailAPI } from './types/utilisateur/EmailAPI';
 import { Inscription_v2_Usecase } from '../../usecase/inscription_v2.usecase';
@@ -20,27 +19,8 @@ import { Inscription_v2_Usecase } from '../../usecase/inscription_v2.usecase';
 @Controller()
 @ApiTags('1 - Utilisateur - Inscription')
 export class InscriptionController extends GenericControler {
-  constructor(
-    private readonly inscription_v1_Usecase: Inscription_v1_Usecase,
-    private readonly inscription_v2_Usecase: Inscription_v2_Usecase,
-  ) {
+  constructor(private readonly inscription_v2_Usecase: Inscription_v2_Usecase) {
     super();
-  }
-
-  @Post('utilisateurs')
-  @ApiOperation({
-    summary:
-      "création d'un compte, qui doit ensuite être activé via la soumission d'un code",
-  })
-  @ApiBody({
-    type: CreateUtilisateurAPI,
-  })
-  @ApiOkResponse({
-    type: ProspectSubmitAPI,
-  })
-  async createUtilisateur(@Body() body: CreateUtilisateurAPI) {
-    await this.inscription_v1_Usecase.createUtilisateur(body);
-    return EmailAPI.mapToAPI(body.email);
   }
 
   @Post('utilisateurs_v2')
@@ -70,7 +50,7 @@ export class InscriptionController extends GenericControler {
     type: TokenAPI,
   })
   async validerCode(@Body() body: ValidateCodeAPI) {
-    const loggedUser = await this.inscription_v1_Usecase.validateCode(
+    const loggedUser = await this.inscription_v2_Usecase.validateCode(
       body.email,
       body.code,
     );
@@ -86,7 +66,6 @@ export class InscriptionController extends GenericControler {
     type: RenvoyerCodeAPI,
   })
   async renvoyerCode(@Body() body: RenvoyerCodeAPI) {
-    await this.inscription_v1_Usecase.renvoyerCode(body.email);
-    return 'code renvoyé';
+    await this.inscription_v2_Usecase.renvoyerCodeInscription(body.email);
   }
 }
