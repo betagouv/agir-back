@@ -181,7 +181,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC/TEST_MOSAIC_ID',
     ).send({
-      reponse: [
+      reponse_mosaic: [
         { code: '_1', boolean_value: true },
         { code: '_2', boolean_value: false },
       ],
