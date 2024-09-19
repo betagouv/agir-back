@@ -239,6 +239,38 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     });
   });
 
+  it('PUT /utilisateurs/id/questionsKYC/id - maj mosaic avec pas de réponses', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v0() });
+    MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/TEST_MOSAIC_ID',
+    ).send({
+      reponse_mosaic: [],
+    });
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toBe('072');
+  });
+
+  it('PUT /utilisateurs/id/questionsKYC/id - maj mosaic réponses manquantes', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v0() });
+    MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/TEST_MOSAIC_ID',
+    ).send({});
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toBe('072');
+  });
+
   it('GET /utilisateurs/id/questionsKYC/id - lecture mosaic avec reponses précédentes', async () => {
     // GIVEN
 

@@ -96,6 +96,10 @@ export class QuestionKYCUsecase {
     mosaicId: string,
     reponses: { code: string; boolean_value: boolean }[],
   ): Promise<void> {
+    if (!reponses || reponses.length === 0) {
+      ApplicationError.throwMissingMosaicData();
+    }
+
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 

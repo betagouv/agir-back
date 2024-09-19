@@ -366,6 +366,12 @@ export class ApplicationError {
       500,
     );
   }
+  static throwMissingMosaicData() {
+    this.throwAppError(
+      '072',
+      `Les données sont manquantes pour mettre à jour la mosaic argument`,
+    );
+  }
 
   private static throwAppError(
     code: string,
