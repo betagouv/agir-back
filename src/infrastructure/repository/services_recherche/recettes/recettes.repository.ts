@@ -171,7 +171,7 @@ export class RecettesRepository implements FinderInterface {
           difficulty_plat: r.express === 1 ? 'Facile' : 'Intérmédiaire',
           type_plat: this.mapCategoryPlat(r.recipe_category),
           temps_prepa_min: r.preparation_time,
-          image_url: IMAGES_TMP[Math.floor(Math.random() * 5)],
+          image_url: this.getImageUrlFromCategorieRecette(r.recipe_category),
           ingredients: this.getIngredientsRecette(r.id),
           etapes_recette: this.getEtapesRecette(r.id),
         }),
@@ -182,6 +182,21 @@ export class RecettesRepository implements FinderInterface {
     return mapped_result;
   }
 
+  private getImageUrlFromCategorieRecette(recipe_category: string): string {
+    if (!recipe_category)
+      return 'https://res.cloudinary.com/dq023imd8/image/upload/v1726729974/plat_41956db95a.svg';
+    if (recipe_category.includes('ENT'))
+      return 'https://res.cloudinary.com/dq023imd8/image/upload/v1726729974/entree_62c9c6f503.svg';
+    if (recipe_category.includes('DES'))
+      return 'https://res.cloudinary.com/dq023imd8/image/upload/v1726729974/dessert_6e8fdb8ff0.svg';
+    if (recipe_category.includes('PL'))
+      return 'https://res.cloudinary.com/dq023imd8/image/upload/v1726729974/plat_41956db95a.svg';
+    if (recipe_category.includes('GAR'))
+      return 'https://res.cloudinary.com/dq023imd8/image/upload/v1726729974/plat_41956db95a.svg';
+    if (recipe_category.includes('PLC'))
+      return 'https://res.cloudinary.com/dq023imd8/image/upload/v1726729974/plat_41956db95a.svg';
+    return '-';
+  }
   private getIngredientsRecette(recetteId: number): IngredientRecette[] {
     const liste_raw_ingredients = this.readIngredientsRecette(recetteId);
 
