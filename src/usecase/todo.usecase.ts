@@ -13,14 +13,24 @@ import {
 import { Categorie } from '../../src/domain/contenu/categorie';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { KYCID } from '../domain/kyc/KYCID';
+import { MosaicKYC } from '../domain/kyc/mosaicKYC';
+import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
+import { QuestionGeneric } from '../domain/kyc/questionGeneric';
+import { KycRepository } from '../infrastructure/repository/kyc.repository';
 
 @Injectable()
 export class TodoUsecase {
+  static enchainements: Record<string, string[]> = {
+    ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCID.KYC002, KYCID.KYC003],
+  };
+
   constructor(
     private communeRepository: CommuneRepository,
     private utilisateurRepository: UtilisateurRepository,
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
+    private kycRepository: KycRepository,
     private personnalisator: Personnalisator,
   ) {}
 
@@ -148,6 +158,43 @@ export class TodoUsecase {
           const randomArticle = this.randomFromArray(articles);
           element.content_id = randomArticle.content_id;
         }
+      }
+      if (element.type === ContentType.enchainement_kyc) {
+        const catalogue = await this.kycRepository.getAllDefs();
+        utilisateur.kyc_history.setCatalogue(catalogue);
+
+        const liste_kycs_ids = TodoUsecase.enchainements[element.content_id];
+        const liste_questions: QuestionGeneric[] = [];
+        let progression = 0;
+        for (const kyc_id of liste_kycs_ids) {
+          if (MosaicKYC.isMosaicID(kyc_id)) {
+            const mosaic = utilisateur.kyc_history.getUpToDateMosaicById(
+              KYCMosaicID[kyc_id],
+            );
+            if (mosaic) {
+              liste_questions.push({ mosaic: mosaic });
+              if (mosaic.is_answered) {
+                progression++;
+              }
+            }
+          } else {
+            const kyc =
+              utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(kyc_id);
+            if (kyc) {
+              liste_questions.push({
+                kyc: kyc,
+              });
+              if (kyc.hasAnyResponses()) {
+                progression++;
+              }
+            }
+          }
+        }
+        element.questions = liste_questions;
+        element.progression = {
+          current: progression,
+          target: liste_kycs_ids.length,
+        };
       }
     }
     //return todo;
