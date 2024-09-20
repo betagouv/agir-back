@@ -27,7 +27,7 @@ import { OubliMdpAPI } from './types/utilisateur/oubliMdpAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { ModifierMdpAPI } from './types/utilisateur/modifierMdpAPI';
 import { EmailAPI } from './types/utilisateur/EmailAPI';
-import { Connexion_v2_Usecase } from '../../usecase/connexion_v2.usecase';
+import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
 import { Valider2FAAPI } from './types/utilisateur/valider2FAAPI';
 
 export class ConfirmationAPI {

@@ -172,7 +172,7 @@ export class Connexion_v2_Usecase {
     this.emailSender.sendEmail(
       utilisateur.email,
       utilisateur.prenom,
-      `Bonjour ${utilisateur.prenom},<br>
+      `Bonjour,<br>
 Voici votre code pour valider votre connexion à l'application Agir !<br><br>
     
 code : ${utilisateur.code}<br><br>
@@ -188,7 +188,7 @@ Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="
     this.emailSender.sendEmail(
       utilisateur.email,
       utilisateur.prenom,
-      `Bonjour ${utilisateur.prenom},<br>
+      `Bonjour,<br>
 Voici votre code pour pouvoir modifier votre mot de passe de l'application Agir !<br><br>
     
 code : ${utilisateur.code}<br><br>

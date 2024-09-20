@@ -47,7 +47,10 @@ export class ApplicationError {
     this.throwAppError('008', 'Prénom obligatoire pour créer un utilisateur');
   }
   static throwEmailObligatoireError() {
-    this.throwAppError('009', 'Email obligatoire pour créer un utilisateur');
+    this.throwAppError(
+      '009',
+      'Adresse électronique obligatoire pour créer un utilisateur',
+    );
   }
   static throwUserGroupNotAdminError() {
     this.throwAppError('010', 'User is not admin of this group');
@@ -311,7 +314,7 @@ export class ApplicationError {
     this.throwAppError('056', `Categorie de recherche [${categorie}] inconnue`);
   }
   static throwEmailObligatoireMagicLinkError() {
-    this.throwAppError('057', 'Email obligatoire');
+    this.throwAppError('057', 'Adresse électronique obligatoire');
   }
   static throwCodeObligatoireMagicLinkError() {
     this.throwAppError('058', 'Code obligatoire');

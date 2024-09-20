@@ -13,7 +13,7 @@ import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { GenericControler } from './genericControler';
 import { TokenAPI } from './types/utilisateur/TokenAPI';
 import { EmailAPI } from './types/utilisateur/EmailAPI';
-import { Inscription_v2_Usecase } from '../../usecase/inscription_v2.usecase';
+import { Inscription_v2_Usecase } from '../../usecase/inscription.usecase';
 
 @ApiExtraModels(CreateUtilisateurAPI)
 @Controller()
