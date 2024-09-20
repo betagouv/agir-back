@@ -441,5 +441,38 @@ export class TodoCatalogue {
         },
       ],
     },
+    {
+      numero_todo: 2,
+      points_todo: 50,
+      titre: 'Découvrir Mon empreinte environnementale',
+      imageUrl:
+        'https://res.cloudinary.com/dq023imd8/image/upload/v1718959271/Mission_2_bb3aa4b43d.png',
+      done_at: null,
+      celebration: {
+        id: uuidv4(),
+        titre: 'Nouvelle Fonctionnalité',
+        type: CelebrationType.reveal,
+        reveal: {
+          id: uuidv4(),
+          titre: 'Votre empreinte carbone',
+          description: `Evaluez et mettez à jour votre empreinte carbone`,
+          feature: Feature.bilan_carbone,
+        },
+      },
+      done: [],
+      todo: [
+        {
+          id: uuidv4(),
+          titre: `5 questions pour avoir une première estimation de son empreinte`,
+          content_id: 'ENCHAINEMENT_KYC_1',
+          thematiques: [Thematique.climat],
+          progression: { current: 0, target: 1 },
+          sont_points_en_poche: false,
+          type: ContentType.enchainement_kyc,
+          level: DifficultyLevel.ANY,
+          points: 5,
+        },
+      ],
+    },
   ];
 }
