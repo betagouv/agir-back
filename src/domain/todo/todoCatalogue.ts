@@ -428,6 +428,28 @@ export class TodoCatalogue {
           level: DifficultyLevel.ANY,
           points: 5,
         },
+      ],
+    },
+    {
+      numero_todo: 2,
+      points_todo: 50,
+      titre: 'Découvrir La Bibliothèque',
+      imageUrl:
+        'https://res.cloudinary.com/dq023imd8/image/upload/v1718959271/Mission_3_e87ba4bebb.png',
+      done_at: null,
+      celebration: {
+        id: uuidv4(),
+        titre: 'Nouvelle Fonctionnalité',
+        type: CelebrationType.reveal,
+        reveal: {
+          id: uuidv4(),
+          titre: 'La bibliothèque',
+          description: `Pour retrouver tous vos articles lus !`,
+          feature: Feature.bibliotheque,
+        },
+      },
+      done: [],
+      todo: [
         {
           id: uuidv4(),
           titre: 'Découvrir des articles et quiz recommandés pour vous',
@@ -441,8 +463,9 @@ export class TodoCatalogue {
         },
       ],
     },
+
     {
-      numero_todo: 2,
+      numero_todo: 3,
       points_todo: 50,
       titre: 'Découvrir Mon empreinte environnementale',
       imageUrl:
