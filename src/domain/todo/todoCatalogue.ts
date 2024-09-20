@@ -396,5 +396,50 @@ export class TodoCatalogue {
     },
   ];
 
-  private static DEV_catalogue: Todo_v0[] = TodoCatalogue.catalogue;
+  private static DEV_catalogue: Todo_v0[] = [
+    {
+      numero_todo: 1,
+      points_todo: 50,
+      titre: 'Découvrir Mes aides',
+      imageUrl:
+        'https://res.cloudinary.com/dq023imd8/image/upload/v1718959272/Mission_1_2076902965.png',
+      done_at: null,
+      celebration: {
+        id: uuidv4(),
+        titre: 'Nouvelle Fonctionnalité',
+        type: CelebrationType.reveal,
+        reveal: {
+          id: uuidv4(),
+          titre: 'Vos aides',
+          description: `En fonction de votre situation et de votre lieu de vie !`,
+          feature: Feature.aides,
+        },
+      },
+      done: [],
+      todo: [
+        {
+          id: uuidv4(),
+          titre: 'Lire votre premier article : Bienvenue sur Agir !',
+          content_id: '170',
+          thematiques: [Thematique.climat],
+          progression: { current: 0, target: 1 },
+          sont_points_en_poche: false,
+          type: ContentType.article,
+          level: DifficultyLevel.ANY,
+          points: 5,
+        },
+        {
+          id: uuidv4(),
+          titre: 'Découvrir des articles et quiz recommandés pour vous',
+          content_id: null,
+          thematiques: [Thematique.climat],
+          progression: { current: 0, target: 1 },
+          sont_points_en_poche: false,
+          type: ContentType.recommandations,
+          level: DifficultyLevel.ANY,
+          points: 5,
+        },
+      ],
+    },
+  ];
 }
