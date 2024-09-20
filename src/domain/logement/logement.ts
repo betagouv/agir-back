@@ -1,6 +1,8 @@
+import { ApplicationError } from '../../infrastructure/applicationError';
 import { Logement_v0 } from '../object_store/logement/logement_v0';
 import { Onboarding } from '../onboarding/onboarding';
 import { Utilisateur } from '../utilisateur/utilisateur';
+import validator from 'validator';
 
 export enum TypeLogement {
   maison = 'maison',
@@ -60,8 +62,31 @@ export class Logement {
   }
 
   patch?(input: Logement, utilisateur: Utilisateur) {
+    if (input.nombre_adultes) {
+      if (!validator.isInt('' + input.nombre_adultes))
+        ApplicationError.throwNbrAdultesEnfants();
+    }
+    if (input.nombre_enfants) {
+      if (!validator.isInt('' + input.nombre_enfants))
+        ApplicationError.throwNbrAdultesEnfants();
+    }
+
     this.nombre_adultes = this.AorB(input.nombre_adultes, this.nombre_adultes);
     this.nombre_enfants = this.AorB(input.nombre_enfants, this.nombre_enfants);
+
+    if (input.code_postal) {
+      if (!validator.isInt(input.code_postal))
+        ApplicationError.throwCodePostalIncorrect();
+      if (input.code_postal.length !== 5)
+        ApplicationError.throwCodePostalIncorrect();
+    }
+
+    if (
+      (input.commune && !input.code_postal) ||
+      (!input.commune && input.code_postal)
+    ) {
+      ApplicationError.throwCodePostalCommuneMandatory();
+    }
 
     this.code_postal = this.AorB(input.code_postal, this.code_postal);
     utilisateur.code_postal_classement = this.code_postal;
@@ -76,7 +101,6 @@ export class Logement {
     this.plus_de_15_ans = this.AorB(input.plus_de_15_ans, this.plus_de_15_ans);
 
     this.dpe = this.AorB(input.dpe, this.dpe);
-    
   }
 
   public static buildFromOnboarding(data: Onboarding): Logement {

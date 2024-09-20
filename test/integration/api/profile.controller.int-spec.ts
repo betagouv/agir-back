@@ -305,6 +305,64 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.status).toBe(400);
     expect(response.body.code).toEqual('068');
   });
+  it('PATCH /utilisateurs/id/profile - RFR non entier => erreur', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      revenu_fiscal: 'haha45',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('073');
+  });
+  it('PATCH /utilisateurs/id/profile - Annee naissance non entier => erreur', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      annee_naissance: 'haha45',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('075');
+  });
+  it('PATCH /utilisateurs/id/profile - parts fiscal non decimal erreur', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      nombre_de_parts_fiscales: 'haha45',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('074');
+  });
+  it('PATCH /utilisateurs/id/profile - parts fiscal avec . ou virgule OK ', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      nombre_de_parts_fiscales: '2.5',
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const response2 = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      parts_fiscales: '2,5',
+    });
+    // THEN
+    expect(response2.status).toBe(200);
+  });
   it('PATCH /utilisateurs/id/profile - update basic profile datas', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -586,12 +644,69 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       '/utilisateurs/utilisateur-id/logement',
     ).send({
       code_postal: '21000',
+      commune: 'DIJON',
     });
     // THEN
     expect(response.status).toBe(200);
     const dbUser = await utilisateurRepository.getById('utilisateur-id');
 
     expect(dbUser.couverture_aides_ok).toEqual(true);
+  });
+  it('PATCH /utilisateurs/id/logement - code postal de moins de 5 char => erreur', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_postal: '1234',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('077');
+  });
+  it('PATCH /utilisateurs/id/logement - code postal pas entier', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_postal: 'hahah',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('077');
+  });
+  it('PATCH /utilisateurs/id/logement - code postal sans commune', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_postal: '21000',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('078');
+  });
+  it('PATCH /utilisateurs/id/logement - commune sans code postal', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      commune: 'DIJON',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('078');
   });
 
   it('PATCH /utilisateurs/id/logement - exception silencieuse si KYC de synchro échoue', async () => {
@@ -629,6 +744,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       '/utilisateurs/utilisateur-id/logement',
     ).send({
       code_postal: '21000',
+      commune: 'DIJON',
     });
     // THEN
     expect(response.status).toBe(200);

@@ -3,7 +3,6 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import {
   LogementAPI,
   TransportAPI,
-  UtilisateurProfileAPI,
   UtilisateurUpdateProfileAPI,
 } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
 import { SuiviRepository } from '../infrastructure/repository/suivi.repository';
@@ -16,10 +15,8 @@ import { ServiceRepository } from '../infrastructure/repository/service.reposito
 import { GroupeRepository } from '../infrastructure/repository/groupe.repository';
 import { ContactUsecase } from './contact.usecase';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
-import { KYCID } from '../domain/kyc/KYCID';
 import { Retryable } from 'typescript-retry-decorator';
 import { AideRepository } from '../infrastructure/repository/aide.repository';
-import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import validator from 'validator';
 
@@ -73,6 +70,19 @@ export class ProfileUsecase {
       if (!char_regexp.test(profile.prenom)) {
         ApplicationError.throwNotAlhpaPrenom();
       }
+    }
+
+    if (profile.revenu_fiscal) {
+      if (!validator.isInt('' + profile.revenu_fiscal))
+        ApplicationError.throwRFRNotNumer();
+    }
+    if (profile.annee_naissance) {
+      if (!validator.isInt('' + profile.annee_naissance))
+        ApplicationError.throwBadAnnee();
+    }
+    if (profile.nombre_de_parts_fiscales) {
+      if (!validator.isDecimal('' + profile.nombre_de_parts_fiscales))
+        ApplicationError.throwPartsFiscalesNotDecimal();
     }
 
     utilisateur.revenu_fiscal = profile.revenu_fiscal;

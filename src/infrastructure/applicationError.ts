@@ -372,6 +372,36 @@ export class ApplicationError {
       `Les données sont manquantes pour mettre à jour la mosaic argument`,
     );
   }
+  static throwRFRNotNumer() {
+    this.throwAppError('073', `Le revenu fisscal doi être un nombre entier`);
+  }
+  static throwPartsFiscalesNotDecimal() {
+    this.throwAppError(
+      '074',
+      `Le nombre de parts fiscales doit être un nombre décimal`,
+    );
+  }
+  static throwBadAnnee() {
+    this.throwAppError(
+      '075',
+      `L'année de naissance doit être un nombre entier`,
+    );
+  }
+  static throwNbrAdultesEnfants() {
+    this.throwAppError(
+      '076',
+      `Le nombre d'adultes et d'enfants doit être un nombre entier`,
+    );
+  }
+  static throwCodePostalIncorrect() {
+    this.throwAppError(
+      '077',
+      'Le code postal doit être une suite de 5 chiffres',
+    );
+  }
+  static throwCodePostalCommuneMandatory() {
+    this.throwAppError('078', 'Le code postal ET la commune sont obligatoires');
+  }
 
   private static throwAppError(
     code: string,
