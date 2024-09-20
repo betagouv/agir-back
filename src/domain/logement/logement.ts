@@ -62,31 +62,8 @@ export class Logement {
   }
 
   patch?(input: Logement, utilisateur: Utilisateur) {
-    if (input.nombre_adultes) {
-      if (!validator.isInt('' + input.nombre_adultes))
-        ApplicationError.throwNbrAdultesEnfants();
-    }
-    if (input.nombre_enfants) {
-      if (!validator.isInt('' + input.nombre_enfants))
-        ApplicationError.throwNbrAdultesEnfants();
-    }
-
     this.nombre_adultes = this.AorB(input.nombre_adultes, this.nombre_adultes);
     this.nombre_enfants = this.AorB(input.nombre_enfants, this.nombre_enfants);
-
-    if (input.code_postal) {
-      if (!validator.isInt(input.code_postal))
-        ApplicationError.throwCodePostalIncorrect();
-      if (input.code_postal.length !== 5)
-        ApplicationError.throwCodePostalIncorrect();
-    }
-
-    if (
-      (input.commune && !input.code_postal) ||
-      (!input.commune && input.code_postal)
-    ) {
-      ApplicationError.throwCodePostalCommuneMandatory();
-    }
 
     this.code_postal = this.AorB(input.code_postal, this.code_postal);
     utilisateur.code_postal_classement = this.code_postal;

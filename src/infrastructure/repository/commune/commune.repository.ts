@@ -43,6 +43,11 @@ export class CommuneRepository {
     return codes_postaux[code_postal] !== undefined;
   }
 
+  checkOKCodePostalAndCommune(code_postal: string, commune: string): boolean {
+    const liste_communes = this.getListCommunesParCodePostal(code_postal);
+    return liste_communes.length !== 0 && liste_communes.includes(commune);
+  }
+
   getListCommunesParCodePostal(code_postal: string): string[] {
     const liste: CommuneParCodePostal[] = codes_postaux[code_postal];
     if (liste === undefined) return [];

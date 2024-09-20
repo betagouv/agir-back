@@ -402,6 +402,15 @@ export class ApplicationError {
   static throwCodePostalCommuneMandatory() {
     this.throwAppError('078', 'Le code postal ET la commune sont obligatoires');
   }
+  static throwBadCodePostalAndCommuneAssociation(
+    code_postal: string,
+    commune: string,
+  ) {
+    this.throwAppError(
+      '079',
+      `Le code postal '${code_postal}' ne correspond pas à la commune ${commune}`,
+    );
+  }
 
   private static throwAppError(
     code: string,

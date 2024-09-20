@@ -128,6 +128,41 @@ export class ProfileUsecase {
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
+    if (input.nombre_adultes) {
+      if (!validator.isInt('' + input.nombre_adultes))
+        ApplicationError.throwNbrAdultesEnfants();
+    }
+    if (input.nombre_enfants) {
+      if (!validator.isInt('' + input.nombre_enfants))
+        ApplicationError.throwNbrAdultesEnfants();
+    }
+    if (input.code_postal) {
+      if (!validator.isInt(input.code_postal))
+        ApplicationError.throwCodePostalIncorrect();
+      if (input.code_postal.length !== 5)
+        ApplicationError.throwCodePostalIncorrect();
+    }
+
+    if (
+      (input.commune && !input.code_postal) ||
+      (!input.commune && input.code_postal)
+    ) {
+      ApplicationError.throwCodePostalCommuneMandatory();
+    }
+
+    if (input.commune) {
+      const ok = this.communeRepository.checkOKCodePostalAndCommune(
+        input.code_postal,
+        input.commune,
+      );
+      if (!ok) {
+        ApplicationError.throwBadCodePostalAndCommuneAssociation(
+          input.code_postal,
+          input.commune,
+        );
+      }
+    }
+
     utilisateur.logement.patch(input, utilisateur);
 
     try {
