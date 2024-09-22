@@ -15,7 +15,6 @@ export class GamificationUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private utilisateurBoardRepository: UtilisateurBoardRepository,
     private communeRepository: CommuneRepository,
-    private personnalisator: Personnalisator,
   ) {}
 
   async getGamificationData(utilisateurId: string): Promise<Gamification> {

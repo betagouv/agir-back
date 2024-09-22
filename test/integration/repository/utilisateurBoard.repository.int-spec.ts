@@ -122,6 +122,70 @@ describe('UtilisateurBoardRepository', () => {
     expect(liste[1].utilisateurId).toEqual('3');
     expect(liste[1].rank).toEqual(5);
   });
+  it('utilisateur_classement_proximite : extract correct pour apres, ignore prenoms null', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 10,
+      id: '1',
+      email: '1',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 20,
+      id: '2',
+      email: '2',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 30,
+      id: '3',
+      email: '3',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 40,
+      id: '4',
+      email: '4',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 45,
+      id: '45',
+      email: '45',
+      prenom: null,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 50,
+      id: '5',
+      email: '5',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 60,
+      id: '6',
+      email: '6',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 70,
+      id: '7',
+      email: '7',
+    });
+
+    await repo.update_rank_user_france();
+
+    // WHEN
+    const liste = await repo.utilisateur_classement_proximite(
+      3,
+      2,
+      'rank_apres_ou_egal',
+      'national',
+      undefined,
+      undefined,
+      '5',
+    );
+
+    // THEN
+    expect(liste).toHaveLength(2);
+    expect(liste[0].utilisateurId).toEqual('4');
+    expect(liste[0].rank).toEqual(4);
+    expect(liste[1].utilisateurId).toEqual('3');
+    expect(liste[1].rank).toEqual(5);
+  });
   it('utilisateur_classement_proximite : extract correct pour avant', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
