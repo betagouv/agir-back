@@ -95,10 +95,12 @@ export class MissionController extends GenericControler {
   @UseGuards(AuthGuard)
   @ApiOkResponse({
     schema: {
-      allOf: [
-        { $ref: getSchemaPath(QuestionKYCAPI) },
-        { $ref: getSchemaPath(MosaicKYCAPI) },
-      ],
+      items: {
+        allOf: [
+          { $ref: getSchemaPath(QuestionKYCAPI) },
+          { $ref: getSchemaPath(MosaicKYCAPI) },
+        ],
+      },
     },
   })
   @ApiParam({

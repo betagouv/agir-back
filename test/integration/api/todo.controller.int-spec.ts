@@ -521,7 +521,7 @@ describe('TODO list (API test)', () => {
 
   it('GET /utilisateurs/id/todo retourne la todo avec un enchainement de KYC et mosaics', async () => {
     // GIVEN
-    TodoUsecase.enchainements = {
+    QuestionKYCUsecase.ENCHAINEMENTS = {
       ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCID.KYC002, 'TEST_MOSAIC_ID'],
     };
     MosaicKYC.MOSAIC_CATALOGUE = [
@@ -620,58 +620,137 @@ describe('TODO list (API test)', () => {
       level: 1,
       content_id: 'ENCHAINEMENT_KYC_1',
       points: 10,
-      questions: [
-        {
-          id: 'KYC001',
-          question: 'quest 1',
-          reponse: [],
-          reponses_possibles: ['Oui', 'Non', 'Je sais pas'],
-          categorie: 'recommandation',
-          points: 20,
-          type: 'choix_unique',
-          is_NGC: true,
-          thematique: 'alimentation',
-        },
-        {
-          id: 'KYC002',
-          question: 'quest 2',
-          reponse: [],
-          reponses_possibles: ['Oui', 'Non', 'Je sais pas'],
-          categorie: 'recommandation',
-          points: 20,
-          type: 'choix_unique',
-          is_NGC: true,
-          thematique: 'alimentation',
-        },
-        {
-          id: 'TEST_MOSAIC_ID',
-          titre: 'Titre test',
-          reponses: [
-            {
-              boolean_value: false,
-              code: 'KYC003',
-              image_url: 'AAA',
-              label: 'short',
-            },
-            {
-              boolean_value: false,
-              code: 'KYC004',
-              image_url: 'AAA',
-              label: 'short',
-            },
-          ],
-          categorie: 'test',
-          points: 10,
-          type: 'mosaic_boolean',
-          is_answered: false,
-        },
-      ],
       progression: { current: 0, target: 3 },
       sont_points_en_poche: false,
       thematiques: ['climat'],
     });
   });
 
+  it('GET /utilisateurs/id/todo retourne la todo avec un enchainement de KYC terminée', async () => {
+    // GIVEN
+    QuestionKYCUsecase.ENCHAINEMENTS = {
+      ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCID.KYC002, 'TEST_MOSAIC_ID'],
+    };
+    MosaicKYC.MOSAIC_CATALOGUE = [
+      {
+        id: KYCMosaicID.TEST_MOSAIC_ID,
+        categorie: Categorie.test,
+        points: 10,
+        titre: 'Titre test',
+        type: TypeReponseMosaicKYC.mosaic_boolean,
+        question_kyc_codes: [KYCID.KYC003, KYCID.KYC004],
+      },
+    ];
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 2,
+      todo: {
+        liste_todo: [
+          {
+            numero_todo: 1,
+            points_todo: 25,
+            done: [],
+            todo: [
+              {
+                titre: 'Enchainement',
+                thematiques: [Thematique.climat],
+                progression: { current: 0, target: 3 },
+                sont_points_en_poche: false,
+                type: ContentType.enchainement_kyc,
+                level: DifficultyLevel.L1,
+                points: 10,
+                content_id: 'ENCHAINEMENT_KYC_1',
+              },
+            ],
+          },
+        ],
+        todo_active: 0,
+      },
+    });
+
+    const dbKYC: KYC = {
+      id_cms: 1,
+      categorie: Categorie.recommandation,
+      code: '1',
+      is_ngc: true,
+      points: 20,
+      question: 'The question !',
+      tags: [Tag.possede_voiture],
+      universes: [Univers.alimentation],
+      thematique: Thematique.alimentation,
+      type: TypeReponseQuestionKYC.choix_unique,
+      ngc_key: 'a . b . c',
+      reponses: [
+        { label: 'Oui', code: 'oui' },
+        { label: 'Non', code: 'non' },
+        { label: 'Je sais pas', code: 'sais_pas' },
+      ],
+      short_question: 'short',
+      image_url: 'AAA',
+      created_at: undefined,
+      updated_at: undefined,
+    };
+
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 1,
+      question: 'quest 1',
+      code: 'KYC001',
+    });
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 2,
+      question: 'quest 2',
+      code: 'KYC002',
+    });
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 3,
+      question: 'quest 3',
+      code: 'KYC003',
+    });
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 4,
+      question: 'quest 4',
+      code: 'KYC004',
+    });
+
+    // WHEN
+    let R = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/KYC001',
+    ).send({ reponse: ['Oui'] });
+    expect(R.status).toEqual(200);
+    R = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/KYC002',
+    ).send({ reponse: ['Oui'] });
+    expect(R.status).toEqual(200);
+    R = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/TEST_MOSAIC_ID',
+    ).send({
+      reponse_mosaic: [
+        { code: KYCID.KYC003, boolean_value: true },
+        { code: KYCID.KYC004, boolean_value: false },
+      ],
+    });
+    expect(R.status).toEqual(200);
+
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.todo).toHaveLength(0);
+    expect(response.body.done[0]).toEqual({
+      titre: 'Enchainement',
+      type: 'enchainement_kyc',
+      level: 1,
+      content_id: 'ENCHAINEMENT_KYC_1',
+      points: 10,
+      progression: { current: 3, target: 3 },
+      sont_points_en_poche: false,
+      thematiques: ['climat'],
+    });
+  });
   it('GET /utilisateurs/id/todo retourne la todo avec une ref d article en dur', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {

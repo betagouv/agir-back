@@ -16,7 +16,7 @@ import { MosaicKYC, TypeReponseMosaicKYC } from '../domain/kyc/mosaicKYC';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { QuestionGeneric } from '../domain/kyc/questionGeneric';
-import { ReponsesGeneric } from '../domain/kyc/reponseGeneric';
+import { EnchainementQuestions } from '../domain/kyc/enchainementQuestions';
 
 @Injectable()
 export class QuestionKYCUsecase {
@@ -26,6 +26,10 @@ export class QuestionKYCUsecase {
     private defiRepository: DefiRepository,
     private personnalisator: Personnalisator,
   ) {}
+
+  static ENCHAINEMENTS: Record<string, string[]> = {
+    ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCID.KYC002, KYCID.KYC003],
+  };
 
   async getALL(utilisateurId: string): Promise<QuestionGeneric[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
@@ -40,9 +44,48 @@ export class QuestionKYCUsecase {
     return this.personnalisator.personnaliser(result, utilisateur);
   }
 
+  async getEnchainementQuestions(
+    utilisateurId: string,
+    enchainementId: string,
+  ): Promise<EnchainementQuestions> {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
+    const result: EnchainementQuestions = new EnchainementQuestions();
+
+    const kyc_catalogue = await this.kycRepository.getAllDefs();
+    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
+
+    const liste_kycs_ids = QuestionKYCUsecase.ENCHAINEMENTS[enchainementId];
+
+    if (!liste_kycs_ids) {
+      ApplicationError.throwUnkownEnchainement(enchainementId);
+    }
+
+    for (const kyc_id of liste_kycs_ids) {
+      if (MosaicKYC.isMosaicID(kyc_id)) {
+        const mosaic = utilisateur.kyc_history.getUpToDateMosaicById(
+          KYCMosaicID[kyc_id],
+        );
+        if (mosaic) {
+          result.addQuestionGeneric({ mosaic: mosaic });
+        }
+      } else {
+        const kyc =
+          utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(kyc_id);
+        if (kyc) {
+          result.addQuestionGeneric({
+            kyc: kyc,
+          });
+        }
+      }
+    }
+    return this.personnalisator.personnaliser(result, utilisateur);
+  }
+
   async getQuestion(
     utilisateurId: string,
-    questionId,
+    questionId: string,
   ): Promise<QuestionGeneric> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();

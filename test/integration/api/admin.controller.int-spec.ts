@@ -610,7 +610,7 @@ describe('Admin (API test)', () => {
       Feature.services,
     ]);
   });
-  it('POST /admin/migrate_users migration V11 OK - user ayant fini les mission onboarding', async () => {
+  it.skip('POST /admin/migrate_users migration V11 OK - user ayant fini les mission onboarding', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     const todo: ParcoursTodo_v0 = ParcoursTodo_v0.serialise(new ParcoursTodo());

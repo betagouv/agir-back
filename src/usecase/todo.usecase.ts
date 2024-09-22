@@ -18,13 +18,10 @@ import { MosaicKYC } from '../domain/kyc/mosaicKYC';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { QuestionGeneric } from '../domain/kyc/questionGeneric';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
+import { QuestionKYCUsecase } from './questionKYC.usecase';
 
 @Injectable()
 export class TodoUsecase {
-  static enchainements: Record<string, string[]> = {
-    ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCID.KYC002, KYCID.KYC003],
-  };
-
   constructor(
     private communeRepository: CommuneRepository,
     private utilisateurRepository: UtilisateurRepository,
@@ -32,6 +29,7 @@ export class TodoUsecase {
     private quizzRepository: QuizzRepository,
     private kycRepository: KycRepository,
     private personnalisator: Personnalisator,
+    private questionKYCUsecase: QuestionKYCUsecase,
   ) {}
 
   async gagnerPointsFromTodoElement(utilisateurId: string, elementId: string) {
@@ -160,43 +158,25 @@ export class TodoUsecase {
         }
       }
       if (element.type === ContentType.enchainement_kyc) {
-        const catalogue = await this.kycRepository.getAllDefs();
-        utilisateur.kyc_history.setCatalogue(catalogue);
+        const enchainement =
+          await this.questionKYCUsecase.getEnchainementQuestions(
+            utilisateurId,
+            element.content_id,
+          );
 
-        const liste_kycs_ids = TodoUsecase.enchainements[element.content_id];
-        const liste_questions: QuestionGeneric[] = [];
-        let progression = 0;
-        for (const kyc_id of liste_kycs_ids) {
-          if (MosaicKYC.isMosaicID(kyc_id)) {
-            const mosaic = utilisateur.kyc_history.getUpToDateMosaicById(
-              KYCMosaicID[kyc_id],
-            );
-            if (mosaic) {
-              liste_questions.push({ mosaic: mosaic });
-              if (mosaic.is_answered) {
-                progression++;
-              }
-            }
-          } else {
-            const kyc =
-              utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(kyc_id);
-            if (kyc) {
-              liste_questions.push({
-                kyc: kyc,
-              });
-              if (kyc.hasAnyResponses()) {
-                progression++;
-              }
-            }
-          }
-        }
-        element.questions = liste_questions;
+        const progression = enchainement.getProgression();
         element.progression = {
-          current: progression,
-          target: liste_kycs_ids.length,
+          current: progression.current,
+          target: progression.target,
         };
+
+        if (progression.current === progression.target) {
+          todo.done.push(element);
+          todo.todo.splice(index, 1);
+        }
       }
     }
+
     //return todo;
     return this.personnalisator.personnaliser(todo, utilisateur);
   }

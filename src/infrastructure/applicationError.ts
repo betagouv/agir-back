@@ -414,6 +414,9 @@ export class ApplicationError {
       `Le code postal '${code_postal}' ne correspond pas à la commune ${commune}`,
     );
   }
+  static throwUnkownEnchainement(id: string) {
+    this.throwAppError('080', `L'enchainement d'id [${id}] n'existe pas`);
+  }
 
   private static throwAppError(
     code: string,

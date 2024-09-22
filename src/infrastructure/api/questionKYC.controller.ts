@@ -99,6 +99,39 @@ export class QuestionsKYCController extends GenericControler {
       return MosaicKYCAPI.mapToAPI(result.mosaic);
     }
   }
+  @ApiOperation({
+    summary: 'Retourne une liste de questions à enchainer',
+  })
+  @Get('utilisateurs/:utilisateurId/enchainementQuestionsKYC/:enchainementId')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    schema: {
+      items: {
+        allOf: [
+          { $ref: getSchemaPath(QuestionKYCAPI) },
+          { $ref: getSchemaPath(MosaicKYCAPI) },
+        ],
+      },
+    },
+  })
+  async getEnchainementQuestions(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('enchainementId') enchainementId: string,
+  ): Promise<(QuestionKYCAPI | MosaicKYCAPI)[]> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.questionKYCUsecase.getEnchainementQuestions(
+      utilisateurId,
+      enchainementId,
+    );
+    return result.liste_questions.map((q) => {
+      if (q.kyc) {
+        return QuestionKYCAPI.mapToAPI(q.kyc);
+      } else {
+        return MosaicKYCAPI.mapToAPI(q.mosaic);
+      }
+    });
+  }
 
   @ApiOperation({
     summary: "Met à jour la réponse de la question d'id donné",
