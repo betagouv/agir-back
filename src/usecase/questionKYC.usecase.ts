@@ -28,7 +28,12 @@ export class QuestionKYCUsecase {
   ) {}
 
   static ENCHAINEMENTS: Record<string, string[]> = {
-    ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCID.KYC002, KYCID.KYC003],
+    ENCHAINEMENT_KYC_1: [
+      KYCID.KYC001,
+      KYCID.KYC002,
+      KYCID.KYC003,
+      KYCMosaicID.TEST_MOSAIC_ID,
+    ],
   };
 
   async getALL(utilisateurId: string): Promise<QuestionGeneric[]> {
