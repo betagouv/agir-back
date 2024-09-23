@@ -40,9 +40,6 @@ import { ServiceUsecase } from './usecase/service.usecase';
 import { ServiceRepository } from './infrastructure/repository/service.repository';
 import { TodoController } from './infrastructure/api/todo.controller';
 import { TodoUsecase } from './usecase/todo.usecase';
-import { GroupeController } from './infrastructure/api/groupe.controller';
-import { GroupeUseCase } from './usecase/groupe.usecase';
-import { GroupeRepository } from './infrastructure/repository/groupe.repository';
 import { ThematiqueRepository } from './infrastructure/repository/thematique.repository';
 import { EcoWattServiceManager } from './infrastructure/service/ecowatt/ecoWattServiceManager';
 import { WinterController } from './infrastructure/api/incoming/winter.controller';
@@ -162,7 +159,6 @@ function getControllers(): any[] {
     controllers.push(TestDataController);
     controllers.push(AuthController);
     controllers.push(BilanController);
-    controllers.push(GroupeController);
     controllers.push(MagicLinkController);
     controllers.push(OnboardingController);
     controllers.push(SuiviDashboardController);
@@ -213,8 +209,6 @@ function getControllers(): any[] {
     ServiceUsecase,
     ServiceRepository,
     TodoUsecase,
-    GroupeUseCase,
-    GroupeRepository,
     ThematiqueRepository,
     EcoWattServiceManager,
     FruitsEtLegumesServiceManager,

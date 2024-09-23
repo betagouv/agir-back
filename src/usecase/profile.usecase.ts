@@ -12,7 +12,6 @@ import { Injectable } from '@nestjs/common';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { ServiceRepository } from '../infrastructure/repository/service.repository';
-import { GroupeRepository } from '../infrastructure/repository/groupe.repository';
 import { ContactUsecase } from './contact.usecase';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { Retryable } from 'typescript-retry-decorator';
@@ -29,7 +28,6 @@ export type Phrase = {
 export class ProfileUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
-    private groupeRepository: GroupeRepository,
     private serviceRepository: ServiceRepository,
     private suiviRepository: SuiviRepository,
     private bilanRepository: BilanRepository,
@@ -259,7 +257,6 @@ export class ProfileUsecase {
     await this.bilanRepository.delete(utilisateurId);
     await this.oIDCStateRepository.delete(utilisateurId);
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
-    await this.groupeRepository.delete(utilisateurId);
     await this.utilisateurRepository.delete(utilisateurId);
 
     await this.contactUsecase.delete(utilisateur.email);

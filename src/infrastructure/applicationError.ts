@@ -52,9 +52,6 @@ export class ApplicationError {
       'Adresse électronique obligatoire pour créer un utilisateur',
     );
   }
-  static throwUserGroupNotAdminError() {
-    this.throwAppError('010', 'User is not admin of this group');
-  }
   static throwTypeSuiviInconnuError(type) {
     this.throwAppError('011', `Unknown suivi type : ${type}`);
   }

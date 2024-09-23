@@ -4,14 +4,8 @@ import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 //import { PrismaService as PrismaService_STATS } from '../src/infrastructure/prisma/stats/prisma.service.stats';
 import { Thematique } from '../src/domain/contenu/thematique';
-import {
-  Consommation,
-  Repas,
-  ThematiqueOnboarding as ThematiqueOnboarding,
-} from '../src/domain/onboarding/onboarding';
 import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
-import { Impact } from '../src/domain/onboarding/onboarding';
 const request = require('supertest');
 import { JwtService } from '@nestjs/jwt';
 import { ParcoursTodo } from '../src/domain/todo/parcoursTodo';
@@ -54,8 +48,6 @@ import {
   Article,
   Defi,
   DefiStatistique,
-  Groupe,
-  GroupeAbonnement,
   Linky,
   Quizz,
   Service,
@@ -92,8 +84,6 @@ export enum DB {
   defi = 'defi',
   empreinte = 'empreinte',
   service = 'service',
-  groupeAbonnement = 'groupeAbonnement',
-  groupe = 'groupe',
   serviceDefinition = 'serviceDefinition',
   thematique = 'thematique',
   univers = 'univers',
@@ -116,8 +106,6 @@ export class TestUtil {
     defi: TestUtil.defiData,
     empreinte: TestUtil.empreinteData,
     service: TestUtil.serviceData,
-    groupeAbonnement: TestUtil.groupeAbonnementData,
-    groupe: TestUtil.groupeData,
     serviceDefinition: TestUtil.serviceDefinitionData,
     thematique: TestUtil.thematiqueData,
     linky: TestUtil.linkyData,
@@ -195,8 +183,6 @@ export class TestUtil {
   static async deleteAll() {
     await this.prisma.suivi.deleteMany();
     await this.prisma.service.deleteMany();
-    await this.prisma.groupeAbonnement.deleteMany();
-    await this.prisma.groupe.deleteMany();
     await this.prisma.serviceDefinition.deleteMany();
     await this.prisma.empreinte.deleteMany();
     await this.prisma.utilisateur.deleteMany();
@@ -732,22 +718,6 @@ export class TestUtil {
       sous_description: 'sous desc',
       parametrage_requis: true,
       thematiques: ['climat', 'logement'],
-      ...override,
-    };
-  }
-  static groupeData(override?): Groupe {
-    return {
-      id: 'groupe-id',
-      name: 'name',
-      description: 'description',
-      ...override,
-    };
-  }
-  static groupeAbonnementData(override?): GroupeAbonnement {
-    return {
-      groupeId: 'groupe-id',
-      utilisateurId: 'utilisateur-id',
-      admin: true,
       ...override,
     };
   }

@@ -61,8 +61,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     await TestUtil.create(DB.situationNGC);
     await TestUtil.create(DB.empreinte);
     await TestUtil.create(DB.serviceDefinition);
-    await TestUtil.create(DB.groupe);
-    await TestUtil.create(DB.groupeAbonnement);
     await TestUtil.create(DB.thematique);
 
     // WHEN
@@ -83,8 +81,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     await TestUtil.create(DB.situationNGC);
     await TestUtil.create(DB.empreinte);
     await TestUtil.create(DB.serviceDefinition);
-    await TestUtil.create(DB.groupe);
-    await TestUtil.create(DB.groupeAbonnement);
     await TestUtil.create(DB.thematique);
 
     // WHEN
