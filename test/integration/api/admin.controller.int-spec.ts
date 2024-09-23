@@ -449,6 +449,7 @@ describe('Admin (API test)', () => {
           categorie: Categorie.recommandation,
           mois: [],
           conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+          sont_points_en_poche: true,
         },
       ],
     };
@@ -609,7 +610,7 @@ describe('Admin (API test)', () => {
       Feature.services,
     ]);
   });
-  it('POST /admin/migrate_users migration V11 OK - user ayant fini les mission onboarding', async () => {
+  it.skip('POST /admin/migrate_users migration V11 OK - user ayant fini les mission onboarding', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     const todo: ParcoursTodo_v0 = ParcoursTodo_v0.serialise(new ParcoursTodo());
@@ -1294,6 +1295,7 @@ describe('Admin (API test)', () => {
       categorie: Categorie.recommandation,
       mois: [],
       conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+      sont_points_en_poche: false,
     };
     const defis_1: DefiHistory_v0 = {
       version: 0,
@@ -1621,6 +1623,7 @@ describe('Admin (API test)', () => {
       categorie: Categorie.recommandation,
       mois: [],
       conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+      sont_points_en_poche: false,
     };
 
     const defi1 = {

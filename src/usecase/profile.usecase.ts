@@ -3,7 +3,6 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import {
   LogementAPI,
   TransportAPI,
-  UtilisateurProfileAPI,
   UtilisateurUpdateProfileAPI,
 } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
 import { SuiviRepository } from '../infrastructure/repository/suivi.repository';
@@ -13,13 +12,10 @@ import { Injectable } from '@nestjs/common';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { ServiceRepository } from '../infrastructure/repository/service.repository';
-import { GroupeRepository } from '../infrastructure/repository/groupe.repository';
 import { ContactUsecase } from './contact.usecase';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
-import { KYCID } from '../domain/kyc/KYCID';
 import { Retryable } from 'typescript-retry-decorator';
 import { AideRepository } from '../infrastructure/repository/aide.repository';
-import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import validator from 'validator';
 
@@ -32,7 +28,6 @@ export type Phrase = {
 export class ProfileUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
-    private groupeRepository: GroupeRepository,
     private serviceRepository: ServiceRepository,
     private suiviRepository: SuiviRepository,
     private bilanRepository: BilanRepository,
@@ -73,6 +68,19 @@ export class ProfileUsecase {
       if (!char_regexp.test(profile.prenom)) {
         ApplicationError.throwNotAlhpaPrenom();
       }
+    }
+
+    if (profile.revenu_fiscal) {
+      if (!validator.isInt('' + profile.revenu_fiscal))
+        ApplicationError.throwRFRNotNumer();
+    }
+    if (profile.annee_naissance) {
+      if (!validator.isInt('' + profile.annee_naissance))
+        ApplicationError.throwBadAnnee();
+    }
+    if (profile.nombre_de_parts_fiscales) {
+      if (!validator.isDecimal('' + profile.nombre_de_parts_fiscales))
+        ApplicationError.throwPartsFiscalesNotDecimal();
     }
 
     utilisateur.revenu_fiscal = profile.revenu_fiscal;
@@ -117,6 +125,41 @@ export class ProfileUsecase {
 
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
+
+    if (input.nombre_adultes) {
+      if (!validator.isInt('' + input.nombre_adultes))
+        ApplicationError.throwNbrAdultesEnfants();
+    }
+    if (input.nombre_enfants) {
+      if (!validator.isInt('' + input.nombre_enfants))
+        ApplicationError.throwNbrAdultesEnfants();
+    }
+    if (input.code_postal) {
+      if (!validator.isInt(input.code_postal))
+        ApplicationError.throwCodePostalIncorrect();
+      if (input.code_postal.length !== 5)
+        ApplicationError.throwCodePostalIncorrect();
+    }
+
+    if (
+      (input.commune && !input.code_postal) ||
+      (!input.commune && input.code_postal)
+    ) {
+      ApplicationError.throwCodePostalCommuneMandatory();
+    }
+
+    if (input.commune) {
+      const ok = this.communeRepository.checkOKCodePostalAndCommune(
+        input.code_postal,
+        input.commune,
+      );
+      if (!ok) {
+        ApplicationError.throwBadCodePostalAndCommuneAssociation(
+          input.code_postal,
+          input.commune,
+        );
+      }
+    }
 
     utilisateur.logement.patch(input, utilisateur);
 
@@ -214,7 +257,6 @@ export class ProfileUsecase {
     await this.bilanRepository.delete(utilisateurId);
     await this.oIDCStateRepository.delete(utilisateurId);
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
-    await this.groupeRepository.delete(utilisateurId);
     await this.utilisateurRepository.delete(utilisateurId);
 
     await this.contactUsecase.delete(utilisateur.email);

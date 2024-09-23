@@ -13,6 +13,8 @@ import {
 import { Categorie } from '../../src/domain/contenu/categorie';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { KycRepository } from '../infrastructure/repository/kyc.repository';
+import { QuestionKYCUsecase } from './questionKYC.usecase';
 
 @Injectable()
 export class TodoUsecase {
@@ -21,7 +23,9 @@ export class TodoUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
+    private kycRepository: KycRepository,
     private personnalisator: Personnalisator,
+    private questionKYCUsecase: QuestionKYCUsecase,
   ) {}
 
   async gagnerPointsFromTodoElement(utilisateurId: string, elementId: string) {
@@ -149,7 +153,33 @@ export class TodoUsecase {
           element.content_id = randomArticle.content_id;
         }
       }
+      if (element.type === ContentType.enchainement_kyc) {
+        const enchainement =
+          await this.questionKYCUsecase.getEnchainementQuestions(
+            utilisateurId,
+            element.content_id,
+          );
+
+        const progression = enchainement.getProgression();
+        element.progression = progression;
+
+        if (progression.current === progression.target) {
+          todo.moveElementToDone(element);
+          const tmp_user = await this.utilisateurRepository.getById(
+            utilisateurId,
+          );
+          const new_elem = tmp_user.parcours_todo.findTodoElementByID(
+            element.id,
+          );
+          if (new_elem) {
+            new_elem.element.progression = progression;
+            new_elem.todo.moveElementToDone(new_elem.element);
+            await this.utilisateurRepository.updateUtilisateur(tmp_user);
+          }
+        }
+      }
     }
+
     //return todo;
     return this.personnalisator.personnaliser(todo, utilisateur);
   }

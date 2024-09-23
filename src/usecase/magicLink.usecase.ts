@@ -4,16 +4,9 @@ import {
 } from '../domain/utilisateur/utilisateur';
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/onboarding/createUtilisateurAPI';
-import { Onboarding } from '../domain/onboarding/onboarding';
-import { OnboardingDataAPI } from '../infrastructure/api/types/utilisateur/onboarding/onboardingDataAPI';
 import { EmailSender } from '../infrastructure/email/emailSender';
-import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
-import { CodeManager } from '../domain/utilisateur/manager/codeManager';
 import { OidcService } from '../infrastructure/auth/oidc.service';
-import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { ContactUsecase } from './contact.usecase';
 import { App } from '../domain/app';
 
 export type Phrase = {
@@ -28,10 +21,7 @@ export class MagicLinkUsecase {
   constructor(
     private utilisateurRespository: UtilisateurRepository,
     private emailSender: EmailSender,
-    private codeManager: CodeManager,
-    private contactUsecase: ContactUsecase,
     private oidcService: OidcService,
-    private securityEmailManager: SecurityEmailManager,
   ) {}
 
   async validateLink(

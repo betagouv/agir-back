@@ -47,10 +47,10 @@ export class ApplicationError {
     this.throwAppError('008', 'Prénom obligatoire pour créer un utilisateur');
   }
   static throwEmailObligatoireError() {
-    this.throwAppError('009', 'Email obligatoire pour créer un utilisateur');
-  }
-  static throwUserGroupNotAdminError() {
-    this.throwAppError('010', 'User is not admin of this group');
+    this.throwAppError(
+      '009',
+      'Adresse électronique obligatoire pour créer un utilisateur',
+    );
   }
   static throwTypeSuiviInconnuError(type) {
     this.throwAppError('011', `Unknown suivi type : ${type}`);
@@ -267,9 +267,6 @@ export class ApplicationError {
   static throwToManyAttenteForToday() {
     this.throwAppError('048', `Liste d'attente complète pour aujourd'hui !`);
   }
-  static throwBadInputsForFileAttente() {
-    this.throwAppError('049', `Mauvais inputs pour la mise en file d'attente`);
-  }
   static throwConcurrentUpdate() {
     this.throwAppError(
       '050',
@@ -311,7 +308,7 @@ export class ApplicationError {
     this.throwAppError('056', `Categorie de recherche [${categorie}] inconnue`);
   }
   static throwEmailObligatoireMagicLinkError() {
-    this.throwAppError('057', 'Email obligatoire');
+    this.throwAppError('057', 'Adresse électronique obligatoire');
   }
   static throwCodeObligatoireMagicLinkError() {
     this.throwAppError('058', 'Code obligatoire');
@@ -358,6 +355,61 @@ export class ApplicationError {
   }
   static throwUnknownMosaicId(id: string) {
     this.throwAppError('070', `Mosaic d'id [${id}] inconnue`, 404);
+  }
+  static throwExternalServiceError(service_name) {
+    this.throwAppError(
+      '071',
+      `Le service externe '${service_name}' semble rencontrer un problème, nous vous proposons sde re-essayer plus tard`,
+      500,
+    );
+  }
+  static throwMissingMosaicData() {
+    this.throwAppError(
+      '072',
+      `Les données sont manquantes pour mettre à jour la mosaic argument`,
+    );
+  }
+  static throwRFRNotNumer() {
+    this.throwAppError('073', `Le revenu fisscal doi être un nombre entier`);
+  }
+  static throwPartsFiscalesNotDecimal() {
+    this.throwAppError(
+      '074',
+      `Le nombre de parts fiscales doit être un nombre décimal`,
+    );
+  }
+  static throwBadAnnee() {
+    this.throwAppError(
+      '075',
+      `L'année de naissance doit être un nombre entier`,
+    );
+  }
+  static throwNbrAdultesEnfants() {
+    this.throwAppError(
+      '076',
+      `Le nombre d'adultes et d'enfants doit être un nombre entier`,
+    );
+  }
+  static throwCodePostalIncorrect() {
+    this.throwAppError(
+      '077',
+      'Le code postal doit être une suite de 5 chiffres',
+    );
+  }
+  static throwCodePostalCommuneMandatory() {
+    this.throwAppError('078', 'Le code postal ET la commune sont obligatoires');
+  }
+  static throwBadCodePostalAndCommuneAssociation(
+    code_postal: string,
+    commune: string,
+  ) {
+    this.throwAppError(
+      '079',
+      `Le code postal '${code_postal}' ne correspond pas à la commune ${commune}`,
+    );
+  }
+  static throwUnkownEnchainement(id: string) {
+    this.throwAppError('080', `L'enchainement d'id [${id}] n'existe pas`);
   }
 
   private static throwAppError(

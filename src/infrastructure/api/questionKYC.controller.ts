@@ -1,9 +1,11 @@
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiExtraModels,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
+  getSchemaPath,
 } from '@nestjs/swagger';
 import {
   Controller,
@@ -21,8 +23,15 @@ import { QuestionKYCAPI } from './types/kyc/questionsKYCAPI';
 import { ReponseKYCAPI } from './types/kyc/reponseKYCAPI';
 import { MosaicKYCAPI } from './types/kyc/mosaicKYCAPI';
 import { ReponseKYCMosaicAPI } from './types/kyc/reponseKYCMosaicAPI';
+import { MosaicKYC } from '../../domain/kyc/mosaicKYC';
 
 @Controller()
+@ApiExtraModels(
+  QuestionKYCAPI,
+  MosaicKYCAPI,
+  ReponseKYCMosaicAPI,
+  ReponseKYCAPI,
+)
 @ApiBearerAuth()
 @ApiTags('QuestionsKYC')
 export class QuestionsKYCController extends GenericControler {
@@ -33,7 +42,14 @@ export class QuestionsKYCController extends GenericControler {
   @Get('utilisateurs/:utilisateurId/questionsKYC')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
-    type: [QuestionKYCAPI],
+    schema: {
+      items: {
+        allOf: [
+          { $ref: getSchemaPath(QuestionKYCAPI) },
+          { $ref: getSchemaPath(MosaicKYCAPI) },
+        ],
+      },
+    },
   })
   @ApiOperation({
     summary: "Retourne l'ensemble des question (avec ou sans réponses)",
@@ -41,10 +57,16 @@ export class QuestionsKYCController extends GenericControler {
   async getAll(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-  ): Promise<QuestionKYCAPI[]> {
+  ): Promise<(QuestionKYCAPI | MosaicKYCAPI)[]> {
     this.checkCallerId(req, utilisateurId);
     const result = await this.questionKYCUsecase.getALL(utilisateurId);
-    return result.map((element) => QuestionKYCAPI.mapToAPI(element));
+    return result.map((k) => {
+      if (k.kyc) {
+        return QuestionKYCAPI.mapToAPI(k.kyc);
+      } else {
+        return MosaicKYCAPI.mapToAPI(k.mosaic);
+      }
+    });
   }
 
   @ApiOperation({
@@ -54,48 +76,73 @@ export class QuestionsKYCController extends GenericControler {
   @Get('utilisateurs/:utilisateurId/questionsKYC/:questionId')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
-    type: QuestionKYCAPI,
+    schema: {
+      allOf: [
+        { $ref: getSchemaPath(QuestionKYCAPI) },
+        { $ref: getSchemaPath(MosaicKYCAPI) },
+      ],
+    },
   })
   async getQuestion(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
     @Param('questionId') questionId: string,
-  ): Promise<QuestionKYCAPI> {
+  ): Promise<QuestionKYCAPI | MosaicKYCAPI> {
     this.checkCallerId(req, utilisateurId);
     const result = await this.questionKYCUsecase.getQuestion(
       utilisateurId,
       questionId,
     );
-    return QuestionKYCAPI.mapToAPI(result);
+    if (result.kyc) {
+      return QuestionKYCAPI.mapToAPI(result.kyc);
+    } else {
+      return MosaicKYCAPI.mapToAPI(result.mosaic);
+    }
   }
-
   @ApiOperation({
-    summary:
-      "Retourne une mosaic de questions d'id mosaicId avec sa réponse, reponse qui peut être null si l'utilsateur n'a pas répondu à la question encore",
+    summary: 'Retourne une liste de questions à enchainer',
   })
-  @Get('utilisateurs/:utilisateurId/mosaicsKYC/:mosaicId')
+  @Get('utilisateurs/:utilisateurId/enchainementQuestionsKYC/:enchainementId')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
-    type: MosaicKYCAPI,
+    schema: {
+      items: {
+        allOf: [
+          { $ref: getSchemaPath(QuestionKYCAPI) },
+          { $ref: getSchemaPath(MosaicKYCAPI) },
+        ],
+      },
+    },
   })
-  async getMosaic(
+  async getEnchainementQuestions(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-    @Param('mosaicId') mosaicId: string,
-  ): Promise<MosaicKYCAPI> {
+    @Param('enchainementId') enchainementId: string,
+  ): Promise<(QuestionKYCAPI | MosaicKYCAPI)[]> {
     this.checkCallerId(req, utilisateurId);
-    const result = await this.questionKYCUsecase.getQuestionMosaic(
+    const result = await this.questionKYCUsecase.getEnchainementQuestions(
       utilisateurId,
-      mosaicId,
+      enchainementId,
     );
-    return MosaicKYCAPI.mapToAPI(result);
+    return result.liste_questions.map((q) => {
+      if (q.kyc) {
+        return QuestionKYCAPI.mapToAPI(q.kyc);
+      } else {
+        return MosaicKYCAPI.mapToAPI(q.mosaic);
+      }
+    });
   }
 
   @ApiOperation({
     summary: "Met à jour la réponse de la question d'id donné",
   })
   @ApiBody({
-    type: ReponseKYCAPI,
+    schema: {
+      allOf: [
+        { $ref: getSchemaPath(ReponseKYCMosaicAPI) },
+        { $ref: getSchemaPath(ReponseKYCAPI) },
+      ],
+    },
   })
   @Put('utilisateurs/:utilisateurId/questionsKYC/:questionId')
   @UseGuards(AuthGuard)
@@ -103,37 +150,21 @@ export class QuestionsKYCController extends GenericControler {
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
     @Param('questionId') questionId: string,
-    @Body() body: ReponseKYCAPI,
-  ): Promise<string> {
+    @Body() body: ReponseKYCAPI | ReponseKYCMosaicAPI,
+  ): Promise<void> {
     this.checkCallerId(req, utilisateurId);
-    await this.questionKYCUsecase.updateResponse(
-      utilisateurId,
-      questionId,
-      body.reponse,
-    );
-    return 'OK';
-  }
-
-  @ApiOperation({
-    summary: "Met à jour la réponse de la question mosaic d'id donné",
-  })
-  @ApiBody({
-    type: ReponseKYCMosaicAPI,
-  })
-  @Put('utilisateurs/:utilisateurId/mosaicsKYC/:mosaicId')
-  @UseGuards(AuthGuard)
-  async updateResponseMosaic(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-    @Param('mosaicId') mosaicId: string,
-    @Body() body: ReponseKYCMosaicAPI,
-  ): Promise<string> {
-    this.checkCallerId(req, utilisateurId);
-    await this.questionKYCUsecase.updateResponseMosaic(
-      utilisateurId,
-      mosaicId,
-      body.reponse,
-    );
-    return 'OK';
+    if (MosaicKYC.isMosaicID(questionId)) {
+      await this.questionKYCUsecase.updateResponseMosaic(
+        utilisateurId,
+        questionId,
+        (body as ReponseKYCMosaicAPI).reponse_mosaic,
+      );
+    } else {
+      await this.questionKYCUsecase.updateResponseKYC(
+        utilisateurId,
+        questionId,
+        (body as ReponseKYCAPI).reponse,
+      );
+    }
   }
 }

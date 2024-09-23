@@ -2,15 +2,12 @@ import { Controller, Get, Param, Query, Redirect } from '@nestjs/common';
 import { ApiExcludeController, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { OidcService } from '../auth/oidc.service';
 import { ProfileUsecase } from '../../usecase/profile.usecase';
-import { Inscription_v1_Usecase } from '../../usecase/inscription_v1.usecase';
 import { App } from '../../../src/domain/app';
-import { SourceInscription } from '../../domain/utilisateur/utilisateur';
 
 @Controller()
 @ApiExcludeController()
 export class AuthController {
   constructor(
-    private inscriptionUsecase: Inscription_v1_Usecase,
     private profileUsecase: ProfileUsecase,
     private oidcService: OidcService,
   ) {}
@@ -48,6 +45,7 @@ export class AuthController {
     );
     if (!utilisateur) {
       // FIXME : revoir le moment venu, c'est plus en ligne avec la création de compte standalone
+      /*
       await this.inscriptionUsecase.createUtilisateur({
         nom: user_data.family_name,
         prenom: 'UNDEFINED',
@@ -59,6 +57,7 @@ export class AuthController {
         source_inscription: SourceInscription.inconnue,
         mot_de_passe: undefined,
       });
+      */
     }
     const utilisateurId = utilisateur.id; // FIXME : broken for now
 

@@ -1,0 +1,650 @@
+[
+  {
+    "id": 1,
+    "name": "g",
+    "plural": "g",
+    "use_ingredient_name": 0,
+    "computable": 1,
+    "round_type": "round_2"
+  },
+  {
+    "id": 2,
+    "name": "boîte",
+    "plural": "boîtes",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 3,
+    "name": "unité",
+    "plural": "unités",
+    "use_ingredient_name": 1,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 4,
+    "name": "cuillère à soupe",
+    "plural": "cuillères à soupe",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 6,
+    "name": "cuillère à café",
+    "plural": "cuillères à café",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_3"
+  },
+  {
+    "id": 7,
+    "name": "cl",
+    "plural": "cl",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_2"
+  },
+  {
+    "id": 8,
+    "name": "ml",
+    "plural": "ml",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_2"
+  },
+  {
+    "id": 9,
+    "name": "pot",
+    "plural": "pots",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 13,
+    "name": "gousse",
+    "plural": "gousses",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 14,
+    "name": "pincée",
+    "plural": "pincées",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_3"
+  },
+  {
+    "id": 15,
+    "name": "cube",
+    "plural": "cubes",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 18,
+    "name": "filet",
+    "plural": "filets",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_3"
+  },
+  {
+    "id": 19,
+    "name": "brin",
+    "plural": "brins",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_3"
+  },
+  {
+    "id": 20,
+    "name": "botte",
+    "plural": "bottes",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 23,
+    "name": "tranche",
+    "plural": "tranches",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 24,
+    "name": "feuille",
+    "plural": "feuilles",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 25,
+    "name": "brique",
+    "plural": "briques",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 26,
+    "name": "noix",
+    "plural": "noix",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_3"
+  },
+  {
+    "id": 27,
+    "name": "noisette",
+    "plural": "noisettes",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_3"
+  },
+  {
+    "id": 32,
+    "name": "branche",
+    "plural": "branches",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 34,
+    "name": "bouquet",
+    "plural": "bouquets",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 52,
+    "name": "poignée",
+    "plural": "poignées",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 55,
+    "name": "boule",
+    "plural": "boules",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 81,
+    "name": "cm",
+    "plural": "cm",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_2"
+  },
+  {
+    "id": 118,
+    "name": "barquette",
+    "plural": "barquettes",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 119,
+    "name": "dl",
+    "plural": "dl",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_2"
+  },
+  {
+    "id": 120,
+    "name": "l",
+    "plural": "l",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_2"
+  },
+  {
+    "id": 121,
+    "name": "kg",
+    "plural": "kg",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_2"
+  },
+  {
+    "id": 122,
+    "name": "tête",
+    "plural": "têtes",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 123,
+    "name": "quart",
+    "plural": "quarts",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 124,
+    "name": "petite boîte",
+    "plural": "petites boîtes ",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 125,
+    "name": "bocal",
+    "plural": "bocaux",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 126,
+    "name": "portion",
+    "plural": "portions",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 127,
+    "name": "goutte",
+    "plural": "gouttes",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_3"
+  },
+  {
+    "id": 128,
+    "name": "bâton",
+    "plural": "bâtons",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 129,
+    "name": "bâtonnet",
+    "plural": "bâtonnets",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 130,
+    "name": "canette",
+    "plural": "canettes",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 131,
+    "name": "kg (avec coquille)",
+    "plural": "kg (avec coquille)",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_2"
+  },
+  {
+    "id": 132,
+    "name": "coupelle",
+    "plural": "coupelles",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 133,
+    "name": "sachet",
+    "plural": "sachets",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 134,
+    "name": "bouteille",
+    "plural": "bouteilles",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 135,
+    "name": "tasse",
+    "plural": "tasses",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 136,
+    "name": "tablette",
+    "plural": "tablettes",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 137,
+    "name": "carré",
+    "plural": "carrés",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 138,
+    "name": "rondelle",
+    "plural": "rondelles",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 139,
+    "name": "grande boîte",
+    "plural": "grandes boîtes",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 140,
+    "name": "pièce",
+    "plural": "pièces",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 141,
+    "name": "bombe",
+    "plural": "bombes",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 142,
+    "name": "briquette 20 cl",
+    "plural": "briquettes 20 cl",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 143,
+    "name": "pièce (poids net)",
+    "plural": "pièces (poids net)",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 144,
+    "name": "bûche",
+    "plural": "bûches",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 145,
+    "name": "verre",
+    "plural": "verres",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 146,
+    "name": "pot de yaourt",
+    "plural": "pots de yaourt",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 147,
+    "name": "Filet d'anchois",
+    "plural": "filets d'anchois",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 148,
+    "name": "petit pot",
+    "plural": "petits pots",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 149,
+    "name": "petit sachet",
+    "plural": "petits sachets",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 150,
+    "name": "tranche fine",
+    "plural": "tranches fines",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 152,
+    "name": "cuisse",
+    "plural": "cuisses",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 153,
+    "name": "paquet",
+    "plural": "paquets",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 154,
+    "name": "bol",
+    "plural": "bols",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 155,
+    "name": "zeste",
+    "plural": "zestes",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 156,
+    "name": "rouleau",
+    "plural": "rouleaux",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 157,
+    "name": "grain",
+    "plural": "grains",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_3"
+  },
+  {
+    "id": 158,
+    "name": "morceau",
+    "plural": "morceaux",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 159,
+    "name": "petite brique",
+    "plural": "petites briques",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 160,
+    "name": "grappe",
+    "plural": "grappes",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 161,
+    "name": "plaquette",
+    "plural": "plaquettes",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 162,
+    "name": "coupe",
+    "plural": "coupes",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 163,
+    "name": "pavé",
+    "plural": "pavés",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 164,
+    "name": "briquette",
+    "plural": "briquettes",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 165,
+    "name": "galette",
+    "plural": "galettes",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 166,
+    "name": "petit bocal",
+    "plural": "petits bocaux",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 167,
+    "name": "tronçon",
+    "plural": "tronçons",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 168,
+    "name": "grande feuille",
+    "plural": "grandes feuilles",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 170,
+    "name": "pétale",
+    "plural": "pétales",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_3"
+  },
+  {
+    "id": 171,
+    "name": "pilon",
+    "plural": "pilons",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_3"
+  },
+  {
+    "id": 172,
+    "name": "grand pot",
+    "plural": "grands pots",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 174,
+    "name": "petit paquet",
+    "plural": "petits paquets",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 175,
+    "name": "cannelloni",
+    "plural": "cannellonis",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_3"
+  },
+  {
+    "id": 176,
+    "name": "conserve",
+    "plural": "conserves",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_1"
+  },
+  {
+    "id": 177,
+    "name": "pointe",
+    "plural": "pointes",
+    "use_ingredient_name": 0,
+    "computable": 0,
+    "round_type": "round_3"
+  }
+]

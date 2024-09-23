@@ -12,6 +12,11 @@ export class UtilisateurBoardRepository {
     const top = await this.prisma.utilisateur.findMany({
       take: 3,
       orderBy: { points_classement: 'desc' },
+      where: {
+        prenom: {
+          not: null,
+        },
+      },
     });
     return top.map((t) => this.mapUserDbToDomain(t));
   }
@@ -25,6 +30,9 @@ export class UtilisateurBoardRepository {
       where: {
         code_postal_classement: code_postal,
         commune_classement: commune,
+        prenom: {
+          not: null,
+        },
       },
       orderBy: { points_classement: 'desc' },
     });
@@ -39,6 +47,8 @@ export class UtilisateurBoardRepository {
         DENSE_RANK() OVER ( ORDER BY points_classement DESC) AS rnk
       FROM
         "Utilisateur"
+      WHERE
+        "prenom" IS NOT NULL
     )
     UPDATE
       "Utilisateur"
@@ -59,6 +69,8 @@ export class UtilisateurBoardRepository {
         DENSE_RANK() OVER ( PARTITION BY "code_postal_classement", "commune_classement" ORDER BY points_classement DESC) AS rnk
       FROM
         "Utilisateur"
+      WHERE
+        "prenom" IS NOT NULL
     )
     UPDATE
       "Utilisateur"
@@ -192,6 +204,9 @@ export class UtilisateurBoardRepository {
         ...rank_cond,
         id: user_cond,
         ...filtre_commune,
+        prenom: {
+          not: null,
+        },
       },
     });
 
@@ -200,7 +215,7 @@ export class UtilisateurBoardRepository {
     } else {
       result.sort((a, b) => a.rank_commune - b.rank_commune);
     }
-    
+
     return result.map((t) => this.mapUserDbToDomain(t));
   }
   async getPourcentile(
@@ -215,6 +230,9 @@ export class UtilisateurBoardRepository {
         where: {
           code_postal_classement: code_postal,
           commune_classement: commune,
+          prenom: {
+            not: null,
+          },
         },
       });
       count_better_than_user = await this.prisma.utilisateur.count({
@@ -224,6 +242,9 @@ export class UtilisateurBoardRepository {
           points_classement: {
             gt: points,
           },
+          prenom: {
+            not: null,
+          },
         },
       });
     } else {
@@ -232,6 +253,9 @@ export class UtilisateurBoardRepository {
         where: {
           points_classement: {
             gt: points,
+          },
+          prenom: {
+            not: null,
           },
         },
       });

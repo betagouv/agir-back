@@ -29,8 +29,13 @@ export class EmailSender {
     smtpEmail.replyTo = { email: App.getEmailReplyTo(), name: 'Contact' };
 
     if (App.isMailEnabled()) {
-      console.log(`Sending email to ${email_to}`);
-      this.apiInstance.sendTransacEmail(smtpEmail);
+      try {
+        console.log(`Sending email to ${email_to}`);
+        await this.apiInstance.sendTransacEmail(smtpEmail);
+        console.log(`Sending email to ${email_to} OK`);
+      } catch (error) {
+        console.error(error);
+      }
     } else {
       console.log(`Email not sent in test mode: 
       subject: ${subject}

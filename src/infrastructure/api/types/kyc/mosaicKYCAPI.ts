@@ -27,6 +27,9 @@ export class MosaicKYCAPI {
   id: string;
 
   @ApiProperty()
+  is_answered: boolean;
+
+  @ApiProperty()
   titre: string;
 
   @ApiProperty({ enum: TypeReponseMosaicKYC })
@@ -49,6 +52,7 @@ export class MosaicKYCAPI {
       categorie: mosaic.categorie,
       points: mosaic.points,
       type: mosaic.type,
+      is_answered: mosaic.is_answered,
     };
   }
 }

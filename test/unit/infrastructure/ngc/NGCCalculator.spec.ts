@@ -1,4 +1,3 @@
-import { VoitureGabarit } from '../../../../src/domain/equipements/vehicule';
 import { NGCCalculator } from '../../../../src/infrastructure/ngc/NGCCalculator';
 
 describe('NGCCalculator', () => {
@@ -18,7 +17,7 @@ describe('NGCCalculator', () => {
     const response = calculator.computeSingleEntryValue(situation, entry);
 
     //THEN
-    expect(response).toEqual(2199.540741358343);
+    expect(response).toEqual(1568.5480530854577);
   });
   it('computeSingleEntry : compute ok single entry, minimal situation', () => {
     //GIVEN
@@ -32,7 +31,7 @@ describe('NGCCalculator', () => {
     const response = calculator.computeSingleEntryValue(situation, entry);
 
     //THEN
-    expect(response).toEqual(1983.1924717165384);
+    expect(response).toEqual(1990.0803695420266);
   });
   it('computeSingleEntry : compute ok single entry, complexe situation', () => {
     //GIVEN
@@ -54,7 +53,7 @@ describe('NGCCalculator', () => {
     const response = calculator.computeSingleEntryValue(situation, entry);
 
     //THEN
-    expect(response).toEqual(7661.143979107765);
+    expect(response).toEqual(8442.02626567427);
   });
   it('computeSingleEntry : Cas du photovlotaique', () => {
     //GIVEN
@@ -99,13 +98,13 @@ describe('NGCCalculator', () => {
 
     //THEN
     expect(response.size).toEqual(6);
-    expect(response.get('bilan')).toEqual(7661.143979107765);
-    expect(response.get('divers')).toEqual(1079.0454437235896);
-    expect(response.get('logement')).toEqual(1477.82343812085);
+    expect(response.get('bilan')).toEqual(8442.02626567427);
+    expect(response.get('divers')).toEqual(1149.8963528144989);
+    expect(response.get('logement')).toEqual(2160.200464307907);
     expect(response.get('transport . voiture . empreinte moyenne')).toEqual(
-      1298.089617850825,
+      1297.8253327911443,
     );
-    expect(response.get('alimentation')).toEqual(2094.1568221);
+    expect(response.get('alimentation')).toEqual(2328.7004821);
     expect(response.get('services sociétaux')).toEqual(1450.9052263863641);
   });
 

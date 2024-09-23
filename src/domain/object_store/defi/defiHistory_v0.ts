@@ -23,6 +23,7 @@ export class Defi_v0 {
   categorie: Categorie;
   mois: number[];
   conditions: ConditionDefi[][];
+  sont_points_en_poche: boolean;
 
   static map(elem: Defi): Defi_v0 {
     return {
@@ -42,6 +43,7 @@ export class Defi_v0 {
       categorie: elem.categorie,
       mois: elem.mois ? elem.mois : [],
       conditions: elem.conditions ? elem.conditions : [],
+      sont_points_en_poche: elem.sont_points_en_poche,
     };
   }
 }

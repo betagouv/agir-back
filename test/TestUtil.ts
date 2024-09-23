@@ -4,14 +4,8 @@ import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 //import { PrismaService as PrismaService_STATS } from '../src/infrastructure/prisma/stats/prisma.service.stats';
 import { Thematique } from '../src/domain/contenu/thematique';
-import {
-  Consommation,
-  Repas,
-  ThematiqueOnboarding as ThematiqueOnboarding,
-} from '../src/domain/onboarding/onboarding';
 import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
-import { Impact } from '../src/domain/onboarding/onboarding';
 const request = require('supertest');
 import { JwtService } from '@nestjs/jwt';
 import { ParcoursTodo } from '../src/domain/todo/parcoursTodo';
@@ -54,8 +48,6 @@ import {
   Article,
   Defi,
   DefiStatistique,
-  Groupe,
-  GroupeAbonnement,
   Linky,
   Quizz,
   Service,
@@ -92,8 +84,6 @@ export enum DB {
   defi = 'defi',
   empreinte = 'empreinte',
   service = 'service',
-  groupeAbonnement = 'groupeAbonnement',
-  groupe = 'groupe',
   serviceDefinition = 'serviceDefinition',
   thematique = 'thematique',
   univers = 'univers',
@@ -116,8 +106,6 @@ export class TestUtil {
     defi: TestUtil.defiData,
     empreinte: TestUtil.empreinteData,
     service: TestUtil.serviceData,
-    groupeAbonnement: TestUtil.groupeAbonnementData,
-    groupe: TestUtil.groupeData,
     serviceDefinition: TestUtil.serviceDefinitionData,
     thematique: TestUtil.thematiqueData,
     linky: TestUtil.linkyData,
@@ -195,8 +183,6 @@ export class TestUtil {
   static async deleteAll() {
     await this.prisma.suivi.deleteMany();
     await this.prisma.service.deleteMany();
-    await this.prisma.groupeAbonnement.deleteMany();
-    await this.prisma.groupe.deleteMany();
     await this.prisma.serviceDefinition.deleteMany();
     await this.prisma.empreinte.deleteMany();
     await this.prisma.utilisateur.deleteMany();
@@ -217,7 +203,6 @@ export class TestUtil {
     await this.prisma.kycStatistique.deleteMany();
     await this.prisma.mission.deleteMany();
     await this.prisma.kYC.deleteMany();
-    await this.prisma.fileAttente.deleteMany();
     await this.prisma.thematiqueStatistique.deleteMany();
     await this.prisma.universStatistique.deleteMany();
     await this.prisma.servicesFavorisStatistique.deleteMany();
@@ -418,6 +403,9 @@ export class TestUtil {
         { label: 'Mon logement', code: Thematique.logement },
         { label: 'Ce que je mange', code: Thematique.alimentation },
       ],
+      short_question: 'short',
+      image_url: 'URL',
+
       created_at: undefined,
       updated_at: undefined,
       ...override,
@@ -469,12 +457,14 @@ export class TestUtil {
           categorie: Categorie.recommandation,
           mois: [],
           conditions: [],
+          sont_points_en_poche: false,
         },
       ],
     };
 
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID._2,
@@ -495,6 +485,8 @@ export class TestUtil {
           ],
           tags: [],
           universes: [Univers.climat],
+          short_question: 'short',
+          image_url: 'URL',
         },
       ],
     };
@@ -726,22 +718,6 @@ export class TestUtil {
       sous_description: 'sous desc',
       parametrage_requis: true,
       thematiques: ['climat', 'logement'],
-      ...override,
-    };
-  }
-  static groupeData(override?): Groupe {
-    return {
-      id: 'groupe-id',
-      name: 'name',
-      description: 'description',
-      ...override,
-    };
-  }
-  static groupeAbonnementData(override?): GroupeAbonnement {
-    return {
-      groupeId: 'groupe-id',
-      utilisateurId: 'utilisateur-id',
-      admin: true,
       ...override,
     };
   }

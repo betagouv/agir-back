@@ -151,6 +151,8 @@ describe('Objet Utilisateur', () => {
         { label: 'Chicoré', code: 'chicore' },
       ],
       universes: [],
+      short_question: 'short',
+      image_url: 'https://',
     });
 
     // WHEN
@@ -185,6 +187,8 @@ describe('Objet Utilisateur', () => {
         { label: 'autre', code: 'autre' },
       ],
       universes: [],
+      short_question: 'short',
+      image_url: 'https://',
     });
 
     // WHEN
@@ -231,6 +235,8 @@ describe('Objet Utilisateur', () => {
         { label: 'autre', code: 'autre' },
       ],
       universes: [],
+      short_question: 'short',
+      image_url: 'https://',
     });
 
     // WHEN

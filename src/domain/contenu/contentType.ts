@@ -4,10 +4,13 @@ export enum ContentType {
   aides = 'aides',
   suivi_du_jour = 'suivi_du_jour',
   quizz = 'quizz',
+  enchainement = 'enchainement',
+  enchainement_kyc = 'enchainement_kyc',
   onboarding = 'onboarding',
   service = 'service',
   profile = 'profile',
   recommandations = 'recommandations',
   kyc = 'kyc',
   defi = 'defi',
+  mosaic = 'mosaic',
 }

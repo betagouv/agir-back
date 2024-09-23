@@ -11,7 +11,6 @@ import { Tag } from '../../../../src/domain/scoring/tag';
 import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
-import { CMSWebhookAPI } from '../../../../src/infrastructure/api/types/cms/CMSWebhookAPI';
 
 describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA_DEFI = {
@@ -65,12 +64,18 @@ describe('/api/incoming/cms (API test)', () => {
     entry: {
       id: 123,
       question: 'question',
+      short_question: 'short question',
       code: KYCID.KYC001,
       type: TypeReponseQuestionKYC.choix_multiple,
       categorie: Categorie.mission,
       points: 5,
       is_ngc: false,
       ngc_key: 'a . b . c',
+      imageUrl: {
+        formats: {
+          thumbnail: { url: 'https://' },
+        },
+      },
       reponses: [
         {
           id: 1,
@@ -392,6 +397,8 @@ describe('/api/incoming/cms (API test)', () => {
 
     expect(item.code).toEqual('KYC001');
     expect(item.question).toEqual('question');
+    expect(item.short_question).toEqual('short question');
+    expect(item.image_url).toEqual('https://');
     expect(item.id_cms).toEqual(123);
     expect(item.type).toEqual(TypeReponseQuestionKYC.choix_multiple);
     expect(item.categorie).toEqual(Categorie.mission);

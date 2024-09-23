@@ -5,7 +5,6 @@ import { Gamification } from '../domain/gamification/gamification';
 import { UtilisateurBoardRepository } from '../infrastructure/repository/utilisateurBoard.repository';
 import { Board } from '../domain/gamification/board';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
-import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { Classement } from '../domain/gamification/classement';
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
 
@@ -15,7 +14,6 @@ export class GamificationUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private utilisateurBoardRepository: UtilisateurBoardRepository,
     private communeRepository: CommuneRepository,
-    private personnalisator: Personnalisator,
   ) {}
 
   async getGamificationData(utilisateurId: string): Promise<Gamification> {

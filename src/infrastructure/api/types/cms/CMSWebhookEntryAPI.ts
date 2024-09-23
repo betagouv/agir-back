@@ -29,6 +29,7 @@ export class CMSWebhookObjectifAPI {
   @ApiProperty({ type: IDAPI }) defi: IDAPI;
   @ApiProperty({ type: IDAPI }) quizz: IDAPI;
   @ApiProperty({ type: CodeAPI }) kyc: CodeAPI;
+  @ApiProperty({ type: CodeAPI }) mosaic: CodeAPI;
   @ApiProperty({ type: CodeAPI }) tag_article: CodeAPI;
 }
 export class CMSWebhookReponseKYCAPI {
@@ -79,6 +80,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() type: string;
   @ApiProperty() label: string;
   @ApiProperty() question: string;
+  @ApiProperty() short_question: string;
   @ApiProperty() niveau: number;
   @ApiProperty({ type: CMSWebhookFamilleAPI })
   famille: CMSWebhookFamilleAPI;
@@ -139,6 +141,7 @@ export class CMSWebhookEntryAPI {
 export type CMSWebhookPopulateAPI = {
   id: number;
   attributes: {
+    contenu: string;
     titre: string;
     label: string;
     sousTitre: string;
@@ -151,6 +154,7 @@ export type CMSWebhookPopulateAPI = {
     code: string;
     niveau: number;
     question: string;
+    short_question: string;
     pourquoi: string;
     description: string;
     source: string;
@@ -340,6 +344,14 @@ export type CMSWebhookPopulateAPI = {
           };
         };
         kyc: {
+          data: {
+            id: number;
+            attributes: {
+              code: string;
+            };
+          };
+        };
+        mosaic: {
           data: {
             id: number;
             attributes: {

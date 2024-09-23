@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Request } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, Request } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -66,6 +66,18 @@ export class AdminController extends GenericControler {
   @ApiOkResponse({ type: VersionAPI })
   async getVersion(): Promise<VersionAPI> {
     return App.getAppVersion();
+  }
+
+  @Delete('admin/utilisateurs/:utilisateurId')
+  @ApiOperation({
+    summary: "Suppression du compte d'un utilisateur d'id donnée en mode admin",
+  })
+  async adminDeleteUtilisateurById(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ) {
+    this.checkCronAPIProtectedEndpoint(req);
+    await this.profileUsecase.deleteUtilisateur(utilisateurId);
   }
 
   @Post('services/refresh_dynamic_data')

@@ -123,8 +123,50 @@ describe('Gamification  (API test)', () => {
       id: 'c4ca4238a0b923820dcc509a6f75849b',
     });
   });
+  it(`GET /utilisateurs/id/classement/national retourne le top 3 France ok exclu prenom null`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      prenom: 'yop',
+      email: '1',
+      points_classement: 10,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      prenom: 'yi',
+      email: '2',
+      points_classement: 20,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'utilisateur-id',
+      prenom: 'ya',
+      email: '3',
+      points_classement: 30,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '4',
+      prenom: null,
+      email: '4',
+      points_classement: 40,
+    });
 
-  it(`GET /utilisateurs/id/classement retourne le top 3 commune utilisateur ok`, async () => {
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/classement/national',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.top_trois).toHaveLength(3);
+    expect(response.body.top_trois[0]).toStrictEqual({
+      points: 30,
+      rank: 1,
+      prenom: 'ya',
+      id: 'ceddc0d114c8db1dc4bde88f1e29231f',
+    });
+  });
+
+  it(`GET /utilisateurs/id/classement retourne le top 3 commune utilisateur ok, exclu prenom null`, async () => {
     // GIVEN
 
     await TestUtil.create(DB.utilisateur, {
@@ -165,6 +207,14 @@ describe('Gamification  (API test)', () => {
       prenom: 'dijon_2',
       email: '5',
       points_classement: 20,
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '444',
+      prenom: null,
+      email: '444',
+      points_classement: 40,
       code_postal_classement: '21000',
       commune_classement: 'DIJON',
     });
@@ -288,6 +338,62 @@ describe('Gamification  (API test)', () => {
     expect(response.body.pourcentile).toEqual(Pourcentile.pourcent_25);
     expect(response.body.code_postal).toEqual(null);
     expect(response.body.commune_label).toEqual(null);
+  });
+
+  it(`GET /utilisateurs/id/classement retourne le national utilisateur ok , si utilisateur a prenom null alors il est exclu du classement`, async () => {
+    // GIVEN
+
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      prenom: 'palaiseau_1',
+      email: '1',
+      points_classement: 10,
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      prenom: 'palaiseau_2',
+      email: '2',
+      points_classement: 20,
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '3',
+      prenom: 'palaiseau_3',
+      email: '3',
+      points_classement: 30,
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+
+    await TestUtil.create(DB.utilisateur, {
+      id: '4',
+      prenom: 'dijon_1',
+      email: '4',
+      points_classement: 11,
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'utilisateur-id',
+      prenom: null,
+      email: '5',
+      points_classement: 21,
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/classement/national',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.utilisateur).toEqual(null);
+    expect(response.body.classement_utilisateur).toEqual(null);
   });
 
   /*

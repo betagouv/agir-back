@@ -5,6 +5,9 @@ import { Chauffage, DPE, Superficie, TypeLogement } from '../logement/logement';
 import { KYCHistory_v0 as KYCHistory_v0 } from '../object_store/kyc/kycHistory_v0';
 import { KycDefinition } from './kycDefinition';
 import { KYCID } from './KYCID';
+import { KYCMosaicID } from './KYCMosaicID';
+import { MosaicKYC, MosaicKYCDef } from './mosaicKYC';
+import { QuestionGeneric } from './questionGeneric';
 import { QuestionKYC } from './questionKYC';
 
 type LogementInput = {
@@ -22,6 +25,8 @@ type LogementInput = {
 
 export class KYCHistory {
   answered_questions: QuestionKYC[];
+  answered_mosaics: KYCMosaicID[];
+
   catalogue: KycDefinition[];
 
   constructor(data?: KYCHistory_v0) {
@@ -32,6 +37,9 @@ export class KYCHistory {
         this.answered_questions.push(new QuestionKYC(element));
       });
     }
+    if (data && data.answered_mosaics) {
+      this.answered_mosaics = data.answered_mosaics;
+    }
   }
 
   public setCatalogue(cat: KycDefinition[]) {
@@ -40,18 +48,38 @@ export class KYCHistory {
 
   public reset() {
     this.answered_questions = [];
+    this.answered_mosaics = [];
     this.catalogue = [];
   }
-  public getAllUpToDateQuestionSet(): QuestionKYC[] {
-    let result = [];
+
+  public addAnsweredMosaic(type: KYCMosaicID) {
+    if (!this.answered_mosaics.includes(type)) {
+      this.answered_mosaics.push(type);
+    }
+  }
+  public isMosaicAnswered(type: KYCMosaicID): boolean {
+    return this.answered_mosaics.includes(type);
+  }
+
+  public getAllUpToDateQuestionSet(): QuestionGeneric[] {
+    let result: QuestionGeneric[] = [];
 
     this.catalogue.forEach((question) => {
       const answered_question = this.getAnsweredQuestionByCode(question.code);
       if (answered_question) {
         answered_question.refreshFromDef(question);
       }
-      result.push(answered_question || QuestionKYC.buildFromDef(question));
+      result.push({
+        kyc: answered_question || QuestionKYC.buildFromDef(question),
+      });
     });
+
+    const liste_mosaic_ids = MosaicKYC.listMosaicIDs();
+    for (const mosaic_id of liste_mosaic_ids) {
+      result.push({
+        mosaic: this.getUpToDateMosaicById(mosaic_id),
+      });
+    }
 
     return result;
   }
@@ -180,6 +208,30 @@ export class KYCHistory {
       return answered_question;
     }
     return QuestionKYC.buildFromDef(question_catalogue);
+  }
+
+  public getUpToDateMosaicById(mosaicID: KYCMosaicID): MosaicKYC {
+    if (!mosaicID) return null;
+    const mosaic_def = MosaicKYC.findMosaicDefByID(mosaicID);
+    return this.getUpToDateMosaic(mosaic_def);
+  }
+
+  public getUpToDateMosaic(mosaic_def: MosaicKYCDef): MosaicKYC {
+    if (!mosaic_def) return null;
+
+    const target_kyc_liste: QuestionKYC[] = [];
+    for (const kyc_code of mosaic_def.question_kyc_codes) {
+      const kyc = this.getUpToDateQuestionByCodeOrNull(kyc_code);
+
+      if (kyc) {
+        target_kyc_liste.push(kyc);
+      }
+    }
+
+    const result = new MosaicKYC(target_kyc_liste, mosaic_def);
+    result.is_answered = this.isMosaicAnswered(mosaic_def.id);
+
+    return result;
   }
 
   public areConditionsMatched(conditions: ConditionDefi[][]): boolean {

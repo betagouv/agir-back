@@ -12,13 +12,8 @@ import { CodeManager } from '../domain/utilisateur/manager/codeManager';
 import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
 import { App } from '../domain/app';
 
-export type Phrase = {
-  phrase: string;
-  pourcent: number;
-};
-
 @Injectable()
-export class Connexion_v1_Usecase {
+export class Connexion_v2_Usecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private oidcService: OidcService,
@@ -28,20 +23,7 @@ export class Connexion_v1_Usecase {
     private passwordManager: PasswordManager,
   ) {}
 
-  async disconnectUser(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
-    utilisateur.force_connexion = true;
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
-  }
-
-  async disconnectAllUsers() {
-    await this.utilisateurRepository.disconnectAll();
-  }
-
-  async loginUtilisateur(
-    email: string,
-    password: string,
-  ): Promise<{ token: string; utilisateur: Utilisateur }> {
+  async loginUtilisateur(email: string, password: string) {
     if (!email || email === '') {
       ApplicationError.throwMissinEmail();
     }
@@ -60,16 +42,56 @@ export class Connexion_v1_Usecase {
 
     const _this = this;
     const okAction = async function () {
-      const token = await _this.oidcService.createNewInnerAppToken(
-        utilisateur.id,
-      );
-      return { token: token, utilisateur: utilisateur };
+      const user = await _this.utilisateurRepository.findByEmail(email);
+
+      user.setNew6DigitCode();
+      user.status = UtilisateurStatus.connexion_etape_1;
+
+      await _this.utilisateurRepository.updateUtilisateur(user);
+
+      _this.sendCodeForConnexion(user);
     };
 
     return this.passwordManager.loginUtilisateur(
       utilisateur,
       password,
       okAction,
+    );
+  }
+
+  async validateCodePourLogin(
+    email: string,
+    code: string,
+  ): Promise<{ token: string; utilisateur: Utilisateur }> {
+    const utilisateur = await this.utilisateurRepository.findByEmail(email);
+    if (!utilisateur) {
+      ApplicationError.throwBadCodeOrEmailError();
+    }
+    if (!utilisateur.active_account) {
+      ApplicationError.throwInactiveAccountError();
+    }
+    if (utilisateur.status !== UtilisateurStatus.connexion_etape_1) {
+      ApplicationError.throwBadCodeOrEmailError();
+    }
+
+    const _this = this;
+
+    const codeOkAction = async () => {
+      await _this.securityEmailManager.resetEmailSendingState(utilisateur);
+
+      const user = await _this.utilisateurRepository.findByEmail(email);
+      user.status = UtilisateurStatus.default;
+
+      await _this.utilisateurRepository.updateUtilisateur(user);
+
+      const token = await _this.oidcService.createNewInnerAppToken(user.id);
+      return { token: token, utilisateur: user };
+    };
+
+    return this.codeManager.processInputCodeAndDoActionIfOK(
+      code,
+      utilisateur,
+      codeOkAction,
     );
   }
 
@@ -136,11 +158,37 @@ export class Connexion_v1_Usecase {
     );
   }
 
+  async disconnectUser(utilisateurId: string) {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.force_connexion = true;
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
+  async disconnectAllUsers() {
+    await this.utilisateurRepository.disconnectAll();
+  }
+
+  private async sendCodeForConnexion(utilisateur: Utilisateur) {
+    this.emailSender.sendEmail(
+      utilisateur.email,
+      utilisateur.prenom,
+      `Bonjour,<br>
+Voici votre code pour valider votre connexion à l'application Agir !<br><br>
+    
+code : ${utilisateur.code}<br><br>
+
+Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="${App.getBaseURLFront()}/URL_TO_SET">Page pour rentrer le code</a><br><br>
+    
+À très vite !`,
+      `${utilisateur.code} - Votre code connexion à Agir`,
+    );
+  }
+
   private async sendMotDePasseCode(utilisateur: Utilisateur) {
     this.emailSender.sendEmail(
       utilisateur.email,
       utilisateur.prenom,
-      `Bonjour ${utilisateur.prenom},<br>
+      `Bonjour,<br>
 Voici votre code pour pouvoir modifier votre mot de passe de l'application Agir !<br><br>
     
 code : ${utilisateur.code}<br><br>

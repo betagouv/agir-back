@@ -412,7 +412,7 @@ export class CMSUsecase {
     const URL = App.getCmsURL().concat(
       '/',
       type,
-      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[10]=prochaines_thematiques&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article',
+      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[10]=prochaines_thematiques&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic',
     );
     return URL.concat(page);
   }
@@ -432,7 +432,7 @@ export class CMSUsecase {
       code: cmsWebhookAPI.entry.code,
       label: cmsWebhookAPI.entry.label,
       id_cms: cmsWebhookAPI.entry.id,
-      image_url: CMSUsecase.getImageUrl(cmsWebhookAPI),
+      image_url: CMSUsecase.getImageUrl(cmsWebhookAPI.entry),
       is_locked: cmsWebhookAPI.entry.is_locked,
     });
   }
@@ -479,7 +479,7 @@ export class CMSUsecase {
       id_cms: cmsWebhookAPI.entry.id,
       label: cmsWebhookAPI.entry.label,
       niveau: cmsWebhookAPI.entry.niveau,
-      image_url: CMSUsecase.getImageUrl(cmsWebhookAPI),
+      image_url: CMSUsecase.getImageUrl(cmsWebhookAPI.entry),
       famille_ordre: cmsWebhookAPI.entry.famille
         ? cmsWebhookAPI.entry.famille.ordre
         : 999,
@@ -508,13 +508,13 @@ export class CMSUsecase {
     }
     return url;
   }
-  private static getImageUrl(cmsWebhookAPI: CMSWebhookAPI) {
+  private static getImageUrl(cmsWebhookEntryAPI: CMSWebhookEntryAPI) {
     let url = null;
-    if (cmsWebhookAPI.entry.imageUrl) {
-      if (cmsWebhookAPI.entry.imageUrl.formats.thumbnail) {
-        url = cmsWebhookAPI.entry.imageUrl.formats.thumbnail.url;
+    if (cmsWebhookEntryAPI.imageUrl) {
+      if (cmsWebhookEntryAPI.imageUrl.formats.thumbnail) {
+        url = cmsWebhookEntryAPI.imageUrl.formats.thumbnail.url;
       } else {
-        url = cmsWebhookAPI.entry.imageUrl.url;
+        url = cmsWebhookEntryAPI.imageUrl.url;
       }
     }
     return url;
@@ -556,7 +556,7 @@ export class CMSUsecase {
       titre: hook.entry.titre,
       soustitre: hook.entry.sousTitre,
       source: hook.entry.source,
-      image_url: CMSUsecase.getImageUrl(hook),
+      image_url: CMSUsecase.getImageUrl(hook.entry),
       partenaire: hook.entry.partenaire ? hook.entry.partenaire.nom : null,
       rubrique_ids: CMSUsecase.getIdsFromRubriques(hook.entry.rubriques),
       rubrique_labels: CMSUsecase.getTitresFromRubriques(hook.entry.rubriques),
@@ -678,6 +678,8 @@ export class CMSUsecase {
         ? entry.tags.map((elem) => TagUtilisateur[elem.code])
         : [],
       universes: entry.univers ? entry.univers.map((u) => u.code) : [],
+      image_url: CMSUsecase.getImageUrl(entry),
+      short_question: entry.short_question,
     };
   }
 
@@ -727,6 +729,11 @@ export class CMSUsecase {
                 result.type = ContentType.kyc;
                 result.content_id = obj.kyc.code;
                 result.id_cms = obj.kyc.id;
+              }
+              if (obj.mosaic) {
+                result.type = ContentType.mosaic;
+                result.content_id = obj.mosaic.code;
+                result.id_cms = obj.mosaic.id;
               }
               return result;
             })
@@ -934,6 +941,8 @@ export class CMSUsecase {
         entry.attributes.univers.data.length > 0
           ? entry.attributes.univers.data.map((u) => u.attributes.code)
           : [],
+      short_question: entry.attributes.short_question,
+      image_url: CMSUsecase.getImageUrlFromPopulate(entry),
     };
   }
 
@@ -987,6 +996,11 @@ export class CMSUsecase {
                 result.type = ContentType.kyc;
                 result.content_id = obj.kyc.data.attributes.code;
                 result.id_cms = obj.kyc.data.id;
+              }
+              if (obj.mosaic.data) {
+                result.type = ContentType.mosaic;
+                result.content_id = obj.mosaic.data.attributes.code;
+                result.id_cms = obj.mosaic.data.id;
               }
               return result;
             })

@@ -15,12 +15,14 @@ import {
   Superficie,
   TypeLogement,
 } from '../../../../src/domain/logement/logement';
+import { KYCMosaicID } from '../../../../src/domain/kyc/KYCMosaicID';
 
 describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('areConditionsMatched : true si pas de condition', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -37,6 +39,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           tags: [],
           universes: [],
           id_cms: 1,
+          short_question: 'short',
+          image_url: 'https://',
         },
       ],
     });
@@ -51,6 +55,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -67,6 +72,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'https://',
         },
       ],
     });
@@ -83,6 +90,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -99,6 +107,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'https://',
         },
       ],
     });
@@ -115,6 +125,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -131,6 +142,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'https://',
         },
       ],
     });
@@ -147,6 +160,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -163,6 +177,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'https://',
         },
         {
           id: KYCID.KYC002,
@@ -179,6 +195,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'https://',
         },
       ],
     });
@@ -198,6 +216,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -214,6 +233,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'https://',
         },
         {
           id: KYCID.KYC002,
@@ -230,6 +251,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'https://',
         },
       ],
     });
@@ -249,6 +272,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -265,6 +289,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'https://',
         },
         {
           id: KYCID.KYC002,
@@ -281,6 +307,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'https://',
         },
       ],
     });
@@ -294,32 +322,28 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(result).toEqual(true);
   });
-  it('isQuestionAnswered :false si pas répondu', () => {
+  it('isQuestionAnsweredByCode :false si pas répondu', () => {
     // WHEN
     const questionsKYC = new KYCHistory();
 
     // THEN
     expect(questionsKYC.isQuestionAnsweredByCode('2')).toStrictEqual(false);
   });
-
-  it('isQuestionAnswered :false si pas répondu', () => {
+  it('isMosaicAnswered :false si pas répondu', () => {
     // WHEN
     const questionsKYC = new KYCHistory();
 
     // THEN
-    expect(questionsKYC.isQuestionAnsweredByCode('2')).toStrictEqual(false);
+    expect(
+      questionsKYC.isMosaicAnswered(KYCMosaicID.TEST_MOSAIC_ID),
+    ).toStrictEqual(false);
   });
-  it('isQuestionAnswered :false si pas répondu', () => {
-    // WHEN
-    const questionsKYC = new KYCHistory();
 
-    // THEN
-    expect(questionsKYC.isQuestionAnsweredByCode('2')).toStrictEqual(false);
-  });
   it('hasResponses :false si attribut undefined', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -338,6 +362,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'https://',
         },
       ],
     });
@@ -358,6 +384,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'BBB', code: Thematique.logement },
           { label: 'CCC', code: Thematique.alimentation },
         ],
+        short_question: 'short',
+        image_url: 'https://',
       }),
     ]);
 
@@ -372,6 +400,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -390,6 +419,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'https://',
         },
       ],
     });
@@ -410,6 +441,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'BBB', code: Thematique.logement },
           { label: 'CCC', code: Thematique.alimentation },
         ],
+        short_question: 'short',
+        image_url: 'https://',
       }),
     ]);
     // THEN
@@ -423,6 +456,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -441,6 +475,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'https://',
         },
       ],
     });
@@ -462,6 +498,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'CCC', code: Thematique.alimentation },
           { label: 'Le climat', code: Thematique.climat },
         ],
+        short_question: 'short',
+        image_url: 'https://',
       }),
     ]);
     // THEN
@@ -488,6 +526,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -506,6 +545,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'https://',
         },
       ],
     });
@@ -535,6 +576,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: '🚗 Transports', code: Thematique.transport },
           { label: 'Aucun / Je ne sais pas', code: 'rien' },
         ],
+        short_question: 'short',
+        image_url: 'https://',
       }),
     ]);
 
@@ -562,6 +605,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -581,6 +625,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'https://',
         },
       ],
     });
@@ -601,6 +647,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'BBB', code: Thematique.logement },
           { label: 'CCC', code: Thematique.alimentation },
         ],
+        short_question: 'short',
+        image_url: 'https://',
       }),
     ]);
 
@@ -630,6 +678,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -649,6 +698,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'https://',
         },
       ],
     });
@@ -669,6 +720,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'BBB', code: Thematique.logement },
           { label: 'CCC', code: Thematique.alimentation },
         ],
+        short_question: 'short',
+        image_url: 'https://',
       }),
     ]);
 
@@ -698,6 +751,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -711,6 +765,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           reponses_possibles: [],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'https://',
         },
       ],
     });
@@ -728,6 +784,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.entier,
         reponses: [],
+        short_question: 'short',
+        image_url: 'https://',
       }),
     ]);
 
@@ -742,6 +800,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -755,6 +814,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           reponses_possibles: [],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'https://',
         },
       ],
     });
@@ -770,6 +831,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -788,6 +850,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'https://',
         },
       ],
     });
@@ -810,6 +874,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'CCC', code: Thematique.alimentation },
           { label: 'DDD', code: Thematique.transport },
         ],
+        short_question: 'short',
+        image_url: 'https://',
       }),
       new KycDefinition({
         id_cms: 2,
@@ -824,6 +890,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.libre,
         reponses: [],
+        short_question: 'short',
+        image_url: 'https://',
       }),
     ]);
 
@@ -838,6 +906,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: KYCID.KYC001,
@@ -856,6 +925,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
           tags: [],
           universes: [],
+          short_question: 'short',
+          image_url: 'https://',
         },
       ],
     });
@@ -878,6 +949,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'CCC', code: Thematique.alimentation },
           { label: 'DDD', code: Thematique.transport },
         ],
+        short_question: 'short',
+        image_url: 'https://',
       }),
       new KycDefinition({
         id_cms: 2,
@@ -897,6 +970,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'CCC', code: Thematique.alimentation },
           { label: 'DDD', code: Thematique.transport },
         ],
+        short_question: 'short',
+        image_url: 'https://',
       }),
     ]);
 
@@ -914,6 +989,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id_cms: 2,
@@ -933,6 +1009,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
             { label: 'NON', code: 'non', ngc_code: '_non' },
             { label: 'Ne sais pas', code: 'ne_sais_pas' },
           ],
+          short_question: 'short',
+          image_url: 'https://',
         },
       ],
     });
@@ -954,6 +1032,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'NON', code: 'non', ngc_code: '_non' },
           { label: 'Ne sais pas', code: 'ne_sais_pas' },
         ],
+        short_question: 'short',
+        image_url: 'https://',
       }),
       new KycDefinition({
         id_cms: 2,
@@ -972,6 +1052,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'NON', code: 'non', ngc_code: '_non' },
           { label: 'Ne sais pas', code: 'ne_sais_pas' },
         ],
+        short_question: 'short',
+        image_url: 'https://',
       }),
       new KycDefinition({
         id_cms: 3,
@@ -990,6 +1072,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'NON', code: 'non', ngc_code: '_non' },
           { label: 'Ne sais pas', code: 'ne_sais_pas' },
         ],
+        short_question: 'short',
+        image_url: 'https://',
       }),
       new KycDefinition({
         id_cms: 4,
@@ -1008,6 +1092,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'NON', code: 'non', ngc_code: '_non' },
           { label: 'Ne sais pas', code: 'ne_sais_pas' },
         ],
+        short_question: 'short',
+        image_url: 'https://',
       }),
     ]);
 
@@ -1033,6 +1119,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const history = new KYCHistory({
       version: 0,
+      answered_mosaics: [],
       answered_questions: [],
     });
     history.setCatalogue([
@@ -1053,6 +1140,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'B', code: 'b' },
           { label: 'Ne sais pas', code: 'ne_sais_pas' },
         ],
+        short_question: 'short',
+        image_url: 'https://',
       }),
     ]);
 

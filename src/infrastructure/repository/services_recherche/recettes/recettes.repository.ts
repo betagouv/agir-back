@@ -7,10 +7,11 @@ import {
   IngredientRecette,
   ResultatRecherche,
 } from '../../../../domain/bibliotheque_services/resultatRecherche';
-import _recettes from './data/dump-recipes.2024-08-09.17-38-20.json';
+import _recettes from './data/dump-recipes.2024-09-06.json';
 import _ingredients_recette from './data/dump-ingredient_recipe.2024-08-09.17-29-40.json';
 import _ingredients from './data/dump-ingredients.2024-08-09.17-44-22.json';
 import _etapes from './data/dump-recipe_steps.2024-08-09.17-47-05.json';
+import _units from './data/dump-measurement_units.2024-09-06.json';
 
 // const API_URL = 'https://';
 
@@ -73,6 +74,15 @@ export type Recette_RAW = {
   pnns_yoghurt: number; // 0;
 };
 
+export type Units_RAW = {
+  id: number;
+  name: string;
+  plural: string;
+  use_ingredient_name: number;
+  computable: number;
+  round_type: string; //"round_1"
+};
+
 export type Etapes_RAW = {
   id: number;
   text: string; //"[{\"children\":[{\"text\":\"Dans une casserole, mettre la crème fraîche et ajouter les lentilles cuites.\"}]}]",
@@ -105,47 +115,6 @@ export type Ingredient_RAW = {
   ingredient_family_id: number; //4
   nutritional_value_id: number; //634
   forbidden_out_of_season: number; //0
-};
-
-const UNITS = {
-  _1: 'g',
-  _3: '',
-  _4: 'cuillère à soupe',
-  _6: 'cuillère à café',
-  _7: 'cl',
-  _8: 'cl',
-  _13: 'gousse',
-  _14: 'pincée',
-  _19: 'brin',
-  _24: 'feuille',
-  _23: 'tranche',
-  _32: 'branche',
-  _34: 'bouquet',
-  _55: 'boule',
-  _118: 'barquette',
-  _120: 'verre',
-  _125: 'boîte',
-  _133: 'sachet',
-};
-const UNITS_PLURIEL = {
-  _1: 'g',
-  _3: '',
-  _4: 'cuillères à soupe',
-  _6: 'cuillères à café',
-  _7: 'cl',
-  _8: 'cl',
-  _13: 'gousses',
-  _14: 'pincées',
-  _19: 'brins',
-  _24: 'feuilles',
-  _23: 'tranches',
-  _32: 'branches',
-  _34: 'bouquets',
-  _55: 'boules',
-  _118: 'barquettes',
-  _120: 'verres',
-  _125: 'boîtes',
-  _133: 'sachets',
 };
 
 const IMAGES_TMP = [
@@ -185,16 +154,11 @@ export class RecettesRepository implements FinderInterface {
     }
 
     if (filtre.categorie === CategorieRecherche.vegan) {
-      recherche = recherche.filter((a) => a.ingredient_food_practice === '[]');
+      recherche = recherche.filter((a) => a.regime === 1);
     }
 
     if (filtre.categorie === CategorieRecherche.vege) {
-      recherche = recherche.filter(
-        (a) =>
-          !a.ingredient_food_practice.includes('meat') &&
-          !a.ingredient_food_practice.includes('fish') &&
-          !a.ingredient_food_practice.includes('pork'),
-      );
+      recherche = recherche.filter((a) => a.regime === 2);
     }
 
     recherche = recherche.slice(0, 10);
@@ -207,7 +171,7 @@ export class RecettesRepository implements FinderInterface {
           difficulty_plat: r.express === 1 ? 'Facile' : 'Intérmédiaire',
           type_plat: this.mapCategoryPlat(r.recipe_category),
           temps_prepa_min: r.preparation_time,
-          image_url: IMAGES_TMP[Math.floor(Math.random() * 5)],
+          image_url: this.getImageUrlFromCategorieRecette(r.recipe_category),
           ingredients: this.getIngredientsRecette(r.id),
           etapes_recette: this.getEtapesRecette(r.id),
         }),
@@ -218,6 +182,21 @@ export class RecettesRepository implements FinderInterface {
     return mapped_result;
   }
 
+  private getImageUrlFromCategorieRecette(recipe_category: string): string {
+    if (!recipe_category)
+      return 'https://res.cloudinary.com/dq023imd8/image/upload/v1726729974/plat_41956db95a.svg';
+    if (recipe_category.includes('ENT'))
+      return 'https://res.cloudinary.com/dq023imd8/image/upload/v1726729974/entree_62c9c6f503.svg';
+    if (recipe_category.includes('DES'))
+      return 'https://res.cloudinary.com/dq023imd8/image/upload/v1726729974/dessert_6e8fdb8ff0.svg';
+    if (recipe_category.includes('PL'))
+      return 'https://res.cloudinary.com/dq023imd8/image/upload/v1726729974/plat_41956db95a.svg';
+    if (recipe_category.includes('GAR'))
+      return 'https://res.cloudinary.com/dq023imd8/image/upload/v1726729974/plat_41956db95a.svg';
+    if (recipe_category.includes('PLC'))
+      return 'https://res.cloudinary.com/dq023imd8/image/upload/v1726729974/plat_41956db95a.svg';
+    return '-';
+  }
   private getIngredientsRecette(recetteId: number): IngredientRecette[] {
     const liste_raw_ingredients = this.readIngredientsRecette(recetteId);
 
@@ -235,14 +214,24 @@ export class RecettesRepository implements FinderInterface {
     return result;
   }
 
-  private computeUnit(quantity: number, unit_id): string {
+  private computeUnit(quantity: number, unit_id: number): string {
+    const unit = this.getUnitFromId(unit_id);
+    if (!unit) {
+      return '';
+    }
+    if (unit.use_ingredient_name === 1) {
+      return '';
+    }
     if (quantity > 1) {
-      return UNITS_PLURIEL['_' + unit_id] || '';
+      return unit.plural;
     } else {
-      return UNITS['_' + unit_id] || '';
+      return unit.name;
     }
   }
 
+  private getUnitFromId(id: number): Units_RAW {
+    return _units.find((u) => u.id === id);
+  }
   private getEtapesRecette(recetteId: number): EtapeRecette[] {
     const liste_raw_etapes = _etapes.filter((e) => e.recipe_id === recetteId);
     liste_raw_etapes.sort((a, b) => a.id - b.id);
@@ -277,6 +266,8 @@ export class RecettesRepository implements FinderInterface {
     if (cat.includes('ENT')) return 'Entée';
     if (cat.includes('DES')) return 'Déssert';
     if (cat.includes('PL')) return 'Plat';
+    if (cat.includes('GAR')) return 'Garniture';
+    if (cat.includes('PLC')) return 'Plat complet';
     return '-';
   }
 

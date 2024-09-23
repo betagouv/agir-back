@@ -1,3 +1,4 @@
+import { App } from '../app';
 import { Categorie } from '../contenu/categorie';
 import { KYCID } from './KYCID';
 import { KYCMosaicID } from './KYCMosaicID';
@@ -22,6 +23,37 @@ export class MosaicKYC {
   categorie: Categorie;
   points: number;
   reponses: KYCMosaicReponse[];
+  is_answered?: boolean;
+
+  static MOSAIC_CATALOGUE: MosaicKYCDef[] = [
+    {
+      id: KYCMosaicID.TEST_MOSAIC_ID,
+      categorie: Categorie.test,
+      points: 10,
+      titre: 'Quels modes de chauffage existes chez vous ?',
+      type: TypeReponseMosaicKYC.mosaic_boolean,
+      question_kyc_codes: [
+        KYCID.KYC_chauffage_bois,
+        KYCID.KYC_chauffage_fioul,
+        KYCID.KYC_chauffage_gaz,
+      ],
+    },
+  ];
+
+  public static listMosaicIDs(): KYCMosaicID[] {
+    return MosaicKYC.MOSAIC_CATALOGUE.filter(
+      (m) => m.categorie !== Categorie.test || !App.isProd(),
+    ).map((m) => m.id);
+  }
+
+  public static isMosaicID(id: string): boolean {
+    return MosaicKYC.MOSAIC_CATALOGUE.findIndex((m) => m.id === id) > -1;
+  }
+
+  static findMosaicDefByID(mosaicID: KYCMosaicID) {
+    if (!mosaicID) return null;
+    return MosaicKYC.MOSAIC_CATALOGUE.find((m) => m.id === mosaicID);
+  }
 
   constructor(liste_kyc: QuestionKYC[], mosaic_def: MosaicKYCDef) {
     this.id = mosaic_def.id;
@@ -47,8 +79,8 @@ export class MosaicKYC {
       }
       const new_reponse: KYCMosaicReponse = {
         code: kyc.id,
-        label: kyc.question,
-        image_url: null,
+        label: kyc.short_question,
+        image_url: kyc.image_url,
         boolean_value: value === 'oui',
       };
       liste_reponses.push(new_reponse);

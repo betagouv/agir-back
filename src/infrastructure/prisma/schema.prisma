@@ -33,62 +33,61 @@ model OIDC_STATE {
 }
 
 model Utilisateur {
-  id                       String             @id
-  email                    String?            @unique
-  nom                      String?            @default("nom")
-  prenom                   String?            @default("prenom")
+  id                       String      @id
+  email                    String?     @unique
+  nom                      String?     @default("nom")
+  prenom                   String?     @default("prenom")
   annee_naissance          Int?
-  passwordHash             String?            @default("hash")
-  passwordSalt             String?            @default("salt")
+  passwordHash             String?     @default("hash")
+  passwordSalt             String?     @default("salt")
   revenu_fiscal            Int?
-  onboardingData           Json               @default("{}") // versioné 
-  onboardingResult         Json               @default("{}") // versioné 
-  todo                     Json               @default("{}") // versioné 
-  gamification             Json               @default("{}") // versioné 
-  history                  Json               @default("{}") // versioné 
-  kyc                      Json               @default("{}") // versioné
-  unlocked_features        Json               @default("{}") // versioné 
-  equipements              Json               @default("{}") // versioné 
-  logement                 Json               @default("{}") // versioné 
-  transport                Json               @default("{}") // versioné 
-  defis                    Json               @default("{}") // versioné
-  missions                 Json               @default("{}") // versioné
-  bilbiotheque_services    Json               @default("{}") // versioné
-  notification_history     Json               @default("{}") // versioné
+  onboardingData           Json        @default("{}") // versioné 
+  onboardingResult         Json        @default("{}") // versioné 
+  todo                     Json        @default("{}") // versioné 
+  gamification             Json        @default("{}") // versioné 
+  history                  Json        @default("{}") // versioné 
+  kyc                      Json        @default("{}") // versioné
+  unlocked_features        Json        @default("{}") // versioné 
+  equipements              Json        @default("{}") // versioné 
+  logement                 Json        @default("{}") // versioné 
+  transport                Json        @default("{}") // versioné 
+  defis                    Json        @default("{}") // versioné
+  missions                 Json        @default("{}") // versioné
+  bilbiotheque_services    Json        @default("{}") // versioné
+  notification_history     Json        @default("{}") // versioné
   empreintes               Empreinte[]
   suivis                   Suivi[]
-  groupes                  GroupeAbonnement[]
-  created_at               DateTime           @default(now()) @db.Timestamptz(3)
-  updated_at               DateTime           @default(now()) @updatedAt @db.Timestamptz(3)
-  failed_login_count       Int                @default(0)
-  prevent_login_before     DateTime           @default(now())
+  created_at               DateTime    @default(now()) @db.Timestamptz(3)
+  updated_at               DateTime    @default(now()) @updatedAt @db.Timestamptz(3)
+  failed_login_count       Int         @default(0)
+  prevent_login_before     DateTime    @default(now())
   code                     String?
   code_generation_time     DateTime?
-  active_account           Boolean            @default(true)
-  failed_checkcode_count   Int                @default(0)
-  prevent_checkcode_before DateTime           @default(now())
-  sent_email_count         Int                @default(0)
-  prevent_sendemail_before DateTime           @default(now())
+  active_account           Boolean     @default(true)
+  failed_checkcode_count   Int         @default(0)
+  prevent_checkcode_before DateTime    @default(now())
+  sent_email_count         Int         @default(0)
+  prevent_sendemail_before DateTime    @default(now())
   services                 Service[]
-  parts                    Decimal?           @db.Decimal(4, 2)
-  abonnement_ter_loire     Boolean            @default(false)
+  parts                    Decimal?    @db.Decimal(4, 2)
+  abonnement_ter_loire     Boolean     @default(false)
   code_departement         String?
-  version                  Int                @default(0)
-  migration_enabled        Boolean            @default(false)
-  tag_ponderation_set      Json               @default("{}")
-  force_connexion          Boolean            @default(false)
+  version                  Int         @default(0)
+  migration_enabled        Boolean     @default(false)
+  tag_ponderation_set      Json        @default("{}")
+  force_connexion          Boolean     @default(false)
   derniere_activite        DateTime?
-  db_version               Int                @default(0)
-  is_magic_link_user       Boolean            @default(false)
-  points_classement        Int                @default(0)
+  db_version               Int         @default(0)
+  is_magic_link_user       Boolean     @default(false)
+  points_classement        Int         @default(0)
   code_postal_classement   String?
   commune_classement       String?
   rank                     Int?
   rank_commune             Int?
   status                   String?
-  couverture_aides_ok      Boolean            @default(false)
-  source_inscription       String             @default("web")
-  unsubscribe_mail_token   String?            @unique
+  couverture_aides_ok      Boolean     @default(false)
+  source_inscription       String      @default("web")
+  unsubscribe_mail_token   String?     @unique
 }
 
 model Statistique {
@@ -349,29 +348,23 @@ model Mission {
   updated_at             DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
-model FileAttente {
-  email       String   @unique
-  code_postal String?
-  code_profil String?
-  created_at  DateTime @default(now()) @db.Timestamptz(3)
-  updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz(3)
-}
-
 model KYC {
-  id_cms     Int      @unique
-  code       String   @unique
-  type       String
-  categorie  String
-  points     Int
-  is_ngc     Boolean
-  ngc_key    String?
-  question   String
-  reponses   Json     @default("{}")
-  thematique String
-  tags       String[] @default([])
-  universes  String[] @default([])
-  created_at DateTime @default(now()) @db.Timestamptz(3)
-  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  id_cms         Int      @unique
+  code           String   @unique
+  type           String
+  categorie      String
+  points         Int
+  is_ngc         Boolean
+  ngc_key        String?
+  question       String
+  short_question String?
+  reponses       Json     @default("{}")
+  thematique     String
+  tags           String[] @default([])
+  universes      String[] @default([])
+  image_url      String?
+  created_at     DateTime @default(now()) @db.Timestamptz(3)
+  updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model SituationNGC {
@@ -417,27 +410,6 @@ model ServiceDefinition {
   services           Service[]
 }
 
-model Groupe {
-  id           String             @id @default(uuid())
-  name         String
-  description  String?
-  utilisateurs GroupeAbonnement[]
-  created_at   DateTime           @default(now()) @db.Timestamptz(3)
-  updated_at   DateTime           @default(now()) @updatedAt @db.Timestamptz(3)
-}
-
-model GroupeAbonnement {
-  groupe        Groupe      @relation(fields: [groupeId], references: [id])
-  groupeId      String
-  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
-  utilisateurId String
-  admin         Boolean     @default(false)
-  created_at    DateTime    @default(now()) @db.Timestamptz(3)
-  updated_at    DateTime    @default(now()) @updatedAt @db.Timestamptz(3)
-
-  @@id([groupeId, utilisateurId])
-}
-
 model Linky {
   utilisateurId String?  @unique
   winter_pk     String?  @unique
@@ -448,7 +420,7 @@ model Linky {
 }
 
 view PrenomVue {
-  id     Int @id
+  id     Int    @id
   prenom String
 }
 
@@ -456,4 +428,25 @@ view CartographieVue {
   id                Int     @id
   code_postal       String
   couvert_par_aides Boolean
+}
+
+view UtilisateurVue {
+  id                      Int       @id
+  code_postal             String
+  date_inscription        DateTime
+  date_derniere_connexion DateTime?
+  nombre_points           Int
+  classement_global       Int
+  classement_local        Int
+  couverture_aide         Boolean
+  source_inscription      String
+  commune                 String?
+  dpe                     String?
+  plus_de_15_ans          Boolean?
+  nombre_adultes          Int?
+  nombre_enfants          Int?
+  proprietaire            Boolean?
+  superficie              String?
+  type                    String?
+  chauffage               String?
 }

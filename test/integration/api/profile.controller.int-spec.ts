@@ -61,12 +61,32 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     await TestUtil.create(DB.situationNGC);
     await TestUtil.create(DB.empreinte);
     await TestUtil.create(DB.serviceDefinition);
-    await TestUtil.create(DB.groupe);
-    await TestUtil.create(DB.groupeAbonnement);
     await TestUtil.create(DB.thematique);
 
     // WHEN
     const response = await TestUtil.DELETE('/utilisateurs/utilisateur-id');
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(dbUser).toBeNull();
+  });
+  it('DELETE /admin/utilisateurs/id en mode admin', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.suivi);
+    await TestUtil.create(DB.situationNGC);
+    await TestUtil.create(DB.empreinte);
+    await TestUtil.create(DB.serviceDefinition);
+    await TestUtil.create(DB.thematique);
+
+    // WHEN
+    const response = await TestUtil.DELETE(
+      '/admin/utilisateurs/utilisateur-id',
+    );
 
     // THEN
     expect(response.status).toBe(200);
@@ -281,6 +301,64 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.status).toBe(400);
     expect(response.body.code).toEqual('068');
   });
+  it('PATCH /utilisateurs/id/profile - RFR non entier => erreur', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      revenu_fiscal: 'haha45',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('073');
+  });
+  it('PATCH /utilisateurs/id/profile - Annee naissance non entier => erreur', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      annee_naissance: 'haha45',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('075');
+  });
+  it('PATCH /utilisateurs/id/profile - parts fiscal non decimal erreur', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      nombre_de_parts_fiscales: 'haha45',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('074');
+  });
+  it('PATCH /utilisateurs/id/profile - parts fiscal avec . ou virgule OK ', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      nombre_de_parts_fiscales: '2.5',
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const response2 = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      parts_fiscales: '2,5',
+    });
+    // THEN
+    expect(response2.status).toBe(200);
+  });
   it('PATCH /utilisateurs/id/profile - update basic profile datas', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -478,8 +556,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     ).send({
       nombre_adultes: 4,
       nombre_enfants: 1,
-      code_postal: '11111',
-      commune: 'Patelin',
+      code_postal: '21000',
+      commune: 'DIJON',
       type: TypeLogement.appartement,
       superficie: Superficie.superficie_35,
       proprietaire: false,
@@ -490,8 +568,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     const dbUser = await utilisateurRepository.getById('utilisateur-id');
-    expect(dbUser.logement.code_postal).toEqual('11111');
-    expect(dbUser.logement.commune).toEqual('Patelin');
+    expect(dbUser.logement.code_postal).toEqual('21000');
+    expect(dbUser.logement.commune).toEqual('DIJON');
     expect(dbUser.logement.nombre_adultes).toEqual(4);
     expect(dbUser.logement.nombre_enfants).toEqual(1);
     expect(dbUser.logement.type).toEqual(TypeLogement.appartement);
@@ -500,8 +578,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.logement.plus_de_15_ans).toEqual(false);
     expect(dbUser.logement.chauffage).toEqual(Chauffage.electricite);
     expect(dbUser.logement.dpe).toEqual(DPE.E);
-    expect(dbUser.commune_classement).toEqual('Patelin');
-    expect(dbUser.code_postal_classement).toEqual('11111');
+    expect(dbUser.commune_classement).toEqual('DIJON');
+    expect(dbUser.code_postal_classement).toEqual('21000');
 
     // KYCs
     expect(
@@ -562,12 +640,99 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       '/utilisateurs/utilisateur-id/logement',
     ).send({
       code_postal: '21000',
+      commune: 'DIJON',
     });
     // THEN
     expect(response.status).toBe(200);
     const dbUser = await utilisateurRepository.getById('utilisateur-id');
 
     expect(dbUser.couverture_aides_ok).toEqual(true);
+  });
+  it('PATCH /utilisateurs/id/logement - code postal de moins de 5 char => erreur', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_postal: '1234',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('077');
+  });
+  it('PATCH /utilisateurs/id/logement - code postal pas entier', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_postal: 'hahah',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('077');
+  });
+  it('PATCH /utilisateurs/id/logement - code postal sans commune', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_postal: '21000',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('078');
+  });
+  it('PATCH /utilisateurs/id/logement - commune sans code postal', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      commune: 'DIJON',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('078');
+  });
+  it('PATCH /utilisateurs/id/logement - commune qui match pas le code postal', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_postal: '91120',
+      commune: 'DIJON',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('079');
+  });
+  it('PATCH /utilisateurs/id/logement - code postal inconnu', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_postal: '99999',
+      commune: 'DIJON',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('079');
   });
 
   it('PATCH /utilisateurs/id/logement - exception silencieuse si KYC de synchro échoue', async () => {
@@ -579,8 +744,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     ).send({
       nombre_adultes: 4,
       nombre_enfants: 1,
-      code_postal: '11111',
-      commune: 'Patelin',
+      code_postal: '21000',
+      commune: 'DIJON',
       type: TypeLogement.appartement,
       superficie: Superficie.superficie_35,
       proprietaire: false,
@@ -605,6 +770,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       '/utilisateurs/utilisateur-id/logement',
     ).send({
       code_postal: '21000',
+      commune: 'DIJON',
     });
     // THEN
     expect(response.status).toBe(200);

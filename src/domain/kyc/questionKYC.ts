@@ -30,6 +30,7 @@ export class QuestionKYC implements TaggedContent {
   id: string;
   id_cms: number;
   question: string;
+  short_question: string;
   type: TypeReponseQuestionKYC;
   categorie: Categorie;
   thematique?: Thematique;
@@ -41,6 +42,7 @@ export class QuestionKYC implements TaggedContent {
   tags: Tag[];
   score: number;
   universes: string[];
+  image_url: string;
 
   constructor(data?: QuestionKYC_v0) {
     if (!data) return;
@@ -58,6 +60,8 @@ export class QuestionKYC implements TaggedContent {
     this.score = 0;
     this.universes = data.universes ? data.universes : [];
     this.id_cms = data.id_cms;
+    this.short_question = data.short_question;
+    this.image_url = data.image_url;
   }
 
   public static buildFromDef(def: KycDefinition): QuestionKYC {
@@ -74,6 +78,8 @@ export class QuestionKYC implements TaggedContent {
       universes: def.universes,
       question: def.question,
       reponses_possibles: def.reponses ? def.reponses : [],
+      short_question: def.short_question,
+      image_url: def.image_url,
     });
   }
 

@@ -2,8 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ContentType } from '../../../../domain/contenu/contentType';
 import { DifficultyLevel } from '../../../../domain/contenu/difficultyLevel';
 import { Thematique } from '../../../../domain/contenu/thematique';
-import { Todo } from '../../../../../src/domain/todo/todo';
+import { Todo, TodoElement } from '../../../../../src/domain/todo/todo';
 import { CelebrationAPI } from '../gamification/gamificationAPI';
+import { QuestionKYCAPI } from '../kyc/questionsKYCAPI';
+import { MosaicKYCAPI } from '../kyc/mosaicKYCAPI';
 
 export class ProgressionAPI {
   @ApiProperty() current: number;
@@ -21,8 +23,34 @@ export class TodoElementAPI {
   @ApiProperty() interaction_id?: string;
   @ApiProperty() url?: string;
   @ApiProperty() points: number;
+  @ApiProperty() questions?: any[];
   @ApiProperty() sont_points_en_poche: boolean;
   @ApiProperty({ type: ProgressionAPI }) progression: ProgressionAPI;
+
+  public static mapToAPI(element: TodoElement): TodoElementAPI {
+    return {
+      id: element.id,
+      titre: element.titre,
+      type: element.type,
+      level: element.level,
+      content_id: element.content_id,
+      interaction_id: element.interaction_id,
+      url: element.url,
+      points: element.points,
+      questions: element.questions
+        ? element.questions.map((q) => {
+            if (q.kyc) {
+              return QuestionKYCAPI.mapToAPI(q.kyc);
+            } else {
+              return MosaicKYCAPI.mapToAPI(q.mosaic);
+            }
+          })
+        : undefined,
+      progression: element.progression,
+      sont_points_en_poche: element.sontPointsEnPoche(),
+      thematiques: element.thematiques,
+    };
+  }
 }
 
 export class TodoAPI {
@@ -42,8 +70,8 @@ export class TodoAPI {
       points_todo: todo.points_todo,
       titre: todo.titre,
       imageUrl: todo.imageUrl,
-      todo: todo.todo,
-      done: todo.done,
+      todo: todo.todo.map((e) => TodoElementAPI.mapToAPI(e)),
+      done: todo.done.map((e) => TodoElementAPI.mapToAPI(e)),
       done_at: todo.done_at,
       is_last: todo.is_last ? todo.is_last : false,
       celebration: todo.celebration

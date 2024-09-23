@@ -14,11 +14,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { BilanUsecase } from '../../usecase/bilan.usecase';
-import { BilanCarboneAPI } from './types/ngc/bilanAPI';
 import { SituationNGCAPI } from './types/ngc/situationNGCAPI';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
-import { BilanCarboneUsecase } from '../../usecase/bilanCarbone.usecase';
 
 @Controller()
 @ApiBearerAuth()

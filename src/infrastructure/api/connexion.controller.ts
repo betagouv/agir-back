@@ -27,8 +27,7 @@ import { OubliMdpAPI } from './types/utilisateur/oubliMdpAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { ModifierMdpAPI } from './types/utilisateur/modifierMdpAPI';
 import { EmailAPI } from './types/utilisateur/EmailAPI';
-import { Connexion_v1_Usecase } from '../../usecase/connexion_v1.usecase';
-import { Connexion_v2_Usecase } from '../../usecase/connexion_v2.usecase';
+import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
 import { Valider2FAAPI } from './types/utilisateur/valider2FAAPI';
 
 export class ConfirmationAPI {
@@ -41,34 +40,8 @@ export class ConfirmationAPI {
 @ApiBearerAuth()
 @ApiTags('1 - Utilisateur - Connexion')
 export class ConnexionController extends GenericControler {
-  constructor(
-    private readonly connexion_v1_Usecase: Connexion_v1_Usecase,
-    private readonly connexion_v2_Usecase: Connexion_v2_Usecase,
-  ) {
+  constructor(private readonly connexion_v2_Usecase: Connexion_v2_Usecase) {
     super();
-  }
-
-  @Post('utilisateurs/login')
-  @ApiOperation({
-    summary:
-      "Opération de login d'un utilisateur existant et actif, renvoi les info de l'utilisateur complètes ainsi qu'un token de sécurité pour navigation dans les APIs",
-  })
-  @ApiBody({
-    type: LoginUtilisateurAPI,
-  })
-  @ApiOkResponse({ type: LoggedUtilisateurAPI })
-  @ApiBadRequestResponse({ type: ApplicationError })
-  async loginUtilisateur(
-    @Body() body: LoginUtilisateurAPI,
-  ): Promise<LoggedUtilisateurAPI> {
-    const loggedUser = await this.connexion_v1_Usecase.loginUtilisateur(
-      body.email,
-      body.mot_de_passe,
-    );
-    return LoggedUtilisateurAPI.mapToAPI(
-      loggedUser.token,
-      loggedUser.utilisateur,
-    );
   }
 
   @Post('utilisateurs/login_v2')
@@ -116,7 +89,7 @@ export class ConnexionController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
   ) {
     this.checkCallerId(req, utilisateurId);
-    await this.connexion_v1_Usecase.disconnectUser(utilisateurId);
+    await this.connexion_v2_Usecase.disconnectUser(utilisateurId);
   }
 
   @Post('utilisateurs/logout')
@@ -125,7 +98,7 @@ export class ConnexionController extends GenericControler {
   })
   async disconnectAll(@Request() req) {
     this.checkCronAPIProtectedEndpoint(req);
-    await this.connexion_v1_Usecase.disconnectAllUsers();
+    await this.connexion_v2_Usecase.disconnectAllUsers();
   }
 
   @Post('utilisateurs/oubli_mot_de_passe')
@@ -139,7 +112,7 @@ export class ConnexionController extends GenericControler {
   @ApiOkResponse({ type: RenvoyerCodeAPI })
   @ApiBadRequestResponse({ type: ApplicationError })
   async oubli_mdp(@Body() body: OubliMdpAPI): Promise<RenvoyerCodeAPI> {
-    await this.connexion_v1_Usecase.oubli_mot_de_passe(body.email);
+    await this.connexion_v2_Usecase.oubli_mot_de_passe(body.email);
     return EmailAPI.mapToAPI(body.email);
   }
 
@@ -153,11 +126,10 @@ export class ConnexionController extends GenericControler {
   })
   @ApiBadRequestResponse({ type: ApplicationError })
   async modifier_mdp(@Body() body: ModifierMdpAPI) {
-    await this.connexion_v1_Usecase.modifier_mot_de_passe(
+    await this.connexion_v2_Usecase.modifier_mot_de_passe(
       body.email,
       body.code,
       body.mot_de_passe,
     );
-    return 'OK';
   }
 }

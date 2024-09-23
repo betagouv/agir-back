@@ -37,6 +37,7 @@ const DEFI_1: Defi_v0 = {
   categorie: Categorie.recommandation,
   mois: [],
   conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+  sont_points_en_poche: true,
 };
 const DEFI_1_DEF: Defi = {
   content_id: '1',
@@ -980,6 +981,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [],
     };
 
@@ -1056,6 +1058,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [],
     };
 

@@ -6,6 +6,7 @@ import {
   Todo_v0,
 } from '../object_store/parcoursTodo/parcoursTodo_v0';
 import { Celebration } from '../gamification/celebrations/celebration';
+import { QuestionGeneric } from '../kyc/questionGeneric';
 
 export class TodoElement {
   id: string;
@@ -17,6 +18,7 @@ export class TodoElement {
   service_id?: string;
   interaction_id?: string;
   points: number;
+  questions?: QuestionGeneric[];
   sont_points_en_poche: boolean;
   progression: { current: number; target: number };
   url?: string;
@@ -117,10 +119,14 @@ export class Todo {
     );
   }
 
-  public findTodoKYCElementByQuestionID?(content_id: string): TodoElement {
+  public findTodoKYCOrMosaicElementByQuestionID?(
+    content_id: string,
+  ): TodoElement {
     return this.todo.find(
       (element) =>
-        element.type === ContentType.kyc && element.content_id === content_id,
+        (element.type === ContentType.kyc ||
+          element.type === ContentType.mosaic) &&
+        element.content_id === content_id,
     );
   }
 
@@ -129,6 +135,9 @@ export class Todo {
   }
   public findTodoElementByServiceId?(service_id: string): TodoElement {
     return this.todo.find((element) => element.service_id === service_id);
+  }
+  public findTodoElementByID?(id: string): TodoElement {
+    return this.todo.find((element) => element.id === id);
   }
 
   public makeProgress?(element: TodoElement) {

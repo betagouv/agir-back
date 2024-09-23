@@ -40,9 +40,6 @@ import { ServiceUsecase } from './usecase/service.usecase';
 import { ServiceRepository } from './infrastructure/repository/service.repository';
 import { TodoController } from './infrastructure/api/todo.controller';
 import { TodoUsecase } from './usecase/todo.usecase';
-import { GroupeController } from './infrastructure/api/groupe.controller';
-import { GroupeUseCase } from './usecase/groupe.usecase';
-import { GroupeRepository } from './infrastructure/repository/groupe.repository';
 import { ThematiqueRepository } from './infrastructure/repository/thematique.repository';
 import { EcoWattServiceManager } from './infrastructure/service/ecowatt/ecoWattServiceManager';
 import { WinterController } from './infrastructure/api/incoming/winter.controller';
@@ -73,7 +70,6 @@ import { LinkyAPIConnector } from './infrastructure/service/linky/LinkyAPIConnec
 import { LinkyEmailer } from './infrastructure/service/linky/LinkyEmailer';
 import { EquipementUsecase } from './usecase/equipements.usecase';
 import { EquipementsController } from './infrastructure/api/equipements.controller';
-import { Inscription_v1_Usecase } from './usecase/inscription_v1.usecase';
 import { InscriptionController } from './infrastructure/api/inscription.controller';
 import { AideRepository } from './infrastructure/repository/aide.repository';
 import { DefisController } from './infrastructure/api/defis.controller';
@@ -96,8 +92,6 @@ import { KycStatistiqueUsecase } from './usecase/kycStatistique.usecase';
 import { KycStatistiqueRepository } from './infrastructure/repository/kycStatistique.repository';
 import { MissionRepository } from './infrastructure/repository/mission.repository';
 import { KycRepository } from './infrastructure/repository/kyc.repository';
-import { FileAttenteUsecase } from './usecase/fileAttente.usecase';
-import { FileAttenteRepository } from './infrastructure/repository/fileAttente.repository';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ThematiqueStatistiqueUsecase } from './usecase/thematiqueStatistique.usecase';
 import { ThematiqueStatistiqueRepository } from './infrastructure/repository/thematiqueStatistique.repository';
@@ -122,12 +116,11 @@ import { MagicLinkUsecase } from './usecase/magicLink.usecase';
 import { MagicLinkController } from './infrastructure/api/magicLink.controller';
 import { ImpactTransportsRepository } from './infrastructure/repository/services_recherche/impactTransport.repository';
 import { DistancesRepository } from './infrastructure/repository/services_recherche/distances.repository';
-import { Connexion_v1_Usecase } from './usecase/connexion_v1.usecase';
 import { ConnexionController } from './infrastructure/api/connexion.controller';
-import { Inscription_v2_Usecase } from './usecase/inscription_v2.usecase';
+import { Inscription_v2_Usecase } from './usecase/inscription.usecase';
 import { ProfileUsecase } from './usecase/profile.usecase';
 import { ProfileController } from './infrastructure/api/profile.controller';
-import { Connexion_v2_Usecase } from './usecase/connexion_v2.usecase';
+import { Connexion_v2_Usecase } from './usecase/connexion.usecase';
 import { EmailTemplateRepository } from './infrastructure/email/emailTemplate.repository';
 import { MailerUsecase } from './usecase/mailer.usecase';
 import { NotificationsController } from './infrastructure/api/notifications.controller';
@@ -166,7 +159,6 @@ function getControllers(): any[] {
     controllers.push(TestDataController);
     controllers.push(AuthController);
     controllers.push(BilanController);
-    controllers.push(GroupeController);
     controllers.push(MagicLinkController);
     controllers.push(OnboardingController);
     controllers.push(SuiviDashboardController);
@@ -217,8 +209,6 @@ function getControllers(): any[] {
     ServiceUsecase,
     ServiceRepository,
     TodoUsecase,
-    GroupeUseCase,
-    GroupeRepository,
     ThematiqueRepository,
     EcoWattServiceManager,
     FruitsEtLegumesServiceManager,
@@ -239,7 +229,6 @@ function getControllers(): any[] {
     LinkyAPIConnector,
     LinkyEmailer,
     EquipementUsecase,
-    Inscription_v1_Usecase,
     Inscription_v2_Usecase,
     AideRepository,
     DefiRepository,
@@ -259,8 +248,6 @@ function getControllers(): any[] {
     KycStatistiqueRepository,
     MissionRepository,
     KycRepository,
-    FileAttenteUsecase,
-    FileAttenteRepository,
     ThematiqueStatistiqueUsecase,
     ThematiqueStatistiqueRepository,
     UniversStatistiqueUsecase,
@@ -279,7 +266,6 @@ function getControllers(): any[] {
     MagicLinkUsecase,
     ImpactTransportsRepository,
     DistancesRepository,
-    Connexion_v1_Usecase,
     Connexion_v2_Usecase,
     EmailTemplateRepository,
     MailerUsecase,

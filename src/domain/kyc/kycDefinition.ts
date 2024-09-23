@@ -12,10 +12,12 @@ export class KycDefinition {
   is_ngc: boolean;
   ngc_key: string;
   question: string;
+  short_question: string;
   reponses?: { label: string; code: string; ngc_code?: string }[];
   thematique: Thematique;
   tags: Tag[];
   universes: string[];
+  image_url: string;
 
   constructor(data: KycDefinition) {
     this.id_cms = data.id_cms;
@@ -30,6 +32,8 @@ export class KycDefinition {
     this.thematique = data.thematique;
     this.tags = data.tags ? data.tags : [];
     this.universes = data.universes ? data.universes : [];
+    this.short_question = data.short_question;
+    this.image_url = data.image_url;
   }
 
   public getReponseByCode?(code: string): {

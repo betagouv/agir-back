@@ -24,8 +24,16 @@ import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { KYC } from '.prisma/client';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import {
+  MosaicKYC,
+  MosaicKYCDef,
+  TypeReponseMosaicKYC,
+} from '../../../src/domain/kyc/mosaicKYC';
+import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
+import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
 
 describe('/utilisateurs/id/questionsKYC (API test)', () => {
+  const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -64,16 +72,20 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
+    process.env = { ...OLD_ENV }; // Make a copy
   });
 
   afterAll(async () => {
     await TestUtil.appclose();
+    process.env = OLD_ENV;
   });
 
   it('GET /utilisateurs/id/questionsKYC - 1 question répondue, avec attributs à jour depuis le catalogue', async () => {
     // GIVEN
+    MosaicKYC.MOSAIC_CATALOGUE = [];
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: '1',
@@ -92,6 +104,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           universes: [Univers.consommation],
           thematique: Thematique.consommation,
           ngc_key: '123',
+          short_question: 'short',
+          image_url: 'AAA',
         },
       ],
     };
@@ -112,6 +126,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
         { label: 'Le climat !!!', code: Thematique.climat },
         { label: 'Mon logement !!!', code: Thematique.logement },
       ],
+      short_question: 'short',
+      image_url: 'AAA',
       created_at: undefined,
       updated_at: undefined,
     };
@@ -151,6 +167,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
   it('GET /utilisateurs/id/questionsKYC - liste N questions', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
+    MosaicKYC.MOSAIC_CATALOGUE = [];
+
     await TestUtil.create(DB.kYC, { id_cms: 1, code: KYCID.KYC001 });
     await TestUtil.create(DB.kYC, { id_cms: 2, code: KYCID.KYC002 });
     await TestUtil.create(DB.kYC, { id_cms: 3, code: KYCID._2 });
@@ -164,8 +182,152 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.length).toEqual(3);
   });
+  it('GET /utilisateurs/id/questionsKYC - liste N questions + 1 mosaic', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    MosaicKYC.MOSAIC_CATALOGUE = [
+      {
+        id: KYCMosaicID.TEST_MOSAIC_ID,
+        categorie: Categorie.test,
+        points: 10,
+        titre: 'Titre test',
+        type: TypeReponseMosaicKYC.mosaic_boolean,
+        question_kyc_codes: [KYCID._1, KYCID._2],
+      },
+    ];
+
+    const dbKYC: KYC = {
+      id_cms: 1,
+      categorie: Categorie.recommandation,
+      code: '1',
+      is_ngc: true,
+      points: 20,
+      question: 'The question !',
+      tags: [Tag.possede_voiture],
+      universes: [Univers.alimentation],
+      thematique: Thematique.alimentation,
+      type: TypeReponseQuestionKYC.choix_unique,
+      ngc_key: 'a . b . c',
+      reponses: [
+        { label: 'Oui', code: 'oui' },
+        { label: 'Non', code: 'non' },
+        { label: 'Je sais pas', code: 'sais_pas' },
+      ],
+      short_question: 'short',
+      image_url: 'AAA',
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 4,
+      question: 'quest 1',
+      code: '_1',
+    });
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 5,
+      question: 'quest 2',
+      code: '_2',
+    });
+    await TestUtil.create(DB.kYC, { id_cms: 1, code: KYCID.KYC001 });
+    await TestUtil.create(DB.kYC, { id_cms: 2, code: KYCID.KYC002 });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/questionsKYC',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toEqual(5);
+    expect(response.body[0]).toEqual({
+      id: '_1',
+      question: 'quest 1',
+      reponse: [],
+      reponses_possibles: ['Oui', 'Non', 'Je sais pas'],
+      categorie: 'recommandation',
+      points: 20,
+      type: 'choix_unique',
+      is_NGC: true,
+      thematique: 'alimentation',
+    });
+    expect(response.body[4]).toEqual({
+      id: 'TEST_MOSAIC_ID',
+      titre: 'Titre test',
+      reponses: [
+        {
+          code: '_1',
+          image_url: 'AAA',
+          label: 'short',
+          boolean_value: false,
+        },
+        {
+          code: '_2',
+          image_url: 'URL',
+          label: 'short',
+          boolean_value: false,
+        },
+      ],
+      categorie: 'test',
+      points: 10,
+      type: 'mosaic_boolean',
+      is_answered: false,
+    });
+  });
+
+  it('GET /utilisateurs/id/questionsKYC - liste pas une mosaic de test en prod', async () => {
+    // GIVEN
+    process.env.IS_PROD = 'true';
+    await TestUtil.create(DB.utilisateur);
+    MosaicKYC.MOSAIC_CATALOGUE = [
+      {
+        id: KYCMosaicID.TEST_MOSAIC_ID,
+        categorie: Categorie.test,
+        points: 10,
+        titre: 'Titre test',
+        type: TypeReponseMosaicKYC.mosaic_boolean,
+        question_kyc_codes: [KYCID._1, KYCID._2],
+      },
+    ];
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/questionsKYC',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toEqual(0);
+  });
+  it('GET /utilisateurs/id/questionsKYC - liste une mosaic de test hors prod', async () => {
+    // GIVEN
+    process.env.IS_PROD = 'false';
+    await TestUtil.create(DB.utilisateur);
+    MosaicKYC.MOSAIC_CATALOGUE = [
+      {
+        id: KYCMosaicID.TEST_MOSAIC_ID,
+        categorie: Categorie.test,
+        points: 10,
+        titre: 'Titre test',
+        type: TypeReponseMosaicKYC.mosaic_boolean,
+        question_kyc_codes: [KYCID._1, KYCID._2],
+      },
+    ];
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/questionsKYC',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toEqual(1);
+  });
   it('GET /utilisateurs/id/questionsKYC - liste N questions dont une remplie', async () => {
     // GIVEN
+    MosaicKYC.MOSAIC_CATALOGUE = [];
+
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.kYC, { id_cms: 1, code: KYCID.KYC001 });
     await TestUtil.create(DB.kYC, { id_cms: 2, code: KYCID.KYC002 });
@@ -188,6 +350,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, { kyc: kyc });
@@ -332,6 +495,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
@@ -430,6 +594,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     };
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [
         {
           id: '1',
@@ -447,6 +612,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
             { label: 'YO', code: 'yos' },
           ],
           tags: [],
+          short_question: 'short',
+          image_url: 'AAA',
         },
       ],
     };
@@ -584,6 +751,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, { kyc: kyc });
@@ -614,6 +782,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, { kyc: kyc });
@@ -639,6 +808,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
+
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
@@ -682,6 +853,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
+
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
@@ -722,6 +895,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
+
       answered_questions: [],
     };
     const logement: Logement_v0 = {
@@ -765,6 +940,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
+
       answered_questions: [],
     };
     const logement: Logement_v0 = {
@@ -812,6 +989,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
+
       answered_questions: [],
     };
     const logement: Logement_v0 = {
@@ -870,6 +1049,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
       answered_questions: [],
     };
     const logement: Logement_v0 = {
@@ -925,5 +1105,138 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // THEN
 
     expect(response.status).toBe(404);
+  });
+
+  it('GET /utilisateurs/id/enchainementQuestionsKYC/id - liste un enchainement de quesitions', async () => {
+    // GIVEN
+    QuestionKYCUsecase.ENCHAINEMENTS = {
+      ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCMosaicID.TEST_MOSAIC_ID],
+    };
+
+    const MOSAIC_CATALOGUE: MosaicKYCDef[] = [
+      {
+        id: KYCMosaicID.TEST_MOSAIC_ID,
+        categorie: Categorie.test,
+        points: 10,
+        titre: 'Titre test',
+        type: TypeReponseMosaicKYC.mosaic_boolean,
+        question_kyc_codes: [KYCID.KYC002, KYCID.KYC003],
+      },
+    ];
+
+    MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+
+    const dbKYC: KYC = {
+      id_cms: 1,
+      categorie: Categorie.recommandation,
+      code: '1',
+      is_ngc: true,
+      points: 20,
+      question: 'The question !',
+      tags: [Tag.possede_voiture],
+      universes: [Univers.alimentation],
+      thematique: Thematique.alimentation,
+      type: TypeReponseQuestionKYC.choix_unique,
+      ngc_key: 'a . b . c',
+      reponses: [
+        { label: 'Oui', code: 'oui' },
+        { label: 'Non', code: 'non' },
+        { label: 'Je sais pas', code: 'sais_pas' },
+      ],
+      short_question: 'short',
+      image_url: 'AAA',
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 1,
+      question: 'quest 1',
+      short_question: 'short 1',
+      image_url: 'AAA',
+      code: KYCID.KYC001,
+    });
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 2,
+      question: 'quest 2',
+      short_question: 'short 2',
+      image_url: 'BBB',
+      code: KYCID.KYC002,
+    });
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 3,
+      question: 'quest 3',
+      short_question: 'short 3',
+      image_url: 'CCC',
+      code: KYCID.KYC003,
+    });
+
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC/ENCHAINEMENT_KYC_1',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toEqual(2);
+    expect(response.body).toEqual([
+      {
+        id: 'KYC001',
+        question: 'quest 1',
+        reponse: [],
+        reponses_possibles: ['Oui', 'Non', 'Je sais pas'],
+        categorie: 'recommandation',
+        points: 20,
+        type: 'choix_unique',
+        is_NGC: true,
+        thematique: 'alimentation',
+      },
+      {
+        id: 'TEST_MOSAIC_ID',
+        titre: 'Titre test',
+        reponses: [
+          {
+            boolean_value: false,
+            code: 'KYC002',
+            image_url: 'BBB',
+            label: 'short 2',
+          },
+          {
+            boolean_value: false,
+            code: 'KYC003',
+            image_url: 'CCC',
+            label: 'short 3',
+          },
+        ],
+        categorie: 'test',
+        points: 10,
+        type: 'mosaic_boolean',
+        is_answered: false,
+      },
+    ]);
+  });
+
+  it('GET /utilisateurs/id/enchainementQuestionsKYC/id - enchainement qui existe pas', async () => {
+    // GIVEN
+    QuestionKYCUsecase.ENCHAINEMENTS = {
+      ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCMosaicID.TEST_MOSAIC_ID],
+    };
+
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC/BAD',
+    );
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      "L'enchainement d'id [BAD] n'existe pas",
+    );
   });
 });

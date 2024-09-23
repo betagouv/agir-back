@@ -5,6 +5,7 @@ import { ContentType } from '../../contenu/contentType';
 import { DifficultyLevel } from '../../contenu/difficultyLevel';
 import { Todo, TodoElement } from '../../todo/todo';
 import { Celebration_v0 } from '../gamification/gamification_v0';
+import { QuestionGeneric } from '../../kyc/questionGeneric';
 
 export class TodoElement_v0 {
   id: string;
