@@ -11,7 +11,6 @@ import { ApiTags, ApiOperation, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
 import { EventUsecase } from '../../../src/usecase/event.usecase';
-import { Response } from 'express';
 import { EventAPI } from './types/event/eventAPI';
 
 @Controller()
@@ -30,7 +29,7 @@ export class EventController extends GenericControler {
     type: EventAPI,
   })
   @UseGuards(AuthGuard)
-  async getUtilisateurTodo(
+  async getProcessEvent(
     @Param('utilisateurId') utilisateurId: string,
     @Request() req,
     @Body() body: EventAPI,
