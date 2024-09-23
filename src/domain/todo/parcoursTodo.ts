@@ -112,4 +112,17 @@ export class ParcoursTodo {
       }
     }
   }
+  public findTodoElementByID?(id: string): {
+    element: TodoElement;
+    todo: Todo;
+  } {
+    for (let index = 0; index < this.liste_todo.length; index++) {
+      const current_todo = this.liste_todo[index];
+      const found = current_todo.findTodoElementByID(id);
+      if (found) {
+        return { element: found, todo: current_todo };
+      }
+      return null;
+    }
+  }
 }

@@ -13,10 +13,6 @@ import {
 import { Categorie } from '../../src/domain/contenu/categorie';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
-import { KYCID } from '../domain/kyc/KYCID';
-import { MosaicKYC } from '../domain/kyc/mosaicKYC';
-import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
-import { QuestionGeneric } from '../domain/kyc/questionGeneric';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { QuestionKYCUsecase } from './questionKYC.usecase';
 
@@ -165,14 +161,21 @@ export class TodoUsecase {
           );
 
         const progression = enchainement.getProgression();
-        element.progression = {
-          current: progression.current,
-          target: progression.target,
-        };
+        element.progression = progression;
 
         if (progression.current === progression.target) {
-          todo.done.push(element);
-          todo.todo.splice(index, 1);
+          todo.moveElementToDone(element);
+          const tmp_user = await this.utilisateurRepository.getById(
+            utilisateurId,
+          );
+          const new_elem = tmp_user.parcours_todo.findTodoElementByID(
+            element.id,
+          );
+          if (new_elem) {
+            new_elem.element.progression = progression;
+            new_elem.todo.moveElementToDone(new_elem.element);
+          }
+          await this.utilisateurRepository.updateUtilisateur(tmp_user);
         }
       }
     }

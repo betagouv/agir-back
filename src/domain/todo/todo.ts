@@ -136,6 +136,9 @@ export class Todo {
   public findTodoElementByServiceId?(service_id: string): TodoElement {
     return this.todo.find((element) => element.service_id === service_id);
   }
+  public findTodoElementByID?(id: string): TodoElement {
+    return this.todo.find((element) => element.id === id);
+  }
 
   public makeProgress?(element: TodoElement) {
     element.progression.current++;
