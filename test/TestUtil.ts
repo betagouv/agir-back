@@ -217,7 +217,6 @@ export class TestUtil {
     await this.prisma.kycStatistique.deleteMany();
     await this.prisma.mission.deleteMany();
     await this.prisma.kYC.deleteMany();
-    await this.prisma.fileAttente.deleteMany();
     await this.prisma.thematiqueStatistique.deleteMany();
     await this.prisma.universStatistique.deleteMany();
     await this.prisma.servicesFavorisStatistique.deleteMany();

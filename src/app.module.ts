@@ -95,8 +95,6 @@ import { KycStatistiqueUsecase } from './usecase/kycStatistique.usecase';
 import { KycStatistiqueRepository } from './infrastructure/repository/kycStatistique.repository';
 import { MissionRepository } from './infrastructure/repository/mission.repository';
 import { KycRepository } from './infrastructure/repository/kyc.repository';
-import { FileAttenteUsecase } from './usecase/fileAttente.usecase';
-import { FileAttenteRepository } from './infrastructure/repository/fileAttente.repository';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ThematiqueStatistiqueUsecase } from './usecase/thematiqueStatistique.usecase';
 import { ThematiqueStatistiqueRepository } from './infrastructure/repository/thematiqueStatistique.repository';
@@ -256,8 +254,6 @@ function getControllers(): any[] {
     KycStatistiqueRepository,
     MissionRepository,
     KycRepository,
-    FileAttenteUsecase,
-    FileAttenteRepository,
     ThematiqueStatistiqueUsecase,
     ThematiqueStatistiqueRepository,
     UniversStatistiqueUsecase,

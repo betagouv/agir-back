@@ -349,14 +349,6 @@ model Mission {
   updated_at             DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
-model FileAttente {
-  email       String   @unique
-  code_postal String?
-  code_profil String?
-  created_at  DateTime @default(now()) @db.Timestamptz(3)
-  updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz(3)
-}
-
 model KYC {
   id_cms         Int      @unique
   code           String   @unique
@@ -461,7 +453,7 @@ view CartographieVue {
 }
 
 view UtilisateurVue {
-  id                      Int @id
+  id                      Int       @id
   code_postal             String
   date_inscription        DateTime
   date_derniere_connexion DateTime?

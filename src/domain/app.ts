@@ -62,37 +62,6 @@ export class App {
     return process.env.BASE_URL;
   }
 
-  public static isWhiteListeEnabled(): boolean {
-    return process.env.WHITE_LIST_ENABLED === 'true';
-  }
-  public static doesAnyWhiteListIncludes(email: string): boolean {
-    const access_1 = App.doesWhiteListIncludes(email);
-    const access_2 = App.doesWhiteListDijonIncludes(email);
-    const access_3 = App.doesWhiteListBesIncludes(email);
-    return access_1 || access_2 || access_3;
-  }
-  private static doesWhiteListIncludes(email: string): boolean {
-    return (
-      !!process.env.WHITE_LIST &&
-      process.env.WHITE_LIST.toLowerCase().includes(email.toLocaleLowerCase())
-    );
-  }
-  private static doesWhiteListDijonIncludes(email: string): boolean {
-    return (
-      !!process.env.WHITE_LIST_DIJON &&
-      process.env.WHITE_LIST_DIJON.toLowerCase().includes(
-        email.toLocaleLowerCase(),
-      )
-    );
-  }
-  private static doesWhiteListBesIncludes(email: string): boolean {
-    return (
-      !!process.env.WHITE_LIST_BES &&
-      process.env.WHITE_LIST_BES.toLowerCase().includes(
-        email.toLocaleLowerCase(),
-      )
-    );
-  }
   public static getCmsApiKey(): string {
     return process.env.CMS_API_KEY;
   }
@@ -126,9 +95,6 @@ export class App {
   }
   public static getCurrentPonderationRubriqueSetName(): string {
     return process.env.PONDERATION_RUBRIQUES;
-  }
-  public static getMaxFileAttenteJour(): number {
-    return Number.parseInt(process.env.MAX_ATTENTE_JOUR) || 0;
   }
   public static getActiveNotificationsListe(): string {
     return process.env.NOTIFICATIONS_MAIL_ACTIVES || '';
