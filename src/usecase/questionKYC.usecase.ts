@@ -39,6 +39,7 @@ export class QuestionKYCUsecase {
       KYCID.KYC_transport_avion_3_annees,
       KYCMosaicID.MOSAIC_CHAUFFAGE,
       KYCID.KYC_superficie,
+      KYCID.KYC_alimentation_regime,
     ],
   };
 
