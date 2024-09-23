@@ -122,7 +122,7 @@ export class ParcoursTodo {
       if (found) {
         return { element: found, todo: current_todo };
       }
-      return null;
     }
+    return null;
   }
 }

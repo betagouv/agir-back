@@ -174,8 +174,8 @@ export class TodoUsecase {
           if (new_elem) {
             new_elem.element.progression = progression;
             new_elem.todo.moveElementToDone(new_elem.element);
+            await this.utilisateurRepository.updateUtilisateur(tmp_user);
           }
-          await this.utilisateurRepository.updateUtilisateur(tmp_user);
         }
       }
     }
