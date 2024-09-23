@@ -30,12 +30,25 @@ export class MosaicKYC {
       id: KYCMosaicID.TEST_MOSAIC_ID,
       categorie: Categorie.test,
       points: 10,
-      titre: 'Quels modes de chauffage existes chez vous ?',
+      titre: 'Quels modes de chauffage existent chez vous ?',
       type: TypeReponseMosaicKYC.mosaic_boolean,
       question_kyc_codes: [
         KYCID.KYC_chauffage_bois,
         KYCID.KYC_chauffage_fioul,
         KYCID.KYC_chauffage_gaz,
+      ],
+    },
+    {
+      id: KYCMosaicID.MOSAIC_CHAUFFAGE,
+      categorie: Categorie.mission,
+      points: 10,
+      titre: 'Quels modes de chauffage existent chez vous ?',
+      type: TypeReponseMosaicKYC.mosaic_boolean,
+      question_kyc_codes: [
+        KYCID.KYC_chauffage_bois,
+        KYCID.KYC_chauffage_fioul,
+        KYCID.KYC_chauffage_gaz,
+        KYCID.KYC_chauffage_elec,
       ],
     },
   ];

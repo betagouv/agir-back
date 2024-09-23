@@ -34,6 +34,12 @@ export class QuestionKYCUsecase {
       KYCID.KYC003,
       KYCMosaicID.TEST_MOSAIC_ID,
     ],
+    ENCHAINEMENT_KYC_mini_bilan_carbone: [
+      KYCID.KYC_transport_voiture_km,
+      KYCID.KYC_transport_avion_3_annees,
+      KYCMosaicID.MOSAIC_CHAUFFAGE,
+      KYCID.KYC_superficie,
+    ],
   };
 
   async getALL(utilisateurId: string): Promise<QuestionGeneric[]> {

@@ -560,40 +560,6 @@ export class TestUtil {
         TransportQuotidien.voiture,
       ],
     };
-    /*
-    const onboarding: Onboarding_v0 = {
-      version: 0,
-      transports: [TransportQuotidien.voiture, TransportQuotidien.pied],
-      avion: 2,
-      code_postal: '91120',
-      adultes: 2,
-      enfants: 1,
-      residence: TypeLogement.maison,
-      proprietaire: true,
-      superficie: Superficie.superficie_100,
-      chauffage: Chauffage.bois,
-      repas: Repas.tout,
-      consommation: Consommation.raisonnable,
-      commune: 'PALAISEAU',
-    };
-
-    const onboardingRes: OnboardingResult_v0 = {
-      version: 0,
-      ventilation_par_thematiques: {
-        alimentation: Impact.tres_faible,
-        transports: Impact.faible,
-        logement: Impact.eleve,
-        consommation: Impact.tres_eleve,
-      },
-      ventilation_par_impacts: {
-        '1': [ThematiqueOnboarding.alimentation],
-        '2': [ThematiqueOnboarding.transports],
-        '3': [ThematiqueOnboarding.logement],
-        '4': [ThematiqueOnboarding.consommation],
-      },
-    };
-    */
-
     return {
       id: 'utilisateur-id',
       nom: 'nom',
@@ -621,10 +587,6 @@ export class TestUtil {
       gamification: gamification,
       unlocked_features: unlocked,
       history: history,
-      /*
-      onboardingData: onboarding,
-      onboardingResult: onboardingRes,
-      */
       onboardingData: {} as any,
       onboardingResult: {} as any,
       created_at: undefined,

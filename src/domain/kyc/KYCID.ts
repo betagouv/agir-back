@@ -28,4 +28,6 @@ export enum KYCID {
   KYC_chauffage_gaz = 'KYC_chauffage_gaz',
   KYC_chauffage_fioul = 'KYC_chauffage_fioul',
   KYC_chauffage_bois = 'KYC_chauffage_bois',
+  KYC_transport_voiture_km = 'KYC_transport_voiture_km',
+  KYC_transport_avion_3_annees = 'KYC_transport_avion_3_annees',
 }
