@@ -183,7 +183,7 @@ export class TodoCatalogue {
         {
           id: uuidv4(),
           titre: `5 questions pour avoir une première estimation de son empreinte`,
-          content_id: 'ENCHAINEMENT_KYC_mini_bilan_carbone',
+          content_id: 'ENCHAINEMENT_KYC_1',
           thematiques: [Thematique.climat],
           progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
