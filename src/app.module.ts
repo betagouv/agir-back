@@ -14,7 +14,6 @@ import { UtilisateurRepository } from './infrastructure/repository/utilisateur/u
 import { BilanRepository } from './infrastructure/repository/bilan.repository';
 
 import { PrismaService } from './infrastructure/prisma/prisma.service';
-//import { PrismaService as PrismaService_STATS } from './infrastructure/prisma/stats/prisma.service.stats';
 import { SuiviRepository } from './infrastructure/repository/suivi.repository';
 import { SuiviUsecase } from './usecase/suivi.usecase';
 import { AidesVeloRepository } from './infrastructure/repository/aidesVelo.repository';
@@ -124,6 +123,7 @@ import { Connexion_v2_Usecase } from './usecase/connexion.usecase';
 import { EmailTemplateRepository } from './infrastructure/email/emailTemplate.repository';
 import { MailerUsecase } from './usecase/mailer.usecase';
 import { NotificationsController } from './infrastructure/api/notifications.controller';
+import { PrismaServiceStat } from './infrastructure/prisma/stats/prisma.service.stats';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -183,7 +183,7 @@ function getControllers(): any[] {
   controllers: getControllers(),
   providers: [
     PrismaService,
-    //PrismaService_STATS,
+    PrismaServiceStat,
     UtilisateurRepository,
     BilanRepository,
     SuiviRepository,

@@ -1159,7 +1159,6 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     ).send({ reponse: ['Peu de viande'] });
 
     // THEN
-    console.log(response.body);
     expect(response.status).toBe(200);
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(
