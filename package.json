@@ -10,7 +10,7 @@
   },
   "scripts": {
     "db:update": "dotenv -e .env.test -- npx prisma migrate dev && dotenv -e .env.run -- npx prisma migrate dev",
-    "db:update-stats": "dotenv -e .env.test -- npx prisma migrate dev  --schema ./src/infrastructure/prisma/stats/schema.prisma",
+    "db:update-stats": "dotenv -e .env.test -- npx prisma migrate dev  --schema ./src/infrastructure/prisma/stats/schema.prisma && dotenv -e .env.run -- npx prisma migrate dev  --schema ./src/infrastructure/prisma/stats/schema.prisma",
     "db:update_tests": "dotenv -e .env.test -- npx prisma migrate dev",
     "db:generate": "dotenv -e .env.test -- npx prisma migrate dev --create-only",
     "db:status": "dotenv -e .env.test -- npx prisma migrate status",
