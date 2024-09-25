@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Controller, Get, Param, Post, Request } from '@nestjs/common';
 import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
+import { PrismaServiceStat } from '../prisma/stats/prisma.service.stats';
 import { SuiviAlimentation } from '../../../src/domain/suivi/suiviAlimentation';
 import { SuiviRepository } from '../../../src/infrastructure/repository/suivi.repository';
 import { Suivi } from '../../../src/domain/suivi/suivi';
@@ -31,6 +32,7 @@ import { GenericControler } from './genericControler';
 export class TestDataController extends GenericControler {
   constructor(
     private prisma: PrismaService,
+    private prismaStats: PrismaServiceStat,
     private suiviRepository: SuiviRepository,
     private linkyRepository: LinkyRepository,
     private migrationUsecase: MigrationUsecase,
@@ -61,6 +63,10 @@ export class TestDataController extends GenericControler {
       },
     });
     await this.contactSynchro.createContactFromContact(contact);
+  }
+  @Get('stats')
+  async test_stats() {
+    return await this.prismaStats.testTable.findMany();
   }
 
   @Get('testdata/:id')
