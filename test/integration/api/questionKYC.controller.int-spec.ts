@@ -1093,6 +1093,107 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(userDB.logement.type).toEqual(TypeLogement.appartement);
   });
 
+  it('PUT /utilisateurs/id/questionsKYC/KYC_alimentation_regime - transpose dans mes KYC unitaires NGC', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_mosaics: [],
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc,
+    });
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_alimentation_regime,
+      question: `YOP`,
+      reponses: [
+        { code: 'vegetalien', label: 'Vegetalien', ngc_code: null },
+        { code: 'vegetarien', label: 'Vegetarien', ngc_code: null },
+        { code: 'peu_viande', label: 'Peu de viande', ngc_code: null },
+        { code: 'chaque_jour_viande', label: 'Tous les jours', ngc_code: null },
+      ],
+      type: TypeReponseQuestionKYC.choix_unique,
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID.KYC_nbr_plats_vegetaliens,
+      question: `YOP`,
+      type: TypeReponseQuestionKYC.entier,
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 3,
+      code: KYCID.KYC_nbr_plats_vegetariens,
+      question: `YOP`,
+      type: TypeReponseQuestionKYC.entier,
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 4,
+      code: KYCID.KYC_nbr_plats_poisson_blanc,
+      question: `YOP`,
+      type: TypeReponseQuestionKYC.entier,
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 5,
+      code: KYCID.KYC_nbr_plats_poisson_gras,
+      question: `YOP`,
+      type: TypeReponseQuestionKYC.entier,
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 6,
+      code: KYCID.KYC_nbr_plats_viande_blanche,
+      question: `YOP`,
+      type: TypeReponseQuestionKYC.entier,
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 7,
+      code: KYCID.KYC_nbr_plats_viande_rouge,
+      question: `YOP`,
+      type: TypeReponseQuestionKYC.entier,
+    });
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/KYC_alimentation_regime',
+    ).send({ reponse: ['Peu de viande'] });
+
+    // THEN
+    console.log(response.body);
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    expect(
+      userDB.kyc_history.getAnsweredQuestionByCode(
+        KYCID.KYC_nbr_plats_vegetaliens,
+      ).reponses[0].label,
+    ).toEqual('1');
+    expect(
+      userDB.kyc_history.getAnsweredQuestionByCode(
+        KYCID.KYC_nbr_plats_vegetariens,
+      ).reponses[0].label,
+    ).toEqual('7');
+    expect(
+      userDB.kyc_history.getAnsweredQuestionByCode(
+        KYCID.KYC_nbr_plats_poisson_blanc,
+      ).reponses[0].label,
+    ).toEqual('1');
+    expect(
+      userDB.kyc_history.getAnsweredQuestionByCode(
+        KYCID.KYC_nbr_plats_poisson_gras,
+      ).reponses[0].label,
+    ).toEqual('1');
+    expect(
+      userDB.kyc_history.getAnsweredQuestionByCode(
+        KYCID.KYC_nbr_plats_viande_blanche,
+      ).reponses[0].label,
+    ).toEqual('4');
+    expect(
+      userDB.kyc_history.getAnsweredQuestionByCode(
+        KYCID.KYC_nbr_plats_viande_rouge,
+      ).reponses[0].label,
+    ).toEqual('0');
+  });
+
   it('PUT /utilisateurs/id/questionsKYC/bad - erreur 404 ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);

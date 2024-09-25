@@ -31,4 +31,10 @@ export enum KYCID {
   KYC_transport_voiture_km = 'KYC_transport_voiture_km',
   KYC_transport_avion_3_annees = 'KYC_transport_avion_3_annees',
   KYC_alimentation_regime = 'KYC_alimentation_regime',
+  KYC_nbr_plats_vegetaliens = 'KYC_nbr_plats_vegetaliens',
+  KYC_nbr_plats_vegetariens = 'KYC_nbr_plats_vegetariens',
+  KYC_nbr_plats_poisson_blanc = 'KYC_nbr_plats_poisson_blanc',
+  KYC_nbr_plats_poisson_gras = 'KYC_nbr_plats_poisson_gras',
+  KYC_nbr_plats_viande_blanche = 'KYC_nbr_plats_viande_blanche',
+  KYC_nbr_plats_viande_rouge = 'KYC_nbr_plats_viande_rouge',
 }

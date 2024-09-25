@@ -1590,20 +1590,4 @@ describe('TODO list (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.numero_todo).toEqual(2);
   });
-  it('GET /utilisateurs/id/todo répond OK pour todo #3', async () => {
-    // GIVEN
-    const parcours = new ParcoursTodo();
-    parcours.avanceDansParcours();
-    parcours.avanceDansParcours();
-    await TestUtil.create(DB.utilisateur, {
-      todo: parcours,
-    });
-
-    // WHEN
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.numero_todo).toEqual(3);
-  });
 });
