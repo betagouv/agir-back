@@ -38,7 +38,6 @@ lerna-debug.log*
 # prisma 
 /src/infrastructure/prisma/stats/prisma_client_stats/runtime
 /src/infrastructure/prisma/stats/prisma_client_stats/libquery_engine-darwin.dylib.node
-/src/infrastructure/prisma/stats/prisma_client_stats/index.d.ts
 
 # other
 .env
