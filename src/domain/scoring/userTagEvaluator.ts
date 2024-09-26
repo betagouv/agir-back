@@ -1,7 +1,6 @@
 import { Thematique } from '../contenu/thematique';
 import { KYCID } from '../kyc/KYCID';
 import { BooleanKYC, QuestionKYC } from '../kyc/questionKYC';
-import { ThematiqueOnboarding } from '../onboarding/onboarding';
 import { TransportQuotidien } from '../transport/transport';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { Tag } from './tag';
@@ -14,25 +13,7 @@ export class UserTagEvaluator {
       UserTagEvaluator.processKYC(user, KYCID[kyc_id]);
     }
 
-    UserTagEvaluator.shopping_addict(user);
     UserTagEvaluator.transport_quotidiens(user);
-    UserTagEvaluator.viande_addict(user);
-  }
-
-  private static shopping_addict(user: Utilisateur) {
-    if (!user.onboardingResult.isAvailable()) return;
-    const impact = user.onboardingResult.getImpact(
-      ThematiqueOnboarding.consommation,
-    );
-    user.increaseTagValue(Tag.shopping_addict, (impact - 1) * 20);
-  }
-
-  private static viande_addict(user: Utilisateur) {
-    if (!user.onboardingResult.isAvailable()) return;
-    const impact = user.onboardingResult.getImpact(
-      ThematiqueOnboarding.alimentation,
-    );
-    user.increaseTagValue(Tag.viande_addict, (impact - 1) * 20);
   }
 
   private static transport_quotidiens(user: Utilisateur) {

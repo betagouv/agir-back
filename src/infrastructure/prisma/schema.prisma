@@ -41,8 +41,6 @@ model Utilisateur {
   passwordHash             String?     @default("hash")
   passwordSalt             String?     @default("salt")
   revenu_fiscal            Int?
-  onboardingData           Json        @default("{}") // versioné 
-  onboardingResult         Json        @default("{}") // versioné 
   todo                     Json        @default("{}") // versioné 
   gamification             Json        @default("{}") // versioné 
   history                  Json        @default("{}") // versioné 

@@ -205,7 +205,7 @@ export class ProfileController extends GenericControler {
     type: ConfirmationAPI,
   })
   @ApiOperation({
-    summary: `Reset l'utilisateur donné en argument, tout sauf l'onboarding`,
+    summary: `Reset l'utilisateur donné en argument`,
   })
   @UseGuards(AuthGuard)
   async reset(
@@ -222,7 +222,7 @@ export class ProfileController extends GenericControler {
     type: ConfirmationAPI,
   })
   @ApiOperation({
-    summary: `Reset TOUS LES UTILISATEURS, tout sauf l'onboarding`,
+    summary: `Reset TOUS LES UTILISATEURS`,
   })
   async resetAll(@Request() req, @Body() body: ConfirmationAPI) {
     this.checkCronAPIProtectedEndpoint(req);

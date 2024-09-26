@@ -249,12 +249,6 @@ export class TestDataController extends GenericControler {
     const utilisatateur = await this.utilisateurRepository2.getById(
       utilisateurId,
     );
-    utilisatateur.logement = Logement.buildFromOnboarding(
-      utilisatateur.onboardingData,
-    );
-    utilisatateur.transport = Transport.buildFromOnboarding(
-      utilisatateur.onboardingData,
-    );
     utilisatateur.recomputeRecoTags();
     await this.utilisateurRepository2.updateUtilisateur(utilisatateur);
   }

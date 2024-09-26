@@ -25,8 +25,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { OidcService } from '../src/infrastructure/auth/oidc.service';
 import { NGCCalculator } from './infrastructure/ngc/NGCCalculator';
 import { EmailSender } from './infrastructure/email/emailSender';
-import { OnboardingUsecase } from './usecase/onboarding.usecase';
-import { OnboardingController } from './infrastructure/api/onboarding.controller';
 import { CommuneRepository } from './infrastructure/repository/commune/commune.repository';
 import { CommunesUsecase } from './usecase/communes.usecase';
 import { CommunesController } from './infrastructure/api/communes.controller';
@@ -160,7 +158,6 @@ function getControllers(): any[] {
     controllers.push(AuthController);
     controllers.push(BilanController);
     controllers.push(MagicLinkController);
-    controllers.push(OnboardingController);
     controllers.push(SuiviDashboardController);
   }
   return controllers;
@@ -200,7 +197,6 @@ function getControllers(): any[] {
     SuiviUsecase,
     CMSUsecase,
     EmailSender,
-    OnboardingUsecase,
     CommuneRepository,
     CommunesUsecase,
     UtilisateurSecurityRepository,

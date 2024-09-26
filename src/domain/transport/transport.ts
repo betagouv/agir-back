@@ -1,5 +1,4 @@
 import { Transport_v0 } from '../object_store/transport/transport_v0';
-import { Onboarding } from '../onboarding/onboarding';
 
 export enum TransportQuotidien {
   voiture = 'voiture',
@@ -27,13 +26,6 @@ export class Transport {
     this.avions_par_an = this.AorB(input.avions_par_an, this.avions_par_an);
   }
 
-  public static buildFromOnboarding(data: Onboarding): Transport {
-    return new Transport({
-      version: 0,
-      transports_quotidiens: data.transports,
-      avions_par_an: data.avion,
-    });
-  }
   private AorB?<T>(a: T, b: T): T {
     if (a === undefined) return b;
     return a;

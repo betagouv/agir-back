@@ -7,12 +7,6 @@ import {
   Utilisateur,
   UtilisateurStatus,
 } from '../../../domain/utilisateur/utilisateur';
-import {
-  Impact,
-  Onboarding,
-  ThematiqueOnboarding,
-} from '../../../domain/onboarding/onboarding';
-import { OnboardingResult } from '../../../domain/onboarding/onboardingResult';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { Gamification } from '../../../domain/gamification/gamification';
 import { History } from '../../../../src/domain/history/history';
@@ -184,57 +178,6 @@ export class UtilisateurRepository {
     }
   }
 
-  async countUsersWithAtLeastNThematiquesOfImpactGreaterThan(
-    minImpact: Impact,
-    nombreThematiques: number,
-  ): Promise<number> {
-    let query = `
-    SELECT count(1)
-    FROM "Utilisateur"
-    WHERE ( 0 + `;
-    for (
-      let impact: number = minImpact;
-      impact <= Impact.tres_eleve;
-      impact++
-    ) {
-      query = query.concat(
-        `+ JSONB_ARRAY_LENGTH("onboardingResult" -> 'ventilation_par_impacts' -> '${impact}') `,
-      );
-    }
-    query = query.concat(`) >= ${nombreThematiques}`);
-    let result = await this.prisma.$queryRawUnsafe(query);
-    return Number(result[0].count);
-  }
-
-  async countUsersWithLessImpactOnThematique(
-    maxImpact: Impact,
-    targetThematique: ThematiqueOnboarding,
-  ): Promise<number> {
-    let query = `
-    SELECT count(1)
-    FROM "Utilisateur"
-    WHERE CAST("onboardingResult" -> 'ventilation_par_thematiques' -> '${targetThematique}' AS INTEGER) < ${maxImpact}`;
-    let result = await this.prisma.$queryRawUnsafe(query);
-    return Number(result[0].count);
-  }
-
-  async countUsersWithMoreImpactOnThematiques(
-    minImpacts: Impact[],
-    targetThematiques: ThematiqueOnboarding[],
-  ): Promise<number> {
-    let query = `
-    SELECT count(1)
-    FROM "Utilisateur"
-    WHERE 1=1 `;
-    for (let index = 0; index < minImpacts.length; index++) {
-      query = query.concat(
-        ` AND CAST("onboardingResult" -> 'ventilation_par_thematiques' -> '${targetThematiques[index]}' AS INTEGER) > ${minImpacts[index]} `,
-      );
-    }
-    let result = await this.prisma.$queryRawUnsafe(query);
-    return Number(result[0].count);
-  }
-
   async nombreTotalUtilisateurs(): Promise<number> {
     const count = await this.prisma.utilisateur.count();
     return Number(count);
@@ -301,15 +244,6 @@ export class UtilisateurRepository {
       const gamification = new Gamification(
         Upgrader.upgradeRaw(user.gamification, SerialisableDomain.Gamification),
       );
-      const onboarding = new Onboarding(
-        Upgrader.upgradeRaw(user.onboardingData, SerialisableDomain.Onboarding),
-      );
-      const onboardingResult = new OnboardingResult(
-        Upgrader.upgradeRaw(
-          user.onboardingResult,
-          SerialisableDomain.OnboardingResult,
-        ),
-      );
       const kyc = new KYCHistory(
         Upgrader.upgradeRaw(user.kyc, SerialisableDomain.KYCHistory),
       );
@@ -348,8 +282,6 @@ export class UtilisateurRepository {
         abonnement_ter_loire: user.abonnement_ter_loire,
         passwordHash: user.passwordHash,
         passwordSalt: user.passwordSalt,
-        onboardingData: onboarding,
-        onboardingResult: onboardingResult,
         failed_login_count: user.failed_login_count,
         prevent_login_before: user.prevent_login_before,
         code: user.code,
@@ -415,14 +347,6 @@ export class UtilisateurRepository {
       prevent_checkcode_before: user.prevent_checkcode_before,
       sent_email_count: user.sent_email_count,
       prevent_sendemail_before: user.prevent_sendemail_before,
-      onboardingData: Upgrader.serialiseToLastVersion(
-        user.onboardingData,
-        SerialisableDomain.Onboarding,
-      ),
-      onboardingResult: Upgrader.serialiseToLastVersion(
-        user.onboardingResult,
-        SerialisableDomain.OnboardingResult,
-      ),
       todo: Upgrader.serialiseToLastVersion(
         user.parcours_todo,
         SerialisableDomain.ParcoursTodo,

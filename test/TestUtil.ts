@@ -17,8 +17,6 @@ import { ParcoursTodo_v0 } from '../src/domain/object_store/parcoursTodo/parcour
 import { History_v0 } from '../src/domain/object_store/history/history_v0';
 import { Gamification_v0 } from '../src/domain/object_store/gamification/gamification_v0';
 import { CelebrationType } from '../src/domain/gamification/celebrations/celebration';
-import { Onboarding_v0 } from '../src/domain/object_store/Onboarding/onboarding_v0';
-import { OnboardingResult_v0 } from '../src/domain/object_store/onboardingResult/onboardingResult_v0';
 import { KYCHistory_v0 } from '../src/domain/object_store/kyc/kycHistory_v0';
 import { Equipements_v0 } from '../src/domain/object_store/equipement/equipement_v0';
 import {
@@ -589,8 +587,6 @@ export class TestUtil {
       gamification: gamification,
       unlocked_features: unlocked,
       history: history,
-      onboardingData: {} as any,
-      onboardingResult: {} as any,
       created_at: undefined,
       updated_at: undefined,
       kyc: kyc,

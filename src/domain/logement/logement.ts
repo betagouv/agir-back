@@ -1,8 +1,5 @@
-import { ApplicationError } from '../../infrastructure/applicationError';
 import { Logement_v0 } from '../object_store/logement/logement_v0';
-import { Onboarding } from '../onboarding/onboarding';
 import { Utilisateur } from '../utilisateur/utilisateur';
-import validator from 'validator';
 
 export enum TypeLogement {
   maison = 'maison',
@@ -78,22 +75,6 @@ export class Logement {
     this.plus_de_15_ans = this.AorB(input.plus_de_15_ans, this.plus_de_15_ans);
 
     this.dpe = this.AorB(input.dpe, this.dpe);
-  }
-
-  public static buildFromOnboarding(data: Onboarding): Logement {
-    return new Logement({
-      version: 0,
-      dpe: null,
-      plus_de_15_ans: null,
-      chauffage: data.chauffage,
-      code_postal: data.code_postal,
-      commune: data.commune,
-      nombre_adultes: data.adultes,
-      nombre_enfants: data.enfants,
-      proprietaire: data.proprietaire,
-      superficie: data.superficie,
-      type: data.residence,
-    });
   }
 
   private undefinedToNull?(val): any {

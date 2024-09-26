@@ -141,18 +141,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       'defis',
     ]);
   });
-  it('GET /utilisateurs/id/profile - part fiscale estimée', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, {
-      failed_login_count: 2,
-      parts: null,
-    });
-    // WHEN
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/profile');
-    // THEN
-    //expect(response.body.nombre_de_parts_fiscales).toEqual(2.5);
-    expect(response.body.nombre_de_parts_fiscales).toEqual(1);
-  });
 
   it('GET /utilisateurs/id/profile - read basic profile datas', async () => {
     // GIVEN
@@ -170,14 +158,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.revenu_fiscal).toEqual(10000);
     expect(response.body.nombre_de_parts_fiscales).toEqual(2);
     expect(response.body.abonnement_ter_loire).toEqual(false);
-    /*
-    expect(response.body.onboarding_result).toEqual({
-      alimentation: Impact.tres_faible,
-      transports: Impact.faible,
-      logement: Impact.eleve,
-      consommation: Impact.tres_eleve,
-    });
-    */
   });
   it('GET /utilisateurs/id/logement - read logement datas', async () => {
     // GIVEN
@@ -215,22 +195,11 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     ]);
     expect(response.body.avions_par_an).toEqual(2);
   });
-  /**
-  it('GET /utilisateurs/id/profile - use onboarding data when missing parts in user account', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, { parts: null });
-    // WHEN
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/profile');
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.nombre_de_parts_fiscales).toEqual(2.5);
-  });
-  */
-  it('GET /utilisateurs/id/profile - default to 1 when no onboarding data', async () => {
+  it('GET /utilisateurs/id/profile - default to 1 when no logement data', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       parts: null,
-      onboardingData: {},
+      logement: {},
     });
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/profile');
