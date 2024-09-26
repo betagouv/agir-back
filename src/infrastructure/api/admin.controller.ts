@@ -253,15 +253,6 @@ export class AdminController extends GenericControler {
     return await this.contactUsecase.batchUpdate();
   }
 
-  @Post('/admin/compute_reco_tags')
-  @ApiOperation({
-    summary: `recalcule les valorisations de tags de reco pour tous les utilisateurs`,
-  })
-  async compute_reco_tags(@Request() req): Promise<void> {
-    this.checkCronAPIProtectedEndpoint(req);
-    await this.profileUsecase.computeAllUsersRecoTags();
-  }
-
   @Post('/admin/statistique')
   @ApiOperation({
     summary: `Calcul des statistiques de l'ensemble des utilisateurs`,

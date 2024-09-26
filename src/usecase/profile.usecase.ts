@@ -198,20 +198,6 @@ export class ProfileUsecase {
     return this.utilisateurRepository.findByEmail(email);
   }
 
-  async computeAllUsersRecoTags() {
-    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
-    for (let index = 0; index < userIdList.length; index++) {
-      const user_id = userIdList[index];
-      const utilisateur = await this.utilisateurRepository.getById(user_id);
-
-      const catalogue = await this.kycRepository.getAllDefs();
-      utilisateur.kyc_history.setCatalogue(catalogue);
-
-      utilisateur.recomputeRecoTags();
-      await this.utilisateurRepository.updateUtilisateur(utilisateur);
-    }
-  }
-
   async reset(confirmation: string, utilisateurId: string) {
     if (confirmation !== 'CONFIRMATION RESET') {
       ApplicationError.throwMissingResetConfirmation();
