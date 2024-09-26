@@ -62,8 +62,6 @@ import { BibliothequeController } from './infrastructure/api/bibliotheque.contro
 import { BibliothequeUsecase } from './usecase/bibliotheque.usecase';
 import { LinkyAPIConnector } from './infrastructure/service/linky/LinkyAPIConnector';
 import { LinkyEmailer } from './infrastructure/service/linky/LinkyEmailer';
-import { EquipementUsecase } from './usecase/equipements.usecase';
-import { EquipementsController } from './infrastructure/api/equipements.controller';
 import { InscriptionController } from './infrastructure/api/inscription.controller';
 import { AideRepository } from './infrastructure/repository/aide.repository';
 import { DefisController } from './infrastructure/api/defis.controller';
@@ -150,7 +148,6 @@ function getControllers(): any[] {
     NotificationsController,
   );
   if (!App.isProd()) {
-    controllers.push(EquipementsController);
     controllers.push(TestDataController);
     controllers.push(AuthController);
     controllers.push(BilanController);
@@ -217,7 +214,6 @@ function getControllers(): any[] {
     BibliothequeUsecase,
     LinkyAPIConnector,
     LinkyEmailer,
-    EquipementUsecase,
     Inscription_v2_Usecase,
     AideRepository,
     DefiRepository,

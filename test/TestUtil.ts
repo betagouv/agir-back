@@ -18,13 +18,6 @@ import { History_v0 } from '../src/domain/object_store/history/history_v0';
 import { Gamification_v0 } from '../src/domain/object_store/gamification/gamification_v0';
 import { CelebrationType } from '../src/domain/gamification/celebrations/celebration';
 import { KYCHistory_v0 } from '../src/domain/object_store/kyc/kycHistory_v0';
-import { Equipements_v0 } from '../src/domain/object_store/equipement/equipement_v0';
-import {
-  Consommation100km,
-  VehiculeType,
-  VoitureCarburant,
-  VoitureGabarit,
-} from '../src/domain/equipements/vehicule';
 import { Logement_v0 } from '../src/domain/object_store/logement/logement_v0';
 import {
   Chauffage,
@@ -486,21 +479,6 @@ export class TestUtil {
       enabled_canals: [CanalNotification.email, CanalNotification.mobile],
     };
 
-    const equipements: Equipements_v0 = {
-      version: 0,
-      vehicules: [
-        {
-          nom: 'titine',
-          carburant: VoitureCarburant.E85,
-          a_plus_de_10_ans: true,
-          est_en_autopartage: false,
-          conso_100_km: Consommation100km.entre_5_10L,
-          gabarit: VoitureGabarit.berline,
-          type: VehiculeType.voiture,
-        },
-      ],
-    };
-
     const gamification: Gamification_v0 = {
       version: 0,
       points: 10,
@@ -573,7 +551,6 @@ export class TestUtil {
       updated_at: undefined,
       kyc: kyc,
       defis: defis,
-      equipements: equipements,
       logement: logement,
       transport: transport,
       tag_ponderation_set: {},

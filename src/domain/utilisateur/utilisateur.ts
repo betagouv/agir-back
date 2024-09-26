@@ -6,7 +6,6 @@ import { ParcoursTodo } from '../todo/parcoursTodo';
 import { UnlockedFeatures } from '../gamification/unlockedFeatures';
 import { History } from '../history/history';
 import { KYCHistory } from '../kyc/kycHistory';
-import { Equipements } from '../equipements/equipements';
 import { Logement } from '../logement/logement';
 import { App } from '../app';
 import { TagPonderationSet } from '../scoring/tagPonderationSet';
@@ -62,7 +61,6 @@ export class UtilisateurData {
   gamification: Gamification;
   missions: MissionsUtilisateur;
   history: History;
-  equipements: Equipements;
   unlocked_features: UnlockedFeatures;
   version: number;
   migration_enabled: boolean;
@@ -146,7 +144,6 @@ export class Utilisateur extends UtilisateurData {
       history: new History(),
       kyc_history: new KYCHistory(),
       defi_history: new DefiHistory(),
-      equipements: new Equipements(),
       version: App.currentUserSystemVersion(),
       logement: new Logement({
         version: 0,
@@ -190,7 +187,6 @@ export class Utilisateur extends UtilisateurData {
     this.unlocked_features.reset();
     this.history.reset();
     this.defi_history.reset();
-    this.equipements.reset();
     this.kyc_history.reset();
   }
 

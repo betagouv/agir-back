@@ -17,7 +17,6 @@ import {
 } from '../../../domain/object_store/upgrader';
 import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
 import { KYCHistory } from '../../../domain/kyc/kycHistory';
-import { Equipements } from '../../../../src/domain/equipements/equipements';
 import { Logement } from '../../../domain/logement/logement';
 import { Transport } from '../../../domain/transport/transport';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
@@ -250,9 +249,6 @@ export class UtilisateurRepository {
       const defis = new DefiHistory(
         Upgrader.upgradeRaw(user.defis, SerialisableDomain.DefiHistory),
       );
-      const equipements = new Equipements(
-        Upgrader.upgradeRaw(user.equipements, SerialisableDomain.Equipements),
-      );
       const logement = new Logement(
         Upgrader.upgradeRaw(user.logement, SerialisableDomain.Logement),
       );
@@ -297,7 +293,6 @@ export class UtilisateurRepository {
         gamification: gamification,
         history: history,
         kyc_history: kyc,
-        equipements: equipements,
         code_departement: user.code_departement,
         unlocked_features: unlocked_features,
         version: user.version,
@@ -362,10 +357,6 @@ export class UtilisateurRepository {
       history: Upgrader.serialiseToLastVersion(
         user.history,
         SerialisableDomain.History,
-      ),
-      equipements: Upgrader.serialiseToLastVersion(
-        user.equipements,
-        SerialisableDomain.Equipements,
       ),
       logement: Upgrader.serialiseToLastVersion(
         user.logement,

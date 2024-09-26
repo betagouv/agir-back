@@ -35,7 +35,6 @@ model Utilisateur {
   history                  Json        @default("{}") // versioné 
   kyc                      Json        @default("{}") // versioné
   unlocked_features        Json        @default("{}") // versioné 
-  equipements              Json        @default("{}") // versioné 
   logement                 Json        @default("{}") // versioné 
   transport                Json        @default("{}") // versioné 
   defis                    Json        @default("{}") // versioné

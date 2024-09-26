@@ -1,5 +1,4 @@
 import { DefiHistory_v0 } from './defi/defiHistory_v0';
-import { Equipements_v0 } from './equipement/equipement_v0';
 import { Gamification_v0 } from './gamification/gamification_v0';
 import { History_v0 } from './history/history_v0';
 import { KYCHistory_v0 } from './kyc/kycHistory_v0';
@@ -19,7 +18,6 @@ export enum SerialisableDomain {
   Gamification = 'Gamification',
   KYCHistory = 'KYCHistory',
   DefiHistory = 'DefiHistory',
-  Equipements = 'Equipements',
   Logement = 'Logement',
   Transport = 'Transport',
   MissionsUtilisateur = 'MissionsUtilisateur',
@@ -34,7 +32,6 @@ const CLASS_DICTIONNARY = {
   History_v0: History_v0,
   Gamification_v0: Gamification_v0,
   KYCHistory_v0: KYCHistory_v0,
-  Equipements_v0: Equipements_v0,
   Logement_v0: Logement_v0,
   Transport_v0: Transport_v0,
   DefiHistory_v0: DefiHistory_v0,
