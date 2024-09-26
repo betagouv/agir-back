@@ -152,19 +152,7 @@ export class ServiceUsecase {
     return resultStatusList;
   }
 
-  async listServicesDefinitions(
-    utilisateurId: string,
-  ): Promise<ServiceDefinition[]> {
-    if (utilisateurId) {
-      await this.utilisateurRepository.checkState(utilisateurId);
-    }
-
-    return this.serviceRepository.listeServiceDefinitionsAndUserRelatedServices(
-      utilisateurId,
-    );
-  }
-
-  async addServiceToUtilisateur(
+  private async addServiceToUtilisateur(
     utilisateurId: string,
     serviceDefinitionId: string,
   ) {
@@ -226,20 +214,6 @@ export class ServiceUsecase {
         serviceDefinitionId,
       );
     }
-  }
-  async listeServicesOfUtilisateur(utilisateurId: string): Promise<Service[]> {
-    await this.utilisateurRepository.checkState(utilisateurId);
-
-    const userServiceList =
-      await this.serviceRepository.listeServicesOfUtilisateur(utilisateurId);
-    for (let index = 0; index < userServiceList.length; index++) {
-      const service = userServiceList[index];
-      if (service.isLiveServiceType()) {
-        await this.refreshLiveService(service);
-      }
-      await this.setAsyncServiceStateIfNeeded(service);
-    }
-    return userServiceList;
   }
 
   async getServiceOfUtilisateur(

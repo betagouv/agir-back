@@ -1214,63 +1214,7 @@ describe('TODO list (API test)', () => {
     });
     expect(dbUtilisateur.gamification['points']).toEqual(10);
   });
-  it.skip('POST /utilisateurs/id/services ajout du service fruits sur la todo 3 réalise l objctif', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, {
-      todo: new ParcoursTodo({
-        version: 2,
-        todo_active: 0,
-        liste_todo: [
-          {
-            done: [],
-            numero_todo: 1,
-            points_todo: 20,
-            done_at: null,
-            celebration: null,
-            imageUrl: 'https://',
-            titre: 'titre',
-            todo: [
-              {
-                id: '1',
-                points: 10,
-                progression: { current: 0, target: 1 },
-                level: DifficultyLevel.L1,
-                titre: 'titre',
-                type: ContentType.service,
-                service_id: LiveService.fruits,
-                thematiques: [Thematique.transport],
-                sont_points_en_poche: false,
-              },
-            ],
-          },
-        ],
-      }),
-    });
-    await TestUtil.create(DB.serviceDefinition, {
-      id: LiveService.fruits,
-    });
 
-    // WHEN
-    const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/services',
-    ).send({
-      service_definition_id: LiveService.fruits,
-    });
-
-    // THEN
-    expect(response.status).toBe(201);
-    const dbUser = await utilisateurRepository.getById('utilisateur-id');
-    expect(dbUser.parcours_todo.getTodoByNumero(1).done).toHaveLength(1);
-    expect(dbUser.parcours_todo.getTodoByNumero(1).done[0].titre).toEqual(
-      'titre',
-    );
-    expect(
-      dbUser.parcours_todo.getTodoByNumero(1).done[0].progression.current,
-    ).toEqual(1);
-    expect(
-      dbUser.parcours_todo.getTodoByNumero(1).done[0].sont_points_en_poche,
-    ).toStrictEqual(false);
-  });
   it(`POST /utilisateurs/id/event voir la conf lonky valide l'objectif`, async () => {
     // GIVEN
     const todo: ParcoursTodo_v0 = {
