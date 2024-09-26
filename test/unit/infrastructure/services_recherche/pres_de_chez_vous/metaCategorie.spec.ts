@@ -1,4 +1,4 @@
-import { CategorieRecherche } from '../../../../../src/domain/bibliotheque_services/categorieRecherche';
+import { CategorieRecherche } from '../../../../../src/domain/bibliotheque_services/recherche/categorieRecherche';
 import { PresDeChezNousCategorieMapping } from '../../../../../src/infrastructure/repository/services_recherche/pres_de_chez_nous/presDeChezNousCategorieMapping';
 
 describe('Prez de chez vous - MetaCategorie', () => {

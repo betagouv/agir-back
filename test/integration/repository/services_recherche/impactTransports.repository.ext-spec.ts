@@ -1,4 +1,4 @@
-import { FiltreRecherche } from '../../../../src/domain/bibliotheque_services/filtreRecherche';
+import { FiltreRecherche } from '../../../../src/domain/bibliotheque_services/recherche/filtreRecherche';
 import { DistancesRepository } from '../../../../src/infrastructure/repository/services_recherche/distances.repository';
 import { ImpactTransportsRepository } from '../../../../src/infrastructure/repository/services_recherche/impactTransport.repository';
 import { TestUtil } from '../../../TestUtil';

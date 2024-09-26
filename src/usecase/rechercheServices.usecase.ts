@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { ServiceRechercheID } from '../../src/domain/bibliotheque_services/serviceRechercheID';
-import { ResultatRecherche } from '../../src/domain/bibliotheque_services/resultatRecherche';
-import { RechercheServiceManager } from '../../src/domain/bibliotheque_services/serviceManager';
+import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
+import { ResultatRecherche } from '../domain/bibliotheque_services/recherche/resultatRecherche';
+import { RechercheServiceManager } from '../domain/bibliotheque_services/recherche/rechercheServiceManager';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
-import { FiltreRecherche } from '../domain/bibliotheque_services/filtreRecherche';
+import { FiltreRecherche } from '../domain/bibliotheque_services/recherche/filtreRecherche';
 import {
   CategorieRecherche,
   CategorieRechercheManager,
-} from '../domain/bibliotheque_services/categorieRecherche';
+} from '../domain/bibliotheque_services/recherche/categorieRecherche';
 import { ServiceFavorisStatistiqueRepository } from '../infrastructure/repository/serviceFavorisStatistique.repository';
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
-import { ServiceRechercheDefinition } from '../domain/bibliotheque_services/serviceRechercheDefinition';
+import { NewServiceDefinition } from '../domain/bibliotheque_services/newServiceDefinition';
 import { Univers } from '../domain/univers/univers';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { ServiceExterneID } from '../domain/bibliotheque_services/serviceExterneID';
-import { generateFishUrlForCurrentMonth } from "../domain/bibliotheque_services/fruitsEtLegumesDeSaisonUrls";
+import { generateFishUrlForCurrentMonth } from '../domain/bibliotheque_services/poissonsDeSaisonUrlsGenerator';
 
 const CATALOGUE = [
   {
@@ -339,11 +339,11 @@ export class RechercheServicesUsecase {
 
   async getListServiceDefHome(
     utilisateurId: string,
-  ): Promise<ServiceRechercheDefinition[]> {
+  ): Promise<NewServiceDefinition[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
-    let result = CATALOGUE.map((c) => new ServiceRechercheDefinition(c));
+    let result = CATALOGUE.map((c) => new NewServiceDefinition(c));
     result = result.filter((r) => r.is_available_inhouse);
 
     return this.personnalisator.personnaliser(result, utilisateur);
@@ -352,11 +352,11 @@ export class RechercheServicesUsecase {
   async getListServiceDef(
     utilisateurId: string,
     univers: string,
-  ): Promise<ServiceRechercheDefinition[]> {
+  ): Promise<NewServiceDefinition[]> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
-    let result = CATALOGUE.map((c) => new ServiceRechercheDefinition(c));
+    let result = CATALOGUE.map((c) => new NewServiceDefinition(c));
     result = result.filter((r) => r.univers === univers);
 
     return this.personnalisator.personnaliser(result, utilisateur);

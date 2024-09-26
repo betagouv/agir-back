@@ -93,7 +93,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { Personnalisator } from './infrastructure/personnalisation/personnalisator';
 import { RechecheServicesController } from './infrastructure/api/rechercheServices.controller';
 import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
-import { RechercheServiceManager } from './domain/bibliotheque_services/serviceManager';
+import { RechercheServiceManager } from './domain/bibliotheque_services/recherche/rechercheServiceManager';
 import { PresDeChezNousRepository } from './infrastructure/repository/services_recherche/pres_de_chez_nous/presDeChezNous.repository';
 import { AddressesRepository } from './infrastructure/repository/services_recherche/addresses.repository';
 import { ServiceFavorisStatistiqueRepository } from './infrastructure/repository/serviceFavorisStatistique.repository';

@@ -1,9 +1,9 @@
 import {
   CategorieRecherche,
   CategorieRechercheManager,
-} from '../../../src/domain/bibliotheque_services/categorieRecherche';
-import { Day } from '../../../src/domain/bibliotheque_services/days';
-import { ServiceRechercheID } from '../../../src/domain/bibliotheque_services/serviceRechercheID';
+} from '../../../src/domain/bibliotheque_services/recherche/categorieRecherche';
+import { Day } from '../../../src/domain/bibliotheque_services/types/days';
+import { ServiceRechercheID } from '../../../src/domain/bibliotheque_services/recherche/serviceRechercheID';
 import {
   Superficie,
   TypeLogement,

@@ -1,4 +1,4 @@
-import { FiltreRecherche } from '../../../../src/domain/bibliotheque_services/filtreRecherche';
+import { FiltreRecherche } from '../../../../src/domain/bibliotheque_services/recherche/filtreRecherche';
 
 describe('FiltreRecherche', () => {
   it(`computeBox : calcul la boite autour d'un point central  `, () => {

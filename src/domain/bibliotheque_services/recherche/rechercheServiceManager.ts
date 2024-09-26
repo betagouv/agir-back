@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { FruitsLegumesRepository } from '../../infrastructure/repository/services_recherche/fruitsLegumes.repository';
-import { ImpactTransportsRepository } from '../../infrastructure/repository/services_recherche/impactTransport.repository';
-import { PresDeChezNousRepository } from '../../infrastructure/repository/services_recherche/pres_de_chez_nous/presDeChezNous.repository';
-import { RecettesRepository } from '../../infrastructure/repository/services_recherche/recettes/recettes.repository';
+import { FruitsLegumesRepository } from '../../../infrastructure/repository/services_recherche/fruitsLegumes.repository';
+import { ImpactTransportsRepository } from '../../../infrastructure/repository/services_recherche/impactTransport.repository';
+import { PresDeChezNousRepository } from '../../../infrastructure/repository/services_recherche/pres_de_chez_nous/presDeChezNous.repository';
+import { RecettesRepository } from '../../../infrastructure/repository/services_recherche/recettes/recettes.repository';
 import { FinderInterface } from './finderInterface';
 import { ServiceRechercheID } from './serviceRechercheID';
 

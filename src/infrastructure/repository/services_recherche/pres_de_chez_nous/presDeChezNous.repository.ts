@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { CategorieRecherche } from '../../../../domain/bibliotheque_services/categorieRecherche';
-import { Day } from '../../../../domain/bibliotheque_services/days';
-import { FiltreRecherche } from '../../../../domain/bibliotheque_services/filtreRecherche';
-import { FinderInterface } from '../../../../domain/bibliotheque_services/finderInterface';
-import { OpenHour } from '../../../../domain/bibliotheque_services/openHour';
-import { ResultatRecherche } from '../../../../domain/bibliotheque_services/resultatRecherche';
+import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
+import { Day } from '../../../../domain/bibliotheque_services/types/days';
+import { FiltreRecherche } from '../../../../domain/bibliotheque_services/recherche/filtreRecherche';
+import { FinderInterface } from '../../../../domain/bibliotheque_services/recherche/finderInterface';
+import { OpenHour } from '../../../../domain/bibliotheque_services/types/openHour';
+import { ResultatRecherche } from '../../../../domain/bibliotheque_services/recherche/resultatRecherche';
 import { AddressesRepository } from '../addresses.repository';
 import { PresDeChezNousCategorieMapping } from './presDeChezNousCategorieMapping';
 import { ApplicationError } from '../../../applicationError';

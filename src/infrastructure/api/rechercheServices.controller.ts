@@ -20,11 +20,11 @@ import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { RechercheServicesUsecase } from '../../../src/usecase/rechercheServices.usecase';
 import { RechercheServiceInputAPI } from './types/rechercheServices/rechercheServiceInputAPI';
-import { ServiceRechercheID } from '../../../src/domain/bibliotheque_services/serviceRechercheID';
+import { ServiceRechercheID } from '../../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { ResultatRechercheAPI } from './types/rechercheServices/resultatRecherchAPI';
 import { CategoriesRechercheAPI } from './types/rechercheServices/categoriesRechercheAPI';
-import { CategorieRecherche } from '../../domain/bibliotheque_services/categorieRecherche';
-import { FiltreRecherche } from '../../domain/bibliotheque_services/filtreRecherche';
+import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
+import { FiltreRecherche } from '../../domain/bibliotheque_services/recherche/filtreRecherche';
 import { ApplicationError } from '../applicationError';
 import { ServiceRechercheAPI } from './types/rechercheServices/serviceRechercheAPI';
 

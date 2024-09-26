@@ -1,10 +1,10 @@
-import { FruitLegume } from '../../infrastructure/service/fruits/fruitEtLegumesServiceManager';
+import { FruitLegume } from '../../../infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import {
   EtapeRecette_v0,
   IngredientRecette_v0,
   ResultatRecherche_v0,
-} from '../object_store/service/BibliothequeService_v0';
-import { OpenHour } from './openHour';
+} from '../../object_store/service/BibliothequeService_v0';
+import { OpenHour } from '../types/openHour';
 
 export class IngredientRecette {
   ordre: number;

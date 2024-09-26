@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ResultatRecherche } from '../../../../../src/domain/bibliotheque_services/resultatRecherche';
-import { Day } from '../../../../domain/bibliotheque_services/days';
+import { ResultatRecherche } from '../../../../domain/bibliotheque_services/recherche/resultatRecherche';
+import { Day } from '../../../../domain/bibliotheque_services/types/days';
 import { FruitLegume } from '../../../service/fruits/fruitEtLegumesServiceManager';
 
 export class OpenHourAPI {

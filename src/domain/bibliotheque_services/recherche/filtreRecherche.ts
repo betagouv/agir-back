@@ -1,5 +1,5 @@
 import { CategorieRecherche } from './categorieRecherche';
-import { ModeDeplacement } from './modeDeplacement';
+import { ModeDeplacement } from '../types/modeDeplacement';
 
 export class FiltreRecherche {
   text?: string;

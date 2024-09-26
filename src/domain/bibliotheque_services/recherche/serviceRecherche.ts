@@ -1,5 +1,5 @@
-import { ApplicationError } from '../../infrastructure/applicationError';
-import { ServiceRecherche_v0 } from '../object_store/service/BibliothequeService_v0';
+import { ApplicationError } from '../../../infrastructure/applicationError';
+import { ServiceRecherche_v0 } from '../../object_store/service/BibliothequeService_v0';
 import { FavorisRecherche } from './favorisRecherche';
 import { ResultatRecherche } from './resultatRecherche';
 import { ServiceRechercheID } from './serviceRechercheID';
@@ -48,7 +48,7 @@ export class ServiceRecherche {
       favoris_existant.date_ajout = new Date();
       favoris_existant.resulat_recherche = resultat_a_favoriser;
     } else {
-      const new_favoris = FavorisRecherche.new(result_id, resultat_a_favoriser);
+      const new_favoris = FavorisRecherche.new(resultat_a_favoriser);
       this.favoris.push(new_favoris);
     }
   }

@@ -1,4 +1,4 @@
-import { FavorisRecherche_v0 } from '../object_store/service/BibliothequeService_v0';
+import { FavorisRecherche_v0 } from '../../object_store/service/BibliothequeService_v0';
 import { ResultatRecherche } from './resultatRecherche';
 
 export class FavorisRecherche {
@@ -12,7 +12,7 @@ export class FavorisRecherche {
     }
   }
 
-  public static new(id: string, resultat: ResultatRecherche) {
+  public static new(resultat: ResultatRecherche) {
     const fav = new FavorisRecherche({
       date_ajout: new Date(),
       resulat_recherche: null,
