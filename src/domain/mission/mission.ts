@@ -67,7 +67,6 @@ export class Mission {
   done_at: Date;
   thematique_univers: string;
   objectifs: Objectif[];
-  prochaines_thematiques: string[];
   est_visible: boolean;
   univers: string;
 
@@ -77,11 +76,6 @@ export class Mission {
     this.thematique_univers = data.thematique_univers;
     this.est_visible = data.est_visible;
     this.univers = data.univers;
-
-    this.prochaines_thematiques = [];
-    if (data.prochaines_thematiques) {
-      this.prochaines_thematiques = data.prochaines_thematiques;
-    }
 
     if (data.done_at) {
       this.done_at = new Date(data.done_at);
@@ -101,7 +95,6 @@ export class Mission {
       id: def.id_cms.toString(),
       est_visible: def.est_visible,
       thematique_univers: def.thematique_univers,
-      prochaines_thematiques: def.prochaines_thematiques,
       univers: def.univers,
       objectifs: def.objectifs.map((o) => ({
         content_id: o.content_id,
@@ -191,13 +184,9 @@ export class Mission {
     }
   }
 
-  public terminer(utilisateur: Utilisateur): string[] {
+  public terminer(utilisateur: Utilisateur): void {
     this.done_at = new Date();
-    utilisateur.gamification.celebrerFinMission(
-      this.thematique_univers,
-      this.prochaines_thematiques,
-    );
-    return this.prochaines_thematiques;
+    utilisateur.gamification.celebrerFinMission(this.thematique_univers);
   }
 
   public unlockContentIfAllKYCsDone() {

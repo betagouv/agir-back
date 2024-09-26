@@ -324,13 +324,12 @@ model ThematiqueUnivers {
 }
 
 model Mission {
-  id_cms                 Int      @unique
-  thematique_univers     String?  @unique
-  objectifs              Json     @default("{}")
-  prochaines_thematiques String[] @default([])
-  est_visible            Boolean
-  created_at             DateTime @default(now()) @db.Timestamptz(3)
-  updated_at             DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  id_cms             Int      @unique
+  thematique_univers String?  @unique
+  objectifs          Json     @default("{}")
+  est_visible        Boolean
+  created_at         DateTime @default(now()) @db.Timestamptz(3)
+  updated_at         DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model KYC {

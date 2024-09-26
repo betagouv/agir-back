@@ -346,10 +346,6 @@ export class TestUtil {
           id_cms: 2,
         },
       ],
-      prochaines_thematiques: [
-        ThematiqueUnivers.manger_local,
-        ThematiqueUnivers.dechets_compost,
-      ],
       created_at: undefined,
       updated_at: undefined,
       ...override,

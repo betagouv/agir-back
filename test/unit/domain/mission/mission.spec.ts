@@ -1,7 +1,10 @@
 import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { Mission } from '../../../../src/domain/mission/mission';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
-import { SourceInscription, Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
+import {
+  SourceInscription,
+  Utilisateur,
+} from '../../../../src/domain/utilisateur/utilisateur';
 
 describe('Missions', () => {
   it('validateDefi : valider un seul défi NE termine PAS la mission', () => {
@@ -46,7 +49,6 @@ describe('Missions', () => {
           type: ContentType.defi,
         },
       ],
-      prochaines_thematiques: ['aaa'],
       thematique_univers: 'cereales',
     });
 
@@ -109,7 +111,6 @@ describe('Missions', () => {
           type: ContentType.defi,
         },
       ],
-      prochaines_thematiques: ['aaa'],
       thematique_univers: 'cereales',
     });
 
@@ -119,7 +120,6 @@ describe('Missions', () => {
     // THEN
     expect(mission.isDone()).toEqual(true);
     expect(mission.done_at.getTime()).toBeGreaterThan(Date.now() - 100);
-    expect(result).toEqual(['aaa']);
     expect(utilisateur.gamification.celebrations).toHaveLength(1);
   });
   it('getProgression : ok si mission vide', () => {
@@ -129,7 +129,6 @@ describe('Missions', () => {
       est_visible: true,
       id: '123',
       objectifs: [],
-      prochaines_thematiques: [],
       thematique_univers: 'cereales',
       univers: 'alimentation',
     });
@@ -185,7 +184,6 @@ describe('Missions', () => {
           type: ContentType.defi,
         },
       ],
-      prochaines_thematiques: [],
       thematique_univers: 'cereales',
     });
 
@@ -240,7 +238,6 @@ describe('Missions', () => {
           type: ContentType.defi,
         },
       ],
-      prochaines_thematiques: [],
       thematique_univers: 'cereales',
     });
 
@@ -306,7 +303,6 @@ describe('Missions', () => {
           type: ContentType.defi,
         },
       ],
-      prochaines_thematiques: [],
       thematique_univers: 'cereales',
     });
 
@@ -372,7 +368,6 @@ describe('Missions', () => {
           type: ContentType.defi,
         },
       ],
-      prochaines_thematiques: [],
       thematique_univers: 'cereales',
     });
 
@@ -438,7 +433,6 @@ describe('Missions', () => {
           type: ContentType.defi,
         },
       ],
-      prochaines_thematiques: [],
       thematique_univers: 'cereales',
     });
 
@@ -493,7 +487,6 @@ describe('Missions', () => {
           type: ContentType.quizz,
         },
       ],
-      prochaines_thematiques: [],
       thematique_univers: 'cereales',
     });
 
@@ -514,7 +507,6 @@ describe('Missions', () => {
       id: '123',
       univers: 'alimentation',
       objectifs: [],
-      prochaines_thematiques: [],
       thematique_univers: 'cereales',
     });
     const m2 = new Mission({
@@ -523,7 +515,6 @@ describe('Missions', () => {
       id: '456',
       univers: 'alimentation',
       objectifs: [],
-      prochaines_thematiques: [],
       thematique_univers: 'cereales',
     });
     const m3 = new Mission({
@@ -532,7 +523,6 @@ describe('Missions', () => {
       id: '1',
       univers: 'climat',
       objectifs: [],
-      prochaines_thematiques: [],
       thematique_univers: 'cereales',
     });
     const m4 = new Mission({
@@ -541,7 +531,6 @@ describe('Missions', () => {
       id: '2',
       univers: 'climat',
       objectifs: [],
-      prochaines_thematiques: [],
       thematique_univers: 'cereales',
     });
 

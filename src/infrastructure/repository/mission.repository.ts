@@ -12,7 +12,6 @@ export class MissionRepository {
     const mission_db: Mission = {
       id_cms: missionDef.id_cms,
       thematique_univers: missionDef.thematique_univers,
-      prochaines_thematiques: missionDef.prochaines_thematiques,
       est_visible: missionDef.est_visible,
       objectifs: missionDef.objectifs as any,
       created_at: undefined,
@@ -58,7 +57,6 @@ export class MissionRepository {
     return new MissionDefinition({
       id_cms: missionDB.id_cms,
       est_visible: missionDB.est_visible,
-      prochaines_thematiques: missionDB.prochaines_thematiques,
       thematique_univers: missionDB.thematique_univers,
       objectifs: missionDB.objectifs as any,
       univers: ThematiqueRepository.getUniversParent(

@@ -4,7 +4,6 @@ import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
 import { Mission, Objectif } from '../../src/domain/mission/mission';
 import { ContentType } from '../../src/domain/contenu/contentType';
-import { QuestionKYC } from '../domain/kyc/questionKYC';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { DefiStatus } from '../../src/domain/defis/defi';
@@ -22,7 +21,6 @@ import { Categorie } from '../domain/contenu/categorie';
 import { PonderationApplicativeManager } from '../domain/scoring/ponderationApplicative';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { QuestionGeneric } from '../domain/kyc/questionGeneric';
-import { MosaicKYC } from '../domain/kyc/mosaicKYC';
 
 @Injectable()
 export class MissionUsecase {
@@ -49,10 +47,7 @@ export class MissionUsecase {
       ApplicationError.throwMissionNotFound(thematique);
     }
     if (mission.estTerminable()) {
-      const unlocked_thematiques = mission.terminer(utilisateur);
-
-      await this.unlockThematiques(unlocked_thematiques, utilisateur);
-
+      mission.terminer(utilisateur);
       await this.utilisateurRepository.updateUtilisateur(utilisateur);
     }
   }
@@ -234,19 +229,5 @@ export class MissionUsecase {
       }
     }
     return mission_def;
-  }
-
-  private async unlockThematiques(
-    unlocked_thematiques: string[],
-    utilisateur: Utilisateur,
-  ) {
-    for (const thematiqueU of unlocked_thematiques) {
-      const mission_def = await this.missionRepository.getByThematique(
-        thematiqueU,
-      );
-      if (mission_def) {
-        utilisateur.missions.upsertNewMission(mission_def, true);
-      }
-    }
   }
 }

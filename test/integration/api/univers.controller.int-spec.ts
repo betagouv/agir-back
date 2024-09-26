@@ -48,7 +48,6 @@ describe('Univers (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [],
         est_visible: true,
       },
       {
@@ -80,7 +79,6 @@ describe('Univers (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [],
         est_visible: true,
       },
       {
@@ -101,7 +99,6 @@ describe('Univers (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [],
         est_visible: true,
       },
       {
@@ -122,7 +119,6 @@ describe('Univers (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [],
         est_visible: true,
       },
       {
@@ -143,7 +139,6 @@ describe('Univers (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [],
         est_visible: true,
       },
       {
@@ -164,7 +159,6 @@ describe('Univers (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [],
         est_visible: true,
       },
       {
@@ -185,7 +179,6 @@ describe('Univers (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [],
         est_visible: true,
       },
     ],
@@ -211,7 +204,6 @@ describe('Univers (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
         est_visible: true,
       },
     ],
@@ -237,7 +229,6 @@ describe('Univers (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
         est_visible: true,
       },
     ],
@@ -264,7 +255,6 @@ describe('Univers (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
         est_visible: true,
       },
       {
@@ -285,7 +275,6 @@ describe('Univers (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [],
         est_visible: false,
       },
     ],
@@ -604,7 +593,6 @@ describe('Univers (API test)', () => {
       thematique_univers: ThematiqueUnivers.cereales,
       est_visible: true,
       objectifs: objectifs as any,
-      prochaines_thematiques: [],
       created_at: undefined,
       updated_at: undefined,
     };
@@ -681,7 +669,6 @@ describe('Univers (API test)', () => {
       thematique_univers: ThematiqueUnivers.cereales,
       est_visible: true,
       objectifs: objectifs as any,
-      prochaines_thematiques: [],
       created_at: undefined,
       updated_at: undefined,
     };
@@ -760,7 +747,6 @@ describe('Univers (API test)', () => {
       thematique_univers: ThematiqueUnivers.cereales,
       est_visible: true,
       objectifs: objectifs as any,
-      prochaines_thematiques: [],
       created_at: undefined,
       updated_at: undefined,
     };
@@ -841,7 +827,6 @@ describe('Univers (API test)', () => {
       thematique_univers: ThematiqueUnivers.cereales,
       est_visible: true,
       objectifs: objectifs as any,
-      prochaines_thematiques: [],
       created_at: undefined,
       updated_at: undefined,
     };

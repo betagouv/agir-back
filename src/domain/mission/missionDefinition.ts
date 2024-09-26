@@ -22,7 +22,6 @@ export class MissionDefinition {
   id_cms: number;
   thematique_univers: string;
   objectifs: ObjectifDefinition[];
-  prochaines_thematiques: string[];
   est_visible: boolean;
   univers: string;
 
@@ -31,11 +30,6 @@ export class MissionDefinition {
     this.est_visible = data.est_visible;
     this.id_cms = data.id_cms;
     this.univers = data.univers;
-
-    this.prochaines_thematiques = [];
-    if (data.prochaines_thematiques) {
-      this.prochaines_thematiques = data.prochaines_thematiques;
-    }
 
     this.objectifs = [];
     if (data.objectifs) {

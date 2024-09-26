@@ -109,8 +109,6 @@ export class CMSWebhookEntryAPI {
   @ApiProperty({ type: [CMSWebhookObjectifAPI] })
   objectifs: CMSWebhookObjectifAPI[];
 
-  @ApiProperty({ type: [CMSWebhookThematiqueUniversAPI] })
-  prochaines_thematiques: CMSWebhookThematiqueUniversAPI[];
   @ApiProperty({ type: CMSThematiqueAPI })
   thematique: CMSThematiqueAPI;
   @ApiProperty({ type: [CMSTagAPI] })
@@ -182,16 +180,6 @@ export type CMSWebhookPopulateAPI = {
       };
     };
 
-    prochaines_thematiques: {
-      data: [
-        {
-          id: number;
-          attributes: {
-            code: string;
-          };
-        },
-      ];
-    };
     thematiques: {
       data: [
         {

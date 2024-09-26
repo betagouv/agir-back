@@ -60,7 +60,6 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           },
         ],
         est_visible: true,
-        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
       },
     ],
   };
@@ -587,7 +586,6 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
               est_reco: true,
             },
           ],
-          prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
           est_visible: true,
         },
       ],

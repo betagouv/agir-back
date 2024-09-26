@@ -95,7 +95,6 @@ describe('Mission (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
         est_visible: true,
       },
     ],
@@ -143,7 +142,6 @@ describe('Mission (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [],
         est_visible: true,
       },
     ],
@@ -169,7 +167,6 @@ describe('Mission (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
         est_visible: true,
       },
     ],
@@ -206,7 +203,6 @@ describe('Mission (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
         est_visible: true,
       },
     ],
@@ -243,7 +239,6 @@ describe('Mission (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
         est_visible: true,
       },
     ],
@@ -280,7 +275,6 @@ describe('Mission (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
         est_visible: true,
       },
     ],
@@ -306,7 +300,6 @@ describe('Mission (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [],
         est_visible: true,
       },
     ],
@@ -343,7 +336,6 @@ describe('Mission (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [],
         est_visible: true,
       },
     ],
@@ -381,7 +373,6 @@ describe('Mission (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
         est_visible: true,
       },
     ],
@@ -418,7 +409,6 @@ describe('Mission (API test)', () => {
             est_reco: true,
           },
         ],
-        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
         est_visible: true,
       },
     ],
@@ -680,7 +670,6 @@ describe('Mission (API test)', () => {
       thematique_univers: ThematiqueUnivers.cereales,
       est_visible: true,
       objectifs: objectifs as any,
-      prochaines_thematiques: [],
       created_at: undefined,
       updated_at: undefined,
     };
@@ -781,7 +770,6 @@ describe('Mission (API test)', () => {
       thematique_univers: ThematiqueUnivers.cereales,
       est_visible: true,
       objectifs: objectifs as any,
-      prochaines_thematiques: [],
       created_at: undefined,
       updated_at: undefined,
     };
@@ -1123,7 +1111,6 @@ describe('Mission (API test)', () => {
       thematique_univers: ThematiqueUnivers.cereales,
       est_visible: true,
       objectifs: objectifs as any,
-      prochaines_thematiques: [],
       created_at: undefined,
       updated_at: undefined,
     };
@@ -1643,58 +1630,7 @@ describe('Mission (API test)', () => {
       userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
     ).toEqual(true);
   });
-  it(`POST /utilisateurs/utilisateur-id/thematiques/cereales/mission/terminer - ajout mission si mission passée au statut terminées`, async () => {
-    // GIVEN
-    const gamification: Gamification_v0 = {
-      version: 0,
-      points: 10,
-      celebrations: [],
-    };
-    await TestUtil.create(DB.utilisateur, {
-      missions: missions_defi_seul_done,
-      gamification: gamification,
-    });
-    await TestUtil.create(DB.defi, { content_id: '1' });
-    await TestUtil.create(DB.article, { content_id: '1' });
-    await TestUtil.create(DB.mission, {
-      id_cms: 2,
-      est_visible: false,
-      thematique_univers: ThematiqueUnivers.dechets_compost,
-    });
 
-    // WHEN
-    const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/thematiques/cereales/mission/terminer',
-    );
-
-    // THEN
-    expect(response.status).toBe(201);
-
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
-
-    expect(userDB.missions.missions).toHaveLength(2);
-
-    const old_mission = userDB.missions.getMissionById('1');
-    const new_mission = userDB.missions.getMissionById('2');
-
-    expect(old_mission.isDone()).toEqual(true);
-    expect(old_mission.done_at.getTime()).toBeGreaterThan(Date.now() - 100);
-
-    expect(new_mission.est_visible).toEqual(true);
-    expect(new_mission.thematique_univers).toEqual(
-      ThematiqueUnivers.dechets_compost,
-    );
-    expect(userDB.gamification.celebrations).toHaveLength(1);
-    expect(userDB.gamification.celebrations[0].new_thematiques).toEqual([
-      ThematiqueUnivers.dechets_compost,
-    ]);
-    expect(userDB.gamification.celebrations[0].type).toEqual(
-      CelebrationType.fin_thematique,
-    );
-    expect(userDB.gamification.celebrations[0].thematique_univers).toEqual(
-      ThematiqueUnivers.cereales,
-    );
-  });
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - NON ajout mission si dernier defi abondonné`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
