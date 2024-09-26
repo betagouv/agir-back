@@ -194,9 +194,13 @@ export class Utilisateur extends UtilisateurData {
     const KYC_preference_answered = this.kyc_history.isQuestionAnsweredByCode(
       KYCID.KYC_preference,
     );
-    return (
-      !!this.prenom && !!this.logement.code_postal && KYC_preference_answered
-    );
+
+    const ok_prenom = !!this.prenom && this.prenom !== '';
+
+    const ok_code_postal =
+      !!this.logement.code_postal && this.logement.code_postal.length === 5;
+
+    return ok_prenom && ok_code_postal && KYC_preference_answered;
   }
 
   public isMagicLinkCodeExpired?(): boolean {
