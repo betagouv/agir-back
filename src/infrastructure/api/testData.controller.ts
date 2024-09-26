@@ -3,25 +3,17 @@ import { Controller, Get, Param, Post, Request } from '@nestjs/common';
 import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
 import { PrismaServiceStat } from '../prisma/stats/prisma.service.stats';
-import { SuiviAlimentation } from '../../../src/domain/suivi/suiviAlimentation';
-import { SuiviRepository } from '../../../src/infrastructure/repository/suivi.repository';
-import { Suivi } from '../../../src/domain/suivi/suivi';
-import { SuiviTransport } from '../../../src/domain/suivi/suiviTransport';
 import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
 const service_catalogue = require('../../../src/usecase/referentiel/service_catalogue');
 const _linky_data = require('../../../test_data/PRM_thermo_pas_sensible');
-const suivis_alimentation = require('../../../test_data/evenements/suivis_alimentation');
-const suivis_transport = require('../../../test_data/evenements/suivis_transport');
 const empreintes_utilisateur = require('../../../test_data/evenements/bilans');
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { LinkyRepository } from '../repository/linky.repository';
 import { ServiceStatus } from '../../../src/domain/service/service';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
-import { Transport } from '../../../src/domain/transport/transport';
-import { Logement } from '../../../src/domain/logement/logement';
 import { Contact } from '../contact/contact';
 import { ContactSynchro } from '../contact/contactSynchro';
 import { GenericControler } from './genericControler';
@@ -33,7 +25,6 @@ export class TestDataController extends GenericControler {
   constructor(
     private prisma: PrismaService,
     private prismaStats: PrismaServiceStat,
-    private suiviRepository: SuiviRepository,
     private linkyRepository: LinkyRepository,
     private migrationUsecase: MigrationUsecase,
     public contactSynchro: ContactSynchro,
@@ -95,7 +86,6 @@ export class TestDataController extends GenericControler {
     await this.upsertServicesDefinitions();
     await this.insertServicesForUtilisateur(utilisateurId);
     await this.insertLinkyDataForUtilisateur(utilisateurId);
-    await this.insertSuivisAlimentationForUtilisateur(utilisateurId);
     await this.insertEmpreintesForUtilisateur(utilisateurId);
     return utilisateurs_content[utilisateurId];
   }
@@ -118,27 +108,6 @@ export class TestDataController extends GenericControler {
     }
   }
 
-  async insertSuivisAlimentationForUtilisateur(utilisateurId: string) {
-    const suivis = utilisateurs_content[utilisateurId].suivis;
-    if (!suivis) return;
-    for (let index = 0; index < suivis.length; index++) {
-      const suiviId = suivis[index];
-      let suiviToCreate: Suivi;
-      if (suivis_alimentation[suiviId]) {
-        suiviToCreate = new SuiviAlimentation(
-          new Date(Date.parse(suivis_alimentation[suiviId].date)),
-        );
-        suiviToCreate.injectValuesFromObject(suivis_alimentation[suiviId]);
-      } else if (suivis_transport[suiviId]) {
-        suiviToCreate = new SuiviTransport(
-          new Date(Date.parse(suivis_transport[suiviId].date)),
-        );
-        suiviToCreate.injectValuesFromObject(suivis_transport[suiviId]);
-      }
-      suiviToCreate.calculImpacts();
-      await this.suiviRepository.createSuivi(suiviToCreate, utilisateurId);
-    }
-  }
   async insertEmpreintesForUtilisateur(utilisateurId: string) {
     const empreintes = utilisateurs_content[utilisateurId].bilans;
     if (!empreintes) return;
@@ -201,11 +170,6 @@ export class TestDataController extends GenericControler {
   }
 
   async deleteUtilisateur(utilisateurId: string) {
-    await this.prisma.suivi.deleteMany({
-      where: {
-        utilisateurId,
-      },
-    });
     await this.prisma.service.deleteMany({
       where: {
         utilisateurId,
@@ -222,7 +186,6 @@ export class TestDataController extends GenericControler {
   }
   async upsertUtilisateur(utilisateurId: string) {
     const clonedData = { ...utilisateurs_content[utilisateurId] };
-    delete clonedData.suivis;
     delete clonedData.interactions;
     delete clonedData.bilans;
     delete clonedData.services;

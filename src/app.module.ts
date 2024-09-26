@@ -14,11 +14,8 @@ import { UtilisateurRepository } from './infrastructure/repository/utilisateur/u
 import { BilanRepository } from './infrastructure/repository/bilan.repository';
 
 import { PrismaService } from './infrastructure/prisma/prisma.service';
-import { SuiviRepository } from './infrastructure/repository/suivi.repository';
-import { SuiviUsecase } from './usecase/suivi.usecase';
 import { AidesVeloRepository } from './infrastructure/repository/aidesVelo.repository';
 import { AidesRetrofitRepository } from './infrastructure/repository/aidesRetrofit.repository';
-import { SuiviDashboardController } from './infrastructure/api/suiviDashboard.controller';
 import { OIDCStateRepository } from '../src/infrastructure/repository/oidcState.repository';
 
 import { JwtModule } from '@nestjs/jwt';
@@ -158,7 +155,6 @@ function getControllers(): any[] {
     controllers.push(AuthController);
     controllers.push(BilanController);
     controllers.push(MagicLinkController);
-    controllers.push(SuiviDashboardController);
   }
   return controllers;
 }
@@ -183,9 +179,7 @@ function getControllers(): any[] {
     PrismaServiceStat,
     UtilisateurRepository,
     BilanRepository,
-    SuiviRepository,
     CodeManager,
-
     OIDCStateRepository,
     OidcService,
     NGCCalculator,
@@ -194,7 +188,6 @@ function getControllers(): any[] {
     ProfileUsecase,
     BilanUsecase,
     AidesUsecase,
-    SuiviUsecase,
     CMSUsecase,
     EmailSender,
     CommuneRepository,

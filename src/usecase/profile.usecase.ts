@@ -5,7 +5,6 @@ import {
   TransportAPI,
   UtilisateurUpdateProfileAPI,
 } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
-import { SuiviRepository } from '../infrastructure/repository/suivi.repository';
 import { BilanRepository } from '../infrastructure/repository/bilan.repository';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { Injectable } from '@nestjs/common';
@@ -29,7 +28,6 @@ export class ProfileUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private serviceRepository: ServiceRepository,
-    private suiviRepository: SuiviRepository,
     private bilanRepository: BilanRepository,
     private oIDCStateRepository: OIDCStateRepository,
     private contactUsecase: ContactUsecase,
@@ -239,7 +237,6 @@ export class ProfileUsecase {
   async deleteUtilisateur(utilisateurId: string) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
-    await this.suiviRepository.delete(utilisateurId);
     await this.bilanRepository.delete(utilisateurId);
     await this.oIDCStateRepository.delete(utilisateurId);
     await this.serviceRepository.deleteAllUserServices(utilisateurId);

@@ -35,7 +35,6 @@ import {
 import {
   Empreinte,
   SituationNGC,
-  Suivi,
   Univers as UniversDB,
   ThematiqueUnivers as ThematiqueUniversDB,
   Mission,
@@ -76,7 +75,6 @@ import { CanalNotification } from '../src/domain/notification/notificationHistor
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
   situationNGC = 'situationNGC',
-  suivi = 'suivi',
   utilisateur = 'utilisateur',
   aide = 'aide',
   defi = 'defi',
@@ -98,7 +96,6 @@ export class TestUtil {
   private static TYPE_DATA_MAP: Record<DB, Function> = {
     CMSWebhookAPI: TestUtil.CMSWebhookAPIData,
     situationNGC: TestUtil.situationNGCData,
-    suivi: TestUtil.suiviData,
     utilisateur: TestUtil.utilisateurData,
     aide: TestUtil.aideData,
     defi: TestUtil.defiData,
@@ -122,7 +119,6 @@ export class TestUtil {
   public static prisma = new PrismaService();
   public static prisma_stats = new PrismaServiceStat();
   public static utilisateur = 'utilisateur';
-  public static suivi = 'suivi';
   public static SECRET = '123456789012345678901234567890';
   public static jwtService = new JwtService({
     secret: TestUtil.SECRET,
@@ -179,7 +175,6 @@ export class TestUtil {
   }
 
   static async deleteAll() {
-    await this.prisma.suivi.deleteMany();
     await this.prisma.service.deleteMany();
     await this.prisma.serviceDefinition.deleteMany();
     await this.prisma.empreinte.deleteMany();
@@ -265,19 +260,6 @@ export class TestUtil {
         'transport . voiture . km': 12000,
       },
       created_at: new Date(),
-      ...override,
-    };
-  }
-  static suiviData(override?): Suivi {
-    return {
-      id: 'suivi-id',
-      type: 'alimentation',
-      data: {
-        a: 1,
-        b: 2,
-        c: 3,
-      },
-      utilisateurId: 'utilisateur-id',
       ...override,
     };
   }

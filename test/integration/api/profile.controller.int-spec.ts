@@ -57,7 +57,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   it('DELETE /utilisateurs/id', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.suivi);
     await TestUtil.create(DB.situationNGC);
     await TestUtil.create(DB.empreinte);
     await TestUtil.create(DB.serviceDefinition);
@@ -77,7 +76,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.suivi);
     await TestUtil.create(DB.situationNGC);
     await TestUtil.create(DB.empreinte);
     await TestUtil.create(DB.serviceDefinition);

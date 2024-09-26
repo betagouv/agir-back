@@ -20,7 +20,6 @@ const utilisateurs = {
         Feature.services,
       ],
     },
-    suivis: [],
     services: [],
   },
   margaux: {
@@ -42,7 +41,6 @@ const utilisateurs = {
         Feature.services,
       ],
     },
-    suivis: [],
     services: [],
   },
   abdellah: {
@@ -64,7 +62,6 @@ const utilisateurs = {
         Feature.services,
       ],
     },
-    suivis: [],
     services: [],
   },
   wojtek: {
@@ -82,7 +79,6 @@ const utilisateurs = {
       version: 1,
       unlocked_features: [Feature.univers, Feature.services],
     },
-    suivis: [],
     services: [],
     linky: {
       prm: '12345678903333',
@@ -104,7 +100,6 @@ const utilisateurs = {
       version: 1,
       unlocked_features: [Feature.univers, Feature.services],
     },
-    suivis: [],
     services: [],
   },
   nina: {
@@ -126,7 +121,6 @@ const utilisateurs = {
         Feature.services,
       ],
     },
-    suivis: [],
     services: [],
   },
   lucas: {
@@ -148,7 +142,6 @@ const utilisateurs = {
         Feature.services,
       ],
     },
-    suivis: [],
     services: [],
   },
   jeremie: {
@@ -170,7 +163,6 @@ const utilisateurs = {
         Feature.services,
       ],
     },
-    suivis: [],
     services: [],
   },
   dorian: {
@@ -192,7 +184,6 @@ const utilisateurs = {
         Feature.services,
       ],
     },
-    suivis: [],
     services: [],
   },
   dunia: {
@@ -214,7 +205,6 @@ const utilisateurs = {
         Feature.services,
       ],
     },
-    suivis: [],
     services: [],
   },
   guillaume: {
@@ -236,7 +226,6 @@ const utilisateurs = {
         Feature.services,
       ],
     },
-    suivis: [],
     services: [],
   },
   romane: {
@@ -258,7 +247,6 @@ const utilisateurs = {
         Feature.services,
       ],
     },
-    suivis: [],
     services: [],
   },
   claire: {
@@ -280,7 +268,6 @@ const utilisateurs = {
         Feature.services,
       ],
     },
-    suivis: [],
     services: [],
   },
 };
