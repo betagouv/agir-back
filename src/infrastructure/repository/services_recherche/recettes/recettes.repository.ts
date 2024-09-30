@@ -161,7 +161,9 @@ export class RecettesRepository implements FinderInterface {
       recherche = recherche.filter((a) => a.regime === 2);
     }
 
-    recherche = recherche.slice(0, 10);
+    const max_result = filtre.nombre_max_resultats || 10;
+
+    recherche = recherche.slice(0, max_result);
 
     const mapped_result = recherche.map(
       (r) =>

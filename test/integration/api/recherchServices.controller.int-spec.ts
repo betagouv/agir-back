@@ -770,4 +770,17 @@ describe('RechercheServices (API test)', () => {
       },
     ]);
   });
+  it(`POST /utlilisateur/id/recherche_services/recettes/search prend en compte le nombre max de résultats`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/recettes/search',
+    ).send({ categorie: 'vege', nombre_max_resultats: 30 });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(30);
+  });
 });
