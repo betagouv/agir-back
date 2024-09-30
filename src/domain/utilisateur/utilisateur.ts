@@ -1,6 +1,4 @@
 import { CodeManager } from './manager/codeManager';
-import { Onboarding } from '../onboarding/onboarding';
-import { OnboardingResult } from '../onboarding/onboardingResult';
 import { PasswordManager } from './manager/passwordManager';
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Gamification } from '../gamification/gamification';
@@ -8,7 +6,6 @@ import { ParcoursTodo } from '../todo/parcoursTodo';
 import { UnlockedFeatures } from '../gamification/unlockedFeatures';
 import { History } from '../history/history';
 import { KYCHistory } from '../kyc/kycHistory';
-import { Equipements } from '../equipements/equipements';
 import { Logement } from '../logement/logement';
 import { App } from '../app';
 import { TagPonderationSet } from '../scoring/tagPonderationSet';
@@ -43,8 +40,6 @@ export class UtilisateurData {
   nom: string;
   prenom: string;
   annee_naissance: number;
-  onboardingData: Onboarding;
-  onboardingResult: OnboardingResult;
   revenu_fiscal: number;
   parts: number;
   abonnement_ter_loire: boolean;
@@ -66,7 +61,6 @@ export class UtilisateurData {
   gamification: Gamification;
   missions: MissionsUtilisateur;
   history: History;
-  equipements: Equipements;
   unlocked_features: UnlockedFeatures;
   version: number;
   migration_enabled: boolean;
@@ -123,13 +117,6 @@ export class Utilisateur extends UtilisateurData {
       nom: nom,
       prenom: prenom,
       email: email,
-      /*
-      onboardingData: onboarding,
-      onboardingResult: OnboardingResult.buildFromOnboarding(onboarding),
-      */
-      onboardingData: {} as any,
-      onboardingResult: {} as any,
-
       id: undefined,
       code_departement: null,
       revenu_fiscal: null,
@@ -152,25 +139,12 @@ export class Utilisateur extends UtilisateurData {
       gamification: new Gamification(),
       unlocked_features: new UnlockedFeatures({
         version: 1,
-        unlocked_features: [
-          Feature.bibliotheque,
-          Feature.univers,
-          Feature.services,
-        ],
+        unlocked_features: [Feature.univers, Feature.services],
       }),
       history: new History(),
       kyc_history: new KYCHistory(),
       defi_history: new DefiHistory(),
-      equipements: new Equipements(),
       version: App.currentUserSystemVersion(),
-      /*
-      logement: onboarding
-        ? Logement.buildFromOnboarding(onboarding)
-        : new Logement(),
-      transport: onboarding
-        ? Transport.buildFromOnboarding(onboarding)
-        : new Transport(),
-        */
       logement: new Logement({
         version: 0,
         dpe: null,
@@ -213,7 +187,6 @@ export class Utilisateur extends UtilisateurData {
     this.unlocked_features.reset();
     this.history.reset();
     this.defi_history.reset();
-    this.equipements.reset();
     this.kyc_history.reset();
   }
 
@@ -221,9 +194,13 @@ export class Utilisateur extends UtilisateurData {
     const KYC_preference_answered = this.kyc_history.isQuestionAnsweredByCode(
       KYCID.KYC_preference,
     );
-    return (
-      !!this.prenom && !!this.logement.code_postal && KYC_preference_answered
-    );
+
+    const ok_prenom = !!this.prenom && this.prenom !== '';
+
+    const ok_code_postal =
+      !!this.logement.code_postal && this.logement.code_postal.length === 5;
+
+    return ok_prenom && ok_code_postal && KYC_preference_answered;
   }
 
   public isMagicLinkCodeExpired?(): boolean {
@@ -243,14 +220,14 @@ export class Utilisateur extends UtilisateurData {
       return this.parts;
     }
     let parts_estimee = 0;
-    if (this.onboardingData && this.onboardingData.adultes) {
-      parts_estimee += this.onboardingData.adultes;
+    if (this.logement.nombre_adultes) {
+      parts_estimee += this.logement.nombre_adultes;
     }
-    if (this.onboardingData && this.onboardingData.enfants) {
+    if (this.logement.nombre_enfants) {
       const total_enfants =
-        this.onboardingData.enfants > 2
-          ? this.onboardingData.enfants
-          : this.onboardingData.enfants * 0.5;
+        this.logement.nombre_enfants > 2
+          ? this.logement.nombre_enfants
+          : this.logement.nombre_enfants * 0.5;
       parts_estimee += total_enfants;
     }
     return parts_estimee === 0 ? 1 : parts_estimee;

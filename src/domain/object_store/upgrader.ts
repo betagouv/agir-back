@@ -1,13 +1,10 @@
 import { DefiHistory_v0 } from './defi/defiHistory_v0';
-import { Equipements_v0 } from './equipement/equipement_v0';
 import { Gamification_v0 } from './gamification/gamification_v0';
 import { History_v0 } from './history/history_v0';
 import { KYCHistory_v0 } from './kyc/kycHistory_v0';
 import { Logement_v0 } from './logement/logement_v0';
 import { MissionsUtilisateur_v0 } from './mission/MissionsUtilisateur_v0';
 import { NotificationHistory_v0 } from './notification/NotificationHistory_v0';
-import { Onboarding_v0 } from './Onboarding/onboarding_v0';
-import { OnboardingResult_v0 } from './onboardingResult/onboardingResult_v0';
 import { ParcoursTodo_v0 } from './parcoursTodo/parcoursTodo_v0';
 import { BibliothequeServices_v0 } from './service/BibliothequeService_v0';
 import { Transport_v0 } from './transport/transport_v0';
@@ -19,11 +16,8 @@ export enum SerialisableDomain {
   ParcoursTodo = 'ParcoursTodo',
   History = 'History',
   Gamification = 'Gamification',
-  OnboardingResult = 'OnboardingResult',
-  Onboarding = 'Onboarding',
   KYCHistory = 'KYCHistory',
   DefiHistory = 'DefiHistory',
-  Equipements = 'Equipements',
   Logement = 'Logement',
   Transport = 'Transport',
   MissionsUtilisateur = 'MissionsUtilisateur',
@@ -37,10 +31,7 @@ const CLASS_DICTIONNARY = {
   ParcoursTodo_v0: ParcoursTodo_v0,
   History_v0: History_v0,
   Gamification_v0: Gamification_v0,
-  OnboardingResult_v0: OnboardingResult_v0,
-  Onboarding_v0: Onboarding_v0,
   KYCHistory_v0: KYCHistory_v0,
-  Equipements_v0: Equipements_v0,
   Logement_v0: Logement_v0,
   Transport_v0: Transport_v0,
   DefiHistory_v0: DefiHistory_v0,

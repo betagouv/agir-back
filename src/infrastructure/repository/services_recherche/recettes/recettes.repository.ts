@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { CategorieRecherche } from '../../../../domain/bibliotheque_services/categorieRecherche';
-import { FiltreRecherche } from '../../../../domain/bibliotheque_services/filtreRecherche';
-import { FinderInterface } from '../../../../domain/bibliotheque_services/finderInterface';
+import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
+import { FiltreRecherche } from '../../../../domain/bibliotheque_services/recherche/filtreRecherche';
+import { FinderInterface } from '../../../../domain/bibliotheque_services/recherche/finderInterface';
 import {
   EtapeRecette,
   IngredientRecette,
   ResultatRecherche,
-} from '../../../../domain/bibliotheque_services/resultatRecherche';
+} from '../../../../domain/bibliotheque_services/recherche/resultatRecherche';
 import _recettes from './data/dump-recipes.2024-09-06.json';
 import _ingredients_recette from './data/dump-ingredient_recipe.2024-08-09.17-29-40.json';
 import _ingredients from './data/dump-ingredients.2024-08-09.17-44-22.json';
@@ -161,7 +161,9 @@ export class RecettesRepository implements FinderInterface {
       recherche = recherche.filter((a) => a.regime === 2);
     }
 
-    recherche = recherche.slice(0, 10);
+    const max_result = filtre.nombre_max_resultats || 10;
+
+    recherche = recherche.slice(0, max_result);
 
     const mapped_result = recherche.map(
       (r) =>

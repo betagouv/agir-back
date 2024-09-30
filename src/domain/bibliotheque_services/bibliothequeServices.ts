@@ -1,7 +1,7 @@
 import { BibliothequeServices_v0 } from '../object_store/service/BibliothequeService_v0';
-import { ResultatRecherche } from './resultatRecherche';
-import { ServiceRecherche } from './serviceRecherche';
-import { ServiceRechercheID } from './serviceRechercheID';
+import { ResultatRecherche } from './recherche/resultatRecherche';
+import { ServiceRecherche } from './recherche/serviceRecherche';
+import { ServiceRechercheID } from './recherche/serviceRechercheID';
 
 export class BibliothequeServices {
   liste_services: ServiceRecherche[];

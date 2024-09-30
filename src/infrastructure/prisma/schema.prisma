@@ -11,17 +11,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Suivi {
-  id              String      @id
-  type            String
-  data            Json        @default("{}")
-  computed_impact Boolean     @default(false)
-  created_at      DateTime    @default(now()) @db.Timestamptz(3)
-  updated_at      DateTime    @updatedAt @db.Timestamptz(3)
-  utilisateurId   String
-  utilisateur     Utilisateur @relation(fields: [utilisateurId], references: [id])
-}
-
 model OIDC_STATE {
   loginId       String   @id
   utilisateurId String?  @unique
@@ -41,14 +30,11 @@ model Utilisateur {
   passwordHash             String?     @default("hash")
   passwordSalt             String?     @default("salt")
   revenu_fiscal            Int?
-  onboardingData           Json        @default("{}") // versioné 
-  onboardingResult         Json        @default("{}") // versioné 
   todo                     Json        @default("{}") // versioné 
   gamification             Json        @default("{}") // versioné 
   history                  Json        @default("{}") // versioné 
   kyc                      Json        @default("{}") // versioné
   unlocked_features        Json        @default("{}") // versioné 
-  equipements              Json        @default("{}") // versioné 
   logement                 Json        @default("{}") // versioné 
   transport                Json        @default("{}") // versioné 
   defis                    Json        @default("{}") // versioné
@@ -56,7 +42,6 @@ model Utilisateur {
   bilbiotheque_services    Json        @default("{}") // versioné
   notification_history     Json        @default("{}") // versioné
   empreintes               Empreinte[]
-  suivis                   Suivi[]
   created_at               DateTime    @default(now()) @db.Timestamptz(3)
   updated_at               DateTime    @default(now()) @updatedAt @db.Timestamptz(3)
   failed_login_count       Int         @default(0)
@@ -339,13 +324,12 @@ model ThematiqueUnivers {
 }
 
 model Mission {
-  id_cms                 Int      @unique
-  thematique_univers     String?  @unique
-  objectifs              Json     @default("{}")
-  prochaines_thematiques String[] @default([])
-  est_visible            Boolean
-  created_at             DateTime @default(now()) @db.Timestamptz(3)
-  updated_at             DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  id_cms             Int      @unique
+  thematique_univers String?  @unique
+  objectifs          Json     @default("{}")
+  est_visible        Boolean
+  created_at         DateTime @default(now()) @db.Timestamptz(3)
+  updated_at         DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model KYC {

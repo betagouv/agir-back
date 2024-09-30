@@ -34,7 +34,6 @@ export class Mission_v0 {
   done_at: Date;
   thematique_univers: string;
   objectifs: Objectif_v0[];
-  prochaines_thematiques: string[];
   est_visible: boolean;
   univers: string;
 
@@ -45,9 +44,6 @@ export class Mission_v0 {
       thematique_univers: mission.thematique_univers,
       objectifs: mission.objectifs
         ? mission.objectifs.map((m) => Objectif_v0.map(m))
-        : [],
-      prochaines_thematiques: mission.prochaines_thematiques
-        ? mission.prochaines_thematiques
         : [],
       est_visible: !!mission.est_visible,
       univers: mission.univers,

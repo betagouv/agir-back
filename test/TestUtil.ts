@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
-//import { PrismaService as PrismaService_STATS } from '../src/infrastructure/prisma/stats/prisma.service.stats';
+import { PrismaServiceStat } from '../src/infrastructure/prisma/stats/prisma.service.stats';
 import { Thematique } from '../src/domain/contenu/thematique';
 import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
@@ -17,16 +17,7 @@ import { ParcoursTodo_v0 } from '../src/domain/object_store/parcoursTodo/parcour
 import { History_v0 } from '../src/domain/object_store/history/history_v0';
 import { Gamification_v0 } from '../src/domain/object_store/gamification/gamification_v0';
 import { CelebrationType } from '../src/domain/gamification/celebrations/celebration';
-import { Onboarding_v0 } from '../src/domain/object_store/Onboarding/onboarding_v0';
-import { OnboardingResult_v0 } from '../src/domain/object_store/onboardingResult/onboardingResult_v0';
 import { KYCHistory_v0 } from '../src/domain/object_store/kyc/kycHistory_v0';
-import { Equipements_v0 } from '../src/domain/object_store/equipement/equipement_v0';
-import {
-  Consommation100km,
-  VehiculeType,
-  VoitureCarburant,
-  VoitureGabarit,
-} from '../src/domain/equipements/vehicule';
 import { Logement_v0 } from '../src/domain/object_store/logement/logement_v0';
 import {
   Chauffage,
@@ -37,7 +28,6 @@ import {
 import {
   Empreinte,
   SituationNGC,
-  Suivi,
   Univers as UniversDB,
   ThematiqueUnivers as ThematiqueUniversDB,
   Mission,
@@ -78,7 +68,6 @@ import { CanalNotification } from '../src/domain/notification/notificationHistor
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
   situationNGC = 'situationNGC',
-  suivi = 'suivi',
   utilisateur = 'utilisateur',
   aide = 'aide',
   defi = 'defi',
@@ -100,7 +89,6 @@ export class TestUtil {
   private static TYPE_DATA_MAP: Record<DB, Function> = {
     CMSWebhookAPI: TestUtil.CMSWebhookAPIData,
     situationNGC: TestUtil.situationNGCData,
-    suivi: TestUtil.suiviData,
     utilisateur: TestUtil.utilisateurData,
     aide: TestUtil.aideData,
     defi: TestUtil.defiData,
@@ -122,9 +110,8 @@ export class TestUtil {
   constructor() {}
   public static app: INestApplication;
   public static prisma = new PrismaService();
-  //  public static prisma_stats = new PrismaService_STATS();
+  public static prisma_stats = new PrismaServiceStat();
   public static utilisateur = 'utilisateur';
-  public static suivi = 'suivi';
   public static SECRET = '123456789012345678901234567890';
   public static jwtService = new JwtService({
     secret: TestUtil.SECRET,
@@ -181,7 +168,6 @@ export class TestUtil {
   }
 
   static async deleteAll() {
-    await this.prisma.suivi.deleteMany();
     await this.prisma.service.deleteMany();
     await this.prisma.serviceDefinition.deleteMany();
     await this.prisma.empreinte.deleteMany();
@@ -207,6 +193,8 @@ export class TestUtil {
     await this.prisma.universStatistique.deleteMany();
     await this.prisma.servicesFavorisStatistique.deleteMany();
     await this.prisma.bilanCarboneStatistique.deleteMany();
+
+    await this.prisma_stats.testTable.deleteMany();
 
     ThematiqueRepository.resetAllRefs();
   }
@@ -265,19 +253,6 @@ export class TestUtil {
         'transport . voiture . km': 12000,
       },
       created_at: new Date(),
-      ...override,
-    };
-  }
-  static suiviData(override?): Suivi {
-    return {
-      id: 'suivi-id',
-      type: 'alimentation',
-      data: {
-        a: 1,
-        b: 2,
-        c: 3,
-      },
-      utilisateurId: 'utilisateur-id',
       ...override,
     };
   }
@@ -370,10 +345,6 @@ export class TestUtil {
           points: 25,
           id_cms: 2,
         },
-      ],
-      prochaines_thematiques: [
-        ThematiqueUnivers.manger_local,
-        ThematiqueUnivers.dechets_compost,
       ],
       created_at: undefined,
       updated_at: undefined,
@@ -504,21 +475,6 @@ export class TestUtil {
       enabled_canals: [CanalNotification.email, CanalNotification.mobile],
     };
 
-    const equipements: Equipements_v0 = {
-      version: 0,
-      vehicules: [
-        {
-          nom: 'titine',
-          carburant: VoitureCarburant.E85,
-          a_plus_de_10_ans: true,
-          est_en_autopartage: false,
-          conso_100_km: Consommation100km.entre_5_10L,
-          gabarit: VoitureGabarit.berline,
-          type: VehiculeType.voiture,
-        },
-      ],
-    };
-
     const gamification: Gamification_v0 = {
       version: 0,
       points: 10,
@@ -560,40 +516,6 @@ export class TestUtil {
         TransportQuotidien.voiture,
       ],
     };
-    /*
-    const onboarding: Onboarding_v0 = {
-      version: 0,
-      transports: [TransportQuotidien.voiture, TransportQuotidien.pied],
-      avion: 2,
-      code_postal: '91120',
-      adultes: 2,
-      enfants: 1,
-      residence: TypeLogement.maison,
-      proprietaire: true,
-      superficie: Superficie.superficie_100,
-      chauffage: Chauffage.bois,
-      repas: Repas.tout,
-      consommation: Consommation.raisonnable,
-      commune: 'PALAISEAU',
-    };
-
-    const onboardingRes: OnboardingResult_v0 = {
-      version: 0,
-      ventilation_par_thematiques: {
-        alimentation: Impact.tres_faible,
-        transports: Impact.faible,
-        logement: Impact.eleve,
-        consommation: Impact.tres_eleve,
-      },
-      ventilation_par_impacts: {
-        '1': [ThematiqueOnboarding.alimentation],
-        '2': [ThematiqueOnboarding.transports],
-        '3': [ThematiqueOnboarding.logement],
-        '4': [ThematiqueOnboarding.consommation],
-      },
-    };
-    */
-
     return {
       id: 'utilisateur-id',
       nom: 'nom',
@@ -621,17 +543,10 @@ export class TestUtil {
       gamification: gamification,
       unlocked_features: unlocked,
       history: history,
-      /*
-      onboardingData: onboarding,
-      onboardingResult: onboardingRes,
-      */
-      onboardingData: {} as any,
-      onboardingResult: {} as any,
       created_at: undefined,
       updated_at: undefined,
       kyc: kyc,
       defis: defis,
-      equipements: equipements,
       logement: logement,
       transport: transport,
       tag_ponderation_set: {},

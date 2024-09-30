@@ -14,13 +14,8 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [
-        Feature.univers,
-        Feature.bibliotheque,
-        Feature.services,
-      ],
+      unlocked_features: [Feature.univers, Feature.services],
     },
-    suivis: [],
     services: [],
   },
   margaux: {
@@ -36,13 +31,8 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [
-        Feature.univers,
-        Feature.bibliotheque,
-        Feature.services,
-      ],
+      unlocked_features: [Feature.univers, Feature.services],
     },
-    suivis: [],
     services: [],
   },
   abdellah: {
@@ -58,13 +48,8 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [
-        Feature.univers,
-        Feature.bibliotheque,
-        Feature.services,
-      ],
+      unlocked_features: [Feature.univers, Feature.services],
     },
-    suivis: [],
     services: [],
   },
   wojtek: {
@@ -82,7 +67,6 @@ const utilisateurs = {
       version: 1,
       unlocked_features: [Feature.univers, Feature.services],
     },
-    suivis: [],
     services: [],
     linky: {
       prm: '12345678903333',
@@ -104,7 +88,6 @@ const utilisateurs = {
       version: 1,
       unlocked_features: [Feature.univers, Feature.services],
     },
-    suivis: [],
     services: [],
   },
   nina: {
@@ -120,13 +103,8 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [
-        Feature.univers,
-        Feature.bibliotheque,
-        Feature.services,
-      ],
+      unlocked_features: [Feature.univers, Feature.services],
     },
-    suivis: [],
     services: [],
   },
   lucas: {
@@ -142,13 +120,8 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [
-        Feature.univers,
-        Feature.bibliotheque,
-        Feature.services,
-      ],
+      unlocked_features: [Feature.univers, Feature.services],
     },
-    suivis: [],
     services: [],
   },
   jeremie: {
@@ -164,13 +137,8 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [
-        Feature.univers,
-        Feature.bibliotheque,
-        Feature.services,
-      ],
+      unlocked_features: [Feature.univers, Feature.services],
     },
-    suivis: [],
     services: [],
   },
   dorian: {
@@ -186,13 +154,8 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [
-        Feature.univers,
-        Feature.bibliotheque,
-        Feature.services,
-      ],
+      unlocked_features: [Feature.univers, Feature.services],
     },
-    suivis: [],
     services: [],
   },
   dunia: {
@@ -208,13 +171,8 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [
-        Feature.univers,
-        Feature.bibliotheque,
-        Feature.services,
-      ],
+      unlocked_features: [Feature.univers, Feature.services],
     },
-    suivis: [],
     services: [],
   },
   guillaume: {
@@ -230,13 +188,8 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [
-        Feature.univers,
-        Feature.bibliotheque,
-        Feature.services,
-      ],
+      unlocked_features: [Feature.univers, Feature.services],
     },
-    suivis: [],
     services: [],
   },
   romane: {
@@ -252,13 +205,8 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [
-        Feature.univers,
-        Feature.bibliotheque,
-        Feature.services,
-      ],
+      unlocked_features: [Feature.univers, Feature.services],
     },
-    suivis: [],
     services: [],
   },
   claire: {
@@ -274,13 +222,8 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [
-        Feature.univers,
-        Feature.bibliotheque,
-        Feature.services,
-      ],
+      unlocked_features: [Feature.univers, Feature.services],
     },
-    suivis: [],
     services: [],
   },
 };

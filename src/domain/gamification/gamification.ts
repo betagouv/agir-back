@@ -3,7 +3,6 @@ import { Utilisateur } from '../utilisateur/utilisateur';
 import { Celebration, CelebrationType } from './celebrations/celebration';
 import { Reveal } from './celebrations/reveal';
 import { Feature } from './feature';
-import { UnlockedFeatures } from './unlockedFeatures';
 
 let SEUILS_NIVEAUX: number[] = [
   100, 150, 300, 400, 500, 800, 1000, 2000, 4000, 10000,
@@ -62,16 +61,12 @@ export class Gamification {
     );
   }
 
-  public celebrerFinMission(
-    thematique_univers: string,
-    new_thematiques: string[],
-  ) {
+  public celebrerFinMission(thematique_univers: string) {
     this.celebrations.push(
       new Celebration({
         id: undefined,
         titre: `FIN DE MISSION !`,
         type: CelebrationType.fin_thematique,
-        new_thematiques: new_thematiques,
         thematique_univers: thematique_univers,
       }),
     );

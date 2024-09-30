@@ -38,7 +38,6 @@ describe('EVENT (API test)', () => {
           },
         ],
         est_visible: true,
-        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
       },
     ],
   };
@@ -64,7 +63,6 @@ describe('EVENT (API test)', () => {
           },
         ],
         est_visible: true,
-        prochaines_thematiques: [ThematiqueUnivers.dechets_compost],
       },
     ],
   };

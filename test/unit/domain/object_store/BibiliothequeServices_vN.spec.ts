@@ -4,7 +4,7 @@ import {
 } from '../../../../src/domain/object_store/upgrader';
 import { BibliothequeServices } from '../../../../src/domain/bibliotheque_services/bibliothequeServices';
 import { BibliothequeServices_v0 } from '../../../../src/domain/object_store/service/BibliothequeService_v0';
-import { ServiceRechercheID } from '../../../../src/domain/bibliotheque_services/serviceRechercheID';
+import { ServiceRechercheID } from '../../../../src/domain/bibliotheque_services/recherche/serviceRechercheID';
 
 describe('BibliothequeService vN ', () => {
   it('build OK from empty', () => {

@@ -51,10 +51,10 @@ export class TodoCatalogue {
   private static NEW_DEV_catalogue: Todo_v0[] = [
     {
       numero_todo: 1,
-      points_todo: 50,
+      points_todo: 0,
       titre: 'Découvrir Mes aides',
       imageUrl:
-        'https://res.cloudinary.com/dq023imd8/image/upload/v1718959272/Mission_1_2076902965.png',
+        'https://res.cloudinary.com/dq023imd8/image/upload/v1727099530/1_9911eb628c.svg',
       done_at: null,
       celebration: {
         id: uuidv4(),
@@ -96,10 +96,10 @@ export class TodoCatalogue {
     },
     {
       numero_todo: 2,
-      points_todo: 50,
+      points_todo: 0,
       titre: 'Découvrir La Bibliothèque',
       imageUrl:
-        'https://res.cloudinary.com/dq023imd8/image/upload/v1718959271/Mission_3_e87ba4bebb.png',
+        'https://res.cloudinary.com/dq023imd8/image/upload/v1727099530/2_1a66ec4a41.svg',
       done_at: null,
       celebration: {
         id: uuidv4(),
@@ -140,10 +140,10 @@ export class TodoCatalogue {
     },
     {
       numero_todo: 3,
-      points_todo: 50,
+      points_todo: 0,
       titre: 'Découvrir Mon empreinte environnementale',
       imageUrl:
-        'https://res.cloudinary.com/dq023imd8/image/upload/v1718959271/Mission_2_bb3aa4b43d.png',
+        'https://res.cloudinary.com/dq023imd8/image/upload/v1727099530/3_f3181e2c5e.svg',
       done_at: null,
       celebration: {
         id: uuidv4(),
@@ -183,7 +183,7 @@ export class TodoCatalogue {
         {
           id: uuidv4(),
           titre: `5 questions pour avoir une première estimation de son empreinte`,
-          content_id: 'ENCHAINEMENT_KYC_1',
+          content_id: 'ENCHAINEMENT_KYC_mini_bilan_carbone',
           thematiques: [Thematique.climat],
           progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
@@ -246,28 +246,6 @@ export class TodoCatalogue {
           progression: { current: 0, target: 1 },
           sont_points_en_poche: false,
           type: ContentType.kyc,
-          level: DifficultyLevel.ANY,
-          points: 5,
-        },
-        {
-          id: uuidv4(),
-          titre: `Qu'est-ce que le réchauffement climatique ?`,
-          content_id: '13',
-          thematiques: [Thematique.climat],
-          progression: { current: 0, target: 1 },
-          sont_points_en_poche: false,
-          type: ContentType.quizz,
-          level: DifficultyLevel.ANY,
-          points: 5,
-        },
-        {
-          id: uuidv4(),
-          titre: `Qu'est-ce que le réchauffement climatique ?`,
-          content_id: '13',
-          thematiques: [Thematique.climat],
-          progression: { current: 0, target: 1 },
-          sont_points_en_poche: false,
-          type: ContentType.quizz,
           level: DifficultyLevel.ANY,
           points: 5,
         },
@@ -396,7 +374,8 @@ export class TodoCatalogue {
     },
   ];
 
-  private static DEV_catalogue: Todo_v0[] = [
+  private static DEV_catalogue: Todo_v0[] = TodoCatalogue.NEW_DEV_catalogue;
+  /*[
     {
       numero_todo: 1,
       points_todo: 50,
@@ -486,4 +465,5 @@ export class TodoCatalogue {
       ],
     },
   ];
+  */
 }

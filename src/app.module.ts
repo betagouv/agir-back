@@ -14,20 +14,14 @@ import { UtilisateurRepository } from './infrastructure/repository/utilisateur/u
 import { BilanRepository } from './infrastructure/repository/bilan.repository';
 
 import { PrismaService } from './infrastructure/prisma/prisma.service';
-//import { PrismaService as PrismaService_STATS } from './infrastructure/prisma/stats/prisma.service.stats';
-import { SuiviRepository } from './infrastructure/repository/suivi.repository';
-import { SuiviUsecase } from './usecase/suivi.usecase';
 import { AidesVeloRepository } from './infrastructure/repository/aidesVelo.repository';
 import { AidesRetrofitRepository } from './infrastructure/repository/aidesRetrofit.repository';
-import { SuiviDashboardController } from './infrastructure/api/suiviDashboard.controller';
 import { OIDCStateRepository } from '../src/infrastructure/repository/oidcState.repository';
 
 import { JwtModule } from '@nestjs/jwt';
 import { OidcService } from '../src/infrastructure/auth/oidc.service';
 import { NGCCalculator } from './infrastructure/ngc/NGCCalculator';
 import { EmailSender } from './infrastructure/email/emailSender';
-import { OnboardingUsecase } from './usecase/onboarding.usecase';
-import { OnboardingController } from './infrastructure/api/onboarding.controller';
 import { CommuneRepository } from './infrastructure/repository/commune/commune.repository';
 import { CommunesUsecase } from './usecase/communes.usecase';
 import { CommunesController } from './infrastructure/api/communes.controller';
@@ -68,8 +62,6 @@ import { BibliothequeController } from './infrastructure/api/bibliotheque.contro
 import { BibliothequeUsecase } from './usecase/bibliotheque.usecase';
 import { LinkyAPIConnector } from './infrastructure/service/linky/LinkyAPIConnector';
 import { LinkyEmailer } from './infrastructure/service/linky/LinkyEmailer';
-import { EquipementUsecase } from './usecase/equipements.usecase';
-import { EquipementsController } from './infrastructure/api/equipements.controller';
 import { InscriptionController } from './infrastructure/api/inscription.controller';
 import { AideRepository } from './infrastructure/repository/aide.repository';
 import { DefisController } from './infrastructure/api/defis.controller';
@@ -101,7 +93,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { Personnalisator } from './infrastructure/personnalisation/personnalisator';
 import { RechecheServicesController } from './infrastructure/api/rechercheServices.controller';
 import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
-import { RechercheServiceManager } from './domain/bibliotheque_services/serviceManager';
+import { RechercheServiceManager } from './domain/bibliotheque_services/recherche/rechercheServiceManager';
 import { PresDeChezNousRepository } from './infrastructure/repository/services_recherche/pres_de_chez_nous/presDeChezNous.repository';
 import { AddressesRepository } from './infrastructure/repository/services_recherche/addresses.repository';
 import { ServiceFavorisStatistiqueRepository } from './infrastructure/repository/serviceFavorisStatistique.repository';
@@ -124,6 +116,7 @@ import { Connexion_v2_Usecase } from './usecase/connexion.usecase';
 import { EmailTemplateRepository } from './infrastructure/email/emailTemplate.repository';
 import { MailerUsecase } from './usecase/mailer.usecase';
 import { NotificationsController } from './infrastructure/api/notifications.controller';
+import { PrismaServiceStat } from './infrastructure/prisma/stats/prisma.service.stats';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -155,13 +148,10 @@ function getControllers(): any[] {
     NotificationsController,
   );
   if (!App.isProd()) {
-    controllers.push(EquipementsController);
     controllers.push(TestDataController);
     controllers.push(AuthController);
     controllers.push(BilanController);
     controllers.push(MagicLinkController);
-    controllers.push(OnboardingController);
-    controllers.push(SuiviDashboardController);
   }
   return controllers;
 }
@@ -183,12 +173,10 @@ function getControllers(): any[] {
   controllers: getControllers(),
   providers: [
     PrismaService,
-    //PrismaService_STATS,
+    PrismaServiceStat,
     UtilisateurRepository,
     BilanRepository,
-    SuiviRepository,
     CodeManager,
-
     OIDCStateRepository,
     OidcService,
     NGCCalculator,
@@ -197,10 +185,8 @@ function getControllers(): any[] {
     ProfileUsecase,
     BilanUsecase,
     AidesUsecase,
-    SuiviUsecase,
     CMSUsecase,
     EmailSender,
-    OnboardingUsecase,
     CommuneRepository,
     CommunesUsecase,
     UtilisateurSecurityRepository,
@@ -228,7 +214,6 @@ function getControllers(): any[] {
     BibliothequeUsecase,
     LinkyAPIConnector,
     LinkyEmailer,
-    EquipementUsecase,
     Inscription_v2_Usecase,
     AideRepository,
     DefiRepository,

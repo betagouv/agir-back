@@ -64,12 +64,6 @@ export class ApplicationError {
   static throwServiceInconnuError(serviceDefId) {
     this.throwAppError('013', `Le service d'id ${serviceDefId} n'existe pas`);
   }
-  static throwDonneeObligatoireOnboarding(champ) {
-    this.throwAppError('014', `Valeur ${champ} obligatoire`);
-  }
-  static throwValeurInconnueOnboarding(nom, valeur) {
-    this.throwAppError('015', `Valeur ${nom} [${valeur}] inconnue`);
-  }
   static throwTropEssaisCode(jusqua) {
     this.throwAppError(
       '016',

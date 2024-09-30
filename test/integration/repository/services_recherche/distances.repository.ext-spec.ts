@@ -1,5 +1,5 @@
-import { FiltreRecherche } from '../../../../src/domain/bibliotheque_services/filtreRecherche';
-import { ModeDeplacement } from '../../../../src/domain/bibliotheque_services/modeDeplacement';
+import { FiltreRecherche } from '../../../../src/domain/bibliotheque_services/recherche/filtreRecherche';
+import { ModeDeplacement } from '../../../../src/domain/bibliotheque_services/types/modeDeplacement';
 import { DistancesRepository } from '../../../../src/infrastructure/repository/services_recherche/distances.repository';
 import { TestUtil } from '../../../TestUtil';
 

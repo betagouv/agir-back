@@ -1,15 +1,15 @@
 import { Versioned } from '../versioned';
-import { ServiceRecherche } from '../../bibliotheque_services/serviceRecherche';
+import { ServiceRecherche } from '../../bibliotheque_services/recherche/serviceRecherche';
 import { BibliothequeServices } from '../../bibliotheque_services/bibliothequeServices';
-import { ServiceRechercheID } from '../../../../src/domain/bibliotheque_services/serviceRechercheID';
+import { ServiceRechercheID } from '../../bibliotheque_services/recherche/serviceRechercheID';
 import {
   EtapeRecette,
   IngredientRecette,
   ResultatRecherche,
-} from '../../../../src/domain/bibliotheque_services/resultatRecherche';
-import { FavorisRecherche } from 'src/domain/bibliotheque_services/favorisRecherche';
+} from '../../bibliotheque_services/recherche/resultatRecherche';
 import { FruitLegume } from '../../../infrastructure/service/fruits/fruitEtLegumesServiceManager';
-import { OpenHour } from '../../bibliotheque_services/openHour';
+import { OpenHour } from '../../bibliotheque_services/types/openHour';
+import { FavorisRecherche } from '../../bibliotheque_services/recherche/favorisRecherche';
 
 export class EtapeRecette_v0 {
   ordre: number;

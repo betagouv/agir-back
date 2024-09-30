@@ -3,7 +3,6 @@ import { DB, TestUtil } from '../../TestUtil';
 
 describe.skip('/utilisateurs - Magic link - (API test)', () => {
   const OLD_ENV = process.env;
-  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();

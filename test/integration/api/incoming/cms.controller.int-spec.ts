@@ -115,12 +115,6 @@ describe('/api/incoming/cms (API test)', () => {
         id: 1,
         code: ThematiqueUnivers.cereales,
       },
-      prochaines_thematiques: [
-        {
-          id: 1,
-          code: ThematiqueUnivers.dechets_compost,
-        },
-      ],
       objectifs: [
         { id: 1, titre: 'do it article', points: 5, article: { id: 11 } },
         { id: 2, titre: 'do it defi', points: 10, defi: { id: 12 } },
@@ -439,9 +433,6 @@ describe('/api/incoming/cms (API test)', () => {
 
     expect(item.est_visible).toEqual(true);
     expect(item.id_cms).toEqual(123);
-    expect(item.prochaines_thematiques).toEqual([
-      ThematiqueUnivers.dechets_compost,
-    ]);
     expect(item.thematique_univers).toEqual(ThematiqueUnivers.cereales);
     expect(item.objectifs).toEqual([
       {

@@ -6,7 +6,6 @@ export enum ContentType {
   quizz = 'quizz',
   enchainement = 'enchainement',
   enchainement_kyc = 'enchainement_kyc',
-  onboarding = 'onboarding',
   service = 'service',
   profile = 'profile',
   recommandations = 'recommandations',

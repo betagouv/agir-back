@@ -14,7 +14,6 @@ import {
   TypeLogement,
 } from '../../../src/domain/logement/logement';
 import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
-import { Repas, Consommation } from '../../../src/domain/onboarding/onboarding';
 import { TransportQuotidien } from '../../../src/domain/transport/transport';
 import { DefiStatus } from '../../../src/domain/defis/defi';
 import {
@@ -347,85 +346,7 @@ describe('Admin (API test)', () => {
       },
     ]);
   });
-  /*
-  it('POST /admin/migrate_users migration V5 OK', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.utilisateur, {
-      version: 4,
-      migration_enabled: true,
-      logement: {},
-    });
-    process.env.USER_CURRENT_VERSION = '5';
 
-    // WHEN
-    const response = await TestUtil.POST('/admin/migrate_users');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual([
-      {
-        user_id: 'utilisateur-id',
-        migrations: [
-          {
-            version: 5,
-            ok: true,
-            info: `migrated logement data`,
-          },
-        ],
-      },
-    ]);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
-    expect(userDB.version).toBe(5);
-    expect(userDB.logement.type).toEqual(TypeLogement.maison);
-    expect(userDB.logement.chauffage).toEqual(Chauffage.bois);
-    expect(userDB.logement.code_postal).toEqual('91120');
-    expect(userDB.logement.commune).toEqual('PALAISEAU');
-    expect(userDB.logement.dpe).toEqual(undefined);
-    expect(userDB.logement.nombre_adultes).toEqual(2);
-    expect(userDB.logement.nombre_enfants).toEqual(1);
-    expect(userDB.logement.plus_de_15_ans).toEqual(undefined);
-    expect(userDB.logement.proprietaire).toEqual(true);
-    expect(userDB.logement.superficie).toEqual(Superficie.superficie_100);
-  });
-  */
-  /*
-  it('POST /admin/migrate_users migration V6 OK', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.utilisateur, {
-      version: 5,
-      migration_enabled: true,
-      logement: {},
-    });
-    process.env.USER_CURRENT_VERSION = '6';
-
-    // WHEN
-    const response = await TestUtil.POST('/admin/migrate_users');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual([
-      {
-        user_id: 'utilisateur-id',
-        migrations: [
-          {
-            version: 6,
-            ok: true,
-            info: `migrated transport data`,
-          },
-        ],
-      },
-    ]);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
-    expect(userDB.version).toBe(6);
-    expect(userDB.transport.avions_par_an).toEqual(2);
-    expect(userDB.transport.transports_quotidiens).toEqual([
-      TransportQuotidien.voiture,
-      TransportQuotidien.pied,
-    ]);
-  });
-  */
   it('POST /admin/migrate_users migration V7 OK', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -1212,55 +1133,7 @@ describe('Admin (API test)', () => {
       TodoCatalogue.getNombreTodo(),
     );
   });
-  it('POST /utilisateurs/compute_reco_tags - recalcul les tags de reco', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.utilisateur, {
-      onboardingData: {
-        version: 0,
-        transports: [TransportQuotidien.pied, TransportQuotidien.voiture],
-        avion: 2,
-        code_postal: '91120',
-        adultes: 2,
-        enfants: 1,
-        residence: TypeLogement.maison,
-        proprietaire: true,
-        superficie: Superficie.superficie_100,
-        chauffage: Chauffage.bois,
-        repas: Repas.tout,
-        consommation: Consommation.raisonnable,
-        commune: 'PALAISEAU',
-      },
-    });
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID._2,
-      type: TypeReponseQuestionKYC.choix_multiple,
-      categorie: Categorie.test,
-      points: 10,
-      question: 'Comment avez vous connu le service ?',
-      reponses: [
-        { label: 'Le climat', code: Thematique.climat },
-        { label: 'Mon logement', code: Thematique.logement },
-        { label: 'Ce que je mange', code: Thematique.alimentation },
-      ],
-    });
 
-    const userDB_before = await utilisateurRepository.getById('utilisateur-id');
-
-    // WHEN
-    const response = await TestUtil.POST('/admin/compute_reco_tags');
-
-    // THEN
-    expect(response.status).toBe(201);
-
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
-
-    expect(userDB_before.tag_ponderation_set.utilise_moto_ou_voiture).toEqual(
-      undefined,
-    );
-    expect(userDB.tag_ponderation_set.utilise_moto_ou_voiture).toEqual(100);
-  });
   it('POST /admin/contacts/synchronize - synchro user dans Brevo', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -1364,7 +1237,6 @@ describe('Admin (API test)', () => {
           done_at: new Date(),
           thematique_univers: ThematiqueUnivers.cereales,
           objectifs: [objectifComplete, objectifComplete],
-          prochaines_thematiques: [],
           est_visible: true,
           univers: 'alimentation',
         },
@@ -1373,7 +1245,6 @@ describe('Admin (API test)', () => {
           done_at: null,
           thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
           objectifs: [objectifNonComplete, objectifNonComplete],
-          prochaines_thematiques: [],
           est_visible: true,
           univers: 'alimentation',
         },
@@ -1382,7 +1253,6 @@ describe('Admin (API test)', () => {
           done_at: new Date(),
           thematique_univers: ThematiqueUnivers.mobilite_quotidien,
           objectifs: [objectifComplete, objectifComplete],
-          prochaines_thematiques: [],
           est_visible: true,
           univers: 'alimentation',
         },
@@ -1396,7 +1266,6 @@ describe('Admin (API test)', () => {
           done_at: null,
           thematique_univers: ThematiqueUnivers.cereales,
           objectifs: [objectifComplete, objectifNonComplete],
-          prochaines_thematiques: [],
           est_visible: true,
           univers: 'alimentation',
         },
@@ -1405,7 +1274,6 @@ describe('Admin (API test)', () => {
           done_at: new Date(),
           thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
           objectifs: [objectifComplete, objectifComplete],
-          prochaines_thematiques: [],
           est_visible: true,
           univers: 'alimentation',
         },
@@ -1414,7 +1282,6 @@ describe('Admin (API test)', () => {
           done_at: new Date(),
           thematique_univers: ThematiqueUnivers.mobilite_quotidien,
           objectifs: [objectifComplete, objectifComplete],
-          prochaines_thematiques: [],
           est_visible: true,
           univers: 'alimentation',
         },
@@ -2034,7 +1901,6 @@ describe('Admin (API test)', () => {
               est_reco: true,
             },
           ],
-          prochaines_thematiques: [],
           est_visible: true,
         },
         {
@@ -2066,7 +1932,6 @@ describe('Admin (API test)', () => {
               est_reco: true,
             },
           ],
-          prochaines_thematiques: [],
           est_visible: true,
         },
       ],
@@ -2103,7 +1968,6 @@ describe('Admin (API test)', () => {
               est_reco: true,
             },
           ],
-          prochaines_thematiques: [],
           est_visible: true,
         },
         {
@@ -2135,7 +1999,6 @@ describe('Admin (API test)', () => {
               est_reco: true,
             },
           ],
-          prochaines_thematiques: [],
           est_visible: true,
         },
         {
@@ -2167,7 +2030,6 @@ describe('Admin (API test)', () => {
               est_reco: true,
             },
           ],
-          prochaines_thematiques: [],
           est_visible: true,
         },
       ],
@@ -2295,7 +2157,6 @@ describe('Admin (API test)', () => {
           done_at: new Date(),
           thematique_univers: ThematiqueUnivers.cereales,
           objectifs: [objectifComplete, objectifComplete],
-          prochaines_thematiques: [],
           est_visible: true,
           univers: Univers.alimentation,
         },
@@ -2304,7 +2165,6 @@ describe('Admin (API test)', () => {
           done_at: new Date(),
           thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
           objectifs: [objectifComplete, objectifComplete],
-          prochaines_thematiques: [],
           est_visible: true,
           univers: Univers.alimentation,
         },
@@ -2313,7 +2173,6 @@ describe('Admin (API test)', () => {
           done_at: null,
           thematique_univers: ThematiqueUnivers.mobilite_quotidien,
           objectifs: [objectifComplete, objectifNonComplete],
-          prochaines_thematiques: [],
           est_visible: true,
           univers: Univers.transport,
         },
@@ -2322,7 +2181,6 @@ describe('Admin (API test)', () => {
           done_at: null,
           thematique_univers: ThematiqueUnivers.partir_vacances,
           objectifs: [objectifComplete, objectifNonComplete],
-          prochaines_thematiques: [],
           est_visible: true,
           univers: Univers.transport,
         },
@@ -2336,7 +2194,6 @@ describe('Admin (API test)', () => {
           done_at: new Date(),
           thematique_univers: ThematiqueUnivers.cereales,
           objectifs: [objectifComplete, objectifComplete],
-          prochaines_thematiques: [],
           est_visible: true,
           univers: Univers.alimentation,
         },
@@ -2345,7 +2202,6 @@ describe('Admin (API test)', () => {
           done_at: new Date(),
           thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
           objectifs: [objectifComplete, objectifComplete],
-          prochaines_thematiques: [],
           est_visible: true,
           univers: Univers.alimentation,
         },
@@ -2354,7 +2210,6 @@ describe('Admin (API test)', () => {
           done_at: null,
           thematique_univers: ThematiqueUnivers.mobilite_quotidien,
           objectifs: [objectifNonComplete, objectifNonComplete],
-          prochaines_thematiques: [],
           est_visible: true,
           univers: Univers.transport,
         },
@@ -2363,7 +2218,6 @@ describe('Admin (API test)', () => {
           done_at: new Date(),
           thematique_univers: ThematiqueUnivers.partir_vacances,
           objectifs: [objectifComplete, objectifComplete],
-          prochaines_thematiques: [],
           est_visible: true,
           univers: Univers.transport,
         },

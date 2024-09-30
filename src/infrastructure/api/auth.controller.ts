@@ -53,7 +53,6 @@ export class AuthController {
         annee_naissance: 1900,
         code_postal: '91120',
         commune: 'PALAISEAU',
-        //onboardingData: {} as any,
         source_inscription: SourceInscription.inconnue,
         mot_de_passe: undefined,
       });

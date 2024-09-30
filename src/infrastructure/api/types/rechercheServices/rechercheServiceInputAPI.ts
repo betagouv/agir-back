@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CategorieRecherche } from '../../../../domain/bibliotheque_services/categorieRecherche';
+import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 
 export class RechercheServiceInputAPI {
   @ApiProperty({ required: false, enum: CategorieRecherche })

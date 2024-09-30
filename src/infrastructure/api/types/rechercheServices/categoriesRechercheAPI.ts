@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   CategorieRecherche,
   CategorieRechercheManager,
-} from '../../../../domain/bibliotheque_services/categorieRecherche';
+} from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 
 export class CategoriesRechercheAPI {
   @ApiProperty({ enum: CategorieRecherche }) code: CategorieRecherche;

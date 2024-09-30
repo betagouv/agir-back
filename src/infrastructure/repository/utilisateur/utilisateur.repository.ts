@@ -7,12 +7,6 @@ import {
   Utilisateur,
   UtilisateurStatus,
 } from '../../../domain/utilisateur/utilisateur';
-import {
-  Impact,
-  Onboarding,
-  ThematiqueOnboarding,
-} from '../../../domain/onboarding/onboarding';
-import { OnboardingResult } from '../../../domain/onboarding/onboardingResult';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { Gamification } from '../../../domain/gamification/gamification';
 import { History } from '../../../../src/domain/history/history';
@@ -23,7 +17,6 @@ import {
 } from '../../../domain/object_store/upgrader';
 import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
 import { KYCHistory } from '../../../domain/kyc/kycHistory';
-import { Equipements } from '../../../../src/domain/equipements/equipements';
 import { Logement } from '../../../domain/logement/logement';
 import { Transport } from '../../../domain/transport/transport';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
@@ -184,57 +177,6 @@ export class UtilisateurRepository {
     }
   }
 
-  async countUsersWithAtLeastNThematiquesOfImpactGreaterThan(
-    minImpact: Impact,
-    nombreThematiques: number,
-  ): Promise<number> {
-    let query = `
-    SELECT count(1)
-    FROM "Utilisateur"
-    WHERE ( 0 + `;
-    for (
-      let impact: number = minImpact;
-      impact <= Impact.tres_eleve;
-      impact++
-    ) {
-      query = query.concat(
-        `+ JSONB_ARRAY_LENGTH("onboardingResult" -> 'ventilation_par_impacts' -> '${impact}') `,
-      );
-    }
-    query = query.concat(`) >= ${nombreThematiques}`);
-    let result = await this.prisma.$queryRawUnsafe(query);
-    return Number(result[0].count);
-  }
-
-  async countUsersWithLessImpactOnThematique(
-    maxImpact: Impact,
-    targetThematique: ThematiqueOnboarding,
-  ): Promise<number> {
-    let query = `
-    SELECT count(1)
-    FROM "Utilisateur"
-    WHERE CAST("onboardingResult" -> 'ventilation_par_thematiques' -> '${targetThematique}' AS INTEGER) < ${maxImpact}`;
-    let result = await this.prisma.$queryRawUnsafe(query);
-    return Number(result[0].count);
-  }
-
-  async countUsersWithMoreImpactOnThematiques(
-    minImpacts: Impact[],
-    targetThematiques: ThematiqueOnboarding[],
-  ): Promise<number> {
-    let query = `
-    SELECT count(1)
-    FROM "Utilisateur"
-    WHERE 1=1 `;
-    for (let index = 0; index < minImpacts.length; index++) {
-      query = query.concat(
-        ` AND CAST("onboardingResult" -> 'ventilation_par_thematiques' -> '${targetThematiques[index]}' AS INTEGER) > ${minImpacts[index]} `,
-      );
-    }
-    let result = await this.prisma.$queryRawUnsafe(query);
-    return Number(result[0].count);
-  }
-
   async nombreTotalUtilisateurs(): Promise<number> {
     const count = await this.prisma.utilisateur.count();
     return Number(count);
@@ -301,23 +243,11 @@ export class UtilisateurRepository {
       const gamification = new Gamification(
         Upgrader.upgradeRaw(user.gamification, SerialisableDomain.Gamification),
       );
-      const onboarding = new Onboarding(
-        Upgrader.upgradeRaw(user.onboardingData, SerialisableDomain.Onboarding),
-      );
-      const onboardingResult = new OnboardingResult(
-        Upgrader.upgradeRaw(
-          user.onboardingResult,
-          SerialisableDomain.OnboardingResult,
-        ),
-      );
       const kyc = new KYCHistory(
         Upgrader.upgradeRaw(user.kyc, SerialisableDomain.KYCHistory),
       );
       const defis = new DefiHistory(
         Upgrader.upgradeRaw(user.defis, SerialisableDomain.DefiHistory),
-      );
-      const equipements = new Equipements(
-        Upgrader.upgradeRaw(user.equipements, SerialisableDomain.Equipements),
       );
       const logement = new Logement(
         Upgrader.upgradeRaw(user.logement, SerialisableDomain.Logement),
@@ -348,8 +278,6 @@ export class UtilisateurRepository {
         abonnement_ter_loire: user.abonnement_ter_loire,
         passwordHash: user.passwordHash,
         passwordSalt: user.passwordSalt,
-        onboardingData: onboarding,
-        onboardingResult: onboardingResult,
         failed_login_count: user.failed_login_count,
         prevent_login_before: user.prevent_login_before,
         code: user.code,
@@ -365,7 +293,6 @@ export class UtilisateurRepository {
         gamification: gamification,
         history: history,
         kyc_history: kyc,
-        equipements: equipements,
         code_departement: user.code_departement,
         unlocked_features: unlocked_features,
         version: user.version,
@@ -415,14 +342,6 @@ export class UtilisateurRepository {
       prevent_checkcode_before: user.prevent_checkcode_before,
       sent_email_count: user.sent_email_count,
       prevent_sendemail_before: user.prevent_sendemail_before,
-      onboardingData: Upgrader.serialiseToLastVersion(
-        user.onboardingData,
-        SerialisableDomain.Onboarding,
-      ),
-      onboardingResult: Upgrader.serialiseToLastVersion(
-        user.onboardingResult,
-        SerialisableDomain.OnboardingResult,
-      ),
       todo: Upgrader.serialiseToLastVersion(
         user.parcours_todo,
         SerialisableDomain.ParcoursTodo,
@@ -438,10 +357,6 @@ export class UtilisateurRepository {
       history: Upgrader.serialiseToLastVersion(
         user.history,
         SerialisableDomain.History,
-      ),
-      equipements: Upgrader.serialiseToLastVersion(
-        user.equipements,
-        SerialisableDomain.Equipements,
       ),
       logement: Upgrader.serialiseToLastVersion(
         user.logement,

@@ -1,4 +1,4 @@
-import { FiltreRecherche } from '../../../../src/domain/bibliotheque_services/filtreRecherche';
+import { FiltreRecherche } from '../../../../src/domain/bibliotheque_services/recherche/filtreRecherche';
 import { AddressesRepository } from '../../../../src/infrastructure/repository/services_recherche/addresses.repository';
 import { PresDeChezNousRepository } from '../../../../src/infrastructure/repository/services_recherche/pres_de_chez_nous/presDeChezNous.repository';
 import { TestUtil, DB } from '../../../TestUtil';

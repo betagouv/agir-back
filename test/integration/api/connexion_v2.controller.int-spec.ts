@@ -8,7 +8,6 @@ import { Thematique } from '../../../src/domain/contenu/thematique';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { Univers } from '../../../src/domain/univers/univers';
-var crypto = require('crypto');
 
 function getFakeUtilisteur() {
   return {

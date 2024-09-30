@@ -63,10 +63,8 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
     expect(user.logement.code_postal).toEqual(null);
     expect(user.logement.commune).toEqual(null);
-    expect(user.unlocked_features.isUnlocked(Feature.bibliotheque)).toEqual(
-      true,
-    );
     expect(user.unlocked_features.isUnlocked(Feature.univers)).toEqual(true);
+    expect(user.unlocked_features.isUnlocked(Feature.services)).toEqual(true);
   });
   it('POST /utilisateurs_v2 - no user version defaults to 0', async () => {
     // GIVEN

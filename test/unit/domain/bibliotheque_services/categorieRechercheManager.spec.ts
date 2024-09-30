@@ -1,7 +1,7 @@
 import {
   CategorieRecherche,
   CategorieRechercheManager,
-} from '../../../../src/domain/bibliotheque_services/categorieRecherche';
+} from '../../../../src/domain/bibliotheque_services/recherche/categorieRecherche';
 
 describe('CategorieRechercheManager', () => {
   it(`isDefault : renvoie le bonne valeur true`, () => {

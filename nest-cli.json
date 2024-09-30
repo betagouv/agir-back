@@ -9,6 +9,26 @@
         "include": "../src/**/*.hbs",
         "outDir": "dist/src",
         "watchAssets": true
+      },
+      {
+        "include": "../src/**/*.node",
+        "outDir": "dist/src",
+        "watchAssets": true
+      },
+      {
+        "include": "../src/**/*.js",
+        "outDir": "dist/src",
+        "watchAssets": true
+      },
+      {
+        "include": "../src/**/*.d.ts",
+        "outDir": "dist/src",
+        "watchAssets": true
+      },
+      {
+        "include": "../src/**/*.prisma",
+        "outDir": "dist/src",
+        "watchAssets": true
       }
     ]
   }

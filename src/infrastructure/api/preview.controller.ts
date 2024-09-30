@@ -484,13 +484,6 @@ export class PreviewController extends GenericControler {
       }">${ThematiqueRepository.getTitreUnivers(mission_def.univers)}</a>`,
     );
     result.push(`Est visible : ${mission_def.est_visible}`);
-    result.push(
-      `Prochaines thématiques liées : ${
-        mission_def.prochaines_thematiques.length > 0
-          ? mission_def.prochaines_thematiques
-          : 'aucune'
-      }`,
-    );
 
     await this.dump_mission(result, mission_def);
 

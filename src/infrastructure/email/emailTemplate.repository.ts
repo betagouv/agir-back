@@ -64,8 +64,8 @@ export class EmailTemplateRepository {
             PRENOM: utilisateur.prenom,
             CONTACT_EMAIL: utilisateur.email,
             UNSUBSCRIBE_URL: unsubscribe_URL,
-            EMAIL_URL: 'https://',
             SERVICE_URL: `${App.getBaseURLFront()}/agir`,
+            HOME_URL: App.getBaseURLFront(),
           }),
         };
       case TypeNotification.late_onboarding:
@@ -75,8 +75,8 @@ export class EmailTemplateRepository {
             PRENOM: utilisateur.prenom,
             CONTACT_EMAIL: utilisateur.email,
             UNSUBSCRIBE_URL: unsubscribe_URL,
-            EMAIL_URL: 'https://',
             SERVICE_URL: `${App.getBaseURLFront()}/agir`,
+            HOME_URL: App.getBaseURLFront(),
           }),
         };
       case TypeNotification.waiting_action:
@@ -88,9 +88,9 @@ export class EmailTemplateRepository {
               PRENOM: utilisateur.prenom,
               CONTACT_EMAIL: utilisateur.email,
               UNSUBSCRIBE_URL: unsubscribe_URL,
-              EMAIL_URL: 'https://',
               TITRE_ACTION: defi.titre,
               ACTIONS_URL: `${App.getBaseURLFront()}/mon-compte/vos-actions`,
+              HOME_URL: App.getBaseURLFront(),
             }),
           };
         } else {

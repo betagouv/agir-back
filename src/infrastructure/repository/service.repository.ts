@@ -104,19 +104,6 @@ export class ServiceRepository {
     });
   }
 
-  async listeServicesOfUtilisateur(utilisateurId: string): Promise<Service[]> {
-    const result = await this.prisma.service.findMany({
-      where: {
-        utilisateurId: utilisateurId,
-        status: { not: ServiceStatus.TO_DELETE },
-      },
-      include: {
-        serviceDefinition: true,
-      },
-    });
-    return result.map((service) => this.buildService(service));
-  }
-
   async getServiceOfUtilisateur(
     utilisateurId: string,
     serviceDefinitionId: string,
@@ -135,23 +122,6 @@ export class ServiceRepository {
     return this.buildService(result);
   }
 
-  async listeServiceDefinitionsAndUserRelatedServices(
-    utilisateurId?: string,
-  ): Promise<ServiceDefinition[]> {
-    const result = await this.prisma.serviceDefinition.findMany({
-      include: {
-        services: {
-          where: {
-            utilisateurId: utilisateurId || 'XXX',
-          },
-        },
-      },
-      orderBy: {
-        id: 'asc',
-      },
-    });
-    return this.buildServiceDefinitionList(result, utilisateurId != undefined);
-  }
   async listeServiceDefinitionsToRefresh(): Promise<ServiceDefinition[]> {
     const result = await this.prisma.serviceDefinition.findMany({
       where: {

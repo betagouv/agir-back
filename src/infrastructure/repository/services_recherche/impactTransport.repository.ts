@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { App } from '../../../domain/app';
-import { CategorieRecherche } from '../../../domain/bibliotheque_services/categorieRecherche';
-import { FiltreRecherche } from '../../../domain/bibliotheque_services/filtreRecherche';
-import { FinderInterface } from '../../../domain/bibliotheque_services/finderInterface';
-import { ModeDeplacement } from '../../../domain/bibliotheque_services/modeDeplacement';
-import { ResultatRecherche } from '../../../domain/bibliotheque_services/resultatRecherche';
+import { CategorieRecherche } from '../../../domain/bibliotheque_services/recherche/categorieRecherche';
+import { FiltreRecherche } from '../../../domain/bibliotheque_services/recherche/filtreRecherche';
+import { FinderInterface } from '../../../domain/bibliotheque_services/recherche/finderInterface';
+import { ModeDeplacement } from '../../../domain/bibliotheque_services/types/modeDeplacement';
+import { ResultatRecherche } from '../../../domain/bibliotheque_services/recherche/resultatRecherche';
 import { DistancesRepository } from './distances.repository';
 
 const API_URL = 'https://impactco2.fr/api/v1/transport';

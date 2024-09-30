@@ -1,4 +1,4 @@
-import { Controller, Param, Request, Post } from '@nestjs/common';
+import { Controller, Param, Request, Post, Get } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -20,7 +20,7 @@ export class NotificationsController extends GenericControler {
     summary:
       'Desactive les notifications email pour un utilisateur via un token donné',
   })
-  @Post('notifications/email/:token/disable')
+  @Get('notifications/email/:token/disable')
   @ApiOkResponse({
     type: String,
   })

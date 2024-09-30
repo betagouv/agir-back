@@ -412,7 +412,7 @@ export class CMSUsecase {
     const URL = App.getCmsURL().concat(
       '/',
       type,
-      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[10]=prochaines_thematiques&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic',
+      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic',
     );
     return URL.concat(page);
   }
@@ -687,10 +687,6 @@ export class CMSUsecase {
     return {
       id_cms: entry.id,
       est_visible: entry.est_visible,
-      prochaines_thematiques:
-        entry.prochaines_thematiques.length > 0
-          ? entry.prochaines_thematiques.map((t) => t.code)
-          : [],
       thematique_univers: entry.thematique_univers_unique
         ? entry.thematique_univers_unique.code
         : null,
@@ -952,12 +948,6 @@ export class CMSUsecase {
     return {
       id_cms: entry.id,
       est_visible: entry.attributes.est_visible,
-      prochaines_thematiques:
-        entry.attributes.prochaines_thematiques.data.length > 0
-          ? entry.attributes.prochaines_thematiques.data.map(
-              (t) => t.attributes.code,
-            )
-          : [],
       thematique_univers: entry.attributes.thematique_univers_unique.data
         ? entry.attributes.thematique_univers_unique.data.attributes.code
         : null,
