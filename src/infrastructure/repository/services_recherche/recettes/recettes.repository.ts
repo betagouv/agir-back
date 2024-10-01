@@ -117,17 +117,25 @@ export type Ingredient_RAW = {
   forbidden_out_of_season: number; //0
 };
 
-const IMAGES_TMP = [
-  'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Ftian-de-sardines.jpg&w=3840&q=75',
-  'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Fshutterstock_1938638506-dinde-provencale.jpg&w=3840&q=75',
-  'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Fshutterstock_1169506885-salade-crevettes-curry.jpg&w=3840&q=75',
-  'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Fquiche-chou-saumon-et-salade.jpg&w=3840&q=75',
-  'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/_next/image?url=https%3A%2F%2Fapi-prod-fam.mangerbouger.fr%2Fstorage%2Frecettes%2Ftiramisu-aux-fruits-rouges.jpg&w=3840&q=75',
-];
 @Injectable()
 export class RecettesRepository implements FinderInterface {
   constructor() {}
 
+  public getMaxResultOfCategorie(cat: CategorieRecherche): number {
+    switch (cat) {
+      case CategorieRecherche.vege:
+        return 217;
+      case CategorieRecherche.vegan:
+        return 438;
+      case CategorieRecherche.dinde_volaille:
+        return 88;
+      case CategorieRecherche.saison:
+        return 811;
+
+      default:
+        return 0;
+    }
+  }
   public getManagedCategories(): CategorieRecherche[] {
     return [
       CategorieRecherche.vegan,
@@ -242,10 +250,17 @@ export class RecettesRepository implements FinderInterface {
     let ordre = 0;
     for (const etape of liste_raw_etapes) {
       ordre++;
+      let texte_etape = '';
+      try {
+        texte_etape = JSON.parse(etape.text)[0].children[0].text;
+      } catch (error) {
+        console.error(error);
+        console.error(etape.text);
+      }
       result.push(
         new EtapeRecette({
           ordre: ordre,
-          texte: JSON.parse(etape.text)[0].children[0].text,
+          texte: texte_etape,
         }),
       );
     }

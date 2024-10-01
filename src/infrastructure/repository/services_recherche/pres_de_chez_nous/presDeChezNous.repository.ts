@@ -68,6 +68,10 @@ export class PresDeChezNousRepository implements FinderInterface {
 
   constructor(private addressesRepository: AddressesRepository) {}
 
+  public getMaxResultOfCategorie(cat: CategorieRecherche): number {
+    return 999999999;
+  }
+
   public getManagedCategories(): CategorieRecherche[] {
     return [
       CategorieRecherche.circuit_court,

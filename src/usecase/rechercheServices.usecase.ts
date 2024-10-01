@@ -255,6 +255,63 @@ export class RechercheServicesUsecase {
     return result;
   }
 
+  async search_2(
+    utilisateurId: string,
+    serviceId: ServiceRechercheID,
+    filtre: FiltreRecherche,
+  ): Promise<{
+    liste: ResultatRecherche[];
+    encore_plus_resultats_dispo: boolean;
+  }> {
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
+    const finder = this.rechercheServiceManager.getFinderById(serviceId);
+
+    if (!finder) {
+      ApplicationError.throwUnkonwnSearchService(serviceId);
+    }
+
+    if (
+      filtre.categorie &&
+      !finder.getManagedCategories().includes(filtre.categorie)
+    ) {
+      ApplicationError.throwUnkonwnCategorieForSearchService(
+        serviceId,
+        filtre.categorie,
+      );
+    }
+
+    if (serviceId === ServiceRechercheID.proximite) {
+      if (!filtre.hasPoint()) {
+        if (!utilisateur.logement.code_postal) {
+          ApplicationError.throwUnkonwnUserLocation();
+        } else {
+          filtre.code_postal = utilisateur.logement.code_postal;
+          filtre.commune = utilisateur.logement.commune;
+        }
+      }
+    }
+
+    const result = await finder.find(filtre);
+
+    utilisateur.bilbiotheque_services.setDerniereRecherche(serviceId, result);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
+    this.completeFavorisDataToResult(serviceId, result, utilisateur);
+
+    let encore_plus_resultats_dispo = false;
+    if (result.length < finder.getMaxResultOfCategorie(filtre.categorie)) {
+      encore_plus_resultats_dispo = true;
+    }
+
+    return {
+      liste: result,
+      encore_plus_resultats_dispo: encore_plus_resultats_dispo,
+    };
+  }
+
   async getResultRechercheDetail(
     utilisateurId: string,
     serviceId: ServiceRechercheID,

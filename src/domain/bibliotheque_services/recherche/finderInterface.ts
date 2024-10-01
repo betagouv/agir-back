@@ -6,4 +6,6 @@ export interface FinderInterface {
   find(filtre: FiltreRecherche): Promise<ResultatRecherche[]>;
 
   getManagedCategories(): CategorieRecherche[];
+
+  getMaxResultOfCategorie(cat: CategorieRecherche): number;
 }

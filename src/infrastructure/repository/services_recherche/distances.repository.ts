@@ -25,6 +25,10 @@ export class DistancesRepository implements FinderInterface {
     return [];
   }
 
+  public getMaxResultOfCategorie(cat: CategorieRecherche): number {
+    return 999999999;
+  }
+
   public async find(filtre: FiltreRecherche): Promise<ResultatRecherche[]> {
     const mode = this.mapMode(filtre.mode_deplacement);
 

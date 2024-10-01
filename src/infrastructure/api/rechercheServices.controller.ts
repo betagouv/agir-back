@@ -21,7 +21,10 @@ import { GenericControler } from './genericControler';
 import { RechercheServicesUsecase } from '../../../src/usecase/rechercheServices.usecase';
 import { RechercheServiceInputAPI } from './types/rechercheServices/rechercheServiceInputAPI';
 import { ServiceRechercheID } from '../../domain/bibliotheque_services/recherche/serviceRechercheID';
-import { ResultatRechercheAPI } from './types/rechercheServices/resultatRecherchAPI';
+import {
+  ReponseRechecheAPI,
+  ResultatRechercheAPI,
+} from './types/rechercheServices/resultatRecherchAPI';
 import { CategoriesRechercheAPI } from './types/rechercheServices/categoriesRechercheAPI';
 import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { FiltreRecherche } from '../../domain/bibliotheque_services/recherche/filtreRecherche';
@@ -88,6 +91,61 @@ export class RechecheServicesController extends GenericControler {
       new FiltreRecherche(filtre),
     );
     return result.map((r) => ResultatRechercheAPI.mapToAPI(r));
+  }
+
+  @Post('utilisateurs/:utilisateurId/recherche_services/:serviceId/search2')
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `recherche une categorie au sein d'un service de recherche donné, indique si plus de résultats peuvent être récupérés`,
+  })
+  @ApiBody({
+    type: RechercheServiceInputAPI,
+  })
+  @ApiOkResponse({
+    type: ReponseRechecheAPI,
+  })
+  @ApiParam({ name: 'serviceId', enum: ServiceRechercheID })
+  async recherche2(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('serviceId') serviceId: ServiceRechercheID,
+    @Body() body: RechercheServiceInputAPI,
+  ): Promise<ReponseRechecheAPI> {
+    this.checkCallerId(req, utilisateurId);
+
+    if (body.categorie && !CategorieRecherche[body.categorie]) {
+      ApplicationError.throwUnkonwnCategorie(body.categorie);
+    }
+    const filtre = {
+      categorie: CategorieRecherche[body.categorie],
+      point: body.longitude
+        ? { latitude: body.latitude, longitude: body.longitude }
+        : undefined,
+      nombre_max_resultats: body.nombre_max_resultats,
+      rayon_metres: body.rayon_metres,
+      distance_metres: body.distance_metres,
+    };
+
+    if (body.latitude_depart) {
+      filtre['rect_A'] = {
+        latitude: body.latitude_depart,
+        longitude: body.longitude_depart,
+      };
+    }
+    if (body.latitude_arrivee) {
+      filtre['rect_B'] = {
+        latitude: body.latitude_arrivee,
+        longitude: body.longitude_arrivee,
+      };
+    }
+
+    const result = await this.rechercheServicesUsecase.search_2(
+      utilisateurId,
+      ServiceRechercheID[serviceId],
+      new FiltreRecherche(filtre),
+    );
+
+    return ReponseRechecheAPI.mapToAPI(result);
   }
 
   @Get('utilisateurs/:utilisateurId/recherche_services/:serviceId/favoris')

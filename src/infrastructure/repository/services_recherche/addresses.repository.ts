@@ -45,6 +45,10 @@ export class AddressesRepository implements FinderInterface {
     return [];
   }
 
+  public getMaxResultOfCategorie(cat: CategorieRecherche): number {
+    return 999999999;
+  }
+
   public async find(filtre: FiltreRecherche): Promise<ResultatRecherche[]> {
     const result = await this.callAddresseAPI(filtre.text);
 

@@ -32,6 +32,10 @@ export class FruitsLegumesRepository implements FinderInterface {
     private fruitsEtLegumesServiceManager: FruitsEtLegumesServiceManager,
   ) {}
 
+  public getMaxResultOfCategorie(cat: CategorieRecherche): number {
+    return 999999999;
+  }
+
   public getManagedCategories(): CategorieRecherche[] {
     return [
       CategorieRecherche.janvier,

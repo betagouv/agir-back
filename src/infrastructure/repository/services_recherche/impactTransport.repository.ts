@@ -73,6 +73,9 @@ export class ImpactTransportsRepository implements FinderInterface {
   public getManagedCategories(): CategorieRecherche[] {
     return [CategorieRecherche.any_transport];
   }
+  public getMaxResultOfCategorie(cat: CategorieRecherche): number {
+    return 999999999;
+  }
 
   public async find(filtre: FiltreRecherche): Promise<ResultatRecherche[]> {
     let distance_metres;
