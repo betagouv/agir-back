@@ -280,7 +280,7 @@ export class RecettesRepository implements FinderInterface {
 
   private mapCategoryPlat(cat: string): string {
     if (!cat) return '-';
-    if (cat.includes('ENT')) return 'Entée';
+    if (cat.includes('ENT')) return 'Entrée';
     if (cat.includes('DES')) return 'Déssert';
     if (cat.includes('PL')) return 'Plat';
     if (cat.includes('GAR')) return 'Garniture';
