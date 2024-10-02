@@ -24,23 +24,18 @@ export class UniversUsecase {
     let tuiles = ThematiqueRepository.getAllTuileUnivers();
     tuiles = tuiles.map((t) => new TuileUnivers(t));
 
-    if (!utilisateur.parcours_todo.isEndedTodo()) {
-      for (const t of tuiles) {
-        t.is_locked = true;
+    const blocked_univers = !utilisateur.parcours_todo.isEndedTodo();
+    for (const t of tuiles) {
+      t.is_locked = blocked_univers;
+    }
+
+    if (!blocked_univers) {
+      for (const univers of tuiles) {
+        univers.is_done = utilisateur.missions.isUniversDone(univers.type);
       }
-      return tuiles;
     }
 
-    let result: TuileUnivers[] = [];
-
-    result = result.concat(tuiles.filter((t) => !t.is_locked));
-    result = result.concat(tuiles.filter((t) => t.is_locked));
-
-    for (const univers of result) {
-      univers.is_done = utilisateur.missions.isUniversDone(univers.type);
-    }
-
-    return this.personnalisator.personnaliser(result, utilisateur);
+    return this.personnalisator.personnaliser(tuiles, utilisateur);
   }
 
   async getThematiquesOfUnivers(

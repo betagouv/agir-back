@@ -763,7 +763,6 @@ describe('/api/incoming/cms (API test)', () => {
     expect(universDB).toHaveLength(1);
     expect(universDB[0].id_cms).toEqual(1);
     expect(universDB[0].label).toEqual('yo');
-    expect(universDB[0].is_locked).toEqual(false);
     expect(universDB[0].code).toEqual(Univers.climat);
     expect(universDB[0].image_url).toEqual('https://haha');
   });

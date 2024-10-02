@@ -433,7 +433,6 @@ export class CMSUsecase {
       label: cmsWebhookAPI.entry.label,
       id_cms: cmsWebhookAPI.entry.id,
       image_url: CMSUsecase.getImageUrl(cmsWebhookAPI.entry),
-      is_locked: cmsWebhookAPI.entry.is_locked,
     });
   }
 
@@ -840,7 +839,6 @@ export class CMSUsecase {
       id_cms: entry.id,
       label: entry.attributes.label,
       image_url: this.getImageUrlFromPopulate(entry),
-      is_locked: entry.attributes.is_locked,
       code: entry.attributes.code,
     };
   }

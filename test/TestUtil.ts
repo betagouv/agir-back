@@ -583,7 +583,6 @@ export class TestUtil {
       label: 'Le Climat !',
       code: Univers.climat,
       image_url: 'https://',
-      is_locked: false,
       created_at: undefined,
       updated_at: undefined,
       ...override,

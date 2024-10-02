@@ -43,28 +43,24 @@ describe('/bilan (API test)', () => {
       code: Univers.transport,
       label: 'The Transport',
       image_url: 'aaaa',
-      is_locked: false,
     });
     await TestUtil.create(DB.univers, {
       id_cms: 2,
       code: Univers.logement,
       label: 'Logement',
       image_url: 'bbbb',
-      is_locked: false,
     });
     await TestUtil.create(DB.univers, {
       id_cms: 3,
       code: Univers.consommation,
       label: 'Consommation',
       image_url: 'bbbb',
-      is_locked: false,
     });
     await TestUtil.create(DB.univers, {
       id_cms: 4,
       code: Univers.alimentation,
       label: 'Alimentation',
       image_url: 'bbbb',
-      is_locked: false,
     });
     await thematiqueRepository.loadUnivers();
 
