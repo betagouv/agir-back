@@ -177,7 +177,7 @@ export class Utilisateur extends UtilisateurData {
       couverture_aides_ok: false,
       source_inscription: source_inscription,
       notification_history: new NotificationHistory(),
-      unsubscribe_mail_token: crypto.randomUUID(),
+      unsubscribe_mail_token: Utilisateur.generateEmailToken(),
     });
   }
 
@@ -193,8 +193,12 @@ export class Utilisateur extends UtilisateurData {
 
   public setUnsubscribeEmailTokenIfMissing?() {
     if (!this.unsubscribe_mail_token) {
-      this.unsubscribe_mail_token = crypto.randomUUID();
+      this.unsubscribe_mail_token = Utilisateur.generateEmailToken();
     }
+  }
+
+  private static generateEmailToken?(): string {
+    return App.isProd() ? crypto.randomUUID() : '123456789';
   }
 
   public isOnboardingDone?(): boolean {

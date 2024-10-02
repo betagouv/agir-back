@@ -119,14 +119,10 @@ export class MailerUsecase {
     type_notif: TypeNotification,
     utilisateur: Utilisateur,
   ): Promise<boolean> {
-    const token = App.isProd()
-      ? utilisateur.unsubscribe_mail_token
-      : '123456789';
-
     const email = this.emailTemplateRepository.generateEmailByType(
       type_notif,
       utilisateur,
-      token,
+      utilisateur.unsubscribe_mail_token,
     );
 
     if (email) {
