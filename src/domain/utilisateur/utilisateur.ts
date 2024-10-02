@@ -20,6 +20,7 @@ import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServi
 import { KYCID } from '../kyc/KYCID';
 import validator from 'validator';
 import { NotificationHistory } from '../notification/notificationHistory';
+var crypto = require('crypto');
 
 export enum UtilisateurStatus {
   default = 'default',
@@ -176,7 +177,7 @@ export class Utilisateur extends UtilisateurData {
       couverture_aides_ok: false,
       source_inscription: source_inscription,
       notification_history: new NotificationHistory(),
-      unsubscribe_mail_token: null,
+      unsubscribe_mail_token: crypto.randomUUID(),
     });
   }
 
@@ -188,6 +189,12 @@ export class Utilisateur extends UtilisateurData {
     this.history.reset();
     this.defi_history.reset();
     this.kyc_history.reset();
+  }
+
+  public setUnsubscribeEmailTokenIfMissing?() {
+    if (!this.unsubscribe_mail_token) {
+      this.unsubscribe_mail_token = crypto.randomUUID();
+    }
   }
 
   public isOnboardingDone?(): boolean {
