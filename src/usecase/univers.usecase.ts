@@ -24,15 +24,8 @@ export class UniversUsecase {
     let tuiles = ThematiqueRepository.getAllTuileUnivers();
     tuiles = tuiles.map((t) => new TuileUnivers(t));
 
-    const blocked_univers = !utilisateur.parcours_todo.isEndedTodo();
-    for (const t of tuiles) {
-      t.is_locked = blocked_univers;
-    }
-
-    if (!blocked_univers) {
-      for (const univers of tuiles) {
-        univers.is_done = utilisateur.missions.isUniversDone(univers.type);
-      }
+    for (const univers of tuiles) {
+      univers.is_done = utilisateur.missions.isUniversDone(univers.type);
     }
 
     return this.personnalisator.personnaliser(tuiles, utilisateur);

@@ -748,7 +748,6 @@ describe('/api/incoming/cms (API test)', () => {
         id: 1,
         label: 'yo',
         code: Univers.climat,
-        is_locked: false,
         imageUrl: {
           formats: {
             thumbnail: { url: 'https://haha' },

@@ -3,7 +3,6 @@ export class TuileUnivers {
   titre: string;
   type: string;
   etoiles: number;
-  is_locked?: boolean;
   image_url: string;
   is_done: boolean;
 
