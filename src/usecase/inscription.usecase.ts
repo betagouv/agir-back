@@ -21,7 +21,7 @@ export type Phrase = {
 };
 
 @Injectable()
-export class Inscription_v2_Usecase {
+export class InscriptionUsecase {
   constructor(
     private utilisateurRespository: UtilisateurRepository,
     private emailSender: EmailSender,

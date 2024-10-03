@@ -109,7 +109,7 @@ import { MagicLinkController } from './infrastructure/api/magicLink.controller';
 import { ImpactTransportsRepository } from './infrastructure/repository/services_recherche/impactTransport.repository';
 import { DistancesRepository } from './infrastructure/repository/services_recherche/distances.repository';
 import { ConnexionController } from './infrastructure/api/connexion.controller';
-import { Inscription_v2_Usecase } from './usecase/inscription.usecase';
+import { InscriptionUsecase } from './usecase/inscription.usecase';
 import { ProfileUsecase } from './usecase/profile.usecase';
 import { ProfileController } from './infrastructure/api/profile.controller';
 import { Connexion_v2_Usecase } from './usecase/connexion.usecase';
@@ -214,7 +214,7 @@ function getControllers(): any[] {
     BibliothequeUsecase,
     LinkyAPIConnector,
     LinkyEmailer,
-    Inscription_v2_Usecase,
+    InscriptionUsecase,
     AideRepository,
     DefiRepository,
     DefisUsecase,

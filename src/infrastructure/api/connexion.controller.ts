@@ -17,7 +17,6 @@ import {
   ApiProperty,
 } from '@nestjs/swagger';
 import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
-import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
 import { LoginUtilisateurAPI } from './types/utilisateur/loginUtilisateurAPI';
 import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
 import { ApplicationError } from '../applicationError';
@@ -35,7 +34,7 @@ export class ConfirmationAPI {
   confirmation: string;
 }
 
-@ApiExtraModels(CreateUtilisateurAPI, UtilisateurAPI)
+@ApiExtraModels(UtilisateurAPI)
 @Controller()
 @ApiBearerAuth()
 @ApiTags('1 - Utilisateur - Connexion')

@@ -6,20 +6,19 @@ import {
   ApiExtraModels,
   ApiOperation,
 } from '@nestjs/swagger';
-import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
 import { ProspectSubmitAPI } from './types/utilisateur/onboarding/prospectSubmitAPI';
 import { ValidateCodeAPI } from './types/utilisateur/onboarding/validateCodeAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { GenericControler } from './genericControler';
 import { TokenAPI } from './types/utilisateur/TokenAPI';
 import { EmailAPI } from './types/utilisateur/EmailAPI';
-import { Inscription_v2_Usecase } from '../../usecase/inscription.usecase';
+import { InscriptionUsecase } from '../../usecase/inscription.usecase';
+import { CreateUtilisateurAPI_v2 } from './types/utilisateur/onboarding/createUtilisateurAPI_v2';
 
-@ApiExtraModels(CreateUtilisateurAPI)
 @Controller()
 @ApiTags('1 - Utilisateur - Inscription')
 export class InscriptionController extends GenericControler {
-  constructor(private readonly inscription_v2_Usecase: Inscription_v2_Usecase) {
+  constructor(private readonly inscription_v2_Usecase: InscriptionUsecase) {
     super();
   }
 
@@ -28,12 +27,12 @@ export class InscriptionController extends GenericControler {
     summary: "création d'un compte, seul email et mot de passe obligatoire",
   })
   @ApiBody({
-    type: CreateUtilisateurAPI,
+    type: CreateUtilisateurAPI_v2,
   })
   @ApiOkResponse({
     type: ProspectSubmitAPI,
   })
-  async createUtilisateur_v2(@Body() body: CreateUtilisateurAPI) {
+  async createUtilisateur_v2(@Body() body: CreateUtilisateurAPI_v2) {
     await this.inscription_v2_Usecase.createUtilisateur(body);
     return EmailAPI.mapToAPI(body.email);
   }

@@ -27,7 +27,6 @@ import {
   UtilisateurProfileAPI,
   UtilisateurUpdateProfileAPI,
 } from './types/utilisateur/utilisateurProfileAPI';
-import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
 
@@ -36,7 +35,7 @@ export class ConfirmationAPI {
   confirmation: string;
 }
 
-@ApiExtraModels(CreateUtilisateurAPI, UtilisateurAPI)
+@ApiExtraModels(UtilisateurAPI)
 @Controller()
 @ApiBearerAuth()
 @ApiTags('1 - Utilisateur - Profile')
