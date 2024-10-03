@@ -169,105 +169,105 @@ export class QuestionKYCUsecase {
     if (!code_reponse_unique) return;
 
     if (code_reponse_unique === 'vegetalien') {
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_vegetaliens,
         ['14'],
       );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_vegetariens,
         ['0'],
       );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_poisson_blanc,
         ['0'],
       );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_poisson_gras,
         ['0'],
       );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_viande_blanche,
         ['0'],
       );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_viande_rouge,
         ['0'],
       );
     }
     if (code_reponse_unique === 'vegetarien') {
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_vegetaliens,
         ['3'],
       );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_vegetariens,
         ['11'],
       );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_poisson_blanc,
         ['0'],
       );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_poisson_gras,
         ['0'],
       );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_viande_blanche,
         ['0'],
       );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_viande_rouge,
         ['0'],
       );
     }
     if (code_reponse_unique === 'peu_viande') {
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_vegetaliens,
         ['1'],
       );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_vegetariens,
         ['7'],
       );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_poisson_blanc,
         ['1'],
       );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_poisson_gras,
         ['1'],
       );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_viande_blanche,
         ['4'],
       );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_viande_rouge,
         ['0'],
       );
     }
     if (code_reponse_unique === 'chaque_jour_viande') {
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_vegetaliens,
         ['0'],
       );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_vegetariens,
         ['0'],
       );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_poisson_blanc,
         ['1'],
       );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_poisson_gras,
         ['1'],
       );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_viande_blanche,
         ['6'],
       );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         KYCID.KYC_nbr_plats_viande_rouge,
         ['6'],
       );
@@ -328,7 +328,7 @@ export class QuestionKYCUsecase {
     }
 
     if (labels_reponse) {
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         code_question,
         labels_reponse,
       );

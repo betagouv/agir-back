@@ -209,6 +209,13 @@ export class QuestionKYC implements TaggedContent {
     const found = this.reponses_possibles.find((r) => r.label === label);
     return found ? found.code : null;
   }
+  public getCodeByNGCCode(ngc_code: string): string {
+    if (!this.reponses_possibles) {
+      return null;
+    }
+    const found = this.reponses_possibles.find((r) => r.ngc_code === ngc_code);
+    return found ? found.code : null;
+  }
 
   private getNGCCodeByLabel(label: string): string {
     if (!this.reponses_possibles) {

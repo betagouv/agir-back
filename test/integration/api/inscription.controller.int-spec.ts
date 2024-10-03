@@ -2,6 +2,9 @@ import { UtilisateurRepository } from '../../../src/infrastructure/repository/ut
 import { DB, TestUtil } from '../../TestUtil';
 import { Feature } from '../../../src/domain/gamification/feature';
 import { UtilisateurStatus } from '../../../src/domain/utilisateur/utilisateur';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import { Categorie } from '../../../src/domain/contenu/categorie';
 
 describe('/utilisateurs - Inscription - (API test)', () => {
   const OLD_ENV = process.env;
@@ -27,8 +30,6 @@ describe('/utilisateurs - Inscription - (API test)', () => {
   it('POST /utilisateurs_v2 - create new utilisateur avec seulement email et mot de passe', async () => {
     // GIVEN
     process.env.USER_CURRENT_VERSION = '2';
-    process.env.WHITE_LIST_ENABLED = 'false';
-    process.env.WHITE_LIST = 'hahah';
     process.env.OTP_DEV = '112233';
 
     // WHEN
@@ -85,7 +86,6 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
   it('POST /utilisateurs_v2 - bad password', async () => {
     // GIVEN
-    process.env.WHITE_LIST_ENABLED = 'false';
     // WHEN
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
       mot_de_passe: 'to use',
@@ -128,8 +128,6 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
   it('POST /utilisateurs - returns NO error when email match as case insensitive', async () => {
     // GIVEN
-    process.env.WHITE_LIST_ENABLED = 'true';
-    process.env.WHITE_LIST = 'w@w.com';
 
     // WHEN
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
@@ -399,5 +397,86 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(dbUser.prevent_checkcode_before.getTime()).toBeGreaterThan(
       new Date().getTime(),
     );
+  });
+
+  it(`POST /utilisateurs_v2 - integration situation NGC à l'inscription`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_transport_voiture_km,
+      type: TypeReponseQuestionKYC.entier,
+      is_ngc: true,
+      question: `Km en voiture ?`,
+      points: 10,
+      categorie: Categorie.test,
+      reponses: [],
+      ngc_key: 'transport . voiture . km',
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID.KYC_chauffage_bois,
+      type: TypeReponseQuestionKYC.choix_unique,
+      is_ngc: true,
+      question: `chauffage bois ?`,
+      points: 10,
+      categorie: Categorie.test,
+      reponses: [
+        { label: 'Oui', code: 'oui', ngc_code: 'oui' },
+        { label: 'Non', code: 'non', ngc_code: 'non' },
+        { label: 'Je sais pas', code: 'sais_pas', ngc_code: null },
+      ],
+      ngc_key: 'logement . chauffage . bois . présent',
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs_v2')
+      .send({
+        mot_de_passe: '#1234567890HAHAa',
+        email: 'w@w.com',
+        source_inscription: 'mobile',
+        situation_ngc: {
+          'transport . voiture . km': 20000,
+          'logement . chauffage . bois . présent': 'oui',
+        },
+      });
+    // THEN
+
+    expect(response.status).toBe(201);
+    const user = await utilisateurRepository.findByEmail('w@w.com');
+
+    const kyc_voiture = user.kyc_history.getAnsweredQuestionByCode(
+      KYCID.KYC_transport_voiture_km,
+    );
+    expect(kyc_voiture).not.toBeUndefined();
+    expect(kyc_voiture.hasAnyResponses()).toEqual(true);
+    expect(kyc_voiture.listeReponsesLabels()).toEqual(['20000']);
+
+    const kyc_bois = user.kyc_history.getAnsweredQuestionByCode(
+      KYCID.KYC_chauffage_bois,
+    );
+    expect(kyc_bois).not.toBeUndefined();
+    expect(kyc_bois.hasAnyResponses()).toEqual(true);
+    expect(kyc_bois.listeReponsesLabels()).toEqual(['Oui']);
+  });
+  it(`POST /utilisateurs_v2 - integration situation NGC , pas d'erreurs si clé pas connu`, async () => {
+    // GIVEN
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs_v2')
+      .send({
+        mot_de_passe: '#1234567890HAHAa',
+        email: 'w@w.com',
+        source_inscription: 'mobile',
+        situation_ngc: {
+          'transport . velo . km': 20000,
+        },
+      });
+    // THEN
+
+    expect(response.status).toBe(201);
+    const user = await utilisateurRepository.findByEmail('w@w.com');
+
+    expect(user.kyc_history.answered_questions).toHaveLength(0);
   });
 });

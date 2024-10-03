@@ -13,7 +13,7 @@ import { GenericControler } from './genericControler';
 import { TokenAPI } from './types/utilisateur/TokenAPI';
 import { EmailAPI } from './types/utilisateur/EmailAPI';
 import { InscriptionUsecase } from '../../usecase/inscription.usecase';
-import { CreateUtilisateurAPI_v2 } from './types/utilisateur/onboarding/createUtilisateurAPI_v2';
+import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
 
 @Controller()
 @ApiTags('1 - Utilisateur - Inscription')
@@ -27,12 +27,12 @@ export class InscriptionController extends GenericControler {
     summary: "création d'un compte, seul email et mot de passe obligatoire",
   })
   @ApiBody({
-    type: CreateUtilisateurAPI_v2,
+    type: CreateUtilisateurAPI,
   })
   @ApiOkResponse({
     type: ProspectSubmitAPI,
   })
-  async createUtilisateur_v2(@Body() body: CreateUtilisateurAPI_v2) {
+  async createUtilisateur_v2(@Body() body: CreateUtilisateurAPI) {
     await this.inscription_v2_Usecase.createUtilisateur(body);
     return EmailAPI.mapToAPI(body.email);
   }

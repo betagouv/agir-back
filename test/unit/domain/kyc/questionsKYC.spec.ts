@@ -515,7 +515,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // WHEN
     try {
-      questionsKYC.updateQuestionByCodeWithLabel('1234', ['yo']);
+      questionsKYC.updateQuestionByCodeWithLabelOrException('1234', ['yo']);
       fail();
     } catch (error) {
       // THEN

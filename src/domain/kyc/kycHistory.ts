@@ -8,7 +8,8 @@ import { KYCID } from './KYCID';
 import { KYCMosaicID } from './KYCMosaicID';
 import { MosaicKYC, MosaicKYCDef } from './mosaicKYC';
 import { QuestionGeneric } from './questionGeneric';
-import { QuestionKYC } from './questionKYC';
+import { QuestionKYC, TypeReponseQuestionKYC } from './questionKYC';
+import validator from 'validator';
 
 type LogementInput = {
   nombre_adultes?: number;
@@ -84,9 +85,39 @@ export class KYCHistory {
     return result;
   }
 
+  public injectSituationNGC(situation: object): string[] {
+    const result = [];
+    for (const [key, value] of Object.entries(situation)) {
+      const kyc = this.getKYCByNGCKeyFromCatalogue(key);
+
+      if (kyc && kyc.is_NGC) {
+        const string_value = '' + value;
+
+        const is_kyc_number =
+          kyc.type === TypeReponseQuestionKYC.entier ||
+          kyc.type === TypeReponseQuestionKYC.decimal;
+
+        if (validator.isInt(string_value) && is_kyc_number) {
+          this.updateQuestionByNGCKeyWithLabel(key, [string_value]);
+          result.push(key);
+        } else if (validator.isDecimal(string_value) && is_kyc_number) {
+          this.updateQuestionByNGCKeyWithLabel(key, [string_value]);
+          result.push(key);
+        } else if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
+          const code_reponse = kyc.getCodeByNGCCode(string_value);
+          if (code_reponse) {
+            this.updateQuestionByCodeWithCode(kyc.id, code_reponse);
+            result.push(key);
+          }
+        }
+      }
+    }
+    return result;
+  }
+
   public patchLogement(input: LogementInput) {
     if (input.dpe) {
-      this.updateQuestionByCodeWithLabel(KYCID.KYC_DPE, [input.dpe]);
+      this.updateQuestionByCodeWithLabelOrException(KYCID.KYC_DPE, [input.dpe]);
     }
     if (input.superficie) {
       const value: Record<Superficie, number> = {
@@ -96,7 +127,7 @@ export class KYCHistory {
         superficie_150: 149,
         superficie_150_et_plus: 200,
       };
-      this.updateQuestionByCodeWithLabel(KYCID.KYC_superficie, [
+      this.updateQuestionByCodeWithLabelOrException(KYCID.KYC_superficie, [
         value[input.superficie].toString(),
       ]);
     }
@@ -134,7 +165,7 @@ export class KYCHistory {
     }
 
     if (input.nombre_adultes || input.nombre_enfants) {
-      this.updateQuestionByCodeWithLabel(KYCID.KYC_menage, [
+      this.updateQuestionByCodeWithLabelOrException(KYCID.KYC_menage, [
         '' +
           ((input.nombre_adultes ? input.nombre_adultes : 0) +
             (input.nombre_enfants ? input.nombre_enfants : 0)),
@@ -256,12 +287,25 @@ export class KYCHistory {
     return !!this.getAnsweredQuestionByCode(code);
   }
 
-  public updateQuestionByCodeWithLabel(code: string, reponses: string[]) {
+  public updateQuestionByCodeWithLabelOrException(
+    code: string,
+    reponses: string[],
+  ) {
     let question = this.getAnsweredQuestionByCode(code);
     if (question) {
       question.setResponses(reponses);
     } else {
       let question_catalogue = this.getKYCByCodeFromCatalogueOrException(code);
+      question_catalogue.setResponses(reponses);
+      this.answered_questions.push(question_catalogue);
+    }
+  }
+  public updateQuestionByNGCKeyWithLabel(ngc_key: string, reponses: string[]) {
+    let question = this.getAnsweredQuestionByNGCKey(ngc_key);
+    if (question) {
+      question.setResponses(reponses);
+    } else {
+      let question_catalogue = this.getKYCByNGCKeyFromCatalogue(ngc_key);
       question_catalogue.setResponses(reponses);
       this.answered_questions.push(question_catalogue);
     }
@@ -316,6 +360,9 @@ export class KYCHistory {
   public getAnsweredQuestionByCode(id: string): QuestionKYC {
     return this.answered_questions.find((element) => element.id === id);
   }
+  public getAnsweredQuestionByNGCKey(key: string): QuestionKYC {
+    return this.answered_questions.find((element) => element.ngc_key === key);
+  }
   public getAnsweredQuestionByCMS_ID(cms_id: number): QuestionKYC {
     const found = this.answered_questions.find(
       (element) => element.id_cms === cms_id,
@@ -336,6 +383,16 @@ export class KYCHistory {
   private getKYCByCodeFromCatalogue(code: string): QuestionKYC {
     const question_def = this.catalogue.find(
       (element) => element.code === code,
+    );
+
+    if (question_def) {
+      return QuestionKYC.buildFromDef(question_def);
+    }
+    return null;
+  }
+  private getKYCByNGCKeyFromCatalogue(key: string): QuestionKYC {
+    const question_def = this.catalogue.find(
+      (element) => element.ngc_key === key,
     );
 
     if (question_def) {
