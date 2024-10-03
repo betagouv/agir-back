@@ -17,6 +17,7 @@ import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.rep
 import { Contact } from '../contact/contact';
 import { ContactSynchro } from '../contact/contactSynchro';
 import { GenericControler } from './genericControler';
+import { ProfileUsecase } from '../../usecase/profile.usecase';
 
 @Controller()
 @ApiTags('TestData')
@@ -29,6 +30,7 @@ export class TestDataController extends GenericControler {
     private migrationUsecase: MigrationUsecase,
     public contactSynchro: ContactSynchro,
     private utilisateurRepository2: UtilisateurRepository,
+    private profileUsecase: ProfileUsecase,
   ) {
     super();
   }
@@ -82,7 +84,7 @@ export class TestDataController extends GenericControler {
   async injectUserId(utilisateurId: string): Promise<string> {
     if (!utilisateurs_content[utilisateurId]) return '{}';
     await this.deleteUtilisateur(utilisateurId);
-    await this.upsertUtilisateur(utilisateurId);
+    await this.insertUtilisateur(utilisateurId);
     await this.upsertServicesDefinitions();
     await this.insertServicesForUtilisateur(utilisateurId);
     await this.insertLinkyDataForUtilisateur(utilisateurId);
@@ -184,7 +186,12 @@ export class TestDataController extends GenericControler {
       where: { id: utilisateurId },
     });
   }
-  async upsertUtilisateur(utilisateurId: string) {
+  async insertUtilisateur(utilisateurId: string) {
+    const user = await this.utilisateurRepository2.getById(utilisateurId);
+    if (user) {
+      await this.profileUsecase.deleteUtilisateur(utilisateurId);
+    }
+
     const clonedData = { ...utilisateurs_content[utilisateurId] };
     delete clonedData.interactions;
     delete clonedData.bilans;
@@ -195,6 +202,8 @@ export class TestDataController extends GenericControler {
     if (!clonedData.todo) {
       clonedData.todo = new ParcoursTodo();
     }
+
+    clonedData.unsubscribe_mail_token = '123456789';
 
     PasswordManager.setUserPassword(clonedData, clonedData.mot_de_passe);
     delete clonedData.mot_de_passe;
