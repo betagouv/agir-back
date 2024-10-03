@@ -22,18 +22,6 @@ describe('/bilan (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('GET /utilisateur/id/bilans/last - 403 if bad id', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.situationNGC);
-    await TestUtil.create(DB.empreinte);
-
-    // WHEN
-    const response = await TestUtil.GET('/utilisateur/autre-id/bilans/last');
-
-    //THEN
-    expect(response.status).toBe(403);
-  });
   it('GET /utilisateur/id/bilans/last - get last bilan with proper data', async () => {
     // GIVEN
     const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -426,35 +414,6 @@ describe('/bilan (API test)', () => {
     expect(response.body.impact_kg_annee).toEqual(9048.184937832844);
   });
 
-  it.skip('POST /utilisateur/id/bilans - compute and create new Bilan', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.situationNGC);
-
-    // WHEN
-    const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/bilans/situationNGC-id',
-    );
-
-    //THEN
-    expect(response.status).toBe(201);
-
-    /*
-    const bilanDB = await TestUtil.prisma.empreinte.findMany({
-      include: { situation: true },
-    });
-    expect(bilanDB).toHaveLength(1);
-    expect(bilanDB[0]['situation'].situation).toStrictEqual({
-      'transport . voiture . km': 12000,
-    });
-    expect(Math.floor(bilanDB[0].bilan['details'].transport)).toStrictEqual(
-      2552,
-    );
-    expect(Math.floor(bilanDB[0].bilan['details'].alimentation)).toStrictEqual(
-      2328,
-    );
-    */
-  });
   it('POST /bilan/importFromNGC - creates new situation', async () => {
     // WHEN
     const response = await TestUtil.POST('/bilan/importFromNGC').send({
@@ -472,7 +431,7 @@ describe('/bilan (API test)', () => {
     });
 
     expect(response.headers.location).toEqual(
-      `${App.getBaseURLFront()}/creation-compte?situatio_id=${
+      `${App.getBaseURLFront()}/creation-compte?situation_id=${
         situationDB[0].id
       }`,
     );

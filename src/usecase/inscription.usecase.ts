@@ -16,7 +16,7 @@ import { CodeManager } from '../domain/utilisateur/manager/codeManager';
 import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/onboarding/createUtilisateurAPI';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { BilanUsecase } from './bilan.usecase';
-import { BilanRepository } from '../infrastructure/repository/bilan.repository';
+import { SituationNGCRepository } from '../infrastructure/repository/bilan.repository';
 
 export type Phrase = {
   phrase: string;
@@ -33,7 +33,7 @@ export class InscriptionUsecase {
     private oidcService: OidcService,
     private codeManager: CodeManager,
     private kycRepository: KycRepository,
-    private bilanRepository: BilanRepository,
+    private bilanRepository: SituationNGCRepository,
   ) {}
 
   async createUtilisateur(utilisateurInput: CreateUtilisateurAPI) {

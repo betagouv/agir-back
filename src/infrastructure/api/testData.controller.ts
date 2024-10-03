@@ -8,7 +8,6 @@ import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwor
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
 const service_catalogue = require('../../../src/usecase/referentiel/service_catalogue');
 const _linky_data = require('../../../test_data/PRM_thermo_pas_sensible');
-const empreintes_utilisateur = require('../../../test_data/evenements/bilans');
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { LinkyRepository } from '../repository/linky.repository';
 import { ServiceStatus } from '../../../src/domain/service/service';
@@ -88,7 +87,6 @@ export class TestDataController extends GenericControler {
     await this.upsertServicesDefinitions();
     await this.insertServicesForUtilisateur(utilisateurId);
     await this.insertLinkyDataForUtilisateur(utilisateurId);
-    await this.insertEmpreintesForUtilisateur(utilisateurId);
     return utilisateurs_content[utilisateurId];
   }
 
@@ -110,35 +108,6 @@ export class TestDataController extends GenericControler {
     }
   }
 
-  async insertEmpreintesForUtilisateur(utilisateurId: string) {
-    const empreintes = utilisateurs_content[utilisateurId].bilans;
-    if (!empreintes) return;
-    for (let index = 0; index < empreintes.length; index++) {
-      const empreinteId = empreintes[index];
-      const empreinte = empreintes_utilisateur[empreinteId];
-      if (empreinte) {
-        const situationId = uuidv4();
-        await this.prisma.situationNGC.create({
-          data: {
-            id: situationId,
-            situation: empreinte.situation,
-          },
-        });
-        let data = {
-          ...empreinte,
-          created_at: new Date(Date.parse(empreinte.date)),
-          id: uuidv4(),
-          utilisateurId,
-          situationId,
-          date: undefined,
-          situation: undefined,
-        };
-        await this.prisma.empreinte.create({
-          data,
-        });
-      }
-    }
-  }
   async insertServicesForUtilisateur(utilisateurId: string) {
     const services = utilisateurs_content[utilisateurId].services;
     if (!services) return;
@@ -173,11 +142,6 @@ export class TestDataController extends GenericControler {
 
   async deleteUtilisateur(utilisateurId: string) {
     await this.prisma.service.deleteMany({
-      where: {
-        utilisateurId,
-      },
-    });
-    await this.prisma.empreinte.deleteMany({
       where: {
         utilisateurId,
       },

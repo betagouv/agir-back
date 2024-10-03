@@ -26,7 +26,6 @@ import {
   TypeLogement,
 } from '../src/domain/logement/logement';
 import {
-  Empreinte,
   SituationNGC,
   Univers as UniversDB,
   ThematiqueUnivers as ThematiqueUniversDB,
@@ -69,7 +68,6 @@ export enum DB {
   utilisateur = 'utilisateur',
   aide = 'aide',
   defi = 'defi',
-  empreinte = 'empreinte',
   service = 'service',
   serviceDefinition = 'serviceDefinition',
   thematique = 'thematique',
@@ -90,7 +88,6 @@ export class TestUtil {
     utilisateur: TestUtil.utilisateurData,
     aide: TestUtil.aideData,
     defi: TestUtil.defiData,
-    empreinte: TestUtil.empreinteData,
     service: TestUtil.serviceData,
     serviceDefinition: TestUtil.serviceDefinitionData,
     thematique: TestUtil.thematiqueData,
@@ -168,7 +165,6 @@ export class TestUtil {
   static async deleteAll() {
     await this.prisma.service.deleteMany();
     await this.prisma.serviceDefinition.deleteMany();
-    await this.prisma.empreinte.deleteMany();
     await this.prisma.utilisateur.deleteMany();
     await this.prisma.situationNGC.deleteMany();
     await this.prisma.thematique.deleteMany();
@@ -381,25 +377,6 @@ export class TestUtil {
     };
   }
 
-  static empreinteData(override?): Empreinte {
-    return {
-      id: 'empreinte-id',
-      initial: false,
-      situationId: 'situationNGC-id',
-      bilan: {
-        details: {
-          divers: 852.8584599753638,
-          logement: 1424.3853917865213,
-          transport: 2533.9706912924553,
-          alimentation: 2033.7441687666667,
-          services_societaux: 1553.6358095597056,
-        },
-        bilan_carbone_annuel: 8398.594521380714,
-      },
-      utilisateurId: 'utilisateur-id',
-      ...override,
-    };
-  }
   static utilisateurData(override?): Utilisateur {
     const unlocked: UnlockedFeatures_v1 = {
       version: 1,

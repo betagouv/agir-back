@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 
 import { AuthController } from './infrastructure/api/auth.controller';
-import { BilanController } from './infrastructure/api/bilan.controller';
 import { AidesController } from './infrastructure/api/aides.controller';
 import { TestDataController } from './infrastructure/api/testData.controller';
 import { CMSController } from './infrastructure/api/incoming/cms.controller';
@@ -11,7 +10,7 @@ import { AidesUsecase } from './usecase/aides.usecase';
 import { CMSUsecase } from './usecase/cms.usecase';
 
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur/utilisateur.repository';
-import { BilanRepository } from './infrastructure/repository/bilan.repository';
+import { SituationNGCRepository } from './infrastructure/repository/bilan.repository';
 
 import { PrismaService } from './infrastructure/prisma/prisma.service';
 import { AidesVeloRepository } from './infrastructure/repository/aidesVelo.repository';
@@ -150,7 +149,6 @@ function getControllers(): any[] {
   if (!App.isProd()) {
     controllers.push(TestDataController);
     controllers.push(AuthController);
-    controllers.push(BilanController);
     controllers.push(MagicLinkController);
   }
   return controllers;
@@ -175,7 +173,7 @@ function getControllers(): any[] {
     PrismaService,
     PrismaServiceStat,
     UtilisateurRepository,
-    BilanRepository,
+    SituationNGCRepository,
     CodeManager,
     OIDCStateRepository,
     OidcService,

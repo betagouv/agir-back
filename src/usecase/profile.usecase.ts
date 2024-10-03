@@ -4,7 +4,7 @@ import {
   LogementAPI,
   UtilisateurUpdateProfileAPI,
 } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
-import { BilanRepository } from '../infrastructure/repository/bilan.repository';
+import { SituationNGCRepository } from '../infrastructure/repository/bilan.repository';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { Injectable } from '@nestjs/common';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
@@ -27,7 +27,7 @@ export class ProfileUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private serviceRepository: ServiceRepository,
-    private bilanRepository: BilanRepository,
+    private bilanRepository: SituationNGCRepository,
     private oIDCStateRepository: OIDCStateRepository,
     private contactUsecase: ContactUsecase,
     private kycRepository: KycRepository,
@@ -216,7 +216,6 @@ export class ProfileUsecase {
   async deleteUtilisateur(utilisateurId: string) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
-    await this.bilanRepository.delete(utilisateurId);
     await this.oIDCStateRepository.delete(utilisateurId);
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
     await this.utilisateurRepository.delete(utilisateurId);

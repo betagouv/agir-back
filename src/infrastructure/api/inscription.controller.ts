@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Redirect, UseGuards } from '@nestjs/common';
 import {
   ApiTags,
   ApiBody,
@@ -14,11 +14,18 @@ import { TokenAPI } from './types/utilisateur/TokenAPI';
 import { EmailAPI } from './types/utilisateur/EmailAPI';
 import { InscriptionUsecase } from '../../usecase/inscription.usecase';
 import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
+import { ThrottlerGuard } from '@nestjs/throttler';
+import { App } from '../../domain/app';
+import { SituationNGCAPI } from './types/ngc/situationNGCAPI';
+import { BilanUsecase } from '../../usecase/bilan.usecase';
 
 @Controller()
 @ApiTags('1 - Utilisateur - Inscription')
 export class InscriptionController extends GenericControler {
-  constructor(private readonly inscription_v2_Usecase: InscriptionUsecase) {
+  constructor(
+    private readonly inscriptionUsecase: InscriptionUsecase,
+    private readonly bilanUsecase: BilanUsecase,
+  ) {
     super();
   }
 
@@ -33,7 +40,7 @@ export class InscriptionController extends GenericControler {
     type: ProspectSubmitAPI,
   })
   async createUtilisateur_v2(@Body() body: CreateUtilisateurAPI) {
-    await this.inscription_v2_Usecase.createUtilisateur(body);
+    await this.inscriptionUsecase.createUtilisateur(body);
     return EmailAPI.mapToAPI(body.email);
   }
 
@@ -49,7 +56,7 @@ export class InscriptionController extends GenericControler {
     type: TokenAPI,
   })
   async validerCode(@Body() body: ValidateCodeAPI) {
-    const loggedUser = await this.inscription_v2_Usecase.validateCode(
+    const loggedUser = await this.inscriptionUsecase.validateCode(
       body.email,
       body.code,
     );
@@ -65,6 +72,17 @@ export class InscriptionController extends GenericControler {
     type: RenvoyerCodeAPI,
   })
   async renvoyerCode(@Body() body: RenvoyerCodeAPI) {
-    await this.inscription_v2_Usecase.renvoyerCodeInscription(body.email);
+    await this.inscriptionUsecase.renvoyerCodeInscription(body.email);
+  }
+
+  @ApiBody({ type: SituationNGCAPI })
+  @Post('bilan/importFromNGC')
+  @Redirect('https://FRONT/creation-compte?situatio_id=1234', 302)
+  @UseGuards(ThrottlerGuard)
+  async importFromNGC(@Body() body: SituationNGCAPI) {
+    const id = await this.bilanUsecase.importSituationNGC(body.situation);
+    return {
+      url: `${App.getBaseURLFront()}/creation-compte?situation_id=${id}`,
+    };
   }
 }

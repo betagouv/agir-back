@@ -57,7 +57,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.situationNGC);
-    await TestUtil.create(DB.empreinte);
     await TestUtil.create(DB.serviceDefinition);
     await TestUtil.create(DB.thematique);
 
@@ -76,7 +75,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.situationNGC);
-    await TestUtil.create(DB.empreinte);
     await TestUtil.create(DB.serviceDefinition);
     await TestUtil.create(DB.thematique);
 

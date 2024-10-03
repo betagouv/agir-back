@@ -1,33 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
-import { BilanRepository } from '../infrastructure/repository/bilan.repository';
+import { SituationNGCRepository } from '../infrastructure/repository/bilan.repository';
 
 @Injectable()
 export class BilanUsecase {
-  constructor(
-    private bilanRepository: BilanRepository,
-    private nGCCalculator: NGCCalculator,
-  ) {}
+  constructor(private bilanRepository: SituationNGCRepository) {}
 
-  async addBilanToUtilisateur(
-    utilisateurId: string,
-    situationId: string,
-  ): Promise<boolean> {
-    const situation = await this.bilanRepository.getSituationNGCbyId(
-      situationId,
-    );
-    const bilan = this.nGCCalculator.computeBilanFromSituation(
-      situation.situation as any,
-    );
-    const result = await this.bilanRepository.createBilan(
-      situationId,
-      utilisateurId,
-      bilan,
-    );
-    return result !== null;
-  }
-
-  async addSituation(situation: object): Promise<string> {
+  async importSituationNGC(situation: object): Promise<string> {
     return await this.bilanRepository.createSituation(situation);
   }
 }
