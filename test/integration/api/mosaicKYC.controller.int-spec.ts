@@ -19,7 +19,7 @@ const MOSAIC_CATALOGUE: MosaicKYCDef[] = [
   {
     id: KYCMosaicID.TEST_MOSAIC_ID,
     categorie: Categorie.test,
-    points: 10,
+    points: 5,
     titre: 'Titre test',
     type: TypeReponseMosaicKYC.mosaic_boolean,
     question_kyc_codes: [KYCID._1, KYCID._2],
@@ -97,7 +97,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     expect(response.body.is_answered).toEqual(false);
     expect(response.body.id).toEqual('TEST_MOSAIC_ID');
     expect(response.body.categorie).toEqual(Categorie.test);
-    expect(response.body.points).toEqual(10);
+    expect(response.body.points).toEqual(5);
     expect(response.body.type).toEqual(TypeReponseMosaicKYC.mosaic_boolean);
     expect(response.body.reponses).toHaveLength(2);
 
@@ -191,6 +191,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     expect(response.status).toBe(200);
 
     const dbUser = await utilisateurRepository.getById('utilisateur-id');
+
+    expect(dbUser.gamification.points).toEqual(15);
 
     expect(dbUser.kyc_history.answered_questions).toHaveLength(2);
     expect(dbUser.kyc_history.answered_questions[0]).toEqual({
@@ -387,7 +389,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         },
       ],
       categorie: 'test',
-      points: 10,
+      points: 5,
       type: 'mosaic_boolean',
     });
   });

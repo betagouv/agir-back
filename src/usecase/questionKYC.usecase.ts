@@ -141,7 +141,13 @@ export class QuestionKYCUsecase {
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
-    await this.updateQuestionOfCode(code_question, null, reponse, utilisateur);
+    await this.updateQuestionOfCode(
+      code_question,
+      null,
+      reponse,
+      utilisateur,
+      true,
+    );
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -158,6 +164,158 @@ export class QuestionKYCUsecase {
         break;
       default:
         break;
+    }
+  }
+
+  async updateResponseMosaic(
+    utilisateurId: string,
+    mosaicId: string,
+    reponses: { code: string; boolean_value: boolean }[],
+  ): Promise<void> {
+    if (!reponses || reponses.length === 0) {
+      ApplicationError.throwMissingMosaicData();
+    }
+
+    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    utilisateur.checkState();
+
+    const mosaic = MosaicKYC.findMosaicDefByID(KYCMosaicID[mosaicId]);
+    if (!mosaic) {
+      ApplicationError.throwUnknownMosaicId(mosaicId);
+    }
+
+    const kyc_catalogue = await this.kycRepository.getAllDefs();
+    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
+
+    if (mosaic.type === TypeReponseMosaicKYC.mosaic_boolean) {
+      for (const reponse of reponses) {
+        await this.updateQuestionOfCode(
+          reponse.code,
+          reponse.boolean_value ? 'oui' : 'non',
+          null,
+          utilisateur,
+          false,
+        );
+      }
+    }
+
+    if (!utilisateur.kyc_history.isMosaicAnswered(mosaic.id)) {
+      utilisateur.gamification.ajoutePoints(mosaic.points, utilisateur);
+    }
+
+    utilisateur.kyc_history.addAnsweredMosaic(mosaic.id);
+    utilisateur.missions.answerMosaic(mosaic.id);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
+  private async updateQuestionOfCode(
+    code_question: string,
+    code_reponse: string,
+    labels_reponse: string[],
+    utilisateur: Utilisateur,
+    gain_points: boolean,
+  ) {
+    utilisateur.kyc_history.checkQuestionExistsByCode(code_question);
+    this.updateUserTodo(utilisateur, code_question);
+
+    if (
+      !utilisateur.kyc_history.isQuestionAnsweredByCode(code_question) &&
+      gain_points
+    ) {
+      const question =
+        utilisateur.kyc_history.getUpToDateQuestionByCodeOrException(
+          code_question,
+        );
+      utilisateur.gamification.ajoutePoints(question.points, utilisateur);
+    }
+
+    if (labels_reponse) {
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        code_question,
+        labels_reponse,
+      );
+      this.synchroKYCAvecProfileUtilisateur(
+        code_question,
+        labels_reponse,
+        utilisateur,
+      );
+    } else {
+      utilisateur.kyc_history.updateQuestionByCodeWithCode(
+        code_question,
+        code_reponse,
+      );
+    }
+
+    utilisateur.missions.answerKyc(code_question);
+
+    this.dispatchKYCUpdateToOtherKYCsPostUpdate(code_question, utilisateur);
+
+    utilisateur.recomputeRecoTags();
+
+    const catalogue_defis = await this.defiRepository.list({});
+    utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
+  }
+
+  public synchroKYCAvecProfileUtilisateur(
+    code_question: string,
+    reponse: string[],
+    utilisateur: Utilisateur,
+  ) {
+    const kyc =
+      utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(code_question);
+
+    if (kyc) {
+      switch (kyc.id) {
+        case KYCID.KYC006:
+          const label_age = kyc.getLabelByCode('plus_15');
+          utilisateur.logement.plus_de_15_ans = reponse.includes(label_age);
+          break;
+        case KYCID.KYC_DPE:
+          const code_dpe = kyc.getCodeByLabel(reponse[0]);
+          utilisateur.logement.dpe = DPE[code_dpe];
+          break;
+        case KYCID.KYC_superficie:
+          const valeur = parseInt(reponse[0]);
+          if (valeur < 35)
+            utilisateur.logement.superficie = Superficie.superficie_35;
+          if (valeur < 70)
+            utilisateur.logement.superficie = Superficie.superficie_70;
+          if (valeur < 100)
+            utilisateur.logement.superficie = Superficie.superficie_100;
+          if (valeur < 150)
+            utilisateur.logement.superficie = Superficie.superficie_150;
+          if (valeur >= 150)
+            utilisateur.logement.superficie = Superficie.superficie_150_et_plus;
+          break;
+        case KYCID.KYC_proprietaire:
+          const code_prop = kyc.getCodeByLabel(reponse[0]);
+          utilisateur.logement.proprietaire = code_prop === 'oui';
+          break;
+        case KYCID.KYC_chauffage:
+          const code_chauff = kyc.getCodeByLabel(reponse[0]);
+          utilisateur.logement.chauffage = Chauffage[code_chauff];
+          break;
+        case KYCID.KYC_type_logement:
+          const code_log = kyc.getCodeByLabel(reponse[0]);
+          utilisateur.logement.type =
+            code_log === 'type_appartement'
+              ? TypeLogement.appartement
+              : TypeLogement.maison;
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  private updateUserTodo(utilisateur: Utilisateur, questionId: string) {
+    const matching =
+      utilisateur.parcours_todo.findTodoKYCOrMosaicElementByQuestionID(
+        questionId,
+      );
+    if (matching && !matching.element.isDone()) {
+      matching.todo.makeProgress(matching.element);
     }
   }
 
@@ -271,148 +429,6 @@ export class QuestionKYCUsecase {
         KYCID.KYC_nbr_plats_viande_rouge,
         ['6'],
       );
-    }
-  }
-
-  async updateResponseMosaic(
-    utilisateurId: string,
-    mosaicId: string,
-    reponses: { code: string; boolean_value: boolean }[],
-  ): Promise<void> {
-    if (!reponses || reponses.length === 0) {
-      ApplicationError.throwMissingMosaicData();
-    }
-
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
-    utilisateur.checkState();
-
-    const mosaic = MosaicKYC.findMosaicDefByID(KYCMosaicID[mosaicId]);
-    if (!mosaic) {
-      ApplicationError.throwUnknownMosaicId(mosaicId);
-    }
-
-    const kyc_catalogue = await this.kycRepository.getAllDefs();
-    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
-
-    if (mosaic.type === TypeReponseMosaicKYC.mosaic_boolean) {
-      for (const reponse of reponses) {
-        await this.updateQuestionOfCode(
-          reponse.code,
-          reponse.boolean_value ? 'oui' : 'non',
-          null,
-          utilisateur,
-        );
-      }
-    }
-    utilisateur.kyc_history.addAnsweredMosaic(mosaic.id);
-    utilisateur.missions.answerMosaic(mosaic.id);
-
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
-  }
-
-  private async updateQuestionOfCode(
-    code_question: string,
-    code_reponse: string,
-    labels_reponse: string[],
-    utilisateur: Utilisateur,
-  ) {
-    utilisateur.kyc_history.checkQuestionExistsByCode(code_question);
-    this.updateUserTodo(utilisateur, code_question);
-
-    if (!utilisateur.kyc_history.isQuestionAnsweredByCode(code_question)) {
-      const question =
-        utilisateur.kyc_history.getUpToDateQuestionByCodeOrException(
-          code_question,
-        );
-      utilisateur.gamification.ajoutePoints(question.points, utilisateur);
-    }
-
-    if (labels_reponse) {
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        code_question,
-        labels_reponse,
-      );
-      this.synchroKYCAvecProfileUtilisateur(
-        code_question,
-        labels_reponse,
-        utilisateur,
-      );
-    } else {
-      utilisateur.kyc_history.updateQuestionByCodeWithCode(
-        code_question,
-        code_reponse,
-      );
-    }
-
-    utilisateur.missions.answerKyc(code_question);
-
-    this.dispatchKYCUpdateToOtherKYCsPostUpdate(code_question, utilisateur);
-
-    utilisateur.recomputeRecoTags();
-
-    const catalogue_defis = await this.defiRepository.list({});
-    utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
-  }
-
-  public synchroKYCAvecProfileUtilisateur(
-    code_question: string,
-    reponse: string[],
-    utilisateur: Utilisateur,
-  ) {
-    const kyc =
-      utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(code_question);
-
-    if (kyc) {
-      switch (kyc.id) {
-        case KYCID.KYC006:
-          const label_age = kyc.getLabelByCode('plus_15');
-          utilisateur.logement.plus_de_15_ans = reponse.includes(label_age);
-          break;
-        case KYCID.KYC_DPE:
-          const code_dpe = kyc.getCodeByLabel(reponse[0]);
-          utilisateur.logement.dpe = DPE[code_dpe];
-          break;
-        case KYCID.KYC_superficie:
-          const valeur = parseInt(reponse[0]);
-          if (valeur < 35)
-            utilisateur.logement.superficie = Superficie.superficie_35;
-          if (valeur < 70)
-            utilisateur.logement.superficie = Superficie.superficie_70;
-          if (valeur < 100)
-            utilisateur.logement.superficie = Superficie.superficie_100;
-          if (valeur < 150)
-            utilisateur.logement.superficie = Superficie.superficie_150;
-          if (valeur >= 150)
-            utilisateur.logement.superficie = Superficie.superficie_150_et_plus;
-          break;
-        case KYCID.KYC_proprietaire:
-          const code_prop = kyc.getCodeByLabel(reponse[0]);
-          utilisateur.logement.proprietaire = code_prop === 'oui';
-          break;
-        case KYCID.KYC_chauffage:
-          const code_chauff = kyc.getCodeByLabel(reponse[0]);
-          utilisateur.logement.chauffage = Chauffage[code_chauff];
-          break;
-        case KYCID.KYC_type_logement:
-          const code_log = kyc.getCodeByLabel(reponse[0]);
-          utilisateur.logement.type =
-            code_log === 'type_appartement'
-              ? TypeLogement.appartement
-              : TypeLogement.maison;
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  private updateUserTodo(utilisateur: Utilisateur, questionId: string) {
-    const matching =
-      utilisateur.parcours_todo.findTodoKYCOrMosaicElementByQuestionID(
-        questionId,
-      );
-    if (matching && !matching.element.isDone()) {
-      matching.todo.makeProgress(matching.element);
     }
   }
 }

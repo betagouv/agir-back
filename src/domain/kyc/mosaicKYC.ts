@@ -41,7 +41,7 @@ export class MosaicKYC {
     {
       id: KYCMosaicID.MOSAIC_CHAUFFAGE,
       categorie: Categorie.mission,
-      points: 10,
+      points: 5,
       titre: 'Quels modes de chauffage existent chez vous ?',
       type: TypeReponseMosaicKYC.mosaic_boolean,
       question_kyc_codes: [
@@ -63,7 +63,7 @@ export class MosaicKYC {
     return MosaicKYC.MOSAIC_CATALOGUE.findIndex((m) => m.id === id) > -1;
   }
 
-  static findMosaicDefByID(mosaicID: KYCMosaicID) {
+  static findMosaicDefByID(mosaicID: KYCMosaicID): MosaicKYCDef {
     if (!mosaicID) return null;
     return MosaicKYC.MOSAIC_CATALOGUE.find((m) => m.id === mosaicID);
   }
