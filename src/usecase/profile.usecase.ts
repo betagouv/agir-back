@@ -2,7 +2,6 @@ import { Utilisateur } from '../domain/utilisateur/utilisateur';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import {
   LogementAPI,
-  TransportAPI,
   UtilisateurUpdateProfileAPI,
 } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
 import { BilanRepository } from '../infrastructure/repository/bilan.repository';
@@ -87,26 +86,6 @@ export class ProfileUsecase {
     utilisateur.nom = profile.nom;
     utilisateur.prenom = profile.prenom;
     utilisateur.annee_naissance = profile.annee_naissance;
-
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
-  }
-
-  @Retryable({
-    maxAttempts: 1,
-    doRetry: (e: any) => {
-      return e.code === '050';
-    },
-  })
-  async updateUtilisateurTransport(utilisateurId: string, input: TransportAPI) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
-    utilisateur.checkState();
-
-    const kyc_catalogue = await this.kycRepository.getAllDefs();
-    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
-
-    utilisateur.transport.patch(input);
-
-    utilisateur.recomputeRecoTags();
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }

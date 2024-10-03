@@ -46,8 +46,6 @@ import {
   Utilisateur,
 } from '@prisma/client';
 import { ServiceStatus } from '../src/domain/service/service';
-import { TransportQuotidien } from '../src/domain/transport/transport';
-import { Transport_v0 } from '../src/domain/object_store/transport/transport_v0';
 import { DefiHistory_v0 } from '../src/domain/object_store/defi/defiHistory_v0';
 import { DefiStatus } from '../src/domain/defis/defi';
 import { TagUtilisateur } from '../src/domain/scoring/tagUtilisateur';
@@ -508,14 +506,6 @@ export class TestUtil {
       proprietaire: true,
     };
 
-    const transport: Transport_v0 = {
-      version: 0,
-      avions_par_an: 2,
-      transports_quotidiens: [
-        TransportQuotidien.velo,
-        TransportQuotidien.voiture,
-      ],
-    };
     return {
       id: 'utilisateur-id',
       nom: 'nom',
@@ -548,7 +538,6 @@ export class TestUtil {
       kyc: kyc,
       defis: defis,
       logement: logement,
-      transport: transport,
       tag_ponderation_set: {},
       force_connexion: false,
       derniere_activite: null,

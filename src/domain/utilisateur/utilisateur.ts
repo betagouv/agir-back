@@ -9,7 +9,6 @@ import { KYCHistory } from '../kyc/kycHistory';
 import { Logement } from '../logement/logement';
 import { App } from '../app';
 import { TagPonderationSet } from '../scoring/tagPonderationSet';
-import { Transport } from '../transport/transport';
 import { Tag } from '../scoring/tag';
 import { DefiHistory } from '../defis/defiHistory';
 import { UserTagEvaluator } from '../scoring/userTagEvaluator';
@@ -67,7 +66,6 @@ export class UtilisateurData {
   migration_enabled: boolean;
   kyc_history: KYCHistory;
   logement: Logement;
-  transport: Transport;
   tag_ponderation_set: TagPonderationSet;
   defi_history: DefiHistory;
   force_connexion: boolean;
@@ -159,7 +157,6 @@ export class Utilisateur extends UtilisateurData {
         superficie: null,
         type: null,
       }),
-      transport: {} as any,
       tag_ponderation_set: {},
       force_connexion: false,
       derniere_activite: new Date(),

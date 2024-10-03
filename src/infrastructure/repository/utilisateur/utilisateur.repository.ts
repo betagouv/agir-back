@@ -18,7 +18,6 @@ import {
 import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
 import { KYCHistory } from '../../../domain/kyc/kycHistory';
 import { Logement } from '../../../domain/logement/logement';
-import { Transport } from '../../../domain/transport/transport';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
 import { BibliothequeServices } from '../../../domain/bibliotheque_services/bibliothequeServices';
@@ -252,9 +251,6 @@ export class UtilisateurRepository {
       const logement = new Logement(
         Upgrader.upgradeRaw(user.logement, SerialisableDomain.Logement),
       );
-      const transport = new Transport(
-        Upgrader.upgradeRaw(user.transport, SerialisableDomain.Transport),
-      );
       const missions = new MissionsUtilisateur(
         Upgrader.upgradeRaw(
           user.missions,
@@ -298,7 +294,6 @@ export class UtilisateurRepository {
         version: user.version,
         migration_enabled: user.migration_enabled,
         logement: logement,
-        transport: transport,
         tag_ponderation_set: user.tag_ponderation_set as any,
         defi_history: defis,
         force_connexion: user.force_connexion,
@@ -361,10 +356,6 @@ export class UtilisateurRepository {
       logement: Upgrader.serialiseToLastVersion(
         user.logement,
         SerialisableDomain.Logement,
-      ),
-      transport: Upgrader.serialiseToLastVersion(
-        user.transport,
-        SerialisableDomain.Transport,
       ),
       kyc: Upgrader.serialiseToLastVersion(
         user.kyc_history,

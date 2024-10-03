@@ -6,7 +6,6 @@ import {
   Superficie,
   TypeLogement,
 } from '../../../src/domain/logement/logement';
-import { TransportQuotidien } from '../../../src/domain/transport/transport';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
@@ -177,21 +176,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.nombre_enfants).toEqual(2);
     expect(response.body.plus_de_15_ans).toEqual(true);
     expect(response.body.proprietaire).toEqual(true);
-  });
-  it('GET /utilisateurs/id/transport - read transport datas', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/transport',
-    );
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.transports_quotidiens).toEqual([
-      TransportQuotidien.velo,
-      TransportQuotidien.voiture,
-    ]);
-    expect(response.body.avions_par_an).toEqual(2);
   });
   it('GET /utilisateurs/id/profile - default to 1 when no logement data', async () => {
     // GIVEN
@@ -792,50 +776,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     );
     expect(question.hasAnyResponses());
     expect(question.includesReponseCode('plus_15'));
-  });
-  it('PATCH /utilisateurs/id/transport - update transport datas and reco tags', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID._2,
-      type: TypeReponseQuestionKYC.choix_multiple,
-      categorie: Categorie.test,
-      points: 10,
-      question: 'Comment avez vous connu le service ?',
-      reponses: [
-        { label: 'Le climat', code: Thematique.climat },
-        { label: 'Mon logement', code: Thematique.logement },
-        { label: 'Ce que je mange', code: Thematique.alimentation },
-      ],
-    });
-    // WHEN
-    let response = await TestUtil.PATCH(
-      '/utilisateurs/utilisateur-id/transport',
-    ).send({
-      avions_par_an: 1,
-      transports_quotidiens: [TransportQuotidien.pied],
-    });
-    // THEN
-    expect(response.status).toBe(200);
-    let dbUser = await utilisateurRepository.getById('utilisateur-id');
-
-    expect(dbUser.transport.avions_par_an).toEqual(1);
-    expect(dbUser.transport.transports_quotidiens).toEqual([
-      TransportQuotidien.pied,
-    ]);
-    expect(dbUser.tag_ponderation_set.utilise_moto_ou_voiture).toEqual(0);
-    // WHEN
-    response = await TestUtil.PATCH(
-      '/utilisateurs/utilisateur-id/transport',
-    ).send({
-      avions_par_an: 1,
-      transports_quotidiens: [TransportQuotidien.voiture],
-    });
-    // THEN
-    expect(response.status).toBe(200);
-    dbUser = await utilisateurRepository.getById('utilisateur-id');
-    expect(dbUser.tag_ponderation_set.utilise_moto_ou_voiture).toEqual(100);
   });
   it('PATCH /utilisateurs/id/profile - bad password format', async () => {
     // GIVEN

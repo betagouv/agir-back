@@ -1,7 +1,6 @@
 import { Thematique } from '../contenu/thematique';
 import { KYCID } from '../kyc/KYCID';
 import { BooleanKYC, QuestionKYC } from '../kyc/questionKYC';
-import { TransportQuotidien } from '../transport/transport';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { Tag } from './tag';
 
@@ -12,25 +11,8 @@ export class UserTagEvaluator {
     for (const kyc_id in KYCID) {
       UserTagEvaluator.processKYC(user, KYCID[kyc_id]);
     }
-
-    UserTagEvaluator.transport_quotidiens(user);
   }
 
-  private static transport_quotidiens(user: Utilisateur) {
-    if (user.transport.transports_quotidiens) {
-      user.increaseTagValueIfElse(
-        Tag.utilise_moto_ou_voiture,
-        user.transport.transports_quotidiens.includes(
-          TransportQuotidien.moto,
-        ) ||
-          user.transport.transports_quotidiens.includes(
-            TransportQuotidien.voiture,
-          ),
-        100,
-        0,
-      );
-    }
-  }
   private static kyc_001(user: Utilisateur, kyc: QuestionKYC) {
     user.increaseTagValueIfElse(
       Tag.transport,

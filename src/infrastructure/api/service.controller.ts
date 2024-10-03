@@ -32,7 +32,7 @@ import { ApplicationError } from '../applicationError';
 @ApiExtraModels(LinkyConfigurationAPI)
 @Controller()
 @ApiBearerAuth()
-@ApiTags('Services')
+@ApiTags('Services (OLD)')
 export class ServiceController extends GenericControler {
   constructor(private readonly serviceUsecase: ServiceUsecase) {
     super();
