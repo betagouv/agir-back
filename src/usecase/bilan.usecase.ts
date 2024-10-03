@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
 import { BilanRepository } from '../infrastructure/repository/bilan.repository';
-import { SituationNGC } from '@prisma/client';
 
 @Injectable()
 export class BilanUsecase {
@@ -28,7 +27,7 @@ export class BilanUsecase {
     return result !== null;
   }
 
-  async addSituation(situation: object): Promise<SituationNGC | null> {
-    return this.bilanRepository.createSituation(situation);
+  async addSituation(situation: object): Promise<string> {
+    return await this.bilanRepository.createSituation(situation);
   }
 }

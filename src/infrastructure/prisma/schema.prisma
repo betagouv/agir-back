@@ -281,15 +281,14 @@ model BilanCarboneStatistique {
 }
 
 model Empreinte {
-  id            String       @id
-  initial       Boolean      @default(true)
+  id            String      @id
+  initial       Boolean     @default(true)
   bilan         Json?
-  created_at    DateTime     @default(now()) @db.Timestamptz(3)
-  updated_at    DateTime     @default(now()) @updatedAt @db.Timestamptz(3)
-  utilisateur   Utilisateur  @relation(fields: [utilisateurId], references: [id])
+  created_at    DateTime    @default(now()) @db.Timestamptz(3)
+  updated_at    DateTime    @default(now()) @updatedAt @db.Timestamptz(3)
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
   utilisateurId String
-  situationId   String       @unique
-  situation     SituationNGC @relation(fields: [situationId], references: [id])
+  situationId   String      @unique
 }
 
 model Thematique {
@@ -350,10 +349,10 @@ model KYC {
 }
 
 model SituationNGC {
-  id         String     @id
+  id         String   @id
   situation  Json?
-  empreinte  Empreinte?
-  created_at DateTime   @default(now()) @db.Timestamptz(3)
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model Service {

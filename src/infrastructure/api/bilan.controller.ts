@@ -1,22 +1,19 @@
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOkResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import {
   Controller,
-  Get,
   Post,
   Param,
   Body,
   Request,
   UseGuards,
+  Redirect,
 } from '@nestjs/common';
 import { BilanUsecase } from '../../usecase/bilan.usecase';
 import { SituationNGCAPI } from './types/ngc/situationNGCAPI';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
+import { App } from '../../domain/app';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 @Controller()
 @ApiBearerAuth()
@@ -39,17 +36,14 @@ export class BilanController extends GenericControler {
       situationId,
     );
   }
-  @ApiBody({
-    schema: {
-      type: 'object',
-    },
-  })
+  @ApiBody({ type: SituationNGCAPI })
   @Post('bilan/importFromNGC')
-  async importFromNGC(
-    @Body() body: { situation: object },
-  ): Promise<SituationNGCAPI> {
-    // todo : check situation for security
-    const result = await this.bilanUsecase.addSituation(body.situation);
-    return result as SituationNGCAPI;
+  @Redirect('https://front-jagis.beta.gouv.fr', 302)
+  @UseGuards(ThrottlerGuard)
+  async importFromNGC(@Body() body: SituationNGCAPI) {
+    const id = await this.bilanUsecase.addSituation(body.situation);
+    return {
+      url: `${App.getBaseURLFront()}/creation-compte?situatio_id=${id}`,
+    };
   }
 }

@@ -11,6 +11,6 @@ export class CreateUtilisateurAPI {
   @ApiProperty({ required: true })
   mot_de_passe: string;
 
-  @ApiProperty({ type: Object, required: false })
-  situation_ngc?: object;
+  @ApiProperty({ required: false })
+  situation_ngc_id?: string;
 }

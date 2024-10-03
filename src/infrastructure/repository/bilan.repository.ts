@@ -15,6 +15,7 @@ export class BilanRepository {
       await this.prisma.empreinte.deleteMany({ where: { utilisateurId } });
   }
 
+  /*
   async getLastSituationbyUtilisateurId(utilisateurId: string): Promise<any> {
     const empreintes = await this.prisma.empreinte.findMany({
       where: { utilisateurId },
@@ -26,13 +27,14 @@ export class BilanRepository {
     });
     return !empreintes.length ? {} : empreintes[0]['situation'].situation;
   }
-
+*/
   async getSituationNGCbyId(id: string): Promise<SituationNGC | null> {
     return this.prisma.situationNGC.findUnique({
       where: { id },
     });
   }
 
+  /*
   async getLastBilanByUtilisateurId(
     utilisateurId: string,
   ): Promise<BilanExtra> {
@@ -49,6 +51,7 @@ export class BilanRepository {
     }
     return this.buildBilanExtraFromEmpreinte(empreintes[0]);
   }
+    */
 
   async getAllBilansByUtilisateurId(utilisateurId): Promise<BilanExtra[]> {
     const empreintes = await this.prisma.empreinte.findMany({
@@ -89,13 +92,15 @@ export class BilanRepository {
     return response;
   }
 
-  async createSituation(situation: object): Promise<SituationNGC | null> {
-    return this.prisma.situationNGC.create({
+  async createSituation(situation: object): Promise<string> {
+    const id_situation = uuidv4();
+    await this.prisma.situationNGC.create({
       data: {
-        id: uuidv4(),
+        id: id_situation,
         situation: situation,
       },
     });
+    return id_situation;
   }
 
   private buildBilanExtraFromEmpreinte(empreinte: Empreinte): BilanExtra {

@@ -429,19 +429,27 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.getServer()
-      .post('/utilisateurs_v2')
+    const response_post_situation = await TestUtil.getServer()
+      .post('/bilan/importFromNGC')
       .send({
-        mot_de_passe: '#1234567890HAHAa',
-        email: 'w@w.com',
-        source_inscription: 'mobile',
-        situation_ngc: {
+        situation: {
           'transport . voiture . km': 20000,
           'logement . chauffage . bois . présent': 'oui',
         },
       });
-    // THEN
 
+    const situtation_id = response_post_situation.headers.location
+      .split('=')
+      .pop();
+
+    const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
+      mot_de_passe: '#1234567890HAHAa',
+      email: 'w@w.com',
+      source_inscription: 'mobile',
+      situation_ngc_id: situtation_id,
+    });
+
+    // THEN
     expect(response.status).toBe(201);
     const user = await utilisateurRepository.findByEmail('w@w.com');
 
@@ -462,16 +470,24 @@ describe('/utilisateurs - Inscription - (API test)', () => {
   it(`POST /utilisateurs_v2 - integration situation NGC , pas d'erreurs si clé pas connu`, async () => {
     // GIVEN
     // WHEN
-    const response = await TestUtil.getServer()
-      .post('/utilisateurs_v2')
+    const response_post_situation = await TestUtil.getServer()
+      .post('/bilan/importFromNGC')
       .send({
-        mot_de_passe: '#1234567890HAHAa',
-        email: 'w@w.com',
-        source_inscription: 'mobile',
-        situation_ngc: {
-          'transport . velo . km': 20000,
+        situation: {
+          'transport . velo . km': 150,
         },
       });
+
+    const situtation_id = response_post_situation.headers.location
+      .split('=')
+      .pop();
+
+    const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
+      mot_de_passe: '#1234567890HAHAa',
+      email: 'w@w.com',
+      source_inscription: 'mobile',
+      situation_ngc_id: situtation_id,
+    });
     // THEN
 
     expect(response.status).toBe(201);

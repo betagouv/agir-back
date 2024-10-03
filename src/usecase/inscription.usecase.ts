@@ -15,6 +15,8 @@ import { ContactUsecase } from './contact.usecase';
 import { CodeManager } from '../domain/utilisateur/manager/codeManager';
 import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/onboarding/createUtilisateurAPI';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
+import { BilanUsecase } from './bilan.usecase';
+import { BilanRepository } from '../infrastructure/repository/bilan.repository';
 
 export type Phrase = {
   phrase: string;
@@ -31,6 +33,7 @@ export class InscriptionUsecase {
     private oidcService: OidcService,
     private codeManager: CodeManager,
     private kycRepository: KycRepository,
+    private bilanRepository: BilanRepository,
   ) {}
 
   async createUtilisateur(utilisateurInput: CreateUtilisateurAPI) {
@@ -61,16 +64,21 @@ export class InscriptionUsecase {
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateurToCreate.kyc_history.setCatalogue(kyc_catalogue);
 
-    if (utilisateurInput.situation_ngc) {
-      const updated_keys = utilisateurToCreate.kyc_history.injectSituationNGC(
-        utilisateurInput.situation_ngc,
+    if (utilisateurInput.situation_ngc_id) {
+      const situation = await this.bilanRepository.getSituationNGCbyId(
+        utilisateurInput.situation_ngc_id,
       );
-      if (updated_keys.length > 0) {
-        console.log(
-          `Updated NGC kycs for ${utilisateurInput.email} : ${updated_keys.join(
-            '|',
-          )}`,
+      if (situation) {
+        const updated_keys = utilisateurToCreate.kyc_history.injectSituationNGC(
+          situation.situation as any,
         );
+        if (updated_keys.length > 0) {
+          console.log(
+            `Updated NGC kycs for ${
+              utilisateurInput.email
+            } : ${updated_keys.join('|')}`,
+          );
+        }
       }
     }
 
