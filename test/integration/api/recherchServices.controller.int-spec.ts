@@ -477,7 +477,7 @@ describe('RechercheServices (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(3);
+    expect(response.body).toHaveLength(4);
     expect(response.body[0]).toStrictEqual({
       id_service: 'fruits_legumes',
       titre: 'Fruits et légumes de saison',
@@ -488,7 +488,7 @@ describe('RechercheServices (API test)', () => {
       is_available_inhouse: true,
     });
     expect(response.body[1].external_url).toEqual(
-      'https://presdecheznous.fr/map#/carte/91120',
+      'https://www.winter-energies.fr/',
     );
   });
 

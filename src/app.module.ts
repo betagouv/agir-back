@@ -55,7 +55,7 @@ import { ContactSynchro } from './infrastructure/contact/contactSynchro';
 import { RecommandationsController } from './infrastructure/api/recommandations.controller';
 import { RecommandationUsecase } from './usecase/recommandation.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
-import { ReferentielUsecase } from './usecase/referentiel/referentiel.usecase';
+import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
 import { App } from './domain/app';
 import { BibliothequeController } from './infrastructure/api/bibliotheque.controller';
 import { BibliothequeUsecase } from './usecase/bibliotheque.usecase';

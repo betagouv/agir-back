@@ -6,7 +6,6 @@ import { PrismaServiceStat } from '../prisma/stats/prisma.service.stats';
 import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
-const service_catalogue = require('../../../src/usecase/referentiel/service_catalogue');
 const _linky_data = require('../../../test_data/PRM_thermo_pas_sensible');
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { LinkyRepository } from '../repository/linky.repository';
@@ -84,51 +83,10 @@ export class TestDataController extends GenericControler {
     if (!utilisateurs_content[utilisateurId]) return '{}';
     await this.deleteUtilisateur(utilisateurId);
     await this.insertUtilisateur(utilisateurId);
-    await this.upsertServicesDefinitions();
-    await this.insertServicesForUtilisateur(utilisateurId);
     await this.insertLinkyDataForUtilisateur(utilisateurId);
     return utilisateurs_content[utilisateurId];
   }
 
-  async upsertServicesDefinitions() {
-    const keyList = Object.keys(service_catalogue);
-    for (let index = 0; index < keyList.length; index++) {
-      const serviceId = keyList[index];
-      const service = service_catalogue[serviceId];
-      const data = { ...service };
-      data.id = serviceId;
-      delete data.configuration;
-      await this.prisma.serviceDefinition.upsert({
-        where: {
-          id: serviceId,
-        },
-        update: data,
-        create: data,
-      });
-    }
-  }
-
-  async insertServicesForUtilisateur(utilisateurId: string) {
-    const services = utilisateurs_content[utilisateurId].services;
-    if (!services) return;
-    for (let index = 0; index < services.length; index++) {
-      const serviceId = services[index];
-      if (service_catalogue[serviceId]) {
-        let data = {
-          id: uuidv4(),
-          utilisateurId: utilisateurId,
-          serviceDefinitionId: serviceId,
-          status: ServiceStatus.LIVE,
-          configuration: service_catalogue[serviceId].configuration
-            ? service_catalogue[serviceId].configuration
-            : {},
-        };
-        await this.prisma.service.create({
-          data,
-        });
-      }
-    }
-  }
   async insertLinkyDataForUtilisateur(utilisateurId: string) {
     const linky = utilisateurs_content[utilisateurId].linky;
     if (!linky) return;
