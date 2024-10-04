@@ -5,10 +5,7 @@ import { CategorieRecherche } from '../../../domain/bibliotheque_services/recher
 import { FiltreRecherche } from '../../../domain/bibliotheque_services/recherche/filtreRecherche';
 import { FinderInterface } from '../../../domain/bibliotheque_services/recherche/finderInterface';
 import { ResultatRecherche } from '../../../domain/bibliotheque_services/recherche/resultatRecherche';
-import {
-  FruitLegume,
-  FruitsEtLegumesServiceManager,
-} from '../../service/fruits/fruitEtLegumesServiceManager';
+import { FruitsEtLegumesServiceManager } from '../../service/fruits/fruitEtLegumesServiceManager';
 import { ApplicationError } from '../../applicationError';
 
 const API_URL = 'https://impactco2.fr/api/v1/fruitsetlegumes';
@@ -102,6 +99,7 @@ export class FruitsLegumesRepository implements FinderInterface {
     } else {
       params = {};
     }
+    const call_time = Date.now();
     try {
       response = await axios.get(API_URL, {
         timeout: FruitsLegumesRepository.API_TIMEOUT,
@@ -112,6 +110,11 @@ export class FruitsLegumesRepository implements FinderInterface {
         params: params,
       });
     } catch (error) {
+      console.log(
+        `Error calling [impactco2.fr/api/v1/fruitsetlegumes] after ${
+          Date.now() - call_time
+        } ms`,
+      );
       if (error.response) {
         console.error(error.response);
       } else if (error.request) {
@@ -119,6 +122,9 @@ export class FruitsLegumesRepository implements FinderInterface {
       }
       return null;
     }
+    console.log(
+      `API_TIME:impactco2.fr/api/v1/fruitsetlegumes:${Date.now() - call_time}`,
+    );
     return response.data;
   }
 }

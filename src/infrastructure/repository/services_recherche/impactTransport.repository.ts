@@ -183,6 +183,7 @@ export class ImpactTransportsRepository implements FinderInterface {
       params.transports = transports;
     }
 
+    const call_time = Date.now();
     try {
       response = await axios.get(API_URL, {
         headers: {
@@ -192,6 +193,11 @@ export class ImpactTransportsRepository implements FinderInterface {
         params: params,
       });
     } catch (error) {
+      console.log(
+        `Error calling [impactco2.fr/api/v1/transport] after ${
+          Date.now() - call_time
+        } ms`,
+      );
       if (error.response) {
         console.log(error.response);
       } else if (error.request) {
@@ -199,6 +205,9 @@ export class ImpactTransportsRepository implements FinderInterface {
       }
       return null;
     }
+    console.log(
+      `API_TIME:impactco2.fr/api/v1/transport:${Date.now() - call_time}`,
+    );
     return response.data;
   }
 }
