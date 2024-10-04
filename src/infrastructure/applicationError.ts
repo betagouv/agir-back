@@ -353,7 +353,7 @@ export class ApplicationError {
   static throwExternalServiceError(service_name) {
     this.throwAppError(
       '071',
-      `Le service externe '${service_name}' semble rencontrer un problème, nous vous proposons sde re-essayer plus tard`,
+      `Le service externe '${service_name}' semble rencontrer un problème, nous vous proposons de re-essayer plus tard`,
       500,
     );
   }
