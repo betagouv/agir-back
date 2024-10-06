@@ -62,6 +62,7 @@ describe('UseragEvaluator', () => {
         ],
         short_question: 'short',
         image_url: 'AAA',
+        conditions: [],
       }),
     ]);
     user.kyc_history.updateQuestionByCodeWithLabelOrException(KYCID.KYC001, []);
@@ -118,6 +119,7 @@ describe('UseragEvaluator', () => {
         ],
         short_question: 'short',
         image_url: 'AAA',
+        conditions: [],
       }),
     ]);
     user.kyc_history.updateQuestionByCodeWithLabelOrException(KYCID.KYC001, [
@@ -185,6 +187,7 @@ describe('UseragEvaluator', () => {
         ],
         short_question: 'short',
         image_url: 'AAA',
+        conditions: [],
       }),
     ]);
     user.kyc_history.updateQuestionByCodeWithLabelOrException(

@@ -1,12 +1,5 @@
 import { DB, TestUtil } from '../../TestUtil';
-import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { Categorie } from '../../../src/domain/contenu/categorie';
-import { Thematique } from '../../../src/domain/contenu/thematique';
-import { KYCID } from '../../../src/domain/kyc/KYCID';
-import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
-import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
-import { Univers } from '../../../src/domain/univers/univers';
 var crypto = require('crypto');
 
 function getFakeUtilisteur() {

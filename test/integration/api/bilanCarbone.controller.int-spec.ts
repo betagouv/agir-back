@@ -75,6 +75,7 @@ describe('BilanCarbone (API test)', () => {
           ngc_key: 'alimentation . de saison . consommation',
           image_url: '111',
           short_question: 'short',
+          conditions: [],
         },
       ],
     };

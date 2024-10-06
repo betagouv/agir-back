@@ -117,6 +117,7 @@ describe('Objet Utilisateur', () => {
       universes: [],
       short_question: 'short',
       image_url: 'https://',
+      conditions: [],
     });
 
     // WHEN
@@ -153,6 +154,7 @@ describe('Objet Utilisateur', () => {
       universes: [],
       short_question: 'short',
       image_url: 'https://',
+      conditions: [],
     });
 
     // WHEN
@@ -201,6 +203,7 @@ describe('Objet Utilisateur', () => {
       universes: [],
       short_question: 'short',
       image_url: 'https://',
+      conditions: [],
     });
 
     // WHEN

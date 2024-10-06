@@ -50,7 +50,6 @@ describe('/api/incoming/cms (API test)', () => {
               kyc: {
                 code: '123',
                 id: 1,
-                reponse: '12',
               },
             },
           ],
@@ -100,6 +99,19 @@ describe('/api/incoming/cms (API test)', () => {
         {
           id: 1,
           code: Univers.climat,
+        },
+      ],
+      OR_Conditions: [
+        {
+          AND_Conditions: [
+            {
+              code_reponse: 'yop',
+              kyc: {
+                code: '999',
+                id: 8888,
+              },
+            },
+          ],
         },
       ],
     },
@@ -414,6 +426,9 @@ describe('/api/incoming/cms (API test)', () => {
     expect(item.thematique).toEqual(Thematique.alimentation);
     expect(item.tags).toEqual([Tag.capacite_physique, Tag.possede_velo]);
     expect(item.universes).toEqual([Univers.climat]);
+    expect(item.conditions).toStrictEqual([
+      [{ id_kyc: 8888, code_kyc: '999', code_reponse: 'yop' }],
+    ]);
   });
   it('POST /api/incoming/cms - create a new mission', async () => {
     // GIVEN

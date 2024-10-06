@@ -399,6 +399,7 @@ describe('/bilan (API test)', () => {
           ngc_key: 'logement . âge',
           short_question: 'short',
           image_url: 'AAA',
+          conditions: [],
         },
       ],
     };

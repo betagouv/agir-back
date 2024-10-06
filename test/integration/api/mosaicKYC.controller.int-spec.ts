@@ -63,6 +63,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       ],
       short_question: 'short',
       image_url: 'AAA',
+      conditions: [],
       created_at: undefined,
       updated_at: undefined,
     };
@@ -159,6 +160,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       ],
       short_question: 'short',
       image_url: 'AAA',
+      conditions: [],
       created_at: undefined,
       updated_at: undefined,
     };
@@ -216,6 +218,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       id_cms: 1,
       short_question: 'short',
       image_url: 'AAA',
+      conditions: [],
     });
     expect(dbUser.kyc_history.answered_questions[1]).toEqual({
       id: '_2',
@@ -238,6 +241,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       id_cms: 2,
       short_question: 'short',
       image_url: 'AAA',
+      conditions: [],
     });
   });
 
@@ -295,6 +299,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       ],
       short_question: 'short',
       image_url: 'AAA',
+      conditions: [],
       created_at: undefined,
       updated_at: undefined,
     };
@@ -335,6 +340,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           id_cms: 1,
           short_question: 'short 1',
           image_url: 'AAA',
+          conditions: [],
         },
         {
           id: '_2',
@@ -356,6 +362,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           id_cms: 2,
           short_question: 'short 2',
           image_url: 'BBB',
+          conditions: [],
         },
       ],
     };

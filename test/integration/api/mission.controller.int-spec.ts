@@ -1547,6 +1547,7 @@ describe('Mission (API test)', () => {
           universes: [],
           short_question: 'short',
           image_url: 'AAA',
+          conditions: [],
         },
       ],
     };

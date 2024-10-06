@@ -27,6 +27,7 @@ export class KycRepository {
       universes: kycDef.universes.map((u) => u.toString()),
       image_url: kycDef.image_url,
       short_question: kycDef.short_question,
+      conditions: kycDef.conditions as any,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -82,6 +83,7 @@ export class KycRepository {
       ngc_key: kycDB.ngc_key,
       short_question: kycDB.short_question,
       image_url: kycDB.image_url,
+      conditions: kycDB.conditions as any,
     });
   }
 }

@@ -370,6 +370,7 @@ export class TestUtil {
       ],
       short_question: 'short',
       image_url: 'URL',
+      conditions: [],
 
       created_at: undefined,
       updated_at: undefined,
@@ -433,6 +434,7 @@ export class TestUtil {
           universes: [Univers.climat],
           short_question: 'short',
           image_url: 'URL',
+          conditions: [],
         },
       ],
     };
