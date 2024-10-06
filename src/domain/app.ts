@@ -99,6 +99,18 @@ export class App {
   public static getActiveNotificationsListe(): string {
     return process.env.NOTIFICATIONS_MAIL_ACTIVES || '';
   }
+  public static getBasicLogin(): string {
+    return process.env.BASIC_LOGIN || '';
+  }
+  public static getBasicPassword(): string {
+    return process.env.BASIC_PASSWORD || '';
+  }
+
+  public static getBasicLoginPwdBase64(): string {
+    const login = this.getBasicLogin();
+    const pwd = this.getBasicPassword();
+    return btoa(login + ':' + pwd);
+  }
   public static getAppVersion(): {
     major: number;
     minor: number;
