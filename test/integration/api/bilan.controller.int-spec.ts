@@ -383,7 +383,6 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
-    console.log(response.body.bilan_synthese);
     expect(response.body.bilan_synthese).toEqual({
       impact_transport: 'moyen',
       impact_alimentation: 'tres_fort',
