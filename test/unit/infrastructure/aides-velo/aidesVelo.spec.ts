@@ -95,6 +95,18 @@ describe('Aides Vélo', () => {
     });
   });
 
+  describe('Région Occitanie', () => {
+    it("ne devrait pas avoir de plafond pour l'Eco-chèque mobilité", () => {
+      engine.setSituation({
+        'localisation . région': "'76'",
+        'revenu fiscal de référence': '8000€/an',
+        'vélo . type': "'électrique'",
+        'vélo . prix': '100€',
+      });
+      expect(engine.evaluate('aides . occitanie').nodeValue).toEqual(200);
+    });
+  });
+
   describe('Toulouse Métropole', () => {
     it('devrait correctement arrondir la valeur', () => {
       engine.setSituation({
