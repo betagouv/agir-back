@@ -94,4 +94,51 @@ describe('Aides Vélo', () => {
       expect(engine.evaluate("aides . cote d'or").nodeValue).toEqual(350);
     });
   });
+
+  describe('Toulouse Métropole', () => {
+    it('devrait correctement arrondir la valeur', () => {
+      engine.setSituation({
+        'localisation . epci': "'Toulouse Métropole'",
+        'revenu fiscal de référence': '8000€/an',
+        'vélo . type': "'électrique'",
+        'vélo . prix': '500€',
+      });
+
+      expect(engine.evaluate('aides . toulouse').nodeValue).toEqual(167);
+    });
+
+    it("devrait considérer la transformation en VAE de la même façon que l'achat d'une VAE", () => {
+      engine.setSituation({
+        'localisation . epci': "'Toulouse Métropole'",
+        'revenu fiscal de référence': '8000€/an',
+        'vélo . type': "'électrique'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . toulouse').nodeValue).toEqual(250);
+
+      engine.setSituation({
+        'localisation . epci': "'Toulouse Métropole'",
+        'revenu fiscal de référence': '8000€/an',
+        'vélo . type': "'motorisation'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . toulouse').nodeValue).toEqual(250);
+
+      engine.setSituation({
+        'localisation . epci': "'Toulouse Métropole'",
+        'revenu fiscal de référence': '20000€/an',
+        'vélo . type': "'électrique'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . toulouse').nodeValue).toEqual(200);
+
+      engine.setSituation({
+        'localisation . epci': "'Toulouse Métropole'",
+        'revenu fiscal de référence': '20000€/an',
+        'vélo . type': "'motorisation'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . toulouse').nodeValue).toEqual(200);
+    });
+  });
 });

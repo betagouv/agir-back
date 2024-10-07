@@ -17,7 +17,7 @@ describe('AideVeloRepository', () => {
     await TestUtil.appclose();
   });
 
-  it('getSummaryVelos : calcul de base OK', async () => {
+  it('doit correctement calculer les aides pour une situation de base', async () => {
     // WHEN
     const result = await aidesVeloRepository.getSummaryVelos(
       '91120',
@@ -37,7 +37,7 @@ describe('AideVeloRepository', () => {
     ]);
   });
 
-  it('getSummaryVelos : avec abonnement TER à Anger', async () => {
+  it("doit retourner le bon montant de l'aide avec un abonnement TER à Anger ", async () => {
     // WHEN
     const result = await aidesVeloRepository.getSummaryVelos(
       '49000',
@@ -58,7 +58,7 @@ describe('AideVeloRepository', () => {
     ]);
   });
 
-  it('getSummaryVelos : sans abonnement TER à Anger', async () => {
+  it("doit retourner le bon montant de l'aide sans un abonnement TER à Anger", async () => {
     // WHEN
     const result = await aidesVeloRepository.getSummaryVelos(
       '49000',
@@ -76,6 +76,22 @@ describe('AideVeloRepository', () => {
       { kind: 'région', value: '52' },
       { kind: 'epci', value: 'CU Angers Loire Métropole', code: '244900015' },
     ]);
+  });
+
+  it('doit correctement cumuler les aides pour une personne habitant à Toulouse', async () => {
+    // WHEN
+    const result = await aidesVeloRepository.getSummaryVelos(
+      '31000',
+      8000,
+      1,
+      500,
+    );
+
+    // THEN
+    expect(result['électrique'].length).toBe(3);
+    expect(result['électrique'][0].libelle).toBe('Bonus vélo');
+    expect(result['électrique'][1].libelle).toBe('Région Occitanie');
+    expect(result['électrique'][2].libelle).toBe('Toulouse Métropole');
   });
 });
 

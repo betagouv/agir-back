@@ -1197,7 +1197,10 @@
         "revenu fiscal de référence <= 35052 €/an"
       ]
     },
-    "valeur": "40% * vélo . prix . HT",
+    "formule": {
+      "valeur": "40% * vélo . prix . HT",
+      "arrondi": "oui"
+    },
     "plafond": {
       "variations": [
         {
@@ -1229,7 +1232,12 @@
           }
         },
         {
-          "si": "vélo . électrique",
+          "si": {
+            "une de ces conditions": [
+              "vélo . électrique",
+              "vélo . motorisation"
+            ]
+          },
           "alors": {
             "variations": [
               {
@@ -8869,7 +8877,9 @@
     }
   },
   "revenu fiscal de référence": {
+    "titre": "Revenu fiscal de référence par part (quotient familial)",
     "question": "Quel est votre revenu annuel (quotient familial) ?",
+    "description": "[Revenu fiscal de\nréférence](https://www.economie.gouv.fr/particuliers/revenu-imposable-revenu-fiscal-reference)\ndivisé par le nombre de parts fiscales.\n\nVoir également le [calcul du quotient\nfamilial](https://www.economie.gouv.fr/particuliers/quotient-familial).\n",
     "par défaut": "800 €/an"
   },
   "première tranche IR": "15400 €/an",
