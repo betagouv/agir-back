@@ -1254,7 +1254,7 @@
     "slug": "saint-etienne",
     "country": "france"
   },
-  "aides . département Hérault": {
+  "aides . département hérault": {
     "collectivity": {
       "kind": "département",
       "value": "34"
@@ -3470,3 +3470,4 @@
     "country": "luxembourg"
   }
 }
+

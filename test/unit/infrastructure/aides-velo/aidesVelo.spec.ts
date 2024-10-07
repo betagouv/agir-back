@@ -205,4 +205,35 @@ describe('Aides Vélo', () => {
       );
     });
   });
+
+  describe('Département Hérault', () => {
+    it('devrait correctement prendre en compte les vélo adaptés pour les personnes en situation de handicap', () => {
+      engine.setSituation({
+        'localisation . département': "'34'",
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'adapté'",
+        'vélo . prix': '1000€',
+      });
+
+      expect(engine.evaluate('aides . département hérault').nodeValue).toEqual(
+        null,
+      );
+      expect(
+        engine.evaluate('aides . département hérault vélo adapté').nodeValue,
+      ).toEqual(500);
+
+      engine.setSituation({
+        'localisation . département': "'34'",
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'adapté'",
+        'vélo . prix': '25000€',
+      });
+      expect(engine.evaluate('aides . département hérault').nodeValue).toEqual(
+        null,
+      );
+      expect(
+        engine.evaluate('aides . département hérault vélo adapté').nodeValue,
+      ).toEqual(1000);
+    });
+  });
 });

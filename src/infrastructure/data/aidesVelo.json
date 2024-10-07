@@ -3039,20 +3039,35 @@
     "plafond": "vélo . prix",
     "lien": "https://www.loire.fr/jcms/lw_1383840/fr/beneficiez-de-300-euros-pour-l-achat-d-un-velo-a-assistance-electrique-ou-d-un-kit-d-electrification-vae"
   },
-  "aides . département Hérault": {
+  "aides . département hérault": {
     "remplace": "département",
     "titre": "Département Hérault",
-    "description": "Chèque Hérault Vélo - Aide à l'achat d'un vélo électrique. Cette aide peut\nêtre complétées par un bonus « Hérault Pichòt » de 20€ pour l’achat d’un\nsiège enfant ou de 50€ pour une carriole.\n",
+    "description": "Chèque Hérault Vélo - Aide à l'achat d'un vélo électrique neuf réalisé\nauprès d’un professionnel exerçant son activité professionnelle sur le\nterritoire du Département de l’Hérault. Cette aide peut être complétées par\nun bonus « Hérault Pichòt » de 20€ pour l’achat d’un siège enfant ou de 50€\npour une carriole.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . département = '34'",
         "vélo . électrique",
         "vélo . neuf",
-        "revenu fiscal de référence <= 25660 €/an"
+        "revenu fiscal de référence <= 25660 €/an",
+        "vélo . adapté = non"
       ]
     },
     "valeur": "250€",
     "note": "### Note sur le plafond\n\nDans les versions précédentes, un plafond du montant du prix du vélo était\nappliqué. Cependant, rien n'indique la présence de ce plafond dans la\n[documentation\nofficielle](https://herault.fr/cms_viewFile.php?idtf=9118&path=Reglement-des-cheques-Herault-Velo-et-Herault-Handi-Velo.pdf).\nNous avons donc décidé de ne pas l'appliquer.\n",
+    "lien": "https://herault.fr/aideProjet/3/321-aide-a-l-achat-d-un-velo-electrique-vae.htm"
+  },
+  "aides . département hérault vélo adapté": {
+    "remplace": "département",
+    "titre": "Département Hérault",
+    "description": "Chèque Hérault Handi Vélo - Aide à l'achat d'un vélo électrique adapté ou\nde matériel adapté (dispositif de troisième roue, guidons électriques…)\nneuf et d’occasion. \n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . département = '34'",
+        "vélo . adapté"
+      ]
+    },
+    "valeur": "50% * vélo . prix",
+    "plafond": "1000 €",
     "lien": "https://herault.fr/aideProjet/3/321-aide-a-l-achat-d-un-velo-electrique-vae.htm"
   },
   "aides . montpellier": {
