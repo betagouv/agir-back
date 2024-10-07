@@ -185,8 +185,24 @@ describe('Aides Vélo', () => {
         'localisation . code insee': "'75056'",
         'revenu fiscal de référence': '5000€/an',
         'vélo . type': "'adapté'",
-        'vélo . prix': '500€',
+        'vélo . prix': '1000€',
       });
+
+      expect(engine.evaluate('aides . paris').nodeValue).toEqual(null);
+      expect(engine.evaluate('aides . paris vélo adapté').nodeValue).toEqual(
+        275,
+      );
+
+      engine.setSituation({
+        'localisation . code insee': "'75056'",
+        'revenu fiscal de référence': '5000€/an',
+        'vélo . type': "'adapté'",
+        'vélo . prix': '25000€',
+      });
+      expect(engine.evaluate('aides . paris').nodeValue).toEqual(null);
+      expect(engine.evaluate('aides . paris vélo adapté').nodeValue).toEqual(
+        900,
+      );
     });
   });
 });
