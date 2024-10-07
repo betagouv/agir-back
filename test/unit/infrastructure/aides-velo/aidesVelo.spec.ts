@@ -110,6 +110,31 @@ describe('Aides Vélo', () => {
       });
       expect(engine.evaluate('aides . occitanie').nodeValue).toEqual(200);
     });
+
+    it('devrait correctement prendre en compte les vélo adaptés pour les personnes en situation de handicap', () => {
+      engine.setSituation({
+        'localisation . région': "'76'",
+        'revenu fiscal de référence': '8000€/an',
+        'vélo . type': "'adapté'",
+        'vélo . prix': '1000€',
+      });
+
+      expect(engine.evaluate('aides . occitanie').nodeValue).toEqual(null);
+      expect(
+        engine.evaluate('aides . occitanie vélo adapté').nodeValue,
+      ).toEqual(500);
+
+      engine.setSituation({
+        'localisation . région': "'76'",
+        'revenu fiscal de référence': '8000€/an',
+        'vélo . type': "'adapté'",
+        'vélo . prix': '25000€',
+      });
+      expect(engine.evaluate('aides . occitanie').nodeValue).toEqual(null);
+      expect(
+        engine.evaluate('aides . occitanie vélo adapté').nodeValue,
+      ).toEqual(1000);
+    });
   });
 
   describe('Toulouse Métropole', () => {
