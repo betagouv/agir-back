@@ -42,6 +42,7 @@ export class LienBilanUnivers {
   pourcentage_progression: number;
   nombre_total_question: number;
   id_enchainement_kyc: string;
+  temps_minutes: number;
 }
 
 export class BilanCarboneSynthese {

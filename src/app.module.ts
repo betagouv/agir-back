@@ -5,7 +5,7 @@ import { AidesController } from './infrastructure/api/aides.controller';
 import { TestDataController } from './infrastructure/api/testData.controller';
 import { CMSController } from './infrastructure/api/incoming/cms.controller';
 
-import { BilanUsecase } from './usecase/bilan.usecase';
+import { ImportNGCUsecase } from './usecase/importNGC.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
 import { CMSUsecase } from './usecase/cms.usecase';
 
@@ -181,7 +181,7 @@ function getControllers(): any[] {
     AidesRetrofitRepository,
     AidesVeloRepository,
     ProfileUsecase,
-    BilanUsecase,
+    ImportNGCUsecase,
     AidesUsecase,
     CMSUsecase,
     EmailSender,

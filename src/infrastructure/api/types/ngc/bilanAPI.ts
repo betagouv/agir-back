@@ -74,6 +74,8 @@ export class LienBilanUniversAPI {
 
   @ApiProperty()
   nombre_total_question: number;
+  @ApiProperty()
+  temps_minutes: number;
 
   @ApiProperty()
   id_enchainement_kyc: string;
@@ -86,6 +88,7 @@ export class LienBilanUniversAPI {
       pourcentage_progression: lien.pourcentage_progression,
       univers: lien.univers,
       univers_label: ThematiqueRepository.getTitreUnivers(lien.univers),
+      temps_minutes: lien.temps_minutes,
     };
   }
 }

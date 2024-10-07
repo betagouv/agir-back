@@ -18,14 +18,14 @@ import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtili
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { App } from '../../domain/app';
 import { SituationNGCAPI } from './types/ngc/situationNGCAPI';
-import { BilanUsecase } from '../../usecase/bilan.usecase';
+import { ImportNGCUsecase } from '../../usecase/importNGC.usecase';
 
 @Controller()
 @ApiTags('1 - Utilisateur - Inscription')
 export class InscriptionController extends GenericControler {
   constructor(
     private readonly inscriptionUsecase: InscriptionUsecase,
-    private readonly bilanUsecase: BilanUsecase,
+    private readonly importNGCUsecase: ImportNGCUsecase,
   ) {
     super();
   }
@@ -88,7 +88,9 @@ export class InscriptionController extends GenericControler {
   )
   @UseGuards(ThrottlerGuard)
   async importFromNGC(@Body() body: SituationNGCAPI) {
-    const result = await this.bilanUsecase.importSituationNGC(body.situation);
+    const result = await this.importNGCUsecase.importSituationNGC(
+      body.situation,
+    );
     return {
       url: `${App.getBaseURLFront()}/creation-compte?situationId=${
         result.id_situtation

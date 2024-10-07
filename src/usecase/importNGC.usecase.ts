@@ -3,7 +3,7 @@ import { SituationNGCRepository } from '../infrastructure/repository/bilan.repos
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
 
 @Injectable()
-export class BilanUsecase {
+export class ImportNGCUsecase {
   constructor(
     private bilanRepository: SituationNGCRepository,
     private ngcCaclulator: NGCCalculator,

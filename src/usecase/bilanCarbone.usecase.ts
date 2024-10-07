@@ -47,6 +47,7 @@ export class BilanCarboneUsecase {
             nombre_total_question: 7,
             pourcentage_progression: 45,
             id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+            temps_minutes: 5,
           },
           {
             image_url:
@@ -55,6 +56,7 @@ export class BilanCarboneUsecase {
             nombre_total_question: 9,
             pourcentage_progression: 30,
             id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+            temps_minutes: 3,
           },
           {
             image_url:
@@ -63,6 +65,7 @@ export class BilanCarboneUsecase {
             nombre_total_question: 12,
             pourcentage_progression: 70,
             id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+            temps_minutes: 10,
           },
           {
             image_url:
@@ -71,6 +74,7 @@ export class BilanCarboneUsecase {
             nombre_total_question: 12,
             pourcentage_progression: 70,
             id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+            temps_minutes: 9,
           },
         ],
       },

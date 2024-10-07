@@ -398,6 +398,7 @@ describe('/bilan (API test)', () => {
           pourcentage_progression: 45,
           univers: 'transport',
           univers_label: 'The Transport',
+          temps_minutes: 5,
         },
         {
           id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
@@ -407,6 +408,7 @@ describe('/bilan (API test)', () => {
           pourcentage_progression: 30,
           univers: 'alimentation',
           univers_label: 'Alimentation',
+          temps_minutes: 3,
         },
         {
           id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
@@ -416,6 +418,7 @@ describe('/bilan (API test)', () => {
           pourcentage_progression: 70,
           univers: 'consommation',
           univers_label: 'Consommation',
+          temps_minutes: 10,
         },
         {
           id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
@@ -425,6 +428,7 @@ describe('/bilan (API test)', () => {
           pourcentage_progression: 70,
           univers: 'logement',
           univers_label: 'Logement',
+          temps_minutes: 9,
         },
       ],
     });

@@ -438,9 +438,8 @@ describe('/utilisateurs - Inscription - (API test)', () => {
         },
       });
 
-    const situtation_id = response_post_situation.headers.location
-      .split('=')
-      .pop();
+    let situtation_id = response_post_situation.headers.location.split('=')[1];
+    situtation_id = situtation_id.substring(0, situtation_id.indexOf('&'));
 
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
       mot_de_passe: '#1234567890HAHAa',
@@ -478,9 +477,37 @@ describe('/utilisateurs - Inscription - (API test)', () => {
         },
       });
 
-    const situtation_id = response_post_situation.headers.location
-      .split('=')
-      .pop();
+    let situtation_id: string =
+      response_post_situation.headers.location.split('=')[1];
+    situtation_id = situtation_id.substring(0, situtation_id.indexOf('&'));
+
+    const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
+      mot_de_passe: '#1234567890HAHAa',
+      email: 'w@w.com',
+      source_inscription: 'mobile',
+      situation_ngc_id: situtation_id,
+    });
+    // THEN
+
+    expect(response.status).toBe(201);
+    const user = await utilisateurRepository.findByEmail('w@w.com');
+
+    expect(user.kyc_history.answered_questions).toHaveLength(0);
+  });
+  it(`POST /utilisateurs_v2 - integration situation NGC , pas d'erreurs n importe quoi `, async () => {
+    // GIVEN
+    // WHEN
+    const response_post_situation = await TestUtil.getServer()
+      .post('/bilan/importFromNGC')
+      .send({
+        situation: {
+          'c est vraime null': 's:fqjvvq',
+        },
+      });
+
+    let situtation_id: string =
+      response_post_situation.headers.location.split('=')[1];
+    situtation_id = situtation_id.substring(0, situtation_id.indexOf('&'));
 
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
       mot_de_passe: '#1234567890HAHAa',

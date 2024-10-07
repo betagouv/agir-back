@@ -15,7 +15,7 @@ import { ContactUsecase } from './contact.usecase';
 import { CodeManager } from '../domain/utilisateur/manager/codeManager';
 import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/onboarding/createUtilisateurAPI';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
-import { BilanUsecase } from './bilan.usecase';
+import { ImportNGCUsecase } from './importNGC.usecase';
 import { SituationNGCRepository } from '../infrastructure/repository/bilan.repository';
 
 export type Phrase = {
