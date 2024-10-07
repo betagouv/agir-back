@@ -26,15 +26,20 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         ...baseSituation,
         'revenu fiscal de référence': '20000€/an',
-        'vélo . type': "'électrique'",
-        'vélo . prix': '500€',
-        'personne en situation de handicap': 'oui',
+        'vélo . type': "'adapté'",
+        'vélo . prix': '2500€',
       });
-      const expectedAmount = Math.min(500 * 0.4, 400);
 
-      expect(engine.evaluate('aides . bonus vélo').nodeValue).toEqual(
-        expectedAmount,
-      );
+      expect(engine.evaluate('aides . bonus vélo').nodeValue).toEqual(1000);
+
+      engine.setSituation({
+        ...baseSituation,
+        'revenu fiscal de référence': '20000€/an',
+        'vélo . type': "'adapté'",
+        'vélo . prix': '25000€',
+      });
+
+      expect(engine.evaluate('aides . bonus vélo').nodeValue).toEqual(2000);
     });
 
     it('revenu fiscal de référence < 15 400 €/an pour un vélo électrique de 1000€', () => {
@@ -171,6 +176,17 @@ describe('Aides Vélo', () => {
         'vélo . prix': '1000€',
       });
       expect(engine.evaluate('aides . nantes').nodeValue).toEqual(500);
+    });
+  });
+
+  describe('Ville de Paris', () => {
+    it('devrait correctement prendre en compte les vélo adaptés pour les personnes en situation de handicap', () => {
+      engine.setSituation({
+        'localisation . code insee': "'75056'",
+        'revenu fiscal de référence': '5000€/an',
+        'vélo . type': "'adapté'",
+        'vélo . prix': '500€',
+      });
     });
   });
 });

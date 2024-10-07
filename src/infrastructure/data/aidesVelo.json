@@ -27,7 +27,7 @@
         {
           "une de ces conditions": [
             "revenu fiscal de référence <= 15400 €/an",
-            "personne en situation de handicap"
+            "vélo . adapté"
           ]
         }
       ]
@@ -39,7 +39,7 @@
           "si": {
             "une de ces conditions": [
               "revenu fiscal de référence <= 7100 €/an",
-              "personne en situation de handicap"
+              "vélo . adapté"
             ]
           },
           "alors": {
@@ -48,7 +48,8 @@
                 "si": {
                   "une de ces conditions": [
                     "vélo . cargo",
-                    "vélo . pliant"
+                    "vélo . pliant",
+                    "vélo . adapté"
                   ]
                 },
                 "alors": "2000€"
@@ -8610,9 +8611,15 @@
       "cargo électrique",
       "pliant",
       "pliant électrique",
-      "motorisation"
+      "motorisation",
+      "adapté"
     ],
     "par défaut": "'électrique'"
+  },
+  "vélo . adapté": {
+    "applicable si": "vélo . type = 'adapté'",
+    "valeur": "oui",
+    "note": "Pour plus d'informations, voir cet\n[article](https://www.monparcourshandicap.gouv.fr/actualite/velo-adapte-au-handicap-quel-materiel-choisir-et-comment-le-financer).\n"
   },
   "vélo . mécanique simple": {
     "valeur": "oui",
@@ -8955,9 +8962,5 @@
         "sinon": "'France'"
       }
     ]
-  },
-  "personne en situation de handicap": {
-    "question": "Êtes-vous en situation de handicap ?",
-    "par défaut": "non"
   }
 }
