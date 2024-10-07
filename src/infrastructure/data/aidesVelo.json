@@ -195,18 +195,33 @@
   "aides . occitanie": {
     "remplace": "région",
     "titre": "Région Occitanie",
-    "description": "Éco-chèque mobilité - Achat d’un vélo à assistance électrique",
+    "description": "Éco-chèque mobilité - Achat d’un vélo à assistance électrique.",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . région = '76'",
         "revenu fiscal de référence <= 14089 €/an",
         "vélo . neuf",
-        "vélo . électrique"
+        "vélo . électrique",
+        "vélo . adapté = non"
       ]
     },
     "valeur": "200€",
     "note": "### Note sur le plafond\n\nDans les versions précédentes, un plafond du montant du prix du vélo\nétait appliqué. Cependant, rien n'indique la présence de ce plafond dans\nla [documentation\nofficielle](https://www.laregion.fr/Eco-cheque-mobilite-velo-a-assistance-electrique).\nNous avons donc décidé de ne pas l'appliquer.\n",
     "lien": "https://www.laregion.fr/Eco-cheque-mobilite-velo-a-assistance-electrique"
+  },
+  "aides . occitanie vélo adapté": {
+    "remplace": "région",
+    "titre": "Région Occitanie",
+    "description": "Éco-chèque mobilité - Bonus vélo adapté PMR.",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . région = '76'",
+        "vélo . adapté"
+      ]
+    },
+    "valeur": "50% * vélo . prix",
+    "plafond": "1000€",
+    "lien": "https://www.laregion.fr/Eco-cheque-mobilite-Bonus-velo-adapte-PMR"
   },
   "aides . grand est": {
     "remplace": "région",
