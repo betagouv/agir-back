@@ -204,7 +204,7 @@
       ]
     },
     "valeur": "200€",
-    "plafond": "vélo . prix",
+    "note": "### Note sur le plafond\n\nDans les versions précédentes, un plafond du montant du prix du vélo\nétait appliqué. Cependant, rien n'indique la présence de ce plafond dans\nla [documentation\nofficielle](https://www.laregion.fr/Eco-cheque-mobilite-velo-a-assistance-electrique).\nNous avons donc décidé de ne pas l'appliquer.\n",
     "lien": "https://www.laregion.fr/Eco-cheque-mobilite-velo-a-assistance-electrique"
   },
   "aides . grand est": {
