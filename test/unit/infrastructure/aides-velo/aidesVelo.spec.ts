@@ -75,4 +75,23 @@ describe('Aides Vélo', () => {
       expect(engine.evaluate('aides . bonus vélo').nodeValue).toEqual(0);
     });
   });
+
+  describe("Département Côte-d'Or", () => {
+    it('plus de subvention pour les vélos assemblés ou produit localement', () => {
+      const coteDorSituation = {
+        'vélo . type': "'électrique'",
+        'localisation . département': "'21'",
+        'vélo . prix': '500€',
+      };
+
+      engine.setSituation(coteDorSituation);
+      expect(engine.evaluate("aides . cote d'or").nodeValue).toEqual(250);
+
+      engine.setSituation({
+        ...coteDorSituation,
+        "aides . cote d'or . vélo assemblé ou produit localement": 'oui',
+      });
+      expect(engine.evaluate("aides . cote d'or").nodeValue).toEqual(350);
+    });
+  });
 });
