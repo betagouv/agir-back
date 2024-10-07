@@ -242,7 +242,7 @@
   "aides . ardèche": {
     "remplace": "département",
     "titre": "Département de l'Ardèche",
-    "description": "Le département ardéchois rembourse 10% du prix d'un vélo électrique\nneuf acheté auprès d'un vélociste partenaire (offre limitée à 1500 vélos).\n",
+    "description": "Le département ardéchois rembourse 10% du prix d'un vélo électrique neuf\nacheté auprès d'un vélociste partenaire (offre limitée à 1500 vélos).\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . département = '07'",
@@ -3026,16 +3026,18 @@
   "aides . département Hérault": {
     "remplace": "département",
     "titre": "Département Hérault",
+    "description": "Chèque Hérault Vélo - Aide à l'achat d'un vélo électrique. Cette aide peut\nêtre complétées par un bonus « Hérault Pichòt » de 20€ pour l’achat d’un\nsiège enfant ou de 50€ pour une carriole.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . département = '34'",
         "vélo . électrique",
-        "revenu fiscal de référence <= 27086 €/an"
+        "vélo . neuf",
+        "revenu fiscal de référence <= 25660 €/an"
       ]
     },
-    "valeur": "vélo . prix",
-    "plafond": "250€",
-    "lien": "https://herault.fr/409-mon-velo.htm"
+    "valeur": "250€",
+    "note": "### Note sur le plafond\n\nDans les versions précédentes, un plafond du montant du prix du vélo était\nappliqué. Cependant, rien n'indique la présence de ce plafond dans la\n[documentation\nofficielle](https://herault.fr/cms_viewFile.php?idtf=9118&path=Reglement-des-cheques-Herault-Velo-et-Herault-Handi-Velo.pdf).\nNous avons donc décidé de ne pas l'appliquer.\n",
+    "lien": "https://herault.fr/aideProjet/3/321-aide-a-l-achat-d-un-velo-electrique-vae.htm"
   },
   "aides . montpellier": {
     "remplace": "intercommunalité",
