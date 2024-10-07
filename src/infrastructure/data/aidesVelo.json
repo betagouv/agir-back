@@ -1026,6 +1026,7 @@
   "aides . nantes": {
     "remplace": "intercommunalité",
     "titre": "Nantes Métropole",
+    "description": "Aide solidaire à l'achat de vélo",
     "applicable si": "localisation . epci = 'Nantes Métropole'",
     "variations": [
       {
@@ -1091,7 +1092,7 @@
       {
         "si": "revenu fiscal de référence <= 750 €/mois",
         "alors": {
-          "valeur": "90% * vélo . prix",
+          "valeur": "50% * vélo . prix",
           "plafond": {
             "variations": [
               {
@@ -1121,7 +1122,7 @@
       {
         "si": "revenu fiscal de référence <= 900 €/mois",
         "alors": {
-          "valeur": "90% * vélo . prix",
+          "valeur": "30% * vélo . prix",
           "plafond": {
             "variations": [
               {
@@ -1191,6 +1192,7 @@
   "aides . toulouse": {
     "remplace": "intercommunalité",
     "titre": "Toulouse Métropole",
+    "description": "Prime vélo – Aide à l’achat, la location ou la transformation d’un vélo.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'Toulouse Métropole'",
