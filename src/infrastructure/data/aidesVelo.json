@@ -1750,24 +1750,16 @@
   "aides . toulon": {
     "remplace": "intercommunalité",
     "titre": "Métropole Toulon-Provence-Méditerranée",
-    "applicable si": "localisation . epci = 'Métropole Toulon-Provence-Méditerranée'",
-    "valeur": "25% * vélo . prix",
-    "plafond": {
-      "variations": [
-        {
-          "si": "vélo . électrique",
-          "alors": "250 €"
-        },
-        {
-          "si": "vélo . motorisation",
-          "alors": "150 €"
-        },
-        {
-          "sinon": "0 €"
-        }
+    "description": "Aide à l'achat d'un vélo à assistance électrique",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . epci = 'Métropole Toulon-Provence-Méditerranée'",
+        "vélo . électrique"
       ]
     },
-    "lien": "https://metropoletpm.fr/tourisme/proxy/tpm-s-engage-velo-electrique"
+    "valeur": "25% * vélo . prix",
+    "plafond": "250 €",
+    "lien": "https://metropoletpm.fr/velo-assistance-electrique"
   },
   "aides . provence verte": {
     "remplace": "intercommunalité",
