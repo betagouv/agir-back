@@ -521,7 +521,7 @@ describe('/bilan (API test)', () => {
     });
 
     expect(response.headers.location).toEqual(
-      `${App.getBaseURLFront()}/creation-compte?situation_id=${
+      `${App.getBaseURLFront()}/creation-compte?situationId=${
         situationDB[0].id
       }&bilan_tonnes=10`,
     );
@@ -543,7 +543,7 @@ describe('/bilan (API test)', () => {
     });
 
     expect(response.headers.location).toEqual(
-      `${App.getBaseURLFront()}/creation-compte?situation_id=${
+      `${App.getBaseURLFront()}/creation-compte?situationId=${
         situationDB[0].id
       }&bilan_tonnes=8`,
     );

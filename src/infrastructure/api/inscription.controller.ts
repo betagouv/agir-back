@@ -80,13 +80,17 @@ export class InscriptionController extends GenericControler {
   @Post('bilan/importFromNGC')
   @ApiFoundResponse({
     description:
-      "Redirige vers la page d'inscription avec 2 param d'URL : situation_id et bilan_tonnes. L'url a la forme DOMAINE/creation-compte?situation_id=XYZ&bilan_tonnes=8",
+      "Redirige vers la page d'inscription avec 2 param d'URL : situation_id et bilan_tonnes. L'url a la forme DOMAINE/creation-compte?situationId=XYZ&bilan_tonnes=8",
   })
+  @Redirect(
+    'https://FRONT/creation-compte?situationId=1234&bilan_tonnes=8',
+    302,
+  )
   @UseGuards(ThrottlerGuard)
   async importFromNGC(@Body() body: SituationNGCAPI) {
     const result = await this.bilanUsecase.importSituationNGC(body.situation);
     return {
-      url: `${App.getBaseURLFront()}/creation-compte?situation_id=${
+      url: `${App.getBaseURLFront()}/creation-compte?situationId=${
         result.id_situtation
       }&bilan_tonnes=${result.bilan_tonnes}`,
     };
