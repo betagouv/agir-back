@@ -262,7 +262,8 @@
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '75056'",
-        "revenu fiscal de référence <= 6358 €/an"
+        "revenu fiscal de référence <= 6358 €/an",
+        "vélo . adapté = non"
       ]
     },
     "valeur": {
@@ -293,11 +294,25 @@
             "alors": "400€"
           },
           {
-            "sinon": "0€"
+            "sinon": "100€"
           }
         ]
       }
     },
+    "lien": "https://www.paris.fr/pages/lutte-contre-la-pollution-les-aides-a-la-mobilite-5373"
+  },
+  "aides . paris vélo adapté": {
+    "remplace": "commune",
+    "titre": "Ville de Paris",
+    "description": "Subvention de la ville de Paris pour l'achat d'un vélo adapté aux\npersonnes à mobilité réduite.\n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . code insee = '75056'",
+        "vélo . adapté"
+      ]
+    },
+    "valeur": "33% * vélo . prix . HT",
+    "plafond": "900 €",
     "lien": "https://www.paris.fr/pages/lutte-contre-la-pollution-les-aides-a-la-mobilite-5373"
   },
   "aides . saint-étienne": {
