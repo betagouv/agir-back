@@ -42,10 +42,15 @@ export class CodeManager {
     utilisateur: CodeAwareUtilisateur,
     code: string,
   ): Promise<boolean> {
-    let ok =
-      utilisateur.code === code &&
-      utilisateur.code_generation_time.getTime() >
-        Date.now() - CodeManager.CODE_VALIDITY_TIME_MS;
+    let ok;
+    if (utilisateur.email === App.getGoogleTestEmail()) {
+      ok = App.getGoogleTestOTP() === code;
+    } else {
+      ok =
+        utilisateur.code === code &&
+        utilisateur.code_generation_time.getTime() >
+          Date.now() - CodeManager.CODE_VALIDITY_TIME_MS;
+    }
     if (!ok) {
       CodeManager.failCode(utilisateur);
       await this.securityRepository.updateCodeValidationData(utilisateur);
