@@ -125,7 +125,7 @@ export class TestDataController extends GenericControler {
       clonedData.todo = new ParcoursTodo();
     }
 
-    clonedData.unsubscribe_mail_token = '123456789';
+    clonedData.unsubscribe_mail_token = crypto.randomUUID();
 
     PasswordManager.setUserPassword(clonedData, clonedData.mot_de_passe);
     delete clonedData.mot_de_passe;
