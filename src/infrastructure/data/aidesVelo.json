@@ -1,4 +1,4 @@
-﻿{
+{
   "aides": {
     "avec": {
       "commune": "0 €",
@@ -9,7 +9,13 @@
     }
   },
   "aides . montant": {
-    "somme": ["commune", "intercommunalité", "département", "région", "état"]
+    "somme": [
+      "commune",
+      "intercommunalité",
+      "département",
+      "région",
+      "état"
+    ]
   },
   "aides . bonus vélo": {
     "remplace": "état",
@@ -18,19 +24,32 @@
     "applicable si": {
       "toutes ces conditions": [
         "localisation . pays = 'France'",
-        "revenu fiscal de référence <= première tranche IR"
+        {
+          "une de ces conditions": [
+            "revenu fiscal de référence <= 15400 €/an",
+            "personne en situation de handicap"
+          ]
+        }
       ]
     },
     "valeur": "40% * vélo . prix",
     "plafond": {
       "variations": [
         {
-          "si": "revenu fiscal de référence <= 7100 €/an",
+          "si": {
+            "une de ces conditions": [
+              "revenu fiscal de référence <= 7100 €/an",
+              "personne en situation de handicap"
+            ]
+          },
           "alors": {
             "variations": [
               {
                 "si": {
-                  "une de ces conditions": ["vélo . cargo", "vélo . pliant"]
+                  "une de ces conditions": [
+                    "vélo . cargo",
+                    "vélo . pliant"
+                  ]
                 },
                 "alors": "2000€"
               },
@@ -54,7 +73,10 @@
             "variations": [
               {
                 "si": {
-                  "une de ces conditions": ["vélo . cargo", "vélo . pliant"]
+                  "une de ces conditions": [
+                    "vélo . cargo",
+                    "vélo . pliant"
+                  ]
                 },
                 "alors": "1000"
               },
@@ -73,7 +95,8 @@
         }
       ]
     },
-    "lien": "https://www.service-public.fr/particuliers/vosdroits/F36828"
+    "note": "### Sources\n\nLe calcul du montant du bonus vélo est basé sur cet [article de\neconomie.gouv.fr](https://www.economie.gouv.fr/particuliers/prime-velo-electrique).\n",
+    "lien": "https://www.economie.gouv.fr/particuliers/prime-velo-electrique#"
   },
   "aides . prime à la conversion": {
     "applicable si": {
@@ -108,7 +131,12 @@
     },
     "titre": "Surprime Zone à Faibles Émissions (ZFE)",
     "description": "Vous pouvez bénéficier d’une surprime car $ville est une zone à faible\némission mobilité (ZFE). Cette surprime est conditionnée à l'octroi d’une\naide par la collectivité locale et son montant est identique à l'aide versée\npar la collectivité locale, dans la limite de 1 000 €.\n",
-    "somme": ["commune", "intercommunalité", "département", "région"],
+    "somme": [
+      "commune",
+      "intercommunalité",
+      "département",
+      "région"
+    ],
     "plafond": "1000€",
     "lien": "https://www.service-public.fr/particuliers/vosdroits/F36827"
   },
@@ -309,7 +337,10 @@
       },
       {
         "si": {
-          "toutes ces conditions": ["vélo . neuf", "vélo . cargo électrique"]
+          "toutes ces conditions": [
+            "vélo . neuf",
+            "vélo . cargo électrique"
+          ]
         },
         "alors": {
           "valeur": "50% * vélo . prix",
@@ -328,7 +359,10 @@
       },
       {
         "si": {
-          "toutes ces conditions": ["vélo . neuf", "vélo . cargo"]
+          "toutes ces conditions": [
+            "vélo . neuf",
+            "vélo . cargo"
+          ]
         },
         "alors": {
           "valeur": "50% * vélo . prix",
@@ -488,7 +522,10 @@
       "toutes ces conditions": [
         "localisation . epci = 'CC du Pays Mornantais (COPAMO)'",
         {
-          "une de ces conditions": ["vélo . électrique", "vélo . motorisation"]
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . motorisation"
+          ]
         }
       ]
     },
@@ -543,7 +580,10 @@
       "toutes ces conditions": [
         "localisation . code insee = '69081'",
         {
-          "une de ces conditions": ["vélo . électrique", "vélo . motorisation"]
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . motorisation"
+          ]
         }
       ]
     },
@@ -583,7 +623,10 @@
       "toutes ces conditions": [
         "localisation . code insee = '91312'",
         {
-          "une de ces conditions": ["vélo . électrique", "vélo . motorisation"]
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . motorisation"
+          ]
         }
       ]
     },
@@ -639,7 +682,10 @@
     "variations": [
       {
         "si": {
-          "une de ces conditions": ["vélo . électrique", "vélo . motorisation"]
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . motorisation"
+          ]
         },
         "alors": "100 €"
       },
@@ -697,7 +743,10 @@
       "toutes ces conditions": [
         "localisation . code insee = \"42316\"",
         {
-          "une de ces conditions": ["vélo . électrique", "vélo . motorisation"]
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . motorisation"
+          ]
         }
       ]
     },
@@ -909,13 +958,19 @@
     "variations": [
       {
         "si": {
-          "toutes ces conditions": ["vélo . électrique", "vélo . prix >= 1000€"]
+          "toutes ces conditions": [
+            "vélo . électrique",
+            "vélo . prix >= 1000€"
+          ]
         },
         "alors": "100€"
       },
       {
         "si": {
-          "toutes ces conditions": ["vélo . mécanique", "vélo . prix >= 500€"]
+          "toutes ces conditions": [
+            "vélo . mécanique",
+            "vélo . prix >= 500€"
+          ]
         },
         "alors": "50€"
       },
@@ -945,7 +1000,10 @@
       "toutes ces conditions": [
         "localisation . région = '52'",
         {
-          "une de ces conditions": ["vélo . pliant", "vélo . électrique"]
+          "une de ces conditions": [
+            "vélo . pliant",
+            "vélo . électrique"
+          ]
         },
         "abonné TER"
       ]
@@ -2494,7 +2552,10 @@
       },
       {
         "si": {
-          "toutes ces conditions": ["vélo . occasion", "vélo . mécanique"]
+          "toutes ces conditions": [
+            "vélo . occasion",
+            "vélo . mécanique"
+          ]
         },
         "alors": {
           "valeur": "50€",
@@ -2981,13 +3042,19 @@
       "variations": [
         {
           "si": {
-            "toutes ces conditions": ["vélo . électrique", "vélo . neuf"]
+            "toutes ces conditions": [
+              "vélo . électrique",
+              "vélo . neuf"
+            ]
           },
           "alors": "500€"
         },
         {
           "si": {
-            "toutes ces conditions": ["vélo . électrique", "vélo . occasion"]
+            "toutes ces conditions": [
+              "vélo . électrique",
+              "vélo . occasion"
+            ]
           },
           "alors": "200€"
         },
@@ -3205,7 +3272,10 @@
     "variations": [
       {
         "si": {
-          "toutes ces conditions": ["vélo . mécanique", "vélo . occasion"]
+          "toutes ces conditions": [
+            "vélo . mécanique",
+            "vélo . occasion"
+          ]
         },
         "alors": {
           "valeur": "200€",
@@ -3214,7 +3284,10 @@
       },
       {
         "si": {
-          "toutes ces conditions": ["vélo . électrique", "vélo . occasion"]
+          "toutes ces conditions": [
+            "vélo . électrique",
+            "vélo . occasion"
+          ]
         },
         "alors": {
           "valeur": "150€",
@@ -3303,7 +3376,10 @@
       },
       {
         "si": {
-          "une de ces conditions": ["vélo . électrique", "vélo . pliant"]
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . pliant"
+          ]
         },
         "alors": {
           "variations": [
@@ -3555,7 +3631,10 @@
       "toutes ces conditions": [
         "localisation . code insee = '73179'",
         {
-          "une de ces conditions": ["vélo . électrique", "vélo . pliant"]
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . pliant"
+          ]
         }
       ]
     },
@@ -3685,7 +3764,10 @@
       "toutes ces conditions": [
         "localisation . epci = 'CC Sèvre et Loire'",
         {
-          "une de ces conditions": ["vélo . cargo", "vélo . électrique"]
+          "une de ces conditions": [
+            "vélo . cargo",
+            "vélo . électrique"
+          ]
         }
       ]
     },
@@ -3984,7 +4066,10 @@
       "toutes ces conditions": [
         "localisation . code insee = '92026'",
         {
-          "une de ces conditions": ["vélo . électrique", "vélo . motorisation"]
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . motorisation"
+          ]
         }
       ]
     },
@@ -4138,7 +4223,10 @@
       "toutes ces conditions": [
         "localisation . epci = 'CC de Puisaye-Forterre'",
         {
-          "une de ces conditions": ["vélo . électrique", "vélo . cargo"]
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . cargo"
+          ]
         }
       ]
     },
@@ -4321,13 +4409,19 @@
       },
       {
         "si": {
-          "toutes ces conditions": ["vélo . mécanique", "vélo . occasion"]
+          "toutes ces conditions": [
+            "vélo . mécanique",
+            "vélo . occasion"
+          ]
         },
         "alors": "30 €"
       },
       {
         "si": {
-          "toutes ces conditions": ["vélo . mécanique", "vélo . neuf"]
+          "toutes ces conditions": [
+            "vélo . mécanique",
+            "vélo . neuf"
+          ]
         },
         "alors": "20 €"
       },
@@ -4689,7 +4783,10 @@
       "toutes ces conditions": [
         "localisation . code insee = '74164'",
         {
-          "une de ces conditions": ["vélo . électrique", "vélo . pliant"]
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . pliant"
+          ]
         }
       ]
     },
@@ -5356,7 +5453,10 @@
       },
       {
         "si": {
-          "toutes ces conditions": ["vélo . électrique", "vélo . prix <= 4000€"]
+          "toutes ces conditions": [
+            "vélo . électrique",
+            "vélo . prix <= 4000€"
+          ]
         },
         "alors": "100€"
       },
@@ -5543,7 +5643,10 @@
       },
       {
         "si": {
-          "toutes ces conditions": ["vélo . électrique", "vélo . prix <= 2000€"]
+          "toutes ces conditions": [
+            "vélo . électrique",
+            "vélo . prix <= 2000€"
+          ]
         },
         "alors": "200€"
       },
@@ -5595,19 +5698,28 @@
       },
       {
         "si": {
-          "toutes ces conditions": ["vélo . cargo", "vélo . prix <= 4000€"]
+          "toutes ces conditions": [
+            "vélo . cargo",
+            "vélo . prix <= 4000€"
+          ]
         },
         "alors": "50€"
       },
       {
         "si": {
-          "toutes ces conditions": ["vélo . mécanique", "vélo . prix <= 3000€"]
+          "toutes ces conditions": [
+            "vélo . mécanique",
+            "vélo . prix <= 3000€"
+          ]
         },
         "alors": "50€"
       },
       {
         "si": {
-          "toutes ces conditions": ["vélo . électrique", "vélo . prix <= 3000€"]
+          "toutes ces conditions": [
+            "vélo . électrique",
+            "vélo . prix <= 3000€"
+          ]
         },
         "alors": "100€"
       },
@@ -5672,7 +5784,10 @@
       "toutes ces conditions": [
         "localisation . epci = 'CC du Bassin d'Aubenas'",
         {
-          "une de ces conditions": ["vélo . électrique", "vélo . cargo"]
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . cargo"
+          ]
         }
       ]
     },
@@ -5836,7 +5951,10 @@
     "variations": [
       {
         "si": {
-          "une de ces conditions": ["vélo . électrique", "vélo . motorisation"]
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . motorisation"
+          ]
         },
         "alors": "200€"
       },
@@ -5903,7 +6021,10 @@
       },
       {
         "si": {
-          "une de ces conditions": ["vélo . électrique", "vélo . motorisation"]
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . motorisation"
+          ]
         },
         "alors": {
           "valeur": "25% * vélo . prix",
@@ -6985,7 +7106,10 @@
         "localisation . epci = 'CC du Pays de Dol et de la Baie du Mont Saint-Michel'",
         "revenu fiscal de référence <= première tranche IR",
         {
-          "une de ces conditions": ["vélo . électrique", "vélo . motorisation"]
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . motorisation"
+          ]
         }
       ]
     },
@@ -7014,7 +7138,10 @@
       },
       {
         "si": {
-          "toutes ces conditions": ["vélo . électrique", "vélo . neuf"]
+          "toutes ces conditions": [
+            "vélo . électrique",
+            "vélo . neuf"
+          ]
         },
         "alors": "100 €"
       },
@@ -7112,7 +7239,10 @@
       "toutes ces conditions": [
         "localisation . epci = 'CA Saint-Brieuc Armor Agglomération'",
         {
-          "une de ces conditions": ["vélo . électrique", "vélo . cargo"]
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . cargo"
+          ]
         }
       ]
     },
@@ -7207,7 +7337,10 @@
       },
       {
         "si": {
-          "une de ces conditions": ["vélo . cargo", "vélo . mécanique"]
+          "une de ces conditions": [
+            "vélo . cargo",
+            "vélo . mécanique"
+          ]
         },
         "alors": "50% * vélo . prix"
       },
@@ -8249,7 +8382,10 @@
       "toutes ces conditions": [
         "localisation . epci = 'CC de la Côtière à Montluel'",
         {
-          "une de ces conditions": ["travailler à moins de 20km", "abonné TER"]
+          "une de ces conditions": [
+            "travailler à moins de 20km",
+            "abonné TER"
+          ]
         }
       ]
     },
@@ -8454,8 +8590,11 @@
     "plafond": "600€",
     "lien": "https://guichet.public.lu/fr/citoyens/transport/transports-individuels/aides-financieres/deduction-mobilite-durable-velo.html"
   },
-  "vélo": "oui",
+  "vélo": {
+    "titre": "Informations sur le type de vélo"
+  },
   "vélo . type": {
+    "question": "Quel type de vélo souhaitez-vous acheter ?",
     "possibilités": [
       "mécanique simple",
       "électrique",
@@ -8494,7 +8633,10 @@
   "vélo . électrique ou mécanique": {
     "valeur": "oui",
     "applicable si": {
-      "une de ces conditions": ["vélo . électrique", "vélo . mécanique"]
+      "une de ces conditions": [
+        "vélo . électrique",
+        "vélo . mécanique"
+      ]
     }
   },
   "vélo . cargo": {
@@ -8526,7 +8668,7 @@
   "vélo . motorisation": {
     "valeur": "oui",
     "applicable si": "vélo . type = 'motorisation'",
-    "description": "Un kit de conversion permet de transformer un vélo mécanique classique en\nvélo à assistance électrique. Il est constitué d’un moteur électrique, d’une\nbatterie, ainsi que d’un contrôleur et d’un afficheur.\n"
+    "description": "Un kit de conversion permet de transformer un vélo mécanique classique en\nvélo à assistance électrique. Il est constitué d’un moteur électrique,\nd’une batterie, ainsi que d’un contrôleur et d’un afficheur.\n"
   },
   "vélo . prix": {
     "question": {
@@ -8668,7 +8810,10 @@
   "vélo . neuf ou occasion": {
     "question": "S’agit-t-il d’un vélo neuf ou d’occasion ?",
     "par défaut": "'neuf'",
-    "possibilités": ["neuf", "occasion"]
+    "possibilités": [
+      "neuf",
+      "occasion"
+    ]
   },
   "vélo . neuf": {
     "titre": "Vélo neuf",
@@ -8763,11 +8908,29 @@
     }
   },
   "localisation": null,
-  "localisation . code insee": "''",
+  "localisation . code insee": {
+    "titre": "Code INSEE",
+    "type": "string",
+    "par défaut": "''",
+    "note": "Voir [Code officiel\ngéographique](https://fr.wikipedia.org/wiki/Code_officiel_g%C3%A9ographique)\n"
+  },
   "localisation . ZFE": "non",
-  "localisation . epci": "''",
-  "localisation . département": "''",
-  "localisation . région": "''",
+  "localisation . epci": {
+    "type": "string",
+    "titre": "Etablissement public de coopération intercommunale (EPCI)",
+    "description": "### Définition\n\nLes établissements publics de coopération intercommunale (EPCI) sont des\nstructures administratives permettant à plusieurs communes d’exercer des\ncompétences en commun.\n\nIls sont soumis à des règles communes, homogènes et comparables à celles\nde collectivités locales. Les communautés urbaines, communautés\nd'agglomération, communautés de communes, syndicats d'agglomération\nnouvelle, syndicats de communes et les syndicats mixtes sont des EPCI.\n\n> Source : [insee.fr](https://www.insee.fr/fr/metadonnees/definition/c1160)\n",
+    "par défaut": "'Toulouse Métropole'"
+  },
+  "localisation . département": {
+    "type": "string",
+    "titre": "Code département",
+    "par défaut": "''"
+  },
+  "localisation . région": {
+    "type": "string",
+    "titre": "Code région",
+    "par défaut": "''"
+  },
   "localisation . pays": {
     "variations": [
       {
@@ -8782,5 +8945,9 @@
         "sinon": "'France'"
       }
     ]
+  },
+  "personne en situation de handicap": {
+    "question": "Êtes-vous en situation de handicap ?",
+    "par défaut": "non"
   }
 }
