@@ -133,7 +133,7 @@ export class QuestionKYCUsecase {
         );
     }
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    // await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
     return {
       kyc: this.personnalisator.personnaliser(result_kyc, utilisateur),
