@@ -15,7 +15,7 @@ export type Collectivite = {
 export type AidesVelo = AideVelo[];
 
 export type AidesVeloParType = {
-  [category in TypeVelos]: number;
+  [category in TypeVelos]: AideVelo[];
 };
 
 export type Localisation = {
@@ -30,6 +30,7 @@ export type Localisation = {
   pays: string;
 };
 
+// TODO: Should be auto-generated from the publicodes rules
 export type InputParameters = Partial<{
   'localisation . pays': string;
   'localisation . code insee': string;
