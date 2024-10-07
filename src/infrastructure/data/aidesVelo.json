@@ -194,10 +194,12 @@
   "aides . occitanie": {
     "remplace": "région",
     "titre": "Région Occitanie",
+    "description": "Éco-chèque mobilité - Achat d’un vélo à assistance électrique",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . région = '76'",
-        "revenu fiscal de référence <= première tranche IR",
+        "revenu fiscal de référence <= 14089 €/an",
+        "vélo . neuf",
         "vélo . électrique"
       ]
     },
