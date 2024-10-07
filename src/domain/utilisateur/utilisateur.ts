@@ -195,7 +195,7 @@ export class Utilisateur extends UtilisateurData {
   }
 
   private static generateEmailToken?(): string {
-    return App.isProd() ? crypto.randomUUID() : '123456789';
+    return crypto.randomUUID();
   }
 
   public isOnboardingDone?(): boolean {
