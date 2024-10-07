@@ -153,4 +153,24 @@ describe('Aides Vélo', () => {
       expect(engine.evaluate('aides . toulouse').nodeValue).toEqual(200);
     });
   });
+
+  describe('Nantes Métropole', () => {
+    it('devrait correctement prendre en compte le revenu fiscale de référence en €/mois', () => {
+      engine.setSituation({
+        'localisation . epci': "'Nantes Métropole'",
+        'revenu fiscal de référence': '700€/mois',
+        'vélo . type': "'cargo'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . nantes').nodeValue).toEqual(500);
+
+      engine.setSituation({
+        'localisation . epci': "'Nantes Métropole'",
+        'revenu fiscal de référence': '8400€/an',
+        'vélo . type': "'cargo'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . nantes').nodeValue).toEqual(500);
+    });
+  });
 });
