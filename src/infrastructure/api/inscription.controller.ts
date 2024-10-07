@@ -5,6 +5,7 @@ import {
   ApiOkResponse,
   ApiExtraModels,
   ApiOperation,
+  ApiFoundResponse,
 } from '@nestjs/swagger';
 import { ProspectSubmitAPI } from './types/utilisateur/onboarding/prospectSubmitAPI';
 import { ValidateCodeAPI } from './types/utilisateur/onboarding/validateCodeAPI';
@@ -77,12 +78,17 @@ export class InscriptionController extends GenericControler {
 
   @ApiBody({ type: SituationNGCAPI })
   @Post('bilan/importFromNGC')
-  @Redirect('https://FRONT/creation-compte?situatio_id=1234', 302)
+  @ApiFoundResponse({
+    description:
+      "Redirige vers la page d'inscription avec 2 param d'URL : situation_id et bilan_tonnes. L'url a la forme DOMAINE/creation-compte?situation_id=XYZ&bilan_tonnes=8",
+  })
   @UseGuards(ThrottlerGuard)
   async importFromNGC(@Body() body: SituationNGCAPI) {
-    const id = await this.bilanUsecase.importSituationNGC(body.situation);
+    const result = await this.bilanUsecase.importSituationNGC(body.situation);
     return {
-      url: `${App.getBaseURLFront()}/creation-compte?situation_id=${id}`,
+      url: `${App.getBaseURLFront()}/creation-compte?situation_id=${
+        result.id_situtation
+      }&bilan_tonnes=${result.bilan_tonnes}`,
     };
   }
 }

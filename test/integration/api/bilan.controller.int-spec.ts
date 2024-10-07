@@ -523,7 +523,29 @@ describe('/bilan (API test)', () => {
     expect(response.headers.location).toEqual(
       `${App.getBaseURLFront()}/creation-compte?situation_id=${
         situationDB[0].id
-      }`,
+      }&bilan_tonnes=10`,
+    );
+  });
+  it.only('POST /bilan/importFromNGC - creates new situation alors que erreur de contenu, 8 tonnes par défaut ^^', async () => {
+    // WHEN
+    const response = await TestUtil.POST('/bilan/importFromNGC').send({
+      situation: {
+        'C est vraiement pas bon': 'dfsgsdg',
+      },
+    });
+
+    //THEN
+    expect(response.status).toBe(302);
+    const situationDB = await TestUtil.prisma.situationNGC.findMany({});
+    expect(situationDB).toHaveLength(1);
+    expect(situationDB[0].situation).toStrictEqual({
+      'C est vraiement pas bon': 'dfsgsdg',
+    });
+
+    expect(response.headers.location).toEqual(
+      `${App.getBaseURLFront()}/creation-compte?situation_id=${
+        situationDB[0].id
+      }&bilan_tonnes=8`,
     );
   });
 });
