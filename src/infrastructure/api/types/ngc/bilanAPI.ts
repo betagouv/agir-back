@@ -91,7 +91,7 @@ export class LienBilanUniversAPI {
 }
 
 export class BilanCarboneSyntheseAPI {
-  @ApiProperty({ type: NiveauImpact })
+  @ApiProperty({ enum: NiveauImpact })
   impact_transport: NiveauImpact;
 
   @ApiProperty({ enum: NiveauImpact })
