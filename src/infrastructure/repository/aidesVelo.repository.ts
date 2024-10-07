@@ -8,7 +8,6 @@ import aidesAndCollectivities from '../data/aides-collectivities.json';
 import {
   AidesVeloParType,
   InputParameters,
-  TypeVelos,
   AidesVelo,
   Localisation,
   Collectivite,
