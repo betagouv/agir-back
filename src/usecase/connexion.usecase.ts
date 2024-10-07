@@ -49,7 +49,9 @@ export class Connexion_v2_Usecase {
 
       await _this.utilisateurRepository.updateUtilisateur(user);
 
-      _this.sendCodeForConnexion(user);
+      if (user.email !== App.getGoogleTestEmail()) {
+        _this.sendCodeForConnexion(user);
+      }
     };
 
     return this.passwordManager.loginUtilisateur(
