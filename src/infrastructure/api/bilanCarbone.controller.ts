@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { GenericControler } from './genericControler';
 import { BilanCarboneUsecase } from '../../usecase/bilanCarbone.usecase';
-import { BilanCarboneAPI } from './types/ngc/bilanAPI';
+import { BilanCarboneDashboardAPI } from './types/ngc/bilanAPI';
 import { AuthGuard } from '../auth/guard';
 
 @Controller()
@@ -20,18 +20,21 @@ export class BilanCarboneController extends GenericControler {
     super();
   }
 
-  @ApiOkResponse({ type: BilanCarboneAPI })
+  @ApiOkResponse({ type: BilanCarboneDashboardAPI })
   @Get('utilisateur/:utilisateurId/bilans/last')
   @UseGuards(AuthGuard)
   async getBilan(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-  ): Promise<BilanCarboneAPI> {
+  ): Promise<BilanCarboneDashboardAPI> {
     this.checkCallerId(req, utilisateurId);
     const bilan = await this.bilanCarboneUsecase.getCurrentBilanByUtilisateurId(
       utilisateurId,
     );
-    return BilanCarboneAPI.mapToAPI(bilan);
+    return BilanCarboneDashboardAPI.mapToAPI(
+      bilan.bilan_complet,
+      bilan.bilan_synthese,
+    );
   }
 
   @Post('utilisateurs/compute_bilan_carbone')

@@ -60,7 +60,7 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({
+    expect(response.body.bilan_complet).toEqual({
       impact_kg_annee: 9048.184937832844,
       top_3: [
         {
@@ -345,6 +345,92 @@ describe('/bilan (API test)', () => {
     });
   });
 
+  it('GET /utilisateur/id/bilans/last - presence du bilan de synthese', async () => {
+    // GIVEN
+    const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
+
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.univers, {
+      id_cms: 1,
+      code: Univers.transport,
+      label: 'The Transport',
+      image_url: 'aaaa',
+    });
+    await TestUtil.create(DB.univers, {
+      id_cms: 2,
+      code: Univers.logement,
+      label: 'Logement',
+      image_url: 'bbbb',
+    });
+    await TestUtil.create(DB.univers, {
+      id_cms: 3,
+      code: Univers.consommation,
+      label: 'Consommation',
+      image_url: 'bbbb',
+    });
+    await TestUtil.create(DB.univers, {
+      id_cms: 4,
+      code: Univers.alimentation,
+      label: 'Alimentation',
+      image_url: 'bbbb',
+    });
+    await thematiqueRepository.loadUnivers();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateur/utilisateur-id/bilans/last',
+    );
+
+    //THEN
+    expect(response.status).toBe(200);
+    console.log(response.body.bilan_synthese);
+    expect(response.body.bilan_synthese).toEqual({
+      impact_transport: 'moyen',
+      impact_alimentation: 'tres_fort',
+      impact_logement: 'fort',
+      impact_consommation: 'faible',
+      pourcentage_completion_totale: 35,
+      liens_bilans_univers: [
+        {
+          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+          image_url:
+            'https://res.cloudinary.com/dq023imd8/image/upload/v1718886533/velo_2_27b85c28d4.png',
+          nombre_total_question: 7,
+          pourcentage_progression: 45,
+          univers: 'transport',
+          univers_label: 'The Transport',
+        },
+        {
+          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+          image_url:
+            'https://res.cloudinary.com/dq023imd8/image/upload/v1718701364/fruits_2_cfbf4b47b9.png',
+          nombre_total_question: 9,
+          pourcentage_progression: 30,
+          univers: 'alimentation',
+          univers_label: 'Alimentation',
+        },
+        {
+          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+          image_url:
+            'https://res.cloudinary.com/dq023imd8/image/upload/v1714635518/univers_loisirs_596c3b0599.jpg',
+          nombre_total_question: 12,
+          pourcentage_progression: 70,
+          univers: 'consommation',
+          univers_label: 'Consommation',
+        },
+        {
+          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+          image_url:
+            'https://res.cloudinary.com/dq023imd8/image/upload/v1714635495/univers_logement_6376123d16.jpg',
+          nombre_total_question: 12,
+          pourcentage_progression: 70,
+          univers: 'logement',
+          univers_label: 'Logement',
+        },
+      ],
+    });
+  });
+
   it('GET /utilisateur/id/bilans/last - mettre à jour le profil utilisateur change le bilan', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -375,7 +461,9 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
-    expect(response.body.impact_kg_annee).toEqual(11365.866563693477);
+    expect(response.body.bilan_complet.impact_kg_annee).toEqual(
+      11365.866563693477,
+    );
   });
 
   it('GET /utilisateur/id/bilans/last - une réponse vide ne fait pas crasher le bilan carbone', async () => {
@@ -412,7 +500,9 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
-    expect(response.body.impact_kg_annee).toEqual(9048.184937832844);
+    expect(response.body.bilan_complet.impact_kg_annee).toEqual(
+      9048.184937832844,
+    );
   });
 
   it('POST /bilan/importFromNGC - creates new situation', async () => {

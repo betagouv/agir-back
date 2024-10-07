@@ -3,8 +3,13 @@ import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { BilanCarboneStatistiqueRepository } from '../infrastructure/repository/bilanCarboneStatistique.repository';
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
-import { BilanCarbone } from '../domain/bilan/bilanCarbone';
+import {
+  BilanCarbone,
+  BilanCarboneSynthese,
+  NiveauImpact,
+} from '../domain/bilan/bilanCarbone';
 import { TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
+import { Univers } from '../domain/univers/univers';
 
 @Injectable()
 export class BilanCarboneUsecase {
@@ -14,18 +19,62 @@ export class BilanCarboneUsecase {
     private bilanCarboneStatistiqueRepository: BilanCarboneStatistiqueRepository,
   ) {}
 
-  async getCurrentBilanByUtilisateurId(
-    utilisateurId: string,
-  ): Promise<BilanCarbone> {
+  async getCurrentBilanByUtilisateurId(utilisateurId: string): Promise<{
+    bilan_complet: BilanCarbone;
+    bilan_synthese: BilanCarboneSynthese;
+  }> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
     const situation = this.computeSituation(utilisateur);
 
-    const result =
+    const bilan_complet =
       this.nGCCalculator.computeBilanCarboneFromSituation(situation);
 
-    return result;
+    return {
+      bilan_complet: bilan_complet,
+      bilan_synthese: {
+        impact_alimentation: NiveauImpact.tres_fort,
+        impact_logement: NiveauImpact.fort,
+        impact_transport: NiveauImpact.moyen,
+        impact_consommation: NiveauImpact.faible,
+        pourcentage_completion_totale: 35,
+        liens_bilans_univers: [
+          {
+            image_url:
+              'https://res.cloudinary.com/dq023imd8/image/upload/v1718886533/velo_2_27b85c28d4.png',
+            univers: Univers.transport,
+            nombre_total_question: 7,
+            pourcentage_progression: 45,
+            id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+          },
+          {
+            image_url:
+              'https://res.cloudinary.com/dq023imd8/image/upload/v1718701364/fruits_2_cfbf4b47b9.png',
+            univers: Univers.alimentation,
+            nombre_total_question: 9,
+            pourcentage_progression: 30,
+            id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+          },
+          {
+            image_url:
+              'https://res.cloudinary.com/dq023imd8/image/upload/v1714635518/univers_loisirs_596c3b0599.jpg',
+            univers: Univers.consommation,
+            nombre_total_question: 12,
+            pourcentage_progression: 70,
+            id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+          },
+          {
+            image_url:
+              'https://res.cloudinary.com/dq023imd8/image/upload/v1714635495/univers_logement_6376123d16.jpg',
+            univers: Univers.logement,
+            nombre_total_question: 12,
+            pourcentage_progression: 70,
+            id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+          },
+        ],
+      },
+    };
   }
 
   async computeBilanTousUtilisateurs(): Promise<string[]> {

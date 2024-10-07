@@ -7,7 +7,7 @@ import {
   ImpactUnivers,
 } from '../../domain/bilan/bilanCarbone';
 import { Univers } from '../../domain/univers/univers';
-import { Bilan } from '../../domain/bilan/bilan';
+import { Bilan_OLD } from '../../domain/bilan/bilan_old';
 
 @Injectable()
 export class NGCCalculator {
@@ -594,7 +594,7 @@ export class NGCCalculator {
     return liste_details.slice(0, 3);
   }
 
-  computeBilanFromSituation(situation: object): Bilan {
+  computeBilanFromSituation(situation: object): Bilan_OLD {
     const entryList = [
       'bilan',
       'transport',
