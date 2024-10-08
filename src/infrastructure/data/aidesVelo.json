@@ -353,76 +353,24 @@
   "aides . lyon": {
     "remplace": "intercommunalité",
     "titre": "Métropole Grand Lyon",
-    "applicable si": "localisation . epci = 'Métropole de Lyon'",
+    "description": "Aide à l'achat d'un vélo 2024.",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . epci = 'Métropole de Lyon'",
+        "revenu fiscal de référence <= 24900 €/an"
+      ]
+    },
     "variations": [
-      {
-        "si": {
-          "toutes ces conditions": [
-            "vélo . occasion",
-            "vélo . prix <= 150€",
-            "revenu fiscal de référence <= 19600€/an"
-          ]
-        },
-        "alors": {
-          "valeur": "100% * vélo . prix",
-          "plafond": "100€"
-        }
-      },
-      {
-        "si": {
-          "toutes ces conditions": [
-            "vélo . neuf",
-            "vélo . cargo électrique"
-          ]
-        },
-        "alors": {
-          "valeur": "50% * vélo . prix",
-          "plafond": {
-            "variations": [
-              {
-                "si": "revenu fiscal de référence <= 19600 €/an",
-                "alors": "1000 €"
-              },
-              {
-                "sinon": "200 €"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "si": {
-          "toutes ces conditions": [
-            "vélo . neuf",
-            "vélo . cargo"
-          ]
-        },
-        "alors": {
-          "valeur": "50% * vélo . prix",
-          "plafond": {
-            "variations": [
-              {
-                "si": "revenu fiscal de référence <= 19600 €/an",
-                "alors": "800 €"
-              },
-              {
-                "sinon": "200 €"
-              }
-            ]
-          }
-        }
-      },
       {
         "si": {
           "toutes ces conditions": [
             "vélo . neuf",
             {
               "une de ces conditions": [
-                "vélo . électrique",
-                "vélo . motorisation"
+                "vélo . cargo électrique",
+                "vélo . adapté"
               ]
-            },
-            "vélo . prix <= 3200 €"
+            }
           ]
         },
         "alors": {
@@ -431,10 +379,10 @@
             "variations": [
               {
                 "si": "revenu fiscal de référence <= 19600 €/an",
-                "alors": "500 €"
+                "alors": "1000€"
               },
               {
-                "sinon": "100 €"
+                "sinon": "200€"
               }
             ]
           }
@@ -444,8 +392,13 @@
         "si": {
           "toutes ces conditions": [
             "vélo . neuf",
-            "vélo . mécanique",
-            "vélo . prix <= 3200 €"
+            "vélo . prix <= 3200€",
+            {
+              "une de ces conditions": [
+                "vélo . électrique",
+                "vélo . motorisation"
+              ]
+            }
           ]
         },
         "alors": {
@@ -454,13 +407,72 @@
             "variations": [
               {
                 "si": "revenu fiscal de référence <= 19600 €/an",
-                "alors": "300 €"
+                "alors": "500€"
               },
               {
-                "sinon": "100 €"
+                "sinon": "100€"
               }
             ]
           }
+        }
+      },
+      {
+        "si": {
+          "toutes ces conditions": [
+            "vélo . cargo",
+            "vélo . neuf"
+          ]
+        },
+        "alors": {
+          "valeur": "50% * vélo . prix",
+          "plafond": {
+            "variations": [
+              {
+                "si": "revenu fiscal de référence <= 19600 €/an",
+                "alors": "800€"
+              },
+              {
+                "sinon": "200€"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "si": {
+          "toutes ces conditions": [
+            "vélo . pliant",
+            "vélo . neuf",
+            "vélo . prix <= 3200€"
+          ]
+        },
+        "alors": {
+          "valeur": "50% * vélo . prix",
+          "plafond": {
+            "variations": [
+              {
+                "si": "revenu fiscal de référence <= 19600 €/an",
+                "alors": "300€"
+              },
+              {
+                "sinon": "100€"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "si": {
+          "toutes ces conditions": [
+            "vélo . mécanique",
+            "vélo . occasion",
+            "vélo . prix <= 150€",
+            "revenu fiscal de référence <= 19600 €/an"
+          ]
+        },
+        "alors": {
+          "valeur": "vélo . prix",
+          "plafond": "100€"
         }
       },
       {

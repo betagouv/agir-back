@@ -14,6 +14,7 @@
 - `aides . occitanie vélo adapté`
 - `aides . paris vélo adapté`
 - `aides . pays de cruseilles`
+- `aides . région centre rémi zen`
 - `aides . tulle`
 - `aides . val d'yerres val de seine`
 
@@ -25,11 +26,13 @@
 - `aides . département hérault`
 - `aides . epinal`
 - `aides . loire layon aubance`
+- `aides . lyon`
 - `aides . montpellier`
 - `aides . nantes`
 - `aides . occitanie`
 - `aides . paris`
 - `aides . pays de lumbres`
+- `aides . région centre`
 - `aides . riviera francaise`
 - `aides . sophia antipolis`
 - `aides . toulon`
