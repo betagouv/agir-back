@@ -43,6 +43,7 @@ export class QuestionKYCUsecase {
     ],
     ENCHAINEMENT_KYC_bilan_transport: [
       KYCID.KYC_transport_type_utilisateur,
+      KYCID.KYC_transport_voiture_nbr_voyageurs,
       KYCID.KYC_transport_voiture_motorisation,
       KYCID.KYC_transport_heures_avion_court,
       KYCID.KYC_transport_heures_avion_moyen,
@@ -50,7 +51,6 @@ export class QuestionKYCUsecase {
       KYCID.KYC_transport_2roues_usager,
       KYCID.KYC_2roue_motorisation_type,
       KYCID.KYC_2roue_km,
-      KYCID.KYC_transport_voiture_nbr_voyageurs,
     ],
   };
 
