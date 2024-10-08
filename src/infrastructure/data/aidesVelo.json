@@ -6201,33 +6201,6 @@
     ],
     "lien": "https://www.cc-paysdesachards.fr/amenagement/mobilites/351-bonus-velo.html"
   },
-  "aides . terres de montaigu": {
-    "remplace": "intercommunalité",
-    "titre": "Terres de Montaigu",
-    "applicable si": "localisation . epci = 'CA Terres de Montaigu'",
-    "variations": [
-      {
-        "si": "vélo . cargo électrique",
-        "alors": "400€"
-      },
-      {
-        "si": "vélo . cargo",
-        "alors": "200€"
-      },
-      {
-        "si": "vélo . électrique",
-        "alors": "100€"
-      },
-      {
-        "si": "vélo . mécanique",
-        "alors": "50€"
-      },
-      {
-        "sinon": "0€"
-      }
-    ],
-    "lien": "https://www.terresdemontaigu.fr/demarche/demande-aide-acquisition-velo/"
-  },
   "aides . hem": {
     "remplace": "commune",
     "titre": "Ville de Hem",
