@@ -110,9 +110,13 @@ export class QuestionKYCUsecase {
     utilisateurId: string,
     questionId: string,
   ): Promise<QuestionGeneric> {
-    console.log(`getQuestion read user : ${Date.now()}`);
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
+    console.log(
+      `getQuestion read user : ${Date.now()} - ${utilisateur.id} - ${
+        utilisateur.version
+      }`,
+    );
 
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
@@ -133,9 +137,17 @@ export class QuestionKYCUsecase {
           questionId,
         );
     }
-    console.log(`getQuestion update : ${Date.now()}`);
+    console.log(
+      `getQuestion update : ${Date.now()} - ${utilisateur.id} - ${
+        utilisateur.version
+      }`,
+    );
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
-    console.log(`getQuestion update done : ${Date.now()}`);
+    console.log(
+      `getQuestion update done : ${Date.now()} - ${utilisateur.id} - ${
+        utilisateur.version
+      }`,
+    );
 
     return {
       kyc: this.personnalisator.personnaliser(result_kyc, utilisateur),
@@ -148,9 +160,13 @@ export class QuestionKYCUsecase {
     code_question: string,
     reponse: string[],
   ): Promise<void> {
-    console.log(`updateResponseKYC read user : ${Date.now()}`);
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
+    console.log(
+      `updateResponseKYC read user : ${Date.now()} - ${utilisateur.id} - ${
+        utilisateur.version
+      }`,
+    );
 
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
@@ -162,9 +178,17 @@ export class QuestionKYCUsecase {
       utilisateur,
       true,
     );
-    console.log(`updateResponseKYC update : ${Date.now()}`);
+    console.log(
+      `updateResponseKYC update : ${Date.now()} - ${utilisateur.id} - ${
+        utilisateur.version
+      }`,
+    );
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
-    console.log(`updateResponseKYC update done : ${Date.now()}`);
+    console.log(
+      `updateResponseKYC update done : ${Date.now()} - ${utilisateur.id} - ${
+        utilisateur.version
+      }`,
+    );
   }
 
   private dispatchKYCUpdateToOtherKYCsPostUpdate(

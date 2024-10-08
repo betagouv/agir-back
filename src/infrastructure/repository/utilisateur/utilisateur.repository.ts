@@ -127,6 +127,9 @@ export class UtilisateurRepository {
     });
   }
   async updateUtilisateur(utilisateur: Utilisateur): Promise<void> {
+    console.log(
+      `DB user update start : ${utilisateur.id} - ${utilisateur.version}`,
+    );
     try {
       await this.prisma.utilisateur.update({
         where: { id: utilisateur.id, db_version: utilisateur.db_version },
@@ -135,7 +138,13 @@ export class UtilisateurRepository {
           db_version: { increment: 1 },
         },
       });
+      console.log(
+        `DB user update done OK : ${utilisateur.id} - ${utilisateur.version}`,
+      );
     } catch (error) {
+      console.log(
+        `DB user update KO : ${utilisateur.id} - ${utilisateur.version}`,
+      );
       if (error.code === 'P2025') {
         ApplicationError.throwConcurrentUpdate();
       }
