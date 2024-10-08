@@ -8545,12 +8545,17 @@
   "aides . region centre": {
     "remplace": "région",
     "titre": "Région Centre-Val de Loire",
-    "description": "L'aide régionale est réservée aux habitants d'une commune sur laquelle la\nRégion est l'autorité organisatrice de la mobilité locale de substitution.\n",
+    "description": "Mobilité rurale - Vélo à assistance électrique ou adapté. L'aide régionale\nest réservée aux habitants d'une commune sur laquelle la Région est\nl'autorité organisatrice de la mobilité locale de substitution.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . région = '24'",
-        "vélo . électrique",
         "vélo . prix >= 600€",
+        {
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . adapté"
+          ]
+        },
         {
           "une de ces conditions": [
             "localisation . epci = \"CC du Perche\"",
@@ -8614,7 +8619,17 @@
       ]
     },
     "valeur": "25% * vélo . prix",
-    "plafond": "200€",
+    "plafond": {
+      "variations": [
+        {
+          "si": "vélo . adapté",
+          "alors": "500€"
+        },
+        {
+          "sinon": "200€"
+        }
+      ]
+    },
     "lien": "https://www.centre-valdeloire.fr/le-guide-des-aides-de-la-region-centre-val-de-loire/mobilite-rurale-velo-assistance-electrique"
   },
   "aides . monaco": {
@@ -8885,43 +8900,43 @@
     "rend non applicable": {
       "références à": "aides",
       "sauf dans": [
-        "aides . montant",
-        "aides . ile de france",
-        "aides . toulouse",
-        "aides . lyon",
-        "aides . grenoble",
-        "aides . louvigny",
-        "aides . pantin",
-        "aides . la roche sur yon",
-        "aides . saint-jacques de la lande",
-        "aides . béthune bruay",
-        "aides . haut val de sèvre",
-        "aides . grand périgueux",
-        "aides . divonne-les-bains",
-        "aides . illkirch",
-        "aides . valenciennes",
-        "aides . montpellier",
-        "aides . oullins",
-        "aides . grand villeneuvois",
         "aides . ambert livradois forez",
-        "aides . limoges metropole",
-        "aides . coeur de nacre",
-        "aides . belfort",
-        "aides . dieppe",
-        "aides . chevilly-larue",
-        "aides . loos-en-gohelle",
+        "aides . aubervilliers",
         "aides . auray quiberon",
+        "aides . belfort",
+        "aides . béthune bruay",
+        "aides . canélan",
+        "aides . chevilly-larue",
+        "aides . coeur de nacre",
+        "aides . denain",
+        "aides . dieppe",
+        "aides . divonne-les-bains",
+        "aides . feignies",
         "aides . ferte saint aubin",
+        "aides . grand cubzaguais",
+        "aides . grand périgueux",
+        "aides . grand villeneuvois",
+        "aides . grenoble",
+        "aides . haut val de sèvre",
+        "aides . ile de france",
+        "aides . illkirch",
+        "aides . kremlin-bicetre",
+        "aides . la roche sur yon",
+        "aides . limoges metropole",
+        "aides . loos-en-gohelle",
+        "aides . louvigny",
+        "aides . lyon",
+        "aides . montant",
+        "aides . montpellier",
+        "aides . moselle et madon",
+        "aides . oullins",
+        "aides . pantin",
+        "aides . saint-jacques de la lande",
         "aides . saint-louis",
         "aides . saint-marcellin vercors isère",
-        "aides . aubervilliers",
-        "aides . grand cubzaguais",
-        "aides . vallée de l'homme",
-        "aides . denain",
-        "aides . feignies",
-        "aides . moselle et madon",
-        "aides . canélan",
-        "aides . kremlin-bicetre"
+        "aides . toulouse",
+        "aides . valenciennes",
+        "aides . vallée de l'homme"
       ]
     }
   },
