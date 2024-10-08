@@ -207,7 +207,7 @@
     },
     "valeur": "25% * vélo . prix",
     "plafond": "500€",
-    "lien": "https://www.aue.corsica/Aide-a-l-achat-des-Velos-a-Assistance-Electrique_a205.html"
+    "lien": "https://www.aue.corsica/Aide-a-l-achat-des-Velos-a-Assistance-Electrique_a856.html"
   },
   "aides . ardèche": {
     "remplace": "département",
@@ -231,7 +231,7 @@
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '75056'",
-        "revenu fiscal de référence <= 6358 €/an"
+        "revenu fiscal de référence <= 6300 €/an"
       ]
     },
     "valeur": {
@@ -309,7 +309,8 @@
       },
       {
         "si": {
-          "toutes ces conditions": ["vélo . neuf", "vélo . cargo électrique"]
+          "toutes ces conditions": ["vélo . neuf", "vélo . cargo électrique",
+            "vélo . prix <= 3200€"]
         },
         "alors": {
           "valeur": "50% * vélo . prix",
@@ -416,7 +417,7 @@
       "variations": [
         {
           "si": "vélo . électrique",
-          "alors": "600€"
+          "alors": "500€"
         },
         {
           "sinon": "200€"
@@ -498,7 +499,7 @@
         "alors": "400€"
       },
       {
-        "sinon": "250€"
+        "sinon": "0€"
       }
     ],
     "lien": "https://www.cc-paysmornantais.fr/velo-electrique-on-vous-aide.html"
@@ -521,7 +522,7 @@
         "sinon": "150€"
       }
     ],
-    "lien": "https://www.ville-mornant.fr/Aide-acquisition-velo-a-assistance-electrique-mornant-art-283.html"
+    "lien": "https://www.ville-mornant.fr/Aide-a-l-acquisition-d-un-velo-specifique-ou-d-un-VAE-mornant-art-535.html"
   },
   "aides . dardilly": {
     "remplace": "commune",
