@@ -137,6 +137,7 @@ export class BilanCarboneDashboardAPI {
     bilan_synthese: BilanCarboneSynthese,
   ): BilanCarboneDashboardAPI {
     return {
+      ...bilan_complet, // TO DELETE
       bilan_complet: BilanCarboneCompletAPI.mapToAPI(bilan_complet),
       bilan_synthese: BilanCarboneSyntheseAPI.mapToAPI(bilan_synthese),
     };
