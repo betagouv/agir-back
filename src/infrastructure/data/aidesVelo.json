@@ -8807,83 +8807,211 @@
         "revenu fiscal de référence <= 30000 €/an"
       ]
     },
-    "variations": [
-      {
-        "si": "revenu fiscal de référence <= 14089€/an",
-        "alors": {
-          "variations": [
-            {
-              "si": "vélo . cargo électrique",
-              "alors": "600€"
-            },
-            {
-              "si": "vélo . électrique",
-              "alors": "400€"
-            },
-            {
-              "si": "vélo . mécanique",
-              "alors": "150€"
-            },
-            {
-              "si": "vélo . motorisation",
-              "alors": "200€"
-            },
-            {
-              "sinon": "0€"
-            }
-          ]
+    "valeur": {
+      "variations": [
+        {
+          "si": "revenu fiscal de référence <= 14089€/an",
+          "alors": {
+            "variations": [
+              {
+                "si": "vélo . cargo électrique",
+                "alors": "600€"
+              },
+              {
+                "si": "vélo . électrique",
+                "alors": "400€"
+              },
+              {
+                "si": "vélo . mécanique",
+                "alors": "150€"
+              },
+              {
+                "si": "vélo . motorisation",
+                "alors": "200€"
+              },
+              {
+                "sinon": "0€"
+              }
+            ]
+          }
+        },
+        {
+          "si": "revenu fiscal de référence <= 23000€/an",
+          "alors": {
+            "variations": [
+              {
+                "si": "vélo . cargo électrique",
+                "alors": "500€"
+              },
+              {
+                "si": "vélo . électrique",
+                "alors": "300€"
+              },
+              {
+                "si": "vélo . mécanique",
+                "alors": "100€"
+              },
+              {
+                "si": "vélo . motorisation",
+                "alors": "150€"
+              },
+              {
+                "sinon": "0€"
+              }
+            ]
+          }
+        },
+        {
+          "sinon": {
+            "variations": [
+              {
+                "si": "vélo . cargo électrique",
+                "alors": "400€"
+              },
+              {
+                "si": "vélo . électrique",
+                "alors": "200€"
+              },
+              {
+                "si": "vélo . motorisation",
+                "alors": "100€"
+              },
+              {
+                "sinon": "0€"
+              }
+            ]
+          }
         }
-      },
-      {
-        "si": "revenu fiscal de référence <= 23000€/an",
-        "alors": {
-          "variations": [
-            {
-              "si": "vélo . cargo électrique",
-              "alors": "500€"
-            },
-            {
-              "si": "vélo . électrique",
-              "alors": "300€"
-            },
-            {
-              "si": "vélo . mécanique",
-              "alors": "100€"
-            },
-            {
-              "si": "vélo . motorisation",
-              "alors": "150€"
-            },
-            {
-              "sinon": "0€"
-            }
-          ]
-        }
-      },
-      {
-        "sinon": {
-          "variations": [
-            {
-              "si": "vélo . cargo électrique",
-              "alors": "400€"
-            },
-            {
-              "si": "vélo . électrique",
-              "alors": "200€"
-            },
-            {
-              "si": "vélo . motorisation",
-              "alors": "100€"
-            },
-            {
-              "sinon": "0€"
-            }
-          ]
-        }
-      }
-    ],
+      ]
+    },
     "plafond": "50% * vélo . prix",
     "lien": "https://www.fier-et-usses.com/actualite/18078/2048-aide-a-l-achat-velo.htm"
+  },
+  "aides . pays de cruseilles": {
+    "remplace": "intercommunalité",
+    "titre": "Pays de Cruseilles",
+    "description": "Prime Achat Vélo. A noter qu'un bonus de 300€ est accordé pour l'adaptation\nd'un vélo pour les personnes à mobilité réduite.\n",
+    "applicable si": "localisation . epci = 'CC du Pays de Cruseilles'",
+    "valeur": {
+      "variations": [
+        {
+          "si": {
+            "toutes ces conditions": [
+              "vélo . cargo électrique",
+              "vélo . prix >= 1000€",
+              "vélo . prix <= 4500€"
+            ]
+          },
+          "alors": {
+            "variations": [
+              {
+                "si": "revenu fiscal de référence <= 7100€/an",
+                "alors": "700€"
+              },
+              {
+                "si": "revenu fiscal de référence <= 15400€/an",
+                "alors": "600€"
+              },
+              {
+                "si": "revenu fiscal de référence <= 20000€/an",
+                "alors": "400€"
+              },
+              {
+                "sinon": "0€"
+              }
+            ]
+          }
+        },
+        {
+          "si": {
+            "toutes ces conditions": [
+              "vélo . cargo",
+              "vélo . prix >= 1000€",
+              "vélo . prix <= 3000€"
+            ]
+          },
+          "alors": {
+            "variations": [
+              {
+                "si": "revenu fiscal de référence <= 7100€/an",
+                "alors": "400€"
+              },
+              {
+                "si": "revenu fiscal de référence <= 15400€/an",
+                "alors": "300€"
+              },
+              {
+                "si": "revenu fiscal de référence <= 20000€/an",
+                "alors": "200€"
+              },
+              {
+                "sinon": "0€"
+              }
+            ]
+          }
+        },
+        {
+          "si": {
+            "toutes ces conditions": [
+              "vélo . électrique",
+              "vélo . prix >= 600€",
+              "vélo . prix <= 3000€"
+            ]
+          },
+          "alors": {
+            "variations": [
+              {
+                "si": "revenu fiscal de référence <= 7100€/an",
+                "alors": "400€"
+              },
+              {
+                "si": "revenu fiscal de référence <= 15400€/an",
+                "alors": "300€"
+              },
+              {
+                "si": "revenu fiscal de référence <= 20000€/an",
+                "alors": "200€"
+              },
+              {
+                "sinon": "0€"
+              }
+            ]
+          }
+        },
+        {
+          "si": {
+            "toutes ces conditions": [
+              "vélo . mécanique",
+              "vélo . prix >= 400€",
+              "vélo . prix <= 1200€"
+            ]
+          },
+          "alors": {
+            "variations": [
+              {
+                "si": "revenu fiscal de référence <= 7100€/an",
+                "alors": "200€"
+              },
+              {
+                "si": "revenu fiscal de référence <= première tranche IR",
+                "alors": "150€"
+              },
+              {
+                "si": "revenu fiscal de référence <= 20000€/an",
+                "alors": "100€"
+              },
+              {
+                "sinon": "0€"
+              }
+            ]
+          }
+        },
+        {
+          "sinon": "0€"
+        }
+      ]
+    },
+    "lien": "https://ccpaysdecruseilles.org/vivre-ici/mobilite/prime-achat-velo/"
   },
   "aides . monaco": {
     "remplace": "commune",
@@ -9185,6 +9313,7 @@
         "aides . moselle et madon",
         "aides . oullins",
         "aides . pantin",
+        "aides . pays de cruseilles",
         "aides . perpignan métropole",
         "aides . saint-jacques de la lande",
         "aides . saint-louis",
