@@ -7855,19 +7855,6 @@
     "plafond": "100€",
     "lien": "http://www.beauvais.fr/velo/"
   },
-  "aides . pont-saint-maxence": {
-    "remplace": "commune",
-    "titre": "Ville de Pont-Saint-Maxence",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . code insee = '60509'",
-        "vélo . électrique"
-      ]
-    },
-    "valeur": "20% * vélo . prix",
-    "plafond": "250€",
-    "lien": "https://www.pontsaintemaxence.fr/wp-content/uploads/2019/05/2019_cp_vae.pdf"
-  },
   "aides . grand angouleme": {
     "remplace": "intercommunalité",
     "titre": "Grand Angoulême",
