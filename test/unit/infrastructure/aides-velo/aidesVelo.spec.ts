@@ -276,7 +276,7 @@ describe('Aides Vélo', () => {
         'localisation . epci': "'Montpellier Méditerranée Métropole'",
         'revenu fiscal de référence': '10000€/an',
         'vélo . type': "'électrique'",
-        'vélo . occasion': 'oui',
+        'vélo . neuf ou occasion': "'occasion'",
         'vélo . prix': '1000€',
       });
       expect(engine.evaluate('aides . montpellier').nodeValue).toEqual(200);
@@ -443,6 +443,20 @@ describe('Aides Vélo', () => {
       expect(engine.evaluate('aides . pays de cruseilles').nodeValue).toEqual(
         300,
       );
+    });
+  });
+
+  describe('Bourges Plus', () => {
+    it("devrait être élligible pour les vélo d'occasion", () => {
+      engine.setSituation({
+        'localisation . epci': "'CA Bourges Plus'",
+        'vélo . type': "'électrique'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+      });
+
+      expect(engine.evaluate('aides . bourges').nodeValue).toEqual(200);
     });
   });
 });

@@ -5684,26 +5684,64 @@
   "aides . bourges": {
     "remplace": "intercommunalité",
     "titre": "Bourges Plus",
-    "non applicable si": "oui",
-    "applicable si": "localisation . epci = 'CA Bourges Plus'",
+    "description": "Aide à l'achat d'un vélo 2024",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . epci = 'CA Bourges Plus'",
+        {
+          "une de ces conditions": [
+            "personne en situation de handicap",
+            "revenu fiscal de référence <= 31593 €/an"
+          ]
+        }
+      ]
+    },
     "valeur": "50% * vélo . prix",
     "plafond": {
       "variations": [
         {
-          "si": "vélo . cargo",
+          "si": {
+            "toutes ces conditions": [
+              "vélo . cargo",
+              "vélo . prix <= 6000€"
+            ]
+          },
           "alors": "500€"
         },
         {
-          "si": "vélo . pliant",
-          "alors": "300€"
+          "si": {
+            "toutes ces conditions": [
+              "vélo . pliant",
+              "vélo . prix <= 1500€"
+            ]
+          },
+          "alors": "200€"
         },
         {
-          "si": "vélo . électrique",
-          "alors": "300€"
+          "si": {
+            "toutes ces conditions": [
+              "vélo . électrique",
+              "vélo . prix <= 2500€"
+            ]
+          },
+          "alors": "200€"
         },
         {
-          "si": "vélo . mécanique",
-          "alors": "150€"
+          "si": "vélo . adapté",
+          "alors": "500€"
+        },
+        {
+          "si": "vélo . motorisation",
+          "alors": "200€"
+        },
+        {
+          "si": {
+            "toutes ces conditions": [
+              "vélo . mécanique simple",
+              "vélo . prix <= 1000€"
+            ]
+          },
+          "alors": "100€"
         },
         {
           "sinon": "0€"
@@ -9286,6 +9324,7 @@
         "aides . auray quiberon",
         "aides . belfort",
         "aides . béthune bruay",
+        "aides . bourges",
         "aides . canélan",
         "aides . chevilly-larue",
         "aides . coeur de nacre",
