@@ -4369,7 +4369,12 @@
         "alors": {
           "variations": [
             {
-              "si": "étudiant ou jeune en recherche d'emploi",
+              "si": {
+                "une de ces conditions": [
+                  "statut étudiant",
+                  "jeune en recherche d'emploi"
+                ]
+              },
               "alors": "350 €"
             },
             {
@@ -4384,10 +4389,11 @@
     ],
     "lien": "https://www.ville-saint-omer.fr/aides-lacquisition-de-velo",
     "avec": {
-      "étudiant ou jeune en recherche d'emploi": {
+      "jeune en recherche d'emploi": {
         "type": "booléen",
+        "non applicable si": "statut étudiant",
         "par défaut": "non",
-        "question": "Êtes-vous étudiant ou jeune de moins de 25 ans en recherche d'emploi ?"
+        "question": "Avez-vous moins de 25 ans et êtes-vous en recherche d'emploi ?"
       }
     }
   },
@@ -8654,6 +8660,84 @@
       }
     }
   },
+  "aides . perpignan métropole": {
+    "remplace": "intercommunalité",
+    "titre": "Perpignan Méditerranée Métropole",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . epci = 'CU Perpignan Méditerranée Métropole'",
+        {
+          "une de ces conditions": [
+            "vélo . adapté",
+            {
+              "toutes ces conditions": [
+                "vélo . mécanique",
+                "vélo . prix >= 600€",
+                "vélo . prix <= 1500€"
+              ]
+            },
+            {
+              "toutes ces conditions": [
+                "vélo . pliant",
+                "vélo . neuf",
+                "vélo . prix >= 600€",
+                "vélo . prix <= 2000€"
+              ]
+            },
+            {
+              "toutes ces conditions": [
+                "vélo . électrique",
+                {
+                  "variations": [
+                    {
+                      "si": "vélo . neuf",
+                      "alors": "vélo . prix <= 2500€"
+                    },
+                    {
+                      "sinon": "vélo . prix <= 1500€"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "toutes ces conditions": [
+                "vélo . motorisation",
+                "vélo . prix <= 1500€"
+              ]
+            },
+            {
+              "toutes ces conditions": [
+                "vélo . cargo",
+                "vélo . prix >= 2000€",
+                "vélo . prix <= 4000€"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "valeur": {
+      "variations": [
+        {
+          "si": "vélo . adapté",
+          "alors": "1000€"
+        },
+        {
+          "si": "vélo . cargo",
+          "alors": "500€"
+        },
+        {
+          "si": "statut étudiant",
+          "alors": "350€"
+        },
+        {
+          "sinon": "250€"
+        }
+      ]
+    },
+    "lien": "https://aide-velo.perpignan-mediterranee.org/"
+  },
   "aides . monaco": {
     "remplace": "commune",
     "titre": "Monaco",
@@ -8953,6 +9037,7 @@
         "aides . moselle et madon",
         "aides . oullins",
         "aides . pantin",
+        "aides . perpignan métropole",
         "aides . saint-jacques de la lande",
         "aides . saint-louis",
         "aides . saint-marcellin vercors isère",
@@ -9044,5 +9129,11 @@
         "sinon": "'France'"
       }
     ]
+  },
+  "statut étudiant": {
+    "type": "booléen",
+    "question": "Êtes-vous étudiant·e ?",
+    "description": "Certaines aides sont réservées ou majorées pour les étudiant·es.",
+    "par défaut": "non"
   }
 }
