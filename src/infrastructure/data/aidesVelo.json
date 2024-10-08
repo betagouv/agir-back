@@ -6734,10 +6734,12 @@
   "aides . cœur d'ostrevent": {
     "remplace": "intercommunalité",
     "titre": "Cœur d'Ostrevent",
+    "description": "Prime à l'achat d'un vélo électrique",
     "applicable si": {
       "toutes ces conditions": [
-        "localisation . epci = \"CC Coeur d'Ostrevent (CCCO)\"",
-        "vélo . électrique"
+        "localisation . epci = 'CC Coeur d'Ostrevent (CCCO)'",
+        "vélo . électrique",
+        "vélo . neuf"
       ]
     },
     "valeur": "25% * vélo . prix",
@@ -9063,6 +9065,56 @@
     ],
     "lien": "https://www.tulleagglo.fr/actualites/lagglo-a-velo/"
   },
+  "aides . val d'yerres val de seine": {
+    "remplace": "intercommunalité",
+    "titre": "Val d'Yerres Val de Seine",
+    "applicable si": "localisation . epci = 'CA Val d'Yerres Val de Seine'",
+    "valeur": "50% * vélo . prix",
+    "plafond": {
+      "variations": [
+        {
+          "si": "vélo . cargo",
+          "alors": "200€"
+        },
+        {
+          "si": "vélo . adapté",
+          "alors": "150€"
+        },
+        {
+          "si": "vélo . électrique",
+          "alors": "100€"
+        },
+        {
+          "si": "vélo . pliant",
+          "alors": "100€"
+        },
+        {
+          "si": "vélo . motorisation",
+          "alors": "150€"
+        },
+        {
+          "si": {
+            "toutes ces conditions": [
+              "vélo . mécanique",
+              "jeune de 15 à 25 ans"
+            ]
+          },
+          "alors": "50€"
+        },
+        {
+          "sinon": "0€"
+        }
+      ]
+    },
+    "lien": "https://www.vyvs.fr/lagglo-vous-aide-a-acheter-un-velo/",
+    "avec": {
+      "jeune de 15 à 25 ans": {
+        "question": "Êtes-vous âgé de 15 à 25 ans ?",
+        "type": "booléen",
+        "par défaut": "non"
+      }
+    }
+  },
   "aides . monaco": {
     "remplace": "commune",
     "titre": "Monaco",
@@ -9372,6 +9424,7 @@
         "aides . saint-marcellin vercors isère",
         "aides . toulouse",
         "aides . tulle",
+        "aides . val d'yerres val de seine",
         "aides . valenciennes",
         "aides . vallée de l'homme"
       ]

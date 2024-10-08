@@ -12,6 +12,7 @@
 - `aides . paris vélo adapté`
 - `aides . pays de cruseilles`
 - `aides . tulle`
+- `aides . val d'yerres val de seine`
 
 **Aides mise à jour**
 
