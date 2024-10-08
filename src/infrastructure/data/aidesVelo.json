@@ -7605,20 +7605,32 @@
   "aides . pays de lumbres": {
     "remplace": "intercommunalité",
     "titre": "Pays de Lumbres",
+    "description": "Aide à l'achat d'un vélo 2024",
     "applicable si": "localisation . epci = 'CC du Pays de Lumbres'",
-    "valeur": "20% * vélo . prix",
-    "plafond": {
+    "valeur": {
       "variations": [
         {
-          "si": "vélo . électrique",
-          "alors": "250€"
+          "si": "vélo . adapté",
+          "alors": {
+            "valeur": "40% * vélo . prix . HT",
+            "plafond": "500€"
+          }
         },
         {
-          "si": "vélo . mécanique",
-          "alors": "100€"
-        },
-        {
-          "sinon": "0€"
+          "sinon": {
+            "valeur": "10% * vélo . prix . HT",
+            "plafond": {
+              "variations": [
+                {
+                  "si": "vélo . électrique",
+                  "alors": "125€"
+                },
+                {
+                  "sinon": "50€"
+                }
+              ]
+            }
+          }
         }
       ]
     },
@@ -9418,6 +9430,7 @@
         "aides . oullins",
         "aides . pantin",
         "aides . pays de cruseilles",
+        "aides . pays de lumbres",
         "aides . perpignan métropole",
         "aides . saint-jacques de la lande",
         "aides . saint-louis",
