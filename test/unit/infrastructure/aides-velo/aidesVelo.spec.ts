@@ -459,4 +459,99 @@ describe('Aides Vélo', () => {
       expect(engine.evaluate('aides . bourges').nodeValue).toEqual(200);
     });
   });
+
+  describe('Métropole Grand Lyon', () => {
+    it("devrait être élligible pour les vélo d'occasion uniquement pour les vélos mécaniques avec un revenu fiscal de référence < 19 500 €/an", () => {
+      engine.setSituation({
+        'localisation . epci': "'Métropole de Lyon'",
+        'vélo . type': "'pliant'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '15000€/an',
+      });
+      // Prix maximum de 150€
+      expect(engine.evaluate('aides . lyon').nodeValue).toEqual(0);
+
+      engine.setSituation({
+        'localisation . epci': "'Métropole de Lyon'",
+        'vélo . type': "'pliant'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '100€',
+        'revenu fiscal de référence': '15000€/an',
+      });
+      expect(engine.evaluate('aides . lyon').nodeValue).toEqual(100);
+
+      engine.setSituation({
+        'localisation . epci': "'Métropole de Lyon'",
+        'vélo . type': "'pliant'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '100€',
+        'revenu fiscal de référence': '20000€/an',
+      });
+      expect(engine.evaluate('aides . lyon').nodeValue).toEqual(0);
+
+      engine.setSituation({
+        'localisation . epci': "'Métropole de Lyon'",
+        'vélo . type': "'électrique'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '100€',
+        'revenu fiscal de référence': '15000€/an',
+      });
+      expect(engine.evaluate('aides . lyon').nodeValue).toEqual(0);
+    });
+
+    it('devrait correctement prendre en compte les vélo adaptés pour les personnes en situation de handicap', () => {
+      engine.setSituation({
+        'localisation . epci': "'Métropole de Lyon'",
+        'vélo . type': "'adapté'",
+        'vélo . prix': '15000€',
+        'revenu fiscal de référence': '10000€/an',
+      });
+      expect(engine.evaluate('aides . lyon').nodeValue).toEqual(1000);
+
+      engine.setSituation({
+        'localisation . epci': "'Métropole de Lyon'",
+        'vélo . type': "'adapté'",
+        'vélo . prix': '15000€',
+        'revenu fiscal de référence': '20000€/an',
+      });
+      expect(engine.evaluate('aides . lyon').nodeValue).toEqual(200);
+    });
+
+    it('devrait correctement prendre en compte les vélo cargo', () => {
+      // Cargo mécanique
+      engine.setSituation({
+        'localisation . epci': "'Métropole de Lyon'",
+        'vélo . type': "'cargo'",
+        'vélo . prix': '2000€',
+        'revenu fiscal de référence': '10000€/an',
+      });
+      expect(engine.evaluate('aides . lyon').nodeValue).toEqual(800);
+
+      engine.setSituation({
+        'localisation . epci': "'Métropole de Lyon'",
+        'vélo . type': "'cargo'",
+        'vélo . prix': '2000€',
+        'revenu fiscal de référence': '20000€/an',
+      });
+      expect(engine.evaluate('aides . lyon').nodeValue).toEqual(200);
+
+      // Cargo électrique
+      engine.setSituation({
+        'localisation . epci': "'Métropole de Lyon'",
+        'vélo . type': "'cargo électrique'",
+        'vélo . prix': '15000€',
+        'revenu fiscal de référence': '10000€/an',
+      });
+      expect(engine.evaluate('aides . lyon').nodeValue).toEqual(1000);
+
+      engine.setSituation({
+        'localisation . epci': "'Métropole de Lyon'",
+        'vélo . type': "'cargo électrique'",
+        'vélo . prix': '15000€',
+        'revenu fiscal de référence': '20000€/an',
+      });
+      expect(engine.evaluate('aides . lyon').nodeValue).toEqual(200);
+    });
+  });
 });
