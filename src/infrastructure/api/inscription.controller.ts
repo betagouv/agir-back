@@ -19,6 +19,7 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 import { App } from '../../domain/app';
 import { SituationNGCAPI } from './types/ngc/situationNGCAPI';
 import { ImportNGCUsecase } from '../../usecase/importNGC.usecase';
+import { ReponseImportSituationNGCAPI } from './types/ngc/reponseImportSituationNGCAPI';
 
 @Controller()
 @ApiTags('1 - Utilisateur - Inscription')
@@ -78,21 +79,18 @@ export class InscriptionController extends GenericControler {
 
   @ApiBody({ type: SituationNGCAPI })
   @Post('bilan/importFromNGC')
-  @ApiFoundResponse({
-    description:
-      "Redirige vers la page d'inscription avec 2 param d'URL : situation_id et bilan_tonnes. L'url a la forme DOMAINE/creation-compte?situationId=XYZ&bilan_tonnes=8",
+  @ApiOkResponse({
+    type: ReponseImportSituationNGCAPI,
   })
-  @Redirect(
-    'https://FRONT/creation-compte?situationId=1234&bilan_tonnes=8',
-    302,
-  )
   @UseGuards(ThrottlerGuard)
-  async importFromNGC(@Body() body: SituationNGCAPI) {
+  async importFromNGC(
+    @Body() body: SituationNGCAPI,
+  ): Promise<ReponseImportSituationNGCAPI> {
     const result = await this.importNGCUsecase.importSituationNGC(
       body.situation,
     );
     return {
-      url: `${App.getBaseURLFront()}/creation-compte?situationId=${
+      redirect_url: `${App.getBaseURLFront()}/creation-compte?situationId=${
         result.id_situtation
       }&bilan_tonnes=${result.bilan_tonnes}`,
     };

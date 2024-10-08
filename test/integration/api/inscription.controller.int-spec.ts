@@ -438,7 +438,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
         },
       });
 
-    let situtation_id = response_post_situation.headers.location.split('=')[1];
+    let situtation_id = response_post_situation.body.redirect_url.split('=')[1];
     situtation_id = situtation_id.substring(0, situtation_id.indexOf('&'));
 
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
@@ -478,7 +478,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
       });
 
     let situtation_id: string =
-      response_post_situation.headers.location.split('=')[1];
+      response_post_situation.body.redirect_url.split('=')[1];
     situtation_id = situtation_id.substring(0, situtation_id.indexOf('&'));
 
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
@@ -506,7 +506,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
       });
 
     let situtation_id: string =
-      response_post_situation.headers.location.split('=')[1];
+      response_post_situation.body.redirect_url.split('=')[1];
     situtation_id = situtation_id.substring(0, situtation_id.indexOf('&'));
 
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({

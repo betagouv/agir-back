@@ -517,14 +517,14 @@ describe('/bilan (API test)', () => {
     });
 
     //THEN
-    expect(response.status).toBe(302);
+    expect(response.status).toBe(201);
     const situationDB = await TestUtil.prisma.situationNGC.findMany({});
     expect(situationDB).toHaveLength(1);
     expect(situationDB[0].situation).toStrictEqual({
       'transport . voiture . km': 12000,
     });
 
-    expect(response.headers.location).toEqual(
+    expect(response.body.redirect_url).toEqual(
       `${App.getBaseURLFront()}/creation-compte?situationId=${
         situationDB[0].id
       }&bilan_tonnes=10`,
@@ -539,14 +539,14 @@ describe('/bilan (API test)', () => {
     });
 
     //THEN
-    expect(response.status).toBe(302);
+    expect(response.status).toBe(201);
     const situationDB = await TestUtil.prisma.situationNGC.findMany({});
     expect(situationDB).toHaveLength(1);
     expect(situationDB[0].situation).toStrictEqual({
       'C est vraiement pas bon': 'dfsgsdg',
     });
 
-    expect(response.headers.location).toEqual(
+    expect(response.body.redirect_url).toEqual(
       `${App.getBaseURLFront()}/creation-compte?situationId=${
         situationDB[0].id
       }&bilan_tonnes=8`,
