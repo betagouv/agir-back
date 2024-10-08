@@ -1,4 +1,11 @@
-import { Body, Controller, Post, Redirect, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Redirect,
+  UseGuards,
+  Headers,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiBody,
@@ -6,6 +13,7 @@ import {
   ApiExtraModels,
   ApiOperation,
   ApiFoundResponse,
+  ApiHeader,
 } from '@nestjs/swagger';
 import { ProspectSubmitAPI } from './types/utilisateur/onboarding/prospectSubmitAPI';
 import { ValidateCodeAPI } from './types/utilisateur/onboarding/validateCodeAPI';
@@ -82,9 +90,14 @@ export class InscriptionController extends GenericControler {
   @ApiOkResponse({
     type: ReponseImportSituationNGCAPI,
   })
+  @ApiHeader({
+    name: 'apikey',
+    description: 'La clé de sécurité pour soliciter cette URL',
+  })
   @UseGuards(ThrottlerGuard)
   async importFromNGC(
     @Body() body: SituationNGCAPI,
+    @Headers('apikey') apikey: string,
   ): Promise<ReponseImportSituationNGCAPI> {
     const result = await this.importNGCUsecase.importSituationNGC(
       body.situation,
