@@ -415,4 +415,18 @@ describe('Aides Vélo', () => {
       expect(engine.evaluate('aides . sophia antipolis').nodeValue).toEqual(0);
     });
   });
+
+  describe('Communauté de communes Fier et Usses', () => {
+    it("devrait être élligible pour les vélo d'occasion", () => {
+      engine.setSituation({
+        'localisation . epci': "'CC Fier et Usses'",
+        'vélo . type': "'électrique'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+      });
+
+      expect(engine.evaluate('aides . fier et usses').nodeValue).toEqual(400);
+    });
+  });
 });

@@ -8797,6 +8797,94 @@
     "plafond": "vélo . prix",
     "lien": "https://www.agglo-agen.net/vie-quotidienne/mobilites/aide-velo-electrique"
   },
+  "aides . fier et usses": {
+    "remplace": "intercommunalité",
+    "titre": "Communauté de communes Fier et Usses",
+    "description": "Aide à l'achat d'un vélo",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . epci = 'CC Fier et Usses'",
+        "revenu fiscal de référence <= 30000 €/an"
+      ]
+    },
+    "variations": [
+      {
+        "si": "revenu fiscal de référence <= 14089€/an",
+        "alors": {
+          "variations": [
+            {
+              "si": "vélo . cargo électrique",
+              "alors": "600€"
+            },
+            {
+              "si": "vélo . électrique",
+              "alors": "400€"
+            },
+            {
+              "si": "vélo . mécanique",
+              "alors": "150€"
+            },
+            {
+              "si": "vélo . motorisation",
+              "alors": "200€"
+            },
+            {
+              "sinon": "0€"
+            }
+          ]
+        }
+      },
+      {
+        "si": "revenu fiscal de référence <= 23000€/an",
+        "alors": {
+          "variations": [
+            {
+              "si": "vélo . cargo électrique",
+              "alors": "500€"
+            },
+            {
+              "si": "vélo . électrique",
+              "alors": "300€"
+            },
+            {
+              "si": "vélo . mécanique",
+              "alors": "100€"
+            },
+            {
+              "si": "vélo . motorisation",
+              "alors": "150€"
+            },
+            {
+              "sinon": "0€"
+            }
+          ]
+        }
+      },
+      {
+        "sinon": {
+          "variations": [
+            {
+              "si": "vélo . cargo électrique",
+              "alors": "400€"
+            },
+            {
+              "si": "vélo . électrique",
+              "alors": "200€"
+            },
+            {
+              "si": "vélo . motorisation",
+              "alors": "100€"
+            },
+            {
+              "sinon": "0€"
+            }
+          ]
+        }
+      }
+    ],
+    "plafond": "50% * vélo . prix",
+    "lien": "https://www.fier-et-usses.com/actualite/18078/2048-aide-a-l-achat-velo.htm"
+  },
   "aides . monaco": {
     "remplace": "commune",
     "titre": "Monaco",
@@ -9078,6 +9166,7 @@
         "aides . divonne-les-bains",
         "aides . feignies",
         "aides . ferte saint aubin",
+        "aides . fier et usses",
         "aides . grand cubzaguais",
         "aides . grand périgueux",
         "aides . grand villeneuvois",
