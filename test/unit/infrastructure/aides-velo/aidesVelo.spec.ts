@@ -1,9 +1,9 @@
 import Engine from 'publicodes';
 import rules from '../../../../src/infrastructure/data/aidesVelo.json';
 
-const engine = new Engine(rules);
-
 describe('Aides Vélo', () => {
+  const engine = new Engine(rules);
+
   describe('Bonus Vélo', () => {
     const baseSituation = {
       'localisation . code insee': "'75056'",
@@ -306,6 +306,47 @@ describe('Aides Vélo', () => {
       expect(
         engine.evaluate('aides . département hérault vélo adapté').nodeValue,
       ).toEqual(1000);
+    });
+  });
+
+  describe('Perpignan Méditerrannée Métropole" ', () => {
+    it("devrait être élligible pour les vélo d'occasion", () => {
+      engine.setSituation({
+        'localisation . epci': "'CU Perpignan Méditerranée Métropole'",
+        'vélo . type': "'électrique'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '1000€',
+      });
+
+      expect(engine.evaluate('aides . perpignan métropole').nodeValue).toEqual(
+        250,
+      );
+    });
+
+    it('devrait être majorée pour les étudiant·es', () => {
+      engine.setSituation({
+        'localisation . epci': "'CU Perpignan Méditerranée Métropole'",
+        'vélo . type': "'électrique'",
+        'statut étudiant': 'oui',
+        'vélo . prix': '1000€',
+      });
+
+      expect(engine.evaluate('aides . perpignan métropole').nodeValue).toEqual(
+        350,
+      );
+    });
+
+    it('devrait correctement prendre en compte les vélo adaptés pour les personnes en situation de handicap', () => {
+      engine.setSituation({
+        'localisation . epci': "'CU Perpignan Méditerranée Métropole'",
+        'vélo . type': "'adapté'",
+        'statut étudiant': 'oui',
+        'vélo . prix': '1000€',
+      });
+
+      expect(engine.evaluate('aides . perpignan métropole').nodeValue).toEqual(
+        1000,
+      );
     });
   });
 });
