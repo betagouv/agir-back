@@ -6090,26 +6090,40 @@
   "aides . loire layon aubance": {
     "remplace": "intercommunalité",
     "titre": "Loire Layon Aubance",
-    "applicable si": "localisation . epci = 'CC Loire Layon Aubance'",
-    "variations": [
-      {
-        "si": {
-          "une de ces conditions": [
-            "vélo . électrique",
-            "vélo . motorisation"
-          ]
+    "description": "Subvention vélo à assistance électrique 2024",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . epci = 'CC Loire Layon Aubance'",
+        "revenu fiscal de référence <= 15400 €/an"
+      ]
+    },
+    "valeur": "40% * vélo . prix",
+    "plafond": {
+      "variations": [
+        {
+          "si": {
+            "toutes ces conditions": [
+              "vélo . cargo électrique",
+              "vélo . pliant électrique",
+              "vélo . adapté"
+            ]
+          },
+          "alors": "450€"
         },
-        "alors": "200€"
-      },
-      {
-        "si": "vélo . cargo électrique",
-        "alors": "350€"
-      },
-      {
-        "sinon": "0€"
-      }
-    ],
-    "lien": "https://loire-layon-aubance.fr/vivre-habiter/mes-demarches-de-mobilite/subvention-achat-velo-a-assistance-electrique/"
+        {
+          "si": "vélo . électrique",
+          "alors": "300€"
+        },
+        {
+          "si": "vélo . motorisation",
+          "alors": "150€"
+        },
+        {
+          "sinon": "0€"
+        }
+      ]
+    },
+    "lien": "https://www.loire-layon-aubance.fr/vivre-et-habiter/transports/velo-a-assistance-electrique/"
   },
   "aides . laval": {
     "remplace": "intercommunalité",
@@ -9369,6 +9383,7 @@
         "aides . kremlin-bicetre",
         "aides . la roche sur yon",
         "aides . limoges metropole",
+        "aides . loire layon aubance",
         "aides . loos-en-gohelle",
         "aides . louvigny",
         "aides . lyon",

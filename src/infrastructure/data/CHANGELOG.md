@@ -20,6 +20,7 @@
 - `aides . département cote d'or`
 - `aides . département hérault`
 - `aides . epinal`
+- `aides . loire layon aubance`
 - `aides . montpellier`
 - `aides . nantes`
 - `aides . occitanie`
