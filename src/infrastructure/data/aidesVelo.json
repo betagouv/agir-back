@@ -8632,6 +8632,28 @@
     },
     "lien": "https://www.centre-valdeloire.fr/le-guide-des-aides-de-la-region-centre-val-de-loire/mobilite-rurale-velo-assistance-electrique"
   },
+  "aides . region centre rémi zen": {
+    "remplace": "région",
+    "titre": "Région Centre-Val de Loire",
+    "description": "Pour favoriser l’intermodalité avec les transports collectifs au quotidien,\nla Région incite les usagers réguliers du réseau Rémi à monter à bord avec\ndes engins de déplacements compacts grâce à l’aide régionale Rémi Zen pour\nl’achat d’un vélo pliant ou d’une trottinette électrique pliante.\n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . région = '24'",
+        "vélo . pliant",
+        "abonné Rémi"
+      ]
+    },
+    "valeur": "40% * vélo . prix",
+    "plafond": "500€",
+    "lien": "https://www.centre-valdeloire.fr/le-guide-des-aides-de-la-region-centre-val-de-loire/remi-zen-velos-pliants-et-trottinettes",
+    "avec": {
+      "abonné Rémi": {
+        "question": "Disposez-vous d’un abonnement Rémi Zen ?",
+        "par défaut": "oui",
+        "description": "Le réseau Rémi rassemble à la fois les dessertes régionales en train et en cars.\nDe plus, les abonnements reconnus pour donner droit à l’aide sont :\n\n- Abonnement Rémi Zen annuel\n- Abonnement Car Rémi Zen annuel\n- Abonnement Rémi Zen Jeune annuel\n- Abonnement Rémi Zen Plus Jeune annuel\n- Abonnement Car Rémi Zen Jeune annuel\n- Abonnement Rémi Zen Combi Navigo\n- Abonnement Rémi Zen sans Navigo\n- Abonnement Optiforfait\n\nPar ailleurs, la preuve d’achat de 10 mois d’abonnements mensuels sur\nles 12 derniers mois à la date d’achat est également valable pour les\nabonnements n’existant pas en version annuelle :\n\n - Abonnement Multi\n - Abonnement Forfait\n - Abonnement de travail\n - Abonnement Car Rémi Zen jeune interdépartemental\n\nLes abonnements scolaires et les abonnements commerciaux aux abris-vélo\nRémi sont exclus de ce dispositif. Les cartes de réduction (Rémi\nLiberté) ne constituent pas des abonnements et ne donnent donc pas\naccès à l’aide.\n"
+      }
+    }
+  },
   "aides . monaco": {
     "remplace": "commune",
     "titre": "Monaco",
