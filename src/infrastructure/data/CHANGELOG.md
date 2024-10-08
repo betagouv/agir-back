@@ -36,5 +36,6 @@
 **Aides supprimées**
 
 - `aides . nevers`
+- `aides . pont-saint-maxence`
 - `aides . sisteronais-buëch`
 - `aides . terres de montaigu`
