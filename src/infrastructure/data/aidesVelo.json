@@ -4374,47 +4374,6 @@
     "valeur": "100€",
     "lien": "https://www.puisaye-forterre.com/vivre/aide-a-la-mobilite/"
   },
-  "aides . nevers": {
-    "remplace": "intercommunalité",
-    "titre": "Nevers Agglomération",
-    "applicable si": "localisation . epci = 'CA de Nevers'",
-    "valeur": "30% * vélo . prix",
-    "plafond": {
-      "variations": [
-        {
-          "si": {
-            "toutes ces conditions": [
-              "vélo . électrique",
-              "vélo . prix <= 1650 €"
-            ]
-          },
-          "alors": "150 €"
-        },
-        {
-          "si": {
-            "toutes ces conditions": [
-              "vélo . mécanique",
-              "vélo . prix <= 500 €"
-            ]
-          },
-          "alors": "75 €"
-        },
-        {
-          "si": {
-            "toutes ces conditions": [
-              "vélo . motorisation",
-              "vélo . prix <= 500 €"
-            ]
-          },
-          "alors": "150 €"
-        },
-        {
-          "sinon": "0 €"
-        }
-      ]
-    },
-    "lien": "https://www.nevers.fr/actualites/aide-a-lacquisition-dun-velo-2022"
-  },
   "aides . aurillac": {
     "remplace": "intercommunalité",
     "titre": "Vélo'Cab - Aurillac",
