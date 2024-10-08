@@ -4476,15 +4476,13 @@
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CA de la Riviera Française'",
-        "vélo . électrique"
+        "vélo . électrique",
+        "vélo . neuf"
       ]
     },
-    "valeur": "150€",
-    "plafond": {
-      "valeur": "vélo . prix",
-      "abattement": "aides . commune"
-    },
-    "lien": "https://www.riviera-francaise.fr/les-actualites/item/236-prime-pour-l-achat-d-un-velo-electrique-il-est-encore-temps-d-en-profiter"
+    "valeur": "vélo . prix",
+    "plafond": "300€",
+    "lien": "https://www.riviera-francaise.fr/media/attachments/2022/03/30/convention-2022-2024-cc01221.pdf"
   },
   "aides . frejus": {
     "remplace": "commune",
