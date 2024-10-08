@@ -3,14 +3,14 @@ import rules from '../../../../src/infrastructure/data/aidesVelo.json';
 
 const engine = new Engine(rules);
 
-const baseSituation = {
-  'localisation . code insee': "'75056'",
-  'localisation . epci': "'Métropole du Grand Paris'",
-  'localisation . région': "'11'",
-};
-
 describe('Aides Vélo', () => {
   describe('Bonus Vélo', () => {
+    const baseSituation = {
+      'localisation . code insee': "'75056'",
+      'localisation . epci': "'Métropole du Grand Paris'",
+      'localisation . région': "'11'",
+    };
+
     it('ne doit pas être accordé pour un revenu fiscal de référence > 15 400 €/an', () => {
       // Set base situation
       engine.setSituation({
@@ -256,6 +256,53 @@ describe('Aides Vélo', () => {
       expect(engine.evaluate('aides . département hérault').nodeValue).toEqual(
         null,
       );
+      expect(
+        engine.evaluate('aides . département hérault vélo adapté').nodeValue,
+      ).toEqual(1000);
+    });
+  });
+
+  describe('Montpellier Méditerranée Métropole', () => {
+    it("devrait être élligible uniquement pour les vélo électrique d'occasion et les kits de motorisation", () => {
+      engine.setSituation({
+        'localisation . epci': "'Montpellier Méditerranée Métropole'",
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'électrique'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . montpellier').nodeValue).toEqual(null);
+
+      engine.setSituation({
+        'localisation . epci': "'Montpellier Méditerranée Métropole'",
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'électrique'",
+        'vélo . occasion': 'oui',
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . montpellier').nodeValue).toEqual(200);
+
+      engine.setSituation({
+        'localisation . epci': "'Montpellier Méditerranée Métropole'",
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'motorisation'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . montpellier').nodeValue).toEqual(200);
+    });
+
+    it("ne devrait pas être cumulable avec l'aide vélo adapté", () => {
+      engine.setSituation({
+        'localisation . epci': "'Montpellier Méditerranée Métropole'",
+        'localisation . département': "'34'",
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'adapté'",
+        'vélo . prix': '2000€',
+      });
+
+      expect(engine.evaluate('aides . montpellier').nodeValue).toEqual(null);
+      expect(
+        engine.evaluate('aides . montpellier vélo adapté').nodeValue,
+      ).toEqual(500);
       expect(
         engine.evaluate('aides . département hérault vélo adapté').nodeValue,
       ).toEqual(1000);
