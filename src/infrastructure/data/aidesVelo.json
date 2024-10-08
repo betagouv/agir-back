@@ -9159,6 +9159,43 @@
     },
     "lien": "https://cdcgangesumene.fr/au-quotidien/mobilite/velo/"
   },
+  "aides . monmorillon": {
+    "remplace": "commune",
+    "titre": "Ville de Montmorillon",
+    "description": "Dispositif d’aide à l’acquisition d’un vélo et des accessoires afférents\n(2024).\n",
+    "applicable si": "localisation . code insee = '86164'",
+    "variations": [
+      {
+        "si": "vélo . électrique",
+        "alors": {
+          "valeur": "20% * vélo . prix . HT",
+          "plafond": "150€"
+        }
+      },
+      {
+        "si": "vélo . motorisation",
+        "alors": {
+          "valeur": "20% * vélo . prix . HT",
+          "plafond": "150€"
+        }
+      },
+      {
+        "si": "vélo . adapté",
+        "alors": {
+          "valeur": "30% * vélo . prix . HT",
+          "plafond": "300€"
+        }
+      },
+      {
+        "si": "vélo . mécanique",
+        "alors": {
+          "valeur": "50% * vélo . prix",
+          "plafond": "100€"
+        }
+      }
+    ],
+    "lien": "https://www.montmorillon.fr/plan-velo/"
+  },
   "aides . monaco": {
     "remplace": "commune",
     "titre": "Monaco",
@@ -9458,6 +9495,7 @@
         "aides . loos-en-gohelle",
         "aides . louvigny",
         "aides . lyon",
+        "aides . monmorillon",
         "aides . montant",
         "aides . montpellier",
         "aides . moselle et madon",

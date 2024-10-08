@@ -9,6 +9,7 @@
 - `aides . cévennes gangeoises et suménoises`
 - `aides . département hérault vélo adapté`
 - `aides . fier et usses`
+- `aides . monmorillon`
 - `aides . montpellier vélo adapté`
 - `aides . occitanie vélo adapté`
 - `aides . paris vélo adapté`
