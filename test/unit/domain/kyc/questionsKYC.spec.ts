@@ -1697,4 +1697,309 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       history.getAnsweredQuestionByCode(KYCID.KYC_chauffage).reponses,
     ).toEqual([{ code: 'b', label: 'B', ngc_code: 'toto . b' }]);
   });
+  it(`isKYCEligible : true si condition ok`, () => {
+    // GIVEN
+    const history = new KYCHistory({
+      version: 0,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          id_cms: 2,
+          categorie: Categorie.recommandation,
+          id: 'code_2',
+          is_NGC: true,
+          points: 10,
+          question: 'The question !',
+          tags: [],
+          universes: [],
+          thematique: Thematique.climat,
+          type: TypeReponseQuestionKYC.choix_unique,
+          ngc_key: 'a . b . c',
+          short_question: 'short',
+          image_url: 'https://',
+          reponses: [{ label: 'A', code: 'haha', ngc_code: 'toto . a' }],
+          reponses_possibles: [
+            { label: 'A', code: 'haha', ngc_code: 'toto . a' },
+            { label: 'B', code: 'hihi', ngc_code: 'toto . b' },
+            { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
+          ],
+          conditions: [
+            [
+              {
+                id_kyc: 2,
+                code_kyc: 'code_2',
+                code_reponse: 'haha',
+              },
+            ],
+          ],
+        },
+      ],
+    });
+
+    history.setCatalogue([
+      new KycDefinition({
+        id_cms: 1,
+        categorie: Categorie.recommandation,
+        code: KYCID.KYC_chauffage,
+        is_ngc: true,
+        points: 10,
+        question: 'The question !',
+        tags: [],
+        universes: [],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_unique,
+        ngc_key: 'a . b . c',
+        reponses: [
+          { label: 'A', code: 'a', ngc_code: 'toto . a' },
+          { label: 'B', code: 'b', ngc_code: 'toto . b' },
+          { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
+        ],
+        short_question: 'short',
+        image_url: 'https://',
+        conditions: [
+          [
+            {
+              id_kyc: 2,
+              code_kyc: 'code_2',
+              code_reponse: 'haha',
+            },
+          ],
+        ],
+      }),
+      new KycDefinition({
+        id_cms: 2,
+        categorie: Categorie.recommandation,
+        code: 'code_2',
+        is_ngc: true,
+        points: 10,
+        question: 'The question 2',
+        tags: [],
+        universes: [],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_unique,
+        ngc_key: 'a . b . c',
+        reponses: [
+          { label: 'A', code: 'haha', ngc_code: 'toto . a' },
+          { label: 'B', code: 'hihi', ngc_code: 'toto . b' },
+          { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
+        ],
+        short_question: 'short',
+        image_url: 'https://',
+        conditions: [],
+      }),
+    ]);
+    // WHEN
+    const reponse = history.isKYCEligible(
+      history.getUpToDateQuestionByCodeOrNull(KYCID.KYC_chauffage),
+    );
+
+    // THEN
+    expect(reponse).toEqual(true);
+  });
+  it(`isKYCEligible : false si condition ko`, () => {
+    // GIVEN
+    const history = new KYCHistory({
+      version: 0,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          id_cms: 2,
+          categorie: Categorie.recommandation,
+          id: 'code_2',
+          is_NGC: true,
+          points: 10,
+          question: 'The question !',
+          tags: [],
+          universes: [],
+          thematique: Thematique.climat,
+          type: TypeReponseQuestionKYC.choix_unique,
+          ngc_key: 'a . b . c',
+          short_question: 'short',
+          image_url: 'https://',
+          reponses: [{ label: 'B', code: 'hihi', ngc_code: 'toto . b' }],
+          reponses_possibles: [
+            { label: 'A', code: 'haha', ngc_code: 'toto . a' },
+            { label: 'B', code: 'hihi', ngc_code: 'toto . b' },
+            { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
+          ],
+          conditions: [
+            [
+              {
+                id_kyc: 2,
+                code_kyc: 'code_2',
+                code_reponse: 'haha',
+              },
+            ],
+          ],
+        },
+      ],
+    });
+
+    history.setCatalogue([
+      new KycDefinition({
+        id_cms: 1,
+        categorie: Categorie.recommandation,
+        code: KYCID.KYC_chauffage,
+        is_ngc: true,
+        points: 10,
+        question: 'The question !',
+        tags: [],
+        universes: [],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_unique,
+        ngc_key: 'a . b . c',
+        reponses: [
+          { label: 'A', code: 'a', ngc_code: 'toto . a' },
+          { label: 'B', code: 'b', ngc_code: 'toto . b' },
+          { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
+        ],
+        short_question: 'short',
+        image_url: 'https://',
+        conditions: [
+          [
+            {
+              id_kyc: 2,
+              code_kyc: 'code_2',
+              code_reponse: 'haha',
+            },
+          ],
+        ],
+      }),
+      new KycDefinition({
+        id_cms: 2,
+        categorie: Categorie.recommandation,
+        code: 'code_2',
+        is_ngc: true,
+        points: 10,
+        question: 'The question 2',
+        tags: [],
+        universes: [],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_unique,
+        ngc_key: 'a . b . c',
+        reponses: [
+          { label: 'A', code: 'haha', ngc_code: 'toto . a' },
+          { label: 'B', code: 'hihi', ngc_code: 'toto . b' },
+          { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
+        ],
+        short_question: 'short',
+        image_url: 'https://',
+        conditions: [],
+      }),
+    ]);
+    // WHEN
+    const reponse = history.isKYCEligible(
+      history.getUpToDateQuestionByCodeOrNull(KYCID.KYC_chauffage),
+    );
+
+    // THEN
+    expect(reponse).toEqual(false);
+  });
+  it(`isKYCEligible : false si question par répondues`, () => {
+    // GIVEN
+    const history = new KYCHistory({
+      version: 0,
+      answered_mosaics: [],
+      answered_questions: [],
+    });
+
+    history.setCatalogue([
+      new KycDefinition({
+        id_cms: 1,
+        categorie: Categorie.recommandation,
+        code: KYCID.KYC_chauffage,
+        is_ngc: true,
+        points: 10,
+        question: 'The question !',
+        tags: [],
+        universes: [],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_unique,
+        ngc_key: 'a . b . c',
+        reponses: [
+          { label: 'A', code: 'a', ngc_code: 'toto . a' },
+          { label: 'B', code: 'b', ngc_code: 'toto . b' },
+          { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
+        ],
+        short_question: 'short',
+        image_url: 'https://',
+        conditions: [
+          [
+            {
+              id_kyc: 2,
+              code_kyc: 'code_2',
+              code_reponse: 'haha',
+            },
+          ],
+        ],
+      }),
+      new KycDefinition({
+        id_cms: 2,
+        categorie: Categorie.recommandation,
+        code: 'code_2',
+        is_ngc: true,
+        points: 10,
+        question: 'The question 2',
+        tags: [],
+        universes: [],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_unique,
+        ngc_key: 'a . b . c',
+        reponses: [
+          { label: 'A', code: 'haha', ngc_code: 'toto . a' },
+          { label: 'B', code: 'hihi', ngc_code: 'toto . b' },
+          { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
+        ],
+        short_question: 'short',
+        image_url: 'https://',
+        conditions: [],
+      }),
+    ]);
+    // WHEN
+    const reponse = history.isKYCEligible(
+      history.getUpToDateQuestionByCodeOrNull(KYCID.KYC_chauffage),
+    );
+
+    // THEN
+    expect(reponse).toEqual(false);
+  });
+  it(`isKYCEligible : true si aucune condition`, () => {
+    // GIVEN
+    const history = new KYCHistory({
+      version: 0,
+      answered_mosaics: [],
+      answered_questions: [],
+    });
+
+    history.setCatalogue([
+      new KycDefinition({
+        id_cms: 1,
+        categorie: Categorie.recommandation,
+        code: KYCID.KYC_chauffage,
+        is_ngc: true,
+        points: 10,
+        question: 'The question !',
+        tags: [],
+        universes: [],
+        thematique: Thematique.climat,
+        type: TypeReponseQuestionKYC.choix_unique,
+        ngc_key: 'a . b . c',
+        reponses: [
+          { label: 'A', code: 'a', ngc_code: 'toto . a' },
+          { label: 'B', code: 'b', ngc_code: 'toto . b' },
+          { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
+        ],
+        short_question: 'short',
+        image_url: 'https://',
+        conditions: [],
+      }),
+    ]);
+    // WHEN
+    const reponse = history.isKYCEligible(
+      history.getUpToDateQuestionByCodeOrNull(KYCID.KYC_chauffage),
+    );
+
+    // THEN
+    expect(reponse).toEqual(true);
+  });
 });

@@ -43,6 +43,16 @@ export class KYCHistory {
     }
   }
 
+  public isKYCEligible(kyc: QuestionKYC) {
+    if (!kyc) {
+      return false;
+    }
+    if (!kyc.conditions || kyc.conditions.length === 0) {
+      return true;
+    }
+    return this.areConditionsMatched(kyc.conditions);
+  }
+
   public setCatalogue(cat: KycDefinition[]) {
     this.catalogue = cat;
   }
