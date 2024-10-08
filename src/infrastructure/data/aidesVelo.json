@@ -3948,54 +3948,154 @@
     "titre": "Communauté d’Agglomération Sophia Antipolis",
     "applicable si": {
       "toutes ces conditions": [
-        "localisation . epci = 'CA de Sophia Antipolis'",
-        "vélo . électrique ou mécanique",
-        "revenu fiscal de référence <= 19200 €/an"
+        "localisation . epci = 'CA de Sophia Antipolis'"
       ]
     },
-    "variations": [
-      {
-        "si": "vélo . cargo",
-        "alors": {
-          "valeur": "25% * vélo . prix",
-          "plafond": "500€"
-        }
-      },
-      {
-        "si": "vélo . électrique",
-        "alors": {
-          "valeur": "40% * vélo . prix",
-          "plafond": {
+    "formule": {
+      "variations": [
+        {
+          "si": "personne en situation de handicap",
+          "alors": {
             "variations": [
               {
-                "si": "revenu fiscal de référence <= 6358 €/an",
-                "alors": "400€"
+                "si": {
+                  "une de ces conditions": [
+                    "vélo . cargo",
+                    "vélo . adapté"
+                  ]
+                },
+                "alors": {
+                  "valeur": "25% * vélo . prix",
+                  "plafond": "750€"
+                }
               },
               {
-                "si": "revenu fiscal de référence <= 14089 €/an",
-                "alors": "300€"
+                "si": "vélo . électrique",
+                "alors": {
+                  "valeur": "25% * vélo . prix",
+                  "plafond": "400€"
+                }
               },
               {
-                "sinon": "200€"
+                "sinon": "0€"
+              }
+            ]
+          }
+        },
+        {
+          "si": "revenu fiscal de référence <= 6358 €/an",
+          "alors": {
+            "variations": [
+              {
+                "si": {
+                  "une de ces conditions": [
+                    "vélo . cargo",
+                    "vélo . adapté"
+                  ]
+                },
+                "alors": {
+                  "valeur": "25% * vélo . prix",
+                  "plafond": "500€"
+                }
+              },
+              {
+                "si": "vélo . électrique",
+                "alors": {
+                  "valeur": "40% * vélo . prix",
+                  "plafond": "400€"
+                }
+              },
+              {
+                "sinon": {
+                  "valeur": "40% * vélo . prix",
+                  "plafond": "150€"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "si": "revenu fiscal de référence <= 14089 €/an",
+          "alors": {
+            "variations": [
+              {
+                "si": {
+                  "une de ces conditions": [
+                    "vélo . cargo",
+                    "vélo . adapté"
+                  ]
+                },
+                "alors": {
+                  "valeur": "25% * vélo . prix",
+                  "plafond": "500€"
+                }
+              },
+              {
+                "si": "vélo . électrique",
+                "alors": {
+                  "valeur": "40% * vélo . prix",
+                  "plafond": "300€"
+                }
+              },
+              {
+                "sinon": "0€"
+              }
+            ]
+          }
+        },
+        {
+          "si": "revenu fiscal de référence <= 19200 €/an",
+          "alors": {
+            "variations": [
+              {
+                "si": {
+                  "une de ces conditions": [
+                    "vélo . cargo",
+                    "vélo . adapté"
+                  ]
+                },
+                "alors": {
+                  "valeur": "25% * vélo . prix",
+                  "plafond": "500€"
+                }
+              },
+              {
+                "si": "vélo . électrique",
+                "alors": {
+                  "valeur": "40% * vélo . prix",
+                  "plafond": "200€"
+                }
+              },
+              {
+                "sinon": "0€"
+              }
+            ]
+          }
+        },
+        {
+          "sinon": {
+            "variations": [
+              {
+                "si": {
+                  "une de ces conditions": [
+                    "vélo . cargo",
+                    "vélo . adapté"
+                  ]
+                },
+                "alors": {
+                  "valeur": "25% * vélo . prix",
+                  "plafond": "500€"
+                }
+              },
+              {
+                "sinon": "0€"
               }
             ]
           }
         }
-      },
-      {
-        "si": {
-          "toutes ces conditions": [
-            "vélo . mécanique",
-            "revenu fiscal de référence <= 6358 €/an"
-          ]
-        },
-        "alors": {
-          "valeur": "40% * vélo . prix",
-          "plafond": "150€"
-        }
-      }
-    ],
-    "lien": "https://www.agglo-sophiaantipolis.fr/vivre-et-habiter/se-deplacer/le-velo/demande-subvention-aide-a-lacquisition"
+      ]
+    },
+    "lien": "https://www.agglo-sophiaantipolis.fr/vivre-et-habiter/se-deplacer/le-velo/demande-subvention-aide-a-lacquisition/demande-aide-achat-a-partir-du-1er-septembre-2023-inclus"
   },
   "aides . mougins": {
     "remplace": "commune",
@@ -9136,6 +9236,12 @@
     "type": "booléen",
     "question": "Êtes-vous étudiant·e ?",
     "description": "Certaines aides sont réservées ou majorées pour les étudiant·es.",
+    "par défaut": "non"
+  },
+  "personne en situation de handicap": {
+    "type": "booléen",
+    "question": "Êtes-vous en situation de handicap ?",
+    "description": "Pour certaines aides, les conditions de ressources sont ignorées pour les\npersonnes en situation de handicap.\n",
     "par défaut": "non"
   }
 }

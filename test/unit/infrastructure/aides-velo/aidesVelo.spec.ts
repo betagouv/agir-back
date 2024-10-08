@@ -349,4 +349,70 @@ describe('Aides Vélo', () => {
       );
     });
   });
+
+  describe('Communauté d’Agglomération Sophia Antipolis', () => {
+    it('aides sans condition de revenu pour les vélos cargo ou adaptés', () => {
+      engine.setSituation({
+        'localisation . epci': "'CA de Sophia Antipolis'",
+        'vélo . type': "'cargo'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '20000€/an',
+      });
+      expect(engine.evaluate('aides . sophia antipolis').nodeValue).toEqual(
+        250,
+      );
+
+      engine.setSituation({
+        'localisation . epci': "'CA de Sophia Antipolis'",
+        'vélo . type': "'adapté'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '20000€/an',
+      });
+      expect(engine.evaluate('aides . sophia antipolis').nodeValue).toEqual(
+        250,
+      );
+    });
+
+    it('aides majorées pour les personnes en situation de handicap', () => {
+      engine.setSituation({
+        'localisation . epci': "'CA de Sophia Antipolis'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': '2000€',
+        'revenu fiscal de référence': '20000€/an',
+        'personne en situation de handicap': 'oui',
+      });
+      expect(engine.evaluate('aides . sophia antipolis').nodeValue).toEqual(
+        400,
+      );
+
+      engine.setSituation({
+        'localisation . epci': "'CA de Sophia Antipolis'",
+        'vélo . type': "'adapté'",
+        'vélo . prix': '10000€',
+        'revenu fiscal de référence': '20000€/an',
+        'personne en situation de handicap': 'oui',
+      });
+      expect(engine.evaluate('aides . sophia antipolis').nodeValue).toEqual(
+        750,
+      );
+    });
+
+    it('aide nulle pour les vélos mécaniques simples avec un revenu fiscal de référence > 6358 €/an', () => {
+      engine.setSituation({
+        'localisation . epci': "'CA de Sophia Antipolis'",
+        'vélo . type': "'mécanique simple'",
+        'vélo . prix': '300€',
+        'revenu fiscal de référence': '15000€/an',
+      });
+      expect(engine.evaluate('aides . sophia antipolis').nodeValue).toEqual(0);
+
+      engine.setSituation({
+        'localisation . epci': "'CA de Sophia Antipolis'",
+        'vélo . type': "'pliant'",
+        'vélo . prix': '300€',
+        'revenu fiscal de référence': '15000€/an',
+      });
+      expect(engine.evaluate('aides . sophia antipolis').nodeValue).toEqual(0);
+    });
+  });
 });
