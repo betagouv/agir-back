@@ -110,6 +110,7 @@ export class QuestionKYCUsecase {
     utilisateurId: string,
     questionId: string,
   ): Promise<QuestionGeneric> {
+    console.log(`getQuestion read user : ${Date.now()}`);
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
@@ -132,8 +133,9 @@ export class QuestionKYCUsecase {
           questionId,
         );
     }
-
-    // await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    console.log(`getQuestion update : ${Date.now()}`);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    console.log(`getQuestion update done : ${Date.now()}`);
 
     return {
       kyc: this.personnalisator.personnaliser(result_kyc, utilisateur),
@@ -146,6 +148,7 @@ export class QuestionKYCUsecase {
     code_question: string,
     reponse: string[],
   ): Promise<void> {
+    console.log(`updateResponseKYC read user : ${Date.now()}`);
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
@@ -159,8 +162,9 @@ export class QuestionKYCUsecase {
       utilisateur,
       true,
     );
-
+    console.log(`updateResponseKYC update : ${Date.now()}`);
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    console.log(`updateResponseKYC update done : ${Date.now()}`);
   }
 
   private dispatchKYCUpdateToOtherKYCsPostUpdate(
