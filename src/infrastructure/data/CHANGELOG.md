@@ -5,28 +5,29 @@
 **Nouvelles aides**
 
 - `aides . agen`
+- `aides . département hérault vélo adapté`
+- `aides . fier et usses`
+- `aides . montpellier vélo adapté`
 - `aides . occitanie vélo adapté`
 - `aides . paris vélo adapté`
+- `aides . pays de cruseilles`
 - `aides . perpignan métropole`
-- `aides . département hérault vélo adapté`
-- `aides . montpellier vélo adapté`
-- `aides . fier et usses`
 
 **Aides mise à jour**
 
 - `aides . bonus vélo`
-- `aides . occitanie`
-- `aides . paris`
-- `aides . nantes`
-- `aides . toulouse`
-- `aides . toulon`
+- `aides . département cote d'or`
 - `aides . département hérault`
 - `aides . montpellier`
-- `aides . département cote d'or`
-- `aides . sophia antipolis`
+- `aides . nantes`
+- `aides . occitanie`
+- `aides . paris`
 - `aides . riviera francaise`
+- `aides . sophia antipolis`
+- `aides . toulon`
+- `aides . toulouse`
 
 **Aides supprimées**
 
-- `aides . sisteronais-buëch`
 - `aides . nevers`
+- `aides . sisteronais-buëch`

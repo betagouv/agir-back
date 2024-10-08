@@ -429,4 +429,20 @@ describe('Aides Vélo', () => {
       expect(engine.evaluate('aides . fier et usses').nodeValue).toEqual(400);
     });
   });
+
+  describe('Pays de Cruseilles', () => {
+    it("devrait être élligible pour les vélo d'occasion", () => {
+      engine.setSituation({
+        'localisation . epci': "'CC du Pays de Cruseilles'",
+        'vélo . type': "'électrique'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+      });
+
+      expect(engine.evaluate('aides . pays de cruseilles').nodeValue).toEqual(
+        300,
+      );
+    });
+  });
 });
