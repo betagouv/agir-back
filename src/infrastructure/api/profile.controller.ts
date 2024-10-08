@@ -23,11 +23,9 @@ import {
 import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
 import {
   LogementAPI,
-  TransportAPI,
   UtilisateurProfileAPI,
   UtilisateurUpdateProfileAPI,
 } from './types/utilisateur/utilisateurProfileAPI';
-import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
 
@@ -36,7 +34,7 @@ export class ConfirmationAPI {
   confirmation: string;
 }
 
-@ApiExtraModels(CreateUtilisateurAPI, UtilisateurAPI)
+@ApiExtraModels(UtilisateurAPI)
 @Controller()
 @ApiBearerAuth()
 @ApiTags('1 - Utilisateur - Profile')
@@ -123,29 +121,6 @@ export class ProfileController extends GenericControler {
     return LogementAPI.mapToAPI(utilisateur.logement);
   }
 
-  @ApiOkResponse({ type: TransportAPI })
-  @Get('utilisateurs/:utilisateurId/transport')
-  @ApiOperation({
-    summary:
-      "Information de transport d'un utilisateur d'id donné (frequence avions, transports du quotidien)",
-  })
-  @UseGuards(AuthGuard)
-  async getUtilisateurTransport(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-  ): Promise<TransportAPI> {
-    this.checkCallerId(req, utilisateurId);
-
-    let utilisateur = await this.profileUsecase.findUtilisateurById(
-      utilisateurId,
-    );
-    if (utilisateur == null) {
-      throw new NotFoundException(`Pas d'utilisateur d'id ${utilisateurId}`);
-    }
-
-    return TransportAPI.mapToAPI(utilisateur.transport);
-  }
-
   @Patch('utilisateurs/:utilisateurId/profile')
   @ApiBody({
     type: UtilisateurUpdateProfileAPI,
@@ -180,24 +155,6 @@ export class ProfileController extends GenericControler {
   ) {
     this.checkCallerId(req, utilisateurId);
     await this.profileUsecase.updateUtilisateurLogement(utilisateurId, body);
-  }
-
-  @Patch('utilisateurs/:utilisateurId/transport')
-  @ApiBody({
-    type: TransportAPI,
-  })
-  @ApiOperation({
-    summary:
-      'Mise à jour des infos de transport (frequence avion, transports du quotidien, etc)',
-  })
-  @UseGuards(AuthGuard)
-  async updateTransport(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-    @Body() body: TransportAPI,
-  ) {
-    this.checkCallerId(req, utilisateurId);
-    await this.profileUsecase.updateUtilisateurTransport(utilisateurId, body);
   }
 
   @Post('utilisateurs/:utilisateurId/reset')

@@ -52,16 +52,25 @@ export class MagicLinkUsecase {
       if (utilisateur.failed_checkcode_count > MAX_CODE_ATTEMPT) {
         utilisateur.failed_checkcode_count = 0;
         utilisateur.code = null;
-        await this.utilisateurRespository.updateUtilisateur(utilisateur);
+        await this.utilisateurRespository.updateUtilisateur(
+          utilisateur,
+          'validateLink',
+        );
         ApplicationError.throwMagicLinkUsedError();
       }
-      await this.utilisateurRespository.updateUtilisateur(utilisateur);
+      await this.utilisateurRespository.updateUtilisateur(
+        utilisateur,
+        'validateLink',
+      );
       ApplicationError.throwBadCodError();
     }
 
     utilisateur.code = null;
     utilisateur.active_account = true;
-    await this.utilisateurRespository.updateUtilisateur(utilisateur);
+    await this.utilisateurRespository.updateUtilisateur(
+      utilisateur,
+      'validateLink',
+    );
 
     const token = await this.oidcService.createNewInnerAppToken(utilisateur.id);
 
@@ -96,7 +105,10 @@ export class MagicLinkUsecase {
       utilisateur.setNew6DigitCode();
     }
 
-    await this.utilisateurRespository.updateUtilisateur(utilisateur);
+    await this.utilisateurRespository.updateUtilisateur(
+      utilisateur,
+      'sendLink',
+    );
 
     this.sendValidationCode(email, utilisateur.code);
   }

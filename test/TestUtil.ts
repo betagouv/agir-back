@@ -26,7 +26,6 @@ import {
   TypeLogement,
 } from '../src/domain/logement/logement';
 import {
-  Empreinte,
   SituationNGC,
   Univers as UniversDB,
   ThematiqueUnivers as ThematiqueUniversDB,
@@ -46,8 +45,6 @@ import {
   Utilisateur,
 } from '@prisma/client';
 import { ServiceStatus } from '../src/domain/service/service';
-import { TransportQuotidien } from '../src/domain/transport/transport';
-import { Transport_v0 } from '../src/domain/object_store/transport/transport_v0';
 import { DefiHistory_v0 } from '../src/domain/object_store/defi/defiHistory_v0';
 import { DefiStatus } from '../src/domain/defis/defi';
 import { TagUtilisateur } from '../src/domain/scoring/tagUtilisateur';
@@ -71,7 +68,6 @@ export enum DB {
   utilisateur = 'utilisateur',
   aide = 'aide',
   defi = 'defi',
-  empreinte = 'empreinte',
   service = 'service',
   serviceDefinition = 'serviceDefinition',
   thematique = 'thematique',
@@ -92,7 +88,6 @@ export class TestUtil {
     utilisateur: TestUtil.utilisateurData,
     aide: TestUtil.aideData,
     defi: TestUtil.defiData,
-    empreinte: TestUtil.empreinteData,
     service: TestUtil.serviceData,
     serviceDefinition: TestUtil.serviceDefinitionData,
     thematique: TestUtil.thematiqueData,
@@ -170,7 +165,6 @@ export class TestUtil {
   static async deleteAll() {
     await this.prisma.service.deleteMany();
     await this.prisma.serviceDefinition.deleteMany();
-    await this.prisma.empreinte.deleteMany();
     await this.prisma.utilisateur.deleteMany();
     await this.prisma.situationNGC.deleteMany();
     await this.prisma.thematique.deleteMany();
@@ -376,6 +370,7 @@ export class TestUtil {
       ],
       short_question: 'short',
       image_url: 'URL',
+      conditions: [],
 
       created_at: undefined,
       updated_at: undefined,
@@ -383,25 +378,6 @@ export class TestUtil {
     };
   }
 
-  static empreinteData(override?): Empreinte {
-    return {
-      id: 'empreinte-id',
-      initial: false,
-      situationId: 'situationNGC-id',
-      bilan: {
-        details: {
-          divers: 852.8584599753638,
-          logement: 1424.3853917865213,
-          transport: 2533.9706912924553,
-          alimentation: 2033.7441687666667,
-          services_societaux: 1553.6358095597056,
-        },
-        bilan_carbone_annuel: 8398.594521380714,
-      },
-      utilisateurId: 'utilisateur-id',
-      ...override,
-    };
-  }
   static utilisateurData(override?): Utilisateur {
     const unlocked: UnlockedFeatures_v1 = {
       version: 1,
@@ -458,6 +434,7 @@ export class TestUtil {
           universes: [Univers.climat],
           short_question: 'short',
           image_url: 'URL',
+          conditions: [],
         },
       ],
     };
@@ -508,14 +485,6 @@ export class TestUtil {
       proprietaire: true,
     };
 
-    const transport: Transport_v0 = {
-      version: 0,
-      avions_par_an: 2,
-      transports_quotidiens: [
-        TransportQuotidien.velo,
-        TransportQuotidien.voiture,
-      ],
-    };
     return {
       id: 'utilisateur-id',
       nom: 'nom',
@@ -548,7 +517,6 @@ export class TestUtil {
       kyc: kyc,
       defis: defis,
       logement: logement,
-      transport: transport,
       tag_ponderation_set: {},
       force_connexion: false,
       derniere_activite: null,
@@ -583,7 +551,6 @@ export class TestUtil {
       label: 'Le Climat !',
       code: Univers.climat,
       image_url: 'https://',
-      is_locked: false,
       created_at: undefined,
       updated_at: undefined,
       ...override,

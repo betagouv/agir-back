@@ -1,12 +1,14 @@
-import { Controller, Param, Request, Post, Get } from '@nestjs/common';
+import { Controller, Param, Request, Post, Get, Body } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
 import { MailerUsecase } from '../../usecase/mailer.usecase';
+import { DisableEmailAPI } from './types/email/tokenEmailAPI';
 
 @Controller()
 @ApiTags('Notifications')
@@ -20,14 +22,15 @@ export class NotificationsController extends GenericControler {
     summary:
       'Desactive les notifications email pour un utilisateur via un token donné',
   })
-  @Get('notifications/email/:token/disable')
+  @Post('notifications/email/disable')
   @ApiOkResponse({
     type: String,
   })
-  async disableUserEmails(@Param('token') token: string): Promise<string> {
-    await this.mailerUsecase.disableUserEmails(token);
-    return `Votre demande de désinscription des messages électroniques Agir a bien été prise en compte !
-Vous pouvez à tout moment rétablir ces notifications dans votre profile Agir`;
+  @ApiBody({
+    type: DisableEmailAPI,
+  })
+  async disableUserEmails(@Body() body: DisableEmailAPI) {
+    await this.mailerUsecase.disableUserEmails(body.token);
   }
 
   @Post('/notifications/email/send_notifications')

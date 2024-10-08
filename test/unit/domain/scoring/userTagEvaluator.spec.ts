@@ -62,9 +62,10 @@ describe('UseragEvaluator', () => {
         ],
         short_question: 'short',
         image_url: 'AAA',
+        conditions: [],
       }),
     ]);
-    user.kyc_history.updateQuestionByCodeWithLabel(KYCID.KYC001, []);
+    user.kyc_history.updateQuestionByCodeWithLabelOrException(KYCID.KYC001, []);
 
     // WHEN
     UserTagEvaluator.recomputeRecoTags(user);
@@ -118,9 +119,10 @@ describe('UseragEvaluator', () => {
         ],
         short_question: 'short',
         image_url: 'AAA',
+        conditions: [],
       }),
     ]);
-    user.kyc_history.updateQuestionByCodeWithLabel(KYCID.KYC001, [
+    user.kyc_history.updateQuestionByCodeWithLabelOrException(KYCID.KYC001, [
       '🥦 Alimentation',
       '☀️ Climat et Environnement',
       '🛒 Consommation durable',
@@ -185,14 +187,18 @@ describe('UseragEvaluator', () => {
         ],
         short_question: 'short',
         image_url: 'AAA',
+        conditions: [],
       }),
     ]);
-    user.kyc_history.updateQuestionByCodeWithLabel(KYCID.KYC_preference, [
-      'La cuisine et l’alimentation',
-      'Mes déplacements',
-      'Ma consommation',
-      'Mon logement',
-    ]);
+    user.kyc_history.updateQuestionByCodeWithLabelOrException(
+      KYCID.KYC_preference,
+      [
+        'La cuisine et l’alimentation',
+        'Mes déplacements',
+        'Ma consommation',
+        'Mon logement',
+      ],
+    );
 
     // WHEN
     UserTagEvaluator.recomputeRecoTags(user);

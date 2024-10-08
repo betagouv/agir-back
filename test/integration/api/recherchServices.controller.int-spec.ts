@@ -477,7 +477,7 @@ describe('RechercheServices (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(3);
+    expect(response.body).toHaveLength(4);
     expect(response.body[0]).toStrictEqual({
       id_service: 'fruits_legumes',
       titre: 'Fruits et légumes de saison',
@@ -488,7 +488,7 @@ describe('RechercheServices (API test)', () => {
       is_available_inhouse: true,
     });
     expect(response.body[1].external_url).toEqual(
-      'https://presdecheznous.fr/map#/carte/91120',
+      'https://www.winter-energies.fr/',
     );
   });
 
@@ -776,11 +776,68 @@ describe('RechercheServices (API test)', () => {
 
     // WHEN
     const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/recherche_services/recettes/search',
+      '/utilisateurs/utilisateur-id/recherche_services/recettes/search2',
     ).send({ categorie: 'vege', nombre_max_resultats: 30 });
 
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(30);
+    expect(response.body.resultats).toHaveLength(30);
+    expect(response.body.encore_plus_resultats_dispo).toEqual(true);
+  });
+  it(`POST /utlilisateur/id/recherche_services/recettes/search flag encore_plus_resultats_dispo vege`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/recettes/search2',
+    ).send({ categorie: 'vege', nombre_max_resultats: 3000 });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body.resultats).toHaveLength(217);
+    expect(response.body.encore_plus_resultats_dispo).toEqual(false);
+  });
+  it(`POST /utlilisateur/id/recherche_services/recettes/search flag encore_plus_resultats_dispo vegan`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/recettes/search2',
+    ).send({ categorie: 'vegan', nombre_max_resultats: 3000 });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body.resultats).toHaveLength(438);
+    expect(response.body.encore_plus_resultats_dispo).toEqual(false);
+  });
+  it(`POST /utlilisateur/id/recherche_services/recettes/search flag encore_plus_resultats_dispo volaile`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/recettes/search2',
+    ).send({ categorie: 'dinde_volaille', nombre_max_resultats: 3000 });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body.resultats).toHaveLength(88);
+    expect(response.body.encore_plus_resultats_dispo).toEqual(false);
+  });
+  it(`POST /utlilisateur/id/recherche_services/recettes/search flag encore_plus_resultats_dispo saison`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/recettes/search2',
+    ).send({ categorie: 'saison', nombre_max_resultats: 3000 });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body.resultats).toHaveLength(811);
+    expect(response.body.encore_plus_resultats_dispo).toEqual(false);
   });
 });

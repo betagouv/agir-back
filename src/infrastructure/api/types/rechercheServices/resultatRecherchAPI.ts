@@ -81,3 +81,19 @@ export class ResultatRechercheAPI {
     };
   }
 }
+
+export class ReponseRechecheAPI {
+  @ApiProperty({ type: [ResultatRechercheAPI] })
+  resultats: ResultatRechercheAPI[];
+  @ApiProperty() encore_plus_resultats_dispo: boolean;
+
+  public static mapToAPI(res: {
+    liste: ResultatRecherche[];
+    encore_plus_resultats_dispo: boolean;
+  }): ReponseRechecheAPI {
+    return {
+      encore_plus_resultats_dispo: res.encore_plus_resultats_dispo,
+      resultats: res.liste.map((r) => ResultatRechercheAPI.mapToAPI(r)),
+    };
+  }
+}

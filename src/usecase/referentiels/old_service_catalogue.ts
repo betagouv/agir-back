@@ -1,4 +1,4 @@
-const service_catalogue = {
+const old_service_catalogue = {
   recettes: {
     titre: 'Un délice végétarien chaque jour',
     url: 'https://cuisine-facile.com/index.php',
@@ -73,4 +73,4 @@ const service_catalogue = {
     parametrage_requis: false,
   },
 };
-module.exports = service_catalogue;
+module.exports = old_service_catalogue;

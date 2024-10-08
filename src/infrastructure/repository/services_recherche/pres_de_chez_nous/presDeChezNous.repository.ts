@@ -68,6 +68,10 @@ export class PresDeChezNousRepository implements FinderInterface {
 
   constructor(private addressesRepository: AddressesRepository) {}
 
+  public getMaxResultOfCategorie(cat: CategorieRecherche): number {
+    return 999999999;
+  }
+
   public getManagedCategories(): CategorieRecherche[] {
     return [
       CategorieRecherche.circuit_court,
@@ -171,6 +175,7 @@ export class PresDeChezNousRepository implements FinderInterface {
     categories: string,
   ): Promise<PresDeChezVousResponse> {
     let response;
+    const call_time = Date.now();
     try {
       response = await axios.get(API_URL, {
         timeout: PresDeChezNousRepository.API_TIMEOUT,
@@ -184,6 +189,9 @@ export class PresDeChezNousRepository implements FinderInterface {
         },
       });
     } catch (error) {
+      console.log(
+        `Error calling [presdecheznous] after ${Date.now() - call_time} ms`,
+      );
       if (error.response) {
         console.error(error.response);
       } else if (error.request) {
@@ -191,6 +199,7 @@ export class PresDeChezNousRepository implements FinderInterface {
       }
       return null;
     }
+    console.log(`API_TIME:presdecheznous:${Date.now() - call_time}`);
     return response.data;
   }
 }

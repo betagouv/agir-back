@@ -18,7 +18,7 @@ describe('Notifications (API test)', () => {
   });
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
-  it(`GET /notifications/email/12345678901234567890123/disable - desactive ok les mails de l'utilisateur`, async () => {
+  it(`GET /notifications/email/disable - desactive ok les mails de l'utilisateur`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       unsubscribe_mail_token: '12345678901234567890123',
@@ -26,14 +26,13 @@ describe('Notifications (API test)', () => {
 
     // WHEN
     const response = await TestUtil.getServer()
-      .get('/notifications/email/12345678901234567890123/disable')
-      .set('Accept', `text/html`);
+      .post('/notifications/email/disable')
+      .send({
+        token: '12345678901234567890123',
+      });
 
     // THEN
-    expect(response.status).toBe(200);
-    expect(response.text)
-      .toEqual(`Votre demande de désinscription des messages électroniques Agir a bien été prise en compte !
-Vous pouvez à tout moment rétablir ces notifications dans votre profile Agir`);
+    expect(response.status).toBe(201);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.notification_history.enabled_canals).toEqual([
@@ -41,14 +40,18 @@ Vous pouvez à tout moment rétablir ces notifications dans votre profile Agir`)
     ]);
   });
 
-  it(`GET /notifications/email/bad/disable - mauvais token`, async () => {
+  it(`GET /notifications/email/disable - mauvais token`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
-      unsubscribe_mail_token: 'bad',
+      unsubscribe_mail_token: 'hohofsjflqsfj',
     });
 
     // WHEN
-    const response = await TestUtil.GET('/notifications/email/bad/disable');
+    const response = await TestUtil.getServer()
+      .post('/notifications/email/disable')
+      .send({
+        token: 'bad',
+      });
 
     // THEN
     expect(response.status).toBe(400);

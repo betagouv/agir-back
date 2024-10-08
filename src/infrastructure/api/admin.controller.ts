@@ -11,7 +11,7 @@ import { CMSUsecase } from '../../../src/usecase/cms.usecase';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { GenericControler } from './genericControler';
 import { UserMigrationReportAPI } from './types/userMigrationReportAPI';
-import { ReferentielUsecase } from '../../../src/usecase/referentiel/referentiel.usecase';
+import { ReferentielUsecase } from '../../usecase/referentiels/referentiel.usecase';
 import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
 import { TodoUsecase } from '../../../src/usecase/todo.usecase';
 import { ContactUsecase } from '../../usecase/contact.usecase';

@@ -7,7 +7,6 @@ import { ResultatRecherche } from '../../../domain/bibliotheque_services/recherc
 
 const API_URL = 'https://api-adresse.data.gouv.fr/search';
 
-//https://presdecheznous.gogocarto.fr/api/elements.json?limit=100&categories=&bounds=1.69739 41.93845 2.68343 43.14308
 export type AddresseResponse = {
   type: string;
   version: string;
@@ -45,6 +44,10 @@ export class AddressesRepository implements FinderInterface {
     return [];
   }
 
+  public getMaxResultOfCategorie(cat: CategorieRecherche): number {
+    return 999999999;
+  }
+
   public async find(filtre: FiltreRecherche): Promise<ResultatRecherche[]> {
     const result = await this.callAddresseAPI(filtre.text);
 
@@ -70,6 +73,7 @@ export class AddressesRepository implements FinderInterface {
 
   private async callAddresseAPI(text: string): Promise<AddresseResponse> {
     let response;
+    const call_time = Date.now();
     try {
       response = await axios.get(API_URL, {
         headers: {
@@ -78,13 +82,19 @@ export class AddressesRepository implements FinderInterface {
         params: { q: text, limit: 1 },
       });
     } catch (error) {
+      console.log(
+        `Error calling [api-adresse.data.gouv.fr] after ${
+          Date.now() - call_time
+        } ms`,
+      );
       if (error.response) {
-        // haha
+        console.error(error.response);
       } else if (error.request) {
-        // hihi
+        console.error(error.request);
       }
       return null;
     }
+    console.log(`API_TIME:api-adresse.data.gouv.fr:${Date.now() - call_time}`);
     return response.data;
   }
 }

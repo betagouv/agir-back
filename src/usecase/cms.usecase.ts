@@ -433,7 +433,6 @@ export class CMSUsecase {
       label: cmsWebhookAPI.entry.label,
       id_cms: cmsWebhookAPI.entry.id,
       image_url: CMSUsecase.getImageUrl(cmsWebhookAPI.entry),
-      is_locked: cmsWebhookAPI.entry.is_locked,
     });
   }
 
@@ -680,6 +679,15 @@ export class CMSUsecase {
       universes: entry.univers ? entry.univers.map((u) => u.code) : [],
       image_url: CMSUsecase.getImageUrl(entry),
       short_question: entry.short_question,
+      conditions: entry.OR_Conditions
+        ? entry.OR_Conditions.map((or) =>
+            or.AND_Conditions.map((and) => ({
+              code_kyc: and.kyc.code,
+              id_kyc: and.kyc.id,
+              code_reponse: and.code_reponse,
+            })),
+          )
+        : [],
     };
   }
 
@@ -840,7 +848,6 @@ export class CMSUsecase {
       id_cms: entry.id,
       label: entry.attributes.label,
       image_url: this.getImageUrlFromPopulate(entry),
-      is_locked: entry.attributes.is_locked,
       code: entry.attributes.code,
     };
   }
@@ -939,6 +946,15 @@ export class CMSUsecase {
           : [],
       short_question: entry.attributes.short_question,
       image_url: CMSUsecase.getImageUrlFromPopulate(entry),
+      conditions: entry.attributes.OR_Conditions
+        ? entry.attributes.OR_Conditions.map((or) =>
+            or.AND_Conditions.map((and) => ({
+              id_kyc: and.kyc.data.id,
+              code_kyc: and.kyc.data.attributes.code,
+              code_reponse: and.code_reponse,
+            })),
+          )
+        : [],
     };
   }
 

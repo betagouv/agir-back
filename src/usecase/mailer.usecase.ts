@@ -8,7 +8,7 @@ import {
 import { EmailTemplateRepository } from '../infrastructure/email/emailTemplate.repository';
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
-var crypto = require('crypto');
+import { App } from '../domain/app';
 
 const day_2 = 1000 * 60 * 60 * 24 * 2;
 
@@ -21,7 +21,7 @@ export class MailerUsecase {
   ) {}
 
   async disableUserEmails(token: string) {
-    if (!token || token.length < 20) {
+    if (!token || token.length < 8) {
       ApplicationError.throwBadTokenError(token);
     }
 
@@ -29,7 +29,10 @@ export class MailerUsecase {
 
     if (utilisateur) {
       utilisateur.notification_history.disableCanal(CanalNotification.email);
-      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+      await this.utilisateurRepository.updateUtilisateur(
+        utilisateur,
+        'disableUserEmailss',
+      );
     } else {
       ApplicationError.throwBadTokenError(token);
     }
@@ -48,18 +51,19 @@ export class MailerUsecase {
       );
 
       if (utilisateur.notification_history.isWelcomeEmailToSend(utilisateur)) {
-        const USER_UNSUBSCRIBE_TOKEN = crypto.randomUUID();
+        utilisateur.setUnsubscribeEmailTokenIfMissing();
 
         const is_sent_email = await this.sendEmailOfType(
           TypeNotification.welcome,
           utilisateur,
-          USER_UNSUBSCRIBE_TOKEN,
         );
 
         if (is_sent_email) {
-          utilisateur.unsubscribe_mail_token = USER_UNSUBSCRIBE_TOKEN;
           result.push(`Sent welcome email to [${utilisateur.id}]`);
-          await this.utilisateurRepository.updateUtilisateur(utilisateur);
+          await this.utilisateurRepository.updateUtilisateur(
+            utilisateur,
+            'envoyerEmailsWelcome',
+          );
         }
       }
     }
@@ -91,22 +95,21 @@ export class MailerUsecase {
         );
 
       const liste_sent_notifs: string[] = [];
-      const USER_UNSUBSCRIBE_TOKEN = crypto.randomUUID();
 
       for (const notif_type of notif_type_liste) {
+        utilisateur.setUnsubscribeEmailTokenIfMissing();
+
         const is_sent_email = await this.sendEmailOfType(
           notif_type,
           utilisateur,
-          USER_UNSUBSCRIBE_TOKEN,
         );
 
         if (is_sent_email) {
           liste_sent_notifs.push(notif_type);
-          utilisateur.unsubscribe_mail_token = USER_UNSUBSCRIBE_TOKEN;
         }
       }
 
-      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+      await this.utilisateurRepository.updateUtilisateur(utilisateur, 'envoyerEmailsAutomatiques');
 
       if (liste_sent_notifs.length > 0) {
         result.push(
@@ -121,13 +124,13 @@ export class MailerUsecase {
   private async sendEmailOfType(
     type_notif: TypeNotification,
     utilisateur: Utilisateur,
-    unsubscribe_token: string,
   ): Promise<boolean> {
     const email = this.emailTemplateRepository.generateEmailByType(
       type_notif,
       utilisateur,
-      unsubscribe_token,
+      utilisateur.unsubscribe_mail_token,
     );
+
     if (email) {
       await this.emailSender.sendEmail(
         utilisateur.email,

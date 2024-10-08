@@ -2,10 +2,9 @@ import { Utilisateur } from '../domain/utilisateur/utilisateur';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import {
   LogementAPI,
-  TransportAPI,
   UtilisateurUpdateProfileAPI,
 } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
-import { BilanRepository } from '../infrastructure/repository/bilan.repository';
+import { SituationNGCRepository } from '../infrastructure/repository/bilan.repository';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { Injectable } from '@nestjs/common';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
@@ -28,7 +27,7 @@ export class ProfileUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private serviceRepository: ServiceRepository,
-    private bilanRepository: BilanRepository,
+    private bilanRepository: SituationNGCRepository,
     private oIDCStateRepository: OIDCStateRepository,
     private contactUsecase: ContactUsecase,
     private kycRepository: KycRepository,
@@ -88,27 +87,10 @@ export class ProfileUsecase {
     utilisateur.prenom = profile.prenom;
     utilisateur.annee_naissance = profile.annee_naissance;
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
-  }
-
-  @Retryable({
-    maxAttempts: 1,
-    doRetry: (e: any) => {
-      return e.code === '050';
-    },
-  })
-  async updateUtilisateurTransport(utilisateurId: string, input: TransportAPI) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
-    utilisateur.checkState();
-
-    const kyc_catalogue = await this.kycRepository.getAllDefs();
-    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
-
-    utilisateur.transport.patch(input);
-
-    utilisateur.recomputeRecoTags();
-
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'updateUserProfile',
+    );
   }
 
   @Retryable({
@@ -175,7 +157,10 @@ export class ProfileUsecase {
       );
     utilisateur.couverture_aides_ok = couverture_code_postal;
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'updateUser',
+    );
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
@@ -230,14 +215,16 @@ export class ProfileUsecase {
         );
       couvert += utilisateur.couverture_aides_ok ? 1 : 0;
       pas_couvert += !utilisateur.couverture_aides_ok ? 1 : 0;
-      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+      await this.utilisateurRepository.updateUtilisateur(
+        utilisateur,
+        'updateAllUserCouvertureAides',
+      );
     }
     return { couvert, pas_couvert };
   }
   async deleteUtilisateur(utilisateurId: string) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
 
-    await this.bilanRepository.delete(utilisateurId);
     await this.oIDCStateRepository.delete(utilisateurId);
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
     await this.utilisateurRepository.delete(utilisateurId);
@@ -252,7 +239,10 @@ export class ProfileUsecase {
 
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'resetUser',
+    );
   }
 
   private AorB?<T>(a: T, b: T): T {

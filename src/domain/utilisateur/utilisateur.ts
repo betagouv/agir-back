@@ -9,7 +9,6 @@ import { KYCHistory } from '../kyc/kycHistory';
 import { Logement } from '../logement/logement';
 import { App } from '../app';
 import { TagPonderationSet } from '../scoring/tagPonderationSet';
-import { Transport } from '../transport/transport';
 import { Tag } from '../scoring/tag';
 import { DefiHistory } from '../defis/defiHistory';
 import { UserTagEvaluator } from '../scoring/userTagEvaluator';
@@ -20,6 +19,7 @@ import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServi
 import { KYCID } from '../kyc/KYCID';
 import validator from 'validator';
 import { NotificationHistory } from '../notification/notificationHistory';
+var crypto = require('crypto');
 
 export enum UtilisateurStatus {
   default = 'default',
@@ -66,7 +66,6 @@ export class UtilisateurData {
   migration_enabled: boolean;
   kyc_history: KYCHistory;
   logement: Logement;
-  transport: Transport;
   tag_ponderation_set: TagPonderationSet;
   defi_history: DefiHistory;
   force_connexion: boolean;
@@ -158,7 +157,6 @@ export class Utilisateur extends UtilisateurData {
         superficie: null,
         type: null,
       }),
-      transport: {} as any,
       tag_ponderation_set: {},
       force_connexion: false,
       derniere_activite: new Date(),
@@ -176,7 +174,7 @@ export class Utilisateur extends UtilisateurData {
       couverture_aides_ok: false,
       source_inscription: source_inscription,
       notification_history: new NotificationHistory(),
-      unsubscribe_mail_token: null,
+      unsubscribe_mail_token: Utilisateur.generateEmailToken(),
     });
   }
 
@@ -188,6 +186,16 @@ export class Utilisateur extends UtilisateurData {
     this.history.reset();
     this.defi_history.reset();
     this.kyc_history.reset();
+  }
+
+  public setUnsubscribeEmailTokenIfMissing?() {
+    if (!this.unsubscribe_mail_token) {
+      this.unsubscribe_mail_token = Utilisateur.generateEmailToken();
+    }
+  }
+
+  private static generateEmailToken?(): string {
+    return crypto.randomUUID();
   }
 
   public isOnboardingDone?(): boolean {

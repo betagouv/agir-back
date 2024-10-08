@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { TransportQuotidien } from '../../../../domain/transport/transport';
 import {
   TypeLogement,
   Superficie,
@@ -8,7 +7,6 @@ import {
   Logement,
 } from '../../../../domain/logement/logement';
 import { Utilisateur } from '../../../../../src/domain/utilisateur/utilisateur';
-import { Transport } from '../../../../domain/transport/transport';
 
 export class LogementAPI {
   @ApiProperty({ required: false })
@@ -47,25 +45,6 @@ export class LogementAPI {
       plus_de_15_ans: log.plus_de_15_ans,
       dpe: log.dpe,
       commune_label: log.commune_label,
-    };
-  }
-}
-
-export class TransportAPI {
-  @ApiProperty({ required: false })
-  avions_par_an: number;
-  @ApiProperty({
-    required: false,
-    enum: TransportQuotidien,
-    enumName: 'TransportQuotidien',
-    isArray: true,
-  })
-  transports_quotidiens: TransportQuotidien[];
-
-  public static mapToAPI(data: Transport): TransportAPI {
-    return {
-      avions_par_an: data.avions_par_an,
-      transports_quotidiens: data.transports_quotidiens,
     };
   }
 }

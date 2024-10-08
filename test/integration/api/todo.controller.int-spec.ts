@@ -580,6 +580,7 @@ describe('TODO list (API test)', () => {
       ],
       short_question: 'short',
       image_url: 'AAA',
+      conditions: [],
       created_at: undefined,
       updated_at: undefined,
     };
@@ -687,6 +688,7 @@ describe('TODO list (API test)', () => {
       ],
       short_question: 'short',
       image_url: 'AAA',
+      conditions: [],
       created_at: undefined,
       updated_at: undefined,
     };
@@ -1340,6 +1342,7 @@ describe('TODO list (API test)', () => {
           universes: [],
           short_question: 'short',
           image_url: 'AAA',
+          conditions: [],
         },
       ],
     };

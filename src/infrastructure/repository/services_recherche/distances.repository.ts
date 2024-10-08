@@ -25,6 +25,10 @@ export class DistancesRepository implements FinderInterface {
     return [];
   }
 
+  public getMaxResultOfCategorie(cat: CategorieRecherche): number {
+    return 999999999;
+  }
+
   public async find(filtre: FiltreRecherche): Promise<ResultatRecherche[]> {
     const mode = this.mapMode(filtre.mode_deplacement);
 
@@ -67,6 +71,7 @@ export class DistancesRepository implements FinderInterface {
       units: 'm',
     };
     let response;
+    const call_time = Date.now();
     try {
       response = await axios.post(API_URL.concat('/', mode), data, {
         headers: {
@@ -75,13 +80,19 @@ export class DistancesRepository implements FinderInterface {
         },
       });
     } catch (error) {
+      console.log(
+        `Error calling [api.openrouteservice.org] after ${
+          Date.now() - call_time
+        } ms`,
+      );
       if (error.response) {
-        // haha
+        console.error(error.response);
       } else if (error.request) {
-        // hihi
+        console.error(error.request);
       }
       return null;
     }
+    console.log(`API_TIME:api.openrouteservice.org:${Date.now() - call_time}`);
     return response.data;
   }
 }

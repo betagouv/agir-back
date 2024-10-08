@@ -1,17 +1,16 @@
 import { Module } from '@nestjs/common';
 
 import { AuthController } from './infrastructure/api/auth.controller';
-import { BilanController } from './infrastructure/api/bilan.controller';
 import { AidesController } from './infrastructure/api/aides.controller';
 import { TestDataController } from './infrastructure/api/testData.controller';
 import { CMSController } from './infrastructure/api/incoming/cms.controller';
 
-import { BilanUsecase } from './usecase/bilan.usecase';
+import { ImportNGCUsecase } from './usecase/importNGC.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
 import { CMSUsecase } from './usecase/cms.usecase';
 
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur/utilisateur.repository';
-import { BilanRepository } from './infrastructure/repository/bilan.repository';
+import { SituationNGCRepository } from './infrastructure/repository/bilan.repository';
 
 import { PrismaService } from './infrastructure/prisma/prisma.service';
 import { AidesVeloRepository } from './infrastructure/repository/aidesVelo.repository';
@@ -56,7 +55,7 @@ import { ContactSynchro } from './infrastructure/contact/contactSynchro';
 import { RecommandationsController } from './infrastructure/api/recommandations.controller';
 import { RecommandationUsecase } from './usecase/recommandation.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
-import { ReferentielUsecase } from './usecase/referentiel/referentiel.usecase';
+import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
 import { App } from './domain/app';
 import { BibliothequeController } from './infrastructure/api/bibliotheque.controller';
 import { BibliothequeUsecase } from './usecase/bibliotheque.usecase';
@@ -109,7 +108,7 @@ import { MagicLinkController } from './infrastructure/api/magicLink.controller';
 import { ImpactTransportsRepository } from './infrastructure/repository/services_recherche/impactTransport.repository';
 import { DistancesRepository } from './infrastructure/repository/services_recherche/distances.repository';
 import { ConnexionController } from './infrastructure/api/connexion.controller';
-import { Inscription_v2_Usecase } from './usecase/inscription.usecase';
+import { InscriptionUsecase } from './usecase/inscription.usecase';
 import { ProfileUsecase } from './usecase/profile.usecase';
 import { ProfileController } from './infrastructure/api/profile.controller';
 import { Connexion_v2_Usecase } from './usecase/connexion.usecase';
@@ -150,7 +149,6 @@ function getControllers(): any[] {
   if (!App.isProd()) {
     controllers.push(TestDataController);
     controllers.push(AuthController);
-    controllers.push(BilanController);
     controllers.push(MagicLinkController);
   }
   return controllers;
@@ -175,7 +173,7 @@ function getControllers(): any[] {
     PrismaService,
     PrismaServiceStat,
     UtilisateurRepository,
-    BilanRepository,
+    SituationNGCRepository,
     CodeManager,
     OIDCStateRepository,
     OidcService,
@@ -183,7 +181,7 @@ function getControllers(): any[] {
     AidesRetrofitRepository,
     AidesVeloRepository,
     ProfileUsecase,
-    BilanUsecase,
+    ImportNGCUsecase,
     AidesUsecase,
     CMSUsecase,
     EmailSender,
@@ -214,7 +212,7 @@ function getControllers(): any[] {
     BibliothequeUsecase,
     LinkyAPIConnector,
     LinkyEmailer,
-    Inscription_v2_Usecase,
+    InscriptionUsecase,
     AideRepository,
     DefiRepository,
     DefisUsecase,

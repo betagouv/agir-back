@@ -9,6 +9,7 @@ import { Thematique } from '../../contenu/thematique';
 import { Tag } from '../../scoring/tag';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { KYCMosaicID } from '../../kyc/KYCMosaicID';
+import { ConditionKYC } from '../../kyc/conditionKYC';
 
 export class KYCReponse_v0 {
   code: string;
@@ -40,6 +41,7 @@ export class QuestionKYC_v0 {
   tags: Tag[];
   universes: string[];
   image_url: string;
+  conditions: ConditionKYC[][];
 
   static map(elem: QuestionKYC): QuestionKYC_v0 {
     return {
@@ -62,6 +64,7 @@ export class QuestionKYC_v0 {
       id_cms: elem.id_cms,
       short_question: elem.short_question,
       image_url: elem.image_url,
+      conditions: elem.conditions ? elem.conditions : [],
     };
   }
 }

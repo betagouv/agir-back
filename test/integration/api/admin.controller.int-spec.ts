@@ -8,13 +8,7 @@ import { Gamification_v0 } from '../../../src/domain/object_store/gamification/g
 import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
 import { Feature } from '../../../src/domain/gamification/feature';
 import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
-import {
-  Chauffage,
-  Superficie,
-  TypeLogement,
-} from '../../../src/domain/logement/logement';
 import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
-import { TransportQuotidien } from '../../../src/domain/transport/transport';
 import { DefiStatus } from '../../../src/domain/defis/defi';
 import {
   DefiHistory_v0,

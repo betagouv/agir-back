@@ -66,6 +66,7 @@ describe('KYC vN ', () => {
           universes: [Univers.climat],
           short_question: 'short',
           image_url: 'AAA',
+          conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
         },
       ],
     });
@@ -119,7 +120,8 @@ describe('KYC vN ', () => {
           universes: [Univers.climat],
           short_question: 'short',
           image_url: 'AAA',
-          },
+          conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+        },
       ],
     });
 

@@ -6,9 +6,7 @@ import { PrismaServiceStat } from '../prisma/stats/prisma.service.stats';
 import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
-const service_catalogue = require('../../../src/usecase/referentiel/service_catalogue');
 const _linky_data = require('../../../test_data/PRM_thermo_pas_sensible');
-const empreintes_utilisateur = require('../../../test_data/evenements/bilans');
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { LinkyRepository } from '../repository/linky.repository';
 import { ServiceStatus } from '../../../src/domain/service/service';
@@ -17,6 +15,7 @@ import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.rep
 import { Contact } from '../contact/contact';
 import { ContactSynchro } from '../contact/contactSynchro';
 import { GenericControler } from './genericControler';
+import { ProfileUsecase } from '../../usecase/profile.usecase';
 
 @Controller()
 @ApiTags('TestData')
@@ -29,6 +28,7 @@ export class TestDataController extends GenericControler {
     private migrationUsecase: MigrationUsecase,
     public contactSynchro: ContactSynchro,
     private utilisateurRepository2: UtilisateurRepository,
+    private profileUsecase: ProfileUsecase,
   ) {
     super();
   }
@@ -82,82 +82,11 @@ export class TestDataController extends GenericControler {
   async injectUserId(utilisateurId: string): Promise<string> {
     if (!utilisateurs_content[utilisateurId]) return '{}';
     await this.deleteUtilisateur(utilisateurId);
-    await this.upsertUtilisateur(utilisateurId);
-    await this.upsertServicesDefinitions();
-    await this.insertServicesForUtilisateur(utilisateurId);
+    await this.insertUtilisateur(utilisateurId);
     await this.insertLinkyDataForUtilisateur(utilisateurId);
-    await this.insertEmpreintesForUtilisateur(utilisateurId);
     return utilisateurs_content[utilisateurId];
   }
 
-  async upsertServicesDefinitions() {
-    const keyList = Object.keys(service_catalogue);
-    for (let index = 0; index < keyList.length; index++) {
-      const serviceId = keyList[index];
-      const service = service_catalogue[serviceId];
-      const data = { ...service };
-      data.id = serviceId;
-      delete data.configuration;
-      await this.prisma.serviceDefinition.upsert({
-        where: {
-          id: serviceId,
-        },
-        update: data,
-        create: data,
-      });
-    }
-  }
-
-  async insertEmpreintesForUtilisateur(utilisateurId: string) {
-    const empreintes = utilisateurs_content[utilisateurId].bilans;
-    if (!empreintes) return;
-    for (let index = 0; index < empreintes.length; index++) {
-      const empreinteId = empreintes[index];
-      const empreinte = empreintes_utilisateur[empreinteId];
-      if (empreinte) {
-        const situationId = uuidv4();
-        await this.prisma.situationNGC.create({
-          data: {
-            id: situationId,
-            situation: empreinte.situation,
-          },
-        });
-        let data = {
-          ...empreinte,
-          created_at: new Date(Date.parse(empreinte.date)),
-          id: uuidv4(),
-          utilisateurId,
-          situationId,
-          date: undefined,
-          situation: undefined,
-        };
-        await this.prisma.empreinte.create({
-          data,
-        });
-      }
-    }
-  }
-  async insertServicesForUtilisateur(utilisateurId: string) {
-    const services = utilisateurs_content[utilisateurId].services;
-    if (!services) return;
-    for (let index = 0; index < services.length; index++) {
-      const serviceId = services[index];
-      if (service_catalogue[serviceId]) {
-        let data = {
-          id: uuidv4(),
-          utilisateurId: utilisateurId,
-          serviceDefinitionId: serviceId,
-          status: ServiceStatus.LIVE,
-          configuration: service_catalogue[serviceId].configuration
-            ? service_catalogue[serviceId].configuration
-            : {},
-        };
-        await this.prisma.service.create({
-          data,
-        });
-      }
-    }
-  }
   async insertLinkyDataForUtilisateur(utilisateurId: string) {
     const linky = utilisateurs_content[utilisateurId].linky;
     if (!linky) return;
@@ -175,16 +104,16 @@ export class TestDataController extends GenericControler {
         utilisateurId,
       },
     });
-    await this.prisma.empreinte.deleteMany({
-      where: {
-        utilisateurId,
-      },
-    });
     await this.prisma.utilisateur.deleteMany({
       where: { id: utilisateurId },
     });
   }
-  async upsertUtilisateur(utilisateurId: string) {
+  async insertUtilisateur(utilisateurId: string) {
+    const user = await this.utilisateurRepository2.getById(utilisateurId);
+    if (user) {
+      await this.profileUsecase.deleteUtilisateur(utilisateurId);
+    }
+
     const clonedData = { ...utilisateurs_content[utilisateurId] };
     delete clonedData.interactions;
     delete clonedData.bilans;
@@ -195,6 +124,8 @@ export class TestDataController extends GenericControler {
     if (!clonedData.todo) {
       clonedData.todo = new ParcoursTodo();
     }
+
+    clonedData.unsubscribe_mail_token = crypto.randomUUID();
 
     PasswordManager.setUserPassword(clonedData, clonedData.mot_de_passe);
     delete clonedData.mot_de_passe;
@@ -213,6 +144,6 @@ export class TestDataController extends GenericControler {
       utilisateurId,
     );
     utilisatateur.recomputeRecoTags();
-    await this.utilisateurRepository2.updateUtilisateur(utilisatateur);
+    await this.utilisateurRepository2.updateUtilisateur(utilisatateur, 'insertUser');
   }
 }

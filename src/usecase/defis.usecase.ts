@@ -143,6 +143,9 @@ export class DefisUsecase {
       utilisateur.missions.validateDefiObjectif(defiId);
     }
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'updateStatus',
+    );
   }
 }

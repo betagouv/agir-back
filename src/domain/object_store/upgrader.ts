@@ -7,7 +7,6 @@ import { MissionsUtilisateur_v0 } from './mission/MissionsUtilisateur_v0';
 import { NotificationHistory_v0 } from './notification/NotificationHistory_v0';
 import { ParcoursTodo_v0 } from './parcoursTodo/parcoursTodo_v0';
 import { BibliothequeServices_v0 } from './service/BibliothequeService_v0';
-import { Transport_v0 } from './transport/transport_v0';
 import { UnlockedFeatures_v0 } from './unlockedFeatures/unlockedFeatures_v0';
 import { UnlockedFeatures_v1 } from './unlockedFeatures/unlockedFeatures_v1';
 
@@ -19,7 +18,6 @@ export enum SerialisableDomain {
   KYCHistory = 'KYCHistory',
   DefiHistory = 'DefiHistory',
   Logement = 'Logement',
-  Transport = 'Transport',
   MissionsUtilisateur = 'MissionsUtilisateur',
   BibliothequeServices = 'BibliothequeServices',
   NotificationHistory = 'NotificationHistory',
@@ -33,7 +31,6 @@ const CLASS_DICTIONNARY = {
   Gamification_v0: Gamification_v0,
   KYCHistory_v0: KYCHistory_v0,
   Logement_v0: Logement_v0,
-  Transport_v0: Transport_v0,
   DefiHistory_v0: DefiHistory_v0,
   MissionsUtilisateur_v0: MissionsUtilisateur_v0,
   BibliothequeServices_v0: BibliothequeServices_v0,

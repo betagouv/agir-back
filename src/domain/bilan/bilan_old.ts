@@ -1,4 +1,4 @@
-export type Bilan = {
+export type Bilan_OLD = {
   bilan_carbone_annuel: number;
   details: {
     divers: number;

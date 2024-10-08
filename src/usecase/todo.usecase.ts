@@ -39,7 +39,10 @@ export class TodoUsecase {
       const points = todo_active.empochePoints(element);
       utilisateur.gamification.ajoutePoints(points, utilisateur);
     }
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'gagnerPointsFromTodoElement',
+    );
   }
 
   async gagnerPointsFromTodoTerminee(utilisateurId: string) {
@@ -73,7 +76,10 @@ export class TodoUsecase {
     } else {
       ApplicationError.throwUnfinishedTodoError();
     }
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'gagnerPointsFromTodoTerminee',
+    );
   }
 
   async getUtilisateurTodo(utilisateurId: string): Promise<Todo> {
@@ -174,7 +180,10 @@ export class TodoUsecase {
           if (new_elem) {
             new_elem.element.progression = progression;
             new_elem.todo.moveElementToDone(new_elem.element);
-            await this.utilisateurRepository.updateUtilisateur(tmp_user);
+            await this.utilisateurRepository.updateUtilisateur(
+              tmp_user,
+              'getUtilisateurTodo',
+            );
           }
         }
       }
@@ -196,7 +205,7 @@ export class TodoUsecase {
 
       log.push(`utilisateur ${utilisateur.id} : ${evolved}`);
 
-      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+      await this.utilisateurRepository.updateUtilisateur(utilisateur, 'updateAllUsersTodo');
     }
     return log;
   }

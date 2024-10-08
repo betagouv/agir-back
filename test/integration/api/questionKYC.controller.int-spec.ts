@@ -105,6 +105,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           ngc_key: '123',
           short_question: 'short',
           image_url: 'AAA',
+          conditions: [],
         },
       ],
     };
@@ -127,6 +128,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       ],
       short_question: 'short',
       image_url: 'AAA',
+      conditions: [],
       created_at: undefined,
       updated_at: undefined,
     };
@@ -214,6 +216,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       ],
       short_question: 'short',
       image_url: 'AAA',
+      conditions: [],
       created_at: undefined,
       updated_at: undefined,
     };
@@ -612,6 +615,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           tags: [],
           short_question: 'short',
           image_url: 'AAA',
+          conditions: [],
         },
       ],
     };
@@ -1243,6 +1247,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       ],
       short_question: 'short',
       image_url: 'AAA',
+      conditions: [],
       created_at: undefined,
       updated_at: undefined,
     };

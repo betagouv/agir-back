@@ -50,7 +50,6 @@ describe('/api/incoming/cms (API test)', () => {
               kyc: {
                 code: '123',
                 id: 1,
-                reponse: '12',
               },
             },
           ],
@@ -100,6 +99,19 @@ describe('/api/incoming/cms (API test)', () => {
         {
           id: 1,
           code: Univers.climat,
+        },
+      ],
+      OR_Conditions: [
+        {
+          AND_Conditions: [
+            {
+              code_reponse: 'yop',
+              kyc: {
+                code: '999',
+                id: 8888,
+              },
+            },
+          ],
         },
       ],
     },
@@ -414,6 +426,9 @@ describe('/api/incoming/cms (API test)', () => {
     expect(item.thematique).toEqual(Thematique.alimentation);
     expect(item.tags).toEqual([Tag.capacite_physique, Tag.possede_velo]);
     expect(item.universes).toEqual([Univers.climat]);
+    expect(item.conditions).toStrictEqual([
+      [{ id_kyc: 8888, code_kyc: '999', code_reponse: 'yop' }],
+    ]);
   });
   it('POST /api/incoming/cms - create a new mission', async () => {
     // GIVEN
@@ -748,7 +763,6 @@ describe('/api/incoming/cms (API test)', () => {
         id: 1,
         label: 'yo',
         code: Univers.climat,
-        is_locked: false,
         imageUrl: {
           formats: {
             thumbnail: { url: 'https://haha' },
@@ -763,7 +777,6 @@ describe('/api/incoming/cms (API test)', () => {
     expect(universDB).toHaveLength(1);
     expect(universDB[0].id_cms).toEqual(1);
     expect(universDB[0].label).toEqual('yo');
-    expect(universDB[0].is_locked).toEqual(false);
     expect(universDB[0].code).toEqual(Univers.climat);
     expect(universDB[0].image_url).toEqual('https://haha');
   });

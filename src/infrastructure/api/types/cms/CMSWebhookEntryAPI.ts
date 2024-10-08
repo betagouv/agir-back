@@ -71,7 +71,6 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() titre: string;
   @ApiProperty() code: string;
   @ApiProperty() est_visible: boolean;
-  @ApiProperty() is_locked: boolean;
   @ApiProperty() include_codes_commune: string;
   @ApiProperty() exclude_codes_commune: string;
   @ApiProperty() codes_departement: string;
@@ -148,7 +147,6 @@ export type CMSWebhookPopulateAPI = {
     categorie: string;
     is_ngc: boolean;
     ngc_key: string;
-    is_locked: boolean;
     code: string;
     niveau: number;
     question: string;

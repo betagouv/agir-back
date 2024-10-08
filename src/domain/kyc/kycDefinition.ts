@@ -1,6 +1,7 @@
 import { Categorie } from '../contenu/categorie';
 import { Thematique } from '../contenu/thematique';
 import { Tag } from '../scoring/tag';
+import { ConditionKYC } from './conditionKYC';
 import { TypeReponseQuestionKYC } from './questionKYC';
 
 export class KycDefinition {
@@ -18,6 +19,7 @@ export class KycDefinition {
   tags: Tag[];
   universes: string[];
   image_url: string;
+  conditions: ConditionKYC[][];
 
   constructor(data: KycDefinition) {
     this.id_cms = data.id_cms;
@@ -34,6 +36,7 @@ export class KycDefinition {
     this.universes = data.universes ? data.universes : [];
     this.short_question = data.short_question;
     this.image_url = data.image_url;
+    this.conditions = data.conditions ? data.conditions : [];
   }
 
   public getReponseByCode?(code: string): {

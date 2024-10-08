@@ -41,6 +41,17 @@ export class QuestionKYCUsecase {
       KYCID.KYC_superficie,
       KYCID.KYC_alimentation_regime,
     ],
+    ENCHAINEMENT_KYC_bilan_transport: [
+      KYCID.KYC_transport_type_utilisateur,
+      KYCID.KYC_transport_voiture_motorisation,
+      KYCID.KYC_transport_heures_avion_court,
+      KYCID.KYC_transport_heures_avion_moyen,
+      KYCID.KYC_transport_heures_avion_long,
+      KYCID.KYC_transport_2roues_usager,
+      KYCID.KYC_2roue_motorisation_type,
+      KYCID.KYC_2roue_km,
+      KYCID.KYC_transport_voiture_nbr_voyageurs,
+    ],
   };
 
   async getALL(utilisateurId: string): Promise<QuestionGeneric[]> {
@@ -51,7 +62,7 @@ export class QuestionKYCUsecase {
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
     const result = utilisateur.kyc_history.getAllUpToDateQuestionSet();
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur, 'getALL');
 
     return this.personnalisator.personnaliser(result, utilisateur);
   }
@@ -85,7 +96,8 @@ export class QuestionKYCUsecase {
       } else {
         const kyc =
           utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(kyc_id);
-        if (kyc) {
+
+        if (kyc && utilisateur.kyc_history.isKYCEligible(kyc)) {
           result.addQuestionGeneric({
             kyc: kyc,
           });
@@ -121,7 +133,6 @@ export class QuestionKYCUsecase {
           questionId,
         );
     }
-
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
     return {
@@ -141,9 +152,17 @@ export class QuestionKYCUsecase {
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
-    await this.updateQuestionOfCode(code_question, null, reponse, utilisateur);
-
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.updateQuestionOfCode(
+      code_question,
+      null,
+      reponse,
+      utilisateur,
+      true,
+    );
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'updateResponseKYC',
+    );
   }
 
   private dispatchKYCUpdateToOtherKYCsPostUpdate(
@@ -158,119 +177,6 @@ export class QuestionKYCUsecase {
         break;
       default:
         break;
-    }
-  }
-
-  private synchroAlimentationRegime(
-    kyc: QuestionKYC,
-    utilisateur: Utilisateur,
-  ) {
-    const code_reponse_unique = kyc.getCodeReponseUniqueSaisie();
-    if (!code_reponse_unique) return;
-
-    if (code_reponse_unique === 'vegetalien') {
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_vegetaliens,
-        ['14'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_vegetariens,
-        ['0'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_poisson_blanc,
-        ['0'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_poisson_gras,
-        ['0'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_viande_blanche,
-        ['0'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_viande_rouge,
-        ['0'],
-      );
-    }
-    if (code_reponse_unique === 'vegetarien') {
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_vegetaliens,
-        ['3'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_vegetariens,
-        ['11'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_poisson_blanc,
-        ['0'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_poisson_gras,
-        ['0'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_viande_blanche,
-        ['0'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_viande_rouge,
-        ['0'],
-      );
-    }
-    if (code_reponse_unique === 'peu_viande') {
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_vegetaliens,
-        ['1'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_vegetariens,
-        ['7'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_poisson_blanc,
-        ['1'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_poisson_gras,
-        ['1'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_viande_blanche,
-        ['4'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_viande_rouge,
-        ['0'],
-      );
-    }
-    if (code_reponse_unique === 'chaque_jour_viande') {
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_vegetaliens,
-        ['0'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_vegetariens,
-        ['0'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_poisson_blanc,
-        ['1'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_poisson_gras,
-        ['1'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_viande_blanche,
-        ['6'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
-        KYCID.KYC_nbr_plats_viande_rouge,
-        ['6'],
-      );
     }
   }
 
@@ -301,13 +207,22 @@ export class QuestionKYCUsecase {
           reponse.boolean_value ? 'oui' : 'non',
           null,
           utilisateur,
+          false,
         );
       }
     }
+
+    if (!utilisateur.kyc_history.isMosaicAnswered(mosaic.id)) {
+      utilisateur.gamification.ajoutePoints(mosaic.points, utilisateur);
+    }
+
     utilisateur.kyc_history.addAnsweredMosaic(mosaic.id);
     utilisateur.missions.answerMosaic(mosaic.id);
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'updateResponseMosaic',
+    );
   }
 
   private async updateQuestionOfCode(
@@ -315,11 +230,15 @@ export class QuestionKYCUsecase {
     code_reponse: string,
     labels_reponse: string[],
     utilisateur: Utilisateur,
+    gain_points: boolean,
   ) {
     utilisateur.kyc_history.checkQuestionExistsByCode(code_question);
     this.updateUserTodo(utilisateur, code_question);
 
-    if (!utilisateur.kyc_history.isQuestionAnsweredByCode(code_question)) {
+    if (
+      !utilisateur.kyc_history.isQuestionAnsweredByCode(code_question) &&
+      gain_points
+    ) {
       const question =
         utilisateur.kyc_history.getUpToDateQuestionByCodeOrException(
           code_question,
@@ -328,7 +247,7 @@ export class QuestionKYCUsecase {
     }
 
     if (labels_reponse) {
-      utilisateur.kyc_history.updateQuestionByCodeWithLabel(
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
         code_question,
         labels_reponse,
       );
@@ -413,6 +332,119 @@ export class QuestionKYCUsecase {
       );
     if (matching && !matching.element.isDone()) {
       matching.todo.makeProgress(matching.element);
+    }
+  }
+
+  private synchroAlimentationRegime(
+    kyc: QuestionKYC,
+    utilisateur: Utilisateur,
+  ) {
+    const code_reponse_unique = kyc.getCodeReponseUniqueSaisie();
+    if (!code_reponse_unique) return;
+
+    if (code_reponse_unique === 'vegetalien') {
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_vegetaliens,
+        ['14'],
+      );
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_vegetariens,
+        ['0'],
+      );
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_poisson_blanc,
+        ['0'],
+      );
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_poisson_gras,
+        ['0'],
+      );
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_viande_blanche,
+        ['0'],
+      );
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_viande_rouge,
+        ['0'],
+      );
+    }
+    if (code_reponse_unique === 'vegetarien') {
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_vegetaliens,
+        ['3'],
+      );
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_vegetariens,
+        ['11'],
+      );
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_poisson_blanc,
+        ['0'],
+      );
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_poisson_gras,
+        ['0'],
+      );
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_viande_blanche,
+        ['0'],
+      );
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_viande_rouge,
+        ['0'],
+      );
+    }
+    if (code_reponse_unique === 'peu_viande') {
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_vegetaliens,
+        ['1'],
+      );
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_vegetariens,
+        ['7'],
+      );
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_poisson_blanc,
+        ['1'],
+      );
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_poisson_gras,
+        ['1'],
+      );
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_viande_blanche,
+        ['4'],
+      );
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_viande_rouge,
+        ['0'],
+      );
+    }
+    if (code_reponse_unique === 'chaque_jour_viande') {
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_vegetaliens,
+        ['0'],
+      );
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_vegetariens,
+        ['0'],
+      );
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_poisson_blanc,
+        ['1'],
+      );
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_poisson_gras,
+        ['1'],
+      );
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_viande_blanche,
+        ['6'],
+      );
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_nbr_plats_viande_rouge,
+        ['6'],
+      );
     }
   }
 }

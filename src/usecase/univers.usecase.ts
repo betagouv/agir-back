@@ -24,23 +24,11 @@ export class UniversUsecase {
     let tuiles = ThematiqueRepository.getAllTuileUnivers();
     tuiles = tuiles.map((t) => new TuileUnivers(t));
 
-    if (!utilisateur.parcours_todo.isEndedTodo()) {
-      for (const t of tuiles) {
-        t.is_locked = true;
-      }
-      return tuiles;
-    }
-
-    let result: TuileUnivers[] = [];
-
-    result = result.concat(tuiles.filter((t) => !t.is_locked));
-    result = result.concat(tuiles.filter((t) => t.is_locked));
-
-    for (const univers of result) {
+    for (const univers of tuiles) {
       univers.is_done = utilisateur.missions.isUniversDone(univers.type);
     }
 
-    return this.personnalisator.personnaliser(result, utilisateur);
+    return this.personnalisator.personnaliser(tuiles, utilisateur);
   }
 
   async getThematiquesOfUnivers(
@@ -86,7 +74,10 @@ export class UniversUsecase {
         }
       }
     }
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'getThematiquesOfUnivers',
+    );
 
     const final_result = this.ordonneTuilesThematiques(result);
 

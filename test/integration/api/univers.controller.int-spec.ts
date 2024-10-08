@@ -301,14 +301,12 @@ describe('Univers (API test)', () => {
       code: Univers.climat,
       label: 'yo',
       image_url: 'aaaa',
-      is_locked: false,
     });
     await TestUtil.create(DB.univers, {
       id_cms: 2,
       code: Univers.alimentation,
       label: 'ya',
       image_url: 'bbbb',
-      is_locked: false,
     });
     await thematiqueRepository.loadUnivers();
 
@@ -320,47 +318,11 @@ describe('Univers (API test)', () => {
     expect(response.body.length).toBe(2);
     expect(response.body[0]).toEqual({
       etoiles: 0,
-      is_locked: true,
-      reason_locked: null,
       titre: 'yo',
       type: Univers.climat,
       image_url: 'aaaa',
       is_done: false,
     });
-    expect(response.body[1].is_locked).toEqual(true);
-  });
-  it(`GET /utilisateurs/id/univers - liste les univers de l'utilisateur, todo terminée => unlock, sauf les locked dans le CMS`, async () => {
-    // GIVEN
-    const todo: ParcoursTodo_v0 = ParcoursTodo_v0.serialise(new ParcoursTodo());
-    todo.todo_active = 3;
-
-    await TestUtil.create(DB.utilisateur, { todo: todo });
-    await TestUtil.create(DB.univers, {
-      id_cms: 1,
-      code: Univers.climat,
-      label: 'yo',
-      image_url: 'aaaa',
-      is_locked: false,
-    });
-    await TestUtil.create(DB.univers, {
-      id_cms: 2,
-      code: Univers.alimentation,
-      label: 'ya',
-      image_url: 'bbbb',
-      is_locked: true,
-    });
-    await thematiqueRepository.loadUnivers();
-
-    // WHEN
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/univers');
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.length).toBe(2);
-    expect(response.body[0].type).toEqual(Univers.climat);
-    expect(response.body[0].is_locked).toEqual(false);
-    expect(response.body[1].type).toEqual(Univers.alimentation);
-    expect(response.body[1].is_locked).toEqual(true);
   });
   it(`GET /utilisateurs/id/univers - liste les univers de l'utilisateur, is_done à true`, async () => {
     // GIVEN
@@ -387,48 +349,7 @@ describe('Univers (API test)', () => {
     expect(response.body.length).toBe(1);
     expect(response.body[0].is_done).toEqual(true);
   });
-  it(`GET /utilisateurs/id/univers - univers bloqué en dernier`, async () => {
-    // GIVEN
-    const todo: ParcoursTodo_v0 = ParcoursTodo_v0.serialise(new ParcoursTodo());
-    todo.todo_active = 3;
 
-    await TestUtil.create(DB.utilisateur, { todo: todo });
-    await TestUtil.create(DB.univers, {
-      id_cms: 1,
-      code: Univers.climat,
-      label: 'yo',
-      image_url: 'aaaa',
-      is_locked: false,
-    });
-    await TestUtil.create(DB.univers, {
-      id_cms: 2,
-      code: Univers.alimentation,
-      label: 'ya',
-      image_url: 'bbbb',
-      is_locked: true,
-    });
-    await TestUtil.create(DB.univers, {
-      id_cms: 3,
-      code: Univers.dechet,
-      label: 'yi',
-      image_url: 'cccc',
-      is_locked: false,
-    });
-    await thematiqueRepository.loadUnivers();
-
-    // WHEN
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/univers');
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.length).toBe(3);
-    expect(response.body[0].titre).toEqual('yo');
-    expect(response.body[0].is_locked).toEqual(false);
-    expect(response.body[1].titre).toEqual('yi');
-    expect(response.body[1].is_locked).toEqual(false);
-    expect(response.body[2].titre).toEqual('ya');
-    expect(response.body[2].is_locked).toEqual(true);
-  });
   it(`GET /utilisateurs/id/univers/id/thematiques - liste une thematique, donnée correctes, ajout mission à utilisateur si visible`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {

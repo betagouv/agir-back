@@ -19,7 +19,7 @@ const MOSAIC_CATALOGUE: MosaicKYCDef[] = [
   {
     id: KYCMosaicID.TEST_MOSAIC_ID,
     categorie: Categorie.test,
-    points: 10,
+    points: 5,
     titre: 'Titre test',
     type: TypeReponseMosaicKYC.mosaic_boolean,
     question_kyc_codes: [KYCID._1, KYCID._2],
@@ -63,6 +63,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       ],
       short_question: 'short',
       image_url: 'AAA',
+      conditions: [],
       created_at: undefined,
       updated_at: undefined,
     };
@@ -97,7 +98,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     expect(response.body.is_answered).toEqual(false);
     expect(response.body.id).toEqual('TEST_MOSAIC_ID');
     expect(response.body.categorie).toEqual(Categorie.test);
-    expect(response.body.points).toEqual(10);
+    expect(response.body.points).toEqual(5);
     expect(response.body.type).toEqual(TypeReponseMosaicKYC.mosaic_boolean);
     expect(response.body.reponses).toHaveLength(2);
 
@@ -159,6 +160,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       ],
       short_question: 'short',
       image_url: 'AAA',
+      conditions: [],
       created_at: undefined,
       updated_at: undefined,
     };
@@ -192,6 +194,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
     const dbUser = await utilisateurRepository.getById('utilisateur-id');
 
+    expect(dbUser.gamification.points).toEqual(15);
+
     expect(dbUser.kyc_history.answered_questions).toHaveLength(2);
     expect(dbUser.kyc_history.answered_questions[0]).toEqual({
       id: '_1',
@@ -214,6 +218,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       id_cms: 1,
       short_question: 'short',
       image_url: 'AAA',
+      conditions: [],
     });
     expect(dbUser.kyc_history.answered_questions[1]).toEqual({
       id: '_2',
@@ -236,6 +241,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       id_cms: 2,
       short_question: 'short',
       image_url: 'AAA',
+      conditions: [],
     });
   });
 
@@ -293,6 +299,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       ],
       short_question: 'short',
       image_url: 'AAA',
+      conditions: [],
       created_at: undefined,
       updated_at: undefined,
     };
@@ -333,6 +340,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           id_cms: 1,
           short_question: 'short 1',
           image_url: 'AAA',
+          conditions: [],
         },
         {
           id: '_2',
@@ -354,6 +362,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           id_cms: 2,
           short_question: 'short 2',
           image_url: 'BBB',
+          conditions: [],
         },
       ],
     };
@@ -387,7 +396,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         },
       ],
       categorie: 'test',
-      points: 10,
+      points: 5,
       type: 'mosaic_boolean',
     });
   });

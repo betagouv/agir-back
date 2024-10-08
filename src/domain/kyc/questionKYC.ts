@@ -4,6 +4,7 @@ import { Thematique } from '../contenu/thematique';
 import { QuestionKYC_v0 } from '../object_store/kyc/kycHistory_v0';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
+import { ConditionKYC } from './conditionKYC';
 import { KycDefinition } from './kycDefinition';
 
 export enum TypeReponseQuestionKYC {
@@ -43,6 +44,7 @@ export class QuestionKYC implements TaggedContent {
   score: number;
   universes: string[];
   image_url: string;
+  conditions: ConditionKYC[][];
 
   constructor(data?: QuestionKYC_v0) {
     if (!data) return;
@@ -62,6 +64,7 @@ export class QuestionKYC implements TaggedContent {
     this.id_cms = data.id_cms;
     this.short_question = data.short_question;
     this.image_url = data.image_url;
+    this.conditions = data.conditions ? data.conditions : [];
   }
 
   public static buildFromDef(def: KycDefinition): QuestionKYC {
@@ -80,6 +83,7 @@ export class QuestionKYC implements TaggedContent {
       reponses_possibles: def.reponses ? def.reponses : [],
       short_question: def.short_question,
       image_url: def.image_url,
+      conditions: def.conditions ? def.conditions : [],
     });
   }
 
@@ -94,6 +98,7 @@ export class QuestionKYC implements TaggedContent {
     this.thematique = def.thematique;
     this.tags = def.tags ? def.tags : [];
     this.universes = def.universes ? def.universes : [];
+    this.conditions = def.conditions ? def.conditions : [];
     this.id_cms = def.id_cms;
     if (
       (this.type === TypeReponseQuestionKYC.choix_multiple ||
@@ -207,6 +212,13 @@ export class QuestionKYC implements TaggedContent {
       return null;
     }
     const found = this.reponses_possibles.find((r) => r.label === label);
+    return found ? found.code : null;
+  }
+  public getCodeByNGCCode(ngc_code: string): string {
+    if (!this.reponses_possibles) {
+      return null;
+    }
+    const found = this.reponses_possibles.find((r) => r.ngc_code === ngc_code);
     return found ? found.code : null;
   }
 

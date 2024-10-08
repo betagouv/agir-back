@@ -105,8 +105,6 @@ export class ThematiqueRepository {
           titre: u.label,
           type: u.code,
           etoiles: 0,
-          is_locked: u.is_locked,
-          reason_locked: null,
           id_cms: u.id_cms,
           is_done: false,
         }),
@@ -174,13 +172,11 @@ export class ThematiqueRepository {
         code: univers.code,
         label: univers.label,
         image_url: univers.image_url,
-        is_locked: univers.is_locked,
       },
       update: {
         code: univers.code,
         label: univers.label,
         image_url: univers.image_url,
-        is_locked: univers.is_locked,
       },
     });
   }

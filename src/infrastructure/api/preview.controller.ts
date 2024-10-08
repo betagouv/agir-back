@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  Headers,
+  Response,
+} from '@nestjs/common';
+import { Response as Res } from 'express';
 import { ApiBearerAuth, ApiExcludeController } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
 import { KycRepository } from '../repository/kyc.repository';
@@ -42,8 +50,14 @@ export class PreviewController extends GenericControler {
   }
 
   @Get('cms_urls_preview')
-  @UseGuards(AuthGuard)
-  async cms_urls_preview(): Promise<string> {
+  async cms_urls_preview(
+    @Headers('Authorization') authorization: string,
+    @Response() res: Res,
+  ): Promise<any> {
+    if (!this.checkAuthHeaderOK(authorization)) {
+      return this.returnBadOreMissingLoginError(res);
+    }
+
     let result = [];
     result.push(`
 
@@ -144,7 +158,7 @@ export class PreviewController extends GenericControler {
         }
       }
     }
-    return `<pre>${result.join('\n')}</pre>`;
+    return res.send(`<pre>${result.join('\n')}</pre>`);
   }
 
   private async checkURLOK(url: string): Promise<boolean> {
@@ -158,8 +172,14 @@ export class PreviewController extends GenericControler {
   }
 
   @Get('kyc_preview/:id')
-  @UseGuards(AuthGuard)
-  async kyc_preview(@Param('id') id: string): Promise<string> {
+  async kyc_preview(
+    @Param('id') id: string,
+    @Headers('Authorization') authorization: string,
+    @Response() res: Res,
+  ): Promise<any> {
+    if (!this.checkAuthHeaderOK(authorization)) {
+      return this.returnBadOreMissingLoginError(res);
+    }
     let result = [];
     const kyc_def = await this.kycRepository.getByCMS_ID(parseInt(id));
 
@@ -176,7 +196,7 @@ export class PreviewController extends GenericControler {
 
     result = this.dumpSingleKycPage(kyc_def);
 
-    return `<pre>${result.join('\n')}</pre>`;
+    return res.send(`<pre>${result.join('\n')}</pre>`);
   }
 
   private dumpSingleKycPage(kyc_def: KycDefinition): string[] {
@@ -282,10 +302,14 @@ export class PreviewController extends GenericControler {
   }
 
   @Get('all_kyc_preview')
-  @UseGuards(AuthGuard)
   async all_kyc_preview(
     @Query('check_kyc') check_kyc: string,
-  ): Promise<string> {
+    @Headers('Authorization') authorization: string,
+    @Response() res: Res,
+  ): Promise<any> {
+    if (!this.checkAuthHeaderOK(authorization)) {
+      return this.returnBadOreMissingLoginError(res);
+    }
     let all_kyc_defs = await this.kycRepository.getAllDefs();
     let all_mission_defs = await this.missionRepository.list();
     let result = [];
@@ -407,7 +431,7 @@ export class PreviewController extends GenericControler {
       );
     }
 
-    return `<pre>${result.join('\n')}</pre>`;
+    return res.send(`<pre>${result.join('\n')}</pre>`);
   }
 
   private updateFireMapForNgcKYC(
@@ -450,12 +474,21 @@ export class PreviewController extends GenericControler {
   }
 
   @Get('mission_preview/:id')
-  @UseGuards(AuthGuard)
-  async mission_preview(@Param('id') id: string): Promise<string> {
+  async mission_preview(
+    @Param('id') id: string,
+    @Headers('Authorization') authorization: string,
+    @Response() res: Res,
+  ): Promise<any> {
+    if (!this.checkAuthHeaderOK(authorization)) {
+      return this.returnBadOreMissingLoginError(res);
+    }
+
     const mission_def = await this.missionRepository.getByCMS_ID(parseInt(id));
 
     if (!mission_def) {
-      return '<pre>Publiez la mission avant de faire la preview !!! </pre>';
+      return res.send(
+        '<pre>Publiez la mission avant de faire la preview !!! </pre>',
+      );
     }
     let result = [];
 
@@ -494,7 +527,7 @@ export class PreviewController extends GenericControler {
 
     await this.dump_defis_of_mission(mission_def, result);
 
-    return `<pre>${result.join('\n')}</pre>`;
+    return res.send(`<pre>${result.join('\n')}</pre>`);
   }
 
   private async dump_mission(result: any[], mission_def: MissionDefinition) {
@@ -669,8 +702,14 @@ export class PreviewController extends GenericControler {
   }
 
   @Get('all_preview')
-  @UseGuards(AuthGuard)
-  async all_preview(): Promise<string> {
+  async all_preview(
+    @Headers('Authorization') authorization: string,
+    @Response() res: Res,
+  ) {
+    if (!this.checkAuthHeaderOK(authorization)) {
+      return this.returnBadOreMissingLoginError(res);
+    }
+
     let result = [];
 
     let DATA: any = {};
@@ -693,6 +732,9 @@ export class PreviewController extends GenericControler {
     for (const univers of tuiles_univers) {
       const preview_univers = await this.univers_preview(
         univers.id_cms.toString(),
+        authorization,
+        res,
+        true,
       );
       const prefix = ` Univers [${univers.id_cms}] - <a href="/univers_preview/${univers.id_cms}">${univers.titre}</a>`;
       if (preview_univers.includes('🔥🔥🔥')) {
@@ -749,11 +791,16 @@ export class PreviewController extends GenericControler {
     result.push(` > Sur l'ensemble des univers`);
     result.push(` > Sur l'ensemble d'une mission`);
 
-    return `<pre>${result.join('\n')}</pre>`;
+    return res.send(`<pre>${result.join('\n')}</pre>`);
   }
+
   @Get('univers_preview/:id')
-  @UseGuards(AuthGuard)
-  async univers_preview(@Param('id') id: string): Promise<string> {
+  async univers_preview(
+    @Param('id') id: string,
+    @Headers('Authorization') authorization: string,
+    @Response() res: Res,
+    prevent_send?: boolean,
+  ): Promise<any> {
     let result = [];
 
     let DATA: any = {};
@@ -859,17 +906,28 @@ export class PreviewController extends GenericControler {
         result.push('');
       }
     }
-    return `<pre>${result.join('\n')}</pre>`;
+    if (prevent_send) {
+      return `<pre>${result.join('\n')}</pre>`;
+    }
+    return res.send(`<pre>${result.join('\n')}</pre>`);
   }
 
   @Get('defi_preview/:id')
-  @UseGuards(AuthGuard)
-  async defi_preview(@Param('id') id: string): Promise<string> {
+  async defi_preview(
+    @Param('id') id: string,
+    @Headers('Authorization') authorization: string,
+    @Response() res: Res,
+  ): Promise<any> {
+    if (!this.checkAuthHeaderOK(authorization)) {
+      return this.returnBadOreMissingLoginError(res);
+    }
     let result = [];
 
     const defi_def = await this.defiRepository.getByContentId(id);
     if (!defi_def) {
-      return `<pre>Publiez le defi [${id}] avant de faire la preview !!! </pre>`;
+      return res.send(
+        `<pre>Publiez le defi [${id}] avant de faire la preview !!! </pre>`,
+      );
     }
 
     result.push(`
@@ -897,7 +955,7 @@ export class PreviewController extends GenericControler {
 
     await this.dump_defi_conditions(result, defi_def);
 
-    return `<pre>${result.join('\n')}</pre>`;
+    return res.send(`<pre>${result.join('\n')}</pre>`);
   }
 
   private async dump_defi_conditions(result: any[], defi: DefiDefinition) {
@@ -1023,5 +1081,19 @@ export class PreviewController extends GenericControler {
       '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[10]=prochaines_thematiques&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article',
     );
     return URL.concat(page);
+  }
+
+  private returnBadOreMissingLoginError(res: Res) {
+    return res
+      .set({ 'WWW-Authenticate': 'Basic realm=preview' })
+      .status(401)
+      .send('Bad or missing login / password');
+  }
+  private checkAuthHeaderOK(header: string): boolean {
+    if (!header || !header.startsWith('Basic ')) {
+      return false;
+    }
+    const base64 = header.split(' ').pop();
+    return App.getBasicLoginPwdBase64() == base64;
   }
 }

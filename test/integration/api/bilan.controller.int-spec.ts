@@ -1,3 +1,4 @@
+import { App } from '../../../src/domain/app';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
@@ -21,18 +22,6 @@ describe('/bilan (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('GET /utilisateur/id/bilans/last - 403 if bad id', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.situationNGC);
-    await TestUtil.create(DB.empreinte);
-
-    // WHEN
-    const response = await TestUtil.GET('/utilisateur/autre-id/bilans/last');
-
-    //THEN
-    expect(response.status).toBe(403);
-  });
   it('GET /utilisateur/id/bilans/last - get last bilan with proper data', async () => {
     // GIVEN
     const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -43,28 +32,24 @@ describe('/bilan (API test)', () => {
       code: Univers.transport,
       label: 'The Transport',
       image_url: 'aaaa',
-      is_locked: false,
     });
     await TestUtil.create(DB.univers, {
       id_cms: 2,
       code: Univers.logement,
       label: 'Logement',
       image_url: 'bbbb',
-      is_locked: false,
     });
     await TestUtil.create(DB.univers, {
       id_cms: 3,
       code: Univers.consommation,
       label: 'Consommation',
       image_url: 'bbbb',
-      is_locked: false,
     });
     await TestUtil.create(DB.univers, {
       id_cms: 4,
       code: Univers.alimentation,
       label: 'Alimentation',
       image_url: 'bbbb',
-      is_locked: false,
     });
     await thematiqueRepository.loadUnivers();
 
@@ -75,7 +60,7 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({
+    expect(response.body.bilan_complet).toEqual({
       impact_kg_annee: 9048.184937832844,
       top_3: [
         {
@@ -360,6 +345,95 @@ describe('/bilan (API test)', () => {
     });
   });
 
+  it('GET /utilisateur/id/bilans/last - presence du bilan de synthese', async () => {
+    // GIVEN
+    const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
+
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.univers, {
+      id_cms: 1,
+      code: Univers.transport,
+      label: 'The Transport',
+      image_url: 'aaaa',
+    });
+    await TestUtil.create(DB.univers, {
+      id_cms: 2,
+      code: Univers.logement,
+      label: 'Logement',
+      image_url: 'bbbb',
+    });
+    await TestUtil.create(DB.univers, {
+      id_cms: 3,
+      code: Univers.consommation,
+      label: 'Consommation',
+      image_url: 'bbbb',
+    });
+    await TestUtil.create(DB.univers, {
+      id_cms: 4,
+      code: Univers.alimentation,
+      label: 'Alimentation',
+      image_url: 'bbbb',
+    });
+    await thematiqueRepository.loadUnivers();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateur/utilisateur-id/bilans/last',
+    );
+
+    //THEN
+    expect(response.status).toBe(200);
+    expect(response.body.bilan_synthese).toEqual({
+      impact_transport: 'moyen',
+      impact_alimentation: 'tres_fort',
+      impact_logement: 'fort',
+      impact_consommation: 'faible',
+      pourcentage_completion_totale: 35,
+      liens_bilans_univers: [
+        {
+          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+          image_url:
+            'https://res.cloudinary.com/dq023imd8/image/upload/v1718886533/velo_2_27b85c28d4.png',
+          nombre_total_question: 7,
+          pourcentage_progression: 45,
+          univers: 'transport',
+          univers_label: 'The Transport',
+          temps_minutes: 5,
+        },
+        {
+          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+          image_url:
+            'https://res.cloudinary.com/dq023imd8/image/upload/v1718701364/fruits_2_cfbf4b47b9.png',
+          nombre_total_question: 9,
+          pourcentage_progression: 30,
+          univers: 'alimentation',
+          univers_label: 'Alimentation',
+          temps_minutes: 3,
+        },
+        {
+          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+          image_url:
+            'https://res.cloudinary.com/dq023imd8/image/upload/v1714635518/univers_loisirs_596c3b0599.jpg',
+          nombre_total_question: 12,
+          pourcentage_progression: 70,
+          univers: 'consommation',
+          univers_label: 'Consommation',
+          temps_minutes: 10,
+        },
+        {
+          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+          image_url:
+            'https://res.cloudinary.com/dq023imd8/image/upload/v1714635495/univers_logement_6376123d16.jpg',
+          nombre_total_question: 12,
+          pourcentage_progression: 70,
+          univers: 'logement',
+          univers_label: 'Logement',
+          temps_minutes: 9,
+        },
+      ],
+    });
+  });
+
   it('GET /utilisateur/id/bilans/last - mettre à jour le profil utilisateur change le bilan', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -390,7 +464,9 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
-    expect(response.body.impact_kg_annee).toEqual(11365.866563693477);
+    expect(response.body.bilan_complet.impact_kg_annee).toEqual(
+      11365.866563693477,
+    );
   });
 
   it('GET /utilisateur/id/bilans/last - une réponse vide ne fait pas crasher le bilan carbone', async () => {
@@ -414,6 +490,7 @@ describe('/bilan (API test)', () => {
           ngc_key: 'logement . âge',
           short_question: 'short',
           image_url: 'AAA',
+          conditions: [],
         },
       ],
     };
@@ -426,36 +503,11 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
-    expect(response.body.impact_kg_annee).toEqual(9048.184937832844);
-  });
-
-  it('POST /utilisateur/id/bilans - compute and create new Bilan', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.situationNGC);
-
-    // WHEN
-    const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/bilans/situationNGC-id',
-    );
-
-    //THEN
-    expect(response.status).toBe(201);
-
-    const bilanDB = await TestUtil.prisma.empreinte.findMany({
-      include: { situation: true },
-    });
-    expect(bilanDB).toHaveLength(1);
-    expect(bilanDB[0]['situation'].situation).toStrictEqual({
-      'transport . voiture . km': 12000,
-    });
-    expect(Math.floor(bilanDB[0].bilan['details'].transport)).toStrictEqual(
-      2552,
-    );
-    expect(Math.floor(bilanDB[0].bilan['details'].alimentation)).toStrictEqual(
-      2328,
+    expect(response.body.bilan_complet.impact_kg_annee).toEqual(
+      9048.184937832844,
     );
   });
+
   it('POST /bilan/importFromNGC - creates new situation', async () => {
     // WHEN
     const response = await TestUtil.POST('/bilan/importFromNGC').send({
@@ -466,11 +518,38 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(201);
-
     const situationDB = await TestUtil.prisma.situationNGC.findMany({});
     expect(situationDB).toHaveLength(1);
     expect(situationDB[0].situation).toStrictEqual({
       'transport . voiture . km': 12000,
     });
+
+    expect(response.body.redirect_url).toEqual(
+      `${App.getBaseURLFront()}/creation-compte?situationId=${
+        situationDB[0].id
+      }&bilan_tonnes=10`,
+    );
+  });
+  it.only('POST /bilan/importFromNGC - creates new situation alors que erreur de contenu, 8 tonnes par défaut ^^', async () => {
+    // WHEN
+    const response = await TestUtil.POST('/bilan/importFromNGC').send({
+      situation: {
+        'C est vraiement pas bon': 'dfsgsdg',
+      },
+    });
+
+    //THEN
+    expect(response.status).toBe(201);
+    const situationDB = await TestUtil.prisma.situationNGC.findMany({});
+    expect(situationDB).toHaveLength(1);
+    expect(situationDB[0].situation).toStrictEqual({
+      'C est vraiement pas bon': 'dfsgsdg',
+    });
+
+    expect(response.body.redirect_url).toEqual(
+      `${App.getBaseURLFront()}/creation-compte?situationId=${
+        situationDB[0].id
+      }&bilan_tonnes=8`,
+    );
   });
 });

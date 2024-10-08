@@ -9,11 +9,14 @@ import { EmailSender } from '../infrastructure/email/emailSender';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { App } from '../domain/app';
-import { CreateUtilisateurAPI_v2 } from '../infrastructure/api/types/utilisateur/onboarding/createUtilisateurAPI_v2';
 import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
 import { OidcService } from '../infrastructure/auth/oidc.service';
 import { ContactUsecase } from './contact.usecase';
 import { CodeManager } from '../domain/utilisateur/manager/codeManager';
+import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/onboarding/createUtilisateurAPI';
+import { KycRepository } from '../infrastructure/repository/kyc.repository';
+import { ImportNGCUsecase } from './importNGC.usecase';
+import { SituationNGCRepository } from '../infrastructure/repository/bilan.repository';
 
 export type Phrase = {
   phrase: string;
@@ -21,7 +24,7 @@ export type Phrase = {
 };
 
 @Injectable()
-export class Inscription_v2_Usecase {
+export class InscriptionUsecase {
   constructor(
     private utilisateurRespository: UtilisateurRepository,
     private emailSender: EmailSender,
@@ -29,9 +32,11 @@ export class Inscription_v2_Usecase {
     private contactUsecase: ContactUsecase,
     private oidcService: OidcService,
     private codeManager: CodeManager,
+    private kycRepository: KycRepository,
+    private bilanRepository: SituationNGCRepository,
   ) {}
 
-  async createUtilisateur(utilisateurInput: CreateUtilisateurAPI_v2) {
+  async createUtilisateur(utilisateurInput: CreateUtilisateurAPI) {
     if (!utilisateurInput.email) {
       ApplicationError.throwEmailObligatoireError();
     }
@@ -55,6 +60,27 @@ export class Inscription_v2_Usecase {
 
     utilisateurToCreate.setPassword(utilisateurInput.mot_de_passe);
     utilisateurToCreate.status = UtilisateurStatus.creation_compte_etape_1;
+
+    const kyc_catalogue = await this.kycRepository.getAllDefs();
+    utilisateurToCreate.kyc_history.setCatalogue(kyc_catalogue);
+
+    if (utilisateurInput.situation_ngc_id) {
+      const situation = await this.bilanRepository.getSituationNGCbyId(
+        utilisateurInput.situation_ngc_id,
+      );
+      if (situation) {
+        const updated_keys = utilisateurToCreate.kyc_history.injectSituationNGC(
+          situation.situation as any,
+        );
+        if (updated_keys.length > 0) {
+          console.log(
+            `Updated NGC kycs for ${
+              utilisateurInput.email
+            } : ${updated_keys.join('|')}`,
+          );
+        }
+      }
+    }
 
     await this.utilisateurRespository.createUtilisateur(utilisateurToCreate);
 
