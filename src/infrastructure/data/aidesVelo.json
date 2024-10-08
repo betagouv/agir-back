@@ -8726,6 +8726,20 @@
     },
     "lien": "https://aide-velo.perpignan-mediterranee.org/"
   },
+  "aides . agen": {
+    "remplace": "intercommunalité",
+    "titre": "Agglomération d’Agen",
+    "description": "La liste d'attente pour 2024 est close. Les prochaines demandes seront donc\nà déposer en 2025.\n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . epci = \"CA Agglomération d'Agen\"",
+        "vélo . électrique"
+      ]
+    },
+    "valeur": "200€",
+    "plafond": "vélo . prix",
+    "lien": "https://www.agglo-agen.net/vie-quotidienne/mobilites/aide-velo-electrique"
+  },
   "aides . monaco": {
     "remplace": "commune",
     "titre": "Monaco",
