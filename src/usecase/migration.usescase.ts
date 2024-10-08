@@ -60,7 +60,10 @@ export class MigrationUsecase {
             break;
           }
           utilisateur.version = current_version;
-          await this.utilisateurRepository.updateUtilisateur(utilisateur);
+          await this.utilisateurRepository.updateUtilisateur(
+            utilisateur,
+            'migrateUsers',
+          );
         } else {
           log.migrations.push({
             version: current_version,

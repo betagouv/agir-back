@@ -29,7 +29,10 @@ export class MailerUsecase {
 
     if (utilisateur) {
       utilisateur.notification_history.disableCanal(CanalNotification.email);
-      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+      await this.utilisateurRepository.updateUtilisateur(
+        utilisateur,
+        'disableUserEmailss',
+      );
     } else {
       ApplicationError.throwBadTokenError(token);
     }
@@ -57,7 +60,10 @@ export class MailerUsecase {
 
         if (is_sent_email) {
           result.push(`Sent welcome email to [${utilisateur.id}]`);
-          await this.utilisateurRepository.updateUtilisateur(utilisateur);
+          await this.utilisateurRepository.updateUtilisateur(
+            utilisateur,
+            'envoyerEmailsWelcome',
+          );
         }
       }
     }
@@ -103,7 +109,7 @@ export class MailerUsecase {
         }
       }
 
-      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+      await this.utilisateurRepository.updateUtilisateur(utilisateur, 'envoyerEmailsAutomatiques');
 
       if (liste_sent_notifs.length > 0) {
         result.push(

@@ -60,7 +60,7 @@ export class RechercheServicesUsecase {
 
     utilisateur.bilbiotheque_services.setDerniereRecherche(serviceId, result);
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur, 'search');
 
     this.completeFavorisDataToResult(serviceId, result, utilisateur);
 
@@ -109,7 +109,7 @@ export class RechercheServicesUsecase {
 
     utilisateur.bilbiotheque_services.setDerniereRecherche(serviceId, result);
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur, 'search2');
 
     this.completeFavorisDataToResult(serviceId, result, utilisateur);
 
@@ -165,7 +165,7 @@ export class RechercheServicesUsecase {
 
     service.ajouterFavoris(favId);
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur, 'ajouterFavoris');
   }
 
   async supprimerFavoris(
@@ -184,7 +184,7 @@ export class RechercheServicesUsecase {
 
     service.supprimerFavoris(favId);
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur, 'supprimerFavoris');
   }
 
   async getFavoris(

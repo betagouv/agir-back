@@ -47,7 +47,10 @@ export class Connexion_v2_Usecase {
       user.setNew6DigitCode();
       user.status = UtilisateurStatus.connexion_etape_1;
 
-      await _this.utilisateurRepository.updateUtilisateur(user);
+      await _this.utilisateurRepository.updateUtilisateur(
+        user,
+        'loginUtilisateur',
+      );
 
       if (user.email !== App.getGoogleTestEmail()) {
         _this.sendCodeForConnexion(user);
@@ -84,7 +87,10 @@ export class Connexion_v2_Usecase {
       const user = await _this.utilisateurRepository.findByEmail(email);
       user.status = UtilisateurStatus.default;
 
-      await _this.utilisateurRepository.updateUtilisateur(user);
+      await _this.utilisateurRepository.updateUtilisateur(
+        user,
+        'validateCodePourLogin',
+      );
 
       const token = await _this.oidcService.createNewInnerAppToken(user.id);
       return { token: token, utilisateur: user };
@@ -111,7 +117,10 @@ export class Connexion_v2_Usecase {
       user.setNew6DigitCode();
       user.status = UtilisateurStatus.mot_de_passe_oublie_etape_1;
 
-      await _this.utilisateurRepository.updateUtilisateur(user);
+      await _this.utilisateurRepository.updateUtilisateur(
+        user,
+        'oubli_mot_de_passe',
+      );
 
       _this.sendMotDePasseCode(user);
     };
@@ -149,7 +158,10 @@ export class Connexion_v2_Usecase {
       user.setPassword(mot_de_passe);
       user.status = UtilisateurStatus.default;
 
-      await _this.utilisateurRepository.updateUtilisateur(user);
+      await _this.utilisateurRepository.updateUtilisateur(
+        user,
+        'modifier_mot_de_passe',
+      );
       return;
     };
 
@@ -163,7 +175,10 @@ export class Connexion_v2_Usecase {
   async disconnectUser(utilisateurId: string) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.force_connexion = true;
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'disconnectUser',
+    );
   }
 
   async disconnectAllUsers() {

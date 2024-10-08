@@ -62,7 +62,7 @@ export class QuestionKYCUsecase {
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
     const result = utilisateur.kyc_history.getAllUpToDateQuestionSet();
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur, 'getALL');
 
     return this.personnalisator.personnaliser(result, utilisateur);
   }
@@ -114,7 +114,7 @@ export class QuestionKYCUsecase {
     utilisateur.checkState();
     console.log(
       `getQuestion read user : ${Date.now()} - ${utilisateur.id} - ${
-        utilisateur.version
+        utilisateur.db_version
       }`,
     );
 
@@ -139,13 +139,13 @@ export class QuestionKYCUsecase {
     }
     console.log(
       `getQuestion update : ${Date.now()} - ${utilisateur.id} - ${
-        utilisateur.version
+        utilisateur.db_version
       }`,
     );
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
     console.log(
       `getQuestion update done : ${Date.now()} - ${utilisateur.id} - ${
-        utilisateur.version
+        utilisateur.db_version
       }`,
     );
 
@@ -164,7 +164,7 @@ export class QuestionKYCUsecase {
     utilisateur.checkState();
     console.log(
       `updateResponseKYC read user : ${Date.now()} - ${utilisateur.id} - ${
-        utilisateur.version
+        utilisateur.db_version
       }`,
     );
 
@@ -180,13 +180,16 @@ export class QuestionKYCUsecase {
     );
     console.log(
       `updateResponseKYC update : ${Date.now()} - ${utilisateur.id} - ${
-        utilisateur.version
+        utilisateur.db_version
       }`,
     );
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'updateResponseKYC',
+    );
     console.log(
       `updateResponseKYC update done : ${Date.now()} - ${utilisateur.id} - ${
-        utilisateur.version
+        utilisateur.db_version
       }`,
     );
   }
@@ -245,7 +248,10 @@ export class QuestionKYCUsecase {
     utilisateur.kyc_history.addAnsweredMosaic(mosaic.id);
     utilisateur.missions.answerMosaic(mosaic.id);
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'updateResponseMosaic',
+    );
   }
 
   private async updateQuestionOfCode(

@@ -87,7 +87,10 @@ export class ProfileUsecase {
     utilisateur.prenom = profile.prenom;
     utilisateur.annee_naissance = profile.annee_naissance;
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'updateUserProfile',
+    );
   }
 
   @Retryable({
@@ -154,7 +157,10 @@ export class ProfileUsecase {
       );
     utilisateur.couverture_aides_ok = couverture_code_postal;
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'updateUser',
+    );
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
@@ -209,7 +215,10 @@ export class ProfileUsecase {
         );
       couvert += utilisateur.couverture_aides_ok ? 1 : 0;
       pas_couvert += !utilisateur.couverture_aides_ok ? 1 : 0;
-      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+      await this.utilisateurRepository.updateUtilisateur(
+        utilisateur,
+        'updateAllUserCouvertureAides',
+      );
     }
     return { couvert, pas_couvert };
   }
@@ -230,7 +239,10 @@ export class ProfileUsecase {
 
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'resetUser',
+    );
   }
 
   private AorB?<T>(a: T, b: T): T {

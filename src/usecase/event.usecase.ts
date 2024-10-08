@@ -54,7 +54,10 @@ export class EventUsecase {
       found.todo.makeProgress(found.element);
     }
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'processAccessConLinky',
+    );
   }
 
   private async processArticleNonFavoris(
@@ -63,24 +66,36 @@ export class EventUsecase {
   ) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.history.defavoriserArticle(event.content_id);
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'processArticleNonFavoris',
+    );
   }
 
   private async processArticleFavoris(utilisateurId: string, event: AppEvent) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.history.favoriserArticle(event.content_id);
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'processArticleFavoris',
+    );
   }
 
   private async processLike(utilisateurId: string, event: AppEvent) {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     if (event.content_type === ContentType.article) {
       utilisateur.history.likerArticle(event.content_id, event.number_value);
-      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+      await this.utilisateurRepository.updateUtilisateur(
+        utilisateur,
+        'processLike',
+      );
     }
     if (event.content_type === ContentType.quizz) {
       utilisateur.history.likerQuizz(event.content_id, event.number_value);
-      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+      await this.utilisateurRepository.updateUtilisateur(
+        utilisateur,
+        'processLike',
+      );
     }
   }
 
@@ -93,7 +108,10 @@ export class EventUsecase {
       found.todo.makeProgress(found.element);
     }
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'processAccessRecommandations',
+    );
   }
 
   private async processAccessProfile(utilisateurId: string) {
@@ -105,7 +123,10 @@ export class EventUsecase {
       found.todo.makeProgress(found.element);
     }
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'processAccessProfile',
+    );
   }
 
   private async processAccessCatalogueAides(utilisateurId: string) {
@@ -117,7 +138,10 @@ export class EventUsecase {
       found.todo.makeProgress(found.element);
     }
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'processAccessCatalogueAides',
+    );
   }
 
   private async processServiceInstalled(
@@ -132,7 +156,10 @@ export class EventUsecase {
       found.todo.makeProgress(found.element);
     }
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'processServiceInstalled',
+    );
   }
 
   private async processCelebration(utilisateurId: string, event: AppEvent) {
@@ -141,7 +168,10 @@ export class EventUsecase {
       event.celebration_id,
       utilisateur,
     );
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'processCelebration',
+    );
   }
 
   private async processLectureArticle(utilisateurId: string, event: AppEvent) {
@@ -164,7 +194,10 @@ export class EventUsecase {
     const catalogue_defis = await this.defiRepository.list({});
     utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'processLectureArticle',
+    );
   }
 
   private async processQuizzScore(utilisateurId: string, event: AppEvent) {
@@ -192,7 +225,10 @@ export class EventUsecase {
     const catalogue_defis = await this.defiRepository.list({});
     utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'processQuizzScore',
+    );
   }
 
   private updateUserTodo(

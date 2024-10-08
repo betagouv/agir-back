@@ -74,7 +74,10 @@ export class UniversUsecase {
         }
       }
     }
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'getThematiquesOfUnivers',
+    );
 
     const final_result = this.ordonneTuilesThematiques(result);
 

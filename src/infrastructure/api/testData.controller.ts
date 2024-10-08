@@ -144,6 +144,6 @@ export class TestDataController extends GenericControler {
       utilisateurId,
     );
     utilisatateur.recomputeRecoTags();
-    await this.utilisateurRepository2.updateUtilisateur(utilisatateur);
+    await this.utilisateurRepository2.updateUtilisateur(utilisatateur, 'insertUser');
   }
 }

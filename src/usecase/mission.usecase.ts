@@ -48,7 +48,10 @@ export class MissionUsecase {
     }
     if (mission.estTerminable()) {
       mission.terminer(utilisateur);
-      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+      await this.utilisateurRepository.updateUtilisateur(
+        utilisateur,
+        'terminerMission',
+      );
     }
   }
   async getMissionOfThematique(
@@ -75,7 +78,10 @@ export class MissionUsecase {
           true,
         );
 
-        await this.utilisateurRepository.updateUtilisateur(utilisateur);
+        await this.utilisateurRepository.updateUtilisateur(
+          utilisateur,
+          'getMissionOfThematique',
+        );
       }
     }
 
@@ -129,7 +135,10 @@ export class MissionUsecase {
       }
     }
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'gagnerPointsDeObjectifs',
+    );
   }
 
   async getMissionKYCsAndMosaics(
@@ -170,7 +179,10 @@ export class MissionUsecase {
       }
     }
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateur(
+      utilisateur,
+      'getMissionKYCsAndMosaics',
+    );
 
     return this.personnalisator.personnaliser(result, utilisateur);
   }
