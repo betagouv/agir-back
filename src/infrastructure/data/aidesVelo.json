@@ -9055,7 +9055,7 @@
   "aides . tulle": {
     "remplace": "intercommunalité",
     "titre": "Tulle agglo",
-    "description": "Chèque Vélo Electrique du dispositif \"L'agglo à vélo !\" 2024",
+    "description": "Chèque Vélo Electrique du dispositif \"L'agglo à vélo !\" 2024.",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CA Tulle Agglo'",
@@ -9126,6 +9126,31 @@
         "par défaut": "non"
       }
     }
+  },
+  "aides . campagnes de l'artois": {
+    "remplace": "intercommunalité",
+    "titre": "Campagnes de l’Artois",
+    "description": "Aide locale à l'acquisition de vélo électrique ou mécanique. A noter que la\nsubvention pourra être portée à 25% du prix d'achat TTC pour les achats\nréalisés dans une boutique située sur le territoire des Campagnes de\nl'Artois.\n",
+    "applicable si": "localisation . epci = \"CC des Campagnes de l'Artois\"",
+    "valeur": "20% * vélo . prix",
+    "plafond": {
+      "variations": [
+        {
+          "si": {
+            "une de ces conditions": [
+              "vélo . électrique",
+              "vélo . motorisation"
+            ]
+          },
+          "alors": "240€"
+        },
+        {
+          "si": "vélo . mécanique simple",
+          "alors": "80€"
+        }
+      ]
+    },
+    "lien": "https://campagnesartois.fr/vivre/mobilite/48534-2/"
   },
   "aides . monaco": {
     "remplace": "commune",
@@ -9401,6 +9426,7 @@
         "aides . belfort",
         "aides . béthune bruay",
         "aides . bourges",
+        "aides . campagnes de l'artois",
         "aides . canélan",
         "aides . chevilly-larue",
         "aides . coeur de nacre",
