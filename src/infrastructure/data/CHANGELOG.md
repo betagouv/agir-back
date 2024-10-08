@@ -5,6 +5,7 @@
 **Nouvelles aides**
 
 - `aides . agen`
+- `aides . campagnes de l'artois`
 - `aides . département hérault vélo adapté`
 - `aides . fier et usses`
 - `aides . montpellier vélo adapté`
