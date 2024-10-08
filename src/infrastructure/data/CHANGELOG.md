@@ -16,8 +16,10 @@
 **Aides mise à jour**
 
 - `aides . bonus vélo`
+- `aides . bourges`
 - `aides . département cote d'or`
 - `aides . département hérault`
+- `aides . epinal`
 - `aides . montpellier`
 - `aides . nantes`
 - `aides . occitanie`
