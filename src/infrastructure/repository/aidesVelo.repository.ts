@@ -76,6 +76,7 @@ function getAidesVeloTousTypes(
     'cargo électrique': [],
     pliant: [],
     motorisation: [],
+    adapté: [],
   };
 
   for (const key of Object.keys(veloTypes)) {

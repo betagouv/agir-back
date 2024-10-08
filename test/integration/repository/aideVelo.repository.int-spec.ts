@@ -92,6 +92,10 @@ describe('AideVeloRepository', () => {
     expect(result['électrique'][0].libelle).toBe('Bonus vélo');
     expect(result['électrique'][1].libelle).toBe('Région Occitanie');
     expect(result['électrique'][2].libelle).toBe('Toulouse Métropole');
+    expect(result['adapté'].length).toBe(2);
+    expect(result['adapté'][0].libelle).toBe('Bonus vélo');
+    expect(result['adapté'][1].libelle).toContain('Région Occitanie');
+    expect(result['adapté'][1].description).toContain('Bonus vélo adapté PMR');
   });
 });
 

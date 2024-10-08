@@ -51,4 +51,5 @@ export type TypeVelos =
   | 'cargo'
   | 'cargo électrique'
   | 'pliant'
-  | 'motorisation';
+  | 'motorisation'
+  | 'adapté';
