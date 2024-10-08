@@ -11,7 +11,7 @@
 - `aides . occitanie vélo adapté`
 - `aides . paris vélo adapté`
 - `aides . pays de cruseilles`
-- `aides . perpignan métropole`
+- `aides . tulle`
 
 **Aides mise à jour**
 

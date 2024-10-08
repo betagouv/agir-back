@@ -9051,6 +9051,31 @@
     },
     "lien": "https://ccpaysdecruseilles.org/vivre-ici/mobilite/prime-achat-velo/"
   },
+  "aides . tulle": {
+    "remplace": "intercommunalité",
+    "titre": "Tulle agglo",
+    "description": "Chèque Vélo Electrique du dispositif \"L'agglo à vélo !\" 2024",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . epci = 'CA Tulle Agglo'",
+        "vélo . électrique"
+      ]
+    },
+    "variations": [
+      {
+        "si": "revenu fiscal de référence <= 1799€/mois",
+        "alors": "200€"
+      },
+      {
+        "si": "revenu fiscal de référence <= 2999€/mois",
+        "alors": "150€"
+      },
+      {
+        "sinon": "100€"
+      }
+    ],
+    "lien": "https://www.tulleagglo.fr/actualites/lagglo-a-velo/"
+  },
   "aides . monaco": {
     "remplace": "commune",
     "titre": "Monaco",
@@ -9358,6 +9383,7 @@
         "aides . saint-louis",
         "aides . saint-marcellin vercors isère",
         "aides . toulouse",
+        "aides . tulle",
         "aides . valenciennes",
         "aides . vallée de l'homme"
       ]
