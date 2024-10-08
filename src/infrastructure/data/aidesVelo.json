@@ -9139,6 +9139,26 @@
     },
     "lien": "https://campagnesartois.fr/vivre/mobilite/48534-2/"
   },
+  "aides . cévennes gangeoises et suménoises": {
+    "remplace": "intercommunalité",
+    "titre": "Cévennes Gangeoises et Suménoises",
+    "description": "Aides à l'achat d'un vélo 2024.",
+    "applicable si": "localisation . epci = 'CC des Cévennes Gangeoises et Suménoises'",
+    "valeur": "30% * (vélo . prix - aides . département - aides . région - aides . état)",
+    "plancher": "0€",
+    "plafond": {
+      "variations": [
+        {
+          "si": "revenu fiscal de référence <= 27478€/an",
+          "alors": "350€"
+        },
+        {
+          "sinon": "300€"
+        }
+      ]
+    },
+    "lien": "https://cdcgangesumene.fr/au-quotidien/mobilite/velo/"
+  },
   "aides . monaco": {
     "remplace": "commune",
     "titre": "Monaco",
@@ -9415,6 +9435,7 @@
         "aides . bourges",
         "aides . campagnes de l'artois",
         "aides . canélan",
+        "aides . cévennes gangeoises et suménoises",
         "aides . chevilly-larue",
         "aides . coeur de nacre",
         "aides . denain",

@@ -6,6 +6,7 @@
 
 - `aides . agen`
 - `aides . campagnes de l'artois`
+- `aides . cévennes gangeoises et suménoises`
 - `aides . département hérault vélo adapté`
 - `aides . fier et usses`
 - `aides . montpellier vélo adapté`
