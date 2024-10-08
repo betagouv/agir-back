@@ -26,6 +26,7 @@
 - `aides . nantes`
 - `aides . occitanie`
 - `aides . paris`
+- `aides . pays de lumbres`
 - `aides . riviera francaise`
 - `aides . sophia antipolis`
 - `aides . toulon`
