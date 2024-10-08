@@ -3074,7 +3074,7 @@
   "aides . département hérault vélo adapté": {
     "remplace": "département",
     "titre": "Département Hérault",
-    "description": "Chèque Hérault Handi Vélo - Aide à l'achat d'un vélo électrique adapté ou\nde matériel adapté (dispositif de troisième roue, guidons électriques…)\nneuf et d’occasion. \n",
+    "description": "Chèque Hérault Handi-Vélo - Aide à l'achat d'un vélo électrique adapté ou\nde matériel adapté (dispositif de troisième roue, guidons électriques…)\nneuf et d’occasion. \n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . département = '34'",
@@ -3082,43 +3082,43 @@
       ]
     },
     "valeur": "50% * vélo . prix",
-    "plafond": "1000 €",
+    "plafond": "1000€",
     "lien": "https://herault.fr/aideProjet/3/321-aide-a-l-achat-d-un-velo-electrique-vae.htm"
   },
   "aides . montpellier": {
     "remplace": "intercommunalité",
     "titre": "Montpellier Méditerranée Métropole",
-    "applicable si": "localisation . epci = 'Montpellier Méditerranée Métropole'",
-    "valeur": "50% * vélo . prix",
-    "plafond": {
-      "variations": [
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . epci = 'Montpellier Méditerranée Métropole'",
         {
-          "si": {
-            "toutes ces conditions": [
-              "vélo . électrique",
-              "vélo . neuf"
-            ]
-          },
-          "alors": "500€"
-        },
-        {
-          "si": {
-            "toutes ces conditions": [
-              "vélo . électrique",
-              "vélo . occasion"
-            ]
-          },
-          "alors": "200€"
-        },
-        {
-          "si": "vélo . motorisation",
-          "alors": "200€"
-        },
-        {
-          "sinon": "0€"
+          "une de ces conditions": [
+            "vélo . motorisation",
+            {
+              "toutes ces conditions": [
+                "vélo . électrique",
+                "vélo . occasion"
+              ]
+            }
+          ]
         }
       ]
     },
+    "valeur": "50% * vélo . prix",
+    "plafond": "200€",
+    "lien": "https://www.montpellier3m.fr/vivre-transport/toutes-les-aides-pour-lachat-ou-la-reparation-de-velos"
+  },
+  "aides . montpellier vélo adapté": {
+    "remplace": "intercommunalité",
+    "titre": "Montpellier Méditerranée Métropole",
+    "description": "500€ d'aide à l'achat d'un vélo à assistance électrique adapté pour les\npersonnes en situation de handicap ayant bénéficié du \"Chèque Hérault\nHandi-Vélo\".\n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "aides . département hérault vélo adapté"
+      ]
+    },
+    "valeur": "50% * vélo . prix",
+    "plafond": "500€",
     "lien": "https://www.montpellier3m.fr/vivre-transport/toutes-les-aides-pour-lachat-ou-la-reparation-de-velos"
   },
   "aides . sète": {
