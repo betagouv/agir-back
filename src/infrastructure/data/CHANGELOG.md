@@ -35,6 +35,7 @@
 - `aides . pays de lumbres`
 - `aides . région centre`
 - `aides . riviera francaise`
+- `aides . saint-omer`
 - `aides . sophia antipolis`
 - `aides . toulon`
 - `aides . toulouse`
