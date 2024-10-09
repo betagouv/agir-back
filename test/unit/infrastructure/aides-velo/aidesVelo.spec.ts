@@ -11,7 +11,7 @@ describe('Aides Vélo', () => {
       'localisation . région': "'11'",
     };
 
-    it('ne doit pas être accordé pour un revenu fiscal de référence > 15 400 €/an', () => {
+    it('ne devrait pas être accordé pour un revenu fiscal de référence > 15 400 €/an', () => {
       // Set base situation
       engine.setSituation({
         ...baseSituation,
@@ -22,23 +22,59 @@ describe('Aides Vélo', () => {
       expect(engine.evaluate('aides . bonus vélo').nodeValue).toEqual(null);
     });
 
-    it('doit être accordée pour les personnes en situation de handicap quelque soit le revenu fiscal de référence', () => {
+    it('devrait être accordée pour les personnes en situation de handicap quelque soit le revenu fiscal de référence', () => {
       engine.setSituation({
         ...baseSituation,
         'revenu fiscal de référence': '20000€/an',
+        'personne en situation de handicap': 'oui',
         'vélo . type': "'adapté'",
         'vélo . prix': '2500€',
       });
-
       expect(engine.evaluate('aides . bonus vélo').nodeValue).toEqual(1000);
 
+      engine.setSituation({
+        ...baseSituation,
+        'revenu fiscal de référence': '20000€/an',
+        'personne en situation de handicap': 'oui',
+        'vélo . type': "'adapté'",
+        'vélo . prix': '25000€',
+      });
+      expect(engine.evaluate('aides . bonus vélo').nodeValue).toEqual(2000);
+
+      // Personne en situation de handicap sans vélo adapté
+      engine.setSituation({
+        ...baseSituation,
+        'revenu fiscal de référence': '20000€/an',
+        'personne en situation de handicap': 'oui',
+        'vélo . type': "'mécanique simple'",
+        'vélo . prix': '25000€',
+      });
+      expect(engine.evaluate('aides . bonus vélo').nodeValue).toEqual(150);
+    });
+
+    it('ne devrait correctement prendre en compte les vélo adaptés pour les personnes qui ne sont PAS en situation de handicap', () => {
       engine.setSituation({
         ...baseSituation,
         'revenu fiscal de référence': '20000€/an',
         'vélo . type': "'adapté'",
         'vélo . prix': '25000€',
       });
+      expect(engine.evaluate('aides . bonus vélo').nodeValue).toEqual(null);
 
+      engine.setSituation({
+        ...baseSituation,
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'adapté'",
+        'vélo . prix': '25000€',
+      });
+      expect(engine.evaluate('aides . bonus vélo').nodeValue).toEqual(1000);
+
+      engine.setSituation({
+        ...baseSituation,
+        'revenu fiscal de référence': '2000€/an',
+        'vélo . type': "'adapté'",
+        'vélo . prix': '25000€',
+      });
       expect(engine.evaluate('aides . bonus vélo').nodeValue).toEqual(2000);
     });
 
