@@ -26,6 +26,12 @@
         "localisation . pays = 'France'",
         {
           "une de ces conditions": [
+            "vélo . électrique ou mécanique",
+            "vélo . adapté"
+          ]
+        },
+        {
+          "une de ces conditions": [
             "revenu fiscal de référence <= 15400 €/an",
             "personne en situation de handicap"
           ]
