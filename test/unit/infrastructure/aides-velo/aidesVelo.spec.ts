@@ -116,6 +116,16 @@ describe('Aides Vélo', () => {
 
       expect(engine.evaluate('aides . bonus vélo').nodeValue).toEqual(0);
     });
+
+    it('ne devrait pas être accordée pour les kits de motorisation', () => {
+      engine.setSituation({
+        ...baseSituation,
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'motorisation'",
+      });
+
+      expect(engine.evaluate('aides . bonus vélo').nodeValue).toEqual(null);
+    });
   });
 
   describe("Département Côte-d'Or", () => {
