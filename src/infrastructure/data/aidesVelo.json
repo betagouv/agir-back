@@ -234,20 +234,53 @@
   "aides . grand est": {
     "remplace": "région",
     "titre": "Région Grand Est",
+    "description": "Soutien à l’acquisition de vélos adaptés, de vélos-cargos, de vélos\nlongtails et à l’installation de kits de conversion de vélos.\n",
     "applicable si": "localisation . région = '44'",
-    "variations": [
-      {
-        "si": "vélo . cargo",
-        "alors": "500€"
-      },
-      {
-        "si": "vélo . motorisation",
-        "alors": "200€"
-      },
-      {
-        "sinon": "0€"
-      }
-    ],
+    "valeur": {
+      "variations": [
+        {
+          "si": {
+            "toutes ces conditions": [
+              "personne en situation de handicap",
+              "vélo . électrique"
+            ]
+          },
+          "alors": {
+            "valeur": "70% * vélo . prix",
+            "plafond": "500€"
+          }
+        },
+        {
+          "si": {
+            "toutes ces conditions": [
+              "personne en situation de handicap",
+              "vélo . adapté"
+            ]
+          },
+          "alors": {
+            "valeur": "70% * vélo . prix",
+            "plafond": "3000€"
+          }
+        },
+        {
+          "si": "vélo . cargo",
+          "alors": {
+            "valeur": "500€",
+            "plafond": "vélo . prix"
+          }
+        },
+        {
+          "si": "vélo . motorisation",
+          "alors": {
+            "valeur": "200€",
+            "plafond": "vélo . prix"
+          }
+        },
+        {
+          "sinon": "0€"
+        }
+      ]
+    },
     "lien": "https://www.grandest.fr/vos-aides-regionales/achat-velos/"
   },
   "aides . corse": {
@@ -9510,6 +9543,7 @@
         "aides . ferte saint aubin",
         "aides . fier et usses",
         "aides . grand cubzaguais",
+        "aides . grand est",
         "aides . grand périgueux",
         "aides . grand villeneuvois",
         "aides . grenoble",
