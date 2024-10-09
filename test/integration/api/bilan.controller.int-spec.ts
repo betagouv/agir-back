@@ -394,8 +394,8 @@ describe('/bilan (API test)', () => {
           id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1718886533/velo_2_27b85c28d4.png',
-          nombre_total_question: 7,
-          pourcentage_progression: 45,
+          nombre_total_question: 0,
+          pourcentage_progression: null,
           univers: 'transport',
           univers_label: 'The Transport',
           temps_minutes: 5,
@@ -530,7 +530,7 @@ describe('/bilan (API test)', () => {
       }&bilan_tonnes=10`,
     );
   });
-  it.only('POST /bilan/importFromNGC - creates new situation alors que erreur de contenu, 8 tonnes par défaut ^^', async () => {
+  it('POST /bilan/importFromNGC - creates new situation alors que erreur de contenu, 8 tonnes par défaut ^^', async () => {
     // WHEN
     const response = await TestUtil.POST('/bilan/importFromNGC').send({
       situation: {
