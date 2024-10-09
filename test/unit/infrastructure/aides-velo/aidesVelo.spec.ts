@@ -636,4 +636,30 @@ describe('Aides Vélo', () => {
       expect(engine.evaluate('aides . lyon').nodeValue).toEqual(200);
     });
   });
+
+  describe('Communauté de communes Saône Beaujolais', () => {
+    it("devrait être élligible pour les vélo d'occasion", () => {
+      engine.setSituation({
+        'localisation . epci': "'CC Saône-Beaujolais'",
+        'vélo . type': "'électrique'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+      });
+      expect(engine.evaluate('aides . saône-beaujolais').nodeValue).toEqual(
+        300,
+      );
+
+      engine.setSituation({
+        'localisation . epci': "'CC Saône-Beaujolais'",
+        'vélo . type': "'pliant'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+      });
+      expect(engine.evaluate('aides . saône-beaujolais').nodeValue).toEqual(
+        200,
+      );
+    });
+  });
 });

@@ -522,21 +522,30 @@
   "aides . saône-beaujolais": {
     "remplace": "intercommunalité",
     "titre": "Communauté de communes Saône Beaujolais",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . epci = 'CC Saône-Beaujolais'",
-        "vélo . électrique ou mécanique"
-      ]
-    },
+    "applicable si": "localisation . epci = 'CC Saône-Beaujolais'",
     "valeur": "30% * vélo . prix",
     "plafond": {
       "variations": [
         {
-          "si": "vélo . électrique",
+          "si": {
+            "une de ces conditions": [
+              "vélo . mécanique",
+              "vélo . adapté"
+            ]
+          },
+          "alors": "200€"
+        },
+        {
+          "si": {
+            "une de ces conditions": [
+              "vélo . électrique",
+              "vélo . motorisation"
+            ]
+          },
           "alors": "600€"
         },
         {
-          "sinon": "200€"
+          "sinon": "0€"
         }
       ]
     },
@@ -9574,6 +9583,7 @@
         "aides . saint-jacques de la lande",
         "aides . saint-louis",
         "aides . saint-marcellin vercors isère",
+        "aides . saône-beaujolais",
         "aides . toulouse",
         "aides . tulle",
         "aides . val d'yerres val de seine",
