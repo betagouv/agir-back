@@ -149,6 +149,18 @@ describe('Aides Vélo', () => {
     });
   });
 
+  describe('Ville de Paris', () => {
+    it('devrait fournir une aide pour les vélos mécaniques', () => {
+      engine.setSituation({
+        'localisation . code insee': "'75056'",
+        'revenu fiscal de référence': '5000€/an',
+        'vélo . type': "'mécanique simple'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . paris').nodeValue).toEqual(100);
+    });
+  });
+
   describe("Département Côte-d'Or", () => {
     it('plus de subvention pour les vélos assemblés ou produit localement', () => {
       const coteDorSituation = {
