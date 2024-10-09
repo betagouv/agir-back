@@ -367,21 +367,25 @@
   "aides . saint-étienne": {
     "remplace": "intercommunalité",
     "titre": "Saint-Étienne Métropole",
+    "description": "Aide à l'achat d'un vélo à assistance électrique neuf (2024).",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'Saint-Etienne Métropole'",
-        "vélo . électrique"
+        "vélo . électrique",
+        "vélo . neuf"
       ]
     },
-    "variations": [
-      {
-        "si": "ménage imposable = non",
-        "alors": "200€"
-      },
-      {
-        "sinon": "100€"
-      }
-    ],
+    "valeur": {
+      "variations": [
+        {
+          "si": "ménage imposable",
+          "alors": "200€"
+        },
+        {
+          "sinon": "100€"
+        }
+      ]
+    },
     "lien": "https://www.saint-etienne-metropole.fr/form/aide-VAE-2024"
   },
   "aides . lyon": {
@@ -9587,7 +9591,12 @@
   "première tranche IR": "15400 €/an",
   "ANAH": null,
   "ANAH . plafond ménage modeste": "19565 €/an",
-  "ménage imposable": "revenu fiscal de référence >= 11120 €/an",
+  "ménage imposable": {
+    "titre": "Imposition du ménage 2023",
+    "description": "Imposabilité d'un ménage en fonction de son quotient familial en 2023.\n",
+    "valeur": "revenu fiscal de référence >= 11295 €/an",
+    "note": "### Source\n\n[Tableau - Barème progressif applicable aux revenus de 2023](https://www.service-public.fr/particuliers/vosdroits/F1419)\n"
+  },
   "personnes dans le foyer fiscal": {
     "question": "Combien de personnes composent le ménage ?",
     "par défaut": 1
