@@ -38,8 +38,9 @@
 - `aides . pays de lumbres`
 - `aides . région centre`
 - `aides . riviera francaise`
-- `aides . saint-omer`
 - `aides . saint-étienne`
+- `aides . saint-omer`
+- `aides . saône-beaujolais`
 - `aides . sophia antipolis`
 - `aides . toulon`
 - `aides . toulouse`
