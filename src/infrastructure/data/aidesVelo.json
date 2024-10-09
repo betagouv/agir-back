@@ -27,7 +27,7 @@
         {
           "une de ces conditions": [
             "revenu fiscal de référence <= 15400 €/an",
-            "vélo . adapté"
+            "personne en situation de handicap"
           ]
         }
       ]
@@ -38,7 +38,8 @@
         {
           "si": {
             "une de ces conditions": [
-              "revenu fiscal de référence <= 7100 €/an",
+              "vélo . cargo",
+              "vélo . pliant",
               "vélo . adapté"
             ]
           },
@@ -47,19 +48,47 @@
               {
                 "si": {
                   "une de ces conditions": [
-                    "vélo . cargo",
-                    "vélo . pliant",
-                    "vélo . adapté"
+                    "revenu fiscal de référence <= 7100 €/an",
+                    "personne en situation de handicap"
                   ]
                 },
                 "alors": "2000€"
               },
               {
-                "si": "vélo . électrique",
+                "sinon": "1000€"
+              }
+            ]
+          }
+        },
+        {
+          "si": "vélo . électrique",
+          "alors": {
+            "variations": [
+              {
+                "si": {
+                  "une de ces conditions": [
+                    "revenu fiscal de référence <= 7100 €/an",
+                    "personne en situation de handicap"
+                  ]
+                },
                 "alors": "400€"
               },
               {
-                "si": "vélo . mécanique simple",
+                "sinon": "300€"
+              }
+            ]
+          }
+        },
+        {
+          "sinon": {
+            "variations": [
+              {
+                "si": {
+                  "une de ces conditions": [
+                    "revenu fiscal de référence <= 7100 €/an",
+                    "personne en situation de handicap"
+                  ]
+                },
                 "alors": "150€"
               },
               {
@@ -67,36 +96,9 @@
               }
             ]
           }
-        },
-        {
-          "si": "revenu fiscal de référence <= 15400 €/an",
-          "alors": {
-            "variations": [
-              {
-                "si": {
-                  "une de ces conditions": [
-                    "vélo . cargo",
-                    "vélo . pliant"
-                  ]
-                },
-                "alors": "1000"
-              },
-              {
-                "si": "vélo . électrique",
-                "alors": "300"
-              },
-              {
-                "sinon": "0€"
-              }
-            ]
-          }
-        },
-        {
-          "sinon": "0€"
         }
       ]
     },
-    "note": "### Sources\n\nLe calcul du montant du bonus vélo est basé sur cet [article de\neconomie.gouv.fr](https://www.economie.gouv.fr/particuliers/prime-velo-electrique).\n",
     "lien": "https://www.economie.gouv.fr/particuliers/prime-velo-electrique#"
   },
   "aides . prime à la conversion": {
