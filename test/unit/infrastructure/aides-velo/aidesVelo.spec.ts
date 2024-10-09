@@ -1,5 +1,6 @@
 import Engine from 'publicodes';
 import rules from '../../../../src/infrastructure/data/aidesVelo.json';
+import assert from 'assert';
 
 describe('Aides Vélo', () => {
   const engine = new Engine(rules);
@@ -151,22 +152,27 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . région': "'76'",
         'revenu fiscal de référence': '8000€/an',
+        'personne en situation de handicap': 'oui',
         'vélo . type': "'adapté'",
         'vélo . prix': '1000€',
       });
 
-      expect(engine.evaluate('aides . occitanie').nodeValue).toEqual(null);
+      const aideEtat = engine.evaluate('aides . état').nodeValue;
+      assert(typeof aideEtat === 'number');
+      expect(aideEtat).toEqual(400);
+
+      const expectedAmount = 0.5 * (1000 - aideEtat);
       expect(
         engine.evaluate('aides . occitanie vélo adapté').nodeValue,
-      ).toEqual(500);
+      ).toEqual(expectedAmount);
 
       engine.setSituation({
         'localisation . région': "'76'",
         'revenu fiscal de référence': '8000€/an',
+        'personne en situation de handicap': 'oui',
         'vélo . type': "'adapté'",
         'vélo . prix': '25000€',
       });
-      expect(engine.evaluate('aides . occitanie').nodeValue).toEqual(null);
       expect(
         engine.evaluate('aides . occitanie vélo adapté').nodeValue,
       ).toEqual(1000);
@@ -249,21 +255,15 @@ describe('Aides Vélo', () => {
         'vélo . prix': '1000€',
       });
 
-      expect(engine.evaluate('aides . paris').nodeValue).toEqual(null);
-      expect(engine.evaluate('aides . paris vélo adapté').nodeValue).toEqual(
-        275,
-      );
+      expect(engine.evaluate('aides . paris').nodeValue).toEqual(275);
 
       engine.setSituation({
         'localisation . code insee': "'75056'",
-        'revenu fiscal de référence': '5000€/an',
+        'revenu fiscal de référence': '10000€/an',
         'vélo . type': "'adapté'",
         'vélo . prix': '25000€',
       });
-      expect(engine.evaluate('aides . paris').nodeValue).toEqual(null);
-      expect(engine.evaluate('aides . paris vélo adapté').nodeValue).toEqual(
-        900,
-      );
+      expect(engine.evaluate('aides . paris').nodeValue).toEqual(900);
     });
   });
 

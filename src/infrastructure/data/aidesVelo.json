@@ -203,8 +203,7 @@
         "localisation . région = '76'",
         "revenu fiscal de référence <= 14089 €/an",
         "vélo . neuf",
-        "vélo . électrique",
-        "vélo . adapté = non"
+        "vélo . électrique"
       ]
     },
     "valeur": "200€",
@@ -218,10 +217,12 @@
     "applicable si": {
       "toutes ces conditions": [
         "localisation . région = '76'",
-        "vélo . adapté"
+        "personne en situation de handicap",
+        "vélo . adapté",
+        "vélo . neuf"
       ]
     },
-    "valeur": "50% * vélo . prix",
+    "valeur": "50% * \n  (vélo . prix - (aides . état + aides . département + aides . intercommunalité))\n",
     "plafond": "1000€",
     "lien": "https://www.laregion.fr/Eco-cheque-mobilite-Bonus-velo-adapte-PMR"
   },
@@ -279,8 +280,12 @@
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '75056'",
-        "revenu fiscal de référence <= 6358 €/an",
-        "vélo . adapté = non"
+        {
+          "une de ces conditions": [
+            "revenu fiscal de référence <= 6358 €/an",
+            "vélo . adapté"
+          ]
+        }
       ]
     },
     "valeur": {
@@ -299,6 +304,10 @@
       "$plafond": {
         "variations": [
           {
+            "si": "vélo . adapté",
+            "alors": "900 €"
+          },
+          {
             "si": "vélo . cargo",
             "alors": "600€"
           },
@@ -316,20 +325,6 @@
         ]
       }
     },
-    "lien": "https://www.paris.fr/pages/lutte-contre-la-pollution-les-aides-a-la-mobilite-5373"
-  },
-  "aides . paris vélo adapté": {
-    "remplace": "commune",
-    "titre": "Ville de Paris",
-    "description": "Subvention de la ville de Paris pour l'achat d'un vélo adapté aux\npersonnes à mobilité réduite.\n",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . code insee = '75056'",
-        "vélo . adapté"
-      ]
-    },
-    "valeur": "33% * vélo . prix . HT",
-    "plafond": "900 €",
     "lien": "https://www.paris.fr/pages/lutte-contre-la-pollution-les-aides-a-la-mobilite-5373"
   },
   "aides . saint-étienne": {
@@ -4461,8 +4456,8 @@
       "jeune en recherche d'emploi": {
         "type": "booléen",
         "non applicable si": "statut étudiant",
-        "question": "Avez-vous moins de 25 ans et êtes-vous en recherche d'emploi ?",
-        "par défaut": "non"
+        "par défaut": "non",
+        "question": "Avez-vous moins de 25 ans et êtes-vous en recherche d'emploi ?"
       }
     }
   },
@@ -9509,6 +9504,7 @@
         "aides . coeur de nacre",
         "aides . crozon",
         "aides . denain",
+        "aides . département hérault vélo adapté",
         "aides . dieppe",
         "aides . divonne-les-bains",
         "aides . feignies",
