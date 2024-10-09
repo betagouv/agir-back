@@ -12,18 +12,18 @@
 - `aides . monmorillon`
 - `aides . montpellier vélo adapté`
 - `aides . occitanie vélo adapté`
-- `aides . paris vélo adapté`
 - `aides . pays de cruseilles`
 - `aides . région centre rémi zen`
 - `aides . tulle`
 - `aides . val d'yerres val de seine`
+- `aides . perpignan métropole`
 
 **Aides mise à jour**
 
 - `aides . bonus vélo`
 - `aides . bourges`
+- `aides . cote d'or`
 - `aides . crozon`
-- `aides . département cote d'or`
 - `aides . département hérault`
 - `aides . epinal`
 - `aides . loire layon aubance`
