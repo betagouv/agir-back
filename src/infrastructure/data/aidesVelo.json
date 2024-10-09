@@ -4417,43 +4417,50 @@
   "aides . saint-omer": {
     "remplace": "commune",
     "titre": "Ville de Saint-Omer",
+    "description": "Aide à l'achat de vélo (2024)",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '62765'",
-        "vélo . électrique ou mécanique"
+        "vélo . neuf"
       ]
     },
-    "variations": [
-      {
-        "si": "vélo . électrique",
-        "alors": {
-          "variations": [
-            {
-              "si": {
-                "une de ces conditions": [
-                  "statut étudiant",
-                  "jeune en recherche d'emploi"
-                ]
+    "valeur": {
+      "variations": [
+        {
+          "si": "vélo . adapté",
+          "alors": "600€"
+        },
+        {
+          "si": "vélo . électrique",
+          "alors": {
+            "variations": [
+              {
+                "si": {
+                  "une de ces conditions": [
+                    "statut étudiant",
+                    "jeune en recherche d'emploi"
+                  ]
+                },
+                "alors": "350 €"
               },
-              "alors": "350 €"
-            },
-            {
-              "sinon": "250 €"
-            }
-          ]
+              {
+                "sinon": "250 €"
+              }
+            ]
+          }
+        },
+        {
+          "sinon": "100 €"
         }
-      },
-      {
-        "sinon": "100 €"
-      }
-    ],
+      ]
+    },
     "lien": "https://www.ville-saint-omer.fr/aides-lacquisition-de-velo",
     "avec": {
       "jeune en recherche d'emploi": {
         "type": "booléen",
         "non applicable si": "statut étudiant",
-        "par défaut": "non",
-        "question": "Avez-vous moins de 25 ans et êtes-vous en recherche d'emploi ?"
+        "question": "Avez-vous moins de 25 ans et êtes-vous en recherche d'emploi ?",
+        "par défaut": "non"
       }
     }
   },
