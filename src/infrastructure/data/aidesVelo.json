@@ -315,13 +315,14 @@
   "aides . paris": {
     "remplace": "commune",
     "titre": "Ville de Paris",
-    "description": "La ville de Paris subventionne l’achat d’un $vélo à hauteur de 33% et\njusqu’à un plafond de $plafond.\n",
+    "description": "Vélos à assistance électrique, vélos cargos, découverte de Mobilib'… La Ville\nde Paris propose des aides financières pour inciter à utiliser des modes de\ndéplacements plus respectueux de l’environnement. Les personnes malvoyantes\nbénéficient gratuitement d'une télécommande pour activer les feux piétons.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '75056'",
+        "vélo . neuf",
         {
           "une de ces conditions": [
-            "revenu fiscal de référence <= 6358 €/an",
+            "revenu fiscal de référence <= 6300 €/an",
             "vélo . adapté"
           ]
         }
@@ -331,38 +332,35 @@
       "variations": [
         {
           "si": "vélo . mécanique",
-          "alors": "100% * vélo . prix . HT"
+          "alors": "vélo . prix . HT"
         },
         {
           "sinon": "33% * vélo . prix . HT"
         }
       ]
     },
-    "plafond": "$plafond",
-    "avec": {
-      "$plafond": {
-        "variations": [
-          {
-            "si": "vélo . adapté",
-            "alors": "900 €"
-          },
-          {
-            "si": "vélo . cargo",
-            "alors": "600€"
-          },
-          {
-            "si": "vélo . électrique",
-            "alors": "400€"
-          },
-          {
-            "si": "vélo . motorisation",
-            "alors": "400€"
-          },
-          {
-            "sinon": "100€"
-          }
-        ]
-      }
+    "plafond": {
+      "variations": [
+        {
+          "si": "vélo . adapté",
+          "alors": "900 €"
+        },
+        {
+          "si": "vélo . cargo",
+          "alors": "600€"
+        },
+        {
+          "si": "vélo . électrique",
+          "alors": "400€"
+        },
+        {
+          "si": "vélo . motorisation",
+          "alors": "400€"
+        },
+        {
+          "sinon": "100€"
+        }
+      ]
     },
     "lien": "https://www.paris.fr/pages/lutte-contre-la-pollution-les-aides-a-la-mobilite-5373"
   },
