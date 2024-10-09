@@ -34,11 +34,11 @@ export class Connexion_v2_Usecase {
 
     const utilisateur = await this.utilisateurRepository.findByEmail(email);
     if (!utilisateur) {
-      console.log(`CONNEXION : loginUtilisateur : ${email} mauvais email`);
+      console.log(`CONNEXION : loginUtilisateur : [${email}] mauvais email`);
       ApplicationError.throwBadPasswordOrEmailError();
     }
     if (!utilisateur.active_account) {
-      console.log(`CONNEXION : loginUtilisateur : ${email} compte inactif`);
+      console.log(`CONNEXION : loginUtilisateur : [${email}] compte inactif`);
       ApplicationError.throwBadPasswordOrEmailError();
     }
 
@@ -72,18 +72,18 @@ export class Connexion_v2_Usecase {
   ): Promise<{ token: string; utilisateur: Utilisateur }> {
     const utilisateur = await this.utilisateurRepository.findByEmail(email);
     if (!utilisateur) {
-      console.log(`CONNEXION : validateCodePourLogin : ${email} inconnu`);
+      console.log(`CONNEXION : validateCodePourLogin : [${email}] inconnu`);
       ApplicationError.throwBadCodeOrEmailError();
     }
     if (!utilisateur.active_account) {
       console.log(
-        `CONNEXION : validateCodePourLogin : ${email} compte inactif`,
+        `CONNEXION : validateCodePourLogin : [${email}] compte inactif`,
       );
       ApplicationError.throwBadCodeOrEmailError();
     }
     if (utilisateur.status !== UtilisateurStatus.connexion_etape_1) {
       console.log(
-        `CONNEXION : validateCodePourLogin : ${email} mauvaise étape`,
+        `CONNEXION : validateCodePourLogin : [${email}] mauvaise étape`,
       );
       ApplicationError.throwBadCodeOrEmailError();
     }
@@ -116,12 +116,12 @@ export class Connexion_v2_Usecase {
     const utilisateur = await this.utilisateurRepository.findByEmail(email);
 
     if (!utilisateur) {
-      console.log(`CONNEXION : oubli_mot_de_pass : ${email} inconnu`);
+      console.log(`CONNEXION : oubli_mot_de_pass : [${email}] inconnu`);
       return; // pas d'erreur, silence ^^
     }
 
     if (!utilisateur.active_account) {
-      console.log(`CONNEXION : oubli_mot_de_pass : ${email} compte inactif`);
+      console.log(`CONNEXION : oubli_mot_de_pass : [${email}] compte inactif`);
       return; // pas d'erreur, silence ^^
     }
 
@@ -155,14 +155,14 @@ export class Connexion_v2_Usecase {
 
     if (!utilisateur) {
       console.log(
-        `CONNEXION : modifier_mot_de_passe : ${email} compte inconnu`,
+        `CONNEXION : modifier_mot_de_passe : [${email}] compte inconnu`,
       );
       ApplicationError.throwBadCodeOrEmailError();
     }
 
     if (!utilisateur.active_account) {
       console.log(
-        `CONNEXION : modifier_mot_de_passe : ${email} compte inactif`,
+        `CONNEXION : modifier_mot_de_passe : [${email}] compte inactif`,
       );
       ApplicationError.throwBadCodeOrEmailError();
     }
