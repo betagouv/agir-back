@@ -39,6 +39,7 @@
 - `aides . région centre`
 - `aides . riviera francaise`
 - `aides . saint-omer`
+- `aides . saint-étienne`
 - `aides . sophia antipolis`
 - `aides . toulon`
 - `aides . toulouse`
