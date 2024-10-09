@@ -9,6 +9,8 @@ import {
   NiveauImpact,
 } from '../domain/bilan/bilanCarbone';
 import { TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
+import { KycRepository } from '../infrastructure/repository/kyc.repository';
+import { QuestionKYCUsecase } from './questionKYC.usecase';
 import { Univers } from '../domain/univers/univers';
 
 @Injectable()
@@ -17,6 +19,7 @@ export class BilanCarboneUsecase {
     private nGCCalculator: NGCCalculator,
     private utilisateurRepository: UtilisateurRepository,
     private bilanCarboneStatistiqueRepository: BilanCarboneStatistiqueRepository,
+    private kycRepository: KycRepository,
   ) {}
 
   async getCurrentBilanByUtilisateurId(utilisateurId: string): Promise<{
@@ -26,10 +29,23 @@ export class BilanCarboneUsecase {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
+    const kyc_catalogue = await this.kycRepository.getAllDefs();
+    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
+
     const situation = this.computeSituation(utilisateur);
 
     const bilan_complet =
       this.nGCCalculator.computeBilanCarboneFromSituation(situation);
+
+    const liste_kycs_transport =
+      QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_bilan_transport'];
+
+    const enchainement_transport =
+      utilisateur.kyc_history.getEnchainementKYCsEligibles(
+        liste_kycs_transport,
+      );
+    const enchainement_transport_progression =
+      enchainement_transport.getProgression();
 
     return {
       bilan_complet: bilan_complet,
@@ -44,8 +60,12 @@ export class BilanCarboneUsecase {
             image_url:
               'https://res.cloudinary.com/dq023imd8/image/upload/v1718886533/velo_2_27b85c28d4.png',
             univers: Univers.transport,
-            nombre_total_question: 7,
-            pourcentage_progression: 45,
+            nombre_total_question: enchainement_transport_progression.target,
+            pourcentage_progression: Math.round(
+              (enchainement_transport_progression.current /
+                enchainement_transport_progression.target) *
+                100,
+            ),
             id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
             temps_minutes: 5,
           },

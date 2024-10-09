@@ -3,6 +3,7 @@ import { Categorie } from '../contenu/categorie';
 import { ConditionDefi } from '../defis/conditionDefi';
 import { Chauffage, DPE, Superficie, TypeLogement } from '../logement/logement';
 import { KYCHistory_v0 as KYCHistory_v0 } from '../object_store/kyc/kycHistory_v0';
+import { EnchainementQuestions } from './enchainementQuestions';
 import { KycDefinition } from './kycDefinition';
 import { KYCID } from './KYCID';
 import { KYCMosaicID } from './KYCMosaicID';
@@ -41,6 +42,29 @@ export class KYCHistory {
     if (data && data.answered_mosaics) {
       this.answered_mosaics = data.answered_mosaics;
     }
+  }
+
+  public getEnchainementKYCsEligibles(
+    liste_kycs_ids: string[],
+  ): EnchainementQuestions {
+    const result: EnchainementQuestions = new EnchainementQuestions();
+    for (const kyc_id of liste_kycs_ids) {
+      if (MosaicKYC.isMosaicID(kyc_id)) {
+        const mosaic = this.getUpToDateMosaicById(KYCMosaicID[kyc_id]);
+        if (mosaic) {
+          result.addQuestionGeneric({ mosaic: mosaic });
+        }
+      } else {
+        const kyc = this.getUpToDateQuestionByCodeOrNull(kyc_id);
+
+        if (kyc && this.isKYCEligible(kyc)) {
+          result.addQuestionGeneric({
+            kyc: kyc,
+          });
+        }
+      }
+    }
+    return result;
   }
 
   public isKYCEligible(kyc: QuestionKYC) {

@@ -43,6 +43,7 @@ export class QuestionKYCUsecase {
     ],
     ENCHAINEMENT_KYC_bilan_transport: [
       KYCID.KYC_transport_type_utilisateur,
+      KYCID.KYC_transport_voiture_nbr_voyageurs,
       KYCID.KYC_transport_voiture_motorisation,
       KYCID.KYC_transport_heures_avion_court,
       KYCID.KYC_transport_heures_avion_moyen,
@@ -50,7 +51,6 @@ export class QuestionKYCUsecase {
       KYCID.KYC_transport_2roues_usager,
       KYCID.KYC_2roue_motorisation_type,
       KYCID.KYC_2roue_km,
-      KYCID.KYC_transport_voiture_nbr_voyageurs,
     ],
   };
 
@@ -74,8 +74,6 @@ export class QuestionKYCUsecase {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
     utilisateur.checkState();
 
-    const result: EnchainementQuestions = new EnchainementQuestions();
-
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
@@ -85,25 +83,9 @@ export class QuestionKYCUsecase {
       ApplicationError.throwUnkownEnchainement(enchainementId);
     }
 
-    for (const kyc_id of liste_kycs_ids) {
-      if (MosaicKYC.isMosaicID(kyc_id)) {
-        const mosaic = utilisateur.kyc_history.getUpToDateMosaicById(
-          KYCMosaicID[kyc_id],
-        );
-        if (mosaic) {
-          result.addQuestionGeneric({ mosaic: mosaic });
-        }
-      } else {
-        const kyc =
-          utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(kyc_id);
+    const result =
+      utilisateur.kyc_history.getEnchainementKYCsEligibles(liste_kycs_ids);
 
-        if (kyc && utilisateur.kyc_history.isKYCEligible(kyc)) {
-          result.addQuestionGeneric({
-            kyc: kyc,
-          });
-        }
-      }
-    }
     return this.personnalisator.personnaliser(result, utilisateur);
   }
 
