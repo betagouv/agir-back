@@ -26,6 +26,7 @@
 - `aides . crozon`
 - `aides . département hérault`
 - `aides . epinal`
+- `aides . ile de france`
 - `aides . loire layon aubance`
 - `aides . lyon`
 - `aides . montpellier`

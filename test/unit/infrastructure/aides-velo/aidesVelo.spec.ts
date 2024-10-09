@@ -128,6 +128,27 @@ describe('Aides Vélo', () => {
     });
   });
 
+  describe('Île-de-France Mobilités', () => {
+    it('devrait être nulle pour un vélo mécanique si la personne a plus de 25 ans', () => {
+      engine.setSituation({
+        'localisation . région': "'11'",
+        'vélo . type': "'mécanique simple'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . ile de france').nodeValue).toEqual(0);
+    });
+
+    it('devrait être non nulle pour un vélo mécanique est âgée de 15 à 25 ans', () => {
+      engine.setSituation({
+        'localisation . région': "'11'",
+        'vélo . type': "'mécanique simple'",
+        'vélo . prix': '1000€',
+        'jeune de 15 à 25 ans': 'oui',
+      });
+      expect(engine.evaluate('aides . ile de france').nodeValue).toEqual(100);
+    });
+  });
+
   describe("Département Côte-d'Or", () => {
     it('plus de subvention pour les vélos assemblés ou produit localement', () => {
       const coteDorSituation = {

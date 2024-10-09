@@ -161,6 +161,10 @@
       "$plafond": {
         "variations": [
           {
+            "si": "vélo . adapté",
+            "alors": "1200 €"
+          },
+          {
             "si": "vélo . cargo électrique",
             "alors": "600 €"
           },
@@ -182,7 +186,7 @@
             "si": {
               "toutes ces conditions": [
                 "vélo . mécanique simple",
-                "bénéficiaire jeune"
+                "jeune de 15 à 25 ans"
               ]
             },
             "alors": "100 €"
@@ -191,11 +195,6 @@
             "sinon": "0 €"
           }
         ]
-      },
-      "bénéficiaire jeune": {
-        "question": "Le bénéficiaire a t-il entre 15 et 25 ans ?",
-        "type": "booléen",
-        "par défaut": "oui"
       }
     },
     "lien": "https://www.iledefrance-mobilites.fr/le-reseau/services-de-mobilite/velo/prime-achat-velo"
@@ -9139,14 +9138,7 @@
         }
       ]
     },
-    "lien": "https://www.vyvs.fr/lagglo-vous-aide-a-acheter-un-velo/",
-    "avec": {
-      "jeune de 15 à 25 ans": {
-        "question": "Êtes-vous âgé de 15 à 25 ans ?",
-        "type": "booléen",
-        "par défaut": "non"
-      }
-    }
+    "lien": "https://www.vyvs.fr/lagglo-vous-aide-a-acheter-un-velo/"
   },
   "aides . campagnes de l'artois": {
     "remplace": "intercommunalité",
@@ -9644,6 +9636,11 @@
     "type": "booléen",
     "question": "Êtes-vous en situation de handicap ?",
     "description": "Pour certaines aides, les conditions de ressources sont ignorées pour les\npersonnes en situation de handicap.\n",
+    "par défaut": "non"
+  },
+  "jeune de 15 à 25 ans": {
+    "question": "Êtes-vous âgé de 15 à 25 ans ?",
+    "type": "booléen",
     "par défaut": "non"
   }
 }
