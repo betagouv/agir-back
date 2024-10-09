@@ -282,6 +282,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . département': "'34'",
         'revenu fiscal de référence': '10000€/an',
+        'personne en situation de handicap': 'oui',
         'vélo . type': "'adapté'",
         'vélo . prix': '1000€',
       });
@@ -296,6 +297,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . département': "'34'",
         'revenu fiscal de référence': '10000€/an',
+        'personne en situation de handicap': 'oui',
         'vélo . type': "'adapté'",
         'vélo . prix': '25000€',
       });
@@ -341,6 +343,7 @@ describe('Aides Vélo', () => {
         'localisation . epci': "'Montpellier Méditerranée Métropole'",
         'localisation . département': "'34'",
         'revenu fiscal de référence': '10000€/an',
+        'personne en situation de handicap': 'oui',
         'vélo . type': "'adapté'",
         'vélo . prix': '2000€',
       });

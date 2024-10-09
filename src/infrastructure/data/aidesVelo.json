@@ -3093,6 +3093,7 @@
     "applicable si": {
       "toutes ces conditions": [
         "localisation . département = '34'",
+        "personne en situation de handicap",
         "vélo . adapté"
       ]
     },
