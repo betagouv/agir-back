@@ -1,6 +1,7 @@
 import { TestUtil } from '../../TestUtil';
 import { AidesVeloRepository } from '../../../src/infrastructure/repository/aidesVelo.repository';
 import { AidesVeloParType, Collectivite } from 'src/domain/aides/aideVelo';
+import exp from 'constants';
 
 describe('AideVeloRepository', () => {
   let aidesVeloRepository = new AidesVeloRepository();
@@ -48,8 +49,14 @@ describe('AideVeloRepository', () => {
     );
 
     // THEN
-    expect(result['électrique'][1].description).toContain('TER');
-    expect(result['électrique'][1].montant).toBe(50);
+    expect(result['électrique'].length).toBe(3);
+    const aide = result['électrique'].find((aide) => {
+      if (aide.libelle === 'Région Pays de la Loire') {
+        return true;
+      }
+    });
+    expect(aide.libelle).toContain('Région Pays de la Loire');
+    expect(aide.montant).toBe(50);
     expectAllMatchOneOfCollectivite(result, [
       // Check that all aides are in France, Pays de la Loire or Angers
       { kind: 'pays', value: 'France' },
@@ -69,7 +76,10 @@ describe('AideVeloRepository', () => {
     );
 
     // THEN
-    expect(result['électrique'][1].description).not.toContain('TER');
+    expect(result['électrique'].length).toBe(2);
+    result['électrique'].forEach((aide) => {
+      expect(aide.libelle).not.toContain('Région Pays de la Loire');
+    });
     expectAllMatchOneOfCollectivite(result, [
       // Check that all aides are in France, Pays de la Loire or Angers
       { kind: 'pays', value: 'France' },

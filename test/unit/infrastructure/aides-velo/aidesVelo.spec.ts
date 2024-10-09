@@ -27,7 +27,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         ...baseSituation,
         'revenu fiscal de référence': '20000€/an',
-        'personne en situation de handicap': 'oui',
+        'demandeur . en situation de handicap': 'oui',
         'vélo . type': "'adapté'",
         'vélo . prix': '2500€',
       });
@@ -36,7 +36,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         ...baseSituation,
         'revenu fiscal de référence': '20000€/an',
-        'personne en situation de handicap': 'oui',
+        'demandeur . en situation de handicap': 'oui',
         'vélo . type': "'adapté'",
         'vélo . prix': '25000€',
       });
@@ -46,7 +46,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         ...baseSituation,
         'revenu fiscal de référence': '20000€/an',
-        'personne en situation de handicap': 'oui',
+        'demandeur . en situation de handicap': 'oui',
         'vélo . type': "'mécanique simple'",
         'vélo . prix': '25000€',
       });
@@ -143,7 +143,7 @@ describe('Aides Vélo', () => {
         'localisation . région': "'11'",
         'vélo . type': "'mécanique simple'",
         'vélo . prix': '1000€',
-        'jeune de 15 à 25 ans': 'oui',
+        'demandeur . jeune de 15 à 25 ans': 'oui',
       });
       expect(engine.evaluate('aides . ile de france').nodeValue).toEqual(100);
     });
@@ -195,7 +195,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . région': "'76'",
         'revenu fiscal de référence': '8000€/an',
-        'personne en situation de handicap': 'oui',
+        'demandeur . en situation de handicap': 'oui',
         'vélo . type': "'adapté'",
         'vélo . prix': '1000€',
       });
@@ -212,7 +212,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . région': "'76'",
         'revenu fiscal de référence': '8000€/an',
-        'personne en situation de handicap': 'oui',
+        'demandeur . en situation de handicap': 'oui',
         'vélo . type': "'adapté'",
         'vélo . prix': '25000€',
       });
@@ -315,7 +315,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . département': "'34'",
         'revenu fiscal de référence': '10000€/an',
-        'personne en situation de handicap': 'oui',
+        'demandeur . en situation de handicap': 'oui',
         'vélo . type': "'adapté'",
         'vélo . prix': '1000€',
       });
@@ -330,7 +330,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . département': "'34'",
         'revenu fiscal de référence': '10000€/an',
-        'personne en situation de handicap': 'oui',
+        'demandeur . en situation de handicap': 'oui',
         'vélo . type': "'adapté'",
         'vélo . prix': '25000€',
       });
@@ -376,7 +376,7 @@ describe('Aides Vélo', () => {
         'localisation . epci': "'Montpellier Méditerranée Métropole'",
         'localisation . département': "'34'",
         'revenu fiscal de référence': '10000€/an',
-        'personne en situation de handicap': 'oui',
+        'demandeur . en situation de handicap': 'oui',
         'vélo . type': "'adapté'",
         'vélo . prix': '2000€',
       });
@@ -409,7 +409,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . epci': "'CU Perpignan Méditerranée Métropole'",
         'vélo . type': "'électrique'",
-        'statut étudiant': 'oui',
+        'demandeur . statut étudiant': 'oui',
         'vélo . prix': '1000€',
       });
 
@@ -422,7 +422,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . epci': "'CU Perpignan Méditerranée Métropole'",
         'vélo . type': "'adapté'",
-        'statut étudiant': 'oui',
+        'demandeur . statut étudiant': 'oui',
         'vélo . prix': '1000€',
       });
 
@@ -461,7 +461,7 @@ describe('Aides Vélo', () => {
         'vélo . type': "'électrique'",
         'vélo . prix': '2000€',
         'revenu fiscal de référence': '20000€/an',
-        'personne en situation de handicap': 'oui',
+        'demandeur . en situation de handicap': 'oui',
       });
       expect(engine.evaluate('aides . sophia antipolis').nodeValue).toEqual(
         400,
@@ -472,7 +472,7 @@ describe('Aides Vélo', () => {
         'vélo . type': "'adapté'",
         'vélo . prix': '10000€',
         'revenu fiscal de référence': '20000€/an',
-        'personne en situation de handicap': 'oui',
+        'demandeur . en situation de handicap': 'oui',
       });
       expect(engine.evaluate('aides . sophia antipolis').nodeValue).toEqual(
         750,
@@ -659,6 +659,40 @@ describe('Aides Vélo', () => {
       });
       expect(engine.evaluate('aides . saône-beaujolais').nodeValue).toEqual(
         200,
+      );
+    });
+  });
+
+  describe('Communauté de communes du Pays Mornantais', () => {
+    it("devrait correctement prendre en compte le plafond de l'Anah", () => {
+      engine.setSituation({
+        'localisation . epci': "'CC du Pays Mornantais (COPAMO)'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+      });
+      expect(engine.evaluate('aides . pays mornantais').nodeValue).toEqual(400);
+
+      engine.setSituation({
+        'localisation . epci': "'CC du Pays Mornantais (COPAMO)'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '30000€/an',
+      });
+      expect(engine.evaluate('aides . pays mornantais').nodeValue).toEqual(250);
+    });
+
+    it("ne devrait pas être élligible pour les vélo d'occasion", () => {
+      engine.setSituation({
+        'localisation . epci': "'CC du Pays Mornantais (COPAMO)'",
+        'vélo . type': "'électrique'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+      });
+
+      expect(engine.evaluate('aides . pays mornantais').nodeValue).toEqual(
+        null,
       );
     });
   });
