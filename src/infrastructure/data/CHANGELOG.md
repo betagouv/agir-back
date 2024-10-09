@@ -22,6 +22,7 @@
 
 - `aides . bonus vélo`
 - `aides . bourges`
+- `aides . crozon`
 - `aides . département cote d'or`
 - `aides . département hérault`
 - `aides . epinal`

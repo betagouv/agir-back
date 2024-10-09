@@ -3126,6 +3126,7 @@
     "description": "500€ d'aide à l'achat d'un vélo à assistance électrique adapté pour les\npersonnes en situation de handicap ayant bénéficié du \"Chèque Hérault\nHandi-Vélo\".\n",
     "applicable si": {
       "toutes ces conditions": [
+        "localisation . epci = 'Montpellier Méditerranée Métropole'",
         "aides . département hérault vélo adapté"
       ]
     },
@@ -7473,26 +7474,36 @@
   },
   "aides . crozon": {
     "remplace": "intercommunalité",
-    "applicable si": "localisation . epci = \"CC Presqu'île de Crozon-Aulne maritime\"",
-    "variations": [
-      {
-        "si": "vélo . électrique",
-        "alors": "vélo . prix"
-      },
-      {
-        "si": {
-          "une de ces conditions": [
-            "vélo . cargo",
-            "vélo . mécanique"
-          ]
+    "titre": "Presqu'île de Crozon-Aulne Maritime",
+    "description": "Aide de la Communauté de Communes depuis 2022.",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . epci = \"CC Presqu'île de Crozon-Aulne maritime\"",
+        "revenu fiscal de référence <= 14089 €/an"
+      ]
+    },
+    "valeur": {
+      "variations": [
+        {
+          "si": "vélo . électrique",
+          "alors": "vélo . prix"
         },
-        "alors": "50% * vélo . prix"
-      },
-      {
-        "sinon": "0€"
-      }
-    ],
-    "plafond": "100€",
+        {
+          "si": {
+            "une de ces conditions": [
+              "vélo . cargo",
+              "vélo . mécanique simple",
+              "vélo . adapté"
+            ]
+          },
+          "alors": "50% * vélo . prix"
+        },
+        {
+          "sinon": "0€"
+        }
+      ]
+    },
+    "plafond": "200€",
     "lien": "https://www.comcom-crozon.com/amenagement-et-cadre-de-vie/transports-deplacements-randonnees/deplacements-doux/"
   },
   "aides . saint-jacques de la lande": {
@@ -9487,6 +9498,7 @@
         "aides . cévennes gangeoises et suménoises",
         "aides . chevilly-larue",
         "aides . coeur de nacre",
+        "aides . crozon",
         "aides . denain",
         "aides . dieppe",
         "aides . divonne-les-bains",
