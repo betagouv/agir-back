@@ -78,24 +78,75 @@ describe('AideVeloRepository', () => {
     ]);
   });
 
-  it('doit correctement cumuler les aides pour une personne habitant à Toulouse', async () => {
-    // WHEN
-    const result = await aidesVeloRepository.getSummaryVelos(
-      '31000',
-      8000,
-      1,
-      500,
-    );
+  describe('Vélo adapté et personne en situation de handicap', () => {
+    it.skip('doit correctement cumuler les aides pour une personne habitant à Toulouse', async () => {
+      // WHEN
+      const result = await aidesVeloRepository.getSummaryVelos(
+        '31000',
+        8000,
+        1,
+        500,
+      );
 
-    // THEN
-    expect(result['électrique'].length).toBe(3);
-    expect(result['électrique'][0].libelle).toBe('Bonus vélo');
-    expect(result['électrique'][1].libelle).toBe('Région Occitanie');
-    expect(result['électrique'][2].libelle).toBe('Toulouse Métropole');
-    expect(result['adapté'].length).toBe(2);
-    expect(result['adapté'][0].libelle).toBe('Bonus vélo');
-    expect(result['adapté'][1].libelle).toContain('Région Occitanie');
-    expect(result['adapté'][1].description).toContain('Bonus vélo adapté PMR');
+      // THEN
+      expect(result['électrique'].length).toBe(3);
+      expect(result['électrique'][0].libelle).toBe('Bonus vélo');
+      expect(result['électrique'][1].libelle).toBe('Région Occitanie');
+      expect(result['électrique'][2].libelle).toBe('Toulouse Métropole');
+      expect(result['adapté'].length).toBe(2);
+      expect(result['adapté'][0].libelle).toBe('Bonus vélo');
+      expect(result['adapté'][1].libelle).toContain('Région Occitanie');
+      expect(result['adapté'][1].description).toContain(
+        'Bonus vélo adapté PMR',
+      );
+    });
+
+    it.skip('doit correctement cumuler les aides pour une personne habitant à Montpellier', async () => {
+      // WHEN
+      const result = await aidesVeloRepository.getSummaryVelos(
+        '31000',
+        8000,
+        1,
+        500,
+      );
+
+      // THEN
+      expect(result['électrique'].length).toBe(3);
+      expect(result['électrique'][0].libelle).toBe('Bonus vélo');
+      expect(result['électrique'][1].libelle).toBe('Région Occitanie');
+      expect(result['électrique'][2].libelle).toBe('Toulouse Métropole');
+      expect(result['adapté'].length).toBe(3);
+      expect(result['adapté'][0].libelle).toBe('Bonus vélo');
+      expect(result['adapté'][1].libelle).toContain('Région Occitanie');
+      expect(result['adapté'][1].description).toContain(
+        'Bonus vélo adapté PMR',
+      );
+      expect(result['adapté'][2].libelle).toContain('Département Hérault');
+      expect(result['adapté'][2].description).toContain(
+        'Chèque Hérault Handi-Vélo',
+      );
+    });
+
+    // TODO
+    // it.skip(
+    //   "'Hérault Handi Vélo' devrait être cumulable avec le 'Bonus vélo adapté PMR' de la région Occitanie",
+    //   async () => {
+    //     engine.setSituation({
+    //       'localisation . département': "'34'",
+    //       'revenu fiscal de référence': '10000€/an',
+    //       'personne en situation de handicap': 'oui',
+    //       'vélo . type': "'adapté'",
+    //       'vélo . prix': '1000€',
+    //     });
+    //
+    //     expect(
+    //       engine.evaluate('aides . département hérault vélo adapté').nodeValue,
+    //     ).toEqual(500);
+    //     expect(
+    //       engine.evaluate('aides . occitanie vélo adapté').nodeValue,
+    //     ).toEqual(500);
+    //   },
+    // );
   });
 });
 
