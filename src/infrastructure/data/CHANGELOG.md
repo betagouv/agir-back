@@ -22,6 +22,7 @@
 
 - `aides . bonus vélo`
 - `aides . bourges`
+- `aides . corse`
 - `aides . cote d'or`
 - `aides . crozon`
 - `aides . département hérault`
