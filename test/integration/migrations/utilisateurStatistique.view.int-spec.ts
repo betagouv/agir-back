@@ -38,6 +38,7 @@ describe('UtilisateurView', () => {
       source_inscription: 'inconnue',
       couverture_aides_ok: true,
       rank_commune: 1,
+      annee_naissance: 1994,
       logement: new Logement({
         code_postal: '22000',
         commune: 'St Brieuc',
@@ -59,6 +60,7 @@ describe('UtilisateurView', () => {
       points_classement: 2222,
       rank: 25,
       rank_commune: 11,
+      annee_naissance: 2000,
       source_inscription: 'web',
       couverture_aides_ok: false,
       logement: {
@@ -105,6 +107,7 @@ describe('UtilisateurView', () => {
         superficie: Superficie.superficie_100,
         type: TypeLogement.appartement,
         chauffage: Chauffage.electricite,
+        annee_de_naissance: 1994,
       },
       {
         id: 1704150000,
@@ -125,6 +128,7 @@ describe('UtilisateurView', () => {
         superficie: null,
         type: null,
         chauffage: null,
+        annee_de_naissance: 2000,
       },
       {
         id: 1704236400,
@@ -145,6 +149,7 @@ describe('UtilisateurView', () => {
         superficie: null,
         type: null,
         chauffage: null,
+        annee_de_naissance: 1979,
       },
     ]);
   });

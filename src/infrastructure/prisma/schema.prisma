@@ -419,4 +419,5 @@ view UtilisateurVue {
   superficie              String?
   type                    String?
   chauffage               String?
+  annee_de_naissance      Int
 }
