@@ -8,7 +8,6 @@ import aidesAndCollectivities from '../data/aides-collectivities.json';
 import {
   AidesVeloParType,
   InputParameters,
-  TypeVelos,
   AidesVelo,
   Localisation,
   Collectivite,
@@ -43,6 +42,7 @@ async function summaryVelo(
   delete rules['aides . prime à la conversion'];
   delete rules['aides . prime à la conversion . surprime ZFE'];
 
+  // NOTE: should we create a new engine for each request?
   const engine = new Engine(rules, {
     logger: {
       log(message: string) {},
@@ -58,6 +58,8 @@ async function summaryVelo(
     'localisation . code insee': `${lieu?.code}`,
     'revenu fiscal de référence': revenuParPart, // revenu fiscal de référence par part
     'vélo . prix': prixVelo,
+    // TODO: should be refactor to be dynamically retrieved from the rules or
+    // to be a unique rule: 'abonné TER' used in all the rules needing it.
     'aides . pays de la loire . abonné TER': is_abonnement,
   };
   return getAidesVeloTousTypes(situationBase, engine);
@@ -65,15 +67,16 @@ async function summaryVelo(
 
 function getAidesVeloTousTypes(
   situationBase: InputParameters,
-  engine: any,
+  engine: Engine,
 ): AidesVeloParType {
-  const veloTypes: Record<TypeVelos, any> = {
-    'mécanique simple': {},
-    électrique: {},
-    cargo: {},
-    'cargo électrique': {},
-    pliant: {},
-    motorisation: {},
+  const veloTypes: AidesVeloParType = {
+    'mécanique simple': [],
+    électrique: [],
+    cargo: [],
+    'cargo électrique': [],
+    pliant: [],
+    motorisation: [],
+    adapté: [],
   };
 
   for (const key of Object.keys(veloTypes)) {
@@ -85,7 +88,7 @@ function getAidesVeloTousTypes(
 }
 
 function getAidesVeloParType(
-  engine,
+  engine: Engine,
   situation: InputParameters = {},
 ): AidesVelo {
   engine.setSituation(formatInput(situation));
@@ -180,7 +183,6 @@ async function getLocalisationByCP(cp: string): Promise<Localisation> {
   return lieu;
 }
 
-const defaultDescription = '';
 export function formatDescription({
   ruleName,
   engine,
@@ -188,7 +190,7 @@ export function formatDescription({
   ville,
 }): string {
   const { rawNode } = engine.getRule(ruleName);
-  const description = rawNode?.description ?? defaultDescription;
+  const description = rawNode?.description ?? '';
   const plafondRuleName = `${ruleName} . $plafond`;
   const plafondIsDefined = Object.keys(engine.getParsedRules()).includes(
     plafondRuleName,
