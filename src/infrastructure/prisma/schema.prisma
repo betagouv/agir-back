@@ -397,6 +397,7 @@ view PrenomVue {
 view CartographieVue {
   id                Int     @id
   code_postal       String
+  code_departement  String
   couvert_par_aides Boolean
 }
 
