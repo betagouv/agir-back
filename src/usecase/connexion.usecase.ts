@@ -136,6 +136,9 @@ export class Connexion_v2_Usecase {
         user,
         'oubli_mot_de_passe',
       );
+      console.log(
+        `CONNEXION : oubli_mot_de_passe : [${utilisateur.id}] email sending`,
+      );
 
       _this.sendMotDePasseCode(user);
     };

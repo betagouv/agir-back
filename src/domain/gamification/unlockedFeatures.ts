@@ -13,11 +13,7 @@ export class UnlockedFeatures {
   }
 
   public reset?() {
-    this.unlocked_features = [
-      Feature.bibliotheque,
-      Feature.univers,
-      Feature.services,
-    ];
+    this.unlocked_features = [Feature.univers];
   }
 
   public add?(feature: Feature) {

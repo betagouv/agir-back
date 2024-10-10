@@ -286,7 +286,7 @@ describe('Gamification', () => {
 
     // THEN
     expect(gamification.celebrations).toHaveLength(0);
-    expect(utilisateur.unlocked_features.getUnlockedFeatures()).toHaveLength(4);
+    expect(utilisateur.unlocked_features.getUnlockedFeatures()).toHaveLength(2);
     expect(
       utilisateur.unlocked_features
         .getUnlockedFeatures()

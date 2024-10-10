@@ -520,9 +520,7 @@ describe('Admin (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id');
     expect(userDB.parcours_todo.todo_active).toEqual(0);
     expect(userDB.unlocked_features.unlocked_features).toEqual([
-      Feature.bibliotheque,
       Feature.univers,
-      Feature.services,
     ]);
   });
   it.skip('POST /admin/migrate_users migration V11 OK - user ayant fini les mission onboarding', async () => {
