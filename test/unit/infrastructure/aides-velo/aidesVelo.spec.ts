@@ -143,7 +143,7 @@ describe('Aides Vélo', () => {
         'localisation . région': "'11'",
         'vélo . type': "'mécanique simple'",
         'vélo . prix': '1000€',
-        'demandeur . jeune de 15 à 25 ans': 'oui',
+        'demandeur . âge': '20 an',
       });
       expect(engine.evaluate('aides . ile de france').nodeValue).toEqual(100);
     });
@@ -693,6 +693,152 @@ describe('Aides Vélo', () => {
 
       expect(engine.evaluate('aides . pays mornantais').nodeValue).toEqual(
         null,
+      );
+    });
+  });
+
+  describe('Quimperlé Communauté', () => {
+    it("devrait pas être élligible pour les VAE d'occasion d'une valeur supérieure à 2000€", () => {
+      engine.setSituation({
+        'localisation . epci': "'CA Quimperlé Communauté'",
+        'vélo . type': "'électrique'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '3000€',
+        'revenu fiscal de référence': '10000€/an',
+      });
+      expect(engine.evaluate('aides . quimperlé').nodeValue).toEqual(null);
+    });
+
+    it("devrait être élligible pour les vélo cargo électrique d'occasion jusqu'à 5000€", () => {
+      engine.setSituation({
+        'localisation . epci': "'CA Quimperlé Communauté'",
+        'vélo . type': "'cargo électrique'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '3000€',
+        'revenu fiscal de référence': '10000€/an',
+      });
+      expect(engine.evaluate('aides . quimperlé').nodeValue).toEqual(150);
+    });
+
+    it("devrait être élligible pour les VAE neuf jusqu'à 3000€", () => {
+      engine.setSituation({
+        'localisation . epci': "'CA Quimperlé Communauté'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': '3000€',
+        'revenu fiscal de référence': '10000€/an',
+      });
+      expect(engine.evaluate('aides . quimperlé').nodeValue).toEqual(150);
+    });
+  });
+
+  describe('Ville de Caen', () => {
+    it("devrait correctement prendre en compte les jeunes de moins de 25 ans pour les vélos d'occasion", () => {
+      engine.setSituation({
+        'localisation . code insee': "'14118'",
+        'vélo . type': "'mécanique simple'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '1000€',
+        'demandeur . âge': '20 an',
+        'revenu fiscal de référence': '10000€/an',
+      });
+      expect(engine.evaluate('aides . caen jeune').nodeValue).toEqual(50);
+      expect(engine.evaluate('aides . caen').nodeValue).toEqual(null);
+
+      engine.setSituation({
+        'localisation . code insee': "'14118'",
+        'vélo . type': "'électrique'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '1000€',
+        'demandeur . âge': '20 an',
+        'revenu fiscal de référence': '10000€/an',
+      });
+      expect(engine.evaluate('aides . caen jeune').nodeValue).toEqual(null);
+      expect(engine.evaluate('aides . caen').nodeValue).toEqual(null);
+    });
+
+    it('devrait être élligible pour les personnes en situation de handicap sans condition de revenu', () => {
+      engine.setSituation({
+        'localisation . code insee': "'14118'",
+        'vélo . type': "'adapté'",
+        'revenu fiscal de référence': '20000€/an',
+        'demandeur . en situation de handicap': 'oui',
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . caen jeune').nodeValue).toEqual(null);
+      expect(engine.evaluate('aides . caen').nodeValue).toEqual(null);
+      expect(engine.evaluate('aides . caen vélo adapté').nodeValue).toEqual(
+        300,
+      );
+
+      // Pas nécessairement adapté
+      engine.setSituation({
+        'localisation . code insee': "'14118'",
+        'vélo . type': "'motorisation'",
+        'revenu fiscal de référence': '20000€/an',
+        'demandeur . en situation de handicap': 'oui',
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . caen jeune').nodeValue).toEqual(null);
+      expect(engine.evaluate('aides . caen').nodeValue).toEqual(null);
+      expect(engine.evaluate('aides . caen vélo adapté').nodeValue).toEqual(
+        300,
+      );
+    });
+
+    it("l'aide de Caen la mer ne devrait pas être élligible pour les personnes mineures", () => {
+      engine.setSituation({
+        'localisation . epci': "'CU Caen la Mer'",
+        'revenu fiscal de référence': '10000€/an',
+        'demandeur . âge': '16 an',
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . caen la mer').nodeValue).toEqual(null);
+    });
+  });
+
+  describe('Vienne et Gartempe Communauté de communes', () => {
+    it('devrait être élligible pour les mineurs uniquement si iels possèdent un contrat', () => {
+      engine.setSituation({
+        'localisation . epci': "'CC Vienne et Gartempe'",
+        'revenu fiscal de référence': '10000€/an',
+        'demandeur . âge': '16 an',
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . vienne gartempe').nodeValue).toEqual(0);
+
+      engine.setSituation({
+        'localisation . epci': "'CC Vienne et Gartempe'",
+        'revenu fiscal de référence': '10000€/an',
+        'demandeur . âge': '16 an',
+        // TODO: use generated types instead of the json
+        // @ts-ignore
+        "aides . vienne gartempe . titulaire d'un contrat d'alternance ou de stage":
+          'oui',
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . vienne gartempe').nodeValue).toEqual(400);
+    });
+  });
+
+  describe('Ville de Montval sur Loir', () => {
+    it('devrait être élligible pour les vélo mécanique seulement pour les bénéficiaires du RSA', () => {
+      engine.setSituation({
+        'localisation . code insee': "'72071'",
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'mécanique simple'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . montval sur loir').nodeValue).toEqual(0);
+
+      engine.setSituation({
+        'localisation . code insee': "'72071'",
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'électrique'",
+        'vélo . prix': '200€',
+        'demandeur . bénéficiaire du RSA': 'oui',
+      });
+      expect(engine.evaluate('aides . montval sur loir').nodeValue).toEqual(
+        100,
       );
     });
   });

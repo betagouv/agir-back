@@ -186,7 +186,7 @@
             "si": {
               "toutes ces conditions": [
                 "vélo . mécanique simple",
-                "demandeur . jeune de 15 à 25 ans"
+                "demandeur . âge . de 15 à 25 ans"
               ]
             },
             "alors": "100 €"
@@ -522,7 +522,7 @@
   "aides . saône-beaujolais": {
     "remplace": "intercommunalité",
     "titre": "Communauté de communes Saône Beaujolais",
-    "description": "La CCSB met en place une aide financière à l'acquisition de vélos\ntraditionnels, de vélos à assistance électrique ou de kit d'électrification\nà destination des habitants de la Communauté de Communes Saône-Beaujolais.\n",
+    "description": "La CCSB met en place une aide financière à l'acquisition de vélos\ntraditionnels, de vélos à assistance électrique ou de kit d'électrification\nà destination des habitant·es de la Communauté de Communes\nSaône-Beaujolais.\n",
     "applicable si": "localisation . epci = 'CC Saône-Beaujolais'",
     "valeur": "30% * vélo . prix",
     "plafond": {
@@ -580,7 +580,7 @@
   "aides . ville-sur-jarnioux": {
     "remplace": "commune",
     "titre": "Ville-sur-Jarnioux",
-    "description": "Le Conseil Municipal de Ville-sur-Jarnioux a voté la mise en place d'une «\naide-vélo » aux Villésiens. Cette participation financière est versée aux\nhabitants qui ont bénéficié de l'aide de la CAVBS.\n",
+    "description": "Le Conseil Municipal de Ville-sur-Jarnioux a voté la mise en place d'une «\naide-vélo » aux Villésiens. Cette participation financière est versée aux\nhabitant·es qui ont bénéficié de l'aide de la CAVBS.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '69265'",
@@ -1054,7 +1054,7 @@
   "aides . cenon": {
     "remplace": "commune",
     "titre": "Ville de Cenon",
-    "description": "La Ville de Cenon propose une aide à l'achat d'un vélo à assistance\nélectrique, d'un vélo pliant ou d'un vélo cargo avec un prix d'acquisition\nsupérieur ou égal à 800 € pour les habitants de la commune ayant un\nquotient familiale inférieur à 2200 €/mois.\n",
+    "description": "La Ville de Cenon propose une aide à l'achat d'un vélo à assistance\nélectrique, d'un vélo pliant ou d'un vélo cargo avec un prix d'acquisition\nsupérieur ou égal à 800 € pour les habitant·es de la commune ayant un\nquotient familiale inférieur à 2200 €/mois.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '33119'",
@@ -1816,52 +1816,67 @@
   "aides . entzheim": {
     "remplace": "commune",
     "titre": "Ville de Entzheim",
-    "applicable si": "localisation . code insee = '67124'",
-    "variations": [
-      {
-        "si": "vélo . cargo",
-        "alors": {
-          "valeur": "10% * vélo . prix",
-          "plafond": "200€"
+    "description": "Jusqu'au 31 décembre 2024, la commune d'Entzheim subventionne l'achat d'un\nvélo neuf ou la réparation d'un vélo.\n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . code insee = '67124'",
+        "vélo . neuf"
+      ]
+    },
+    "valeur": {
+      "variations": [
+        {
+          "si": "vélo . cargo",
+          "alors": {
+            "valeur": "10% * vélo . prix",
+            "plafond": "200€"
+          }
+        },
+        {
+          "si": "vélo . électrique",
+          "alors": {
+            "valeur": "10% * vélo . prix",
+            "plafond": "150€"
+          }
+        },
+        {
+          "si": "vélo . mécanique simple",
+          "alors": {
+            "valeur": "30% * vélo . prix",
+            "plafond": "80€"
+          }
+        },
+        {
+          "sinon": "0€"
         }
-      },
-      {
-        "si": "vélo . électrique",
-        "alors": {
-          "valeur": "10% * vélo . prix",
-          "plafond": "150€"
-        }
-      },
-      {
-        "si": "vélo . mécanique simple",
-        "alors": {
-          "valeur": "30% * vélo . prix",
-          "plafond": "80€"
-        }
-      },
-      {
-        "sinon": "0€"
-      }
-    ],
+      ]
+    },
     "lien": "http://www.entzheim.fr/fr/information/113321/aide-achat-un-velo-neuf-ou-reparation-un-velo"
   },
   "aides . geispolsheim": {
     "remplace": "commune",
     "titre": "Ville de Geispolsheim",
+    "description": "Dans le cadre de sa politique de développement durable, la Commune de\nGeispolsheim vous propose d'obtenir une aide pour l'achat d'un vélo à\nassistance électrique, d'un vélo cargo (électrique ou non). (Dispositif\nréservé aux 50 premiers dossiers complets).\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '67152'",
-        "vélo . électrique"
+        "vélo . neuf",
+        {
+          "une de ces conditions": [
+            "vélo . cargo",
+            "vélo . électrique"
+          ]
+        }
       ]
     },
     "variations": [
       {
-        "si": "ménage imposable = non",
-        "alors": "200€"
+        "si": "revenu fiscal de référence <= 6385 €/an",
+        "alors": "250€"
       },
       {
-        "si": "revenu fiscal de référence <= 750 €/mois",
-        "alors": "150€"
+        "si": "revenu fiscal de référence <= 14089 €/an",
+        "alors": "200€"
       },
       {
         "sinon": "100€"
@@ -1869,55 +1884,49 @@
     ],
     "lien": "https://www.geispolsheim.fr/fr/subventions-transport-et-velo-a-assistance-electrique"
   },
-  "aides . hangenbieten": {
-    "remplace": "commune",
-    "titre": "Ville de Hangenbieten",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . code insee = '67182'",
-        "vélo . électrique"
-      ]
-    },
-    "variations": [
-      {
-        "si": "revenu fiscal de référence <= 560 €/mois",
-        "alors": "120€"
-      },
-      {
-        "si": "revenu fiscal de référence <= 764 €/mois",
-        "alors": "100€"
-      },
-      {
-        "sinon": "80€"
-      }
-    ],
-    "lien": "https://hangenbieten.fr/wp-content/uploads/2021/03/SKM_C30821031516140.pdf#page=4"
-  },
   "aides . eschau": {
     "remplace": "commune",
-    "titre": "Ville d'Eschau",
-    "applicable si": "localisation . code insee = '67131'",
-    "variations": [
-      {
-        "si": "vélo . cargo",
-        "alors": "200€"
-      },
-      {
-        "si": "vélo . électrique",
-        "alors": "100€"
-      },
-      {
-        "sinon": "0€"
-      }
-    ],
+    "titre": "Commune d'Eschau",
+    "description": "Subvention pour l'achat d'un vélo neuf à assistance électrique, d'un vélo\ncargo/adapté (électrique ou non) ainsi que de remorque pour cycles.\n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . code insee = '67131'",
+        "vélo . neuf",
+        {
+          "une de ces conditions": [
+            "vélo . cargo",
+            "vélo . adapté",
+            "vélo . électrique"
+          ]
+        }
+      ]
+    },
+    "valeur": {
+      "variations": [
+        {
+          "si": "vélo . adapté",
+          "alors": "200€"
+        },
+        {
+          "si": "vélo . cargo",
+          "alors": "200€"
+        },
+        {
+          "si": "vélo . électrique",
+          "alors": "100€"
+        }
+      ]
+    },
     "lien": "https://www.eschau.fr/cadre-de-vie/transport-deplacements/"
   },
   "aides . eckbolsheim": {
     "remplace": "commune",
     "titre": "Ville d'Eckbolsheim",
+    "description": "La commune d'Eckbolsheim vous propose d'obtenir une aide de 10% du prix\nd'achat de votre vélo à assistance électrique (VAE) dans la limite de 100€.\nAttention : l'obtention de cette subvention est possible jusqu'à la fin de\nl'année 2024, elle ne sera plus versée à partir du 1er janvier 2025.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '67118'",
+        "vélo . neuf",
         "vélo . électrique"
       ]
     },
@@ -1928,55 +1937,25 @@
   "aides . ried de marckolsheim": {
     "remplace": "intercommunalité",
     "titre": "Communauté de Communes du Ried de Marckolsheim",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . epci = 'CC du Ried de Marckolsheim'",
-        "vélo . électrique ou mécanique"
-      ]
-    },
+    "description": "La Communauté de Communes du Ried de Marckolsheim propose une aide à\nl'achat pour vélo de tout type (neuf ou d'occasion). Cette aide est de 75€\npour l'achat d'un vélo acheté chez un revendeur situé sur le territoire du\nPETR Sélestat – Alsace Centrale, 50€ sinon.\n",
+    "applicable si": "localisation . epci = 'CC du Ried de Marckolsheim'",
     "valeur": "75€",
-    "lien": "https://selestat-alsace-centrale.fr/beneficier-dune-prime-a-lachat-dun-velo/"
+    "plafond": "vélo . prix",
+    "lien": "https://www.ried-marckolsheim.fr/actualites/nouveau-prime-velo?highlight=WyJhaWRlIl0="
   },
   "aides . vallée de villé": {
     "remplace": "intercommunalité",
     "titre": "Communauté de communes de la Vallée de Villé",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . epci = 'CC de la Vallée de Villé'",
-        "vélo . électrique ou mécanique"
-      ]
-    },
+    "description": "La Communauté de Communes vous aide à hauteur de 50€ pour l'achat de votre\nvélo neuf ou d'occasion, chez un revendeur situé sur le territoire du PETR\nSélestat Alsace Central.\n",
+    "applicable si": "localisation . epci = 'CC de la Vallée de Villé'",
     "valeur": "50€",
+    "plaond": "vélo . prix",
     "lien": "https://cdc.valleedeville.fr/service-aux-habitants/beneficier-de-la-prime-velo/"
-  },
-  "aides . marckolsheim": {
-    "remplace": "commune",
-    "titre": "Ville de Marckolsheim",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . code insee = '67281'",
-        "vélo . électrique ou mécanique"
-      ]
-    },
-    "valeur": "50€",
-    "lien": "https://www.marckolsheim.fr/Votre-ville/Informations-pratiques/Subvention-achat-velo.html"
-  },
-  "aides . pays de saverne": {
-    "remplace": "intercommunalité",
-    "titre": "Pays de Saverne",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . epci = 'CC du Pays de Saverne'",
-        "vélo . électrique"
-      ]
-    },
-    "valeur": "100€",
-    "plafond": "10% * vélo . prix",
-    "lien": "http://www.paysdesaverne.fr/Actions/VelosElec/2019-04-VAE-velo-saverne.htm"
   },
   "aides . val d'argent": {
     "remplace": "intercommunalité",
     "titre": "Communauté de Communes du Val d'Argent",
+    "description": "La Communauté de Communes du Val d'Argent propose une aide à l'achat pour\nvélo de tout type (neuf ou d'occasion). Cette aide est de 75€ pour l'achat\nd'un vélo acheté chez un revendeur situé sur le territoire du PETR Sélestat\n– Alsace Centrale, 50€ sinon.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = \"CC du Val d'Argent\"",
@@ -1984,96 +1963,137 @@
       ]
     },
     "valeur": "75€",
-    "lien": "https://www.valdargent.com/index.php/environnement-cadre-vie/prime-velo"
+    "plafond": "vélo . prix",
+    "lien": "https://www.valdargent.com/index.php/environnement-cadre-vie/mobilites/prime-velo"
+  },
+  "aides . selestat": {
+    "remplace": "intercommunalité",
+    "titre": "Communauté de Communes de Sélestat",
+    "description": "La Communauté de Communes de Sélestat propose une aide à l'achat pour vélo\nde tout type (neuf ou d'occasion). Cette aide est de 75€ pour l'achat d'un\nvélo acheté chez un revendeur situé sur le territoire du PETR Sélestat –\nAlsace Centrale, 50€ sinon.\n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . epci = 'CC de Sélestat et Environs'",
+        "vélo . électrique ou mécanique"
+      ]
+    },
+    "valeur": "75€",
+    "plafond": "vélo . prix",
+    "lien": "https://www.cc-selestat.fr/economie/prime-velo.html"
+  },
+  "aides . pays de saverne": {
+    "remplace": "intercommunalité",
+    "titre": "Pays de Saverne",
+    "description": "La prime de la collectivité locale est de 10% du prix d'achat du vélo\nplafonnée à 100€ pour les ménages dont le revenu fiscal est inférieur ou\négal à 15 400 €.\n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . epci = 'CC du Pays de Saverne'",
+        "vélo . électrique",
+        "revenu fiscal de référence <= 15400 €/an"
+      ]
+    },
+    "valeur": "100€",
+    "plafond": "10% * vélo . prix",
+    "lien": "http://www.paysdesaverne.fr/Actions/VelosElec/2019-04-VAE-velo-saverne.htm"
   },
   "aides . illkirch": {
     "remplace": "commune",
     "titre": "Ville de Illkirch-Graffenstaden",
+    "description": "La Ville d'Illkirch-Graffenstaden s'engage à vos côtés en subventionnant\njusqu'à 200€ votre achat de Vélo à Assistance électrique (VAE) neuf ou\nd'occasion ou votre transformation de vélo en VAE. (Renouvelé jusqu'au 31\ndécembre 2024).\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '67218'",
-        "vélo . électrique"
+        {
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . motorisation"
+          ]
+        }
       ]
     },
-    "variations": [
-      {
-        "si": "vélo . prix <= 600€",
-        "alors": "50€"
-      },
-      {
-        "si": "vélo . prix <= 800€",
-        "alors": "100€"
-      },
-      {
-        "sinon": "200€"
-      }
-    ],
+    "valeur": {
+      "variations": [
+        {
+          "si": "vélo . motorisation",
+          "alors": "200€"
+        },
+        {
+          "si": "vélo . prix <= 800€",
+          "alors": "100€"
+        },
+        {
+          "sinon": "200€"
+        }
+      ]
+    },
     "lien": "http://www.illkirch.eu/aide-a-lachat-dun-velo-a-assistance-electrique/"
-  },
-  "aides . plobsheim": {
-    "remplace": "commune",
-    "titre": "Ville de Plobsheim",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . code insee = '67378'",
-        "vélo . électrique"
-      ]
-    },
-    "valeur": "25% * vélo . prix",
-    "plafond": "100€",
-    "lien": "https://www.plobsheim.fr/subvention-pour-lachat-dun-velo/"
   },
   "aides . vendenheim": {
     "remplace": "commune",
-    "titre": "Ville de Vendenheim",
-    "applicable si": "localisation . code insee = '67506'",
-    "variations": [
-      {
-        "si": "vélo . électrique",
-        "alors": {
-          "variations": [
-            {
-              "si": "revenu fiscal de référence <= 500 €/mois",
-              "alors": "300€"
-            },
-            {
-              "si": "revenu fiscal de référence <= 700 €/mois",
-              "alors": "275€"
-            },
-            {
-              "sinon": "250€"
-            }
-          ]
+    "titre": "Commune de Vendenheim",
+    "description": "La commune de Vendenheim propose une aide financière pour l'achat d'un vélo\nneuf.\n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . code insee = '67506'",
+        "vélo . neuf",
+        "vélo . électrique ou mécanique"
+      ]
+    },
+    "valeur": {
+      "variations": [
+        {
+          "si": "vélo . électrique",
+          "alors": {
+            "variations": [
+              {
+                "si": "revenu fiscal de référence <= 500 €/mois",
+                "alors": "300€"
+              },
+              {
+                "si": "revenu fiscal de référence <= 700 €/mois",
+                "alors": "275€"
+              },
+              {
+                "sinon": "250€"
+              }
+            ]
+          }
+        },
+        {
+          "si": "vélo . mécanique",
+          "alors": {
+            "variations": [
+              {
+                "si": "revenu fiscal de référence <= 500 €/mois",
+                "alors": "100€"
+              },
+              {
+                "si": "revenu fiscal de référence <= 700 €/mois",
+                "alors": "90€"
+              },
+              {
+                "sinon": "80€"
+              }
+            ]
+          }
+        },
+        {
+          "sinon": "0€"
         }
-      },
-      {
-        "si": "vélo . mécanique",
-        "alors": {
-          "variations": [
-            {
-              "si": "revenu fiscal de référence <= 500 €/mois",
-              "alors": "100€"
-            },
-            {
-              "si": "revenu fiscal de référence <= 700 €/mois",
-              "alors": "90€"
-            },
-            {
-              "sinon": "80€"
-            }
-          ]
-        }
-      },
-      {
-        "sinon": "0€"
-      }
-    ],
-    "lien": "https://vendenheim.fr/aides-et-subventions/"
+      ]
+    },
+    "lien": "https://vendenheim.fr/demarches/subventions/"
   },
   "aides . albi": {
     "remplace": "intercommunalité",
-    "titre": "Grand Albigeois",
-    "applicable si": "localisation . epci = \"CA de l'Albigeois (C2A)\"",
+    "titre": "Communauté d'Agglomération de l'Albigeois",
+    "description": "Aide à l'achat d'un vélo neuf pour les habitant·es d'une des 16 communes de\nl'agglomération albigeoise. Cette aide est couplée à la réalisation d'un\nmini-stage Circuler en ville. D'une durée de 3h, ce stage permet, en\nsituation de circulation, de bénéficier des conseils d'un moniteur diplômé.\n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . epci = \"CA de l'Albigeois (C2A)\"",
+        "vélo . neuf",
+        "vélo . électrique ou mécanique"
+      ]
+    },
     "valeur": "25% * vélo . prix",
     "plafond": {
       "variations": [
@@ -2099,31 +2119,63 @@
   "aides . toulon": {
     "remplace": "intercommunalité",
     "titre": "Métropole Toulon-Provence-Méditerranée",
-    "description": "Aide à l'achat d'un vélo à assistance électrique",
+    "description": "Aide à l'achat d'un Vélo à Assistance Électrique (VAE) neuf ou d'un kit\nélectrique vélo pour les habitant·es de Toulon Provence Méditerranée.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'Métropole Toulon-Provence-Méditerranée'",
-        "vélo . électrique"
+        "vélo . neuf",
+        {
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . motorisation"
+          ]
+        }
       ]
     },
     "valeur": "25% * vélo . prix",
-    "plafond": "250 €",
+    "plafond": {
+      "variations": [
+        {
+          "si": "vélo . électrique",
+          "alors": "250 €"
+        },
+        {
+          "si": "vélo . motorisation",
+          "alors": "150 €"
+        },
+        {
+          "sinon": "0 €"
+        }
+      ]
+    },
     "lien": "https://metropoletpm.fr/velo-assistance-electrique"
   },
   "aides . provence verte": {
     "remplace": "intercommunalité",
     "titre": "Agglomération Provence Verte",
-    "applicable si": "localisation . epci = 'CA de la Provence Verte'",
+    "description": "Aide intercommunale est prévue pour l'année 2024 pour tout achat de vélo\nneuf (type VTC) à assistance électrique ou non.\n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . epci = 'CA de la Provence Verte'",
+        "vélo . neuf",
+        {
+          "une de ces conditions": [
+            "vélo . mécanique simple",
+            "vélo . électrique simple"
+          ]
+        }
+      ]
+    },
     "variations": [
       {
-        "si": "vélo . électrique",
+        "si": "vélo . électrique simple",
         "alors": {
           "valeur": "30% * vélo . prix",
-          "plafond": "300€"
+          "plafond": "250€"
         }
       },
       {
-        "si": "vélo . mécanique",
+        "si": "vélo . mécanique simple",
         "alors": {
           "valeur": "80% * vélo . prix",
           "plafond": "100€"
@@ -2138,10 +2190,13 @@
   "aides . bretagne romantique": {
     "remplace": "intercommunalité",
     "titre": "Communauté de communes Bretagne romantique",
+    "description": "La Communauté de communes Bretagne romantique alloue une aide de 100€ pour\nl'achat d'un vélo à assistance électrique neuf sous condition de\nressources.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CC Bretagne Romantique'",
-        "vélo . électrique"
+        "vélo . neuf",
+        "vélo . électrique",
+        "revenu fiscal de référence <= 15400 €/an"
       ]
     },
     "valeur": "100€",
@@ -2151,24 +2206,29 @@
   "aides . fougères": {
     "remplace": "intercommunalité",
     "titre": "Fougères Agglomération",
+    "description": "Fougères Agglomération accorde une aide à 20% plafonnée à 200 € pour aider\nles habitant·es qui souhaitent faire l'acquisition d'un vélo à assistance\nélectrique neuf.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CA Fougères Agglomération'",
         "vélo . électrique",
-        "revenu fiscal de référence <= première tranche IR"
+        "vélo . neuf",
+        "revenu fiscal de référence <= 15400 €/an"
       ]
     },
-    "valeur": "200 €",
-    "plafond": "20% * vélo . prix",
-    "lien": "https://fougeres-agglo.bzh/habitat-mobilites-transports/mobilite/un-coup-de-pouce-pour-acheter-un-velo/"
+    "valeur": "20% * vélo . prix",
+    "plafond": "200 €",
+    "lien": "https://fougeres-agglo.bzh/mobilites-transports/mobilites-durables-et-alternatives/les-aides-financieres-pour-lachat-dun-velo-electrique/"
   },
   "aides . quimper": {
     "remplace": "intercommunalité",
     "titre": "Quimper Bretagne Occidentale",
+    "description": "Aide pour l'achat d'un vélo à assistance électrique neuf.",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CA Quimper Bretagne Occidentale'",
-        "vélo . électrique"
+        "vélo . électrique",
+        "vélo . neuf",
+        "revenu fiscal de référence <= 26350 €/an"
       ]
     },
     "variations": [
@@ -2187,14 +2247,10 @@
         }
       },
       {
-        "si": "revenu fiscal de référence <= 26350 €/an",
-        "alors": {
+        "sinon": {
           "valeur": "20% * vélo . prix",
           "plafond": "200€"
         }
-      },
-      {
-        "sinon": "0€"
       }
     ],
     "lien": "https://www.quimper-bretagne-occidentale.bzh/1763-deplacements-a-velo.htm"
@@ -2202,37 +2258,62 @@
   "aides . quimperlé": {
     "remplace": "intercommunalité",
     "titre": "Quimperlé Communauté",
+    "description": "Aide à l'achat d'un vélo à assistance électrique neuf ou d'occasion, ainsi\nque d'un kit d'éléctrification.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CA Quimperlé Communauté'",
-        "vélo . électrique"
+        "revenu fiscal de référence <= 26446 €/an",
+        {
+          "une de ces conditions": [
+            {
+              "toutes ces conditions": [
+                "vélo . cargo",
+                "vélo . prix <= 5000€"
+              ]
+            },
+            {
+              "toutes ces conditions": [
+                "vélo . électrique",
+                "vélo . occasion",
+                "vélo . prix <= 2000€"
+              ]
+            },
+            {
+              "toutes ces conditions": [
+                "vélo . motorisation",
+                "vélo . prix <= 1000€"
+              ]
+            },
+            {
+              "toutes ces conditions": [
+                "vélo . électrique",
+                "vélo . neuf",
+                "vélo . prix <= 3000€"
+              ]
+            }
+          ]
+        }
       ]
     },
     "valeur": "25% * vélo . prix",
     "plafond": "150€",
     "lien": "https://www.quimperle-communaute.bzh/vos-demarches/deplacements/aide-a-lachat-de-velo-electrique/"
   },
-  "aides . laon": {
-    "remplace": "intercommunalité",
-    "titre": "Pays de Laon",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . epci = 'CA du Pays de Laon'",
-        "vélo . électrique"
-      ]
-    },
-    "valeur": "300€",
-    "plafond": "vélo . prix",
-    "lien": "http://www.ca-paysdelaon.fr/Aide_VAE/index.html"
-  },
   "aides . caen": {
     "remplace": "commune",
     "titre": "Ville de Caen",
+    "description": "La Ville de Caen propose une aide à l'achat sous-conditions de ressources\npour l'achat d'un vélo à assistance électrique neuf ou d'un kit.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '14118'",
-        "vélo . électrique",
-        "revenu fiscal de référence <= 13489 €/an"
+        "revenu fiscal de référence <= 15400 €/an",
+        "vélo . neuf",
+        {
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . motorisation"
+          ]
+        }
       ]
     },
     "valeur": {
@@ -2249,47 +2330,94 @@
     "plafond": "vélo . prix",
     "lien": "https://caen.fr/velo-pied"
   },
+  "aides . caen jeune": {
+    "remplace": "commune",
+    "titre": "Ville de Caen",
+    "description": "La Ville de Caen propose une aide à l'achat d'un vélo classique d'occasion\nde 50 euros sous conditions de ressources pour les jeunes de 18 à 25 ans.\n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . code insee = '14118'",
+        "revenu fiscal de référence <= 15400 €/an",
+        "demandeur . âge . de 18 à 25 ans",
+        "vélo . mécanique simple",
+        "vélo . occasion"
+      ]
+    },
+    "valeur": "50€",
+    "plafond": "vélo . prix",
+    "lien": "https://caen.fr/velo-pied"
+  },
+  "aides . caen vélo adapté": {
+    "remplace": "commune",
+    "titre": "Ville de Caen",
+    "description": "La Ville de Caen propose une aide à l'achat pour les personnes en situation\nde handicap pour l'achat d'un vélo neuf adapté à une situation de handicap\nou d'un kit d'électrification.\n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . code insee = '14118'",
+        "vélo . neuf",
+        "demandeur . en situation de handicap",
+        {
+          "une de ces conditions": [
+            "vélo . adapté",
+            "vélo . motorisation"
+          ]
+        }
+      ]
+    },
+    "valeur": "30% * vélo . prix",
+    "plafond": "400€",
+    "lien": "https://caen.fr/velo-pied"
+  },
   "aides . caen la mer": {
     "remplace": "intercommunalité",
     "titre": "Caen la mer communauté urbaine",
+    "description": "Pour tout projet d'achat d'un VAE neuf déjà soutenu par les communes\nmembres, et sous conditions, la Communauté urbaine financera 50 €\nsupplémentaires.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CU Caen la Mer'",
+        "demandeur . âge . majeur",
+        "revenu fiscal de référence <= 13489 €/an",
         "aides . commune > 0",
         "vélo . électrique"
       ]
     },
     "valeur": "50€",
-    "lien": "https://caenlamer.fr/actualites/aide-de-caen-la-mer-pour-lachat-de-velo-assistance-electrique"
+    "lien": "https://caenlamer.fr/aide-achat-velo-assistance-electrique"
   },
   "aides . thue et mue": {
     "remplace": "commune",
     "titre": "Ville de Thue et Mue",
+    "description": "La commune de Thue et Mue propose une aide à l'achat d'un vélo à assistance\nélectrique neuf pour les habitant·es de la commune.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '14098'",
-        "vélo . électrique"
+        "demandeur . âge . majeur",
+        "vélo . électrique",
+        "vélo . neuf"
       ]
     },
-    "variations": [
-      {
-        "si": "revenu fiscal de référence <= 13489 €/an",
-        "alors": "150€"
-      },
-      {
-        "sinon": "100€"
-      }
-    ],
-    "lien": "https://www.thueetmue.fr/sites/default/files/2022-08/Formulaire%20de%20demande%20aide%20achat%20v%C3%A9lo.pdf"
+    "valeur": {
+      "variations": [
+        {
+          "si": "revenu fiscal de référence <= 13489 €/an",
+          "alors": "150€"
+        },
+        {
+          "sinon": "100€"
+        }
+      ]
+    },
+    "lien": "https://www.thueetmue.fr/aide-lachat-dun-velo-electrique"
   },
   "aides . hermanville-sur-mer": {
     "remplace": "commune",
     "titre": "Ville d'Hermanville-sur-Mer",
+    "description": "Le conseil municipal a voté un dispositif d'aide pour l'achat d'un vélo à\nassistance électrique (VAE). Cette aide plafonnée à 250 € permet également\nde bénéficier dans des conditions identiques d'une contribution\nsupplémentaire de Caen la Mer d'un montant de 50 €. Pour ces deux aides un\nseul dossier est à déposer en mairie.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '14325'",
         "vélo . électrique",
-        "revenu fiscal de référence <= première tranche IR"
+        "revenu fiscal de référence <= 14089 €/an"
       ]
     },
     "valeur": "25% * vélo . prix",
@@ -2298,128 +2426,150 @@
   },
   "aides . carpiquet": {
     "remplace": "commune",
-    "titre": "Ville de Carpiquet",
+    "titre": "Commune de Carpiquet",
+    "description": "Aide financière vélo et trottinette électrique (neuf).",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '14137'",
-        "vélo . électrique"
+        "vélo . électrique",
+        "vélo . neuf"
       ]
     },
     "valeur": "150€",
-    "lien": "https://www.carpiquet.fr/wp-content/uploads/2022/12/CONVENTION-2023-AIDE-FINANCIERE-ACQUISITION-VELO-ELECTRIQUE-ET-TROTTINETTE-ELECTRIQUE.pdf"
-  },
-  "aides . herouville": {
-    "remplace": "commune",
-    "titre": "Ville d'Hérouville Saint-Clair",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . code insee = '14327'",
-        "vélo . électrique",
-        "vélo . prix <= 2500€"
-      ]
-    },
-    "valeur": "100€",
-    "lien": "https://www.herouville.net/services/cadre-de-vie-environnement/vos-deplacements-doux"
+    "lien": "https://www.carpiquet.fr/wp-content/uploads/2024/01/CONVENTION-AIDE-FINANCIERE-VAE-ET-TROTTINETTE-ELECTRIQUE-ANNEE-2024.pdf"
   },
   "aides . ifs": {
     "remplace": "commune",
     "titre": "Ville d'Ifs",
+    "description": "La Ville d'Ifs propose à ses habitant·es une subvention correspondant à 10%\ndu montant d'achat d'un vélo à assistance électrique neuf dans un plafond\nde 150€.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '14341'",
-        "vélo . électrique",
         "revenu fiscal de référence <= 24000€/an",
+        "vélo . neuf",
+        "vélo . électrique",
         "vélo . prix <= 2500€"
       ]
     },
     "valeur": "10% * vélo . prix",
-    "plafond": "100€",
-    "lien": "https://ville-ifs.fr/storage/app/uploads/public/5b3/0b5/eed/5b30b5eed183e270384162.pdf"
+    "plafond": "150€",
+    "lien": "https://ville-ifs.fr/storage/app/media/DOSSIER%20SUBVENTION%20VAE-2023.pdf"
   },
   "aides . mondeville": {
     "remplace": "commune",
     "titre": "Ville de Mondeville",
-    "applicable si": "localisation . code insee = '14437'",
-    "variations": [
-      {
-        "si": "vélo . électrique",
-        "alors": {
-          "grille": {
-            "assiette": "revenu fiscal de référence",
-            "tranches": [
+    "description": "Aide DYNAMO La prime concerne l'achat d'un Vélo à Assistance Électrique\n(VAE), d'un vélo-cargo à assistance électrique et même d'un vélo classique\n! L'achat doit se faire chez un vélociste de Caen La Mer. \n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . code insee = '14437'",
+        "revenu fiscal de référence <= 19565 €/an"
+      ]
+    },
+    "valeur": {
+      "variations": [
+        {
+          "si": "revenu fiscal de référence <= 7740 €/an",
+          "alors": {
+            "variations": [
               {
-                "plafond": "620 €/mois",
-                "montant": "300€"
+                "si": "vélo . cargo",
+                "alors": "400€"
               },
               {
-                "plafond": "920 €/mois",
-                "montant": "200€"
+                "si": "vélo . électrique",
+                "alors": "300€"
               },
               {
-                "plafond": "1200 €/mois",
-                "montant": "100€"
+                "si": "vélo . mécanique simple",
+                "alors": "50€"
+              }
+            ]
+          }
+        },
+        {
+          "si": "revenu fiscal de référence <= 11040 €/an",
+          "alors": {
+            "variations": [
+              {
+                "si": "vélo . cargo",
+                "alors": "300€"
+              },
+              {
+                "si": "vélo . électrique",
+                "alors": "200€"
+              },
+              {
+                "sinon": "0€"
+              }
+            ]
+          }
+        },
+        {
+          "si": "revenu fiscal de référence <= 13489 €/an",
+          "alors": {
+            "variations": [
+              {
+                "si": "vélo . cargo",
+                "alors": "200€"
+              },
+              {
+                "si": "vélo . électrique",
+                "alors": "120€"
+              },
+              {
+                "sinon": "0€"
+              }
+            ]
+          }
+        },
+        {
+          "sinon": {
+            "variations": [
+              {
+                "si": "vélo . cargo",
+                "alors": "150€"
+              },
+              {
+                "si": "vélo . électrique",
+                "alors": "80€"
+              },
+              {
+                "sinon": "0€"
               }
             ]
           }
         }
-      },
-      {
-        "si": "vélo . cargo",
-        "alors": {
-          "grille": {
-            "assiette": "revenu fiscal de référence",
-            "tranches": [
-              {
-                "plafond": "620 €/mois",
-                "montant": "400€"
-              },
-              {
-                "plafond": "920 €/mois",
-                "montant": "300€"
-              },
-              {
-                "plafond": "1200 €/mois",
-                "montant": "200€"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "si": "vélo . mécanique",
-        "alors": {
-          "grille": {
-            "assiette": "revenu fiscal de référence",
-            "tranches": [
-              {
-                "plafond": "620 €/mois",
-                "montant": "50€"
-              }
-            ]
-          }
-        }
-      }
-    ],
-    "lien": "http://www.mondeville.fr/vivre_a_mondeville/prime_a_l_achat_d_un_velo.html"
+      ]
+    },
+    "lien": "https://www.mondeville.fr/mes-demarches/besoin-dune-aide/prime-velo-la-dynamo/"
   },
   "aides . flers": {
     "remplace": "intercommunalité",
     "titre": "Flers Agglo",
+    "description": "Aide à l'achat de vélos (classique ou électrique, neuf ou occasion)\ndestinée aux habitants de Flers Agglo. L'aide attribuée est de 30 % du prix\nde la facture plafonnée à 200 €.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CA Flers Agglo'",
-        "vélo . électrique",
-        "revenu fiscal de référence <= première tranche IR"
+        "vélo . électrique ou mécanique",
+        "demandeur . âge . majeur",
+        "revenu fiscal de référence <= 20000 €/an"
       ]
     },
     "valeur": "30% * vélo . prix",
     "plafond": "200€",
-    "lien": "https://www.flers-agglo.fr/mobilite-aide-a-lacquisition-de-velos/"
+    "lien": "https://www.flers-agglo.fr/mon-quotidien/mobilite/se-deplacer-a-velo/aide-acquisition-velos/"
   },
   "aides . dreux": {
     "remplace": "commune",
     "titre": "Ville de Dreux",
-    "applicable si": "localisation . code insee = '28134'",
+    "description": "La prime sera déduite directement lors de l'achat du vélo chez un des 3\npartenaires de l'opération (Intersport Dreux, Decathlon Dreux, Cycles Pena)\nsur présentation d'un courrier d'éligibilité transmis par mail au\nbénéficiaire après validation du dossier de demande. \n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . code insee = '28134'",
+        "vélo . électrique ou mécanique",
+        "demandeur . âge . majeur"
+      ]
+    },
     "valeur": "25% * vélo . prix",
     "plafond": {
       "variations": [
@@ -2445,9 +2595,11 @@
   "aides . val-au-perche": {
     "remplace": "commune",
     "titre": "Ville de Val-au-Perche",
+    "description": "La commune de Val-au-Perche propose une aide à l'achat d'un vélo à\nassistance électrique de 50€ sans condition de ressources.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '61484'",
+        "vélo . neuf",
         "vélo . électrique"
       ]
     },
@@ -2457,6 +2609,7 @@
   "aides . ronchin": {
     "remplace": "commune",
     "titre": "Ville de Ronchin",
+    "description": "La prime s'applique pour l'achat d'un vélo adulte, neuf ou d'occasion vendu\npar des professionnels, et équipé d'un système d'éclairage homologué, et\nincluant éventuellement l'achat d'un antivol de bonne résistance. Cette\naide municipale réservée aux Ronchinois est fixée à 25% du prix\nd'acquisition avec un plafond de 150 € pour les vélos sans assistance\nélectrique et de 300 € pour les vélos avec assistance électrique ou type\ncargo.\n",
     "applicable si": "localisation . code insee = '59507'",
     "valeur": "25% * vélo . prix",
     "plafond": {
@@ -2479,7 +2632,15 @@
   "aides . wasquehal": {
     "remplace": "commune",
     "titre": "Ville de Wasquehal",
-    "applicable si": "localisation . code insee = '59646'",
+    "description": "La Ville de Wasquehal aide les habitants à acquérir un moyen de locomotion\nde type vélo ou trottinette, électrique ou pas, ainsi que des équipements\nconnexes (vêtements de pluie, équipements de sécurité ou destinés aux\nenfants…) par le biais d'une aide financière.\n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . code insee = '59646'",
+        "vélo . neuf",
+        "vélo . électrique ou mécanique",
+        "demandeur . âge . majeur"
+      ]
+    },
     "valeur": "25% * vélo . prix",
     "plafond": {
       "variations": [
@@ -2501,9 +2662,11 @@
   "aides . belfort": {
     "remplace": "commune",
     "titre": "Ville de Belfort",
+    "description": "La Ville de Belfort propose une aide financière aux Belfortains à partir de\n18 ans sans conditions de ressources pour l'achat d'un vélo à assistance\nélectrique.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '90010'",
+        "demandeur . âge . majeur",
         "vélo . électrique"
       ]
     },
@@ -2518,33 +2681,17 @@
     ],
     "lien": "https://www.belfort.fr/cadre-de-vie/vie-quotidienne/aide-a-lachat-dun-velo-electrique"
   },
-  "aides . ouistreham": {
-    "remplace": "commune",
-    "titre": "Ouistreham Riva-Bella",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . code insee = '14488'",
-        "vélo . électrique"
-      ]
-    },
-    "variations": [
-      {
-        "si": "revenu fiscal de référence <= 21640 €/an",
-        "alors": "200€"
-      },
-      {
-        "sinon": "100€"
-      }
-    ],
-    "lien": "http://ouistreham-rivabella.fr/wp-content/uploads/2019/05/Dossier-de-subvention-velos.pdf"
-  },
   "aides . verson": {
     "remplace": "commune",
     "titre": "Ville de Verson",
+    "description": "Afin de favoriser les déplacements à vélo, la commission Espaces publics et\ncadre de vie a proposé la mise en place d'une « prime » vélo. L'aide est de\n250 € pour un vélo à assistance électrique et de 50 € pour un vélo\nclassique.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '14738'",
-        "revenu fiscal de référence <= 13489 €/an"
+        "demandeur . âge . majeur",
+        "revenu fiscal de référence <= 13489 €/an",
+        "vélo . neuf",
+        "vélo . électrique ou mécanique"
       ]
     },
     "variations": [
@@ -2560,14 +2707,17 @@
         "sinon": "0€"
       }
     ],
-    "lien": "http://www.ville-verson.fr/actualites/prime-velo/"
+    "lien": "https://www.ville-verson.fr/vie-pratique/prime-velo/"
   },
   "aides . saint-germain la blanche herbe": {
     "remplace": "commune",
     "titre": "Ville de Saint-Germain la Blanche Herbe",
+    "description": "Aide pour l'achat d'un vélo électrique neuf.",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '14587'",
+        "revenu fiscal de référence <= 15400 €/an",
+        "vélo . neuf",
         "vélo . électrique"
       ]
     },
@@ -2577,6 +2727,7 @@
   "aides . coeur de nacre": {
     "remplace": "intercommunalité",
     "titre": "Communauté de Communes Cœur de Nacre",
+    "description": "Aide pour l'achat d'un vélo à assistance électrique, neuf ou d'occasion.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CC Coeur de Nacre'",
@@ -2600,8 +2751,20 @@
   },
   "aides . trouville sur mer": {
     "remplace": "commune",
-    "titre": "Ville de Trouville-sur-Mer",
-    "applicable si": "localisation . code insee = '14715'",
+    "titre": "Commune de Trouville-sur-Mer",
+    "description": "Aide financière octroyée par la commune de Trouville-sur-Mer pour\nl'acquisition d'un vélo à assistance électrique ou d'un vélo cargo.\n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . code insee = '14715'",
+        "vélo . neuf",
+        {
+          "une de ces conditions": [
+            "vélo . cargo",
+            "vélo . électrique"
+          ]
+        }
+      ]
+    },
     "valeur": "30% * vélo . prix",
     "plafond": {
       "variations": [
@@ -2618,17 +2781,28 @@
         }
       ]
     },
-    "lien": "https://www.trouville.fr/wp-content/uploads/2021/04/Demande-Subvention-Ve%CC%81lo-5.pdf"
+    "lien": "https://www.trouville.fr/ma-ville/le-developpement-durable/aide-financiere-velo/"
   },
   "aides . deauville": {
     "remplace": "commune",
     "titre": "Ville de Deauville",
-    "applicable si": "localisation . code insee = '14220'",
+    "description": "Subvention pour l'acquisition d'un vélo neuf à assistance électrique, vélo\nà propulsion humaine, vélo cargo, vélo pliant pour les résidents\nDeauvillais (personnes physiques et morales) à usage personnel. Fin du\ndispositif le 30 novembre 2024 en attendant le renouvellement.\n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . code insee = '14220'",
+        "vélo . neuf"
+      ]
+    },
     "valeur": "30% * vélo . prix",
     "plafond": {
       "variations": [
         {
-          "si": "vélo . cargo",
+          "si": {
+            "une de ces conditions": [
+              "vélo . cargo",
+              "vélo . adapté"
+            ]
+          },
           "alors": "400€"
         },
         {
@@ -2648,7 +2822,7 @@
         }
       ]
     },
-    "lien": "https://www.mairie-deauville.fr/ville/mobilite-en-2022-la-ville-renouvelle-laide-lachat-de-votre-velo"
+    "lien": "https://www.mairie-deauville.fr/ville/mobilite-la-ville-renouvelle-laide-lachat-de-votre-velo"
   },
   "aides . louvigny": {
     "remplace": "commune",
@@ -2656,7 +2830,18 @@
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '14383'",
-        "vélo . électrique ou mécanique"
+        "revenu fiscal de référence <= 13489 €/an",
+        {
+          "une de ces conditions": [
+            "vélo . mécanique simple",
+            {
+              "toutes ces conditions": [
+                "vélo . électrique",
+                "vélo . neuf"
+              ]
+            }
+          ]
+        }
       ]
     },
     "valeur": "50€",
@@ -2665,9 +2850,12 @@
   "aides . honfleur": {
     "remplace": "intercommunalité",
     "titre": "Communauté de communes Honfleur-Beuzeville",
+    "description": "Subvention pour l'achat d'un vélo à assistance électrique (VAE). Cette\nprime s'adresse aux habitants des communes de la CCPHB, de plus de 18 ans. \n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CC du Pays de Honfleur-Beuzeville'",
+        "revenu fiscal de référence <= 2000 €/mois",
+        "demandeur . âge . majeur",
         "vélo . électrique"
       ]
     },
@@ -2675,26 +2863,15 @@
       {
         "si": "revenu fiscal de référence <= 1000 €/mois",
         "alors": {
-          "valeur": "25% * vélo . prix",
-          "plafond": "350€"
+          "valeur": "15% * vélo . prix",
+          "plafond": "190€"
         }
       },
       {
-        "si": "revenu fiscal de référence <= 1800 €/mois",
-        "alors": {
-          "valeur": "20% * vélo . prix",
-          "plafond": "250€"
-        }
-      },
-      {
-        "si": "revenu fiscal de référence <= 3000 €/mois",
-        "alors": {
+        "sinon": {
           "valeur": "10% * vélo . prix",
-          "plafond": "100€"
+          "plafond": "120€"
         }
-      },
-      {
-        "sinon": "0€"
       }
     ],
     "lien": "https://www.ccphb.fr/amenager-et-developper/grands-projets/plan-velo/"
@@ -2702,10 +2879,12 @@
   "aides . istres": {
     "remplace": "commune",
     "titre": "Ville d'Istres",
+    "description": "Aide pour l'achat d'un vélo à assistance électrique neuf.",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '13047'",
-        "vélo . électrique"
+        "vélo . électrique",
+        "vélo . neuf"
       ]
     },
     "valeur": "150€",
@@ -2715,10 +2894,13 @@
   "aides . montbéliard agglo": {
     "remplace": "intercommunalité",
     "titre": "Pays de Montbéliard Agglomération",
+    "description": "L'aide de Pays de Montbéliard Agglomération pour l'achat d'un vélo à\nassistance électrique est de 100€.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CA Pays de Montbéliard Agglomération'",
-        "vélo . électrique"
+        "vélo . électrique",
+        "vélo . prix <= 3000€",
+        "revenu fiscal de référence <= 1800 €/mois"
       ]
     },
     "valeur": "100€",
@@ -2727,9 +2909,11 @@
   "aides . montbéliard": {
     "remplace": "commune",
     "titre": "Ville de Montbéliard",
+    "description": "La Ville de Montbéliard propose une aide financière pour l'achat d'un vélo\nà assistance électrique neuf.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '25388'",
+        "vélo . neuf",
         "vélo . électrique"
       ]
     },
@@ -2739,22 +2923,48 @@
   "aides . vienne gartempe": {
     "remplace": "intercommunalité",
     "titre": "Vienne et Gartempe Communauté de communes",
+    "description": "Aide à l'achat d'un vélo à assistance électrique jusqu'au 31 décembre 2024.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CC Vienne et Gartempe'",
+        "revenu fiscal de référence <= 15400 €/an",
         "vélo . électrique"
       ]
     },
-    "valeur": "300 €",
-    "lien": "https://www.vienneetgartempe.fr/vivre/aide-a-lachat-dun-velo-a-assistance-electrique-vae/"
+    "valeur": {
+      "variations": [
+        {
+          "si": "demandeur . âge . majeur",
+          "alors": "300 €"
+        },
+        {
+          "si": "titulaire d'un contrat d'alternance ou de stage",
+          "alors": "400 €"
+        },
+        {
+          "sinon": "0 €"
+        }
+      ]
+    },
+    "lien": "https://www.vienneetgartempe.fr/vivre/aide-a-lachat-dun-velo-a-assistance-electrique-vae/",
+    "avec": {
+      "titulaire d'un contrat d'alternance ou de stage": {
+        "applicable si": "demandeur . âge . mineur",
+        "question": "Êtes-vous titulaires d'un contrat d'alternance ou d'une convention de\nstage rémunéré ?\n",
+        "par défaut": "non"
+      }
+    }
   },
   "aides . vienne condrieu": {
     "remplace": "intercommunalité",
     "titre": "Vienne Condrieu Agglomération",
+    "description": "Vienne Condrieu Agglomération accompagne les usagers qui s'équipent d'un\nVélo à Assistance Électrique grâce à la mise en place d'un dispositif\nd'aide financière de 150 € pour l'achat d'un VAE (les VTT et vélos de\nroutes sont exclus).\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CA Vienne Condrieu'",
-        "vélo . électrique"
+        "demandeur . âge . majeur",
+        "vélo . électrique",
+        "vélo . neuf"
       ]
     },
     "valeur": "150€",
@@ -2763,10 +2973,14 @@
   "aides . pont-de-beauvoisin": {
     "remplace": "commune",
     "titre": "Ville de Pont-de-Beauvoisin",
+    "description": "Aide à l'achat d'un vélo électrique (hors VTT) neuf dans l'un des magasins\nspécialisés (Vals du Dauphiné et Val Guiers).\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '38315'",
-        "vélo . électrique"
+        "demandeur . âge . majeur",
+        "revenu fiscal de référence <= 30000 €/an",
+        "vélo . électrique",
+        "vélo . neuf"
       ]
     },
     "valeur": "100€",
@@ -2775,16 +2989,31 @@
   "aides . saint-marcellin vercors isère": {
     "remplace": "intercommunalité",
     "titre": "Saint-Marcellin Vercors Isère Communauté",
+    "description": "Saint-Marcellin Vercors Isère Communauté aide les habitants du territoire à\ns'équiper en vélo avec ou sans assistance électrique, neufs ou d'occasion\navec une prime à l'achat.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CC Saint-Marcellin Vercors Isère Communauté'",
-        "vélo . électrique ou mécanique",
-        "vélo . prix <= prix maximum vélo"
+        {
+          "une de ces conditions": [
+            {
+              "toutes ces conditions": [
+                "vélo . électrique",
+                "vélo . prix <= 3000€"
+              ]
+            },
+            {
+              "toutes ces conditions": [
+                "vélo . mécanique",
+                "vélo . prix <= 1500€"
+              ]
+            }
+          ]
+        }
       ]
     },
     "variations": [
       {
-        "si": "revenu fiscal de référence <= première tranche IR",
+        "si": "revenu fiscal de référence <= 14089 €/an",
         "alors": "200 €"
       },
       {
@@ -2792,41 +3021,12 @@
       }
     ],
     "plafond": "50% * vélo . prix",
-    "avec": {
-      "prix maximum vélo": {
-        "variations": [
-          {
-            "si": "vélo . électrique",
-            "alors": "3000 €"
-          },
-          {
-            "sinon": "1500 €"
-          }
-        ]
-      }
-    },
     "lien": "http://www.saintmarcellin-vercors-isere.fr/evenement/9916/4451-toute-l-actualite.htm"
-  },
-  "aides . crolles": {
-    "remplace": "commune",
-    "titre": "Ville de Crolles",
-    "description": "Le « Chèque vélo électrique pour tous » est a demander en mairie de Crolles\net son montant est calculé en fonction de votre revenu fiscal de référence.\nIl est compris entre 150€ et 600€.\n",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . code insee = '38140'",
-        "vélo . électrique",
-        "vélo . prix >= 1400€",
-        "vélo . prix <= 3500€"
-      ]
-    },
-    "valeur": "(1700€/mois - revenu fiscal de référence) / (1700€/mois - 600€/mois) * (600€ - 150€) + 150€",
-    "plancher": "150€",
-    "plafond": "600€",
-    "lien": "http://www.ville-crolles.fr/vues/pages/services-et-demarches/particuliers/crolles-pratique-cheque-VAE.php#partHome1"
   },
   "aides . montval sur loir": {
     "remplace": "commune",
     "titre": "Ville de Montval sur Loir",
+    "description": "Aide à l'achat d'un vélo électrique ou mécanique (pour les bénéficiaires du\nRSA uniquement) pour les habitants de Montval sur Loir.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '72071'",
@@ -2837,28 +3037,29 @@
       {
         "si": "vélo . électrique",
         "alors": {
-          "variations": [
-            {
-              "si": "demandeur . bénéficiaire de minima sociaux",
-              "alors": {
-                "valeur": "50% * vélo . prix",
-                "plafond": "150€"
+          "plafond": "150€",
+          "valeur": {
+            "variations": [
+              {
+                "si": "demandeur . bénéficiaire du RSA",
+                "alors": "50% * vélo . prix"
+              },
+              {
+                "sinon": "25% * vélo . prix"
               }
-            },
-            {
-              "sinon": {
-                "valeur": "25% * vélo . prix",
-                "plafond": "150€"
-              }
-            }
-          ]
+            ]
+          }
         }
       },
       {
-        "sinon": {
+        "si": "demandeur . bénéficiaire du RSA",
+        "alors": {
           "valeur": "50% * vélo . prix",
           "plafond": "150€"
         }
+      },
+      {
+        "sinon": "0€"
       }
     ],
     "lien": "https://www.montvalsurloir.fr/demarche-administrative/demande-de-subvention-velo-electrique/"
@@ -2866,9 +3067,12 @@
   "aides . sorgues du comtat": {
     "remplace": "intercommunalité",
     "titre": "Communauté de communes des Sorgues du Comtat",
+    "description": "Cette subvention concerne l'achat d'un seul vélo à assistance électrique\nneuf, deux ou trois roues, à usage personnel, acquis à partir du 1er\njanvier 2024. Cette prime s'élève à 20 % du prix TTC du vélo sans pouvoir\ndépasser un plafond de 120 euros et ne pourra être versée qu'une seule fois\npar demandeur.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CA des Sorgues du Comtat'",
+        "demandeur . âge . majeur",
+        "vélo . neuf",
         "vélo . électrique"
       ]
     },
@@ -2879,61 +3083,61 @@
   "aides . grand périgueux": {
     "remplace": "intercommunalité",
     "titre": "Grand Périgueux",
-    "applicable si": "localisation . epci = 'CA Le Grand Périgueux'",
-    "variations": [
-      {
-        "si": "vélo . neuf",
-        "alors": {
-          "variations": [
-            {
-              "si": "vélo . cargo",
-              "alors": "500€"
-            },
-            {
-              "si": "vélo . électrique",
-              "alors": "250€"
-            },
-            {
-              "si": "vélo . mécanique",
-              "alors": {
-                "valeur": "30€",
-                "plafond": "50% * vélo . prix"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "si": {
-          "toutes ces conditions": [
-            "vélo . occasion",
-            "vélo . mécanique"
-          ]
-        },
-        "alors": {
-          "valeur": "50€",
-          "plafond": "50% * vélo . prix"
-        }
-      }
-    ],
-    "plafond": "vélo . prix",
-    "lien": "https://www.grandperigueux.fr/au-quotidien/deplacements/velo/aide-a-lachat-velo"
-  },
-  "aides . pays de fénelon": {
-    "remplace": "intercommunalité",
-    "titre": "Communauté de communes du Pays de Fénelon",
+    "description": "Une aide pouvant aller jusqu'à 500€ est délivrée sous forme d'un chèque\nvélo et permet de financer pour partie l'achat d'un vélo (électrique et\nclassique neuf ou d'occasion, cargo).\n",
     "applicable si": {
       "toutes ces conditions": [
-        "localisation . epci = 'CC du Pays de Fénelon'",
-        "vélo . électrique"
+        "localisation . epci = 'CA Le Grand Périgueux'",
+        "demandeur . âge . majeur"
       ]
     },
-    "valeur": "100€",
-    "lien": "https://www.paysdefenelon.fr/2022/07/07/en-route-pour-une-autre-mobilite/"
+    "valeur": {
+      "variations": [
+        {
+          "si": "vélo . neuf",
+          "alors": {
+            "variations": [
+              {
+                "si": "vélo . cargo",
+                "alors": "500€"
+              },
+              {
+                "si": "vélo . électrique",
+                "alors": "250€"
+              },
+              {
+                "si": "vélo . mécanique",
+                "alors": "30€"
+              }
+            ]
+          }
+        },
+        {
+          "sinon": {
+            "variations": [
+              {
+                "si": "vélo . cargo",
+                "alors": "0€"
+              },
+              {
+                "si": "vélo . électrique",
+                "alors": "150€"
+              },
+              {
+                "si": "vélo . mécanique",
+                "alors": "50€"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "plafond": "50% * vélo . prix",
+    "lien": "https://www.grandperigueux.fr/au-quotidien/deplacements/velo/aides-a-lachat-velo"
   },
   "aides . sarlat": {
     "remplace": "commune",
     "titre": "Ville de Sarlat",
+    "description": "Aide financière pour l'achat d'un vélo électrique.",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '24520'",
@@ -2941,14 +3145,17 @@
       ]
     },
     "valeur": "100€",
+    "plaond": "vélo . prix",
     "lien": "https://www.sarlat.fr/100-e-daide-pour-lachat-dun-velo-electrique/"
   },
   "aides . vallée de l'homme": {
     "remplace": "intercommunalité",
     "titre": "Communauté de communes Vallée de l'Homme",
+    "description": "Aide à l'achat d'un vélo électrique neuf ou d'occasion pour les habitant·es\nde la Communauté de communes Vallée de l'Homme.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = \"CC de la Vallée de l'Homme\"",
+        "demandeur . âge . majeur",
         "vélo . électrique"
       ]
     },
@@ -2969,34 +3176,27 @@
   "aides . sablé sur sarthe": {
     "remplace": "commune",
     "titre": "Communauté de communes de Sablé sur Sarthe",
+    "description": "Afin de favoriser l'accès aux modes de déplacement doux pour ses habitants,\nla Ville de Sablé- sur-Sarthe met en place un dispositif d'aide à\nl'acquisition de vélo à assistance électrique (VAE). Le montant de l'aide\nattribuée par la Ville est de 10% du prix d'achat TTC, plafonné à 100 €.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '72264'",
-        "vélo . électrique"
+        "vélo . neuf",
+        "vélo . électrique",
+        "demandeur . âge . majeur"
       ]
     },
     "valeur": "10% * vélo . prix",
     "plafond": "100€",
     "lien": "https://www.sablesursarthe.fr/pratique/je-veux/demarches-administratives/aide-a-lachat-dun-velo-electrique/"
   },
-  "aides . loue lison": {
-    "remplace": "intercommunalité",
-    "titre": "Communauté de communes Loue Lison",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . epci = 'CC Loue-Lison'",
-        "vélo . électrique"
-      ]
-    },
-    "valeur": "200€",
-    "lien": "https://cclouelison.fr/fr/rb/1729730/mobilite-21"
-  },
   "aides . département somme": {
     "remplace": "département",
     "titre": "Département de la Somme",
+    "description": "Le Département accorde une aide à tout particulier résidant dans la Somme,\nsans condition de ressources, pour l'achat d'un vélo électrique auprès d'un\ncommerçant de la Somme. Cette subvention s'applique aux achats intervenus\naprès le 17 mars 2020.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . département = '80'",
+        "vélo . neuf",
         "vélo . électrique"
       ]
     },
@@ -3007,33 +3207,29 @@
   "aides . amiens": {
     "remplace": "commune",
     "titre": "Ville d'Amiens",
-    "applicable si": "localisation . code insee = '80021'",
-    "valeur": "25% * vélo . prix",
-    "plafond": {
-      "variations": [
-        {
-          "si": "vélo . cargo",
-          "alors": "300€"
-        },
-        {
-          "si": "vélo . électrique",
-          "alors": "200€"
-        },
-        {
-          "si": "vélo . mécanique",
-          "alors": "100€"
-        },
-        {
-          "sinon": "0€"
-        }
+    "description": "Afin d'encourager la remise en selle, depuis 2021, la Ville d'Amiens a mis\nen place un remboursement de 25% du coût d'achat d'un vélo électrique dans\nla limite de 200€.\n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . code insee = '80021'",
+        "demandeur . âge . majeur",
+        "vélo . neuf",
+        "vélo . électrique"
       ]
     },
-    "lien": "https://www.amiens.fr/Actualites/L-aide-a-l-achat-de-velo-s-electrise"
+    "valeur": "25% * vélo . prix",
+    "plafond": "200€",
+    "lien": "https://www.amiens.fr/Vivre-a-Amiens/Mobilite/Se-deplacer-a-velo/La-pratique-du-velo-au-quotidien/AIDE-A-L-ACHAT-D-UN-VELO-ELECTRIQUE"
   },
   "aides . camon": {
     "remplace": "commune",
     "titre": "Ville de Camon",
-    "applicable si": "localisation . code insee = '80164'",
+    "description": "La Commune de Camon a décidé de renouveler son aide à l'achat de vélo pour\n2024. La subvention est valable sur l'achat d'un vélo neuf à assistance\nélectrique et homologué ou sans assistance électrique. Le vélo devra\navoir été acheté dans un magasin du territoire d'Amiens Métropole :\nvélociste, grande surface, etc. Les achats sur internet ne sont pas\nacceptés.\n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . code insee = '80164'",
+        "demandeur . âge . majeur"
+      ]
+    },
     "valeur": "25% * vélo . prix",
     "plafond": {
       "variations": [
@@ -3059,9 +3255,12 @@
   "aides . grand roye": {
     "remplace": "intercommunalité",
     "titre": "Communauté de communes du Grand Roye",
+    "description": "La Communauté de Communes du Grand Roye a décidé d'accorder une aide, sous\nforme de subvention, aux habitants du territoire qui feront l'acquisition\nd'un vélo à assistance électrique (VAE). Cette subvention est fixée à 10 %\ndu prix d'achat dans la limite de 100 euros par matériel jusqu'à épuisement\ndes crédits annuels votés au budget.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CC du Grand Roye'",
+        "demandeur . âge . majeur",
+        "vélo . neuf",
         "vélo . électrique"
       ]
     },
@@ -3072,9 +3271,12 @@
   "aides . somme sud-ouest": {
     "remplace": "intercommunalité",
     "titre": "Communauté de communes Sommes Sud-Ouest",
+    "description": "Pour une mobilité plus vertueuse, la CC2SO vous aide à changer vos\nhabitudes. Bénéficiez d'une aide de 200€ pour l'achat d'un vélo à\nassistance électrique. Une seule condition : être majeur et avoir sa\nrésidence principale sur le territoire de la CC2SO. En plus, cette aide est\nrétroactive pour les vélos achetés depuis le 1er janvier 2023.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CC Somme Sud-Ouest'",
+        "demandeur . âge . majeur",
+        "vélo . neuf",
         "vélo . électrique"
       ]
     },
@@ -3082,31 +3284,10 @@
     "plafond": "vélo . prix",
     "lien": "https://www.cc2so.fr/aide-velo/"
   },
-  "aides . rivery": {
-    "remplace": "commune",
-    "titre": "Ville de Rivery",
-    "applicable si": "localisation . code insee = '80674'",
-    "valeur": "20% * vélo . prix",
-    "plafond": {
-      "variations": [
-        {
-          "si": "vélo . électrique",
-          "alors": "100€"
-        },
-        {
-          "si": "vélo . mécanique",
-          "alors": "50€"
-        },
-        {
-          "sinon": "0€"
-        }
-      ]
-    },
-    "lien": "https://www.ville-rivery.fr/2023/04/13/aide-financiere-a-lachat-dun-velo/"
-  },
   "aides . albert": {
     "remplace": "commune",
     "titre": "Ville d'Albert",
+    "description": "Depuis 2020, dans une logique d'encouragement de la mobilité douce, la\nmunicipalité octroie une aide financière de 100 €, sans condition de\nressources, pour l'achat d'un vélo à assistance électrique (VAE).\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '80016'",
@@ -3119,25 +3300,28 @@
   "aides . faches-thumesnil": {
     "remplace": "commune",
     "titre": "Ville de Faches-Thumesnil",
+    "description": "Cette prime concerne l'achat d'un vélo neuf ou d'occasion, classique,\nélectrique ou cargo effectué après le 18 septembre 2020.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '59220'",
-        "vélo . électrique ou mécanique"
+        {
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . cargo",
+            "vélo . mécanique simple"
+          ]
+        }
       ]
     },
     "valeur": "25% * vélo . prix",
     "plafond": {
       "variations": [
         {
-          "si": "vélo . mécanique",
+          "si": "vélo . mécanique simple",
           "alors": "150€"
         },
         {
-          "si": "vélo . électrique",
-          "alors": "300€"
-        },
-        {
-          "sinon": "0€"
+          "sinon": "300€"
         }
       ]
     },
@@ -3146,63 +3330,106 @@
   "aides . pays sainte odile": {
     "remplace": "commune",
     "titre": "Pays de Sainte-Odile",
-    "applicable si": "localisation . epci = 'CC du Pays de Sainte-Odile'",
-    "variations": [
-      {
-        "si": "vélo . cargo",
-        "alors": {
-          "valeur": "10% * vélo . prix",
-          "plafond": "180€"
+    "description": "Pour encourager l'usage du vélo comme mode de déplacement à part entière,\nles élus de la Communauté de Communes du Pays de Sainte Odile ont souhaité\nmettre en place un dispositif d'aide à l'acquisition d'un vélo neuf.\n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . epci = 'CC du Pays de Sainte-Odile'",
+        "vélo . neuf",
+        {
+          "une de ces conditions": [
+            "vélo . électrique",
+            "demandeur . âge . majeur"
+          ]
         }
-      },
-      {
-        "si": "vélo . électrique",
-        "alors": {
-          "valeur": "10% * vélo . prix",
-          "plafond": "120€"
+      ]
+    },
+    "valeur": {
+      "variations": [
+        {
+          "si": {
+            "une de ces conditions": [
+              "vélo . cargo",
+              "vélo . adapté"
+            ]
+          },
+          "alors": {
+            "valeur": "10% * vélo . prix",
+            "plafond": "180€"
+          }
+        },
+        {
+          "si": "vélo . électrique",
+          "alors": {
+            "valeur": "10% * vélo . prix",
+            "plafond": "120€"
+          }
+        },
+        {
+          "si": "vélo . mécanique",
+          "alors": {
+            "valeur": "20% * vélo . prix",
+            "plafond": "60€"
+          }
+        },
+        {
+          "sinon": "0€"
         }
-      },
-      {
-        "si": "vélo . mécanique",
-        "alors": {
-          "valeur": "20% * vélo . prix",
-          "plafond": "60€"
-        }
-      },
-      {
-        "sinon": "0€"
-      }
-    ],
+      ]
+    },
     "lien": "http://www.cc-paysdesainteodile.fr/competences/se-deplacer/2/"
   },
   "aides . portes de rosheim": {
     "remplace": "intercommunalité",
     "titre": "Communauté de communes des Portes de Rosheim",
-    "applicable si": "localisation . epci = 'CC des Portes de Rosheim'",
-    "description": "La communauté de communes a prévu un budget de 40 000 € en 2022",
-    "variations": [
-      {
-        "si": "vélo . cargo électrique",
-        "alors": {
-          "valeur": "10% * vélo . prix",
-          "plafond": "180€"
+    "description": "Pour encourager la pratique du vélo au quotidien, les élus de la Communauté\nde Communes des Portes de Rosheim (CCPR) ont souhaité mettre en place un\ndispositif d’aide à l’achat de vélos neufs ainsi qu’à la motorisation de\nvélos classiques. \n",
+    "applicable si": {
+      "toutes ces conditions": [
+        "localisation . epci = 'CC des Portes de Rosheim'",
+        "vélo . neuf",
+        {
+          "une de ces conditions": [
+            "demandeur . âge . majeur",
+            "vélo . adapté",
+            "vélo . mécanique"
+          ]
         }
-      },
-      {
-        "si": "vélo . électrique",
-        "alors": {
-          "valeur": "10% * vélo . prix",
-          "plafond": "120€"
+      ]
+    },
+    "valeur": {
+      "variations": [
+        {
+          "si": {
+            "une de ces conditions": [
+              "vélo . cargo électrique",
+              "vélo . adapté"
+            ]
+          },
+          "alors": {
+            "valeur": "10% * vélo . prix",
+            "plafond": "180€"
+          }
+        },
+        {
+          "si": {
+            "une de ces conditions": [
+              "vélo . électrique",
+              "vélo . motorisation"
+            ]
+          },
+          "alors": {
+            "valeur": "10% * vélo . prix",
+            "plafond": "120€"
+          }
+        },
+        {
+          "si": "vélo . mécanique",
+          "alors": {
+            "valeur": "20% * vélo . prix",
+            "plafond": "60€"
+          }
         }
-      },
-      {
-        "si": "vélo . mécanique",
-        "alors": {
-          "valeur": "20% * vélo . prix",
-          "plafond": "60€"
-        }
-      }
-    ],
+      ]
+    },
     "lien": "https://www.cc-portesderosheim.fr/vivre-au-quotidien/se-deplacer/en-velo/dispositif-daide-a-lachat-dun-velo-neuf/"
   },
   "aides . pays de barr": {
@@ -4554,7 +4781,7 @@
     "remplace": "commune",
     "titre": "Ville de Mons en Barœul",
     "applicable si": "localisation . code insee = '59410'",
-    "description": "La ville de Mons en Barœul offre une aide à l'achat d'un $vélo\njusqu'à $plafond pour ses habitants.\nNote: Les vélos dédiés exclusivement à des activités de loisirs ne sont pas\néligibles (BMX, VTT, vélo de course)\n",
+    "description": "La ville de Mons en Barœul offre une aide à l'achat d'un $vélo\njusqu'à $plafond pour ses habitant·es.\nNote: Les vélos dédiés exclusivement à des activités de loisirs ne sont pas\néligibles (BMX, VTT, vélo de course)\n",
     "plafond": "$plafond",
     "variations": [
       {
@@ -8959,7 +9186,7 @@
   "aides . region centre": {
     "remplace": "région",
     "titre": "Région Centre-Val de Loire",
-    "description": "Mobilité rurale - Vélo à assistance électrique ou adapté. L'aide régionale\nest réservée aux habitants d'une commune sur laquelle la Région est\nl'autorité organisatrice de la mobilité locale de substitution.\n",
+    "description": "Mobilité rurale - Vélo à assistance électrique ou adapté. L'aide régionale\nest réservée aux habitant·es d'une commune sur laquelle la Région est\nl'autorité organisatrice de la mobilité locale de substitution.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . région = '24'",
@@ -9432,7 +9659,7 @@
           "si": {
             "toutes ces conditions": [
               "vélo . mécanique",
-              "demandeur . jeune de 15 à 25 ans"
+              "demandeur . âge . de 15 à 25 ans"
             ]
           },
           "alors": "50€"
@@ -9578,6 +9805,10 @@
   "vélo . mécanique simple": {
     "valeur": "oui",
     "applicable si": "vélo . type = 'mécanique simple'"
+  },
+  "vélo . électrique simple": {
+    "valeur": "oui",
+    "applicable si": "vélo . type = 'électrique'"
   },
   "vélo . électrique": {
     "valeur": "oui",
@@ -9804,6 +10035,7 @@
         "aides . blacé",
         "aides . bordeaux",
         "aides . bourges",
+        "aides . caen jeune",
         "aides . campagnes de l'artois",
         "aides . canélan",
         "aides . cenon",
@@ -9816,15 +10048,20 @@
         "aides . département hérault vélo adapté",
         "aides . dieppe",
         "aides . divonne-les-bains",
+        "aides . dreux",
+        "aides . faches-thumesnil",
         "aides . feignies",
         "aides . ferte saint aubin",
         "aides . fier et usses",
+        "aides . flers",
         "aides . grand cubzaguais",
         "aides . grand est",
         "aides . grand périgueux",
         "aides . grand villeneuvois",
         "aides . grenoble",
         "aides . haut val de sèvre",
+        "aides . hermanville-sur-mer",
+        "aides . honfleur",
         "aides . ile de france",
         "aides . illkirch",
         "aides . kremlin-bicetre",
@@ -9836,17 +10073,24 @@
         "aides . louvigny",
         "aides . lyon",
         "aides . mérignac",
+        "aides . mondeville",
         "aides . monmorillon",
         "aides . montant",
+        "aides . montbéliard agglo",
         "aides . montpellier",
+        "aides . montval sur loir",
         "aides . moselle et madon",
         "aides . nantes",
         "aides . oullins",
         "aides . pantin",
         "aides . pays de cruseilles",
         "aides . pays de lumbres",
+        "aides . pays de saverne",
         "aides . perpignan métropole",
         "aides . pornic",
+        "aides . quimperlé",
+        "aides . ried de marckolsheim",
+        "aides . ronchin",
         "aides . sainte-foy-lès-lyon",
         "aides . saint-émilionnais",
         "aides . saint-jacques de la lande",
@@ -9854,12 +10098,17 @@
         "aides . saint-marcellin vercors isère",
         "aides . saint-rémy",
         "aides . saône-beaujolais",
+        "aides . sarlat",
+        "aides . selestat",
         "aides . taillan-médoc",
         "aides . toulouse",
         "aides . tulle",
+        "aides . val d'argent",
         "aides . val d'yerres val de seine",
         "aides . valenciennes",
         "aides . vallée de l'homme",
+        "aides . vallée de villé",
+        "aides . vienne gartempe",
         "aides . villefranche beaujolais saône",
         "aides . ville-sur-jarnioux"
       ]
@@ -9962,6 +10211,11 @@
     "type": "booléen",
     "par défaut": "oui"
   },
+  "demandeur . bénéficiaire du RSA": {
+    "question": "Percevez-vous le RSA ?",
+    "type": "booléen",
+    "par défaut": "non"
+  },
   "demandeur . bénéficiaire de minima sociaux": {
     "question": "Percevez-vous le RSA, l'AAH, l'ASS ou ASPA ?",
     "description": "RSA : Revenu de solidarité active<br />\nAAH : Allocation aux adultes handicapés<br />\nASS : Allocation de solidarité spécifique<br />\nASPA : Allocation de solidarit aux personnes âgées\n",
@@ -9980,10 +10234,32 @@
     "description": "Pour certaines aides, les conditions de ressources sont ignorées pour les\npersonnes en situation de handicap.\n\nVous pouvez également consulter [Mon parcours\nhandicap](https://www.monparcourshandicap.gouv.fr/actualite/velo-adapte-au-handicap-quel-materiel-choisir-et-comment-le-financer)\npour plus d'informations sur les différents matériels et les moyens de les\nfinancer.\n",
     "par défaut": "non"
   },
-  "demandeur . jeune de 15 à 25 ans": {
-    "question": "Êtes-vous âgé de 15 à 25 ans ?",
-    "type": "booléen",
-    "par défaut": "non"
+  "demandeur . âge": {
+    "question": "Quel est votre âge ?",
+    "description": "Certaines aides sont réservées ou majorées pour les jeunes de moins de 25\nans.\n",
+    "par défaut": "30 an"
+  },
+  "demandeur . âge . majeur": {
+    "valeur": "demandeur . âge >= 18 an"
+  },
+  "demandeur . âge . mineur": {
+    "valeur": "demandeur . âge < 18 an"
+  },
+  "demandeur . âge . de 15 à 25 ans": {
+    "valeur": {
+      "toutes ces conditions": [
+        "demandeur . âge >= 15 an",
+        "demandeur . âge <= 25 an"
+      ]
+    }
+  },
+  "demandeur . âge . de 18 à 25 ans": {
+    "valeur": {
+      "toutes ces conditions": [
+        "demandeur . âge >= 18 an",
+        "demandeur . âge <= 25 an"
+      ]
+    }
   },
   "maximiser les aides": {
     "par défaut": "non",
