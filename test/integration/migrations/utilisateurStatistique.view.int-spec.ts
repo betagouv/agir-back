@@ -78,7 +78,11 @@ describe('UtilisateurView', () => {
     });
 
     // WHEN
-    const utilisateurVue = await TestUtil.prisma.utilisateurVue.findMany();
+    const utilisateurVue = await TestUtil.prisma.utilisateurVue.findMany({
+      orderBy: {
+        id: 'asc',
+      },
+    });
 
     // THEN
     expect(utilisateurVue).toStrictEqual([

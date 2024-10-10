@@ -138,7 +138,7 @@ export class Utilisateur extends UtilisateurData {
       gamification: new Gamification(),
       unlocked_features: new UnlockedFeatures({
         version: 1,
-        unlocked_features: [Feature.univers, Feature.services],
+        unlocked_features: [Feature.univers],
       }),
       history: new History(),
       kyc_history: new KYCHistory(),
