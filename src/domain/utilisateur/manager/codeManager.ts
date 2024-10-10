@@ -33,6 +33,9 @@ export class CodeManager {
     if (code_ok) {
       return okAction();
     } else {
+      console.log(
+        `CONNEXION : validateCodePourLogin : [${utilisateur.id}] bad code`,
+      );
       CodeManager.checkCodeLocked(utilisateur);
       ApplicationError.throwBadCodeOrEmailError();
     }

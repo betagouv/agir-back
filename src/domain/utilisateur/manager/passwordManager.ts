@@ -26,6 +26,10 @@ export class PasswordManager {
     if (login_ok) {
       return okAction();
     } else {
+      console.log(
+        `CONNEXION : loginUtilisateur : [${utilisateur.id}] bad password`,
+      );
+
       PasswordManager.checkLoginLocked(utilisateur);
       ApplicationError.throwBadPasswordOrEmailError();
     }

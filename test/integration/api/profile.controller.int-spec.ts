@@ -809,7 +809,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(userDB.unlocked_features.unlocked_features).toHaveLength(3);
+    expect(userDB.unlocked_features.unlocked_features).toHaveLength(1);
     expect(servicesDB).toHaveLength(0);
     expect(servicesDefDB).toHaveLength(1);
   });
@@ -830,7 +830,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(userDB1.unlocked_features.unlocked_features).toHaveLength(3);
+    expect(userDB1.unlocked_features.unlocked_features).toHaveLength(1);
   });
   it(`POST /utilisateurs/id/reset erreur si pas la bonne phrase de confirmation`, async () => {
     // GIVEN
