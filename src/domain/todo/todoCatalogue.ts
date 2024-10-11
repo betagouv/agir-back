@@ -145,7 +145,7 @@ export class TodoCatalogue {
     {
       numero_todo: 3,
       points_todo: 0,
-      titre: 'Découvrir Mon empreinte environnementale',
+      titre: 'Découvrir mon bilan environnemental',
       imageUrl:
         'https://res.cloudinary.com/dq023imd8/image/upload/v1727099530/3_f3181e2c5e.svg',
       done_at: null,
@@ -155,8 +155,8 @@ export class TodoCatalogue {
         type: CelebrationType.reveal,
         reveal: {
           id: uuidv4(),
-          titre: 'Votre empreinte carbone',
-          description: `Evaluez et mettez à jour votre empreinte carbone`,
+          titre: 'Votre bilan environnemental',
+          description: `Evaluez et mettez à jour votre bilan environnemental`,
           feature: Feature.bilan_carbone,
         },
       },
@@ -164,18 +164,7 @@ export class TodoCatalogue {
       todo: [
         {
           id: uuidv4(),
-          titre: 'Qu’est-ce qu’un bilan carbone ?',
-          content_id: '151',
-          thematiques: [Thematique.climat],
-          progression: { current: 0, target: 1 },
-          sont_points_en_poche: false,
-          type: ContentType.quizz,
-          level: DifficultyLevel.ANY,
-          points: 5,
-        },
-        {
-          id: uuidv4(),
-          titre: 'Avez-vous réalisé votre bilan carbone ?',
+          titre: 'Avez-vous réalisé votre bilan environnemental ?',
           content_id: 'KYC_bilan',
           thematiques: [Thematique.climat],
           progression: { current: 0, target: 1 },
@@ -186,7 +175,18 @@ export class TodoCatalogue {
         },
         {
           id: uuidv4(),
-          titre: `5 questions pour avoir une première estimation de son empreinte`,
+          titre: 'Qu’est-ce qu’un bilan environnemental ?',
+          content_id: '151',
+          thematiques: [Thematique.climat],
+          progression: { current: 0, target: 1 },
+          sont_points_en_poche: false,
+          type: ContentType.quizz,
+          level: DifficultyLevel.ANY,
+          points: 5,
+        },
+        {
+          id: uuidv4(),
+          titre: `5 questions pour avoir une première estimation de son bilan environnemental`,
           content_id: 'ENCHAINEMENT_KYC_mini_bilan_carbone',
           thematiques: [Thematique.climat],
           progression: { current: 0, target: 1 },
