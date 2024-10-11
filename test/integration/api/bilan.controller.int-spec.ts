@@ -393,7 +393,7 @@ describe('/bilan (API test)', () => {
         {
           id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
           image_url:
-            'https://res.cloudinary.com/dq023imd8/image/upload/v1718886533/velo_2_27b85c28d4.png',
+            'https://res.cloudinary.com/dq023imd8/image/upload/v1728466903/Mobilite_df75aefd09.svg',
           nombre_total_question: 0,
           pourcentage_progression: null,
           univers: 'transport',
@@ -403,7 +403,7 @@ describe('/bilan (API test)', () => {
         {
           id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
           image_url:
-            'https://res.cloudinary.com/dq023imd8/image/upload/v1718701364/fruits_2_cfbf4b47b9.png',
+            'https://res.cloudinary.com/dq023imd8/image/upload/v1728466523/cuisine_da54797693.svg',
           nombre_total_question: 9,
           pourcentage_progression: 30,
           univers: 'alimentation',
@@ -413,7 +413,7 @@ describe('/bilan (API test)', () => {
         {
           id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
           image_url:
-            'https://res.cloudinary.com/dq023imd8/image/upload/v1714635518/univers_loisirs_596c3b0599.jpg',
+            'https://res.cloudinary.com/dq023imd8/image/upload/v1728468852/conso_7522b1950d.svg',
           nombre_total_question: 12,
           pourcentage_progression: 70,
           univers: 'consommation',
@@ -423,7 +423,7 @@ describe('/bilan (API test)', () => {
         {
           id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
           image_url:
-            'https://res.cloudinary.com/dq023imd8/image/upload/v1714635495/univers_logement_6376123d16.jpg',
+            'https://res.cloudinary.com/dq023imd8/image/upload/v1728468978/maison_80242d91f3.svg',
           nombre_total_question: 12,
           pourcentage_progression: 70,
           univers: 'logement',
