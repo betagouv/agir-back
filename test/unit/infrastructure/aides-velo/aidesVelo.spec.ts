@@ -1,6 +1,7 @@
 import Engine from 'publicodes';
 import rules from '../../../../src/infrastructure/data/aidesVelo.json';
 import assert from 'assert';
+import { deserialize } from 'v8';
 
 describe('Aides Vélo', () => {
   const engine = new Engine(rules);
@@ -486,7 +487,9 @@ describe('Aides Vélo', () => {
         'vélo . prix': '300€',
         'revenu fiscal de référence': '15000€/an',
       });
-      expect(engine.evaluate('aides . sophia antipolis').nodeValue).toEqual(0);
+      expect(engine.evaluate('aides . sophia antipolis').nodeValue).toEqual(
+        null,
+      );
 
       engine.setSituation({
         'localisation . epci': "'CA de Sophia Antipolis'",
@@ -494,7 +497,9 @@ describe('Aides Vélo', () => {
         'vélo . prix': '300€',
         'revenu fiscal de référence': '15000€/an',
       });
-      expect(engine.evaluate('aides . sophia antipolis').nodeValue).toEqual(0);
+      expect(engine.evaluate('aides . sophia antipolis').nodeValue).toEqual(
+        null,
+      );
     });
   });
 
@@ -839,6 +844,158 @@ describe('Aides Vélo', () => {
       });
       expect(engine.evaluate('aides . montval sur loir').nodeValue).toEqual(
         100,
+      );
+    });
+  });
+
+  describe('Sète Agglopôle Méditerranée', () => {
+    it('devrait correctement prendre en compte les différents bonus', () => {
+      engine.setSituation({
+        'localisation . epci': "'CA Sète Agglopôle Méditerranée'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'électrique'",
+      });
+      expect(engine.evaluate('aides . sète').nodeValue).toEqual(200);
+
+      engine.setSituation({
+        'localisation . epci': "'CA Sète Agglopôle Méditerranée'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'électrique'",
+        'vélo . neuf ou occasion': "'occasion'",
+      });
+      expect(engine.evaluate('aides . sète').nodeValue).toEqual(250);
+
+      engine.setSituation({
+        'localisation . epci': "'CA Sète Agglopôle Méditerranée'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'électrique'",
+        'vélo . neuf ou occasion': "'occasion'",
+        // TODO: use generated types instead of the json
+        // @ts-ignore
+        'aides . sète . acheté dans un commerce local': 'oui',
+      });
+      expect(engine.evaluate('aides . sète').nodeValue).toEqual(300);
+    });
+  });
+
+  describe('Grand Avignon', () => {
+    it("le cumul de l'aide avec celles des communes ne devrait pas dépaser 200€", () => {
+      engine.setSituation({
+        'localisation . epci': "'CA du Grand Avignon (COGA)'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+        // TODO: use generated types instead of the json
+        // @ts-ignore
+        'aides . commune': 150,
+      });
+      expect(engine.evaluate('aides . grand avignon').nodeValue).toEqual(50);
+
+      engine.setSituation({
+        'localisation . epci': "'CA du Grand Avignon (COGA)'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+        // TODO: use generated types instead of the json
+        // @ts-ignore
+        'aides . commune': 250,
+      });
+      expect(engine.evaluate('aides . grand avignon').nodeValue).toEqual(0);
+
+      engine.setSituation({
+        'localisation . epci': "'CA du Grand Avignon (COGA)'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+      });
+      expect(engine.evaluate('aides . grand avignon').nodeValue).toEqual(100);
+    });
+  });
+
+  describe("Ville d'Avignon", () => {
+    it('le montant minimum de subvention devrait être respectée', () => {
+      engine.setSituation({
+        'localisation . code insee': "'84007'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . avignon').nodeValue).toEqual(50);
+
+      engine.setSituation({
+        'localisation . code insee': "'84007'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': '10€',
+      });
+      expect(engine.evaluate('aides . avignon').nodeValue).toEqual(0);
+
+      engine.setSituation({
+        'localisation . code insee': "'84007'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': '3000€',
+      });
+      expect(engine.evaluate('aides . avignon').nodeValue).toEqual(0);
+
+      engine.setSituation({
+        'localisation . code insee': "'84007'",
+        'vélo . type': "'mécanique simple'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '200€',
+      });
+      expect(engine.evaluate('aides . avignon').nodeValue).toEqual(70);
+
+      engine.setSituation({
+        'localisation . code insee': "'84007'",
+        'vélo . type': "'mécanique simple'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '10€',
+      });
+      expect(engine.evaluate('aides . avignon').nodeValue).toEqual(0);
+    });
+  });
+
+  describe('Ville de La Motte Servolex', () => {
+    it("devrait être élligible pour les vélo d'occasion uniquement pour les vélos électriques", () => {
+      engine.setSituation({
+        'localisation . code insee': "'73179'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '1000€',
+        'vélo . type': "'électrique'",
+      });
+      expect(engine.evaluate('aides . la motte servolex').nodeValue).toEqual(
+        150,
+      );
+
+      engine.setSituation({
+        'localisation . code insee': "'73179'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '1000€',
+        'vélo . type': "'cargo électrique'",
+      });
+      expect(engine.evaluate('aides . la motte servolex').nodeValue).toEqual(
+        null,
+      );
+
+      engine.setSituation({
+        'localisation . code insee': "'73179'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '1000€',
+        'vélo . type': "'mécanique simple'",
+      });
+      expect(engine.evaluate('aides . la motte servolex').nodeValue).toEqual(
+        null,
+      );
+
+      engine.setSituation({
+        'localisation . code insee': "'73179'",
+        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . prix': '1000€',
+        'vélo . type': "'pliant'",
+      });
+      expect(engine.evaluate('aides . la motte servolex').nodeValue).toEqual(
+        null,
       );
     });
   });

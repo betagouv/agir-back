@@ -1,7 +1,6 @@
 import { TestUtil } from '../../TestUtil';
 import { AidesVeloRepository } from '../../../src/infrastructure/repository/aidesVelo.repository';
 import { AidesVeloParType, Collectivite } from 'src/domain/aides/aideVelo';
-import exp from 'constants';
 
 describe('AideVeloRepository', () => {
   let aidesVeloRepository = new AidesVeloRepository();

@@ -7,6 +7,7 @@
 #### Ajout
 
 - `aides . agen`
+- `aides . avignon`
 - `aides . bègle vélo classique`
 - `aides . bègle vélo spécifique`
 - `aides . caen jeune`
@@ -21,6 +22,7 @@
 - `aides . occitanie vélo adapté`
 - `aides . pays de cruseilles`
 - `aides . perpignan métropole`
+- `aides . portes de sologne`
 - `aides . région centre rémi zen`
 - `aides . selestat`
 - `aides . taillan-médoc`
@@ -29,23 +31,37 @@
 
 #### Mise à jour
 
+- `aides . aix les bains`
 - `aides . albert`
 - `aides . albi`
 - `aides . amiens`
+- `aides . annoeullin`
+- `aides . aubervilliers`
+- `aides . aubiere`
+- `aides . aurillac`
+- `aides . avignon` -> `aides . grand avignon`
 - `aides . belfort`
+- `aides . bidart`
 - `aides . blacé`
+- `aides . boé`
 - `aides . bonus vélo`
 - `aides . bordeaux`
 - `aides . bourges`
+- `aides . bourg-saint-maurice`
 - `aides . bretagne romantique`
 - `aides . caen`
 - `aides . caen la mer`
 - `aides . camon`
 - `aides . carpiquet`
+- `aides . cébazat`
 - `aides . cenon`
+- `aides . chevilly-larue`
+- `aides . clisson`
+- `aides . cœur de maurienne arvan` -> `aides . coeur de maurienne arvan`
 - `aides . coeur de nacre`
 - `aides . corse`
 - `aides . cote d'or`
+- `aides . cournon d'auvergne`
 - `aides . crozon`
 - `aides . dardilly`
 - `aides . deauville`
@@ -58,10 +74,12 @@
 - `aides . faches-thumesnil`
 - `aides . flers`
 - `aides . fougères`
+- `aides . frejus`
 - `aides . geispolsheim`
 - `aides . givors`
 - `aides . grand est`
 - `aides . grand périgueux`
+- `aides . grand reims`
 - `aides . grand roye`
 - `aides . grenoble`
 - `aides . hermanville-sur-mer`
@@ -70,19 +88,39 @@
 - `aides . ile de france`
 - `aides . illkirch`
 - `aides . istres`
+- `aides . kremlin-bicetre`
 - `aides . la cali`
+- `aides . la madeleine`
+- `aides . la motte servolex`
+- `aides . lescar`
+- `aides . les crêtes préardennaises`
+- `aides . les herbiers`
+- `aides . les sables d'olonne`
 - `aides . loire layon aubance`
 - `aides . louvigny`
+- `aides . luberon`
 - `aides . lyon`
+- `aides . mandelieu`
+- `aides . molsheim-mutzig`
 - `aides . mondeville`
+- `aides . mons en baroeul`
+- `aides . montagnole`
 - `aides . montbéliard`
 - `aides . montbéliard agglo`
 - `aides . montpellier`
 - `aides . montval sur loir`
 - `aides . mornant`
+- `aides . morzine-avoriaz`
+- `aides . mougins`
 - `aides . nantes`
 - `aides . occitanie`
+- `aides . pantin`
 - `aides . paris`
+- `aides . pau`
+- `aides . pays ancenis`
+- `aides . pays de barr`
+- `aides . pays de l'arbresle`
+- `aides . pays de l'ozon`
 - `aides . pays de lumbres`
 - `aides . pays de saverne`
 - `aides . pays mornantais`
@@ -92,13 +130,18 @@
 - `aides . pornic`
 - `aides . portes de rosheim`
 - `aides . provence verte`
+- `aides . puisaye forterre`
 - `aides . quimper`
 - `aides . quimperlé`
 - `aides . région centre`
+- `aides . reims`
 - `aides . ried de marckolsheim`
 - `aides . riviera francaise`
+- `aides . romagnat`
+- `aides . romilly-sur-seine`
 - `aides . ronchin`
 - `aides . sablé sur sarthe`
+- `aides . saint alban leysse`
 - `aides . sainte-foy-lès-lyon`
 - `aides . saint-étienne`
 - `aides . saint-germain la blanche herbe`
@@ -107,10 +150,13 @@
 - `aides . saint-rémy`
 - `aides . saône-beaujolais`
 - `aides . sarlat`
+- `aides . sète`
+- `aides . sèvre et loire`
 - `aides . somme sud-ouest`
 - `aides . sophia antipolis`
 - `aides . sorgues du comtat`
 - `aides . strasbourg`
+- `aides . terre des 2 caps`
 - `aides . thue et mue`
 - `aides . toulon`
 - `aides . toulouse`
@@ -119,6 +165,8 @@
 - `aides . val d'argent`
 - `aides . vallée de l'homme`
 - `aides . vallée de villé`
+- `aides . vallée d'ossau`
+- `aides . vallons du lyonnais`
 - `aides . vendenheim`
 - `aides . verson`
 - `aides . vienne condrieu`
@@ -129,8 +177,16 @@
 
 #### Suppression
 
+- `aides . ambert livradois forez`
+- `aides . ardenne`
+- `aides . carvin`
+- `aides . chateaubriant derval`
+- `aides . colmar`
+- `aides . courbevoie`
 - `aides . crolles`
+- `aides . département loire`
 - `aides . écully`
+- `aides . ferte saint aubin`
 - `aides . feyzin`
 - `aides . hangenbieten`
 - `aides . herouville`
