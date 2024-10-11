@@ -45,5 +45,9 @@ export enum KYCID {
   KYC_transport_heures_avion_long = 'KYC_transport_heures_avion_long',
   KYC_transport_2roues_usager = 'KYC_transport_2roues_usager',
   KYC_2roue_motorisation_type = 'KYC_2roue_motorisation_type',
+  KYC_logement_reno_second_oeuvre = 'KYC_logement_reno_second_oeuvre',
+  KYC_logement_reno_isolation = 'KYC_logement_reno_isolation',
+  KYC_logement_reno_chauffage = 'KYC_logement_reno_chauffage',
+  KYC_logement_reno_extension = 'KYC_logement_reno_extension',
   KYC_2roue_km = 'KYC_2roue_km',
 }

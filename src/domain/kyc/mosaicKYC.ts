@@ -51,6 +51,20 @@ export class MosaicKYC {
         KYCID.KYC_chauffage_elec,
       ],
     },
+    {
+      id: KYCMosaicID.MOSAIC_RENO,
+      categorie: Categorie.mission,
+      points: 5,
+      titre:
+        'Des travaux de rénovation ont-ils été réalisés dans votre logement (hors rafraîchissement) depuis 2000 ?',
+      type: TypeReponseMosaicKYC.mosaic_boolean,
+      question_kyc_codes: [
+        KYCID.KYC_logement_reno_second_oeuvre,
+        KYCID.KYC_logement_reno_isolation,
+        KYCID.KYC_logement_reno_chauffage,
+        KYCID.KYC_logement_reno_extension,
+      ],
+    },
   ];
 
   public static listMosaicIDs(): KYCMosaicID[] {
