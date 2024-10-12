@@ -52,6 +52,20 @@ export class QuestionKYCUsecase {
       KYCID.KYC_2roue_motorisation_type,
       KYCID.KYC_2roue_km,
     ],
+    ENCHAINEMENT_KYC_bilan_logement: [
+      KYCID.KYC_type_logement,
+      KYCID.KYC006,
+      KYCID.KYC_menage,
+      KYCMosaicID.MOSAIC_RENO,
+      KYCID.KYC_photovoltaiques,
+      KYCMosaicID.MOSAIC_EXTERIEUR,
+    ],
+    ENCHAINEMENT_KYC_bilan_consommation: [
+      KYCMosaicID.MOSAIC_LOGEMENT_VACANCES,
+      KYCID.KYC_consommation_relation_objets,
+      KYCMosaicID.MOSAIC_ELECTROMENAGER,
+    ],
+    ENCHAINEMENT_KYC_bilan_alimentation: [KYCID.KYC_nbr_plats_viande_blanche],
   };
 
   async getALL(utilisateurId: string): Promise<QuestionGeneric[]> {

@@ -388,7 +388,7 @@ describe('/bilan (API test)', () => {
       impact_alimentation: 'tres_fort',
       impact_logement: 'fort',
       impact_consommation: 'faible',
-      pourcentage_completion_totale: 35,
+      pourcentage_completion_totale: 0,
       liens_bilans_univers: [
         {
           id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
@@ -401,31 +401,31 @@ describe('/bilan (API test)', () => {
           temps_minutes: 5,
         },
         {
-          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_alimentation',
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1728466523/cuisine_da54797693.svg',
-          nombre_total_question: 9,
-          pourcentage_progression: 30,
+          nombre_total_question: 0,
+          pourcentage_progression: null,
           univers: 'alimentation',
           univers_label: 'Alimentation',
           temps_minutes: 3,
         },
         {
-          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_consommation',
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1728468852/conso_7522b1950d.svg',
-          nombre_total_question: 12,
-          pourcentage_progression: 70,
+          nombre_total_question: 2,
+          pourcentage_progression: 0,
           univers: 'consommation',
           univers_label: 'Consommation',
           temps_minutes: 10,
         },
         {
-          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_logement',
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1728468978/maison_80242d91f3.svg',
-          nombre_total_question: 12,
-          pourcentage_progression: 70,
+          nombre_total_question: 2,
+          pourcentage_progression: 0,
           univers: 'logement',
           univers_label: 'Logement',
           temps_minutes: 9,
