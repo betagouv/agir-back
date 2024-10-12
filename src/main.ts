@@ -20,8 +20,10 @@ async function bootstrap() {
     },
   };
   const config = new DocumentBuilder()
-    .setTitle('Agir back')
-    .setDescription('Doc API Agir')
+    .setTitle(`Backend de l'application "j'agis"`)
+    .setDescription(
+      `Doc API executable, tous les endpoints sont testables en conditions réelles`,
+    )
     .setVersion('1.0')
     .addBearerAuth()
     .build();

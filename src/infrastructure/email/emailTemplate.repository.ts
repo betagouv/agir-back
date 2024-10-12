@@ -48,7 +48,7 @@ export class EmailTemplateRepository {
     switch (emailType) {
       case TypeNotification.inscription_code:
         return {
-          subject: `Votre code d'inscription Agir`,
+          subject: `Votre code d'inscription J'agis`,
           body: this.email_inscription_code({
             CODE: utilisateur.code,
             URL_CODE: `${App.getBaseURLFront()}/validation-compte?email=${
@@ -58,7 +58,7 @@ export class EmailTemplateRepository {
         };
       case TypeNotification.welcome:
         return {
-          subject: `Bienvenue dans Agir !`,
+          subject: `Bienvenue dans J'agis !`,
           body: this.email_welcome({
             PRENOM: utilisateur.prenom,
             CONTACT_EMAIL: utilisateur.email,
@@ -69,7 +69,7 @@ export class EmailTemplateRepository {
         };
       case TypeNotification.late_onboarding:
         return {
-          subject: `Vos premiers pas avec AGIR 🌱`,
+          subject: `Vos premiers pas avec J'agis 🌱`,
           body: this.email_relance_onboarding({
             PRENOM: utilisateur.prenom,
             CONTACT_EMAIL: utilisateur.email,
@@ -82,7 +82,7 @@ export class EmailTemplateRepository {
         const defi = utilisateur.defi_history.getPlusVieuxDefiEnCours();
         if (defi) {
           return {
-            subject: `Avez-vous relevé le défi ? Validez votre progression sur AGIR !`,
+            subject: `Avez-vous relevé le défi ? Validez votre progression sur J'agis !`,
             body: this.email_relance_action({
               PRENOM: utilisateur.prenom,
               CONTACT_EMAIL: utilisateur.email,

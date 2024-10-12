@@ -52,11 +52,11 @@ describe('EmailTemplateRepository', () => {
     // THEN
     expect(result).toEqual({
       body: `Bonjour,<br>
-Voici votre code pour valider votre inscription à l'application Agir !<br><br>
+Voici votre code pour valider votre inscription à l'application J'agis !<br><br>
 code : 123456<br><br>
 Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="https://agir-front/validation-compte?email&#x3D;g@c.com">Page pour rentrer le code</a><br><br>
 À très vite !`,
-      subject: "Votre code d'inscription Agir",
+      subject: "Votre code d'inscription J'agis",
     });
   });
 });

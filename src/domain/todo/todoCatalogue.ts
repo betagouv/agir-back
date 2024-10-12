@@ -120,7 +120,7 @@ export class TodoCatalogue {
       todo: [
         {
           id: uuidv4(),
-          titre: 'Lire votre premier article : Bienvenue sur Agir !',
+          titre: `Lire votre premier article : Bienvenue sur j'agis !`,
           content_id: '170',
           thematiques: [Thematique.climat],
           progression: { current: 0, target: 1 },

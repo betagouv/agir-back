@@ -260,7 +260,7 @@ describe('linkyServiceManager', () => {
       'Proposer aux utilisateurs un suivi quotidien de leur consommation électrique ainsi que des comparaisons de consommation sur des périodes de 2 ans et plus',
     );
     expect(consentDB[0].texte_signature).toEqual(
-      `Je déclare sur l'honneur être titulaire du point ou être mandaté par celui-ci et j'accepte que le service 'Agir' ait accès à mes données des 2 ans passés et pour les 3 ans à venir. Je peux changer d'avis à tout moment sur mon compte Enedis.`,
+      `Je déclare sur l'honneur être titulaire du point ou être mandaté par celui-ci et j'accepte que le service 'J'agis' ait accès à mes données des 2 ans passés et pour les 3 ans à venir. Je peux changer d'avis à tout moment sur mon compte Enedis.`,
     );
     expect(consentDB[0].type_donnees).toEqual(
       'index quotidien, index corrigé météo',

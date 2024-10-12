@@ -22,7 +22,7 @@ export class EmailSender {
   ) {
     const smtpEmail = new Brevo.SendSmtpEmail();
     smtpEmail.to = [{ email: email_to, name: name }];
-    smtpEmail.sender = { name: 'Agir', email: 'noreply-agir@beta.gouv.fr' };
+    smtpEmail.sender = { name: `J'agis`, email: 'noreply-agir@beta.gouv.fr' };
     smtpEmail.subject = subject;
     //smtpEmail.textContent = text_content;
     smtpEmail.htmlContent = text_content_html;

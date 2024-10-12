@@ -214,14 +214,14 @@ export class Connexion_v2_Usecase {
       utilisateur.email,
       utilisateur.prenom,
       `Bonjour,<br>
-Voici votre code pour valider votre connexion à l'application Agir !<br><br>
+Voici votre code pour valider votre connexion à l'application J'agis !<br><br>
     
 code : ${utilisateur.code}<br><br>
 
 Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="${App.getBaseURLFront()}/URL_TO_SET">Page pour rentrer le code</a><br><br>
     
 À très vite !`,
-      `${utilisateur.code} - Votre code connexion à Agir`,
+      `${utilisateur.code} - Votre code connexion à J'agis`,
     );
   }
 
@@ -230,7 +230,7 @@ Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="
       utilisateur.email,
       utilisateur.prenom,
       `Bonjour,<br>
-Voici votre code pour pouvoir modifier votre mot de passe de l'application Agir !<br><br>
+Voici votre code pour pouvoir modifier votre mot de passe de l'application J'agis !<br><br>
     
 code : ${utilisateur.code}<br><br>
 
@@ -239,7 +239,7 @@ Si vous n'avez plus la page ouverte pour saisir le code et modifier le mot de pa
       }">Page pour modifier votre mot de passe</a><br><br>
     
 À très vite !`,
-      `Modification de mot de passe Agir`,
+      `Modification de mot de passe J'agis`,
     );
   }
 }
