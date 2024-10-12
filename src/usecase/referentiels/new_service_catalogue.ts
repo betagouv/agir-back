@@ -86,16 +86,6 @@ const new_service_catalogue: NewServiceDefinition[] = [
     is_available_inhouse: false,
   },
   {
-    id: ServiceExterneID.bornes_elec,
-    external_url: 'https://abetterrouteplanner.com/',
-    icon_url:
-      'https://abetterrouteplanner.com/static/media/abrp_icon_round.388cd679ba52e719ddd4.png',
-    titre: 'Où trouver des bornes électriques sur mes trajets ?',
-    sous_titre: 'A better route planner',
-    univers: Univers.transport,
-    is_available_inhouse: false,
-  },
-  {
     id: ServiceExterneID.impact_co2,
     external_url: 'https://impactco2.fr/outils/comparateur',
     icon_url:
@@ -143,16 +133,6 @@ const new_service_catalogue: NewServiceDefinition[] = [
     titre: `Changer son chauffage`,
     sous_titre: 'Pacoupa',
     univers: Univers.logement,
-    is_available_inhouse: false,
-  },
-  {
-    id: ServiceExterneID.chronotrains,
-    external_url: 'https://www.chronotrains.com/fr#google_vignette',
-    icon_url:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Logo_train_transilien_black.svg/240px-Logo_train_transilien_black.svg.png',
-    titre: `Où partir en train pour les vacances ?`,
-    sous_titre: 'Chronotrains',
-    univers: Univers.transport,
     is_available_inhouse: false,
   },
   {
