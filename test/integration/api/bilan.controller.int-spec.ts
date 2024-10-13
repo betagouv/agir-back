@@ -414,7 +414,7 @@ describe('/bilan (API test)', () => {
           id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_consommation',
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1728468852/conso_7522b1950d.svg',
-          nombre_total_question: 2,
+          nombre_total_question: 1,
           pourcentage_progression: 0,
           univers: 'consommation',
           univers_label: 'Consommation',

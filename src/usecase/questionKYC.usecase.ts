@@ -63,7 +63,7 @@ export class QuestionKYCUsecase {
     ENCHAINEMENT_KYC_bilan_consommation: [
       KYCMosaicID.MOSAIC_LOGEMENT_VACANCES,
       KYCID.KYC_consommation_relation_objets,
-      KYCMosaicID.MOSAIC_ELECTROMENAGER,
+      //KYCMosaicID.MOSAIC_ELECTROMENAGER,
     ],
     ENCHAINEMENT_KYC_bilan_alimentation: [KYCID.KYC_nbr_plats_viande_blanche],
   };
