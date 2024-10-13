@@ -311,7 +311,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('PATCH /utilisateurs/id/profile - update basic profile datas', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.utilisateur, { est_valide_pour_classement: true });
     // WHEN
     const response = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/profile',
@@ -339,6 +339,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.revenu_fiscal).toEqual(12345);
     expect(dbUser.parts.toNumber()).toEqual(3);
     expect(dbUser.abonnement_ter_loire).toEqual(true);
+    expect(dbUser.est_valide_pour_classement).toEqual(false);
     expect(dbUser.passwordHash).toEqual(
       crypto
         .pbkdf2Sync('123456789012#aA', dbUser.passwordSalt, 1000, 64, `sha512`)

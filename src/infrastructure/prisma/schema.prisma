@@ -22,55 +22,56 @@ model OIDC_STATE {
 }
 
 model Utilisateur {
-  id                       String    @id
-  email                    String?   @unique
-  nom                      String?   @default("nom")
-  prenom                   String?   @default("prenom")
-  annee_naissance          Int?
-  passwordHash             String?   @default("hash")
-  passwordSalt             String?   @default("salt")
-  revenu_fiscal            Int?
-  todo                     Json      @default("{}") // versioné 
-  gamification             Json      @default("{}") // versioné 
-  history                  Json      @default("{}") // versioné 
-  kyc                      Json      @default("{}") // versioné
-  unlocked_features        Json      @default("{}") // versioné 
-  logement                 Json      @default("{}") // versioné 
-  defis                    Json      @default("{}") // versioné
-  missions                 Json      @default("{}") // versioné
-  bilbiotheque_services    Json      @default("{}") // versioné
-  notification_history     Json      @default("{}") // versioné
-  created_at               DateTime  @default(now()) @db.Timestamptz(3)
-  updated_at               DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
-  failed_login_count       Int       @default(0)
-  prevent_login_before     DateTime  @default(now())
-  code                     String?
-  code_generation_time     DateTime?
-  active_account           Boolean   @default(true)
-  failed_checkcode_count   Int       @default(0)
-  prevent_checkcode_before DateTime  @default(now())
-  sent_email_count         Int       @default(0)
-  prevent_sendemail_before DateTime  @default(now())
-  services                 Service[]
-  parts                    Decimal?  @db.Decimal(4, 2)
-  abonnement_ter_loire     Boolean   @default(false)
-  code_departement         String?
-  version                  Int       @default(0)
-  migration_enabled        Boolean   @default(false)
-  tag_ponderation_set      Json      @default("{}")
-  force_connexion          Boolean   @default(false)
-  derniere_activite        DateTime?
-  db_version               Int       @default(0)
-  is_magic_link_user       Boolean   @default(false)
-  points_classement        Int       @default(0)
-  code_postal_classement   String?
-  commune_classement       String?
-  rank                     Int?
-  rank_commune             Int?
-  status                   String?
-  couverture_aides_ok      Boolean   @default(false)
-  source_inscription       String    @default("web")
-  unsubscribe_mail_token   String?   @unique
+  id                         String    @id
+  email                      String?   @unique
+  nom                        String?   @default("nom")
+  prenom                     String?   @default("prenom")
+  annee_naissance            Int?
+  passwordHash               String?   @default("hash")
+  passwordSalt               String?   @default("salt")
+  revenu_fiscal              Int?
+  todo                       Json      @default("{}") // versioné 
+  gamification               Json      @default("{}") // versioné 
+  history                    Json      @default("{}") // versioné 
+  kyc                        Json      @default("{}") // versioné
+  unlocked_features          Json      @default("{}") // versioné 
+  logement                   Json      @default("{}") // versioné 
+  defis                      Json      @default("{}") // versioné
+  missions                   Json      @default("{}") // versioné
+  bilbiotheque_services      Json      @default("{}") // versioné
+  notification_history       Json      @default("{}") // versioné
+  created_at                 DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at                 DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
+  failed_login_count         Int       @default(0)
+  prevent_login_before       DateTime  @default(now())
+  code                       String?
+  code_generation_time       DateTime?
+  active_account             Boolean   @default(true)
+  failed_checkcode_count     Int       @default(0)
+  prevent_checkcode_before   DateTime  @default(now())
+  sent_email_count           Int       @default(0)
+  prevent_sendemail_before   DateTime  @default(now())
+  services                   Service[]
+  parts                      Decimal?  @db.Decimal(4, 2)
+  abonnement_ter_loire       Boolean   @default(false)
+  code_departement           String?
+  version                    Int       @default(0)
+  migration_enabled          Boolean   @default(false)
+  tag_ponderation_set        Json      @default("{}")
+  force_connexion            Boolean   @default(false)
+  derniere_activite          DateTime?
+  db_version                 Int       @default(0)
+  is_magic_link_user         Boolean   @default(false)
+  points_classement          Int       @default(0)
+  code_postal_classement     String?
+  commune_classement         String?
+  rank                       Int?
+  rank_commune               Int?
+  status                     String?
+  couverture_aides_ok        Boolean   @default(false)
+  source_inscription         String    @default("web")
+  unsubscribe_mail_token     String?   @unique
+  est_valide_pour_classement Boolean   @default(true)
 }
 
 model Statistique {

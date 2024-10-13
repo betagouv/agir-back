@@ -1,6 +1,15 @@
-import { Controller, Delete, Get, Param, Post, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Request,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiOkResponse,
   ApiOperation,
   ApiProperty,
@@ -26,6 +35,8 @@ import { UniversStatistiqueUsecase } from '../../../src/usecase/universStatistiq
 import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
 import { App } from '../../domain/app';
 import { MailerUsecase } from '../../usecase/mailer.usecase';
+import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
+import { ValiderPrenomAPI } from './types/utilisateur/validerPrenomsAPI';
 
 class VersionAPI {
   @ApiProperty()
@@ -57,7 +68,6 @@ export class AdminController extends GenericControler {
     private kycStatistiqueUsecase: KycStatistiqueUsecase,
     private thematiqueStatistiqueUsecase: ThematiqueStatistiqueUsecase,
     private universStatistiqueUsecase: UniversStatistiqueUsecase,
-    private mailerUsecase: MailerUsecase,
   ) {
     super();
   }
@@ -314,5 +324,27 @@ export class AdminController extends GenericControler {
   async calcul_univers_statistique(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.universStatistiqueUsecase.calculStatistique();
+  }
+  @Get('/admin/prenoms_a_valider')
+  @ApiOperation({
+    summary: `Liste les utilisateurs ayant un prenom à valider`,
+  })
+  async getPrenomsAValider(
+    @Request() req,
+  ): Promise<{ id: string; prenom: string }[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.profileUsecase.listPrenomsAValider();
+  }
+
+  @Post('/admin/valider_prenoms')
+  @ApiOperation({
+    summary: `valide la liste de prenoms argument`,
+  })
+  @ApiBody({
+    type: [ValiderPrenomAPI],
+  })
+  async validerPrenoms(@Request() req, @Body() body: ValiderPrenomAPI[]) {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.profileUsecase.validerPrenoms(body);
   }
 }

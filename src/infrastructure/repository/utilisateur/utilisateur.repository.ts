@@ -32,6 +32,26 @@ export class UtilisateurRepository {
     await this.prisma.utilisateur.delete({ where: { id: utilisateurId } });
   }
 
+  async listePrenomsAValider(): Promise<{ id: string; prenom: string }[]> {
+    return await this.prisma.utilisateur.findMany({
+      where: { est_valide_pour_classement: false },
+      select: {
+        id: true,
+        prenom: true,
+      },
+    });
+  }
+
+  async validerPrenom(utilisateurId: string, prenom: string) {
+    await this.prisma.utilisateur.update({
+      where: { id: utilisateurId },
+      data: {
+        prenom: prenom,
+        est_valide_pour_classement: true,
+      },
+    });
+  }
+
   async getById(id: string, scopes: Scope[]): Promise<Utilisateur | null> {
     if (scopes.includes(Scope.ALL)) {
       scopes = Object.values(Scope);
@@ -375,6 +395,7 @@ export class UtilisateurRepository {
         source_inscription: SourceInscription[user.source_inscription],
         notification_history: notification_history,
         unsubscribe_mail_token: user.unsubscribe_mail_token,
+        est_valide_pour_classement: user.est_valide_pour_classement,
       });
     }
     return null;
@@ -460,6 +481,7 @@ export class UtilisateurRepository {
       couverture_aides_ok: user.couverture_aides_ok,
       source_inscription: user.source_inscription,
       unsubscribe_mail_token: user.unsubscribe_mail_token,
+      est_valide_pour_classement: user.est_valide_pour_classement,
     };
   }
 }

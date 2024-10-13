@@ -68,6 +68,7 @@ export class ProfileUsecase {
       if (!char_regexp.test(profile.prenom)) {
         ApplicationError.throwNotAlhpaPrenom();
       }
+      utilisateur.est_valide_pour_classement = false;
     }
 
     if (profile.revenu_fiscal) {
@@ -91,6 +92,15 @@ export class ProfileUsecase {
     utilisateur.annee_naissance = profile.annee_naissance;
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
+  async listPrenomsAValider(): Promise<{ id: string; prenom: string }[]> {
+    return await this.utilisateurRepository.listePrenomsAValider();
+  }
+  async validerPrenoms(input: { id: string; prenom: string }[]) {
+    for (const user of input) {
+      await this.utilisateurRepository.validerPrenom(user.id, user.prenom);
+    }
   }
 
   @Retryable({

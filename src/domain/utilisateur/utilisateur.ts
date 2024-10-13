@@ -96,6 +96,7 @@ export class UtilisateurData {
   source_inscription: SourceInscription;
   notification_history: NotificationHistory;
   unsubscribe_mail_token: string;
+  est_valide_pour_classement: boolean;
 }
 
 export class Utilisateur extends UtilisateurData {
@@ -188,6 +189,7 @@ export class Utilisateur extends UtilisateurData {
       source_inscription: source_inscription,
       notification_history: new NotificationHistory(),
       unsubscribe_mail_token: Utilisateur.generateEmailToken(),
+      est_valide_pour_classement: false,
     });
   }
 

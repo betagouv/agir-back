@@ -13,9 +13,7 @@ export class UtilisateurBoardRepository {
       take: 3,
       orderBy: { points_classement: 'desc' },
       where: {
-        prenom: {
-          not: null,
-        },
+        est_valide_pour_classement: true,
       },
     });
     return top.map((t) => this.mapUserDbToDomain(t));
@@ -30,9 +28,7 @@ export class UtilisateurBoardRepository {
       where: {
         code_postal_classement: code_postal,
         commune_classement: commune,
-        prenom: {
-          not: null,
-        },
+        est_valide_pour_classement: true,
       },
       orderBy: { points_classement: 'desc' },
     });
@@ -48,7 +44,7 @@ export class UtilisateurBoardRepository {
       FROM
         "Utilisateur"
       WHERE
-        "prenom" IS NOT NULL
+        "est_valide_pour_classement" = TRUE
     )
     UPDATE
       "Utilisateur"
@@ -70,7 +66,7 @@ export class UtilisateurBoardRepository {
       FROM
         "Utilisateur"
       WHERE
-        "prenom" IS NOT NULL
+        "est_valide_pour_classement" = TRUE
     )
     UPDATE
       "Utilisateur"
@@ -82,66 +78,6 @@ export class UtilisateurBoardRepository {
     "Utilisateur"."id" = tmp."id";`;
     await this.prisma.$queryRawUnsafe(query);
   }
-
-  /*
-
-  async utilisateur_classement_proximite(
-    points: number,
-    nombre: number,
-    position: 'avant' | 'apres',
-    utlisateurId?: string,
-  ): Promise<Classement[]> {
-    let diff;
-    if (position === 'avant') {
-      diff = `points - ${points}`;
-    } else {
-      diff = `${points} - points`;
-    }
-    let exclude_user = utlisateurId
-      ? `AND "utilisateurId" <> '${utlisateurId}'`
-      : '';
-    let query = `
-    SELECT
-      *,
-      (${diff}) AS difference,
-      ABS(${points} - points) AS distance,
-    FROM
-      "UtilisateurBoard"
-    WHERE
-      (${diff}) >= 0
-      ${exclude_user}
-    ORDER BY distance ASC
-    LIMIT ${nombre};`;
-    let result: {
-      utilisateurId: string;
-      distance: number;
-      points: number;
-      difference: number;
-      code_postal: string;
-      commune: string;
-      prenom: string;
-      rank: number;
-    }[] = await this.prisma.$queryRawUnsafe(query);
-
-    if (position === 'apres') {
-      result.sort((a, b) => a.difference - b.difference);
-    } else {
-      result.sort((a, b) => b.difference - a.difference);
-    }
-
-    return result.map(
-      (e) =>
-        new Classement({
-          code_postal: e.code_postal,
-          commune: e.commune,
-          points: e.points,
-          utilisateurId: e.utilisateurId,
-          prenom: e.prenom,
-          rank: Number(e.rank),
-        }),
-    );
-  }
-  */
 
   async utilisateur_classement_proximite(
     rank: number,
@@ -204,9 +140,7 @@ export class UtilisateurBoardRepository {
         ...rank_cond,
         id: user_cond,
         ...filtre_commune,
-        prenom: {
-          not: null,
-        },
+        est_valide_pour_classement: true,
       },
     });
 
@@ -230,9 +164,7 @@ export class UtilisateurBoardRepository {
         where: {
           code_postal_classement: code_postal,
           commune_classement: commune,
-          prenom: {
-            not: null,
-          },
+          est_valide_pour_classement: true,
         },
       });
       count_better_than_user = await this.prisma.utilisateur.count({
@@ -242,9 +174,7 @@ export class UtilisateurBoardRepository {
           points_classement: {
             gt: points,
           },
-          prenom: {
-            not: null,
-          },
+          est_valide_pour_classement: true,
         },
       });
     } else {
@@ -254,9 +184,7 @@ export class UtilisateurBoardRepository {
           points_classement: {
             gt: points,
           },
-          prenom: {
-            not: null,
-          },
+          est_valide_pour_classement: true,
         },
       });
     }

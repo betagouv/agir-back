@@ -28,6 +28,7 @@ import { ThematiqueRepository } from '../../../src/infrastructure/repository/the
 import { ParcoursTodo_v0 } from '../../../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { truncate } from 'fs';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
@@ -2314,5 +2315,94 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ major: 1, minor: 0, patch: 0 });
+  });
+  it('GET /admin/prenoms_a_valider', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      prenom: 'A',
+      est_valide_pour_classement: false,
+      email: '1',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      prenom: 'B',
+      est_valide_pour_classement: false,
+      email: '2',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '3',
+      prenom: 'C',
+      est_valide_pour_classement: true,
+      email: '3',
+    });
+    // WHEN
+    const response = await TestUtil.GET('/admin/prenoms_a_valider');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(2);
+    expect(response.body).toEqual([
+      { id: '1', prenom: 'A' },
+      { id: '2', prenom: 'B' },
+    ]);
+  });
+  it('POST /admin/valider_prenoms', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      prenom: 'A',
+      est_valide_pour_classement: false,
+      email: '1',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      prenom: 'B',
+      est_valide_pour_classement: false,
+      email: '2',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '3',
+      prenom: 'C',
+      est_valide_pour_classement: false,
+      email: '3',
+    });
+    // WHEN
+    const response = await TestUtil.POST('/admin/valider_prenoms').send([
+      { id: '1', prenom: 'George' },
+      { id: '2', prenom: 'Paul' },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(201);
+    const listeUsers = await TestUtil.prisma.utilisateur.findMany({
+      select: {
+        id: true,
+        prenom: true,
+        est_valide_pour_classement: true,
+      },
+      orderBy: {
+        id: 'asc',
+      },
+    });
+    expect(listeUsers).toEqual([
+      {
+        est_valide_pour_classement: true,
+        id: '1',
+        prenom: 'George',
+      },
+      {
+        est_valide_pour_classement: true,
+        id: '2',
+        prenom: 'Paul',
+      },
+      {
+        est_valide_pour_classement: false,
+        id: '3',
+        prenom: 'C',
+      },
+    ]);
   });
 });
