@@ -49,10 +49,7 @@ export class Connexion_v2_Usecase {
       user.setNew6DigitCode();
       user.status = UtilisateurStatus.connexion_etape_1;
 
-      await _this.utilisateurRepository.updateUtilisateur(
-        user,
-        'loginUtilisateur',
-      );
+      await _this.utilisateurRepository.updateUtilisateur(user);
 
       if (user.email !== App.getGoogleTestEmail()) {
         _this.sendCodeForConnexion(user);
@@ -96,10 +93,7 @@ export class Connexion_v2_Usecase {
       const user = await _this.utilisateurRepository.findByEmail(email);
       user.status = UtilisateurStatus.default;
 
-      await _this.utilisateurRepository.updateUtilisateur(
-        user,
-        'validateCodePourLogin',
-      );
+      await _this.utilisateurRepository.updateUtilisateur(user);
 
       const token = await _this.oidcService.createNewInnerAppToken(user.id);
       return { token: token, utilisateur: user };
@@ -132,10 +126,7 @@ export class Connexion_v2_Usecase {
       user.setNew6DigitCode();
       user.status = UtilisateurStatus.mot_de_passe_oublie_etape_1;
 
-      await _this.utilisateurRepository.updateUtilisateur(
-        user,
-        'oubli_mot_de_passe',
-      );
+      await _this.utilisateurRepository.updateUtilisateur(user);
       console.log(
         `CONNEXION : oubli_mot_de_passe : [${utilisateur.id}] email sending`,
       );
@@ -182,10 +173,7 @@ export class Connexion_v2_Usecase {
       user.setPassword(mot_de_passe);
       user.status = UtilisateurStatus.default;
 
-      await _this.utilisateurRepository.updateUtilisateur(
-        user,
-        'modifier_mot_de_passe',
-      );
+      await _this.utilisateurRepository.updateUtilisateur(user);
       return;
     };
 
@@ -197,12 +185,12 @@ export class Connexion_v2_Usecase {
   }
 
   async disconnectUser(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
-    utilisateur.force_connexion = true;
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'disconnectUser',
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [],
     );
+    utilisateur.force_connexion = true;
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   async disconnectAllUsers() {

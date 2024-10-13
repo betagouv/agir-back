@@ -6,9 +6,8 @@ import {
   TypeNotification,
 } from '../domain/notification/notificationHistory';
 import { EmailTemplateRepository } from '../infrastructure/email/emailTemplate.repository';
-import { Utilisateur } from '../domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { App } from '../domain/app';
 
 const day_2 = 1000 * 60 * 60 * 24 * 2;
 
@@ -29,10 +28,7 @@ export class MailerUsecase {
 
     if (utilisateur) {
       utilisateur.notification_history.disableCanal(CanalNotification.email);
-      await this.utilisateurRepository.updateUtilisateur(
-        utilisateur,
-        'disableUserEmailss',
-      );
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
     } else {
       ApplicationError.throwBadTokenError(token);
     }
@@ -48,6 +44,7 @@ export class MailerUsecase {
     for (const utilisateurId of listeUtilisateursIds) {
       const utilisateur = await this.utilisateurRepository.getById(
         utilisateurId,
+        [Scope.notification_history],
       );
 
       if (utilisateur.notification_history.isWelcomeEmailToSend(utilisateur)) {
@@ -60,10 +57,7 @@ export class MailerUsecase {
 
         if (is_sent_email) {
           result.push(`Sent welcome email to [${utilisateur.id}]`);
-          await this.utilisateurRepository.updateUtilisateur(
-            utilisateur,
-            'envoyerEmailsWelcome',
-          );
+          await this.utilisateurRepository.updateUtilisateur(utilisateur);
         }
       }
     }
@@ -78,6 +72,7 @@ export class MailerUsecase {
     for (const utilisateurId of listeUtilisateursIds) {
       const utilisateur = await this.utilisateurRepository.getById(
         utilisateurId,
+        [Scope.notification_history, Scope.todo, Scope.defis],
       );
 
       if (
@@ -109,7 +104,7 @@ export class MailerUsecase {
         }
       }
 
-      await this.utilisateurRepository.updateUtilisateur(utilisateur, 'envoyerEmailsAutomatiques');
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
       if (liste_sent_notifs.length > 0) {
         result.push(

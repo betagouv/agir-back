@@ -259,7 +259,7 @@ export class AdminController extends GenericControler {
   })
   async calcul_statistique(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
-    return await this.statistiqueUsecase.calculStatistique();
+    return await this.statistiqueUsecase.calculStatistiqueDefis();
   }
 
   @Post('/admin/article-statistique')

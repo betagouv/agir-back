@@ -1,6 +1,7 @@
 import { DB, TestUtil } from '../../TestUtil';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import {
+  Scope,
   SourceInscription,
   Utilisateur,
 } from '../../../src/domain/utilisateur/utilisateur';
@@ -61,7 +62,7 @@ describe('UtilisateurRepository', () => {
     await TestUtil.create(DB.utilisateur, { parts: null });
 
     // WHEN
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', []);
     // THEN
     expect(userDB.parts).toEqual(null);
   });
@@ -207,5 +208,55 @@ describe('UtilisateurRepository', () => {
       Date.now() - 100,
     );
     expect(userDB.derniere_activite.getTime()).toBeLessThan(Date.now());
+  });
+  it('getById  : lecture du scope argument', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const userDB = await utilisateurRepository.getById('utilisateur-id', []);
+
+    // THEN
+    expect(userDB.kyc_history).toBeUndefined();
+  });
+  it('getById  : scope ALL ', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    // THEN
+    expect(userDB.kyc_history.answered_questions).toHaveLength(1);
+  });
+  it('getById  : scope kyc ', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.kyc,
+    ]);
+
+    // THEN
+    expect(userDB.kyc_history.answered_questions).toHaveLength(1);
+  });
+  it(`updateUtilisateur : pas d'erreur si champ json undefined`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', []);
+    expect(userDB.kyc_history).toBeUndefined();
+
+    // WHEN
+    await utilisateurRepository.updateUtilisateur(userDB);
+
+    // THEN
+    // no error
+    const userDB_2 = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.kyc,
+    ]);
+    expect(userDB_2.kyc_history).not.toBeUndefined();
   });
 });

@@ -4,7 +4,7 @@ import { Defi, DefiStatus } from '../../src/domain/defis/defi';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
-import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
 import { Feature } from '../../src/domain/gamification/feature';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
@@ -14,7 +14,6 @@ export class DefisUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private defiRepository: DefiRepository,
-    private missionRepository: MissionRepository,
     private personnalisator: Personnalisator,
   ) {}
 
@@ -22,7 +21,10 @@ export class DefisUsecase {
     utilisateurId: string,
     univers: string,
   ): Promise<Defi[]> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.defis, Scope.logement, Scope.missions],
+    );
     utilisateur.checkState();
     const defiDefinitions = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(defiDefinitions);
@@ -53,7 +55,10 @@ export class DefisUsecase {
   }
 
   async getAllDefis_v2(utilisateurId: string): Promise<Defi[]> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.defis, Scope.logement, Scope.missions],
+    );
     utilisateur.checkState();
     const defiDefinitions = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(defiDefinitions);
@@ -82,7 +87,10 @@ export class DefisUsecase {
   ): Promise<Defi[]> {
     let result: Defi[] = [];
 
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.defis, Scope.logement],
+    );
     utilisateur.checkState();
     const defiDefinitions = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(defiDefinitions);
@@ -112,7 +120,10 @@ export class DefisUsecase {
   }
 
   async getById(utilisateurId: string, defiId: string): Promise<Defi> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.defis, Scope.logement],
+    );
     utilisateur.checkState();
 
     const catalogue = await this.defiRepository.list({});
@@ -128,7 +139,15 @@ export class DefisUsecase {
     status: DefiStatus,
     motif: string,
   ): Promise<void> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [
+        Scope.defis,
+        Scope.missions,
+        Scope.unlocked_features,
+        Scope.gamification,
+      ],
+    );
     utilisateur.checkState();
 
     const catalogue = await this.defiRepository.list({});
@@ -143,9 +162,6 @@ export class DefisUsecase {
       utilisateur.missions.validateDefiObjectif(defiId);
     }
 
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'updateStatus',
-    );
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 }

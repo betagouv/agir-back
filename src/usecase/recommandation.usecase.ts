@@ -10,7 +10,7 @@ import {
 } from '../infrastructure/repository/quizz.repository';
 import { Recommandation } from '../domain/contenu/recommandation';
 import { ContentType } from '../../src/domain/contenu/contentType';
-import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
 import { Defi, DefiStatus } from '../../src/domain/defis/defi';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
@@ -39,7 +39,10 @@ export class RecommandationUsecase {
     utilisateurId: string,
     univers?: string,
   ): Promise<Recommandation[]> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.kyc, Scope.history_article_quizz, Scope.logement],
+    );
     utilisateur.checkState();
 
     const catalogue = await this.kycRepository.getAllDefs();
@@ -69,7 +72,16 @@ export class RecommandationUsecase {
   }
 
   async listRecommandations(utilisateurId: string): Promise<Recommandation[]> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [
+        Scope.kyc,
+        Scope.history_article_quizz,
+        Scope.logement,
+        Scope.defis,
+        Scope.unlocked_features,
+      ],
+    );
     utilisateur.checkState();
 
     const kyc_catalogue = await this.kycRepository.getAllDefs();

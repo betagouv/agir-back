@@ -34,6 +34,7 @@ import {
   TypeReponseMosaicKYC,
 } from '../../../src/domain/kyc/mosaicKYC';
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 
 describe('TODO list (API test)', () => {
   const OLD_ENV = process.env;
@@ -984,7 +985,9 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
     expect(
       userDB.parcours_todo.getActiveTodo().done[0].sont_points_en_poche,
@@ -1093,7 +1096,10 @@ describe('TODO list (API test)', () => {
     );
     expect(response.status).toBe(201);
     // THEN
-    const dbUtilisateur = await utilisateurRepository.getById('utilisateur-id');
+    const dbUtilisateur = await utilisateurRepository.getById(
+      'utilisateur-id',
+      [Scope.ALL],
+    );
     expect(dbUtilisateur.gamification['points']).toEqual(35);
     expect(dbUtilisateur.parcours_todo.getActiveTodo().numero_todo).toEqual(2);
     expect(
@@ -1148,7 +1154,7 @@ describe('TODO list (API test)', () => {
           {
             numero_todo: 1,
             points_todo: 25,
-            todo: [,],
+            todo: [],
             done: [
               {
                 id: '123',
@@ -1261,7 +1267,9 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const dbUser = await utilisateurRepository.getById('utilisateur-id');
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(dbUser.parcours_todo.liste_todo[0].done).toHaveLength(1);
     expect(dbUser.parcours_todo.liste_todo[0].done[0].isDone()).toEqual(true);
     expect(
@@ -1313,7 +1321,9 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const dbUser = await utilisateurRepository.getById('utilisateur-id');
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(dbUser.parcours_todo.getActiveTodo().todo).toHaveLength(1);
     expect(
       dbUser.parcours_todo.getActiveTodo().todo[0].progression.current,
@@ -1394,7 +1404,9 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = await utilisateurRepository.getById('utilisateur-id');
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(dbUser.parcours_todo.getActiveTodo().todo).toHaveLength(0);
     expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
     expect(
@@ -1434,7 +1446,9 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const dbUser = await utilisateurRepository.getById('utilisateur-id');
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
     expect(
       dbUser.parcours_todo.getActiveTodo().done[0].progression.current,
@@ -1474,7 +1488,9 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const dbUser = await utilisateurRepository.getById('utilisateur-id');
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
     expect(
       dbUser.parcours_todo.getActiveTodo().done[0].progression.current,
@@ -1514,7 +1530,9 @@ describe('TODO list (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const dbUser = await utilisateurRepository.getById('utilisateur-id');
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(dbUser.parcours_todo.getActiveTodo().done).toHaveLength(1);
     expect(
       dbUser.parcours_todo.getActiveTodo().done[0].progression.current,

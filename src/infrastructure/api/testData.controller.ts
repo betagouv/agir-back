@@ -9,13 +9,13 @@ const utilisateurs_content = require('../../../test_data/utilisateurs_content');
 const _linky_data = require('../../../test_data/PRM_thermo_pas_sensible');
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { LinkyRepository } from '../repository/linky.repository';
-import { ServiceStatus } from '../../../src/domain/service/service';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 import { Contact } from '../contact/contact';
 import { ContactSynchro } from '../contact/contactSynchro';
 import { GenericControler } from './genericControler';
 import { ProfileUsecase } from '../../usecase/profile.usecase';
+import { Scope } from '../../domain/utilisateur/utilisateur';
 
 @Controller()
 @ApiTags('TestData')
@@ -109,7 +109,9 @@ export class TestDataController extends GenericControler {
     });
   }
   async insertUtilisateur(utilisateurId: string) {
-    const user = await this.utilisateurRepository2.getById(utilisateurId);
+    const user = await this.utilisateurRepository2.getById(utilisateurId, [
+      Scope.ALL,
+    ]);
     if (user) {
       await this.profileUsecase.deleteUtilisateur(utilisateurId);
     }
@@ -142,8 +144,9 @@ export class TestDataController extends GenericControler {
 
     const utilisatateur = await this.utilisateurRepository2.getById(
       utilisateurId,
+      [Scope.ALL],
     );
     utilisatateur.recomputeRecoTags();
-    await this.utilisateurRepository2.updateUtilisateur(utilisatateur, 'insertUser');
+    await this.utilisateurRepository2.updateUtilisateur(utilisatateur);
   }
 }

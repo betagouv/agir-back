@@ -26,6 +26,7 @@ import {
   MosaicKYCDef,
   TypeReponseMosaicKYC,
 } from '../../../src/domain/kyc/mosaicKYC';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 
 describe('Mission (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -615,7 +616,9 @@ describe('Mission (API test)', () => {
     expect(objectif_article.is_locked).toEqual(true);
     expect(objectif_article.done_at).toEqual(null);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.missions.missions).toHaveLength(1);
   });
 
@@ -700,7 +703,9 @@ describe('Mission (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.objectifs).toHaveLength(4);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.missions.missions).toHaveLength(1);
     expect(userDB.missions.missions[0].objectifs).toHaveLength(4);
     expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('222');
@@ -800,7 +805,9 @@ describe('Mission (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.objectifs).toHaveLength(2);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.missions.missions).toHaveLength(1);
     expect(userDB.missions.missions[0].objectifs).toHaveLength(2);
     expect(userDB.missions.missions[0].objectifs[0].content_id).toEqual('_1');
@@ -863,7 +870,9 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(
       userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
     ).toEqual(true);
@@ -908,7 +917,9 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(
       userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
     ).toEqual(true);
@@ -950,7 +961,9 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
     expect(
       userDB.missions.missions[0].objectifs[2].sont_points_en_poche,
@@ -992,7 +1005,9 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
     expect(
       userDB.missions.missions[0].objectifs[3].sont_points_en_poche,
@@ -1025,7 +1040,9 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(
       userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
     ).toEqual(false);
@@ -1067,7 +1084,9 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(
       userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
     ).toEqual(true);
@@ -1144,7 +1163,9 @@ describe('Mission (API test)', () => {
     // THEN
     expect(reponse_1.status).toBe(201);
 
-    let userDB = await utilisateurRepository.getById('utilisateur-id');
+    let userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.gamification.points).toEqual(10);
   });
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour deux KYC`, async () => {
@@ -1196,7 +1217,9 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(
       userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
     ).toEqual(true);
@@ -1423,7 +1446,9 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
     expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
   });
@@ -1458,7 +1483,9 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
     expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
     expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(true);
@@ -1506,7 +1533,9 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
     expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
     expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(false);
@@ -1572,7 +1601,9 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
     expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
     expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(true);
@@ -1597,7 +1628,9 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
     expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('2');
     expect(
@@ -1624,7 +1657,9 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
     expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('2');
     expect(
@@ -1655,7 +1690,9 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
     expect(userDB.missions.missions).toHaveLength(1);
 

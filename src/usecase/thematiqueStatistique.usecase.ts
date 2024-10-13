@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Mission } from '../../src/domain/mission/mission';
 import { ThematiqueStatistiqueRepository } from '../../src/infrastructure/repository/thematiqueStatistique.repository';
+import { Scope } from '../domain/utilisateur/utilisateur';
 
 type ThematiqueRecord = {
   titre: string;
@@ -27,7 +28,9 @@ export class ThematiqueStatistiqueUsecase {
       await this.utilisateurRepository.listUtilisateurIds();
 
     for (const userId of listeUtilisateursIds) {
-      const user = await this.utilisateurRepository.getById(userId);
+      const user = await this.utilisateurRepository.getById(userId, [
+        Scope.missions,
+      ]);
 
       user.missions.missions.forEach((mission) => {
         const pourcentageCompletionMission =

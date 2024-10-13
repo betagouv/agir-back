@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ArticleStatistiqueRepository } from '../../src/infrastructure/repository/articleStatistique.repository';
+import { Scope } from '../domain/utilisateur/utilisateur';
 
 @Injectable()
 export class ArticleStatistiqueUsecase {
@@ -61,6 +62,7 @@ export class ArticleStatistiqueUsecase {
     for (let index = 0; index < listeUtilisateursIds.length; index++) {
       const user = await this.utilisateurRepository.getById(
         listeUtilisateursIds[index],
+        [Scope.history_article_quizz],
       );
 
       user.history.article_interactions.forEach((article) => {

@@ -11,7 +11,7 @@ import {
   MissionDefinition,
   ObjectifDefinition,
 } from '../domain/mission/missionDefinition';
-import { Utilisateur } from '../domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import {
   ArticleFilter,
@@ -37,7 +37,10 @@ export class MissionUsecase {
     utilisateurId: string,
     thematique: string,
   ): Promise<void> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.missions],
+    );
     utilisateur.checkState();
 
     let mission =
@@ -48,17 +51,17 @@ export class MissionUsecase {
     }
     if (mission.estTerminable()) {
       mission.terminer(utilisateur);
-      await this.utilisateurRepository.updateUtilisateur(
-        utilisateur,
-        'terminerMission',
-      );
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
     }
   }
   async getMissionOfThematique(
     utilisateurId: string,
     thematique: string,
   ): Promise<Mission> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.missions, Scope.logement, Scope.defis],
+    );
     utilisateur.checkState();
 
     let mission_resultat =
@@ -78,10 +81,7 @@ export class MissionUsecase {
           true,
         );
 
-        await this.utilisateurRepository.updateUtilisateur(
-          utilisateur,
-          'getMissionOfThematique',
-        );
+        await this.utilisateurRepository.updateUtilisateur(utilisateur);
       }
     }
 
@@ -105,7 +105,16 @@ export class MissionUsecase {
   }
 
   async gagnerPointsDeObjectif(utilisateurId: string, objectifId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [
+        Scope.missions,
+        Scope.gamification,
+        Scope.kyc,
+        Scope.history_article_quizz,
+        Scope.defis,
+      ],
+    );
     utilisateur.checkState();
 
     let objectifs_target: Objectif[] = [];
@@ -135,17 +144,17 @@ export class MissionUsecase {
       }
     }
 
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'gagnerPointsDeObjectifs',
-    );
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   async getMissionKYCsAndMosaics(
     utilisateurId: string,
     thematique: string,
   ): Promise<QuestionGeneric[]> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.missions, Scope.kyc, Scope.logement],
+    );
     utilisateur.checkState();
 
     const catalogue = await this.kycRepository.getAllDefs();
@@ -179,10 +188,7 @@ export class MissionUsecase {
       }
     }
 
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'getMissionKYCsAndMosaics',
-    );
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
     return this.personnalisator.personnaliser(result, utilisateur);
   }

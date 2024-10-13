@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { BilanCarboneStatistiqueRepository } from '../infrastructure/repository/bilanCarboneStatistique.repository';
-import { Utilisateur } from '../domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import {
   BilanCarbone,
   BilanCarboneSynthese,
@@ -26,7 +26,10 @@ export class BilanCarboneUsecase {
     bilan_complet: BilanCarbone;
     bilan_synthese: BilanCarboneSynthese;
   }> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.kyc],
+    );
     utilisateur.checkState();
 
     const kyc_catalogue = await this.kycRepository.getAllDefs();
@@ -144,7 +147,9 @@ export class BilanCarboneUsecase {
     const user_id_liste = await this.utilisateurRepository.listUtilisateurIds();
 
     for (const user_id of user_id_liste) {
-      const utilisateur = await this.utilisateurRepository.getById(user_id);
+      const utilisateur = await this.utilisateurRepository.getById(user_id, [
+        Scope.kyc,
+      ]);
 
       const situation = this.computeSituation(utilisateur);
 

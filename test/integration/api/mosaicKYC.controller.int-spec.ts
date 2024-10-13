@@ -14,6 +14,7 @@ import {
   TypeReponseMosaicKYC,
 } from '../../../src/domain/kyc/mosaicKYC';
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 
 const MOSAIC_CATALOGUE: MosaicKYCDef[] = [
   {
@@ -192,7 +193,9 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
 
-    const dbUser = await utilisateurRepository.getById('utilisateur-id');
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
     expect(dbUser.gamification.points).toEqual(15);
 

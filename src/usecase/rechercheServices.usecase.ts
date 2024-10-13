@@ -7,7 +7,7 @@ import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { FiltreRecherche } from '../domain/bibliotheque_services/recherche/filtreRecherche';
 import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
 import { ServiceFavorisStatistiqueRepository } from '../infrastructure/repository/serviceFavorisStatistique.repository';
-import { Utilisateur } from '../domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { NewServiceDefinition } from '../domain/bibliotheque_services/newServiceDefinition';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { ReferentielUsecase } from './referentiels/referentiel.usecase';
@@ -26,7 +26,10 @@ export class RechercheServicesUsecase {
     serviceId: ServiceRechercheID,
     filtre: FiltreRecherche,
   ): Promise<ResultatRecherche[]> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.logement, Scope.bilbiotheque_services],
+    );
     utilisateur.checkState();
 
     const finder = this.rechercheServiceManager.getFinderById(serviceId);
@@ -60,7 +63,7 @@ export class RechercheServicesUsecase {
 
     utilisateur.bilbiotheque_services.setDerniereRecherche(serviceId, result);
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur, 'search');
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
     this.completeFavorisDataToResult(serviceId, result, utilisateur);
 
@@ -75,7 +78,10 @@ export class RechercheServicesUsecase {
     liste: ResultatRecherche[];
     encore_plus_resultats_dispo: boolean;
   }> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.bilbiotheque_services, Scope.logement],
+    );
     utilisateur.checkState();
 
     const finder = this.rechercheServiceManager.getFinderById(serviceId);
@@ -109,7 +115,7 @@ export class RechercheServicesUsecase {
 
     utilisateur.bilbiotheque_services.setDerniereRecherche(serviceId, result);
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur, 'search2');
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
     this.completeFavorisDataToResult(serviceId, result, utilisateur);
 
@@ -129,7 +135,10 @@ export class RechercheServicesUsecase {
     serviceId: ServiceRechercheID,
     reultatId: string,
   ): Promise<ResultatRecherche> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.bilbiotheque_services],
+    );
     utilisateur.checkState();
 
     const service = utilisateur.bilbiotheque_services.getServiceById(serviceId);
@@ -154,7 +163,10 @@ export class RechercheServicesUsecase {
     serviceId: ServiceRechercheID,
     favId: string,
   ) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.bilbiotheque_services],
+    );
     utilisateur.checkState();
 
     const service = utilisateur.bilbiotheque_services.getServiceById(serviceId);
@@ -165,7 +177,7 @@ export class RechercheServicesUsecase {
 
     service.ajouterFavoris(favId);
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur, 'ajouterFavoris');
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   async supprimerFavoris(
@@ -173,7 +185,10 @@ export class RechercheServicesUsecase {
     serviceId: ServiceRechercheID,
     favId: string,
   ) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.bilbiotheque_services],
+    );
     utilisateur.checkState();
 
     const service = utilisateur.bilbiotheque_services.getServiceById(serviceId);
@@ -184,14 +199,17 @@ export class RechercheServicesUsecase {
 
     service.supprimerFavoris(favId);
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur, 'supprimerFavoris');
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   async getFavoris(
     utilisateurId: string,
     serviceId: ServiceRechercheID,
   ): Promise<ResultatRecherche[]> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.bilbiotheque_services],
+    );
     utilisateur.checkState();
 
     const service = utilisateur.bilbiotheque_services.getServiceById(serviceId);
@@ -209,7 +227,10 @@ export class RechercheServicesUsecase {
   async getListServiceDefHome(
     utilisateurId: string,
   ): Promise<NewServiceDefinition[]> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.logement],
+    );
     utilisateur.checkState();
 
     let result = ReferentielUsecase.getNewServiceCatalogue();
@@ -222,7 +243,10 @@ export class RechercheServicesUsecase {
     utilisateurId: string,
     univers: string,
   ): Promise<NewServiceDefinition[]> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.logement],
+    );
     utilisateur.checkState();
 
     let result = ReferentielUsecase.getNewServiceCatalogue();
@@ -252,7 +276,9 @@ export class RechercheServicesUsecase {
     > = new Map();
 
     for (const user_id of user_id_liste) {
-      const user = await this.utilisateurRepository.getById(user_id);
+      const user = await this.utilisateurRepository.getById(user_id, [
+        Scope.bilbiotheque_services,
+      ]);
 
       for (const service of user.bilbiotheque_services.liste_services) {
         for (const favoris of service.favoris) {

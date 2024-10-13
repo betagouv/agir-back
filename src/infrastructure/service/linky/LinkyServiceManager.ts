@@ -13,7 +13,10 @@ import { LinkyRepository } from '../../../../src/infrastructure/repository/linky
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { LinkyAPIConnector } from './LinkyAPIConnector';
 import { LinkyEmailer } from './LinkyEmailer';
-import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
+import {
+  Scope,
+  Utilisateur,
+} from '../../../../src/domain/utilisateur/utilisateur';
 import { LinkyConsent } from '../../../../src/domain/linky/linkyConsent';
 import { LinkyConsentRepository } from '../../../../src/infrastructure/repository/linkyConsent.repository';
 import { CommuneRepository } from '../../../../src/infrastructure/repository/commune/commune.repository';
@@ -119,6 +122,7 @@ export class LinkyServiceManager
 
     const utilisateur = await this.utilisateurRepository.getById(
       service.utilisateurId,
+      [Scope.logement],
     );
     const consent = this.createConsent(
       utilisateur,
@@ -170,6 +174,7 @@ export class LinkyServiceManager
   ): Promise<string> {
     const utilisateur = await this.utilisateurRepository.getById(
       service.utilisateurId,
+      [Scope.logement],
     );
 
     const email_sent = await this.sendDataEmailIfNeeded(service, utilisateur);

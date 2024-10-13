@@ -7,6 +7,7 @@ import { Thematique } from '../domain/contenu/thematique';
 import { PersonalArticle } from '../domain/contenu/article';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { Scope } from '../domain/utilisateur/utilisateur';
 
 @Injectable()
 export class BibliothequeUsecase {
@@ -24,7 +25,10 @@ export class BibliothequeUsecase {
   ): Promise<Bibliotheque> {
     let result = new Bibliotheque();
 
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.history_article_quizz, Scope.logement],
+    );
     utilisateur.checkState();
 
     const articles_lus = utilisateur.history.searchArticlesIds({
@@ -71,7 +75,10 @@ export class BibliothequeUsecase {
       ApplicationError.throwArticleNotFound(content_id);
     }
 
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.history_article_quizz, Scope.logement],
+    );
     utilisateur.checkState();
 
     const result = utilisateur.history.personnaliserArticle(article);

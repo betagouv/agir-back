@@ -10,6 +10,7 @@ import { AideRepository } from '../../src/infrastructure/repository/aide.reposit
 import { Aide } from '../../src/domain/aides/aide';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { Scope } from '../domain/utilisateur/utilisateur';
 
 @Injectable()
 export class AidesUsecase {
@@ -32,7 +33,9 @@ export class AidesUsecase {
   }
 
   async getCatalogueAides(utilisateurId: string): Promise<Aide[]> {
-    const user = await this.utilisateurRepository.getById(utilisateurId);
+    const user = await this.utilisateurRepository.getById(utilisateurId, [
+      Scope.logement,
+    ]);
     user.checkState();
 
     const code_commune = await this.communeRepository.getCodeCommune(
@@ -59,7 +62,10 @@ export class AidesUsecase {
     utilisateurId: string,
     prix_velo: number,
   ): Promise<AidesVeloParType> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.logement],
+    );
     utilisateur.checkState();
 
     const RFR =

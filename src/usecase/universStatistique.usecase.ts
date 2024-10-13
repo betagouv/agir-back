@@ -3,6 +3,7 @@ import { UtilisateurRepository } from '../../src/infrastructure/repository/utili
 import { Mission } from '../../src/domain/mission/mission';
 import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
 import { UniversStatistiqueRepository } from '../../src/infrastructure/repository/universStatistique.repository';
+import { Scope } from '../domain/utilisateur/utilisateur';
 
 type UniversRecord = {
   titre: string;
@@ -30,7 +31,9 @@ export class UniversStatistiqueUsecase {
     for (const userId of listeUtilisateursIds) {
       const thematiqueRecord: Record<string, number[]> = {};
 
-      const user = await this.utilisateurRepository.getById(userId);
+      const user = await this.utilisateurRepository.getById(userId, [
+        Scope.missions,
+      ]);
 
       user.missions.missions.forEach((mission) => {
         const pourcentageCompletionMission =

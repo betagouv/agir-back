@@ -12,6 +12,7 @@ import { KycRepository } from '../../../src/infrastructure/repository/kyc.reposi
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 var crypto = require('crypto');
 
 function getFakeUtilisteur() {
@@ -516,7 +517,9 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     });
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = await utilisateurRepository.getById('utilisateur-id');
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(dbUser.logement.code_postal).toEqual('21000');
     expect(dbUser.logement.commune).toEqual('DIJON');
     expect(dbUser.logement.nombre_adultes).toEqual(4);
@@ -593,7 +596,9 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     });
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = await utilisateurRepository.getById('utilisateur-id');
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
     expect(dbUser.couverture_aides_ok).toEqual(true);
   });
@@ -723,7 +728,9 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     });
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = await utilisateurRepository.getById('utilisateur-id');
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
     expect(dbUser.couverture_aides_ok).toEqual(true);
   });
@@ -765,7 +772,9 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     });
     // THEN
     expect(response.status).toBe(200);
-    const dbUser = await utilisateurRepository.getById('utilisateur-id');
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     const catalogue = await kycRepository.getAllDefs();
     dbUser.kyc_history.setCatalogue(catalogue);
 
@@ -803,7 +812,9 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       confirmation: 'CONFIRMATION RESET',
     });
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     const servicesDB = await TestUtil.prisma.service.findMany();
     const servicesDefDB = await TestUtil.prisma.serviceDefinition.findMany();
 
@@ -825,8 +836,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       confirmation: 'CONFIRMATION RESET',
     });
 
-    const userDB1 = await utilisateurRepository.getById('1');
-    const userDB2 = await utilisateurRepository.getById('2');
+    const userDB1 = await utilisateurRepository.getById('1', [Scope.ALL]);
+    const userDB2 = await utilisateurRepository.getById('2', [Scope.ALL]);
 
     // THEN
     expect(response.status).toBe(201);
@@ -845,7 +856,9 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     // THEN
     expect(response.status).toBe(400);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.unlocked_features.unlocked_features).toHaveLength(2);
   });
   it(`POST /utilisateurs/id/reset erreur si pas de payload`, async () => {
@@ -857,7 +870,9 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     // THEN
     expect(response.status).toBe(400);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.unlocked_features.unlocked_features).toHaveLength(2);
   });
   it(`POST /utilisateurs/update_user_couverture`, async () => {
@@ -925,10 +940,10 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       pas_couvert: 1,
     });
 
-    let userDB = await utilisateurRepository.getById('1');
+    let userDB = await utilisateurRepository.getById('1', [Scope.ALL]);
     expect(userDB.couverture_aides_ok).toEqual(true);
 
-    userDB = await utilisateurRepository.getById('3');
+    userDB = await utilisateurRepository.getById('3', [Scope.ALL]);
     expect(userDB.couverture_aides_ok).toEqual(false);
   });
 });

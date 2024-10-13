@@ -33,6 +33,19 @@ export enum SourceInscription {
   mobile = 'mobile',
   inconnue = 'inconnue',
 }
+export enum Scope {
+  ALL = 'ALL',
+  todo = 'todo',
+  gamification = 'gamification',
+  history_article_quizz = 'history_article_quizz',
+  kyc = 'kyc',
+  unlocked_features = 'unlocked_features',
+  logement = 'logement',
+  defis = 'defis',
+  missions = 'missions',
+  bilbiotheque_services = 'bilbiotheque_services',
+  notification_history = 'notification_history',
+}
 
 export class UtilisateurData {
   id: string;

@@ -526,7 +526,7 @@ describe('/api/incoming/cms (API test)', () => {
 
   it('POST /api/incoming/cms - updates a  defi', async () => {
     // GIVEN
-    TestUtil.create(DB.defi);
+    await TestUtil.create(DB.defi);
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(

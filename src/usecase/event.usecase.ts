@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EventType, AppEvent } from '../domain/appEvent';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { ContentType } from '../domain/contenu/contentType';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 import { Thematique } from '../domain/contenu/thematique';
@@ -46,7 +46,10 @@ export class EventUsecase {
   }
 
   private async processAccessConfLinky(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.todo],
+    );
     const found = utilisateur.parcours_todo.findTodoElementByServiceId(
       LiveService.linky,
     );
@@ -54,53 +57,50 @@ export class EventUsecase {
       found.todo.makeProgress(found.element);
     }
 
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'processAccessConLinky',
-    );
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private async processArticleNonFavoris(
     utilisateurId: string,
     event: AppEvent,
   ) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
-    utilisateur.history.defavoriserArticle(event.content_id);
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'processArticleNonFavoris',
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.history_article_quizz],
     );
+    utilisateur.history.defavoriserArticle(event.content_id);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private async processArticleFavoris(utilisateurId: string, event: AppEvent) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
-    utilisateur.history.favoriserArticle(event.content_id);
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'processArticleFavoris',
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.history_article_quizz],
     );
+    utilisateur.history.favoriserArticle(event.content_id);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private async processLike(utilisateurId: string, event: AppEvent) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.history_article_quizz],
+    );
     if (event.content_type === ContentType.article) {
       utilisateur.history.likerArticle(event.content_id, event.number_value);
-      await this.utilisateurRepository.updateUtilisateur(
-        utilisateur,
-        'processLike',
-      );
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
     }
     if (event.content_type === ContentType.quizz) {
       utilisateur.history.likerQuizz(event.content_id, event.number_value);
-      await this.utilisateurRepository.updateUtilisateur(
-        utilisateur,
-        'processLike',
-      );
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
     }
   }
 
   private async processAccessRecommandations(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.todo],
+    );
     const found = utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
       ContentType.recommandations,
     );
@@ -108,14 +108,14 @@ export class EventUsecase {
       found.todo.makeProgress(found.element);
     }
 
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'processAccessRecommandations',
-    );
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private async processAccessProfile(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.todo],
+    );
     const found = utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
       ContentType.profile,
     );
@@ -123,14 +123,14 @@ export class EventUsecase {
       found.todo.makeProgress(found.element);
     }
 
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'processAccessProfile',
-    );
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private async processAccessCatalogueAides(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.todo],
+    );
     const found = utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
       ContentType.aides,
     );
@@ -138,17 +138,17 @@ export class EventUsecase {
       found.todo.makeProgress(found.element);
     }
 
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'processAccessCatalogueAides',
-    );
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private async processServiceInstalled(
     utilisateurId: string,
     event: AppEvent,
   ) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.todo],
+    );
     const found = utilisateur.parcours_todo.findTodoElementByServiceId(
       event.service_id,
     );
@@ -156,26 +156,32 @@ export class EventUsecase {
       found.todo.makeProgress(found.element);
     }
 
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'processServiceInstalled',
-    );
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private async processCelebration(utilisateurId: string, event: AppEvent) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.gamification, Scope.unlocked_features],
+    );
     utilisateur.gamification.terminerCelebration(
       event.celebration_id,
       utilisateur,
     );
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'processCelebration',
-    );
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private async processLectureArticle(utilisateurId: string, event: AppEvent) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [
+        Scope.history_article_quizz,
+        Scope.gamification,
+        Scope.missions,
+        Scope.kyc,
+        Scope.todo,
+      ],
+    );
     utilisateur.history.lireArticle(event.content_id);
     const article = await this.articleRepository.getArticleByContentId(
       event.content_id,
@@ -194,14 +200,20 @@ export class EventUsecase {
     const catalogue_defis = await this.defiRepository.list({});
     utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
 
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'processLectureArticle',
-    );
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private async processQuizzScore(utilisateurId: string, event: AppEvent) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [
+        Scope.history_article_quizz,
+        Scope.gamification,
+        Scope.missions,
+        Scope.kyc,
+        Scope.todo,
+      ],
+    );
     utilisateur.history.quizzAttempt(event.content_id, event.number_value);
 
     const quizz = await this.quizzRepository.getQuizzByContentId(
@@ -225,10 +237,7 @@ export class EventUsecase {
     const catalogue_defis = await this.defiRepository.list({});
     utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
 
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'processQuizzScore',
-    );
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private updateUserTodo(

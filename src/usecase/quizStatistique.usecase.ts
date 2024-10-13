@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { QuizStatistiqueRepository } from '../../src/infrastructure/repository/quizStatistique.repository';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
+import { Scope } from '../domain/utilisateur/utilisateur';
 
 @Injectable()
 export class QuizStatistiqueUsecase {
@@ -23,6 +24,7 @@ export class QuizStatistiqueUsecase {
     for (const utilisateurId of listeUtilisateursIds) {
       const utilisateur = await this.utilisateurRepository.getById(
         utilisateurId,
+        [Scope.history_article_quizz],
       );
 
       utilisateur.history.quizz_interactions.forEach((quiz) => {

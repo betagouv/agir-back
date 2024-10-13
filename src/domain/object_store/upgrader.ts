@@ -67,6 +67,9 @@ export class Upgrader {
     domain: any,
     className: SerialisableDomain,
   ): any {
+    if (!domain) {
+      return undefined;
+    }
     let current_version: number = 0;
     let current_class = Upgrader.getClassFromVersion(
       className,

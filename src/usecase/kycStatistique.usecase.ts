@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { KycStatistiqueRepository } from '../../src/infrastructure/repository/kycStatistique.repository';
 import { KYCReponse } from 'src/domain/kyc/questionKYC';
+import { Scope } from '../domain/utilisateur/utilisateur';
 
 @Injectable()
 export class KycStatistiqueUsecase {
@@ -17,6 +18,7 @@ export class KycStatistiqueUsecase {
     for (const utilisateurId of listeUtilisateursIds) {
       const utilisateur = await this.utilisateurRepository.getById(
         utilisateurId,
+        [Scope.kyc],
       );
 
       for (const question of utilisateur.kyc_history.answered_questions) {

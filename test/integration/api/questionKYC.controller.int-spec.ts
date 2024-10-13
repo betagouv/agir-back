@@ -31,6 +31,7 @@ import {
 } from '../../../src/domain/kyc/mosaicKYC';
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 
 describe('/utilisateurs/id/questionsKYC (API test)', () => {
   const OLD_ENV = process.env;
@@ -144,7 +145,9 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.length).toEqual(1);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
     const new_kyc = userDB.kyc_history.answered_questions[0];
 
@@ -531,7 +534,9 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const user = await utilisateurRepository.getById('utilisateur-id');
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     const catalogue = await kycRepository.getAllDefs();
     user.kyc_history.setCatalogue(catalogue);
 
@@ -545,7 +550,9 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       },
     ]);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.gamification.points).toEqual(20);
     expect(
       userDB.missions.missions[0].objectifs[0].done_at.getTime(),
@@ -660,7 +667,9 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
 
-    let userDB = await utilisateurRepository.getById('utilisateur-id');
+    let userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
     expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
     expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(false);
@@ -671,7 +680,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    userDB = await utilisateurRepository.getById('utilisateur-id');
+    userDB = await utilisateurRepository.getById('utilisateur-id', [Scope.ALL]);
     expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
     expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(true);
   });
@@ -696,7 +705,9 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const user = await utilisateurRepository.getById('utilisateur-id');
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     const catalogue = await kycRepository.getAllDefs();
     user.kyc_history.setCatalogue(catalogue);
     expect(
@@ -709,7 +720,9 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       },
     ]);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.gamification.points).toEqual(10);
   });
   it('PUT /utilisateurs/id/questionsKYC/1 - erreur si réponse inconnue', async () => {
@@ -765,7 +778,9 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.tag_ponderation_set.transport).toEqual(50);
   });
   it('PUT /utilisateurs/id/questionsKYC/KYC001 - met à jour les tags de reco - suppression boost', async () => {
@@ -802,7 +817,9 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.tag_ponderation_set.transport).toEqual(0);
   });
 
@@ -847,7 +864,9 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.logement.plus_de_15_ans).toEqual(true);
   });
 
@@ -889,7 +908,9 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.logement.dpe).toEqual('F');
   });
 
@@ -935,7 +956,9 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.logement.superficie).toEqual(Superficie.superficie_150);
   });
   it('PUT /utilisateurs/id/questionsKYC/KYC_proprietaire - transpose dans logement', async () => {
@@ -983,7 +1006,9 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.logement.proprietaire).toEqual(true);
   });
 
@@ -1043,7 +1068,9 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.logement.chauffage).toEqual(Chauffage.gaz);
   });
 
@@ -1091,7 +1118,9 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.logement.type).toEqual(TypeLogement.appartement);
   });
 
@@ -1162,7 +1191,9 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(
       userDB.kyc_history.getAnsweredQuestionByCode(
         KYCID.KYC_nbr_plats_vegetaliens,

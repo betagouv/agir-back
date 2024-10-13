@@ -1,4 +1,4 @@
-import { Utilisateur } from '../domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import {
   LogementAPI,
@@ -45,7 +45,10 @@ export class ProfileUsecase {
     utilisateurId: string,
     profile: UtilisateurUpdateProfileAPI,
   ) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [],
+    );
     utilisateur.checkState();
 
     if (profile.mot_de_passe) {
@@ -87,10 +90,7 @@ export class ProfileUsecase {
     utilisateur.prenom = profile.prenom;
     utilisateur.annee_naissance = profile.annee_naissance;
 
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'updateUserProfile',
-    );
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   @Retryable({
@@ -100,7 +100,10 @@ export class ProfileUsecase {
     },
   })
   async updateUtilisateurLogement(utilisateurId: string, input: LogementAPI) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.logement, Scope.kyc],
+    );
     utilisateur.checkState();
 
     const kyc_catalogue = await this.kycRepository.getAllDefs();
@@ -157,14 +160,15 @@ export class ProfileUsecase {
       );
     utilisateur.couverture_aides_ok = couverture_code_postal;
 
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'updateUser',
-    );
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
-    const utilisateur = await this.utilisateurRepository.getById(id);
+    const utilisateur = await this.utilisateurRepository.getById(id, [
+      Scope.unlocked_features,
+      Scope.logement,
+      Scope.kyc,
+    ]);
     if (utilisateur) {
       utilisateur.checkState();
     } else {
@@ -208,22 +212,24 @@ export class ProfileUsecase {
     let couvert = 0;
     let pas_couvert = 0;
     for (const id of userIdList) {
-      const utilisateur = await this.utilisateurRepository.getById(id);
+      const utilisateur = await this.utilisateurRepository.getById(id, [
+        Scope.logement,
+      ]);
       utilisateur.couverture_aides_ok =
         await this.aideRepository.isCodePostalCouvert(
           utilisateur.logement.code_postal,
         );
       couvert += utilisateur.couverture_aides_ok ? 1 : 0;
       pas_couvert += !utilisateur.couverture_aides_ok ? 1 : 0;
-      await this.utilisateurRepository.updateUtilisateur(
-        utilisateur,
-        'updateAllUserCouvertureAides',
-      );
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
     }
     return { couvert, pas_couvert };
   }
   async deleteUtilisateur(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [],
+    );
 
     await this.oIDCStateRepository.delete(utilisateurId);
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
@@ -233,16 +239,16 @@ export class ProfileUsecase {
   }
 
   private async resetUser(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.ALL],
+    );
 
     utilisateur.resetAllHistory();
 
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
 
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'resetUser',
-    );
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private AorB?<T>(a: T, b: T): T {

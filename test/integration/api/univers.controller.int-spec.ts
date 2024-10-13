@@ -3,11 +3,7 @@ import { Univers } from '../../../src/domain/univers/univers';
 import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { ContentType } from '../../../src/domain/contenu/contentType';
-import {
-  MissionsUtilisateur_v0,
-  Mission_v0,
-  Objectif_v0,
-} from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
+import { MissionsUtilisateur_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
 import { ParcoursTodo_v0 } from '../../../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
@@ -22,6 +18,7 @@ import {
 } from '../../../src/domain/logement/logement';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 
 describe('Univers (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -410,7 +407,9 @@ describe('Univers (API test)', () => {
       univers_parent_label: 'Manger !',
     });
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.missions.missions).toHaveLength(2);
   });
   it(`GET /utilisateurs/id/univers/id/thematiques - liste une thematique, donnée correctes, NON ajout mission à utilisateur si PAS visible`, async () => {
@@ -460,7 +459,9 @@ describe('Univers (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(1);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.missions.missions).toHaveLength(1);
   });
   it(`GET /utilisateurs/id/univers/id/thematiques - ajout mission correcte avec articles taggué`, async () => {
@@ -544,7 +545,9 @@ describe('Univers (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(1);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.missions.missions).toHaveLength(1);
     expect(userDB.missions.missions[0].objectifs).toHaveLength(4);
     expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('222');
@@ -620,7 +623,9 @@ describe('Univers (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(1);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.missions.missions).toHaveLength(1);
     expect(userDB.missions.missions[0].objectifs).toHaveLength(0);
   });
@@ -701,7 +706,9 @@ describe('Univers (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(1);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.missions.missions).toHaveLength(1);
     expect(userDB.missions.missions[0].objectifs).toHaveLength(1);
     expect(userDB.missions.missions[0].objectifs[0].content_id).toEqual('0');
@@ -786,7 +793,9 @@ describe('Univers (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(1);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.missions.missions).toHaveLength(1);
     expect(userDB.missions.missions[0].objectifs).toHaveLength(4);
     expect(userDB.missions.missions[0].objectifs[0].content_id).toEqual('0');

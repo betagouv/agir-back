@@ -7,6 +7,7 @@ import { MissionRepository } from '../../src/infrastructure/repository/mission.r
 import { Mission } from '../../src/domain/mission/mission';
 import { MissionUsecase } from './mission.usecase';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { Scope } from '../domain/utilisateur/utilisateur';
 
 @Injectable()
 export class UniversUsecase {
@@ -18,7 +19,10 @@ export class UniversUsecase {
   ) {}
 
   async getALL(utilisateurId: string): Promise<TuileUnivers[]> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.missions, Scope.logement],
+    );
     utilisateur.checkState();
 
     let tuiles = ThematiqueRepository.getAllTuileUnivers();
@@ -36,7 +40,10 @@ export class UniversUsecase {
     univers: string,
   ): Promise<TuileThematique[]> {
     // FIXME : refacto , code tout moche en dessous
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.missions, Scope.logement],
+    );
     utilisateur.checkState();
 
     const listTuilesThem = ThematiqueRepository.getAllTuilesThematique(univers);
@@ -74,10 +81,7 @@ export class UniversUsecase {
         }
       }
     }
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'getThematiquesOfUnivers',
-    );
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
     const final_result = this.ordonneTuilesThematiques(result);
 

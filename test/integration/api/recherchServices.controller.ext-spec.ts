@@ -18,6 +18,7 @@ import { PresDeChezNousRepository } from '../../../src/infrastructure/repository
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { FruitLegume } from '../../../src/infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { DB, TestUtil } from '../../TestUtil';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 
 const logement_palaiseau: Logement_v0 = {
   version: 0,
@@ -182,7 +183,9 @@ describe('RechercheServices (API test)', () => {
     expect(response.body[2].distance_metres).toEqual(922);
     expect(response.body[3].distance_metres).toEqual(971);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
     expect(userDB.bilbiotheque_services.liste_services).toHaveLength(1);
     expect(userDB.bilbiotheque_services.liste_services[0].id).toEqual(
@@ -299,7 +302,9 @@ describe('RechercheServices (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
     expect(userDB.bilbiotheque_services.liste_services[0].favoris).toHaveLength(
       1,
@@ -337,7 +342,9 @@ describe('RechercheServices (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
     expect(userDB.bilbiotheque_services.liste_services[0].favoris).toHaveLength(
       1,
@@ -553,7 +560,9 @@ describe('RechercheServices (API test)', () => {
       image_url: 'https://site/impact_co2_img_fruits_legumes/poire.svg',
     });
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
     expect(userDB.bilbiotheque_services.liste_services).toHaveLength(1);
     expect(userDB.bilbiotheque_services.liste_services[0].id).toEqual(
@@ -590,7 +599,9 @@ describe('RechercheServices (API test)', () => {
       image_url: 'https://site/impact_co2_img_fruits_legumes/poire.svg',
     });
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
     expect(userDB.bilbiotheque_services.liste_services).toHaveLength(1);
     expect(userDB.bilbiotheque_services.liste_services[0].id).toEqual(
@@ -641,7 +652,9 @@ describe('RechercheServices (API test)', () => {
       ingredients: [],
     });
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
     expect(userDB.bilbiotheque_services.liste_services).toHaveLength(1);
     expect(userDB.bilbiotheque_services.liste_services[0].id).toEqual(

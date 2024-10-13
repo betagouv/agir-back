@@ -27,6 +27,7 @@ import {
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { ParcoursTodo_v0 } from '../../../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
@@ -321,7 +322,9 @@ describe('Admin (API test)', () => {
     const response = await TestUtil.POST('/admin/migrate_users');
 
     // THEN
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.version).toBe(4);
     expect(userDB.unlocked_features.isUnlocked(Feature.bibliotheque)).toEqual(
       true,
@@ -393,7 +396,9 @@ describe('Admin (API test)', () => {
         ],
       },
     ]);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.defi_history.defis[0].getStatus()).toEqual(DefiStatus.fait);
   });
   it('POST /admin/migrate_users migration V8 OK', async () => {
@@ -452,7 +457,9 @@ describe('Admin (API test)', () => {
         ],
       },
     ]);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.kyc_history.answered_questions[0].id_cms).toEqual(1);
   });
   it('POST /admin/migrate_users migration V10 OK', async () => {
@@ -482,7 +489,9 @@ describe('Admin (API test)', () => {
         ],
       },
     ]);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.code_postal_classement).toEqual('91120');
     expect(userDB.commune_classement).toEqual('PALAISEAU');
     expect(userDB.points_classement).toEqual(10);
@@ -517,7 +526,9 @@ describe('Admin (API test)', () => {
         ],
       },
     ]);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.parcours_todo.todo_active).toEqual(0);
     expect(userDB.unlocked_features.unlocked_features).toEqual([
       Feature.univers,
@@ -553,7 +564,9 @@ describe('Admin (API test)', () => {
         ],
       },
     ]);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.parcours_todo.todo_active).toEqual(3);
   });
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
@@ -1114,8 +1127,12 @@ describe('Admin (API test)', () => {
     const response = await TestUtil.POST('/admin/upgrade_user_todo');
 
     // THEN
-    const userDB_1 = await utilisateurRepository.getById('utilisateur-id');
-    const userDB_2 = await utilisateurRepository.getById('utilisateur-id');
+    const userDB_1 = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    const userDB_2 = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(response.status).toBe(201);
     expect(response.body).toHaveLength(2);
     expect(response.body).toContain(`utilisateur utilisateur-id : true`);

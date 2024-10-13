@@ -1,5 +1,6 @@
 import { CanalNotification } from '../../../src/domain/notification/notificationHistory';
 import { NotificationHistory_v0 } from '../../../src/domain/object_store/notification/NotificationHistory_v0';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
@@ -34,7 +35,9 @@ describe('Notifications (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.notification_history.enabled_canals).toEqual([
       CanalNotification.mobile,
     ]);
@@ -57,7 +60,9 @@ describe('Notifications (API test)', () => {
     expect(response.status).toBe(400);
     expect(response.body.code).toBe('069');
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.notification_history.enabled_canals).toEqual([
       CanalNotification.email,
       CanalNotification.mobile,
@@ -86,7 +91,9 @@ describe('Notifications (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.notification_history.sent_notifications).toHaveLength(0);
   });
   it(`POST /notifications/email/send_notifications envoie le mail late_onboarding`, async () => {
@@ -111,7 +118,9 @@ describe('Notifications (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.notification_history.sent_notifications).toHaveLength(1);
     expect(response.body).toEqual([
       'Sent for [utilisateur-id] : [late_onboarding]',
@@ -147,7 +156,9 @@ describe('Notifications (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.notification_history.sent_notifications).toHaveLength(0);
     expect(response.body).toEqual([]);
   });
@@ -171,7 +182,9 @@ describe('Notifications (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.notification_history.sent_notifications).toHaveLength(1);
     expect(response.body).toEqual(['Sent welcome email to [utilisateur-id]']);
   });
@@ -195,7 +208,9 @@ describe('Notifications (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.notification_history.sent_notifications).toHaveLength(1);
     expect(response.body).toEqual(['Sent welcome email to [utilisateur-id]']);
 
@@ -204,7 +219,9 @@ describe('Notifications (API test)', () => {
 
     // THEN
     expect(response2.status).toBe(201);
-    const userDB2 = await utilisateurRepository.getById('utilisateur-id');
+    const userDB2 = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB2.notification_history.sent_notifications).toHaveLength(1);
     expect(response2.body).toEqual([]);
   });
