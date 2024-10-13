@@ -46,12 +46,7 @@ export class InscriptionUsecase {
     Utilisateur.checkEmailFormat(utilisateurInput.email);
 
     const utilisateurToCreate = Utilisateur.createNewUtilisateur(
-      null,
-      null,
       utilisateurInput.email,
-      null,
-      null,
-      null,
       false,
       utilisateurInput.source_inscription || SourceInscription.inconnue,
     );

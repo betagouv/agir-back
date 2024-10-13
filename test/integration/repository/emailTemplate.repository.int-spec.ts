@@ -29,12 +29,7 @@ describe('EmailTemplateRepository', () => {
   it('template email code inscription', async () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur(
-      'Clooney',
-      'George',
       'g@c.com',
-      1967,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.web,
     );

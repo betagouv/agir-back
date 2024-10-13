@@ -24,16 +24,7 @@ describe('UseragEvaluator', () => {
 
   it('recomputeRecoTags : kyc_001 : tout à zero', () => {
     // GIVEN
-    const user = Utilisateur.createNewUtilisateur(
-      'a',
-      'b',
-      'a@a.com',
-      1234,
-      null,
-      null,
-      false,
-      null,
-    );
+    const user = Utilisateur.createNewUtilisateur('a@a.com', false, null);
     user.kyc_history.setCatalogue([
       new KycDefinition({
         id_cms: 1,
@@ -81,16 +72,7 @@ describe('UseragEvaluator', () => {
   });
   it('recomputeRecoTags : kyc_001 : tout à 50', () => {
     // GIVEN
-    const user = Utilisateur.createNewUtilisateur(
-      'a',
-      'b',
-      'a@a.com',
-      1234,
-      null,
-      null,
-      false,
-      null,
-    );
+    const user = Utilisateur.createNewUtilisateur('a@a.com', false, null);
     user.kyc_history.setCatalogue([
       new KycDefinition({
         id_cms: 1,
@@ -147,16 +129,7 @@ describe('UseragEvaluator', () => {
 
   it('recomputeRecoTags : KYC_preference : tout à 50', () => {
     // GIVEN
-    const user = Utilisateur.createNewUtilisateur(
-      'a',
-      'b',
-      'a@a.com',
-      1234,
-      null,
-      null,
-      false,
-      null,
-    );
+    const user = Utilisateur.createNewUtilisateur('a@a.com', false, null);
     user.kyc_history.setCatalogue([
       new KycDefinition({
         id_cms: 1,

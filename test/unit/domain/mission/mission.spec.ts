@@ -62,12 +62,7 @@ describe('Missions', () => {
   it('validateDefi : terminaison de mission', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur(
-      'C',
-      'George',
       'mail@www.com',
-      12345,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.inconnue,
     );

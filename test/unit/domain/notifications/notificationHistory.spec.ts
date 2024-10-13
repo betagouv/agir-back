@@ -59,12 +59,7 @@ describe('NotificationHistory', () => {
     process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
 
     const utilisateur = Utilisateur.createNewUtilisateur(
-      'yo',
-      'prenom',
       'toto@dev.com',
-      1979,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.mobile,
     );
@@ -85,12 +80,7 @@ describe('NotificationHistory', () => {
     // GIVEN
     process.env.NOTIFICATIONS_MAIL_ACTIVES = '';
     const utilisateur = Utilisateur.createNewUtilisateur(
-      'yo',
-      'prenom',
       'toto@dev.com',
-      1979,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.mobile,
     );
@@ -111,12 +101,7 @@ describe('NotificationHistory', () => {
     // GIVEN
     process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
-      'yo',
-      'prenom',
       'toto@dev.com',
-      1979,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.mobile,
     );
@@ -139,12 +124,7 @@ describe('NotificationHistory', () => {
     // GIVEN
     process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
-      'yo',
-      'prenom',
       'toto@dev.com',
-      1979,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.mobile,
     );
@@ -173,12 +153,7 @@ describe('NotificationHistory', () => {
     // GIVEN
     process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
-      'yo',
-      'prenom',
       'toto@dev.com',
-      1979,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.mobile,
     );
@@ -200,12 +175,7 @@ describe('NotificationHistory', () => {
     // GIVEN
     process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
-      'yo',
-      'prenom',
       'toto@dev.com',
-      1979,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.mobile,
     );
@@ -231,12 +201,7 @@ describe('NotificationHistory', () => {
     // GIVEN
     process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
-      'yo',
-      'prenom',
       'toto@dev.com',
-      1979,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.mobile,
     );
@@ -260,12 +225,7 @@ describe('NotificationHistory', () => {
     // GIVEN
     process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
-      'yo',
-      'prenom',
       'toto@dev.com',
-      1979,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.mobile,
     );
@@ -330,12 +290,7 @@ describe('NotificationHistory', () => {
     });
 
     const utilisateur = Utilisateur.createNewUtilisateur(
-      'yo',
-      'prenom',
       'toto@dev.com',
-      1979,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.mobile,
     );

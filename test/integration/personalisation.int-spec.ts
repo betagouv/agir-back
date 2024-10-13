@@ -25,12 +25,7 @@ describe('Personalisation', () => {
   it('perso : ne touche pas une chaine quelconque', async () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
-      'W',
-      'George',
       'g@www.com',
-      1234,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.inconnue,
     );
@@ -46,12 +41,7 @@ describe('Personalisation', () => {
   it('perso : ne bug pas sur undefined , null, et autres types', async () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
-      'W',
-      'George',
       'g@www.com',
-      1234,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.inconnue,
     );
@@ -67,12 +57,7 @@ describe('Personalisation', () => {
   it('perso : remplace COMMUNE OK', async () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
-      'W',
-      'George',
       'g@www.com',
-      1234,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.inconnue,
     );
@@ -93,12 +78,7 @@ describe('Personalisation', () => {
   it('perso : remplace COMMUNE dans un sous objet', async () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
-      'W',
-      'George',
       'g@www.com',
-      1234,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.inconnue,
     );
@@ -118,12 +98,7 @@ describe('Personalisation', () => {
   it('perso : remplace COMMUNE dans une liste de objets', async () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
-      'W',
-      'George',
       'g@www.com',
-      1234,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.inconnue,
     );
@@ -147,12 +122,7 @@ describe('Personalisation', () => {
   it('perso : remplace COMMUNE dans une liste de strings', async () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
-      'W',
-      'George',
       'g@www.com',
-      1234,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.inconnue,
     );
@@ -170,12 +140,7 @@ describe('Personalisation', () => {
   it('perso : préserve les dates', async () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
-      'W',
-      'George',
       'g@www.com',
-      1234,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.inconnue,
     );

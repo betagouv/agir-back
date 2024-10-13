@@ -16,12 +16,7 @@ describe('Gamification', () => {
     // GIVEN
     const gamification = new Gamification();
     const user = Utilisateur.createNewUtilisateur(
-      'a',
-      'b',
       'c',
-      1234,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.inconnue,
     );

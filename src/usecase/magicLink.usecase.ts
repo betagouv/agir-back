@@ -78,12 +78,7 @@ export class MagicLinkUsecase {
 
     if (!utilisateur) {
       utilisateur = Utilisateur.createNewUtilisateur(
-        'NOM',
-        'PRENOM',
         email,
-        null,
-        null,
-        null,
         true,
         SourceInscription.inconnue,
       );

@@ -69,12 +69,7 @@ describe('UtilisateurRepository', () => {
   it('creation et lecture , versionning des donnes json ', async () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
-      'pierre',
-      'paul',
       'w@w.com',
-      1234,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.inconnue,
     );
