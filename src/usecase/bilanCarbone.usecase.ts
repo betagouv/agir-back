@@ -282,27 +282,45 @@ export class BilanCarboneUsecase {
       return null;
     }
 
-    const chauffage = utilisateur.logement.chauffage;
+    const kyc_bois = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+      KYCID.KYC_chauffage_bois,
+    );
+    if (!kyc_bois) return null;
+    if (!kyc_bois.hasAnyResponses()) return null;
+
+    const kyc_elec = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+      KYCID.KYC_chauffage_elec,
+    );
+    if (!kyc_elec) return null;
+    if (!kyc_elec.hasAnyResponses()) return null;
+
+    const kyc_gaz = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+      KYCID.KYC_chauffage_gaz,
+    );
+    if (!kyc_gaz) return null;
+    if (!kyc_gaz.hasAnyResponses()) return null;
+
+    const kyc_fioul = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+      KYCID.KYC_chauffage_fioul,
+    );
+    if (!kyc_fioul) return null;
+    if (!kyc_fioul.hasAnyResponses()) return null;
+
+    const is_fioul = kyc_fioul.getCodeReponseUniqueSaisie() === 'oui';
+    const is_gaz = kyc_gaz.getCodeReponseUniqueSaisie() === 'oui';
+    const is_elec = kyc_elec.getCodeReponseUniqueSaisie() === 'oui';
+    const is_bois = kyc_bois.getCodeReponseUniqueSaisie() === 'oui';
+
     let type_chauffage_nbr;
 
-    switch (chauffage) {
-      case Chauffage.bois:
-        type_chauffage_nbr = 1;
-        break;
-      case Chauffage.electricite:
-        type_chauffage_nbr = 1;
-        break;
-      case Chauffage.autre:
-        type_chauffage_nbr = 2;
-        break;
-      case Chauffage.gaz:
-        type_chauffage_nbr = 3;
-        break;
-      case Chauffage.fioul:
-        type_chauffage_nbr = 4;
-        break;
-      default:
-        return null;
+    if (is_fioul) {
+      type_chauffage_nbr = 4;
+    } else if (is_gaz) {
+      type_chauffage_nbr = 3;
+    } else if (is_elec || is_bois) {
+      type_chauffage_nbr = 1;
+    } else {
+      type_chauffage_nbr = 2;
     }
 
     const nbr_hab = parseInt(kyc_menage.reponses[0].label);
