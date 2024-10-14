@@ -115,6 +115,19 @@ export class MosaicKYC {
         KYCID.KYC_electro_seche_linge,
       ],
     },
+    {
+      id: KYCMosaicID.MOSAIC_REDUCTION_DECHETS,
+      categorie: Categorie.mission,
+      points: 5,
+      titre: 'Quels éco-gestes mettez-vous en place pour réduire vos déchets ?',
+      type: TypeReponseMosaicKYC.mosaic_boolean,
+      question_kyc_codes: [
+        KYCID.KYC_alimentation_compostage,
+        KYCID.KYC_alimentation_reduc_gaspi_alim,
+        KYCID.KYC_alimentation_stoppub,
+        KYCID.KYC_alimentation_achat_vrac,
+      ],
+    },
   ];
 
   public static listMosaicIDs(): KYCMosaicID[] {

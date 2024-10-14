@@ -76,4 +76,12 @@ export enum KYCID {
   KYC_electro_seche_linge = 'KYC_electro_seche_linge',
   KYC_consommation_relation_objets = 'KYC_consommation_relation_objets',
   KYC_consommation_type_consommateur = 'KYC_consommation_type_consommateur',
+  KYC_local_frequence = 'KYC_local_frequence',
+  KYC_saison_frequence = 'KYC_saison_frequence',
+  KYC_alimentation_litres_alcool = 'KYC_alimentation_litres_alcool',
+  KYC_gaspillage_alimentaire_frequence = 'KYC_gaspillage_alimentaire_frequence',
+  KYC_alimentation_compostage = 'KYC_alimentation_compostage',
+  KYC_alimentation_reduc_gaspi_alim = 'KYC_alimentation_reduc_gaspi_alim',
+  KYC_alimentation_stoppub = 'KYC_alimentation_stoppub',
+  KYC_alimentation_achat_vrac = 'KYC_alimentation_achat_vrac',
 }

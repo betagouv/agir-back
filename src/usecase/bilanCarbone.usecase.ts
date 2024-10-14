@@ -14,7 +14,6 @@ import { QuestionKYCUsecase } from './questionKYC.usecase';
 import { Univers } from '../domain/univers/univers';
 import { KYCID } from '../domain/kyc/KYCID';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
-import { Chauffage } from '../domain/logement/logement';
 
 @Injectable()
 export class BilanCarboneUsecase {

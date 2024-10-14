@@ -404,8 +404,8 @@ describe('/bilan (API test)', () => {
           id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_alimentation',
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1728466523/cuisine_da54797693.svg',
-          nombre_total_question: 0,
-          pourcentage_progression: null,
+          nombre_total_question: 1,
+          pourcentage_progression: 0,
           univers: 'alimentation',
           univers_label: 'Alimentation',
           temps_minutes: 3,

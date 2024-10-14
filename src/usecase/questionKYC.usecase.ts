@@ -70,7 +70,13 @@ export class QuestionKYCUsecase {
       KYCID.KYC_consommation_relation_objets,
       KYCMosaicID.MOSAIC_ELECTROMENAGER,
     ],
-    ENCHAINEMENT_KYC_bilan_alimentation: [KYCID.KYC_nbr_plats_viande_blanche],
+    ENCHAINEMENT_KYC_bilan_alimentation: [
+      KYCID.KYC_local_frequence,
+      KYCID.KYC_saison_frequence,
+      KYCID.KYC_alimentation_litres_alcool,
+      KYCID.KYC_gaspillage_alimentaire_frequence,
+      KYCMosaicID.MOSAIC_REDUCTION_DECHETS,
+    ],
   };
 
   async getALL(utilisateurId: string): Promise<QuestionGeneric[]> {
