@@ -96,13 +96,12 @@ export class MosaicKYC {
         KYCID.KYC_consommation_logement_vacances_secondaire,
       ],
     },
-    /*
     {
       id: KYCMosaicID.MOSAIC_ELECTROMENAGER,
       categorie: Categorie.mission,
       points: 5,
       titre: 'Quels appareils électroménagers possédez-vous ?',
-      type: TypeReponseMosaicKYC.mosaic_number,
+      type: TypeReponseMosaicKYC.mosaic_boolean,
       question_kyc_codes: [
         KYCID.KYC_electro_robot_cuisine,
         KYCID.KYC_electro_aspirateur,
@@ -116,7 +115,6 @@ export class MosaicKYC {
         KYCID.KYC_electro_seche_linge,
       ],
     },
-    */
   ];
 
   public static listMosaicIDs(): KYCMosaicID[] {

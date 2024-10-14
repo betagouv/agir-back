@@ -248,6 +248,113 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     });
   });
 
+  it('PUT /utilisateurs/id/questionsKYC/id - maj mosaic boolean alors que que les question sous jacente sont interger', async () => {
+    // GIVEN
+
+    const dbKYC: KYC = {
+      id_cms: 1,
+      categorie: Categorie.recommandation,
+      code: '1',
+      is_ngc: true,
+      points: 20,
+      question: 'The question !',
+      tags: [Tag.possede_voiture],
+      universes: [Univers.alimentation],
+      thematique: Thematique.alimentation,
+      type: TypeReponseQuestionKYC.entier,
+      ngc_key: 'a . b . c',
+      reponses: [],
+      short_question: 'short',
+      image_url: 'AAA',
+      conditions: [],
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 1,
+      question: 'quest 1',
+      code: '_1',
+    });
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 2,
+      question: 'quest 2',
+      code: '_2',
+    });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v0() });
+    MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/TEST_MOSAIC_ID',
+    ).send({
+      reponse_mosaic: [
+        { code: '_1', boolean_value: true },
+        { code: '_2', boolean_value: false },
+      ],
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(dbUser.kyc_history.answered_questions).toHaveLength(2);
+    expect(dbUser.kyc_history.answered_questions[0]).toEqual({
+      id: '_1',
+      question: 'quest 1',
+      type: 'entier',
+      categorie: 'recommandation',
+      points: 20,
+      is_NGC: true,
+      reponses: [
+        {
+          code: null,
+          label: '1',
+          ngc_code: null,
+        },
+      ],
+      reponses_possibles: [],
+      ngc_key: 'a . b . c',
+      thematique: 'alimentation',
+      tags: ['possede_voiture'],
+      score: 0,
+      universes: ['alimentation'],
+      id_cms: 1,
+      short_question: 'short',
+      image_url: 'AAA',
+      conditions: [],
+    });
+    expect(dbUser.kyc_history.answered_questions[1]).toEqual({
+      id: '_2',
+      question: 'quest 2',
+      type: 'entier',
+      categorie: 'recommandation',
+      points: 20,
+      is_NGC: true,
+      reponses: [
+        {
+          code: null,
+          label: '0',
+          ngc_code: null,
+        },
+      ],
+      reponses_possibles: [],
+      ngc_key: 'a . b . c',
+      thematique: 'alimentation',
+      tags: ['possede_voiture'],
+      score: 0,
+      universes: ['alimentation'],
+      id_cms: 2,
+      short_question: 'short',
+      image_url: 'AAA',
+      conditions: [],
+    });
+  });
+
   it('PUT /utilisateurs/id/questionsKYC/id - maj mosaic avec pas de réponses', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v0() });

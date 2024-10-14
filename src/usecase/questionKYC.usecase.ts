@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { QuestionKYC } from '../domain/kyc/questionKYC';
+import { QuestionKYC, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
@@ -66,7 +66,7 @@ export class QuestionKYCUsecase {
     ENCHAINEMENT_KYC_bilan_consommation: [
       KYCMosaicID.MOSAIC_LOGEMENT_VACANCES,
       KYCID.KYC_consommation_relation_objets,
-      //KYCMosaicID.MOSAIC_ELECTROMENAGER,
+      KYCMosaicID.MOSAIC_ELECTROMENAGER,
     ],
     ENCHAINEMENT_KYC_bilan_alimentation: [KYCID.KYC_nbr_plats_viande_blanche],
   };
@@ -178,13 +178,11 @@ export class QuestionKYCUsecase {
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
-    await this.updateQuestionOfCode(
-      code_question,
-      null,
-      reponse,
-      utilisateur,
-      true,
-    );
+    this.updateQuestionOfCode(code_question, null, reponse, utilisateur, true);
+
+    const catalogue_defis = await this.defiRepository.list({});
+    utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
+
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
@@ -235,13 +233,28 @@ export class QuestionKYCUsecase {
 
     if (mosaic.type === TypeReponseMosaicKYC.mosaic_boolean) {
       for (const reponse of reponses) {
-        await this.updateQuestionOfCode(
+        const kyc = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
           reponse.code,
-          reponse.boolean_value ? 'oui' : 'non',
-          null,
-          utilisateur,
-          false,
         );
+        if (kyc) {
+          if (kyc.type === TypeReponseQuestionKYC.entier) {
+            this.updateQuestionOfCode(
+              reponse.code,
+              null,
+              reponse.boolean_value ? ['1'] : ['0'],
+              utilisateur,
+              false,
+            );
+          } else {
+            this.updateQuestionOfCode(
+              reponse.code,
+              reponse.boolean_value ? 'oui' : 'non',
+              null,
+              utilisateur,
+              false,
+            );
+          }
+        }
       }
     }
 
@@ -252,10 +265,13 @@ export class QuestionKYCUsecase {
     utilisateur.kyc_history.addAnsweredMosaic(mosaic.id);
     utilisateur.missions.answerMosaic(mosaic.id);
 
+    const catalogue_defis = await this.defiRepository.list({});
+    utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
+
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  private async updateQuestionOfCode(
+  private updateQuestionOfCode(
     code_question: string,
     code_reponse: string,
     labels_reponse: string[],
@@ -298,9 +314,6 @@ export class QuestionKYCUsecase {
     this.dispatchKYCUpdateToOtherKYCsPostUpdate(code_question, utilisateur);
 
     utilisateur.recomputeRecoTags();
-
-    const catalogue_defis = await this.defiRepository.list({});
-    utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
   }
 
   public synchroKYCAvecProfileUtilisateur(
