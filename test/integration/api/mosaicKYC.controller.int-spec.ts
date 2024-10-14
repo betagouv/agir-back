@@ -14,6 +14,7 @@ import {
   TypeReponseMosaicKYC,
 } from '../../../src/domain/kyc/mosaicKYC';
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 
 const MOSAIC_CATALOGUE: MosaicKYCDef[] = [
   {
@@ -103,12 +104,12 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     expect(response.body.reponses).toHaveLength(2);
 
     expect(response.body.reponses[0].code).toEqual('_1');
-    expect(response.body.reponses[0].label).toEqual('short 1');
+    expect(response.body.reponses[0].label).toEqual('short 1');
     expect(response.body.reponses[0].image_url).toEqual('AAA');
     expect(response.body.reponses[0].boolean_value).toEqual(false);
 
     expect(response.body.reponses[1].code).toEqual('_2');
-    expect(response.body.reponses[1].label).toEqual('short 2');
+    expect(response.body.reponses[1].label).toEqual('short 2');
     expect(response.body.reponses[1].image_url).toEqual('BBB');
     expect(response.body.reponses[1].boolean_value).toEqual(false);
   });
@@ -192,7 +193,9 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
 
-    const dbUser = await utilisateurRepository.getById('utilisateur-id');
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
     expect(dbUser.gamification.points).toEqual(15);
 
@@ -233,6 +236,113 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         { code: 'non', label: 'Non' },
         { code: 'sais_pas', label: 'Je sais pas' },
       ],
+      ngc_key: 'a . b . c',
+      thematique: 'alimentation',
+      tags: ['possede_voiture'],
+      score: 0,
+      universes: ['alimentation'],
+      id_cms: 2,
+      short_question: 'short',
+      image_url: 'AAA',
+      conditions: [],
+    });
+  });
+
+  it('PUT /utilisateurs/id/questionsKYC/id - maj mosaic boolean alors que que les question sous jacente sont interger', async () => {
+    // GIVEN
+
+    const dbKYC: KYC = {
+      id_cms: 1,
+      categorie: Categorie.recommandation,
+      code: '1',
+      is_ngc: true,
+      points: 20,
+      question: 'The question !',
+      tags: [Tag.possede_voiture],
+      universes: [Univers.alimentation],
+      thematique: Thematique.alimentation,
+      type: TypeReponseQuestionKYC.entier,
+      ngc_key: 'a . b . c',
+      reponses: [],
+      short_question: 'short',
+      image_url: 'AAA',
+      conditions: [],
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 1,
+      question: 'quest 1',
+      code: '_1',
+    });
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 2,
+      question: 'quest 2',
+      code: '_2',
+    });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v0() });
+    MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/TEST_MOSAIC_ID',
+    ).send({
+      reponse_mosaic: [
+        { code: '_1', boolean_value: true },
+        { code: '_2', boolean_value: false },
+      ],
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(dbUser.kyc_history.answered_questions).toHaveLength(2);
+    expect(dbUser.kyc_history.answered_questions[0]).toEqual({
+      id: '_1',
+      question: 'quest 1',
+      type: 'entier',
+      categorie: 'recommandation',
+      points: 20,
+      is_NGC: true,
+      reponses: [
+        {
+          code: null,
+          label: '1',
+          ngc_code: null,
+        },
+      ],
+      reponses_possibles: [],
+      ngc_key: 'a . b . c',
+      thematique: 'alimentation',
+      tags: ['possede_voiture'],
+      score: 0,
+      universes: ['alimentation'],
+      id_cms: 1,
+      short_question: 'short',
+      image_url: 'AAA',
+      conditions: [],
+    });
+    expect(dbUser.kyc_history.answered_questions[1]).toEqual({
+      id: '_2',
+      question: 'quest 2',
+      type: 'entier',
+      categorie: 'recommandation',
+      points: 20,
+      is_NGC: true,
+      reponses: [
+        {
+          code: null,
+          label: '0',
+          ngc_code: null,
+        },
+      ],
+      reponses_possibles: [],
       ngc_key: 'a . b . c',
       thematique: 'alimentation',
       tags: ['possede_voiture'],
@@ -384,13 +494,13 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       reponses: [
         {
           code: '_1',
-          label: 'short 1',
+          label: 'short 1',
           boolean_value: true,
           image_url: 'AAA',
         },
         {
           code: '_2',
-          label: 'short 2',
+          label: 'short 2',
           boolean_value: false,
           image_url: 'BBB',
         },

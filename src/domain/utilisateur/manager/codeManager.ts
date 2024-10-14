@@ -48,6 +48,8 @@ export class CodeManager {
     let ok;
     if (utilisateur.email === App.getGoogleTestEmail()) {
       ok = App.getGoogleTestOTP() === code;
+    } else if (utilisateur.email === App.getAppleTestEmail()) {
+      ok = App.getAppleTestOTP() === code;
     } else {
       ok =
         utilisateur.code === code &&

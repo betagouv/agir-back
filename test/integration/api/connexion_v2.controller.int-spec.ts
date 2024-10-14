@@ -1,7 +1,10 @@
 import { DB, TestUtil } from '../../TestUtil';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { UtilisateurStatus } from '../../../src/domain/utilisateur/utilisateur';
+import {
+  Scope,
+  UtilisateurStatus,
+} from '../../../src/domain/utilisateur/utilisateur';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Thematique } from '../../../src/domain/contenu/thematique';
@@ -64,7 +67,9 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
         email: 'yo@truc.com',
       });
     // THEN
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(response.status).toBe(201);
     expect(response.body).toEqual({});
 
@@ -116,7 +121,9 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
     expect(response.body.utilisateur.nom).toEqual('nom');
     expect(response.body.utilisateur.prenom).toEqual('prenom');
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.status).toEqual(UtilisateurStatus.default);
   });
   it(`POST /utilisateurs/login_v2_code - mauvais code de validation`, async () => {
@@ -157,7 +164,9 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
       'Mauvais code, code expiré, ou mauvaise adresse électronique',
     );
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.status).toEqual(UtilisateurStatus.connexion_etape_1);
   });
   it(`POST /utilisateurs/login_v2_code - 4 mauvais code de validation`, async () => {
@@ -222,7 +231,9 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
       true,
     );
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.failed_checkcode_count).toEqual(4);
   });
 
@@ -497,7 +508,9 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
     await TestUtil.create(DB.utilisateur);
     // WHEN
     const response = await TestUtil.POST('/utilisateurs/utilisateur-id/logout');
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
     // THEN
     expect(response.status).toBe(201);
@@ -511,8 +524,8 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
 
     // WHEN
     const response = await TestUtil.POST('/utilisateurs/logout');
-    const userDB_1 = await utilisateurRepository.getById('1');
-    const userDB_2 = await utilisateurRepository.getById('2');
+    const userDB_1 = await utilisateurRepository.getById('1', [Scope.ALL]);
+    const userDB_2 = await utilisateurRepository.getById('2', [Scope.ALL]);
 
     // THEN
     expect(response.status).toBe(201);

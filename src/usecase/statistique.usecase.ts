@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { StatistiqueRepository } from '../../src/infrastructure/repository/statitstique.repository';
 import { Mission, Objectif } from '../../src/domain/mission/mission';
-import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
 
 @Injectable()
@@ -12,13 +12,16 @@ export class StatistiqueUsecase {
     private statistiqueRepository: StatistiqueRepository,
   ) {}
 
-  async calculStatistique(): Promise<string[]> {
+  async calculStatistiqueDefis(): Promise<string[]> {
     const utilisateurIds =
       await this.utilisateurRepository.listUtilisateurIds();
     const reponse: string[] = [];
 
     for (const userId of utilisateurIds) {
-      const user = await this.utilisateurRepository.getById(userId);
+      const user = await this.utilisateurRepository.getById(userId, [
+        Scope.defis,
+        Scope.missions,
+      ]);
 
       const {
         thematiquesTermineesAsc,

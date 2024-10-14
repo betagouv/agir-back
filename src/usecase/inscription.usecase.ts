@@ -46,12 +46,7 @@ export class InscriptionUsecase {
     Utilisateur.checkEmailFormat(utilisateurInput.email);
 
     const utilisateurToCreate = Utilisateur.createNewUtilisateur(
-      null,
-      null,
       utilisateurInput.email,
-      null,
-      null,
-      null,
       false,
       utilisateurInput.source_inscription || SourceInscription.inconnue,
     );
@@ -144,7 +139,7 @@ export class InscriptionUsecase {
       utilisateur.email,
       utilisateur.prenom,
       `Bonjour,<br>
-Voici votre code pour valider votre inscription à l'application Agir !<br><br>
+Voici votre code pour valider votre inscription à l'application J'agis !<br><br>
     
 code : ${utilisateur.code}<br><br>
 
@@ -153,7 +148,7 @@ Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="
       }">Page pour rentrer le code</a><br><br>
     
 À très vite !`,
-      `Votre code d'inscription Agir`,
+      `Votre code d'inscription J'agis`,
     );
   }
 }

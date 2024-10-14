@@ -25,12 +25,7 @@ describe('Gamification vN ', () => {
   it('serialise <=> deserialise v0 OK', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
-      'a',
-      'b',
       'c',
-      1234,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.inconnue,
     );
@@ -47,12 +42,7 @@ describe('Gamification vN ', () => {
   it('serialise <=> upgade <=> deserialise v0 OK', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
-      'a',
-      'b',
       'c',
-      1234,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.inconnue,
     );

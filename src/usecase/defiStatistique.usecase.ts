@@ -3,6 +3,7 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { DefiStatistiqueRepository } from '../../src/infrastructure/repository/defiStatistique.repository';
 import { DefiStatus } from '../../src/domain/defis/defi';
 import { DefiStatistique } from '../../src/domain/defis/defiStatistique';
+import { Scope } from '../domain/utilisateur/utilisateur';
 
 @Injectable()
 export class DefiStatistiqueUsecase {
@@ -20,7 +21,9 @@ export class DefiStatistiqueUsecase {
       await this.utilisateurRepository.listUtilisateurIds();
 
     for (const userId of listeUtilisateursIds) {
-      const utilisateur = await this.utilisateurRepository.getById(userId);
+      const utilisateur = await this.utilisateurRepository.getById(userId, [
+        Scope.defis,
+      ]);
 
       utilisateur.defi_history.defis.forEach((defi) => {
         const defi_agrega = this.getDefiAgregationRefById(defi.id, defi_map);

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Utilisateur as UtilisateurDB, Prisma } from '@prisma/client';
 import {
+  Scope,
   SourceInscription,
   Utilisateur,
   UtilisateurStatus,
@@ -31,8 +32,43 @@ export class UtilisateurRepository {
     await this.prisma.utilisateur.delete({ where: { id: utilisateurId } });
   }
 
-  async getById(id: string): Promise<Utilisateur | null> {
+  async listePrenomsAValider(): Promise<{ id: string; prenom: string }[]> {
+    return await this.prisma.utilisateur.findMany({
+      where: { est_valide_pour_classement: false },
+      select: {
+        id: true,
+        prenom: true,
+      },
+    });
+  }
+
+  async validerPrenom(utilisateurId: string, prenom: string) {
+    await this.prisma.utilisateur.update({
+      where: { id: utilisateurId },
+      data: {
+        prenom: prenom,
+        est_valide_pour_classement: true,
+      },
+    });
+  }
+
+  async getById(id: string, scopes: Scope[]): Promise<Utilisateur | null> {
+    if (scopes.includes(Scope.ALL)) {
+      scopes = Object.values(Scope);
+    }
     const user = await this.prisma.utilisateur.findUnique({
+      omit: {
+        todo: !scopes.includes(Scope.todo),
+        gamification: !scopes.includes(Scope.gamification),
+        history: !scopes.includes(Scope.history_article_quizz),
+        kyc: !scopes.includes(Scope.kyc),
+        unlocked_features: !scopes.includes(Scope.unlocked_features),
+        logement: !scopes.includes(Scope.logement),
+        defis: !scopes.includes(Scope.defis),
+        missions: !scopes.includes(Scope.missions),
+        bilbiotheque_services: !scopes.includes(Scope.bilbiotheque_services),
+        notification_history: !scopes.includes(Scope.notification_history),
+      },
       where: {
         id,
       },
@@ -41,6 +77,17 @@ export class UtilisateurRepository {
   }
   async getByEmailToken(token: string): Promise<Utilisateur | null> {
     const user = await this.prisma.utilisateur.findUnique({
+      omit: {
+        todo: true,
+        gamification: true,
+        history: true,
+        kyc: true,
+        unlocked_features: true,
+        logement: true,
+        defis: true,
+        missions: true,
+        bilbiotheque_services: true,
+      },
       where: {
         unsubscribe_mail_token: token,
       },
@@ -57,6 +104,18 @@ export class UtilisateurRepository {
   }
   async findByEmail(email: string): Promise<Utilisateur | null> {
     const users = await this.prisma.utilisateur.findMany({
+      omit: {
+        todo: true,
+        gamification: true,
+        history: true,
+        kyc: false,
+        unlocked_features: false,
+        logement: false,
+        defis: true,
+        missions: true,
+        bilbiotheque_services: true,
+        notification_history: true,
+      },
       where: {
         email: {
           equals: email,
@@ -126,10 +185,7 @@ export class UtilisateurRepository {
       },
     });
   }
-  async updateUtilisateur(
-    utilisateur: Utilisateur,
-    who?: string,
-  ): Promise<void> {
+  async updateUtilisateur(utilisateur: Utilisateur): Promise<void> {
     try {
       await this.prisma.utilisateur.update({
         where: { id: utilisateur.id, db_version: utilisateur.db_version },
@@ -222,50 +278,73 @@ export class UtilisateurRepository {
     return Number(count);
   }
 
-  private buildUtilisateurFromDB(user: UtilisateurDB): Utilisateur {
+  private buildUtilisateurFromDB(user: Partial<UtilisateurDB>): Utilisateur {
     if (user) {
-      const unlocked_features = new UnlockedFeatures(
-        Upgrader.upgradeRaw(
-          user.unlocked_features,
-          SerialisableDomain.UnlockedFeatures,
-        ),
-      );
-      const bibliotheque_services = new BibliothequeServices(
-        Upgrader.upgradeRaw(
-          user.bilbiotheque_services,
-          SerialisableDomain.BibliothequeServices,
-        ),
-      );
-      const parcours_todo = new ParcoursTodo(
-        Upgrader.upgradeRaw(user.todo, SerialisableDomain.ParcoursTodo),
-      );
-      const history = new History(
-        Upgrader.upgradeRaw(user.history, SerialisableDomain.History),
-      );
-      const gamification = new Gamification(
-        Upgrader.upgradeRaw(user.gamification, SerialisableDomain.Gamification),
-      );
-      const kyc = new KYCHistory(
-        Upgrader.upgradeRaw(user.kyc, SerialisableDomain.KYCHistory),
-      );
-      const defis = new DefiHistory(
-        Upgrader.upgradeRaw(user.defis, SerialisableDomain.DefiHistory),
-      );
-      const logement = new Logement(
-        Upgrader.upgradeRaw(user.logement, SerialisableDomain.Logement),
-      );
-      const missions = new MissionsUtilisateur(
-        Upgrader.upgradeRaw(
-          user.missions,
-          SerialisableDomain.MissionsUtilisateur,
-        ),
-      );
-      const notification_history = new NotificationHistory(
-        Upgrader.upgradeRaw(
-          user.notification_history,
-          SerialisableDomain.NotificationHistory,
-        ),
-      );
+      const unlocked_features = user.unlocked_features
+        ? new UnlockedFeatures(
+            Upgrader.upgradeRaw(
+              user.unlocked_features,
+              SerialisableDomain.UnlockedFeatures,
+            ),
+          )
+        : undefined;
+      const bibliotheque_services = user.bilbiotheque_services
+        ? new BibliothequeServices(
+            Upgrader.upgradeRaw(
+              user.bilbiotheque_services,
+              SerialisableDomain.BibliothequeServices,
+            ),
+          )
+        : undefined;
+      const parcours_todo = user.todo
+        ? new ParcoursTodo(
+            Upgrader.upgradeRaw(user.todo, SerialisableDomain.ParcoursTodo),
+          )
+        : undefined;
+      const history = user.history
+        ? new History(
+            Upgrader.upgradeRaw(user.history, SerialisableDomain.History),
+          )
+        : undefined;
+      const gamification = user.gamification
+        ? new Gamification(
+            Upgrader.upgradeRaw(
+              user.gamification,
+              SerialisableDomain.Gamification,
+            ),
+          )
+        : undefined;
+      const kyc = user.kyc
+        ? new KYCHistory(
+            Upgrader.upgradeRaw(user.kyc, SerialisableDomain.KYCHistory),
+          )
+        : undefined;
+      const defis = user.defis
+        ? new DefiHistory(
+            Upgrader.upgradeRaw(user.defis, SerialisableDomain.DefiHistory),
+          )
+        : undefined;
+      const logement = user.logement
+        ? new Logement(
+            Upgrader.upgradeRaw(user.logement, SerialisableDomain.Logement),
+          )
+        : undefined;
+      const missions = user.missions
+        ? new MissionsUtilisateur(
+            Upgrader.upgradeRaw(
+              user.missions,
+              SerialisableDomain.MissionsUtilisateur,
+            ),
+          )
+        : undefined;
+      const notification_history = user.notification_history
+        ? new NotificationHistory(
+            Upgrader.upgradeRaw(
+              user.notification_history,
+              SerialisableDomain.NotificationHistory,
+            ),
+          )
+        : undefined;
 
       return new Utilisateur({
         id: user.id,
@@ -316,6 +395,7 @@ export class UtilisateurRepository {
         source_inscription: SourceInscription[user.source_inscription],
         notification_history: notification_history,
         unsubscribe_mail_token: user.unsubscribe_mail_token,
+        est_valide_pour_classement: user.est_valide_pour_classement,
       });
     }
     return null;
@@ -401,6 +481,7 @@ export class UtilisateurRepository {
       couverture_aides_ok: user.couverture_aides_ok,
       source_inscription: user.source_inscription,
       unsubscribe_mail_token: user.unsubscribe_mail_token,
+      est_valide_pour_classement: user.est_valide_pour_classement,
     };
   }
 }

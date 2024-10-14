@@ -6,7 +6,7 @@ import { UtilisateurBoardRepository } from '../infrastructure/repository/utilisa
 import { Board } from '../domain/gamification/board';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { Classement } from '../domain/gamification/classement';
-import { Utilisateur } from '../domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 
 @Injectable()
 export class GamificationUsecase {
@@ -17,7 +17,10 @@ export class GamificationUsecase {
   ) {}
 
   async getGamificationData(utilisateurId: string): Promise<Gamification> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.gamification],
+    );
     utilisateur.checkState();
 
     return utilisateur.gamification;
@@ -26,7 +29,10 @@ export class GamificationUsecase {
   async classementLocal(utilisateurId: string): Promise<Board> {
     await this.utilisateurBoardRepository.update_rank_user_commune();
 
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [],
+    );
     utilisateur.checkState();
 
     let top_trois_commune = null;
@@ -104,7 +110,10 @@ export class GamificationUsecase {
   async classementNational(utilisateurId: string): Promise<Board> {
     await this.utilisateurBoardRepository.update_rank_user_france();
 
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [],
+    );
     utilisateur.checkState();
 
     const top_trois = await this.utilisateurBoardRepository.top_trois_user();

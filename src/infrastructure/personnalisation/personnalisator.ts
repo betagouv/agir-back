@@ -5,6 +5,7 @@ import { CommuneRepository } from '../repository/commune/commune.repository';
 export enum CLE_PERSO {
   commune = '{COMMUNE}',
   code_postal = '{CODE_POSTAL}',
+  espace_insecable = 'espace_insecable',
 }
 
 @Injectable()
@@ -15,23 +16,34 @@ export class Personnalisator {
 
   private KEYS_PERSO: CLE_PERSO[];
 
-  public personnaliser<T>(obj: T, utilisateur: Utilisateur): T {
+  public personnaliser<T>(
+    obj: T,
+    utilisateur: Utilisateur,
+    disable_actions?: CLE_PERSO[],
+  ): T {
+    if (!disable_actions) {
+      disable_actions = [];
+    }
     if (obj === undefined) return undefined;
     if (obj === null) return null;
 
     if (obj instanceof Array) {
       for (let index = 0; index < (obj as Array<any>).length; index++) {
-        obj[index] = this.personnaliser(obj[index], utilisateur);
+        obj[index] = this.personnaliser(
+          obj[index],
+          utilisateur,
+          disable_actions,
+        );
       }
       return obj;
     } else if (obj instanceof Date) {
       return obj;
     } else {
       if (typeof obj === 'string') {
-        return this.personnaliserText(obj, utilisateur) as any;
+        return this.personnaliserText(obj, utilisateur, disable_actions) as any;
       } else if (typeof obj === 'object') {
         for (const [key, value] of Object.entries(obj)) {
-          obj[key] = this.personnaliser(value, utilisateur);
+          obj[key] = this.personnaliser(value, utilisateur, disable_actions);
         }
         return obj;
       } else {
@@ -40,10 +52,17 @@ export class Personnalisator {
     }
   }
 
-  private personnaliserText(text: string, utilisateur: Utilisateur): string {
-    let new_value = this.replaceLastSpaceByNBSP(text);
+  private personnaliserText(
+    text: string,
+    utilisateur: Utilisateur,
+    disable_actions?: CLE_PERSO[],
+  ): string {
+    let new_value = text;
+    if (!disable_actions.includes(CLE_PERSO.espace_insecable)) {
+      new_value = this.replaceLastSpaceByNBSP(text);
+    }
     for (const cle of this.KEYS_PERSO) {
-      if (new_value.includes(cle)) {
+      if (new_value.includes(cle) && !disable_actions.includes(cle)) {
         new_value = this.replace(new_value, cle, utilisateur);
       }
     }
@@ -59,8 +78,12 @@ export class Personnalisator {
 
   private replaceLastSpaceByNBSP(source: string): string {
     const length = source.length;
-    if (length > 3 && source.substr(length - 2, 1) === ' ') {
-      return source.substr(0, length - 2) + ' ' + source.substr(length - 1, 1); // espace inseccable
+    if (length > 3 && source.substring(length - 2, length - 1) === ' ') {
+      return (
+        source.substring(0, length - 2) +
+        ' ' +
+        source.substring(length - 1, length)
+      ); // espace inseccable
     } else {
       return source;
     }

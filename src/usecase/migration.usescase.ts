@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { Utilisateur } from '../../src/domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { App } from '../domain/app';
 import { Feature } from '../../src/domain/gamification/feature';
 import { DefiStatus } from '../../src/domain/defis/defi';
@@ -32,13 +32,15 @@ export class MigrationUsecase {
     for (let index = 0; index < userIdList.length; index++) {
       const user_id = userIdList[index];
       const log = { user_id: user_id, migrations: [] };
-      let utilisateur = await this.utilisateurRepository.getById(user_id);
+      let utilisateur = await this.utilisateurRepository.getById(user_id, []);
       for (
         let current_version = utilisateur.version + 1;
         current_version <= version_target;
         current_version++
       ) {
-        let utilisateur = await this.utilisateurRepository.getById(user_id);
+        let utilisateur = await this.utilisateurRepository.getById(user_id, [
+          Scope.ALL,
+        ]);
         if (!utilisateur.migration_enabled) {
           log.migrations.push({
             version: current_version,
@@ -60,10 +62,7 @@ export class MigrationUsecase {
             break;
           }
           utilisateur.version = current_version;
-          await this.utilisateurRepository.updateUtilisateur(
-            utilisateur,
-            'migrateUsers',
-          );
+          await this.utilisateurRepository.updateUtilisateur(utilisateur);
         } else {
           log.migrations.push({
             version: current_version,

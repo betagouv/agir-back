@@ -1,5 +1,6 @@
 import { DB, TestUtil } from '../../TestUtil';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 var crypto = require('crypto');
 
 function getFakeUtilisteur() {
@@ -101,7 +102,9 @@ describe('/utilisateurs - Oubli de mot de passe (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     expect(userDB.failed_checkcode_count).toEqual(0);
     expect(userDB.passwordHash).toEqual(
       crypto

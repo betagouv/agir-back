@@ -52,25 +52,16 @@ export class MagicLinkUsecase {
       if (utilisateur.failed_checkcode_count > MAX_CODE_ATTEMPT) {
         utilisateur.failed_checkcode_count = 0;
         utilisateur.code = null;
-        await this.utilisateurRespository.updateUtilisateur(
-          utilisateur,
-          'validateLink',
-        );
+        await this.utilisateurRespository.updateUtilisateur(utilisateur);
         ApplicationError.throwMagicLinkUsedError();
       }
-      await this.utilisateurRespository.updateUtilisateur(
-        utilisateur,
-        'validateLink',
-      );
+      await this.utilisateurRespository.updateUtilisateur(utilisateur);
       ApplicationError.throwBadCodError();
     }
 
     utilisateur.code = null;
     utilisateur.active_account = true;
-    await this.utilisateurRespository.updateUtilisateur(
-      utilisateur,
-      'validateLink',
-    );
+    await this.utilisateurRespository.updateUtilisateur(utilisateur);
 
     const token = await this.oidcService.createNewInnerAppToken(utilisateur.id);
 
@@ -87,12 +78,7 @@ export class MagicLinkUsecase {
 
     if (!utilisateur) {
       utilisateur = Utilisateur.createNewUtilisateur(
-        'NOM',
-        'PRENOM',
         email,
-        null,
-        null,
-        null,
         true,
         SourceInscription.inconnue,
       );
@@ -105,10 +91,7 @@ export class MagicLinkUsecase {
       utilisateur.setNew6DigitCode();
     }
 
-    await this.utilisateurRespository.updateUtilisateur(
-      utilisateur,
-      'sendLink',
-    );
+    await this.utilisateurRespository.updateUtilisateur(utilisateur);
 
     this.sendValidationCode(email, utilisateur.code);
   }
@@ -118,14 +101,14 @@ export class MagicLinkUsecase {
       email,
       'name',
       `Bonjour !<br>
-Voici votre code pour accédder à l'application Agir !<br><br>
+Voici votre code pour accédder à l'application J'agis !<br><br>
     
 CODE : <strong>${code}</strong><br><br>
 
-Si vous n'avez plus la page ouverte pour saisir le code, ici le lien pour un accès directe, sans même saisir le code !!! : <a href="${App.getBaseURLBack()}/utilisateurs/${email}/login?code=${code}">Accès à l'application Agir</a><br><br>
+Si vous n'avez plus la page ouverte pour saisir le code, ici le lien pour un accès directe, sans même saisir le code !!! : <a href="${App.getBaseURLBack()}/utilisateurs/${email}/login?code=${code}">Accès à l'application J'agis</a><br><br>
     
 À très vite !`,
-      `Votre code Agir : ${code}`,
+      `Votre code J'agis : ${code}`,
     );
   }
 }

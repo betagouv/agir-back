@@ -15,6 +15,7 @@ import { BibliothequeServices_v0 } from '../../../src/domain/object_store/servic
 import { ServiceFavorisStatistiqueRepository } from '../../../src/infrastructure/repository/serviceFavorisStatistique.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 
 const logement_palaiseau: Logement_v0 = {
   version: 0,
@@ -402,7 +403,9 @@ describe('RechercheServices (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
     expect(userDB.bilbiotheque_services.liste_services[0].favoris).toHaveLength(
       0,
@@ -650,7 +653,9 @@ describe('RechercheServices (API test)', () => {
     expect(response.body[0].titre).toEqual('Clafoutis salé au chèvre et curry');
     expect(response.body[0].type_plat).toEqual('Plat');
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
     expect(userDB.bilbiotheque_services.liste_services).toHaveLength(1);
     expect(userDB.bilbiotheque_services.liste_services[0].id).toEqual(

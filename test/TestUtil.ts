@@ -534,6 +534,7 @@ export class TestUtil {
       source_inscription: SourceInscription.web,
       unsubscribe_mail_token: null,
       notification_history: notifications,
+      est_valide_pour_classement: true,
       ...override,
     };
   }

@@ -170,12 +170,7 @@ describe('Objet Utilisateur', () => {
   it('increaseTagForAnswers : cumule', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
-      'A',
-      'B',
       'w@w.com',
-      1234,
-      '91120',
-      'PALAISEAU',
       false,
       SourceInscription.inconnue,
     );

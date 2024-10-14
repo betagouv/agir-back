@@ -27,6 +27,7 @@ import {
 import { Feature } from '../../../src/domain/gamification/feature';
 import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 
 const DEFI_1_DEF: Defi = {
   content_id: '1',
@@ -1041,7 +1042,9 @@ describe('/utilisateurs/id/defis (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
     const defi_user = userDB.defi_history.getDefiOrException('001');
     expect(defi_user.getStatus()).toBe(DefiStatus.fait);
@@ -1075,7 +1078,9 @@ describe('/utilisateurs/id/defis (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
     const defi = userDB.defi_history.getDefiOrException('1');
 
     expect(defi.getStatus()).toBe(DefiStatus.en_cours);
@@ -1104,7 +1109,9 @@ describe('/utilisateurs/id/defis (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
     expect(userDB.gamification.points).toBe(15);
   });

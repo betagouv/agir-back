@@ -24,8 +24,8 @@ const DATA_REVEAL: Record<Feature, { titre: string; description: string }> = {
     description: `Retrouvez plein d'actions concrètes pour des premiers petits pas`,
   },
   bilan_carbone: {
-    titre: 'Votre bilan carbone',
-    description: `Evaluez et mettez à jour votre bilan carbone`,
+    titre: 'Votre bilan environnemental',
+    description: `Evaluez et mettez à jour votre bilan environnemental`,
   },
   univers: {
     titre: 'Vos univers à explorer',

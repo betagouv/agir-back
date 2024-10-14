@@ -33,6 +33,19 @@ export enum SourceInscription {
   mobile = 'mobile',
   inconnue = 'inconnue',
 }
+export enum Scope {
+  ALL = 'ALL',
+  todo = 'todo',
+  gamification = 'gamification',
+  history_article_quizz = 'history_article_quizz',
+  kyc = 'kyc',
+  unlocked_features = 'unlocked_features',
+  logement = 'logement',
+  defis = 'defis',
+  missions = 'missions',
+  bilbiotheque_services = 'bilbiotheque_services',
+  notification_history = 'notification_history',
+}
 
 export class UtilisateurData {
   id: string;
@@ -83,6 +96,7 @@ export class UtilisateurData {
   source_inscription: SourceInscription;
   notification_history: NotificationHistory;
   unsubscribe_mail_token: string;
+  est_valide_pour_classement: boolean;
 }
 
 export class Utilisateur extends UtilisateurData {
@@ -103,18 +117,13 @@ export class Utilisateur extends UtilisateurData {
   }
 
   public static createNewUtilisateur(
-    nom: string,
-    prenom: string,
     email: string,
-    annee_naissance: number,
-    code_postal: string,
-    commune: string,
     is_magic_link: boolean,
     source_inscription: SourceInscription,
   ): Utilisateur {
     return new Utilisateur({
-      nom: nom,
-      prenom: prenom,
+      nom: null,
+      prenom: null,
       email: email,
       id: undefined,
       code_departement: null,
@@ -149,8 +158,8 @@ export class Utilisateur extends UtilisateurData {
         dpe: null,
         plus_de_15_ans: null,
         chauffage: null,
-        code_postal: code_postal,
-        commune: commune,
+        code_postal: null,
+        commune: null,
         nombre_adultes: null,
         nombre_enfants: null,
         proprietaire: null,
@@ -161,24 +170,28 @@ export class Utilisateur extends UtilisateurData {
       force_connexion: false,
       derniere_activite: new Date(),
       missions: new MissionsUtilisateur(),
-      annee_naissance: annee_naissance,
+      annee_naissance: null,
       db_version: 0,
       bilbiotheque_services: new BibliothequeServices(),
       is_magic_link_user: is_magic_link,
       rank: null,
       rank_commune: null,
-      code_postal_classement: code_postal,
-      commune_classement: commune,
+      code_postal_classement: null,
+      commune_classement: null,
       points_classement: 0,
       status: UtilisateurStatus.default,
       couverture_aides_ok: false,
       source_inscription: source_inscription,
       notification_history: new NotificationHistory(),
       unsubscribe_mail_token: Utilisateur.generateEmailToken(),
+      est_valide_pour_classement: false,
     });
   }
 
   public resetAllHistory?() {
+    this.points_classement = 0;
+    this.commune_classement = null;
+    this.code_postal_classement = null;
     this.tag_ponderation_set = {};
     this.parcours_todo.reset();
     this.gamification.reset();

@@ -15,6 +15,7 @@ import { CommuneRepository } from '../../src/infrastructure/repository/commune/c
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { QuestionKYCUsecase } from './questionKYC.usecase';
+import { Scope } from '../domain/utilisateur/utilisateur';
 
 @Injectable()
 export class TodoUsecase {
@@ -23,13 +24,15 @@ export class TodoUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
-    private kycRepository: KycRepository,
     private personnalisator: Personnalisator,
     private questionKYCUsecase: QuestionKYCUsecase,
   ) {}
 
   async gagnerPointsFromTodoElement(utilisateurId: string, elementId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.todo, Scope.gamification],
+    );
     utilisateur.checkState();
 
     const todo_active = utilisateur.parcours_todo.getActiveTodo();
@@ -39,14 +42,14 @@ export class TodoUsecase {
       const points = todo_active.empochePoints(element);
       utilisateur.gamification.ajoutePoints(points, utilisateur);
     }
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'gagnerPointsFromTodoElement',
-    );
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   async gagnerPointsFromTodoTerminee(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.todo, Scope.gamification, Scope.unlocked_features],
+    );
     utilisateur.checkState();
 
     const todo_active = utilisateur.parcours_todo.getActiveTodo();
@@ -76,14 +79,14 @@ export class TodoUsecase {
     } else {
       ApplicationError.throwUnfinishedTodoError();
     }
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'gagnerPointsFromTodoTerminee',
-    );
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   async getUtilisateurTodo(utilisateurId: string): Promise<Todo> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.todo, Scope.logement, Scope.history_article_quizz],
+    );
     utilisateur.checkState();
 
     const todo = utilisateur.parcours_todo.getActiveTodo();
@@ -173,6 +176,7 @@ export class TodoUsecase {
           todo.moveElementToDone(element);
           const tmp_user = await this.utilisateurRepository.getById(
             utilisateurId,
+            [Scope.todo],
           );
           const new_elem = tmp_user.parcours_todo.findTodoElementByID(
             element.id,
@@ -180,10 +184,7 @@ export class TodoUsecase {
           if (new_elem) {
             new_elem.element.progression = progression;
             new_elem.todo.moveElementToDone(new_elem.element);
-            await this.utilisateurRepository.updateUtilisateur(
-              tmp_user,
-              'getUtilisateurTodo',
-            );
+            await this.utilisateurRepository.updateUtilisateur(tmp_user);
           }
         }
       }
@@ -199,13 +200,15 @@ export class TodoUsecase {
     for (let index = 0; index < userIdList.length; index++) {
       const user_id = userIdList[index];
 
-      const utilisateur = await this.utilisateurRepository.getById(user_id);
+      const utilisateur = await this.utilisateurRepository.getById(user_id, [
+        Scope.todo,
+      ]);
 
       const evolved = utilisateur.parcours_todo.appendNewFromCatalogue();
 
       log.push(`utilisateur ${utilisateur.id} : ${evolved}`);
 
-      await this.utilisateurRepository.updateUtilisateur(utilisateur, 'updateAllUsersTodo');
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
     }
     return log;
   }

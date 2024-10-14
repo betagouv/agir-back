@@ -49,12 +49,12 @@ export class Connexion_v2_Usecase {
       user.setNew6DigitCode();
       user.status = UtilisateurStatus.connexion_etape_1;
 
-      await _this.utilisateurRepository.updateUtilisateur(
-        user,
-        'loginUtilisateur',
-      );
+      await _this.utilisateurRepository.updateUtilisateur(user);
 
-      if (user.email !== App.getGoogleTestEmail()) {
+      if (
+        user.email !== App.getGoogleTestEmail() &&
+        user.email !== App.getAppleTestEmail()
+      ) {
         _this.sendCodeForConnexion(user);
       }
     };
@@ -96,10 +96,7 @@ export class Connexion_v2_Usecase {
       const user = await _this.utilisateurRepository.findByEmail(email);
       user.status = UtilisateurStatus.default;
 
-      await _this.utilisateurRepository.updateUtilisateur(
-        user,
-        'validateCodePourLogin',
-      );
+      await _this.utilisateurRepository.updateUtilisateur(user);
 
       const token = await _this.oidcService.createNewInnerAppToken(user.id);
       return { token: token, utilisateur: user };
@@ -132,10 +129,7 @@ export class Connexion_v2_Usecase {
       user.setNew6DigitCode();
       user.status = UtilisateurStatus.mot_de_passe_oublie_etape_1;
 
-      await _this.utilisateurRepository.updateUtilisateur(
-        user,
-        'oubli_mot_de_passe',
-      );
+      await _this.utilisateurRepository.updateUtilisateur(user);
       console.log(
         `CONNEXION : oubli_mot_de_passe : [${utilisateur.id}] email sending`,
       );
@@ -182,10 +176,7 @@ export class Connexion_v2_Usecase {
       user.setPassword(mot_de_passe);
       user.status = UtilisateurStatus.default;
 
-      await _this.utilisateurRepository.updateUtilisateur(
-        user,
-        'modifier_mot_de_passe',
-      );
+      await _this.utilisateurRepository.updateUtilisateur(user);
       return;
     };
 
@@ -197,12 +188,12 @@ export class Connexion_v2_Usecase {
   }
 
   async disconnectUser(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
-    utilisateur.force_connexion = true;
-    await this.utilisateurRepository.updateUtilisateur(
-      utilisateur,
-      'disconnectUser',
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [],
     );
+    utilisateur.force_connexion = true;
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   async disconnectAllUsers() {
@@ -214,14 +205,14 @@ export class Connexion_v2_Usecase {
       utilisateur.email,
       utilisateur.prenom,
       `Bonjour,<br>
-Voici votre code pour valider votre connexion à l'application Agir !<br><br>
+Voici votre code pour valider votre connexion à l'application J'agis !<br><br>
     
 code : ${utilisateur.code}<br><br>
 
 Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="${App.getBaseURLFront()}/URL_TO_SET">Page pour rentrer le code</a><br><br>
     
 À très vite !`,
-      `${utilisateur.code} - Votre code connexion à Agir`,
+      `${utilisateur.code} - Votre code connexion à J'agis`,
     );
   }
 
@@ -230,7 +221,7 @@ Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="
       utilisateur.email,
       utilisateur.prenom,
       `Bonjour,<br>
-Voici votre code pour pouvoir modifier votre mot de passe de l'application Agir !<br><br>
+Voici votre code pour pouvoir modifier votre mot de passe de l'application J'agis !<br><br>
     
 code : ${utilisateur.code}<br><br>
 
@@ -239,7 +230,7 @@ Si vous n'avez plus la page ouverte pour saisir le code et modifier le mot de pa
       }">Page pour modifier votre mot de passe</a><br><br>
     
 À très vite !`,
-      `Modification de mot de passe Agir`,
+      `Modification de mot de passe J'agis`,
     );
   }
 }

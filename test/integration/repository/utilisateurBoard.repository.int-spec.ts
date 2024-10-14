@@ -148,7 +148,7 @@ describe('UtilisateurBoardRepository', () => {
       points_classement: 45,
       id: '45',
       email: '45',
-      prenom: null,
+      est_valide_pour_classement: false,
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 50,

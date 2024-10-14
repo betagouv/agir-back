@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { BilanCarboneStatistiqueRepository } from '../infrastructure/repository/bilanCarboneStatistique.repository';
-import { Utilisateur } from '../domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import {
   BilanCarbone,
   BilanCarboneSynthese,
@@ -26,7 +26,10 @@ export class BilanCarboneUsecase {
     bilan_complet: BilanCarbone;
     bilan_synthese: BilanCarboneSynthese;
   }> {
-    const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.kyc],
+    );
     utilisateur.checkState();
 
     const kyc_catalogue = await this.kycRepository.getAllDefs();
@@ -37,15 +40,42 @@ export class BilanCarboneUsecase {
     const bilan_complet =
       this.nGCCalculator.computeBilanCarboneFromSituation(situation);
 
-    const liste_kycs_transport =
-      QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_bilan_transport'];
-
     const enchainement_transport =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        liste_kycs_transport,
+        QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_bilan_transport'],
       );
+    const enchainement_logement =
+      utilisateur.kyc_history.getEnchainementKYCsEligibles(
+        QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_bilan_logement'],
+      );
+    const enchainement_conso =
+      utilisateur.kyc_history.getEnchainementKYCsEligibles(
+        QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_bilan_consommation'],
+      );
+    const enchainement_alimentation =
+      utilisateur.kyc_history.getEnchainementKYCsEligibles(
+        QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_bilan_alimentation'],
+      );
+
     const enchainement_transport_progression =
       enchainement_transport.getProgression();
+    const enchainement_logement_progression =
+      enchainement_logement.getProgression();
+    const enchainement_conso_progression = enchainement_conso.getProgression();
+    const enchainement_alimentation_progression =
+      enchainement_alimentation.getProgression();
+
+    const pourcentage_prog_totale = Math.round(
+      ((enchainement_transport_progression.current +
+        enchainement_logement_progression.current +
+        enchainement_conso_progression.current +
+        enchainement_alimentation_progression.current) /
+        (enchainement_transport_progression.target +
+          enchainement_logement_progression.target +
+          enchainement_conso_progression.target +
+          enchainement_alimentation_progression.target)) *
+        100,
+    );
 
     return {
       bilan_complet: bilan_complet,
@@ -54,11 +84,11 @@ export class BilanCarboneUsecase {
         impact_logement: NiveauImpact.fort,
         impact_transport: NiveauImpact.moyen,
         impact_consommation: NiveauImpact.faible,
-        pourcentage_completion_totale: 35,
+        pourcentage_completion_totale: pourcentage_prog_totale,
         liens_bilans_univers: [
           {
             image_url:
-              'https://res.cloudinary.com/dq023imd8/image/upload/v1718886533/velo_2_27b85c28d4.png',
+              'https://res.cloudinary.com/dq023imd8/image/upload/v1728466903/Mobilite_df75aefd09.svg',
             univers: Univers.transport,
             nombre_total_question: enchainement_transport_progression.target,
             pourcentage_progression: Math.round(
@@ -71,29 +101,41 @@ export class BilanCarboneUsecase {
           },
           {
             image_url:
-              'https://res.cloudinary.com/dq023imd8/image/upload/v1718701364/fruits_2_cfbf4b47b9.png',
+              'https://res.cloudinary.com/dq023imd8/image/upload/v1728466523/cuisine_da54797693.svg',
             univers: Univers.alimentation,
-            nombre_total_question: 9,
-            pourcentage_progression: 30,
-            id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+            nombre_total_question: enchainement_alimentation_progression.target,
+            pourcentage_progression: Math.round(
+              (enchainement_alimentation_progression.current /
+                enchainement_alimentation_progression.target) *
+                100,
+            ),
+            id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_alimentation',
             temps_minutes: 3,
           },
           {
             image_url:
-              'https://res.cloudinary.com/dq023imd8/image/upload/v1714635518/univers_loisirs_596c3b0599.jpg',
+              'https://res.cloudinary.com/dq023imd8/image/upload/v1728468852/conso_7522b1950d.svg',
             univers: Univers.consommation,
-            nombre_total_question: 12,
-            pourcentage_progression: 70,
-            id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+            nombre_total_question: enchainement_conso_progression.target,
+            pourcentage_progression: Math.round(
+              (enchainement_conso_progression.current /
+                enchainement_conso_progression.target) *
+                100,
+            ),
+            id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_consommation',
             temps_minutes: 10,
           },
           {
             image_url:
-              'https://res.cloudinary.com/dq023imd8/image/upload/v1714635495/univers_logement_6376123d16.jpg',
+              'https://res.cloudinary.com/dq023imd8/image/upload/v1728468978/maison_80242d91f3.svg',
             univers: Univers.logement,
-            nombre_total_question: 12,
-            pourcentage_progression: 70,
-            id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+            nombre_total_question: enchainement_logement_progression.target,
+            pourcentage_progression: Math.round(
+              (enchainement_logement_progression.current /
+                enchainement_logement_progression.target) *
+                100,
+            ),
+            id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_logement',
             temps_minutes: 9,
           },
         ],
@@ -105,7 +147,9 @@ export class BilanCarboneUsecase {
     const user_id_liste = await this.utilisateurRepository.listUtilisateurIds();
 
     for (const user_id of user_id_liste) {
-      const utilisateur = await this.utilisateurRepository.getById(user_id);
+      const utilisateur = await this.utilisateurRepository.getById(user_id, [
+        Scope.kyc,
+      ]);
 
       const situation = this.computeSituation(utilisateur);
 
