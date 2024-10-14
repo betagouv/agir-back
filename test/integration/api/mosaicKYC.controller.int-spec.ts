@@ -104,12 +104,12 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     expect(response.body.reponses).toHaveLength(2);
 
     expect(response.body.reponses[0].code).toEqual('_1');
-    expect(response.body.reponses[0].label).toEqual('short 1');
+    expect(response.body.reponses[0].label).toEqual('short 1');
     expect(response.body.reponses[0].image_url).toEqual('AAA');
     expect(response.body.reponses[0].boolean_value).toEqual(false);
 
     expect(response.body.reponses[1].code).toEqual('_2');
-    expect(response.body.reponses[1].label).toEqual('short 2');
+    expect(response.body.reponses[1].label).toEqual('short 2');
     expect(response.body.reponses[1].image_url).toEqual('BBB');
     expect(response.body.reponses[1].boolean_value).toEqual(false);
   });
@@ -387,13 +387,13 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       reponses: [
         {
           code: '_1',
-          label: 'short 1',
+          label: 'short 1',
           boolean_value: true,
           image_url: 'AAA',
         },
         {
           code: '_2',
-          label: 'short 2',
+          label: 'short 2',
           boolean_value: false,
           image_url: 'BBB',
         },

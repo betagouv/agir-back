@@ -5,7 +5,10 @@ import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { KYCID } from '../../src/domain/kyc/KYCID';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
-import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import {
+  CLE_PERSO,
+  Personnalisator,
+} from '../infrastructure/personnalisation/personnalisator';
 import {
   Chauffage,
   DPE,
@@ -81,7 +84,9 @@ export class QuestionKYCUsecase {
     const result = utilisateur.kyc_history.getAllUpToDateQuestionSet();
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    return this.personnalisator.personnaliser(result, utilisateur);
+    return this.personnalisator.personnaliser(result, utilisateur, [
+      CLE_PERSO.espace_insecable,
+    ]);
   }
 
   async getEnchainementQuestions(
@@ -106,7 +111,9 @@ export class QuestionKYCUsecase {
     const result =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(liste_kycs_ids);
 
-    return this.personnalisator.personnaliser(result, utilisateur);
+    return this.personnalisator.personnaliser(result, utilisateur, [
+      CLE_PERSO.espace_insecable,
+    ]);
   }
 
   async getQuestion(
@@ -141,8 +148,12 @@ export class QuestionKYCUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
     return {
-      kyc: this.personnalisator.personnaliser(result_kyc, utilisateur),
-      mosaic: this.personnalisator.personnaliser(result_mosaic, utilisateur),
+      kyc: this.personnalisator.personnaliser(result_kyc, utilisateur, [
+        CLE_PERSO.espace_insecable,
+      ]),
+      mosaic: this.personnalisator.personnaliser(result_mosaic, utilisateur, [
+        CLE_PERSO.espace_insecable,
+      ]),
     };
   }
 

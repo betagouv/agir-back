@@ -2,7 +2,10 @@ import {
   SourceInscription,
   Utilisateur,
 } from '../../src/domain/utilisateur/utilisateur';
-import { Personnalisator } from '../../src/infrastructure/personnalisation/personnalisator';
+import {
+  CLE_PERSO,
+  Personnalisator,
+} from '../../src/infrastructure/personnalisation/personnalisator';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 import { TestUtil } from '../../test/TestUtil';
 
@@ -73,6 +76,106 @@ describe('Personalisation', () => {
     expect(result).toStrictEqual({
       a: 'Sennecey-lès-Dijon',
       b: 'The Sennecey-lès-Dijon',
+    });
+  });
+  it('perso : remplace CODE POSTAL OK', async () => {
+    // GIVEN
+    const user = Utilisateur.createNewUtilisateur(
+      'g@www.com',
+      false,
+      SourceInscription.inconnue,
+    );
+    user.logement.code_postal = '21800';
+    user.logement.commune = 'SENNECEY LES DIJON';
+
+    const test_data = { a: '{CODE_POSTAL}' };
+
+    // WHEN
+    const result = personnalisation.personnaliser(test_data, user);
+
+    // THEN
+    expect(result).toStrictEqual({
+      a: '21800',
+    });
+  });
+  it('perso : remplace pas CODE POSTAL si disable', async () => {
+    // GIVEN
+    const user = Utilisateur.createNewUtilisateur(
+      'g@www.com',
+      false,
+      SourceInscription.inconnue,
+    );
+    user.logement.code_postal = '21800';
+    user.logement.commune = 'SENNECEY LES DIJON';
+
+    const test_data = { a: '{CODE_POSTAL}' };
+
+    // WHEN
+    const result = personnalisation.personnaliser(test_data, user, [
+      CLE_PERSO.code_postal,
+    ]);
+
+    // THEN
+    expect(result).toStrictEqual({
+      a: '{CODE_POSTAL}',
+    });
+  });
+  it('perso : remplace pas COMMUNE si disable', async () => {
+    // GIVEN
+    const user = Utilisateur.createNewUtilisateur(
+      'g@www.com',
+      false,
+      SourceInscription.inconnue,
+    );
+    user.logement.code_postal = '21800';
+    user.logement.commune = 'SENNECEY LES DIJON';
+
+    const test_data = { a: '{COMMUNE}', b: 'The {COMMUNE}' };
+
+    // WHEN
+    const result = personnalisation.personnaliser(test_data, user, [
+      CLE_PERSO.commune,
+    ]);
+
+    // THEN
+    expect(result).toStrictEqual({ a: '{COMMUNE}', b: 'The {COMMUNE}' });
+  });
+  it('perso : remplace espace insécable OK', async () => {
+    // GIVEN
+    const user = Utilisateur.createNewUtilisateur(
+      'g@www.com',
+      false,
+      SourceInscription.inconnue,
+    );
+
+    const test_data = { a: 'Comment ça va ?' };
+
+    // WHEN
+    const result = personnalisation.personnaliser(test_data, user);
+
+    // THEN
+    expect(result).toStrictEqual({
+      a: 'Comment ça va ?',
+    });
+  });
+  it('perso : ne remplace pas espace insécable OK si on dit que non', async () => {
+    // GIVEN
+    const user = Utilisateur.createNewUtilisateur(
+      'g@www.com',
+      false,
+      SourceInscription.inconnue,
+    );
+
+    const test_data = { a: 'Comment ça va ?' };
+
+    // WHEN
+    const result = personnalisation.personnaliser(test_data, user, [
+      CLE_PERSO.espace_insecable,
+    ]);
+
+    // THEN
+    expect(result).toStrictEqual({
+      a: 'Comment ça va ?',
     });
   });
   it('perso : remplace COMMUNE dans un sous objet', async () => {

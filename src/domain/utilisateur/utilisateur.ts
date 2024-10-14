@@ -189,6 +189,9 @@ export class Utilisateur extends UtilisateurData {
   }
 
   public resetAllHistory?() {
+    this.points_classement = 0;
+    this.commune_classement = null;
+    this.code_postal_classement = null;
     this.tag_ponderation_set = {};
     this.parcours_todo.reset();
     this.gamification.reset();

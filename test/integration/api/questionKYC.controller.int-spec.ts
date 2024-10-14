@@ -248,7 +248,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(response.body.length).toEqual(5);
     expect(response.body[0]).toEqual({
       id: '_1',
-      question: 'quest 1',
+      question: 'quest 1',
       reponse: [],
       reponses_possibles: ['Oui', 'Non', 'Je sais pas'],
       categorie: 'recommandation',
@@ -385,7 +385,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(response.body.reponses_possibles).toEqual(['Oui', 'Non', 'A voir']);
     expect(response.body.categorie).toEqual(Categorie.test);
     expect(response.body.question).toEqual(
-      `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
+      `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
     );
     expect(response.body.reponse).toEqual([]);
   });
@@ -491,7 +491,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.question).toEqual(
-      `Quel est votre sujet principal d'intéret ?`,
+      `Quel est votre sujet principal d'intéret ?`,
     );
     expect(response.body.reponse).toEqual(['Le climat', 'Mon logement']);
   });
@@ -1320,7 +1320,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(response.body).toEqual([
       {
         id: 'KYC001',
-        question: 'quest 1',
+        question: 'quest 1',
         reponse: [],
         reponses_possibles: ['Oui', 'Non', 'Je sais pas'],
         categorie: 'recommandation',
@@ -1337,13 +1337,13 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
             boolean_value: false,
             code: 'KYC002',
             image_url: 'BBB',
-            label: 'short 2',
+            label: 'short 2',
           },
           {
             boolean_value: false,
             code: 'KYC003',
             image_url: 'CCC',
-            label: 'short 3',
+            label: 'short 3',
           },
         ],
         categorie: 'test',
