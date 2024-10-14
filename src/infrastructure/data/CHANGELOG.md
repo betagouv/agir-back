@@ -16,6 +16,7 @@
 - `aides . cévennes gangeoises et suménoises`
 - `aides . département hérault vélo adapté`
 - `aides . fier et usses`
+- `aides . grand besançon`
 - `aides . mérignac`
 - `aides . monmorillon`
 - `aides . montpellier vélo adapté`
@@ -35,7 +36,11 @@
 - `aides . albert`
 - `aides . albi`
 - `aides . amiens`
+- `aides . angers`
+- `aides . anjou bleu`
+- `aides . annecy`
 - `aides . annoeullin`
+- `aides . arve salève`
 - `aides . aubervilliers`
 - `aides . aubiere`
 - `aides . aurillac`
@@ -55,10 +60,13 @@
 - `aides . carpiquet`
 - `aides . cébazat`
 - `aides . cenon`
+- `aides . châtel`
 - `aides . chevilly-larue`
 - `aides . clisson`
+- `aides . cluses arve et montagnes`
 - `aides . cœur de maurienne arvan` -> `aides . coeur de maurienne arvan`
 - `aides . coeur de nacre`
+- `aides . combloux`
 - `aides . corse`
 - `aides . cote d'or`
 - `aides . cournon d'auvergne`
@@ -71,17 +79,21 @@
 - `aides . eckbolsheim`
 - `aides . epinal`
 - `aides . eschau`
+- `aides . évian-les-bains`
 - `aides . faches-thumesnil`
 - `aides . flers`
 - `aides . fougères`
 - `aides . frejus`
 - `aides . geispolsheim`
+- `aides . genevois`
 - `aides . givors`
 - `aides . grand est`
 - `aides . grand périgueux`
+- `aides . grand poitiers`
 - `aides . grand reims`
 - `aides . grand roye`
 - `aides . grenoble`
+- `aides . haut val de sèvre`
 - `aides . hermanville-sur-mer`
 - `aides . honfleur`
 - `aides . ifs`
@@ -96,6 +108,8 @@
 - `aides . les crêtes préardennaises`
 - `aides . les herbiers`
 - `aides . les sables d'olonne`
+- `aides . le vigan`
+- `aides . limoges metropole`
 - `aides . loire layon aubance`
 - `aides . louvigny`
 - `aides . luberon`
@@ -177,10 +191,13 @@
 
 #### Suppression
 
+- `aides . agglo bocage bressuirais`
 - `aides . ambert livradois forez`
 - `aides . ardenne`
+- `aides . brissac loire aubance`
 - `aides . carvin`
 - `aides . chateaubriant derval`
+- `aides . châtellrault`
 - `aides . colmar`
 - `aides . courbevoie`
 - `aides . crolles`
@@ -189,10 +206,12 @@
 - `aides . ferte saint aubin`
 - `aides . feyzin`
 - `aides . hangenbieten`
+- `aides . haut-poitou`
 - `aides . herouville`
 - `aides . laon`
 - `aides . loue lison`
 - `aides . marckolsheim`
+- `aides . marignier`
 - `aides . monts du pilat`
 - `aides . nevers`
 - `aides . ouistreham`

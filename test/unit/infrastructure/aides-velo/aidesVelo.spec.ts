@@ -1,7 +1,6 @@
 import Engine from 'publicodes';
 import rules from '../../../../src/infrastructure/data/aidesVelo.json';
 import assert from 'assert';
-import { deserialize } from 'v8';
 
 describe('Aides Vélo', () => {
   const engine = new Engine(rules);
@@ -175,6 +174,8 @@ describe('Aides Vélo', () => {
 
       engine.setSituation({
         ...coteDorSituation,
+        // TODO: use generated types instead of the json
+        // @ts-ignore
         "aides . cote d'or . vélo assemblé ou produit localement": 'oui',
       });
       expect(engine.evaluate("aides . cote d'or").nodeValue).toEqual(350);
@@ -997,6 +998,126 @@ describe('Aides Vélo', () => {
       expect(engine.evaluate('aides . la motte servolex').nodeValue).toEqual(
         null,
       );
+    });
+  });
+
+  describe('Grand Annecy Agglomération', () => {
+    it('devrait prendre en compte un bonus de 400€ pour les PMR', () => {
+      engine.setSituation({
+        'localisation . epci': "'CA du Grand Annecy'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'électrique'",
+      });
+      expect(engine.evaluate('aides . annecy').nodeValue).toEqual(400);
+
+      engine.setSituation({
+        'localisation . epci': "'CA du Grand Annecy'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'électrique'",
+        'demandeur . en situation de handicap': 'oui',
+      });
+      expect(engine.evaluate('aides . annecy').nodeValue).toEqual(800);
+    });
+
+    it("devrait prendre en compte les vélos d'occasions", () => {
+      engine.setSituation({
+        'localisation . epci': "'CA du Grand Annecy'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'mécanique simple'",
+      });
+      expect(engine.evaluate('aides . annecy').nodeValue).toEqual(150);
+
+      engine.setSituation({
+        'localisation . epci': "'CA du Grand Annecy'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'mécanique simple'",
+        'vélo . neuf ou occasion': "'occasion'",
+      });
+      expect(engine.evaluate('aides . annecy').nodeValue).toEqual(70);
+
+      engine.setSituation({
+        'localisation . epci': "'CA du Grand Annecy'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'électrique'",
+        'vélo . neuf ou occasion': "'occasion'",
+      });
+      expect(engine.evaluate('aides . annecy').nodeValue).toEqual(400);
+    });
+  });
+
+  describe('Communauté de communes Cluses Arve & Montagnes', () => {
+    it("devrait correctement prendre en compte le bonus 'vélo d'occasion'", () => {
+      engine.setSituation({
+        'localisation . epci': "'CC Cluses-Arve et Montagnes'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'électrique'",
+      });
+      expect(
+        engine.evaluate('aides . cluses arve et montagnes').nodeValue,
+      ).toEqual(300);
+
+      engine.setSituation({
+        'localisation . epci': "'CC Cluses-Arve et Montagnes'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'électrique'",
+        'vélo . neuf ou occasion': "'occasion'",
+      });
+      expect(
+        engine.evaluate('aides . cluses arve et montagnes').nodeValue,
+      ).toEqual(400);
+    });
+
+    it("devrait correctement prendre en compte le bonus 'participation employeur'", () => {
+      engine.setSituation({
+        'localisation . epci': "'CC Cluses-Arve et Montagnes'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'électrique'",
+      });
+      expect(
+        engine.evaluate('aides . cluses arve et montagnes').nodeValue,
+      ).toEqual(300);
+
+      engine.setSituation({
+        'localisation . epci': "'CC Cluses-Arve et Montagnes'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '10000€/an',
+        'vélo . type': "'électrique'",
+        // TODO: use generated types instead of the json
+        // @ts-ignore
+        'aides . cluses arve et montagnes . participation employeur': 500,
+      });
+      expect(
+        engine.evaluate('aides . cluses arve et montagnes').nodeValue,
+      ).toEqual(700);
+    });
+  });
+
+  describe('Anjou Bleu Communauté', () => {
+    it('devrait correctement prendre en compte le revenu fiscal de référence maximal', () => {
+      engine.setSituation({
+        'localisation . epci': "'CC Anjou Bleu Communauté'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '16000€/an',
+        'vélo . type': "'électrique'",
+      });
+      expect(engine.evaluate('aides . anjou bleu').nodeValue).not.toEqual(null);
+
+      engine.setSituation({
+        'localisation . epci': "'CC Anjou Bleu Communauté'",
+        'vélo . prix': '1000€',
+        'revenu fiscal de référence': '16000€/an',
+        'vélo . type': "'électrique'",
+        'personnes dans le foyer fiscal': 2,
+      });
+      expect(engine.evaluate('aides . anjou bleu').nodeValue).toEqual(null);
     });
   });
 });
