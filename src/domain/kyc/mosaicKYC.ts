@@ -96,6 +96,7 @@ export class MosaicKYC {
         KYCID.KYC_consommation_logement_vacances_secondaire,
       ],
     },
+    /*
     {
       id: KYCMosaicID.MOSAIC_ELECTROMENAGER,
       categorie: Categorie.mission,
@@ -115,6 +116,7 @@ export class MosaicKYC {
         KYCID.KYC_electro_seche_linge,
       ],
     },
+    */
   ];
 
   public static listMosaicIDs(): KYCMosaicID[] {
