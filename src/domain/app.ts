@@ -111,6 +111,12 @@ export class App {
   public static getGoogleTestOTP(): string {
     return process.env.GOOGLE_TEST_OTP || '';
   }
+  public static getAppleTestEmail(): string {
+    return process.env.APPLE_TEST_EMAIL || '';
+  }
+  public static getAppleTestOTP(): string {
+    return process.env.APPLE_TEST_OTP || '';
+  }
 
   public static getBasicLoginPwdBase64(): string {
     const login = this.getBasicLogin();

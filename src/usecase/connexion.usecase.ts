@@ -51,7 +51,10 @@ export class Connexion_v2_Usecase {
 
       await _this.utilisateurRepository.updateUtilisateur(user);
 
-      if (user.email !== App.getGoogleTestEmail()) {
+      if (
+        user.email !== App.getGoogleTestEmail() &&
+        user.email !== App.getAppleTestEmail()
+      ) {
         _this.sendCodeForConnexion(user);
       }
     };
