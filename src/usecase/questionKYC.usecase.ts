@@ -42,7 +42,9 @@ export class QuestionKYCUsecase {
       KYCID.KYC_transport_avion_3_annees,
       KYCMosaicID.MOSAIC_CHAUFFAGE,
       KYCID.KYC_superficie,
+      KYCID.KYC_menage,
       KYCID.KYC_alimentation_regime,
+      KYCID.KYC_consommation_type_consommateur,
     ],
     ENCHAINEMENT_KYC_bilan_transport: [
       KYCID.KYC_transport_type_utilisateur,

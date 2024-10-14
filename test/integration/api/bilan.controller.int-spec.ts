@@ -384,10 +384,10 @@ describe('/bilan (API test)', () => {
     //THEN
     expect(response.status).toBe(200);
     expect(response.body.bilan_synthese).toEqual({
-      impact_transport: 'moyen',
-      impact_alimentation: 'tres_fort',
-      impact_logement: 'fort',
-      impact_consommation: 'faible',
+      impact_transport: null,
+      impact_alimentation: null,
+      impact_logement: null,
+      impact_consommation: null,
       pourcentage_completion_totale: 0,
       liens_bilans_univers: [
         {

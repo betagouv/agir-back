@@ -75,4 +75,5 @@ export enum KYCID {
   KYC_electro_lave_vaiselle = 'KYC_electro_lave_vaiselle',
   KYC_electro_seche_linge = 'KYC_electro_seche_linge',
   KYC_consommation_relation_objets = 'KYC_consommation_relation_objets',
+  KYC_consommation_type_consommateur = 'KYC_consommation_type_consommateur',
 }
