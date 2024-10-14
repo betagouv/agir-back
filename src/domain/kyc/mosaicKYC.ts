@@ -128,6 +128,37 @@ export class MosaicKYC {
         KYCID.KYC_alimentation_achat_vrac,
       ],
     },
+    {
+      id: KYCMosaicID.MOSAIC_ANIMAUX,
+      categorie: Categorie.mission,
+      points: 5,
+      titre: `Quels animaux vivent avec vous, au sein de votre foyer ?`,
+      type: TypeReponseMosaicKYC.mosaic_boolean,
+      question_kyc_codes: [
+        KYCID.KYC_consommation_petit_chien,
+        KYCID.KYC_consommation_moyen_chien,
+        KYCID.KYC_consommation_grand_chien,
+        KYCID.KYC_consommation_chat,
+      ],
+    },
+    {
+      id: KYCMosaicID.MOSAIC_APPAREIL_NUM,
+      categorie: Categorie.mission,
+      points: 5,
+      titre: `Quels appareils numériques possédez-vous ?`,
+      type: TypeReponseMosaicKYC.mosaic_boolean,
+      question_kyc_codes: [
+        KYCID.KYC_appareil_telephone,
+        KYCID.KYC_appareil_television,
+        KYCID.KYC_appareil_ordi_portable,
+        KYCID.KYC_appareil_ordi_fixe,
+        KYCID.KYC_appareil_tablette,
+        KYCID.KYC_appareil_enceinte_bluetooth,
+        KYCID.KYC_appareil_console_salon,
+        KYCID.KYC_appareil_console_portable,
+        KYCID.KYC_appareil_imprimante_nbr,
+      ],
+    },
   ];
 
   public static listMosaicIDs(): KYCMosaicID[] {
