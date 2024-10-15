@@ -159,6 +159,43 @@ export class MosaicKYC {
         KYCID.KYC_appareil_imprimante_nbr,
       ],
     },
+    {
+      id: KYCMosaicID.MOSAIC_MEUBLES,
+      categorie: Categorie.mission,
+      points: 5,
+      titre: `Quels meubles de moins de 10 ans possédez-vous ?`,
+      type: TypeReponseMosaicKYC.mosaic_boolean,
+      question_kyc_codes: [
+        KYCID.KYC_meuble_armoire,
+        KYCID.KYC_meuble_canape,
+        KYCID.KYC_meuble_chaise,
+        KYCID.KYC_meuble_grand_meuble,
+        KYCID.KYC_meuble_lit,
+        KYCID.KYC_meuble_matelas,
+        KYCID.KYC_meuble_petit_meuble,
+        KYCID.KYC_meuble_table,
+      ],
+    },
+    {
+      id: KYCMosaicID.MOSAIC_VETEMENTS,
+      categorie: Categorie.mission,
+      points: 5,
+      titre: `Quels vêtements achetez-vous neufs en général dans une année ?`,
+      type: TypeReponseMosaicKYC.mosaic_boolean,
+      question_kyc_codes: [
+        KYCID.KYC_achat_chaussure,
+        KYCID.KYC_achat_chemise,
+        KYCID.KYC_achat_manteau,
+        KYCID.KYC_achat_pantalon,
+        KYCID.KYC_achat_pull,
+        KYCID.KYC_achat_petit_article,
+        KYCID.KYC_achat_pull,
+        KYCID.KYC_achat_robe,
+        KYCID.KYC_achat_short,
+        KYCID.KYC_achat_sweat,
+        KYCID.KYC_achat_tshirt,
+      ],
+    },
   ];
 
   public static listMosaicIDs(): KYCMosaicID[] {

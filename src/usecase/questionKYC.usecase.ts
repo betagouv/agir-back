@@ -71,6 +71,8 @@ export class QuestionKYCUsecase {
       KYCMosaicID.MOSAIC_ELECTROMENAGER,
       KYCMosaicID.MOSAIC_ANIMAUX,
       KYCMosaicID.MOSAIC_APPAREIL_NUM,
+      KYCMosaicID.MOSAIC_MEUBLES,
+      KYCMosaicID.MOSAIC_VETEMENTS,
     ],
     ENCHAINEMENT_KYC_bilan_alimentation: [
       KYCID.KYC_local_frequence,
