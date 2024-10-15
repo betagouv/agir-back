@@ -27,7 +27,7 @@ export class GamificationUsecase {
   }
 
   async classementLocal(utilisateurId: string): Promise<Board> {
-    await this.utilisateurBoardRepository.update_rank_user_commune();
+    await this.utilisateurBoardRepository.update_rank_user_commune_V2();
 
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -59,8 +59,8 @@ export class GamificationUsecase {
     }
 
     const users_avant_local =
-      await this.utilisateurBoardRepository.utilisateur_classement_proximite(
-        utilisateur.rank_commune,
+      await this.utilisateurBoardRepository.utilisateur_classement_proximite_V2(
+        utilisateur.points_classement,
         4,
         'rank_avant_strict',
         'local',
@@ -69,8 +69,8 @@ export class GamificationUsecase {
         utilisateur.id,
       );
     const users_apres_local =
-      await this.utilisateurBoardRepository.utilisateur_classement_proximite(
-        utilisateur.rank_commune,
+      await this.utilisateurBoardRepository.utilisateur_classement_proximite_V2(
+        utilisateur.points_classement,
         4,
         'rank_apres_ou_egal',
         'local',
@@ -108,7 +108,7 @@ export class GamificationUsecase {
   }
 
   async classementNational(utilisateurId: string): Promise<Board> {
-    await this.utilisateurBoardRepository.update_rank_user_france();
+    await this.utilisateurBoardRepository.update_rank_user_france_V2();
 
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -130,8 +130,8 @@ export class GamificationUsecase {
     }
 
     const users_avant_national =
-      await this.utilisateurBoardRepository.utilisateur_classement_proximite(
-        utilisateur.rank,
+      await this.utilisateurBoardRepository.utilisateur_classement_proximite_V2(
+        utilisateur.points_classement,
         4,
         'rank_avant_strict',
         'national',
@@ -140,8 +140,8 @@ export class GamificationUsecase {
         utilisateur.id,
       );
     const users_apres_national =
-      await this.utilisateurBoardRepository.utilisateur_classement_proximite(
-        utilisateur.rank,
+      await this.utilisateurBoardRepository.utilisateur_classement_proximite_V2(
+        utilisateur.points_classement,
         4,
         'rank_apres_ou_egal',
         'national',

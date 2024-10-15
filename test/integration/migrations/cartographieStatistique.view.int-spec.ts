@@ -65,7 +65,11 @@ describe('CartographieView', () => {
     });
 
     // WHEN
-    const cartographieVue = await TestUtil.prisma.cartographieVue.findMany();
+    const cartographieVue = await TestUtil.prisma.cartographieVue.findMany({
+      orderBy: {
+        id: 'asc',
+      },
+    });
 
     // THEN
     expect(cartographieVue).toStrictEqual([

@@ -149,13 +149,13 @@ describe('Gamification  (API test)', () => {
     expect(response.body.top_trois).toHaveLength(3);
     expect(response.body.top_trois[0]).toStrictEqual({
       points: 30,
-      rank: 1,
+      rank: 2,
       prenom: 'ya',
       id: 'ceddc0d114c8db1dc4bde88f1e29231f',
     });
   });
 
-  it(`GET /utilisateurs/id/classement retourne le top 3 commune utilisateur ok, exclu utilisateur`, async () => {
+  it(`GET /utilisateurs/id/classement retourne le top 3 commune utilisateur ok, exclu autre utilisateur`, async () => {
     // GIVEN
 
     await TestUtil.create(DB.utilisateur, {
@@ -216,20 +216,19 @@ describe('Gamification  (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.utilisateur.rank).toEqual(1);
 
     expect(response.body).toEqual({
       classement_utilisateur: [
         {
           points: 20,
           prenom: 'dijon_2',
-          rank: 1,
+          rank: 2,
           id: 'ceddc0d114c8db1dc4bde88f1e29231f',
         },
         {
           points: 10,
           prenom: 'dijon_1',
-          rank: 2,
+          rank: 3,
           id: 'a87ff679a2f3e71d9181a67b7542122c',
         },
       ],
@@ -240,20 +239,20 @@ describe('Gamification  (API test)', () => {
         {
           points: 20,
           prenom: 'dijon_2',
-          rank: 1,
+          rank: 2,
           id: 'ceddc0d114c8db1dc4bde88f1e29231f',
         },
         {
           points: 10,
           prenom: 'dijon_1',
-          rank: 2,
+          rank: 3,
           id: 'a87ff679a2f3e71d9181a67b7542122c',
         },
       ],
       utilisateur: {
         points: 20,
         prenom: 'dijon_2',
-        rank: 1,
+        rank: 2,
         id: 'ceddc0d114c8db1dc4bde88f1e29231f',
       },
     });
@@ -330,7 +329,7 @@ describe('Gamification  (API test)', () => {
     expect(response.body.commune_label).toEqual(null);
   });
 
-  it(`GET /utilisateurs/id/classement retourne le national utilisateur ok , si utilisateur exclu alors exclu du classement`, async () => {
+  it(`GET /utilisateurs/id/classement retourne le national utilisateur ok , si utilisateur exclu alors non exclu de son propre classement`, async () => {
     // GIVEN
 
     await TestUtil.create(DB.utilisateur, {
@@ -383,7 +382,43 @@ describe('Gamification  (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.utilisateur).toEqual(null);
-    expect(response.body.classement_utilisateur).toEqual(null);
+    expect(response.body.utilisateur).toEqual({
+      id: 'ceddc0d114c8db1dc4bde88f1e29231f',
+      points: 21,
+      prenom: 'insulte',
+      rank: 2,
+    });
+    expect(response.body.classement_utilisateur).toEqual([
+      {
+        id: 'eccbc87e4b5ce2fe28308fd9f2a7baf3',
+        points: 30,
+        prenom: 'palaiseau_3',
+        rank: 1,
+      },
+      {
+        id: 'ceddc0d114c8db1dc4bde88f1e29231f',
+        points: 21,
+        prenom: 'insulte',
+        rank: 2,
+      },
+      {
+        id: 'c81e728d9d4c2f636f067f89cc14862c',
+        points: 20,
+        prenom: 'palaiseau_2',
+        rank: 3,
+      },
+      {
+        id: 'a87ff679a2f3e71d9181a67b7542122c',
+        points: 11,
+        prenom: 'dijon_1',
+        rank: 4,
+      },
+      {
+        id: 'c4ca4238a0b923820dcc509a6f75849b',
+        points: 10,
+        prenom: 'palaiseau_1',
+        rank: 5,
+      },
+    ]);
   });
 });
