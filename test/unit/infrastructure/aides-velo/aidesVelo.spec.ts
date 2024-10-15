@@ -1,6 +1,34 @@
 import Engine from 'publicodes';
 import rules from '../../../../src/infrastructure/data/aidesVelo.json';
+import collectivites from '../../../../src/infrastructure/data/aides-collectivities.json';
 import assert from 'assert';
+
+// NOTE: should be generated at compile time
+describe('aides-collectivities.json', () => {
+  const rulesToIgnore = [
+    'aides . montant',
+    'aides . état',
+    'aides . région',
+    'aides . département',
+    'aides . commune',
+    'aides . intercommunalité',
+    'aides . bonus vélo',
+    'aides . prime à la conversion',
+    'aides . forfait mobilités durables',
+  ];
+
+  it('devrait y avoir une entrée pour chaque aide', () => {
+    Object.keys(rules).forEach((key) => {
+      if (
+        key.startsWith('aides .') &&
+        key.split(' . ').length === 2 &&
+        !rulesToIgnore.includes(key)
+      ) {
+        expect(collectivites[key]).not.toBeUndefined();
+      }
+    });
+  });
+});
 
 describe('Aides Vélo', () => {
   const engine = new Engine(rules);
