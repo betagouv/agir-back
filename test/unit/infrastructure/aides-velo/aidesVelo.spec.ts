@@ -3,6 +3,7 @@ import rules from '../../../../src/infrastructure/data/aidesVelo.json';
 import collectivites from '../../../../src/infrastructure/data/aides-collectivities.json';
 import miniatures from '../../../../src/infrastructure/data/miniatures.json';
 import assert from 'assert';
+import { deserialize } from 'v8';
 
 describe('Aides Vélo', () => {
   const engine = new Engine(rules);
@@ -948,7 +949,7 @@ describe('Aides Vélo', () => {
   });
 
   describe('Grand Avignon', () => {
-    it("le cumul de l'aide avec celles des communes ne devrait pas dépaser 200€", () => {
+    it("le cumul de l'aide avec celles des communes ne devrait pas dépasser 200€", () => {
       engine.setSituation({
         'localisation . epci': "'CA du Grand Avignon (COGA)'",
         'vélo . type': "'électrique'",
@@ -1183,6 +1184,30 @@ describe('Aides Vélo', () => {
         'personnes dans le foyer fiscal': 2,
       });
       expect(engine.evaluate('aides . anjou bleu').nodeValue).toEqual(null);
+    });
+  });
+
+  describe("Communauté d'agglomération de Rochefort Océan", () => {
+    it("devrait avoir le même montant que l'exemple du site", () => {
+      engine.setSituation({
+        'localisation . epci': "'CA Rochefort Océan'",
+        'revenu fiscal de référence': '14200 €/an',
+        'vélo . neuf ou occasion': "'neuf'",
+        'vélo . prix': '1000 €',
+        'vélo . type': "'électrique'",
+      });
+      expect(engine.evaluate('aides . rochefort').nodeValue).toEqual(225);
+    });
+
+    it('devrait avoir le même plafond pour les cargo mécanique que pour les vélos électriques', () => {
+      engine.setSituation({
+        'localisation . epci': "'CA Rochefort Océan'",
+        'revenu fiscal de référence': '14200 €/an',
+        'vélo . neuf ou occasion': "'neuf'",
+        'vélo . prix': '1000 €',
+        'vélo . type': "'cargo'",
+      });
+      expect(engine.evaluate('aides . rochefort').nodeValue).toEqual(225);
     });
   });
 });
