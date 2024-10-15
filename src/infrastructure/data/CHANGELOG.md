@@ -1,0 +1,251 @@
+# Historique des modifications
+
+## [PR 25](https://github.com/betagouv/agir-back/pull/25) (10/2024)
+
+### Aides
+
+#### Ajout
+
+- `aides . agen`
+- `aides . avignon`
+- `aides . bègle vélo classique`
+- `aides . bègle vélo spécifique`
+- `aides . caen jeune`
+- `aides . caen vélo adapté`
+- `aides . campagnes de l'artois`
+- `aides . cévennes gangeoises et suménoises`
+- `aides . département hérault vélo adapté`
+- `aides . fier et usses`
+- `aides . grand besançon`
+- `aides . mérignac`
+- `aides . monmorillon`
+- `aides . montpellier vélo adapté`
+- `aides . occitanie vélo adapté`
+- `aides . pays de cruseilles`
+- `aides . perpignan métropole`
+- `aides . portes de sologne`
+- `aides . région centre rémi zen`
+- `aides . selestat`
+- `aides . taillan-médoc`
+- `aides . tulle`
+- `aides . val d'yerres val de seine`
+
+#### Mise à jour
+
+- `aides . aix les bains`
+- `aides . albert`
+- `aides . albi`
+- `aides . amiens`
+- `aides . angers`
+- `aides . anjou bleu`
+- `aides . annecy`
+- `aides . annoeullin`
+- `aides . arve salève`
+- `aides . aubervilliers`
+- `aides . aubiere`
+- `aides . aunis atlantique`
+- `aides . aurillac`
+- `aides . avignon` -> `aides . grand avignon`
+- `aides . belfort`
+- `aides . bidart`
+- `aides . blacé`
+- `aides . boé`
+- `aides . bonus vélo`
+- `aides . bordeaux`
+- `aides . bourges`
+- `aides . bourg-saint-maurice`
+- `aides . bretagne romantique`
+- `aides . caen`
+- `aides . caen la mer`
+- `aides . camon`
+- `aides . carpiquet`
+- `aides . cébazat`
+- `aides . cenon`
+- `aides . châtel`
+- `aides . chevilly-larue`
+- `aides . clisson`
+- `aides . cluses arve et montagnes`
+- `aides . cœur de maurienne arvan` -> `aides . coeur de maurienne arvan`
+- `aides . coeur de nacre`
+- `aides . combloux`
+- `aides . corse`
+- `aides . cote d'or`
+- `aides . cotentin`
+- `aides . cournon d'auvergne`
+- `aides . crozon`
+- `aides . dardilly`
+- `aides . deauville`
+- `aides . département hérault`
+- `aides . département somme`
+- `aides . dreux`
+- `aides . eckbolsheim`
+- `aides . epinal`
+- `aides . eschau`
+- `aides . évian-les-bains`
+- `aides . faches-thumesnil`
+- `aides . flers`
+- `aides . fougères`
+- `aides . frejus`
+- `aides . geispolsheim`
+- `aides . genevois`
+- `aides . givors`
+- `aides . grand est`
+- `aides . grand orb`
+- `aides . grand périgueux`
+- `aides . grand poitiers`
+- `aides . grand reims`
+- `aides . grand roye`
+- `aides . granville`
+- `aides . grenoble`
+- `aides . haut val de sèvre`
+- `aides . hermanville-sur-mer`
+- `aides . honfleur`
+- `aides . ifs`
+- `aides . ile de france`
+- `aides . illkirch`
+- `aides . istres`
+- `aides . kremlin-bicetre`
+- `aides . la cali`
+- `aides . la madeleine`
+- `aides . la motte servolex`
+- `aides . lescar`
+- `aides . les crêtes préardennaises`
+- `aides . les herbiers`
+- `aides . les sables d'olonne`
+- `aides . le vigan`
+- `aides . limoges metropole`
+- `aides . loire layon aubance`
+- `aides . louvigny`
+- `aides . luberon`
+- `aides . lyon`
+- `aides . mandelieu`
+- `aides . molsheim-mutzig`
+- `aides . mondeville`
+- `aides . mons en baroeul`
+- `aides . montagnole`
+- `aides . montbéliard`
+- `aides . montbéliard agglo`
+- `aides . montlucon`
+- `aides . montpellier`
+- `aides . montval sur loir`
+- `aides . mornant`
+- `aides . morzine-avoriaz`
+- `aides . mougins`
+- `aides . nantes`
+- `aides . occitanie`
+- `aides . pantin`
+- `aides . paris`
+- `aides . pau`
+- `aides . pays ancenis`
+- `aides . pays de barr`
+- `aides . pays de l'arbresle`
+- `aides . pays de l'ozon`
+- `aides . pays de lumbres`
+- `aides . pays de saverne`
+- `aides . pays mornantais`
+- `aides . pays sainte odile`
+- `aides . pierre-bénite`
+- `aides . pont-de-beauvoisin`
+- `aides . pornic`
+- `aides . portes de rosheim`
+- `aides . provence verte`
+- `aides . puisaye forterre`
+- `aides . quimper`
+- `aides . quimperlé`
+- `aides . région centre`
+- `aides . reims`
+- `aides . ried de marckolsheim`
+- `aides . riviera francaise`
+- `aides . romagnat`
+- `aides . romilly-sur-seine`
+- `aides . ronchin`
+- `aides . sablé sur sarthe`
+- `aides . saint alban leysse`
+- `aides . sainte-foy-lès-lyon`
+- `aides . saint-étienne`
+- `aides . saint-germain la blanche herbe`
+- `aides . saint-louis`
+- `aides . saint-marcellin vercors isère`
+- `aides . saint-omer`
+- `aides . saint-pair-sur-mer`
+- `aides . saint-rémy`
+- `aides . saône-beaujolais`
+- `aides . sarlat`
+- `aides . sète`
+- `aides . sèvre et loire`
+- `aides . somme sud-ouest`
+- `aides . sophia antipolis`
+- `aides . sorgues du comtat`
+- `aides . strasbourg`
+- `aides . terre des 2 caps`
+- `aides . thue et mue`
+- `aides . toulon`
+- `aides . toulouse`
+- `aides . trouville sur mer`
+- `aides . val-au-perche`
+- `aides . val d'argent`
+- `aides . vallée de l'homme`
+- `aides . vallée de villé`
+- `aides . vallée d'ossau`
+- `aides . vallons du lyonnais`
+- `aides . vendenheim`
+- `aides . verson`
+- `aides . vienne condrieu`
+- `aides . vienne gartempe`
+- `aides . villefranche beaujolais saône`
+- `aides . ville-sur-jarnioux`
+- `aides . wasquehal`
+
+#### Suppression
+
+- `aides . agglo bocage bressuirais`
+- `aides . ambert livradois forez`
+- `aides . ardenne`
+- `aides . brissac loire aubance`
+- `aides . carvin`
+- `aides . chateaubriant derval`
+- `aides . châtellrault`
+- `aides . colmar`
+- `aides . courbevoie`
+- `aides . crolles`
+- `aides . département loire`
+- `aides . écully`
+- `aides . ferte saint aubin`
+- `aides . feyzin`
+- `aides . hangenbieten`
+- `aides . haut-poitou`
+- `aides . herouville`
+- `aides . laon`
+- `aides . loue lison`
+- `aides . marckolsheim`
+- `aides . marignier`
+- `aides . monts du pilat`
+- `aides . nevers`
+- `aides . ouistreham`
+- `aides . pays de fénelon`
+- `aides . plobsheim`
+- `aides . pont-saint-maxence`
+- `aides . rivery`
+- `aides . saint-jean-de-védas`
+- `aides . saint-lô`
+- `aides . sisteronais-buëch`
+- `aides . terres de montaigu`
+- `aides . vesoul`
+
+### Paramètres
+
+#### Ajout
+
+- `demandeur . âge`
+- `demandeur . bénéficiaire du RSA`
+- `demandeur . en situation de handicap`
+- `demandeur . en situation de handicap`
+- `demandeur . statut étudiant`
+- `vélo . adapté`
+- `vélo . électrique simple`
+
+#### Mise à jour
+
+- `Anah`
+- `Anah . plafond ménage modeste`
+- `ménage imposable`
