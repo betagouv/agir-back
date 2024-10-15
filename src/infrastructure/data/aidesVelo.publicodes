@@ -5050,49 +5050,87 @@ aides . grand poitiers:
 #         décembre 2021 ?
 #       par défaut: non
 
+# NOTE: valide jusqu'au 31 décembre 2024, à vérifier en 2025
 aides . grand orb:
   remplace: intercommunalité
   titre: Grand Orb Communauté de communes
+  description: |
+    La Communauté de communes accompagne financièrement les habitants du
+    territoire qui souhaitent acheter un vélo à assistance électrique (aide
+    forfaitaire de 100 € sans conditions particulières) où faire poser un kit
+    d'électrification (aide forfaitaire de 80 €).
+
+    Date limite de dépôt des dossiers : 10 janvier 2025.
   applicable si:
     toutes ces conditions:
       - localisation . epci = 'CC Grand Orb communauté de communes en Languedoc'
-      - vélo . électrique
-  valeur: 100€
-  lien: https://www.grandorb.fr/phototheque_publique/Developpement-durable-/2022/03/convention-aide-achat-VAE-2022pdf.pdf
+      - vélo . neuf
+      - une de ces conditions:
+          - vélo . électrique
+          - vélo . motorisation
+  valeur: 
+    variations:
+      - si: vélo . électrique
+        alors: 100€
+      - sinon: 80€
+  lien: https://www.grandorb.fr/phototheque_publique/PCAET/2024/02/convention-aide-achat-VAE-2024pdf.pdf
 
-aides . saint-jean-de-védas:
-  remplace: commune
-  titre: Ville de Saint-Jean-de-Védas
-  applicable si: localisation . code insee = '34270'
-  variations:
-    - si: vélo . cargo
-      alors:
-        valeur: 25% * vélo . prix
-        plafond: 300€
-    - si: vélo . électrique
-      alors:
-        valeur: 25% * vélo . prix
-        plafond: 200€
-    - si: vélo . mécanique
-      alors:
-        valeur: 50% * vélo . prix
-        plafond: 100€
-    - sinon: 0€
-  lien: https://www.saintjeandevedas.fr/actualites/actu-2022/aide-a-l-acquisition-d-un-velo
+# NOTE: ne semble plus d'actualité
+# aides . saint-jean-de-védas:
+#   remplace: commune
+#   titre: Ville de Saint-Jean-de-Védas
+#   applicable si: localisation . code insee = '34270'
+#   variations:
+#     - si: vélo . cargo
+#       alors:
+#         valeur: 25% * vélo . prix
+#         plafond: 300€
+#     - si: vélo . électrique
+#       alors:
+#         valeur: 25% * vélo . prix
+#         plafond: 200€
+#    - si: vélo . mécanique
+#       alors:
+#         valeur: 50% * vélo . prix
+#         plafond: 100€
+#    - sinon: 0€
+#   lien: https://www.saintjeandevedas.fr/actualites/actu-2022/aide-a-l-acquisition-d-un-velo
+
 aides . montlucon:
   remplace: intercommunalité
   titre: Montluçon Communauté
+  description: |
+    Aide pour l'acquisition d'un vélo à assistance électrique neuf ou
+    d'occasion ou d'un vélo classique musculaire neuf ou d'occasion à usage
+    personnel.
   applicable si:
     toutes ces conditions:
       - localisation . epci = 'CA Montluçon Communauté'
-      - vélo . électrique
-      - vélo . prix <= 2500€
-  valeur: vélo . prix
-  plafond: 200 €
+      - demandeur . âge . majeur
+  valeur: 
+    variations:
+      - si: vélo . électrique
+        alors: 
+          variations:
+            - si: vélo . neuf
+              alors: 200€
+            - si: vélo . occasion
+              alors: 100€
+      - sinon:
+          variations:
+            - si: vélo . neuf
+              alors: 100€
+            - si: vélo . occasion
+              alors: 50€
   lien: https://www.montlucon-communaute.com/vivre-au-quotidien/la-mobilite-durable/a-velo-dans-lagglo/
+
 aides . cotentin:
   remplace: intercommunalité
   titre: Cap Cotentin
+  description: |
+    Après avoir loué un vélo électrique Cap Cotentin ou si votre quotient
+    familial est égal ou inférieur à 750 €, vous pouvez bénéficier d'une aide
+    à l'acquisition pour l'achat de votre propre vélo électrique.
   applicable si:
     toutes ces conditions:
       - localisation . epci = 'CA du Cotentin'
@@ -5100,59 +5138,81 @@ aides . cotentin:
       - revenu fiscal de référence <= 750 €/mois
   valeur: 40% * vélo . prix
   plafond: 350 €
-  lien: https://www.capcotentin.fr/aide-a-lacquisition/
-aides . saint-lô:
-  remplace: intercommunalité
-  titre: Saint-Lô Agglo
-  applicable si:
-    toutes ces conditions:
-      - localisation . epci = 'CA Saint-Lô Agglo'
-      - une de ces conditions:
-          - toutes ces conditions:
-              - vélo . électrique
-              - vélo . prix <= 3000 €
-          - vélo . cargo
-  variations:
-    - si: vélo . cargo
-      alors: 400 €
-    - si: revenu fiscal de référence <= première tranche IR
-      alors: 200 €
-    - sinon: 100 €
-  plafond: 20% * vélo . prix
-  lien: https://www.saint-lo-agglo.fr/fr/la-prime-lachat-dun-velo-assistance-electrique
+  lien: https://www.capcotentin.fr/velo/
+
+# NOTE: clôture de l'aide en 2024, à vérifier en 2025
+# https://www.saint-lo-agglo.fr/fr/actualites/fin-de-la-prime-lachat-de-velos-assistance-electrique-2024
+# aides . saint-lô:
+#   remplace: intercommunalité
+#   titre: Saint-Lô Agglo
+#   applicable si:
+#     toutes ces conditions:
+#       - localisation . epci = 'CA Saint-Lô Agglo'
+#       - une de ces conditions:
+#           - toutes ces conditions:
+#               - vélo . électrique
+#               - vélo . prix <= 3000 €
+#           - vélo . cargo
+#   variations:
+#     - si: vélo . cargo
+#       alors: 400 €
+#     - si: revenu fiscal de référence <= première tranche IR
+#       alors: 200 €
+#     - sinon: 100 €
+#   plafond: 20% * vélo . prix
+#   lien: https://www.saint-lo-agglo.fr/fr/la-prime-lachat-dun-velo-assistance-electrique
+
+# Si aides . commune + aides . état <= 75% * vélo . prix
+# alors aides . commune <= 75% * vélo . prix - aides . état
+# alors le plafond de l'aide de la commune doit être de 
+
 aides . granville:
   remplace: commune
   titre: Ville de Granville
+  description: |
+    Une aide financière est accordée aux résident·es granvillais·es de 18 ans
+    et plus ainsi qu'aux apprenti·es (mineurs) pour l'achat, depuis le 1er
+    janvier 2022, d'une vélo de tout type : vélo/ vélo cargo avec ou sans
+    assistance électrique, neuf ou d'occasion.
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '50218'
       - vélo . électrique ou mécanique
-  variations:
-    - si: revenu fiscal de référence <= 13488€/an
-      alors:
-        variations:
-          - si: vélo . électrique
-            alors: 600€
-          - sinon: 250€
-    - si: revenu fiscal de référence <= 20230€/an
-      alors:
-        variations:
-          - si: vélo . électrique
-            alors: 250€
-          - sinon: 100€
-    - si: revenu fiscal de référence <= 26972€/an
-      alors: 100€
-    - sinon: 0€
+      - revenu fiscal de référence < 28285 €/an
+      - une de ces conditions:
+          - demandeur . âge . majeur
+          - demandeur . statut apprenti
+  valeur: 
+    variations:
+      - si: revenu fiscal de référence <= 15400€/an
+        alors:
+          variations:
+            - si: vélo . électrique
+              alors: 600€
+            - sinon: 250€
+      - si: revenu fiscal de référence <= 21542€/an
+        alors:
+          variations:
+            - si: vélo . électrique
+              alors: 250€
+            - sinon: 100€
+      - sinon: 100€
   plafond:
     variations:
-      - si: revenu fiscal de référence <= 13488€/an
+      - si: revenu fiscal de référence <= 15400€/an
         alors: 75% * vélo . prix
       - sinon: 50% * vélo . prix
   abattement: aides . état
   lien: https://www.ville-granville.fr/vivre-au-quotidien-demarches-services/se-deplacer/aide-a-lachat-dun-velo/
+
+# NOTE: infos pour 2023, à vérifier en 2025
 aides . saint-louis:
   remplace: intercommunalité
   titre: Saint-Louis Agglomération
+  description: |
+    Saint-Louis Agglomération propose une aide à l'achat d'un vélo à assistance
+    électrique ou mécanique, neuf ou d'occasion, acheté dans un magasin situé
+    dans l'une des 40 communes membres de l'agglomération.
   applicable si:
     toutes ces conditions:
       - localisation . epci = 'CA Saint-Louis Agglomération'
@@ -5161,31 +5221,66 @@ aides . saint-louis:
           - si: vélo . cargo
             alors: vélo . prix <= 4000€
           - sinon: vélo . prix <= 3000€
-  variations:
-    - si: vélo . électrique
-      alors: 200 €
-    - sinon: 100 €
+  valeur:
+    variations:
+      - si: 
+          une de ces conditions:
+            - vélo . électrique
+            - vélo . cargo
+        alors: 200 €
+      - sinon: 100 €
   plafond: 50% * vélo . prix
   lien: https://www.agglo-saint-louis.fr/fr/au-quotidien/mobilite/prime-velo
+
 aides . saint-pair-sur-mer:
   remplace: commune
   titre: Ville de Saint-Pair-sur-Mer
+  description: |
+    Prime de 200€ pour l'acquisition d'un vélo à assistance électrique et
+    mécanique (uniquement pour les personnes en situation de handicap ou ayant
+    un revenu fiscal de référence par part inférieur ou égal à 6 358 €).
+
+    La prime est élligible pour les Saint Pairais majeur ayant un revenu fiscal
+    de référence par part inférieur ou égal à 14 089 € ou étant en situation de
+    handicap.
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '50532'
-      - vélo . électrique
-  valeur: 200€
+      - vélo . électrique ou mécanique
+      - une de ces conditions:
+          - revenu fiscal de référence <= 14089 €/an
+          - demandeur . en situation de handicap
+  valeur: 
+    variations:
+      - si: vélo . électrique
+        alors: 200€
+      - si: 
+          une de ces conditions:
+            - revenu fiscal de référence <= 6358 €/an
+            - demandeur . en situation de handicap
+        alors: 
+          valeur: 40% * vélo . prix
+          plafond: 100€
+      - sinon: 0€
   lien: https://saintpairsurmer.fr/prime-a-lacquisition-dun-velo-a-assistance-electrique-2024/
+
+# NOTE: potentiellement pas à jour, à vérifier en 2025
 aides . aunis atlantique:
   remplace: intercommunalité
   titre: Communauté de Communes Aunis Atlantique
+  description: |
+     La Communauté de Communes a décidé de mettre en place une aide forfaitaire
+     de 200€ à l'achat de vélos à assistance électrique (VAE).
   applicable si:
     toutes ces conditions:
       - localisation . epci = 'CC Aunis Atlantique'
+      - revenu fiscal de référence <= 13489 €/an
+      - demandeur . âge . majeur
       - vélo . électrique
-      - revenu fiscal de référence <= première tranche IR
+      - vélo . neuf
   valeur: 200€
   lien: https://www.aunisatlantique.fr/aide-a-lacquisition-de-velo-a-assistance-electrique-vae/
+
 aides . blois:
   remplace: intercommunalité
   titre: Agglopolys
@@ -7864,6 +7959,8 @@ vélo . occasion:
     références à: aides
     sauf dans:
       # - aides . ambert livradois forez
+      - aides . annecy
+      - aides . arve salève
       - aides . aubervilliers
       - aides . aubiere
       - aides . auray quiberon
@@ -7883,7 +7980,9 @@ vélo . occasion:
       - aides . cébazat
       - aides . cenon
       - aides . cévennes gangeoises et suménoises
+      - aides . châtel
       - aides . chevilly-larue
+      - aides . cluses arve et montagnes
       - aides . coeur de maurienne arvan
       - aides . coeur de nacre
       - aides . corse
@@ -7893,15 +7992,20 @@ vélo . occasion:
       - aides . dieppe
       - aides . divonne-les-bains
       - aides . dreux
+      - aides . évian-les-bains
       - aides . faches-thumesnil
       - aides . feignies
       - aides . fier et usses
       - aides . flers
+      - aides . genevois
       - aides . grand cubzaguais
       - aides . grand est
       - aides . grand périgueux
+      - aides . grand poitiers
       - aides . grand villeneuvois
+      - aides . granville
       - aides . grenoble
+      - aides . haut val de sèvre
       - aides . haut val de sèvre
       - aides . hermanville-sur-mer
       - aides . honfleur
@@ -7915,6 +8019,7 @@ vélo . occasion:
       - aides . lescar
       - aides . les herbiers
       - aides . les sables d'olonne
+      - aides . le vigan
       - aides . limoges metropole
       - aides . loire layon aubance
       - aides . loos-en-gohelle
@@ -7929,6 +8034,7 @@ vélo . occasion:
       - aides . montagnole
       - aides . montant
       - aides . montbéliard agglo
+      - aides . montlucon
       - aides . montpellier
       - aides . montval sur loir
       - aides . morzine-avoriaz
@@ -7977,15 +8083,6 @@ vélo . occasion:
       - aides . vienne gartempe
       - aides . villefranche beaujolais saône 
       - aides . ville-sur-jarnioux
-      - aides . annecy
-      - aides . genevois
-      - aides . arve salève
-      - aides . cluses arve et montagnes
-      - aides . évian-les-bains
-      - aides . châtel
-      - aides . le vigan
-      - aides . haut val de sèvre
-      - aides . grand poitiers
 
 # NOTE: ne devrait-on pas plutôt avoir 'quotient familial' calculée à partir de
 # 'revenu fiscal de référence' et 'personnes dans le foyer fiscal' ? ->
@@ -8117,6 +8214,13 @@ demandeur . en situation de handicap:
     handicap](https://www.monparcourshandicap.gouv.fr/actualite/velo-adapte-au-handicap-quel-materiel-choisir-et-comment-le-financer)
     pour plus d'informations sur les différents matériels et les moyens de les
     financer.
+  par défaut: non
+
+demandeur . statut apprenti:
+  type: booléen
+  question: Êtes-vous apprenti·e ?
+  description: |
+    Certaines aides sont réservées ou majorées pour les apprenti·es.
   par défaut: non
 
 demandeur . âge:

@@ -1989,17 +1989,6 @@
     "slug": "bedarieux",
     "country": "france"
   },
-  "aides . saint-jean-de-védas": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "34270"
-    },
-    "codeInsee": "34270",
-    "departement": "34",
-    "population": 11843,
-    "slug": "saint-jean-de-vedas",
-    "country": "france"
-  },
   "aides . montlucon": {
     "collectivity": {
       "kind": "epci",
@@ -2022,18 +2011,6 @@
     "departement": "50",
     "population": 77789,
     "slug": "cherbourg-en-cotentin",
-    "country": "france"
-  },
-  "aides . saint-lô": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CA Saint-Lô Agglo",
-      "code": "200066389"
-    },
-    "codeInsee": "50502",
-    "departement": "50",
-    "population": 19206,
-    "slug": "saint-lo",
     "country": "france"
   },
   "aides . granville": {

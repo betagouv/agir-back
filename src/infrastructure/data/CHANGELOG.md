@@ -43,6 +43,7 @@
 - `aides . arve salève`
 - `aides . aubervilliers`
 - `aides . aubiere`
+- `aides . aunis atlantique`
 - `aides . aurillac`
 - `aides . avignon` -> `aides . grand avignon`
 - `aides . belfort`
@@ -69,6 +70,7 @@
 - `aides . combloux`
 - `aides . corse`
 - `aides . cote d'or`
+- `aides . cotentin`
 - `aides . cournon d'auvergne`
 - `aides . crozon`
 - `aides . dardilly`
@@ -88,10 +90,12 @@
 - `aides . genevois`
 - `aides . givors`
 - `aides . grand est`
+- `aides . grand orb`
 - `aides . grand périgueux`
 - `aides . grand poitiers`
 - `aides . grand reims`
 - `aides . grand roye`
+- `aides . granville`
 - `aides . grenoble`
 - `aides . haut val de sèvre`
 - `aides . hermanville-sur-mer`
@@ -121,6 +125,7 @@
 - `aides . montagnole`
 - `aides . montbéliard`
 - `aides . montbéliard agglo`
+- `aides . montlucon`
 - `aides . montpellier`
 - `aides . montval sur loir`
 - `aides . mornant`
@@ -159,8 +164,10 @@
 - `aides . sainte-foy-lès-lyon`
 - `aides . saint-étienne`
 - `aides . saint-germain la blanche herbe`
+- `aides . saint-louis`
 - `aides . saint-marcellin vercors isère`
 - `aides . saint-omer`
+- `aides . saint-pair-sur-mer`
 - `aides . saint-rémy`
 - `aides . saône-beaujolais`
 - `aides . sarlat`
@@ -219,6 +226,8 @@
 - `aides . plobsheim`
 - `aides . pont-saint-maxence`
 - `aides . rivery`
+- `aides . saint-jean-de-védas`
+- `aides . saint-lô`
 - `aides . sisteronais-buëch`
 - `aides . terres de montaigu`
 - `aides . vesoul`
