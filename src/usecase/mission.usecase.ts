@@ -39,7 +39,7 @@ export class MissionUsecase {
   ): Promise<void> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.missions],
+      [Scope.missions, Scope.gamification],
     );
     utilisateur.checkState();
 
