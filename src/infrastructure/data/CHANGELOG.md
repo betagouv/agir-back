@@ -40,15 +40,18 @@
 - `aides . anjou bleu`
 - `aides . annecy`
 - `aides . annoeullin`
+- `aides . arcachon`
 - `aides . arve salève`
 - `aides . aubervilliers`
 - `aides . aubiere`
 - `aides . aunis atlantique`
 - `aides . aurillac`
 - `aides . avignon` -> `aides . grand avignon`
+- `aides . bassin d'arcachon nord`
 - `aides . belfort`
 - `aides . bidart`
 - `aides . blacé`
+- `aides . blois`
 - `aides . boé`
 - `aides . bonus vélo`
 - `aides . bordeaux`
@@ -58,6 +61,7 @@
 - `aides . caen`
 - `aides . caen la mer`
 - `aides . camon`
+- `aides . canélan`
 - `aides . carpiquet`
 - `aides . cébazat`
 - `aides . cenon`
@@ -69,6 +73,7 @@
 - `aides . coeur de nacre`
 - `aides . combloux`
 - `aides . corse`
+- `aides . cote albatre`
 - `aides . cote d'or`
 - `aides . cotentin`
 - `aides . cournon d'auvergne`
@@ -77,6 +82,7 @@
 - `aides . deauville`
 - `aides . département hérault`
 - `aides . département somme`
+- `aides . dieppe`
 - `aides . dreux`
 - `aides . eckbolsheim`
 - `aides . epinal`
@@ -89,6 +95,7 @@
 - `aides . geispolsheim`
 - `aides . genevois`
 - `aides . givors`
+- `aides . grand cubzaguais`
 - `aides . grand est`
 - `aides . grand orb`
 - `aides . grand périgueux`
@@ -123,8 +130,10 @@
 - `aides . mondeville`
 - `aides . mons en baroeul`
 - `aides . montagnole`
+- `aides . montauban`
 - `aides . montbéliard`
 - `aides . montbéliard agglo`
+- `aides . mont de marsan`
 - `aides . montlucon`
 - `aides . montpellier`
 - `aides . montval sur loir`
@@ -156,12 +165,14 @@
 - `aides . reims`
 - `aides . ried de marckolsheim`
 - `aides . riviera francaise`
+- `aides . rochefort`
 - `aides . romagnat`
 - `aides . romilly-sur-seine`
 - `aides . ronchin`
 - `aides . sablé sur sarthe`
 - `aides . saint alban leysse`
 - `aides . sainte-foy-lès-lyon`
+- `aides . saintes`
 - `aides . saint-étienne`
 - `aides . saint-germain la blanche herbe`
 - `aides . saint-louis`
@@ -193,8 +204,10 @@
 - `aides . vienne condrieu`
 - `aides . vienne gartempe`
 - `aides . villefranche beaujolais saône`
+- `aides . villes soeurs`
 - `aides . ville-sur-jarnioux`
 - `aides . wasquehal`
+- `aides . yvetot normandie`
 
 #### Suppression
 
@@ -210,6 +223,7 @@
 - `aides . crolles`
 - `aides . département loire`
 - `aides . écully`
+- `aides . elbeuf`
 - `aides . ferte saint aubin`
 - `aides . feyzin`
 - `aides . hangenbieten`
@@ -222,9 +236,11 @@
 - `aides . monts du pilat`
 - `aides . nevers`
 - `aides . ouistreham`
+- `aides . pavilly`
 - `aides . pays de fénelon`
 - `aides . plobsheim`
 - `aides . pont-saint-maxence`
+- `aides . quéven`
 - `aides . rivery`
 - `aides . saint-jean-de-védas`
 - `aides . saint-lô`
