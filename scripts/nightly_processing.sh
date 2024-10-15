@@ -10,6 +10,7 @@ curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/admin/quiz-sta
 curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/admin/kyc-statistique
 curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/admin/thematique-statistique
 curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/admin/univers-statistique
+curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/utilisateurs/compute_bilan_carbone
 curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/services/compute_stats
 curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/utilisateurs/update_user_couverture
 curl -H "Authorization: Bearer ${CRON_API_KEY}" -d "" ${BASE_URL}/notifications/email/send_notifications
