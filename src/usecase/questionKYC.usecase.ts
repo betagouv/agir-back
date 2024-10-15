@@ -60,7 +60,6 @@ export class QuestionKYCUsecase {
     ENCHAINEMENT_KYC_bilan_logement: [
       KYCID.KYC_type_logement,
       KYCID.KYC006,
-      KYCID.KYC_menage,
       KYCMosaicID.MOSAIC_RENO,
       KYCID.KYC_photovoltaiques,
       KYCMosaicID.MOSAIC_EXTERIEUR,

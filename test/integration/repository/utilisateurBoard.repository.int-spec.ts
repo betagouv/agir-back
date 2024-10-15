@@ -33,7 +33,7 @@ describe('UtilisateurBoardRepository', () => {
     // THEN
     expect(liste).toHaveLength(0);
   });
-  it.only('utilisateur_classement_proximite_v2 : get empty when DB is empty', async () => {
+  it('utilisateur_classement_proximite_v2 : get empty when DB is empty', async () => {
     // GIVEN
 
     // WHEN
@@ -80,7 +80,7 @@ describe('UtilisateurBoardRepository', () => {
     expect(liste[0].rank).toEqual(1);
   });
 
-  it.only('utilisateur_classement_proximite_v2 : ligne unique ', async () => {
+  it('utilisateur_classement_proximite_v2 : ligne unique ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       points_classement: 10,
@@ -167,7 +167,7 @@ describe('UtilisateurBoardRepository', () => {
     expect(liste[1].rank).toEqual(5);
   });
 
-  it.only('utilisateur_classement_proximite_v2 : extract correct pour apres', async () => {
+  it('utilisateur_classement_proximite_v2 : extract correct pour apres', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       points_classement: 10,
@@ -289,7 +289,7 @@ describe('UtilisateurBoardRepository', () => {
     expect(liste[1].rank).toEqual(5);
   });
 
-  it.only('utilisateur_classement_proximite_v2 : extract correct pour apres, ignore user non eligibles', async () => {
+  it('utilisateur_classement_proximite_v2 : extract correct pour apres, ignore user non eligibles', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       points_classement: 10,
@@ -409,7 +409,7 @@ describe('UtilisateurBoardRepository', () => {
     expect(liste[1].rank).toEqual(5);
   });
 
-  it.only('utilisateur_classement_proximite_v2 : extract correct pour avant', async () => {
+  it('utilisateur_classement_proximite_v2 : extract correct pour avant', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       points_classement: 10,
@@ -510,7 +510,7 @@ describe('UtilisateurBoardRepository', () => {
     ).toHaveLength(0);
   });
 
-  it.only('utilisateur_classement_proximite_v2 : extract correct pour avant => liste vide si premier', async () => {
+  it('utilisateur_classement_proximite_v2 : extract correct pour avant => liste vide si premier', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       points_classement: 10,
@@ -611,7 +611,7 @@ describe('UtilisateurBoardRepository', () => {
     ).toHaveLength(0);
   });
 
-  it.only('utilisateur_classement_proximite-V2 : extract correct pour apres => liste vide si dernier', async () => {
+  it('utilisateur_classement_proximite-V2 : extract correct pour apres => liste vide si dernier', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       points_classement: 10,
@@ -740,7 +740,7 @@ describe('UtilisateurBoardRepository', () => {
     expect(liste[1].rank_commune).toEqual(3);
   });
 
-  it.only('utilisateur_classement_proximite_v2 : extract correct pour avant LOCAL', async () => {
+  it('utilisateur_classement_proximite_v2 : extract correct pour avant LOCAL', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       points_classement: 10,
@@ -866,7 +866,7 @@ describe('UtilisateurBoardRepository', () => {
     expect(db_list[6].rank).toEqual(5);
   });
 
-  it.only('update_rank_v2 : Caclul le rang', async () => {
+  it('update_rank_v2 : Caclul le rang', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       points_classement: 10,
@@ -1001,7 +1001,7 @@ describe('UtilisateurBoardRepository', () => {
     expect(db_list[2].id).toEqual('4');
   });
 
-  it.only('update_rank_commune_v2 : Caclul le rang par commune', async () => {
+  it('update_rank_commune_v2 : Caclul le rang par commune', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       points_classement: 10,
