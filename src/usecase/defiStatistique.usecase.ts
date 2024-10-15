@@ -13,6 +13,7 @@ export class DefiStatistiqueUsecase {
   ) {}
 
   async calculStatistique(): Promise<string[]> {
+    this.defiStatistiqueRepository.deleteAll();
     const defi_map: Map<string, DefiStatistique> = new Map();
 
     const result = [];
