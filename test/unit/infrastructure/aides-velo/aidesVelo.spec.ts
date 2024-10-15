@@ -1,6 +1,7 @@
 import Engine from 'publicodes';
 import rules from '../../../../src/infrastructure/data/aidesVelo.json';
 import collectivites from '../../../../src/infrastructure/data/aides-collectivities.json';
+import miniatures from '../../../../src/infrastructure/data/miniatures.json';
 import assert from 'assert';
 
 // NOTE: should be generated at compile time
@@ -25,6 +26,35 @@ describe('aides-collectivities.json', () => {
         !rulesToIgnore.includes(key)
       ) {
         expect(collectivites[key]).not.toBeUndefined();
+      }
+    });
+  });
+});
+
+// NOTE: should be generated at compile time
+// TODO: improve the generation script to manage missing cities
+describe.skip('miniatures.json', () => {
+  const rulesToIgnore = [
+    'aides . montant',
+    'aides . état',
+    'aides . région',
+    'aides . département',
+    'aides . commune',
+    'aides . intercommunalité',
+    'aides . forfait mobilités durables',
+  ];
+
+  it('devrait y avoir une entrée pour chaque aide', () => {
+    Object.keys(rules).forEach((key) => {
+      if (
+        key.startsWith('aides .') &&
+        key.split(' . ').length === 2 &&
+        !rulesToIgnore.includes(key)
+      ) {
+        if (!miniatures[key]) {
+          console.log(key);
+        }
+        expect(miniatures[key]).not.toBeUndefined();
       }
     });
   });
