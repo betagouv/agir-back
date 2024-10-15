@@ -10,7 +10,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
   {
     id: ServiceRechercheID.fruits_legumes,
     external_url: 'https://impactco2.fr/outils/fruitsetlegumes',
-    icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/cerise.png',
+    icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/cerise.webp',
     titre: 'Fruits et légumes de saison',
     sous_titre: CategorieRechercheManager.getMoisCourant(),
     univers: Univers.alimentation,
@@ -29,7 +29,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
   {
     id: ServiceRechercheID.proximite,
     external_url: 'https://presdecheznous.fr/map#/carte/{CODE_POSTAL}',
-    icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/commerce.png',
+    icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/commerce.webp',
     titre: 'Mes commerces de proximité',
     sous_titre: 'À {COMMUNE}',
     univers: Univers.alimentation,
@@ -39,7 +39,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     id: ServiceRechercheID.recettes,
     external_url:
       'https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/recettes',
-    icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/omelette.png',
+    icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/omelette.webp',
     titre: 'Recettes saines et équilibrées',
     sous_titre: 'Bas carbone',
     univers: Univers.alimentation,
