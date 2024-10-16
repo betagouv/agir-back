@@ -192,8 +192,16 @@ describe('Gamification  (API test)', () => {
       commune_classement: 'DIJON',
     });
     await TestUtil.create(DB.utilisateur, {
+      id: '41',
+      prenom: 'dijon_11',
+      email: '41',
+      points_classement: 19,
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+    await TestUtil.create(DB.utilisateur, {
       id: 'utilisateur-id',
-      prenom: 'dijon_2',
+      prenom: 'utilisateur',
       email: '5',
       points_classement: 20,
       code_postal_classement: '21000',
@@ -208,6 +216,22 @@ describe('Gamification  (API test)', () => {
       commune_classement: 'DIJON',
       est_valide_pour_classement: false,
     });
+    await TestUtil.create(DB.utilisateur, {
+      id: '6',
+      prenom: 'dijon_6',
+      email: '6',
+      points_classement: 50,
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '7',
+      prenom: 'dijon_7',
+      email: '7',
+      points_classement: 10,
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -217,44 +241,69 @@ describe('Gamification  (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
 
+    console.log(response.body);
     expect(response.body).toEqual({
-      classement_utilisateur: [
-        {
-          points: 20,
-          prenom: 'dijon_2',
-          rank: 2,
-          id: 'ceddc0d114c8db1dc4bde88f1e29231f',
-        },
-        {
-          points: 10,
-          prenom: 'dijon_1',
-          rank: 3,
-          id: 'a87ff679a2f3e71d9181a67b7542122c',
-        },
-      ],
-      code_postal: '21000',
-      commune_label: 'Dijon',
-      pourcentile: 'pourcent_5',
       top_trois: [
         {
+          points: 50,
+          rank: 1,
+          prenom: 'dijon_6',
+          id: '1679091c5a880faf6fb5e6087eb1b2dc',
+        },
+        {
           points: 20,
-          prenom: 'dijon_2',
-          rank: 2,
+          rank: 3,
+          prenom: 'utilisateur',
           id: 'ceddc0d114c8db1dc4bde88f1e29231f',
         },
         {
-          points: 10,
-          prenom: 'dijon_1',
-          rank: 3,
-          id: 'a87ff679a2f3e71d9181a67b7542122c',
+          points: 19,
+          rank: 4,
+          prenom: 'dijon_11',
+          id: '3416a75f4cea9109507cacd8e2f2aefc',
         },
       ],
       utilisateur: {
         points: 20,
-        prenom: 'dijon_2',
-        rank: 2,
+        rank: 3,
+        prenom: 'utilisateur',
         id: 'ceddc0d114c8db1dc4bde88f1e29231f',
       },
+      classement_utilisateur: [
+        {
+          points: 50,
+          rank: 2,
+          prenom: 'dijon_6',
+          id: '1679091c5a880faf6fb5e6087eb1b2dc',
+        },
+        {
+          points: 20,
+          rank: 3,
+          prenom: 'utilisateur',
+          id: 'ceddc0d114c8db1dc4bde88f1e29231f',
+        },
+        {
+          points: 19,
+          rank: 4,
+          prenom: 'dijon_11',
+          id: '3416a75f4cea9109507cacd8e2f2aefc',
+        },
+        {
+          points: 10,
+          rank: 5,
+          prenom: 'dijon_7',
+          id: '8f14e45fceea167a5a36dedd4bea2543',
+        },
+        {
+          points: 10,
+          rank: 6,
+          prenom: 'dijon_1',
+          id: 'a87ff679a2f3e71d9181a67b7542122c',
+        },
+      ],
+      pourcentile: 'pourcent_25',
+      code_postal: '21000',
+      commune_label: 'Dijon',
     });
   });
 
@@ -327,6 +376,118 @@ describe('Gamification  (API test)', () => {
     expect(response.body.pourcentile).toEqual(Pourcentile.pourcent_25);
     expect(response.body.code_postal).toEqual(null);
     expect(response.body.commune_label).toEqual(null);
+  });
+
+  it(`GET /utilisateurs/id/classement retourne le national avec ordre OK même si des utilisateurs ont le même nbre de points`, async () => {
+    // GIVEN
+
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      prenom: '1',
+      email: '1',
+      points_classement: 10,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '0',
+      prenom: '0',
+      email: '0',
+      points_classement: 10,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      prenom: '2',
+      email: '2',
+      points_classement: 10,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '3',
+      prenom: '3',
+      email: '3',
+      points_classement: 30,
+    });
+
+    await TestUtil.create(DB.utilisateur, {
+      id: '4',
+      prenom: '4',
+      email: '4',
+      points_classement: 30,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '5',
+      prenom: '5',
+      email: '5',
+      points_classement: 30,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '55',
+      prenom: '55',
+      email: '55',
+      points_classement: 35,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'utilisateur-id',
+      prenom: 'utilisateur',
+      email: '6',
+      points_classement: 20,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/classement/national',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.classement_utilisateur).toEqual([
+      {
+        points: 35,
+        rank: 1,
+        prenom: '55',
+        id: 'b53b3a3d6ab90ce0268229151c9bde11',
+      },
+      {
+        points: 30,
+        rank: 2,
+        prenom: '5',
+        id: 'e4da3b7fbbce2345d7772b0674a318d5',
+      },
+      {
+        points: 30,
+        rank: 3,
+        prenom: '4',
+        id: 'a87ff679a2f3e71d9181a67b7542122c',
+      },
+      {
+        points: 30,
+        rank: 4,
+        prenom: '3',
+        id: 'eccbc87e4b5ce2fe28308fd9f2a7baf3',
+      },
+      {
+        points: 20,
+        rank: 5,
+        prenom: 'utilisateur',
+        id: 'ceddc0d114c8db1dc4bde88f1e29231f',
+      },
+      {
+        points: 10,
+        rank: 6,
+        prenom: '2',
+        id: 'c81e728d9d4c2f636f067f89cc14862c',
+      },
+      {
+        points: 10,
+        rank: 7,
+        prenom: '1',
+        id: 'c4ca4238a0b923820dcc509a6f75849b',
+      },
+      {
+        points: 10,
+        rank: 8,
+        prenom: '0',
+        id: 'cfcd208495d565ef66e7dff9f98764da',
+      },
+    ]);
   });
 
   it(`GET /utilisateurs/id/classement retourne le national utilisateur ok , si utilisateur exclu alors non exclu de son propre classement`, async () => {

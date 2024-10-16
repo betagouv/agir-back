@@ -16,6 +16,9 @@ export class UtilisateurBoardRepository {
         est_valide_pour_classement: true,
       },
     });
+
+    top.sort((a, b) => this.compareUsers(b, a));
+
     return top.map((t) => this.mapUserDbToDomain(t));
   }
 
@@ -32,6 +35,8 @@ export class UtilisateurBoardRepository {
       },
       orderBy: { points_classement: 'desc' },
     });
+    top.sort((a, b) => this.compareUsers(b, a));
+
     return top.map((t) => this.mapUserDbToDomain(t));
   }
 
@@ -248,14 +253,30 @@ export class UtilisateurBoardRepository {
       },
     });
 
+    /*/
     if (scope === 'national') {
-      result.sort((a, b) => b.points_classement - a.points_classement);
+      result.sort((a, b) => a.rank - b.rank);
     } else {
-      result.sort((a, b) => b.points_classement - a.points_classement);
+      result.sort((a, b) => a.rank_commune - b.rank_commune);
     }
+      */
+    result.sort((a, b) => this.compareUsers(b, a));
 
     return result.map((t) => this.mapUserDbToDomain(t));
   }
+
+  private compareUsers(a: Utilisateur, b: Utilisateur): number {
+    const key_a = String(a.points_classement).padStart(6, '0') + a.id;
+    const key_b = String(b.points_classement).padStart(6, '0') + b.id;
+    if (key_a < key_b) {
+      return -1;
+    }
+    if (key_a > key_b) {
+      return 1;
+    }
+    return 0;
+  }
+
   async getPourcentile(
     points: number,
     code_postal?: string,
