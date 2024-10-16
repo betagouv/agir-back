@@ -3,6 +3,7 @@ import rules from '../../../../src/infrastructure/data/aidesVelo.json';
 import collectivites from '../../../../src/infrastructure/data/aides-collectivities.json';
 import miniatures from '../../../../src/infrastructure/data/miniatures.json';
 import assert from 'assert';
+import { deserialize } from 'v8';
 
 describe('Aides Vélo', () => {
   const engine = new Engine(rules);
@@ -424,7 +425,7 @@ describe('Aides Vélo', () => {
         'localisation . epci': "'Montpellier Méditerranée Métropole'",
         'revenu fiscal de référence': '10000€/an',
         'vélo . type': "'électrique'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '1000€',
       });
       expect(engine.evaluate('aides . montpellier').nodeValue).toEqual(200);
@@ -463,7 +464,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . epci': "'CU Perpignan Méditerranée Métropole'",
         'vélo . type': "'électrique'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '1000€',
       });
 
@@ -476,7 +477,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . epci': "'CU Perpignan Méditerranée Métropole'",
         'vélo . type': "'électrique'",
-        'demandeur . statut étudiant': 'oui',
+        'demandeur . statut': "'étudiant'",
         'vélo . prix': '1000€',
       });
 
@@ -489,7 +490,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . epci': "'CU Perpignan Méditerranée Métropole'",
         'vélo . type': "'adapté'",
-        'demandeur . statut étudiant': 'oui',
+        'demandeur . statut': "'étudiant'",
         'vélo . prix': '1000€',
       });
 
@@ -574,7 +575,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . epci': "'CC Fier et Usses'",
         'vélo . type': "'électrique'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '1000€',
         'revenu fiscal de référence': '10000€/an',
       });
@@ -588,7 +589,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . epci': "'CC du Pays de Cruseilles'",
         'vélo . type': "'électrique'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '1000€',
         'revenu fiscal de référence': '10000€/an',
       });
@@ -604,7 +605,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . epci': "'CA Bourges Plus'",
         'vélo . type': "'électrique'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '1000€',
         'revenu fiscal de référence': '10000€/an',
       });
@@ -618,7 +619,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . epci': "'Métropole de Lyon'",
         'vélo . type': "'pliant'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '1000€',
         'revenu fiscal de référence': '15000€/an',
       });
@@ -628,7 +629,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . epci': "'Métropole de Lyon'",
         'vélo . type': "'pliant'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '100€',
         'revenu fiscal de référence': '15000€/an',
       });
@@ -637,7 +638,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . epci': "'Métropole de Lyon'",
         'vélo . type': "'pliant'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '100€',
         'revenu fiscal de référence': '20000€/an',
       });
@@ -646,7 +647,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . epci': "'Métropole de Lyon'",
         'vélo . type': "'électrique'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '100€',
         'revenu fiscal de référence': '15000€/an',
       });
@@ -713,7 +714,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . epci': "'CC Saône-Beaujolais'",
         'vélo . type': "'électrique'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '1000€',
         'revenu fiscal de référence': '10000€/an',
       });
@@ -724,7 +725,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . epci': "'CC Saône-Beaujolais'",
         'vélo . type': "'pliant'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '1000€',
         'revenu fiscal de référence': '10000€/an',
       });
@@ -757,7 +758,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . epci': "'CC du Pays Mornantais (COPAMO)'",
         'vélo . type': "'électrique'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '1000€',
         'revenu fiscal de référence': '10000€/an',
       });
@@ -773,7 +774,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . epci': "'CA Quimperlé Communauté'",
         'vélo . type': "'électrique'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '3000€',
         'revenu fiscal de référence': '10000€/an',
       });
@@ -784,7 +785,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . epci': "'CA Quimperlé Communauté'",
         'vélo . type': "'cargo électrique'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '3000€',
         'revenu fiscal de référence': '10000€/an',
       });
@@ -807,7 +808,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . code insee': "'14118'",
         'vélo . type': "'mécanique simple'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '1000€',
         'demandeur . âge': '20 an',
         'revenu fiscal de référence': '10000€/an',
@@ -818,7 +819,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . code insee': "'14118'",
         'vélo . type': "'électrique'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '1000€',
         'demandeur . âge': '20 an',
         'revenu fiscal de référence': '10000€/an',
@@ -929,7 +930,7 @@ describe('Aides Vélo', () => {
         'vélo . prix': '1000€',
         'revenu fiscal de référence': '10000€/an',
         'vélo . type': "'électrique'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
       });
       expect(engine.evaluate('aides . sète').nodeValue).toEqual(250);
 
@@ -938,7 +939,7 @@ describe('Aides Vélo', () => {
         'vélo . prix': '1000€',
         'revenu fiscal de référence': '10000€/an',
         'vélo . type': "'électrique'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         // TODO: use generated types instead of the json
         // @ts-ignore
         'aides . sète . acheté dans un commerce local': 'oui',
@@ -948,7 +949,7 @@ describe('Aides Vélo', () => {
   });
 
   describe('Grand Avignon', () => {
-    it("le cumul de l'aide avec celles des communes ne devrait pas dépaser 200€", () => {
+    it("le cumul de l'aide avec celles des communes ne devrait pas dépasser 200€", () => {
       engine.setSituation({
         'localisation . epci': "'CA du Grand Avignon (COGA)'",
         'vélo . type': "'électrique'",
@@ -1007,7 +1008,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . code insee': "'84007'",
         'vélo . type': "'mécanique simple'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '200€',
       });
       expect(engine.evaluate('aides . avignon').nodeValue).toEqual(70);
@@ -1015,7 +1016,7 @@ describe('Aides Vélo', () => {
       engine.setSituation({
         'localisation . code insee': "'84007'",
         'vélo . type': "'mécanique simple'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '10€',
       });
       expect(engine.evaluate('aides . avignon').nodeValue).toEqual(0);
@@ -1026,7 +1027,7 @@ describe('Aides Vélo', () => {
     it("devrait être élligible pour les vélo d'occasion uniquement pour les vélos électriques", () => {
       engine.setSituation({
         'localisation . code insee': "'73179'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '1000€',
         'vélo . type': "'électrique'",
       });
@@ -1036,7 +1037,7 @@ describe('Aides Vélo', () => {
 
       engine.setSituation({
         'localisation . code insee': "'73179'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '1000€',
         'vélo . type': "'cargo électrique'",
       });
@@ -1046,7 +1047,7 @@ describe('Aides Vélo', () => {
 
       engine.setSituation({
         'localisation . code insee': "'73179'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '1000€',
         'vélo . type': "'mécanique simple'",
       });
@@ -1056,7 +1057,7 @@ describe('Aides Vélo', () => {
 
       engine.setSituation({
         'localisation . code insee': "'73179'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
         'vélo . prix': '1000€',
         'vélo . type': "'pliant'",
       });
@@ -1100,7 +1101,7 @@ describe('Aides Vélo', () => {
         'vélo . prix': '1000€',
         'revenu fiscal de référence': '10000€/an',
         'vélo . type': "'mécanique simple'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
       });
       expect(engine.evaluate('aides . annecy').nodeValue).toEqual(70);
 
@@ -1109,7 +1110,7 @@ describe('Aides Vélo', () => {
         'vélo . prix': '1000€',
         'revenu fiscal de référence': '10000€/an',
         'vélo . type': "'électrique'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
       });
       expect(engine.evaluate('aides . annecy').nodeValue).toEqual(400);
     });
@@ -1132,7 +1133,7 @@ describe('Aides Vélo', () => {
         'vélo . prix': '1000€',
         'revenu fiscal de référence': '10000€/an',
         'vélo . type': "'électrique'",
-        'vélo . neuf ou occasion': "'occasion'",
+        'vélo . état': "'occasion'",
       });
       expect(
         engine.evaluate('aides . cluses arve et montagnes').nodeValue,
@@ -1183,6 +1184,123 @@ describe('Aides Vélo', () => {
         'personnes dans le foyer fiscal': 2,
       });
       expect(engine.evaluate('aides . anjou bleu').nodeValue).toEqual(null);
+    });
+  });
+
+  describe("Communauté d'agglomération de Rochefort Océan", () => {
+    it("devrait avoir le même montant que l'exemple du site", () => {
+      engine.setSituation({
+        'localisation . epci': "'CA Rochefort Océan'",
+        'revenu fiscal de référence': '14200 €/an',
+        'vélo . état': "'neuf'",
+        'vélo . prix': '1000 €',
+        'vélo . type': "'électrique'",
+      });
+      expect(engine.evaluate('aides . rochefort').nodeValue).toEqual(225);
+    });
+
+    it('devrait avoir le même plafond pour les cargo mécanique que pour les vélos électriques', () => {
+      engine.setSituation({
+        'localisation . epci': "'CA Rochefort Océan'",
+        'revenu fiscal de référence': '14200 €/an',
+        'vélo . état': "'neuf'",
+        'vélo . prix': '1000 €',
+        'vélo . type': "'cargo'",
+      });
+      expect(engine.evaluate('aides . rochefort').nodeValue).toEqual(225);
+    });
+  });
+
+  describe('La Roche-sur-Yon Agglomération', () => {
+    it("devrait être élligible pour les vélo d'occasion", () => {
+      engine.setSituation({
+        'localisation . epci': "'CA La Roche sur Yon - Agglomération'",
+        'vélo . type': "'électrique'",
+        'vélo . état': "'occasion'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . la roche sur yon').nodeValue).toEqual(50);
+    });
+
+    it("devrait être élligible uniquement pour les VAE en-dessous d'un certain prix", () => {
+      engine.setSituation({
+        'localisation . epci': "'CA La Roche sur Yon - Agglomération'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . la roche sur yon').nodeValue).toEqual(
+        100,
+      );
+
+      engine.setSituation({
+        'localisation . epci': "'CA La Roche sur Yon - Agglomération'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': '2000€',
+      });
+      expect(engine.evaluate('aides . la roche sur yon').nodeValue).toEqual(
+        null,
+      );
+
+      engine.setSituation({
+        'localisation . epci': "'CA La Roche sur Yon - Agglomération'",
+        'vélo . type': "'électrique'",
+        'vélo . état': "'occasion'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . la roche sur yon').nodeValue).toEqual(50);
+
+      engine.setSituation({
+        'localisation . epci': "'CA La Roche sur Yon - Agglomération'",
+        'vélo . type': "'électrique'",
+        'vélo . état': "'occasion'",
+        'vélo . prix': '1500€',
+      });
+      expect(engine.evaluate('aides . la roche sur yon').nodeValue).toEqual(
+        null,
+      );
+    });
+
+    it("devrait être majoré pour les salariés d'une structure membres du PDIE", () => {
+      engine.setSituation({
+        'localisation . epci': "'CA La Roche sur Yon - Agglomération'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': '1000€',
+        'demandeur . statut': "'salarié'",
+        // TODO: use generated types instead of the json
+        // @ts-ignore
+        "aides . la roche sur yon . salarié d'une structure membre du PDIE":
+          'oui',
+      });
+      expect(engine.evaluate('aides . la roche sur yon').nodeValue).toEqual(
+        200,
+      );
+    });
+  });
+
+  describe('Ville de Denain', () => {
+    it('devrait correspondre à la moitié du montant de celle du CAPH', () => {
+      engine.setSituation({
+        'localisation . epci': "'CA de la Porte du Hainaut'",
+        'localisation . code insee': "'59172'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . denain').nodeValue).toEqual(150);
+      expect(engine.evaluate('aides . denain').nodeValue).toEqual(
+        (engine.evaluate('aides . porte du hainaut').nodeValue as number) / 2,
+      );
+
+      engine.setSituation({
+        'localisation . epci': "'CA de la Porte du Hainaut'",
+        'localisation . code insee': "'59172'",
+        'vélo . type': "'cargo électrique'",
+        'vélo . état': "'occasion'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . denain').nodeValue).toEqual(100);
+      expect(engine.evaluate('aides . denain').nodeValue).toEqual(
+        (engine.evaluate('aides . porte du hainaut').nodeValue as number) / 2,
+      );
     });
   });
 });
