@@ -88,7 +88,7 @@ export class EmailTemplateRepository {
               CONTACT_EMAIL: utilisateur.email,
               UNSUBSCRIBE_URL: unsubscribe_URL,
               TITRE_ACTION: defi.titre,
-              ACTIONS_URL: `${App.getBaseURLFront()}/mon-compte/vos-actions`,
+              ACTIONS_URL: `${App.getBaseURLFront()}/compte/mes-actions`,
               HOME_URL: App.getBaseURLFront(),
             }),
           };
