@@ -5693,205 +5693,383 @@ aides . mont de marsan:
       - sinon: 0€
   lien: http://www.montdemarsan-agglo.fr/agglo/document?id=4059&id_attribute=48
 
-# TODO: à vérifier
-aides . plaine de l'ain:
+# NOTE: valide pour 2024, à vérifier en 2025 
+aides . plaine de l'ain VAE:
   remplace: intercommunalité
   titre: Communauté de communes de la Plaine de l'Ain
   description: |
      Aide à l'acquisition de vélos à assistance électrique et trottinette
-     électrique. Dossier à envoyer avant le 1er décembre 2024.
-  applicable si: localisation . epci = "CC de la Plaine de l'Ain"
-  variations:
-    - si: vélo . cargo
-      alors: 300€
-    - si:
-        toutes ces conditions:
-          - vélo . électrique
-          - vélo . prix <= 2000€
-      alors: 200€
-    - sinon: 0€
+     électrique. 
+
+     Dossier à envoyer avant le 1er décembre 2024.
+  applicable si: 
+    toutes ces conditions:
+      - localisation . epci = "CC de la Plaine de l'Ain"
+      - demandeur . âge . majeur
+      - vélo . électrique
+      - vélo . prix <= 2000€
+      - une de ces conditions:
+          - distance domicile-travail inférieur à 15 km
+          - abonné TER
+          - demandeur . statut . retraité
+  valeur: 200€
+  plafond: vélo . prix
+  lien: https://www.cc-plainedelain.fr/fr/les-subventions.html
+  avec:
+    distance domicile-travail inférieur à 15 km:
+      type: booléen
+      question: Travaillez vous à moins de 15 km de votre domicile ?
+      description: |
+        Vous devez pouvoir le justifier grâce à une attestation de votre
+        employeur, datée de moins de 2 mois.
+      par défaut: non
+
+    abonné TER:
+      type: booléen
+      question: Disposez-vous d'un abonnement TER de plus de 3 mois ?
+      description: |
+        Vous devez pouvoir le justifier grâce à une copie de la carte Ourà à
+        votre nom.
+      par défaut: non
+
+# NOTE: valide pour 2024, à vérifier en 2025 
+aides . plaine de l'ain vélos spécifiques:
+  remplace: intercommunalité
+  titre: Communauté de communes de la Plaine de l'Ain
+  description: |
+     Aide à l'acquisition de vélos spécifiques (vélos cargos, vélos rallongés,
+     vélos adaptés au handicap, Triporteur).
+     
+     Dossier à envoyer avant le 1er décembre 2024.
+  applicable si: 
+    toutes ces conditions:
+      - localisation . epci = "CC de la Plaine de l'Ain"
+      - demandeur . âge . majeur
+      - une de ces conditions:
+          - vélo . cargo
+          - vélo . adapté
+  valeur: 300€
+  plafond: vélo . prix
   lien: https://www.cc-plainedelain.fr/fr/les-subventions.html
 
 aides . divonne-les-bains:
   remplace: commune
   titre: Ville de Divonne-les-Bains
-  applicable si: localisation . code insee = '01143'
+  description: |
+    Le Conseil Municipal a voté la reconduction de la prime à l'achat de vélos
+    neufs ou d'occasion pour les Divonnais·es pour l'année 2024 !
+
+    Date limite de dépôt des dossiers : 31 décembre 2024.
+  applicable si: 
+    toutes ces conditions:
+      - localisation . code insee = '01143'
+      - une de ces conditions:
+          - vélo . électrique ou mécanique
+          - vélo . adapté
+
   valeur: 50% * vélo . prix
   plafond:
     variations:
-      - si: vélo . électrique
+      - si: 
+          une de ces conditions:
+            - vélo . électrique
+            - vélo . cargo
+            - vélo . adapté
         alors: 200€
-      - si: vélo . cargo
-        alors: 200€
-      - si: vélo . mécanique
-        alors: 100€
-      - sinon: 0€
+      - sinon: 100€
   lien: http://www.divonnelesbains.fr/prime_a_l_achat_de_velos_a_divonne_les_bains.html
+
+# TODO: vérifier toutes les communes
 aides . dieulefit-bourdeaux:
   remplace: intercommunalité
   titre: Communauté de communes Dieulefit-Bourdeaux
-  applicable si: localisation . epci = 'CC Dieulefit-Bourdeaux'
-  variations:
-    - si:
-        toutes ces conditions:
-          - vélo . cargo électrique
-          - vélo . prix <= 4000€
-      alors: 100€
-    - si:
-        toutes ces conditions:
-          - vélo . cargo
-          - vélo . prix <= 4000€
-      alors: 50€
-    - si:
-        toutes ces conditions:
-          - vélo . mécanique
-          - vélo . prix <= 3000€
-      alors: 50€
-    - si:
-        toutes ces conditions:
+  description: |
+     Aide à l'achat de vélos urbain classique ou à assistance électrique,
+     vélo-cargo, tricycle à assistance électrique ou kit d'électrification,
+     hors vélo de loisirs type VTT, fatbikes et gravel.
+
+     Attention : les demandes (à la CCDB et/ou à votre commune) doivent être
+     réalisées avant la demande des aides d'Etat.
+  applicable si: 
+    toutes ces conditions:
+      - localisation . epci = 'CC Dieulefit-Bourdeaux'
+      - une de ces conditions:
+          - demandeur . âge . majeur
+          - toutes ces conditions:
+              - demandeur . âge >= 16 an
+              - une de ces conditions:
+                  - demandeur . statut . salarié
+                  - demandeur . statut . apprenti
+                  - demandeur . statut . demandeur d'emploi
+      - une de ces conditions:
+          - vélo . motorisation
           - vélo . électrique
-          - vélo . prix <= 3000€
-      alors: 100€
-    - si: vélo . motorisation
-      alors: 100€
-    - sinon: 0€
+          - vélo . cargo
+          - toutes ces conditions:
+              - vélo . mécanique
+              - vélo . état . neuf
+  valeur:
+    variations:
+      - si: 
+          toutes ces conditions:
+            - vélo . cargo
+            - revenu fiscal de référence <= 25000 €/an
+        alors: 200€
+      - si: 
+          une de ces conditions:
+            - vélo . électrique
+            - vélo . motorisation
+        alors: 
+          variations:
+            - si: revenu fiscal de référence <= 14000 €/an
+              alors: 150€
+            - si: revenu fiscal de référence <= 25000 €/an
+              alors: 100€
+            - sinon: 0€
+      - si: vélo . mécanique
+        alors: 50€
+      - sinon: 0€
   lien: https://www.ccdb26.fr/vie-quotidienne/mobilites/aide-velos/
+
+# NOTE: Valide jusqu'en 2026, à vérifier en 2027
 aides . arche agglo:
   remplace: intercommunalité
   titre: ARCHE Agglo
   description: |
-    Jusqu'à 150€ d'aide pour l'achat d'un vélo électrique auprès d'un
-    vélociste partenaire.
+    Jusqu'à 150€ d'aide pour l'achat d'un vélo électrique. Il devra être acheté
+    auprès d'un vélociste partenaire (sauf pour les vélos adaptés aux personnes
+    à mobilité réduite).
+
+    Opération valable jusqu'en 2026, dans la limite de l'enveloppe budgétaire
+    annuelle.
   applicable si:
     toutes ces conditions:
       - localisation . epci = 'CA Arche Agglo'
+      - demandeur . âge . majeur
+      - vélo . état . neuf
       - une de ces conditions:
           - vélo . cargo électrique
+          - vélo . adapté
           - toutes ces conditions:
               - vélo . électrique
               - vélo . prix <= 4000€
   valeur: 15% * vélo . prix
-  plafond: 150€
+  plafond: 
+    variations:
+      - si: vélo . adapté
+        alors: 300€
+      - sinon: 150€
   lien: https://www.archeagglo.fr/vivre-ici/transport-mobilite/velos/
+
 aides . annonay:
   remplace: intercommunalité
   titre: Annonay Rhône Agglo
+  description: |
+    Prime d'aide à l'achat de vélo à assistance électrique neuf ou
+    recondtionnées à neuf achetés auprès de l'un des vendeurs de cycles du
+    territoire.
   applicable si:
     toutes ces conditions:
       - localisation . epci = 'CA Annonay Rhône Agglo'
-      - vélo . électrique
-  variations:
-    - si: revenu fiscal de référence <= première tranche IR
-      alors: 300€
-    - sinon: 150€
-  lien: https://annonayrhoneagglo.fr/article2059.html
-aides . bassin d'aubenas:
-  remplace: intercommunalité
-  titre: Bassin d'Aubenas
-  applicable si:
-    toutes ces conditions:
-      - localisation . epci = 'CC du Bassin d'Aubenas'
+      - demandeur . âge . majeur
       - une de ces conditions:
           - vélo . électrique
+          - vélo . adapté
+      - une de ces conditions:
           - vélo . cargo
-  valeur: 10% * vélo . prix
-  plafond: 200€
-  lien: https://www.bassin-aubenas.fr/actualites/aide-a-lachat-dun-velo-a-assistance-electrique/
-aides . lorient:
-  remplace: intercommunalité
-  titre: Lorient Agglomération
-  applicable si: localisation . epci = 'CA Lorient Agglomération'
-  valeur: 20% * vélo . prix
-  plafond:
+          - vélo . adapté
+          - vélo . prix <= 3000€
+  valeur: 40% * vélo . prix
+  plafond: 
     variations:
-      - si: vélo . cargo
-        alors: 250€
-      - si: vélo . électrique
-        alors: 200€
-      - si: vélo . pliant
-        alors: 100€
-      - sinon: 0€
-  lien: https://www.lorient-agglo.bzh/services/deplacements/aide-achat-velo/
+      - si:
+          une de ces conditions:
+            - revenu fiscal de référence <= 14089 €/an
+            - demandeur . en situation de handicap
+        alors: 300€
+      - sinon: 150€
+  lien: https://www.annonayrhoneagglo.fr/agir-pour-lenvironnement/mobilite
+
+# NOTE: fin de validité le 30 septembre 2024, à vérifier en 2025
+# aides . bassin d'aubenas:
+#   remplace: intercommunalité
+#   titre: Bassin d'Aubenas
+#   applicable si:
+#     toutes ces conditions:
+#       - localisation . epci = 'CC du Bassin d'Aubenas'
+#       - une de ces conditions:
+#           - vélo . électrique
+#           - vélo . cargo
+#   valeur: 10% * vélo . prix
+#   plafond: 200€
+#  lien: https://www.bassin-aubenas.fr/actualites/aide-a-lachat-dun-velo-a-assistance-electrique/
+
+# NOTE: nouvelles version fin octobre 2024, à vérifier en 2025
+# aides . lorient:
+#   remplace: intercommunalité
+#   titre: Lorient Agglomération
+#   applicable si: localisation . epci = 'CA Lorient Agglomération'
+#   valeur: 20% * vélo . prix
+#   plafond:
+#     variations:
+#       - si: vélo . cargo
+#         alors: 250€
+#       - si: vélo . électrique
+#         alors: 200€
+#       - si: vélo . pliant
+#         alors: 100€
+#      - sinon: 0€
+#  lien: https://www.lorient-agglo.bzh/services/deplacements/aide-achat-velo/
+
 aides . lanester:
   remplace: commune
   titre: Ville de Lanester
-  applicable si: localisation . code insee = '56098'
-  variations:
-    - si: revenu fiscal de référence <= première tranche IR
-      alors:
-        variations:
-          - si: vélo . cargo
-            alors: 300€
-          - si: vélo . électrique ou mécanique
-            alors: 200€
-          - sinon: 0€
-    - sinon:
-        variations:
-          - si: vélo . cargo
-            alors: 150€
-          - si: vélo . électrique ou mécanique
-            alors: 100€
-          - sinon: 0€
+  description: |
+    Aide pour l'achat d'un vélo neuf ou d'occasion avec ou sans assistance
+    électrique, ou pour l'achat d'une remorque pour vélo.
+  applicable si: 
+    toutes ces conditions:
+      - localisation . code insee = '56098'
+      - demandeur . âge . majeur
+      - vélo . électrique ou mécanique
+  valeur:
+    variations:
+      - si: revenu fiscal de référence <= 15400 €/an
+        alors:
+          variations:
+            - si: vélo . cargo
+              alors: 300€
+            - sinon: 200€
+      - sinon:
+          variations:
+            - si: vélo . cargo
+              alors: 150€
+            - sinon: 100€
   lien: https://www.lanester.bzh/services/demt-services-en-ligne/particuliers/aide-achat-velo/
+
 aides . la roche sur yon:
   remplace: intercommunalité
   titre: La Roche-sur-Yon Agglomération
-  applicable si: localisation . epci = 'CA La Roche sur Yon - Agglomération'
-  variations:
-    - si: vélo . cargo
-      alors:
-        valeur: 20% * vélo . prix
-        plafond:
-          variations:
-            - si: vélo . état . neuf
-              alors: 400€
-            - sinon: 200€
-    - si:
-        toutes ces conditions:
+  description: |
+    Aide à l'acquisition de vélos à assistance électrique, de vélos familiaux
+    ou vélos cargos et de vélos adaptés aux personnes en situation de handicap.
+
+    L'aide est majorée pour les salariés d'une structure membre du Plan de
+    Déplacement inter-entreprises (PDIE).
+  applicable si: 
+    toutes ces conditions:
+      - localisation . epci = 'CA La Roche sur Yon - Agglomération'
+      - demandeur . âge . majeur
+      - une de ces conditions:
+          - vélo . adapté
           - vélo . électrique
-          - vélo . état . neuf
-          - vélo . prix <= 1500€
-      alors:
-        variations:
-          - si: entreprise adherente au pdie
-            alors: 200€
-          - sinon: 100€
-    - sinon: 0€
-  lien: https://www.larochesuryon.fr/services-infos-pratiques/transports-et-deplacements-durables/velos/
-aides . la roche sur yon . entreprise adherente au pdie:
-  question: Êtes-vous salarié d'une entreprise adhérente au Plan de déplacement
-    inter-entreprises (PDIE) ?
-  type: booléen
-  par défaut: non
+          - vélo . motorisation
+  valeur:
+    variations:
+      - si: vélo . adapté
+        alors:
+          valeur: 80% * vélo . prix
+          plafond: 
+            variations:
+              - si: vélo . état . neuf
+                alors: 400€
+              - sinon: 200€
+      - si: vélo . cargo
+        alors:
+          valeur: 20% * vélo . prix
+          plafond:
+            variations:
+              - si: vélo . état . neuf
+                alors: 400€
+              - sinon: 200€
+      - si:
+          toutes ces conditions:
+            - vélo . électrique
+            - vélo . état . neuf
+            - vélo . prix <= 1800€
+        alors:
+          variations:
+            - si: salarié d'une structure membre du PDIE
+              alors: 200€
+            - sinon: 100€
+      - si:
+          toutes ces conditions:
+            - vélo . électrique
+            - vélo . état . occasion
+            - vélo . prix <= 1200€
+        alors:
+          variations:
+            - si: salarié d'une structure membre du PDIE
+              alors: 100€
+            - sinon: 50€
+      - si: vélo . motorisation
+        alors:
+          variations:
+            - si: salarié d'une structure membre du PDIE
+              alors: 100€
+            - sinon: 50€
+  lien: https://larochesuryon.fr/velo/
+  avec:
+    salarié d'une structure membre du PDIE:
+      type: booléen
+      applicable si: demandeur . statut . salarié
+      question: |
+        Êtes-vous salarié d'une structure membre du Plan de Déplacement
+        inter-entreprises (PDIE) ?
+      par défaut: non
+
+# NOTE: valide jusqu'au 31 décembre 2024, à vérifier en 2025
 aides . cholet:
   remplace: intercommunalité
   titre: Agglomération du Choletais
+  description: |
+    Subvention pour l'achat d'un vélo neuf à assistance électrique. Le vélo
+    devra être acheté auprès d'un revendeur professionnel partenaire de cette
+    opération et ayant signé une charte d'engagement avec Cholet Agglomération
+
+    Fin de l'opération le 31 décembre 2024.
   applicable si:
     toutes ces conditions:
       - localisation . epci = 'CA Agglomération du Choletais'
-      - vélo . électrique
+      - demandeur . âge . majeur
+      - vélo . état . neuf
+      - une de ces conditions:
+          - vélo . électrique
+          - vélo . adapté
   valeur: 25% * vélo . prix
   plafond: 250€
   lien: https://www.cholet.fr/dossiers/dossier_5364_aide+velo+assistance+electrique.html
+
 aides . saumur val de loire:
   remplace: intercommunalité
-  titre: Saumur Val de Loire agglomération
+  titre: Communauté d'Agglomération Saumur Val de Loire
+  description: |
+    Aide à l'acquisition de vélo à assistance électrique neuf ou d'occasion à
+    usage personnel.
   applicable si:
     toutes ces conditions:
       - localisation . epci = 'CA Saumur Val de Loire'
+      - demandeur . âge . majeur
       - vélo . électrique
-      - revenu fiscal de référence <= première tranche IR
+      - revenu fiscal de référence <= 15400 €/an
   valeur: 10% * vélo . prix
   plafond: 100€
-  lien: https://www.saumurvaldeloire.fr/images/VAE_REGLEMENT_AIDE_ACHAT_2023_2.pdf
+  lien: https://www.saumurvaldeloire.fr/se-deplacer-a-velo
 
+# NOTE: à vérifier en 2025
 aides . loire layon aubance:
   remplace: intercommunalité
-  titre: Loire Layon Aubance
-  description: Subvention vélo à assistance électrique 2024
+  titre: Communauté de Communes Loire Layon Aubance
+  description: |
+    Subvention pour l'achat d'un vélo à assistance électrique en 2024. L'achat
+    doit être effectué physiquement dans un magasin. 
+
+    A noter que le montant de la subvention est plafonnée à 80% du prix d'achat
+    du vélo avec le cumul du Bonus Vélo de l'Etat.
   applicable si:
     toutes ces conditions:
       - localisation . epci = 'CC Loire Layon Aubance'
+      - demandeur . âge . majeur
       - revenu fiscal de référence <= 15400 €/an
   valeur: 40% * vélo . prix
   plafond:
@@ -5911,190 +6089,298 @@ aides . loire layon aubance:
 
 aides . laval:
   remplace: intercommunalité
-  titre: Laval Agglo
+  titre: Laval Agglomération
+  description:
+    Prime à l'achat d'un vélo cargo électrique neuf pour les habitants de Laval
+    Agglomération. L'achat doit être effectué chez un vélociste domicilié sur
+    le territoire des Pays de la Loire ou de la Bretagne.
   applicable si:
     toutes ces conditions:
       - localisation . epci = 'CA Laval Agglomération'
+      - demandeur . âge . majeur
+      - vélo . état . neuf
       - vélo . cargo électrique
   valeur: 300€
   lien: https://www.agglo-laval.fr/utile-au-quotidien/transports-et-mobilites/lagglo-a-velo/prime-a-lachat-dun-velo-cargo
 
-aides . brive:
-  remplace: intercommunalité
-  titre: Agglo de Brive
-  description: |
-    Aide sous forme d'un Chèque Vélo à demander avant d'acheter le vélo
-  applicable si:
-    toutes ces conditions:
-      - localisation . epci = 'CA du Bassin de Brive'
-      - vélo . électrique
-  valeur: 30% * vélo . prix
-  plafond: 200€
-  lien: http://www.donzenac.correze.net/data/uploads/actualites/aide-velos-elec.pdf
+# NOTE: semble ne plus avoir de budget, à vérifier en 2025
+# http://www.agglodebrive.fr/velo/#1631112994855-09923425-e07a
+# aides . brive:
+#   remplace: intercommunalité
+#   titre: Agglo de Brive
+#   description: |
+#     Aide sous forme d'un Chèque Vélo à demander avant d'acheter le vélo
+#   applicable si:
+#     toutes ces conditions:
+#       - localisation . epci = 'CA du Bassin de Brive'
+#       - vélo . électrique
+#   valeur: 30% * vélo . prix
+#   plafond: 200€
+#   lien: http://www.donzenac.correze.net/data/uploads/actualites/aide-velos-elec.pdf
 
 aides . ville de talant:
   remplace: commune
   titre: Ville de Talant
+  description: |
+    Aide à l'achat d'un vélo à assistance électrique (VAE) neuf ou d'occasion,
+    effectué auprès d'un commerçant professionnel implanté sur le territoire de
+    la Métropole Dijonnaise.
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '21617'
-      - vélo . électrique
+      - demandeur . âge . majeur
+      - une de ces conditions:
+          - vélo . électrique
+          - vélo . adapté  # TODO: faire la distinction adapté électrique
   valeur: 20% * vélo . prix
   plafond: 100€
   lien: https://talant.fr/pratique/primes-municipales
+
+# NOTE: règlement pour 2023 mais semble d'actualité jusqu'en 2030, à vérifier
+# en 2025.
 aides . pays des achards:
   remplace: intercommunalité
-  titre: Pays des Achards
-  applicable si: localisation . epci = 'CC du Pays des Achards'
-  variations:
-    - si: vélo . cargo
-      alors:
-        valeur: 25% * vélo . prix
-        plafond: 300€
-    - si:
-        une de ces conditions:
-          - vélo . électrique
-          - vélo . motorisation
-      alors:
-        valeur: 25% * vélo . prix
-        plafond: 200€
-    - si: vélo . mécanique
-      alors:
-        valeur: 25% * vélo . prix
-        plafond: 100€
-    - sinon: 0€
+  titre: Communauté de communes du Pays des Achards
+  description: |
+    L'aide financière vise l'acquisition d'un vélo, d'un vélo pliant, d'un Vélo
+    à Assistance Électrique, d'un kit d'électrification ou d'un vélo spécial
+    (vélo cargo, biporteur, triporteur, vélo rallongé) pour adulte.
+
+    Les vélos adaptés à un handicap pourront faire l'objet d'une étude
+    spécifique.
+  applicable si: 
+    toutes ces conditions:
+      - localisation . epci = 'CC du Pays des Achards'
+      - demandeur . âge . majeur
+      - une de ces conditions:
+          - vélo . électrique ou mécanique
+          - vélo . adapté
+  valeur: 25% * vélo . prix
+  plafond:
+    variations:
+      - si: 
+          une de ces conditions:
+            - vélo . cargo
+            - vélo . adapté
+        alors: 300€
+      - sinon: 200€
   lien: https://www.cc-paysdesachards.fr/amenagement/mobilites/351-bonus-velo.html
 
 aides . hem:
   remplace: commune
   titre: Ville de Hem
+  description: |
+    Prime d'aide à l'achat de tout type de vélo ou d'une trottinette électrique
+    acheté chez un commerçant professionnel implanté sur le territoire de la
+    commune ou de la Métropole Lilloise. (Dans la limite du budget annuel
+    alloué).
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '59299'
-      - vélo . électrique
-  valeur: 40% * vélo . prix
+      - demandeur . âge . majeur
+  valeur: 25% * vélo . prix
   plafond: 300 €
   lien: https://www.ville-hem.fr/cadre-de-vie/environnement/prime-a-lachat-dun-velo-ou-dune-trottinette/
+
 aides . liévin:
   remplace: commune
   titre: Ville de Liévin
+  description: |
+    Aide à l'acquisition d'un vélo ou trotinette à assistance électrique.
+    L'achat du matériel neuf devra avoir été effectué auprès d'un commerçant
+    professionnel présent sur le territoire du Pôle Métropolitain de l'Artois.
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '62510'
       - vélo . électrique
+      - vélo . état . neuf
   valeur: 250€
   plafond: vélo . prix
   lien: https://www.lievin.fr/velo-ou-trottinette
+
+# NOTE: fin de validité en 2024, à vérifier en 2025
 aides . béthune bruay:
   remplace: intercommunalité
-  titre: Pass'Mobil'Agglo
-  applicable si: localisation . epci = 'CA de Béthune-Bruay, Artois-Lys Romane'
-  variations:
-    - si: vélo . cargo
-      alors: 400 €
-    - si: vélo . électrique
-      alors: 300 €
-    - si: vélo . mécanique
-      alors:
-        variations:
-          - si: vélo . état . neuf
-            alors: 60€
-          - sinon: 50€
-    - sinon: 0€
-  plafond: vélo . prix
+  titre: Communauté d'Agglomération de Béthune-Bruay, Artois-Lys Romane
+  description: |
+     Pass'Mobil'Agglo - Aide financière accessible aux habitants du territoire
+     qui en feront la demande pour l'achat de vélo mécanique, vélo à assistance
+     électrique, vélo cargo, vélo adapté pour les personnes à mobilité réduite
+     (PMR), d'accessoires de sécurité pour cycliste (conditionné à l'achat d'un
+     vélo) et nouveauté cette année la catégorie vélo pliant ! Cette subvention
+     sous forme de bon d'achat de 30€ à 500€, sera valable chez les commerçants
+     et associations partenaires de l'opération.
+
+     Attention, les bons d'achat ont une durée de validité limitée au 8
+     décembre 2024.
+  applicable si:  localisation . epci = 'CA de Béthune-Bruay, Artois-Lys Romane'
+  valeur:
+    variations:
+      - si: vélo . adapté
+        alors: 500€
+      - si: vélo . électrique simple
+        alors: 300€
+      - si: vélo . cargo
+        alors: 500€
+      - si: vélo . pliant
+        alors: 200€
+      - si: vélo . mécanique
+        alors: 70€
+      - sinon: 0€
   lien: https://www.bethunebruay.fr/fr/passmobilagglo
+
+# NOTE: valide pour 2024, à vérifier en 2025
 aides . baisieux:
   remplace: commune
   titre: Ville de Baisieux
   description: |
+    Aide à l'achat d'un vélo classique, VAE ou kit d'électrification (neuf ou
+    d'occasion).
+
     Il est nécessaire de faire la demande auprès de la maire de Baisieux avant
     l'achat.
-  applicable si: localisation . code insee = '59044'
+  applicable si: 
+    toutes ces conditions:
+      - localisation . code insee = '59044'
+      - une de ces conditions:
+          - vélo . électrique ou mécanique
+          - vélo . cargo
+          - vélo . motorisation
   valeur: 20% * vélo . prix
   plafond:
     variations:
-      - si: vélo . électrique
+      - si: 
+          une de ces conditions:
+            - vélo . électrique
+            - vélo . cargo
+            - vélo . motorisation
         alors: 200€
-      - si: vélo . mécanique
-        alors: 100€
-      - sinon: 0€
+      - sinon: 100€
   lien: https://www.mairie-baisieux.fr/aide-velo
-aides . billy-berclau:
-  remplace: commune
-  titre: Ville de Billy-Berclau
-  applicable si: localisation . code insee = '62132'
-  valeur: 20% * vélo . prix
-  plafond:
-    variations:
-      - si: vélo . électrique
-        alors: 100€
-      - si: vélo . mécanique
-        alors: 50€
-      - sinon: 0€
-  lien: https://www.billy-berclau.fr/blog/mairie/aide-municipale-pour-lachat-dun-velo/
+
+# NOTE: plus valide mais toujours en ligne, à vérifier en 2025
+# aides . billy-berclau:
+#   remplace: commune
+#   titre: Ville de Billy-Berclau
+#   applicable si: localisation . code insee = '62132'
+#   valeur: 20% * vélo . prix
+#   plafond:
+#     variations:
+#       - si: vélo . électrique
+#         alors: 100€
+#       - si: vélo . mécanique
+#         alors: 50€
+#       - sinon: 0€
+#   lien: https://www.billy-berclau.fr/blog/mairie/aide-municipale-pour-lachat-dun-velo/
+
+# NOTE: fin de validité en 2024, à vérifier en 2025
 aides . bonningues-lès-calais:
   remplace: commune
-  titre: Ville de Bonningues-lès-Calais
+  titre: Ville de Bonningues-Lès-Calais
+  description: |
+    Aide octroyée sous forme de subvention pour tout achat d'un vélo neuf ou
+    d'occasion entre le 1er avril 2023 et le 30 Avril 2024 auprès d'un
+    commerçant spécialisé.
   applicable si: localisation . code insee = '62156'
-  variations:
-    - si: vélo . électrique
-      alors: 250€
-    - si: vélo . mécanique
-      alors: 200€
-    - sinon: 0€
+  valeur:
+    variations:
+      - si: 
+          toutes ces conditions:
+            - vélo . électrique
+            - vélo . état . neuf
+        alors: 200€
+      - si: vélo . mécanique
+        alors:
+          variations:
+            - si: vélo . état . neuf
+              alors: 150€
+            - sinon: 100€
   plafond: 50% * vélo . prix
   lien: http://www.bonningues-les-calais.fr/more?type=news&id=255
+
+# NOTE: fin de validité en 2025, à vérifier en 2026
 aides . loos-en-gohelle:
   remplace: commune
   titre: Ville de Loos-en-Gohelle
-  applicable si: localisation . code insee = '62528'
-  valeur: 20% * vélo . prix
-  plafond:
+  description: |
+    Prime à l'achat d'un vélo neuf ou d'occasion. Demande possible jusqu'à
+    épuisement du budget du 1er janvier 2024 au 31 décembre 2025.
+  applicable si:
+    toutes ces conditions:
+      - localisation . code insee = '62528'
+      - vélo . électrique ou mécanique
+  valeur:
     variations:
       - si: vélo . électrique
         alors:
           valeur: 30% * vélo . prix
           plafond: 150 €
-      - si: vélo . mécanique
-        alors:
+      - sinon:
           valeur: 50% * vélo . prix
           plafond: 100 €
-      - sinon: 0€
-  lien: https://loos-en-gohelle.fr/wp-content/uploads/2023/04/Dossier-sub.-2023-1.pdf
+  lien: https://loos-en-gohelle.fr/mobilite-transport/
+
+# NOTE: valide pour 2024, à vérifier en 2025
 aides . gruson:
   remplace: commune
   titre: Ville de Gruson
+  description: |
+    Aide à l'achat d'un vélo à assistance électrique neuf.
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '59275'
       - vélo . électrique
-  valeur: vélo . prix
-  plafond:
+      - vélo . état . neuf
+  valeur:
     variations:
       - si: revenu fiscal de référence <= 13489 €/an
-        alors: 200€
-      - sinon: 100€
+        alors: 300€
+      - sinon: 200€
+  plafond: vélo . prix
   lien: https://www.mairie-gruson.fr/environnement/developpement-durable/aides-a-lachat-dun-velo-electrique
+
 aides . iwuy:
   remplace: commune
   titre: Ville d'Iwuy
+  description: |
+    Aide de 100€ pour l'achat d'un vélo neuf à assistance électrique.
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '59322'
       - vélo . électrique
+      - vélo . état . neuf
   valeur: 100€
-  lien: https://www.iwuy.fr/page.php?id=6#37
-aides . denain:
-  remplace: commune
-  titre: Ville de Denain
+  lien: https://www.iwuy.fr/page.php?id=6#53
+
+aides . porte du hainaut:
+  remplace: intercommunalité
+  titre: Communauté d'Agglomération de la Porte du Hainaut
+  description: |
+    Aide à l'achat d'un vélo à assistance électrique ou mécanique, neuf ou
+    d'occasion.
+
+    Une aide allant jusqu'à 50€ est également disponible pour la réparation de
+    son vélo.
   applicable si:
     toutes ces conditions:
-      - localisation . code insee = '59172'
+      - localisation . epci = 'CA de la Porte du Hainaut'
+      - demandeur . âge . majeur
       - vélo . électrique ou mécanique
-  valeur: 50% * vélo . prix
-  plafond:
+  valeur:
     variations:
-      - si: vélo . mécanique
+      - si: vélo . cargo électrique
+        alors:
+          variations:
+            - si: vélo . état . neuf
+              alors: 400€
+            - sinon: 200€
+      - si: vélo . cargo
+        alors:
+          variations:
+            - si: vélo . état . neuf
+              alors: 200€
+            - sinon: 100€
+      - si: vélo . électrique
         alors:
           variations:
             - si: vélo . état . neuf
@@ -6104,21 +6390,44 @@ aides . denain:
           variations:
             - si: vélo . état . neuf
               alors: 150€
-            - sinon: 75€
-  lien: https://www.ville-denain.fr/content/view/full/7159
-aides . feignies:
+            - sinon: 100€
+  plafond: 50% * vélo . prix
+  lien: https://www.agglo-porteduhainaut.fr/actualites/l-aide-en-faveur-des-mobilites-actives-est-de-retour
+
+aides . denain:
   remplace: commune
-  titre: Ville de Feignies
+  titre: Ville de Denain
+  description: |
+    Aide complémentaire d'un montant de la moitié de celle allouée par la
+    Communauté d'Agglomération de la Porte du Hainault. Dossier à déposer en
+    mairie de Denain.
   applicable si:
     toutes ces conditions:
-      - localisation . code insee = '59225'
-      - vélo . électrique ou mécanique
-  valeur: 150€
-  plafond: vélo . prix
-  lien: http://www.ville-feignies.fr/prime-velo/
+      - localisation . code insee = '59172'
+      - aides . porte du hainaut
+  valeur: 50% * aides . porte du hainaut
+  lien: https://www.ville-denain.fr/Urbanisme-habitat-et-cadre-de-vie/Developpement-durable/Aide-en-faveur-des-mobilites-actives
+
+# NOTE: plus accessible sur le site, à vérifier en 2025
+# aides . feignies:
+#   remplace: commune
+#   titre: Ville de Feignies
+#   applicable si:
+#     toutes ces conditions:
+#       - localisation . code insee = '59225'
+#       - vélo . électrique ou mécanique
+#   valeur: 150€
+#   plafond: vélo . prix
+#   lien: http://www.ville-feignies.fr/prime-velo/
+
+# NOTE: info pour 2023, à vérifier en 2025
 aides . wambrechies:
   remplace: commune
   titre: Ville de Wambrechies
+  description: |
+    Subvention d'aide à l'achat de vélos à assistance électrique ou mécanique
+    ainsi que d'accessoires. L'achat d'un vélo neuf ou d'occasion doit se faire
+    chez un professionnel avec facture.
   applicable si: localisation . code insee = '59636'
   valeur: 50% * vélo . prix
   plafond:
@@ -6131,32 +6440,48 @@ aides . wambrechies:
         alors: 100€
       - sinon: 0€
   lien: https://www.wambrechies.fr/actualites/prime-velo-jusqua-250eu-daide
-aides . fourmies:
-  remplace: commune
-  titre: Ville de Fourmies
-  applicable si:
-    toutes ces conditions:
-      - localisation . code insee = '59249'
-      - vélo . électrique
-  valeur: 300€
-  plafond: vélo . prix
-  lien: https://www.fourmies.fr/pages/article-MOBILITE-prime-velo-electrique-27032019.html
+
+# NOTE: plus accessible, à vérifier en 2025
+# aides . fourmies:
+#  remplace: commune
+#  titre: Ville de Fourmies
+#  applicable si:
+#    toutes ces conditions:
+#      - localisation . code insee = '59249'
+#      - vélo . électrique
+#  valeur: 300€
+#  plafond: vélo . prix
+#  lien: https://www.fourmies.fr/pages/article-MOBILITE-prime-velo-electrique-27032019.html
+
+# NOTE: fin de validité le 31 décembre 2024, à vérifier en 2025
 aides . lesquin:
   remplace: commune
   titre: Ville de Lesquin
-  applicable si: localisation . code insee = '59343'
+  description: |
+    Subvention pour l'achat d'un vélo, un vélo à assistance électrique ou
+    trottinette électrique (neuf ou d'occasion) chez un professionnel.
+
+    Dispositif valable jusqu'au 31 décembre 2024.
+  applicable si:
+    toutes ces conditions:
+      - localisation . code insee = '59343'
+      - demandeur . âge . majeur
+      - vélo . électrique ou mécanique
   valeur: 25% * vélo . prix
   plafond:
     variations:
       - si: vélo . électrique
         alors: 150€
-      - si: vélo . mécanique
-        alors: 100€
-      - sinon: 0€
+      - sinon: 100€
   lien: https://www.ville-lesquin.fr/lesquin/subventions-municipales
+
+# NOTE: aide pour 2023, à vérifier en 2025
 aides . lezenne:
   remplace: commune
   titre: Ville de Lezenne
+  description: |
+    Aide à l'achat aussi bien pour un vélo neuf que d'occasion, de type vélo de
+    ville, VTC et VTT, vendu par un professionnel.
   applicable si: localisation . code insee = '59346'
   variations:
     - si: demandeur . bénéficiaire de minima sociaux
@@ -6164,6 +6489,8 @@ aides . lezenne:
         valeur: 80% * vélo . prix
         plafond:
           variations:
+            - si: vélo . adapté
+              alors: 900€
             - si: vélo . cargo
               alors: 900€
             - si: vélo . électrique
@@ -6175,6 +6502,8 @@ aides . lezenne:
         valeur: 50% * vélo . prix
         plafond:
           variations:
+            - si: vélo . adapté
+              alors: 450€
             - si: vélo . cargo
               alors: 450€
             - si: vélo . électrique
@@ -6183,6 +6512,7 @@ aides . lezenne:
               alors: 150€
             - sinon: 0€
   lien: http://www.lezennes.fr/index.php?id=167
+
 aides . dunkerque:
   remplace: intercommunalité
   titre: Communauté urbaine de Dunkerque
@@ -7045,27 +7375,6 @@ aides . carmausin-ségala:
         valeur: 100 €
         plafond: 20 % * vélo . prix
   lien: https://www.carmausin-segala.fr/sites/carmausin-segala.fr/www.carmausin-segala.fr/files/pdf/3cs_-_dossier_aide_a_lachat_velo.pdf
-aides . porte du hainaut:
-  remplace: intercommunalité
-  titre: La Porte du Hainaut
-  applicable si:
-    toutes ces conditions:
-      - localisation . epci = 'CA de la Porte du Hainaut'
-      - vélo . électrique ou mécanique
-  variations:
-    - si: vélo . électrique
-      alors:
-        variations:
-          - si: vélo . état . neuf
-            alors: 300 €
-          - sinon: 150 €
-    - sinon:
-        variations:
-          - si: vélo . état . neuf
-            alors: 150 €
-          - sinon: 75 €
-  plafond: 50% * vélo . prix
-  lien: https://www.agglo-porteduhainaut.fr/actualites/une-prime-pour-vous-accompagner-vers-les-mobilites-decarbonees
 aides . lisieux:
   remplace: commune
   titre: Ville de Lisieux
@@ -8072,7 +8381,6 @@ vélo . prix pour maximiser les aides:
           - localisation . epci = 'CA Grand Lac'
           - localisation . code insee = '38140'
           - localisation . département = '07'
-          - localisation . epci = 'CC Dieulefit-Bourdeaux'
           - localisation . epci = 'CA Saint-Lô Agglo'
           - localisation . epci = 'CA Saint-Louis Agglomération'
           - localisation . code insee = '73222'
@@ -8113,17 +8421,21 @@ vélo . état:
         sauf dans:
           # - aides . ambert livradois forez
           - aides . annecy
+          - aides . annonay
           - aides . arve salève
           - aides . aubervilliers
           - aides . aubiere
           - aides . auray quiberon
           - aides . avignon
+          - aides . baisieux
+          - aides . bassin d'arcachon nord
           - aides . bègles vélo classique
           - aides . belfort
           - aides . béthune bruay
           - aides . bidart
           - aides . blacé
           - aides . boé
+          - aides . bonningues-lès-calais
           - aides . bordeaux
           - aides . bourges
           - aides . bourg-saint-maurice
@@ -8143,11 +8455,13 @@ vélo . état:
           - aides . denain
           - aides . département hérault vélo adapté
           - aides . dieppe
+          - aides . dieulefit-bourdeaux
           - aides . divonne-les-bains
           - aides . dreux
+          - aides . epinal
           - aides . évian-les-bains
           - aides . faches-thumesnil
-          - aides . feignies
+          # - aides . feignies
           - aides . fier et usses
           - aides . flers
           - aides . genevois
@@ -8160,6 +8474,7 @@ vélo . état:
           - aides . grenoble
           - aides . haut val de sèvre
           - aides . haut val de sèvre
+          - aides . hem
           - aides . hermanville-sur-mer
           - aides . honfleur
           - aides . ile de france
@@ -8168,9 +8483,11 @@ vélo . état:
           - aides . la cali
           - aides . la madeleine
           - aides . la motte servolex
+          - aides . lanester
           - aides . la roche sur yon
           - aides . lescar
           - aides . les herbiers
+          - aides . lesquin
           - aides . les sables d'olonne
           - aides . le vigan
           - aides . limoges metropole
@@ -8202,24 +8519,30 @@ vélo . état:
           - aides . pays de l'arbresle
           - aides . pays de l'ozon
           - aides . pays de lumbres 
+          - aides . pays des achards
           - aides . pays de saverne
           - aides . perpignan métropole
+          - aides . plaine de l'ain VAE
           - aides . pornic
+          - aides . porte du hainaut
           - aides . portes de sologne
           - aides . puisaye forterre
           - aides . quimperlé
           - aides . reims
           - aides . ried de marckolsheim
+          - aides . rochefort
           - aides . ronchin
           - aides . saint alban leysse
           - aides . sainte-foy-lès-lyon
           - aides . saint-émilionnais
+          - aides . saintes
           - aides . saint-jacques de la lande
           - aides . saint-louis
           - aides . saint-marcellin vercors isère
           - aides . saint-rémy
           - aides . saône-beaujolais
           - aides . sarlat
+          - aides . saumur val de loire
           - aides . selestat
           - aides . sète
           - aides . sèvre et loire
@@ -8234,14 +8557,11 @@ vélo . état:
           - aides . vallée de villé
           - aides . vallons du lyonnais
           - aides . vienne gartempe
+          - aides . ville de talant
           - aides . villefranche beaujolais saône 
           - aides . ville-sur-jarnioux
-          - aides . epinal
-          - aides . rochefort
-          - aides . saintes
+          - aides . wambrechies
           - aides . yvetot normandie
-          - aides . bassin d'arcachon nord
-          - aides . plaine de l'ain VAE
 
 # NOTE: ne devrait-on pas plutôt avoir 'quotient familial' calculée à partir de
 # 'revenu fiscal de référence' et 'personnes dans le foyer fiscal' ? ->
@@ -8382,7 +8702,7 @@ demandeur . statut:
       titre: Apprenti·e
       valeur: statut = 'apprenti'
     demandeur d'emploi:
-      titre: Demandeur d'emploi
+      titre: Demandeureuse d'emploi
       valeur: statut = 'demandeur d'emploi'
     salarié:
       titre: Salarié·e
