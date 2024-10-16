@@ -1,6 +1,7 @@
 import { DB, TestUtil } from '../../TestUtil';
 import { UtilisateurBoardRepository } from '../../../src/infrastructure/repository/utilisateurBoard.repository';
 import { Pourcentile } from '../../../src/domain/gamification/board';
+import { equal } from 'assert';
 
 describe('UtilisateurBoardRepository', () => {
   let repo = new UtilisateurBoardRepository(TestUtil.prisma);
@@ -15,6 +16,453 @@ describe('UtilisateurBoardRepository', () => {
 
   afterAll(async () => {
     await TestUtil.appclose();
+  });
+
+  it(`top3 france: standard`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 10,
+      id: '1',
+      email: '1',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 20,
+      id: '2',
+      email: '2',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 30,
+      id: 'user',
+      email: '3',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 25,
+      id: '4',
+      email: '4',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 15,
+      id: '5',
+      email: '5',
+    });
+
+    // WHEN
+    const liste = await repo.top_trois_user('user');
+
+    // THEN
+    expect(liste).toHaveLength(3);
+    expect(liste).toEqual([
+      {
+        code_postal: '91120',
+        commune: 'PALAISEAU',
+        points: 30,
+        prenom: 'prenom',
+        utilisateurId: 'user',
+        rank: null,
+        rank_commune: null,
+      },
+      {
+        code_postal: '91120',
+        commune: 'PALAISEAU',
+        points: 25,
+        prenom: 'prenom',
+        utilisateurId: '4',
+        rank: null,
+        rank_commune: null,
+      },
+      {
+        code_postal: '91120',
+        commune: 'PALAISEAU',
+        points: 20,
+        prenom: 'prenom',
+        utilisateurId: '2',
+        rank: null,
+        rank_commune: null,
+      },
+    ]);
+  });
+  it(`top3 france : user présent même si exclu`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 10,
+      id: '1',
+      email: '1',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 20,
+      id: '2',
+      email: '2',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 30,
+      id: 'user',
+      email: '3',
+      est_valide_pour_classement: false,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 25,
+      id: '4',
+      email: '4',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 15,
+      id: '5',
+      email: '5',
+    });
+
+    // WHEN
+    const liste = await repo.top_trois_user('user');
+
+    // THEN
+    expect(liste).toHaveLength(3);
+    expect(liste).toEqual([
+      {
+        code_postal: '91120',
+        commune: 'PALAISEAU',
+        points: 30,
+        prenom: 'prenom',
+        utilisateurId: 'user',
+        rank: null,
+        rank_commune: null,
+      },
+      {
+        code_postal: '91120',
+        commune: 'PALAISEAU',
+        points: 25,
+        prenom: 'prenom',
+        utilisateurId: '4',
+        rank: null,
+        rank_commune: null,
+      },
+      {
+        code_postal: '91120',
+        commune: 'PALAISEAU',
+        points: 20,
+        prenom: 'prenom',
+        utilisateurId: '2',
+        rank: null,
+        rank_commune: null,
+      },
+    ]);
+  });
+  it(`top3 france : autre user exclu ok`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 10,
+      id: '1',
+      email: '1',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 20,
+      id: '2',
+      email: '2',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 30,
+      id: 'user',
+      email: '3',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 25,
+      id: '4',
+      email: '4',
+      est_valide_pour_classement: false,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 15,
+      id: '5',
+      email: '5',
+    });
+
+    // WHEN
+    const liste = await repo.top_trois_user('user');
+
+    // THEN
+    expect(liste).toHaveLength(3);
+    expect(liste).toEqual([
+      {
+        code_postal: '91120',
+        commune: 'PALAISEAU',
+        points: 30,
+        prenom: 'prenom',
+        utilisateurId: 'user',
+        rank: null,
+        rank_commune: null,
+      },
+      {
+        code_postal: '91120',
+        commune: 'PALAISEAU',
+        points: 20,
+        prenom: 'prenom',
+        utilisateurId: '2',
+        rank: null,
+        rank_commune: null,
+      },
+      {
+        code_postal: '91120',
+        commune: 'PALAISEAU',
+        points: 15,
+        prenom: 'prenom',
+        utilisateurId: '5',
+        rank: null,
+        rank_commune: null,
+      },
+    ]);
+  });
+
+  it(`top3 local: standard`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 10,
+      id: '1',
+      email: '1',
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 20,
+      id: '2',
+      email: '2',
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 30,
+      id: 'user',
+      email: '3',
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 25,
+      id: '4',
+      email: '4',
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 15,
+      id: '5',
+      email: '5',
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 100,
+      id: '6',
+      email: '6',
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+
+    // WHEN
+    const liste = await repo.top_trois_commune_user(
+      '91120',
+      'PALAISEAU',
+      'user',
+    );
+
+    // THEN
+    expect(liste).toHaveLength(3);
+    expect(liste).toEqual([
+      {
+        code_postal: '91120',
+        commune: 'PALAISEAU',
+        points: 30,
+        prenom: 'prenom',
+        utilisateurId: 'user',
+        rank: null,
+        rank_commune: null,
+      },
+      {
+        code_postal: '91120',
+        commune: 'PALAISEAU',
+        points: 25,
+        prenom: 'prenom',
+        utilisateurId: '4',
+        rank: null,
+        rank_commune: null,
+      },
+      {
+        code_postal: '91120',
+        commune: 'PALAISEAU',
+        points: 20,
+        prenom: 'prenom',
+        utilisateurId: '2',
+        rank: null,
+        rank_commune: null,
+      },
+    ]);
+  });
+  it(`top3 local : user présent même si exclu`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 10,
+      id: '1',
+      email: '1',
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 20,
+      id: '2',
+      email: '2',
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 30,
+      id: 'user',
+      email: '3',
+      est_valide_pour_classement: false,
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 25,
+      id: '4',
+      email: '4',
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 15,
+      id: '5',
+      email: '5',
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 100,
+      id: '6',
+      email: '6',
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+
+    // WHEN
+    const liste = await repo.top_trois_commune_user(
+      '91120',
+      'PALAISEAU',
+      'user',
+    );
+
+    // THEN
+    expect(liste).toHaveLength(3);
+    expect(liste).toEqual([
+      {
+        code_postal: '91120',
+        commune: 'PALAISEAU',
+        points: 30,
+        prenom: 'prenom',
+        utilisateurId: 'user',
+        rank: null,
+        rank_commune: null,
+      },
+      {
+        code_postal: '91120',
+        commune: 'PALAISEAU',
+        points: 25,
+        prenom: 'prenom',
+        utilisateurId: '4',
+        rank: null,
+        rank_commune: null,
+      },
+      {
+        code_postal: '91120',
+        commune: 'PALAISEAU',
+        points: 20,
+        prenom: 'prenom',
+        utilisateurId: '2',
+        rank: null,
+        rank_commune: null,
+      },
+    ]);
+  });
+  it(`top3 local : autre user exclu ok`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 10,
+      id: '1',
+      email: '1',
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 20,
+      id: '2',
+      email: '2',
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 30,
+      id: 'user',
+      email: '3',
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 25,
+      id: '4',
+      email: '4',
+      est_valide_pour_classement: false,
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 15,
+      id: '5',
+      email: '5',
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 100,
+      id: '6',
+      email: '6',
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+
+    // WHEN
+    const liste = await repo.top_trois_commune_user(
+      '91120',
+      'PALAISEAU',
+      'user',
+    );
+
+    // THEN
+    expect(liste).toHaveLength(3);
+    expect(liste).toEqual([
+      {
+        code_postal: '91120',
+        commune: 'PALAISEAU',
+        points: 30,
+        prenom: 'prenom',
+        utilisateurId: 'user',
+        rank: null,
+        rank_commune: null,
+      },
+      {
+        code_postal: '91120',
+        commune: 'PALAISEAU',
+        points: 20,
+        prenom: 'prenom',
+        utilisateurId: '2',
+        rank: null,
+        rank_commune: null,
+      },
+      {
+        code_postal: '91120',
+        commune: 'PALAISEAU',
+        points: 15,
+        prenom: 'prenom',
+        utilisateurId: '5',
+        rank: null,
+        rank_commune: null,
+      },
+    ]);
   });
 
   it('utilisateur_classement_proximite : get empty when DB is empty', async () => {

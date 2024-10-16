@@ -8,12 +8,19 @@ import { Pourcentile } from '../../domain/gamification/board';
 export class UtilisateurBoardRepository {
   constructor(private prisma: PrismaService) {}
 
-  async top_trois_user(): Promise<Classement[]> {
+  async top_trois_user(utilisateurId: string): Promise<Classement[]> {
     const top = await this.prisma.utilisateur.findMany({
       take: 3,
       orderBy: { points_classement: 'desc' },
       where: {
-        est_valide_pour_classement: true,
+        OR: [
+          {
+            est_valide_pour_classement: true,
+          },
+          {
+            id: utilisateurId,
+          },
+        ],
       },
     });
 
@@ -25,13 +32,21 @@ export class UtilisateurBoardRepository {
   async top_trois_commune_user(
     code_postal: string,
     commune: string,
+    utilisateurId: string,
   ): Promise<Classement[]> {
     const top = await this.prisma.utilisateur.findMany({
       take: 3,
       where: {
         code_postal_classement: code_postal,
         commune_classement: commune,
-        est_valide_pour_classement: true,
+        OR: [
+          {
+            est_valide_pour_classement: true,
+          },
+          {
+            id: utilisateurId,
+          },
+        ],
       },
       orderBy: { points_classement: 'desc' },
     });
