@@ -255,8 +255,7 @@
 - `demandeur . âge`
 - `demandeur . bénéficiaire du RSA`
 - `demandeur . en situation de handicap`
-- `demandeur . en situation de handicap`
-- `demandeur . statut étudiant`
+- `demandeur . statut`
 - `vélo . adapté`
 - `vélo . électrique simple`
 
@@ -265,3 +264,4 @@
 - `Anah`
 - `Anah . plafond ménage modeste`
 - `ménage imposable`
+- `vélo . neuf ou occasion` -> `vélo . état`
