@@ -43,7 +43,7 @@ export class EmailTemplateRepository {
     unsubscribe_token: string,
   ): { subject: string; body: string } | null {
     const unsubscribe_URL =
-      App.getBaseURLFront + `/se-desabonner?token=${unsubscribe_token}`;
+      App.getBaseURLFront() + `/se-desabonner?token=${unsubscribe_token}`;
 
     switch (emailType) {
       case TypeNotification.inscription_code:
