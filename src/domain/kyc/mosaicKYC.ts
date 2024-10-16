@@ -2,7 +2,7 @@ import { App } from '../app';
 import { Categorie } from '../contenu/categorie';
 import { KYCID } from './KYCID';
 import { KYCMosaicID } from './KYCMosaicID';
-import { QuestionKYC } from './questionKYC';
+import { QuestionKYC, TypeReponseQuestionKYC } from './questionKYC';
 
 export class KYCMosaicReponse {
   code: string;
@@ -233,7 +233,11 @@ export class MosaicKYC {
     for (const kyc of kyc_liste) {
       let value = 'non';
       if (kyc.hasAnyResponses()) {
-        value = kyc.reponses[0].code;
+        if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
+          value = kyc.reponses[0].code;
+        } else if (kyc.type === TypeReponseQuestionKYC.entier) {
+          value = kyc.reponses[0].label === '1' ? 'oui' : 'non';
+        }
       }
       const new_reponse: KYCMosaicReponse = {
         code: kyc.id,
