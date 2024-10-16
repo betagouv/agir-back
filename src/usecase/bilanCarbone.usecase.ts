@@ -42,6 +42,10 @@ export class BilanCarboneUsecase {
     const bilan_complet =
       this.nGCCalculator.computeBilanCarboneFromSituation(situation);
 
+    const enchainement_mini_bilan =
+      utilisateur.kyc_history.getEnchainementKYCsEligibles(
+        QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_mini_bilan_carbone'],
+      );
     const enchainement_transport =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
         QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_bilan_transport'],
@@ -59,6 +63,8 @@ export class BilanCarboneUsecase {
         QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_bilan_alimentation'],
       );
 
+    const enchainement_minibilan_progression =
+      enchainement_mini_bilan.getProgression();
     const enchainement_transport_progression =
       enchainement_transport.getProgression();
     const enchainement_logement_progression =
@@ -68,14 +74,16 @@ export class BilanCarboneUsecase {
       enchainement_alimentation.getProgression();
 
     const pourcentage_prog_totale = Math.round(
-      ((enchainement_transport_progression.current +
+      ((enchainement_minibilan_progression.current +
+        enchainement_transport_progression.current +
         enchainement_logement_progression.current +
         enchainement_conso_progression.current +
         enchainement_alimentation_progression.current) /
         (enchainement_transport_progression.target +
           enchainement_logement_progression.target +
           enchainement_conso_progression.target +
-          enchainement_alimentation_progression.target)) *
+          enchainement_alimentation_progression.target +
+          enchainement_minibilan_progression.target)) *
         100,
     );
 

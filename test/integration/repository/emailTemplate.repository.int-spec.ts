@@ -45,6 +45,7 @@ describe('EmailTemplateRepository', () => {
     );
 
     // THEN
+    console.log(result.body);
     expect(result).toEqual({
       body: `Bonjour,<br>
 Voici votre code pour valider votre inscription à l'application J'agis !<br><br>

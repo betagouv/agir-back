@@ -1279,7 +1279,7 @@ describe('Mission (API test)', () => {
     expect(response.body[0]).toEqual({
       id: '_3',
       question:
-        "Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?",
+        "Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?",
       reponse: [],
       categorie: 'test',
       points: 10,
@@ -1359,7 +1359,7 @@ describe('Mission (API test)', () => {
     expect(response.body).toHaveLength(3);
     expect(response.body[0]).toEqual({
       id: '_1',
-      question: 'Comment avez vous connu le service ?',
+      question: 'Comment avez vous connu le service ?',
       reponse: [],
       reponses_possibles: [
         'Moins de 15 ans (neuf ou récent)',
@@ -1379,13 +1379,13 @@ describe('Mission (API test)', () => {
         {
           code: '_2',
           image_url: 'BBB',
-          label: 'short 2',
+          label: 'short 2',
           boolean_value: false,
         },
         {
           code: '_3',
           image_url: 'CCC',
-          label: 'short 3',
+          label: 'short 3',
           boolean_value: false,
         },
       ],
@@ -1396,7 +1396,7 @@ describe('Mission (API test)', () => {
     expect(response.body[2]).toEqual({
       id: '_3',
       question:
-        "Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?",
+        "Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?",
       reponse: [],
       reponses_possibles: ['Oui', 'Non', 'A voir'],
       categorie: 'test',

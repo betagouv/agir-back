@@ -116,9 +116,36 @@ export class MailerUsecase {
     return result;
   }
 
-  private async sendEmailOfType(
+  public async sendAllMailsToUserAsTest(
+    utilisateurId: string,
+  ): Promise<string[]> {
+    const result = [];
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.ALL],
+    );
+
+    for (const type of Object.values(TypeNotification)) {
+      await this.sendTestEmailOfType(type, utilisateur, result);
+    }
+
+    return result;
+  }
+
+  private async sendTestEmailOfType(
+    type: TypeNotification,
+    utilisateur: Utilisateur,
+    log: string[],
+  ) {
+    if (await this.sendEmailOfType(type, utilisateur, false)) {
+      log.push(type);
+    }
+  }
+
+  public async sendEmailOfType(
     type_notif: TypeNotification,
     utilisateur: Utilisateur,
+    update_history: boolean = true,
   ): Promise<boolean> {
     const email = this.emailTemplateRepository.generateEmailByType(
       type_notif,
@@ -133,11 +160,12 @@ export class MailerUsecase {
         email.body,
         email.subject,
       );
-
-      utilisateur.notification_history.declareSentNotification(
-        type_notif,
-        CanalNotification.email,
-      );
+      if (update_history && utilisateur.notification_history) {
+        utilisateur.notification_history.declareSentNotification(
+          type_notif,
+          CanalNotification.email,
+        );
+      }
       return true;
     }
     return false;

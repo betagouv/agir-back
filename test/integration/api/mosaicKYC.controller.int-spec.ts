@@ -510,4 +510,116 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       type: 'mosaic_boolean',
     });
   });
+
+  it('GET /utilisateurs/id/questionsKYC/id - lecture mosaic avec reponses précédentes de type integer', async () => {
+    // GIVEN
+
+    const dbKYC: KYC = {
+      id_cms: 1,
+      categorie: Categorie.recommandation,
+      code: '1',
+      is_ngc: true,
+      points: 20,
+      question: 'The question !',
+      tags: [Tag.possede_voiture],
+      universes: [Univers.alimentation],
+      thematique: Thematique.alimentation,
+      type: TypeReponseQuestionKYC.entier,
+      ngc_key: 'a . b . c',
+      reponses: [],
+      short_question: 'short',
+      image_url: 'AAA',
+      conditions: [],
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 1,
+      question: 'quest 1',
+      code: '_1',
+    });
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 2,
+      question: 'quest 2',
+      code: '_2',
+    });
+
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_mosaics: [KYCMosaicID.TEST_MOSAIC_ID],
+      answered_questions: [
+        {
+          id: '_1',
+          question: 'quest 1',
+          type: TypeReponseQuestionKYC.entier,
+          categorie: Categorie.recommandation,
+          points: 20,
+          is_NGC: true,
+          reponses: [{ code: null, label: '0' }],
+          reponses_possibles: [],
+          ngc_key: 'a . b . c',
+          thematique: Thematique.alimentation,
+          tags: [Tag.possede_voiture],
+          universes: ['alimentation'],
+          id_cms: 1,
+          short_question: 'short 1',
+          image_url: 'AAA',
+          conditions: [],
+        },
+        {
+          id: '_2',
+          question: 'quest 2',
+          type: TypeReponseQuestionKYC.entier,
+          categorie: Categorie.recommandation,
+          points: 20,
+          is_NGC: true,
+          reponses: [{ code: null, label: '1' }],
+          reponses_possibles: [],
+          ngc_key: 'a . b . c',
+          thematique: Thematique.alimentation,
+          tags: [Tag.possede_voiture],
+          universes: ['alimentation'],
+          id_cms: 2,
+          short_question: 'short 2',
+          image_url: 'BBB',
+          conditions: [],
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+
+    MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/questionsKYC/TEST_MOSAIC_ID',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      id: 'TEST_MOSAIC_ID',
+      titre: 'Titre test',
+      is_answered: true,
+      reponses: [
+        {
+          code: '_1',
+          label: 'short 1',
+          boolean_value: false,
+          image_url: 'AAA',
+        },
+        {
+          code: '_2',
+          label: 'short 2',
+          boolean_value: true,
+          image_url: 'BBB',
+        },
+      ],
+      categorie: 'test',
+      points: 5,
+      type: 'mosaic_boolean',
+    });
+  });
 });

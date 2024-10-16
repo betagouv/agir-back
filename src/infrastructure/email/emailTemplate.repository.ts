@@ -43,7 +43,7 @@ export class EmailTemplateRepository {
     unsubscribe_token: string,
   ): { subject: string; body: string } | null {
     const unsubscribe_URL =
-      App.getBaseURLFront + `/se-desabonner?token=${unsubscribe_token}`;
+      App.getBaseURLFront() + `/se-desabonner?token=${unsubscribe_token}`;
 
     switch (emailType) {
       case TypeNotification.inscription_code:
@@ -88,7 +88,7 @@ export class EmailTemplateRepository {
               CONTACT_EMAIL: utilisateur.email,
               UNSUBSCRIBE_URL: unsubscribe_URL,
               TITRE_ACTION: defi.titre,
-              ACTIONS_URL: `${App.getBaseURLFront()}/mon-compte/vos-actions`,
+              ACTIONS_URL: `${App.getBaseURLFront()}/compte/mes-actions`,
               HOME_URL: App.getBaseURLFront(),
             }),
           };

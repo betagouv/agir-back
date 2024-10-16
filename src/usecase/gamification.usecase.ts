@@ -41,6 +41,7 @@ export class GamificationUsecase {
         await this.utilisateurBoardRepository.top_trois_commune_user(
           utilisateur.code_postal_classement,
           utilisateur.commune_classement,
+          utilisateur.id,
         );
     }
 
@@ -129,7 +130,9 @@ export class GamificationUsecase {
     );
     utilisateur.checkState();
 
-    const top_trois = await this.utilisateurBoardRepository.top_trois_user();
+    const top_trois = await this.utilisateurBoardRepository.top_trois_user(
+      utilisateur.id,
+    );
 
     if (utilisateur.rank === null) {
       return {

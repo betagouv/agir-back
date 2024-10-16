@@ -10,7 +10,7 @@ import { AideRepository } from '../../src/infrastructure/repository/aide.reposit
 import { Aide } from '../../src/domain/aides/aide';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
-import { Scope } from '../domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 
 @Injectable()
 export class AidesUsecase {
@@ -32,7 +32,9 @@ export class AidesUsecase {
     );
   }
 
-  async getCatalogueAides(utilisateurId: string): Promise<Aide[]> {
+  async getCatalogueAides(
+    utilisateurId: string,
+  ): Promise<{ aides: Aide[]; utilisateur: Utilisateur }> {
     const user = await this.utilisateurRepository.getById(utilisateurId, [
       Scope.logement,
     ]);
@@ -55,7 +57,10 @@ export class AidesUsecase {
       code_region: dept_region ? dept_region.code_region : undefined,
     });
 
-    return this.personnalisator.personnaliser(result, user);
+    return {
+      aides: this.personnalisator.personnaliser(result, user),
+      utilisateur: user,
+    };
   }
 
   async simulerAideVelo(

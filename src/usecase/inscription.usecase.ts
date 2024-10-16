@@ -5,18 +5,17 @@ import {
 } from '../domain/utilisateur/utilisateur';
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { EmailSender } from '../infrastructure/email/emailSender';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { App } from '../domain/app';
 import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
 import { OidcService } from '../infrastructure/auth/oidc.service';
 import { ContactUsecase } from './contact.usecase';
 import { CodeManager } from '../domain/utilisateur/manager/codeManager';
 import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/onboarding/createUtilisateurAPI';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
-import { ImportNGCUsecase } from './importNGC.usecase';
 import { SituationNGCRepository } from '../infrastructure/repository/bilan.repository';
+import { MailerUsecase } from './mailer.usecase';
+import { TypeNotification } from '../domain/notification/notificationHistory';
 
 export type Phrase = {
   phrase: string;
@@ -27,13 +26,13 @@ export type Phrase = {
 export class InscriptionUsecase {
   constructor(
     private utilisateurRespository: UtilisateurRepository,
-    private emailSender: EmailSender,
     private securityEmailManager: SecurityEmailManager,
     private contactUsecase: ContactUsecase,
     private oidcService: OidcService,
     private codeManager: CodeManager,
     private kycRepository: KycRepository,
     private bilanRepository: SituationNGCRepository,
+    private mailerUsecase: MailerUsecase,
   ) {}
 
   async createUtilisateur(utilisateurInput: CreateUtilisateurAPI) {
@@ -135,20 +134,9 @@ export class InscriptionUsecase {
   }
 
   private async sendValidationCode(utilisateur: Utilisateur) {
-    this.emailSender.sendEmail(
-      utilisateur.email,
-      utilisateur.prenom,
-      `Bonjour,<br>
-Voici votre code pour valider votre inscription à l'application J'agis !<br><br>
-    
-code : ${utilisateur.code}<br><br>
-
-Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="${App.getBaseURLFront()}/validation-compte?email=${
-        utilisateur.email
-      }">Page pour rentrer le code</a><br><br>
-    
-À très vite !`,
-      `Votre code d'inscription J'agis`,
+    await this.mailerUsecase.sendEmailOfType(
+      TypeNotification.inscription_code,
+      utilisateur,
     );
   }
 }

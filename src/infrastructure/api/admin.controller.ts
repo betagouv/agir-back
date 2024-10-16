@@ -35,7 +35,6 @@ import { UniversStatistiqueUsecase } from '../../../src/usecase/universStatistiq
 import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
 import { App } from '../../domain/app';
 import { MailerUsecase } from '../../usecase/mailer.usecase';
-import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
 import { ValiderPrenomAPI } from './types/utilisateur/validerPrenomsAPI';
 
 class VersionAPI {
@@ -68,6 +67,7 @@ export class AdminController extends GenericControler {
     private kycStatistiqueUsecase: KycStatistiqueUsecase,
     private thematiqueStatistiqueUsecase: ThematiqueStatistiqueUsecase,
     private universStatistiqueUsecase: UniversStatistiqueUsecase,
+    private mailerUsecase: MailerUsecase,
   ) {
     super();
   }
@@ -346,5 +346,16 @@ export class AdminController extends GenericControler {
   async validerPrenoms(@Request() req, @Body() body: ValiderPrenomAPI[]) {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.profileUsecase.validerPrenoms(body);
+  }
+  @Post('/admin/send_all_emails_as_test/:utilisateurId')
+  @ApiOperation({
+    summary: `Tente d'envoyer tous les templates de mail à un utilisateur donné, sans maj de l'historique de notification. Utile pour recetter les templates de mail`,
+  })
+  async send_all_emails_as_test(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.mailerUsecase.sendAllMailsToUserAsTest(utilisateurId);
   }
 }

@@ -34,7 +34,10 @@ export class UtilisateurRepository {
 
   async listePrenomsAValider(): Promise<{ id: string; prenom: string }[]> {
     return await this.prisma.utilisateur.findMany({
-      where: { est_valide_pour_classement: false },
+      where: {
+        est_valide_pour_classement: false,
+        active_account: true,
+      },
       select: {
         id: true,
         prenom: true,
