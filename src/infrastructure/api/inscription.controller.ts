@@ -28,6 +28,7 @@ import { App } from '../../domain/app';
 import { SituationNGCAPI } from './types/ngc/situationNGCAPI';
 import { ImportNGCUsecase } from '../../usecase/importNGC.usecase';
 import { ReponseImportSituationNGCAPI } from './types/ngc/reponseImportSituationNGCAPI';
+import { ApplicationError } from '../applicationError';
 
 @Controller()
 @ApiTags('1 - Utilisateur - Inscription')
@@ -99,6 +100,12 @@ export class InscriptionController extends GenericControler {
     @Body() body: SituationNGCAPI,
     @Headers('apikey') apikey: string,
   ): Promise<ReponseImportSituationNGCAPI> {
+    if (!apikey) {
+      ApplicationError.throwMissingNGC_API_KEY();
+    }
+    if (apikey !== App.getNGC_API_KEY()) {
+      ApplicationError.throwBadNGC_API_KEY(apikey);
+    }
     const result = await this.importNGCUsecase.importSituationNGC(
       body.situation,
     );

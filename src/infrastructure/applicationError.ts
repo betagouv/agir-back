@@ -406,6 +406,13 @@ export class ApplicationError {
     this.throwAppError('080', `L'enchainement d'id [${id}] n'existe pas`);
   }
 
+  static throwMissingNGC_API_KEY() {
+    this.throwAppError('080', `Clé API manquante (header 'apikey')`, 401);
+  }
+  static throwBadNGC_API_KEY(apikey: string) {
+    this.throwAppError('081', `Clé API [${apikey}] incorrecte`, 403);
+  }
+
   private static throwAppError(
     code: string,
     message: string,

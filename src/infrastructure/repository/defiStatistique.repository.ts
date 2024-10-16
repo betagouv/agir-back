@@ -63,4 +63,8 @@ export class DefiStatistiqueRepository {
       raisons_abandonne: [],
     };
   }
+
+  async deleteAll(): Promise<void> {
+    await this.prisma.defiStatistique.deleteMany();
+  }
 }

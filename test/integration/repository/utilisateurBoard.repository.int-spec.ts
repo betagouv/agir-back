@@ -33,6 +33,22 @@ describe('UtilisateurBoardRepository', () => {
     // THEN
     expect(liste).toHaveLength(0);
   });
+  it('utilisateur_classement_proximite_v2 : get empty when DB is empty', async () => {
+    // GIVEN
+
+    // WHEN
+    const liste = await repo.utilisateur_classement_proximite_V2(
+      100,
+      10,
+      'rank_avant_strict',
+      'national',
+      undefined,
+      undefined,
+    );
+
+    // THEN
+    expect(liste).toHaveLength(0);
+  });
   it('utilisateur_classement_proximite : ligne unique ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -64,6 +80,34 @@ describe('UtilisateurBoardRepository', () => {
     expect(liste[0].rank).toEqual(1);
   });
 
+  it('utilisateur_classement_proximite_v2 : ligne unique ', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 10,
+      id: '1',
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+      prenom: 'toto',
+    });
+
+    // WHEN
+    const liste = await repo.utilisateur_classement_proximite_V2(
+      9,
+      10,
+      'rank_avant_strict',
+      'national',
+      undefined,
+      undefined,
+    );
+
+    // THEN
+    expect(liste).toHaveLength(1);
+    expect(liste[0].utilisateurId).toEqual('1');
+    expect(liste[0].code_postal).toEqual('91120');
+    expect(liste[0].commune).toEqual('PALAISEAU');
+    expect(liste[0].prenom).toEqual('toto');
+    expect(liste[0].points).toEqual(10);
+  });
   it('utilisateur_classement_proximite : extract correct pour apres', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -122,7 +166,65 @@ describe('UtilisateurBoardRepository', () => {
     expect(liste[1].utilisateurId).toEqual('3');
     expect(liste[1].rank).toEqual(5);
   });
-  it('utilisateur_classement_proximite : extract correct pour apres, ignore prenoms null', async () => {
+
+  it('utilisateur_classement_proximite_v2 : extract correct pour apres', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 10,
+      id: '1',
+      email: '1',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 20,
+      id: '2',
+      email: '2',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 30,
+      id: '3',
+      email: '3',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 40,
+      id: '4',
+      email: '4',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 50,
+      id: '5',
+      email: '5',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 60,
+      id: '6',
+      email: '6',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 70,
+      id: '7',
+      email: '7',
+    });
+
+    // WHEN
+    const liste = await repo.utilisateur_classement_proximite_V2(
+      50,
+      2,
+      'rank_apres_ou_egal',
+      'national',
+      undefined,
+      undefined,
+      '5',
+    );
+
+    // THEN
+    expect(liste).toHaveLength(2);
+    expect(liste[0].utilisateurId).toEqual('4');
+    expect(liste[0].points).toEqual(40);
+    expect(liste[1].utilisateurId).toEqual('3');
+    expect(liste[1].points).toEqual(30);
+  });
+
+  it('utilisateur_classement_proximite : extract correct pour apres, ignore user non eligibles', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       points_classement: 10,
@@ -186,6 +288,68 @@ describe('UtilisateurBoardRepository', () => {
     expect(liste[1].utilisateurId).toEqual('3');
     expect(liste[1].rank).toEqual(5);
   });
+
+  it('utilisateur_classement_proximite_v2 : extract correct pour apres, ignore user non eligibles', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 10,
+      id: '1',
+      email: '1',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 20,
+      id: '2',
+      email: '2',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 30,
+      id: '3',
+      email: '3',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 40,
+      id: '4',
+      email: '4',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 45,
+      id: '45',
+      email: '45',
+      est_valide_pour_classement: false,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 50,
+      id: '5',
+      email: '5',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 60,
+      id: '6',
+      email: '6',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 70,
+      id: '7',
+      email: '7',
+    });
+
+    // WHEN
+    const liste = await repo.utilisateur_classement_proximite_V2(
+      50,
+      2,
+      'rank_apres_ou_egal',
+      'national',
+      undefined,
+      undefined,
+      '5',
+    );
+
+    // THEN
+    expect(liste).toHaveLength(2);
+    expect(liste[0].utilisateurId).toEqual('4');
+    expect(liste[1].utilisateurId).toEqual('3');
+  });
+
   it('utilisateur_classement_proximite : extract correct pour avant', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -244,6 +408,62 @@ describe('UtilisateurBoardRepository', () => {
     expect(liste[1].utilisateurId).toEqual('3');
     expect(liste[1].rank).toEqual(5);
   });
+
+  it('utilisateur_classement_proximite_v2 : extract correct pour avant', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 10,
+      id: '1',
+      email: '1',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 20,
+      id: '2',
+      email: '2',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 30,
+      id: '3',
+      email: '3',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 40,
+      id: '4',
+      email: '4',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 50,
+      id: '5',
+      email: '5',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 60,
+      id: '6',
+      email: '6',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 70,
+      id: '7',
+      email: '7',
+    });
+
+    // WHEN
+    const liste = await repo.utilisateur_classement_proximite_V2(
+      20,
+      2,
+      'rank_avant_strict',
+      'national',
+      undefined,
+      undefined,
+      '2',
+    );
+
+    // THEN
+    expect(liste).toHaveLength(2);
+    expect(liste[0].utilisateurId).toEqual('4');
+    expect(liste[1].utilisateurId).toEqual('3');
+  });
+
   it('utilisateur_classement_proximite : extract correct pour avant => liste vide si premier', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -289,6 +509,51 @@ describe('UtilisateurBoardRepository', () => {
       ),
     ).toHaveLength(0);
   });
+
+  it('utilisateur_classement_proximite_v2 : extract correct pour avant => liste vide si premier', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 10,
+      id: '1',
+      email: '1',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 20,
+      id: '2',
+      email: '2',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 30,
+      id: '3',
+      email: '3',
+    });
+
+    // THEN
+    expect(
+      await repo.utilisateur_classement_proximite_V2(
+        30,
+        2,
+        'rank_avant_strict',
+        'national',
+        undefined,
+        undefined,
+        '3',
+      ),
+    ).toHaveLength(0);
+
+    // THEN
+    expect(
+      await repo.utilisateur_classement_proximite_V2(
+        30,
+        2,
+        'rank_avant_strict',
+        'national',
+        undefined,
+        undefined,
+      ),
+    ).toHaveLength(0);
+  });
+
   it('utilisateur_classement_proximite : extract correct pour apres => liste vide si dernier', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -345,6 +610,62 @@ describe('UtilisateurBoardRepository', () => {
       ),
     ).toHaveLength(0);
   });
+
+  it('utilisateur_classement_proximite-V2 : extract correct pour apres => liste vide si dernier', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 10,
+      id: '1',
+      email: '1',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 20,
+      id: '2',
+      email: '2',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 30,
+      id: '3',
+      email: '3',
+    });
+
+    // THEN
+    expect(
+      await repo.utilisateur_classement_proximite_V2(
+        20,
+        2,
+        'rank_apres_ou_egal',
+        'national',
+        undefined,
+        undefined,
+      ),
+    ).toHaveLength(2);
+
+    // THEN
+    expect(
+      await repo.utilisateur_classement_proximite_V2(
+        10,
+        2,
+        'rank_apres_ou_egal',
+        'national',
+        undefined,
+        undefined,
+        '1',
+      ),
+    ).toHaveLength(0);
+    // THEN
+    expect(
+      await repo.utilisateur_classement_proximite_V2(
+        9,
+        2,
+        'rank_apres_ou_egal',
+        'national',
+        undefined,
+        undefined,
+      ),
+    ).toHaveLength(0);
+  });
+
   it('utilisateur_classement_proximite : extract correct pour avant LOCAL', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -418,6 +739,76 @@ describe('UtilisateurBoardRepository', () => {
     expect(liste[1].utilisateurId).toEqual('2');
     expect(liste[1].rank_commune).toEqual(3);
   });
+
+  it('utilisateur_classement_proximite_v2 : extract correct pour avant LOCAL', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 10,
+      id: '1',
+      email: '1',
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 20,
+      id: '2',
+      email: '2',
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 30,
+      id: '3',
+      email: '3',
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 40,
+      id: '4',
+      email: '4',
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 50,
+      id: '5',
+      email: '5',
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 60,
+      id: '6',
+      email: '6',
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 70,
+      id: '7',
+      email: '7',
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+
+    // WHEN
+    const liste = await repo.utilisateur_classement_proximite_V2(
+      20,
+      2,
+      'rank_apres_ou_egal',
+      'local',
+      '21000',
+      'DIJON',
+    );
+
+    // THEN
+    expect(liste).toHaveLength(2);
+    expect(liste[0].utilisateurId).toEqual('2');
+    expect(liste[1].utilisateurId).toEqual('1');
+  });
+
   it('update_rank : Caclul le rang', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -474,6 +865,59 @@ describe('UtilisateurBoardRepository', () => {
     expect(db_list[5].rank).toEqual(4);
     expect(db_list[6].rank).toEqual(5);
   });
+
+  it('update_rank_v2 : Caclul le rang', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 10,
+      id: '1',
+      email: '1',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 20,
+      id: '2',
+      email: '2',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 20,
+      id: '3',
+      email: '3',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 30,
+      id: '4',
+      email: '4',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 40,
+      id: '5',
+      email: '5',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 40,
+      id: '6',
+      email: '6',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 50,
+      id: '7',
+      email: '7',
+    });
+
+    // WHEN
+    await repo.update_rank_user_france_V2();
+
+    // THEN
+    const db_list = await TestUtil.prisma.utilisateur.findMany({
+      orderBy: {
+        id: 'desc',
+      },
+    });
+
+    expect(db_list[0].rank).toEqual(1);
+    expect(db_list[6].rank).toEqual(7);
+  });
+
   it('update_rank_commune : Caclul le rang par commune', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -556,6 +1000,90 @@ describe('UtilisateurBoardRepository', () => {
     expect(db_list[2].rank_commune).toEqual(3);
     expect(db_list[2].id).toEqual('4');
   });
+
+  it('update_rank_commune_v2 : Caclul le rang par commune', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 10,
+      id: '1',
+      email: '1',
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 20,
+      id: '2',
+      email: '2',
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 30,
+      id: '3',
+      email: '3',
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 40,
+      id: '4',
+      email: '4',
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 50,
+      id: '5',
+      email: '5',
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      points_classement: 60,
+      id: '6',
+      email: '6',
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+
+    // WHEN
+    await repo.update_rank_user_commune_V2();
+
+    // THEN
+    let db_list = await TestUtil.prisma.utilisateur.findMany({
+      where: {
+        code_postal_classement: '91120',
+      },
+      orderBy: {
+        id: 'desc',
+      },
+    });
+
+    expect(db_list[0].rank_commune).toEqual(1);
+    expect(db_list[0].id).toEqual('3');
+    expect(db_list[1].rank_commune).toEqual(2);
+    expect(db_list[1].id).toEqual('2');
+    expect(db_list[2].rank_commune).toEqual(3);
+    expect(db_list[2].id).toEqual('1');
+
+    db_list = await TestUtil.prisma.utilisateur.findMany({
+      where: {
+        code_postal_classement: '21000',
+      },
+      orderBy: {
+        id: 'desc',
+      },
+    });
+
+    expect(db_list[0].rank_commune).toEqual(1);
+    expect(db_list[0].id).toEqual('6');
+    expect(db_list[1].rank_commune).toEqual(2);
+    expect(db_list[1].id).toEqual('5');
+    expect(db_list[2].rank_commune).toEqual(3);
+    expect(db_list[2].id).toEqual('4');
+  });
+
   it('utilisateur_classement_proximite : extract correct pour apres même si un utilisateur sans rang', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -619,6 +1147,7 @@ describe('UtilisateurBoardRepository', () => {
     expect(liste[1].utilisateurId).toEqual('3');
     expect(liste[1].rank).toEqual(5);
   });
+
   it('getPourcentile : calcul correct national 50', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {

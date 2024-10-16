@@ -42,6 +42,28 @@
     "slug": "toulouse",
     "country": "france"
   },
+  "aides . occitanie vélo adapté": {
+    "collectivity": {
+      "kind": "région",
+      "value": "76"
+    },
+    "codeInsee": "31555",
+    "departement": "31",
+    "population": 498003,
+    "slug": "toulouse",
+    "country": "france"
+  },
+  "aides . grand est": {
+    "collectivity": {
+      "kind": "région",
+      "value": "44"
+    },
+    "codeInsee": "67482",
+    "departement": "67",
+    "population": 290576,
+    "slug": "strasbourg",
+    "country": "france"
+  },
   "aides . corse": {
     "collectivity": {
       "kind": "région",
@@ -99,6 +121,18 @@
     "slug": "lyon",
     "country": "france"
   },
+  "aides . saône-beaujolais": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC Saône-Beaujolais",
+      "code": "200067817"
+    },
+    "codeInsee": "69019",
+    "departement": "69",
+    "population": 13336,
+    "slug": "belleville-en-beaujolais",
+    "country": "france"
+  },
   "aides . villefranche beaujolais saône": {
     "collectivity": {
       "kind": "epci",
@@ -111,7 +145,18 @@
     "slug": "villefranche-sur-saone",
     "country": "france"
   },
-  "aides . sainte foy lès lyon": {
+  "aides . ville-sur-jarnioux": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "69265"
+    },
+    "codeInsee": "69265",
+    "departement": "69",
+    "population": 803,
+    "slug": "ville-sur-jarnioux",
+    "country": "france"
+  },
+  "aides . sainte-foy-lès-lyon": {
     "collectivity": {
       "kind": "code insee",
       "value": "69202"
@@ -156,37 +201,15 @@
     "slug": "dardilly",
     "country": "france"
   },
-  "aides . écully": {
+  "aides . igny": {
     "collectivity": {
       "kind": "code insee",
-      "value": "69081"
+      "value": "91312"
     },
-    "codeInsee": "69081",
-    "departement": "69",
-    "population": 18789,
-    "slug": "ecully",
-    "country": "france"
-  },
-  "aides . feyzin": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "69276"
-    },
-    "codeInsee": "69276",
-    "departement": "69",
-    "population": 9926,
-    "slug": "feyzin",
-    "country": "france"
-  },
-  "aides . grigny": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "91286"
-    },
-    "codeInsee": "91286",
+    "codeInsee": "91312",
     "departement": "91",
-    "population": 27571,
-    "slug": "grigny-91",
+    "population": 10157,
+    "slug": "igny-91",
     "country": "france"
   },
   "aides . irigny": {
@@ -279,6 +302,61 @@
     "slug": "bordeaux",
     "country": "france"
   },
+  "aides . mérignac": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "33281"
+    },
+    "codeInsee": "33281",
+    "departement": "33",
+    "population": 74009,
+    "slug": "merignac-33",
+    "country": "france"
+  },
+  "aides . taillan-médoc": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "33519"
+    },
+    "codeInsee": "33519",
+    "departement": "33",
+    "population": 10416,
+    "slug": "le-taillan-medoc",
+    "country": "france"
+  },
+  "aides . bègles vélo spécifique": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "33039"
+    },
+    "codeInsee": "33039",
+    "departement": "33",
+    "population": 30543,
+    "slug": "begles",
+    "country": "france"
+  },
+  "aides . bègles vélo classique": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "33039"
+    },
+    "codeInsee": "33039",
+    "departement": "33",
+    "population": 30543,
+    "slug": "begles",
+    "country": "france"
+  },
+  "aides . cenon": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "33119"
+    },
+    "codeInsee": "33119",
+    "departement": "33",
+    "population": 26047,
+    "slug": "cenon",
+    "country": "france"
+  },
   "aides . la cali": {
     "collectivity": {
       "kind": "epci",
@@ -291,30 +369,6 @@
     "slug": "libourne",
     "country": "france"
   },
-  "aides . monts du pilat": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC des Monts du Pilat",
-      "code": "244200622"
-    },
-    "codeInsee": "42023",
-    "departement": "42",
-    "population": 2950,
-    "slug": "bourg-argental",
-    "country": "france"
-  },
-  "aides . vesoul": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CA de Vesoul",
-      "code": "247000011"
-    },
-    "codeInsee": "70550",
-    "departement": "70",
-    "population": 14866,
-    "slug": "vesoul",
-    "country": "france"
-  },
   "aides . saint-rémy": {
     "collectivity": {
       "kind": "code insee",
@@ -324,17 +378,6 @@
     "departement": "71",
     "population": 6605,
     "slug": "saint-remy-71",
-    "country": "france"
-  },
-  "aides . mérignac": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "33281"
-    },
-    "codeInsee": "33281",
-    "departement": "33",
-    "population": 74009,
-    "slug": "merignac-33",
     "country": "france"
   },
   "aides . saint-émilionnais": {
@@ -396,28 +439,16 @@
     "slug": "toulouse",
     "country": "france"
   },
-  "aides . tarbes lourdes pyrénées": {
+  "aides . grenoble": {
     "collectivity": {
       "kind": "epci",
-      "value": "CA Tarbes-Lourdes-Pyrénées",
-      "code": "200069300"
+      "value": "Grenoble-Alpes-Métropole",
+      "code": "200040715"
     },
-    "codeInsee": "65440",
-    "departement": "65",
-    "population": 42925,
-    "slug": "tarbes",
-    "country": "france"
-  },
-  "aides . nice": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "Métropole Nice Côte d'Azur",
-      "code": "200030195"
-    },
-    "codeInsee": "06088",
-    "departement": "06",
-    "population": 343477,
-    "slug": "nice",
+    "codeInsee": "38185",
+    "departement": "38",
+    "population": 158240,
+    "slug": "grenoble",
     "country": "france"
   },
   "aides . strasbourg": {
@@ -454,28 +485,6 @@
     "slug": "geispolsheim",
     "country": "france"
   },
-  "aides . hangenbieten": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "67182"
-    },
-    "codeInsee": "67182",
-    "departement": "67",
-    "population": 1696,
-    "slug": "hangenbieten",
-    "country": "france"
-  },
-  "aides . gerstheim": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "67154"
-    },
-    "codeInsee": "67154",
-    "departement": "67",
-    "population": 3452,
-    "slug": "gerstheim",
-    "country": "france"
-  },
   "aides . eschau": {
     "collectivity": {
       "kind": "code insee",
@@ -510,27 +519,16 @@
     "slug": "marckolsheim",
     "country": "france"
   },
-  "aides . marckolsheim": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "67281"
-    },
-    "codeInsee": "67281",
-    "departement": "67",
-    "population": 4234,
-    "slug": "marckolsheim",
-    "country": "france"
-  },
-  "aides . pays de saverne": {
+  "aides . vallée de villé": {
     "collectivity": {
       "kind": "epci",
-      "value": "CC du Pays de Saverne",
-      "code": "200068112"
+      "value": "CC de la Vallée de Villé",
+      "code": "246700777"
     },
-    "codeInsee": "67437",
+    "codeInsee": "67507",
     "departement": "67",
-    "population": 11303,
-    "slug": "saverne",
+    "population": 1786,
+    "slug": "ville-67",
     "country": "france"
   },
   "aides . val d'argent": {
@@ -545,6 +543,30 @@
     "slug": "sainte-marie-aux-mines",
     "country": "france"
   },
+  "aides . selestat": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC de Sélestat",
+      "code": "246700967"
+    },
+    "codeInsee": "67462",
+    "departement": "67",
+    "population": 19279,
+    "slug": "selestat",
+    "country": "france"
+  },
+  "aides . pays de saverne": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC du Pays de Saverne",
+      "code": "200068112"
+    },
+    "codeInsee": "67437",
+    "departement": "67",
+    "population": 11303,
+    "slug": "saverne",
+    "country": "france"
+  },
   "aides . illkirch": {
     "collectivity": {
       "kind": "code insee",
@@ -554,17 +576,6 @@
     "departement": "67",
     "population": 27087,
     "slug": "illkirch-graffenstaden",
-    "country": "france"
-  },
-  "aides . plobsheim": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "67378"
-    },
-    "codeInsee": "67378",
-    "departement": "67",
-    "population": 4475,
-    "slug": "plobsheim",
     "country": "france"
   },
   "aides . vendenheim": {
@@ -662,19 +673,29 @@
     "slug": "quimperle",
     "country": "france"
   },
-  "aides . laon": {
+  "aides . caen": {
     "collectivity": {
-      "kind": "epci",
-      "value": "CA du Pays de Laon",
-      "code": "200043495"
+      "kind": "code insee",
+      "value": "14118"
     },
-    "codeInsee": "02408",
-    "departement": "02",
-    "population": 24091,
-    "slug": "laon",
+    "codeInsee": "14118",
+    "departement": "14",
+    "population": 107250,
+    "slug": "caen",
     "country": "france"
   },
-  "aides . caen": {
+  "aides . caen jeune": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "14118"
+    },
+    "codeInsee": "14118",
+    "departement": "14",
+    "population": 107250,
+    "slug": "caen",
+    "country": "france"
+  },
+  "aides . caen vélo adapté": {
     "collectivity": {
       "kind": "code insee",
       "value": "14118"
@@ -695,6 +716,17 @@
     "departement": "14",
     "population": 107250,
     "slug": "caen",
+    "country": "france"
+  },
+  "aides . thue et mue": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "14098"
+    },
+    "codeInsee": "14098",
+    "departement": "14",
+    "population": 6150,
+    "slug": "thue-et-mue",
     "country": "france"
   },
   "aides . hermanville-sur-mer": {
@@ -719,17 +751,6 @@
     "slug": "carpiquet",
     "country": "france"
   },
-  "aides . herouville": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "14327"
-    },
-    "codeInsee": "14327",
-    "departement": "14",
-    "population": 22150,
-    "slug": "herouville-saint-clair",
-    "country": "france"
-  },
   "aides . ifs": {
     "collectivity": {
       "kind": "code insee",
@@ -752,18 +773,6 @@
     "slug": "mondeville-14",
     "country": "france"
   },
-  "aides . terre d'auge": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC Terre d'Auge",
-      "code": "241400878"
-    },
-    "codeInsee": "14514",
-    "departement": "14",
-    "population": 4790,
-    "slug": "pont-leveque-14",
-    "country": "france"
-  },
   "aides . flers": {
     "collectivity": {
       "kind": "epci",
@@ -774,6 +783,28 @@
     "departement": "61",
     "population": 14589,
     "slug": "flers-61",
+    "country": "france"
+  },
+  "aides . dreux": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "28134"
+    },
+    "codeInsee": "28134",
+    "departement": "28",
+    "population": 30744,
+    "slug": "dreux",
+    "country": "france"
+  },
+  "aides . val-au-perche": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "61484"
+    },
+    "codeInsee": "61484",
+    "departement": "61",
+    "population": 3410,
+    "slug": "val-au-perche",
     "country": "france"
   },
   "aides . ronchin": {
@@ -807,17 +838,6 @@
     "departement": "90",
     "population": 45458,
     "slug": "belfort",
-    "country": "france"
-  },
-  "aides . ouistreham": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "14488"
-    },
-    "codeInsee": "14488",
-    "departement": "14",
-    "population": 9438,
-    "slug": "ouistreham",
     "country": "france"
   },
   "aides . verson": {
@@ -899,17 +919,6 @@
     "slug": "honfleur",
     "country": "france"
   },
-  "aides . montlouis sur loire": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "37156"
-    },
-    "codeInsee": "37156",
-    "departement": "37",
-    "population": 10895,
-    "slug": "montlouis-sur-loire",
-    "country": "france"
-  },
   "aides . istres": {
     "collectivity": {
       "kind": "code insee",
@@ -933,18 +942,6 @@
     "slug": "montbeliard",
     "country": "france"
   },
-  "aides . besançon": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CU Grand Besançon Métropole",
-      "code": "242500361"
-    },
-    "codeInsee": "25056",
-    "departement": "25",
-    "population": 118258,
-    "slug": "besancon",
-    "country": "france"
-  },
   "aides . montbéliard": {
     "collectivity": {
       "kind": "code insee",
@@ -954,6 +951,18 @@
     "departement": "25",
     "population": 25726,
     "slug": "montbeliard",
+    "country": "france"
+  },
+  "aides . vienne gartempe": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC Vienne et Gartempe",
+      "code": "200070043"
+    },
+    "codeInsee": "86165",
+    "departement": "86",
+    "population": 5914,
+    "slug": "montmorillon",
     "country": "france"
   },
   "aides . vienne condrieu": {
@@ -968,6 +977,17 @@
     "slug": "vienne",
     "country": "france"
   },
+  "aides . pont-de-beauvoisin": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "38315"
+    },
+    "codeInsee": "38315",
+    "departement": "38",
+    "population": 3546,
+    "slug": "le-pont-de-beauvoisin-38",
+    "country": "france"
+  },
   "aides . saint-marcellin vercors isère": {
     "collectivity": {
       "kind": "epci",
@@ -980,59 +1000,15 @@
     "slug": "saint-marcellin",
     "country": "france"
   },
-  "aides . noyarey": {
+  "aides . montval sur loir": {
     "collectivity": {
       "kind": "code insee",
-      "value": "38281"
+      "value": "72071"
     },
-    "codeInsee": "38281",
-    "departement": "38",
-    "population": 2242,
-    "slug": "noyarey",
-    "country": "france"
-  },
-  "aides . vif": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "38545"
-    },
-    "codeInsee": "38545",
-    "departement": "38",
-    "population": 8614,
-    "slug": "vif",
-    "country": "france"
-  },
-  "aides . crolles": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "38140"
-    },
-    "codeInsee": "38140",
-    "departement": "38",
-    "population": 8193,
-    "slug": "crolles",
-    "country": "france"
-  },
-  "aides . ploemeur": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "56162"
-    },
-    "codeInsee": "56162",
-    "departement": "56",
-    "population": 18537,
-    "slug": "ploemeur",
-    "country": "france"
-  },
-  "aides . daix": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "21223"
-    },
-    "codeInsee": "21223",
-    "departement": "21",
-    "population": 1541,
-    "slug": "daix",
+    "codeInsee": "72071",
+    "departement": "72",
+    "population": 5903,
+    "slug": "montval-sur-loir",
     "country": "france"
   },
   "aides . sorgues du comtat": {
@@ -1070,6 +1046,18 @@
     "slug": "sarlat-la-caneda",
     "country": "france"
   },
+  "aides . vallée de l'homme": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC de la Vallée de l'Homme",
+      "code": "200041168"
+    },
+    "codeInsee": "24291",
+    "departement": "24",
+    "population": 2757,
+    "slug": "montignac-lascaux",
+    "country": "france"
+  },
   "aides . sablé sur sarthe": {
     "collectivity": {
       "kind": "code insee",
@@ -1079,18 +1067,6 @@
     "departement": "72",
     "population": 12123,
     "slug": "sable-sur-sarthe",
-    "country": "france"
-  },
-  "aides . loue lison": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC Loue-Lison",
-      "code": "200068070"
-    },
-    "codeInsee": "25434",
-    "departement": "25",
-    "population": 4422,
-    "slug": "ornans-25",
     "country": "france"
   },
   "aides . département somme": {
@@ -1138,15 +1114,27 @@
     "slug": "montdidier-80",
     "country": "france"
   },
-  "aides . rivery": {
+  "aides . somme sud-ouest": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC Somme Sud-Ouest",
+      "code": "200071181"
+    },
+    "codeInsee": "80630",
+    "departement": "80",
+    "population": 2332,
+    "slug": "poix-de-picardie",
+    "country": "france"
+  },
+  "aides . albert": {
     "collectivity": {
       "kind": "code insee",
-      "value": "80674"
+      "value": "80016"
     },
-    "codeInsee": "80674",
+    "codeInsee": "80016",
     "departement": "80",
-    "population": 3623,
-    "slug": "rivery",
+    "population": 9814,
+    "slug": "albert",
     "country": "france"
   },
   "aides . faches-thumesnil": {
@@ -1208,17 +1196,6 @@
     "slug": "molsheim",
     "country": "france"
   },
-  "aides . wasselonne": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "67520"
-    },
-    "codeInsee": "67520",
-    "departement": "67",
-    "population": 5755,
-    "slug": "wasselonne",
-    "country": "france"
-  },
   "aides . les sables d'olonne": {
     "collectivity": {
       "kind": "epci",
@@ -1243,18 +1220,42 @@
     "slug": "brindas",
     "country": "france"
   },
-  "aides . département loire": {
+  "aides . pays de l'arbresle": {
     "collectivity": {
-      "kind": "département",
-      "value": "42"
+      "kind": "epci",
+      "value": "CC du Pays de l'Arbresle (CCPA)",
+      "code": "246900625"
     },
-    "codeInsee": "42218",
-    "departement": "42",
-    "population": 174082,
-    "slug": "saint-etienne",
+    "codeInsee": "69112",
+    "departement": "69",
+    "population": 6510,
+    "slug": "lentilly",
     "country": "france"
   },
-  "aides . département Hérault": {
+  "aides . pays de l'ozon": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC du Pays de l'Ozon",
+      "code": "246900765"
+    },
+    "codeInsee": "69291",
+    "departement": "69",
+    "population": 5850,
+    "slug": "saint-symphorien-dozon",
+    "country": "france"
+  },
+  "aides . département hérault": {
+    "collectivity": {
+      "kind": "département",
+      "value": "34"
+    },
+    "codeInsee": "34172",
+    "departement": "34",
+    "population": 299096,
+    "slug": "montpellier",
+    "country": "france"
+  },
+  "aides . département hérault vélo adapté": {
     "collectivity": {
       "kind": "département",
       "value": "34"
@@ -1277,6 +1278,18 @@
     "slug": "montpellier",
     "country": "france"
   },
+  "aides . montpellier vélo adapté": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "Montpellier Méditerranée Métropole",
+      "code": "243400017"
+    },
+    "codeInsee": "34172",
+    "departement": "34",
+    "population": 299096,
+    "slug": "montpellier",
+    "country": "france"
+  },
   "aides . sète": {
     "collectivity": {
       "kind": "epci",
@@ -1287,29 +1300,6 @@
     "departement": "34",
     "population": 44576,
     "slug": "sete",
-    "country": "france"
-  },
-  "aides . vauvert": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "30341"
-    },
-    "codeInsee": "30341",
-    "departement": "30",
-    "population": 11465,
-    "slug": "vauvert",
-    "country": "france"
-  },
-  "aides . pays d'issoire": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CA Agglo Pays d'Issoire",
-      "code": "200070407"
-    },
-    "codeInsee": "63178",
-    "departement": "63",
-    "population": 15297,
-    "slug": "issoire",
     "country": "france"
   },
   "aides . cébazat": {
@@ -1345,18 +1335,6 @@
     "slug": "romagnat",
     "country": "france"
   },
-  "aides . ambert livradois forez": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC Ambert Livradois Forez",
-      "code": "200070761"
-    },
-    "codeInsee": "63003",
-    "departement": "63",
-    "population": 6636,
-    "slug": "ambert",
-    "country": "france"
-  },
   "aides . cournon d'auvergne": {
     "collectivity": {
       "kind": "code insee",
@@ -1368,18 +1346,7 @@
     "slug": "cournon-dauvergne",
     "country": "france"
   },
-  "aides . colmar": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "68066"
-    },
-    "codeInsee": "68066",
-    "departement": "68",
-    "population": 68294,
-    "slug": "colmar",
-    "country": "france"
-  },
-  "aides . avignon": {
+  "aides . grand avignon": {
     "collectivity": {
       "kind": "epci",
       "value": "CA du Grand Avignon (COGA)",
@@ -1391,15 +1358,15 @@
     "slug": "avignon",
     "country": "france"
   },
-  "aides . villeneuve lez avignon": {
+  "aides . avignon": {
     "collectivity": {
       "kind": "code insee",
-      "value": "30351"
+      "value": "84007"
     },
-    "codeInsee": "30351",
-    "departement": "30",
-    "population": 12848,
-    "slug": "villeneuve-les-avignon",
+    "codeInsee": "84007",
+    "departement": "84",
+    "population": 90597,
+    "slug": "avignon",
     "country": "france"
   },
   "aides . luberon": {
@@ -1412,17 +1379,6 @@
     "departement": "84",
     "population": 25832,
     "slug": "cavaillon",
-    "country": "france"
-  },
-  "aides . charenton": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "94018"
-    },
-    "codeInsee": "94018",
-    "departement": "94",
-    "population": 29632,
-    "slug": "charenton-le-pont",
     "country": "france"
   },
   "aides . kremlin-bicetre": {
@@ -1470,6 +1426,17 @@
     "slug": "lescar",
     "country": "france"
   },
+  "aides . bidart": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "64125"
+    },
+    "codeInsee": "64125",
+    "departement": "64",
+    "population": 7224,
+    "slug": "bidart",
+    "country": "france"
+  },
   "aides . vallée d'ossau": {
     "collectivity": {
       "kind": "epci",
@@ -1480,18 +1447,6 @@
     "departement": "64",
     "population": 2253,
     "slug": "arudy",
-    "country": "france"
-  },
-  "aides . grand lac": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CA Grand Lac",
-      "code": "200068674"
-    },
-    "codeInsee": "73008",
-    "departement": "73",
-    "population": 31100,
-    "slug": "aix-les-bains",
     "country": "france"
   },
   "aides . aix les bains": {
@@ -1505,15 +1460,27 @@
     "slug": "aix-les-bains",
     "country": "france"
   },
-  "aides . bourget-du-lac": {
+  "aides . coeur de maurienne arvan": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC Coeur de Maurienne Arvan",
+      "code": "200070464"
+    },
+    "codeInsee": "73248",
+    "departement": "73",
+    "population": 7560,
+    "slug": "saint-jean-de-maurienne",
+    "country": "france"
+  },
+  "aides . morzine-avoriaz": {
     "collectivity": {
       "kind": "code insee",
-      "value": "73051"
+      "value": "74191"
     },
-    "codeInsee": "73051",
-    "departement": "73",
-    "population": 4911,
-    "slug": "le-bourget-du-lac",
+    "codeInsee": "74191",
+    "departement": "74",
+    "population": 2690,
+    "slug": "morzine",
     "country": "france"
   },
   "aides . bourg-saint-maurice": {
@@ -1527,18 +1494,6 @@
     "slug": "bourg-saint-maurice",
     "country": "france"
   },
-  "aides . sisteronais-buëch": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC du Sisteronais-Buëch",
-      "code": "200068765"
-    },
-    "codeInsee": "04209",
-    "departement": "04",
-    "population": 7669,
-    "slug": "sisteron",
-    "country": "france"
-  },
   "aides . la motte servolex": {
     "collectivity": {
       "kind": "code insee",
@@ -1550,52 +1505,38 @@
     "slug": "la-motte-servolex",
     "country": "france"
   },
-  "aides . ardenne": {
+  "aides . montagnole": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "73160"
+    },
+    "codeInsee": "73160",
+    "departement": "73",
+    "population": 976,
+    "slug": "montagnole",
+    "country": "france"
+  },
+  "aides . saint alban leysse": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "73222"
+    },
+    "codeInsee": "73222",
+    "departement": "73",
+    "population": 6286,
+    "slug": "saint-alban-leysse",
+    "country": "france"
+  },
+  "aides . les crêtes préardennaises": {
     "collectivity": {
       "kind": "epci",
-      "value": "CA Ardenne Métropole",
-      "code": "200041630"
+      "value": "CC des Crêtes Préardennaises",
+      "code": "240800862"
     },
-    "codeInsee": "08105",
+    "codeInsee": "08419",
     "departement": "08",
-    "population": 46388,
-    "slug": "charleville-mezieres",
-    "country": "france"
-  },
-  "aides . erdregesvres": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC d'Erdre et Gesvres",
-      "code": "244400503"
-    },
-    "codeInsee": "44209",
-    "departement": "44",
-    "population": 10054,
-    "slug": "treillieres",
-    "country": "france"
-  },
-  "aides . sud estuaire": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC du Sud Estuaire",
-      "code": "244400586"
-    },
-    "codeInsee": "44154",
-    "departement": "44",
-    "population": 14473,
-    "slug": "saint-brevin-les-pins",
-    "country": "france"
-  },
-  "aides . grand lieu": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC Grand Lieu Communauté",
-      "code": "244400438"
-    },
-    "codeInsee": "44188",
-    "departement": "44",
-    "population": 9213,
-    "slug": "saint-philbert-de-grand-lieu",
+    "population": 1351,
+    "slug": "signy-labbaye",
     "country": "france"
   },
   "aides . clisson": {
@@ -1619,18 +1560,6 @@
     "departement": "44",
     "population": 9412,
     "slug": "vallet-44",
-    "country": "france"
-  },
-  "aides . chateaubriant derval": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC Châteaubriant-Derval",
-      "code": "200072726"
-    },
-    "codeInsee": "44036",
-    "departement": "44",
-    "population": 12016,
-    "slug": "chateaubriant",
     "country": "france"
   },
   "aides . pays ancenis": {
@@ -1666,6 +1595,17 @@
     "departement": "21",
     "population": 159106,
     "slug": "dijon",
+    "country": "france"
+  },
+  "aides . boé": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "47031"
+    },
+    "codeInsee": "47031",
+    "departement": "47",
+    "population": 5639,
+    "slug": "boe",
     "country": "france"
   },
   "aides . sophia antipolis": {
@@ -1713,6 +1653,17 @@
     "slug": "pantin",
     "country": "france"
   },
+  "aides . aubervilliers": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "93001"
+    },
+    "codeInsee": "93001",
+    "departement": "93",
+    "population": 89401,
+    "slug": "aubervilliers",
+    "country": "france"
+  },
   "aides . rueil-malmaison": {
     "collectivity": {
       "kind": "code insee",
@@ -1722,17 +1673,6 @@
     "departement": "92",
     "population": 78265,
     "slug": "rueil-malmaison",
-    "country": "france"
-  },
-  "aides . courbevoie": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "92026"
-    },
-    "codeInsee": "92026",
-    "departement": "92",
-    "population": 82074,
-    "slug": "courbevoie",
     "country": "france"
   },
   "aides . mons en baroeul": {
@@ -1780,30 +1720,6 @@
     "slug": "charny-oree-de-puisaye",
     "country": "france"
   },
-  "aides . nevers": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CA de Nevers",
-      "code": "245804406"
-    },
-    "codeInsee": "58194",
-    "departement": "58",
-    "population": 32284,
-    "slug": "nevers",
-    "country": "france"
-  },
-  "aides . sud nivernais": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC Sud Nivernais",
-      "code": "200067700"
-    },
-    "codeInsee": "58095",
-    "departement": "58",
-    "population": 5193,
-    "slug": "decize",
-    "country": "france"
-  },
   "aides . aurillac": {
     "collectivity": {
       "kind": "epci",
@@ -1828,15 +1744,15 @@
     "slug": "marquise",
     "country": "france"
   },
-  "aides . carvin": {
+  "aides . saint-omer": {
     "collectivity": {
       "kind": "code insee",
-      "value": "62215"
+      "value": "62765"
     },
-    "codeInsee": "62215",
+    "codeInsee": "62765",
     "departement": "62",
-    "population": 17667,
-    "slug": "carvin",
+    "population": 14782,
+    "slug": "saint-omer-62",
     "country": "france"
   },
   "aides . les herbiers": {
@@ -1874,34 +1790,11 @@
     "slug": "frejus",
     "country": "france"
   },
-  "aides . orléans": {
+  "aides . portes de sologne": {
     "collectivity": {
       "kind": "epci",
-      "value": "Orléans Métropole",
-      "code": "244500468"
-    },
-    "codeInsee": "45234",
-    "departement": "45",
-    "population": 117026,
-    "slug": "orleans",
-    "country": "france"
-  },
-  "aides . gien": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC Giennoises",
-      "code": "244500211"
-    },
-    "codeInsee": "45155",
-    "departement": "45",
-    "population": 13305,
-    "slug": "gien",
-    "country": "france"
-  },
-  "aides . ferte saint aubin": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "45146"
+      "value": "CC des Portes de Sologne",
+      "code": "200005932"
     },
     "codeInsee": "45146",
     "departement": "45",
@@ -1909,10 +1802,11 @@
     "slug": "la-ferte-saint-aubin",
     "country": "france"
   },
-  "aides . reims": {
+  "aides . grand reims": {
     "collectivity": {
-      "kind": "code insee",
-      "value": "51454"
+      "kind": "epci",
+      "value": "CU du Grand Reims",
+      "code": "200067213"
     },
     "codeInsee": "51454",
     "departement": "51",
@@ -1920,11 +1814,10 @@
     "slug": "reims",
     "country": "france"
   },
-  "aides . grand reims": {
+  "aides . reims": {
     "collectivity": {
-      "kind": "epci",
-      "value": "CU du Grand Reims",
-      "code": "200067213"
+      "kind": "code insee",
+      "value": "51454"
     },
     "codeInsee": "51454",
     "departement": "51",
@@ -1956,18 +1849,6 @@
     "slug": "saint-julien-en-genevois",
     "country": "france"
   },
-  "aides . pays rochois": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC du Pays Rochois",
-      "code": "247400724"
-    },
-    "codeInsee": "74224",
-    "departement": "74",
-    "population": 11155,
-    "slug": "la-roche-sur-foron",
-    "country": "france"
-  },
   "aides . arve salève": {
     "collectivity": {
       "kind": "epci",
@@ -1978,6 +1859,18 @@
     "departement": "74",
     "population": 8150,
     "slug": "reignier-esery",
+    "country": "france"
+  },
+  "aides . cluses arve et montagnes": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC Cluses-Arve et Montagnes",
+      "code": "200033116"
+    },
+    "codeInsee": "74081",
+    "departement": "74",
+    "population": 16976,
+    "slug": "cluses",
     "country": "france"
   },
   "aides . évian-les-bains": {
@@ -1991,17 +1884,6 @@
     "slug": "evian-les-bains",
     "country": "france"
   },
-  "aides . marignier": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "74164"
-    },
-    "codeInsee": "74164",
-    "departement": "74",
-    "population": 6333,
-    "slug": "marignier",
-    "country": "france"
-  },
   "aides . combloux": {
     "collectivity": {
       "kind": "code insee",
@@ -2011,6 +1893,28 @@
     "departement": "74",
     "population": 2109,
     "slug": "combloux",
+    "country": "france"
+  },
+  "aides . châtel": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "74063"
+    },
+    "codeInsee": "74063",
+    "departement": "74",
+    "population": 1219,
+    "slug": "chatel",
+    "country": "france"
+  },
+  "aides . le vigan": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "30350"
+    },
+    "codeInsee": "30350",
+    "departement": "30",
+    "population": 3708,
+    "slug": "le-vigan-30",
     "country": "france"
   },
   "aides . angers": {
@@ -2035,30 +1939,6 @@
     "departement": "79",
     "population": 7243,
     "slug": "saint-maixent-lecole",
-    "country": "france"
-  },
-  "aides . agglo bocage bressuirais": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CA du Bocage Bressuirais",
-      "code": "200040244"
-    },
-    "codeInsee": "79049",
-    "departement": "79",
-    "population": 19862,
-    "slug": "bressuire",
-    "country": "france"
-  },
-  "aides . brissac loire aubance": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC Loire Layon Aubance",
-      "code": "200071553"
-    },
-    "codeInsee": "49050",
-    "departement": "49",
-    "population": 10906,
-    "slug": "brissac-loire-aubance",
     "country": "france"
   },
   "aides . anjou bleu": {
@@ -2097,42 +1977,6 @@
     "slug": "poitiers",
     "country": "france"
   },
-  "aides . haut-poitou": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC du Haut-Poitou",
-      "code": "200069763"
-    },
-    "codeInsee": "86281",
-    "departement": "86",
-    "population": 5594,
-    "slug": "saint-martin-la-pallu",
-    "country": "france"
-  },
-  "aides . châtellrault": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CA Grand Châtellerault",
-      "code": "248600413"
-    },
-    "codeInsee": "86066",
-    "departement": "86",
-    "population": 31573,
-    "slug": "chatellerault",
-    "country": "france"
-  },
-  "aides . pays de l'or": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CA du Pays de l'Or",
-      "code": "243400470"
-    },
-    "codeInsee": "34154",
-    "departement": "34",
-    "population": 16714,
-    "slug": "mauguio",
-    "country": "france"
-  },
   "aides . grand orb": {
     "collectivity": {
       "kind": "epci",
@@ -2143,29 +1987,6 @@
     "departement": "34",
     "population": 5736,
     "slug": "bedarieux",
-    "country": "france"
-  },
-  "aides . saint-jean-de-védas": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "34270"
-    },
-    "codeInsee": "34270",
-    "departement": "34",
-    "population": 11843,
-    "slug": "saint-jean-de-vedas",
-    "country": "france"
-  },
-  "aides . annemasse": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CA Annemasse-Les Voirons-Agglomération",
-      "code": "200011773"
-    },
-    "codeInsee": "74012",
-    "departement": "74",
-    "population": 37485,
-    "slug": "annemasse",
     "country": "france"
   },
   "aides . montlucon": {
@@ -2190,30 +2011,6 @@
     "departement": "50",
     "population": 77789,
     "slug": "cherbourg-en-cotentin",
-    "country": "france"
-  },
-  "aides . coutances mer et bocage": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC Coutances Mer et Bocage",
-      "code": "200067023"
-    },
-    "codeInsee": "50147",
-    "departement": "50",
-    "population": 8380,
-    "slug": "coutances",
-    "country": "france"
-  },
-  "aides . saint-lô": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CA Saint-Lô Agglo",
-      "code": "200066389"
-    },
-    "codeInsee": "50502",
-    "departement": "50",
-    "population": 19206,
-    "slug": "saint-lo",
     "country": "france"
   },
   "aides . granville": {
@@ -2248,18 +2045,6 @@
     "departement": "50",
     "population": 4103,
     "slug": "saint-pair-sur-mer",
-    "country": "france"
-  },
-  "aides . la rochelle": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CA de La Rochelle",
-      "code": "241700434"
-    },
-    "codeInsee": "17300",
-    "departement": "17",
-    "population": 77210,
-    "slug": "la-rochelle-17",
     "country": "france"
   },
   "aides . aunis atlantique": {
@@ -2298,18 +2083,6 @@
     "slug": "epinal",
     "country": "france"
   },
-  "aides . vannes": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CA Golfe du Morbihan - Vannes Agglomération",
-      "code": "200067932"
-    },
-    "codeInsee": "56260",
-    "departement": "56",
-    "population": 54017,
-    "slug": "vannes",
-    "country": "france"
-  },
   "aides . quéven": {
     "collectivity": {
       "kind": "code insee",
@@ -2343,17 +2116,6 @@
     "departement": "17",
     "population": 25412,
     "slug": "saintes",
-    "country": "france"
-  },
-  "aides . seine-maritime": {
-    "collectivity": {
-      "kind": "département",
-      "value": "76"
-    },
-    "codeInsee": "76540",
-    "departement": "76",
-    "population": 114187,
-    "slug": "rouen",
     "country": "france"
   },
   "aides . dieppe": {
@@ -2403,18 +2165,6 @@
     "slug": "saint-valery-en-caux",
     "country": "france"
   },
-  "aides . caux austreberthe": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC Caux - Austreberthe",
-      "code": "247600646"
-    },
-    "codeInsee": "76057",
-    "departement": "76",
-    "population": 12239,
-    "slug": "barentin",
-    "country": "france"
-  },
   "aides . pavilly": {
     "collectivity": {
       "kind": "code insee",
@@ -2448,6 +2198,41 @@
     "slug": "arcachon",
     "country": "france"
   },
+  "aides . canélan": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "33090"
+    },
+    "codeInsee": "33090",
+    "departement": "33",
+    "population": 5997,
+    "slug": "canejan",
+    "country": "france"
+  },
+  "aides . bassin d'arcachon nord": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CA du Bassin d'Arcachon Nord",
+      "code": "243301504"
+    },
+    "codeInsee": "33005",
+    "departement": "33",
+    "population": 12284,
+    "slug": "andernos-les-bains",
+    "country": "france"
+  },
+  "aides . grand cubzaguais": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC du Grand Cubzaguais",
+      "code": "243301223"
+    },
+    "codeInsee": "33366",
+    "departement": "33",
+    "population": 12735,
+    "slug": "saint-andre-de-cubzac",
+    "country": "france"
+  },
   "aides . bourges": {
     "collectivity": {
       "kind": "epci",
@@ -2458,17 +2243,6 @@
     "departement": "18",
     "population": 64362,
     "slug": "bourges",
-    "country": "france"
-  },
-  "aides . corrèze": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "19062"
-    },
-    "codeInsee": "19062",
-    "departement": "19",
-    "population": 1151,
-    "slug": "correze",
     "country": "france"
   },
   "aides . montauban": {
@@ -2495,15 +2269,16 @@
     "slug": "mont-de-marsan",
     "country": "france"
   },
-  "aides . bourg-en-bresse": {
+  "aides . plaine de l'ain": {
     "collectivity": {
-      "kind": "code insee",
-      "value": "01053"
+      "kind": "epci",
+      "value": "CC de la Plaine de l'Ain",
+      "code": "240100883"
     },
-    "codeInsee": "01053",
+    "codeInsee": "01004",
     "departement": "01",
-    "population": 41681,
-    "slug": "bourg-en-bresse",
+    "population": 14288,
+    "slug": "amberieu-en-bugey",
     "country": "france"
   },
   "aides . divonne-les-bains": {
@@ -2539,6 +2314,30 @@
     "departement": "07",
     "population": 10835,
     "slug": "tournon-sur-rhone",
+    "country": "france"
+  },
+  "aides . annonay": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CA Annonay Rhône Agglo",
+      "code": "200072015"
+    },
+    "codeInsee": "07010",
+    "departement": "07",
+    "population": 16359,
+    "slug": "annonay",
+    "country": "france"
+  },
+  "aides . bassin d'aubenas": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC du Bassin d'Aubenas",
+      "code": "200073245"
+    },
+    "codeInsee": "07019",
+    "departement": "07",
+    "population": 12403,
+    "slug": "aubenas",
     "country": "france"
   },
   "aides . lorient": {
@@ -2612,17 +2411,6 @@
     "slug": "brissac-loire-aubance",
     "country": "france"
   },
-  "aides . mayenne": {
-    "collectivity": {
-      "kind": "département",
-      "value": "53"
-    },
-    "codeInsee": "53130",
-    "departement": "53",
-    "population": 49617,
-    "slug": "laval",
-    "country": "france"
-  },
   "aides . laval": {
     "collectivity": {
       "kind": "epci",
@@ -2633,18 +2421,6 @@
     "departement": "53",
     "population": 49617,
     "slug": "laval",
-    "country": "france"
-  },
-  "aides . bocage mayennais": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC du Bocage Mayennais",
-      "code": "245300389"
-    },
-    "codeInsee": "53003",
-    "departement": "53",
-    "population": 2625,
-    "slug": "ambrieres-les-vallees",
     "country": "france"
   },
   "aides . brive": {
@@ -2670,18 +2446,6 @@
     "slug": "talant",
     "country": "france"
   },
-  "aides . vendée grand littoral": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC Vendée Grand Littoral",
-      "code": "200071900"
-    },
-    "codeInsee": "85288",
-    "departement": "85",
-    "population": 7933,
-    "slug": "talmont-saint-hilaire",
-    "country": "france"
-  },
   "aides . pays des achards": {
     "collectivity": {
       "kind": "epci",
@@ -2694,18 +2458,6 @@
     "slug": "les-achards",
     "country": "france"
   },
-  "aides . terres de montaigu": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CA Terres de Montaigu",
-      "code": "200070233"
-    },
-    "codeInsee": "85146",
-    "departement": "85",
-    "population": 20578,
-    "slug": "montaigu-vendee",
-    "country": "france"
-  },
   "aides . hem": {
     "collectivity": {
       "kind": "code insee",
@@ -2715,18 +2467,6 @@
     "departement": "59",
     "population": 18462,
     "slug": "hem",
-    "country": "france"
-  },
-  "aides . saint-omer": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CA du Pays de Saint-Omer",
-      "code": "200069037"
-    },
-    "codeInsee": "62765",
-    "departement": "62",
-    "population": 14782,
-    "slug": "saint-omer-62",
     "country": "france"
   },
   "aides . liévin": {
@@ -2796,18 +2536,6 @@
     "slug": "loos-en-gohelle",
     "country": "france"
   },
-  "aides . pévèle carembault": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC Pévèle-Carembault",
-      "code": "200041960"
-    },
-    "codeInsee": "59449",
-    "departement": "59",
-    "population": 8529,
-    "slug": "orchies",
-    "country": "france"
-  },
   "aides . gruson": {
     "collectivity": {
       "kind": "code insee",
@@ -2819,6 +2547,61 @@
     "slug": "gruson",
     "country": "france"
   },
+  "aides . iwuy": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "59322"
+    },
+    "codeInsee": "59322",
+    "departement": "59",
+    "population": 3358,
+    "slug": "iwuy",
+    "country": "france"
+  },
+  "aides . denain": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "59172"
+    },
+    "codeInsee": "59172",
+    "departement": "59",
+    "population": 20415,
+    "slug": "denain",
+    "country": "france"
+  },
+  "aides . feignies": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "59225"
+    },
+    "codeInsee": "59225",
+    "departement": "59",
+    "population": 6763,
+    "slug": "feignies",
+    "country": "france"
+  },
+  "aides . wambrechies": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "59636"
+    },
+    "codeInsee": "59636",
+    "departement": "59",
+    "population": 10716,
+    "slug": "wambrechies",
+    "country": "france"
+  },
+  "aides . fourmies": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "59249"
+    },
+    "codeInsee": "59249",
+    "departement": "59",
+    "population": 11403,
+    "slug": "fourmies",
+    "country": "france"
+  },
   "aides . lesquin": {
     "collectivity": {
       "kind": "code insee",
@@ -2828,17 +2611,6 @@
     "departement": "59",
     "population": 9113,
     "slug": "lesquin",
-    "country": "france"
-  },
-  "aides . marcq-en-baroeul": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "59378"
-    },
-    "codeInsee": "59378",
-    "departement": "59",
-    "population": 38604,
-    "slug": "marcq-en-baroeul",
     "country": "france"
   },
   "aides . lezenne": {
@@ -2911,6 +2683,18 @@
     "slug": "cambrai",
     "country": "france"
   },
+  "aides . cœur d'ostrevent": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC Coeur d'Ostrevent (CCCO)",
+      "code": "245901152"
+    },
+    "codeInsee": "59574",
+    "departement": "59",
+    "population": 11869,
+    "slug": "somain",
+    "country": "france"
+  },
   "aides . thiais": {
     "collectivity": {
       "kind": "code insee",
@@ -2964,17 +2748,6 @@
     "departement": "93",
     "population": 71276,
     "slug": "drancy",
-    "country": "france"
-  },
-  "aides . fontenay": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "94033"
-    },
-    "codeInsee": "94033",
-    "departement": "94",
-    "population": 51386,
-    "slug": "fontenay-sous-bois",
     "country": "france"
   },
   "aides . rives de moselle": {
@@ -3068,6 +2841,18 @@
     "slug": "plougastel-daoulas",
     "country": "france"
   },
+  "aides . pays d'iroise": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC du Pays d'Iroise",
+      "code": "242900074"
+    },
+    "codeInsee": "29260",
+    "departement": "29",
+    "population": 8276,
+    "slug": "saint-renan",
+    "country": "france"
+  },
   "aides . haute-cornouaille": {
     "collectivity": {
       "kind": "epci",
@@ -3100,18 +2885,6 @@
     "departement": "29",
     "population": 6743,
     "slug": "saint-pol-de-leon",
-    "country": "france"
-  },
-  "aides . cote d'émeraude": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC Terre d'Émeraude Communauté",
-      "code": "200090579"
-    },
-    "codeInsee": "39333",
-    "departement": "39",
-    "population": 2133,
-    "slug": "moirans-en-montagne",
     "country": "france"
   },
   "aides . baie du mont saint-michel": {
@@ -3220,6 +2993,17 @@
     "slug": "perros-guirec",
     "country": "france"
   },
+  "aides . trébeurden": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "22343"
+    },
+    "codeInsee": "22343",
+    "departement": "22",
+    "population": 3701,
+    "slug": "trebeurden",
+    "country": "france"
+  },
   "aides . morlaix": {
     "collectivity": {
       "kind": "epci",
@@ -3230,6 +3014,30 @@
     "departement": "29",
     "population": 14709,
     "slug": "morlaix",
+    "country": "france"
+  },
+  "aides . poher": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC Poher Communauté",
+      "code": "242900744"
+    },
+    "codeInsee": "29024",
+    "departement": "29",
+    "population": 7165,
+    "slug": "carhaix-plouguer",
+    "country": "france"
+  },
+  "aides . crozon": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC Presqu'île de Crozon-Aulne maritime",
+      "code": "200066868"
+    },
+    "codeInsee": "29042",
+    "departement": "29",
+    "population": 7360,
+    "slug": "crozon",
     "country": "france"
   },
   "aides . saint-jacques de la lande": {
@@ -3277,16 +3085,16 @@
     "slug": "le-quesnoy",
     "country": "france"
   },
-  "aides . arras": {
+  "aides . grand calais": {
     "collectivity": {
       "kind": "epci",
-      "value": "CU d'Arras",
-      "code": "200033579"
+      "value": "CA Grand Calais Terres et Mers",
+      "code": "200090751"
     },
-    "codeInsee": "62041",
+    "codeInsee": "62193",
     "departement": "62",
-    "population": 42337,
-    "slug": "arras",
+    "population": 67544,
+    "slug": "calais",
     "country": "france"
   },
   "aides . pays de lumbres": {
@@ -3301,6 +3109,52 @@
     "slug": "lumbres",
     "country": "france"
   },
+  "aides . amboise": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "37003"
+    },
+    "codeInsee": "37003",
+    "departement": "37",
+    "population": 12569,
+    "slug": "amboise",
+    "country": "france"
+  },
+  "aides . vexin normand": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC du Vexin Normand",
+      "code": "200071843"
+    },
+    "codeInsee": "27284",
+    "departement": "27",
+    "population": 11863,
+    "slug": "gisors",
+    "country": "france"
+  },
+  "aides . val-de-reuil": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "27701"
+    },
+    "codeInsee": "27701",
+    "departement": "27",
+    "population": 12702,
+    "slug": "val-de-reuil",
+    "country": "france"
+  },
+  "aides . moselle et madon": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC Moselle et Madon",
+      "code": "245400171"
+    },
+    "codeInsee": "54397",
+    "departement": "54",
+    "population": 6629,
+    "slug": "neuves-maisons",
+    "country": "france"
+  },
   "aides . boulonnais": {
     "collectivity": {
       "kind": "epci",
@@ -3313,16 +3167,16 @@
     "slug": "boulogne-sur-mer",
     "country": "france"
   },
-  "aides . chateauroux": {
+  "aides . osartis-marquion": {
     "collectivity": {
       "kind": "epci",
-      "value": "CA Châteauroux Métropole",
-      "code": "243600327"
+      "value": "CC Osartis Marquion",
+      "code": "200044048"
     },
-    "codeInsee": "36044",
-    "departement": "36",
-    "population": 43331,
-    "slug": "chateauroux",
+    "codeInsee": "62173",
+    "departement": "62",
+    "population": 5128,
+    "slug": "brebieres",
     "country": "france"
   },
   "aides . pontivy": {
@@ -3335,6 +3189,18 @@
     "departement": "56",
     "population": 15092,
     "slug": "pontivy",
+    "country": "france"
+  },
+  "aides . chateauroux": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CA Châteauroux Métropole",
+      "code": "243600327"
+    },
+    "codeInsee": "36044",
+    "departement": "36",
+    "population": 43331,
+    "slug": "chateauroux",
     "country": "france"
   },
   "aides . auray quiberon": {
@@ -3361,15 +3227,27 @@
     "slug": "villeneuve-sur-lot",
     "country": "france"
   },
-  "aides . pont-saint-maxence": {
+  "aides . oise": {
     "collectivity": {
-      "kind": "code insee",
-      "value": "60509"
+      "kind": "département",
+      "value": "60"
     },
-    "codeInsee": "60509",
+    "codeInsee": "60057",
     "departement": "60",
-    "population": 12512,
-    "slug": "pont-sainte-maxence",
+    "population": 56889,
+    "slug": "beauvais",
+    "country": "france"
+  },
+  "aides . beauvais": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CA du Beauvaisis",
+      "code": "200067999"
+    },
+    "codeInsee": "60057",
+    "departement": "60",
+    "population": 56889,
+    "slug": "beauvais",
     "country": "france"
   },
   "aides . grand angouleme": {
@@ -3408,18 +3286,6 @@
     "slug": "carmaux",
     "country": "france"
   },
-  "aides . val de drôme en biovalée": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC du Val de Drôme en Biovallée",
-      "code": "242600252"
-    },
-    "codeInsee": "26165",
-    "departement": "26",
-    "population": 9254,
-    "slug": "livron-sur-drome",
-    "country": "france"
-  },
   "aides . porte du hainaut": {
     "collectivity": {
       "kind": "epci",
@@ -3455,6 +3321,466 @@
     "slug": "carignan",
     "country": "france"
   },
+  "aides . cazouls-lès-béziers": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "34069"
+    },
+    "codeInsee": "34069",
+    "departement": "34",
+    "population": 5124,
+    "slug": "cazouls-les-beziers",
+    "country": "france"
+  },
+  "aides . château-thierry": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CA de la Région de Château-Thierry",
+      "code": "200072031"
+    },
+    "codeInsee": "02168",
+    "departement": "02",
+    "population": 15306,
+    "slug": "chateau-thierry",
+    "country": "france"
+  },
+  "aides . ecommoy": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "72124"
+    },
+    "codeInsee": "72124",
+    "departement": "72",
+    "population": 4752,
+    "slug": "ecommoy",
+    "country": "france"
+  },
+  "aides . bannalec": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "29004"
+    },
+    "codeInsee": "29004",
+    "departement": "29",
+    "population": 5656,
+    "slug": "bannalec",
+    "country": "france"
+  },
+  "aides . vallées du clain": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC des Vallées du Clain",
+      "code": "200043628"
+    },
+    "codeInsee": "86293",
+    "departement": "86",
+    "population": 4437,
+    "slug": "vivonne",
+    "country": "france"
+  },
+  "aides . witry-lès-reims": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "51662"
+    },
+    "codeInsee": "51662",
+    "departement": "51",
+    "population": 4951,
+    "slug": "witry-les-reims",
+    "country": "france"
+  },
+  "aides . golf de saint-tropez": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC du Golfe de Saint-Tropez",
+      "code": "200036077"
+    },
+    "codeInsee": "83115",
+    "departement": "83",
+    "population": 14750,
+    "slug": "sainte-maxime",
+    "country": "france"
+  },
+  "aides . labège": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "31254"
+    },
+    "codeInsee": "31254",
+    "departement": "31",
+    "population": 4122,
+    "slug": "labege",
+    "country": "france"
+  },
+  "aides . hennebont": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "56083"
+    },
+    "codeInsee": "56083",
+    "departement": "56",
+    "population": 15873,
+    "slug": "hennebont",
+    "country": "france"
+  },
+  "aides . couesnon": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC Couesnon Marches de Bretagne",
+      "code": "200070688"
+    },
+    "codeInsee": "35257",
+    "departement": "35",
+    "population": 5033,
+    "slug": "maen-roch",
+    "country": "france"
+  },
+  "aides . avant-monts": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC Les Avant-Monts",
+      "code": "200071058"
+    },
+    "codeInsee": "34147",
+    "departement": "34",
+    "population": 3424,
+    "slug": "magalas",
+    "country": "france"
+  },
+  "aides . vallées de l'orne et de l'odon": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC Vallées de l'Orne et de l'Odon",
+      "code": "200066728"
+    },
+    "codeInsee": "14274",
+    "departement": "14",
+    "population": 2682,
+    "slug": "fontaine-etoupefour",
+    "country": "france"
+  },
+  "aides . joinville-le-pont": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "94042"
+    },
+    "codeInsee": "94042",
+    "departement": "94",
+    "population": 19128,
+    "slug": "joinville-le-pont",
+    "country": "france"
+  },
+  "aides . haut-béarn": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC du Haut Béarn",
+      "code": "200067262"
+    },
+    "codeInsee": "64422",
+    "departement": "64",
+    "population": 10653,
+    "slug": "oloron-sainte-marie",
+    "country": "france"
+  },
+  "aides . joinville": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "52250"
+    },
+    "codeInsee": "52250",
+    "departement": "52",
+    "population": 3001,
+    "slug": "joinville",
+    "country": "france"
+  },
+  "aides . villers-sur-mer": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "14754"
+    },
+    "codeInsee": "14754",
+    "departement": "14",
+    "population": 2507,
+    "slug": "villers-sur-mer",
+    "country": "france"
+  },
+  "aides . saint-rémy-de-provence": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "13100"
+    },
+    "codeInsee": "13100",
+    "departement": "13",
+    "population": 9692,
+    "slug": "saint-remy-de-provence",
+    "country": "france"
+  },
+  "aides . val-revermont": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "01426"
+    },
+    "codeInsee": "01426",
+    "departement": "01",
+    "population": 2506,
+    "slug": "val-revermont",
+    "country": "france"
+  },
+  "aides . pays de châteaugiron": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC Pays de Châteaugiron Communauté",
+      "code": "243500659"
+    },
+    "codeInsee": "35069",
+    "departement": "35",
+    "population": 10541,
+    "slug": "chateaugiron-35",
+    "country": "france"
+  },
+  "aides . tour du pin": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "38509"
+    },
+    "codeInsee": "38509",
+    "departement": "38",
+    "population": 8148,
+    "slug": "la-tour-du-pin",
+    "country": "france"
+  },
+  "aides . bièvre isère": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC Bièvre Isère",
+      "code": "200059392"
+    },
+    "codeInsee": "38130",
+    "departement": "38",
+    "population": 4817,
+    "slug": "la-cote-saint-andre",
+    "country": "france"
+  },
+  "aides . ceyrat": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "63070"
+    },
+    "codeInsee": "63070",
+    "departement": "63",
+    "population": 6338,
+    "slug": "ceyrat",
+    "country": "france"
+  },
+  "aides . baud": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "56010"
+    },
+    "codeInsee": "56010",
+    "departement": "56",
+    "population": 6242,
+    "slug": "baud",
+    "country": "france"
+  },
+  "aides . longuenesse": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "62525"
+    },
+    "codeInsee": "62525",
+    "departement": "62",
+    "population": 10600,
+    "slug": "longuenesse",
+    "country": "france"
+  },
+  "aides . castelnau de médoc": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "33104"
+    },
+    "codeInsee": "33104",
+    "departement": "33",
+    "population": 4820,
+    "slug": "castelnau-de-medoc",
+    "country": "france"
+  },
+  "aides . saulieu": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC de Saulieu",
+      "code": "242101442"
+    },
+    "codeInsee": "21584",
+    "departement": "21",
+    "population": 2346,
+    "slug": "saulieu",
+    "country": "france"
+  },
+  "aides . la côtière à montluel": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC de la Côtière à Montluel",
+      "code": "240100610"
+    },
+    "codeInsee": "01262",
+    "departement": "01",
+    "population": 6864,
+    "slug": "montluel",
+    "country": "france"
+  },
+  "aides . pays orne moselle": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC du Pays Orne Moselle",
+      "code": "245701271"
+    },
+    "codeInsee": "57019",
+    "departement": "57",
+    "population": 10668,
+    "slug": "amneville",
+    "country": "france"
+  },
+  "aides . bram": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "11049"
+    },
+    "codeInsee": "11049",
+    "departement": "11",
+    "population": 3226,
+    "slug": "bram",
+    "country": "france"
+  },
+  "aides . region centre": {
+    "collectivity": {
+      "kind": "région",
+      "value": "24"
+    },
+    "codeInsee": "45234",
+    "departement": "45",
+    "population": 117026,
+    "slug": "orleans",
+    "country": "france"
+  },
+  "aides . region centre rémi zen": {
+    "collectivity": {
+      "kind": "région",
+      "value": "24"
+    },
+    "codeInsee": "45234",
+    "departement": "45",
+    "population": 117026,
+    "slug": "orleans",
+    "country": "france"
+  },
+  "aides . perpignan métropole": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CU Perpignan Méditerranée Métropole",
+      "code": "200027183"
+    },
+    "codeInsee": "66136",
+    "departement": "66",
+    "population": 118032,
+    "slug": "perpignan",
+    "country": "france"
+  },
+  "aides . agen": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CA Agglomération d'Agen",
+      "code": "200096956"
+    },
+    "codeInsee": "47001",
+    "departement": "47",
+    "population": 32214,
+    "slug": "agen",
+    "country": "france"
+  },
+  "aides . fier et usses": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC Fier et Usses",
+      "code": "247400567"
+    },
+    "codeInsee": "74272",
+    "departement": "74",
+    "population": 5480,
+    "slug": "sillingy",
+    "country": "france"
+  },
+  "aides . pays de cruseilles": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC du Pays de Cruseilles",
+      "code": "247400112"
+    },
+    "codeInsee": "74096",
+    "departement": "74",
+    "population": 4665,
+    "slug": "cruseilles",
+    "country": "france"
+  },
+  "aides . tulle": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CA Tulle Agglo",
+      "code": "241927201"
+    },
+    "codeInsee": "19272",
+    "departement": "19",
+    "population": 14314,
+    "slug": "tulle",
+    "country": "france"
+  },
+  "aides . val d'yerres val de seine": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CA Val d'Yerres Val de Seine",
+      "code": "200058477"
+    },
+    "codeInsee": "91657",
+    "departement": "91",
+    "population": 31495,
+    "slug": "vigneux-sur-seine",
+    "country": "france"
+  },
+  "aides . campagnes de l'artois": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC des Campagnes de l'Artois",
+      "code": "200069482"
+    },
+    "codeInsee": "62063",
+    "departement": "62",
+    "population": 1820,
+    "slug": "avesnes-le-comte",
+    "country": "france"
+  },
+  "aides . cévennes gangeoises et suménoises": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC des Cévennes Gangeoises et Suménoises",
+      "code": "243400736"
+    },
+    "codeInsee": "34111",
+    "departement": "34",
+    "population": 4114,
+    "slug": "ganges",
+    "country": "france"
+  },
+  "aides . monmorillon": {
+    "collectivity": {
+      "kind": "code insee",
+      "value": "86164"
+    },
+    "codeInsee": "86164",
+    "departement": "86",
+    "population": 667,
+    "slug": "monthoiron",
+    "country": "france"
+  },
   "aides . monaco": {
     "collectivity": {
       "kind": "pays",
@@ -3468,5 +3794,17 @@
       "value": "Luxembourg"
     },
     "country": "luxembourg"
+  },
+  "aides . grand besançon": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CU Grand Besançon Métropole",
+      "code": "242500361"
+    },
+    "codeInsee": "25056",
+    "departement": "25",
+    "population": 118258,
+    "slug": "besancon",
+    "country": "france"
   }
 }

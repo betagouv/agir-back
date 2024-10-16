@@ -31,6 +31,7 @@ export enum UtilisateurStatus {
 export enum SourceInscription {
   web = 'web',
   mobile = 'mobile',
+  web_ngc = 'web_ngc',
   inconnue = 'inconnue',
 }
 export enum Scope {

@@ -400,6 +400,8 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
   it(`POST /utilisateurs_v2 - integration situation NGC à l'inscription`, async () => {
     // GIVEN
+    process.env.NGC_API_KEY = '12345';
+
     await TestUtil.create(DB.kYC, {
       id_cms: 1,
       code: KYCID.KYC_transport_voiture_km,
@@ -430,6 +432,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     // WHEN
     const response_post_situation = await TestUtil.getServer()
       .post('/bilan/importFromNGC')
+      .set('apikey', `12345`)
       .send({
         situation: {
           'transport . voiture . km': 20000,
@@ -467,9 +470,11 @@ describe('/utilisateurs - Inscription - (API test)', () => {
   });
   it(`POST /utilisateurs_v2 - integration situation NGC , pas d'erreurs si clé pas connu`, async () => {
     // GIVEN
+    process.env.NGC_API_KEY = '12345';
     // WHEN
     const response_post_situation = await TestUtil.getServer()
       .post('/bilan/importFromNGC')
+      .set('apikey', `12345`)
       .send({
         situation: {
           'transport . velo . km': 150,
@@ -495,9 +500,11 @@ describe('/utilisateurs - Inscription - (API test)', () => {
   });
   it(`POST /utilisateurs_v2 - integration situation NGC , pas d'erreurs n importe quoi `, async () => {
     // GIVEN
+    process.env.NGC_API_KEY = '12345';
     // WHEN
     const response_post_situation = await TestUtil.getServer()
       .post('/bilan/importFromNGC')
+      .set('apikey', `12345`)
       .send({
         situation: {
           'c est vraime null': 's:fqjvvq',

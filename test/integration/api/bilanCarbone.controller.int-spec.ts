@@ -1,11 +1,9 @@
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('BilanCarbone (API test)', () => {
-  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const OLD_ENV = process.env;
 
   beforeAll(async () => {

@@ -117,6 +117,9 @@ export class App {
   public static getAppleTestOTP(): string {
     return process.env.APPLE_TEST_OTP || '';
   }
+  public static getNGC_API_KEY(): string {
+    return process.env.NGC_API_KEY || '';
+  }
 
   public static getBasicLoginPwdBase64(): string {
     const login = this.getBasicLogin();

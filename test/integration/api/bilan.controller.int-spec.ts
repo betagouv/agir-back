@@ -9,16 +9,20 @@ import { ThematiqueRepository } from '../../../src/infrastructure/repository/the
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('/bilan (API test)', () => {
+  const OLD_ENV = process.env;
   beforeAll(async () => {
     await TestUtil.appinit();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
   });
 
   beforeEach(async () => {
+    jest.resetModules();
     await TestUtil.deleteAll();
+    process.env = { ...OLD_ENV }; // Make a copy
   });
 
   afterAll(async () => {
+    process.env = OLD_ENV;
     await TestUtil.appclose();
   });
 
@@ -384,10 +388,10 @@ describe('/bilan (API test)', () => {
     //THEN
     expect(response.status).toBe(200);
     expect(response.body.bilan_synthese).toEqual({
-      impact_transport: 'moyen',
-      impact_alimentation: 'tres_fort',
-      impact_logement: 'fort',
-      impact_consommation: 'faible',
+      impact_transport: null,
+      impact_alimentation: null,
+      impact_logement: null,
+      impact_consommation: null,
       pourcentage_completion_totale: 0,
       liens_bilans_univers: [
         {
@@ -404,8 +408,8 @@ describe('/bilan (API test)', () => {
           id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_alimentation',
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1728466523/cuisine_da54797693.svg',
-          nombre_total_question: 0,
-          pourcentage_progression: null,
+          nombre_total_question: 1,
+          pourcentage_progression: 0,
           univers: 'alimentation',
           univers_label: 'Alimentation',
           temps_minutes: 3,
@@ -414,7 +418,7 @@ describe('/bilan (API test)', () => {
           id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_consommation',
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1728468852/conso_7522b1950d.svg',
-          nombre_total_question: 2,
+          nombre_total_question: 6,
           pourcentage_progression: 0,
           univers: 'consommation',
           univers_label: 'Consommation',
@@ -508,13 +512,55 @@ describe('/bilan (API test)', () => {
     );
   });
 
-  it('POST /bilan/importFromNGC - creates new situation', async () => {
+  it('POST /bilan/importFromNGC - missing API KEY', async () => {
+    // GIVEN
+
     // WHEN
     const response = await TestUtil.POST('/bilan/importFromNGC').send({
       situation: {
         'transport . voiture . km': 12000,
       },
     });
+
+    //THEN
+    expect(response.status).toBe(401);
+    expect(response.body).toEqual({
+      code: '080',
+      message: "Clé API manquante (header 'apikey')",
+      statusCode: 401,
+    });
+  });
+  it('POST /bilan/importFromNGC - bad API KEY', async () => {
+    // GIVEN
+    process.env.NGC_API_KEY = '12345';
+    // WHEN
+    const response = await TestUtil.POST('/bilan/importFromNGC')
+      .set('apikey', `bad`)
+      .send({
+        situation: {
+          'transport . voiture . km': 12000,
+        },
+      });
+
+    //THEN
+    expect(response.status).toBe(403);
+    expect(response.body).toEqual({
+      code: '081',
+      message: 'Clé API [bad] incorrecte',
+      statusCode: 403,
+    });
+  });
+  it('POST /bilan/importFromNGC - creates new situation', async () => {
+    // GIVEN
+    process.env.NGC_API_KEY = '12345';
+    // WHEN
+    const response = await TestUtil.POST('/bilan/importFromNGC')
+      .set('apikey', `12345`)
+      .send({
+        situation: {
+          'transport . voiture . km': 12000,
+        },
+      });
 
     //THEN
     expect(response.status).toBe(201);
@@ -531,12 +577,16 @@ describe('/bilan (API test)', () => {
     );
   });
   it('POST /bilan/importFromNGC - creates new situation alors que erreur de contenu, 8 tonnes par défaut ^^', async () => {
+    // GIVEN
+    process.env.NGC_API_KEY = '12345';
     // WHEN
-    const response = await TestUtil.POST('/bilan/importFromNGC').send({
-      situation: {
-        'C est vraiement pas bon': 'dfsgsdg',
-      },
-    });
+    const response = await TestUtil.POST('/bilan/importFromNGC')
+      .set('apikey', `12345`)
+      .send({
+        situation: {
+          'C est vraiement pas bon': 'dfsgsdg',
+        },
+      });
 
     //THEN
     expect(response.status).toBe(201);

@@ -12,6 +12,8 @@ import { TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { QuestionKYCUsecase } from './questionKYC.usecase';
 import { Univers } from '../domain/univers/univers';
+import { KYCID } from '../domain/kyc/KYCID';
+import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 
 @Injectable()
 export class BilanCarboneUsecase {
@@ -28,7 +30,7 @@ export class BilanCarboneUsecase {
   }> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.kyc],
+      [Scope.kyc, Scope.logement],
     );
     utilisateur.checkState();
 
@@ -80,10 +82,10 @@ export class BilanCarboneUsecase {
     return {
       bilan_complet: bilan_complet,
       bilan_synthese: {
-        impact_alimentation: NiveauImpact.tres_fort,
-        impact_logement: NiveauImpact.fort,
-        impact_transport: NiveauImpact.moyen,
-        impact_consommation: NiveauImpact.faible,
+        impact_alimentation: this.computeImpactAlimentation(utilisateur),
+        impact_logement: this.computeImpactLogement(utilisateur),
+        impact_transport: this.computeImpactTransport(utilisateur),
+        impact_consommation: this.computeImpactConsommation(utilisateur),
         pourcentage_completion_totale: pourcentage_prog_totale,
         liens_bilans_univers: [
           {
@@ -191,5 +193,155 @@ export class BilanCarboneUsecase {
       }
     }
     return situation;
+  }
+
+  private computeImpactTransport(utilisateur: Utilisateur): NiveauImpact {
+    const kyc_voiture = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+      KYCID.KYC_transport_voiture_km,
+    );
+    if (!kyc_voiture) return null;
+    if (!kyc_voiture.hasAnyResponses()) return null;
+
+    const kyc_avion = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+      KYCID.KYC_transport_avion_3_annees,
+    );
+    if (!kyc_avion) return null;
+    if (!kyc_avion.hasAnyResponses()) return null;
+
+    const avion = kyc_avion.includesReponseCode('oui');
+    const km = parseInt(kyc_voiture.reponses[0].label);
+    if (!avion) {
+      if (km < 1000) return NiveauImpact.faible;
+      if (km < 10000) return NiveauImpact.moyen;
+      if (km < 15000) return NiveauImpact.fort;
+      return NiveauImpact.tres_fort;
+    } else {
+      if (km < 10000) return NiveauImpact.fort;
+      return NiveauImpact.tres_fort;
+    }
+  }
+  private computeImpactAlimentation(utilisateur: Utilisateur): NiveauImpact {
+    const kyc_regime = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+      KYCID.KYC_alimentation_regime,
+    );
+    if (!kyc_regime) return null;
+    if (!kyc_regime.hasAnyResponses()) return null;
+
+    const regime_code = kyc_regime.getCodeReponseUniqueSaisie();
+    switch (regime_code) {
+      case 'vegetalien':
+        return NiveauImpact.faible;
+      case 'vegetarien':
+        return NiveauImpact.moyen;
+      case 'peu_viande':
+        return NiveauImpact.fort;
+      case 'chaque_jour_viande':
+        return NiveauImpact.tres_fort;
+    }
+    return null;
+  }
+  private computeImpactConsommation(utilisateur: Utilisateur): NiveauImpact {
+    const kyc_type_conso =
+      utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+        KYCID.KYC_consommation_type_consommateur,
+      );
+    if (!kyc_type_conso) return null;
+    if (!kyc_type_conso.hasAnyResponses()) return null;
+
+    const code = kyc_type_conso.getCodeReponseUniqueSaisie();
+    switch (code) {
+      case 'achete_jamais':
+        return NiveauImpact.faible;
+      case 'seconde_main':
+        return NiveauImpact.moyen;
+      case 'raisonnable':
+        return NiveauImpact.fort;
+      case 'shopping_addict':
+        return NiveauImpact.tres_fort;
+    }
+    return null;
+  }
+  private computeImpactLogement(utilisateur: Utilisateur): NiveauImpact {
+    const kyc_menage = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+      KYCID.KYC_menage,
+    );
+    if (!kyc_menage) return null;
+    if (!kyc_menage.hasAnyResponses()) return null;
+
+    const kyc_superficie =
+      utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+        KYCID.KYC_superficie,
+      );
+    if (!kyc_superficie) return null;
+    if (!kyc_superficie.hasAnyResponses()) return null;
+
+    if (
+      !utilisateur.kyc_history.isMosaicAnswered(KYCMosaicID.MOSAIC_CHAUFFAGE)
+    ) {
+      return null;
+    }
+
+    const kyc_bois = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+      KYCID.KYC_chauffage_bois,
+    );
+    if (!kyc_bois) return null;
+    if (!kyc_bois.hasAnyResponses()) return null;
+
+    const kyc_elec = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+      KYCID.KYC_chauffage_elec,
+    );
+    if (!kyc_elec) return null;
+    if (!kyc_elec.hasAnyResponses()) return null;
+
+    const kyc_gaz = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+      KYCID.KYC_chauffage_gaz,
+    );
+    if (!kyc_gaz) return null;
+    if (!kyc_gaz.hasAnyResponses()) return null;
+
+    const kyc_fioul = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+      KYCID.KYC_chauffage_fioul,
+    );
+    if (!kyc_fioul) return null;
+    if (!kyc_fioul.hasAnyResponses()) return null;
+
+    const is_fioul = kyc_fioul.getCodeReponseUniqueSaisie() === 'oui';
+    const is_gaz = kyc_gaz.getCodeReponseUniqueSaisie() === 'oui';
+    const is_elec = kyc_elec.getCodeReponseUniqueSaisie() === 'oui';
+    const is_bois = kyc_bois.getCodeReponseUniqueSaisie() === 'oui';
+
+    let type_chauffage_nbr;
+
+    if (is_fioul) {
+      type_chauffage_nbr = 4;
+    } else if (is_gaz) {
+      type_chauffage_nbr = 3;
+    } else if (is_elec || is_bois) {
+      type_chauffage_nbr = 1;
+    } else {
+      type_chauffage_nbr = 2;
+    }
+
+    const nbr_hab = parseInt(kyc_menage.reponses[0].label);
+    const superficie = parseInt(kyc_superficie.reponses[0].label);
+    let nbr_superficie;
+    if (superficie <= 35) nbr_superficie = 1;
+    if (superficie <= 70) nbr_superficie = 2;
+    if (superficie <= 100) nbr_superficie = 3;
+    if (superficie <= 150) nbr_superficie = 4;
+    if (superficie > 150) nbr_superficie = 5;
+
+    const nbr_adultes = Math.min(nbr_hab, 2);
+    const nbr_enfants = nbr_hab <= 2 ? 0 : nbr_hab - 2;
+    const nbr_hab_pondere = nbr_adultes + 0.33 * nbr_enfants;
+    const logement_moyen = 1.5;
+
+    const impact_number =
+      (logement_moyen * nbr_superficie * type_chauffage_nbr) / nbr_hab_pondere;
+
+    if (impact_number <= 2) return NiveauImpact.faible;
+    if (impact_number <= 4) return NiveauImpact.moyen;
+    if (impact_number <= 8) return NiveauImpact.fort;
+    return NiveauImpact.tres_fort;
   }
 }
