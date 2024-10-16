@@ -147,7 +147,7 @@ aides . occitanie:
     toutes ces conditions:
       - localisation . région = '76'
       - revenu fiscal de référence <= 14089 €/an
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
   valeur: 200€
   note: |
@@ -170,7 +170,7 @@ aides . occitanie vélo adapté:
       - localisation . région = '76'
       - demandeur . en situation de handicap
       - vélo . adapté
-      - vélo . neuf
+      - vélo . état . neuf
   valeur: |
     50% * 
       (vélo . prix - (aides . état + aides . département + aides . intercommunalité))
@@ -249,7 +249,7 @@ aides . paris:
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '75056'
-      - vélo . neuf
+      - vélo . état . neuf
       - une de ces conditions:
           - revenu fiscal de référence <= 6300 €/an
           - vélo . adapté
@@ -279,7 +279,7 @@ aides . saint-étienne:
     toutes ces conditions:
       - localisation . epci = 'Saint-Etienne Métropole'
       - vélo . électrique
-      - vélo . neuf
+      - vélo . état . neuf
   valeur:
     variations:
       - si: ménage imposable
@@ -298,7 +298,7 @@ aides . lyon:
   variations:
     - si:
         toutes ces conditions:
-          - vélo . neuf
+          - vélo . état . neuf
           - une de ces conditions:
               - vélo . cargo électrique
               - vélo . adapté
@@ -311,7 +311,7 @@ aides . lyon:
             - sinon: 200€
     - si:
         toutes ces conditions:
-          - vélo . neuf
+          - vélo . état . neuf
           - vélo . prix <= 3200€
           - une de ces conditions:
             - vélo . électrique
@@ -326,7 +326,7 @@ aides . lyon:
     - si: 
         toutes ces conditions:
           - vélo . cargo
-          - vélo . neuf
+          - vélo . état . neuf
       alors:
         valeur: 50% * vélo . prix
         plafond: 
@@ -337,7 +337,7 @@ aides . lyon:
     - si:
         toutes ces conditions:
           - vélo . pliant
-          - vélo . neuf
+          - vélo . état . neuf
           - vélo . prix <= 3200€
       alors:
         valeur: 50% * vélo . prix
@@ -349,7 +349,7 @@ aides . lyon:
     - si: 
         toutes ces conditions:
           - vélo . mécanique
-          - vélo . occasion
+          - vélo . état . occasion
           - vélo . prix <= 150€
           - revenu fiscal de référence <= 19600 €/an
       alors:
@@ -423,7 +423,7 @@ aides . ville-sur-jarnioux:
   valeur: 50% * vélo . prix
   plafond: 
     variations:
-      - si: vélo . neuf
+      - si: vélo . état . neuf
         alors: 100€
       - sinon: 50€
   lien: https://www.ville-sur-jarnioux.fr/aide-velo/
@@ -456,7 +456,7 @@ aides . pays mornantais:
   applicable si:
     toutes ces conditions:
       - localisation . epci = 'CC du Pays Mornantais (COPAMO)'
-      - vélo . neuf
+      - vélo . état . neuf
       - une de ces conditions:
           - vélo . électrique
           - vélo . motorisation
@@ -479,7 +479,7 @@ aides . mornant:
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '69141'
-      - vélo . neuf
+      - vélo . état . neuf
       - revenu fiscal de référence < 1600 €/mois
       - une de ces conditions:
           - vélo . électrique
@@ -533,7 +533,7 @@ aides . igny:
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '91312'
-      - vélo . neuf
+      - vélo . état . neuf
       - une de ces conditions:
           - vélo . électrique
           - vélo . motorisation
@@ -580,7 +580,7 @@ aides . pierre-bénite:
     toutes ces conditions:
       - localisation . code insee = '69152'
       - vélo . électrique
-      - vélo . neuf
+      - vélo . état . neuf
   valeur: 100€
   plafond: vélo . prix
   lien: https://www.pierrebenite.fr/wp-content/uploads/CONVENTIONVAE.pdf
@@ -595,7 +595,7 @@ aides . givors:
     toutes ces conditions:
       - localisation . code insee = '69091'
       # NOTE: ce n'est pas vraiement explicite.
-      - vélo . neuf 
+      - vélo . état . neuf 
   variations:
     - si:
         une de ces conditions:
@@ -776,7 +776,7 @@ aides . bègles vélo spécifique:
     toutes ces conditions:
       - aides . bordeaux > 0
       - localisation . code insee = "33039"
-      - vélo . neuf
+      - vélo . état . neuf
       - une de ces conditions:
           - vélo . pliant
           - vélo . cargo
@@ -1231,7 +1231,7 @@ aides . grenoble:
       - si:
           toutes ces conditions:
             - vélo . mécanique simple
-            - vélo . occasion
+            - vélo . état . occasion
             - vélo . prix >= 30€
         alors:
           variations:
@@ -1246,7 +1246,7 @@ aides . grenoble:
       - si:
           toutes ces conditions:
             - vélo . mécanique simple
-            - vélo . neuf
+            - vélo . état . neuf
             - vélo . prix >= 200€
             - vélo . prix <= 1500€
         alors:
@@ -1272,7 +1272,7 @@ aides . strasbourg:
   applicable si: 
     toutes ces conditions:
       - localisation . epci = 'Eurométropole de Strasbourg'
-      - vélo . neuf
+      - vélo . état . neuf
   valeur: 50% * vélo . prix
   plafond:
     variations:
@@ -1306,7 +1306,7 @@ aides . entzheim:
   applicable si: 
     toutes ces conditions:
       - localisation . code insee = '67124'
-      - vélo . neuf
+      - vélo . état . neuf
   valeur:
     variations:
       - si: vélo . cargo
@@ -1335,7 +1335,7 @@ aides . geispolsheim:
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '67152'
-      - vélo . neuf
+      - vélo . état . neuf
       - une de ces conditions:
           - vélo . cargo
           - vélo . électrique
@@ -1376,7 +1376,7 @@ aides . eschau:
   applicable si: 
     toutes ces conditions:
       - localisation . code insee = '67131'
-      - vélo . neuf
+      - vélo . état . neuf
       - une de ces conditions:
           - vélo . cargo
           - vélo . adapté
@@ -1403,7 +1403,7 @@ aides . eckbolsheim:
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '67118'
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
   valeur: 10% * vélo . prix
   plafond: 100€
@@ -1531,7 +1531,7 @@ aides . vendenheim:
   applicable si: 
     toutes ces conditions:
       - localisation . code insee = '67506'
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique ou mécanique
   valeur:
     variations:
@@ -1565,7 +1565,7 @@ aides . albi:
   applicable si: 
     toutes ces conditions:
       - localisation . epci = "CA de l'Albigeois (C2A)"
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique ou mécanique
   valeur: 25% * vélo . prix
   plafond:
@@ -1589,7 +1589,7 @@ aides . toulon:
   applicable si:
     toutes ces conditions:
       - localisation . epci = 'Métropole Toulon-Provence-Méditerranée'
-      - vélo . neuf
+      - vélo . état . neuf
       - une de ces conditions:
           - vélo . électrique
           - vélo . motorisation
@@ -1613,7 +1613,7 @@ aides . provence verte:
   applicable si: 
     toutes ces conditions:
       - localisation . epci = 'CA de la Provence Verte'
-      - vélo . neuf
+      - vélo . état . neuf
       - une de ces conditions:
           - vélo . mécanique simple
           - vélo . électrique simple
@@ -1639,7 +1639,7 @@ aides . bretagne romantique:
   applicable si:
     toutes ces conditions:
       - localisation . epci = 'CC Bretagne Romantique'
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
       - revenu fiscal de référence <= 15400 €/an
   valeur: 100€
@@ -1657,7 +1657,7 @@ aides . fougères:
     toutes ces conditions:
       - localisation . epci = 'CA Fougères Agglomération'
       - vélo . électrique
-      - vélo . neuf
+      - vélo . état . neuf
       - revenu fiscal de référence <= 15400 €/an
   valeur: 20% * vélo . prix
   plafond: 200 €
@@ -1671,7 +1671,7 @@ aides . quimper:
     toutes ces conditions:
       - localisation . epci = 'CA Quimper Bretagne Occidentale'
       - vélo . électrique
-      - vélo . neuf
+      - vélo . état . neuf
       - revenu fiscal de référence <= 26350 €/an
   variations:
     - si: revenu fiscal de référence <= 13489 €/an
@@ -1703,14 +1703,14 @@ aides . quimperlé:
               - vélo . prix <= 5000€
           - toutes ces conditions:
               - vélo . électrique
-              - vélo . occasion
+              - vélo . état . occasion
               - vélo . prix <= 2000€
           - toutes ces conditions:
               - vélo . motorisation
               - vélo . prix <= 1000€
           - toutes ces conditions:
               - vélo . électrique
-              - vélo . neuf
+              - vélo . état . neuf
               - vélo . prix <= 3000€
   valeur: 25% * vélo . prix
   plafond: 150€
@@ -1738,7 +1738,7 @@ aides . caen:
     toutes ces conditions:
       - localisation . code insee = '14118'
       - revenu fiscal de référence <= 15400 €/an
-      - vélo . neuf
+      - vélo . état . neuf
       - une de ces conditions:
           - vélo . électrique
           - vélo . motorisation
@@ -1762,7 +1762,7 @@ aides . caen jeune:
       - revenu fiscal de référence <= 15400 €/an
       - demandeur . âge . de 18 à 25 ans
       - vélo . mécanique simple
-      - vélo . occasion
+      - vélo . état . occasion
   valeur: 50€
   plafond: vélo . prix
   lien: https://caen.fr/velo-pied
@@ -1777,7 +1777,7 @@ aides . caen vélo adapté:
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '14118'
-      - vélo . neuf
+      - vélo . état . neuf
       - demandeur . en situation de handicap
       - une de ces conditions:
           - vélo . adapté
@@ -1815,7 +1815,7 @@ aides . thue et mue:
       - localisation . code insee = '14098'
       - demandeur . âge . majeur
       - vélo . électrique
-      - vélo . neuf
+      - vélo . état . neuf
   valeur:
     variations:
       - si: revenu fiscal de référence <= 13489 €/an
@@ -1851,7 +1851,7 @@ aides . carpiquet:
     toutes ces conditions:
       - localisation . code insee = '14137'
       - vélo . électrique
-      - vélo . neuf
+      - vélo . état . neuf
   valeur: 150€
   lien: https://www.carpiquet.fr/wp-content/uploads/2024/01/CONVENTION-AIDE-FINANCIERE-VAE-ET-TROTTINETTE-ELECTRIQUE-ANNEE-2024.pdf
 
@@ -1879,7 +1879,7 @@ aides . ifs:
     toutes ces conditions:
       - localisation . code insee = '14341'
       - revenu fiscal de référence <= 24000€/an
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
       - vélo . prix <= 2500€
   valeur: 10% * vélo . prix
@@ -1987,7 +1987,7 @@ aides . val-au-perche:
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '61484'
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
   valeur: 50€
   lien: https://valauperche.fr/transports/
@@ -2025,7 +2025,7 @@ aides . wasquehal:
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '59646'
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique ou mécanique
       - demandeur . âge . majeur
   valeur: 25% * vélo . prix
@@ -2083,7 +2083,7 @@ aides . verson:
       - localisation . code insee = '14738'
       - demandeur . âge . majeur
       - revenu fiscal de référence <= 13489 €/an
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique ou mécanique
   variations:
     - si: vélo . électrique
@@ -2102,7 +2102,7 @@ aides . saint-germain la blanche herbe:
     toutes ces conditions:
       - localisation . code insee = '14587'
       - revenu fiscal de référence <= 15400 €/an
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
   valeur: 100€
   lien: https://www.mairie-stgermainblancheherbe.fr/29-actualites/658-aide-pour-l-achat-d-un-velo-electrique
@@ -2135,7 +2135,7 @@ aides . trouville sur mer:
   applicable si: 
     toutes ces conditions: 
       - localisation . code insee = '14715'
-      - vélo . neuf
+      - vélo . état . neuf
       - une de ces conditions:
           - vélo . cargo
           - vélo . électrique
@@ -2161,7 +2161,7 @@ aides . deauville:
   applicable si: 
     toutes ces conditions:
       - localisation . code insee = '14220'
-      - vélo . neuf
+      - vélo . état . neuf
   valeur: 30% * vélo . prix
   plafond:
     variations:
@@ -2191,7 +2191,7 @@ aides . louvigny:
           - vélo . mécanique simple
           - toutes ces conditions:
               - vélo . électrique
-              - vélo . neuf
+              - vélo . état . neuf
   valeur: 50€
   lien: https://ville-louvigny.fr/agenda/aide-communale-a-lacquisition-dun-velo-a-assistance-electrique-neuf-ou-velo-classique-neuf-ou-doccasion-a-la-maison-du-velo-ou-chez-un-velociste/
 
@@ -2226,7 +2226,7 @@ aides . istres:
     toutes ces conditions:
       - localisation . code insee = '13047'
       - vélo . électrique
-      - vélo . neuf
+      - vélo . état . neuf
   valeur: 150€
   plafond: vélo . prix
   lien: https://www.istres.fr/index.php?id=1024
@@ -2257,7 +2257,7 @@ aides . montbéliard:
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '25388'
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
   valeur: 150€
   lien: https://www.montbeliard.fr/pages-datterrissage-temporaires/subvention-pour-lachat-dun-velo-a-assistance-electrique.html
@@ -2302,7 +2302,7 @@ aides . vienne condrieu:
       - localisation . epci = 'CA Vienne Condrieu'
       - demandeur . âge . majeur
       - vélo . électrique
-      - vélo . neuf
+      - vélo . état . neuf
   valeur: 150€
   lien: https://www.vienne-condrieu-agglomeration.fr/nos-services-au-quotidien/deplacements/faire-du-velo/aide-financiere-vae/
 
@@ -2318,7 +2318,7 @@ aides . pont-de-beauvoisin:
       - demandeur . âge . majeur
       - revenu fiscal de référence <= 30000 €/an
       - vélo . électrique
-      - vélo . neuf
+      - vélo . état . neuf
   valeur: 100€
   lien: https://www.mairie-pontdebeauvoisin38.fr/aide-a-lachat-dun-velo-a-assistance-electrique/
 
@@ -2386,7 +2386,7 @@ aides . sorgues du comtat:
     toutes ces conditions:
       - localisation . epci = 'CA des Sorgues du Comtat'
       - demandeur . âge . majeur
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
   valeur: 20% * vélo . prix
   plafond: 120€
@@ -2406,7 +2406,7 @@ aides . grand périgueux:
       - demandeur . âge . majeur
   valeur:
     variations:
-      - si: vélo . neuf
+      - si: vélo . état . neuf
         alors:
           variations:
             - si: vélo . cargo
@@ -2467,7 +2467,7 @@ aides . vallée de l'homme:
   valeur: 25% * vélo . prix
   plafond:
     variations:
-      - si: vélo . neuf
+      - si: vélo . état . neuf
         alors: 200€
       - sinon: 100€
   lien: https://www.cc-valleedelhomme.fr/mobilit%C3%A9-itin%C3%A9rance-douce/dispositifs-v%C3%A9lo/aide-%C3%A0-l-achat-pour-un-v%C3%A9lo-%C3%A9lectrique/
@@ -2484,7 +2484,7 @@ aides . sablé sur sarthe:
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '72264'
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
       - demandeur . âge . majeur
   valeur: 10% * vélo . prix
@@ -2513,7 +2513,7 @@ aides . département somme:
   applicable si:
     toutes ces conditions:
       - localisation . département = '80'
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
   valeur: 25% * vélo . prix
   plafond: 400€
@@ -2531,7 +2531,7 @@ aides . amiens:
     toutes ces conditions:
       - localisation . code insee = '80021'
       - demandeur . âge . majeur
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
   valeur: 25% * vélo . prix
   plafond: 200€
@@ -2578,7 +2578,7 @@ aides . grand roye:
     toutes ces conditions:
       - localisation . epci = 'CC du Grand Roye'
       - demandeur . âge . majeur
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
   valeur: 10% * vélo . prix
   plafond: 100 €
@@ -2598,7 +2598,7 @@ aides . somme sud-ouest:
     toutes ces conditions:
       - localisation . epci = 'CC Somme Sud-Ouest'
       - demandeur . âge . majeur
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
   valeur: 200€
   plafond: vélo . prix
@@ -2651,7 +2651,7 @@ aides . pays sainte odile:
   applicable si: 
     toutes ces conditions:
       - localisation . epci = 'CC du Pays de Sainte-Odile'
-      - vélo . neuf
+      - vélo . état . neuf
       - une de ces conditions:
           - vélo . électrique
           - demandeur . âge . majeur
@@ -2687,7 +2687,7 @@ aides . portes de rosheim:
   applicable si: 
     toutes ces conditions:
       - localisation . epci = 'CC des Portes de Rosheim'
-      - vélo . neuf
+      - vélo . état . neuf
       - une de ces conditions:
           - demandeur . âge . majeur
           - vélo . adapté
@@ -2894,7 +2894,7 @@ aides . département hérault:
       - localisation . département = '34'
       - demandeur . âge . majeur
       - vélo . électrique
-      - vélo . neuf
+      - vélo . état . neuf
       - revenu fiscal de référence <= 25660 €/an
   valeur: 250€
   note: |
@@ -2936,7 +2936,7 @@ aides . montpellier:
         - vélo . motorisation
         - toutes ces conditions:
           - vélo . électrique
-          - vélo . occasion
+          - vélo . état . occasion
   valeur: 50% * vélo . prix
   plafond: 200€
   lien: https://www.montpellier3m.fr/vivre-transport/toutes-les-aides-pour-lachat-ou-la-reparation-de-velos
@@ -2985,7 +2985,7 @@ aides . sète:
       - variations:
           - si:
               une de ces conditions:
-                - vélo . occasion
+                - vélo . état . occasion
                 - vélo . motorisation
             alors: 50€
           - sinon: 0€
@@ -3047,7 +3047,7 @@ aides . romagnat:
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '63307'
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
   valeur: 100€
   lien: https://www.ville-romagnat.fr/cadre-de-vie-urbanisme/developpement-durable/velo-electrique/
@@ -3088,7 +3088,7 @@ aides . cournon d'auvergne:
     toutes ces conditions:
       - localisation . code insee = '63124'
       - revenu fiscal de référence <= 2967 €/mois
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
   valeur:
     variations:
@@ -3124,7 +3124,7 @@ aides . grand avignon:
     toutes ces conditions:
       - localisation . epci = 'CA du Grand Avignon (COGA)'
       - demandeur . âge . majeur
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
       - vélo . prix >= 400 €
   valeur: 100€
@@ -3163,7 +3163,7 @@ aides . avignon:
       - si: 
           toutes ces conditions:
             - vélo . électrique
-            - vélo . neuf
+            - vélo . état . neuf
             - vélo . prix <= 2000€
             - vélo . prix >= 30€
         alors:
@@ -3172,7 +3172,7 @@ aides . avignon:
       - si:
           toutes ces conditions:
             - vélo . mécanique simple
-            - vélo . neuf
+            - vélo . état . neuf
             - vélo . prix <= 2000€
             - vélo . prix >= 30€
         alors:
@@ -3181,7 +3181,7 @@ aides . avignon:
       - si: 
           toutes ces conditions:
             - vélo . électrique
-            - vélo . occasion
+            - vélo . état . occasion
             - vélo . prix <= 1500€
             - vélo . prix >= 22€
         alors:
@@ -3190,7 +3190,7 @@ aides . avignon:
       - si: 
           toutes ces conditions:
             - vélo . mécanique simple
-            - vélo . occasion
+            - vélo . état . occasion
             - vélo . prix <= 500€
             - vélo . prix >= 22€
         alors:
@@ -3214,7 +3214,7 @@ aides . luberon:
           - vélo . électrique
           - toutes ces conditions:
               - vélo . mécanique
-              - vélo . neuf
+              - vélo . état . neuf
   valeur: 30% * vélo . prix
   plafond:
     variations:
@@ -3223,10 +3223,10 @@ aides . luberon:
             - vélo . électrique
             - une de ces conditions:
                 - toutes ces conditions:
-                    - vélo . neuf
+                    - vélo . état . neuf
                     - vélo . prix <= 2500€
                 - toutes ces conditions:
-                    - vélo . occasion
+                    - vélo . état . occasion
                     - vélo . prix <= 1500€
         alors: 300€
       - si:
@@ -3250,7 +3250,7 @@ aides . kremlin-bicetre:
     toutes ces conditions:
       - localisation . code insee = '94043'
       - vélo . électrique ou mécanique
-      - vélo . occasion
+      - vélo . état . occasion
   valeur:
     variations:
       - si: vélo . mécanique
@@ -3284,7 +3284,7 @@ aides . chevilly-larue:
               - vélo . électrique
   valeur:
     variations:
-      - si: vélo . occasion
+      - si: vélo . état . occasion
         alors: 30 % * vélo . prix
       - sinon: 20 % * vélo . prix
   plafond: 100€
@@ -3426,7 +3426,7 @@ aides . vallée d'ossau:
       - localisation . epci = "CC de la Vallée d'Ossau"
       - demandeur . âge . majeur
       - vélo . électrique
-      - vélo . neuf
+      - vélo . état . neuf
   valeur: 20% * vélo . prix
   plafond: 200€
   lien: https://cc-ossau.fr/aide-a-lachat-dun-vae/
@@ -3442,7 +3442,7 @@ aides . aix les bains:
     toutes ces conditions:
       - localisation . code insee = '73008'
       - vélo . électrique
-      - vélo . neuf
+      - vélo . état . neuf
   valeur: 10% * vélo . prix
   plafond: 250€
   lien: https://www.aixlesbains.fr/Cadre-de-vie/Transports-et-deplacements/A-velo/Aides-financieres-pour-se-deplacer-a-velo
@@ -3562,7 +3562,7 @@ aides . la motte servolex:
       - une de ces conditions:
           - vélo . électrique simple
           - toutes ces conditions:
-              - vélo . neuf
+              - vélo . état . neuf
               - une de ces conditions:
                   - vélo . pliant
                   - vélo . cargo
@@ -3640,7 +3640,7 @@ aides . les crêtes préardennaises:
     toutes ces conditions:
       - localisation . epci = 'CC des Crêtes Préardennaises'
       - demandeur . âge . majeur
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
       - ménage imposable = non
   valeur: 10% * vélo . prix
@@ -3660,7 +3660,7 @@ aides . clisson:
     toutes ces conditions:
       - localisation . code insee = '44043'
       - vélo . électrique ou mécanique
-      - vélo . neuf
+      - vélo . état . neuf
   valeur:
     variations:
       - si: revenu fiscal de référence <= 400 €/mois
@@ -3791,7 +3791,7 @@ aides . cote d'or:
     toutes ces conditions:
       - localisation . département = '21'
       - vélo . électrique
-      - vélo . neuf
+      - vélo . état . neuf
   valeur:
     variations:
       - si: vélo assemblé ou produit localement
@@ -3927,7 +3927,7 @@ aides . mougins:
     toutes ces conditions:
       - localisation . code insee = '06085'
       - demandeur . âge >= 16 an
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
   valeur: 25% * vélo . prix
   plafond: 300€
@@ -3943,7 +3943,7 @@ aides . mandelieu:
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '06079'
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
   valeur: 25% * vélo . prix
   plafond:
@@ -3986,7 +3986,7 @@ aides . aubervilliers:
       - demandeur . âge . majeur
       - vélo . mécanique simple
   variations:
-    - si: vélo . neuf
+    - si: vélo . état . neuf
       alors: 100 €
     - sinon: 50 €
   lien: https://www.aubervilliers.fr/Aide-a-l-achat-d-un-velo
@@ -4138,7 +4138,7 @@ aides . annoeullin:
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '59011'
-      - vélo . neuf
+      - vélo . état . neuf
       - une de ces conditions:
           - vélo . électrique simple
           - vélo . pliant électrique
@@ -4236,7 +4236,7 @@ aides . aurillac:
     toutes ces conditions:
       - localisation . epci = "CA du Bassin d'Aurillac"
       - demandeur . âge . majeur
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
   valeur: 25% * vélo . prix
   plafond: 300€
@@ -4279,7 +4279,7 @@ aides . saint-omer:
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '62765'
-      - vélo . neuf
+      - vélo . état . neuf
   valeur:
     variations:
       - si: vélo . adapté
@@ -4289,10 +4289,10 @@ aides . saint-omer:
           variations:
             - si: 
                 une de ces conditions:
-                  - demandeur . statut étudiant
+                  - demandeur . statut . étudiant
                   - toutes ces conditions:
                       - demandeur . âge < 25 an
-                      - demandeur . statut demandeur d'emploi
+                      - demandeur . statut . demandeur d'emploi
               alors: 350 €
             - sinon: 250 €
       - sinon: 100 €
@@ -4357,7 +4357,7 @@ aides . riviera francaise:
       - localisation . epci = 'CA de la Riviera Française'
       - demandeur . âge . majeur
       - vélo . électrique
-      - vélo . neuf
+      - vélo . état . neuf
   valeur: vélo . prix
   plafond: 300€
   lien: https://www.riviera-francaise.fr/media/attachments/2022/03/30/convention-2022-2024-cc01221.pdf
@@ -4398,11 +4398,11 @@ aides . portes de sologne:
           - vélo . motorisation
   valeur:
     variations:
-      - si: vélo . neuf
+      - si: vélo . état . neuf
         alors:
           valeur: 30% * vélo . prix
           plafond: 300€
-      - si: vélo . occasion
+      - si: vélo . état . occasion
         alors:
           valeur: 50% * vélo . prix
           plafond: 100€
@@ -4431,7 +4431,7 @@ aides . grand reims:
       - localisation . epci = 'CU du Grand Reims'
       - une de ces conditions:
           - demandeur . âge . majeur
-          - demandeur . statut étudiant
+          - demandeur . statut . étudiant
       - une de ces conditions:
           - vélo . électrique
           - vélo . adapté
@@ -4448,7 +4448,7 @@ aides . grand reims:
             alors: 300€
           - sinon: 0€
       - variations:
-          - si: demandeur . statut étudiant
+          - si: demandeur . statut . étudiant
             alors: 50€
           - sinon: 0€
   lien: https://www.grandreims.fr/se-deplacer/operation-aide-a-lachat-dun-velo-a-assistance-electrique
@@ -4473,7 +4473,7 @@ aides . reims:
       - localisation . code insee = '51454'
       - une de ces conditions:
           - demandeur . âge . majeur
-          - demandeur . statut étudiant
+          - demandeur . statut . étudiant
       - une de ces conditions:
           - vélo . électrique ou mécanique
           - vélo . adapté
@@ -4497,7 +4497,7 @@ aides . reims:
               plafond: 80€
           - sinon: 0€
       - variations:
-          - si: demandeur . statut étudiant
+          - si: demandeur . statut . étudiant
             alors:
               variations:
                 - si: vélo . électrique
@@ -4573,7 +4573,7 @@ aides . annecy:
           - si:
               toutes ces conditions:
                 - vélo . mécanique simple
-                - vélo . neuf
+                - vélo . état . neuf
                 - vélo . prix >= 200 €
                 - vélo . prix <= 1500 €
             alors: 
@@ -4586,7 +4586,7 @@ aides . annecy:
           - si:
               toutes ces conditions:
                 - vélo . mécanique simple
-                - vélo . occasion
+                - vélo . état . occasion
             alors: 
               variations:
                 - si: revenu fiscal de référence < 14089 €/an
@@ -4746,7 +4746,7 @@ aides . cluses arve et montagnes:
                   alors: 200 €
                 - sinon: 100 €
       - variations:
-          - si: vélo . occasion
+          - si: vélo . état . occasion
             alors: 100€
           - sinon: 0€
       - valeur: participation employeur
@@ -4813,7 +4813,7 @@ aides . combloux:
       - localisation . code insee = '74083'
       - demandeur . âge >= 16 an
       - revenu fiscal de référence <= 74545 €/an
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
   valeur: 200€
   plafond: 80% * vélo . prix # TODO: prendre en compte le montant des aides cumulées.
@@ -4866,7 +4866,7 @@ aides . angers:
   applicable si: 
     toutes ces conditions:
       - localisation . epci = 'CU Angers Loire Métropole'
-      - vélo . neuf
+      - vélo . état . neuf
   valeur: 25% * vélo . prix
   plafond:
     variations:
@@ -4900,11 +4900,11 @@ aides . haut val de sèvre:
       - vélo . électrique
       - une de ces conditions:
           - toutes ces conditions:
-              - vélo . neuf
+              - vélo . état . neuf
               - vélo . prix >= 950 €
               - vélo . prix <= 3000 €
           - toutes ces conditions:
-              - vélo . occasion
+              - vélo . état . occasion
               - vélo . prix >= 700 €
               - vélo . prix <= 2000 €
   valeur: 150€
@@ -4954,7 +4954,7 @@ aides . anjou bleu:
     toutes ces conditions:
       - localisation . epci = 'CC Anjou Bleu Communauté'
       - demandeur . âge . majeur
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
       - variations:
           - si: personnes dans le foyer fiscal < 2
@@ -5064,7 +5064,7 @@ aides . grand orb:
   applicable si:
     toutes ces conditions:
       - localisation . epci = 'CC Grand Orb communauté de communes en Languedoc'
-      - vélo . neuf
+      - vélo . état . neuf
       - une de ces conditions:
           - vélo . électrique
           - vélo . motorisation
@@ -5112,15 +5112,15 @@ aides . montlucon:
       - si: vélo . électrique
         alors: 
           variations:
-            - si: vélo . neuf
+            - si: vélo . état . neuf
               alors: 200€
-            - si: vélo . occasion
+            - si: vélo . état . occasion
               alors: 100€
       - sinon:
           variations:
-            - si: vélo . neuf
+            - si: vélo . état . neuf
               alors: 100€
-            - si: vélo . occasion
+            - si: vélo . état . occasion
               alors: 50€
   lien: https://www.montlucon-communaute.com/vivre-au-quotidien/la-mobilite-durable/a-velo-dans-lagglo/
 
@@ -5181,7 +5181,7 @@ aides . granville:
       - revenu fiscal de référence < 28285 €/an
       - une de ces conditions:
           - demandeur . âge . majeur
-          - demandeur . statut apprenti
+          - demandeur . statut . apprenti
   valeur: 
     variations:
       - si: revenu fiscal de référence <= 15400€/an
@@ -5276,7 +5276,7 @@ aides . aunis atlantique:
       - revenu fiscal de référence <= 13489 €/an
       - demandeur . âge . majeur
       - vélo . électrique
-      - vélo . neuf
+      - vélo . état . neuf
   valeur: 200€
   lien: https://www.aunisatlantique.fr/aide-a-lacquisition-de-velo-a-assistance-electrique-vae/
 
@@ -5388,7 +5388,7 @@ aides . saintes:
       - si: 
           toutes ces conditions:
             - vélo . cargo
-            - vélo . neuf
+            - vélo . état . neuf
         alors: 400€
       - sinon: 200€
   lien: https://www.agglo-saintes.fr/l-agglo-au-quotidien/transports-et-mobilites/530-aide-a-l-achat-d-un-velo-a-assistance-electrique.html
@@ -5453,7 +5453,7 @@ aides . villes soeurs:
       - localisation . epci = 'CC des Villes Soeurs'
       - demandeur . âge . majeur
       - vélo . électrique
-      - vélo . neuf
+      - vélo . état . neuf
   valeur: 25% * vélo . prix
   plafond: 150 €
   lien: https://www.villes-soeurs.fr/vie-quotidienne/transport-mobilite/aide-velo-electrique/
@@ -5551,7 +5551,7 @@ aides . canélan:
       - si: vélo . électrique
         alors:
           variations:
-            - si: vélo . neuf
+            - si: vélo . état . neuf
               alors: 100€
             - sinon: 150€
       - sinon: 150€
@@ -5583,7 +5583,7 @@ aides . grand cubzaguais:
     Cette aide financière, sous condition de ressource, porte aussi bien sur
     les vélos mécaniques que sur les vélos électriques, avec une nouveauté
     cette année : les vélos mécaniques neufs sont maintenant éligibles !
-    Pouvant aller de 50€ à 150€ selon l’achat. 
+    Pouvant aller de 50€ à 150€ selon l'achat. 
   applicable si:
     toutes ces conditions:
       - localisation . epci = 'CC du Grand Cubzaguais'
@@ -5599,13 +5599,13 @@ aides . grand cubzaguais:
             - vélo . cargo
         alors:
           variations:
-            - si: vélo . neuf
+            - si: vélo . état . neuf
               alors: 100€
             - sinon: 150€
       - si: vélo . mécanique
         alors:
           variations:
-            - si: vélo . neuf
+            - si: vélo . état . neuf
               alors: 50 €
             - sinon: 70 €
       - sinon: 0€
@@ -5661,7 +5661,7 @@ aides . montauban:
     toutes ces conditions:
       - localisation . epci = 'CA Grand Montauban'
       - vélo . cargo
-      - vélo . neuf
+      - vélo . état . neuf
   valeur: vélo . prix
   plafond: 250€
   lien: https://www.montauban.com/au-quotidien/mobilite-et-stationnement/velos-et-pistes-cyclables
@@ -5843,13 +5843,13 @@ aides . la roche sur yon:
         valeur: 20% * vélo . prix
         plafond:
           variations:
-            - si: vélo . neuf
+            - si: vélo . état . neuf
               alors: 400€
             - sinon: 200€
     - si:
         toutes ces conditions:
           - vélo . électrique
-          - vélo . neuf
+          - vélo . état . neuf
           - vélo . prix <= 1500€
       alors:
         variations:
@@ -5997,7 +5997,7 @@ aides . béthune bruay:
     - si: vélo . mécanique
       alors:
         variations:
-          - si: vélo . neuf
+          - si: vélo . état . neuf
             alors: 60€
           - sinon: 50€
     - sinon: 0€
@@ -6097,12 +6097,12 @@ aides . denain:
       - si: vélo . mécanique
         alors:
           variations:
-            - si: vélo . neuf
+            - si: vélo . état . neuf
               alors: 300€
             - sinon: 150€
       - sinon:
           variations:
-            - si: vélo . neuf
+            - si: vélo . état . neuf
               alors: 150€
             - sinon: 75€
   lien: https://www.ville-denain.fr/content/view/full/7159
@@ -6238,7 +6238,7 @@ aides . valenciennes:
   valeur: 30% * vélo . prix
   plafond:
     variations:
-      - si: vélo . neuf
+      - si: vélo . état . neuf
         alors:
           variations:
             - si: vélo . cargo
@@ -6248,7 +6248,7 @@ aides . valenciennes:
             - si: vélo . mécanique
               alors: 150€
             - sinon: 0€
-      - si: vélo . occasion
+      - si: vélo . état . occasion
         alors:
           variations:
             - si: vélo . cargo
@@ -6282,7 +6282,7 @@ aides . cœur d'ostrevent:
     toutes ces conditions:
       - localisation . epci = 'CC Coeur d'Ostrevent (CCCO)'
       - vélo . électrique
-      - vélo . neuf
+      - vélo . état . neuf
   valeur: 25% * vélo . prix
   plafond: 200€
   lien: https://coeurdostrevent.fr/citoyennete-et-environnement/prime-achat-velos-electriques/
@@ -6594,13 +6594,13 @@ aides . montfort:
     - si:
         toutes ces conditions:
           - vélo . électrique
-          - vélo . neuf
+          - vélo . état . neuf
           - revenu fiscal de référence <= première tranche IR
       alors: 200 €
     - si:
         toutes ces conditions:
           - vélo . électrique
-          - vélo . neuf
+          - vélo . état . neuf
       alors: 100 €
     - si:
         toutes ces conditions:
@@ -6752,7 +6752,7 @@ aides . saint-jacques de la lande:
   applicable si: localisation . code insee = '35281'
   valeur:
     variations:
-      - si: vélo . occasion
+      - si: vélo . état . occasion
         alors: 50€
       - si: vélo . cargo
         alors: 100€
@@ -7024,7 +7024,7 @@ aides . massif du vercors:
     - si: vélo . électrique
       alors:
         variations:
-          - si: vélo . neuf
+          - si: vélo . état . neuf
             alors: 200 €
           - sinon: 300 €
     - sinon: 0 €
@@ -7056,12 +7056,12 @@ aides . porte du hainaut:
     - si: vélo . électrique
       alors:
         variations:
-          - si: vélo . neuf
+          - si: vélo . état . neuf
             alors: 300 €
           - sinon: 150 €
     - sinon:
         variations:
-          - si: vélo . neuf
+          - si: vélo . état . neuf
             alors: 150 €
           - sinon: 75 €
   plafond: 50% * vélo . prix
@@ -7609,13 +7609,13 @@ aides . perpignan métropole:
               - vélo . prix <= 1500€
           - toutes ces conditions:
               - vélo . pliant
-              - vélo . neuf
+              - vélo . état . neuf
               - vélo . prix >= 600€
               - vélo . prix <= 2000€
           - toutes ces conditions:
               - vélo . électrique
               - variations:
-                  - si: vélo . neuf
+                  - si: vélo . état . neuf
                     alors: vélo . prix <= 2500€
                   - sinon: vélo . prix <= 1500€
           - toutes ces conditions:
@@ -7631,7 +7631,7 @@ aides . perpignan métropole:
         alors: 1000€
       - si: vélo . cargo
         alors: 500€
-      - si: demandeur . statut étudiant
+      - si: demandeur . statut . étudiant
         alors: 350€
       - sinon: 250€
   lien: https://aide-velo.perpignan-mediterranee.org/
@@ -7904,7 +7904,7 @@ aides . grand besançon:
       - localisation . epci = 'CU Grand Besançon Métropole'
       - demandeur . âge . majeur
       - revenu fiscal de référence <= 20781€/an
-      - vélo . neuf
+      - vélo . état . neuf
       - vélo . électrique
   valeur: 25% * vélo . prix
   plafond:
@@ -7919,6 +7919,7 @@ vélo:
 
 # NOTE: je pense que l'assistance électrique ou non des vélos devrait être une
 # règle booléenne supplémentaire.
+# TODO: à refactorer avec `une possibilité`
 vélo . type:
   question: Quel type de vélo souhaitez-vous acheter ?
   possibilités:
@@ -8062,7 +8063,7 @@ vélo . prix pour maximiser les aides:
         toutes ces conditions:
           - localisation . epci = 'Métropole de Lyon'
           - vélo . mécanique simple
-          - vélo . occasion
+          - vélo . état . occasion
       alors: 100€
     - si:
         une de ces conditions:
@@ -8088,158 +8089,159 @@ vélo . fabriqué en france:
   par défaut: non
 
 # NOTE: souhaitons-nous faire la distinction entre occasion et reconditionné ?
-vélo . neuf ou occasion:
+vélo . état:
   question: S'agit-t-il d'un vélo neuf ou d'occasion ?
-  par défaut: "'neuf'"
   description: |
     Par occasion est généralement entendu un vélo reconditionné acheté auprès
     d'un revendeur agréé.
-  possibilités:
+  par défaut: "'neuf'"
+  une possibilité:
     - neuf
     - occasion
-
-vélo . neuf:
-  titre: Vélo neuf
-  valeur: neuf ou occasion = 'neuf'
-
-vélo . occasion:
-  titre: Vélo d'occasion
-  valeur: neuf ou occasion = 'occasion'
-  # TODO: supprimer ce mécanisme et gérer l'occasion directement dans les
-  # conditions d'applicabilité des aides.
-  rend non applicable:
-    références à: aides
-    sauf dans:
-      # - aides . ambert livradois forez
-      - aides . annecy
-      - aides . arve salève
-      - aides . aubervilliers
-      - aides . aubiere
-      - aides . auray quiberon
-      - aides . avignon
-      - aides . bègles vélo classique
-      - aides . belfort
-      - aides . béthune bruay
-      - aides . bidart
-      - aides . blacé
-      - aides . boé
-      - aides . bordeaux
-      - aides . bourges
-      - aides . bourg-saint-maurice
-      - aides . caen jeune
-      - aides . campagnes de l'artois
-      - aides . canélan
-      - aides . cébazat
-      - aides . cenon
-      - aides . cévennes gangeoises et suménoises
-      - aides . châtel
-      - aides . chevilly-larue
-      - aides . cluses arve et montagnes
-      - aides . coeur de maurienne arvan
-      - aides . coeur de nacre
-      - aides . corse
-      - aides . crozon
-      - aides . denain
-      - aides . département hérault vélo adapté
-      - aides . dieppe
-      - aides . divonne-les-bains
-      - aides . dreux
-      - aides . évian-les-bains
-      - aides . faches-thumesnil
-      - aides . feignies
-      - aides . fier et usses
-      - aides . flers
-      - aides . genevois
-      - aides . grand cubzaguais
-      - aides . grand est
-      - aides . grand périgueux
-      - aides . grand poitiers
-      - aides . grand villeneuvois
-      - aides . granville
-      - aides . grenoble
-      - aides . haut val de sèvre
-      - aides . haut val de sèvre
-      - aides . hermanville-sur-mer
-      - aides . honfleur
-      - aides . ile de france
-      - aides . illkirch
-      - aides . kremlin-bicetre
-      - aides . la cali
-      - aides . la madeleine
-      - aides . la motte servolex
-      - aides . la roche sur yon
-      - aides . lescar
-      - aides . les herbiers
-      - aides . les sables d'olonne
-      - aides . le vigan
-      - aides . limoges metropole
-      - aides . loire layon aubance
-      - aides . loos-en-gohelle
-      - aides . louvigny
-      - aides . luberon
-      - aides . lyon
-      - aides . mérignac
-      - aides . molsheim-mutzig
-      - aides . mondeville
-      - aides . monmorillon
-      - aides . mons en baroeul
-      - aides . montagnole
-      - aides . montant
-      - aides . montbéliard agglo
-      - aides . montlucon
-      - aides . montpellier
-      - aides . montval sur loir
-      - aides . morzine-avoriaz
-      - aides . moselle et madon
-      - aides . nantes
-      - aides . oullins
-      - aides . pantin
-      - aides . pau
-      - aides . pays ancenis
-      - aides . pays de barr
-      - aides . pays de cruseilles
-      - aides . pays de l'arbresle
-      - aides . pays de l'ozon
-      - aides . pays de lumbres 
-      - aides . pays de saverne
-      - aides . perpignan métropole
-      - aides . pornic
-      - aides . portes de sologne
-      - aides . puisaye forterre
-      - aides . quimperlé
-      - aides . reims
-      - aides . ried de marckolsheim
-      - aides . ronchin
-      - aides . saint alban leysse
-      - aides . sainte-foy-lès-lyon
-      - aides . saint-émilionnais
-      - aides . saint-jacques de la lande
-      - aides . saint-louis
-      - aides . saint-marcellin vercors isère
-      - aides . saint-rémy
-      - aides . saône-beaujolais
-      - aides . sarlat
-      - aides . selestat
-      - aides . sète
-      - aides . sèvre et loire
-      - aides . taillan-médoc
-      - aides . terre des 2 caps
-      - aides . toulouse
-      - aides . tulle
-      - aides . val d'argent
-      - aides . val d'yerres val de seine
-      - aides . valenciennes
-      - aides . vallée de l'homme
-      - aides . vallée de villé
-      - aides . vallons du lyonnais
-      - aides . vienne gartempe
-      - aides . villefranche beaujolais saône 
-      - aides . ville-sur-jarnioux
-      - aides . epinal
-      - aides . rochefort
-      - aides . saintes
-      - aides . yvetot normandie
-      - aides . bassin d'arcachon nord
+  avec:
+    neuf:
+      titre: Vélo neuf
+      valeur: état = 'neuf'
+    
+    occasion:
+      titre: Vélo d'occasion
+      valeur: état = 'occasion'
+      # TODO: supprimer ce mécanisme et gérer l'occasion directement dans les
+      # conditions d'applicabilité des aides.
+      rend non applicable:
+        références à: aides
+        sauf dans:
+          # - aides . ambert livradois forez
+          - aides . annecy
+          - aides . arve salève
+          - aides . aubervilliers
+          - aides . aubiere
+          - aides . auray quiberon
+          - aides . avignon
+          - aides . bègles vélo classique
+          - aides . belfort
+          - aides . béthune bruay
+          - aides . bidart
+          - aides . blacé
+          - aides . boé
+          - aides . bordeaux
+          - aides . bourges
+          - aides . bourg-saint-maurice
+          - aides . caen jeune
+          - aides . campagnes de l'artois
+          - aides . canélan
+          - aides . cébazat
+          - aides . cenon
+          - aides . cévennes gangeoises et suménoises
+          - aides . châtel
+          - aides . chevilly-larue
+          - aides . cluses arve et montagnes
+          - aides . coeur de maurienne arvan
+          - aides . coeur de nacre
+          - aides . corse
+          - aides . crozon
+          - aides . denain
+          - aides . département hérault vélo adapté
+          - aides . dieppe
+          - aides . divonne-les-bains
+          - aides . dreux
+          - aides . évian-les-bains
+          - aides . faches-thumesnil
+          - aides . feignies
+          - aides . fier et usses
+          - aides . flers
+          - aides . genevois
+          - aides . grand cubzaguais
+          - aides . grand est
+          - aides . grand périgueux
+          - aides . grand poitiers
+          - aides . grand villeneuvois
+          - aides . granville
+          - aides . grenoble
+          - aides . haut val de sèvre
+          - aides . haut val de sèvre
+          - aides . hermanville-sur-mer
+          - aides . honfleur
+          - aides . ile de france
+          - aides . illkirch
+          - aides . kremlin-bicetre
+          - aides . la cali
+          - aides . la madeleine
+          - aides . la motte servolex
+          - aides . la roche sur yon
+          - aides . lescar
+          - aides . les herbiers
+          - aides . les sables d'olonne
+          - aides . le vigan
+          - aides . limoges metropole
+          - aides . loire layon aubance
+          - aides . loos-en-gohelle
+          - aides . louvigny
+          - aides . luberon
+          - aides . lyon
+          - aides . mérignac
+          - aides . molsheim-mutzig
+          - aides . mondeville
+          - aides . monmorillon
+          - aides . mons en baroeul
+          - aides . montagnole
+          - aides . montant
+          - aides . montbéliard agglo
+          - aides . montlucon
+          - aides . montpellier
+          - aides . montval sur loir
+          - aides . morzine-avoriaz
+          - aides . moselle et madon
+          - aides . nantes
+          - aides . oullins
+          - aides . pantin
+          - aides . pau
+          - aides . pays ancenis
+          - aides . pays de barr
+          - aides . pays de cruseilles
+          - aides . pays de l'arbresle
+          - aides . pays de l'ozon
+          - aides . pays de lumbres 
+          - aides . pays de saverne
+          - aides . perpignan métropole
+          - aides . pornic
+          - aides . portes de sologne
+          - aides . puisaye forterre
+          - aides . quimperlé
+          - aides . reims
+          - aides . ried de marckolsheim
+          - aides . ronchin
+          - aides . saint alban leysse
+          - aides . sainte-foy-lès-lyon
+          - aides . saint-émilionnais
+          - aides . saint-jacques de la lande
+          - aides . saint-louis
+          - aides . saint-marcellin vercors isère
+          - aides . saint-rémy
+          - aides . saône-beaujolais
+          - aides . sarlat
+          - aides . selestat
+          - aides . sète
+          - aides . sèvre et loire
+          - aides . taillan-médoc
+          - aides . terre des 2 caps
+          - aides . toulouse
+          - aides . tulle
+          - aides . val d'argent
+          - aides . val d'yerres val de seine
+          - aides . valenciennes
+          - aides . vallée de l'homme
+          - aides . vallée de villé
+          - aides . vallons du lyonnais
+          - aides . vienne gartempe
+          - aides . villefranche beaujolais saône 
+          - aides . ville-sur-jarnioux
+          - aides . epinal
+          - aides . rochefort
+          - aides . saintes
+          - aides . yvetot normandie
+          - aides . bassin d'arcachon nord
+          - aides . plaine de l'ain VAE
 
 # NOTE: ne devrait-on pas plutôt avoir 'quotient familial' calculée à partir de
 # 'revenu fiscal de référence' et 'personnes dans le foyer fiscal' ? ->
@@ -8349,17 +8351,6 @@ demandeur . bénéficiaire de minima sociaux:
   type: booléen
   par défaut: non
 
-demandeur . statut étudiant:
-  type: booléen
-  question: Êtes-vous étudiant·e ?
-  description: Certaines aides sont réservées ou majorées pour les étudiant·es.
-  par défaut: non
-
-demandeur . statut demandeur d'emploi:
-  type: booléen
-  question: Êtes-vous en recherche d'emploi ?
-  par défaut: non
-
 demandeur . en situation de handicap:
   type: booléen
   question: Êtes-vous en situation de handicap ?
@@ -8373,12 +8364,35 @@ demandeur . en situation de handicap:
     financer.
   par défaut: non
 
-demandeur . statut apprenti:
-  type: booléen
-  question: Êtes-vous apprenti·e ?
-  description: |
-    Certaines aides sont réservées ou majorées pour les apprenti·es.
-  par défaut: non
+demandeur . statut:
+  question: Quel est votre statut ?
+  une possibilité:
+    - étudiant
+    - apprenti
+    - demandeur d'emploi
+    - salarié
+    - retraité
+    - autre
+  par défaut: "'autre'"
+  avec:
+    étudiant:
+      titre: Étudiant·e
+      valeur: statut = 'étudiant'
+    apprenti:
+      titre: Apprenti·e
+      valeur: statut = 'apprenti'
+    demandeur d'emploi:
+      titre: Demandeur d'emploi
+      valeur: statut = 'demandeur d'emploi'
+    salarié:
+      titre: Salarié·e
+      valeur: statut = 'salarié'
+    retraité:
+      titre: Retraité·e
+      valeur: statut = 'retraité'
+    autre:
+      titre: Autre
+      valeur: statut = 'autre'
 
 demandeur . âge:
   question: Quel est votre âge ?
