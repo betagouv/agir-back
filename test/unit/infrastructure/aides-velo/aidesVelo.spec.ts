@@ -3,6 +3,7 @@ import rules from '../../../../src/infrastructure/data/aidesVelo.json';
 import collectivites from '../../../../src/infrastructure/data/aides-collectivities.json';
 import miniatures from '../../../../src/infrastructure/data/miniatures.json';
 import assert from 'assert';
+import { deserialize } from 'v8';
 
 describe('Aides Vélo', () => {
   const engine = new Engine(rules);
@@ -1207,6 +1208,99 @@ describe('Aides Vélo', () => {
         'vélo . type': "'cargo'",
       });
       expect(engine.evaluate('aides . rochefort').nodeValue).toEqual(225);
+    });
+  });
+
+  describe('La Roche-sur-Yon Agglomération', () => {
+    it("devrait être élligible pour les vélo d'occasion", () => {
+      engine.setSituation({
+        'localisation . epci': "'CA La Roche sur Yon - Agglomération'",
+        'vélo . type': "'électrique'",
+        'vélo . état': "'occasion'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . la roche sur yon').nodeValue).toEqual(50);
+    });
+
+    it("devrait être élligible uniquement pour les VAE en-dessous d'un certain prix", () => {
+      engine.setSituation({
+        'localisation . epci': "'CA La Roche sur Yon - Agglomération'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . la roche sur yon').nodeValue).toEqual(
+        100,
+      );
+
+      engine.setSituation({
+        'localisation . epci': "'CA La Roche sur Yon - Agglomération'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': '2000€',
+      });
+      expect(engine.evaluate('aides . la roche sur yon').nodeValue).toEqual(
+        null,
+      );
+
+      engine.setSituation({
+        'localisation . epci': "'CA La Roche sur Yon - Agglomération'",
+        'vélo . type': "'électrique'",
+        'vélo . état': "'occasion'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . la roche sur yon').nodeValue).toEqual(50);
+
+      engine.setSituation({
+        'localisation . epci': "'CA La Roche sur Yon - Agglomération'",
+        'vélo . type': "'électrique'",
+        'vélo . état': "'occasion'",
+        'vélo . prix': '1500€',
+      });
+      expect(engine.evaluate('aides . la roche sur yon').nodeValue).toEqual(
+        null,
+      );
+    });
+
+    it("devrait être majoré pour les salariés d'une structure membres du PDIE", () => {
+      engine.setSituation({
+        'localisation . epci': "'CA La Roche sur Yon - Agglomération'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': '1000€',
+        'demandeur . statut': "'salarié'",
+        // TODO: use generated types instead of the json
+        // @ts-ignore
+        "aides . la roche sur yon . salarié d'une structure membre du PDIE":
+          'oui',
+      });
+      expect(engine.evaluate('aides . la roche sur yon').nodeValue).toEqual(
+        200,
+      );
+    });
+  });
+
+  describe('Ville de Denain', () => {
+    it('devrait correspondre à la moitié du montant de celle du CAPH', () => {
+      engine.setSituation({
+        'localisation . epci': "'CA de la Porte du Hainaut'",
+        'localisation . code insee': "'59172'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . denain').nodeValue).toEqual(150);
+      expect(engine.evaluate('aides . denain').nodeValue).toEqual(
+        (engine.evaluate('aides . porte du hainaut').nodeValue as number) / 2,
+      );
+
+      engine.setSituation({
+        'localisation . epci': "'CA de la Porte du Hainaut'",
+        'localisation . code insee': "'59172'",
+        'vélo . type': "'cargo électrique'",
+        'vélo . état': "'occasion'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . denain').nodeValue).toEqual(100);
+      expect(engine.evaluate('aides . denain').nodeValue).toEqual(
+        (engine.evaluate('aides . porte du hainaut').nodeValue as number) / 2,
+      );
     });
   });
 });
