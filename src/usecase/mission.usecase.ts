@@ -5,7 +5,10 @@ import { MissionRepository } from '../../src/infrastructure/repository/mission.r
 import { Mission, Objectif } from '../../src/domain/mission/mission';
 import { ContentType } from '../../src/domain/contenu/contentType';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
-import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import {
+  CLE_PERSO,
+  Personnalisator,
+} from '../infrastructure/personnalisation/personnalisator';
 import { DefiStatus } from '../../src/domain/defis/defi';
 import {
   MissionDefinition,
@@ -190,7 +193,9 @@ export class MissionUsecase {
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    return this.personnalisator.personnaliser(result, utilisateur);
+    return this.personnalisator.personnaliser(result, utilisateur, [
+      CLE_PERSO.espace_insecable,
+    ]);
   }
 
   async completeMissionDef(
