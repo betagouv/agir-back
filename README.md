@@ -8,7 +8,7 @@ Ce composant porte
 - la majeur partie de la logique métier et data du service exposée via des APIs aux clients web et mobile (les mêmes APIs pour les deux)
 - l'interfaçage avec les services externes (Nos gestes climat, impactCO2, pres de chez nous, linky, etc)
 
-## Pile technique
+## Pile technique.
 
 - Language : nodejs (>=18.0.0)
 - Typescript
