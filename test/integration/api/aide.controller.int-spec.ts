@@ -3,6 +3,7 @@ import { Thematique } from '../../../src/domain/contenu/thematique';
 import { AideAPI } from '../../../src/infrastructure/api/types/aide/AideAPI';
 import { DB, TestUtil } from '../../TestUtil';
 import { Besoin } from '../../../src/domain/aides/besoin';
+import { ProfileUsecase } from '../../../src/usecase/profile.usecase';
 
 describe('Aide (API test)', () => {
   let thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -141,5 +142,59 @@ describe('Aide (API test)', () => {
 
     const aideBody = response.body[0] as AideAPI;
     expect(aideBody.content_id).toEqual('2');
+  });
+  it('GET /utilisateurs/:utilisateurId/aides_v2 info de couvertur true', async () => {
+    // GIVEN
+    process.env.CRON_API_KEY = TestUtil.token;
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: { code_postal: '22222' },
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: ['11111'],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      codes_postaux: ['22222'],
+    });
+    await TestUtil.POST('/utilisateurs/update_user_couverture');
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_aides).toHaveLength(1);
+    expect(response.body.couverture_aides_ok).toEqual(true);
+  });
+  it('GET /utilisateurs/:utilisateurId/aides_v2 info de couvertur true', async () => {
+    // GIVEN
+    process.env.CRON_API_KEY = TestUtil.token;
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: { code_postal: '22222' },
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: [],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      codes_postaux: [],
+    });
+    await TestUtil.POST('/utilisateurs/update_user_couverture');
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_aides).toHaveLength(2);
+    expect(response.body.couverture_aides_ok).toEqual(false);
   });
 });
