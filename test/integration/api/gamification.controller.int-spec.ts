@@ -241,7 +241,6 @@ describe('Gamification  (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
 
-    console.log(response.body);
     expect(response.body).toEqual({
       top_trois: [
         {
