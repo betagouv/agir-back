@@ -255,7 +255,7 @@ export class CMSUsecase {
       try {
         defi = CMSUsecase.buildDefiFromCMSPopulateData(element);
         liste_defis.push(defi);
-        loading_result.push(`loaded article : ${defi.content_id}`);
+        loading_result.push(`loaded defi : ${defi.content_id}`);
       } catch (error) {
         loading_result.push(
           `Could not load defi ${element.id} : ${error.message}`,

@@ -12,7 +12,7 @@ export enum TagUtilisateur {
   appetence_tec = 'appetence_tec',
   appetence_velo = 'appetence_velo',
   appetence_cafe = 'appetence_cafe',
-  appetence_ecomomies = 'appetence_ecomomies',
+  appetence_economies = 'appetence_economies',
   appetence_bouger_sante = 'appetence_bouger_sante',
   appetence_changement_voit = 'appetence_changement_voit',
   appetence_limiter_impact_trajets = 'appetence_limiter_impact_trajets',
@@ -31,5 +31,5 @@ export enum TagUtilisateur {
   logement_plus_15_ans = 'logement_plus_15_ans',
   trajet_court_voiture = 'trajet_court_voiture',
   trajet_long_voiture = 'trajet_long_voiture',
-  UNKNOWN = 'UNKNOWN',
+  UNKNOWN = 'UNKWON',
 }
