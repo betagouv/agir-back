@@ -236,12 +236,12 @@ export class ProfileUsecase {
               'ENCHAINEMENT_KYC_mini_bilan_carbone'
             ],
           );
-        if (enchainement_mini_bilan.getProgression().current === 5) {
+        if (enchainement_mini_bilan.getProgression().current === 7) {
+          count_onboarding_7_done++;
+        } else {
           result.push(
             `user : ${utilisateur.id}/${utilisateur.email} - bilan incomplet`,
           );
-        } else {
-          count_onboarding_7_done++;
         }
       } else {
         count_onboarding_non_done++;
