@@ -1303,4 +1303,23 @@ describe('Aides Vélo', () => {
       );
     });
   });
+
+  describe('Communauté urbaine de Dunkerque', () => {
+    it("devrait être bonifié pour les bénéficiaires du RSA et de l'ASS", () => {
+      engine.setSituation({
+        'localisation . epci': "'CU de Dunkerque'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': '1000€',
+      });
+      expect(engine.evaluate('aides . dunkerque').nodeValue).toEqual(150);
+
+      engine.setSituation({
+        'localisation . epci': "'CU de Dunkerque'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': '1000€',
+        'demandeur . bénéficiaire de minima sociaux': 'oui',
+      });
+      expect(engine.evaluate('aides . dunkerque').nodeValue).toEqual(250);
+    });
+  });
 });
