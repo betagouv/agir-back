@@ -302,9 +302,15 @@ export class LinkyServiceManager
 
     let winter_pk;
     try {
+      console.log(
+        `Attempt activating PRM [${prm}] for departement [${localisation_commune.code_departement}]`,
+      );
       winter_pk = await this.linkyAPIConnector.souscription_API(
         prm,
         localisation_commune.code_departement,
+      );
+      console.log(
+        `Activated PRM [${prm}] for departement [${localisation_commune.code_departement}]`,
       );
       service.resetErrorState();
     } catch (error) {

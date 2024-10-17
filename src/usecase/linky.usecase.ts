@@ -150,7 +150,6 @@ export class LinkyUsecase {
   }
 
   async process_incoming_data(incoming: WinterDataSentAPI): Promise<any> {
-    console.log(JSON.stringify(incoming));
     if (
       incoming.error &&
       incoming.error.code !== null &&
@@ -162,6 +161,9 @@ export class LinkyUsecase {
       );
     }
     const prm = incoming.info.prm;
+    console.log(
+      `Received data for PRM [${prm}] : ${JSON.stringify(incoming.data)}`,
+    );
 
     let current_data = await this.linkyRepository.getByPRM(prm);
     if (!current_data) {
