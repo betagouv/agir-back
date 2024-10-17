@@ -107,18 +107,6 @@ export class UtilisateurRepository {
   }
   async findByEmail(email: string): Promise<Utilisateur | null> {
     const users = await this.prisma.utilisateur.findMany({
-      omit: {
-        todo: true,
-        gamification: true,
-        history: true,
-        kyc: false,
-        unlocked_features: false,
-        logement: false,
-        defis: true,
-        missions: true,
-        bilbiotheque_services: true,
-        notification_history: true,
-      },
       where: {
         email: {
           equals: email,
