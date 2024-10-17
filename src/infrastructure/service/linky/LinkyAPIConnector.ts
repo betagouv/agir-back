@@ -97,22 +97,25 @@ export class LinkyAPIConnector {
           }
           ApplicationError.throwUnknownLinkyError(
             prm,
-            JSON.stringify(error.response),
+            JSON.stringify(error.response.data),
           );
         } else {
           ApplicationError.throwUnknownLinkyError(
             prm,
-            JSON.stringify(error.response),
+            'Linky erreur de reponse sans data : ' + error.response,
           );
         }
       } else if (error.request) {
         // erreur technique
         ApplicationError.throwUnknownLinkyError(
           prm,
-          JSON.stringify(error.request),
+          'Linky erreur de requête ' + error.request,
         );
       }
-      ApplicationError.throwUnknownLinkyError(prm, JSON.stringify(error));
+      ApplicationError.throwUnknownLinkyError(
+        prm,
+        'Linky completly unknown error : ' + error,
+      );
     }
     return response.data.pk;
   }

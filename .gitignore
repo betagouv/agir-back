@@ -44,3 +44,4 @@ lerna-debug.log*
 .env.run
 *wwo.json
 DOSSIER D’ARCHITECTURE TECHNIQUE.md
+log.txt
