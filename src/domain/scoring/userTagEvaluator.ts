@@ -206,7 +206,7 @@ export class UserTagEvaluator {
       0,
     );
     user.increaseTagValueIfElse(
-      Tag.appetence_ecomomies,
+      Tag.appetence_economies,
       kyc.includesReponseCode('economie'),
       100,
       0,

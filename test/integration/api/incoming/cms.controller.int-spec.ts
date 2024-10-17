@@ -11,6 +11,7 @@ import { Tag } from '../../../../src/domain/scoring/tag';
 import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
+import { TagUtilisateur } from '../../../../src/domain/scoring/tagUtilisateur';
 
 describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA_DEFI = {
@@ -28,6 +29,47 @@ describe('/api/incoming/cms (API test)', () => {
         { id: 1, code: 'capacite_physique' },
         { id: 2, code: 'possede_velo' },
       ],
+      publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+      univers: [
+        {
+          id: 1,
+          code: Univers.climat,
+        },
+      ],
+      thematique_univers: [
+        {
+          id: 1,
+          code: ThematiqueUnivers.dechets_compost,
+        },
+      ],
+      mois: '0,1',
+      OR_Conditions: [
+        {
+          AND_Conditions: [
+            {
+              code_reponse: 'oui',
+              kyc: {
+                code: '123',
+                id: 1,
+              },
+            },
+          ],
+        },
+      ],
+    },
+  };
+  const CMS_DATA_DEFI_bad_tag = {
+    model: CMSModel.defi,
+    event: CMSEvent['entry.publish'],
+    entry: {
+      id: 123,
+      titre: 'titre',
+      sousTitre: 'sous titre',
+      astuces: 'facile',
+      pourquoi: 'parce que !!',
+      points: 10,
+      thematique: { id: 1, titre: 'Alimentation' },
+      tags: [{ id: 1, code: 'VERY_BAD' }],
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       univers: [
         {
@@ -522,6 +564,23 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.conditions).toStrictEqual([
       [{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }],
     ]);
+  });
+
+  it('POST /api/incoming/cms - gestion tag inconnu', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_DEFI_bad_tag,
+    );
+
+    // THEN
+    const defis = await TestUtil.prisma.defi.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(defis).toHaveLength(1);
+    const defi = defis[0];
+    expect(defi.tags).toEqual([TagUtilisateur.UNKNOWN]);
   });
 
   it('POST /api/incoming/cms - updates a  defi', async () => {
