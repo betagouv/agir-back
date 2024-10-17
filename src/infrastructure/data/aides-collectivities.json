@@ -2558,18 +2558,6 @@
     "slug": "dunkerque",
     "country": "france"
   },
-  "aides . flandre intérieure": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC de Flandre Intérieure",
-      "code": "200040947"
-    },
-    "codeInsee": "59295",
-    "departement": "59",
-    "population": 21464,
-    "slug": "hazebrouck",
-    "country": "france"
-  },
   "aides . grande-synthe": {
     "collectivity": {
       "kind": "code insee",
@@ -2605,7 +2593,7 @@
     "slug": "cambrai",
     "country": "france"
   },
-  "aides . cœur d'ostrevent": {
+  "aides . coeur d'ostrevent": {
     "collectivity": {
       "kind": "epci",
       "value": "CC Coeur d'Ostrevent (CCCO)",
@@ -2845,7 +2833,7 @@
     "slug": "liffre",
     "country": "france"
   },
-  "aides . Vallons de Haute Bretagne": {
+  "aides . vallons de haute bretagne": {
     "collectivity": {
       "kind": "epci",
       "value": "CC Vallons de Haute-Bretagne Communauté",
@@ -2902,17 +2890,6 @@
     "departement": "22",
     "population": 20451,
     "slug": "lannion",
-    "country": "france"
-  },
-  "aides . perros-guirec": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "22168"
-    },
-    "codeInsee": "22168",
-    "departement": "22",
-    "population": 7149,
-    "slug": "perros-guirec",
     "country": "france"
   },
   "aides . trébeurden": {
