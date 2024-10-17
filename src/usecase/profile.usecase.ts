@@ -16,6 +16,7 @@ import { Retryable } from 'typescript-retry-decorator';
 import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import validator from 'validator';
+import { QuestionKYCUsecase } from './questionKYC.usecase';
 
 export type Phrase = {
   phrase: string;
@@ -212,6 +213,43 @@ export class ProfileUsecase {
 
       await this.resetUser(user_id);
     }
+  }
+
+  async liste5questOnboarding(): Promise<string[]> {
+    const result = [];
+    const kyc_catalogue = await this.kycRepository.getAllDefs();
+    let count_onboarding_7_done = 0;
+    let count_onboarding_non_done = 0;
+
+    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
+    for (let index = 0; index < userIdList.length; index++) {
+      const user_id = userIdList[index];
+      const utilisateur = await this.utilisateurRepository.getById(user_id, [
+        Scope.todo,
+        Scope.kyc,
+      ]);
+      utilisateur.kyc_history.setCatalogue(kyc_catalogue);
+      if (utilisateur.parcours_todo.isEndedTodo()) {
+        const enchainement_mini_bilan =
+          utilisateur.kyc_history.getEnchainementKYCsEligibles(
+            QuestionKYCUsecase.ENCHAINEMENTS[
+              'ENCHAINEMENT_KYC_mini_bilan_carbone'
+            ],
+          );
+        if (enchainement_mini_bilan.getProgression().current === 5) {
+          result.push(
+            `user : ${utilisateur.id}/${utilisateur.email} - bilan incomplet`,
+          );
+        } else {
+          count_onboarding_7_done++;
+        }
+      } else {
+        count_onboarding_non_done++;
+      }
+    }
+    result.push(`Onboarding_7_done : ${count_onboarding_7_done}`);
+    result.push(`Onboarding_non_done : ${count_onboarding_non_done}`);
+    return result;
   }
 
   async updateAllUserCouvertureAides(): Promise<{

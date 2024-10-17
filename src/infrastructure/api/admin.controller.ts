@@ -347,6 +347,16 @@ export class AdminController extends GenericControler {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.profileUsecase.validerPrenoms(body);
   }
+
+  @Post('/admin/lister_onboarding_a_5_quetions_done')
+  @ApiOperation({
+    summary: `Liste les users qui ont un onboarding à 5 questions réalisé`,
+  })
+  async lister5question(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.profileUsecase.liste5questOnboarding();
+  }
+
   @Post('/admin/send_all_emails_as_test/:utilisateurId')
   @ApiOperation({
     summary: `Tente d'envoyer tous les templates de mail à un utilisateur donné, sans maj de l'historique de notification. Utile pour recetter les templates de mail`,
