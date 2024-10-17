@@ -636,7 +636,9 @@ export class CMSUsecase {
       pourquoi: entry.pourquoi,
       sous_titre: entry.sousTitre,
       tags: entry.tags
-        ? entry.tags.map((elem) => TagUtilisateur[elem.code])
+        ? entry.tags.map(
+            (elem) => TagUtilisateur[elem.code] || TagUtilisateur.UNKNOWN,
+          )
         : [],
       universes: entry.univers ? entry.univers.map((u) => u.code) : [],
       thematiques_univers: entry.thematique_univers
@@ -674,7 +676,9 @@ export class CMSUsecase {
           }))
         : [],
       tags: entry.tags
-        ? entry.tags.map((elem) => TagUtilisateur[elem.code])
+        ? entry.tags.map(
+            (elem) => TagUtilisateur[elem.code] || TagUtilisateur.UNKNOWN,
+          )
         : [],
       universes: entry.univers ? entry.univers.map((u) => u.code) : [],
       image_url: CMSUsecase.getImageUrl(entry),
@@ -887,7 +891,8 @@ export class CMSUsecase {
           )
         : Thematique.climat,
       tags: entry.attributes.tags.data.map(
-        (elem) => TagUtilisateur[elem.attributes.code],
+        (elem) =>
+          TagUtilisateur[elem.attributes.code] || TagUtilisateur.UNKNOWN,
       ),
       universes:
         entry.attributes.univers.data.length > 0
@@ -938,7 +943,8 @@ export class CMSUsecase {
           )
         : Thematique.climat,
       tags: entry.attributes.tags.data.map(
-        (elem) => TagUtilisateur[elem.attributes.code],
+        (elem) =>
+          TagUtilisateur[elem.attributes.code] || TagUtilisateur.UNKNOWN,
       ),
       universes:
         entry.attributes.univers.data.length > 0

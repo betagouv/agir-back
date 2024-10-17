@@ -31,4 +31,5 @@ export enum TagUtilisateur {
   logement_plus_15_ans = 'logement_plus_15_ans',
   trajet_court_voiture = 'trajet_court_voiture',
   trajet_long_voiture = 'trajet_long_voiture',
+  UNKNOWN = 'UNKNOWN',
 }
