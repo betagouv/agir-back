@@ -1322,4 +1322,249 @@ describe('Aides Vélo', () => {
       expect(engine.evaluate('aides . dunkerque').nodeValue).toEqual(250);
     });
   });
+
+  describe("Ville d'Amboise", () => {
+    it('devrait être de 200 € pour un QF > 1100 €/mois', () => {
+      engine.setSituation({
+        'localisation . code insee': "'37003'",
+        'revenu fiscal de référence': '2000 €/mois',
+        'vélo . type': "'électrique'",
+        'vélo . prix': 1400,
+      });
+      expect(engine.evaluate('aides . amboise').nodeValue).toEqual(200);
+    });
+
+    it('devrait avoir un plafond de limite de 1200 € pour le prix du vélo', () => {
+      engine.setSituation({
+        'localisation . code insee': "'37003'",
+        'revenu fiscal de référence': '400 €/mois',
+        'vélo . type': "'électrique'",
+        'vélo . prix': 2000,
+      });
+      expect(engine.evaluate('aides . amboise').nodeValue).toEqual(0.5 * 1200);
+
+      engine.setSituation({
+        'localisation . code insee': "'37003'",
+        'revenu fiscal de référence': '1000 €/mois',
+        'vélo . type': "'électrique'",
+        'vélo . prix': 2000,
+      });
+      expect(engine.evaluate('aides . amboise').nodeValue).toEqual(0.3 * 1200);
+    });
+
+    it('devrait être de 200 € minimum', () => {
+      engine.setSituation({
+        'localisation . code insee': "'37003'",
+        'revenu fiscal de référence': '400 €/mois',
+        'vélo . type': "'électrique'",
+        'vélo . prix': 200,
+      });
+      expect(engine.evaluate('aides . amboise').nodeValue).not.toBeLessThan(
+        200,
+      );
+
+      engine.setSituation({
+        'localisation . code insee': "'37003'",
+        'revenu fiscal de référence': '1000 €/mois',
+        'vélo . type': "'électrique'",
+        'vélo . prix': 200,
+      });
+      expect(engine.evaluate('aides . amboise').nodeValue).not.toBeLessThan(
+        200,
+      );
+    });
+
+    it("devrait être élligible pour les vélo d'occasion", () => {
+      engine.setSituation({
+        'localisation . code insee': "'37003'",
+        'revenu fiscal de référence': '400 €/mois',
+        'vélo . type': "'électrique'",
+        'vélo . état': "'occasion'",
+        'vélo . prix': 2000,
+      });
+      expect(engine.evaluate('aides . amboise').nodeValue).toEqual(0.5 * 1200);
+    });
+  });
+
+  describe('Région Pays de la Loire', () => {
+    it('devrait être élligible uniquement pour les abonné TER', () => {
+      engine.setSituation({
+        'localisation . région': "'52'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': 1000,
+      });
+      expect(engine.evaluate('aides . pays de la loire').nodeValue).toEqual(
+        200,
+      );
+
+      engine.setSituation({
+        'localisation . région': "'52'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': 1000,
+        // TODO: use generated types instead of the json
+        // @ts-ignore
+        'aides . pays de la loire . abonné TER': 'non',
+      });
+      expect(engine.evaluate('aides . pays de la loire').nodeValue).toBeNull();
+    });
+  });
+
+  describe("Département de l'Oise", () => {
+    it("devrait pas être élligible pour les personnes ayant bénéficiées de l'aide à la conversion bioéthanol", () => {
+      engine.setSituation({
+        'localisation . département': "'60'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': 1000,
+      });
+      expect(engine.evaluate('aides . oise').nodeValue).toEqual(300);
+
+      engine.setSituation({
+        'localisation . département': "'60'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': 1000,
+        // TODO: use generated types instead of the json
+        // @ts-ignore
+        'aides . oise . aide à la conversion bioéthanol': 'oui',
+      });
+      expect(engine.evaluate('aides . oise').nodeValue).toEqual(0);
+    });
+
+    it("devrait être élligible pour les vélo d'occasion", () => {
+      engine.setSituation({
+        'localisation . département': "'60'",
+        'vélo . type': "'électrique'",
+        'vélo . état': "'occasion'",
+        'vélo . prix': 1000,
+      });
+      expect(engine.evaluate('aides . oise').nodeValue).toEqual(300);
+    });
+  });
+
+  describe('Grand Angoulême', () => {
+    it('devrait être élligible sans condition de revenu pour les étudiants et les apprantis', () => {
+      engine.setSituation({
+        'localisation . epci': "'CA du Grand Angoulême'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': 1000,
+        'revenu fiscal de référence': '5000 €/mois',
+      });
+      expect(engine.evaluate('aides . grand angouleme').nodeValue).toBeNull();
+
+      engine.setSituation({
+        'localisation . epci': "'CA du Grand Angoulême'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': 1000,
+        'revenu fiscal de référence': '5000 €/mois',
+        'demandeur . statut': "'étudiant'",
+      });
+      expect(engine.evaluate('aides . grand angouleme').nodeValue).toEqual(400);
+
+      engine.setSituation({
+        'localisation . epci': "'CA du Grand Angoulême'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': 1000,
+        'revenu fiscal de référence': '5000 €/mois',
+        'demandeur . statut': "'apprenti'",
+      });
+      expect(engine.evaluate('aides . grand angouleme').nodeValue).toEqual(400);
+    });
+
+    it("devrait être élligible pour les vélo d'occasion", () => {
+      engine.setSituation({
+        'localisation . epci': "'CA du Grand Angoulême'",
+        'vélo . type': "'électrique'",
+        'vélo . état': "'occasion'",
+        'vélo . prix': 1000,
+        'revenu fiscal de référence': '200 €/mois',
+      });
+      expect(engine.evaluate('aides . grand angouleme').nodeValue).toEqual(400);
+    });
+  });
+
+  describe('Les Portes du Luxembourg', () => {
+    it("devrait être élligible pour les vélo d'occasion", () => {
+      engine.setSituation({
+        'localisation . epci': "'CC des Portes du Luxembourg'",
+        'vélo . type': "'électrique'",
+        'vélo . état': "'occasion'",
+        'vélo . prix': 1000,
+      });
+      expect(engine.evaluate('aides . portes du luxembourg').nodeValue).toEqual(
+        200,
+      );
+    });
+
+    it('devrait être bonifiée pour les vélos conçus et assemblés en France', () => {
+      engine.setSituation({
+        'localisation . epci': "'CC des Portes du Luxembourg'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': 1000,
+        // TODO: use generated types instead of the json
+        // @ts-ignore
+        'aides . portes du luxembourg . assemblé en France': 'oui',
+      });
+      expect(engine.evaluate('aides . portes du luxembourg').nodeValue).toEqual(
+        300,
+      );
+    });
+  });
+
+  describe('Brièvre Isère Communauté', () => {
+    it('devrait pas être élligible pour pour un vélo cargo >5000€', () => {
+      engine.setSituation({
+        'localisation . epci': "'CC Bièvre Isère'",
+        'vélo . type': "'cargo électrique'",
+        'vélo . prix': 6000,
+      });
+      expect(engine.evaluate('aides . bièvre isère').nodeValue).toBeNull();
+
+      engine.setSituation({
+        'localisation . epci': "'CC Bièvre Isère'",
+        'vélo . type': "'cargo'",
+        'vélo . prix': 6000,
+      });
+      expect(engine.evaluate('aides . bièvre isère').nodeValue).toBeNull();
+
+      engine.setSituation({
+        'localisation . epci': "'CC Bièvre Isère'",
+        'vélo . type': "'adapté'",
+        'vélo . prix': 6000,
+      });
+      expect(engine.evaluate('aides . bièvre isère').nodeValue).toBeNull();
+    });
+
+    it('devrait pas être élligible pour pour un vélo non cargo >3000€', () => {
+      engine.setSituation({
+        'localisation . epci': "'CC Bièvre Isère'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': 4000,
+      });
+      expect(engine.evaluate('aides . bièvre isère').nodeValue).toBeNull();
+
+      engine.setSituation({
+        'localisation . epci': "'CC Bièvre Isère'",
+        'vélo . type': "'mécanique simple'",
+        'vélo . prix': 4000,
+      });
+      expect(engine.evaluate('aides . bièvre isère').nodeValue).toBeNull();
+    });
+
+    it("devrait être élligible pour les vélo d'occasion", () => {
+      engine.setSituation({
+        'localisation . epci': "'CC Bièvre Isère'",
+        'vélo . type': "'électrique'",
+        'vélo . état': "'occasion'",
+        'vélo . prix': 1000,
+      });
+      expect(engine.evaluate('aides . bièvre isère').nodeValue).toEqual(250);
+
+      engine.setSituation({
+        'localisation . epci': "'CC Bièvre Isère'",
+        'vélo . type': "'adapté'",
+        'vélo . état': "'occasion'",
+        'vélo . prix': 4500,
+      });
+      expect(engine.evaluate('aides . bièvre isère').nodeValue).toEqual(100);
+    });
+  });
 });
