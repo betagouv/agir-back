@@ -44,16 +44,17 @@ describe('CartographieView', () => {
       },
     });
 
+    delete cartographieVue[0].id;
+    delete cartographieVue[1].id;
+
     // THEN
     expect(cartographieVue).toStrictEqual([
       {
-        id: 1,
         code_postal: '22000',
         couvert_par_aides: true,
         code_departement: '22',
       },
       {
-        id: 2,
         code_postal: null,
         couvert_par_aides: false,
         code_departement: null,

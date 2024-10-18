@@ -28,7 +28,6 @@ export class ProfileUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private serviceRepository: ServiceRepository,
-    private bilanRepository: SituationNGCRepository,
     private oIDCStateRepository: OIDCStateRepository,
     private contactUsecase: ContactUsecase,
     private kycRepository: KycRepository,

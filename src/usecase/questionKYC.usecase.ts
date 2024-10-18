@@ -303,80 +303,29 @@ export class QuestionKYCUsecase {
       utilisateur.gamification.ajoutePoints(question.points, utilisateur);
     }
 
+    let updated_kyc;
     if (labels_reponse) {
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        code_question,
-        labels_reponse,
-      );
-      this.synchroKYCAvecProfileUtilisateur(
-        code_question,
-        labels_reponse,
-        utilisateur,
-      );
+      updated_kyc =
+        utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+          code_question,
+          labels_reponse,
+        );
     } else {
-      utilisateur.kyc_history.updateQuestionByCodeWithCode(
+      updated_kyc = utilisateur.kyc_history.updateQuestionByCodeWithCode(
         code_question,
         code_reponse,
       );
     }
+    utilisateur.kyc_history.synchroKYCAvecProfileUtilisateur(
+      updated_kyc,
+      utilisateur,
+    );
 
     utilisateur.missions.answerKyc(code_question);
 
     this.dispatchKYCUpdateToOtherKYCsPostUpdate(code_question, utilisateur);
 
     utilisateur.recomputeRecoTags();
-  }
-
-  public synchroKYCAvecProfileUtilisateur(
-    code_question: string,
-    reponse: string[],
-    utilisateur: Utilisateur,
-  ) {
-    const kyc =
-      utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(code_question);
-
-    if (kyc) {
-      switch (kyc.id) {
-        case KYCID.KYC006:
-          const label_age = kyc.getLabelByCode('plus_15');
-          utilisateur.logement.plus_de_15_ans = reponse.includes(label_age);
-          break;
-        case KYCID.KYC_DPE:
-          const code_dpe = kyc.getCodeByLabel(reponse[0]);
-          utilisateur.logement.dpe = DPE[code_dpe];
-          break;
-        case KYCID.KYC_superficie:
-          const valeur = parseInt(reponse[0]);
-          if (valeur < 35)
-            utilisateur.logement.superficie = Superficie.superficie_35;
-          if (valeur < 70)
-            utilisateur.logement.superficie = Superficie.superficie_70;
-          if (valeur < 100)
-            utilisateur.logement.superficie = Superficie.superficie_100;
-          if (valeur < 150)
-            utilisateur.logement.superficie = Superficie.superficie_150;
-          if (valeur >= 150)
-            utilisateur.logement.superficie = Superficie.superficie_150_et_plus;
-          break;
-        case KYCID.KYC_proprietaire:
-          const code_prop = kyc.getCodeByLabel(reponse[0]);
-          utilisateur.logement.proprietaire = code_prop === 'oui';
-          break;
-        case KYCID.KYC_chauffage:
-          const code_chauff = kyc.getCodeByLabel(reponse[0]);
-          utilisateur.logement.chauffage = Chauffage[code_chauff];
-          break;
-        case KYCID.KYC_type_logement:
-          const code_log = kyc.getCodeByLabel(reponse[0]);
-          utilisateur.logement.type =
-            code_log === 'type_appartement'
-              ? TypeLogement.appartement
-              : TypeLogement.maison;
-          break;
-        default:
-          break;
-      }
-    }
   }
 
   private updateUserTodo(utilisateur: Utilisateur, questionId: string) {

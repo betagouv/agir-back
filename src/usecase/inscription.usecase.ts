@@ -65,6 +65,7 @@ export class InscriptionUsecase {
       if (situation) {
         const updated_keys = utilisateurToCreate.kyc_history.injectSituationNGC(
           situation.situation as any,
+          utilisateurToCreate,
         );
         if (updated_keys.length > 0) {
           console.log(
