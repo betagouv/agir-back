@@ -3019,29 +3019,6 @@
     "slug": "amboise",
     "country": "france"
   },
-  "aides . vexin normand": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC du Vexin Normand",
-      "code": "200071843"
-    },
-    "codeInsee": "27284",
-    "departement": "27",
-    "population": 11863,
-    "slug": "gisors",
-    "country": "france"
-  },
-  "aides . val-de-reuil": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "27701"
-    },
-    "codeInsee": "27701",
-    "departement": "27",
-    "population": 12702,
-    "slug": "val-de-reuil",
-    "country": "france"
-  },
   "aides . moselle et madon": {
     "collectivity": {
       "kind": "epci",
@@ -3171,29 +3148,6 @@
     "departement": "38",
     "population": 4279,
     "slug": "villard-de-lans",
-    "country": "france"
-  },
-  "aides . carmausin-ségala": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC Carmausin-Ségala",
-      "code": "200040905"
-    },
-    "codeInsee": "81060",
-    "departement": "81",
-    "population": 9870,
-    "slug": "carmaux",
-    "country": "france"
-  },
-  "aides . lisieux": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "14366"
-    },
-    "codeInsee": "14366",
-    "departement": "14",
-    "population": 19755,
-    "slug": "lisieux",
     "country": "france"
   },
   "aides . portes du luxembourg": {

@@ -37,6 +37,7 @@
 - `aides . aix les bains`
 - `aides . albert`
 - `aides . albi`
+- `aides . amboise`
 - `aides . amiens`
 - `aides . angers`
 - `aides . anjou bleu`
@@ -49,21 +50,28 @@
 - `aides . aubervilliers`
 - `aides . aubiere`
 - `aides . aunis atlantique`
+- `aides . auray quiberon`
 - `aides . aurillac`
+- `aides . avant-monts`
 - `aides . avignon` -> `aides . grand avignon`
 - `aides . baie du mont saint-michel`
 - `aides . baisieux`
+- `aides . bannalec`
 - `aides . bassin d'arcachon nord`
+- `aides . baud`
+- `aides . beauvais`
 - `aides . belfort`
 - `aides . betheny`
 - `aides . béthune bruay`
 - `aides . bidart`
+- `aides . bièvre isère`
 - `aides . blacé`
 - `aides . blois`
 - `aides . boé`
 - `aides . bonningues-lès-calais`
 - `aides . bonus vélo`
 - `aides . bordeaux`
+- `aides . boulonnais`
 - `aides . bourges`
 - `aides . bourg-saint-maurice`
 - `aides . brest`
@@ -74,8 +82,12 @@
 - `aides . camon`
 - `aides . canélan`
 - `aides . carpiquet`
+- `aides . cazouls-lès-béziers`
 - `aides . cébazat`
 - `aides . cenon`
+- `aides . ceyrat`
+- `aides . chateauroux`
+- `aides . château-thierry`
 - `aides . châtel`
 - `aides . chevilly-larue`
 - `aides . cholet`
@@ -90,6 +102,7 @@
 - `aides . cote d'emeraude`
 - `aides . cote d'or`
 - `aides . cotentin`
+- `aides . couesnon`
 - `aides . cournon d'auvergne`
 - `aides . crozon`
 - `aides . dardilly`
@@ -104,6 +117,7 @@
 - `aides . dreux`
 - `aides . dunkerque`
 - `aides . eckbolsheim`
+- `aides . ecommoy`
 - `aides . epinal`
 - `aides . eschau`
 - `aides . évian-les-bains`
@@ -115,7 +129,10 @@
 - `aides . genevois`
 - `aides . genneviliers`
 - `aides . givors`
+- `aides . golf de saint-tropez`
 - `aides . gouesnou`
+- `aides . grand angouleme`
+- `aides . grand calais`
 - `aides . grand cubzaguais`
 - `aides . grand est`
 - `aides . grande-synthe`
@@ -124,13 +141,16 @@
 - `aides . grand poitiers`
 - `aides . grand reims`
 - `aides . grand roye`
+- `aides . grand villeneuvois`
 - `aides . granville`
 - `aides . grenoble`
 - `aides . gruson`
 - `aides . guichen`
+- `aides . haut-béarn`
 - `aides . haute-cornouaille`
 - `aides . haut val de sèvre`
 - `aides . hem`
+- `aides . hennebont`
 - `aides . hermanville-sur-mer`
 - `aides . honfleur`
 - `aides . ifs`
@@ -138,7 +158,10 @@
 - `aides . illkirch`
 - `aides . istres`
 - `aides . iwuy`
+- `aides . joinville`
+- `aides . joinville-le-pont`
 - `aides . kremlin-bicetre`
+- `aides . labège`
 - `aides . la cali`
 - `aides . la madeleine`
 - `aides . la motte servolex`
@@ -156,11 +179,13 @@
 - `aides . liffré-cormier`
 - `aides . limoges metropole`
 - `aides . loire layon aubance`
+- `aides . longuenesse`
 - `aides . loos-en-gohelle`
 - `aides . louvigny`
 - `aides . luberon`
 - `aides . lyon`
 - `aides . mandelieu`
+- `aides . massif du vercors`
 - `aides . mennecy`
 - `aides . molsheim-mutzig`
 - `aides . mondeville`
@@ -178,18 +203,23 @@
 - `aides . morlaix`
 - `aides . mornant`
 - `aides . morzine-avoriaz`
+- `aides . moselle et madon`
 - `aides . mougins`
 - `aides . nanterre`
 - `aides . nantes`
 - `aides . occitanie`
+- `aides . oise`
+- `aides . osartis-marquion`
 - `aides . pantin`
 - `aides . paris`
 - `aides . pau`
 - `aides . pays ancenis`
 - `aides . pays de barr`
+- `aides . pays de châteaugiron`
 - `aides . pays de l'arbresle`
 - `aides . pays de l'ozon`
 - `aides . pays de lumbres`
+- `aides . pays de mormal`
 - `aides . pays des achards`
 - `aides . pays de saverne`
 - `aides . pays d'iroise`
@@ -202,6 +232,7 @@
 - `aides . pornic`
 - `aides . porte du hainaut`
 - `aides . portes de rosheim`
+- `aides . portes du luxembourg`
 - `aides . provence verte`
 - `aides . puisaye forterre`
 - `aides . puteaux`
@@ -256,18 +287,23 @@
 - `aides . vallée de l'homme`
 - `aides . vallée de villé`
 - `aides . vallée d'ossau`
+- `aides . vallées de l'orne et de l'odon`
+- `aides . vallées du clain`
 - `aides . Vallons de Haute Bretagne` -> `aides . vallons de haute bretagne`
 - `aides . vallons du lyonnais`
+- `aides . val-revermont`
 - `aides . vendenheim`
 - `aides . verson`
 - `aides . vienne condrieu`
 - `aides . vienne gartempe`
 - `aides . ville de talant`
 - `aides . villefranche beaujolais saône`
+- `aides . villers-sur-mer`
 - `aides . villes soeurs`
 - `aides . ville-sur-jarnioux`
 - `aides . wambrechies`
 - `aides . wasquehal`
+- `aides . witry-lès-reims`
 - `aides . yvetot normandie`
 
 #### Suppression
@@ -279,6 +315,7 @@
 - `aides . billy-berclau`
 - `aides . brissac loire aubance`
 - `aides . brive`
+- `aides . carmausin-ségala`
 - `aides . carvin`
 - `aides . chateaubriant derval`
 - `aides . châtellrault`
@@ -298,6 +335,7 @@
 - `aides . herouville`
 - `aides . lanester`
 - `aides . laon`
+- `aides . lisieux`
 - `aides . lorient`
 - `aides . loue lison`
 - `aides . marckolsheim`
@@ -315,9 +353,13 @@
 - `aides . rivery`
 - `aides . saint-jean-de-védas`
 - `aides . saint-lô`
+- `aides . saint-rémy-de-provence`
 - `aides . sisteronais-buëch`
 - `aides . terres de montaigu`
+- `aides . tour du pin`
+- `aides . val-de-reuil`
 - `aides . vesoul`
+- `aides . vexin normand`
 
 ### Paramètres
 
