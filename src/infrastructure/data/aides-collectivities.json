@@ -2083,17 +2083,6 @@
     "slug": "epinal",
     "country": "france"
   },
-  "aides . quéven": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "56185"
-    },
-    "codeInsee": "56185",
-    "departement": "56",
-    "population": 8816,
-    "slug": "queven",
-    "country": "france"
-  },
   "aides . rochefort": {
     "collectivity": {
       "kind": "epci",
@@ -2163,28 +2152,6 @@
     "departement": "76",
     "population": 3906,
     "slug": "saint-valery-en-caux",
-    "country": "france"
-  },
-  "aides . pavilly": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "76495"
-    },
-    "codeInsee": "76495",
-    "departement": "76",
-    "population": 6164,
-    "slug": "pavilly",
-    "country": "france"
-  },
-  "aides . elbeuf": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "76231"
-    },
-    "codeInsee": "76231",
-    "departement": "76",
-    "population": 16087,
-    "slug": "elbeuf",
     "country": "france"
   },
   "aides . arcachon": {
@@ -2269,7 +2236,19 @@
     "slug": "mont-de-marsan",
     "country": "france"
   },
-  "aides . plaine de l'ain": {
+  "aides . plaine de l'ain VAE": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CC de la Plaine de l'Ain",
+      "code": "240100883"
+    },
+    "codeInsee": "01004",
+    "departement": "01",
+    "population": 14288,
+    "slug": "amberieu-en-bugey",
+    "country": "france"
+  },
+  "aides . plaine de l'ain vélos spécifiques": {
     "collectivity": {
       "kind": "epci",
       "value": "CC de la Plaine de l'Ain",
@@ -2326,30 +2305,6 @@
     "departement": "07",
     "population": 16359,
     "slug": "annonay",
-    "country": "france"
-  },
-  "aides . bassin d'aubenas": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC du Bassin d'Aubenas",
-      "code": "200073245"
-    },
-    "codeInsee": "07019",
-    "departement": "07",
-    "population": 12403,
-    "slug": "aubenas",
-    "country": "france"
-  },
-  "aides . lorient": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CA Lorient Agglomération",
-      "code": "200042174"
-    },
-    "codeInsee": "56121",
-    "departement": "56",
-    "population": 57412,
-    "slug": "lorient",
     "country": "france"
   },
   "aides . lanester": {
@@ -2423,18 +2378,6 @@
     "slug": "laval",
     "country": "france"
   },
-  "aides . brive": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CA du Bassin de Brive",
-      "code": "200043172"
-    },
-    "codeInsee": "19031",
-    "departement": "19",
-    "population": 45910,
-    "slug": "brive-la-gaillarde",
-    "country": "france"
-  },
   "aides . ville de talant": {
     "collectivity": {
       "kind": "code insee",
@@ -2503,17 +2446,6 @@
     "slug": "baisieux",
     "country": "france"
   },
-  "aides . billy-berclau": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "62132"
-    },
-    "codeInsee": "62132",
-    "departement": "62",
-    "population": 5034,
-    "slug": "billy-berclau",
-    "country": "france"
-  },
   "aides . bonningues-lès-calais": {
     "collectivity": {
       "kind": "code insee",
@@ -2558,6 +2490,18 @@
     "slug": "iwuy",
     "country": "france"
   },
+  "aides . porte du hainaut": {
+    "collectivity": {
+      "kind": "epci",
+      "value": "CA de la Porte du Hainaut",
+      "code": "200042190"
+    },
+    "codeInsee": "59172",
+    "departement": "59",
+    "population": 20415,
+    "slug": "denain",
+    "country": "france"
+  },
   "aides . denain": {
     "collectivity": {
       "kind": "code insee",
@@ -2569,17 +2513,6 @@
     "slug": "denain",
     "country": "france"
   },
-  "aides . feignies": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "59225"
-    },
-    "codeInsee": "59225",
-    "departement": "59",
-    "population": 6763,
-    "slug": "feignies",
-    "country": "france"
-  },
   "aides . wambrechies": {
     "collectivity": {
       "kind": "code insee",
@@ -2589,17 +2522,6 @@
     "departement": "59",
     "population": 10716,
     "slug": "wambrechies",
-    "country": "france"
-  },
-  "aides . fourmies": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "59249"
-    },
-    "codeInsee": "59249",
-    "departement": "59",
-    "population": 11403,
-    "slug": "fourmies",
     "country": "france"
   },
   "aides . lesquin": {
@@ -2634,18 +2556,6 @@
     "departement": "59",
     "population": 86545,
     "slug": "dunkerque",
-    "country": "france"
-  },
-  "aides . flandre intérieure": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC de Flandre Intérieure",
-      "code": "200040947"
-    },
-    "codeInsee": "59295",
-    "departement": "59",
-    "population": 21464,
-    "slug": "hazebrouck",
     "country": "france"
   },
   "aides . grande-synthe": {
@@ -2683,7 +2593,7 @@
     "slug": "cambrai",
     "country": "france"
   },
-  "aides . cœur d'ostrevent": {
+  "aides . coeur d'ostrevent": {
     "collectivity": {
       "kind": "epci",
       "value": "CC Coeur d'Ostrevent (CCCO)",
@@ -2923,7 +2833,7 @@
     "slug": "liffre",
     "country": "france"
   },
-  "aides . Vallons de Haute Bretagne": {
+  "aides . vallons de haute bretagne": {
     "collectivity": {
       "kind": "epci",
       "value": "CC Vallons de Haute-Bretagne Communauté",
@@ -2980,17 +2890,6 @@
     "departement": "22",
     "population": 20451,
     "slug": "lannion",
-    "country": "france"
-  },
-  "aides . perros-guirec": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "22168"
-    },
-    "codeInsee": "22168",
-    "departement": "22",
-    "population": 7149,
-    "slug": "perros-guirec",
     "country": "france"
   },
   "aides . trébeurden": {
@@ -3118,29 +3017,6 @@
     "departement": "37",
     "population": 12569,
     "slug": "amboise",
-    "country": "france"
-  },
-  "aides . vexin normand": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC du Vexin Normand",
-      "code": "200071843"
-    },
-    "codeInsee": "27284",
-    "departement": "27",
-    "population": 11863,
-    "slug": "gisors",
-    "country": "france"
-  },
-  "aides . val-de-reuil": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "27701"
-    },
-    "codeInsee": "27701",
-    "departement": "27",
-    "population": 12702,
-    "slug": "val-de-reuil",
     "country": "france"
   },
   "aides . moselle et madon": {
@@ -3272,41 +3148,6 @@
     "departement": "38",
     "population": 4279,
     "slug": "villard-de-lans",
-    "country": "france"
-  },
-  "aides . carmausin-ségala": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CC Carmausin-Ségala",
-      "code": "200040905"
-    },
-    "codeInsee": "81060",
-    "departement": "81",
-    "population": 9870,
-    "slug": "carmaux",
-    "country": "france"
-  },
-  "aides . porte du hainaut": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CA de la Porte du Hainaut",
-      "code": "200042190"
-    },
-    "codeInsee": "59172",
-    "departement": "59",
-    "population": 20415,
-    "slug": "denain",
-    "country": "france"
-  },
-  "aides . lisieux": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "14366"
-    },
-    "codeInsee": "14366",
-    "departement": "14",
-    "population": 19755,
-    "slug": "lisieux",
     "country": "france"
   },
   "aides . portes du luxembourg": {

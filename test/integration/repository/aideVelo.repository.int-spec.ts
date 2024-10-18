@@ -87,6 +87,27 @@ describe('AideVeloRepository', () => {
     ]);
   });
 
+  describe("Département de l'Hérault", () => {
+    it('devrait avoir une aide régionale, départementale pour une personne habitant à Cazouls-Lès-Béziers', async () => {
+      // WHEN
+      const result = await aidesVeloRepository.getSummaryVelos(
+        '34370',
+        5000,
+        1,
+        100,
+      );
+
+      // THEN
+      expect(result['électrique'].length).toBe(4);
+      expect(result['électrique'][0].libelle).toBe('Bonus vélo');
+      expect(result['électrique'][1].libelle).toContain('Région Occitanie');
+      expect(result['électrique'][2].libelle).toContain('Département Hérault');
+      expect(result['électrique'][3].libelle).toContain(
+        'Ville de Cazouls-Lès-Béziers',
+      );
+    });
+  });
+
   describe('Vélo adapté et personne en situation de handicap', () => {
     it.skip('doit correctement cumuler les aides pour une personne habitant à Toulouse', async () => {
       // WHEN
