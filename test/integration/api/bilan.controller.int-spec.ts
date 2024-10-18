@@ -570,7 +570,7 @@ describe('/bilan (API test)', () => {
     });
 
     expect(response.body.redirect_url).toEqual(
-      `${App.getBaseURLFront()}/creation-compte?situationId=${
+      `${App.getBaseURLFront()}/creation-compte/nos-gestes-climat?situationId=${
         situationDB[0].id
       }&bilan_tonnes=10`,
     );
@@ -596,7 +596,7 @@ describe('/bilan (API test)', () => {
     });
 
     expect(response.body.redirect_url).toEqual(
-      `${App.getBaseURLFront()}/creation-compte?situationId=${
+      `${App.getBaseURLFront()}/creation-compte/nos-gestes-climat?situationId=${
         situationDB[0].id
       }&bilan_tonnes=8`,
     );
