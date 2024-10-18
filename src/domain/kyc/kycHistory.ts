@@ -96,10 +96,13 @@ export class KYCHistory {
     return this.answered_mosaics.includes(type);
   }
 
-  public getAllUpToDateQuestionSet(): QuestionGeneric[] {
+  public getAllUpToDateQuestionSet(
+    kyc_only: boolean = false,
+  ): QuestionGeneric[] {
     let result: QuestionGeneric[] = [];
 
     this.catalogue.forEach((question) => {
+      console.log(question);
       const answered_question = this.getAnsweredQuestionByCode(question.code);
       if (answered_question) {
         answered_question.refreshFromDef(question);
@@ -108,6 +111,9 @@ export class KYCHistory {
         kyc: answered_question || QuestionKYC.buildFromDef(question),
       });
     });
+    if (kyc_only) {
+      return result;
+    }
 
     const liste_mosaic_ids = MosaicKYC.listMosaicIDs();
     for (const mosaic_id of liste_mosaic_ids) {

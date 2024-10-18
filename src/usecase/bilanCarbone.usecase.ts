@@ -156,10 +156,13 @@ export class BilanCarboneUsecase {
   async computeBilanTousUtilisateurs(): Promise<string[]> {
     const user_id_liste = await this.utilisateurRepository.listUtilisateurIds();
 
+    const kyc_catalogue = await this.kycRepository.getAllDefs();
+
     for (const user_id of user_id_liste) {
       const utilisateur = await this.utilisateurRepository.getById(user_id, [
         Scope.kyc,
       ]);
+      utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
       const situation = this.computeSituation(utilisateur);
 
@@ -179,7 +182,12 @@ export class BilanCarboneUsecase {
   public computeSituation(utilisateur: Utilisateur): Object {
     const situation = {};
 
-    for (const kyc of utilisateur.kyc_history.answered_questions) {
+    const kyc_liste = utilisateur.kyc_history.getAllUpToDateQuestionSet(true);
+    console.log(kyc_liste);
+    for (const entry of kyc_liste) {
+      const kyc = entry.kyc;
+      console.log(kyc);
+
       if (kyc.is_NGC) {
         if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
           if (kyc.ngc_key && kyc.reponses && kyc.reponses.length > 0) {
