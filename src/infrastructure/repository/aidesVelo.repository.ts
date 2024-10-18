@@ -56,6 +56,7 @@ async function summaryVelo(
     'localisation . epci': `${lieu?.epci}`,
     'localisation . région': `${lieu?.region}`,
     'localisation . code insee': `${lieu?.code}`,
+    'localisation . département': `${lieu?.departement}`,
     'revenu fiscal de référence': revenuParPart, // revenu fiscal de référence par part
     'vélo . prix': prixVelo,
     // TODO: should be refactor to be dynamically retrieved from the rules or
