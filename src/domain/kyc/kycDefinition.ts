@@ -14,7 +14,12 @@ export class KycDefinition {
   ngc_key: string;
   question: string;
   short_question: string;
-  reponses?: { label: string; code: string; ngc_code?: string }[];
+  reponses?: {
+    label: string;
+    code: string;
+    ngc_code?: string;
+    value?: string;
+  }[];
   thematique: Thematique;
   tags: Tag[];
   universes: string[];

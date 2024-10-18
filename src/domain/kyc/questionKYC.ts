@@ -25,6 +25,7 @@ export class KYCReponse {
   code: string;
   label: string;
   ngc_code?: string;
+  value?: string;
 }
 
 export class QuestionKYC implements TaggedContent {

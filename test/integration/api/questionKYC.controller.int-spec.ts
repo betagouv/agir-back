@@ -496,6 +496,58 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(response.body.reponse).toEqual(['Le climat', 'Mon logement']);
   });
 
+  it('GET /utilisateurs/id/questionsKYC-V2/question - renvoie la quesition avec la réponse', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      kyc: {
+        version: 0,
+        answered_questions: [
+          {
+            id: KYCID._2,
+            question: `Quel est votre sujet principal d'intéret ?`,
+            type: TypeReponseQuestionKYC.entier,
+            is_NGC: false,
+            categorie: Categorie.test,
+            points: 10,
+            reponses: [
+              { label: 'Le climat', code: Thematique.climat, value: '123' },
+            ],
+            reponses_possibles: [],
+            tags: [],
+          },
+        ],
+      },
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      question: `Quel est votre sujet principal d'intéret ?`,
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.question).toEqual(
+      `Quel est votre sujet principal d'intéret ?`,
+    );
+    expect(response.body.reponse).toEqual([
+      {
+        code: 'climat',
+        label: 'Le climat',
+        value: '123',
+      },
+    ]);
+  });
+
   it('PUT /utilisateurs/id/questionsKYC/1 - crée la reponse à la question 1, empoche les points', async () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
