@@ -110,7 +110,7 @@ export class InscriptionController extends GenericControler {
       body.situation,
     );
     return {
-      redirect_url: `${App.getBaseURLFront()}/creation-compte?situationId=${
+      redirect_url: `${App.getBaseURLFront()}/creation-compte/nos-gestes-climat?situationId=${
         result.id_situtation
       }&bilan_tonnes=${result.bilan_tonnes}`,
     };

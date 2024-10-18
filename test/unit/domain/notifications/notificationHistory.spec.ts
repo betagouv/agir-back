@@ -20,7 +20,6 @@ describe('NotificationHistory', () => {
   const OLD_ENV = process.env;
 
   beforeEach(async () => {
-    jest.resetModules();
     process.env = { ...OLD_ENV }; // Make a copy
   });
 

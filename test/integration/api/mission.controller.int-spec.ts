@@ -13,8 +13,6 @@ import { EventType } from '../../../src/domain/appEvent';
 import { DefiStatus } from '../../../src/domain/defis/defi';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
-import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
-import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { DefiHistory_v0 } from '../../../src/domain/object_store/defi/defiHistory_v0';
 import { Thematique } from '../../../src/domain/contenu/thematique';

@@ -1,10 +1,3 @@
-import {
-  Chauffage,
-  DPE,
-  Logement,
-  Superficie,
-  TypeLogement,
-} from '../../../src/domain/logement/logement';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('CartographieView', () => {
@@ -16,7 +9,6 @@ describe('CartographieView', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
-    jest.resetModules();
     process.env = { ...OLD_ENV };
     process.env.SERVICE_APIS_ENABLED = 'false';
   });
@@ -31,36 +23,17 @@ describe('CartographieView', () => {
     await TestUtil.create(DB.utilisateur, {
       id: 'idUtilisateur1',
       email: 'user1@dev.com',
-      created_at: new Date(2024, 0, 1),
-      derniere_activite: new Date(2024, 0, 2),
-      points_classement: 4321,
-      rank: 2,
-      source_inscription: 'inconnue',
       couverture_aides_ok: true,
-      rank_commune: 1,
-      annee_naissance: 1994,
-      code_departement: '22',
-      logement: new Logement({
+      logement: {
         code_postal: '22000',
-        commune: 'St Brieuc',
-        dpe: DPE.B,
-        nombre_adultes: 2,
-        nombre_enfants: 3,
-        plus_de_15_ans: false,
-        version: 0,
-        proprietaire: true,
-        superficie: Superficie.superficie_100,
-        type: TypeLogement.appartement,
-        chauffage: Chauffage.electricite,
-      }),
+      },
     });
     await TestUtil.create(DB.utilisateur, {
       id: 'idUtilisateur2',
       email: 'user2@dev.com',
       couverture_aides_ok: false,
-      code_departement: '13',
       logement: {
-        code_postal: '13000',
+        code_postal: null,
       },
     });
 
@@ -81,9 +54,9 @@ describe('CartographieView', () => {
       },
       {
         id: 2,
-        code_postal: '13000',
+        code_postal: null,
         couvert_par_aides: false,
-        code_departement: '13',
+        code_departement: null,
       },
     ]);
   });

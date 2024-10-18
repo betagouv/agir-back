@@ -61,6 +61,7 @@ export class KycRepository {
     return this.buildKYCDefFromDB(result);
   }
 
+  // FIXME : set cache comme pour les thémtiques
   async getAllDefs(): Promise<KycDefinition[]> {
     const result = await this.prisma.kYC.findMany();
     return result.map((elem) => this.buildKYCDefFromDB(elem));

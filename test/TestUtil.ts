@@ -103,6 +103,7 @@ export class TestUtil {
   };
 
   constructor() {}
+  public static ok_appclose = true;
   public static app: INestApplication;
   public static prisma = new PrismaService();
   public static prisma_stats = new PrismaServiceStat();
@@ -149,17 +150,20 @@ export class TestUtil {
   }
 
   static async appinit() {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+    if (TestUtil.app === undefined) {
+      const moduleFixture: TestingModule = await Test.createTestingModule({
+        imports: [AppModule],
+      }).compile();
 
-    this.app = moduleFixture.createNestApplication();
-    await this.app.init();
-    return this.app;
+      TestUtil.app = moduleFixture.createNestApplication();
+      await TestUtil.app.init();
+    }
   }
   static async appclose() {
-    await this.app.close();
-    await this.prisma.$disconnect();
+    if (TestUtil.ok_appclose) {
+      await this.app.close();
+      await this.prisma.$disconnect();
+    }
   }
 
   static async deleteAll() {

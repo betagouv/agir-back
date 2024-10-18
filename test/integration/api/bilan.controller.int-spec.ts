@@ -16,7 +16,6 @@ describe('/bilan (API test)', () => {
   });
 
   beforeEach(async () => {
-    jest.resetModules();
     await TestUtil.deleteAll();
     process.env = { ...OLD_ENV }; // Make a copy
   });
@@ -571,7 +570,7 @@ describe('/bilan (API test)', () => {
     });
 
     expect(response.body.redirect_url).toEqual(
-      `${App.getBaseURLFront()}/creation-compte?situationId=${
+      `${App.getBaseURLFront()}/creation-compte/nos-gestes-climat?situationId=${
         situationDB[0].id
       }&bilan_tonnes=10`,
     );
@@ -597,7 +596,7 @@ describe('/bilan (API test)', () => {
     });
 
     expect(response.body.redirect_url).toEqual(
-      `${App.getBaseURLFront()}/creation-compte?situationId=${
+      `${App.getBaseURLFront()}/creation-compte/nos-gestes-climat?situationId=${
         situationDB[0].id
       }&bilan_tonnes=8`,
     );

@@ -1,3 +1,4 @@
+import { KYC } from '@prisma/client';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
@@ -11,7 +12,6 @@ describe('BilanCarbone (API test)', () => {
   });
 
   beforeEach(async () => {
-    jest.resetModules();
     process.env = { ...OLD_ENV }; // Make a copy
     await TestUtil.deleteAll();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
@@ -64,9 +64,9 @@ describe('BilanCarbone (API test)', () => {
             { label: 'Souvent', code: 'souvent', ngc_code: '"souvent"' },
           ],
           reponses_possibles: [
-            { label: 'Souvent', code: 'souvent' },
-            { label: 'Jamais', code: 'jamais' },
-            { label: 'Parfois', code: 'parfois' },
+            { label: 'Souvent', code: 'souvent', ngc_code: '"souvent"' },
+            { label: 'Jamais', code: 'jamais', ngc_code: '"bof"' },
+            { label: 'Parfois', code: 'parfois', ngc_code: '"burp"' },
           ],
           tags: [],
           universes: [],
@@ -77,6 +77,30 @@ describe('BilanCarbone (API test)', () => {
         },
       ],
     };
+
+    await TestUtil.create(DB.kYC, {
+      code: 'KYC_saison_frequence',
+      id_cms: 21,
+      question: `À quelle fréquence mangez-vous de saison ? `,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.mission,
+      points: 10,
+      reponses: [
+        { label: 'Souvent', code: 'souvent', ngc_code: '"souvent"' },
+        { label: 'Jamais', code: 'jamais', ngc_code: '"bof"' },
+        { label: 'Parfois', code: 'parfois', ngc_code: '"burp"' },
+      ],
+      tags: [],
+      universes: [],
+      ngc_key: 'alimentation . de saison . consommation',
+      image_url: '111',
+      short_question: 'short',
+      conditions: [],
+      created_at: undefined,
+      is_ngc: true,
+      thematique: 'alimentation',
+      updated_at: undefined,
+    } as KYC);
 
     await TestUtil.create(DB.utilisateur, { kyc: kyc });
     TestUtil.token = process.env.CRON_API_KEY;

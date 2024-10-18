@@ -13,7 +13,6 @@ describe('DistancesRepository', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
-    jest.resetModules();
     process.env = { ...OLD_ENV }; // Make a copy
   });
 

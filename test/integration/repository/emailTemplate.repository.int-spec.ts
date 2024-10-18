@@ -16,7 +16,6 @@ describe('EmailTemplateRepository', () => {
   });
 
   beforeEach(async () => {
-    jest.resetModules();
     process.env = { ...OLD_ENV }; // Make a copy
     await TestUtil.deleteAll();
   });

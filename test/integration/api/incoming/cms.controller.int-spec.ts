@@ -458,11 +458,13 @@ describe('/api/incoming/cms (API test)', () => {
         label: 'haha',
         code: 'haha_code',
         ngc_code: '123',
+        value: 'haha',
       },
       {
         label: 'hihi',
         code: 'hihi_code',
         ngc_code: '456',
+        value: 'hihi',
       },
     ]);
     expect(item.thematique).toEqual(Thematique.alimentation);

@@ -673,6 +673,7 @@ export class CMSUsecase {
             label: r.reponse,
             code: r.code,
             ngc_code: r.ngc_code,
+            value: r.reponse,
           }))
         : [],
       tags: entry.tags
@@ -935,6 +936,7 @@ export class CMSUsecase {
             label: r.reponse,
             code: r.code,
             ngc_code: r.ngc_code,
+            value: r.reponse,
           }))
         : [],
       thematique: entry.attributes.thematique.data

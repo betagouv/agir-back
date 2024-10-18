@@ -67,7 +67,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   beforeEach(async () => {
     await TestUtil.deleteAll();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
-    jest.resetModules();
     process.env = { ...OLD_ENV }; // Make a copy
     process.env.PONDERATION_RUBRIQUES = ApplicativePonderationSetName.neutre;
   });

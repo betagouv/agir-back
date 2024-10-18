@@ -46,7 +46,6 @@ describe('TODO list (API test)', () => {
   });
 
   beforeEach(async () => {
-    jest.resetModules();
     process.env = { ...OLD_ENV }; // Make a copy
     await TestUtil.deleteAll();
     process.env.SERVICE_APIS_ENABLED = 'false';

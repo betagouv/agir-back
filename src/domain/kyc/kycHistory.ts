@@ -96,10 +96,13 @@ export class KYCHistory {
     return this.answered_mosaics.includes(type);
   }
 
-  public getAllUpToDateQuestionSet(): QuestionGeneric[] {
+  public getAllUpToDateQuestionSet(
+    kyc_only: boolean = false,
+  ): QuestionGeneric[] {
     let result: QuestionGeneric[] = [];
 
     this.catalogue.forEach((question) => {
+      console.log(question);
       const answered_question = this.getAnsweredQuestionByCode(question.code);
       if (answered_question) {
         answered_question.refreshFromDef(question);
@@ -108,6 +111,9 @@ export class KYCHistory {
         kyc: answered_question || QuestionKYC.buildFromDef(question),
       });
     });
+    if (kyc_only) {
+      return result;
+    }
 
     const liste_mosaic_ids = MosaicKYC.listMosaicIDs();
     for (const mosaic_id of liste_mosaic_ids) {
@@ -124,25 +130,33 @@ export class KYCHistory {
     for (const [key, value] of Object.entries(situation)) {
       const kyc = this.getKYCByNGCKeyFromCatalogue(key);
 
-      if (kyc && kyc.is_NGC) {
-        const string_value = '' + value;
+      if (!kyc) {
+        console.log(`KYC NGC manquant dans agir [${key}]`);
+      } else {
+        if (kyc.is_NGC) {
+          const string_value = '' + value;
 
-        const is_kyc_number =
-          kyc.type === TypeReponseQuestionKYC.entier ||
-          kyc.type === TypeReponseQuestionKYC.decimal;
+          const is_kyc_number =
+            kyc.type === TypeReponseQuestionKYC.entier ||
+            kyc.type === TypeReponseQuestionKYC.decimal;
 
-        if (validator.isInt(string_value) && is_kyc_number) {
-          this.updateQuestionByNGCKeyWithLabel(key, [string_value]);
-          result.push(key);
-        } else if (validator.isDecimal(string_value) && is_kyc_number) {
-          this.updateQuestionByNGCKeyWithLabel(key, [string_value]);
-          result.push(key);
-        } else if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
-          const code_reponse = kyc.getCodeByNGCCode(string_value);
-          if (code_reponse) {
-            this.updateQuestionByCodeWithCode(kyc.id, code_reponse);
+          if (validator.isInt(string_value) && is_kyc_number) {
+            this.updateQuestionByNGCKeyWithLabel(key, [string_value]);
             result.push(key);
+          } else if (validator.isDecimal(string_value) && is_kyc_number) {
+            this.updateQuestionByNGCKeyWithLabel(key, [string_value]);
+            result.push(key);
+          } else if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
+            const code_reponse = kyc.getCodeByNGCCode(string_value);
+            if (code_reponse) {
+              this.updateQuestionByCodeWithCode(kyc.id, code_reponse);
+              result.push(key);
+            }
           }
+        } else {
+          console.log(
+            `KYC NGC trouvée dans agir [${key}] mais non flaguée NGC !`,
+          );
         }
       }
     }
