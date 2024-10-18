@@ -42,7 +42,6 @@ describe('/api/incoming/winter-energies (API test)', () => {
   beforeEach(async () => {
     await TestUtil.deleteAll();
     TestUtil.token = process.env.CMS_WEBHOOK_API_KEY;
-    jest.resetModules();
     process.env = { ...OLD_ENV }; // Make a copy
     process.env.WINTER_API_KEY = '123456789';
   });

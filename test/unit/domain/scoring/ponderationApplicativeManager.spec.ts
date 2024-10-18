@@ -10,7 +10,6 @@ describe('PonderationApplicativeManager', () => {
   const OLD_ENV = process.env;
 
   beforeEach(async () => {
-    jest.resetModules();
     process.env = { ...OLD_ENV }; // Make a copy
     process.env.PONDERATION_RUBRIQUES = ApplicativePonderationSetName.neutre;
   });

@@ -16,7 +16,6 @@ describe('/bilan (API test)', () => {
   });
 
   beforeEach(async () => {
-    jest.resetModules();
     await TestUtil.deleteAll();
     process.env = { ...OLD_ENV }; // Make a copy
   });

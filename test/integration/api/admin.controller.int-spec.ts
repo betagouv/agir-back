@@ -41,7 +41,6 @@ describe('Admin (API test)', () => {
   });
 
   beforeEach(async () => {
-    jest.resetModules();
     process.env = { ...OLD_ENV }; // Make a copy
 
     await TestUtil.deleteAll();

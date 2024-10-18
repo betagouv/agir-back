@@ -16,7 +16,6 @@ describe('CartographieView', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
-    jest.resetModules();
     process.env = { ...OLD_ENV };
     process.env.SERVICE_APIS_ENABLED = 'false';
   });

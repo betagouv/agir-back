@@ -149,13 +149,14 @@ export class TestUtil {
   }
 
   static async appinit() {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+    if (TestUtil.app === undefined) {
+      const moduleFixture: TestingModule = await Test.createTestingModule({
+        imports: [AppModule],
+      }).compile();
 
-    this.app = moduleFixture.createNestApplication();
-    await this.app.init();
-    return this.app;
+      TestUtil.app = moduleFixture.createNestApplication();
+      await TestUtil.app.init();
+    }
   }
   static async appclose() {
     await this.app.close();
