@@ -103,6 +103,7 @@ export class TestUtil {
   };
 
   constructor() {}
+  public static ok_appclose = true;
   public static app: INestApplication;
   public static prisma = new PrismaService();
   public static prisma_stats = new PrismaServiceStat();
@@ -159,8 +160,10 @@ export class TestUtil {
     }
   }
   static async appclose() {
-    await this.app.close();
-    await this.prisma.$disconnect();
+    if (TestUtil.ok_appclose) {
+      await this.app.close();
+      await this.prisma.$disconnect();
+    }
   }
 
   static async deleteAll() {

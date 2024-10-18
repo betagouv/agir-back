@@ -1,10 +1,3 @@
-import {
-  Chauffage,
-  DPE,
-  Logement,
-  Superficie,
-  TypeLogement,
-} from '../../../src/domain/logement/logement';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('CartographieView', () => {
