@@ -183,10 +183,8 @@ export class BilanCarboneUsecase {
     const situation = {};
 
     const kyc_liste = utilisateur.kyc_history.getAllUpToDateQuestionSet(true);
-    console.log(kyc_liste);
     for (const entry of kyc_liste) {
       const kyc = entry.kyc;
-      console.log(kyc);
 
       if (kyc.is_NGC) {
         if (kyc.type === TypeReponseQuestionKYC.choix_unique) {

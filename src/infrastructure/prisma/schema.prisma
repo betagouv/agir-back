@@ -54,7 +54,6 @@ model Utilisateur {
   services                   Service[]
   parts                      Decimal?  @db.Decimal(4, 2)
   abonnement_ter_loire       Boolean   @default(false)
-  code_departement           String?
   version                    Int       @default(0)
   migration_enabled          Boolean   @default(false)
   tag_ponderation_set        Json      @default("{}")

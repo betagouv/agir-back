@@ -103,7 +103,6 @@ export class KYCHistory {
     let result: QuestionGeneric[] = [];
 
     this.catalogue.forEach((question) => {
-      console.log(question);
       const answered_question = this.getAnsweredQuestionByCode(question.code);
       if (answered_question) {
         answered_question.refreshFromDef(question);
