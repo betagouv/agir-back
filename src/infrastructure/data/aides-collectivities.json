@@ -1664,17 +1664,6 @@
     "slug": "aubervilliers",
     "country": "france"
   },
-  "aides . rueil-malmaison": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "92063"
-    },
-    "codeInsee": "92063",
-    "departement": "92",
-    "population": 78265,
-    "slug": "rueil-malmaison",
-    "country": "france"
-  },
   "aides . mons en baroeul": {
     "collectivity": {
       "kind": "code insee",
@@ -3345,17 +3334,6 @@
     "slug": "villers-sur-mer",
     "country": "france"
   },
-  "aides . saint-rémy-de-provence": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "13100"
-    },
-    "codeInsee": "13100",
-    "departement": "13",
-    "population": 9692,
-    "slug": "saint-remy-de-provence",
-    "country": "france"
-  },
   "aides . val-revermont": {
     "collectivity": {
       "kind": "code insee",
@@ -3377,17 +3355,6 @@
     "departement": "35",
     "population": 10541,
     "slug": "chateaugiron-35",
-    "country": "france"
-  },
-  "aides . tour du pin": {
-    "collectivity": {
-      "kind": "code insee",
-      "value": "38509"
-    },
-    "codeInsee": "38509",
-    "departement": "38",
-    "population": 8148,
-    "slug": "la-tour-du-pin",
     "country": "france"
   },
   "aides . bièvre isère": {
@@ -3525,18 +3492,6 @@
     "departement": "66",
     "population": 118032,
     "slug": "perpignan",
-    "country": "france"
-  },
-  "aides . agen": {
-    "collectivity": {
-      "kind": "epci",
-      "value": "CA Agglomération d'Agen",
-      "code": "200096956"
-    },
-    "codeInsee": "47001",
-    "departement": "47",
-    "population": 32214,
-    "slug": "agen",
     "country": "france"
   },
   "aides . fier et usses": {

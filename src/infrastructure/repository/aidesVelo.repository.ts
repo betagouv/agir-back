@@ -14,6 +14,8 @@ import {
 } from '../../domain/aides/aideVelo';
 import { App } from '../../../src/domain/app';
 
+// FIXME: need to have the commune name to differentiate between the different
+// communes with the same postal code.
 @Injectable()
 export class AidesVeloRepository {
   async getSummaryVelos(
@@ -31,13 +33,13 @@ export class AidesVeloRepository {
   }
 }
 
-async function summaryVelo(
+function summaryVelo(
   codePostal: string,
   revenuParPart: number,
   prixVelo: number,
   is_abonnement: boolean,
-): Promise<AidesVeloParType> {
-  const lieu = await getLocalisationByCP(codePostal);
+): AidesVeloParType {
+  const lieu = getLocalisationByCP(codePostal);
   const rules = rulesVelo as Record<string, any>;
   delete rules['aides . prime à la conversion'];
   delete rules['aides . prime à la conversion . surprime ZFE'];
@@ -177,10 +179,14 @@ const epciSirenToName = Object.fromEntries(
   }),
 );
 
-async function getLocalisationByCP(cp: string): Promise<Localisation> {
+// FIXME: should use the commune name to differentiate between the different
+// communes with the same postal code.
+function getLocalisationByCP(cp: string): Localisation | undefined {
   const lieux = localisations as Localisation[];
   // FIXME AIDE : sens fonctionel du premier match ?
-  const lieu = lieux.find((lieu) => lieu.codesPostaux.includes(cp));
+  const lieu = lieux.find((lieu) => {
+    return lieu.codesPostaux.includes(cp);
+  });
   return lieu;
 }
 

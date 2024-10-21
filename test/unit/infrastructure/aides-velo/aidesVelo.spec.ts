@@ -288,6 +288,22 @@ describe('Aides Vélo', () => {
         engine.evaluate('aides . occitanie vélo adapté').nodeValue,
       ).toEqual(1000);
     });
+
+    it('devrait pas pouvoir obtenir un motant négatif pour un vélo adapté PMR', () => {
+      engine.setSituation({
+        'localisation . région': "'76'",
+        'revenu fiscal de référence': '8000€/an',
+        'demandeur . en situation de handicap': 'oui',
+        'vélo . type': "'adapté'",
+        'vélo . prix': '100€',
+        // TODO: use generated types instead of the json
+        // @ts-ignore
+        'aides . département': '400€',
+      });
+      expect(
+        engine.evaluate('aides . occitanie vélo adapté').nodeValue,
+      ).toBeGreaterThanOrEqual(0);
+    });
   });
 
   describe('Toulouse Métropole', () => {
@@ -1565,6 +1581,33 @@ describe('Aides Vélo', () => {
         'vélo . prix': 4500,
       });
       expect(engine.evaluate('aides . bièvre isère').nodeValue).toEqual(100);
+    });
+  });
+
+  describe('Villefranche Agglomération Beaujolais Saône', () => {
+    it('devrait pas pouvoir avoir un montant négatif', () => {
+      engine.setSituation({
+        'localisation . epci': "'CA Villefranche Beaujolais Saône'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': 200,
+        'revenu fiscal de référence': '5000 €/mois',
+      });
+      expect(
+        engine.evaluate('aides . villefranche beaujolais saône').nodeValue,
+      ).toBeGreaterThanOrEqual(0);
+
+      engine.setSituation({
+        'localisation . epci': "'CA Villefranche Beaujolais Saône'",
+        'vélo . type': "'électrique'",
+        'vélo . prix': 200,
+        'revenu fiscal de référence': '5000 €/mois',
+        // TODO: use generated types instead of the json
+        // @ts-ignore
+        'aides . département': 400,
+      });
+      expect(
+        engine.evaluate('aides . villefranche beaujolais saône').nodeValue,
+      ).toBeGreaterThanOrEqual(0);
     });
   });
 });

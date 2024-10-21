@@ -6,7 +6,6 @@
 
 #### Ajout
 
-- `aides . agen`
 - `aides . avignon`
 - `aides . bègle vélo classique`
 - `aides . bègle vélo spécifique`
@@ -74,6 +73,7 @@
 - `aides . boulonnais`
 - `aides . bourges`
 - `aides . bourg-saint-maurice`
+- `aides . bram`
 - `aides . brest`
 - `aides . bretagne romantique`
 - `aides . caen`
@@ -82,6 +82,7 @@
 - `aides . camon`
 - `aides . canélan`
 - `aides . carpiquet`
+- `aides . castelnau de médoc`
 - `aides . cazouls-lès-béziers`
 - `aides . cébazat`
 - `aides . cenon`
@@ -163,6 +164,7 @@
 - `aides . kremlin-bicetre`
 - `aides . labège`
 - `aides . la cali`
+- `aides . la côtière à montluel`
 - `aides . la madeleine`
 - `aides . la motte servolex`
 - `aides . lannion-trégor`
@@ -224,6 +226,7 @@
 - `aides . pays de saverne`
 - `aides . pays d'iroise`
 - `aides . pays mornantais`
+- `aides . pays orne moselle`
 - `aides . pays sainte odile`
 - `aides . pierre-bénite`
 - `aides . plougastel-daoulas`
@@ -267,6 +270,7 @@
 - `aides . saint-rémy`
 - `aides . saône-beaujolais`
 - `aides . sarlat`
+- `aides . saulieu`
 - `aides . saumur val de loire`
 - `aides . sète`
 - `aides . sèvre et loire`
@@ -305,14 +309,10 @@
 - `aides . wasquehal`
 - `aides . witry-lès-reims`
 - `aides . yvetot normandie`
-- `aides . castelnau de médoc`
-- `aides . saulieu`
-- `aides . la côtière à montluel`
-- `aides . pays orne moselle`
-- `aides . bram`
 
 #### Suppression
 
+- `aides . agen`
 - `aides . agglo bocage bressuirais`
 - `aides . ambert livradois forez`
 - `aides . ardenne`
@@ -356,6 +356,7 @@
 - `aides . pont-saint-maxence`
 - `aides . quéven`
 - `aides . rivery`
+- `aides . rueil-malmaison`
 - `aides . saint-jean-de-védas`
 - `aides . saint-lô`
 - `aides . saint-rémy-de-provence`
@@ -365,7 +366,6 @@
 - `aides . val-de-reuil`
 - `aides . vesoul`
 - `aides . vexin normand`
-- `aides . rueil-malmaison`
 
 ### Paramètres
 

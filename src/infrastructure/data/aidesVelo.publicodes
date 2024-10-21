@@ -169,13 +169,16 @@ aides . occitanie vélo adapté:
     toutes ces conditions:
       - localisation . région = '76'
       - demandeur . en situation de handicap
+      - demandeur . âge . majeur
       - vélo . adapté
       - vélo . état . neuf
-  valeur: |
-    50% * 
-      (vélo . prix - (aides . état + aides . département + aides . intercommunalité))
+  valeur: 50% * prix déduit des autres aides
   plafond: 1000€
   lien: https://www.laregion.fr/Eco-cheque-mobilite-Bonus-velo-adapte-PMR
+  avec:
+    prix déduit des autres aides: 
+      valeur: vélo . prix - (aides . état + aides . département + aides . intercommunalité)
+      plancher: 0€
 
 aides . grand est:
   remplace: région
@@ -227,11 +230,12 @@ aides . ardèche:
   remplace: département
   titre: Département de l'Ardèche
   description: |
-    Le département ardéchois rembourse 10% du prix d'un vélo électrique neuf
-    acheté auprès d'un vélociste partenaire (offre limitée à 1500 vélos).
+    Le département ardéchois rembourse 10% du prix d'un vélo électrique acheté
+    auprès d'un vélociste partenaire (offre limitée à 1500 vélos).
   applicable si:
     toutes ces conditions:
       - localisation . département = '07'
+      - demandeur . âge . majeur
       - vélo . électrique
       - vélo . prix <= 3000 €
   valeur: 10% * vélo . prix
@@ -396,18 +400,21 @@ aides . villefranche beaujolais saône:
      d'occasion.
      Le dispositif est prolongé jusqu'au 31 décembre 2025.
   applicable si: localisation . epci = 'CA Villefranche Beaujolais Saône'
-  variations:
-    - si: vélo . électrique
-      alors: 500€
-    - si: vélo . mécanique
-      alors: 200€
-    - si: vélo . motorisation
-      alors: 200€
-    - sinon: 0€
-  plafond: |
-    vélo . prix 
-      - (aides . état + aides . département + aides . région + aides . commune)
+  valeur:
+    variations:
+      - si: vélo . électrique
+        alors: 500€
+      - si: vélo . mécanique
+        alors: 200€
+      - si: vélo . motorisation
+        alors: 200€
+      - sinon: 0€
+  plafond: prix déduit des autres aides
   lien: https://www.agglo-villefranche.fr/aide-a-lachat-velo.html
+  avec:
+    prix déduit des autres aides: 
+      valeur: vélo . prix - (aides . état + aides . département + aides . région + aides . commune)
+      plancher: 0€
 
 aides . ville-sur-jarnioux:
   remplace: commune
@@ -419,7 +426,7 @@ aides . ville-sur-jarnioux:
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '69265'
-      - aides . villefranche beaujolais saône >= 0
+      - aides . villefranche beaujolais saône > 0€
   valeur: 50% * vélo . prix
   plafond: 
     variations:
@@ -550,6 +557,8 @@ aides . irigny:
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '69100'
+      - demandeur . âge . majeur
+      - vélo . état . neuf
       - une de ces conditions:
           - vélo . électrique
           - vélo . cargo
@@ -774,7 +783,7 @@ aides . bègles vélo spécifique:
     la limite des 35 premiers foyers). 
   applicable si:
     toutes ces conditions:
-      - aides . bordeaux > 0
+      - aides . bordeaux > 0€
       - localisation . code insee = "33039"
       - vélo . état . neuf
       - une de ces conditions:
@@ -1798,7 +1807,8 @@ aides . caen la mer:
       - localisation . epci = 'CU Caen la Mer'
       - demandeur . âge . majeur
       - revenu fiscal de référence <= 13489 €/an
-      - aides . commune > 0
+      - aides . commune > 0€
+      - vélo . état . neuf
       - vélo . électrique
   valeur: 50€
   lien: https://caenlamer.fr/aide-achat-velo-assistance-electrique
@@ -2552,6 +2562,7 @@ aides . camon:
     toutes ces conditions:
       - localisation . code insee = '80164'
       - demandeur . âge . majeur
+      - vélo . état . neuf
   valeur: 25% * vélo . prix
   plafond:
     variations:
@@ -2615,6 +2626,7 @@ aides . albert:
     toutes ces conditions:
       - localisation . code insee = '80016'
       - vélo . électrique
+      - vélo . état . neuf
   valeur: 100€
   lien: https://www.ville-albert.fr/aide-a-lachat-dun-velo-electrique/
 
@@ -2953,7 +2965,8 @@ aides . montpellier vélo adapté:
   applicable si:
     toutes ces conditions:
       - localisation . epci = 'Montpellier Méditerranée Métropole'
-      - aides . département hérault vélo adapté
+      - aides . département hérault vélo adapté > 0€
+      - vélo . état . neuf
   valeur: 50% * vélo . prix
   plafond: 500€
   lien: https://www.montpellier3m.fr/vivre-transport/toutes-les-aides-pour-lachat-ou-la-reparation-de-velos
@@ -3331,7 +3344,7 @@ aides . lescar:
     toutes ces conditions: 
       - localisation . code insee = '64335'
       - revenu fiscal de référence <= 20000 €/an
-      - aides . pau > 0 
+      - aides . pau > 0€
   variations:
     - si: revenu fiscal de référence < 12000 €/an
       alors:
@@ -4378,6 +4391,7 @@ aides . frejus:
       - localisation . code insee = '83061'
       - demandeur . âge . majeur
       - vélo . électrique
+      - vélo . état . neuf
   valeur: vélo . prix
   plafond: 200 €
   lien: https://www.ville-frejus.fr/ma-ville/valorisation-et-preservation/dossier-de-demande-daide-a-lachat-dun-vae/
@@ -8052,6 +8066,7 @@ aides . witry-lès-reims:
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '51662'
+      - demandeur . âge . majeur
       - vélo . électrique
   valeur: 100€
   lien: http://www.witry-les-reims.fr/actualite_witry-les-reims-402
@@ -8469,7 +8484,7 @@ aides . pays orne moselle:
       - localisation . epci = 'CC du Pays Orne Moselle'
       - revenu fiscal de référence <= première tranche IR
       - demandeur . âge . majeur
-      - aides . bonus vélo >= 0€
+      - aides . bonus vélo > 0€
       - vélo . électrique ou mécanique
   valeur: 20% * vélo . prix
   plafond:
@@ -8693,19 +8708,19 @@ aides . perpignan métropole:
   lien: https://aide-velo.perpignan-mediterranee.org/
 
 # TODO: à mettre à jour en 2025
-aides . agen:
-  remplace: intercommunalité
-  titre: Agglomération d'Agen
-  description: |
-    La liste d'attente pour 2024 est close. Les prochaines demandes seront donc
-    à déposer en 2025.
-  applicable si:
-    toutes ces conditions:
-      - localisation . epci = "CA Agglomération d'Agen"
-      - vélo . électrique
-  valeur: 200€
-  plafond: vélo . prix
-  lien: https://www.agglo-agen.net/vie-quotidienne/mobilites/aide-velo-electrique
+# aides . agen:
+#   remplace: intercommunalité
+#   titre: Agglomération d'Agen
+#   description: |
+#     La liste d'attente pour 2024 est close. Les prochaines demandes seront donc
+#     à déposer en 2025.
+#   applicable si:
+#     toutes ces conditions:
+#       - localisation . epci = "CA Agglomération d'Agen"
+#       - vélo . électrique
+#   valeur: 200€
+#   plafond: vélo . prix
+#   lien: https://www.agglo-agen.net/vie-quotidienne/mobilites/aide-velo-electrique
 
 aides . fier et usses:
   remplace: intercommunalité
@@ -9147,196 +9162,9 @@ vélo . état:
     neuf:
       titre: Vélo neuf
       valeur: état = 'neuf'
-    
     occasion:
       titre: Vélo d'occasion
       valeur: état = 'occasion'
-      # TODO: supprimer ce mécanisme et gérer l'occasion directement dans les
-      # conditions d'applicabilité des aides.
-      rend non applicable:
-        références à: aides
-        sauf dans:
-          # - aides . ambert livradois forez
-          - aides . amboise
-          - aides . annecy
-          - aides . annonay
-          - aides . arve salève
-          - aides . aubervilliers
-          - aides . aubiere
-          - aides . auray quiberon
-          - aides . avant-monts
-          - aides . avignon
-          - aides . baisieux
-          - aides . bannalec
-          - aides . bassin d'arcachon nord
-          - aides . beauvais
-          - aides . bègles vélo classique
-          - aides . belfort
-          - aides . betheny
-          - aides . béthune bruay
-          - aides . bidart
-          - aides . bièvre isère
-          - aides . blacé
-          - aides . boé
-          - aides . bonningues-lès-calais
-          - aides . bordeaux
-          - aides . bourges
-          - aides . bourg-saint-maurice
-          - aides . caen jeune
-          - aides . campagnes de l'artois
-          - aides . canélan
-          - aides . cébazat
-          - aides . cenon
-          - aides . cévennes gangeoises et suménoises
-          - aides . ceyrat
-          - aides . chateauroux
-          - aides . châtel
-          - aides . chevilly-larue
-          - aides . cluses arve et montagnes
-          - aides . coeur de maurienne arvan
-          - aides . coeur de nacre
-          - aides . corse
-          - aides . crozon
-          - aides . denain
-          - aides . département hérault vélo adapté
-          - aides . dieppe
-          - aides . dieulefit-bourdeaux
-          - aides . divonne-les-bains
-          - aides . drancy
-          - aides . dreux
-          - aides . ecommoy
-          - aides . epinal
-          - aides . évian-les-bains
-          - aides . faches-thumesnil
-          # - aides . feignies
-          - aides . fier et usses
-          - aides . flers
-          - aides . genevois
-          - aides . genneviliers
-          - aides . gouesnou
-          - aides . grand angouleme
-          - aides . grand calais
-          - aides . grand cubzaguais
-          - aides . grand est
-          - aides . grand périgueux
-          - aides . grand poitiers
-          - aides . grand villeneuvois
-          - aides . granville
-          - aides . grenoble
-          - aides . haut val de sèvre
-          - aides . haut val de sèvre
-          - aides . hem
-          - aides . hermanville-sur-mer
-          - aides . honfleur
-          - aides . ile de france
-          - aides . illkirch
-          - aides . kremlin-bicetre
-          - aides . la cali
-          - aides . la madeleine
-          - aides . la motte servolex
-          - aides . lanester
-          - aides . la roche sur yon
-          - aides . lescar
-          - aides . les herbiers
-          - aides . lesquin
-          - aides . les sables d'olonne
-          - aides . le vigan
-          - aides . limoges metropole
-          - aides . loire layon aubance
-          - aides . longuenesse
-          - aides . loos-en-gohelle
-          - aides . louvigny
-          - aides . luberon
-          - aides . lyon
-          - aides . massif du vercors
-          - aides . mérignac
-          - aides . molsheim-mutzig
-          - aides . mondeville
-          - aides . monmorillon
-          - aides . mons en baroeul
-          - aides . montagnole
-          - aides . montant
-          - aides . montbéliard agglo
-          - aides . montfort
-          - aides . montigny les metz
-          - aides . montlucon
-          - aides . montpellier
-          - aides . montval sur loir
-          - aides . morlaix
-          - aides . morzine-avoriaz
-          - aides . moselle et madon
-          - aides . nanterre
-          - aides . nantes
-          - aides . oise
-          - aides . oullins
-          - aides . pantin
-          - aides . pau
-          - aides . pays ancenis
-          - aides . pays de barr
-          - aides . pays de cruseilles
-          - aides . pays de l'arbresle
-          - aides . pays de l'ozon
-          - aides . pays de lumbres 
-          - aides . pays de mormal
-          - aides . pays des achards
-          - aides . pays de saverne
-          - aides . pays d'iroise
-          - aides . perpignan métropole
-          - aides . plaine de l'ain VAE
-          - aides . plougastel-daoulas
-          - aides . pornic
-          - aides . porte du hainaut
-          - aides . portes de sologne
-          - aides . portes du luxembourg
-          - aides . puisaye forterre
-          - aides . puteaux
-          - aides . quesnoy-sur-deûle
-          - aides . quimperlé
-          - aides . reims
-          - aides . relecq-kerhuon
-          - aides . ried de marckolsheim
-          - aides . rives de moselle
-          - aides . rochefort
-          - aides . ronchin
-          - aides . sainghin en melantois
-          - aides . saint alban leysse
-          - aides . saint-avold
-          - aides . sainte-foy-lès-lyon
-          - aides . saint-émilionnais
-          - aides . saintes
-          - aides . saint-jacques de la lande
-          - aides . saint-louis
-          - aides . saint-marcellin vercors isère
-          - aides . saint-rémy
-          - aides . saône-beaujolais
-          - aides . sarlat
-          - aides . saumur val de loire
-          - aides . selestat
-          - aides . sète
-          - aides . sèvre et loire
-          - aides . taillan-médoc
-          - aides . terre des 2 caps
-          - aides . toulouse
-          - aides . tulle
-          - aides . val d'argent
-          - aides . val d'yerres val de seine
-          - aides . valenciennes
-          - aides . vallée de l'homme
-          - aides . vallée de villé
-          - aides . vallées de l'orne et de l'odon
-          - aides . vallées du clain
-          - aides . vallons du lyonnais
-          - aides . val-revermont
-          - aides . vienne gartempe
-          - aides . ville de talant
-          - aides . villefranche beaujolais saône 
-          - aides . ville-sur-jarnioux
-          - aides . wambrechies
-          - aides . witry-lès-reims
-          - aides . yvetot normandie
-          - aides . la côtière à montluel
-          - aides . pays orne moselle
-          - aides . pontivy
 
 # NOTE: ne devrait-on pas plutôt avoir 'quotient familial' calculée à partir de
 # 'revenu fiscal de référence' et 'personnes dans le foyer fiscal' ? ->
