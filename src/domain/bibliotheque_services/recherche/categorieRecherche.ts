@@ -1,4 +1,12 @@
 export enum CategorieRecherche {
+  vos_objets = 'vos_objets',
+  donner = 'donner',
+  jeter = 'jeter',
+  reparer = 'reparer',
+  vendre = 'vendre',
+  louer = 'louer',
+  acheter = 'acheter',
+  emprunter = 'emprunter',
   nourriture = 'nourriture',
   marche_local = 'marche_local',
   epicerie_superette = 'epicerie_superette',
@@ -44,6 +52,14 @@ export class CategorieRechercheManager {
     CategorieRecherche.any_transport,
   ];
   private static labels: Record<CategorieRecherche, string> = {
+    vos_objets: 'vos objets',
+    donner: 'donner',
+    jeter: 'jeter',
+    reparer: 'reparer',
+    vendre: 'vendre',
+    louer: 'louer',
+    acheter: 'acheter',
+    emprunter: 'emprunter',
     nourriture: 'Tous les commerces',
     marche_local: 'Les marchés locaux',
     circuit_court: 'Les producteurs locaux',
