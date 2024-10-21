@@ -305,6 +305,11 @@
 - `aides . wasquehal`
 - `aides . witry-lès-reims`
 - `aides . yvetot normandie`
+- `aides . castelnau de médoc`
+- `aides . saulieu`
+- `aides . la côtière à montluel`
+- `aides . pays orne moselle`
+- `aides . bram`
 
 #### Suppression
 
@@ -360,6 +365,7 @@
 - `aides . val-de-reuil`
 - `aides . vesoul`
 - `aides . vexin normand`
+- `aides . rueil-malmaison`
 
 ### Paramètres
 

@@ -4982,39 +4982,6 @@
     ],
     "lien": "https://www.aubervilliers.fr/Aide-a-l-achat-d-un-velo"
   },
-  "aides . rueil-malmaison": {
-    "remplace": "commune",
-    "titre": "Ville de Rueil-Malmaison",
-    "applicable si": {
-      "toutes ces conditions": [
-        "localisation . code insee = '92063'",
-        "vélo . électrique"
-      ]
-    },
-    "variations": [
-      {
-        "si": "revenu fiscal de référence <= 20000 €/an",
-        "alors": {
-          "valeur": "40% * vélo . prix",
-          "plafond": "500€"
-        }
-      },
-      {
-        "si": "revenu fiscal de référence <= 30000 €/an",
-        "alors": {
-          "valeur": "30% * vélo . prix",
-          "plafond": "300€"
-        }
-      },
-      {
-        "sinon": {
-          "valeur": "20% * vélo . prix",
-          "plafond": "200€"
-        }
-      }
-    ],
-    "lien": "https://www.villederueil.fr/fr/aide-lachat-dun-velo-electrique"
-  },
   "aides . mons en baroeul": {
     "remplace": "commune",
     "titre": "Ville de Mons en Barœul",
@@ -9500,11 +9467,21 @@
       "toutes ces conditions": [
         "localisation . epci = 'CC Pontivy Communauté'",
         "revenu fiscal de référence <= 25000 €/an",
-        "vélo . électrique"
+        "vélo . électrique ou mécanique"
       ]
     },
     "valeur": "vélo . prix",
-    "plafond": "200€",
+    "plafond": {
+      "variations": [
+        {
+          "si": "vélo . électrique",
+          "alors": "200€"
+        },
+        {
+          "sinon": "50€"
+        }
+      ]
+    },
     "lien": "https://www.pontivy-communaute.bzh/aide-a-lacquisition-dun-velo-a-assistante-electrique/"
   },
   "aides . chateauroux": {
@@ -10218,7 +10195,7 @@
   "aides . pays de châteaugiron": {
     "remplace": "intercommunalité",
     "titre": "Pays de Châteaugiron",
-    "description": "Prime à l’achat d’un Vélo à Assistance Électrique, d’une remorque\nélectrique pour vélo ou d’un vélo cargo.\n",
+    "description": "Prime à l'achat d'un Vélo à Assistance Électrique, d'une remorque\nélectrique pour vélo ou d'un vélo cargo.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CC Pays de Châteaugiron Communauté'",
@@ -10234,7 +10211,7 @@
   "aides . bièvre isère": {
     "remplace": "intercommunalité",
     "titre": "Bièvre Isère Communauté",
-    "description": "Prime Vélo - aide financière à l’achat d’un vélo, musculaire ou à\nassistance électrique, cargo ou non.\n",
+    "description": "Prime Vélo - aide financière à l'achat d'un vélo, musculaire ou à\nassistance électrique, cargo ou non.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CC Bièvre Isère'",
@@ -10362,23 +10339,30 @@
   "aides . castelnau de médoc": {
     "remplace": "commune",
     "titre": "Ville de Castelnau de Médoc",
+    "description": "Aide à l'acquisition d'un vélo à assistance électrique neuf.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '33104'",
-        "vélo . électrique",
-        "revenu fiscal de référence <= première tranche IR"
+        "demandeur . âge . majeur",
+        "revenu fiscal de référence <= première tranche IR",
+        "vélo . état . neuf",
+        "vélo . électrique"
       ]
     },
     "valeur": "100€",
+    "plafond": "vélo . prix",
     "lien": "https://www.mairie-castelnau-medoc.fr/actus/1557-aide-a-l-acquisition-de-velos"
   },
   "aides . saulieu": {
     "remplace": "commune",
-    "titre": "Communauté de communes du Saulieu",
+    "titre": "Communauté de communes de Saulieu-Morvan",
+    "description": "Subvention de 100€ pour l'achat d'un vélo électrique neuf à partir de 650€.\n\nLe dossier est à déposer dans les trentes jours suivants l'achat.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CC de Saulieu'",
+        "demandeur . âge . majeur",
         "vélo . électrique",
+        "vélo . état . neuf",
         "vélo . prix >= 650€"
       ]
     },
@@ -10388,13 +10372,21 @@
   "aides . la côtière à montluel": {
     "remplace": "intercommunalité",
     "titre": "Communauté de Communes de la Côtière à Montluel",
+    "description": "Aide à l'achat d'un vélo à assistance électrique, neuf ou d'occasion.",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CC de la Côtière à Montluel'",
+        "demandeur . âge . majeur",
         {
           "une de ces conditions": [
             "travailler à moins de 20km",
             "abonné TER"
+          ]
+        },
+        {
+          "une de ces conditions": [
+            "vélo . électrique",
+            "vélo . adapté"
           ]
         }
       ]
@@ -10403,15 +10395,16 @@
     "plafond": {
       "variations": [
         {
-          "si": "vélo . cargo",
+          "si": {
+            "une de ces conditions": [
+              "vélo . cargo",
+              "vélo . adapté"
+            ]
+          },
           "alors": "400€"
         },
         {
-          "si": "vélo . électrique",
-          "alors": "300€"
-        },
-        {
-          "sinon": "0€"
+          "sinon": "300€"
         }
       ]
     },
@@ -10420,7 +10413,7 @@
       "travailler à moins de 20km": {
         "type": "booléen",
         "question": "Travaillez-vous à moins de 20km de votre domicile ?",
-        "description": "Vous devez justifier d'une activité professionnelle en tant que salarié, employeur ou auto-entrepreneur",
+        "description": "Vous devez justifier d'une activité professionnelle en tant que salarié, employeur ou auto-entrepreneur.",
         "par défaut": "oui"
       },
       "abonné TER": {
@@ -10433,10 +10426,13 @@
   "aides . pays orne moselle": {
     "remplace": "intercommunalité",
     "titre": "Pays Orne Moselle",
+    "description": "Aide à l'achat d'un vélo, neuf ou d'occasion.",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . epci = 'CC du Pays Orne Moselle'",
         "revenu fiscal de référence <= première tranche IR",
+        "demandeur . âge . majeur",
+        "aides . bonus vélo >= 0€",
         "vélo . électrique ou mécanique"
       ]
     },
@@ -10457,26 +10453,67 @@
   "aides . bram": {
     "remplace": "commune",
     "titre": "Ville de Bram",
+    "description": "Bram à vélo - Aide à l'achat d'un vélo à assistance électrique ou mécanique\njusqu'au 1er décembre 2024.\n",
     "applicable si": {
       "toutes ces conditions": [
         "localisation . code insee = '11049'",
-        "vélo . électrique ou mécanique",
-        "revenu fiscal de référence <= 35052 €/an"
+        "demandeur . âge >= 16 an",
+        "vélo . état . neuf",
+        "revenu fiscal de référence <= 35052 €/an",
+        {
+          "une de ces conditions": [
+            "vélo . électrique ou mécanique",
+            {
+              "toutes ces conditions": [
+                "vélo . adapté",
+                "demandeur . en situation de handicap"
+              ]
+            }
+          ]
+        }
       ]
     },
-    "valeur": "50% * vélo . prix",
+    "valeur": "50% * vélo . prix . HT",
     "plafond": {
       "variations": [
+        {
+          "si": "vélo . adapté",
+          "alors": {
+            "variations": [
+              {
+                "si": "revenu fiscal de référence <= 18000 €/an",
+                "alors": "300€ + 150€"
+              },
+              {
+                "sinon": "250€ + 150€"
+              }
+            ]
+          }
+        },
         {
           "si": "vélo . électrique",
           "alors": {
             "variations": [
               {
                 "si": "revenu fiscal de référence <= 18000 €/an",
-                "alors": "300 €"
+                "alors": "300€"
               },
               {
-                "sinon": "250 €"
+                "sinon": "250€"
+              }
+            ]
+          }
+        },
+        {
+          "si": "vélo . électrique",
+          "alors": {
+            "variations": [
+              {
+                "si": "revenu fiscal de référence <= 18000 €/an",
+                "alors": "300€"
+              },
+              {
+                "sinon": "250€"
               }
             ]
           }
@@ -10486,10 +10523,10 @@
             "variations": [
               {
                 "si": "revenu fiscal de référence <= 18000 €/an",
-                "alors": "150 €"
+                "alors": "150€"
               },
               {
-                "sinon": "100 €"
+                "sinon": "100€"
               }
             ]
           }
@@ -11360,20 +11397,25 @@
         "rend non applicable": {
           "références à": "aides",
           "sauf dans": [
+            "aides . amboise",
             "aides . annecy",
             "aides . annonay",
             "aides . arve salève",
             "aides . aubervilliers",
             "aides . aubiere",
             "aides . auray quiberon",
+            "aides . avant-monts",
             "aides . avignon",
             "aides . baisieux",
+            "aides . bannalec",
             "aides . bassin d'arcachon nord",
+            "aides . beauvais",
             "aides . bègles vélo classique",
             "aides . belfort",
             "aides . betheny",
             "aides . béthune bruay",
             "aides . bidart",
+            "aides . bièvre isère",
             "aides . blacé",
             "aides . boé",
             "aides . bonningues-lès-calais",
@@ -11386,6 +11428,8 @@
             "aides . cébazat",
             "aides . cenon",
             "aides . cévennes gangeoises et suménoises",
+            "aides . ceyrat",
+            "aides . chateauroux",
             "aides . châtel",
             "aides . chevilly-larue",
             "aides . cluses arve et montagnes",
@@ -11400,6 +11444,7 @@
             "aides . divonne-les-bains",
             "aides . drancy",
             "aides . dreux",
+            "aides . ecommoy",
             "aides . epinal",
             "aides . évian-les-bains",
             "aides . faches-thumesnil",
@@ -11408,6 +11453,8 @@
             "aides . genevois",
             "aides . genneviliers",
             "aides . gouesnou",
+            "aides . grand angouleme",
+            "aides . grand calais",
             "aides . grand cubzaguais",
             "aides . grand est",
             "aides . grand périgueux",
@@ -11435,10 +11482,12 @@
             "aides . le vigan",
             "aides . limoges metropole",
             "aides . loire layon aubance",
+            "aides . longuenesse",
             "aides . loos-en-gohelle",
             "aides . louvigny",
             "aides . luberon",
             "aides . lyon",
+            "aides . massif du vercors",
             "aides . mérignac",
             "aides . molsheim-mutzig",
             "aides . mondeville",
@@ -11457,6 +11506,7 @@
             "aides . moselle et madon",
             "aides . nanterre",
             "aides . nantes",
+            "aides . oise",
             "aides . oullins",
             "aides . pantin",
             "aides . pau",
@@ -11466,6 +11516,7 @@
             "aides . pays de l'arbresle",
             "aides . pays de l'ozon",
             "aides . pays de lumbres",
+            "aides . pays de mormal",
             "aides . pays des achards",
             "aides . pays de saverne",
             "aides . pays d'iroise",
@@ -11475,6 +11526,7 @@
             "aides . pornic",
             "aides . porte du hainaut",
             "aides . portes de sologne",
+            "aides . portes du luxembourg",
             "aides . puisaye forterre",
             "aides . puteaux",
             "aides . quesnoy-sur-deûle",
@@ -11510,32 +11562,20 @@
             "aides . valenciennes",
             "aides . vallée de l'homme",
             "aides . vallée de villé",
+            "aides . vallées de l'orne et de l'odon",
+            "aides . vallées du clain",
             "aides . vallons du lyonnais",
+            "aides . val-revermont",
             "aides . vienne gartempe",
             "aides . ville de talant",
             "aides . villefranche beaujolais saône",
             "aides . ville-sur-jarnioux",
             "aides . wambrechies",
-            "aides . yvetot normandie",
-            "aides . pays de mormal",
-            "aides . grand calais",
-            "aides . amboise",
-            "aides . chateauroux",
-            "aides . oise",
-            "aides . beauvais",
-            "aides . grand angouleme",
-            "aides . massif du vercors",
-            "aides . portes du luxembourg",
-            "aides . ecommoy",
-            "aides . bannalec",
-            "aides . vallées du clain",
             "aides . witry-lès-reims",
-            "aides . avant-monts",
-            "aides . vallées de l'orne et de l'odon",
-            "aides . val-revermont",
-            "aides . bièvre isère",
-            "aides . ceyrat",
-            "aides . longuenesse"
+            "aides . yvetot normandie",
+            "aides . la côtière à montluel",
+            "aides . pays orne moselle",
+            "aides . pontivy"
           ]
         }
       }

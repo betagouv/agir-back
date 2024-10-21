@@ -3991,26 +3991,27 @@ aides . aubervilliers:
     - sinon: 50 €
   lien: https://www.aubervilliers.fr/Aide-a-l-achat-d-un-velo
 
-aides . rueil-malmaison:
-  remplace: commune
-  titre: Ville de Rueil-Malmaison
-  applicable si:
-    toutes ces conditions:
-      - localisation . code insee = '92063'
-      - vélo . électrique
-  variations:
-    - si: revenu fiscal de référence <= 20000 €/an
-      alors:
-        valeur: 40% * vélo . prix
-        plafond: 500€
-    - si: revenu fiscal de référence <= 30000 €/an
-      alors:
-        valeur: 30% * vélo . prix
-        plafond: 300€
-    - sinon:
-        valeur: 20% * vélo . prix
-        plafond: 200€
-  lien: https://www.villederueil.fr/fr/aide-lachat-dun-velo-electrique
+# TODO: à vérifier à partir du 15 janvier 2025
+# aides . rueil-malmaison:
+#   remplace: commune
+#   titre: Ville de Rueil-Malmaison
+#   applicable si:
+#     toutes ces conditions:
+#       - localisation . code insee = '92063'
+#       - vélo . électrique
+#   variations:
+#     - si: revenu fiscal de référence <= 20000 €/an
+#       alors:
+#         valeur: 40% * vélo . prix
+#         plafond: 500€
+#     - si: revenu fiscal de référence <= 30000 €/an
+#       alors:
+#         valeur: 30% * vélo . prix
+#         plafond: 300€
+#     - sinon:
+#         valeur: 20% * vélo . prix
+#         plafond: 200€
+#   lien: https://www.villederueil.fr/fr/aide-lachat-dun-velo-electrique
 
 # NOTE: dispositif suspendu jusqu'au 15 janvier 2025, à vérifier en 2025
 # aides . courbevoie:
@@ -7695,9 +7696,13 @@ aides . pontivy:
     toutes ces conditions:
       - localisation . epci = 'CC Pontivy Communauté'
       - revenu fiscal de référence <= 25000 €/an
-      - vélo . électrique
+      - vélo . électrique ou mécanique
   valeur: vélo . prix
-  plafond: 200€
+  plafond: 
+    variations:
+      - si: vélo . électrique
+        alors: 200€
+      - sinon: 50€
   lien: https://www.pontivy-communaute.bzh/aide-a-lacquisition-dun-velo-a-assistante-electrique/
 
 aides . chateauroux:
@@ -8385,40 +8390,61 @@ aides . longuenesse:
 aides . castelnau de médoc:
   remplace: commune
   titre: Ville de Castelnau de Médoc
+  description: |
+    Aide à l'acquisition d'un vélo à assistance électrique neuf.
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '33104'
-      - vélo . électrique
+      - demandeur . âge . majeur
       - revenu fiscal de référence <= première tranche IR
+      - vélo . état . neuf
+      - vélo . électrique
   valeur: 100€
+  plafond: vélo . prix
   lien: https://www.mairie-castelnau-medoc.fr/actus/1557-aide-a-l-acquisition-de-velos
+
+# NOTE: valide jusqu'au 1er octobre 2025 (dans la limite de l'enveloppe
+# budgétaire annuelle), à vérifier en 2025.
 aides . saulieu:
   remplace: commune
-  titre: Communauté de communes du Saulieu
+  titre: Communauté de communes de Saulieu-Morvan
+  description: |
+    Subvention de 100€ pour l'achat d'un vélo électrique neuf à partir de 650€.
+
+    Le dossier est à déposer dans les trentes jours suivants l'achat.
   applicable si:
     toutes ces conditions:
       - localisation . epci = 'CC de Saulieu'
+      - demandeur . âge . majeur
       - vélo . électrique
+      - vélo . état . neuf
       - vélo . prix >= 650€
   valeur: 100€
   lien: https://www.saulieu-morvan.fr/joomla/tourisme-loisirs
+
 aides . la côtière à montluel:
   remplace: intercommunalité
   titre: Communauté de Communes de la Côtière à Montluel
+  description: Aide à l'achat d'un vélo à assistance électrique, neuf ou d'occasion.
   applicable si:
     toutes ces conditions:
       - localisation . epci = 'CC de la Côtière à Montluel'
+      - demandeur . âge . majeur
       - une de ces conditions:
           - travailler à moins de 20km
           - abonné TER
+      - une de ces conditions:
+          - vélo . électrique
+          - vélo . adapté
   valeur: 15% * vélo . prix
   plafond:
     variations:
-      - si: vélo . cargo
+      - si: 
+          une de ces conditions:
+            - vélo . cargo
+            - vélo . adapté
         alors: 400€
-      - si: vélo . électrique
-        alors: 300€
-      - sinon: 0€
+      - sinon: 300€
   lien: https://www.3cm.fr/18967-aide-a-l-achat-d-un-velo-a-assistance-electrique.htm
   avec:
     travailler à moins de 20km:
@@ -8426,19 +8452,24 @@ aides . la côtière à montluel:
       question: Travaillez-vous à moins de 20km de votre domicile ?
       description:
         Vous devez justifier d'une activité professionnelle en tant que
-        salarié, employeur ou auto-entrepreneur
+        salarié, employeur ou auto-entrepreneur.
       par défaut: oui
+
     abonné TER:
       type: booléen
       question: Êtes-vous abonné au TER ?
       par défaut: non
+
 aides . pays orne moselle:
   remplace: intercommunalité
   titre: Pays Orne Moselle
+  description: Aide à l'achat d'un vélo, neuf ou d'occasion.
   applicable si:
     toutes ces conditions:
       - localisation . epci = 'CC du Pays Orne Moselle'
       - revenu fiscal de référence <= première tranche IR
+      - demandeur . âge . majeur
+      - aides . bonus vélo >= 0€
       - vélo . électrique ou mécanique
   valeur: 20% * vélo . prix
   plafond:
@@ -8447,28 +8478,51 @@ aides . pays orne moselle:
         alors: 150€
       - sinon: 200€
   lien: https://www.ccpom.fr/aides-a-la-mobilite/
+
+# NOTE: valide jusqu'au 1er décembre 2024, à vérifier en 2025
 aides . bram:
   remplace: commune
   titre: Ville de Bram
+  description: |
+    Bram à vélo - Aide à l'achat d'un vélo à assistance électrique ou mécanique
+    jusqu'au 1er décembre 2024.
   applicable si:
     toutes ces conditions:
       - localisation . code insee = '11049'
-      - vélo . électrique ou mécanique
+      - demandeur . âge >= 16 an
+      - vélo . état . neuf
       - revenu fiscal de référence <= 35052 €/an
-  valeur: 50% * vélo . prix
+      - une de ces conditions:
+          - vélo . électrique ou mécanique
+          - toutes ces conditions:
+              - vélo . adapté
+              - demandeur . en situation de handicap
+  valeur: 50% * vélo . prix . HT
   plafond:
     variations:
+      - si: vélo . adapté
+        alors:
+          variations:
+            - si: revenu fiscal de référence <= 18000 €/an
+              alors: 300€ + 150€
+            - sinon: 250€ + 150€
       - si: vélo . électrique
         alors:
           variations:
             - si: revenu fiscal de référence <= 18000 €/an
-              alors: 300 €
-            - sinon: 250 €
+              alors: 300€
+            - sinon: 250€
+      - si: vélo . électrique
+        alors:
+          variations:
+            - si: revenu fiscal de référence <= 18000 €/an
+              alors: 300€
+            - sinon: 250€
       - sinon:
           variations:
             - si: revenu fiscal de référence <= 18000 €/an
-              alors: 150 €
-            - sinon: 100 €
+              alors: 150€
+            - sinon: 100€
   lien: https://www.villedebram.fr/actualite/une-aide-a-lachat-de-velos-pour-les-bramais/
 
 aides . region centre:
@@ -9280,6 +9334,9 @@ vélo . état:
           - aides . wambrechies
           - aides . witry-lès-reims
           - aides . yvetot normandie
+          - aides . la côtière à montluel
+          - aides . pays orne moselle
+          - aides . pontivy
 
 # NOTE: ne devrait-on pas plutôt avoir 'quotient familial' calculée à partir de
 # 'revenu fiscal de référence' et 'personnes dans le foyer fiscal' ? ->
