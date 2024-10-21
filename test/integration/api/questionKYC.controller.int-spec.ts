@@ -2,6 +2,7 @@ import { UtilisateurRepository } from '../../../src/infrastructure/repository/ut
 import {
   BooleanKYC,
   TypeReponseQuestionKYC,
+  Unite,
 } from '../../../src/domain/kyc/questionKYC';
 import { DB, TestUtil } from '../../TestUtil';
 import { Thematique } from '../../../src/domain/contenu/thematique';
@@ -107,6 +108,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           short_question: 'short',
           image_url: 'AAA',
           conditions: [],
+          unite: Unite.kg,
         },
       ],
     };
@@ -132,6 +134,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       conditions: [],
       created_at: undefined,
       updated_at: undefined,
+      unite: Unite.kg,
     };
     await TestUtil.create(DB.kYC, dbKYC);
     await TestUtil.create(DB.utilisateur, { kyc: kyc });
@@ -220,6 +223,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       short_question: 'short',
       image_url: 'AAA',
       conditions: [],
+      unite: Unite.kg,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -369,7 +373,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       reponses: [
         { label: 'Oui', code: BooleanKYC.oui },
         { label: 'Non', code: BooleanKYC.non },
-        { label: 'A voir', code: BooleanKYC.peut_etre },
+        { label: 'A voir', code: 'peut_etre' },
       ],
     });
     // WHEN
@@ -675,6 +679,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           short_question: 'short',
           image_url: 'AAA',
           conditions: [],
+          unite: Unite.kg,
         },
       ],
     };
@@ -1333,6 +1338,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       conditions: [],
       created_at: undefined,
       updated_at: undefined,
+      unite: Unite.kg,
     };
     await TestUtil.create(DB.kYC, {
       ...dbKYC,

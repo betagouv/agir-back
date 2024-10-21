@@ -4,6 +4,7 @@ import {
   KYCReponse,
   QuestionKYC,
   TypeReponseQuestionKYC,
+  Unite,
 } from '../../kyc/questionKYC';
 import { Thematique } from '../../contenu/thematique';
 import { Tag } from '../../scoring/tag';
@@ -44,6 +45,7 @@ export class QuestionKYC_v0 {
   universes: string[];
   image_url: string;
   conditions: ConditionKYC[][];
+  unite: Unite;
 
   static map(elem: QuestionKYC): QuestionKYC_v0 {
     return {
@@ -67,6 +69,7 @@ export class QuestionKYC_v0 {
       short_question: elem.short_question,
       image_url: elem.image_url,
       conditions: elem.conditions ? elem.conditions : [],
+      unite: elem.unite,
     };
   }
 }

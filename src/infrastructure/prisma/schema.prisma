@@ -333,6 +333,7 @@ model KYC {
   tags           String[] @default([])
   universes      String[] @default([])
   image_url      String?
+  unite          String?
   conditions     Json     @default("[]")
   created_at     DateTime @default(now()) @db.Timestamptz(3)
   updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(3)

@@ -9,7 +9,7 @@ import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
 const request = require('supertest');
 import { JwtService } from '@nestjs/jwt';
 import { ParcoursTodo } from '../src/domain/todo/parcoursTodo';
-import { TypeReponseQuestionKYC } from '../src/domain/kyc/questionKYC';
+import { TypeReponseQuestionKYC, Unite } from '../src/domain/kyc/questionKYC';
 import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
 import { Feature } from '../src/domain/gamification/feature';
 import { UnlockedFeatures_v1 } from '../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
@@ -375,6 +375,7 @@ export class TestUtil {
       ],
       short_question: 'short',
       image_url: 'URL',
+      unite: Unite.euro,
       conditions: [],
 
       created_at: undefined,
@@ -441,6 +442,7 @@ export class TestUtil {
           short_question: 'short',
           image_url: 'URL',
           conditions: [],
+          unite: Unite.euro,
         },
       ],
     };

@@ -1,6 +1,9 @@
 import { KYC } from '@prisma/client';
 import { Categorie } from '../../../src/domain/contenu/categorie';
-import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import {
+  TypeReponseQuestionKYC,
+  Unite,
+} from '../../../src/domain/kyc/questionKYC';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { DB, TestUtil } from '../../TestUtil';
 
@@ -74,6 +77,7 @@ describe('BilanCarbone (API test)', () => {
           image_url: '111',
           short_question: 'short',
           conditions: [],
+          unite: Unite.kg,
         },
       ],
     };
@@ -96,6 +100,7 @@ describe('BilanCarbone (API test)', () => {
       image_url: '111',
       short_question: 'short',
       conditions: [],
+      unite: Unite.kg,
       created_at: undefined,
       is_ngc: true,
       thematique: 'alimentation',

@@ -18,7 +18,13 @@ export enum TypeReponseQuestionKYC {
 export enum BooleanKYC {
   oui = 'oui',
   non = 'non',
-  peut_etre = 'peut_etre',
+}
+export enum Unite {
+  kg = 'kg',
+  g = 'l',
+  km = 'km',
+  l = 'l',
+  euro = 'euro',
 }
 
 export class KYCReponse {
@@ -46,6 +52,7 @@ export class QuestionKYC implements TaggedContent {
   universes: string[];
   image_url: string;
   conditions: ConditionKYC[][];
+  unite: Unite;
 
   constructor(data?: QuestionKYC_v0) {
     if (!data) return;
@@ -85,6 +92,7 @@ export class QuestionKYC implements TaggedContent {
       short_question: def.short_question,
       image_url: def.image_url,
       conditions: def.conditions ? def.conditions : [],
+      unite: def.unite,
     });
   }
 
@@ -101,6 +109,7 @@ export class QuestionKYC implements TaggedContent {
     this.universes = def.universes ? def.universes : [];
     this.conditions = def.conditions ? def.conditions : [];
     this.id_cms = def.id_cms;
+    this.unite = def.unite;
     if (
       (this.type === TypeReponseQuestionKYC.choix_multiple ||
         this.type === TypeReponseQuestionKYC.choix_unique) &&

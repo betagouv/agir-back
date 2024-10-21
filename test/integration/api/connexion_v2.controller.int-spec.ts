@@ -9,7 +9,10 @@ import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
-import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import {
+  TypeReponseQuestionKYC,
+  Unite,
+} from '../../../src/domain/kyc/questionKYC';
 import { Univers } from '../../../src/domain/univers/univers';
 
 function getFakeUtilisteur() {
@@ -391,6 +394,7 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
           short_question: 'short',
           image_url: 'AAA',
           conditions: [],
+          unite: Unite.kg,
         },
       ],
     };

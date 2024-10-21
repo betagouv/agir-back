@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { KYC } from '@prisma/client';
 import { KycDefinition } from '../../../src/domain/kyc/kycDefinition';
-import { TypeReponseQuestionKYC } from '../../domain/kyc/questionKYC';
+import { TypeReponseQuestionKYC, Unite } from '../../domain/kyc/questionKYC';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { Categorie } from '../../../src/domain/contenu/categorie';
@@ -28,6 +28,7 @@ export class KycRepository {
       image_url: kycDef.image_url,
       short_question: kycDef.short_question,
       conditions: kycDef.conditions as any,
+      unite: kycDef.unite,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -85,6 +86,7 @@ export class KycRepository {
       short_question: kycDB.short_question,
       image_url: kycDB.image_url,
       conditions: kycDB.conditions as any,
+      unite: Unite[kycDB.unite],
     });
   }
 }

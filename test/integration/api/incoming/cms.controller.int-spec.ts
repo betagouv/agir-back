@@ -111,6 +111,7 @@ describe('/api/incoming/cms (API test)', () => {
       type: TypeReponseQuestionKYC.choix_multiple,
       categorie: Categorie.mission,
       points: 5,
+      unite: 'kg (kilogramme)',
       is_ngc: false,
       ngc_key: 'a . b . c',
       imageUrl: {
@@ -452,6 +453,56 @@ describe('/api/incoming/cms (API test)', () => {
     expect(item.type).toEqual(TypeReponseQuestionKYC.choix_multiple);
     expect(item.categorie).toEqual(Categorie.mission);
     expect(item.points).toEqual(5);
+    expect(item.unite).toEqual('kg');
+    expect(item.is_ngc).toEqual(false);
+    expect(item.ngc_key).toEqual('a . b . c');
+    expect(item.reponses).toEqual([
+      {
+        label: 'haha',
+        code: 'haha_code',
+        ngc_code: '123',
+        value: 'haha',
+      },
+      {
+        label: 'hihi',
+        code: 'hihi_code',
+        ngc_code: '456',
+        value: 'hihi',
+      },
+    ]);
+    expect(item.thematique).toEqual(Thematique.alimentation);
+    expect(item.tags).toEqual([Tag.capacite_physique, Tag.possede_velo]);
+    expect(item.universes).toEqual([Univers.climat]);
+    expect(item.conditions).toStrictEqual([
+      [{ id_kyc: 8888, code_kyc: '999', code_reponse: 'yop' }],
+    ]);
+  });
+  it('POST /api/incoming/cms - updates kyc', async () => {
+    // GIVEN
+    await TestUtil.create(DB.kYC, { id_cms: 123 });
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_KYC,
+    );
+
+    // THEN
+    const kycs = await TestUtil.prisma.kYC.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(kycs).toHaveLength(1);
+
+    const item: KYC = kycs[0];
+
+    expect(item.code).toEqual('KYC001');
+    expect(item.question).toEqual('question');
+    expect(item.short_question).toEqual('short question');
+    expect(item.image_url).toEqual('https://');
+    expect(item.id_cms).toEqual(123);
+    expect(item.type).toEqual(TypeReponseQuestionKYC.choix_multiple);
+    expect(item.categorie).toEqual(Categorie.mission);
+    expect(item.points).toEqual(5);
+    expect(item.unite).toEqual('kg');
     expect(item.is_ngc).toEqual(false);
     expect(item.ngc_key).toEqual('a . b . c');
     expect(item.reponses).toEqual([

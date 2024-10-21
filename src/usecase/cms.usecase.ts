@@ -28,7 +28,7 @@ import {
 import { ContentType } from '../../src/domain/contenu/contentType';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
 import { KycDefinition } from '../../src/domain/kyc/kycDefinition';
-import { TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
+import { TypeReponseQuestionKYC, Unite } from '../domain/kyc/questionKYC';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { Categorie } from '../../src/domain/contenu/categorie';
 import { UniversDefinition } from 'src/domain/univers/universDefinition';
@@ -665,6 +665,7 @@ export class CMSUsecase {
       is_ngc: entry.is_ngc,
       ngc_key: entry.ngc_key,
       points: entry.points,
+      unite: this.extractUnite(entry.unite),
       question: entry.question,
       thematique: entry.thematique
         ? ThematiqueRepository.getThematiqueByCmsId(entry.thematique.id)
@@ -695,6 +696,12 @@ export class CMSUsecase {
           )
         : [],
     };
+  }
+
+  private static extractUnite(label_unite: string) {
+    if (!label_unite) return null;
+    const unite = Unite[label_unite.substring(0, label_unite.indexOf(' '))];
+    return unite ? unite : null;
   }
 
   static buildMissionFromCMSData(entry: CMSWebhookEntryAPI): MissionDefinition {
@@ -930,6 +937,7 @@ export class CMSUsecase {
       type: TypeReponseQuestionKYC[entry.attributes.type],
       categorie: Categorie[entry.attributes.categorie],
       points: entry.attributes.points,
+      unite: this.extractUnite(entry.attributes.unite),
       is_ngc: entry.attributes.is_ngc,
       ngc_key: entry.attributes.ngc_key,
       question: entry.attributes.question,

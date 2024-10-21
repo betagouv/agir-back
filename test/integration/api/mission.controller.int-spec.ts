@@ -7,6 +7,7 @@ import { Univers } from '../../../src/domain/univers/univers';
 import {
   TypeReponseQuestionKYC,
   BooleanKYC,
+  Unite,
 } from '../../../src/domain/kyc/questionKYC';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { EventType } from '../../../src/domain/appEvent';
@@ -1265,7 +1266,7 @@ describe('Mission (API test)', () => {
       reponses: [
         { label: 'Oui', code: BooleanKYC.oui },
         { label: 'Non', code: BooleanKYC.non },
-        { label: 'A voir', code: BooleanKYC.peut_etre },
+        { label: 'A voir', code: 'peut_etre' },
       ],
     });
     // WHEN
@@ -1329,7 +1330,7 @@ describe('Mission (API test)', () => {
       reponses: [
         { label: 'Oui', code: BooleanKYC.oui },
         { label: 'Non', code: BooleanKYC.non },
-        { label: 'A voir', code: BooleanKYC.peut_etre },
+        { label: 'A voir', code: 'peut_etre' },
       ],
       short_question: 'short 2',
       image_url: 'BBB',
@@ -1344,7 +1345,7 @@ describe('Mission (API test)', () => {
       reponses: [
         { label: 'Oui', code: BooleanKYC.oui },
         { label: 'Non', code: BooleanKYC.non },
-        { label: 'A voir', code: BooleanKYC.peut_etre },
+        { label: 'A voir', code: 'peut_etre' },
       ],
       short_question: 'short 3',
       image_url: 'CCC',
@@ -1434,7 +1435,7 @@ describe('Mission (API test)', () => {
       reponses: [
         { label: 'Oui', code: BooleanKYC.oui },
         { label: 'Non', code: BooleanKYC.non },
-        { label: 'A voir', code: BooleanKYC.peut_etre },
+        { label: 'A voir', code: 'peut_etre' },
       ],
     });
 
@@ -1577,6 +1578,7 @@ describe('Mission (API test)', () => {
           short_question: 'short',
           image_url: 'AAA',
           conditions: [],
+          unite: Unite.kg,
         },
       ],
     };

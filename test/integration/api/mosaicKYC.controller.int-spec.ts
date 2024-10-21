@@ -2,7 +2,10 @@ import { KYC } from '.prisma/client';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
-import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import {
+  TypeReponseQuestionKYC,
+  Unite,
+} from '../../../src/domain/kyc/questionKYC';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { Univers } from '../../../src/domain/univers/univers';
@@ -67,6 +70,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       conditions: [],
       created_at: undefined,
       updated_at: undefined,
+      unite: Unite.kg,
     };
     await TestUtil.create(DB.kYC, {
       ...dbKYC,
@@ -162,6 +166,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       short_question: 'short',
       image_url: 'AAA',
       conditions: [],
+      unite: Unite.kg,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -267,6 +272,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       short_question: 'short',
       image_url: 'AAA',
       conditions: [],
+      unite: Unite.kg,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -412,6 +418,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       conditions: [],
       created_at: undefined,
       updated_at: undefined,
+      unite: Unite.kg,
     };
     await TestUtil.create(DB.kYC, {
       ...dbKYC,
@@ -451,6 +458,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           short_question: 'short 1',
           image_url: 'AAA',
           conditions: [],
+          unite: Unite.kg,
         },
         {
           id: '_2',
@@ -473,6 +481,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           short_question: 'short 2',
           image_url: 'BBB',
           conditions: [],
+          unite: Unite.kg,
         },
       ],
     };
@@ -532,6 +541,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       conditions: [],
       created_at: undefined,
       updated_at: undefined,
+      unite: Unite.kg,
     };
     await TestUtil.create(DB.kYC, {
       ...dbKYC,
@@ -567,6 +577,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           short_question: 'short 1',
           image_url: 'AAA',
           conditions: [],
+          unite: Unite.kg,
         },
         {
           id: '_2',
@@ -585,6 +596,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           short_question: 'short 2',
           image_url: 'BBB',
           conditions: [],
+          unite: Unite.kg,
         },
       ],
     };
