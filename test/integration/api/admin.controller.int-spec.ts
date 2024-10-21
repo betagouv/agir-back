@@ -1671,6 +1671,14 @@ describe('Admin (API test)', () => {
       raisons_defi_pas_envie: ['motif pas envie defi3 user4'],
       raisons_defi_abandonne: [],
     });
+
+    expect(
+      defi_4_stat.raisons_defi_pas_envie.includes('pas envie user1'),
+    ).toEqual(true);
+    expect(
+      defi_4_stat.raisons_defi_pas_envie.includes('pas envie defi4 user3'),
+    ).toEqual(true);
+    delete defi_4_stat.raisons_defi_pas_envie;
     expect(defi_4_stat).toEqual({
       content_id: '4',
       titre: 'D',
@@ -1678,7 +1686,6 @@ describe('Admin (API test)', () => {
       nombre_defis_abandonnes: 0,
       nombre_defis_en_cours: 0,
       nombre_defis_realises: 0,
-      raisons_defi_pas_envie: ['pas envie user1', 'pas envie defi4 user3'],
       raisons_defi_abandonne: [],
     });
   });

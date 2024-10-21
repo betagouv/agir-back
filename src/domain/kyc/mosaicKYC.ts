@@ -190,7 +190,7 @@ export class MosaicKYC {
         KYCID.KYC_achat_pantalon,
         KYCID.KYC_achat_pull,
         KYCID.KYC_achat_petit_article,
-        KYCID.KYC_achat_pull,
+        KYCID.KYC_achat_gros_article,
         KYCID.KYC_achat_robe,
         KYCID.KYC_achat_short,
         KYCID.KYC_achat_sweat,
