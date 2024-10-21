@@ -116,4 +116,5 @@ export enum KYCID {
   KYC_achat_short = 'KYC_achat_short',
   KYC_achat_pantalon = 'KYC_achat_pantalon',
   KYC_achat_tshirt = 'KYC_achat_tshirt',
+  KYC_bilan = 'KYC_bilan',
 }

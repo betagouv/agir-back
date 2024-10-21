@@ -450,17 +450,13 @@ export class KYCHistory {
     code_question: string,
     code_reponse: string,
   ) {
-    let question = this.getAnsweredQuestionByCode(code_question);
-    if (question) {
-      question.setResponseByCode(code_reponse);
-    } else {
-      let question_catalogue = this.getKYCByCodeFromCatalogue(code_question);
-      if (question_catalogue) {
-        question_catalogue.setResponseByCode(code_reponse);
-        this.answered_questions.push(question_catalogue);
-      }
+    try {
+      this.updateQuestionByCodeWithCode(code_question, code_reponse);
+    } catch (error) {
+      return;
     }
   }
+
   public updateQuestionByCodeWithCode(
     code_question: string,
     code_reponse: string,

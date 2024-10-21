@@ -468,6 +468,61 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(kyc_bois.hasAnyResponses()).toEqual(true);
     expect(kyc_bois.listeReponsesLabels()).toEqual(['Oui']);
   });
+
+  it(`POST /utilisateurs_v2 - integration situation NGC  => KYC 'KYC_bilan' à true`, async () => {
+    // GIVEN
+    process.env.NGC_API_KEY = '12345';
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_bilan,
+      type: TypeReponseQuestionKYC.choix_unique,
+      is_ngc: false,
+      question: `Bilan réalisé ?`,
+      points: 10,
+      categorie: Categorie.test,
+      reponses: [
+        { label: 'Oui', code: 'oui' },
+        { label: 'Non', code: 'non' },
+      ],
+    });
+
+    // WHEN
+    const response_post_situation = await TestUtil.getServer()
+      .post('/bilan/importFromNGC')
+      .set('apikey', `12345`)
+      .send({
+        situation: {
+          'transport . voiture . km': 20000,
+        },
+      });
+
+    let situtation_id = response_post_situation.body.redirect_url.split('=')[1];
+    situtation_id = situtation_id.substring(0, situtation_id.indexOf('&'));
+
+    const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
+      mot_de_passe: '#1234567890HAHAa',
+      email: 'w@w.com',
+      source_inscription: 'mobile',
+      situation_ngc_id: situtation_id,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    const user = await utilisateurRepository.findByEmail('w@w.com');
+
+    const KYC_bilan = user.kyc_history.getAnsweredQuestionByCode(
+      KYCID.KYC_bilan,
+    );
+    expect(KYC_bilan).not.toBeUndefined();
+    expect(KYC_bilan.hasAnyResponses()).toEqual(true);
+    expect(
+      user.parcours_todo
+        .findTodoKYCOrMosaicElementByQuestionID(KYCID.KYC_bilan)
+        .element.isDone(),
+    ).toEqual(true);
+  });
+
   it(`POST /utilisateurs_v2 - integration situation NGC => maj logement`, async () => {
     // GIVEN
     process.env.NGC_API_KEY = '12345';

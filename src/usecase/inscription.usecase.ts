@@ -16,6 +16,8 @@ import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { SituationNGCRepository } from '../infrastructure/repository/bilan.repository';
 import { MailerUsecase } from './mailer.usecase';
 import { TypeNotification } from '../domain/notification/notificationHistory';
+import { KYCID } from '../domain/kyc/KYCID';
+import { BooleanKYC } from '../domain/kyc/questionKYC';
 
 export type Phrase = {
   phrase: string;
@@ -63,6 +65,18 @@ export class InscriptionUsecase {
         utilisateurInput.situation_ngc_id,
       );
       if (situation) {
+        utilisateurToCreate.kyc_history.tryUpdateQuestionByCodeWithCode(
+          KYCID.KYC_bilan,
+          BooleanKYC.oui,
+        );
+        const matching =
+          utilisateurToCreate.parcours_todo.findTodoKYCOrMosaicElementByQuestionID(
+            KYCID.KYC_bilan,
+          );
+        if (matching && !matching.element.isDone()) {
+          matching.todo.makeProgress(matching.element);
+        }
+
         const updated_keys = utilisateurToCreate.kyc_history.injectSituationNGC(
           situation.situation as any,
           utilisateurToCreate,
