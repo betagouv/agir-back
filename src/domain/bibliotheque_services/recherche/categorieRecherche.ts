@@ -50,6 +50,7 @@ export class CategorieRechercheManager {
     CategorieRecherche.nourriture,
     CategorieRecherche.saison,
     CategorieRecherche.any_transport,
+    CategorieRecherche.vos_objets,
   ];
   private static labels: Record<CategorieRecherche, string> = {
     vos_objets: 'vos objets',
