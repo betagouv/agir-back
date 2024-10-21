@@ -58,6 +58,7 @@ export class Defi implements TaggedContent {
     this.mois = data.mois ? data.mois : [];
     this.conditions = data.conditions ? data.conditions : [];
     this.sont_points_en_poche = !!data.sont_points_en_poche;
+    this.impact_kg_co2 = data.impact_kg_co2;
   }
 
   public getStatus(): DefiStatus {

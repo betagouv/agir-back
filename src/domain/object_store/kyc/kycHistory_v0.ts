@@ -46,6 +46,7 @@ export class QuestionKYC_v0 {
   image_url: string;
   conditions: ConditionKYC[][];
   unite: Unite;
+  emoji: string;
 
   static map(elem: QuestionKYC): QuestionKYC_v0 {
     return {
@@ -70,6 +71,7 @@ export class QuestionKYC_v0 {
       image_url: elem.image_url,
       conditions: elem.conditions ? elem.conditions : [],
       unite: elem.unite,
+      emoji: elem.emoji,
     };
   }
 }

@@ -8,6 +8,7 @@ export class KYCMosaicReponse {
   code: string;
   label: string;
   image_url: string;
+  emoji: string;
   boolean_value: boolean;
 }
 
@@ -244,6 +245,7 @@ export class MosaicKYC {
         label: kyc.short_question,
         image_url: kyc.image_url,
         boolean_value: value === 'oui',
+        emoji: kyc.emoji,
       };
       liste_reponses.push(new_reponse);
     }

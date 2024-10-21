@@ -75,6 +75,7 @@ describe('KYC vN ', () => {
           image_url: 'AAA',
           conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
           unite: Unite.euro,
+          emoji: '🔥',
         },
       ],
     });
@@ -134,6 +135,7 @@ describe('KYC vN ', () => {
           image_url: 'AAA',
           conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
           unite: Unite.euro,
+          emoji: '🔥',
         },
       ],
     });

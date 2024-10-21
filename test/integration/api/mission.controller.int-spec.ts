@@ -1382,12 +1382,14 @@ describe('Mission (API test)', () => {
           image_url: 'BBB',
           label: 'short 2',
           boolean_value: false,
+          emoji: '🎉',
         },
         {
           code: '_3',
           image_url: 'CCC',
           label: 'short 3',
           boolean_value: false,
+          emoji: '🎉',
         },
       ],
       categorie: 'test',
@@ -1579,6 +1581,7 @@ describe('Mission (API test)', () => {
           image_url: 'AAA',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     };

@@ -78,6 +78,7 @@ describe('BilanCarbone (API test)', () => {
           short_question: 'short',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     };
@@ -105,6 +106,7 @@ describe('BilanCarbone (API test)', () => {
       is_ngc: true,
       thematique: 'alimentation',
       updated_at: undefined,
+      emoji: '🔥',
     } as KYC);
 
     await TestUtil.create(DB.utilisateur, { kyc: kyc });

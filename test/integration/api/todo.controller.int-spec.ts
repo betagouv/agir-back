@@ -587,6 +587,7 @@ describe('TODO list (API test)', () => {
       created_at: undefined,
       updated_at: undefined,
       unite: Unite.euro,
+      emoji: '🔥',
     };
 
     await TestUtil.create(DB.kYC, {
@@ -696,6 +697,7 @@ describe('TODO list (API test)', () => {
       created_at: undefined,
       updated_at: undefined,
       unite: Unite.euro,
+      emoji: '🔥',
     };
 
     await TestUtil.create(DB.kYC, {
@@ -1358,6 +1360,7 @@ describe('TODO list (API test)', () => {
           image_url: 'AAA',
           conditions: [],
           unite: Unite.euro,
+          emoji: '🔥',
         },
       ],
     };

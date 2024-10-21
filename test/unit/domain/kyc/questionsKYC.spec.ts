@@ -39,6 +39,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -74,6 +75,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -111,6 +113,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -148,6 +151,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -185,6 +189,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
         {
           id: KYCID.KYC002,
@@ -205,6 +210,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -245,6 +251,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
         {
           id: KYCID.KYC002,
@@ -265,6 +272,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -305,6 +313,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
         {
           id: KYCID.KYC002,
@@ -325,6 +334,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -382,6 +392,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -406,6 +417,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -443,6 +455,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -467,6 +480,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
     // THEN
@@ -503,6 +517,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -528,6 +543,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
     // THEN
@@ -577,6 +593,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -610,6 +627,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -661,6 +679,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -685,6 +704,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -738,6 +758,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -762,6 +783,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -809,6 +831,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -830,6 +853,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -862,6 +886,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -900,6 +925,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -926,6 +952,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
       new KycDefinition({
         id_cms: 2,
@@ -944,6 +971,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -981,6 +1009,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -1007,6 +1036,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
       new KycDefinition({
         id_cms: 2,
@@ -1030,6 +1060,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -1071,6 +1102,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -1096,6 +1128,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
       new KycDefinition({
         id_cms: 2,
@@ -1118,6 +1151,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
       new KycDefinition({
         id_cms: 3,
@@ -1140,6 +1174,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
       new KycDefinition({
         id_cms: 4,
@@ -1162,6 +1197,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -1212,6 +1248,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -1275,6 +1312,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -1321,6 +1359,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -1367,6 +1406,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -1413,6 +1453,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -1459,6 +1500,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -1505,6 +1547,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -1546,6 +1589,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -1587,6 +1631,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -1628,6 +1673,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -1669,6 +1715,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -1714,6 +1761,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -1760,6 +1808,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           image_url: 'https://',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -1786,6 +1835,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -1830,6 +1880,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
             { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
           ],
           unite: Unite.kg,
+          emoji: '🔥',
           conditions: [
             [
               {
@@ -1873,6 +1924,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
         ],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
       new KycDefinition({
         id_cms: 2,
@@ -1895,6 +1947,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
     // WHEN
@@ -1941,6 +1994,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
             ],
           ],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -1975,6 +2029,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
         ],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
       new KycDefinition({
         id_cms: 2,
@@ -1997,6 +2052,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
     // WHEN
@@ -2045,6 +2101,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ],
         ],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
       new KycDefinition({
         id_cms: 2,
@@ -2067,6 +2124,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
     // WHEN
@@ -2107,6 +2165,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         image_url: 'https://',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
     // WHEN

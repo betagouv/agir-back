@@ -71,6 +71,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       created_at: undefined,
       updated_at: undefined,
       unite: Unite.kg,
+      emoji: '🔥',
     };
     await TestUtil.create(DB.kYC, {
       ...dbKYC,
@@ -110,11 +111,13 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     expect(response.body.reponses[0].code).toEqual('_1');
     expect(response.body.reponses[0].label).toEqual('short 1');
     expect(response.body.reponses[0].image_url).toEqual('AAA');
+    expect(response.body.reponses[0].emoji).toEqual('🔥');
     expect(response.body.reponses[0].boolean_value).toEqual(false);
 
     expect(response.body.reponses[1].code).toEqual('_2');
     expect(response.body.reponses[1].label).toEqual('short 2');
     expect(response.body.reponses[1].image_url).toEqual('BBB');
+    expect(response.body.reponses[1].emoji).toEqual('🔥');
     expect(response.body.reponses[1].boolean_value).toEqual(false);
   });
   it('GET /utilisateurs/id/questionsKYC/bad - mosaic inconnue', async () => {
@@ -169,6 +172,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       unite: Unite.kg,
       created_at: undefined,
       updated_at: undefined,
+      emoji: '🔥',
     };
     await TestUtil.create(DB.kYC, {
       ...dbKYC,
@@ -227,6 +231,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       short_question: 'short',
       image_url: 'AAA',
       conditions: [],
+      emoji: '🔥',
+      unite: Unite.kg,
     });
     expect(dbUser.kyc_history.answered_questions[1]).toEqual({
       id: '_2',
@@ -250,6 +256,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       short_question: 'short',
       image_url: 'AAA',
       conditions: [],
+      emoji: '🔥',
+      unite: Unite.kg,
     });
   });
 
@@ -275,6 +283,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       unite: Unite.kg,
       created_at: undefined,
       updated_at: undefined,
+      emoji: '🔥',
     };
     await TestUtil.create(DB.kYC, {
       ...dbKYC,
@@ -333,6 +342,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       short_question: 'short',
       image_url: 'AAA',
       conditions: [],
+      unite: Unite.kg,
+      emoji: '🔥',
     });
     expect(dbUser.kyc_history.answered_questions[1]).toEqual({
       id: '_2',
@@ -358,6 +369,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       short_question: 'short',
       image_url: 'AAA',
       conditions: [],
+      unite: Unite.kg,
+      emoji: '🔥',
     });
   });
 
@@ -419,6 +432,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       created_at: undefined,
       updated_at: undefined,
       unite: Unite.kg,
+      emoji: '🔥',
     };
     await TestUtil.create(DB.kYC, {
       ...dbKYC,
@@ -459,6 +473,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           image_url: 'AAA',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
         {
           id: '_2',
@@ -482,6 +497,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           image_url: 'BBB',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     };
@@ -506,12 +522,14 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           label: 'short 1',
           boolean_value: true,
           image_url: 'AAA',
+          emoji: '🔥',
         },
         {
           code: '_2',
           label: 'short 2',
           boolean_value: false,
           image_url: 'BBB',
+          emoji: '🔥',
         },
       ],
       categorie: 'test',
@@ -542,6 +560,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       created_at: undefined,
       updated_at: undefined,
       unite: Unite.kg,
+      emoji: '🔥',
     };
     await TestUtil.create(DB.kYC, {
       ...dbKYC,
@@ -578,6 +597,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           image_url: 'AAA',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
         {
           id: '_2',
@@ -597,6 +617,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           image_url: 'BBB',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     };
@@ -621,12 +642,14 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           label: 'short 1',
           boolean_value: false,
           image_url: 'AAA',
+          emoji: '🔥',
         },
         {
           code: '_2',
           label: 'short 2',
           boolean_value: true,
           image_url: 'BBB',
+          emoji: '🔥',
         },
       ],
       categorie: 'test',

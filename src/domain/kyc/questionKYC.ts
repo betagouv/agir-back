@@ -53,6 +53,7 @@ export class QuestionKYC implements TaggedContent {
   image_url: string;
   conditions: ConditionKYC[][];
   unite: Unite;
+  emoji: string;
 
   constructor(data?: QuestionKYC_v0) {
     if (!data) return;
@@ -73,6 +74,8 @@ export class QuestionKYC implements TaggedContent {
     this.short_question = data.short_question;
     this.image_url = data.image_url;
     this.conditions = data.conditions ? data.conditions : [];
+    this.unite = data.unite;
+    this.emoji = data.emoji;
   }
 
   public static buildFromDef(def: KycDefinition): QuestionKYC {
@@ -93,6 +96,7 @@ export class QuestionKYC implements TaggedContent {
       image_url: def.image_url,
       conditions: def.conditions ? def.conditions : [],
       unite: def.unite,
+      emoji: def.emoji,
     });
   }
 
@@ -109,6 +113,7 @@ export class QuestionKYC implements TaggedContent {
     this.universes = def.universes ? def.universes : [];
     this.conditions = def.conditions ? def.conditions : [];
     this.id_cms = def.id_cms;
+    this.emoji = def.emoji;
     this.unite = def.unite;
     if (
       (this.type === TypeReponseQuestionKYC.choix_multiple ||

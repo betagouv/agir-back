@@ -498,6 +498,7 @@ describe('/bilan (API test)', () => {
           image_url: 'AAA',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     };

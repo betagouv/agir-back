@@ -127,6 +127,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() difficulty: number;
   @ApiProperty() points?: number;
   @ApiProperty() unite?: string;
+  @ApiProperty() emoji?: string;
   @ApiProperty() impact_kg_co2: number;
   @ApiProperty() codes_postaux?: string;
   @ApiProperty() mois?: string;
@@ -166,6 +167,7 @@ export type CMSWebhookPopulateAPI = {
     frequence: string;
     points: number;
     unite: string;
+    emoji: string;
     impact_kg_co2: number;
     difficulty: number;
     publishedAt: string;

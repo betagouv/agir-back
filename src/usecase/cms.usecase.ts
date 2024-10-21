@@ -665,6 +665,7 @@ export class CMSUsecase {
       is_ngc: entry.is_ngc,
       ngc_key: entry.ngc_key,
       points: entry.points,
+      emoji: entry.emoji,
       unite: this.extractUnite(entry.unite),
       question: entry.question,
       thematique: entry.thematique
@@ -936,6 +937,7 @@ export class CMSUsecase {
       code: entry.attributes.code,
       type: TypeReponseQuestionKYC[entry.attributes.type],
       categorie: Categorie[entry.attributes.categorie],
+      emoji: entry.attributes.emoji,
       points: entry.attributes.points,
       unite: this.extractUnite(entry.attributes.unite),
       is_ngc: entry.attributes.is_ngc,

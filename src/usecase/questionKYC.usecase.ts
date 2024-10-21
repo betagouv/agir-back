@@ -9,12 +9,6 @@ import {
   CLE_PERSO,
   Personnalisator,
 } from '../infrastructure/personnalisation/personnalisator';
-import {
-  Chauffage,
-  DPE,
-  Superficie,
-  TypeLogement,
-} from '../domain/logement/logement';
 import { MosaicKYC, TypeReponseMosaicKYC } from '../domain/kyc/mosaicKYC';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';

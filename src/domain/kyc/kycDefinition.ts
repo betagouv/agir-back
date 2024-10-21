@@ -26,6 +26,7 @@ export class KycDefinition {
   image_url: string;
   conditions: ConditionKYC[][];
   unite: Unite;
+  emoji: string;
 
   constructor(data: KycDefinition) {
     Object.assign(this, data);

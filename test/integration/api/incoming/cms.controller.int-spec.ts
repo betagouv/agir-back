@@ -111,6 +111,7 @@ describe('/api/incoming/cms (API test)', () => {
       type: TypeReponseQuestionKYC.choix_multiple,
       categorie: Categorie.mission,
       points: 5,
+      emoji: '🔥',
       unite: 'kg (kilogramme)',
       is_ngc: false,
       ngc_key: 'a . b . c',
@@ -454,6 +455,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(item.categorie).toEqual(Categorie.mission);
     expect(item.points).toEqual(5);
     expect(item.unite).toEqual('kg');
+    expect(item.emoji).toEqual('🔥');
     expect(item.is_ngc).toEqual(false);
     expect(item.ngc_key).toEqual('a . b . c');
     expect(item.reponses).toEqual([
@@ -503,6 +505,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(item.categorie).toEqual(Categorie.mission);
     expect(item.points).toEqual(5);
     expect(item.unite).toEqual('kg');
+    expect(item.emoji).toEqual('🔥');
     expect(item.is_ngc).toEqual(false);
     expect(item.ngc_key).toEqual('a . b . c');
     expect(item.reponses).toEqual([

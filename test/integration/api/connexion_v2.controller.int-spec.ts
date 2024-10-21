@@ -395,6 +395,7 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
           image_url: 'AAA',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     };

@@ -376,6 +376,7 @@ export class TestUtil {
       short_question: 'short',
       image_url: 'URL',
       unite: Unite.euro,
+      emoji: '🎉',
       conditions: [],
 
       created_at: undefined,
@@ -443,6 +444,7 @@ export class TestUtil {
           image_url: 'URL',
           conditions: [],
           unite: Unite.euro,
+          emoji: '🎉',
         },
       ],
     };

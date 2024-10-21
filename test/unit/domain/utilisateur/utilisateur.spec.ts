@@ -120,6 +120,7 @@ describe('Objet Utilisateur', () => {
       image_url: 'https://',
       conditions: [],
       unite: Unite.euro,
+      emoji: '🔥',
     });
 
     // WHEN
@@ -158,6 +159,7 @@ describe('Objet Utilisateur', () => {
       image_url: 'https://',
       conditions: [],
       unite: Unite.euro,
+      emoji: '🔥',
     });
 
     // WHEN
@@ -203,6 +205,7 @@ describe('Objet Utilisateur', () => {
       image_url: 'https://',
       conditions: [],
       unite: Unite.euro,
+      emoji: '🔥',
     });
 
     // WHEN

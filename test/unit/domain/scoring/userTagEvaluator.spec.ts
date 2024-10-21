@@ -57,6 +57,7 @@ describe('UseragEvaluator', () => {
         image_url: 'AAA',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
     user.kyc_history.updateQuestionByCodeWithLabelOrException(KYCID.KYC001, []);
@@ -106,6 +107,7 @@ describe('UseragEvaluator', () => {
         image_url: 'AAA',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
     user.kyc_history.updateQuestionByCodeWithLabelOrException(KYCID.KYC001, [
@@ -166,6 +168,7 @@ describe('UseragEvaluator', () => {
         image_url: 'AAA',
         conditions: [],
         unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
     user.kyc_history.updateQuestionByCodeWithLabelOrException(

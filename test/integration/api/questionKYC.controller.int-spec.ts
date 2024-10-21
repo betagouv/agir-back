@@ -109,6 +109,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           image_url: 'AAA',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     };
@@ -135,6 +136,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       created_at: undefined,
       updated_at: undefined,
       unite: Unite.kg,
+      emoji: '🔥',
     };
     await TestUtil.create(DB.kYC, dbKYC);
     await TestUtil.create(DB.utilisateur, { kyc: kyc });
@@ -226,6 +228,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       unite: Unite.kg,
       created_at: undefined,
       updated_at: undefined,
+      emoji: '🔥',
     };
     await TestUtil.create(DB.kYC, {
       ...dbKYC,
@@ -270,12 +273,14 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           image_url: 'AAA',
           label: 'short',
           boolean_value: false,
+          emoji: '🔥',
         },
         {
           code: '_2',
           image_url: 'URL',
           label: 'short',
           boolean_value: false,
+          emoji: '🔥',
         },
       ],
       categorie: 'test',
@@ -680,6 +685,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           image_url: 'AAA',
           conditions: [],
           unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     };
@@ -1339,6 +1345,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       created_at: undefined,
       updated_at: undefined,
       unite: Unite.kg,
+      emoji: '🔥',
     };
     await TestUtil.create(DB.kYC, {
       ...dbKYC,
@@ -1396,12 +1403,14 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
             code: 'KYC002',
             image_url: 'BBB',
             label: 'short 2',
+            emoji: '🔥',
           },
           {
             boolean_value: false,
             code: 'KYC003',
             image_url: 'CCC',
             label: 'short 3',
+            emoji: '🔥',
           },
         ],
         categorie: 'test',
