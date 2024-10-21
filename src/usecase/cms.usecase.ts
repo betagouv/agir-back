@@ -653,6 +653,7 @@ export class CMSUsecase {
           code_reponse: and.code_reponse,
         })),
       ),
+      impact_kg_co2: entry.impact_kg_co2,
     };
   }
   static buildKycFromCMSData(entry: CMSWebhookEntryAPI): KycDefinition {
@@ -886,6 +887,7 @@ export class CMSUsecase {
       astuces: entry.attributes.astuces,
       pourquoi: entry.attributes.pourquoi,
       points: entry.attributes.points,
+      impact_kg_co2: entry.attributes.impact_kg_co2,
       thematique: entry.attributes.thematique.data
         ? ThematiqueRepository.getThematiqueByCmsId(
             entry.attributes.thematique.data.id,

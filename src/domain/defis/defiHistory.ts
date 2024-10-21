@@ -173,6 +173,7 @@ export class DefiHistory {
       accessible: false,
       motif: null,
       sont_points_en_poche: false,
+      impact_kg_co2: 0,
     });
   }
 }

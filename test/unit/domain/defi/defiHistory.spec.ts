@@ -30,6 +30,7 @@ const DEFI_1: Defi_v0 = {
   mois: [1],
   conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
   sont_points_en_poche: false,
+  impact_kg_co2: 5,
 };
 const DEFI_1_DEF: DefiDefinition = {
   content_id: '1',
@@ -45,6 +46,7 @@ const DEFI_1_DEF: DefiDefinition = {
   categorie: Categorie.recommandation,
   mois: [0],
   conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+  impact_kg_co2: 5,
 };
 
 describe('DefiHistory', () => {

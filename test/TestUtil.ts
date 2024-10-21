@@ -319,6 +319,7 @@ export class TestUtil {
       categorie: Categorie.recommandation,
       mois: [],
       conditions: [],
+      impact_kg_co2: 5,
       ...override,
     };
   }
@@ -409,6 +410,7 @@ export class TestUtil {
           mois: [],
           conditions: [],
           sont_points_en_poche: false,
+          impact_kg_co2: 5,
         },
       ],
     };

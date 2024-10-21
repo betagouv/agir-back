@@ -17,22 +17,15 @@ export class DefiDefinition {
   categorie: Categorie;
   mois: number[];
   conditions: ConditionDefi[][];
+  impact_kg_co2: number;
 
   constructor(data: DefiDefinition) {
-    this.content_id = data.content_id;
-    this.titre = data.titre;
-    this.sous_titre = data.sous_titre;
-    this.points = data.points;
-    this.thematique = data.thematique;
-    this.tags = data.tags;
-    this.astuces = data.astuces;
-    this.pourquoi = data.pourquoi;
+    Object.assign(this, data);
     this.thematiques_univers = data.thematiques_univers
       ? data.thematiques_univers
       : [];
     this.universes = data.universes ? data.universes : [];
     this.mois = data.mois ? data.mois : [];
-    this.categorie = data.categorie;
     this.mois = data.mois ? data.mois : [];
     this.conditions = data.conditions ? data.conditions : [];
   }

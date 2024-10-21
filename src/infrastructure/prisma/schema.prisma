@@ -214,6 +214,7 @@ model Defi {
   categorie          String   @default("recommandation")
   mois               Int[]    @default([])
   conditions         Json     @default("[]")
+  impact_kg_co2      Int?     @default(0)
   created_at         DateTime @default(now()) @db.Timestamptz(3)
   updated_at         DateTime @updatedAt @db.Timestamptz(3)
 }

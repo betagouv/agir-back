@@ -47,6 +47,7 @@ describe('DefiHistory vN ', () => {
         mois: [1],
         conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
         sont_points_en_poche: true,
+        impact_kg_co2: 6,
       }),
     );
 
@@ -79,6 +80,7 @@ describe('DefiHistory vN ', () => {
         mois: [1],
         conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
         sont_points_en_poche: false,
+        impact_kg_co2: 6,
       }),
     );
 
@@ -110,6 +112,7 @@ describe('DefiHistory vN ', () => {
       mois: [1],
       conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
       sont_points_en_poche: false,
+      impact_kg_co2: 6,
     };
 
     delete defi_sans_accessibilite.accessible;

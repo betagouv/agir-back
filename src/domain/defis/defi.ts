@@ -37,8 +37,9 @@ export class Defi implements TaggedContent {
   mois: number[];
   conditions: ConditionDefi[][];
   sont_points_en_poche: boolean;
+  impact_kg_co2: number;
 
-  constructor(data: Defi_v0, utilisateur?: Utilisateur) {
+  constructor(data: Defi_v0) {
     this.id = data.id;
     this.titre = data.titre;
     this.sous_titre = data.sous_titre;

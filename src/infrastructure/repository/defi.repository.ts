@@ -32,6 +32,7 @@ export class DefiRepository {
       updated_at: undefined,
       mois: defi.mois,
       conditions: defi.conditions as any,
+      impact_kg_co2: defi.impact_kg_co2,
     };
     await this.prisma.defi.upsert({
       where: { content_id: defi.content_id },
@@ -96,6 +97,7 @@ export class DefiRepository {
       categorie: Categorie[defiDB.categorie],
       mois: defiDB.mois,
       conditions: defiDB.conditions as any,
+      impact_kg_co2: defiDB.impact_kg_co2,
     });
   }
 }

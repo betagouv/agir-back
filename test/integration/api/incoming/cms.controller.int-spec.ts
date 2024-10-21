@@ -24,6 +24,7 @@ describe('/api/incoming/cms (API test)', () => {
       astuces: 'facile',
       pourquoi: 'parce que !!',
       points: 10,
+      impact_kg_co2: 10,
       thematique: { id: 1, titre: 'Alimentation' },
       tags: [
         { id: 1, code: 'capacite_physique' },
@@ -556,6 +557,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.astuces).toEqual('facile');
     expect(defi.pourquoi).toEqual('parce que !!');
     expect(defi.points).toEqual(10);
+    expect(defi.impact_kg_co2).toEqual(10);
     expect(defi.thematique).toEqual('alimentation');
     expect(defi.tags).toEqual(['capacite_physique', 'possede_velo']);
     expect(defi.universes).toEqual([Univers.climat]);
@@ -606,6 +608,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.astuces).toEqual('facile');
     expect(defi.pourquoi).toEqual('parce que !!');
     expect(defi.points).toEqual(10);
+    expect(defi.impact_kg_co2).toEqual(10);
     expect(defi.thematique).toEqual('alimentation');
     expect(defi.tags).toEqual(['capacite_physique', 'possede_velo']);
     expect(defi.universes).toEqual([Univers.climat]);
