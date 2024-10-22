@@ -139,4 +139,38 @@ describe('NGCCalculator', () => {
 
     //THEN
   });
+
+  it('computeEntryListValues : situation a probleme', () => {
+    //GIVEN
+    let calculator = new NGCCalculator();
+    const situation = {
+      'alimentation . local . consommation': '"souvent"',
+      'alimentation . déchets . quantité jetée': "'base'",
+      'alimentation . plats . viande blanche . nombre': '4',
+      'alimentation . plats . poisson blanc . nombre': '1',
+      'alimentation . plats . poisson gras . nombre': '1',
+      'alimentation . plats . végétarien . nombre': '7',
+      'alimentation . plats . végétalien . nombre': '1',
+      'alimentation . plats . viande rouge . nombre': '0',
+      'alimentation . déchets . gestes . gaspillage alimentaire . présent':
+        'non',
+      'alimentation . déchets . gestes . stop pub . présent': 'non',
+      'alimentation . déchets . gestes . acheter en vrac . présent': 'oui',
+      'alimentation . boisson . alcool . litres': '233',
+      'alimentation . de saison . consommation': '"parfois"',
+      'alimentation . déchets . gestes . compostage biodéchets . présent':
+        'non',
+      /*
+      'alimentation . plats': '"je mange beaucoup de viande"',
+        */
+    };
+    const entries = ['alimentation'];
+
+    //WHEN
+    const response = calculator.computeEntryListValues(situation, entries);
+
+    //THEN
+    expect(response.size).toEqual(1);
+    expect(response.get('alimentation')).not.toEqual(NaN);
+  });
 });
