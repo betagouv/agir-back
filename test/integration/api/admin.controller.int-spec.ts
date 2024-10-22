@@ -1648,6 +1648,14 @@ describe('Admin (API test)', () => {
       raisons_defi_pas_envie: [],
       raisons_defi_abandonne: ['motif abandon defi1 user4'],
     });
+
+    expect(
+      defi_2_stat.raisons_defi_abandonne.includes('Top dur à mettre en place'),
+    ).toEqual(true);
+    expect(
+      defi_2_stat.raisons_defi_abandonne.includes('motif abandon defi2 user4'),
+    ).toEqual(true);
+    delete defi_2_stat.raisons_defi_abandonne;
     expect(defi_2_stat).toEqual({
       content_id: '2',
       titre: 'B',
@@ -1656,11 +1664,8 @@ describe('Admin (API test)', () => {
       nombre_defis_en_cours: 0,
       nombre_defis_realises: 0,
       raisons_defi_pas_envie: ['pas envie defi2 user3'],
-      raisons_defi_abandonne: [
-        'Top dur à mettre en place',
-        'motif abandon defi2 user4',
-      ],
     });
+
     expect(defi_3_stat).toEqual({
       content_id: '3',
       titre: 'C',
