@@ -76,22 +76,15 @@ export class LongueVieObjetsRepository implements FinderInterface {
       );
 
     if (!filtre.hasPoint()) {
-      const adresse = await this.addressesRepository.find(
-        new FiltreRecherche({
-          text: filtre.code_postal.concat(' ', filtre.commune),
-        }),
-      );
-
-      if (!adresse || adresse.length === 0) {
+      const location =
+        await this.addressesRepository.findLocationFromCodePostalCommune(
+          filtre.code_postal,
+          filtre.commune,
+        );
+      if (!location) {
         return [];
       }
-
-      const the_adresse = adresse[0];
-
-      filtre.point = {
-        latitude: the_adresse.latitude,
-        longitude: the_adresse.longitude,
-      };
+      filtre.point = location;
     }
 
     const result = await this.callServiceAPI(filtre, categorie_lvo);

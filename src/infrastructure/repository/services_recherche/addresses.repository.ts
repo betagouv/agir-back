@@ -71,6 +71,28 @@ export class AddressesRepository implements FinderInterface {
     ];
   }
 
+  public async findLocationFromCodePostalCommune(
+    code_postal: string,
+    commune: string,
+  ): Promise<{ latitude: number; longitude: number }> {
+    const adresse = await this.find(
+      new FiltreRecherche({
+        text: '' + code_postal + ' ' + commune,
+      }),
+    );
+
+    if (!adresse || adresse.length === 0) {
+      return null;
+    }
+
+    const the_adresse = adresse[0];
+
+    return {
+      latitude: the_adresse.latitude,
+      longitude: the_adresse.longitude,
+    };
+  }
+
   private async callAddresseAPI(text: string): Promise<AddresseResponse> {
     let response;
     const call_time = Date.now();
