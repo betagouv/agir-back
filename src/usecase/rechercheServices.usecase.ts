@@ -61,8 +61,6 @@ export class RechercheServicesUsecase {
         }
       }
     }
-    console.log(filtre);
-
     const result = await finder.find(filtre);
 
     utilisateur.bilbiotheque_services.setDerniereRecherche(serviceId, result);
