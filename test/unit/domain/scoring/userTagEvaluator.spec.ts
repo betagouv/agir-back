@@ -1,7 +1,10 @@
 import { ApplicativePonderationSetName } from '../../../../src/domain/scoring/ponderationApplicative';
 import { UserTagEvaluator } from '../../../../src/domain/scoring/userTagEvaluator';
 import { Tag } from '../../../../src/domain/scoring/tag';
-import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
+import {
+  TypeReponseQuestionKYC,
+  Unite,
+} from '../../../../src/domain/kyc/questionKYC';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { Univers } from '../../../../src/domain/univers/univers';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
@@ -53,6 +56,8 @@ describe('UseragEvaluator', () => {
         short_question: 'short',
         image_url: 'AAA',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
     user.kyc_history.updateQuestionByCodeWithLabelOrException(KYCID.KYC001, []);
@@ -101,6 +106,8 @@ describe('UseragEvaluator', () => {
         short_question: 'short',
         image_url: 'AAA',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
     user.kyc_history.updateQuestionByCodeWithLabelOrException(KYCID.KYC001, [
@@ -160,6 +167,8 @@ describe('UseragEvaluator', () => {
         short_question: 'short',
         image_url: 'AAA',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
     user.kyc_history.updateQuestionByCodeWithLabelOrException(

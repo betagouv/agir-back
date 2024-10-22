@@ -55,6 +55,33 @@ describe('RechercheServices (API test)', () => {
     await TestUtil.appclose();
   });
 
+  it(`POST /utlilisateur/id/recherche_services/longue_vie_objets/search renvoie qque chose`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/longue_vie_objets/search',
+    ).send({});
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(10);
+    expect(response.body[2]).toStrictEqual({
+      id: 'sylphe_creations_217436_reparation',
+      titre: 'Sylphe Creations',
+      adresse_rue: '58 RUE LOUISE BRUNEAU',
+      est_favoris: false,
+      nombre_favoris: 0,
+      distance_metres: 663,
+      categories: ['reparer'],
+      latitude: 48.719232,
+      longitude: 2.240495,
+      ingredients: [],
+      etapes_recette: [],
+    });
+  });
+
   it(`POST /utlilisateur/id/recherche_services/proximite/search renvoie les bonnes données`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });

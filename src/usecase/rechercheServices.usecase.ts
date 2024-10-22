@@ -48,7 +48,10 @@ export class RechercheServicesUsecase {
       );
     }
 
-    if (serviceId === ServiceRechercheID.proximite) {
+    if (
+      serviceId === ServiceRechercheID.proximite ||
+      serviceId === ServiceRechercheID.longue_vie_objets
+    ) {
       if (!filtre.hasPoint()) {
         if (!utilisateur.logement.code_postal) {
           ApplicationError.throwUnkonwnUserLocation();
@@ -58,6 +61,7 @@ export class RechercheServicesUsecase {
         }
       }
     }
+    console.log(filtre);
 
     const result = await finder.find(filtre);
 

@@ -10,6 +10,7 @@ export class KYCMosaicReponseAPI {
   @ApiProperty() code: string;
   @ApiProperty() label: string;
   @ApiProperty() image_url: string;
+  @ApiProperty() emoji: string;
   @ApiProperty() boolean_value: boolean;
 
   public static mapToAPI(reponse: KYCMosaicReponse): KYCMosaicReponseAPI {
@@ -18,6 +19,7 @@ export class KYCMosaicReponseAPI {
       image_url: reponse.image_url,
       label: reponse.label,
       boolean_value: reponse.boolean_value,
+      emoji: reponse.emoji,
     };
   }
 }

@@ -6,7 +6,10 @@ import { LiveService } from '../../../src/domain/service/serviceDefinition';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { EventType } from '../../../src/domain/appEvent';
-import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import {
+  TypeReponseQuestionKYC,
+  Unite,
+} from '../../../src/domain/kyc/questionKYC';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
 import {
@@ -583,6 +586,8 @@ describe('TODO list (API test)', () => {
       conditions: [],
       created_at: undefined,
       updated_at: undefined,
+      unite: Unite.euro,
+      emoji: '🔥',
     };
 
     await TestUtil.create(DB.kYC, {
@@ -691,6 +696,8 @@ describe('TODO list (API test)', () => {
       conditions: [],
       created_at: undefined,
       updated_at: undefined,
+      unite: Unite.euro,
+      emoji: '🔥',
     };
 
     await TestUtil.create(DB.kYC, {
@@ -1352,6 +1359,8 @@ describe('TODO list (API test)', () => {
           short_question: 'short',
           image_url: 'AAA',
           conditions: [],
+          unite: Unite.euro,
+          emoji: '🔥',
         },
       ],
     };

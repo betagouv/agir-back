@@ -2,7 +2,7 @@ import { Categorie } from '../contenu/categorie';
 import { Thematique } from '../contenu/thematique';
 import { Tag } from '../scoring/tag';
 import { ConditionKYC } from './conditionKYC';
-import { TypeReponseQuestionKYC } from './questionKYC';
+import { TypeReponseQuestionKYC, Unite } from './questionKYC';
 
 export class KycDefinition {
   id_cms: number;
@@ -25,22 +25,14 @@ export class KycDefinition {
   universes: string[];
   image_url: string;
   conditions: ConditionKYC[][];
+  unite: Unite;
+  emoji: string;
 
   constructor(data: KycDefinition) {
-    this.id_cms = data.id_cms;
-    this.code = data.code;
-    this.type = data.type;
-    this.points = data.points;
-    this.categorie = data.categorie;
-    this.is_ngc = data.is_ngc;
-    this.ngc_key = data.ngc_key;
-    this.question = data.question;
+    Object.assign(this, data);
     this.reponses = data.reponses ? data.reponses : [];
-    this.thematique = data.thematique;
     this.tags = data.tags ? data.tags : [];
     this.universes = data.universes ? data.universes : [];
-    this.short_question = data.short_question;
-    this.image_url = data.image_url;
     this.conditions = data.conditions ? data.conditions : [];
   }
 

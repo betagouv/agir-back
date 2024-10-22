@@ -45,6 +45,7 @@ const DEFI_1_DEF: Defi = {
   categorie: Categorie.recommandation,
   mois: [0],
   conditions: [[{ code_kyc: '123', code_reponse: 'oui' }]],
+  impact_kg_co2: 5,
 };
 
 describe('/utilisateurs/id/defis (API test)', () => {
@@ -168,6 +169,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
     mois: [1],
     sont_points_en_poche: true,
+    impact_kg_co2: 5,
   };
 
   beforeAll(async () => {
@@ -950,6 +952,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           mois: [1],
           conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
           sont_points_en_poche: true,
+          impact_kg_co2: 5,
         },
       ],
     };
@@ -1026,6 +1029,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           mois: [1],
           conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
           sont_points_en_poche: true,
+          impact_kg_co2: 5,
         },
       ],
     };

@@ -1,6 +1,10 @@
 import { TestUtil } from '../../TestUtil';
 import { AidesVeloRepository } from '../../../src/infrastructure/repository/aidesVelo.repository';
-import { AidesVeloParType, Collectivite } from 'src/domain/aides/aideVelo';
+import {
+  AideVelo,
+  AidesVeloParType,
+  Collectivite,
+} from 'src/domain/aides/aideVelo';
 
 describe('AideVeloRepository', () => {
   let aidesVeloRepository = new AidesVeloRepository();
@@ -87,6 +91,27 @@ describe('AideVeloRepository', () => {
     ]);
   });
 
+  describe("Département de l'Hérault", () => {
+    it('devrait avoir une aide régionale, départementale pour une personne habitant à Cazouls-Lès-Béziers', async () => {
+      // WHEN
+      const result = await aidesVeloRepository.getSummaryVelos(
+        '34370',
+        5000,
+        1,
+        100,
+      );
+
+      // THEN
+      expect(result['électrique'].length).toBe(4);
+      expect(result['électrique'][0].libelle).toBe('Bonus vélo');
+      expect(result['électrique'][1].libelle).toContain('Région Occitanie');
+      expect(result['électrique'][2].libelle).toContain('Département Hérault');
+      expect(result['électrique'][3].libelle).toContain(
+        'Ville de Cazouls-Lès-Béziers',
+      );
+    });
+  });
+
   describe('Vélo adapté et personne en situation de handicap', () => {
     it.skip('doit correctement cumuler les aides pour une personne habitant à Toulouse', async () => {
       // WHEN
@@ -157,6 +182,39 @@ describe('AideVeloRepository', () => {
     //   },
     // );
   });
+
+  describe("Il ne devrait pas pouvoir y avoir de montant d'aide négtif", () => {
+    // TODO: needs to support extra questions such as 'demandeur . en situation de handicap'.
+    it.skip('Région Occitanie - Éco-chèque mobilité - Bonus vélo adapté PMR', async () => {
+      // WHEN
+      const result = await aidesVeloRepository.getSummaryVelos(
+        '31000',
+        8000,
+        1,
+        500,
+      );
+
+      // THEN
+      forEachAide(result, (aide: AideVelo) => {
+        expect(aide.montant).toBeGreaterThanOrEqual(0);
+      });
+    });
+
+    it('Villefranche Agglomération Beaujolais Saône', async () => {
+      // WHEN
+      const result = await aidesVeloRepository.getSummaryVelos(
+        '69400',
+        2000,
+        1,
+        500,
+      );
+
+      // THEN
+      forEachAide(result, (aide: AideVelo) => {
+        expect(aide.montant).toBeGreaterThanOrEqual(0);
+      });
+    });
+  });
 });
 
 /**
@@ -166,9 +224,11 @@ function expectAllMatchOneOfCollectivite(
   aides: AidesVeloParType,
   collectivites: Collectivite[],
 ) {
-  Object.values(aides)
-    .flat()
-    .forEach((aide) => {
-      expect(collectivites).toContainEqual<Collectivite>(aide.collectivite);
-    });
+  forEachAide(aides, (aide) => {
+    expect(collectivites).toContainEqual<Collectivite>(aide.collectivite);
+  });
+}
+
+function forEachAide(aides: AidesVeloParType, f: (aide: AideVelo) => void) {
+  Object.values(aides).flat().forEach(f);
 }

@@ -52,6 +52,7 @@ export class ResultatRecherche_v0 {
   adresse_code_postal?: string;
 
   site_web?: string;
+  siret?: string;
 
   longitude?: number;
   latitude?: number;
@@ -107,6 +108,7 @@ export class ResultatRecherche_v0 {
       etapes_recette: res.etapes_recette
         ? res.etapes_recette.map((e) => EtapeRecette_v0.map(e))
         : [],
+      siret: res.siret,
     };
   }
 }

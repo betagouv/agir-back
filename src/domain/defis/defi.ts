@@ -37,8 +37,9 @@ export class Defi implements TaggedContent {
   mois: number[];
   conditions: ConditionDefi[][];
   sont_points_en_poche: boolean;
+  impact_kg_co2: number;
 
-  constructor(data: Defi_v0, utilisateur?: Utilisateur) {
+  constructor(data: Defi_v0) {
     this.id = data.id;
     this.titre = data.titre;
     this.sous_titre = data.sous_titre;
@@ -57,6 +58,7 @@ export class Defi implements TaggedContent {
     this.mois = data.mois ? data.mois : [];
     this.conditions = data.conditions ? data.conditions : [];
     this.sont_points_en_poche = !!data.sont_points_en_poche;
+    this.impact_kg_co2 = data.impact_kg_co2;
   }
 
   public getStatus(): DefiStatus {

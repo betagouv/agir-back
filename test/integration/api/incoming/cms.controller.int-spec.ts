@@ -24,6 +24,7 @@ describe('/api/incoming/cms (API test)', () => {
       astuces: 'facile',
       pourquoi: 'parce que !!',
       points: 10,
+      impact_kg_co2: 10,
       thematique: { id: 1, titre: 'Alimentation' },
       tags: [
         { id: 1, code: 'capacite_physique' },
@@ -110,6 +111,8 @@ describe('/api/incoming/cms (API test)', () => {
       type: TypeReponseQuestionKYC.choix_multiple,
       categorie: Categorie.mission,
       points: 5,
+      emoji: '🔥',
+      unite: 'kg (kilogramme)',
       is_ngc: false,
       ngc_key: 'a . b . c',
       imageUrl: {
@@ -451,6 +454,58 @@ describe('/api/incoming/cms (API test)', () => {
     expect(item.type).toEqual(TypeReponseQuestionKYC.choix_multiple);
     expect(item.categorie).toEqual(Categorie.mission);
     expect(item.points).toEqual(5);
+    expect(item.unite).toEqual('kg');
+    expect(item.emoji).toEqual('🔥');
+    expect(item.is_ngc).toEqual(false);
+    expect(item.ngc_key).toEqual('a . b . c');
+    expect(item.reponses).toEqual([
+      {
+        label: 'haha',
+        code: 'haha_code',
+        ngc_code: '123',
+        value: 'haha',
+      },
+      {
+        label: 'hihi',
+        code: 'hihi_code',
+        ngc_code: '456',
+        value: 'hihi',
+      },
+    ]);
+    expect(item.thematique).toEqual(Thematique.alimentation);
+    expect(item.tags).toEqual([Tag.capacite_physique, Tag.possede_velo]);
+    expect(item.universes).toEqual([Univers.climat]);
+    expect(item.conditions).toStrictEqual([
+      [{ id_kyc: 8888, code_kyc: '999', code_reponse: 'yop' }],
+    ]);
+  });
+  it('POST /api/incoming/cms - updates kyc', async () => {
+    // GIVEN
+    await TestUtil.create(DB.kYC, { id_cms: 123 });
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_KYC,
+    );
+
+    // THEN
+    const kycs = await TestUtil.prisma.kYC.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(kycs).toHaveLength(1);
+
+    const item: KYC = kycs[0];
+
+    expect(item.code).toEqual('KYC001');
+    expect(item.question).toEqual('question');
+    expect(item.short_question).toEqual('short question');
+    expect(item.image_url).toEqual('https://');
+    expect(item.id_cms).toEqual(123);
+    expect(item.type).toEqual(TypeReponseQuestionKYC.choix_multiple);
+    expect(item.categorie).toEqual(Categorie.mission);
+    expect(item.points).toEqual(5);
+    expect(item.unite).toEqual('kg');
+    expect(item.emoji).toEqual('🔥');
     expect(item.is_ngc).toEqual(false);
     expect(item.ngc_key).toEqual('a . b . c');
     expect(item.reponses).toEqual([
@@ -556,6 +611,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.astuces).toEqual('facile');
     expect(defi.pourquoi).toEqual('parce que !!');
     expect(defi.points).toEqual(10);
+    expect(defi.impact_kg_co2).toEqual(10);
     expect(defi.thematique).toEqual('alimentation');
     expect(defi.tags).toEqual(['capacite_physique', 'possede_velo']);
     expect(defi.universes).toEqual([Univers.climat]);
@@ -606,6 +662,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.astuces).toEqual('facile');
     expect(defi.pourquoi).toEqual('parce que !!');
     expect(defi.points).toEqual(10);
+    expect(defi.impact_kg_co2).toEqual(10);
     expect(defi.thematique).toEqual('alimentation');
     expect(defi.tags).toEqual(['capacite_physique', 'possede_velo']);
     expect(defi.universes).toEqual([Univers.climat]);

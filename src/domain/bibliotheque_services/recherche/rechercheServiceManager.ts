@@ -5,11 +5,13 @@ import { PresDeChezNousRepository } from '../../../infrastructure/repository/ser
 import { RecettesRepository } from '../../../infrastructure/repository/services_recherche/recettes/recettes.repository';
 import { FinderInterface } from './finderInterface';
 import { ServiceRechercheID } from './serviceRechercheID';
+import { LongueVieObjetsRepository } from '../../../infrastructure/repository/services_recherche/lvo/LongueVieObjets.repository';
 
 @Injectable()
 export class RechercheServiceManager {
   constructor(
     private presDeChezNousRepository: PresDeChezNousRepository,
+    private longueVieObjetsRepository: LongueVieObjetsRepository,
     private fruitsLegumesRepository: FruitsLegumesRepository,
     private recettesRepository: RecettesRepository,
     private impactTransportsRepository: ImpactTransportsRepository,
@@ -25,6 +27,8 @@ export class RechercheServiceManager {
         return this.recettesRepository;
       case ServiceRechercheID.impact_transports:
         return this.impactTransportsRepository;
+      case ServiceRechercheID.longue_vie_objets:
+        return this.longueVieObjetsRepository;
       default:
         return null;
     }

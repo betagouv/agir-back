@@ -116,6 +116,7 @@ import { EmailTemplateRepository } from './infrastructure/email/emailTemplate.re
 import { MailerUsecase } from './usecase/mailer.usecase';
 import { NotificationsController } from './infrastructure/api/notifications.controller';
 import { PrismaServiceStat } from './infrastructure/prisma/stats/prisma.service.stats';
+import { LongueVieObjetsRepository } from './infrastructure/repository/services_recherche/lvo/LongueVieObjets.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -252,6 +253,7 @@ function getControllers(): any[] {
     Connexion_v2_Usecase,
     EmailTemplateRepository,
     MailerUsecase,
+    LongueVieObjetsRepository,
   ],
 })
 export class AppModule {}

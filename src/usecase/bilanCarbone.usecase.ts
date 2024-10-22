@@ -183,15 +183,15 @@ export class BilanCarboneUsecase {
     const situation = {};
 
     const kyc_liste = utilisateur.kyc_history.getAllUpToDateQuestionSet(true);
-    console.log(kyc_liste);
     for (const entry of kyc_liste) {
       const kyc = entry.kyc;
-      console.log(kyc);
 
       if (kyc.is_NGC) {
         if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
-          if (kyc.ngc_key && kyc.reponses && kyc.reponses.length > 0) {
-            situation[kyc.ngc_key] = kyc.reponses[0].ngc_code;
+          if (kyc.ngc_key) {
+            if (kyc.reponses && kyc.reponses.length > 0) {
+              situation[kyc.ngc_key] = kyc.reponses[0].ngc_code;
+            }
           } else {
             console.error(`Missing ngc key for KYC [${kyc.id_cms}/${kyc.id}]`);
           }

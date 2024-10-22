@@ -37,6 +37,7 @@ export class ResultatRecherche {
   adresse_code_postal?: string;
 
   site_web?: string;
+  siret?: string;
 
   longitude?: number;
   latitude?: number;

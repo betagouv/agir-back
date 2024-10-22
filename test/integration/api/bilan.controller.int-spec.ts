@@ -1,7 +1,10 @@
 import { App } from '../../../src/domain/app';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
-import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import {
+  TypeReponseQuestionKYC,
+  Unite,
+} from '../../../src/domain/kyc/questionKYC';
 import { Superficie } from '../../../src/domain/logement/logement';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { Univers } from '../../../src/domain/univers/univers';
@@ -494,6 +497,8 @@ describe('/bilan (API test)', () => {
           short_question: 'short',
           image_url: 'AAA',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     };

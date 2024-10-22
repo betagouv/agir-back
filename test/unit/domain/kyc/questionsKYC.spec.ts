@@ -1,5 +1,8 @@
 import { Thematique } from '../../../../src/domain/contenu/thematique';
-import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
+import {
+  TypeReponseQuestionKYC,
+  Unite,
+} from '../../../../src/domain/kyc/questionKYC';
 import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
 import { Univers } from '../../../../src/domain/univers/univers';
 import { Tag } from '../../../../src/domain/scoring/tag';
@@ -8,6 +11,7 @@ import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { KycDefinition } from '../../../../src/domain/kyc/kycDefinition';
 import { Chauffage, DPE } from '../../../../src/domain/logement/logement';
 import { KYCMosaicID } from '../../../../src/domain/kyc/KYCMosaicID';
+import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
 
 describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('areConditionsMatched : true si pas de condition', () => {
@@ -34,6 +38,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -68,6 +74,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -104,6 +112,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -140,6 +150,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -176,6 +188,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
         {
           id: KYCID.KYC002,
@@ -195,6 +209,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -234,6 +250,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
         {
           id: KYCID.KYC002,
@@ -253,6 +271,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -292,6 +312,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
         {
           id: KYCID.KYC002,
@@ -311,6 +333,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -367,6 +391,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -390,6 +416,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -426,6 +454,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -449,6 +479,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
     // THEN
@@ -484,6 +516,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -508,6 +542,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
     // THEN
@@ -556,6 +592,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -588,6 +626,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -638,6 +678,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -661,6 +703,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -713,6 +757,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -736,6 +782,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -782,6 +830,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -802,6 +852,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -833,6 +885,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -870,6 +924,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -895,6 +951,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
       new KycDefinition({
         id_cms: 2,
@@ -912,6 +970,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -948,6 +1008,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -973,6 +1035,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
       new KycDefinition({
         id_cms: 2,
@@ -995,6 +1059,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -1035,6 +1101,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -1059,6 +1127,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
       new KycDefinition({
         id_cms: 2,
@@ -1080,6 +1150,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
       new KycDefinition({
         id_cms: 3,
@@ -1101,6 +1173,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
       new KycDefinition({
         id_cms: 4,
@@ -1122,6 +1196,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -1171,6 +1247,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
@@ -1189,6 +1267,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
   it('injectSituationNGC : ok si la situtation ne match rien', () => {
     // GIVEN
+    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
       version: 0,
       answered_mosaics: [],
@@ -1196,15 +1275,19 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     });
 
     // WHEN
-    history.injectSituationNGC({
-      'a . b': 123,
-    });
+    history.injectSituationNGC(
+      {
+        'a . b': 123,
+      },
+      utilisateur,
+    );
 
     // THEN
     expect(history.answered_questions).toHaveLength(0);
   });
   it('injectSituationNGC : ok pour un kyc ngc de type entier et input entier', () => {
     // GIVEN
+    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
       version: 0,
       answered_mosaics: [],
@@ -1228,13 +1311,18 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
     // WHEN
-    history.injectSituationNGC({
-      'a . b . c': 123,
-    });
+    history.injectSituationNGC(
+      {
+        'a . b . c': 123,
+      },
+      utilisateur,
+    );
 
     // THEN
     expect(history.answered_questions).toHaveLength(1);
@@ -1246,6 +1334,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   });
   it('injectSituationNGC : ok pour un kyc ngc de type entier et input entier', () => {
     // GIVEN
+    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
       version: 0,
       answered_mosaics: [],
@@ -1269,13 +1358,18 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
     // WHEN
-    history.injectSituationNGC({
-      'a . b . c': 123,
-    });
+    history.injectSituationNGC(
+      {
+        'a . b . c': 123,
+      },
+      utilisateur,
+    );
 
     // THEN
     expect(history.answered_questions).toHaveLength(1);
@@ -1287,6 +1381,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   });
   it('injectSituationNGC : ok pour un kyc ngc de type entier et input entier as string', () => {
     // GIVEN
+    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
       version: 0,
       answered_mosaics: [],
@@ -1310,13 +1405,18 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
     // WHEN
-    history.injectSituationNGC({
-      'a . b . c': '123',
-    });
+    history.injectSituationNGC(
+      {
+        'a . b . c': '123',
+      },
+      utilisateur,
+    );
 
     // THEN
     expect(history.answered_questions).toHaveLength(1);
@@ -1328,6 +1428,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   });
   it('injectSituationNGC : ok pour un kyc ngc de type decimal et input entier ', () => {
     // GIVEN
+    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
       version: 0,
       answered_mosaics: [],
@@ -1351,13 +1452,18 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
     // WHEN
-    history.injectSituationNGC({
-      'a . b . c': '123',
-    });
+    history.injectSituationNGC(
+      {
+        'a . b . c': '123',
+      },
+      utilisateur,
+    );
 
     // THEN
     expect(history.answered_questions).toHaveLength(1);
@@ -1369,6 +1475,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   });
   it('injectSituationNGC : ok pour un kyc ngc de type decimal et input decimal ', () => {
     // GIVEN
+    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
       version: 0,
       answered_mosaics: [],
@@ -1392,13 +1499,18 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
     // WHEN
-    history.injectSituationNGC({
-      'a . b . c': '123.34',
-    });
+    history.injectSituationNGC(
+      {
+        'a . b . c': '123.34',
+      },
+      utilisateur,
+    );
 
     // THEN
     expect(history.answered_questions).toHaveLength(1);
@@ -1410,6 +1522,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   });
   it('injectSituationNGC : ignore pour un kyc ngc de type entier et input pas entier ', () => {
     // GIVEN
+    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
       version: 0,
       answered_mosaics: [],
@@ -1433,19 +1546,25 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
     // WHEN
-    history.injectSituationNGC({
-      'a . b . c': 'bad',
-    });
+    history.injectSituationNGC(
+      {
+        'a . b . c': 'bad',
+      },
+      utilisateur,
+    );
 
     // THEN
     expect(history.answered_questions).toHaveLength(0);
   });
   it('injectSituationNGC : ignore pour un kyc ngc de type entier et input pas entier ', () => {
     // GIVEN
+    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
       version: 0,
       answered_mosaics: [],
@@ -1469,19 +1588,25 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
     // WHEN
-    history.injectSituationNGC({
-      'a . b . c': 'bad',
-    });
+    history.injectSituationNGC(
+      {
+        'a . b . c': 'bad',
+      },
+      utilisateur,
+    );
 
     // THEN
     expect(history.answered_questions).toHaveLength(0);
   });
   it('injectSituationNGC : ignore pour un kyc ngc de type decimal et input pas decimal ', () => {
     // GIVEN
+    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
       version: 0,
       answered_mosaics: [],
@@ -1505,19 +1630,25 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
     // WHEN
-    history.injectSituationNGC({
-      'a . b . c': 'bad',
-    });
+    history.injectSituationNGC(
+      {
+        'a . b . c': 'bad',
+      },
+      utilisateur,
+    );
 
     // THEN
     expect(history.answered_questions).toHaveLength(0);
   });
   it('injectSituationNGC : ignore pour un kyc ngc de type decimal et input pas decimal ', () => {
     // GIVEN
+    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
       version: 0,
       answered_mosaics: [],
@@ -1541,19 +1672,25 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
     // WHEN
-    history.injectSituationNGC({
-      'a . b . c': 'bad',
-    });
+    history.injectSituationNGC(
+      {
+        'a . b . c': 'bad',
+      },
+      utilisateur,
+    );
 
     // THEN
     expect(history.answered_questions).toHaveLength(0);
   });
   it('injectSituationNGC : ignore pour un kyc non ngc ', () => {
     // GIVEN
+    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
       version: 0,
       answered_mosaics: [],
@@ -1577,19 +1714,25 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
     // WHEN
-    history.injectSituationNGC({
-      'a . b . c': '123',
-    });
+    history.injectSituationNGC(
+      {
+        'a . b . c': '123',
+      },
+      utilisateur,
+    );
 
     // THEN
     expect(history.answered_questions).toHaveLength(0);
   });
   it('injectSituationNGC : integre une reponse string pour une question a choix unique', () => {
     // GIVEN
+    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
       version: 0,
       answered_mosaics: [],
@@ -1617,13 +1760,18 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
     // WHEN
-    history.injectSituationNGC({
-      'a . b . c': 'toto . a',
-    });
+    history.injectSituationNGC(
+      {
+        'a . b . c': 'toto . a',
+      },
+      utilisateur,
+    );
 
     // THEN
     expect(history.answered_questions).toHaveLength(1);
@@ -1633,6 +1781,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   });
   it(`injectSituationNGC : maj d'une KYC deja renseignée`, () => {
     // GIVEN
+    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
       version: 0,
       answered_mosaics: [],
@@ -1658,6 +1807,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           short_question: 'short',
           image_url: 'https://',
           conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -1683,13 +1834,18 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
 
     // WHEN
-    history.injectSituationNGC({
-      'a . b . c': 'toto . b',
-    });
+    history.injectSituationNGC(
+      {
+        'a . b . c': 'toto . b',
+      },
+      utilisateur,
+    );
 
     // THEN
     expect(history.answered_questions).toHaveLength(1);
@@ -1723,6 +1879,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
             { label: 'B', code: 'hihi', ngc_code: 'toto . b' },
             { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
           ],
+          unite: Unite.kg,
+          emoji: '🔥',
           conditions: [
             [
               {
@@ -1765,6 +1923,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
             },
           ],
         ],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
       new KycDefinition({
         id_cms: 2,
@@ -1786,6 +1946,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
     // WHEN
@@ -1831,6 +1993,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
               },
             ],
           ],
+          unite: Unite.kg,
+          emoji: '🔥',
         },
       ],
     });
@@ -1864,6 +2028,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
             },
           ],
         ],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
       new KycDefinition({
         id_cms: 2,
@@ -1885,6 +2051,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
     // WHEN
@@ -1932,6 +2100,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
             },
           ],
         ],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
       new KycDefinition({
         id_cms: 2,
@@ -1953,6 +2123,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
     // WHEN
@@ -1992,6 +2164,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         short_question: 'short',
         image_url: 'https://',
         conditions: [],
+        unite: Unite.kg,
+        emoji: '🔥',
       }),
     ]);
     // WHEN

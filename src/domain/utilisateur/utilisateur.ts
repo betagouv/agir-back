@@ -57,7 +57,6 @@ export class UtilisateurData {
   revenu_fiscal: number;
   parts: number;
   abonnement_ter_loire: boolean;
-  code_departement: string;
   created_at: Date;
   updated_at?: Date;
   passwordHash: string;
@@ -127,7 +126,6 @@ export class Utilisateur extends UtilisateurData {
       prenom: null,
       email: email,
       id: undefined,
-      code_departement: null,
       revenu_fiscal: null,
       parts: null,
       abonnement_ter_loire: false,

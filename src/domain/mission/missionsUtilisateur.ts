@@ -45,15 +45,17 @@ export class MissionsUtilisateur {
     type: ContentType,
     score?: number,
   ) {
-    const { mission, objectif } = this.getObjectifByContentId(content_id, type);
+    const liste = this.getObjectifByContentId(content_id, type);
 
-    if (objectif && !objectif.isDone()) {
-      objectif.done_at = new Date();
-      mission.unlockDefiIfAllContentDone();
+    for (const mission_objectif of liste) {
+      if (mission_objectif.objectif && !mission_objectif.objectif.isDone()) {
+        mission_objectif.objectif.done_at = new Date();
+        mission_objectif.mission.unlockDefiIfAllContentDone();
 
-      // Pour éviter de récolter les points d'un quizz raté ^^
-      if (type === ContentType.quizz && score !== 100) {
-        objectif.sont_points_en_poche = true;
+        // Pour éviter de récolter les points d'un quizz raté ^^
+        if (type === ContentType.quizz && score !== 100) {
+          mission_objectif.objectif.sont_points_en_poche = true;
+        }
       }
     }
   }
@@ -88,16 +90,19 @@ export class MissionsUtilisateur {
   public getObjectifByContentId(
     content_id: string,
     type: ContentType,
-  ): { mission: Mission; objectif: Objectif } {
+  ): { mission: Mission; objectif: Objectif }[] {
+    const result = [];
     for (let index = 0; index < this.missions.length; index++) {
       const mission = this.missions[index];
 
       const objectif = mission.objectifs.find(
         (o) => o.content_id === content_id && o.type === type,
       );
-      if (objectif) return { mission: mission, objectif: objectif };
+      if (objectif) {
+        result.push({ mission: mission, objectif: objectif });
+      }
     }
-    return { mission: null, objectif: null };
+    return result;
   }
 
   public upsertNewMission(

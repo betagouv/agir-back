@@ -6,6 +6,7 @@ import { Logement } from '../../../../src/domain/logement/logement';
 import {
   QuestionKYC,
   TypeReponseQuestionKYC,
+  Unite,
 } from '../../../../src/domain/kyc/questionKYC';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
@@ -118,6 +119,8 @@ describe('Objet Utilisateur', () => {
       short_question: 'short',
       image_url: 'https://',
       conditions: [],
+      unite: Unite.euro,
+      emoji: '🔥',
     });
 
     // WHEN
@@ -155,6 +158,8 @@ describe('Objet Utilisateur', () => {
       short_question: 'short',
       image_url: 'https://',
       conditions: [],
+      unite: Unite.euro,
+      emoji: '🔥',
     });
 
     // WHEN
@@ -199,6 +204,8 @@ describe('Objet Utilisateur', () => {
       short_question: 'short',
       image_url: 'https://',
       conditions: [],
+      unite: Unite.euro,
+      emoji: '🔥',
     });
 
     // WHEN

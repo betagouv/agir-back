@@ -24,6 +24,7 @@ export class Defi_v0 {
   mois: number[];
   conditions: ConditionDefi[][];
   sont_points_en_poche: boolean;
+  impact_kg_co2: number;
 
   static map(elem: Defi): Defi_v0 {
     return {
@@ -44,6 +45,7 @@ export class Defi_v0 {
       mois: elem.mois ? elem.mois : [],
       conditions: elem.conditions ? elem.conditions : [],
       sont_points_en_poche: elem.sont_points_en_poche,
+      impact_kg_co2: elem.impact_kg_co2,
     };
   }
 }

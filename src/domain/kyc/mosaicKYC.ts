@@ -8,6 +8,7 @@ export class KYCMosaicReponse {
   code: string;
   label: string;
   image_url: string;
+  emoji: string;
   boolean_value: boolean;
 }
 
@@ -189,7 +190,7 @@ export class MosaicKYC {
         KYCID.KYC_achat_pantalon,
         KYCID.KYC_achat_pull,
         KYCID.KYC_achat_petit_article,
-        KYCID.KYC_achat_pull,
+        KYCID.KYC_achat_gros_article,
         KYCID.KYC_achat_robe,
         KYCID.KYC_achat_short,
         KYCID.KYC_achat_sweat,
@@ -244,6 +245,7 @@ export class MosaicKYC {
         label: kyc.short_question,
         image_url: kyc.image_url,
         boolean_value: value === 'oui',
+        emoji: kyc.emoji,
       };
       liste_reponses.push(new_reponse);
     }
