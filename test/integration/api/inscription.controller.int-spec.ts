@@ -566,7 +566,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
     expect(user.logement.superficie).toEqual(Superficie.superficie_150);
   });
-  it.only(`POST /utilisateurs_v2 - test situtation "complete"`, async () => {
+  it(`POST /utilisateurs_v2 - test situtation "complete"`, async () => {
     // GIVEN
     process.env.NGC_API_KEY = '12345';
 

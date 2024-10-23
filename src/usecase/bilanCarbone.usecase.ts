@@ -187,23 +187,23 @@ export class BilanCarboneUsecase {
       const kyc = entry.kyc;
 
       if (kyc.is_NGC) {
-        if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
-          if (kyc.ngc_key) {
+        if (!kyc.ngc_key) {
+          console.error(
+            `Missing ngc key for KYC [${kyc.id_cms}/${kyc.id}]  user [${utilisateur.id}]`,
+          );
+        } else {
+          if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
             if (kyc.reponses && kyc.reponses.length > 0) {
               situation[kyc.ngc_key] = kyc.reponses[0].ngc_code;
             }
-          } else {
-            console.error(`Missing ngc key for KYC [${kyc.id_cms}/${kyc.id}]`);
           }
-        }
-        if (
-          kyc.type === TypeReponseQuestionKYC.entier ||
-          kyc.type === TypeReponseQuestionKYC.decimal
-        ) {
-          if (kyc.ngc_key && kyc.reponses && kyc.reponses.length > 0) {
-            situation[kyc.ngc_key] = kyc.reponses[0].label;
-          } else {
-            console.error(`Missing ngc key for KYC [${kyc.id_cms}/${kyc.id}]`);
+          if (
+            kyc.type === TypeReponseQuestionKYC.entier ||
+            kyc.type === TypeReponseQuestionKYC.decimal
+          ) {
+            if (kyc.reponses && kyc.reponses.length > 0) {
+              situation[kyc.ngc_key] = kyc.getReponseUniqueSaisie();
+            }
           }
         }
       }
