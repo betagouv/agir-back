@@ -87,6 +87,7 @@ export class BilanCarboneUsecase {
 
     const bilan_synthese: BilanCarboneSynthese = {
       mini_bilan_dispo: false,
+      bilan_complet_dispo: false,
       impact_alimentation: this.computeImpactAlimentation(utilisateur),
       impact_logement: this.computeImpactLogement(utilisateur),
       impact_transport: this.computeImpactTransport(utilisateur),
@@ -162,14 +163,12 @@ export class BilanCarboneUsecase {
       await this.utilisateurRepository.updateUtilisateur(utilisateur);
     }
 
-    let bilan_complet = undefined;
-    if (
-      utilisateur.unlocked_features.isUnlocked(Feature.bilan_carbone_detail)
-    ) {
-      const situation = this.computeSituation(utilisateur);
-      bilan_complet =
-        this.nGCCalculator.computeBilanCarboneFromSituation(situation);
-    }
+    bilan_synthese.bilan_complet_dispo =
+      utilisateur.unlocked_features.isUnlocked(Feature.bilan_carbone_detail);
+
+    const situation = this.computeSituation(utilisateur);
+    const bilan_complet =
+      this.nGCCalculator.computeBilanCarboneFromSituation(situation);
 
     return {
       bilan_synthese: bilan_synthese,

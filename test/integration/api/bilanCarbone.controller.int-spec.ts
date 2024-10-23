@@ -359,7 +359,7 @@ describe('/bilan (API test)', () => {
     });
   });
 
-  it('GET /utilisateur/id/bilans/last - presence du bilan de synthese', async () => {
+  it('GET /utilisateur/id/bilans/last - presence du bilan de synthese et mini bilan', async () => {
     // GIVEN
     const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
 
@@ -397,7 +397,15 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
+    expect(response.body.mini_bilan).toEqual({
+      impact_transport: null,
+      impact_alimentation: null,
+      impact_logement: null,
+      impact_consommation: null,
+    });
+
     expect(response.body.bilan_synthese).toEqual({
+      bilan_complet_dispo: false,
       mini_bilan_dispo: false,
       impact_transport: null,
       impact_alimentation: null,
@@ -548,7 +556,8 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
-    expect(response.body.bilan_complet).toBeUndefined();
+    expect(response.body.bilan_synthese.bilan_complet_dispo).toEqual(false);
+    expect(response.body.bilan_complet).not.toBeUndefined();
   });
 
   it('POST /bilan/importFromNGC - missing API KEY', async () => {

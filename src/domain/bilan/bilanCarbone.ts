@@ -51,6 +51,7 @@ export class BilanCarboneSynthese {
   }
 
   mini_bilan_dispo: boolean;
+  bilan_complet_dispo: boolean;
   impact_transport: NiveauImpact;
   impact_alimentation: NiveauImpact;
   impact_logement: NiveauImpact;
