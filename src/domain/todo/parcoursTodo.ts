@@ -24,6 +24,10 @@ export class ParcoursTodo {
     }
   }
 
+  public dropLastMission() {
+    this.liste_todo.pop();
+  }
+
   public reset() {
     this.liste_todo = TodoCatalogue.getAllTodos();
     this.todo_active = 0;

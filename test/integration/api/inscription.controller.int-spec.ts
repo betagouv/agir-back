@@ -7,6 +7,7 @@ import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Superficie } from '../../../src/domain/logement/logement';
 import _situationNGCTest from './situationNGCtest.json';
+import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 
 describe('/utilisateurs - Inscription - (API test)', () => {
   const OLD_ENV = process.env;
@@ -441,8 +442,9 @@ describe('/utilisateurs - Inscription - (API test)', () => {
         },
       });
 
-    let situtation_id = response_post_situation.body.redirect_url.split('=')[1];
-    situtation_id = situtation_id.substring(0, situtation_id.indexOf('&'));
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
+    );
 
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
       mot_de_passe: '#1234567890HAHAa',
@@ -470,23 +472,9 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(kyc_bois.listeReponsesLabels()).toEqual(['Oui']);
   });
 
-  it(`POST /utilisateurs_v2 - integration situation NGC  => KYC 'KYC_bilan' à true`, async () => {
+  it(`POST /utilisateurs_v2 - integration situation NGC  => todo à 2 missions au lieu de 3`, async () => {
     // GIVEN
     process.env.NGC_API_KEY = '12345';
-
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID.KYC_bilan,
-      type: TypeReponseQuestionKYC.choix_unique,
-      is_ngc: false,
-      question: `Bilan réalisé ?`,
-      points: 10,
-      categorie: Categorie.test,
-      reponses: [
-        { label: 'Oui', code: 'oui' },
-        { label: 'Non', code: 'non' },
-      ],
-    });
 
     // WHEN
     const response_post_situation = await TestUtil.getServer()
@@ -498,8 +486,9 @@ describe('/utilisateurs - Inscription - (API test)', () => {
         },
       });
 
-    let situtation_id = response_post_situation.body.redirect_url.split('=')[1];
-    situtation_id = situtation_id.substring(0, situtation_id.indexOf('&'));
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
+    );
 
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
       mot_de_passe: '#1234567890HAHAa',
@@ -512,16 +501,42 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(response.status).toBe(201);
     const user = await utilisateurRepository.findByEmail('w@w.com');
 
-    const KYC_bilan = user.kyc_history.getAnsweredQuestionByCode(
-      KYCID.KYC_bilan,
+    expect(user.parcours_todo.liste_todo).toHaveLength(
+      new ParcoursTodo().liste_todo.length - 1,
     );
-    expect(KYC_bilan).not.toBeUndefined();
-    expect(KYC_bilan.hasAnyResponses()).toEqual(true);
-    expect(
-      user.parcours_todo
-        .findTodoKYCOrMosaicElementByQuestionID(KYCID.KYC_bilan)
-        .element.isDone(),
-    ).toEqual(true);
+  });
+  it(`POST /utilisateurs_v2 - integration situation NGC  => feature bilan carbone dispo de suite`, async () => {
+    // GIVEN
+    process.env.NGC_API_KEY = '12345';
+
+    // WHEN
+    const response_post_situation = await TestUtil.getServer()
+      .post('/bilan/importFromNGC')
+      .set('apikey', `12345`)
+      .send({
+        situation: {
+          'transport . voiture . km': 20000,
+        },
+      });
+
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
+    );
+
+    const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
+      mot_de_passe: '#1234567890HAHAa',
+      email: 'w@w.com',
+      source_inscription: 'mobile',
+      situation_ngc_id: situtation_id,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    const user = await utilisateurRepository.findByEmail('w@w.com');
+
+    expect(user.unlocked_features.isUnlocked(Feature.bilan_carbone)).toEqual(
+      true,
+    );
   });
 
   it(`POST /utilisateurs_v2 - integration situation NGC => maj logement`, async () => {
@@ -550,8 +565,9 @@ describe('/utilisateurs - Inscription - (API test)', () => {
         },
       });
 
-    let situtation_id = response_post_situation.body.redirect_url.split('=')[1];
-    situtation_id = situtation_id.substring(0, situtation_id.indexOf('&'));
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
+    );
 
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
       mot_de_passe: '#1234567890HAHAa',
@@ -616,8 +632,9 @@ describe('/utilisateurs - Inscription - (API test)', () => {
         situation: _situationNGCTest,
       });
 
-    let situtation_id = response_post_situation.body.redirect_url.split('=')[1];
-    situtation_id = situtation_id.substring(0, situtation_id.indexOf('&'));
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
+    );
 
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
       mot_de_passe: '#1234567890HAHAa',
@@ -647,9 +664,9 @@ describe('/utilisateurs - Inscription - (API test)', () => {
         },
       });
 
-    let situtation_id: string =
-      response_post_situation.body.redirect_url.split('=')[1];
-    situtation_id = situtation_id.substring(0, situtation_id.indexOf('&'));
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
+    );
 
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
       mot_de_passe: '#1234567890HAHAa',
@@ -677,9 +694,9 @@ describe('/utilisateurs - Inscription - (API test)', () => {
         },
       });
 
-    let situtation_id: string =
-      response_post_situation.body.redirect_url.split('=')[1];
-    situtation_id = situtation_id.substring(0, situtation_id.indexOf('&'));
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
+    );
 
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
       mot_de_passe: '#1234567890HAHAa',

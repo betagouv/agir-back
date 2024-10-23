@@ -18,6 +18,7 @@ import { MailerUsecase } from './mailer.usecase';
 import { TypeNotification } from '../domain/notification/notificationHistory';
 import { KYCID } from '../domain/kyc/KYCID';
 import { BooleanKYC } from '../domain/kyc/questionKYC';
+import { Feature } from '../domain/gamification/feature';
 
 export type Phrase = {
   phrase: string;
@@ -61,6 +62,9 @@ export class InscriptionUsecase {
     utilisateurToCreate.kyc_history.setCatalogue(kyc_catalogue);
 
     if (utilisateurInput.situation_ngc_id) {
+      utilisateurToCreate.parcours_todo.dropLastMission();
+      utilisateurToCreate.unlocked_features.add(Feature.bilan_carbone);
+
       const situation = await this.bilanRepository.getSituationNGCbyId(
         utilisateurInput.situation_ngc_id,
       );
