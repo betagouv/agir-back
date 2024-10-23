@@ -6,7 +6,6 @@ import './api/bibliotheque.controller.int-spec';
 import './api/defis.controller.int-spec';
 import './api/admin.controller.int-spec';
 import './api/aide.controller.int-spec';
-import './api/bilan.controller.int-spec';
 import './api/bilanCarbone.controller.int-spec';
 import './api/communes.controller.int-spec';
 import './api/connexion_oubli_mdp.controller.int-spec';

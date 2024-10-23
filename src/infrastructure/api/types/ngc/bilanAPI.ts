@@ -94,6 +94,9 @@ export class LienBilanUniversAPI {
 }
 
 export class BilanCarboneSyntheseAPI {
+  @ApiProperty()
+  mini_bilan_dispo: boolean;
+
   @ApiProperty({ enum: NiveauImpact })
   impact_transport: NiveauImpact;
 
@@ -122,6 +125,7 @@ export class BilanCarboneSyntheseAPI {
       liens_bilans_univers: bilan.liens_bilans_univers.map((l) =>
         LienBilanUniversAPI.mapToAPI(l),
       ),
+      mini_bilan_dispo: bilan.mini_bilan_dispo,
     };
   }
 }
@@ -137,8 +141,9 @@ export class BilanCarboneDashboardAPI {
     bilan_synthese: BilanCarboneSynthese,
   ): BilanCarboneDashboardAPI {
     return {
-      ...bilan_complet, // TO DELETE
-      bilan_complet: BilanCarboneCompletAPI.mapToAPI(bilan_complet),
+      bilan_complet: bilan_complet
+        ? BilanCarboneCompletAPI.mapToAPI(bilan_complet)
+        : undefined,
       bilan_synthese: BilanCarboneSyntheseAPI.mapToAPI(bilan_synthese),
     };
   }
