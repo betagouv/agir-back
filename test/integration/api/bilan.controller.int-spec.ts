@@ -430,7 +430,7 @@ describe('/bilan (API test)', () => {
           id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_logement',
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1728468978/maison_80242d91f3.svg',
-          nombre_total_question: 2,
+          nombre_total_question: 3,
           pourcentage_progression: 0,
           univers: 'logement',
           univers_label: 'Logement',

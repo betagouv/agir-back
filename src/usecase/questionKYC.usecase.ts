@@ -41,6 +41,8 @@ export class QuestionKYCUsecase {
       KYCID.KYC_consommation_type_consommateur,
     ],
     ENCHAINEMENT_KYC_bilan_transport: [
+      KYCID.KYC_transport_voiture_km,
+      KYCID.KYC_transport_avion_3_annees,
       KYCID.KYC_transport_type_utilisateur,
       KYCID.KYC_transport_voiture_nbr_voyageurs,
       KYCID.KYC_transport_voiture_motorisation,
@@ -52,6 +54,9 @@ export class QuestionKYCUsecase {
       KYCID.KYC_2roue_km,
     ],
     ENCHAINEMENT_KYC_bilan_logement: [
+      KYCMosaicID.MOSAIC_CHAUFFAGE,
+      KYCID.KYC_superficie,
+      KYCID.KYC_menage,
       KYCID.KYC_type_logement,
       KYCID.KYC006,
       KYCMosaicID.MOSAIC_RENO,
@@ -59,6 +64,7 @@ export class QuestionKYCUsecase {
       KYCMosaicID.MOSAIC_EXTERIEUR,
     ],
     ENCHAINEMENT_KYC_bilan_consommation: [
+      KYCID.KYC_consommation_type_consommateur,
       KYCMosaicID.MOSAIC_LOGEMENT_VACANCES,
       KYCID.KYC_consommation_relation_objets,
       KYCMosaicID.MOSAIC_ELECTROMENAGER,
@@ -68,6 +74,7 @@ export class QuestionKYCUsecase {
       KYCMosaicID.MOSAIC_VETEMENTS,
     ],
     ENCHAINEMENT_KYC_bilan_alimentation: [
+      KYCID.KYC_alimentation_regime,
       KYCID.KYC_local_frequence,
       KYCID.KYC_saison_frequence,
       KYCID.KYC_alimentation_litres_alcool,
