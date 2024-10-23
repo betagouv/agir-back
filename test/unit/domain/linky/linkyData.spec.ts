@@ -1,5 +1,6 @@
 import {
   LinkyData,
+  LinkyDataElement,
   MonthLinkyData,
   YearMonthLinkyData,
 } from '../../../../src/domain/linky/linkyData';
@@ -1328,6 +1329,92 @@ describe('LinkyData', () => {
         date: new Date('2023-12-10'),
         value_cumulee: 25,
         day_value: 5,
+      },
+    ]);
+  });
+  it(`completeMissingDays : complete riensit tous jours présents`, () => {
+    // GIVEN
+    const linky_data = new LinkyData();
+    const liste: LinkyDataElement[] = [
+      {
+        day_value: 1,
+        value_cumulee: 1000,
+        date: new Date('2023-10-09T00:00:00.000Z'),
+      },
+      {
+        day_value: 2,
+        value_cumulee: 2000,
+        date: new Date('2023-10-10T00:00:00.000Z'),
+      },
+      {
+        day_value: 3,
+        value_cumulee: 3000,
+        date: new Date('2023-10-11T00:00:00.000Z'),
+      },
+    ];
+
+    // WHEN
+    const result = linky_data.completeMissingDays(liste);
+
+    // THEN
+    expect(result).toHaveLength(3);
+  });
+  it(`completeMissingDays : injecte les jours manquants dans l'intervalle `, () => {
+    // GIVEN
+    const linky_data = new LinkyData();
+    const liste: LinkyDataElement[] = [
+      {
+        day_value: 1,
+        value_cumulee: 1000,
+        date: new Date('2023-10-09T00:00:00.000Z'),
+      },
+      {
+        day_value: 2,
+        value_cumulee: 2000,
+        date: new Date('2023-10-11T00:00:00.000Z'),
+      },
+      {
+        day_value: 2,
+        value_cumulee: 2000,
+        date: new Date('2023-10-14T00:00:00.000Z'),
+      },
+    ];
+
+    // WHEN
+    const result = linky_data.completeMissingDays(liste);
+
+    // THEN
+    expect(result).toHaveLength(6);
+    expect(result).toEqual([
+      {
+        day_value: 1,
+        value_cumulee: 1000,
+        date: new Date('2023-10-09T00:00:00.000Z'),
+      },
+      {
+        day_value: 1,
+        value_cumulee: undefined,
+        date: new Date('2023-10-10T00:00:00.000Z'),
+      },
+      {
+        day_value: 2,
+        value_cumulee: 2000,
+        date: new Date('2023-10-11T00:00:00.000Z'),
+      },
+      {
+        day_value: 2,
+        value_cumulee: undefined,
+        date: new Date('2023-10-12T00:00:00.000Z'),
+      },
+      {
+        day_value: 2,
+        value_cumulee: undefined,
+        date: new Date('2023-10-13T00:00:00.000Z'),
+      },
+      {
+        day_value: 2,
+        value_cumulee: 2000,
+        date: new Date('2023-10-14T00:00:00.000Z'),
       },
     ]);
   });

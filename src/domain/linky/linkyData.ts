@@ -94,7 +94,11 @@ export class LinkyData {
       last_element_date.getFullYear() - 1,
     );
 
-    let block = this.searchDays(last_element_date_minus14, last_element_date);
+    let block_current_year = this.searchDays(
+      last_element_date_minus14,
+      last_element_date,
+    );
+    block_current_year = this.completeMissingDays(block_current_year);
 
     const block_last_year = this.searchDays(
       last_element_date_minus14_minus_one_year,
@@ -102,12 +106,14 @@ export class LinkyData {
     );
 
     // Re alignement des blocks
-    block = block.slice(block.length - block_last_year.length);
+    block_current_year = block_current_year.slice(
+      block_current_year.length - block_last_year.length,
+    );
 
     const result: LinkyDataElement[] = [];
 
     // Entrelassage
-    block.forEach((elem, index) => {
+    block_current_year.forEach((elem, index) => {
       result.push(block_last_year[index]);
       result.push(elem);
     });
@@ -119,7 +125,7 @@ export class LinkyData {
       elem.jour_val = elem.date.getDate();
     });
 
-    const somme_block = this.sommeElements(block);
+    const somme_block = this.sommeElements(block_current_year);
     const somme_block_last_year = this.sommeElements(block_last_year);
 
     const variation = Math.round(
@@ -387,10 +393,47 @@ export class LinkyData {
     return Array.from(dayLinkyData.days.values());
   }
 
+  completeMissingDays?(liste: LinkyDataElement[]): LinkyDataElement[] {
+    const result: LinkyDataElement[] = [];
+    if (liste.length === 0 || liste.length === 1) return;
+
+    let left_date = new Date(liste[0].date);
+    const last_date = liste[liste.length - 1].date;
+
+    while (left_date.getTime() !== last_date.getTime()) {
+      const elememt = this.searchExactSingleDayInListe(liste, left_date);
+      if (elememt) {
+        result.push(elememt);
+      } else {
+        result.push({
+          date: new Date(left_date),
+          day_value: result[result.length - 1].day_value,
+          value_cumulee: undefined,
+        });
+      }
+      left_date.setDate(left_date.getDate() + 1);
+    }
+    result.push(liste[liste.length - 1]);
+    return result;
+  }
+
   searchSingleDay?(day: Date): LinkyDataElement {
     for (let index = 0; index < this.serie.length; index++) {
       const element = this.serie[index];
       if (LinkyData.isBetween(element.date, day, day)) {
+        return element;
+      }
+    }
+    return null;
+  }
+
+  searchExactSingleDayInListe?(
+    liste: LinkyDataElement[],
+    date: Date,
+  ): LinkyDataElement {
+    for (let index = 0; index < liste.length; index++) {
+      const element = liste[index];
+      if (element.date.getTime() === date.getTime()) {
         return element;
       }
     }

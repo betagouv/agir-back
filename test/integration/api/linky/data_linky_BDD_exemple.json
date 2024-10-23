@@ -5481,67 +5481,7 @@
   },
   {
     "date": "2024-10-22T00:00:00.000Z",
-    "day_value": null,
+    "day_value": 10744,
     "value_cumulee": 22950900
-  },
-  {
-    "date": "2024-10-21T00:00:00.000Z",
-    "day_value": null,
-    "value_cumulee": 22940156
-  },
-  {
-    "date": "2024-10-19T00:00:00.000Z",
-    "day_value": null,
-    "value_cumulee": 22914871
-  },
-  {
-    "date": "2024-10-18T00:00:00.000Z",
-    "day_value": null,
-    "value_cumulee": 22903392
-  },
-  {
-    "date": "2024-10-17T00:00:00.000Z",
-    "day_value": null,
-    "value_cumulee": 22891891
-  },
-  {
-    "date": "2024-10-16T00:00:00.000Z",
-    "day_value": null,
-    "value_cumulee": 22880395
-  },
-  {
-    "date": "2024-10-15T00:00:00.000Z",
-    "day_value": null,
-    "value_cumulee": 22873447
-  },
-  {
-    "date": "2024-10-14T00:00:00.000Z",
-    "day_value": null,
-    "value_cumulee": 22860365
-  },
-  {
-    "date": "2024-10-13T00:00:00.000Z",
-    "day_value": null,
-    "value_cumulee": 22847823
-  },
-  {
-    "date": "2024-10-12T00:00:00.000Z",
-    "day_value": null,
-    "value_cumulee": 22835121
-  },
-  {
-    "date": "2024-10-11T00:00:00.000Z",
-    "day_value": null,
-    "value_cumulee": 22826590
-  },
-  {
-    "date": "2024-10-10T00:00:00.000Z",
-    "day_value": null,
-    "value_cumulee": 22821602
-  },
-  {
-    "date": "2024-10-09T00:00:00.000Z",
-    "day_value": null,
-    "value_cumulee": 22809265
   }
 ]
