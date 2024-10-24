@@ -82,10 +82,7 @@ export class ThematiqueRepository {
     const new_map = new Map();
     const listeThematiques = await this.prisma.thematique.findMany();
     listeThematiques.forEach((them) => {
-      new_map.set(
-        ThematiqueRepository.getThematiqueByCmsId(them.id_cms),
-        them.titre,
-      );
+      new_map.set(Thematique[them.code], them.titre);
     });
     ThematiqueRepository.titres_thematiques = new_map;
   }
@@ -146,7 +143,7 @@ export class ThematiqueRepository {
     ThematiqueRepository.thematiquesUnivers = new_map;
   }
 
-  public async upsertThematique(id_cms: number, titre: string) {
+  public async upsertThematique(id_cms: number, titre: string, code: string) {
     await this.prisma.thematique.upsert({
       where: {
         id_cms: id_cms,
@@ -155,9 +152,11 @@ export class ThematiqueRepository {
         id: uuidv4(),
         id_cms: id_cms,
         titre: titre,
+        code: code,
       },
       update: {
         titre: titre,
+        code: code,
       },
     });
   }
@@ -216,23 +215,6 @@ export class ThematiqueRepository {
         famille_ordre: them.famille_ordre,
       },
     });
-  }
-
-  // FIXME : basculer sur une gestion de code et pas d'id tech CMS
-  public static getThematiqueByCmsId(cms_id: number): Thematique {
-    if (cms_id > Object.values(Thematique).length) {
-      return undefined;
-    } else {
-      return [
-        Thematique.alimentation,
-        Thematique.climat,
-        Thematique.consommation,
-        Thematique.dechet,
-        Thematique.logement,
-        Thematique.transport,
-        Thematique.loisir,
-      ][cms_id - 1];
-    }
   }
 
   public static getTuileUniversByCMS_ID(id_cms: number): TuileUnivers {

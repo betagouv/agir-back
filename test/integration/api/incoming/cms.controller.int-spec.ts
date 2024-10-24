@@ -25,7 +25,11 @@ describe('/api/incoming/cms (API test)', () => {
       pourquoi: 'parce que !!',
       points: 10,
       impact_kg_co2: 10,
-      thematique: { id: 1, titre: 'Alimentation' },
+      thematique: {
+        id: 1,
+        titre: 'Alimentation',
+        code: Thematique.alimentation,
+      },
       tags: [
         { id: 1, code: 'capacite_physique' },
         { id: 2, code: 'possede_velo' },
@@ -69,7 +73,11 @@ describe('/api/incoming/cms (API test)', () => {
       astuces: 'facile',
       pourquoi: 'parce que !!',
       points: 10,
-      thematique: { id: 1, titre: 'Alimentation' },
+      thematique: {
+        id: 1,
+        titre: 'Alimentation',
+        code: Thematique.alimentation,
+      },
       tags: [{ id: 1, code: 'VERY_BAD' }],
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       univers: [
@@ -134,7 +142,7 @@ describe('/api/incoming/cms (API test)', () => {
           ngc_code: '456',
         },
       ],
-      thematique: { id: 1 },
+      thematique: { id: 1, code: Thematique.alimentation },
       tags: [
         { id: 1, code: 'capacite_physique' },
         { id: 2, code: 'possede_velo' },
@@ -202,8 +210,8 @@ describe('/api/incoming/cms (API test)', () => {
       is_simulation: true,
       montantMaximum: '123',
       thematiques: [
-        { id: 1, titre: 'Alimentation' },
-        { id: 2, titre: 'Climat' },
+        { id: 1, titre: 'Alimentation', code: Thematique.alimentation },
+        { id: 2, titre: 'Climat', code: Thematique.climat },
       ],
       codes_postaux: '91120 , 75002',
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
@@ -225,11 +233,15 @@ describe('/api/incoming/cms (API test)', () => {
       id: 123,
       titre: 'titre',
       sousTitre: 'soustitre 222',
-      thematique_gamification: { id: 1, titre: 'Alimentation' },
+      thematique_gamification: {
+        id: 1,
+        titre: 'Alimentation',
+        code: Thematique.alimentation,
+      },
       tag_article: { code: 'composter' },
       thematiques: [
-        { id: 1, titre: 'Alimentation' },
-        { id: 2, titre: 'Climat' },
+        { id: 1, titre: 'Alimentation', code: Thematique.alimentation },
+        { id: 2, titre: 'Climat', code: Thematique.climat },
       ],
       rubriques: [
         { id: 1, titre: 'A' },
@@ -266,10 +278,14 @@ describe('/api/incoming/cms (API test)', () => {
       id: 123,
       titre: 'titre',
       sousTitre: 'soustitre 222',
-      thematique_gamification: { id: 1, titre: 'Alimentation' },
+      thematique_gamification: {
+        id: 1,
+        titre: 'Alimentation',
+        code: Thematique.alimentation,
+      },
       thematiques: [
-        { id: 1, titre: 'Alimentation' },
-        { id: 2, titre: 'Climat' },
+        { id: 1, titre: 'Alimentation', code: Thematique.alimentation },
+        { id: 2, titre: 'Climat', code: Thematique.climat },
       ],
       partenaire: {
         id: 1,
@@ -301,10 +317,14 @@ describe('/api/incoming/cms (API test)', () => {
       id: 123,
       titre: 'titre',
       sousTitre: 'soustitre 222',
-      thematique_gamification: { id: 1, titre: 'Alimentation' },
+      thematique_gamification: {
+        id: 1,
+        titre: 'Alimentation',
+        code: Thematique.alimentation,
+      },
       thematiques: [
-        { id: 1, titre: 'Alimentation' },
-        { id: 2, titre: 'Climat' },
+        { id: 1, titre: 'Alimentation', code: Thematique.alimentation },
+        { id: 2, titre: 'Climat', code: Thematique.climat },
       ],
       partenaire: {
         id: 1,
@@ -860,7 +880,7 @@ describe('/api/incoming/cms (API test)', () => {
       ...CMS_DATA_ARTICLE,
       model: CMSModel.thematique,
       event: CMSEvent['entry.publish'],
-      entry: { id: 1, titre: 'yo' },
+      entry: { id: 1, titre: 'yo', code: Thematique.logement },
     });
 
     // THEN
@@ -869,6 +889,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(thematiqueDB).toHaveLength(1);
     expect(thematiqueDB[0].id_cms).toEqual(1);
     expect(thematiqueDB[0].titre).toEqual('yo');
+    expect(thematiqueDB[0].code).toEqual('logement');
   });
   it('POST /api/incoming/cms - create 1 univers', async () => {
     // GIVEN

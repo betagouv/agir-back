@@ -192,6 +192,9 @@ export type CMSWebhookPopulateAPI = {
       data: [
         {
           id: number;
+          attributes: {
+            code: string;
+          };
         },
       ];
     };
@@ -207,6 +210,9 @@ export type CMSWebhookPopulateAPI = {
     thematique_gamification: {
       data: {
         id: number;
+        attributes: {
+          code: string;
+        };
       };
     };
     tag_article: {
@@ -219,6 +225,9 @@ export type CMSWebhookPopulateAPI = {
     thematique: {
       data: {
         id: number;
+        attributes: {
+          code: string;
+        };
       };
     };
     famille: {
