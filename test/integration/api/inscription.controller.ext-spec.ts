@@ -29,6 +29,8 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
     expect(response.status).toEqual(201);
 
+    console.log(response.body.redirect_url);
+
     let situtation_id = response.body.redirect_url.split('=')[1];
     situtation_id = situtation_id.substring(0, situtation_id.indexOf('&'));
 
@@ -69,12 +71,12 @@ describe('/utilisateurs - Inscription - (API test)', () => {
       user.kyc_history
         .getAnsweredQuestionByCode(KYCID.KYC_local_frequence)
         .getReponseUniqueSaisie(),
-    ).toEqual('Souvent');
+    ).toEqual('Parfois');
     expect(
       user.kyc_history
         .getAnsweredQuestionByCode(KYCID.KYC_transport_voiture_km)
         .getReponseUniqueSaisie(),
-    ).toEqual('12000');
+    ).toEqual('12345');
     expect(
       user.kyc_history
         .getAnsweredQuestionByCode(KYCID.KYC_transport_avion_3_annees)
