@@ -158,7 +158,7 @@ export class BilanCarboneUsecase {
       !!bilan_synthese.impact_consommation &&
       !!bilan_synthese.impact_logement &&
       !!bilan_synthese.impact_transport &&
-      utilisateur.source_inscription !== SourceInscription.web_ngc;
+      !utilisateur.estDeNGC();
 
     if (
       bilan_synthese.pourcentage_completion_totale >
@@ -169,7 +169,8 @@ export class BilanCarboneUsecase {
     }
 
     bilan_synthese.bilan_complet_dispo =
-      utilisateur.unlocked_features.isUnlocked(Feature.bilan_carbone_detail);
+      utilisateur.unlocked_features.isUnlocked(Feature.bilan_carbone_detail) ||
+      utilisateur.estDeNGC();
 
     const situation = this.computeSituation(utilisateur);
     const bilan_complet =

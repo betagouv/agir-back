@@ -206,6 +206,10 @@ export class Utilisateur extends UtilisateurData {
     }
   }
 
+  public estDeNGC() {
+    return this.source_inscription === SourceInscription.web_ngc;
+  }
+
   private static generateEmailToken?(): string {
     return crypto.randomUUID();
   }
