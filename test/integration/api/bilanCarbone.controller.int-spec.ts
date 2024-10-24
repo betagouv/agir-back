@@ -359,6 +359,486 @@ describe('/bilan (API test)', () => {
     });
   });
 
+  it('GET /utilisateur/id/bilans/last_v2 - get last bilan with proper data', async () => {
+    // GIVEN
+    const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_alimentation_regime,
+      question: `YOP`,
+      reponses: [
+        { code: 'vegetalien', label: 'Vegetalien', ngc_code: null },
+        { code: 'vegetarien', label: 'Vegetarien', ngc_code: null },
+        { code: 'peu_viande', label: 'Peu de viande', ngc_code: null },
+        { code: 'chaque_jour_viande', label: 'Tous les jours', ngc_code: null },
+      ],
+      type: TypeReponseQuestionKYC.choix_unique,
+    });
+
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          id: 'KYC_saison_frequence',
+          id_cms: 21,
+          question: `À quelle fréquence mangez-vous de saison ? `,
+          type: TypeReponseQuestionKYC.choix_unique,
+          is_NGC: true,
+          categorie: Categorie.mission,
+          points: 10,
+          reponses: [
+            { label: 'Souvent', code: 'souvent', ngc_code: '"souvent"' },
+          ],
+          reponses_possibles: [
+            { label: 'Souvent', code: 'souvent', ngc_code: '"souvent"' },
+            { label: 'Jamais', code: 'jamais', ngc_code: '"bof"' },
+            { label: 'Parfois', code: 'parfois', ngc_code: '"burp"' },
+          ],
+          tags: [],
+          universes: [],
+          ngc_key: 'alimentation . de saison . consommation',
+          image_url: '111',
+          short_question: 'short',
+          conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
+        },
+        {
+          id: 'KYC_alimentation_regime',
+          id_cms: 1,
+          question: `Votre regime`,
+          type: TypeReponseQuestionKYC.choix_unique,
+          is_NGC: false,
+          categorie: Categorie.mission,
+          points: 10,
+          reponses: [
+            { code: 'vegetalien', label: 'Vegetalien', ngc_code: null },
+          ],
+          reponses_possibles: [
+            { code: 'vegetalien', label: 'Vegetalien', ngc_code: null },
+            { code: 'vegetarien', label: 'Vegetarien', ngc_code: null },
+            { code: 'peu_viande', label: 'Peu de viande', ngc_code: null },
+            {
+              code: 'chaque_jour_viande',
+              label: 'Tous les jours',
+              ngc_code: null,
+            },
+          ],
+          tags: [],
+          universes: [],
+          ngc_key: null,
+          image_url: '111',
+          short_question: 'short',
+          conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.kYC, {
+      code: 'KYC_saison_frequence',
+      id_cms: 21,
+      question: `À quelle fréquence mangez-vous de saison ? `,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.mission,
+      points: 10,
+      reponses: [
+        { label: 'Souvent', code: 'souvent', ngc_code: '"souvent"' },
+        { label: 'Jamais', code: 'jamais', ngc_code: '"bof"' },
+        { label: 'Parfois', code: 'parfois', ngc_code: '"burp"' },
+      ],
+      tags: [],
+      universes: [],
+      ngc_key: 'alimentation . de saison . consommation',
+      image_url: '111',
+      short_question: 'short',
+      conditions: [],
+      unite: Unite.kg,
+      created_at: undefined,
+      is_ngc: true,
+      thematique: 'alimentation',
+      updated_at: undefined,
+      emoji: '🔥',
+    } as KYC);
+
+    const unlocked: UnlockedFeatures_v1 = {
+      version: 1,
+      unlocked_features: [Feature.bilan_carbone_detail],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      unlocked_features: unlocked,
+      kyc: kyc,
+    });
+
+    await TestUtil.create(DB.univers, {
+      id_cms: 1,
+      code: Univers.transport,
+      label: 'The Transport',
+      image_url: 'aaaa',
+    });
+    await TestUtil.create(DB.univers, {
+      id_cms: 2,
+      code: Univers.logement,
+      label: 'Logement',
+      image_url: 'bbbb',
+    });
+    await TestUtil.create(DB.univers, {
+      id_cms: 3,
+      code: Univers.consommation,
+      label: 'Consommation',
+      image_url: 'bbbb',
+    });
+    await TestUtil.create(DB.univers, {
+      id_cms: 4,
+      code: Univers.alimentation,
+      label: 'Alimentation',
+      image_url: 'bbbb',
+    });
+    await thematiqueRepository.loadUnivers();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateur/utilisateur-id/bilans/last_v2?force=true',
+    );
+
+    //THEN
+    expect(response.status).toBe(200);
+    expect(response.body.pourcentage_completion_totale).toEqual(21);
+    expect(response.body.liens_bilans_univers).toEqual([
+      {
+        id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+        image_url:
+          'https://res.cloudinary.com/dq023imd8/image/upload/v1728466903/Mobilite_df75aefd09.svg',
+        nombre_total_question: 0,
+        pourcentage_progression: null,
+        univers: 'transport',
+        univers_label: 'The Transport',
+        temps_minutes: 5,
+      },
+      {
+        id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_alimentation',
+        image_url:
+          'https://res.cloudinary.com/dq023imd8/image/upload/v1728466523/cuisine_da54797693.svg',
+        nombre_total_question: 3,
+        pourcentage_progression: 67,
+        univers: 'alimentation',
+        univers_label: 'Alimentation',
+        temps_minutes: 3,
+      },
+      {
+        id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_consommation',
+        image_url:
+          'https://res.cloudinary.com/dq023imd8/image/upload/v1728468852/conso_7522b1950d.svg',
+        nombre_total_question: 6,
+        pourcentage_progression: 0,
+        univers: 'consommation',
+        univers_label: 'Consommation',
+        temps_minutes: 10,
+      },
+      {
+        id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_logement',
+        image_url:
+          'https://res.cloudinary.com/dq023imd8/image/upload/v1728468978/maison_80242d91f3.svg',
+        nombre_total_question: 3,
+        pourcentage_progression: 0,
+        univers: 'logement',
+        univers_label: 'Logement',
+        temps_minutes: 9,
+      },
+    ]);
+    expect(response.body.bilan_approximatif).toEqual({
+      impact_transport: null,
+      impact_alimentation: 'faible',
+      impact_logement: null,
+      impact_consommation: null,
+    });
+    expect(response.body.bilan_complet).toEqual({
+      impact_kg_annee: 9011.638873282402,
+      top_3: [
+        {
+          label: 'Voiture',
+          pourcentage: 17,
+          pourcentage_categorie: 80,
+          impact_kg_annee: 1568.5480530854577,
+          emoji: '🚘️',
+        },
+        {
+          label: 'Viandes',
+          pourcentage: 13,
+          pourcentage_categorie: 53,
+          impact_kg_annee: 1207.648,
+          emoji: '🥩',
+        },
+        {
+          label: 'Construction',
+          pourcentage: 11,
+          pourcentage_categorie: 45,
+          impact_kg_annee: 968.7934897866139,
+          emoji: '🧱',
+        },
+      ],
+      impact_univers: [
+        {
+          pourcentage: 25,
+          univers: 'alimentation',
+          univers_label: 'Alimentation',
+          impact_kg_annee: 2292.154417549558,
+          details: [
+            {
+              label: 'Viandes',
+              pourcentage: 13,
+              pourcentage_categorie: 53,
+              impact_kg_annee: 1207.648,
+              emoji: '🥩',
+            },
+            {
+              label: 'Fruits & Légumes',
+              pourcentage: 3,
+              pourcentage_categorie: 11,
+              impact_kg_annee: 252.2,
+              emoji: '🥦',
+            },
+            {
+              label: 'Boissons',
+              pourcentage: 3,
+              pourcentage_categorie: 10,
+              impact_kg_annee: 225.37310000000002,
+              emoji: '🥤',
+            },
+            {
+              label: 'Poissons',
+              pourcentage: 1,
+              pourcentage_categorie: 5,
+              impact_kg_annee: 125.84,
+              emoji: '🐟',
+            },
+            {
+              label: 'Petit déjeuner',
+              pourcentage: 1,
+              pourcentage_categorie: 5,
+              impact_kg_annee: 113.15,
+              emoji: '🥐',
+            },
+          ],
+          emoji: '🍴',
+        },
+        {
+          pourcentage: 24,
+          univers: 'logement',
+          univers_label: 'Logement',
+          impact_kg_annee: 2160.200464307907,
+          details: [
+            {
+              label: 'Construction',
+              pourcentage: 11,
+              pourcentage_categorie: 45,
+              impact_kg_annee: 968.7934897866139,
+              emoji: '🧱',
+            },
+            {
+              label: 'Chauffage',
+              pourcentage: 9,
+              pourcentage_categorie: 38,
+              impact_kg_annee: 822.4772605840475,
+              emoji: '🔥',
+            },
+            {
+              label: 'Vacances',
+              pourcentage: 2,
+              pourcentage_categorie: 7,
+              impact_kg_annee: 152.08498652513995,
+              emoji: '🏖',
+            },
+            {
+              label: 'Electricité',
+              pourcentage: 1,
+              pourcentage_categorie: 6,
+              impact_kg_annee: 132.21789018483327,
+              emoji: '⚡',
+            },
+            {
+              label: 'Climatisation',
+              pourcentage: 1,
+              pourcentage_categorie: 3,
+              impact_kg_annee: 63.176259272727265,
+              emoji: '❄️',
+            },
+            {
+              label: 'Extérieur',
+              pourcentage: 0,
+              pourcentage_categorie: 1,
+              impact_kg_annee: 21.45057795454545,
+              emoji: '☘️',
+            },
+            {
+              label: 'Piscine',
+              pourcentage: 0,
+              pourcentage_categorie: 0,
+              impact_kg_annee: 0,
+              emoji: '🏊',
+            },
+          ],
+          emoji: '🏠',
+        },
+        {
+          pourcentage: 22,
+          univers: 'transport',
+          univers_label: 'The Transport',
+          impact_kg_annee: 1958.4824122240736,
+          details: [
+            {
+              label: 'Voiture',
+              pourcentage: 17,
+              pourcentage_categorie: 80,
+              impact_kg_annee: 1568.5480530854577,
+              emoji: '🚘️',
+            },
+            {
+              label: 'Avion',
+              pourcentage: 3,
+              pourcentage_categorie: 16,
+              impact_kg_annee: 312.2395338291978,
+              emoji: '✈️',
+            },
+            {
+              label: 'Transports en commun',
+              pourcentage: 0,
+              pourcentage_categorie: 2,
+              impact_kg_annee: 33.7904763482199,
+              emoji: '🚌',
+            },
+            {
+              label: '2 roues',
+              pourcentage: 0,
+              pourcentage_categorie: 1,
+              impact_kg_annee: 23.196418035061875,
+              emoji: '🛵',
+            },
+            {
+              label: 'Ferry',
+              pourcentage: 0,
+              pourcentage_categorie: 1,
+              impact_kg_annee: 11.88805068661542,
+              emoji: '⛴',
+            },
+            {
+              label: 'Train',
+              pourcentage: 0,
+              pourcentage_categorie: 0,
+              impact_kg_annee: 8.8198802395209,
+              emoji: '🚋',
+            },
+            {
+              label: 'Mobilité douce',
+              pourcentage: 0,
+              pourcentage_categorie: 0,
+              impact_kg_annee: 0,
+              emoji: '🚲',
+            },
+            {
+              label: 'Vacances',
+              pourcentage: 0,
+              pourcentage_categorie: 0,
+              impact_kg_annee: 0,
+              emoji: '🏖️',
+            },
+          ],
+          emoji: '🚦',
+        },
+        {
+          pourcentage: 16,
+          univers: 'services_societaux',
+          univers_label: 'Services sociétaux',
+          impact_kg_annee: 1450.9052263863641,
+          details: [
+            {
+              label: 'Services publics',
+              pourcentage: 14,
+              pourcentage_categorie: 87,
+              impact_kg_annee: 1259.4428717769142,
+              emoji: '🏛',
+            },
+            {
+              label: 'Services marchands',
+              pourcentage: 2,
+              pourcentage_categorie: 13,
+              impact_kg_annee: 191.4623546094499,
+              emoji: '✉️',
+            },
+          ],
+          emoji: '🏛️',
+        },
+        {
+          pourcentage: 13,
+          univers: 'consommation',
+          univers_label: 'Consommation',
+          impact_kg_annee: 1149.8963528144989,
+          details: [
+            {
+              label: 'Textile',
+              pourcentage: 5,
+              pourcentage_categorie: 42,
+              impact_kg_annee: 486.13999999999993,
+              emoji: '👕',
+            },
+            {
+              label: 'Ameublement',
+              pourcentage: 2,
+              pourcentage_categorie: 12,
+              impact_kg_annee: 139.7448484848485,
+              emoji: '🛋️',
+            },
+            {
+              label: 'Autres produits',
+              pourcentage: 1,
+              pourcentage_categorie: 11,
+              impact_kg_annee: 123.01123396773932,
+              emoji: '📦',
+            },
+            {
+              label: 'Numérique',
+              pourcentage: 1,
+              pourcentage_categorie: 10,
+              impact_kg_annee: 120.076661030303,
+              emoji: '📺',
+            },
+            {
+              label: 'Loisirs',
+              pourcentage: 1,
+              pourcentage_categorie: 10,
+              impact_kg_annee: 118.99921707433923,
+              emoji: '🎭',
+            },
+            {
+              label: 'Electroménager',
+              pourcentage: 1,
+              pourcentage_categorie: 7,
+              impact_kg_annee: 75.44090909090907,
+              emoji: '🔌',
+            },
+            {
+              label: 'Animaux',
+              pourcentage: 1,
+              pourcentage_categorie: 5,
+              impact_kg_annee: 53.11748316635982,
+              emoji: '🐶',
+            },
+            {
+              label: 'Tabac',
+              pourcentage: 0,
+              pourcentage_categorie: 1,
+              impact_kg_annee: 7.28,
+              emoji: '🚬',
+            },
+          ],
+          emoji: '📦',
+        },
+      ],
+    });
+  });
+
   it('GET /utilisateur/id/bilans/last - presence du bilan de synthese et mini bilan', async () => {
     // GIVEN
     const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
