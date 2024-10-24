@@ -437,6 +437,7 @@ export class CMSUsecase {
     await this.thematiqueRepository.upsertThematique(
       cmsWebhookAPI.entry.id,
       cmsWebhookAPI.entry.titre,
+      cmsWebhookAPI.entry.code,
     );
   }
 
@@ -580,14 +581,10 @@ export class CMSUsecase {
       difficulty: hook.entry.difficulty ? hook.entry.difficulty : 1,
       points: hook.entry.points ? hook.entry.points : 0,
       thematique_principale: hook.entry.thematique_gamification
-        ? ThematiqueRepository.getThematiqueByCmsId(
-            hook.entry.thematique_gamification.id,
-          )
+        ? Thematique[hook.entry.thematique_gamification.code]
         : Thematique.climat,
       thematiques: hook.entry.thematiques
-        ? hook.entry.thematiques.map((elem) =>
-            ThematiqueRepository.getThematiqueByCmsId(elem.id),
-          )
+        ? hook.entry.thematiques.map((elem) => Thematique[elem.code])
         : [],
       score: 0,
       tags_rubriques: [],
@@ -620,9 +617,7 @@ export class CMSUsecase {
       titre: entry.titre,
       codes_postaux: CMSUsecase.split(entry.codes_postaux),
       thematiques: entry.thematiques
-        ? entry.thematiques.map((elem) =>
-            ThematiqueRepository.getThematiqueByCmsId(elem.id),
-          )
+        ? entry.thematiques.map((elem) => Thematique[elem.code])
         : [],
       contenu: entry.description,
       is_simulateur: entry.is_simulation ? true : false,
@@ -644,7 +639,7 @@ export class CMSUsecase {
       content_id: entry.id.toString(),
       titre: entry.titre,
       thematique: entry.thematique
-        ? ThematiqueRepository.getThematiqueByCmsId(entry.thematique.id)
+        ? Thematique[entry.thematique.code]
         : Thematique.climat,
       astuces: entry.astuces,
       points: entry.points,
@@ -684,7 +679,7 @@ export class CMSUsecase {
       unite: this.extractUnite(entry.unite),
       question: entry.question,
       thematique: entry.thematique
-        ? ThematiqueRepository.getThematiqueByCmsId(entry.thematique.id)
+        ? Thematique[entry.thematique.code]
         : Thematique.climat,
       reponses: entry.reponses
         ? entry.reponses.map((r) => ({
@@ -802,14 +797,14 @@ export class CMSUsecase {
       difficulty: entry.attributes.difficulty ? entry.attributes.difficulty : 1,
       points: entry.attributes.points ? entry.attributes.points : 0,
       thematique_principale: entry.attributes.thematique_gamification.data
-        ? ThematiqueRepository.getThematiqueByCmsId(
-            entry.attributes.thematique_gamification.data.id,
-          )
+        ? Thematique[
+            entry.attributes.thematique_gamification.data.attributes.code
+          ]
         : Thematique.climat,
       thematiques:
         entry.attributes.thematiques.data.length > 0
-          ? entry.attributes.thematiques.data.map((elem) =>
-              ThematiqueRepository.getThematiqueByCmsId(elem.id),
+          ? entry.attributes.thematiques.data.map(
+              (elem) => Thematique[elem.attributes.code],
             )
           : [Thematique.climat],
       score: 0,
@@ -844,8 +839,8 @@ export class CMSUsecase {
       contenu: entry.attributes.description,
       thematiques:
         entry.attributes.thematiques.data.length > 0
-          ? entry.attributes.thematiques.data.map((elem) =>
-              ThematiqueRepository.getThematiqueByCmsId(elem.id),
+          ? entry.attributes.thematiques.data.map(
+              (elem) => Thematique[elem.attributes.code],
             )
           : [Thematique.climat],
       is_simulateur: entry.attributes.is_simulation ? true : false,
@@ -912,9 +907,7 @@ export class CMSUsecase {
       points: entry.attributes.points,
       impact_kg_co2: entry.attributes.impact_kg_co2,
       thematique: entry.attributes.thematique.data
-        ? ThematiqueRepository.getThematiqueByCmsId(
-            entry.attributes.thematique.data.id,
-          )
+        ? Thematique[entry.attributes.thematique.data.attributes.code]
         : Thematique.climat,
       tags: entry.attributes.tags.data.map(
         (elem) =>
@@ -967,9 +960,7 @@ export class CMSUsecase {
           }))
         : [],
       thematique: entry.attributes.thematique.data
-        ? ThematiqueRepository.getThematiqueByCmsId(
-            entry.attributes.thematique.data.id,
-          )
+        ? Thematique[entry.attributes.thematique.data.attributes.code]
         : Thematique.climat,
       tags: entry.attributes.tags.data.map(
         (elem) =>

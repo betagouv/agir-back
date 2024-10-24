@@ -283,6 +283,7 @@ model BilanCarboneStatistique {
 model Thematique {
   id         String   @id
   id_cms     Int      @unique
+  code       String   @default("")
   titre      String
   created_at DateTime @default(now()) @db.Timestamptz(3)
 }

@@ -72,8 +72,16 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
   });
   it('GET /utilisateurs/id/bibliotheque - renvoie un article  lu', async () => {
     // GIVEN
-    await thematiqueRepository.upsertThematique(1, 'Alimentation !!');
-    await thematiqueRepository.upsertThematique(2, 'Climat !!');
+    await thematiqueRepository.upsertThematique(
+      1,
+      'Alimentation !!',
+      Thematique.alimentation,
+    );
+    await thematiqueRepository.upsertThematique(
+      2,
+      'Climat !!',
+      Thematique.climat,
+    );
     await thematiqueRepository.loadThematiques();
     await TestUtil.create(DB.utilisateur, {
       history: {
@@ -131,9 +139,21 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
   });
   it('GET /utilisateurs/id/bibliotheque - renvoie les articles de bonne thematique', async () => {
     // GIVEN
-    await thematiqueRepository.upsertThematique(1, 'Alimentation !!');
-    await thematiqueRepository.upsertThematique(2, 'Climat !!');
-    await thematiqueRepository.upsertThematique(5, 'Logement !!');
+    await thematiqueRepository.upsertThematique(
+      1,
+      'Alimentation !!',
+      Thematique.alimentation,
+    );
+    await thematiqueRepository.upsertThematique(
+      2,
+      'Climat !!',
+      Thematique.climat,
+    );
+    await thematiqueRepository.upsertThematique(
+      5,
+      'Logement !!',
+      Thematique.logement,
+    );
     await thematiqueRepository.loadThematiques();
     await TestUtil.create(DB.utilisateur, {
       history: {

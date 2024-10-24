@@ -90,8 +90,16 @@ describe('Aide (API test)', () => {
   });
   it('GET /utilisateurs/:utilisateurId/aides', async () => {
     // GIVEN
-    await thematiqueRepository.upsertThematique(2, 'Climat !!');
-    await thematiqueRepository.upsertThematique(5, 'Logement !!');
+    await thematiqueRepository.upsertThematique(
+      2,
+      'Climat !!',
+      Thematique.climat,
+    );
+    await thematiqueRepository.upsertThematique(
+      5,
+      'Logement !!',
+      Thematique.logement,
+    );
     await thematiqueRepository.loadThematiques();
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide);

@@ -220,10 +220,14 @@ export class TestUtil {
         id: 123,
         titre: 'titre',
         sousTitre: 'soustitre 222',
-        thematique_principale: { id: 1, titre: 'Alimentation' },
+        thematique_principale: {
+          id: 1,
+          titre: 'Alimentation',
+          code: Thematique.alimentation,
+        },
         thematiques: [
-          { id: 1, titre: 'Alimentation' },
-          { id: 2, titre: 'Climat' },
+          { id: 1, titre: 'Alimentation', code: Thematique.alimentation },
+          { id: 2, titre: 'Climat', code: Thematique.climat },
         ],
         rubriques: [
           { id: 1, titre: 'A' },
@@ -557,6 +561,7 @@ export class TestUtil {
       id: 'thematique-id',
       id_cms: 1,
       titre: 'titre',
+      code: Thematique.alimentation,
       ...override,
     };
   }
