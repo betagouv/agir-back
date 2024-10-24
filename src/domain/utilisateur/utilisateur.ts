@@ -206,7 +206,7 @@ export class Utilisateur extends UtilisateurData {
     }
   }
 
-  public estDeNGC() {
+  public vientDeNGC?() {
     return this.source_inscription === SourceInscription.web_ngc;
   }
 
