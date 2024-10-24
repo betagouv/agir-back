@@ -23,7 +23,7 @@ export class ImportNGCUsecase {
     }
     return {
       id_situtation: id_situtation,
-      bilan_tonnes: Math.round(bilan.bilan_carbone_annuel / 1000),
+      bilan_tonnes: Math.round(bilan.bilan_carbone_annuel / 100) / 10,
     };
   }
 }

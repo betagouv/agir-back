@@ -1101,7 +1101,7 @@ describe('/bilan (API test)', () => {
     expect(response.body.redirect_url).toEqual(
       `${App.getBaseURLFront()}/creation-compte/nos-gestes-climat?situationId=${
         situationDB[0].id
-      }&bilan_tonnes=10`,
+      }&bilan_tonnes=9.6`,
     );
   });
   it('POST /bilan/importFromNGC - creates new situation alors que erreur de contenu, 8 tonnes par défaut ^^', async () => {
