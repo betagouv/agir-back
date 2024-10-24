@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { BilanCarboneStatistiqueRepository } from '../infrastructure/repository/bilanCarboneStatistique.repository';
-import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
+import {
+  Scope,
+  SourceInscription,
+  Utilisateur,
+} from '../domain/utilisateur/utilisateur';
 import {
   BilanCarbone,
   BilanCarboneSynthese,
@@ -153,7 +157,8 @@ export class BilanCarboneUsecase {
       !!bilan_synthese.impact_alimentation &&
       !!bilan_synthese.impact_consommation &&
       !!bilan_synthese.impact_logement &&
-      !!bilan_synthese.impact_transport;
+      !!bilan_synthese.impact_transport &&
+      utilisateur.source_inscription !== SourceInscription.web_ngc;
 
     if (
       bilan_synthese.pourcentage_completion_totale >
