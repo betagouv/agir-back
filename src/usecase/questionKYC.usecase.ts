@@ -64,7 +64,7 @@ export class QuestionKYCUsecase {
       KYCMosaicID.MOSAIC_EXTERIEUR,
     ],
     ENCHAINEMENT_KYC_bilan_consommation: [
-      KYCID.KYC_consommation_type_consommateur,
+      KYCID.KYC_consommation_type_consommateur, // manque quand import NGC Full
       KYCMosaicID.MOSAIC_LOGEMENT_VACANCES,
       KYCID.KYC_consommation_relation_objets,
       KYCMosaicID.MOSAIC_ELECTROMENAGER,
@@ -74,7 +74,7 @@ export class QuestionKYCUsecase {
       KYCMosaicID.MOSAIC_VETEMENTS,
     ],
     ENCHAINEMENT_KYC_bilan_alimentation: [
-      KYCID.KYC_alimentation_regime,
+      KYCID.KYC_alimentation_regime, // manque quand import NGC Full
       KYCID.KYC_local_frequence,
       KYCID.KYC_saison_frequence,
       KYCID.KYC_alimentation_litres_alcool,
