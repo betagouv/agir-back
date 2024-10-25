@@ -58,7 +58,7 @@ export class QuestionKYCUsecase {
       KYCID.KYC_superficie,
       KYCID.KYC_menage,
       KYCID.KYC_type_logement,
-      KYCID.KYC006,
+      KYCID.KYC_logement_age,
       KYCMosaicID.MOSAIC_RENO,
       KYCID.KYC_photovoltaiques,
       KYCMosaicID.MOSAIC_EXTERIEUR,

@@ -579,6 +579,88 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_menage).reponses,
     ).toEqual([{ code: null, label: '5', ngc_code: null }]);
   });
+
+  it('PATCH /utilisateurs/id/logement - update logement datas et synchro KYC logement age', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      is_ngc: true,
+      code: KYCID.KYC_logement_age,
+      type: TypeReponseQuestionKYC.entier,
+      categorie: Categorie.test,
+      ngc_key: 'a . b .c',
+      points: 10,
+      question: 'Age maison',
+      reponses: [],
+    });
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      plus_de_15_ans: false,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    // KYCs
+    expect(
+      dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_logement_age)
+        .reponses,
+    ).toEqual([
+      {
+        code: null,
+        label: '5',
+        ngc_code: null,
+      },
+    ]);
+  });
+  it('PATCH /utilisateurs/id/logement - update logement datas et synchro KYC logement age supp', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      is_ngc: true,
+      code: KYCID.KYC_logement_age,
+      type: TypeReponseQuestionKYC.entier,
+      categorie: Categorie.test,
+      ngc_key: 'a . b .c',
+      points: 10,
+      question: 'Age maison',
+      reponses: [],
+    });
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      plus_de_15_ans: true,
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    // KYCs
+    expect(
+      dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_logement_age)
+        .reponses,
+    ).toEqual([
+      {
+        code: null,
+        label: '20',
+        ngc_code: null,
+      },
+    ]);
+  });
+
   it('PATCH /utilisateurs/id/logement - maj code postal recalcul le flag de couverture d aides', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { couverture_aides_ok: false });

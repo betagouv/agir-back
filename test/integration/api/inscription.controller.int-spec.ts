@@ -8,6 +8,8 @@ import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Superficie } from '../../../src/domain/logement/logement';
 import _situationNGCTest from './situationNGCtest.json';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
+import { Thematique } from '../../../src/domain/contenu/thematique';
+import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 
 describe('/utilisateurs - Inscription - (API test)', () => {
   const OLD_ENV = process.env;
@@ -710,5 +712,63 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     const user = await utilisateurRepository.findByEmail('w@w.com');
 
     expect(user.kyc_history.answered_questions).toHaveLength(0);
+  });
+
+  it(`POST /utilisateurs_v2 - integration situation NGC touches les mosaics`, async () => {
+    // GIVEN
+    process.env.NGC_API_KEY = '12345';
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      categorie: Categorie.recommandation,
+      code: KYCID.KYC_chauffage_fioul,
+      is_ngc: true,
+      points: 10,
+      question: 'The question !',
+      tags: [],
+      universes: [],
+      thematique: Thematique.climat,
+      type: TypeReponseQuestionKYC.choix_unique,
+      ngc_key: 'logement . chauffage . fioul . présent',
+      reponses: [
+        { label: 'OUI', code: 'oui', ngc_code: '_oui' },
+        { label: 'NON', code: 'non', ngc_code: '_non' },
+        { label: 'Ne sais pas', code: 'ne_sais_pas' },
+      ],
+    });
+
+    // WHEN
+    const response_post_situation = await TestUtil.getServer()
+      .post('/bilan/importFromNGC')
+      .set('apikey', `12345`)
+      .send({
+        situation: {
+          'logement . chauffage . fioul . présent': '_oui',
+        },
+      });
+
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
+    );
+
+    const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
+      mot_de_passe: '#1234567890HAHAa',
+      email: 'w@w.com',
+      source_inscription: 'mobile',
+      situation_ngc_id: situtation_id,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    const user = await utilisateurRepository.findByEmail('w@w.com');
+
+    console.log(user.kyc_history);
+    expect(
+      user.kyc_history.isQuestionAnsweredByCode(KYCID.KYC_chauffage_fioul),
+    ).toEqual(true);
+    expect(user.kyc_history.answered_mosaics).toHaveLength(2);
+    expect(
+      user.kyc_history.isMosaicAnswered(KYCMosaicID.MOSAIC_CHAUFFAGE),
+    ).toEqual(true);
   });
 });

@@ -73,18 +73,13 @@ export class InscriptionUsecase {
           KYCID.KYC_bilan,
           BooleanKYC.oui,
         );
-        const matching =
-          utilisateurToCreate.parcours_todo.findTodoKYCOrMosaicElementByQuestionID(
-            KYCID.KYC_bilan,
-          );
-        if (matching && !matching.element.isDone()) {
-          matching.todo.makeProgress(matching.element);
-        }
-
         const updated_keys = utilisateurToCreate.kyc_history.injectSituationNGC(
           situation.situation as any,
           utilisateurToCreate,
         );
+
+        utilisateurToCreate.kyc_history.flagMosaicsAsAnsweredWhenAtLeastOneQuestionAnswered();
+
         if (updated_keys.length > 0) {
           console.log(
             `Updated NGC kycs for ${

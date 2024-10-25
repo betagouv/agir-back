@@ -4,7 +4,6 @@ import {
   LogementAPI,
   UtilisateurUpdateProfileAPI,
 } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
-import { SituationNGCRepository } from '../infrastructure/repository/bilan.repository';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { Injectable } from '@nestjs/common';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
