@@ -35,6 +35,78 @@ export class UniversUsecase {
     return this.personnalisator.personnaliser(tuiles, utilisateur);
   }
 
+  async getThematiquesRecommandees(
+    utilisateurId: string,
+  ): Promise<TuileThematique[]> {
+    // FIXME : refacto , code tout moche en dessous
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.missions, Scope.logement],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const liste_thematiques_reco_result: TuileThematique[] = [];
+
+    const liste_univers = ThematiqueRepository.getAllUnivers();
+    console.log(liste_univers);
+
+    const listMissionDefs = await this.missionRepository.list();
+
+    for (const code_univers of liste_univers) {
+      const listTuilesThem =
+        ThematiqueRepository.getAllTuilesThematique(code_univers);
+
+      const result: TuileThematique[] = [];
+
+      for (const tuile of listTuilesThem) {
+        const existing_mission =
+          utilisateur.missions.getMissionByThematiqueUnivers(tuile.type);
+
+        if (existing_mission && existing_mission.est_visible) {
+          if (!existing_mission.isDone()) {
+            console.log('PUSH HISTORY');
+            result.push(this.completeTuileWithMission(existing_mission, tuile));
+          }
+        } else {
+          for (const mission_def of listMissionDefs) {
+            console.log(mission_def);
+            if (
+              (mission_def.est_visible || utilisateur.isAdmin()) &&
+              mission_def.thematique_univers === tuile.type &&
+              ThematiqueRepository.getUniversParent(
+                mission_def.thematique_univers,
+              ) === code_univers
+            ) {
+              const ready_mission_def =
+                await this.missionUsecase.completeMissionDef(
+                  mission_def,
+                  utilisateur,
+                );
+
+              const new_mission =
+                utilisateur.missions.upsertNewMission(ready_mission_def);
+
+              console.log('PUSH CATALOGUE');
+              result.push(this.completeTuileWithMission(new_mission, tuile));
+            }
+          }
+        }
+      }
+      const final_result = this.ordonneTuilesThematiques(result);
+      if (final_result.length > 0) {
+        liste_thematiques_reco_result.push(final_result[0]);
+      }
+    }
+
+    console.log(liste_thematiques_reco_result);
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
+    return this.personnalisator.personnaliser(
+      liste_thematiques_reco_result,
+      utilisateur,
+    );
+  }
+
   async getThematiquesOfUnivers(
     utilisateurId: string,
     univers: string,
