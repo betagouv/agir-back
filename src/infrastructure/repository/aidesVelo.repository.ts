@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
-// FIXME: use the @betagouv/publicodes-aides-velo package when published
 import {
   AidesVeloEngine,
   Questions,
   AideRuleNames,
   Aide,
-} from '../../../../publicodes-aides-velo/dist/src/index.js';
+} from '@betagouv/aides-velo';
+import { Pick } from '@prisma/client/runtime/library.js';
+
 import { AideVelo, AidesVeloParType } from '../../domain/aides/aideVelo';
 import { App } from '../../../src/domain/app';
 
@@ -20,85 +21,98 @@ const AIDES_TO_EXCLUDE: AideRuleNames[] = [
   'aides . prime à la conversion . surprime ZFE',
 ];
 
+/**
+ * Required parameters to get the summary of the aids for the different types
+ * of bikes.
+ *
+ * @note This is a subset of the {@link Questions} type.
+ */
+export type SummaryVelosParams = Required<
+  Pick<
+    Questions,
+    | 'localisation . code insee'
+    | 'vélo . prix'
+    | 'aides . pays de la loire . abonné TER'
+    | 'foyer . personnes'
+    | 'revenu fiscal de référence par part . revenu de référence'
+    | 'revenu fiscal de référence par part . nombre de parts'
+  >
+>;
+
 @Injectable()
 export class AidesVeloRepository {
-  async getSummaryVelos({
-    code_insee,
-    revenu_fiscal_par_part,
-    prix_velo,
-    abonnement_ter_loire = false,
-  }: {
-    // NOTE: shouldn't we use Questions type here?
-    code_insee: string;
-    revenu_fiscal_par_part: number;
-    prix_velo: number;
-    // FIXME: should be refactor to be dynamically retrieved from the rules or
-    // to be a unique rule: 'abonné TER' used in all the rules needing it.
-    abonnement_ter_loire?: boolean;
-  }): Promise<AidesVeloParType> {
-    // NOTE: should we create a new engine for each request?
-    const engine = new AidesVeloEngine();
-    const commune = AidesVeloEngine.getCommuneByInseeCode(code_insee);
+  private engine: AidesVeloEngine;
+
+  constructor() {
+    this.engine = new AidesVeloEngine();
+  }
+
+  async getSummaryVelos(params: SummaryVelosParams): Promise<AidesVeloParType> {
+    const commune = AidesVeloEngine.getCommuneByInseeCode(
+      params['localisation . code insee'],
+    );
+
+    // NOTE: what should we do if the commune is not found? Or more generally
+    // if there is an error with the computation?
+    if (!commune) {
+      // throw new Error(
+      //   `Commune not found for code insee: ${params['localisation . code insee']}`,
+      // );
+    }
 
     const situationBase: Questions = {
+      ...params,
       'localisation . epci': `${commune?.epci}`,
       'localisation . région': `${commune?.region}`,
       'localisation . code insee': `${commune?.code}`,
       'localisation . département': `${commune?.departement}`,
-      'revenu fiscal de référence': revenu_fiscal_par_part,
-      'vélo . prix': prix_velo,
-      // TODO: should be refactor to be dynamically retrieved from the rules or
-      // to be a unique rule: 'abonné TER' used in all the rules needing it.
-      'aides . pays de la loire . abonné TER': abonnement_ter_loire,
     };
 
-    return getAidesVeloTousTypes(situationBase, engine);
-  }
-}
-
-function getAidesVeloTousTypes(
-  situationBase: Questions,
-  engine: AidesVeloEngine,
-): AidesVeloParType {
-  const veloTypes: AidesVeloParType = {
-    'mécanique simple': [],
-    électrique: [],
-    cargo: [],
-    'cargo électrique': [],
-    pliant: [],
-    'pliant électrique': [],
-    motorisation: [],
-    adapté: [],
-  };
-
-  for (const key of Object.keys(veloTypes)) {
-    situationBase['vélo . type'] = key as keyof typeof veloTypes;
-    veloTypes[key] = engine
-      .setInputs(situationBase)
-      .computeAides()
-      .filter(({ id }) => !AIDES_TO_EXCLUDE.includes(id))
-      .map(
-        (aide: Aide) => ({
-          libelle: aide.title,
-          montant: aide.amount,
-          // NOTE: this is legacy behavior, the plafond is the same as the
-          // amount we should consider removing this field or implementing it
-          // correctly.
-          // NOTE: after checking, it seems that the plafond is only used for
-          // the aides retrofits repository, they shouldn't share the same type
-          // or it should be refactored to have a generic type.
-          plafond: aide.amount,
-          description: aide.description,
-          lien: aide.url,
-          collectivite: aide.collectivity,
-          logo: App.getAideVeloMiniaturesURL() + aide.logo,
-        }),
-        // HACK: limits of TS inference, without this, there is no error when
-        // returning an array of `Aide` instead of `AideVelo`.
-      ) as AideVelo[];
+    return this.getAidesVeloTousTypes(situationBase);
   }
 
-  return veloTypes;
+  private getAidesVeloTousTypes(situationBase: Questions): AidesVeloParType {
+    const veloTypes: AidesVeloParType = {
+      'mécanique simple': [],
+      électrique: [],
+      cargo: [],
+      'cargo électrique': [],
+      pliant: [],
+      'pliant électrique': [],
+      motorisation: [],
+      adapté: [],
+    };
+
+    for (const key of Object.keys(veloTypes)) {
+      situationBase['vélo . type'] = key as keyof typeof veloTypes;
+      veloTypes[key] = this.engine
+        .shallowCopy()
+        .setInputs(situationBase)
+        .computeAides()
+        .filter(({ id }) => !AIDES_TO_EXCLUDE.includes(id))
+        .map(
+          (aide: Aide) => ({
+            libelle: aide.title,
+            montant: aide.amount,
+            // NOTE: this is legacy behavior, the plafond is the same as the
+            // amount we should consider removing this field or implementing it
+            // correctly.
+            // NOTE: after checking, it seems that the plafond is only used for
+            // the aides retrofits repository, they shouldn't share the same type
+            // or it should be refactored to have a generic type.
+            plafond: aide.amount,
+            description: aide.description,
+            lien: aide.url,
+            collectivite: aide.collectivity,
+            logo: App.getAideVeloMiniaturesURL() + aide.logo,
+          }),
+          // HACK: limits of TS inference, without this, there is no error when
+          // returning an array of `Aide` instead of `AideVelo`.
+        ) as AideVelo[];
+    }
+
+    return veloTypes;
+  }
 }
 
 // function getAidesVeloParType(

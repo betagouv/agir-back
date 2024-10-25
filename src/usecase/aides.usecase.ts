@@ -117,10 +117,12 @@ export class AidesUsecase {
     );
 
     return this.aidesVeloRepository.getSummaryVelos({
-      code_insee,
-      revenu_fiscal_par_part: RFR / PARTS,
-      prix_velo,
-      abonnement_ter_loire: ABONNEMENT,
+      'localisation . code insee': code_insee,
+      'vélo . prix': prix_velo,
+      'aides . pays de la loire . abonné TER': ABONNEMENT,
+      'foyer . personnes': utilisateur.getNombrePersonnesDansLogement(),
+      'revenu fiscal de référence par part . revenu de référence': RFR,
+      'revenu fiscal de référence par part . nombre de parts': PARTS,
     });
   }
 }

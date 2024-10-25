@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import Publicodes from 'publicodes';
+import { Commune } from '@betagouv/aides-velo';
+
 import rulesRetrofit from '../data/aidesRetrofit.json';
 import localisations from '../../infrastructure/repository/commune/communes.json';
-
 import { AideVelo } from '../../domain/aides/aideVelo';
-// FIXME: use the @betagouv/publicodes-aides-velo package when published
-import { Commune } from '../../../../publicodes-aides-velo/dist/src';
 
 @Injectable()
 export class AidesRetrofitRepository {

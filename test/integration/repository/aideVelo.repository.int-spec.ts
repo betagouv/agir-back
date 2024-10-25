@@ -1,5 +1,8 @@
 import { TestUtil } from '../../TestUtil';
-import { AidesVeloRepository } from '../../../src/infrastructure/repository/aidesVelo.repository';
+import {
+  AidesVeloRepository,
+  SummaryVelosParams,
+} from '../../../src/infrastructure/repository/aidesVelo.repository';
 import {
   AideVelo,
   AidesVeloParType,
@@ -21,13 +24,18 @@ describe('AideVeloRepository', () => {
     await TestUtil.appclose();
   });
 
+  const baseParams: SummaryVelosParams = {
+    'localisation . code insee': '91477', // Palaiseau
+    'revenu fiscal de référence par part . revenu de référence': 800,
+    'revenu fiscal de référence par part . nombre de parts': 1,
+    'vélo . prix': 500,
+    'foyer . personnes': 1,
+    'aides . pays de la loire . abonné TER': false,
+  };
+
   it('doit correctement calculer les aides pour une situation de base', async () => {
     // WHEN
-    const result = await aidesVeloRepository.getSummaryVelos({
-      code_insee: '91477', // Palaiseau
-      revenu_fiscal_par_part: 10000,
-      prix_velo: 500,
-    });
+    const result = await aidesVeloRepository.getSummaryVelos(baseParams);
 
     // THEN
     expect(result['motorisation'][0].libelle).toBe('Île-de-France Mobilités');
@@ -43,10 +51,11 @@ describe('AideVeloRepository', () => {
   it("doit retourner le bon montant de l'aide avec un abonnement TER à Anger ", async () => {
     // WHEN
     const result = await aidesVeloRepository.getSummaryVelos({
-      code_insee: '49007', // Angers
-      revenu_fiscal_par_part: 5000,
-      prix_velo: 100,
-      abonnement_ter_loire: true,
+      ...baseParams,
+      'localisation . code insee': '49007', // Angers
+      'aides . pays de la loire . abonné TER': true,
+      'revenu fiscal de référence par part . revenu de référence': 5000,
+      'vélo . prix': 100,
     });
 
     // THEN
@@ -69,9 +78,9 @@ describe('AideVeloRepository', () => {
   it("doit retourner le bon montant de l'aide sans un abonnement TER à Anger", async () => {
     // WHEN
     const result = await aidesVeloRepository.getSummaryVelos({
-      code_insee: '49007', // Angers
-      revenu_fiscal_par_part: 5000,
-      prix_velo: 100,
+      ...baseParams,
+      'localisation . code insee': '49007', // Angers
+      'aides . pays de la loire . abonné TER': false,
     });
 
     // THEN
@@ -91,9 +100,9 @@ describe('AideVeloRepository', () => {
     it('devrait avoir une aide régionale, départementale pour une personne habitant à Cazouls-Lès-Béziers', async () => {
       // WHEN
       const result = await aidesVeloRepository.getSummaryVelos({
-        code_insee: '34069', // Cazouls-Lès-Béziers
-        revenu_fiscal_par_part: 5000,
-        prix_velo: 100,
+        ...baseParams,
+        'localisation . code insee': '34069', // Cazouls-Lès-Béziers
+        'aides . pays de la loire . abonné TER': false,
       });
 
       // THEN
@@ -111,9 +120,9 @@ describe('AideVeloRepository', () => {
     it.skip('doit correctement cumuler les aides pour une personne habitant à Toulouse', async () => {
       // WHEN
       const result = await aidesVeloRepository.getSummaryVelos({
-        code_insee: '31555', // Toulouse
-        revenu_fiscal_par_part: 8000,
-        prix_velo: 500,
+        ...baseParams,
+        'localisation . code insee': '31555', // Toulouse
+        'aides . pays de la loire . abonné TER': false,
       });
 
       // THEN
@@ -132,9 +141,9 @@ describe('AideVeloRepository', () => {
     it.skip('doit correctement cumuler les aides pour une personne habitant à Montpellier', async () => {
       // WHEN
       const result = await aidesVeloRepository.getSummaryVelos({
-        code_insee: '34172', // Montpellier
-        revenu_fiscal_par_part: 8000,
-        prix_velo: 500,
+        ...baseParams,
+        'localisation . code insee': '34172', // Montpellier
+        'aides . pays de la loire . abonné TER': false,
       });
 
       // THEN
@@ -158,9 +167,9 @@ describe('AideVeloRepository', () => {
   it('Villefranche Agglomération Beaujolais Saône', async () => {
     // WHEN
     const result = await aidesVeloRepository.getSummaryVelos({
-      code_insee: '69264', // Villefranche-sur-Saône
-      revenu_fiscal_par_part: 2000,
-      prix_velo: 500,
+      ...baseParams,
+      'localisation . code insee': '69264', // Villefranche-sur-Saône
+      'aides . pays de la loire . abonné TER': false,
     });
 
     // THEN

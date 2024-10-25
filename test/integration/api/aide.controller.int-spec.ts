@@ -3,7 +3,6 @@ import { Thematique } from '../../../src/domain/contenu/thematique';
 import { AideAPI } from '../../../src/infrastructure/api/types/aide/AideAPI';
 import { DB, TestUtil } from '../../TestUtil';
 import { Besoin } from '../../../src/domain/aides/besoin';
-import { ProfileUsecase } from '../../../src/usecase/profile.usecase';
 
 describe('Aide (API test)', () => {
   let thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);

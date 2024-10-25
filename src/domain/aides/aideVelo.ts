@@ -1,4 +1,4 @@
-import { Aide, Questions } from '../../../../publicodes-aides-velo/dist/src';
+import { Aide, Questions } from '@betagouv/aides-velo';
 
 export type Collectivite = Aide['collectivity'];
 
