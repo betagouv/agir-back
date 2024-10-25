@@ -23,4 +23,18 @@ export class SituationNGCRepository {
     });
     return id_situation;
   }
+
+  async setUtilisateurIdToSituation(
+    utilisateurId: string,
+    situationId: string,
+  ): Promise<void> {
+    await this.prisma.situationNGC.update({
+      where: {
+        id: situationId,
+      },
+      data: {
+        utilisateurId: utilisateurId,
+      },
+    });
+  }
 }

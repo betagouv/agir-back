@@ -474,6 +474,45 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(kyc_bois.listeReponsesLabels()).toEqual(['Oui']);
   });
 
+  it(`POST /utilisateurs_v2 - integration situation NGC => set id utilisateur sur situation`, async () => {
+    // GIVEN
+    process.env.NGC_API_KEY = '12345';
+
+    // WHEN
+    const response_post_situation = await TestUtil.getServer()
+      .post('/bilan/importFromNGC')
+      .set('apikey', `12345`)
+      .send({
+        situation: {
+          'transport . voiture . km': 20000,
+          'logement . chauffage . bois . présent': 'oui',
+        },
+      });
+
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
+    );
+
+    const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
+      mot_de_passe: '#1234567890HAHAa',
+      email: 'w@w.com',
+      source_inscription: 'mobile',
+      situation_ngc_id: situtation_id,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    const user = await utilisateurRepository.findByEmail('w@w.com');
+
+    const situtation = await TestUtil.prisma.situationNGC.findUnique({
+      where: {
+        id: situtation_id,
+      },
+    });
+
+    expect(situtation.utilisateurId).toEqual(user.id);
+  });
+
   it(`POST /utilisateurs_v2 - integration situation NGC  => todo à 2 missions au lieu de 3`, async () => {
     // GIVEN
     process.env.NGC_API_KEY = '12345';
@@ -762,7 +801,6 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(response.status).toBe(201);
     const user = await utilisateurRepository.findByEmail('w@w.com');
 
-    console.log(user.kyc_history);
     expect(
       user.kyc_history.isQuestionAnsweredByCode(KYCID.KYC_chauffage_fioul),
     ).toEqual(true);

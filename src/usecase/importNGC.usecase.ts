@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { SituationNGCRepository } from '../infrastructure/repository/bilan.repository';
+import { SituationNGCRepository } from '../infrastructure/repository/situationNGC.repository';
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
 
 @Injectable()

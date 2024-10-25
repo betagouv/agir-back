@@ -20,6 +20,7 @@ import { KYCID } from '../kyc/KYCID';
 import validator from 'validator';
 import { NotificationHistory } from '../notification/notificationHistory';
 var crypto = require('crypto');
+import { v4 as uuidv4 } from 'uuid';
 
 export enum UtilisateurStatus {
   default = 'default',
@@ -125,7 +126,7 @@ export class Utilisateur extends UtilisateurData {
       nom: null,
       prenom: null,
       email: email,
-      id: undefined,
+      id: uuidv4(),
       revenu_fiscal: null,
       parts: null,
       abonnement_ter_loire: false,

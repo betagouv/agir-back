@@ -13,7 +13,7 @@ import { ContactUsecase } from './contact.usecase';
 import { CodeManager } from '../domain/utilisateur/manager/codeManager';
 import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/onboarding/createUtilisateurAPI';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
-import { SituationNGCRepository } from '../infrastructure/repository/bilan.repository';
+import { SituationNGCRepository } from '../infrastructure/repository/situationNGC.repository';
 import { MailerUsecase } from './mailer.usecase';
 import { TypeNotification } from '../domain/notification/notificationHistory';
 import { KYCID } from '../domain/kyc/KYCID';
@@ -34,7 +34,7 @@ export class InscriptionUsecase {
     private oidcService: OidcService,
     private codeManager: CodeManager,
     private kycRepository: KycRepository,
-    private bilanRepository: SituationNGCRepository,
+    private situationNGCRepository: SituationNGCRepository,
     private mailerUsecase: MailerUsecase,
   ) {}
 
@@ -65,10 +65,15 @@ export class InscriptionUsecase {
       utilisateurToCreate.parcours_todo.dropLastMission();
       utilisateurToCreate.unlocked_features.add(Feature.bilan_carbone);
 
-      const situation = await this.bilanRepository.getSituationNGCbyId(
+      const situation = await this.situationNGCRepository.getSituationNGCbyId(
         utilisateurInput.situation_ngc_id,
       );
       if (situation) {
+        await this.situationNGCRepository.setUtilisateurIdToSituation(
+          utilisateurToCreate.id,
+          utilisateurInput.situation_ngc_id,
+        );
+
         utilisateurToCreate.kyc_history.tryUpdateQuestionByCodeWithCode(
           KYCID.KYC_bilan,
           BooleanKYC.oui,
