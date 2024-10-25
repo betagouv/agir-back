@@ -1,5 +1,3 @@
-import { ApplicativePonderationSetName } from './scoring/ponderationApplicative';
-
 import metadata from './metadata.json';
 
 export class App {
