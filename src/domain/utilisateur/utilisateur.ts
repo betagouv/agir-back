@@ -258,6 +258,15 @@ export class Utilisateur extends UtilisateurData {
     return parts_estimee === 0 ? 1 : parts_estimee;
   }
 
+  /**
+   * Returns the total number of people in the household, including adults and
+   * children.
+   */
+  public getNombrePersonnesDansLogement?() {
+    const total = this.logement.nombre_adultes + this.logement.nombre_enfants;
+    return total || 1;
+  }
+
   public setPassword?(password: string) {
     PasswordManager.setUserPassword(this, password);
   }
