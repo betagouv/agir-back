@@ -70,13 +70,13 @@ export class AidesUsecase {
     ]);
     Utilisateur.checkState(user);
 
-    const code_commune = await this.communeRepository.getCodeCommune(
+    const code_commune = this.communeRepository.getCodeCommune(
       user.logement.code_postal,
       user.logement.commune,
     );
 
     const dept_region =
-      await this.communeRepository.findDepartementRegionByCodePostal(
+      this.communeRepository.findDepartementRegionByCodePostal(
         user.logement.code_postal,
       );
 
@@ -111,12 +111,16 @@ export class AidesUsecase {
         ? false
         : utilisateur.abonnement_ter_loire;
 
-    return this.aidesVeloRepository.getSummaryVelos(
+    const code_insee = this.communeRepository.getCodeCommune(
       utilisateur.logement.code_postal,
-      RFR,
-      PARTS,
-      prix_velo,
-      ABONNEMENT,
+      utilisateur.logement.commune,
     );
+
+    return this.aidesVeloRepository.getSummaryVelos({
+      code_insee,
+      revenu_fiscal_par_part: RFR / PARTS,
+      prix_velo,
+      abonnement_ter_loire: ABONNEMENT,
+    });
   }
 }

@@ -3,7 +3,9 @@ import Publicodes from 'publicodes';
 import rulesRetrofit from '../data/aidesRetrofit.json';
 import localisations from '../../infrastructure/repository/commune/communes.json';
 
-import { AideVelo, Localisation } from '../../domain/aides/aideVelo';
+import { AideVelo } from '../../domain/aides/aideVelo';
+// FIXME: use the @betagouv/publicodes-aides-velo package when published
+import { Commune } from '../../../../publicodes-aides-velo/dist/src';
 
 @Injectable()
 export class AidesRetrofitRepository {
@@ -57,11 +59,13 @@ async function aidesRetrofit(
     };
   });
 
+  // FIXME: should be refactored to have its own type
+  // @ts-ignore
   return result;
 }
 
-function getLocalisationByCP(cp: string): Localisation {
-  const lieux = localisations as Localisation[];
+function getLocalisationByCP(cp: string): Commune {
+  const lieux = localisations as Commune[];
   const lieu = lieux.find((lieu) => lieu.codesPostaux.includes(cp));
   return lieu;
 }

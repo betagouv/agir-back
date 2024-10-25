@@ -23,7 +23,7 @@ aides . bonus vélo:
     toutes ces conditions:
       - localisation . pays = 'France'
       - une de ces conditions:
-          - vélo . électrique ou mécanique
+          - vélo . électrique ou mécanierque
           - vélo . adapté
       - une de ces conditions:
           - revenu fiscal de référence <= première tranche IR
@@ -137,7 +137,7 @@ aides . ile de france:
               - demandeur . âge . de 15 à 25 ans
           alors: 100 €
         - sinon: 0 €
-  lien: https://www.iledefrance-mobilites.fr/le-reseau/services-de-mobilite/velo/prime-achat-velo
+  lien: "https://www.iledefrance-mobilites.fr/le-reseau/services-de-mobilite/velo/prime-achat-velo"
 
 aides . occitanie:
   remplace: région
