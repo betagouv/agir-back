@@ -39,7 +39,7 @@ export class BilanCarboneUsecase {
       utilisateurId,
       [Scope.kyc, Scope.logement, Scope.unlocked_features],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);

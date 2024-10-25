@@ -7,7 +7,7 @@ import { MissionRepository } from '../../src/infrastructure/repository/mission.r
 import { Mission } from '../../src/domain/mission/mission';
 import { MissionUsecase } from './mission.usecase';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
-import { Scope } from '../domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 
 @Injectable()
 export class UniversUsecase {
@@ -23,7 +23,7 @@ export class UniversUsecase {
       utilisateurId,
       [Scope.missions, Scope.logement],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     let tuiles = ThematiqueRepository.getAllTuileUnivers();
     tuiles = tuiles.map((t) => new TuileUnivers(t));
@@ -44,7 +44,7 @@ export class UniversUsecase {
       utilisateurId,
       [Scope.missions, Scope.logement],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const listTuilesThem = ThematiqueRepository.getAllTuilesThematique(univers);
 

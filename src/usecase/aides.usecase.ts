@@ -38,7 +38,7 @@ export class AidesUsecase {
     const user = await this.utilisateurRepository.getById(utilisateurId, [
       Scope.logement,
     ]);
-    user.checkState();
+    Utilisateur.checkState(user);
 
     const code_commune = await this.communeRepository.getCodeCommune(
       user.logement.code_postal,
@@ -71,7 +71,7 @@ export class AidesUsecase {
       utilisateurId,
       [Scope.logement],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const RFR =
       utilisateur.revenu_fiscal === null ? 0 : utilisateur.revenu_fiscal;

@@ -15,7 +15,7 @@ import { CommuneRepository } from '../../src/infrastructure/repository/commune/c
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { QuestionKYCUsecase } from './questionKYC.usecase';
-import { Scope } from '../domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 
 @Injectable()
 export class TodoUsecase {
@@ -33,7 +33,7 @@ export class TodoUsecase {
       utilisateurId,
       [Scope.todo, Scope.gamification],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const todo_active = utilisateur.parcours_todo.getActiveTodo();
     const element = todo_active.findDoneElementById(elementId);
@@ -50,7 +50,7 @@ export class TodoUsecase {
       utilisateurId,
       [Scope.todo, Scope.gamification, Scope.unlocked_features],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const todo_active = utilisateur.parcours_todo.getActiveTodo();
     if (todo_active.isDone()) {
@@ -87,7 +87,7 @@ export class TodoUsecase {
       utilisateurId,
       [Scope.todo, Scope.logement, Scope.history_article_quizz],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const todo = utilisateur.parcours_todo.getActiveTodo();
 

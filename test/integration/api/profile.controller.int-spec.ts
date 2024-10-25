@@ -51,7 +51,10 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id');
     // THEN
-    expect(response.status).toBe(404);
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe(
+      `Cet utilisateur n'existe plus, veuillez vous reconnecter`,
+    );
   });
   it('DELETE /utilisateurs/id', async () => {
     // GIVEN

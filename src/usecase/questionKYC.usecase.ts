@@ -88,7 +88,7 @@ export class QuestionKYCUsecase {
       utilisateurId,
       [Scope.kyc, Scope.logement],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
@@ -109,7 +109,7 @@ export class QuestionKYCUsecase {
       utilisateurId,
       [Scope.kyc, Scope.logement],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
@@ -136,7 +136,7 @@ export class QuestionKYCUsecase {
       utilisateurId,
       [Scope.kyc, Scope.logement],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
@@ -185,7 +185,7 @@ export class QuestionKYCUsecase {
         Scope.logement,
       ],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
@@ -233,7 +233,7 @@ export class QuestionKYCUsecase {
         Scope.logement,
       ],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const mosaic = MosaicKYC.findMosaicDefByID(KYCMosaicID[mosaicId]);
     if (!mosaic) {

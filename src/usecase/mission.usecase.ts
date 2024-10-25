@@ -44,7 +44,7 @@ export class MissionUsecase {
       utilisateurId,
       [Scope.missions, Scope.gamification],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     let mission =
       utilisateur.missions.getMissionByThematiqueUnivers(thematique);
@@ -65,7 +65,7 @@ export class MissionUsecase {
       utilisateurId,
       [Scope.missions, Scope.logement, Scope.defis],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     let mission_resultat =
       utilisateur.missions.getMissionByThematiqueUnivers(thematique);
@@ -118,7 +118,7 @@ export class MissionUsecase {
         Scope.defis,
       ],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     let objectifs_target: Objectif[] = [];
 
@@ -158,7 +158,7 @@ export class MissionUsecase {
       utilisateurId,
       [Scope.missions, Scope.kyc, Scope.logement],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(catalogue);

@@ -234,8 +234,11 @@ export class Utilisateur extends UtilisateurData {
       this.code_generation_time.getTime() < Date.now() - 1000 * 60 * 60
     );
   }
-  public checkState?() {
-    if (this.force_connexion) {
+  static checkState?(utilisateur: Utilisateur) {
+    if (!utilisateur) {
+      ApplicationError.throwMissingUser();
+    }
+    if (utilisateur.force_connexion) {
       ApplicationError.throwPleaseReconnect();
     }
   }

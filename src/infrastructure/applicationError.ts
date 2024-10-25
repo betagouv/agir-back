@@ -412,6 +412,13 @@ export class ApplicationError {
   static throwBadNGC_API_KEY(apikey: string) {
     this.throwAppError('081', `Clé API [${apikey}] incorrecte`, 403);
   }
+  static throwMissingUser() {
+    this.throwAppError(
+      '082',
+      `Cet utilisateur n'existe plus, veuillez vous reconnecter`,
+      401,
+    );
+  }
 
   private static throwAppError(
     code: string,
