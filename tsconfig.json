@@ -23,5 +23,6 @@
     "noFallthroughCasesInSwitch": false,
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "allowJs": true,
   }
 }
