@@ -1,7 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import _codes_postaux from './codes_postaux.json';
-import _communes from './communes.json';
 import _epiccom from './epicom2024.json';
+/**
+ * NOTE: Initially, a 'communes.json' file was used to store the commune data.
+ * It was copied from the mquendal/mesaidesvelo repository. However, as we
+ * created a dedicated package (@betagouv/aides-velo) to isolate the logic and
+ * generate the 'communes.json' file, we use it as a source of truth for the
+ * commune data.
+ *
+ * NOTE: We should consider at some point to create a standalone package for
+ * the commune data and use it as a source of truth for all the packages that
+ * need it with extra utilities to manipulate the data or decide to directly
+ * use the @etalab/decoupage-administratif package.
+ */
+import { data as aidesVeloData } from '@betagouv/aides-velo';
 
 export type CommuneParCodePostal = {
   INSEE: string;
@@ -17,7 +29,7 @@ export type Commune = {
   region: string;
   population: number;
   zfe: boolean;
-  epci: string;
+  epci?: string;
   codesPostaux: string[];
 };
 
@@ -129,7 +141,7 @@ export class CommuneRepository {
 
     let commune = this.getCommuneByCodeINSEE(liste[0].INSEE);
     if (!commune) {
-      for (const commune_insee of _communes as Commune[]) {
+      for (const commune_insee of aidesVeloData.communes) {
         if (commune_insee.codesPostaux.includes(code_postal)) {
           commune = commune_insee;
           break;
@@ -156,6 +168,6 @@ export class CommuneRepository {
   }
 
   private getCommuneByCodeINSEE(code_insee: string): Commune {
-    return (_communes as Commune[]).find((c) => c.code === code_insee);
+    return aidesVeloData.communes.find((c) => c.code === code_insee);
   }
 }

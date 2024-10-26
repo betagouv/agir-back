@@ -3,7 +3,7 @@ import Publicodes from 'publicodes';
 import { Commune } from '@betagouv/aides-velo';
 
 import rulesRetrofit from '../data/aidesRetrofit.json';
-import localisations from '../../infrastructure/repository/commune/communes.json';
+import { data as aidesVeloData } from '@betagouv/aides-velo';
 import { AideVelo } from '../../domain/aides/aideVelo';
 
 @Injectable()
@@ -64,7 +64,7 @@ async function aidesRetrofit(
 }
 
 function getLocalisationByCP(cp: string): Commune {
-  const lieux = localisations as Commune[];
+  const lieux = aidesVeloData.communes;
   const lieu = lieux.find((lieu) => lieu.codesPostaux.includes(cp));
   return lieu;
 }

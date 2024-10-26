@@ -39,7 +39,7 @@
     "kube:env": "eval $(minikube docker-env)"
   },
   "dependencies": {
-    "@betagouv/aides-velo": "^0.1.0-6",
+    "@betagouv/aides-velo": "^0.1.0-8",
     "@getbrevo/brevo": "^1.0.1",
     "@incubateur-ademe/nosgestesclimat": "^3.3.2",
     "@nestjs/common": "^9.0.0",
