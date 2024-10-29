@@ -2,6 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ResultatRecherche } from '../../../../domain/bibliotheque_services/recherche/resultatRecherche';
 import { Day } from '../../../../domain/bibliotheque_services/types/days';
 import { FruitLegume } from '../../../service/fruits/fruitEtLegumesServiceManager';
+import {
+  CategorieRecherche,
+  CategorieRechercheManager,
+} from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 
 export class OpenHourAPI {
   @ApiProperty({ enum: Day }) jour: Day;
@@ -42,6 +46,7 @@ export class ResultatRechercheAPI {
   @ApiProperty() description_more: string;
   @ApiProperty() phone: string;
   @ApiProperty() categories: string[];
+  @ApiProperty() categories_labels: string[];
   @ApiProperty() openhours_more_infos: string;
   @ApiProperty({ type: [OpenHourAPI] }) open_hours: OpenHourAPI[];
   @ApiProperty() longitude: number;
@@ -71,13 +76,16 @@ export class ResultatRechercheAPI {
       description: res.description,
       description_more: res.description_more,
       phone: res.phone,
-      categories: res.categories,
+      categories: res.categories ? res.categories : [],
       openhours_more_infos: res.openhours_more_infos,
       open_hours: res.open_hours,
       latitude: res.latitude,
       longitude: res.longitude,
       ingredients: res.ingredients,
       etapes_recette: res.etapes_recette,
+      categories_labels: res.categories
+        ? res.categories.map((c) => CategorieRechercheManager.getLabel(c))
+        : [],
     };
   }
 }

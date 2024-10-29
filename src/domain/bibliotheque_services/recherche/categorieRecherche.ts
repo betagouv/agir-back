@@ -85,8 +85,8 @@ export class CategorieRechercheManager {
     any_transport: 'Tout mode de déplacement',
   };
 
-  public static getLabel(cat: CategorieRecherche): string {
-    return CategorieRechercheManager.labels[cat];
+  public static getLabel(cat: string): string {
+    return CategorieRechercheManager.labels[cat] || cat;
   }
 
   public static isDefault(cat: CategorieRecherche): boolean {

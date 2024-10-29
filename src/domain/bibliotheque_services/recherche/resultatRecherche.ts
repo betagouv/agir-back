@@ -61,6 +61,7 @@ export class ResultatRecherche {
   description_more?: string;
   phone?: string;
   categories?: string[];
+  categories_labels?: string[];
   openhours_more_infos?: string;
   open_hours?: OpenHour[];
 
@@ -82,7 +83,6 @@ export class ResultatRecherche {
     this.temps_prepa_min = res.temps_prepa_min;
     this.distance_metres = res.distance_metres;
     this.impact_carbone_kg = res.impact_carbone_kg;
-
     this.est_favoris = false;
     this.nombre_favoris = 0;
     this.emoji = res.emoji;
