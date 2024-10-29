@@ -193,18 +193,23 @@ export class UtilisateurRepository {
     }
   }
 
-  async listUtilisateurIds(created_after?: Date): Promise<string[]> {
+  async listUtilisateurIds(
+    created_after?: Date,
+    is_active?: boolean,
+  ): Promise<string[]> {
     let query = {
       select: {
         id: true,
       },
+      where: {} as any,
     };
     if (created_after) {
-      query['where'] = {
-        created_at: {
-          gte: created_after,
-        },
+      query['where'].created_at = {
+        gte: created_after,
       };
+    }
+    if (is_active) {
+      query['where'].active_account = true;
     }
     const result = await this.prisma.utilisateur.findMany(query);
 
