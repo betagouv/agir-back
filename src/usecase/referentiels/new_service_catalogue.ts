@@ -20,7 +20,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     id: ServiceRechercheID.longue_vie_objets,
     external_url: 'https://longuevieauxobjets.ademe.fr/',
     icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/commerce.webp',
-    titre: 'Que faire de vos objets ?',
+    titre: 'Que faire de mes objets ?',
     sous_titre: 'donner, réparer, recycler,...',
     univers: Univers.consommation,
     is_available_inhouse: true,
