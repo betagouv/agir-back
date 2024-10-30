@@ -79,9 +79,17 @@ export class AdminController extends GenericControler {
     return App.getAppVersion();
   }
 
-  @Get('error_410')
-  async error410() {
-    ApplicationError.throwThatURLIsGone(`${App.getBaseURLBack()}/error_410`);
+  @Get('error_410_get')
+  async error410Get() {
+    ApplicationError.throwThatURLIsGone(
+      `${App.getBaseURLBack()}/error_410_get`,
+    );
+  }
+  @Post('error_410_post')
+  async error410Post() {
+    ApplicationError.throwThatURLIsGone(
+      `${App.getBaseURLBack()}/error_410_post`,
+    );
   }
 
   @Delete('admin/utilisateurs/:utilisateurId')
