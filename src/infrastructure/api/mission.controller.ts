@@ -21,6 +21,9 @@ import { MissionAPI } from './types/mission/MissionAPI';
 import { MissionUsecase } from '../../../src/usecase/mission.usecase';
 import { QuestionKYCAPI } from './types/kyc/questionsKYCAPI';
 import { MosaicKYCAPI } from './types/kyc/mosaicKYCAPI';
+import { TuileMissionAPI } from './types/univers/TuileMissionAPI';
+import { Thematique } from '../../domain/contenu/thematique';
+import { ApplicationError } from '../applicationError';
 @ApiExtraModels(QuestionKYCAPI, MosaicKYCAPI)
 @Controller()
 @ApiBearerAuth()
@@ -28,6 +31,38 @@ import { MosaicKYCAPI } from './types/kyc/mosaicKYCAPI';
 export class MissionController extends GenericControler {
   constructor(private missionUsecase: MissionUsecase) {
     super();
+  }
+
+  // NEW NEW NEW
+  @Get('utilisateurs/:utilisateurId/tuiles_mission/:thematique')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: [TuileMissionAPI],
+  })
+  @ApiParam({
+    name: 'thematique',
+    enum: Thematique,
+    required: true,
+    description: `la thematique des missions demandées`,
+  })
+  @ApiOperation({
+    summary: `Retourne une liste de tuile de mission correspondant à la thématique demandée, ordonnée par reco`,
+  })
+  async getTuilesMissions(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('thematique') thematique: string,
+  ): Promise<TuileMissionAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const them = Thematique[thematique];
+    if (!them) {
+      ApplicationError.throwThematiqueNotFound(thematique);
+    }
+    const result = await this.missionUsecase.getMissionsOfThematique(
+      utilisateurId,
+      them,
+    );
+    return result.map((e) => TuileMissionAPI.mapToAPI(e));
   }
 
   @Get('utilisateurs/:utilisateurId/thematiques/:thematique/mission')

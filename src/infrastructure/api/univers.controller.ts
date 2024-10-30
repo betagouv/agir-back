@@ -9,15 +9,16 @@ import { Controller, Param, UseGuards, Request, Get } from '@nestjs/common';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { UniversAPI } from './types/univers/UniversAPI';
-import { UniversUsecase } from '../../../src/usecase/univers.usecase';
+import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
 import { ThematiqueUniversAPI } from './types/univers/ThematiqueUniversAPI';
 import { Univers } from '../../domain/univers/univers';
+import { ApplicationError } from '../applicationError';
 
 @Controller()
 @ApiBearerAuth()
 @ApiTags('Univers')
 export class UniversController extends GenericControler {
-  constructor(private universUsecase: UniversUsecase) {
+  constructor(private universUsecase: ThematiqueUsecase) {
     super();
   }
 
@@ -27,15 +28,13 @@ export class UniversController extends GenericControler {
     type: [UniversAPI],
   })
   @ApiOperation({
-    summary: `Retourne les univers auquels peut accéder l'utilisateur`,
+    summary: `DEPRECATED : Retourne les univers auquels peut accéder l'utilisateur`,
   })
   async getUnivers(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-  ): Promise<UniversAPI[]> {
-    this.checkCallerId(req, utilisateurId);
-    const result = await this.universUsecase.getALL(utilisateurId);
-    return result.map((e) => UniversAPI.mapToAPI(e));
+  ) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
   }
 
   @Get('utilisateurs/:utilisateurId/univers/:univers/thematiques')
@@ -51,7 +50,7 @@ export class UniversController extends GenericControler {
     description: `l'univers demandé`,
   })
   @ApiOperation({
-    summary: `Retourne les thematiques de d'un univers particulier d'un utilisateur donné`,
+    summary: `DEPRECATED : Retourne les thematiques de d'un univers particulier d'un utilisateur donné`,
   })
   async getUniversThematiques(
     @Request() req,
@@ -59,7 +58,7 @@ export class UniversController extends GenericControler {
     @Param('univers') univers: string,
   ): Promise<ThematiqueUniversAPI[]> {
     this.checkCallerId(req, utilisateurId);
-    const result = await this.universUsecase.getThematiquesOfUnivers(
+    const result = await this.universUsecase.getMissionsOfThematique(
       utilisateurId,
       univers,
     );

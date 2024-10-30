@@ -23,7 +23,7 @@ import { Categorie } from '../../domain/contenu/categorie';
 import { QuizzRepository } from '../repository/quizz.repository';
 import { DefiRepository } from '../repository/defi.repository';
 import { MissionDefinition } from '../../domain/mission/missionDefinition';
-import { UniversUsecase } from '../../usecase/univers.usecase';
+import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
 import { DefiDefinition } from '../../domain/defis/defiDefinition';
 import { AuthGuard } from '../auth/guard';
 import { KycDefinition } from '../../domain/kyc/kycDefinition';
@@ -42,7 +42,7 @@ export class PreviewController extends GenericControler {
     private nGCCalculator: NGCCalculator,
     private missionRepository: MissionRepository,
     private articleRepository: ArticleRepository,
-    private universUsecase: UniversUsecase,
+    private universUsecase: ThematiqueUsecase,
     private quizzRepository: QuizzRepository,
     private defiRepository: DefiRepository,
   ) {

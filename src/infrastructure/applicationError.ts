@@ -426,6 +426,9 @@ export class ApplicationError {
       410,
     );
   }
+  static throwThematiqueNotFound(them: string) {
+    this.throwAppError('084', `Thematique [${them}] inconnue`);
+  }
 
   private static throwAppError(
     code: string,
