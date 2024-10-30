@@ -72,7 +72,7 @@ import { StatistiqueRepository } from './infrastructure/repository/statitstique.
 import { ArticleStatistiqueUsecase } from './usecase/articleStatistique.usecase';
 import { ArticleStatistiqueRepository } from './infrastructure/repository/articleStatistique.repository';
 import { UniversController } from './infrastructure/api/univers.controller';
-import { UniversUsecase } from './usecase/univers.usecase';
+import { ThematiqueUsecase } from './usecase/thematique.usecase';
 import { DefiStatistiqueUsecase } from './usecase/defiStatistique.usecase';
 import { DefiStatistiqueRepository } from './infrastructure/repository/defiStatistique.repository';
 import { MissionUsecase } from './usecase/mission.usecase';
@@ -222,7 +222,7 @@ function getControllers(): any[] {
     StatistiqueRepository,
     ArticleStatistiqueUsecase,
     ArticleStatistiqueRepository,
-    UniversUsecase,
+    ThematiqueUsecase,
     DefiStatistiqueUsecase,
     DefiStatistiqueRepository,
     MissionUsecase,

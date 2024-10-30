@@ -24,6 +24,10 @@ import { Categorie } from '../domain/contenu/categorie';
 import { PonderationApplicativeManager } from '../domain/scoring/ponderationApplicative';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { QuestionGeneric } from '../domain/kyc/questionGeneric';
+import { TuileThematique } from '../domain/univers/tuileThematique';
+import { TuileMission } from '../domain/univers/tuileMission';
+import { Thematique } from '../domain/contenu/thematique';
+import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 
 @Injectable()
 export class MissionUsecase {
@@ -36,6 +40,47 @@ export class MissionUsecase {
     private communeRepository: CommuneRepository,
   ) {}
 
+  async getMissionsOfThematique(
+    utilisateurId: string,
+    thematique: Thematique,
+  ): Promise<TuileMission[]> {
+    // FIXME : refacto , code tout moche en dessous
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.missions, Scope.logement],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const listMissionDefs = this.missionRepository.getByThematique(thematique);
+
+    const result: TuileMission[] = [];
+
+    for (const mission_def of listMissionDefs) {
+      const existing_mission = utilisateur.missions.getMissionByCode(
+        mission_def.code,
+      );
+
+      if (!mission_def.est_visible) {
+        continue; // on passe à la misison suivante
+      }
+
+      if (existing_mission) {
+        result.push(
+          this.makeTuileMissionFromMissionAndDefinition(
+            existing_mission,
+            mission_def,
+          ),
+        );
+      } else {
+        result.push(this.makeTuileMissionFromMissionDefinition(mission_def));
+      }
+    }
+    // FIXME
+    //const final_result = this.ordonneTuilesThematiques(result);
+
+    return this.personnalisator.personnaliser(result, utilisateur);
+  }
+
   async terminerMission(
     utilisateurId: string,
     thematique: string,
@@ -46,8 +91,7 @@ export class MissionUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    let mission =
-      utilisateur.missions.getMissionByThematiqueUnivers(thematique);
+    let mission = utilisateur.missions.getMissionByCode(thematique);
 
     if (!mission) {
       ApplicationError.throwMissionNotFound(thematique);
@@ -67,8 +111,7 @@ export class MissionUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    let mission_resultat =
-      utilisateur.missions.getMissionByThematiqueUnivers(thematique);
+    let mission_resultat = utilisateur.missions.getMissionByCode(thematique);
 
     if (!mission_resultat || mission_resultat.isNew()) {
       const mission_def = await this.missionRepository.getByThematiqueUnivers(
@@ -163,8 +206,7 @@ export class MissionUsecase {
     const catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(catalogue);
 
-    const mission =
-      utilisateur.missions.getMissionByThematiqueUnivers(thematique);
+    const mission = utilisateur.missions.getMissionByCode(thematique);
 
     if (!mission) {
       throw ApplicationError.throwMissionNotFoundOfThematique(thematique);
@@ -252,5 +294,33 @@ export class MissionUsecase {
       }
     }
     return mission_def;
+  }
+
+  private makeTuileMissionFromMissionAndDefinition(
+    mission: Mission,
+    mission_def: MissionDefinition,
+  ): TuileMission {
+    return new TuileMission({
+      image_url: mission_def.image_url,
+      is_new: mission.isNew(),
+      code: mission_def.code,
+      titre: mission_def.titre,
+      progression: mission.getProgression().current,
+      cible_progression: mission.getProgression().target,
+      thematique: mission_def.thematique,
+    });
+  }
+  private makeTuileMissionFromMissionDefinition(
+    mission_def: MissionDefinition,
+  ): TuileMission {
+    return new TuileMission({
+      image_url: mission_def.image_url,
+      is_new: true,
+      code: mission_def.code,
+      titre: mission_def.titre,
+      progression: 0,
+      cible_progression: mission_def.objectifs.length, // approximation temporaire
+      thematique: mission_def.thematique,
+    });
   }
 }

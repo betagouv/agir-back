@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { DefiDefinition } from '../defis/defiDefinition';
 import { DefiStatus } from '../defis/defi';
 import { KYCMosaicID } from '../kyc/KYCMosaicID';
+import { Thematique } from '../contenu/thematique';
 
 export class Objectif {
   id: string;
@@ -66,7 +67,7 @@ export class Mission {
   id: string;
   done_at: Date;
   thematique_univers: string;
-  thematique: string;
+  thematique: Thematique;
   titre: string;
   code: string;
   image_url: string;
@@ -80,7 +81,7 @@ export class Mission {
     this.thematique_univers = data.thematique_univers;
     this.est_visible = data.est_visible;
     this.univers = data.univers; // A SUPPRIMER
-    this.thematique = data.univers; // A RENOMER
+    this.thematique = data.thematique; // A RENOMER
 
     if (data.done_at) {
       this.done_at = new Date(data.done_at);

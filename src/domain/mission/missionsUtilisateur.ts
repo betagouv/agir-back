@@ -33,7 +33,7 @@ export class MissionsUtilisateur {
     return done === of_univers && done !== 0;
   }
 
-  public getMissionByThematiqueUnivers(them: string): Mission {
+  public getMissionByCode(them: string): Mission {
     return this.missions.find((m) => m.thematique_univers === them);
   }
   public getMissionById(missionId: string): Mission {

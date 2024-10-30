@@ -2,6 +2,7 @@ import { Versioned } from '../versioned';
 import { ContentType } from '../../contenu/contentType';
 import { Mission, Objectif } from '../../../../src/domain/mission/mission';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
+import { Thematique } from '../../contenu/thematique';
 
 export class Objectif_v0 {
   id: string;
@@ -36,7 +37,7 @@ export class Mission_v0 {
   objectifs: Objectif_v0[];
   est_visible: boolean;
   univers: string;
-  thematique: string;
+  thematique: Thematique;
   titre: string;
   code: string;
   image_url: string;
@@ -51,7 +52,7 @@ export class Mission_v0 {
         : [],
       est_visible: !!mission.est_visible,
       univers: mission.univers,
-      thematique: mission.univers,
+      thematique: Thematique[mission.univers],
       code: mission.code,
       image_url: mission.image_url,
       titre: mission.titre,

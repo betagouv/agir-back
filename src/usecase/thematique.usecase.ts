@@ -1,39 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { TuileThematique } from '../domain/univers/tuileThematique';
 import { TuileUnivers } from '../domain/univers/tuileUnivers';
-import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
-import { Mission } from '../../src/domain/mission/mission';
+import { MissionRepository } from '../infrastructure/repository/mission.repository';
+import { Mission } from '../domain/mission/mission';
 import { MissionUsecase } from './mission.usecase';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 
 @Injectable()
-export class UniversUsecase {
+export class ThematiqueUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private missionRepository: MissionRepository,
     private missionUsecase: MissionUsecase,
     private personnalisator: Personnalisator,
   ) {}
-
-  async getALL(utilisateurId: string): Promise<TuileUnivers[]> {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.missions, Scope.logement],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    let tuiles = ThematiqueRepository.getAllTuileUnivers();
-    tuiles = tuiles.map((t) => new TuileUnivers(t));
-
-    for (const univers of tuiles) {
-      univers.is_done = utilisateur.missions.isUniversDone(univers.type);
-    }
-
-    return this.personnalisator.personnaliser(tuiles, utilisateur);
-  }
 
   async getThematiquesRecommandees(
     utilisateurId: string,
@@ -58,8 +41,9 @@ export class UniversUsecase {
       const result: TuileThematique[] = [];
 
       for (const tuile of listTuilesThem) {
-        const existing_mission =
-          utilisateur.missions.getMissionByThematiqueUnivers(tuile.type);
+        const existing_mission = utilisateur.missions.getMissionByCode(
+          tuile.type,
+        );
 
         if (existing_mission && existing_mission.est_visible) {
           if (!existing_mission.isDone()) {
@@ -102,7 +86,7 @@ export class UniversUsecase {
     );
   }
 
-  async getThematiquesOfUnivers(
+  async getMissionsOfThematique(
     utilisateurId: string,
     univers: string,
   ): Promise<TuileThematique[]> {
@@ -120,8 +104,9 @@ export class UniversUsecase {
     const result: TuileThematique[] = [];
 
     for (const tuile of listTuilesThem) {
-      const existing_mission =
-        utilisateur.missions.getMissionByThematiqueUnivers(tuile.type);
+      const existing_mission = utilisateur.missions.getMissionByCode(
+        tuile.type,
+      );
 
       if (existing_mission && existing_mission.est_visible) {
         result.push(this.completeTuileWithMission(existing_mission, tuile));

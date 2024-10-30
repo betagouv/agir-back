@@ -30,6 +30,10 @@ export class GenericControler {
       .catch(() => {});
   }
 
+  public getURLFromRequest(req: Request): string {
+    return `${req.protocol}://${req.get('Host')}${req.originalUrl}`;
+  }
+
   isCallerAdmin(req: Request) {
     return App.isAdmin(AuthGuard.getUtilisateurIdFromTokenInRequest(req));
   }

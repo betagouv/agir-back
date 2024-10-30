@@ -79,20 +79,21 @@ export class MissionRepository {
     });
   }
 
-  async getByThematiqueUnivers(
-    thematiqueUnivers: string,
-  ): Promise<MissionDefinition> {
+  getByThematiqueUnivers(thematiqueUnivers: string): MissionDefinition {
     for (const [key, value] of MissionRepository.catalogue_missions_by_idcms) {
       if (value.thematique_univers === thematiqueUnivers) return value;
     }
     return null;
   }
 
-  async getByCMS_ID(cms_id: number): Promise<MissionDefinition> {
+  getByCMS_ID(cms_id: number): MissionDefinition {
     return MissionRepository.catalogue_missions_by_idcms.get(cms_id);
   }
+  getByThematique(thematique: Thematique): MissionDefinition[] {
+    return MissionRepository.catalogue_missions_by_thematique.get(thematique);
+  }
 
-  async list(): Promise<MissionDefinition[]> {
+  list(): MissionDefinition[] {
     return Array.from(MissionRepository.catalogue_missions_by_idcms.values());
   }
 
