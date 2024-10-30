@@ -29,6 +29,7 @@ describe('EVENT (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: false,
         objectifs: [
           {
             id: '0',
@@ -58,6 +59,7 @@ describe('EVENT (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: false,
         objectifs: [
           {
             id: '0',

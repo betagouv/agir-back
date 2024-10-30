@@ -36,6 +36,7 @@ export class Mission_v0 {
   thematique_univers: string;
   objectifs: Objectif_v0[];
   est_visible: boolean;
+  is_first: boolean;
   univers: string;
   thematique: Thematique;
   titre: string;
@@ -56,6 +57,7 @@ export class Mission_v0 {
       code: mission.code,
       image_url: mission.image_url,
       titre: mission.titre,
+      is_first: mission.is_first,
     };
   }
 }

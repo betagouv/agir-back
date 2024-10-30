@@ -1254,6 +1254,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          is_first: false,
         },
         {
           id: '2',
@@ -1266,6 +1267,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          is_first: false,
         },
         {
           id: '3',
@@ -1278,6 +1280,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          is_first: false,
         },
       ],
     };
@@ -1295,6 +1298,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          is_first: false,
         },
         {
           id: '2',
@@ -1307,6 +1311,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          is_first: false,
         },
         {
           id: '3',
@@ -1319,6 +1324,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          is_first: false,
         },
       ],
     };
@@ -1929,6 +1935,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          is_first: false,
           objectifs: [
             {
               id: '1',
@@ -1964,6 +1971,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.transport,
           titre: 'titre',
+          is_first: false,
           objectifs: [
             {
               id: '1',
@@ -2004,6 +2012,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          is_first: false,
           objectifs: [
             {
               id: '1',
@@ -2039,6 +2048,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          is_first: false,
           objectifs: [
             {
               id: '1',
@@ -2074,6 +2084,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.transport,
           titre: 'titre',
+          is_first: false,
           objectifs: [
             {
               id: '1',
@@ -2231,6 +2242,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          is_first: false,
         },
         {
           id: '2',
@@ -2243,6 +2255,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          is_first: false,
         },
         {
           id: '3',
@@ -2255,6 +2268,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.transport,
           titre: 'titre',
+          is_first: false,
         },
         {
           id: '4',
@@ -2267,6 +2281,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.transport,
           titre: 'titre',
+          is_first: false,
         },
       ],
     };
@@ -2284,6 +2299,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          is_first: false,
         },
         {
           id: '2',
@@ -2296,6 +2312,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          is_first: false,
         },
         {
           id: '3',
@@ -2308,6 +2325,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.transport,
           titre: 'titre',
+          is_first: false,
         },
         {
           id: '4',
@@ -2320,6 +2338,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.transport,
           titre: 'titre',
+          is_first: false,
         },
       ],
     };

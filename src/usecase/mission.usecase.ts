@@ -42,7 +42,6 @@ export class MissionUsecase {
     utilisateurId: string,
     thematique: Thematique,
   ): Promise<TuileMission[]> {
-    // FIXME : refacto , code tout moche en dessous
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.missions, Scope.logement],
@@ -51,9 +50,9 @@ export class MissionUsecase {
 
     const listMissionDefs = this.missionRepository.getByThematique(thematique);
 
-    console.log(listMissionDefs);
     const result: TuileMission[] = [];
 
+    console.log(utilisateur.missions.missions);
     for (const mission_def of listMissionDefs) {
       const existing_mission = utilisateur.missions.getMissionByCode(
         mission_def.code,
@@ -89,7 +88,8 @@ export class MissionUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    let mission = utilisateur.missions.getMissionByCode(thematique);
+    let mission =
+      utilisateur.missions.getMissionByThematiqueUnivers(thematique);
 
     if (!mission) {
       ApplicationError.throwMissionNotFound(thematique);
@@ -109,7 +109,8 @@ export class MissionUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    let mission_resultat = utilisateur.missions.getMissionByCode(thematique);
+    let mission_resultat =
+      utilisateur.missions.getMissionByThematiqueUnivers(thematique);
 
     if (!mission_resultat || mission_resultat.isNew()) {
       const mission_def = await this.missionRepository.getByThematiqueUnivers(
@@ -204,7 +205,8 @@ export class MissionUsecase {
     const catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(catalogue);
 
-    const mission = utilisateur.missions.getMissionByCode(thematique);
+    const mission =
+      utilisateur.missions.getMissionByThematiqueUnivers(thematique);
 
     if (!mission) {
       throw ApplicationError.throwMissionNotFoundOfThematique(thematique);
@@ -298,6 +300,7 @@ export class MissionUsecase {
     mission: Mission,
     mission_def: MissionDefinition,
   ): TuileMission {
+    console.log(mission);
     return new TuileMission({
       image_url: mission_def.image_url,
       is_new: mission.isNew(),

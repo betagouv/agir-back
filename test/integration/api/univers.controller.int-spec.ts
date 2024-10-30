@@ -39,6 +39,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: false,
         objectifs: [
           {
             id: '0',
@@ -63,6 +64,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: false,
         objectifs: [
           {
             id: '0',
@@ -98,6 +100,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: false,
         objectifs: [
           {
             id: '1',
@@ -122,6 +125,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: false,
         objectifs: [
           {
             id: '1',
@@ -146,6 +150,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: false,
         objectifs: [
           {
             id: '1',
@@ -170,6 +175,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: false,
         objectifs: [
           {
             id: '1',
@@ -194,6 +200,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: false,
         objectifs: [
           {
             id: '1',
@@ -223,6 +230,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: false,
         objectifs: [
           {
             id: '0',
@@ -252,6 +260,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: false,
         objectifs: [
           {
             id: '0',
@@ -282,6 +291,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: false,
         objectifs: [
           {
             id: '0',
@@ -306,6 +316,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: false,
         objectifs: [
           {
             id: '0',
@@ -358,15 +369,7 @@ describe('Univers (API test)', () => {
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/univers');
 
     // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.length).toBe(2);
-    expect(response.body[0]).toEqual({
-      etoiles: 0,
-      titre: 'yo',
-      type: Univers.climat,
-      image_url: 'aaaa',
-      is_done: false,
-    });
+    expect(response.status).toBe(410);
   });
   it(`GET /utilisateurs/id/univers - liste les univers de l'utilisateur, is_done à true`, async () => {
     // GIVEN
@@ -389,9 +392,7 @@ describe('Univers (API test)', () => {
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/univers');
 
     // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.length).toBe(1);
-    expect(response.body[0].is_done).toEqual(true);
+    expect(response.status).toBe(410);
   });
 
   it(`GET /utilisateurs/id/univers/id/thematiques - liste une thematique, donnée correctes, ajout mission à utilisateur si visible`, async () => {
@@ -568,6 +569,7 @@ describe('Univers (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      is_first: false,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -650,6 +652,7 @@ describe('Univers (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      is_first: false,
       objectifs: objectifs as any,
       created_at: undefined,
       updated_at: undefined,
@@ -735,6 +738,7 @@ describe('Univers (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      is_first: false,
       objectifs: objectifs as any,
       created_at: undefined,
       updated_at: undefined,
@@ -822,6 +826,7 @@ describe('Univers (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      is_first: false,
       objectifs: objectifs as any,
       created_at: undefined,
       updated_at: undefined,

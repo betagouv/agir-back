@@ -52,6 +52,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: false,
         objectifs: [
           {
             id: '0',
@@ -641,6 +642,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           image_url: 'img',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          is_first: false,
           objectifs: [
             {
               id: '0',
