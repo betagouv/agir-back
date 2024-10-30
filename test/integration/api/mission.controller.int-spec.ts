@@ -55,6 +55,7 @@ describe('Mission (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: true,
         objectifs: [
           {
             id: '0',
@@ -117,6 +118,7 @@ describe('Mission (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: true,
         objectifs: [
           {
             id: '0',
@@ -168,6 +170,7 @@ describe('Mission (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: true,
         objectifs: [
           {
             id: '0',
@@ -197,6 +200,7 @@ describe('Mission (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: true,
         objectifs: [
           {
             id: '0',
@@ -237,6 +241,7 @@ describe('Mission (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: true,
         objectifs: [
           {
             id: '0',
@@ -277,6 +282,7 @@ describe('Mission (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: true,
         objectifs: [
           {
             id: '0',
@@ -317,6 +323,7 @@ describe('Mission (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: true,
         objectifs: [
           {
             id: '000',
@@ -346,6 +353,7 @@ describe('Mission (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: true,
         objectifs: [
           {
             id: '000',
@@ -387,6 +395,7 @@ describe('Mission (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: true,
         objectifs: [
           {
             id: '0',
@@ -427,6 +436,7 @@ describe('Mission (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: true,
         objectifs: [
           {
             id: '0',
@@ -1815,7 +1825,7 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(404);
   });
-  it.only(`GET /utilisateurs/id/tuiles_missions/:thematique - Liste les missions de la thématique, 100% catalogue`, async () => {
+  it(`GET /utilisateurs/id/tuiles_missions/:thematique - Liste les missions de la thématique, 100% catalogue`, async () => {
     // GIVEN
 
     const objectifs: ObjectifDefinition[] = [
@@ -1854,12 +1864,22 @@ describe('Mission (API test)', () => {
 
     await TestUtil.create(DB.mission, {
       ...mission_article,
+      code: 'code_1',
       id_cms: 1,
     });
     await TestUtil.create(DB.mission, {
       ...mission_article,
+      code: 'code_2',
       id_cms: 2,
     });
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+
+    await missionRepository.onApplicationBootstrap();
+    await thematiqueRepository.onApplicationBootstrap();
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/tuiles_missions/alimentation',
@@ -1868,6 +1888,181 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(2);
-    expect(response.body[0]).toEqual({});
+    expect(response.body[0]).toEqual({
+      cible_progression: 2,
+      code: 'code_1',
+      image_url: 'img',
+      is_new: true,
+      progression: 0,
+      thematique: 'alimentation',
+      thematique_label: 'Faut manger !',
+      titre: 'titre',
+    });
+  });
+  it(`GET /utilisateurs/id/tuiles_missions/:thematique - Liste pas mission de la thématique si non visible`, async () => {
+    // GIVEN
+
+    const mission_article: Mission = {
+      id_cms: 1,
+      thematique_univers: ThematiqueUnivers.cereales,
+      est_visible: false,
+      objectifs: [],
+      code: 'code',
+      image_url: 'img',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
+      is_first: false,
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.utilisateur, { missions: {} });
+
+    await TestUtil.create(DB.mission, {
+      ...mission_article,
+      code: 'code_1',
+      id_cms: 1,
+    });
+
+    await missionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/tuiles_missions/alimentation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(0);
+  });
+  it(`GET /utilisateurs/id/tuiles_missions/:thematique - Liste la mission 'is_first' en premier`, async () => {
+    // GIVEN
+
+    const mission_article: Mission = {
+      id_cms: 1,
+      thematique_univers: ThematiqueUnivers.cereales,
+      est_visible: true,
+      objectifs: [],
+      code: 'code',
+      image_url: 'img',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
+      is_first: false,
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.utilisateur, { missions: {} });
+
+    await TestUtil.create(DB.mission, {
+      ...mission_article,
+      code: 'code_1',
+      id_cms: 1,
+      is_first: false,
+    });
+    await TestUtil.create(DB.mission, {
+      ...mission_article,
+      code: 'code_2',
+      id_cms: 2,
+      is_first: true,
+    });
+    await TestUtil.create(DB.mission, {
+      ...mission_article,
+      code: 'code_3',
+      id_cms: 3,
+      is_first: false,
+    });
+
+    await missionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/tuiles_missions/alimentation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(3);
+    expect(response.body[0].code).toEqual('code_2');
+  });
+  it(`GET /utilisateurs/id/tuiles_missions/:thematique - liste inclut une mission en cours de l'utilisateur, maj avec la def`, async () => {
+    // GIVEN
+
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          id: '2',
+          points: 10,
+          tags: [],
+          titre: 'titre',
+          thematique: Thematique.transport,
+          astuces: 'ASTUCE',
+          date_acceptation: null,
+          pourquoi: 'POURQUOI',
+          sous_titre: 'SOUS TITRE',
+          status: DefiStatus.en_cours,
+          universes: [Univers.climat],
+          accessible: false,
+          motif: 'bidon',
+          categorie: Categorie.recommandation,
+          mois: [],
+          conditions: [],
+          sont_points_en_poche: false,
+          impact_kg_co2: 5,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, { missions: missions, defis: defis });
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Mange de la graine',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+
+    await TestUtil.create(DB.defi, { content_id: '2' });
+
+    const mission_article: Mission = {
+      id_cms: 1,
+      thematique_univers: ThematiqueUnivers.cereales,
+      est_visible: true,
+      objectifs: [],
+      code: 'code',
+      image_url: 'NEW img',
+      thematique: Thematique.alimentation,
+      titre: 'NEW titre',
+      is_first: false,
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.mission, {
+      ...mission_article,
+    });
+
+    await missionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/tuiles_missions/alimentation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toEqual({
+      cible_progression: 5,
+      code: 'code',
+      image_url: 'NEW img',
+      is_new: false,
+      progression: 1,
+      thematique: 'alimentation',
+      thematique_label: 'Faut manger !',
+      titre: 'NEW titre',
+    });
   });
 });

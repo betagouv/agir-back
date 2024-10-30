@@ -41,9 +41,8 @@ export class ThematiqueUsecase {
       const result: TuileThematique[] = [];
 
       for (const tuile of listTuilesThem) {
-        const existing_mission = utilisateur.missions.getMissionByCode(
-          tuile.type,
-        );
+        const existing_mission =
+          utilisateur.missions.getMissionByThematiqueUnivers(tuile.type);
 
         if (existing_mission && existing_mission.est_visible) {
           if (!existing_mission.isDone()) {
@@ -104,9 +103,8 @@ export class ThematiqueUsecase {
     const result: TuileThematique[] = [];
 
     for (const tuile of listTuilesThem) {
-      const existing_mission = utilisateur.missions.getMissionByCode(
-        tuile.type,
-      );
+      const existing_mission =
+        utilisateur.missions.getMissionByThematiqueUnivers(tuile.type);
 
       if (existing_mission && existing_mission.est_visible) {
         result.push(this.completeTuileWithMission(existing_mission, tuile));

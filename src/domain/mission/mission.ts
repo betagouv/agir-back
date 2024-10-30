@@ -73,6 +73,7 @@ export class Mission {
   image_url: string;
   objectifs: Objectif[];
   est_visible: boolean;
+  is_first: boolean;
   univers: string;
 
   constructor(data: Mission_v0) {
@@ -82,6 +83,10 @@ export class Mission {
     this.est_visible = data.est_visible;
     this.univers = data.univers; // A SUPPRIMER
     this.thematique = data.thematique; // A RENOMER
+    this.titre = data.titre;
+    this.code = data.code;
+    this.image_url = data.image_url;
+    this.is_first = !!data.is_first;
 
     if (data.done_at) {
       this.done_at = new Date(data.done_at);
@@ -106,6 +111,7 @@ export class Mission {
       image_url: def.image_url,
       titre: def.titre,
       univers: def.thematique,
+      is_first: def.is_first,
       objectifs: def.objectifs.map((o) => ({
         content_id: o.content_id,
         done_at: null,

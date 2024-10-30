@@ -65,6 +65,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: false,
         objectifs: [
           {
             id: '1',
@@ -100,6 +101,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: false,
         objectifs: [
           {
             id: '1',
@@ -135,6 +137,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        is_first: false,
         objectifs: [
           {
             id: '1',
@@ -294,6 +297,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          is_first: false,
           objectifs: [
             {
               id: '0',
@@ -380,6 +384,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          is_first: false,
           objectifs: [
             {
               id: '0',

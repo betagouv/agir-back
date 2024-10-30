@@ -6,6 +6,7 @@ import { MissionsUtilisateur_v0 } from '../../../../src/domain/object_store/miss
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
 import { ThematiqueUnivers } from '../../../../src/domain/univers/thematiqueUnivers';
 import { ContentType } from '../../../../src/domain/contenu/contentType';
+import { Thematique } from '../../../../src/domain/contenu/thematique';
 
 describe('MissionsUilisateur vN ', () => {
   it('build OK from empty', () => {
@@ -29,10 +30,11 @@ describe('MissionsUilisateur vN ', () => {
           done_at: new Date(1),
           thematique_univers: ThematiqueUnivers.cereales,
           univers: 'alimentation',
-          thematique: 'alimentation',
+          thematique: Thematique.alimentation,
           code: 'code',
           image_url: 'img',
           titre: 'titre',
+          is_first: false,
           objectifs: [
             {
               id: '2',
@@ -68,10 +70,11 @@ describe('MissionsUilisateur vN ', () => {
           done_at: new Date(1),
           thematique_univers: ThematiqueUnivers.cereales,
           univers: 'alimentation',
-          thematique: 'alimentation',
+          thematique: Thematique.alimentation,
           code: 'code',
           image_url: 'img',
           titre: 'titre',
+          is_first: false,
 
           objectifs: [
             {
