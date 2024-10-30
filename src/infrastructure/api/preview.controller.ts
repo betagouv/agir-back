@@ -861,7 +861,7 @@ export class PreviewController extends GenericControler {
     );
 
     for (const tuile_thema of tuiles_thema) {
-      const mission_def = await this.missionRepository.getByThematique(
+      const mission_def = await this.missionRepository.getByThematiqueUnivers(
         tuile_thema.type,
       );
       if (mission_def) {

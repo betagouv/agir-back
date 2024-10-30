@@ -20,9 +20,11 @@ import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { Thematique } from '../../../src/domain/contenu/thematique';
+import { MissionRepository } from '../../../src/infrastructure/repository/mission.repository';
 
 describe('Univers (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
+  const missionRepository = new MissionRepository(TestUtil.prisma);
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
   const sept_missions: MissionsUtilisateur_v0 = {
@@ -429,6 +431,7 @@ describe('Univers (API test)', () => {
       univers_parent: Univers.alimentation,
     });
     await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -494,6 +497,7 @@ describe('Univers (API test)', () => {
       univers_parent: Univers.alimentation,
     });
     await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -584,6 +588,7 @@ describe('Univers (API test)', () => {
       univers_parent: Univers.alimentation,
     });
     await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -666,6 +671,7 @@ describe('Univers (API test)', () => {
       univers_parent: Univers.alimentation,
     });
     await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -753,6 +759,7 @@ describe('Univers (API test)', () => {
       univers_parent: Univers.alimentation,
     });
     await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -844,6 +851,7 @@ describe('Univers (API test)', () => {
       univers_parent: Univers.alimentation,
     });
     await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -930,6 +938,7 @@ describe('Univers (API test)', () => {
       niveau: null,
     });
     await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1013,8 +1022,7 @@ describe('Univers (API test)', () => {
       label: 'dechets compost',
       image_url: 'bbbb',
     });
-    await ThematiqueRepository.resetAllRefs();
-    await thematiqueRepository.onApplicationBootstrap();
+
     await TestUtil.create(DB.mission, {
       id_cms: 1,
       est_visible: false,
@@ -1025,6 +1033,9 @@ describe('Univers (API test)', () => {
       est_visible: true,
       thematique_univers: ThematiqueUnivers.dechets_compost,
     });
+    await ThematiqueRepository.resetAllRefs();
+    await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1069,20 +1080,23 @@ describe('Univers (API test)', () => {
       univers_parent: Univers.logement,
     });
 
-    await thematiqueRepository.onApplicationBootstrap();
-
     await TestUtil.create(DB.mission, {
       id_cms: 1,
       thematique_univers: ThematiqueUnivers.cereales,
+      thematique: Thematique.alimentation,
     });
     await TestUtil.create(DB.mission, {
       id_cms: 2,
       thematique_univers: ThematiqueUnivers.coming_soon,
+      thematique: Thematique.alimentation,
     });
     await TestUtil.create(DB.mission, {
       id_cms: 3,
       thematique_univers: ThematiqueUnivers.partir_vacances,
+      thematique: Thematique.logement,
     });
+    await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1112,12 +1126,12 @@ describe('Univers (API test)', () => {
       univers_parent: Univers.alimentation,
     });
 
-    await thematiqueRepository.onApplicationBootstrap();
-
     await TestUtil.create(DB.mission, {
       id_cms: 1,
       thematique_univers: ThematiqueUnivers.cereales,
     });
+    await missionRepository.onApplicationBootstrap();
+    await thematiqueRepository.onApplicationBootstrap();
 
     // WHEN
     const response = await TestUtil.GET(

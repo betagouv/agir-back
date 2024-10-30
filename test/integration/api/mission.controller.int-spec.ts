@@ -26,9 +26,11 @@ import {
   TypeReponseMosaicKYC,
 } from '../../../src/domain/kyc/mosaicKYC';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { MissionRepository } from '../../../src/infrastructure/repository/mission.repository';
 
 describe('Mission (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
+  const missionRepository = new MissionRepository(TestUtil.prisma);
 
   const MOSAIC_CATALOGUE: MosaicKYCDef[] = [
     {
@@ -509,6 +511,7 @@ describe('Mission (API test)', () => {
       image_url: 'aaaa',
     });
     await thematiqueRepository.onApplicationBootstrap();
+
     await TestUtil.create(DB.defi, { content_id: '2' });
 
     // WHEN
@@ -588,6 +591,7 @@ describe('Mission (API test)', () => {
       image_url: 'aaaa',
     });
     await thematiqueRepository.onApplicationBootstrap();
+
     await TestUtil.create(DB.defi, { content_id: '2' });
 
     // WHEN
@@ -614,7 +618,6 @@ describe('Mission (API test)', () => {
       label: 'Mange de la graine',
       image_url: 'aaaa',
     });
-    await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.mission);
     await TestUtil.create(DB.kYC, {
@@ -626,6 +629,9 @@ describe('Mission (API test)', () => {
       question: 'Comment avez vous connu le service ?',
       reponses: [],
     });
+
+    await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -738,6 +744,7 @@ describe('Mission (API test)', () => {
       univers_parent: Univers.alimentation,
     });
     await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -844,6 +851,7 @@ describe('Mission (API test)', () => {
       univers_parent: Univers.alimentation,
     });
     await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -877,6 +885,7 @@ describe('Mission (API test)', () => {
       image_url: 'aaaa',
     });
     await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -901,6 +910,7 @@ describe('Mission (API test)', () => {
       image_url: 'aaaa',
     });
     await thematiqueRepository.onApplicationBootstrap();
+
     await TestUtil.create(DB.article, {
       content_id: '1',
       points: 0,
@@ -944,6 +954,7 @@ describe('Mission (API test)', () => {
       image_url: 'aaaa',
     });
     await thematiqueRepository.onApplicationBootstrap();
+
     await TestUtil.create(DB.kYC, {
       id_cms: 1,
       code: KYCID._3,
@@ -1203,6 +1214,7 @@ describe('Mission (API test)', () => {
       univers_parent: Univers.alimentation,
     });
     await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
 
     // WHEN
     const read_mission_1 = await TestUtil.GET(
@@ -1777,6 +1789,7 @@ describe('Mission (API test)', () => {
       image_url: 'aaaa',
     });
     await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
 
     // WHEN
     const response = await TestUtil.GET(
