@@ -19,8 +19,12 @@ export class MissionRepository {
   }
 
   async onApplicationBootstrap(): Promise<void> {
-    if (!App.isFirstStart()) {
+    try {
       await this.reloadMissions();
+    } catch (error) {
+      console.error(
+        `Error loading missions definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
+      );
     }
   }
 
