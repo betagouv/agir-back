@@ -317,8 +317,9 @@ model Mission {
   image_url          String?
   titre              String?
   code               String?
+  is_first           Boolean?
   thematique         String?
-  thematique_univers String?  @unique
+  thematique_univers String? // A supprimer, remplacé par code
   objectifs          Json     @default("{}")
   est_visible        Boolean
   created_at         DateTime @default(now()) @db.Timestamptz(3)

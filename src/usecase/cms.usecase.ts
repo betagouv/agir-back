@@ -730,6 +730,7 @@ export class CMSUsecase {
       titre: entry.titre,
       code: entry.code,
       image_url: CMSUsecase.getImageUrl(entry),
+      is_first: entry.is_first,
       objectifs:
         entry.objectifs.length > 0
           ? entry.objectifs.map((obj) => {
@@ -1006,6 +1007,7 @@ export class CMSUsecase {
         ? Thematique[entry.attributes.thematique.data.attributes.code]
         : Thematique.climat,
       code: entry.attributes.code,
+      is_first: entry.attributes.is_first,
       titre: entry.attributes.titre,
       image_url: CMSUsecase.getImageUrlFromPopulate(entry),
       objectifs:

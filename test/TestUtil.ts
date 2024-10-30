@@ -344,6 +344,7 @@ export class TestUtil {
       code: 'code',
       image_url: 'https://theimage',
       titre: 'the title',
+      is_first: false,
       objectifs: [
         {
           titre: 'obj 1',
