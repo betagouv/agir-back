@@ -419,6 +419,13 @@ export class ApplicationError {
       401,
     );
   }
+  static throwThatURLIsGone(url: string) {
+    this.throwAppError(
+      '083',
+      `l'URL [${url}] n'est définitivement plus disponible`,
+      410,
+    );
+  }
 
   private static throwAppError(
     code: string,

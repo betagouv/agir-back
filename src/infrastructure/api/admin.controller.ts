@@ -36,6 +36,7 @@ import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecas
 import { App } from '../../domain/app';
 import { MailerUsecase } from '../../usecase/mailer.usecase';
 import { ValiderPrenomAPI } from './types/utilisateur/validerPrenomsAPI';
+import { ApplicationError } from '../applicationError';
 
 class VersionAPI {
   @ApiProperty()
@@ -76,6 +77,11 @@ export class AdminController extends GenericControler {
   @ApiOkResponse({ type: VersionAPI })
   async getVersion(): Promise<VersionAPI> {
     return App.getAppVersion();
+  }
+
+  @Get('error_410')
+  async error410() {
+    ApplicationError.throwThatURLIsGone(`${App.getBaseURLBack()}/error_410`);
   }
 
   @Delete('admin/utilisateurs/:utilisateurId')
