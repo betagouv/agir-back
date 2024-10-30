@@ -724,6 +724,7 @@ describe('Mission (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      is_first: false,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -831,6 +832,7 @@ describe('Mission (API test)', () => {
       thematique: Thematique.alimentation,
       titre: 'titre',
       objectifs: objectifs as any,
+      is_first: false,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -1194,6 +1196,7 @@ describe('Mission (API test)', () => {
       thematique: Thematique.alimentation,
       titre: 'titre',
       objectifs: objectifs as any,
+      is_first: false,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -1811,5 +1814,60 @@ describe('Mission (API test)', () => {
 
     // THEN
     expect(response.status).toBe(404);
+  });
+  it.only(`GET /utilisateurs/id/tuiles_missions/:thematique - Liste les missions de la thématique, 100% catalogue`, async () => {
+    // GIVEN
+
+    const objectifs: ObjectifDefinition[] = [
+      {
+        content_id: '11',
+        points: 5,
+        titre: 'yop',
+        type: ContentType.kyc,
+        tag_article: null,
+        id_cms: 11,
+      },
+      {
+        content_id: '22',
+        points: 5,
+        titre: 'haha',
+        type: ContentType.article,
+        tag_article: null,
+        id_cms: 22,
+      },
+    ];
+
+    const mission_article: Mission = {
+      id_cms: 1,
+      thematique_univers: ThematiqueUnivers.cereales,
+      est_visible: true,
+      objectifs: objectifs as any,
+      code: 'code',
+      image_url: 'img',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
+      is_first: false,
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.utilisateur, { missions: {} });
+
+    await TestUtil.create(DB.mission, {
+      ...mission_article,
+      id_cms: 1,
+    });
+    await TestUtil.create(DB.mission, {
+      ...mission_article,
+      id_cms: 2,
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/tuiles_missions/alimentation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(2);
+    expect(response.body[0]).toEqual({});
   });
 });

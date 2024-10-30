@@ -6,6 +6,7 @@ export class TuileMission {
   progression: number;
   cible_progression: number;
   is_new: boolean;
+  is_first: boolean;
   image_url: string;
   thematique: Thematique;
 

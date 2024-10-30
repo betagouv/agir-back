@@ -24,6 +24,7 @@ export class MissionDefinition {
   thematique: Thematique;
   thematique_univers: string;
   titre: string;
+  is_first: boolean;
   code: string;
   image_url: string;
   objectifs: ObjectifDefinition[];
@@ -31,6 +32,8 @@ export class MissionDefinition {
 
   constructor(data: MissionDefinition) {
     Object.assign(this, data);
+
+    this.is_first = !!data.is_first;
 
     this.objectifs = [];
     if (data.objectifs) {

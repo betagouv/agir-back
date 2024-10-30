@@ -3,7 +3,6 @@ import { PrismaService } from '../prisma/prisma.service';
 import { Mission } from '@prisma/client';
 import { MissionDefinition } from '../../../src/domain/mission/missionDefinition';
 import { Cron } from '@nestjs/schedule';
-import { App } from '../../domain/app';
 import { Thematique } from '../../domain/contenu/thematique';
 
 @Injectable()
@@ -60,6 +59,7 @@ export class MissionRepository {
       image_url: missionDef.image_url,
       est_visible: missionDef.est_visible,
       objectifs: missionDef.objectifs as any,
+      is_first: missionDef.is_first,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -108,6 +108,7 @@ export class MissionRepository {
       code: missionDB.code,
       image_url: missionDB.image_url,
       titre: missionDB.titre,
+      is_first: missionDB.is_first,
     });
   }
 }

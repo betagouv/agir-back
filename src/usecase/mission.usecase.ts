@@ -24,10 +24,8 @@ import { Categorie } from '../domain/contenu/categorie';
 import { PonderationApplicativeManager } from '../domain/scoring/ponderationApplicative';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { QuestionGeneric } from '../domain/kyc/questionGeneric';
-import { TuileThematique } from '../domain/univers/tuileThematique';
 import { TuileMission } from '../domain/univers/tuileMission';
 import { Thematique } from '../domain/contenu/thematique';
-import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 
 @Injectable()
 export class MissionUsecase {
@@ -53,6 +51,7 @@ export class MissionUsecase {
 
     const listMissionDefs = this.missionRepository.getByThematique(thematique);
 
+    console.log(listMissionDefs);
     const result: TuileMission[] = [];
 
     for (const mission_def of listMissionDefs) {
@@ -72,13 +71,12 @@ export class MissionUsecase {
           ),
         );
       } else {
-        result.push(this.makeTuileMissionFromMissionDefinition(mission_def));
+        result.push(this.makeTuileMissionFromDefinition(mission_def));
       }
     }
-    // FIXME
-    //const final_result = this.ordonneTuilesThematiques(result);
+    const final_result = this.ordonneTuilesMission(result);
 
-    return this.personnalisator.personnaliser(result, utilisateur);
+    return this.personnalisator.personnaliser(final_result, utilisateur);
   }
 
   async terminerMission(
@@ -308,9 +306,10 @@ export class MissionUsecase {
       progression: mission.getProgression().current,
       cible_progression: mission.getProgression().target,
       thematique: mission_def.thematique,
+      is_first: mission_def.is_first,
     });
   }
-  private makeTuileMissionFromMissionDefinition(
+  private makeTuileMissionFromDefinition(
     mission_def: MissionDefinition,
   ): TuileMission {
     return new TuileMission({
@@ -321,6 +320,16 @@ export class MissionUsecase {
       progression: 0,
       cible_progression: mission_def.objectifs.length, // approximation temporaire
       thematique: mission_def.thematique,
+      is_first: mission_def.is_first,
     });
+  }
+
+  public ordonneTuilesMission(liste: TuileMission[]): TuileMission[] {
+    const first = liste.find((t) => t.is_first);
+    if (first) {
+      return [first].concat(liste.filter((t) => !t.is_first));
+    } else {
+      return liste;
+    }
   }
 }
