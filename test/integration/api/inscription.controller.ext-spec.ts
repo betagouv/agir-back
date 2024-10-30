@@ -29,12 +29,9 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
     expect(response.status).toEqual(201);
 
-    console.log(response.body.redirect_url);
-
     let situtation_id = response.body.redirect_url.split('=')[1];
     situtation_id = situtation_id.substring(0, situtation_id.indexOf('&'));
 
-    console.log(situtation_id);
     return situtation_id;
   }
 
@@ -52,7 +49,6 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
     const reponse_injectKYCs = await TestUtil.POST('/admin/load_kycs_from_cms');
     expect(reponse_injectKYCs.status).toEqual(201);
-    console.log(reponse_injectKYCs.body);
 
     const situationId = await importSitutationAndGetId(_situationNGCTest);
 

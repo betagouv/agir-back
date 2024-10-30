@@ -48,7 +48,6 @@ export class UniversUsecase {
     const liste_thematiques_reco_result: TuileThematique[] = [];
 
     const liste_univers = ThematiqueRepository.getAllUnivers();
-    console.log(liste_univers);
 
     const listMissionDefs = await this.missionRepository.list();
 
@@ -64,12 +63,10 @@ export class UniversUsecase {
 
         if (existing_mission && existing_mission.est_visible) {
           if (!existing_mission.isDone()) {
-            console.log('PUSH HISTORY');
             result.push(this.completeTuileWithMission(existing_mission, tuile));
           }
         } else {
           for (const mission_def of listMissionDefs) {
-            console.log(mission_def);
             if (
               (mission_def.est_visible || utilisateur.isAdmin()) &&
               mission_def.thematique_univers === tuile.type &&
@@ -86,7 +83,6 @@ export class UniversUsecase {
               const new_mission =
                 utilisateur.missions.upsertNewMission(ready_mission_def);
 
-              console.log('PUSH CATALOGUE');
               result.push(this.completeTuileWithMission(new_mission, tuile));
             }
           }
@@ -98,7 +94,6 @@ export class UniversUsecase {
       }
     }
 
-    console.log(liste_thematiques_reco_result);
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
     return this.personnalisator.personnaliser(
