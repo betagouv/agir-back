@@ -16,6 +16,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { AideVeloAPI as AideVeloAPI } from './types/aide/AideVeloAPI';
@@ -26,6 +27,7 @@ import { InputAideVeloAPI } from './types/aide/inputAideVeloAPI';
 import { Response } from 'express';
 import { AideAPI } from './types/aide/AideAPI';
 import { AideAPI_v2 } from './types/aide/AideAPI_v2';
+import { AideExportAPI } from './types/aide/AideExportAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -33,6 +35,18 @@ import { AideAPI_v2 } from './types/aide/AideAPI_v2';
 export class AidesController extends GenericControler {
   constructor(private readonly aidesUsecase: AidesUsecase) {
     super();
+  }
+
+  @ApiOkResponse({ type: [AideExportAPI] })
+  @ApiOperation({
+    summary:
+      "Export l'ensemble du catalogue d'aides avec les tagging METRO-CA-CC-CU",
+  })
+  @Get('aides')
+  async getCatalogueAidesComplet(@Request() req): Promise<AideExportAPI[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    const aides = await this.aidesUsecase.exportAides();
+    return aides.map((elem) => AideExportAPI.mapToAPI(elem));
   }
 
   /**

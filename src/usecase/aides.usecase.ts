@@ -32,6 +32,36 @@ export class AidesUsecase {
     );
   }
 
+  async exportAides(): Promise<Aide[]> {
+    const liste = await this.aideRepository.listAll();
+    for (const aide of liste) {
+      const metropoles = new Set<string>();
+      const cas = new Set<string>();
+      const cus = new Set<string>();
+      const ccs = new Set<string>();
+      for (const code_postal of aide.codes_postaux) {
+        this.communeRepository
+          .findRaisonSocialeDeNatureJuridiqueByCodePostal(code_postal, 'METRO')
+          .map((m) => metropoles.add(m));
+        this.communeRepository
+          .findRaisonSocialeDeNatureJuridiqueByCodePostal(code_postal, 'CA')
+          .map((m) => cas.add(m));
+        this.communeRepository
+          .findRaisonSocialeDeNatureJuridiqueByCodePostal(code_postal, 'CC')
+          .map((m) => ccs.add(m));
+        this.communeRepository
+          .findRaisonSocialeDeNatureJuridiqueByCodePostal(code_postal, 'CU')
+          .map((m) => cus.add(m));
+      }
+      aide.ca = Array.from(cas.values());
+      aide.cc = Array.from(ccs.values());
+      aide.cu = Array.from(cus.values());
+      aide.metropoles = Array.from(metropoles.values());
+    }
+    liste.sort((a, b) => parseInt(a.content_id) - parseInt(b.content_id));
+    return liste;
+  }
+
   async getCatalogueAides(
     utilisateurId: string,
   ): Promise<{ aides: Aide[]; utilisateur: Utilisateur }> {

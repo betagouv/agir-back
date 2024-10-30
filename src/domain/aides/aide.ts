@@ -19,4 +19,8 @@ export class Aide {
   exclude_codes_commune: string[];
   codes_departement: string[];
   codes_region: string[];
+  ca?: string[];
+  cu?: string[];
+  cc?: string[];
+  metropoles?: string[];
 }

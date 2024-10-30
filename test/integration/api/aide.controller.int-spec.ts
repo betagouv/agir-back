@@ -197,4 +197,55 @@ describe('Aide (API test)', () => {
     expect(response.body.liste_aides).toHaveLength(2);
     expect(response.body.couverture_aides_ok).toEqual(false);
   });
+  it('GET /aides toutes les aides avec les bonnes meta données', async () => {
+    // GIVEN
+    process.env.CRON_API_KEY = TestUtil.token;
+
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: ['21000'], // metropole
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      codes_postaux: ['01170'], // CA
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '3',
+      codes_postaux: ['01160'], // CC
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '4',
+      codes_postaux: ['14280'], // CU
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/aides');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(4);
+    expect(response.body[0]).toEqual({
+      content_id: '1',
+      titre: 'titreA',
+      contenu: "Contenu de l'aide",
+      codes_postaux: ['21000'],
+      thematiques: ['climat', 'logement'],
+      montant_max: 999,
+      codes_departement: [],
+      codes_region: [],
+      com_agglo: [],
+      com_urbaine: [],
+      com_com: [],
+      metropoles: ['Dijon Métropole'],
+    });
+    expect(response.body[0].metropoles).toEqual(['Dijon Métropole']);
+    expect(response.body[1].com_agglo).toEqual(['CA du Pays de Gex']);
+    expect(response.body[2].com_agglo).toEqual([
+      'CA du Bassin de Bourg-en-Bresse',
+    ]);
+    expect(response.body[2].com_com).toEqual([
+      `CC Rives de l'Ain - Pays du Cerdon`,
+    ]);
+    expect(response.body[3].com_urbaine).toEqual(['CU Caen la Mer']);
+  });
 });

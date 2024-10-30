@@ -142,4 +142,70 @@ describe('CommuneRepository', () => {
       code_region: '94',
     });
   });
+  it('findRaisonSocialeDeNatureJuridiqueByCodePostal : renvoi la metropole quand ça match', async () => {
+    // WHEN
+    const result =
+      await communeRepository.findRaisonSocialeDeNatureJuridiqueByCodePostal(
+        '29280',
+        'METRO',
+      );
+
+    // THEN
+    expect(result).toEqual(['Brest Métropole']);
+  });
+  it('findRaisonSocialeDeNatureJuridiqueByCodePostal : liste vide si pas de match metropole', async () => {
+    // WHEN
+    const result =
+      await communeRepository.findRaisonSocialeDeNatureJuridiqueByCodePostal(
+        '77650',
+        'METRO',
+      );
+
+    // THEN
+    expect(result).toEqual([]);
+  });
+  it('findRaisonSocialeDeNatureJuridiqueByCodePostal : renvoi la CA quand ça match', async () => {
+    // WHEN
+    const result =
+      await communeRepository.findRaisonSocialeDeNatureJuridiqueByCodePostal(
+        '01100',
+        'CA',
+      );
+
+    // THEN
+    expect(result).toEqual(['CA Haut - Bugey Agglomération']);
+  });
+  it('findRaisonSocialeDeNatureJuridiqueByCodePostal : liste vide si pas de match CA', async () => {
+    // WHEN
+    const result =
+      await communeRepository.findRaisonSocialeDeNatureJuridiqueByCodePostal(
+        '01260',
+        'CA',
+      );
+
+    // THEN
+    expect(result).toEqual([]);
+  });
+  it('findRaisonSocialeDeNatureJuridiqueByCodePostal : renvoi la CC quand ça match', async () => {
+    // WHEN
+    const result =
+      await communeRepository.findRaisonSocialeDeNatureJuridiqueByCodePostal(
+        '01300',
+        'CC',
+      );
+
+    // THEN
+    expect(result).toEqual(['CC Bugey Sud']);
+  });
+  it('findRaisonSocialeDeNatureJuridiqueByCodePostal : liste vide si pas de match CC', async () => {
+    // WHEN
+    const result =
+      await communeRepository.findRaisonSocialeDeNatureJuridiqueByCodePostal(
+        '01170',
+        'CC',
+      );
+
+    // THEN
+    expect(result).toEqual([]);
+  });
 });

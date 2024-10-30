@@ -17,17 +17,7 @@ export type AideFilter = {
 
 @Injectable()
 export class AideRepository {
-  constructor(private prisma: PrismaService) {
-    this.last_query_time = 0;
-  }
-
-  private last_query_time: number;
-  private aides: Aide[];
-
-  private async load_aides() {
-    const all_aides = await this.prisma.aide.findMany();
-    this.aides = all_aides.map((elem) => this.buildAideFromDB(elem));
-  }
+  constructor(private prisma: PrismaService) {}
 
   async upsert(aide: Aide): Promise<void> {
     await this.prisma.aide.upsert({
@@ -54,6 +44,11 @@ export class AideRepository {
       where: { content_id: content_id },
     });
     return this.buildAideFromDB(result);
+  }
+
+  async listAll(): Promise<Aide[]> {
+    const result = await this.prisma.aide.findMany();
+    return result.map((a) => this.buildAideFromDB(a));
   }
 
   async isCodePostalCouvert(code_postal: string): Promise<boolean> {

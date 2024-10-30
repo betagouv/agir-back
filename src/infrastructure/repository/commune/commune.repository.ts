@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import codes_postaux from './codes_postaux.json';
-import communes from './communes.json';
+import _codes_postaux from './codes_postaux.json';
+import _communes from './communes.json';
+import _epiccom from './epicom2024.json';
 
 export type CommuneParCodePostal = {
   INSEE: string;
@@ -20,10 +21,21 @@ export type Commune = {
   codesPostaux: string[];
 };
 
+export type EpicCom = {
+  dept: string;
+  siren: string;
+  raison_sociale: string;
+  nature_juridique: string;
+  mode_financ: string;
+  dep_com: string;
+  insee: string;
+  nom_membre: String;
+};
+
 @Injectable()
 export class CommuneRepository {
   constructor() {
-    this.supprimernDoublonsCommunesEtLigne5(codes_postaux);
+    this.supprimernDoublonsCommunesEtLigne5(_codes_postaux);
   }
 
   supprimernDoublonsCommunesEtLigne5(referentiel) {
@@ -40,7 +52,7 @@ export class CommuneRepository {
   }
 
   checkCodePostal(code_postal: string): boolean {
-    return codes_postaux[code_postal] !== undefined;
+    return _codes_postaux[code_postal] !== undefined;
   }
 
   checkOKCodePostalAndCommune(code_postal: string, commune: string): boolean {
@@ -49,7 +61,7 @@ export class CommuneRepository {
   }
 
   getListCommunesParCodePostal(code_postal: string): string[] {
-    const liste: CommuneParCodePostal[] = codes_postaux[code_postal];
+    const liste: CommuneParCodePostal[] = _codes_postaux[code_postal];
     if (liste === undefined) return [];
     return liste.map((a) => a.commune);
   }
@@ -63,7 +75,7 @@ export class CommuneRepository {
   }
 
   getCodeCommune(code_postal: string, nom_commune: string): string {
-    const liste: CommuneParCodePostal[] = codes_postaux[code_postal];
+    const liste: CommuneParCodePostal[] = _codes_postaux[code_postal];
     if (!liste) {
       return null;
     }
@@ -83,6 +95,26 @@ export class CommuneRepository {
     return libelle || commune;
   }
 
+  findRaisonSocialeDeNatureJuridiqueByCodePostal(
+    code_postal: string,
+    echelon: 'CC' | 'CA' | 'METRO' | 'CU',
+  ): string[] {
+    const liste_communes = this.getCommunesForCodePostal(code_postal);
+    const result = new Set<string>();
+
+    for (const commune of liste_communes) {
+      for (const epicom of _epiccom as EpicCom[]) {
+        if (
+          epicom.insee === commune.INSEE &&
+          epicom.nature_juridique === echelon
+        ) {
+          result.add(epicom.raison_sociale);
+        }
+      }
+    }
+    return Array.from(result.values());
+  }
+
   findDepartementRegionByCodePostal(code_postal: string): {
     code_departement: string;
     code_region: string;
@@ -97,7 +129,7 @@ export class CommuneRepository {
 
     let commune = this.getCommuneByCodeINSEE(liste[0].INSEE);
     if (!commune) {
-      for (const commune_insee of communes as Commune[]) {
+      for (const commune_insee of _communes as Commune[]) {
         if (commune_insee.codesPostaux.includes(code_postal)) {
           commune = commune_insee;
           break;
@@ -119,11 +151,11 @@ export class CommuneRepository {
   }
 
   private getCommunesForCodePostal(code_postal: string) {
-    const liste: CommuneParCodePostal[] = codes_postaux[code_postal];
+    const liste: CommuneParCodePostal[] = _codes_postaux[code_postal];
     return liste ? liste : [];
   }
 
   private getCommuneByCodeINSEE(code_insee: string): Commune {
-    return (communes as Commune[]).find((c) => c.code === code_insee);
+    return (_communes as Commune[]).find((c) => c.code === code_insee);
   }
 }
