@@ -36,6 +36,10 @@ export class Mission_v0 {
   objectifs: Objectif_v0[];
   est_visible: boolean;
   univers: string;
+  thematique: string;
+  titre: string;
+  code: string;
+  image_url: string;
 
   static map(mission: Mission): Mission_v0 {
     return {
@@ -47,6 +51,10 @@ export class Mission_v0 {
         : [],
       est_visible: !!mission.est_visible,
       univers: mission.univers,
+      thematique: mission.univers,
+      code: mission.code,
+      image_url: mission.image_url,
+      titre: mission.titre,
     };
   }
 }

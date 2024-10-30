@@ -25,6 +25,10 @@ describe('EVENT (API test)', () => {
         done_at: new Date(1),
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
+        code: 'code',
+        image_url: 'image',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '0',
@@ -50,6 +54,10 @@ describe('EVENT (API test)', () => {
         done_at: new Date(1),
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
+        code: 'code',
+        image_url: 'image',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '0',

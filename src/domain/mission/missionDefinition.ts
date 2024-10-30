@@ -20,16 +20,16 @@ export class ObjectifDefinition {
 
 export class MissionDefinition {
   id_cms: number;
+  thematique: string;
   thematique_univers: string;
+  titre: string;
+  code: string;
+  image_url: string;
   objectifs: ObjectifDefinition[];
   est_visible: boolean;
-  univers: string;
 
   constructor(data: MissionDefinition) {
-    this.thematique_univers = data.thematique_univers;
-    this.est_visible = data.est_visible;
-    this.id_cms = data.id_cms;
-    this.univers = data.univers;
+    Object.assign(this, data);
 
     this.objectifs = [];
     if (data.objectifs) {

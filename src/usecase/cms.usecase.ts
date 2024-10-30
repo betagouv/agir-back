@@ -722,7 +722,12 @@ export class CMSUsecase {
       thematique_univers: entry.thematique_univers_unique
         ? entry.thematique_univers_unique.code
         : null,
-      univers: undefined,
+      thematique: entry.thematique
+        ? Thematique[entry.thematique.code]
+        : Thematique.climat,
+      titre: entry.titre,
+      code: entry.code,
+      image_url: CMSUsecase.getImageUrl(entry),
       objectifs:
         entry.objectifs.length > 0
           ? entry.objectifs.map((obj) => {
@@ -993,7 +998,12 @@ export class CMSUsecase {
       thematique_univers: entry.attributes.thematique_univers_unique.data
         ? entry.attributes.thematique_univers_unique.data.attributes.code
         : null,
-      univers: undefined,
+      thematique: entry.attributes.thematique.data
+        ? Thematique[entry.attributes.thematique.data.attributes.code]
+        : Thematique.climat,
+      code: entry.attributes.code,
+      titre: entry.attributes.titre,
+      image_url: CMSUsecase.getImageUrlFromPopulate(entry),
       objectifs:
         entry.attributes.objectifs.length > 0
           ? entry.attributes.objectifs.map((obj) => {

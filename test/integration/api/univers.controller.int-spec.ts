@@ -19,6 +19,7 @@ import {
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { Thematique } from '../../../src/domain/contenu/thematique';
 
 describe('Univers (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -32,6 +33,10 @@ describe('Univers (API test)', () => {
         done_at: null,
         thematique_univers: 'A',
         univers: 'alimentation',
+        code: 'code',
+        image_url: 'img',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '0',
@@ -52,6 +57,10 @@ describe('Univers (API test)', () => {
         done_at: null,
         thematique_univers: 'B',
         univers: 'alimentation',
+        code: 'code',
+        image_url: 'img',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '0',
@@ -83,6 +92,10 @@ describe('Univers (API test)', () => {
         done_at: new Date(),
         thematique_univers: 'C',
         univers: 'alimentation',
+        code: 'code',
+        image_url: 'img',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '1',
@@ -103,6 +116,10 @@ describe('Univers (API test)', () => {
         done_at: null,
         thematique_univers: 'D',
         univers: 'alimentation',
+        code: 'code',
+        image_url: 'img',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '1',
@@ -123,6 +140,10 @@ describe('Univers (API test)', () => {
         done_at: null,
         thematique_univers: 'E',
         univers: 'alimentation',
+        code: 'code',
+        image_url: 'img',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '1',
@@ -143,6 +164,10 @@ describe('Univers (API test)', () => {
         done_at: null,
         thematique_univers: 'F',
         univers: 'alimentation',
+        code: 'code',
+        image_url: 'img',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '1',
@@ -163,6 +188,10 @@ describe('Univers (API test)', () => {
         done_at: null,
         thematique_univers: 'G',
         univers: 'alimentation',
+        code: 'code',
+        image_url: 'img',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '1',
@@ -188,6 +217,10 @@ describe('Univers (API test)', () => {
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
         univers: 'alimentation',
+        code: 'code',
+        image_url: 'img',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '0',
@@ -213,6 +246,10 @@ describe('Univers (API test)', () => {
         done_at: new Date(),
         thematique_univers: ThematiqueUnivers.cereales,
         univers: 'alimentation',
+        code: 'code',
+        image_url: 'img',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '0',
@@ -239,6 +276,10 @@ describe('Univers (API test)', () => {
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
         univers: 'alimentation',
+        code: 'code',
+        image_url: 'img',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '0',
@@ -259,6 +300,10 @@ describe('Univers (API test)', () => {
         done_at: null,
         thematique_univers: ThematiqueUnivers.dechets_compost,
         univers: 'alimentation',
+        code: 'code',
+        image_url: 'img',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '0',
@@ -515,6 +560,10 @@ describe('Univers (API test)', () => {
       thematique_univers: ThematiqueUnivers.cereales,
       est_visible: true,
       objectifs: objectifs as any,
+      code: 'code',
+      image_url: 'img',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
       created_at: undefined,
       updated_at: undefined,
     };
@@ -592,6 +641,10 @@ describe('Univers (API test)', () => {
       id_cms: 1,
       thematique_univers: ThematiqueUnivers.cereales,
       est_visible: true,
+      code: 'code',
+      image_url: 'img',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
       objectifs: objectifs as any,
       created_at: undefined,
       updated_at: undefined,
@@ -672,6 +725,10 @@ describe('Univers (API test)', () => {
       id_cms: 1,
       thematique_univers: ThematiqueUnivers.cereales,
       est_visible: true,
+      code: 'code',
+      image_url: 'img',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
       objectifs: objectifs as any,
       created_at: undefined,
       updated_at: undefined,
@@ -754,6 +811,10 @@ describe('Univers (API test)', () => {
       id_cms: 1,
       thematique_univers: ThematiqueUnivers.cereales,
       est_visible: true,
+      code: 'code',
+      image_url: 'img',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
       objectifs: objectifs as any,
       created_at: undefined,
       updated_at: undefined,

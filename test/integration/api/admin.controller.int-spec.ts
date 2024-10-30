@@ -1250,6 +1250,10 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifComplete],
           est_visible: true,
           univers: 'alimentation',
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.alimentation,
+          titre: 'titre',
         },
         {
           id: '2',
@@ -1258,6 +1262,10 @@ describe('Admin (API test)', () => {
           objectifs: [objectifNonComplete, objectifNonComplete],
           est_visible: true,
           univers: 'alimentation',
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.alimentation,
+          titre: 'titre',
         },
         {
           id: '3',
@@ -1266,6 +1274,10 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifComplete],
           est_visible: true,
           univers: 'alimentation',
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.alimentation,
+          titre: 'titre',
         },
       ],
     };
@@ -1279,6 +1291,10 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifNonComplete],
           est_visible: true,
           univers: 'alimentation',
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.alimentation,
+          titre: 'titre',
         },
         {
           id: '2',
@@ -1287,6 +1303,10 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifComplete],
           est_visible: true,
           univers: 'alimentation',
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.alimentation,
+          titre: 'titre',
         },
         {
           id: '3',
@@ -1295,6 +1315,10 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifComplete],
           est_visible: true,
           univers: 'alimentation',
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.alimentation,
+          titre: 'titre',
         },
       ],
     };
@@ -1901,6 +1925,10 @@ describe('Admin (API test)', () => {
           done_at: new Date(),
           thematique_univers: ThematiqueUnivers.cereales,
           univers: 'alimentation',
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.alimentation,
+          titre: 'titre',
           objectifs: [
             {
               id: '1',
@@ -1932,6 +1960,10 @@ describe('Admin (API test)', () => {
           done_at: null,
           thematique_univers: ThematiqueUnivers.mobilite_quotidien,
           univers: Univers.transport,
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.transport,
+          titre: 'titre',
           objectifs: [
             {
               id: '1',
@@ -1968,6 +2000,10 @@ describe('Admin (API test)', () => {
           done_at: null,
           thematique_univers: ThematiqueUnivers.cereales,
           univers: Univers.alimentation,
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.alimentation,
+          titre: 'titre',
           objectifs: [
             {
               id: '1',
@@ -1999,6 +2035,10 @@ describe('Admin (API test)', () => {
           done_at: null,
           thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
           univers: Univers.alimentation,
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.alimentation,
+          titre: 'titre',
           objectifs: [
             {
               id: '1',
@@ -2030,6 +2070,10 @@ describe('Admin (API test)', () => {
           done_at: null,
           thematique_univers: ThematiqueUnivers.mobilite_quotidien,
           univers: Univers.transport,
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.transport,
+          titre: 'titre',
           objectifs: [
             {
               id: '1',
@@ -2183,6 +2227,10 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifComplete],
           est_visible: true,
           univers: Univers.alimentation,
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.alimentation,
+          titre: 'titre',
         },
         {
           id: '2',
@@ -2191,6 +2239,10 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifComplete],
           est_visible: true,
           univers: Univers.alimentation,
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.alimentation,
+          titre: 'titre',
         },
         {
           id: '3',
@@ -2199,6 +2251,10 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifNonComplete],
           est_visible: true,
           univers: Univers.transport,
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.transport,
+          titre: 'titre',
         },
         {
           id: '4',
@@ -2207,6 +2263,10 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifNonComplete],
           est_visible: true,
           univers: Univers.transport,
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.transport,
+          titre: 'titre',
         },
       ],
     };
@@ -2220,6 +2280,10 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifComplete],
           est_visible: true,
           univers: Univers.alimentation,
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.alimentation,
+          titre: 'titre',
         },
         {
           id: '2',
@@ -2228,6 +2292,10 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifComplete],
           est_visible: true,
           univers: Univers.alimentation,
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.alimentation,
+          titre: 'titre',
         },
         {
           id: '3',
@@ -2236,6 +2304,10 @@ describe('Admin (API test)', () => {
           objectifs: [objectifNonComplete, objectifNonComplete],
           est_visible: true,
           univers: Univers.transport,
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.transport,
+          titre: 'titre',
         },
         {
           id: '4',
@@ -2244,6 +2316,10 @@ describe('Admin (API test)', () => {
           objectifs: [objectifComplete, objectifComplete],
           est_visible: true,
           univers: Univers.transport,
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.transport,
+          titre: 'titre',
         },
       ],
     };

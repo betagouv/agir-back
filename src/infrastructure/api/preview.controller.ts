@@ -513,8 +513,8 @@ export class PreviewController extends GenericControler {
     );
     result.push(
       `Univers : <a href="/univers_preview/${
-        ThematiqueRepository.getTuileUnivers(mission_def.univers).id_cms
-      }">${ThematiqueRepository.getTitreUnivers(mission_def.univers)}</a>`,
+        ThematiqueRepository.getTuileUnivers(mission_def.thematique).id_cms
+      }">${ThematiqueRepository.getTitreUnivers(mission_def.thematique)}</a>`,
     );
     result.push(`Est visible : ${mission_def.est_visible}`);
 
