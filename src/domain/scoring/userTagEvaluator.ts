@@ -119,6 +119,17 @@ export class UserTagEvaluator {
       -100,
     );
   }
+  private static kyc_logement_age(user: Utilisateur, kyc: QuestionKYC) {
+    const value = kyc.getValeurEntiereReponseUniqueSaisie();
+    if (value) {
+      user.increaseTagValueIfElse(
+        Tag.logement_plus_15_ans,
+        value >= 15,
+        100,
+        -100,
+      );
+    }
+  }
 
   private static kyc_007(user: Utilisateur, kyc: QuestionKYC) {
     user.increaseTagValueIfElse(
@@ -243,6 +254,9 @@ export class UserTagEvaluator {
         break;
       case KYCID.KYC006:
         UserTagEvaluator.kyc_006(user, kyc);
+        break;
+      case KYCID.KYC_logement_age:
+        UserTagEvaluator.kyc_logement_age(user, kyc);
         break;
       case KYCID.KYC007:
         UserTagEvaluator.kyc_007(user, kyc);

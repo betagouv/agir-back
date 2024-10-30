@@ -341,10 +341,11 @@ model KYC {
 }
 
 model SituationNGC {
-  id         String   @id
-  situation  Json?
-  created_at DateTime @default(now()) @db.Timestamptz(3)
-  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  id            String   @id
+  utilisateurId String?
+  situation     Json?
+  created_at    DateTime @default(now()) @db.Timestamptz(3)
+  updated_at    DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model Service {

@@ -9,7 +9,7 @@ import { EmailTemplateRepository } from '../infrastructure/email/emailTemplate.r
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
 
-const day_2 = 1000 * 60 * 60 * 24 * 2;
+const day_10 = 1000 * 60 * 60 * 24 * 10;
 
 @Injectable()
 export class MailerUsecase {
@@ -38,7 +38,8 @@ export class MailerUsecase {
     const result: string[] = [];
     const listeUtilisateursIds =
       await this.utilisateurRepository.listUtilisateurIds(
-        new Date(Date.now() - day_2),
+        new Date(Date.now() - day_10),
+        true,
       );
 
     for (const utilisateurId of listeUtilisateursIds) {

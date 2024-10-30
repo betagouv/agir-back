@@ -11,6 +11,7 @@ import { GenericControler } from './genericControler';
 import { UniversAPI } from './types/univers/UniversAPI';
 import { UniversUsecase } from '../../../src/usecase/univers.usecase';
 import { ThematiqueUniversAPI } from './types/univers/ThematiqueUniversAPI';
+import { Univers } from '../../domain/univers/univers';
 
 @Controller()
 @ApiBearerAuth()
@@ -61,6 +62,25 @@ export class UniversController extends GenericControler {
     const result = await this.universUsecase.getThematiquesOfUnivers(
       utilisateurId,
       univers,
+    );
+    return result.map((e) => ThematiqueUniversAPI.mapToAPI(e));
+  }
+
+  @Get('utilisateurs/:utilisateurId/thematiques_recommandees')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: [ThematiqueUniversAPI],
+  })
+  @ApiOperation({
+    summary: `Retourne les thematiques recommandées pour la home`,
+  })
+  async getThematiquesRecommandees(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<ThematiqueUniversAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.universUsecase.getThematiquesRecommandees(
+      utilisateurId,
     );
     return result.map((e) => ThematiqueUniversAPI.mapToAPI(e));
   }

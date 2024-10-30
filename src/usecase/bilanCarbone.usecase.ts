@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { BilanCarboneStatistiqueRepository } from '../infrastructure/repository/bilanCarboneStatistique.repository';
-import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
+import {
+  Scope,
+  SourceInscription,
+  Utilisateur,
+} from '../domain/utilisateur/utilisateur';
 import {
   BilanCarbone,
   BilanCarboneSynthese,
@@ -14,6 +18,9 @@ import { QuestionKYCUsecase } from './questionKYC.usecase';
 import { Univers } from '../domain/univers/univers';
 import { KYCID } from '../domain/kyc/KYCID';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
+import { Feature } from '../domain/gamification/feature';
+
+const SEUIL_POURCENTAGE_BILAN_COMPLET = 99;
 
 @Injectable()
 export class BilanCarboneUsecase {
@@ -30,17 +37,12 @@ export class BilanCarboneUsecase {
   }> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.kyc, Scope.logement],
+      [Scope.kyc, Scope.logement, Scope.unlocked_features],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
-
-    const situation = this.computeSituation(utilisateur);
-
-    const bilan_complet =
-      this.nGCCalculator.computeBilanCarboneFromSituation(situation);
 
     const enchainement_mini_bilan =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
@@ -87,69 +89,96 @@ export class BilanCarboneUsecase {
         100,
     );
 
+    const bilan_synthese: BilanCarboneSynthese = {
+      mini_bilan_dispo: false,
+      bilan_complet_dispo: false,
+      impact_alimentation: this.computeImpactAlimentation(utilisateur),
+      impact_logement: this.computeImpactLogement(utilisateur),
+      impact_transport: this.computeImpactTransport(utilisateur),
+      impact_consommation: this.computeImpactConsommation(utilisateur),
+      pourcentage_completion_totale: pourcentage_prog_totale,
+      liens_bilans_univers: [
+        {
+          image_url:
+            'https://res.cloudinary.com/dq023imd8/image/upload/v1728466903/Mobilite_df75aefd09.svg',
+          univers: Univers.transport,
+          nombre_total_question: enchainement_transport_progression.target,
+          pourcentage_progression: Math.round(
+            (enchainement_transport_progression.current /
+              enchainement_transport_progression.target) *
+              100,
+          ),
+          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
+          temps_minutes: 5,
+        },
+        {
+          image_url:
+            'https://res.cloudinary.com/dq023imd8/image/upload/v1728466523/cuisine_da54797693.svg',
+          univers: Univers.alimentation,
+          nombre_total_question: enchainement_alimentation_progression.target,
+          pourcentage_progression: Math.round(
+            (enchainement_alimentation_progression.current /
+              enchainement_alimentation_progression.target) *
+              100,
+          ),
+          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_alimentation',
+          temps_minutes: 3,
+        },
+        {
+          image_url:
+            'https://res.cloudinary.com/dq023imd8/image/upload/v1728468852/conso_7522b1950d.svg',
+          univers: Univers.consommation,
+          nombre_total_question: enchainement_conso_progression.target,
+          pourcentage_progression: Math.round(
+            (enchainement_conso_progression.current /
+              enchainement_conso_progression.target) *
+              100,
+          ),
+          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_consommation',
+          temps_minutes: 10,
+        },
+        {
+          image_url:
+            'https://res.cloudinary.com/dq023imd8/image/upload/v1728468978/maison_80242d91f3.svg',
+          univers: Univers.logement,
+          nombre_total_question: enchainement_logement_progression.target,
+          pourcentage_progression: Math.round(
+            (enchainement_logement_progression.current /
+              enchainement_logement_progression.target) *
+              100,
+          ),
+          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_logement',
+          temps_minutes: 9,
+        },
+      ],
+    };
+
+    bilan_synthese.mini_bilan_dispo =
+      !!bilan_synthese.impact_alimentation &&
+      !!bilan_synthese.impact_consommation &&
+      !!bilan_synthese.impact_logement &&
+      !!bilan_synthese.impact_transport &&
+      !utilisateur.vientDeNGC();
+
+    if (
+      bilan_synthese.pourcentage_completion_totale >
+      SEUIL_POURCENTAGE_BILAN_COMPLET
+    ) {
+      utilisateur.unlocked_features.add(Feature.bilan_carbone_detail);
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    }
+
+    bilan_synthese.bilan_complet_dispo =
+      utilisateur.unlocked_features.isUnlocked(Feature.bilan_carbone_detail) ||
+      utilisateur.vientDeNGC();
+
+    const situation = this.computeSituation(utilisateur);
+    const bilan_complet =
+      this.nGCCalculator.computeBilanCarboneFromSituation(situation);
+
     return {
+      bilan_synthese: bilan_synthese,
       bilan_complet: bilan_complet,
-      bilan_synthese: {
-        impact_alimentation: this.computeImpactAlimentation(utilisateur),
-        impact_logement: this.computeImpactLogement(utilisateur),
-        impact_transport: this.computeImpactTransport(utilisateur),
-        impact_consommation: this.computeImpactConsommation(utilisateur),
-        pourcentage_completion_totale: pourcentage_prog_totale,
-        liens_bilans_univers: [
-          {
-            image_url:
-              'https://res.cloudinary.com/dq023imd8/image/upload/v1728466903/Mobilite_df75aefd09.svg',
-            univers: Univers.transport,
-            nombre_total_question: enchainement_transport_progression.target,
-            pourcentage_progression: Math.round(
-              (enchainement_transport_progression.current /
-                enchainement_transport_progression.target) *
-                100,
-            ),
-            id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
-            temps_minutes: 5,
-          },
-          {
-            image_url:
-              'https://res.cloudinary.com/dq023imd8/image/upload/v1728466523/cuisine_da54797693.svg',
-            univers: Univers.alimentation,
-            nombre_total_question: enchainement_alimentation_progression.target,
-            pourcentage_progression: Math.round(
-              (enchainement_alimentation_progression.current /
-                enchainement_alimentation_progression.target) *
-                100,
-            ),
-            id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_alimentation',
-            temps_minutes: 3,
-          },
-          {
-            image_url:
-              'https://res.cloudinary.com/dq023imd8/image/upload/v1728468852/conso_7522b1950d.svg',
-            univers: Univers.consommation,
-            nombre_total_question: enchainement_conso_progression.target,
-            pourcentage_progression: Math.round(
-              (enchainement_conso_progression.current /
-                enchainement_conso_progression.target) *
-                100,
-            ),
-            id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_consommation',
-            temps_minutes: 10,
-          },
-          {
-            image_url:
-              'https://res.cloudinary.com/dq023imd8/image/upload/v1728468978/maison_80242d91f3.svg',
-            univers: Univers.logement,
-            nombre_total_question: enchainement_logement_progression.target,
-            pourcentage_progression: Math.round(
-              (enchainement_logement_progression.current /
-                enchainement_logement_progression.target) *
-                100,
-            ),
-            id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_logement',
-            temps_minutes: 9,
-          },
-        ],
-      },
     };
   }
 
@@ -187,23 +216,23 @@ export class BilanCarboneUsecase {
       const kyc = entry.kyc;
 
       if (kyc.is_NGC) {
-        if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
-          if (kyc.ngc_key) {
+        if (!kyc.ngc_key) {
+          console.error(
+            `Missing ngc key for KYC [${kyc.id_cms}/${kyc.id}]  user [${utilisateur.id}]`,
+          );
+        } else {
+          if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
             if (kyc.reponses && kyc.reponses.length > 0) {
               situation[kyc.ngc_key] = kyc.reponses[0].ngc_code;
             }
-          } else {
-            console.error(`Missing ngc key for KYC [${kyc.id_cms}/${kyc.id}]`);
           }
-        }
-        if (
-          kyc.type === TypeReponseQuestionKYC.entier ||
-          kyc.type === TypeReponseQuestionKYC.decimal
-        ) {
-          if (kyc.ngc_key && kyc.reponses && kyc.reponses.length > 0) {
-            situation[kyc.ngc_key] = kyc.reponses[0].label;
-          } else {
-            console.error(`Missing ngc key for KYC [${kyc.id_cms}/${kyc.id}]`);
+          if (
+            kyc.type === TypeReponseQuestionKYC.entier ||
+            kyc.type === TypeReponseQuestionKYC.decimal
+          ) {
+            if (kyc.reponses && kyc.reponses.length > 0) {
+              situation[kyc.ngc_key] = kyc.getReponseUniqueSaisie();
+            }
           }
         }
       }

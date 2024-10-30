@@ -43,6 +43,56 @@ describe('UtilisateurRepository', () => {
     // THEN
     expect(result).toStrictEqual(['1', '2', '3']);
   });
+  it('listUtilisateurIds : list utilisateur Ids apres date', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      email: 'email1@truc.com',
+      created_at: new Date(100),
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      email: 'email2@truc.com',
+      created_at: new Date(200),
+    });
+
+    // WHEN
+    const result = await utilisateurRepository.listUtilisateurIds(
+      new Date(150),
+    );
+
+    // THEN
+    expect(result).toStrictEqual(['2']);
+  });
+  it('listUtilisateurIds : list utilisateur Ids apres date et actifs', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      email: 'email1@truc.com',
+      created_at: new Date(100),
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      email: 'email2@truc.com',
+      created_at: new Date(200),
+      active_account: false,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '3',
+      email: 'email3@truc.com',
+      created_at: new Date(300),
+      active_account: true,
+    });
+
+    // WHEN
+    const result = await utilisateurRepository.listUtilisateurIds(
+      new Date(150),
+      true,
+    );
+
+    // THEN
+    expect(result).toStrictEqual(['3']);
+  });
 
   it('nombreTotalUtilisateurs :  compte le bon nombre', async () => {
     // GIVEN

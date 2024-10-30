@@ -25,7 +25,8 @@ export class DefisUsecase {
       utilisateurId,
       [Scope.defis, Scope.logement, Scope.missions],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
+
     const defiDefinitions = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(defiDefinitions);
 
@@ -59,7 +60,8 @@ export class DefisUsecase {
       utilisateurId,
       [Scope.defis, Scope.logement, Scope.missions],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
+
     const defiDefinitions = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(defiDefinitions);
 
@@ -91,7 +93,8 @@ export class DefisUsecase {
       utilisateurId,
       [Scope.defis, Scope.logement],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
+
     const defiDefinitions = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(defiDefinitions);
 
@@ -124,7 +127,7 @@ export class DefisUsecase {
       utilisateurId,
       [Scope.defis, Scope.logement],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const catalogue = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(catalogue);
@@ -148,7 +151,7 @@ export class DefisUsecase {
         Scope.gamification,
       ],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const catalogue = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(catalogue);

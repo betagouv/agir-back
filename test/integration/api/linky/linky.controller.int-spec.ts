@@ -1,6 +1,7 @@
 import { DB, TestUtil } from '../../../TestUtil';
 
 const _linky_data = require('../../../../test_data/PRM_thermo_pas_sensible');
+const _linky_full_BDD_data = require('./data_linky_BDD_exemple.json');
 
 describe('Linky (API test)', () => {
   const OLD_ENV = process.env;
@@ -247,6 +248,261 @@ describe('Linky (API test)', () => {
     );
     expect(response.body.commentaires[1]).toEqual(
       `Au cours des 2 dernières semaines, votre consommation éléctrique a <strong>augmenté de +58%</strong> par rapport à la même période l'année dernière`,
+    );
+  });
+
+  it('GET /utilisateurs/id/linky comparaison 15 derniers jours avec data full', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.serviceDefinition, { id: 'linky' });
+    await TestUtil.create(DB.service, {
+      serviceDefinitionId: 'linky',
+      configuration: { prm: 'abc' },
+    });
+    await TestUtil.create(DB.linky, {
+      data: _linky_full_BDD_data,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/linky?derniers_14_jours=true',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.data).toHaveLength(28);
+    expect(response.body.data).toEqual([
+      {
+        date: '2023-10-09T00:00:00.000Z',
+        valeur: 12898,
+        jour: 'lundi',
+        jour_val: 9,
+        mois: 'octobre',
+        annee: '2023',
+      },
+      {
+        date: '2024-10-09T00:00:00.000Z',
+        valeur: 9006,
+        jour: 'mercredi',
+        jour_val: 9,
+        mois: 'octobre',
+        annee: '2024',
+      },
+      {
+        date: '2023-10-10T00:00:00.000Z',
+        valeur: 7765,
+        jour: 'mardi',
+        jour_val: 10,
+        mois: 'octobre',
+        annee: '2023',
+      },
+      {
+        date: '2024-10-10T00:00:00.000Z',
+        valeur: 12337,
+        jour: 'jeudi',
+        jour_val: 10,
+        mois: 'octobre',
+        annee: '2024',
+      },
+      {
+        date: '2023-10-11T00:00:00.000Z',
+        valeur: 5100,
+        jour: 'mercredi',
+        jour_val: 11,
+        mois: 'octobre',
+        annee: '2023',
+      },
+      {
+        date: '2024-10-11T00:00:00.000Z',
+        valeur: 4988,
+        jour: 'vendredi',
+        jour_val: 11,
+        mois: 'octobre',
+        annee: '2024',
+      },
+      {
+        date: '2023-10-12T00:00:00.000Z',
+        valeur: 10763,
+        jour: 'jeudi',
+        jour_val: 12,
+        mois: 'octobre',
+        annee: '2023',
+      },
+      {
+        date: '2024-10-12T00:00:00.000Z',
+        valeur: 8531,
+        jour: 'samedi',
+        jour_val: 12,
+        mois: 'octobre',
+        annee: '2024',
+      },
+      {
+        date: '2023-10-13T00:00:00.000Z',
+        valeur: 4654,
+        jour: 'vendredi',
+        jour_val: 13,
+        mois: 'octobre',
+        annee: '2023',
+      },
+      {
+        date: '2024-10-13T00:00:00.000Z',
+        valeur: 12702,
+        jour: 'dimanche',
+        jour_val: 13,
+        mois: 'octobre',
+        annee: '2024',
+      },
+      {
+        date: '2023-10-14T00:00:00.000Z',
+        valeur: 5837,
+        jour: 'samedi',
+        jour_val: 14,
+        mois: 'octobre',
+        annee: '2023',
+      },
+      {
+        date: '2024-10-14T00:00:00.000Z',
+        valeur: 12542,
+        jour: 'lundi',
+        jour_val: 14,
+        mois: 'octobre',
+        annee: '2024',
+      },
+      {
+        date: '2023-10-15T00:00:00.000Z',
+        valeur: 12462,
+        jour: 'dimanche',
+        jour_val: 15,
+        mois: 'octobre',
+        annee: '2023',
+      },
+      {
+        date: '2024-10-15T00:00:00.000Z',
+        valeur: 13082,
+        jour: 'mardi',
+        jour_val: 15,
+        mois: 'octobre',
+        annee: '2024',
+      },
+      {
+        date: '2023-10-16T00:00:00.000Z',
+        valeur: 11953,
+        jour: 'lundi',
+        jour_val: 16,
+        mois: 'octobre',
+        annee: '2023',
+      },
+      {
+        date: '2024-10-16T00:00:00.000Z',
+        valeur: 6948,
+        jour: 'mercredi',
+        jour_val: 16,
+        mois: 'octobre',
+        annee: '2024',
+      },
+      {
+        date: '2023-10-17T00:00:00.000Z',
+        valeur: 7214,
+        jour: 'mardi',
+        jour_val: 17,
+        mois: 'octobre',
+        annee: '2023',
+      },
+      {
+        date: '2024-10-17T00:00:00.000Z',
+        valeur: 11496,
+        jour: 'jeudi',
+        jour_val: 17,
+        mois: 'octobre',
+        annee: '2024',
+      },
+      {
+        date: '2023-10-18T00:00:00.000Z',
+        valeur: 9116,
+        jour: 'mercredi',
+        jour_val: 18,
+        mois: 'octobre',
+        annee: '2023',
+      },
+      {
+        date: '2024-10-18T00:00:00.000Z',
+        valeur: 11501,
+        jour: 'vendredi',
+        jour_val: 18,
+        mois: 'octobre',
+        annee: '2024',
+      },
+      {
+        date: '2023-10-19T00:00:00.000Z',
+        valeur: 11360,
+        jour: 'jeudi',
+        jour_val: 19,
+        mois: 'octobre',
+        annee: '2023',
+      },
+      {
+        date: '2024-10-19T00:00:00.000Z',
+        valeur: 11479,
+        jour: 'samedi',
+        jour_val: 19,
+        mois: 'octobre',
+        annee: '2024',
+      },
+      {
+        date: '2023-10-20T00:00:00.000Z',
+        valeur: 7365,
+        jour: 'vendredi',
+        jour_val: 20,
+        mois: 'octobre',
+        annee: '2023',
+      },
+      {
+        date: '2024-10-20T00:00:00.000Z',
+        valeur: 11479,
+        jour: 'dimanche',
+        jour_val: 20,
+        mois: 'octobre',
+        annee: '2024',
+      },
+      {
+        date: '2023-10-21T00:00:00.000Z',
+        valeur: 7157,
+        jour: 'samedi',
+        jour_val: 21,
+        mois: 'octobre',
+        annee: '2023',
+      },
+      {
+        date: '2024-10-21T00:00:00.000Z',
+        valeur: 25285,
+        jour: 'lundi',
+        jour_val: 21,
+        mois: 'octobre',
+        annee: '2024',
+      },
+      {
+        date: '2023-10-22T00:00:00.000Z',
+        valeur: 9625,
+        jour: 'dimanche',
+        jour_val: 22,
+        mois: 'octobre',
+        annee: '2023',
+      },
+      {
+        date: '2024-10-22T00:00:00.000Z',
+        valeur: 10744,
+        jour: 'mardi',
+        jour_val: 22,
+        mois: 'octobre',
+        annee: '2024',
+      },
+    ]);
+    expect(response.body.commentaires).toHaveLength(2);
+    expect(response.body.commentaires[0]).toEqual(
+      `Votre consommation a <strong>diminué de -57.51%</strong> entre lundi et mardi dernier`,
+    );
+    expect(response.body.commentaires[1]).toEqual(
+      `Au cours des 2 dernières semaines, votre consommation éléctrique a <strong>augmenté de +32%</strong> par rapport à la même période l'année dernière`,
     );
   });
 

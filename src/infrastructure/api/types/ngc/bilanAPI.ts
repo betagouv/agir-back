@@ -64,6 +64,29 @@ export class BilanCarboneCompletAPI {
   }
 }
 
+export class MiniBilanCarboneAPI {
+  @ApiProperty({ enum: NiveauImpact })
+  impact_transport: NiveauImpact;
+
+  @ApiProperty({ enum: NiveauImpact })
+  impact_alimentation: NiveauImpact;
+
+  @ApiProperty({ enum: NiveauImpact })
+  impact_logement: NiveauImpact;
+
+  @ApiProperty({ enum: NiveauImpact })
+  impact_consommation: NiveauImpact;
+
+  public static mapToAPI(bilan: BilanCarboneSynthese): MiniBilanCarboneAPI {
+    return {
+      impact_transport: bilan.impact_transport,
+      impact_alimentation: bilan.impact_alimentation,
+      impact_logement: bilan.impact_logement,
+      impact_consommation: bilan.impact_consommation,
+    };
+  }
+}
+
 export class LienBilanUniversAPI {
   @ApiProperty() univers: Univers;
   @ApiProperty() univers_label: string;
@@ -94,6 +117,12 @@ export class LienBilanUniversAPI {
 }
 
 export class BilanCarboneSyntheseAPI {
+  @ApiProperty()
+  mini_bilan_dispo: boolean;
+
+  @ApiProperty()
+  bilan_complet_dispo: boolean;
+
   @ApiProperty({ enum: NiveauImpact })
   impact_transport: NiveauImpact;
 
@@ -122,12 +151,17 @@ export class BilanCarboneSyntheseAPI {
       liens_bilans_univers: bilan.liens_bilans_univers.map((l) =>
         LienBilanUniversAPI.mapToAPI(l),
       ),
+      mini_bilan_dispo: bilan.mini_bilan_dispo,
+      bilan_complet_dispo: bilan.bilan_complet_dispo,
     };
   }
 }
 export class BilanCarboneDashboardAPI {
   @ApiProperty({ type: BilanCarboneCompletAPI })
   bilan_complet: BilanCarboneCompletAPI;
+
+  @ApiProperty({ type: MiniBilanCarboneAPI })
+  mini_bilan: MiniBilanCarboneAPI;
 
   @ApiProperty({ type: BilanCarboneSyntheseAPI })
   bilan_synthese: BilanCarboneSyntheseAPI;
@@ -137,8 +171,10 @@ export class BilanCarboneDashboardAPI {
     bilan_synthese: BilanCarboneSynthese,
   ): BilanCarboneDashboardAPI {
     return {
-      ...bilan_complet, // TO DELETE
-      bilan_complet: BilanCarboneCompletAPI.mapToAPI(bilan_complet),
+      mini_bilan: MiniBilanCarboneAPI.mapToAPI(bilan_synthese),
+      bilan_complet: bilan_complet
+        ? BilanCarboneCompletAPI.mapToAPI(bilan_complet)
+        : undefined,
       bilan_synthese: BilanCarboneSyntheseAPI.mapToAPI(bilan_synthese),
     };
   }

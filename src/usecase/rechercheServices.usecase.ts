@@ -30,7 +30,7 @@ export class RechercheServicesUsecase {
       utilisateurId,
       [Scope.logement, Scope.bilbiotheque_services],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const finder = this.rechercheServiceManager.getFinderById(serviceId);
 
@@ -61,8 +61,6 @@ export class RechercheServicesUsecase {
         }
       }
     }
-    console.log(filtre);
-
     const result = await finder.find(filtre);
 
     utilisateur.bilbiotheque_services.setDerniereRecherche(serviceId, result);
@@ -86,7 +84,7 @@ export class RechercheServicesUsecase {
       utilisateurId,
       [Scope.bilbiotheque_services, Scope.logement],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const finder = this.rechercheServiceManager.getFinderById(serviceId);
 
@@ -143,7 +141,7 @@ export class RechercheServicesUsecase {
       utilisateurId,
       [Scope.bilbiotheque_services],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const service = utilisateur.bilbiotheque_services.getServiceById(serviceId);
 
@@ -171,7 +169,7 @@ export class RechercheServicesUsecase {
       utilisateurId,
       [Scope.bilbiotheque_services],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const service = utilisateur.bilbiotheque_services.getServiceById(serviceId);
 
@@ -193,7 +191,7 @@ export class RechercheServicesUsecase {
       utilisateurId,
       [Scope.bilbiotheque_services],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const service = utilisateur.bilbiotheque_services.getServiceById(serviceId);
 
@@ -214,7 +212,7 @@ export class RechercheServicesUsecase {
       utilisateurId,
       [Scope.bilbiotheque_services],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const service = utilisateur.bilbiotheque_services.getServiceById(serviceId);
     if (!service) {
@@ -235,7 +233,7 @@ export class RechercheServicesUsecase {
       utilisateurId,
       [Scope.logement],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     let result = ReferentielUsecase.getNewServiceCatalogue();
     result = result.filter((r) => r.is_available_inhouse);
@@ -251,7 +249,7 @@ export class RechercheServicesUsecase {
       utilisateurId,
       [Scope.logement],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     let result = ReferentielUsecase.getNewServiceCatalogue();
     result = result.filter((r) => r.univers === univers);

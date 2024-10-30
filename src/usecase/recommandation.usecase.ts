@@ -43,7 +43,7 @@ export class RecommandationUsecase {
       utilisateurId,
       [Scope.kyc, Scope.history_article_quizz, Scope.logement],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(catalogue);
@@ -82,7 +82,7 @@ export class RecommandationUsecase {
         Scope.unlocked_features,
       ],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);

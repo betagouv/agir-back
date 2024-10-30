@@ -149,6 +149,11 @@ export class TestUtil {
       .set('Authorization', `Bearer ${TestUtil.token}`);
   }
 
+  static getSitutationIdFromRedirectURL(url: string): string {
+    let situtation_id = url.split('=')[1];
+    return situtation_id.substring(0, situtation_id.indexOf('&'));
+  }
+
   static async appinit() {
     if (TestUtil.app === undefined) {
       const moduleFixture: TestingModule = await Test.createTestingModule({

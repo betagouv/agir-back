@@ -175,6 +175,12 @@ export class QuestionKYC implements TaggedContent {
     }
     return null;
   }
+  public getReponseUniqueSaisie(): string {
+    if (this.reponses && this.reponses.length === 1) {
+      return this.reponses[0].label;
+    }
+    return null;
+  }
   public listeReponsesPossiblesLabels() {
     if (this.reponses_possibles) {
       return this.reponses_possibles.map((e) => e.label);

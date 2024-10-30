@@ -53,14 +53,14 @@ export class CategorieRechercheManager {
     CategorieRecherche.vos_objets,
   ];
   private static labels: Record<CategorieRecherche, string> = {
-    vos_objets: 'vos objets',
-    donner: 'donner',
-    jeter: 'jeter',
-    reparer: 'reparer',
-    vendre: 'vendre',
-    louer: 'louer',
-    acheter: 'acheter',
-    emprunter: 'emprunter',
+    vos_objets: 'Vos objets',
+    donner: 'Donner',
+    jeter: 'Jeter',
+    reparer: 'Réparer',
+    vendre: 'Vendre',
+    louer: 'Louer',
+    acheter: `Acheter d'occasion`,
+    emprunter: 'Emprunter',
     nourriture: 'Tous les commerces',
     marche_local: 'Les marchés locaux',
     circuit_court: 'Les producteurs locaux',
@@ -85,8 +85,8 @@ export class CategorieRechercheManager {
     any_transport: 'Tout mode de déplacement',
   };
 
-  public static getLabel(cat: CategorieRecherche): string {
-    return CategorieRechercheManager.labels[cat];
+  public static getLabel(cat: string): string {
+    return CategorieRechercheManager.labels[cat] || cat;
   }
 
   public static isDefault(cat: CategorieRecherche): boolean {

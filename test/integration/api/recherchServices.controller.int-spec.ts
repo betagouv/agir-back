@@ -149,6 +149,7 @@ describe('RechercheServices (API test)', () => {
       impact_carbone_kg: 1,
       image_url: 'https://',
       categories: ['a'],
+      categories_labels: ['a'],
       commitment: 'hahaha',
       description: 'description',
       description_more: 'description more',
@@ -305,6 +306,7 @@ describe('RechercheServices (API test)', () => {
       description_more: 'plus de description',
       phone: '061294875272',
       categories: [],
+      categories_labels: [],
       openhours_more_infos: 'sauf le mardi',
       open_hours: [{ jour: 'lundi', heures: '10h-18h' }],
       latitude: 40,
@@ -479,7 +481,7 @@ describe('RechercheServices (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(4);
+    expect(response.body).toHaveLength(5);
     expect(response.body[0]).toStrictEqual({
       id_service: 'fruits_legumes',
       titre: 'Fruits et légumes de saison',
@@ -489,7 +491,7 @@ describe('RechercheServices (API test)', () => {
       external_url: 'https://impactco2.fr/outils/fruitsetlegumes',
       is_available_inhouse: true,
     });
-    expect(response.body[1].external_url).toEqual(
+    expect(response.body[2].external_url).toEqual(
       'https://www.winter-energies.fr/',
     );
   });

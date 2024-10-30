@@ -21,7 +21,7 @@ export class GamificationUsecase {
       utilisateurId,
       [Scope.gamification],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     return utilisateur.gamification;
   }
@@ -33,7 +33,7 @@ export class GamificationUsecase {
       utilisateurId,
       [],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     let top_trois_commune: Classement[] = null;
     if (utilisateur.code_postal_classement) {
@@ -128,7 +128,7 @@ export class GamificationUsecase {
       utilisateurId,
       [],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const top_trois = await this.utilisateurBoardRepository.top_trois_user(
       utilisateur.id,

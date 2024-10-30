@@ -933,6 +933,55 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(userDB.logement.plus_de_15_ans).toEqual(true);
   });
 
+  it('PUT /utilisateurs/id/questionsKYC/006 - transpose dans logement KYC_logement_age plus de 15 ans', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_mosaics: [],
+
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc,
+      logement: {
+        version: 0,
+        superficie: Superficie.superficie_150,
+        type: TypeLogement.maison,
+        code_postal: '91120',
+        chauffage: Chauffage.bois,
+        commune: 'PALAISEAU',
+        dpe: DPE.B,
+        nombre_adultes: 2,
+        nombre_enfants: 2,
+        plus_de_15_ans: false,
+        proprietaire: true,
+      },
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      is_ngc: true,
+      code: KYCID.KYC_logement_age,
+      type: TypeReponseQuestionKYC.entier,
+      categorie: Categorie.test,
+      ngc_key: 'a . b .c',
+      points: 10,
+      question: 'Age maison',
+      reponses: [],
+    });
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/KYC_logement_age',
+    ).send({ reponse: ['30'] });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.logement.plus_de_15_ans).toEqual(true);
+  });
+
   it('PUT /utilisateurs/id/questionsKYC/KYC_DPE - transpose dans logement', async () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {

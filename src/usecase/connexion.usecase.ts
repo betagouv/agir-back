@@ -37,10 +37,12 @@ export class Connexion_v2_Usecase {
       console.log(`CONNEXION : loginUtilisateur : [${email}] mauvais email`);
       ApplicationError.throwBadPasswordOrEmailError();
     }
+    /*
     if (!utilisateur.active_account) {
       console.log(`CONNEXION : loginUtilisateur : [${email}] compte inactif`);
       ApplicationError.throwBadPasswordOrEmailError();
     }
+    */
 
     const _this = this;
     const okAction = async function () {
@@ -75,12 +77,14 @@ export class Connexion_v2_Usecase {
       console.log(`CONNEXION : validateCodePourLogin : [${email}] inconnu`);
       ApplicationError.throwBadCodeOrEmailError();
     }
+    /*
     if (!utilisateur.active_account) {
       console.log(
         `CONNEXION : validateCodePourLogin : [${email}] compte inactif`,
       );
       ApplicationError.throwBadCodeOrEmailError();
     }
+    */
     if (utilisateur.status !== UtilisateurStatus.connexion_etape_1) {
       console.log(
         `CONNEXION : validateCodePourLogin : [${email}] mauvaise étape`,
@@ -96,6 +100,7 @@ export class Connexion_v2_Usecase {
       const user = await _this.utilisateurRepository.findByEmail(email);
       user.status = UtilisateurStatus.default;
 
+      await _this.utilisateurRepository.activateAccount(utilisateur.id);
       await _this.utilisateurRepository.updateUtilisateur(user);
 
       const token = await _this.oidcService.createNewInnerAppToken(user.id);
@@ -117,11 +122,12 @@ export class Connexion_v2_Usecase {
       return; // pas d'erreur, silence ^^
     }
 
+    /*
     if (!utilisateur.active_account) {
       console.log(`CONNEXION : oubli_mot_de_pass : [${email}] compte inactif`);
       return; // pas d'erreur, silence ^^
     }
-
+    */
     const _this = this;
     const okAction = async function () {
       const user = await _this.utilisateurRepository.findByEmail(email);
@@ -156,13 +162,21 @@ export class Connexion_v2_Usecase {
       );
       ApplicationError.throwBadCodeOrEmailError();
     }
+    if (utilisateur.status !== UtilisateurStatus.mot_de_passe_oublie_etape_1) {
+      console.log(
+        `CONNEXION : validateCodePourModifMotDePasse : [${email}] mauvaise étape`,
+      );
+      ApplicationError.throwBadCodeOrEmailError();
+    }
 
+    /*
     if (!utilisateur.active_account) {
       console.log(
         `CONNEXION : modifier_mot_de_passe : [${email}] compte inactif`,
       );
       ApplicationError.throwBadCodeOrEmailError();
     }
+    */
 
     PasswordManager.checkPasswordFormat(mot_de_passe);
 
@@ -176,6 +190,7 @@ export class Connexion_v2_Usecase {
       user.setPassword(mot_de_passe);
       user.status = UtilisateurStatus.default;
 
+      await _this.utilisateurRepository.activateAccount(utilisateur.id);
       await _this.utilisateurRepository.updateUtilisateur(user);
       return;
     };

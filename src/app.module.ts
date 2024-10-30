@@ -10,7 +10,7 @@ import { AidesUsecase } from './usecase/aides.usecase';
 import { CMSUsecase } from './usecase/cms.usecase';
 
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur/utilisateur.repository';
-import { SituationNGCRepository } from './infrastructure/repository/bilan.repository';
+import { SituationNGCRepository } from './infrastructure/repository/situationNGC.repository';
 
 import { PrismaService } from './infrastructure/prisma/prisma.service';
 import { AidesVeloRepository } from './infrastructure/repository/aidesVelo.repository';

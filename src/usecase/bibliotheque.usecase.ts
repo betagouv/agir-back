@@ -7,7 +7,7 @@ import { Thematique } from '../domain/contenu/thematique';
 import { PersonalArticle } from '../domain/contenu/article';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
-import { Scope } from '../domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 
 @Injectable()
 export class BibliothequeUsecase {
@@ -29,7 +29,7 @@ export class BibliothequeUsecase {
       utilisateurId,
       [Scope.history_article_quizz, Scope.logement],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const articles_lus = utilisateur.history.searchArticlesIds({
       est_lu: true,
@@ -79,7 +79,7 @@ export class BibliothequeUsecase {
       utilisateurId,
       [Scope.history_article_quizz, Scope.logement],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const result = utilisateur.history.personnaliserArticle(article);
 

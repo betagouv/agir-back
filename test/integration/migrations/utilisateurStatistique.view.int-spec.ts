@@ -1,3 +1,4 @@
+import { Gamification } from '../../../src/domain/gamification/gamification';
 import {
   Chauffage,
   DPE,
@@ -32,7 +33,6 @@ describe('UtilisateurView', () => {
       email: 'user1@dev.com',
       created_at: new Date(2024, 0, 1),
       derniere_activite: new Date(2024, 0, 2),
-      points_classement: 4321,
       rank: 2,
       source_inscription: 'inconnue',
       couverture_aides_ok: true,
@@ -51,6 +51,11 @@ describe('UtilisateurView', () => {
         type: TypeLogement.appartement,
         chauffage: Chauffage.electricite,
       }),
+      gamification: new Gamification({
+        version: 0,
+        points: 123,
+        celebrations: [],
+      }),
     });
     await TestUtil.create(DB.utilisateur, {
       id: 'idUtilisateur2',
@@ -65,17 +70,26 @@ describe('UtilisateurView', () => {
       logement: {
         code_postal: '13000',
       },
+      gamification: new Gamification({
+        version: 0,
+        points: 666,
+        celebrations: [],
+      }),
     });
     await TestUtil.create(DB.utilisateur, {
       id: 'idUtilisateur3',
       email: 'user3@dev.com',
       created_at: new Date(2024, 0, 3),
-      points_classement: 1111,
       rank: 2,
       rank_commune: 1,
       logement: {
         code_postal: '75018',
       },
+      gamification: new Gamification({
+        version: 0,
+        points: 0,
+        celebrations: [],
+      }),
     });
 
     // WHEN
@@ -93,7 +107,7 @@ describe('UtilisateurView', () => {
         classement_global: 2,
         classement_local: 1,
         couverture_aide: true,
-        nombre_points: 4321,
+        nombre_points: 123,
         source_inscription: 'inconnue',
         date_derniere_connexion: new Date(2024, 0, 2),
         date_inscription: new Date(2024, 0, 1),
@@ -114,7 +128,7 @@ describe('UtilisateurView', () => {
         classement_global: 25,
         classement_local: 11,
         couverture_aide: false,
-        nombre_points: 2222,
+        nombre_points: 666,
         source_inscription: 'web',
         date_derniere_connexion: null,
         date_inscription: new Date(2024, 0, 2),
@@ -135,7 +149,7 @@ describe('UtilisateurView', () => {
         classement_global: 2,
         classement_local: 1,
         couverture_aide: false,
-        nombre_points: 1111,
+        nombre_points: 0,
         source_inscription: 'web',
         date_derniere_connexion: null,
         date_inscription: new Date(2024, 0, 3),

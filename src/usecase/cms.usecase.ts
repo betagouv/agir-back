@@ -387,6 +387,9 @@ export class CMSUsecase {
     const page_1 = '&pagination[start]=0&pagination[limit]=100';
     const page_2 = '&pagination[start]=100&pagination[limit]=100';
     const page_3 = '&pagination[start]=200&pagination[limit]=100';
+    const page_4 = '&pagination[start]=300&pagination[limit]=100';
+    const page_5 = '&pagination[start]=400&pagination[limit]=100';
+    const page_6 = '&pagination[start]=500&pagination[limit]=100';
     let response = null;
     const headers = {
       'Content-Type': 'application/json',
@@ -402,6 +405,18 @@ export class CMSUsecase {
     result = result.concat(response.data.data);
 
     URL = this.buildPopulateURL(page_3, type);
+    response = await axios.get(URL, { headers: headers });
+    result = result.concat(response.data.data);
+
+    URL = this.buildPopulateURL(page_4, type);
+    response = await axios.get(URL, { headers: headers });
+    result = result.concat(response.data.data);
+
+    URL = this.buildPopulateURL(page_5, type);
+    response = await axios.get(URL, { headers: headers });
+    result = result.concat(response.data.data);
+
+    URL = this.buildPopulateURL(page_6, type);
     response = await axios.get(URL, { headers: headers });
     result = result.concat(response.data.data);
 

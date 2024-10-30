@@ -177,23 +177,26 @@ describe('/utilisateurs - Oubli de mot de passe (API test)', () => {
   it('POST /utilisateurs/modifier_mot_de_passe - si code ko 4 fois, blocage', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
+    await TestUtil.getServer().post('/utilisateurs/oubli_mot_de_passe').send({
+      email: 'yo@truc.com',
+    });
 
     // WHEN
-    await TestUtil.getServer()
+    const a = await TestUtil.getServer()
       .post('/utilisateurs/modifier_mot_de_passe')
       .send({
         code: 'bad_code',
         mot_de_passe: '#1234567890HAHAa',
         email: 'yo@truc.com',
       });
-    await TestUtil.getServer()
+    const b = await TestUtil.getServer()
       .post('/utilisateurs/modifier_mot_de_passe')
       .send({
         code: 'bad_code',
         mot_de_passe: '#1234567890HAHAa',
         email: 'yo@truc.com',
       });
-    await TestUtil.getServer()
+    const c = await TestUtil.getServer()
       .post('/utilisateurs/modifier_mot_de_passe')
       .send({
         code: 'bad_code',

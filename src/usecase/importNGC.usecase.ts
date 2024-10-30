@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { SituationNGCRepository } from '../infrastructure/repository/bilan.repository';
+import { SituationNGCRepository } from '../infrastructure/repository/situationNGC.repository';
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
 
 @Injectable()
@@ -13,17 +13,24 @@ export class ImportNGCUsecase {
     situation: object,
   ): Promise<{ id_situtation: string; bilan_tonnes: number }> {
     const id_situtation = await this.bilanRepository.createSituation(situation);
-    let bilan = { bilan_carbone_annuel: 8000 };
+    let bilan = 8000;
     try {
-      bilan = this.ngcCaclulator.computeBilanFromSituation(situation);
+      bilan =
+        this.ngcCaclulator.computeBilanFromSituation(
+          situation,
+        ).bilan_carbone_annuel;
     } catch (error) {
       console.error(
-        `Erreur calcul bilan carbone utilisateur NGC, id_situation : ${id_situtation}`,
+        `Erreur calcul bilan carbone utilisateur NGC, id_situation : ${id_situtation} ${error}`,
       );
+    }
+    if (!bilan) {
+      console.error(`Bilan import NGC incorrecte : [${bilan}]`);
+      bilan = 8000;
     }
     return {
       id_situtation: id_situtation,
-      bilan_tonnes: Math.round(bilan.bilan_carbone_annuel / 1000),
+      bilan_tonnes: Math.round(bilan / 100) / 10,
     };
   }
 }

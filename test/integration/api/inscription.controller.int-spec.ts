@@ -6,6 +6,10 @@ import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Superficie } from '../../../src/domain/logement/logement';
+import _situationNGCTest from './situationNGCtest.json';
+import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
+import { Thematique } from '../../../src/domain/contenu/thematique';
+import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 
 describe('/utilisateurs - Inscription - (API test)', () => {
   const OLD_ENV = process.env;
@@ -440,8 +444,9 @@ describe('/utilisateurs - Inscription - (API test)', () => {
         },
       });
 
-    let situtation_id = response_post_situation.body.redirect_url.split('=')[1];
-    situtation_id = situtation_id.substring(0, situtation_id.indexOf('&'));
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
+    );
 
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
       mot_de_passe: '#1234567890HAHAa',
@@ -469,23 +474,9 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(kyc_bois.listeReponsesLabels()).toEqual(['Oui']);
   });
 
-  it(`POST /utilisateurs_v2 - integration situation NGC  => KYC 'KYC_bilan' à true`, async () => {
+  it(`POST /utilisateurs_v2 - integration situation NGC => set id utilisateur sur situation`, async () => {
     // GIVEN
     process.env.NGC_API_KEY = '12345';
-
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID.KYC_bilan,
-      type: TypeReponseQuestionKYC.choix_unique,
-      is_ngc: false,
-      question: `Bilan réalisé ?`,
-      points: 10,
-      categorie: Categorie.test,
-      reponses: [
-        { label: 'Oui', code: 'oui' },
-        { label: 'Non', code: 'non' },
-      ],
-    });
 
     // WHEN
     const response_post_situation = await TestUtil.getServer()
@@ -494,11 +485,13 @@ describe('/utilisateurs - Inscription - (API test)', () => {
       .send({
         situation: {
           'transport . voiture . km': 20000,
+          'logement . chauffage . bois . présent': 'oui',
         },
       });
 
-    let situtation_id = response_post_situation.body.redirect_url.split('=')[1];
-    situtation_id = situtation_id.substring(0, situtation_id.indexOf('&'));
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
+    );
 
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
       mot_de_passe: '#1234567890HAHAa',
@@ -511,16 +504,80 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(response.status).toBe(201);
     const user = await utilisateurRepository.findByEmail('w@w.com');
 
-    const KYC_bilan = user.kyc_history.getAnsweredQuestionByCode(
-      KYCID.KYC_bilan,
+    const situtation = await TestUtil.prisma.situationNGC.findUnique({
+      where: {
+        id: situtation_id,
+      },
+    });
+
+    expect(situtation.utilisateurId).toEqual(user.id);
+  });
+
+  it(`POST /utilisateurs_v2 - integration situation NGC  => todo à 2 missions au lieu de 3`, async () => {
+    // GIVEN
+    process.env.NGC_API_KEY = '12345';
+
+    // WHEN
+    const response_post_situation = await TestUtil.getServer()
+      .post('/bilan/importFromNGC')
+      .set('apikey', `12345`)
+      .send({
+        situation: {
+          'transport . voiture . km': 20000,
+        },
+      });
+
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
     );
-    expect(KYC_bilan).not.toBeUndefined();
-    expect(KYC_bilan.hasAnyResponses()).toEqual(true);
-    expect(
-      user.parcours_todo
-        .findTodoKYCOrMosaicElementByQuestionID(KYCID.KYC_bilan)
-        .element.isDone(),
-    ).toEqual(true);
+
+    const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
+      mot_de_passe: '#1234567890HAHAa',
+      email: 'w@w.com',
+      source_inscription: 'mobile',
+      situation_ngc_id: situtation_id,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    const user = await utilisateurRepository.findByEmail('w@w.com');
+
+    expect(user.parcours_todo.liste_todo).toHaveLength(
+      new ParcoursTodo().liste_todo.length - 1,
+    );
+  });
+  it(`POST /utilisateurs_v2 - integration situation NGC  => feature bilan carbone dispo de suite`, async () => {
+    // GIVEN
+    process.env.NGC_API_KEY = '12345';
+
+    // WHEN
+    const response_post_situation = await TestUtil.getServer()
+      .post('/bilan/importFromNGC')
+      .set('apikey', `12345`)
+      .send({
+        situation: {
+          'transport . voiture . km': 20000,
+        },
+      });
+
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
+    );
+
+    const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
+      mot_de_passe: '#1234567890HAHAa',
+      email: 'w@w.com',
+      source_inscription: 'mobile',
+      situation_ngc_id: situtation_id,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    const user = await utilisateurRepository.findByEmail('w@w.com');
+
+    expect(user.unlocked_features.isUnlocked(Feature.bilan_carbone)).toEqual(
+      true,
+    );
   });
 
   it(`POST /utilisateurs_v2 - integration situation NGC => maj logement`, async () => {
@@ -549,8 +606,9 @@ describe('/utilisateurs - Inscription - (API test)', () => {
         },
       });
 
-    let situtation_id = response_post_situation.body.redirect_url.split('=')[1];
-    situtation_id = situtation_id.substring(0, situtation_id.indexOf('&'));
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
+    );
 
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
       mot_de_passe: '#1234567890HAHAa',
@@ -565,6 +623,75 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
     expect(user.logement.superficie).toEqual(Superficie.superficie_150);
   });
+  it(`POST /utilisateurs_v2 - test situtation "complete"`, async () => {
+    // GIVEN
+    process.env.NGC_API_KEY = '12345';
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_local_frequence,
+      type: TypeReponseQuestionKYC.choix_unique,
+      is_ngc: true,
+      question: `KYC_local_frequence`,
+      points: 10,
+      categorie: Categorie.test,
+      reponses: [
+        {
+          code: 'jamais',
+          label: 'Jamais',
+          ngc_code: "'jamais'",
+        },
+        {
+          code: 'parfois',
+          label: 'Parfois',
+          ngc_code: "'parfois'",
+        },
+        {
+          code: 'souvent',
+          label: 'Souvent',
+          ngc_code: "'souvent'",
+        },
+        {
+          code: 'toujours',
+          label: 'Toujours',
+          ngc_code: "'oui toujours'",
+        },
+        {
+          code: 'ne_sais_pas',
+          label: 'Je ne sais pas',
+          ngc_code: null,
+        },
+      ],
+      ngc_key: 'alimentation . local . consommation',
+    });
+
+    // WHEN
+    const response_post_situation = await TestUtil.getServer()
+      .post('/bilan/importFromNGC')
+      .set('apikey', `12345`)
+      .send({
+        situation: _situationNGCTest,
+      });
+
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
+    );
+
+    const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
+      mot_de_passe: '#1234567890HAHAa',
+      email: 'w@w.com',
+      source_inscription: 'mobile',
+      situation_ngc_id: situtation_id,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    const user = await utilisateurRepository.findByEmail('w@w.com');
+
+    expect(
+      user.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_local_frequence),
+    ).not.toBeNull();
+  });
   it(`POST /utilisateurs_v2 - integration situation NGC , pas d'erreurs si clé pas connu`, async () => {
     // GIVEN
     process.env.NGC_API_KEY = '12345';
@@ -578,9 +705,9 @@ describe('/utilisateurs - Inscription - (API test)', () => {
         },
       });
 
-    let situtation_id: string =
-      response_post_situation.body.redirect_url.split('=')[1];
-    situtation_id = situtation_id.substring(0, situtation_id.indexOf('&'));
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
+    );
 
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
       mot_de_passe: '#1234567890HAHAa',
@@ -608,9 +735,9 @@ describe('/utilisateurs - Inscription - (API test)', () => {
         },
       });
 
-    let situtation_id: string =
-      response_post_situation.body.redirect_url.split('=')[1];
-    situtation_id = situtation_id.substring(0, situtation_id.indexOf('&'));
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
+    );
 
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
       mot_de_passe: '#1234567890HAHAa',
@@ -624,5 +751,62 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     const user = await utilisateurRepository.findByEmail('w@w.com');
 
     expect(user.kyc_history.answered_questions).toHaveLength(0);
+  });
+
+  it(`POST /utilisateurs_v2 - integration situation NGC touches les mosaics`, async () => {
+    // GIVEN
+    process.env.NGC_API_KEY = '12345';
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      categorie: Categorie.recommandation,
+      code: KYCID.KYC_chauffage_fioul,
+      is_ngc: true,
+      points: 10,
+      question: 'The question !',
+      tags: [],
+      universes: [],
+      thematique: Thematique.climat,
+      type: TypeReponseQuestionKYC.choix_unique,
+      ngc_key: 'logement . chauffage . fioul . présent',
+      reponses: [
+        { label: 'OUI', code: 'oui', ngc_code: '_oui' },
+        { label: 'NON', code: 'non', ngc_code: '_non' },
+        { label: 'Ne sais pas', code: 'ne_sais_pas' },
+      ],
+    });
+
+    // WHEN
+    const response_post_situation = await TestUtil.getServer()
+      .post('/bilan/importFromNGC')
+      .set('apikey', `12345`)
+      .send({
+        situation: {
+          'logement . chauffage . fioul . présent': '_oui',
+        },
+      });
+
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
+    );
+
+    const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
+      mot_de_passe: '#1234567890HAHAa',
+      email: 'w@w.com',
+      source_inscription: 'mobile',
+      situation_ngc_id: situtation_id,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    const user = await utilisateurRepository.findByEmail('w@w.com');
+
+    expect(
+      user.kyc_history.isQuestionAnsweredByCode(KYCID.KYC_chauffage_fioul),
+    ).toEqual(true);
+    expect(user.kyc_history.answered_mosaics).toHaveLength(2);
+    expect(
+      user.kyc_history.isMosaicAnswered(KYCMosaicID.MOSAIC_CHAUFFAGE),
+    ).toEqual(true);
   });
 });

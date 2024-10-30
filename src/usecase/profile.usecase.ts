@@ -4,7 +4,6 @@ import {
   LogementAPI,
   UtilisateurUpdateProfileAPI,
 } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
-import { SituationNGCRepository } from '../infrastructure/repository/bilan.repository';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { Injectable } from '@nestjs/common';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
@@ -49,7 +48,7 @@ export class ProfileUsecase {
       utilisateurId,
       [],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     if (profile.mot_de_passe) {
       PasswordManager.checkPasswordFormat(profile.mot_de_passe);
@@ -114,7 +113,7 @@ export class ProfileUsecase {
       utilisateurId,
       [Scope.logement, Scope.kyc],
     );
-    utilisateur.checkState();
+    Utilisateur.checkState(utilisateur);
 
     const kyc_catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(kyc_catalogue);
@@ -179,11 +178,7 @@ export class ProfileUsecase {
       Scope.logement,
       Scope.kyc,
     ]);
-    if (utilisateur) {
-      utilisateur.checkState();
-    } else {
-      return null;
-    }
+    Utilisateur.checkState(utilisateur);
     utilisateur.logement.commune_label = this.communeRepository.formatCommune(
       utilisateur.logement.code_postal,
       utilisateur.logement.commune,
