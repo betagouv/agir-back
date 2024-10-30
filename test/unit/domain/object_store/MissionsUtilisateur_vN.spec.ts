@@ -29,6 +29,10 @@ describe('MissionsUilisateur vN ', () => {
           done_at: new Date(1),
           thematique_univers: ThematiqueUnivers.cereales,
           univers: 'alimentation',
+          thematique: 'alimentation',
+          code: 'code',
+          image_url: 'img',
+          titre: 'titre',
           objectifs: [
             {
               id: '2',
@@ -64,6 +68,11 @@ describe('MissionsUilisateur vN ', () => {
           done_at: new Date(1),
           thematique_univers: ThematiqueUnivers.cereales,
           univers: 'alimentation',
+          thematique: 'alimentation',
+          code: 'code',
+          image_url: 'img',
+          titre: 'titre',
+
           objectifs: [
             {
               id: '2',

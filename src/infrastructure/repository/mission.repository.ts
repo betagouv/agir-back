@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Mission } from '@prisma/client';
 import { MissionDefinition } from '../../../src/domain/mission/missionDefinition';
-import { ThematiqueRepository } from './thematique.repository';
 
 @Injectable()
 export class MissionRepository {
@@ -11,7 +10,11 @@ export class MissionRepository {
   async upsert(missionDef: MissionDefinition): Promise<void> {
     const mission_db: Mission = {
       id_cms: missionDef.id_cms,
+      thematique: missionDef.thematique,
       thematique_univers: missionDef.thematique_univers,
+      titre: missionDef.titre,
+      code: missionDef.code,
+      image_url: missionDef.image_url,
       est_visible: missionDef.est_visible,
       objectifs: missionDef.objectifs as any,
       created_at: undefined,
@@ -57,11 +60,12 @@ export class MissionRepository {
     return new MissionDefinition({
       id_cms: missionDB.id_cms,
       est_visible: missionDB.est_visible,
+      thematique: missionDB.thematique,
       thematique_univers: missionDB.thematique_univers,
       objectifs: missionDB.objectifs as any,
-      univers: ThematiqueRepository.getUniversParent(
-        missionDB.thematique_univers,
-      ),
+      code: missionDB.code,
+      image_url: missionDB.image_url,
+      titre: missionDB.titre,
     });
   }
 }

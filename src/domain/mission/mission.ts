@@ -66,6 +66,10 @@ export class Mission {
   id: string;
   done_at: Date;
   thematique_univers: string;
+  thematique: string;
+  titre: string;
+  code: string;
+  image_url: string;
   objectifs: Objectif[];
   est_visible: boolean;
   univers: string;
@@ -75,7 +79,8 @@ export class Mission {
     this.done_at = data.done_at;
     this.thematique_univers = data.thematique_univers;
     this.est_visible = data.est_visible;
-    this.univers = data.univers;
+    this.univers = data.univers; // A SUPPRIMER
+    this.thematique = data.univers; // A RENOMER
 
     if (data.done_at) {
       this.done_at = new Date(data.done_at);
@@ -95,7 +100,11 @@ export class Mission {
       id: def.id_cms.toString(),
       est_visible: def.est_visible,
       thematique_univers: def.thematique_univers,
-      univers: def.univers,
+      thematique: def.thematique,
+      code: def.code,
+      image_url: def.image_url,
+      titre: def.titre,
+      univers: def.thematique,
       objectifs: def.objectifs.map((o) => ({
         content_id: o.content_id,
         done_at: null,

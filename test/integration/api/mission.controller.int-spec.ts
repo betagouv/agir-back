@@ -49,6 +49,10 @@ describe('Mission (API test)', () => {
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
+        code: 'code',
+        image_url: 'image',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '0',
@@ -107,6 +111,10 @@ describe('Mission (API test)', () => {
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
+        code: 'code',
+        image_url: 'image',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '0',
@@ -154,6 +162,10 @@ describe('Mission (API test)', () => {
         done_at: new Date(1),
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
+        code: 'code',
+        image_url: 'image',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '0',
@@ -179,6 +191,10 @@ describe('Mission (API test)', () => {
         done_at: new Date(1),
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
+        code: 'code',
+        image_url: 'image',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '0',
@@ -215,6 +231,10 @@ describe('Mission (API test)', () => {
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
+        code: 'code',
+        image_url: 'image',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '0',
@@ -251,6 +271,10 @@ describe('Mission (API test)', () => {
         done_at: new Date(1),
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
+        code: 'code',
+        image_url: 'image',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '0',
@@ -287,6 +311,10 @@ describe('Mission (API test)', () => {
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
+        code: 'code',
+        image_url: 'image',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '000',
@@ -312,6 +340,10 @@ describe('Mission (API test)', () => {
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
+        code: 'code',
+        image_url: 'image',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '000',
@@ -349,6 +381,10 @@ describe('Mission (API test)', () => {
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
+        code: 'code',
+        image_url: 'image',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '0',
@@ -385,6 +421,10 @@ describe('Mission (API test)', () => {
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
+        code: 'code',
+        image_url: 'image',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '0',
@@ -674,6 +714,10 @@ describe('Mission (API test)', () => {
       thematique_univers: ThematiqueUnivers.cereales,
       est_visible: true,
       objectifs: objectifs as any,
+      code: 'code',
+      image_url: 'img',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
       created_at: undefined,
       updated_at: undefined,
     };
@@ -775,6 +819,10 @@ describe('Mission (API test)', () => {
       id_cms: 1,
       thematique_univers: ThematiqueUnivers.cereales,
       est_visible: true,
+      code: 'code',
+      image_url: 'img',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
       objectifs: objectifs as any,
       created_at: undefined,
       updated_at: undefined,
@@ -1130,6 +1178,10 @@ describe('Mission (API test)', () => {
       id_cms: 1,
       thematique_univers: ThematiqueUnivers.cereales,
       est_visible: true,
+      code: 'code',
+      image_url: 'img',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
       objectifs: objectifs as any,
       created_at: undefined,
       updated_at: undefined,

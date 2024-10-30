@@ -1,4 +1,5 @@
 import { ContentType } from '../../../../src/domain/contenu/contentType';
+import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { Mission } from '../../../../src/domain/mission/mission';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
 import {
@@ -14,6 +15,10 @@ describe('Missions', () => {
       est_visible: true,
       id: '123',
       univers: 'alimentation',
+      code: 'code',
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
       objectifs: [
         {
           content_id: '1',
@@ -71,6 +76,10 @@ describe('Missions', () => {
       est_visible: true,
       id: '123',
       univers: 'alimentation',
+      code: 'code',
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
       objectifs: [
         {
           content_id: '1',
@@ -126,6 +135,10 @@ describe('Missions', () => {
       objectifs: [],
       thematique_univers: 'cereales',
       univers: 'alimentation',
+      code: 'code',
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
     });
 
     // WHEN
@@ -144,6 +157,10 @@ describe('Missions', () => {
       est_visible: true,
       id: '123',
       univers: 'alimentation',
+      code: 'code',
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
       objectifs: [
         {
           content_id: '1',
@@ -198,6 +215,10 @@ describe('Missions', () => {
       est_visible: true,
       id: '123',
       univers: 'alimentation',
+      code: 'code',
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
       objectifs: [
         {
           content_id: '1',
@@ -252,6 +273,10 @@ describe('Missions', () => {
       est_visible: true,
       id: '123',
       univers: 'alimentation',
+      code: 'code',
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
       objectifs: [
         {
           content_id: '1',
@@ -317,6 +342,10 @@ describe('Missions', () => {
       est_visible: true,
       id: '123',
       univers: 'alimentation',
+      code: 'code',
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
       objectifs: [
         {
           content_id: '1',
@@ -382,6 +411,10 @@ describe('Missions', () => {
       est_visible: true,
       id: '123',
       univers: 'alimentation',
+      code: 'code',
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
       objectifs: [
         {
           content_id: '1',
@@ -447,6 +480,10 @@ describe('Missions', () => {
       est_visible: true,
       id: '123',
       univers: 'alimentation',
+      code: 'code',
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
       objectifs: [
         {
           content_id: '1',
@@ -503,6 +540,10 @@ describe('Missions', () => {
       univers: 'alimentation',
       objectifs: [],
       thematique_univers: 'cereales',
+      code: 'code',
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
     });
     const m2 = new Mission({
       done_at: new Date(),
@@ -511,6 +552,10 @@ describe('Missions', () => {
       univers: 'alimentation',
       objectifs: [],
       thematique_univers: 'cereales',
+      code: 'code',
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
     });
     const m3 = new Mission({
       done_at: new Date(),
@@ -519,6 +564,10 @@ describe('Missions', () => {
       univers: 'climat',
       objectifs: [],
       thematique_univers: 'cereales',
+      code: 'code',
+      image_url: 'image',
+      thematique: Thematique.climat,
+      titre: 'titre',
     });
     const m4 = new Mission({
       done_at: null,
@@ -527,6 +576,10 @@ describe('Missions', () => {
       univers: 'climat',
       objectifs: [],
       thematique_univers: 'cereales',
+      code: 'code',
+      image_url: 'image',
+      thematique: Thematique.climat,
+      titre: 'titre',
     });
 
     const missionsUtilisateur = new MissionsUtilisateur({

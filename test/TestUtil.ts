@@ -340,6 +340,10 @@ export class TestUtil {
       id_cms: 1,
       thematique_univers: ThematiqueUnivers.cereales,
       est_visible: true,
+      thematique: Thematique.alimentation,
+      code: 'code',
+      image_url: 'https://theimage',
+      titre: 'the title',
       objectifs: [
         {
           titre: 'obj 1',

@@ -61,6 +61,10 @@ describe('/utilisateurs/id/defis (API test)', () => {
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
         univers: 'alimentation',
+        code: 'code',
+        image_url: 'image',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '1',
@@ -92,6 +96,10 @@ describe('/utilisateurs/id/defis (API test)', () => {
         done_at: null,
         thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
         univers: 'alimentation',
+        code: 'code',
+        image_url: 'image',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '1',
@@ -123,6 +131,10 @@ describe('/utilisateurs/id/defis (API test)', () => {
         done_at: null,
         thematique_univers: ThematiqueUnivers.mobilite_quotidien,
         univers: 'alimentation',
+        code: 'code',
+        image_url: 'image',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
         objectifs: [
           {
             id: '1',
@@ -278,6 +290,10 @@ describe('/utilisateurs/id/defis (API test)', () => {
           done_at: null,
           thematique_univers: ThematiqueUnivers.cereales,
           univers: 'alimentation',
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.alimentation,
+          titre: 'titre',
           objectifs: [
             {
               id: '0',
@@ -360,6 +376,10 @@ describe('/utilisateurs/id/defis (API test)', () => {
           done_at: null,
           thematique_univers: ThematiqueUnivers.cereales,
           univers: 'alimentation',
+          code: 'code',
+          image_url: 'image',
+          thematique: Thematique.alimentation,
+          titre: 'titre',
           objectifs: [
             {
               id: '0',
