@@ -205,4 +205,9 @@ export class MigrationUsecase {
   ): Promise<{ ok: boolean; info: string }> {
     return { ok: false, info: 'to implement' };
   }
+  private async migrate_13(
+    utilisateur: Utilisateur,
+  ): Promise<{ ok: boolean; info: string }> {
+    return { ok: false, info: 'to implement' };
+  }
 }

@@ -119,6 +119,14 @@ export class Mission {
     });
   }
 
+  public refreshFromDef(def: MissionDefinition) {
+    this.est_visible = def.est_visible;
+    this.image_url = def.image_url;
+    this.thematique = def.thematique;
+    this.titre = def.titre;
+    this.univers = def.thematique;
+  }
+
   public exfiltreObjectifsNonVisibles() {
     this.objectifs = this.objectifs.filter((o) => o.est_reco);
   }

@@ -2,10 +2,49 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Mission } from '@prisma/client';
 import { MissionDefinition } from '../../../src/domain/mission/missionDefinition';
+import { Cron } from '@nestjs/schedule';
+import { App } from '../../domain/app';
+import { Thematique } from '../../domain/contenu/thematique';
 
 @Injectable()
 export class MissionRepository {
-  constructor(private prisma: PrismaService) {}
+  static catalogue_missions_by_idcms: Map<number, MissionDefinition>;
+  static catalogue_missions_by_code: Map<string, MissionDefinition>;
+  static catalogue_missions_by_thematique: Map<Thematique, MissionDefinition[]>;
+
+  constructor(private prisma: PrismaService) {
+    MissionRepository.catalogue_missions_by_idcms = new Map();
+    MissionRepository.catalogue_missions_by_thematique = new Map();
+    MissionRepository.catalogue_missions_by_code = new Map();
+  }
+
+  async onApplicationBootstrap(): Promise<void> {
+    if (!App.isFirstStart()) {
+      await this.reloadMissions();
+    }
+  }
+
+  @Cron('* * * * *')
+  public async reloadMissions() {
+    const new_map_id: Map<number, MissionDefinition> = new Map();
+    const new_map_code: Map<string, MissionDefinition> = new Map();
+    const new_map_them: Map<Thematique, MissionDefinition[]> = new Map();
+    const liste_missions = await this.prisma.mission.findMany();
+    liste_missions.forEach((mission) => {
+      const def = MissionRepository.buildMissionDefFromDB(mission);
+      new_map_code.set(mission.code, def);
+      new_map_id.set(mission.id_cms, def);
+      const them_array = new_map_them.get(def.thematique);
+      if (them_array) {
+        them_array.push(def);
+      } else {
+        new_map_them.set(def.thematique, [def]);
+      }
+    });
+    MissionRepository.catalogue_missions_by_code = new_map_code;
+    MissionRepository.catalogue_missions_by_idcms = new_map_id;
+    MissionRepository.catalogue_missions_by_thematique = new_map_them;
+  }
 
   async upsert(missionDef: MissionDefinition): Promise<void> {
     const mission_db: Mission = {
@@ -36,31 +75,29 @@ export class MissionRepository {
     });
   }
 
-  async getByThematique(thematiqueUnivers: string): Promise<MissionDefinition> {
-    const result = await this.prisma.mission.findUnique({
-      where: { thematique_univers: thematiqueUnivers },
-    });
-    return this.buildMissionDefFromDB(result);
+  async getByThematiqueUnivers(
+    thematiqueUnivers: string,
+  ): Promise<MissionDefinition> {
+    for (const [key, value] of MissionRepository.catalogue_missions_by_idcms) {
+      if (value.thematique_univers === thematiqueUnivers) return value;
+    }
+    return null;
   }
 
   async getByCMS_ID(cms_id: number): Promise<MissionDefinition> {
-    const result = await this.prisma.mission.findUnique({
-      where: { id_cms: cms_id },
-    });
-    return this.buildMissionDefFromDB(result);
+    return MissionRepository.catalogue_missions_by_idcms.get(cms_id);
   }
 
   async list(): Promise<MissionDefinition[]> {
-    const result = await this.prisma.mission.findMany();
-    return result.map((elem) => this.buildMissionDefFromDB(elem));
+    return Array.from(MissionRepository.catalogue_missions_by_idcms.values());
   }
 
-  private buildMissionDefFromDB(missionDB: Mission): MissionDefinition {
+  private static buildMissionDefFromDB(missionDB: Mission): MissionDefinition {
     if (missionDB === null) return null;
     return new MissionDefinition({
       id_cms: missionDB.id_cms,
       est_visible: missionDB.est_visible,
-      thematique: missionDB.thematique,
+      thematique: Thematique[missionDB.thematique],
       thematique_univers: missionDB.thematique_univers,
       objectifs: missionDB.objectifs as any,
       code: missionDB.code,

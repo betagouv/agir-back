@@ -1,4 +1,5 @@
 import { ContentType } from '../contenu/contentType';
+import { Thematique } from '../contenu/thematique';
 
 export class ObjectifDefinition {
   titre: string;
@@ -20,7 +21,7 @@ export class ObjectifDefinition {
 
 export class MissionDefinition {
   id_cms: number;
-  thematique: string;
+  thematique: Thematique;
   thematique_univers: string;
   titre: string;
   code: string;

@@ -71,7 +71,7 @@ export class MissionUsecase {
       utilisateur.missions.getMissionByThematiqueUnivers(thematique);
 
     if (!mission_resultat || mission_resultat.isNew()) {
-      const mission_def = await this.missionRepository.getByThematique(
+      const mission_def = await this.missionRepository.getByThematiqueUnivers(
         thematique,
       );
       if (mission_def) {
