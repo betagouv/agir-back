@@ -85,6 +85,7 @@ export class ThematiqueUsecase {
     );
   }
 
+  // DEPRECATED
   async getMissionsOfThematique(
     utilisateurId: string,
     univers: string,

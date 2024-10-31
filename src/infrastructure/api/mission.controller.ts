@@ -84,7 +84,7 @@ export class MissionController extends GenericControler {
     description: `id de l'utilisateur`,
   })
   @ApiOperation({
-    summary: `Retourne la mission de la thématique`,
+    summary: `DEPRECATED : Retourne la mission de la thématique`,
   })
   async getMission(
     @Request() req,
@@ -95,6 +95,39 @@ export class MissionController extends GenericControler {
     const result = await this.missionUsecase.getMissionOfThematique(
       utilisateurId,
       thematique,
+    );
+    return MissionAPI.mapToAPI(result);
+  }
+
+  @Get('utilisateurs/:utilisateurId/missions/:code_mission')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: MissionAPI,
+  })
+  @ApiParam({
+    name: 'code_mission',
+    type: String,
+    required: true,
+    description: `Le code de la mission`,
+  })
+  @ApiParam({
+    name: 'utilisateurId',
+    type: String,
+    required: true,
+    description: `id de l'utilisateur`,
+  })
+  @ApiOperation({
+    summary: `Retourne la mission de code donné`,
+  })
+  async getMissionByCode(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('code_mission') code_mission: string,
+  ): Promise<MissionAPI> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.missionUsecase.getMissionByCode(
+      utilisateurId,
+      code_mission,
     );
     return MissionAPI.mapToAPI(result);
   }
@@ -115,7 +148,7 @@ export class MissionController extends GenericControler {
     description: `id de l'utilisateur`,
   })
   @ApiOperation({
-    summary: `Declare la mission de cette thematique comme terminée`,
+    summary: `DEPRECATED : Declare la mission de cette thematique comme terminée`,
   })
   async terminerMission(
     @Request() req,
@@ -124,6 +157,35 @@ export class MissionController extends GenericControler {
   ) {
     this.checkCallerId(req, utilisateurId);
     await this.missionUsecase.terminerMission(utilisateurId, thematique);
+  }
+
+  @Post('utilisateurs/:utilisateurId/missions/:code_mission/terminer')
+  @UseGuards(AuthGuard)
+  @ApiParam({
+    name: 'code_mission',
+    type: String,
+    required: true,
+    description: `le code de la mission`,
+  })
+  @ApiParam({
+    name: 'utilisateurId',
+    type: String,
+    required: true,
+    description: `id de l'utilisateur`,
+  })
+  @ApiOperation({
+    summary: `Declare la mission de code argument comme terminée`,
+  })
+  async terminerMissionByCode(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('code_mission') code_mission: string,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    await this.missionUsecase.terminerMissionByCode(
+      utilisateurId,
+      code_mission,
+    );
   }
 
   @Get('utilisateurs/:utilisateurId/thematiques/:thematique/kycs')
@@ -151,7 +213,7 @@ export class MissionController extends GenericControler {
     description: `Thematique de la mission`,
   })
   @ApiOperation({
-    summary: `Liste l'ensemble des kycs associées à la thématique argument, avec leur état respectif, incluant des mosaics`,
+    summary: `DEPRECATED : Liste l'ensemble des kycs associées à la thématique argument, avec leur état respectif, incluant des mosaics`,
   })
   async getMissionKYCs(
     @Request() req,
@@ -164,6 +226,55 @@ export class MissionController extends GenericControler {
       await this.missionUsecase.getMissionKYCsAndMosaics(
         utilisateurId,
         thematique,
+      );
+
+    return all_kyc_and_mosaic.map((k) => {
+      if (k.kyc) {
+        return QuestionKYCAPI.mapToAPI(k.kyc);
+      } else {
+        return MosaicKYCAPI.mapToAPI(k.mosaic);
+      }
+    });
+  }
+
+  @Get('utilisateurs/:utilisateurId/missions/:code_mission/kycs')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    schema: {
+      items: {
+        allOf: [
+          { $ref: getSchemaPath(QuestionKYCAPI) },
+          { $ref: getSchemaPath(MosaicKYCAPI) },
+        ],
+      },
+    },
+  })
+  @ApiParam({
+    name: 'utilisateurId',
+    type: String,
+    required: true,
+    description: `id de l'utilisateur`,
+  })
+  @ApiParam({
+    name: 'code_mission',
+    type: String,
+    required: true,
+    description: `Code de la mission`,
+  })
+  @ApiOperation({
+    summary: `Liste l'ensemble des kycs associées à la mission de code argument, avec leur état respectif, incluant des mosaics`,
+  })
+  async getMissionKYCsByCodeMission(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('code_mission') code_mission: string,
+  ): Promise<(QuestionKYCAPI | MosaicKYCAPI)[]> {
+    this.checkCallerId(req, utilisateurId);
+
+    const all_kyc_and_mosaic =
+      await this.missionUsecase.getMissionKYCsAndMosaicsByCodeMission(
+        utilisateurId,
+        code_mission,
       );
 
     return all_kyc_and_mosaic.map((k) => {

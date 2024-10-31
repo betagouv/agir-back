@@ -429,6 +429,9 @@ export class ApplicationError {
   static throwThematiqueNotFound(them: string) {
     this.throwAppError('084', `Thematique [${them}] inconnue`);
   }
+  static throwMissionNotFoundOfCode(code: string) {
+    this.throwAppError('084', `Mission de code [${code}] non trouvée`, 404);
+  }
 
   private static throwAppError(
     code: string,

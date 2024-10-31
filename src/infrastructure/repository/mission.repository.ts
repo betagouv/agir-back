@@ -92,6 +92,9 @@ export class MissionRepository {
   getByThematique(thematique: Thematique): MissionDefinition[] {
     return MissionRepository.catalogue_missions_by_thematique.get(thematique);
   }
+  getByCode(code_mission: string): MissionDefinition {
+    return MissionRepository.catalogue_missions_by_code.get(code_mission);
+  }
 
   list(): MissionDefinition[] {
     return Array.from(MissionRepository.catalogue_missions_by_idcms.values());
