@@ -72,9 +72,29 @@ export class UniversController extends GenericControler {
     type: [ThematiqueUniversAPI],
   })
   @ApiOperation({
-    summary: `Retourne les thematiques recommandées pour la home`,
+    deprecated: true,
+    summary: `DEPRECATED : Retourne les thematiques recommandées pour la home`,
   })
   async getThematiquesRecommandees(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<ThematiqueUniversAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.universUsecase.getThematiquesRecommandees(
+      utilisateurId,
+    );
+    return result.map((e) => ThematiqueUniversAPI.mapToAPI(e));
+  }
+
+  @Get('utilisateurs/:utilisateurId/missions_recommandees')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: [ThematiqueUniversAPI],
+  })
+  @ApiOperation({
+    summary: `Retourne les missions recommandées pour la home (toute thématique confondue)`,
+  })
+  async getMissionsRecommandees(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<ThematiqueUniversAPI[]> {
