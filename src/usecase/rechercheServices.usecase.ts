@@ -11,6 +11,7 @@ import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { NewServiceDefinition } from '../domain/bibliotheque_services/newServiceDefinition';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { ReferentielUsecase } from './referentiels/referentiel.usecase';
+import { Thematique } from '../domain/contenu/thematique';
 
 @Injectable()
 export class RechercheServicesUsecase {
@@ -241,6 +242,7 @@ export class RechercheServicesUsecase {
     return this.personnalisator.personnaliser(result, utilisateur);
   }
 
+  // DEPRECATED
   async getListServiceDef(
     utilisateurId: string,
     univers: string,
@@ -253,6 +255,22 @@ export class RechercheServicesUsecase {
 
     let result = ReferentielUsecase.getNewServiceCatalogue();
     result = result.filter((r) => r.univers === univers);
+
+    return this.personnalisator.personnaliser(result, utilisateur);
+  }
+
+  async getListServicesOfThematique(
+    utilisateurId: string,
+    thematique: Thematique,
+  ): Promise<NewServiceDefinition[]> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.logement],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    let result = ReferentielUsecase.getNewServiceCatalogue();
+    result = result.filter((r) => r.thematique === thematique);
 
     return this.personnalisator.personnaliser(result, utilisateur);
   }

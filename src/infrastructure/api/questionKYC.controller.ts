@@ -71,8 +71,9 @@ export class QuestionsKYCController extends GenericControler {
   }
 
   @ApiOperation({
+    deprecated: true,
     summary:
-      "Retourne une question d'id questionId avec sa réponse, reponse qui peut être null si l'utilsateur n'a pas répondu à la question encore",
+      "DEPRECATED : Retourne une question d'id questionId avec sa réponse, reponse qui peut être null si l'utilsateur n'a pas répondu à la question encore",
   })
   @Get('utilisateurs/:utilisateurId/questionsKYC/:questionId')
   @UseGuards(AuthGuard)

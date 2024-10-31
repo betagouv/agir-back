@@ -30,6 +30,7 @@ import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche
 import { FiltreRecherche } from '../../domain/bibliotheque_services/recherche/filtreRecherche';
 import { ApplicationError } from '../applicationError';
 import { ServiceRechercheAPI } from './types/rechercheServices/serviceRechercheAPI';
+import { Thematique } from '../../domain/contenu/thematique';
 
 @Controller()
 @ApiBearerAuth()
@@ -42,7 +43,8 @@ export class RechecheServicesController extends GenericControler {
   @Post('utilisateurs/:utilisateurId/recherche_services/:serviceId/search')
   @UseGuards(AuthGuard)
   @ApiOperation({
-    summary: `recherche une categorie au sein d'un service de recherche donné`,
+    deprecated: true,
+    summary: `DEPRECATED : recherche une categorie au sein d'un service de recherche donné`,
   })
   @ApiBody({
     type: RechercheServiceInputAPI,
@@ -195,12 +197,13 @@ export class RechecheServicesController extends GenericControler {
   @Get('utilisateurs/:utilisateurId/recherche_services/:universId')
   @UseGuards(AuthGuard)
   @ApiOperation({
-    summary: `Liste des service disponible dans un univers donné`,
+    deprecated: true,
+    summary: `DEPRECATED : Liste des service disponible dans un univers donné`,
   })
   @ApiOkResponse({
     type: [ServiceRechercheAPI],
   })
-  async getListeServices(
+  async getListeServices_deprecated(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
     @Param('universId') universId: string,
@@ -210,6 +213,34 @@ export class RechecheServicesController extends GenericControler {
       utilisateurId,
       universId,
     );
+    return result.map((r) => ServiceRechercheAPI.mapToAPI(r));
+  }
+
+  @Get(
+    'utilisateurs/:utilisateurId/thematiques/:code_thematique/recherche_services',
+  )
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Liste des service disponible dans une thematique donnée`,
+  })
+  @ApiOkResponse({
+    type: [ServiceRechercheAPI],
+  })
+  async getListeServices(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('code_thematique') code_thematique: string,
+  ): Promise<ServiceRechercheAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const them = Thematique[code_thematique];
+    if (!them) {
+      ApplicationError.throwThematiqueNotFound(code_thematique);
+    }
+    const result =
+      await this.rechercheServicesUsecase.getListServicesOfThematique(
+        utilisateurId,
+        them,
+      );
     return result.map((r) => ServiceRechercheAPI.mapToAPI(r));
   }
 

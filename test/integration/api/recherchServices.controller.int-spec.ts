@@ -464,13 +464,40 @@ describe('RechercheServices (API test)', () => {
       univers: 'alimentation',
       external_url: 'https://impactco2.fr/outils/fruitsetlegumes',
       is_available_inhouse: true,
+      thematique: 'alimentation',
     });
     expect(response.body[1].external_url).toEqual(
       'https://presdecheznous.fr/map#/carte/91120',
     );
   });
 
-  it(`GET /utlilisateur/id/recherche_services/universId  listes les services pour la home`, async () => {
+  it(`NEW GET /utlilisateur/id/thematiques/id/recherche_services  listes les services pour une thematique donnée`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/recherche_services',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body[0]).toStrictEqual({
+      id_service: 'fruits_legumes',
+      titre: 'Fruits et légumes de saison',
+      sous_titre: CategorieRechercheManager.getMoisCourant(),
+      icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/cerise.webp',
+      univers: 'alimentation',
+      external_url: 'https://impactco2.fr/outils/fruitsetlegumes',
+      is_available_inhouse: true,
+      thematique: 'alimentation',
+    });
+    expect(response.body[1].external_url).toEqual(
+      'https://presdecheznous.fr/map#/carte/91120',
+    );
+  });
+
+  it(`GET /utlilisateur/id/recherche_services  listes les services pour la home`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
 
@@ -490,6 +517,7 @@ describe('RechercheServices (API test)', () => {
       univers: 'alimentation',
       external_url: 'https://impactco2.fr/outils/fruitsetlegumes',
       is_available_inhouse: true,
+      thematique: 'alimentation',
     });
     expect(response.body[2].external_url).toEqual(
       'https://www.winter-energies.fr/',
