@@ -34,13 +34,13 @@ export class MissionController extends GenericControler {
   }
 
   // NEW NEW NEW
-  @Get('utilisateurs/:utilisateurId/tuiles_missions/:thematique')
+  @Get('utilisateurs/:utilisateurId/tuiles_missions/:code_thematique')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: [TuileMissionAPI],
   })
   @ApiParam({
-    name: 'thematique',
+    name: 'code_thematique',
     enum: Thematique,
     required: true,
     description: `la thematique des missions demandées`,
@@ -51,12 +51,12 @@ export class MissionController extends GenericControler {
   async getTuilesMissions(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-    @Param('thematique') thematique: string,
+    @Param('code_thematique') code_thematique: string,
   ): Promise<TuileMissionAPI[]> {
     this.checkCallerId(req, utilisateurId);
-    const them = Thematique[thematique];
+    const them = Thematique[code_thematique];
     if (!them) {
-      ApplicationError.throwThematiqueNotFound(thematique);
+      ApplicationError.throwThematiqueNotFound(code_thematique);
     }
     const result = await this.missionUsecase.getMissionsOfThematique(
       utilisateurId,

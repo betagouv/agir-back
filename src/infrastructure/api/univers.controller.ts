@@ -11,7 +11,6 @@ import { GenericControler } from './genericControler';
 import { UniversAPI } from './types/univers/UniversAPI';
 import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
 import { ThematiqueUniversAPI } from './types/univers/ThematiqueUniversAPI';
-import { Univers } from '../../domain/univers/univers';
 import { ApplicationError } from '../applicationError';
 
 @Controller()

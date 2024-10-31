@@ -22,6 +22,8 @@ import { DefisUsecase } from '../../../src/usecase/defis.usecase';
 import { DefiAPI, PatchDefiStatusAPI } from './types/defis/DefiAPI';
 import { DefiStatus } from '../../../src/domain/defis/defi';
 import { DefiStatistiqueUsecase } from '../../../src/usecase/defiStatistique.usecase';
+import { Thematique } from '../../domain/contenu/thematique';
+import { ApplicationError } from '../applicationError';
 
 @Controller()
 @ApiBearerAuth()
@@ -99,7 +101,6 @@ export class DefisController extends GenericControler {
     return result.map((element) => DefiAPI.mapToAPI(element));
   }
 
-  
   @Get('utilisateurs/:utilisateurId/defis')
   @ApiQuery({
     name: 'univers',
@@ -127,7 +128,7 @@ export class DefisController extends GenericControler {
   })
   @ApiOperation({
     summary:
-      "Retourne l'ensemble des défis de l'utilisateur (en cours, fait, abandonné, etc)",
+      "DEPRECATED : Retourne l'ensemble des défis de l'utilisateur (en cours, fait, abandonné, etc)",
   })
   async getAllUserDefi(
     @Request() req,
@@ -153,7 +154,7 @@ export class DefisController extends GenericControler {
   })
   @ApiOperation({
     summary:
-      "Retourne l'ensemble des défis de l'utilisateur visible dans l'univers argument, agrégation des défis visibles des thémtiques de cet univers",
+      "DEPRECATED : Retourne l'ensemble des défis de l'utilisateur visible dans l'univers argument, agrégation des défis visibles des thémtiques de cet univers",
   })
   async getAllUserDefiInUnivers(
     @Request() req,
@@ -164,6 +165,32 @@ export class DefisController extends GenericControler {
     const result = await this.defisUsecase.getDefisOfUnivers(
       utilisateurId,
       universId,
+    );
+    return result.map((element) => DefiAPI.mapToAPI(element));
+  }
+
+  @Get('utilisateurs/:utilisateurId/thematiques/:code_thematique/defis')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: [DefiAPI],
+  })
+  @ApiOperation({
+    summary:
+      "Retourne l'ensemble des défis de l'utilisateur visible pour une thematique donnée",
+  })
+  async getAllUserDefisByThematique(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('code_thematique') code_thematique: string,
+  ): Promise<DefiAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const them = Thematique[code_thematique];
+    if (!them) {
+      ApplicationError.throwThematiqueNotFound(code_thematique);
+    }
+    const result = await this.defisUsecase.getDefisOfUnivers(
+      utilisateurId,
+      them,
     );
     return result.map((element) => DefiAPI.mapToAPI(element));
   }
