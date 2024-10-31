@@ -2907,4 +2907,129 @@ describe('Mission (API test)', () => {
       titre: 'NEW titre',
     });
   });
+
+  it(`NEW GET /utilisateurs/id/tuiles_missions - renvoie la liste des missions recommandées pour l'utilisateur, premiere mission de chaque univers`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { missions: {} });
+    await TestUtil.create(DB.univers, {
+      id_cms: 1,
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.univers, {
+      id_cms: 2,
+      code: Univers.logement,
+      label: 'Maison',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      label: 'cereales',
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 2,
+      label: 'coming_soon',
+      code: ThematiqueUnivers.coming_soon,
+      univers_parent: Univers.alimentation,
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 3,
+      label: 'partir_vacances',
+      code: ThematiqueUnivers.partir_vacances,
+      univers_parent: Univers.logement,
+    });
+
+    await TestUtil.create(DB.mission, {
+      id_cms: 1,
+      thematique: Thematique.alimentation,
+      code: ThematiqueUnivers.cereales,
+      titre: 'cereales',
+    });
+    await TestUtil.create(DB.mission, {
+      id_cms: 2,
+      thematique: Thematique.alimentation,
+      code: ThematiqueUnivers.coming_soon,
+      titre: 'coming_soon',
+    });
+    await TestUtil.create(DB.mission, {
+      id_cms: 3,
+      thematique: Thematique.logement,
+      code: ThematiqueUnivers.partir_vacances,
+      titre: 'partir_vacances',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/tuiles_missions',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(2);
+    console.log(response.body);
+    expect(response.body[0].titre).toEqual('cereales');
+    expect(response.body[1].titre).toEqual('partir_vacances');
+  });
+
+  it(`NEW GET /utilisateurs/id/tuiles_missions - une tuile terminée n'apparaît pas`, async () => {
+    // GIVEN
+    const mission_unique_done: MissionsUtilisateur_v0 = {
+      version: 0,
+      missions: [
+        {
+          id: '1',
+          done_at: new Date(),
+          thematique_univers: ThematiqueUnivers.cereales,
+          univers: 'alimentation',
+          code: ThematiqueUnivers.cereales,
+          image_url: 'img',
+          thematique: Thematique.alimentation,
+          titre: 'titre',
+          is_first: false,
+          objectifs: [
+            {
+              id: '0',
+              content_id: '1',
+              type: ContentType.article,
+              titre: '1 article',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+          ],
+          est_visible: true,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, { missions: mission_unique_done });
+
+    await TestUtil.create(DB.univers, {
+      id_cms: 1,
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+
+    await TestUtil.create(DB.mission, {
+      id_cms: 1,
+      thematique_univers: ThematiqueUnivers.cereales,
+      code: ThematiqueUnivers.cereales,
+    });
+    await missionRepository.onApplicationBootstrap();
+    await thematiqueRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/tuiles_missions',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(0);
+  });
 });

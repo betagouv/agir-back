@@ -18,6 +18,7 @@ export class ThematiqueUsecase {
     private personnalisator: Personnalisator,
   ) {}
 
+  // DEPRECATED
   async getThematiquesRecommandees(
     utilisateurId: string,
   ): Promise<TuileThematique[]> {

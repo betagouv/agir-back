@@ -26,6 +26,7 @@ import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { QuestionGeneric } from '../domain/kyc/questionGeneric';
 import { TuileMission } from '../domain/univers/tuileMission';
 import { Thematique } from '../domain/contenu/thematique';
+import { TuileThematique } from '../domain/univers/tuileThematique';
 
 @Injectable()
 export class MissionUsecase {
@@ -38,7 +39,33 @@ export class MissionUsecase {
     private communeRepository: CommuneRepository,
   ) {}
 
-  async getMissionsOfThematique(
+  async getTuilesMissionsRecommandeesToutesThematiques(
+    utilisateurId: string,
+  ): Promise<TuileThematique[]> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.missions, Scope.logement],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const final_result = [];
+
+    const liste_thematiques = Object.values(Thematique);
+    for (const thematique of liste_thematiques) {
+      const liste_missions = await this.getOrderedListeMissionsOfThematique(
+        thematique,
+        utilisateur,
+        true,
+      );
+      if (liste_missions.length > 0) {
+        final_result.push(liste_missions[0]);
+      }
+    }
+
+    return this.personnalisator.personnaliser(final_result, utilisateur);
+  }
+
+  async getTuilesMissionsOfThematique(
     utilisateurId: string,
     thematique: Thematique,
   ): Promise<TuileMission[]> {
@@ -48,33 +75,48 @@ export class MissionUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
+    const final_result = await this.getOrderedListeMissionsOfThematique(
+      thematique,
+      utilisateur,
+    );
+
+    return this.personnalisator.personnaliser(final_result, utilisateur);
+  }
+
+  private async getOrderedListeMissionsOfThematique(
+    thematique: Thematique,
+    utilisateur: Utilisateur,
+    exclude_done?: boolean,
+  ): Promise<TuileMission[]> {
     const listMissionDefs = this.missionRepository.getByThematique(thematique);
 
     const result: TuileMission[] = [];
 
     for (const mission_def of listMissionDefs) {
-      const existing_mission = utilisateur.missions.getMissionByCode(
-        mission_def.code,
-      );
-
       if (!mission_def.est_visible) {
         continue; // on passe à la misison suivante
       }
 
+      const existing_mission = utilisateur.missions.getMissionByCode(
+        mission_def.code,
+      );
+
       if (existing_mission) {
-        result.push(
-          this.makeTuileMissionFromMissionAndDefinition(
-            existing_mission,
-            mission_def,
-          ),
-        );
+        if (exclude_done && existing_mission.isDone()) {
+          // SKIP
+        } else {
+          result.push(
+            this.makeTuileMissionFromMissionAndDefinition(
+              existing_mission,
+              mission_def,
+            ),
+          );
+        }
       } else {
         result.push(this.makeTuileMissionFromDefinition(mission_def));
       }
     }
-    const final_result = this.ordonneTuilesMission(result);
-
-    return this.personnalisator.personnaliser(final_result, utilisateur);
+    return this.ordonneTuilesMission(result);
   }
 
   // DEPRECATED
