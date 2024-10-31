@@ -86,6 +86,7 @@ export class MissionController extends GenericControler {
     description: `id de l'utilisateur`,
   })
   @ApiOperation({
+    deprecated: true,
     summary: `DEPRECATED : Retourne la mission de la thématique`,
   })
   async getMission(
@@ -150,6 +151,7 @@ export class MissionController extends GenericControler {
     description: `id de l'utilisateur`,
   })
   @ApiOperation({
+    deprecated: true,
     summary: `DEPRECATED : Declare la mission de cette thematique comme terminée`,
   })
   async terminerMission(
@@ -215,6 +217,7 @@ export class MissionController extends GenericControler {
     description: `Thematique de la mission`,
   })
   @ApiOperation({
+    deprecated: true,
     summary: `DEPRECATED : Liste l'ensemble des kycs associées à la thématique argument, avec leur état respectif, incluant des mosaics`,
   })
   async getMissionKYCs(

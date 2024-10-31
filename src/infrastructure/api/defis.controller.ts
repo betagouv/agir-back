@@ -127,6 +127,7 @@ export class DefisController extends GenericControler {
     type: [DefiAPI],
   })
   @ApiOperation({
+    deprecated: true,
     summary:
       "DEPRECATED : Retourne l'ensemble des défis de l'utilisateur (en cours, fait, abandonné, etc)",
   })
@@ -153,6 +154,7 @@ export class DefisController extends GenericControler {
     type: [DefiAPI],
   })
   @ApiOperation({
+    deprecated: true,
     summary:
       "DEPRECATED : Retourne l'ensemble des défis de l'utilisateur visible dans l'univers argument, agrégation des défis visibles des thémtiques de cet univers",
   })

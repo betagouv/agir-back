@@ -27,6 +27,7 @@ export class UniversController extends GenericControler {
     type: [UniversAPI],
   })
   @ApiOperation({
+    deprecated: true,
     summary: `DEPRECATED : Retourne les univers auquels peut accéder l'utilisateur`,
   })
   async getUnivers(
@@ -49,6 +50,7 @@ export class UniversController extends GenericControler {
     description: `l'univers demandé`,
   })
   @ApiOperation({
+    deprecated: true,
     summary: `DEPRECATED : Retourne les thematiques de d'un univers particulier d'un utilisateur donné`,
   })
   async getUniversThematiques(
