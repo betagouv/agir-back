@@ -24,6 +24,7 @@ import { MosaicKYCAPI } from './types/kyc/mosaicKYCAPI';
 import { TuileMissionAPI } from './types/univers/TuileMissionAPI';
 import { Thematique } from '../../domain/contenu/thematique';
 import { ApplicationError } from '../applicationError';
+import { ThematiqueUniversAPI } from './types/univers/ThematiqueUniversAPI';
 @ApiExtraModels(QuestionKYCAPI, MosaicKYCAPI)
 @Controller()
 @ApiBearerAuth()
@@ -60,11 +61,31 @@ export class MissionController extends GenericControler {
     if (!them) {
       ApplicationError.throwThematiqueNotFound(code_thematique);
     }
-    const result = await this.missionUsecase.getMissionsOfThematique(
+    const result = await this.missionUsecase.getTuilesMissionsOfThematique(
       utilisateurId,
       them,
     );
     return result.map((e) => TuileMissionAPI.mapToAPI(e));
+  }
+
+  @Get('utilisateurs/:utilisateurId/tuiles_missions')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: [ThematiqueUniversAPI],
+  })
+  @ApiOperation({
+    summary: `Retourne les missions recommandées pour la home (toute thématique confondue)`,
+  })
+  async getMissionsRecommandees(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<ThematiqueUniversAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const result =
+      await this.missionUsecase.getTuilesMissionsRecommandeesToutesThematiques(
+        utilisateurId,
+      );
+    return result.map((e) => ThematiqueUniversAPI.mapToAPI(e));
   }
 
   @Get('utilisateurs/:utilisateurId/thematiques/:thematique/mission')

@@ -90,7 +90,9 @@ export class MissionRepository {
     return MissionRepository.catalogue_missions_by_idcms.get(cms_id);
   }
   getByThematique(thematique: Thematique): MissionDefinition[] {
-    return MissionRepository.catalogue_missions_by_thematique.get(thematique);
+    const result =
+      MissionRepository.catalogue_missions_by_thematique.get(thematique);
+    return result ? result : [];
   }
   getByCode(code_mission: string): MissionDefinition {
     return MissionRepository.catalogue_missions_by_code.get(code_mission);
