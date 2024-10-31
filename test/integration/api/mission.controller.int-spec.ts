@@ -2667,7 +2667,7 @@ describe('Mission (API test)', () => {
     expect(response.status).toBe(404);
   });
 
-  it(`GET /utilisateurs/id/tuiles_missions/:thematique - Liste les missions de la thématique, 100% catalogue`, async () => {
+  it(`GET /utilisateurs/id/thematiques/id/tuiles_missions - Liste les missions de la thématique, 100% catalogue`, async () => {
     // GIVEN
 
     const objectifs: ObjectifDefinition[] = [
@@ -2724,7 +2724,7 @@ describe('Mission (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/tuiles_missions/alimentation',
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/tuiles_missions',
     );
 
     // THEN
@@ -2741,7 +2741,7 @@ describe('Mission (API test)', () => {
       titre: 'titre',
     });
   });
-  it(`GET /utilisateurs/id/tuiles_missions/:thematique - Liste pas mission de la thématique si non visible`, async () => {
+  it(`GET /utilisateurs/id/thematiques/id/tuiles_missions - Liste pas mission de la thématique si non visible`, async () => {
     // GIVEN
 
     const mission_article: Mission = {
@@ -2769,14 +2769,14 @@ describe('Mission (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/tuiles_missions/alimentation',
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/tuiles_missions',
     );
 
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(0);
   });
-  it(`GET /utilisateurs/id/tuiles_missions/:thematique - Liste la mission 'is_first' en premier`, async () => {
+  it(`GET /utilisateurs/id/thematiques/id/tuiles_missions - Liste la mission 'is_first' en premier`, async () => {
     // GIVEN
 
     const mission_article: Mission = {
@@ -2817,7 +2817,7 @@ describe('Mission (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/tuiles_missions/alimentation',
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/tuiles_missions',
     );
 
     // THEN
@@ -2825,7 +2825,7 @@ describe('Mission (API test)', () => {
     expect(response.body).toHaveLength(3);
     expect(response.body[0].code).toEqual('code_2');
   });
-  it(`GET /utilisateurs/id/tuiles_missions/:thematique - liste inclut une mission en cours de l'utilisateur, maj avec la def`, async () => {
+  it(`GET /utilisateurs/id/thematiques/id/tuiles_missions - liste inclut une mission en cours de l'utilisateur, maj avec la def`, async () => {
     // GIVEN
 
     const defis: DefiHistory_v0 = {
@@ -2890,7 +2890,7 @@ describe('Mission (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/tuiles_missions/alimentation',
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/tuiles_missions',
     );
 
     // THEN
