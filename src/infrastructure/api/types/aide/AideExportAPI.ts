@@ -6,6 +6,8 @@ export class AideExportAPI {
   @ApiProperty() content_id: string;
   @ApiProperty() titre: string;
   @ApiProperty() contenu: string;
+  @ApiProperty() echelle: string;
+  @ApiProperty() url_source: string;
   @ApiProperty() codes_postaux: string[];
   @ApiProperty({ enum: Thematique, enumName: 'Thematique', isArray: true })
   thematiques: Thematique[];
@@ -31,6 +33,8 @@ export class AideExportAPI {
       com_urbaine: aide.cu,
       com_com: aide.cc,
       metropoles: aide.metropoles,
+      echelle: aide.echelle,
+      url_source: aide.url_source,
     };
   }
 }

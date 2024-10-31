@@ -122,6 +122,8 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() astuces: string;
   @ApiProperty() pourquoi: string;
   @ApiProperty() source: string;
+  @ApiProperty() echelle: string;
+  @ApiProperty() url_source: string;
   @ApiProperty() frequence: string;
   @ApiProperty({ type: CMSWebhookImageURLAPI }) imageUrl: CMSWebhookImageURLAPI;
   @ApiProperty() difficulty: number;
@@ -148,6 +150,8 @@ export type CMSWebhookPopulateAPI = {
     astuces: string;
     type: string;
     categorie: string;
+    echelle: string;
+    url_source: string;
     is_ngc: boolean;
     ngc_key: string;
     code: string;

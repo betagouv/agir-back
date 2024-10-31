@@ -9,10 +9,12 @@ export class Aide {
   titre: string;
   contenu: string;
   url_simulateur: string;
+  url_source: string;
   is_simulateur: boolean;
   codes_postaux: string[];
   thematiques: Thematique[];
   montant_max: number;
+  echelle: string;
   besoin: Besoin;
   besoin_desc: string;
   include_codes_commune: string[];

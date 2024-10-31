@@ -186,10 +186,12 @@ model Aide {
   titre                 String
   contenu               String
   url_simulateur        String?
+  url_source            String?
   is_simulateur         Boolean?
   codes_postaux         String[] @default([])
   thematiques           String[] @default([])
   montant_max           Int?
+  echelle               String?
   besoin                String?
   besoin_desc           String?
   include_codes_commune String[] @default([])

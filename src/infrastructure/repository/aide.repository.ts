@@ -3,7 +3,6 @@ import { PrismaService } from '../prisma/prisma.service';
 import { Aide as AideDB } from '@prisma/client';
 import { Thematique } from '../../domain/contenu/thematique';
 import { Aide } from '../../../src/domain/aides/aide';
-import { App } from '../../domain/app';
 import { Besoin } from '../../../src/domain/aides/besoin';
 
 export type AideFilter = {
@@ -139,6 +138,8 @@ export class AideRepository {
       codes_region: aideDB.codes_region,
       exclude_codes_commune: aideDB.exclude_codes_commune,
       include_codes_commune: aideDB.include_codes_commune,
+      echelle: aideDB.echelle,
+      url_source: aideDB.url_source,
     };
   }
 }

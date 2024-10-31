@@ -636,6 +636,8 @@ export class CMSUsecase {
       exclude_codes_commune: CMSUsecase.split(entry.exclude_codes_commune),
       codes_departement: CMSUsecase.split(entry.codes_departement),
       codes_region: CMSUsecase.split(entry.codes_region),
+      echelle: entry.echelle,
+      url_source: entry.url_source,
     };
   }
 
@@ -867,6 +869,8 @@ export class CMSUsecase {
       ),
       codes_departement: CMSUsecase.split(entry.attributes.codes_departement),
       codes_region: CMSUsecase.split(entry.attributes.codes_region),
+      echelle: entry.attributes.echelle,
+      url_source: entry.attributes.url_source,
     };
   }
 

@@ -237,6 +237,8 @@ describe('Aide (API test)', () => {
       com_urbaine: [],
       com_com: [],
       metropoles: ['Dijon Métropole'],
+      echelle: 'National',
+      url_source: 'https://hello',
     });
     expect(response.body[0].metropoles).toEqual(['Dijon Métropole']);
     expect(response.body[1].com_agglo).toEqual(['CA du Pays de Gex']);

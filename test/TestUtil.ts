@@ -304,6 +304,8 @@ export class TestUtil {
       exclude_codes_commune: [],
       codes_departement: [],
       codes_region: [],
+      echelle: 'National',
+      url_source: 'https://hello',
       ...override,
     };
   }
