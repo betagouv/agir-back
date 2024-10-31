@@ -1,5 +1,6 @@
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { ContentType } from '../contenu/contentType';
+import { Thematique } from '../contenu/thematique';
 import { DefiDefinition } from '../defis/defiDefinition';
 import { KYCMosaicID } from '../kyc/KYCMosaicID';
 import { MissionsUtilisateur_v0 } from '../object_store/mission/MissionsUtilisateur_v0';
@@ -127,13 +128,13 @@ export class MissionsUtilisateur {
     return new_mission;
   }
 
-  public getAllUnlockedDefisIdsByUnivers(univers: string): string[] {
+  public getAllUnlockedDefisIdsByThematique(thematique: Thematique): string[] {
     let result: string[] = [];
     for (const mission of this.missions) {
       const univers_mission = ThematiqueRepository.getUniversParent(
         mission.thematique_univers,
       );
-      if (univers_mission === univers) {
+      if (univers_mission === thematique) {
         result = result.concat(mission.getUnlockedDefisIds());
       }
     }

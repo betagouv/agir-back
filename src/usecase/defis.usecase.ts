@@ -3,11 +3,11 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { Defi, DefiStatus } from '../../src/domain/defis/defi';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
-import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
 import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
 import { Feature } from '../../src/domain/gamification/feature';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { Thematique } from '../domain/contenu/thematique';
 
 @Injectable()
 export class DefisUsecase {
@@ -17,6 +17,7 @@ export class DefisUsecase {
     private personnalisator: Personnalisator,
   ) {}
 
+  // DEPRECATED
   async getDefisOfUnivers(
     utilisateurId: string,
     univers: string,
@@ -30,9 +31,9 @@ export class DefisUsecase {
     const defiDefinitions = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(defiDefinitions);
 
-    let result = await this.getDefisOfUniversAndUtilisateur(
+    let result = await this.getDefisOfThematiqueAndUtilisateur(
       utilisateur,
-      univers,
+      Thematique[univers],
     );
 
     result = result.filter((d) => d.getStatus() === DefiStatus.en_cours);
@@ -40,12 +41,35 @@ export class DefisUsecase {
     return this.personnalisator.personnaliser(result, utilisateur);
   }
 
-  private async getDefisOfUniversAndUtilisateur(
+  async getDefisOfThematique(
+    utilisateurId: string,
+    thematique: Thematique,
+  ): Promise<Defi[]> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.defis, Scope.logement, Scope.missions],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const defiDefinitions = await this.defiRepository.list({});
+    utilisateur.defi_history.setCatalogue(defiDefinitions);
+
+    let result = await this.getDefisOfThematiqueAndUtilisateur(
+      utilisateur,
+      thematique,
+    );
+
+    result = result.filter((d) => d.getStatus() === DefiStatus.en_cours);
+
+    return this.personnalisator.personnaliser(result, utilisateur);
+  }
+
+  private async getDefisOfThematiqueAndUtilisateur(
     utilisateur: Utilisateur,
-    univers: string,
+    thematique: Thematique,
   ): Promise<Defi[]> {
     const list_defi_ids =
-      utilisateur.missions.getAllUnlockedDefisIdsByUnivers(univers);
+      utilisateur.missions.getAllUnlockedDefisIdsByThematique(thematique);
 
     const result: Defi[] = [];
 
@@ -70,9 +94,9 @@ export class DefisUsecase {
     const univers_liste = ThematiqueRepository.getAllUnivers();
 
     for (const univers of univers_liste) {
-      const defis_univers = await this.getDefisOfUniversAndUtilisateur(
+      const defis_univers = await this.getDefisOfThematiqueAndUtilisateur(
         utilisateur,
-        univers,
+        Thematique[univers],
       );
       result = result.concat(
         defis_univers.filter((d) => d.getStatus() === DefiStatus.en_cours),
