@@ -14,6 +14,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     titre: 'Fruits et légumes de saison',
     sous_titre: CategorieRechercheManager.getMoisCourant(),
     univers: Univers.alimentation,
+    thematique: Univers.alimentation,
     is_available_inhouse: true,
   },
   {
@@ -23,6 +24,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     titre: 'Que faire de mes objets ?',
     sous_titre: 'donner, réparer, recycler,...',
     univers: Univers.consommation,
+    thematique: Univers.consommation,
     is_available_inhouse: true,
   },
   {
@@ -33,6 +35,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     titre: 'Votre consommation électrique',
     sous_titre: 'Conseils et suivi',
     univers: Univers.logement,
+    thematique: Univers.logement,
     is_available_inhouse: true,
   },
   {
@@ -42,6 +45,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     titre: 'Mes commerces de proximité',
     sous_titre: 'À {COMMUNE}',
     univers: Univers.alimentation,
+    thematique: Univers.alimentation,
     is_available_inhouse: true,
   },
   {
@@ -52,6 +56,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     titre: 'Recettes saines et équilibrées',
     sous_titre: 'Bas carbone',
     univers: Univers.alimentation,
+    thematique: Univers.alimentation,
     is_available_inhouse: true,
   },
   {
@@ -62,6 +67,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     titre: 'Poissons de saison',
     sous_titre: 'Manger Bouger',
     univers: Univers.alimentation,
+    thematique: Univers.alimentation,
     is_available_inhouse: false,
   },
   {
@@ -71,6 +77,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     titre: 'Où composter proche de chez moi ?',
     sous_titre: 'Réseau Compost Citoyen',
     univers: Univers.alimentation,
+    thematique: Univers.alimentation,
     is_available_inhouse: false,
   },
   {
@@ -82,6 +89,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     titre: 'Quel véhicule pour remplacer le mien ?',
     sous_titre: 'Je change ma voiture',
     univers: Univers.transport,
+    thematique: Univers.transport,
     is_available_inhouse: false,
   },
   {
@@ -92,6 +100,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     titre: 'Voyager à vélo en France',
     sous_titre: 'France vélo tourisme',
     univers: Univers.transport,
+    thematique: Univers.transport,
     is_available_inhouse: false,
   },
   {
@@ -102,6 +111,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     titre: 'Comparateur carbone',
     sous_titre: 'Impact CO2',
     univers: Univers.climat,
+    thematique: Univers.climat,
     is_available_inhouse: false,
   },
   {
@@ -112,6 +122,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     titre: 'Devenir bénévole',
     sous_titre: 'Je veux aider',
     univers: Univers.climat,
+    thematique: Univers.climat,
     is_available_inhouse: false,
   },
   {
@@ -122,6 +133,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     titre: 'Estimer mes aides à la rénovation',
     sous_titre: 'Mes Aides Reno',
     univers: Univers.logement,
+    thematique: Univers.logement,
     is_available_inhouse: false,
   },
   {
@@ -133,6 +145,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     titre: `Estimer ma conso d'eau`,
     sous_titre: 'Cieau',
     univers: Univers.logement,
+    thematique: Univers.logement,
     is_available_inhouse: false,
   },
   {
@@ -142,6 +155,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     titre: `Changer son chauffage`,
     sous_titre: 'Pacoupa',
     univers: Univers.logement,
+    thematique: Univers.logement,
     is_available_inhouse: false,
   },
   {
@@ -153,6 +167,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     titre: `Mon appareil se répare-t-il facilement ?`,
     sous_titre: 'Epargnons nos ressources',
     univers: Univers.consommation,
+    thematique: Univers.consommation,
     is_available_inhouse: false,
   },
   {
@@ -164,6 +179,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     titre: `Se repérer dans les labels`,
     sous_titre: 'Epargnons nos ressources',
     univers: Univers.consommation,
+    thematique: Univers.consommation,
     is_available_inhouse: false,
   },
   {
@@ -175,6 +191,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     titre: `Diagnostiquer une panne`,
     sous_titre: 'Epargnons nos ressources',
     univers: Univers.consommation,
+    thematique: Univers.consommation,
     is_available_inhouse: false,
   },
   {
@@ -185,6 +202,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     titre: `Tutos pour réparer mes objets`,
     sous_titre: 'Epargnons nos ressources',
     univers: Univers.consommation,
+    thematique: Univers.consommation,
     is_available_inhouse: false,
   },
 ];
