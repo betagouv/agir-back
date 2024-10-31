@@ -260,11 +260,15 @@ export class Utilisateur extends UtilisateurData {
 
   /**
    * Returns the total number of people in the household, including adults and
-   * children.
+   * children (see {@link UtilisateurData.logement}).
+   *
+   * @ensures The result to be in the range [1, +∞[.
    */
-  public getNombrePersonnesDansLogement?() {
-    const total = this.logement.nombre_adultes + this.logement.nombre_enfants;
-    return total || 1;
+  public getNombrePersonnesDansLogement?(): number {
+    return Math.max(
+      this.logement.nombre_adultes + this.logement.nombre_enfants,
+      1,
+    );
   }
 
   public setPassword?(password: string) {
