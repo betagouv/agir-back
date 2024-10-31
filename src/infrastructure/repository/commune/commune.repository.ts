@@ -167,7 +167,17 @@ export class CommuneRepository {
     return liste ? liste : [];
   }
 
-  private getCommuneByCodeINSEE(code_insee: string): Commune {
+  /**
+   * Get the commune by its INSEE code.
+   *
+   * @param inseeCode The INSEE code of the commune (e.g. "75056").
+   * @returns The commune if found, `undefined` otherwise.
+   *
+   * @note The INSEE code is not the same as the postal code. It's a unique
+   * identifier for each commune in France in contrast to the postal code which
+   * can be shared by multiple communes.
+   */
+  getCommuneByCodeINSEE(code_insee: string): Commune | undefined {
     return aidesVeloData.communes.find((c) => c.code === code_insee);
   }
 }

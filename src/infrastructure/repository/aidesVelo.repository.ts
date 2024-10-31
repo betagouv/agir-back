@@ -31,6 +31,9 @@ export type SummaryVelosParams = Required<
   Pick<
     Questions,
     | 'localisation . code insee'
+    | 'localisation . epci'
+    | 'localisation . région'
+    | 'localisation . département'
     | 'vélo . prix'
     | 'aides . pays de la loire . abonné TER'
     | 'foyer . personnes'
@@ -48,24 +51,9 @@ export class AidesVeloRepository {
   }
 
   async getSummaryVelos(params: SummaryVelosParams): Promise<AidesVeloParType> {
-    const commune = AidesVeloEngine.getCommuneByInseeCode(
-      params['localisation . code insee'],
-    );
-
-    // NOTE: what should we do if the commune is not found? Or more generally
-    // if there is an error with the computation?
-    if (!commune) {
-      // throw new Error(
-      //   `Commune not found for code insee: ${params['localisation . code insee']}`,
-      // );
-    }
-
     const situationBase: Questions = {
       ...params,
-      'localisation . epci': `${commune?.epci}`,
-      'localisation . région': `${commune?.region}`,
-      'localisation . code insee': `${commune?.code}`,
-      'localisation . département': `${commune?.departement}`,
+      'localisation . pays': 'France',
     };
 
     return this.getAidesVeloTousTypes(situationBase);

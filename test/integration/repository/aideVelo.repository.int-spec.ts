@@ -26,6 +26,9 @@ describe('AideVeloRepository', () => {
 
   const baseParams: SummaryVelosParams = {
     'localisation . code insee': '91477', // Palaiseau
+    'localisation . epci': 'CA Communauté Paris-Saclay',
+    'localisation . région': '11',
+    'localisation . département': '91',
     'revenu fiscal de référence par part . revenu de référence': 800,
     'revenu fiscal de référence par part . nombre de parts': 1,
     'vélo . prix': 500,
@@ -53,6 +56,9 @@ describe('AideVeloRepository', () => {
     const result = await aidesVeloRepository.getSummaryVelos({
       ...baseParams,
       'localisation . code insee': '49007', // Angers
+      'localisation . epci': 'CU Angers Loire Métropole',
+      'localisation . département': '49',
+      'localisation . région': '52',
       'aides . pays de la loire . abonné TER': true,
       'revenu fiscal de référence par part . revenu de référence': 5000,
       'vélo . prix': 100,
@@ -80,6 +86,9 @@ describe('AideVeloRepository', () => {
     const result = await aidesVeloRepository.getSummaryVelos({
       ...baseParams,
       'localisation . code insee': '49007', // Angers
+      'localisation . epci': 'CU Angers Loire Métropole',
+      'localisation . département': '49',
+      'localisation . région': '52',
       'aides . pays de la loire . abonné TER': false,
     });
 
@@ -102,6 +111,9 @@ describe('AideVeloRepository', () => {
       const result = await aidesVeloRepository.getSummaryVelos({
         ...baseParams,
         'localisation . code insee': '34069', // Cazouls-Lès-Béziers
+        'localisation . epci': 'CC la Domitienne',
+        'localisation . département': '34',
+        'localisation . région': '76',
         'aides . pays de la loire . abonné TER': false,
       });
 
@@ -122,6 +134,9 @@ describe('AideVeloRepository', () => {
       const result = await aidesVeloRepository.getSummaryVelos({
         ...baseParams,
         'localisation . code insee': '31555', // Toulouse
+        'localisation . epci': 'Toulouse Métropole',
+        'localisation . département': '31',
+        'localisation . région': '76',
         'aides . pays de la loire . abonné TER': false,
       });
 
@@ -143,6 +158,9 @@ describe('AideVeloRepository', () => {
       const result = await aidesVeloRepository.getSummaryVelos({
         ...baseParams,
         'localisation . code insee': '34172', // Montpellier
+        'localisation . epci': 'Montpellier Méditerranée Métropole',
+        'localisation . département': '34',
+        'localisation . région': '76',
         'aides . pays de la loire . abonné TER': false,
       });
 
@@ -169,6 +187,9 @@ describe('AideVeloRepository', () => {
     const result = await aidesVeloRepository.getSummaryVelos({
       ...baseParams,
       'localisation . code insee': '69264', // Villefranche-sur-Saône
+      'localisation . epci': 'CA Villefranche Beaujolais Saône',
+      'localisation . département': '69',
+      'localisation . région': '84',
       'aides . pays de la loire . abonné TER': false,
     });
 

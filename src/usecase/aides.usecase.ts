@@ -115,9 +115,20 @@ export class AidesUsecase {
       utilisateur.logement.code_postal,
       utilisateur.logement.commune,
     );
+    const commune = this.communeRepository.getCommuneByCodeINSEE(code_insee);
+
+    // NOTE: what should we do if the commune is not found?
+    if (!commune) {
+      // throw new Error(
+      //   `Commune not found for code insee: ${params['localisation . code insee']}`,
+      // );
+    }
 
     return this.aidesVeloRepository.getSummaryVelos({
       'localisation . code insee': code_insee,
+      'localisation . epci': commune?.epci,
+      'localisation . région': commune?.region,
+      'localisation . département': commune?.departement,
       'vélo . prix': prix_velo,
       'aides . pays de la loire . abonné TER': ABONNEMENT,
       'foyer . personnes': utilisateur.getNombrePersonnesDansLogement(),
