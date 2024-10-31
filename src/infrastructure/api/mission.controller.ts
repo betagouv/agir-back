@@ -34,7 +34,9 @@ export class MissionController extends GenericControler {
   }
 
   // NEW NEW NEW
-  @Get('utilisateurs/:utilisateurId/tuiles_missions/:code_thematique')
+  @Get(
+    'utilisateurs/:utilisateurId/thematiques/:code_thematique/tuiles_missions',
+  )
   @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: [TuileMissionAPI],
