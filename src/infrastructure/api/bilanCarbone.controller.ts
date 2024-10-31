@@ -1,6 +1,7 @@
 import {
   ApiBearerAuth,
   ApiOkResponse,
+  ApiOperation,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
@@ -29,8 +30,12 @@ export class BilanCarboneController extends GenericControler {
 
   @ApiOkResponse({ type: BilanCarboneDashboardAPI })
   @Get('utilisateur/:utilisateurId/bilans/last')
+  @ApiOperation({
+    deprecated: true,
+    summary: "DEPRECATED : Renvoie le bilan carbone courant de l'utilisateur",
+  })
   @UseGuards(AuthGuard)
-  async getBilan(
+  async getBilan_deprecated(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<BilanCarboneDashboardAPI> {
@@ -51,7 +56,41 @@ export class BilanCarboneController extends GenericControler {
     required: false,
     description: `si renseigné (à n'importe quoi), alors force le calcul du bilan complet, ainsi que tout ce qui peut être calculé dans le bilan approximatif`,
   })
+  @ApiOperation({
+    deprecated: true,
+    summary:
+      "DEPRECATED : Renvoie le bilan carbone courant de l'utilisateur - nouveau format",
+  })
   @Get('utilisateur/:utilisateurId/bilans/last_v2')
+  @UseGuards(AuthGuard)
+  async getBilan_V2_deprecated(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Query('force') force: string,
+  ): Promise<BilanCarboneDashboardAPI_v2> {
+    this.checkCallerId(req, utilisateurId);
+    const bilan = await this.bilanCarboneUsecase.getCurrentBilanByUtilisateurId(
+      utilisateurId,
+    );
+    return BilanCarboneDashboardAPI_v2.mapToAPI(
+      bilan.bilan_complet,
+      bilan.bilan_synthese,
+      force,
+    );
+  }
+
+  @ApiOkResponse({ type: BilanCarboneDashboardAPI_v2 })
+  @ApiQuery({
+    name: 'force',
+    type: String,
+    required: false,
+    description: `si renseigné (à n'importe quoi), alors force le calcul du bilan complet, ainsi que tout ce qui peut être calculé dans le bilan approximatif`,
+  })
+  @Get('utilisateurs/:utilisateurId/bilans/last_v2')
+  @ApiOperation({
+    summary:
+      "Renvoie le bilan carbone courant de l'utilisateur - nouveau format",
+  })
   @UseGuards(AuthGuard)
   async getBilan_V2(
     @Request() req,
