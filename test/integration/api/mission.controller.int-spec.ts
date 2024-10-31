@@ -51,7 +51,7 @@ describe('Mission (API test)', () => {
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
-        code: 'code',
+        code: ThematiqueUnivers.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -114,7 +114,7 @@ describe('Mission (API test)', () => {
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
-        code: 'code',
+        code: ThematiqueUnivers.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -237,7 +237,7 @@ describe('Mission (API test)', () => {
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
-        code: 'code',
+        code: ThematiqueUnivers.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -349,7 +349,7 @@ describe('Mission (API test)', () => {
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
-        code: 'code',
+        code: ThematiqueUnivers.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -432,7 +432,7 @@ describe('Mission (API test)', () => {
         done_at: null,
         thematique_univers: ThematiqueUnivers.cereales,
         univers: Univers.alimentation,
-        code: 'code',
+        code: ThematiqueUnivers.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -557,6 +557,82 @@ describe('Mission (API test)', () => {
     const objectif_defi = response.body.objectifs[3];
     expect(objectif_defi.defi_status).toEqual(DefiStatus.en_cours);
   });
+  it(`NEW GET /utilisateurs/id/missions/id - renvoie la mission de la thématique - à partir du compte utilisateur`, async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          id: '2',
+          points: 10,
+          tags: [],
+          titre: 'titre',
+          thematique: Thematique.transport,
+          astuces: 'ASTUCE',
+          date_acceptation: null,
+          pourquoi: 'POURQUOI',
+          sous_titre: 'SOUS TITRE',
+          status: DefiStatus.en_cours,
+          universes: [Univers.climat],
+          accessible: false,
+          motif: 'bidon',
+          categorie: Categorie.recommandation,
+          mois: [],
+          conditions: [],
+          sont_points_en_poche: false,
+          impact_kg_co2: 5,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, { missions: missions, defis: defis });
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Mange de la graine',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+
+    await TestUtil.create(DB.defi, { content_id: '2' });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/missions/cereales',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.id).toEqual('1');
+    expect(response.body.is_new).toEqual(false);
+    expect(response.body.image_url).toEqual('aaaa');
+    expect(response.body.progression).toEqual({ current: 1, target: 5 });
+    expect(response.body.thematique_univers).toEqual('cereales');
+    expect(response.body.thematique_univers_label).toEqual(
+      'Mange de la graine',
+    );
+    expect(response.body.univers_label).toEqual('Faut manger !');
+    expect(response.body.done_at).toEqual(null);
+    expect(response.body.terminable).toEqual(false);
+    expect(response.body.objectifs).toHaveLength(4);
+    expect(response.body.progression_kyc).toEqual({ current: 0, target: 1 });
+
+    const objectif = response.body.objectifs[1];
+    expect(objectif.id).toEqual('1');
+    expect(objectif.content_id).toEqual('13');
+    expect(objectif.type).toEqual(ContentType.article);
+    expect(objectif.titre).toEqual('Super article Palaiseau');
+    expect(objectif.points).toEqual(10);
+    expect(objectif.is_locked).toEqual(true);
+    expect(objectif.done_at).toEqual(new Date(0).toISOString());
+
+    const objectif_defi = response.body.objectifs[3];
+    expect(objectif_defi.defi_status).toEqual(DefiStatus.en_cours);
+  });
 
   it(`GET /utilisateurs/id/thematiques/climat/mission - mission terminable`, async () => {
     // GIVEN
@@ -614,6 +690,63 @@ describe('Mission (API test)', () => {
     expect(response.body.done_at).toEqual(null);
     expect(response.body.terminable).toEqual(true);
   });
+
+  it(`NEW GET /utilisateurs/id/missions/id - mission terminable`, async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          id: '2',
+          points: 10,
+          tags: [],
+          titre: 'titre',
+          thematique: Thematique.transport,
+          astuces: 'ASTUCE',
+          date_acceptation: null,
+          pourquoi: 'POURQUOI',
+          sous_titre: 'SOUS TITRE',
+          status: DefiStatus.en_cours,
+          universes: [Univers.climat],
+          accessible: false,
+          motif: 'bidon',
+          categorie: Categorie.recommandation,
+          mois: [],
+          conditions: [],
+          sont_points_en_poche: false,
+          impact_kg_co2: 5,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_defi_seul_done,
+      defis: defis,
+    });
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Mange de la graine',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+
+    await TestUtil.create(DB.defi, { content_id: '2' });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/missions/cereales',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.done_at).toEqual(null);
+    expect(response.body.terminable).toEqual(true);
+  });
   it(`GET /utilisateurs/id/thematiques/climat/mission - renvoie la mission de la thématique - à partir du catalgue de mission`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: {} });
@@ -646,6 +779,71 @@ describe('Mission (API test)', () => {
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/thematiques/cereales/mission',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.id).toEqual('1');
+    expect(response.body.is_new).toEqual(true);
+    expect(response.body.progression).toEqual({ current: 0, target: 3 });
+    expect(response.body.thematique_univers).toEqual('cereales');
+    expect(response.body.thematique_univers_label).toEqual(
+      'Mange de la graine',
+    );
+    expect(response.body.univers_label).toEqual('Faut manger !');
+    expect(response.body.done_at).toEqual(null);
+    expect(response.body.objectifs).toHaveLength(2);
+
+    const objctif_kyc = response.body.objectifs[0];
+    expect(objctif_kyc.is_locked).toEqual(false);
+
+    const objectif_article = response.body.objectifs[1];
+    expect(objectif_article.id.length).toBeGreaterThan(10);
+    expect(objectif_article.content_id).toEqual('2');
+    expect(objectif_article.type).toEqual(ContentType.article);
+    expect(objectif_article.titre).toEqual('obj 2');
+    expect(objectif_article.points).toEqual(25);
+    expect(objectif_article.is_locked).toEqual(true);
+    expect(objectif_article.done_at).toEqual(null);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.missions.missions).toHaveLength(1);
+  });
+
+  it(`NEW GET /utilisateurs/id/missions/id - renvoie la mission de la thématique - à partir du catalgue de mission`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { missions: {} });
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Mange de la graine',
+      image_url: 'aaaa',
+    });
+
+    await TestUtil.create(DB.mission, { code: ThematiqueUnivers.cereales });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._1,
+      type: TypeReponseQuestionKYC.libre,
+      categorie: Categorie.mission,
+      points: 10,
+      question: 'Comment avez vous connu le service ?',
+      reponses: [],
+    });
+
+    await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/missions/cereales',
     );
 
     // THEN
@@ -787,6 +985,114 @@ describe('Mission (API test)', () => {
     expect(userDB.missions.missions[0].objectifs[3].titre).toEqual('hoho');
   });
 
+  it(`NEW GET /utilisateurs/utilisateur-id/missions/id - recalcul une mission avec des articles dynamiques`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.article, {
+      content_id: '0',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+      titre: 'hihi',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+      titre: 'hoho',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+      tag_article: 'autre',
+      categorie: Categorie.mission,
+    });
+
+    const objectifs: ObjectifDefinition[] = [
+      {
+        content_id: '11',
+        points: 5,
+        titre: 'yop',
+        type: ContentType.kyc,
+        tag_article: null,
+        id_cms: 11,
+      },
+      {
+        content_id: '222',
+        points: 5,
+        titre: 'haha',
+        type: ContentType.article,
+        tag_article: null,
+        id_cms: 222,
+      },
+      {
+        content_id: null,
+        points: 5,
+        titre: 'TTT',
+        type: ContentType.article,
+        tag_article: 'composter',
+        id_cms: null,
+      },
+    ];
+    const mission_articles_tag: Mission = {
+      id_cms: 1,
+      thematique_univers: ThematiqueUnivers.cereales,
+      est_visible: true,
+      objectifs: objectifs as any,
+      code: ThematiqueUnivers.cereales,
+      image_url: 'img',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
+      is_first: false,
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.utilisateur, { missions: {} });
+
+    await TestUtil.create(DB.mission, mission_articles_tag);
+
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      label: `Les céréales c'est bon`,
+      image_url: 'aaaa',
+      niveau: 2,
+      univers_parent: Univers.alimentation,
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/missions/cereales',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.objectifs).toHaveLength(4);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.missions.missions).toHaveLength(1);
+    expect(userDB.missions.missions[0].objectifs).toHaveLength(4);
+    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('222');
+    expect(userDB.missions.missions[0].objectifs[1].type).toEqual(
+      ContentType.article,
+    );
+    expect(userDB.missions.missions[0].objectifs[2].content_id).toEqual('0');
+    expect(userDB.missions.missions[0].objectifs[2].type).toEqual(
+      ContentType.article,
+    );
+    expect(userDB.missions.missions[0].objectifs[2].titre).toEqual('hihi');
+    expect(userDB.missions.missions[0].objectifs[3].content_id).toEqual('1');
+    expect(userDB.missions.missions[0].objectifs[3].type).toEqual(
+      ContentType.article,
+    );
+    expect(userDB.missions.missions[0].objectifs[3].titre).toEqual('hoho');
+  });
+
   it(`GET /utilisateurs/utilisateur-id/thematiques/cereales/mission - pas de recalcul articles dynamiques si mission plus nouvelle`, async () => {
     // GIVEN
     await TestUtil.create(DB.article, {
@@ -837,7 +1143,7 @@ describe('Mission (API test)', () => {
       id_cms: 1,
       thematique_univers: ThematiqueUnivers.cereales,
       est_visible: true,
-      code: 'code',
+      code: 'ThematiqueUnivers.cereales',
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
@@ -882,6 +1188,103 @@ describe('Mission (API test)', () => {
     expect(userDB.missions.missions[0].objectifs[0].content_id).toEqual('_1');
     expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('_2');
   });
+
+  it(`NEW GET /utilisateurs/utilisateur-id/missions/id - pas de recalcul articles dynamiques si mission plus nouvelle`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.article, {
+      content_id: '0',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+      titre: 'hihi',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+      titre: 'hoho',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+      tag_article: 'autre',
+      categorie: Categorie.mission,
+    });
+
+    const objectifs: ObjectifDefinition[] = [
+      {
+        content_id: '11',
+        points: 5,
+        titre: 'yop',
+        type: ContentType.kyc,
+        tag_article: null,
+        id_cms: 11,
+      },
+      {
+        content_id: '222',
+        points: 5,
+        titre: 'haha',
+        type: ContentType.article,
+        tag_article: null,
+        id_cms: 222,
+      },
+      {
+        content_id: null,
+        points: 5,
+        titre: 'TTT',
+        type: ContentType.article,
+        tag_article: 'composter',
+        id_cms: null,
+      },
+    ];
+    const mission_articles_tag: Mission = {
+      id_cms: 1,
+      thematique_univers: ThematiqueUnivers.cereales,
+      est_visible: true,
+      code: ThematiqueUnivers.cereales,
+      image_url: 'img',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
+      objectifs: objectifs as any,
+      is_first: false,
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.utilisateur, { missions: missions_2_KYC });
+
+    await TestUtil.create(DB.mission, mission_articles_tag);
+
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      label: `Les céréales c'est bon`,
+      image_url: 'aaaa',
+      niveau: 2,
+      univers_parent: Univers.alimentation,
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/missions/cereales',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.objectifs).toHaveLength(2);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.missions.missions).toHaveLength(1);
+    expect(userDB.missions.missions[0].objectifs).toHaveLength(2);
+    expect(userDB.missions.missions[0].objectifs[0].content_id).toEqual('_1');
+    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('_2');
+  });
+
   it(`GET /utilisateurs/id/thematiques/climat/mission - 404 si pas de mission pour cette thematique`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: {} });
@@ -907,6 +1310,33 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(404);
   });
+
+  it(`NEW GET /utilisateurs/id/missions/id - 404 si pas de mission pour cette thematique`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { missions: {} });
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Mange de la graine',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/missions/bad',
+    );
+
+    // THEN
+    expect(response.status).toBe(404);
+  });
+
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour l'objecif donné (article)`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: missions_article_seul });
@@ -1246,6 +1676,90 @@ describe('Mission (API test)', () => {
     ]);
     expect(userDB.gamification.points).toEqual(10);
   });
+
+  it(`NEW GET /utilisateurs/id/objectifs/id/gagner_points - n'empoche pas les points d'une mission pas vraiment commencer`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.article, {
+      content_id: '0',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+      titre: 'hihi',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      tag_article: 'composter',
+      categorie: Categorie.mission,
+      titre: 'hoho',
+    });
+
+    const objectifs: ObjectifDefinition[] = [
+      {
+        content_id: '11',
+        points: 5,
+        titre: 'yop',
+        type: ContentType.kyc,
+        tag_article: null,
+        id_cms: 11,
+      },
+      {
+        content_id: null,
+        points: 5,
+        titre: 'TTT',
+        type: ContentType.article,
+        tag_article: 'composter',
+        id_cms: null,
+      },
+    ];
+    const mission_article: Mission = {
+      id_cms: 1,
+      thematique_univers: ThematiqueUnivers.cereales,
+      est_visible: true,
+      code: ThematiqueUnivers.cereales,
+      image_url: 'img',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
+      objectifs: objectifs as any,
+      is_first: false,
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.utilisateur, { missions: {} });
+
+    await TestUtil.create(DB.mission, mission_article);
+
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      label: `Les céréales c'est bon`,
+      image_url: 'aaaa',
+      niveau: 2,
+      univers_parent: Univers.alimentation,
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const read_mission_1 = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/missions/cereales',
+    );
+    const id_objectif_1 = read_mission_1.body.objectifs[0].id;
+
+    const reponse_1 = await TestUtil.POST(
+      `/utilisateurs/utilisateur-id/objectifs/${id_objectif_1}/gagner_points`,
+    );
+    // THEN
+    expect(reponse_1.status).toBe(201);
+
+    let userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.gamification.points).toEqual(10);
+  });
+
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour deux KYC`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: missions_2_KYC });
@@ -1318,6 +1832,18 @@ describe('Mission (API test)', () => {
     expect(response.status).toBe(404);
   });
 
+  it(`NEW GET /utilisateurs/id/missions/cereales/next_kyc - renvoie 404 si plus de kyc à faire`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { missions: missions_kyc_done });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/missions/cereales/next_kyc',
+    );
+
+    // THEN
+    expect(response.status).toBe(404);
+  });
+
   it(`GET /utilisateurs/id/thematiques/cereales/kycs - renvoie la liste des questions à poser`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: missions });
@@ -1349,6 +1875,56 @@ describe('Mission (API test)', () => {
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/thematiques/cereales/kycs',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toEqual({
+      id: '_3',
+      question:
+        "Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?",
+      reponse: [],
+      categorie: 'test',
+      points: 10,
+      type: 'choix_unique',
+      reponses_possibles: ['Oui', 'Non', 'A voir'],
+      is_NGC: false,
+      thematique: 'climat',
+    });
+  });
+
+  it(`NEW GET /utilisateurs/id/missions/cereales/kycs - renvoie la liste des questions à poser`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { missions: missions });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.test,
+      points: 10,
+      question: 'Comment avez vous connu le service ?',
+      reponses: [
+        { label: 'Moins de 15 ans (neuf ou récent)', code: 'moins_15' },
+        { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
+      ],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID._3,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.test,
+      points: 10,
+      question: `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
+      reponses: [
+        { label: 'Oui', code: BooleanKYC.oui },
+        { label: 'Non', code: BooleanKYC.non },
+        { label: 'A voir', code: 'peut_etre' },
+      ],
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/missions/cereales/kycs',
     );
 
     // THEN
@@ -1430,6 +2006,125 @@ describe('Mission (API test)', () => {
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/thematiques/cereales/kycs',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(3);
+    expect(response.body[0]).toEqual({
+      id: '_1',
+      question: 'Comment avez vous connu le service ?',
+      reponse: [],
+      reponses_possibles: [
+        'Moins de 15 ans (neuf ou récent)',
+        'Plus de 15 ans (ancien)',
+      ],
+      categorie: 'test',
+      points: 10,
+      type: 'choix_unique',
+      is_NGC: false,
+      thematique: 'climat',
+    });
+    expect(response.body[1]).toEqual({
+      id: 'TEST_MOSAIC_ID',
+      titre: 'Titre test',
+      is_answered: false,
+      reponses: [
+        {
+          code: '_2',
+          image_url: 'BBB',
+          label: 'short 2',
+          boolean_value: false,
+          emoji: '🎉',
+        },
+        {
+          code: '_3',
+          image_url: 'CCC',
+          label: 'short 3',
+          boolean_value: false,
+          emoji: '🎉',
+        },
+      ],
+      categorie: 'test',
+      points: 10,
+      type: 'mosaic_boolean',
+    });
+    expect(response.body[2]).toEqual({
+      id: '_3',
+      question:
+        "Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?",
+      reponse: [],
+      reponses_possibles: ['Oui', 'Non', 'A voir'],
+      categorie: 'test',
+      points: 10,
+      type: 'choix_unique',
+      is_NGC: false,
+      thematique: 'climat',
+    });
+  });
+
+  it(`NEW GET /utilisateurs/id/missions/cereales/kycs - renvoie la liste des questions à poser avec une mosaic`, async () => {
+    // GIVEN
+    MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+
+    const kyc: KYCHistory_v0 = {
+      version: 0,
+      answered_mosaics: [],
+      answered_questions: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      missions: mission_avec_mosaic,
+      kyc: kyc,
+    });
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._1,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.test,
+      points: 10,
+      question: 'Comment avez vous connu le service ?',
+      reponses: [
+        { label: 'Moins de 15 ans (neuf ou récent)', code: 'moins_15' },
+        { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
+      ],
+      short_question: 'short 1',
+      image_url: 'AAA',
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.test,
+      points: 10,
+      question: `Encore une question`,
+      reponses: [
+        { label: 'Oui', code: BooleanKYC.oui },
+        { label: 'Non', code: BooleanKYC.non },
+        { label: 'A voir', code: 'peut_etre' },
+      ],
+      short_question: 'short 2',
+      image_url: 'BBB',
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 3,
+      code: KYCID._3,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.test,
+      points: 10,
+      question: `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
+      reponses: [
+        { label: 'Oui', code: BooleanKYC.oui },
+        { label: 'Non', code: BooleanKYC.non },
+        { label: 'A voir', code: 'peut_etre' },
+      ],
+      short_question: 'short 3',
+      image_url: 'CCC',
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/missions/cereales/kycs',
     );
 
     // THEN
@@ -1579,6 +2274,55 @@ describe('Mission (API test)', () => {
     const objctif_defi = response.body.objectifs[1];
     expect(objctif_defi.is_reco).toEqual(true);
   });
+
+  it(`NEW GET /utilisateurs/:utilisateurId/missions/id - un defi débloqué lecture du dernier article`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_article_plus_defi,
+    });
+    await TestUtil.create(DB.article, { content_id: '1' });
+    await TestUtil.create(DB.defi, { content_id: '1' });
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Mange de la graine',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+
+    // WHEN
+    let response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.article_lu,
+      content_id: '1',
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
+    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
+    expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(true);
+
+    // WHEN
+    response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/missions/cereales',
+    );
+    // THEN
+    expect(response.body.objectifs).toHaveLength(2);
+    const objctif_defi = response.body.objectifs[1];
+    expect(objctif_defi.is_reco).toEqual(true);
+  });
+
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un defi débloqué lecture du dernier article, mais non visible car condition par remplie`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -1629,6 +2373,58 @@ describe('Mission (API test)', () => {
     const objctif_defi = response.body.objectifs[1];
     expect(objctif_defi.is_reco).toEqual(false);
   });
+
+  it(`NEW GET /utilisateurs/:utilisateurId/missions/id - un defi débloqué lecture du dernier article, mais non visible car condition par remplie`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_article_plus_defi,
+    });
+    await TestUtil.create(DB.article, { content_id: '1' });
+    await TestUtil.create(DB.defi, {
+      content_id: '1',
+      conditions: [[{ code_kyc: '1', code_reponse: 'yi' }]],
+    });
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Mange de la graine',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+
+    // WHEN
+    let response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/events',
+    ).send({
+      type: EventType.article_lu,
+      content_id: '1',
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
+    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
+    expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(false);
+
+    // WHEN
+    response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/missions/cereales',
+    );
+    // THEN
+    expect(response.body.objectifs).toHaveLength(2);
+    const objctif_defi = response.body.objectifs[1];
+    expect(objctif_defi.is_reco).toEqual(false);
+  });
+
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un defi débloqué lecture du dernier article,  visible car condition remplie`, async () => {
     // GIVEN
     const kyc: KYCHistory_v0 = {
@@ -1814,6 +2610,39 @@ describe('Mission (API test)', () => {
     expect(response.body.is_new).toEqual(true);
     expect(response.body.progression).toEqual({ current: 0, target: 3 });
   });
+
+  it(`NEW GET /utilisateurs/:utilisateurId/missions/id - is_new true si rien fait`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_article_plus_defi,
+    });
+    await TestUtil.create(DB.article, { content_id: '1' });
+
+    await TestUtil.create(DB.univers, {
+      code: Univers.alimentation,
+      label: 'Faut manger !',
+    });
+    await TestUtil.create(DB.thematiqueUnivers, {
+      id_cms: 1,
+      code: ThematiqueUnivers.cereales,
+      univers_parent: Univers.alimentation,
+      label: 'Mange de la graine',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.onApplicationBootstrap();
+    await missionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/missions/cereales',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.is_new).toEqual(true);
+    expect(response.body.progression).toEqual({ current: 0, target: 3 });
+  });
+
   it(`GET /utilisateurs/id/missions/:missionId/next_kyc - renvoie 404 si plus de kyc à faire`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: missions_kyc_done });
@@ -1825,6 +2654,19 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(404);
   });
+
+  it(`NEW GET /utilisateurs/id/missions/:missionId/next_kyc - renvoie 404 si plus de kyc à faire`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { missions: missions_kyc_done });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/missions/cereales/next_kyc',
+    );
+
+    // THEN
+    expect(response.status).toBe(404);
+  });
+
   it(`GET /utilisateurs/id/tuiles_missions/:thematique - Liste les missions de la thématique, 100% catalogue`, async () => {
     // GIVEN
 
@@ -2032,7 +2874,7 @@ describe('Mission (API test)', () => {
       thematique_univers: ThematiqueUnivers.cereales,
       est_visible: true,
       objectifs: [],
-      code: 'code',
+      code: ThematiqueUnivers.cereales,
       image_url: 'NEW img',
       thematique: Thematique.alimentation,
       titre: 'NEW titre',
@@ -2056,7 +2898,7 @@ describe('Mission (API test)', () => {
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual({
       cible_progression: 5,
-      code: 'code',
+      code: ThematiqueUnivers.cereales,
       image_url: 'NEW img',
       is_new: false,
       progression: 1,

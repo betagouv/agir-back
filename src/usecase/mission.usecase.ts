@@ -52,7 +52,6 @@ export class MissionUsecase {
 
     const result: TuileMission[] = [];
 
-    console.log(utilisateur.missions.missions);
     for (const mission_def of listMissionDefs) {
       const existing_mission = utilisateur.missions.getMissionByCode(
         mission_def.code,
@@ -78,6 +77,7 @@ export class MissionUsecase {
     return this.personnalisator.personnaliser(final_result, utilisateur);
   }
 
+  // DEPRECATED
   async terminerMission(
     utilisateurId: string,
     thematique: string,
@@ -99,6 +99,29 @@ export class MissionUsecase {
       await this.utilisateurRepository.updateUtilisateur(utilisateur);
     }
   }
+
+  async terminerMissionByCode(
+    utilisateurId: string,
+    code_mission: string,
+  ): Promise<void> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.missions, Scope.gamification],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    let mission = utilisateur.missions.getMissionByCode(code_mission);
+
+    if (!mission) {
+      ApplicationError.throwMissionNotFoundOfCode(code_mission);
+    }
+    if (mission.estTerminable()) {
+      mission.terminer(utilisateur);
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    }
+  }
+
+  // DEPRECATED
   async getMissionOfThematique(
     utilisateurId: string,
     thematique: string,
@@ -149,6 +172,53 @@ export class MissionUsecase {
     }
   }
 
+  async getMissionByCode(
+    utilisateurId: string,
+    code_mission: string,
+  ): Promise<Mission> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.missions, Scope.logement, Scope.defis],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    let mission_resultat = utilisateur.missions.getMissionByCode(code_mission);
+
+    if (!mission_resultat || mission_resultat.isNew()) {
+      const mission_def = await this.missionRepository.getByCode(code_mission);
+      if (mission_def) {
+        const completed_mission = await this.completeMissionDef(
+          mission_def,
+          utilisateur,
+        );
+        mission_resultat = utilisateur.missions.upsertNewMission(
+          completed_mission,
+          true,
+        );
+
+        await this.utilisateurRepository.updateUtilisateur(utilisateur);
+      }
+    }
+
+    if (!mission_resultat) {
+      throw ApplicationError.throwMissionNotFoundOfCode(code_mission);
+    }
+
+    for (const objectif of mission_resultat.objectifs) {
+      if (objectif.type === ContentType.defi) {
+        const defi = utilisateur.defi_history.getDefiFromHistory(
+          objectif.content_id,
+        );
+        if (defi) {
+          objectif.defi_status = defi.getStatus();
+        } else {
+          objectif.defi_status = DefiStatus.todo;
+        }
+      }
+    }
+    return this.personnalisator.personnaliser(mission_resultat, utilisateur);
+  }
+
   async gagnerPointsDeObjectif(utilisateurId: string, objectifId: string) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -192,6 +262,7 @@ export class MissionUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
+  // DEPRECATED
   async getMissionKYCsAndMosaics(
     utilisateurId: string,
     thematique: string,
@@ -210,6 +281,53 @@ export class MissionUsecase {
 
     if (!mission) {
       throw ApplicationError.throwMissionNotFoundOfThematique(thematique);
+    }
+
+    const result: QuestionGeneric[] = [];
+
+    const liste_objectifs_kyc = mission.getAllKYCsandMosaics();
+
+    for (const objectif_kyc of liste_objectifs_kyc) {
+      if (objectif_kyc.type === ContentType.kyc) {
+        result.push({
+          kyc: utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+            objectif_kyc.content_id,
+          ),
+        });
+      } else {
+        const mosaic = utilisateur.kyc_history.getUpToDateMosaicById(
+          KYCMosaicID[objectif_kyc.content_id],
+        );
+        if (mosaic) {
+          result.push({ mosaic: mosaic });
+        }
+      }
+    }
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
+    return this.personnalisator.personnaliser(result, utilisateur, [
+      CLE_PERSO.espace_insecable,
+    ]);
+  }
+
+  async getMissionKYCsAndMosaicsByCodeMission(
+    utilisateurId: string,
+    code_mission: string,
+  ): Promise<QuestionGeneric[]> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.missions, Scope.kyc, Scope.logement],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const catalogue = await this.kycRepository.getAllDefs();
+    utilisateur.kyc_history.setCatalogue(catalogue);
+
+    const mission = utilisateur.missions.getMissionByCode(code_mission);
+
+    if (!mission) {
+      throw ApplicationError.throwMissionNotFoundOfCode(code_mission);
     }
 
     const result: QuestionGeneric[] = [];
@@ -300,7 +418,6 @@ export class MissionUsecase {
     mission: Mission,
     mission_def: MissionDefinition,
   ): TuileMission {
-    console.log(mission);
     return new TuileMission({
       image_url: mission_def.image_url,
       is_new: mission.isNew(),
