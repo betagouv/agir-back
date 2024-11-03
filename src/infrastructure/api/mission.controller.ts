@@ -79,13 +79,13 @@ export class MissionController extends GenericControler {
   async getMissionsRecommandees(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-  ): Promise<ThematiqueUniversAPI[]> {
+  ): Promise<TuileMissionAPI[]> {
     this.checkCallerId(req, utilisateurId);
     const result =
       await this.missionUsecase.getTuilesMissionsRecommandeesToutesThematiques(
         utilisateurId,
       );
-    return result.map((e) => ThematiqueUniversAPI.mapToAPI(e));
+    return result.map((e) => TuileMissionAPI.mapToAPI(e));
   }
 
   @Get('utilisateurs/:utilisateurId/thematiques/:thematique/mission')

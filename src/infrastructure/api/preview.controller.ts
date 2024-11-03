@@ -23,7 +23,6 @@ import { Categorie } from '../../domain/contenu/categorie';
 import { QuizzRepository } from '../repository/quizz.repository';
 import { DefiRepository } from '../repository/defi.repository';
 import { MissionDefinition } from '../../domain/mission/missionDefinition';
-import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
 import { MissionUsecase } from '../../usecase/mission.usecase';
 import { DefiDefinition } from '../../domain/defis/defiDefinition';
 import { AuthGuard } from '../auth/guard';
