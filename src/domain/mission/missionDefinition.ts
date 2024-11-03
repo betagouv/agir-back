@@ -22,7 +22,6 @@ export class ObjectifDefinition {
 export class MissionDefinition {
   id_cms: number;
   thematique: Thematique;
-  thematique_univers: string;
   titre: string;
   is_first: boolean;
   code: string;

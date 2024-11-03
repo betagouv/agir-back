@@ -40,7 +40,7 @@ export class UniversStatistiqueUsecase {
           this.calculPourcentageDeCompletion(mission);
 
         const universParent = ThematiqueRepository.getUniversParent(
-          mission.thematique_univers,
+          mission.code,
         );
 
         if (!thematiqueRecord[universParent]) {

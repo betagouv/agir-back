@@ -719,9 +719,6 @@ export class CMSUsecase {
     return {
       id_cms: entry.id,
       est_visible: entry.est_visible,
-      thematique_univers: entry.thematique_univers_unique
-        ? entry.thematique_univers_unique.code
-        : null,
       thematique: entry.thematique
         ? Thematique[entry.thematique.code]
         : Thematique.climat,
@@ -996,9 +993,6 @@ export class CMSUsecase {
     return {
       id_cms: entry.id,
       est_visible: entry.attributes.est_visible,
-      thematique_univers: entry.attributes.thematique_univers_unique.data
-        ? entry.attributes.thematique_univers_unique.data.attributes.code
-        : null,
       thematique: entry.attributes.thematique.data
         ? Thematique[entry.attributes.thematique.data.attributes.code]
         : Thematique.climat,

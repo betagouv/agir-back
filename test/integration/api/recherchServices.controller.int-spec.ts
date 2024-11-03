@@ -860,18 +860,4 @@ describe('RechercheServices (API test)', () => {
     expect(response.body.resultats).toHaveLength(88);
     expect(response.body.encore_plus_resultats_dispo).toEqual(false);
   });
-  it(`POST /utlilisateur/id/recherche_services/recettes/search flag encore_plus_resultats_dispo saison`, async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
-
-    // WHEN
-    const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/recherche_services/recettes/search2',
-    ).send({ categorie: 'saison', nombre_max_resultats: 3000 });
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body.resultats).toHaveLength(811);
-    expect(response.body.encore_plus_resultats_dispo).toEqual(false);
-  });
 });

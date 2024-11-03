@@ -56,28 +56,18 @@ export class MissionAPI {
 
   public static mapToAPI(mission: Mission): MissionAPI {
     return {
-      id: mission.id,
-      titre: ThematiqueRepository.getTitreThematiqueUnivers(
-        mission.thematique_univers,
-      ),
+      id: mission.id_cms,
+      titre: ThematiqueRepository.getTitreThematiqueUnivers(mission.code),
       done_at: mission.done_at,
       objectifs: mission.objectifs.map((o) => ObjectifAPI.mapToAPI(o)),
-      thematique_univers: mission.thematique_univers,
-      thematique_univers_label: ThematiqueRepository.getTitreThematiqueUnivers(
-        mission.thematique_univers,
-      ),
-      univers_label: ThematiqueRepository.getTitreUnivers(
-        ThematiqueRepository.getUniversParent(mission.thematique_univers),
-      ),
-      univers: ThematiqueRepository.getUniversParent(
-        mission.thematique_univers,
-      ),
+      thematique_univers: mission.code,
+      thematique_univers_label: mission.titre,
+      univers_label: ThematiqueRepository.getTitreUnivers(mission.thematique),
+      univers: mission.thematique,
       progression: mission.getProgression(),
       is_new: mission.isNew(),
       progression_kyc: mission.getProgressionKYC(),
-      image_url: ThematiqueRepository.getTuileThematique(
-        mission.thematique_univers,
-      ).image_url,
+      image_url: mission.image_url,
       terminable: mission.estTerminable(),
     };
   }

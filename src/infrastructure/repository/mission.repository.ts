@@ -53,7 +53,6 @@ export class MissionRepository {
     const mission_db: Mission = {
       id_cms: missionDef.id_cms,
       thematique: missionDef.thematique,
-      thematique_univers: missionDef.thematique_univers,
       titre: missionDef.titre,
       code: missionDef.code,
       image_url: missionDef.image_url,
@@ -79,13 +78,6 @@ export class MissionRepository {
     });
   }
 
-  getByThematiqueUnivers(thematiqueUnivers: string): MissionDefinition {
-    for (const [key, value] of MissionRepository.catalogue_missions_by_idcms) {
-      if (value.thematique_univers === thematiqueUnivers) return value;
-    }
-    return null;
-  }
-
   getByCMS_ID(cms_id: number): MissionDefinition {
     return MissionRepository.catalogue_missions_by_idcms.get(cms_id);
   }
@@ -108,7 +100,6 @@ export class MissionRepository {
       id_cms: missionDB.id_cms,
       est_visible: missionDB.est_visible,
       thematique: Thematique[missionDB.thematique],
-      thematique_univers: missionDB.thematique_univers,
       objectifs: missionDB.objectifs as any,
       code: missionDB.code,
       image_url: missionDB.image_url,

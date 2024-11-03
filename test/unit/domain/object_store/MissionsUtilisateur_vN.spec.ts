@@ -2,11 +2,11 @@ import {
   SerialisableDomain,
   Upgrader,
 } from '../../../../src/domain/object_store/upgrader';
-import { MissionsUtilisateur_v0 } from '../../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
 import { ThematiqueUnivers } from '../../../../src/domain/univers/thematiqueUnivers';
 import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
+import { MissionsUtilisateur_v1 } from '../../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
 
 describe('MissionsUilisateur vN ', () => {
   it('build OK from empty', () => {
@@ -20,18 +20,16 @@ describe('MissionsUilisateur vN ', () => {
 
     expect(domain.missions).toEqual([]);
   });
-  it('serialise <=> deserialise v0 OK', () => {
+  it('serialise <=> deserialise v1 OK', () => {
     // GIVEN
     const domain_start = new MissionsUtilisateur({
-      version: 0,
+      version: 1,
       missions: [
         {
           id: '1',
           done_at: new Date(1),
-          thematique_univers: ThematiqueUnivers.cereales,
-          univers: 'alimentation',
           thematique: Thematique.alimentation,
-          code: 'code',
+          code: ThematiqueUnivers.cereales,
           image_url: 'img',
           titre: 'titre',
           is_first: false,
@@ -54,24 +52,22 @@ describe('MissionsUilisateur vN ', () => {
     });
 
     // WHEN
-    const raw = MissionsUtilisateur_v0.serialise(domain_start);
+    const raw = MissionsUtilisateur_v1.serialise(domain_start);
     const domain_end = new MissionsUtilisateur(raw);
 
     // THEN
     expect(domain_end).toStrictEqual(domain_start);
   });
-  it('serialise <=> upgade <=> deserialise v0 OK', () => {
+  it('serialise <=> upgade <=> deserialise v1 OK', () => {
     // GIVEN
     const domain_start = new MissionsUtilisateur({
-      version: 0,
+      version: 1,
       missions: [
         {
           id: '1',
           done_at: new Date(1),
-          thematique_univers: ThematiqueUnivers.cereales,
-          univers: 'alimentation',
           thematique: Thematique.alimentation,
-          code: 'code',
+          code: ThematiqueUnivers.cereales,
           image_url: 'img',
           titre: 'titre',
           is_first: false,
@@ -95,7 +91,7 @@ describe('MissionsUilisateur vN ', () => {
     });
 
     // WHEN
-    const raw = MissionsUtilisateur_v0.serialise(domain_start);
+    const raw = MissionsUtilisateur_v1.serialise(domain_start);
     const upgrade = Upgrader.upgradeRaw(
       raw,
       SerialisableDomain.MissionsUtilisateur,
