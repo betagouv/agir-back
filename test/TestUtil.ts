@@ -370,6 +370,7 @@ export class TestUtil {
       categorie: Categorie.recommandation,
       code: KYCID.KYC001,
       is_ngc: false,
+      a_supprimer: false,
       points: 10,
       question: 'The question !',
       tags: [Tag.possede_voiture],
@@ -440,6 +441,7 @@ export class TestUtil {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
+          a_supprimer: false,
           categorie: Categorie.test,
           points: 10,
           reponses: [

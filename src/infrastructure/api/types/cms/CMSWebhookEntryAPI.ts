@@ -136,6 +136,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() url_detail_front: string;
   @ApiProperty() is_simulation: boolean;
   @ApiProperty() is_ngc: boolean;
+  @ApiProperty() A_SUPPRIMER: boolean;
   @ApiProperty() ngc_key: string;
   @ApiProperty() montantMaximum: string;
 }
@@ -149,6 +150,7 @@ export type CMSWebhookPopulateAPI = {
     astuces: string;
     type: string;
     categorie: string;
+    A_SUPPRIMER: boolean;
     is_ngc: boolean;
     is_first: boolean;
     ngc_key: string;

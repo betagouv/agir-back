@@ -673,6 +673,7 @@ export class CMSUsecase {
       categorie: Categorie[entry.categorie],
       type: TypeReponseQuestionKYC[entry.type],
       is_ngc: entry.is_ngc,
+      a_supprimer: !!entry.A_SUPPRIMER,
       ngc_key: entry.ngc_key,
       points: entry.points,
       emoji: entry.emoji,
@@ -952,6 +953,7 @@ export class CMSUsecase {
       points: entry.attributes.points,
       unite: this.extractUnite(entry.attributes.unite),
       is_ngc: entry.attributes.is_ngc,
+      a_supprimer: !!entry.attributes.A_SUPPRIMER,
       ngc_key: entry.attributes.ngc_key,
       question: entry.attributes.question,
       reponses: entry.attributes.reponses

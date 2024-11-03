@@ -550,7 +550,9 @@ export class PreviewController extends GenericControler {
           } else {
             result.push(``);
             result.push(
-              `## <a href="/kyc_preview/${kyc_def.id_cms}">KYC</a> [${kyc_def.id_cms}]`,
+              `## <a href="/kyc_preview/${kyc_def.id_cms}">KYC</a> [${
+                kyc_def.id_cms
+              }] ${kyc_def.a_supprimer ? '[🔥🔥🔥 FLAG A SUPPRIMER]' : ''}`,
             );
 
             const DATA: any = {};
@@ -908,6 +910,10 @@ export class PreviewController extends GenericControler {
         if (ouput3.includes('UNKNOWN ERROR'))
           result.push(
             `🔥🔥🔥 ERREUR Inconnue, allez voir le détail de la mission`,
+          );
+        if (ouput3.includes('🔥🔥🔥 FLAG A SUPPRIMER'))
+          result.push(
+            `🔥🔥🔥 La mission contient au moins une KYC 'à supprimer', c-à-d à ne plus utiliser`,
           );
       } else {
         result.push('');

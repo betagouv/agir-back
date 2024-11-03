@@ -2395,6 +2395,7 @@ describe('Mission (API test)', () => {
           question: `Question`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
+          a_supprimer: false,
           categorie: Categorie.test,
           points: 10,
           reponses: [

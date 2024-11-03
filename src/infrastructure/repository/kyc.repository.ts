@@ -30,6 +30,7 @@ export class KycRepository {
       conditions: kycDef.conditions as any,
       unite: kycDef.unite,
       emoji: kycDef.emoji,
+      a_supprimer: kycDef.a_supprimer,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -89,6 +90,7 @@ export class KycRepository {
       conditions: kycDB.conditions as any,
       unite: Unite[kycDB.unite],
       emoji: kycDB.emoji,
+      a_supprimer: kycDB.a_supprimer,
     });
   }
 }

@@ -11,6 +11,7 @@ export class KycDefinition {
   categorie: Categorie;
   points: number;
   is_ngc: boolean;
+  a_supprimer: boolean;
   ngc_key: string;
   question: string;
   short_question: string;

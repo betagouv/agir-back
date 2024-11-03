@@ -44,6 +44,7 @@ export class QuestionKYC implements TaggedContent {
   thematique?: Thematique;
   points: number;
   is_NGC: boolean;
+  a_supprimer: boolean;
   reponses?: KYCReponse[];
   reponses_possibles?: KYCReponse[];
   ngc_key?: string;
@@ -76,6 +77,7 @@ export class QuestionKYC implements TaggedContent {
     this.conditions = data.conditions ? data.conditions : [];
     this.unite = data.unite;
     this.emoji = data.emoji;
+    this.a_supprimer = !!data.a_supprimer;
   }
 
   public static buildFromDef(def: KycDefinition): QuestionKYC {
@@ -97,6 +99,7 @@ export class QuestionKYC implements TaggedContent {
       conditions: def.conditions ? def.conditions : [],
       unite: def.unite,
       emoji: def.emoji,
+      a_supprimer: !!def.a_supprimer,
     });
   }
 
@@ -106,6 +109,7 @@ export class QuestionKYC implements TaggedContent {
     this.categorie = def.categorie;
     this.points = def.points;
     this.is_NGC = def.is_ngc;
+    this.a_supprimer = !!def.a_supprimer;
     this.reponses_possibles = def.reponses ? def.reponses : [];
     this.ngc_key = def.ngc_key;
     this.thematique = def.thematique;

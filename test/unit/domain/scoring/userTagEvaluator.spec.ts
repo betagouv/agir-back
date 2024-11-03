@@ -33,6 +33,7 @@ describe('UseragEvaluator', () => {
         categorie: Categorie.recommandation,
         code: KYCID.KYC001,
         is_ngc: false,
+        a_supprimer: false,
         points: 10,
         question: 'The question !',
         tags: [Tag.possede_voiture],
@@ -83,6 +84,8 @@ describe('UseragEvaluator', () => {
         categorie: Categorie.recommandation,
         code: KYCID.KYC001,
         is_ngc: false,
+        a_supprimer: false,
+
         points: 10,
         question: 'The question !',
         tags: [Tag.possede_voiture],
@@ -142,6 +145,8 @@ describe('UseragEvaluator', () => {
         categorie: Categorie.recommandation,
         code: KYCID.KYC_preference,
         is_ngc: false,
+        a_supprimer: false,
+
         points: 10,
         question: 'The question !',
         tags: [Tag.possede_voiture],

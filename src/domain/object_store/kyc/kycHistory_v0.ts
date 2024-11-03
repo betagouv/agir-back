@@ -37,6 +37,7 @@ export class QuestionKYC_v0 {
   categorie: Categorie;
   points: number;
   is_NGC: boolean;
+  a_supprimer: boolean;
   reponses?: KYCReponse_v0[];
   reponses_possibles?: KYCReponse_v0[];
   ngc_key?: string;
@@ -56,6 +57,7 @@ export class QuestionKYC_v0 {
       categorie: elem.categorie,
       points: elem.points,
       is_NGC: elem.is_NGC,
+      a_supprimer: elem.a_supprimer,
       reponses: elem.reponses
         ? elem.reponses.map((e) => KYCReponse_v0.map(e))
         : undefined,
