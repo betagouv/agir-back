@@ -332,6 +332,7 @@ model KYC {
   categorie      String
   points         Int
   is_ngc         Boolean
+  a_supprimer    Boolean  @default(false)
   ngc_key        String?
   question       String
   short_question String?

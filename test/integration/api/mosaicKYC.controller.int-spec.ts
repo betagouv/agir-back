@@ -53,6 +53,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       categorie: Categorie.recommandation,
       code: '1',
       is_ngc: true,
+      a_supprimer: false,
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
@@ -154,6 +155,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       categorie: Categorie.recommandation,
       code: '1',
       is_ngc: true,
+      a_supprimer: false,
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
@@ -216,6 +218,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       categorie: 'recommandation',
       points: 20,
       is_NGC: true,
+      a_supprimer: false,
       reponses: [{ code: 'oui', label: 'Oui' }],
       reponses_possibles: [
         { code: 'oui', label: 'Oui' },
@@ -241,6 +244,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       categorie: 'recommandation',
       points: 20,
       is_NGC: true,
+      a_supprimer: false,
       reponses: [{ code: 'non', label: 'Non' }],
       reponses_possibles: [
         { code: 'oui', label: 'Oui' },
@@ -269,6 +273,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       categorie: Categorie.recommandation,
       code: '1',
       is_ngc: true,
+      a_supprimer: false,
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
@@ -325,6 +330,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       categorie: 'recommandation',
       points: 20,
       is_NGC: true,
+      a_supprimer: false,
       reponses: [
         {
           code: null,
@@ -352,6 +358,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       categorie: 'recommandation',
       points: 20,
       is_NGC: true,
+      a_supprimer: false,
       reponses: [
         {
           code: null,
@@ -414,6 +421,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       categorie: Categorie.recommandation,
       code: '1',
       is_ngc: true,
+      a_supprimer: false,
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
@@ -458,6 +466,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           categorie: Categorie.recommandation,
           points: 20,
           is_NGC: true,
+          a_supprimer: false,
           reponses: [{ code: 'oui', label: 'Oui' }],
           reponses_possibles: [
             { code: 'oui', label: 'Oui' },
@@ -482,6 +491,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           categorie: Categorie.recommandation,
           points: 20,
           is_NGC: true,
+          a_supprimer: false,
           reponses: [{ code: 'non', label: 'Non' }],
           reponses_possibles: [
             { code: 'oui', label: 'Oui' },
@@ -546,6 +556,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       categorie: Categorie.recommandation,
       code: '1',
       is_ngc: true,
+      a_supprimer: false,
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
@@ -586,6 +597,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           categorie: Categorie.recommandation,
           points: 20,
           is_NGC: true,
+          a_supprimer: false,
           reponses: [{ code: null, label: '0' }],
           reponses_possibles: [],
           ngc_key: 'a . b . c',
@@ -606,6 +618,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           categorie: Categorie.recommandation,
           points: 20,
           is_NGC: true,
+          a_supprimer: false,
           reponses: [{ code: null, label: '1' }],
           reponses_possibles: [],
           ngc_key: 'a . b . c',

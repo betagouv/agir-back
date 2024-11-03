@@ -569,6 +569,7 @@ describe('TODO list (API test)', () => {
       categorie: Categorie.recommandation,
       code: '1',
       is_ngc: true,
+      a_supprimer: false,
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
@@ -679,6 +680,7 @@ describe('TODO list (API test)', () => {
       categorie: Categorie.recommandation,
       code: '1',
       is_ngc: true,
+      a_supprimer: false,
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
@@ -1347,6 +1349,7 @@ describe('TODO list (API test)', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
+          a_supprimer: false,
           categorie: Categorie.recommandation,
           points: 10,
           reponses_possibles: [

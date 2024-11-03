@@ -122,6 +122,7 @@ describe('/api/incoming/cms (API test)', () => {
       emoji: '🔥',
       unite: 'kg (kilogramme)',
       is_ngc: false,
+      A_SUPPRIMER: true,
       ngc_key: 'a . b . c',
       imageUrl: {
         formats: {
@@ -485,6 +486,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(item.unite).toEqual('kg');
     expect(item.emoji).toEqual('🔥');
     expect(item.is_ngc).toEqual(false);
+    expect(item.a_supprimer).toEqual(true);
     expect(item.ngc_key).toEqual('a . b . c');
     expect(item.reponses).toEqual([
       {
@@ -535,6 +537,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(item.unite).toEqual('kg');
     expect(item.emoji).toEqual('🔥');
     expect(item.is_ngc).toEqual(false);
+    expect(item.a_supprimer).toEqual(true);
     expect(item.ngc_key).toEqual('a . b . c');
     expect(item.reponses).toEqual([
       {

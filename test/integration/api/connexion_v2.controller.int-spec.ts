@@ -381,6 +381,7 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
+          a_supprimer: false,
           categorie: Categorie.test,
           points: 10,
           reponses: [{ label: 'Le climat', code: Thematique.climat }],

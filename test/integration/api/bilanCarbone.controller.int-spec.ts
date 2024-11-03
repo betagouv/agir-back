@@ -385,6 +385,7 @@ describe('/bilan (API test)', () => {
           question: `À quelle fréquence mangez-vous de saison ? `,
           type: TypeReponseQuestionKYC.choix_unique,
           is_NGC: true,
+          a_supprimer: false,
           categorie: Categorie.mission,
           points: 10,
           reponses: [
@@ -410,6 +411,7 @@ describe('/bilan (API test)', () => {
           question: `Votre regime`,
           type: TypeReponseQuestionKYC.choix_unique,
           is_NGC: false,
+          a_supprimer: false,
           categorie: Categorie.mission,
           points: 10,
           reponses: [
@@ -458,6 +460,7 @@ describe('/bilan (API test)', () => {
       unite: Unite.kg,
       created_at: undefined,
       is_ngc: true,
+      a_supprimer: false,
       thematique: 'alimentation',
       updated_at: undefined,
       emoji: '🔥',
@@ -993,6 +996,7 @@ describe('/bilan (API test)', () => {
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_unique,
           is_NGC: true,
+          a_supprimer: false,
           categorie: Categorie.test,
           points: 10,
           reponses: [],
@@ -1167,6 +1171,7 @@ describe('/bilan (API test)', () => {
           question: `À quelle fréquence mangez-vous de saison ? `,
           type: TypeReponseQuestionKYC.choix_unique,
           is_NGC: true,
+          a_supprimer: false,
           categorie: Categorie.mission,
           points: 10,
           reponses: [
@@ -1210,6 +1215,7 @@ describe('/bilan (API test)', () => {
       unite: Unite.kg,
       created_at: undefined,
       is_ngc: true,
+      a_supprimer: false,
       thematique: 'alimentation',
       updated_at: undefined,
       emoji: '🔥',
