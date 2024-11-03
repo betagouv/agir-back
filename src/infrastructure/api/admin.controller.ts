@@ -154,16 +154,6 @@ export class AdminController extends GenericControler {
     return await this.cmsUsecase.loadUniversFromCMS();
   }
 
-  @Post('/admin/load_thematiqueUnivers_from_cms')
-  @ApiOperation({
-    summary: 'Upsert tous les thematiques_univers publiés du CMS',
-  })
-  @ApiOkResponse({ type: [String] })
-  async upsertAllCMSThematiqueUnivers(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.cmsUsecase.loadThematiquesUniversFromCMS();
-  }
-
   @Post('/admin/load_missions_from_cms')
   @ApiOperation({
     summary: 'Upsert toutes les missions publiées du CMS',

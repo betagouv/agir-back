@@ -26,7 +26,6 @@ import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { QuestionGeneric } from '../domain/kyc/questionGeneric';
 import { TuileMission } from '../domain/univers/tuileMission';
 import { Thematique } from '../domain/contenu/thematique';
-import { TuileThematique } from '../domain/univers/tuileThematique';
 
 @Injectable()
 export class MissionUsecase {
@@ -41,14 +40,14 @@ export class MissionUsecase {
 
   async getTuilesMissionsRecommandeesToutesThematiques(
     utilisateurId: string,
-  ): Promise<TuileThematique[]> {
+  ): Promise<TuileMission[]> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.missions, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
-    const final_result = [];
+    const final_result: TuileMission[] = [];
 
     const liste_thematiques = Object.values(Thematique);
     for (const thematique of liste_thematiques) {

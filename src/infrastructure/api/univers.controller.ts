@@ -9,7 +9,6 @@ import { Controller, Param, UseGuards, Request, Get } from '@nestjs/common';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { UniversAPI } from './types/univers/UniversAPI';
-import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
 import { ThematiqueUniversAPI } from './types/univers/ThematiqueUniversAPI';
 import { ApplicationError } from '../applicationError';
 import { MissionUsecase } from '../../usecase/mission.usecase';
@@ -19,10 +18,7 @@ import { Thematique } from '../../domain/contenu/thematique';
 @ApiBearerAuth()
 @ApiTags('Univers')
 export class UniversController extends GenericControler {
-  constructor(
-    private universUsecase: ThematiqueUsecase,
-    private missionUsecase: MissionUsecase,
-  ) {
+  constructor(private missionUsecase: MissionUsecase) {
     super();
   }
 
@@ -72,7 +68,7 @@ export class UniversController extends GenericControler {
       utilisateurId,
       them,
     );
-    return result.map((e) => ThematiqueUniversAPI.mapToAPI_2(e));
+    return result.map((e) => ThematiqueUniversAPI.mapToAPI(e));
   }
 
   @Get('utilisateurs/:utilisateurId/thematiques_recommandees')

@@ -52,12 +52,6 @@ export class ThematiqueRepository {
     return tuile ? tuile.univers_parent : undefined;
   }
 
-  public static getAllTuilesThematique(univers: string): TuileThematique[] {
-    return ThematiqueRepository.getAllTuileThematique().filter(
-      (t) => t.univers_parent === univers,
-    );
-  }
-
   public static getAllTuileUnivers(): TuileUnivers[] {
     return Array.from(ThematiqueRepository.univers.values());
   }
@@ -67,10 +61,6 @@ export class ThematiqueRepository {
   public static getAllThematiquesUnivers(): string[] {
     return Array.from(ThematiqueRepository.thematiquesUnivers.keys());
   }
-  public static getAllTuileThematique(): TuileThematique[] {
-    return Array.from(ThematiqueRepository.thematiquesUnivers.values());
-  }
-
   public static resetAllRefs() {
     // FOR TEST ONLY
     ThematiqueRepository.titres_thematiques = new Map();
