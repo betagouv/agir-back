@@ -116,7 +116,7 @@ export class MissionController extends GenericControler {
     @Param('thematique') thematique: string,
   ): Promise<MissionAPI> {
     this.checkCallerId(req, utilisateurId);
-    const result = await this.missionUsecase.getMissionOfThematique(
+    const result = await this.missionUsecase.getMissionByCode(
       utilisateurId,
       thematique,
     );
@@ -181,7 +181,7 @@ export class MissionController extends GenericControler {
     @Param('thematique') thematique: string,
   ) {
     this.checkCallerId(req, utilisateurId);
-    await this.missionUsecase.terminerMission(utilisateurId, thematique);
+    await this.missionUsecase.terminerMissionByCode(utilisateurId, thematique);
   }
 
   @Post('utilisateurs/:utilisateurId/missions/:code_mission/terminer')
@@ -249,7 +249,7 @@ export class MissionController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
 
     const all_kyc_and_mosaic =
-      await this.missionUsecase.getMissionKYCsAndMosaics(
+      await this.missionUsecase.getMissionKYCsAndMosaicsByCodeMission(
         utilisateurId,
         thematique,
       );

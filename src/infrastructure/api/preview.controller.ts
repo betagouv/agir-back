@@ -24,12 +24,14 @@ import { QuizzRepository } from '../repository/quizz.repository';
 import { DefiRepository } from '../repository/defi.repository';
 import { MissionDefinition } from '../../domain/mission/missionDefinition';
 import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
+import { MissionUsecase } from '../../usecase/mission.usecase';
 import { DefiDefinition } from '../../domain/defis/defiDefinition';
 import { AuthGuard } from '../auth/guard';
 import { KycDefinition } from '../../domain/kyc/kycDefinition';
 import { App } from '../../domain/app';
 import axios from 'axios';
 import { CMSWebhookPopulateAPI } from './types/cms/CMSWebhookEntryAPI';
+import { Thematique } from '../../domain/contenu/thematique';
 
 // https://fsymbols.com/generators/carty/
 
@@ -42,7 +44,7 @@ export class PreviewController extends GenericControler {
     private nGCCalculator: NGCCalculator,
     private missionRepository: MissionRepository,
     private articleRepository: ArticleRepository,
-    private universUsecase: ThematiqueUsecase,
+    private missionUsecase: MissionUsecase,
     private quizzRepository: QuizzRepository,
     private defiRepository: DefiRepository,
   ) {
@@ -464,7 +466,7 @@ export class PreviewController extends GenericControler {
     let index = 0;
     const last = list_mission_with_kyc.length - 1;
     for (const mission_def of list_mission_with_kyc) {
-      line += ` <a href="/mission_preview/${mission_def.id_cms}">${mission_def.thematique_univers}</a>`;
+      line += ` <a href="/mission_preview/${mission_def.id_cms}">${mission_def.code}</a>`;
       if (index !== last) {
         line += ' |';
       }
@@ -508,7 +510,7 @@ export class PreviewController extends GenericControler {
     result.push(``);
     result.push(
       `Titre : ${ThematiqueRepository.getTitreThematiqueUnivers(
-        mission_def.thematique_univers,
+        mission_def.code,
       )}`,
     );
     result.push(
@@ -714,8 +716,7 @@ export class PreviewController extends GenericControler {
 
     let DATA: any = {};
 
-    const tuiles_univers = ThematiqueRepository.getAllTuileUnivers();
-    tuiles_univers.sort((a, b) => a.id_cms - b.id_cms);
+    const all_thematiques = Object.values(Thematique);
 
     result.push(`
 
@@ -729,14 +730,16 @@ export class PreviewController extends GenericControler {
 
 `);
 
-    for (const univers of tuiles_univers) {
+    for (const thematique of all_thematiques) {
       const preview_univers = await this.univers_preview(
-        univers.id_cms.toString(),
+        thematique,
         authorization,
         res,
         true,
       );
-      const prefix = ` Univers [${univers.id_cms}] - <a href="/univers_preview/${univers.id_cms}">${univers.titre}</a>`;
+      const prefix = ` Univers [${thematique}] - <a href="/univers_preview/${thematique}">${ThematiqueRepository.getLibelleThematique(
+        thematique,
+      )}</a>`;
       if (preview_univers.includes('🔥🔥🔥')) {
         result.push(
           ` ${prefix} ${this.getSpaceString(
@@ -796,7 +799,7 @@ export class PreviewController extends GenericControler {
 
   @Get('univers_preview/:id')
   async univers_preview(
-    @Param('id') id: string,
+    @Param('id') id: Thematique,
     @Headers('Authorization') authorization: string,
     @Response() res: Res,
     prevent_send?: boolean,
@@ -818,18 +821,21 @@ export class PreviewController extends GenericControler {
 ░╚═════╝░╚═╝░░╚══╝╚═╝░░░╚═╝░░░╚══════╝╚═╝░░╚═╝╚═════╝░
 `);
 
-    const all_univers = ThematiqueRepository.getAllTuileUnivers();
-    all_univers.sort((a, b) => a.id_cms - b.id_cms);
+    const all_thematiques = Object.values(Thematique);
     result.push(`################################`);
     result.push(``);
-    for (const univers of all_univers) {
-      if (univers.id_cms.toString() === id) {
+    for (const thematique of all_thematiques) {
+      if (thematique === id) {
         result.push(
-          `>> Univers [${univers.id_cms}] - <a href="/univers_preview/${univers.id_cms}">${univers.titre}</a>`,
+          `>> Thematique [${thematique}] - <a href="/univers_preview/${thematique}">${ThematiqueRepository.getLibelleThematique(
+            thematique,
+          )}</a>`,
         );
       } else {
         result.push(
-          `   Univers [${univers.id_cms}] - <a href="/univers_preview/${univers.id_cms}">${univers.titre}</a>`,
+          `   Thematiques [${thematique}] - <a href="/univers_preview/${thematique}">${ThematiqueRepository.getLibelleThematique(
+            thematique,
+          )}</a>`,
         );
       }
     }
@@ -852,24 +858,18 @@ export class PreviewController extends GenericControler {
     result.push(`# Liste Missions UNIVERS [${id}]`);
     result.push('###############################');
 
-    let tuiles_thema = ThematiqueRepository.getAllTuilesThematique(
-      tuile_univers.type,
-    );
+    let missions = this.missionRepository.getByThematique(id);
 
-    tuiles_thema = await this.universUsecase.ordonneTuilesThematiques(
-      tuiles_thema,
-    );
+    //await this.missionUsecase.ordonneTuilesMission(tuiles_thema);
 
-    for (const tuile_thema of tuiles_thema) {
-      const mission_def = await this.missionRepository.getByThematiqueUnivers(
-        tuile_thema.type,
-      );
+    for (const mission of missions) {
+      const mission_def = await this.missionRepository.getByCode(mission.code);
       if (mission_def) {
         result.push('');
-        const prefix = `#### <a href="/mission_preview/${mission_def.id_cms}">MISSION [${mission_def.id_cms}]</a> [GROUPE_${tuile_thema.famille_id_cms}]`;
+        const prefix = `#### <a href="/mission_preview/${mission_def.id_cms}">MISSION [${mission_def.id_cms}]</a>`;
         result.push(
           `${prefix} ${this.getSpaceString(65, prefix.length)}> ${
-            tuile_thema.titre
+            mission.titre
           }`,
         );
         result.push(`Est visible : ${mission_def.est_visible}`);
@@ -901,7 +901,7 @@ export class PreviewController extends GenericControler {
       } else {
         result.push('');
         result.push(
-          `🔥🔥🔥 Thematique sans mission [${tuile_thema.type}] - ${tuile_thema.titre}`,
+          `🔥🔥🔥 Thematique sans mission [${mission.code}] - ${mission.titre}`,
         );
         result.push('');
       }

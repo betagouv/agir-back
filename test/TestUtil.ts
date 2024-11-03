@@ -338,7 +338,6 @@ export class TestUtil {
   static missionData(override?: Partial<Mission>): Mission {
     return {
       id_cms: 1,
-      thematique_univers: ThematiqueUnivers.cereales,
       est_visible: true,
       thematique: Thematique.alimentation,
       code: 'code',

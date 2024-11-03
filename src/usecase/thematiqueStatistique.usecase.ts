@@ -36,9 +36,9 @@ export class ThematiqueStatistiqueUsecase {
         const pourcentageCompletionMission =
           this.calculPourcentageDeCompletion(mission);
 
-        if (!thematiqueRecord[mission.id]) {
-          thematiqueRecord[mission.id] = {
-            titre: mission.thematique_univers,
+        if (!thematiqueRecord[mission.id_cms]) {
+          thematiqueRecord[mission.id_cms] = {
+            titre: mission.code,
             range_1_20: 0,
             range_21_40: 0,
             range_41_60: 0,
@@ -49,7 +49,7 @@ export class ThematiqueStatistiqueUsecase {
         }
 
         this.incrementeRange(
-          thematiqueRecord[mission.id],
+          thematiqueRecord[mission.id_cms],
           pourcentageCompletionMission,
         );
       });

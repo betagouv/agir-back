@@ -9,23 +9,21 @@ import {
 } from '../../../src/domain/gamification/celebrations/celebration';
 import { Gamification } from '../../../src/domain/gamification/gamification';
 import { ContentType } from '../../../src/domain/contenu/contentType';
-import { MissionsUtilisateur_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
 import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
 import { Univers } from '../../../src/domain/univers/univers';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
 
 describe('EVENT (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
-  const missions_article: MissionsUtilisateur_v0 = {
-    version: 0,
+  const missions_article: MissionsUtilisateur_v1 = {
+    version: 1,
     missions: [
       {
         id: '1',
         done_at: new Date(1),
-        thematique_univers: ThematiqueUnivers.cereales,
-        univers: Univers.alimentation,
-        code: 'code',
+        code: ThematiqueUnivers.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -47,15 +45,13 @@ describe('EVENT (API test)', () => {
       },
     ],
   };
-  const missions_quizz: MissionsUtilisateur_v0 = {
-    version: 0,
+  const missions_quizz: MissionsUtilisateur_v1 = {
+    version: 1,
     missions: [
       {
         id: '1',
         done_at: new Date(1),
-        thematique_univers: ThematiqueUnivers.cereales,
-        univers: Univers.alimentation,
-        code: 'code',
+        code: ThematiqueUnivers.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',

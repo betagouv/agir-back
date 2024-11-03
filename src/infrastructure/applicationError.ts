@@ -430,7 +430,14 @@ export class ApplicationError {
     this.throwAppError('084', `Thematique [${them}] inconnue`);
   }
   static throwMissionNotFoundOfCode(code: string) {
-    this.throwAppError('084', `Mission de code [${code}] non trouvée`, 404);
+    this.throwAppError('085', `Mission de code [${code}] non trouvée`, 404);
+  }
+  static throwUnsupportedSerialisationVersion(className: string) {
+    this.throwAppError(
+      '086',
+      `Classe de serialisation non supportée : [${className}]`,
+      500,
+    );
   }
 
   private static throwAppError(

@@ -177,7 +177,7 @@ describe('/api/incoming/cms (API test)', () => {
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       est_visible: true,
       titre: 'YOO',
-      code: 'theCode',
+      code: ThematiqueUnivers.cereales,
       imageUrl: {
         formats: {
           thumbnail: { url: 'https://' },
@@ -187,10 +187,6 @@ describe('/api/incoming/cms (API test)', () => {
         id: 1,
         titre: 'Alimentation',
         code: Thematique.alimentation,
-      },
-      thematique_univers_unique: {
-        id: 1,
-        code: ThematiqueUnivers.cereales,
       },
       objectifs: [
         { id: 1, titre: 'do it article', points: 5, article: { id: 11 } },
@@ -579,9 +575,8 @@ describe('/api/incoming/cms (API test)', () => {
 
     expect(item.est_visible).toEqual(true);
     expect(item.id_cms).toEqual(123);
-    expect(item.thematique_univers).toEqual(ThematiqueUnivers.cereales);
-    expect(item.thematique).toEqual('alimentation');
-    expect(item.code).toEqual('theCode');
+    expect(item.code).toEqual(ThematiqueUnivers.cereales);
+    expect(item.thematique).toEqual(Thematique.alimentation);
     expect(item.titre).toEqual('YOO');
     expect(item.image_url).toEqual('https://');
     expect(item.objectifs).toEqual([

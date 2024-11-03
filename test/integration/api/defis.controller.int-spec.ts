@@ -15,7 +15,6 @@ import { Defi } from '.prisma/client';
 import { PonderationApplicativeManager } from '../../../src/domain/scoring/ponderationApplicative';
 import { TagRubrique } from '../../../src/domain/scoring/tagRubrique';
 import { ContentType } from '../../../src/domain/contenu/contentType';
-import { MissionsUtilisateur_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import {
@@ -28,6 +27,7 @@ import { Feature } from '../../../src/domain/gamification/feature';
 import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
 
 const DEFI_1_DEF: Defi = {
   content_id: '1',
@@ -53,15 +53,13 @@ describe('/utilisateurs/id/defis (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
   const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
-  const missions: MissionsUtilisateur_v0 = {
-    version: 0,
+  const missions: MissionsUtilisateur_v1 = {
+    version: 1,
     missions: [
       {
         id: '1',
         done_at: null,
-        thematique_univers: ThematiqueUnivers.cereales,
-        univers: 'alimentation',
-        code: 'code',
+        code: ThematiqueUnivers.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -95,9 +93,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       {
         id: '2',
         done_at: null,
-        thematique_univers: ThematiqueUnivers.gaspillage_alimentaire,
-        univers: 'alimentation',
-        code: 'code',
+        code: ThematiqueUnivers.gaspillage_alimentaire,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -131,9 +127,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       {
         id: '3',
         done_at: null,
-        thematique_univers: ThematiqueUnivers.mobilite_quotidien,
-        univers: 'alimentation',
-        code: 'code',
+        code: ThematiqueUnivers.mobilite_quotidien,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -285,15 +279,13 @@ describe('/utilisateurs/id/defis (API test)', () => {
       ],
     };
 
-    const missions_defi_seul: MissionsUtilisateur_v0 = {
-      version: 0,
+    const missions_defi_seul: MissionsUtilisateur_v1 = {
+      version: 1,
       missions: [
         {
           id: '1',
           done_at: null,
-          thematique_univers: ThematiqueUnivers.cereales,
-          univers: 'alimentation',
-          code: 'code',
+          code: ThematiqueUnivers.cereales,
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
@@ -394,15 +386,13 @@ describe('/utilisateurs/id/defis (API test)', () => {
       ],
     };
 
-    const missions_defi_seul: MissionsUtilisateur_v0 = {
-      version: 0,
+    const missions_defi_seul: MissionsUtilisateur_v1 = {
+      version: 1,
       missions: [
         {
           id: '1',
           done_at: null,
-          thematique_univers: ThematiqueUnivers.cereales,
-          univers: 'alimentation',
-          code: 'code',
+          code: ThematiqueUnivers.cereales,
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
@@ -713,6 +703,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
+    response.body.sort((a, b) => (a.id > b.id ? -1 : 1));
     expect(response.body.length).toBe(2);
 
     expect(response.body[0].id).toEqual('003');

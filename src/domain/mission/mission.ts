@@ -1,8 +1,4 @@
 import { ContentType } from '../contenu/contentType';
-import {
-  Objectif_v0,
-  Mission_v0,
-} from '../object_store/mission/MissionsUtilisateur_v0';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { MissionDefinition } from './missionDefinition';
 import { v4 as uuidv4 } from 'uuid';
@@ -10,6 +6,10 @@ import { DefiDefinition } from '../defis/defiDefinition';
 import { DefiStatus } from '../defis/defi';
 import { KYCMosaicID } from '../kyc/KYCMosaicID';
 import { Thematique } from '../contenu/thematique';
+import {
+  Mission_v1,
+  Objectif_v1,
+} from '../object_store/mission/MissionsUtilisateur_v1';
 
 export class Objectif {
   id: string;
@@ -25,7 +25,7 @@ export class Objectif {
   est_reco: boolean;
   defi_status?: DefiStatus;
 
-  constructor(data: Objectif_v0) {
+  constructor(data: Objectif_v1) {
     this.id = data.id;
     this.titre = data.titre;
     this.type = data.type;
@@ -64,9 +64,8 @@ export class Objectif {
 }
 
 export class Mission {
-  id: string;
+  id_cms: string;
   done_at: Date;
-  thematique_univers: string;
   thematique: Thematique;
   titre: string;
   code: string;
@@ -74,15 +73,12 @@ export class Mission {
   objectifs: Objectif[];
   est_visible: boolean;
   is_first: boolean;
-  univers: string;
 
-  constructor(data: Mission_v0) {
-    this.id = data.id;
+  constructor(data: Mission_v1) {
+    this.id_cms = data.id;
     this.done_at = data.done_at;
-    this.thematique_univers = data.thematique_univers;
     this.est_visible = data.est_visible;
-    this.univers = data.univers; // A SUPPRIMER
-    this.thematique = data.thematique; // A RENOMER
+    this.thematique = data.thematique;
     this.titre = data.titre;
     this.code = data.code;
     this.image_url = data.image_url;
@@ -105,12 +101,10 @@ export class Mission {
       done_at: null,
       id: def.id_cms.toString(),
       est_visible: def.est_visible,
-      thematique_univers: def.thematique_univers,
       thematique: def.thematique,
       code: def.code,
       image_url: def.image_url,
       titre: def.titre,
-      univers: def.thematique,
       is_first: def.is_first,
       objectifs: def.objectifs.map((o) => ({
         content_id: o.content_id,
@@ -131,7 +125,8 @@ export class Mission {
     this.image_url = def.image_url;
     this.thematique = def.thematique;
     this.titre = def.titre;
-    this.univers = def.thematique;
+    this.code = def.code;
+    this.is_first = def.is_first;
   }
 
   public exfiltreObjectifsNonVisibles() {
@@ -210,7 +205,7 @@ export class Mission {
 
   public terminer(utilisateur: Utilisateur): void {
     this.done_at = new Date();
-    utilisateur.gamification.celebrerFinMission(this.thematique_univers);
+    utilisateur.gamification.celebrerFinMission(this.code);
   }
 
   public unlockContentIfAllKYCsDone() {

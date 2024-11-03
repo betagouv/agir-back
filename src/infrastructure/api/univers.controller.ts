@@ -12,12 +12,17 @@ import { UniversAPI } from './types/univers/UniversAPI';
 import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
 import { ThematiqueUniversAPI } from './types/univers/ThematiqueUniversAPI';
 import { ApplicationError } from '../applicationError';
+import { MissionUsecase } from '../../usecase/mission.usecase';
+import { Thematique } from '../../domain/contenu/thematique';
 
 @Controller()
 @ApiBearerAuth()
 @ApiTags('Univers')
 export class UniversController extends GenericControler {
-  constructor(private universUsecase: ThematiqueUsecase) {
+  constructor(
+    private universUsecase: ThematiqueUsecase,
+    private missionUsecase: MissionUsecase,
+  ) {
     super();
   }
 
@@ -59,11 +64,15 @@ export class UniversController extends GenericControler {
     @Param('univers') univers: string,
   ): Promise<ThematiqueUniversAPI[]> {
     this.checkCallerId(req, utilisateurId);
-    const result = await this.universUsecase.getMissionsOfThematique(
+    const them = Thematique[univers];
+    if (!them) {
+      ApplicationError.throwThematiqueNotFound(univers);
+    }
+    const result = await this.missionUsecase.getTuilesMissionsOfThematique(
       utilisateurId,
-      univers,
+      them,
     );
-    return result.map((e) => ThematiqueUniversAPI.mapToAPI(e));
+    return result.map((e) => ThematiqueUniversAPI.mapToAPI_2(e));
   }
 
   @Get('utilisateurs/:utilisateurId/thematiques_recommandees')
@@ -80,9 +89,10 @@ export class UniversController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<ThematiqueUniversAPI[]> {
     this.checkCallerId(req, utilisateurId);
-    const result = await this.universUsecase.getThematiquesRecommandees(
-      utilisateurId,
-    );
+    const result =
+      await this.missionUsecase.getTuilesMissionsRecommandeesToutesThematiques(
+        utilisateurId,
+      );
     return result.map((e) => ThematiqueUniversAPI.mapToAPI(e));
   }
 }

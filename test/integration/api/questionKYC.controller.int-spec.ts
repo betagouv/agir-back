@@ -14,7 +14,6 @@ import {
 } from '../../../src/domain/logement/logement';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { ContentType } from '../../../src/domain/contenu/contentType';
-import { MissionsUtilisateur_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
 import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
@@ -33,6 +32,7 @@ import {
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
 
 describe('/utilisateurs/id/questionsKYC (API test)', () => {
   const OLD_ENV = process.env;
@@ -40,15 +40,13 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
   const kycRepository = new KycRepository(TestUtil.prisma);
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
 
-  const missions_with_kyc: MissionsUtilisateur_v0 = {
-    version: 0,
+  const missions_with_kyc: MissionsUtilisateur_v1 = {
+    version: 1,
     missions: [
       {
         id: '1',
         done_at: new Date(1),
-        thematique_univers: ThematiqueUnivers.cereales,
-        univers: Univers.alimentation,
-        code: 'code',
+        code: ThematiqueUnivers.cereales,
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -630,15 +628,13 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
   it(`PUT /utilisateurs/id/questionsKYC/1 - un defi deviens non recommandé suite à maj de KYC`, async () => {
     // GIVEN
-    const missions_article_plus_defi: MissionsUtilisateur_v0 = {
-      version: 0,
+    const missions_article_plus_defi: MissionsUtilisateur_v1 = {
+      version: 1,
       missions: [
         {
           id: '1',
           done_at: new Date(1),
-          thematique_univers: ThematiqueUnivers.cereales,
-          univers: Univers.alimentation,
-          code: 'code',
+          code: ThematiqueUnivers.cereales,
           image_url: 'img',
           thematique: Thematique.alimentation,
           titre: 'titre',

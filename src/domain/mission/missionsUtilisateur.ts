@@ -3,7 +3,7 @@ import { ContentType } from '../contenu/contentType';
 import { Thematique } from '../contenu/thematique';
 import { DefiDefinition } from '../defis/defiDefinition';
 import { KYCMosaicID } from '../kyc/KYCMosaicID';
-import { MissionsUtilisateur_v0 } from '../object_store/mission/MissionsUtilisateur_v0';
+import { MissionsUtilisateur_v1 } from '../object_store/mission/MissionsUtilisateur_v1';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { Mission, Objectif } from './mission';
 import { MissionDefinition } from './missionDefinition';
@@ -11,7 +11,7 @@ import { MissionDefinition } from './missionDefinition';
 export class MissionsUtilisateur {
   missions: Mission[];
 
-  constructor(data?: MissionsUtilisateur_v0) {
+  constructor(data?: MissionsUtilisateur_v1) {
     this.missions = [];
     if (data && data.missions) {
       data.missions.forEach((m) => {
@@ -20,28 +20,25 @@ export class MissionsUtilisateur {
     }
   }
 
-  public isUniversDone(univers: string): boolean {
+  public isThematiqueDone(thematique: Thematique): boolean {
     let done = 0;
-    let of_univers = 0;
+    let of_thematique = 0;
     for (const mission of this.missions) {
-      if (mission.univers === univers) {
-        of_univers++;
+      if (mission.thematique === thematique) {
+        of_thematique++;
         if (mission.isDone()) {
           done++;
         }
       }
     }
-    return done === of_univers && done !== 0;
+    return done === of_thematique && done !== 0;
   }
 
-  public getMissionByThematiqueUnivers(them: string): Mission {
-    return this.missions.find((m) => m.thematique_univers === them);
-  }
   public getMissionByCode(code: string): Mission {
     return this.missions.find((m) => m.code === code);
   }
   public getMissionById(missionId: string): Mission {
-    return this.missions.find((m) => m.id === missionId);
+    return this.missions.find((m) => m.id_cms === missionId);
   }
 
   public validateAricleOrQuizzDone(
@@ -131,10 +128,7 @@ export class MissionsUtilisateur {
   public getAllUnlockedDefisIdsByThematique(thematique: Thematique): string[] {
     let result: string[] = [];
     for (const mission of this.missions) {
-      const univers_mission = ThematiqueRepository.getUniversParent(
-        mission.thematique_univers,
-      );
-      if (univers_mission === thematique) {
+      if (mission.thematique === thematique) {
         result = result.concat(mission.getUnlockedDefisIds());
       }
     }

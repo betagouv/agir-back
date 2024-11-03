@@ -66,9 +66,7 @@ export class StatistiqueUsecase {
     user.missions.missions.forEach((mission) => {
       const pourcentageCompletion = this.calculPourcentageDeCompletion(mission);
 
-      const universParent = ThematiqueRepository.getUniversParent(
-        mission.thematique_univers,
-      );
+      const universParent = ThematiqueRepository.getUniversParent(mission.code);
 
       if (!universCompletions[universParent]) {
         universCompletions[universParent] = {
@@ -78,13 +76,13 @@ export class StatistiqueUsecase {
       }
 
       if (pourcentageCompletion === 100) {
-        thematiquesTerminees.push(mission.thematique_univers);
+        thematiquesTerminees.push(mission.code);
 
         if (!universCompletions[universParent].enCours) {
           universCompletions[universParent].termines = true;
         }
       } else if (pourcentageCompletion > 0) {
-        thematiquesEnCours.push(mission.thematique_univers);
+        thematiquesEnCours.push(mission.code);
         universCompletions[universParent].enCours = true;
 
         if (!universCompletions[universParent].enCours) {
