@@ -13,9 +13,6 @@ export class App {
   public static isProd(): boolean {
     return process.env.IS_PROD === 'true';
   }
-  public static isFirstStart(): boolean {
-    return process.env.FIRST_START === 'true';
-  }
   public static getFixedOTP_DEVCode(): string {
     return process.env.OTP_DEV;
   }
