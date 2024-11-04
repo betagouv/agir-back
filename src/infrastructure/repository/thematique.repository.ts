@@ -22,10 +22,26 @@ export class ThematiqueRepository {
     ThematiqueRepository.thematiquesUnivers = new Map();
   }
   async onApplicationBootstrap(): Promise<void> {
-    if (!App.isFirstStart()) {
+    try {
       await this.loadThematiques();
+    } catch (error) {
+      console.error(
+        `Error loading thematiques definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
+      );
+    }
+    try {
       await this.loadUnivers();
+    } catch (error) {
+      console.error(
+        `Error loading univers definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
+      );
+    }
+    try {
       await this.loadThematiqueUnivers();
+    } catch (error) {
+      console.error(
+        `Error loading ThematiqueUnivers definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
+      );
     }
   }
 
