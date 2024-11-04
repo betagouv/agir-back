@@ -416,7 +416,6 @@ describe('Univers (API test)', () => {
       is_locked: false,
       reason_locked: null,
       is_new: false,
-      niveau: 1,
       image_url: 'aaaa',
       univers_parent: Univers.alimentation,
       univers_parent_label: 'Manger !',

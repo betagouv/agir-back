@@ -85,6 +85,7 @@ export class ThematiqueRepository {
   }
 
   public async loadThematiques() {
+    console.log('AUTOD RELOADING THEMATIQUES');
     const new_map = new Map();
     const listeThematiques = await this.prisma.thematique.findMany();
     listeThematiques.forEach((them) => {
@@ -94,6 +95,7 @@ export class ThematiqueRepository {
   }
 
   public async loadUnivers() {
+    console.log('AUTOD RELOADING UNIVERS');
     const listeUnivers = await this.prisma.univers.findMany();
 
     const new_map = new Map();
@@ -116,6 +118,7 @@ export class ThematiqueRepository {
     ThematiqueRepository.univers = new_map;
   }
   public async loadThematiqueUnivers() {
+    console.log('AUTOD RELOADING THEMATIQUES UNIVERS');
     const listeThematiqueUnivers =
       await this.prisma.thematiqueUnivers.findMany();
 

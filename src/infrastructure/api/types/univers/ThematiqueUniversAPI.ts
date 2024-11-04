@@ -10,7 +10,6 @@ export class ThematiqueUniversAPI {
   @ApiProperty() is_locked: boolean;
   @ApiProperty() reason_locked: string;
   @ApiProperty() is_new: boolean;
-  @ApiProperty() niveau: number;
   @ApiProperty() image_url: string;
   @ApiProperty() univers_parent: string;
   @ApiProperty() univers_parent_label: string;
@@ -24,7 +23,6 @@ export class ThematiqueUniversAPI {
       is_locked: false,
       reason_locked: null,
       is_new: tuile.is_new,
-      niveau: 1,
       image_url: tuile.image_url,
       univers_parent: tuile.thematique,
       univers_parent_label: ThematiqueRepository.getTitreUnivers(
