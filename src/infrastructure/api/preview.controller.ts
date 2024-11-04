@@ -514,10 +514,11 @@ export class PreviewController extends GenericControler {
     );
     result.push(
       `Univers : <a href="/univers_preview/${
-        ThematiqueRepository.getTuileUnivers(mission_def.thematique).id_cms
+        mission_def.thematique
       }">${ThematiqueRepository.getTitreUnivers(mission_def.thematique)}</a>`,
     );
-    result.push(`Est visible : ${mission_def.est_visible}`);
+    result.push(`Est visible                : ${mission_def.est_visible}`);
+    result.push(`Est première dans la liste : ${mission_def.est_visible}`);
 
     await this.dump_mission(result, mission_def);
 
@@ -744,13 +745,16 @@ export class PreviewController extends GenericControler {
       if (preview_univers.includes('🔥🔥🔥')) {
         result.push(
           ` ${prefix} ${this.getSpaceString(
-            65,
-            prefix.length,
+            80,
+            prefix.length - thematique.length,
           )}> HAS SOME 🔥🔥🔥`,
         );
       } else {
         result.push(
-          ` ${prefix} ${this.getSpaceString(65, prefix.length)}> LOOKS GOOD`,
+          ` ${prefix} ${this.getSpaceString(
+            80,
+            prefix.length - thematique.length,
+          )}> LOOKS GOOD`,
         );
       }
     }
@@ -813,12 +817,13 @@ export class PreviewController extends GenericControler {
       ThematiqueRepository.getTuileUnivers(input_thematique);
     result.push(`
 
-██╗░░░██╗███╗░░██╗██╗██╗░░░██╗███████╗██████╗░░██████╗
-██║░░░██║████╗░██║██║██║░░░██║██╔════╝██╔══██╗██╔════╝
-██║░░░██║██╔██╗██║██║╚██╗░██╔╝█████╗░░██████╔╝╚█████╗░
-██║░░░██║██║╚████║██║░╚████╔╝░██╔══╝░░██╔══██╗░╚═══██╗
-╚██████╔╝██║░╚███║██║░░╚██╔╝░░███████╗██║░░██║██████╔╝
-░╚═════╝░╚═╝░░╚══╝╚═╝░░░╚═╝░░░╚══════╝╚═╝░░╚═╝╚═════╝░
+
+████████╗██╗░░██╗███████╗███╗░░░███╗░█████╗░████████╗██╗░██████╗░██╗░░░██╗███████╗░██████╗
+╚══██╔══╝██║░░██║██╔════╝████╗░████║██╔══██╗╚══██╔══╝██║██╔═══██╗██║░░░██║██╔════╝██╔════╝
+░░░██║░░░███████║█████╗░░██╔████╔██║███████║░░░██║░░░██║██║██╗██║██║░░░██║█████╗░░╚█████╗░
+░░░██║░░░██╔══██║██╔══╝░░██║╚██╔╝██║██╔══██║░░░██║░░░██║╚██████╔╝██║░░░██║██╔══╝░░░╚═══██╗
+░░░██║░░░██║░░██║███████╗██║░╚═╝░██║██║░░██║░░░██║░░░██║░╚═██╔═╝░╚██████╔╝███████╗██████╔╝
+░░░╚═╝░░░╚═╝░░╚═╝╚══════╝╚═╝░░░░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░░╚═╝░░░░╚═════╝░╚══════╝╚═════╝░
 `);
 
     const all_thematiques = Object.values(Thematique);
@@ -826,14 +831,23 @@ export class PreviewController extends GenericControler {
     result.push(``);
     for (const thematique of all_thematiques) {
       if (thematique === input_thematique) {
+        const prefix = `>> Thematique [${thematique}]`;
         result.push(
-          `>> Thematique [${thematique}] - <a href="/univers_preview/${thematique}">${ThematiqueRepository.getLibelleThematique(
+          `${prefix} ${this.getSpaceString(
+            30,
+            prefix.length,
+          )} <a href="/univers_preview/${thematique}">${ThematiqueRepository.getLibelleThematique(
             thematique,
           )}</a>`,
         );
       } else {
+        const prefix = `   Thematique [${thematique}]`;
+        this.getSpaceString(25, prefix.length);
         result.push(
-          `   Thematique [${thematique}] - <a href="/univers_preview/${thematique}">${ThematiqueRepository.getLibelleThematique(
+          `${prefix} ${this.getSpaceString(
+            30,
+            prefix.length,
+          )} <a href="/univers_preview/${thematique}">${ThematiqueRepository.getLibelleThematique(
             thematique,
           )}</a>`,
         );
@@ -873,7 +887,7 @@ export class PreviewController extends GenericControler {
 
     let missions = this.missionRepository.getByThematique(input_thematique);
 
-    //await this.missionUsecase.ordonneTuilesMission(tuiles_thema);
+    missions = this.missionUsecase.ordonneTuilesMission(missions);
 
     for (const mission of missions) {
       const mission_def = await this.missionRepository.getByCode(mission.code);
@@ -885,7 +899,8 @@ export class PreviewController extends GenericControler {
             mission.titre
           }`,
         );
-        result.push(`Est visible : ${mission_def.est_visible}`);
+        result.push(`Est visible  : ${mission_def.est_visible}`);
+        result.push(`Est première : ${mission_def.is_first}`);
 
         const result2 = [];
         await this.dump_defis_of_mission(mission_def, result2);

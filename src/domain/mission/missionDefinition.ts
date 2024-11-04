@@ -1,5 +1,6 @@
 import { ContentType } from '../contenu/contentType';
 import { Thematique } from '../contenu/thematique';
+import { PriorityContent } from '../scoring/priorityContent';
 
 export class ObjectifDefinition {
   titre: string;
@@ -19,7 +20,7 @@ export class ObjectifDefinition {
   }
 }
 
-export class MissionDefinition {
+export class MissionDefinition implements PriorityContent {
   id_cms: number;
   thematique: Thematique;
   titre: string;
