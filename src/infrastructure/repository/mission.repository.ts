@@ -87,7 +87,11 @@ export class MissionRepository {
       MissionRepository.catalogue_missions_by_thematique.get(thematique);
     return result ? result : [];
   }
-  getByCode(code_mission: string): MissionDefinition {
+  public static getTitreByCode(code: string): string {
+    const result = MissionRepository.catalogue_missions_by_code.get(code);
+    return result ? result.titre : code;
+  }
+  public static getByCode(code_mission: string): MissionDefinition {
     return MissionRepository.catalogue_missions_by_code.get(code_mission);
   }
 

@@ -13,6 +13,7 @@ import { ThematiqueRepository } from '../../../src/infrastructure/repository/the
 import { DB, TestUtil } from '../../TestUtil';
 import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { Feature } from '../../../src/domain/gamification/feature';
+import { Thematique } from '../../../src/domain/contenu/thematique';
 
 describe('/bilan (API test)', () => {
   const OLD_ENV = process.env;
@@ -41,31 +42,37 @@ describe('/bilan (API test)', () => {
     };
     await TestUtil.create(DB.utilisateur, { unlocked_features: unlocked });
 
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 1,
-      code: Univers.transport,
-      label: 'The Transport',
+      code: Thematique.transport,
+      titre: 'The Transport',
       image_url: 'aaaa',
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 2,
-      code: Univers.logement,
-      label: 'Logement',
+      code: Thematique.logement,
+      titre: 'Logement',
       image_url: 'bbbb',
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 3,
-      code: Univers.consommation,
-      label: 'Consommation',
+      code: Thematique.consommation,
+      titre: 'Consommation',
       image_url: 'bbbb',
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 4,
-      code: Univers.alimentation,
-      label: 'Alimentation',
+      code: Thematique.alimentation,
+      titre: 'Alimentation',
       image_url: 'bbbb',
     });
-    await thematiqueRepository.loadUnivers();
+    await TestUtil.create(DB.thematique, {
+      id_cms: 5,
+      code: Thematique.services_societaux,
+      titre: 'Services sociétaux',
+      image_url: 'bbbb',
+    });
+    await thematiqueRepository.loadThematiques();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -475,31 +482,37 @@ describe('/bilan (API test)', () => {
       kyc: kyc,
     });
 
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 1,
-      code: Univers.transport,
-      label: 'The Transport',
+      code: Thematique.transport,
+      titre: 'The Transport',
       image_url: 'aaaa',
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 2,
-      code: Univers.logement,
-      label: 'Logement',
+      code: Thematique.logement,
+      titre: 'Logement',
       image_url: 'bbbb',
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 3,
-      code: Univers.consommation,
-      label: 'Consommation',
+      code: Thematique.consommation,
+      titre: 'Consommation',
       image_url: 'bbbb',
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 4,
-      code: Univers.alimentation,
-      label: 'Alimentation',
+      code: Thematique.alimentation,
+      titre: 'Alimentation',
       image_url: 'bbbb',
     });
-    await thematiqueRepository.loadUnivers();
+    await TestUtil.create(DB.thematique, {
+      id_cms: 5,
+      code: Thematique.services_societaux,
+      titre: 'Services sociétaux',
+      image_url: 'bbbb',
+    });
+    await thematiqueRepository.loadThematiques();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -847,31 +860,31 @@ describe('/bilan (API test)', () => {
     const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
 
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 1,
-      code: Univers.transport,
-      label: 'The Transport',
+      code: Thematique.transport,
+      titre: 'The Transport',
       image_url: 'aaaa',
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 2,
-      code: Univers.logement,
-      label: 'Logement',
+      code: Thematique.logement,
+      titre: 'Logement',
       image_url: 'bbbb',
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 3,
-      code: Univers.consommation,
-      label: 'Consommation',
+      code: Thematique.consommation,
+      titre: 'Consommation',
       image_url: 'bbbb',
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 4,
-      code: Univers.alimentation,
-      label: 'Alimentation',
+      code: Thematique.alimentation,
+      titre: 'Alimentation',
       image_url: 'bbbb',
     });
-    await thematiqueRepository.loadUnivers();
+    await thematiqueRepository.loadThematiques();
 
     // WHEN
     const response = await TestUtil.GET(

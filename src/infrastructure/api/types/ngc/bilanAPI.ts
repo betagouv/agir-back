@@ -3,8 +3,8 @@ import {
   BilanCarbone,
   BilanCarboneSynthese,
   DetailImpact,
-  ImpactUnivers,
-  LienBilanUnivers,
+  ImpactThematique,
+  LienBilanThematique,
   NiveauImpact,
 } from '../../../../domain/bilan/bilanCarbone';
 import { Univers } from '../../../../domain/univers/univers';
@@ -36,11 +36,11 @@ export class ImpactUniversAPI {
   @ApiProperty() emoji: string;
   @ApiProperty({ type: [DetailImpactAPI] }) details: DetailImpactAPI[];
 
-  public static mapToAPI(impact: ImpactUnivers): ImpactUniversAPI {
+  public static mapToAPI(impact: ImpactThematique): ImpactUniversAPI {
     return {
       pourcentage: impact.pourcentage,
-      univers: impact.univers,
-      univers_label: ThematiqueRepository.getTitreUnivers(impact.univers),
+      univers: impact.thematique,
+      univers_label: ThematiqueRepository.getTitreThematique(impact.thematique),
       impact_kg_annee: impact.impact_kg_annee,
       details: impact.details.map((d) => DetailImpactAPI.mapToAPI(d)),
       emoji: impact.emoji,
@@ -57,7 +57,7 @@ export class BilanCarboneCompletAPI {
     return {
       impact_kg_annee: bilan.impact_kg_annee,
       top_3: bilan.top_3,
-      impact_univers: bilan.impact_univers.map((e) =>
+      impact_univers: bilan.impact_thematique.map((e) =>
         ImpactUniversAPI.mapToAPI(e),
       ),
     };
@@ -103,14 +103,14 @@ export class LienBilanUniversAPI {
   @ApiProperty()
   id_enchainement_kyc: string;
 
-  public static mapToAPI(lien: LienBilanUnivers): LienBilanUniversAPI {
+  public static mapToAPI(lien: LienBilanThematique): LienBilanUniversAPI {
     return {
       id_enchainement_kyc: lien.id_enchainement_kyc,
       image_url: lien.image_url,
       nombre_total_question: lien.nombre_total_question,
       pourcentage_progression: lien.pourcentage_progression,
-      univers: lien.univers,
-      univers_label: ThematiqueRepository.getTitreUnivers(lien.univers),
+      univers: lien.thematique,
+      univers_label: ThematiqueRepository.getTitreThematique(lien.thematique),
       temps_minutes: lien.temps_minutes,
     };
   }
@@ -148,7 +148,7 @@ export class BilanCarboneSyntheseAPI {
       impact_logement: bilan.impact_logement,
       impact_consommation: bilan.impact_consommation,
       pourcentage_completion_totale: bilan.pourcentage_completion_totale,
-      liens_bilans_univers: bilan.liens_bilans_univers.map((l) =>
+      liens_bilans_univers: bilan.liens_bilans_thematiques.map((l) =>
         LienBilanUniversAPI.mapToAPI(l),
       ),
       mini_bilan_dispo: bilan.mini_bilan_dispo,

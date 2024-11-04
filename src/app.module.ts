@@ -83,10 +83,10 @@ import { KycStatistiqueRepository } from './infrastructure/repository/kycStatist
 import { MissionRepository } from './infrastructure/repository/mission.repository';
 import { KycRepository } from './infrastructure/repository/kyc.repository';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { MissionStatistiqueUsecase } from './usecase/missionStatistique.usecase';
+import { MissionStatistiqueRepository } from './infrastructure/repository/thematiqueStatistique.repository';
 import { ThematiqueStatistiqueUsecase } from './usecase/thematiqueStatistique.usecase';
-import { ThematiqueStatistiqueRepository } from './infrastructure/repository/thematiqueStatistique.repository';
-import { UniversStatistiqueUsecase } from './usecase/universStatistique.usecase';
-import { UniversStatistiqueRepository } from './infrastructure/repository/universStatistique.repository';
+import { ThematiqueStatistiqueRepository } from './infrastructure/repository/universStatistique.repository';
 import { ScheduleModule } from '@nestjs/schedule';
 import { Personnalisator } from './infrastructure/personnalisation/personnalisator';
 import { RechecheServicesController } from './infrastructure/api/rechercheServices.controller';
@@ -230,10 +230,10 @@ function getControllers(): any[] {
     KycStatistiqueRepository,
     MissionRepository,
     KycRepository,
+    MissionStatistiqueUsecase,
+    MissionStatistiqueRepository,
     ThematiqueStatistiqueUsecase,
     ThematiqueStatistiqueRepository,
-    UniversStatistiqueUsecase,
-    UniversStatistiqueRepository,
     Personnalisator,
     RechercheServicesUsecase,
     RechercheServiceManager,

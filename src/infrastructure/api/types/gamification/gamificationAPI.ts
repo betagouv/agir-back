@@ -5,7 +5,7 @@ import {
   CelebrationType,
 } from '../../../../domain/gamification/celebrations/celebration';
 import { Feature } from '../../../../../src/domain/gamification/feature';
-import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
+import { MissionRepository } from '../../../repository/mission.repository';
 
 export class RevealAPI {
   @ApiProperty() id: string;
@@ -22,8 +22,6 @@ export class CelebrationAPI {
 
   @ApiProperty()
   thematique_univers_label?: string;
-  @ApiProperty({ type: [String] })
-  new_thematiques_labels?: string[];
 
   public static mapToAPI(celeb: Celebration): CelebrationAPI {
     return {
@@ -33,14 +31,7 @@ export class CelebrationAPI {
       new_niveau: celeb.new_niveau,
       reveal: celeb.reveal,
       thematique_univers_label: celeb.thematique_univers
-        ? ThematiqueRepository.getTitreThematiqueUnivers(
-            celeb.thematique_univers,
-          )
-        : undefined,
-      new_thematiques_labels: celeb.new_thematiques
-        ? celeb.new_thematiques.map((n) =>
-            ThematiqueRepository.getTitreThematiqueUnivers(n),
-          )
+        ? MissionRepository.getTitreByCode(celeb.thematique_univers)
         : undefined,
     };
   }

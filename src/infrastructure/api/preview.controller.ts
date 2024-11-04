@@ -508,14 +508,14 @@ export class PreviewController extends GenericControler {
     result.push('##################################################');
     result.push(``);
     result.push(
-      `Titre : ${ThematiqueRepository.getTitreThematiqueUnivers(
-        mission_def.code,
-      )}`,
+      `Titre : ${MissionRepository.getTitreByCode(mission_def.code)}`,
     );
     result.push(
       `Univers : <a href="/univers_preview/${
         mission_def.thematique
-      }">${ThematiqueRepository.getTitreUnivers(mission_def.thematique)}</a>`,
+      }">${ThematiqueRepository.getTitreThematique(
+        mission_def.thematique,
+      )}</a>`,
     );
     result.push(`Est visible                : ${mission_def.est_visible}`);
     result.push(`Est première dans la liste : ${mission_def.est_visible}`);
@@ -809,12 +809,14 @@ export class PreviewController extends GenericControler {
     @Response() res: Res,
     prevent_send?: boolean,
   ): Promise<any> {
+    if (!this.checkAuthHeaderOK(authorization)) {
+      return this.returnBadOreMissingLoginError(res);
+    }
+
     let result = [];
 
     let DATA: any = {};
 
-    const tuile_univers =
-      ThematiqueRepository.getTuileUnivers(input_thematique);
     result.push(`
 
 
@@ -826,7 +828,9 @@ export class PreviewController extends GenericControler {
 ░░░╚═╝░░░╚═╝░░╚═╝╚══════╝╚═╝░░░░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░░╚═╝░░░░╚═════╝░╚══════╝╚═════╝░
 `);
 
-    const all_thematiques = Object.values(Thematique);
+    const thematiqueDef =
+      ThematiqueRepository.getThematiqueDefinition(input_thematique);
+    const all_thematiques = ThematiqueRepository.getAllThematiques();
     result.push(`################################`);
     result.push(``);
     for (const thematique of all_thematiques) {
@@ -854,18 +858,6 @@ export class PreviewController extends GenericControler {
       }
     }
 
-    if (!tuile_univers) {
-      result.push(``);
-      result.push(
-        `🔥🔥🔥 Missing Univer in CMS for themtique [${input_thematique}]`,
-      );
-      result.push(``);
-      if (prevent_send) {
-        return `<pre>${result.join('\n')}</pre>`;
-      }
-      return res.send(`<pre>${result.join('\n')}</pre>`);
-    }
-
     result.push(``);
     result.push(`################################`);
     result.push(``);
@@ -873,11 +865,19 @@ export class PreviewController extends GenericControler {
     result.push(``);
 
     result.push(`########################`);
-    result.push(`### UNIVERS ID_CMS : ${tuile_univers.id_cms}`);
+    result.push(
+      `### Thematique : ${ThematiqueRepository.getTitreThematique(
+        input_thematique,
+      )}`,
+    );
     result.push(`########################`);
     result.push(``);
-    DATA.titre = tuile_univers.titre;
-    DATA.code = tuile_univers.type;
+    DATA.id_cms = thematiqueDef.id_cms;
+    DATA.titre = thematiqueDef.titre;
+    DATA.label = thematiqueDef.label;
+    DATA.code = thematiqueDef.code;
+    DATA.emoji = thematiqueDef.emoji;
+    DATA.image_url = thematiqueDef.image_url;
     result.push(JSON.stringify(DATA, null, 2));
     result.push(``);
 
@@ -890,7 +890,7 @@ export class PreviewController extends GenericControler {
     missions = this.missionUsecase.ordonneTuilesMission(missions);
 
     for (const mission of missions) {
-      const mission_def = await this.missionRepository.getByCode(mission.code);
+      const mission_def = MissionRepository.getByCode(mission.code);
       if (mission_def) {
         result.push('');
         const prefix = `#### <a href="/mission_preview/${mission_def.id_cms}">MISSION [${mission_def.id_cms}]</a>`;

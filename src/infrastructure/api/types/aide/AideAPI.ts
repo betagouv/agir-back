@@ -29,7 +29,7 @@ export class AideAPI {
       codes_postaux: aide.codes_postaux,
       thematiques: aide.thematiques,
       thematiques_label: aide.thematiques.map((elem) =>
-        ThematiqueRepository.getLibelleThematique(elem),
+        ThematiqueRepository.getTitreThematique(elem),
       ),
       montant_max: aide.montant_max,
       besoin_desc: aide.besoin_desc,

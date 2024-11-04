@@ -15,6 +15,7 @@ import { MissionUsecase } from '../../usecase/mission.usecase';
 import { Thematique } from '../../domain/contenu/thematique';
 import { TuileUnivers } from '../../domain/univers/tuileUnivers';
 import { ThematiqueRepository } from '../repository/thematique.repository';
+import { ThematiqueDefinition } from '../../domain/univers/thematiqueDefinition';
 
 @Controller()
 @ApiBearerAuth()
@@ -44,14 +45,14 @@ export class UniversController extends GenericControler {
       Thematique.logement,
       Thematique.transport,
     ];
-    const list_tuiles_univers: TuileUnivers[] = [];
+    const liste_them_def: ThematiqueDefinition[] = [];
     for (const thematique of liste_thematiques) {
-      const tuile = ThematiqueRepository.getTuileUnivers(thematique);
+      const tuile = ThematiqueRepository.getThematiqueDefinition(thematique);
       if (tuile) {
-        list_tuiles_univers.push(tuile);
+        liste_them_def.push(tuile);
       }
     }
-    return list_tuiles_univers.map((e) => UniversAPI.mapToAPI(e));
+    return liste_them_def.map((e) => UniversAPI.mapToAPI(e));
     // SOON ^^ ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
   }
 

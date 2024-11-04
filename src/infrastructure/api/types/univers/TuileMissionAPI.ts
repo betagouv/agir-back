@@ -22,7 +22,7 @@ export class TuileMissionAPI {
       is_new: tuileMission.is_new,
       image_url: tuileMission.image_url,
       thematique: tuileMission.thematique,
-      thematique_label: ThematiqueRepository.getTitreUnivers(
+      thematique_label: ThematiqueRepository.getLibelleThematique(
         tuileMission.thematique,
       ),
     };

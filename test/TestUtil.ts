@@ -3,7 +3,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { PrismaServiceStat } from '../src/infrastructure/prisma/stats/prisma.service.stats';
-import { Thematique } from '../src/domain/contenu/thematique';
 import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
 const request = require('supertest');
@@ -27,10 +26,9 @@ import {
 } from '../src/domain/logement/logement';
 import {
   SituationNGC,
-  Univers as UniversDB,
-  ThematiqueUnivers as ThematiqueUniversDB,
   Mission,
   KYC,
+  Thematique as ThematiqueDB,
 } from '.prisma/client';
 import {
   Aide,
@@ -61,6 +59,7 @@ import {
 } from '../src/domain/utilisateur/utilisateur';
 import { NotificationHistory_v0 } from '../src/domain/object_store/notification/NotificationHistory_v0';
 import { CanalNotification } from '../src/domain/notification/notificationHistory';
+import { Thematique } from '../src/domain/contenu/thematique';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -71,8 +70,6 @@ export enum DB {
   service = 'service',
   serviceDefinition = 'serviceDefinition',
   thematique = 'thematique',
-  univers = 'univers',
-  thematiqueUnivers = 'thematiqueUnivers',
   linky = 'linky',
   article = 'article',
   quizz = 'quizz',
@@ -94,8 +91,6 @@ export class TestUtil {
     linky: TestUtil.linkyData,
     article: TestUtil.articleData,
     quizz: TestUtil.quizzData,
-    univers: TestUtil.universData,
-    thematiqueUnivers: TestUtil.thematiqueUniversData,
     defiStatistique: TestUtil.defiStatistiqueData,
     mission: TestUtil.missionData,
     kYC: TestUtil.kycData,
@@ -186,8 +181,6 @@ export class TestUtil {
     await this.prisma.statistique.deleteMany();
     await this.prisma.articleStatistique.deleteMany();
     await this.prisma.defiStatistique.deleteMany();
-    await this.prisma.univers.deleteMany();
-    await this.prisma.thematiqueUnivers.deleteMany();
     await this.prisma.quizStatistique.deleteMany();
     await this.prisma.kycStatistique.deleteMany();
     await this.prisma.mission.deleteMany();
@@ -564,40 +557,14 @@ export class TestUtil {
       ...override,
     };
   }
-  static thematiqueData(override?): Thematique {
+  static thematiqueData(override?): ThematiqueDB {
     return {
-      id: 'thematique-id',
-      id_cms: 1,
-      titre: 'titre',
       code: Thematique.alimentation,
-      ...override,
-    };
-  }
-  static universData(override?: Partial<UniversDB>): UniversDB {
-    return {
+      titre: 'titre',
       id_cms: 1,
-      label: 'Le Climat !',
-      code: Univers.climat,
-      image_url: 'https://',
-      created_at: undefined,
-      updated_at: undefined,
-      ...override,
-    };
-  }
-  static thematiqueUniversData(
-    override?: Partial<ThematiqueUniversDB>,
-  ): ThematiqueUniversDB {
-    return {
-      id_cms: 1,
-      label: `C'est bon les céréales`,
-      code: ThematiqueUnivers.cereales,
-      image_url: 'https://',
-      univers_parent: Univers.climat,
-      created_at: undefined,
-      updated_at: undefined,
-      niveau: 0,
-      famille_id_cms: 1,
-      famille_ordre: 0,
+      emoji: '🔥',
+      image_url: 'https://img',
+      label: 'the label',
       ...override,
     };
   }

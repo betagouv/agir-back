@@ -329,19 +329,19 @@ describe('Univers (API test)', () => {
   it(`GET /utilisateurs/id/univers - liste les univers de l'utilisateur`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 1,
-      code: Univers.climat,
+      code: Thematique.climat,
       label: 'yo',
       image_url: 'aaaa',
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 2,
-      code: Univers.alimentation,
+      code: Thematique.alimentation,
       label: 'ya',
       image_url: 'bbbb',
     });
-    await thematiqueRepository.loadUnivers();
+    await thematiqueRepository.loadThematiques();
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/univers');
@@ -358,13 +358,13 @@ describe('Univers (API test)', () => {
       missions: mission_unique_done,
       todo: todo,
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 1,
-      code: Univers.alimentation,
+      code: Thematique.alimentation,
       label: 'ya',
       image_url: 'bbbb',
     });
-    await thematiqueRepository.loadUnivers();
+    await thematiqueRepository.loadThematiques();
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/univers');
@@ -378,8 +378,8 @@ describe('Univers (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       missions: mission_unique,
     });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Manger !',
     });
     await TestUtil.create(DB.mission, {
@@ -431,8 +431,8 @@ describe('Univers (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       missions: mission_unique,
     });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Manger !',
     });
     await TestUtil.create(DB.mission, {
@@ -531,8 +531,8 @@ describe('Univers (API test)', () => {
 
     await TestUtil.create(DB.mission, mission_articles_tag);
 
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Manger !',
     });
     await thematiqueRepository.onApplicationBootstrap();
@@ -605,8 +605,8 @@ describe('Univers (API test)', () => {
 
     await TestUtil.create(DB.mission, mission_articles_tag);
 
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Manger !',
     });
 
@@ -685,8 +685,8 @@ describe('Univers (API test)', () => {
 
     await TestUtil.create(DB.mission, mission_articles_tag);
 
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Manger !',
     });
     await thematiqueRepository.onApplicationBootstrap();
@@ -768,8 +768,8 @@ describe('Univers (API test)', () => {
 
     await TestUtil.create(DB.mission, mission_articles_tag);
 
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Manger !',
     });
     await thematiqueRepository.onApplicationBootstrap();
@@ -801,9 +801,9 @@ describe('Univers (API test)', () => {
     });
     await TestUtil.create(DB.article, { content_id: '1' });
     await TestUtil.create(DB.article, { content_id: '2' });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 1,
-      code: Univers.alimentation,
+      code: Thematique.alimentation,
       label: 'ya',
       image_url: 'bbbb',
     });
@@ -836,14 +836,14 @@ describe('Univers (API test)', () => {
   it(`GET /utilisateurs/id/thematiques_recommandees - renvoie la liste des thematiques recommandées pour l'utilisateur, premiere thematique de chaque univers`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: {} });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 1,
-      code: Univers.alimentation,
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 2,
-      code: Univers.logement,
+      code: Thematique.logement,
       label: 'Maison',
     });
 

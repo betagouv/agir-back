@@ -25,7 +25,7 @@ export class ThematiqueUniversAPI {
       is_new: tuile.is_new,
       image_url: tuile.image_url,
       univers_parent: tuile.thematique,
-      univers_parent_label: ThematiqueRepository.getTitreUnivers(
+      univers_parent_label: ThematiqueRepository.getLabelThematique(
         tuile.thematique,
       ),
     };

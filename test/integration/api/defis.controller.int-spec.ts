@@ -330,17 +330,10 @@ describe('/utilisateurs/id/defis (API test)', () => {
       ],
     };
 
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 2,
-      code: Univers.alimentation,
+      code: Thematique.alimentation,
       label: 'Alimentation',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Cereales',
-      image_url: 'aaaa',
     });
     await thematiqueRepository.onApplicationBootstrap();
 
@@ -437,17 +430,10 @@ describe('/utilisateurs/id/defis (API test)', () => {
       ],
     };
 
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 2,
-      code: Univers.alimentation,
+      code: Thematique.alimentation,
       label: 'Alimentation',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Cereales',
-      image_url: 'aaaa',
     });
     await thematiqueRepository.onApplicationBootstrap();
 
@@ -493,42 +479,22 @@ describe('/utilisateurs/id/defis (API test)', () => {
       ],
     };
 
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 1,
-      code: Univers.climat,
+      code: Thematique.climat,
       label: 'Climat',
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 2,
-      code: Univers.alimentation,
+      code: Thematique.alimentation,
       label: 'Alimentation',
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 3,
-      code: Univers.transport,
+      code: Thematique.transport,
       label: 'Transport',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Cereales',
-      image_url: 'aaaa',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 2,
-      code: ThematiqueUnivers.mobilite_quotidien,
-      univers_parent: Univers.transport,
-      label: 'dechets compost',
-      image_url: 'aaaa',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 3,
-      code: ThematiqueUnivers.gaspillage_alimentaire,
-      univers_parent: Univers.alimentation,
-      label: 'gaspillage alimentaire',
-      image_url: 'aaaa',
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.utilisateur, {
@@ -572,41 +538,20 @@ describe('/utilisateurs/id/defis (API test)', () => {
       ],
     };
 
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 1,
-      code: Univers.climat,
+      code: Thematique.climat,
       label: 'Climat',
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 2,
-      code: Univers.alimentation,
+      code: Thematique.alimentation,
       label: 'Alimentation',
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 3,
-      code: Univers.transport,
+      code: Thematique.transport,
       label: 'Transport',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Cereales',
-      image_url: 'aaaa',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 2,
-      code: ThematiqueUnivers.mobilite_quotidien,
-      univers_parent: Univers.transport,
-      label: 'dechets compost',
-      image_url: 'aaaa',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 3,
-      code: ThematiqueUnivers.gaspillage_alimentaire,
-      univers_parent: Univers.alimentation,
-      label: 'gaspillage alimentaire',
-      image_url: 'aaaa',
     });
     await thematiqueRepository.onApplicationBootstrap();
 
@@ -650,41 +595,20 @@ describe('/utilisateurs/id/defis (API test)', () => {
       ],
     };
 
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 1,
-      code: Univers.climat,
+      code: Thematique.climat,
       label: 'Climat',
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 2,
-      code: Univers.transport,
+      code: Thematique.transport,
       label: 'Transport',
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 3,
-      code: Univers.alimentation,
+      code: Thematique.alimentation,
       label: 'Alimentation',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Cereales',
-      image_url: 'aaaa',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 2,
-      code: ThematiqueUnivers.gaspillage_alimentaire,
-      univers_parent: Univers.alimentation,
-      label: 'dechets compost',
-      image_url: 'aaaa',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 3,
-      code: ThematiqueUnivers.mobilite_quotidien,
-      univers_parent: Univers.transport,
-      label: 'mobilite quotidien',
-      image_url: 'aaaa',
     });
     await thematiqueRepository.onApplicationBootstrap();
 
@@ -732,42 +656,22 @@ describe('/utilisateurs/id/defis (API test)', () => {
       ],
     };
 
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 1,
-      code: Univers.climat,
+      code: Thematique.climat,
       label: 'Climat',
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 2,
-      code: Univers.transport,
+      code: Thematique.transport,
       label: 'Transport',
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 3,
-      code: Univers.alimentation,
+      code: Thematique.alimentation,
       label: 'Alimentation',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Cereales',
-      image_url: 'aaaa',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 2,
-      code: ThematiqueUnivers.gaspillage_alimentaire,
-      univers_parent: Univers.alimentation,
-      label: 'dechets compost',
-      image_url: 'aaaa',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 3,
-      code: ThematiqueUnivers.mobilite_quotidien,
-      univers_parent: Univers.transport,
-      label: 'mobilite quotidien',
-      image_url: 'aaaa',
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.utilisateur, {
@@ -1057,9 +961,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
     });
     ThematiqueRepository.resetAllRefs();
     await TestUtil.create(DB.thematique, {
-      id: '1',
       id_cms: 1,
-      titre: 't1',
+      label: 't1',
     });
     await thematiqueRepository.loadThematiques();
 
@@ -1128,9 +1031,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
     ThematiqueRepository.resetAllRefs();
     await TestUtil.create(DB.thematique, {
-      id: '1',
       id_cms: 1,
-      titre: 't1',
+      label: 't1',
     });
     await TestUtil.create(DB.defiStatistique, {
       content_id: '001',

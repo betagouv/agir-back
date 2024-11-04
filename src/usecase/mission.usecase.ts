@@ -153,7 +153,7 @@ export class MissionUsecase {
     let mission_resultat = utilisateur.missions.getMissionByCode(code_mission);
 
     if (!mission_resultat || mission_resultat.isNew()) {
-      const mission_def = await this.missionRepository.getByCode(code_mission);
+      const mission_def = MissionRepository.getByCode(code_mission);
       if (mission_def) {
         const completed_mission = await this.completeMissionDef(
           mission_def,

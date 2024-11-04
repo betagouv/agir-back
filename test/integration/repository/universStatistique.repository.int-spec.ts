@@ -1,10 +1,10 @@
 import { TestUtil } from '../../TestUtil';
-import { UniversStatistiqueRepository } from '../../../src/infrastructure/repository/universStatistique.repository';
+import { ThematiqueStatistiqueRepository } from '../../../src/infrastructure/repository/universStatistique.repository';
 import { Univers } from '../../../src/domain/univers/univers';
 
 describe('UniversStatistiqueRepository', () => {
   const OLD_ENV = process.env;
-  const universStatistiqueRepository = new UniversStatistiqueRepository(
+  const universStatistiqueRepository = new ThematiqueStatistiqueRepository(
     TestUtil.prisma,
   );
 
@@ -25,7 +25,7 @@ describe('UniversStatistiqueRepository', () => {
 
   it("upsertUniversStatistiques  : créer ou modifie les statistiques d'un univers", async () => {
     // WHEN
-    await universStatistiqueRepository.upsertUniversStatistiques(
+    await universStatistiqueRepository.upsert(
       'idUnivers1',
       Univers.alimentation,
       0,
@@ -35,7 +35,7 @@ describe('UniversStatistiqueRepository', () => {
       0,
       6,
     );
-    await universStatistiqueRepository.upsertUniversStatistiques(
+    await universStatistiqueRepository.upsert(
       'idUnivers2',
       Univers.climat,
       1,
@@ -85,7 +85,7 @@ describe('UniversStatistiqueRepository', () => {
       completion_pourcentage_100: 6,
     });
 
-    await universStatistiqueRepository.upsertUniversStatistiques(
+    await universStatistiqueRepository.upsert(
       'idUnivers1',
       Univers.alimentation,
       1,

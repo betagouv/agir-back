@@ -1,10 +1,10 @@
 import { TestUtil } from '../../TestUtil';
-import { ThematiqueStatistiqueRepository } from '../../../src/infrastructure/repository/thematiqueStatistique.repository';
+import { MissionStatistiqueRepository } from '../../../src/infrastructure/repository/thematiqueStatistique.repository';
 import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
 
 describe('ThematiqueStatistiqueRepository', () => {
   const OLD_ENV = process.env;
-  const thematiqueStatistiqueRepository = new ThematiqueStatistiqueRepository(
+  const thematiqueStatistiqueRepository = new MissionStatistiqueRepository(
     TestUtil.prisma,
   );
 
@@ -25,7 +25,7 @@ describe('ThematiqueStatistiqueRepository', () => {
 
   it("upsertThematiqueStatistiques  : créer ou modifie les statistiques d'une thématique", async () => {
     // WHEN
-    await thematiqueStatistiqueRepository.upsertThematiqueStatistiques(
+    await thematiqueStatistiqueRepository.upsert(
       'idThematique1',
       ThematiqueUnivers.cereales,
       0,
@@ -35,7 +35,7 @@ describe('ThematiqueStatistiqueRepository', () => {
       0,
       6,
     );
-    await thematiqueStatistiqueRepository.upsertThematiqueStatistiques(
+    await thematiqueStatistiqueRepository.upsert(
       'idThematique2',
       ThematiqueUnivers.dechets_compost,
       1,
@@ -85,7 +85,7 @@ describe('ThematiqueStatistiqueRepository', () => {
       completion_pourcentage_100: 6,
     });
 
-    await thematiqueStatistiqueRepository.upsertThematiqueStatistiques(
+    await thematiqueStatistiqueRepository.upsert(
       'idThematique1',
       ThematiqueUnivers.cereales,
       1,

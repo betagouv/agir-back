@@ -90,16 +90,22 @@ describe('Aide (API test)', () => {
   });
   it('GET /utilisateurs/:utilisateurId/aides', async () => {
     // GIVEN
-    await thematiqueRepository.upsertThematique(
-      2,
-      'Climat !!',
-      Thematique.climat,
-    );
-    await thematiqueRepository.upsertThematique(
-      5,
-      'Logement !!',
-      Thematique.logement,
-    );
+    await thematiqueRepository.upsert({
+      code: Thematique.climat,
+      titre: 'Climat !!',
+      id_cms: 2,
+      emoji: '🔥',
+      image_url: 'https://img',
+      label: 'the label',
+    });
+    await thematiqueRepository.upsert({
+      code: Thematique.logement,
+      titre: 'Logement !!',
+      id_cms: 5,
+      emoji: '🔥',
+      image_url: 'https://img',
+      label: 'the label',
+    });
     await thematiqueRepository.loadThematiques();
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide);

@@ -1,4 +1,4 @@
-import { Univers } from '../univers/univers';
+import { Thematique } from '../contenu/thematique';
 
 export class DetailImpact {
   label: string;
@@ -15,8 +15,8 @@ export enum NiveauImpact {
   tres_fort = 'tres_fort',
 }
 
-export class ImpactUnivers {
-  univers: Univers;
+export class ImpactThematique {
+  thematique: Thematique;
   pourcentage: number;
   impact_kg_annee: number;
   emoji: string;
@@ -29,15 +29,15 @@ export class BilanCarbone {
   }
   impact_kg_annee: number;
   top_3: DetailImpact[];
-  impact_univers: ImpactUnivers[];
+  impact_thematique: ImpactThematique[];
 
-  getImpactParUnivers?(univers: Univers): ImpactUnivers {
-    return this.impact_univers.find((a) => a.univers === univers);
+  getImpactParThematique?(thematique: Thematique): ImpactThematique {
+    return this.impact_thematique.find((a) => a.thematique === thematique);
   }
 }
 
-export class LienBilanUnivers {
-  univers: Univers;
+export class LienBilanThematique {
+  thematique: Thematique;
   image_url: string;
   pourcentage_progression: number;
   nombre_total_question: number;
@@ -57,5 +57,5 @@ export class BilanCarboneSynthese {
   impact_logement: NiveauImpact;
   impact_consommation: NiveauImpact;
   pourcentage_completion_totale: number;
-  liens_bilans_univers: LienBilanUnivers[];
+  liens_bilans_thematiques: LienBilanThematique[];
 }

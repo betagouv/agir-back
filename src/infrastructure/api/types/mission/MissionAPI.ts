@@ -57,12 +57,14 @@ export class MissionAPI {
   public static mapToAPI(mission: Mission): MissionAPI {
     return {
       id: mission.id_cms,
-      titre: ThematiqueRepository.getTitreThematiqueUnivers(mission.code),
+      titre: mission.titre,
       done_at: mission.done_at,
       objectifs: mission.objectifs.map((o) => ObjectifAPI.mapToAPI(o)),
       thematique_univers: mission.code,
       thematique_univers_label: mission.titre,
-      univers_label: ThematiqueRepository.getTitreUnivers(mission.thematique),
+      univers_label: ThematiqueRepository.getLabelThematique(
+        mission.thematique,
+      ),
       univers: mission.thematique,
       progression: mission.getProgression(),
       is_new: mission.isNew(),

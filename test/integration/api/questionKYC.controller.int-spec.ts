@@ -719,17 +719,11 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       content_id: '1',
       conditions: [[{ id_kyc: 1, code_kyc: '1', code_reponse: 'yi' }]],
     });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Mange de la graine',
-      image_url: 'aaaa',
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
 
     // WHEN

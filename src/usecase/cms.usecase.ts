@@ -31,7 +31,6 @@ import { KycDefinition } from '../../src/domain/kyc/kycDefinition';
 import { TypeReponseQuestionKYC, Unite } from '../domain/kyc/questionKYC';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { Categorie } from '../../src/domain/contenu/categorie';
-import { UniversDefinition } from 'src/domain/univers/universDefinition';
 import { ThematiqueDefinition } from 'src/domain/univers/thematiqueDefinition';
 
 @Injectable()
@@ -53,18 +52,6 @@ export class CMSUsecase {
           return this.createOrUpdateThematique(cmsWebhookAPI);
         case CMSEvent['entry.update']:
           return this.createOrUpdateThematique(cmsWebhookAPI);
-      }
-    }
-    if (cmsWebhookAPI.model === CMSModel.univers) {
-      switch (cmsWebhookAPI.event) {
-        case CMSEvent['entry.unpublish']:
-          return this.deleteUnivers(cmsWebhookAPI);
-        case CMSEvent['entry.delete']:
-          return this.deleteUnivers(cmsWebhookAPI);
-        case CMSEvent['entry.publish']:
-          return this.createOrUpdateUnivers(cmsWebhookAPI);
-        case CMSEvent['entry.update']:
-          return this.createOrUpdateUnivers(cmsWebhookAPI);
       }
     }
     if (cmsWebhookAPI.model === CMSModel.kyc) {
@@ -89,18 +76,6 @@ export class CMSUsecase {
           return this.createOrUpdateMission(cmsWebhookAPI);
         case CMSEvent['entry.update']:
           return this.createOrUpdateMission(cmsWebhookAPI);
-      }
-    }
-    if (cmsWebhookAPI.model === CMSModel['thematique-univers']) {
-      switch (cmsWebhookAPI.event) {
-        case CMSEvent['entry.unpublish']:
-          return this.deleteThematiqueUnivers(cmsWebhookAPI);
-        case CMSEvent['entry.delete']:
-          return this.deleteThematiqueUnivers(cmsWebhookAPI);
-        case CMSEvent['entry.publish']:
-          return this.createOrUpdateThematiqueUnivers(cmsWebhookAPI);
-        case CMSEvent['entry.update']:
-          return this.createOrUpdateThematiqueUnivers(cmsWebhookAPI);
       }
     }
     if ([CMSModel.article, CMSModel.quizz].includes(cmsWebhookAPI.model)) {
@@ -161,58 +136,6 @@ export class CMSUsecase {
     await this.defiRepository.upsert(
       CMSUsecase.buildDefiFromCMSData(cmsWebhookAPI.entry),
     );
-  }
-
-  async loadUniversFromCMS(): Promise<string[]> {
-    const loading_result: string[] = [];
-    const liste_univers: UniversDefinition[] = [];
-    const CMS_UNIVERS_DATA = await this.loadDataFromCMS('universes');
-
-    for (let index = 0; index < CMS_UNIVERS_DATA.length; index++) {
-      const element: CMSWebhookPopulateAPI = CMS_UNIVERS_DATA[index];
-      let univers: UniversDefinition;
-      try {
-        univers = CMSUsecase.buildUniversFromCMSPopulateData(element);
-        liste_univers.push(univers);
-        loading_result.push(`loaded univers : ${univers.code}`);
-      } catch (error) {
-        loading_result.push(
-          `Could not load univers ${element.id} : ${error.message}`,
-        );
-        loading_result.push(JSON.stringify(element));
-      }
-    }
-    for (const univers_to_upsert of liste_univers) {
-      await this.thematiqueRepository.upsertUnivers(univers_to_upsert);
-    }
-    return loading_result;
-  }
-
-  async loadThematiquesUniversFromCMS(): Promise<string[]> {
-    const loading_result: string[] = [];
-    const liste_them: ThematiqueDefinition[] = [];
-    const CMS_THEMATIQUE_DATA = await this.loadDataFromCMS(
-      'thematiques-univers',
-    );
-
-    for (const element of CMS_THEMATIQUE_DATA) {
-      let thematique: ThematiqueDefinition;
-      try {
-        thematique =
-          CMSUsecase.buildThematiqueUniversFromCMSPopulateData(element);
-        liste_them.push(thematique);
-        loading_result.push(`loaded thematiqueUnivers : ${thematique.code}`);
-      } catch (error) {
-        loading_result.push(
-          `Could not load thematiqueUnivers ${element.id} : ${error.message}`,
-        );
-        loading_result.push(JSON.stringify(element));
-      }
-    }
-    for (const them_to_upsert of liste_them) {
-      await this.thematiqueRepository.upsertThematiqueUnivers(them_to_upsert);
-    }
-    return loading_result;
   }
 
   async loadArticlesFromCMS(): Promise<string[]> {
@@ -319,6 +242,33 @@ export class CMSUsecase {
     return loading_result;
   }
 
+  async loadThematiquesFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste_themDef: ThematiqueDefinition[] = [];
+    const CMS_THEMATIQUE_DATA = await this.loadDataFromCMS('thematiques');
+
+    for (let index = 0; index < CMS_THEMATIQUE_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_THEMATIQUE_DATA[index];
+      let them_def: ThematiqueDefinition;
+      try {
+        them_def = CMSUsecase.buildThematiqueFromCMSPopulateData(element);
+        liste_themDef.push(them_def);
+        loading_result.push(
+          `loaded thematique : ${them_def.id_cms}/${them_def.code}`,
+        );
+      } catch (error) {
+        loading_result.push(
+          `Could not load thematique ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (const them_def of liste_themDef) {
+      await this.thematiqueRepository.upsert(them_def);
+    }
+    return loading_result;
+  }
+
   async loadAidesFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste_aides: Aide[] = [];
@@ -380,8 +330,7 @@ export class CMSUsecase {
       | 'defis'
       | 'kycs'
       | 'missions'
-      | 'universes'
-      | 'thematiques-univers',
+      | 'thematiques',
   ): Promise<CMSWebhookPopulateAPI[]> {
     let result = [];
     const page_1 = '&pagination[start]=0&pagination[limit]=100';
@@ -434,21 +383,13 @@ export class CMSUsecase {
   async createOrUpdateThematique(cmsWebhookAPI: CMSWebhookAPI) {
     if (cmsWebhookAPI.entry.publishedAt === null) return;
 
-    await this.thematiqueRepository.upsertThematique(
-      cmsWebhookAPI.entry.id,
-      cmsWebhookAPI.entry.titre,
-      cmsWebhookAPI.entry.code,
-    );
-  }
-
-  async createOrUpdateUnivers(cmsWebhookAPI: CMSWebhookAPI) {
-    if (cmsWebhookAPI.entry.publishedAt === null) return;
-
-    await this.thematiqueRepository.upsertUnivers({
-      code: cmsWebhookAPI.entry.code,
-      label: cmsWebhookAPI.entry.label,
+    await this.thematiqueRepository.upsert({
       id_cms: cmsWebhookAPI.entry.id,
+      titre: cmsWebhookAPI.entry.titre,
+      code: cmsWebhookAPI.entry.code,
+      emoji: cmsWebhookAPI.entry.emoji,
       image_url: CMSUsecase.getImageUrl(cmsWebhookAPI.entry),
+      label: cmsWebhookAPI.entry.label,
     });
   }
 
@@ -473,35 +414,6 @@ export class CMSUsecase {
   }
   async deleteMission(cmsWebhookAPI: CMSWebhookAPI) {
     await this.missionRepository.delete(cmsWebhookAPI.entry.id);
-  }
-  async deleteThematiqueUnivers(cmsWebhookAPI: CMSWebhookAPI) {
-    await this.thematiqueRepository.deleteThematiqueUnivers(
-      cmsWebhookAPI.entry.id,
-    );
-  }
-  async deleteUnivers(cmsWebhookAPI: CMSWebhookAPI) {
-    await this.thematiqueRepository.deleteUnivers(cmsWebhookAPI.entry.id);
-  }
-
-  async createOrUpdateThematiqueUnivers(cmsWebhookAPI: CMSWebhookAPI) {
-    if (cmsWebhookAPI.entry.publishedAt === null) return;
-
-    await this.thematiqueRepository.upsertThematiqueUnivers({
-      code: cmsWebhookAPI.entry.code,
-      univers_parent: cmsWebhookAPI.entry.univers_parent
-        ? cmsWebhookAPI.entry.univers_parent.code
-        : undefined,
-      id_cms: cmsWebhookAPI.entry.id,
-      label: cmsWebhookAPI.entry.label,
-      niveau: cmsWebhookAPI.entry.niveau,
-      image_url: CMSUsecase.getImageUrl(cmsWebhookAPI.entry),
-      famille_ordre: cmsWebhookAPI.entry.famille
-        ? cmsWebhookAPI.entry.famille.ordre
-        : 999,
-      famille_id_cms: cmsWebhookAPI.entry.famille
-        ? cmsWebhookAPI.entry.famille.id
-        : -1,
-    });
   }
 
   private static getImageUrlFromPopulate(
@@ -873,18 +785,7 @@ export class CMSUsecase {
     };
   }
 
-  static buildUniversFromCMSPopulateData(
-    entry: CMSWebhookPopulateAPI,
-  ): UniversDefinition {
-    return {
-      id_cms: entry.id,
-      label: entry.attributes.label,
-      image_url: this.getImageUrlFromPopulate(entry),
-      code: entry.attributes.code,
-    };
-  }
-
-  static buildThematiqueUniversFromCMSPopulateData(
+  static buildThematiqueFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
   ): ThematiqueDefinition {
     return {
@@ -892,14 +793,8 @@ export class CMSUsecase {
       label: entry.attributes.label,
       image_url: this.getImageUrlFromPopulate(entry),
       code: entry.attributes.code,
-      niveau: entry.attributes.niveau,
-      univers_parent: entry.attributes.univers_parent.data.attributes.code,
-      famille_ordre: entry.attributes.famille.data
-        ? entry.attributes.famille.data.attributes.ordre
-        : 999,
-      famille_id_cms: entry.attributes.famille.data
-        ? entry.attributes.famille.data.id
-        : -1,
+      emoji: entry.attributes.emoji,
+      titre: entry.attributes.titre,
     };
   }
 

@@ -30,8 +30,8 @@ import { ArticleStatistiqueUsecase } from '../../../src/usecase/articleStatistiq
 import { DefiStatistiqueUsecase } from '../../../src/usecase/defiStatistique.usecase';
 import { QuizStatistiqueUsecase } from '../../../src/usecase/quizStatistique.usecase';
 import { KycStatistiqueUsecase } from '../../../src/usecase/kycStatistique.usecase';
-import { ThematiqueStatistiqueUsecase } from '../../../src/usecase/thematiqueStatistique.usecase';
-import { UniversStatistiqueUsecase } from '../../../src/usecase/universStatistique.usecase';
+import { MissionStatistiqueUsecase } from '../../usecase/missionStatistique.usecase';
+import { ThematiqueStatistiqueUsecase } from '../../usecase/thematiqueStatistique.usecase';
 import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
 import { App } from '../../domain/app';
 import { MailerUsecase } from '../../usecase/mailer.usecase';
@@ -66,8 +66,8 @@ export class AdminController extends GenericControler {
     private defiStatistiqueUsecase: DefiStatistiqueUsecase,
     private quizStatistiqueUsecase: QuizStatistiqueUsecase,
     private kycStatistiqueUsecase: KycStatistiqueUsecase,
+    private missionStatistiqueUsecase: MissionStatistiqueUsecase,
     private thematiqueStatistiqueUsecase: ThematiqueStatistiqueUsecase,
-    private universStatistiqueUsecase: UniversStatistiqueUsecase,
     private mailerUsecase: MailerUsecase,
   ) {
     super();
@@ -144,14 +144,14 @@ export class AdminController extends GenericControler {
     return await this.cmsUsecase.loadArticlesFromCMS();
   }
 
-  @Post('/admin/load_univers_from_cms')
+  @Post('/admin/load_thematiques_from_cms')
   @ApiOperation({
-    summary: 'Upsert tous les univers publiés du CMS',
+    summary: 'Upsert toutes les thematiques publiés du CMS',
   })
   @ApiOkResponse({ type: [String] })
-  async upsertAllCMSUnivers(@Request() req): Promise<string[]> {
+  async upsertAllCMSThematiques(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
-    return await this.cmsUsecase.loadUniversFromCMS();
+    return await this.cmsUsecase.loadThematiquesFromCMS();
   }
 
   @Post('/admin/load_missions_from_cms')
@@ -318,7 +318,7 @@ export class AdminController extends GenericControler {
   })
   async calcul_thematique_statistique(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
-    return await this.thematiqueStatistiqueUsecase.calculStatistique();
+    return await this.missionStatistiqueUsecase.calculStatistique();
   }
 
   @Post('/admin/univers-statistique')
@@ -327,7 +327,7 @@ export class AdminController extends GenericControler {
   })
   async calcul_univers_statistique(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
-    return await this.universStatistiqueUsecase.calculStatistique();
+    return await this.thematiqueStatistiqueUsecase.calculStatistique();
   }
   @Get('/admin/prenoms_a_valider')
   @ApiOperation({

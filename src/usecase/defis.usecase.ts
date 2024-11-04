@@ -91,12 +91,12 @@ export class DefisUsecase {
 
     let result: Defi[] = [];
 
-    const univers_liste = ThematiqueRepository.getAllUnivers();
+    const thematique_liste = ThematiqueRepository.getAllThematiques();
 
-    for (const univers of univers_liste) {
+    for (const thematique of thematique_liste) {
       const defis_univers = await this.getDefisOfThematiqueAndUtilisateur(
         utilisateur,
-        Thematique[univers],
+        thematique,
       );
       result = result.concat(
         defis_univers.filter((d) => d.getStatus() === DefiStatus.en_cours),

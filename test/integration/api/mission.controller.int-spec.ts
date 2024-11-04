@@ -489,16 +489,9 @@ describe('Mission (API test)', () => {
       ],
     };
     await TestUtil.create(DB.utilisateur, { missions: missions, defis: defis });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Mange de la graine',
-      image_url: 'aaaa',
     });
     await thematiqueRepository.onApplicationBootstrap();
 
@@ -563,8 +556,8 @@ describe('Mission (API test)', () => {
       ],
     };
     await TestUtil.create(DB.utilisateur, { missions: missions, defis: defis });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
     await thematiqueRepository.onApplicationBootstrap();
@@ -634,16 +627,9 @@ describe('Mission (API test)', () => {
       missions: missions_defi_seul_done,
       defis: defis,
     });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Mange de la graine',
-      image_url: 'aaaa',
     });
     await thematiqueRepository.onApplicationBootstrap();
 
@@ -691,16 +677,9 @@ describe('Mission (API test)', () => {
       missions: missions_defi_seul_done,
       defis: defis,
     });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Mange de la graine',
-      image_url: 'aaaa',
     });
     await thematiqueRepository.onApplicationBootstrap();
 
@@ -719,14 +698,14 @@ describe('Mission (API test)', () => {
   it(`GET /utilisateurs/id/thematiques/climat/mission - renvoie la mission de la thématique - à partir du catalgue de mission`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: {} });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
 
     await TestUtil.create(DB.mission, {
       code: ThematiqueUnivers.cereales,
-      thematique: Univers.alimentation,
+      thematique: Thematique.alimentation,
       titre: 'Mange de la graine',
       image_url: 'aaaa',
     });
@@ -782,8 +761,8 @@ describe('Mission (API test)', () => {
   it(`NEW GET /utilisateurs/id/missions/id - renvoie la mission de la thématique - à partir du catalgue de mission`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: {} });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
 
@@ -903,17 +882,9 @@ describe('Mission (API test)', () => {
 
     await TestUtil.create(DB.mission, mission_articles_tag);
 
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Manger !',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      label: `Les céréales c'est bon`,
-      image_url: 'aaaa',
-      niveau: 2,
-      univers_parent: Univers.alimentation,
     });
     await thematiqueRepository.onApplicationBootstrap();
     await missionRepository.onApplicationBootstrap();
@@ -1010,17 +981,9 @@ describe('Mission (API test)', () => {
 
     await TestUtil.create(DB.mission, mission_articles_tag);
 
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Manger !',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      label: `Les céréales c'est bon`,
-      image_url: 'aaaa',
-      niveau: 2,
-      univers_parent: Univers.alimentation,
     });
     await thematiqueRepository.onApplicationBootstrap();
     await missionRepository.onApplicationBootstrap();
@@ -1117,18 +1080,11 @@ describe('Mission (API test)', () => {
 
     await TestUtil.create(DB.mission, mission_articles_tag);
 
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Manger !',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      label: `Les céréales c'est bon`,
-      image_url: 'aaaa',
-      niveau: 2,
-      univers_parent: Univers.alimentation,
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
     await missionRepository.onApplicationBootstrap();
 
@@ -1212,18 +1168,11 @@ describe('Mission (API test)', () => {
 
     await TestUtil.create(DB.mission, mission_articles_tag);
 
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Manger !',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      label: `Les céréales c'est bon`,
-      image_url: 'aaaa',
-      niveau: 2,
-      univers_parent: Univers.alimentation,
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
     await missionRepository.onApplicationBootstrap();
 
@@ -1248,17 +1197,11 @@ describe('Mission (API test)', () => {
   it(`GET /utilisateurs/id/thematiques/climat/mission - 404 si pas de mission pour cette thematique`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: {} });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Mange de la graine',
-      image_url: 'aaaa',
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
     await missionRepository.onApplicationBootstrap();
 
@@ -1274,16 +1217,9 @@ describe('Mission (API test)', () => {
   it(`NEW GET /utilisateurs/id/missions/id - 404 si pas de mission pour cette thematique`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: {} });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Mange de la graine',
-      image_url: 'aaaa',
     });
     await thematiqueRepository.onApplicationBootstrap();
     await missionRepository.onApplicationBootstrap();
@@ -1300,16 +1236,9 @@ describe('Mission (API test)', () => {
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour l'objecif donné (article)`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: missions_article_seul });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Mange de la graine',
-      image_url: 'aaaa',
     });
     await thematiqueRepository.onApplicationBootstrap();
 
@@ -1344,17 +1273,11 @@ describe('Mission (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       missions: missions_kyc_plus_article,
     });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Mange de la graine',
-      image_url: 'aaaa',
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.kYC, {
@@ -1392,17 +1315,11 @@ describe('Mission (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       missions: missions,
     });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Mange de la graine',
-      image_url: 'aaaa',
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
     await TestUtil.create(DB.quizz, {
       content_id: '14',
@@ -1438,17 +1355,11 @@ describe('Mission (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       missions: missions,
     });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Mange de la graine',
-      image_url: 'aaaa',
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
     await TestUtil.create(DB.defi, {
       content_id: '2',
@@ -1481,17 +1392,11 @@ describe('Mission (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       missions: missions,
     });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Mange de la graine',
-      image_url: 'aaaa',
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
 
     // WHEN
@@ -1513,17 +1418,11 @@ describe('Mission (API test)', () => {
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - n'empoche pas les points deux fois pour l'objecif donné`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: missions_article_seul });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Mange de la graine',
-      image_url: 'aaaa',
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
     await TestUtil.create(DB.article, {
       content_id: '1',
@@ -1603,18 +1502,11 @@ describe('Mission (API test)', () => {
 
     await TestUtil.create(DB.mission, mission_article);
 
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Manger !',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      label: `Les céréales c'est bon`,
-      image_url: 'aaaa',
-      niveau: 2,
-      univers_parent: Univers.alimentation,
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
     await missionRepository.onApplicationBootstrap();
 
@@ -1685,18 +1577,11 @@ describe('Mission (API test)', () => {
 
     await TestUtil.create(DB.mission, mission_article);
 
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Manger !',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      label: `Les céréales c'est bon`,
-      image_url: 'aaaa',
-      niveau: 2,
-      univers_parent: Univers.alimentation,
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
     await missionRepository.onApplicationBootstrap();
 
@@ -1721,17 +1606,11 @@ describe('Mission (API test)', () => {
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour deux KYC`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: missions_2_KYC });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Mange de la graine',
-      image_url: 'aaaa',
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
     await TestUtil.create(DB.kYC, {
       id_cms: 1,
@@ -2192,17 +2071,11 @@ describe('Mission (API test)', () => {
     });
     await TestUtil.create(DB.article, { content_id: '1' });
     await TestUtil.create(DB.defi, { content_id: '1' });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Mange de la graine',
-      image_url: 'aaaa',
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
 
     // WHEN
@@ -2240,17 +2113,11 @@ describe('Mission (API test)', () => {
     });
     await TestUtil.create(DB.article, { content_id: '1' });
     await TestUtil.create(DB.defi, { content_id: '1' });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Mange de la graine',
-      image_url: 'aaaa',
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
 
     // WHEN
@@ -2291,17 +2158,11 @@ describe('Mission (API test)', () => {
       content_id: '1',
       conditions: [[{ code_kyc: '1', code_reponse: 'yi' }]],
     });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Mange de la graine',
-      image_url: 'aaaa',
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
 
     // WHEN
@@ -2342,17 +2203,11 @@ describe('Mission (API test)', () => {
       content_id: '1',
       conditions: [[{ code_kyc: '1', code_reponse: 'yi' }]],
     });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Mange de la graine',
-      image_url: 'aaaa',
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
 
     // WHEN
@@ -2545,17 +2400,11 @@ describe('Mission (API test)', () => {
     });
     await TestUtil.create(DB.article, { content_id: '1' });
 
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Mange de la graine',
-      image_url: 'aaaa',
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
     await missionRepository.onApplicationBootstrap();
 
@@ -2577,17 +2426,11 @@ describe('Mission (API test)', () => {
     });
     await TestUtil.create(DB.article, { content_id: '1' });
 
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Mange de la graine',
-      image_url: 'aaaa',
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
     await missionRepository.onApplicationBootstrap();
 
@@ -2672,8 +2515,8 @@ describe('Mission (API test)', () => {
       code: 'code_2',
       id_cms: 2,
     });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
 
@@ -2810,17 +2653,11 @@ describe('Mission (API test)', () => {
       ],
     };
     await TestUtil.create(DB.utilisateur, { missions: missions, defis: defis });
-    await TestUtil.create(DB.univers, {
-      code: Univers.alimentation,
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-      label: 'Mange de la graine',
-      image_url: 'aaaa',
-    });
+
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.defi, { content_id: '2' });
@@ -2866,33 +2703,15 @@ describe('Mission (API test)', () => {
   it(`NEW GET /utilisateurs/id/tuiles_missions - renvoie la liste des missions recommandées pour l'utilisateur, premiere mission de chaque univers`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { missions: {} });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 1,
-      code: Univers.alimentation,
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 2,
-      code: Univers.logement,
+      code: Thematique.logement,
       label: 'Maison',
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 1,
-      label: 'cereales',
-      code: ThematiqueUnivers.cereales,
-      univers_parent: Univers.alimentation,
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 2,
-      label: 'coming_soon',
-      code: ThematiqueUnivers.coming_soon,
-      univers_parent: Univers.alimentation,
-    });
-    await TestUtil.create(DB.thematiqueUnivers, {
-      id_cms: 3,
-      label: 'partir_vacances',
-      code: ThematiqueUnivers.partir_vacances,
-      univers_parent: Univers.logement,
     });
 
     await TestUtil.create(DB.mission, {
@@ -2962,9 +2781,9 @@ describe('Mission (API test)', () => {
 
     await TestUtil.create(DB.utilisateur, { missions: mission_unique_done });
 
-    await TestUtil.create(DB.univers, {
+    await TestUtil.create(DB.thematique, {
       id_cms: 1,
-      code: Univers.alimentation,
+      code: Thematique.alimentation,
       label: 'Faut manger !',
     });
 

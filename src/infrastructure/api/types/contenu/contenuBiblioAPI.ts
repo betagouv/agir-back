@@ -31,7 +31,7 @@ export class ContenuBibliothequeAPI {
       titre: content.titre,
       soustitre: content.soustitre,
       thematique_principale: content.thematique_principale,
-      thematique_principale_label: ThematiqueRepository.getLibelleThematique(
+      thematique_principale_label: ThematiqueRepository.getTitreThematique(
         content.thematique_principale,
       ),
       thematiques: content.thematiques,
@@ -76,7 +76,7 @@ export class ThematiqueFiltereAPI {
     for (const entry of filtres) {
       result.push({
         code: entry[0],
-        label: ThematiqueRepository.getLibelleThematique(entry[0]),
+        label: ThematiqueRepository.getTitreThematique(entry[0]),
         selected: entry[1].selected,
       });
     }

@@ -97,11 +97,11 @@ export class BilanCarboneUsecase {
       impact_transport: this.computeImpactTransport(utilisateur),
       impact_consommation: this.computeImpactConsommation(utilisateur),
       pourcentage_completion_totale: pourcentage_prog_totale,
-      liens_bilans_univers: [
+      liens_bilans_thematiques: [
         {
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1728466903/Mobilite_df75aefd09.svg',
-          univers: Univers.transport,
+          thematique: Univers.transport,
           nombre_total_question: enchainement_transport_progression.target,
           pourcentage_progression: Math.round(
             (enchainement_transport_progression.current /
@@ -114,7 +114,7 @@ export class BilanCarboneUsecase {
         {
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1728466523/cuisine_da54797693.svg',
-          univers: Univers.alimentation,
+          thematique: Univers.alimentation,
           nombre_total_question: enchainement_alimentation_progression.target,
           pourcentage_progression: Math.round(
             (enchainement_alimentation_progression.current /
@@ -127,7 +127,7 @@ export class BilanCarboneUsecase {
         {
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1728468852/conso_7522b1950d.svg',
-          univers: Univers.consommation,
+          thematique: Univers.consommation,
           nombre_total_question: enchainement_conso_progression.target,
           pourcentage_progression: Math.round(
             (enchainement_conso_progression.current /
@@ -140,7 +140,7 @@ export class BilanCarboneUsecase {
         {
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1728468978/maison_80242d91f3.svg',
-          univers: Univers.logement,
+          thematique: Univers.logement,
           nombre_total_question: enchainement_logement_progression.target,
           pourcentage_progression: Math.round(
             (enchainement_logement_progression.current /

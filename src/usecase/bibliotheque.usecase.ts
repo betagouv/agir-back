@@ -8,6 +8,7 @@ import { PersonalArticle } from '../domain/contenu/article';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
+import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 
 @Injectable()
 export class BibliothequeUsecase {
@@ -53,11 +54,12 @@ export class BibliothequeUsecase {
       });
     });
 
-    for (const thematique of Object.values(Thematique)) {
-      result.addSelectedThematique(
-        thematique,
-        filtre_thematiques.includes(thematique),
-      );
+    for (const thematique of ThematiqueRepository.getAllThematiques()) {
+      if (thematique !== Thematique.services_societaux)
+        result.addSelectedThematique(
+          thematique,
+          filtre_thematiques.includes(thematique),
+        );
     }
 
     return this.personnalisator.personnaliser(result, utilisateur);

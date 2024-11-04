@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { Mission } from '../../src/domain/mission/mission';
-import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
-import { UniversStatistiqueRepository } from '../../src/infrastructure/repository/universStatistique.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+import { Mission } from '../domain/mission/mission';
+import { MissionStatistiqueRepository } from '../infrastructure/repository/thematiqueStatistique.repository';
 import { Scope } from '../domain/utilisateur/utilisateur';
 
-type UniversRecord = {
+type MissionRecord = {
   titre: string;
   range_1_20: number;
   range_21_40: number;
@@ -16,51 +15,30 @@ type UniversRecord = {
 };
 
 @Injectable()
-export class UniversStatistiqueUsecase {
+export class MissionStatistiqueUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
-    private universStatistiqueRepository: UniversStatistiqueRepository,
+    private missionStatistiqueRepository: MissionStatistiqueRepository,
   ) {}
 
   async calculStatistique(): Promise<string[]> {
-    const universRecord: Record<string, UniversRecord> = {};
+    const missionRecord: Record<string, MissionRecord> = {};
 
     const listeUtilisateursIds =
       await this.utilisateurRepository.listUtilisateurIds();
 
     for (const userId of listeUtilisateursIds) {
-      const thematiqueRecord: Record<string, number[]> = {};
-
       const user = await this.utilisateurRepository.getById(userId, [
         Scope.missions,
       ]);
 
-      user.missions.missions.forEach((mission) => {
+      for (const mission of user.missions.missions) {
         const pourcentageCompletionMission =
           this.calculPourcentageDeCompletion(mission);
 
-        const universParent = ThematiqueRepository.getUniversParent(
-          mission.code,
-        );
-
-        if (!thematiqueRecord[universParent]) {
-          thematiqueRecord[universParent] = [pourcentageCompletionMission];
-        } else {
-          thematiqueRecord[universParent].push(pourcentageCompletionMission);
-        }
-      });
-
-      for (const thematique in thematiqueRecord) {
-        const sum = thematiqueRecord[thematique].reduce(
-          (accumulator, currentValue) => accumulator + currentValue,
-          0,
-        );
-        const pourcentageCompletionUnivers =
-          sum / thematiqueRecord[thematique].length;
-
-        if (!universRecord[thematique]) {
-          universRecord[thematique] = {
-            titre: thematique,
+        if (!missionRecord[mission.id_cms]) {
+          missionRecord[mission.id_cms] = {
+            titre: mission.code,
             range_1_20: 0,
             range_21_40: 0,
             range_41_60: 0,
@@ -71,14 +49,16 @@ export class UniversStatistiqueUsecase {
         }
 
         this.incrementeRange(
-          universRecord[thematique],
-          pourcentageCompletionUnivers,
+          missionRecord[mission.id_cms],
+          pourcentageCompletionMission,
         );
       }
     }
 
-    for (const [key, value] of Object.entries(universRecord)) {
-      await this.universStatistiqueRepository.upsertUniversStatistiques(
+    const missionRecordEntries = Object.entries(missionRecord);
+
+    for (const [key, value] of missionRecordEntries) {
+      await this.missionStatistiqueRepository.upsert(
         key,
         value.titre,
         value.range_1_20,
@@ -90,9 +70,9 @@ export class UniversStatistiqueUsecase {
       );
     }
 
-    const universListeId = Object.keys(universRecord);
+    const thematiqueListeId = Object.keys(missionRecord);
 
-    return universListeId;
+    return thematiqueListeId;
   }
 
   private calculPourcentageDeCompletion(mission: Mission): number {
@@ -100,7 +80,7 @@ export class UniversStatistiqueUsecase {
     return (current / target) * 100;
   }
 
-  private incrementeRange(record: UniversRecord, pourcentage: number) {
+  private incrementeRange(record: MissionRecord, pourcentage: number) {
     let rangeKey;
     switch (true) {
       case pourcentage > 0 && pourcentage <= 20:
