@@ -26,6 +26,7 @@ import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { QuestionGeneric } from '../domain/kyc/questionGeneric';
 import { TuileMission } from '../domain/univers/tuileMission';
 import { Thematique } from '../domain/contenu/thematique';
+import { PriorityContent } from '../domain/scoring/priorityContent';
 
 @Injectable()
 export class MissionUsecase {
@@ -105,14 +106,14 @@ export class MissionUsecase {
           // SKIP
         } else {
           result.push(
-            this.makeTuileMissionFromMissionAndDefinition(
+            TuileMission.newFromMissionANDMissionDefinition(
               existing_mission,
               mission_def,
             ),
           );
         }
       } else {
-        result.push(this.makeTuileMissionFromDefinition(mission_def));
+        result.push(TuileMission.newFromMissionDefinition(mission_def));
       }
     }
     return this.ordonneTuilesMission(result);
@@ -332,37 +333,7 @@ export class MissionUsecase {
     return mission_def;
   }
 
-  private makeTuileMissionFromMissionAndDefinition(
-    mission: Mission,
-    mission_def: MissionDefinition,
-  ): TuileMission {
-    return new TuileMission({
-      image_url: mission_def.image_url,
-      is_new: mission.isNew(),
-      code: mission_def.code,
-      titre: mission_def.titre,
-      progression: mission.getProgression().current,
-      cible_progression: mission.getProgression().target,
-      thematique: mission_def.thematique,
-      is_first: mission_def.is_first,
-    });
-  }
-  private makeTuileMissionFromDefinition(
-    mission_def: MissionDefinition,
-  ): TuileMission {
-    return new TuileMission({
-      image_url: mission_def.image_url,
-      is_new: true,
-      code: mission_def.code,
-      titre: mission_def.titre,
-      progression: 0,
-      cible_progression: mission_def.objectifs.length, // approximation temporaire
-      thematique: mission_def.thematique,
-      is_first: mission_def.is_first,
-    });
-  }
-
-  public ordonneTuilesMission(liste: TuileMission[]): TuileMission[] {
+  public ordonneTuilesMission<T extends PriorityContent>(liste: T[]): T[] {
     const first = liste.find((t) => t.is_first);
     if (first) {
       return [first].concat(liste.filter((t) => !t.is_first));

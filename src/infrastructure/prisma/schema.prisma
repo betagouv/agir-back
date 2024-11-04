@@ -286,8 +286,12 @@ model Thematique {
   id         String   @id
   id_cms     Int      @unique
   code       String   @default("")
+  // emoji      String?
   titre      String
+  //alt_titre  String?
+  //image_url  String?
   created_at DateTime @default(now()) @db.Timestamptz(3)
+  //updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model Univers {
