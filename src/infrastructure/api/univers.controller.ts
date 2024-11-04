@@ -13,6 +13,8 @@ import { ThematiqueUniversAPI } from './types/univers/ThematiqueUniversAPI';
 import { ApplicationError } from '../applicationError';
 import { MissionUsecase } from '../../usecase/mission.usecase';
 import { Thematique } from '../../domain/contenu/thematique';
+import { TuileUnivers } from '../../domain/univers/tuileUnivers';
+import { ThematiqueRepository } from '../repository/thematique.repository';
 
 @Controller()
 @ApiBearerAuth()
@@ -35,7 +37,22 @@ export class UniversController extends GenericControler {
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
   ) {
-    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+    this.checkCallerId(req, utilisateurId);
+    const liste_thematiques: Thematique[] = [
+      Thematique.alimentation,
+      Thematique.consommation,
+      Thematique.logement,
+      Thematique.transport,
+    ];
+    const list_tuiles_univers: TuileUnivers[] = [];
+    for (const thematique of liste_thematiques) {
+      const tuile = ThematiqueRepository.getTuileUnivers(thematique);
+      if (tuile) {
+        list_tuiles_univers.push(tuile);
+      }
+    }
+    return list_tuiles_univers.map((e) => UniversAPI.mapToAPI(e));
+    // SOON ^^ ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
   }
 
   @Get('utilisateurs/:utilisateurId/univers/:univers/thematiques')

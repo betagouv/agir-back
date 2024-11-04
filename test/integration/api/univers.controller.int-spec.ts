@@ -347,7 +347,7 @@ describe('Univers (API test)', () => {
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/univers');
 
     // THEN
-    expect(response.status).toBe(410);
+    expect(response.status).toBe(200);
   });
   it(`GET /utilisateurs/id/univers - liste les univers de l'utilisateur, is_done à true`, async () => {
     // GIVEN
@@ -370,7 +370,7 @@ describe('Univers (API test)', () => {
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/univers');
 
     // THEN
-    expect(response.status).toBe(410);
+    expect(response.status).toBe(200);
   });
 
   it(`GET /utilisateurs/id/univers/id/thematiques - liste une thematique, donnée correctes, ajout mission à utilisateur si visible`, async () => {
