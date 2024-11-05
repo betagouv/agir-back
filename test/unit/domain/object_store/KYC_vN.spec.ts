@@ -9,7 +9,6 @@ import {
   Unite,
 } from '../../../../src/domain/kyc/questionKYC';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
-import { Univers } from '../../../../src/domain/univers/univers';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
@@ -71,7 +70,7 @@ describe('KYC vN ', () => {
             },
           ],
           tags: [Tag.consommation],
-          universes: [Univers.climat],
+          universes: [Thematique.climat],
           short_question: 'short',
           image_url: 'AAA',
           conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
@@ -132,7 +131,7 @@ describe('KYC vN ', () => {
             },
           ],
           tags: [Tag.consommation],
-          universes: [Univers.climat],
+          universes: [Thematique.climat],
           short_question: 'short',
           image_url: 'AAA',
           conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],

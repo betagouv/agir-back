@@ -8,7 +8,6 @@ import {
 } from '../../../src/domain/kyc/questionKYC';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { Tag } from '../../../src/domain/scoring/tag';
-import { Univers } from '../../../src/domain/univers/univers';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 import {
@@ -57,7 +56,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Univers.alimentation],
+      universes: [Thematique.alimentation],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
       ngc_key: 'a . b . c',
@@ -159,7 +158,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Univers.alimentation],
+      universes: [Thematique.alimentation],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
       ngc_key: 'a . b . c',
@@ -277,7 +276,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Univers.alimentation],
+      universes: [Thematique.alimentation],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.entier,
       ngc_key: 'a . b . c',
@@ -425,7 +424,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Univers.alimentation],
+      universes: [Thematique.alimentation],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
       ngc_key: 'a . b . c',
@@ -560,7 +559,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Univers.alimentation],
+      universes: [Thematique.alimentation],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.entier,
       ngc_key: 'a . b . c',

@@ -1,5 +1,4 @@
 import { DB, TestUtil } from '../../TestUtil';
-import { Univers } from '../../../src/domain/univers/univers';
 import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { ContentType } from '../../../src/domain/contenu/contentType';
@@ -417,7 +416,7 @@ describe('Univers (API test)', () => {
       reason_locked: null,
       is_new: false,
       image_url: 'aaaa',
-      univers_parent: Univers.alimentation,
+      univers_parent: Thematique.alimentation,
       univers_parent_label: 'Manger !',
     });
 

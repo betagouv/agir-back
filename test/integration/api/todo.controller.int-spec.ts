@@ -12,10 +12,7 @@ import {
 } from '../../../src/domain/kyc/questionKYC';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
-import {
-  ParcoursTodo_v0,
-  Todo_v0,
-} from '../../../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
+import { ParcoursTodo_v0 } from '../../../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import {
   Superficie,
@@ -27,9 +24,7 @@ import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
 import { Feature } from '../../../src/domain/gamification/feature';
-import { TodoUsecase } from '../../../src/usecase/todo.usecase';
 import { Tag } from '../../../src/domain/scoring/tag';
-import { Univers } from '../../../src/domain/univers/univers';
 import { KYC } from '@prisma/client';
 import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
 import {
@@ -573,7 +568,7 @@ describe('TODO list (API test)', () => {
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Univers.alimentation],
+      universes: [Thematique.alimentation],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
       ngc_key: 'a . b . c',
@@ -684,7 +679,7 @@ describe('TODO list (API test)', () => {
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Univers.alimentation],
+      universes: [Thematique.alimentation],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
       ngc_key: 'a . b . c',

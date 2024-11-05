@@ -2,7 +2,6 @@ import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels
 import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
 import { DB, TestUtil } from '../../../TestUtil';
 import { Besoin } from '../../../../src/domain/aides/besoin';
-import { Univers } from '../../../../src/domain/univers/univers';
 import { ThematiqueUnivers } from '../../../../src/domain/univers/thematiqueUnivers';
 import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
 import { KYC, Mission } from '.prisma/client';
@@ -38,7 +37,7 @@ describe('/api/incoming/cms (API test)', () => {
       univers: [
         {
           id: 1,
-          code: Univers.climat,
+          code: Thematique.climat,
         },
       ],
       thematique_univers: [
@@ -83,7 +82,7 @@ describe('/api/incoming/cms (API test)', () => {
       univers: [
         {
           id: 1,
-          code: Univers.climat,
+          code: Thematique.climat,
         },
       ],
       thematique_univers: [
@@ -152,7 +151,7 @@ describe('/api/incoming/cms (API test)', () => {
       univers: [
         {
           id: 1,
-          code: Univers.climat,
+          code: Thematique.climat,
         },
       ],
       OR_Conditions: [
@@ -504,7 +503,7 @@ describe('/api/incoming/cms (API test)', () => {
     ]);
     expect(item.thematique).toEqual(Thematique.alimentation);
     expect(item.tags).toEqual([Tag.capacite_physique, Tag.possede_velo]);
-    expect(item.universes).toEqual([Univers.climat]);
+    expect(item.universes).toEqual([Thematique.climat]);
     expect(item.conditions).toStrictEqual([
       [{ id_kyc: 8888, code_kyc: '999', code_reponse: 'yop' }],
     ]);
@@ -555,7 +554,7 @@ describe('/api/incoming/cms (API test)', () => {
     ]);
     expect(item.thematique).toEqual(Thematique.alimentation);
     expect(item.tags).toEqual([Tag.capacite_physique, Tag.possede_velo]);
-    expect(item.universes).toEqual([Univers.climat]);
+    expect(item.universes).toEqual([Thematique.climat]);
     expect(item.conditions).toStrictEqual([
       [{ id_kyc: 8888, code_kyc: '999', code_reponse: 'yop' }],
     ]);
@@ -648,7 +647,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.impact_kg_co2).toEqual(10);
     expect(defi.thematique).toEqual('alimentation');
     expect(defi.tags).toEqual(['capacite_physique', 'possede_velo']);
-    expect(defi.universes).toEqual([Univers.climat]);
+    expect(defi.universes).toEqual([Thematique.climat]);
     expect(defi.thematiquesUnivers).toEqual([
       ThematiqueUnivers.dechets_compost,
     ]);
@@ -699,7 +698,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.impact_kg_co2).toEqual(10);
     expect(defi.thematique).toEqual('alimentation');
     expect(defi.tags).toEqual(['capacite_physique', 'possede_velo']);
-    expect(defi.universes).toEqual([Univers.climat]);
+    expect(defi.universes).toEqual([Thematique.climat]);
     expect(defi.thematiquesUnivers).toEqual([
       ThematiqueUnivers.dechets_compost,
     ]);

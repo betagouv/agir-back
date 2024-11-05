@@ -1,6 +1,6 @@
 import { TestUtil } from '../../TestUtil';
 import { ThematiqueStatistiqueRepository } from '../../../src/infrastructure/repository/universStatistique.repository';
-import { Univers } from '../../../src/domain/univers/univers';
+import { Thematique } from '../../../src/domain/contenu/thematique';
 
 describe('UniversStatistiqueRepository', () => {
   const OLD_ENV = process.env;
@@ -27,7 +27,7 @@ describe('UniversStatistiqueRepository', () => {
     // WHEN
     await universStatistiqueRepository.upsert(
       'idUnivers1',
-      Univers.alimentation,
+      Thematique.alimentation,
       0,
       3,
       2,
@@ -37,7 +37,7 @@ describe('UniversStatistiqueRepository', () => {
     );
     await universStatistiqueRepository.upsert(
       'idUnivers2',
-      Univers.climat,
+      Thematique.climat,
       1,
       0,
       2,
@@ -66,7 +66,7 @@ describe('UniversStatistiqueRepository', () => {
     expect(universStatistique).toHaveLength(2);
     expect(universStatistique1).toStrictEqual({
       universId: 'idUnivers1',
-      titre: Univers.alimentation,
+      titre: Thematique.alimentation,
       completion_pourcentage_1_20: 0,
       completion_pourcentage_21_40: 3,
       completion_pourcentage_41_60: 2,
@@ -76,7 +76,7 @@ describe('UniversStatistiqueRepository', () => {
     });
     expect(universStatistique2).toStrictEqual({
       universId: 'idUnivers2',
-      titre: Univers.climat,
+      titre: Thematique.climat,
       completion_pourcentage_1_20: 1,
       completion_pourcentage_21_40: 0,
       completion_pourcentage_41_60: 2,
@@ -87,7 +87,7 @@ describe('UniversStatistiqueRepository', () => {
 
     await universStatistiqueRepository.upsert(
       'idUnivers1',
-      Univers.alimentation,
+      Thematique.alimentation,
       1,
       4,
       2,
@@ -109,7 +109,7 @@ describe('UniversStatistiqueRepository', () => {
     expect(universStatistiqueApresUpsert).toHaveLength(2);
     expect(universStatistique1ApresUpsert).toStrictEqual({
       universId: 'idUnivers1',
-      titre: Univers.alimentation,
+      titre: Thematique.alimentation,
       completion_pourcentage_1_20: 1,
       completion_pourcentage_21_40: 4,
       completion_pourcentage_41_60: 2,

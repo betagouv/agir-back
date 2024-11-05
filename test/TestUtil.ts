@@ -47,7 +47,6 @@ import { DefiHistory_v0 } from '../src/domain/object_store/defi/defiHistory_v0';
 import { DefiStatus } from '../src/domain/defis/defi';
 import { TagUtilisateur } from '../src/domain/scoring/tagUtilisateur';
 import { Besoin } from '../src/domain/aides/besoin';
-import { Univers } from '../src/domain/univers/univers';
 import { ThematiqueUnivers } from '../src/domain/univers/thematiqueUnivers';
 import { ContentType } from '../src/domain/contenu/contentType';
 import { Tag } from '../src/domain/scoring/tag';
@@ -316,7 +315,7 @@ export class TestUtil {
       sous_titre: 'ssss',
       tags: [TagUtilisateur.appetence_cafe],
       thematique: Thematique.consommation,
-      universes: [Univers.alimentation],
+      universes: [Thematique.alimentation],
       thematiquesUnivers: [ThematiqueUnivers.manger_local],
       created_at: undefined,
       updated_at: undefined,
@@ -369,7 +368,7 @@ export class TestUtil {
       points: 10,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Univers.alimentation],
+      universes: [Thematique.alimentation],
       thematique: Thematique.climat,
       type: TypeReponseQuestionKYC.choix_multiple,
       ngc_key: 'a . b . c',
@@ -414,7 +413,7 @@ export class TestUtil {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.todo,
-          universes: [Univers.climat],
+          universes: [Thematique.climat],
           accessible: false,
           motif: 'bidon',
           categorie: Categorie.recommandation,
@@ -449,7 +448,7 @@ export class TestUtil {
             { label: 'Ce que je mange', code: Thematique.alimentation },
           ],
           tags: [],
-          universes: [Univers.climat],
+          universes: [Thematique.climat],
           short_question: 'short',
           image_url: 'URL',
           conditions: [],

@@ -4,7 +4,6 @@ import {
   Unite,
 } from '../../../../src/domain/kyc/questionKYC';
 import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
-import { Univers } from '../../../../src/domain/univers/univers';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
@@ -417,7 +416,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         points: 10,
         question: 'The question !',
         tags: [Tag.possede_voiture],
-        universes: [Univers.alimentation],
+        universes: [Thematique.alimentation],
         thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.choix_multiple,
         ngc_key: 'a . b . c',
@@ -482,7 +481,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         points: 10,
         question: 'The question !',
         tags: [Tag.possede_voiture],
-        universes: [Univers.alimentation],
+        universes: [Thematique.alimentation],
         thematique: Thematique.climat,
         ngc_key: 'a . b . c',
         type: TypeReponseQuestionKYC.choix_multiple,
@@ -546,7 +545,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         points: 10,
         question: 'The question !',
         tags: [Tag.possede_voiture],
-        universes: [Univers.alimentation],
+        universes: [Thematique.alimentation],
         thematique: Thematique.climat,
         ngc_key: 'a . b . c',
         type: TypeReponseQuestionKYC.choix_multiple,
@@ -624,7 +623,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         points: 10,
         question: 'The question !',
         tags: [Tag.possede_voiture],
-        universes: [Univers.alimentation],
+        universes: [Thematique.alimentation],
         thematique: Thematique.climat,
         ngc_key: 'a . b . c',
         type: TypeReponseQuestionKYC.choix_multiple,
@@ -712,7 +711,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         points: 10,
         question: 'The question !',
         tags: [Tag.possede_voiture],
-        universes: [Univers.alimentation],
+        universes: [Thematique.alimentation],
         thematique: Thematique.climat,
         ngc_key: 'a . b . c',
         type: TypeReponseQuestionKYC.choix_multiple,
@@ -793,7 +792,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         points: 10,
         question: 'The question !',
         tags: [Tag.possede_voiture],
-        universes: [Univers.alimentation],
+        universes: [Thematique.alimentation],
         thematique: Thematique.climat,
         ngc_key: 'a . b . c',
         type: TypeReponseQuestionKYC.choix_multiple,
@@ -869,7 +868,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         question: 'The question !',
         tags: [Tag.possede_voiture],
         ngc_key: 'a . b . c',
-        universes: [Univers.alimentation],
+        universes: [Thematique.alimentation],
         thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.entier,
         reponses: [],
@@ -966,7 +965,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         question: 'The question !',
         tags: [Tag.possede_voiture],
         ngc_key: 'a . b . c',
-        universes: [Univers.alimentation],
+        universes: [Thematique.alimentation],
         thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.choix_multiple,
         reponses: [
@@ -991,7 +990,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         question: 'The question !',
         tags: [Tag.possede_voiture],
         ngc_key: 'a . b . c',
-        universes: [Univers.alimentation],
+        universes: [Thematique.alimentation],
         thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.libre,
         reponses: [],
@@ -1077,7 +1076,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         points: 10,
         question: 'The question !',
         tags: [Tag.possede_voiture],
-        universes: [Univers.climat],
+        universes: [Thematique.climat],
         thematique: Thematique.climat,
         ngc_key: 'a . b . c',
         type: TypeReponseQuestionKYC.libre,
@@ -1098,7 +1097,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // WHEN
     const questions = history.getKYCRestantes(
       Categorie.test,
-      Univers.consommation,
+      Thematique.consommation,
     );
 
     // THEN

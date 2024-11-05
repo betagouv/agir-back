@@ -2,7 +2,6 @@ import { DB, TestUtil } from '../../TestUtil';
 import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { ContentType } from '../../../src/domain/contenu/contentType';
-import { Univers } from '../../../src/domain/univers/univers';
 import {
   TypeReponseQuestionKYC,
   BooleanKYC,
@@ -477,7 +476,7 @@ describe('Mission (API test)', () => {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.en_cours,
-          universes: [Univers.climat],
+          universes: [Thematique.climat],
           accessible: false,
           motif: 'bidon',
           categorie: Categorie.recommandation,
@@ -544,7 +543,7 @@ describe('Mission (API test)', () => {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.en_cours,
-          universes: [Univers.climat],
+          universes: [Thematique.climat],
           accessible: false,
           motif: 'bidon',
           categorie: Categorie.recommandation,
@@ -612,7 +611,7 @@ describe('Mission (API test)', () => {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.en_cours,
-          universes: [Univers.climat],
+          universes: [Thematique.climat],
           accessible: false,
           motif: 'bidon',
           categorie: Categorie.recommandation,
@@ -662,7 +661,7 @@ describe('Mission (API test)', () => {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.en_cours,
-          universes: [Univers.climat],
+          universes: [Thematique.climat],
           accessible: false,
           motif: 'bidon',
           categorie: Categorie.recommandation,
@@ -2641,7 +2640,7 @@ describe('Mission (API test)', () => {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.en_cours,
-          universes: [Univers.climat],
+          universes: [Thematique.climat],
           accessible: false,
           motif: 'bidon',
           categorie: Categorie.recommandation,

@@ -7,8 +7,8 @@ import {
   LienBilanThematique,
   NiveauImpact,
 } from '../../../../domain/bilan/bilanCarbone';
-import { Univers } from '../../../../domain/univers/univers';
 import { ThematiqueRepository } from '../../../repository/thematique.repository';
+import { Thematique } from '../../../../domain/contenu/thematique';
 
 export class DetailImpactAPI {
   @ApiProperty() label: string;
@@ -29,7 +29,7 @@ export class DetailImpactAPI {
 }
 
 export class ImpactUniversAPI {
-  @ApiProperty() univers: Univers;
+  @ApiProperty() univers: Thematique;
   @ApiProperty() univers_label: string;
   @ApiProperty() pourcentage: number;
   @ApiProperty() impact_kg_annee: number;
@@ -88,7 +88,7 @@ export class MiniBilanCarboneAPI {
 }
 
 export class LienBilanUniversAPI {
-  @ApiProperty() univers: Univers;
+  @ApiProperty() univers: Thematique;
   @ApiProperty() univers_label: string;
   @ApiProperty() image_url: string;
 

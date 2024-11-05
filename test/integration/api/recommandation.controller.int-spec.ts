@@ -13,7 +13,6 @@ import { DB, TestUtil } from '../../TestUtil';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
-import { Univers } from '../../../src/domain/univers/univers';
 import { Defi } from '.prisma/client';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
@@ -31,7 +30,7 @@ const DEFI_1: Defi_v0 = {
   pourquoi: 'pourquoi',
   sous_titre: 'sous_titre',
   status: DefiStatus.en_cours,
-  universes: [Univers.climat],
+  universes: [Thematique.climat],
   accessible: true,
   motif: 'truc',
   categorie: Categorie.recommandation,
@@ -49,7 +48,7 @@ const DEFI_1_DEF: Defi = {
   astuces: 'astuce',
   pourquoi: 'pourquoi',
   sous_titre: 'sous_titre',
-  universes: [Univers.climat],
+  universes: [Thematique.climat],
   thematiquesUnivers: [ThematiqueUnivers.dechets_compost],
   created_at: undefined,
   updated_at: undefined,
@@ -964,7 +963,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         { label: 'DDD', code: Thematique.transport },
       ],
       tags: [Tag.R6],
-      universes: [Univers.climat],
+      universes: [Thematique.climat],
     });
 
     await TestUtil.create(DB.kYC, {
@@ -977,7 +976,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       thematique: Thematique.consommation,
       reponses: [{ label: 'AAA', code: Thematique.climat }],
       tags: [Tag.R6, Tag.R1],
-      universes: [Univers.logement],
+      universes: [Thematique.logement],
     });
 
     const kyc: KYCHistory_v0 = {
@@ -1041,7 +1040,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         { label: 'DDD', code: Thematique.transport },
       ],
       tags: [Tag.R6],
-      universes: [Univers.climat],
+      universes: [Thematique.climat],
     });
 
     await TestUtil.create(DB.kYC, {
@@ -1054,7 +1053,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       thematique: Thematique.consommation,
       reponses: [{ label: 'AAA', code: Thematique.climat }],
       tags: [Tag.R6, Tag.R1],
-      universes: [Univers.logement],
+      universes: [Thematique.logement],
     });
 
     const kyc: KYCHistory_v0 = {

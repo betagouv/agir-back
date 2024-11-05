@@ -13,7 +13,6 @@ import {
   TypeReponseQuestionKYC,
   Unite,
 } from '../../../src/domain/kyc/questionKYC';
-import { Univers } from '../../../src/domain/univers/univers';
 
 function getFakeUtilisteur() {
   return {
@@ -391,7 +390,7 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
             { label: 'Ce que je mange', code: Thematique.alimentation },
           ],
           tags: [],
-          universes: [Univers.climat],
+          universes: [Thematique.climat],
           short_question: 'short',
           image_url: 'AAA',
           conditions: [],

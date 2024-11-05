@@ -18,7 +18,6 @@ import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
-import { Univers } from '../../../src/domain/univers/univers';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { KYC } from '.prisma/client';
@@ -106,7 +105,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
             { label: 'Mon logement', code: Thematique.logement },
           ],
           tags: [TagUtilisateur.appetence_bouger_sante],
-          universes: [Univers.consommation],
+          universes: [Thematique.consommation],
           thematique: Thematique.consommation,
           ngc_key: '123',
           short_question: 'short',
@@ -127,7 +126,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Univers.alimentation],
+      universes: [Thematique.alimentation],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
       ngc_key: 'a . b . c',
@@ -167,7 +166,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(new_kyc.id_cms).toEqual(22);
     expect(new_kyc.categorie).toEqual(Categorie.recommandation);
     expect(new_kyc.tags).toEqual([Tag.possede_voiture]);
-    expect(new_kyc.universes).toEqual([Univers.alimentation]);
+    expect(new_kyc.universes).toEqual([Thematique.alimentation]);
     expect(new_kyc.thematique).toEqual(Thematique.alimentation);
     expect(new_kyc.ngc_key).toEqual('a . b . c');
     expect(new_kyc.reponses).toEqual([
@@ -219,7 +218,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Univers.alimentation],
+      universes: [Thematique.alimentation],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
       ngc_key: 'a . b . c',
@@ -1384,7 +1383,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Univers.alimentation],
+      universes: [Thematique.alimentation],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
       ngc_key: 'a . b . c',

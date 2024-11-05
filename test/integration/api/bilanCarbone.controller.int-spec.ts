@@ -8,7 +8,6 @@ import {
 } from '../../../src/domain/kyc/questionKYC';
 import { Superficie } from '../../../src/domain/logement/logement';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
-import { Univers } from '../../../src/domain/univers/univers';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { DB, TestUtil } from '../../TestUtil';
 import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
@@ -1015,7 +1014,7 @@ describe('/bilan (API test)', () => {
           reponses: [],
           reponses_possibles: [],
           tags: [],
-          universes: [Univers.climat],
+          universes: [Thematique.climat],
           ngc_key: 'logement . âge',
           short_question: 'short',
           image_url: 'AAA',

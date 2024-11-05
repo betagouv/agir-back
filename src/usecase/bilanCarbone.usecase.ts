@@ -15,10 +15,10 @@ import {
 import { TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { QuestionKYCUsecase } from './questionKYC.usecase';
-import { Univers } from '../domain/univers/univers';
 import { KYCID } from '../domain/kyc/KYCID';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { Feature } from '../domain/gamification/feature';
+import { Thematique } from '../domain/contenu/thematique';
 
 const SEUIL_POURCENTAGE_BILAN_COMPLET = 99;
 
@@ -101,7 +101,7 @@ export class BilanCarboneUsecase {
         {
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1728466903/Mobilite_df75aefd09.svg',
-          thematique: Univers.transport,
+          thematique: Thematique.transport,
           nombre_total_question: enchainement_transport_progression.target,
           pourcentage_progression: Math.round(
             (enchainement_transport_progression.current /
@@ -114,7 +114,7 @@ export class BilanCarboneUsecase {
         {
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1728466523/cuisine_da54797693.svg',
-          thematique: Univers.alimentation,
+          thematique: Thematique.alimentation,
           nombre_total_question: enchainement_alimentation_progression.target,
           pourcentage_progression: Math.round(
             (enchainement_alimentation_progression.current /
@@ -127,7 +127,7 @@ export class BilanCarboneUsecase {
         {
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1728468852/conso_7522b1950d.svg',
-          thematique: Univers.consommation,
+          thematique: Thematique.consommation,
           nombre_total_question: enchainement_conso_progression.target,
           pourcentage_progression: Math.round(
             (enchainement_conso_progression.current /
@@ -140,7 +140,7 @@ export class BilanCarboneUsecase {
         {
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1728468978/maison_80242d91f3.svg',
-          thematique: Univers.logement,
+          thematique: Thematique.logement,
           nombre_total_question: enchainement_logement_progression.target,
           pourcentage_progression: Math.round(
             (enchainement_logement_progression.current /

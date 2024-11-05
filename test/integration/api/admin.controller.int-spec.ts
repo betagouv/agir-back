@@ -14,7 +14,6 @@ import {
   DefiHistory_v0,
   Defi_v0,
 } from '../../../src/domain/object_store/defi/defiHistory_v0';
-import { Univers } from '../../../src/domain/univers/univers';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
@@ -356,7 +355,7 @@ describe('Admin (API test)', () => {
           date_acceptation: new Date(),
           pourquoi: 'pourquoi',
           sous_titre: 'sous_titre',
-          universes: [Univers.climat],
+          universes: [Thematique.climat],
           accessible: true,
           motif: 'truc',
           id: '001',
@@ -422,7 +421,7 @@ describe('Admin (API test)', () => {
             { label: 'Ce que je mange', code: Thematique.alimentation },
           ],
           tags: [],
-          universes: [Univers.climat],
+          universes: [Thematique.climat],
         },
       ],
     };
@@ -1169,7 +1168,7 @@ describe('Admin (API test)', () => {
       pourquoi: 'POURQUOI',
       sous_titre: 'SOUS TITRE',
       status: DefiStatus.todo,
-      universes: [Univers.climat],
+      universes: [Thematique.climat],
       accessible: true,
       motif: 'truc',
       categorie: Categorie.recommandation,
@@ -1352,7 +1351,7 @@ describe('Admin (API test)', () => {
       thematiques_en_cours: null,
       thematiques_terminees: `${ThematiqueUnivers.cereales}, ${ThematiqueUnivers.mobilite_quotidien}`,
       univers_en_cours: null,
-      univers_termines: `${Univers.alimentation}, ${Univers.transport}`,
+      univers_termines: `${Thematique.alimentation}, ${Thematique.transport}`,
     });
     expect(userStatistique2).toEqual({
       utilisateurId: 'test-id-2',
@@ -1362,8 +1361,8 @@ describe('Admin (API test)', () => {
       nombre_defis_realises: 1,
       thematiques_en_cours: ThematiqueUnivers.cereales,
       thematiques_terminees: `${ThematiqueUnivers.gaspillage_alimentaire}, ${ThematiqueUnivers.mobilite_quotidien}`,
-      univers_en_cours: Univers.alimentation,
-      univers_termines: Univers.transport,
+      univers_en_cours: Thematique.alimentation,
+      univers_termines: Thematique.transport,
     });
   });
 
@@ -1503,7 +1502,7 @@ describe('Admin (API test)', () => {
       pourquoi: 'POURQUOI',
       sous_titre: 'SOUS TITRE',
       status: DefiStatus.todo,
-      universes: [Univers.climat],
+      universes: [Thematique.climat],
       accessible: true,
       motif: '',
       categorie: Categorie.recommandation,
@@ -2286,7 +2285,7 @@ describe('Admin (API test)', () => {
 
     expect(univers1).toStrictEqual({
       universId: 'alimentation',
-      titre: Univers.alimentation,
+      titre: Thematique.alimentation,
       completion_pourcentage_1_20: 0,
       completion_pourcentage_21_40: 0,
       completion_pourcentage_41_60: 0,

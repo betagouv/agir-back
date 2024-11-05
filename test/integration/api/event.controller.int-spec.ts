@@ -10,7 +10,6 @@ import {
 import { Gamification } from '../../../src/domain/gamification/gamification';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
-import { Univers } from '../../../src/domain/univers/univers';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
 

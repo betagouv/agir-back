@@ -8,7 +8,6 @@ export class NewServiceDefinition {
   titre: string;
   sous_titre: string;
   icon_url: string;
-  univers: string;
   thematique: Thematique;
   external_url?: string;
   is_available_inhouse: boolean;

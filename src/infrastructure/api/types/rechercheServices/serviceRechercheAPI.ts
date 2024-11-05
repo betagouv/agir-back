@@ -25,7 +25,7 @@ export class ServiceRechercheAPI {
       sous_titre: service.sous_titre,
       external_url: service.external_url,
       icon_url: service.icon_url,
-      univers: service.univers,
+      univers: service.thematique,
       thematique: service.thematique,
       is_available_inhouse: service.is_available_inhouse,
     };

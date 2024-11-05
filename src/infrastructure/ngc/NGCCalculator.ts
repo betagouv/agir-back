@@ -6,7 +6,6 @@ import {
   DetailImpact,
   ImpactThematique,
 } from '../../domain/bilan/bilanCarbone';
-import { Univers } from '../../domain/univers/univers';
 import { Bilan_OLD } from '../../domain/bilan/bilan_old';
 import { Thematique } from '../../domain/contenu/thematique';
 

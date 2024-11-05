@@ -4,7 +4,7 @@ import { CategorieRechercheManager } from '../../domain/bibliotheque_services/re
 import { ServiceRechercheID } from '../../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { ServiceAsyncID } from '../../domain/bibliotheque_services/serviceAsyncID';
 import { ServiceExterneID } from '../../domain/bibliotheque_services/serviceExterneID';
-import { Univers } from '../../domain/univers/univers';
+import { Thematique } from '../../domain/contenu/thematique';
 
 const new_service_catalogue: NewServiceDefinition[] = [
   {
@@ -13,8 +13,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/cerise.webp',
     titre: 'Fruits et légumes de saison',
     sous_titre: CategorieRechercheManager.getMoisCourant(),
-    univers: Univers.alimentation,
-    thematique: Univers.alimentation,
+    thematique: Thematique.alimentation,
     is_available_inhouse: true,
   },
   {
@@ -23,8 +22,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/commerce.webp',
     titre: 'Que faire de mes objets ?',
     sous_titre: 'donner, réparer, recycler,...',
-    univers: Univers.consommation,
-    thematique: Univers.consommation,
+    thematique: Thematique.consommation,
     is_available_inhouse: true,
   },
   {
@@ -34,8 +32,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
       'https://res.cloudinary.com/dq023imd8/image/upload/v1727275914/Screenshot_2024_09_25_at_16_51_08_876426bef9.png',
     titre: 'Votre consommation électrique',
     sous_titre: 'Conseils et suivi',
-    univers: Univers.logement,
-    thematique: Univers.logement,
+    thematique: Thematique.logement,
     is_available_inhouse: true,
   },
   {
@@ -44,8 +41,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/commerce.webp',
     titre: 'Mes commerces de proximité',
     sous_titre: 'À {COMMUNE}',
-    univers: Univers.alimentation,
-    thematique: Univers.alimentation,
+    thematique: Thematique.alimentation,
     is_available_inhouse: true,
   },
   {
@@ -55,8 +51,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/omelette.webp',
     titre: 'Recettes saines et équilibrées',
     sous_titre: 'Bas carbone',
-    univers: Univers.alimentation,
-    thematique: Univers.alimentation,
+    thematique: Thematique.alimentation,
     is_available_inhouse: true,
   },
   {
@@ -66,8 +61,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
       'https://www.mangerbouger.fr/var/mb/storage/images/_aliases/reference/9/9/9/1/11999-1-eng-GB/Poissons@3x.png',
     titre: 'Poissons de saison',
     sous_titre: 'Manger Bouger',
-    univers: Univers.alimentation,
-    thematique: Univers.alimentation,
+    thematique: Thematique.alimentation,
     is_available_inhouse: false,
   },
   {
@@ -76,8 +70,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     icon_url: 'https://reseaucompost.org/themes/custom/rcc/logo.svg',
     titre: 'Où composter proche de chez moi ?',
     sous_titre: 'Réseau Compost Citoyen',
-    univers: Univers.alimentation,
-    thematique: Univers.alimentation,
+    thematique: Thematique.alimentation,
     is_available_inhouse: false,
   },
   {
@@ -88,8 +81,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
       'https://jechangemavoiture.gouv.fr/jcmv/simulateur/assets/img/marianne-64.png',
     titre: 'Quel véhicule pour remplacer le mien ?',
     sous_titre: 'Je change ma voiture',
-    univers: Univers.transport,
-    thematique: Univers.transport,
+    thematique: Thematique.transport,
     is_available_inhouse: false,
   },
   {
@@ -99,8 +91,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
       'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Logo_France_V%C3%A9lo_Tourisme.jpg/320px-Logo_France_V%C3%A9lo_Tourisme.jpg',
     titre: 'Voyager à vélo en France',
     sous_titre: 'France vélo tourisme',
-    univers: Univers.transport,
-    thematique: Univers.transport,
+    thematique: Thematique.transport,
     is_available_inhouse: false,
   },
   {
@@ -110,8 +101,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
       'https://upload.wikimedia.org/wikipedia/fr/thumb/3/3d/Logo_Impact_CO2.svg/320px-Logo_Impact_CO2.svg.png',
     titre: 'Comparateur carbone',
     sous_titre: 'Impact CO2',
-    univers: Univers.climat,
-    thematique: Univers.climat,
+    thematique: Thematique.climat,
     is_available_inhouse: false,
   },
   {
@@ -121,8 +111,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
       'https://www.jeveuxaider.gouv.fr/_nuxt/jeveuxaider-logo.5c6a563b.svg',
     titre: 'Devenir bénévole',
     sous_titre: 'Je veux aider',
-    univers: Univers.climat,
-    thematique: Univers.climat,
+    thematique: Thematique.climat,
     is_available_inhouse: false,
   },
   {
@@ -132,8 +121,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
       'https://mesaidesreno.beta.gouv.fr/_next/static/media/logo.6655b6e6.svg',
     titre: 'Estimer mes aides à la rénovation',
     sous_titre: 'Mes Aides Reno',
-    univers: Univers.logement,
-    thematique: Univers.logement,
+    thematique: Thematique.logement,
     is_available_inhouse: false,
   },
   {
@@ -144,8 +132,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
       'https://www.cieau.com/wp-content/themes/understrap-child/img/cieau_logo_header.png',
     titre: `Estimer ma conso d'eau`,
     sous_titre: 'Cieau',
-    univers: Univers.logement,
-    thematique: Univers.logement,
+    thematique: Thematique.logement,
     is_available_inhouse: false,
   },
   {
@@ -154,8 +141,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     icon_url: 'https://pacoupa.ademe.fr/_next/static/media/hero.849dfaf7.svg',
     titre: `Changer son chauffage`,
     sous_titre: 'Pacoupa',
-    univers: Univers.logement,
-    thematique: Univers.logement,
+    thematique: Thematique.logement,
     is_available_inhouse: false,
   },
   {
@@ -166,8 +152,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
       'https://epargnonsnosressources.gouv.fr/wp-content/uploads/2023/09/picto_reparabilite_desktop-115.png',
     titre: `Mon appareil se répare-t-il facilement ?`,
     sous_titre: 'Epargnons nos ressources',
-    univers: Univers.consommation,
-    thematique: Univers.consommation,
+    thematique: Thematique.consommation,
     is_available_inhouse: false,
   },
   {
@@ -178,8 +163,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
       'https://epargnonsnosressources.gouv.fr/wp-content/uploads/2023/09/outils_index-des-labels_icon_desktop_115x95.png',
     titre: `Se repérer dans les labels`,
     sous_titre: 'Epargnons nos ressources',
-    univers: Univers.consommation,
-    thematique: Univers.consommation,
+    thematique: Thematique.consommation,
     is_available_inhouse: false,
   },
   {
@@ -190,8 +174,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
       'https://epargnonsnosressources.gouv.fr/wp-content/uploads/2023/10/icons-outils_diagnostique.png',
     titre: `Diagnostiquer une panne`,
     sous_titre: 'Epargnons nos ressources',
-    univers: Univers.consommation,
-    thematique: Univers.consommation,
+    thematique: Thematique.consommation,
     is_available_inhouse: false,
   },
   {
@@ -201,8 +184,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
       'https://epargnonsnosressources.gouv.fr/wp-content/uploads/2023/09/picto_tutoreparation_desktop_115x95.png',
     titre: `Tutos pour réparer mes objets`,
     sous_titre: 'Epargnons nos ressources',
-    univers: Univers.consommation,
-    thematique: Univers.consommation,
+    thematique: Thematique.consommation,
     is_available_inhouse: false,
   },
 ];

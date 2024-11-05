@@ -245,7 +245,7 @@ export class RechercheServicesUsecase {
   // DEPRECATED
   async getListServiceDef(
     utilisateurId: string,
-    univers: string,
+    thematique: string,
   ): Promise<NewServiceDefinition[]> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -254,7 +254,7 @@ export class RechercheServicesUsecase {
     Utilisateur.checkState(utilisateur);
 
     let result = ReferentielUsecase.getNewServiceCatalogue();
-    result = result.filter((r) => r.univers === univers);
+    result = result.filter((r) => r.thematique === thematique);
 
     return this.personnalisator.personnaliser(result, utilisateur);
   }
