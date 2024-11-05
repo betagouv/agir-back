@@ -2,7 +2,7 @@ import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels
 import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
 import { DB, TestUtil } from '../../../TestUtil';
 import { Besoin } from '../../../../src/domain/aides/besoin';
-import { ThematiqueUnivers } from '../../../../src/domain/univers/thematiqueUnivers';
+import { CodeMission } from '../../../../src/domain/thematique/codeMission';
 import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
 import { KYC, Mission } from '.prisma/client';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
@@ -43,7 +43,7 @@ describe('/api/incoming/cms (API test)', () => {
       thematique_univers: [
         {
           id: 1,
-          code: ThematiqueUnivers.dechets_compost,
+          code: CodeMission.dechets_compost,
         },
       ],
       mois: '0,1',
@@ -88,7 +88,7 @@ describe('/api/incoming/cms (API test)', () => {
       thematique_univers: [
         {
           id: 1,
-          code: ThematiqueUnivers.dechets_compost,
+          code: CodeMission.dechets_compost,
         },
       ],
       mois: '0,1',
@@ -177,7 +177,7 @@ describe('/api/incoming/cms (API test)', () => {
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       est_visible: true,
       titre: 'YOO',
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       imageUrl: {
         formats: {
           thumbnail: { url: 'https://' },
@@ -577,7 +577,7 @@ describe('/api/incoming/cms (API test)', () => {
 
     expect(item.est_visible).toEqual(true);
     expect(item.id_cms).toEqual(123);
-    expect(item.code).toEqual(ThematiqueUnivers.cereales);
+    expect(item.code).toEqual(CodeMission.cereales);
     expect(item.thematique).toEqual(Thematique.alimentation);
     expect(item.titre).toEqual('YOO');
     expect(item.image_url).toEqual('https://');
@@ -648,9 +648,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.thematique).toEqual('alimentation');
     expect(defi.tags).toEqual(['capacite_physique', 'possede_velo']);
     expect(defi.universes).toEqual([Thematique.climat]);
-    expect(defi.thematiquesUnivers).toEqual([
-      ThematiqueUnivers.dechets_compost,
-    ]);
+    expect(defi.thematiquesUnivers).toEqual([CodeMission.dechets_compost]);
     expect(defi.mois).toStrictEqual([0, 1]);
     expect(defi.conditions).toStrictEqual([
       [{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }],
@@ -699,9 +697,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.thematique).toEqual('alimentation');
     expect(defi.tags).toEqual(['capacite_physique', 'possede_velo']);
     expect(defi.universes).toEqual([Thematique.climat]);
-    expect(defi.thematiquesUnivers).toEqual([
-      ThematiqueUnivers.dechets_compost,
-    ]);
+    expect(defi.thematiquesUnivers).toEqual([CodeMission.dechets_compost]);
     expect(defi.mois).toStrictEqual([0, 1]);
     expect(defi.conditions).toStrictEqual([
       [{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }],

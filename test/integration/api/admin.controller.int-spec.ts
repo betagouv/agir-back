@@ -17,7 +17,7 @@ import {
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
-import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
+import { CodeMission } from '../../../src/domain/thematique/codeMission';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import { Objectif_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
@@ -1220,7 +1220,7 @@ describe('Admin (API test)', () => {
           done_at: new Date(),
           objectifs: [objectifComplete, objectifComplete],
           est_visible: true,
-          code: ThematiqueUnivers.cereales,
+          code: CodeMission.cereales,
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
@@ -1231,7 +1231,7 @@ describe('Admin (API test)', () => {
           done_at: null,
           objectifs: [objectifNonComplete, objectifNonComplete],
           est_visible: true,
-          code: ThematiqueUnivers.gaspillage_alimentaire,
+          code: CodeMission.gaspillage_alimentaire,
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
@@ -1242,7 +1242,7 @@ describe('Admin (API test)', () => {
           done_at: new Date(),
           objectifs: [objectifComplete, objectifComplete],
           est_visible: true,
-          code: ThematiqueUnivers.mobilite_quotidien,
+          code: CodeMission.mobilite_quotidien,
           image_url: 'image',
           thematique: Thematique.transport,
           titre: 'titre',
@@ -1258,7 +1258,7 @@ describe('Admin (API test)', () => {
           done_at: null,
           objectifs: [objectifComplete, objectifNonComplete],
           est_visible: true,
-          code: ThematiqueUnivers.cereales,
+          code: CodeMission.cereales,
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
@@ -1269,7 +1269,7 @@ describe('Admin (API test)', () => {
           done_at: new Date(),
           objectifs: [objectifComplete, objectifComplete],
           est_visible: true,
-          code: ThematiqueUnivers.gaspillage_alimentaire,
+          code: CodeMission.gaspillage_alimentaire,
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
@@ -1280,7 +1280,7 @@ describe('Admin (API test)', () => {
           done_at: new Date(),
           objectifs: [objectifComplete, objectifComplete],
           est_visible: true,
-          code: ThematiqueUnivers.mobilite_quotidien,
+          code: CodeMission.mobilite_quotidien,
           image_url: 'image',
           thematique: Thematique.transport,
           titre: 'titre',
@@ -1349,7 +1349,7 @@ describe('Admin (API test)', () => {
       nombre_defis_en_cours: 1,
       nombre_defis_realises: 1,
       thematiques_en_cours: null,
-      thematiques_terminees: `${ThematiqueUnivers.cereales}, ${ThematiqueUnivers.mobilite_quotidien}`,
+      thematiques_terminees: `${CodeMission.cereales}, ${CodeMission.mobilite_quotidien}`,
       univers_en_cours: null,
       univers_termines: `${Thematique.alimentation}, ${Thematique.transport}`,
     });
@@ -1359,8 +1359,8 @@ describe('Admin (API test)', () => {
       nombre_defis_abandonnes: 1,
       nombre_defis_en_cours: 0,
       nombre_defis_realises: 1,
-      thematiques_en_cours: ThematiqueUnivers.cereales,
-      thematiques_terminees: `${ThematiqueUnivers.gaspillage_alimentaire}, ${ThematiqueUnivers.mobilite_quotidien}`,
+      thematiques_en_cours: CodeMission.cereales,
+      thematiques_terminees: `${CodeMission.gaspillage_alimentaire}, ${CodeMission.mobilite_quotidien}`,
       univers_en_cours: Thematique.alimentation,
       univers_termines: Thematique.transport,
     });
@@ -1883,7 +1883,7 @@ describe('Admin (API test)', () => {
         {
           id: '1',
           done_at: new Date(),
-          code: ThematiqueUnivers.cereales,
+          code: CodeMission.cereales,
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
@@ -1917,7 +1917,7 @@ describe('Admin (API test)', () => {
         {
           id: '3',
           done_at: null,
-          code: ThematiqueUnivers.mobilite_quotidien,
+          code: CodeMission.mobilite_quotidien,
           image_url: 'image',
           thematique: Thematique.transport,
           titre: 'titre',
@@ -1956,7 +1956,7 @@ describe('Admin (API test)', () => {
         {
           id: '1',
           done_at: null,
-          code: ThematiqueUnivers.cereales,
+          code: CodeMission.cereales,
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
@@ -1990,7 +1990,7 @@ describe('Admin (API test)', () => {
         {
           id: '2',
           done_at: null,
-          code: ThematiqueUnivers.gaspillage_alimentaire,
+          code: CodeMission.gaspillage_alimentaire,
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
@@ -2024,7 +2024,7 @@ describe('Admin (API test)', () => {
         {
           id: '3',
           done_at: null,
-          code: ThematiqueUnivers.mobilite_quotidien,
+          code: CodeMission.mobilite_quotidien,
           image_url: 'image',
           thematique: Thematique.transport,
           titre: 'titre',
@@ -2094,7 +2094,7 @@ describe('Admin (API test)', () => {
 
     expect(thematique1).toStrictEqual({
       thematiqueId: '1',
-      titre: ThematiqueUnivers.cereales,
+      titre: CodeMission.cereales,
       completion_pourcentage_1_20: 0,
       completion_pourcentage_21_40: 1,
       completion_pourcentage_41_60: 0,
@@ -2104,7 +2104,7 @@ describe('Admin (API test)', () => {
     });
     expect(thematique2).toStrictEqual({
       thematiqueId: '2',
-      titre: ThematiqueUnivers.gaspillage_alimentaire,
+      titre: CodeMission.gaspillage_alimentaire,
       completion_pourcentage_1_20: 0,
       completion_pourcentage_21_40: 0,
       completion_pourcentage_41_60: 0,
@@ -2114,7 +2114,7 @@ describe('Admin (API test)', () => {
     });
     expect(thematique3).toStrictEqual({
       thematiqueId: '3',
-      titre: ThematiqueUnivers.mobilite_quotidien,
+      titre: CodeMission.mobilite_quotidien,
       completion_pourcentage_1_20: 0,
       completion_pourcentage_21_40: 2,
       completion_pourcentage_41_60: 0,
@@ -2153,7 +2153,7 @@ describe('Admin (API test)', () => {
           done_at: new Date(),
           objectifs: [objectifComplete, objectifComplete],
           est_visible: true,
-          code: ThematiqueUnivers.cereales,
+          code: CodeMission.cereales,
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
@@ -2164,7 +2164,7 @@ describe('Admin (API test)', () => {
           done_at: new Date(),
           objectifs: [objectifComplete, objectifComplete],
           est_visible: true,
-          code: ThematiqueUnivers.gaspillage_alimentaire,
+          code: CodeMission.gaspillage_alimentaire,
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
@@ -2175,7 +2175,7 @@ describe('Admin (API test)', () => {
           done_at: null,
           objectifs: [objectifComplete, objectifNonComplete],
           est_visible: true,
-          code: ThematiqueUnivers.mobilite_quotidien,
+          code: CodeMission.mobilite_quotidien,
           image_url: 'image',
           thematique: Thematique.transport,
           titre: 'titre',
@@ -2186,7 +2186,7 @@ describe('Admin (API test)', () => {
           done_at: null,
           objectifs: [objectifComplete, objectifNonComplete],
           est_visible: true,
-          code: ThematiqueUnivers.partir_vacances,
+          code: CodeMission.partir_vacances,
           image_url: 'image',
           thematique: Thematique.transport,
           titre: 'titre',
@@ -2202,7 +2202,7 @@ describe('Admin (API test)', () => {
           done_at: new Date(),
           objectifs: [objectifComplete, objectifComplete],
           est_visible: true,
-          code: ThematiqueUnivers.cereales,
+          code: CodeMission.cereales,
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
@@ -2213,7 +2213,7 @@ describe('Admin (API test)', () => {
           done_at: new Date(),
           objectifs: [objectifComplete, objectifComplete],
           est_visible: true,
-          code: ThematiqueUnivers.gaspillage_alimentaire,
+          code: CodeMission.gaspillage_alimentaire,
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
@@ -2224,7 +2224,7 @@ describe('Admin (API test)', () => {
           done_at: null,
           objectifs: [objectifNonComplete, objectifNonComplete],
           est_visible: true,
-          code: ThematiqueUnivers.mobilite_quotidien,
+          code: CodeMission.mobilite_quotidien,
           image_url: 'image',
           thematique: Thematique.transport,
           titre: 'titre',
@@ -2235,7 +2235,7 @@ describe('Admin (API test)', () => {
           done_at: new Date(),
           objectifs: [objectifComplete, objectifComplete],
           est_visible: true,
-          code: ThematiqueUnivers.partir_vacances,
+          code: CodeMission.partir_vacances,
           image_url: 'image',
           thematique: Thematique.climat,
           titre: 'titre',

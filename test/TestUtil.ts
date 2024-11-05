@@ -47,7 +47,7 @@ import { DefiHistory_v0 } from '../src/domain/object_store/defi/defiHistory_v0';
 import { DefiStatus } from '../src/domain/defis/defi';
 import { TagUtilisateur } from '../src/domain/scoring/tagUtilisateur';
 import { Besoin } from '../src/domain/aides/besoin';
-import { ThematiqueUnivers } from '../src/domain/univers/thematiqueUnivers';
+import { CodeMission } from '../src/domain/thematique/codeMission';
 import { ContentType } from '../src/domain/contenu/contentType';
 import { Tag } from '../src/domain/scoring/tag';
 import { KYCID } from '../src/domain/kyc/KYCID';
@@ -316,7 +316,7 @@ export class TestUtil {
       tags: [TagUtilisateur.appetence_cafe],
       thematique: Thematique.consommation,
       universes: [Thematique.alimentation],
-      thematiquesUnivers: [ThematiqueUnivers.manger_local],
+      thematiquesUnivers: [CodeMission.manger_local],
       created_at: undefined,
       updated_at: undefined,
       categorie: Categorie.recommandation,

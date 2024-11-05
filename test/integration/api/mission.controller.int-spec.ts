@@ -1,5 +1,5 @@
 import { DB, TestUtil } from '../../TestUtil';
-import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
+import { CodeMission } from '../../../src/domain/thematique/codeMission';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import {
@@ -48,7 +48,7 @@ describe('Mission (API test)', () => {
       {
         id: '1',
         done_at: null,
-        code: ThematiqueUnivers.cereales,
+        code: CodeMission.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -109,7 +109,7 @@ describe('Mission (API test)', () => {
       {
         id: '1',
         done_at: null,
-        code: ThematiqueUnivers.cereales,
+        code: CodeMission.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -159,7 +159,7 @@ describe('Mission (API test)', () => {
       {
         id: '1',
         done_at: new Date(1),
-        code: ThematiqueUnivers.cereales,
+        code: CodeMission.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -187,7 +187,7 @@ describe('Mission (API test)', () => {
       {
         id: '1',
         done_at: new Date(1),
-        code: ThematiqueUnivers.cereales,
+        code: CodeMission.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -226,7 +226,7 @@ describe('Mission (API test)', () => {
       {
         id: '1',
         done_at: null,
-        code: ThematiqueUnivers.cereales,
+        code: CodeMission.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -265,7 +265,7 @@ describe('Mission (API test)', () => {
       {
         id: '1',
         done_at: new Date(1),
-        code: ThematiqueUnivers.cereales,
+        code: CodeMission.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -304,7 +304,7 @@ describe('Mission (API test)', () => {
       {
         id: '1',
         done_at: null,
-        code: ThematiqueUnivers.cereales,
+        code: CodeMission.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -332,7 +332,7 @@ describe('Mission (API test)', () => {
       {
         id: '1',
         done_at: null,
-        code: ThematiqueUnivers.cereales,
+        code: CodeMission.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -372,7 +372,7 @@ describe('Mission (API test)', () => {
       {
         id: '1',
         done_at: null,
-        code: ThematiqueUnivers.cereales,
+        code: CodeMission.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -411,7 +411,7 @@ describe('Mission (API test)', () => {
       {
         id: '1',
         done_at: null,
-        code: ThematiqueUnivers.cereales,
+        code: CodeMission.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -703,7 +703,7 @@ describe('Mission (API test)', () => {
     });
 
     await TestUtil.create(DB.mission, {
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       thematique: Thematique.alimentation,
       titre: 'Mange de la graine',
       image_url: 'aaaa',
@@ -766,7 +766,7 @@ describe('Mission (API test)', () => {
     });
 
     await TestUtil.create(DB.mission, {
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       titre: 'Mange de la graine',
       image_url: 'aaaa',
     });
@@ -869,7 +869,7 @@ describe('Mission (API test)', () => {
       id_cms: 1,
       est_visible: true,
       objectifs: objectifs as any,
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
@@ -968,7 +968,7 @@ describe('Mission (API test)', () => {
       id_cms: 1,
       est_visible: true,
       objectifs: objectifs as any,
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
@@ -1066,7 +1066,7 @@ describe('Mission (API test)', () => {
     const mission_articles_tag: Mission = {
       id_cms: 1,
       est_visible: true,
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
@@ -1154,7 +1154,7 @@ describe('Mission (API test)', () => {
     const mission_articles_tag: Mission = {
       id_cms: 1,
       est_visible: true,
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
@@ -1488,7 +1488,7 @@ describe('Mission (API test)', () => {
     const mission_article: Mission = {
       id_cms: 1,
       est_visible: true,
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
@@ -1563,7 +1563,7 @@ describe('Mission (API test)', () => {
     const mission_article: Mission = {
       id_cms: 1,
       est_visible: true,
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
@@ -2368,7 +2368,7 @@ describe('Mission (API test)', () => {
     await TestUtil.create(DB.mission, {
       id_cms: 2,
       est_visible: false,
-      code: ThematiqueUnivers.dechets_compost,
+      code: CodeMission.dechets_compost,
     });
 
     // WHEN
@@ -2494,7 +2494,7 @@ describe('Mission (API test)', () => {
       id_cms: 1,
       est_visible: true,
       objectifs: objectifs as any,
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
@@ -2548,7 +2548,7 @@ describe('Mission (API test)', () => {
       id_cms: 1,
       est_visible: false,
       objectifs: [],
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
@@ -2582,7 +2582,7 @@ describe('Mission (API test)', () => {
       id_cms: 1,
       est_visible: true,
       objectifs: [],
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
@@ -2665,7 +2665,7 @@ describe('Mission (API test)', () => {
       id_cms: 1,
       est_visible: true,
       objectifs: [],
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       image_url: 'NEW img',
       thematique: Thematique.alimentation,
       titre: 'NEW titre',
@@ -2689,7 +2689,7 @@ describe('Mission (API test)', () => {
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual({
       cible_progression: 5,
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       image_url: 'NEW img',
       is_new: false,
       progression: 1,
@@ -2716,19 +2716,19 @@ describe('Mission (API test)', () => {
     await TestUtil.create(DB.mission, {
       id_cms: 1,
       thematique: Thematique.alimentation,
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       titre: 'cereales',
     });
     await TestUtil.create(DB.mission, {
       id_cms: 2,
       thematique: Thematique.alimentation,
-      code: ThematiqueUnivers.coming_soon,
+      code: CodeMission.coming_soon,
       titre: 'coming_soon',
     });
     await TestUtil.create(DB.mission, {
       id_cms: 3,
       thematique: Thematique.logement,
-      code: ThematiqueUnivers.partir_vacances,
+      code: CodeMission.partir_vacances,
       titre: 'partir_vacances',
     });
     await thematiqueRepository.onApplicationBootstrap();
@@ -2755,7 +2755,7 @@ describe('Mission (API test)', () => {
         {
           id: '1',
           done_at: new Date(),
-          code: ThematiqueUnivers.cereales,
+          code: CodeMission.cereales,
           image_url: 'img',
           thematique: Thematique.alimentation,
           titre: 'titre',
@@ -2788,7 +2788,7 @@ describe('Mission (API test)', () => {
 
     await TestUtil.create(DB.mission, {
       id_cms: 1,
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
     });
     await missionRepository.onApplicationBootstrap();
     await thematiqueRepository.onApplicationBootstrap();

@@ -24,7 +24,7 @@ import { Categorie } from '../domain/contenu/categorie';
 import { PonderationApplicativeManager } from '../domain/scoring/ponderationApplicative';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { QuestionGeneric } from '../domain/kyc/questionGeneric';
-import { TuileMission } from '../domain/univers/tuileMission';
+import { TuileMission } from '../domain/thematique/tuileMission';
 import { Thematique } from '../domain/contenu/thematique';
 import { PriorityContent } from '../domain/scoring/priorityContent';
 

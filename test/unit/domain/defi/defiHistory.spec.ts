@@ -6,7 +6,7 @@ import { Defi_v0 } from '../../../../src/domain/object_store/defi/defiHistory_v0
 import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
 import { Gamification } from '../../../../src/domain/gamification/gamification';
 import { DefiDefinition } from '../../../../src/domain/defis/defiDefinition';
-import { ThematiqueUnivers } from '../../../../src/domain/univers/thematiqueUnivers';
+import { CodeMission } from '../../../../src/domain/thematique/codeMission';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
@@ -41,7 +41,7 @@ const DEFI_1_DEF: DefiDefinition = {
   pourquoi: 'pourquoi',
   sous_titre: 'sous_titre',
   universes: [Thematique.climat],
-  thematiques_univers: [ThematiqueUnivers.dechets_compost],
+  thematiques_univers: [CodeMission.dechets_compost],
   categorie: Categorie.recommandation,
   mois: [0],
   conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],

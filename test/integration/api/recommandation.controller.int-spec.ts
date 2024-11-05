@@ -12,7 +12,7 @@ import {
 import { DB, TestUtil } from '../../TestUtil';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
-import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
+import { CodeMission } from '../../../src/domain/thematique/codeMission';
 import { Defi } from '.prisma/client';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
@@ -49,7 +49,7 @@ const DEFI_1_DEF: Defi = {
   pourquoi: 'pourquoi',
   sous_titre: 'sous_titre',
   universes: [Thematique.climat],
-  thematiquesUnivers: [ThematiqueUnivers.dechets_compost],
+  thematiquesUnivers: [CodeMission.dechets_compost],
   created_at: undefined,
   updated_at: undefined,
   categorie: Categorie.recommandation,

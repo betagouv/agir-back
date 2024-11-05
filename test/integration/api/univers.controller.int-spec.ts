@@ -1,5 +1,5 @@
 import { DB, TestUtil } from '../../TestUtil';
-import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
+import { CodeMission } from '../../../src/domain/thematique/codeMission';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import { ParcoursTodo_v0 } from '../../../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
@@ -209,7 +209,7 @@ describe('Univers (API test)', () => {
       {
         id: '1',
         done_at: null,
-        code: ThematiqueUnivers.cereales,
+        code: CodeMission.cereales,
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -237,7 +237,7 @@ describe('Univers (API test)', () => {
       {
         id: '1',
         done_at: new Date(),
-        code: ThematiqueUnivers.cereales,
+        code: CodeMission.cereales,
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -266,7 +266,7 @@ describe('Univers (API test)', () => {
       {
         id: '1',
         done_at: null,
-        code: ThematiqueUnivers.cereales,
+        code: CodeMission.cereales,
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -289,7 +289,7 @@ describe('Univers (API test)', () => {
       {
         id: '2',
         done_at: null,
-        code: ThematiqueUnivers.dechets_compost,
+        code: CodeMission.dechets_compost,
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -384,7 +384,7 @@ describe('Univers (API test)', () => {
     await TestUtil.create(DB.mission, {
       id_cms: 1,
       est_visible: true,
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       thematique: Thematique.alimentation,
       image_url: 'aaaa',
       titre: "Les céréales c'est bon",
@@ -392,7 +392,7 @@ describe('Univers (API test)', () => {
     await TestUtil.create(DB.mission, {
       id_cms: 2,
       est_visible: true,
-      code: ThematiqueUnivers.gaspillage_alimentaire,
+      code: CodeMission.gaspillage_alimentaire,
       thematique: Thematique.alimentation,
     });
 
@@ -409,7 +409,7 @@ describe('Univers (API test)', () => {
     expect(response.body.length).toBe(2);
     expect(response.body[0]).toEqual({
       titre: `Les céréales c'est bon`,
-      type: ThematiqueUnivers.cereales,
+      type: CodeMission.cereales,
       progression: 1,
       cible_progression: 2,
       is_locked: false,
@@ -437,7 +437,7 @@ describe('Univers (API test)', () => {
     await TestUtil.create(DB.mission, {
       id_cms: 1,
       est_visible: true,
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       thematique: Thematique.alimentation,
       titre: `Les céréales c'est bon`,
       image_url: 'aaaa',
@@ -445,7 +445,7 @@ describe('Univers (API test)', () => {
     await TestUtil.create(DB.mission, {
       id_cms: 2,
       est_visible: false,
-      code: ThematiqueUnivers.gaspillage_alimentaire,
+      code: CodeMission.gaspillage_alimentaire,
       thematique: Thematique.alimentation,
       titre: `jette pas !!`,
       image_url: 'bbb',
@@ -518,7 +518,7 @@ describe('Univers (API test)', () => {
       id_cms: 1,
       est_visible: true,
       objectifs: objectifs as any,
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
@@ -591,7 +591,7 @@ describe('Univers (API test)', () => {
     const mission_articles_tag: Mission = {
       id_cms: 1,
       est_visible: true,
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
@@ -668,7 +668,7 @@ describe('Univers (API test)', () => {
     const mission_articles_tag: Mission = {
       id_cms: 1,
       est_visible: true,
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
@@ -746,7 +746,7 @@ describe('Univers (API test)', () => {
     const mission_articles_tag: Mission = {
       id_cms: 1,
       est_visible: true,
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
@@ -809,12 +809,12 @@ describe('Univers (API test)', () => {
     await TestUtil.create(DB.mission, {
       id_cms: 1,
       est_visible: false,
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
     });
     await TestUtil.create(DB.mission, {
       id_cms: 2,
       est_visible: true,
-      code: ThematiqueUnivers.dechets_compost,
+      code: CodeMission.dechets_compost,
       titre: 'dechets compost',
     });
     await ThematiqueRepository.resetAllRefs();
@@ -848,20 +848,20 @@ describe('Univers (API test)', () => {
 
     await TestUtil.create(DB.mission, {
       id_cms: 1,
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       thematique: Thematique.alimentation,
       titre: 'cereales',
     });
     await TestUtil.create(DB.mission, {
       id_cms: 2,
-      code: ThematiqueUnivers.coming_soon,
+      code: CodeMission.coming_soon,
       thematique: Thematique.alimentation,
       titre: 'coming_soon',
     });
     await TestUtil.create(DB.mission, {
       id_cms: 3,
       titre: 'partir_vacances',
-      code: ThematiqueUnivers.partir_vacances,
+      code: CodeMission.partir_vacances,
       thematique: Thematique.logement,
     });
     await thematiqueRepository.onApplicationBootstrap();
@@ -885,7 +885,7 @@ describe('Univers (API test)', () => {
 
     await TestUtil.create(DB.mission, {
       id_cms: 1,
-      code: ThematiqueUnivers.cereales,
+      code: CodeMission.cereales,
       thematique: Thematique.alimentation,
     });
     await missionRepository.onApplicationBootstrap();

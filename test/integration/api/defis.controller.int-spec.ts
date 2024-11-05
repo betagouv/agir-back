@@ -9,7 +9,7 @@ import {
   DefiHistory_v0,
   Defi_v0,
 } from '../../../src/domain/object_store/defi/defiHistory_v0';
-import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
+import { CodeMission } from '../../../src/domain/thematique/codeMission';
 import { Defi } from '.prisma/client';
 import { PonderationApplicativeManager } from '../../../src/domain/scoring/ponderationApplicative';
 import { TagRubrique } from '../../../src/domain/scoring/tagRubrique';
@@ -38,7 +38,7 @@ const DEFI_1_DEF: Defi = {
   pourquoi: 'pourquoi',
   sous_titre: 'sous_titre',
   universes: [Thematique.climat],
-  thematiquesUnivers: [ThematiqueUnivers.dechets_compost],
+  thematiquesUnivers: [CodeMission.dechets_compost],
   created_at: undefined,
   updated_at: undefined,
   categorie: Categorie.recommandation,
@@ -58,7 +58,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       {
         id: '1',
         done_at: null,
-        code: ThematiqueUnivers.cereales,
+        code: CodeMission.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -92,7 +92,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       {
         id: '2',
         done_at: null,
-        code: ThematiqueUnivers.gaspillage_alimentaire,
+        code: CodeMission.gaspillage_alimentaire,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -126,7 +126,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       {
         id: '3',
         done_at: null,
-        code: ThematiqueUnivers.mobilite_quotidien,
+        code: CodeMission.mobilite_quotidien,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -284,7 +284,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         {
           id: '1',
           done_at: null,
-          code: ThematiqueUnivers.cereales,
+          code: CodeMission.cereales,
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
@@ -384,7 +384,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         {
           id: '1',
           done_at: null,
-          code: ThematiqueUnivers.cereales,
+          code: CodeMission.cereales,
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',

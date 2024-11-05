@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { TuileMission } from '../../../../domain/univers/tuileMission';
+import { TuileMission } from '../../../../domain/thematique/tuileMission';
 import { ThematiqueRepository } from '../../../repository/thematique.repository';
 
 export class ThematiqueUniversAPI {

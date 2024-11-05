@@ -13,9 +13,8 @@ import { ThematiqueUniversAPI } from './types/univers/ThematiqueUniversAPI';
 import { ApplicationError } from '../applicationError';
 import { MissionUsecase } from '../../usecase/mission.usecase';
 import { Thematique } from '../../domain/contenu/thematique';
-import { TuileUnivers } from '../../domain/univers/tuileUnivers';
 import { ThematiqueRepository } from '../repository/thematique.repository';
-import { ThematiqueDefinition } from '../../domain/univers/thematiqueDefinition';
+import { ThematiqueDefinition } from '../../domain/thematique/thematiqueDefinition';
 
 @Controller()
 @ApiBearerAuth()

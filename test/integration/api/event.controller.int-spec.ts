@@ -9,7 +9,7 @@ import {
 } from '../../../src/domain/gamification/celebrations/celebration';
 import { Gamification } from '../../../src/domain/gamification/gamification';
 import { ContentType } from '../../../src/domain/contenu/contentType';
-import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
+import { CodeMission } from '../../../src/domain/thematique/codeMission';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
 
@@ -22,7 +22,7 @@ describe('EVENT (API test)', () => {
       {
         id: '1',
         done_at: new Date(1),
-        code: ThematiqueUnivers.cereales,
+        code: CodeMission.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -50,7 +50,7 @@ describe('EVENT (API test)', () => {
       {
         id: '1',
         done_at: new Date(1),
-        code: ThematiqueUnivers.cereales,
+        code: CodeMission.cereales,
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Thematique } from '../../domain/contenu/thematique';
 import { Cron } from '@nestjs/schedule';
-import { ThematiqueDefinition } from '../../../src/domain/univers/thematiqueDefinition';
+import { ThematiqueDefinition } from '../../domain/thematique/thematiqueDefinition';
 
 @Injectable()
 export class ThematiqueRepository {

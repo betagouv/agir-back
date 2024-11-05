@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ThematiqueDefinition } from '../../../../domain/univers/thematiqueDefinition';
+import { ThematiqueDefinition } from '../../../../domain/thematique/thematiqueDefinition';
 
 export class UniversAPI {
   @ApiProperty() titre: string;

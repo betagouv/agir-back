@@ -14,7 +14,7 @@ import {
 } from '../../../src/domain/logement/logement';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { ContentType } from '../../../src/domain/contenu/contentType';
-import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
+import { CodeMission } from '../../../src/domain/thematique/codeMission';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
@@ -45,7 +45,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       {
         id: '1',
         done_at: new Date(1),
-        code: ThematiqueUnivers.cereales,
+        code: CodeMission.cereales,
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
@@ -636,7 +636,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
         {
           id: '1',
           done_at: new Date(1),
-          code: ThematiqueUnivers.cereales,
+          code: CodeMission.cereales,
           image_url: 'img',
           thematique: Thematique.alimentation,
           titre: 'titre',

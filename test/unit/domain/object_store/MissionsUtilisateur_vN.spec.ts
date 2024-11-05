@@ -3,7 +3,7 @@ import {
   Upgrader,
 } from '../../../../src/domain/object_store/upgrader';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
-import { ThematiqueUnivers } from '../../../../src/domain/univers/thematiqueUnivers';
+import { CodeMission } from '../../../../src/domain/thematique/codeMission';
 import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { MissionsUtilisateur_v1 } from '../../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
@@ -29,7 +29,7 @@ describe('MissionsUilisateur vN ', () => {
           id: '1',
           done_at: new Date(1),
           thematique: Thematique.alimentation,
-          code: ThematiqueUnivers.cereales,
+          code: CodeMission.cereales,
           image_url: 'img',
           titre: 'titre',
           is_first: false,
@@ -67,7 +67,7 @@ describe('MissionsUilisateur vN ', () => {
           id: '1',
           done_at: new Date(1),
           thematique: Thematique.alimentation,
-          code: ThematiqueUnivers.cereales,
+          code: CodeMission.cereales,
           image_url: 'img',
           titre: 'titre',
           is_first: false,

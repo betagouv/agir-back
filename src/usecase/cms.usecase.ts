@@ -31,7 +31,7 @@ import { KycDefinition } from '../../src/domain/kyc/kycDefinition';
 import { TypeReponseQuestionKYC, Unite } from '../domain/kyc/questionKYC';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { Categorie } from '../../src/domain/contenu/categorie';
-import { ThematiqueDefinition } from 'src/domain/univers/thematiqueDefinition';
+import { ThematiqueDefinition } from 'src/domain/thematique/thematiqueDefinition';
 
 @Injectable()
 export class CMSUsecase {

@@ -1,6 +1,6 @@
 import { TestUtil } from '../../TestUtil';
 import { StatistiqueRepository } from '../../../src/infrastructure/repository/statitstique.repository';
-import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
+import { CodeMission } from '../../../src/domain/thematique/codeMission';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 
 describe('StatistiqueRepository', () => {
@@ -30,7 +30,7 @@ describe('StatistiqueRepository', () => {
       3,
       2,
       1,
-      ThematiqueUnivers.cereales,
+      CodeMission.cereales,
       null,
       `${Thematique.alimentation}, ${Thematique.consommation}`,
       null,
@@ -51,7 +51,7 @@ describe('StatistiqueRepository', () => {
       nombre_defis_abandonnes: 2,
       nombre_defis_pas_envie: 1,
       thematiques_en_cours: null,
-      thematiques_terminees: ThematiqueUnivers.cereales,
+      thematiques_terminees: CodeMission.cereales,
       univers_en_cours: null,
       univers_termines: `${Thematique.alimentation}, ${Thematique.consommation}`,
     });

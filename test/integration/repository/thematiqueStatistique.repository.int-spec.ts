@@ -1,6 +1,6 @@
 import { TestUtil } from '../../TestUtil';
 import { MissionStatistiqueRepository } from '../../../src/infrastructure/repository/thematiqueStatistique.repository';
-import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
+import { CodeMission } from '../../../src/domain/thematique/codeMission';
 
 describe('ThematiqueStatistiqueRepository', () => {
   const OLD_ENV = process.env;
@@ -27,7 +27,7 @@ describe('ThematiqueStatistiqueRepository', () => {
     // WHEN
     await thematiqueStatistiqueRepository.upsert(
       'idThematique1',
-      ThematiqueUnivers.cereales,
+      CodeMission.cereales,
       0,
       3,
       2,
@@ -37,7 +37,7 @@ describe('ThematiqueStatistiqueRepository', () => {
     );
     await thematiqueStatistiqueRepository.upsert(
       'idThematique2',
-      ThematiqueUnivers.dechets_compost,
+      CodeMission.dechets_compost,
       1,
       0,
       2,
@@ -66,7 +66,7 @@ describe('ThematiqueStatistiqueRepository', () => {
     expect(thematiquesStatistique).toHaveLength(2);
     expect(thematiqueStatistique1).toStrictEqual({
       thematiqueId: 'idThematique1',
-      titre: ThematiqueUnivers.cereales,
+      titre: CodeMission.cereales,
       completion_pourcentage_1_20: 0,
       completion_pourcentage_21_40: 3,
       completion_pourcentage_41_60: 2,
@@ -76,7 +76,7 @@ describe('ThematiqueStatistiqueRepository', () => {
     });
     expect(thematiqueStatistique2).toStrictEqual({
       thematiqueId: 'idThematique2',
-      titre: ThematiqueUnivers.dechets_compost,
+      titre: CodeMission.dechets_compost,
       completion_pourcentage_1_20: 1,
       completion_pourcentage_21_40: 0,
       completion_pourcentage_41_60: 2,
@@ -87,7 +87,7 @@ describe('ThematiqueStatistiqueRepository', () => {
 
     await thematiqueStatistiqueRepository.upsert(
       'idThematique1',
-      ThematiqueUnivers.cereales,
+      CodeMission.cereales,
       1,
       4,
       2,
@@ -109,7 +109,7 @@ describe('ThematiqueStatistiqueRepository', () => {
     expect(thematiquesStatistiqueApresUpsert).toHaveLength(2);
     expect(thematiqueStatistique1ApresUpsert).toStrictEqual({
       thematiqueId: 'idThematique1',
-      titre: ThematiqueUnivers.cereales,
+      titre: CodeMission.cereales,
       completion_pourcentage_1_20: 1,
       completion_pourcentage_21_40: 4,
       completion_pourcentage_41_60: 2,
