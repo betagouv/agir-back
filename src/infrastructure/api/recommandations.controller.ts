@@ -101,7 +101,6 @@ export class RecommandationsController extends GenericControler {
   @ApiOkResponse({ type: [RecommandationAPI] })
   @UseGuards(AuthGuard)
   @ApiOperation({
-    deprecated: true,
     summary: "Liste les recommendations personnalisées de l'utilisateur",
   })
   async getUserRecommandationV3(
