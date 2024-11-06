@@ -24,7 +24,7 @@ import { MosaicKYCAPI } from './types/kyc/mosaicKYCAPI';
 import { TuileMissionAPI } from './types/univers/TuileMissionAPI';
 import { Thematique } from '../../domain/contenu/thematique';
 import { ApplicationError } from '../applicationError';
-import { ThematiqueUniversAPI } from './types/univers/ThematiqueUniversAPI';
+import { MissionAPI_v2 } from './types/mission/MissionAPI_v2';
 @ApiExtraModels(QuestionKYCAPI, MosaicKYCAPI)
 @Controller()
 @ApiBearerAuth()
@@ -57,10 +57,8 @@ export class MissionController extends GenericControler {
     @Param('code_thematique') code_thematique: string,
   ): Promise<TuileMissionAPI[]> {
     this.checkCallerId(req, utilisateurId);
-    const them = Thematique[code_thematique];
-    if (!them) {
-      ApplicationError.throwThematiqueNotFound(code_thematique);
-    }
+    const them = this.castThematiqueOrException(code_thematique);
+
     const result = await this.missionUsecase.getTuilesMissionsOfThematique(
       utilisateurId,
       them,
@@ -71,7 +69,7 @@ export class MissionController extends GenericControler {
   @Get('utilisateurs/:utilisateurId/tuiles_missions')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
-    type: [ThematiqueUniversAPI],
+    type: [TuileMissionAPI],
   })
   @ApiOperation({
     summary: `Retourne les missions recommandées pour la home (toute thématique confondue)`,
@@ -126,7 +124,7 @@ export class MissionController extends GenericControler {
   @Get('utilisateurs/:utilisateurId/missions/:code_mission')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
-    type: MissionAPI,
+    type: MissionAPI_v2,
   })
   @ApiParam({
     name: 'code_mission',
@@ -147,13 +145,13 @@ export class MissionController extends GenericControler {
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
     @Param('code_mission') code_mission: string,
-  ): Promise<MissionAPI> {
+  ): Promise<MissionAPI_v2> {
     this.checkCallerId(req, utilisateurId);
     const result = await this.missionUsecase.getMissionByCode(
       utilisateurId,
       code_mission,
     );
-    return MissionAPI.mapToAPI(result);
+    return MissionAPI_v2.mapToAPI(result);
   }
 
   @Post('utilisateurs/:utilisateurId/thematiques/:thematique/mission/terminer')

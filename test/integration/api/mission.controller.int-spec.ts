@@ -574,9 +574,9 @@ describe('Mission (API test)', () => {
     expect(response.body.is_new).toEqual(false);
     expect(response.body.image_url).toEqual('image');
     expect(response.body.progression).toEqual({ current: 1, target: 5 });
-    expect(response.body.thematique_univers).toEqual('cereales');
-    expect(response.body.thematique_univers_label).toEqual('titre');
-    expect(response.body.univers_label).toEqual('Faut manger !');
+    expect(response.body.code).toEqual('cereales');
+    expect(response.body.thematique).toEqual(Thematique.alimentation);
+    expect(response.body.titre).toEqual('titre');
     expect(response.body.done_at).toEqual(null);
     expect(response.body.terminable).toEqual(false);
     expect(response.body.objectifs).toHaveLength(4);
@@ -793,11 +793,9 @@ describe('Mission (API test)', () => {
     expect(response.body.id).toEqual('1');
     expect(response.body.is_new).toEqual(true);
     expect(response.body.progression).toEqual({ current: 0, target: 3 });
-    expect(response.body.thematique_univers).toEqual('cereales');
-    expect(response.body.thematique_univers_label).toEqual(
-      'Mange de la graine',
-    );
-    expect(response.body.univers_label).toEqual('Faut manger !');
+    expect(response.body.code).toEqual('cereales');
+    expect(response.body.thematique).toEqual(Thematique.alimentation);
+    expect(response.body.titre).toEqual('Mange de la graine');
     expect(response.body.done_at).toEqual(null);
     expect(response.body.objectifs).toHaveLength(2);
 

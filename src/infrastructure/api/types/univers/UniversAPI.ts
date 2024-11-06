@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ThematiqueDefinition } from '../../../../domain/thematique/thematiqueDefinition';
 
+// FIXME : A SUPPRIMER
 export class UniversAPI {
   @ApiProperty() titre: string;
   @ApiProperty() type: string;

@@ -25,8 +25,8 @@ export class DefiRepository {
       sous_titre: defi.sous_titre,
       tags: defi.tags,
       thematique: defi.thematique,
-      universes: defi.universes,
-      thematiquesUnivers: defi.thematiques_univers,
+      universes: defi.universes, // FIXME : A SUPPRIMER
+      thematiquesUnivers: defi.thematiques_univers, // FIXME : A SUPPRIMER
       categorie: defi.categorie,
       created_at: undefined,
       updated_at: undefined,

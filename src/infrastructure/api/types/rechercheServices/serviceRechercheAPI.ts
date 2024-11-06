@@ -13,7 +13,7 @@ export class ServiceRechercheAPI {
   @ApiProperty() titre: string;
   @ApiProperty() sous_titre: string;
   @ApiProperty() icon_url: string;
-  @ApiProperty() univers: string; // A SUPPRIMER
+  @ApiProperty() univers: string; // FIXME : A SUPPRIMER
   @ApiProperty({ enum: Thematique }) thematique: Thematique;
   @ApiProperty() external_url: string;
   @ApiProperty() is_available_inhouse: boolean;

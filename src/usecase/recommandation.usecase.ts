@@ -37,7 +37,7 @@ export class RecommandationUsecase {
 
   async listRecommandationsV2(
     utilisateurId: string,
-    univers?: string,
+    thematique?: Thematique,
   ): Promise<Recommandation[]> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -48,11 +48,11 @@ export class RecommandationUsecase {
     const catalogue = await this.kycRepository.getAllDefs();
     utilisateur.kyc_history.setCatalogue(catalogue);
 
-    const articles = await this.getArticles(utilisateur, univers);
+    const articles = await this.getArticles(utilisateur, thematique);
 
-    const quizzes = await this.getQuizzes(utilisateur, univers);
+    const quizzes = await this.getQuizzes(utilisateur, thematique);
 
-    let kycs = await this.getKYC(utilisateur, univers);
+    let kycs = await this.getKYC(utilisateur, thematique);
 
     if (kycs.length > 0) {
       PonderationApplicativeManager.sortContent(kycs);
@@ -139,10 +139,13 @@ export class RecommandationUsecase {
     return this.personnalisator.personnaliser(result, utilisateur);
   }
 
-  private getKYC(utilisateur: Utilisateur, univers?: string): Recommandation[] {
+  private getKYC(
+    utilisateur: Utilisateur,
+    thematique?: Thematique,
+  ): Recommandation[] {
     const kycs = utilisateur.kyc_history.getKYCRestantes(
       Categorie.recommandation,
-      univers,
+      thematique,
     );
 
     PonderationApplicativeManager.increaseScoreContentOfList(
@@ -210,7 +213,7 @@ export class RecommandationUsecase {
 
   private async getArticles(
     utilisateur: Utilisateur,
-    univers?: string,
+    thematique?: Thematique,
   ): Promise<Recommandation[]> {
     const articles_lus = utilisateur.history.searchArticlesIds({
       est_lu: true,
@@ -235,8 +238,8 @@ export class RecommandationUsecase {
       code_departement: dept_region ? dept_region.code_departement : undefined,
       code_region: dept_region ? dept_region.code_region : undefined,
     };
-    if (univers) {
-      filtre.thematiques = [Thematique[univers]];
+    if (thematique) {
+      filtre.thematiques = [Thematique[thematique]];
     }
     let articles = await this.articleRepository.searchArticles(filtre);
 
@@ -253,7 +256,7 @@ export class RecommandationUsecase {
 
   private async getQuizzes(
     utilisateur: Utilisateur,
-    univers?: string,
+    thematique?: Thematique,
   ): Promise<Recommandation[]> {
     const quizz_attempted = utilisateur.history.listeIdsQuizzAttempted();
 
@@ -264,8 +267,8 @@ export class RecommandationUsecase {
       date: new Date(),
     };
 
-    if (univers) {
-      filtre.thematiques = [Thematique[univers]];
+    if (thematique) {
+      filtre.thematiques = [Thematique[thematique]];
     }
 
     let quizzes = await this.quizzRepository.searchQuizzes(filtre);

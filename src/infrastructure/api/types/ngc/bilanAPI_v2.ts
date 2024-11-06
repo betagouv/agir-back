@@ -10,6 +10,7 @@ import {
 import { ThematiqueRepository } from '../../../repository/thematique.repository';
 import { Thematique } from '../../../../domain/contenu/thematique';
 
+// FIXME : A SUPPRIMER
 export class DetailImpactAPI {
   @ApiProperty() label: string;
   @ApiProperty() emoji: string;

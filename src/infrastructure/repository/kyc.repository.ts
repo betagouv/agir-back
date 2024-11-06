@@ -24,7 +24,7 @@ export class KycRepository {
       reponses: kycDef.reponses,
       thematique: kycDef.thematique ? kycDef.thematique.toString() : null,
       tags: kycDef.tags.map((t) => t.toString()),
-      universes: kycDef.universes.map((u) => u.toString()),
+      universes: kycDef.universes.map((u) => u.toString()), // FIXME : A SUPPRIMER
       image_url: kycDef.image_url,
       short_question: kycDef.short_question,
       conditions: kycDef.conditions as any,

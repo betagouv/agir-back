@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { TuileMission } from '../../../../domain/thematique/tuileMission';
 import { ThematiqueRepository } from '../../../repository/thematique.repository';
 
+// FIXME : A SUPPRIMER
 export class ThematiqueUniversAPI {
   @ApiProperty() titre: string;
   @ApiProperty() type: string;

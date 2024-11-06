@@ -10,7 +10,6 @@ import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { UniversAPI } from './types/univers/UniversAPI';
 import { ThematiqueUniversAPI } from './types/univers/ThematiqueUniversAPI';
-import { ApplicationError } from '../applicationError';
 import { MissionUsecase } from '../../usecase/mission.usecase';
 import { Thematique } from '../../domain/contenu/thematique';
 import { ThematiqueRepository } from '../repository/thematique.repository';
@@ -77,10 +76,7 @@ export class UniversController extends GenericControler {
     @Param('univers') univers: string,
   ): Promise<ThematiqueUniversAPI[]> {
     this.checkCallerId(req, utilisateurId);
-    const them = Thematique[univers];
-    if (!them) {
-      ApplicationError.throwThematiqueNotFound(univers);
-    }
+    const them = univers ? this.castThematiqueOrException(univers) : undefined;
     const result = await this.missionUsecase.getTuilesMissionsOfThematique(
       utilisateurId,
       them,

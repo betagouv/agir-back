@@ -90,7 +90,7 @@ export class DefisController extends GenericControler {
   })
   @ApiOperation({
     summary:
-      "Retourne l'ensemble des défis de l'utilisateur, aggrégation des défis dispo via les différents univers / thémtiques",
+      "Retourne l'ensemble des défis de l'utilisateur, aggrégation des défis dispo via les différents univers / thématiques",
   })
   async getAllUserDefi_2(
     @Request() req,
@@ -186,10 +186,7 @@ export class DefisController extends GenericControler {
     @Param('code_thematique') code_thematique: string,
   ): Promise<DefiAPI[]> {
     this.checkCallerId(req, utilisateurId);
-    const them = Thematique[code_thematique];
-    if (!them) {
-      ApplicationError.throwThematiqueNotFound(code_thematique);
-    }
+    const them = this.castThematiqueOrException(code_thematique);
     const result = await this.defisUsecase.getDefisOfUnivers(
       utilisateurId,
       them,

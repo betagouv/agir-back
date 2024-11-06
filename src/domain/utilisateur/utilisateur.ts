@@ -145,10 +145,7 @@ export class Utilisateur extends UtilisateurData {
       prevent_sendemail_before: new Date(),
       parcours_todo: new ParcoursTodo(),
       gamification: new Gamification(),
-      unlocked_features: new UnlockedFeatures({
-        version: 1,
-        unlocked_features: [Feature.univers],
-      }),
+      unlocked_features: new UnlockedFeatures(),
       history: new History(),
       kyc_history: new KYCHistory(),
       defi_history: new DefiHistory(),

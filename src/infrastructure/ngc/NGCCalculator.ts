@@ -580,8 +580,8 @@ export class NGCCalculator {
 
   private sortResult(liste: ImpactThematique[]) {
     liste.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
-    for (const univers of liste) {
-      univers.details.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
+    for (const thematique of liste) {
+      thematique.details.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
     }
   }
 

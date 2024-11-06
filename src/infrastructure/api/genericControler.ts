@@ -10,6 +10,8 @@ import { App } from '../../../src/domain/app';
 import { AuthGuard } from '../auth/guard';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 import { ControllerExceptionFilter } from './controllerException.filter';
+import { Thematique } from '../../domain/contenu/thematique';
+import { ApplicationError } from '../applicationError';
 
 @UseFilters(new ControllerExceptionFilter())
 @Injectable()
@@ -32,6 +34,14 @@ export class GenericControler {
 
   public getURLFromRequest(req: Request): string {
     return `${req.protocol}://${req.get('Host')}${req.originalUrl}`;
+  }
+
+  public castThematiqueOrException(code_thematique: string): Thematique {
+    const thematique = Thematique[code_thematique];
+    if (!thematique) {
+      ApplicationError.throwThematiqueNotFound(code_thematique);
+    }
+    return thematique;
   }
 
   isCallerAdmin(req: Request) {
