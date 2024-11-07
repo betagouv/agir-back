@@ -1,19 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import _communes from '@etalab/decoupage-administratif/data/communes.json';
+import _epci from '@etalab/decoupage-administratif/data/epci.json';
 import _codes_postaux from './codes_postaux.json';
-import _epiccom from './epicom2024.json';
-/**
- * NOTE: Initially, a 'communes.json' file was used to store the commune data.
- * It was copied from the mquendal/mesaidesvelo repository. However, as we
- * created a dedicated package (@betagouv/aides-velo) to isolate the logic and
- * generate the 'communes.json' file, we use it as a source of truth for the
- * commune data.
- *
- * NOTE: We should consider at some point to create a standalone package for
- * the commune data and use it as a source of truth for all the packages that
- * need it with extra utilities to manipulate the data or decide to directly
- * use the @etalab/decoupage-administratif package.
- */
-import { data as aidesVeloData } from '@betagouv/aides-velo';
+
+const communes = _communes as Commune[];
+const epci = _epci as EPCI[];
+
+/** Associate each commune INSEE code to its EPCI SIREN code. */
+const communesEPCI = Object.fromEntries(
+  _epci.flatMap((epci) => epci.membres.map(({ code }) => [code, epci.code])),
+);
 
 export type CommuneParCodePostal = {
   INSEE: string;
@@ -22,26 +18,54 @@ export type CommuneParCodePostal = {
   Ligne_5: string;
 };
 
+/**
+ * NOTE: this type has been inferred from the
+ * @etalab/decoupage-administratif/data/communes.json file  by running 'fx
+ * @.<key> uniq sort' on the data. Therefore, there is no guarantee that in
+ * future versions of the data, the keys will remain the same.
+ */
 export type Commune = {
+  /** The INSEE code of the commune (e.g. "75056"). */
   code: string;
   nom: string;
+  typeLiaison?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 8;
+  zone: 'metro' | 'dom' | 'com';
+  arrondissement?: string;
   departement: string;
   region: string;
-  population: number;
-  zfe: boolean;
-  epci?: string;
-  codesPostaux: string[];
+  type:
+    | 'commune-actuelle'
+    | 'commune-deleguee'
+    | 'commune-associee'
+    | 'arrondissement-municipal';
+  rangChefLieu?: 0;
+  siren?: string;
+  codesPostaux?: string[];
+  population?: number;
 };
 
-export type EpicCom = {
-  dept: string;
-  siren: string;
-  raison_sociale: string;
-  nature_juridique: string;
-  mode_financ: string;
-  dep_com: string;
-  insee: string;
-  nom_membre: String;
+/**
+ * NOTE: this type has been inferred from the
+ * @etalab/decoupage-administratif/data/epci.json file  by running 'fx @.<key>
+ * uniq sort' on the data. Therefore, there is no guarantee that in future
+ * versions of the data, the keys will remain the same.
+ */
+export type EPCI = {
+  /** The SIREN code of the EPCI (e.g. "200000172"). */
+  code: string;
+  /** The name of the EPCI (e.g. "CC Faucigny - Glières"). */
+  nom: string;
+  /** The type of the EPCI (i.e. "Communauté d'agglomération", "Communauté de communes", ...). */
+  type: 'CA' | 'CC' | 'CU' | 'MET69' | 'METRO';
+  modeFinancement: 'FA' | 'FPU';
+  populationTotale: number;
+  populationMunicipale: number;
+  membres: Array<
+    Pick<Commune, 'code' | 'siren' | 'nom'> & {
+      populationTotale: number;
+      populationMunicipale: number;
+    }
+  >;
 };
 
 @Injectable()
@@ -109,21 +133,23 @@ export class CommuneRepository {
 
   findRaisonSocialeDeNatureJuridiqueByCodePostal(
     code_postal: string,
-    echelon: 'CC' | 'CA' | 'METRO' | 'CU',
+    echelon: EPCI['type'],
   ): string[] {
     const liste_communes = this.getCommunesForCodePostal(code_postal);
     const result = new Set<string>();
 
     for (const commune of liste_communes) {
-      for (const epicom of _epiccom as EpicCom[]) {
-        if (
-          epicom.insee === commune.INSEE &&
-          epicom.nature_juridique === echelon
-        ) {
-          result.add(epicom.raison_sociale);
-        }
+      const epciCode = communesEPCI[commune.INSEE];
+      if (!epciCode) {
+        continue;
+      }
+
+      const epci = this.getEPCI(epciCode);
+      if (epci?.type === echelon) {
+        result.add(epci.nom);
       }
     }
+
     return Array.from(result.values());
   }
 
@@ -141,7 +167,7 @@ export class CommuneRepository {
 
     let commune = this.getCommuneByCodeINSEE(liste[0].INSEE);
     if (!commune) {
-      for (const commune_insee of aidesVeloData.communes) {
+      for (const commune_insee of communes) {
         if (commune_insee.codesPostaux.includes(code_postal)) {
           commune = commune_insee;
           break;
@@ -178,6 +204,29 @@ export class CommuneRepository {
    * can be shared by multiple communes.
    */
   getCommuneByCodeINSEE(code_insee: string): Commune | undefined {
-    return aidesVeloData.communes.find((c) => c.code === code_insee);
+    return communes.find((c) => c.code === code_insee);
+  }
+
+  /**
+   * Returns the EPCI of the commune identified by its INSEE code.
+   *
+   * @param code_insee The INSEE code of the commune (e.g. "75056").
+   * @returns The EPCI if found, `undefined` otherwise.
+   */
+  getEPCIByCommuneCodeINSEE(code_insee: string): EPCI | undefined {
+    const epciCode = communesEPCI[code_insee];
+    return this.getEPCI(epciCode);
+  }
+
+  /**
+   * Returns the EPCI identified by its SIREN code.
+   *
+   * @param code The SIREN code of the EPCI (e.g. "200000172").
+   * @returns The EPCI if found, `undefined` otherwise.
+   */
+  private getEPCI(code?: string): EPCI | undefined {
+    if (code) {
+      return epci.find((epci) => epci.code === code);
+    }
   }
 }

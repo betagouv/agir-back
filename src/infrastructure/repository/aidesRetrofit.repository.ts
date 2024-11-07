@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import Publicodes from 'publicodes';
-import { Commune } from '@betagouv/aides-velo';
+import communes from '@etalab/decoupage-administratif/data/communes.json';
 
 import rulesRetrofit from '../data/aidesRetrofit.json';
-import { data as aidesVeloData } from '@betagouv/aides-velo';
 import { AideVelo } from '../../domain/aides/aideVelo';
 
 @Injectable()
@@ -63,8 +62,10 @@ async function aidesRetrofit(
   return result;
 }
 
-function getLocalisationByCP(cp: string): Commune {
-  const lieux = aidesVeloData.communes;
-  const lieu = lieux.find((lieu) => lieu.codesPostaux.includes(cp));
+function getLocalisationByCP(cp: string) {
+  // FIXME: this function must be removed and replaced by the CommuneRepository
+  // methods in the same way as in aidesVelo.repository.ts.
+  // @ts-ignore
+  const lieu = communes.find((lieu) => lieu.codesPostaux.includes(cp));
   return lieu;
 }

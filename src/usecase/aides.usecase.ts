@@ -124,9 +124,11 @@ export class AidesUsecase {
       // );
     }
 
+    const epci = this.communeRepository.getEPCIByCommuneCodeINSEE(code_insee);
+
     return this.aidesVeloRepository.getSummaryVelos({
       'localisation . code insee': code_insee,
-      'localisation . epci': commune?.epci,
+      'localisation . epci': epci?.nom,
       'localisation . région': commune?.region,
       'localisation . département': commune?.departement,
       'vélo . prix': prix_velo,

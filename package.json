@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "@betagouv/aides-velo": "^0.1.0-9",
+    "@etalab/decoupage-administratif": "^4.0.0",
     "@getbrevo/brevo": "^1.0.1",
     "@incubateur-ademe/nosgestesclimat": "^3.3.2",
     "@nestjs/common": "^9.0.0",
