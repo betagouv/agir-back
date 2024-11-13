@@ -1,4 +1,4 @@
-import { Versioned } from '../versioned';
+import { Versioned, Versioned_v0 } from '../versioned';
 import {
   Chauffage,
   DPE,
@@ -7,7 +7,7 @@ import {
   TypeLogement,
 } from '../../logement/logement';
 
-export class Logement_v0 extends Versioned {
+export class Logement_v0 extends Versioned_v0 {
   nombre_adultes: number;
   nombre_enfants: number;
   code_postal: string;

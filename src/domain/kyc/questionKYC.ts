@@ -1,16 +1,35 @@
 import { ApplicationError } from '../../infrastructure/applicationError';
 import { Categorie } from '../contenu/categorie';
 import { Thematique } from '../contenu/thematique';
-import { QuestionKYC_v0 } from '../object_store/kyc/kycHistory_v0';
+import {
+  QuestionKYC_v1,
+  ReponseComplexe_v1,
+  ReponseSimple_v1,
+} from '../object_store/kyc/kycHistory_v1';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
 import { ConditionKYC } from './conditionKYC';
 import { KycDefinition } from './kycDefinition';
+import { MosaicKYCDef, TypeMosaic } from './mosaicKYC';
 
+const TRUE_STRING = [
+  'true',
+  'True',
+  'TRUE',
+  'yes',
+  'Yes',
+  'YES',
+  'oui',
+  'Oui',
+  'OUI',
+  '1',
+];
 export enum TypeReponseQuestionKYC {
   libre = 'libre',
   choix_unique = 'choix_unique',
   choix_multiple = 'choix_multiple',
+  mosaic_boolean = 'mosaic_boolean',
+  mosaic_number = 'mosaic_number',
   entier = 'entier',
   decimal = 'decimal',
 }
@@ -34,56 +53,85 @@ export class KYCReponse {
   value?: string;
 }
 
+export type AndConditionSet = ConditionKYC[];
+
+export type KYCReponseSimple = {
+  value: string;
+  unite?: Unite;
+};
+export type KYCReponseComplexe = {
+  code: string;
+  label: string;
+  value: string;
+  ngc_code?: string;
+  image_url?: string;
+  emoji?: string;
+  unite?: Unite;
+};
+
 export class QuestionKYC implements TaggedContent {
-  id: string;
+  code: string;
   id_cms: number;
   question: string;
   short_question: string;
+  emoji: string;
+  image_url: string;
+  unite: Unite;
   type: TypeReponseQuestionKYC;
   categorie: Categorie;
-  thematique?: Thematique;
+  thematique: Thematique;
+  thematiques: Thematique[];
   points: number;
   is_NGC: boolean;
   a_supprimer: boolean;
-  reponses?: KYCReponse[];
-  reponses_possibles?: KYCReponse[];
-  ngc_key?: string;
+  is_mosaic_answered?: boolean;
+  is_answererd?: boolean;
   tags: Tag[];
   score: number;
-  universes: string[];
-  image_url: string;
-  conditions: ConditionKYC[][];
-  unite: Unite;
-  emoji: string;
+  ngc_key?: string;
+  private reponse_simple: KYCReponseSimple;
+  private reponse_complexe: KYCReponseComplexe[];
+  private conditions: AndConditionSet[];
 
-  constructor(data?: QuestionKYC_v0) {
+  constructor(data?: QuestionKYC_v1) {
     if (!data) return;
-    this.id = data.id;
+    this.code = data.code;
+    this.id_cms = data.id_cms;
     this.question = data.question;
+    this.short_question = data.short_question;
+    this.emoji = data.emoji;
+    this.unite = data.unite;
+    this.image_url = data.image_url;
     this.type = data.type;
     this.categorie = data.categorie;
     this.points = data.points;
     this.is_NGC = data.is_NGC;
-    this.reponses = data.reponses;
-    this.reponses_possibles = data.reponses_possibles;
     this.ngc_key = data.ngc_key;
     this.thematique = data.thematique;
     this.tags = data.tags ? data.tags : [];
     this.score = 0;
-    this.universes = data.universes ? data.universes : [];
-    this.id_cms = data.id_cms;
-    this.short_question = data.short_question;
-    this.image_url = data.image_url;
+    this.thematiques = data.thematiques;
     this.conditions = data.conditions ? data.conditions : [];
-    this.unite = data.unite;
-    this.emoji = data.emoji;
     this.a_supprimer = !!data.a_supprimer;
+
+    this.reponse_simple = data.reponse_simple;
+    this.reponse_complexe = data.reponse_complexe
+      ? data.reponse_complexe.map((r) => ({
+          code: r.code,
+          label: r.label,
+          ngc_code: r.ngc_code,
+          value: r.value,
+          emoji: undefined,
+          image_url: undefined,
+          unite: undefined,
+        }))
+      : undefined;
   }
 
   public static buildFromDef(def: KycDefinition): QuestionKYC {
-    return new QuestionKYC({
+    const result = new QuestionKYC({
       categorie: def.categorie,
-      id: def.code,
+      code: def.code,
       id_cms: def.id_cms,
       is_NGC: def.is_ngc,
       points: def.points,
@@ -91,54 +139,197 @@ export class QuestionKYC implements TaggedContent {
       type: def.type,
       ngc_key: def.ngc_key,
       thematique: def.thematique,
-      universes: def.universes,
+      thematiques: def.thematiques,
       question: def.question,
-      reponses_possibles: def.reponses ? def.reponses : [],
-      short_question: def.short_question,
-      image_url: def.image_url,
       conditions: def.conditions ? def.conditions : [],
-      unite: def.unite,
-      emoji: def.emoji,
       a_supprimer: !!def.a_supprimer,
+      reponse_simple: null,
+      reponse_complexe: null,
+      emoji: def.emoji,
+      image_url: def.image_url,
+      short_question: def.short_question,
+      unite: def.unite,
     });
+    result.is_answererd = false;
+
+    if (
+      def.type === TypeReponseQuestionKYC.choix_unique ||
+      def.type === TypeReponseQuestionKYC.choix_multiple
+    ) {
+      result.reponse_complexe = [];
+      for (const reponse of def.reponses) {
+        result.reponse_complexe.push({
+          label: reponse.label,
+          code: reponse.code,
+          ngc_code: reponse.ngc_code,
+          value: undefined,
+        });
+      }
+    } else {
+      result.reponse_simple = {
+        unite: def.unite,
+        value: undefined,
+      };
+    }
+
+    return result;
+  }
+
+  public static buildFromMosaicDef(
+    def: MosaicKYCDef,
+    liste_kyc: QuestionKYC[],
+  ): QuestionKYC {
+    const result = new QuestionKYC({
+      id_cms: undefined,
+      question: def.titre,
+      thematique: def.thematique,
+      categorie: def.categorie,
+      code: def.id,
+      points: def.points,
+      type:
+        def.type === TypeMosaic.mosaic_boolean
+          ? TypeReponseQuestionKYC.mosaic_boolean
+          : TypeReponseQuestionKYC.mosaic_number,
+      is_NGC: false,
+      tags: [],
+      thematiques: undefined,
+      conditions: [],
+      a_supprimer: false,
+      reponse_simple: undefined,
+      reponse_complexe: undefined,
+    });
+    if (def.type === TypeMosaic.mosaic_boolean) {
+      result.reponse_complexe =
+        QuestionKYC.buildBooleanResponseListe(liste_kyc);
+    }
+
+    return result;
+  }
+
+  private static buildBooleanResponseListe(
+    kyc_liste: QuestionKYC[],
+  ): KYCReponseComplexe[] {
+    const liste_reponses: KYCReponseComplexe[] = [];
+    for (const kyc of kyc_liste) {
+      let value: string;
+      if (kyc.hasAnyResponses()) {
+        if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
+          value = kyc.getCodeReponseQuestionChoixUnique();
+        } else if (kyc.type === TypeReponseQuestionKYC.entier) {
+          value = kyc.getReponseSimpleValue() === '1' ? 'oui' : 'non';
+        }
+      } else {
+        value = 'non';
+      }
+      liste_reponses.push({
+        code: kyc.code,
+        value: value,
+        label: kyc.short_question,
+        image_url: kyc.image_url,
+        unite: kyc.unite,
+        emoji: kyc.emoji,
+        ngc_code: undefined,
+      });
+    }
+    return liste_reponses;
   }
 
   public refreshFromDef(def: KycDefinition) {
+    if (
+      def.type === TypeReponseQuestionKYC.choix_unique ||
+      def.type === TypeReponseQuestionKYC.choix_multiple
+    ) {
+      const updated_set: KYCReponseComplexe[] = [];
+      for (const def_reponse of def.reponses) {
+        const current_rep = this.getQuestionComplexeByCode(def_reponse.code);
+        if (current_rep) {
+          current_rep.ngc_code = def_reponse.ngc_code;
+          current_rep.label = def_reponse.label;
+          updated_set.push(current_rep);
+        } else {
+          updated_set.push({
+            code: def_reponse.code,
+            label: def_reponse.label,
+            ngc_code: def_reponse.ngc_code,
+            value: undefined,
+          });
+        }
+      }
+      this.reponse_complexe = updated_set;
+    } else {
+      if (this.reponse_simple) {
+        this.reponse_simple.unite = def.unite;
+      }
+    }
+
     this.question = def.question;
     this.type = def.type;
     this.categorie = def.categorie;
     this.points = def.points;
     this.is_NGC = def.is_ngc;
     this.a_supprimer = !!def.a_supprimer;
-    this.reponses_possibles = def.reponses ? def.reponses : [];
     this.ngc_key = def.ngc_key;
     this.thematique = def.thematique;
+    this.thematiques = def.thematiques;
     this.tags = def.tags ? def.tags : [];
-    this.universes = def.universes ? def.universes : [];
     this.conditions = def.conditions ? def.conditions : [];
     this.id_cms = def.id_cms;
     this.emoji = def.emoji;
+    this.image_url = def.image_url;
     this.unite = def.unite;
-    if (
-      (this.type === TypeReponseQuestionKYC.choix_multiple ||
-        this.type === TypeReponseQuestionKYC.choix_unique) &&
-      this.hasAnyResponses()
-    ) {
-      const upgraded_set = [];
-      for (const response of this.reponses) {
-        const def_reponse = def.getReponseByCode(response.code);
-        if (def_reponse) {
-          response.label = def_reponse.label;
-          response.ngc_code = def_reponse.ngc_code;
-          upgraded_set.push(response);
-        }
-      }
-      this.reponses = upgraded_set;
-    }
+    this.short_question = def.short_question;
+  }
+
+  public isSimpleQuestion(): boolean {
+    return (
+      this.type === TypeReponseQuestionKYC.decimal ||
+      this.type === TypeReponseQuestionKYC.libre ||
+      this.type === TypeReponseQuestionKYC.entier
+    );
+  }
+  public isChoixQuestion(): boolean {
+    return (
+      this.type === TypeReponseQuestionKYC.choix_unique ||
+      this.type === TypeReponseQuestionKYC.choix_multiple
+    );
+  }
+  public isChoixUnique(): boolean {
+    return this.type === TypeReponseQuestionKYC.choix_unique;
+  }
+  public isChoixMultiple(): boolean {
+    return this.type === TypeReponseQuestionKYC.choix_multiple;
+  }
+
+  public updateQuestionValues(input: { code: string; value: string }[]) {}
+
+  public hasConditions() {
+    return this.conditions && this.conditions.length > 0;
   }
 
   public hasAnyResponses(): boolean {
-    return !!this.reponses && this.reponses.length > 0;
+    if (this.reponse_simple && this.reponse_simple.value) {
+      return true;
+    }
+    if (this.reponse_complexe) {
+      for (const reponse of this.reponse_complexe) {
+        if (reponse.value) return true;
+      }
+    }
+    return false;
+  }
+  public hasAnySimpleResponse(): boolean {
+    if (this.reponse_simple && this.reponse_simple.value) {
+      return true;
+    }
+    return false;
+  }
+  public hasAnyComplexeResponse(): boolean {
+    if (this.reponse_complexe) {
+      for (const reponse of this.reponse_complexe) {
+        if (reponse.value) return true;
+      }
+    }
+    return false;
   }
 
   public getTags(): Tag[] {
@@ -152,78 +343,183 @@ export class QuestionKYC implements TaggedContent {
     return false;
   }
 
-  public includesReponseCode(code: string): boolean {
-    if (!this.hasAnyResponses()) {
+  public static isTrueBooleanString(str: string): boolean {
+    return TRUE_STRING.includes(str);
+  }
+  public isMosaic(): boolean {
+    return (
+      this.type === TypeReponseQuestionKYC.mosaic_boolean ||
+      this.type === TypeReponseQuestionKYC.mosaic_number
+    );
+  }
+
+  public getConditions(): AndConditionSet[] {
+    if (this.hasConditions()) return this.conditions;
+    return [];
+  }
+
+  public isSelectedReponseCode(code: string): boolean {
+    if (!this.hasAnyComplexeResponse()) {
       return false;
     }
-    const found = this.reponses.find((r) => r.code === code);
-    return !!found;
+    const found = this.reponse_complexe.find((r) => r.code === code);
+    return found ? QuestionKYC.isTrueBooleanString(found.value) : false;
   }
 
-  public listeReponsesLabels() {
-    if (this.reponses) {
-      return this.reponses.map((e) => e.label);
+  public listeReponseValues(): string[] {
+    if (this.reponse_simple && this.reponse_simple.value) {
+      return [this.reponse_simple.value];
+    }
+    if (this.reponse_complexe) {
+      return this.reponse_complexe.map((r) => r.value).filter((v) => !!v);
+    }
+    return [];
+  }
+  public getCodeReponseQuestionChoixUnique(): string {
+    if (!this.hasAnyComplexeResponse()) return null;
+    for (const reponse of this.reponse_complexe) {
+      if (QuestionKYC.isTrueBooleanString(reponse.value)) {
+        return reponse.code;
+      }
+    }
+  }
+  public getNGCCodeReponseQuestionChoixUnique(): string {
+    if (!this.hasAnyComplexeResponse()) return null;
+    for (const reponse of this.reponse_complexe) {
+      if (QuestionKYC.isTrueBooleanString(reponse.value)) {
+        return reponse.ngc_code;
+      }
+    }
+  }
+
+  public getNombreReponsesPossibles(): number {
+    if (!this.hasAnyComplexeResponse()) return 0;
+    return this.reponse_complexe.length;
+  }
+  public getReponseComplexeByCode(code: string): KYCReponseComplexe {
+    if (!this.reponse_complexe || !(this.reponse_complexe.length > 0))
+      return null;
+    return this.reponse_complexe.find((r) => r.code === code);
+  }
+  public getListeReponsesComplexes(): KYCReponseComplexe[] {
+    return this.reponse_complexe ? this.reponse_complexe : [];
+  }
+  public getReponseSimple(): KYCReponseSimple {
+    return this.reponse_simple;
+  }
+  public getReponseSimpleValueAsNumber(): number {
+    if (this.reponse_simple && this.reponse_simple.value) {
+      return Number(this.reponse_simple.value);
+    }
+    return null;
+  }
+
+  public getReponseSimpleValue(): string {
+    if (this.reponse_simple) {
+      return this.reponse_simple.value;
+    }
+    return null;
+  }
+  public setReponseSimpleValue(value: string) {
+    this.reponse_simple.value = value;
+  }
+
+  public getReponseSimpleUnite(): Unite {
+    if (this.reponse_simple) {
+      return this.reponse_simple.unite;
+    }
+    return null;
+  }
+
+  // DEPRECATED
+  public listeLabelsReponseComplexe() {
+    if (this.reponse_complexe) {
+      return this.reponse_complexe.map((e) => e.label);
     } else {
       return [];
     }
   }
-  public getCodeReponseUniqueSaisie(): string {
-    if (this.reponses && this.reponses.length === 1) {
-      return this.reponses[0].code;
-    }
-    return null;
-  }
-  public getValeurEntiereReponseUniqueSaisie(): number {
-    if (this.reponses && this.reponses.length === 1) {
-      return parseInt(this.reponses[0].label);
-    }
-    return null;
-  }
-  public getReponseUniqueSaisie(): string {
-    if (this.reponses && this.reponses.length === 1) {
-      return this.reponses[0].label;
-    }
-    return null;
-  }
-  public listeReponsesPossiblesLabels() {
-    if (this.reponses_possibles) {
-      return this.reponses_possibles.map((e) => e.label);
-    } else {
-      return [];
-    }
-  }
 
+  // DEPRECATED
   public getLabelByCode(code: string): string {
-    if (!this.reponses_possibles) {
+    if (!this.reponse_complexe) {
       return null;
     }
-    const found = this.reponses_possibles.find((r) => r.code === code);
+    const found = this.reponse_complexe.find((r) => r.code === code);
     return found ? found.label : null;
   }
 
-  public setResponses(reponses: string[]) {
-    this.checkReponseExists(reponses);
-    this.reponses = [];
-    reponses.forEach((label) => {
-      this.reponses.push({
-        label: label,
-        code: this.getCodeByLabel(label),
-        ngc_code: this.getNGCCodeByLabel(label),
+  // DEPRECATED
+  public setResponseWithValueOrLabels(reponses: string[]) {
+    this.throwExceptionIfReponseNotExists(reponses);
+
+    if (this.isSimpleQuestion()) {
+      if (reponses && reponses.length === 1) {
+        this.reponse_simple = { value: reponses[0] };
+      }
+    } else {
+      reponses.forEach((label) => {
+        this.selectChoixByLabel(label);
       });
-    });
+    }
   }
-  public setResponseByCode(code: string) {
-    if (this.type !== TypeReponseQuestionKYC.choix_unique) return;
-    const reponse = this.getReponsePossibleByCodeOrException(code);
-    this.reponses = [];
-    this.reponses.push({
-      label: reponse.label,
-      code: code,
-      ngc_code: reponse.ngc_code,
-    });
+  public setResponseValueForCode(code: string, value: string) {
+    for (const reponse of this.reponse_complexe) {
+      if (reponse.code === code) {
+        reponse.value = value;
+      }
+    }
   }
 
-  private checkReponseExists(reponses: string[]) {
+  // DEPRECATED
+  private selectChoixByLabel(label: string) {
+    if (!this.reponse_complexe) return;
+    for (const rep of this.reponse_complexe) {
+      if (rep.label === label) {
+        rep.value = BooleanKYC.oui;
+      } else {
+        rep.value = BooleanKYC.non;
+      }
+    }
+  }
+
+  public getSelectedLabels(): string[] {
+    if (!this.reponse_complexe) return [];
+    const result = [];
+    for (const rep of this.reponse_complexe) {
+      if (QuestionKYC.isTrueBooleanString(rep.value)) {
+        result.push(rep.label);
+      }
+    }
+    return result;
+  }
+
+  public selectChoixByCode(code: string) {
+    if (!this.reponse_complexe) return;
+    for (const rep of this.reponse_complexe) {
+      if (rep.code === code) {
+        rep.value = BooleanKYC.oui;
+      } else {
+        rep.value = BooleanKYC.non;
+      }
+    }
+  }
+
+  private getQuestionComplexeByCode(code: string): KYCReponseComplexe {
+    if (!this.reponse_complexe) return null;
+    return this.reponse_complexe.find((r) => r.code === code);
+  }
+  private getQuestionComplexeByLabel(label: string): KYCReponseComplexe {
+    if (!this.reponse_complexe) return null;
+    return this.reponse_complexe.find((r) => r.label === label);
+  }
+  private getQuestionComplexeByNgcCode(ngc_code: string): KYCReponseComplexe {
+    if (!this.reponse_complexe) return null;
+    return this.reponse_complexe.find((r) => r.ngc_code === ngc_code);
+  }
+
+  // DEPRECATED
+  private throwExceptionIfReponseNotExists(reponses: string[]) {
     if (
       this.type !== TypeReponseQuestionKYC.choix_multiple &&
       this.type !== TypeReponseQuestionKYC.choix_unique
@@ -233,44 +529,83 @@ export class QuestionKYC implements TaggedContent {
     for (const reponse_label of reponses) {
       const code = this.getCodeByLabel(reponse_label);
       if (!code) {
-        ApplicationError.throwBadResponseValue(reponse_label, this.id);
+        ApplicationError.throwBadResponseValue(reponse_label, this.code);
       }
     }
   }
 
+  public getAllCodes(): string[] {
+    if (!this.reponse_complexe) {
+      return [];
+    }
+    return this.reponse_complexe.map((r) => r.code);
+  }
+
   public getCodeByLabel(label: string): string {
-    if (!this.reponses_possibles) {
+    if (!this.reponse_complexe) {
       return null;
     }
-    const found = this.reponses_possibles.find((r) => r.label === label);
-    return found ? found.code : null;
+    const q = this.getQuestionComplexeByLabel(label);
+    return q ? q.code : null;
   }
   public getCodeByNGCCode(ngc_code: string): string {
-    if (!this.reponses_possibles) {
+    if (!this.reponse_complexe) {
       return null;
     }
-    const found = this.reponses_possibles.find((r) => r.ngc_code === ngc_code);
-    return found ? found.code : null;
+    const q = this.getQuestionComplexeByNgcCode(ngc_code);
+    return q ? q.code : null;
   }
 
   private getNGCCodeByLabel(label: string): string {
-    if (!this.reponses_possibles) {
+    if (!this.reponse_complexe) {
       return null;
     }
-    const found = this.reponses_possibles.find((r) => r.label === label);
-    return found ? found.ngc_code : null;
+    const q = this.getQuestionComplexeByLabel(label);
+    return q ? q.ngc_code : null;
   }
 
-  private getReponsePossibleByCodeOrException(code: string): KYCReponse {
-    const found = this.reponses_possibles.find((q) => q.code === code);
-    if (!found) ApplicationError.throwBadResponseCode(this.question, code);
-    return found;
-  }
-  private getNGCCodeByCode(code: string): string {
-    if (!this.reponses_possibles) {
-      return null;
+  public static getProgression(liste: QuestionKYC[]): {
+    current: number;
+    target: number;
+  } {
+    let progression = 0;
+    for (const question of liste) {
+      if (question.isMosaic()) {
+        if (question.is_mosaic_answered) {
+          progression++;
+        }
+      } else if (question.hasAnyResponses()) {
+        progression++;
+      }
     }
-    const found = this.reponses_possibles.find((r) => r.code === code);
-    return found ? found.ngc_code : null;
+    return { current: progression, target: liste.length };
+  }
+
+  static serialise(elem: QuestionKYC): QuestionKYC_v1 {
+    return {
+      code: elem.code,
+      question: elem.question,
+      type: elem.type,
+      categorie: elem.categorie,
+      points: elem.points,
+      is_NGC: elem.is_NGC,
+      a_supprimer: elem.a_supprimer,
+      ngc_key: elem.ngc_key,
+      reponse_simple: elem.reponse_simple
+        ? ReponseSimple_v1.map(elem.reponse_simple)
+        : null,
+      reponse_complexe: elem.reponse_complexe
+        ? elem.reponse_complexe.map((r) => ReponseComplexe_v1.map(r))
+        : null,
+      thematique: elem.thematique,
+      tags: elem.tags,
+      thematiques: elem.thematiques ? elem.thematiques : [],
+      id_cms: elem.id_cms,
+      short_question: elem.short_question,
+      image_url: elem.image_url,
+      conditions: elem.conditions ? elem.conditions : [],
+      unite: elem.unite,
+      emoji: elem.emoji,
+    };
   }
 }

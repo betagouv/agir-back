@@ -66,27 +66,27 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(
       user.kyc_history
         .getAnsweredQuestionByCode(KYCID.KYC_local_frequence)
-        .getReponseUniqueSaisie(),
+        .getReponseSimpleValue(),
     ).toEqual('Parfois');
     expect(
       user.kyc_history
         .getAnsweredQuestionByCode(KYCID.KYC_transport_voiture_km)
-        .getReponseUniqueSaisie(),
+        .getReponseSimpleValue(),
     ).toEqual('12345');
     expect(
       user.kyc_history
         .getAnsweredQuestionByCode(KYCID.KYC_transport_avion_3_annees)
-        .getReponseUniqueSaisie(),
+        .getReponseSimpleValue(),
     ).toEqual('Oui');
     expect(
       user.kyc_history
         .getAnsweredQuestionByCode(KYCID.KYC_superficie)
-        .getReponseUniqueSaisie(),
+        .getReponseSimpleValue(),
     ).toEqual('130');
     expect(
       user.kyc_history
         .getAnsweredQuestionByCode(KYCID.KYC_menage)
-        .getReponseUniqueSaisie(),
+        .getReponseSimpleValue(),
     ).toEqual('4');
   });
 });

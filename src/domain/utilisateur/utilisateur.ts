@@ -291,7 +291,7 @@ export class Utilisateur extends UtilisateurData {
   ) {
     if (kyc && kyc.hasAnyResponses()) {
       for (const key in map) {
-        if (kyc.includesReponseCode(key)) {
+        if (kyc.isSelectedReponseCode(key)) {
           this.increaseTagValue(tag, map[key]);
         }
       }

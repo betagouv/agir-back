@@ -6,17 +6,22 @@ import {
   TypeReponseQuestionKYC,
   Unite,
 } from '../../../src/domain/kyc/questionKYC';
-import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 import {
-  MosaicKYC,
+  MosaicKYC_CATALOGUE,
   MosaicKYCDef,
-  TypeReponseMosaicKYC,
+  TypeMosaic,
 } from '../../../src/domain/kyc/mosaicKYC';
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import {
+  KYCHistory_v1,
+  QuestionKYC_v1,
+} from '../../../src/domain/object_store/kyc/kycHistory_v1';
+import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 
 const MOSAIC_CATALOGUE: MosaicKYCDef[] = [
   {
@@ -24,12 +29,14 @@ const MOSAIC_CATALOGUE: MosaicKYCDef[] = [
     categorie: Categorie.test,
     points: 5,
     titre: 'Titre test',
-    type: TypeReponseMosaicKYC.mosaic_boolean,
+    type: TypeMosaic.mosaic_boolean,
     question_kyc_codes: [KYCID._1, KYCID._2],
+    thematique: Thematique.alimentation,
   },
 ];
 describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const kycRepository = new KycRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -89,9 +96,10 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       image_url: 'BBB',
       code: '_2',
     });
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v0() });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v1() });
+    await kycRepository.loadDefinitions();
 
-    MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
     const response = await TestUtil.GET(
@@ -105,7 +113,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     expect(response.body.id).toEqual('TEST_MOSAIC_ID');
     expect(response.body.categorie).toEqual(Categorie.test);
     expect(response.body.points).toEqual(5);
-    expect(response.body.type).toEqual(TypeReponseMosaicKYC.mosaic_boolean);
+    expect(response.body.type).toEqual(TypeMosaic.mosaic_boolean);
     expect(response.body.reponses).toHaveLength(2);
 
     expect(response.body.reponses[0].code).toEqual('_1');
@@ -187,8 +195,9 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       question: 'quest 2',
       code: '_2',
     });
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v0() });
-    MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+    await kycRepository.loadDefinitions();
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v1() });
+    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -211,24 +220,48 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
     expect(dbUser.kyc_history.answered_questions).toHaveLength(2);
     expect(dbUser.kyc_history.answered_questions[0]).toEqual({
-      id: '_1',
+      code: '_1',
       question: 'quest 1',
       type: 'choix_unique',
       categorie: 'recommandation',
       points: 20,
       is_NGC: true,
       a_supprimer: false,
-      reponses: [{ code: 'oui', label: 'Oui' }],
-      reponses_possibles: [
-        { code: 'oui', label: 'Oui' },
-        { code: 'non', label: 'Non' },
-        { code: 'sais_pas', label: 'Je sais pas' },
+      reponse_complexe: [
+        {
+          code: 'oui',
+          label: 'Oui',
+          value: 'oui',
+          emoji: undefined,
+          image_url: undefined,
+          ngc_code: undefined,
+          unite: undefined,
+        },
+        {
+          code: 'non',
+          label: 'Non',
+          value: 'non',
+          emoji: undefined,
+          image_url: undefined,
+          ngc_code: undefined,
+          unite: undefined,
+        },
+        {
+          code: 'sais_pas',
+          label: 'Je sais pas',
+          value: 'non',
+          emoji: undefined,
+          image_url: undefined,
+          ngc_code: undefined,
+          unite: undefined,
+        },
       ],
+      reponse_simple: null,
       ngc_key: 'a . b . c',
       thematique: 'alimentation',
       tags: ['possede_voiture'],
       score: 0,
-      universes: ['alimentation'],
+      thematiques: ['alimentation'],
       id_cms: 1,
       short_question: 'short',
       image_url: 'AAA',
@@ -237,24 +270,48 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       unite: Unite.kg,
     });
     expect(dbUser.kyc_history.answered_questions[1]).toEqual({
-      id: '_2',
+      code: '_2',
       question: 'quest 2',
       type: 'choix_unique',
       categorie: 'recommandation',
       points: 20,
       is_NGC: true,
       a_supprimer: false,
-      reponses: [{ code: 'non', label: 'Non' }],
-      reponses_possibles: [
-        { code: 'oui', label: 'Oui' },
-        { code: 'non', label: 'Non' },
-        { code: 'sais_pas', label: 'Je sais pas' },
+      reponse_complexe: [
+        {
+          code: 'oui',
+          label: 'Oui',
+          value: 'non',
+          emoji: undefined,
+          image_url: undefined,
+          ngc_code: undefined,
+          unite: undefined,
+        },
+        {
+          code: 'non',
+          label: 'Non',
+          value: 'oui',
+          emoji: undefined,
+          image_url: undefined,
+          ngc_code: undefined,
+          unite: undefined,
+        },
+        {
+          code: 'sais_pas',
+          label: 'Je sais pas',
+          value: 'non',
+          emoji: undefined,
+          image_url: undefined,
+          ngc_code: undefined,
+          unite: undefined,
+        },
       ],
+      reponse_simple: null,
       ngc_key: 'a . b . c',
       thematique: 'alimentation',
       tags: ['possede_voiture'],
       score: 0,
-      universes: ['alimentation'],
+      thematiques: ['alimentation'],
       id_cms: 2,
       short_question: 'short',
       image_url: 'AAA',
@@ -301,8 +358,9 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       question: 'quest 2',
       code: '_2',
     });
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v0() });
-    MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v1() });
+    await kycRepository.loadDefinitions();
+    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -323,26 +381,23 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
     expect(dbUser.kyc_history.answered_questions).toHaveLength(2);
     expect(dbUser.kyc_history.answered_questions[0]).toEqual({
-      id: '_1',
+      code: '_1',
       question: 'quest 1',
       type: 'entier',
       categorie: 'recommandation',
       points: 20,
       is_NGC: true,
       a_supprimer: false,
-      reponses: [
-        {
-          code: null,
-          label: '1',
-          ngc_code: null,
-        },
-      ],
-      reponses_possibles: [],
+      reponse_simple: {
+        unite: 'kg',
+        value: '1',
+      },
+      reponse_complexe: undefined,
       ngc_key: 'a . b . c',
       thematique: 'alimentation',
       tags: ['possede_voiture'],
       score: 0,
-      universes: ['alimentation'],
+      thematiques: ['alimentation'],
       id_cms: 1,
       short_question: 'short',
       image_url: 'AAA',
@@ -351,26 +406,23 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       emoji: '🔥',
     });
     expect(dbUser.kyc_history.answered_questions[1]).toEqual({
-      id: '_2',
+      code: '_2',
       question: 'quest 2',
       type: 'entier',
       categorie: 'recommandation',
       points: 20,
       is_NGC: true,
       a_supprimer: false,
-      reponses: [
-        {
-          code: null,
-          label: '0',
-          ngc_code: null,
-        },
-      ],
-      reponses_possibles: [],
+      reponse_simple: {
+        unite: 'kg',
+        value: '0',
+      },
+      reponse_complexe: undefined,
       ngc_key: 'a . b . c',
       thematique: 'alimentation',
       tags: ['possede_voiture'],
       score: 0,
-      universes: ['alimentation'],
+      thematiques: ['alimentation'],
       id_cms: 2,
       short_question: 'short',
       image_url: 'AAA',
@@ -382,8 +434,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC/id - maj mosaic avec pas de réponses', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v0() });
-    MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v1() });
+    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -399,8 +451,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC/id - maj mosaic réponses manquantes', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v0() });
-    MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v1() });
+    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -446,36 +498,45 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       id_cms: 1,
       question: 'quest 1',
       code: '_1',
+      short_question: 'short_1',
+      image_url: 'AAA_1',
     });
     await TestUtil.create(DB.kYC, {
       ...dbKYC,
       id_cms: 2,
       question: 'quest 2',
       code: '_2',
+      short_question: 'short_2',
+      image_url: 'AAA_2',
     });
 
-    const kyc: KYCHistory_v0 = {
-      version: 0,
+    const kyc: KYCHistory_v1 = {
+      version: 1,
       answered_mosaics: [KYCMosaicID.TEST_MOSAIC_ID],
       answered_questions: [
         {
-          id: '_1',
+          code: '_1',
           question: 'quest 1',
           type: TypeReponseQuestionKYC.choix_unique,
           categorie: Categorie.recommandation,
           points: 20,
           is_NGC: true,
           a_supprimer: false,
-          reponses: [{ code: 'oui', label: 'Oui' }],
-          reponses_possibles: [
-            { code: 'oui', label: 'Oui' },
-            { code: 'non', label: 'Non' },
-            { code: 'sais_pas', label: 'Je sais pas' },
+          reponse_complexe: [
+            { code: 'oui', label: 'Oui', ngc_code: undefined, value: 'oui' },
+            { code: 'non', label: 'Non', ngc_code: undefined, value: 'non' },
+            {
+              code: 'sais_pas',
+              label: 'Je sais pas',
+              ngc_code: undefined,
+              value: 'non',
+            },
           ],
           ngc_key: 'a . b . c',
           thematique: Thematique.alimentation,
           tags: [Tag.possede_voiture],
-          universes: ['alimentation'],
+          thematiques: [Thematique.alimentation],
+          reponse_simple: undefined,
           id_cms: 1,
           short_question: 'short 1',
           image_url: 'AAA',
@@ -484,23 +545,28 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           emoji: '🔥',
         },
         {
-          id: '_2',
+          code: '_2',
           question: 'quest 2',
           type: TypeReponseQuestionKYC.choix_unique,
           categorie: Categorie.recommandation,
           points: 20,
           is_NGC: true,
           a_supprimer: false,
-          reponses: [{ code: 'non', label: 'Non' }],
-          reponses_possibles: [
-            { code: 'oui', label: 'Oui' },
-            { code: 'non', label: 'Non' },
-            { code: 'sais_pas', label: 'Je sais pas' },
+          reponse_complexe: [
+            { code: 'non', label: 'Non', ngc_code: undefined, value: 'oui' },
+            { code: 'oui', label: 'Oui', ngc_code: undefined, value: 'non' },
+            {
+              code: 'sais_pas',
+              label: 'Je sais pas',
+              ngc_code: undefined,
+              value: 'non',
+            },
           ],
           ngc_key: 'a . b . c',
           thematique: Thematique.alimentation,
           tags: [Tag.possede_voiture],
-          universes: ['alimentation'],
+          thematiques: [Thematique.alimentation],
+          reponse_simple: undefined,
           id_cms: 2,
           short_question: 'short 2',
           image_url: 'BBB',
@@ -512,7 +578,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     };
     await TestUtil.create(DB.utilisateur, { kyc: kyc });
 
-    MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+    await kycRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -528,16 +595,16 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       reponses: [
         {
           code: '_1',
-          label: 'short 1',
+          label: 'short_1',
           boolean_value: true,
-          image_url: 'AAA',
+          image_url: 'AAA_1',
           emoji: '🔥',
         },
         {
           code: '_2',
-          label: 'short 2',
+          label: 'short_2',
           boolean_value: false,
-          image_url: 'BBB',
+          image_url: 'AAA_2',
           emoji: '🔥',
         },
       ],
@@ -577,32 +644,36 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       id_cms: 1,
       question: 'quest 1',
       code: '_1',
+      short_question: 'short 1',
+      image_url: 'AAA_1',
     });
     await TestUtil.create(DB.kYC, {
       ...dbKYC,
       id_cms: 2,
       question: 'quest 2',
       code: '_2',
+      short_question: 'short 2',
+      image_url: 'BBB_1',
     });
 
-    const kyc: KYCHistory_v0 = {
-      version: 0,
+    const kyc: KYCHistory_v1 = {
+      version: 1,
       answered_mosaics: [KYCMosaicID.TEST_MOSAIC_ID],
       answered_questions: [
         {
-          id: '_1',
+          code: '_1',
           question: 'quest 1',
           type: TypeReponseQuestionKYC.entier,
           categorie: Categorie.recommandation,
           points: 20,
           is_NGC: true,
           a_supprimer: false,
-          reponses: [{ code: null, label: '0' }],
-          reponses_possibles: [],
+          reponse_simple: { value: '0' },
+          reponse_complexe: [],
           ngc_key: 'a . b . c',
           thematique: Thematique.alimentation,
           tags: [Tag.possede_voiture],
-          universes: ['alimentation'],
+          thematiques: [Thematique.alimentation],
           id_cms: 1,
           short_question: 'short 1',
           image_url: 'AAA',
@@ -611,19 +682,19 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           emoji: '🔥',
         },
         {
-          id: '_2',
+          code: '_2',
           question: 'quest 2',
           type: TypeReponseQuestionKYC.entier,
           categorie: Categorie.recommandation,
           points: 20,
           is_NGC: true,
           a_supprimer: false,
-          reponses: [{ code: null, label: '1' }],
-          reponses_possibles: [],
+          reponse_simple: { value: '1' },
+          reponse_complexe: undefined,
           ngc_key: 'a . b . c',
           thematique: Thematique.alimentation,
           tags: [Tag.possede_voiture],
-          universes: ['alimentation'],
+          thematiques: [Thematique.alimentation],
           id_cms: 2,
           short_question: 'short 2',
           image_url: 'BBB',
@@ -634,8 +705,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       ],
     };
     await TestUtil.create(DB.utilisateur, { kyc: kyc });
-
-    MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+    await kycRepository.loadDefinitions();
+    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
     const response = await TestUtil.GET(
@@ -653,14 +724,14 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           code: '_1',
           label: 'short 1',
           boolean_value: false,
-          image_url: 'AAA',
+          image_url: 'AAA_1',
           emoji: '🔥',
         },
         {
           code: '_2',
           label: 'short 2',
           boolean_value: true,
-          image_url: 'BBB',
+          image_url: 'BBB_1',
           emoji: '🔥',
         },
       ],

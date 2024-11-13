@@ -2,6 +2,7 @@ import { DefiHistory_v0 } from './defi/defiHistory_v0';
 import { Gamification_v0 } from './gamification/gamification_v0';
 import { History_v0 } from './history/history_v0';
 import { KYCHistory_v0 } from './kyc/kycHistory_v0';
+import { KYCHistory_v1 } from './kyc/kycHistory_v1';
 import { Logement_v0 } from './logement/logement_v0';
 import { MissionsUtilisateur_v0 } from './mission/MissionsUtilisateur_v0';
 import { MissionsUtilisateur_v1 } from './mission/MissionsUtilisateur_v1';
@@ -31,6 +32,7 @@ const CLASS_DICTIONNARY = {
   History_v0: History_v0,
   Gamification_v0: Gamification_v0,
   KYCHistory_v0: KYCHistory_v0,
+  KYCHistory_v1: KYCHistory_v1,
   Logement_v0: Logement_v0,
   DefiHistory_v0: DefiHistory_v0,
   MissionsUtilisateur_v0: MissionsUtilisateur_v0,

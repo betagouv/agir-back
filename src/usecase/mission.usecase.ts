@@ -23,10 +23,10 @@ import {
 import { Categorie } from '../domain/contenu/categorie';
 import { PonderationApplicativeManager } from '../domain/scoring/ponderationApplicative';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
-import { QuestionGeneric } from '../domain/kyc/questionGeneric';
 import { TuileMission } from '../domain/thematique/tuileMission';
 import { Thematique } from '../domain/contenu/thematique';
 import { PriorityContent } from '../domain/scoring/priorityContent';
+import { QuestionKYC } from '../domain/kyc/questionKYC';
 
 @Injectable()
 export class MissionUsecase {
@@ -233,15 +233,14 @@ export class MissionUsecase {
   async getMissionKYCsAndMosaicsByCodeMission(
     utilisateurId: string,
     code_mission: string,
-  ): Promise<QuestionGeneric[]> {
+  ): Promise<QuestionKYC[]> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.missions, Scope.kyc, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
-    const catalogue = await this.kycRepository.getAllDefs();
-    utilisateur.kyc_history.setCatalogue(catalogue);
+    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
     const mission = utilisateur.missions.getMissionByCode(code_mission);
 
@@ -249,23 +248,24 @@ export class MissionUsecase {
       throw ApplicationError.throwMissionNotFoundOfCode(code_mission);
     }
 
-    const result: QuestionGeneric[] = [];
+    const result: QuestionKYC[] = [];
 
     const liste_objectifs_kyc = mission.getAllKYCsandMosaics();
 
     for (const objectif_kyc of liste_objectifs_kyc) {
       if (objectif_kyc.type === ContentType.kyc) {
-        result.push({
-          kyc: utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
-            objectif_kyc.content_id,
-          ),
-        });
+        const kyc = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+          objectif_kyc.content_id,
+        );
+        if (kyc) {
+          result.push(kyc);
+        }
       } else {
         const mosaic = utilisateur.kyc_history.getUpToDateMosaicById(
           KYCMosaicID[objectif_kyc.content_id],
         );
         if (mosaic) {
-          result.push({ mosaic: mosaic });
+          result.push(mosaic);
         }
       }
     }

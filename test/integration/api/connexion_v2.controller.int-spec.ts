@@ -5,7 +5,6 @@ import {
   Scope,
   UtilisateurStatus,
 } from '../../../src/domain/utilisateur/utilisateur';
-import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
@@ -13,6 +12,7 @@ import {
   TypeReponseQuestionKYC,
   Unite,
 } from '../../../src/domain/kyc/questionKYC';
+import { KYCHistory_v1 } from '../../../src/domain/object_store/kyc/kycHistory_v1';
 
 function getFakeUtilisteur() {
   return {
@@ -370,12 +370,12 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
     const utilisateur = getFakeUtilisteur();
     PasswordManager.setUserPassword(utilisateur, '#1234567890HAHAa');
 
-    const kyc: KYCHistory_v0 = {
-      version: 0,
+    const kyc: KYCHistory_v1 = {
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: KYCID.KYC_preference,
+          code: KYCID.KYC_preference,
           id_cms: 1,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
@@ -383,14 +383,30 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
           a_supprimer: false,
           categorie: Categorie.test,
           points: 10,
-          reponses: [{ label: 'Le climat', code: Thematique.climat }],
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-            { label: 'Ce que je mange', code: Thematique.alimentation },
+          reponse_complexe: [
+            {
+              label: 'Le climat',
+              code: Thematique.climat,
+              ngc_code: undefined,
+              value: 'oui',
+            },
+            {
+              label: 'Mon logement',
+              code: Thematique.logement,
+              ngc_code: undefined,
+              value: 'non',
+            },
+            {
+              label: 'Ce que je mange',
+              code: Thematique.alimentation,
+              ngc_code: undefined,
+              value: 'non',
+            },
           ],
           tags: [],
-          universes: [Thematique.climat],
+          thematiques: [Thematique.climat],
+          thematique: Thematique.alimentation,
+          reponse_simple: undefined,
           short_question: 'short',
           image_url: 'AAA',
           conditions: [],

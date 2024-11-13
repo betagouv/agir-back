@@ -96,7 +96,7 @@ const KYC_DB_DATA: KYC = {
   updated_at: undefined,
 };
 
-describe('/utilisateurs/id/questionsKYC (API test)', () => {
+describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
@@ -146,7 +146,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     process.env = OLD_ENV;
   });
 
-  it('GET /utilisateurs/id/questionsKYC - 1 question répondue, avec attributs à jour depuis le catalogue', async () => {
+  it('GET /utilisateurs/id/questionsKYC_v2 - 1 question répondue, avec attributs à jour depuis le catalogue', async () => {
     // GIVEN
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = [];
     const kyc: KYCHistory_v1 = {
@@ -206,7 +206,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/questionsKYC',
+      '/utilisateurs/utilisateur-id/questionsKYC_v2',
     );
 
     // THEN
@@ -238,7 +238,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       value: 'oui',
     });
   });
-  it('GET /utilisateurs/id/questionsKYC - liste N questions', async () => {
+  it('GET /utilisateurs/id/questionsKYC_v2 - liste N questions', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = [];
@@ -250,14 +250,14 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/questionsKYC',
+      '/utilisateurs/utilisateur-id/questionsKYC_V2',
     );
 
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.length).toEqual(3);
   });
-  it('GET /utilisateurs/id/questionsKYC - liste N questions + 1 mosaic', async () => {
+  it('GET /utilisateurs/id/questionsKYC_V2 - liste N questions + 1 mosaic', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = [
@@ -316,17 +316,30 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/questionsKYC',
+      '/utilisateurs/utilisateur-id/questionsKYC_v2',
     );
 
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.length).toEqual(5);
     expect(response.body[0]).toEqual({
-      id: '_1',
+      code: '_1',
+      is_answered: false,
       question: 'quest 1',
-      reponse: [],
-      reponses_possibles: ['Oui', 'Non', 'Je sais pas'],
+      reponse_multiple: [
+        {
+          code: 'oui',
+          label: 'Oui',
+        },
+        {
+          code: 'non',
+          label: 'Non',
+        },
+        {
+          code: 'sais_pas',
+          label: 'Je sais pas',
+        },
+      ],
       categorie: 'recommandation',
       points: 20,
       type: 'choix_unique',
@@ -334,32 +347,36 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       thematique: 'alimentation',
     });
     expect(response.body[4]).toEqual({
-      id: 'TEST_MOSAIC_ID',
-      titre: 'Titre test',
-      reponses: [
+      code: 'TEST_MOSAIC_ID',
+      is_NGC: false,
+      question: 'Titre test',
+      reponse_multiple: [
         {
           code: '_1',
           image_url: 'AAA',
           label: 'short',
-          boolean_value: false,
+          value: 'non',
           emoji: '🔥',
+          unite: Unite.kg,
         },
         {
           code: '_2',
           image_url: 'AAA',
           label: 'short',
-          boolean_value: false,
+          value: 'non',
           emoji: '🔥',
+          unite: Unite.kg,
         },
       ],
       categorie: 'test',
       points: 10,
       type: 'mosaic_boolean',
       is_answered: false,
+      thematique: 'alimentation',
     });
   });
 
-  it('GET /utilisateurs/id/questionsKYC - liste une mosaic de test hors prod', async () => {
+  it('GET /utilisateurs/id/questionsKYC_v2 - liste une mosaic de test hors prod', async () => {
     // GIVEN
     process.env.IS_PROD = 'false';
     await TestUtil.create(DB.utilisateur);
@@ -378,37 +395,119 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/questionsKYC',
+      '/utilisateurs/utilisateur-id/questionsKYC_v2',
     );
 
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.length).toEqual(1);
   });
-  it('GET /utilisateurs/id/questionsKYC - liste N questions dont une remplie', async () => {
+  it('GET /utilisateurs/id/questionsKY_v2 - liste N questions dont une remplie', async () => {
     // GIVEN
+    const kyc: KYCHistory_v1 = {
+      version: 1,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          code: KYCID._2,
+          id_cms: 2,
+          question: `Quel est votre sujet principal d'intéret ?`,
+          type: TypeReponseQuestionKYC.choix_multiple,
+          is_NGC: false,
+          a_supprimer: false,
+          categorie: Categorie.test,
+          points: 10,
+          reponse_complexe: [
+            {
+              label: 'Le climat',
+              code: Thematique.climat,
+              value: 'oui',
+              ngc_code: '123',
+            },
+            {
+              label: 'Mon logement',
+              code: Thematique.logement,
+              value: 'oui',
+              ngc_code: '123',
+            },
+          ],
+          tags: [],
+          thematiques: [Thematique.climat],
+          short_question: 'short',
+          image_url: 'URL',
+          conditions: [],
+          unite: Unite.euro,
+          emoji: '🎉',
+          ngc_key: '1223',
+          thematique: Thematique.climat,
+          reponse_simple: undefined,
+        },
+      ],
+    };
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = [];
 
-    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.utilisateur, { kyc: kyc });
     await TestUtil.create(DB.kYC, { id_cms: 1, code: KYCID.KYC001 });
     await TestUtil.create(DB.kYC, { id_cms: 2, code: KYCID.KYC002 });
-    await TestUtil.create(DB.kYC, { id_cms: 3, code: KYCID._2 });
+    const KYC_DB_DATA_: KYC = {
+      id_cms: 3,
+      code: KYCID._2,
+      a_supprimer: false,
+      categorie: Categorie.mission,
+      conditions: undefined,
+      emoji: 'a',
+      image_url: 'img',
+      is_ngc: true,
+      ngc_key: 'a . b . c',
+      points: 123,
+      short_question: 'short',
+      tags: ['A'],
+      thematique: Thematique.dechet,
+      unite: Unite.kg,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      universes: [Thematique.climat],
+      question: `Quel est votre sujet principal d'intéret ?`,
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.kYC, KYC_DB_DATA_);
+
     await kycRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/questionsKYC',
+      '/utilisateurs/utilisateur-id/questionsKYC_v2',
     );
 
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.length).toEqual(3);
 
-    const quest = response.body.find((e) => e.id === '_2');
-    expect(quest.reponse).toStrictEqual(['Le climat', 'Mon logement']);
+    const quest = response.body.find((e) => e.code === '_2');
+    expect(quest.reponse_multiple).toStrictEqual([
+      {
+        code: 'climat',
+        label: 'Le climat',
+        value: 'oui',
+      },
+      {
+        code: 'logement',
+        label: 'Mon logement',
+        value: 'oui',
+      },
+      {
+        code: 'alimentation',
+        label: 'Ce que je mange',
+      },
+    ]);
   });
 
-  it('GET /utilisateurs/id/questionsKYC/3 - renvoie la question sans réponse', async () => {
+  it('GET /utilisateurs/id/questionsKYC_v2/3 - renvoie la question sans réponse', async () => {
     // GIVEN
     const kyc: KYCHistory_v1 = {
       version: 1,
@@ -433,22 +532,34 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/questionsKYC/_3',
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_3',
     );
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.id).toEqual('_3');
+    expect(response.body.code).toEqual('_3');
     expect(response.body.type).toEqual(TypeReponseQuestionKYC.choix_unique);
     expect(response.body.points).toEqual(10);
-    expect(response.body.reponses_possibles).toEqual(['Oui', 'Non', 'A voir']);
+    expect(response.body.reponse_multiple).toEqual([
+      {
+        code: 'oui',
+        label: 'Oui',
+      },
+      {
+        code: 'non',
+        label: 'Non',
+      },
+      {
+        code: 'peut_etre',
+        label: 'A voir',
+      },
+    ]);
     expect(response.body.categorie).toEqual(Categorie.test);
     expect(response.body.question).toEqual(
       `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
     );
-    expect(response.body.reponse).toEqual([]);
   });
-  it(`GET /utilisateurs/id/questionsKYC/3 - renvoie les reponses possibles du catalogue, pas de la question historique `, async () => {
+  it(`GET /utilisateurs/id/questionsKYC_v2/3 - renvoie les reponses possibles du catalogue, pas de la question historique `, async () => {
     // GIVEN
     await TestUtil.create(DB.kYC, {
       id_cms: 1,
@@ -497,27 +608,37 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/questionsKYC/KYC001',
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC001',
     );
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.reponses_possibles).toEqual(['AAA', 'BBB']);
-    expect(response.body.reponse).toEqual(['AAA']);
+    expect(response.body.reponse_multiple).toEqual([
+      {
+        code: 'climat',
+        label: 'AAA',
+        value: 'oui',
+      },
+      {
+        code: 'logement',
+        label: 'BBB',
+        value: 'non',
+      },
+    ]);
   });
-  it('GET /utilisateurs/id/questionsKYC/bad - renvoie 404', async () => {
+  it('GET /utilisateurs/id/questionsKYC_v2/bad - renvoie 404', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/questionsKYC/bad',
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/bad',
     );
 
     // THEN
     expect(response.status).toBe(404);
   });
-  it('GET /utilisateurs/id/questionsKYC/question - renvoie la quesition avec la réponse', async () => {
+  it('GET /utilisateurs/id/questionsKYC_v2/question - renvoie la quesition avec la réponse', async () => {
     // GIVEN
     const kyc: KYCHistory_v1 = {
       version: 1,
@@ -562,7 +683,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/questionsKYC/_2',
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_2',
     );
 
     // THEN
@@ -570,256 +691,54 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(response.body.question).toEqual(
       `Quel est votre sujet principal d'intéret ?`,
     );
-    expect(response.body.reponse).toEqual(['Le climat', 'Mon logement']);
+    expect(response.body.reponse_multiple).toEqual([
+      {
+        code: 'climat',
+        label: 'Le climat',
+        value: 'oui',
+      },
+      {
+        code: 'logement',
+        label: 'Mon logement',
+        value: 'oui',
+      },
+      {
+        code: 'alimentation',
+        label: 'Ce que je mange',
+        value: 'non',
+      },
+    ]);
   });
 
-  it('PUT /utilisateurs/id/questionsKYC/1 - crée la reponse à la question 1, empoche les points', async () => {
+  it('PUT /utilisateurs/id/questionsKYC_v2/1 - erreur si réponse inconnue', async () => {
     // GIVEN
-    const kyc: KYCHistory_v1 = {
-      version: 1,
-      answered_mosaics: [],
-      answered_questions: [],
-    };
-    await TestUtil.create(DB.utilisateur, {
-      missions: missions_with_kyc,
-      kyc: kyc,
-    });
+    await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.kYC, {
       id_cms: 1,
-      code: KYCID._1,
-      type: TypeReponseQuestionKYC.libre,
-      points: 10,
-      question: 'Comment avez vous connu le service ?',
-      reponses: [],
-    });
-    await TestUtil.create(DB.kYC, {
-      id_cms: 2,
-      code: KYCID.KYC006,
+      code: KYCID._2,
+      question: `Quel est votre sujet principal d'intéret ?`,
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
       type: TypeReponseQuestionKYC.choix_unique,
-      points: 10,
-      question: 'Comment avez vous connu le service ?',
-      reponses: [
-        { label: 'Moins de 15 ans (neuf ou récent)', code: 'moins_15' },
-        { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
-      ],
     });
     await kycRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/_1',
-    ).send({ reponse: ['YO'] });
-
-    // THEN
-    expect(response.status).toBe(200);
-    const user = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    user.kyc_history.setCatalogue(KycRepository.getCatalogue());
-
-    expect(
-      user.kyc_history
-        .getUpToDateQuestionByCodeOrException('_1')
-        .getReponseSimpleValue(),
-    ).toStrictEqual('YO');
-
-    const userDB = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(userDB.gamification.points).toEqual(20);
-    expect(
-      userDB.missions.missions[0].objectifs[0].done_at.getTime(),
-    ).toBeLessThan(Date.now());
-    expect(
-      userDB.missions.missions[0].objectifs[0].done_at.getTime(),
-    ).toBeGreaterThan(Date.now() - 200);
-  });
-
-  it(`PUT /utilisateurs/id/questionsKYC/1 - un defi deviens non recommandé suite à maj de KYC`, async () => {
-    // GIVEN
-    const missions_article_plus_defi: MissionsUtilisateur_v1 = {
-      version: 1,
-      missions: [
-        {
-          id: '1',
-          done_at: new Date(1),
-          code: CodeMission.cereales,
-          image_url: 'img',
-          thematique: Thematique.alimentation,
-          titre: 'titre',
-          is_first: false,
-          objectifs: [
-            {
-              id: '0',
-              content_id: '1',
-              type: ContentType.article,
-              titre: '1 article',
-              points: 10,
-              is_locked: false,
-              done_at: new Date(),
-              sont_points_en_poche: false,
-              est_reco: true,
-            },
-            {
-              id: '1',
-              content_id: '1',
-              type: ContentType.defi,
-              titre: '1 défi',
-              points: 10,
-              is_locked: false,
-              done_at: null,
-              sont_points_en_poche: false,
-              est_reco: true,
-            },
-          ],
-          est_visible: true,
-        },
-      ],
-    };
-    const kyc: KYCHistory_v1 = {
-      version: 1,
-      answered_mosaics: [],
-      answered_questions: [
-        {
-          ...KYC_DATA,
-          code: '1',
-          id_cms: 1,
-          question: `question`,
-          type: TypeReponseQuestionKYC.choix_unique,
-          thematique: Thematique.climat,
-          reponse_complexe: [
-            { label: 'YI', code: 'yi', value: 'oui' },
-            { label: 'YO', code: 'yos', value: 'non' },
-          ],
-          tags: [],
-          short_question: 'short',
-          image_url: 'AAA',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
-        },
-      ],
-    };
-
-    await TestUtil.create(DB.utilisateur, {
-      missions: missions_article_plus_defi,
-      kyc: kyc,
-    });
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: '1',
-      question: `question`,
-      reponses: [
-        { label: 'YI', code: 'yi' },
-        { label: 'YO', code: 'yos' },
-      ],
-    });
-
-    await TestUtil.create(DB.article, { content_id: '1' });
-    await TestUtil.create(DB.defi, {
-      content_id: '1',
-      conditions: [[{ id_kyc: 1, code_kyc: '1', code_reponse: 'yi' }]],
-    });
-    await TestUtil.create(DB.thematique, {
-      code: Thematique.alimentation,
-      label: 'Faut manger !',
-    });
-
-    await thematiqueRepository.onApplicationBootstrap();
-    await kycRepository.loadDefinitions();
-
-    // WHEN
-    let response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/1',
-    ).send({ reponse: ['YO'] });
-
-    // THEN
-    expect(response.status).toBe(200);
-
-    let userDB = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
-    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
-    expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(false);
-    // WHEN
-    response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/1',
-    ).send({ reponse: ['YI'] });
-
-    // THEN
-    expect(response.status).toBe(200);
-    userDB = await utilisateurRepository.getById('utilisateur-id', [Scope.ALL]);
-    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
-    expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(true);
-  });
-
-  it('PUT /utilisateurs/id/questionsKYC/1 - met à jour la reponse à la question 1', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID._2,
-      question: `Quel est votre sujet principal d'intéret ?`,
-      reponses: [
-        { label: 'Le climat', code: Thematique.climat },
-        { label: 'Mon logement', code: Thematique.logement },
-        { label: 'Ce que je mange', code: Thematique.alimentation },
-      ],
-    });
-    await kycRepository.loadDefinitions();
-
-    // WHEN
-    const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/_2',
-    ).send({ reponse: ['Le climat'] });
-
-    // THEN
-    expect(response.status).toBe(200);
-    const user = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    user.kyc_history.setCatalogue(KycRepository.getCatalogue());
-    expect(
-      user.kyc_history
-        .getUpToDateQuestionByCodeOrException('_2')
-        .getCodeReponseQuestionChoixUnique(),
-    ).toStrictEqual(Thematique.climat);
-
-    const userDB = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(userDB.gamification.points).toEqual(10);
-  });
-
-  it('PUT /utilisateurs/id/questionsKYC/1 - erreur si réponse inconnue', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID._2,
-      question: `Quel est votre sujet principal d'intéret ?`,
-      reponses: [
-        { label: 'Le climat', code: Thematique.climat },
-        { label: 'Mon logement', code: Thematique.logement },
-        { label: 'Ce que je mange', code: Thematique.alimentation },
-      ],
-    });
-    await kycRepository.loadDefinitions();
-
-    // WHEN
-    const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/_2',
-    ).send({ reponse: ['Le climat haha'] });
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_2',
+    ).send([{ code: 'haaha' }]);
 
     // THEN
     expect(response.status).toBe(400);
     expect(response.body.message).toEqual(
-      'Reponse [Le climat haha] inconnue pour la KYC [_2]',
+      'Code réponse [haaha] inconnu pour la KYC [_2]',
     );
   });
 
-  it('PUT /utilisateurs/id/questionsKYC/001 - met à jour les tags de reco - ajout boost', async () => {
+  it('PUT /utilisateurs/id/questionsKYC_v2/KYC001 - met à jour les tags de reco - suppression boost', async () => {
     // GIVEN
     await TestUtil.create(DB.kYC, {
       id_cms: 1,
@@ -841,55 +760,24 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     await TestUtil.create(DB.utilisateur, { kyc: kyc });
     await kycRepository.loadDefinitions();
 
-    // WHEN
-    const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/KYC001',
-    ).send({ reponse: ['Comment je bouge'] });
-
-    // THEN
-    expect(response.status).toBe(200);
-    const userDB = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
+    await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC001',
+    ).send([
+      { code: Thematique.transport, value: 'oui' },
+      { code: Thematique.alimentation, value: 'non' },
+      { code: Thematique.climat, value: 'non' },
+      { code: Thematique.logement, value: 'non' },
     ]);
-    expect(userDB.tag_ponderation_set.transport).toEqual(50);
-  });
-
-  //########################################################################################################
-  //########################################################################################################
-  //########################################################################################################
-
-  it('PUT /utilisateurs/id/questionsKYC/KYC001 - met à jour les tags de reco - suppression boost', async () => {
-    // GIVEN
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID.KYC001,
-      question: `Quel est votre sujet principal d'intéret ?`,
-      reponses: [
-        { label: 'Le climat', code: Thematique.climat },
-        { label: 'Mon logement', code: Thematique.logement },
-        { label: 'Ce que je mange', code: Thematique.alimentation },
-        { label: 'Comment je bouge', code: Thematique.transport },
-      ],
-    });
-
-    const kyc: KYCHistory_v1 = {
-      version: 1,
-      answered_mosaics: [],
-      answered_questions: [],
-    };
-    await TestUtil.create(DB.utilisateur, { kyc: kyc });
-
-    await TestUtil.PUT('/utilisateurs/utilisateur-id/questionsKYC/KYC001').send(
-      {
-        reponse: ['Comment je bouge'],
-      },
-    );
-    await kycRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/KYC001',
-    ).send({ reponse: ['Le climat'] });
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC001',
+    ).send([
+      { code: Thematique.transport, value: 'non' },
+      { code: Thematique.alimentation, value: 'non' },
+      { code: Thematique.climat, value: 'oui' },
+      { code: Thematique.logement, value: 'non' },
+    ]);
 
     // THEN
     expect(response.status).toBe(200);
@@ -899,7 +787,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(userDB.tag_ponderation_set.transport).toEqual(0);
   });
 
-  it('PUT /utilisateurs/id/questionsKYC/006 - transpose dans logement KYC006 plus de 15 ans', async () => {
+  it('PUT /utilisateurs/id/questionsKYC_v2/006 - transpose dans logement KYC006 plus de 15 ans', async () => {
     // GIVEN
     const kyc: KYCHistory_v1 = {
       version: 1,
@@ -931,13 +819,14 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
         { label: 'Moins de 15 ans (neuf ou récent)', code: 'moins_15' },
         { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
       ],
+      type: TypeReponseQuestionKYC.choix_unique,
     });
     await kycRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/KYC006',
-    ).send({ reponse: ['Plus de 15 ans (ancien)'] });
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC006',
+    ).send([{ code: 'plus_15' }]);
 
     // THEN
     expect(response.status).toBe(200);
@@ -947,7 +836,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(userDB.logement.plus_de_15_ans).toEqual(true);
   });
 
-  it('PUT /utilisateurs/id/questionsKYC/006 - transpose dans logement KYC_logement_age plus de 15 ans', async () => {
+  it('PUT /utilisateurs/id/questionsKYC_v2/006 - transpose dans logement KYC_logement_age plus de 15 ans', async () => {
     // GIVEN
     const kyc: KYCHistory_v1 = {
       version: 1,
@@ -986,8 +875,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/KYC_logement_age',
-    ).send({ reponse: ['30'] });
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC_logement_age',
+    ).send([{ value: '30' }]);
 
     // THEN
     expect(response.status).toBe(200);
@@ -997,7 +886,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(userDB.logement.plus_de_15_ans).toEqual(true);
   });
 
-  it('PUT /utilisateurs/id/questionsKYC/KYC_DPE - transpose dans logement', async () => {
+  it('PUT /utilisateurs/id/questionsKYC_v2/KYC_DPE - transpose dans logement', async () => {
     // GIVEN
     const kyc: KYCHistory_v1 = {
       version: 1,
@@ -1026,13 +915,14 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
         { code: 'G', label: 'G', ngc_code: null },
         { code: 'ne_sais_pas', label: 'Je ne sais pas', ngc_code: null },
       ],
+      type: TypeReponseQuestionKYC.choix_unique,
     });
     await kycRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/KYC_DPE',
-    ).send({ reponse: ['F'] });
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC_DPE',
+    ).send([{ code: 'F' }]);
 
     // THEN
     expect(response.status).toBe(200);
@@ -1042,7 +932,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(userDB.logement.dpe).toEqual('F');
   });
 
-  it('PUT /utilisateurs/id/questionsKYC/KYC_superficie - transpose dans logement', async () => {
+  it('PUT /utilisateurs/id/questionsKYC_v2/KYC_superficie - transpose dans logement', async () => {
     // GIVEN
     const kyc: KYCHistory_v1 = {
       version: 1,
@@ -1080,17 +970,18 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/KYC_superficie',
-    ).send({ reponse: ['134'] });
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC_superficie',
+    ).send([{ value: '134' }]);
 
     // THEN
+    console.log(response.body);
     expect(response.status).toBe(200);
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
     expect(userDB.logement.superficie).toEqual(Superficie.superficie_150);
   });
-  it('PUT /utilisateurs/id/questionsKYC/KYC_proprietaire - transpose dans logement', async () => {
+  it('PUT /utilisateurs/id/questionsKYC_v2/KYC_proprietaire - transpose dans logement', async () => {
     // GIVEN
     const kyc: KYCHistory_v1 = {
       version: 1,
@@ -1131,8 +1022,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/KYC_proprietaire',
-    ).send({ reponse: ['Oui'] });
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC_proprietaire',
+    ).send([{ code: 'oui' }]);
 
     // THEN
     expect(response.status).toBe(200);
@@ -1142,7 +1033,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(userDB.logement.proprietaire).toEqual(true);
   });
 
-  it('PUT /utilisateurs/id/questionsKYC/KYC_chauffage - transpose dans logement', async () => {
+  it('PUT /utilisateurs/id/questionsKYC_v2/KYC_chauffage - transpose dans logement', async () => {
     // GIVEN
     const kyc: KYCHistory_v1 = {
       version: 1,
@@ -1194,8 +1085,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/KYC_chauffage',
-    ).send({ reponse: ['Gaz'] });
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC_chauffage',
+    ).send([{ code: 'gaz' }]);
 
     // THEN
     expect(response.status).toBe(200);
@@ -1205,7 +1096,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(userDB.logement.chauffage).toEqual(Chauffage.gaz);
   });
 
-  it('PUT /utilisateurs/id/questionsKYC/KYC_type_logement - transpose dans logement', async () => {
+  it('PUT /utilisateurs/id/questionsKYC_v2/KYC_type_logement - transpose dans logement', async () => {
     // GIVEN
     const kyc: KYCHistory_v1 = {
       version: 1,
@@ -1245,8 +1136,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/KYC_type_logement',
-    ).send({ reponse: ['Appartement'] });
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC_type_logement',
+    ).send([{ code: 'type_appartement' }]);
 
     // THEN
     expect(response.status).toBe(200);
@@ -1256,7 +1147,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(userDB.logement.type).toEqual(TypeLogement.appartement);
   });
 
-  it('PUT /utilisateurs/id/questionsKYC/KYC_alimentation_regime - transpose dans mes KYC unitaires NGC', async () => {
+  it('PUT /utilisateurs/id/questionsKYC_v2/KYC_alimentation_regime - transpose dans mes KYC unitaires NGC', async () => {
     // GIVEN
     const kyc: KYCHistory_v1 = {
       version: 1,
@@ -1320,8 +1211,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/KYC_alimentation_regime',
-    ).send({ reponse: ['Peu de viande'] });
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC_alimentation_regime',
+    ).send([{ code: 'peu_viande' }]);
 
     // THEN
     expect(response.status).toBe(200);
@@ -1360,21 +1251,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     ).toEqual(0);
   });
 
-  it('PUT /utilisateurs/id/questionsKYC/bad - erreur 404 ', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-
-    // WHEN
-    const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/bad',
-    ).send({ reponse: ['YO'] });
-
-    // THEN
-
-    expect(response.status).toBe(404);
-  });
-
-  it('GET /utilisateurs/id/enchainementQuestionsKYC/id - liste un enchainement de quesitions', async () => {
+  it('GET /utilisateurs/id/enchainementQuestionsKYC_v2/id - liste un enchainement de quesitions', async () => {
     // GIVEN
     QuestionKYCUsecase.ENCHAINEMENTS = {
       ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCMosaicID.TEST_MOSAIC_ID],
@@ -1450,7 +1327,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC/ENCHAINEMENT_KYC_1',
+      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1',
     );
 
     // THEN
@@ -1458,10 +1335,23 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(response.body.length).toEqual(2);
     expect(response.body).toEqual([
       {
-        id: 'KYC001',
+        code: 'KYC001',
         question: 'quest 1',
-        reponse: [],
-        reponses_possibles: ['Oui', 'Non', 'Je sais pas'],
+        is_answered: false,
+        reponse_multiple: [
+          {
+            code: 'oui',
+            label: 'Oui',
+          },
+          {
+            code: 'non',
+            label: 'Non',
+          },
+          {
+            code: 'sais_pas',
+            label: 'Je sais pas',
+          },
+        ],
         categorie: 'recommandation',
         points: 20,
         type: 'choix_unique',
@@ -1469,33 +1359,37 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
         thematique: 'alimentation',
       },
       {
-        id: 'TEST_MOSAIC_ID',
-        titre: 'Titre test',
-        reponses: [
+        code: 'TEST_MOSAIC_ID',
+        question: 'Titre test',
+        is_NGC: false,
+        reponse_multiple: [
           {
-            boolean_value: false,
             code: 'KYC002',
             image_url: 'BBB',
             label: 'short 2',
             emoji: '🔥',
+            unite: 'kg',
+            value: 'non',
           },
           {
-            boolean_value: false,
             code: 'KYC003',
             image_url: 'CCC',
             label: 'short 3',
             emoji: '🔥',
+            unite: 'kg',
+            value: 'non',
           },
         ],
         categorie: 'test',
         points: 10,
         type: 'mosaic_boolean',
         is_answered: false,
+        thematique: 'alimentation',
       },
     ]);
   });
 
-  it('GET /utilisateurs/id/enchainementQuestionsKYC/id - enchainement qui existe pas', async () => {
+  it('GET /utilisateurs/id/enchainementQuestionsKYC_v2/id - enchainement qui existe pas', async () => {
     // GIVEN
     QuestionKYCUsecase.ENCHAINEMENTS = {
       ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCMosaicID.TEST_MOSAIC_ID],
@@ -1505,7 +1399,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC/BAD',
+      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/BAD',
     );
 
     // THEN
@@ -1513,5 +1407,426 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(response.body.message).toEqual(
       "L'enchainement d'id [BAD] n'existe pas",
     );
+  });
+
+  it(`GET /utilisateurs/id/questionsKYC-V2/question - renvoie la quesition avec la réponse depuis l'historique , maj avec la definition`, async () => {
+    // GIVEN
+    const kyc: KYCHistory_v1 = {
+      version: 1,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          ...KYC_DATA,
+          code: KYCID._2,
+          id_cms: 1,
+          question: `Quel est votre sujet principal d'intéret ????`,
+          type: TypeReponseQuestionKYC.choix_unique,
+          is_NGC: false,
+          categorie: Categorie.test,
+          points: 10,
+          reponse_complexe: [
+            { label: 'Le climat', code: Thematique.climat, value: 'oui' },
+            { label: 'Mon logement', code: Thematique.logement, value: 'non' },
+          ],
+          reponse_simple: undefined,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc,
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      question: `Quel est votre sujet principal d'intéret ?`,
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
+    });
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      code: '_2',
+      question: "Quel est votre sujet principal d'intéret ?",
+      reponse_multiple: [
+        { code: 'climat', label: 'Le climat', value: 'oui' },
+        { code: 'logement', label: 'Mon logement', value: 'non' },
+        { code: 'alimentation', label: 'Ce que je mange' },
+      ],
+      categorie: 'recommandation',
+      points: 10,
+      type: 'choix_multiple',
+      is_NGC: false,
+      thematique: 'climat',
+      is_answered: true,
+    });
+  });
+  it(`GET /utilisateurs/id/questionsKYC-V2/question - renvoie la question multiple depuis catalogue seul`, async () => {
+    // GIVEN
+    const kyc: KYCHistory_v1 = {
+      version: 1,
+      answered_mosaics: [],
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc,
+    });
+    await TestUtil.create(DB.kYC, KYC_DB_DATA);
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      code: '_2',
+      question: "Quel est votre sujet principal d'intéret ?",
+      reponse_multiple: [
+        { code: 'climat', label: 'Le climat' },
+        { code: 'logement', label: 'Mon logement' },
+        { code: 'alimentation', label: 'Ce que je mange' },
+      ],
+      categorie: 'mission',
+      points: 123,
+      type: 'choix_multiple',
+      is_NGC: true,
+      thematique: 'dechet',
+      is_answered: false,
+    });
+  });
+  it(`GET /utilisateurs/id/questionsKYC_V2/question - renvoie la question unique depuis catalogue seul`, async () => {
+    // GIVEN
+    const kyc: KYCHistory_v1 = {
+      version: 1,
+      answered_mosaics: [],
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc,
+    });
+    await TestUtil.create(DB.kYC, {
+      ...KYC_DB_DATA,
+      type: TypeReponseQuestionKYC.entier,
+      reponses: undefined,
+    });
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      code: '_2',
+      question: "Quel est votre sujet principal d'intéret ?",
+      reponse_unique: { unite: 'kg' },
+      categorie: 'mission',
+      points: 123,
+      type: 'entier',
+      is_NGC: true,
+      thematique: 'dechet',
+      is_answered: false,
+    });
+  });
+
+  it('PUT /utilisateurs/id/questionsKYC_v2/1 - crée la reponse à la question 1, empoche les points', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v1 = {
+      version: 1,
+      answered_mosaics: [],
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_with_kyc,
+      kyc: kyc,
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._1,
+      type: TypeReponseQuestionKYC.libre,
+      points: 10,
+      question: 'Comment avez vous connu le service ?',
+      reponses: [],
+    });
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_1',
+    ).send([{ value: 'YO' }]);
+
+    // THEN
+    expect(response.status).toBe(200);
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    user.kyc_history.setCatalogue(KycRepository.getCatalogue());
+
+    expect(
+      user.kyc_history
+        .getUpToDateQuestionByCodeOrException('_1')
+        .getReponseSimpleValue(),
+    ).toStrictEqual('YO');
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.gamification.points).toEqual(20);
+    expect(
+      userDB.missions.missions[0].objectifs[0].done_at.getTime(),
+    ).toBeLessThan(Date.now());
+    expect(
+      userDB.missions.missions[0].objectifs[0].done_at.getTime(),
+    ).toBeGreaterThan(Date.now() - 200);
+  });
+
+  it(`PUT /utilisateurs/id/questionsKYC_v2/1 - un defi deviens non recommandé suite à maj de KYC`, async () => {
+    // GIVEN
+    const missions_article_plus_defi: MissionsUtilisateur_v1 = {
+      version: 1,
+      missions: [
+        {
+          id: '1',
+          done_at: new Date(1),
+          code: CodeMission.cereales,
+          image_url: 'img',
+          thematique: Thematique.alimentation,
+          titre: 'titre',
+          is_first: false,
+          objectifs: [
+            {
+              id: '0',
+              content_id: '1',
+              type: ContentType.article,
+              titre: '1 article',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+            {
+              id: '1',
+              content_id: '1',
+              type: ContentType.defi,
+              titre: '1 défi',
+              points: 10,
+              is_locked: false,
+              done_at: null,
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+          ],
+          est_visible: true,
+        },
+      ],
+    };
+    const kyc: KYCHistory_v1 = {
+      version: 1,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          ...KYC_DATA,
+          code: '1',
+          id_cms: 1,
+          question: `question`,
+          type: TypeReponseQuestionKYC.choix_unique,
+          thematique: Thematique.climat,
+          reponse_complexe: [
+            { label: 'YI', code: 'yi', value: 'oui' },
+            { label: 'YO', code: 'yos', value: 'non' },
+          ],
+          tags: [],
+          short_question: 'short',
+          image_url: 'AAA',
+          conditions: [],
+          unite: Unite.kg,
+          emoji: '🔥',
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_article_plus_defi,
+      kyc: kyc,
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: '1',
+      question: `question`,
+      type: TypeReponseQuestionKYC.choix_unique,
+      reponses: [
+        { label: 'YI', code: 'yi' },
+        { label: 'YO', code: 'yos' },
+      ],
+    });
+
+    await TestUtil.create(DB.article, { content_id: '1' });
+    await TestUtil.create(DB.defi, {
+      content_id: '1',
+      conditions: [[{ id_kyc: 1, code_reponse: 'yi' }]],
+    });
+    await TestUtil.create(DB.thematique, {
+      code: Thematique.alimentation,
+      label: 'Faut manger !',
+    });
+
+    await thematiqueRepository.onApplicationBootstrap();
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    let response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/1',
+    ).send([{ code: 'yos', value: 'oui' }]);
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    let userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
+    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
+    expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(false);
+    // WHEN
+    response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/1',
+    ).send([{ code: 'yi', value: 'oui' }]);
+
+    // THEN
+    expect(response.status).toBe(200);
+    userDB = await utilisateurRepository.getById('utilisateur-id', [Scope.ALL]);
+    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
+    expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(true);
+  });
+
+  it('PUT /utilisateurs/id/questionsKYC_v2/1 - met à jour la reponse à la question 1', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
+    });
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_2',
+    ).send([
+      { code: Thematique.climat, value: 'oui' },
+      { code: Thematique.logement, value: 'non' },
+      { code: Thematique.alimentation, value: 'non' },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(200);
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    user.kyc_history.setCatalogue(KycRepository.getCatalogue());
+    expect(
+      user.kyc_history
+        .getUpToDateQuestionByCodeOrException('_2')
+        .getCodeReponseQuestionChoixUnique(),
+    ).toStrictEqual(Thematique.climat);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.gamification.points).toEqual(10);
+  });
+
+  it('PUT /utilisateurs/id/questionsKYC_v2/1 - erreur si code réponse inconnue', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      question: `Quel est votre sujet principal d'intéret ?`,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
+    });
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_2',
+    ).send([
+      { code: 'hahah', value: 'oui' },
+      { code: Thematique.logement, value: 'non' },
+      { code: Thematique.alimentation, value: 'non' },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      'Valeur [oui/non] manquante pour le code [climat] de la question [_2]',
+    );
+  });
+
+  it('PUT /utilisateurs/id/questionsKYC_v2/001 - met à jour les tags de reco - ajout boost', async () => {
+    // GIVEN
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC001,
+      question: `Quel est votre sujet principal d'intéret ?`,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+        { label: 'Comment je bouge', code: Thematique.transport },
+      ],
+    });
+    await kycRepository.loadDefinitions();
+
+    const kyc: KYCHistory_v1 = {
+      version: 1,
+      answered_mosaics: [],
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC001',
+    ).send([
+      { code: Thematique.climat, value: 'non' },
+      { code: Thematique.logement, value: 'non' },
+      { code: Thematique.alimentation, value: 'non' },
+      { code: Thematique.transport, value: 'oui' },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.tag_ponderation_set.transport).toEqual(50);
   });
 });

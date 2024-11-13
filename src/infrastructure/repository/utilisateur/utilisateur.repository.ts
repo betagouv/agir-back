@@ -397,7 +397,7 @@ export class UtilisateurRepository {
   }
 
   private buildDBFromUtilisateur(user: Utilisateur): UtilisateurDB {
-    return {
+    const result = {
       id: user.id ? user.id : uuidv4(),
       nom: user.nom,
       prenom: user.prenom,
@@ -477,5 +477,6 @@ export class UtilisateurRepository {
       unsubscribe_mail_token: user.unsubscribe_mail_token,
       est_valide_pour_classement: user.est_valide_pour_classement,
     };
+    return result;
   }
 }

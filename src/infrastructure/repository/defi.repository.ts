@@ -88,7 +88,9 @@ export class DefiRepository {
       titre: defiDB.titre,
       sous_titre: defiDB.sous_titre,
       points: defiDB.points,
-      tags: defiDB.tags.map((t) => Tag[t]),
+      tags: defiDB.tags
+        ? defiDB.tags.map((t) => Tag[t]).filter((e) => !!e)
+        : [],
       thematique: Thematique[defiDB.thematique],
       astuces: defiDB.astuces,
       pourquoi: defiDB.pourquoi,

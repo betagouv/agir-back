@@ -12,24 +12,26 @@ import { EventType } from '../../../src/domain/appEvent';
 import { DefiStatus } from '../../../src/domain/defis/defi';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
-import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { DefiHistory_v0 } from '../../../src/domain/object_store/defi/defiHistory_v0';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { ObjectifDefinition } from '../../../src/domain/mission/missionDefinition';
 import { Mission } from '@prisma/client';
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 import {
-  MosaicKYC,
+  MosaicKYC_CATALOGUE,
   MosaicKYCDef,
-  TypeReponseMosaicKYC,
+  TypeMosaic,
 } from '../../../src/domain/kyc/mosaicKYC';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { MissionRepository } from '../../../src/infrastructure/repository/mission.repository';
 import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
+import { KYCHistory_v1 } from '../../../src/domain/object_store/kyc/kycHistory_v1';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 
 describe('Mission (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
   const missionRepository = new MissionRepository(TestUtil.prisma);
+  const kycRepository = new KycRepository(TestUtil.prisma);
 
   const MOSAIC_CATALOGUE: MosaicKYCDef[] = [
     {
@@ -37,8 +39,9 @@ describe('Mission (API test)', () => {
       categorie: Categorie.test,
       points: 10,
       titre: 'Titre test',
-      type: TypeReponseMosaicKYC.mosaic_boolean,
+      type: TypeMosaic.mosaic_boolean,
       question_kyc_codes: [KYCID._2, KYCID._3],
+      thematique: Thematique.alimentation,
     },
   ];
 
@@ -720,6 +723,7 @@ describe('Mission (API test)', () => {
 
     await thematiqueRepository.onApplicationBootstrap();
     await missionRepository.onApplicationBootstrap();
+    await kycRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -782,6 +786,7 @@ describe('Mission (API test)', () => {
 
     await thematiqueRepository.onApplicationBootstrap();
     await missionRepository.onApplicationBootstrap();
+    await kycRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1286,6 +1291,7 @@ describe('Mission (API test)', () => {
       question: `HAHA`,
       reponses: [],
     });
+    await kycRepository.loadDefinitions();
 
     await TestUtil.PUT('/utilisateurs/utilisateur-id/questionsKYC/_3').send({
       reponse: ['hoho'],
@@ -1627,6 +1633,7 @@ describe('Mission (API test)', () => {
       question: `HIHI`,
       reponses: [],
     });
+    await kycRepository.loadDefinitions();
 
     await TestUtil.PUT('/utilisateurs/utilisateur-id/questionsKYC/_1').send({
       reponse: ['haha'],
@@ -1706,6 +1713,8 @@ describe('Mission (API test)', () => {
         { label: 'A voir', code: 'peut_etre' },
       ],
     });
+    await kycRepository.loadDefinitions();
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/thematiques/cereales/kycs',
@@ -1756,6 +1765,8 @@ describe('Mission (API test)', () => {
         { label: 'A voir', code: 'peut_etre' },
       ],
     });
+    await kycRepository.loadDefinitions();
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/missions/cereales/kycs',
@@ -1780,10 +1791,10 @@ describe('Mission (API test)', () => {
 
   it(`GET /utilisateurs/id/thematiques/cereales/kycs - renvoie la liste des questions à poser avec une mosaic`, async () => {
     // GIVEN
-    MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
-    const kyc: KYCHistory_v0 = {
-      version: 0,
+    const kyc: KYCHistory_v1 = {
+      version: 1,
       answered_mosaics: [],
       answered_questions: [],
     };
@@ -1837,6 +1848,8 @@ describe('Mission (API test)', () => {
       short_question: 'short 3',
       image_url: 'CCC',
     });
+    await kycRepository.loadDefinitions();
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/thematiques/cereales/kycs',
@@ -1899,10 +1912,10 @@ describe('Mission (API test)', () => {
 
   it(`NEW GET /utilisateurs/id/missions/cereales/kycs - renvoie la liste des questions à poser avec une mosaic`, async () => {
     // GIVEN
-    MosaicKYC.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
-    const kyc: KYCHistory_v0 = {
-      version: 0,
+    const kyc: KYCHistory_v1 = {
+      version: 1,
       answered_mosaics: [],
       answered_questions: [],
     };
@@ -1956,6 +1969,8 @@ describe('Mission (API test)', () => {
       short_question: 'short 3',
       image_url: 'CCC',
     });
+    await kycRepository.loadDefinitions();
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/missions/cereales/kycs',
@@ -2046,6 +2061,7 @@ describe('Mission (API test)', () => {
         { label: 'A voir', code: 'peut_etre' },
       ],
     });
+    await kycRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -2237,12 +2253,12 @@ describe('Mission (API test)', () => {
 
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un defi débloqué lecture du dernier article,  visible car condition remplie`, async () => {
     // GIVEN
-    const kyc: KYCHistory_v0 = {
-      version: 0,
+    const kyc: KYCHistory_v1 = {
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: '1',
+          code: '1',
           id_cms: 1,
           question: `Question`,
           type: TypeReponseQuestionKYC.choix_multiple,
@@ -2250,17 +2266,16 @@ describe('Mission (API test)', () => {
           a_supprimer: false,
           categorie: Categorie.test,
           points: 10,
-          reponses: [
-            { label: 'YO', code: 'yo' },
-            { label: 'YI', code: 'yi' },
+          reponse_complexe: [
+            { label: 'YO', code: 'yo', ngc_code: undefined, value: 'oui' },
+            { label: 'YI', code: 'yi', ngc_code: undefined, value: 'oui' },
+            { label: 'YA', code: 'ya', ngc_code: undefined, value: 'non' },
           ],
-          reponses_possibles: [
-            { label: 'YO', code: 'yo' },
-            { label: 'YI', code: 'yi' },
-            { label: 'YA', code: 'ya' },
-          ],
+          ngc_key: undefined,
           tags: [],
-          universes: [],
+          thematiques: [],
+          thematique: Thematique.alimentation,
+          reponse_simple: undefined,
           short_question: 'short',
           image_url: 'AAA',
           conditions: [],
@@ -2740,7 +2755,6 @@ describe('Mission (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(2);
-    console.log(response.body);
     expect(response.body[0].titre).toEqual('cereales');
     expect(response.body[1].titre).toEqual('partir_vacances');
   });

@@ -575,7 +575,7 @@ describe('Missions', () => {
     };
 
     const missionsUtilisateur = new MissionsUtilisateur({
-      version: 0,
+      version: 1,
       missions: [m1, m2, m3, m4],
     });
     // THEN

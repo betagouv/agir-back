@@ -45,8 +45,7 @@ export class RecommandationUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const catalogue = await this.kycRepository.getAllDefs();
-    utilisateur.kyc_history.setCatalogue(catalogue);
+    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
     const articles = await this.getArticles(utilisateur, thematique);
 
@@ -84,8 +83,7 @@ export class RecommandationUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const kyc_catalogue = await this.kycRepository.getAllDefs();
-    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
+    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
     const articles = await this.getArticles(utilisateur);
 
@@ -143,7 +141,7 @@ export class RecommandationUsecase {
     utilisateur: Utilisateur,
     thematique?: Thematique,
   ): Recommandation[] {
-    const kycs = utilisateur.kyc_history.getKYCRestantes(
+    const kycs = utilisateur.kyc_history.getKYCsNeverAnswered(
       Categorie.recommandation,
       thematique,
     );
@@ -200,7 +198,7 @@ export class RecommandationUsecase {
 
   private mapKYCToRecommandation(kycs: QuestionKYC[]): Recommandation[] {
     return kycs.map((e) => ({
-      content_id: e.id,
+      content_id: e.code,
       image_url:
         'https://res.cloudinary.com/dq023imd8/image/upload/v1720704333/Screenshot_2024_07_11_at_15_24_52_f5226c666e.png',
       points: e.points,

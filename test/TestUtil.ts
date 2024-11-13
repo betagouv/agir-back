@@ -13,10 +13,8 @@ import { ThematiqueRepository } from '../src/infrastructure/repository/thematiqu
 import { Feature } from '../src/domain/gamification/feature';
 import { UnlockedFeatures_v1 } from '../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { ParcoursTodo_v0 } from '../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
-import { History_v0 } from '../src/domain/object_store/history/history_v0';
 import { Gamification_v0 } from '../src/domain/object_store/gamification/gamification_v0';
 import { CelebrationType } from '../src/domain/gamification/celebrations/celebration';
-import { KYCHistory_v0 } from '../src/domain/object_store/kyc/kycHistory_v0';
 import { Logement_v0 } from '../src/domain/object_store/logement/logement_v0';
 import {
   Chauffage,
@@ -59,6 +57,8 @@ import {
 import { NotificationHistory_v0 } from '../src/domain/object_store/notification/NotificationHistory_v0';
 import { CanalNotification } from '../src/domain/notification/notificationHistory';
 import { Thematique } from '../src/domain/contenu/thematique';
+import { KYCHistory_v1 } from '../src/domain/object_store/kyc/kycHistory_v1';
+import { History_v0 } from '../src/domain/object_store/history/history_v0';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -425,12 +425,12 @@ export class TestUtil {
       ],
     };
 
-    const kyc: KYCHistory_v0 = {
-      version: 0,
+    const kyc: KYCHistory_v1 = {
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: KYCID._2,
+          code: KYCID._2,
           id_cms: 2,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
@@ -438,22 +438,30 @@ export class TestUtil {
           a_supprimer: false,
           categorie: Categorie.test,
           points: 10,
-          reponses: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-          ],
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-            { label: 'Ce que je mange', code: Thematique.alimentation },
+          reponse_complexe: [
+            {
+              label: 'Le climat',
+              code: Thematique.climat,
+              value: 'oui',
+              ngc_code: '123',
+            },
+            {
+              label: 'Mon logement',
+              code: Thematique.logement,
+              value: 'oui',
+              ngc_code: '123',
+            },
           ],
           tags: [],
-          universes: [Thematique.climat],
+          thematiques: [Thematique.climat],
           short_question: 'short',
           image_url: 'URL',
           conditions: [],
           unite: Unite.euro,
           emoji: '🎉',
+          ngc_key: '1223',
+          thematique: Thematique.climat,
+          reponse_simple: undefined,
         },
       ],
     };

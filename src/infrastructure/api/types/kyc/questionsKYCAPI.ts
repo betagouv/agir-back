@@ -31,7 +31,7 @@ export class QuestionKYCAPI {
 
   public static mapToAPI(question: QuestionKYC): QuestionKYCAPI {
     let result: QuestionKYCAPI = {
-      id: question.id,
+      id: question.code,
       question: question.question,
       reponse: undefined,
       reponses_possibles: undefined,
@@ -42,8 +42,14 @@ export class QuestionKYCAPI {
       thematique: question.thematique,
     };
 
-    result.reponses_possibles = question.listeReponsesPossiblesLabels();
-    result.reponse = question.listeReponsesLabels();
+    result.reponses_possibles = question.listeLabelsReponseComplexe();
+
+    if (question.isSimpleQuestion()) {
+      result.reponse = [question.getReponseSimpleValue()];
+    }
+    if (question.isChoixQuestion()) {
+      result.reponse = question.getSelectedLabels();
+    }
 
     return result;
   }

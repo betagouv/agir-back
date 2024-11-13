@@ -1,8 +1,8 @@
 import { App } from '../app';
 import { Categorie } from '../contenu/categorie';
+import { Thematique } from '../contenu/thematique';
 import { KYCID } from './KYCID';
 import { KYCMosaicID } from './KYCMosaicID';
-import { QuestionKYC, TypeReponseQuestionKYC } from './questionKYC';
 
 export class KYCMosaicReponse {
   code: string;
@@ -12,15 +12,25 @@ export class KYCMosaicReponse {
   boolean_value: boolean;
 }
 
-export enum TypeReponseMosaicKYC {
+export enum TypeMosaic {
   mosaic_boolean = 'mosaic_boolean',
   mosaic_number = 'mosaic_number',
 }
 
-export class MosaicKYC {
+export type MosaicKYCDef = {
   id: KYCMosaicID;
   titre: string;
-  type: TypeReponseMosaicKYC;
+  type: TypeMosaic;
+  categorie: Categorie;
+  points: number;
+  question_kyc_codes: KYCID[];
+  thematique: Thematique;
+};
+
+export class MosaicKYC_CATALOGUE {
+  id: KYCMosaicID;
+  titre: string;
+  type: TypeMosaic;
   categorie: Categorie;
   points: number;
   reponses: KYCMosaicReponse[];
@@ -32,25 +42,27 @@ export class MosaicKYC {
       categorie: Categorie.test,
       points: 10,
       titre: 'Quels modes de chauffage existent chez vous ?',
-      type: TypeReponseMosaicKYC.mosaic_boolean,
+      type: TypeMosaic.mosaic_boolean,
       question_kyc_codes: [
         KYCID.KYC_chauffage_bois,
         KYCID.KYC_chauffage_fioul,
         KYCID.KYC_chauffage_gaz,
       ],
+      thematique: Thematique.logement,
     },
     {
       id: KYCMosaicID.MOSAIC_CHAUFFAGE,
       categorie: Categorie.mission,
       points: 5,
       titre: 'Quels modes de chauffage existent chez vous ?',
-      type: TypeReponseMosaicKYC.mosaic_boolean,
+      type: TypeMosaic.mosaic_boolean,
       question_kyc_codes: [
         KYCID.KYC_chauffage_bois,
         KYCID.KYC_chauffage_fioul,
         KYCID.KYC_chauffage_gaz,
         KYCID.KYC_chauffage_elec,
       ],
+      thematique: Thematique.logement,
     },
     {
       id: KYCMosaicID.MOSAIC_RENO,
@@ -58,20 +70,21 @@ export class MosaicKYC {
       points: 5,
       titre:
         'Des travaux de rénovation ont-ils été réalisés dans votre logement (hors rafraîchissement) depuis 2000 ?',
-      type: TypeReponseMosaicKYC.mosaic_boolean,
+      type: TypeMosaic.mosaic_boolean,
       question_kyc_codes: [
         KYCID.KYC_logement_reno_second_oeuvre,
         KYCID.KYC_logement_reno_isolation,
         KYCID.KYC_logement_reno_chauffage,
         KYCID.KYC_logement_reno_extension,
       ],
+      thematique: Thematique.logement,
     },
     {
       id: KYCMosaicID.MOSAIC_EXTERIEUR,
       categorie: Categorie.mission,
       points: 5,
       titre: 'Que possédez-vous dans votre extérieur (jardin, balcon) ?',
-      type: TypeReponseMosaicKYC.mosaic_boolean,
+      type: TypeMosaic.mosaic_boolean,
       question_kyc_codes: [
         KYCID.KYC_logement_exterieur_salon_bois,
         KYCID.KYC_logement_exterieur_salon_resine_metal,
@@ -80,13 +93,14 @@ export class MosaicKYC {
         KYCID.KYC_logement_exterieur_bbq_elec_gaz,
         KYCID.KYC_logement_exterieur_bbq_charbon,
       ],
+      thematique: Thematique.logement,
     },
     {
       id: KYCMosaicID.MOSAIC_LOGEMENT_VACANCES,
       categorie: Categorie.mission,
       points: 5,
       titre: 'Comment êtes-vous hébergé pour vos week-ends, vos vacances ?',
-      type: TypeReponseMosaicKYC.mosaic_boolean,
+      type: TypeMosaic.mosaic_boolean,
       question_kyc_codes: [
         KYCID.KYC_consommation_logement_vacances_hotel,
         KYCID.KYC_consommation_logement_vacances_camping,
@@ -96,13 +110,14 @@ export class MosaicKYC {
         KYCID.KYC_consommation_logement_vacances_echange,
         KYCID.KYC_consommation_logement_vacances_secondaire,
       ],
+      thematique: Thematique.loisir,
     },
     {
       id: KYCMosaicID.MOSAIC_ELECTROMENAGER,
       categorie: Categorie.mission,
       points: 5,
       titre: 'Quels appareils électroménagers possédez-vous ?',
-      type: TypeReponseMosaicKYC.mosaic_boolean,
+      type: TypeMosaic.mosaic_boolean,
       question_kyc_codes: [
         KYCID.KYC_electro_robot_cuisine,
         KYCID.KYC_electro_aspirateur,
@@ -115,39 +130,42 @@ export class MosaicKYC {
         KYCID.KYC_electro_lave_vaiselle,
         KYCID.KYC_electro_seche_linge,
       ],
+      thematique: Thematique.consommation,
     },
     {
       id: KYCMosaicID.MOSAIC_REDUCTION_DECHETS,
       categorie: Categorie.mission,
       points: 5,
       titre: 'Quels éco-gestes mettez-vous en place pour réduire vos déchets ?',
-      type: TypeReponseMosaicKYC.mosaic_boolean,
+      type: TypeMosaic.mosaic_boolean,
       question_kyc_codes: [
         KYCID.KYC_alimentation_compostage,
         KYCID.KYC_alimentation_reduc_gaspi_alim,
         KYCID.KYC_alimentation_stoppub,
         KYCID.KYC_alimentation_achat_vrac,
       ],
+      thematique: Thematique.dechet,
     },
     {
       id: KYCMosaicID.MOSAIC_ANIMAUX,
       categorie: Categorie.mission,
       points: 5,
       titre: `Quels animaux vivent avec vous, au sein de votre foyer ?`,
-      type: TypeReponseMosaicKYC.mosaic_boolean,
+      type: TypeMosaic.mosaic_boolean,
       question_kyc_codes: [
         KYCID.KYC_consommation_petit_chien,
         KYCID.KYC_consommation_moyen_chien,
         KYCID.KYC_consommation_grand_chien,
         KYCID.KYC_consommation_chat,
       ],
+      thematique: Thematique.loisir,
     },
     {
       id: KYCMosaicID.MOSAIC_APPAREIL_NUM,
       categorie: Categorie.mission,
       points: 5,
       titre: `Quels appareils numériques possédez-vous ?`,
-      type: TypeReponseMosaicKYC.mosaic_boolean,
+      type: TypeMosaic.mosaic_boolean,
       question_kyc_codes: [
         KYCID.KYC_appareil_telephone,
         KYCID.KYC_appareil_television,
@@ -159,13 +177,14 @@ export class MosaicKYC {
         KYCID.KYC_appareil_console_portable,
         KYCID.KYC_appareil_imprimante_nbr,
       ],
+      thematique: Thematique.consommation,
     },
     {
       id: KYCMosaicID.MOSAIC_MEUBLES,
       categorie: Categorie.mission,
       points: 5,
       titre: `Quels meubles de moins de 10 ans possédez-vous ?`,
-      type: TypeReponseMosaicKYC.mosaic_boolean,
+      type: TypeMosaic.mosaic_boolean,
       question_kyc_codes: [
         KYCID.KYC_meuble_armoire,
         KYCID.KYC_meuble_canape,
@@ -176,13 +195,14 @@ export class MosaicKYC {
         KYCID.KYC_meuble_petit_meuble,
         KYCID.KYC_meuble_table,
       ],
+      thematique: Thematique.consommation,
     },
     {
       id: KYCMosaicID.MOSAIC_VETEMENTS,
       categorie: Categorie.mission,
       points: 5,
       titre: `Quels vêtements achetez-vous neufs en général dans une année ?`,
-      type: TypeReponseMosaicKYC.mosaic_boolean,
+      type: TypeMosaic.mosaic_boolean,
       question_kyc_codes: [
         KYCID.KYC_achat_chaussure,
         KYCID.KYC_achat_chemise,
@@ -196,68 +216,24 @@ export class MosaicKYC {
         KYCID.KYC_achat_sweat,
         KYCID.KYC_achat_tshirt,
       ],
+      thematique: Thematique.consommation,
     },
   ];
 
   public static listMosaicIDs(): KYCMosaicID[] {
-    return MosaicKYC.MOSAIC_CATALOGUE.filter(
+    return MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE.filter(
       (m) => m.categorie !== Categorie.test || !App.isProd(),
     ).map((m) => m.id);
   }
 
   public static isMosaicID(id: string): boolean {
-    return MosaicKYC.MOSAIC_CATALOGUE.findIndex((m) => m.id === id) > -1;
+    return (
+      MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE.findIndex((m) => m.id === id) > -1
+    );
   }
 
   static findMosaicDefByID(mosaicID: KYCMosaicID): MosaicKYCDef {
     if (!mosaicID) return null;
-    return MosaicKYC.MOSAIC_CATALOGUE.find((m) => m.id === mosaicID);
-  }
-
-  constructor(liste_kyc: QuestionKYC[], mosaic_def: MosaicKYCDef) {
-    this.id = mosaic_def.id;
-    this.titre = mosaic_def.titre;
-    this.type = mosaic_def.type;
-    this.categorie = mosaic_def.categorie;
-    this.points = mosaic_def.points;
-    this.reponses = [];
-
-    if (mosaic_def.type === TypeReponseMosaicKYC.mosaic_boolean) {
-      this.reponses = this.buildBooleanResponseListe(liste_kyc);
-    }
-  }
-
-  private buildBooleanResponseListe(
-    kyc_liste: QuestionKYC[],
-  ): KYCMosaicReponse[] {
-    const liste_reponses: KYCMosaicReponse[] = [];
-    for (const kyc of kyc_liste) {
-      let value = 'non';
-      if (kyc.hasAnyResponses()) {
-        if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
-          value = kyc.reponses[0].code;
-        } else if (kyc.type === TypeReponseQuestionKYC.entier) {
-          value = kyc.reponses[0].label === '1' ? 'oui' : 'non';
-        }
-      }
-      const new_reponse: KYCMosaicReponse = {
-        code: kyc.id,
-        label: kyc.short_question,
-        image_url: kyc.image_url,
-        boolean_value: value === 'oui',
-        emoji: kyc.emoji,
-      };
-      liste_reponses.push(new_reponse);
-    }
-    return liste_reponses;
+    return MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE.find((m) => m.id === mosaicID);
   }
 }
-
-export type MosaicKYCDef = {
-  id: KYCMosaicID;
-  titre: string;
-  type: TypeReponseMosaicKYC;
-  categorie: Categorie;
-  points: number;
-  question_kyc_codes: KYCID[];
-};

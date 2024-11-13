@@ -16,6 +16,7 @@ import { Personnalisator } from '../infrastructure/personnalisation/personnalisa
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { QuestionKYCUsecase } from './questionKYC.usecase';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
+import { QuestionKYC } from '../domain/kyc/questionKYC';
 
 @Injectable()
 export class TodoUsecase {
@@ -169,7 +170,7 @@ export class TodoUsecase {
             element.content_id,
           );
 
-        const progression = enchainement.getProgression();
+        const progression = QuestionKYC.getProgression(enchainement);
         element.progression = progression;
 
         if (progression.current === progression.target) {

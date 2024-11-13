@@ -11,37 +11,70 @@ import { KycDefinition } from '../../../../src/domain/kyc/kycDefinition';
 import { Chauffage, DPE } from '../../../../src/domain/logement/logement';
 import { KYCMosaicID } from '../../../../src/domain/kyc/KYCMosaicID';
 import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
+import { QuestionKYC_v1 } from '../../../../src/domain/object_store/kyc/kycHistory_v1';
+
+const QUESTION_TEST: QuestionKYC_v1 = {
+  id_cms: 1,
+  code: KYCID.KYC001,
+  question: `question`,
+  type: TypeReponseQuestionKYC.choix_unique,
+  is_NGC: false,
+  a_supprimer: false,
+  categorie: Categorie.recommandation,
+  points: 10,
+  reponse_complexe: [
+    {
+      label: 'Le climat',
+      code: Thematique.climat,
+      value: 'oui',
+      ngc_code: '1234',
+    },
+    {
+      label: 'reponse D',
+      code: 'D',
+      value: undefined,
+      ngc_code: '987',
+    },
+  ],
+  tags: [],
+  thematiques: [],
+  short_question: 'short',
+  image_url: 'https://',
+  conditions: [],
+  unite: Unite.kg,
+  emoji: '🔥',
+  thematique: Thematique.alimentation,
+  reponse_simple: undefined,
+};
+
+const KYC_DEF = {
+  id_cms: 1,
+  categorie: Categorie.recommandation,
+  code: KYCID.KYC001,
+  is_ngc: false,
+  a_supprimer: false,
+  points: 10,
+  question: 'The question !',
+  tags: [Tag.possede_voiture],
+  thematique: Thematique.alimentation,
+  thematiques: [],
+  type: TypeReponseQuestionKYC.choix_multiple,
+  ngc_key: 'a . b . c',
+  reponses: [{ label: 'CCC', code: Thematique.climat }],
+  short_question: 'short',
+  image_url: 'https://',
+  conditions: [],
+  unite: Unite.kg,
+  emoji: '🔥',
+};
 
 describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('areConditionsMatched : true si pas de condition', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
-      answered_questions: [
-        {
-          id: KYCID.KYC001,
-          question: `question`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [{ label: 'Le climat', code: Thematique.climat }],
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-          ],
-          tags: [],
-          universes: [],
-          id_cms: 1,
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
-        },
-      ],
+      answered_questions: [QUESTION_TEST],
     });
 
     // WHEN
@@ -53,37 +86,20 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('areConditionsMatched : false si kyc par répondu', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: KYCID.KYC001,
-          id_cms: 1,
-          question: `question`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [{ label: 'Le climat', code: Thematique.climat }],
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-          ],
-          tags: [],
-          universes: [],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
+          ...QUESTION_TEST,
+          reponse_complexe: undefined,
+          reponse_simple: undefined,
         },
       ],
     });
 
     // WHEN
     const result = history.areConditionsMatched([
-      [{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }],
+      [{ id_kyc: 1, code_reponse: 'climat' }],
     ]);
 
     // THEN
@@ -92,37 +108,26 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('areConditionsMatched : true si match simple', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: KYCID.KYC001,
-          id_cms: 1,
-          question: `question 1`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [{ label: 'Le climat', code: Thematique.climat }],
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
+          ...QUESTION_TEST,
+          reponse_complexe: [
+            {
+              label: 'Le climat',
+              code: Thematique.climat,
+              ngc_code: '123',
+              value: 'oui',
+            },
           ],
-          tags: [],
-          universes: [],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
         },
       ],
     });
 
     // WHEN
     const result = history.areConditionsMatched([
-      [{ id_kyc: 1, code_kyc: 'KYC001', code_reponse: 'climat' }],
+      [{ id_kyc: 1, code_reponse: 'climat' }],
     ]);
 
     // THEN
@@ -131,37 +136,33 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('areConditionsMatched : false si non match simple', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: KYCID.KYC001,
-          id_cms: 1,
-          question: `question 1`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [{ label: 'Le climat', code: Thematique.climat }],
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
+          ...QUESTION_TEST,
+          code: KYCID.KYC001,
+          reponse_complexe: [
+            {
+              label: 'Le climat',
+              code: 'climat',
+              ngc_code: '123',
+              value: 'oui',
+            },
+            {
+              label: 'Le climat',
+              code: 'logement',
+              ngc_code: '123',
+              value: 'non',
+            },
           ],
-          tags: [],
-          universes: [],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
         },
       ],
     });
 
     // WHEN
     const result = history.areConditionsMatched([
-      [{ id_kyc: 1, code_kyc: 'KYC001', code_reponse: 'logement' }],
+      [{ id_kyc: 1, code_reponse: 'logement' }],
     ]);
 
     // THEN
@@ -170,52 +171,32 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('areConditionsMatched : true si match 2 conditions OK', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: KYCID.KYC001,
-          id_cms: 1,
-          question: `question 1`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [{ label: 'Le climat', code: Thematique.climat }],
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
+          ...QUESTION_TEST,
+          reponse_complexe: [
+            {
+              label: 'Le climat',
+              code: Thematique.climat,
+              ngc_code: '123',
+              value: 'oui',
+            },
           ],
-          tags: [],
-          universes: [],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
         },
         {
-          id: KYCID.KYC002,
+          ...QUESTION_TEST,
+          code: KYCID.KYC002,
           id_cms: 2,
-          question: `question 2`,
-          type: TypeReponseQuestionKYC.choix_unique,
-          is_NGC: false,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [{ label: 'YO', code: 'yo' }],
-          reponses_possibles: [
-            { label: 'YO', code: 'yo' },
-            { label: 'YA', code: 'ya' },
+          reponse_complexe: [
+            {
+              label: 'Yo',
+              code: 'yo',
+              ngc_code: '123',
+              value: 'oui',
+            },
           ],
-          tags: [],
-          universes: [],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
         },
       ],
     });
@@ -223,8 +204,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // WHEN
     const result = history.areConditionsMatched([
       [
-        { id_kyc: 1, code_kyc: 'KYC001', code_reponse: 'climat' },
-        { id_kyc: 2, code_kyc: 'KYC002', code_reponse: 'yo' },
+        { id_kyc: 1, code_reponse: 'climat' },
+        { id_kyc: 2, code_reponse: 'yo' },
       ],
     ]);
 
@@ -234,52 +215,40 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('areConditionsMatched : false si non match 2 conditions OK', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: KYCID.KYC001,
+          ...QUESTION_TEST,
+          code: KYCID.KYC001,
           id_cms: 1,
-          question: `question 1`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [{ label: 'Le climat', code: Thematique.climat }],
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
+          reponse_complexe: [
+            {
+              label: 'Le climat',
+              code: Thematique.climat,
+              ngc_code: '123',
+              value: 'oui',
+            },
           ],
-          tags: [],
-          universes: [],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
         },
         {
-          id: KYCID.KYC002,
+          ...QUESTION_TEST,
+          code: KYCID.KYC002,
           id_cms: 2,
-          question: `question 2`,
-          type: TypeReponseQuestionKYC.choix_unique,
-          is_NGC: false,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [{ label: 'YO', code: 'yo' }],
-          reponses_possibles: [
-            { label: 'YO', code: 'yo' },
-            { label: 'YA', code: 'ya' },
+          reponse_complexe: [
+            {
+              label: 'Yo',
+              code: 'yo',
+              ngc_code: '123',
+              value: 'non',
+            },
+            {
+              label: 'Yi',
+              code: 'yi',
+              ngc_code: '123',
+              value: 'oui',
+            },
           ],
-          tags: [],
-          universes: [],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
         },
       ],
     });
@@ -287,8 +256,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // WHEN
     const result = history.areConditionsMatched([
       [
-        { id_kyc: 1, code_kyc: 'KYC001', code_reponse: 'logement' },
-        { id_kyc: 2, code_kyc: 'KYC002', code_reponse: 'ya' },
+        { id_kyc: 1, code_reponse: 'climat' },
+        { id_kyc: 2, code_reponse: 'ya' },
       ],
     ]);
 
@@ -298,60 +267,48 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('areConditionsMatched : true si OU match 1 conditions OK', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: KYCID.KYC001,
+          ...QUESTION_TEST,
+          code: KYCID.KYC001,
           id_cms: 1,
-          question: `question 1`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [{ label: 'Le climat', code: Thematique.climat }],
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
+          reponse_complexe: [
+            {
+              label: 'Le climat',
+              code: Thematique.climat,
+              ngc_code: '123',
+              value: 'oui',
+            },
           ],
-          tags: [],
-          universes: [],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
         },
         {
-          id: KYCID.KYC002,
+          ...QUESTION_TEST,
+          code: KYCID.KYC002,
           id_cms: 2,
-          question: `question 2`,
-          type: TypeReponseQuestionKYC.choix_unique,
-          is_NGC: false,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [{ label: 'YO', code: 'yo' }],
-          reponses_possibles: [
-            { label: 'YO', code: 'yo' },
-            { label: 'YA', code: 'ya' },
+          reponse_complexe: [
+            {
+              label: 'Yo',
+              code: 'yo',
+              ngc_code: '123',
+              value: 'non',
+            },
+            {
+              label: 'Yi',
+              code: 'yi',
+              ngc_code: '123',
+              value: 'oui',
+            },
           ],
-          tags: [],
-          universes: [],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
         },
       ],
     });
 
     // WHEN
     const result = history.areConditionsMatched([
-      [{ id_kyc: 1, code_kyc: 'KYC001', code_reponse: 'logement' }],
-      [{ id_kyc: 2, code_kyc: 'KYC002', code_reponse: 'yo' }],
+      [{ id_kyc: 1, code_reponse: 'logement' }],
+      [{ id_kyc: 2, code_reponse: 'yi' }],
     ]);
 
     // THEN
@@ -377,60 +334,19 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('hasResponses :false si attribut undefined', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: KYCID.KYC001,
+          ...QUESTION_TEST,
+          code: KYCID.KYC001,
           id_cms: 1,
-          question: `Quel est votre sujet principal d'intéret ?`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: undefined,
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-            { label: 'Ce que je mange', code: Thematique.alimentation },
-            { label: 'Comment je bouge', code: Thematique.transport },
-          ],
-          tags: [],
-          universes: [],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
+          reponse_complexe: undefined,
+          reponse_simple: undefined,
         },
       ],
     });
-    history.setCatalogue([
-      new KycDefinition({
-        id_cms: 1,
-        categorie: Categorie.recommandation,
-        code: KYCID.KYC001,
-        is_ngc: false,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [Tag.possede_voiture],
-        universes: [Thematique.alimentation],
-        thematique: Thematique.climat,
-        type: TypeReponseQuestionKYC.choix_multiple,
-        ngc_key: 'a . b . c',
-        reponses: [
-          { label: 'BBB', code: Thematique.logement },
-          { label: 'CCC', code: Thematique.alimentation },
-        ],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
-      }),
-    ]);
+    history.setCatalogue([new KycDefinition(KYC_DEF)]);
 
     // THEN
     expect(
@@ -442,60 +358,20 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('hasResponses :false si attribut []', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: KYCID.KYC001,
+          ...QUESTION_TEST,
+          code: KYCID.KYC001,
           id_cms: 1,
-          question: `Quel est votre sujet principal d'intéret ?`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [],
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-            { label: 'Ce que je mange', code: Thematique.alimentation },
-            { label: 'Comment je bouge', code: Thematique.transport },
-          ],
-          tags: [],
-          universes: [],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
+          reponse_complexe: [],
+          reponse_simple: undefined,
         },
       ],
     });
-    history.setCatalogue([
-      new KycDefinition({
-        id_cms: 1,
-        categorie: Categorie.recommandation,
-        code: KYCID.KYC001,
-        is_ngc: false,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [Tag.possede_voiture],
-        universes: [Thematique.alimentation],
-        thematique: Thematique.climat,
-        ngc_key: 'a . b . c',
-        type: TypeReponseQuestionKYC.choix_multiple,
-        reponses: [
-          { label: 'BBB', code: Thematique.logement },
-          { label: 'CCC', code: Thematique.alimentation },
-        ],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
-      }),
-    ]);
+    history.setCatalogue([new KycDefinition(KYC_DEF)]);
+
     // THEN
     expect(
       history
@@ -506,61 +382,31 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('hasResponses :true si au moins un reponse valorisée', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: KYCID.KYC001,
+          ...QUESTION_TEST,
+          code: KYCID.KYC001,
           id_cms: 1,
-          question: `Quel est votre sujet principal d'intéret ?`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [{ label: 'Le climat', code: Thematique.climat }],
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-            { label: 'Ce que je mange', code: Thematique.alimentation },
-            { label: 'Comment je bouge', code: Thematique.transport },
+          reponse_complexe: [
+            {
+              label: 'Yo',
+              code: 'climat',
+              ngc_code: '123',
+              value: 'non',
+            },
+            {
+              label: 'Yi',
+              code: 'yi',
+              ngc_code: '123',
+              value: undefined,
+            },
           ],
-          tags: [],
-          universes: [],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
         },
       ],
     });
-    history.setCatalogue([
-      new KycDefinition({
-        id_cms: 1,
-        categorie: Categorie.recommandation,
-        code: KYCID.KYC001,
-        is_ngc: false,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [Tag.possede_voiture],
-        universes: [Thematique.alimentation],
-        thematique: Thematique.climat,
-        ngc_key: 'a . b . c',
-        type: TypeReponseQuestionKYC.choix_multiple,
-        reponses: [
-          { label: 'BBB', code: Thematique.logement },
-          { label: 'CCC', code: Thematique.alimentation },
-          { label: 'Le climat', code: Thematique.climat },
-        ],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
-      }),
-    ]);
+    history.setCatalogue([new KycDefinition(KYC_DEF)]);
     // THEN
     expect(
       history
@@ -568,6 +414,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         .hasAnyResponses(),
     ).toEqual(true);
   });
+
   it('updateQuestion : exeption si question id inconnu', () => {
     // GIVEN
     const questionsKYC = new KYCHistory();
@@ -581,70 +428,47 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       expect(error.code).toEqual('030');
     }
   });
-  it('getQuestionOrException : rematch la reponse via code sur catalogue', () => {
+
+  it('getQuestionOrException : si code manquant dans catalogue, reponse disparait', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: KYCID.KYC001,
-          id_cms: 1,
-          question: `Quel est votre sujet principal d'intéret ?`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [{ label: 'Le climat', code: Thematique.climat }],
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-            { label: 'Ce que je mange', code: Thematique.alimentation },
-            { label: 'Comment je bouge', code: Thematique.transport },
+          ...QUESTION_TEST,
+          reponse_complexe: [
+            {
+              label: 'Le climat',
+              code: 'a',
+              ngc_code: '123',
+              value: 'oui',
+            },
+            {
+              label: 'truc',
+              code: 'b',
+              ngc_code: '456',
+              value: 'non',
+            },
           ],
-          tags: [],
-          universes: [],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
         },
       ],
     });
     history.setCatalogue([
       new KycDefinition({
-        id_cms: 1,
-        categorie: Categorie.recommandation,
-        code: KYCID.KYC001,
-        is_ngc: false,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [Tag.possede_voiture],
-        universes: [Thematique.alimentation],
-        thematique: Thematique.climat,
-        ngc_key: 'a . b . c',
-        type: TypeReponseQuestionKYC.choix_multiple,
+        ...KYC_DEF,
         reponses: [
-          { label: '🥦 Alimentation', code: Thematique.alimentation },
-          { label: '☀️ Climat et Environnement', code: Thematique.climat },
-          { label: '🛒 Consommation durable', code: Thematique.consommation },
-          { label: '🗑️ Déchets', code: Thematique.dechet },
-          { label: '🏡 Logement', code: Thematique.logement },
           {
-            label: '⚽ Loisirs (vacances, sport,...)',
-            code: Thematique.loisir,
+            code: 'a',
+            label: 'yoyo',
+            ngc_code: '0987',
           },
-          { label: '🚗 Transports', code: Thematique.transport },
-          { label: 'Aucun / Je ne sais pas', code: 'rien' },
+          {
+            code: 'c',
+            label: 'hihi',
+            ngc_code: '000',
+          },
         ],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
     ]);
 
@@ -652,231 +476,66 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     const question = history.getUpToDateQuestionByCodeOrException(KYCID.KYC001);
 
     // THEN
-    expect(question.reponses[0].code).toEqual(Thematique.climat);
-    expect(question.reponses[0].label).toEqual('☀️ Climat et Environnement');
-    expect(question.reponses_possibles).toEqual([
-      { label: '🥦 Alimentation', code: Thematique.alimentation },
-      { label: '☀️ Climat et Environnement', code: Thematique.climat },
-      { label: '🛒 Consommation durable', code: Thematique.consommation },
-      { label: '🗑️ Déchets', code: Thematique.dechet },
-      { label: '🏡 Logement', code: Thematique.logement },
-      {
-        label: '⚽ Loisirs (vacances, sport,...)',
-        code: Thematique.loisir,
-      },
-      { label: '🚗 Transports', code: Thematique.transport },
-      { label: 'Aucun / Je ne sais pas', code: 'rien' },
-    ]);
-  });
-  it('getQuestionOrException : si code manquant dans catalogue, reponse disparait', () => {
-    // GIVEN
-    const history = new KYCHistory({
-      version: 0,
-      answered_mosaics: [],
-      answered_questions: [
-        {
-          id: KYCID.KYC001,
-          id_cms: 1,
-          question: `Quel est votre sujet principal d'intéret ?`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-          ],
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-          ],
-          tags: [],
-          universes: [],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
-        },
-      ],
+    expect(question.getNombreReponsesPossibles()).toEqual(2);
+    expect(question.getReponseComplexeByCode('a')).toEqual({
+      code: 'a',
+      emoji: undefined,
+      image_url: undefined,
+      label: 'yoyo',
+      ngc_code: '0987',
+      unite: undefined,
+      value: 'oui',
     });
-    history.setCatalogue([
-      new KycDefinition({
-        id_cms: 1,
-        categorie: Categorie.recommandation,
-        code: KYCID.KYC001,
-        is_ngc: false,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [Tag.possede_voiture],
-        universes: [Thematique.alimentation],
-        thematique: Thematique.climat,
-        ngc_key: 'a . b . c',
-        type: TypeReponseQuestionKYC.choix_multiple,
-        reponses: [
-          { label: 'BBB', code: Thematique.logement },
-          { label: 'CCC', code: Thematique.alimentation },
-        ],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
-      }),
-    ]);
-
-    // WHEN
-    const question = history.getUpToDateQuestionByCodeOrException(KYCID.KYC001);
-
-    // THEN
-    expect(question.reponses).toEqual([
-      {
-        label: 'BBB',
-        code: Thematique.logement,
-      },
-    ]);
-    expect(question.reponses_possibles).toEqual([
-      { label: 'BBB', code: Thematique.logement },
-      { label: 'CCC', code: Thematique.alimentation },
-    ]);
-
-    expect(history.answered_questions[0].reponses).toEqual([
-      {
-        label: 'BBB',
-        code: Thematique.logement,
-      },
-    ]);
-  });
-  it('getQuestionOrException : si code manquant dans catalogue, reponse disparait', () => {
-    // GIVEN
-    const history = new KYCHistory({
-      version: 0,
-      answered_mosaics: [],
-      answered_questions: [
-        {
-          id: KYCID.KYC001,
-          id_cms: 1,
-          question: `Quel est votre sujet principal d'intéret ?`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-          ],
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-          ],
-          tags: [],
-          universes: [],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
-        },
-      ],
+    expect(question.getReponseComplexeByCode('c')).toEqual({
+      code: 'c',
+      label: 'hihi',
+      ngc_code: '000',
+      value: undefined,
     });
-    history.setCatalogue([
-      new KycDefinition({
-        id_cms: 1,
-        categorie: Categorie.recommandation,
-        code: KYCID.KYC001,
-        is_ngc: false,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [Tag.possede_voiture],
-        universes: [Thematique.alimentation],
-        thematique: Thematique.climat,
-        ngc_key: 'a . b . c',
-        type: TypeReponseQuestionKYC.choix_multiple,
-        reponses: [
-          { label: 'BBB', code: Thematique.logement },
-          { label: 'CCC', code: Thematique.alimentation },
-        ],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
-      }),
-    ]);
 
-    // WHEN
-    const question = history.getUpToDateQuestionByCodeOrException(KYCID.KYC001);
-
-    // THEN
-    expect(question.reponses).toEqual([
+    expect(history.answered_questions[0].getNombreReponsesPossibles()).toEqual(
+      2,
+    );
+    expect(history.answered_questions[0].getReponseComplexeByCode('a')).toEqual(
       {
-        label: 'BBB',
-        code: Thematique.logement,
+        code: 'a',
+        emoji: undefined,
+        image_url: undefined,
+        label: 'yoyo',
+        ngc_code: '0987',
+        unite: undefined,
+        value: 'oui',
       },
-    ]);
-    expect(question.reponses_possibles).toEqual([
-      { label: 'BBB', code: Thematique.logement },
-      { label: 'CCC', code: Thematique.alimentation },
-    ]);
-
-    expect(history.answered_questions[0].reponses).toEqual([
+    );
+    expect(history.answered_questions[0].getReponseComplexeByCode('c')).toEqual(
       {
-        label: 'BBB',
-        code: Thematique.logement,
+        code: 'c',
+        label: 'hihi',
+        ngc_code: '000',
+        value: undefined,
       },
-    ]);
+    );
   });
+
   it('getQuestionOrException : si code manquant pas grave si question pas de type choix', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: KYCID.KYC001,
-          id_cms: 1,
-          question: `Quel est votre sujet principal d'intéret ?`,
+          ...QUESTION_TEST,
           type: TypeReponseQuestionKYC.entier,
-          is_NGC: false,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [{ label: '123', code: null }],
-          reponses_possibles: [],
-          tags: [],
-          universes: [],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
+          reponse_simple: { value: '123', unite: Unite.kg },
+          reponse_complexe: [],
         },
       ],
     });
     history.setCatalogue([
       new KycDefinition({
-        id_cms: 1,
-        categorie: Categorie.recommandation,
-        code: KYCID.KYC001,
-        is_ngc: false,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [Tag.possede_voiture],
-        ngc_key: 'a . b . c',
-        universes: [Thematique.alimentation],
-        thematique: Thematique.climat,
+        ...KYC_DEF,
         type: TypeReponseQuestionKYC.entier,
-        reponses: [],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
+        reponses: [{ code: 'a', label: 'b', ngc_code: 'c' }],
       }),
     ]);
 
@@ -884,33 +543,19 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     const question = history.getUpToDateQuestionByCodeOrException(KYCID.KYC001);
 
     // THEN
-    expect(question.reponses).toEqual([{ label: '123', code: null }]);
+    expect(question.getReponseSimple()).toEqual({ value: '123', unite: 'kg' });
   });
 
   it('getQuestionOrException : trouve une question répondu par id KYC CMS', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: KYCID.KYC001,
+          ...QUESTION_TEST,
+          code: KYCID.KYC001,
           id_cms: 1,
-          question: `Quel est votre sujet principal d'intéret ?`,
-          type: TypeReponseQuestionKYC.entier,
-          is_NGC: false,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [{ label: '123', code: null }],
-          reponses_possibles: [],
-          tags: [],
-          universes: [],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
         },
       ],
     });
@@ -919,236 +564,115 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     const question = history.getAnsweredQuestionByCMS_ID(1);
 
     // THEN
-    expect(question.id).toEqual(KYCID.KYC001);
+    expect(question.code).toEqual(KYCID.KYC001);
   });
 
   it('getKYCRestantes : kyc non repondu', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: KYCID.KYC001,
+          ...QUESTION_TEST,
           id_cms: 1,
-          question: `Quel est votre sujet principal d'intéret ?`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [{ label: 'Le climat', code: Thematique.climat }],
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-            { label: 'Ce que je mange', code: Thematique.alimentation },
-            { label: 'Comment je bouge', code: Thematique.transport },
-          ],
-          tags: [],
-          universes: [],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
+          code: KYCID.KYC001,
         },
       ],
     });
     history.setCatalogue([
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 1,
-        categorie: Categorie.test,
         code: KYCID.KYC001,
-        is_ngc: false,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [Tag.possede_voiture],
-        ngc_key: 'a . b . c',
-        universes: [Thematique.alimentation],
-        thematique: Thematique.climat,
-        type: TypeReponseQuestionKYC.choix_multiple,
-        reponses: [
-          { label: 'AAA', code: Thematique.climat },
-          { label: 'BBB', code: Thematique.logement },
-          { label: 'CCC', code: Thematique.alimentation },
-          { label: 'DDD', code: Thematique.transport },
-        ],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 2,
-        categorie: Categorie.test,
         code: KYCID.KYC002,
-        is_ngc: false,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [Tag.possede_voiture],
-        ngc_key: 'a . b . c',
-        universes: [Thematique.alimentation],
-        thematique: Thematique.climat,
-        type: TypeReponseQuestionKYC.libre,
-        reponses: [],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
     ]);
 
     // WHEN
-    const questions = history.getKYCRestantes(Categorie.test);
+    const questions = history.getKYCsNeverAnswered(Categorie.recommandation);
 
     // THEN
     expect(questions).toHaveLength(1);
-    expect(questions[0].id).toEqual(KYCID.KYC002);
+    expect(questions[0].code).toEqual(KYCID.KYC002);
   });
-  it('getKYCRestantes : filtrage univers', () => {
+
+  it('getKYCRestantes : kyc non repondu et thematique', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: KYCID.KYC001,
+          ...QUESTION_TEST,
           id_cms: 1,
-          question: `Quel est votre sujet principal d'intéret ?`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [{ label: 'Le climat', code: Thematique.climat }],
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-            { label: 'Ce que je mange', code: Thematique.alimentation },
-            { label: 'Comment je bouge', code: Thematique.transport },
-          ],
-          tags: [],
-          universes: [],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
+          code: KYCID.KYC001,
         },
       ],
     });
     history.setCatalogue([
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 1,
-        categorie: Categorie.recommandation,
+        thematiques: [Thematique.alimentation],
         code: KYCID.KYC001,
-        is_ngc: false,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [Tag.possede_voiture],
-        universes: [],
-        thematique: Thematique.climat,
-        ngc_key: 'a . b . c',
-        type: TypeReponseQuestionKYC.choix_multiple,
-        reponses: [
-          { label: 'AAA', code: Thematique.climat },
-          { label: 'BBB', code: Thematique.logement },
-          { label: 'CCC', code: Thematique.alimentation },
-          { label: 'DDD', code: Thematique.transport },
-        ],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 2,
-        categorie: Categorie.recommandation,
+        thematiques: [Thematique.logement],
         code: KYCID.KYC002,
-        is_ngc: false,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [Tag.possede_voiture],
-        universes: [Thematique.climat],
-        thematique: Thematique.climat,
-        ngc_key: 'a . b . c',
-        type: TypeReponseQuestionKYC.libre,
-        reponses: [
-          { label: 'AAA', code: Thematique.climat },
-          { label: 'BBB', code: Thematique.logement },
-          { label: 'CCC', code: Thematique.alimentation },
-          { label: 'DDD', code: Thematique.transport },
-        ],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
+      }),
+      new KycDefinition({
+        ...KYC_DEF,
+        id_cms: 3,
+        thematiques: [Thematique.dechet],
+        code: KYCID.KYC003,
       }),
     ]);
 
     // WHEN
-    const questions = history.getKYCRestantes(
-      Categorie.test,
-      Thematique.consommation,
+    const questions = history.getKYCsNeverAnswered(
+      Categorie.recommandation,
+      Thematique.dechet,
     );
 
     // THEN
-    expect(questions).toHaveLength(0);
+    expect(questions).toHaveLength(1);
+    expect(questions[0].code).toEqual(KYCID.KYC003);
   });
 
   it('patchLogement : chauffage => maj KYC chauffage et vide l autre KYC reponse', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
+          ...QUESTION_TEST,
           id_cms: 2,
           categorie: Categorie.recommandation,
-          id: KYCID.KYC_chauffage_elec,
+          code: KYCID.KYC_chauffage_elec,
           is_NGC: true,
-          a_supprimer: false,
-          points: 10,
-          question: 'The question !',
-          tags: [],
-          universes: [],
-          thematique: Thematique.climat,
           type: TypeReponseQuestionKYC.choix_unique,
           ngc_key: 'a . b . c',
-          reponses: [{ label: 'OUI', code: 'oui', ngc_code: '_oui' }],
-          reponses_possibles: [
-            { label: 'OUI', code: 'oui', ngc_code: '_oui' },
-            { label: 'NON', code: 'non', ngc_code: '_non' },
-            { label: 'Ne sais pas', code: 'ne_sais_pas' },
+          reponse_complexe: [
+            { label: 'OUI', code: 'oui', ngc_code: '_oui', value: 'oui' },
           ],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
         },
       ],
     });
     history.setCatalogue([
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC_chauffage_bois,
         is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.choix_unique,
         ngc_key: 'a . b . c',
         reponses: [
@@ -1156,47 +680,26 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'NON', code: 'non', ngc_code: '_non' },
           { label: 'Ne sais pas', code: 'ne_sais_pas' },
         ],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 2,
         categorie: Categorie.recommandation,
         code: KYCID.KYC_chauffage_elec,
         is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
-        type: TypeReponseQuestionKYC.choix_unique,
         ngc_key: 'a . b . c',
         reponses: [
           { label: 'OUI', code: 'oui', ngc_code: '_oui' },
           { label: 'NON', code: 'non', ngc_code: '_non' },
           { label: 'Ne sais pas', code: 'ne_sais_pas' },
         ],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 3,
         categorie: Categorie.recommandation,
         code: KYCID.KYC_chauffage_gaz,
         is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.choix_unique,
         ngc_key: 'a . b . c',
         reponses: [
@@ -1204,35 +707,19 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'NON', code: 'non', ngc_code: '_non' },
           { label: 'Ne sais pas', code: 'ne_sais_pas' },
         ],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 4,
         categorie: Categorie.recommandation,
         code: KYCID.KYC_chauffage_fioul,
         is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
-        type: TypeReponseQuestionKYC.choix_unique,
         ngc_key: 'a . b . c',
         reponses: [
           { label: 'OUI', code: 'oui', ngc_code: '_oui' },
           { label: 'NON', code: 'non', ngc_code: '_non' },
           { label: 'Ne sais pas', code: 'ne_sais_pas' },
         ],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
     ]);
 
@@ -1242,49 +729,87 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     });
 
     // THEN
-    expect(history.getAnsweredQuestionByCMS_ID(1).reponses[0]).toEqual({
-      code: 'oui',
+    expect(
+      history.getAnsweredQuestionByCMS_ID(1).getNombreReponsesPossibles(),
+    ).toEqual(3);
+    expect(
+      history.getAnsweredQuestionByCMS_ID(1).getReponseComplexeByCode('oui'),
+    ).toEqual({
       label: 'OUI',
+      code: 'oui',
       ngc_code: '_oui',
+      value: 'oui',
     });
-    expect(history.getAnsweredQuestionByCMS_ID(2).reponses[0]).toEqual({
+    expect(
+      history.getAnsweredQuestionByCMS_ID(1).getReponseComplexeByCode('non'),
+    ).toEqual({
+      label: 'NON',
+      code: 'non',
+      ngc_code: '_non',
+      value: 'non',
+    });
+    expect(
+      history
+        .getAnsweredQuestionByCMS_ID(1)
+        .getReponseComplexeByCode('ne_sais_pas'),
+    ).toEqual({
       label: 'Ne sais pas',
       code: 'ne_sais_pas',
       ngc_code: undefined,
+      value: 'non',
+    });
+    expect(
+      history.getAnsweredQuestionByCMS_ID(2).getNombreReponsesPossibles(),
+    ).toEqual(3);
+    expect(
+      history.getAnsweredQuestionByCMS_ID(2).getReponseComplexeByCode('oui'),
+    ).toEqual({
+      code: 'oui',
+      label: 'OUI',
+      ngc_code: '_oui',
+      value: 'non',
+    });
+    expect(
+      history.getAnsweredQuestionByCMS_ID(2).getReponseComplexeByCode('non'),
+    ).toEqual({
+      code: 'non',
+      label: 'NON',
+      ngc_code: '_non',
+      value: 'non',
+    });
+    expect(
+      history
+        .getAnsweredQuestionByCMS_ID(2)
+        .getReponseComplexeByCode('ne_sais_pas'),
+    ).toEqual({
+      code: 'ne_sais_pas',
+      label: 'Ne sais pas',
+      ngc_code: undefined,
+      value: 'oui',
     });
   });
 
   it('patchLogement :DPE', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [],
     });
     history.setCatalogue([
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC_DPE,
         is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.choix_unique,
         ngc_key: 'a . b . c',
         reponses: [
-          { label: 'A', code: 'a' },
-          { label: 'B', code: 'b' },
+          { label: 'A', code: 'A' },
+          { label: 'B', code: 'B' },
           { label: 'Ne sais pas', code: 'ne_sais_pas' },
         ],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
     ]);
 
@@ -1294,10 +819,26 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     });
 
     // THEN
-    expect(history.getAnsweredQuestionByCMS_ID(1).reponses[0]).toEqual({
-      code: 'b',
-      label: 'B',
+    expect(
+      history
+        .getAnsweredQuestionByCMS_ID(1)
+        .getCodeReponseQuestionChoixUnique(),
+    ).toEqual('B');
+    expect(
+      history.getAnsweredQuestionByCMS_ID(1).getReponseComplexeByCode('A'),
+    ).toEqual({ label: 'A', code: 'A', ngc_code: undefined, value: 'non' });
+    expect(
+      history.getAnsweredQuestionByCMS_ID(1).getReponseComplexeByCode('B'),
+    ).toEqual({ label: 'B', code: 'B', ngc_code: undefined, value: 'oui' });
+    expect(
+      history
+        .getAnsweredQuestionByCMS_ID(1)
+        .getReponseComplexeByCode('ne_sais_pas'),
+    ).toEqual({
+      label: 'Ne sais pas',
+      code: 'ne_sais_pas',
       ngc_code: undefined,
+      value: 'non',
     });
   });
 
@@ -1305,7 +846,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [],
     });
@@ -1321,35 +862,25 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(history.answered_questions).toHaveLength(0);
   });
+
   it('injectSituationNGC : ok pour un kyc ngc de type entier et input entier', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [],
     });
 
     history.setCatalogue([
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC_chauffage,
         is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.entier,
         ngc_key: 'a . b . c',
-        reponses: [],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
     ]);
 
@@ -1366,86 +897,28 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     expect(
       history
         .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .listeReponsesLabels()[0],
-    ).toEqual('123');
+        .getReponseSimpleValueAsNumber(),
+    ).toEqual(123);
   });
-  it('injectSituationNGC : ok pour un kyc ngc de type entier et input entier', () => {
-    // GIVEN
-    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
-    const history = new KYCHistory({
-      version: 0,
-      answered_mosaics: [],
-      answered_questions: [],
-    });
 
-    history.setCatalogue([
-      new KycDefinition({
-        id_cms: 1,
-        categorie: Categorie.recommandation,
-        code: KYCID.KYC_chauffage,
-        is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
-        type: TypeReponseQuestionKYC.entier,
-        ngc_key: 'a . b . c',
-        reponses: [],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
-      }),
-    ]);
-
-    // WHEN
-    history.injectSituationNGC(
-      {
-        'a . b . c': 123,
-      },
-      utilisateur,
-    );
-
-    // THEN
-    expect(history.answered_questions).toHaveLength(1);
-    expect(
-      history
-        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .listeReponsesLabels()[0],
-    ).toEqual('123');
-  });
   it('injectSituationNGC : ok pour un kyc ngc de type entier et input entier as string', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [],
     });
 
     history.setCatalogue([
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC_chauffage,
-        is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.entier,
+        is_ngc: true,
         ngc_key: 'a . b . c',
-        reponses: [],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
     ]);
 
@@ -1462,38 +935,28 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     expect(
       history
         .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .listeReponsesLabels()[0],
-    ).toEqual('123');
+        .getReponseSimpleValueAsNumber(),
+    ).toEqual(123);
   });
+
   it('injectSituationNGC : ok pour un kyc ngc de type decimal et input entier ', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [],
     });
 
     history.setCatalogue([
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC_chauffage,
         is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.decimal,
         ngc_key: 'a . b . c',
-        reponses: [],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
     ]);
 
@@ -1510,38 +973,28 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     expect(
       history
         .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .listeReponsesLabels()[0],
-    ).toEqual('123');
+        .getReponseSimpleValueAsNumber(),
+    ).toEqual(123);
   });
+
   it('injectSituationNGC : ok pour un kyc ngc de type decimal et input decimal ', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [],
     });
 
     history.setCatalogue([
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC_chauffage,
         is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.decimal,
         ngc_key: 'a . b . c',
-        reponses: [],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
     ]);
 
@@ -1558,38 +1011,28 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     expect(
       history
         .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .listeReponsesLabels()[0],
-    ).toEqual('123.34');
+        .getReponseSimpleValueAsNumber(),
+    ).toEqual(123.34);
   });
+
   it('injectSituationNGC : ignore pour un kyc ngc de type entier et input pas entier ', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [],
     });
 
     history.setCatalogue([
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC_chauffage,
         is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.entier,
         ngc_key: 'a . b . c',
-        reponses: [],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
     ]);
 
@@ -1604,78 +1047,25 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(history.answered_questions).toHaveLength(0);
   });
-  it('injectSituationNGC : ignore pour un kyc ngc de type entier et input pas entier ', () => {
-    // GIVEN
-    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
-    const history = new KYCHistory({
-      version: 0,
-      answered_mosaics: [],
-      answered_questions: [],
-    });
 
-    history.setCatalogue([
-      new KycDefinition({
-        id_cms: 1,
-        categorie: Categorie.recommandation,
-        code: KYCID.KYC_chauffage,
-        is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
-        type: TypeReponseQuestionKYC.entier,
-        ngc_key: 'a . b . c',
-        reponses: [],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
-      }),
-    ]);
-
-    // WHEN
-    history.injectSituationNGC(
-      {
-        'a . b . c': 'bad',
-      },
-      utilisateur,
-    );
-
-    // THEN
-    expect(history.answered_questions).toHaveLength(0);
-  });
   it('injectSituationNGC : ignore pour un kyc ngc de type decimal et input pas decimal ', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [],
     });
 
     history.setCatalogue([
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC_chauffage,
         is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.decimal,
         ngc_key: 'a . b . c',
-        reponses: [],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
     ]);
 
@@ -1690,78 +1080,25 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(history.answered_questions).toHaveLength(0);
   });
-  it('injectSituationNGC : ignore pour un kyc ngc de type decimal et input pas decimal ', () => {
-    // GIVEN
-    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
-    const history = new KYCHistory({
-      version: 0,
-      answered_mosaics: [],
-      answered_questions: [],
-    });
 
-    history.setCatalogue([
-      new KycDefinition({
-        id_cms: 1,
-        categorie: Categorie.recommandation,
-        code: KYCID.KYC_chauffage,
-        is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
-        type: TypeReponseQuestionKYC.decimal,
-        ngc_key: 'a . b . c',
-        reponses: [],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
-      }),
-    ]);
-
-    // WHEN
-    history.injectSituationNGC(
-      {
-        'a . b . c': 'bad',
-      },
-      utilisateur,
-    );
-
-    // THEN
-    expect(history.answered_questions).toHaveLength(0);
-  });
   it('injectSituationNGC : ignore pour un kyc non ngc ', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [],
     });
 
     history.setCatalogue([
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC_chauffage,
         is_ngc: false,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.entier,
         ngc_key: 'a . b . c',
-        reponses: [],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
     ]);
 
@@ -1776,27 +1113,23 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(history.answered_questions).toHaveLength(0);
   });
+
   it('injectSituationNGC : integre une reponse string pour une question a choix unique', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [],
     });
 
     history.setCatalogue([
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC_chauffage,
         is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.choix_unique,
         ngc_key: 'a . b . c',
         reponses: [
@@ -1804,11 +1137,6 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'B', code: 'b', ngc_code: 'toto . b' },
           { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
         ],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
     ]);
 
@@ -1823,56 +1151,88 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(history.answered_questions).toHaveLength(1);
     expect(
-      history.getAnsweredQuestionByCode(KYCID.KYC_chauffage).reponses,
-    ).toEqual([{ code: 'a', label: 'A', ngc_code: 'toto . a' }]);
+      history
+        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getCodeReponseQuestionChoixUnique(),
+    ).toEqual('a');
+    expect(
+      history
+        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getReponseComplexeByCode('a'),
+    ).toEqual({
+      code: 'a',
+      label: 'A',
+      ngc_code: 'toto . a',
+      value: 'oui',
+    });
+    expect(
+      history
+        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getReponseComplexeByCode('b'),
+    ).toEqual({
+      code: 'b',
+      label: 'B',
+      ngc_code: 'toto . b',
+      value: 'non',
+    });
+    expect(
+      history
+        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getReponseComplexeByCode('ne_sais_pas'),
+    ).toEqual({
+      code: 'ne_sais_pas',
+      label: 'Ne sais pas',
+      ngc_code: null,
+      value: 'non',
+    });
   });
+
   it(`injectSituationNGC : maj d'une KYC deja renseignée`, () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
+          ...QUESTION_TEST,
           id_cms: 1,
           categorie: Categorie.recommandation,
-          id: KYCID.KYC_chauffage,
+          code: KYCID.KYC_chauffage,
           is_NGC: true,
-          a_supprimer: false,
-          points: 10,
-          question: 'The question !',
-          tags: [],
-          universes: [],
-          thematique: Thematique.climat,
           type: TypeReponseQuestionKYC.choix_unique,
           ngc_key: 'a . b . c',
-          reponses: [{ label: 'A1', code: 'a', ngc_code: 'toto . a' }],
-          reponses_possibles: [
-            { label: 'A', code: 'a', ngc_code: 'toto . a' },
-            { label: 'B', code: 'b', ngc_code: 'toto . b' },
-            { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
+          reponse_complexe: [
+            {
+              code: 'a',
+              label: 'A',
+              ngc_code: 'toto . a',
+              value: 'oui',
+            },
+            {
+              code: 'b',
+              label: 'B',
+              ngc_code: 'toto . b',
+              value: 'non',
+            },
+            {
+              code: 'ne_sais_pas',
+              label: 'Ne sais pas',
+              ngc_code: null,
+              value: 'non',
+            },
           ],
-          short_question: 'short',
-          image_url: 'https://',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
         },
       ],
     });
 
     history.setCatalogue([
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC_chauffage,
         is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.choix_unique,
         ngc_key: 'a . b . c',
         reponses: [
@@ -1880,11 +1240,6 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'B', code: 'b', ngc_code: 'toto . b' },
           { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
         ],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
     ]);
 
@@ -1899,46 +1254,76 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(history.answered_questions).toHaveLength(1);
     expect(
-      history.getAnsweredQuestionByCode(KYCID.KYC_chauffage).reponses,
-    ).toEqual([{ code: 'b', label: 'B', ngc_code: 'toto . b' }]);
+      history
+        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getCodeReponseQuestionChoixUnique(),
+    ).toEqual('b');
+
+    expect(
+      history
+        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getReponseComplexeByCode('a'),
+    ).toEqual({
+      code: 'a',
+      label: 'A',
+      ngc_code: 'toto . a',
+      value: 'non',
+    });
+    expect(
+      history
+        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getReponseComplexeByCode('b'),
+    ).toEqual({
+      code: 'b',
+      label: 'B',
+      ngc_code: 'toto . b',
+      value: 'oui',
+    });
+    expect(
+      history
+        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getReponseComplexeByCode('ne_sais_pas'),
+    ).toEqual({
+      code: 'ne_sais_pas',
+      label: 'Ne sais pas',
+      ngc_code: null,
+      value: 'non',
+    });
   });
+
   it(`isKYCEligible : true si condition ok`, () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
+          ...QUESTION_TEST,
           id_cms: 2,
           categorie: Categorie.recommandation,
-          id: 'code_2',
+          code: 'code_2',
           is_NGC: true,
-          a_supprimer: false,
-          points: 10,
-          question: 'The question !',
-          tags: [],
-          universes: [],
-          thematique: Thematique.climat,
           type: TypeReponseQuestionKYC.choix_unique,
           ngc_key: 'a . b . c',
-          short_question: 'short',
-          image_url: 'https://',
-          reponses: [{ label: 'A', code: 'haha', ngc_code: 'toto . a' }],
-          reponses_possibles: [
-            { label: 'A', code: 'haha', ngc_code: 'toto . a' },
-            { label: 'B', code: 'hihi', ngc_code: 'toto . b' },
-            { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
-          ],
-          unite: Unite.kg,
-          emoji: '🔥',
-          conditions: [
-            [
-              {
-                id_kyc: 2,
-                code_kyc: 'code_2',
-                code_reponse: 'haha',
-              },
-            ],
+          reponse_complexe: [
+            {
+              code: 'a',
+              label: 'A',
+              ngc_code: 'toto . a',
+              value: 'oui',
+            },
+            {
+              code: 'b',
+              label: 'B',
+              ngc_code: 'toto . b',
+              value: 'non',
+            },
+            {
+              code: 'ne_sais_pas',
+              label: 'Ne sais pas',
+              ngc_code: null,
+              value: 'non',
+            },
           ],
         },
       ],
@@ -1946,48 +1331,27 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     history.setCatalogue([
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC_chauffage,
         is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
-        type: TypeReponseQuestionKYC.choix_unique,
-        ngc_key: 'a . b . c',
-        reponses: [
-          { label: 'A', code: 'a', ngc_code: 'toto . a' },
-          { label: 'B', code: 'b', ngc_code: 'toto . b' },
-          { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
-        ],
-        short_question: 'short',
-        image_url: 'https://',
+        type: TypeReponseQuestionKYC.entier,
         conditions: [
           [
             {
               id_kyc: 2,
-              code_kyc: 'code_2',
-              code_reponse: 'haha',
+              code_reponse: 'a',
             },
           ],
         ],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
       new KycDefinition({
         id_cms: 2,
+        ...KYC_DEF,
         categorie: Categorie.recommandation,
         code: 'code_2',
         is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question 2',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.choix_unique,
         ngc_key: 'a . b . c',
         reponses: [
@@ -1995,11 +1359,6 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'B', code: 'hihi', ngc_code: 'toto . b' },
           { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
         ],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
     ]);
     // WHEN
@@ -2010,92 +1369,68 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(reponse).toEqual(true);
   });
-  it(`isKYCEligible : false si condition ko`, () => {
+
+  it(`isKYCEligible : false si condition KO`, () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
+          ...QUESTION_TEST,
           id_cms: 2,
           categorie: Categorie.recommandation,
-          id: 'code_2',
+          code: 'code_2',
           is_NGC: true,
-          a_supprimer: false,
-          points: 10,
-          question: 'The question !',
-          tags: [],
-          universes: [],
-          thematique: Thematique.climat,
           type: TypeReponseQuestionKYC.choix_unique,
           ngc_key: 'a . b . c',
-          short_question: 'short',
-          image_url: 'https://',
-          reponses: [{ label: 'B', code: 'hihi', ngc_code: 'toto . b' }],
-          reponses_possibles: [
-            { label: 'A', code: 'haha', ngc_code: 'toto . a' },
-            { label: 'B', code: 'hihi', ngc_code: 'toto . b' },
-            { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
+          reponse_complexe: [
+            {
+              code: 'a',
+              label: 'A',
+              ngc_code: 'toto . a',
+              value: 'oui',
+            },
+            {
+              code: 'b',
+              label: 'B',
+              ngc_code: 'toto . b',
+              value: 'non',
+            },
+            {
+              code: 'ne_sais_pas',
+              label: 'Ne sais pas',
+              ngc_code: null,
+              value: 'non',
+            },
           ],
-          conditions: [
-            [
-              {
-                id_kyc: 2,
-                code_kyc: 'code_2',
-                code_reponse: 'haha',
-              },
-            ],
-          ],
-          unite: Unite.kg,
-          emoji: '🔥',
         },
       ],
     });
 
     history.setCatalogue([
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC_chauffage,
         is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
-        type: TypeReponseQuestionKYC.choix_unique,
-        ngc_key: 'a . b . c',
-        reponses: [
-          { label: 'A', code: 'a', ngc_code: 'toto . a' },
-          { label: 'B', code: 'b', ngc_code: 'toto . b' },
-          { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
-        ],
-        short_question: 'short',
-        image_url: 'https://',
+        type: TypeReponseQuestionKYC.entier,
         conditions: [
           [
             {
               id_kyc: 2,
-              code_kyc: 'code_2',
-              code_reponse: 'haha',
+              code_reponse: 'b',
             },
           ],
         ],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
       new KycDefinition({
         id_cms: 2,
+        ...KYC_DEF,
         categorie: Categorie.recommandation,
         code: 'code_2',
         is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question 2',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.choix_unique,
         ngc_key: 'a . b . c',
         reponses: [
@@ -2103,11 +1438,6 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'B', code: 'hihi', ngc_code: 'toto . b' },
           { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
         ],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
     ]);
     // WHEN
@@ -2118,58 +1448,38 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(reponse).toEqual(false);
   });
-  it(`isKYCEligible : false si question par répondues`, () => {
+
+  it(`isKYCEligible : false si question par répondu KO`, () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [],
     });
 
     history.setCatalogue([
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC_chauffage,
         is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
-        type: TypeReponseQuestionKYC.choix_unique,
-        ngc_key: 'a . b . c',
-        reponses: [
-          { label: 'A', code: 'a', ngc_code: 'toto . a' },
-          { label: 'B', code: 'b', ngc_code: 'toto . b' },
-          { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
-        ],
-        short_question: 'short',
-        image_url: 'https://',
+        type: TypeReponseQuestionKYC.entier,
         conditions: [
           [
             {
               id_kyc: 2,
-              code_kyc: 'code_2',
-              code_reponse: 'haha',
+              code_reponse: 'b',
             },
           ],
         ],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
       new KycDefinition({
         id_cms: 2,
+        ...KYC_DEF,
         categorie: Categorie.recommandation,
         code: 'code_2',
         is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question 2',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.choix_unique,
         ngc_key: 'a . b . c',
         reponses: [
@@ -2177,11 +1487,6 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           { label: 'B', code: 'hihi', ngc_code: 'toto . b' },
           { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
         ],
-        short_question: 'short',
-        image_url: 'https://',
-        conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
     ]);
     // WHEN
@@ -2192,38 +1497,24 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(reponse).toEqual(false);
   });
-  it(`isKYCEligible : true si aucune condition`, () => {
+
+  it(`isKYCEligible : true si aucune condition `, () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [],
       answered_questions: [],
     });
 
     history.setCatalogue([
       new KycDefinition({
+        ...KYC_DEF,
         id_cms: 1,
         categorie: Categorie.recommandation,
         code: KYCID.KYC_chauffage,
         is_ngc: true,
-        a_supprimer: false,
-        points: 10,
-        question: 'The question !',
-        tags: [],
-        universes: [],
-        thematique: Thematique.climat,
-        type: TypeReponseQuestionKYC.choix_unique,
-        ngc_key: 'a . b . c',
-        reponses: [
-          { label: 'A', code: 'a', ngc_code: 'toto . a' },
-          { label: 'B', code: 'b', ngc_code: 'toto . b' },
-          { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
-        ],
-        short_question: 'short',
-        image_url: 'https://',
+        type: TypeReponseQuestionKYC.entier,
         conditions: [],
-        unite: Unite.kg,
-        emoji: '🔥',
       }),
     ]);
     // WHEN

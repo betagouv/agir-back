@@ -609,7 +609,9 @@ export class CMSUsecase {
             (elem) => TagUtilisateur[elem.code] || TagUtilisateur.UNKNOWN,
           )
         : [],
-      universes: entry.univers ? entry.univers.map((u) => u.code) : [],
+      thematiques: entry.univers
+        ? entry.univers.map((u) => Thematique[u.code])
+        : [],
       image_url: CMSUsecase.getImageUrl(entry),
       short_question: entry.short_question,
       conditions: entry.OR_Conditions
@@ -870,9 +872,11 @@ export class CMSUsecase {
         (elem) =>
           TagUtilisateur[elem.attributes.code] || TagUtilisateur.UNKNOWN,
       ),
-      universes:
+      thematiques:
         entry.attributes.univers.data.length > 0
-          ? entry.attributes.univers.data.map((u) => u.attributes.code)
+          ? entry.attributes.univers.data.map(
+              (u) => Thematique[u.attributes.code],
+            )
           : [],
       short_question: entry.attributes.short_question,
       image_url: CMSUsecase.getImageUrlFromPopulate(entry),

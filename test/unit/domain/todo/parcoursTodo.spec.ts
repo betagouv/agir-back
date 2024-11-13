@@ -30,7 +30,7 @@ describe('ParcoursTodo', () => {
   it('findTodoElementByTypeAndThematique : le bon element et la bonne todo', () => {
     // GIVEN
     const parcours = new ParcoursTodo({
-      version: 2,
+      version: 0,
       todo_active: 0,
       liste_todo: [
         {
@@ -39,7 +39,7 @@ describe('ParcoursTodo', () => {
           points_todo: 20,
           done_at: null,
           titre: 'titre',
-          imageUrl : 'http',
+          imageUrl: 'http',
           celebration: null,
           todo: [
             {
@@ -79,7 +79,7 @@ describe('ParcoursTodo', () => {
   it('findTodoElementByServiceId : le bon element et la bonne todo', () => {
     // GIVEN
     const parcours = new ParcoursTodo({
-      version: 2,
+      version: 0,
       todo_active: 0,
       liste_todo: [
         {
@@ -89,7 +89,7 @@ describe('ParcoursTodo', () => {
           done_at: null,
           celebration: null,
           titre: 'titre',
-          imageUrl : 'http',
+          imageUrl: 'http',
           todo: [
             {
               id: '1',
@@ -144,7 +144,7 @@ describe('ParcoursTodo', () => {
   it('appendNewFromCatalogue : ajoute une todo depuis le catalogue', () => {
     // GIVEN
     const parcours = new ParcoursTodo({
-      version: 2,
+      version: 0,
       todo_active: 0,
       liste_todo: [
         {
@@ -154,7 +154,7 @@ describe('ParcoursTodo', () => {
           done_at: null,
           celebration: null,
           titre: 'titre',
-          imageUrl : 'http',
+          imageUrl: 'http',
           todo: [
             {
               id: '1',
@@ -178,7 +178,7 @@ describe('ParcoursTodo', () => {
   it('isLast : quand position un cran au dela', () => {
     // GIVEN
     const parcours = new ParcoursTodo({
-      version: 2,
+      version: 0,
       todo_active: 0,
       liste_todo: [
         {
@@ -188,7 +188,7 @@ describe('ParcoursTodo', () => {
           done_at: null,
           celebration: null,
           titre: 'titre',
-          imageUrl : 'http',
+          imageUrl: 'http',
           todo: [
             {
               id: '1',

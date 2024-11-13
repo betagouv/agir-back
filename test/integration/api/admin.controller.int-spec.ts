@@ -25,12 +25,14 @@ import { ParcoursTodo_v0 } from '../../../src/domain/object_store/parcoursTodo/p
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const linkyRepository = new LinkyRepository(TestUtil.prisma);
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
+  const kycRepository = new KycRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -362,7 +364,7 @@ describe('Admin (API test)', () => {
           status: DefiStatus.deja_fait,
           categorie: Categorie.recommandation,
           mois: [],
-          conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+          conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
           sont_points_en_poche: true,
           impact_kg_co2: 5,
         },
@@ -436,6 +438,7 @@ describe('Admin (API test)', () => {
       kyc: kyc,
     });
     process.env.USER_CURRENT_VERSION = '8';
+    await kycRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.POST('/admin/migrate_users');
@@ -1171,7 +1174,7 @@ describe('Admin (API test)', () => {
       motif: 'truc',
       categorie: Categorie.recommandation,
       mois: [],
-      conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+      conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
       sont_points_en_poche: false,
       impact_kg_co2: 5,
     };
@@ -1505,7 +1508,7 @@ describe('Admin (API test)', () => {
       motif: '',
       categorie: Categorie.recommandation,
       mois: [],
-      conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+      conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
       sont_points_en_poche: false,
       impact_kg_co2: 5,
     };

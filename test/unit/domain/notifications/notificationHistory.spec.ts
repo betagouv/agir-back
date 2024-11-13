@@ -271,7 +271,7 @@ describe('NotificationHistory', () => {
       motif: 'truc',
       categorie: Categorie.recommandation,
       mois: [1],
-      conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+      conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
       sont_points_en_poche: true,
       impact_kg_co2: 5,
     };

@@ -23,7 +23,6 @@ import { QuestionKYCAPI } from './types/kyc/questionsKYCAPI';
 import { MosaicKYCAPI } from './types/kyc/mosaicKYCAPI';
 import { TuileMissionAPI } from './types/univers/TuileMissionAPI';
 import { Thematique } from '../../domain/contenu/thematique';
-import { ApplicationError } from '../applicationError';
 import { MissionAPI_v2 } from './types/mission/MissionAPI_v2';
 @ApiExtraModels(QuestionKYCAPI, MosaicKYCAPI)
 @Controller()
@@ -253,10 +252,10 @@ export class MissionController extends GenericControler {
       );
 
     return all_kyc_and_mosaic.map((k) => {
-      if (k.kyc) {
-        return QuestionKYCAPI.mapToAPI(k.kyc);
+      if (k.isMosaic()) {
+        return MosaicKYCAPI.mapToAPI(k);
       } else {
-        return MosaicKYCAPI.mapToAPI(k.mosaic);
+        return QuestionKYCAPI.mapToAPI(k);
       }
     });
   }
@@ -302,10 +301,10 @@ export class MissionController extends GenericControler {
       );
 
     return all_kyc_and_mosaic.map((k) => {
-      if (k.kyc) {
-        return QuestionKYCAPI.mapToAPI(k.kyc);
+      if (k.isMosaic()) {
+        return MosaicKYCAPI.mapToAPI(k);
       } else {
-        return MosaicKYCAPI.mapToAPI(k.mosaic);
+        return QuestionKYCAPI.mapToAPI(k);
       }
     });
   }

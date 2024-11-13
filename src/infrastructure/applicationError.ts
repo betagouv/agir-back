@@ -360,7 +360,7 @@ export class ApplicationError {
   static throwMissingMosaicData() {
     this.throwAppError(
       '072',
-      `Les données sont manquantes pour mettre à jour la mosaic argument`,
+      `Les données sont manquantes pour mettre à jour la mosaic argument, tableau de code/value attendu`,
     );
   }
   static throwRFRNotNumer() {
@@ -437,6 +437,43 @@ export class ApplicationError {
       '086',
       `Classe de serialisation non supportée : [${className}]`,
       500,
+    );
+  }
+
+  static throwNoKYCResponse(code_kyc: string) {
+    this.throwAppError(
+      '087',
+      `Aucune réponse fournie à la question [${code_kyc}]`,
+    );
+  }
+  static throwUniqueReponseExpected(code_kyc: string) {
+    this.throwAppError(
+      '088',
+      `Une réponse de valeur unique était attendue pour la question [${code_kyc}]`,
+    );
+  }
+  static throwMissingValue(code_kyc: string) {
+    this.throwAppError(
+      '089',
+      `Valeur réponse manquante pour la question [${code_kyc}]`,
+    );
+  }
+  static throwMissingYesNoValueForCode(code_kyc: string, code: string) {
+    this.throwAppError(
+      '089',
+      `Valeur [oui/non] manquante pour le code [${code}] de la question [${code_kyc}]`,
+    );
+  }
+  static throwMissingCode(code_kyc: string) {
+    this.throwAppError(
+      '090',
+      `Code réponse manquant pour la question [${code_kyc}]`,
+    );
+  }
+  static throwQuestionBadCodeValue(code: string, kyc_code: string) {
+    this.throwAppError(
+      '091',
+      `Code réponse [${code}] inconnu pour la KYC [${kyc_code}]`,
     );
   }
 

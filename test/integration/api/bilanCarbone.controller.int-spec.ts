@@ -7,14 +7,61 @@ import {
   Unite,
 } from '../../../src/domain/kyc/questionKYC';
 import { Superficie } from '../../../src/domain/logement/logement';
-import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { DB, TestUtil } from '../../TestUtil';
 import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { Feature } from '../../../src/domain/gamification/feature';
 import { Thematique } from '../../../src/domain/contenu/thematique';
+import {
+  KYCHistory_v1,
+  QuestionKYC_v1,
+} from '../../../src/domain/object_store/kyc/kycHistory_v1';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+
+const KYC_DATA: QuestionKYC_v1 = {
+  code: 'KYC_saison_frequence',
+  id_cms: 21,
+  question: `À quelle fréquence mangez-vous de saison ? `,
+  type: TypeReponseQuestionKYC.choix_unique,
+  is_NGC: true,
+  a_supprimer: false,
+  categorie: Categorie.mission,
+  points: 10,
+  reponse_complexe: [
+    {
+      label: 'Souvent',
+      code: 'souvent',
+      ngc_code: '"souvent"',
+      value: 'oui',
+    },
+    {
+      label: 'Jamais',
+      code: 'jamais',
+      ngc_code: '"bof"',
+      value: 'non',
+    },
+    {
+      label: 'Parfois',
+      code: 'parfois',
+      ngc_code: '"burp"',
+      value: 'non',
+    },
+  ],
+  tags: [],
+  thematiques: [],
+  ngc_key: 'alimentation . de saison . consommation',
+  image_url: '111',
+  short_question: 'short',
+  conditions: [],
+  unite: Unite.kg,
+  emoji: '🔥',
+  reponse_simple: undefined,
+  thematique: Thematique.alimentation,
+};
 
 describe('/bilan (API test)', () => {
+  const kycRepository = new KycRepository(TestUtil.prisma);
+
   const OLD_ENV = process.env;
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -381,12 +428,12 @@ describe('/bilan (API test)', () => {
       type: TypeReponseQuestionKYC.choix_unique,
     });
 
-    const kyc: KYCHistory_v0 = {
-      version: 0,
+    const kyc: KYCHistory_v1 = {
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: 'KYC_saison_frequence',
+          code: 'KYC_saison_frequence',
           id_cms: 21,
           question: `À quelle fréquence mangez-vous de saison ? `,
           type: TypeReponseQuestionKYC.choix_unique,
@@ -394,25 +441,39 @@ describe('/bilan (API test)', () => {
           a_supprimer: false,
           categorie: Categorie.mission,
           points: 10,
-          reponses: [
-            { label: 'Souvent', code: 'souvent', ngc_code: '"souvent"' },
-          ],
-          reponses_possibles: [
-            { label: 'Souvent', code: 'souvent', ngc_code: '"souvent"' },
-            { label: 'Jamais', code: 'jamais', ngc_code: '"bof"' },
-            { label: 'Parfois', code: 'parfois', ngc_code: '"burp"' },
+          reponse_complexe: [
+            {
+              label: 'Souvent',
+              code: 'souvent',
+              ngc_code: '"souvent"',
+              value: 'oui',
+            },
+            {
+              label: 'Jamais',
+              code: 'jamais',
+              ngc_code: '"bof"',
+              value: 'non',
+            },
+            {
+              label: 'Parfois',
+              code: 'parfois',
+              ngc_code: '"burp"',
+              value: 'non',
+            },
           ],
           tags: [],
-          universes: [],
+          thematiques: [],
           ngc_key: 'alimentation . de saison . consommation',
           image_url: '111',
           short_question: 'short',
           conditions: [],
           unite: Unite.kg,
           emoji: '🔥',
+          reponse_simple: undefined,
+          thematique: Thematique.alimentation,
         },
         {
-          id: 'KYC_alimentation_regime',
+          code: 'KYC_alimentation_regime',
           id_cms: 1,
           question: `Votre regime`,
           type: TypeReponseQuestionKYC.choix_unique,
@@ -420,27 +481,42 @@ describe('/bilan (API test)', () => {
           a_supprimer: false,
           categorie: Categorie.mission,
           points: 10,
-          reponses: [
-            { code: 'vegetalien', label: 'Vegetalien', ngc_code: null },
-          ],
-          reponses_possibles: [
-            { code: 'vegetalien', label: 'Vegetalien', ngc_code: null },
-            { code: 'vegetarien', label: 'Vegetarien', ngc_code: null },
-            { code: 'peu_viande', label: 'Peu de viande', ngc_code: null },
+          reponse_complexe: [
+            {
+              code: 'vegetalien',
+              label: 'Vegetalien',
+              ngc_code: null,
+              value: 'oui',
+            },
+            {
+              code: 'vegetarien',
+              label: 'Vegetarien',
+              ngc_code: null,
+              value: undefined,
+            },
+            {
+              code: 'peu_viande',
+              label: 'Peu de viande',
+              ngc_code: null,
+              value: undefined,
+            },
             {
               code: 'chaque_jour_viande',
               label: 'Tous les jours',
               ngc_code: null,
+              value: undefined,
             },
           ],
           tags: [],
-          universes: [],
+          thematiques: [],
           ngc_key: null,
           image_url: '111',
           short_question: 'short',
           conditions: [],
           unite: Unite.kg,
           emoji: '🔥',
+          thematique: Thematique.alimentation,
+          reponse_simple: undefined,
         },
       ],
     };
@@ -512,6 +588,7 @@ describe('/bilan (API test)', () => {
       image_url: 'bbbb',
     });
     await thematiqueRepository.loadThematiques();
+    await kycRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -884,6 +961,7 @@ describe('/bilan (API test)', () => {
       image_url: 'bbbb',
     });
     await thematiqueRepository.loadThematiques();
+    await kycRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -970,7 +1048,7 @@ describe('/bilan (API test)', () => {
       ngc_key: 'logement . surface',
       reponses: [],
     });
-
+    await kycRepository.loadDefinitions();
     // WHEN
     const rep = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/logement',
@@ -998,29 +1076,19 @@ describe('/bilan (API test)', () => {
       unlocked_features: [Feature.bilan_carbone_detail],
     };
 
-    const kyc: KYCHistory_v0 = {
-      version: 0,
+    const kyc: KYCHistory_v1 = {
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: KYCID.KYC006,
+          ...KYC_DATA,
+          code: KYCID.KYC006,
           id_cms: 3,
-          question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_unique,
           is_NGC: true,
-          a_supprimer: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [],
-          reponses_possibles: [],
-          tags: [],
-          universes: [Thematique.climat],
+          reponse_complexe: undefined,
+          reponse_simple: undefined,
           ngc_key: 'logement . âge',
-          short_question: 'short',
-          image_url: 'AAA',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
         },
       ],
     };
@@ -1173,35 +1241,38 @@ describe('/bilan (API test)', () => {
   });
   it(`POST /utlilisateurs/compute_bilan_carbone bilan carbon utilisteur avec une reponse alimentationNGC`, async () => {
     // GIVEN
-    const kyc: KYCHistory_v0 = {
-      version: 0,
+    const kyc: KYCHistory_v1 = {
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: 'KYC_saison_frequence',
+          ...KYC_DATA,
+          code: 'KYC_saison_frequence',
           id_cms: 21,
-          question: `À quelle fréquence mangez-vous de saison ? `,
           type: TypeReponseQuestionKYC.choix_unique,
           is_NGC: true,
-          a_supprimer: false,
-          categorie: Categorie.mission,
-          points: 10,
-          reponses: [
-            { label: 'Souvent', code: 'souvent', ngc_code: '"souvent"' },
-          ],
-          reponses_possibles: [
-            { label: 'Souvent', code: 'souvent', ngc_code: '"souvent"' },
-            { label: 'Jamais', code: 'jamais', ngc_code: '"bof"' },
-            { label: 'Parfois', code: 'parfois', ngc_code: '"burp"' },
+          reponse_complexe: [
+            {
+              label: 'Souvent',
+              code: 'souvent',
+              ngc_code: '"souvent"',
+              value: 'oui',
+            },
+            {
+              label: 'Jamais',
+              code: 'jamais',
+              ngc_code: '"bof"',
+              value: 'non',
+            },
+            {
+              label: 'Parfois',
+              code: 'parfois',
+              ngc_code: '"burp"',
+              value: 'non',
+            },
           ],
           tags: [],
-          universes: [],
           ngc_key: 'alimentation . de saison . consommation',
-          image_url: '111',
-          short_question: 'short',
-          conditions: [],
-          unite: Unite.kg,
-          emoji: '🔥',
         },
       ],
     };
@@ -1235,7 +1306,7 @@ describe('/bilan (API test)', () => {
 
     await TestUtil.create(DB.utilisateur, { kyc: kyc });
     TestUtil.token = process.env.CRON_API_KEY;
-
+    await kycRepository.loadDefinitions();
     // WHEN
     const response = await TestUtil.POST('/utilisateurs/compute_bilan_carbone');
 

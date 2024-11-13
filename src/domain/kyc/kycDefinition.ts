@@ -4,6 +4,12 @@ import { Tag } from '../scoring/tag';
 import { ConditionKYC } from './conditionKYC';
 import { TypeReponseQuestionKYC, Unite } from './questionKYC';
 
+export type ReponseDefinition = {
+  label: string;
+  code: string;
+  ngc_code?: string;
+};
+
 export class KycDefinition {
   id_cms: number;
   code: string;
@@ -15,15 +21,10 @@ export class KycDefinition {
   ngc_key: string;
   question: string;
   short_question: string;
-  reponses?: {
-    label: string;
-    code: string;
-    ngc_code?: string;
-    value?: string;
-  }[];
+  reponses?: ReponseDefinition[];
   thematique: Thematique;
   tags: Tag[];
-  universes: string[];
+  thematiques: Thematique[];
   image_url: string;
   conditions: ConditionKYC[][];
   unite: Unite;
@@ -33,7 +34,7 @@ export class KycDefinition {
     Object.assign(this, data);
     this.reponses = data.reponses ? data.reponses : [];
     this.tags = data.tags ? data.tags : [];
-    this.universes = data.universes ? data.universes : [];
+    this.thematiques = data.thematiques ? data.thematiques : [];
     this.conditions = data.conditions ? data.conditions : [];
   }
 
@@ -53,5 +54,11 @@ export class KycDefinition {
           ngc_code: found.ngc_code,
         }
       : null;
+  }
+  public getReponseByCode_v2?(code: string): ReponseDefinition {
+    if (!this.reponses) {
+      return null;
+    }
+    return this.reponses.find((r) => r.code === code);
   }
 }

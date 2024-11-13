@@ -1,4 +1,4 @@
-import { Versioned } from '../versioned';
+import { Versioned, Versioned_v0 } from '../versioned';
 import { ContentType } from '../../contenu/contentType';
 import { Mission, Objectif } from '../../../../src/domain/mission/mission';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
@@ -33,7 +33,7 @@ export class Mission_v0 {
   }
 }
 
-export class MissionsUtilisateur_v0 extends Versioned {
+export class MissionsUtilisateur_v0 extends Versioned_v0 {
   missions: Mission_v0[];
 
   static serialise(

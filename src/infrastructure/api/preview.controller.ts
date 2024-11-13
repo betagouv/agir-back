@@ -25,7 +25,6 @@ import { DefiRepository } from '../repository/defi.repository';
 import { MissionDefinition } from '../../domain/mission/missionDefinition';
 import { MissionUsecase } from '../../usecase/mission.usecase';
 import { DefiDefinition } from '../../domain/defis/defiDefinition';
-import { AuthGuard } from '../auth/guard';
 import { KycDefinition } from '../../domain/kyc/kycDefinition';
 import { App } from '../../domain/app';
 import axios from 'axios';
@@ -226,7 +225,7 @@ export class PreviewController extends GenericControler {
     DATA.catgorie = kyc_def.categorie;
     DATA.tags = kyc_def.tags;
     DATA.thematique = kyc_def.thematique;
-    DATA.universes = kyc_def.universes;
+    DATA.universes = kyc_def.thematiques;
     DATA.type = kyc_def.type;
     DATA.IS_NGC = kyc_def.is_ngc;
     if (kyc_def.is_ngc) {
@@ -311,7 +310,7 @@ export class PreviewController extends GenericControler {
     if (!this.checkAuthHeaderOK(authorization)) {
       return this.returnBadOreMissingLoginError(res);
     }
-    let all_kyc_defs = await this.kycRepository.getAllDefs();
+    let all_kyc_defs = KycRepository.getCatalogue();
     let all_mission_defs = await this.missionRepository.list();
     let result = [];
 

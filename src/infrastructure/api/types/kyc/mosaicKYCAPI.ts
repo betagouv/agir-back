@@ -2,9 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Categorie } from '../../../../domain/contenu/categorie';
 import {
   KYCMosaicReponse,
-  MosaicKYC,
-  TypeReponseMosaicKYC,
+  MosaicKYC_CATALOGUE,
+  TypeMosaic,
 } from '../../../../domain/kyc/mosaicKYC';
+import {
+  KYCReponseComplexe,
+  QuestionKYC,
+} from '../../../../domain/kyc/questionKYC';
 
 export class KYCMosaicReponseAPI {
   @ApiProperty() code: string;
@@ -13,12 +17,12 @@ export class KYCMosaicReponseAPI {
   @ApiProperty() emoji: string;
   @ApiProperty() boolean_value: boolean;
 
-  public static mapToAPI(reponse: KYCMosaicReponse): KYCMosaicReponseAPI {
+  public static mapToAPI(reponse: KYCReponseComplexe): KYCMosaicReponseAPI {
     return {
       code: reponse.code,
       image_url: reponse.image_url,
       label: reponse.label,
-      boolean_value: reponse.boolean_value,
+      boolean_value: QuestionKYC.isTrueBooleanString(reponse.value),
       emoji: reponse.emoji,
     };
   }
@@ -34,8 +38,8 @@ export class MosaicKYCAPI {
   @ApiProperty()
   titre: string;
 
-  @ApiProperty({ enum: TypeReponseMosaicKYC })
-  type: TypeReponseMosaicKYC;
+  @ApiProperty({ enum: TypeMosaic })
+  type: TypeMosaic;
 
   @ApiProperty({ enum: Categorie })
   categorie: Categorie;
@@ -46,15 +50,17 @@ export class MosaicKYCAPI {
   @ApiProperty({ type: [KYCMosaicReponseAPI] })
   reponses: KYCMosaicReponseAPI[];
 
-  public static mapToAPI(mosaic: MosaicKYC): MosaicKYCAPI {
+  public static mapToAPI(mosaic: QuestionKYC): MosaicKYCAPI {
     return {
-      id: mosaic.id,
-      titre: mosaic.titre,
-      reponses: mosaic.reponses.map((r) => KYCMosaicReponseAPI.mapToAPI(r)),
+      id: mosaic.code,
+      titre: mosaic.question,
+      reponses: mosaic
+        .getListeReponsesComplexes()
+        .map((r) => KYCMosaicReponseAPI.mapToAPI(r)),
       categorie: mosaic.categorie,
       points: mosaic.points,
-      type: mosaic.type,
-      is_answered: mosaic.is_answered,
+      type: TypeMosaic[mosaic.type],
+      is_answered: mosaic.is_mosaic_answered,
     };
   }
 }

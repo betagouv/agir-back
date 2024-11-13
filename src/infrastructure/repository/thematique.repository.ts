@@ -6,7 +6,7 @@ import { ThematiqueDefinition } from '../../domain/thematique/thematiqueDefiniti
 
 @Injectable()
 export class ThematiqueRepository {
-  static catalogue_thematiques_by_thematiques: Map<
+  private static catalogue_thematiques_by_thematiques: Map<
     Thematique,
     ThematiqueDefinition
   >;

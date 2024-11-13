@@ -1,4 +1,4 @@
-import { Versioned } from '../versioned';
+import { Versioned, Versioned_v0 } from '../versioned';
 import { ServiceRecherche } from '../../bibliotheque_services/recherche/serviceRecherche';
 import { BibliothequeServices } from '../../bibliotheque_services/bibliothequeServices';
 import { ServiceRechercheID } from '../../bibliotheque_services/recherche/serviceRechercheID';
@@ -143,7 +143,7 @@ export class ServiceRecherche_v0 {
   }
 }
 
-export class BibliothequeServices_v0 extends Versioned {
+export class BibliothequeServices_v0 extends Versioned_v0 {
   liste_services: ServiceRecherche_v0[];
 
   static serialise(biblio: BibliothequeServices): BibliothequeServices_v0 {

@@ -11,6 +11,7 @@ import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { TagUtilisateur } from '../../../../src/domain/scoring/tagUtilisateur';
+import { KycRepository } from '../../../../src/infrastructure/repository/kyc.repository';
 
 describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA_DEFI = {
@@ -357,6 +358,8 @@ describe('/api/incoming/cms (API test)', () => {
       mois: '0,1',
     },
   };
+  const kycRepository = new KycRepository(TestUtil.prisma);
+
   beforeAll(async () => {
     await TestUtil.appinit();
   });
@@ -511,6 +514,7 @@ describe('/api/incoming/cms (API test)', () => {
   it('POST /api/incoming/cms - updates kyc', async () => {
     // GIVEN
     await TestUtil.create(DB.kYC, { id_cms: 123 });
+    await kycRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(

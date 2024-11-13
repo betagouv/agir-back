@@ -12,7 +12,7 @@ import {
   BilanCarboneSynthese,
   NiveauImpact,
 } from '../domain/bilan/bilanCarbone';
-import { TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
+import { QuestionKYC, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { QuestionKYCUsecase } from './questionKYC.usecase';
 import { KYCID } from '../domain/kyc/KYCID';
@@ -41,8 +41,7 @@ export class BilanCarboneUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const kyc_catalogue = await this.kycRepository.getAllDefs();
-    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
+    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
     const enchainement_mini_bilan =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
@@ -65,15 +64,20 @@ export class BilanCarboneUsecase {
         QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_bilan_alimentation'],
       );
 
-    const enchainement_minibilan_progression =
-      enchainement_mini_bilan.getProgression();
-    const enchainement_transport_progression =
-      enchainement_transport.getProgression();
-    const enchainement_logement_progression =
-      enchainement_logement.getProgression();
-    const enchainement_conso_progression = enchainement_conso.getProgression();
-    const enchainement_alimentation_progression =
-      enchainement_alimentation.getProgression();
+    const enchainement_minibilan_progression = QuestionKYC.getProgression(
+      enchainement_mini_bilan,
+    );
+    const enchainement_transport_progression = QuestionKYC.getProgression(
+      enchainement_transport,
+    );
+    const enchainement_logement_progression = QuestionKYC.getProgression(
+      enchainement_logement,
+    );
+    const enchainement_conso_progression =
+      QuestionKYC.getProgression(enchainement_conso);
+    const enchainement_alimentation_progression = QuestionKYC.getProgression(
+      enchainement_alimentation,
+    );
 
     const pourcentage_prog_totale = Math.round(
       ((enchainement_minibilan_progression.current +
@@ -185,7 +189,7 @@ export class BilanCarboneUsecase {
   async computeBilanTousUtilisateurs(): Promise<string[]> {
     const user_id_liste = await this.utilisateurRepository.listUtilisateurIds();
 
-    const kyc_catalogue = await this.kycRepository.getAllDefs();
+    const kyc_catalogue = KycRepository.getCatalogue();
 
     for (const user_id of user_id_liste) {
       const utilisateur = await this.utilisateurRepository.getById(user_id, [
@@ -212,26 +216,25 @@ export class BilanCarboneUsecase {
     const situation = {};
 
     const kyc_liste = utilisateur.kyc_history.getAllUpToDateQuestionSet(true);
-    for (const entry of kyc_liste) {
-      const kyc = entry.kyc;
-
+    for (const kyc of kyc_liste) {
       if (kyc.is_NGC) {
         if (!kyc.ngc_key) {
           console.error(
-            `Missing ngc key for KYC [${kyc.id_cms}/${kyc.id}]  user [${utilisateur.id}]`,
+            `Missing ngc key for KYC [${kyc.id_cms}/${kyc.code}]  user [${utilisateur.id}]`,
           );
         } else {
           if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
-            if (kyc.reponses && kyc.reponses.length > 0) {
-              situation[kyc.ngc_key] = kyc.reponses[0].ngc_code;
+            if (kyc.hasAnyComplexeResponse()) {
+              situation[kyc.ngc_key] =
+                kyc.getNGCCodeReponseQuestionChoixUnique();
             }
           }
           if (
             kyc.type === TypeReponseQuestionKYC.entier ||
             kyc.type === TypeReponseQuestionKYC.decimal
           ) {
-            if (kyc.reponses && kyc.reponses.length > 0) {
-              situation[kyc.ngc_key] = kyc.getReponseUniqueSaisie();
+            if (kyc.hasAnySimpleResponse()) {
+              situation[kyc.ngc_key] = kyc.getReponseSimpleValue();
             }
           }
         }
@@ -253,8 +256,8 @@ export class BilanCarboneUsecase {
     if (!kyc_avion) return null;
     if (!kyc_avion.hasAnyResponses()) return null;
 
-    const avion = kyc_avion.includesReponseCode('oui');
-    const km = parseInt(kyc_voiture.reponses[0].label);
+    const avion = kyc_avion.isSelectedReponseCode('oui');
+    const km = kyc_voiture.getReponseSimpleValueAsNumber();
     if (!avion) {
       if (km < 1000) return NiveauImpact.faible;
       if (km < 10000) return NiveauImpact.moyen;
@@ -272,7 +275,7 @@ export class BilanCarboneUsecase {
     if (!kyc_regime) return null;
     if (!kyc_regime.hasAnyResponses()) return null;
 
-    const regime_code = kyc_regime.getCodeReponseUniqueSaisie();
+    const regime_code = kyc_regime.getCodeReponseQuestionChoixUnique();
     switch (regime_code) {
       case 'vegetalien':
         return NiveauImpact.faible;
@@ -293,7 +296,7 @@ export class BilanCarboneUsecase {
     if (!kyc_type_conso) return null;
     if (!kyc_type_conso.hasAnyResponses()) return null;
 
-    const code = kyc_type_conso.getCodeReponseUniqueSaisie();
+    const code = kyc_type_conso.getCodeReponseQuestionChoixUnique();
     switch (code) {
       case 'achete_jamais':
         return NiveauImpact.faible;
@@ -350,10 +353,10 @@ export class BilanCarboneUsecase {
     if (!kyc_fioul) return null;
     if (!kyc_fioul.hasAnyResponses()) return null;
 
-    const is_fioul = kyc_fioul.getCodeReponseUniqueSaisie() === 'oui';
-    const is_gaz = kyc_gaz.getCodeReponseUniqueSaisie() === 'oui';
-    const is_elec = kyc_elec.getCodeReponseUniqueSaisie() === 'oui';
-    const is_bois = kyc_bois.getCodeReponseUniqueSaisie() === 'oui';
+    const is_fioul = kyc_fioul.getCodeReponseQuestionChoixUnique() === 'oui';
+    const is_gaz = kyc_gaz.getCodeReponseQuestionChoixUnique() === 'oui';
+    const is_elec = kyc_elec.getCodeReponseQuestionChoixUnique() === 'oui';
+    const is_bois = kyc_bois.getCodeReponseQuestionChoixUnique() === 'oui';
 
     let type_chauffage_nbr;
 
@@ -367,8 +370,8 @@ export class BilanCarboneUsecase {
       type_chauffage_nbr = 2;
     }
 
-    const nbr_hab = parseInt(kyc_menage.reponses[0].label);
-    const superficie = parseInt(kyc_superficie.reponses[0].label);
+    const nbr_hab = kyc_menage.getReponseSimpleValueAsNumber();
+    const superficie = kyc_superficie.getReponseSimpleValueAsNumber();
     let nbr_superficie;
     if (superficie <= 35) nbr_superficie = 1;
     if (superficie <= 70) nbr_superficie = 2;

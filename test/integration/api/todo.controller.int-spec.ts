@@ -28,15 +28,18 @@ import { Tag } from '../../../src/domain/scoring/tag';
 import { KYC } from '@prisma/client';
 import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
 import {
-  MosaicKYC,
-  TypeReponseMosaicKYC,
+  MosaicKYC_CATALOGUE,
+  TypeMosaic,
 } from '../../../src/domain/kyc/mosaicKYC';
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { KYCHistory_v1 } from '../../../src/domain/object_store/kyc/kycHistory_v1';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 
 describe('TODO list (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const kycRepository = new KycRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -522,14 +525,15 @@ describe('TODO list (API test)', () => {
     QuestionKYCUsecase.ENCHAINEMENTS = {
       ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCID.KYC002, 'TEST_MOSAIC_ID'],
     };
-    MosaicKYC.MOSAIC_CATALOGUE = [
+    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = [
       {
         id: KYCMosaicID.TEST_MOSAIC_ID,
         categorie: Categorie.test,
         points: 10,
         titre: 'Titre test',
-        type: TypeReponseMosaicKYC.mosaic_boolean,
+        type: TypeMosaic.mosaic_boolean,
         question_kyc_codes: [KYCID.KYC003, KYCID.KYC004],
+        thematique: Thematique.alimentation,
       },
     ];
 
@@ -610,7 +614,7 @@ describe('TODO list (API test)', () => {
       question: 'quest 4',
       code: 'KYC004',
     });
-
+    await kycRepository.loadDefinitions();
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/todo');
 
@@ -633,14 +637,15 @@ describe('TODO list (API test)', () => {
     QuestionKYCUsecase.ENCHAINEMENTS = {
       ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCID.KYC002, 'TEST_MOSAIC_ID'],
     };
-    MosaicKYC.MOSAIC_CATALOGUE = [
+    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = [
       {
         id: KYCMosaicID.TEST_MOSAIC_ID,
         categorie: Categorie.test,
         points: 10,
         titre: 'Titre test',
-        type: TypeReponseMosaicKYC.mosaic_boolean,
+        type: TypeMosaic.mosaic_boolean,
         question_kyc_codes: [KYCID.KYC003, KYCID.KYC004],
+        thematique: Thematique.alimentation,
       },
     ];
 
@@ -721,6 +726,7 @@ describe('TODO list (API test)', () => {
       question: 'quest 4',
       code: 'KYC004',
     });
+    await kycRepository.loadDefinitions();
 
     // WHEN
     let R = await TestUtil.PUT(
@@ -1334,12 +1340,12 @@ describe('TODO list (API test)', () => {
   });
 
   it('POST KYC met à jour la todo si la question correspond', async () => {
-    const kyc: KYCHistory_v0 = {
-      version: 0,
+    const kyc: KYCHistory_v1 = {
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: KYCID._1,
+          code: KYCID._1,
           id_cms: 1,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
@@ -1347,18 +1353,25 @@ describe('TODO list (API test)', () => {
           a_supprimer: false,
           categorie: Categorie.recommandation,
           points: 10,
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-            { label: 'Ce que je mange', code: Thematique.alimentation },
+          reponse_complexe: [
+            { label: 'Le climat', code: Thematique.climat, value: 'oui' },
+            { label: 'Mon logement', code: Thematique.logement, value: 'oui' },
+            {
+              label: 'Ce que je mange',
+              code: Thematique.alimentation,
+              value: 'oui',
+            },
           ],
           tags: [],
-          universes: [],
+          thematiques: [],
+          reponse_simple: undefined,
           short_question: 'short',
           image_url: 'AAA',
           conditions: [],
           unite: Unite.euro,
           emoji: '🔥',
+          thematique: Thematique.alimentation,
+          ngc_key: undefined,
         },
       ],
     };
@@ -1402,7 +1415,7 @@ describe('TODO list (API test)', () => {
         { label: 'Ce que je mange', code: Thematique.alimentation },
       ],
     });
-
+    await kycRepository.loadDefinitions();
     // WHEN
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC/_1',

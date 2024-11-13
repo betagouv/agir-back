@@ -6,10 +6,33 @@ import { TypeReponseQuestionKYC, Unite } from '../../domain/kyc/questionKYC';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class KycRepository {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {
+    KycRepository.catalogue_kyc = [];
+  }
+
+  private static catalogue_kyc: KycDefinition[];
+
+  async onApplicationBootstrap(): Promise<void> {
+    try {
+      await this.loadDefinitions();
+    } catch (error) {
+      console.error(
+        `Error loading KYC definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
+      );
+    }
+  }
+
+  @Cron('* * * * *')
+  async loadDefinitions(): Promise<void> {
+    const result = await this.prisma.kYC.findMany();
+    KycRepository.catalogue_kyc = result.map((elem) =>
+      this.buildKYCDefFromDB(elem),
+    );
+  }
 
   async upsert(kycDef: KycDefinition): Promise<void> {
     const kycDB: KYC = {
@@ -24,7 +47,7 @@ export class KycRepository {
       reponses: kycDef.reponses,
       thematique: kycDef.thematique ? kycDef.thematique.toString() : null,
       tags: kycDef.tags.map((t) => t.toString()),
-      universes: kycDef.universes.map((u) => u.toString()), // FIXME : A SUPPRIMER
+      universes: kycDef.thematiques.map((u) => u.toString()),
       image_url: kycDef.image_url,
       short_question: kycDef.short_question,
       conditions: kycDef.conditions as any,
@@ -50,13 +73,6 @@ export class KycRepository {
     });
   }
 
-  async getByCode(code: string): Promise<KycDefinition> {
-    const result = await this.prisma.kYC.findUnique({
-      where: { code: code.toString() },
-    });
-    return this.buildKYCDefFromDB(result);
-  }
-
   async getByCMS_ID(cms_id: number): Promise<KycDefinition> {
     const result = await this.prisma.kYC.findUnique({
       where: { id_cms: cms_id },
@@ -64,10 +80,8 @@ export class KycRepository {
     return this.buildKYCDefFromDB(result);
   }
 
-  // FIXME : set cache comme pour les thémtiques
-  async getAllDefs(): Promise<KycDefinition[]> {
-    const result = await this.prisma.kYC.findMany();
-    return result.map((elem) => this.buildKYCDefFromDB(elem));
+  public static getCatalogue(): KycDefinition[] {
+    return KycRepository.catalogue_kyc;
   }
 
   private buildKYCDefFromDB(kycDB: KYC): KycDefinition {
@@ -82,8 +96,10 @@ export class KycRepository {
       question: kycDB.question,
       reponses: kycDB.reponses as any,
       thematique: Thematique[kycDB.thematique],
-      tags: kycDB.tags ? kycDB.tags.map((t) => Tag[t]) : [],
-      universes: kycDB.universes ? kycDB.universes : [],
+      tags: kycDB.tags ? kycDB.tags.map((t) => Tag[t]).filter((e) => !!e) : [],
+      thematiques: kycDB.universes
+        ? kycDB.universes.map((u) => Thematique[u])
+        : [],
       ngc_key: kycDB.ngc_key,
       short_question: kycDB.short_question,
       image_url: kycDB.image_url,

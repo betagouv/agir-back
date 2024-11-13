@@ -39,10 +39,10 @@ export class TodoElementAPI {
       points: element.points,
       questions: element.questions
         ? element.questions.map((q) => {
-            if (q.kyc) {
-              return QuestionKYCAPI.mapToAPI(q.kyc);
+            if (q.isMosaic()) {
+              return MosaicKYCAPI.mapToAPI(q);
             } else {
-              return MosaicKYCAPI.mapToAPI(q.mosaic);
+              return QuestionKYCAPI.mapToAPI(q);
             }
           })
         : undefined,

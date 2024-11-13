@@ -24,9 +24,9 @@ export class KycStatistiqueUsecase {
       for (const question of utilisateur.kyc_history.answered_questions) {
         await this.kycStatistiqueRepository.upsertStatistiquesDUneKyc(
           utilisateurId,
-          question.id,
+          question.code,
           question.question,
-          this.ordonneReponse(question.reponses),
+          this.ordonneReponse(question.getListeReponsesComplexes()),
         );
       }
     }
