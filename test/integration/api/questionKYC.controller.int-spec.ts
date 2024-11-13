@@ -448,6 +448,45 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     );
     expect(response.body.reponse).toEqual([]);
   });
+
+  it('GET /utilisateurs/id/questionsKYC/3 - renvoie une question entière OK sans réponse', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v1 = {
+      version: 1,
+      answered_mosaics: [],
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._3,
+      type: TypeReponseQuestionKYC.entier,
+      question: `Combien de Km ?`,
+      points: 10,
+      categorie: Categorie.test,
+      reponses: undefined,
+    });
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/questionsKYC/_3',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      id: '_3',
+      question: 'Combien de Km ?',
+      reponse: [],
+      reponses_possibles: [],
+      categorie: 'test',
+      points: 10,
+      type: 'entier',
+      is_NGC: false,
+      thematique: 'climat',
+    });
+  });
   it(`GET /utilisateurs/id/questionsKYC/3 - renvoie les reponses possibles du catalogue, pas de la question historique `, async () => {
     // GIVEN
     await TestUtil.create(DB.kYC, {

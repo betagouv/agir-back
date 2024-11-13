@@ -45,7 +45,11 @@ export class QuestionKYCAPI {
     result.reponses_possibles = question.listeLabelsReponseComplexe();
 
     if (question.isSimpleQuestion()) {
-      result.reponse = [question.getReponseSimpleValue()];
+      if (question.hasAnySimpleResponse()) {
+        result.reponse = [question.getReponseSimpleValue()];
+      } else {
+        result.reponse = [];
+      }
     }
     if (question.isChoixQuestion()) {
       result.reponse = question.getSelectedLabels();
