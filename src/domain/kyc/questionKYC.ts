@@ -418,7 +418,7 @@ export class QuestionKYC implements TaggedContent {
     if (this.reponse_simple) {
       return this.reponse_simple.value;
     }
-    return null;
+    return undefined;
   }
   public setReponseSimpleValue(value: string) {
     this.reponse_simple.value = value;
@@ -428,7 +428,7 @@ export class QuestionKYC implements TaggedContent {
     if (this.reponse_simple) {
       return this.reponse_simple.unite;
     }
-    return null;
+    return undefined;
   }
 
   // DEPRECATED

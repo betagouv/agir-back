@@ -236,4 +236,10 @@ export class MosaicKYC_CATALOGUE {
     if (!mosaicID) return null;
     return MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE.find((m) => m.id === mosaicID);
   }
+
+  static hasCode(mosaicID: KYCMosaicID, code: string): boolean {
+    const mosaic = MosaicKYC_CATALOGUE.findMosaicDefByID(mosaicID);
+    const found = mosaic.question_kyc_codes.find((c) => c === code);
+    return !!found;
+  }
 }

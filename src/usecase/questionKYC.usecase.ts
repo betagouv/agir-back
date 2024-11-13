@@ -277,6 +277,19 @@ export class QuestionKYCUsecase {
       ApplicationError.throwUnknownMosaicId(mosaicId);
     }
 
+    if (reponses.length !== mosaic.question_kyc_codes.length) {
+      ApplicationError.throwBadMosaicDataNumber(
+        mosaicId,
+        mosaic.question_kyc_codes.length,
+      );
+    }
+
+    for (const reponse of reponses) {
+      if (!MosaicKYC_CATALOGUE.hasCode(mosaic.id, reponse.code)) {
+        ApplicationError.throwQuestionBadCodeValue(reponse.code, mosaicId);
+      }
+    }
+
     utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
     if (mosaic.type === TypeMosaic.mosaic_boolean) {

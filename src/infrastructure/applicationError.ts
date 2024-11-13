@@ -476,6 +476,12 @@ export class ApplicationError {
       `Code réponse [${code}] inconnu pour la KYC [${kyc_code}]`,
     );
   }
+  static throwBadMosaicDataNumber(id: string, nbr: number) {
+    this.throwAppError(
+      '092',
+      `le nombre de reponses attendu pour la mosaic [${id}] est de [${nbr}]`,
+    );
+  }
 
   private static throwAppError(
     code: string,
