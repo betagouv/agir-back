@@ -10,6 +10,7 @@ import {
 
 import { AideVelo, AidesVeloParType } from '../../domain/aides/aideVelo';
 import { App } from '../../../src/domain/app';
+import miniatures from '../../../src/infrastructure/data/miniatures.json';
 
 /**
  * Aids to exclude from the results.
@@ -93,7 +94,10 @@ export class AidesVeloRepository {
             description: aide.description,
             lien: aide.url,
             collectivite: aide.collectivity,
-            logo: App.getAideVeloMiniaturesURL() + aide.logo,
+            logo:
+              App.getAideVeloMiniaturesURL() + miniatures[aide.id] ??
+              // TODO: this should be added to the CMS.
+              'default.webp',
           }),
           // HACK: limits of TS inference, without this, there is no error when
           // returning an array of `Aide` instead of `AideVelo`.
