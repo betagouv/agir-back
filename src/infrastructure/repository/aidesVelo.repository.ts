@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { Pick } from '@prisma/client/runtime/library.js';
+
 import {
   AidesVeloEngine,
-  Questions,
-  AideRuleNames,
   Aide,
+  AideRuleNames,
+  Questions,
 } from '@betagouv/aides-velo';
-import { Pick } from '@prisma/client/runtime/library.js';
 
 import { AideVelo, AidesVeloParType } from '../../domain/aides/aideVelo';
 import { App } from '../../../src/domain/app';
