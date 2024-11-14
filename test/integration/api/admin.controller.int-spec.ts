@@ -1788,11 +1788,17 @@ describe('Admin (API test)', () => {
       id: 'test-id-1',
       email: 'john-doe@dev.com',
       kyc: {
+        version: 0,
         answered_questions: [
           {
             id: 'id-kyc-1',
+            type: TypeReponseQuestionKYC.choix_multiple,
             question: `Question kyc 1`,
             reponses: [
+              { label: 'Le climat', code: Thematique.climat },
+              { label: 'Mon logement', code: Thematique.logement },
+            ],
+            reponses_possibles: [
               { label: 'Le climat', code: Thematique.climat },
               { label: 'Mon logement', code: Thematique.logement },
             ],
@@ -1800,7 +1806,11 @@ describe('Admin (API test)', () => {
           {
             id: 'id-kyc-2',
             question: `Question kyc 2`,
+            type: TypeReponseQuestionKYC.choix_multiple,
             reponses: [{ label: 'Une réponse', code: Thematique.climat }],
+            reponses_possibles: [
+              { label: 'Une réponse', code: Thematique.climat },
+            ],
           },
         ],
       },
@@ -1810,11 +1820,18 @@ describe('Admin (API test)', () => {
       id: 'test-id-2',
       email: 'john-doedoe@dev.com',
       kyc: {
+        version: 0,
         answered_questions: [
           {
             id: 'id-kyc-1',
             question: `Question kyc 1`,
+            type: TypeReponseQuestionKYC.choix_multiple,
             reponses: [
+              { label: 'Le climat', code: Thematique.climat },
+              { label: 'Mon logement', code: Thematique.logement },
+              { label: 'Appartement', code: Thematique.logement },
+            ],
+            reponses_possibles: [
               { label: 'Le climat', code: Thematique.climat },
               { label: 'Mon logement', code: Thematique.logement },
               { label: 'Appartement', code: Thematique.logement },

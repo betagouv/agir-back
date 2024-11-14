@@ -124,16 +124,38 @@ export class KYCHistory_v1 extends Versioned_v1 {
           ) {
             new_question.reponse_simple = {
               unite: question.unite,
-              value: question.reponses[0].value,
+              value: question.reponses[0].label,
             };
-          } else {
+          } else if (question.type === TypeReponseQuestionKYC.choix_unique) {
             new_question.reponse_complexe = [];
-            for (const reponse of question.reponses) {
+            let selected_code;
+            if (question.reponses && question.reponses.length === 1) {
+              selected_code = question.reponses[0].code;
+            }
+            for (const reponse_possible of question.reponses_possibles) {
               new_question.reponse_complexe.push({
-                code: reponse.code,
-                label: reponse.label,
-                ngc_code: reponse.ngc_code,
-                value: reponse.value,
+                code: reponse_possible.code,
+                label: reponse_possible.label,
+                ngc_code: reponse_possible.ngc_code,
+                value: reponse_possible.code === selected_code ? 'oui' : 'non',
+              });
+            }
+          } else if (question.type === TypeReponseQuestionKYC.choix_multiple) {
+            new_question.reponse_complexe = [];
+            let selected_code = [];
+            if (question.reponses) {
+              for (const rep of question.reponses) {
+                selected_code.push(rep.code);
+              }
+            }
+            for (const reponse_possible of question.reponses_possibles) {
+              new_question.reponse_complexe.push({
+                code: reponse_possible.code,
+                label: reponse_possible.label,
+                ngc_code: reponse_possible.ngc_code,
+                value: selected_code.includes(reponse_possible.code)
+                  ? 'oui'
+                  : 'non',
               });
             }
           }
