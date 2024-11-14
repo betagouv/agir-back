@@ -1,21 +1,32 @@
 ## Description
 
-Backend de l'application Agir https://agir.beta.gouv.fr/
+Backend de l'application [J'agis](https://jagis.beta.gouv.fr/), un service
+d'accompagnement des citoyens dans la réduction de leur empreinte carbone.
 
-Ce composant porte
+Ce composant porte :
 
 - la persistance des données utilisateur via la BDD Postgresql
-- la majeur partie de la logique métier et data du service exposée via des APIs aux clients web et mobile (les mêmes APIs pour les deux)
-- l'interfaçage avec les services externes (Nos gestes climat, impactCO2, pres de chez nous, linky, etc)
+- la majeur partie de la logique métier et data du service exposée via des APIs
+  aux clients web et mobile (les mêmes APIs pour les deux)
+- l'interfaçage avec les services externes (Nos gestes climat, impactCO2, pres
+  de chez nous, linky, etc)
+
+> [!NOTE]
+> Pour plus d'informations sur les choix techniques, les processus de
+> développement, ainsi que l'intégration avec les services externes, veuillez
+> consulter la documentation dans le dossier [`./docs`](./docs).
 
 ## Pile technique.
 
 - Language : nodejs (>=18.0.0)
-- Typescript
-- Postgresql 14 en base de données
+- TypeScript
+- [PostgreSQL](https://www.postgresql.org/) 14 en base de données
 - ORM Prisma
-- Nestjs comme framework principale (controlers, injection de dépendances, ...)
-- Jest pour le framework de tests
+- [NestJS](https://nestjs.com/) comme framework principale (controlers,
+  injection de dépendances, ...)
+- [Jest](https://jestjs.io/) pour le framework de tests
+- [Publicodes](https://publi.codes) pour la modélisation/réutilisation de
+  certains calculs métiers
 - Infra de run : Scalingo.com
 
 ## Installation locale
