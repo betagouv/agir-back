@@ -66,8 +66,8 @@ Ce fichier est généré automatiquement par le script
 > ([`./scripts/generate-images.mjs`](../scripts/generate-images.mjs)) JS
 > permettant de télécharger les images et de les convertir au format WebP dans
 > `./public/images`. Il faut ensuite les ajouter à la main dans le dossier
-> [`Logos Institutions (Aides
-vélo)`](https://agir-cms-prod.osc-secnum-fr1.scalingo.io/admin/plugins/upload?sort=createdAt:DESC&page=1&pageSize=10&folder=14&folderPath=/14)
+> [`miniatures`](https://console.cloudinary.com/pm/c-ac7daab9ad09abfa85f08b02cfc95e/media-explorer/miniatures)
+> de Cloudinary.
 
 > [!IMPORTANT]
 > Un workflow automatisé devrait être mis en place à terme pour s'assurer que

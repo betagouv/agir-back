@@ -94,10 +94,7 @@ export class AidesVeloRepository {
             description: aide.description,
             lien: aide.url,
             collectivite: aide.collectivity,
-            logo:
-              App.getAideVeloMiniaturesURL() + miniatures[aide.id] ??
-              // TODO: this should be added to the CMS.
-              'default.webp',
+            logo: App.getAideVeloMiniaturesURL() + miniatures[aide.id],
           }),
           // HACK: limits of TS inference, without this, there is no error when
           // returning an array of `Aide` instead of `AideVelo`.

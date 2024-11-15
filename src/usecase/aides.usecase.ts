@@ -116,14 +116,6 @@ export class AidesUsecase {
       utilisateur.logement.commune,
     );
     const commune = this.communeRepository.getCommuneByCodeINSEE(code_insee);
-
-    // NOTE: what should we do if the commune is not found?
-    if (!commune) {
-      // throw new Error(
-      //   `Commune not found for code insee: ${params['localisation . code insee']}`,
-      // );
-    }
-
     const epci = this.communeRepository.getEPCIByCommuneCodeINSEE(code_insee);
 
     return this.aidesVeloRepository.getSummaryVelos({
