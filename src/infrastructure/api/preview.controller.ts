@@ -28,8 +28,8 @@ import { DefiDefinition } from '../../domain/defis/defiDefinition';
 import { KycDefinition } from '../../domain/kyc/kycDefinition';
 import { App } from '../../domain/app';
 import axios from 'axios';
-import { CMSWebhookPopulateAPI } from './types/cms/CMSWebhookEntryAPI';
 import { Thematique } from '../../domain/contenu/thematique';
+import { CMSWebhookPopulateAPI } from './types/cms/CMSWebhookPopulateAPI';
 
 // https://fsymbols.com/generators/carty/
 

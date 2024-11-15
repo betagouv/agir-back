@@ -7,7 +7,7 @@ import { CMSController } from './infrastructure/api/incoming/cms.controller';
 
 import { ImportNGCUsecase } from './usecase/importNGC.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
-import { CMSUsecase } from './usecase/cms.usecase';
+import { CMSWebhookUsecase } from './usecase/cms.webhook.usecase';
 
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur/utilisateur.repository';
 import { SituationNGCRepository } from './infrastructure/repository/situationNGC.repository';
@@ -116,6 +116,8 @@ import { MailerUsecase } from './usecase/mailer.usecase';
 import { NotificationsController } from './infrastructure/api/notifications.controller';
 import { PrismaServiceStat } from './infrastructure/prisma/stats/prisma.service.stats';
 import { LongueVieObjetsRepository } from './infrastructure/repository/services_recherche/lvo/LongueVieObjets.repository';
+import { CMSImportUsecase } from './usecase/cms.import.usecase';
+import { LoadCMSController } from './infrastructure/api/loadCMS.controller';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -145,6 +147,7 @@ function getControllers(): any[] {
     BilanCarboneController,
     PreviewController,
     NotificationsController,
+    LoadCMSController,
   );
   if (!App.isProd()) {
     controllers.push(TestDataController);
@@ -183,7 +186,8 @@ function getControllers(): any[] {
     ProfileUsecase,
     ImportNGCUsecase,
     AidesUsecase,
-    CMSUsecase,
+    CMSWebhookUsecase,
+    CMSImportUsecase,
     EmailSender,
     CommuneRepository,
     CommunesUsecase,

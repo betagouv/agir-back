@@ -974,7 +974,6 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     ).send([{ value: '134' }]);
 
     // THEN
-    console.log(response.body);
     expect(response.status).toBe(200);
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
