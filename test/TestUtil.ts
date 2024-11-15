@@ -302,6 +302,7 @@ export class TestUtil {
       codes_region: [],
       echelle: 'National',
       url_source: 'https://hello',
+      url_demande: 'https://demande',
       ...override,
     };
   }

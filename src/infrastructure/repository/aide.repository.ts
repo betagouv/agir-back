@@ -19,16 +19,18 @@ export class AideRepository {
   constructor(private prisma: PrismaService) {}
 
   async upsert(aide: Aide): Promise<void> {
+    const data: AideDB = {
+      ...aide,
+      created_at: undefined,
+      updated_at: undefined,
+    };
     await this.prisma.aide.upsert({
       where: { content_id: aide.content_id },
       create: {
-        ...aide,
-        created_at: undefined,
-        updated_at: undefined,
+        ...data,
       },
       update: {
-        ...aide,
-        updated_at: undefined,
+        ...data,
       },
     });
   }
@@ -140,6 +142,7 @@ export class AideRepository {
       include_codes_commune: aideDB.include_codes_commune,
       echelle: aideDB.echelle,
       url_source: aideDB.url_source,
+      url_demande: aideDB.url_demande,
     };
   }
 }

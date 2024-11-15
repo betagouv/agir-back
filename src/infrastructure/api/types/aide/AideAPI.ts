@@ -9,6 +9,8 @@ export class AideAPI {
   @ApiProperty() titre: string;
   @ApiProperty() contenu: string;
   @ApiProperty() url_simulateur: string;
+  @ApiProperty() url_source: string;
+  @ApiProperty() url_demande: string;
   @ApiProperty() is_simulateur: boolean;
   @ApiProperty() codes_postaux: string[];
   @ApiProperty({ enum: Thematique, enumName: 'Thematique', isArray: true })
@@ -25,6 +27,8 @@ export class AideAPI {
       titre: aide.titre,
       contenu: aide.contenu,
       url_simulateur: aide.url_simulateur,
+      url_source: aide.url_source,
+      url_demande: aide.url_demande,
       is_simulateur: aide.is_simulateur,
       codes_postaux: aide.codes_postaux,
       thematiques: aide.thematiques,

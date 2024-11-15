@@ -187,6 +187,7 @@ model Aide {
   contenu               String
   url_simulateur        String?
   url_source            String?
+  url_demande           String?
   is_simulateur         Boolean?
   codes_postaux         String[] @default([])
   thematiques           String[] @default([])

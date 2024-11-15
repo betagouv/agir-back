@@ -122,6 +122,8 @@ describe('Aide (API test)', () => {
     expect(aideBody.codes_postaux).toEqual(['91120']);
     expect(aideBody.contenu).toEqual("Contenu de l'aide");
     expect(aideBody.is_simulateur).toEqual(true);
+    expect(aideBody.url_source).toEqual('https://hello');
+    expect(aideBody.url_demande).toEqual('https://demande');
     expect(aideBody.montant_max).toEqual(999);
     expect(aideBody.thematiques).toEqual([
       Thematique.climat,
@@ -211,7 +213,7 @@ describe('Aide (API test)', () => {
     expect(response.body.liste_aides).toHaveLength(2);
     expect(response.body.couverture_aides_ok).toEqual(false);
   });
-  it('GET /aides toutes les aides avec les bonnes meta données', async () => {
+  it('GET /aides toutes les aides avec les bonnes meta données en mode export', async () => {
     // GIVEN
     process.env.CRON_API_KEY = TestUtil.token;
 
@@ -253,6 +255,7 @@ describe('Aide (API test)', () => {
       metropoles: ['Dijon Métropole'],
       echelle: 'National',
       url_source: 'https://hello',
+      url_demande: 'https://demande',
     });
     expect(response.body[0].metropoles).toEqual(['Dijon Métropole']);
     expect(response.body[1].com_agglo).toEqual(['CA du Pays de Gex']);

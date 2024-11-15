@@ -10,6 +10,7 @@ export class Aide {
   contenu: string;
   url_simulateur: string;
   url_source: string;
+  url_demande: string;
   is_simulateur: boolean;
   codes_postaux: string[];
   thematiques: Thematique[];

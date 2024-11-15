@@ -216,6 +216,8 @@ describe('/api/incoming/cms (API test)', () => {
       titre: 'titre',
       description: "Contenu de l'aide",
       url_detail_front: '/aide/velo',
+      url_source: 'haha',
+      url_demande: 'hihi',
       is_simulation: true,
       montantMaximum: '123',
       thematiques: [
@@ -448,6 +450,8 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.titre).toEqual('titre');
     expect(aide.contenu).toEqual("Contenu de l'aide");
     expect(aide.url_simulateur).toEqual('/aide/velo');
+    expect(aide.url_source).toEqual('haha');
+    expect(aide.url_demande).toEqual('hihi');
     expect(aide.is_simulateur).toEqual(true);
     expect(aide.montant_max).toEqual(123);
     expect(aide.thematiques).toStrictEqual(['alimentation', 'climat']);
@@ -727,6 +731,8 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.contenu).toEqual("Contenu de l'aide");
     expect(aide.url_simulateur).toEqual('/aide/velo');
     expect(aide.is_simulateur).toEqual(true);
+    expect(aide.url_source).toEqual('haha');
+    expect(aide.url_demande).toEqual('hihi');
     expect(aide.montant_max).toEqual(123);
     expect(aide.thematiques).toStrictEqual(['alimentation', 'climat']);
     expect(aide.codes_postaux).toStrictEqual(['91120', '75002']);

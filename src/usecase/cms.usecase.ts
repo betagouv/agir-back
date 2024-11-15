@@ -545,6 +545,7 @@ export class CMSUsecase {
       codes_region: CMSUsecase.split(entry.codes_region),
       echelle: entry.echelle,
       url_source: entry.url_source,
+      url_demande: entry.url_demande,
     };
   }
 
@@ -784,6 +785,7 @@ export class CMSUsecase {
       codes_region: CMSUsecase.split(entry.attributes.codes_region),
       echelle: entry.attributes.echelle,
       url_source: entry.attributes.url_source,
+      url_demande: entry.attributes.url_demande,
     };
   }
 
