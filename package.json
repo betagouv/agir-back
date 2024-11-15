@@ -41,7 +41,7 @@
     "scripts:images": "node scripts/generate-images.mjs"
   },
   "dependencies": {
-    "@betagouv/aides-velo": "^0.2.0",
+    "@betagouv/aides-velo": "^0.2.1",
     "@etalab/decoupage-administratif": "^4.0.0",
     "@getbrevo/brevo": "^1.0.1",
     "@incubateur-ademe/nosgestesclimat": "^3.3.2",
