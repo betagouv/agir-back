@@ -98,13 +98,13 @@ export class BrevoRepository {
 
       const date_creation = new Date(brevo_contact.createdAt);
 
-      if (isDate(date_creation)) {
-        return date_creation;
-      } else {
+      if (isNaN(date_creation.getTime())) {
         console.log(
           `BAD date retrieved from BREVO : [${date_creation}] => setting to now() as default`,
         );
         return new Date();
+      } else {
+        return date_creation;
       }
     } catch (error) {
       // Contact existant
