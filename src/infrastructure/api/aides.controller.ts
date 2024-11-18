@@ -65,6 +65,10 @@ export class AidesController extends GenericControler {
 
   @ApiOkResponse({ type: [AideAPI] })
   @Get('utilisateurs/:utilisateurId/aides')
+  @ApiOperation({
+    deprecated: true,
+    summary: `DEPRECATED : NEW => utilisateurs/:utilisateurId/aides_v2`,
+  })
   @UseGuards(AuthGuard)
   async getCatalogueAides(
     @Param('utilisateurId') utilisateurId: string,

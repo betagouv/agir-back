@@ -38,7 +38,6 @@ export class ThematiqueRepository {
 
   @Cron('* * * * *')
   public async loadThematiques() {
-    console.log('AUTOD RELOADING THEMATIQUES');
     const new_map: Map<Thematique, ThematiqueDefinition> = new Map();
     const listeThematiques = await this.prisma.thematique.findMany();
     listeThematiques.forEach((them) => {

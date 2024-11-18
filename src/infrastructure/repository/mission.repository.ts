@@ -29,7 +29,6 @@ export class MissionRepository {
 
   @Cron('* * * * *')
   public async reloadMissions() {
-    console.log('AUTOD RELOADING MISSIONS');
     const new_map_id: Map<number, MissionDefinition> = new Map();
     const new_map_code: Map<string, MissionDefinition> = new Map();
     const new_map_them: Map<Thematique, MissionDefinition[]> = new Map();
